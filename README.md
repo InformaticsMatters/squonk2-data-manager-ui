@@ -6,7 +6,7 @@
 ## Building
 Official builds are handled by Travis and container images pushed to Docker-Hub.
 Refer to the `.travis.yml` file to see the official build commands,
-which can be run from the project clone to produce an NGINX web-container: -
+which can be run from the project clone to produce an [nginx] web-container: -
 
     $ docker build . \
         -t informaticsmatters/mini-apps-data-tier-ui:latest
@@ -67,3 +67,4 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 ---
 
 [ansible playbook repo]: https://github.com/InformaticsMatters/mini-apps-data-tier-ui-ansible
+[nginx]: https://hub.docker.com/_/nginx

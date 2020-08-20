@@ -1,0 +1,105 @@
+---
+
+# -----------------
+# Control variables (Travis Settings)
+# -----------------
+#
+# PUBLISH_IMAGES    Should be 'yes' to enable publishing to Docker Hub.
+#
+# If you set PUBLISH_IMAGES you must also set the following: -
+#
+# DOCKER_USERNAME   If PUBLISH_IMAGES is 'yes'
+# DOCKER_PASSWORD   If PUBLISH_IMAGES is 'yes'
+#
+# For automated deployment you must also set the following: -
+#
+# TRIGGER_AWX       Should be set to 'yes' to trigger the chosen AWX Job.
+#                   Enabling TRIGGER_AWX is only effective if PUBLISH_IMAGES
+#                   is also set.
+# AWX_HOST          The fully-qualified URL to AWX.
+# AWX_USER          The username of someone that can execute the AWX Job.
+# AWX_USER_PASSWORD The user's password.
+
+os: linux
+language: python
+python:
+- '3.8'
+services:
+- docker
+
+env:
+  global:
+  - NAMESPACE=informaticsmatters
+  - IMAGE=mini-apps-data-tier-ui
+  # The origin of the AWX trigger code
+  - TRIGGER_ORIGIN=https://raw.githubusercontent.com/informaticsmatters/trigger-awx/1.0.0
+  # The name of the AWX Job Template to run to deploy the application...
+  - AWX_JOB_NAME="Mini Apps Data Tier UI"
+
+stages:
+- name: publish latest
+  if: |
+    branch = master \
+    AND env(PUBLISH_IMAGES) = yes
+- name: test latest
+  if: |
+    branch = master \
+    AND env(PUBLISH_IMAGES) = yes
+- name: publish tag
+  if: |
+    tag IS present \
+    AND env(PUBLISH_IMAGES) = yes
+- name: publish stable
+  if: |
+    tag IS present \
+    AND tag =~ ^([0-9]+\.){1,2}[0-9]+$ \
+    AND env(PUBLISH_IMAGES) = yes
+- name: trigger awx production
+  if: |
+    env(PUBLISH_IMAGES) = yes \
+    AND env(TRIGGER_AWX) = yes
+
+install:
+- curl --location --retry 3 ${TRIGGER_ORIGIN}/requirements.txt --output trigger-awx-requirements.txt
+- curl --location --retry 3 ${TRIGGER_ORIGIN}/trigger-awx-tag.sh --output trigger-awx-tag.sh
+- pip install -r trigger-awx-requirements.txt
+- chmod +x trigger-awx-tag.sh
+
+before_script:
+-
+
+jobs:
+  include:
+
+  # Publish-stage jobs...
+  # Every successful master build results in a latest image
+  # and every tag results in a tagged image in Docker Hub.
+
+  - stage: publish latest
+    name: Latest Image
+    script:
+    # Build and push the pipelines-rdkit image and its sd-poster
+    - docker build -t ${NAMESPACE}/${IMAGE}:latest .
+#    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+#    - docker push ${NAMESPACE}/${IMAGE}:latest
+
+  - stage: publish tag
+    name: Tagged Image
+    script:
+    # Build and push the pipelines-rdkit image and its sd-poster
+    - docker build --build-arg tag=${TRAVIS_TAG} -t ${NAMESPACE}/${IMAGE}:${TRAVIS_TAG} .
+#    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+#    - docker push ${NAMESPACE}/${IMAGE}:${TRAVIS_TAG}
+
+  - stage: publish stable
+    name: Stable Image
+    script:
+    # Pull the corresponding pipelines-rdkit image tag and push it as 'stable'
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+    - docker pull ${NAMESPACE}/${IMAGE}:${TRAVIS_TAG}
+    - docker tag ${NAMESPACE}/${IMAGE}:${TRAVIS_TAG} ${NAMESPACE}/${IMAGE}:stable
+    - docker push ${NAMESPACE}/${IMAGE}:stable
+
+  - stage: trigger awx production
+    name: Trigger AWX Production
+    script: ./trigger-awx-tag.sh latest maui_image_tag "${AWX_JOB_NAME}"

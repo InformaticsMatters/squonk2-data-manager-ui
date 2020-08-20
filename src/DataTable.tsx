@@ -41,6 +41,10 @@ interface IProps {
   rows: Row[];
 }
 
+// This currently produces a React.StrictMode warning
+// Which will be fixed in the next major version of dx-grid
+// https://github.com/DevExpress/devextreme-reactive/issues/2727
+
 const DataTable = ({ rows }: IProps) => {
   const [selection, setSelection] = useState<React.ReactText[]>([]);
 

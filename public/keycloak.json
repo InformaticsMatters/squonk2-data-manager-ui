@@ -1,8 +1,8 @@
 {
   "realm": "squonk",
-  "auth-server-url": "https://squonk.it/auth/",
+  "auth-server-url": "https://keycloak.informaticsmatters.org/auth/",
   "ssl-required": "external",
-  "resource": "fragnet-search-dev",
+  "resource": "data-ui-staging",
   "public-client": true,
   "confidential-port": 0
 }

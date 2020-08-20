@@ -4,6 +4,7 @@ import { Button } from '@material-ui/core';
 import { useKeycloak } from '@react-keycloak/web';
 
 import { useIsAuthenticated } from './hooks';
+import LocalStorageService from './Services/LocalStorageService';
 
 const LoginButton = () => {
   const isAuthenticated = useIsAuthenticated();
@@ -13,6 +14,7 @@ const LoginButton = () => {
     keycloak && keycloak.login();
   };
   const authLogout = () => {
+    LocalStorageService.removeKeycloakTokens();
     keycloak && keycloak.logout();
   };
 

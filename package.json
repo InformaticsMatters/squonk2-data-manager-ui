@@ -19,6 +19,7 @@
     "@types/react-dom": "^16.9.0",
     "@types/styled-components": "^5.1.2",
     "@types/webpack-env": "^1.15.2",
+    "axios": "^0.19.2",
     "keycloak-js": "^11.0.0",
     "material-ui-dropzone": "^3.3.1",
     "react": "^16.13.1",

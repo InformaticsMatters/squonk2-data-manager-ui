@@ -10,11 +10,13 @@
   "prettier.packageManager": "yarn",
   "cSpell.words": [
     "Bluered",
+    "Keycloak",
     "Molfile",
     "Popover",
     "Relayout",
     "Spikelines",
     "Swipeable",
+    "autologin",
     "colorbar",
     "colorscale",
     "colouraxis",

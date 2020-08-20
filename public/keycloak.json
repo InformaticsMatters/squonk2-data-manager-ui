@@ -1,0 +1,8 @@
+{
+  "realm": "squonk",
+  "auth-server-url": "https://squonk.it/auth/",
+  "ssl-required": "external",
+  "resource": "fragnet-search-dev",
+  "public-client": true,
+  "confidential-port": 0
+}

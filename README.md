@@ -1,4 +1,22 @@
+# The Mini-Apps Data Tier UI
+
+[![Build Status](https://travis-ci.com/InformaticsMatters/mini-apps-data-tier-ui.svg?branch=master)](https://travis-ci.com/InformaticsMatters/mini-apps-data-tier-ui)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/InformaticsMatters/mini-apps-data-tier-ui)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Building
+Official builds are handled by Travis and container images pushed to Docker-Hub.
+Refer to the `.travis.yml` file to see the official build commands,
+which can be run from the project clone to produce an NGINX web-container: -
+
+    $ docker build . \
+        -t informaticsmatters/mini-apps-data-tier-ui:latest
+
+Which can then be started on `https://localhost:8080` with: -
+
+    $ docker run --rm -p 8080:80 \
+        informaticsmatters/mini-apps-data-tier-ui:latest
 
 ## Available Scripts
 

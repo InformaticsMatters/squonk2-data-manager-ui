@@ -65,9 +65,6 @@ install:
 - pip install -r trigger-awx-requirements.txt
 - chmod +x trigger-awx-tag.sh
 
-before_script:
--
-
 jobs:
   include:
 
@@ -80,16 +77,16 @@ jobs:
     script:
     # Build and push the pipelines-rdkit image and its sd-poster
     - docker build -t ${NAMESPACE}/${IMAGE}:latest .
-#    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-#    - docker push ${NAMESPACE}/${IMAGE}:latest
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+    - docker push ${NAMESPACE}/${IMAGE}:latest
 
   - stage: publish tag
     name: Tagged Image
     script:
     # Build and push the pipelines-rdkit image and its sd-poster
     - docker build --build-arg tag=${TRAVIS_TAG} -t ${NAMESPACE}/${IMAGE}:${TRAVIS_TAG} .
-#    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-#    - docker push ${NAMESPACE}/${IMAGE}:${TRAVIS_TAG}
+    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+    - docker push ${NAMESPACE}/${IMAGE}:${TRAVIS_TAG}
 
   - stage: publish stable
     name: Stable Image

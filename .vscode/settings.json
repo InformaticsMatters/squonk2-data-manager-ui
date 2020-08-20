@@ -1,0 +1,77 @@
+{
+  "prettier.semi": true,
+  "prettier.arrowParens": "always",
+  "prettier.bracketSpacing": true,
+  "prettier.printWidth": 100,
+  "prettier.singleQuote": true,
+  "prettier.tabWidth": 2,
+  "prettier.trailingComma": "all",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "prettier.packageManager": "yarn",
+  "cSpell.words": [
+    "Bluered",
+    "Molfile",
+    "Popover",
+    "Relayout",
+    "Spikelines",
+    "Swipeable",
+    "colorbar",
+    "colorscale",
+    "colouraxis",
+    "customdata",
+    "depictmcs",
+    "devtools",
+    "dragmode",
+    "dtype",
+    "fragnet",
+    "hovermode",
+    "minmax",
+    "moleculespath",
+    "mols",
+    "openchemlib",
+    "pako",
+    "plotly",
+    "proxyurl",
+    "remotedev",
+    "resp",
+    "reversescale",
+    "scatterplot",
+    "sizeaxis",
+    "ungzip",
+    "xaxis",
+    "xlabel",
+    "xprop",
+    "yaxis",
+    "ylabel",
+    "yprop"
+  ],
+  "importSorter.generalConfiguration.sortOnBeforeSave": true,
+  "importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.type": "newLineEachExpressionAfterCountLimit",
+  "importSorter.importStringConfiguration.tabSize": 2,
+  "importSorter.importStringConfiguration.trailingComma": "multiLine",
+  "importSorter.sortConfiguration.removeUnusedImports": true,
+  "importSorter.sortConfiguration.customOrderingRules.rules": [
+    {
+      "regex": "^react(-dom)?$",
+      "orderLevel": 1,
+    },
+    {
+      "type": "importMember",
+      "regex": "^$",
+      "orderLevel": 5,
+      "disableSort": true
+    },
+    {
+      "regex": "^[^.@]",
+      "orderLevel": 10
+    },
+    {
+      "regex": "^[@]",
+      "orderLevel": 15
+    },
+    {
+      "regex": "^[.]",
+      "orderLevel": 30
+    }
+  ],
+}

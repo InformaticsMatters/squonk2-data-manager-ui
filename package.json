@@ -1,6 +1,7 @@
 {
   "name": "mini-apps-data-tier-ui",
   "version": "0.0.0",
+  "homepage" : ".",
   "private": true,
   "dependencies": {
     "@devexpress/dx-core": "^2.7.0",

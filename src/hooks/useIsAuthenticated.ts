@@ -1,7 +1,10 @@
 import { useKeycloak } from '@react-keycloak/web';
 
 export const useIsAuthenticated = () => {
-  const { keycloak } = useKeycloak();
+  const [keycloak, initialised] = useKeycloak();
 
-  return keycloak?.authenticated;
+  // console.debug(initialised, keycloak?.authenticated, keycloak?.token)
+  return initialised && !!keycloak?.authenticated && !!keycloak?.token;
 };
+
+export default useIsAuthenticated;

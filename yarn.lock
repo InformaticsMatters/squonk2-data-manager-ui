@@ -1384,6 +1384,17 @@
   dependencies:
     "@babel/runtime" "^7.4.4"
 
+"@material-ui/lab@^4.0.0-alpha.56":
+  version "4.0.0-alpha.56"
+  resolved "https://registry.yarnpkg.com/@material-ui/lab/-/lab-4.0.0-alpha.56.tgz#ff63080949b55b40625e056bbda05e130d216d34"
+  integrity sha512-xPlkK+z/6y/24ka4gVJgwPfoCF4RCh8dXb1BNE7MtF9bXEBLN/lBxNTK8VAa0qm3V2oinA6xtUIdcRh0aeRtVw==
+  dependencies:
+    "@babel/runtime" "^7.4.4"
+    "@material-ui/utils" "^4.10.2"
+    clsx "^1.0.4"
+    prop-types "^15.7.2"
+    react-is "^16.8.0"
+
 "@material-ui/styles@^4.10.0":
   version "4.10.0"
   resolved "https://registry.yarnpkg.com/@material-ui/styles/-/styles-4.10.0.tgz#2406dc23aa358217aa8cc772e6237bd7f0544071"
@@ -1443,22 +1454,22 @@
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
 
-"@react-keycloak/core@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@react-keycloak/core/-/core-2.2.0.tgz#e545c305ddddc1e3ea4ec11ed8549afb3aa02d52"
-  integrity sha512-StRP4CicuQpRzEnQFneTGd8lHYPPiQT9nb30aif/k0S9lzbAtvUTd5o3M62RZQdTU2QuaUWIceWLQ3n+rOLASw==
+"@react-keycloak/core@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@react-keycloak/core/-/core-2.2.1.tgz#c09fbf8e22f6e2646781f59a1cfa2f4411911c63"
+  integrity sha512-MKoawiLMamhCrcEQ79svZZV8lw+ojkcz4LMGeCzHULlZB8sTDY3uBg7S8NxhpdPdyAjQoQ5ExKL4Il75OBIamg==
   dependencies:
     "@babel/runtime" "^7.9.0"
     prop-types "^15.7.2"
     react-fast-compare "^3.0.1"
 
-"@react-keycloak/web@^2.1.3":
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/@react-keycloak/web/-/web-2.1.3.tgz#0bf803d9f3b4ddb5d6c3192c94ba41be1bcdec7e"
-  integrity sha512-AApGJ6lyEReBPkEtXRUjz07Oy/SQmRypa2eXy0/EwsPvHeLaGsq95jBfuDGrQCvi9jHtXmcuAJhuFfZtoOQjjg==
+"@react-keycloak/web@2.1.4":
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/@react-keycloak/web/-/web-2.1.4.tgz#bdd6836748b5f8165fc79deeb8f6ba2cc631085c"
+  integrity sha512-HZry6/UIeStGc2reqYhRFAkmVGCb4fQfOdOK2bJ6RCatN5uuJ+sDu5w5L97JtGNirTqP2eKsTUM3Dx1EvgJ4ng==
   dependencies:
     "@babel/runtime" "^7.9.0"
-    "@react-keycloak/core" "^2.2.0"
+    "@react-keycloak/core" "^2.2.1"
     hoist-non-react-statics "^3.3.2"
     prop-types "^15.7.2"
 
@@ -1729,6 +1740,11 @@
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.5.tgz#dcce4430e64b443ba8945f0290fb564ad5bac6dd"
   integrity sha512-7+2BITlgjgDhH0vvwZU/HZJVyk+2XUlvxXe8dFMedNX/aMkaOq++rMAFXc0tM7ij15QaWlbdQASBR9dihi+bDQ==
+
+"@types/lodash@^4.14.159":
+  version "4.14.159"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.159.tgz#61089719dc6fdd9c5cb46efc827f2571d1517065"
+  integrity sha512-gF7A72f7WQN33DpqOWw9geApQPh4M3PxluMtaHxWHXEGSN12/WbcEk/eNSqWNQcQhF66VSZ06vCF94CrHwXJDg==
 
 "@types/minimatch@*":
   version "3.0.3"
@@ -6904,7 +6920,7 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
 
-lodash@^4.17.19:
+lodash@^4.17.19, lodash@^4.17.20:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==

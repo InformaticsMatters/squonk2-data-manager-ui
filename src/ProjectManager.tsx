@@ -11,7 +11,7 @@ interface IProps {
   currentProject: Project | null;
 }
 
-const ProjectManager = ({ currentProject, setCurrentProject }: IProps) => {
+const ProjectManager: React.FC<IProps> = ({ currentProject, setCurrentProject }) => {
   const { projects, loading } = useProjects();
 
   const handleChange = (_: React.ChangeEvent<{}>, newValue: Project | null) => {

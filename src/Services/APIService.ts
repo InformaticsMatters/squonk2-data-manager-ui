@@ -35,21 +35,21 @@ class ApiService {
   /**
    * getToken gets the stored keycloak token
    */
-  public getToken() {
+  getToken() {
     return this.token;
   }
 
   /**
    * removeToken sets the token back to undefined
    */
-  public removeToken() {
+  removeToken() {
     this.token = undefined;
   }
 
   /**
    * hasToken check whether service has a token
    */
-  public hasToken() {
+  hasToken() {
     return this.token !== undefined;
   }
 
@@ -62,7 +62,7 @@ class ApiService {
     };
   }
 
-  public static getPromiseMockData(key: string) {
+  getPromiseMockData(key: string) {
     return Promise.resolve(mockedData[key]);
   }
 
@@ -71,7 +71,7 @@ class ApiService {
    */
   private async _fetchAvailableProjects() {
     if (this.mock) {
-      return ApiService.getPromiseMockData('GET/project');
+      return this.getPromiseMockData('GET/project');
     }
 
     const response = await axios.get(`${this.url}/${Endpoints.PROJECT}`, this.getAuthHeaders());
@@ -81,22 +81,34 @@ class ApiService {
   /**
    * Asynchronously get the projects the authenticated user has access to
    */
-  public async getAvailableProjects(): Promise<Project[]> {
+  async getAvailableProjects(): Promise<Project[]> {
     const data = await this._fetchAvailableProjects();
     return data.map(({ project_id, ...rest }: any) => ({ projectId: project_id, ...rest }));
   }
 
   /**
+   * Access the api endpoint for projects if mock is false
+   */
+  private async _fetchAvailableDatasets() {
+    if (this.mock) {
+      return this.getPromiseMockData('GET/dataset');
+    }
+
+    const response = await axios.get(`${this.url}/${Endpoints.DATASET}`, this.getAuthHeaders());
+    console.debug(response.data);
+    return response.data;
+  }
+
+  /**
    * Asynchronously get all the datasets the user has access to
    */
-  public _fetchAvailableDatasets() {
-    if (this.mock) {
-      ApiService.getPromiseMockData('GET/dataset');
-    }
+  async getAvailableDatasets(): Promise<Dataset[]> {
+    const data = await this._fetchAvailableDatasets();
+    return data.map(({ dataset_id, ...rest }: any) => ({ datasetId: dataset_id, ...rest }));
   }
 }
 
-export default new ApiService(false, true);
+export default new ApiService(true, true);
 
 /* spell-checker: disable */
 const mockedData: { [key: string]: Project[] | Dataset[] } = {

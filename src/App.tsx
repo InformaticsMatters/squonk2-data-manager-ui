@@ -35,10 +35,7 @@ const App = () => {
       initConfig={keycloakProviderInitConfig}
       onEvent={onKeycloakEvent}
       onTokens={onKeycloakTokens}
-      isLoadingCheck={(keycloak) => {
-        console.debug(APIService.getToken());
-        return !!keycloak.authenticated && !APIService.getToken();
-      }}
+      isLoadingCheck={(keycloak) => !!keycloak.authenticated && !APIService.getToken()}
       LoadingComponent={<Loader open reason={'Authenticating...'} />}
     >
       <MainView />

@@ -4,7 +4,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
 import appSettings from '../appSettings';
-import { Project } from './apiTypes';
+import { Dataset, Project } from './apiTypes';
 
 enum Endpoints {
   PROJECT = 'project',
@@ -40,6 +40,20 @@ class ApiService {
   }
 
   /**
+   * removeToken sets the token back to undefined
+   */
+  public removeToken() {
+    this.token = undefined;
+  }
+
+  /**
+   * hasToken check whether service has a token
+   */
+  public hasToken() {
+    return this.token !== undefined;
+  }
+
+  /**
    * get the Auth headers required to make an axios request
    */
   private getAuthHeaders(): AxiosRequestConfig {
@@ -48,15 +62,17 @@ class ApiService {
     };
   }
 
+  public static getPromiseMockData(key: string) {
+    return Promise.resolve(mockedData[key]);
+  }
+
   /**
    * Access the api endpoint for projects if mock is false
    */
   private async _fetchAvailableProjects() {
     if (this.mock) {
-      return Promise.resolve(mockedData['GET/project']);
+      return ApiService.getPromiseMockData('GET/project');
     }
-
-    console.debug(this.getAuthHeaders());
 
     const response = await axios.get(`${this.url}/${Endpoints.PROJECT}`, this.getAuthHeaders());
     return response.data;
@@ -69,18 +85,40 @@ class ApiService {
     const data = await this._fetchAvailableProjects();
     return data.map(({ project_id, ...rest }: any) => ({ projectId: project_id, ...rest }));
   }
+
+  /**
+   * Asynchronously get all the datasets the user has access to
+   */
+  public _fetchAvailableDatasets() {
+    if (this.mock) {
+      ApiService.getPromiseMockData('GET/dataset');
+    }
+  }
 }
 
 export default new ApiService(false, true);
 
 /* spell-checker: disable */
-const mockedData = {
+const mockedData: { [key: string]: Project[] | Dataset[] } = {
   'GET/project': [
     {
       editors: ['dlister'],
       name: 'project-x',
       owner: 'dlister',
-      project_id: 'project-cd1e6c92-81db-4e47-9834-4c1115e3b048',
+      projectId: 'project-cd1e6c92-81db-4e47-9834-4c1115e3b048',
+    },
+  ],
+  'GET/dataset': [
+    {
+      datasetId: 'dataset-319bc63b-6534-439a-91e1-4cbd1f87fa46',
+      editors: ['dlister'],
+      labels: ['project-x'],
+      name: 'alpine',
+      owner: 'dlister',
+      projects: ['project-cd1e6c92-81db-4e47-9834-4c1115e3b048'],
+      published: '2020-01-20T18:32:00+00:00',
+      source: 'alpine.sdf',
+      type: 'chemical/x-mdl-sdfile',
     },
   ],
 };

@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Container, Paper, Typography } from '@material-ui/core';
 
 import DataTable from './DataTable';
-import { useProjects } from './hooks';
-// import { useProjects } from './hooks';
 import LoginButton from './LoginButton';
 import ProjectManager from './ProjectManager';
+import APIService from './Services/APIService';
+import { Project } from './Services/apiTypes';
 
 // Mock data
 const rows = [
@@ -15,15 +15,20 @@ const rows = [
 ];
 
 const MainView = () => {
-  const projects = useProjects();
+  const [currentProject, setCurrentProject] = useState<Project | null>(null);
+
   return (
     <Container>
       <Typography variant="h1">Data Tier</Typography>
-      <ProjectManager projects={projects} />
       <LoginButton />
-      <Paper>
-        <DataTable rows={rows} />
-      </Paper>
+      {APIService.hasToken() && (
+        <>
+          <ProjectManager currentProject={currentProject} setCurrentProject={setCurrentProject} />
+          <Paper>
+            <DataTable rows={rows} />
+          </Paper>
+        </>
+      )}
     </Container>
   );
 };

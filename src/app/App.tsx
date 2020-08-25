@@ -5,6 +5,7 @@ import Keycloak, { KeycloakError, KeycloakInitOptions } from 'keycloak-js';
 import { KeycloakEvent, KeycloakProvider, KeycloakTokens } from '@react-keycloak/web';
 
 import Loader from '../components/Loader';
+import { ProjectsProvider } from '../context/projects';
 import APIService from '../Services/APIService';
 import LocalStorageService from '../Services/LocalStorageService';
 import MainView from './MainView';
@@ -37,7 +38,9 @@ const App = () => {
       isLoadingCheck={(keycloak) => !!keycloak.authenticated && !APIService.getToken()}
       LoadingComponent={<Loader open reason={'Authenticating...'} />}
     >
-      <MainView />
+      <ProjectsProvider>
+        <MainView />
+      </ProjectsProvider>
     </KeycloakProvider>
   );
 };

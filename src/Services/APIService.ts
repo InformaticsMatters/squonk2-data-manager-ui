@@ -124,7 +124,7 @@ class APIService {
    * @param name the name of the new project
    */
   createNewProject(name: string) {
-    return this._postNewProject(name).then(console.debug);
+    return this._postNewProject(name);
   }
 
   /**
@@ -136,7 +136,6 @@ class APIService {
     }
 
     const response = await axios.get(`${this.url}/${Endpoints.DATASET}`, this.getAuthHeaders());
-    console.debug(response.data);
     return response.data;
   }
 

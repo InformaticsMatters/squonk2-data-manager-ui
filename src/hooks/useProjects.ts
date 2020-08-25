@@ -1,24 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useContext } from 'react';
 
-import APIService from '../Services/APIService';
-import { Project } from '../Services/apiTypes';
+import { ProjectsContext } from '../context/projects';
 
 /**
  * Consume the GET projects endpoint. User must be authenticated.
  */
 export const useProjects = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const refreshProjects = useCallback(async () => {
-    setLoading(true);
-    const newProjects = await APIService.getAvailableProjects();
-    setProjects(newProjects);
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    refreshProjects();
-  }, [refreshProjects]);
+  const { projects, loading, refreshProjects } = useContext(ProjectsContext);
   return { projects, loading, refreshProjects };
 };

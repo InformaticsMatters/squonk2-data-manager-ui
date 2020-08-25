@@ -38,7 +38,7 @@ const AddProjectButton: React.FC<IProps> = ({ refreshProjects }) => {
                     const name = target.projectName.value;
 
                     await APIService.createNewProject(name);
-                    setTimeout(refreshProjects, 500);
+                    refreshProjects();
                     setOpen(false);
                   }}
                 >

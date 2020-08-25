@@ -3,24 +3,18 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
+import { useProjects } from '../hooks';
 import { Project } from '../Services/apiTypes';
 import AddProjectButton from './AddProjectButton';
 
 interface IProps {
   setCurrentProject: (_: Project | null) => void;
   currentProject: Project | null;
-  refreshProjects: () => void;
-  loading: boolean;
-  projects: Project[];
 }
 
-const ProjectManager: React.FC<IProps> = ({
-  currentProject,
-  setCurrentProject,
-  refreshProjects,
-  loading,
-  projects,
-}) => {
+const ProjectManager: React.FC<IProps> = ({ currentProject, setCurrentProject }) => {
+  const { projects, loading, refreshProjects } = useProjects();
+
   const handleProjectChange = (_: React.ChangeEvent<{}>, newValue: Project | null) => {
     setCurrentProject(newValue);
   };

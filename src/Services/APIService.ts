@@ -12,7 +12,7 @@ enum Endpoints {
   LABEL = 'label',
 }
 
-class ApiService {
+class APIService {
   private token?: string;
   private url: string;
 
@@ -132,7 +132,7 @@ class ApiService {
   }
 }
 
-export default new ApiService(false, false);
+export default new APIService(false, false);
 
 /* spell-checker: disable */
 const mockedData: any = {

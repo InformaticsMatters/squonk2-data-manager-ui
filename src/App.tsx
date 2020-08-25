@@ -10,9 +10,7 @@ import APIService from './Services/APIService';
 import LocalStorageService from './Services/LocalStorageService';
 
 // Auth
-const keycloak = Keycloak(
-  process.env.NODE_ENV === 'production' ? '/ui/keycloak.json' : 'keycloak.json',
-); // TODO: make the subpath programmatic
+const keycloak = Keycloak('/ui/keycloak.json'); // TODO: make the subpath programmatic
 
 const keycloakProviderInitConfig: KeycloakInitOptions = {
   onLoad: 'check-sso',

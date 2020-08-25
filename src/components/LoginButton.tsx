@@ -3,9 +3,9 @@ import React from 'react';
 import { Button } from '@material-ui/core';
 import { useKeycloak } from '@react-keycloak/web';
 
-import { useIsAuthenticated } from './hooks';
-import APIService from './Services/APIService';
-import LocalStorageService from './Services/LocalStorageService';
+import { useIsAuthenticated } from '../hooks';
+import APIService from '../Services/APIService';
+import LocalStorageService from '../Services/LocalStorageService';
 
 const LoginButton = () => {
   const isAuthenticated = useIsAuthenticated();

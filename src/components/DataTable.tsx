@@ -17,8 +17,8 @@ import {
   VirtualTable,
 } from '@devexpress/dx-react-grid-material-ui';
 
-import { useDatasets } from './hooks';
-import { Project } from './Services/apiTypes';
+import { useDatasets } from '../hooks';
+import { Project } from '../Services/apiTypes';
 
 // Types
 

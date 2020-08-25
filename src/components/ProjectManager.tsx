@@ -3,8 +3,8 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
+import { Project } from '../Services/apiTypes';
 import AddProjectButton from './AddProjectButton';
-import { Project } from './Services/apiTypes';
 
 interface IProps {
   setCurrentProject: (_: Project | null) => void;

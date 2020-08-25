@@ -4,10 +4,10 @@ import Keycloak, { KeycloakError, KeycloakInitOptions } from 'keycloak-js';
 
 import { KeycloakEvent, KeycloakProvider, KeycloakTokens } from '@react-keycloak/web';
 
-import Loader from './Loader';
+import Loader from '../components/Loader';
+import APIService from '../Services/APIService';
+import LocalStorageService from '../Services/LocalStorageService';
 import MainView from './MainView';
-import APIService from './Services/APIService';
-import LocalStorageService from './Services/LocalStorageService';
 
 // Auth
 const keycloak = Keycloak('/ui/keycloak.json'); // TODO: make the subpath programmatic

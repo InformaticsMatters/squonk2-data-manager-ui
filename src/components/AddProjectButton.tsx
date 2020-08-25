@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 
 import { Button, ClickAwayListener, Grow, Paper, Popper, TextField } from '@material-ui/core';
 
-import APIService from './Services/APIService';
+import APIService from '../Services/APIService';
 
 interface IProps {
   refreshProjects: () => void;

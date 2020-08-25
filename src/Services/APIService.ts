@@ -3,7 +3,7 @@
  */
 import axios, { AxiosRequestConfig } from 'axios';
 
-import appSettings from '../appSettings';
+import appSettings from '../app/appSettings';
 import { Dataset, Project } from './apiTypes';
 
 enum Endpoints {

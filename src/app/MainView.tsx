@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 
 import { Container, Paper, Typography } from '@material-ui/core';
 
-import DataTable from './DataTable';
-import { useProjects } from './hooks';
-import LoginButton from './LoginButton';
-import ProjectManager from './ProjectManager';
-import APIService from './Services/APIService';
-import { Project } from './Services/apiTypes';
+import DataTable from '../components/DataTable';
+import LoginButton from '../components/LoginButton';
+import ProjectManager from '../components/ProjectManager';
+import { useProjects } from '../hooks';
+import APIService from '../Services/APIService';
+import { Project } from '../Services/apiTypes';
 
 const MainView = () => {
   const [currentProject, setCurrentProject] = useState<Project | null>(null);

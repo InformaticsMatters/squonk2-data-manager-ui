@@ -51,19 +51,14 @@ interface IProps {
 const DataTable: React.FC<IProps> = ({ currentProject }) => {
   const [selection, setSelection] = useState<React.ReactText[]>([]);
 
-  const { datasets, loading } = useDatasets();
-
-  const rows =
-    currentProject !== null
-      ? datasets.filter((dataset) => dataset.projects.includes(currentProject?.projectId))
-      : datasets;
+  const { datasets, loading } = useDatasets(currentProject?.projectId);
 
   return (
     <>
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <Grid rows={rows} columns={columns}>
+        <Grid rows={datasets} columns={columns}>
           <SearchState defaultValue="" />
           <SelectionState selection={selection} onSelectionChange={setSelection} />
           <SortingState />

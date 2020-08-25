@@ -87,9 +87,33 @@ class ApiService {
   }
 
   /**
-   * Access the api endpoint for projects if mock is false
+   * Access the api endpoint for projects/project_id if mock is false otherwise return mocked data
    */
-  private async _fetchAvailableDatasets() {
+  private async _fetchProjectDetails(projectId: string) {
+    if (this.mock) {
+      return this.getPromiseMockData('GET/project/project_id');
+    }
+
+    const response = await axios.get(
+      `${this.url}/${Endpoints.PROJECT}/${projectId}`,
+      this.getAuthHeaders(),
+    );
+    return response.data;
+  }
+
+  /**
+   * Asynchronously get all the datasets for the specified project id
+   * @param projectId the `project_id` for the project to fetch the datasets of
+   */
+  async getDatasetsFromProject(projectId: string): Promise<Dataset[]> {
+    const data = await this._fetchProjectDetails(projectId);
+    return data.datasets;
+  }
+
+  /**
+   * Access the api endpoint for projects if mock is false otherwise return mocked data
+   */
+  private async _fetchOwedDatasets() {
     if (this.mock) {
       return this.getPromiseMockData('GET/dataset');
     }
@@ -102,22 +126,31 @@ class ApiService {
   /**
    * Asynchronously get all the datasets the user has access to
    */
-  async getAvailableDatasets(): Promise<Dataset[]> {
-    const data = await this._fetchAvailableDatasets();
+  async getOwnedDatasets(): Promise<Dataset[]> {
+    const data = await this._fetchOwedDatasets();
     return data.map(({ dataset_id, ...rest }: any) => ({ datasetId: dataset_id, ...rest }));
   }
 }
 
-export default new ApiService(true, true);
+export default new ApiService(false, false);
 
 /* spell-checker: disable */
-const mockedData: { [key: string]: Project[] | Dataset[] } = {
+const mockedData: any = {
   'GET/project': [
     {
       editors: ['dlister'],
       name: 'project-x',
       owner: 'dlister',
       projectId: 'project-cd1e6c92-81db-4e47-9834-4c1115e3b048',
+    },
+  ],
+  'GET/project/project_id': [
+    {
+      datasets: [],
+      editors: ['dlister'],
+      name: 'project-x',
+      owner: 'dlister',
+      project_id: 'project-cd1e6c92-81db-4e47-9834-4c1115e3b048',
     },
   ],
   'GET/dataset': [

@@ -3,18 +3,25 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
-import { useProjects } from './hooks';
+import AddProjectButton from './AddProjectButton';
 import { Project } from './Services/apiTypes';
 
 interface IProps {
   setCurrentProject: (_: Project | null) => void;
   currentProject: Project | null;
+  refreshProjects: () => void;
+  loading: boolean;
+  projects: Project[];
 }
 
-const ProjectManager: React.FC<IProps> = ({ currentProject, setCurrentProject }) => {
-  const { projects, loading } = useProjects();
-
-  const handleChange = (_: React.ChangeEvent<{}>, newValue: Project | null) => {
+const ProjectManager: React.FC<IProps> = ({
+  currentProject,
+  setCurrentProject,
+  refreshProjects,
+  loading,
+  projects,
+}) => {
+  const handleProjectChange = (_: React.ChangeEvent<{}>, newValue: Project | null) => {
     setCurrentProject(newValue);
   };
 
@@ -29,8 +36,9 @@ const ProjectManager: React.FC<IProps> = ({ currentProject, setCurrentProject })
         renderInput={(params) => (
           <TextField {...params} label="Select project" variant="outlined" />
         )}
-        onChange={handleChange}
+        onChange={handleProjectChange}
       />
+      <AddProjectButton refreshProjects={refreshProjects} />
       <p>
         <b>Owner</b>: {currentProject?.owner}
       </p>

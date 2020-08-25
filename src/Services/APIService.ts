@@ -110,6 +110,23 @@ class APIService {
     return data.datasets;
   }
 
+  private async _postNewProject(name: string) {
+    const response = await axios.post(
+      `${this.url}/${Endpoints.PROJECT}`,
+      `name=${name}`,
+      this.getAuthHeaders(),
+    );
+    return response.data;
+  }
+
+  /**
+   * Asynchronously add a new project with the provided name
+   * @param name the name of the new project
+   */
+  createNewProject(name: string) {
+    return this._postNewProject(name).then(console.debug);
+  }
+
   /**
    * Access the api endpoint for projects if mock is false otherwise return mocked data
    */

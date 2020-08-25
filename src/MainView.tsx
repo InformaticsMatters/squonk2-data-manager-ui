@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Container, Paper, Typography } from '@material-ui/core';
 
 import DataTable from './DataTable';
+import { useProjects } from './hooks';
 import LoginButton from './LoginButton';
 import ProjectManager from './ProjectManager';
 import APIService from './Services/APIService';
@@ -11,13 +12,21 @@ import { Project } from './Services/apiTypes';
 const MainView = () => {
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
 
+  const { projects, loading, refreshProjects } = useProjects();
+
   return (
     <Container>
       <Typography variant="h1">Data Tier</Typography>
       <LoginButton />
       {APIService.hasToken() && (
         <>
-          <ProjectManager currentProject={currentProject} setCurrentProject={setCurrentProject} />
+          <ProjectManager
+            refreshProjects={refreshProjects}
+            loading={loading}
+            projects={projects}
+            currentProject={currentProject}
+            setCurrentProject={setCurrentProject}
+          />
           <Paper>
             <DataTable currentProject={currentProject} />
           </Paper>

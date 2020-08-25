@@ -1,14 +1,24 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import APIService from '../Services/APIService';
-import { usePromise } from './usePromise';
+import { Project } from '../Services/apiTypes';
 
 /**
  * Consume the GET projects endpoint. User must be authenticated.
  */
 export const useProjects = () => {
-  // Callback needs to be wrapped since useCallback changes this
-  const func = useCallback(() => APIService.getAvailableProjects(), []);
-  const { data: projects, loading } = usePromise(func, []);
-  return { projects, loading };
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const refreshProjects = useCallback(async () => {
+    setLoading(true);
+    const newProjects = await APIService.getAvailableProjects();
+    setProjects(newProjects);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    refreshProjects();
+  }, [refreshProjects]);
+  return { projects, loading, refreshProjects };
 };

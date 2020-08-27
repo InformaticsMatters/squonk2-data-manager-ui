@@ -11,7 +11,7 @@ import LocalStorageService from '../Services/LocalStorageService';
 import MainView from './MainView';
 
 // Auth
-const keycloak = Keycloak('/ui/keycloak.json'); // TODO: make the subpath programmatic
+const keycloak = Keycloak('./keycloak.json'); // TODO: make the subpath programmatic
 
 const keycloakProviderInitConfig: KeycloakInitOptions = {
   onLoad: 'check-sso',

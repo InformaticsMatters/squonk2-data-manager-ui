@@ -42,7 +42,13 @@ const AddProjectButton: React.FC<IProps> = ({ refreshProjects }) => {
                     setOpen(false);
                   }}
                 >
-                  <TextField name="projectName" variant="outlined" required autoFocus />
+                  <TextField
+                    inputProps={{ maxLength: 18 }}
+                    name="projectName"
+                    variant="outlined"
+                    required
+                    autoFocus
+                  />
                 </form>
               </ClickAwayListener>
             </Paper>

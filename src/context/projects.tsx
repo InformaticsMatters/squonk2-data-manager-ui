@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import APIService from '../Services/APIService';
 import { Project } from '../Services/apiTypes';
+import DataTierAPI from '../Services/DataTierAPI';
 
 interface ProjectState {
   projects: Project[];
@@ -21,7 +21,7 @@ export const ProjectsProvider: React.FC = ({ children }) => {
 
   const refreshProjects = useCallback(async () => {
     setLoading(true);
-    const newProjects = await APIService.getAvailableProjects();
+    const newProjects = await DataTierAPI.getAvailableProjects();
     setProjects(newProjects);
     setLoading(false);
   }, []);

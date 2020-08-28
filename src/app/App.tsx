@@ -1,12 +1,18 @@
 import React from 'react';
 
 import Keycloak, { KeycloakError, KeycloakInitOptions } from 'keycloak-js';
+import { ThemeProvider } from 'styled-components';
 
+import {
+  createMuiTheme,
+  StylesProvider,
+  ThemeProvider as MuiThemeProvider,
+} from '@material-ui/core/styles';
 import { KeycloakEvent, KeycloakProvider, KeycloakTokens } from '@react-keycloak/web';
 
 import Loader from '../components/Loader';
 import { ProjectsProvider } from '../context/projects';
-import APIService from '../Services/APIService';
+import DataTierAPI from '../Services/DataTierAPI';
 import LocalStorageService from '../Services/LocalStorageService';
 import MainView from './MainView';
 
@@ -14,7 +20,7 @@ import MainView from './MainView';
 const keycloak = Keycloak('./keycloak.json'); // TODO: make the subpath programmatic
 
 const keycloakProviderInitConfig: KeycloakInitOptions = {
-  onLoad: 'check-sso',
+  onLoad: 'login-required',
   checkLoginIframe: false, // Without this reload of browser will prevent autologin
 };
 
@@ -24,24 +30,32 @@ const onKeycloakEvent = (event: KeycloakEvent, error: KeycloakError | undefined)
 
 const onKeycloakTokens = (tokens: KeycloakTokens) => {
   console.log('onKeycloakTokens', tokens);
-  APIService.setToken(tokens.token);
+  DataTierAPI.setToken(tokens.token);
   LocalStorageService.saveKeycloakTokens(tokens);
 };
 
+export const theme = createMuiTheme();
+
 const App = () => {
   return (
-    <KeycloakProvider
-      keycloak={keycloak}
-      initConfig={keycloakProviderInitConfig}
-      onEvent={onKeycloakEvent}
-      onTokens={onKeycloakTokens}
-      isLoadingCheck={(keycloak) => !!keycloak.authenticated && !APIService.getToken()}
-      LoadingComponent={<Loader open reason={'Authenticating...'} />}
-    >
-      <ProjectsProvider>
-        <MainView />
-      </ProjectsProvider>
-    </KeycloakProvider>
+    <StylesProvider injectFirst>
+      <MuiThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
+          <KeycloakProvider
+            keycloak={keycloak}
+            initConfig={keycloakProviderInitConfig}
+            onEvent={onKeycloakEvent}
+            onTokens={onKeycloakTokens}
+            isLoadingCheck={(keycloak) => !!keycloak.authenticated && !DataTierAPI.getToken()}
+            LoadingComponent={<Loader open reason={'Authenticating...'} />}
+          >
+            <ProjectsProvider>
+              <MainView />
+            </ProjectsProvider>
+          </KeycloakProvider>
+        </ThemeProvider>
+      </MuiThemeProvider>
+    </StylesProvider>
   );
 };
 

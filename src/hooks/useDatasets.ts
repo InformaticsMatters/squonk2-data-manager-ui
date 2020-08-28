@@ -1,19 +1,11 @@
-import { useCallback } from 'react';
+import { useContext } from 'react';
 
-import APIService from '../Services/APIService';
-import { usePromise } from './usePromise';
+import { DatasetsContext } from '../context/datasets';
 
 /**
  * Consume the GET project/project_id endpoint. User must be authenticated.
  */
-export const useDatasets = (projectId?: string) => {
-  // Callback needs to be wrapped since useCallback changes this
-  const func = useCallback(() => {
-    if (projectId !== undefined) {
-      return APIService.getDatasetsFromProject(projectId);
-    }
-    return Promise.resolve([]);
-  }, [projectId]);
-  const { data: datasets, loading } = usePromise(func, []);
-  return { datasets, loading };
+export const useDatasets = () => {
+  const { datasets, loading, refreshDatasets } = useContext(DatasetsContext);
+  return { datasets, loading, refreshDatasets };
 };

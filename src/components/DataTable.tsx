@@ -18,7 +18,6 @@ import {
 } from '@devexpress/dx-react-grid-material-ui';
 
 import { useDatasets } from '../hooks';
-import { Project } from '../Services/apiTypes';
 
 // Types
 
@@ -32,7 +31,7 @@ type Column = { name: keyof ColumnTypes; title: string };
 
 const columns: Column[] = [
   { name: 'name', title: 'File Name' },
-  { name: 'projects', title: 'Projects' },
+  // { name: 'projects', title: 'Projects' },
   { name: 'labels', title: 'Labels' },
 ];
 
@@ -40,18 +39,16 @@ interface Row extends ColumnTypes {
   id: number;
 }
 
-interface IProps {
-  currentProject: Project | null;
-}
+interface IProps {}
 
 // This currently produces a React.StrictMode warning
 // Which will be fixed in the next major version of dx-grid
 // https://github.com/DevExpress/devextreme-reactive/issues/2727
 
-const DataTable: React.FC<IProps> = ({ currentProject }) => {
+const DataTable: React.FC<IProps> = () => {
   const [selection, setSelection] = useState<React.ReactText[]>([]);
 
-  const { datasets, loading } = useDatasets(currentProject?.projectId);
+  const { datasets, loading } = useDatasets();
 
   return (
     <>

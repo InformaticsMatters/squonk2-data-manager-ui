@@ -2,12 +2,9 @@ import React, { useState } from 'react';
 
 import Keycloak, { KeycloakError, KeycloakInitOptions } from 'keycloak-js';
 
-import { Container, Typography } from '@material-ui/core';
 import { KeycloakEvent, KeycloakProvider, KeycloakTokens } from '@react-keycloak/web';
 
 import Loader from '../components/Loader';
-import LoginButton from '../components/LoginButton';
-import { ProjectsProvider } from '../context/projects';
 import DataTierAPI from '../Services/DataTierAPI';
 import LocalStorageService from '../Services/LocalStorageService';
 import MainView from './MainView';
@@ -45,17 +42,7 @@ const App = () => {
         isLoadingCheck={(keycloak) => !!keycloak.authenticated && !DataTierAPI.getToken()}
         LoadingComponent={<Loader open reason={'Authenticating...'} />}
       >
-        <Container component="main">
-          <Typography variant="h2" component="h1">
-            Squonk Data
-          </Typography>
-          <LoginButton />
-          {DataTierAPI.hasToken() && (
-            <ProjectsProvider>
-              <MainView />
-            </ProjectsProvider>
-          )}
-        </Container>
+        <MainView />
       </KeycloakProvider>
     </Theme>
   );

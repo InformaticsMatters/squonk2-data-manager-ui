@@ -1,24 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { Paper } from '@material-ui/core';
+import { Container, Typography } from '@material-ui/core';
 
-import DataTable from '../components/DataTable';
-import ProjectManager from '../components/ProjectManager';
-import UploadFileButton from '../components/UploadFileButton';
-import { DatasetsProvider } from '../context/datasets';
-import { Project } from '../Services/apiTypes';
+import LoginButton from '../components/LoginButton';
+import { ProjectsProvider } from '../context/projects';
+import DataTierAPI from '../Services/DataTierAPI';
+import DataTierView from './DataTierView';
 
-const MainView = () => {
-  const [currentProject, setCurrentProject] = useState<Project | null>(null);
+interface IProps {}
 
+const MainView: React.FC<IProps> = () => {
   return (
-    <DatasetsProvider project={currentProject}>
-      <UploadFileButton currentProject={currentProject} />
-      <ProjectManager currentProject={currentProject} setCurrentProject={setCurrentProject} />
-      <Paper>
-        <DataTable />
-      </Paper>
-    </DatasetsProvider>
+    <Container component="main">
+      <Typography variant="h2" component="h1">
+        Squonk Data
+      </Typography>
+      <LoginButton />
+      {DataTierAPI.hasToken() && (
+        <ProjectsProvider>
+          <DataTierView />
+        </ProjectsProvider>
+      )}
+    </Container>
   );
 };
 

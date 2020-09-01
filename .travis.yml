@@ -32,7 +32,7 @@ env:
   - NAMESPACE=informaticsmatters
   - IMAGE=mini-apps-data-tier-ui
   # The origin of the AWX trigger code
-  - TRIGGER_ORIGIN=https://raw.githubusercontent.com/informaticsmatters/trigger-awx/1.0.0
+  - TRIGGER_ORIGIN=https://raw.githubusercontent.com/informaticsmatters/trigger-awx/1.0.2
   # The name of the AWX Job Template to run to deploy the application...
   - AWX_JOB_NAME="Mini Apps Data Tier UI"
 

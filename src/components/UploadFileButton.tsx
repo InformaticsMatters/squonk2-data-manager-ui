@@ -101,7 +101,7 @@ const UploadFileButton: React.FC<IProps> = ({ currentProject }) => {
         <DialogContent>
           Files will be upload into project: {currentProject?.name}
           <LabelSelector options={datasetLabels} labels={labels} setLabels={setLabels} />
-          <DropzoneArea filesLimit={1} acceptedFiles={allowedFiles} onChange={handleFileChange} />
+          <DropzoneArea maxFileSize={100000000} filesLimit={1} acceptedFiles={allowedFiles} onChange={handleFileChange} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} color="default">

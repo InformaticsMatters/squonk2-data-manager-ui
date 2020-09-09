@@ -33,7 +33,7 @@ type Column = { name: keyof ColumnTypes; title: string };
 
 const columns: Column[] = [
   { name: 'name', title: 'File Name' },
-  // { name: 'projects', title: 'Projects' },
+  { name: 'projects', title: 'Projects' },
   { name: 'labels', title: 'Labels' },
   { name: 'actions', title: 'Actions' },
 ];

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { TextField } from '@material-ui/core';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 
 interface IProps {
+  helperText?: string;
   options: string[];
   labels: string[];
   setLabels: (newLabels: string[]) => void;
@@ -11,11 +12,30 @@ interface IProps {
 
 const filter = createFilterOptions<string>();
 
-const LabelSelector: React.FC<IProps> = ({ options, labels, setLabels }) => {
+/**
+ * Multiselect, creatable combobox for selecting label elements.
+ * This is a controlled component so you need to provide the state as props.
+ * @param helperText the text displayed in the input label
+ * @param options the default options that the user can pick from
+ * @param labels the value of the input. The value of your useState
+ * @param setLabels the setter for the value input. Called when a selection is made.
+ * The setter from your useState.
+ */
+const LabelSelector: React.FC<IProps> = ({
+  helperText = 'Add labels',
+  options,
+  labels,
+  setLabels,
+}) => {
+  const [addedOptions, setAddedOptions] = useState<string[]>([]);
+  const displayOptions = [...options, ...addedOptions];
   return (
     <Autocomplete
+      disableCloseOnSelect
       value={labels}
       onChange={(_, newValue) => {
+        const additions = newValue.filter((value) => !displayOptions.includes(value));
+        setAddedOptions([...addedOptions, ...additions]);
         setLabels(newValue);
       }}
       multiple
@@ -33,8 +53,8 @@ const LabelSelector: React.FC<IProps> = ({ options, labels, setLabels }) => {
       handleHomeEndKeys
       id="size-small-outlined-multi"
       size="small"
-      options={options}
-      renderInput={(params) => <TextField {...params} variant="outlined" label="Add labels" />}
+      options={displayOptions}
+      renderInput={(params) => <TextField {...params} variant="outlined" label={helperText} />}
     />
   );
 };

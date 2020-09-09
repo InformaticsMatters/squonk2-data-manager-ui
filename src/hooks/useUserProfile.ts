@@ -1,17 +1,9 @@
-import { useCallback } from 'react';
+import { useContext } from 'react';
 
-import { KeycloakProfile } from 'keycloak-js';
-
-import { useKeycloak } from '@react-keycloak/web';
-
-import { usePromise } from './usePromise';
+import { UserProfileContext } from '../context/userProfile';
 
 export const useUserProfile = () => {
-  const { keycloak } = useKeycloak();
+  const { profile, loading } = useContext(UserProfileContext);
 
-  const loadProfile = useCallback(keycloak?.loadUserProfile as () => Promise<KeycloakProfile>, []);
-
-  const { data, loading } = usePromise(loadProfile, null);
-
-  return { profile: data, profileLoading: loading };
+  return { profile, profileLoading: loading };
 };

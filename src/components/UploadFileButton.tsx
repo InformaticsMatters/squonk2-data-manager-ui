@@ -11,7 +11,6 @@ import {
   IconButton,
   Slide,
   SlideProps,
-  Tooltip,
 } from '@material-ui/core';
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
 
@@ -19,6 +18,7 @@ import { useDatasets } from '../hooks';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { PostDatasetArgs, Project } from '../Services/apiTypes';
 import DataTierAPI from '../Services/DataTierAPI';
+import ConditionalTooltip from './ConditionalTooltip';
 import LabelSelector from './LabelSelector';
 
 const extensions = ['.sdf', '.pdb'];
@@ -37,6 +37,10 @@ interface IProps {
   currentProject: Project | null;
 }
 
+/**
+ * Button and dialog to upload files to the data-tier.
+ * @param currentProject the currently selected project, usually from the CurrentProject context.
+ */
 const UploadFileButton: React.FC<IProps> = ({ currentProject }) => {
   const { profile, profileLoading } = useUserProfile();
   const { refreshDatasets, datasets } = useDatasets();
@@ -101,7 +105,12 @@ const UploadFileButton: React.FC<IProps> = ({ currentProject }) => {
         <DialogContent>
           Files will be upload into project: {currentProject?.name}
           <LabelSelector options={datasetLabels} labels={labels} setLabels={setLabels} />
-          <DropzoneArea maxFileSize={100000000} filesLimit={1} acceptedFiles={allowedFiles} onChange={handleFileChange} />
+          <DropzoneArea
+            maxFileSize={100000000}
+            filesLimit={1}
+            acceptedFiles={allowedFiles}
+            onChange={handleFileChange}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} color="default">
@@ -119,23 +128,3 @@ export default UploadFileButton;
 const Transition = React.forwardRef((props: SlideProps, ref: React.Ref<unknown>) => {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-
-const ConditionalTooltip = ({
-  condition,
-  title,
-  children,
-}: {
-  condition: boolean;
-  title: string;
-  children: React.ReactElement;
-}) => {
-  if (condition) {
-    return (
-      <Tooltip arrow title={title}>
-        {children}
-      </Tooltip>
-    );
-  } else {
-    return children;
-  }
-};

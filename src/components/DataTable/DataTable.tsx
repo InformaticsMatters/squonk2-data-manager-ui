@@ -17,7 +17,8 @@ import {
   VirtualTable,
 } from '@devexpress/dx-react-grid-material-ui';
 
-import { useDatasets } from '../hooks';
+import { useDatasets } from '../../hooks';
+import CustomCell from './CustomCell';
 
 // Types
 
@@ -25,6 +26,7 @@ interface ColumnTypes {
   name: string;
   projects: string[];
   labels: string[];
+  actions: null;
 }
 
 type Column = { name: keyof ColumnTypes; title: string };
@@ -33,11 +35,8 @@ const columns: Column[] = [
   { name: 'name', title: 'File Name' },
   // { name: 'projects', title: 'Projects' },
   { name: 'labels', title: 'Labels' },
+  { name: 'actions', title: 'Actions' },
 ];
-
-interface Row extends ColumnTypes {
-  id: number;
-}
 
 interface IProps {}
 
@@ -50,26 +49,25 @@ const DataTable: React.FC<IProps> = () => {
 
   const { datasets, loading } = useDatasets();
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
   return (
-    <>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <Grid rows={datasets} columns={columns}>
-          <SearchState defaultValue="" />
-          <SelectionState selection={selection} onSelectionChange={setSelection} />
-          <SortingState />
-          <IntegratedFiltering />
-          <IntegratedSelection />
-          <IntegratedSorting />
-          <VirtualTable />
-          <TableHeaderRow showSortingControls />
-          <TableSelection showSelectAll />
-          <Toolbar />
-          <SearchPanel />
-        </Grid>
-      )}
-    </>
+    <Grid rows={datasets} columns={columns} getRowId={(row) => row.datasetId}>
+      <SearchState defaultValue="" />
+      <SelectionState selection={selection} onSelectionChange={setSelection} />
+      <SortingState />
+
+      <IntegratedFiltering />
+      <IntegratedSelection />
+      <IntegratedSorting />
+
+      <VirtualTable cellComponent={CustomCell} />
+      <TableHeaderRow showSortingControls />
+      <TableSelection showSelectAll />
+      <Toolbar />
+      <SearchPanel />
+    </Grid>
   );
 };
 

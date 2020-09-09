@@ -9,7 +9,6 @@ const fetchConfig = () => {
     var request = new XMLHttpRequest();
     // Loads the config.json file in the public folder
     // ! Should find a better way to do this
-    // TODO: // TODO: make the subpath programmatic
     request.open('GET', './config.json', false); // `false` makes the request synchronous
     request.send(null);
     if (request.status === 200) {

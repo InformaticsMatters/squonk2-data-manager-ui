@@ -1,3 +1,5 @@
+// ! VERSION 2.0.0
+
 export interface Project {
   editors: string[];
   name: string;
@@ -22,7 +24,17 @@ interface BasePostDataset {
   projects?: string[];
 }
 
-type AllowedMIMETypes = 'chemical/x-mdl-sdfile' | 'chemical/x-pdb';
+export enum MIMETypes {
+  SDF = 'chemical/x-mdl-sdfile',
+  PDB = 'chemical/x-pdb',
+}
+
+export type AllowedMIMETypes = MIMETypes;
+
+export enum AllowedMediaTypes {
+  SCHEMA = 'application/schema+json',
+  JSON = 'application/x-squonk-dataset-molecule-v2+json',
+}
 
 export interface PostDatasetArgs extends BasePostDataset {
   datasetFile: File;
@@ -34,4 +46,15 @@ export interface AddNewDatasetArgs extends BasePostDataset {
   file: File;
   MIMEType: AllowedMIMETypes;
   name?: string;
+}
+
+export interface IMMolecule {
+  uuid: string;
+  molecule: {
+    name: string;
+    molblock?: string;
+  };
+  values: {
+    [field: string]: string;
+  };
 }

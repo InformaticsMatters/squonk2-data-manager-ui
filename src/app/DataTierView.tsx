@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Paper } from '@material-ui/core';
 
-import DataTable from '../components/DataTable';
+import DataTable from '../components/DataTable/DataTable';
 import ProjectManager from '../components/ProjectManager';
 import UploadFileButton from '../components/UploadFileButton';
 import { DatasetsProvider } from '../context/datasets';
-import { Project } from '../Services/apiTypes';
+import { useCurrentProject } from '../hooks/useCurrentProject';
 
+/**
+ * Main application view with data-tier functionality
+ */
 const DataTierView = () => {
-  const [currentProject, setCurrentProject] = useState<Project | null>(null);
+  const { currentProject, setCurrentProject } = useCurrentProject();
 
   return (
     <DatasetsProvider project={currentProject}>

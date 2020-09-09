@@ -10,24 +10,26 @@ import LocalStorageService from '../Services/LocalStorageService';
 import MainView from './MainView';
 import Theme from './Theme';
 
+console.debug(window.location.origin + '/silent-check-sso.html');
+
 // Auth
-const keycloak = Keycloak('./keycloak.json'); // TODO: make the subpath programmatic
+const keycloak = Keycloak('./keycloak.json');
 
 const keycloakProviderInitConfig: KeycloakInitOptions = {
   onLoad: 'login-required',
   // onLoad: 'check-sso',
-  checkLoginIframe: false, // Without this reload of browser will prevent autologin
+  // silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
 };
 
 const onKeycloakEvent = (event: KeycloakEvent, error: KeycloakError | undefined) => {
-  console.log('onKeycloakEvent', event, error);
+  // console.log('onKeycloakEvent', event, error);
 };
 
 const App = () => {
   const [, setToken] = useState<KeycloakTokens | null>(null); // State to trigger rerender when
 
   const onKeycloakTokens = (tokens: KeycloakTokens) => {
-    console.log('onKeycloakTokens', tokens);
+    // console.log('onKeycloakTokens', tokens);
     DataTierAPI.setToken(tokens.token);
     setToken(tokens);
     LocalStorageService.saveKeycloakTokens(tokens);
@@ -39,7 +41,7 @@ const App = () => {
         initConfig={keycloakProviderInitConfig}
         onEvent={onKeycloakEvent}
         onTokens={onKeycloakTokens}
-        isLoadingCheck={(keycloak) => !!keycloak.authenticated && !DataTierAPI.getToken()}
+        // isLoadingCheck={(keycloak) => !!keycloak.authenticated && !DataTierAPI.getToken()}
         LoadingComponent={<Loader open reason={'Authenticating...'} />}
       >
         <MainView />

@@ -82,6 +82,7 @@ const UploadFileButton: React.FC<IProps> = ({ currentProject }) => {
         projects: currentProject !== null ? [currentProject.projectId] : undefined,
         labels,
       });
+      setLabels([]);
       refreshDatasets();
     });
 

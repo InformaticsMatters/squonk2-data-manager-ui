@@ -10,6 +10,7 @@
   "prettier.packageManager": "yarn",
   "cSpell.words": [
     "Bluered",
+    "Dropzone",
     "Keycloak",
     "Molfile",
     "Popover",

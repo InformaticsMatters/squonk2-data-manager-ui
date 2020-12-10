@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { TextField } from '@material-ui/core';
+import { TextField, Typography } from '@material-ui/core';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 
 interface IProps {
@@ -58,6 +58,17 @@ const LabelSelector: React.FC<IProps> = ({
       size="small"
       options={displayOptions}
       renderInput={(params) => <TextField {...params} variant="outlined" label={helperText} />}
+      renderOption={(option) => {
+        // Custom render option to make the 'add new label' option styled differently
+        return (
+          <Typography
+            style={{ fontWeight: !displayOptions.includes(option) ? 'bold' : 'normal' }}
+            noWrap
+          >
+            {option}
+          </Typography>
+        );
+      }}
     />
   );
 };

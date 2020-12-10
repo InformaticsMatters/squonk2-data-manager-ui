@@ -82,7 +82,7 @@ const UploadFileButton: React.FC<IProps> = ({ currentProject }) => {
         projects: currentProject !== null ? [currentProject.projectId] : undefined,
         labels,
       });
-      setLabels([]);
+      setLabels([]); // Reset labels as the component is not unmounted
       refreshDatasets();
     });
 

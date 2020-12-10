@@ -28,7 +28,9 @@ const LabelSelector: React.FC<IProps> = ({
   setLabels,
 }) => {
   const [addedOptions, setAddedOptions] = useState<string[]>([]);
-  const displayOptions = [...options, ...addedOptions];
+
+  // Set trick to remove duplicate entries
+  const displayOptions = Array.from(new Set([...options, ...addedOptions]));
   return (
     <Autocomplete
       disableCloseOnSelect
@@ -42,7 +44,8 @@ const LabelSelector: React.FC<IProps> = ({
       filterOptions={(options, params) => {
         const filtered = filter(options, params);
 
-        if (params.inputValue !== '') {
+        // Only create an add new label option if it doesn't exist already and isn't empty
+        if (params.inputValue !== '' && !displayOptions.includes(params.inputValue)) {
           filtered.push(params.inputValue);
         }
 

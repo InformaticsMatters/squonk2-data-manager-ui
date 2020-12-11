@@ -31,7 +31,9 @@ const EditButton: React.FC<IProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [labels, setLabels] = useState(oldLabels);
-  const { refreshDatasets } = useDatasets();
+  const { datasets, refreshDatasets } = useDatasets();
+
+  const datasetLabels = datasets.map((dataset) => dataset.labels).flat();
 
   const handleConfirm = async () => {
     setOpen(false);
@@ -65,7 +67,7 @@ const EditButton: React.FC<IProps> = ({
         <DialogContent>
           <LabelSelector
             helperText="Update labels"
-            options={oldLabels}
+            options={datasetLabels}
             labels={labels}
             setLabels={setLabels}
           />

@@ -19,7 +19,7 @@ export const UserProfileContext = React.createContext<ProjectState>({
 export const UserProfileProvider: React.FC = ({ children }) => {
   const { keycloak } = useKeycloak();
 
-  const loadProfile = useCallback(keycloak?.loadUserProfile as () => Promise<KeycloakProfile>, []);
+  const loadProfile = useCallback(() => keycloak?.loadUserProfile(), [keycloak]);
 
   const { data, loading } = usePromise(loadProfile, null);
 

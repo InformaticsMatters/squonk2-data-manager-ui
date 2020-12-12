@@ -29,6 +29,8 @@ const fetchConfig = () => {
   }
 };
 
-export default {
+const config = {
   ...fetchConfig(),
 };
+
+export default config;

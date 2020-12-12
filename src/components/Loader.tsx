@@ -2,8 +2,6 @@
  * TODO: MOVE TO COMPONENT LIB WHEN REPOS ARE SETUP
  */
 
-import React from 'react';
-
 import { Typography } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';

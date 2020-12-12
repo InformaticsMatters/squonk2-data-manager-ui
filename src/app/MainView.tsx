@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Container, Typography } from '@material-ui/core';
 
 import LoginButton from '../components/LoginButton';

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IconButton } from '@material-ui/core';
 
 import { useUserProfile } from '../../hooks/useUserProfile';

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Button } from '@material-ui/core';
 import { useKeycloak } from '@react-keycloak/web';
 
@@ -16,7 +14,7 @@ const LoginButton = () => {
   };
   const authLogout = () => {
     LocalStorageService.removeKeycloakTokens();
-    DataTierAPI.removeToken()
+    DataTierAPI.removeToken();
     keycloak && keycloak.logout();
   };
 

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Checkbox, Chip, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 

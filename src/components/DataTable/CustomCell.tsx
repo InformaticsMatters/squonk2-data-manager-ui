@@ -1,5 +1,3 @@
-import React from 'react';
-
 import styled from 'styled-components';
 
 import { Table } from '@devexpress/dx-react-grid-material-ui';

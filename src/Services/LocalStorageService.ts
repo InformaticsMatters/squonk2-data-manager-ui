@@ -1,4 +1,4 @@
-import { KeycloakTokens } from '@react-keycloak/web';
+import { AuthClientTokens } from '@react-keycloak/core';
 
 enum LocalStorageKeys {
   KcTokens = 'kcTokens',
@@ -59,12 +59,12 @@ class LocalStorageService {
   }
 
   // Keycloak related storage functions
-  saveKeycloakTokens(tokens: KeycloakTokens) {
+  saveKeycloakTokens(tokens: AuthClientTokens) {
     this._writeData<typeof tokens>(LocalStorageKeys.KcTokens, tokens);
   }
 
   getKeycloakTokens() {
-    return this._getData<KeycloakTokens>(LocalStorageKeys.KcTokens);
+    return this._getData<AuthClientTokens>(LocalStorageKeys.KcTokens);
   }
 
   removeKeycloakTokens() {

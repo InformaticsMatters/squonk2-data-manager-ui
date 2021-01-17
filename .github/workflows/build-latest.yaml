@@ -1,0 +1,80 @@
+---
+name: build latest
+
+# Actions on the main/master branch for every change.
+
+# -----------------
+# Control variables (GitHub Secrets)
+# -----------------
+#
+# At the GitHub 'organisation' or 'project' level you must have the following
+# GitHub 'Repository Secrets' defined (i.e. via 'Settings -> Secrets'): -
+#
+# DOCKERHUB_USERNAME
+# DOCKERHUB_TOKEN
+#
+# -----------
+# Environment (GitHub Environments)
+# -----------
+#
+# Environment         awx/im-main
+#
+# For automated deployment we expect the following in the environment: -
+#
+# AWX_HOST            The fully-qualified URL to AWX.
+#                     If not set, AWX triggering does not take place.
+# AWX_USER            The username of someone that can execute the AWX Job.
+# AWX_USER_PASSWORD   The user's password.
+
+on:
+  push:
+    branches:
+    - 'master'
+
+env:
+  # The origin of the AWX trigger code
+  TRIGGER_ORIGIN: https://raw.githubusercontent.com/informaticsmatters/trigger-awx/1.0.2
+  # The name of the AWX Job Template to run to deploy the application...
+  AWX_JOB_NAME: "Mini Apps Data Tier UI"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Build and push
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: informaticsmatters/mini-apps-data-tier-ui:latest
+
+  trigger-awx:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: awx/im-main
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    - name: Install AWX trigger
+      run: |
+        curl --location --retry 3 ${TRIGGER_ORIGIN}/requirements.txt --output trigger-awx-requirements.txt
+        curl --location --retry 3 ${TRIGGER_ORIGIN}/trigger-awx-tag.sh --output trigger-awx-tag.sh
+        pip install -r trigger-awx-requirements.txt
+        chmod +x trigger-awx-tag.sh
+    - name: Trigger AWX
+      run: ./trigger-awx-tag.sh latest ma_image_tag "${AWX_JOB_NAME}"
+      env:
+        AWX_HOST: ${{ secrets.AWX_HOST }}
+        AWX_USER: ${{ secrets.AWX_USER }}
+        AWX_USER_PASSWORD: ${{ secrets.AWX_USER_PASSWORD }}

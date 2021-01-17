@@ -1,13 +1,18 @@
 # The Mini-Apps Data Tier UI
 
-[![Build Status](https://travis-ci.com/InformaticsMatters/mini-apps-data-tier-ui.svg?branch=master)](https://travis-ci.com/InformaticsMatters/mini-apps-data-tier-ui)
+![build](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build/badge.svg)
+![build latest](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build%20latest/badge.svg)
+![build tag](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build%20tag/badge.svg)
+![build stable](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build%20stable/badge.svg)
+
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/InformaticsMatters/mini-apps-data-tier-ui)
 
 ## Building
 
-Official builds are handled by Travis and container images pushed to Docker-Hub.
-Refer to the `.travis.yml` file to see the official build commands,
-which can be run from the project clone to produce an [nginx] web-container: -
+Official builds are handled by GitHub Actions and container images pushed
+to Docker-Hub. Refer to the `.github/workflows` files to see the official
+build commands, which can be run from the project clone to produce an
+[nginx] web-container: -
 
     $ docker build . \
         -t informaticsmatters/mini-apps-data-tier-ui:latest

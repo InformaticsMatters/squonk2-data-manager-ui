@@ -31,12 +31,6 @@ on:
     branches:
     - 'master'
 
-env:
-  # The origin of the AWX trigger code
-  TRIGGER_ORIGIN: https://raw.githubusercontent.com/informaticsmatters/trigger-awx/1.0.2
-  # The name of the AWX Job Template to run to deploy the application...
-  AWX_JOB_NAME: "Mini Apps Data Tier UI"
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -61,20 +55,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: awx/im-main
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+    - uses: informaticsmatters/trigger-awx-action@v1
       with:
-        python-version: '3.8'
-    - name: Install AWX trigger
-      run: |
-        curl --location --retry 3 ${TRIGGER_ORIGIN}/requirements.txt --output trigger-awx-requirements.txt
-        curl --location --retry 3 ${TRIGGER_ORIGIN}/trigger-awx-tag.sh --output trigger-awx-tag.sh
-        pip install -r trigger-awx-requirements.txt
-        chmod +x trigger-awx-tag.sh
-    - name: Trigger AWX
-      run: ./trigger-awx-tag.sh latest ma_image_tag "${AWX_JOB_NAME}"
-      env:
-        AWX_HOST: ${{ secrets.AWX_HOST }}
-        AWX_USER: ${{ secrets.AWX_USER }}
-        AWX_USER_PASSWORD: ${{ secrets.AWX_USER_PASSWORD }}
+        template: Mini Apps Data Tier UI
+        template-host: ${{ secrets.AWX_HOST }}
+        template-user: ${{ secrets.AWX_USER }}
+        template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
+        template-var: ma_image_tag
+        template-var-value: latest

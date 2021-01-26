@@ -12,7 +12,7 @@ import MainView from './MainView';
 import Theme from './Theme';
 
 // Auth
-const keycloak = Keycloak('./keycloak.json');
+const keycloak = Keycloak(process.env.PUBLIC_URL + '/keycloak.json');
 
 const authInitOptions: KeycloakInitOptions = {
   onLoad: 'login-required',

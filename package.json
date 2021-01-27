@@ -1,7 +1,7 @@
 {
   "name": "mini-apps-data-tier-ui",
   "version": "0.0.0",
-  "homepage": ".",
+  "homepage": "/data-manager-ui",
   "private": true,
   "dependencies": {
     "@devexpress/dx-react-core": "^2.7.3",

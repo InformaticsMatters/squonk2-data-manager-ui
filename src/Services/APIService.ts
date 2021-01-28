@@ -25,9 +25,9 @@ export class APIService {
 
   constructor(protected mock: boolean = false, useProxy: boolean = false) {
     if (useProxy) {
-      this.url = 'https://cors-anywhere.herokuapp.com/' + appSettings.DATA_TIER_SERVER;
+      this.url = 'https://cors-anywhere.herokuapp.com/' + appSettings.DATA_MANAGER_API_SERVER;
     } else {
-      this.url = appSettings.DATA_TIER_SERVER;
+      this.url = appSettings.DATA_MANAGER_API_SERVER;
     }
   }
 

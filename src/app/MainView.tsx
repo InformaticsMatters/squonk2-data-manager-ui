@@ -16,7 +16,7 @@ const MainView: React.FC<IProps> = () => {
   return (
     <Container component="main">
       <Typography variant="h2" component="h1">
-        Squonk Data
+        Squonk Data Manager
       </Typography>
       <LoginButton />
       {DataTierAPI.hasToken() && (

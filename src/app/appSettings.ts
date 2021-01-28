@@ -2,7 +2,7 @@
 import get from 'lodash/get';
 import zipObject from 'lodash/zipObject';
 
-const VARS = ['DATA_TIER_SERVER', 'GANALYTICS_ID'];
+const VARS = ['DATA_MANAGER_API_SERVER', 'GANALYTICS_ID'];
 
 const fetchConfig = () => {
   try {
@@ -18,8 +18,8 @@ const fetchConfig = () => {
         VARS.map((v) => get(process.env, `REACT_APP_${v}`)),
       );
       return {
-        ...env,
         ...config,
+        ...env,
       };
     }
   } catch (error) {

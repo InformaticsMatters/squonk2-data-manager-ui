@@ -68,7 +68,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 Modify the `config.json` in a production build to build a version detached from informatics matters.
 Currently the following options are available:
 
-- `DATA_TIER_SERVER`: The base url where an implementation of the [data-tier]() can be accessed <!-- TODO: Need to add url when repo made public -->
+- `DATA_MANAGER_API_SERVER`: The base url where an implementation of the [data-tier]() can be accessed <!-- TODO: Need to add url when repo made public -->
 - `GANALYTICS_ID`: The ID for a google analytics link. NOT CURRENTLY IMPLEMENTED
 
 ---

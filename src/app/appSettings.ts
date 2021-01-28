@@ -1,6 +1,5 @@
 // Load settings that need to be defined at runtime rather than build time
 import get from 'lodash/get';
-import zipObject from 'lodash/zipObject';
 
 const VARS = ['DATA_MANAGER_API_SERVER', 'GANALYTICS_ID'];
 
@@ -13,10 +12,13 @@ const fetchConfig = () => {
     request.send(null);
     if (request.status === 200) {
       const config = JSON.parse(request.responseText);
-      const env = zipObject(
-        VARS,
-        VARS.map((v) => get(process.env, `REACT_APP_${v}`)),
-      );
+      let env: { [key: string]: string } = {};
+      VARS.forEach((v) => {
+        const val = get(process.env, `REACT_APP_${v}`);
+        if (val !== undefined) {
+          env[v] = val;
+        }
+      });
       return {
         ...config,
         ...env,

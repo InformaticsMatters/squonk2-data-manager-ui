@@ -20,8 +20,8 @@ const fetchConfig = () => {
         }
       });
       return {
-        ...config,
         ...env,
+        ...config,
       };
     }
   } catch (error) {

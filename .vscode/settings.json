@@ -1,13 +1,5 @@
 {
-  "prettier.semi": true,
-  "prettier.arrowParens": "always",
-  "prettier.bracketSpacing": true,
-  "prettier.printWidth": 100,
-  "prettier.singleQuote": true,
-  "prettier.tabWidth": 2,
-  "prettier.trailingComma": "all",
   "typescript.tsdk": "node_modules/typescript/lib",
-  "prettier.packageManager": "yarn",
   "cSpell.words": [
     "Bluered",
     "Dropzone",

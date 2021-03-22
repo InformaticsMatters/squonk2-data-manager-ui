@@ -53,7 +53,7 @@ jobs:
     steps:
     - uses: informaticsmatters/trigger-awx-action@v1
       with:
-        template: Mini Apps Data Tier UI
+        template: Data Manager UI -staging-
         template-host: ${{ secrets.AWX_HOST }}
         template-user: ${{ secrets.AWX_USER }}
         template-user-password: ${{ secrets.AWX_USER_PASSWORD }}

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Table } from '@devexpress/dx-react-grid-material-ui';
 import { Chip as MuiChip } from '@material-ui/core';
 
+import { useProjects } from '../../hooks';
 import { Dataset } from '../../Services/apiTypes';
 import DeleteButton from './DeleteButton';
 import DownloadButton from './DownloadButton';
@@ -11,6 +12,7 @@ import EditButton from './EditButton';
 enum ColumnTypes {
   ACTIONS = 'actions',
   LABELS = 'labels',
+  PROJECTS = 'projects',
 }
 
 type IProps = Omit<Table.DataCellProps, 'row'> & {
@@ -21,6 +23,7 @@ type IProps = Omit<Table.DataCellProps, 'row'> & {
  * Display rich content based on column name
  */
 const CustomCell: React.FC<IProps> = ({ row, column, ...rest }) => {
+  const { projects } = useProjects();
   switch (column.name) {
     case ColumnTypes.ACTIONS:
       return (
@@ -36,6 +39,15 @@ const CustomCell: React.FC<IProps> = ({ row, column, ...rest }) => {
           {row.labels.map((label, index) => (
             <Chip key={index} label={label} />
           ))}
+        </Cell>
+      );
+    case ColumnTypes.PROJECTS:
+      return (
+        <Cell row={row} column={column} {...rest}>
+          {row.projects.map((projectId) => {
+            const name = projects.find((project) => project.projectId === projectId)?.name;
+            return <Chip key={projectId} label={name} />;
+          })}
         </Cell>
       );
     default:

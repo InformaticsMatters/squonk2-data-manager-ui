@@ -26,14 +26,15 @@ export const DatasetsProvider: React.FC<IProps> = ({ children, project }) => {
   const projectId = project?.projectId;
 
   const refreshDatasets = useCallback(async () => {
+    setLoading(true);
     if (projectId !== undefined) {
-      setLoading(true);
       const newDatasets = await DataTierAPI.getDatasetsFromProject(projectId);
       setDatasets(newDatasets);
-      setLoading(false);
     } else {
-      setDatasets([]);
+      const newDatasets = await DataTierAPI.getOwnedDatasets();
+      setDatasets(newDatasets);
     }
+    setLoading(false);
   }, [projectId]);
 
   useEffect(() => {

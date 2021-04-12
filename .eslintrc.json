@@ -34,19 +34,11 @@
     "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/no-use-before-define": 0,
     "@typescript-eslint/no-unused-vars": [
-      2,
+      "warn",
       {
         "argsIgnorePattern": "^_"
       }
     ],
-    "no-console": [
-      2,
-      {
-        "allow": [
-          "warn",
-          "error"
-        ]
-      }
-    ]
+    "no-console": 0
   }
 }

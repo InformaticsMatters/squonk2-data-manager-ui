@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
+    "dev:debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
     "type-check": "tsc --pretty --noEmit",
@@ -24,7 +25,9 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^1.3.0",
+    "@squonk/data-manager-client": "^0.0.1-alpha.2",
     "next": "^10.1.3",
+    "next-http-proxy-middleware": "^1.0.9",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },

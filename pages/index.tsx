@@ -1,20 +1,12 @@
-import Link from 'next/link';
-
 import { useUser } from '@auth0/nextjs-auth0';
+
+import Layout from '../components/Layout';
 
 export default function Index() {
   const { user, error, isLoading } = useUser();
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>{error.message}</div>;
-
-  if (user) {
-    return (
-      <div>
-        Welcome {user.name}! <Link href="/api/auth/logout">Logout</Link>
-      </div>
-    );
-  }
-
-  return <Link href="/api/auth/login">Login</Link>;
+  return (
+    <Layout user={user} authLoading={isLoading} authError={error}>
+      <h1>Home Page</h1>
+    </Layout>
+  );
 }

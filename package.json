@@ -3,6 +3,7 @@
   "author": "Oliver Dudgeon",
   "license": "MIT",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "dev": "next dev",
     "dev:debug": "NODE_OPTIONS='--inspect' next dev",

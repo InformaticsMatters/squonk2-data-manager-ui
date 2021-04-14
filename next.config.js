@@ -1,6 +1,6 @@
 module.exports = {
-  basePath: "",
+  basePath: process.env.BASE_PATH,
   future: {
     webpack5: true,
   },
-}
+};

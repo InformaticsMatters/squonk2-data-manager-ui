@@ -8,4 +8,7 @@ export const auth0 = initAuth0({
   clientSecret: 'f73baa27-6aa4-4b77-8d64-c27c7f411e6d',
   enableTelemetry: false,
   auth0Logout: false,
+  session: {
+    rolling: false,
+  },
 });

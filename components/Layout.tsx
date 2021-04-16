@@ -1,17 +1,9 @@
 import Header from './Header';
 
-import type { UserProfile } from '@auth0/nextjs-auth0';
-
-interface LayoutProps {
-  user?: UserProfile;
-  authLoading: boolean;
-  authError?: Error;
-}
-
-const Layout: React.FC<LayoutProps> = ({ user, authLoading = false, authError, children }) => {
+const Layout: React.FC = ({ children }) => {
   return (
     <>
-      <Header user={user} authLoading={authLoading} authError={authError} />
+      <Header />
       <main>{children}</main>
     </>
   );

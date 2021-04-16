@@ -6,7 +6,8 @@ import { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { UserProvider } from '@auth0/nextjs-auth0';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@emotion/react';
+import { CssBaseline, useTheme } from '@material-ui/core';
 import { setBaseUrl } from '@squonk/data-manager-client';
 import { MuiTheme } from '@squonk/mui-theme';
 
@@ -16,16 +17,18 @@ setBaseUrl('/api/dm-api');
 
 export default function App({ Component, pageProps }: AppProps) {
   // ! Need resolutions in package.json for <Theme></Theme> to not cause "invalid hooks usage" error
+
+  const theme = useTheme();
   return (
-    <React.StrictMode>
-      <MuiTheme>
-        <CssBaseline />
+    <MuiTheme>
+      <CssBaseline />
+      <ThemeProvider theme={theme}>
         <UserProvider>
           <QueryClientProvider client={queryClient}>
             <Component {...pageProps} />
           </QueryClientProvider>
         </UserProvider>
-      </MuiTheme>
-    </React.StrictMode>
+      </ThemeProvider>
+    </MuiTheme>
   );
 }

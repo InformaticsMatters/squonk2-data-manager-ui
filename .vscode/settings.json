@@ -71,6 +71,7 @@
   ],
   "conventionalCommits.scopes": [
     "nextjs",
-    "ui/navigation"
+    "ui/navigation",
+    "ui/projects",
   ],
 }

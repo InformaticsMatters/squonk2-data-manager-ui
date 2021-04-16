@@ -25,9 +25,6 @@ export const UserMenu = () => {
       </IconButton>
 
       <Popover
-        css={css`
-          padding: 8px;
-        `}
         {...bindPopover(popupState)}
         anchorOrigin={{
           vertical: 'bottom',

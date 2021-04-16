@@ -1,25 +1,24 @@
-import Link from 'next/link';
+import { useState } from 'react';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { Container } from '@material-ui/core';
-import {
-  useGetAvailableDatasets,
-  useGetAvailableProjects,
-  useUploadDataset,
-} from '@squonk/data-manager-client';
+import { css } from '@emotion/react';
+import { Container, useTheme } from '@material-ui/core';
 
 import Layout from '../components/Layout';
 import ProjectManager from '../components/ProjectManager';
 
 const Data = () => {
-  const { data: datasets } = useGetAvailableDatasets();
-  const { data: projects } = useGetAvailableProjects();
-  const uploadDatasetMutation = useUploadDataset();
+  const [currentProject, setCurrentProject] = useState(null);
 
+  const theme = useTheme();
   return (
     <Layout>
-      <Container>
-        <ProjectManager />
+      <Container
+        css={css`
+          margin-top: ${theme.spacing(4)}px;
+        `}
+      >
+        <ProjectManager currentProject={currentProject} />
       </Container>
     </Layout>
   );

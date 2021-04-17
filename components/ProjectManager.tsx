@@ -1,33 +1,50 @@
 import React from 'react';
 
-import { Grid, TextField } from '@material-ui/core';
+import { Grid, TextField, Typography } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import { useGetAvailableProjects } from '@squonk/data-manager-client';
-import { Project } from '@squonk/data-manager-client/dist/orval/model/project';
-import { ProjectSummary } from '@squonk/data-manager-client/dist/orval/model/projectSummary';
+import { Project, ProjectSummary, useGetAvailableProjects } from '@squonk/data-manager-client';
 
 import AddProject from './AddProject';
 
-const ProjectManager: React.FC<{ currentProject: ProjectSummary }> = () => {
-  const { data, isLoading } = useGetAvailableProjects<Project, Error>();
+interface ProjectManagerProps {
+  currentProject: ProjectSummary | null;
+  setCurrentProject: (project: ProjectSummary | null) => void;
+}
+
+const ProjectManager: React.FC<ProjectManagerProps> = ({ currentProject, setCurrentProject }) => {
+  const { data, isLoading } = useGetAvailableProjects();
+  const projects = (data as Project)?.projects;
 
   return (
-    <Grid container>
+    <Grid container alignItems="center">
       <Grid item>
         <Autocomplete
           id="project-selection"
+          size="small"
           loading={isLoading}
-          options={data?.projects ?? []}
+          options={projects ?? []}
           getOptionLabel={(option) => (option as any).name}
           style={{ width: 300 }}
           renderInput={(params) => (
             <TextField {...params} label="Select project" variant="outlined" />
           )}
-          onChange={() => {}}
+          onChange={(_, project) => setCurrentProject(project)}
         />
       </Grid>
       <Grid item>
         <AddProject />
+      </Grid>
+      <Grid item>
+        {!!currentProject && (
+          <>
+            <Typography>
+              <b>Owner</b>: {currentProject.owner}
+            </Typography>
+            <Typography>
+              <b>Editors</b>: {currentProject.editors?.join(', ')}
+            </Typography>
+          </>
+        )}
       </Grid>
     </Grid>
   );

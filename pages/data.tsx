@@ -3,12 +3,14 @@ import { useState } from 'react';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, useTheme } from '@material-ui/core';
+import { ProjectSummary } from '@squonk/data-manager-client';
 
+import { DataTableManager } from '../components/DataTable/DataTableManager';
 import Layout from '../components/Layout';
 import ProjectManager from '../components/ProjectManager';
 
 const Data = () => {
-  const [currentProject, setCurrentProject] = useState(null);
+  const [currentProject, setCurrentProject] = useState<ProjectSummary | null>(null);
 
   const theme = useTheme();
   return (
@@ -18,7 +20,8 @@ const Data = () => {
           margin-top: ${theme.spacing(4)}px;
         `}
       >
-        <ProjectManager currentProject={currentProject} />
+        <ProjectManager setCurrentProject={setCurrentProject} currentProject={currentProject} />
+        <DataTableManager currentProject={currentProject} />
       </Container>
     </Layout>
   );

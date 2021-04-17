@@ -2,7 +2,7 @@ import React from 'react';
 
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 
-import { IconButton, Popover, TextField, Tooltip, Typography } from '@material-ui/core';
+import { IconButton, Popover, TextField, Tooltip } from '@material-ui/core';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 import { useAddNewProject, useGetAvailableProjects } from '@squonk/data-manager-client';
 
@@ -33,9 +33,6 @@ const AddProject: React.FC = () => {
           horizontal: 'left',
         }}
       >
-        <Typography gutterBottom variant="subtitle1">
-          Project Name
-        </Typography>
         <form
           onSubmit={async (e) => {
             e.preventDefault();
@@ -43,17 +40,19 @@ const AddProject: React.FC = () => {
             const target = e.target as typeof e.target & {
               projectName: { value: string };
             };
-            const name = target.projectName.value;
-            await mutation.mutateAsync({ data: { name } });
-            refetch();
-            popupState.close();
+            const name = target.projectName.value.trim();
+            if (name) {
+              await mutation.mutateAsync({ data: { name } });
+              refetch();
+              popupState.close();
+            }
           }}
         >
           <TextField
             inputProps={{ maxLength: 18 }}
+            label="Project Name"
             name="projectName"
             variant="outlined"
-            required
             autoFocus
           />
         </form>

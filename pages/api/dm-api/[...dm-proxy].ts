@@ -2,8 +2,6 @@ import httpProxyMiddleware from 'next-http-proxy-middleware';
 
 import { auth0 } from '../../../lib/auth/auth0';
 
-// import { getAccessToken, withApiAuthRequired } from '@auth0/nextjs-auth0';
-
 if (process.env.DATA_MANAGER_API_SERVER === undefined) {
   throw Error('Data Manager API environment variable not specified!');
 }
@@ -30,3 +28,11 @@ export default auth0.withApiAuthRequired(async (req, res) => {
     res.status(500).json(error);
   }
 });
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '25mb', // Same as the file uploader dialog limit
+    },
+  },
+};

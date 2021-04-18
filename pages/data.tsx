@@ -6,6 +6,7 @@ import { Container, useTheme } from '@material-ui/core';
 import { ProjectSummary } from '@squonk/data-manager-client';
 
 import { DataTableManager } from '../components/DataTable/DataTableManager';
+import { FileUpload } from '../components/FileUpload/FileUpload';
 import Layout from '../components/Layout';
 import ProjectManager from '../components/ProjectManager';
 
@@ -21,6 +22,7 @@ const Data = () => {
         `}
       >
         <ProjectManager setCurrentProject={setCurrentProject} currentProject={currentProject} />
+        <FileUpload />
         <DataTableManager currentProject={currentProject} />
       </Container>
     </Layout>

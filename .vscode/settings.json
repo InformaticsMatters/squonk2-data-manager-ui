@@ -9,6 +9,7 @@
     "Relayout",
     "Spikelines",
     "Swipeable",
+    "Uploadable",
     "autologin",
     "colorbar",
     "colorscale",
@@ -73,5 +74,6 @@
     "nextjs",
     "ui/navigation",
     "ui/projects",
+    "ui/data-table"
   ],
 }

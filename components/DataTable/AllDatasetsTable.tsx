@@ -8,13 +8,14 @@ export const AllDatasetsTable = () => {
   if (!isLoading) {
     const datasets = data.datasets as DatasetDetail[];
     // Transform all datasets to match the data-table props
-    const rows = datasets.map(({ dataset_id, filename, owner, editors, published }) => ({
+    const rows = datasets.map(({ dataset_id, file_name, owner, editors, published }) => ({
       id: dataset_id as string,
-      fileName: filename as string,
+      fileName: file_name as string,
       owner: owner as string,
       editors: editors as string[],
       published: published as string,
       path: null,
+      actions: {},
     }));
 
     return <DataTable rows={rows} />;

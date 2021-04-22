@@ -1,4 +1,4 @@
-import { Row, TableRow } from '../components/DataTable/DataTable';
+import { Row, TableRow } from './types';
 
 let currentId = 0;
 
@@ -46,7 +46,13 @@ const getPath = (node: TableRow[], path: string[]): any => {
 
   // Not created? Create it with a generated id and append
   if (level === undefined) {
-    level = { items: [] as TableRow[], fileName: first, path: '', id: getNewId().toString() };
+    level = {
+      items: [] as TableRow[],
+      fileName: first,
+      path: '',
+      id: getNewId().toString(),
+      actions: {},
+    };
     node.push(level as TableRow);
   }
   // Base Case! This breaks the recursion when we reach a leaf

@@ -1,6 +1,6 @@
 import { ProjectSummary } from '@squonk/data-manager-client';
 
-import { OrphansTable } from './OrphansTable';
+import { AllDatasetsTable } from './AllDatasetsTable';
 import { ProjectTable } from './ProjectTable';
 
 interface DataTableManagerProps {
@@ -8,7 +8,7 @@ interface DataTableManagerProps {
 }
 export const DataTableManager: React.FC<DataTableManagerProps> = ({ currentProject }) => {
   if (currentProject === null) {
-    return <OrphansTable />;
+    return <AllDatasetsTable />;
   } else {
     return <ProjectTable currentProject={currentProject} />;
   }

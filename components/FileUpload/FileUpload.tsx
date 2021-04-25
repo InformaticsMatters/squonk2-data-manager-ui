@@ -12,13 +12,12 @@ import {
   DialogTitle,
   Grid,
   IconButton,
-  Slide,
-  SlideProps,
   useTheme,
 } from '@material-ui/core';
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
 import { customInstance } from '@squonk/data-manager-client';
 
+import { SlideUpTransition } from '../SlideUpTransition';
 import { SingleFileUploadWithProgress } from './SingleFileUploader';
 
 const allowedFileTypes = ['.sdf', '.pdb'].map((s) => [s, `${s}.gz`]).flat();
@@ -102,14 +101,13 @@ export const FileUpload = () => {
           data,
           url: '/dataset',
           onUploadProgress: (progressEvent) => {
-            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
             const updatedFiles = [...files];
             updatedFiles[index].progress = progress;
 
             setFiles(updatedFiles);
           },
         });
-        files.splice(index, 1);
         setFiles(files);
       } catch (err) {
         if (err.isAxiosError) {
@@ -129,7 +127,7 @@ export const FileUpload = () => {
         <CloudUploadRoundedIcon />
       </IconButton>
       <Dialog
-        TransitionComponent={Transition}
+        TransitionComponent={SlideUpTransition}
         open={open}
         onClose={() => setOpen(false)}
         aria-labelledby="file-upload-title"
@@ -179,7 +177,3 @@ export const FileUpload = () => {
     </>
   );
 };
-
-const Transition = React.forwardRef((props: SlideProps, ref: React.Ref<unknown>) => {
-  return <Slide direction="up" ref={ref} {...props} />;
-});

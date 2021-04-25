@@ -74,6 +74,7 @@
     "nextjs",
     "ui/navigation",
     "ui/projects",
-    "ui/data-table"
+    "ui/data-table",
+    "ui/attach-datasets"
   ],
 }

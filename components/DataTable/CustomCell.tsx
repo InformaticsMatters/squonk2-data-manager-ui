@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { useQueryClient } from 'react-query';
 
 import { Table } from '@devexpress/dx-react-grid-material-ui';
@@ -10,10 +12,11 @@ import {
   useRemoveDatasetFromProject,
 } from '@squonk/data-manager-client';
 
+import { AttachButton } from './AttachButton';
 import { TableRow } from './types';
 
 type CustomCellProps = Omit<Table.DataCellProps, 'row'> & {
-  row: any;
+  row: TableRow;
 };
 
 /**
@@ -25,8 +28,8 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
   const deleteMutation = useDeleteDataset();
   const detachMutation = useRemoveDatasetFromProject();
 
-  const id = (row as TableRow).id;
-  const projectId = (row as TableRow).actions?.projectId;
+  const id = row.id;
+  const projectId = row.actions?.projectId;
 
   switch (column.name) {
     case 'actions':
@@ -34,19 +37,22 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
         <Cell row={row} column={column} {...rest}>
           {/* <Button>Download</Button> */}
           {id.startsWith('dataset') && (
-            <Button
-              onClick={async () => {
-                await deleteMutation.mutateAsync(
-                  { datasetid: row.file_id },
-                  {
-                    onSuccess: () =>
-                      queryClient.invalidateQueries(getGetAvailableDatasetsQueryKey()),
-                  },
-                );
-              }}
-            >
-              Delete
-            </Button>
+            <>
+              <Button
+                onClick={async () => {
+                  await deleteMutation.mutateAsync(
+                    { datasetid: id },
+                    {
+                      onSuccess: () =>
+                        queryClient.invalidateQueries(getGetAvailableDatasetsQueryKey()),
+                    },
+                  );
+                }}
+              >
+                Delete
+              </Button>
+              <AttachButton datasetId={id} />
+            </>
           )}
           {id.startsWith('file') && projectId !== undefined && (
             <Button

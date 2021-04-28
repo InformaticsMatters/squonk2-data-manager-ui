@@ -17,10 +17,13 @@ const Header: React.FC = () => {
 
         <nav
           css={css`
+            display: flex;
+            align-items: center;
+
             & a {
               display: inline-block;
-              min-width: 120px;
-              cursor: ;
+              width: 100px;
+              text-align: center;
             }
 
             & a:first-of-type {
@@ -29,8 +32,8 @@ const Header: React.FC = () => {
           `}
         >
           <NavLink title="Data" />
+          <NavLink title="Execution Manager" />
           <NavLink title="Tasks" />
-          <NavLink title="Executions Manager" />
         </nav>
         <UserMenu />
       </Toolbar>

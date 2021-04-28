@@ -9,7 +9,7 @@ import {
   getGetAvailableDatasetsQueryKey,
   getGetProjectQueryKey,
   useDeleteDataset,
-  useRemoveDatasetFromProject,
+  useDeleteFile,
 } from '@squonk/data-manager-client';
 
 import { AttachButton } from './AttachButton';
@@ -26,7 +26,7 @@ type CustomCellProps = Omit<Table.DataCellProps, 'row'> & {
 export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) => {
   const queryClient = useQueryClient();
   const deleteMutation = useDeleteDataset();
-  const detachMutation = useRemoveDatasetFromProject();
+  const detachMutation = useDeleteFile();
 
   const id = row.id;
   const projectId = row.actions?.projectId;

@@ -57,7 +57,13 @@ export function SingleFileUploadWithProgress({
           />
         </Grid>
         <Grid xs={12} sm={2} item align="center">
-          <Button size="small" onClick={() => onDelete(fileWrapper.file)}>
+          <Button
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(fileWrapper.file);
+            }}
+          >
             Delete
           </Button>
         </Grid>

@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 
 import { AxiosError } from 'axios';
 import { FileError, FileRejection, useDropzone } from 'react-dropzone';
+import { v4 as uuidv4 } from 'uuid';
 
 import { css } from '@emotion/react';
 import {
@@ -10,6 +11,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   Grid,
   IconButton,
   useTheme,
@@ -32,13 +34,6 @@ const getMimeType = (fileName: string) => {
   }
   return 'text/plain';
 };
-
-let currentId = 0;
-
-function getNewId() {
-  // we could use a fancier solution instead of a sequential ID
-  return ++currentId;
-}
 
 export interface UploadableFile {
   id: number;
@@ -66,12 +61,12 @@ export const FileUpload = () => {
     const mappedAccepted = acceptedFiles.map((file) => ({
       file,
       errors: [],
-      id: getNewId(),
+      id: uuidv4(),
       progress: 0,
     }));
     const mappedRejected = rejectedFiles.map((rejection) => ({
       ...rejection,
-      id: getNewId(),
+      id: uuidv4(),
       progress: 0,
     }));
     setFiles((prevFiles) => [...prevFiles, ...mappedAccepted, ...mappedRejected]);
@@ -81,7 +76,7 @@ export const FileUpload = () => {
     setFiles((curr) => curr.filter((fw) => fw.file !== file));
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: allowedFileTypes,
     maxSize: 25 * 1024 ** 2, // 25 MB - same as the API route limit
@@ -139,33 +134,64 @@ export const FileUpload = () => {
       >
         <DialogTitle id="file-upload-title">Upload new datasets</DialogTitle>
         <DialogContent>
-          <Grid container direction="column">
-            <Grid item>
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                <p>Drag and drop files here, or click to select files</p>
-              </div>
-            </Grid>
-            {files.map((fileWrapper, index) => (
-              <Grid
-                item
-                key={fileWrapper.id}
+          <div
+            {...getRootProps()}
+            css={css`
+              border: 2px dashed
+                ${isDragActive ? theme.palette.primary.main : theme.palette.grey[600]};
+              border-radius: 8px;
+              padding-left: ${theme.spacing(1)}px;
+              padding-right: ${theme.spacing(1)}px;
+              max-height: 80vh;
+              overflow-y: scroll;
+            `}
+          >
+            <input {...getInputProps()} />
+            <button
+              css={css`
+                cursor: pointer;
+                text-align: center;
+                border: none;
+                background: none;
+                display: block;
+                width: 100%;
+                margin-top: ${theme.spacing(2)}px;
+                margin-bottom: ${theme.spacing(2)}px;
+                font-size: 1rem;
+              `}
+            >
+              Drag and drop files here, or click to select files
+            </button>
+            {!!files.length && (
+              <Divider
                 css={css`
-                  margin-bottom: ${theme.spacing(1)}px;
+                  margin-top: ${theme.spacing(2)}px;
+                  margin-bottom: ${theme.spacing(2)}px;
                 `}
-              >
-                <SingleFileUploadWithProgress
-                  onDelete={onDelete}
-                  fileWrapper={fileWrapper}
-                  errors={fileWrapper.errors}
-                  rename={(newName) => {
-                    files[index].rename = newName;
-                    setFiles(mutateAtPosition(files, index, files[index]));
-                  }}
-                />
-              </Grid>
-            ))}
-          </Grid>
+              />
+            )}
+            <Grid container direction="column">
+              {files.map((fileWrapper, index) => (
+                <Grid
+                  item
+                  key={fileWrapper.id}
+                  css={css`
+                    margin-bottom: ${theme.spacing(1)}px;
+                  `}
+                >
+                  <SingleFileUploadWithProgress
+                    onDelete={onDelete}
+                    fileWrapper={fileWrapper}
+                    errors={fileWrapper.errors}
+                    rename={(newName) => {
+                      files[index].rename = newName;
+                      setFiles(mutateAtPosition(files, index, files[index]));
+                    }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} color="default">

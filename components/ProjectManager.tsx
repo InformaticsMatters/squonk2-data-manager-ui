@@ -16,7 +16,7 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ currentProject, setCurr
   const projects = (data as Project)?.projects;
 
   return (
-    <Grid container alignItems="center">
+    <>
       <Grid item>
         <Autocomplete
           id="project-selection"
@@ -46,7 +46,7 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ currentProject, setCurr
           </>
         )}
       </Grid>
-    </Grid>
+    </>
   );
 };
 

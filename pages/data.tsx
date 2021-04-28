@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import { Container, useTheme } from '@material-ui/core';
+import { Container, Grid, useTheme } from '@material-ui/core';
 import { ProjectSummary } from '@squonk/data-manager-client';
 
 import { DataTableManager } from '../components/DataTable/DataTableManager';
@@ -21,8 +21,12 @@ const Data = () => {
           margin-top: ${theme.spacing(4)}px;
         `}
       >
-        <ProjectManager setCurrentProject={setCurrentProject} currentProject={currentProject} />
-        <FileUpload />
+        <Grid container alignItems="center">
+          <Grid item>
+            <FileUpload />
+          </Grid>
+          <ProjectManager setCurrentProject={setCurrentProject} currentProject={currentProject} />
+        </Grid>
         <DataTableManager currentProject={currentProject} />
       </Container>
     </Layout>

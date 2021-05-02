@@ -19,6 +19,7 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ currentProject, setCurr
     <>
       <Grid item>
         <Autocomplete
+          value={currentProject}
           id="project-selection"
           size="small"
           loading={isLoading}

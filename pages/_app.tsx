@@ -12,6 +12,8 @@ import { CssBaseline, useTheme } from '@material-ui/core';
 import { setBaseUrl } from '@squonk/data-manager-client';
 import { MuiTheme } from '@squonk/mui-theme';
 
+import { CurrentProjectProvider } from '../components/currentProjectContext';
+
 // ? Is this the right place to set this?
 setBaseUrl('/api/dm-api');
 
@@ -32,7 +34,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <UserProvider>
           <QueryClientProvider client={queryClientRef.current}>
             <Hydrate state={pageProps.dehydratedState}>
-              <Component {...pageProps} />
+              <CurrentProjectProvider>
+                <Component {...pageProps} />
+              </CurrentProjectProvider>
             </Hydrate>
           </QueryClientProvider>
         </UserProvider>

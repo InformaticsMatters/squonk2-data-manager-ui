@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, Grid, useTheme } from '@material-ui/core';
-import { ProjectSummary } from '@squonk/data-manager-client';
 
+import { useCurrentProject } from '../components/currentProjectContext';
 import { DataTableManager } from '../components/DataTable/DataTableManager';
 import { FileUpload } from '../components/FileUpload/FileUpload';
 import Layout from '../components/Layout';
 import ProjectManager from '../components/ProjectManager';
 
 const Data = () => {
-  const [currentProject, setCurrentProject] = useState<ProjectSummary | null>(null);
+  const [currentProject, setCurrentProject] = useCurrentProject();
 
   const theme = useTheme();
   return (
@@ -21,7 +21,7 @@ const Data = () => {
           margin-top: ${theme.spacing(4)}px;
         `}
       >
-        <Grid container alignItems="center">
+        <Grid container alignItems="center" spacing={1}>
           <Grid item>
             <FileUpload />
           </Grid>

@@ -18,7 +18,7 @@ import {
   getGetProjectQueryKey,
   Project,
   Type,
-  useAddDatasetToProject,
+  useAttachFile,
   useGetAvailableProjects,
   useGetTypes,
 } from '@squonk/data-manager-client';
@@ -29,7 +29,7 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
   const [open, setOpen] = useState(false);
 
   const queryClient = useQueryClient();
-  const mutation = useAddDatasetToProject();
+  const mutation = useAttachFile();
 
   const { data: projectsData, isLoading: isProjectsLoading } = useGetAvailableProjects();
   const projects = (projectsData as Project | undefined)?.projects;
@@ -116,9 +116,12 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
             onClick={async () => {
               await mutation.mutateAsync(
                 {
-                  datasetid: datasetId,
-                  projectid: project,
-                  data: { as_type: type, path: `/${path}` },
+                  data: {
+                    dataset_id: datasetId,
+                    project_id: project,
+                    as_type: type,
+                    path: `/${path}`,
+                  },
                 },
                 {
                   onSuccess: () => {

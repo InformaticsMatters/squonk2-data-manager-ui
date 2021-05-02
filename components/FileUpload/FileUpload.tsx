@@ -1,53 +1,26 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 
 import { AxiosError } from 'axios';
-import { FileError, FileRejection, useDropzone } from 'react-dropzone';
-import { v4 as uuidv4 } from 'uuid';
+import { FileError } from 'react-dropzone';
 
 import { css } from '@emotion/react';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  Grid,
-  IconButton,
-  useTheme,
-} from '@material-ui/core';
+import { Grid, IconButton, useTheme } from '@material-ui/core';
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
-import { customInstance } from '@squonk/data-manager-client';
+import { customInstance, DatasetId } from '@squonk/data-manager-client';
 
-import { SlideUpTransition } from '../SlideUpTransition';
+import { Dropzone } from './Dropzone';
+import { ModalWrapper } from './ModalWrapper';
 import { SingleFileUploadWithProgress } from './SingleFileUploader';
-
-const allowedFileTypes = ['.sdf', '.pdb'].map((s) => [s, `${s}.gz`]).flat();
-
-const getMimeType = (fileName: string) => {
-  const parts = fileName.split('.');
-
-  if (parts.includes('sdf')) {
-    return 'chemical/x-mdl-sdfile';
-  } else if (parts.includes('pdb')) {
-    return 'chemical/x-pdb';
-  }
-  return 'text/plain';
-};
+import { getMimeType, mutateAtPosition } from './utils';
 
 export interface UploadableFile {
-  id: number;
+  id: string;
+  taskId: string | null;
   file: File;
   errors: FileError[];
   progress: number;
   rename?: string;
 }
-
-const mutateAtPosition = <T extends unknown>(arr: T[], idx: number, val: T) => {
-  const newArr = [...arr];
-  newArr[idx] = val;
-  return newArr;
-};
 
 export const FileUpload = () => {
   const theme = useTheme();
@@ -57,30 +30,10 @@ export const FileUpload = () => {
   const [files, setFiles] = useState<UploadableFile[]>([]);
 
   // Combine the validated and unvalidated files into a single array for rendering
-  const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
-    const mappedAccepted = acceptedFiles.map((file) => ({
-      file,
-      errors: [],
-      id: uuidv4(),
-      progress: 0,
-    }));
-    const mappedRejected = rejectedFiles.map((rejection) => ({
-      ...rejection,
-      id: uuidv4(),
-      progress: 0,
-    }));
-    setFiles((prevFiles) => [...prevFiles, ...mappedAccepted, ...mappedRejected]);
-  }, []);
 
   const onDelete = (file: File) => {
     setFiles((curr) => curr.filter((fw) => fw.file !== file));
   };
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: allowedFileTypes,
-    maxSize: 25 * 1024 ** 2, // 25 MB - same as the API route limit
-  });
 
   const uploadFiles = () => {
     files.forEach(async ({ file, rename }, index) => {
@@ -91,7 +44,7 @@ export const FileUpload = () => {
       };
 
       try {
-        await customInstance({
+        const res = await customInstance({
           method: 'POST',
           data,
           url: '/dataset',
@@ -103,7 +56,12 @@ export const FileUpload = () => {
             setFiles(updatedFiles);
           },
         });
-        setFiles(files);
+        const response = res as DatasetId;
+        if (response.task_id) {
+          const updatedFiles = [...files];
+          updatedFiles[index].taskId = response.task_id;
+          setFiles(updatedFiles);
+        }
       } catch (err) {
         if (err.isAxiosError) {
           const data = (err as AxiosError).response?.data;
@@ -121,85 +79,31 @@ export const FileUpload = () => {
       <IconButton onClick={() => setOpen(true)}>
         <CloudUploadRoundedIcon />
       </IconButton>
-      <Dialog
-        TransitionComponent={SlideUpTransition}
-        open={open}
-        onClose={() => setOpen(false)}
-        aria-labelledby="file-upload-title"
-        css={css`
-          .MuiDialog-paper {
-            width: min(90vw, 700px);
-          }
-        `}
-      >
-        <DialogTitle id="file-upload-title">Upload new datasets</DialogTitle>
-        <DialogContent>
-          <div
-            {...getRootProps()}
-            css={css`
-              border: 2px dashed
-                ${isDragActive ? theme.palette.primary.main : theme.palette.grey[600]};
-              border-radius: 8px;
-              padding-left: ${theme.spacing(1)}px;
-              padding-right: ${theme.spacing(1)}px;
-              max-height: 80vh;
-              overflow-y: scroll;
-            `}
-          >
-            <input {...getInputProps()} />
-            <button
-              css={css`
-                cursor: pointer;
-                text-align: center;
-                border: none;
-                background: none;
-                display: block;
-                width: 100%;
-                margin-top: ${theme.spacing(2)}px;
-                margin-bottom: ${theme.spacing(2)}px;
-                font-size: 1rem;
-              `}
-            >
-              Drag and drop files here, or click to select files
-            </button>
-            {!!files.length && (
-              <Divider
+      <ModalWrapper open={open} onClose={() => setOpen(false)} onSubmit={uploadFiles}>
+        <Dropzone files={files} setFiles={setFiles}>
+          <Grid container direction="column">
+            {files.map((fileWrapper, index) => (
+              <Grid
+                item
+                key={fileWrapper.id}
                 css={css`
-                  margin-top: ${theme.spacing(2)}px;
-                  margin-bottom: ${theme.spacing(2)}px;
+                  margin-bottom: ${theme.spacing(1)}px;
                 `}
-              />
-            )}
-            <Grid container direction="column">
-              {files.map((fileWrapper, index) => (
-                <Grid
-                  item
-                  key={fileWrapper.id}
-                  css={css`
-                    margin-bottom: ${theme.spacing(1)}px;
-                  `}
-                >
-                  <SingleFileUploadWithProgress
-                    onDelete={onDelete}
-                    fileWrapper={fileWrapper}
-                    errors={fileWrapper.errors}
-                    rename={(newName) => {
-                      files[index].rename = newName;
-                      setFiles(mutateAtPosition(files, index, files[index]));
-                    }}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)} color="default">
-            Close
-          </Button>
-          <Button onClick={uploadFiles}>Upload</Button>
-        </DialogActions>
-      </Dialog>
+              >
+                <SingleFileUploadWithProgress
+                  onDelete={onDelete}
+                  fileWrapper={fileWrapper}
+                  errors={fileWrapper.errors}
+                  rename={(newName) => {
+                    files[index].rename = newName;
+                    setFiles(mutateAtPosition(files, index, files[index]));
+                  }}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Dropzone>
+      </ModalWrapper>
     </>
   );
 };

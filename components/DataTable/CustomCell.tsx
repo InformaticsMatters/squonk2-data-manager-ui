@@ -58,7 +58,7 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
             <Button
               onClick={async () => {
                 await detachMutation.mutateAsync(
-                  { projectid: projectId, fileid: id },
+                  { fileid: id },
                   {
                     onSuccess: () =>
                       queryClient.invalidateQueries(getGetProjectQueryKey(projectId)),

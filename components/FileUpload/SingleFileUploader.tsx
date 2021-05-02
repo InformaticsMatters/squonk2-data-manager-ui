@@ -64,7 +64,7 @@ export function SingleFileUploadWithProgress({
         `}
         spacing={1}
       >
-        <Grid xs={10} sm={8} item>
+        <Grid xs={12} sm={8} item>
           <TextField
             disabled={task?.done}
             inputRef={fileNameRef}
@@ -80,7 +80,7 @@ export function SingleFileUploadWithProgress({
           />
         </Grid>
         <Grid
-          xs={2}
+          xs={8}
           sm={3}
           item
           css={css`
@@ -109,7 +109,7 @@ export function SingleFileUploadWithProgress({
           </TextField>
         </Grid>
         <Grid
-          xs={12}
+          xs={4}
           sm={1}
           item
           css={css`

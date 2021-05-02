@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 import { css } from '@emotion/react';
 import {
@@ -40,8 +40,8 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
   const { data: instancesData } = useGetInstances();
   const instances = instancesData?.instances as InstanceSummary[] | undefined;
 
-  const nameRef = useRef<HTMLInputElement>();
-  const versionRef = useRef<HTMLInputElement>();
+  const [name, setName] = useState('');
+  const [version, setVersion] = useState<string | null>(null);
 
   const mutation = useCreateInstance();
 
@@ -61,23 +61,23 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
         <Grid container spacing={1}>
           <Grid item xs={12}>
             <TextField
-              inputRef={nameRef}
               fullWidth
               size="small"
               variant="outlined"
               label="Instance Name"
+              onChange={(e) => setName(e.target.value)}
             />
           </Grid>
           <Grid item xs={12}>
             {application && (
               <TextField
-                inputRef={versionRef}
                 fullWidth
                 size="small"
                 variant="outlined"
                 label="Version"
                 select
                 defaultValue=""
+                onChange={(e) => setVersion(e.target.value)}
               >
                 {application.versions?.map((version) => (
                   <MenuItem key={version} value={version}>
@@ -103,7 +103,7 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
         `}
       >
         <Button
-          disabled={!project || isTaskProcessing}
+          disabled={!project || isTaskProcessing || !name || !version}
           size="small"
           color="primary"
           onClick={async () => {
@@ -111,8 +111,8 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
             const response: InstanceId = await mutation.mutateAsync({
               data: {
                 application_id: app.application_id,
-                application_version: versionRef.current?.value,
-                as_name: nameRef.current?.value,
+                application_version: version,
+                as_name: name,
                 project_id: project?.project_id,
               },
             });

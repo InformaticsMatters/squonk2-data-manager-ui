@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useQueryClient } from 'react-query';
 
@@ -17,18 +17,23 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   taskId,
 }) => {
   const queryClient = useQueryClient();
-  const [interval, setInterval] = useState<number | false>(10000);
+  const [interval, setInterval] = useState<number | false>(2000);
   const { data, isLoading } = useGetTask(taskId ?? '', undefined, {
     refetchInterval: interval,
     onSuccess: (data) => {
       const task = data as Task | undefined;
-      if (!isLoading && task && task.done) {
+      const hasStarted = !!task?.states?.find((state) => state.state === 'STARTED');
+      if (hasStarted) {
         setInterval(false);
         setIsTaskProcessing(false);
         queryClient.invalidateQueries(getGetInstancesQueryKey());
       }
     },
   });
+
+  useEffect(() => {
+    setInterval(2000);
+  }, [taskId]);
 
   return <div>{isTaskProcessing && <LinearProgress />}</div>;
 };

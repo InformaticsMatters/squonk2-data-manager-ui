@@ -136,10 +136,14 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography variant="subtitle1">Running Instances</Typography>
-          {instances?.map((instance) => (
-            <InstanceDetail key={instance.instance_id} instance={instance} />
-          ))}
+          <Typography variant="h5">Running Instances</Typography>
+          {instances?.length ? (
+            instances?.map((instance) => (
+              <InstanceDetail key={instance.instance_id} instance={instance} />
+            ))
+          ) : (
+            <Typography variant="body2">No Instances Running</Typography>
+          )}
         </CardContent>
       </Collapse>
     </Card>

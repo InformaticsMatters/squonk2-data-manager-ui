@@ -31,7 +31,7 @@ const ExecutionManager = () => {
         </Grid>
         <Grid container spacing={2}>
           {applications?.map((app) => (
-            <Grid key={app.application_id} item xs={3}>
+            <Grid key={app.application_id} item xs={12} sm={6} md={3}>
               <ApplicationCard app={app} project={currentProject} />
             </Grid>
           ))}

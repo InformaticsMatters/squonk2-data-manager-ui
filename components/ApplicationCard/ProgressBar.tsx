@@ -19,15 +19,17 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   const queryClient = useQueryClient();
   const [interval, setInterval] = useState<number | false>(2000);
   const { data, isLoading } = useGetTask(taskId ?? '', undefined, {
-    refetchInterval: interval,
-    onSuccess: (data) => {
-      const task = data as Task | undefined;
-      const hasStarted = !!task?.states?.find((state) => state.state === 'STARTED');
-      if (hasStarted) {
-        setInterval(false);
-        setIsTaskProcessing(false);
-        queryClient.invalidateQueries(getGetInstancesQueryKey());
-      }
+    query: {
+      refetchInterval: interval,
+      onSuccess: (data) => {
+        const task = data as Task | undefined;
+        const hasStarted = !!task?.states?.find((state) => state.state === 'STARTED');
+        if (hasStarted) {
+          setInterval(false);
+          setIsTaskProcessing(false);
+          queryClient.invalidateQueries(getGetInstancesQueryKey());
+        }
+      },
     },
   });
 

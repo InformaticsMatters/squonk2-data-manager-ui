@@ -44,12 +44,14 @@ export function SingleFileUploadWithProgress({
 
   const [interval, setInterval] = useState<number | false>(2000);
   const { data, isLoading } = useGetTask(fileWrapper.taskId ?? '', undefined, {
-    refetchInterval: interval,
-    onSuccess: (data) => {
-      const task = data as Task | undefined;
-      if (!isLoading && task && task.done) {
-        setInterval(false);
-      }
+    query: {
+      refetchInterval: interval,
+      onSuccess: (data) => {
+        const task = data as Task | undefined;
+        if (!isLoading && task && task.done) {
+          setInterval(false);
+        }
+      },
     },
   });
   const task = data as Task | undefined;

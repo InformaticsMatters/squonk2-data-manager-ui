@@ -14,11 +14,13 @@ interface ProgressBarProps {
 export const ProgressBar: React.FC<ProgressBarProps> = ({ taskId, progress, errors }) => {
   const [interval, setInterval] = useState<number | false>(2000);
   const { data, isLoading } = useGetTask(taskId ?? '', undefined, {
-    refetchInterval: interval,
-    onSuccess: () => {
-      if (!isLoading && task && task.done) {
-        setInterval(false);
-      }
+    query: {
+      refetchInterval: interval,
+      onSuccess: () => {
+        if (!isLoading && task && task.done) {
+          setInterval(false);
+        }
+      },
     },
   });
   const task = data as Task;

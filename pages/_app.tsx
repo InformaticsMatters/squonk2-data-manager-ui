@@ -15,7 +15,7 @@ import { MuiTheme } from '@squonk/mui-theme';
 import { CurrentProjectProvider } from '../components/currentProjectContext';
 
 // ? Is this the right place to set this?
-setBaseUrl('/api/dm-api');
+setBaseUrl(process.env.NEXT_PUBLIC_BASE_PATH + '/api/dm-api');
 
 export default function App({ Component, pageProps }: AppProps) {
   // ! Need resolutions in monorepo package.json for <Theme></Theme> to not cause "invalid hooks usage" error

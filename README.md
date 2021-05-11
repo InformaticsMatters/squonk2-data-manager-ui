@@ -29,8 +29,8 @@ Deployment to Kubernetes is handled by our AWX-compliant [Ansible playbook repo]
 Modify the `config.json` in a production build to build a version detached from informatics matters.
 Currently the following options are available:
 
-- `DATA_MANAGER_API_SERVER`: The base url where an implementation of the data-manager-api can be accessed
-- `GANALYTICS_ID`: The ID for a google analytics link. NOT CURRENTLY IMPLEMENTED
+- `DATA_MANAGER_API_SERVER` The base url where an implementation of the data-manager-api can be accessed
+- `GANALYTICS_ID` The ID for a google analytics link. NOT CURRENTLY IMPLEMENTED
 
 ---
 

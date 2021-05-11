@@ -26,6 +26,8 @@ Deployment to Kubernetes is handled by our AWX-compliant [Ansible playbook repo]
 
 ## Configuration
 
+(Following is possibly Out-Of-Date for next.js world)
+
 Modify the `config.json` in a production build to build a version detached from informatics matters.
 Currently the following options are available:
 

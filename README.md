@@ -15,24 +15,23 @@ build commands, which can be run from the project clone to produce an
 [nginx] web-container: -
 
     $ docker build . \
-        -t informaticsmatters/mini-apps-data-tier-ui:latest
-
-Which can then be started on `https://localhost:8080` with: -
-
-    $ docker run --rm -p 8080:80 \
-        informaticsmatters/mini-apps-data-tier-ui:latest
+        --tag informaticsmatters/mini-apps-data-tier-ui:latest
 
 Deployment to Kubernetes is handled by our AWX-compliant [Ansible playbook repo].
 
-## Configuration
+## Local/alternative configuration
+A `.env` file is injected by Kubernetes at run-time that provides values
+for numerous environment variables. The `.env` used at build time is
+`.env.staging`, but this can be changed by using the build-arg `FLAVOUR`: -
 
-(Following is possibly Out-Of-Date for next.js world)
+    $ docker build . \
+        --build-arg FLAVOUR=local.example
+        --tag informaticsmatters/mini-apps-data-tier-ui:latest
 
-Modify the `config.json` in a production build to build a version detached from informatics matters.
-Currently the following options are available:
+Which can then be started on `http://localhost:8080/data-manager-ui` with: -
 
-- `DATA_MANAGER_API_SERVER` The base url where an implementation of the data-manager-api can be accessed
-- `GANALYTICS_ID` The ID for a google analytics link. NOT CURRENTLY IMPLEMENTED
+    $ docker run --rm --detach --publish 8080:3000 \
+        informaticsmatters/mini-apps-data-tier-ui:latest
 
 ---
 

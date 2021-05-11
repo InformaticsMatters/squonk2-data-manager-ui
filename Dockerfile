@@ -4,9 +4,9 @@
 #
 # But ... this is production Dockerfile.
 #
-#   When building the application image you...
-#   - MUST NOT rely on 'latest'
-#   - MUST use patch-version-specific Docker images
+#   When building the application image we...
+#   - DO NOT rely on 'latest'
+#   - DO use patch-version-specific Docker images (like 16.1.0 rather than 16)
 
 
 # "deps" stage ... Install dependencies only when needed
@@ -25,6 +25,10 @@ FROM node:16.1.0-alpine3.13 AS builder
 WORKDIR /app
 
 COPY . .
+# There's no '.env' in the repo - create it from
+# the 'FLAVOUR' of '.env.' that should exist...
+ARG FLAVOUR=staging
+COPY .env.${FLAVOUR} ./.env
 
 # Replace the application version (in package.json)
 # with any defined 'tag', otherwise leave it at 0.0.0.

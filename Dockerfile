@@ -1,34 +1,17 @@
-# A next.js multi-stage Docker build.
-#
-# See https://nextjs.org/docs/deployment for the Dockerfile guidance.
-#
-# But ... this is production Dockerfile.
-#
-#   When building the application image we...
-#   - DO NOT rely on 'latest'
-#   - DO use patch-version-specific Docker images (like 16.1.0 rather than 16)
+FROM node:16.2.0-alpine3.13
 
+# Disable anonymous Next.js telemetry data...
+ENV NEXT_TELEMETRY_DISABLED 1
 
-# "deps" stage ... Install dependencies only when needed
+# Add typical Node/NextJS groups and users
+# Check https://bit.ly/3u8xXQR to understand why libc6-compat might be needed.
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001 && \
+    apk add --no-cache libc6-compat
 
-FROM node:16.1.0-alpine3.13 AS deps
-
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json ./
-RUN yarn install --frozen-lockfile
-
-# "builder" stage ... Rebuild the source code only when needed
-
-FROM node:16.1.0-alpine3.13 AS builder
-WORKDIR /app
-
-COPY . .
-# There's no '.env' in the repo - create it from
-# the 'FLAVOUR' of '.env.' that should exist...
-ARG FLAVOUR=staging
-COPY .env.${FLAVOUR} ./.env
+COPY yarn.lock ./
 
 # Replace the application version (in package.json)
 # with any defined 'tag', otherwise leave it at 0.0.0.
@@ -36,36 +19,32 @@ COPY .env.${FLAVOUR} ./.env
 ARG tag=0.0.0
 ENV TAG=$tag
 RUN sed -i s/'"0.0.0"'/'"'${TAG:-0.0.0}'"'/ package.json && \
-    head package.json
+    head package.json && \
+    yarn install --frozen-lockfile
 
-COPY --from=deps /app/node_modules ./node_modules
-RUN yarn build && \
-    yarn install --production --ignore-scripts --prefer-offline
+# There's no '.env' in the repo - create it from
+# the 'FLAVOUR' of '.env.' that should exist...
+ARG FLAVOUR=staging
+COPY .env.${FLAVOUR} ./.env
+COPY . .
 
-# Final stage ... Production image, copy all the files and run next
+RUN chown --recursive nextjs:nodejs .
 
-FROM node:16.1.0-alpine3.13 AS runner
-WORKDIR /app
-
+# **DO NOT** set 'NODE_ENV any earlier than this in the Dockerfile.
+# We must run 'yarn install' (above) first, otherwise we'll get
+# the folllowing error at run-time in the docker-entrypoint.sh...
+#
+#   "It looks like you're trying to use TypeScript
+#   but do not have the required package(s) installed."
+#
+# Kubernetes can, of course, over-ride this if it wishes.
 ENV NODE_ENV production
 
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
-
-# You only need to copy next.config.js if you are NOT using the default configuration
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
+# Switch to the expected image user
+# and indicate port 3000 should be open
 USER nextjs
-
 EXPOSE 3000
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry.
-ENV NEXT_TELEMETRY_DISABLED 1
-
-CMD ["yarn", "start"]
+# We build, install and start the application at run-time.
+# That's wehere the _real_ '.env' will be provided.
+CMD ["./docker-entrypoint.sh"]

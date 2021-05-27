@@ -16,7 +16,7 @@ export const Logo = () => {
         `}
       >
         <img
-          src="/DataManager_WhiteOpt2.svg"
+          src={process.env.NEXT_PUBLIC_BASE_PATH + '/DataManager_WhiteOpt2.svg'}
           alt="Squonk (animal) logo with title text 'Squonk' and subtitle 'Data Manager'"
           width="341"
           height="99"

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { FileError } from 'react-dropzone';
 
 import { LinearProgress, Typography } from '@material-ui/core';
-import { Task, useGetTask } from '@squonk/data-manager-client';
+import { useGetTask } from '@squonk/data-manager-client';
 
 interface ProgressBarProps {
   taskId: string | null;
@@ -13,7 +13,7 @@ interface ProgressBarProps {
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({ taskId, progress, errors }) => {
   const [interval, setInterval] = useState<number | false>(2000);
-  const { data, isLoading } = useGetTask(taskId ?? '', undefined, {
+  const { data: task, isLoading } = useGetTask(taskId ?? '', undefined, {
     query: {
       refetchInterval: interval,
       onSuccess: () => {
@@ -23,7 +23,6 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ taskId, progress, erro
       },
     },
   });
-  const task = data as Task;
 
   return (
     <>

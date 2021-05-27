@@ -15,7 +15,6 @@ import {
 } from '@material-ui/core';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import {
-  ApplicationDetail,
   ApplicationSummary,
   InstanceId,
   InstanceSummary,
@@ -34,11 +33,10 @@ interface ApplicationCardProps {
 }
 
 export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }) => {
-  const { data: appData } = useGetApplication(app.application_id ?? '');
-  const application = appData as ApplicationDetail | undefined;
+  const { data: application } = useGetApplication(app.application_id ?? '');
 
   const { data: instancesData } = useGetInstances();
-  const instances = instancesData?.instances as InstanceSummary[] | undefined;
+  const instances = (instancesData as any)?.instances as InstanceSummary[]; // TODO: Fix cast through any due to bug in OpenAPI Spec
 
   const [name, setName] = useState('');
   const [version, setVersion] = useState<string | null>(null);
@@ -110,10 +108,10 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
             setIsTaskProcessing(true);
             const response: InstanceId = await mutation.mutateAsync({
               data: {
-                application_id: app.application_id,
-                application_version: version,
+                application_id: app.application_id ?? '',
+                application_version: version ?? '',
                 as_name: name,
-                project_id: project?.project_id,
+                project_id: project?.project_id ?? '',
               },
             });
 

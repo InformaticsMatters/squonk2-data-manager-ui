@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Grid, TextField, Typography } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import { Project, ProjectSummary, useGetAvailableProjects } from '@squonk/data-manager-client';
+import { ProjectSummary, useGetAvailableProjects } from '@squonk/data-manager-client';
 
 import AddProject from './AddProject';
 
@@ -13,7 +13,7 @@ interface ProjectManagerProps {
 
 const ProjectManager: React.FC<ProjectManagerProps> = ({ currentProject, setCurrentProject }) => {
   const { data, isLoading } = useGetAvailableProjects();
-  const projects = (data as Project)?.projects;
+  const projects = data?.projects;
 
   return (
     <>

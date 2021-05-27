@@ -3,7 +3,7 @@ import React from 'react';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, Grid, useTheme } from '@material-ui/core';
-import { ApplicationSummary, useGetApplications } from '@squonk/data-manager-client';
+import { useGetApplications } from '@squonk/data-manager-client';
 
 import { ApplicationCard } from '../components/ApplicationCard/ApplicationCard';
 import { useCurrentProject } from '../components/currentProjectContext';
@@ -16,7 +16,7 @@ const ExecutionManager = () => {
   const [currentProject, setCurrentProject] = useCurrentProject();
 
   const { data } = useGetApplications();
-  const applications = data?.applications as ApplicationSummary[];
+  const applications = data?.applications;
 
   return (
     <Layout>

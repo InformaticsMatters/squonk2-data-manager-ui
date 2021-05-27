@@ -15,9 +15,8 @@ import {
   TextField,
 } from '@material-ui/core';
 import {
+  DatasetAttachBodyAsType,
   getGetProjectQueryKey,
-  Project,
-  Type,
   useAttachFile,
   useGetAvailableProjects,
   useGetTypes,
@@ -25,20 +24,22 @@ import {
 
 import { SlideUpTransition } from '../SlideUpTransition';
 
+type SelectableMimeTypes = DatasetAttachBodyAsType | '';
+
 export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => {
   const [open, setOpen] = useState(false);
 
   const queryClient = useQueryClient();
-  const mutation = useAttachFile();
+  const attachFileMutation = useAttachFile();
 
   const { data: projectsData, isLoading: isProjectsLoading } = useGetAvailableProjects();
-  const projects = (projectsData as Project | undefined)?.projects;
+  const projects = projectsData?.projects;
 
   const { data: typesData, isLoading: isTypesLoading } = useGetTypes();
-  const types = (typesData as Type | undefined)?.types;
+  const types = typesData?.types;
 
   const [project, setProject] = useState<string>('');
-  const [type, setType] = useState<string>('');
+  const [type, setType] = useState<SelectableMimeTypes>('');
   const [path, setPath] = useState('');
 
   return (
@@ -85,7 +86,7 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
               select
               variant="outlined"
               fullWidth
-              onChange={(e) => setType(e.target.value)}
+              onChange={(e) => setType(e.target.value as SelectableMimeTypes)}
             >
               {types?.map((type) => (
                 <MenuItem key={type.mime} value={type.mime}>
@@ -114,22 +115,23 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
           <Button
             disabled={isProjectsLoading || isTypesLoading}
             onClick={async () => {
-              await mutation.mutateAsync(
-                {
-                  data: {
-                    dataset_id: datasetId,
-                    project_id: project,
-                    as_type: type,
-                    path: `/${path}`,
+              type !== '' &&
+                (await attachFileMutation.mutateAsync(
+                  {
+                    data: {
+                      dataset_id: datasetId,
+                      project_id: project,
+                      as_type: type,
+                      path: `/${path}`,
+                    },
                   },
-                },
-                {
-                  onSuccess: () => {
-                    queryClient.invalidateQueries(getGetProjectQueryKey(project));
-                    setOpen(false);
+                  {
+                    onSuccess: () => {
+                      queryClient.invalidateQueries(getGetProjectQueryKey(project));
+                      setOpen(false);
+                    },
                   },
-                },
-              );
+                ));
             }}
           >
             Attach

@@ -43,7 +43,7 @@ export function SingleFileUploadWithProgress({
   const [stem, ...extensions] = typeLabelParts;
 
   const [interval, setInterval] = useState<number | false>(2000);
-  const { data, isLoading } = useGetTask(fileWrapper.taskId ?? '', undefined, {
+  const { data: task, isLoading } = useGetTask(fileWrapper.taskId ?? '', undefined, {
     query: {
       refetchInterval: interval,
       onSuccess: (data) => {
@@ -54,7 +54,6 @@ export function SingleFileUploadWithProgress({
       },
     },
   });
-  const task = data as Task | undefined;
 
   const theme = useTheme();
   return (

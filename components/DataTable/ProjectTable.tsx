@@ -5,8 +5,7 @@ import { nestRows } from './file-nesting';
 import { Row } from './types';
 
 export const ProjectTable: React.FC<{ currentProject: ProjectSummary }> = ({ currentProject }) => {
-  const { data, isLoading } = useGetProject(currentProject.project_id as string);
-  const project = data as ProjectDetail | undefined;
+  const { data: project, isLoading } = useGetProject(currentProject.project_id as string);
 
   if (!isLoading) {
     const rows = (project as ProjectDetail).files?.map(

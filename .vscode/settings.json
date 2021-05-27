@@ -9,6 +9,7 @@
     "Relayout",
     "Spikelines",
     "Swipeable",
+    "Uploadable",
     "autologin",
     "colorbar",
     "colorscale",
@@ -68,5 +69,14 @@
       "regex": "^[.]",
       "orderLevel": 30
     }
+  ],
+  "conventionalCommits.scopes": [
+    "nextjs",
+    "ui/navigation",
+    "ui/projects",
+    "ui/data-table",
+    "ui/attach-datasets",
+    "ui/file-upload",
+    "ui/create-instance"
   ],
 }

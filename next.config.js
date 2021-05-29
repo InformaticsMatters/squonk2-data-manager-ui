@@ -1,4 +1,4 @@
-let ASSET_URL
+let ASSET_URL;
 
 if (process.env.NODE_ENV === 'production' && !process.env.BASE_URL.includes('localhost')) {
   ASSET_URL = process.env.BASE_URL;

@@ -5,23 +5,16 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prepare": "husky install",
+    "postinstall": "husky install",
     "dev": "next dev",
     "dev:debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
     "type-check": "tsc --pretty --noEmit",
-    "lint": "eslint . --ext ts --ext tsx --ext js"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "yarn run type-check"
-    }
+    "format": "eslint --fix . --ext ts --ext tsx --ext js"
   },
   "lint-staged": {
-    "*.@(ts|tsx)": [
-      "yarn lint",
+    "*.@(js|ts|tsx)": [
       "yarn format"
     ]
   },

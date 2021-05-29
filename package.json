@@ -11,7 +11,8 @@
     "build": "next build",
     "start": "next start",
     "type-check": "tsc --pretty --noEmit",
-    "format": "eslint --fix . --ext ts --ext tsx --ext js"
+    "format:all": "eslint --fix . --ext ts --ext tsx --ext js",
+    "format": "eslint --fix --ext ts --ext tsx --ext js"
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [

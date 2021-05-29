@@ -1,11 +1,14 @@
+let ASSET_URL
+
+if (process.env.NODE_ENV === 'production' && !process.env.BASE_URL.includes('localhost')) {
+  ASSET_URL = process.env.BASE_URL;
+}
+ASSET_URL = process.env.BASE_URL = 'https://squonk.informaticsmatters.org';
+
 module.exports = {
-  basePath: process.env.BASE_PATH,
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH,
   sassOptions: {
-    prependData: `$assetsURL: '${
-      process.env.NODE_ENV === 'development'
-        ? 'https://squonk.informaticsmatters.org'
-        : process.env.BASE_URL
-    }';`,
+    prependData: `$assetsURL: ${ASSET_URL};`,
   },
   future: {
     webpack5: true,

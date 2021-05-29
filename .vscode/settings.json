@@ -77,6 +77,7 @@
     "ui/data-table",
     "ui/attach-datasets",
     "ui/file-upload",
-    "ui/create-instance"
+    "ui/create-instance",
+    "editor"
   ],
 }

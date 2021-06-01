@@ -10,4 +10,4 @@
 #echo "+> Running"
 #yarn start
 
-sleep inifinity
+sleep infinity

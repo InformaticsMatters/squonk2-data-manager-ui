@@ -22,10 +22,6 @@ RUN sed -i s/'"0.0.0"'/'"'${TAG:-0.0.0}'"'/ package.json && \
     head package.json && \
     yarn install --frozen-lockfile
 
-# There's no '.env' in the repo - create it from
-# the 'FLAVOUR' of '.env.' that should exist...
-ARG FLAVOUR=production
-COPY .env.${FLAVOUR} ./.env.production
 COPY . .
 
 RUN chown --recursive nextjs:nodejs .

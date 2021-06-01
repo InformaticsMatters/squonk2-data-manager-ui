@@ -8,7 +8,7 @@ ASSET_URL = process.env.BASE_URL = 'https://squonk.informaticsmatters.org';
 module.exports = {
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
   sassOptions: {
-    prependData: `$assetsURL: ${ASSET_URL};`,
+    prependData: `$assetsURL: '${ASSET_URL}';`,
   },
   future: {
     webpack5: true,

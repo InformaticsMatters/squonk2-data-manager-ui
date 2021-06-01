@@ -80,5 +80,10 @@
     "ui/create-instance",
     "editor",
     "auth"
+    "orval",
+    "release",
+    "editor",
+    "auth",
+    "experimentation"
   ],
 }

@@ -27,11 +27,11 @@ const ExecutionManager = () => {
       >
         <h1>Execution Manager</h1>
         <Grid container alignItems="center" spacing={1}>
-          <ProjectManager setCurrentProject={setCurrentProject} currentProject={currentProject} />
+          <ProjectManager currentProject={currentProject} setCurrentProject={setCurrentProject} />
         </Grid>
         <Grid container spacing={2}>
           {applications?.map((app) => (
-            <Grid key={app.application_id} item xs={12} sm={6} md={3}>
+            <Grid item key={app.application_id} md={3} sm={6} xs={12}>
               <ApplicationCard app={app} project={currentProject} />
             </Grid>
           ))}

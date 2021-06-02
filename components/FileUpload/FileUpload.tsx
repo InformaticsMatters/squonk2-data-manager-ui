@@ -6,7 +6,7 @@ import { FileError } from 'react-dropzone';
 import { css } from '@emotion/react';
 import { Grid, IconButton, useTheme } from '@material-ui/core';
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
-import { customInstance, DatasetId } from '@squonk/data-manager-client';
+import { DatasetId, customInstance } from '@squonk/data-manager-client';
 
 import { Dropzone } from './Dropzone';
 import { ModalWrapper } from './ModalWrapper';
@@ -85,19 +85,19 @@ export const FileUpload = () => {
             {files.map((fileWrapper, index) => (
               <Grid
                 item
-                key={fileWrapper.id}
                 css={css`
                   margin-bottom: ${theme.spacing(1)}px;
                 `}
+                key={fileWrapper.id}
               >
                 <SingleFileUploadWithProgress
-                  onDelete={onDelete}
-                  fileWrapper={fileWrapper}
                   errors={fileWrapper.errors}
+                  fileWrapper={fileWrapper}
                   rename={(newName) => {
                     files[index].rename = newName;
                     setFiles(mutateAtPosition(files, index, files[index]));
                   }}
+                  onDelete={onDelete}
                 />
               </Grid>
             ))}

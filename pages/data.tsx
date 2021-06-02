@@ -25,7 +25,7 @@ const Data = () => {
           <Grid item>
             <FileUpload />
           </Grid>
-          <ProjectManager setCurrentProject={setCurrentProject} currentProject={currentProject} />
+          <ProjectManager currentProject={currentProject} setCurrentProject={setCurrentProject} />
         </Grid>
         <DataTableManager currentProject={currentProject} />
       </Container>

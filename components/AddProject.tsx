@@ -49,11 +49,11 @@ const AddProject: React.FC = () => {
           }}
         >
           <TextField
+            autoFocus
             inputProps={{ maxLength: 18 }}
             label="Project Name"
             name="projectName"
             variant="outlined"
-            autoFocus
           />
         </form>
       </Popover>

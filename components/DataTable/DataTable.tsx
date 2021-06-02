@@ -30,7 +30,7 @@ export const DataTable: React.FC<DataTableProps> = ({ rows }) => {
   // const [selection, setSelection] = useState<React.ReactText[]>([]);
 
   return (
-    <Grid rows={rows} columns={columns} getRowId={(row) => row.id}>
+    <Grid columns={columns} getRowId={(row) => row.id} rows={rows}>
       <SearchState />
       {/* <SelectionState selection={selection} onSelectionChange={setSelection} /> */}
       <SortingState />

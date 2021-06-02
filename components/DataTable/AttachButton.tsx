@@ -46,27 +46,27 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
     <>
       <Button onClick={() => setOpen(true)}>Attach</Button>
       <Dialog
-        TransitionComponent={SlideUpTransition}
-        open={open}
-        onClose={() => setOpen(false)}
         aria-labelledby="attach-dataset-to-project-title"
         css={css`
           .MuiDialog-paper {
             width: min(90vw, 700px);
           }
         `}
+        open={open}
+        TransitionComponent={SlideUpTransition}
+        onClose={() => setOpen(false)}
       >
         <DialogTitle id="attach-dataset-to-project-title">Attach to project</DialogTitle>
         <DialogContent>
-          <FormControl margin="dense" fullWidth>
+          <FormControl fullWidth margin="dense">
             <TextField
+              fullWidth
+              select
               disabled={isProjectsLoading}
               id="select-project"
               label="Project"
               value={project}
-              select
               variant="outlined"
-              fullWidth
               onChange={(e) => setProject(e.target.value)}
             >
               {projects?.map((project) => (
@@ -76,16 +76,16 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
               ))}
             </TextField>
           </FormControl>
-          <FormControl margin="dense" fullWidth>
+          <FormControl fullWidth margin="dense">
             <TextField
+              fullWidth
+              select
               disabled={isTypesLoading}
               helperText="The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset"
               id="select-type"
               label="File Type"
               value={type}
-              select
               variant="outlined"
-              fullWidth
               onChange={(e) => setType(e.target.value as SelectableMimeTypes)}
             >
               {types?.map((type) => (
@@ -95,21 +95,21 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
               ))}
             </TextField>
           </FormControl>
-          <FormControl margin="dense" fullWidth>
+          <FormControl fullWidth margin="dense">
             <TextField
-              variant="outlined"
-              label="Path"
-              value={path}
-              onChange={(e) => setPath(e.target.value)}
               helperText="A path within the Project to add the File, default is the project root ('/'), the mount-point within the application container. "
               InputProps={{
                 startAdornment: <InputAdornment position="start">/</InputAdornment>,
               }}
+              label="Path"
+              value={path}
+              variant="outlined"
+              onChange={(e) => setPath(e.target.value)}
             />
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)} color="default">
+          <Button color="default" onClick={() => setOpen(false)}>
             Cancel
           </Button>
           <Button

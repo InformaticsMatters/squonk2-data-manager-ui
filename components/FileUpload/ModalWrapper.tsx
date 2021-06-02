@@ -19,20 +19,20 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
 }) => {
   return (
     <Dialog
-      TransitionComponent={SlideUpTransition}
-      open={open}
-      onClose={onClose}
       aria-labelledby="file-upload-title"
       css={css`
         .MuiDialog-paper {
           width: min(90vw, 700px);
         }
       `}
+      open={open}
+      TransitionComponent={SlideUpTransition}
+      onClose={onClose}
     >
       <DialogTitle id="file-upload-title">Upload new datasets</DialogTitle>
       <DialogContent>{children}</DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="default">
+        <Button color="default" onClick={onClose}>
           Close
         </Button>
         <Button onClick={onSubmit}>Upload</Button>

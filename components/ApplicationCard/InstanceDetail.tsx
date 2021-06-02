@@ -4,9 +4,9 @@ import { useQueryClient } from 'react-query';
 
 import { Button, Typography } from '@material-ui/core';
 import {
-  getGetInstancesQueryKey,
   Instance,
   InstanceSummary,
+  getGetInstancesQueryKey,
   useGetInstance,
   useTerminateInstance,
 } from '@squonk/data-manager-client';
@@ -24,7 +24,7 @@ export const InstanceDetail: React.FC<{ instance: InstanceSummary }> = ({ instan
       <Typography>Owner: {detailedInstance?.owner}</Typography>
       <Typography>
         URL:{' '}
-        <a target="_blank" rel="noopener noreferrer" href={detailedInstance?.url}>
+        <a href={detailedInstance?.url} rel="noopener noreferrer" target="_blank">
           Open
         </a>
       </Typography>

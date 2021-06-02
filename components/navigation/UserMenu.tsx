@@ -20,7 +20,7 @@ export const UserMenu = () => {
         margin-left: auto;
       `}
     >
-      <IconButton disabled={isLoading} edge="end" color="inherit" {...bindTrigger(popupState)}>
+      <IconButton color="inherit" disabled={isLoading} edge="end" {...bindTrigger(popupState)}>
         <AccountCircle />
       </IconButton>
 

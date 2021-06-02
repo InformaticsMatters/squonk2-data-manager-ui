@@ -10,7 +10,7 @@ export const NavLink: React.FC<{ title: string }> = ({ title }) => {
   const router = useRouter();
   const active = router.pathname === path;
   return (
-    <Link href={path} passHref>
+    <Link passHref href={path}>
       <a
         css={css`
           font-weight: ${active ? 'bold' : 'normal'};

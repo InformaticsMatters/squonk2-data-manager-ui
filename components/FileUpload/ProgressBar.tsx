@@ -26,10 +26,10 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ taskId, progress, erro
 
   return (
     <>
-      {progress < 100 && <LinearProgress variant="determinate" value={progress} />}
+      {progress < 100 && <LinearProgress value={progress} variant="determinate" />}
       {!isLoading && task && !task.done && <LinearProgress />}
       {errors.map((error, index) => (
-        <Typography key={`${error.code}-${error.message}-${index}`} color="error">
+        <Typography color="error" key={`${error.code}-${error.message}-${index}`}>
           {error.message}
         </Typography>
       ))}

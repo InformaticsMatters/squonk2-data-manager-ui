@@ -19,16 +19,16 @@ const ProjectManager: React.FC<ProjectManagerProps> = ({ currentProject, setCurr
     <>
       <Grid item>
         <Autocomplete
-          value={currentProject}
+          getOptionLabel={(option) => (option as any).name}
           id="project-selection"
-          size="small"
           loading={isLoading}
           options={projects ?? []}
-          getOptionLabel={(option) => (option as any).name}
-          style={{ width: 300 }}
           renderInput={(params) => (
             <TextField {...params} label="Select project" variant="outlined" />
           )}
+          size="small"
+          style={{ width: 300 }}
+          value={currentProject}
           onChange={(_, project) => setCurrentProject(project)}
         />
       </Grid>

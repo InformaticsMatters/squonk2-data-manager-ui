@@ -34,7 +34,7 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
   switch (column.name) {
     case 'actions':
       return (
-        <Cell row={row} column={column} {...rest}>
+        <Cell column={column} row={row} {...rest}>
           {/* <Button>Download</Button> */}
           {id.startsWith('dataset') && (
             <>
@@ -73,7 +73,7 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
         </Cell>
       );
     default:
-      return <Cell row={row} column={column} {...rest} />;
+      return <Cell column={column} row={row} {...rest} />;
   }
 };
 

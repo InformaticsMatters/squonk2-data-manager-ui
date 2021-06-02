@@ -66,15 +66,15 @@ export function SingleFileUploadWithProgress({
         `}
         spacing={1}
       >
-        <Grid xs={12} sm={8} item>
+        <Grid item sm={8} xs={12}>
           <TextField
-            disabled={task?.done}
-            inputRef={fileNameRef}
             fullWidth
-            size="small"
             required
             defaultValue={stem}
+            disabled={task?.done}
+            inputRef={fileNameRef}
             placeholder={stem}
+            size="small"
             variant="outlined"
             // onChange={(e) => rename(e.target.value)}
             onChange={() => rename(composeNewFilePath())}
@@ -82,22 +82,22 @@ export function SingleFileUploadWithProgress({
           />
         </Grid>
         <Grid
-          xs={8}
-          sm={3}
           item
           css={css`
             text-align: center;
           `}
+          sm={3}
+          xs={8}
         >
           <TextField
+            fullWidth
+            select
+            defaultValue={`.${extensions.join('.')}`}
             disabled={task?.done}
             inputRef={fileExtRef}
-            fullWidth
-            variant="outlined"
-            size="small"
             label="Ext"
-            defaultValue={`.${extensions.join('.')}`}
-            select
+            size="small"
+            variant="outlined"
             onClick={(e) => {
               e.stopPropagation();
               rename(composeNewFilePath());
@@ -111,22 +111,22 @@ export function SingleFileUploadWithProgress({
           </TextField>
         </Grid>
         <Grid
-          xs={4}
-          sm={1}
           item
           css={css`
             text-align: center;
           `}
+          sm={1}
+          xs={4}
         >
           <IconButton
+            css={css`
+              color: ${theme.palette.success.main};
+            `}
             size="small"
             onClick={(e) => {
               e.stopPropagation();
               onDelete(fileWrapper.file);
             }}
-            css={css`
-              color: ${theme.palette.success.main};
-            `}
           >
             {task?.done ? (
               <DoneRoundedIcon
@@ -151,11 +151,11 @@ export function SingleFileUploadWithProgress({
         </Grid>
       </Grid>
       {(fileWrapper.progress < 100 || (fileWrapper.progress === 100 && !fileWrapper.taskId)) && (
-        <LinearProgress variant="determinate" value={fileWrapper.progress} />
+        <LinearProgress value={fileWrapper.progress} variant="determinate" />
       )}
       {!isLoading && task && !task.done && <LinearProgress />}
       {errors.map((error, index) => (
-        <Typography key={`${error.code}-${error.message}-${index}`} color="error">
+        <Typography color="error" key={`${error.code}-${error.message}-${index}`}>
           {error.message}
         </Typography>
       ))}

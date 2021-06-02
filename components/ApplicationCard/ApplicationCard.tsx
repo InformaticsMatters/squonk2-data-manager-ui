@@ -53,16 +53,16 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
         <Typography variant="h6">{app.kind}</Typography>
       </CardContent>
       <CardContent>
-        <Typography variant="subtitle1" gutterBottom>
+        <Typography gutterBottom variant="subtitle1">
           Launch Instance
         </Typography>
         <Grid container spacing={1}>
           <Grid item xs={12}>
             <TextField
               fullWidth
+              label="Instance Name"
               size="small"
               variant="outlined"
-              label="Instance Name"
               onChange={(e) => setName(e.target.value)}
             />
           </Grid>
@@ -70,11 +70,11 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
             {application && (
               <TextField
                 fullWidth
-                size="small"
-                variant="outlined"
-                label="Version"
                 select
                 defaultValue=""
+                label="Version"
+                size="small"
+                variant="outlined"
                 onChange={(e) => setVersion(e.target.value)}
               >
                 {application.versions?.map((version) => (
@@ -87,9 +87,9 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
           </Grid>
           <Grid item xs={12}>
             <ProgressBar
-              taskId={currentTask}
               isTaskProcessing={isTaskProcessing}
               setIsTaskProcessing={setIsTaskProcessing}
+              taskId={currentTask}
             />
           </Grid>
         </Grid>
@@ -101,9 +101,9 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
         `}
       >
         <Button
+          color="primary"
           disabled={!project || isTaskProcessing || !name || !version}
           size="small"
-          color="primary"
           onClick={async () => {
             setIsTaskProcessing(true);
             const response: InstanceId = await mutation.mutateAsync({
@@ -121,23 +121,23 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
           Create Instance
         </Button>
         <IconButton
+          aria-expanded={expanded}
+          aria-label="show instances"
           css={css`
             margin-left: auto;
           `}
           onClick={() => setExpanded(!expanded)}
-          aria-expanded={expanded}
-          aria-label="show instances"
         >
           <ExpandMoreRoundedIcon />
         </IconButton>
       </CardActions>
 
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
+      <Collapse unmountOnExit in={expanded} timeout="auto">
         <CardContent>
           <Typography variant="h5">Running Instances</Typography>
           {instances?.length ? (
             instances?.map((instance) => (
-              <InstanceDetail key={instance.instance_id} instance={instance} />
+              <InstanceDetail instance={instance} key={instance.instance_id} />
             ))
           ) : (
             <Typography variant="body2">No Instances Running</Typography>

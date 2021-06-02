@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import { LinearProgress } from '@material-ui/core';
-import { getGetInstancesQueryKey, Task, useGetTask } from '@squonk/data-manager-client';
+import { Task, getGetInstancesQueryKey, useGetTask } from '@squonk/data-manager-client';
 
 interface ProgressBarProps {
   taskId: string | null;

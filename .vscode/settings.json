@@ -84,6 +84,7 @@
     "release",
     "editor",
     "auth",
-    "experimentation"
+    "experimentation",
+    "husky"
   ],
 }

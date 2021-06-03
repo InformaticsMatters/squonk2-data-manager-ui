@@ -5,7 +5,14 @@ import { useQueryClient } from 'react-query';
 import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Grid, IconButton, InputAdornment, TextField, TextFieldProps } from '@material-ui/core';
+import {
+  Grid,
+  IconButton,
+  InputAdornment,
+  TextField,
+  TextFieldProps,
+  Tooltip,
+} from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
@@ -32,7 +39,9 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
   const currentProject = useCurrentProject();
   const { user } = useUser();
 
-  const canEdit = !!user && user?.preferred_username === currentProject?.owner;
+  const isOwner = !!user && user?.preferred_username === currentProject?.owner;
+  const isEditor =
+    !!user && !!currentProject?.editors?.includes(user?.preferred_username as string);
 
   const deleteProjectMutation = useDeleteProject();
 
@@ -48,20 +57,22 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
   };
 
   const InputProps = {
-    startAdornment: canEdit ? (
+    startAdornment: isOwner ? (
       <>
         {currentProject?.owner === user?.preferred_username && (
           <InputAdornment position="start">
-            <IconButton aria-label="Delete selected project" onClick={handleDelete}>
-              <DeleteForeverIcon />
-            </IconButton>
+            <Tooltip arrow title="Delete selected project">
+              <IconButton aria-label="Delete selected project" onClick={handleDelete}>
+                <DeleteForeverIcon />
+              </IconButton>
+            </Tooltip>
           </InputAdornment>
         )}
 
-        {canEdit && <PersonIcon htmlColor="white" />}
+        {isEditor && <PersonIcon htmlColor="white" />}
       </>
     ) : (
-      canEdit && <PersonIcon htmlColor="white" />
+      isEditor && <PersonIcon htmlColor="white" />
     ),
   };
 
@@ -95,7 +106,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
         />
       </Grid>
       <AddProject inverted={inverted} />
-      <EditProject canEdit={canEdit} inverted={inverted} currentProject={currentProject} />
+      <EditProject canEdit={isEditor} inverted={inverted} currentProject={currentProject} />
     </div>
   );
 };

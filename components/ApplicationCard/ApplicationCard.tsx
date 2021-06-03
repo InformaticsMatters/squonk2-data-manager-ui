@@ -17,7 +17,6 @@ import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import {
   ApplicationSummary,
   InstanceId,
-  InstanceSummary,
   ProjectSummary,
   useCreateInstance,
   useGetApplication,
@@ -33,10 +32,10 @@ interface ApplicationCardProps {
 }
 
 export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }) => {
-  const { data: application } = useGetApplication(app.application_id ?? '');
+  const { data: application } = useGetApplication(app.application_id);
 
   const { data: instancesData } = useGetInstances();
-  const instances = (instancesData as any)?.instances as InstanceSummary[]; // TODO: Fix cast through any due to bug in OpenAPI Spec
+  const instances = instancesData?.instances;
 
   const [name, setName] = useState('');
   const [version, setVersion] = useState<string | null>(null);
@@ -77,7 +76,7 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
                 variant="outlined"
                 onChange={(e) => setVersion(e.target.value)}
               >
-                {application.versions?.map((version) => (
+                {application.versions.map((version) => (
                   <MenuItem key={version} value={version}>
                     {version}
                   </MenuItem>
@@ -108,7 +107,7 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
             setIsTaskProcessing(true);
             const response: InstanceId = await mutation.mutateAsync({
               data: {
-                application_id: app.application_id ?? '',
+                application_id: app.application_id,
                 application_version: version ?? '',
                 as_name: name,
                 project_id: project?.project_id ?? '',
@@ -136,7 +135,7 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
         <CardContent>
           <Typography variant="h5">Running Instances</Typography>
           {instances?.length ? (
-            instances?.map((instance) => (
+            instances.map((instance) => (
               <InstanceDetail instance={instance} key={instance.instance_id} />
             ))
           ) : (

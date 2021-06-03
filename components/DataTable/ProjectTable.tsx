@@ -8,7 +8,7 @@ export const ProjectTable: React.FC<{ currentProject: ProjectSummary }> = ({ cur
   const { data: project, isLoading } = useGetProject(currentProject.project_id as string);
 
   if (!isLoading) {
-    const rows = (project as ProjectDetail).files?.map(
+    const rows = (project as ProjectDetail).files.map(
       ({ file_id, file_name, file_path, owner }) => ({
         id: file_id,
         fileName: file_name,

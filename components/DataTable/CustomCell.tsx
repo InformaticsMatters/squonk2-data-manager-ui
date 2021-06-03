@@ -29,7 +29,7 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
   const detachMutation = useDeleteFile();
 
   const id = row.id;
-  const projectId = row.actions?.projectId;
+  const projectId = row.actions.projectId;
 
   switch (column.name) {
     case 'actions':

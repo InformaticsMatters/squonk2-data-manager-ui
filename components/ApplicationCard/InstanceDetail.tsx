@@ -4,16 +4,16 @@ import { useQueryClient } from 'react-query';
 
 import { Button, Typography } from '@material-ui/core';
 import {
+  getGetInstancesQueryKey,
   Instance,
   InstanceSummary,
-  getGetInstancesQueryKey,
   useGetInstance,
   useTerminateInstance,
 } from '@squonk/data-manager-client';
 
 export const InstanceDetail: React.FC<{ instance: InstanceSummary }> = ({ instance }) => {
   const queryClient = useQueryClient();
-  const { data } = useGetInstance(instance.instance_id ?? '');
+  const { data } = useGetInstance(instance.instance_id);
   const detailedInstance = data as Instance | undefined;
 
   const mutation = useTerminateInstance();
@@ -30,7 +30,7 @@ export const InstanceDetail: React.FC<{ instance: InstanceSummary }> = ({ instan
       </Typography>
       <Button
         onClick={async () => {
-          await mutation.mutateAsync({ instanceid: instance.instance_id ?? '' });
+          await mutation.mutateAsync({ instanceid: instance.instance_id });
           queryClient.invalidateQueries(getGetInstancesQueryKey());
         }}
       >

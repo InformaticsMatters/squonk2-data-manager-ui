@@ -23,7 +23,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       refetchInterval: interval,
       onSuccess: (data) => {
         const task = data as Task | undefined;
-        const hasStarted = !!task?.states?.find((state) => state.state === 'STARTED');
+        const hasStarted = !!task?.states.find((state) => state.state === 'STARTED');
         if (hasStarted) {
           setInterval(false);
           setIsTaskProcessing(false);

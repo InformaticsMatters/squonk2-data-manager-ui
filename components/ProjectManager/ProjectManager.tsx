@@ -39,9 +39,8 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
   const currentProject = useCurrentProject();
   const { user } = useUser();
 
-  const isOwner = !!user && user?.preferred_username === currentProject?.owner;
-  const isEditor =
-    !!user && !!currentProject?.editors?.includes(user?.preferred_username as string);
+  const isOwner = !!user && user.preferred_username === currentProject?.owner;
+  const isEditor = !!user && !!currentProject?.editors.includes(user.preferred_username as string);
 
   const deleteProjectMutation = useDeleteProject();
 
@@ -85,7 +84,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
     >
       <Grid item>
         <Autocomplete
-          getOptionLabel={(option) => (option as any).name}
+          getOptionLabel={(option) => option.name}
           id="project-selection"
           loading={isLoading}
           options={projects ?? []}

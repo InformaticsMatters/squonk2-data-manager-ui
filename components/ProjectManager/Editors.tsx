@@ -46,7 +46,7 @@ export const Editors: FC<EditorsProps> = ({ currentProject }) => {
           }
         `}
       >
-        {currentProject.editors?.map((editor) => (
+        {currentProject.editors.map((editor) => (
           <Chip
             key={editor}
             avatar={<Avatar>{editor[0].toUpperCase()}</Avatar>}

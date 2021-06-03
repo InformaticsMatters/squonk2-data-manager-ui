@@ -40,8 +40,8 @@ const Header: React.FC = () => {
           `}
         >
           <NavLink title="Data" />
-          <NavLink title="Execution Manager" />
-          <NavLink title="Tasks" />
+          <NavLink title="Executions" />
+          {/* <NavLink title="Tasks" /> */}
         </nav>
         <div
           css={css`

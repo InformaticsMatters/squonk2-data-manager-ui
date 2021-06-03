@@ -7,7 +7,7 @@ import { ApplicationCard } from '../components/ApplicationCard/ApplicationCard';
 import { useCurrentProject } from '../components/currentProjectContext';
 import Layout from '../components/Layout';
 
-const ExecutionManager = () => {
+const Executions = () => {
   const theme = useTheme();
 
   const currentProject = useCurrentProject();
@@ -35,4 +35,4 @@ const ExecutionManager = () => {
   );
 };
 
-export default withPageAuthRequired(ExecutionManager);
+export default withPageAuthRequired(Executions);

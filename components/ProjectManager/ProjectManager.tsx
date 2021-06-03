@@ -1,11 +1,19 @@
 import React from 'react';
 
+import { useQueryClient } from 'react-query';
+
 import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Grid, TextField } from '@material-ui/core';
+import { Grid, IconButton, InputAdornment, TextField, TextFieldProps } from '@material-ui/core';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
-import { useGetAvailableProjects } from '@squonk/data-manager-client';
+import {
+  getGetAvailableProjectsQueryKey,
+  useDeleteProject,
+  useGetAvailableProjects,
+} from '@squonk/data-manager-client';
 
 import { useCurrentProject, useCurrentProjectId } from '../currentProjectContext';
 import { AddProject } from './AddProject';
@@ -16,6 +24,7 @@ interface ProjectManagerProps {
 }
 
 export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
+  const queryClient = useQueryClient();
   const { data, isLoading } = useGetAvailableProjects();
   const projects = data?.projects;
 
@@ -24,6 +33,37 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
   const { user } = useUser();
 
   const canEdit = !!user && user?.preferred_username === currentProject?.owner;
+
+  const deleteProjectMutation = useDeleteProject();
+
+  const handleDelete = async () => {
+    currentProject?.project_id &&
+      (await deleteProjectMutation.mutateAsync({ projectid: currentProject.project_id }));
+    queryClient.invalidateQueries(getGetAvailableProjectsQueryKey());
+  };
+
+  const textFieldProps: TextFieldProps = {
+    label: 'Select project',
+    variant: 'outlined',
+  };
+
+  const InputProps = {
+    startAdornment: canEdit ? (
+      <>
+        {currentProject?.owner === user?.preferred_username && (
+          <InputAdornment position="start">
+            <IconButton aria-label="Delete selected project" onClick={handleDelete}>
+              <DeleteForeverIcon />
+            </IconButton>
+          </InputAdornment>
+        )}
+
+        {canEdit && <PersonIcon htmlColor="white" />}
+      </>
+    ) : (
+      canEdit && <PersonIcon htmlColor="white" />
+    ),
+  };
 
   return (
     <div
@@ -40,9 +80,13 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
           options={projects ?? []}
           renderInput={(params) =>
             inverted ? (
-              <InvertedTextField {...params} label="Select project" variant="outlined" />
+              <InvertedTextField
+                {...textFieldProps}
+                {...params}
+                InputProps={{ ...params.InputProps, ...InputProps }}
+              />
             ) : (
-              <TextField {...params} label="Select project" variant="outlined" />
+              <TextField {...textFieldProps} {...params} />
             )
           }
           style={{ width: 300 }}

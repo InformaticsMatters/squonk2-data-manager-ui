@@ -40,6 +40,7 @@ export const Editors: FC<EditorsProps> = ({ currentProject }) => {
       <div
         css={css`
           display: flex;
+          flex-wrap: wrap;
           & > * {
             margin: ${theme.spacing(0.5)}px;
           }

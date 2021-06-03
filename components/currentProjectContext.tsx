@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react';
 
-import { ProjectSummary } from '@squonk/data-manager-client';
+import { useGetAvailableProjects } from '@squonk/data-manager-client';
 
-type CurrentProjectState = [
-  currentProject: ProjectSummary | null,
-  setCurrentProject: (newProject: ProjectSummary | null) => void,
+type CurrentProjectIdState = [
+  currentProjectId: string | null,
+  setCurrentProject: (newProjectId: string | null) => void,
 ];
 
-export const CurrentProjectContext = React.createContext<CurrentProjectState>([
+export const CurrentProjectIdContext = React.createContext<CurrentProjectIdState>([
   null,
   () => {
     // Do Nothing
@@ -15,12 +15,22 @@ export const CurrentProjectContext = React.createContext<CurrentProjectState>([
 ]);
 
 export const CurrentProjectProvider: React.FC = ({ children }) => {
-  const state = useState<ProjectSummary | null>(null);
+  const state = useState<string | null>(null);
 
-  return <CurrentProjectContext.Provider value={state}>{children}</CurrentProjectContext.Provider>;
+  return (
+    <CurrentProjectIdContext.Provider value={state}>{children}</CurrentProjectIdContext.Provider>
+  );
 };
 
 /**
  * Get the currently selected project from the CurrentProject context
  */
-export const useCurrentProject = () => useContext(CurrentProjectContext);
+export const useCurrentProjectId = () => useContext(CurrentProjectIdContext);
+
+export const useCurrentProject = () => {
+  const [currentProjectId] = useContext(CurrentProjectIdContext);
+  const { data } = useGetAvailableProjects();
+  const projects = data?.projects;
+
+  return projects?.find((project) => project.project_id === currentProjectId) ?? null;
+};

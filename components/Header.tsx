@@ -1,18 +1,26 @@
 import React from 'react';
 
+import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { AppBar, Toolbar, useTheme } from '@material-ui/core';
 
 import { Logo } from './navigation/Logo';
 import { NavLink } from './navigation/NavLink';
 import { UserMenu } from './navigation/UserMenu';
+import { ProjectManager } from './ProjectManager/ProjectManager';
 
 const Header: React.FC = () => {
   const theme = useTheme();
 
+  const { user } = useUser();
+
   return (
     <AppBar position="static">
-      <Toolbar>
+      <Toolbar
+        css={css`
+          min-height: 80px;
+        `}
+      >
         <Logo />
 
         <nav
@@ -35,7 +43,15 @@ const Header: React.FC = () => {
           <NavLink title="Execution Manager" />
           <NavLink title="Tasks" />
         </nav>
-        <UserMenu />
+        <div
+          css={css`
+            display: flex;
+            margin-left: auto;
+          `}
+        >
+          {user && <ProjectManager inverted />}
+          <UserMenu />
+        </div>
       </Toolbar>
     </AppBar>
   );

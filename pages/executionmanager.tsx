@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, Grid, useTheme } from '@material-ui/core';
@@ -8,12 +6,11 @@ import { useGetApplications } from '@squonk/data-manager-client';
 import { ApplicationCard } from '../components/ApplicationCard/ApplicationCard';
 import { useCurrentProject } from '../components/currentProjectContext';
 import Layout from '../components/Layout';
-import ProjectManager from '../components/ProjectManager';
 
 const ExecutionManager = () => {
   const theme = useTheme();
 
-  const [currentProject, setCurrentProject] = useCurrentProject();
+  const currentProject = useCurrentProject();
 
   const { data } = useGetApplications();
   const applications = data?.applications;
@@ -26,9 +23,6 @@ const ExecutionManager = () => {
         `}
       >
         <h1>Execution Manager</h1>
-        <Grid container alignItems="center" spacing={1}>
-          <ProjectManager currentProject={currentProject} setCurrentProject={setCurrentProject} />
-        </Grid>
         <Grid container spacing={2}>
           {applications?.map((app) => (
             <Grid item key={app.application_id} md={3} sm={6} xs={12}>

@@ -6,10 +6,10 @@ import { FileError } from 'react-dropzone';
 import { css } from '@emotion/react';
 import { Grid, IconButton, useTheme } from '@material-ui/core';
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
-import { DatasetId, customInstance } from '@squonk/data-manager-client';
+import { customInstance, DatasetId } from '@squonk/data-manager-client';
 
+import { ModalWrapper } from '../ModalWrapper';
 import { Dropzone } from './Dropzone';
-import { ModalWrapper } from './ModalWrapper';
 import { SingleFileUploadWithProgress } from './SingleFileUploader';
 import { getMimeType, mutateAtPosition } from './utils';
 
@@ -79,7 +79,13 @@ export const FileUpload = () => {
       <IconButton onClick={() => setOpen(true)}>
         <CloudUploadRoundedIcon />
       </IconButton>
-      <ModalWrapper open={open} onClose={() => setOpen(false)} onSubmit={uploadFiles}>
+      <ModalWrapper
+        title="Upload New Datasets"
+        submitText="Upload"
+        open={open}
+        onClose={() => setOpen(false)}
+        onSubmit={uploadFiles}
+      >
         <Dropzone files={files} setFiles={setFiles}>
           <Grid container direction="column">
             {files.map((fileWrapper, index) => (

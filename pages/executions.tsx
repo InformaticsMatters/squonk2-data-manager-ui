@@ -1,10 +1,13 @@
+import React from 'react';
+
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, Grid, useTheme } from '@material-ui/core';
-import { useGetApplications } from '@squonk/data-manager-client';
+import { useGetApplications, useGetJobs } from '@squonk/data-manager-client';
 
-import { ApplicationCard } from '../components/ApplicationCard/ApplicationCard';
 import { useCurrentProject } from '../components/currentProjectContext';
+import { ApplicationCard } from '../components/ExecutionsCard/ApplicationCard';
+import { JobCard } from '../components/ExecutionsCard/JobCard';
 import Layout from '../components/Layout';
 
 const Executions = () => {
@@ -12,8 +15,11 @@ const Executions = () => {
 
   const currentProject = useCurrentProject();
 
-  const { data } = useGetApplications();
-  const applications = data?.applications;
+  const { data: applicationsData } = useGetApplications();
+  const applications = applicationsData?.applications;
+
+  const { data: jobsData } = useGetJobs();
+  const jobs = jobsData?.jobs;
 
   return (
     <Layout>
@@ -27,6 +33,11 @@ const Executions = () => {
           {applications?.map((app) => (
             <Grid item key={app.application_id} md={3} sm={6} xs={12}>
               <ApplicationCard app={app} project={currentProject} />
+            </Grid>
+          ))}
+          {jobs?.map((job) => (
+            <Grid item key={job.id} md={3} sm={6} xs={12}>
+              <JobCard job={job} project={currentProject} />
             </Grid>
           ))}
         </Grid>

@@ -49,11 +49,14 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
   return (
     <Card>
       <CardContent>
-        <Typography variant="h6">{app.kind}</Typography>
+        <Typography component="h2" variant="h6">
+          {app.kind}
+        </Typography>
+        <Typography variant="subtitle1">{application?.group}</Typography>
       </CardContent>
       <CardContent>
         <Typography gutterBottom variant="subtitle1">
-          Launch Instance
+          <b>Launch Instance</b>
         </Typography>
         <Grid container spacing={1}>
           <Grid item xs={12}>
@@ -61,7 +64,6 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
               fullWidth
               label="Instance Name"
               size="small"
-              variant="outlined"
               onChange={(e) => setName(e.target.value)}
             />
           </Grid>
@@ -73,7 +75,6 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
                 defaultValue=""
                 label="Version"
                 size="small"
-                variant="outlined"
                 onChange={(e) => setVersion(e.target.value)}
               >
                 {application.versions.map((version) => (

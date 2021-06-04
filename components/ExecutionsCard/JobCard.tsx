@@ -1,0 +1,49 @@
+import React from 'react';
+
+import { css } from '@emotion/react';
+import { Card, CardActions, CardContent, Chip, Typography, useTheme } from '@material-ui/core';
+import { JobSummary, ProjectSummary } from '@squonk/data-manager-client';
+
+import { JobModal } from './JobModal';
+
+interface ApplicationCardProps {
+  job: JobSummary;
+  project: ProjectSummary | null;
+}
+
+export const JobCard: React.FC<ApplicationCardProps> = ({ job, project }) => {
+  const theme = useTheme();
+  return (
+    <Card>
+      <CardContent>
+        <Typography component="h2" variant="h6">
+          {job.job}
+        </Typography>
+        <Typography variant="subtitle1">{job.collection}</Typography>
+      </CardContent>
+      <CardContent>
+        <Typography gutterBottom variant="subtitle1">
+          <b>Run Job</b>
+        </Typography>
+        <Typography variant="body2">{job.version}</Typography>
+        <Typography>{job.category}</Typography>
+        <div
+          css={css`
+            display: flex;
+            flex-wrap: wrap;
+            & > * {
+              margin: ${theme.spacing(0.5)}px;
+            }
+          `}
+        >
+          {job.keywords.map((word) => (
+            <Chip key={word} label={word} />
+          ))}
+        </div>
+      </CardContent>
+      <CardActions>
+        <JobModal jobId={job.id} />
+      </CardActions>
+    </Card>
+  );
+};

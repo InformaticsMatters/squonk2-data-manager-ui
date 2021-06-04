@@ -75,7 +75,6 @@ export function SingleFileUploadWithProgress({
             inputRef={fileNameRef}
             placeholder={stem}
             size="small"
-            variant="outlined"
             // onChange={(e) => rename(e.target.value)}
             onChange={() => rename(composeNewFilePath())}
             onClick={(e) => e.stopPropagation()}
@@ -97,7 +96,6 @@ export function SingleFileUploadWithProgress({
             inputRef={fileExtRef}
             label="Ext"
             size="small"
-            variant="outlined"
             onClick={(e) => {
               e.stopPropagation();
               rename(composeNewFilePath());

@@ -56,7 +56,6 @@ export const PopoverTextField: FC<PopoverTextFieldProps> = ({
             inputProps={{ maxLength: 18 }}
             label={textFieldLabel}
             name={textFieldName}
-            variant="outlined"
           />
         </form>
       </Popover>

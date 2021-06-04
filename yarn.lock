@@ -461,10 +461,10 @@
   dependencies:
     axios "^0.21.1"
 
-"@squonk/mui-theme@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@squonk/mui-theme/-/mui-theme-0.4.1.tgz#5a1f93a154e43cf5737feb2d142ac45835118e54"
-  integrity sha512-s09cqGyMz7a023hmqKCvZlXklN4zgl/BBCX1+guX2N04bqFMmsFtjB9xWFhRkHGewWvS5JH7oJLe40I8b9innw==
+"@squonk/mui-theme@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@squonk/mui-theme/-/mui-theme-0.6.0.tgz#13d38c3a46e5e02c51a360946f0ae6cfc8898546"
+  integrity sha512-NJn1+8Xsc909i7SgvVDNlR5wqt2CBenXT1hPM2GU6Bpsc/MAsf/1R49CmGcxMglZ4VsH3tuBJpZd6guz0Mmx0g==
   dependencies:
     "@material-ui/core" "^4.11.3"
 

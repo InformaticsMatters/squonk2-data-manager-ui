@@ -66,7 +66,6 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
               id="select-project"
               label="Project"
               value={project}
-              variant="outlined"
               onChange={(e) => setProject(e.target.value)}
             >
               {projects?.map((project) => (
@@ -85,7 +84,6 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
               id="select-type"
               label="File Type"
               value={type}
-              variant="outlined"
               onChange={(e) => setType(e.target.value as SelectableMimeTypes)}
             >
               {types?.map((type) => (
@@ -103,7 +101,6 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
               }}
               label="Path"
               value={path}
-              variant="outlined"
               onChange={(e) => setPath(e.target.value)}
             />
           </FormControl>

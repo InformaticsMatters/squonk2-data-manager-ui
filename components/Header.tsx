@@ -16,11 +16,7 @@ const Header: React.FC = () => {
 
   return (
     <AppBar position="static">
-      <Toolbar
-        css={css`
-          min-height: 80px;
-        `}
-      >
+      <Toolbar>
         <Logo />
 
         <nav

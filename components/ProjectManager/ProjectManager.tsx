@@ -52,7 +52,6 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
 
   const textFieldProps: TextFieldProps = {
     label: 'Select project',
-    variant: 'outlined',
   };
 
   const InputProps = {
@@ -94,9 +93,10 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
                 {...textFieldProps}
                 {...params}
                 InputProps={{ ...params.InputProps, ...InputProps }}
+                size="medium" // Must be last to override size being set to undefined by above spreads
               />
             ) : (
-              <TextField {...textFieldProps} {...params} />
+              <TextField {...textFieldProps} {...params} size="medium" />
             )
           }
           style={{ width: 300 }}

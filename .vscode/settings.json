@@ -50,12 +50,13 @@
     "ui/file-upload",
     "ui/create-instance",
     "editor",
-    "auth"
+    "auth",
     "orval",
     "release",
     "editor",
     "auth",
     "experimentation",
-    "husky"
+    "husky",
+    "appearance",
   ],
 }

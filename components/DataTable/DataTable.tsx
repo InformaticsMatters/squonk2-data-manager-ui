@@ -1,10 +1,12 @@
-import React from 'react';
+import { FC } from 'react';
 
 import {
   CustomTreeData,
   IntegratedFiltering,
+  IntegratedSelection,
   IntegratedSorting,
   SearchState,
+  SelectionState,
   SortingState,
   TreeDataState,
 } from '@devexpress/dx-react-grid';
@@ -12,41 +14,58 @@ import {
   Grid,
   SearchPanel,
   TableHeaderRow,
+  TableSelection,
   TableTreeColumn,
   Toolbar,
   VirtualTable,
 } from '@devexpress/dx-react-grid-material-ui';
 
 import { CustomCell } from './CustomCell';
-import { Column, DataTableProps, TableRow } from './types';
+import { useSelectedFiles } from './FileSelectionContext';
+import { Column, Row, TableRow } from './types';
 
 const columns: Column[] = [
   { name: 'fileName', title: 'File Name' },
   { name: 'owner', title: 'Owner' },
+  { name: 'fullPath', title: 'Full Path' },
   { name: 'actions', title: 'Actions' },
 ];
 
-export const DataTable: React.FC<DataTableProps> = ({ rows }) => {
-  // const [selection, setSelection] = useState<React.ReactText[]>([]);
+export interface DataTableProps {
+  rows: Row[];
+}
+
+export const DataTable: FC<DataTableProps> = ({ rows }) => {
+  const state = useSelectedFiles();
+
+  const handleSelectionChange = (selection: (string | number)[]) => {
+    if (state) {
+      state.updateSelectedFiles(selection as string[]);
+    }
+  };
 
   return (
-    <Grid columns={columns} getRowId={(row) => row.id} rows={rows}>
+    <Grid columns={columns} getRowId={(row: Row) => row.fullPath ?? row.id ?? ''} rows={rows}>
       <SearchState />
-      {/* <SelectionState selection={selection} onSelectionChange={setSelection} /> */}
+      {state && (
+        <SelectionState selection={state.selectedFiles} onSelectionChange={handleSelectionChange} />
+      )}
       <SortingState />
 
       <TreeDataState />
       <CustomTreeData
-        getChildRows={(row: TableRow, rootRows: TableRow[]) => (row ? row.items : rootRows)}
+        getChildRows={(row: TableRow | undefined, rootRows: TableRow[]) =>
+          row ? row.items : rootRows
+        }
       />
 
       <IntegratedFiltering />
-      {/* <IntegratedSelection /> */}
+      {state && <IntegratedSelection />}
       <IntegratedSorting />
 
       <VirtualTable cellComponent={CustomCell} />
       <TableHeaderRow showSortingControls />
-      {/* <TableSelection showSelectAll /> */}
+      {state && <TableSelection showSelectAll />}
       <TableTreeColumn for="fileName" />
       <Toolbar />
       <SearchPanel />

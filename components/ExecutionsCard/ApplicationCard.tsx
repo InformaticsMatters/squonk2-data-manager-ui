@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 
 import { css } from '@emotion/react';
 import {
+  Avatar,
   Button,
   Card,
   CardActions,
   CardContent,
+  CardHeader,
   Collapse,
   Grid,
   IconButton,
@@ -48,12 +50,7 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
 
   return (
     <Card>
-      <CardContent>
-        <Typography component="h2" variant="h6">
-          {app.kind}
-        </Typography>
-        <Typography variant="subtitle1">{application?.group}</Typography>
-      </CardContent>
+      <CardHeader avatar={<Avatar>A</Avatar>} title={app.kind} subheader={application?.group} />
       <CardContent>
         <Typography gutterBottom variant="subtitle1">
           <b>Launch Instance</b>

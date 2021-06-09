@@ -1,7 +1,16 @@
 import React from 'react';
 
 import { css } from '@emotion/react';
-import { Card, CardActions, CardContent, Chip, Typography, useTheme } from '@material-ui/core';
+import {
+  Avatar,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Chip,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
 import { JobSummary, ProjectSummary } from '@squonk/data-manager-client';
 
 import { JobModal } from './JobModal';
@@ -15,12 +24,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ job, project }) => {
   const theme = useTheme();
   return (
     <Card>
-      <CardContent>
-        <Typography component="h2" variant="h6">
-          {job.job}
-        </Typography>
-        <Typography variant="subtitle1">{job.collection}</Typography>
-      </CardContent>
+      <CardHeader avatar={<Avatar>J</Avatar>} title={job.job} subheader={job.collection} />
       <CardContent>
         <Typography gutterBottom variant="subtitle1">
           <b>Run Job</b>

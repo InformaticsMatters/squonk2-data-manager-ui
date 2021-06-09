@@ -5,7 +5,7 @@ import { css } from '@emotion/react';
 import { Container, Grid, useTheme } from '@material-ui/core';
 import { useGetApplications, useGetJobs } from '@squonk/data-manager-client';
 
-import { useCurrentProject } from '../components/currentProjectContext';
+import { useCurrentProject } from '../components/CurrentProjectContext';
 import { ApplicationCard } from '../components/ExecutionsCard/ApplicationCard';
 import { JobCard } from '../components/ExecutionsCard/JobCard';
 import Layout from '../components/Layout';

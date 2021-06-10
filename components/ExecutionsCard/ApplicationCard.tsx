@@ -13,6 +13,7 @@ import {
   IconButton,
   MenuItem,
   TextField,
+  Tooltip,
   Typography,
 } from '@material-ui/core';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
@@ -42,11 +43,13 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
   const [name, setName] = useState('');
   const [version, setVersion] = useState<string | null>(null);
 
-  const mutation = useCreateInstance();
+  const createInstanceMutation = useCreateInstance();
 
   const [isTaskProcessing, setIsTaskProcessing] = useState(false);
   const [currentTask, setCurrentTask] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
+
+  const isCreationEnabled = !(!project || isTaskProcessing || !name || !version);
 
   return (
     <Card>
@@ -97,26 +100,36 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
           justify-content: center;
         `}
       >
-        <Button
-          color="primary"
-          disabled={!project || isTaskProcessing || !name || !version}
-          size="small"
-          onClick={async () => {
-            setIsTaskProcessing(true);
-            const response: InstanceId = await mutation.mutateAsync({
-              data: {
-                application_id: app.application_id,
-                application_version: version ?? '',
-                as_name: name,
-                project_id: project?.project_id ?? '',
-              },
-            });
-
-            response.task_id && setCurrentTask(response.task_id);
-          }}
+        <Tooltip
+          arrow
+          title={
+            isCreationEnabled
+              ? 'Create an instance of this app'
+              : 'Ensure a project is selected and a name & version is provided'
+          }
         >
-          Create Instance
-        </Button>
+          <span>
+            <Button
+              color="primary"
+              disabled={!isCreationEnabled}
+              size="small"
+              onClick={async () => {
+                setIsTaskProcessing(true);
+                const response: InstanceId = await createInstanceMutation.mutateAsync({
+                  data: {
+                    application_id: app.application_id,
+                    application_version: version ?? '',
+                    as_name: name,
+                    project_id: project?.project_id ?? '',
+                  },
+                });
+                response.task_id && setCurrentTask(response.task_id);
+              }}
+            >
+              Create Instance
+            </Button>
+          </span>
+        </Tooltip>
         <IconButton
           aria-expanded={expanded}
           aria-label="show instances"

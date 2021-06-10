@@ -2,11 +2,19 @@ import React, { FC, useState } from 'react';
 
 import { Button, Grid, Tooltip, Typography } from '@material-ui/core';
 import Form from '@rjsf/material-ui';
-import { useGetJob } from '@squonk/data-manager-client';
+import { useCreateInstance, useGetJob } from '@squonk/data-manager-client';
 
+import { useCurrentProjectId } from '../CurrentProjectContext';
 import { useSelectedFiles } from '../DataTable/FileSelectionContext';
 import { ModalWrapper } from '../ModalWrapper';
 import { JobInputFields } from './JobInputFields';
+
+interface JobSpecification {
+  collection: string;
+  job: string;
+  version: string;
+  variables: { [key: string]: string | string[] };
+}
 
 interface JobModalProps {
   jobId: number;
@@ -14,20 +22,75 @@ interface JobModalProps {
 
 export const JobModal: FC<JobModalProps> = ({ jobId }) => {
   const [open, setOpen] = useState(false);
-  const { data: job } = useGetJob(jobId);
+
+  const [projectId] = useCurrentProjectId();
+  const { data: job } = useGetJob(jobId); // Get extra details about the job
+
+  // Data to populate file/dir inputs
   const selectedFilesState = useSelectedFiles();
 
-  const [optionsFormData, setOptionsFormData] = useState(null);
+  // Control for generated options form
+  const [optionsFormData, setOptionsFormData] = useState<any>(null);
 
-  console.log(optionsFormData);
+  // Control for the inputs fields
+  const [inputsData, setInputsData] = useState({});
+
+  const createInstanceMutation = useCreateInstance();
+  const handleRunJob = async () => {
+    if (projectId && job) {
+      // Construct the specification
+      const specification: JobSpecification = {
+        collection: job.collection,
+        job: job.job,
+        version: job.version,
+        variables: { ...inputsData, ...optionsFormData },
+      };
+
+      if (projectId) {
+        await createInstanceMutation.mutateAsync({
+          data: {
+            application_id: 'datamanagerjobs.squonk.it',
+            application_version: 'v1',
+            as_name: 'Test',
+            project_id: projectId,
+            specification: JSON.stringify(specification),
+          },
+        });
+      }
+      // We run a job via the instance endpoint
+
+      setOpen(false);
+    }
+  };
 
   if (selectedFilesState) {
     return (
       <>
-        <Button color="primary" disabled={!job} onClick={() => setOpen(true)}>
-          Run
-        </Button>
-        <ModalWrapper title="Run Job" submitText="Run" open={open} onClose={() => setOpen(false)}>
+        <Tooltip
+          arrow
+          title={
+            selectedFilesState.selectedFiles.length
+              ? 'Run this job'
+              : 'Please select some files on the data tab first'
+          }
+        >
+          <span>
+            <Button
+              color="primary"
+              disabled={!job || !selectedFilesState.selectedFiles.length}
+              onClick={() => setOpen(true)}
+            >
+              Run
+            </Button>
+          </span>
+        </Tooltip>
+        <ModalWrapper
+          title="Run Job"
+          submitText="Run"
+          open={open}
+          onClose={() => setOpen(false)}
+          onSubmit={handleRunJob}
+        >
           {job && (
             <Grid container spacing={2}>
               {job.variables.inputs && (
@@ -37,7 +100,10 @@ export const JobModal: FC<JobModalProps> = ({ jobId }) => {
                       <b>Inputs</b>
                     </Typography>
                   </Grid>
-                  <JobInputFields inputs={job.variables.inputs as any} />
+                  <JobInputFields
+                    setInputsData={setInputsData}
+                    inputs={job.variables.inputs as any}
+                  />
                 </>
               )}
 
@@ -48,6 +114,9 @@ export const JobModal: FC<JobModalProps> = ({ jobId }) => {
                       <b>Options</b>
                     </Typography>
                     <Form
+                      showErrorList={false}
+                      liveValidate
+                      noHtml5Validate
                       schema={job.variables.options as any}
                       formData={optionsFormData}
                       onChange={(event) => setOptionsFormData(event.formData)}

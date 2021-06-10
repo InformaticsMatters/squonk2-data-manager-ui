@@ -28,7 +28,6 @@ const Executions = () => {
           margin-top: ${theme.spacing(4)}px;
         `}
       >
-        <h1>Execution Manager</h1>
         <Grid container spacing={2}>
           {applications?.map((app) => (
             <Grid item key={app.application_id} md={3} sm={6} xs={12}>
@@ -37,7 +36,7 @@ const Executions = () => {
           ))}
           {jobs?.map((job) => (
             <Grid item key={job.id} md={3} sm={6} xs={12}>
-              <JobCard job={job} project={currentProject} />
+              <JobCard job={job} />
             </Grid>
           ))}
         </Grid>

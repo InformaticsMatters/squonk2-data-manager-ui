@@ -58,6 +58,7 @@
     "experimentation",
     "husky",
     "appearance",
-    "ui/jobs"
+    "ui/jobs",
+    "jobs"
   ],
 }

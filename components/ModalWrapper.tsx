@@ -39,7 +39,11 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
         <Button color="default" onClick={onClose}>
           Close
         </Button>
-        {onSubmit && <Button onClick={onSubmit}>{submitText}</Button>}
+        {onSubmit && (
+          <Button color="primary" onClick={onSubmit}>
+            {submitText}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

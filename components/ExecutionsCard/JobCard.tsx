@@ -11,16 +11,15 @@ import {
   Typography,
   useTheme,
 } from '@material-ui/core';
-import { JobSummary, ProjectSummary } from '@squonk/data-manager-client';
+import { JobSummary } from '@squonk/data-manager-client';
 
 import { JobModal } from './JobModal';
 
 interface ApplicationCardProps {
   job: JobSummary;
-  project: ProjectSummary | null;
 }
 
-export const JobCard: React.FC<ApplicationCardProps> = ({ job, project }) => {
+export const JobCard: React.FC<ApplicationCardProps> = ({ job }) => {
   const theme = useTheme();
   return (
     <Card>

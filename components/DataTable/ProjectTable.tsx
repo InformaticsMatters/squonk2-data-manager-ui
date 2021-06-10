@@ -18,7 +18,6 @@ export const ProjectTable: FC<{ currentProject: ProjectSummary }> = memo(({ curr
       fullPath: '',
     }));
     const nestedRows = addFullPaths('', nestRows(rows));
-    console.log(nestedRows);
     return <DataTable rows={nestedRows} />;
   }
   return <div>Project Datasets Loading...</div>;

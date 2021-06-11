@@ -59,6 +59,7 @@
     "husky",
     "appearance",
     "ui/jobs",
-    "jobs"
+    "jobs",
+    "executions-cards"
   ],
 }

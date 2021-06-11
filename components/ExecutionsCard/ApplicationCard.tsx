@@ -1,32 +1,23 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 
-import { css } from '@emotion/react';
 import {
-  Avatar,
   Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  Collapse,
+  ButtonProps,
   Grid,
-  IconButton,
   MenuItem,
   TextField,
   Tooltip,
   Typography,
 } from '@material-ui/core';
-import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import {
   ApplicationSummary,
   InstanceId,
   ProjectSummary,
   useCreateInstance,
   useGetApplication,
-  useGetInstances,
 } from '@squonk/data-manager-client';
 
-import { InstanceDetail } from './InstanceDetail';
+import { BaseCard } from './BaseCard';
 import { ProgressBar } from './ProgressBar';
 
 interface ApplicationCardProps {
@@ -34,11 +25,8 @@ interface ApplicationCardProps {
   project: ProjectSummary | null;
 }
 
-export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }) => {
+export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
   const { data: application } = useGetApplication(app.application_id);
-
-  const { data: instancesData } = useGetInstances();
-  const instances = instancesData?.instances;
 
   const [name, setName] = useState('');
   const [version, setVersion] = useState<string | null>(null);
@@ -47,113 +35,89 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ app, project }
 
   const [isTaskProcessing, setIsTaskProcessing] = useState(false);
   const [currentTask, setCurrentTask] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState(false);
 
   const isCreationEnabled = !(!project || isTaskProcessing || !name || !version);
 
+  const handleCreateInstance = async () => {
+    setIsTaskProcessing(true);
+    const response: InstanceId = await createInstanceMutation.mutateAsync({
+      data: {
+        application_id: app.application_id,
+        application_version: version ?? '',
+        as_name: name,
+        project_id: project?.project_id ?? '',
+      },
+    });
+    response.task_id && setCurrentTask(response.task_id);
+  };
+
   return (
-    <Card>
-      <CardHeader avatar={<Avatar>A</Avatar>} title={app.kind} subheader={application?.group} />
-      <CardContent>
-        <Typography gutterBottom variant="subtitle1">
-          <b>Launch Instance</b>
-        </Typography>
-        <Grid container spacing={1}>
-          <Grid item xs={12}>
+    <BaseCard
+      cardType="Application"
+      applicationId={app.application_id}
+      title={app.kind}
+      subtitle={application?.group}
+      actions={
+        <CreateInstanceButton disabled={!isCreationEnabled} onClick={handleCreateInstance} />
+      }
+    >
+      <Typography gutterBottom variant="subtitle1" component="h3">
+        <b>Launch Instance</b>
+      </Typography>
+      <Grid container spacing={1}>
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            label="Instance Name"
+            size="small"
+            onChange={(e) => setName(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          {application && (
             <TextField
               fullWidth
-              label="Instance Name"
+              select
+              defaultValue=""
+              label="Version"
               size="small"
-              onChange={(e) => setName(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            {application && (
-              <TextField
-                fullWidth
-                select
-                defaultValue=""
-                label="Version"
-                size="small"
-                onChange={(e) => setVersion(e.target.value)}
-              >
-                {application.versions.map((version) => (
-                  <MenuItem key={version} value={version}>
-                    {version}
-                  </MenuItem>
-                ))}
-              </TextField>
-            )}
-          </Grid>
-          <Grid item xs={12}>
-            <ProgressBar
-              isTaskProcessing={isTaskProcessing}
-              setIsTaskProcessing={setIsTaskProcessing}
-              taskId={currentTask}
-            />
-          </Grid>
-        </Grid>
-      </CardContent>
-      <CardActions
-        disableSpacing
-        css={css`
-          justify-content: center;
-        `}
-      >
-        <Tooltip
-          arrow
-          title={
-            isCreationEnabled
-              ? 'Create an instance of this app'
-              : 'Ensure a project is selected and a name & version is provided'
-          }
-        >
-          <span>
-            <Button
-              color="primary"
-              disabled={!isCreationEnabled}
-              size="small"
-              onClick={async () => {
-                setIsTaskProcessing(true);
-                const response: InstanceId = await createInstanceMutation.mutateAsync({
-                  data: {
-                    application_id: app.application_id,
-                    application_version: version ?? '',
-                    as_name: name,
-                    project_id: project?.project_id ?? '',
-                  },
-                });
-                response.task_id && setCurrentTask(response.task_id);
-              }}
+              onChange={(e) => setVersion(e.target.value)}
             >
-              Create Instance
-            </Button>
-          </span>
-        </Tooltip>
-        <IconButton
-          aria-expanded={expanded}
-          aria-label="show instances"
-          css={css`
-            margin-left: auto;
-          `}
-          onClick={() => setExpanded(!expanded)}
-        >
-          <ExpandMoreRoundedIcon />
-        </IconButton>
-      </CardActions>
-
-      <Collapse unmountOnExit in={expanded} timeout="auto">
-        <CardContent>
-          <Typography variant="h5">Running Instances</Typography>
-          {instances?.length ? (
-            instances.map((instance) => (
-              <InstanceDetail instance={instance} key={instance.instance_id} />
-            ))
-          ) : (
-            <Typography variant="body2">No Instances Running</Typography>
+              {application.versions.map((version) => (
+                <MenuItem key={version} value={version}>
+                  {version}
+                </MenuItem>
+              ))}
+            </TextField>
           )}
-        </CardContent>
-      </Collapse>
-    </Card>
+        </Grid>
+        <Grid item xs={12}>
+          <ProgressBar
+            isTaskProcessing={isTaskProcessing}
+            setIsTaskProcessing={setIsTaskProcessing}
+            taskId={currentTask}
+          />
+        </Grid>
+      </Grid>
+    </BaseCard>
+  );
+};
+
+const CreateInstanceButton: FC<ButtonProps> = ({ disabled, ...buttonProps }) => {
+  return (
+    <Tooltip
+      arrow
+      title={
+        disabled
+          ? 'Ensure a project is selected and a name & version is provided'
+          : 'Create an instance of this app'
+      }
+    >
+      <span>
+        <Button color="primary" size="small" disabled={disabled} {...buttonProps}>
+          Create Instance
+        </Button>
+      </span>
+    </Tooltip>
   );
 };

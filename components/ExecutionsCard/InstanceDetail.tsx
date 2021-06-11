@@ -2,40 +2,51 @@ import React from 'react';
 
 import { useQueryClient } from 'react-query';
 
-import { Button, Typography } from '@material-ui/core';
+import { Button as MuiButton, Grid, Typography } from '@material-ui/core';
 import {
   getGetInstancesQueryKey,
   Instance,
-  InstanceSummary,
   useGetInstance,
   useTerminateInstance,
 } from '@squonk/data-manager-client';
 
-export const InstanceDetail: React.FC<{ instance: InstanceSummary }> = ({ instance }) => {
+// Button Props doesn't support target and rel when using as a Link
+const Button = MuiButton as any;
+
+export const InstanceDetail: React.FC<{ instanceId: string }> = ({ instanceId }) => {
   const queryClient = useQueryClient();
-  const { data } = useGetInstance(instance.instance_id);
+  const { data } = useGetInstance(instanceId);
   const detailedInstance = data as Instance | undefined;
 
   const mutation = useTerminateInstance();
   return (
     <>
-      <Typography>Name: {detailedInstance?.name}</Typography>
-      <Typography>Version: {detailedInstance?.application_version}</Typography>
-      <Typography>Owner: {detailedInstance?.owner}</Typography>
-      <Typography>
-        URL:{' '}
-        <a href={detailedInstance?.url} rel="noopener noreferrer" target="_blank">
-          Open
-        </a>
-      </Typography>
-      <Button
-        onClick={async () => {
-          await mutation.mutateAsync({ instanceid: instance.instance_id });
-          queryClient.invalidateQueries(getGetInstancesQueryKey());
-        }}
-      >
-        Terminate
-      </Button>
+      <Typography variant="body2">Name: {detailedInstance?.name}</Typography>
+      <Typography variant="body2">Version: {detailedInstance?.application_version}</Typography>
+      <Typography variant="body2">Owner: {detailedInstance?.owner}</Typography>
+
+      <Grid container>
+        <Grid item>
+          <Button
+            onClick={async () => {
+              await mutation.mutateAsync({ instanceid: instanceId });
+              queryClient.invalidateQueries(getGetInstancesQueryKey());
+            }}
+          >
+            Terminate
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            href={detailedInstance?.url}
+            rel="noopener noreferrer"
+            target="_blank"
+            color="primary"
+          >
+            Open
+          </Button>
+        </Grid>
+      </Grid>
     </>
   );
 };

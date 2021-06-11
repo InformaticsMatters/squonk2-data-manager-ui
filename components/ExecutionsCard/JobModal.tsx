@@ -46,16 +46,18 @@ export const JobModal: FC<JobModalProps> = ({ jobId }) => {
         variables: { ...inputsData, ...optionsFormData },
       };
 
-      if (projectId) {
-        await createInstanceMutation.mutateAsync({
+      if (projectId && process.env.NEXT_PUBLIC_JOBS_APPID) {
+        const instance = await createInstanceMutation.mutateAsync({
           data: {
-            application_id: 'datamanagerjobs.squonk.it',
+            application_id: process.env.NEXT_PUBLIC_JOBS_APPID,
             application_version: 'v1',
             as_name: 'Test',
             project_id: projectId,
             specification: JSON.stringify(specification),
           },
         });
+
+        // instance.task_id
       }
       // We run a job via the instance endpoint
 

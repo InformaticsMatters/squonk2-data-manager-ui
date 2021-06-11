@@ -484,17 +484,17 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.0.1.tgz#d26729db850fa327b7cacc5522252194404226f5"
   integrity sha512-Qm9hBEBu18wt1PO2flE7LPb30BHMQt1eQgbV76YntdNk73XZGpn3izvGTYxbGgzXKgbCjiia0uxTd3aTNQrY/g==
 
-"@squonk/data-manager-client@^0.0.1-alpha.15":
-  version "0.0.1-alpha.15"
-  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.0.1-alpha.15.tgz#fbf9b844406c073a9067f763d37c218e22af39cf"
-  integrity sha512-3fVIiEdCL3yIN4dqHpP0a8K3hdVbva4TTm+8E7QSr3avJDOsN3zs55FdLskYunTufDZhQuYCiHuzfXxs3z4JzA==
+"@squonk/data-manager-client@^0.0.1-alpha.16":
+  version "0.0.1-alpha.16"
+  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.0.1-alpha.16.tgz#85a940c5ba90f1959034826762cb5bf7d4d1ac69"
+  integrity sha512-kRfSt1QcDa3C4vGFSkQLwNzhPEkMvswtbsEO98DDZUO/2kO5Ch0tMjWjUlB+LNL5eFVQdQI8ZAqfIXHo34IBlA==
   dependencies:
     axios "^0.21.1"
 
-"@squonk/mui-theme@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@squonk/mui-theme/-/mui-theme-0.6.0.tgz#13d38c3a46e5e02c51a360946f0ae6cfc8898546"
-  integrity sha512-NJn1+8Xsc909i7SgvVDNlR5wqt2CBenXT1hPM2GU6Bpsc/MAsf/1R49CmGcxMglZ4VsH3tuBJpZd6guz0Mmx0g==
+"@squonk/mui-theme@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@squonk/mui-theme/-/mui-theme-0.7.1.tgz#1074a73ea4fc933bdfa29c8c7c422c0b7d872689"
+  integrity sha512-DYYIA/QeVZCo8nK82TAS0Ms4tClMSoKcVaJo5Zkf5uCcZ9e7dpiqcIC2Km/deU+g2nLwGAl+lOBiATImlE+YdA==
   dependencies:
     "@material-ui/core" "^4.11.3"
 

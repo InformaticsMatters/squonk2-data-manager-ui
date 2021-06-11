@@ -24,20 +24,26 @@ const Header: React.FC = () => {
             display: flex;
             align-items: center;
 
-            & a {
+            & div {
               display: inline-block;
-              width: 100px;
+              width: 120px;
               text-align: center;
             }
 
-            & a:first-of-type {
+            & div:first-of-type {
               margin-left: ${theme.spacing(8)}px;
             }
           `}
         >
-          <NavLink title="Data" />
-          <NavLink title="Executions" />
-          {/* <NavLink title="Tasks" /> */}
+          <div>
+            <NavLink title="Data" />
+          </div>
+          <div>
+            <NavLink title="Executions" />
+          </div>
+          <div>
+            <NavLink title="Tasks" />
+          </div>
         </nav>
         <div
           css={css`

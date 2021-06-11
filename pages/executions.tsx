@@ -1,8 +1,17 @@
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import { Container, Grid, MenuItem, TextField, useTheme } from '@material-ui/core';
+import {
+  Container,
+  Grid,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  TextField,
+  useTheme,
+} from '@material-ui/core';
+import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import { useGetApplications, useGetJobs } from '@squonk/data-manager-client';
 
 import { useCurrentProject } from '../components/CurrentProjectContext';
@@ -14,6 +23,7 @@ const Executions: FC = () => {
   const theme = useTheme();
 
   const [executionTypes, setExecutionTypes] = useState<string[]>(['application', 'job']);
+  const [searchValue, setSearchValue] = useState('');
 
   const currentProject = useCurrentProject();
 
@@ -37,7 +47,7 @@ const Executions: FC = () => {
             margin-bottom: ${theme.spacing(2)}px;
           `}
         >
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6} md={4}>
             <TextField
               fullWidth
               onChange={(event) => {
@@ -54,20 +64,49 @@ const Executions: FC = () => {
               <MenuItem value="job">Jobs</MenuItem>
             </TextField>
           </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            css={css`
+              margin-left: auto;
+            `}
+          >
+            <TextField
+              fullWidth
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+              label="Search"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton edge="end">
+                      <SearchRoundedIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
         </Grid>
         <Grid container spacing={2}>
           {executionTypes.includes('application') &&
-            applications?.map((app) => (
-              <Grid item key={app.application_id} md={3} sm={6} xs={12}>
-                <ApplicationCard app={app} project={currentProject} />
-              </Grid>
-            ))}
+            applications
+              ?.filter((app) => app.kind.toLowerCase().includes(searchValue.toLowerCase()))
+              ?.map((app) => (
+                <Grid item key={app.application_id} md={3} sm={6} xs={12}>
+                  <ApplicationCard app={app} project={currentProject} />
+                </Grid>
+              ))}
           {executionTypes.includes('job') &&
-            jobs?.map((job) => (
-              <Grid item key={job.id} md={3} sm={6} xs={12}>
-                <JobCard job={job} />
-              </Grid>
-            ))}
+            jobs
+              ?.filter((job) => job.job.toLowerCase().includes(searchValue.toLowerCase()))
+              ?.map((job) => (
+                <Grid item key={job.id} md={3} sm={6} xs={12}>
+                  <JobCard job={job} />
+                </Grid>
+              ))}
         </Grid>
       </Container>
     </Layout>

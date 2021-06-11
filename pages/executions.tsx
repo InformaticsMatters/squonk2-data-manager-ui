@@ -1,8 +1,8 @@
-import React from 'react';
+import { FC, useState } from 'react';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import { Container, Grid, useTheme } from '@material-ui/core';
+import { Container, Grid, MenuItem, TextField, useTheme } from '@material-ui/core';
 import { useGetApplications, useGetJobs } from '@squonk/data-manager-client';
 
 import { useCurrentProject } from '../components/CurrentProjectContext';
@@ -10,8 +10,10 @@ import { ApplicationCard } from '../components/ExecutionsCard/ApplicationCard';
 import { JobCard } from '../components/ExecutionsCard/JobCard';
 import Layout from '../components/Layout';
 
-const Executions = () => {
+const Executions: FC = () => {
   const theme = useTheme();
+
+  const [executionTypes, setExecutionTypes] = useState<string[]>(['application', 'job']);
 
   const currentProject = useCurrentProject();
 
@@ -28,17 +30,44 @@ const Executions = () => {
           margin-top: ${theme.spacing(4)}px;
         `}
       >
+        <Grid
+          container
+          spacing={2}
+          css={css`
+            margin-bottom: ${theme.spacing(2)}px;
+          `}
+        >
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              onChange={(event) => {
+                // When using TextField for a select multiple, we have to cast the event type as
+                // ts can't workout it's an array
+                setExecutionTypes(event.target.value as unknown as string[]);
+              }}
+              label="Filter Executions"
+              select
+              SelectProps={{ multiple: true }}
+              value={executionTypes}
+            >
+              <MenuItem value="application">Applications</MenuItem>
+              <MenuItem value="job">Jobs</MenuItem>
+            </TextField>
+          </Grid>
+        </Grid>
         <Grid container spacing={2}>
-          {applications?.map((app) => (
-            <Grid item key={app.application_id} md={3} sm={6} xs={12}>
-              <ApplicationCard app={app} project={currentProject} />
-            </Grid>
-          ))}
-          {jobs?.map((job) => (
-            <Grid item key={job.id} md={3} sm={6} xs={12}>
-              <JobCard job={job} />
-            </Grid>
-          ))}
+          {executionTypes.includes('application') &&
+            applications?.map((app) => (
+              <Grid item key={app.application_id} md={3} sm={6} xs={12}>
+                <ApplicationCard app={app} project={currentProject} />
+              </Grid>
+            ))}
+          {executionTypes.includes('job') &&
+            jobs?.map((job) => (
+              <Grid item key={job.id} md={3} sm={6} xs={12}>
+                <JobCard job={job} />
+              </Grid>
+            ))}
         </Grid>
       </Container>
     </Layout>

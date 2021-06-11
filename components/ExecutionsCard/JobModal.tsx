@@ -2,25 +2,20 @@ import React, { FC, useState } from 'react';
 
 import { Button, Grid, Tooltip, Typography } from '@material-ui/core';
 import Form from '@rjsf/material-ui';
-import { useCreateInstance, useGetJob } from '@squonk/data-manager-client';
+import { useGetJob } from '@squonk/data-manager-client';
 
 import { useCurrentProjectId } from '../CurrentProjectContext';
 import { useSelectedFiles } from '../DataTable/FileSelectionContext';
 import { ModalWrapper } from '../ModalWrapper';
+import { JobSpecification } from './JobCard';
 import { JobInputFields } from './JobInputFields';
-
-interface JobSpecification {
-  collection: string;
-  job: string;
-  version: string;
-  variables: { [key: string]: string | string[] };
-}
 
 interface JobModalProps {
   jobId: number;
+  handleRunJob: (specification: JobSpecification) => void;
 }
 
-export const JobModal: FC<JobModalProps> = ({ jobId }) => {
+export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob }) => {
   const [open, setOpen] = useState(false);
 
   const [projectId] = useCurrentProjectId();
@@ -35,8 +30,7 @@ export const JobModal: FC<JobModalProps> = ({ jobId }) => {
   // Control for the inputs fields
   const [inputsData, setInputsData] = useState({});
 
-  const createInstanceMutation = useCreateInstance();
-  const handleRunJob = async () => {
+  const handleSubmit = async () => {
     if (projectId && job) {
       // Construct the specification
       const specification: JobSpecification = {
@@ -46,20 +40,7 @@ export const JobModal: FC<JobModalProps> = ({ jobId }) => {
         variables: { ...inputsData, ...optionsFormData },
       };
 
-      if (projectId && process.env.NEXT_PUBLIC_JOBS_APPID) {
-        const instance = await createInstanceMutation.mutateAsync({
-          data: {
-            application_id: process.env.NEXT_PUBLIC_JOBS_APPID,
-            application_version: 'v1',
-            as_name: 'Test',
-            project_id: projectId,
-            specification: JSON.stringify(specification),
-          },
-        });
-
-        // instance.task_id
-      }
-      // We run a job via the instance endpoint
+      handleRunJob(specification);
 
       setOpen(false);
     }
@@ -91,7 +72,7 @@ export const JobModal: FC<JobModalProps> = ({ jobId }) => {
           submitText="Run"
           open={open}
           onClose={() => setOpen(false)}
-          onSubmit={handleRunJob}
+          onSubmit={handleSubmit}
         >
           {job && (
             <Grid container spacing={2}>

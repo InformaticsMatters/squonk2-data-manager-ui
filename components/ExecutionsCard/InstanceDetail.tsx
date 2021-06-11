@@ -2,23 +2,21 @@ import React from 'react';
 
 import { useQueryClient } from 'react-query';
 
-import { Button as MuiButton, Grid, Typography } from '@material-ui/core';
+import { Button, Grid, Typography } from '@material-ui/core';
 import {
   getGetInstancesQueryKey,
-  Instance,
   useGetInstance,
   useTerminateInstance,
 } from '@squonk/data-manager-client';
 
 // Button Props doesn't support target and rel when using as a Link
-const Button = MuiButton as any;
+const HrefButton = Button as any;
 
 export const InstanceDetail: React.FC<{ instanceId: string }> = ({ instanceId }) => {
   const queryClient = useQueryClient();
-  const { data } = useGetInstance(instanceId);
-  const detailedInstance = data as Instance | undefined;
+  const { data: detailedInstance } = useGetInstance(instanceId);
 
-  const mutation = useTerminateInstance();
+  const terminateInstanceMutation = useTerminateInstance();
   return (
     <>
       <Typography variant="body2">Name: {detailedInstance?.name}</Typography>
@@ -29,23 +27,25 @@ export const InstanceDetail: React.FC<{ instanceId: string }> = ({ instanceId })
         <Grid item>
           <Button
             onClick={async () => {
-              await mutation.mutateAsync({ instanceid: instanceId });
+              await terminateInstanceMutation.mutateAsync({ instanceid: instanceId });
               queryClient.invalidateQueries(getGetInstancesQueryKey());
             }}
           >
             Terminate
           </Button>
         </Grid>
-        <Grid item>
-          <Button
-            href={detailedInstance?.url}
-            rel="noopener noreferrer"
-            target="_blank"
-            color="primary"
-          >
-            Open
-          </Button>
-        </Grid>
+        {!!detailedInstance?.url && (
+          <Grid item>
+            <HrefButton
+              href={detailedInstance.url}
+              rel="noopener noreferrer"
+              target="_blank"
+              color="primary"
+            >
+              Open
+            </HrefButton>
+          </Grid>
+        )}
       </Grid>
     </>
   );

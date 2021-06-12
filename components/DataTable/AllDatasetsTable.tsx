@@ -14,7 +14,8 @@ export const AllDatasetsTable = () => {
         owner: owner as string,
         editors: editors as string[],
         published: published as string,
-        path: null,
+        path: '',
+        fullPath: null,
         actions: {},
       }),
     );

@@ -22,7 +22,7 @@ import {
   useGetAvailableProjects,
 } from '@squonk/data-manager-client';
 
-import { useCurrentProject, useCurrentProjectId } from '../currentProjectContext';
+import { useCurrentProject, useCurrentProjectId } from '../CurrentProjectContext';
 import { AddProject } from './AddProject';
 import { EditProject } from './EditProject';
 

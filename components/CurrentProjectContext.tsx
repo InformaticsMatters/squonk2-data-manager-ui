@@ -2,9 +2,11 @@ import React, { useContext, useState } from 'react';
 
 import { useGetAvailableProjects } from '@squonk/data-manager-client';
 
+export type ProjectId = string | null;
+
 type CurrentProjectIdState = [
-  currentProjectId: string | null,
-  setCurrentProject: (newProjectId: string | null) => void,
+  currentProjectId: ProjectId,
+  setCurrentProject: (newProjectId: ProjectId) => void,
 ];
 
 export const CurrentProjectIdContext = React.createContext<CurrentProjectIdState>([
@@ -15,7 +17,7 @@ export const CurrentProjectIdContext = React.createContext<CurrentProjectIdState
 ]);
 
 export const CurrentProjectProvider: React.FC = ({ children }) => {
-  const state = useState<string | null>(null);
+  const state = useState<ProjectId>(null);
 
   return (
     <CurrentProjectIdContext.Provider value={state}>{children}</CurrentProjectIdContext.Provider>

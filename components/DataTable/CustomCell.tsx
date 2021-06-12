@@ -36,7 +36,7 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
       return (
         <Cell column={column} row={row} {...rest}>
           {/* <Button>Download</Button> */}
-          {id.startsWith('dataset') && (
+          {id?.startsWith('dataset') && (
             <>
               <Button
                 onClick={async () => {
@@ -54,7 +54,7 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
               <AttachButton datasetId={id} />
             </>
           )}
-          {id.startsWith('file') && projectId !== undefined && (
+          {id?.startsWith('file') && projectId !== undefined && (
             <Button
               onClick={async () => {
                 await detachMutation.mutateAsync(

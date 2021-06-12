@@ -1,12 +1,5 @@
 import { Row, TableRow } from './types';
 
-let currentId = 0;
-
-const getNewId = () => {
-  // We could use a fancier solution instead of a sequential ID
-  return ++currentId;
-};
-
 /**
  * Reorganises a flat array of rows into a nested structure for use in the Data-Table component.
  * @param rows Flat rows for a Data-Table component with a path that points to where the row should appear in a nested structure
@@ -17,15 +10,15 @@ export const nestRows = (rows: Row[]): TableRow[] => {
 
   rows.forEach(({ path, ...row }) => {
     // Divide a path "/example/path/to/somewhere" into array ['example', 'path', 'to', 'somewhere']
-    const parts = path?.split('/').filter((subpath) => subpath.length) ?? [];
+    const parts = path.split('/').filter((subpath) => subpath.length); // Remove empty strings
 
-    // Check for root items
     if (!parts.length) {
-      nested.push({ ...row, path: '', items: null });
+      // If the paths array is empty it's a root item
+      nested.push({ ...row, path: '/', items: null });
     } else {
       // Find the leaf in the tree to add the file to
       const level = getPath(nested, parts);
-      level.items.push({ ...row });
+      level.items?.push({ ...row, path: '', items: null });
     }
   });
 
@@ -38,7 +31,7 @@ export const nestRows = (rows: Row[]): TableRow[] => {
  * @param path Sections of the file path
  * @returns The working sub-node
  */
-const getPath = (node: TableRow[], path: string[]): any => {
+const getPath = (node: TableRow[], path: string[]): TableRow => {
   // Work on the first element of the array per function call
   const [first, ...rest] = path;
   // Check that it has already been created
@@ -47,17 +40,35 @@ const getPath = (node: TableRow[], path: string[]): any => {
   // Not created? Create it with a generated id and append
   if (level === undefined) {
     level = {
-      items: [] as TableRow[],
       fileName: first,
-      path: '',
-      id: getNewId().toString(),
+      items: [],
+      path: first,
+      fullPath: '',
       actions: {},
     };
-    node.push(level as TableRow);
+    node.push(level);
   }
   // Base Case! This breaks the recursion when we reach a leaf
   if (!rest.length) {
     return level;
   }
-  return getPath((level as TableRow).items as TableRow[], rest);
+  return getPath(level.items!, rest);
+};
+
+export const addFullPaths = (basePath: string, rows: TableRow[]): TableRow[] => {
+  rows.forEach((row) => {
+    const { path, items, fileName } = row;
+    let fullPath: string;
+    if (row.id) {
+      fullPath = basePath + fileName;
+    } else {
+      fullPath = basePath + path;
+    }
+    row.fullPath = fullPath;
+    if (items) {
+      addFullPaths(basePath + path + '/', items);
+    }
+  });
+
+  return rows;
 };

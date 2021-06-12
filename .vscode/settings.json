@@ -58,5 +58,8 @@
     "experimentation",
     "husky",
     "appearance",
+    "ui/jobs",
+    "jobs",
+    "executions-cards"
   ],
 }

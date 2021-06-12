@@ -5,11 +5,14 @@ import { useQueryClient } from 'react-query';
 import { css } from '@emotion/react';
 import {
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
+  FormGroup,
   InputAdornment,
   MenuItem,
   TextField,
@@ -41,6 +44,8 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
   const [project, setProject] = useState<string>('');
   const [type, setType] = useState<SelectableMimeTypes>('');
   const [path, setPath] = useState('');
+  const [isImmutable, setIsImmutable] = useState(false);
+  const [isCompress, setIsCompress] = useState(true);
 
   return (
     <>
@@ -93,6 +98,28 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
               ))}
             </TextField>
           </FormControl>
+          <FormGroup row>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isImmutable}
+                  onChange={(event) => setIsImmutable(event.target.checked)}
+                  name="immutable"
+                />
+              }
+              label="Immutable"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isCompress}
+                  onChange={(event) => setIsCompress(event.target.checked)}
+                  name="compress"
+                />
+              }
+              label="Compress"
+            />
+          </FormGroup>
           <FormControl fullWidth margin="dense">
             <TextField
               helperText="A path within the Project to add the File, default is the project root ('/'), the mount-point within the application container. "
@@ -118,6 +145,8 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
                     data: {
                       dataset_id: datasetId,
                       project_id: project,
+                      immutable: isImmutable,
+                      compress: isCompress,
                       as_type: type,
                       path: `/${path}`,
                     },

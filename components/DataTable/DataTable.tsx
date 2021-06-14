@@ -27,7 +27,7 @@ import { Column, Row, TableRow } from './types';
 const columns: Column[] = [
   { name: 'fileName', title: 'File Name' },
   { name: 'owner', title: 'Owner' },
-  { name: 'fullPath', title: 'Full Path' },
+  { name: 'immutable', title: 'Immutable' },
   { name: 'actions', title: 'Actions' },
 ];
 

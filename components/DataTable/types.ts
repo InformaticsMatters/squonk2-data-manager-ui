@@ -1,9 +1,8 @@
 export interface ColumnTypes {
   fileName: string;
-  file_path: string;
   owner: string;
+  immutable?: boolean;
   actions: string;
-  fullPath: string;
 }
 
 export type Column = { name: keyof ColumnTypes; title: string };
@@ -22,6 +21,7 @@ export interface Row {
   path: string;
   fullPath: string | null;
   actions: Partial<ActionArguments>;
+  immutable?: boolean;
 }
 
 export interface TableRow extends Row {

@@ -30,6 +30,7 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
 
   const id = row.id;
   const projectId = row.actions.projectId;
+  const immutable = row.immutable;
 
   switch (column.name) {
     case 'actions':
@@ -60,6 +61,12 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
             </Button>
           )}
           {/* <Button>Edit</Button> */}
+        </Cell>
+      );
+    case 'immutable':
+      return (
+        <Cell column={column} row={row} {...rest}>
+          {immutable === undefined ? '-' : immutable ? 'Yes' : 'No'}
         </Cell>
       );
     default:

@@ -45,6 +45,7 @@ const getPath = (node: TableRow[], path: string[]): TableRow => {
       path: first,
       fullPath: '',
       actions: {},
+      immutable: false,
     };
     node.push(level);
   }

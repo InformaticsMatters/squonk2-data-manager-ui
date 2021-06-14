@@ -7,7 +7,6 @@ import {
   MenuItem,
   TextField,
   Tooltip,
-  Typography,
   useTheme,
 } from '@material-ui/core';
 import {
@@ -67,9 +66,6 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
       }
       color={theme.palette.secondary.dark}
     >
-      <Typography gutterBottom variant="subtitle1" component="h3">
-        <b>Launch Instance</b>
-      </Typography>
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <TextField

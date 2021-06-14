@@ -40,13 +40,8 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
             <>
               <Button
                 onClick={async () => {
-                  await deleteMutation.mutateAsync(
-                    { datasetid: id },
-                    {
-                      onSuccess: () =>
-                        queryClient.invalidateQueries(getGetAvailableDatasetsQueryKey()),
-                    },
-                  );
+                  await deleteMutation.mutateAsync({ datasetid: id });
+                  queryClient.invalidateQueries(getGetAvailableDatasetsQueryKey());
                 }}
               >
                 Delete
@@ -57,13 +52,8 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
           {id?.startsWith('file') && projectId !== undefined && (
             <Button
               onClick={async () => {
-                await detachMutation.mutateAsync(
-                  { fileid: id },
-                  {
-                    onSuccess: () =>
-                      queryClient.invalidateQueries(getGetProjectQueryKey(projectId)),
-                  },
-                );
+                await detachMutation.mutateAsync({ fileid: id });
+                queryClient.invalidateQueries(getGetProjectQueryKey(projectId));
               }}
             >
               Detach

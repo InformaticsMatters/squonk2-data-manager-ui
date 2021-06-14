@@ -139,25 +139,20 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
           <Button
             disabled={isProjectsLoading || isTypesLoading}
             onClick={async () => {
-              type !== '' &&
-                (await attachFileMutation.mutateAsync(
-                  {
-                    data: {
-                      dataset_id: datasetId,
-                      project_id: project,
-                      immutable: isImmutable,
-                      compress: isCompress,
-                      as_type: type,
-                      path: `/${path}`,
-                    },
+              if (type !== '') {
+                await attachFileMutation.mutateAsync({
+                  data: {
+                    dataset_id: datasetId,
+                    project_id: project,
+                    immutable: isImmutable,
+                    compress: isCompress,
+                    as_type: type,
+                    path: `/${path}`,
                   },
-                  {
-                    onSuccess: () => {
-                      queryClient.invalidateQueries(getGetProjectQueryKey(project));
-                      setOpen(false);
-                    },
-                  },
-                ));
+                });
+                queryClient.invalidateQueries(getGetProjectQueryKey(project));
+                setOpen(false);
+              }
             }}
           >
             Attach

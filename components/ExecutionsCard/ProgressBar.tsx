@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 
 import { useQueryClient } from 'react-query';
 
-import { LinearProgress } from '@material-ui/core';
-import { getGetInstancesQueryKey, useGetTask } from '@squonk/data-manager-client';
+import { css } from '@emotion/react';
+import { LinearProgress, Typography, useTheme } from '@material-ui/core';
+import { getGetInstancesQueryKey, Task, useGetTask } from '@squonk/data-manager-client';
 
 interface ProgressBarProps {
   taskId: string | null;
   isTaskProcessing: boolean;
   setIsTaskProcessing: (newValue: boolean) => void;
-  endState: string;
+  endState?: string;
 }
 
-export const ProgressBar: React.FC<ProgressBarProps> = ({
+export const ProgressBar: FC<ProgressBarProps> = ({
   isTaskProcessing,
   setIsTaskProcessing,
   taskId,
@@ -20,12 +21,24 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const [pollingInterval, setPollingInterval] = useState<number | false>(2000);
-  const { data, isLoading } = useGetTask(taskId ?? '', undefined, {
+
+  const [task, setTask] = useState<Task | null>(null);
+  useGetTask(taskId ?? '', undefined, {
     query: {
       refetchInterval: pollingInterval,
       onSuccess: (task) => {
-        const hasStarted = !!task.states.find((state) => state.state === endState);
-        if (hasStarted) {
+        setTask(task);
+
+        let isFinished: boolean;
+        if (endState) {
+          // If the component is passed and end state we wait for that state
+          isFinished = !!task.states.find((state) => state.state === endState);
+        } else {
+          // Otherwise we wait for a task to be `done`
+          isFinished = task.done;
+        }
+
+        if (isFinished) {
           setPollingInterval(false);
           setIsTaskProcessing(false);
           queryClient.invalidateQueries(getGetInstancesQueryKey());
@@ -35,8 +48,35 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   });
 
   useEffect(() => {
+    // Restart polling when a new job in run
     setPollingInterval(2000);
+    // Reset the task from the previous run
+    // This just hides the last event that persists after a job is run
+    setTask(null);
   }, [taskId]);
 
-  return <div>{isTaskProcessing && <LinearProgress />}</div>;
+  const theme = useTheme();
+  if (task === null) {
+    return null;
+  }
+
+  // Get the latest status and event for display
+  const status = task.states[task.states.length - 1]?.state;
+  const event = task.events[task.events.length - 1]?.message;
+
+  if (isTaskProcessing || status === 'FAILURE' || event) {
+    return (
+      <div
+        css={css`
+          margin-top: ${theme.spacing(1)}px;
+        `}
+      >
+        {isTaskProcessing && <LinearProgress />}
+        {event && <Typography variant="body2">{event}</Typography>}
+        {status === 'FAILURE' && <Typography color="error">{status}</Typography>}
+      </div>
+    );
+  } else {
+    return null;
+  }
 };

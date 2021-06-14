@@ -51,7 +51,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ job }) => {
       applicationId={process.env.NEXT_PUBLIC_JOBS_APPID!}
       title={job.job}
       subtitle={job.collection}
-      actions={<JobModal jobId={job.id} handleRunJob={handleRunJob} />}
+      actions={<JobModal jobId={job.id} handleRunJob={handleRunJob} disabled={isTaskProcessing} />}
     >
       <Typography gutterBottom variant="subtitle1" component="h3">
         <b>Run Job</b>
@@ -76,7 +76,6 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ job }) => {
           isTaskProcessing={isTaskProcessing}
           setIsTaskProcessing={setIsTaskProcessing}
           taskId={currentTask}
-          endState="STARTED"
         />
       </Grid>
     </BaseCard>

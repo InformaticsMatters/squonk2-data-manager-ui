@@ -98,7 +98,7 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
             isTaskProcessing={isTaskProcessing}
             setIsTaskProcessing={setIsTaskProcessing}
             taskId={currentTask}
-            endState=""
+            endState="STARTED"
           />
         </Grid>
       </Grid>

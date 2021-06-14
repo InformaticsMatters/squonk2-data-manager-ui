@@ -13,9 +13,10 @@ import { JobInputFields } from './JobInputFields';
 interface JobModalProps {
   jobId: number;
   handleRunJob: (specification: JobSpecification) => void;
+  disabled?: boolean;
 }
 
-export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob }) => {
+export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob, disabled }) => {
   const [open, setOpen] = useState(false);
 
   const [projectId] = useCurrentProjectId();
@@ -47,20 +48,18 @@ export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob }) => {
   };
 
   if (selectedFilesState) {
+    const tooltipTitle = selectedFilesState.selectedFiles.length
+      ? disabled
+        ? 'This job is currently in use'
+        : 'Run this job'
+      : 'Please select some files on the data tab first';
     return (
       <>
-        <Tooltip
-          arrow
-          title={
-            selectedFilesState.selectedFiles.length
-              ? 'Run this job'
-              : 'Please select some files on the data tab first'
-          }
-        >
+        <Tooltip arrow title={tooltipTitle}>
           <span>
             <Button
               color="primary"
-              disabled={!job || !selectedFilesState.selectedFiles.length}
+              disabled={!job || !selectedFilesState.selectedFiles.length || disabled}
               onClick={() => setOpen(true)}
             >
               Run

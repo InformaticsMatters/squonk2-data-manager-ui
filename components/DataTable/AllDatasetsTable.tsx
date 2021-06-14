@@ -1,3 +1,6 @@
+import React from 'react';
+
+import { Typography } from '@material-ui/core';
 import { useGetAvailableDatasets } from '@squonk/data-manager-client';
 
 import { DataTable } from './DataTable';
@@ -20,7 +23,14 @@ export const AllDatasetsTable = () => {
       }),
     );
 
-    return <DataTable rows={rows} />;
+    return (
+      <>
+        <Typography variant="h4" component="h1">
+          Datasets
+        </Typography>
+        <DataTable rows={rows} />
+      </>
+    );
   }
   return <div>Orphans Loading...</div>;
 };

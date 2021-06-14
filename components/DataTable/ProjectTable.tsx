@@ -1,5 +1,6 @@
-import { FC, memo } from 'react';
+import React, { FC, memo } from 'react';
 
+import { Typography } from '@material-ui/core';
 import { ProjectSummary, useGetProject } from '@squonk/data-manager-client';
 
 import { DataTable } from './DataTable';
@@ -18,7 +19,14 @@ export const ProjectTable: FC<{ currentProject: ProjectSummary }> = memo(({ curr
       fullPath: '',
     }));
     const nestedRows = addFullPaths('', nestRows(rows));
-    return <DataTable rows={nestedRows} />;
+    return (
+      <>
+        <Typography variant="h4" component="h1">
+          Project: {currentProject.name}
+        </Typography>
+        <DataTable rows={nestedRows} />
+      </>
+    );
   }
   return <div>Project Datasets Loading...</div>;
 });

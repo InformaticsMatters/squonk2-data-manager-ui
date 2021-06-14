@@ -11,7 +11,7 @@ import { customInstance, DatasetId } from '@squonk/data-manager-client';
 import { ModalWrapper } from '../ModalWrapper';
 import { Dropzone } from './Dropzone';
 import { SingleFileUploadWithProgress } from './SingleFileUploader';
-import { getMimeType, mutateAtPosition } from './utils';
+import { mutateAtPosition } from './utils';
 
 export interface UploadableFile {
   id: string;
@@ -20,6 +20,7 @@ export interface UploadableFile {
   errors: FileError[];
   progress: number;
   rename?: string;
+  mimeType: string;
 }
 
 export const FileUpload = () => {
@@ -36,11 +37,11 @@ export const FileUpload = () => {
   };
 
   const uploadFiles = () => {
-    files.forEach(async ({ file, rename }, index) => {
+    files.forEach(async ({ file, rename, mimeType }, index) => {
       const data = {
         dataset_file: file,
         as_filename: rename ?? file.name,
-        dataset_type: getMimeType(file.name),
+        dataset_type: mimeType,
       };
 
       try {
@@ -101,6 +102,10 @@ export const FileUpload = () => {
                   fileWrapper={fileWrapper}
                   rename={(newName) => {
                     files[index].rename = newName;
+                    setFiles(mutateAtPosition(files, index, files[index]));
+                  }}
+                  changeMimeType={(newType) => {
+                    files[index].mimeType = newType;
                     setFiles(mutateAtPosition(files, index, files[index]));
                   }}
                   onDelete={onDelete}

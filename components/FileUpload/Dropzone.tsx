@@ -7,7 +7,9 @@ import { css } from '@emotion/react';
 import { Divider, useTheme } from '@material-ui/core';
 
 import { UploadableFile } from './FileUpload';
-import { allowedFileTypes } from './utils';
+import { useFileExtensions } from './useFileExtensions';
+import { useMimeTypeLookup } from './useMimeTypeLookup';
+import { getMimeFromFileName } from './utils';
 
 interface DropzoneProps {
   files: UploadableFile[];
@@ -15,11 +17,13 @@ interface DropzoneProps {
 }
 
 export const Dropzone: React.FC<DropzoneProps> = ({ children, files, setFiles }) => {
-  const theme = useTheme();
+  const allowedFileTypes = useFileExtensions();
+  const mimeLookup = useMimeTypeLookup();
 
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
     const mappedAccepted = acceptedFiles.map((file) => ({
       file,
+      mimeType: getMimeFromFileName(file.name, mimeLookup),
       errors: [],
       id: uuidv4(),
       progress: 0,
@@ -27,6 +31,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({ children, files, setFiles })
     }));
     const mappedRejected = rejectedFiles.map((rejection) => ({
       ...rejection,
+      mimeType: getMimeFromFileName(rejection.file.name, mimeLookup),
       id: uuidv4(),
       progress: 0,
       taskId: null,
@@ -34,12 +39,16 @@ export const Dropzone: React.FC<DropzoneProps> = ({ children, files, setFiles })
     setFiles([...files, ...mappedAccepted, ...mappedRejected]);
   }, []);
 
+  const patchedFileExtensions = allowedFileTypes ?? [];
+  // TODO: allow gzipped files to be uploaded
+  // patchedFileExtensions.push('.gz');
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: allowedFileTypes,
+    accept: patchedFileExtensions,
     maxSize: 25 * 1024 ** 2, // 25 MB - same as the API route limit
   });
 
+  const theme = useTheme();
   return (
     <div
       {...getRootProps()}

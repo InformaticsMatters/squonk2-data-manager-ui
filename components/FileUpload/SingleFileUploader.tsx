@@ -16,13 +16,15 @@ import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import { Task, useGetTask } from '@squonk/data-manager-client';
 
-import { allowedFileTypes } from './utils';
+import { useFileExtensions } from './useFileExtensions';
+import { useMimeTypeLookup } from './useMimeTypeLookup';
 
 import type { UploadableFile } from './FileUpload';
 export interface SingleFileUploadWithProgressProps {
   fileWrapper: UploadableFile;
   errors: FileError[];
   rename: (newName: string) => void;
+  changeMimeType: (newType: string) => void;
   onDelete: (file: File) => void;
 }
 
@@ -31,6 +33,7 @@ export function SingleFileUploadWithProgress({
   onDelete,
   errors,
   rename,
+  changeMimeType,
 }: SingleFileUploadWithProgressProps) {
   const fileNameRef = useRef<HTMLInputElement>();
   const fileExtRef = useRef<HTMLInputElement>();
@@ -54,6 +57,9 @@ export function SingleFileUploadWithProgress({
       },
     },
   });
+
+  const allowedFileTypes = useFileExtensions();
+  const mimeLookup = useMimeTypeLookup();
 
   const theme = useTheme();
   return (
@@ -96,12 +102,14 @@ export function SingleFileUploadWithProgress({
             inputRef={fileExtRef}
             label="Ext"
             size="small"
-            onClick={(e) => {
+            onChange={(e) => {
               e.stopPropagation();
               rename(composeNewFilePath());
+
+              changeMimeType(mimeLookup[e.target.value]);
             }}
           >
-            {allowedFileTypes.map((fileType) => (
+            {allowedFileTypes?.map((fileType) => (
               <MenuItem key={fileType} value={fileType}>
                 {fileType}
               </MenuItem>

@@ -8,6 +8,7 @@ import {
   TextField,
   Tooltip,
   Typography,
+  useTheme,
 } from '@material-ui/core';
 import {
   ApplicationSummary,
@@ -53,6 +54,8 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
     }
   };
 
+  const theme = useTheme();
+
   return (
     <BaseCard
       cardType="Application"
@@ -62,6 +65,7 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
       actions={
         <CreateInstanceButton disabled={!isCreationEnabled} onClick={handleCreateInstance} />
       }
+      color={theme.palette.secondary.dark}
     >
       <Typography gutterBottom variant="subtitle1" component="h3">
         <b>Launch Instance</b>

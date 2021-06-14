@@ -52,6 +52,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ job }) => {
       title={job.job}
       subtitle={job.collection}
       actions={<JobModal jobId={job.id} handleRunJob={handleRunJob} disabled={isTaskProcessing} />}
+      color={theme.palette.primary.main}
     >
       <Typography gutterBottom variant="subtitle1" component="h3">
         <b>Run Job</b>

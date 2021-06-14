@@ -22,6 +22,7 @@ interface BaseCardProps {
   applicationId: string;
   title: string;
   subtitle?: string;
+  color?: string;
 }
 
 export const BaseCard: FC<BaseCardProps> = ({
@@ -31,6 +32,7 @@ export const BaseCard: FC<BaseCardProps> = ({
   applicationId,
   title,
   subtitle,
+  color,
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -42,7 +44,19 @@ export const BaseCard: FC<BaseCardProps> = ({
   return (
     <Card>
       <CardHeader
-        avatar={<Avatar>{cardType[0].toUpperCase()}</Avatar>}
+        avatar={
+          <Avatar
+            css={
+              color
+                ? css`
+                    background-color: ${color};
+                  `
+                : undefined
+            }
+          >
+            {cardType[0].toUpperCase()}
+          </Avatar>
+        }
         title={title}
         subheader={subtitle}
       />

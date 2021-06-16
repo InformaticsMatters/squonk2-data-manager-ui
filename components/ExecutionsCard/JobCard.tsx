@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { css } from '@emotion/react';
 import { Chip, Grid, Typography, useTheme } from '@material-ui/core';
-import { JobSummary, useCreateInstance } from '@squonk/data-manager-client';
+import { InstanceId, JobSummary, useCreateInstance } from '@squonk/data-manager-client';
 
 import { useCurrentProjectId } from '../CurrentProjectContext';
 import { BaseCard } from './BaseCard';
@@ -40,7 +40,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ job }) => {
           specification: JSON.stringify(specification),
         },
       });
-      setCurrentTask(instance.task_id);
+      setCurrentTask((instance as InstanceId).task_id);
     }
   };
 

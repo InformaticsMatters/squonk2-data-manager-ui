@@ -41,7 +41,7 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
   const handleCreateInstance = async () => {
     setIsTaskProcessing(true);
     if (project) {
-      const response: InstanceId = await createInstanceMutation.mutateAsync({
+      const response = await createInstanceMutation.mutateAsync({
         data: {
           application_id: app.application_id,
           application_version: version ?? '',
@@ -49,7 +49,7 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
           project_id: project.project_id,
         },
       });
-      setCurrentTask(response.task_id);
+      setCurrentTask((response as InstanceId).task_id);
     }
   };
 

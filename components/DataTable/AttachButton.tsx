@@ -18,7 +18,6 @@ import {
   TextField,
 } from '@material-ui/core';
 import {
-  DatasetAttachBodyAsType,
   getGetProjectQueryKey,
   useAttachFile,
   useGetAvailableProjects,
@@ -27,7 +26,7 @@ import {
 
 import { SlideUpTransition } from '../SlideUpTransition';
 
-type SelectableMimeTypes = DatasetAttachBodyAsType | '';
+type SelectableMimeTypes = string | '';
 
 export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => {
   const [open, setOpen] = useState(false);

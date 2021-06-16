@@ -31,7 +31,7 @@ export const JobInputFields: FC<JobInputFieldsProps> = ({ inputs, setInputsData 
   // selectedFilesState is undefined if no project is selected.
   // This shouldn't happen here but checking just in case.
   if (selectedFilesState) {
-    const { selectedFiles } = selectedFilesState;
+    const selectedFiles = ['/', ...selectedFilesState.selectedFiles]; // Manually add root of project option
     return (
       <>
         {Object.entries(inputs.properties).map(
@@ -50,11 +50,17 @@ export const JobInputFields: FC<JobInputFieldsProps> = ({ inputs, setInputsData 
                     setInputsData((prevData: any) => ({ ...prevData, [key]: event.target.value }));
                   }}
                 >
-                  {selectedFiles.map((filePath) => (
-                    <MenuItem key={filePath} value={filePath}>
-                      {filePath}
-                    </MenuItem>
-                  ))}
+                  {selectedFiles
+                    .filter(
+                      (filePath) =>
+                        (type === 'file' && filePath.includes('.')) ||
+                        (type === 'dir' && !filePath.includes('.')),
+                    )
+                    .map((filePath) => (
+                      <MenuItem key={filePath} value={filePath}>
+                        {filePath}
+                      </MenuItem>
+                    ))}
                 </TextField>
               </Grid>
             );

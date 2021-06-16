@@ -6,7 +6,12 @@ import { FileError } from 'react-dropzone';
 import { css } from '@emotion/react';
 import { Grid, IconButton, useTheme } from '@material-ui/core';
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
-import { customInstance, DatasetId } from '@squonk/data-manager-client';
+import {
+  customInstance,
+  DatasetId,
+  DatasetUploadBody,
+  useGetTypes,
+} from '@squonk/data-manager-client';
 
 import { ModalWrapper } from '../ModalWrapper';
 import { Dropzone } from './Dropzone';
@@ -30,7 +35,7 @@ export const FileUpload = () => {
   // Array of the user uploaded files with associated errors
   const [files, setFiles] = useState<UploadableFile[]>([]);
 
-  // Combine the validated and unvalidated files into a single array for rendering
+  const { isLoading: isTypesLoading } = useGetTypes(); // Ensure types are prefetched to mime lookup works
 
   const onDelete = (file: File) => {
     setFiles((curr) => curr.filter((fw) => fw.file !== file));
@@ -38,10 +43,11 @@ export const FileUpload = () => {
 
   const uploadFiles = () => {
     files.forEach(async ({ file, rename, mimeType }, index) => {
-      const data = {
+      console.log(mimeType);
+      const data: DatasetUploadBody = {
         dataset_file: file,
-        as_filename: rename ?? file.name,
         dataset_type: mimeType,
+        as_filename: rename ?? file.name,
       };
 
       try {
@@ -52,7 +58,7 @@ export const FileUpload = () => {
           onUploadProgress: (progressEvent) => {
             const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
             const updatedFiles = [...files];
-            updatedFiles[index].progress = progress;
+            updatedFiles[index] = { ...updatedFiles[index], progress };
 
             setFiles(updatedFiles);
           },
@@ -77,7 +83,7 @@ export const FileUpload = () => {
 
   return (
     <>
-      <IconButton onClick={() => setOpen(true)}>
+      <IconButton onClick={() => setOpen(true)} disabled={isTypesLoading}>
         <CloudUploadRoundedIcon />
       </IconButton>
       <ModalWrapper

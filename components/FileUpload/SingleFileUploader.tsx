@@ -84,7 +84,6 @@ export function SingleFileUploadWithProgress({
             inputRef={fileNameRef}
             placeholder={stem}
             size="small"
-            // onChange={(e) => rename(e.target.value)}
             onChange={() => rename(composeNewFilePath())}
             onClick={(e) => e.stopPropagation()}
           />

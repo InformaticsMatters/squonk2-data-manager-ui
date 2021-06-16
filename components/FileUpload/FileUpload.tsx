@@ -43,7 +43,6 @@ export const FileUpload = () => {
 
   const uploadFiles = () => {
     files.forEach(async ({ file, rename, mimeType }, index) => {
-      console.log(mimeType);
       const data: DatasetUploadBody = {
         dataset_file: file,
         dataset_type: mimeType,

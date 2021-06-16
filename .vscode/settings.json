@@ -60,6 +60,7 @@
     "appearance",
     "ui/jobs",
     "jobs",
-    "executions-cards"
+    "executions-cards",
+    "file-to-dataset"
   ],
 }

@@ -1,5 +1,9 @@
 import { useGetTypes } from '@squonk/data-manager-client';
 
+/**
+ * Hook that consumes the types endpoint and returns a mapping from a file extension to a mime-type
+ * @returns Mapping of file extension to mime-type
+ */
 export const useMimeTypeLookup = () => {
   const { data } = useGetTypes();
   const types = data?.types;

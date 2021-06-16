@@ -111,6 +111,7 @@ export function SingleFileUploadWithProgress({
 
               changeMimeType(mimeLookup[e.target.value]);
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             {allowedFileTypes?.map((fileType) => (
               <MenuItem key={fileType} value={fileType}>

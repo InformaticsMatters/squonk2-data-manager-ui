@@ -47,7 +47,7 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
               >
                 Delete
               </Button>
-              <AttachButton datasetId={id} />
+              <AttachButton datasetId={id} fileName={row.fileName} />
             </>
           )}
           {id?.startsWith('file') && projectId !== undefined && (

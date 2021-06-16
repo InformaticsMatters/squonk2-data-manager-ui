@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import { useQueryClient } from 'react-query';
 
@@ -28,7 +28,12 @@ import { SlideUpTransition } from '../SlideUpTransition';
 
 type SelectableMimeTypes = string | '';
 
-export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => {
+interface AttachButtonProps {
+  datasetId: string;
+  fileName: string;
+}
+
+export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName }) => {
   const [open, setOpen] = useState(false);
 
   const queryClient = useQueryClient();
@@ -60,7 +65,7 @@ export const AttachButton: React.FC<{ datasetId: string }> = ({ datasetId }) => 
         TransitionComponent={SlideUpTransition}
         onClose={() => setOpen(false)}
       >
-        <DialogTitle id="attach-dataset-to-project-title">Attach to project</DialogTitle>
+        <DialogTitle id="attach-dataset-to-project-title">Attach {fileName} to project</DialogTitle>
         <DialogContent>
           <FormControl fullWidth margin="dense">
             <TextField

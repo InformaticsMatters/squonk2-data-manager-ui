@@ -49,8 +49,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ job }) => {
     <BaseCard
       cardType="Job"
       applicationId={process.env.NEXT_PUBLIC_JOBS_APPID!}
-      title={job.job}
-      subtitle={job.collection}
+      title={job.name}
       actions={<JobModal jobId={job.id} handleRunJob={handleRunJob} disabled={isTaskProcessing} />}
       color={theme.palette.primary.main}
     >

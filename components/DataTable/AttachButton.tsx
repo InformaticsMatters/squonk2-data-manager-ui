@@ -93,7 +93,7 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName }) => 
               id="select-type"
               label="File Type"
               value={type}
-              onChange={(e) => setType(e.target.value as SelectableMimeTypes)}
+              onChange={(e) => setType(e.target.value)}
             >
               {types?.map((type) => (
                 <MenuItem key={type.mime} value={type.mime}>

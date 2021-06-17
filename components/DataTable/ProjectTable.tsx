@@ -8,7 +8,7 @@ import { addFullPaths, nestRows } from './file-nesting';
 import { Row } from './types';
 
 export const ProjectTable: FC<{ currentProject: ProjectSummary }> = memo(({ currentProject }) => {
-  const { data: project, isLoading } = useGetProject(currentProject.project_id as string);
+  const { data: project, isLoading } = useGetProject(currentProject.project_id);
 
   if (!isLoading && project) {
     const rows: Row[] = project.files.map((file) => {

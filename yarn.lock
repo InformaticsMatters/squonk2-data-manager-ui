@@ -747,10 +747,10 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.0.1.tgz#d26729db850fa327b7cacc5522252194404226f5"
   integrity sha512-Qm9hBEBu18wt1PO2flE7LPb30BHMQt1eQgbV76YntdNk73XZGpn3izvGTYxbGgzXKgbCjiia0uxTd3aTNQrY/g==
 
-"@squonk/data-manager-client@^0.0.1-alpha.17":
-  version "0.0.1-alpha.17"
-  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.0.1-alpha.17.tgz#e32a6efbbf4bb5f438a5e1ff23eced3aa6de0fe1"
-  integrity sha512-fsV2AnwUKDp/+9vSHKXu6iTKeeUuuDQQmZlxHUuFZAKNGmDBW5Z73lZYSm/HFf75WsW9NFmT8G2PYZIHFUAgYw==
+"@squonk/data-manager-client@^0.0.1-alpha.18":
+  version "0.0.1-alpha.18"
+  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.0.1-alpha.18.tgz#aa3597d50c5d29acc874b1a23ec416b59abf8f4e"
+  integrity sha512-rv0689LLVG3SAWk4wM2uTs/SBrZ8aoec8mh4M/BBwwVkQSM7RzmiwbzYinavYOA4CawFgXtL77ahneJk1RanBg==
   dependencies:
     axios "^0.21.1"
 
@@ -4015,10 +4015,10 @@ react-is@16.13.1, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.9.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-query@^3.17.1:
-  version "3.17.1"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.17.1.tgz#01c46bd0c5fa88f8e9ae6c8fc0d0adb4d47d9d0d"
-  integrity sha512-Wux1Dcoh0InYB2dNI1yGCP86Yy5bCGggJWYy91OhJG71QSsl9SRXSGFpT2b75beoe7SDNGZJDQMxbvIQ93o0Ag==
+react-query@^3.17.2:
+  version "3.17.2"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.17.2.tgz#3ed5b0460a5a05332fbb175c36da55fb2d3ff929"
+  integrity sha512-icMtYL/+jUv0Q3n8GRz6CTyMYKh+l5EBKwhkr8qhbtYRORr43YGiN6EJSyw9WFaSQ9bwD1G9ZhaFxow9NMV0Sw==
   dependencies:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"

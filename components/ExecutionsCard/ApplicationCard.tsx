@@ -11,7 +11,6 @@ import {
 } from '@material-ui/core';
 import {
   ApplicationSummary,
-  InstanceId,
   ProjectSummary,
   useCreateInstance,
   useGetApplication,
@@ -49,7 +48,7 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
           project_id: project.project_id,
         },
       });
-      setCurrentTask((response as InstanceId).task_id);
+      setCurrentTask(response.task_id);
     }
   };
 

@@ -747,10 +747,10 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.0.1.tgz#d26729db850fa327b7cacc5522252194404226f5"
   integrity sha512-Qm9hBEBu18wt1PO2flE7LPb30BHMQt1eQgbV76YntdNk73XZGpn3izvGTYxbGgzXKgbCjiia0uxTd3aTNQrY/g==
 
-"@squonk/data-manager-client@^0.0.1-alpha.18":
-  version "0.0.1-alpha.18"
-  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.0.1-alpha.18.tgz#aa3597d50c5d29acc874b1a23ec416b59abf8f4e"
-  integrity sha512-rv0689LLVG3SAWk4wM2uTs/SBrZ8aoec8mh4M/BBwwVkQSM7RzmiwbzYinavYOA4CawFgXtL77ahneJk1RanBg==
+"@squonk/data-manager-client@^0.0.1-alpha.19":
+  version "0.0.1-alpha.19"
+  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.0.1-alpha.19.tgz#3d0b03144780524ed405dbda5b5eeb8009ef4e0c"
+  integrity sha512-tp260ALY/SEEK8eK4u4ajhNLVu+0Oszh+HUx4s5/ofWxnHUUo/HbrIoaXGwhXhNd1HnDbHD/ihoQ/0sQbNTm4Q==
   dependencies:
     axios "^0.21.1"
 

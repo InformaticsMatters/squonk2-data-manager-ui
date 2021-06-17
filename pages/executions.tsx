@@ -110,7 +110,7 @@ const Executions: FC = () => {
               )
               ?.map((job) => (
                 <Grid item key={job.id} md={3} sm={6} xs={12}>
-                  <JobCard job={job} />
+                  <JobCard jobId={job.id} />
                 </Grid>
               ))}
         </Grid>

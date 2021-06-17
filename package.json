@@ -33,7 +33,7 @@
     "@mdx-js/loader": "^1.5.1",
     "@mdx-js/react": "^1.6.18",
     "@next/mdx": "^10.2.3",
-    "@squonk/data-manager-client": "^0.0.1-alpha.18",
+    "@squonk/data-manager-client": "^0.0.1-alpha.19",
     "@squonk/mui-theme": "^0.7.1",
     "@rjsf/core": "^2.5.1",
     "@rjsf/material-ui": "^2.5.1",

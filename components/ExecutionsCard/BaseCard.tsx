@@ -20,7 +20,7 @@ interface BaseCardProps {
   actions: React.ReactNode;
   cardType: string;
   applicationId: string;
-  title: string;
+  title?: string;
   subtitle?: string;
   color?: string;
 }

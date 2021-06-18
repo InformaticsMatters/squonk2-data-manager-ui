@@ -1,28 +1,25 @@
 import { FC } from 'react';
 
 import {
-  CustomTreeData,
   IntegratedFiltering,
   IntegratedSelection,
   IntegratedSorting,
   SearchState,
   SelectionState,
   SortingState,
-  TreeDataState,
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
   SearchPanel,
   TableHeaderRow,
   TableSelection,
-  TableTreeColumn,
   Toolbar,
   VirtualTable,
 } from '@devexpress/dx-react-grid-material-ui';
 
 import { CustomCell } from './CustomCell';
 import { useSelectedFiles } from './FileSelectionContext';
-import { Column, Row, TableRow } from './types';
+import { Column, Row } from './types';
 
 const columns: Column[] = [
   { name: 'fileName', title: 'File Name' },
@@ -52,13 +49,6 @@ export const DataTable: FC<DataTableProps> = ({ rows }) => {
       )}
       <SortingState />
 
-      <TreeDataState />
-      <CustomTreeData
-        getChildRows={(row: TableRow | undefined, rootRows: TableRow[]) =>
-          row ? row.items : rootRows
-        }
-      />
-
       <IntegratedFiltering />
       {state && <IntegratedSelection />}
       <IntegratedSorting />
@@ -66,7 +56,6 @@ export const DataTable: FC<DataTableProps> = ({ rows }) => {
       <VirtualTable cellComponent={CustomCell} />
       <TableHeaderRow showSortingControls />
       {state && <TableSelection showSelectAll />}
-      <TableTreeColumn for="fileName" />
       <Toolbar />
       <SearchPanel />
     </Grid>

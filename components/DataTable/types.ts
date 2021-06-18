@@ -9,6 +9,7 @@ export type Column = { name: keyof ColumnTypes; title: string };
 
 export interface ActionArguments {
   projectId: string;
+  changePath?: (path: string) => void;
 }
 
 // TODO: can probably type this using the never type

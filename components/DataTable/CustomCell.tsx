@@ -4,7 +4,7 @@ import { useQueryClient } from 'react-query';
 
 import { Table } from '@devexpress/dx-react-grid-material-ui';
 import styled from '@emotion/styled';
-import { Button } from '@material-ui/core';
+import { Button, Link, Typography } from '@material-ui/core';
 import {
   getGetAvailableDatasetsQueryKey,
   getGetProjectQueryKey,
@@ -36,8 +36,26 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
   const id = row.id;
   const projectId = row.actions.projectId;
   const immutable = row.immutable;
+  const changePath = row.actions.changePath;
 
   switch (column.name) {
+    case 'fileName':
+      return (
+        <Cell column={column} row={row} {...rest}>
+          {changePath ? (
+            <Link
+              variant="body1"
+              color="inherit"
+              component="button"
+              onClick={() => changePath(row.path)}
+            >
+              {row.fileName}
+            </Link>
+          ) : (
+            <Typography variant="body1">{row.fileName}</Typography>
+          )}
+        </Cell>
+      );
     case 'actions':
       return (
         <Cell column={column} row={row} {...rest}>

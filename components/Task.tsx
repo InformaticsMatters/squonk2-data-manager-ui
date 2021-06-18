@@ -69,7 +69,7 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
               gap: ${theme.spacing(1)}px;
             `}
           >
-            {icon} {latestState.state} • {(task as any)?.purpose}
+            {icon} {latestState.state} • {task?.purpose}
             <span
               css={css`
                 margin-left: auto;

@@ -17,11 +17,11 @@ export interface JobSpecification {
 }
 
 interface ApplicationCardProps {
-  jobId: string;
+  jobId: number;
 }
 
 export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
-  const { data: job } = useGetJob(Number(jobId));
+  const { data: job } = useGetJob(jobId);
   const [projectId] = useCurrentProjectId();
 
   const createInstanceMutation = useCreateInstance();
@@ -31,10 +31,10 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
 
   const handleRunJob = async (specification: JobSpecification) => {
     setIsTaskProcessing(true);
-    if (projectId && process.env.NEXT_PUBLIC_JOBS_APPID) {
+    if (projectId && job && process.env.NEXT_PUBLIC_JOBS_APPID) {
       const instance = await createInstanceMutation.mutateAsync({
         data: {
-          application_id: job?.application.id,
+          application_id: job.application.application_id,
           application_version: 'v1',
           as_name: 'Test',
           project_id: projectId,
@@ -51,9 +51,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
       cardType="Job"
       applicationId={process.env.NEXT_PUBLIC_JOBS_APPID!}
       title={job?.name}
-      actions={
-        <JobModal jobId={Number(jobId)} handleRunJob={handleRunJob} disabled={isTaskProcessing} />
-      }
+      actions={<JobModal jobId={jobId} handleRunJob={handleRunJob} disabled={isTaskProcessing} />}
       color={theme.palette.primary.main}
     >
       <Typography variant="body2">{job?.description}</Typography>

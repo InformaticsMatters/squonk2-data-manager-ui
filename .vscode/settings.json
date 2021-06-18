@@ -61,6 +61,7 @@
     "ui/jobs",
     "jobs",
     "executions-cards",
-    "file-to-dataset"
+    "file-to-dataset",
+    "tasks"
   ],
 }

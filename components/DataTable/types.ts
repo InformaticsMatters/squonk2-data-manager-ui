@@ -7,24 +7,33 @@ export interface ColumnTypes {
 
 export type Column = { name: keyof ColumnTypes; title: string };
 
-export interface ActionArguments {
-  projectId: string;
-  changePath?: (path: string) => void;
+// Both files are folders have these
+interface BaseTableRow {
+  fileName: string;
 }
 
-// TODO: can probably type this using the never type
-export interface Row {
-  id?: string; // Optional for directories
-  fileName: string; // Value to display in the table - name of file or directory
-  owner?: string; // Optional for directories
-  editors?: string[]; // Optional for directories
-  published?: string; // Optional for directories
-  path: string;
-  fullPath: string | null;
-  actions: Partial<ActionArguments>;
+// Properties of datasets only
+export interface TableDataset extends BaseTableRow {
+  id: string;
+  owner: string;
+  editors: string[];
+  published: string;
+}
+
+// Properties of files only
+export interface TableFile extends BaseTableRow {
+  fullPath: string;
+  id?: string;
+  owner: string;
   immutable?: boolean;
+  actions: { projectId: string };
 }
 
-export interface TableRow extends Row {
-  items: TableRow[] | null;
+// Properties of folders only
+export interface TableDir extends BaseTableRow {
+  fullPath: string;
+  path: string;
+  actions: { changePath: (path: string) => void };
 }
+
+export type Row = TableDataset | TableFile | TableDir;

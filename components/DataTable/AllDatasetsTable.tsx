@@ -4,22 +4,20 @@ import { Typography } from '@material-ui/core';
 import { useGetAvailableDatasets } from '@squonk/data-manager-client';
 
 import { DataTable } from './DataTable';
+import { TableDataset } from './types';
 
 export const AllDatasetsTable = () => {
-  const { data, isLoading } = useGetAvailableDatasets();
+  const { data } = useGetAvailableDatasets();
 
-  if (!isLoading) {
+  if (data) {
     // Transform all datasets to match the data-table props
-    const rows = (data?.datasets ?? []).map(
+    const rows: TableDataset[] = data.datasets.map(
       ({ dataset_id, file_name, owner, editors, published }) => ({
-        id: dataset_id,
         fileName: file_name,
-        owner: owner,
-        editors: editors,
-        published: published,
-        path: '',
-        fullPath: null,
-        actions: {},
+        id: dataset_id,
+        owner,
+        editors,
+        published,
       }),
     );
 

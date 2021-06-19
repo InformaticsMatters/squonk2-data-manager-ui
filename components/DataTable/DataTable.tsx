@@ -20,6 +20,7 @@ import {
 import { CustomCell } from './CustomCell';
 import { useSelectedFiles } from './FileSelectionContext';
 import { Column, Row } from './types';
+import { isDataset } from './utils';
 
 const columns: Column[] = [
   { name: 'fileName', title: 'File Name' },
@@ -41,8 +42,15 @@ export const DataTable: FC<DataTableProps> = ({ rows }) => {
     }
   };
 
+  const getRowID = (row: Row) => {
+    if (isDataset(row)) {
+      return row.id;
+    }
+    return row.fullPath;
+  };
+
   return (
-    <Grid columns={columns} getRowId={(row: Row) => row.fullPath ?? row.id ?? ''} rows={rows}>
+    <Grid columns={columns} getRowId={getRowID} rows={rows}>
       <SearchState />
       {state && (
         <SelectionState selection={state.selectedFiles} onSelectionChange={handleSelectionChange} />

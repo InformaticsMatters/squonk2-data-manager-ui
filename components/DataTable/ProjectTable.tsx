@@ -4,7 +4,7 @@ import { Breadcrumbs, Link, Typography } from '@material-ui/core';
 import { ProjectSummary, useGetFile } from '@squonk/data-manager-client';
 
 import { DataTable } from './DataTable';
-import { Row, TableRow } from './types';
+import { Row, TableDir, TableFile } from './types';
 
 export const ProjectTable: FC<{ currentProject: ProjectSummary }> = memo(({ currentProject }) => {
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
@@ -18,33 +18,28 @@ export const ProjectTable: FC<{ currentProject: ProjectSummary }> = memo(({ curr
   const { data } = useGetFile({ project_id: currentProject.project_id, path });
 
   if (data) {
-    const files: Row[] = data.files.map((file) => {
-      const { file_id, file_name, owner, immutable, paths } = file;
+    const files: TableFile[] = data.files.map((file) => {
+      const { file_id, file_name, owner, immutable } = file;
       return {
-        id: file_id,
         fileName: file_name,
-        owner,
-        actions: { projectId: currentProject.project_id },
         fullPath: breadcrumbs.join('/') + '/' + file_name,
+        id: file_id,
+        owner,
         immutable: immutable as unknown as boolean,
-        path: '',
+        actions: { projectId: currentProject.project_id },
       };
     });
 
-    const dirs: Row[] = data.paths.map((path) => ({
+    const dirs: TableDir[] = data.paths.map((path) => ({
       fileName: path,
-      path: path,
       fullPath: path,
+      path: path,
       actions: {
-        projectId: currentProject.project_id,
         changePath: () => setBreadcrumbs([...breadcrumbs, path]),
       },
     }));
 
-    const rows = [...dirs, ...files].map((row) => {
-      (row as TableRow).items = [];
-      return row;
-    });
+    const rows: Row[] = [...dirs, ...files];
 
     return (
       <>

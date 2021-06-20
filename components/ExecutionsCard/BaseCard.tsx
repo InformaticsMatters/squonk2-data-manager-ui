@@ -19,7 +19,7 @@ import { InstanceDetail } from './InstanceDetail';
 interface BaseCardProps {
   actions: React.ReactNode;
   cardType: string;
-  applicationId: string;
+  applicationId?: string;
   title?: string;
   subtitle?: string;
   color?: string;

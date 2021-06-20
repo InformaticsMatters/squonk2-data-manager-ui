@@ -1,7 +1,7 @@
 export interface ColumnTypes {
   fileName: string;
   owner: string;
-  immutable?: boolean;
+  mode?: boolean;
   actions: string;
 }
 

@@ -122,12 +122,23 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
           {/* <Button>Edit</Button> */}
         </Cell>
       );
-    case 'immutable':
+    case 'mode': {
+      let value: string;
+      if (!isTableFile(row)) {
+        value = '-';
+      } else if (row.immutable) {
+        value = 'immutable';
+      } else if (row.id) {
+        value = 'editable';
+      } else {
+        value = 'unmanaged';
+      }
       return (
         <Cell column={column} row={row} {...rest}>
-          {!isTableFile(row) ? '-' : row.immutable ? 'Yes' : 'No'}
+          {value}
         </Cell>
       );
+    }
     default:
       return <Cell column={column} row={row} {...rest} />;
   }

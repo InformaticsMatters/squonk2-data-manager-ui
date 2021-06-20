@@ -25,7 +25,7 @@ import { isDataset } from './utils';
 const columns: Column[] = [
   { name: 'fileName', title: 'File Name' },
   { name: 'owner', title: 'Owner' },
-  { name: 'immutable', title: 'Immutable' },
+  { name: 'mode', title: 'Mode' },
   { name: 'actions', title: 'Actions' },
   // { name: 'fullPath', title: 'Full Path' },
 ];

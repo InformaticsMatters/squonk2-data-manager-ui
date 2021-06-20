@@ -27,6 +27,7 @@ const columns: Column[] = [
   { name: 'owner', title: 'Owner' },
   { name: 'immutable', title: 'Immutable' },
   { name: 'actions', title: 'Actions' },
+  // { name: 'fullPath', title: 'Full Path' },
 ];
 
 export interface DataTableProps {

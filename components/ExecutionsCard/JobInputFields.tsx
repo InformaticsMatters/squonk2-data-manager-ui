@@ -54,7 +54,7 @@ export const JobInputFields: FC<JobInputFieldsProps> = ({ inputs, setInputsData 
                     .filter(
                       (filePath) =>
                         (type === 'file' && filePath.includes('.')) ||
-                        (type === 'dir' && !filePath.includes('.')),
+                        (type === 'dir' && !filePath.includes('.')), // TODO: This is all very crude and should be improved
                     )
                     .map((filePath) => (
                       <MenuItem key={filePath} value={filePath}>

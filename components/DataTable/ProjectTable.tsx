@@ -13,16 +13,24 @@ export const ProjectTable: FC<{ currentProject: ProjectSummary }> = memo(({ curr
     setBreadcrumbs([]);
   }, [currentProject.project_id]);
 
-  const path = '/' + breadcrumbs.join('/');
+  const dirPath = '/' + breadcrumbs.join('/'); // TODO: This shouldn't need a leading slash
 
-  const { data } = useGetFile({ project_id: currentProject.project_id, path });
+  const { data } = useGetFile({ project_id: currentProject.project_id, path: dirPath });
 
   if (data) {
     const files: TableFile[] = data.files.map((file) => {
       const { file_id, file_name, owner, immutable } = file;
+
+      let fullPath: string;
+      if (breadcrumbs.length > 0) {
+        fullPath = breadcrumbs.join('/') + '/' + file_name;
+      } else {
+        fullPath = file_name;
+      }
+
       return {
         fileName: file_name,
-        fullPath: breadcrumbs.join('/') + '/' + file_name,
+        fullPath,
         id: file_id,
         owner,
         immutable: immutable as unknown as boolean,
@@ -30,14 +38,23 @@ export const ProjectTable: FC<{ currentProject: ProjectSummary }> = memo(({ curr
       };
     });
 
-    const dirs: TableDir[] = data.paths.map((path) => ({
-      fileName: path,
-      fullPath: path,
-      path: path,
-      actions: {
-        changePath: () => setBreadcrumbs([...breadcrumbs, path]),
-      },
-    }));
+    const dirs: TableDir[] = data.paths.map((path) => {
+      let fullPath: string;
+      if (breadcrumbs.length > 0) {
+        fullPath = breadcrumbs.join('/') + '/' + path;
+      } else {
+        fullPath = path;
+      }
+
+      return {
+        fileName: path,
+        fullPath,
+        path,
+        actions: {
+          changePath: () => setBreadcrumbs([...breadcrumbs, path]),
+        },
+      };
+    });
 
     const rows: Row[] = [...dirs, ...files];
 

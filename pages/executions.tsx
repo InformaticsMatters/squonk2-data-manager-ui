@@ -103,10 +103,11 @@ const Executions: FC = () => {
             jobs
               ?.filter(
                 (job) =>
-                  job.job.toLowerCase().includes(searchValue.toLowerCase()) ||
                   job.keywords.some((keyword) =>
                     keyword.toLowerCase().includes(searchValue.toLowerCase()),
-                  ),
+                  ) ||
+                  job.category.toLowerCase().includes(searchValue.toLowerCase()) ||
+                  job.name.toLowerCase().includes(searchValue.toLowerCase()),
               )
               ?.map((job) => (
                 <Grid item key={job.id} md={3} sm={6} xs={12}>

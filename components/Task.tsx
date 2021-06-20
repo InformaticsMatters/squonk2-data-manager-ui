@@ -1,5 +1,8 @@
 import React, { FC, ReactNode, useState } from 'react';
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
 import { css } from '@emotion/react';
 import {
   Card,
@@ -26,6 +29,8 @@ import {
   TimelineSeparator,
 } from '@material-ui/lab';
 import { useGetTask } from '@squonk/data-manager-client';
+
+dayjs.extend(utc);
 
 interface TaskProps {
   taskId: string;
@@ -75,7 +80,7 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
                 margin-left: auto;
               `}
             >
-              {latestState.time}
+              {dayjs.utc(latestState.time).local().format(process.env.NEXT_PUBLIC_TIME_FORMATTER)}
             </span>
           </Typography>
 
@@ -98,7 +103,9 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
               {task?.events.map((event, index) => (
                 <TimelineItem key={event.ordinal}>
                   <TimelineOppositeContent>
-                    <Typography color="textSecondary">{event.time}</Typography>
+                    <Typography color="textSecondary">
+                      {dayjs.utc(event.time).local().format(process.env.NEXT_PUBLIC_TIME_FORMATTER)}
+                    </Typography>
                   </TimelineOppositeContent>
                   <TimelineSeparator>
                     <TimelineDot />

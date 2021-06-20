@@ -1,5 +1,7 @@
 import React from 'react';
 
+import dayjs from 'dayjs';
+
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, Grid, IconButton, Tooltip, useTheme } from '@material-ui/core';
@@ -41,11 +43,15 @@ const Tasks = () => {
           </Tooltip>
         </div>
         <Grid container spacing={2}>
-          {tasks?.map((task) => (
-            <Grid key={task.id} item xs={12}>
-              <Task taskId={task.id} />
-            </Grid>
-          ))}
+          {tasks
+            ?.sort((taskA: any, taskB: any) =>
+              dayjs(taskA.created).isBefore(dayjs(taskB.created)) ? 1 : -1,
+            ) // Newest at the top
+            ?.map((task) => (
+              <Grid key={task.id} item xs={12}>
+                <Task taskId={task.id} />
+              </Grid>
+            ))}
         </Grid>
       </Container>
     </Layout>

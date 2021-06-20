@@ -31,7 +31,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
 
   const handleRunJob = async (specification: JobSpecification) => {
     setIsTaskProcessing(true);
-    if (projectId && job && process.env.NEXT_PUBLIC_JOBS_APPID) {
+    if (projectId && job) {
       const instance = await createInstanceMutation.mutateAsync({
         data: {
           application_id: (job.application as any).id, // TODO: fix when the API / Open API is corrected

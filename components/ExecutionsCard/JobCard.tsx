@@ -34,7 +34,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
     if (projectId && job) {
       const instance = await createInstanceMutation.mutateAsync({
         data: {
-          application_id: (job.application as any).id, // TODO: fix when the API / Open API is corrected
+          application_id: job.application.application_id,
           application_version: 'v1',
           as_name: 'Test',
           project_id: projectId,
@@ -49,7 +49,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
   return (
     <BaseCard
       cardType="Job"
-      applicationId={(job?.application as any)?.id}
+      applicationId={job?.application.application_id}
       title={job?.name}
       actions={<JobModal jobId={jobId} handleRunJob={handleRunJob} disabled={isTaskProcessing} />}
       color={theme.palette.primary.main}

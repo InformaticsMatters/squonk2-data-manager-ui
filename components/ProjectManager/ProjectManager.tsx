@@ -5,15 +5,7 @@ import { useQueryClient } from 'react-query';
 import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  Grid,
-  IconButton,
-  InputAdornment,
-  TextField,
-  TextFieldProps,
-  Tooltip,
-} from '@material-ui/core';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import { Grid, InputAdornment, TextField, TextFieldProps } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
 import {
@@ -24,6 +16,7 @@ import {
 
 import { useCurrentProject, useCurrentProjectId } from '../CurrentProjectContext';
 import { AddProject } from './AddProject';
+import { DeleteProject } from './DeleteProject';
 import { EditProject } from './EditProject';
 
 interface ProjectManagerProps {
@@ -59,11 +52,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
       <>
         {currentProject?.owner === user?.preferred_username && (
           <InputAdornment position="start">
-            <Tooltip arrow title="Delete selected project">
-              <IconButton aria-label="Delete selected project" onClick={handleDelete}>
-                <DeleteForeverIcon />
-              </IconButton>
-            </Tooltip>
+            <DeleteProject onClick={handleDelete} />
           </InputAdornment>
         )}
 

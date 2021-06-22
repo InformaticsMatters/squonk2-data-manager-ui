@@ -10,14 +10,13 @@ import { Button, Link, Typography, useTheme } from '@material-ui/core';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
 import {
   getGetAvailableDatasetsQueryKey,
-  getGetProjectQueryKey,
   useCreateDatasetFromProjectFile,
-  useDeleteFile,
 } from '@squonk/data-manager-client';
 
 import { useMimeTypeLookup } from '../FileUpload/useMimeTypeLookup';
 import { AttachButton } from './AttachButton';
 import { DeleteDataset } from './DeleteDataset';
+import { DetachDataset } from './DetachDataset';
 import { Row } from './types';
 import { isDataset, isTableDir, isTableFile } from './utils';
 
@@ -31,7 +30,7 @@ type CustomCellProps = Omit<Table.DataCellProps, 'row'> & {
  */
 export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) => {
   const queryClient = useQueryClient();
-  const detachMutation = useDeleteFile();
+
   const createDatasetMutation = useCreateDatasetFromProjectFile();
 
   const { user } = useUser();
@@ -66,23 +65,16 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
       return (
         <Cell column={column} row={row} {...rest}>
           {/* <Button>Download</Button> */}
+          {isDataset(row) &&
+            row.id.startsWith('dataset') &&
+            user?.preferred_username &&
+            (row.editors.includes(user.preferred_username as string) ||
+              row.owner === user.preferred_username) && <DeleteDataset datasetId={row.id} />}
           {isDataset(row) && row.id.startsWith('dataset') && (
-            <>
-              {user?.preferred_username &&
-                (row.editors.includes(user.preferred_username as string) ||
-                  row.owner === user.preferred_username) && <DeleteDataset datasetId={row.id} />}
-              <AttachButton datasetId={row.id} fileName={row.fileName} />
-            </>
+            <AttachButton datasetId={row.id} fileName={row.fileName} />
           )}
           {isTableFile(row) && row.id?.startsWith('file') && (
-            <Button
-              onClick={async () => {
-                row.id && (await detachMutation.mutateAsync({ fileid: row.id }));
-                queryClient.invalidateQueries(getGetProjectQueryKey(row.actions.projectId));
-              }}
-            >
-              Detach
-            </Button>
+            <DetachDataset fileId={row.id} projectId={row.actions.projectId} />
           )}
           {isTableFile(row) && (!row.immutable || row.id === undefined) && (
             <Button

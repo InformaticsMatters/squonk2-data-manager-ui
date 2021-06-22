@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useQueryClient } from 'react-query';
 
+import { useUser } from '@auth0/nextjs-auth0';
 import { Table } from '@devexpress/dx-react-grid-material-ui';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -11,12 +12,12 @@ import {
   getGetAvailableDatasetsQueryKey,
   getGetProjectQueryKey,
   useCreateDatasetFromProjectFile,
-  useDeleteDataset,
   useDeleteFile,
 } from '@squonk/data-manager-client';
 
 import { useMimeTypeLookup } from '../FileUpload/useMimeTypeLookup';
 import { AttachButton } from './AttachButton';
+import { DeleteDataset } from './DeleteDataset';
 import { Row } from './types';
 import { isDataset, isTableDir, isTableFile } from './utils';
 
@@ -30,9 +31,10 @@ type CustomCellProps = Omit<Table.DataCellProps, 'row'> & {
  */
 export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) => {
   const queryClient = useQueryClient();
-  const deleteMutation = useDeleteDataset();
   const detachMutation = useDeleteFile();
   const createDatasetMutation = useCreateDatasetFromProjectFile();
+
+  const { user } = useUser();
 
   const mimeLookup = useMimeTypeLookup();
 
@@ -66,14 +68,9 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
           {/* <Button>Download</Button> */}
           {isDataset(row) && row.id.startsWith('dataset') && (
             <>
-              <Button
-                onClick={async () => {
-                  await deleteMutation.mutateAsync({ datasetid: row.id });
-                  queryClient.invalidateQueries(getGetAvailableDatasetsQueryKey());
-                }}
-              >
-                Delete
-              </Button>
+              {user?.preferred_username &&
+                (row.editors.includes(user.preferred_username as string) ||
+                  row.owner === user.preferred_username) && <DeleteDataset datasetId={row.id} />}
               <AttachButton datasetId={row.id} fileName={row.fileName} />
             </>
           )}

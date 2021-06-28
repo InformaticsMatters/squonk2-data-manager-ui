@@ -1,22 +1,20 @@
 import React, { FC } from 'react';
 
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import { useQueryClient } from 'react-query';
 
 import { css } from '@emotion/react';
 import { Button, Divider, Grid, Typography, useTheme } from '@material-ui/core';
 import {
-  getGetInstancesQueryKey,
+  getGetTasksQueryKey,
   useGetInstance,
   useGetJobs,
   useTerminateInstance,
 } from '@squonk/data-manager-client';
 
+import { LocalTime } from './LocalTime';
+
 // Button Props doesn't support target and rel when using as a Link
 const HrefButton = Button as any;
-
-dayjs.extend(utc);
 
 interface TaskInstanceDetailProps {
   instanceId: string;
@@ -58,8 +56,7 @@ export const TaskInstanceDetail: FC<TaskInstanceDetailProps> = ({ instanceId }) 
             <b>Instance Version</b>: {instance.application_version}
           </Typography>
           <Typography gutterBottom>
-            <b>Created</b>:{' '}
-            {dayjs.utc(instance.launched).local().format(process.env.NEXT_PUBLIC_TIME_FORMATTER)}
+            <b>Created</b>: <LocalTime utcTimestamp={instance.launched} showTime showDate={false} />
           </Typography>
         </Grid>
 
@@ -87,7 +84,7 @@ export const TaskInstanceDetail: FC<TaskInstanceDetailProps> = ({ instanceId }) 
           <Button
             onClick={async () => {
               await terminateInstanceMutation.mutateAsync({ instanceid: instanceId });
-              queryClient.invalidateQueries(getGetInstancesQueryKey());
+              queryClient.invalidateQueries(getGetTasksQueryKey());
             }}
           >
             Terminate

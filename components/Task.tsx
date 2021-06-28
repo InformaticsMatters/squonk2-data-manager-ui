@@ -30,6 +30,7 @@ import {
 } from '@material-ui/lab';
 import { useGetTask } from '@squonk/data-manager-client';
 
+import { LocalTime } from './LocalTime';
 import { TaskInstanceDetail } from './TaskInstanceDetail';
 
 dayjs.extend(utc);
@@ -77,13 +78,12 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
             `}
           >
             {icon} {latestState.state} • {task?.purpose}
-            <span
+            <LocalTime
               css={css`
                 margin-left: auto;
               `}
-            >
-              {dayjs.utc(latestState.time).local().format(process.env.NEXT_PUBLIC_TIME_FORMATTER)}
-            </span>
+              utcTimestamp={latestState.time}
+            />
           </Typography>
 
           {task?.purpose === 'INSTANCE' && <TaskInstanceDetail instanceId={task.purpose_uuid} />}
@@ -108,7 +108,7 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
                 <TimelineItem key={event.ordinal}>
                   <TimelineOppositeContent>
                     <Typography color="textSecondary">
-                      {dayjs.utc(event.time).local().format(process.env.NEXT_PUBLIC_TIME_FORMATTER)}
+                      <LocalTime utcTimestamp={event.time} showTime showDate={false} />
                     </Typography>
                   </TimelineOppositeContent>
                   <TimelineSeparator>

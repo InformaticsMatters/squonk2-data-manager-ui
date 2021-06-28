@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 
 import dayjs from 'dayjs';
 
@@ -11,7 +11,7 @@ import { useGetTasks } from '@squonk/data-manager-client';
 import Layout from '../components/Layout';
 import { Task } from '../components/Task';
 
-const Tasks = () => {
+const Tasks: FC = () => {
   const theme = useTheme();
   const { data, refetch } = useGetTasks();
   const tasks = data?.tasks;

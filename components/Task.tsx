@@ -30,6 +30,8 @@ import {
 } from '@material-ui/lab';
 import { useGetTask } from '@squonk/data-manager-client';
 
+import { TaskInstanceDetail } from './TaskInstanceDetail';
+
 dayjs.extend(utc);
 
 interface TaskProps {
@@ -83,6 +85,8 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
               {dayjs.utc(latestState.time).local().format(process.env.NEXT_PUBLIC_TIME_FORMATTER)}
             </span>
           </Typography>
+
+          {task?.purpose === 'INSTANCE' && <TaskInstanceDetail instanceId={task.purpose_uuid} />}
 
           {/* {JSON.stringify(task)} */}
         </CardContent>

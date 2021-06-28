@@ -67,7 +67,7 @@ export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob, disabled }) =
           </span>
         </Tooltip>
         <ModalWrapper
-          title="Run Job"
+          title={job?.name ?? 'Run Job'}
           submitText="Run"
           open={open}
           onClose={() => setOpen(false)}
@@ -100,6 +100,8 @@ export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob, disabled }) =
                       liveValidate
                       noHtml5Validate
                       schema={job.variables.options as any}
+                      // TODO: fix when openapi is updated
+                      uiSchema={{ 'ui:order': (job.variables as any)?.order?.options }}
                       formData={optionsFormData}
                       onChange={(event) => setOptionsFormData(event.formData)}
                     >

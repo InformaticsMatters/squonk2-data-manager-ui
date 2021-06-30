@@ -32,7 +32,7 @@
     "@material-ui/styles": "^4.11.4",
     "@mdx-js/loader": "^1.5.1",
     "@mdx-js/react": "^1.6.18",
-    "@next/mdx": "^10.2.3",
+    "@next/mdx": "^11.0.1",
     "@rjsf/core": "^2.5.1",
     "@rjsf/material-ui": "^2.5.1",
     "@squonk/data-manager-client": "0.3.0-alpha.6",

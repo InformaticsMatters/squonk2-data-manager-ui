@@ -32,7 +32,7 @@ export default withApiAuthRequired(async (req, res) => {
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '25mb', // Same as the file uploader dialog limit
+      sizeLimit: `${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE ?? 25}mb`,
     },
     externalResolver: true,
   },

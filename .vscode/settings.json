@@ -65,6 +65,7 @@
     "tasks",
     "detach-file",
     "datetimes",
-    "actions"
+    "actions",
+    "deps"
   ],
 }

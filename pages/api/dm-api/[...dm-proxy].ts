@@ -34,5 +34,6 @@ export const config = {
     bodyParser: {
       sizeLimit: '25mb', // Same as the file uploader dialog limit
     },
+    externalResolver: true,
   },
 };

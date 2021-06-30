@@ -15,7 +15,9 @@ import {
 } from '@material-ui/core';
 import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import { getGetAvailableDatasetsQueryKey, Task, useGetTask } from '@squonk/data-manager-client';
+import { Task } from '@squonk/data-manager-client';
+import { getGetAvailableDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
+import { useGetTask } from '@squonk/data-manager-client/task';
 
 import { useFileExtensions } from './useFileExtensions';
 import { useMimeTypeLookup } from './useMimeTypeLookup';

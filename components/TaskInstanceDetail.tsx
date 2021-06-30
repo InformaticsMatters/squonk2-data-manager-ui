@@ -4,12 +4,9 @@ import { useQueryClient } from 'react-query';
 
 import { css } from '@emotion/react';
 import { Button, Divider, Grid, Typography, useTheme } from '@material-ui/core';
-import {
-  getGetTasksQueryKey,
-  useGetInstance,
-  useGetJobs,
-  useTerminateInstance,
-} from '@squonk/data-manager-client';
+import { useGetInstance, useTerminateInstance } from '@squonk/data-manager-client/instance';
+import { useGetJobs } from '@squonk/data-manager-client/job';
+import { getGetTasksQueryKey } from '@squonk/data-manager-client/task';
 
 import { LocalTime } from './LocalTime';
 

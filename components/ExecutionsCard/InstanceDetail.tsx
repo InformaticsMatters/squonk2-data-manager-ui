@@ -7,7 +7,7 @@ import {
   getGetInstancesQueryKey,
   useGetInstance,
   useTerminateInstance,
-} from '@squonk/data-manager-client';
+} from '@squonk/data-manager-client/instance';
 
 // Button Props doesn't support target and rel when using as a Link
 const HrefButton = Button as any;

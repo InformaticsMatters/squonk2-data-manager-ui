@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Typography } from '@material-ui/core';
-import { useGetAvailableDatasets } from '@squonk/data-manager-client';
+import { useGetAvailableDatasets } from '@squonk/data-manager-client/dataset';
 
 import { DataTable } from './DataTable';
 import { TableDataset } from './types';

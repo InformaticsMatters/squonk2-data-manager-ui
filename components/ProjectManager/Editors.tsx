@@ -5,11 +5,11 @@ import { useQueryClient } from 'react-query';
 import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Avatar, Chip, Typography, useTheme } from '@material-ui/core';
+import { ProjectSummary } from '@squonk/data-manager-client';
 import {
-  getGetAvailableProjectsQueryKey,
-  ProjectSummary,
+  getGetProjectsQueryKey,
   useRemoveEditorFromProject,
-} from '@squonk/data-manager-client';
+} from '@squonk/data-manager-client/project';
 
 interface EditorsProps {
   currentProject: ProjectSummary;
@@ -26,7 +26,7 @@ export const Editors: FC<EditorsProps> = ({ currentProject }) => {
         projectid: currentProject.project_id,
         userid: editor,
       });
-      queryClient.invalidateQueries(getGetAvailableProjectsQueryKey());
+      queryClient.invalidateQueries(getGetProjectsQueryKey());
     }
   };
 

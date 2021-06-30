@@ -10,8 +10,8 @@ import { Button, Link, Typography, useTheme } from '@material-ui/core';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
 import {
   getGetAvailableDatasetsQueryKey,
-  useCreateDatasetFromProjectFile,
-} from '@squonk/data-manager-client';
+  useCreateDatasetFromFile,
+} from '@squonk/data-manager-client/dataset';
 
 import { useMimeTypeLookup } from '../FileUpload/useMimeTypeLookup';
 import { AttachButton } from './AttachButton';
@@ -31,7 +31,7 @@ type CustomCellProps = Omit<Table.DataCellProps, 'row'> & {
 export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) => {
   const queryClient = useQueryClient();
 
-  const createDatasetMutation = useCreateDatasetFromProjectFile();
+  const createDatasetMutation = useCreateDatasetFromFile();
 
   const { user } = useUser();
 

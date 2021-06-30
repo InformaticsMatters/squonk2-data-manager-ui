@@ -28,7 +28,7 @@ import {
   TimelineOppositeContent,
   TimelineSeparator,
 } from '@material-ui/lab';
-import { useGetTask } from '@squonk/data-manager-client';
+import { useGetTask } from '@squonk/data-manager-client/task';
 
 import { LocalTime } from './LocalTime';
 import { TaskInstanceDetail } from './TaskInstanceDetail';

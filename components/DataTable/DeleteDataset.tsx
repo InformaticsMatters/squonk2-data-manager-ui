@@ -4,7 +4,10 @@ import { useQueryClient } from 'react-query';
 
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import { getGetAvailableDatasetsQueryKey, useDeleteDataset } from '@squonk/data-manager-client';
+import {
+  getGetAvailableDatasetsQueryKey,
+  useDeleteDataset,
+} from '@squonk/data-manager-client/dataset';
 
 import { ModalWrapper } from '../ModalWrapper';
 

@@ -1,7 +1,8 @@
 import React, { FC, memo, useEffect, useState } from 'react';
 
 import { Breadcrumbs, Link, Typography } from '@material-ui/core';
-import { ProjectSummary, useGetFile } from '@squonk/data-manager-client';
+import { ProjectSummary } from '@squonk/data-manager-client';
+import { useGetFiles } from '@squonk/data-manager-client/file';
 
 import { DataTable } from './DataTable';
 import { Row, TableDir, TableFile } from './types';
@@ -15,7 +16,7 @@ export const ProjectTable: FC<{ currentProject: ProjectSummary }> = memo(({ curr
 
   const dirPath = '/' + breadcrumbs.join('/'); // TODO: This shouldn't need a leading slash
 
-  const { data } = useGetFile({ project_id: currentProject.project_id, path: dirPath });
+  const { data } = useGetFiles({ project_id: currentProject.project_id, path: dirPath });
 
   if (data) {
     const files: TableFile[] = data.files.map((file) => {

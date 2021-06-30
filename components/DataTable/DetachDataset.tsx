@@ -4,7 +4,8 @@ import { useQueryClient } from 'react-query';
 
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
-import { getGetProjectQueryKey, useDeleteFile } from '@squonk/data-manager-client';
+import { useDeleteFile } from '@squonk/data-manager-client/file';
+import { getGetProjectQueryKey } from '@squonk/data-manager-client/project';
 
 import { ModalWrapper } from '../ModalWrapper';
 

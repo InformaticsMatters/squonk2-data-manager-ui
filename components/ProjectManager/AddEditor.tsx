@@ -3,14 +3,11 @@ import { FC } from 'react';
 import { useQueryClient } from 'react-query';
 
 import { Button, Tooltip } from '@material-ui/core';
-import {
-  getGetAvailableProjectsQueryKey,
-  ProjectSummary,
-  useAddEditorToProject,
-} from '@squonk/data-manager-client';
+import { getGetProjectsQueryKey, useAddEditorToProject } from '@squonk/data-manager-client/project';
 
 import { PopoverTextField } from '../PopoverTextField';
 
+import type { ProjectSummary } from '@squonk/data-manager-client';
 interface AddEditorProps {
   currentProject: ProjectSummary;
 }
@@ -26,7 +23,7 @@ export const AddEditor: FC<AddEditorProps> = ({ currentProject }) => {
         projectid: currentProject.project_id,
         userid: value,
       });
-      queryClient.invalidateQueries(getGetAvailableProjectsQueryKey());
+      queryClient.invalidateQueries(getGetProjectsQueryKey());
     }
   };
 

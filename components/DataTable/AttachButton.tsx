@@ -17,12 +17,9 @@ import {
   MenuItem,
   TextField,
 } from '@material-ui/core';
-import {
-  getGetProjectQueryKey,
-  useAttachFile,
-  useGetAvailableProjects,
-  useGetTypes,
-} from '@squonk/data-manager-client';
+import { useAttachFile } from '@squonk/data-manager-client/file';
+import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-client/project';
+import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { SlideUpTransition } from '../SlideUpTransition';
 
@@ -39,10 +36,10 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName }) => 
   const queryClient = useQueryClient();
   const attachFileMutation = useAttachFile();
 
-  const { data: projectsData, isLoading: isProjectsLoading } = useGetAvailableProjects();
+  const { data: projectsData, isLoading: isProjectsLoading } = useGetProjects();
   const projects = projectsData?.projects;
 
-  const { data: typesData, isLoading: isTypesLoading } = useGetTypes();
+  const { data: typesData, isLoading: isTypesLoading } = useGetFileTypes();
   const types = typesData?.types;
 
   const [project, setProject] = useState<string>('');

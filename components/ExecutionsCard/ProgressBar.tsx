@@ -4,7 +4,10 @@ import { useQueryClient } from 'react-query';
 
 import { css } from '@emotion/react';
 import { LinearProgress, Typography, useTheme } from '@material-ui/core';
-import { getGetInstancesQueryKey, Task, useGetTask } from '@squonk/data-manager-client';
+import { getGetInstancesQueryKey } from '@squonk/data-manager-client/instance';
+import { useGetTask } from '@squonk/data-manager-client/task';
+
+import type { Task } from '@squonk/data-manager-client';
 
 interface ProgressBarProps {
   taskId: string | null;

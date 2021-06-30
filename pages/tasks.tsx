@@ -6,7 +6,7 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, Grid, IconButton, Tooltip, useTheme } from '@material-ui/core';
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
-import { useGetTasks } from '@squonk/data-manager-client';
+import { useGetTasks } from '@squonk/data-manager-client/task';
 
 import Layout from '../components/Layout';
 import { Task } from '../components/Task';

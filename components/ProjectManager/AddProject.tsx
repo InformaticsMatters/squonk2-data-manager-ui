@@ -5,10 +5,10 @@ import { useQueryClient } from 'react-query';
 import { IconButton, Tooltip } from '@material-ui/core';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 import {
-  getGetAvailableProjectsQueryKey,
-  useAddNewProject,
-  useGetAvailableProjects,
-} from '@squonk/data-manager-client';
+  getGetProjectsQueryKey,
+  useCreateProject,
+  useGetProjects,
+} from '@squonk/data-manager-client/project';
 
 import { PopoverTextField } from '../PopoverTextField';
 
@@ -19,9 +19,9 @@ interface AddProjectProps {
 export const AddProject: FC<AddProjectProps> = ({ inverted = false }) => {
   const queryClient = useQueryClient();
 
-  const mutation = useAddNewProject();
+  const mutation = useCreateProject();
 
-  const { data } = useGetAvailableProjects();
+  const { data } = useGetProjects();
   const projects = data?.projects;
 
   const handleSubmit = async (value: string) => {
@@ -29,7 +29,7 @@ export const AddProject: FC<AddProjectProps> = ({ inverted = false }) => {
     const alreadyExists = !!projects?.find((project) => project.name === name);
     if (name && !alreadyExists) {
       await mutation.mutateAsync({ data: { name } });
-      queryClient.invalidateQueries(getGetAvailableProjectsQueryKey());
+      queryClient.invalidateQueries(getGetProjectsQueryKey());
     }
   };
 

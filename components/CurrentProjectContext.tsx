@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 
-import { useGetAvailableProjects } from '@squonk/data-manager-client';
+import { useGetProjects } from '@squonk/data-manager-client/project';
 
 export type ProjectId = string | null;
 
@@ -31,7 +31,7 @@ export const useCurrentProjectId = () => useContext(CurrentProjectIdContext);
 
 export const useCurrentProject = () => {
   const [currentProjectId] = useContext(CurrentProjectIdContext);
-  const { data } = useGetAvailableProjects();
+  const { data } = useGetProjects();
   const projects = data?.projects;
 
   return projects?.find((project) => project.project_id === currentProjectId) ?? null;

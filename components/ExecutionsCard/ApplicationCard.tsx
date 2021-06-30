@@ -9,12 +9,9 @@ import {
   Tooltip,
   useTheme,
 } from '@material-ui/core';
-import {
-  ApplicationSummary,
-  ProjectSummary,
-  useCreateInstance,
-  useGetApplication,
-} from '@squonk/data-manager-client';
+import { ApplicationSummary, ProjectSummary } from '@squonk/data-manager-client';
+import { useGetApplication } from '@squonk/data-manager-client/application';
+import { useCreateInstance } from '@squonk/data-manager-client/instance';
 
 import { BaseCard } from './BaseCard';
 import { ProgressBar } from './ProgressBar';

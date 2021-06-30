@@ -9,10 +9,10 @@ import { Grid, InputAdornment, TextField, TextFieldProps } from '@material-ui/co
 import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
 import {
-  getGetAvailableProjectsQueryKey,
+  getGetProjectsQueryKey,
   useDeleteProject,
-  useGetAvailableProjects,
-} from '@squonk/data-manager-client';
+  useGetProjects,
+} from '@squonk/data-manager-client/project';
 
 import { useCurrentProject, useCurrentProjectId } from '../CurrentProjectContext';
 import { AddProject } from './AddProject';
@@ -25,7 +25,7 @@ interface ProjectManagerProps {
 
 export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
   const queryClient = useQueryClient();
-  const { data, isLoading } = useGetAvailableProjects();
+  const { data, isLoading } = useGetProjects();
   const projects = data?.projects;
 
   const [, setCurrentProjectId] = useCurrentProjectId();
@@ -40,7 +40,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
   const handleDelete = async () => {
     currentProject?.project_id &&
       (await deleteProjectMutation.mutateAsync({ projectid: currentProject.project_id }));
-    queryClient.invalidateQueries(getGetAvailableProjectsQueryKey());
+    queryClient.invalidateQueries(getGetProjectsQueryKey());
   };
 
   const textFieldProps: TextFieldProps = {

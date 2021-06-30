@@ -6,12 +6,8 @@ import { FileError } from 'react-dropzone';
 import { css } from '@emotion/react';
 import { Grid, IconButton, useTheme } from '@material-ui/core';
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
-import {
-  customInstance,
-  DatasetId,
-  DatasetUploadBody,
-  useGetTypes,
-} from '@squonk/data-manager-client';
+import { customInstance, DatasetId, DatasetUploadBody } from '@squonk/data-manager-client';
+import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { ModalWrapper } from '../ModalWrapper';
 import { Dropzone } from './Dropzone';
@@ -35,7 +31,7 @@ export const FileUpload = () => {
   // Array of the user uploaded files with associated errors
   const [files, setFiles] = useState<UploadableFile[]>([]);
 
-  const { isLoading: isTypesLoading } = useGetTypes(); // Ensure types are prefetched to mime lookup works
+  const { isLoading: isTypesLoading } = useGetFileTypes(); // Ensure types are prefetched to mime lookup works
 
   const onDelete = (file: File) => {
     setFiles((curr) => curr.filter((fw) => fw.file !== file));

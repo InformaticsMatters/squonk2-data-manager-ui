@@ -725,12 +725,10 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.0.1.tgz#d26729db850fa327b7cacc5522252194404226f5"
   integrity sha512-Qm9hBEBu18wt1PO2flE7LPb30BHMQt1eQgbV76YntdNk73XZGpn3izvGTYxbGgzXKgbCjiia0uxTd3aTNQrY/g==
 
-"@squonk/data-manager-client@0.3.0-alpha.6":
-  version "0.3.0-alpha.6"
-  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.3.0-alpha.6.tgz#5a9b474a11be9b716f09f641b4ed16c41bc8124a"
-  integrity sha512-Vd8S7r90ANG34ooZIQxEGP7hrO7atwjOC+5vXGm3rAy2Xc4N0qV+UBIcnZLhpfuMPMxtZ1jg1NafY0h27zNhUQ==
-  dependencies:
-    "@material-ui/core" "^4.11.4"
+"@squonk/data-manager-client@0.4.0-alpha.6":
+  version "0.4.0-alpha.6"
+  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.4.0-alpha.6.tgz#bd5391bc2131db1060d7f0b510754a78e17658e0"
+  integrity sha512-V1cQf8K+APrubT5KmrXvcJZgI1mEklbzBBePJVMWqaFbdj500+UTKvMjI5QpvlECJb+nDy5RQArnRpkrvCE7fA==
 
 "@squonk/mui-theme@^0.7.1":
   version "0.7.1"

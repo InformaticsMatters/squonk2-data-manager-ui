@@ -66,6 +66,7 @@
     "detach-file",
     "datetimes",
     "actions",
-    "deps"
+    "deps",
+    "api"
   ],
 }

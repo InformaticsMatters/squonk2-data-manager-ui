@@ -28,8 +28,8 @@ export const DeleteProject: FC<DeleteProjectProps> = ({ onClick }) => {
         </Typography>
       </ModalWrapper>
       <Tooltip arrow title="Delete selected project">
-        <IconButton aria-label="Delete selected project">
-          <DeleteForeverIcon onClick={() => setOpen(true)} />
+        <IconButton aria-label="Delete selected project" onClick={() => setOpen(true)}>
+          <DeleteForeverIcon />
         </IconButton>
       </Tooltip>
     </>

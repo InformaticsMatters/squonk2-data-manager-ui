@@ -37,8 +37,8 @@ export const DetachDataset: FC<DetachDatasetProps> = ({ fileId, projectId }) => 
         </Typography>
       </ModalWrapper>
       <Tooltip title="Detach File">
-        <IconButton size="small" aria-label="Delete selected dataset">
-          <DeleteOutlineRoundedIcon onClick={() => setOpen(true)} />
+        <IconButton size="small" aria-label="Delete selected dataset" onClick={() => setOpen(true)}>
+          <DeleteOutlineRoundedIcon />
         </IconButton>
       </Tooltip>
     </>

@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
 import { Button, Link, Typography, useTheme } from '@material-ui/core';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
 import {
-  getGetAvailableDatasetsQueryKey,
+  getGetDatasetsQueryKey,
   useCreateDatasetFromFile,
 } from '@squonk/data-manager-client/dataset';
 
@@ -102,7 +102,7 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
                   });
                 }
                 // Force an update of the datasets table which has now changed
-                queryClient.invalidateQueries(getGetAvailableDatasetsQueryKey());
+                queryClient.invalidateQueries(getGetDatasetsQueryKey());
               }}
             >
               New Dataset

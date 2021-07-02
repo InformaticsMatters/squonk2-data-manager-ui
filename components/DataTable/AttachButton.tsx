@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 
 import { useQueryClient } from 'react-query';
 
+import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import {
   Button,
@@ -51,6 +52,8 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
   const [isImmutable, setIsImmutable] = useState(false);
   const [isCompress, setIsCompress] = useState(true);
 
+  const { user } = useUser();
+
   return (
     <>
       <Button onClick={() => setOpen(true)}>Attach</Button>
@@ -71,17 +74,19 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
             <TextField
               fullWidth
               select
-              disabled={isProjectsLoading}
+              disabled={!user || isProjectsLoading}
               id="select-project"
               label="Project"
               value={project}
               onChange={(e) => setProject(e.target.value)}
             >
-              {projects?.map((project) => (
-                <MenuItem key={project.project_id} value={project.project_id}>
-                  {project.name}
-                </MenuItem>
-              ))}
+              {projects
+                ?.filter((project) => project.editors.includes(user?.preferred_username as string))
+                ?.map((project) => (
+                  <MenuItem key={project.project_id} value={project.project_id}>
+                    {project.name}
+                  </MenuItem>
+                ))}
             </TextField>
           </FormControl>
           <FormControl fullWidth margin="dense">

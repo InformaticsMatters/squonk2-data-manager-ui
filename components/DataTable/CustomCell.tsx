@@ -128,6 +128,14 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
         </Cell>
       );
     }
+    case 'numberOfVersions': {
+      return isDataset(row) ? (
+        <Cell column={column} row={row} {...rest}>
+          {row.versions.length}
+        </Cell>
+      ) : null;
+      break;
+    }
     default:
       return <Cell column={column} row={row} {...rest} />;
   }

@@ -1,32 +1,44 @@
 import React from 'react';
 
 import { Typography } from '@material-ui/core';
-import { useGetAvailableDatasets } from '@squonk/data-manager-client/dataset';
+import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 
 import { DataTable } from './DataTable';
 import { TableDataset } from './types';
 
 export const AllDatasetsTable = () => {
-  const { data } = useGetAvailableDatasets();
+  const { data } = useGetDatasets();
 
-  if (data) {
+  const datasets = data?.datasets;
+
+  if (datasets) {
     // Transform all datasets to match the data-table props
-    const rows: TableDataset[] = data.datasets.map(
-      ({ dataset_id, file_name, owner, editors, published }) => ({
-        fileName: file_name,
+    const rows: TableDataset[] = datasets.map(({ dataset_id, versions, owner, editors }) => {
+      const fileName = versions[0].file_name;
+      return {
+        fileName,
         id: dataset_id,
         owner,
         editors,
-        published,
-      }),
-    );
+        versions,
+      };
+    });
 
     return (
       <>
         <Typography variant="h4" component="h1">
           Datasets
         </Typography>
-        <DataTable rows={rows} />
+        <DataTable
+          rows={rows}
+          columns={[
+            { name: 'fileName', title: 'File Name' },
+            { name: 'owner', title: 'Owner' },
+            { name: 'numberOfVersions', title: 'Versions' },
+            { name: 'actions', title: 'Actions' },
+            // { name: 'fullPath', title: 'Full Path' },
+          ]}
+        />
       </>
     );
   }

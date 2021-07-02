@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import {
   IntegratedFiltering,
@@ -11,6 +11,7 @@ import {
 import {
   Grid,
   SearchPanel,
+  TableColumnResizing,
   TableHeaderRow,
   TableSelection,
   Toolbar,
@@ -22,19 +23,12 @@ import { useSelectedFiles } from './FileSelectionContext';
 import { Column, Row } from './types';
 import { isDataset } from './utils';
 
-const columns: Column[] = [
-  { name: 'fileName', title: 'File Name' },
-  { name: 'owner', title: 'Owner' },
-  { name: 'mode', title: 'Mode' },
-  { name: 'actions', title: 'Actions' },
-  // { name: 'fullPath', title: 'Full Path' },
-];
-
 export interface DataTableProps {
+  columns: Column[];
   rows: Row[];
 }
 
-export const DataTable: FC<DataTableProps> = ({ rows }) => {
+export const DataTable: FC<DataTableProps> = ({ columns, rows }) => {
   const state = useSelectedFiles();
 
   const handleSelectionChange = (selection: (string | number)[]) => {
@@ -63,6 +57,13 @@ export const DataTable: FC<DataTableProps> = ({ rows }) => {
       <IntegratedSorting />
 
       <VirtualTable cellComponent={CustomCell} />
+      <TableColumnResizing
+        defaultColumnWidths={columns.map((col) => ({
+          columnName: col.name,
+          width: (0.95 * 1280) / columns.length,
+        }))}
+        resizingMode="nextColumn"
+      />
       <TableHeaderRow showSortingControls />
       {state && <TableSelection showSelectAll />}
       <Toolbar />

@@ -1,8 +1,11 @@
+import { DatasetVersionDetail } from '@squonk/data-manager-client';
+
 export interface ColumnTypes {
   fileName: string;
   owner: string;
   mode?: boolean;
   actions: string;
+  numberOfVersions: number;
 }
 
 export type Column = { name: keyof ColumnTypes; title: string };
@@ -17,7 +20,7 @@ export interface TableDataset extends BaseTableRow {
   id: string;
   owner: string;
   editors: string[];
-  published: string;
+  versions: DatasetVersionDetail[];
 }
 
 // Properties of files only

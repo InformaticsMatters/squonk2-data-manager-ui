@@ -81,7 +81,16 @@ export const ProjectTable: FC<{ currentProject: ProjectSummary }> = memo(({ curr
             ),
           )}
         </Breadcrumbs>
-        <DataTable rows={rows} />
+        <DataTable
+          rows={rows}
+          columns={[
+            { name: 'fileName', title: 'File Name' },
+            { name: 'owner', title: 'Owner' },
+            { name: 'mode', title: 'Mode' },
+            { name: 'actions', title: 'Actions' },
+            // { name: 'fullPath', title: 'Full Path' },
+          ]}
+        />
       </>
     );
   }

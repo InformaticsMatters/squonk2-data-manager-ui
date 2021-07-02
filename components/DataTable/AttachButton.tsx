@@ -17,6 +17,7 @@ import {
   MenuItem,
   TextField,
 } from '@material-ui/core';
+import { DatasetVersionDetail } from '@squonk/data-manager-client';
 import { useAttachFile } from '@squonk/data-manager-client/file';
 import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-client/project';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
@@ -27,10 +28,11 @@ type SelectableMimeTypes = string | '';
 
 interface AttachButtonProps {
   datasetId: string;
+  versions: DatasetVersionDetail[];
   fileName: string;
 }
 
-export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName }) => {
+export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versions }) => {
   const [open, setOpen] = useState(false);
 
   const queryClient = useQueryClient();
@@ -43,8 +45,9 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName }) => 
   const types = typesData?.types;
 
   const [project, setProject] = useState<string>('');
-  const [type, setType] = useState<SelectableMimeTypes>('');
+  const [type, setType] = useState<SelectableMimeTypes>();
   const [path, setPath] = useState('');
+  const [version, setVersion] = useState<DatasetVersionDetail['version']>();
   const [isImmutable, setIsImmutable] = useState(false);
   const [isCompress, setIsCompress] = useState(true);
 
@@ -85,11 +88,28 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName }) => 
             <TextField
               fullWidth
               select
+              disabled={isProjectsLoading}
+              id="select-version"
+              label="Version"
+              value={version ?? ''}
+              onChange={(e) => setVersion(Number(e.target.value))}
+            >
+              {versions.map((version) => (
+                <MenuItem key={version.version} value={version.version}>
+                  {`v${version.version}`}
+                </MenuItem>
+              ))}
+            </TextField>
+          </FormControl>
+          <FormControl fullWidth margin="dense">
+            <TextField
+              fullWidth
+              select
               disabled={isTypesLoading}
               helperText="The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset"
               id="select-type"
               label="File Type"
-              value={type}
+              value={type ?? ''}
               onChange={(e) => setType(e.target.value)}
             >
               {types?.map((type) => (
@@ -138,11 +158,13 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName }) => 
             Cancel
           </Button>
           <Button
-            disabled={isProjectsLoading || isTypesLoading}
+            disabled={isProjectsLoading || isTypesLoading || !version || !type}
             onClick={async () => {
-              if (type !== '') {
-                await attachFileMutation.mutateAsync({
+              version &&
+                type &&
+                (await attachFileMutation.mutateAsync({
                   data: {
+                    dataset_version: version,
                     dataset_id: datasetId,
                     project_id: project,
                     immutable: isImmutable,
@@ -150,10 +172,9 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName }) => 
                     as_type: type,
                     path: `/${path}`,
                   },
-                });
-                queryClient.invalidateQueries(getGetProjectQueryKey(project));
-                setOpen(false);
-              }
+                }));
+              queryClient.invalidateQueries(getGetProjectQueryKey(project));
+              setOpen(false);
             }}
           >
             Attach

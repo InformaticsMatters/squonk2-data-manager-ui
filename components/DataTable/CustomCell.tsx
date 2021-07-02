@@ -71,7 +71,7 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
             (row.editors.includes(user.preferred_username as string) ||
               row.owner === user.preferred_username) && <DeleteDataset datasetId={row.id} />}
           {isDataset(row) && row.id.startsWith('dataset') && (
-            <AttachButton datasetId={row.id} fileName={row.fileName} />
+            <AttachButton datasetId={row.id} fileName={row.fileName} versions={row.versions} />
           )}
           {isTableFile(row) && row.id?.startsWith('file') && (
             <DetachDataset fileId={row.id} projectId={row.actions.projectId} />

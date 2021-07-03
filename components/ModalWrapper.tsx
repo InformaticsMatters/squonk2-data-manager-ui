@@ -1,7 +1,14 @@
 import React from 'react';
 
 import { css } from '@emotion/react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogProps,
+  DialogTitle,
+} from '@material-ui/core';
 
 import { SlideUpTransition } from './SlideUpTransition';
 
@@ -11,6 +18,7 @@ interface ModalWrapperProps {
   open: boolean;
   onClose: () => void;
   onSubmit?: () => void;
+  DialogProps?: Partial<DialogProps>;
 }
 
 export const ModalWrapper: React.FC<ModalWrapperProps> = ({
@@ -20,9 +28,11 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   open,
   onClose,
   onSubmit,
+  DialogProps,
 }) => {
   return (
     <Dialog
+      {...DialogProps}
       aria-labelledby="file-upload-title"
       css={css`
         .MuiDialog-paper {

@@ -3,6 +3,7 @@
   "cSpell.words": [
     "Bluered",
     "Dropzone",
+    "Formik",
     "Keycloak",
     "Molfile",
     "Popover",
@@ -67,6 +68,7 @@
     "datetimes",
     "actions",
     "deps",
-    "api"
+    "api",
+    "delete-dataset"
   ],
 }

@@ -11,6 +11,7 @@
     "build": "next build",
     "start": "next start",
     "type-check": "tsc --pretty --noEmit",
+    "lint": "next lint",
     "format:all": "eslint --fix . --ext ts --ext tsx --ext js",
     "format": "eslint --fix --ext ts --ext tsx --ext js"
   },

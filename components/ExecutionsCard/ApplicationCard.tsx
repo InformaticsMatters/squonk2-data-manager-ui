@@ -9,7 +9,7 @@ import {
   Tooltip,
   useTheme,
 } from '@material-ui/core';
-import { ApplicationSummary, ProjectSummary } from '@squonk/data-manager-client';
+import { ApplicationSummary, ProjectDetail } from '@squonk/data-manager-client';
 import { useGetApplication } from '@squonk/data-manager-client/application';
 import { useCreateInstance } from '@squonk/data-manager-client/instance';
 
@@ -18,7 +18,7 @@ import { ProgressBar } from './ProgressBar';
 
 interface ApplicationCardProps {
   app: ApplicationSummary;
-  project: ProjectSummary | null;
+  project: ProjectDetail | null;
 }
 
 export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {

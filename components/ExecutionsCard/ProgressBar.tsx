@@ -7,7 +7,7 @@ import { LinearProgress, Typography, useTheme } from '@material-ui/core';
 import { getGetInstancesQueryKey } from '@squonk/data-manager-client/instance';
 import { useGetTask } from '@squonk/data-manager-client/task';
 
-import type { Task } from '@squonk/data-manager-client';
+import type { TaskGetResponse } from '@squonk/data-manager-client';
 
 interface ProgressBarProps {
   taskId: string | null;
@@ -25,7 +25,7 @@ export const ProgressBar: FC<ProgressBarProps> = ({
   const queryClient = useQueryClient();
   const [pollingInterval, setPollingInterval] = useState<number | false>(2000);
 
-  const [task, setTask] = useState<Task | null>(null);
+  const [task, setTask] = useState<TaskGetResponse | null>(null);
   useGetTask(taskId ?? '', undefined, {
     query: {
       refetchInterval: pollingInterval,

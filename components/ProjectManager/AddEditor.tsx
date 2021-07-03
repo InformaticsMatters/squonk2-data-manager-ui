@@ -7,9 +7,9 @@ import { getGetProjectsQueryKey, useAddEditorToProject } from '@squonk/data-mana
 
 import { PopoverTextField } from '../PopoverTextField';
 
-import type { ProjectSummary } from '@squonk/data-manager-client';
+import type { ProjectDetail } from '@squonk/data-manager-client';
 interface AddEditorProps {
-  currentProject: ProjectSummary;
+  currentProject: ProjectDetail;
 }
 
 export const AddEditor: FC<AddEditorProps> = ({ currentProject }) => {

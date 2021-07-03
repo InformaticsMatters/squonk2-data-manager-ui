@@ -15,8 +15,7 @@ import {
 } from '@material-ui/core';
 import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
-import { Task } from '@squonk/data-manager-client';
-import { getGetAvailableDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
+import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
 import { useGetTask } from '@squonk/data-manager-client/task';
 
 import { useFileExtensions } from './useFileExtensions';
@@ -53,11 +52,10 @@ export function SingleFileUploadWithProgress({
   const { data: task, isLoading } = useGetTask(fileWrapper.taskId ?? '', undefined, {
     query: {
       refetchInterval: interval,
-      onSuccess: (data) => {
-        const task = data as Task | undefined;
-        if (!isLoading && task && task.done) {
+      onSuccess: (task) => {
+        if (!isLoading && task.done) {
           setInterval(false);
-          queryClient.invalidateQueries(getGetAvailableDatasetsQueryKey());
+          queryClient.invalidateQueries(getGetDatasetsQueryKey());
         }
       },
     },

@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import { ProjectSummary } from '@squonk/data-manager-client';
+import { ProjectDetail } from '@squonk/data-manager-client';
 
 import { ModalWrapper } from '../ModalWrapper';
 import { AddEditor } from './AddEditor';
@@ -11,7 +11,7 @@ import { Editors } from './Editors';
 interface EditProjectProps {
   canEdit: boolean;
   inverted?: boolean;
-  currentProject: ProjectSummary | null;
+  currentProject: ProjectDetail | null;
 }
 
 export const EditProject: FC<EditProjectProps> = ({

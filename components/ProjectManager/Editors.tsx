@@ -5,14 +5,14 @@ import { useQueryClient } from 'react-query';
 import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Avatar, Chip, Typography, useTheme } from '@material-ui/core';
-import { ProjectSummary } from '@squonk/data-manager-client';
+import { ProjectDetail } from '@squonk/data-manager-client';
 import {
   getGetProjectsQueryKey,
   useRemoveEditorFromProject,
 } from '@squonk/data-manager-client/project';
 
 interface EditorsProps {
-  currentProject: ProjectSummary;
+  currentProject: ProjectDetail;
 }
 
 export const Editors: FC<EditorsProps> = ({ currentProject }) => {

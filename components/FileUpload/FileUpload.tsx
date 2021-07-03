@@ -6,7 +6,11 @@ import { FileError } from 'react-dropzone';
 import { css } from '@emotion/react';
 import { Grid, IconButton, useTheme } from '@material-ui/core';
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
-import { customInstance, DatasetId, DatasetUploadBody } from '@squonk/data-manager-client';
+import {
+  customInstance,
+  DatasetPostBodyBody,
+  DatasetPutPostResponse,
+} from '@squonk/data-manager-client';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { ModalWrapper } from '../ModalWrapper';
@@ -39,14 +43,14 @@ export const FileUpload = () => {
 
   const uploadFiles = () => {
     files.forEach(async ({ file, rename, mimeType }, index) => {
-      const data: DatasetUploadBody = {
+      const data: DatasetPostBodyBody = {
         dataset_file: file,
         dataset_type: mimeType,
         as_filename: rename ?? file.name,
       };
 
       try {
-        const res = await customInstance({
+        const response: DatasetPutPostResponse = await customInstance({
           method: 'POST',
           data,
           url: '/dataset',
@@ -58,7 +62,6 @@ export const FileUpload = () => {
             setFiles(updatedFiles);
           },
         });
-        const response = res as DatasetId;
         if (response.task_id) {
           const updatedFiles = [...files];
           updatedFiles[index].taskId = response.task_id;

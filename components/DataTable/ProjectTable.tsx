@@ -1,13 +1,13 @@
 import React, { FC, memo, useEffect, useState } from 'react';
 
 import { Breadcrumbs, Link, Typography } from '@material-ui/core';
-import { ProjectSummary } from '@squonk/data-manager-client';
+import { ProjectDetail } from '@squonk/data-manager-client';
 import { useGetFiles } from '@squonk/data-manager-client/file';
 
 import { DataTable } from './DataTable';
 import { Row, TableDir, TableFile } from './types';
 
-export const ProjectTable: FC<{ currentProject: ProjectSummary }> = memo(({ currentProject }) => {
+export const ProjectTable: FC<{ currentProject: ProjectDetail }> = memo(({ currentProject }) => {
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
 
   useEffect(() => {

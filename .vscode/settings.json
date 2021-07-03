@@ -69,6 +69,7 @@
     "actions",
     "deps",
     "api",
-    "delete-dataset"
+    "delete-dataset",
+    "edit-project"
   ],
 }

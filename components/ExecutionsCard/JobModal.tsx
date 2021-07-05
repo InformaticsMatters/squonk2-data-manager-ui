@@ -73,7 +73,7 @@ export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob, disabled }) =
           onClose={() => setOpen(false)}
           onSubmit={handleSubmit}
         >
-          {job && (
+          {job?.variables && (
             <Grid container spacing={2}>
               {job.variables.inputs && (
                 <>

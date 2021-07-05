@@ -52,6 +52,7 @@ const Executions: FC = () => {
             <TextField
               fullWidth
               onChange={(event) => {
+                // TODO: change this to be inside SelectProps for proper argument type
                 // When using TextField for a select multiple, we have to cast the event type as
                 // ts can't workout it's an array
                 setExecutionTypes(event.target.value as unknown as string[]);
@@ -104,10 +105,10 @@ const Executions: FC = () => {
             jobs
               ?.filter(
                 (job) =>
-                  job.keywords.some((keyword) =>
+                  job.keywords?.some((keyword) =>
                     keyword.toLowerCase().includes(searchValue.toLowerCase()),
                   ) ||
-                  job.category.toLowerCase().includes(searchValue.toLowerCase()) ||
+                  job.category?.toLowerCase().includes(searchValue.toLowerCase()) ||
                   job.name.toLowerCase().includes(searchValue.toLowerCase()),
               )
               ?.map((job) => (

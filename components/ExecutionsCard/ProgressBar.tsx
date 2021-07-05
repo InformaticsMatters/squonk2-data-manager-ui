@@ -35,7 +35,7 @@ export const ProgressBar: FC<ProgressBarProps> = ({
         let isFinished: boolean;
         if (endState) {
           // If the component is passed and end state we wait for that state
-          isFinished = !!task.states.find((state) => state.state === endState);
+          isFinished = !!task.states?.find((state) => state.state === endState);
         } else {
           // Otherwise we wait for a task to be `done`
           isFinished = task.done;
@@ -64,8 +64,8 @@ export const ProgressBar: FC<ProgressBarProps> = ({
   }
 
   // Get the latest status and event for display
-  const status = task.states[task.states.length - 1]?.state;
-  const event = task.events[task.events.length - 1]?.message;
+  const status = task.states?.[task.states.length - 1].state;
+  const event = task.events?.[task.events.length - 1].message;
 
   if (isTaskProcessing || status === 'FAILURE' || event) {
     return (

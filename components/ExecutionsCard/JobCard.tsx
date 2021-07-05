@@ -69,7 +69,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
           }
         `}
       >
-        {job?.keywords.map((word) => (
+        {job?.keywords?.map((word) => (
           <Chip size="small" color="primary" variant="outlined" key={word} label={word} />
         ))}
       </div>

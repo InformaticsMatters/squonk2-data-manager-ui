@@ -43,7 +43,7 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
   const theme = useTheme();
   const { data: task } = useGetTask(taskId);
 
-  const latestState = task?.states[task.states.length - 1];
+  const latestState = task?.states?.[task.states.length - 1];
 
   const [expanded, setExpanded] = useState(false);
 
@@ -92,7 +92,7 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
         </CardContent>
         <CardActions disableSpacing>
           <IconButton
-            disabled={!task?.events.length}
+            disabled={!task?.events?.length}
             css={css`
               margin-left: auto;
             `}
@@ -104,7 +104,7 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
         <Collapse in={expanded}>
           <CardContent>
             <Timeline>
-              {task?.events.map((event, index) => (
+              {task?.events?.map((event, index) => (
                 <TimelineItem key={event.ordinal}>
                   <TimelineOppositeContent>
                     <Typography color="textSecondary">
@@ -113,7 +113,7 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
                   </TimelineOppositeContent>
                   <TimelineSeparator>
                     <TimelineDot />
-                    {(index + 1 !== task.events.length || !task.done) && <TimelineConnector />}
+                    {(index + 1 !== task.events?.length || !task.done) && <TimelineConnector />}
                   </TimelineSeparator>
                   <TimelineContent>{event.message}</TimelineContent>
                 </TimelineItem>

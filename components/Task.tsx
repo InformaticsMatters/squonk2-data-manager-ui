@@ -86,7 +86,7 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
             />
           </Typography>
 
-          {task?.purpose === 'INSTANCE' && <TaskInstanceDetail instanceId={task.purpose_uuid} />}
+          {task?.purpose === 'INSTANCE' && <TaskInstanceDetail instanceId={task.purpose_id} />}
 
           {/* {JSON.stringify(task)} */}
         </CardContent>

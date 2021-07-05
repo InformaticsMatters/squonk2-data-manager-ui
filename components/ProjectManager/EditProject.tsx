@@ -2,24 +2,20 @@ import React, { FC, useState } from 'react';
 
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import { ProjectDetail } from '@squonk/data-manager-client';
 
+import { useCurrentProject } from '../CurrentProjectContext';
 import { ModalWrapper } from '../ModalWrapper';
-import { AddEditor } from './AddEditor';
 import { Editors } from './Editors';
 
 interface EditProjectProps {
   canEdit: boolean;
   inverted?: boolean;
-  currentProject: ProjectDetail | null;
 }
 
-export const EditProject: FC<EditProjectProps> = ({
-  currentProject,
-  inverted = false,
-  canEdit,
-}) => {
+export const EditProject: FC<EditProjectProps> = ({ inverted = false, canEdit }) => {
   const [open, setOpen] = useState(false);
+
+  const currentProject = useCurrentProject();
 
   return (
     <>
@@ -50,17 +46,12 @@ export const EditProject: FC<EditProjectProps> = ({
         <Typography variant="h5" gutterBottom>
           {currentProject?.name}
         </Typography>
-        {!!currentProject && (
-          <>
-            <div>
-              <Typography gutterBottom>
-                <b>Owner</b>: {currentProject.owner}
-              </Typography>
-            </div>
-            <Editors currentProject={currentProject} />
-            <AddEditor currentProject={currentProject} />
-          </>
-        )}
+        <div>
+          <Typography gutterBottom>
+            <b>Owner</b>: {currentProject?.owner}
+          </Typography>
+        </div>
+        <Editors />
       </ModalWrapper>
     </>
   );

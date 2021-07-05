@@ -94,7 +94,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
         />
       </Grid>
       <AddProject inverted={inverted} />
-      <EditProject canEdit={isEditor} inverted={inverted} currentProject={currentProject} />
+      <EditProject canEdit={isEditor} inverted={inverted} />
     </div>
   );
 };

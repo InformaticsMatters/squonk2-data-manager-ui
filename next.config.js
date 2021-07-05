@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === 'production' && !process.env.BASE_URL.includes('loc
 ASSET_URL = process.env.BASE_URL = 'https://squonk.informaticsmatters.org';
 
 module.exports = withMDX({
-  reactStrictMode: true,
+  // reactStrictMode: true, // TODO: switch on after MUI-v5 switch
   pageExtensions: ['js', 'ts', 'jsx', 'tsx', 'md', 'mdx'],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
   sassOptions: {

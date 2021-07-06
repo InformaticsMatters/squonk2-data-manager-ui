@@ -22,9 +22,9 @@ interface FormikModalWrapperProps extends BaseModalWrapperProps {
  *
  * @privateRemarks
  *
- * Usual `Values extends unknown` doesn't work here
+ * We use a function here instead of arrow functions as generics work better with them
  */
-export const FormikModalWrapper = <Values extends Record<string, unknown>>({
+export function FormikModalWrapper<Values>({
   id,
   title,
   submitText,
@@ -33,7 +33,7 @@ export const FormikModalWrapper = <Values extends Record<string, unknown>>({
   children,
   DialogProps,
   ...formikProps
-}: FormikModalWrapperProps & FormikConfig<Values>) => {
+}: FormikModalWrapperProps & FormikConfig<Values>) {
   return (
     <Formik {...formikProps}>
       {({ submitForm, isSubmitting, ...rest }) => (
@@ -56,4 +56,4 @@ export const FormikModalWrapper = <Values extends Record<string, unknown>>({
       )}
     </Formik>
   );
-};
+}

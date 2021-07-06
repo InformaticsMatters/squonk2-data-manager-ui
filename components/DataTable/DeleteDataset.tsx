@@ -54,6 +54,7 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
           await Promise.all(requests);
           queryClient.invalidateQueries(getGetDatasetsQueryKey());
           setSubmitting(false);
+          setOpen(false);
         }}
         validationSchema={yup.object().shape({
           versions: yup

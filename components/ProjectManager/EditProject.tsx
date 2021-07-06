@@ -4,7 +4,7 @@ import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
 import { useCurrentProject } from '../CurrentProjectContext';
-import { ModalWrapper } from '../ModalWrapper';
+import { ModalWrapper } from '../Modals/ModalWrapper';
 import { Editors } from './Editors';
 
 interface EditProjectProps {
@@ -38,10 +38,12 @@ export const EditProject: FC<EditProjectProps> = ({ inverted = false, canEdit })
         </>
       </Tooltip>
       <ModalWrapper
+        id="edit-project"
         title="Edit Project"
         submitText="Save"
         open={open}
         onClose={() => setOpen(false)}
+        DialogProps={{ maxWidth: 'sm', fullWidth: true }}
       >
         <Typography variant="h5" gutterBottom>
           {currentProject?.name}

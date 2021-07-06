@@ -6,7 +6,7 @@ import { useGetJob } from '@squonk/data-manager-client/job';
 
 import { useCurrentProjectId } from '../CurrentProjectContext';
 import { useSelectedFiles } from '../DataTable/FileSelectionContext';
-import { ModalWrapper } from '../ModalWrapper';
+import { ModalWrapper } from '../Modals/ModalWrapper';
 import { JobSpecification } from './JobCard';
 import { JobInputFields } from './JobInputFields';
 
@@ -67,6 +67,7 @@ export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob, disabled }) =
           </span>
         </Tooltip>
         <ModalWrapper
+          id={`job-${jobId}`}
           title={job?.name ?? 'Run Job'}
           submitText="Run"
           open={open}

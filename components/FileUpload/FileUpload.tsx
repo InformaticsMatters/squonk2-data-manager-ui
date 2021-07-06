@@ -13,7 +13,7 @@ import {
 } from '@squonk/data-manager-client';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
-import { ModalWrapper } from '../ModalWrapper';
+import { ModalWrapper } from '../Modals/ModalWrapper';
 import { Dropzone } from './Dropzone';
 import { SingleFileUploadWithProgress } from './SingleFileUploader';
 import { mutateAtPosition } from './utils';
@@ -85,11 +85,13 @@ export const FileUpload = () => {
         <CloudUploadRoundedIcon />
       </IconButton>
       <ModalWrapper
+        id="upload-file"
         title="Upload New Datasets"
         submitText="Upload"
         open={open}
         onClose={() => setOpen(false)}
         onSubmit={uploadFiles}
+        DialogProps={{ maxWidth: 'sm', fullWidth: true }}
       >
         <Dropzone files={files} setFiles={setFiles}>
           <Grid container direction="column">

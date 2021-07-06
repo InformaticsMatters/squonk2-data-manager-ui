@@ -3,7 +3,7 @@ import React, { FC, useState } from 'react';
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
-import { ModalWrapper } from '../ModalWrapper';
+import { ModalWrapper } from '../Modals/ModalWrapper';
 
 interface DeleteProjectProps {
   onClick: () => void;
@@ -14,6 +14,7 @@ export const DeleteProject: FC<DeleteProjectProps> = ({ onClick }) => {
   return (
     <>
       <ModalWrapper
+        id="delete-project"
         title="Delete Project"
         submitText="Delete"
         open={open}

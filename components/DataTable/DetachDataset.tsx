@@ -7,7 +7,7 @@ import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
 import { useDeleteFile } from '@squonk/data-manager-client/file';
 import { getGetProjectQueryKey } from '@squonk/data-manager-client/project';
 
-import { ModalWrapper } from '../ModalWrapper';
+import { ModalWrapper } from '../Modals/ModalWrapper';
 
 interface DetachDatasetProps {
   fileId: string;
@@ -22,6 +22,7 @@ export const DetachDataset: FC<DetachDatasetProps> = ({ fileId, projectId }) => 
   return (
     <>
       <ModalWrapper
+        id={`detach-dataset-${fileId}`}
         title="Detach File"
         submitText="Detach"
         open={open}

@@ -17,7 +17,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import { DatasetVersionDetail } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useDeleteDataset } from '@squonk/data-manager-client/dataset';
 
-import { FormikModalWrapper } from '../FormikModalWrapper';
+import { FormikModalWrapper } from '../Modals/FormikModalWrapper';
 
 interface DeleteDatasetProps {
   datasetId: string;
@@ -34,6 +34,7 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
   return (
     <>
       <FormikModalWrapper
+        id={`delete-dataset-${datasetId}`}
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
         title="Delete Dataset Versions"
         submitText="Delete"

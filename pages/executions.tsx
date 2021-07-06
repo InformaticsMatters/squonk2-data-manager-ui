@@ -2,15 +2,7 @@ import React, { FC, useState } from 'react';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import {
-  Container,
-  Grid,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  TextField,
-  useTheme,
-} from '@material-ui/core';
+import { Container, Grid, InputAdornment, MenuItem, TextField, useTheme } from '@material-ui/core';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import { useGetApplications } from '@squonk/data-manager-client/application';
 import { useGetJobs } from '@squonk/data-manager-client/job';
@@ -83,9 +75,7 @@ const Executions: FC = () => {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton edge="end">
-                      <SearchRoundedIcon />
-                    </IconButton>
+                    <SearchRoundedIcon />
                   </InputAdornment>
                 ),
               }}

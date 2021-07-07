@@ -12,6 +12,7 @@ import {
   FormLabel,
   IconButton,
   Tooltip,
+  Typography,
 } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import { DatasetVersionDetail } from '@squonk/data-manager-client';
@@ -33,6 +34,11 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
   const [open, setOpen] = useState(false);
   return (
     <>
+      <Tooltip arrow title="Delete versions of this dataset">
+        <IconButton size="small" aria-label="Delete selected dataset" onClick={() => setOpen(true)}>
+          <DeleteForeverIcon />
+        </IconButton>
+      </Tooltip>
       <FormikModalWrapper
         enableReinitialize
         id={`delete-dataset-${datasetId}`}
@@ -71,34 +77,35 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
       >
         {({ values, errors }) => {
           return (
-            <FieldArray name="versions">
-              {() => (
-                <FormControl component="fieldset" error={!!errors.versions}>
-                  <FormLabel component="legend">Select Versions to Delete</FormLabel>
-                  <FormGroup row>
-                    {values.versions.map((version, versionIndex) => (
-                      <Field
-                        key={versionIndex}
-                        type="checkbox"
-                        component={CheckboxWithLabel}
-                        name={`versions.${versionIndex}`}
-                        checked={version}
-                        Label={{ label: versions[versionIndex].version }}
-                      />
-                    ))}
-                  </FormGroup>
-                  {!!errors.versions && <FormHelperText>{errors.versions}</FormHelperText>}
-                </FormControl>
-              )}
-            </FieldArray>
+            <>
+              <Typography variant="body2" gutterBottom>
+                Select versions of datasets to delete. Selecting all versions will delete the entire
+                dataset record.
+              </Typography>
+              <FieldArray name="versions">
+                {() => (
+                  <FormControl component="fieldset" error={!!errors.versions}>
+                    <FormLabel component="legend">Select Versions to Delete</FormLabel>
+                    <FormGroup row>
+                      {values.versions.map((version, versionIndex) => (
+                        <Field
+                          key={versionIndex}
+                          type="checkbox"
+                          component={CheckboxWithLabel}
+                          name={`versions.${versionIndex}`}
+                          checked={version}
+                          Label={{ label: versions[versionIndex].version }}
+                        />
+                      ))}
+                    </FormGroup>
+                    {!!errors.versions && <FormHelperText>{errors.versions}</FormHelperText>}
+                  </FormControl>
+                )}
+              </FieldArray>
+            </>
           );
         }}
       </FormikModalWrapper>
-      <Tooltip arrow title="Delete selected dataset">
-        <IconButton size="small" aria-label="Delete selected dataset" onClick={() => setOpen(true)}>
-          <DeleteForeverIcon />
-        </IconButton>
-      </Tooltip>
     </>
   );
 };

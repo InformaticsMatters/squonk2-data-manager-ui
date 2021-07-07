@@ -42,5 +42,5 @@ export const AllDatasetsTable = () => {
       </>
     );
   }
-  return <div>Orphans Loading...</div>;
+  return <div>Loading Datasets...</div>;
 };

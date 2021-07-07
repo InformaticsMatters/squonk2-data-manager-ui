@@ -34,6 +34,7 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
   return (
     <>
       <FormikModalWrapper
+        enableReinitialize
         id={`delete-dataset-${datasetId}`}
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
         title="Delete Dataset Versions"
@@ -77,7 +78,7 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
                   <FormGroup row>
                     {values.versions.map((version, versionIndex) => (
                       <Field
-                        key={version}
+                        key={versionIndex}
                         type="checkbox"
                         component={CheckboxWithLabel}
                         name={`versions.${versionIndex}`}

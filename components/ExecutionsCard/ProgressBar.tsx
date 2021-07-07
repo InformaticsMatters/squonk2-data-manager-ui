@@ -64,8 +64,8 @@ export const ProgressBar: FC<ProgressBarProps> = ({
   }
 
   // Get the latest status and event for display
-  const status = task.states?.[task.states.length - 1].state;
-  const event = task.events?.[task.events.length - 1].message;
+  const status = task.states?.[task.states.length - 1]?.state;
+  const event = task.events?.[task.events.length - 1]?.message;
 
   if (isTaskProcessing || status === 'FAILURE' || event) {
     return (

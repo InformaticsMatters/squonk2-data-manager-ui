@@ -49,8 +49,8 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
     type: types?.[0].mime ?? '',
     path: '',
     version: versions[0].version,
-    isImmutable: false,
-    isCompress: true,
+    isImmutable: true,
+    isCompress: false,
   };
 
   return (

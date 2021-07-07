@@ -112,7 +112,7 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
         }}
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
         validationSchema={yup.object({
-          path: yup.string().matches(/^\/[\S]*$|^$/g, 'Invalid Path'),
+          path: yup.string().matches(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gm, 'Invalid Path'),
         })}
       >
         <FormControl fullWidth margin="dense">

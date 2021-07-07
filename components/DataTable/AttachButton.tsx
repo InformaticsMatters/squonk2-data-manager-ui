@@ -5,7 +5,7 @@ import { CheckboxWithLabel, TextField } from 'formik-material-ui';
 import { useQueryClient } from 'react-query';
 
 import { useUser } from '@auth0/nextjs-auth0';
-import { FormControl, FormGroup, IconButton, MenuItem } from '@material-ui/core';
+import { FormControl, FormGroup, IconButton, MenuItem, Tooltip } from '@material-ui/core';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import { DatasetVersionDetail } from '@squonk/data-manager-client';
 import { useAttachFile } from '@squonk/data-manager-client/file';
@@ -55,13 +55,17 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
 
   return (
     <>
-      <IconButton
-        size="small"
-        disabled={isProjectsLoading || isTypesLoading || isUserLoading}
-        onClick={() => setOpen(true)}
-      >
-        <AttachFileRoundedIcon />
-      </IconButton>
+      <Tooltip title="Attach dataset to a project">
+        <span>
+          <IconButton
+            size="small"
+            disabled={isProjectsLoading || isTypesLoading || isUserLoading}
+            onClick={() => setOpen(true)}
+          >
+            <AttachFileRoundedIcon />
+          </IconButton>
+        </span>
+      </Tooltip>
       <FormikModalWrapper
         enableReinitialize
         initialValues={initialValues}

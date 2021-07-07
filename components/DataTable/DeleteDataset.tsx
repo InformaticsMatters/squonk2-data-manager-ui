@@ -29,7 +29,7 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
   const queryClient = useQueryClient();
   const deleteMutation = useDeleteDataset();
 
-  const initialVersionsValues = Array.from({ length: versions.length }).fill(false) as boolean[];
+  const initialVersionsValues = Array.from({ length: versions.length }).fill(true) as boolean[];
 
   const [open, setOpen] = useState(false);
   return (

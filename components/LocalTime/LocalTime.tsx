@@ -1,12 +1,6 @@
 import React, { FC, HTMLProps } from 'react';
 
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-
-dayjs.extend(utc);
-
-const DATE_FORMAT = 'DD/MM/YY';
-const TIME_FORMAT = 'HH:mm:ss';
+import { toLocalTimeString } from './utils';
 
 interface BaseLocalTimeProps extends HTMLProps<HTMLSpanElement> {
   utcTimestamp: string;
@@ -39,18 +33,7 @@ export const LocalTime: FC<FormatLocalTime | DateTimeLocalTime> = ({
   showTime = true,
   ...spanProps
 }) => {
-  const datetime = dayjs.utc(utcTimestamp).local();
-
-  let localTimestamp: string;
-  if (format) {
-    localTimestamp = datetime.format(format);
-  } else if (showDate && !showTime) {
-    localTimestamp = datetime.format(DATE_FORMAT);
-  } else if (!showDate && showTime) {
-    localTimestamp = datetime.format(TIME_FORMAT);
-  } else {
-    localTimestamp = datetime.format(`${DATE_FORMAT} ${TIME_FORMAT}`);
-  }
+  const localTimestamp = toLocalTimeString(utcTimestamp, showDate, showTime, format);
 
   return <span {...spanProps}>{localTimestamp}</span>;
 };

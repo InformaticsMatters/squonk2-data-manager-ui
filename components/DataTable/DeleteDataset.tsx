@@ -18,6 +18,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import { DatasetVersionDetail } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useDeleteDataset } from '@squonk/data-manager-client/dataset';
 
+import { toLocalTimeString } from '../LocalTime/utils';
 import { FormikModalWrapper } from '../Modals/FormikModalWrapper';
 
 interface DeleteDatasetProps {
@@ -94,7 +95,13 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
                           component={CheckboxWithLabel}
                           name={`versions.${versionIndex}`}
                           checked={version}
-                          Label={{ label: versions[versionIndex].version }}
+                          Label={{
+                            label: `${versions[versionIndex].version}: ${toLocalTimeString(
+                              versions[versionIndex].published,
+                              true,
+                              true,
+                            )}`,
+                          }}
                         />
                       ))}
                     </FormGroup>

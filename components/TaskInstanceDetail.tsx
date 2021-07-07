@@ -8,7 +8,7 @@ import { useGetInstance, useTerminateInstance } from '@squonk/data-manager-clien
 import { useGetJobs } from '@squonk/data-manager-client/job';
 import { getGetTasksQueryKey } from '@squonk/data-manager-client/task';
 
-import { LocalTime } from './LocalTime';
+import { LocalTime } from './LocalTime/LocalTime';
 
 // Button Props doesn't support target and rel when using as a Link
 const HrefButton = Button as any;

@@ -30,7 +30,7 @@ import {
 } from '@material-ui/lab';
 import { useGetTask } from '@squonk/data-manager-client/task';
 
-import { LocalTime } from './LocalTime';
+import { LocalTime } from './LocalTime/LocalTime';
 import { TaskInstanceDetail } from './TaskInstanceDetail';
 
 dayjs.extend(utc);

@@ -1,11 +1,20 @@
 import React, { FC, useState } from 'react';
 
+import { AxiosError } from 'axios';
 import { Field } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-material-ui';
 import { useQueryClient } from 'react-query';
+import * as yup from 'yup';
 
 import { useUser } from '@auth0/nextjs-auth0';
-import { FormControl, FormGroup, IconButton, MenuItem, Tooltip } from '@material-ui/core';
+import {
+  FormControl,
+  FormGroup,
+  IconButton,
+  MenuItem,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import { DatasetVersionDetail } from '@squonk/data-manager-client';
 import { useAttachFile } from '@squonk/data-manager-client/file';
@@ -34,7 +43,8 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
   const { user, isLoading: isUserLoading } = useUser();
 
   const queryClient = useQueryClient();
-  const attachFileMutation = useAttachFile();
+  const { mutate: attachFile, error } = useAttachFile();
+  const errorMessage = (error as null | AxiosError)?.response?.data.detail;
 
   const { data: projectsData, isLoading: isProjectsLoading } = useGetProjects();
   const projects = projectsData?.projects.filter(({ editors }) =>
@@ -74,22 +84,36 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
         title={`Attach ${fileName} to project`}
         id={`attach-dataset-${datasetId}`}
         submitText="Attach"
-        onSubmit={async ({ project, type, version, path, isImmutable, isCompress }) => {
-          await attachFileMutation.mutateAsync({
-            data: {
-              dataset_version: version,
-              dataset_id: datasetId,
-              project_id: project,
-              immutable: isImmutable,
-              compress: isCompress,
-              as_type: type,
-              path: `/${path}`,
+        onSubmit={(
+          { project, type, version, path, isImmutable, isCompress },
+          { setSubmitting },
+        ) => {
+          attachFile(
+            {
+              data: {
+                dataset_version: version,
+                dataset_id: datasetId,
+                project_id: project,
+                immutable: isImmutable,
+                compress: isCompress,
+                as_type: type,
+                path,
+              },
             },
-          });
-          queryClient.invalidateQueries(getGetProjectQueryKey(project));
-          setOpen(false);
+            {
+              onSuccess: () => {
+                queryClient.invalidateQueries(getGetProjectQueryKey(project));
+                setOpen(false);
+                setSubmitting(false);
+              },
+              onError: () => setSubmitting(false),
+            },
+          );
         }}
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+        validationSchema={yup.object({
+          path: yup.string().matches(/^\/[\S]*$|^$/g, 'Invalid Path'),
+        })}
       >
         <FormControl fullWidth margin="dense">
           <Field id="select-project" component={TextField} name="project" select label="Project">
@@ -116,7 +140,7 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
             select
             id="select-type"
             label="File Type"
-            helperText="The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset"
+            helperText="The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset."
           >
             {(types ?? []).map((type) => (
               <MenuItem key={type.mime} value={type.mime}>
@@ -139,14 +163,19 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
             Label={{ label: 'Compress' }}
           />
         </FormGroup>
-        <FormControl fullWidth margin="dense">
+        <FormControl fullWidth margin="normal">
           <Field
             component={TextField}
             label="Path"
             name="path"
-            helperText="A path within the Project to add the File, default is the project root ('/'), the mount-point within the application container. "
+            helperText="A path within the Project to add the File, default is the project root ('/'), the mount-point within the application container. For example a valid path is '/path/subpath'."
           />
         </FormControl>
+        {errorMessage && (
+          <Typography variant="body1" color="error">
+            Error: {errorMessage}
+          </Typography>
+        )}
       </FormikModalWrapper>
     </>
   );

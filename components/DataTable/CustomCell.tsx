@@ -17,6 +17,7 @@ import { useMimeTypeLookup } from '../FileUpload/useMimeTypeLookup';
 import { AttachButton } from './AttachButton';
 import { DeleteDataset } from './DeleteDataset';
 import { DetachDataset } from './DetachDataset';
+import { NewVersionButton } from './NewVersionButton';
 import { Row } from './types';
 import { isDataset, isTableDir, isTableFile } from './utils';
 
@@ -65,20 +66,27 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
       return (
         <Cell column={column} row={row} {...rest}>
           {/* <Button>Download</Button> */}
+          {isDataset(row) && (
+            <AttachButton
+              datasetId={row.dataset_id}
+              fileName={row.fileName}
+              versions={row.versions}
+            />
+          )}
           {isDataset(row) &&
-            row.id.startsWith('dataset') &&
             user?.preferred_username &&
             (row.editors.includes(user.preferred_username as string) ||
               row.owner === user.preferred_username) && (
-              <DeleteDataset datasetId={row.id} versions={row.versions} />
+              <DeleteDataset datasetId={row.dataset_id} versions={row.versions} />
             )}
-          {isDataset(row) && row.id.startsWith('dataset') && (
-            <AttachButton datasetId={row.id} fileName={row.fileName} versions={row.versions} />
+          {isDataset(row) &&
+            user?.preferred_username &&
+            (row.editors.includes(user.preferred_username as string) ||
+              row.owner === user.preferred_username) && <NewVersionButton dataset={row} />}
+          {isTableFile(row) && row.file_id?.startsWith('file') && (
+            <DetachDataset fileId={row.file_id} projectId={row.actions.projectId} />
           )}
-          {isTableFile(row) && row.id?.startsWith('file') && (
-            <DetachDataset fileId={row.id} projectId={row.actions.projectId} />
-          )}
-          {isTableFile(row) && (!row.immutable || row.id === undefined) && (
+          {isTableFile(row) && (!row.immutable || row.file_id === undefined) && (
             <Button
               onClick={async () => {
                 if (row.actions.projectId && row.fullPath) {
@@ -119,7 +127,7 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
         value = '-';
       } else if (row.immutable) {
         value = 'immutable';
-      } else if (row.id) {
+      } else if (row.file_id) {
         value = 'editable';
       } else {
         value = 'unmanaged';
@@ -136,7 +144,6 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
           {row.versions.length}
         </Cell>
       ) : null;
-      break;
     }
     default:
       return <Cell column={column} row={row} {...rest} />;

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import { AxiosError } from 'axios';
-import { FileError } from 'react-dropzone';
 
 import { css } from '@emotion/react';
 import { Grid, IconButton, useTheme } from '@material-ui/core';
@@ -14,19 +13,10 @@ import {
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
-import { Dropzone } from './Dropzone';
+import { Dropzone } from '../Uploads/Dropzone';
+import { UploadableFile } from '../Uploads/types';
 import { SingleFileUploadWithProgress } from './SingleFileUploader';
 import { mutateAtPosition } from './utils';
-
-export interface UploadableFile {
-  id: string;
-  taskId: string | null;
-  file: File;
-  errors: FileError[];
-  progress: number;
-  rename?: string;
-  mimeType: string;
-}
 
 export const FileUpload = () => {
   const theme = useTheme();

@@ -1,4 +1,4 @@
-import { DatasetVersionDetail } from '@squonk/data-manager-client';
+import { DatasetDetail, FilePathFile } from '@squonk/data-manager-client';
 
 export interface ColumnTypes {
   fileName: string;
@@ -16,27 +16,23 @@ interface BaseTableRow {
 }
 
 // Properties of datasets only
-export interface TableDataset extends BaseTableRow {
-  id: string;
-  owner: string;
-  editors: string[];
-  versions: DatasetVersionDetail[];
-}
+export type TableDataset = DatasetDetail & BaseTableRow;
 
 // Properties of files only
-export interface TableFile extends BaseTableRow {
+interface BaseTableFile extends Omit<FilePathFile, 'file_name'> {
   fullPath: string;
-  id?: string;
-  owner: string;
-  immutable?: boolean;
   actions: { projectId: string };
 }
 
+export type TableFile = BaseTableFile & BaseTableRow;
+
 // Properties of folders only
-export interface TableDir extends BaseTableRow {
+interface BaseTableDir extends BaseTableRow {
   fullPath: string;
   path: string;
   actions: { changePath: (path: string) => void };
 }
+
+export type TableDir = BaseTableDir & BaseTableRow;
 
 export type Row = TableDataset | TableFile | TableDir;

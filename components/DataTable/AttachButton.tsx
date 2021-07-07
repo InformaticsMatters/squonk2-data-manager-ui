@@ -56,6 +56,7 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
   return (
     <>
       <IconButton
+        size="small"
         disabled={isProjectsLoading || isTypesLoading || isUserLoading}
         onClick={() => setOpen(true)}
       >

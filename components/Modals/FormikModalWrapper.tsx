@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Form, Formik, FormikConfig } from 'formik';
 
+import { css } from '@emotion/react';
 import { DialogProps } from '@material-ui/core';
 
 import { ModalWrapper } from './ModalWrapper';
@@ -37,7 +38,11 @@ export function FormikModalWrapper<Values>({
   return (
     <Formik {...formikProps}>
       {({ submitForm, isSubmitting, ...rest }) => (
-        <Form>
+        <Form
+          css={css`
+            display: inline;
+          `}
+        >
           <ModalWrapper
             submitDisabled={isSubmitting}
             onSubmit={submitForm}

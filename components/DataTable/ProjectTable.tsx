@@ -32,7 +32,7 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = memo(({ curre
       return {
         fileName: file_name,
         fullPath,
-        id: file_id,
+        file_id,
         owner,
         immutable: immutable as unknown as boolean,
         actions: { projectId: currentProject.project_id },

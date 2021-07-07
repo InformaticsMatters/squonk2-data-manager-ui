@@ -18,10 +18,10 @@ import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
 import { useGetTask } from '@squonk/data-manager-client/task';
 
+import { UploadableFile } from '../Uploads/types';
 import { useFileExtensions } from './useFileExtensions';
 import { useMimeTypeLookup } from './useMimeTypeLookup';
 
-import type { UploadableFile } from './FileUpload';
 export interface SingleFileUploadWithProgressProps {
   fileWrapper: UploadableFile;
   errors: FileError[];

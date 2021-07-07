@@ -39,7 +39,7 @@ export const DataTable: FC<DataTableProps> = ({ columns, rows }) => {
 
   const getRowID = (row: Row) => {
     if (isDataset(row)) {
-      return row.id;
+      return row.dataset_id;
     }
     return row.fullPath;
   };

@@ -17,7 +17,7 @@ export const AllDatasetsTable = () => {
       const fileName = versions[0].file_name;
       return {
         fileName,
-        id: dataset_id,
+        dataset_id,
         owner,
         editors,
         versions,

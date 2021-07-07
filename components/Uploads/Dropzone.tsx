@@ -1,22 +1,27 @@
 import React, { useCallback } from 'react';
 
-import { FileRejection, useDropzone } from 'react-dropzone';
+import { DropzoneOptions, FileRejection, useDropzone } from 'react-dropzone';
 import { v4 as uuidv4 } from 'uuid';
 
 import { css } from '@emotion/react';
 import { Divider, useTheme } from '@material-ui/core';
 
-import { UploadableFile } from './FileUpload';
-import { useFileExtensions } from './useFileExtensions';
-import { useMimeTypeLookup } from './useMimeTypeLookup';
-import { getMimeFromFileName } from './utils';
+import { useFileExtensions } from '../FileUpload/useFileExtensions';
+import { useMimeTypeLookup } from '../FileUpload/useMimeTypeLookup';
+import { getMimeFromFileName } from '../FileUpload/utils';
+import { UploadableFile } from './types';
 
-interface DropzoneProps {
+interface DropzoneProps extends DropzoneOptions {
   files: UploadableFile[];
   setFiles: (newFiles: UploadableFile[]) => void;
 }
 
-export const Dropzone: React.FC<DropzoneProps> = ({ children, files, setFiles }) => {
+export const Dropzone: React.FC<DropzoneProps> = ({
+  children,
+  files,
+  setFiles,
+  ...dropzoneOptions
+}) => {
   const allowedFileTypes = useFileExtensions();
   const mimeLookup = useMimeTypeLookup();
 
@@ -43,9 +48,9 @@ export const Dropzone: React.FC<DropzoneProps> = ({ children, files, setFiles })
   // TODO: allow gzipped files to be uploaded
   // patchedFileExtensions.push('.gz');
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    ...dropzoneOptions,
     onDrop,
     accept: patchedFileExtensions,
-    maxSize: 25 * 1024 ** 2, // 25 MB - same as the API route limit
   });
 
   const theme = useTheme();
@@ -77,7 +82,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({ children, files, setFiles })
       >
         Drag and drop files here, or click to select files
       </button>
-      {!!files.length && (
+      {!!files.length && children && (
         <Divider
           css={css`
             margin-top: ${theme.spacing(2)}px;

@@ -73,6 +73,7 @@
     "delete-dataset",
     "edit-project",
     "executions",
-    "modals"
+    "modals",
+    "dataset-new-version"
   ],
 }

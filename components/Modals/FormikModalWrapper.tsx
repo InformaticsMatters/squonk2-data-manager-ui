@@ -37,14 +37,14 @@ export function FormikModalWrapper<Values>({
 }: FormikModalWrapperProps & FormikConfig<Values>) {
   return (
     <Formik {...formikProps}>
-      {({ submitForm, isSubmitting, ...rest }) => (
+      {({ submitForm, isSubmitting, isValid, ...rest }) => (
         <Form
           css={css`
             display: inline;
           `}
         >
           <ModalWrapper
-            submitDisabled={isSubmitting}
+            submitDisabled={isSubmitting || !isValid}
             onSubmit={submitForm}
             submitText={submitText}
             id={id}

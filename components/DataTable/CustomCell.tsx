@@ -1,6 +1,10 @@
 import React from 'react';
-
 import { useQueryClient } from 'react-query';
+
+import {
+  getGetDatasetsQueryKey,
+  useCreateDatasetFromFile,
+} from '@squonk/data-manager-client/dataset';
 
 import { useUser } from '@auth0/nextjs-auth0';
 import { Table } from '@devexpress/dx-react-grid-material-ui';
@@ -8,10 +12,6 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Link, Typography, useTheme } from '@material-ui/core';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
-import {
-  getGetDatasetsQueryKey,
-  useCreateDatasetFromFile,
-} from '@squonk/data-manager-client/dataset';
 
 import { useMimeTypeLookup } from '../FileUpload/useMimeTypeLookup';
 import { AttachButton } from './AttachButton';

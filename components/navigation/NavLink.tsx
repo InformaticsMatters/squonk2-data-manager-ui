@@ -1,10 +1,9 @@
 import React from 'react';
 
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-
 import { css } from '@emotion/react';
 import { Button } from '@material-ui/core';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 export const NavLink: React.FC<{ title: string }> = ({ title }) => {
   // Generate path from title text "Two Word" => "/twoword"

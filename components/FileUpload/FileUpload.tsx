@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 
-import { AxiosError } from 'axios';
-
-import { IconButton } from '@material-ui/core';
-import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
 import {
   customInstance,
   DatasetPostBodyBody,
   DatasetPutPostResponse,
 } from '@squonk/data-manager-client';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
+
+import { IconButton } from '@material-ui/core';
+import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
+import { AxiosError } from 'axios';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { FileTypeOptions } from '../Uploads/FileTypeOptions';

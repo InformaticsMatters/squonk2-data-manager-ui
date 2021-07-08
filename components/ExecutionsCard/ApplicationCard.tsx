@@ -1,5 +1,9 @@
 import React, { FC, useState } from 'react';
 
+import { ApplicationSummary, ProjectDetail } from '@squonk/data-manager-client';
+import { useGetApplication } from '@squonk/data-manager-client/application';
+import { useCreateInstance } from '@squonk/data-manager-client/instance';
+
 import {
   Button,
   ButtonProps,
@@ -9,9 +13,6 @@ import {
   Tooltip,
   useTheme,
 } from '@material-ui/core';
-import { ApplicationSummary, ProjectDetail } from '@squonk/data-manager-client';
-import { useGetApplication } from '@squonk/data-manager-client/application';
-import { useCreateInstance } from '@squonk/data-manager-client/instance';
 
 import { BaseCard } from './BaseCard';
 import { ProgressBar } from './ProgressBar';

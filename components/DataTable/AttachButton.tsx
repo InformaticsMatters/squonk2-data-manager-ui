@@ -1,10 +1,10 @@
 import React, { FC, useState } from 'react';
-
-import { AxiosError } from 'axios';
-import { Field } from 'formik';
-import { CheckboxWithLabel, TextField } from 'formik-material-ui';
 import { useQueryClient } from 'react-query';
-import * as yup from 'yup';
+
+import { DatasetVersionDetail } from '@squonk/data-manager-client';
+import { useAttachFile } from '@squonk/data-manager-client/file';
+import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-client/project';
+import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { useUser } from '@auth0/nextjs-auth0';
 import {
@@ -16,10 +16,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
-import { DatasetVersionDetail } from '@squonk/data-manager-client';
-import { useAttachFile } from '@squonk/data-manager-client/file';
-import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-client/project';
-import { useGetFileTypes } from '@squonk/data-manager-client/type';
+import { AxiosError } from 'axios';
+import { Field } from 'formik';
+import { CheckboxWithLabel, TextField } from 'formik-material-ui';
+import * as yup from 'yup';
 
 import { FormikModalWrapper } from '../Modals/FormikModalWrapper';
 

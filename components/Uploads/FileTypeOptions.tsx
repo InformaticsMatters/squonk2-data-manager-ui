@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
 
+import { useGetFileTypes } from '@squonk/data-manager-client/type';
+
 import { Box, Card, CardContent, Grid, Typography } from '@material-ui/core';
 import Form from '@rjsf/material-ui';
-import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 interface FileTypeOptionsProps {
   mimeTypes: string[];

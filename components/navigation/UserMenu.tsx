@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
-import Link from 'next/link';
-
 import { useUser } from '@auth0/nextjs-auth0';
 import { IconButton, Popover, Tooltip, Typography } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
+import Link from 'next/link';
 
 export const UserMenu = () => {
   const popupState = usePopupState({

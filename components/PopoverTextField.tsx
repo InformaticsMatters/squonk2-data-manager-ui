@@ -1,8 +1,7 @@
 import React, { FC, useRef } from 'react';
 
-import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
-
 import { Popover, TextField } from '@material-ui/core';
+import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 
 interface PopoverTextFieldProps {
   onSubmit: (value: string) => Promise<void>;

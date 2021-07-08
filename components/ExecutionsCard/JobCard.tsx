@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 
-import { css } from '@emotion/react';
-import { Chip, Grid, Typography, useTheme } from '@material-ui/core';
 import { useCreateInstance } from '@squonk/data-manager-client/instance';
 import { useGetJob } from '@squonk/data-manager-client/job';
+
+import { css } from '@emotion/react';
+import { Chip, Grid, Typography, useTheme } from '@material-ui/core';
 
 import { useCurrentProjectId } from '../CurrentProjectContext';
 import { BaseCard } from './BaseCard';

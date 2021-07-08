@@ -1,9 +1,8 @@
 import React, { FC, useState } from 'react';
-
-import { Field, FieldArray } from 'formik';
-import { CheckboxWithLabel } from 'formik-material-ui';
 import { useQueryClient } from 'react-query';
-import * as yup from 'yup';
+
+import { DatasetVersionDetail } from '@squonk/data-manager-client';
+import { getGetDatasetsQueryKey, useDeleteDataset } from '@squonk/data-manager-client/dataset';
 
 import {
   FormControl,
@@ -15,8 +14,9 @@ import {
   Typography,
 } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import { DatasetVersionDetail } from '@squonk/data-manager-client';
-import { getGetDatasetsQueryKey, useDeleteDataset } from '@squonk/data-manager-client/dataset';
+import { Field, FieldArray } from 'formik';
+import { CheckboxWithLabel } from 'formik-material-ui';
+import * as yup from 'yup';
 
 import { toLocalTimeString } from '../LocalTime/utils';
 import { FormikModalWrapper } from '../Modals/FormikModalWrapper';

@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
-
 import { useQueryClient } from 'react-query';
+
+import { useDeleteFile } from '@squonk/data-manager-client/file';
+import { getGetProjectQueryKey } from '@squonk/data-manager-client/project';
 
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
-import { useDeleteFile } from '@squonk/data-manager-client/file';
-import { getGetProjectQueryKey } from '@squonk/data-manager-client/project';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
 

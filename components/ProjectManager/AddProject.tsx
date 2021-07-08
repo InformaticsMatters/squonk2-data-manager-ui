@@ -1,14 +1,14 @@
 import React, { FC } from 'react';
-
 import { useQueryClient } from 'react-query';
 
-import { IconButton, Tooltip } from '@material-ui/core';
-import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 import {
   getGetProjectsQueryKey,
   useCreateProject,
   useGetProjects,
 } from '@squonk/data-manager-client/project';
+
+import { IconButton, Tooltip } from '@material-ui/core';
+import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 
 import { PopoverTextField } from '../PopoverTextField';
 

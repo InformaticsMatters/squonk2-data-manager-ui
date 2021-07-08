@@ -1,10 +1,9 @@
 import React, { useCallback } from 'react';
-
 import { DropzoneOptions, FileRejection, useDropzone } from 'react-dropzone';
-import { v4 as uuidv4 } from 'uuid';
 
 import { css } from '@emotion/react';
 import { Divider, useTheme } from '@material-ui/core';
+import { v4 as uuidv4 } from 'uuid';
 
 import { useFileExtensions } from '../FileUpload/useFileExtensions';
 import { useMimeTypeLookup } from '../FileUpload/useMimeTypeLookup';

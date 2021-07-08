@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { Form, Formik, FormikConfig } from 'formik';
-
 import { css } from '@emotion/react';
 import { DialogProps } from '@material-ui/core';
+import { Form, Formik, FormikConfig } from 'formik';
 
 import { ModalWrapper } from './ModalWrapper';
 import { BaseModalWrapperProps } from './types';

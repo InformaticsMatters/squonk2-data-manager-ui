@@ -1,19 +1,19 @@
 import React, { useRef } from 'react';
-
-import '../styles/globalStyles.scss';
-
-import { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Hydrate } from 'react-query/hydration';
+
+import { setBaseUrl } from '@squonk/data-manager-client';
+import { MuiTheme } from '@squonk/mui-theme';
 
 import { UserProvider } from '@auth0/nextjs-auth0';
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline, useTheme } from '@material-ui/core';
-import { setBaseUrl } from '@squonk/data-manager-client';
-import { MuiTheme } from '@squonk/mui-theme';
+import { AppProps } from 'next/app';
 
 import { CurrentProjectProvider } from '../components/CurrentProjectContext';
 import { SelectedFilesProvider } from '../components/DataTable/FileSelectionContext';
+
+import '../styles/globalStyles.scss';
 
 // ? Is this the right place to set this?
 setBaseUrl(process.env.NEXT_PUBLIC_BASE_PATH + '/api/dm-api');

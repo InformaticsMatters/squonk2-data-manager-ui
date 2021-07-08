@@ -1,7 +1,9 @@
 import React, { useRef, useState } from 'react';
-
 import { FileError } from 'react-dropzone';
 import { useQueryClient } from 'react-query';
+
+import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
+import { useGetTask } from '@squonk/data-manager-client/task';
 
 import { css } from '@emotion/react';
 import {
@@ -13,8 +15,6 @@ import {
   Typography,
   useTheme,
 } from '@material-ui/core';
-import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
-import { useGetTask } from '@squonk/data-manager-client/task';
 
 import { TwiddleIcon } from '../Uploads/TwiddleIcon';
 import { UploadableFile } from '../Uploads/types';

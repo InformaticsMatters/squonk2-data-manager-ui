@@ -1,5 +1,7 @@
 import React, { FC, useState } from 'react';
 
+import { useGetInstances } from '@squonk/data-manager-client/instance';
+
 import { css } from '@emotion/react';
 import {
   Avatar,
@@ -12,7 +14,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
-import { useGetInstances } from '@squonk/data-manager-client/instance';
 
 import { InstanceDetail } from './InstanceDetail';
 

@@ -1,10 +1,10 @@
 import React, { FC, useState } from 'react';
-
 import { useQueryClient } from 'react-query';
+
+import { getGetDatasetsQueryKey, uploadDataset } from '@squonk/data-manager-client/dataset';
 
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import BackupRoundedIcon from '@material-ui/icons/BackupRounded';
-import { getGetDatasetsQueryKey, uploadDataset } from '@squonk/data-manager-client/dataset';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { Dropzone } from '../Uploads/Dropzone';

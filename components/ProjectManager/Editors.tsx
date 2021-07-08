@@ -1,10 +1,6 @@
 import React, { FC } from 'react';
-
 import { useQueryClient } from 'react-query';
 
-import { useUser } from '@auth0/nextjs-auth0';
-import { Chip, TextField } from '@material-ui/core';
-import { Autocomplete, AutocompleteChangeReason } from '@material-ui/lab';
 import {
   getGetProjectsQueryKey,
   useAddEditorToProject,
@@ -12,6 +8,10 @@ import {
   useRemoveEditorFromProject,
 } from '@squonk/data-manager-client/project';
 import { useGetUsers } from '@squonk/data-manager-client/user';
+
+import { useUser } from '@auth0/nextjs-auth0';
+import { Chip, TextField } from '@material-ui/core';
+import { Autocomplete, AutocompleteChangeReason } from '@material-ui/lab';
 
 import { useCurrentProject } from '../CurrentProjectContext';
 

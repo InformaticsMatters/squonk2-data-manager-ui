@@ -1,7 +1,6 @@
 import React, { FC, ReactNode, useState } from 'react';
 
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import { useGetTask } from '@squonk/data-manager-client/task';
 
 import { css } from '@emotion/react';
 import {
@@ -28,7 +27,8 @@ import {
   TimelineOppositeContent,
   TimelineSeparator,
 } from '@material-ui/lab';
-import { useGetTask } from '@squonk/data-manager-client/task';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 import { LocalTime } from './LocalTime/LocalTime';
 import { TaskInstanceDetail } from './TaskInstanceDetail';

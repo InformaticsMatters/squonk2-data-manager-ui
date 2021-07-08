@@ -1,13 +1,13 @@
 import React from 'react';
-
 import { useQueryClient } from 'react-query';
 
-import { Button, Grid, Typography } from '@material-ui/core';
 import {
   getGetInstancesQueryKey,
   useGetInstance,
   useTerminateInstance,
 } from '@squonk/data-manager-client/instance';
+
+import { Button, Grid, Typography } from '@material-ui/core';
 
 // Button Props doesn't support target and rel when using as a Link
 const HrefButton = Button as any;

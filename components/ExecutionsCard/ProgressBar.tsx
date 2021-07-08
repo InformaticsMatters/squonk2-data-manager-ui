@@ -1,13 +1,12 @@
 import React, { FC, useEffect, useState } from 'react';
-
 import { useQueryClient } from 'react-query';
 
-import { css } from '@emotion/react';
-import { LinearProgress, Typography, useTheme } from '@material-ui/core';
+import type { TaskGetResponse } from '@squonk/data-manager-client';
 import { getGetInstancesQueryKey } from '@squonk/data-manager-client/instance';
 import { useGetTask } from '@squonk/data-manager-client/task';
 
-import type { TaskGetResponse } from '@squonk/data-manager-client';
+import { css } from '@emotion/react';
+import { LinearProgress, Typography, useTheme } from '@material-ui/core';
 
 interface ProgressBarProps {
   taskId: string | null;

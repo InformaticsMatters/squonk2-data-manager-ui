@@ -1,6 +1,5 @@
-import httpProxyMiddleware from 'next-http-proxy-middleware';
-
 import { getAccessToken, withApiAuthRequired } from '@auth0/nextjs-auth0';
+import httpProxyMiddleware from 'next-http-proxy-middleware';
 
 if (process.env.DATA_MANAGER_API_SERVER === undefined) {
   throw Error('Data Manager API environment variable not specified!');

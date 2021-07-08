@@ -1,7 +1,6 @@
-import Link from 'next/link';
-
 import { css } from '@emotion/react';
 import { useTheme } from '@material-ui/core';
+import Link from 'next/link';
 
 export const Logo = () => {
   const theme = useTheme();

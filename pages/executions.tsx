@@ -1,11 +1,12 @@
 import React, { FC, useState } from 'react';
 
+import { useGetApplications } from '@squonk/data-manager-client/application';
+import { useGetJobs } from '@squonk/data-manager-client/job';
+
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, Grid, InputAdornment, MenuItem, TextField, useTheme } from '@material-ui/core';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
-import { useGetApplications } from '@squonk/data-manager-client/application';
-import { useGetJobs } from '@squonk/data-manager-client/job';
 
 import { useCurrentProject } from '../components/CurrentProjectContext';
 import { ApplicationCard } from '../components/ExecutionsCard/ApplicationCard';

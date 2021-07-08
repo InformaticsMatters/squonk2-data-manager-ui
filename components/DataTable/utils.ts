@@ -1,4 +1,4 @@
-import type { TableDir, TableFile, TableDataset, Row } from './types';
+import type { Row, TableDataset, TableDir, TableFile } from './types';
 
 export const isTableFile = (row: Row): row is TableFile => {
   if (Object.prototype.hasOwnProperty.call(row, 'actions')) {

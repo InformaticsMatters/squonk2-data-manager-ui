@@ -1,6 +1,11 @@
 import React from 'react';
-
 import { useQueryClient } from 'react-query';
+
+import {
+  getGetProjectsQueryKey,
+  useDeleteProject,
+  useGetProjects,
+} from '@squonk/data-manager-client/project';
 
 import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
@@ -8,11 +13,6 @@ import styled from '@emotion/styled';
 import { Grid, InputAdornment, TextField, TextFieldProps } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
-import {
-  getGetProjectsQueryKey,
-  useDeleteProject,
-  useGetProjects,
-} from '@squonk/data-manager-client/project';
 
 import { useCurrentProject, useCurrentProjectId } from '../CurrentProjectContext';
 import { AddProject } from './AddProject';

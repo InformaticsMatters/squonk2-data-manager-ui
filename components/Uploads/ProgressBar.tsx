@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-
 import { FileError } from 'react-dropzone';
 
-import { LinearProgress, Typography } from '@material-ui/core';
 import { useGetTask } from '@squonk/data-manager-client/task';
+
+import { LinearProgress, Typography } from '@material-ui/core';
 
 interface ProgressBarProps {
   taskId: string | null;

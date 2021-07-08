@@ -54,7 +54,7 @@ export function FormikModalWrapper<Values>({
             onClose={onClose}
           >
             {typeof children === 'function'
-              ? children({ submitForm, isSubmitting, ...rest })
+              ? children({ isValid, submitForm, isSubmitting, ...rest })
               : children}
           </ModalWrapper>
         </Form>

@@ -13,11 +13,10 @@ import {
   Typography,
   useTheme,
 } from '@material-ui/core';
-import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
-import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
 import { useGetTask } from '@squonk/data-manager-client/task';
 
+import { TwiddleIcon } from '../Uploads/TwiddleIcon';
 import { UploadableFile } from '../Uploads/types';
 import { useFileExtensions } from './useFileExtensions';
 import { useMimeTypeLookup } from './useMimeTypeLookup';
@@ -27,6 +26,7 @@ export interface SingleFileUploadWithProgressProps {
   errors: FileError[];
   rename: (newName: string) => void;
   changeMimeType: (newType: string) => void;
+  changeToDone: () => void;
   onDelete: (file: File) => void;
 }
 
@@ -35,6 +35,7 @@ export function SingleFileUploadWithProgress({
   onDelete,
   errors,
   rename,
+  changeToDone,
   changeMimeType,
 }: SingleFileUploadWithProgressProps) {
   const queryClient = useQueryClient();
@@ -56,6 +57,7 @@ export function SingleFileUploadWithProgress({
         if (!isLoading && task.done) {
           setInterval(false);
           queryClient.invalidateQueries(getGetDatasetsQueryKey());
+          changeToDone();
         }
       },
     },
@@ -65,6 +67,13 @@ export function SingleFileUploadWithProgress({
   const mimeLookup = useMimeTypeLookup();
 
   const theme = useTheme();
+
+  const disabled =
+    (task && !task.done) ||
+    (fileWrapper.progress < 100 && fileWrapper.progress > 0) ||
+    isLoading ||
+    (fileWrapper.progress === 100 && task === undefined);
+
   return (
     <>
       <Grid
@@ -75,17 +84,17 @@ export function SingleFileUploadWithProgress({
         `}
         spacing={1}
       >
-        <Grid item sm={8} xs={12}>
+        <Grid item sm={8} xs={12} md={9}>
           <TextField
             fullWidth
             required
             defaultValue={stem}
-            disabled={task?.done}
+            disabled={disabled || task?.done}
             inputRef={fileNameRef}
             placeholder={stem}
             size="small"
             onChange={() => rename(composeNewFilePath())}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
           />
         </Grid>
         <Grid
@@ -95,22 +104,23 @@ export function SingleFileUploadWithProgress({
           `}
           sm={3}
           xs={8}
+          md={2}
         >
           <TextField
             fullWidth
             select
             defaultValue={`.${extensions.join('.')}`}
-            disabled={task?.done}
+            disabled={disabled || task?.done}
             inputRef={fileExtRef}
             label="Ext"
             size="small"
-            onChange={(e) => {
-              e.stopPropagation();
+            onChange={(event) => {
+              event.stopPropagation();
               rename(composeNewFilePath());
 
-              changeMimeType(mimeLookup[e.target.value]);
+              changeMimeType(mimeLookup[event.target.value]);
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
           >
             {allowedFileTypes?.map((fileType) => (
               <MenuItem key={fileType} value={fileType}>
@@ -126,45 +136,31 @@ export function SingleFileUploadWithProgress({
           `}
           sm={1}
           xs={4}
+          md={1}
         >
           <IconButton
+            disabled={disabled}
             css={css`
               color: ${theme.palette.success.main};
             `}
             size="small"
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={(event) => {
+              event.stopPropagation();
               onDelete(fileWrapper.file);
             }}
           >
-            {task?.done ? (
-              <DoneRoundedIcon
-                css={css`
-                  @keyframes spin-in {
-                    0% {
-                      opacity: 0.4;
-                      transform: rotate(-45deg);
-                    }
-                    100% {
-                      opacity: 1;
-                      transform: rotate(0);
-                    }
-                  }
-                  animation: spin-in 0.5s ease;
-                `}
-              />
-            ) : (
-              <DeleteRoundedIcon color="primary" />
-            )}
+            <TwiddleIcon done={!!task?.done} />
           </IconButton>
         </Grid>
       </Grid>
-      {(fileWrapper.progress < 100 || (fileWrapper.progress === 100 && !fileWrapper.taskId)) && (
+      {fileWrapper.progress < 100 && fileWrapper.progress > 0 && (
         <LinearProgress value={fileWrapper.progress} variant="determinate" />
       )}
-      {!isLoading && task && !task.done && <LinearProgress />}
-      {errors.map((error, index) => (
-        <Typography color="error" key={`${error.code}-${error.message}-${index}`}>
+      {(fileWrapper.progress === 100 && task === undefined) || (task && !task.done) || isLoading ? (
+        <LinearProgress />
+      ) : null}
+      {errors.map((error) => (
+        <Typography color="error" key={`${error.code}-${error.message}`}>
           {error.message}
         </Typography>
       ))}

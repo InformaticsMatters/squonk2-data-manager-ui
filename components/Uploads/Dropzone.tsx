@@ -33,6 +33,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       id: uuidv4(),
       progress: 0,
       taskId: null,
+      done: false,
     }));
     const mappedRejected = rejectedFiles.map((rejection) => ({
       ...rejection,
@@ -40,6 +41,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       id: uuidv4(),
       progress: 0,
       taskId: null,
+      done: false,
     }));
     setFiles([...mappedAccepted, ...mappedRejected]);
   }, []);

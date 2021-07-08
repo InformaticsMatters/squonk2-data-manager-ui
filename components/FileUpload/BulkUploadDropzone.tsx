@@ -1,0 +1,56 @@
+import React, { FC } from 'react';
+
+import { css } from '@emotion/react';
+import { Grid, useTheme } from '@material-ui/core';
+
+import { Dropzone } from '../Uploads/Dropzone';
+import { UploadableFile } from '../Uploads/types';
+import { SingleFileUploadWithProgress } from './SingleFileUploader';
+import { mutateAtPosition } from './utils';
+
+interface BulkUploadDropzoneProps {
+  files: UploadableFile[];
+  setFiles: (files: UploadableFile[] | ((files: UploadableFile[]) => UploadableFile[])) => void;
+}
+
+export const BulkUploadDropzone: FC<BulkUploadDropzoneProps> = ({ files, setFiles }) => {
+  const theme = useTheme();
+
+  const onDelete = (file: File) => {
+    setFiles((curr) => curr.filter((fw) => fw.file !== file));
+  };
+
+  return (
+    <Dropzone files={files} setFiles={setFiles}>
+      <Grid container direction="column">
+        {files.map((fileWrapper, index) => (
+          <Grid
+            item
+            css={css`
+              margin-bottom: ${theme.spacing(1)}px;
+            `}
+            key={fileWrapper.id}
+          >
+            <SingleFileUploadWithProgress
+              errors={fileWrapper.errors}
+              fileWrapper={fileWrapper}
+              rename={(newName) => {
+                files[index].rename = newName;
+                setFiles(mutateAtPosition(files, index, files[index]));
+              }}
+              changeMimeType={(newType) => {
+                files[index].mimeType = newType;
+                setFiles(mutateAtPosition(files, index, files[index]));
+              }}
+              changeToDone={() => {
+                files[index].done = true;
+                setFiles(mutateAtPosition(files, index, files[index]));
+              }}
+              onDelete={onDelete}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </Dropzone>
+  );
+};

@@ -8,6 +8,7 @@ export interface UploadableFile {
   progress: number;
   rename?: string;
   mimeType: string;
+  done: boolean;
 }
 
 export interface FileTypeOptionsState {

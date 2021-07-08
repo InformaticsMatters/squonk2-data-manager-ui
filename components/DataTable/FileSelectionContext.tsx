@@ -1,6 +1,6 @@
 import React, { useContext, useReducer } from 'react';
 
-import { ProjectId, useCurrentProjectId } from '../CurrentProjectContext';
+import { ProjectId, useCurrentProjectId } from '../currentProjectHooks';
 
 type SavedFile = string; // General in case we want to store more than the file path
 

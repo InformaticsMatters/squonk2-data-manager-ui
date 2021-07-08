@@ -76,6 +76,7 @@
     "executions",
     "modals",
     "dataset-new-version",
-    "eslint"
+    "eslint",
+    "project-state"
   ],
 }

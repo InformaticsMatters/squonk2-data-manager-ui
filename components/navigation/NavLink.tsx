@@ -7,12 +7,12 @@ import { useRouter } from 'next/router';
 
 export const NavLink: React.FC<{ title: string }> = ({ title }) => {
   // Generate path from title text "Two Word" => "/twoword"
-  const path = '/' + title.toLowerCase().replace(/ /g, '');
+  const pathname = '/' + title.toLowerCase().replace(/ /g, '');
 
   const router = useRouter();
-  const active = router.pathname === path;
+  const active = router.pathname === pathname;
   return (
-    <Link passHref href={path}>
+    <Link passHref href={{ pathname, query: router.query }}>
       <Button
         css={css`
           font-weight: ${active ? 'bold' : 'normal'};

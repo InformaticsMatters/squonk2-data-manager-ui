@@ -10,7 +10,6 @@ import { ThemeProvider } from '@emotion/react';
 import { CssBaseline, useTheme } from '@material-ui/core';
 import { AppProps } from 'next/app';
 
-import { CurrentProjectProvider } from '../components/CurrentProjectContext';
 import { SelectedFilesProvider } from '../components/DataTable/FileSelectionContext';
 
 import '../styles/globalStyles.scss';
@@ -35,11 +34,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <UserProvider>
           <QueryClientProvider client={queryClientRef.current}>
             <Hydrate state={pageProps.dehydratedState}>
-              <CurrentProjectProvider>
-                <SelectedFilesProvider>
-                  <Component {...pageProps} />
-                </SelectedFilesProvider>
-              </CurrentProjectProvider>
+              <SelectedFilesProvider>
+                <Component {...pageProps} />
+              </SelectedFilesProvider>
             </Hydrate>
           </QueryClientProvider>
         </UserProvider>

@@ -5,7 +5,7 @@ import { useGetJob } from '@squonk/data-manager-client/job';
 import { Button, Grid, Tooltip, Typography } from '@material-ui/core';
 import Form from '@rjsf/material-ui';
 
-import { useCurrentProjectId } from '../CurrentProjectContext';
+import { useCurrentProjectId } from '../currentProjectHooks';
 import { useSelectedFiles } from '../DataTable/FileSelectionContext';
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { JobSpecification } from './JobCard';

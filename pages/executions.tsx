@@ -8,7 +8,7 @@ import { css } from '@emotion/react';
 import { Container, Grid, InputAdornment, MenuItem, TextField, useTheme } from '@material-ui/core';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 
-import { useCurrentProject } from '../components/CurrentProjectContext';
+import { useCurrentProject } from '../components/currentProjectHooks';
 import { ApplicationCard } from '../components/ExecutionsCard/ApplicationCard';
 import { JobCard } from '../components/ExecutionsCard/JobCard';
 import Layout from '../components/Layout';

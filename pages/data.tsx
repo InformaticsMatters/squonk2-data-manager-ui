@@ -2,7 +2,7 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, Grid, useTheme } from '@material-ui/core';
 
-import { useCurrentProject } from '../components/CurrentProjectContext';
+import { useCurrentProject } from '../components/currentProjectHooks';
 import { DataTableManager } from '../components/DataTable/DataTableManager';
 import { FileUpload } from '../components/FileUpload/FileUpload';
 import Layout from '../components/Layout';

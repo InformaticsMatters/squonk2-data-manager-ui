@@ -92,10 +92,10 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
         </CardContent>
         <CardActions disableSpacing>
           <IconButton
-            disabled={!task?.events?.length}
             css={css`
               margin-left: auto;
             `}
+            disabled={!task?.events?.length}
             onClick={() => setExpanded(!expanded)}
           >
             <ExpandMoreIcon />
@@ -108,7 +108,7 @@ export const Task: FC<TaskProps> = ({ taskId }) => {
                 <TimelineItem key={event.ordinal}>
                   <TimelineOppositeContent>
                     <Typography color="textSecondary">
-                      <LocalTime utcTimestamp={event.time} showTime showDate={false} />
+                      <LocalTime showTime showDate={false} utcTimestamp={event.time} />
                     </Typography>
                   </TimelineOppositeContent>
                   <TimelineSeparator>

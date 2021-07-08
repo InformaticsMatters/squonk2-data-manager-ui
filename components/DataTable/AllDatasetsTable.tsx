@@ -26,11 +26,10 @@ export const AllDatasetsTable = () => {
 
     return (
       <>
-        <Typography variant="h4" component="h1">
+        <Typography component="h1" variant="h4">
           Datasets
         </Typography>
         <DataTable
-          rows={rows}
           columns={[
             { name: 'fileName', title: 'File Name' },
             { name: 'owner', title: 'Owner' },
@@ -38,6 +37,7 @@ export const AllDatasetsTable = () => {
             { name: 'actions', title: 'Actions' },
             // { name: 'fullPath', title: 'Full Path' },
           ]}
+          rows={rows}
         />
       </>
     );

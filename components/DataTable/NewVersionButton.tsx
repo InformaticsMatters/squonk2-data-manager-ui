@@ -30,12 +30,12 @@ export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
       </Tooltip>
       <ModalWrapper
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
-        title="Upload a New Version"
-        open={open}
-        onClose={() => setOpen(false)}
         id={`version-upload-${dataset.dataset_id}`}
-        submitText="Upload"
+        open={open}
         submitDisabled={!file || !!file.taskId}
+        submitText="Upload"
+        title="Upload a New Version"
+        onClose={() => setOpen(false)}
         onSubmit={async () => {
           const parentVersion = Math.max(...dataset.versions.map((v) => v.version));
           const parent = dataset.versions.find((version) => version.version === parentVersion);
@@ -60,8 +60,8 @@ export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
         }}
       >
         <Dropzone
-          multiple={false}
           files={file ? [file] : []}
+          multiple={false}
           setFiles={(files) => setFile(files[0])}
         />
         <Typography variant="subtitle1">
@@ -75,9 +75,9 @@ export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
 
         {file && (
           <ProgressBar
-            taskId={file.taskId}
-            progress={file.progress}
             errors={file.errors}
+            progress={file.progress}
+            taskId={file.taskId}
             onDone={() => {
               queryClient.invalidateQueries(getGetDatasetsQueryKey());
               setFile(undefined);

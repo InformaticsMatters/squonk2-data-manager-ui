@@ -68,9 +68,9 @@ export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob, disabled }) =
         </Tooltip>
         <ModalWrapper
           id={`job-${jobId}`}
-          title={job?.name ?? 'Run Job'}
-          submitText="Run"
           open={open}
+          submitText="Run"
+          title={job?.name ?? 'Run Job'}
           onClose={() => setOpen(false)}
           onSubmit={handleSubmit}
         >
@@ -79,13 +79,13 @@ export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob, disabled }) =
               {job.variables.inputs && (
                 <>
                   <Grid item xs={12}>
-                    <Typography gutterBottom variant="subtitle1" component="h3">
+                    <Typography gutterBottom component="h3" variant="subtitle1">
                       <b>Inputs</b>
                     </Typography>
                   </Grid>
                   <JobInputFields
-                    setInputsData={setInputsData}
                     inputs={job.variables.inputs as any}
+                    setInputsData={setInputsData}
                   />
                 </>
               )}
@@ -93,17 +93,17 @@ export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob, disabled }) =
               <Grid item xs={12}>
                 {job.variables.options && (
                   <>
-                    <Typography gutterBottom variant="subtitle1" component="h3">
+                    <Typography gutterBottom component="h3" variant="subtitle1">
                       <b>Options</b>
                     </Typography>
                     <Form
-                      showErrorList={false}
                       liveValidate
                       noHtml5Validate
+                      formData={optionsFormData}
                       schema={job.variables.options as any}
                       // TODO: fix when openapi is updated
+                      showErrorList={false}
                       uiSchema={{ 'ui:order': (job.variables as any)?.order?.options }}
-                      formData={optionsFormData}
                       onChange={(event) => setOptionsFormData(event.formData)}
                     >
                       {/* Remove the default submit button */}

@@ -38,14 +38,14 @@ export const JobInputFields: FC<JobInputFieldsProps> = ({ inputs, setInputsData 
           ([key, { title, type, 'mime-types': mimeType, multiple }]) => {
             return (
               // Expect a grid container in the parent component
-              <Grid item xs={12} key={key}>
+              <Grid item key={key} xs={12}>
                 <TextField
-                  required={inputs.required?.includes(key)}
-                  SelectProps={{ multiple }}
+                  fullWidth
                   select
                   defaultValue={multiple ? [] : ''}
-                  fullWidth
                   label={title}
+                  required={inputs.required?.includes(key)}
+                  SelectProps={{ multiple }}
                   onChange={(event) => {
                     setInputsData((prevData: any) => ({ ...prevData, [key]: event.target.value }));
                   }}

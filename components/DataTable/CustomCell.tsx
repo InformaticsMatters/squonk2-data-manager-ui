@@ -46,14 +46,14 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
         <Cell column={column} row={row} {...rest}>
           {!isTableFile(row) && isTableDir(row) ? (
             <Link
-              variant="body1"
               color="inherit"
               component="button"
-              onClick={() => row.actions.changePath(row.path)}
               css={css`
                 display: flex;
                 gap: ${theme.spacing(1)}px;
               `}
+              variant="body1"
+              onClick={() => row.actions.changePath(row.path)}
             >
               <FolderRoundedIcon /> {row.fileName}
             </Link>

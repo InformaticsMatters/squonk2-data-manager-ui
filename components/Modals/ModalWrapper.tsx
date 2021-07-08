@@ -44,7 +44,6 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       <DialogTitle id={`${id}-title`}>
         {title}
         <IconButton
-          size="small"
           css={css`
             z-index: ${theme.zIndex.appBar + 1};
             position: absolute;
@@ -52,6 +51,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
             top: ${theme.spacing(2)}px;
             color: ${theme.palette.grey[700]};
           `}
+          size="small"
           onClick={onClose}
         >
           <CloseRoundedIcon />
@@ -63,7 +63,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
           Close
         </Button>
         {onSubmit && (
-          <Button disabled={submitDisabled} color="primary" onClick={onSubmit}>
+          <Button color="primary" disabled={submitDisabled} onClick={onSubmit}>
             {submitText}
           </Button>
         )}

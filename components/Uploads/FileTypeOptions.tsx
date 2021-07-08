@@ -26,7 +26,7 @@ export const FileTypeOptions: FC<FileTypeOptionsProps> = ({
       <>
         {!!mimeTypesToShow.length && (
           <Box marginY={2}>
-            <Typography variant="h5" component="h2">
+            <Typography component="h2" variant="h5">
               File Type Options
             </Typography>
             <Typography variant="subtitle1">
@@ -38,15 +38,15 @@ export const FileTypeOptions: FC<FileTypeOptionsProps> = ({
           {mimeTypesToShow.map((mimeType) => {
             const type = types.find((type) => mimeType === type.mime);
             return (
-              <Grid key={mimeType} item xs={12} sm={6} md={4}>
+              <Grid item key={mimeType} md={4} sm={6} xs={12}>
                 <Card>
                   {type?.formatter_options ? (
                     <CardContent>
                       <Form
                         liveValidate
                         noHtml5Validate
-                        schema={type.formatter_options}
                         formData={formDatas[mimeType]}
+                        schema={type.formatter_options}
                         onChange={(event) =>
                           onFormChange({ ...formDatas, [mimeType]: event.formData })
                         }

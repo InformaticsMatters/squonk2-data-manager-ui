@@ -61,17 +61,17 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = memo(({ curre
 
     return (
       <>
-        <Typography variant="h4" component="h1">
+        <Typography component="h1" variant="h4">
           Project: {currentProject.name}
         </Typography>
         <Breadcrumbs>
           {['root', ...breadcrumbs].map((path, pathIndex) =>
             pathIndex < breadcrumbs.length ? (
               <Link
-                variant="body1"
-                key={`${pathIndex}-${path}`}
                 color="inherit"
                 component="button"
+                key={`${pathIndex}-${path}`}
+                variant="body1"
                 onClick={() => setBreadcrumbs(breadcrumbs.slice(0, pathIndex))}
               >
                 {path}
@@ -82,7 +82,6 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = memo(({ curre
           )}
         </Breadcrumbs>
         <DataTable
-          rows={rows}
           columns={[
             { name: 'fileName', title: 'File Name' },
             { name: 'owner', title: 'Owner' },
@@ -90,6 +89,7 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = memo(({ curre
             { name: 'actions', title: 'Actions' },
             // { name: 'fullPath', title: 'Full Path' },
           ]}
+          rows={rows}
         />
       </>
     );

@@ -75,6 +75,7 @@
     "edit-project",
     "executions",
     "modals",
-    "dataset-new-version"
+    "dataset-new-version",
+    "eslint"
   ],
 }

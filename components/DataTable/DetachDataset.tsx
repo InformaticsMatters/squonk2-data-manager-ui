@@ -23,9 +23,9 @@ export const DetachDataset: FC<DetachDatasetProps> = ({ fileId, projectId }) => 
     <>
       <ModalWrapper
         id={`detach-dataset-${fileId}`}
-        title="Detach File"
-        submitText="Detach"
         open={open}
+        submitText="Detach"
+        title="Detach File"
         onClose={() => setOpen(false)}
         onSubmit={async () => {
           await detachMutation.mutateAsync({ fileid: fileId });
@@ -38,7 +38,7 @@ export const DetachDataset: FC<DetachDatasetProps> = ({ fileId, projectId }) => 
         </Typography>
       </ModalWrapper>
       <Tooltip title="Detach File">
-        <IconButton size="small" aria-label="Delete selected dataset" onClick={() => setOpen(true)}>
+        <IconButton aria-label="Delete selected dataset" size="small" onClick={() => setOpen(true)}>
           <DeleteOutlineRoundedIcon />
         </IconButton>
       </Tooltip>

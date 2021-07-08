@@ -58,34 +58,34 @@ export const Editors: FC = () => {
 
   return !!currentProject && !!availableUsers && !!currentUser ? (
     <Autocomplete
-      options={availableUsers.map((user) => user.username)}
       disableClearable
-      loading={isLoading || isProjectsLoading}
-      getOptionDisabled={(option) => option === currentUser.preferred_username}
+      freeSolo
       fullWidth
       multiple
+      getOptionDisabled={(option) => option === currentUser.preferred_username}
       id="editors"
-      value={[
-        currentUser.preferred_username as string,
-        ...currentProject.editors.filter((user) => user !== currentUser.preferred_username),
-      ]}
-      freeSolo
+      loading={isLoading || isProjectsLoading}
+      options={availableUsers.map((user) => user.username)}
+      renderInput={(params) => <TextField {...params} label="Editors" />}
       renderTags={(value, getTagProps) =>
         value.map((option: string, index: number) => {
           const { onDelete, ...chipProps } = getTagProps({ index }) as any;
           return (
             <Chip
               key={option}
-              variant="outlined"
               label={option}
+              variant="outlined"
               onDelete={option !== currentUser.preferred_username ? onDelete : undefined}
               {...chipProps}
             />
           );
         })
       }
+      value={[
+        currentUser.preferred_username as string,
+        ...currentProject.editors.filter((user) => user !== currentUser.preferred_username),
+      ]}
       onChange={(_, value, reason) => updateEditors(value, reason)}
-      renderInput={(params) => <TextField {...params} label="Editors" />}
     />
   ) : null;
 };

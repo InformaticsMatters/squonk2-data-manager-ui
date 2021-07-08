@@ -33,10 +33,10 @@ const Tasks: FC = () => {
           <h1>Tasks</h1>
           <Tooltip title="Refresh Tasks">
             <IconButton
-              onClick={() => refetch()}
               css={css`
                 margin-left: auto;
               `}
+              onClick={() => refetch()}
             >
               <RefreshRoundedIcon />
             </IconButton>
@@ -48,7 +48,7 @@ const Tasks: FC = () => {
               dayjs(taskA.created).isBefore(dayjs(taskB.created)) ? 1 : -1,
             ) // Newest at the top
             ?.map((task) => (
-              <Grid key={task.id} item xs={12}>
+              <Grid item key={task.id} xs={12}>
                 <Task taskId={task.id} />
               </Grid>
             ))}

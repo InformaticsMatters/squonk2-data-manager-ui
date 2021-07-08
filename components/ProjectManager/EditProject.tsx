@@ -27,8 +27,8 @@ export const EditProject: FC<EditProjectProps> = ({ inverted = false, canEdit })
           <Tooltip title="Edit Project">
             <span>
               <IconButton
-                disabled={!canEdit}
                 color={inverted ? 'inherit' : 'default'}
+                disabled={!canEdit}
                 onClick={() => setOpen(!open)}
               >
                 <EditIcon />
@@ -38,14 +38,14 @@ export const EditProject: FC<EditProjectProps> = ({ inverted = false, canEdit })
         </>
       </Tooltip>
       <ModalWrapper
-        id="edit-project"
-        title="Edit Project"
-        submitText="Save"
-        open={open}
-        onClose={() => setOpen(false)}
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+        id="edit-project"
+        open={open}
+        submitText="Save"
+        title="Edit Project"
+        onClose={() => setOpen(false)}
       >
-        <Typography variant="h5" gutterBottom>
+        <Typography gutterBottom variant="h5">
           {currentProject?.name}
         </Typography>
         <div>

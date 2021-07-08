@@ -44,14 +44,14 @@ export function FormikModalWrapper<Values>({
           `}
         >
           <ModalWrapper
-            submitDisabled={isSubmitting || !isValid}
-            onSubmit={submitForm}
-            submitText={submitText}
-            id={id}
             DialogProps={DialogProps}
-            title={title}
+            id={id}
             open={open}
+            submitDisabled={isSubmitting || !isValid}
+            submitText={submitText}
+            title={title}
             onClose={onClose}
+            onSubmit={submitForm}
           >
             {typeof children === 'function'
               ? children({ isValid, submitForm, isSubmitting, ...rest })

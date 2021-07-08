@@ -15,9 +15,9 @@ export const DeleteProject: FC<DeleteProjectProps> = ({ onClick }) => {
     <>
       <ModalWrapper
         id="delete-project"
-        title="Delete Project"
-        submitText="Delete"
         open={open}
+        submitText="Delete"
+        title="Delete Project"
         onClose={() => setOpen(false)}
         onSubmit={() => {
           onClick();

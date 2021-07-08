@@ -32,18 +32,18 @@ export const BulkUploadDropzone: FC<BulkUploadDropzoneProps> = ({ files, setFile
             key={fileWrapper.id}
           >
             <SingleFileUploadWithProgress
-              errors={fileWrapper.errors}
-              fileWrapper={fileWrapper}
-              rename={(newName) => {
-                files[index].rename = newName;
-                setFiles(mutateAtPosition(files, index, files[index]));
-              }}
               changeMimeType={(newType) => {
                 files[index].mimeType = newType;
                 setFiles(mutateAtPosition(files, index, files[index]));
               }}
               changeToDone={() => {
                 files[index].done = true;
+                setFiles(mutateAtPosition(files, index, files[index]));
+              }}
+              errors={fileWrapper.errors}
+              fileWrapper={fileWrapper}
+              rename={(newName) => {
+                files[index].rename = newName;
                 setFiles(mutateAtPosition(files, index, files[index]));
               }}
               onDelete={onDelete}

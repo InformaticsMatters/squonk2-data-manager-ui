@@ -37,10 +37,10 @@ export const InstanceDetail: React.FC<{ instanceId: string }> = ({ instanceId })
         {!!detailedInstance?.url && (
           <Grid item>
             <HrefButton
+              color="primary"
               href={detailedInstance.url}
               rel="noopener noreferrer"
               target="_blank"
-              color="primary"
             >
               Open
             </HrefButton>

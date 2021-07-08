@@ -36,19 +36,29 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
   return (
     <>
       <Tooltip arrow title="Delete versions of this dataset">
-        <IconButton size="small" aria-label="Delete selected dataset" onClick={() => setOpen(true)}>
+        <IconButton aria-label="Delete selected dataset" size="small" onClick={() => setOpen(true)}>
           <DeleteForeverIcon />
         </IconButton>
       </Tooltip>
       <FormikModalWrapper
         enableReinitialize
-        id={`delete-dataset-${datasetId}`}
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
-        title="Delete Dataset Versions"
-        submitText="Delete"
-        open={open}
-        onClose={() => setOpen(false)}
+        id={`delete-dataset-${datasetId}`}
         initialValues={{ versions: initialVersionsValues }}
+        open={open}
+        submitText="Delete"
+        title="Delete Dataset Versions"
+        validationSchema={yup.object().shape({
+          versions: yup
+            .array()
+            .of(yup.bool())
+            .test(
+              'at-least-one-selected',
+              'At least one version must be selected',
+              (values) => !!values?.some((v) => v),
+            ),
+        })}
+        onClose={() => setOpen(false)}
         onSubmit={async (values, { setSubmitting }) => {
           // Get the version objects that are to be deleted
           const versionsToDelete = versions.filter(
@@ -65,21 +75,11 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
           setSubmitting(false);
           setOpen(false);
         }}
-        validationSchema={yup.object().shape({
-          versions: yup
-            .array()
-            .of(yup.bool())
-            .test(
-              'at-least-one-selected',
-              'At least one version must be selected',
-              (values) => !!values?.some((v) => v),
-            ),
-        })}
       >
         {({ values, errors }) => {
           return (
             <>
-              <Typography variant="body2" gutterBottom>
+              <Typography gutterBottom variant="body2">
                 Select versions of datasets to delete. Selecting all versions will delete the entire
                 dataset record.
               </Typography>
@@ -90,11 +90,9 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
                     <FormGroup row>
                       {values.versions.map((version, versionIndex) => (
                         <Field
-                          key={versionIndex}
-                          type="checkbox"
-                          component={CheckboxWithLabel}
-                          name={`versions.${versionIndex}`}
                           checked={version}
+                          component={CheckboxWithLabel}
+                          key={versionIndex}
                           Label={{
                             label: `${versions[versionIndex].version}: ${toLocalTimeString(
                               versions[versionIndex].published,
@@ -102,6 +100,8 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
                               true,
                             )}`,
                           }}
+                          name={`versions.${versionIndex}`}
+                          type="checkbox"
                         />
                       ))}
                     </FormGroup>

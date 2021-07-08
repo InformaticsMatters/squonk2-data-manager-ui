@@ -57,8 +57,8 @@ export const BaseCard: FC<BaseCardProps> = ({
             {cardType[0].toUpperCase()}
           </Avatar>
         }
-        title={title}
         subheader={subtitle}
+        title={title}
       />
       <CardContent>{children}</CardContent>
       <CardActions
@@ -81,7 +81,7 @@ export const BaseCard: FC<BaseCardProps> = ({
       </CardActions>
       <Collapse unmountOnExit in={expanded} timeout="auto">
         <CardContent>
-          <Typography variant="subtitle1" component="h3">
+          <Typography component="h3" variant="subtitle1">
             <b>Running {cardType}s</b>
             {instances?.length ? (
               instances.map((instance) => (

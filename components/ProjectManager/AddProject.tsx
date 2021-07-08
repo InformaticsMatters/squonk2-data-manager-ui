@@ -35,10 +35,10 @@ export const AddProject: FC<AddProjectProps> = ({ inverted = false }) => {
 
   return (
     <PopoverTextField
-      onSubmit={handleSubmit}
+      popoverId="add-project"
       textFieldLabel="Project Name"
       textFieldName="projectName"
-      popoverId="add-project"
+      onSubmit={handleSubmit}
     >
       {(buttonProps) => (
         <Tooltip arrow title="Add new project">

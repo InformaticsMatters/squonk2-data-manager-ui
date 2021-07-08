@@ -53,14 +53,14 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
 
   return (
     <BaseCard
-      cardType="Application"
-      applicationId={app.application_id}
-      title={app.kind}
-      subtitle={application?.group}
       actions={
         <CreateInstanceButton disabled={!isCreationEnabled} onClick={handleCreateInstance} />
       }
+      applicationId={app.application_id}
+      cardType="Application"
       color={theme.palette.secondary.dark}
+      subtitle={application?.group}
+      title={app.kind}
     >
       <Grid container spacing={1}>
         <Grid item xs={12}>
@@ -91,10 +91,10 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
         </Grid>
         <Grid item xs={12}>
           <ProgressBar
+            endState="STARTED"
             isTaskProcessing={isTaskProcessing}
             setIsTaskProcessing={setIsTaskProcessing}
             taskId={currentTask}
-            endState="STARTED"
           />
         </Grid>
       </Grid>
@@ -113,7 +113,7 @@ const CreateInstanceButton: FC<ButtonProps> = ({ disabled, ...buttonProps }) => 
       }
     >
       <span>
-        <Button color="primary" size="small" disabled={disabled} {...buttonProps}>
+        <Button color="primary" disabled={disabled} size="small" {...buttonProps}>
           Create Instance
         </Button>
       </span>

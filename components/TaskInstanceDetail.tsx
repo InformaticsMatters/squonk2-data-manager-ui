@@ -40,12 +40,12 @@ export const TaskInstanceDetail: FC<TaskInstanceDetailProps> = ({ instanceId }) 
       <Grid
         container
         alignItems="center"
-        spacing={2}
         css={css`
           margin-top: ${theme.spacing(1)}px;
         `}
+        spacing={2}
       >
-        <Grid item xs={12} sm={4}>
+        <Grid item sm={4} xs={12}>
           <Typography>
             <b>Instance Name</b>: {instance.name}
           </Typography>
@@ -53,14 +53,14 @@ export const TaskInstanceDetail: FC<TaskInstanceDetailProps> = ({ instanceId }) 
             <b>Instance Version</b>: {instance.application_version}
           </Typography>
           <Typography gutterBottom>
-            <b>Created</b>: <LocalTime utcTimestamp={instance.launched} showTime showDate={false} />
+            <b>Created</b>: <LocalTime showTime showDate={false} utcTimestamp={instance.launched} />
           </Typography>
         </Grid>
 
         {spec && job && (
           <>
-            <Divider orientation="vertical" flexItem />
-            <Grid item xs={12} sm={4}>
+            <Divider flexItem orientation="vertical" />
+            <Grid item sm={4} xs={12}>
               <Typography>
                 <b>Job</b>: {job.name}
               </Typography>
@@ -74,10 +74,10 @@ export const TaskInstanceDetail: FC<TaskInstanceDetailProps> = ({ instanceId }) 
           </>
         )}
 
-        <Divider orientation="vertical" flexItem />
+        <Divider flexItem orientation="vertical" />
 
         {/* 1 sm smaller to cause the dividers to vanish */}
-        <Grid item xs={12} sm={3}>
+        <Grid item sm={3} xs={12}>
           <Button
             onClick={async () => {
               await terminateInstanceMutation.mutateAsync({ instanceid: instanceId });
@@ -88,10 +88,10 @@ export const TaskInstanceDetail: FC<TaskInstanceDetailProps> = ({ instanceId }) 
           </Button>
           {instance.url && (
             <HrefButton
+              color="primary"
               href={instance.url}
               rel="noopener noreferrer"
               target="_blank"
-              color="primary"
             >
               Open
             </HrefButton>

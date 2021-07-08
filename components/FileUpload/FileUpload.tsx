@@ -70,26 +70,26 @@ export const FileUpload = () => {
 
   return (
     <>
-      <IconButton onClick={() => setOpen(true)} disabled={isTypesLoading}>
+      <IconButton disabled={isTypesLoading} onClick={() => setOpen(true)}>
         <CloudUploadRoundedIcon />
       </IconButton>
       <ModalWrapper
-        submitDisabled={!files.some((file) => !file.done)}
+        DialogProps={{ fullScreen: true }}
         id="upload-file"
-        title="Upload New Datasets"
-        submitText="Upload"
         open={open}
+        submitDisabled={!files.some((file) => !file.done)}
+        submitText="Upload"
+        title="Upload New Datasets"
         onClose={() => {
           setOpen(false);
           setFiles(files.filter((file) => !file.done));
         }}
         onSubmit={uploadFiles}
-        DialogProps={{ fullScreen: true }}
       >
         <BulkUploadDropzone files={files} setFiles={setFiles} />
         <FileTypeOptions
-          mimeTypes={Array.from(new Set(files.map((file) => file.mimeType)))}
           formDatas={mimeTypeFormDatas}
+          mimeTypes={Array.from(new Set(files.map((file) => file.mimeType)))}
           onFormChange={setMimeTypeFormDatas}
         />
       </ModalWrapper>

@@ -49,11 +49,11 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
   const theme = useTheme();
   return (
     <BaseCard
-      cardType="Job"
+      actions={<JobModal disabled={isTaskProcessing} handleRunJob={handleRunJob} jobId={jobId} />}
       applicationId={job?.application.application_id}
-      title={job?.name}
-      actions={<JobModal jobId={jobId} handleRunJob={handleRunJob} disabled={isTaskProcessing} />}
+      cardType="Job"
       color={theme.palette.primary.main}
+      title={job?.name}
     >
       <Typography variant="body2">{job?.description}</Typography>
       <Typography variant="body1">{job?.version}</Typography>
@@ -70,7 +70,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
         `}
       >
         {job?.keywords?.map((word) => (
-          <Chip size="small" color="primary" variant="outlined" key={word} label={word} />
+          <Chip color="primary" key={word} label={word} size="small" variant="outlined" />
         ))}
       </div>
       <Grid item xs={12}>

@@ -68,8 +68,8 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
       <Tooltip title="Attach dataset to a project">
         <span>
           <IconButton
-            size="small"
             disabled={isProjectsLoading || isTypesLoading || isUserLoading}
+            size="small"
             onClick={() => setOpen(true)}
           >
             <AttachFileRoundedIcon />
@@ -78,12 +78,16 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
       </Tooltip>
       <FormikModalWrapper
         enableReinitialize
-        initialValues={initialValues}
-        onClose={() => setOpen(false)}
-        open={open}
-        title={`Attach ${fileName} to project`}
+        DialogProps={{ maxWidth: 'sm', fullWidth: true }}
         id={`attach-dataset-${datasetId}`}
+        initialValues={initialValues}
+        open={open}
         submitText="Attach"
+        title={`Attach ${fileName} to project`}
+        validationSchema={yup.object({
+          path: yup.string().matches(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gm, 'Invalid Path'),
+        })}
+        onClose={() => setOpen(false)}
         onSubmit={(
           { project, type, version, path, isImmutable, isCompress },
           { setSubmitting },
@@ -110,13 +114,9 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
             },
           );
         }}
-        DialogProps={{ maxWidth: 'sm', fullWidth: true }}
-        validationSchema={yup.object({
-          path: yup.string().matches(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gm, 'Invalid Path'),
-        })}
       >
         <FormControl fullWidth margin="dense">
-          <Field id="select-project" component={TextField} name="project" select label="Project">
+          <Field select component={TextField} id="select-project" label="Project" name="project">
             {(projects ?? []).map((project) => (
               <MenuItem key={project.project_id} value={project.project_id}>
                 {project.name}
@@ -125,7 +125,7 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
           </Field>
         </FormControl>
         <FormControl fullWidth margin="dense">
-          <Field name="version" component={TextField} select label="Version" id="select-version">
+          <Field select component={TextField} id="select-version" label="Version" name="version">
             {versions.map((version) => (
               <MenuItem key={version.version} value={version.version}>
                 {`v${version.version}`}
@@ -135,12 +135,12 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
         </FormControl>
         <FormControl fullWidth margin="dense">
           <Field
-            name="type"
-            component={TextField}
             select
+            component={TextField}
+            helperText="The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset."
             id="select-type"
             label="File Type"
-            helperText="The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset."
+            name="type"
           >
             {(types ?? []).map((type) => (
               <MenuItem key={type.mime} value={type.mime}>
@@ -152,27 +152,27 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
         <FormGroup row>
           <Field
             component={CheckboxWithLabel}
+            Label={{ label: 'Immutable' }}
             name="isImmutable"
             type="checkbox"
-            Label={{ label: 'Immutable' }}
           />
           <Field
             component={CheckboxWithLabel}
+            Label={{ label: 'Compress' }}
             name="isCompress"
             type="checkbox"
-            Label={{ label: 'Compress' }}
           />
         </FormGroup>
         <FormControl fullWidth margin="normal">
           <Field
             component={TextField}
+            helperText="A path within the Project to add the File, default is the project root ('/'), the mount-point within the application container. For example a valid path is '/path/subpath'."
             label="Path"
             name="path"
-            helperText="A path within the Project to add the File, default is the project root ('/'), the mount-point within the application container. For example a valid path is '/path/subpath'."
           />
         </FormControl>
         {errorMessage && (
-          <Typography variant="body1" color="error">
+          <Typography color="error" variant="body1">
             Error: {errorMessage}
           </Typography>
         )}

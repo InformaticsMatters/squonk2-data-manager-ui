@@ -35,24 +35,24 @@ const Executions: FC = () => {
       >
         <Grid
           container
-          spacing={2}
           css={css`
             margin-bottom: ${theme.spacing(2)}px;
           `}
+          spacing={2}
         >
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid item md={4} sm={6} xs={12}>
             <TextField
               fullWidth
+              select
+              label="Filter Executions"
+              SelectProps={{ multiple: true }}
+              value={executionTypes}
               onChange={(event) => {
                 // TODO: change this to be inside SelectProps for proper argument type
                 // When using TextField for a select multiple, we have to cast the event type as
                 // ts can't workout it's an array
                 setExecutionTypes(event.target.value as unknown as string[]);
               }}
-              label="Filter Executions"
-              select
-              SelectProps={{ multiple: true }}
-              value={executionTypes}
             >
               <MenuItem value="application">Applications</MenuItem>
               <MenuItem value="job">Jobs</MenuItem>
@@ -60,18 +60,15 @@ const Executions: FC = () => {
           </Grid>
           <Grid
             item
-            xs={12}
-            sm={6}
-            md={4}
             css={css`
               margin-left: auto;
             `}
+            md={4}
+            sm={6}
+            xs={12}
           >
             <TextField
               fullWidth
-              value={searchValue}
-              onChange={(event) => setSearchValue(event.target.value)}
-              label="Search"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -79,6 +76,9 @@ const Executions: FC = () => {
                   </InputAdornment>
                 ),
               }}
+              label="Search"
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
             />
           </Grid>
         </Grid>

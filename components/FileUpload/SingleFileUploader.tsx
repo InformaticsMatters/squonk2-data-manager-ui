@@ -84,7 +84,7 @@ export function SingleFileUploadWithProgress({
         `}
         spacing={1}
       >
-        <Grid item sm={8} xs={12} md={9}>
+        <Grid item md={9} sm={8} xs={12}>
           <TextField
             fullWidth
             required
@@ -102,9 +102,9 @@ export function SingleFileUploadWithProgress({
           css={css`
             text-align: center;
           `}
+          md={2}
           sm={3}
           xs={8}
-          md={2}
         >
           <TextField
             fullWidth
@@ -134,15 +134,15 @@ export function SingleFileUploadWithProgress({
           css={css`
             text-align: center;
           `}
+          md={1}
           sm={1}
           xs={4}
-          md={1}
         >
           <IconButton
-            disabled={disabled}
             css={css`
               color: ${theme.palette.success.main};
             `}
+            disabled={disabled}
             size="small"
             onClick={(event) => {
               event.stopPropagation();

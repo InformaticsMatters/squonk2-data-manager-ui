@@ -86,6 +86,13 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
         title={`Attach ${fileName} to project`}
         validationSchema={yup.object({
           path: yup.string().matches(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gm, 'Invalid Path'),
+          version: yup
+            .number()
+            .test(
+              'version-done-stage',
+              'The selected version must have finished processing',
+              (version) => versions.find((v) => v.version === version)?.processing_stage === 'DONE',
+            ),
         })}
         onClose={() => setOpen(false)}
         onSubmit={(

@@ -1,11 +1,14 @@
 import { css } from '@emotion/react';
 import { useTheme } from '@material-ui/core';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 export const Logo = () => {
   const theme = useTheme();
+  const { query } = useRouter();
+
   return (
-    <Link passHref href="/">
+    <Link passHref href={{ pathname: '/', query }}>
       <a
         css={css`
           display: inline-block;

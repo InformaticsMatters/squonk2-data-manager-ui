@@ -9,3 +9,7 @@ export interface UploadableFile {
   rename?: string;
   mimeType: string;
 }
+
+export interface FileTypeOptionsState {
+  [mimeType: string]: any;
+}

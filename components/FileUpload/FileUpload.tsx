@@ -14,7 +14,8 @@ import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { Dropzone } from '../Uploads/Dropzone';
-import { UploadableFile } from '../Uploads/types';
+import { FileTypeOptions } from '../Uploads/FileTypeOptions';
+import { FileTypeOptionsState, UploadableFile } from '../Uploads/types';
 import { SingleFileUploadWithProgress } from './SingleFileUploader';
 import { mutateAtPosition } from './utils';
 
@@ -24,6 +25,8 @@ export const FileUpload = () => {
   const [open, setOpen] = useState(false);
   // Array of the user uploaded files with associated errors
   const [files, setFiles] = useState<UploadableFile[]>([]);
+
+  const [mimeTypeFormDatas, setMimeTypeFormDatas] = useState<FileTypeOptionsState>({});
 
   const { isLoading: isTypesLoading } = useGetFileTypes(); // Ensure types are prefetched to mime lookup works
 
@@ -37,6 +40,9 @@ export const FileUpload = () => {
         dataset_file: file,
         dataset_type: mimeType,
         as_filename: rename ?? file.name,
+        format_extra_variables: mimeTypeFormDatas[mimeType]
+          ? JSON.stringify(mimeTypeFormDatas[mimeType])
+          : undefined,
       };
 
       try {
@@ -81,7 +87,7 @@ export const FileUpload = () => {
         open={open}
         onClose={() => setOpen(false)}
         onSubmit={uploadFiles}
-        DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+        DialogProps={{ fullScreen: true }}
       >
         <Dropzone files={files} setFiles={setFiles}>
           <Grid container direction="column">
@@ -110,6 +116,12 @@ export const FileUpload = () => {
             ))}
           </Grid>
         </Dropzone>
+
+        <FileTypeOptions
+          mimeTypes={Array.from(new Set(files.map((file) => file.mimeType)))}
+          formDatas={mimeTypeFormDatas}
+          onFormChange={setMimeTypeFormDatas}
+        />
       </ModalWrapper>
     </>
   );

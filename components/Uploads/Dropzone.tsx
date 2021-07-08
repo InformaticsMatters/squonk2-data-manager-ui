@@ -41,7 +41,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       progress: 0,
       taskId: null,
     }));
-    setFiles([...files, ...mappedAccepted, ...mappedRejected]);
+    setFiles([...mappedAccepted, ...mappedRejected]);
   }, []);
 
   const patchedFileExtensions = allowedFileTypes ?? [];
@@ -60,9 +60,10 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       css={css`
         border: 2px dashed ${isDragActive ? theme.palette.primary.main : theme.palette.grey[600]};
         border-radius: 8px;
-        padding-left: ${theme.spacing(1)}px;
-        padding-right: ${theme.spacing(1)}px;
-        max-height: 80vh;
+        padding: ${theme.spacing(1)}px;
+        padding-left: ${theme.spacing(2)}px;
+        padding-right: ${theme.spacing(2)}px;
+        max-height: 40vh;
         overflow-y: scroll;
       `}
     >

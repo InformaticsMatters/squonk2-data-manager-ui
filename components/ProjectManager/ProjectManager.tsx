@@ -13,7 +13,6 @@ import styled from '@emotion/styled';
 import { Grid, InputAdornment, TextField, TextFieldProps } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
-import { useRouter } from 'next/router';
 
 import { useCurrentProject, useCurrentProjectId } from '../currentProjectHooks';
 import { AddProject } from './AddProject';
@@ -25,7 +24,6 @@ interface ProjectManagerProps {
 }
 
 export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const { data, isLoading } = useGetProjects();
   const projects = data?.projects;
@@ -93,7 +91,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
           style={{ width: 300 }}
           value={currentProject}
           onChange={(_, project) => {
-            setCurrentProjectId(project?.project_id ?? null);
+            setCurrentProjectId(project?.project_id);
           }}
         />
       </Grid>

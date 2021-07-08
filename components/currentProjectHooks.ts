@@ -2,7 +2,7 @@ import { useGetProjects } from '@squonk/data-manager-client/project';
 
 import { useRouter } from 'next/router';
 
-export type ProjectId = string | null;
+export type ProjectId = string | undefined;
 
 /**
  * @returns The selected projectId from the project key of the query parameters
@@ -12,7 +12,7 @@ export const useCurrentProjectId = () => {
 
   const projectId = query.project as ProjectId;
   const setCurrentProject = (newProjectId: ProjectId) => {
-    if (newProjectId !== null) {
+    if (newProjectId !== undefined) {
       push({
         pathname,
         query: { ...query, project: newProjectId },

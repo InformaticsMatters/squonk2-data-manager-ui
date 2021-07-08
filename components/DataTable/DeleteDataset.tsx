@@ -30,7 +30,7 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
   const queryClient = useQueryClient();
   const deleteMutation = useDeleteDataset();
 
-  const initialVersionsValues = Array.from({ length: versions.length }).fill(true) as boolean[];
+  const initialVersionsValues = versions.map((version) => version.processing_stage === 'DONE');
 
   const [open, setOpen] = useState(false);
   return (
@@ -42,6 +42,7 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
       </Tooltip>
       <FormikModalWrapper
         enableReinitialize
+        validateOnMount
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
         id={`delete-dataset-${datasetId}`}
         initialValues={{ versions: initialVersionsValues }}
@@ -92,13 +93,14 @@ export const DeleteDataset: FC<DeleteDatasetProps> = ({ datasetId, versions }) =
                         <Field
                           checked={version}
                           component={CheckboxWithLabel}
+                          disabled={versions[versionIndex].processing_stage !== 'DONE'}
                           key={versionIndex}
                           Label={{
-                            label: `${versions[versionIndex].version}: ${toLocalTimeString(
+                            label: `v${versions[versionIndex].version} - ${toLocalTimeString(
                               versions[versionIndex].published,
                               true,
                               true,
-                            )}`,
+                            )} - ${versions[versionIndex].processing_stage}`,
                           }}
                           name={`versions.${versionIndex}`}
                           type="checkbox"

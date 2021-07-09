@@ -8,8 +8,9 @@ import BackupRoundedIcon from '@material-ui/icons/BackupRounded';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { Dropzone } from '../Uploads/Dropzone';
+import { FileTypeOptions } from '../Uploads/FileTypeOptions';
 import { ProgressBar } from '../Uploads/ProgressBar';
-import { UploadableFile } from '../Uploads/types';
+import { FileTypeOptionsState, UploadableFile } from '../Uploads/types';
 import { TableDataset } from './types';
 
 interface NewVersionButtonProps {
@@ -20,6 +21,8 @@ export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<UploadableFile>();
+
+  const [optionsFormData, setOptionsFormData] = useState<FileTypeOptionsState>({});
 
   return (
     <>
@@ -34,7 +37,7 @@ export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
         open={open}
         submitDisabled={!file || !!file.taskId}
         submitText="Upload"
-        title="Upload a New Version"
+        title={`Upload a New Version to ${dataset.fileName}`}
         onClose={() => setOpen(false)}
         onSubmit={async () => {
           const parentVersion = Math.max(...dataset.versions.map((v) => v.version));
@@ -47,6 +50,9 @@ export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
                 as_filename: parent.file_name,
                 parent_id: dataset.dataset_id,
                 parent_version: parentVersion,
+                format_extra_variables: optionsFormData[parent.type]
+                  ? JSON.stringify(optionsFormData[parent.type])
+                  : undefined,
               },
               {
                 onUploadProgress: (progressEvent: any) => {
@@ -83,6 +89,14 @@ export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
               setFile(undefined);
               setOpen(false);
             }}
+          />
+        )}
+        {file && (
+          <FileTypeOptions
+            column
+            formDatas={optionsFormData}
+            mimeTypes={[file.mimeType]}
+            onFormChange={setOptionsFormData}
           />
         )}
       </ModalWrapper>

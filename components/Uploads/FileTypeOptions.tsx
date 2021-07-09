@@ -9,12 +9,14 @@ interface FileTypeOptionsProps {
   mimeTypes: string[];
   formDatas: any;
   onFormChange: (formData: any) => void;
+  column?: boolean;
 }
 
 export const FileTypeOptions: FC<FileTypeOptionsProps> = ({
   mimeTypes,
   formDatas,
   onFormChange,
+  column = false,
 }) => {
   const { data, isLoading: isTypesLoading } = useGetFileTypes();
   const types = data?.types;
@@ -39,7 +41,7 @@ export const FileTypeOptions: FC<FileTypeOptionsProps> = ({
           {mimeTypesToShow.map((mimeType) => {
             const type = types.find((type) => mimeType === type.mime);
             return (
-              <Grid item key={mimeType} md={4} sm={6} xs={12}>
+              <Grid item key={mimeType} md={column ? 12 : 4} sm={column ? 12 : 6} xs={12}>
                 <Card>
                   {type?.formatter_options ? (
                     <CardContent>

@@ -55,7 +55,7 @@ export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
                   : undefined,
               },
               {
-                onUploadProgress: (progressEvent: any) => {
+                onUploadProgress: (progressEvent: ProgressEvent) => {
                   const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
                   setFile({ ...file, progress });
                 },

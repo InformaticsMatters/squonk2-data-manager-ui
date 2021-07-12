@@ -11,6 +11,9 @@ export const useCurrentProjectId = () => {
   const { push, query, pathname } = useRouter();
 
   const projectId = query.project as ProjectId;
+
+  // Update project key of query params whilst leaving others alone
+  // This could be made generic if we add more state to query parameters
   const setCurrentProject = (newProjectId: ProjectId) => {
     if (newProjectId !== undefined) {
       push({

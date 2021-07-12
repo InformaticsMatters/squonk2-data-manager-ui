@@ -17,6 +17,7 @@ import { useMimeTypeLookup } from '../FileUpload/useMimeTypeLookup';
 import { AttachButton } from './AttachButton';
 import { DeleteDataset } from './DeleteDataset';
 import { DetachDataset } from './DetachDataset';
+import { DownloadDatasetButton } from './DownloadDatasetButton';
 import { NewVersionButton } from './NewVersionButton';
 import { Row } from './types';
 import { isDataset, isTableDir, isTableFile } from './utils';
@@ -65,7 +66,9 @@ export const CustomCell: React.FC<CustomCellProps> = ({ row, column, ...rest }) 
     case 'actions':
       return (
         <Cell column={column} row={row} {...rest}>
-          {/* <Button>Download</Button> */}
+          {isDataset(row) && (
+            <DownloadDatasetButton datasetId={row.dataset_id} versions={row.versions} />
+          )}
           {isDataset(row) && (
             <AttachButton
               datasetId={row.dataset_id}

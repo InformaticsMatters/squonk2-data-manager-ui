@@ -21,7 +21,7 @@ import { Field } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-material-ui';
 import * as yup from 'yup';
 
-import { FormikModalWrapper } from '../Modals/FormikModalWrapper';
+import { FormikModalWrapper } from '../../Modals/FormikModalWrapper';
 
 interface AttachButtonProps {
   datasetId: string;

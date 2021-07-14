@@ -18,8 +18,8 @@ import { Field, FieldArray } from 'formik';
 import { CheckboxWithLabel } from 'formik-material-ui';
 import * as yup from 'yup';
 
-import { toLocalTimeString } from '../LocalTime/utils';
-import { FormikModalWrapper } from '../Modals/FormikModalWrapper';
+import { toLocalTimeString } from '../../LocalTime/utils';
+import { FormikModalWrapper } from '../../Modals/FormikModalWrapper';
 
 interface DeleteDatasetProps {
   datasetId: string;

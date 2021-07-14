@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 
-import {
-  customInstance,
-  DatasetPostBodyBody,
-  DatasetPutPostResponse,
-} from '@squonk/data-manager-client';
+import { DatasetPostBodyBody } from '@squonk/data-manager-client';
 import { uploadDataset } from '@squonk/data-manager-client/dataset';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 

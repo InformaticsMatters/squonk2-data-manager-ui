@@ -22,9 +22,6 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^1.4.2",
-    "@devexpress/dx-react-core": "^2.7.6",
-    "@devexpress/dx-react-grid": "^2.7.6",
-    "@devexpress/dx-react-grid-material-ui": "^2.7.6",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@material-ui/core": "^4.12.1",
@@ -38,6 +35,7 @@
     "@rjsf/material-ui": "^3.0.0",
     "@squonk/data-manager-client": "^0.4.5",
     "@squonk/mui-theme": "^0.7.1",
+    "@types/react-table": "^7.7.2",
     "axios": "^0.21.1",
     "dayjs": "^1.10.6",
     "formik": "^2.2.9",
@@ -50,6 +48,7 @@
     "react-dom": "^17.0.2",
     "react-dropzone": "^11.3.4",
     "react-query": "^3.18.1",
+    "react-table": "^7.7.0",
     "uuid": "^8.3.2",
     "yup": "^0.32.9"
   },

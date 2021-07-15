@@ -5,9 +5,9 @@ import { useGetJob } from '@squonk/data-manager-client/job';
 import { Button, Grid, Tooltip, Typography } from '@material-ui/core';
 import Form from '@rjsf/material-ui';
 
-import { useCurrentProjectId } from '../currentProjectHooks';
-import { useSelectedFiles } from '../DataTable/FileSelectionContext';
 import { ModalWrapper } from '../Modals/ModalWrapper';
+import { useCurrentProjectId } from '../state/currentProjectHooks';
+import { useSelectedFiles } from '../state/FileSelectionContext';
 import { JobSpecification } from './JobCard';
 import { JobInputFields } from './JobInputFields';
 
@@ -20,7 +20,7 @@ interface JobModalProps {
 export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob, disabled }) => {
   const [open, setOpen] = useState(false);
 
-  const [projectId] = useCurrentProjectId();
+  const { projectId } = useCurrentProjectId();
   const { data: job } = useGetJob(jobId); // Get extra details about the job
 
   // Data to populate file/dir inputs

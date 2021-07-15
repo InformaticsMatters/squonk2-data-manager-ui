@@ -6,7 +6,8 @@
   "plugins": [
     "@typescript-eslint",
     "prettier",
-    "simple-import-sort"
+    "simple-import-sort",
+    "react-hooks"
   ],
   "extends": [
     "eslint:recommended",
@@ -43,6 +44,8 @@
         "reservedFirst": false
       }
     ],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "@typescript-eslint/explicit-member-accessibility": 0,

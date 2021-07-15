@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import { useCurrentProjectId } from '../currentProjectHooks';
+import { useCurrentProjectId } from '../state/currentProjectHooks';
 import { CreateDatasetFromFileButton } from './Actions/CreateDatasetFromFileButton';
 import { DetachDataset } from './Actions/DetachDataset';
 import { TableDir, TableFile } from './types';
@@ -11,7 +11,7 @@ interface FileActionsProps {
 }
 
 export const FileActions: FC<FileActionsProps> = ({ file }) => {
-  const [projectId] = useCurrentProjectId();
+  const { projectId } = useCurrentProjectId();
 
   if (projectId) {
     return (

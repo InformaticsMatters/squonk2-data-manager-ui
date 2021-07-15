@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { useCurrentProject } from '../currentProjectHooks';
+import { useCurrentProject } from '../state/currentProjectHooks';
 import { AllDatasetsTable } from './DatasetsTable';
 import { ProjectTable } from './ProjectTable';
 

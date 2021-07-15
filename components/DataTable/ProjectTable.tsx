@@ -1,4 +1,4 @@
-import React, { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { CellProps, Column, PluginHook } from 'react-table';
 
 import { ProjectDetail } from '@squonk/data-manager-client';
@@ -7,22 +7,23 @@ import { useGetFiles } from '@squonk/data-manager-client/file';
 import { css } from '@emotion/react';
 import { Breadcrumbs, Link, Typography, useTheme } from '@material-ui/core';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 
+import { useSelectedFiles } from '../state/FileSelectionContext';
+import { useProjectBreadcrumbs } from '../state/projectPathHooks';
 import { DataTable } from './DataTable';
 import { FileActions } from './FileActions';
-import { useSelectedFiles } from './FileSelectionContext';
 import { TableDir, TableFile } from './types';
 import { isTableDir } from './utils';
 
-export const ProjectTable: FC<{ currentProject: ProjectDetail }> = memo(({ currentProject }) => {
+export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentProject }) => {
   const theme = useTheme();
 
-  // Breadcrumbs
-  const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
-  useEffect(() => {
-    setBreadcrumbs([]);
-  }, [currentProject.project_id]);
+  const router = useRouter();
 
+  // Breadcrumbs
+  const breadcrumbs = useProjectBreadcrumbs();
   const dirPath = '/' + breadcrumbs.join('/'); // TODO: This shouldn't need a leading slash
 
   // Selection
@@ -35,20 +36,28 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = memo(({ curre
         accessor: 'fileName',
         Header: 'File Name',
         Cell: ({ value, row: r }) => {
+          // ? This seems to be a bug in the types?
           const row = r.original as unknown as TableFile | TableDir;
           return isTableDir(row) ? (
-            <Link
-              color="inherit"
-              component="button"
-              css={css`
-                display: flex;
-                gap: ${theme.spacing(1)}px;
-              `}
-              variant="body1"
-              onClick={() => setBreadcrumbs((breadcrumbs) => [...breadcrumbs, row.path])}
+            <NextLink
+              passHref
+              href={{
+                pathname: router.pathname,
+                query: { project: currentProject.project_id, path: [...breadcrumbs, row.path] },
+              }}
             >
-              <FolderRoundedIcon /> {value}
-            </Link>
+              <Link
+                color="inherit"
+                component="button"
+                css={css`
+                  display: flex;
+                  gap: ${theme.spacing(1)}px;
+                `}
+                variant="body1"
+              >
+                <FolderRoundedIcon /> {value}
+              </Link>
+            </NextLink>
           ) : (
             <Typography variant="body1">{value}</Typography>
           );
@@ -74,39 +83,36 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = memo(({ curre
         },
       },
     ],
-    [],
+    [currentProject.project_id, breadcrumbs, router, theme],
   );
 
   const { data } = useGetFiles({ project_id: currentProject.project_id, path: dirPath });
 
   const rows = useMemo(() => {
-    const files: TableFile[] | undefined = data?.files.map((file) => {
-      const { file_id, file_name, owner, immutable } = file;
-
-      let fullPath: string;
-      if (breadcrumbs.length > 0) {
-        fullPath = breadcrumbs.join('/') + '/' + file_name;
+    const getFullPath = (path: string[], fileName: string) => {
+      if (path.length > 0) {
+        return path.join('/') + '/' + fileName;
       } else {
-        fullPath = file_name;
+        return fileName;
       }
+    };
+
+    const files: TableFile[] | undefined = data?.files.map((file) => {
+      const { file_id: fileId, file_name: fileName, owner, immutable } = file;
+
+      const fullPath = getFullPath(breadcrumbs, fileName);
 
       return {
-        fileName: file_name,
+        fileName,
         fullPath,
-        file_id,
+        file_id: fileId,
         owner,
-        immutable: immutable as unknown as boolean,
-        actions: { projectId: currentProject.project_id },
+        immutable,
       };
     });
 
     const dirs: TableDir[] | undefined = data?.paths.map((path) => {
-      let fullPath: string;
-      if (breadcrumbs.length > 0) {
-        fullPath = breadcrumbs.join('/') + '/' + path;
-      } else {
-        fullPath = path;
-      }
+      const fullPath = getFullPath(breadcrumbs, path);
 
       return {
         fileName: path,
@@ -116,7 +122,7 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = memo(({ curre
     });
 
     return dirs && files ? [...dirs, ...files] : undefined;
-  }, [data]);
+  }, [data, breadcrumbs]);
 
   // react-table plugin to add actions buttons for datasets
   const useActionsColumnPlugin: PluginHook<TableFile | TableDir> = useCallback((hooks) => {
@@ -153,15 +159,21 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = memo(({ curre
             <Breadcrumbs>
               {['root', ...breadcrumbs].map((path, pathIndex) =>
                 pathIndex < breadcrumbs.length ? (
-                  <Link
-                    color="inherit"
-                    component="button"
+                  <NextLink
+                    passHref
+                    href={{
+                      pathname: router.pathname,
+                      query: {
+                        project: currentProject.project_id,
+                        path: breadcrumbs.slice(0, pathIndex),
+                      },
+                    }}
                     key={`${pathIndex}-${path}`}
-                    variant="body1"
-                    onClick={() => setBreadcrumbs(breadcrumbs.slice(0, pathIndex))}
                   >
-                    {path}
-                  </Link>
+                    <Link color="inherit" component="button" variant="body1">
+                      {path}
+                    </Link>
+                  </NextLink>
                 ) : (
                   <Typography key={`${pathIndex}-${path}`}>{path}</Typography>
                 ),
@@ -175,4 +187,4 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = memo(({ curre
     );
   }
   return <div>Project Files Loading...</div>;
-});
+};

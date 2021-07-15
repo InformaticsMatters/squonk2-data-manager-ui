@@ -6,7 +6,7 @@ import { useGetJob } from '@squonk/data-manager-client/job';
 import { css } from '@emotion/react';
 import { Chip, Grid, Typography, useTheme } from '@material-ui/core';
 
-import { useCurrentProjectId } from '../currentProjectHooks';
+import { useCurrentProjectId } from '../state/currentProjectHooks';
 import { BaseCard } from './BaseCard';
 import { JobModal } from './JobModal';
 import { ProgressBar } from './ProgressBar';
@@ -24,7 +24,7 @@ interface ApplicationCardProps {
 
 export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
   const { data: job } = useGetJob(jobId);
-  const [projectId] = useCurrentProjectId();
+  const { projectId } = useCurrentProjectId();
 
   const createInstanceMutation = useCreateInstance();
 

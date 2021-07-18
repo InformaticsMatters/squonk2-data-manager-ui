@@ -1,21 +1,7 @@
-import React, { FC, useState } from 'react';
-
-import { useGetInstances } from '@squonk/data-manager-client/instance';
+import React, { FC } from 'react';
 
 import { css } from '@emotion/react';
-import {
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  Collapse,
-  IconButton,
-  Typography,
-} from '@material-ui/core';
-import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
-
-import { InstanceDetail } from './InstanceDetail';
+import { Avatar, Card, CardActions, CardContent, CardHeader } from '@material-ui/core';
 
 interface BaseCardProps {
   actions: React.ReactNode;
@@ -30,18 +16,10 @@ export const BaseCard: FC<BaseCardProps> = ({
   children,
   actions,
   cardType,
-  applicationId,
   title,
   subtitle,
   color,
 }) => {
-  const [expanded, setExpanded] = useState(false);
-
-  const { data: instancesData } = useGetInstances();
-  const instances = instancesData?.instances.filter(
-    (instance) => instance.application_id === applicationId,
-  );
-
   return (
     <Card>
       <CardHeader
@@ -65,35 +43,11 @@ export const BaseCard: FC<BaseCardProps> = ({
       <CardActions
         disableSpacing
         css={css`
-          justify-content: center;
+          justify-content: right;
         `}
       >
         {actions}
-        <IconButton
-          aria-expanded={expanded}
-          aria-label={`show ${cardType}s`}
-          css={css`
-            margin-left: auto;
-          `}
-          onClick={() => setExpanded(!expanded)}
-        >
-          <ExpandMoreRoundedIcon />
-        </IconButton>
       </CardActions>
-      <Collapse unmountOnExit in={expanded} timeout="auto">
-        <CardContent>
-          <Typography component="h3" variant="subtitle1">
-            <b>Running {cardType}s</b>
-            {instances?.length ? (
-              instances.map((instance) => (
-                <InstanceDetail instanceId={instance.instance_id} key={instance.instance_id} />
-              ))
-            ) : (
-              <Typography variant="body2">No Instances Running</Typography>
-            )}
-          </Typography>
-        </CardContent>
-      </Collapse>
     </Card>
   );
 };

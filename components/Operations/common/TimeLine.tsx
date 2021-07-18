@@ -1,0 +1,58 @@
+import React, { FC } from 'react';
+
+import type { InstanceGetResponse, TaskGetResponse, TaskState } from '@squonk/data-manager-client';
+
+import { css } from '@emotion/react';
+import { Typography } from '@material-ui/core';
+import {
+  Timeline,
+  TimelineConnector,
+  TimelineContent,
+  TimelineDot,
+  TimelineItem,
+  TimelineOppositeContent,
+  TimelineSeparator,
+} from '@material-ui/lab';
+
+import { LocalTime } from '../../LocalTime/LocalTime';
+
+interface TimeLineProps {
+  states: NonNullable<
+    | InstanceGetResponse['states']
+    | InstanceGetResponse['events']
+    | TaskGetResponse['states']
+    | TaskGetResponse['events']
+  >;
+}
+
+export const TimeLine: FC<TimeLineProps> = ({ states }) => {
+  return (
+    <Timeline
+      css={css`
+        padding: 0;
+        margin: 0;
+      `}
+    >
+      {states.map((state, stateIndex) => (
+        <TimelineItem
+          css={css`
+            min-height: 40px;
+          `}
+          key={state.time}
+        >
+          <TimelineOppositeContent>
+            <Typography color="textSecondary">
+              <LocalTime showTime showDate={false} utcTimestamp={state.time} />
+            </Typography>
+          </TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot />
+            {stateIndex + 1 !== states.length && <TimelineConnector />}
+          </TimelineSeparator>
+          {/* When message is undefined we can guarantee that it's a TaskState */}
+          <TimelineContent>{state.message ?? (state as TaskState).state}</TimelineContent>
+        </TimelineItem>
+      ))}
+    </Timeline>
+  );
+};

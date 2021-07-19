@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
 
+import { useCreateInstance } from '@squonk/data-manager-client/instance';
 import { useGetJob } from '@squonk/data-manager-client/job';
 
 import { Button, Grid, Tooltip, Typography } from '@material-ui/core';
@@ -8,19 +9,26 @@ import Form from '@rjsf/material-ui';
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { useCurrentProjectId } from '../state/currentProjectHooks';
 import { useSelectedFiles } from '../state/FileSelectionContext';
-import { JobSpecification } from './JobCard';
 import { JobInputFields } from './JobInputFields';
+
+interface JobSpecification {
+  collection: string;
+  job: string;
+  version: string;
+  variables: { [key: string]: string | string[] };
+}
 
 interface JobModalProps {
   jobId: number;
-  handleRunJob: (specification: JobSpecification) => void;
   disabled?: boolean;
 }
 
-export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob, disabled }) => {
+export const JobModal: FC<JobModalProps> = ({ jobId, disabled }) => {
   const [open, setOpen] = useState(false);
 
   const { projectId } = useCurrentProjectId();
+
+  const { mutateAsync: createInstance } = useCreateInstance();
   const { data: job } = useGetJob(jobId); // Get extra details about the job
 
   // Data to populate file/dir inputs
@@ -42,7 +50,15 @@ export const JobModal: FC<JobModalProps> = ({ jobId, handleRunJob, disabled }) =
         variables: { ...inputsData, ...optionsFormData },
       };
 
-      handleRunJob(specification);
+      await createInstance({
+        data: {
+          application_id: job.application.application_id,
+          application_version: 'v1',
+          as_name: 'Test',
+          project_id: projectId,
+          specification: JSON.stringify(specification),
+        },
+      });
 
       setOpen(false);
     }

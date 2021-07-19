@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 
 import { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetInstance } from '@squonk/data-manager-client/instance';
@@ -47,7 +47,7 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
           </Typography>
           <Typography gutterBottom>
             {Object.entries(JSON.parse(instance.outputs)).map(([key, value]: [string, any]) => (
-              <>
+              <Fragment key={key}>
                 {value.title}:{' '}
                 <NextLink
                   passHref
@@ -59,7 +59,6 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
                       path: getPathName(value.creates, value.type),
                     },
                   }}
-                  key={key}
                 >
                   <Link>
                     {value.creates}{' '}
@@ -70,7 +69,7 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
                     )}
                   </Link>
                 </NextLink>
-              </>
+              </Fragment>
             ))}
           </Typography>
         </>

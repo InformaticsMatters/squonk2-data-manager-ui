@@ -1,10 +1,21 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Avatar, Card, CardActions, CardContent, CardHeader } from '@material-ui/core';
+import {
+  Avatar,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Collapse,
+  IconButton,
+  useTheme,
+} from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 interface BaseCardProps {
   actions: React.ReactNode;
+  collapsed?: React.ReactNode;
   cardType: string;
   applicationId?: string;
   title?: string;
@@ -15,11 +26,17 @@ interface BaseCardProps {
 export const BaseCard: FC<BaseCardProps> = ({
   children,
   actions,
+  collapsed,
   cardType,
   title,
   subtitle,
   color,
 }) => {
+  const [hasExpanded, setHasExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const theme = useTheme();
+
   return (
     <Card>
       <CardHeader
@@ -47,7 +64,27 @@ export const BaseCard: FC<BaseCardProps> = ({
         `}
       >
         {actions}
+        {collapsed !== undefined && (
+          <IconButton
+            aria-expanded={expanded}
+            css={css`
+              margin-left: auto;
+              transform: rotate(${expanded ? 180 : 0}deg);
+              /* transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; */
+              transition: ${theme.transitions.create('transform', {
+                duration: theme.transitions.duration.shortest,
+              })};
+            `}
+            onClick={() => {
+              setExpanded(!expanded);
+              setHasExpanded(true);
+            }}
+          >
+            <ExpandMoreIcon />
+          </IconButton>
+        )}
       </CardActions>
+      <Collapse in={expanded}>{hasExpanded ? collapsed : null}</Collapse>
     </Card>
   );
 };

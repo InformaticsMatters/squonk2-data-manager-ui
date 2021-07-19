@@ -82,7 +82,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
 const isTaskSummary = (
   taskOrInstance: TaskSummary | InstanceSummary,
 ): taskOrInstance is TaskSummary => {
-  return (taskOrInstance as unknown as TaskSummary).created !== undefined;
+  return (taskOrInstance as TaskSummary).created !== undefined;
 };
 
 const getTimeStamp = (taskOrInstance: TaskSummary | InstanceSummary) => {
@@ -100,7 +100,7 @@ const Tasks: FC = () => {
   const { projectId } = useCurrentProjectId();
 
   const { data: instancesData, refetch: instancesRefetch } = useGetInstances({
-    project_id: projectId ?? undefined,
+    project_id: projectId || undefined,
   });
   const instances = instancesData?.instances;
 

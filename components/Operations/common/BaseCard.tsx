@@ -7,11 +7,17 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 interface BaseCardProps {
   collapsed: ReactNode;
   actions?: ReactNode;
+  collapsedByDefault?: boolean;
 }
 
-export const BaseCard: FC<BaseCardProps> = ({ children, collapsed, actions }) => {
-  const [expanded, setExpanded] = useState(false);
-  const [hasExpanded, setHasExpanded] = useState(false);
+export const BaseCard: FC<BaseCardProps> = ({
+  children,
+  collapsed,
+  actions,
+  collapsedByDefault = true,
+}) => {
+  const [expanded, setExpanded] = useState(!collapsedByDefault);
+  const [hasExpanded, setHasExpanded] = useState(!collapsedByDefault);
 
   const theme = useTheme();
 
@@ -20,23 +26,25 @@ export const BaseCard: FC<BaseCardProps> = ({ children, collapsed, actions }) =>
       <CardContent>{children}</CardContent>
       <CardActions disableSpacing>
         {actions}
-        <IconButton
-          aria-expanded={expanded}
-          css={css`
-            margin-left: auto;
-            transform: rotate(${expanded ? 180 : 0}deg);
-            /* transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; */
-            transition: ${theme.transitions.create('transform', {
-              duration: theme.transitions.duration.shortest,
-            })};
-          `}
-          onClick={() => {
-            setExpanded(!expanded);
-            setHasExpanded(true);
-          }}
-        >
-          <ExpandMoreIcon />
-        </IconButton>
+        {collapsedByDefault && (
+          <IconButton
+            aria-expanded={expanded}
+            css={css`
+              margin-left: auto;
+              transform: rotate(${expanded ? 180 : 0}deg);
+              /* transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; */
+              transition: ${theme.transitions.create('transform', {
+                duration: theme.transitions.duration.shortest,
+              })};
+            `}
+            onClick={() => {
+              setExpanded(!expanded);
+              setHasExpanded(true);
+            }}
+          >
+            <ExpandMoreIcon />
+          </IconButton>
+        )}
       </CardActions>
       <Collapse in={expanded}>
         <CardContent>{hasExpanded ? collapsed : null}</CardContent>

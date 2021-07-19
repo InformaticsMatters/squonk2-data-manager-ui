@@ -15,7 +15,6 @@ import {
 } from '@material-ui/core';
 
 import { BaseCard } from './BaseCard';
-import { ProgressBar } from './ProgressBar';
 
 interface ApplicationCardProps {
   app: ApplicationSummary;
@@ -89,14 +88,6 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
               ))}
             </TextField>
           )}
-        </Grid>
-        <Grid item xs={12}>
-          <ProgressBar
-            endState="STARTED"
-            isTaskProcessing={isTaskProcessing}
-            setIsTaskProcessing={setIsTaskProcessing}
-            taskId={currentTask}
-          />
         </Grid>
       </Grid>
     </BaseCard>

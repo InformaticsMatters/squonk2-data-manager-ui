@@ -15,7 +15,7 @@ export const NavLink: FC<NavLinkProps> = ({ title, stripQueryParameters }) => {
   const pathname = '/' + title.toLowerCase().replace(/ /g, '');
 
   const router = useRouter();
-  const active = router.pathname === pathname;
+  const active = router.pathname.startsWith(pathname);
 
   const query = { ...router.query };
   stripQueryParameters?.forEach((param) => delete query[param]);

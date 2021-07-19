@@ -14,9 +14,10 @@ import { RerunJobButton } from './RerunJobButton';
 
 interface JobCardProps {
   instance: InstanceSummary;
+  collapsedByDefault?: boolean;
 }
 
-export const OperationJobCard: FC<JobCardProps> = ({ instance }) => {
+export const OperationJobCard: FC<JobCardProps> = ({ instance, collapsedByDefault = true }) => {
   const theme = useTheme();
   const latestState = instance.state;
 
@@ -29,6 +30,7 @@ export const OperationJobCard: FC<JobCardProps> = ({ instance }) => {
     <BaseCard
       actions={<RerunJobButton instance={instance} />}
       collapsed={<JobDetails instanceSummary={instance} />}
+      collapsedByDefault={collapsedByDefault}
     >
       <Typography
         component="h2"

@@ -18,9 +18,9 @@ interface JobInstancesProps {
 export const JobInstances: FC<JobInstancesProps> = ({ job }) => {
   const { query } = useRouter();
 
-  const { data } = useGetInstances();
-  const instances = data?.instances.filter((instance) => instance.job_name === job.job);
   const { projectId } = useCurrentProjectId();
+  const { data } = useGetInstances({ project_id: projectId ?? undefined });
+  const instances = data?.instances.filter((instance) => instance.job_name === job.job);
 
   return instances === undefined ? (
     <CenterLoader />

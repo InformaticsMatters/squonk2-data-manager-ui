@@ -1,7 +1,6 @@
 import React from 'react';
 
 import type { JobSummary } from '@squonk/data-manager-client';
-import { useGetJob } from '@squonk/data-manager-client/job';
 
 import { css } from '@emotion/react';
 import { Chip, Typography, useTheme } from '@material-ui/core';
@@ -15,13 +14,10 @@ interface ApplicationCardProps {
 }
 
 export const JobCard: React.FC<ApplicationCardProps> = ({ job: jobSummary }) => {
-  const { data: job } = useGetJob(jobSummary.id);
-
   const theme = useTheme();
   return (
     <BaseCard
       actions={<JobModal jobId={jobSummary.id} />}
-      applicationId={job?.application.application_id}
       cardType="Job"
       collapsed={<JobInstances job={jobSummary} />}
       color={theme.palette.primary.main}

@@ -6,6 +6,8 @@ import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager
 
 import { Button } from '@material-ui/core';
 
+import { PopoverTextField } from '../PopoverTextField';
+
 interface RerunJobButtonProps {
   instance: InstanceSummary;
 }
@@ -15,11 +17,11 @@ export const RerunJobButton: FC<RerunJobButtonProps> = ({ instance }) => {
 
   const queryClient = useQueryClient();
 
-  const rerunJob = () => {
+  const rerunJob = (newName: string) => {
     runJob(
       {
         data: {
-          as_name: 'test',
+          as_name: newName || instance.name,
           application_id: instance.application_id,
           application_version: instance.application_version,
           project_id: instance.project_id,
@@ -38,8 +40,18 @@ export const RerunJobButton: FC<RerunJobButtonProps> = ({ instance }) => {
   };
 
   return (
-    <Button color="primary" onClick={rerunJob}>
-      Run again
-    </Button>
+    <PopoverTextField
+      defaultValue={instance.name}
+      label="Instance Name"
+      name="instanceName"
+      popoverId="new-instance-name"
+      onSubmit={rerunJob}
+    >
+      {(buttonProps) => (
+        <Button color="primary" {...buttonProps}>
+          Run again
+        </Button>
+      )}
+    </PopoverTextField>
   );
 };

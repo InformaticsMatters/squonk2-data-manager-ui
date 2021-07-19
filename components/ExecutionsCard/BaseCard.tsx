@@ -17,7 +17,6 @@ interface BaseCardProps {
   actions: React.ReactNode;
   collapsed?: React.ReactNode;
   cardType: string;
-  applicationId?: string;
   title?: string;
   subtitle?: string;
   color?: string;

@@ -1,22 +1,20 @@
 import React, { FC, useRef } from 'react';
 
-import { Popover, TextField } from '@material-ui/core';
+import { Popover, TextField, TextFieldProps } from '@material-ui/core';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 
 interface PopoverTextFieldProps {
-  onSubmit: (value: string) => Promise<void>;
-  textFieldLabel: string;
-  textFieldName: string;
+  onSubmit: (value: string) => Promise<void> | void;
   popoverId: string;
   children: (props: ReturnType<typeof bindTrigger>) => React.ReactNode;
+  name: string;
 }
 
-export const PopoverTextField: FC<PopoverTextFieldProps> = ({
+export const PopoverTextField: FC<Omit<TextFieldProps, 'onSubmit'> & PopoverTextFieldProps> = ({
   children,
   onSubmit,
-  textFieldLabel,
-  textFieldName,
   popoverId,
+  ...TextFieldProps
 }) => {
   const popupState = usePopupState({ variant: 'popover', popupId: popoverId });
 
@@ -43,19 +41,14 @@ export const PopoverTextField: FC<PopoverTextFieldProps> = ({
 
             if (formRef.current) {
               const formData = new FormData(formRef.current);
-              const value = formData.get(textFieldName);
+              const value = formData.get(TextFieldProps.name);
               value && (await onSubmit(value as string));
             }
 
             popupState.close();
           }}
         >
-          <TextField
-            autoFocus
-            inputProps={{ maxLength: 18 }}
-            label={textFieldLabel}
-            name={textFieldName}
-          />
+          <TextField autoFocus inputProps={{ maxLength: 18 }} {...TextFieldProps} />
         </form>
       </Popover>
     </>

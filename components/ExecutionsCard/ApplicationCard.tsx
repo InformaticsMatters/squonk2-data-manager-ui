@@ -27,17 +27,11 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
   const [name, setName] = useState('');
   const [version, setVersion] = useState<string | null>(null);
 
-  const createInstanceMutation = useCreateInstance();
-
-  const [isTaskProcessing, setIsTaskProcessing] = useState(false);
-  const [currentTask, setCurrentTask] = useState<string | null>(null);
-
-  const isCreationEnabled = !(!project || isTaskProcessing || !name || !version);
+  const { mutate: createInstance } = useCreateInstance();
 
   const handleCreateInstance = async () => {
-    setIsTaskProcessing(true);
     if (project) {
-      const response = await createInstanceMutation.mutateAsync({
+      createInstance({
         data: {
           application_id: app.application_id,
           application_version: version ?? '',
@@ -45,7 +39,6 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
           project_id: project.project_id,
         },
       });
-      setCurrentTask(response.task_id);
     }
   };
 
@@ -54,9 +47,11 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, project }) => {
   return (
     <BaseCard
       actions={
-        <CreateInstanceButton disabled={!isCreationEnabled} onClick={handleCreateInstance} />
+        <CreateInstanceButton
+          disabled={!!(!project || !name || !version)}
+          onClick={handleCreateInstance}
+        />
       }
-      applicationId={app.application_id}
       cardType="Application"
       color={theme.palette.secondary.dark}
       subtitle={application?.group}

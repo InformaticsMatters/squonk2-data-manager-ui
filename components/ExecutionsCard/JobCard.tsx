@@ -6,7 +6,7 @@ import { css } from '@emotion/react';
 import { Chip, Typography, useTheme } from '@material-ui/core';
 
 import { BaseCard } from './BaseCard';
-import { JobInstances } from './JobInstances';
+import { InstancesList } from './InstancesList';
 import { JobModal } from './JobModal';
 
 interface ApplicationCardProps {
@@ -19,7 +19,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ job: jobSummary }) => 
     <BaseCard
       actions={<JobModal jobId={jobSummary.id} />}
       cardType="Job"
-      collapsed={<JobInstances job={jobSummary} />}
+      collapsed={<InstancesList predicate={(instance) => instance.job_name === jobSummary.job} />}
       color={theme.palette.primary.main}
       title={jobSummary.name}
     >

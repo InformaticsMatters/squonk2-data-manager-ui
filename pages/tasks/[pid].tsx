@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 
 import Layout from '../../components/Layout';
 import { CenterLoader } from '../../components/Operations/common/CenterLoader';
+import { OperationApplicationCard } from '../../components/Operations/OperationApplicationCard';
 import { OperationJobCard } from '../../components/Operations/OperationJobCard';
 
 const Tasks: FC = () => {
@@ -52,9 +53,9 @@ const Tasks: FC = () => {
           `}
         >
           <Typography gutterBottom component="h1" variant="h4">
-            Tasks
+            Instance
           </Typography>
-          <Tooltip title="Refresh Tasks">
+          <Tooltip title="Refresh Instance">
             <IconButton
               css={css`
                 margin-left: auto;
@@ -65,10 +66,12 @@ const Tasks: FC = () => {
             </IconButton>
           </Tooltip>
         </div>
-        {instance !== undefined ? (
+        {instance?.application_type === 'JOB' ? (
           <Box marginY={1}>
             <OperationJobCard collapsedByDefault={false} instance={instance} />
           </Box>
+        ) : instance?.application_type === 'APPLICATION' ? (
+          <OperationApplicationCard collapsedByDefault={false} instance={instance} />
         ) : (
           <CenterLoader />
         )}

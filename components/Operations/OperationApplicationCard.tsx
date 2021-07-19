@@ -21,9 +21,13 @@ const HrefButton = Button as any;
 
 interface OperationApplicationCardProps {
   instance: InstanceSummary;
+  collapsedByDefault?: boolean;
 }
 
-export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({ instance }) => {
+export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({
+  instance,
+  collapsedByDefault = false,
+}) => {
   const theme = useTheme();
   const latestState = instance.state;
 
@@ -69,6 +73,7 @@ export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({ in
         </>
       }
       collapsed={<ApplicationDetails instanceId={instance.id} />}
+      collapsedByDefault={collapsedByDefault}
     >
       <Typography
         css={css`

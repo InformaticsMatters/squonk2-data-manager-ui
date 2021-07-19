@@ -7,10 +7,9 @@ import { JobModalContent } from './JobModalContent';
 
 interface JobModalProps {
   jobId: number;
-  disabled?: boolean;
 }
 
-export const JobModal: FC<JobModalProps> = ({ jobId, disabled }) => {
+export const JobModal: FC<JobModalProps> = ({ jobId }) => {
   const selectedFilesState = useSelectedFiles();
 
   const [open, setOpen] = useState(false);
@@ -18,9 +17,7 @@ export const JobModal: FC<JobModalProps> = ({ jobId, disabled }) => {
 
   if (selectedFilesState) {
     const tooltipTitle = selectedFilesState.selectedFiles.length
-      ? disabled
-        ? 'This job is currently in use'
-        : 'Run this job'
+      ? 'Run this job'
       : 'Please select some files on the data tab first';
     return (
       <>
@@ -28,7 +25,7 @@ export const JobModal: FC<JobModalProps> = ({ jobId, disabled }) => {
           <span>
             <Button
               color="primary"
-              disabled={!selectedFilesState.selectedFiles.length || disabled}
+              disabled={!selectedFilesState.selectedFiles.length}
               onClick={() => {
                 setOpen(true);
                 setHasOpened(true);

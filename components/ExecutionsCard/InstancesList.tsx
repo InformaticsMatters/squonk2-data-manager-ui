@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import type { JobSummary } from '@squonk/data-manager-client';
+import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetInstances } from '@squonk/data-manager-client/instance';
 
 import { Box, List, ListItem, ListItemText, Typography } from '@material-ui/core';
@@ -11,22 +11,22 @@ import { LocalTime } from '../LocalTime/LocalTime';
 import { CenterLoader } from '../Operations/common/CenterLoader';
 import { useCurrentProjectId } from '../state/currentProjectHooks';
 
-interface JobInstancesProps {
-  job: JobSummary;
+interface InstancesListProps {
+  predicate: (instance: InstanceSummary) => boolean;
 }
 
-export const JobInstances: FC<JobInstancesProps> = ({ job }) => {
+export const InstancesList: FC<InstancesListProps> = ({ predicate }) => {
   const { query } = useRouter();
 
   const { projectId } = useCurrentProjectId();
   const { data } = useGetInstances({ project_id: projectId ?? undefined });
-  const instances = data?.instances.filter((instance) => instance.job_name === job.job);
+  const instances = data?.instances.filter(predicate);
 
   return instances === undefined ? (
     <CenterLoader />
   ) : instances.length === 0 ? (
     <Box p={2}>
-      <Typography variant="body2">No instances of this job currently exist</Typography>
+      <Typography variant="body2">No instances of this type currently exist</Typography>
     </Box>
   ) : (
     <List dense component="ul">

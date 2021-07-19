@@ -89,7 +89,7 @@ const Executions: FC = () => {
               ?.filter((app) => app.kind.toLowerCase().includes(searchValue.toLowerCase()))
               ?.map((app) => (
                 <Grid item key={app.application_id} md={3} sm={6} xs={12}>
-                  <ApplicationCard app={app} project={currentProject} />
+                  <ApplicationCard app={app} projectId={currentProject?.project_id} />
                 </Grid>
               ))}
           {executionTypes.includes('job') &&

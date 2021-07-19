@@ -30,7 +30,7 @@ const Tasks: FC = () => {
   const router = useRouter();
   const { pid } = router.query;
 
-  const { data: instances } = useGetInstances();
+  const { data: instances } = useGetInstances(undefined, { query: { refetchInterval: 5000 } });
 
   const instance = instances?.instances.find((instance) => instance.id === pid);
 

@@ -33,8 +33,9 @@ export const JobModalContent: FC<JobModalContentProps> = ({ jobId, open, onClose
 
   const { projectId } = useCurrentProjectId();
 
-  const { mutateAsync: createInstance } = useCreateInstance();
-  const { data: job } = useGetJob(jobId); // Get extra details about the job
+  const { mutate: createInstance } = useCreateInstance();
+  // Get extra details about the job
+  const { data: job } = useGetJob(jobId);
 
   // Control for generated options form
   const [optionsFormData, setOptionsFormData] = useState<any>(null);
@@ -42,7 +43,7 @@ export const JobModalContent: FC<JobModalContentProps> = ({ jobId, open, onClose
   // Control for the inputs fields
   const [inputsData, setInputsData] = useState({});
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (projectId && job) {
       // Construct the specification
       const specification: JobSpecification = {
@@ -52,19 +53,24 @@ export const JobModalContent: FC<JobModalContentProps> = ({ jobId, open, onClose
         variables: { ...inputsData, ...optionsFormData },
       };
 
-      await createInstance({
-        data: {
-          application_id: job.application.application_id,
-          application_version: 'v1',
-          as_name: name,
-          project_id: projectId,
-          specification: JSON.stringify(specification),
+      createInstance(
+        {
+          data: {
+            application_id: job.application.application_id,
+            application_version: 'v1',
+            as_name: name,
+            project_id: projectId,
+            specification: JSON.stringify(specification),
+          },
         },
-      });
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
 
-      queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
-
-      onClose();
+            onClose();
+          },
+        },
+      );
     }
   };
 

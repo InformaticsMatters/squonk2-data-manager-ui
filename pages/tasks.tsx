@@ -18,7 +18,7 @@ import { getGetTasksQueryKey, getTasks, useGetTasks } from '@squonk/data-manager
 
 import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import { Container, Grid, IconButton, Tooltip, useTheme } from '@material-ui/core';
+import { Container, Grid, IconButton, Tooltip, Typography, useTheme } from '@material-ui/core';
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
 import dayjs from 'dayjs';
 import { GetServerSideProps } from 'next';
@@ -128,10 +128,12 @@ const Tasks: FC = () => {
         <div
           css={css`
             display: flex;
-            align-items: center;
+            align-items: flex-start;
           `}
         >
-          <h1>Tasks</h1>
+          <Typography gutterBottom component="h1" variant="h4">
+            Tasks
+          </Typography>
           <Tooltip title="Refresh Tasks">
             <IconButton
               css={css`

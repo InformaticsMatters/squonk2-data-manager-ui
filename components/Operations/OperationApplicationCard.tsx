@@ -77,8 +77,8 @@ export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({ in
           gap: ${theme.spacing(1)}px;
         `}
       >
-        <StatusIcon state={latestState} /> {latestState} • {instance.name} •{' '}
-        {associatedProject?.name}
+        App • <StatusIcon state={latestState} />
+        {latestState} • {instance.name} • {associatedProject?.name}
         <LocalTime
           css={css`
             margin-left: auto;

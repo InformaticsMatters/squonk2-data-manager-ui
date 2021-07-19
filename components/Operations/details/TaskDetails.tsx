@@ -5,6 +5,7 @@ import { useGetTask } from '@squonk/data-manager-client/task';
 
 import { Grid } from '@material-ui/core';
 
+import { CenterLoader } from '../common/CenterLoader';
 import { TimeLine } from '../common/TimeLine';
 
 interface TaskDetailsProps {
@@ -14,7 +15,9 @@ interface TaskDetailsProps {
 export const TaskDetails: FC<TaskDetailsProps> = ({ taskId }) => {
   const { data: task } = useGetTask(taskId);
 
-  return task ? (
+  return task === undefined ? (
+    <CenterLoader />
+  ) : (
     <Grid container spacing={2}>
       <Grid item sm={6} xs={12}>
         <TimeLine states={task.states ?? []} />
@@ -23,7 +26,5 @@ export const TaskDetails: FC<TaskDetailsProps> = ({ taskId }) => {
         <TimeLine states={task.events ?? []} />
       </Grid>
     </Grid>
-  ) : (
-    <p>Loading...</p>
   );
 };

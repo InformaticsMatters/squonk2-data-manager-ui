@@ -22,6 +22,7 @@ export const StatusIcon: FC<StatusIconProps> = ({ state }) => {
     case 'DONE':
       return <CheckCircleRoundedIcon htmlColor={green[800]} />;
     case 'FAILURE':
+    case 'FAILED':
       return <ErrorRoundedIcon color="error" />;
     default:
       return <FiberManualRecordRoundedIcon />;

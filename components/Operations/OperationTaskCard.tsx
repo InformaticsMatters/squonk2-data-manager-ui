@@ -26,12 +26,13 @@ export const OperationTaskCard: FC<TaskCardProps> = ({ task }) => {
           gap: ${theme.spacing(1)}px;
         `}
       >
+        {task.purpose} •{' '}
         {task.processing_stage && (
           <>
-            <StatusIcon state={task.processing_stage} /> {task.processing_stage}
+            <StatusIcon state={task.processing_stage} />
+            {task.processing_stage}
           </>
-        )}{' '}
-        • {task.purpose}
+        )}
         <LocalTime
           css={css`
             margin-left: auto;

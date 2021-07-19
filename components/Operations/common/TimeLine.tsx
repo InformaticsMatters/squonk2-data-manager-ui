@@ -38,7 +38,7 @@ export const TimeLine: FC<TimeLineProps> = ({ states }) => {
           css={css`
             min-height: 40px;
           `}
-          key={state.time}
+          key={`${state.time}-${stateIndex}`}
         >
           <TimelineOppositeContent>
             <Typography color="textSecondary">

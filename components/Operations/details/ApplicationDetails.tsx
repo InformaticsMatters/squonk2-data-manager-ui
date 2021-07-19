@@ -5,6 +5,7 @@ import { useGetInstance } from '@squonk/data-manager-client/instance';
 
 import { Grid, Typography } from '@material-ui/core';
 
+import { CenterLoader } from '../common/CenterLoader';
 import { TimeLine } from '../common/TimeLine';
 
 interface ApplicationDetailsProps {
@@ -15,7 +16,7 @@ export const ApplicationDetails: FC<ApplicationDetailsProps> = ({ instanceId }) 
   const { data: instance } = useGetInstance(instanceId);
 
   return instance === undefined ? (
-    <p>Loading...</p>
+    <CenterLoader />
   ) : (
     <>
       <Typography>

@@ -31,14 +31,15 @@ export const OperationJobCard: FC<JobCardProps> = ({ instance }) => {
       collapsed={<JobDetails instanceSummary={instance} />}
     >
       <Typography
+        component="h2"
         css={css`
           display: flex;
           align-items: center;
           gap: ${theme.spacing(1)}px;
         `}
       >
-        <StatusIcon state={latestState} /> {latestState} • {instance.name} • {instance.job_name} •{' '}
-        {associatedProject?.name}
+        Job • <StatusIcon state={latestState} />
+        {latestState} • {instance.name} • {instance.job_name} • {associatedProject?.name}
         <LocalTime
           css={css`
             margin-left: auto;

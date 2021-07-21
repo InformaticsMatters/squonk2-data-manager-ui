@@ -24,6 +24,7 @@ import dayjs from 'dayjs';
 import { GetServerSideProps } from 'next';
 
 import Layout from '../components/Layout';
+import { CenterLoader } from '../components/Operations/common/CenterLoader';
 import { OperationApplicationCard } from '../components/Operations/OperationApplicationCard';
 import { OperationJobCard } from '../components/Operations/OperationJobCard';
 import { OperationTaskCard } from '../components/Operations/OperationTaskCard';
@@ -37,35 +38,38 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
 
     const projectId = query.project as string | undefined;
 
-    // Skip prefetching if there is no project. We react-query can't handle undefined in the data as
-    // it can't be serialised in JSON.
     if (projectId) {
-      await queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
-        getProjects({
-          baseURL: process.env.DATA_MANAGER_API_SERVER,
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }),
-      );
-
-      await queryClient.prefetchQuery(getGetInstancesQueryKey({ project_id: projectId }), () =>
-        getInstances(
-          { project_id: projectId },
-          {
+      const queries = [
+        queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
+          getProjects({
             baseURL: process.env.DATA_MANAGER_API_SERVER,
             headers: { Authorization: `Bearer ${accessToken}` },
-          },
+          }),
         ),
-      );
 
-      await queryClient.prefetchQuery(getGetTasksQueryKey({ project_id: projectId }), () =>
-        getTasks(
-          { project_id: projectId },
-          {
-            baseURL: process.env.DATA_MANAGER_API_SERVER,
-            headers: { Authorization: `Bearer ${accessToken}` },
-          },
+        queryClient.prefetchQuery(getGetInstancesQueryKey({ project_id: projectId }), async () =>
+          getInstances(
+            { project_id: projectId },
+            {
+              baseURL: process.env.DATA_MANAGER_API_SERVER,
+              headers: { Authorization: `Bearer ${accessToken}` },
+            },
+          ),
         ),
-      );
+
+        queryClient.prefetchQuery(getGetTasksQueryKey({ project_id: projectId }), () =>
+          getTasks(
+            { project_id: projectId },
+            {
+              baseURL: process.env.DATA_MANAGER_API_SERVER,
+              headers: { Authorization: `Bearer ${accessToken}` },
+            },
+          ),
+        ),
+      ];
+
+      // Make the queries in parallel
+      await Promise.all(queries);
     }
   } catch (error) {
     // TODO: smarter handling
@@ -82,6 +86,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
 const isTaskSummary = (
   taskOrInstance: TaskSummary | InstanceSummary,
 ): taskOrInstance is TaskSummary => {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   return (taskOrInstance as TaskSummary).created !== undefined;
 };
 
@@ -99,12 +104,16 @@ const Tasks: FC = () => {
   const { refetch: projectRefetch } = useGetProjects();
   const { projectId } = useCurrentProjectId();
 
-  const { data: instancesData, refetch: instancesRefetch } = useGetInstances({
+  const {
+    data: instancesData,
+    refetch: instancesRefetch,
+    isLoading: isInstancesLoading,
+  } = useGetInstances({
     project_id: projectId || undefined,
   });
   const instances = instancesData?.instances;
 
-  const { data: tasksData } = useGetTasks({ project_id: projectId });
+  const { data: tasksData, isLoading: isTasksLoading } = useGetTasks({ project_id: projectId });
   const tasks = tasksData?.tasks;
 
   const refreshOperations = [
@@ -146,37 +155,43 @@ const Tasks: FC = () => {
           </Tooltip>
         </div>
         <Grid container spacing={2}>
-          {[
-            ...(instances ?? []),
-            ...(tasks?.filter((task) => task.purpose === 'DATASET' || task.purpose === 'FILE') ??
-              []),
-          ]
-            .sort((a, b) => {
-              const aTime = getTimeStamp(a);
-              const bTime = getTimeStamp(b);
+          {instances !== undefined &&
+          tasks !== undefined &&
+          !isTasksLoading &&
+          !isInstancesLoading ? (
+            [
+              ...instances,
+              ...tasks.filter((task) => task.purpose === 'DATASET' || task.purpose === 'FILE'),
+            ]
+              .sort((a, b) => {
+                const aTime = getTimeStamp(a);
+                const bTime = getTimeStamp(b);
 
-              return dayjs(aTime).isBefore(dayjs(bTime)) ? 1 : -1;
-            })
-            .map((instanceOrTask) => {
-              if (!isTaskSummary(instanceOrTask)) {
-                const instance = instanceOrTask;
-                return instance.application_type === 'JOB' ? (
-                  <Grid item key={instance.id} xs={12}>
-                    <OperationJobCard instance={instance} />
-                  </Grid>
-                ) : (
-                  <Grid item key={instance.id} xs={12}>
-                    <OperationApplicationCard instance={instance} />
+                return dayjs(aTime).isBefore(dayjs(bTime)) ? 1 : -1;
+              })
+              .map((instanceOrTask) => {
+                if (!isTaskSummary(instanceOrTask)) {
+                  const instance = instanceOrTask;
+                  return instance.application_type === 'JOB' ? (
+                    <Grid item key={instance.id} xs={12}>
+                      <OperationJobCard instance={instance} />
+                    </Grid>
+                  ) : (
+                    <Grid item key={instance.id} xs={12}>
+                      <OperationApplicationCard instance={instance} />
+                    </Grid>
+                  );
+                }
+                const task = instanceOrTask;
+                return (
+                  <Grid item key={task.id} xs={12}>
+                    <OperationTaskCard task={task} />
                   </Grid>
                 );
-              }
-              const task = instanceOrTask;
-              return (
-                <Grid item key={task.id} xs={12}>
-                  <OperationTaskCard task={task} />
-                </Grid>
-              );
-            })}
+              })
+          ) : (
+            <CenterLoader />
+          )}
         </Grid>
       </Container>
     </Layout>

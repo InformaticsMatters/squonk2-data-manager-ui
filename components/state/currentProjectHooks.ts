@@ -12,24 +12,32 @@ export const useCurrentProjectId = () => {
 
   const projectId = router.query.project as ProjectId;
 
-  const setCurrentProjectId = (newProjectId?: string) => {
+  const setCurrentProjectId = (newProjectId?: string, shallow?: true) => {
     if (newProjectId !== undefined) {
-      router.push({
-        pathname: router.pathname,
-        query: {
-          ...router.query,
-          project: newProjectId,
-          path: projectId === newProjectId ? router.query.path : [],
+      router.push(
+        {
+          pathname: router.pathname,
+          query: {
+            ...router.query,
+            project: newProjectId,
+            path: projectId === newProjectId ? router.query.path : [],
+          },
         },
-      });
+        undefined,
+        { shallow },
+      );
     } else {
       const newQuery = { ...router.query };
       delete newQuery.project;
       delete newQuery.path;
-      router.push({
-        pathname: router.pathname,
-        query: newQuery,
-      });
+      router.push(
+        {
+          pathname: router.pathname,
+          query: newQuery,
+        },
+        undefined,
+        { shallow },
+      );
     }
   };
 

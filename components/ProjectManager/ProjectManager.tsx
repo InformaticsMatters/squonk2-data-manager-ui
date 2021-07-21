@@ -91,7 +91,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
           style={{ width: 300 }}
           value={currentProject}
           onChange={(_, project) => {
-            setCurrentProjectId(project?.project_id);
+            setCurrentProjectId(project?.project_id, true);
           }}
         />
       </Grid>

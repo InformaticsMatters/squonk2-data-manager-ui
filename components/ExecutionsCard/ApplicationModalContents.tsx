@@ -103,6 +103,8 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
                 </MenuItem>
               ))}
             </TextField>
+          </Grid>
+          <Grid item xs={12}>
             <Form
               liveValidate
               noHtml5Validate

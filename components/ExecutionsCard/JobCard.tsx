@@ -19,7 +19,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ job: jobSummary }) => 
     <BaseCard
       actions={<JobModal jobId={jobSummary.id} />}
       cardType="Job"
-      collapsed={<InstancesList predicate={(instance) => instance.job_name === jobSummary.job} />}
+      collapsed={<InstancesList predicate={(instance) => instance.job_job === jobSummary.job} />}
       color={theme.palette.primary.main}
       title={jobSummary.name}
     >

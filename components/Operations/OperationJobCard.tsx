@@ -41,7 +41,7 @@ export const OperationJobCard: FC<JobCardProps> = ({ instance, collapsedByDefaul
         `}
       >
         Job • <StatusIcon state={latestState} />
-        {latestState} • {instance.name} • {instance.job_name} • {associatedProject?.name}
+        {latestState} • {instance.name} • {instance.job_job} • {associatedProject?.name}
         <LocalTime
           css={css`
             margin-left: auto;

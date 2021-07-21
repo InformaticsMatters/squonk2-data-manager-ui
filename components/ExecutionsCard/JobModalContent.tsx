@@ -91,6 +91,7 @@ export const JobModalContent: FC<JobModalContentProps> = ({ jobId, open, onClose
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
+                fullWidth
                 label="Job name"
                 value={name}
                 onChange={(event) => setName(event.target.value)}

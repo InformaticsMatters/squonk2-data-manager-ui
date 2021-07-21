@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import { JobSummary } from '@squonk/data-manager-client';
+import { InstanceSummary, JobSummary } from '@squonk/data-manager-client';
 import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
 import { useGetJob } from '@squonk/data-manager-client/job';
 
@@ -10,7 +10,7 @@ import Form from '@rjsf/material-ui';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { CenterLoader } from '../Operations/common/CenterLoader';
-import { useCurrentProjectId } from '../state/currentProjectHooks';
+import { ProjectId } from '../state/currentProjectHooks';
 import { JobInputFields } from './JobInputFields';
 
 interface JobSpecification {
@@ -23,22 +23,32 @@ interface JobSpecification {
 interface JobModalContentProps {
   jobId: JobSummary['id'];
   open: boolean;
+  projectId: ProjectId;
+  instance?: InstanceSummary; // Allow loading form values from a previous instance
   onClose: () => void;
 }
 
-export const JobModalContent: FC<JobModalContentProps> = ({ jobId, open, onClose }) => {
+export const JobModalContent: FC<JobModalContentProps> = ({
+  jobId,
+  projectId,
+  instance,
+  open,
+  onClose,
+}) => {
+  // ? Can we guarantee every job has a parsable spec?
+
   const queryClient = useQueryClient();
 
-  const [name, setName] = useState('');
-
-  const { projectId } = useCurrentProjectId();
+  const [name, setName] = useState(instance?.name ?? '');
 
   const { mutate: createInstance } = useCreateInstance();
   // Get extra details about the job
   const { data: job } = useGetJob(jobId);
 
+  const spec = JSON.parse(instance?.application_specification as string).variables;
+
   // Control for generated options form
-  const [optionsFormData, setOptionsFormData] = useState<any>(null);
+  const [optionsFormData, setOptionsFormData] = useState<any>(spec ?? null);
 
   // Control for the inputs fields
   const [inputsData, setInputsData] = useState({});
@@ -109,6 +119,7 @@ export const JobModalContent: FC<JobModalContentProps> = ({ jobId, open, onClose
                   </Grid>
                   <JobInputFields
                     inputs={job.variables.inputs as any}
+                    projectId={projectId}
                     setInputsData={setInputsData}
                   />
                 </>

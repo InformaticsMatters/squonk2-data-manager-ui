@@ -1,57 +1,30 @@
-import React, { FC } from 'react';
-import { useQueryClient } from 'react-query';
+import React, { FC, useState } from 'react';
 
-import { InstanceSummary } from '@squonk/data-manager-client';
-import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
+import type { InstanceSummary } from '@squonk/data-manager-client';
 
 import { Button } from '@material-ui/core';
 
-import { PopoverTextField } from '../PopoverTextField';
+import { JobModalContent } from '../ExecutionsCard/JobModalContent';
 
 interface RerunJobButtonProps {
   instance: InstanceSummary;
 }
 
 export const RerunJobButton: FC<RerunJobButtonProps> = ({ instance }) => {
-  const { mutate: runJob } = useCreateInstance();
+  const [open, setOpen] = useState(false);
 
-  const queryClient = useQueryClient();
-
-  const rerunJob = (newName: string) => {
-    runJob(
-      {
-        data: {
-          as_name: newName || instance.name,
-          application_id: instance.application_id,
-          application_version: instance.application_version,
-          project_id: instance.project_id,
-          specification: instance.application_specification,
-        },
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries(
-            getGetInstancesQueryKey({ project_id: instance.project_id }),
-          );
-          queryClient.invalidateQueries(getGetInstancesQueryKey());
-        },
-      },
-    );
-  };
-
-  return (
-    <PopoverTextField
-      defaultValue={instance.name}
-      label="Instance Name"
-      name="instanceName"
-      popoverId="new-instance-name"
-      onSubmit={rerunJob}
-    >
-      {(buttonProps) => (
-        <Button color="primary" {...buttonProps}>
-          Run again
-        </Button>
-      )}
-    </PopoverTextField>
-  );
+  return instance.job_id !== undefined ? (
+    <>
+      <Button color="primary" onClick={() => setOpen(true)}>
+        Run again
+      </Button>
+      <JobModalContent
+        instance={instance}
+        jobId={instance.job_id}
+        open={open}
+        projectId={instance.project_id}
+        onClose={() => setOpen(false)}
+      />
+    </>
+  ) : null;
 };

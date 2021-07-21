@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 
-import { ApplicationSummary } from '@squonk/data-manager-client';
+import type { ApplicationSummary } from '@squonk/data-manager-client';
 
 import { useTheme } from '@material-ui/core';
 
-import { ProjectId } from '../state/projectPathHooks';
+import type { ProjectId } from '../state/currentProjectHooks';
 import { ApplicationModal } from './ApplicationModal';
 import { BaseCard } from './BaseCard';
 import { InstancesList } from './InstancesList';

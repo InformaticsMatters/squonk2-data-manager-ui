@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 
 import { Grid, MenuItem, TextField } from '@material-ui/core';
 
+import type { ProjectId } from '../state/currentProjectHooks';
 import { useSelectedFiles } from '../state/FileSelectionContext';
 
 // Define types for the form schema as the Open API spec doesn't define these (just gives string)
@@ -21,12 +22,13 @@ interface InputSchema {
 }
 
 interface JobInputFieldsProps {
+  projectId: ProjectId;
   inputs: InputSchema;
   setInputsData: (inputData: any) => void;
 }
 
-export const JobInputFields: FC<JobInputFieldsProps> = ({ inputs, setInputsData }) => {
-  const selectedFilesState = useSelectedFiles(); // User selects files and directories from this context
+export const JobInputFields: FC<JobInputFieldsProps> = ({ projectId, inputs, setInputsData }) => {
+  const selectedFilesState = useSelectedFiles(projectId); // User selects files and directories from this context
 
   // selectedFilesState is undefined if no project is selected.
   // This shouldn't happen here but checking just in case.

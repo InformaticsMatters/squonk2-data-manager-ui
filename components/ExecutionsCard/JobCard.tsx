@@ -5,19 +5,21 @@ import type { JobSummary } from '@squonk/data-manager-client';
 import { css } from '@emotion/react';
 import { Chip, Typography, useTheme } from '@material-ui/core';
 
+import type { ProjectId } from '../state/currentProjectHooks';
 import { BaseCard } from './BaseCard';
 import { InstancesList } from './InstancesList';
 import { JobModal } from './JobModal';
 
 interface ApplicationCardProps {
+  projectId: ProjectId;
   job: JobSummary;
 }
 
-export const JobCard: React.FC<ApplicationCardProps> = ({ job: jobSummary }) => {
+export const JobCard: React.FC<ApplicationCardProps> = ({ projectId, job: jobSummary }) => {
   const theme = useTheme();
   return (
     <BaseCard
-      actions={<JobModal jobId={jobSummary.id} />}
+      actions={<JobModal jobId={jobSummary.id} projectId={projectId} />}
       cardType="Job"
       collapsed={<InstancesList predicate={(instance) => instance.job_job === jobSummary.job} />}
       color={theme.palette.primary.main}

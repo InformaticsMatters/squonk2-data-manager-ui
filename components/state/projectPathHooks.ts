@@ -2,8 +2,6 @@ import { useMemo } from 'react';
 
 import { useRouter } from 'next/router';
 
-export type ProjectId = string | undefined;
-
 /**
  * @returns The selected projectId from the project key of the query parameters
  */

@@ -67,8 +67,8 @@ export const useSelectedFilesFromProject = (projectId: ProjectId) => {
   }
 };
 
-export const useSelectedFiles = () => {
-  const { projectId } = useCurrentProjectId();
+export const useSelectedFiles = (projectId?: ProjectId) => {
+  const { projectId: currentProjectId } = useCurrentProjectId();
 
-  return useSelectedFilesFromProject(projectId);
+  return useSelectedFilesFromProject(projectId ?? currentProjectId);
 };

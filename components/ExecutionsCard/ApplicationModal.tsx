@@ -1,10 +1,10 @@
 import React, { FC, useState } from 'react';
 
-import { ApplicationSummary } from '@squonk/data-manager-client';
+import type { ApplicationSummary } from '@squonk/data-manager-client';
 
 import { Button, Tooltip } from '@material-ui/core';
 
-import { ProjectId } from '../state/projectPathHooks';
+import type { ProjectId } from '../state/currentProjectHooks';
 import { ApplicationModalContent } from './ApplicationModalContents';
 
 interface ApplicationModalProps {

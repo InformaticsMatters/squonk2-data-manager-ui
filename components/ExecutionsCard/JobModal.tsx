@@ -2,14 +2,16 @@ import React, { FC, useState } from 'react';
 
 import { Button, Tooltip } from '@material-ui/core';
 
+import type { ProjectId } from '../state/currentProjectHooks';
 import { useSelectedFiles } from '../state/FileSelectionContext';
 import { JobModalContent } from './JobModalContent';
 
 interface JobModalProps {
+  projectId: ProjectId;
   jobId: number;
 }
 
-export const JobModal: FC<JobModalProps> = ({ jobId }) => {
+export const JobModal: FC<JobModalProps> = ({ projectId, jobId }) => {
   const selectedFilesState = useSelectedFiles();
 
   const [open, setOpen] = useState(false);
@@ -35,7 +37,14 @@ export const JobModal: FC<JobModalProps> = ({ jobId }) => {
             </Button>
           </span>
         </Tooltip>
-        {hasOpened && <JobModalContent jobId={jobId} open={open} onClose={() => setOpen(false)} />}
+        {hasOpened && (
+          <JobModalContent
+            jobId={jobId}
+            open={open}
+            projectId={projectId}
+            onClose={() => setOpen(false)}
+          />
+        )}
       </>
     );
   } else {

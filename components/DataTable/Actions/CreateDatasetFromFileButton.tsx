@@ -48,7 +48,7 @@ export const CreateDatasetFromFileButton: FC<CreateDatasetFromFileButtonProps> =
               data: {
                 project_id: projectId,
                 file_name: file.fileName,
-                path: path,
+                path,
                 dataset_type: mimeType,
               },
             });

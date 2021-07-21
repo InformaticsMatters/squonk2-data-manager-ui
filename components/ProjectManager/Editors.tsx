@@ -13,7 +13,7 @@ import { useUser } from '@auth0/nextjs-auth0';
 import { Chip, TextField } from '@material-ui/core';
 import { Autocomplete, AutocompleteChangeReason } from '@material-ui/lab';
 
-import { useCurrentProject } from '../currentProjectHooks';
+import { useCurrentProject } from '../state/currentProjectHooks';
 
 export const Editors: FC = () => {
   const { user: currentUser } = useUser();

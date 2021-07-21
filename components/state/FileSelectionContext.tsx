@@ -1,6 +1,6 @@
 import React, { useContext, useReducer } from 'react';
 
-import { ProjectId, useCurrentProjectId } from '../currentProjectHooks';
+import { ProjectId, useCurrentProjectId } from '../state/currentProjectHooks';
 
 type SavedFile = string; // General in case we want to store more than the file path
 
@@ -68,7 +68,7 @@ export const useSelectedFilesFromProject = (projectId: ProjectId) => {
 };
 
 export const useSelectedFiles = () => {
-  const [currentProjectId] = useCurrentProjectId();
+  const { projectId } = useCurrentProjectId();
 
-  return useSelectedFilesFromProject(currentProjectId);
+  return useSelectedFilesFromProject(projectId);
 };

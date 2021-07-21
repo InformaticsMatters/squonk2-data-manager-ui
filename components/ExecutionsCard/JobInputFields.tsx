@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import { Grid, MenuItem, TextField } from '@material-ui/core';
 
-import { useSelectedFiles } from '../DataTable/FileSelectionContext';
+import { useSelectedFiles } from '../state/FileSelectionContext';
 
 // Define types for the form schema as the Open API spec doesn't define these (just gives string)
 // These might be defined in the form generator types?

@@ -7,7 +7,7 @@ import { getGetProjectQueryKey } from '@squonk/data-manager-client/project';
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
 
-import { ModalWrapper } from '../Modals/ModalWrapper';
+import { ModalWrapper } from '../../Modals/ModalWrapper';
 
 interface DetachDatasetProps {
   fileId: string;

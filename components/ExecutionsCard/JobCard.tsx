@@ -1,65 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { useCreateInstance } from '@squonk/data-manager-client/instance';
-import { useGetJob } from '@squonk/data-manager-client/job';
+import type { JobSummary } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
-import { Chip, Grid, Typography, useTheme } from '@material-ui/core';
+import { Chip, Typography, useTheme } from '@material-ui/core';
 
-import { useCurrentProjectId } from '../currentProjectHooks';
 import { BaseCard } from './BaseCard';
+import { InstancesList } from './InstancesList';
 import { JobModal } from './JobModal';
-import { ProgressBar } from './ProgressBar';
-
-export interface JobSpecification {
-  collection: string;
-  job: string;
-  version: string;
-  variables: { [key: string]: string | string[] };
-}
 
 interface ApplicationCardProps {
-  jobId: number;
+  job: JobSummary;
 }
 
-export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
-  const { data: job } = useGetJob(jobId);
-  const [projectId] = useCurrentProjectId();
-
-  const createInstanceMutation = useCreateInstance();
-
-  const [currentTask, setCurrentTask] = useState<string | null>(null);
-  const [isTaskProcessing, setIsTaskProcessing] = useState(false);
-
-  const handleRunJob = async (specification: JobSpecification) => {
-    setIsTaskProcessing(true);
-    if (projectId && job) {
-      const instance = await createInstanceMutation.mutateAsync({
-        data: {
-          application_id: job.application.application_id,
-          application_version: 'v1',
-          as_name: 'Test',
-          project_id: projectId,
-          specification: JSON.stringify(specification),
-        },
-      });
-      setCurrentTask(instance.task_id);
-    }
-  };
-
+export const JobCard: React.FC<ApplicationCardProps> = ({ job: jobSummary }) => {
   const theme = useTheme();
   return (
     <BaseCard
-      actions={<JobModal disabled={isTaskProcessing} handleRunJob={handleRunJob} jobId={jobId} />}
-      applicationId={job?.application.application_id}
+      actions={<JobModal jobId={jobSummary.id} />}
       cardType="Job"
+      collapsed={<InstancesList predicate={(instance) => instance.job_name === jobSummary.job} />}
       color={theme.palette.primary.main}
-      title={job?.name}
+      title={jobSummary.name}
     >
-      <Typography variant="body2">{job?.description}</Typography>
-      <Typography variant="body1">{job?.version}</Typography>
+      {/* TODO: Fix this any assertion once API is fixed */}
+      <Typography variant="body2">{(jobSummary as any).description}</Typography>
+      <Typography variant="body1">{jobSummary.version}</Typography>
       <Typography>
-        <em>{job?.category}</em>
+        <em>{jobSummary.category}</em>
       </Typography>
       <div
         css={css`
@@ -70,17 +38,10 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ jobId }) => {
           }
         `}
       >
-        {job?.keywords?.map((word) => (
+        {jobSummary.keywords?.map((word) => (
           <Chip color="primary" key={word} label={word} size="small" variant="outlined" />
         ))}
       </div>
-      <Grid item xs={12}>
-        <ProgressBar
-          isTaskProcessing={isTaskProcessing}
-          setIsTaskProcessing={setIsTaskProcessing}
-          taskId={currentTask}
-        />
-      </Grid>
     </BaseCard>
   );
 };

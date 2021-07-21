@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 
-import {
-  customInstance,
-  DatasetPostBodyBody,
-  DatasetPutPostResponse,
-} from '@squonk/data-manager-client';
+import { DatasetPostBodyBody } from '@squonk/data-manager-client';
+import { uploadDataset } from '@squonk/data-manager-client/dataset';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { IconButton } from '@material-ui/core';
@@ -39,11 +36,8 @@ export const FileUpload = () => {
         };
 
         try {
-          const response: DatasetPutPostResponse = await customInstance({
-            method: 'POST',
-            data,
-            url: '/dataset',
-            onUploadProgress: (progressEvent) => {
+          const response = await uploadDataset(data, {
+            onUploadProgress: (progressEvent: ProgressEvent) => {
               const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
               const updatedFiles = [...files];
               updatedFiles[index] = { ...updatedFiles[index], progress };

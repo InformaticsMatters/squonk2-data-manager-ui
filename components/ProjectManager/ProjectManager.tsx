@@ -14,7 +14,7 @@ import { Grid, InputAdornment, TextField, TextFieldProps } from '@material-ui/co
 import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
 
-import { useCurrentProject, useCurrentProjectId } from '../currentProjectHooks';
+import { useCurrentProject, useCurrentProjectId } from '../state/currentProjectHooks';
 import { AddProject } from './AddProject';
 import { DeleteProject } from './DeleteProject';
 import { EditProject } from './EditProject';
@@ -28,7 +28,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
   const { data, isLoading } = useGetProjects();
   const projects = data?.projects;
 
-  const [, setCurrentProjectId] = useCurrentProjectId();
+  const { setCurrentProjectId } = useCurrentProjectId();
   const currentProject = useCurrentProject();
   const { user } = useUser();
 
@@ -91,7 +91,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
           style={{ width: 300 }}
           value={currentProject}
           onChange={(_, project) => {
-            setCurrentProjectId(project?.project_id);
+            setCurrentProjectId(project?.project_id, true);
           }}
         />
       </Grid>

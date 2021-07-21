@@ -8,10 +8,10 @@ import { css } from '@emotion/react';
 import { Container, Grid, InputAdornment, MenuItem, TextField, useTheme } from '@material-ui/core';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 
-import { useCurrentProject } from '../components/currentProjectHooks';
 import { ApplicationCard } from '../components/ExecutionsCard/ApplicationCard';
 import { JobCard } from '../components/ExecutionsCard/JobCard';
 import Layout from '../components/Layout';
+import { useCurrentProject } from '../components/state/currentProjectHooks';
 
 const Executions: FC = () => {
   const theme = useTheme();
@@ -89,7 +89,7 @@ const Executions: FC = () => {
               ?.filter((app) => app.kind.toLowerCase().includes(searchValue.toLowerCase()))
               ?.map((app) => (
                 <Grid item key={app.application_id} md={3} sm={6} xs={12}>
-                  <ApplicationCard app={app} project={currentProject} />
+                  <ApplicationCard app={app} projectId={currentProject?.project_id} />
                 </Grid>
               ))}
           {executionTypes.includes('job') &&
@@ -104,7 +104,7 @@ const Executions: FC = () => {
               )
               ?.map((job) => (
                 <Grid item key={job.id} md={3} sm={6} xs={12}>
-                  <JobCard jobId={job.id} />
+                  <JobCard job={job} />
                 </Grid>
               ))}
         </Grid>

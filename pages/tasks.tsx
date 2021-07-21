@@ -1,20 +1,130 @@
 import React, { FC } from 'react';
+import { QueryClient, useQueryClient } from 'react-query';
+import { dehydrate } from 'react-query/hydration';
 
-import { useGetTasks } from '@squonk/data-manager-client/task';
+import type { InstanceSummary, TaskSummary } from '@squonk/data-manager-client';
+import {
+  getGetInstanceQueryKey,
+  getGetInstancesQueryKey,
+  getInstances,
+  useGetInstances,
+} from '@squonk/data-manager-client/instance';
+import {
+  getGetProjectsQueryKey,
+  getProjects,
+  useGetProjects,
+} from '@squonk/data-manager-client/project';
+import { getGetTasksQueryKey, getTasks, useGetTasks } from '@squonk/data-manager-client/task';
 
-import { withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import { Container, Grid, IconButton, Tooltip, useTheme } from '@material-ui/core';
+import { Container, Grid, IconButton, Tooltip, Typography, useTheme } from '@material-ui/core';
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
 import dayjs from 'dayjs';
+import { GetServerSideProps } from 'next';
 
 import Layout from '../components/Layout';
-import { Task } from '../components/Task';
+import { CenterLoader } from '../components/Operations/common/CenterLoader';
+import { OperationApplicationCard } from '../components/Operations/OperationApplicationCard';
+import { OperationJobCard } from '../components/Operations/OperationJobCard';
+import { OperationTaskCard } from '../components/Operations/OperationTaskCard';
+import { useCurrentProjectId } from '../components/state/currentProjectHooks';
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
+  const queryClient = new QueryClient();
+
+  try {
+    const { accessToken } = await getAccessToken(req, res);
+
+    const projectId = query.project as string | undefined;
+
+    if (projectId) {
+      const queries = [
+        queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
+          getProjects({
+            baseURL: process.env.DATA_MANAGER_API_SERVER,
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }),
+        ),
+
+        queryClient.prefetchQuery(getGetInstancesQueryKey({ project_id: projectId }), async () =>
+          getInstances(
+            { project_id: projectId },
+            {
+              baseURL: process.env.DATA_MANAGER_API_SERVER,
+              headers: { Authorization: `Bearer ${accessToken}` },
+            },
+          ),
+        ),
+
+        queryClient.prefetchQuery(getGetTasksQueryKey({ project_id: projectId }), () =>
+          getTasks(
+            { project_id: projectId },
+            {
+              baseURL: process.env.DATA_MANAGER_API_SERVER,
+              headers: { Authorization: `Bearer ${accessToken}` },
+            },
+          ),
+        ),
+      ];
+
+      // Make the queries in parallel
+      await Promise.all(queries);
+    }
+  } catch (error) {
+    // TODO: smarter handling
+    console.error(error);
+  }
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+};
+
+const isTaskSummary = (
+  taskOrInstance: TaskSummary | InstanceSummary,
+): taskOrInstance is TaskSummary => {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  return (taskOrInstance as TaskSummary).created !== undefined;
+};
+
+const getTimeStamp = (taskOrInstance: TaskSummary | InstanceSummary) => {
+  if (isTaskSummary(taskOrInstance)) {
+    return taskOrInstance.created;
+  }
+  return taskOrInstance.launched;
+};
 
 const Tasks: FC = () => {
   const theme = useTheme();
-  const { data, refetch } = useGetTasks();
-  const tasks = data?.tasks;
+  const queryClient = useQueryClient();
+
+  const { refetch: projectRefetch } = useGetProjects();
+  const { projectId } = useCurrentProjectId();
+
+  const {
+    data: instancesData,
+    refetch: instancesRefetch,
+    isLoading: isInstancesLoading,
+  } = useGetInstances({
+    project_id: projectId || undefined,
+  });
+  const instances = instancesData?.instances;
+
+  const { data: tasksData, isLoading: isTasksLoading } = useGetTasks({ project_id: projectId });
+  const tasks = tasksData?.tasks;
+
+  const refreshOperations = [
+    projectRefetch,
+    instancesRefetch,
+    ...(instances ?? []).map(
+      ({ id }) =>
+        () =>
+          queryClient.invalidateQueries(getGetInstanceQueryKey(id)),
+    ),
+  ];
 
   return (
     <Layout>
@@ -27,31 +137,61 @@ const Tasks: FC = () => {
         <div
           css={css`
             display: flex;
-            align-items: center;
+            align-items: flex-start;
           `}
         >
-          <h1>Tasks</h1>
+          <Typography gutterBottom component="h1" variant="h4">
+            Tasks
+          </Typography>
           <Tooltip title="Refresh Tasks">
             <IconButton
               css={css`
                 margin-left: auto;
               `}
-              onClick={() => refetch()}
+              onClick={() => refreshOperations.forEach((func) => func())}
             >
               <RefreshRoundedIcon />
             </IconButton>
           </Tooltip>
         </div>
         <Grid container spacing={2}>
-          {tasks
-            ?.sort((taskA: any, taskB: any) =>
-              dayjs(taskA.created).isBefore(dayjs(taskB.created)) ? 1 : -1,
-            ) // Newest at the top
-            ?.map((task) => (
-              <Grid item key={task.id} xs={12}>
-                <Task taskId={task.id} />
-              </Grid>
-            ))}
+          {instances !== undefined &&
+          tasks !== undefined &&
+          !isTasksLoading &&
+          !isInstancesLoading ? (
+            [
+              ...instances,
+              ...tasks.filter((task) => task.purpose === 'DATASET' || task.purpose === 'FILE'),
+            ]
+              .sort((a, b) => {
+                const aTime = getTimeStamp(a);
+                const bTime = getTimeStamp(b);
+
+                return dayjs(aTime).isBefore(dayjs(bTime)) ? 1 : -1;
+              })
+              .map((instanceOrTask) => {
+                if (!isTaskSummary(instanceOrTask)) {
+                  const instance = instanceOrTask;
+                  return instance.application_type === 'JOB' ? (
+                    <Grid item key={instance.id} xs={12}>
+                      <OperationJobCard instance={instance} />
+                    </Grid>
+                  ) : (
+                    <Grid item key={instance.id} xs={12}>
+                      <OperationApplicationCard instance={instance} />
+                    </Grid>
+                  );
+                }
+                const task = instanceOrTask;
+                return (
+                  <Grid item key={task.id} xs={12}>
+                    <OperationTaskCard task={task} />
+                  </Grid>
+                );
+              })
+          ) : (
+            <CenterLoader />
+          )}
         </Grid>
       </Container>
     </Layout>

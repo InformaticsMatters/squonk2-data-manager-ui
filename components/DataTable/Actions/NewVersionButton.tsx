@@ -6,12 +6,12 @@ import { getGetDatasetsQueryKey, uploadDataset } from '@squonk/data-manager-clie
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import BackupRoundedIcon from '@material-ui/icons/BackupRounded';
 
-import { ModalWrapper } from '../Modals/ModalWrapper';
-import { Dropzone } from '../Uploads/Dropzone';
-import { FileTypeOptions } from '../Uploads/FileTypeOptions';
-import { ProgressBar } from '../Uploads/ProgressBar';
-import { FileTypeOptionsState, UploadableFile } from '../Uploads/types';
-import { TableDataset } from './types';
+import { ModalWrapper } from '../../Modals/ModalWrapper';
+import { Dropzone } from '../../Uploads/Dropzone';
+import { FileTypeOptions } from '../../Uploads/FileTypeOptions';
+import { ProgressBar } from '../../Uploads/ProgressBar';
+import { FileTypeOptionsState, UploadableFile } from '../../Uploads/types';
+import { TableDataset } from '../types';
 
 interface NewVersionButtonProps {
   dataset: TableDataset;
@@ -55,7 +55,7 @@ export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
                   : undefined,
               },
               {
-                onUploadProgress: (progressEvent: any) => {
+                onUploadProgress: (progressEvent: ProgressEvent) => {
                   const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
                   setFile({ ...file, progress });
                 },

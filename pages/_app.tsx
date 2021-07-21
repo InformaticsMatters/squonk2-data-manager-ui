@@ -10,7 +10,7 @@ import { ThemeProvider } from '@emotion/react';
 import { CssBaseline, useTheme } from '@material-ui/core';
 import { AppProps } from 'next/app';
 
-import { SelectedFilesProvider } from '../components/DataTable/FileSelectionContext';
+import { SelectedFilesProvider } from '../components/state/FileSelectionContext';
 
 import '../styles/globalStyles.scss';
 

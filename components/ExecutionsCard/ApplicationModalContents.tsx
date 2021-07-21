@@ -6,6 +6,7 @@ import { useGetApplication } from '@squonk/data-manager-client/application';
 import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
 
 import { Grid, MenuItem, TextField } from '@material-ui/core';
+import Form from '@rjsf/material-ui';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { CenterLoader } from '../Operations/common/CenterLoader';
@@ -27,6 +28,7 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
   const queryClient = useQueryClient();
   const [name, setName] = useState('');
   const [version, setVersion] = useState<string | null>(null);
+  const [formData, setFormData] = useState<any>(null);
 
   const { mutate: createInstance } = useCreateInstance();
 
@@ -41,6 +43,9 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
             application_version: version ?? '',
             as_name: name,
             project_id: projectId,
+            specification: JSON.stringify({
+              variables: formData,
+            }),
           },
         },
         {
@@ -53,12 +58,18 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
     }
   };
 
+  const schema = application?.template ? JSON.parse(application.template) : undefined;
+
+  if (schema) {
+    schema.title = undefined;
+  }
+
   return (
     <ModalWrapper
       DialogProps={{ maxWidth: 'sm', fullWidth: true }}
       id={`app-${applicationId}`}
       open={open}
-      submitDisabled={!!(!projectId || !name || !version)}
+      submitDisabled={!projectId || !name || !version}
       submitText="Run"
       title={application?.kind ?? 'Run Job'}
       onClose={onClose}
@@ -73,6 +84,7 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
               fullWidth
               label="Instance Name"
               size="small"
+              value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </Grid>
@@ -80,9 +92,9 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
             <TextField
               fullWidth
               select
-              defaultValue=""
               label="Version"
               size="small"
+              value={version ?? ''}
               onChange={(e) => setVersion(e.target.value)}
             >
               {application.versions.map((version) => (
@@ -91,6 +103,16 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
                 </MenuItem>
               ))}
             </TextField>
+            <Form
+              liveValidate
+              noHtml5Validate
+              formData={formData}
+              schema={schema}
+              showErrorList={false} // TODO: fix when openapi is updated
+              onChange={(event) => setFormData(event.formData)}
+            >
+              <div />
+            </Form>
           </Grid>
         </Grid>
       )}

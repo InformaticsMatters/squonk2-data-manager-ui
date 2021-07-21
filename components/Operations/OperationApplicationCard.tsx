@@ -26,7 +26,7 @@ interface OperationApplicationCardProps {
 
 export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({
   instance,
-  collapsedByDefault = false,
+  collapsedByDefault = true,
 }) => {
   const theme = useTheme();
   const latestState = instance.state;

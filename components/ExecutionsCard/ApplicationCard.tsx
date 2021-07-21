@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 
 import { ApplicationSummary } from '@squonk/data-manager-client';
-import { useGetApplication } from '@squonk/data-manager-client/application';
 
 import { useTheme } from '@material-ui/core';
 
@@ -16,8 +15,6 @@ interface ApplicationCardProps {
 }
 
 export const ApplicationCard: FC<ApplicationCardProps> = ({ app, projectId }) => {
-  const { data: application } = useGetApplication(app.application_id);
-
   const theme = useTheme();
 
   return (
@@ -28,7 +25,7 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, projectId }) =>
         <InstancesList predicate={(instance) => instance.application_id === app.application_id} />
       }
       color={theme.palette.secondary.dark}
-      subtitle={application?.group}
+      subtitle={(app as any).group}
       title={app.kind}
     ></BaseCard>
   );

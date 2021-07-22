@@ -9,7 +9,6 @@ export const DataTableManager: FC = () => {
 
   if (currentProject === null) {
     return <AllDatasetsTable />;
-  } else {
-    return <ProjectTable currentProject={currentProject} />;
   }
+  return <ProjectTable currentProject={currentProject} />;
 };

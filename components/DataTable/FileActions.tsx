@@ -25,7 +25,6 @@ export const FileActions: FC<FileActionsProps> = ({ file }) => {
         )}
       </>
     );
-  } else {
-    return null;
   }
+  return null;
 };

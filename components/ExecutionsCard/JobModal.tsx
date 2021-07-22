@@ -48,15 +48,14 @@ export const JobModal: FC<JobModalProps> = ({ projectId, jobId }) => {
         )}
       </>
     );
-  } else {
-    return (
-      <Tooltip title="Please select a project first">
-        <span>
-          <Button disabled color="primary">
-            Run
-          </Button>
-        </span>
-      </Tooltip>
-    );
   }
+  return (
+    <Tooltip title="Please select a project first">
+      <span>
+        <Button disabled color="primary">
+          Run
+        </Button>
+      </span>
+    </Tooltip>
+  );
 };

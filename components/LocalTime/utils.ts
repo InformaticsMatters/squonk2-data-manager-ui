@@ -20,7 +20,6 @@ export const toLocalTimeString = (
     return datetime.format(DATE_FORMAT);
   } else if (!showDate && showTime) {
     return datetime.format(TIME_FORMAT);
-  } else {
-    return datetime.format(`${DATE_FORMAT} ${TIME_FORMAT}`);
   }
+  return datetime.format(`${DATE_FORMAT} ${TIME_FORMAT}`);
 };

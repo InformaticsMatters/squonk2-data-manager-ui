@@ -76,9 +76,8 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
             return 'immutable';
           } else if (row.file_id) {
             return 'editable';
-          } else {
-            return 'unmanaged';
           }
+          return 'unmanaged';
         },
       },
     ],
@@ -91,9 +90,8 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
     const getFullPath = (path: string[], fileName: string) => {
       if (path.length > 0) {
         return path.join('/') + '/' + fileName;
-      } else {
-        return fileName;
       }
+      return fileName;
     };
 
     const files: TableFile[] | undefined = data?.files.map((file) => {

@@ -45,10 +45,14 @@ export const JobModalContent: FC<JobModalContentProps> = ({
   // Get extra details about the job
   const { data: job } = useGetJob(jobId);
 
-  const spec = JSON.parse(instance?.application_specification as string).variables;
+  const spec = instance?.application_specification;
+  const variables =
+    spec !== undefined
+      ? (JSON.parse(spec).variables as Record<string, string | string[] | undefined>)
+      : undefined;
 
   // Control for generated options form
-  const [optionsFormData, setOptionsFormData] = useState<any>(spec ?? null);
+  const [optionsFormData, setOptionsFormData] = useState<any>(variables ?? null);
 
   // Control for the inputs fields
   const [inputsData, setInputsData] = useState({});
@@ -94,9 +98,7 @@ export const JobModalContent: FC<JobModalContentProps> = ({
       onClose={onClose}
       onSubmit={handleSubmit}
     >
-      {job === undefined ? (
-        <CenterLoader />
-      ) : (
+      {job !== undefined ? (
         <>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -118,6 +120,7 @@ export const JobModalContent: FC<JobModalContentProps> = ({
                     </Typography>
                   </Grid>
                   <JobInputFields
+                    initialValues={variables}
                     inputs={job.variables.inputs as any}
                     projectId={projectId}
                     setInputsData={setInputsData}
@@ -149,6 +152,8 @@ export const JobModalContent: FC<JobModalContentProps> = ({
             </Grid>
           )}
         </>
+      ) : (
+        <CenterLoader />
       )}
     </ModalWrapper>
   );

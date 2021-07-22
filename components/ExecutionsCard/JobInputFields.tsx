@@ -24,10 +24,16 @@ interface InputSchema {
 interface JobInputFieldsProps {
   projectId: ProjectId;
   inputs: InputSchema;
+  initialValues?: Record<string, string | string[] | undefined>;
   setInputsData: (inputData: any) => void;
 }
 
-export const JobInputFields: FC<JobInputFieldsProps> = ({ projectId, inputs, setInputsData }) => {
+export const JobInputFields: FC<JobInputFieldsProps> = ({
+  projectId,
+  inputs,
+  initialValues,
+  setInputsData,
+}) => {
   const selectedFilesState = useSelectedFiles(projectId); // User selects files and directories from this context
 
   // selectedFilesState is undefined if no project is selected.
@@ -44,7 +50,7 @@ export const JobInputFields: FC<JobInputFieldsProps> = ({ projectId, inputs, set
                 <TextField
                   fullWidth
                   select
-                  defaultValue={multiple ? [] : ''}
+                  defaultValue={initialValues?.[key] ?? (multiple ? [] : '')}
                   label={title}
                   required={inputs.required?.includes(key)}
                   SelectProps={{ multiple }}
@@ -52,7 +58,8 @@ export const JobInputFields: FC<JobInputFieldsProps> = ({ projectId, inputs, set
                     setInputsData((prevData: any) => ({ ...prevData, [key]: event.target.value }));
                   }}
                 >
-                  {selectedFiles
+                  {Array.from(new Set([initialValues?.[key], ...selectedFiles].flat()))
+                    .filter((filePath): filePath is string => filePath !== undefined)
                     .filter(
                       (filePath) =>
                         (type === 'file' && filePath.includes('.')) ||

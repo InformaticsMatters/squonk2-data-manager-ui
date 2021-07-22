@@ -8,7 +8,7 @@ import { MuiTheme } from '@squonk/mui-theme';
 import { UserProvider } from '@auth0/nextjs-auth0';
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline, useTheme } from '@material-ui/core';
-import { AppProps } from 'next/app';
+import type { AppProps } from 'next/app';
 
 import { SelectedFilesProvider } from '../components/state/FileSelectionContext';
 

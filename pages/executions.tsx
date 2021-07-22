@@ -1,4 +1,5 @@
-import React, { FC, useState } from 'react';
+import type { FC } from 'react';
+import React, { useState } from 'react';
 
 import { useGetApplications } from '@squonk/data-manager-client/application';
 import { useGetJobs } from '@squonk/data-manager-client/job';

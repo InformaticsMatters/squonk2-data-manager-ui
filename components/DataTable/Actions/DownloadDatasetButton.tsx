@@ -1,6 +1,7 @@
-import React, { FC, useState } from 'react';
+import type { FC } from 'react';
+import React, { useState } from 'react';
 
-import { DatasetVersionDetail } from '@squonk/data-manager-client';
+import type { DatasetVersionDetail } from '@squonk/data-manager-client';
 
 import { IconButton, Link, Tooltip } from '@material-ui/core';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';

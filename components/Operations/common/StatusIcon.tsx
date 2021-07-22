@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 
 import type { InstanceSummaryState, TaskSummaryProcessingStage } from '@squonk/data-manager-client';
 

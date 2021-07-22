@@ -1,7 +1,8 @@
-import React, { FC, useState } from 'react';
+import type { FC } from 'react';
+import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import { InstanceSummary, JobSummary } from '@squonk/data-manager-client';
+import type { InstanceSummary, JobSummary } from '@squonk/data-manager-client';
 import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
 import { useGetJob } from '@squonk/data-manager-client/job';
 
@@ -10,7 +11,7 @@ import Form from '@rjsf/material-ui';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { CenterLoader } from '../Operations/common/CenterLoader';
-import { ProjectId } from '../state/currentProjectHooks';
+import type { ProjectId } from '../state/currentProjectHooks';
 import { JobInputFields } from './JobInputFields';
 
 interface JobSpecification {

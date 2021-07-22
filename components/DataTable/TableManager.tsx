@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 
 import { useCurrentProject } from '../state/currentProjectHooks';
 import { AllDatasetsTable } from './DatasetsTable';

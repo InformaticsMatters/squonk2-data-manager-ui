@@ -1,10 +1,11 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
+import React from 'react';
 
 import { css } from '@emotion/react';
 import { Grid, useTheme } from '@material-ui/core';
 
 import { Dropzone } from '../Uploads/Dropzone';
-import { UploadableFile } from '../Uploads/types';
+import type { UploadableFile } from '../Uploads/types';
 import { SingleFileUploadWithProgress } from './SingleFileUploader';
 import { mutateAtPosition } from './utils';
 

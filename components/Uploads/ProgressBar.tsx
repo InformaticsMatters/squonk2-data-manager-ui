@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileError } from 'react-dropzone';
+import type { FileError } from 'react-dropzone';
 
 import { useGetTask } from '@squonk/data-manager-client/task';
 

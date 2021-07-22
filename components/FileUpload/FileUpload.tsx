@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 
-import { DatasetPostBodyBody } from '@squonk/data-manager-client';
+import type { DatasetPostBodyBody } from '@squonk/data-manager-client';
 import { uploadDataset } from '@squonk/data-manager-client/dataset';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { IconButton } from '@material-ui/core';
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
-import { AxiosError } from 'axios';
+import type { AxiosError } from 'axios';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { FileTypeOptions } from '../Uploads/FileTypeOptions';
-import { FileTypeOptionsState, UploadableFile } from '../Uploads/types';
+import type { FileTypeOptionsState, UploadableFile } from '../Uploads/types';
 import { BulkUploadDropzone } from './BulkUploadDropzone';
 
 export const FileUpload = () => {

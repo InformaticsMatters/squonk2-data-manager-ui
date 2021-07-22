@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { FileError } from 'react-dropzone';
+import type { FileError } from 'react-dropzone';
 import { useQueryClient } from 'react-query';
 
 import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
@@ -17,7 +17,7 @@ import {
 } from '@material-ui/core';
 
 import { TwiddleIcon } from '../Uploads/TwiddleIcon';
-import { UploadableFile } from '../Uploads/types';
+import type { UploadableFile } from '../Uploads/types';
 import { useFileExtensions } from './useFileExtensions';
 import { useMimeTypeLookup } from './useMimeTypeLookup';
 

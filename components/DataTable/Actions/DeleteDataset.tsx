@@ -1,7 +1,8 @@
-import React, { FC, useState } from 'react';
+import type { FC } from 'react';
+import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import { DatasetVersionDetail } from '@squonk/data-manager-client';
+import type { DatasetVersionDetail } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useDeleteDataset } from '@squonk/data-manager-client/dataset';
 
 import {

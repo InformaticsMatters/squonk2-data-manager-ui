@@ -1,14 +1,7 @@
-import React, { ReactNode, useEffect } from 'react';
-import {
-  CellProps,
-  Column,
-  IdType,
-  PluginHook,
-  useGlobalFilter,
-  useRowSelect,
-  useSortBy,
-  useTable,
-} from 'react-table';
+import type { ReactNode } from 'react';
+import React, { useEffect } from 'react';
+import type { CellProps, Column, IdType, PluginHook } from 'react-table';
+import { useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
 
 import { css } from '@emotion/react';
 import {
@@ -27,7 +20,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
-import { TableDataset } from './types';
+import type { TableDataset } from './types';
 
 type Selection<Data> = Record<IdType<Data>, boolean>;
 export interface DataTableProps<Data extends Record<string, any>> {

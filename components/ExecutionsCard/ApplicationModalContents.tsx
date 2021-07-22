@@ -1,7 +1,8 @@
-import React, { FC, useState } from 'react';
+import type { FC } from 'react';
+import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import { ApplicationSummary } from '@squonk/data-manager-client';
+import type { ApplicationSummary } from '@squonk/data-manager-client';
 import { useGetApplication } from '@squonk/data-manager-client/application';
 import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
 
@@ -10,7 +11,7 @@ import Form from '@rjsf/material-ui';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { CenterLoader } from '../Operations/common/CenterLoader';
-import { ProjectId } from '../state/currentProjectHooks';
+import type { ProjectId } from '../state/currentProjectHooks';
 
 interface ApplicationModalContentProps {
   open: boolean;

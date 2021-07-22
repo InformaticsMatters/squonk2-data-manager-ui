@@ -1,6 +1,7 @@
-import React, { FC, Fragment } from 'react';
+import type { FC } from 'react';
+import React, { Fragment } from 'react';
 
-import { InstanceSummary } from '@squonk/data-manager-client';
+import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetInstance } from '@squonk/data-manager-client/instance';
 
 import { Grid, Link, Typography } from '@material-ui/core';

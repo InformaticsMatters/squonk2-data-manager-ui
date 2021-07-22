@@ -10,7 +10,8 @@ import {
 import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Grid, InputAdornment, TextField, TextFieldProps } from '@material-ui/core';
+import type { TextFieldProps } from '@material-ui/core';
+import { Grid, InputAdornment, TextField } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
 

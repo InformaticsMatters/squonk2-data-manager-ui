@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
+import React from 'react';
 import { useQueryClient } from 'react-query';
 
 import {
@@ -10,8 +11,8 @@ import { IconButton, Tooltip } from '@material-ui/core';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 
 import { useMimeTypeLookup } from '../../FileUpload/useMimeTypeLookup';
-import { ProjectId } from '../../state/currentProjectHooks';
-import { TableFile } from '../types';
+import type { ProjectId } from '../../state/currentProjectHooks';
+import type { TableFile } from '../types';
 
 interface CreateDatasetFromFileButtonProps {
   projectId: ProjectId;

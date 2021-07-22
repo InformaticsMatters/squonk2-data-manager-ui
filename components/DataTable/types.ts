@@ -1,4 +1,4 @@
-import { DatasetDetail, FilePathFile } from '@squonk/data-manager-client';
+import type { DatasetDetail, FilePathFile } from '@squonk/data-manager-client';
 
 // Both files are folders have these
 interface BaseTableRow {

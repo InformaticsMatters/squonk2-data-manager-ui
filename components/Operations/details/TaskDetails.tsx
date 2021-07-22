@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
+import React from 'react';
 
 import type { TaskSummary } from '@squonk/data-manager-client';
 import { useGetTask } from '@squonk/data-manager-client/task';

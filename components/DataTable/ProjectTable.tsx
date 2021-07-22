@@ -1,7 +1,8 @@
-import React, { FC, useCallback, useMemo } from 'react';
-import { CellProps, Column, PluginHook } from 'react-table';
+import type { FC } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import type { CellProps, Column, PluginHook } from 'react-table';
 
-import { ProjectDetail } from '@squonk/data-manager-client';
+import type { ProjectDetail } from '@squonk/data-manager-client';
 import { useGetFiles } from '@squonk/data-manager-client/file';
 
 import { css } from '@emotion/react';
@@ -14,7 +15,7 @@ import { useSelectedFiles } from '../state/FileSelectionContext';
 import { useProjectBreadcrumbs } from '../state/projectPathHooks';
 import { DataTable } from './DataTable';
 import { FileActions } from './FileActions';
-import { TableDir, TableFile } from './types';
+import type { TableDir, TableFile } from './types';
 import { isTableDir } from './utils';
 
 export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentProject }) => {

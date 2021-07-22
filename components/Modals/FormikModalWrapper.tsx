@@ -1,11 +1,12 @@
 import React from 'react';
 
 import { css } from '@emotion/react';
-import { DialogProps } from '@material-ui/core';
-import { Form, Formik, FormikConfig } from 'formik';
+import type { DialogProps } from '@material-ui/core';
+import type { FormikConfig } from 'formik';
+import { Form, Formik } from 'formik';
 
 import { ModalWrapper } from './ModalWrapper';
-import { BaseModalWrapperProps } from './types';
+import type { BaseModalWrapperProps } from './types';
 
 interface FormikModalWrapperProps extends BaseModalWrapperProps {
   id: string;

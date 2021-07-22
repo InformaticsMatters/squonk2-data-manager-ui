@@ -1,6 +1,8 @@
-import React, { forwardRef, MutableRefObject, useEffect } from 'react';
+import type { MutableRefObject } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 
-import { Checkbox, CheckboxProps } from '@material-ui/core';
+import type { CheckboxProps } from '@material-ui/core';
+import { Checkbox } from '@material-ui/core';
 
 export const IndeterminateCheckbox = forwardRef<HTMLInputElement, CheckboxProps>(
   ({ indeterminate, ...rest }, ref) => {

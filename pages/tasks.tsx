@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
+import React from 'react';
 import { QueryClient, useQueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
 
@@ -21,7 +22,7 @@ import { css } from '@emotion/react';
 import { Container, Grid, IconButton, Tooltip, Typography, useTheme } from '@material-ui/core';
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
 import dayjs from 'dayjs';
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 
 import Layout from '../components/Layout';
 import { CenterLoader } from '../components/Operations/common/CenterLoader';

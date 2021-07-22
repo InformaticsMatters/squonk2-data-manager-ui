@@ -13,7 +13,7 @@ import {
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 
 import { SlideUpTransition } from '../SlideUpTransition';
-import { BaseModalWrapperProps } from './types';
+import type { BaseModalWrapperProps } from './types';
 
 interface ModalWrapperProps extends BaseModalWrapperProps {
   onSubmit?: () => void;

@@ -1,4 +1,5 @@
-import React, { FC, useState } from 'react';
+import type { FC } from 'react';
+import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import { getGetDatasetsQueryKey, uploadDataset } from '@squonk/data-manager-client/dataset';
@@ -10,8 +11,8 @@ import { ModalWrapper } from '../../Modals/ModalWrapper';
 import { Dropzone } from '../../Uploads/Dropzone';
 import { FileTypeOptions } from '../../Uploads/FileTypeOptions';
 import { ProgressBar } from '../../Uploads/ProgressBar';
-import { FileTypeOptionsState, UploadableFile } from '../../Uploads/types';
-import { TableDataset } from '../types';
+import type { FileTypeOptionsState, UploadableFile } from '../../Uploads/types';
+import type { TableDataset } from '../types';
 
 interface NewVersionButtonProps {
   dataset: TableDataset;

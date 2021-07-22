@@ -1,6 +1,8 @@
-import React, { FC, useRef } from 'react';
+import type { FC } from 'react';
+import React, { useRef } from 'react';
 
-import { Popover, TextField, TextFieldProps } from '@material-ui/core';
+import type { TextFieldProps } from '@material-ui/core';
+import { Popover, TextField } from '@material-ui/core';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 
 interface PopoverTextFieldProps {

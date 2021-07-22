@@ -1,4 +1,5 @@
-import React, { FC, ReactNode, useState } from 'react';
+import type { FC, ReactNode } from 'react';
+import React, { useState } from 'react';
 
 import { css } from '@emotion/react';
 import { Card, CardActions, CardContent, Collapse, IconButton, useTheme } from '@material-ui/core';

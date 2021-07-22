@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
+import React from 'react';
 
 import { useUser } from '@auth0/nextjs-auth0';
 
@@ -6,7 +7,7 @@ import { AttachButton } from './Actions/AttachButton';
 import { DeleteDataset } from './Actions/DeleteDataset';
 import { DownloadDatasetButton } from './Actions/DownloadDatasetButton';
 import { NewVersionButton } from './Actions/NewVersionButton';
-import { TableDataset } from './types';
+import type { TableDataset } from './types';
 
 interface DatasetActionsProps {
   dataset: TableDataset;

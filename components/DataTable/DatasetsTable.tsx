@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { CellProps, Column, PluginHook } from 'react-table';
+import type { CellProps, Column, PluginHook } from 'react-table';
 
 import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 
@@ -8,7 +8,7 @@ import { Typography } from '@material-ui/core';
 import { FileUpload } from '../FileUpload/FileUpload';
 import { DatasetActions } from './DatasetActions';
 import { DataTable } from './DataTable';
-import { TableDataset } from './types';
+import type { TableDataset } from './types';
 
 export const AllDatasetsTable = () => {
   const columns: Column<TableDataset>[] = useMemo(

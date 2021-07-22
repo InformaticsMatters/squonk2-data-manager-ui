@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import type { FC } from 'react';
+import React from 'react';
 
 import type { ApplicationSummary } from '@squonk/data-manager-client';
 

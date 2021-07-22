@@ -1,4 +1,4 @@
-import { DialogProps } from '@material-ui/core';
+import type { DialogProps } from '@material-ui/core';
 
 export interface BaseModalWrapperProps {
   id: string;

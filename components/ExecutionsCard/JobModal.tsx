@@ -13,13 +13,13 @@ interface JobModalProps {
 }
 
 export const JobModal: FC<JobModalProps> = ({ projectId, jobId }) => {
-  const selectedFilesState = useSelectedFiles();
+  const { selectedFiles } = useSelectedFiles();
 
   const [open, setOpen] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
 
-  if (selectedFilesState) {
-    const tooltipTitle = selectedFilesState.selectedFiles.length
+  if (selectedFiles) {
+    const tooltipTitle = selectedFiles.length
       ? 'Run this job'
       : 'Please select some files on the data tab first';
     return (
@@ -28,7 +28,7 @@ export const JobModal: FC<JobModalProps> = ({ projectId, jobId }) => {
           <span>
             <Button
               color="primary"
-              disabled={!selectedFilesState.selectedFiles.length}
+              disabled={!selectedFiles.length}
               onClick={() => {
                 setOpen(true);
                 setHasOpened(true);

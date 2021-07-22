@@ -11,12 +11,13 @@ import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import type { SavedFile } from '../state/FileSelectionContext';
 import { useSelectedFiles } from '../state/FileSelectionContext';
 import { useProjectBreadcrumbs } from '../state/projectPathHooks';
 import { DataTable } from './DataTable';
 import { FileActions } from './FileActions';
 import type { TableDir, TableFile } from './types';
-import { isTableDir } from './utils';
+import { isDataset, isTableDir } from './utils';
 
 export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentProject }) => {
   const theme = useTheme();
@@ -26,9 +27,6 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
   // Breadcrumbs
   const breadcrumbs = useProjectBreadcrumbs();
   const dirPath = '/' + breadcrumbs.join('/'); // TODO: This shouldn't need a leading slash
-
-  // Selection
-  const selectionState = useSelectedFiles();
 
   // Table
   const columns: Column<TableFile | TableDir>[] = useMemo(
@@ -125,6 +123,9 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
     return dirs && files ? [...dirs, ...files] : undefined;
   }, [data, breadcrumbs]);
 
+  // Selection
+  const { selectedFiles, addFile, removeFile } = useSelectedFiles();
+
   // react-table plugin to add actions buttons for datasets
   const useActionsColumnPlugin: PluginHook<TableFile | TableDir> = useCallback((hooks) => {
     hooks.visibleColumns.push((columns) => {
@@ -142,7 +143,7 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
     });
   }, []);
 
-  if (rows && selectionState) {
+  if (rows) {
     return (
       <>
         <Typography gutterBottom component="h1" variant="h4">
@@ -152,10 +153,8 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
         <DataTable
           columns={columns}
           data={rows}
-          getRowId={(row) => {
-            return row.fullPath;
-          }}
-          initialSelection={selectionState.selectedFiles}
+          getRowId={(row) => row.fullPath}
+          initialSelection={selectedFiles?.map((file) => file.path)}
           ToolbarChild={
             <Breadcrumbs>
               {['root', ...breadcrumbs].map((path, pathIndex) =>
@@ -181,8 +180,15 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
               )}
             </Breadcrumbs>
           }
-          updateSelection={(paths) => selectionState.updateSelectedFiles(paths)}
           useActionsColumnPlugin={useActionsColumnPlugin}
+          onSelection={(row, checked) => {
+            if (addFile && removeFile) {
+              const type = isTableDir(row.original) ? 'dir' : 'file';
+              checked
+                ? addFile({ path: row.original.fullPath, type })
+                : removeFile({ path: row.original.fullPath, type });
+            }
+          }}
         />
       </>
     );

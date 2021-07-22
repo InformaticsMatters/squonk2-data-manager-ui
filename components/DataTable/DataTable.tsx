@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import React, { useEffect } from 'react';
-import type { CellProps, Column, IdType, PluginHook } from 'react-table';
+import React from 'react';
+import type { CellProps, Column, IdType, PluginHook, Row } from 'react-table';
 import { useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
 
 import { css } from '@emotion/react';
@@ -20,7 +20,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
-import type { TableDataset } from './types';
 
 type Selection<Data> = Record<IdType<Data>, boolean>;
 export interface DataTableProps<Data extends Record<string, any>> {
@@ -29,7 +28,7 @@ export interface DataTableProps<Data extends Record<string, any>> {
   ToolbarChild?: ReactNode;
   getRowId?: (row: Data) => IdType<Data>;
   initialSelection?: IdType<Data>[];
-  updateSelection?: (selectedIds: IdType<Data>[]) => void;
+  onSelection?: (row: Row<Data>, checked: boolean) => void;
   useActionsColumnPlugin?: PluginHook<Data>;
 }
 
@@ -39,7 +38,7 @@ export function DataTable<Data extends Record<string, any>>({
   ToolbarChild,
   getRowId,
   initialSelection,
-  updateSelection,
+  onSelection,
   useActionsColumnPlugin = () => {
     // Do nothing
   },
@@ -51,7 +50,7 @@ export function DataTable<Data extends Record<string, any>>({
     prepareRow,
     preGlobalFilteredRows,
     setGlobalFilter,
-    state: { selectedRowIds, globalFilter },
+    state: { globalFilter },
   } = useTable(
     {
       columns,
@@ -75,20 +74,23 @@ export function DataTable<Data extends Record<string, any>>({
             Header: ({ getToggleAllRowsSelectedProps }) => (
               <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
             ),
-            Cell: ({ row }: CellProps<TableDataset>) => (
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-            ),
+            Cell: ({ row }: CellProps<Data>) => {
+              const { onChange, ...props } = row.getToggleRowSelectedProps();
+              return (
+                <IndeterminateCheckbox
+                  {...props}
+                  onChange={(event, checked) => {
+                    onSelection && onSelection(row, checked);
+                    onChange && onChange(event);
+                  }}
+                />
+              );
+            },
           },
           ...columns,
         ]);
     },
   );
-
-  // React table doesn't seem to expose an "onSelectionEvent" event hook so we must watch for a
-  // change to the selected Id within a side effect to prevent a render loop
-  useEffect(() => {
-    updateSelection && updateSelection(Object.keys(selectedRowIds));
-  }, [selectedRowIds]);
 
   return (
     <TableContainer component={Paper}>

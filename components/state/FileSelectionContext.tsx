@@ -3,39 +3,58 @@ import React, { useContext, useReducer } from 'react';
 import type { ProjectId } from '../state/currentProjectHooks';
 import { useCurrentProjectId } from '../state/currentProjectHooks';
 
-type SavedFile = string; // General in case we want to store more than the file path
+export type SavedFile = {
+  path: string;
+  type: 'file' | 'dir';
+};
 
 interface FileState {
-  [key: string]: SavedFile[] | undefined;
+  [projectId: string]: SavedFile[] | undefined;
 }
 
-type UpdateFileSelection = (projectId: string) => (filePaths: SavedFile[]) => void;
+type UpdateFileSelection = (projectId: string) => (filePath: SavedFile) => void;
 
 type SelectedFilesState = {
   selectedFiles: FileState;
-  updateSelectedFiles: UpdateFileSelection;
+  addFile: UpdateFileSelection;
+  removeFile: UpdateFileSelection;
 };
 
 const initialState: SelectedFilesState = {
   selectedFiles: {},
-  updateSelectedFiles: () => () => {
-    // Do Nothing
+  addFile: () => () => {
+    // Do nothing
+  },
+  removeFile: () => () => {
+    // Do nothing
   },
 };
 
 export const SelectedFilesContext = React.createContext<SelectedFilesState>(initialState);
 
 interface FileStateAction {
-  type: 'replace-files';
+  type: 'add-file' | 'remove-file';
   projectId: string;
-  files: SavedFile[];
+  file: SavedFile;
 }
 
-const reducer = (state: FileState, { type, projectId, files }: FileStateAction) => {
+const reducer = (state: FileState, { type, projectId, file }: FileStateAction) => {
+  const oldSavedFiles = state[projectId];
   switch (type) {
-    case 'replace-files':
-      state[projectId] = files;
-      return { ...state };
+    case 'add-file': {
+      if (oldSavedFiles !== undefined) {
+        return { ...state, [projectId]: [...oldSavedFiles, file] };
+      }
+      return { ...state, [projectId]: [file] };
+    }
+    case 'remove-file':
+      if (oldSavedFiles !== undefined) {
+        return {
+          ...state,
+          [projectId]: oldSavedFiles.filter((savedFile) => savedFile.path !== file.path),
+        };
+      }
+      return state;
     default:
       throw new Error(`${type} is not a valid reducer`);
   }
@@ -44,32 +63,31 @@ const reducer = (state: FileState, { type, projectId, files }: FileStateAction) 
 export const SelectedFilesProvider: React.FC = ({ children }) => {
   const [selectedFiles, dispatch] = useReducer(reducer, {});
 
-  const updateSelectedFiles: UpdateFileSelection = (projectId) => (files) =>
-    dispatch({ type: 'replace-files', projectId, files });
+  const addFile: UpdateFileSelection = (projectId) => (file) =>
+    dispatch({ type: 'add-file', projectId, file });
+  const removeFile: UpdateFileSelection = (projectId) => (file) =>
+    dispatch({ type: 'remove-file', projectId, file });
 
   return (
-    <SelectedFilesContext.Provider value={{ selectedFiles, updateSelectedFiles }}>
+    <SelectedFilesContext.Provider value={{ selectedFiles, addFile, removeFile }}>
       {children}
     </SelectedFilesContext.Provider>
   );
 };
 
-export const useSelectedFilesFromProject = (projectId: ProjectId) => {
-  const { selectedFiles, updateSelectedFiles } = useContext(SelectedFilesContext);
-
-  if (projectId) {
-    const boundUpdateSelectedFiles = updateSelectedFiles(projectId);
-    const selectedFilesForProject = selectedFiles[projectId];
-
-    return {
-      selectedFiles: selectedFilesForProject ?? [],
-      updateSelectedFiles: boundUpdateSelectedFiles,
-    };
-  }
-};
-
 export const useSelectedFiles = (projectId?: ProjectId) => {
   const { projectId: currentProjectId } = useCurrentProjectId();
 
-  return useSelectedFilesFromProject(projectId ?? currentProjectId);
+  const { selectedFiles, addFile, removeFile } = useContext(SelectedFilesContext);
+
+  const project = projectId || currentProjectId;
+
+  if (project) {
+    return {
+      selectedFiles: selectedFiles[project] ?? [],
+      addFile: addFile(project),
+      removeFile: removeFile(project),
+    };
+  }
+  return {};
 };

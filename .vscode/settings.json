@@ -80,6 +80,7 @@
     "dataset-new-version",
     "eslint",
     "project-state",
-    "download-dataset"
+    "download-dataset",
+    "file-selection"
   ],
 }

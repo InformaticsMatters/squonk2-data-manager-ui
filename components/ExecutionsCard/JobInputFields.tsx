@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import React from 'react';
 
-import { Grid, MenuItem, TextField } from '@material-ui/core';
+import { Grid, MenuItem, TextField, Typography } from '@material-ui/core';
 
 import type { ProjectId } from '../state/currentProjectHooks';
 import { useSelectedFiles } from '../state/FileSelectionContext';
@@ -35,50 +35,49 @@ export const JobInputFields: FC<JobInputFieldsProps> = ({
   initialValues,
   setInputsData,
 }) => {
-  const selectedFilesState = useSelectedFiles(projectId); // User selects files and directories from this context
+  // User selects files and directories from this project-specific context
+  const { selectedFiles } = useSelectedFiles(projectId);
 
-  // selectedFilesState is undefined if no project is selected.
-  // This shouldn't happen here but checking just in case.
-  if (selectedFilesState) {
-    const selectedFiles = ['/', ...selectedFilesState.selectedFiles]; // Manually add root of project option
+  if (selectedFiles) {
     return (
       <>
-        {Object.entries(inputs.properties).map(
-          ([key, { title, type, 'mime-types': mimeType, multiple }]) => {
-            return (
-              // Expect a grid container in the parent component
-              <Grid item key={key} xs={12}>
-                <TextField
-                  fullWidth
-                  select
-                  defaultValue={initialValues?.[key] ?? (multiple ? [] : '')}
-                  label={title}
-                  required={inputs.required?.includes(key)}
-                  SelectProps={{ multiple }}
-                  onChange={(event) => {
-                    setInputsData((prevData: any) => ({ ...prevData, [key]: event.target.value }));
-                  }}
-                >
-                  {Array.from(new Set([initialValues?.[key], ...selectedFiles].flat()))
-                    .filter((filePath): filePath is string => filePath !== undefined)
-                    .filter(
-                      (filePath) =>
-                        (type === 'file' && filePath.includes('.')) ||
-                        (type === 'dir' && !filePath.includes('.')), // TODO: This is all very crude and should be improved
-                    )
-                    .map((filePath) => (
-                      <MenuItem key={filePath} value={filePath}>
-                        {filePath}
-                      </MenuItem>
-                    ))}
-                </TextField>
-              </Grid>
-            );
-          },
-        )}
+        {Object.entries(inputs.properties).map(([key, { title, type, multiple }]) => {
+          // Construct array of all paths from the various sources
+          const paths = Array.from(
+            new Set(
+              [
+                type === 'dir' ? '/' : undefined, // Add a root option if the input is for directories
+                initialValues?.[key], // Provide option for the default value if that is provided in the instance
+                ...selectedFiles.filter((file) => file.type === type).map((file) => file.path), // Get the paths of each selected file or directory
+              ].flat(), // Create flat array of all selectable paths
+            ),
+          ).filter((filePath): filePath is string => filePath !== undefined);
+
+          return (
+            // Expect a grid container in the parent component
+            <Grid item key={key} xs={12}>
+              <TextField
+                fullWidth
+                select
+                defaultValue={initialValues?.[key] ?? (multiple ? [] : '')}
+                label={title}
+                required={inputs.required?.includes(key)}
+                SelectProps={{ multiple }}
+                onChange={(event) => {
+                  setInputsData((prevData: any) => ({ ...prevData, [key]: event.target.value }));
+                }}
+              >
+                {paths.map((filePath) => (
+                  <MenuItem key={filePath} value={filePath}>
+                    {filePath}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          );
+        })}
       </>
     );
   }
-  // TODO: Can probably remove this and fix the selectedFilesState with a type assertion
-  return <div></div>;
+  return <Typography>Please select some files first</Typography>;
 };

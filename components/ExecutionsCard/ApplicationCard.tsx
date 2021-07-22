@@ -25,7 +25,7 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, projectId }) =>
         <InstancesList predicate={(instance) => instance.application_id === app.application_id} />
       }
       color={theme.palette.secondary.dark}
-      subtitle={(app as any).group}
+      subtitle={app.group}
       title={app.kind}
     ></BaseCard>
   );

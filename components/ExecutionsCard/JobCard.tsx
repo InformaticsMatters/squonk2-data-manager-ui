@@ -26,7 +26,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ projectId, job: jobSum
       title={jobSummary.name}
     >
       {/* TODO: Fix this any assertion once API is fixed */}
-      <Typography variant="body2">{(jobSummary as any).description}</Typography>
+      <Typography variant="body2">{jobSummary.description}</Typography>
       <Typography variant="body1">{jobSummary.version}</Typography>
       <Typography>
         <em>{jobSummary.category}</em>

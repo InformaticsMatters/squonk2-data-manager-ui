@@ -140,7 +140,7 @@ export const JobModalContent: FC<JobModalContentProps> = ({
                       formData={optionsFormData}
                       schema={job.variables.options as any} // TODO: fix when openapi is updated
                       showErrorList={false}
-                      uiSchema={{ 'ui:order': (job.variables as any)?.order?.options }}
+                      uiSchema={{ 'ui:order': job.variables.order?.options }}
                       onChange={(event) => setOptionsFormData(event.formData)}
                     >
                       {/* Remove the default submit button */}

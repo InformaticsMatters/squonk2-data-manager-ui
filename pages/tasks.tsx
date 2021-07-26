@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 import { QueryClient, useQueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
 
@@ -19,8 +19,18 @@ import { getGetTasksQueryKey, getTasks, useGetTasks } from '@squonk/data-manager
 
 import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import { Container, Grid, IconButton, Tooltip, Typography, useTheme } from '@material-ui/core';
+import {
+  Container,
+  Grid,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  TextField,
+  Tooltip,
+  useTheme,
+} from '@material-ui/core';
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
+import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import dayjs from 'dayjs';
 import type { GetServerSideProps } from 'next';
 
@@ -30,6 +40,7 @@ import { OperationApplicationCard } from '../components/Operations/OperationAppl
 import { OperationJobCard } from '../components/Operations/OperationJobCard';
 import { OperationTaskCard } from '../components/Operations/OperationTaskCard';
 import { useCurrentProjectId } from '../components/state/currentProjectHooks';
+import { search } from '../utils/search';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
   const queryClient = new QueryClient();
@@ -127,6 +138,9 @@ const Tasks: FC = () => {
     ),
   ];
 
+  const [operationTypes, setOperationTypes] = useState(['task', 'instance']);
+  const [searchValue, setSearchValue] = useState('');
+
   return (
     <Layout>
       <Container
@@ -135,34 +149,89 @@ const Tasks: FC = () => {
         `}
         maxWidth="md"
       >
-        <div
+        <Grid
+          container
+          alignItems="center"
           css={css`
-            display: flex;
-            align-items: flex-start;
+            margin-bottom: ${theme.spacing(2)}px;
           `}
+          spacing={2}
         >
-          <Typography gutterBottom component="h1" variant="h4">
-            Tasks
-          </Typography>
-          <Tooltip title="Refresh Tasks">
-            <IconButton
-              css={css`
-                margin-left: auto;
-              `}
-              onClick={() => refreshOperations.forEach((func) => func())}
+          <Grid item md={4} sm={5} xs={12}>
+            <TextField
+              fullWidth
+              select
+              label="Filter Tasks"
+              SelectProps={{
+                multiple: true,
+                onChange: (event) => {
+                  setOperationTypes(event.target.value as string[]);
+                },
+              }}
+              value={operationTypes}
             >
-              <RefreshRoundedIcon />
-            </IconButton>
-          </Tooltip>
-        </div>
+              <MenuItem value="task">Tasks</MenuItem>
+              <MenuItem value="instance">Instances</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid
+            item
+            css={css`
+              margin-left: auto;
+            `}
+            md={4}
+            sm={5}
+            xs={12}
+          >
+            <TextField
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchRoundedIcon />
+                  </InputAdornment>
+                ),
+              }}
+              label="Search"
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+            />
+          </Grid>
+          <Grid
+            item
+            css={css`
+              text-align: center;
+            `}
+            sm="auto"
+            xs={12}
+          >
+            <Tooltip title="Refresh Tasks">
+              <IconButton
+                css={css`
+                  margin-left: auto;
+                `}
+                onClick={() => refreshOperations.forEach((func) => func())}
+              >
+                <RefreshRoundedIcon />
+              </IconButton>
+            </Tooltip>
+          </Grid>
+        </Grid>
+
         <Grid container spacing={2}>
           {instances !== undefined &&
           tasks !== undefined &&
           !isTasksLoading &&
           !isInstancesLoading ? (
             [
-              ...instances,
-              ...tasks.filter((task) => task.purpose === 'DATASET' || task.purpose === 'FILE'),
+              ...(operationTypes.includes('instance') ? instances : []).filter(
+                ({ job_name, name, state }) => search([job_name, name, state], searchValue),
+              ),
+              ...(operationTypes.includes('task') ? tasks : [])
+                .filter((task) => task.purpose === 'DATASET' || task.purpose === 'FILE')
+                .filter(({ processing_stage, purpose }) =>
+                  search([processing_stage, purpose], searchValue),
+                ),
             ]
               .sort((a, b) => {
                 const aTime = getTimeStamp(a);

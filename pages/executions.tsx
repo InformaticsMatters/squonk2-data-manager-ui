@@ -13,11 +13,12 @@ import { ApplicationCard } from '../components/ExecutionsCard/ApplicationCard';
 import { JobCard } from '../components/ExecutionsCard/JobCard';
 import Layout from '../components/Layout';
 import { useCurrentProject } from '../components/state/currentProjectHooks';
+import { search } from '../utils/search';
 
 const Executions: FC = () => {
   const theme = useTheme();
 
-  const [executionTypes, setExecutionTypes] = useState<string[]>(['application', 'job']);
+  const [executionTypes, setExecutionTypes] = useState(['application', 'job']);
   const [searchValue, setSearchValue] = useState('');
 
   const currentProject = useCurrentProject();
@@ -47,14 +48,13 @@ const Executions: FC = () => {
               fullWidth
               select
               label="Filter Executions"
-              SelectProps={{ multiple: true }}
-              value={executionTypes}
-              onChange={(event) => {
-                // TODO: change this to be inside SelectProps for proper argument type
-                // When using TextField for a select multiple, we have to cast the event type as
-                // ts can't workout it's an array
-                setExecutionTypes(event.target.value as unknown as string[]);
+              SelectProps={{
+                multiple: true,
+                onChange: (event) => {
+                  setExecutionTypes(event.target.value as string[]);
+                },
               }}
+              value={executionTypes}
             >
               <MenuItem value="application">Applications</MenuItem>
               <MenuItem value="job">Jobs</MenuItem>
@@ -87,7 +87,7 @@ const Executions: FC = () => {
         <Grid container spacing={2}>
           {executionTypes.includes('application') &&
             applications
-              ?.filter((app) => app.kind.toLowerCase().includes(searchValue.toLowerCase()))
+              ?.filter(({ kind }) => search([kind], searchValue))
               ?.map((app) => (
                 <Grid item key={app.application_id} md={3} sm={6} xs={12}>
                   <ApplicationCard app={app} projectId={currentProject?.project_id} />
@@ -95,13 +95,8 @@ const Executions: FC = () => {
               ))}
           {executionTypes.includes('job') &&
             jobs
-              ?.filter(
-                (job) =>
-                  job.keywords?.some((keyword) =>
-                    keyword.toLowerCase().includes(searchValue.toLowerCase()),
-                  ) ||
-                  job.category?.toLowerCase().includes(searchValue.toLowerCase()) ||
-                  job.name.toLowerCase().includes(searchValue.toLowerCase()),
+              ?.filter(({ keywords, category, name }) =>
+                search([keywords, category, name], searchValue),
               )
               ?.map((job) => (
                 <Grid item key={job.id} md={3} sm={6} xs={12}>

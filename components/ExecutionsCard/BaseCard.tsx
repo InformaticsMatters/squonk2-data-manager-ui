@@ -14,8 +14,12 @@ import {
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
+interface ActionsParams {
+  setExpanded: (isExpanded: boolean) => void;
+}
+
 interface BaseCardProps {
-  actions: React.ReactNode;
+  actions: React.ReactNode | ((actionsParams: ActionsParams) => React.ReactNode);
   collapsed?: React.ReactNode;
   cardType: string;
   title?: string;
@@ -63,7 +67,7 @@ export const BaseCard: FC<BaseCardProps> = ({
           justify-content: right;
         `}
       >
-        {actions}
+        {typeof actions === 'function' ? actions({ setExpanded }) : actions}
         {collapsed !== undefined && (
           <IconButton
             aria-expanded={expanded}
@@ -84,7 +88,7 @@ export const BaseCard: FC<BaseCardProps> = ({
           </IconButton>
         )}
       </CardActions>
-      <Collapse in={expanded}>{hasExpanded ? collapsed : null}</Collapse>
+      <Collapse in={expanded}>{expanded || hasExpanded ? collapsed : null}</Collapse>
     </Card>
   );
 };

@@ -10,9 +10,10 @@ import { JobModalContent } from './JobModalContent';
 interface JobModalProps {
   projectId: ProjectId;
   jobId: number;
+  onRun?: () => void;
 }
 
-export const JobModal: FC<JobModalProps> = ({ projectId, jobId }) => {
+export const JobModal: FC<JobModalProps> = ({ projectId, jobId, onRun }) => {
   const { selectedFiles } = useSelectedFiles();
 
   const [open, setOpen] = useState(false);
@@ -44,6 +45,7 @@ export const JobModal: FC<JobModalProps> = ({ projectId, jobId }) => {
             open={open}
             projectId={projectId}
             onClose={() => setOpen(false)}
+            onRun={onRun}
           />
         )}
       </>

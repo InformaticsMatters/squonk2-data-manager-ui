@@ -27,6 +27,7 @@ interface JobModalContentProps {
   projectId: ProjectId;
   instance?: InstanceSummary; // Allow loading form values from a previous instance
   onClose: () => void;
+  onRun?: () => void;
 }
 
 export const JobModalContent: FC<JobModalContentProps> = ({
@@ -35,6 +36,7 @@ export const JobModalContent: FC<JobModalContentProps> = ({
   instance,
   open,
   onClose,
+  onRun,
 }) => {
   // ? Can we guarantee every job has a parsable spec?
 
@@ -82,6 +84,7 @@ export const JobModalContent: FC<JobModalContentProps> = ({
           onSuccess: () => {
             queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
 
+            onRun && onRun();
             onClose();
           },
         },

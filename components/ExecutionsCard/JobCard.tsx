@@ -19,7 +19,9 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ projectId, job: jobSum
   const theme = useTheme();
   return (
     <BaseCard
-      actions={<JobModal jobId={jobSummary.id} projectId={projectId} />}
+      actions={({ setExpanded }) => (
+        <JobModal jobId={jobSummary.id} projectId={projectId} onRun={() => setExpanded(true)} />
+      )}
       cardType="Job"
       collapsed={
         <InstancesList

@@ -20,7 +20,13 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, projectId }) =>
 
   return (
     <BaseCard
-      actions={<ApplicationModal applicationId={app.application_id} projectId={projectId} />}
+      actions={({ setExpanded }) => (
+        <ApplicationModal
+          applicationId={app.application_id}
+          projectId={projectId}
+          onLaunch={() => setExpanded(true)}
+        />
+      )}
       cardType="Application"
       collapsed={
         <InstancesList predicate={(instance) => instance.application_id === app.application_id} />

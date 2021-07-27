@@ -15,9 +15,10 @@ import type { ProjectId } from '../state/currentProjectHooks';
 
 interface ApplicationModalContentProps {
   open: boolean;
-  onClose: () => void;
   applicationId: ApplicationSummary['application_id'];
   projectId: ProjectId;
+  onClose: () => void;
+  onLaunch?: () => void;
 }
 
 export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
@@ -25,6 +26,7 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
   onClose,
   applicationId,
   projectId,
+  onLaunch,
 }) => {
   const queryClient = useQueryClient();
   const [name, setName] = useState('');
@@ -52,6 +54,7 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
         {
           onSuccess: () => {
             queryClient.invalidateQueries(getGetInstancesQueryKey());
+            onLaunch && onLaunch();
             onClose();
           },
         },

@@ -11,9 +11,14 @@ import { ApplicationModalContent } from './ApplicationModalContents';
 interface ApplicationModalProps {
   applicationId: ApplicationSummary['application_id'];
   projectId: ProjectId;
+  onLaunch?: () => void;
 }
 
-export const ApplicationModal: FC<ApplicationModalProps> = ({ applicationId, projectId }) => {
+export const ApplicationModal: FC<ApplicationModalProps> = ({
+  applicationId,
+  projectId,
+  onLaunch,
+}) => {
   const [open, setOpen] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
 
@@ -38,6 +43,7 @@ export const ApplicationModal: FC<ApplicationModalProps> = ({ applicationId, pro
           open={open}
           projectId={projectId}
           onClose={() => setOpen(false)}
+          onLaunch={onLaunch}
         />
       )}
     </>

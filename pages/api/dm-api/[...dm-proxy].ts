@@ -11,7 +11,6 @@ export default withApiAuthRequired(async (req, res) => {
 
     if (accessToken === undefined) throw Error('no access token was retrieved');
 
-    // TODO: Need to find a fix for this error message
     // API resolved without sending a response for ..., this may result in stalled requests.
     return await httpProxyMiddleware(req, res, {
       target: process.env.DATA_MANAGER_API_SERVER,
@@ -22,7 +21,6 @@ export default withApiAuthRequired(async (req, res) => {
       },
     });
   } catch (error: unknown) {
-    // TODO: Better error handling of errors
     console.error(error);
     res.status(500).json(error);
   }
@@ -33,6 +31,6 @@ export const config = {
     bodyParser: {
       sizeLimit: `${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE ?? 25}mb`,
     },
-    externalResolver: true,
+    externalResolver: true, // Prevents noise created by proxy
   },
 };

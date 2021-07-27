@@ -59,7 +59,7 @@ export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versi
     project: projects?.[0]?.project_id ?? '',
     type: types?.[0].mime ?? '',
     path: '',
-    version: Math.max(...versions.map((version) => version.version)), // TODO: largest version number
+    version: Math.max(...versions.map(({ version }) => version)),
     isImmutable: true,
     isCompress: false,
   };

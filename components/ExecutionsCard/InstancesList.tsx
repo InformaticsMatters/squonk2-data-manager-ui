@@ -5,6 +5,7 @@ import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetInstances } from '@squonk/data-manager-client/instance';
 
 import { Box, List, ListItem, ListItemText, Typography } from '@material-ui/core';
+import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -31,20 +32,24 @@ export const InstancesList: FC<InstancesListProps> = ({ predicate }) => {
     </Box>
   ) : (
     <List dense component="ul">
-      {instances.map((instance) => (
-        <NextLink
-          passHref
-          href={{ pathname: `/tasks/${instance.id}`, query: { ...query, project: projectId } }}
-          key={instance.id}
-        >
-          <ListItem button component="a">
-            <ListItemText
-              primary={instance.name}
-              secondary={<LocalTime utcTimestamp={instance.launched} />}
-            />
-          </ListItem>
-        </NextLink>
-      ))}
+      {instances
+        .sort((instanceA, instanceB) =>
+          dayjs(instanceA.launched).isBefore(dayjs(instanceB.launched)) ? 1 : -1,
+        )
+        .map((instance) => (
+          <NextLink
+            passHref
+            href={{ pathname: `/tasks/${instance.id}`, query: { ...query, project: projectId } }}
+            key={instance.id}
+          >
+            <ListItem button component="a">
+              <ListItemText
+                primary={instance.name}
+                secondary={<LocalTime utcTimestamp={instance.launched} />}
+              />
+            </ListItem>
+          </NextLink>
+        ))}
     </List>
   );
 };

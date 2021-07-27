@@ -15,13 +15,13 @@ interface JobDetailsProps {
   instanceSummary: InstanceSummary;
 }
 
-const getPathName = (creates: string, type: 'file'): string[] => {
+const getPathName = (creates: string, type: 'file' | 'dir'): string[] => {
   const parts = creates.split('/');
-  if (parts.length === 0) {
-    return [];
+  if (type === 'file') {
+    return parts.slice(0, -1);
   }
 
-  return parts.slice(0, -1);
+  return parts;
 };
 
 export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {

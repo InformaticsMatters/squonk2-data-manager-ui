@@ -21,11 +21,16 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ projectId, job: jobSum
     <BaseCard
       actions={<JobModal jobId={jobSummary.id} projectId={projectId} />}
       cardType="Job"
-      collapsed={<InstancesList predicate={(instance) => instance.job_job === jobSummary.job} />}
+      collapsed={
+        <InstancesList
+          predicate={(instance) =>
+            instance.job_id === jobSummary.id && instance.job_job === jobSummary.job
+          }
+        />
+      }
       color={theme.palette.primary.main}
       title={jobSummary.name}
     >
-      {/* TODO: Fix this any assertion once API is fixed */}
       <Typography variant="body2">{jobSummary.description}</Typography>
       <Typography variant="body1">{jobSummary.version}</Typography>
       <Typography>

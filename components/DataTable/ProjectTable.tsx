@@ -11,13 +11,12 @@ import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import type { SavedFile } from '../state/FileSelectionContext';
 import { useSelectedFiles } from '../state/FileSelectionContext';
 import { useProjectBreadcrumbs } from '../state/projectPathHooks';
 import { DataTable } from './DataTable';
 import { FileActions } from './FileActions';
 import type { TableDir, TableFile } from './types';
-import { isDataset, isTableDir } from './utils';
+import { isTableDir } from './utils';
 
 export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentProject }) => {
   const theme = useTheme();
@@ -26,7 +25,7 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
 
   // Breadcrumbs
   const breadcrumbs = useProjectBreadcrumbs();
-  const dirPath = '/' + breadcrumbs.join('/'); // TODO: This shouldn't need a leading slash
+  const dirPath = '/' + breadcrumbs.join('/'); // ? The API requires a leading slash but should it?
 
   // Table
   const columns: Column<TableFile | TableDir>[] = useMemo(

@@ -8,6 +8,7 @@ import { useGetFiles } from '@squonk/data-manager-client/file';
 import { css } from '@emotion/react';
 import { Breadcrumbs, Link, Typography, useTheme } from '@material-ui/core';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
+import type { AxiosError } from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -83,7 +84,10 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
     [currentProject.project_id, breadcrumbs, router, theme],
   );
 
-  const { data } = useGetFiles({ project_id: currentProject.project_id, path: dirPath });
+  const { data, error, isError } = useGetFiles({
+    project_id: currentProject.project_id,
+    path: dirPath,
+  });
 
   const rows = useMemo(() => {
     const getFullPath = (path: string[], fileName: string) => {
@@ -139,6 +143,18 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
       ];
     });
   }, []);
+
+  if (isError) {
+    const err = error as AxiosError;
+    return (
+      <>
+        {err.message && <Typography color="error">{err.message}</Typography>}
+        {err.response !== undefined && (
+          <Typography color="error">{err.response.data.error}</Typography>
+        )}
+      </>
+    );
+  }
 
   if (rows) {
     return (

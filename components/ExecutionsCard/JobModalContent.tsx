@@ -109,7 +109,7 @@ export const JobModalContent: FC<JobModalContentProps> = ({
               <TextField
                 fullWidth
                 label="Job name"
-                value={name}
+                value={name || job.job} // Give a default instance name of job.job
                 onChange={(event) => setName(event.target.value)}
               />
             </Grid>

@@ -8,7 +8,6 @@ import { Grid, Link, Typography } from '@material-ui/core';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import { useCurrentProjectId } from '../../state/currentProjectHooks';
 import { CenterLoader } from '../common/CenterLoader';
 import { TimeLine } from '../common/TimeLine';
 
@@ -27,7 +26,6 @@ const getPathName = (creates: string, type: 'file'): string[] => {
 
 export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
   const { query } = useRouter();
-  const { projectId } = useCurrentProjectId();
 
   const { data: instance } = useGetInstance(instanceSummary.id);
 
@@ -56,7 +54,7 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
                     pathname: '/data',
                     query: {
                       ...query,
-                      project: projectId,
+                      project: instance.project_id,
                       path: getPathName(value.creates, value.type),
                     },
                   }}

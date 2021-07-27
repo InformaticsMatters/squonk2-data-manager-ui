@@ -81,6 +81,7 @@
     "eslint",
     "project-state",
     "download-dataset",
-    "file-selection"
+    "file-selection",
+    "project-path"
   ],
 }

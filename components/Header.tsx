@@ -39,15 +39,17 @@ const Header: FC = () => {
         >
           <div>
             <NavLink
-              stripQueryParameters={router.pathname === '/data' ? ['pid', 'project'] : ['pid']}
+              stripQueryParameters={
+                router.pathname === '/data' ? ['pid', 'project', 'path'] : ['pid', 'path']
+              }
               title="Data"
             />
           </div>
           <div>
-            <NavLink stripQueryParameters={['pid']} title="Executions" />
+            <NavLink stripQueryParameters={['pid', 'path']} title="Executions" />
           </div>
           <div>
-            <NavLink stripQueryParameters={['pid']} title="Tasks" />
+            <NavLink stripQueryParameters={['pid', 'path']} title="Tasks" />
           </div>
         </nav>
         <div

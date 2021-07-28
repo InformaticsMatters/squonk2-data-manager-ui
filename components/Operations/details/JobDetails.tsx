@@ -4,7 +4,19 @@ import React, { Fragment } from 'react';
 import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetInstance } from '@squonk/data-manager-client/instance';
 
-import { Grid, Link, Typography } from '@material-ui/core';
+import { css } from '@emotion/react';
+import {
+  Avatar,
+  Grid,
+  Link,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+} from '@material-ui/core';
+import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
+import InsertDriveFileRoundedIcon from '@material-ui/icons/InsertDriveFileRounded';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -45,31 +57,51 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
             <b>Outputs</b>
           </Typography>
           <Typography gutterBottom>
-            {Object.entries(JSON.parse(instance.outputs)).map(([key, value]: [string, any]) => (
-              <Fragment key={key}>
-                {value.title}:{' '}
-                <NextLink
-                  passHref
-                  href={{
-                    pathname: '/data',
-                    query: {
-                      ...query,
-                      project: instance.project_id,
-                      path: getPathName(value.creates, value.type),
-                    },
-                  }}
+            <List
+              aria-label="list of job outputs"
+              component="ul"
+              css={css`
+                display: flex;
+                flex-wrap: wrap;
+              `}
+            >
+              {Object.entries(JSON.parse(instance.outputs)).map(([key, value]: [string, any]) => (
+                <ListItem
+                  css={css`
+                    width: auto;
+                  `}
+                  key={key}
                 >
-                  <Link>
-                    {value.creates}{' '}
-                    {value['mime-types'] && (
-                      <>
-                        ({value.type} - {value['mime-types']})
-                      </>
-                    )}
-                  </Link>
-                </NextLink>
-              </Fragment>
-            ))}
+                  <ListItemAvatar>
+                    <Avatar>
+                      {value.type === 'file' ? (
+                        <InsertDriveFileRoundedIcon />
+                      ) : (
+                        <FolderRoundedIcon />
+                      )}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={value.title}
+                    secondary={
+                      <NextLink
+                        passHref
+                        href={{
+                          pathname: '/data',
+                          query: {
+                            ...query,
+                            project: instance.project_id,
+                            path: getPathName(value.creates, value.type),
+                          },
+                        }}
+                      >
+                        <Link>{value.creates}</Link>
+                      </NextLink>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
           </Typography>
         </>
       )}

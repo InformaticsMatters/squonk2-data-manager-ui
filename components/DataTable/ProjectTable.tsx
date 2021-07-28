@@ -196,10 +196,10 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
           useActionsColumnPlugin={useActionsColumnPlugin}
           onSelection={(row, checked) => {
             if (addFile && removeFile) {
-              const type = isTableDir(row.original) ? 'dir' : 'file';
+              const type = isTableDir(row) ? 'dir' : 'file';
               checked
-                ? addFile({ path: row.original.fullPath, type })
-                : removeFile({ path: row.original.fullPath, type });
+                ? addFile({ path: row.fullPath, type })
+                : removeFile({ path: row.fullPath, type });
             }
           }}
         />

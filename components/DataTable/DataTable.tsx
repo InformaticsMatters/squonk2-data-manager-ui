@@ -28,7 +28,7 @@ export interface DataTableProps<Data extends Record<string, any>> {
   ToolbarChild?: ReactNode;
   getRowId?: (row: Data) => IdType<Data>;
   initialSelection?: IdType<Data>[];
-  onSelection?: (row: Row<Data>, checked: boolean) => void;
+  onSelection?: (row: Data, checked: boolean) => void;
   useActionsColumnPlugin?: PluginHook<Data>;
 }
 
@@ -71,16 +71,26 @@ export function DataTable<Data extends Record<string, any>>({
         hooks.visibleColumns.push((columns) => [
           {
             id: 'selection',
-            Header: ({ getToggleAllRowsSelectedProps }) => (
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-            ),
+            Header: ({ getToggleAllRowsSelectedProps }) => {
+              const { onChange, ...props } = getToggleAllRowsSelectedProps();
+              return (
+                <IndeterminateCheckbox
+                  {...props}
+                  onChange={(event, checked) => {
+                    onSelection && data.forEach((row) => onSelection(row, checked));
+                    // onSelection && onSelection(row, checked);
+                    onChange && onChange(event);
+                  }}
+                />
+              );
+            },
             Cell: ({ row }: CellProps<Data>) => {
               const { onChange, ...props } = row.getToggleRowSelectedProps();
               return (
                 <IndeterminateCheckbox
                   {...props}
                   onChange={(event, checked) => {
-                    onSelection && onSelection(row, checked);
+                    onSelection && onSelection(row.original, checked);
                     onChange && onChange(event);
                   }}
                 />

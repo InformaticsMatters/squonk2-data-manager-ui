@@ -10,6 +10,7 @@ import { Typography, useTheme } from '@material-ui/core';
 import { LocalTime } from '../LocalTime/LocalTime';
 import { BaseCard } from './common/BaseCard';
 import { StatusIcon } from './common/StatusIcon';
+import { TerminateInstance } from './common/TerminateInstance';
 import { JobDetails } from './details/JobDetails';
 import { RerunJobButton } from './RerunJobButton';
 
@@ -29,7 +30,12 @@ export const OperationJobCard: FC<JobCardProps> = ({ instance, collapsedByDefaul
 
   return (
     <BaseCard
-      actions={<RerunJobButton instance={instance} />}
+      actions={
+        <>
+          <TerminateInstance instance={instance} />
+          <RerunJobButton instance={instance} />
+        </>
+      }
       collapsed={<JobDetails instanceSummary={instance} />}
       collapsedByDefault={collapsedByDefault}
     >

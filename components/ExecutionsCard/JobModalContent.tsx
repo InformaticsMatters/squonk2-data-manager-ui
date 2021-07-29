@@ -42,11 +42,13 @@ export const JobModalContent: FC<JobModalContentProps> = ({
 
   const queryClient = useQueryClient();
 
-  const [name, setName] = useState(instance?.name ?? '');
+  const [nameState, setNameState] = useState(instance?.name ?? '');
 
   const { mutate: createInstance } = useCreateInstance();
   // Get extra details about the job
   const { data: job } = useGetJob(jobId);
+
+  const name = nameState || (job?.job ?? '');
 
   const spec = instance?.application_specification;
   const variables =
@@ -109,8 +111,8 @@ export const JobModalContent: FC<JobModalContentProps> = ({
               <TextField
                 fullWidth
                 label="Job name"
-                value={name || job.job} // Give a default instance name of job.job
-                onChange={(event) => setName(event.target.value)}
+                value={name} // Give a default instance name of job.job
+                onChange={(event) => setNameState(event.target.value)}
               />
             </Grid>
           </Grid>

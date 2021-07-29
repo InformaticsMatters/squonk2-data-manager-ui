@@ -14,8 +14,8 @@ import { useRouter } from 'next/router';
 
 import { useSelectedFiles } from '../state/FileSelectionContext';
 import { useProjectBreadcrumbs } from '../state/projectPathHooks';
+import { FileActions } from './Actions/FileActions';
 import { DataTable } from './DataTable';
-import { FileActions } from './FileActions';
 import type { TableDir, TableFile } from './types';
 import { isTableDir } from './utils';
 

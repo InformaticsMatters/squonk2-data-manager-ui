@@ -6,8 +6,9 @@ import type { DatasetVersionDetail } from '@squonk/data-manager-client';
 import { IconButton, Link, Tooltip } from '@material-ui/core';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 
-import { LocalTime } from '../../LocalTime/LocalTime';
-import { ModalWrapper } from '../../Modals/ModalWrapper';
+import { LocalTime } from '../../../LocalTime/LocalTime';
+import { ModalWrapper } from '../../../Modals/ModalWrapper';
+
 interface DownloadDatasetButtonProps {
   datasetId: string;
   versions: DatasetVersionDetail[];

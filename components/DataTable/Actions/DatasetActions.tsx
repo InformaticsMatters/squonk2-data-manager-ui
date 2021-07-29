@@ -3,11 +3,11 @@ import React from 'react';
 
 import { useUser } from '@auth0/nextjs-auth0';
 
-import { AttachDatasetButton } from './Actions/Buttons/AttachDatasetButton';
-import { DeleteDatasetButton } from './Actions/Buttons/DeleteDatasetButton';
-import { DownloadDatasetButton } from './Actions/DownloadDatasetButton';
-import { NewVersionButton } from './Actions/NewVersionButton';
-import type { TableDataset } from './types';
+import type { TableDataset } from '../types';
+import { AttachDatasetButton } from './Buttons/AttachDatasetButton';
+import { DeleteDatasetButton } from './Buttons/DeleteDatasetButton';
+import { DownloadDatasetButton } from './Buttons/DownloadDatasetButton';
+import { NewVersionButton } from './Buttons/NewVersionButton';
 
 interface DatasetActionsProps {
   dataset: TableDataset;

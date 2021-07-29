@@ -6,7 +6,7 @@ import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 import { Typography } from '@material-ui/core';
 
 import { FileUpload } from '../FileUpload/FileUpload';
-import { DatasetActions } from './DatasetActions';
+import { DatasetActions } from './Actions/DatasetActions';
 import { DataTable } from './DataTable';
 import type { TableDataset } from './types';
 

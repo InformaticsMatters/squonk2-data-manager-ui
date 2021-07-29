@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import React from 'react';
-import type { CellProps, Column, IdType, PluginHook, Row } from 'react-table';
+import type { CellProps, Column, IdType, PluginHook } from 'react-table';
 import { useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
 
 import { css } from '@emotion/react';

@@ -22,7 +22,7 @@ import { Field } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-material-ui';
 import * as yup from 'yup';
 
-import { FormikModalWrapper } from '../../Modals/FormikModalWrapper';
+import { FormikModalWrapper } from '../../../Modals/FormikModalWrapper';
 
 interface AttachButtonProps {
   datasetId: string;
@@ -39,7 +39,7 @@ interface FormState {
   isCompress: boolean;
 }
 
-export const AttachButton: FC<AttachButtonProps> = ({ datasetId, fileName, versions }) => {
+export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName, versions }) => {
   const [open, setOpen] = useState(false);
   const { user, isLoading: isUserLoading } = useUser();
 

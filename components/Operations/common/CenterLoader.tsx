@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 
 import { css } from '@emotion/react';
 import { CircularProgress } from '@material-ui/core';

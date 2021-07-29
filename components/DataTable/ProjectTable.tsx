@@ -84,7 +84,7 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
     [currentProject.project_id, breadcrumbs, router, theme],
   );
 
-  const { data, error, isError } = useGetFiles({
+  const { data, error, isError, isLoading } = useGetFiles({
     project_id: currentProject.project_id,
     path: dirPath,
   });
@@ -156,55 +156,56 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
     );
   }
 
-  if (rows) {
-    return (
-      <>
-        <Typography gutterBottom component="h1" variant="h4">
-          Project: {currentProject.name}
-        </Typography>
-
-        <DataTable
-          columns={columns}
-          data={rows}
-          getRowId={(row) => row.fullPath}
-          initialSelection={selectedFiles?.map((file) => file.path)}
-          ToolbarChild={
-            <Breadcrumbs>
-              {['root', ...breadcrumbs].map((path, pathIndex) =>
-                pathIndex < breadcrumbs.length ? (
-                  <NextLink
-                    passHref
-                    href={{
-                      pathname: router.pathname,
-                      query: {
-                        project: currentProject.project_id,
-                        path: breadcrumbs.slice(0, pathIndex),
-                      },
-                    }}
-                    key={`${pathIndex}-${path}`}
-                  >
-                    <Link color="inherit" component="button" variant="body1">
-                      {path}
-                    </Link>
-                  </NextLink>
-                ) : (
-                  <Typography key={`${pathIndex}-${path}`}>{path}</Typography>
-                ),
-              )}
-            </Breadcrumbs>
-          }
-          useActionsColumnPlugin={useActionsColumnPlugin}
-          onSelection={(row, checked) => {
-            if (addFile && removeFile) {
-              const type = isTableDir(row) ? 'dir' : 'file';
-              checked
-                ? addFile({ path: row.fullPath, type })
-                : removeFile({ path: row.fullPath, type });
-            }
-          }}
-        />
-      </>
-    );
+  if (isLoading || !rows) {
+    return <div>Project Files Loading...</div>;
   }
-  return <div>Project Files Loading...</div>;
+
+  return (
+    <>
+      <Typography gutterBottom component="h1" variant="h4">
+        Project: {currentProject.name}
+      </Typography>
+
+      <DataTable
+        columns={columns}
+        data={rows}
+        getRowId={(row) => row.fullPath}
+        initialSelection={selectedFiles?.map((file) => file.path)}
+        ToolbarChild={
+          <Breadcrumbs>
+            {['root', ...breadcrumbs].map((path, pathIndex) =>
+              pathIndex < breadcrumbs.length ? (
+                <NextLink
+                  passHref
+                  href={{
+                    pathname: router.pathname,
+                    query: {
+                      project: currentProject.project_id,
+                      path: breadcrumbs.slice(0, pathIndex),
+                    },
+                  }}
+                  key={`${pathIndex}-${path}`}
+                >
+                  <Link color="inherit" component="button" variant="body1">
+                    {path}
+                  </Link>
+                </NextLink>
+              ) : (
+                <Typography key={`${pathIndex}-${path}`}>{path}</Typography>
+              ),
+            )}
+          </Breadcrumbs>
+        }
+        useActionsColumnPlugin={useActionsColumnPlugin}
+        onSelection={(row, checked) => {
+          if (addFile && removeFile) {
+            const type = isTableDir(row) ? 'dir' : 'file';
+            checked
+              ? addFile({ path: row.fullPath, type })
+              : removeFile({ path: row.fullPath, type });
+          }
+        }}
+      />
+    </>
+  );
 };

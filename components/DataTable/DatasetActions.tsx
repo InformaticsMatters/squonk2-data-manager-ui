@@ -3,8 +3,8 @@ import React from 'react';
 
 import { useUser } from '@auth0/nextjs-auth0';
 
-import { AttachButton } from './Actions/AttachButton';
-import { DeleteDataset } from './Actions/DeleteDataset';
+import { AttachDatasetButton } from './Actions/Buttons/AttachDatasetButton';
+import { DeleteDatasetButton } from './Actions/Buttons/DeleteDatasetButton';
 import { DownloadDatasetButton } from './Actions/DownloadDatasetButton';
 import { NewVersionButton } from './Actions/NewVersionButton';
 import type { TableDataset } from './types';
@@ -19,7 +19,7 @@ export const DatasetActions: FC<DatasetActionsProps> = ({ dataset }) => {
   return (
     <>
       <DownloadDatasetButton datasetId={dataset.dataset_id} versions={dataset.versions} />
-      <AttachButton
+      <AttachDatasetButton
         datasetId={dataset.dataset_id}
         fileName={dataset.fileName}
         versions={dataset.versions}
@@ -27,7 +27,7 @@ export const DatasetActions: FC<DatasetActionsProps> = ({ dataset }) => {
       {user?.preferred_username &&
         (dataset.editors.includes(user.preferred_username as string) ||
           dataset.owner === user.preferred_username) && (
-          <DeleteDataset datasetId={dataset.dataset_id} versions={dataset.versions} />
+          <DeleteDatasetButton datasetId={dataset.dataset_id} versions={dataset.versions} />
         )}
       {user?.preferred_username &&
         (dataset.editors.includes(user.preferred_username as string) ||

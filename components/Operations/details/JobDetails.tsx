@@ -123,7 +123,7 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
                             <Link>{value.creates}</Link>
                           </NextLink>
                         ) : (
-                          'Link not available'
+                          <>{value.creates} (Link unavailable)</>
                         )
                       }
                     />

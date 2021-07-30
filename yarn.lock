@@ -757,10 +757,10 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.0.1.tgz#d26729db850fa327b7cacc5522252194404226f5"
   integrity sha512-Qm9hBEBu18wt1PO2flE7LPb30BHMQt1eQgbV76YntdNk73XZGpn3izvGTYxbGgzXKgbCjiia0uxTd3aTNQrY/g==
 
-"@squonk/data-manager-client@0.5.8":
-  version "0.5.8"
-  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.5.8.tgz#d92638b3a8f846f3dbdf9ba937b05fff498df99c"
-  integrity sha512-vLg6QaTCQzORb6tbQH2O+pXAu1KsQ+7X2Qlcqz9k1J5JIi9dVcJkOIz4/YjI6Hx97prQe4jiW3TvbGScUV4P7g==
+"@squonk/data-manager-client@0.5.9":
+  version "0.5.9"
+  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.5.9.tgz#e5139c08c2fba5bb7979f062452b93fc238d07e2"
+  integrity sha512-745C0urONF1+vUW6s+EvphtkQi1b6Wv4ZKWJtfWen8+9hRKcTO27dooGhtLUxZ1O/UiNXzPkbdpMTZ/ONi5BAQ==
 
 "@squonk/mui-theme@^0.7.1":
   version "0.7.1"

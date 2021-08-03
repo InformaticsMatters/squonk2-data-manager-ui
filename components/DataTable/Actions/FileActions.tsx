@@ -8,7 +8,7 @@ import { CreateDatasetFromFileButton } from './Buttons/CreateDatasetFromFileButt
 import { DeleteUnmanagedFileButton } from './Buttons/DeleteUnmanagedFileButton';
 import { DetachDataset } from './Buttons/DetachDataset';
 
-interface FileActionsProps {
+export interface FileActionsProps {
   file: TableFile | TableDir;
 }
 

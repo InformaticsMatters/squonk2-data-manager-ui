@@ -3,12 +3,26 @@ import type { CellProps, Column, PluginHook } from 'react-table';
 
 import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 
-import { Typography } from '@material-ui/core';
+import { CircularProgress, Typography } from '@material-ui/core';
+import dynamic from 'next/dynamic';
 
-import { FileUpload } from '../FileUpload/FileUpload';
-import { DatasetActions } from './Actions/DatasetActions';
+import type { DatasetActionsProps } from './Actions/DatasetActions';
 import { DataTable } from './DataTable';
 import type { TableDataset } from './types';
+
+const DatasetActions = dynamic<DatasetActionsProps>(
+  () => import('./Actions/DatasetActions').then((mod) => mod.DatasetActions),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
+
+const FileUpload = dynamic<Record<string, never>>(
+  () => import('../FileUpload/FileUpload').then((mod) => mod.FileUpload),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
 
 export const AllDatasetsTable = () => {
   const columns: Column<TableDataset>[] = useMemo(

@@ -20,7 +20,7 @@ import { AddProject } from './AddProject';
 import { DeleteProject } from './DeleteProject';
 import { EditProject } from './EditProject';
 
-interface ProjectManagerProps {
+export interface ProjectManagerProps {
   inverted: boolean;
 }
 

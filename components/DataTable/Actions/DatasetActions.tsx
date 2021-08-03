@@ -9,7 +9,7 @@ import { DeleteDatasetButton } from './Buttons/DeleteDatasetButton';
 import { DownloadDatasetButton } from './Buttons/DownloadDatasetButton';
 import { NewVersionButton } from './Buttons/NewVersionButton';
 
-interface DatasetActionsProps {
+export interface DatasetActionsProps {
   dataset: TableDataset;
 }
 

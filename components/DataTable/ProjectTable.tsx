@@ -6,18 +6,26 @@ import type { ProjectDetail } from '@squonk/data-manager-client';
 import { useGetFiles } from '@squonk/data-manager-client/file';
 
 import { css } from '@emotion/react';
-import { Breadcrumbs, Link, Typography, useTheme } from '@material-ui/core';
+import { Breadcrumbs, CircularProgress, Link, Typography, useTheme } from '@material-ui/core';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
 import type { AxiosError } from 'axios';
+import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useSelectedFiles } from '../state/FileSelectionContext';
 import { useProjectBreadcrumbs } from '../state/projectPathHooks';
-import { FileActions } from './Actions/FileActions';
+import type { FileActionsProps } from './Actions/FileActions';
 import { DataTable } from './DataTable';
 import type { TableDir, TableFile } from './types';
 import { isTableDir } from './utils';
+
+const FileActions = dynamic<FileActionsProps>(
+  () => import('./Actions/FileActions').then((mod) => mod.FileActions),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
 
 export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentProject }) => {
   const theme = useTheme();

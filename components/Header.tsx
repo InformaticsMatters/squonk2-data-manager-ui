@@ -4,12 +4,21 @@ import React from 'react';
 import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { AppBar, Toolbar, useTheme } from '@material-ui/core';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
 import { Logo } from './navigation/Logo';
 import { NavLink } from './navigation/NavLink';
 import { UserMenu } from './navigation/UserMenu';
-import { ProjectManager } from './ProjectManager/ProjectManager';
+import { CenterLoader } from './Operations/common/CenterLoader';
+import type { ProjectManagerProps } from './ProjectManager/ProjectManager';
+
+const ProjectManager = dynamic<ProjectManagerProps>(
+  () => import('./ProjectManager/ProjectManager').then((mod) => mod.ProjectManager),
+  {
+    loading: () => <CenterLoader />,
+  },
+);
 
 const Header: FC = () => {
   const theme = useTheme();

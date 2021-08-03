@@ -4,10 +4,10 @@ import React from 'react';
 import type { TaskSummary } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
-import { Typography, useTheme } from '@material-ui/core';
+import { CardContent, Typography, useTheme } from '@material-ui/core';
 
+import { BaseCard } from '../BaseCard';
 import { LocalTime } from '../LocalTime/LocalTime';
-import { BaseCard } from './common/BaseCard';
 import { StatusIcon } from './common/StatusIcon';
 import { TaskDetails } from './details/TaskDetails';
 
@@ -19,7 +19,13 @@ export const OperationTaskCard: FC<TaskCardProps> = ({ task }) => {
   const theme = useTheme();
 
   return (
-    <BaseCard collapsed={<TaskDetails taskId={task.id} />}>
+    <BaseCard
+      collapsed={
+        <CardContent>
+          <TaskDetails taskId={task.id} />
+        </CardContent>
+      }
+    >
       <Typography
         css={css`
           display: flex;

@@ -5,9 +5,9 @@ import type { ApplicationSummary } from '@squonk/data-manager-client';
 
 import { useTheme } from '@material-ui/core';
 
+import { BaseCard } from '../BaseCard';
 import type { ProjectId } from '../state/currentProjectHooks';
 import { ApplicationModal } from './ApplicationModal';
-import { BaseCard } from './BaseCard';
 import { InstancesList } from './InstancesList';
 
 interface ApplicationCardProps {
@@ -27,13 +27,15 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, projectId }) =>
           onLaunch={() => setExpanded(true)}
         />
       )}
-      cardType="Application"
       collapsed={
         <InstancesList predicate={(instance) => instance.application_id === app.application_id} />
       }
-      color={theme.palette.secondary.dark}
-      subtitle={app.group}
-      title={app.kind}
+      header={{
+        title: app.kind,
+        subtitle: app.group,
+        avatar: 'A',
+        color: theme.palette.secondary.dark,
+      }}
     ></BaseCard>
   );
 };

@@ -5,8 +5,8 @@ import type { JobSummary } from '@squonk/data-manager-client';
 import { css } from '@emotion/react';
 import { Chip, Typography, useTheme } from '@material-ui/core';
 
+import { BaseCard } from '../BaseCard';
 import type { ProjectId } from '../state/currentProjectHooks';
-import { BaseCard } from './BaseCard';
 import { InstancesList } from './InstancesList';
 import { JobModal } from './JobModal';
 
@@ -22,7 +22,6 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ projectId, job: jobSum
       actions={({ setExpanded }) => (
         <JobModal jobId={jobSummary.id} projectId={projectId} onRun={() => setExpanded(true)} />
       )}
-      cardType="Job"
       collapsed={
         <InstancesList
           predicate={(instance) =>
@@ -30,8 +29,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ projectId, job: jobSum
           }
         />
       }
-      color={theme.palette.primary.main}
-      title={jobSummary.name}
+      header={{ color: theme.palette.primary.main, title: jobSummary.name, avatar: 'J' }}
     >
       <Typography variant="body2">{jobSummary.description}</Typography>
       <Typography variant="body1">{jobSummary.version}</Typography>

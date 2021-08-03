@@ -5,10 +5,10 @@ import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetProjects } from '@squonk/data-manager-client/project';
 
 import { css } from '@emotion/react';
-import { Typography, useTheme } from '@material-ui/core';
+import { CardContent, Typography, useTheme } from '@material-ui/core';
 
+import { BaseCard } from '../BaseCard';
 import { LocalTime } from '../LocalTime/LocalTime';
-import { BaseCard } from './common/BaseCard';
 import { StatusIcon } from './common/StatusIcon';
 import { TerminateInstance } from './common/TerminateInstance';
 import { JobDetails } from './details/JobDetails';
@@ -36,7 +36,11 @@ export const OperationJobCard: FC<JobCardProps> = ({ instance, collapsedByDefaul
           <RerunJobButton instance={instance} />
         </>
       }
-      collapsed={<JobDetails instanceSummary={instance} />}
+      collapsed={
+        <CardContent>
+          <JobDetails instanceSummary={instance} />
+        </CardContent>
+      }
       collapsedByDefault={collapsedByDefault}
     >
       <Typography

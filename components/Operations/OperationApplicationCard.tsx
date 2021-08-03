@@ -5,10 +5,10 @@ import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetProjects } from '@squonk/data-manager-client/project';
 
 import { css } from '@emotion/react';
-import { Button, Typography, useTheme } from '@material-ui/core';
+import { Button, CardContent, Typography, useTheme } from '@material-ui/core';
 
+import { BaseCard } from '../BaseCard';
 import { LocalTime } from '../LocalTime/LocalTime';
-import { BaseCard } from './common/BaseCard';
 import { StatusIcon } from './common/StatusIcon';
 import { TerminateInstance } from './common/TerminateInstance';
 import { ApplicationDetails } from './details/ApplicationDetails';
@@ -50,7 +50,11 @@ export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({
           )}
         </>
       }
-      collapsed={<ApplicationDetails instanceId={instance.id} />}
+      collapsed={
+        <CardContent>
+          <ApplicationDetails instanceId={instance.id} />
+        </CardContent>
+      }
       collapsedByDefault={collapsedByDefault}
     >
       <Typography

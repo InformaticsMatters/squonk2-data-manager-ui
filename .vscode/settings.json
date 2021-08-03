@@ -82,6 +82,7 @@
     "project-state",
     "download-dataset",
     "file-selection",
-    "project-path"
+    "project-path",
+    "base-card"
   ],
 }

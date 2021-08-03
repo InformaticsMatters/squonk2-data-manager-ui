@@ -19,47 +19,50 @@ interface ActionsParams {
 }
 
 interface BaseCardProps {
-  actions: React.ReactNode | ((actionsParams: ActionsParams) => React.ReactNode);
+  actions?: React.ReactNode | ((actionsParams: ActionsParams) => React.ReactNode);
   collapsed?: React.ReactNode;
-  cardType: string;
-  title?: string;
-  subtitle?: string;
-  color?: string;
+  collapsedByDefault?: boolean;
+  header?: {
+    title: string;
+    subtitle?: string;
+    avatar?: string;
+    color?: string;
+  };
 }
 
 export const BaseCard: FC<BaseCardProps> = ({
   children,
   actions,
+  header,
   collapsed,
-  cardType,
-  title,
-  subtitle,
-  color,
+  collapsedByDefault = true,
 }) => {
-  const [hasExpanded, setHasExpanded] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  const [hasExpanded, setHasExpanded] = useState(!collapsedByDefault);
+  const [expanded, setExpanded] = useState(!collapsedByDefault);
 
   const theme = useTheme();
 
   return (
     <Card>
-      <CardHeader
-        avatar={
-          <Avatar
-            css={
-              color
-                ? css`
-                    background-color: ${color};
-                  `
-                : undefined
-            }
-          >
-            {cardType[0].toUpperCase()}
-          </Avatar>
-        }
-        subheader={subtitle}
-        title={title}
-      />
+      {header && (
+        <CardHeader
+          avatar={
+            <Avatar
+              css={
+                header.color
+                  ? css`
+                      background-color: ${header.color};
+                    `
+                  : undefined
+              }
+            >
+              {header.avatar?.[0].toUpperCase()}
+            </Avatar>
+          }
+          subheader={header.subtitle}
+          title={header.title}
+        />
+      )}
       <CardContent>{children}</CardContent>
       <CardActions
         disableSpacing

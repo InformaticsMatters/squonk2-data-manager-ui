@@ -20,7 +20,7 @@ import InsertDriveFileRoundedIcon from '@material-ui/icons/InsertDriveFileRounde
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import { CenterLoader } from '../common/CenterLoader';
+import { CenterLoader } from '../../CenterLoader';
 import { TimeLine } from '../common/TimeLine';
 
 interface OutputValue {

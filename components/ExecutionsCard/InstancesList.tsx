@@ -9,8 +9,8 @@ import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import { CenterLoader } from '../CenterLoader';
 import { LocalTime } from '../LocalTime/LocalTime';
-import { CenterLoader } from '../Operations/common/CenterLoader';
 import { useCurrentProjectId } from '../state/currentProjectHooks';
 
 interface InstancesListProps {

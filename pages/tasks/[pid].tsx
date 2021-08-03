@@ -19,8 +19,8 @@ import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import { CenterLoader } from '../../components/CenterLoader';
 import Layout from '../../components/Layout';
-import { CenterLoader } from '../../components/Operations/common/CenterLoader';
 import { OperationApplicationCard } from '../../components/Operations/OperationApplicationCard';
 import { OperationJobCard } from '../../components/Operations/OperationJobCard';
 

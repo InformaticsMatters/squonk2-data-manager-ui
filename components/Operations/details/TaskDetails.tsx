@@ -6,7 +6,7 @@ import { useGetTask } from '@squonk/data-manager-client/task';
 
 import { Grid } from '@material-ui/core';
 
-import { CenterLoader } from '../common/CenterLoader';
+import { CenterLoader } from '../../CenterLoader';
 import { TimeLine } from '../common/TimeLine';
 
 interface TaskDetailsProps {

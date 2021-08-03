@@ -6,7 +6,7 @@ import { useGetInstance } from '@squonk/data-manager-client/instance';
 
 import { Grid, Typography } from '@material-ui/core';
 
-import { CenterLoader } from '../common/CenterLoader';
+import { CenterLoader } from '../../CenterLoader';
 import { TimeLine } from '../common/TimeLine';
 
 interface ApplicationDetailsProps {

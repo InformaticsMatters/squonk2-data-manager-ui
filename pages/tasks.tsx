@@ -34,8 +34,8 @@ import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import dayjs from 'dayjs';
 import type { GetServerSideProps } from 'next';
 
+import { CenterLoader } from '../components/CenterLoader';
 import Layout from '../components/Layout';
-import { CenterLoader } from '../components/Operations/common/CenterLoader';
 import { OperationApplicationCard } from '../components/Operations/OperationApplicationCard';
 import { OperationJobCard } from '../components/Operations/OperationJobCard';
 import { OperationTaskCard } from '../components/Operations/OperationTaskCard';

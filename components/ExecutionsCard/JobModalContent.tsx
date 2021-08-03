@@ -9,8 +9,8 @@ import { useGetJob } from '@squonk/data-manager-client/job';
 import { Grid, TextField, Typography } from '@material-ui/core';
 import Form from '@rjsf/material-ui';
 
+import { CenterLoader } from '../CenterLoader';
 import { ModalWrapper } from '../Modals/ModalWrapper';
-import { CenterLoader } from '../Operations/common/CenterLoader';
 import type { ProjectId } from '../state/currentProjectHooks';
 import { JobInputFields } from './JobInputFields';
 

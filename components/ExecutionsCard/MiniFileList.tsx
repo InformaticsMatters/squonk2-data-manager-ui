@@ -49,8 +49,8 @@ export const MiniFileList: FC<MiniFileTableProps> = ({
 
   const selectedFilesToDisplay = selectedFiles?.filter((file) => file.type.includes(targetType));
 
-  const [showAll, setShowAll] = useState(
-    !selectedFiles?.filter((file) => file.type.includes(targetType))?.length,
+  const [showShortList, setShowShortList] = useState(
+    !!selectedFiles?.filter((file) => file.type.includes(targetType))?.length,
   );
 
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
@@ -102,11 +102,16 @@ export const MiniFileList: FC<MiniFileTableProps> = ({
       `}
     >
       <FormControlLabel
-        control={<Checkbox checked={showAll} onChange={(_event, checked) => setShowAll(checked)} />}
-        label="Show all files"
+        control={
+          <Checkbox
+            checked={showShortList}
+            onChange={(_event, checked) => setShowShortList(checked)}
+          />
+        }
+        label="Show short list"
       />
 
-      {showAll && (
+      {!showShortList && (
         <>
           <Breadcrumbs>
             {['root', ...breadcrumbs].map((path, pathIndex) =>
@@ -167,7 +172,7 @@ export const MiniFileList: FC<MiniFileTableProps> = ({
         </>
       )}
 
-      {!showAll &&
+      {showShortList &&
         (selectedFilesToDisplay?.length ? (
           <ScrollList dense>
             {selectedFilesToDisplay.map(({ path: fullPath, type }) => (

@@ -1,63 +1,169 @@
 import type { FC } from 'react';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 
-import { Button, Tooltip } from '@material-ui/core';
+import type { InstanceSummary, JobSummary } from '@squonk/data-manager-client';
+import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
+import { useGetJob } from '@squonk/data-manager-client/job';
 
+import { Grid, TextField, Typography } from '@material-ui/core';
+import Form from '@rjsf/material-ui';
+
+import { CenterLoader } from '../CenterLoader';
+import { ModalWrapper } from '../Modals/ModalWrapper';
 import type { ProjectId } from '../state/currentProjectHooks';
-import { useSelectedFiles } from '../state/FileSelectionContext';
-import { JobModalContent } from './JobModalContent';
+import { JobInputFields } from './JobInputFields';
+
+export type InputData = Record<string, string | string[] | undefined>;
+
+interface JobSpecification {
+  collection: string;
+  job: string;
+  version: string;
+  variables: { [key: string]: string | string[] };
+}
 
 interface JobModalProps {
+  jobId: JobSummary['id'];
+  open: boolean;
   projectId: ProjectId;
-  jobId: number;
+  instance?: InstanceSummary; // Allow loading form values from a previous instance
+  onClose: () => void;
   onRun?: () => void;
 }
 
-export const JobModal: FC<JobModalProps> = ({ projectId, jobId, onRun }) => {
-  const { selectedFiles } = useSelectedFiles();
+export const JobModal: FC<JobModalProps> = ({
+  jobId,
+  projectId,
+  instance,
+  open,
+  onClose,
+  onRun,
+}) => {
+  // ? Can we guarantee every job has a parsable spec?
 
-  const [open, setOpen] = useState(false);
-  const [hasOpened, setHasOpened] = useState(false);
+  const queryClient = useQueryClient();
 
-  if (selectedFiles) {
-    const tooltipTitle = selectedFiles.length
-      ? 'Run this job'
-      : 'Please select some files on the data tab first';
-    return (
-      <>
-        <Tooltip arrow title={tooltipTitle}>
-          <span>
-            <Button
-              color="primary"
-              disabled={!selectedFiles.length}
-              onClick={() => {
-                setOpen(true);
-                setHasOpened(true);
-              }}
-            >
-              Run
-            </Button>
-          </span>
-        </Tooltip>
-        {hasOpened && (
-          <JobModalContent
-            jobId={jobId}
-            open={open}
-            projectId={projectId}
-            onClose={() => setOpen(false)}
-            onRun={onRun}
-          />
-        )}
-      </>
-    );
-  }
+  const [nameState, setNameState] = useState(instance?.name ?? '');
+
+  const { mutate: createInstance } = useCreateInstance();
+  // Get extra details about the job
+  const { data: job } = useGetJob(jobId);
+
+  const name = nameState || (job?.job ?? '');
+
+  const spec = instance?.application_specification;
+  const specVariables =
+    spec !== undefined
+      ? (JSON.parse(spec).variables as Record<string, string | string[] | undefined>)
+      : undefined;
+
+  // Control for generated options form
+  const [optionsFormData, setOptionsFormData] = useState<any>(specVariables ?? null);
+
+  // Control for the inputs fields
+  const [inputsData, setInputsData] = useState<InputData>({});
+
+  const handleSubmit = () => {
+    if (projectId && job) {
+      // Construct the specification
+      const specification: JobSpecification = {
+        collection: job.collection,
+        job: job.job,
+        version: job.version,
+        variables: { ...inputsData, ...optionsFormData },
+      };
+
+      createInstance(
+        {
+          data: {
+            application_id: job.application.application_id,
+            application_version: 'v1',
+            as_name: name,
+            project_id: projectId,
+            specification: JSON.stringify(specification),
+          },
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
+
+            onRun && onRun();
+            onClose();
+          },
+        },
+      );
+    }
+  };
+
   return (
-    <Tooltip title="Please select a project first">
-      <span>
-        <Button disabled color="primary">
-          Run
-        </Button>
-      </span>
-    </Tooltip>
+    <ModalWrapper
+      DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+      id={`job-${jobId}`}
+      open={open}
+      submitText="Run"
+      title={job?.name ?? 'Run Job'}
+      onClose={onClose}
+      onSubmit={handleSubmit}
+    >
+      {job !== undefined && projectId !== undefined ? (
+        <>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Job name"
+                value={name} // Give a default instance name of job.job
+                onChange={(event) => setNameState(event.target.value)}
+              />
+            </Grid>
+          </Grid>
+          {job.variables && (
+            <Grid container spacing={2}>
+              {job.variables.inputs && (
+                <>
+                  <Grid item xs={12}>
+                    <Typography component="h3" variant="subtitle1">
+                      <b>Inputs</b>
+                    </Typography>
+                  </Grid>
+                  <JobInputFields
+                    initialValues={specVariables}
+                    inputs={job.variables.inputs as any}
+                    inputsData={inputsData}
+                    projectId={projectId}
+                    setInputsData={setInputsData}
+                  />
+                </>
+              )}
+
+              <Grid item xs={12}>
+                {job.variables.options && (
+                  <>
+                    <Typography component="h3" variant="subtitle1">
+                      <b>Options</b>
+                    </Typography>
+                    <Form
+                      liveValidate
+                      noHtml5Validate
+                      formData={optionsFormData}
+                      schema={job.variables.options as any} // TODO: fix when openapi is updated
+                      showErrorList={false}
+                      uiSchema={{ 'ui:order': job.variables.order?.options }}
+                      onChange={(event) => setOptionsFormData(event.formData)}
+                    >
+                      {/* Remove the default submit button */}
+                      <div />
+                    </Form>
+                  </>
+                )}
+              </Grid>
+            </Grid>
+          )}
+        </>
+      ) : (
+        <CenterLoader />
+      )}
+    </ModalWrapper>
   );
 };

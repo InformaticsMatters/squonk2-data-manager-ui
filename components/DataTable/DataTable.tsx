@@ -15,28 +15,33 @@ import {
   TableRow,
   TableSortLabel,
   TextField,
+  Toolbar,
 } from '@material-ui/core';
-import Toolbar from '@material-ui/core/Toolbar';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 
 type Selection<Data> = Record<IdType<Data>, boolean>;
+
 export interface DataTableProps<Data extends Record<string, any>> {
+  tableContainer?: boolean;
   columns: Column<Data>[];
   data: Data[];
   ToolbarChild?: ReactNode;
   getRowId?: (row: Data) => IdType<Data>;
+  enableSearch?: boolean;
   initialSelection?: IdType<Data>[];
   onSelection?: (row: Data, checked: boolean) => void;
   useActionsColumnPlugin?: PluginHook<Data>;
 }
 
 export function DataTable<Data extends Record<string, any>>({
+  tableContainer = true,
   columns,
   data,
   ToolbarChild,
   getRowId,
+  enableSearch = true,
   initialSelection,
   onSelection,
   useActionsColumnPlugin = () => {
@@ -102,28 +107,30 @@ export function DataTable<Data extends Record<string, any>>({
     },
   );
 
-  return (
-    <TableContainer component={Paper}>
+  const tableContents = (
+    <>
       <Toolbar>
         {ToolbarChild}
-        <TextField
-          css={css`
-            margin-left: auto;
-          `}
-          inputProps={{ 'aria-label': 'search' }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchRoundedIcon />
-              </InputAdornment>
-            ),
-          }}
-          placeholder={`${preGlobalFilteredRows.length} records...`}
-          value={globalFilter || ''}
-          onChange={(e) => {
-            setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
-          }}
-        />
+        {enableSearch && (
+          <TextField
+            css={css`
+              margin-left: auto;
+            `}
+            inputProps={{ 'aria-label': 'search' }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchRoundedIcon />
+                </InputAdornment>
+              ),
+            }}
+            placeholder={`${preGlobalFilteredRows.length} records...`}
+            value={globalFilter || ''}
+            onChange={(e) => {
+              setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
+            }}
+          />
+        )}
       </Toolbar>
       <Table {...getTableProps()} size="small">
         <TableHead>
@@ -165,6 +172,14 @@ export function DataTable<Data extends Record<string, any>>({
           })}
         </TableBody>
       </Table>
-    </TableContainer>
+    </>
   );
+
+  const table = tableContainer ? (
+    <TableContainer component={Paper}>{tableContents}</TableContainer>
+  ) : (
+    tableContents
+  );
+
+  return table;
 }

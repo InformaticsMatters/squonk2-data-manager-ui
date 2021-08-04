@@ -5,7 +5,7 @@ import type { InstanceSummary } from '@squonk/data-manager-client';
 
 import { Button } from '@material-ui/core';
 
-import { JobModalContent } from '../ExecutionsCard/JobModalContent';
+import { JobModal } from '../ExecutionsCard/JobModal';
 
 interface RerunJobButtonProps {
   instance: InstanceSummary;
@@ -19,7 +19,7 @@ export const RerunJobButton: FC<RerunJobButtonProps> = ({ instance }) => {
       <Button color="primary" onClick={() => setOpen(true)}>
         Run again
       </Button>
-      <JobModalContent
+      <JobModal
         instance={instance}
         jobId={instance.job_id}
         open={open}

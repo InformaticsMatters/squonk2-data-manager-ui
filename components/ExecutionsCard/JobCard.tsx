@@ -8,7 +8,7 @@ import { Chip, Typography, useTheme } from '@material-ui/core';
 import { BaseCard } from '../BaseCard';
 import type { ProjectId } from '../state/currentProjectHooks';
 import { InstancesList } from './InstancesList';
-import { JobModal } from './JobModal';
+import { RunJobButton } from './RunJobButton';
 
 interface ApplicationCardProps {
   projectId: ProjectId;
@@ -20,7 +20,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ projectId, job: jobSum
   return (
     <BaseCard
       actions={({ setExpanded }) => (
-        <JobModal jobId={jobSummary.id} projectId={projectId} onRun={() => setExpanded(true)} />
+        <RunJobButton jobId={jobSummary.id} projectId={projectId} onRun={() => setExpanded(true)} />
       )}
       collapsed={
         <InstancesList

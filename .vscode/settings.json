@@ -83,6 +83,7 @@
     "download-dataset",
     "file-selection",
     "project-path",
-    "base-card"
+    "base-card",
+    "job-file-inputs"
   ],
 }

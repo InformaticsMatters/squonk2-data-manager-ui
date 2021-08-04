@@ -5,7 +5,7 @@ import { useCurrentProjectId } from '../state/currentProjectHooks';
 
 export type SavedFile = {
   path: string;
-  type: 'file' | 'dir';
+  type: 'file' | 'dir' | 'directory';
 };
 
 interface FileState {

@@ -18,6 +18,7 @@ import { useProjectBreadcrumbs } from '../state/projectPathHooks';
 import type { FileActionsProps } from './Actions/FileActions';
 import { DataTable } from './DataTable';
 import type { TableDir, TableFile } from './types';
+import { useRows } from './useRows';
 import { isTableDir } from './utils';
 
 const FileActions = dynamic<FileActionsProps>(
@@ -34,7 +35,7 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
 
   // Breadcrumbs
   const breadcrumbs = useProjectBreadcrumbs();
-  const dirPath = '/' + breadcrumbs.join('/'); // ? The API requires a leading slash but should it?
+  const dirPath = '/' + breadcrumbs.join('/');
 
   // Table
   const columns: Column<TableFile | TableDir>[] = useMemo(
@@ -97,43 +98,11 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
     path: dirPath,
   });
 
-  const rows = useMemo(() => {
-    const getFullPath = (path: string[], fileName: string) => {
-      if (path.length > 0) {
-        return path.join('/') + '/' + fileName;
-      }
-      return fileName;
-    };
-
-    const files: TableFile[] | undefined = data?.files.map((file) => {
-      const { file_id: fileId, file_name: fileName, owner, immutable } = file;
-
-      const fullPath = getFullPath(breadcrumbs, fileName);
-
-      return {
-        fileName,
-        fullPath,
-        file_id: fileId,
-        owner,
-        immutable,
-      };
-    });
-
-    const dirs: TableDir[] | undefined = data?.paths.map((path) => {
-      const fullPath = getFullPath(breadcrumbs, path);
-
-      return {
-        fileName: path,
-        fullPath,
-        path,
-      };
-    });
-
-    return dirs && files ? [...dirs, ...files] : undefined;
-  }, [data, breadcrumbs]);
+  const rows = useRows(breadcrumbs, data);
 
   // Selection
   const { selectedFiles, addFile, removeFile } = useSelectedFiles();
+  console.log(selectedFiles);
 
   // react-table plugin to add actions buttons for datasets
   const useActionsColumnPlugin: PluginHook<TableFile | TableDir> = useCallback((hooks) => {

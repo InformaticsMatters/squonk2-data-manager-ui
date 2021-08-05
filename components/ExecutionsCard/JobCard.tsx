@@ -30,6 +30,7 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ projectId, job: jobSum
         />
       }
       header={{ color: theme.palette.primary.main, title: jobSummary.name, avatar: 'J' }}
+      key={projectId} // Reset state when project changes
     >
       <Typography variant="body2">{jobSummary.description}</Typography>
       <Typography variant="body1">{jobSummary.version}</Typography>

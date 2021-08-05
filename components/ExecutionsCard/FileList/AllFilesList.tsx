@@ -28,7 +28,7 @@ export const AllFilesList = ({
   });
 
   const files = data?.files.filter(
-    (file) => !(!file.mime_type || mimeTypes.includes(file.mime_type)),
+    (file) => !(!file.mime_type || mimeTypes?.includes(file.mime_type)),
   );
   const dirs = data?.paths;
 

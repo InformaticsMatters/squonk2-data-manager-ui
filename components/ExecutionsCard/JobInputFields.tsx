@@ -12,7 +12,7 @@ import type { InputData } from './JobModal';
 interface InputFieldSchema {
   title: string;
   type: 'directory' | 'file';
-  'mime-types': string[];
+  'mime-types'?: string[];
   multiple?: true;
 }
 

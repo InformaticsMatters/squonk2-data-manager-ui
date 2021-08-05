@@ -6,7 +6,7 @@ export type Selection = string[] | string | undefined;
 
 export interface SharedProps {
   targetType: FileOrDirectory;
-  mimeTypes: string[];
+  mimeTypes?: string[];
   multiple: boolean;
   projectId: NoUndefProjectId;
   value?: string[] | string;

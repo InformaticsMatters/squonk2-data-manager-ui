@@ -23,7 +23,7 @@ export const FavouritesList: FC<SharedProps> = ({
 
   const selectedFilesToDisplay = selectedFiles
     ?.filter((file) => file.type.includes(targetType))
-    .filter((file) => !(!file.mimeType || mimeTypes.includes(file.mimeType)));
+    .filter((file) => !(!file.mimeType || mimeTypes?.includes(file.mimeType)));
 
   return selectedFilesToDisplay?.length ? (
     <ScrollList dense>

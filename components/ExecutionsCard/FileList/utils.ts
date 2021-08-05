@@ -22,3 +22,6 @@ export const getNewValue = (
   }
   return checked ? fullPath : undefined;
 };
+
+export const getFullPath = (breadcrumbs: string[], path: string) =>
+  breadcrumbs.join('/') + (breadcrumbs.length ? '/' : '') + path;

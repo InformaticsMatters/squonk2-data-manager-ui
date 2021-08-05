@@ -45,7 +45,7 @@ export const JobInputFields: FC<JobInputFieldsProps> = ({
           // Expect a grid container in the parent component
           <Grid item key={key} xs={12}>
             <Typography component="h4" variant="subtitle1">
-              {title}
+              <em>{title}</em>
             </Typography>
             <FileSelector
               multiple={!!multiple}

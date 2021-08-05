@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import React, { useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Button, Collapse, Toolbar, Typography } from '@material-ui/core';
+import { Button, Collapse, Toolbar, Tooltip, Typography } from '@material-ui/core';
 
 import type { ProjectId } from '../state/currentProjectHooks';
 import { MiniFileList } from './MiniFileList';
@@ -17,7 +17,8 @@ export interface FileSelectorProps {
 
 export const FileSelector: FC<FileSelectorProps> = ({ value, type, ...props }) => {
   const [expanded, setExpanded] = useState(false);
-  const numberOfSelectedFiles = [value].flat().filter((f) => f !== undefined).length;
+
+  const files = [value].flat().filter((f) => f !== undefined);
 
   return (
     <>
@@ -29,8 +30,26 @@ export const FileSelector: FC<FileSelectorProps> = ({ value, type, ...props }) =
       <Toolbar disableGutters variant="dense">
         {!expanded ? (
           <>
-            <Typography display="inline" variant="body2">
-              Selected Files: {numberOfSelectedFiles > 0 ? <b>{numberOfSelectedFiles}</b> : 'None'}
+            <Typography
+              noWrap
+              css={css`
+                white-space: break-spaces;
+              `}
+              display="inline"
+              variant="body2"
+            >
+              Selected Files:{' '}
+              {files.length === 1 ? (
+                files[0]
+              ) : files.length > 1 ? (
+                <Tooltip title={files.slice(1).join(', ')}>
+                  <span>
+                    {files[0]} and <b>{files.length - 1} more</b>
+                  </span>
+                </Tooltip>
+              ) : (
+                'None'
+              )}
             </Typography>
             <Button
               css={css`

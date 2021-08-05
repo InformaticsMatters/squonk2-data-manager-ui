@@ -13,7 +13,6 @@ import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import { useSelectedFiles } from '../state/FileSelectionContext';
 import { useProjectBreadcrumbs } from '../state/projectPathHooks';
 import type { FileActionsProps } from './Actions/FileActions';
 import { DataTable } from './DataTable';
@@ -100,10 +99,6 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
 
   const rows = useRows(breadcrumbs, data);
 
-  // Selection
-  const { selectedFiles, addFile, removeFile } = useSelectedFiles();
-  console.log(selectedFiles);
-
   // react-table plugin to add actions buttons for datasets
   const useActionsColumnPlugin: PluginHook<TableFile | TableDir> = useCallback((hooks) => {
     hooks.visibleColumns.push((columns) => {
@@ -147,7 +142,6 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
         columns={columns}
         data={rows}
         getRowId={(row) => row.fullPath}
-        initialSelection={selectedFiles?.map((file) => file.path)}
         ToolbarChild={
           <Breadcrumbs>
             {['root', ...breadcrumbs].map((path, pathIndex) =>
@@ -174,14 +168,6 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
           </Breadcrumbs>
         }
         useActionsColumnPlugin={useActionsColumnPlugin}
-        onSelection={(row, checked) => {
-          if (addFile && removeFile) {
-            const type = isTableDir(row) ? 'dir' : 'file';
-            checked
-              ? addFile({ path: row.fullPath, type })
-              : removeFile({ path: row.fullPath, type });
-          }
-        }}
       />
     </>
   );

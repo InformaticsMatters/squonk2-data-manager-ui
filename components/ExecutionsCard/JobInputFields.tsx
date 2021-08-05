@@ -4,7 +4,7 @@ import React from 'react';
 import { Grid, Typography } from '@material-ui/core';
 
 import type { ProjectId } from '../state/currentProjectHooks';
-import { FileSelector } from './FileSelector';
+import { FileSelector } from './FileList/FileSelector';
 import type { InputData } from './JobModal';
 
 // Define types for the form schema as the Open API spec doesn't define these (just gives string)
@@ -40,23 +40,26 @@ export const JobInputFields: FC<JobInputFieldsProps> = ({
 }) => {
   return (
     <>
-      {Object.entries(inputs.properties).map(([key, { title, type, multiple }]) => {
-        return (
-          // Expect a grid container in the parent component
-          <Grid item key={key} xs={12}>
-            <Typography component="h4" variant="subtitle1">
-              <em>{title}</em>
-            </Typography>
-            <FileSelector
-              multiple={!!multiple}
-              projectId={projectId}
-              type={type}
-              value={initialValues?.[key] || inputsData[key]}
-              onSelect={(selection) => setInputsData({ ...inputsData, [key]: selection })}
-            />
-          </Grid>
-        );
-      })}
+      {Object.entries(inputs.properties).map(
+        ([key, { title, type, multiple, 'mime-types': mimeTypes }]) => {
+          return (
+            // Expect a grid container in the parent component
+            <Grid item key={key} xs={12}>
+              <Typography component="h4" variant="subtitle1">
+                <em>{title}</em>
+              </Typography>
+              <FileSelector
+                mimeTypes={mimeTypes}
+                multiple={!!multiple}
+                projectId={projectId}
+                targetType={type}
+                value={initialValues?.[key] || inputsData[key]}
+                onSelect={(selection) => setInputsData({ ...inputsData, [key]: selection })}
+              />
+            </Grid>
+          );
+        },
+      )}
     </>
   );
 };

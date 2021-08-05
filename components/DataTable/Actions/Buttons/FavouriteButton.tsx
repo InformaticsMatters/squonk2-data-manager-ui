@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import React from 'react';
 
 import { css } from '@emotion/react';
+import type { CheckboxProps } from '@material-ui/core';
 import { Checkbox, Tooltip } from '@material-ui/core';
 import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import StarRoundedIcon from '@material-ui/icons/StarRounded';
@@ -14,17 +15,25 @@ export interface FavouriteButtonProps {
   projectId: ProjectId;
   fullPath: string;
   type: SavedFile['type'];
+  mimeType: string | undefined;
+  CheckboxProps?: CheckboxProps;
 }
 
-export const FavouriteButton: FC<FavouriteButtonProps> = ({ projectId, fullPath, type }) => {
+export const FavouriteButton = ({
+  projectId,
+  fullPath,
+  type,
+  mimeType,
+  CheckboxProps,
+}: FavouriteButtonProps) => {
   const { selectedFiles, addFile, removeFile } = useSelectedFiles(projectId);
 
   const file = selectedFiles?.find((file) => file.path === fullPath);
 
-  const handleFavouriteChange = (checked: boolean, fullPath: string, type: SavedFile['type']) => {
+  const handleFavouriteChange = (checked: boolean, fullPath: string) => {
     checked
-      ? addFile && addFile({ path: fullPath, type })
-      : removeFile && removeFile({ path: fullPath, type });
+      ? addFile && addFile({ path: fullPath, type, mimeType })
+      : removeFile && removeFile({ path: fullPath, type, mimeType });
   };
 
   return (
@@ -39,7 +48,8 @@ export const FavouriteButton: FC<FavouriteButtonProps> = ({ projectId, fullPath,
         edge="end"
         icon={<StarBorderRoundedIcon />}
         size="small"
-        onChange={(_event, checked) => handleFavouriteChange(checked, fullPath, type)}
+        onChange={(_event, checked) => handleFavouriteChange(checked, fullPath)}
+        {...CheckboxProps}
       />
     </Tooltip>
   );

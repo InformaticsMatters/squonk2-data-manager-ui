@@ -4,18 +4,10 @@ import React, { useState } from 'react';
 import { css } from '@emotion/react';
 import { Button, Collapse, Toolbar, Tooltip, Typography } from '@material-ui/core';
 
-import type { ProjectId } from '../state/currentProjectHooks';
 import { MiniFileList } from './MiniFileList';
+import type { SharedProps } from './types';
 
-export interface FileSelectorProps {
-  type: 'directory' | 'file';
-  multiple: boolean;
-  projectId: NonNullable<ProjectId>;
-  value?: string[] | string;
-  onSelect: (selection: string[] | string | undefined) => void;
-}
-
-export const FileSelector: FC<FileSelectorProps> = ({ value, type, ...props }) => {
+export const FileSelector: FC<SharedProps> = ({ value, targetType, ...props }) => {
   const [expanded, setExpanded] = useState(false);
 
   const files = [value].flat().filter((f) => f !== undefined);
@@ -24,7 +16,7 @@ export const FileSelector: FC<FileSelectorProps> = ({ value, type, ...props }) =
     <>
       <Collapse in={expanded}>
         <div>
-          <MiniFileList {...props} type={type} value={value} />
+          <MiniFileList {...props} targetType={targetType} value={value} />
         </div>
       </Collapse>
       <Toolbar disableGutters variant="dense">
@@ -59,7 +51,7 @@ export const FileSelector: FC<FileSelectorProps> = ({ value, type, ...props }) =
               variant="outlined"
               onClick={() => setExpanded(true)}
             >
-              Select {type}
+              Select {targetType}
             </Button>
           </>
         ) : (

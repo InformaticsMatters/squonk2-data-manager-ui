@@ -6,6 +6,7 @@ import { useCurrentProjectId } from '../state/currentProjectHooks';
 export type SavedFile = {
   path: string;
   type: 'file' | 'directory';
+  mimeType?: string;
 };
 
 interface FileState {

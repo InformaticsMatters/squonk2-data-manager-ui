@@ -24,19 +24,15 @@ export const EditProject: FC<EditProjectProps> = ({ inverted = false, canEdit })
         arrow
         title={canEdit ? 'Edit Project' : 'Select a project of which you have ownership'}
       >
-        <>
-          <Tooltip title="Edit Project">
-            <span>
-              <IconButton
-                color={inverted ? 'inherit' : 'default'}
-                disabled={!canEdit}
-                onClick={() => setOpen(!open)}
-              >
-                <EditIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-        </>
+        <span>
+          <IconButton
+            color={inverted ? 'inherit' : 'default'}
+            disabled={!canEdit}
+            onClick={() => setOpen(!open)}
+          >
+            <EditIcon />
+          </IconButton>
+        </span>
       </Tooltip>
       <ModalWrapper
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}

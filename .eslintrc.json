@@ -32,6 +32,7 @@
   "rules": {
     "object-shorthand": "warn",
     "no-else-return": "warn",
+    "react/jsx-no-useless-fragment": "warn",
     "react/react-in-jsx-scope": 0,
     "react/display-name": 0,
     "react/prop-types": 0,

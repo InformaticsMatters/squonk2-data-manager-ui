@@ -17,11 +17,11 @@ export const UserMenu = () => {
   return (
     <>
       <Tooltip arrow title="User">
-        <>
+        <span>
           <IconButton color="inherit" disabled={isLoading} edge="end" {...bindTrigger(popupState)}>
             <AccountCircle />
           </IconButton>
-        </>
+        </span>
       </Tooltip>
 
       <Popover

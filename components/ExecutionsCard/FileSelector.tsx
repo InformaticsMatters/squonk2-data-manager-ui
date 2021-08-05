@@ -8,7 +8,7 @@ import type { ProjectId } from '../state/currentProjectHooks';
 import { MiniFileList } from './MiniFileList';
 
 export interface FileSelectorProps {
-  type: 'directory' | 'dir' | 'file';
+  type: 'directory' | 'file';
   multiple: boolean;
   projectId: NonNullable<ProjectId>;
   value?: string[] | string;

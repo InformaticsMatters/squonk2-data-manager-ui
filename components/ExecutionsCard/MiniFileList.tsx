@@ -29,7 +29,7 @@ import type { ProjectId } from '../state/currentProjectHooks';
 import { useSelectedFiles } from '../state/FileSelectionContext';
 
 export interface MiniFileTableProps {
-  type: 'directory' | 'dir' | 'file';
+  type: 'directory' | 'file';
   multiple: boolean;
   projectId: NonNullable<ProjectId>;
   value?: string[] | string;

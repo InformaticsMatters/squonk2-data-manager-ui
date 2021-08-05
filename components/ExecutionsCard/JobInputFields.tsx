@@ -11,7 +11,7 @@ import type { InputData } from './JobModal';
 // These might be defined in the form generator types?
 interface InputFieldSchema {
   title: string;
-  type: 'directory' | 'dir' | 'file';
+  type: 'directory' | 'file';
   'mime-types': string[];
   multiple?: true;
 }

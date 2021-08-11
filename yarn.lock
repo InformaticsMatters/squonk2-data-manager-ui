@@ -710,10 +710,10 @@
   resolved "https://registry.yarnpkg.com/@panva/asn1.js/-/asn1.js-1.0.0.tgz#dd55ae7b8129e02049f009408b97c61ccf9032f6"
   integrity sha512-UdkG3mLEqXgnlKsWanWcgb6dOjUzJ+XC5f+aWw30qrtjxeNUSfKX1cd5FBzOaXQumoe9nIqeZUvrRJS03HCCtw==
 
-"@rjsf/core@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-3.0.0.tgz#7f79b0635c969e3fbfe0aaa4773d844fbee68a63"
-  integrity sha512-QSvyVMDiwd7neVnIMOte4tZUvtDWgLDYKOsq1tgCsIFh+RXskd3AEBf6IsK8w6Wg36Om7YalDqqrtXbk9z+rLw==
+"@rjsf/core@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-3.0.2.tgz#7e6db1e95becd9dea4bb5abcc8949a1e9231c97f"
+  integrity sha512-6hqXS3zbEF9OdHzPs/otFP3bh3GWYQXYmzCrebZ80SRkdMRjVJaH0+X9XFqndI/nRLH1v/bFUrLc9Rcyzy3S9g==
   dependencies:
     "@types/json-schema" "^7.0.7"
     ajv "^6.7.0"

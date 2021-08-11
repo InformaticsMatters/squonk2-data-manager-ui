@@ -725,10 +725,10 @@
     prop-types "^15.7.2"
     react-is "^16.9.0"
 
-"@rjsf/material-ui@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@rjsf/material-ui/-/material-ui-3.0.0.tgz#69ece2cb549f0e860b5f89898db90edcc95b15ba"
-  integrity sha512-T2B8QnrDQphbFNxDz7baAa0zTd5TXJmO9soHBPTKKdniRbMEOQ19AJBbZkA3ED2XZa/xrUY/6XjERQLpNACddw==
+"@rjsf/material-ui@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@rjsf/material-ui/-/material-ui-3.0.2.tgz#b77af356afdf2d3f4f85bf520c050a0d0f4d1c52"
+  integrity sha512-COUCoFY36yJw7l0b4pMrEIYFNNCrUIP6gVWvxhmkhciqw5k+tzmKxBqGwhhWP5IklFz9q75mQZQWPIRyPlYAow==
 
 "@rushstack/eslint-patch@^1.0.6":
   version "1.0.6"

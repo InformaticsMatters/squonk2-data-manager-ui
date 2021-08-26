@@ -40,6 +40,7 @@ import { OperationApplicationCard } from '../components/Operations/OperationAppl
 import { OperationJobCard } from '../components/Operations/OperationJobCard';
 import { OperationTaskCard } from '../components/Operations/OperationTaskCard';
 import { useCurrentProjectId } from '../components/state/currentProjectHooks';
+import { RoleRequired } from '../utils/RoleRequired';
 import { search } from '../utils/search';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
@@ -142,129 +143,131 @@ const Tasks: FC = () => {
   const [searchValue, setSearchValue] = useState('');
 
   return (
-    <Layout>
-      <Container
-        css={css`
-          margin-top: ${theme.spacing(4)}px;
-        `}
-        maxWidth="md"
-      >
-        <Grid
-          container
-          alignItems="center"
+    <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
+      <Layout>
+        <Container
           css={css`
-            margin-bottom: ${theme.spacing(2)}px;
+            margin-top: ${theme.spacing(4)}px;
           `}
-          spacing={2}
+          maxWidth="md"
         >
-          <Grid item md={4} sm={5} xs={12}>
-            <TextField
-              fullWidth
-              select
-              label="Filter Tasks"
-              SelectProps={{
-                multiple: true,
-                onChange: (event) => {
-                  setOperationTypes(event.target.value as string[]);
-                },
-              }}
-              value={operationTypes}
-            >
-              <MenuItem value="task">Tasks</MenuItem>
-              <MenuItem value="instance">Instances</MenuItem>
-            </TextField>
-          </Grid>
           <Grid
-            item
+            container
+            alignItems="center"
             css={css`
-              margin-left: auto;
+              margin-bottom: ${theme.spacing(2)}px;
             `}
-            md={4}
-            sm={5}
-            xs={12}
+            spacing={2}
           >
-            <TextField
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <SearchRoundedIcon />
-                  </InputAdornment>
-                ),
-              }}
-              label="Search"
-              value={searchValue}
-              onChange={(event) => setSearchValue(event.target.value)}
-            />
-          </Grid>
-          <Grid
-            item
-            css={css`
-              text-align: center;
-            `}
-            sm="auto"
-            xs={12}
-          >
-            <Tooltip title="Refresh Tasks">
-              <IconButton
-                css={css`
-                  margin-left: auto;
-                `}
-                onClick={() => refreshOperations.forEach((func) => func())}
+            <Grid item md={4} sm={5} xs={12}>
+              <TextField
+                fullWidth
+                select
+                label="Filter Tasks"
+                SelectProps={{
+                  multiple: true,
+                  onChange: (event) => {
+                    setOperationTypes(event.target.value as string[]);
+                  },
+                }}
+                value={operationTypes}
               >
-                <RefreshRoundedIcon />
-              </IconButton>
-            </Tooltip>
+                <MenuItem value="task">Tasks</MenuItem>
+                <MenuItem value="instance">Instances</MenuItem>
+              </TextField>
+            </Grid>
+            <Grid
+              item
+              css={css`
+                margin-left: auto;
+              `}
+              md={4}
+              sm={5}
+              xs={12}
+            >
+              <TextField
+                fullWidth
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <SearchRoundedIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                label="Search"
+                value={searchValue}
+                onChange={(event) => setSearchValue(event.target.value)}
+              />
+            </Grid>
+            <Grid
+              item
+              css={css`
+                text-align: center;
+              `}
+              sm="auto"
+              xs={12}
+            >
+              <Tooltip title="Refresh Tasks">
+                <IconButton
+                  css={css`
+                    margin-left: auto;
+                  `}
+                  onClick={() => refreshOperations.forEach((func) => func())}
+                >
+                  <RefreshRoundedIcon />
+                </IconButton>
+              </Tooltip>
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Grid container spacing={2}>
-          {instances !== undefined &&
-          tasks !== undefined &&
-          !isTasksLoading &&
-          !isInstancesLoading ? (
-            [
-              ...(operationTypes.includes('instance') ? instances : []).filter(
-                ({ job_name, name, state }) => search([job_name, name, state], searchValue),
-              ),
-              ...(operationTypes.includes('task') ? tasks : [])
-                .filter((task) => task.purpose === 'DATASET' || task.purpose === 'FILE')
-                .filter(({ processing_stage, purpose }) =>
-                  search([processing_stage, purpose], searchValue),
+          <Grid container spacing={2}>
+            {instances !== undefined &&
+            tasks !== undefined &&
+            !isTasksLoading &&
+            !isInstancesLoading ? (
+              [
+                ...(operationTypes.includes('instance') ? instances : []).filter(
+                  ({ job_name, name, state }) => search([job_name, name, state], searchValue),
                 ),
-            ]
-              .sort((a, b) => {
-                const aTime = getTimeStamp(a);
-                const bTime = getTimeStamp(b);
+                ...(operationTypes.includes('task') ? tasks : [])
+                  .filter((task) => task.purpose === 'DATASET' || task.purpose === 'FILE')
+                  .filter(({ processing_stage, purpose }) =>
+                    search([processing_stage, purpose], searchValue),
+                  ),
+              ]
+                .sort((a, b) => {
+                  const aTime = getTimeStamp(a);
+                  const bTime = getTimeStamp(b);
 
-                return dayjs(aTime).isBefore(dayjs(bTime)) ? 1 : -1;
-              })
-              .map((instanceOrTask) => {
-                if (!isTaskSummary(instanceOrTask)) {
-                  const instance = instanceOrTask;
-                  return instance.application_type === 'JOB' ? (
-                    <Grid item key={instance.id} xs={12}>
-                      <OperationJobCard instance={instance} />
-                    </Grid>
-                  ) : (
-                    <Grid item key={instance.id} xs={12}>
-                      <OperationApplicationCard instance={instance} />
+                  return dayjs(aTime).isBefore(dayjs(bTime)) ? 1 : -1;
+                })
+                .map((instanceOrTask) => {
+                  if (!isTaskSummary(instanceOrTask)) {
+                    const instance = instanceOrTask;
+                    return instance.application_type === 'JOB' ? (
+                      <Grid item key={instance.id} xs={12}>
+                        <OperationJobCard instance={instance} />
+                      </Grid>
+                    ) : (
+                      <Grid item key={instance.id} xs={12}>
+                        <OperationApplicationCard instance={instance} />
+                      </Grid>
+                    );
+                  }
+                  const task = instanceOrTask;
+                  return (
+                    <Grid item key={task.id} xs={12}>
+                      <OperationTaskCard task={task} />
                     </Grid>
                   );
-                }
-                const task = instanceOrTask;
-                return (
-                  <Grid item key={task.id} xs={12}>
-                    <OperationTaskCard task={task} />
-                  </Grid>
-                );
-              })
-          ) : (
-            <CenterLoader />
-          )}
-        </Grid>
-      </Container>
-    </Layout>
+                })
+            ) : (
+              <CenterLoader />
+            )}
+          </Grid>
+        </Container>
+      </Layout>
+    </RoleRequired>
   );
 };
 

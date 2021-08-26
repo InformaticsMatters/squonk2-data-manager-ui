@@ -86,6 +86,7 @@
     "base-card",
     "job-file-inputs",
     "labels",
-    "dataset-editors"
+    "dataset-editors",
+    "Authorization"
   ],
 }

@@ -84,6 +84,7 @@
     "file-selection",
     "project-path",
     "base-card",
-    "job-file-inputs"
+    "job-file-inputs",
+    "labels"
   ],
 }

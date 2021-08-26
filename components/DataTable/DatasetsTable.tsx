@@ -3,9 +3,10 @@ import type { CellProps, Column, PluginHook } from 'react-table';
 
 import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 
-import { CircularProgress, Typography } from '@material-ui/core';
+import { Chip, CircularProgress, Typography } from '@material-ui/core';
 import dynamic from 'next/dynamic';
 
+import { Chips } from '../Chips';
 import type { DatasetActionsProps } from './Actions/DatasetActions';
 import { DataTable } from './DataTable';
 import type { TableDataset } from './types';
@@ -29,6 +30,17 @@ export const AllDatasetsTable = () => {
     () => [
       { accessor: 'fileName', Header: 'File Name' },
       {
+        accessor: 'labels',
+        Cell: ({ value: labels, row }) => (
+          <Chips>
+            {labels.map(([label, value]) => (
+              <Chip key={label} label={`${label}=${value}`} size="small" variant="outlined" />
+            ))}
+          </Chips>
+        ),
+        Header: 'Labels',
+      },
+      {
         id: 'editors',
         accessor: (row) => row.editors.join(', '),
         Header: 'Editors',
@@ -51,6 +63,7 @@ export const AllDatasetsTable = () => {
         const fileName = dataset.versions[0].file_name; // TODO: should either use the newest version or wait for the API to change
         return {
           fileName,
+          labels: Object.entries(dataset.versions[0].labels ?? {}),
           ...dataset,
         };
       }),

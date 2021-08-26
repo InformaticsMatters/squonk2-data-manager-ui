@@ -6,7 +6,10 @@ interface BaseTableRow {
 }
 
 // Properties of datasets only
-export type TableDataset = DatasetDetail & BaseTableRow;
+export type TableDataset = DatasetDetail &
+  BaseTableRow & {
+    labels: [string, string][];
+  };
 
 // Properties of files only
 interface BaseTableFile extends Omit<FilePathFile, 'file_name'> {

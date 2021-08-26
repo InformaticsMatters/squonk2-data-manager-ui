@@ -6,7 +6,7 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import { useCurrentProject } from '../state/currentProjectHooks';
-import { Editors } from './Editors';
+import { Editors } from './ProjectEditors';
 
 interface EditProjectProps {
   canEdit: boolean;

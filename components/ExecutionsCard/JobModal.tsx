@@ -7,12 +7,24 @@ import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager
 import { useGetJob } from '@squonk/data-manager-client/job';
 
 import { Grid, TextField, Typography } from '@material-ui/core';
-import Form from '@rjsf/material-ui';
+import type { FormProps } from '@rjsf/core';
+import dynamic from 'next/dynamic';
 
 import { CenterLoader } from '../CenterLoader';
 import { ModalWrapper } from '../Modals/ModalWrapper';
 import type { ProjectId } from '../state/currentProjectHooks';
-import { JobInputFields } from './JobInputFields';
+import type { JobInputFieldsProps } from './JobInputFields';
+
+const JobInputFields = dynamic<JobInputFieldsProps>(
+  () => import('./JobInputFields').then((mod) => mod.JobInputFields),
+  {
+    loading: () => <CenterLoader />,
+  },
+);
+
+const Form = dynamic<FormProps<any>>(() => import('@rjsf/material-ui'), {
+  loading: () => <CenterLoader />,
+});
 
 export type InputData = Record<string, string | string[] | undefined>;
 

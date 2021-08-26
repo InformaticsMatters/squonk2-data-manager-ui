@@ -71,7 +71,7 @@ export const Editors: FC = () => {
       renderInput={(params) => <TextField {...params} label="Editors" />}
       renderTags={(value, getTagProps) =>
         value.map((option: string, index: number) => {
-          const { onDelete, ...chipProps } = getTagProps({ index }) as any;
+          const { onDelete, ...chipProps } = getTagProps({ index }) as any; // TODO: find better typing
           return (
             <Chip
               key={option}

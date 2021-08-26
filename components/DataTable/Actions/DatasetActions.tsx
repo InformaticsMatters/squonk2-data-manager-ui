@@ -7,6 +7,7 @@ import type { TableDataset } from '../types';
 import { AttachDatasetButton } from './Buttons/AttachDatasetButton';
 import { DeleteDatasetButton } from './Buttons/DeleteDatasetButton';
 import { DownloadDatasetButton } from './Buttons/DownloadDatasetButton';
+import { EditDatasetButton } from './Buttons/EditDatasetButton';
 import { NewVersionButton } from './Buttons/NewVersionButton';
 
 export interface DatasetActionsProps {
@@ -24,6 +25,9 @@ export const DatasetActions: FC<DatasetActionsProps> = ({ dataset }) => {
         fileName={dataset.fileName}
         versions={dataset.versions}
       />
+      {user?.preferred_username &&
+        (dataset.editors.includes(user.preferred_username as string) ||
+          dataset.owner === user.preferred_username) && <EditDatasetButton dataset={dataset} />}
       {user?.preferred_username &&
         (dataset.editors.includes(user.preferred_username as string) ||
           dataset.owner === user.preferred_username) && (

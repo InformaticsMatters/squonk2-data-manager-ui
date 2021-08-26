@@ -85,6 +85,7 @@
     "project-path",
     "base-card",
     "job-file-inputs",
-    "labels"
+    "labels",
+    "dataset-editors"
   ],
 }

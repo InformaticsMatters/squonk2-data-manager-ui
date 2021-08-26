@@ -23,7 +23,7 @@ interface InputSchema {
   };
 }
 
-interface JobInputFieldsProps {
+export interface JobInputFieldsProps {
   projectId: NonNullable<ProjectId>;
   inputs: InputSchema;
   initialValues?: InputData;

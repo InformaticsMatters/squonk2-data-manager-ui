@@ -2,10 +2,10 @@ import React from 'react';
 
 import type { JobSummary } from '@squonk/data-manager-client';
 
-import { css } from '@emotion/react';
 import { Chip, Typography, useTheme } from '@material-ui/core';
 
 import { BaseCard } from '../BaseCard';
+import { Chips } from '../Chips';
 import type { ProjectId } from '../state/currentProjectHooks';
 import { InstancesList } from './InstancesList';
 import { RunJobButton } from './RunJobButton';
@@ -37,19 +37,11 @@ export const JobCard: React.FC<ApplicationCardProps> = ({ projectId, job: jobSum
       <Typography>
         <em>{jobSummary.category}</em>
       </Typography>
-      <div
-        css={css`
-          display: flex;
-          flex-wrap: wrap;
-          & > * {
-            margin: ${theme.spacing(0.5)}px;
-          }
-        `}
-      >
+      <Chips>
         {jobSummary.keywords?.map((word) => (
           <Chip color="primary" key={word} label={word} size="small" variant="outlined" />
         ))}
-      </div>
+      </Chips>
     </BaseCard>
   );
 };

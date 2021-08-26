@@ -31,7 +31,7 @@ export const AllDatasetsTable = () => {
       { accessor: 'fileName', Header: 'File Name' },
       {
         accessor: 'labels',
-        Cell: ({ value: labels, row }) => (
+        Cell: ({ value: labels }) => (
           <Chips>
             {labels.map(([label, value]) => (
               <Chip key={label} label={`${label}=${value}`} size="small" variant="outlined" />
@@ -41,9 +41,17 @@ export const AllDatasetsTable = () => {
         Header: 'Labels',
       },
       {
-        id: 'editors',
-        accessor: (row) => row.editors.join(', '),
+        accessor: 'editors',
         Header: 'Editors',
+        Cell: ({ value: editors, row }) => {
+          return (
+            <>
+              <i>{row.original.owner}</i>
+              {editors.length > 1 && ', '}
+              {editors.filter((editor) => editor !== row.original.owner).join(', ')}
+            </>
+          );
+        },
       },
       {
         id: 'versions',

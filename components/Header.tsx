@@ -1,12 +1,12 @@
 import type { FC } from 'react';
 import React from 'react';
 
-import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { AppBar, Toolbar, useTheme } from '@material-ui/core';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
+import { useIsAuthorized } from '../hooks/useIsAuthorized';
 import { Logo } from './navigation/Logo';
 import { NavLink } from './navigation/NavLink';
 import { UserMenu } from './navigation/UserMenu';
@@ -23,7 +23,7 @@ const ProjectManager = dynamic<ProjectManagerProps>(
 const Header: FC = () => {
   const theme = useTheme();
   const router = useRouter();
-  const { user } = useUser();
+  const isAuthorized = useIsAuthorized();
 
   return (
     <AppBar position="static">
@@ -67,7 +67,7 @@ const Header: FC = () => {
             margin-left: auto;
           `}
         >
-          {user && <ProjectManager inverted />}
+          {isAuthorized && <ProjectManager inverted />}
           <UserMenu />
         </div>
       </Toolbar>

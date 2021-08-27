@@ -44,8 +44,7 @@ export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVers
           validateOnMount
           initialValues={{ label: '', value: '' }}
           validationSchema={yup.object().shape({
-            label: yup.string().required('A label name is required'),
-            value: yup.string().required('A label value is required'),
+            label: yup.string().trim().required('A label name is required'),
           })}
           onSubmit={async ({ label, value }) => {
             await addAnnotations({
@@ -53,7 +52,12 @@ export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVers
               datasetversion: datasetVersion.version,
               data: {
                 annotations: JSON.stringify([
-                  { label, value, type: 'LabelAnnotation', active: true },
+                  {
+                    label: label.trim(),
+                    value: value.trim(),
+                    type: 'LabelAnnotation',
+                    active: true,
+                  },
                 ]),
               },
             });
@@ -71,19 +75,8 @@ export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVers
                   gap: ${theme.spacing(1)}px;
                 `}
               >
-                <Field
-                  autoFocus
-                  component={TextField}
-                  inputProps={{ maxLength: 18 }}
-                  label="Name"
-                  name="label"
-                />
-                <Field
-                  component={TextField}
-                  inputProps={{ maxLength: 18 }}
-                  label="Value"
-                  name="value"
-                />
+                <Field autoFocus component={TextField} label="Name" name="label" />
+                <Field component={TextField} label="Value" name="value" />
                 <Button disabled={isSubmitting || !isValid} onClick={submitForm}>
                   Add
                 </Button>

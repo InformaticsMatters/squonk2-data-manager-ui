@@ -14,6 +14,7 @@ import { TextField } from 'formik-material-ui';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 import * as yup from 'yup';
 
+import { LowerCaseTextField } from '../../utils/LowerCaseTextField';
 import type { TableDataset } from '../DataTable/types';
 
 export interface NewLabelButtonProps {
@@ -53,7 +54,7 @@ export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVers
               data: {
                 annotations: JSON.stringify([
                   {
-                    label: label.trim(),
+                    label: label.trim().toLowerCase(),
                     value: value.trim(),
                     type: 'LabelAnnotation',
                     active: true,
@@ -75,7 +76,7 @@ export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVers
                   gap: ${theme.spacing(1)}px;
                 `}
               >
-                <Field autoFocus component={TextField} label="Name" name="label" />
+                <Field autoFocus component={LowerCaseTextField} label="Name" name="label" />
                 <Field component={TextField} label="Value" name="value" />
                 <Button disabled={isSubmitting || !isValid} onClick={submitForm}>
                   Add

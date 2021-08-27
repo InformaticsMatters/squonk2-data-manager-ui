@@ -7,6 +7,7 @@ import { getGetDatasetsQueryKey, useAddAnnotations } from '@squonk/data-manager-
 
 import { Chip, Typography } from '@material-ui/core';
 
+import { labelFormatter } from '../../utils/labelFormatter';
 import { Chips } from '../Chips';
 import type { TableDataset } from '../DataTable/types';
 import { NewLabelButton } from './NewLabelButton';
@@ -33,7 +34,7 @@ export const Labels: FC<LabelsProps> = ({ datasetId, datasetVersion }) => {
           labels.map(([label, value]) => (
             <Chip
               key={label}
-              label={`${label}=${value}`}
+              label={labelFormatter(label, value)}
               size="small"
               variant="outlined"
               onDelete={async () => {

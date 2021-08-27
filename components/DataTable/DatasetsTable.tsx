@@ -6,6 +6,7 @@ import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 import { Chip, CircularProgress, Typography } from '@material-ui/core';
 import dynamic from 'next/dynamic';
 
+import { labelFormatter } from '../../utils/labelFormatter';
 import { Chips } from '../Chips';
 import type { DatasetActionsProps } from './Actions/DatasetActions';
 import { DataTable } from './DataTable';
@@ -34,7 +35,12 @@ export const AllDatasetsTable = () => {
         Cell: ({ value: labels }) => (
           <Chips>
             {labels.map(([label, value]) => (
-              <Chip key={label} label={`${label}=${value}`} size="small" variant="outlined" />
+              <Chip
+                key={label}
+                label={labelFormatter(label, value)}
+                size="small"
+                variant="outlined"
+              />
             ))}
           </Chips>
         ),

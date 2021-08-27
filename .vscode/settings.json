@@ -88,6 +88,7 @@
     "labels",
     "dataset-editors",
     "Authorization",
-    "user"
+    "user",
+    "typescript"
   ],
 }

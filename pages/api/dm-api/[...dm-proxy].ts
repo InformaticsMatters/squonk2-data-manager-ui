@@ -20,7 +20,7 @@ export default withApiAuthRequired(async (req, res) => {
         cookie: '', // Must override the browser sent authorization code otherwise ingress gives a 400 status
       },
     });
-  } catch (error: unknown) {
+  } catch (error) {
     console.error(error);
     res.status(500).json(error);
   }

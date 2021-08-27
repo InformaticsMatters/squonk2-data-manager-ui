@@ -51,7 +51,7 @@ export const FileUpload = () => {
             setFiles(updatedFiles);
           }
         } catch (err) {
-          if (err.isAxiosError) {
+          if ((err as AxiosError).isAxiosError) {
             const data = (err as AxiosError).response?.data;
 
             const updatedFiles = [...files];

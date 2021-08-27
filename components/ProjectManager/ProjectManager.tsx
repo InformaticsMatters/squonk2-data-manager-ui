@@ -6,6 +6,7 @@ import {
   useDeleteProject,
   useGetProjects,
 } from '@squonk/data-manager-client/project';
+import { getGetUserAccountQueryKey } from '@squonk/data-manager-client/user';
 
 import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
@@ -42,6 +43,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
     currentProject?.project_id &&
       (await deleteProjectMutation.mutateAsync({ projectid: currentProject.project_id }));
     queryClient.invalidateQueries(getGetProjectsQueryKey());
+    queryClient.invalidateQueries(getGetUserAccountQueryKey());
   };
 
   const textFieldProps: TextFieldProps = {
@@ -51,7 +53,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
   const InputProps = {
     startAdornment: isOwner ? (
       <>
-        {currentProject?.owner === user?.preferred_username && (
+        {currentProject?.owner === user.preferred_username && (
           <InputAdornment position="start">
             <DeleteProject onClick={handleDelete} />
           </InputAdornment>

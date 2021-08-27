@@ -21,12 +21,6 @@ export interface NewLabelButtonProps {
   datasetVersion: DatasetVersionDetail;
 }
 
-const testMinLengthArgs = [
-  'min-length-1',
-  'Text must be at least a character long',
-  (value?: string) => (value ?? '').length > 0,
-] as const;
-
 export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVersion }) => {
   const theme = useTheme();
   const queryClient = useQueryClient();
@@ -50,8 +44,8 @@ export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVers
           validateOnMount
           initialValues={{ label: '', value: '' }}
           validationSchema={yup.object().shape({
-            label: yup.string().test(...testMinLengthArgs),
-            value: yup.string().test(...testMinLengthArgs),
+            label: yup.string().required('A label name is required'),
+            value: yup.string().required('A label value is required'),
           })}
           onSubmit={async ({ label, value }) => {
             await addAnnotations({

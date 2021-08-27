@@ -65,6 +65,7 @@ const Header: FC = () => {
           css={css`
             display: flex;
             margin-left: auto;
+            align-items: center;
           `}
         >
           {isAuthorized && <ProjectManager inverted />}

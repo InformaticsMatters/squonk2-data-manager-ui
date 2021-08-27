@@ -87,6 +87,7 @@
     "job-file-inputs",
     "labels",
     "dataset-editors",
-    "Authorization"
+    "Authorization",
+    "user"
   ],
 }

@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import React from 'react';
 
 import { useUser } from '@auth0/nextjs-auth0';
+import { css } from '@emotion/react';
 
 import type { TableDataset } from '../types';
 import { AttachDatasetButton } from './Buttons/AttachDatasetButton';
@@ -18,7 +19,11 @@ export const DatasetActions: FC<DatasetActionsProps> = ({ dataset }) => {
   const { user } = useUser();
 
   return (
-    <>
+    <div
+      css={css`
+        white-space: nowrap;
+      `}
+    >
       <DownloadDatasetButton datasetId={dataset.dataset_id} versions={dataset.versions} />
       <AttachDatasetButton
         datasetId={dataset.dataset_id}
@@ -36,6 +41,6 @@ export const DatasetActions: FC<DatasetActionsProps> = ({ dataset }) => {
       {user?.preferred_username &&
         (dataset.editors.includes(user.preferred_username as string) ||
           dataset.owner === user.preferred_username) && <NewVersionButton dataset={dataset} />}
-    </>
+    </div>
   );
 };

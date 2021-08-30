@@ -36,7 +36,11 @@ export const TerminateInstance: FC<TerminateInstanceProps> = ({ instance }) => {
         ]);
       }}
     >
-      {({ openModal }) => <Button onClick={openModal}>Terminate</Button>}
+      {({ openModal }) => (
+        <Button onClick={openModal}>
+          {['FAILURE', 'SUCCESS'].includes(instance.state) ? 'Delete' : 'Terminate'}
+        </Button>
+      )}
     </WarningDeleteButton>
   );
 };

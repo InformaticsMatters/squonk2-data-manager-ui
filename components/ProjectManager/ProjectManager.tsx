@@ -12,13 +12,15 @@ import { useUser } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import type { TextFieldProps } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import { Grid, InputAdornment, TextField } from '@material-ui/core';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
 
 import { useCurrentProject, useCurrentProjectId } from '../state/currentProjectHooks';
+import { WarningDeleteButton } from '../WarningDeleteButton';
 import { AddProject } from './AddProject';
-import { DeleteProject } from './DeleteProject';
 import { EditProject } from './EditProject';
 
 export interface ProjectManagerProps {
@@ -55,7 +57,18 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
       <>
         {currentProject?.owner === user.preferred_username && (
           <InputAdornment position="start">
-            <DeleteProject onClick={handleDelete} />
+            <WarningDeleteButton
+              modalId={`delete-${currentProject?.project_id}`}
+              title="Delete Project"
+              tooltipText="Delete selected project"
+              onDelete={handleDelete}
+            >
+              {({ openModal }) => (
+                <IconButton aria-label="Delete selected project" onClick={openModal}>
+                  <DeleteForeverIcon />
+                </IconButton>
+              )}
+            </WarningDeleteButton>
           </InputAdornment>
         )}
 

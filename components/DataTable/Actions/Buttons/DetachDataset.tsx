@@ -1,14 +1,14 @@
 import type { FC } from 'react';
-import React, { useState } from 'react';
+import React from 'react';
 import { useQueryClient } from 'react-query';
 
 import { useDeleteFile } from '@squonk/data-manager-client/file';
 import { getGetProjectQueryKey } from '@squonk/data-manager-client/project';
 
-import { IconButton, Tooltip, Typography } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
 
-import { ModalWrapper } from '../../../Modals/ModalWrapper';
+import { WarningDeleteButton } from '../../../WarningDeleteButton';
 
 interface DetachDatasetProps {
   fileId: string;
@@ -19,30 +19,22 @@ export const DetachDataset: FC<DetachDatasetProps> = ({ fileId, projectId }) => 
   const queryClient = useQueryClient();
   const detachMutation = useDeleteFile();
 
-  const [open, setOpen] = useState(false);
   return (
-    <>
-      <ModalWrapper
-        id={`detach-dataset-${fileId}`}
-        open={open}
-        submitText="Detach"
-        title="Detach File"
-        onClose={() => setOpen(false)}
-        onSubmit={async () => {
-          await detachMutation.mutateAsync({ fileid: fileId });
-          queryClient.invalidateQueries(getGetProjectQueryKey(projectId));
-          setOpen(false);
-        }}
-      >
-        <Typography variant="body1">
-          Are you sure? <b>This cannot be undone</b>.
-        </Typography>
-      </ModalWrapper>
-      <Tooltip title="Detach File">
-        <IconButton aria-label="Delete selected dataset" size="small" onClick={() => setOpen(true)}>
+    <WarningDeleteButton
+      modalId={`detach-dataset-${fileId}`}
+      submitText="Detach"
+      title="Detach File"
+      tooltipText="Detach File"
+      onDelete={async () => {
+        await detachMutation.mutateAsync({ fileid: fileId });
+        await queryClient.invalidateQueries(getGetProjectQueryKey(projectId));
+      }}
+    >
+      {({ openModal }) => (
+        <IconButton aria-label="Delete selected dataset" size="small" onClick={openModal}>
           <DeleteOutlineRoundedIcon />
         </IconButton>
-      </Tooltip>
-    </>
+      )}
+    </WarningDeleteButton>
   );
 };

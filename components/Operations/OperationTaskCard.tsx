@@ -1,13 +1,17 @@
 import type { FC } from 'react';
 import React from 'react';
+import { useQueryClient } from 'react-query';
 
 import type { TaskSummary } from '@squonk/data-manager-client';
+import { getGetTasksQueryKey, useDeleteTask } from '@squonk/data-manager-client/task';
 
 import { css } from '@emotion/react';
-import { CardContent, Typography, useTheme } from '@material-ui/core';
+import { Button, CardContent, Typography, useTheme } from '@material-ui/core';
 
 import { BaseCard } from '../BaseCard';
 import { LocalTime } from '../LocalTime/LocalTime';
+import { useCurrentProjectId } from '../state/currentProjectHooks';
+import { WarningDeleteButton } from '../WarningDeleteButton';
 import { StatusIcon } from './common/StatusIcon';
 import { TaskDetails } from './details/TaskDetails';
 
@@ -18,8 +22,29 @@ interface TaskCardProps {
 export const OperationTaskCard: FC<TaskCardProps> = ({ task }) => {
   const theme = useTheme();
 
+  const queryClient = useQueryClient();
+  const { mutateAsync: deleteTask } = useDeleteTask();
+
+  const { projectId } = useCurrentProjectId();
+
   return (
     <BaseCard
+      actions={
+        <WarningDeleteButton
+          modalId={`delete-task-${task.id}`}
+          title="Delete Task"
+          tooltipText="Delete Task"
+          onDelete={async () => {
+            await deleteTask({ taskid: task.id });
+            await Promise.all([
+              queryClient.invalidateQueries(getGetTasksQueryKey()),
+              queryClient.invalidateQueries(getGetTasksQueryKey({ project_id: projectId })),
+            ]);
+          }}
+        >
+          {({ openModal }) => <Button onClick={openModal}>Delete</Button>}
+        </WarningDeleteButton>
+      }
       collapsed={
         <CardContent>
           <TaskDetails taskId={task.id} />

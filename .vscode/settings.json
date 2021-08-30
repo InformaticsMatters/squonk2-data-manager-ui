@@ -89,6 +89,7 @@
     "dataset-editors",
     "Authorization",
     "user",
-    "typescript"
+    "typescript",
+    "head"
   ],
 }

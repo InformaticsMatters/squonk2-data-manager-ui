@@ -16,6 +16,7 @@ import {
   useTheme,
 } from '@material-ui/core';
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
+import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -40,47 +41,55 @@ const Tasks: FC = () => {
   ];
 
   return (
-    <Layout>
-      <Container
-        css={css`
-          margin-top: ${theme.spacing(4)}px;
-        `}
-        maxWidth="md"
-      >
-        <div
+    <>
+      <Head>
+        <title>Squonk | Task {instance?.state}</title>
+      </Head>
+      <Layout>
+        <Container
           css={css`
-            display: flex;
-            align-items: flex-start;
+            margin-top: ${theme.spacing(4)}px;
           `}
+          maxWidth="md"
         >
-          <Typography gutterBottom component="h1" variant="h4">
-            Instance
-          </Typography>
-          <Tooltip title="Refresh Instance">
-            <IconButton
-              css={css`
-                margin-left: auto;
-              `}
-              onClick={() => refreshOperations.forEach((func) => func())}
-            >
-              <RefreshRoundedIcon />
-            </IconButton>
-          </Tooltip>
-        </div>
-        {instance?.application_type === 'JOB' ? (
-          <Box marginY={1}>
-            <OperationJobCard collapsedByDefault={false} instance={instance} />
-          </Box>
-        ) : instance?.application_type === 'APPLICATION' ? (
-          <OperationApplicationCard collapsedByDefault={false} instance={instance} />
-        ) : (
-          <CenterLoader />
-        )}
-        <NextLink passHref href={{ pathname: '/tasks', query: { project: instance?.project_id } }}>
-          <Button color="primary">See all tasks</Button>
-        </NextLink>
-      </Container>
-    </Layout>
+          <div
+            css={css`
+              display: flex;
+              align-items: flex-start;
+            `}
+          >
+            <Typography gutterBottom component="h1" variant="h4">
+              Instance
+            </Typography>
+            <Tooltip title="Refresh Instance">
+              <IconButton
+                css={css`
+                  margin-left: auto;
+                `}
+                onClick={() => refreshOperations.forEach((func) => func())}
+              >
+                <RefreshRoundedIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
+          {instance?.application_type === 'JOB' ? (
+            <Box marginY={1}>
+              <OperationJobCard collapsedByDefault={false} instance={instance} />
+            </Box>
+          ) : instance?.application_type === 'APPLICATION' ? (
+            <OperationApplicationCard collapsedByDefault={false} instance={instance} />
+          ) : (
+            <CenterLoader />
+          )}
+          <NextLink
+            passHref
+            href={{ pathname: '/tasks', query: { project: instance?.project_id } }}
+          >
+            <Button color="primary">See all tasks</Button>
+          </NextLink>
+        </Container>
+      </Layout>
+    </>
   );
 };
 

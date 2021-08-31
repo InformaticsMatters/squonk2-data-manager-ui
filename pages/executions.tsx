@@ -1,6 +1,8 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import React, { useState } from 'react';
 
+import type { ApplicationsGetResponse, JobsGetResponse } from '@squonk/data-manager-client';
 import { useGetApplications } from '@squonk/data-manager-client/application';
 import { useGetJobs } from '@squonk/data-manager-client/job';
 
@@ -8,8 +10,11 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, Grid, InputAdornment, MenuItem, TextField, useTheme } from '@material-ui/core';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
+import { Alert } from '@material-ui/lab';
+import type { AxiosError } from 'axios';
 import Head from 'next/head';
 
+import { CenterLoader } from '../components/CenterLoader';
 import { ApplicationCard } from '../components/ExecutionsCard/ApplicationCard';
 import { JobCard } from '../components/ExecutionsCard/JobCard';
 import Layout from '../components/Layout';
@@ -25,11 +30,54 @@ const Executions: FC = () => {
 
   const currentProject = useCurrentProject();
 
-  const { data: applicationsData } = useGetApplications();
+  // Needs to assert some types here as Orval still doesn't get this right
+  const {
+    data: applicationsData,
+    isLoading: isApplicationsLoading,
+    isError: isApplicationsError,
+    error: applicationsError,
+  } = useGetApplications<
+    ApplicationsGetResponse,
+    AxiosError<ApplicationsGetResponse>,
+    ApplicationsGetResponse
+  >();
   const applications = applicationsData?.applications;
 
-  const { data: jobsData } = useGetJobs();
+  const {
+    data: jobsData,
+    isLoading: isJobsLoading,
+    isError: isJobsError,
+    error: jobsError,
+  } = useGetJobs<JobsGetResponse, AxiosError<JobsGetResponse>, JobsGetResponse>();
   const jobs = jobsData?.jobs;
+
+  const cards = useMemo(() => {
+    const applicationCards = applications
+      ?.filter(({ kind }) => search([kind], searchValue))
+      ?.map((app) => (
+        <Grid item key={app.application_id} md={3} sm={6} xs={12}>
+          <ApplicationCard app={app} projectId={currentProject?.project_id} />
+        </Grid>
+      ));
+
+    const jobCards = jobs
+      ?.filter(({ keywords, category, name }) => search([keywords, category, name], searchValue))
+      ?.map((job) => (
+        <Grid item key={job.id} md={3} sm={6} xs={12}>
+          <JobCard job={job} projectId={currentProject?.project_id} />
+        </Grid>
+      ));
+
+    const showApplications = executionTypes.includes('application');
+    const showJobs = executionTypes.includes('job');
+
+    if (showApplications && showJobs) {
+      return [...(applicationCards ?? []), ...(jobCards ?? [])];
+    } else if (showApplications) {
+      return applicationCards;
+    }
+    return jobCards;
+  }, [applications, currentProject?.project_id, executionTypes, jobs, searchValue]);
 
   return (
     <>
@@ -92,24 +140,21 @@ const Executions: FC = () => {
               </Grid>
             </Grid>
             <Grid container spacing={2}>
-              {executionTypes.includes('application') &&
-                applications
-                  ?.filter(({ kind }) => search([kind], searchValue))
-                  ?.map((app) => (
-                    <Grid item key={app.application_id} md={3} sm={6} xs={12}>
-                      <ApplicationCard app={app} projectId={currentProject?.project_id} />
-                    </Grid>
-                  ))}
-              {executionTypes.includes('job') &&
-                jobs
-                  ?.filter(({ keywords, category, name }) =>
-                    search([keywords, category, name], searchValue),
-                  )
-                  ?.map((job) => (
-                    <Grid item key={job.id} md={3} sm={6} xs={12}>
-                      <JobCard job={job} projectId={currentProject?.project_id} />
-                    </Grid>
-                  ))}
+              {isApplicationsError && (
+                <Grid item xs={12}>
+                  <Alert severity="warning">
+                    Applications failed to load ({applicationsError?.response?.status})
+                  </Alert>
+                </Grid>
+              )}
+              {isJobsError && (
+                <Grid item xs={12}>
+                  <Alert severity="warning">
+                    Jobs failed to load ({jobsError?.response?.status})
+                  </Alert>
+                </Grid>
+              )}
+              {!isApplicationsLoading && !isJobsLoading ? cards : <CenterLoader />}
             </Grid>
           </Container>
         </Layout>

@@ -108,6 +108,8 @@ export const JobModal: FC<JobModalProps> = ({
     }
   };
 
+  console.log(job);
+
   return (
     <ModalWrapper
       DialogProps={{ maxWidth: 'sm', fullWidth: true }}
@@ -141,7 +143,7 @@ export const JobModal: FC<JobModalProps> = ({
                   </Grid>
                   <JobInputFields
                     initialValues={specVariables}
-                    inputs={job.variables.inputs as any}
+                    inputs={JSON.parse(job.variables.inputs)}
                     inputsData={inputsData}
                     projectId={projectId}
                     setInputsData={setInputsData}
@@ -159,7 +161,7 @@ export const JobModal: FC<JobModalProps> = ({
                       liveValidate
                       noHtml5Validate
                       formData={optionsFormData}
-                      schema={job.variables.options as any} // TODO: fix when openapi is updated
+                      schema={JSON.parse(job.variables.options)}
                       showErrorList={false}
                       uiSchema={{ 'ui:order': job.variables.order?.options }}
                       onChange={(event) => setOptionsFormData(event.formData)}

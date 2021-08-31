@@ -10,16 +10,7 @@ import {
 import { getGetUserAccountQueryKey, useGetUserAccount } from '@squonk/data-manager-client/user';
 
 import { css } from '@emotion/react';
-import {
-  Button,
-  FormGroup,
-  Grid,
-  IconButton,
-  MenuItem,
-  Popover,
-  Tooltip,
-  useTheme,
-} from '@material-ui/core';
+import { Button, Grid, IconButton, MenuItem, Popover, Tooltip } from '@material-ui/core';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
@@ -31,8 +22,6 @@ interface AddProjectProps {
 }
 
 export const AddProject: FC<AddProjectProps> = ({ inverted = false }) => {
-  const theme = useTheme();
-
   const popupState = usePopupState({ variant: 'popover', popupId: `add-project` });
 
   const queryClient = useQueryClient();

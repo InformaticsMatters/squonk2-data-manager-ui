@@ -1,10 +1,11 @@
 import React from 'react';
 
 import { useUser } from '@auth0/nextjs-auth0';
-import { IconButton, Popover, Tooltip, Typography } from '@material-ui/core';
+import { IconButton, Popover, Tooltip } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
-import Link from 'next/link';
+
+import { UserMenuContent } from './UserMenuContent';
 
 export const UserMenu = () => {
   const popupState = usePopupState({
@@ -12,7 +13,7 @@ export const UserMenu = () => {
     popupId: 'user-menu',
   });
 
-  const { user, isLoading } = useUser();
+  const { isLoading } = useUser();
 
   return (
     <>
@@ -35,18 +36,7 @@ export const UserMenu = () => {
           horizontal: 'left',
         }}
       >
-        <Typography variant="h6">Account</Typography>
-        {isLoading ? (
-          <Typography>Loading...</Typography>
-        ) : user ? (
-          <Typography>
-            {user.preferred_username} / <Link href="/api/auth/logout">Logout</Link>
-          </Typography>
-        ) : (
-          <Typography>
-            <Link href="/api/auth/login">Login</Link>
-          </Typography>
-        )}
+        <UserMenuContent />
       </Popover>
     </>
   );

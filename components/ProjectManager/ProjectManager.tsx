@@ -24,10 +24,14 @@ import { AddProject } from './AddProject';
 import { EditProject } from './EditProject';
 
 export interface ProjectManagerProps {
-  inverted: boolean;
+  inverted?: boolean;
+  wrap?: boolean;
 }
 
-export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
+export const ProjectManager: React.FC<ProjectManagerProps> = ({
+  inverted = false,
+  wrap = false,
+}) => {
   const queryClient = useQueryClient();
   const { data, isLoading } = useGetProjects();
   const projects = data?.projects;
@@ -84,10 +88,12 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
       css={css`
         display: flex;
         align-items: center;
+        flex-wrap: ${wrap ? 'wrap' : 'nowrap'};
       `}
     >
-      <Grid item>
+      <Grid item xs={12}>
         <Autocomplete
+          fullWidth
           getOptionLabel={(option) => option.name}
           id="project-selection"
           loading={isLoading}
@@ -104,7 +110,7 @@ export const ProjectManager: React.FC<ProjectManagerProps> = ({ inverted }) => {
               <TextField {...textFieldProps} {...params} size="medium" />
             )
           }
-          style={{ width: 300 }}
+          style={{ minWidth: 240, width: '100%' }}
           value={currentProject}
           onChange={(_, project) => {
             setCurrentProjectId(project?.project_id, true);

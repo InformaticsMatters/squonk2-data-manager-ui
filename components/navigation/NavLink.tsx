@@ -1,17 +1,20 @@
-import type { FC } from 'react';
+import type { ReactNode } from 'react';
 import React from 'react';
 
-import { css } from '@emotion/react';
-import { Button } from '@material-ui/core';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-interface NavLinkProps {
-  title: string;
-  stripQueryParameters?: string[];
+export interface NavLinkChildProps {
+  active: boolean;
 }
 
-export const NavLink: FC<NavLinkProps> = ({ title, stripQueryParameters }) => {
+export interface NavLinkProps {
+  title: string;
+  stripQueryParameters?: string[];
+  children: (props: NavLinkChildProps) => ReactNode;
+}
+
+export const NavLink = ({ children, title, stripQueryParameters }: NavLinkProps) => {
   // Generate path from title text "Two Word" => "/twoword"
   const pathname = '/' + title.toLowerCase().replace(/ /g, '');
 
@@ -23,16 +26,7 @@ export const NavLink: FC<NavLinkProps> = ({ title, stripQueryParameters }) => {
 
   return (
     <Link passHref href={{ pathname, query }}>
-      <Button
-        css={css`
-          font-weight: ${active ? 'bold' : 'normal'};
-          color: white;
-          text-decoration: none;
-          text-transform: none;
-        `}
-      >
-        {title}
-      </Button>
+      {children({ active })}
     </Link>
   );
 };

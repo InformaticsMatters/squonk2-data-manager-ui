@@ -7,6 +7,7 @@ import { Chip, CircularProgress, Typography } from '@material-ui/core';
 import dynamic from 'next/dynamic';
 
 import { labelFormatter } from '../../utils/labelFormatter';
+import { CenterLoader } from '../CenterLoader';
 import { Chips } from '../Chips';
 import type { DatasetActionsProps } from './Actions/DatasetActions';
 import { DataTable } from './DataTable';
@@ -117,5 +118,5 @@ export const AllDatasetsTable = () => {
       </>
     );
   }
-  return <div>Loading Datasets...</div>;
+  return <CenterLoader />;
 };

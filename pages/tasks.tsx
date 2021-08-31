@@ -1,48 +1,30 @@
 import type { FC } from 'react';
 import React, { useState } from 'react';
-import { QueryClient, useQueryClient } from 'react-query';
+import { QueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
 
-import type { InstanceSummary, TaskSummary } from '@squonk/data-manager-client';
 import {
-  getGetInstanceQueryKey,
   getGetInstancesQueryKey,
   getInstances,
   useGetInstances,
 } from '@squonk/data-manager-client/instance';
-import {
-  getGetProjectsQueryKey,
-  getProjects,
-  useGetProjects,
-} from '@squonk/data-manager-client/project';
+import { getGetProjectsQueryKey, getProjects } from '@squonk/data-manager-client/project';
 import { getGetTasksQueryKey, getTasks, useGetTasks } from '@squonk/data-manager-client/task';
 
 import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import {
-  Container,
-  Grid,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  TextField,
-  Tooltip,
-  useTheme,
-} from '@material-ui/core';
-import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
-import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
-import dayjs from 'dayjs';
+import { Container, Grid, useTheme } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import type { AxiosError } from 'axios';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 
 import { CenterLoader } from '../components/CenterLoader';
 import Layout from '../components/Layout';
-import { OperationApplicationCard } from '../components/Operations/OperationApplicationCard';
-import { OperationJobCard } from '../components/Operations/OperationJobCard';
-import { OperationTaskCard } from '../components/Operations/OperationTaskCard';
+import { OperationCards } from '../components/Operations/OperationCards';
+import { OperationsFilters } from '../components/Operations/OperationsFilters';
 import { useCurrentProjectId } from '../components/state/currentProjectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
-import { search } from '../utils/search';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
   const queryClient = new QueryClient();
@@ -97,48 +79,28 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
   };
 };
 
-const isTaskSummary = (
-  taskOrInstance: TaskSummary | InstanceSummary,
-): taskOrInstance is TaskSummary => {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  return (taskOrInstance as TaskSummary).created !== undefined;
-};
-
-const getTimeStamp = (taskOrInstance: TaskSummary | InstanceSummary) => {
-  if (isTaskSummary(taskOrInstance)) {
-    return taskOrInstance.created;
-  }
-  return taskOrInstance.launched;
-};
-
 const Tasks: FC = () => {
   const theme = useTheme();
-  const queryClient = useQueryClient();
 
-  const { refetch: projectRefetch } = useGetProjects();
   const { projectId } = useCurrentProjectId();
 
   const {
     data: instancesData,
-    refetch: instancesRefetch,
     isLoading: isInstancesLoading,
+    isError: isInstancesError,
+    error: instancesError,
   } = useGetInstances({
-    project_id: projectId || undefined,
+    project_id: projectId,
   });
   const instances = instancesData?.instances;
 
-  const { data: tasksData, isLoading: isTasksLoading } = useGetTasks({ project_id: projectId });
+  const {
+    data: tasksData,
+    isLoading: isTasksLoading,
+    isError: isTasksError,
+    error: tasksError,
+  } = useGetTasks({ project_id: projectId });
   const tasks = tasksData?.tasks;
-
-  const refreshOperations = [
-    projectRefetch,
-    instancesRefetch,
-    ...(instances ?? []).map(
-      ({ id }) =>
-        () =>
-          queryClient.invalidateQueries(getGetInstanceQueryKey(id)),
-    ),
-  ];
 
   const [operationTypes, setOperationTypes] = useState(['task', 'instance']);
   const [searchValue, setSearchValue] = useState('');
@@ -156,117 +118,42 @@ const Tasks: FC = () => {
             `}
             maxWidth="md"
           >
-            <Grid
-              container
-              alignItems="center"
-              css={css`
-                margin-bottom: ${theme.spacing(2)}px;
-              `}
-              spacing={2}
-            >
-              <Grid item md={4} sm={5} xs={12}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Filter Tasks"
-                  SelectProps={{
-                    multiple: true,
-                    onChange: (event) => {
-                      setOperationTypes(event.target.value as string[]);
-                    },
-                  }}
-                  value={operationTypes}
-                >
-                  <MenuItem value="task">Tasks</MenuItem>
-                  <MenuItem value="instance">Instances</MenuItem>
-                </TextField>
+            <OperationsFilters
+              operationTypes={operationTypes}
+              searchValue={searchValue}
+              setOperationTypes={setOperationTypes}
+              setSearchValue={setSearchValue}
+            />
+
+            <Grid container spacing={1}>
+              <Grid item xs={12}>
+                {isInstancesError && (
+                  <Alert severity="warning">
+                    Instances failed to load ({(instancesError as AxiosError).response?.status})
+                  </Alert>
+                )}
               </Grid>
-              <Grid
-                item
-                css={css`
-                  margin-left: auto;
-                `}
-                md={4}
-                sm={5}
-                xs={12}
-              >
-                <TextField
-                  fullWidth
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <SearchRoundedIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  label="Search"
-                  value={searchValue}
-                  onChange={(event) => setSearchValue(event.target.value)}
-                />
+              <Grid item xs={12}>
+                {isTasksError && (
+                  <Alert severity="warning">
+                    Tasks failed to load ({(tasksError as AxiosError).response?.status})
+                  </Alert>
+                )}
               </Grid>
-              <Grid
-                item
-                css={css`
-                  text-align: center;
-                `}
-                sm="auto"
-                xs={12}
-              >
-                <Tooltip title="Refresh Tasks">
-                  <IconButton
-                    css={css`
-                      margin-left: auto;
-                    `}
-                    onClick={() => refreshOperations.forEach((func) => func())}
-                  >
-                    <RefreshRoundedIcon />
-                  </IconButton>
-                </Tooltip>
+              <Grid item xs={12}>
+                {(instances !== undefined || tasks !== undefined) &&
+                !isTasksLoading &&
+                !isInstancesLoading ? (
+                  <OperationCards
+                    instances={instances ?? []}
+                    operationTypes={operationTypes}
+                    searchValue={searchValue}
+                    tasks={tasks ?? []}
+                  />
+                ) : (
+                  <CenterLoader />
+                )}
               </Grid>
-            </Grid>
-            <Grid container spacing={2}>
-              {instances !== undefined &&
-              tasks !== undefined &&
-              !isTasksLoading &&
-              !isInstancesLoading ? (
-                [
-                  ...(operationTypes.includes('instance') ? instances : []).filter(
-                    ({ job_name, name, state }) => search([job_name, name, state], searchValue),
-                  ),
-                  ...(operationTypes.includes('task') ? tasks : [])
-                    .filter((task) => task.purpose === 'DATASET' || task.purpose === 'FILE')
-                    .filter(({ processing_stage, purpose }) =>
-                      search([processing_stage, purpose], searchValue),
-                    ),
-                ]
-                  .sort((a, b) => {
-                    const aTime = getTimeStamp(a);
-                    const bTime = getTimeStamp(b);
-                    return dayjs(aTime).isBefore(dayjs(bTime)) ? 1 : -1;
-                  })
-                  .map((instanceOrTask) => {
-                    if (!isTaskSummary(instanceOrTask)) {
-                      const instance = instanceOrTask;
-                      return instance.application_type === 'JOB' ? (
-                        <Grid item key={instance.id} xs={12}>
-                          <OperationJobCard instance={instance} />
-                        </Grid>
-                      ) : (
-                        <Grid item key={instance.id} xs={12}>
-                          <OperationApplicationCard instance={instance} />
-                        </Grid>
-                      );
-                    }
-                    const task = instanceOrTask;
-                    return (
-                      <Grid item key={task.id} xs={12}>
-                        <OperationTaskCard task={task} />
-                      </Grid>
-                    );
-                  })
-              ) : (
-                <CenterLoader />
-              )}
             </Grid>
           </Container>
         </Layout>

@@ -36,7 +36,7 @@ export const OperationTaskCard: FC<TaskCardProps> = ({ task }) => {
           tooltipText="Delete Task"
           onDelete={async () => {
             await deleteTask({ taskid: task.id });
-            await Promise.all([
+            Promise.all([
               queryClient.invalidateQueries(getGetTasksQueryKey()),
               queryClient.invalidateQueries(getGetTasksQueryKey({ project_id: projectId })),
             ]);

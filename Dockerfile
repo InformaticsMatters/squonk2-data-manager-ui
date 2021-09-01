@@ -1,46 +1,45 @@
-FROM node:16.2.0-alpine3.13
+# Install dependencies only when needed
+FROM node:16.2.0-alpine3.13 AS deps
 
-# Disable anonymous Next.js telemetry data...
-ENV NEXT_TELEMETRY_DISABLED 1
-
-# Add typical Node/NextJS groups and users
-# Check https://bit.ly/3u8xXQR to understand why libc6-compat might be needed.
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001 && \
-    apk add --no-cache libc6-compat
-
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json ./
-COPY yarn.lock ./
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
-# Replace the application version (in package.json)
-# with any defined 'tag', otherwise leave it at 0.0.0.
-# Then just display the head of the file for clarification.
-ARG tag=0.0.0
-ENV TAG=$tag
-RUN sed -i s/'"0.0.0"'/'"'${TAG:-0.0.0}'"'/ package.json && \
-    head package.json && \
-    yarn install --frozen-lockfile
-
+# Rebuild the source code only when needed
+FROM node:alpine AS builder
+WORKDIR /app
 COPY . .
 
-RUN chown --recursive nextjs:nodejs .
+COPY --from=deps /app/node_modules ./node_modules
+RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
 
-# **DO NOT** set 'NODE_ENV any earlier than this in the Dockerfile.
-# We must run 'yarn install' (above) first, otherwise we'll get
-# the folllowing error at run-time in the docker-entrypoint.sh...
-#
-#   "It looks like you're trying to use TypeScript
-#   but do not have the required package(s) installed."
-#
-# Kubernetes can, of course, over-ride this if it wishes.
+# Production image, copy all the files and run next
+FROM node:alpine AS runner
+WORKDIR /app
+
 ENV NODE_ENV production
 
-# Switch to the expected image user
-# and indicate port 3000 should be open
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
+# You only need to copy next.config.js if you are NOT using the default configuration
+COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/.env ./.env
+COPY --from=builder /app/.env.local ./.env.local
+
 USER nextjs
+
 EXPOSE 3000
 
-# We build, install and start the application at run-time.
-# That's wehere the _real_ '.env' will be provided.
-CMD ["./docker-entrypoint.sh"]
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry.
+ENV NEXT_TELEMETRY_DISABLED 1
+
+CMD ["yarn", "start"]

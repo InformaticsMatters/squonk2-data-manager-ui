@@ -37,13 +37,15 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
 
   const { data: application } = useGetApplication(applicationId);
 
+  const versionToUse = version ?? application?.versions[0] ?? '';
+
   const handleCreateInstance = async () => {
     if (projectId) {
       createInstance(
         {
           data: {
             application_id: applicationId,
-            application_version: version ?? '',
+            application_version: versionToUse,
             as_name: name,
             project_id: projectId,
             specification: JSON.stringify({
@@ -98,7 +100,7 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
               select
               label="Version"
               size="small"
-              value={version ?? ''}
+              value={versionToUse}
               onChange={(e) => setVersion(e.target.value)}
             >
               {application.versions.map((version) => (

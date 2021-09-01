@@ -135,16 +135,44 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
         </>
       )}
 
-      <Typography component="h3" variant="h6">
-        <b>States and Events</b>
-      </Typography>
-
       <Grid container spacing={2}>
-        <Grid item sm={6} xs={12}>
+        <Grid item md={4} xs={12}>
+          <Typography
+            component="h3"
+            css={css`
+              text-align: center;
+            `}
+            variant="h6"
+          >
+            <b>States</b>
+          </Typography>
           <TimeLine states={instance.states} />
         </Grid>
-        <Grid item sm={6} xs={12}>
-          <TimeLine states={instance.events} />
+        <Grid
+          item
+          css={css`
+            text-align: center;
+          `}
+          md={8}
+          xs={12}
+        >
+          <Typography component="h3" variant="h6">
+            <b>Events</b>
+          </Typography>
+          {instanceSummary.job_image_type === 'SIMPLE' ? (
+            <TimeLine states={instance.events} />
+          ) : (
+            <pre
+              css={css`
+                margin: 0;
+                display: inline-block;
+                text-align: left;
+                font-family: 'Fira Mono', monospace;
+              `}
+            >
+              {instance.events[instance.events.length - 1].message}
+            </pre>
+          )}
         </Grid>
       </Grid>
     </>

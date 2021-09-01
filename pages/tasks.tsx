@@ -3,7 +3,11 @@ import React, { useState } from 'react';
 import { QueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
 
-import type { InstancesGetResponse, TasksGetResponse } from '@squonk/data-manager-client';
+import type {
+  Error as DMError,
+  InstancesGetResponse,
+  TasksGetResponse,
+} from '@squonk/data-manager-client';
 import {
   getGetInstancesQueryKey,
   getInstances,
@@ -90,7 +94,7 @@ const Tasks: FC = () => {
     isLoading: isInstancesLoading,
     isError: isInstancesError,
     error: instancesError,
-  } = useGetInstances<InstancesGetResponse, AxiosError<InstancesGetResponse>>({
+  } = useGetInstances<InstancesGetResponse, AxiosError<DMError>>({
     project_id: projectId,
   });
   const instances = instancesData?.instances;
@@ -100,7 +104,7 @@ const Tasks: FC = () => {
     isLoading: isTasksLoading,
     isError: isTasksError,
     error: tasksError,
-  } = useGetTasks<TasksGetResponse, AxiosError<TasksGetResponse> | void>({ project_id: projectId });
+  } = useGetTasks<TasksGetResponse, AxiosError<DMError> | void>({ project_id: projectId });
   const tasks = tasksData?.tasks;
 
   const [operationTypes, setOperationTypes] = useState(['task', 'instance']);
@@ -130,14 +134,14 @@ const Tasks: FC = () => {
               <Grid item xs={12}>
                 {isInstancesError && (
                   <Alert severity="warning">
-                    Instances failed to load ({(instancesError as AxiosError).response?.status})
+                    Instances failed to load ({instancesError?.response?.status})
                   </Alert>
                 )}
               </Grid>
               <Grid item xs={12}>
                 {isTasksError && (
                   <Alert severity="warning">
-                    Tasks failed to load ({(tasksError as AxiosError).response?.status})
+                    Tasks failed to load ({tasksError?.response?.status})
                   </Alert>
                 )}
               </Grid>

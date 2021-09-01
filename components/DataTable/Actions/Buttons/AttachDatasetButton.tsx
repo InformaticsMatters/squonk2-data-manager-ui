@@ -2,26 +2,24 @@ import type { FC } from 'react';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { DatasetVersionDetail } from '@squonk/data-manager-client';
+import type {
+  DatasetVersionDetail,
+  Error as DMError,
+  FilePostResponse,
+} from '@squonk/data-manager-client';
 import { useAttachFile } from '@squonk/data-manager-client/file';
 import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-client/project';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
-import { useUser } from '@auth0/nextjs-auth0';
-import {
-  FormControl,
-  FormGroup,
-  IconButton,
-  MenuItem,
-  Tooltip,
-  Typography,
-} from '@material-ui/core';
+import { FormControl, FormGroup, IconButton, MenuItem, Tooltip } from '@material-ui/core';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
+import { Alert } from '@material-ui/lab';
 import type { AxiosError } from 'axios';
 import { Field } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-material-ui';
 import * as yup from 'yup';
 
+import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
 import { FormikModalWrapper } from '../../../Modals/FormikModalWrapper';
 
 interface AttachButtonProps {
@@ -41,15 +39,16 @@ interface FormState {
 
 export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName, versions }) => {
   const [open, setOpen] = useState(false);
-  const { user, isLoading: isUserLoading } = useUser();
+
+  const { user, isLoading: isUserLoading } = useKeycloakUser();
 
   const queryClient = useQueryClient();
-  const { mutateAsync: attachFile, error } = useAttachFile();
-  const errorMessage = (error as null | AxiosError)?.response?.data.detail;
+  const { mutateAsync: attachFile, error } = useAttachFile<FilePostResponse, AxiosError<DMError>>();
+  const errorMessage = error?.response?.data.error;
 
   const { data: projectsData, isLoading: isProjectsLoading } = useGetProjects();
-  const projects = projectsData?.projects.filter(({ editors }) =>
-    editors.includes(user?.preferred_username as string),
+  const projects = projectsData?.projects.filter(
+    ({ editors }) => user.username && editors.includes(user.username),
   );
 
   const { data: typesData, isLoading: isTypesLoading } = useGetFileTypes();
@@ -57,7 +56,7 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
 
   const initialValues: FormState = {
     project: projects?.[0]?.project_id ?? '',
-    type: types?.[0].mime ?? '',
+    type: versions[0].type,
     path: '',
     version: Math.max(...versions.map(({ version }) => version)),
     isImmutable: true,
@@ -130,6 +129,7 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
             ))}
           </Field>
         </FormControl>
+
         <FormControl fullWidth margin="dense">
           <Field select component={TextField} id="select-version" label="Version" name="version">
             {versions.map((version) => (
@@ -139,6 +139,7 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
             ))}
           </Field>
         </FormControl>
+
         <FormControl fullWidth margin="dense">
           <Field
             select
@@ -148,13 +149,16 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
             label="File Type"
             name="type"
           >
-            {(types ?? []).map((type) => (
-              <MenuItem key={type.mime} value={type.mime}>
-                {type.mime}
-              </MenuItem>
-            ))}
+            {(types ?? [])
+              .sort((a, b) => a.mime.localeCompare(b.mime)) // Sort alphabetically
+              .map((type) => (
+                <MenuItem key={type.mime} value={type.mime}>
+                  {type.mime}
+                </MenuItem>
+              ))}
           </Field>
         </FormControl>
+
         <FormGroup row>
           <Field
             component={CheckboxWithLabel}
@@ -169,6 +173,7 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
             type="checkbox"
           />
         </FormGroup>
+
         <FormControl fullWidth margin="normal">
           <Field
             component={TextField}
@@ -178,9 +183,9 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
           />
         </FormControl>
         {errorMessage && (
-          <Typography color="error" variant="body1">
-            Error: {errorMessage}
-          </Typography>
+          <Alert severity="error">
+            <b>Error:</b> {errorMessage}
+          </Alert>
         )}
       </FormikModalWrapper>
     </>

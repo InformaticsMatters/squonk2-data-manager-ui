@@ -2,7 +2,11 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import React, { useState } from 'react';
 
-import type { ApplicationsGetResponse, JobsGetResponse } from '@squonk/data-manager-client';
+import type {
+  ApplicationsGetResponse,
+  Error as DMError,
+  JobsGetResponse,
+} from '@squonk/data-manager-client';
 import { useGetApplications } from '@squonk/data-manager-client/application';
 import { useGetJobs } from '@squonk/data-manager-client/job';
 
@@ -36,11 +40,7 @@ const Executions: FC = () => {
     isLoading: isApplicationsLoading,
     isError: isApplicationsError,
     error: applicationsError,
-  } = useGetApplications<
-    ApplicationsGetResponse,
-    AxiosError<ApplicationsGetResponse>,
-    ApplicationsGetResponse
-  >();
+  } = useGetApplications<ApplicationsGetResponse, AxiosError<DMError>>();
   const applications = applicationsData?.applications;
 
   const {
@@ -48,7 +48,7 @@ const Executions: FC = () => {
     isLoading: isJobsLoading,
     isError: isJobsError,
     error: jobsError,
-  } = useGetJobs<JobsGetResponse, AxiosError<JobsGetResponse>, JobsGetResponse>();
+  } = useGetJobs<JobsGetResponse, AxiosError<DMError>>();
   const jobs = jobsData?.jobs;
 
   const cards = useMemo(() => {

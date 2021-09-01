@@ -2,7 +2,11 @@ import type { FC } from 'react';
 import React, { useCallback, useMemo } from 'react';
 import type { CellProps, Column, PluginHook } from 'react-table';
 
-import type { FilesGetResponse, ProjectDetail } from '@squonk/data-manager-client';
+import type {
+  Error as DMError,
+  FilesGetResponse,
+  ProjectDetail,
+} from '@squonk/data-manager-client';
 import { useGetFiles } from '@squonk/data-manager-client/file';
 
 import { css } from '@emotion/react';
@@ -95,7 +99,7 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
 
   const { data, error, isError, isLoading } = useGetFiles<
     FilesGetResponse,
-    AxiosError<FilesGetResponse> | void
+    AxiosError<DMError> | void
   >({
     project_id: currentProject.project_id,
     path: dirPath,
@@ -121,12 +125,11 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
   }, []);
 
   if (isError) {
-    const err = error as AxiosError;
     return (
       <>
-        {err.message && <Typography color="error">{err.message}</Typography>}
-        {err.response !== undefined && (
-          <Typography color="error">{err.response.data.error}</Typography>
+        {error?.message && <Typography color="error">{error.message}</Typography>}
+        {error?.response !== undefined && (
+          <Typography color="error">{error.response.data.error}</Typography>
         )}
       </>
     );

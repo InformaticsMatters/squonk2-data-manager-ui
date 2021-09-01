@@ -3,7 +3,7 @@ import React from 'react';
 
 import type { InstanceSummary, TaskSummary } from '@squonk/data-manager-client';
 
-import { Grid } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import dayjs from 'dayjs';
 
 import { search } from '../../utils/search';
@@ -72,9 +72,13 @@ export const OperationCards: FC<OperationCardsProps> = ({
       );
     });
 
-  return (
+  return cards.length ? (
     <Grid container spacing={2}>
       {cards}
     </Grid>
+  ) : (
+    <Typography align="center" variant="body2">
+      There are no tasks or instances to display.
+    </Typography>
   );
 };

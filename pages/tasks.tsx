@@ -138,6 +138,7 @@ const Tasks: FC = () => {
                   </Alert>
                 )}
               </Grid>
+
               <Grid item xs={12}>
                 {isTasksError && (
                   <Alert severity="warning">
@@ -145,6 +146,7 @@ const Tasks: FC = () => {
                   </Alert>
                 )}
               </Grid>
+
               <Grid item xs={12}>
                 {(instances !== undefined || tasks !== undefined) &&
                 !isTasksLoading &&

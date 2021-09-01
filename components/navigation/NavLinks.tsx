@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import type { ButtonProps } from '@material-ui/core';
-import { Button, useTheme } from '@material-ui/core';
+import { Button as MuiButton, useTheme } from '@material-ui/core';
 import { useRouter } from 'next/router';
 
 import { NavLink } from './NavLink';
@@ -42,25 +42,31 @@ export const NavLinks = ({ linkWidth }: NavLinksProps) => {
           }
           title="Data"
         >
-          {({ active }) => <NavButton active={active}>Data</NavButton>}
+          {({ active }) => <NavButton $active={active}>Data</NavButton>}
         </NavLink>
       </div>
       <div>
         <NavLink stripQueryParameters={['pid', 'path']} title="Executions">
-          {({ active }) => <NavButton active={active}>Executions</NavButton>}
+          {({ active }) => <NavButton $active={active}>Executions</NavButton>}
         </NavLink>
       </div>
       <div>
         <NavLink stripQueryParameters={['pid', 'path']} title="Tasks">
-          {({ active }) => <NavButton active={active}>Tasks</NavButton>}
+          {({ active }) => <NavButton $active={active}>Tasks</NavButton>}
         </NavLink>
       </div>
     </nav>
   );
 };
 
-const NavButton = styled(Button)<ButtonProps & { active: boolean }>`
-  font-weight: ${({ active }) => (active ? 'bold' : 'normal')};
+// N.B. using the transient props pattern here
+// https://medium.com/@probablyup/introducing-transient-props-f35fd5203e0c
+const Button = forwardRef<any, ButtonProps & { $active: boolean }>(({ $active, ...props }, ref) => (
+  <MuiButton ref={ref} {...props} />
+));
+
+const NavButton = styled(Button)`
+  font-weight: ${({ $active }) => ($active ? 'bold' : 'normal')};
   color: white;
   text-decoration: none;
   text-transform: none;

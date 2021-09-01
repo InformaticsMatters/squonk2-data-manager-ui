@@ -108,8 +108,6 @@ export const JobModal: FC<JobModalProps> = ({
     }
   };
 
-  console.log(job);
-
   return (
     <ModalWrapper
       DialogProps={{ maxWidth: 'sm', fullWidth: true }}

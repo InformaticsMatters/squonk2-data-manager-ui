@@ -14,7 +14,7 @@ export const useRows = (breadcrumbs: string[], data?: FilesGetResponse) => {
     };
 
     const files: TableFile[] | undefined = data?.files.map((file) => {
-      const { file_id: fileId, file_name: fileName, owner, immutable } = file;
+      const { file_id: fileId, file_name: fileName, owner, immutable, mime_type } = file;
 
       const fullPath = getFullPath(breadcrumbs, fileName);
 
@@ -24,6 +24,7 @@ export const useRows = (breadcrumbs: string[], data?: FilesGetResponse) => {
         file_id: fileId,
         owner,
         immutable,
+        mime_type,
       };
     });
 

@@ -21,7 +21,7 @@ export const FileActions: FC<FileActionsProps> = ({ file }) => {
       <>
         <FavouriteButton
           fullPath={file.fullPath}
-          mimeType={!isTableDir(file) ? file.mime_type : undefined}
+          mimeType={isTableDir(file) ? undefined : file.mime_type}
           projectId={projectId}
           type={isTableDir(file) ? 'directory' : 'file'}
         />

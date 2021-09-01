@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { QueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
 
+import type { InstancesGetResponse, TasksGetResponse } from '@squonk/data-manager-client';
 import {
   getGetInstancesQueryKey,
   getInstances,
@@ -89,7 +90,7 @@ const Tasks: FC = () => {
     isLoading: isInstancesLoading,
     isError: isInstancesError,
     error: instancesError,
-  } = useGetInstances({
+  } = useGetInstances<InstancesGetResponse, AxiosError<InstancesGetResponse>>({
     project_id: projectId,
   });
   const instances = instancesData?.instances;
@@ -99,7 +100,7 @@ const Tasks: FC = () => {
     isLoading: isTasksLoading,
     isError: isTasksError,
     error: tasksError,
-  } = useGetTasks({ project_id: projectId });
+  } = useGetTasks<TasksGetResponse, AxiosError<TasksGetResponse> | void>({ project_id: projectId });
   const tasks = tasksData?.tasks;
 
   const [operationTypes, setOperationTypes] = useState(['task', 'instance']);

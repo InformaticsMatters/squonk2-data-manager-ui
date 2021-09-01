@@ -44,7 +44,7 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
   const { user, isLoading: isUserLoading } = useUser();
 
   const queryClient = useQueryClient();
-  const { mutate: attachFile, error } = useAttachFile();
+  const { mutateAsync: attachFile, error } = useAttachFile();
   const errorMessage = (error as null | AxiosError)?.response?.data.detail;
 
   const { data: projectsData, isLoading: isProjectsLoading } = useGetProjects();
@@ -96,12 +96,12 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
             ),
         })}
         onClose={() => setOpen(false)}
-        onSubmit={(
+        onSubmit={async (
           { project, type, version, path, isImmutable, isCompress },
           { setSubmitting },
         ) => {
-          attachFile(
-            {
+          try {
+            await attachFile({
               data: {
                 dataset_version: version,
                 dataset_id: datasetId,
@@ -111,16 +111,14 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
                 as_type: type,
                 path: path || '/',
               },
-            },
-            {
-              onSuccess: () => {
-                queryClient.invalidateQueries(getGetProjectQueryKey(project));
-                setOpen(false);
-                setSubmitting(false);
-              },
-              onError: () => setSubmitting(false),
-            },
-          );
+            });
+            await queryClient.invalidateQueries(getGetProjectQueryKey(project));
+            setOpen(false);
+          } catch (err) {
+            console.error(err);
+          } finally {
+            setSubmitting(false);
+          }
         }}
       >
         <FormControl fullWidth margin="dense">

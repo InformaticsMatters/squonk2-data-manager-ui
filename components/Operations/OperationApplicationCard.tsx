@@ -1,11 +1,11 @@
 import type { FC } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 
 import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetProjects } from '@squonk/data-manager-client/project';
 
 import { css } from '@emotion/react';
-import { Button, CardContent, Typography, useTheme } from '@material-ui/core';
+import { Button, CardContent, Slide, Typography, useTheme } from '@material-ui/core';
 
 import { BaseCard } from '../BaseCard';
 import { LocalTime } from '../LocalTime/LocalTime';
@@ -33,46 +33,52 @@ export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({
 
   const associatedProject = projects?.find((project) => project.project_id === instance.project_id);
 
+  const [slideIn, setSlideIn] = useState(true);
+
   return (
-    <BaseCard
-      actions={
-        <>
-          <TerminateInstance instance={instance} />
-          {instance.url && (
-            <HrefButton
-              color="primary"
-              href={instance.url}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Open
-            </HrefButton>
-          )}
-        </>
-      }
-      collapsed={
-        <CardContent>
-          <ApplicationDetails instanceId={instance.id} />
-        </CardContent>
-      }
-      collapsedByDefault={collapsedByDefault}
-    >
-      <Typography
-        css={css`
-          display: flex;
-          align-items: center;
-          gap: ${theme.spacing(1)}px;
-        `}
-      >
-        App • <StatusIcon state={latestState} />
-        {latestState} • {instance.name} • {associatedProject?.name}
-        <LocalTime
-          css={css`
-            margin-left: auto;
-          `}
-          utcTimestamp={instance.launched}
-        />
-      </Typography>
-    </BaseCard>
+    <Slide direction="right" in={slideIn}>
+      <div>
+        <BaseCard
+          actions={
+            <>
+              <TerminateInstance instance={instance} onTermination={() => setSlideIn(false)} />
+              {instance.url && (
+                <HrefButton
+                  color="primary"
+                  href={instance.url}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Open
+                </HrefButton>
+              )}
+            </>
+          }
+          collapsed={
+            <CardContent>
+              <ApplicationDetails instanceId={instance.id} />
+            </CardContent>
+          }
+          collapsedByDefault={collapsedByDefault}
+        >
+          <Typography
+            css={css`
+              display: flex;
+              align-items: center;
+              gap: ${theme.spacing(1)}px;
+            `}
+          >
+            App • <StatusIcon state={latestState} />
+            {latestState} • {instance.name} • {associatedProject?.name}
+            <LocalTime
+              css={css`
+                margin-left: auto;
+              `}
+              utcTimestamp={instance.launched}
+            />
+          </Typography>
+        </BaseCard>
+      </div>
+    </Slide>
   );
 };

@@ -14,9 +14,10 @@ import { WarningDeleteButton } from '../../WarningDeleteButton';
 
 interface TerminateInstanceProps {
   instance: InstanceSummary;
+  onTermination?: () => void;
 }
 
-export const TerminateInstance: FC<TerminateInstanceProps> = ({ instance }) => {
+export const TerminateInstance: FC<TerminateInstanceProps> = ({ instance, onTermination }) => {
   const queryClient = useQueryClient();
   const { mutateAsync: terminateInstance } = useTerminateInstance();
 
@@ -28,12 +29,14 @@ export const TerminateInstance: FC<TerminateInstanceProps> = ({ instance }) => {
       onDelete={async () => {
         await terminateInstance({ instanceid: instance.id });
 
-        await Promise.all([
+        Promise.all([
           queryClient.invalidateQueries(getGetInstancesQueryKey()),
           queryClient.invalidateQueries(
             getGetInstancesQueryKey({ project_id: instance.project_id }),
           ),
         ]);
+
+        onTermination && onTermination();
       }}
     >
       {({ openModal }) => (

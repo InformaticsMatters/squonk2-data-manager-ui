@@ -1,12 +1,12 @@
 import type { FC } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import type { TaskSummary } from '@squonk/data-manager-client';
 import { getGetTasksQueryKey, useDeleteTask } from '@squonk/data-manager-client/task';
 
 import { css } from '@emotion/react';
-import { Button, CardContent, Typography, useTheme } from '@material-ui/core';
+import { Button, CardContent, Slide, Typography, useTheme } from '@material-ui/core';
 
 import { BaseCard } from '../BaseCard';
 import { LocalTime } from '../LocalTime/LocalTime';
@@ -27,51 +27,58 @@ export const OperationTaskCard: FC<TaskCardProps> = ({ task }) => {
 
   const { projectId } = useCurrentProjectId();
 
+  const [slideIn, setSlideIn] = useState(true);
+
   return (
-    <BaseCard
-      actions={
-        <WarningDeleteButton
-          modalId={`delete-task-${task.id}`}
-          title="Delete Task"
-          tooltipText="Delete Task"
-          onDelete={async () => {
-            await deleteTask({ taskid: task.id });
-            Promise.all([
-              queryClient.invalidateQueries(getGetTasksQueryKey()),
-              queryClient.invalidateQueries(getGetTasksQueryKey({ project_id: projectId })),
-            ]);
-          }}
+    <Slide direction="right" in={slideIn}>
+      <div>
+        <BaseCard
+          actions={
+            <WarningDeleteButton
+              modalId={`delete-task-${task.id}`}
+              title="Delete Task"
+              tooltipText="Delete Task"
+              onDelete={async () => {
+                await deleteTask({ taskid: task.id });
+                Promise.all([
+                  queryClient.invalidateQueries(getGetTasksQueryKey()),
+                  queryClient.invalidateQueries(getGetTasksQueryKey({ project_id: projectId })),
+                ]);
+                setSlideIn(false);
+              }}
+            >
+              {({ openModal }) => <Button onClick={openModal}>Delete</Button>}
+            </WarningDeleteButton>
+          }
+          collapsed={
+            <CardContent>
+              <TaskDetails taskId={task.id} />
+            </CardContent>
+          }
         >
-          {({ openModal }) => <Button onClick={openModal}>Delete</Button>}
-        </WarningDeleteButton>
-      }
-      collapsed={
-        <CardContent>
-          <TaskDetails taskId={task.id} />
-        </CardContent>
-      }
-    >
-      <Typography
-        css={css`
-          display: flex;
-          align-items: center;
-          gap: ${theme.spacing(1)}px;
-        `}
-      >
-        {task.purpose} •{' '}
-        {task.processing_stage && (
-          <>
-            <StatusIcon state={task.processing_stage} />
-            {task.processing_stage}
-          </>
-        )}
-        <LocalTime
-          css={css`
-            margin-left: auto;
-          `}
-          utcTimestamp={task.created}
-        />
-      </Typography>
-    </BaseCard>
+          <Typography
+            css={css`
+              display: flex;
+              align-items: center;
+              gap: ${theme.spacing(1)}px;
+            `}
+          >
+            {task.purpose} •{' '}
+            {task.processing_stage && (
+              <>
+                <StatusIcon state={task.processing_stage} />
+                {task.processing_stage}
+              </>
+            )}
+            <LocalTime
+              css={css`
+                margin-left: auto;
+              `}
+              utcTimestamp={task.created}
+            />
+          </Typography>
+        </BaseCard>
+      </div>
+    </Slide>
   );
 };

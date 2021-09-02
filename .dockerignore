@@ -4,4 +4,4 @@
 node_modules
 
 README.md
-!.env.local
+.env.local

@@ -6,10 +6,12 @@ let ASSET_URL;
 
 if (process.env.NODE_ENV === 'production') {
   if (!process.env.BASE_URL) {
-    throw new Error('BASE_URL is missing in the environment variables');
+    console.warn('warn  - BASE_URL is missing in the environment variables');
   }
-  if (!process.env.BASE_URL.includes('localhost')) {
+  if (!(process.env.BASE_URL ?? '').includes('localhost')) {
     ASSET_URL = process.env.BASE_URL;
+  } else {
+    ASSET_URL = '.';
   }
 }
 ASSET_URL = process.env.BASE_URL = 'https://squonk.informaticsmatters.org';

@@ -6,12 +6,22 @@ import type { TaskSummary } from '@squonk/data-manager-client';
 import { getGetTasksQueryKey, useDeleteTask } from '@squonk/data-manager-client/task';
 
 import { css } from '@emotion/react';
-import { Button, CardContent, Slide, Typography, useTheme } from '@material-ui/core';
+import {
+  Button,
+  CardContent,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Slide,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
 
 import { BaseCard } from '../BaseCard';
 import { LocalTime } from '../LocalTime/LocalTime';
 import { useCurrentProjectId } from '../state/currentProjectHooks';
 import { WarningDeleteButton } from '../WarningDeleteButton';
+import { HorizontalList } from './common/HorizontalList';
 import { StatusIcon } from './common/StatusIcon';
 import { TaskDetails } from './details/TaskDetails';
 
@@ -56,27 +66,14 @@ export const OperationTaskCard: FC<TaskCardProps> = ({ task }) => {
             </CardContent>
           }
         >
-          <Typography
-            css={css`
-              display: flex;
-              align-items: center;
-              gap: ${theme.spacing(1)}px;
-            `}
-          >
-            {task.purpose} •{' '}
-            {task.processing_stage && (
-              <>
-                <StatusIcon state={task.processing_stage} />
-                {task.processing_stage}
-              </>
-            )}
-            <LocalTime
-              css={css`
-                margin-left: auto;
-              `}
-              utcTimestamp={task.created}
-            />
-          </Typography>
+          <HorizontalList datetimeString={task.created}>
+            <ListItem>
+              <ListItemIcon>
+                <StatusIcon state={task.processing_stage ?? 'UNKNOWN'} />
+              </ListItemIcon>
+              <ListItemText primary={task.purpose} secondary={task.processing_stage} />
+            </ListItem>
+          </HorizontalList>
         </BaseCard>
       </div>
     </Slide>

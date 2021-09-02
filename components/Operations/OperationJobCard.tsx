@@ -4,11 +4,11 @@ import React, { useState } from 'react';
 import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetProjects } from '@squonk/data-manager-client/project';
 
-import { css } from '@emotion/react';
-import { CardContent, Slide, Typography, useTheme } from '@material-ui/core';
+import { CardContent, ListItem, ListItemIcon, ListItemText, Slide } from '@material-ui/core';
+import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 
 import { BaseCard } from '../BaseCard';
-import { LocalTime } from '../LocalTime/LocalTime';
+import { HorizontalList } from './common/HorizontalList';
 import { StatusIcon } from './common/StatusIcon';
 import { TerminateInstance } from './common/TerminateInstance';
 import { JobDetails } from './details/JobDetails';
@@ -20,7 +20,6 @@ interface JobCardProps {
 }
 
 export const OperationJobCard: FC<JobCardProps> = ({ instance, collapsedByDefault = true }) => {
-  const theme = useTheme();
   const latestState = instance.state;
 
   const { data } = useGetProjects();
@@ -47,23 +46,23 @@ export const OperationJobCard: FC<JobCardProps> = ({ instance, collapsedByDefaul
           }
           collapsedByDefault={collapsedByDefault}
         >
-          <Typography
-            component="h2"
-            css={css`
-              display: flex;
-              align-items: center;
-              gap: ${theme.spacing(1)}px;
-            `}
-          >
-            Job • <StatusIcon state={latestState} />
-            {latestState} • {instance.name} • {instance.job_name} • {associatedProject?.name}
-            <LocalTime
-              css={css`
-                margin-left: auto;
-              `}
-              utcTimestamp={instance.launched}
-            />
-          </Typography>
+          <HorizontalList datetimeString={instance.launched}>
+            <ListItem>
+              <ListItemIcon>
+                <StatusIcon state={latestState} />
+              </ListItemIcon>
+              <ListItemText primary="Job" secondary={latestState} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary={instance.name} secondary={instance.job_name} />
+            </ListItem>
+            <ListItem>
+              <ListItemIcon>
+                <AccountTreeRoundedIcon />
+              </ListItemIcon>
+              <ListItemText primary={associatedProject?.name} />
+            </ListItem>
+          </HorizontalList>
         </BaseCard>
       </div>
     </Slide>

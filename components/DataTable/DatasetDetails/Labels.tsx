@@ -2,19 +2,19 @@ import type { FC } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { DatasetVersionDetail } from '@squonk/data-manager-client';
+import type { DatasetVersionSummary } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useAddAnnotations } from '@squonk/data-manager-client/dataset';
 
 import { Chip, Typography } from '@material-ui/core';
 
-import { labelFormatter } from '../../utils/labelFormatter';
-import { Chips } from '../Chips';
-import type { TableDataset } from '../DataTable/types';
+import { labelFormatter } from '../../../utils/labelFormatter';
+import { Chips } from '../../Chips';
+import type { TableDataset } from '../types';
 import { NewLabelButton } from './NewLabelButton';
 
 export interface LabelsProps {
   datasetId: TableDataset['dataset_id'];
-  datasetVersion: DatasetVersionDetail;
+  datasetVersion: DatasetVersionSummary;
 }
 
 export const Labels: FC<LabelsProps> = ({ datasetId, datasetVersion }) => {
@@ -25,7 +25,7 @@ export const Labels: FC<LabelsProps> = ({ datasetId, datasetVersion }) => {
 
   return (
     <>
-      <Typography component="h4" variant="h6">
+      <Typography component="h3" variant="h6">
         Labels
       </Typography>
 

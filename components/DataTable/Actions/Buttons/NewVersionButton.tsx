@@ -4,6 +4,7 @@ import { useQueryClient } from 'react-query';
 
 import { getGetDatasetsQueryKey, uploadDataset } from '@squonk/data-manager-client/dataset';
 
+import type { IconButtonProps } from '@material-ui/core';
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import BackupRoundedIcon from '@material-ui/icons/BackupRounded';
 
@@ -14,11 +15,11 @@ import { ProgressBar } from '../../../Uploads/ProgressBar';
 import type { FileTypeOptionsState, UploadableFile } from '../../../Uploads/types';
 import type { TableDataset } from '../../types';
 
-interface NewVersionButtonProps {
+interface NewVersionButtonProps extends IconButtonProps {
   dataset: TableDataset;
 }
 
-export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
+export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset, ...buttonProps }) => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<UploadableFile>();
@@ -28,7 +29,7 @@ export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
   return (
     <>
       <Tooltip title="Upload a new version of this dataset">
-        <IconButton size="small" onClick={() => setOpen(true)}>
+        <IconButton {...buttonProps} onClick={() => setOpen(true)}>
           <BackupRoundedIcon />
         </IconButton>
       </Tooltip>

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import type {
-  DatasetVersionDetail,
+  DatasetVersionSummary,
   Error as DMError,
   FilePostResponse,
 } from '@squonk/data-manager-client';
@@ -11,6 +11,7 @@ import { useAttachFile } from '@squonk/data-manager-client/file';
 import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-client/project';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
+import type { IconButtonProps } from '@material-ui/core';
 import { FormControl, FormGroup, IconButton, MenuItem, Tooltip } from '@material-ui/core';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import { Alert } from '@material-ui/lab';
@@ -22,9 +23,9 @@ import * as yup from 'yup';
 import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
 import { FormikModalWrapper } from '../../../Modals/FormikModalWrapper';
 
-interface AttachButtonProps {
+interface AttachButtonProps extends IconButtonProps {
   datasetId: string;
-  versions: DatasetVersionDetail[];
+  version: DatasetVersionSummary;
   fileName: string;
 }
 
@@ -32,12 +33,16 @@ interface FormState {
   project: string;
   type: string;
   path: string;
-  version: DatasetVersionDetail['version'];
   isImmutable: boolean;
   isCompress: boolean;
 }
 
-export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName, versions }) => {
+export const AttachDatasetButton: FC<AttachButtonProps> = ({
+  datasetId,
+  fileName,
+  version,
+  ...buttonProps
+}) => {
   const [open, setOpen] = useState(false);
 
   const { user, isLoading: isUserLoading } = useKeycloakUser();
@@ -56,9 +61,8 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
 
   const initialValues: FormState = {
     project: projects?.[0]?.project_id ?? '',
-    type: versions[0].type,
+    type: version.type,
     path: '',
-    version: Math.max(...versions.map(({ version }) => version)),
     isImmutable: true,
     isCompress: false,
   };
@@ -68,8 +72,8 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
       <Tooltip title="Attach dataset to a project">
         <span>
           <IconButton
+            {...buttonProps}
             disabled={isProjectsLoading || isTypesLoading || isUserLoading}
-            size="small"
             onClick={() => setOpen(true)}
           >
             <AttachFileRoundedIcon />
@@ -83,26 +87,16 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
         initialValues={initialValues}
         open={open}
         submitText="Attach"
-        title={`Attach ${fileName} to project`}
+        title={`Attach ${fileName} v${version.version} to a Project`}
         validationSchema={yup.object({
           path: yup.string().matches(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gm, 'Invalid Path'),
-          version: yup
-            .number()
-            .test(
-              'version-done-stage',
-              'The selected version must have finished processing',
-              (version) => versions.find((v) => v.version === version)?.processing_stage === 'DONE',
-            ),
         })}
         onClose={() => setOpen(false)}
-        onSubmit={async (
-          { project, type, version, path, isImmutable, isCompress },
-          { setSubmitting },
-        ) => {
+        onSubmit={async ({ project, type, path, isImmutable, isCompress }, { setSubmitting }) => {
           try {
             await attachFile({
               data: {
-                dataset_version: version,
+                dataset_version: version.version,
                 dataset_id: datasetId,
                 project_id: project,
                 immutable: isImmutable,
@@ -125,16 +119,6 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName
             {(projects ?? []).map((project) => (
               <MenuItem key={project.project_id} value={project.project_id}>
                 {project.name}
-              </MenuItem>
-            ))}
-          </Field>
-        </FormControl>
-
-        <FormControl fullWidth margin="dense">
-          <Field select component={TextField} id="select-version" label="Version" name="version">
-            {versions.map((version) => (
-              <MenuItem key={version.version} value={version.version}>
-                {`v${version.version}`}
               </MenuItem>
             ))}
           </Field>

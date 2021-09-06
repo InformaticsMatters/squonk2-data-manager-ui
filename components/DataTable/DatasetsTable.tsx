@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from 'react';
-import type { CellProps, Column, PluginHook } from 'react-table';
+import React, { useMemo } from 'react';
+import type { Column } from 'react-table';
 
 import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 
@@ -9,16 +9,9 @@ import dynamic from 'next/dynamic';
 import { labelFormatter } from '../../utils/labelFormatter';
 import { CenterLoader } from '../CenterLoader';
 import { Chips } from '../Chips';
-import type { DatasetActionsProps } from './Actions/DatasetActions';
+import { DatasetDetails } from './DatasetDetails/DatasetDetails';
 import { DataTable } from './DataTable';
 import type { TableDataset } from './types';
-
-const DatasetActions = dynamic<DatasetActionsProps>(
-  () => import('./Actions/DatasetActions').then((mod) => mod.DatasetActions),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
-);
 
 const FileUpload = dynamic<Record<string, never>>(
   () => import('../FileUpload/FileUpload').then((mod) => mod.FileUpload),
@@ -30,7 +23,13 @@ const FileUpload = dynamic<Record<string, never>>(
 export const AllDatasetsTable = () => {
   const columns: Column<TableDataset>[] = useMemo(
     () => [
-      { accessor: 'fileName', Header: 'File Name' },
+      {
+        accessor: 'fileName',
+        Header: 'File Name',
+        Cell: ({ value: fileName, row }) => {
+          return <DatasetDetails dataset={row.original} />;
+        },
+      },
       {
         accessor: 'labels',
         Cell: ({ value: labels }) => (
@@ -85,23 +84,6 @@ export const AllDatasetsTable = () => {
     [data],
   );
 
-  // react-table plugin to add actions buttons for datasets
-  const useActionsColumnPlugin: PluginHook<TableDataset> = useCallback((hooks) => {
-    hooks.visibleColumns.push((columns) => {
-      return [
-        ...columns,
-        {
-          id: 'actions',
-          groupByBoundary: true, // Ensure normal columns can't be ordered before this
-          Header: 'Actions',
-          Cell: ({ row }: CellProps<TableDataset, any>) => (
-            <DatasetActions dataset={row.original} />
-          ),
-        },
-      ];
-    });
-  }, []);
-
   if (datasets) {
     return (
       <>
@@ -113,7 +95,6 @@ export const AllDatasetsTable = () => {
           data={datasets}
           getRowId={(row) => row.dataset_id}
           ToolbarChild={<FileUpload />}
-          useActionsColumnPlugin={useActionsColumnPlugin}
         />
       </>
     );

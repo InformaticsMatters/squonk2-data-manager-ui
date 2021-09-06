@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { DatasetVersionDetail } from '@squonk/data-manager-client';
+import type { DatasetVersionSummary } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useAddAnnotations } from '@squonk/data-manager-client/dataset';
 
 import { css } from '@emotion/react';
@@ -14,12 +14,12 @@ import { TextField } from 'formik-material-ui';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 import * as yup from 'yup';
 
-import { LowerCaseTextField } from '../../utils/LowerCaseTextField';
-import type { TableDataset } from '../DataTable/types';
+import { LowerCaseTextField } from '../../../utils/LowerCaseTextField';
+import type { TableDataset } from '../types';
 
 export interface NewLabelButtonProps {
   datasetId: TableDataset['dataset_id'];
-  datasetVersion: DatasetVersionDetail;
+  datasetVersion: DatasetVersionSummary;
 }
 
 export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVersion }) => {

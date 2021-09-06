@@ -1,4 +1,4 @@
-import type { DatasetDetail, FilePathFile } from '@squonk/data-manager-client';
+import type { DatasetSummary, FilePathFile } from '@squonk/data-manager-client';
 
 // Both files are folders have these
 interface BaseTableRow {
@@ -6,7 +6,7 @@ interface BaseTableRow {
 }
 
 // Properties of datasets only
-export type TableDataset = DatasetDetail &
+export type TableDataset = DatasetSummary &
   BaseTableRow & {
     labels: [string, string][];
   };

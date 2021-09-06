@@ -11,10 +11,10 @@ import {
 
 import { Typography } from '@material-ui/core';
 
-import { useKeycloakUser } from '../../hooks/useKeycloakUser';
-import { CenterLoader } from '../CenterLoader';
-import type { TableDataset } from '../DataTable/types';
-import { ManageEditors } from '../ManageEditors';
+import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
+import { CenterLoader } from '../../CenterLoader';
+import { ManageEditors } from '../../ManageEditors';
+import type { TableDataset } from '../types';
 
 export interface ManageDatasetEditorsProps {
   dataset: TableDataset;
@@ -34,7 +34,7 @@ export const ManageDatasetEditors: FC<ManageDatasetEditorsProps> = ({ dataset })
 
   return (
     <>
-      <Typography gutterBottom component="h3" variant="h5">
+      <Typography gutterBottom component="h3" variant="h6">
         Editors
       </Typography>
       {user.username ? (

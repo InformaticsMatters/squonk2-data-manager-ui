@@ -3,10 +3,12 @@ import type { Column } from 'react-table';
 
 import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 
+import { css } from '@emotion/react';
 import { Chip, CircularProgress, Typography } from '@material-ui/core';
+import DehazeRoundedIcon from '@material-ui/icons/DehazeRounded';
 import dynamic from 'next/dynamic';
 
-import { labelFormatter } from '../../utils/labelFormatter';
+import { combineLabels, labelFormatter } from '../../utils/labelUtils';
 import { CenterLoader } from '../CenterLoader';
 import { Chips } from '../Chips';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
@@ -34,10 +36,19 @@ export const AllDatasetsTable = () => {
         accessor: 'labels',
         Cell: ({ value: labels }) => (
           <Chips>
-            {labels.map(([label, value]) => (
+            {Object.entries(labels).map(([label, values]) => (
               <Chip
+                css={css`
+                  display: flex;
+                  flex-direction: row-reverse;
+                  .MuiChip-iconSmall {
+                    margin-left: 0;
+                    margin-right: 6px;
+                  }
+                `}
+                icon={typeof values === 'string' ? undefined : <DehazeRoundedIcon />}
                 key={label}
-                label={labelFormatter(label, value)}
+                label={labelFormatter(label, values)}
                 size="small"
                 variant="outlined"
               />
@@ -77,7 +88,7 @@ export const AllDatasetsTable = () => {
         const fileName = dataset.versions[0].file_name; // TODO: should either use the newest version or wait for the API to change
         return {
           fileName,
-          labels: Object.entries(dataset.versions[0].labels ?? {}),
+          labels: combineLabels(dataset.versions),
           ...dataset,
         };
       }),

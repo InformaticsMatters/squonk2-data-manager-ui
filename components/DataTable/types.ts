@@ -8,7 +8,7 @@ interface BaseTableRow {
 // Properties of datasets only
 export type TableDataset = DatasetSummary &
   BaseTableRow & {
-    labels: [string, string][];
+    labels: Record<string, string | string[]>;
   };
 
 // Properties of files only

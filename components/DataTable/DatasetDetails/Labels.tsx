@@ -7,7 +7,7 @@ import { getGetDatasetsQueryKey, useAddAnnotations } from '@squonk/data-manager-
 
 import { Chip, Typography } from '@material-ui/core';
 
-import { labelFormatter } from '../../../utils/labelFormatter';
+import { labelFormatter } from '../../../utils/labelUtils';
 import { Chips } from '../../Chips';
 import type { TableDataset } from '../types';
 import { NewLabelButton } from './NewLabelButton';
@@ -19,6 +19,8 @@ export interface LabelsProps {
 
 export const Labels: FC<LabelsProps> = ({ datasetId, datasetVersion }) => {
   const labels = Object.entries((datasetVersion.labels ?? {}) as Record<string, string>);
+
+  console.log(labels);
 
   const queryClient = useQueryClient();
   const { mutateAsync: addAnnotations } = useAddAnnotations();

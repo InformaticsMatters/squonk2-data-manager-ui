@@ -5,7 +5,9 @@ import { useQueryClient } from 'react-query';
 import { getGetDatasetsQueryKey, uploadDataset } from '@squonk/data-manager-client/dataset';
 
 import type { IconButtonProps } from '@material-ui/core';
-import { IconButton, Tooltip, Typography } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
+import { ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import BackupRoundedIcon from '@material-ui/icons/BackupRounded';
 
 import { ModalWrapper } from '../../../Modals/ModalWrapper';
@@ -28,11 +30,14 @@ export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset, ...button
 
   return (
     <>
-      <Tooltip title="Upload a new version of this dataset">
-        <IconButton {...buttonProps} onClick={() => setOpen(true)}>
-          <BackupRoundedIcon />
-        </IconButton>
-      </Tooltip>
+      <ListItem button onClick={() => setOpen(true)}>
+        <ListItemText primary="Create a New Version of this Dataset" />
+        <ListItemSecondaryAction>
+          <IconButton edge="end" onClick={() => setOpen(true)}>
+            <BackupRoundedIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
       <ModalWrapper
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
         id={`version-upload-${dataset.dataset_id}`}

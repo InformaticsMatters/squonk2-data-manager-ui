@@ -34,7 +34,7 @@ export const ManageDatasetEditors: FC<ManageDatasetEditorsProps> = ({ dataset })
 
   return (
     <>
-      <Typography gutterBottom component="h3" variant="h6">
+      <Typography gutterBottom component="h4" variant="h6">
         Editors
       </Typography>
       {user.username ? (

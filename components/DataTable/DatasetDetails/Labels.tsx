@@ -25,7 +25,7 @@ export const Labels: FC<LabelsProps> = ({ datasetId, datasetVersion }) => {
 
   return (
     <>
-      <Typography component="h3" variant="h6">
+      <Typography component="h4" variant="subtitle1">
         Labels
       </Typography>
 

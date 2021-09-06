@@ -2,19 +2,18 @@ import type { FC } from 'react';
 import { useState } from 'react';
 import React from 'react';
 
+import { css } from '@emotion/react';
 import {
   Box,
   Container,
   IconButton,
   Link,
   List,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
   MenuItem,
   TextField,
   Tooltip,
   Typography,
+  useTheme,
 } from '@material-ui/core';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 
@@ -40,6 +39,8 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
   const isEditor = !!user.username && dataset.editors.includes(user.username);
   const isOwner = dataset.owner === user.username;
 
+  const theme = useTheme();
+
   return (
     <>
       <Link component="button" variant="body2" onClick={() => setOpen(true)}>
@@ -53,6 +54,28 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
         onClose={() => setOpen(false)}
       >
         <Container maxWidth="md">
+          <Typography gutterBottom component="h3" variant="h5">
+            Dataset Actions
+          </Typography>
+
+          {(isEditor || isOwner) && (
+            <List>
+              <NewVersionButton dataset={dataset} edge="end" />
+            </List>
+          )}
+
+          {(isEditor || isOwner) && (
+            <Box marginBottom={2}>
+              <ManageDatasetEditors dataset={dataset} />
+            </Box>
+          )}
+
+          <Typography component="h4" variant="h6">
+            Working Version
+          </Typography>
+          <Typography gutterBottom variant="body2">
+            The options below affect this version
+          </Typography>
           {/* Display the download button next to the version select */}
           <Box alignItems="center" display="flex">
             {/* Main version selection - this controls the target version for this whole modal */}
@@ -78,67 +101,45 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
             </TextField>
 
             {/* Download Dataset Version */}
-            <Tooltip title="Download this version of the dataset">
-              <span>
-                <IconButton
-                  download
-                  disabled={!(selectedVersion.processing_stage === 'DONE')} // Need the dataset to be downloadable
-                  href={`/data-manager-ui/api/dm-api/dataset/${dataset.dataset_id}/${selectedVersion.version}`}
-                  onClick={() => setOpen(true)}
-                >
-                  <GetAppRoundedIcon />
-                </IconButton>
-              </span>
-            </Tooltip>
+            <div
+              css={css`
+                margin-left: ${theme.spacing(2)}px;
+              `}
+            >
+              <Tooltip title="Download this version of the dataset">
+                <span>
+                  <IconButton
+                    download
+                    disabled={!(selectedVersion.processing_stage === 'DONE')} // Need the dataset to be downloadable
+                    href={`/data-manager-ui/api/dm-api/dataset/${dataset.dataset_id}/${selectedVersion.version}`}
+                    onClick={() => setOpen(true)}
+                  >
+                    <GetAppRoundedIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </div>
           </Box>
 
           {/* Top level editing - operations that don't have a "submit" */}
           {(isEditor || isOwner) && (
-            <>
-              <Labels datasetId={dataset.dataset_id} datasetVersion={selectedVersion} />
-              <ManageDatasetEditors dataset={dataset} />
-            </>
+            <Labels datasetId={dataset.dataset_id} datasetVersion={selectedVersion} />
           )}
 
           {/* More complex actions requiring a new context */}
           <Box marginY={2}>
-            <Typography component="h3" variant="h6">
-              Actions
+            <Typography component="h4" variant="subtitle1">
+              Version Actions
             </Typography>
             <List>
-              <ListItem>
-                <ListItemText
-                  primary="Attach Dataset to a Project"
-                  secondary="Creates a file in the project linked to the selected version"
-                />
-                <ListItemSecondaryAction>
-                  <AttachDatasetButton
-                    datasetId={dataset.dataset_id}
-                    edge="end"
-                    fileName={dataset.fileName}
-                    version={selectedVersion}
-                  />
-                </ListItemSecondaryAction>
-              </ListItem>
+              <AttachDatasetButton
+                datasetId={dataset.dataset_id}
+                fileName={dataset.fileName}
+                version={selectedVersion}
+              />
+
               {(isEditor || isOwner) && (
-                <ListItem>
-                  <ListItemText primary="Create a New Version of this Dataset" />
-                  <ListItemSecondaryAction>
-                    <NewVersionButton dataset={dataset} edge="end" />
-                  </ListItemSecondaryAction>
-                </ListItem>
-              )}
-              {(isEditor || isOwner) && (
-                <ListItem>
-                  <ListItemText primary="Delete this Version of the Dataset" />
-                  <ListItemSecondaryAction>
-                    <DeleteDatasetButton
-                      datasetId={dataset.dataset_id}
-                      edge="end"
-                      version={selectedVersion}
-                    />
-                  </ListItemSecondaryAction>
-                </ListItem>
+                <DeleteDatasetButton datasetId={dataset.dataset_id} version={selectedVersion} />
               )}
             </List>
           </Box>

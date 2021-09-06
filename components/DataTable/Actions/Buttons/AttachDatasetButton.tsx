@@ -12,7 +12,9 @@ import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-clie
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import type { IconButtonProps } from '@material-ui/core';
-import { FormControl, FormGroup, IconButton, MenuItem, Tooltip } from '@material-ui/core';
+import { ListItemSecondaryAction, ListItemText } from '@material-ui/core';
+import { ListItem } from '@material-ui/core';
+import { FormControl, FormGroup, IconButton, MenuItem } from '@material-ui/core';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import { Alert } from '@material-ui/lab';
 import type { AxiosError } from 'axios';
@@ -23,7 +25,7 @@ import * as yup from 'yup';
 import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
 import { FormikModalWrapper } from '../../../Modals/FormikModalWrapper';
 
-interface AttachButtonProps extends IconButtonProps {
+interface AttachButtonProps {
   datasetId: string;
   version: DatasetVersionSummary;
   fileName: string;
@@ -37,12 +39,7 @@ interface FormState {
   isCompress: boolean;
 }
 
-export const AttachDatasetButton: FC<AttachButtonProps> = ({
-  datasetId,
-  fileName,
-  version,
-  ...buttonProps
-}) => {
+export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName, version }) => {
   const [open, setOpen] = useState(false);
 
   const { user, isLoading: isUserLoading } = useKeycloakUser();
@@ -69,17 +66,25 @@ export const AttachDatasetButton: FC<AttachButtonProps> = ({
 
   return (
     <>
-      <Tooltip title="Attach dataset to a project">
-        <span>
+      <ListItem
+        button
+        disabled={isProjectsLoading || isTypesLoading || isUserLoading}
+        onClick={() => setOpen(true)}
+      >
+        <ListItemText
+          primary="Attach Dataset to a Project"
+          secondary="Creates a file in the project linked to the selected version"
+        />
+        <ListItemSecondaryAction>
           <IconButton
-            {...buttonProps}
             disabled={isProjectsLoading || isTypesLoading || isUserLoading}
+            edge="end"
             onClick={() => setOpen(true)}
           >
             <AttachFileRoundedIcon />
           </IconButton>
-        </span>
-      </Tooltip>
+        </ListItemSecondaryAction>
+      </ListItem>
       <FormikModalWrapper
         enableReinitialize
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}

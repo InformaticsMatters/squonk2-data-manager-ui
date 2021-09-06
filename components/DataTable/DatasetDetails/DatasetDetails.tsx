@@ -14,6 +14,7 @@ import {
   MenuItem,
   TextField,
   Tooltip,
+  Typography,
 } from '@material-ui/core';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 
@@ -100,42 +101,47 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
           )}
 
           {/* More complex actions requiring a new context */}
-          <List>
-            <ListItem>
-              <ListItemText
-                primary="Attach Dataset to a Project"
-                secondary="Creates a file in the project linked to the selected version"
-              />
-              <ListItemSecondaryAction>
-                <AttachDatasetButton
-                  datasetId={dataset.dataset_id}
-                  edge="end"
-                  fileName={dataset.fileName}
-                  version={selectedVersion}
+          <Box marginY={2}>
+            <Typography component="h3" variant="h6">
+              Actions
+            </Typography>
+            <List>
+              <ListItem>
+                <ListItemText
+                  primary="Attach Dataset to a Project"
+                  secondary="Creates a file in the project linked to the selected version"
                 />
-              </ListItemSecondaryAction>
-            </ListItem>
-            {(isEditor || isOwner) && (
-              <ListItem>
-                <ListItemText primary="Create a New Version of this Dataset" />
                 <ListItemSecondaryAction>
-                  <NewVersionButton dataset={dataset} edge="end" />
-                </ListItemSecondaryAction>
-              </ListItem>
-            )}
-            {(isEditor || isOwner) && (
-              <ListItem>
-                <ListItemText primary="Delete this Version of the Dataset" />
-                <ListItemSecondaryAction>
-                  <DeleteDatasetButton
+                  <AttachDatasetButton
                     datasetId={dataset.dataset_id}
                     edge="end"
+                    fileName={dataset.fileName}
                     version={selectedVersion}
                   />
                 </ListItemSecondaryAction>
               </ListItem>
-            )}
-          </List>
+              {(isEditor || isOwner) && (
+                <ListItem>
+                  <ListItemText primary="Create a New Version of this Dataset" />
+                  <ListItemSecondaryAction>
+                    <NewVersionButton dataset={dataset} edge="end" />
+                  </ListItemSecondaryAction>
+                </ListItem>
+              )}
+              {(isEditor || isOwner) && (
+                <ListItem>
+                  <ListItemText primary="Delete this Version of the Dataset" />
+                  <ListItemSecondaryAction>
+                    <DeleteDatasetButton
+                      datasetId={dataset.dataset_id}
+                      edge="end"
+                      version={selectedVersion}
+                    />
+                  </ListItemSecondaryAction>
+                </ListItem>
+              )}
+            </List>
+          </Box>
         </Container>
       </ModalWrapper>
     </>

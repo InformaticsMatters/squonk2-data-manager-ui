@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetProjects } from '@squonk/data-manager-client/project';
 
+import { css } from '@emotion/react';
 import {
   Button,
   CardContent,
@@ -69,7 +70,11 @@ export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({
         >
           <HorizontalList datetimeString={instance.launched}>
             <ListItem>
-              <ListItemIcon>
+              <ListItemIcon
+                css={css`
+                  min-width: 40px;
+                `}
+              >
                 <StatusIcon state={latestState} />
               </ListItemIcon>
               <ListItemText primary="App" secondary={latestState} />
@@ -78,7 +83,11 @@ export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({
               <ListItemText primary={instance.name} />
             </ListItem>
             <ListItem>
-              <ListItemIcon>
+              <ListItemIcon
+                css={css`
+                  min-width: 40px;
+                `}
+              >
                 <AccountTreeRoundedIcon />
               </ListItemIcon>
               <ListItemText primary={associatedProject?.name} />

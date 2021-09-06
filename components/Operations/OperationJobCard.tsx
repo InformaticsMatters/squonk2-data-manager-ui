@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetProjects } from '@squonk/data-manager-client/project';
 
+import { css } from '@emotion/react';
 import { CardContent, ListItem, ListItemIcon, ListItemText, Slide } from '@material-ui/core';
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 
@@ -48,7 +49,11 @@ export const OperationJobCard: FC<JobCardProps> = ({ instance, collapsedByDefaul
         >
           <HorizontalList datetimeString={instance.launched}>
             <ListItem>
-              <ListItemIcon>
+              <ListItemIcon
+                css={css`
+                  min-width: 40px;
+                `}
+              >
                 <StatusIcon state={latestState} />
               </ListItemIcon>
               <ListItemText primary="Job" secondary={latestState} />
@@ -57,7 +62,11 @@ export const OperationJobCard: FC<JobCardProps> = ({ instance, collapsedByDefaul
               <ListItemText primary={instance.name} secondary={instance.job_name} />
             </ListItem>
             <ListItem>
-              <ListItemIcon>
+              <ListItemIcon
+                css={css`
+                  min-width: 40px;
+                `}
+              >
                 <AccountTreeRoundedIcon />
               </ListItemIcon>
               <ListItemText primary={associatedProject?.name} />

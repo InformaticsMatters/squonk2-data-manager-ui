@@ -12,15 +12,19 @@ import {
   List,
   ListItem,
   ListItemAvatar,
+  ListItemIcon,
   ListItemText,
   Typography,
 } from '@material-ui/core';
+import AppsRoundedIcon from '@material-ui/icons/AppsRounded';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
 import InsertDriveFileRoundedIcon from '@material-ui/icons/InsertDriveFileRounded';
+import WorkOutlineRoundedIcon from '@material-ui/icons/WorkOutlineRounded';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { CenterLoader } from '../../CenterLoader';
+import { HorizontalList } from '../common/HorizontalList';
 import { TimeLine } from '../common/TimeLine';
 
 interface OutputValue {
@@ -65,11 +69,34 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
 
   return (
     <>
-      <Typography gutterBottom>
-        <b>App</b>: {instance.application_id} • <b>Version</b>: {instance.application_version} •{' '}
-        <b>Collection</b>: {instanceSummary.job_collection} • <b>Job Version</b>:{' '}
-        {instanceSummary.job_version}
-      </Typography>
+      <HorizontalList>
+        <ListItem>
+          <ListItemIcon
+            css={css`
+              min-width: 40px;
+            `}
+          >
+            <AppsRoundedIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={instance.application_id}
+            secondary={instance.application_version}
+          />
+        </ListItem>
+        <ListItem>
+          <ListItemIcon
+            css={css`
+              min-width: 40px;
+            `}
+          >
+            <WorkOutlineRoundedIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={instanceSummary.job_collection}
+            secondary={instanceSummary.job_version}
+          />
+        </ListItem>
+      </HorizontalList>
 
       {instance.outputs && (
         <>

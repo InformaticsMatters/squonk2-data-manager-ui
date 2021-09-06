@@ -10,7 +10,7 @@ import { DATE_FORMAT, TIME_FORMAT } from '../../LocalTime/utils';
 dayjs.extend(utc);
 
 export interface HorizontalListProps {
-  datetimeString: string;
+  datetimeString?: string;
 }
 
 export const HorizontalList: FC<HorizontalListProps> = ({ children, datetimeString }) => {
@@ -32,20 +32,22 @@ export const HorizontalList: FC<HorizontalListProps> = ({ children, datetimeStri
       `}
     >
       {children}
-      <ListItem
-        css={
-          biggerThanMd
-            ? css`
-                margin-left: auto;
-              `
-            : undefined
-        }
-      >
-        <ListItemText
-          primary={datetime.format(TIME_FORMAT)}
-          secondary={datetime.format(DATE_FORMAT)}
-        />
-      </ListItem>
+      {!!datetimeString && (
+        <ListItem
+          css={
+            biggerThanMd
+              ? css`
+                  margin-left: auto;
+                `
+              : undefined
+          }
+        >
+          <ListItemText
+            primary={datetime.format(TIME_FORMAT)}
+            secondary={datetime.format(DATE_FORMAT)}
+          />
+        </ListItem>
+      )}
     </List>
   );
 };

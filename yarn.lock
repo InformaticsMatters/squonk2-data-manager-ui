@@ -3776,10 +3776,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-next-http-proxy-middleware@^1.0.10:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/next-http-proxy-middleware/-/next-http-proxy-middleware-1.0.10.tgz#016a7cece2b55b5c0dacc510e8577a9acaf93ad4"
-  integrity sha512-TDP+LDkSrkFKTr04jcSozgYA2d9Gbg50J16j8qvJlYM+KhDXY8vwrcDC2xEaNMHHrojQiIGQsFOE15PHPBSRjw==
+next-http-proxy-middleware@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/next-http-proxy-middleware/-/next-http-proxy-middleware-1.1.1.tgz#5c2cf987850d9b083b7e290af43c8c309ef4302c"
+  integrity sha512-qfYDCb5y2WV89IGB03ymsS4MW3tFk3RL/WMyP18jbKfM4iHDLElw4iiefSn9vYyEzAFoJifSE+5HOpWmDW4+ng==
   dependencies:
     "@types/http-proxy" "1.17.3"
     http-proxy "^1.18.1"

@@ -35,7 +35,7 @@
     "@squonk/data-manager-client": "0.5.19",
     "@squonk/mui-theme": "^0.7.1",
     "@types/react-table": "^7.7.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "dayjs": "^1.10.6",
     "formik": "^2.2.9",
     "formik-material-ui": "^3.0.1",

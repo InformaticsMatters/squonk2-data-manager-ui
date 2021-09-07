@@ -13,6 +13,7 @@ import { CenterLoader } from '../CenterLoader';
 import { Chips } from '../Chips';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
 import { DataTable } from './DataTable';
+import { LabelChip } from './LabelChip';
 import type { TableDataset } from './types';
 
 const FileUpload = dynamic<Record<string, never>>(
@@ -37,21 +38,7 @@ export const AllDatasetsTable = () => {
         Cell: ({ value: labels }) => (
           <Chips>
             {Object.entries(labels).map(([label, values]) => (
-              <Chip
-                css={css`
-                  display: flex;
-                  flex-direction: row-reverse;
-                  .MuiChip-iconSmall {
-                    margin-left: 0;
-                    margin-right: 6px;
-                  }
-                `}
-                icon={typeof values === 'string' ? undefined : <DehazeRoundedIcon />}
-                key={label}
-                label={labelFormatter(label, values)}
-                size="small"
-                variant="outlined"
-              />
+              <LabelChip key={label} label={label} values={values} />
             ))}
           </Chips>
         ),

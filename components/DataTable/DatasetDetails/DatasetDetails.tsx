@@ -77,13 +77,13 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
             The options below affect this version
           </Typography>
           {/* Display the download button next to the version select */}
-          <Box alignItems="center" display="flex">
+          <Box alignItems="center" display="flex" marginY={1}>
             {/* Main version selection - this controls the target version for this whole modal */}
             <TextField
               fullWidth
               select
               label="Select a version"
-              size="small"
+              size="medium"
               value={selectedVersion.version}
               onChange={(event) => {
                 const version = dataset.versions.find(

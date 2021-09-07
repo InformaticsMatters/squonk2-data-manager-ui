@@ -5,10 +5,10 @@ import { useQueryClient } from 'react-query';
 import type { DatasetVersionSummary } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useAddAnnotations } from '@squonk/data-manager-client/dataset';
 
-import { Chip, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 
-import { labelFormatter } from '../../../utils/labelUtils';
 import { Chips } from '../../Chips';
+import { LabelChip } from '../LabelChip';
 import type { TableDataset } from '../types';
 import { NewLabelButton } from './NewLabelButton';
 
@@ -32,11 +32,10 @@ export const Labels: FC<LabelsProps> = ({ datasetId, datasetVersion }) => {
       <Chips>
         {labels.length > 0 ? (
           labels.map(([label, value]) => (
-            <Chip
+            <LabelChip
               key={label}
-              label={labelFormatter(label, value)}
-              size="small"
-              variant="outlined"
+              label={label}
+              values={value}
               onDelete={async () => {
                 await addAnnotations({
                   datasetid: datasetId,

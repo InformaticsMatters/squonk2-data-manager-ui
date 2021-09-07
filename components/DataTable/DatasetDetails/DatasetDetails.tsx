@@ -23,6 +23,7 @@ import { AttachDatasetButton } from '../Actions/Buttons/AttachDatasetButton';
 import { DeleteDatasetButton } from '../Actions/Buttons/DeleteDatasetButton';
 import { NewVersionButton } from '../Actions/Buttons/NewVersionButton';
 import type { TableDataset } from '../types';
+import { DatasetSchemaListItem } from './DatasetSchemaListItem';
 import { Labels } from './Labels';
 import { ManageDatasetEditors } from './ManageDatasetEditors';
 
@@ -138,11 +139,25 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
                 version={selectedVersion}
               />
 
+              <DatasetSchemaListItem
+                datasetId={dataset.dataset_id}
+                version={selectedVersion.version}
+              />
+
               {(isEditor || isOwner) && (
                 <DeleteDatasetButton datasetId={dataset.dataset_id} version={selectedVersion} />
               )}
             </List>
           </Box>
+
+          {process.env.NODE_ENV === 'development' && (
+            <>
+              <Typography component="h4" variant="subtitle1">
+                Technical Information
+              </Typography>
+              <pre>{JSON.stringify(dataset, null, 2)}</pre>
+            </>
+          )}
         </Container>
       </ModalWrapper>
     </>

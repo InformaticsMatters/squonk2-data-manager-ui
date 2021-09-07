@@ -95,6 +95,7 @@
     "apps",
     "fonts",
     "dataset-actions",
-    "sort-dataset"
+    "sort-dataset",
+    "dataset-schema"
   ],
 }

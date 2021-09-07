@@ -1,14 +1,12 @@
-import React, { useMemo } from 'react';
-import type { Column } from 'react-table';
+import React, { useCallback, useMemo } from 'react';
+import type { Column, Row } from 'react-table';
 
 import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 
-import { css } from '@emotion/react';
-import { Chip, CircularProgress, Typography } from '@material-ui/core';
-import DehazeRoundedIcon from '@material-ui/icons/DehazeRounded';
+import { CircularProgress, Typography } from '@material-ui/core';
 import dynamic from 'next/dynamic';
 
-import { combineLabels, labelFormatter } from '../../utils/labelUtils';
+import { combineLabels } from '../../utils/labelUtils';
 import { CenterLoader } from '../CenterLoader';
 import { Chips } from '../Chips';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
@@ -24,6 +22,13 @@ const FileUpload = dynamic<Record<string, never>>(
 );
 
 export const AllDatasetsTable = () => {
+  const editorsSorter = useCallback((rowA: Row<TableDataset>, rowB: Row<TableDataset>) => {
+    if (rowA.original.editors.join(' ') > rowB.original.editors.join(' ')) {
+      return 1;
+    }
+    return -1;
+  }, []);
+
   const columns: Column<TableDataset>[] = useMemo(
     () => [
       {
@@ -47,6 +52,7 @@ export const AllDatasetsTable = () => {
       {
         accessor: 'editors',
         Header: 'Editors',
+        sortType: editorsSorter,
         Cell: ({ value: editors, row }) => {
           return (
             <>

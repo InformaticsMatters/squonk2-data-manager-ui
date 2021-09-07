@@ -94,6 +94,7 @@
     "responsive",
     "apps",
     "fonts",
-    "dataset-actions"
+    "dataset-actions",
+    "sort-dataset"
   ],
 }

@@ -33,6 +33,7 @@ export const FileUpload = () => {
           format_extra_variables: mimeTypeFormDatas[mimeType]
             ? JSON.stringify(mimeTypeFormDatas[mimeType])
             : undefined,
+          skip_molecule_load: false,
         };
 
         try {

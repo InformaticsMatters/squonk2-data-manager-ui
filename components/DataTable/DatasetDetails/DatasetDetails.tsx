@@ -151,7 +151,18 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
               />
 
               {selectedVersion && (isEditor || isOwner) && (
-                <DeleteDatasetButton datasetId={dataset.dataset_id} version={selectedVersion} />
+                <DeleteDatasetButton
+                  datasetId={dataset.dataset_id}
+                  resetSelection={() => {
+                    const nextSelectableVersions = dataset.versions.filter(
+                      (version) => version.version !== selectedVersionNumber,
+                    );
+                    if (nextSelectableVersions.length > 0) {
+                      setSelectedVersionNumber(nextSelectableVersions[0].version);
+                    }
+                  }}
+                  version={selectedVersion}
+                />
               )}
             </List>
           </Box>

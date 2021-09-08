@@ -14,9 +14,14 @@ import { WarningDeleteButton } from '../../../WarningDeleteButton';
 interface DeleteDatasetProps {
   datasetId: string;
   version: DatasetVersionSummary;
+  resetSelection: () => void;
 }
 
-export const DeleteDatasetButton: FC<DeleteDatasetProps> = ({ datasetId, version }) => {
+export const DeleteDatasetButton: FC<DeleteDatasetProps> = ({
+  datasetId,
+  version,
+  resetSelection,
+}) => {
   const queryClient = useQueryClient();
   const deleteMutation = useDeleteDataset();
 
@@ -26,8 +31,9 @@ export const DeleteDatasetButton: FC<DeleteDatasetProps> = ({ datasetId, version
       title={`Delete v${version.version}`}
       tooltipText="Delete versions of this dataset"
       onDelete={async () => {
+        resetSelection();
         await deleteMutation.mutateAsync({ datasetid: datasetId, datasetversion: version.version });
-        queryClient.invalidateQueries(getGetDatasetsQueryKey());
+        await queryClient.invalidateQueries(getGetDatasetsQueryKey());
       }}
     >
       {({ isDeleting, openModal }) => (

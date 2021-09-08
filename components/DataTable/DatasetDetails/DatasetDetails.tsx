@@ -33,7 +33,11 @@ export interface DatasetDetailsProps {
 
 export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
   const [open, setOpen] = useState(false);
-  const [selectedVersion, setSelectedVersion] = useState(dataset.versions[0]);
+  const [selectedVersionNumber, setSelectedVersionNumber] = useState(dataset.versions[0].version);
+
+  const selectedVersion = dataset.versions.find(
+    (version) => version.version === selectedVersionNumber,
+  );
 
   const { user } = useKeycloakUser();
 
@@ -85,12 +89,12 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
               select
               label="Select a version"
               size="medium"
-              value={selectedVersion.version}
+              value={selectedVersionNumber}
               onChange={(event) => {
                 const version = dataset.versions.find(
                   (version) => version.version === Number(event.target.value),
                 );
-                version && setSelectedVersion(version);
+                version && setSelectedVersionNumber(version.version);
               }}
             >
               {dataset.versions.map((version) => (
@@ -111,8 +115,8 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
                 <span>
                   <IconButton
                     download
-                    disabled={!(selectedVersion.processing_stage === 'DONE')} // Need the dataset to be downloadable
-                    href={`/data-manager-ui/api/dm-api/dataset/${dataset.dataset_id}/${selectedVersion.version}`}
+                    disabled={!(selectedVersion?.processing_stage === 'DONE')} // Need the dataset to be downloadable
+                    href={`/data-manager-ui/api/dm-api/dataset/${dataset.dataset_id}/${selectedVersionNumber}`}
                     onClick={() => setOpen(true)}
                   >
                     <GetAppRoundedIcon />
@@ -123,7 +127,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
           </Box>
 
           {/* Top level editing - operations that don't have a "submit" */}
-          {(isEditor || isOwner) && (
+          {selectedVersion !== undefined && (isEditor || isOwner) && (
             <Labels datasetId={dataset.dataset_id} datasetVersion={selectedVersion} />
           )}
 
@@ -133,18 +137,20 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
               Version Actions
             </Typography>
             <List>
-              <AttachDatasetButton
-                datasetId={dataset.dataset_id}
-                fileName={dataset.fileName}
-                version={selectedVersion}
-              />
+              {selectedVersion && (
+                <AttachDatasetButton
+                  datasetId={dataset.dataset_id}
+                  fileName={dataset.fileName}
+                  version={selectedVersion}
+                />
+              )}
 
               <DatasetSchemaListItem
                 datasetId={dataset.dataset_id}
-                version={selectedVersion.version}
+                version={selectedVersionNumber}
               />
 
-              {(isEditor || isOwner) && (
+              {selectedVersion && (isEditor || isOwner) && (
                 <DeleteDatasetButton datasetId={dataset.dataset_id} version={selectedVersion} />
               )}
             </List>

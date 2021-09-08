@@ -59,7 +59,7 @@ export const Labels: FC<LabelsProps> = ({ datasetId, datasetVersion }) => {
         ) : (
           <Typography variant="body2">No labels exist for this version</Typography>
         )}
-        <NewLabelButton datasetId={datasetId} datasetVersion={datasetVersion} />
+        <NewLabelButton datasetId={datasetId} datasetVersion={datasetVersion.version} />
       </Chips>
     </>
   );

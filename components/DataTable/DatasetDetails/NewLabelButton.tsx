@@ -2,7 +2,6 @@ import type { FC } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { DatasetVersionSummary } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useAddAnnotations } from '@squonk/data-manager-client/dataset';
 
 import { css } from '@emotion/react';
@@ -19,7 +18,7 @@ import type { TableDataset } from '../types';
 
 export interface NewLabelButtonProps {
   datasetId: TableDataset['dataset_id'];
-  datasetVersion: DatasetVersionSummary;
+  datasetVersion: number;
 }
 
 export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVersion }) => {
@@ -50,7 +49,7 @@ export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVers
           onSubmit={async ({ label, value }) => {
             await addAnnotations({
               datasetid: datasetId,
-              datasetversion: datasetVersion.version,
+              datasetversion: datasetVersion,
               data: {
                 annotations: JSON.stringify([
                   {

@@ -27,7 +27,7 @@ export const DatasetSchemaListItem: FC<DatasetSchemaListItemProps> = ({ datasetI
         </ListItemSecondaryAction>
       </ListItem>
       <ModalWrapper
-        DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+        DialogProps={{ maxWidth: 'md', fullWidth: true }}
         id={`${datasetId}-schema`}
         open={open}
         title="Edit Schema"

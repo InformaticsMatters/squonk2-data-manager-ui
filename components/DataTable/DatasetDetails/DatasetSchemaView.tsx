@@ -1,5 +1,7 @@
 import type { FC } from 'react';
+import { useMemo } from 'react';
 import React, { Fragment } from 'react';
+import type { Column } from 'react-table';
 
 import type { DatasetSchemaGetResponse, Error } from '@squonk/data-manager-client';
 import { useGetSchema } from '@squonk/data-manager-client/dataset';
@@ -9,6 +11,7 @@ import { Alert } from '@material-ui/lab';
 import type { AxiosError } from 'axios';
 
 import { CenterLoader } from '../../CenterLoader';
+import { DataTable } from '../DataTable';
 
 export interface DatasetSchemaViewProps {
   datasetId: string;
@@ -17,7 +20,7 @@ export interface DatasetSchemaViewProps {
 
 interface Field {
   description: string;
-  type: 'float' | 'text' | 'integer' | 'object';
+  type: 'float' | 'text' | 'integer' | 'object'; // These will be replaced with JSON Schema types
 }
 
 type Fields = Record<string, Field>;
@@ -30,6 +33,35 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
     error: schemaError,
   } = useGetSchema<DatasetSchemaGetResponse, AxiosError<Error>>(datasetId, version);
 
+  // Need to assert the fields here as the OpenAPI types are wrong
+  const typedSchema = schema as ({ fields: Fields } & DatasetSchemaGetResponse) | undefined;
+
+  const fields = useMemo(
+    () =>
+      typedSchema !== undefined
+        ? Object.entries(typedSchema.fields).map(([name, field]) => ({ name, ...field }))
+        : undefined,
+    [typedSchema],
+  );
+
+  const columns: Column<NonNullable<typeof fields>[number]>[] = useMemo(
+    () => [
+      {
+        accessor: 'name',
+        Header: 'Field Name',
+      },
+      {
+        accessor: 'description',
+        Header: 'Description',
+      },
+      {
+        accessor: 'type',
+        Header: 'Type',
+      },
+    ],
+    [],
+  );
+
   if (isSchemaLoading) {
     return <CenterLoader />;
   }
@@ -38,7 +70,7 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
     return <Alert severity="warning">{schemaError?.response?.data.error}</Alert>;
   }
 
-  if (schema === undefined) {
+  if (fields === undefined) {
     return (
       <Typography color="textSecondary" variant="body2">
         There no schema for this dataset
@@ -46,28 +78,25 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
     );
   }
 
-  const typedSchema = schema as { fields: Fields } & DatasetSchemaGetResponse;
+  if (fields.length === 0) {
+    return (
+      <Typography align="center" color="textSecondary">
+        No fields exist in the dataset schema
+      </Typography>
+    );
+  }
 
   return (
     <>
       <Typography component="h3" variant="h6">
-        {schema.description}
+        {schema?.description}
       </Typography>
-      <Grid container spacing={1}>
-        {Object.entries(typedSchema.fields).map(([name, field]) => (
-          <Fragment key={name}>
-            <Grid item xs={4}>
-              <Typography>{name}</Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <Typography>{field.description}</Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <Typography>{field.type}</Typography>
-            </Grid>
-          </Fragment>
-        ))}
-      </Grid>
+      <DataTable
+        columns={columns}
+        data={fields}
+        getRowId={(row) => row.name}
+        tableContainer={false}
+      />
     </>
   );
 };

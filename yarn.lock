@@ -492,24 +492,6 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.0.tgz#87de7af9c231826fdd68ac7258f77c429e0e5fcf"
   integrity sha512-wdppn25U8z/2yiaT6YGquE6X8sSv7hNMWSXYSSU1jGv/yd6XqjXgTDJ8KP4NgjTXfJ3GbRjeeb8RTV7a/VpM+w==
 
-"@material-ui/core@^4.11.3":
-  version "4.11.4"
-  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.11.4.tgz#4fb9fe5dec5dcf780b687e3a40cff78b2b9640a4"
-  integrity sha512-oqb+lJ2Dl9HXI9orc6/aN8ZIAMkeThufA5iZELf2LQeBn2NtjVilF5D2w7e9RpntAzDb4jK5DsVhkfOvFY/8fg==
-  dependencies:
-    "@babel/runtime" "^7.4.4"
-    "@material-ui/styles" "^4.11.4"
-    "@material-ui/system" "^4.11.3"
-    "@material-ui/types" "5.1.0"
-    "@material-ui/utils" "^4.11.2"
-    "@types/react-transition-group" "^4.2.0"
-    clsx "^1.0.4"
-    hoist-non-react-statics "^3.3.2"
-    popper.js "1.16.1-lts"
-    prop-types "^15.7.2"
-    react-is "^16.8.0 || ^17.0.0"
-    react-transition-group "^4.4.0"
-
 "@material-ui/core@^4.12.3":
   version "4.12.3"
   resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.12.3.tgz#80d665caf0f1f034e52355c5450c0e38b099d3ca"
@@ -566,16 +548,6 @@
     jss-plugin-props-sort "^10.5.1"
     jss-plugin-rule-value-function "^10.5.1"
     jss-plugin-vendor-prefixer "^10.5.1"
-    prop-types "^15.7.2"
-
-"@material-ui/system@^4.11.3":
-  version "4.11.3"
-  resolved "https://registry.yarnpkg.com/@material-ui/system/-/system-4.11.3.tgz#466bc14c9986798fd325665927c963eb47cc4143"
-  integrity sha512-SY7otguNGol41Mu2Sg6KbBP1ZRFIbFLHGK81y4KYbsV2yIcaEPOmsCK6zwWlp+2yTV3J/VwT6oSBARtGIVdXPw==
-  dependencies:
-    "@babel/runtime" "^7.4.4"
-    "@material-ui/utils" "^4.11.2"
-    csstype "^2.5.2"
     prop-types "^15.7.2"
 
 "@material-ui/system@^4.12.1":
@@ -805,12 +777,10 @@
   resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.5.20-rc.4.tgz#bff31375fd4aeaefecca0efc506c920fc8d4fddd"
   integrity sha512-eKGY9MnCLqLb3HT0Zuwhujf1gaatZ9Njk9dKmA+H62VBlyDO5IIfq1tJLqf8+mKdNemgJWrNtzGzZKHPCJr4aw==
 
-"@squonk/mui-theme@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@squonk/mui-theme/-/mui-theme-0.7.1.tgz#1074a73ea4fc933bdfa29c8c7c422c0b7d872689"
-  integrity sha512-DYYIA/QeVZCo8nK82TAS0Ms4tClMSoKcVaJo5Zkf5uCcZ9e7dpiqcIC2Km/deU+g2nLwGAl+lOBiATImlE+YdA==
-  dependencies:
-    "@material-ui/core" "^4.11.3"
+"@squonk/mui-theme@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@squonk/mui-theme/-/mui-theme-2.0.0.tgz#5b758c7e1730b599ef50285a375e89163fe2df6e"
+  integrity sha512-dHel9ooHVxdLfEALWQYVJYbptTn0bxluSYKNPVDq9wV5cEc5WYDtVSyZ9IiQvnCQt6ItLX9E6ttW+bPo8Mmlrg==
 
 "@szmarczak/http-timer@^4.0.5":
   version "4.0.5"

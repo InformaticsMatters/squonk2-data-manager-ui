@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { useUser } from '@auth0/nextjs-auth0';
-import { IconButton, Popover, Tooltip } from '@material-ui/core';
+import { css } from '@emotion/react';
+import { IconButton, Popover, Tooltip, useTheme } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 
@@ -15,6 +16,8 @@ export const UserMenu = () => {
 
   const { isLoading } = useUser();
 
+  const theme = useTheme();
+
   return (
     <>
       <Tooltip arrow title="User">
@@ -26,6 +29,11 @@ export const UserMenu = () => {
       </Tooltip>
 
       <Popover
+        css={css`
+          .MuiPopover-paper {
+            padding: ${theme.spacing(1)}px;
+          }
+        `}
         {...bindPopover(popupState)}
         anchorOrigin={{
           vertical: 'bottom',

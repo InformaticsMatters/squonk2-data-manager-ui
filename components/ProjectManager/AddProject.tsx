@@ -10,7 +10,7 @@ import {
 import { getGetUserAccountQueryKey, useGetUserAccount } from '@squonk/data-manager-client/user';
 
 import { css } from '@emotion/react';
-import { Button, Grid, IconButton, MenuItem, Popover, Tooltip } from '@material-ui/core';
+import { Button, Grid, IconButton, MenuItem, Popover, Tooltip, useTheme } from '@material-ui/core';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
@@ -37,6 +37,8 @@ export const AddProject: FC<AddProjectProps> = ({ inverted = false }) => {
 
   const { mutateAsync: createProject } = useCreateProject();
 
+  const theme = useTheme();
+
   return (
     <>
       <Tooltip
@@ -60,6 +62,7 @@ export const AddProject: FC<AddProjectProps> = ({ inverted = false }) => {
       <Popover
         css={css`
           .MuiPopover-paper {
+            padding: ${theme.spacing(1)}px;
             min-width: 500px;
           }
         `}

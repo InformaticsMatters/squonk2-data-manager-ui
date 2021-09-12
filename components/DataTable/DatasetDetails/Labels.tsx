@@ -24,43 +24,37 @@ export const Labels: FC<LabelsProps> = ({ datasetId, datasetVersion }) => {
   const { mutateAsync: addAnnotations } = useAddAnnotations();
 
   return (
-    <>
-      <Typography component="h4" variant="subtitle1">
-        Labels
-      </Typography>
+    <Chips>
+      {labels.length > 0 ? (
+        labels.map(([label, value]) => (
+          <LabelChip
+            key={label}
+            label={label}
+            values={value}
+            onDelete={async () => {
+              await addAnnotations({
+                datasetid: datasetId,
+                datasetversion: datasetVersion.version,
+                data: {
+                  annotations: JSON.stringify([
+                    {
+                      label,
+                      value,
+                      type: 'LabelAnnotation',
+                      active: false,
+                    },
+                  ]),
+                },
+              });
 
-      <Chips>
-        {labels.length > 0 ? (
-          labels.map(([label, value]) => (
-            <LabelChip
-              key={label}
-              label={label}
-              values={value}
-              onDelete={async () => {
-                await addAnnotations({
-                  datasetid: datasetId,
-                  datasetversion: datasetVersion.version,
-                  data: {
-                    annotations: JSON.stringify([
-                      {
-                        label,
-                        value,
-                        type: 'LabelAnnotation',
-                        active: false,
-                      },
-                    ]),
-                  },
-                });
-
-                queryClient.invalidateQueries(getGetDatasetsQueryKey());
-              }}
-            />
-          ))
-        ) : (
-          <Typography variant="body2">No labels exist for this version</Typography>
-        )}
-        <NewLabelButton datasetId={datasetId} datasetVersion={datasetVersion.version} />
-      </Chips>
-    </>
+              queryClient.invalidateQueries(getGetDatasetsQueryKey());
+            }}
+          />
+        ))
+      ) : (
+        <Typography variant="body2">No labels exist for this version</Typography>
+      )}
+      <NewLabelButton datasetId={datasetId} datasetVersion={datasetVersion.version} />
+    </Chips>
   );
 };

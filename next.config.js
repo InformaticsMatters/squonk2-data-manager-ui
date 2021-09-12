@@ -16,4 +16,5 @@ module.exports = withMDX({
   sassOptions: {
     prependData: `$assetsURL: '${ASSET_URL}';`,
   },
+  // experimental: { esmExternals: true },
 });

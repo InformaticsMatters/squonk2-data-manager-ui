@@ -8,7 +8,7 @@ export const UserMenuContent = () => {
   const { user, isLoading } = useUser();
   return (
     <>
-      <Typography component="h3" variant="h6">
+      <Typography gutterBottom component="h3" variant="h3">
         Account
       </Typography>
       {isLoading ? (

@@ -69,7 +69,7 @@ export const AllDatasetsTable = () => {
         Header: 'Versions',
       },
     ],
-    [],
+    [editorsSorter],
   );
 
   const { data } = useGetDatasets();
@@ -91,7 +91,7 @@ export const AllDatasetsTable = () => {
   if (datasets) {
     return (
       <>
-        <Typography gutterBottom component="h1" variant="h4">
+        <Typography gutterBottom component="h1" variant="h1">
           Datasets
         </Typography>
         <DataTable

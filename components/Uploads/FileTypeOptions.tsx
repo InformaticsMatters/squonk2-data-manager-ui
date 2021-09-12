@@ -43,7 +43,7 @@ export const FileTypeOptions: FC<FileTypeOptionsProps> = ({
             const type = types.find((type) => mimeType === type.mime);
             return (
               <Grid item key={mimeType} md={column ? 12 : 4} sm={column ? 12 : 6} xs={12}>
-                <Card>
+                <Card elevation={2}>
                   {type?.formatter_options ? (
                     <CardContent>
                       <Form

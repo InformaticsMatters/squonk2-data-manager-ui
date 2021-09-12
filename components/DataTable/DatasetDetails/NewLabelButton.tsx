@@ -36,6 +36,11 @@ export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVers
         </IconButton>
       </Tooltip>
       <Popover
+        css={css`
+          .MuiPopover-paper {
+            padding: ${theme.spacing(1)}px;
+          }
+        `}
         {...bindPopover(popupState)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'center' }}

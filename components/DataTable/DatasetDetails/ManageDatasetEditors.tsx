@@ -9,8 +9,6 @@ import {
   useRemoveEditorFromDataset,
 } from '@squonk/data-manager-client/dataset';
 
-import { Typography } from '@material-ui/core';
-
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
 import { CenterLoader } from '../../CenterLoader';
 import { ManageEditors } from '../../ManageEditors';
@@ -32,42 +30,35 @@ export const ManageDatasetEditors: FC<ManageDatasetEditorsProps> = ({ dataset })
 
   const [isLoading, setIsLoading] = useState(false);
 
-  return (
-    <>
-      <Typography gutterBottom component="h4" variant="h6">
-        Editors
-      </Typography>
-      {user.username ? (
-        <ManageEditors
-          currentUsername={user.username}
-          editorsValue={editors}
-          isLoading={isLoading}
-          onRemove={async (value) => {
-            setIsLoading(true);
-            const username = dataset.editors.find((editor) => !value.includes(editor));
-            username &&
-              (await removeEditor({
-                datasetid: dataset.dataset_id,
-                userid: username,
-              }));
+  return user.username ? (
+    <ManageEditors
+      currentUsername={user.username}
+      editorsValue={editors}
+      isLoading={isLoading}
+      onRemove={async (value) => {
+        setIsLoading(true);
+        const username = dataset.editors.find((editor) => !value.includes(editor));
+        username &&
+          (await removeEditor({
+            datasetid: dataset.dataset_id,
+            userid: username,
+          }));
 
-            await queryClient.invalidateQueries(getGetDatasetsQueryKey());
+        await queryClient.invalidateQueries(getGetDatasetsQueryKey());
 
-            setIsLoading(false);
-          }}
-          onSelect={async (value) => {
-            setIsLoading(true);
-            const username = value.find((user) => !dataset.editors.includes(user));
-            username && (await addEditor({ datasetid: dataset.dataset_id, userid: username }));
+        setIsLoading(false);
+      }}
+      onSelect={async (value) => {
+        setIsLoading(true);
+        const username = value.find((user) => !dataset.editors.includes(user));
+        username && (await addEditor({ datasetid: dataset.dataset_id, userid: username }));
 
-            await queryClient.invalidateQueries(getGetDatasetsQueryKey());
+        await queryClient.invalidateQueries(getGetDatasetsQueryKey());
 
-            setIsLoading(false);
-          }}
-        />
-      ) : (
-        <CenterLoader />
-      )}
-    </>
+        setIsLoading(false);
+      }}
+    />
+  ) : (
+    <CenterLoader />
   );
 };

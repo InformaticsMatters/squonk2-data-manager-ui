@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Typography,
   useTheme,
 } from '@material-ui/core';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
@@ -41,15 +42,17 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       TransitionComponent={SlideUpTransition}
       onClose={onClose}
     >
-      <DialogTitle id={`${id}-title`}>
-        {title}
+      <DialogTitle disableTypography id={`${id}-title`}>
+        <Typography component="h2" variant="h3">
+          {title}
+        </Typography>
         <IconButton
           css={css`
             z-index: ${theme.zIndex.appBar + 1};
             position: absolute;
             right: ${theme.spacing(2)}px;
             top: ${theme.spacing(2)}px;
-            color: ${theme.palette.grey[700]};
+            color: ${theme.palette.text.primary};
           `}
           size="small"
           onClick={onClose}

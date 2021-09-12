@@ -48,7 +48,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
 
   return (
     <>
-      <Link component="button" variant="body2" onClick={() => setOpen(true)}>
+      <Link component="button" variant="body1" onClick={() => setOpen(true)}>
         {dataset.fileName}
       </Link>
       <ModalWrapper
@@ -59,7 +59,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
         onClose={() => setOpen(false)}
       >
         <Container maxWidth="md">
-          <Typography gutterBottom component="h3" variant="h5">
+          <Typography gutterBottom component="h3" variant="h2">
             Dataset Actions
           </Typography>
 
@@ -71,14 +71,17 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
 
           {(isEditor || isOwner) && (
             <Box marginBottom={2}>
+              <Typography gutterBottom component="h4" variant="h3">
+                Editors
+              </Typography>
               <ManageDatasetEditors dataset={dataset} />
             </Box>
           )}
 
-          <Typography component="h4" variant="h6">
+          <Typography gutterBottom component="h4" variant="h3">
             Working Version
           </Typography>
-          <Typography gutterBottom variant="body2">
+          <Typography gutterBottom variant="body1">
             The options below affect this version
           </Typography>
           {/* Display the download button next to the version select */}
@@ -128,12 +131,17 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
 
           {/* Top level editing - operations that don't have a "submit" */}
           {selectedVersion !== undefined && (isEditor || isOwner) && (
-            <Labels datasetId={dataset.dataset_id} datasetVersion={selectedVersion} />
+            <>
+              <Typography gutterBottom component="h4" variant="h4">
+                Labels
+              </Typography>
+              <Labels datasetId={dataset.dataset_id} datasetVersion={selectedVersion} />
+            </>
           )}
 
           {/* More complex actions requiring a new context */}
           <Box marginY={2}>
-            <Typography component="h4" variant="subtitle1">
+            <Typography component="h4" variant="h4">
               Version Actions
             </Typography>
             <List>
@@ -169,7 +177,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
 
           {process.env.NODE_ENV === 'development' && (
             <>
-              <Typography component="h4" variant="subtitle1">
+              <Typography component="h4" variant="h4">
                 Technical Information
               </Typography>
               <pre>{JSON.stringify(dataset, null, 2)}</pre>

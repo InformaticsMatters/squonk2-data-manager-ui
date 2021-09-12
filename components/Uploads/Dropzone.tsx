@@ -3,7 +3,7 @@ import type { DropzoneOptions, FileRejection } from 'react-dropzone';
 import { useDropzone } from 'react-dropzone';
 
 import { css } from '@emotion/react';
-import { Divider, useTheme } from '@material-ui/core';
+import { Button, Divider, useTheme } from '@material-ui/core';
 import { v4 as uuidv4 } from 'uuid';
 
 import { useFileExtensions } from '../FileUpload/useFileExtensions';
@@ -70,8 +70,9 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       `}
     >
       <input {...getInputProps()} />
-      <button
+      <Button
         css={css`
+          text-transform: none;
           cursor: pointer;
           text-align: center;
           border: none;
@@ -84,7 +85,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
         `}
       >
         Drag and drop files here, or click to select files
-      </button>
+      </Button>
       {!!files.length && children && (
         <Divider
           css={css`

@@ -97,6 +97,7 @@
     "dataset-actions",
     "sort-dataset",
     "dataset-schema",
-    "theme"
+    "theme",
+    "proxy"
   ],
 }

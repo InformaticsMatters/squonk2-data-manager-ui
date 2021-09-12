@@ -14,7 +14,7 @@ export default withApiAuthRequired(async (req, res) => {
     // API resolved without sending a response for ..., this may result in stalled requests.
     return await httpProxyMiddleware(req, res, {
       target: process.env.DATA_MANAGER_API_SERVER,
-      pathRewrite: { [`^/api/dm-api`]: '' },
+      pathRewrite: [{ patternStr: `^/api/dm-api`, replaceStr: '' }],
       headers: {
         Authorization: `Bearer ${accessToken}`,
         cookie: '', // Must override the browser sent authorization code otherwise ingress gives a 400 status

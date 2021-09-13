@@ -4,9 +4,10 @@ import React from 'react';
 import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetInstance } from '@squonk/data-manager-client/instance';
 
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, ListItem, ListItemText } from '@material-ui/core';
 
 import { CenterLoader } from '../../CenterLoader';
+import { HorizontalList } from '../common/HorizontalList';
 import { TimeLine } from '../common/TimeLine';
 
 interface ApplicationDetailsProps {
@@ -20,9 +21,14 @@ export const ApplicationDetails: FC<ApplicationDetailsProps> = ({ instanceId }) 
     <CenterLoader />
   ) : (
     <>
-      <Typography>
-        <b>App</b>: {instance.application_id} • <b>Version</b>: {instance.application_version}
-      </Typography>
+      <HorizontalList datetimeString={instance.launched}>
+        <ListItem>
+          <ListItemText
+            primary={instance.application_id}
+            secondary={instance.application_version}
+          />
+        </ListItem>
+      </HorizontalList>
 
       <Grid container spacing={2}>
         <Grid item sm={6} xs={12}>

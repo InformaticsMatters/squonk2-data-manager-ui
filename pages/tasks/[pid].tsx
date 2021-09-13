@@ -46,12 +46,7 @@ const Tasks: FC = () => {
         <title>Squonk | Task {instance?.state}</title>
       </Head>
       <Layout>
-        <Container
-          css={css`
-            margin-top: ${theme.spacing(4)}px;
-          `}
-          maxWidth="md"
-        >
+        <Container maxWidth="md">
           <div
             css={css`
               display: flex;

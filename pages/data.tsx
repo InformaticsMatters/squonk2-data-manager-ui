@@ -19,11 +19,7 @@ const Data = () => {
       </Head>
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
         <Layout>
-          <Container
-            css={css`
-              margin-top: ${theme.spacing(4)}px;
-            `}
-          >
+          <Container>
             <DataTableManager />
           </Container>
         </Layout>

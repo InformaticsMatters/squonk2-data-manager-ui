@@ -11,6 +11,7 @@ import { CssBaseline, useMediaQuery } from '@material-ui/core';
 import { StylesProvider, ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import type { AppProps } from 'next/app';
 
+import { MDXComponentProvider } from '../components/MDXComponentProvider';
 import { SelectedFilesProvider } from '../components/state/FileSelectionContext';
 
 import '../styles/globalStyles.scss';
@@ -42,7 +43,9 @@ export default function App({ Component, pageProps }: AppProps) {
             <QueryClientProvider client={queryClientRef.current}>
               <Hydrate state={pageProps.dehydratedState}>
                 <SelectedFilesProvider>
-                  <Component {...pageProps} />
+                  <MDXComponentProvider>
+                    <Component {...pageProps} />
+                  </MDXComponentProvider>
                 </SelectedFilesProvider>
               </Hydrate>
             </QueryClientProvider>

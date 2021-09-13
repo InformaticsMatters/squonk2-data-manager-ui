@@ -98,6 +98,7 @@
     "sort-dataset",
     "dataset-schema",
     "theme",
-    "proxy"
+    "proxy",
+    "mdx"
   ],
 }

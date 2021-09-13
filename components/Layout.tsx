@@ -1,13 +1,17 @@
 import type { FC } from 'react';
 import React from 'react';
 
+import { Box } from '@material-ui/core';
+
 import Header from './Header';
 
 const Layout: FC = ({ children }) => {
   return (
     <>
       <Header />
-      <main>{children}</main>
+      <Box component="main" marginY={2}>
+        {children}
+      </Box>
     </>
   );
 };

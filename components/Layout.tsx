@@ -9,7 +9,7 @@ const Layout: FC = ({ children }) => {
   return (
     <>
       <Header />
-      <Box component="main" marginY={2}>
+      <Box component="main" paddingY={2}>
         {children}
       </Box>
     </>

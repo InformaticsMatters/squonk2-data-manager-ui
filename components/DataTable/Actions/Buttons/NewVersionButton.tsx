@@ -21,7 +21,7 @@ interface NewVersionButtonProps extends IconButtonProps {
   dataset: TableDataset;
 }
 
-export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset, ...buttonProps }) => {
+export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<UploadableFile>();

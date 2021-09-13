@@ -5,7 +5,6 @@ import { useQueryClient } from 'react-query';
 import type { TaskSummary } from '@squonk/data-manager-client';
 import { getGetTasksQueryKey, useDeleteTask } from '@squonk/data-manager-client/task';
 
-import { css } from '@emotion/react';
 import {
   Button,
   CardContent,
@@ -13,12 +12,9 @@ import {
   ListItemIcon,
   ListItemText,
   Slide,
-  Typography,
-  useTheme,
 } from '@material-ui/core';
 
 import { BaseCard } from '../BaseCard';
-import { LocalTime } from '../LocalTime/LocalTime';
 import { useCurrentProjectId } from '../state/currentProjectHooks';
 import { WarningDeleteButton } from '../WarningDeleteButton';
 import { HorizontalList } from './common/HorizontalList';
@@ -30,8 +26,6 @@ interface TaskCardProps {
 }
 
 export const OperationTaskCard: FC<TaskCardProps> = ({ task }) => {
-  const theme = useTheme();
-
   const queryClient = useQueryClient();
   const { mutateAsync: deleteTask } = useDeleteTask();
 

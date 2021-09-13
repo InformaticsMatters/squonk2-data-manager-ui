@@ -34,7 +34,7 @@ export const AllDatasetsTable = () => {
       {
         accessor: 'fileName',
         Header: 'File Name',
-        Cell: ({ value: fileName, row }) => {
+        Cell: ({ row }) => {
           return <DatasetDetails dataset={row.original} />;
         },
       },

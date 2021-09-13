@@ -25,26 +25,29 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   const allowedFileTypes = useFileExtensions();
   const mimeLookup = useMimeTypeLookup();
 
-  const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
-    const mappedAccepted = acceptedFiles.map((file) => ({
-      file,
-      mimeType: getMimeFromFileName(file.name, mimeLookup),
-      errors: [],
-      id: uuidv4(),
-      progress: 0,
-      taskId: null,
-      done: false,
-    }));
-    const mappedRejected = rejectedFiles.map((rejection) => ({
-      ...rejection,
-      mimeType: getMimeFromFileName(rejection.file.name, mimeLookup),
-      id: uuidv4(),
-      progress: 0,
-      taskId: null,
-      done: false,
-    }));
-    setFiles([...mappedAccepted, ...mappedRejected]);
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+      const mappedAccepted = acceptedFiles.map((file) => ({
+        file,
+        mimeType: getMimeFromFileName(file.name, mimeLookup),
+        errors: [],
+        id: uuidv4(),
+        progress: 0,
+        taskId: null,
+        done: false,
+      }));
+      const mappedRejected = rejectedFiles.map((rejection) => ({
+        ...rejection,
+        mimeType: getMimeFromFileName(rejection.file.name, mimeLookup),
+        id: uuidv4(),
+        progress: 0,
+        taskId: null,
+        done: false,
+      }));
+      setFiles([...mappedAccepted, ...mappedRejected]);
+    },
+    [mimeLookup, setFiles],
+  );
 
   const patchedFileExtensions = allowedFileTypes ?? [];
   // TODO: allow gzipped files to be uploaded

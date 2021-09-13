@@ -6,7 +6,7 @@ import type { Column } from 'react-table';
 import type { DatasetSchemaGetResponse, Error } from '@squonk/data-manager-client';
 import { useGetSchema } from '@squonk/data-manager-client/dataset';
 
-import { Grid, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import type { AxiosError } from 'axios';
 

@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { css } from '@emotion/react';
-import { Container, useTheme } from '@material-ui/core';
+import { Container } from '@material-ui/core';
 import Head from 'next/head';
 
 import { DataTableManager } from '../components/DataTable/TableManager';
@@ -10,8 +9,6 @@ import Layout from '../components/Layout';
 import { RoleRequired } from '../utils/RoleRequired';
 
 const Data = () => {
-  const theme = useTheme();
-
   return (
     <>
       <Head>

@@ -6,15 +6,7 @@ import { getGetInstanceQueryKey, useGetInstances } from '@squonk/data-manager-cl
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import {
-  Box,
-  Button,
-  Container,
-  IconButton,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@material-ui/core';
+import { Box, Button, Container, IconButton, Tooltip, Typography } from '@material-ui/core';
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
 import Head from 'next/head';
 import NextLink from 'next/link';
@@ -26,7 +18,6 @@ import { OperationApplicationCard } from '../../components/Operations/OperationA
 import { OperationJobCard } from '../../components/Operations/OperationJobCard';
 
 const Tasks: FC = () => {
-  const theme = useTheme();
   const queryClient = useQueryClient();
 
   const router = useRouter();

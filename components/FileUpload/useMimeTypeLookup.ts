@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 /**
@@ -6,11 +8,13 @@ import { useGetFileTypes } from '@squonk/data-manager-client/type';
  */
 export const useMimeTypeLookup = () => {
   const { data } = useGetFileTypes();
-  const types = data?.types;
 
-  const mimeLookup: { [key: string]: string } = {};
+  const mimeLookup = useMemo(() => {
+    const lookup: { [key: string]: string } = {};
+    data?.types.forEach((type) => type.file_extensions.forEach((ext) => (lookup[ext] = type.mime)));
 
-  types?.forEach((type) => type.file_extensions.forEach((ext) => (mimeLookup[ext] = type.mime)));
+    return lookup;
+  }, [data]);
 
   return mimeLookup;
 };

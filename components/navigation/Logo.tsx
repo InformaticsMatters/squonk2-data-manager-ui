@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { useTheme } from '@material-ui/core';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -17,15 +18,12 @@ export const Logo = () => {
           padding-bottom: ${theme.spacing(1) / 2}px;
         `}
       >
-        <img
+        <Image
           alt="Squonk (animal) logo with title text 'Squonk' and subtitle 'Data Manager'"
-          css={css`
-            max-height: 60px;
-            width: auto;
-          `}
-          height="99"
+          height="60"
+          layout="fixed"
           src={process.env.NEXT_PUBLIC_BASE_PATH + '/DataManager_WhiteOpt2.svg'}
-          width="341"
+          width="206"
         />
       </a>
     </Link>

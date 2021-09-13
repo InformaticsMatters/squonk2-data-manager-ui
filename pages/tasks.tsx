@@ -17,8 +17,7 @@ import { getGetProjectsQueryKey, getProjects } from '@squonk/data-manager-client
 import { getGetTasksQueryKey, getTasks, useGetTasks } from '@squonk/data-manager-client/task';
 
 import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { css } from '@emotion/react';
-import { Container, Grid, useTheme } from '@material-ui/core';
+import { Container, Grid } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import type { AxiosError } from 'axios';
 import type { GetServerSideProps } from 'next';
@@ -85,8 +84,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
 };
 
 const Tasks: FC = () => {
-  const theme = useTheme();
-
   const { projectId } = useCurrentProjectId();
 
   const {

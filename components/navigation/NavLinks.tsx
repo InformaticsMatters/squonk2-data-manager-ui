@@ -59,11 +59,11 @@ export const NavLinks = ({ linkWidth }: NavLinksProps) => {
   );
 };
 
-// N.B. using the transient props pattern here
+// N.B. using the transient props pattern
 // https://medium.com/@probablyup/introducing-transient-props-f35fd5203e0c
-const Button = forwardRef<any, ButtonProps & { $active: boolean }>(({ $active, ...props }, ref) => (
-  <MuiButton ref={ref} {...props} />
-));
+const Button = forwardRef<any, ButtonProps & { $active: boolean }>(
+  ({ $active: _$active, ...props }, ref) => <MuiButton ref={ref} {...props} />,
+);
 
 const NavButton = styled(Button)`
   font-weight: ${({ $active }) => ($active ? 'bold' : 'normal')};

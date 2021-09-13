@@ -11,7 +11,6 @@ import { useAttachFile } from '@squonk/data-manager-client/file';
 import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-client/project';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
-import type { IconButtonProps } from '@material-ui/core';
 import { ListItemSecondaryAction, ListItemText } from '@material-ui/core';
 import { ListItem } from '@material-ui/core';
 import { FormControl, FormGroup, IconButton, MenuItem } from '@material-ui/core';

@@ -10,9 +10,9 @@ import { Grid, TextField, Typography } from '@material-ui/core';
 import type { FormProps } from '@rjsf/core';
 import dynamic from 'next/dynamic';
 
+import type { ProjectId } from '../../hooks/currentProjectHooks';
 import { CenterLoader } from '../CenterLoader';
 import { ModalWrapper } from '../Modals/ModalWrapper';
-import type { ProjectId } from '../state/currentProjectHooks';
 import type { JobInputFieldsProps } from './JobInputFields';
 
 const JobInputFields = dynamic<JobInputFieldsProps>(

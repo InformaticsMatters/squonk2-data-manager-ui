@@ -14,8 +14,8 @@ import {
   Slide,
 } from '@material-ui/core';
 
+import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
 import { BaseCard } from '../BaseCard';
-import { useCurrentProjectId } from '../state/currentProjectHooks';
 import { WarningDeleteButton } from '../WarningDeleteButton';
 import { HorizontalList } from './common/HorizontalList';
 import { StatusIcon } from './common/StatusIcon';

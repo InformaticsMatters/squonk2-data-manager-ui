@@ -9,9 +9,9 @@ import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
 import { CenterLoader } from '../CenterLoader';
 import { LocalTime } from '../LocalTime/LocalTime';
-import { useCurrentProjectId } from '../state/currentProjectHooks';
 
 interface InstancesListProps {
   predicate: (instance: InstanceSummary) => boolean;

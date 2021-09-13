@@ -10,8 +10,8 @@ import {
 import { IconButton, Tooltip } from '@material-ui/core';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 
+import type { ProjectId } from '../../../../hooks/currentProjectHooks';
 import { useMimeTypeLookup } from '../../../FileUpload/useMimeTypeLookup';
-import type { ProjectId } from '../../../state/currentProjectHooks';
 import type { TableFile } from '../../types';
 
 interface CreateDatasetFromFileButtonProps {

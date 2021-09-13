@@ -1,4 +1,4 @@
-import type { ProjectId } from '../../state/currentProjectHooks';
+import type { ProjectId } from '../../../hooks/currentProjectHooks';
 
 export type NoUndefProjectId = NonNullable<ProjectId>;
 export type FileOrDirectory = 'file' | 'directory';

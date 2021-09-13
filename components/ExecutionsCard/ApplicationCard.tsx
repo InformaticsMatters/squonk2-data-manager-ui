@@ -5,8 +5,8 @@ import type { ApplicationSummary } from '@squonk/data-manager-client';
 
 import { useTheme } from '@material-ui/core';
 
+import type { ProjectId } from '../../hooks/currentProjectHooks';
 import { BaseCard } from '../BaseCard';
-import type { ProjectId } from '../state/currentProjectHooks';
 import { ApplicationModal } from './ApplicationModal';
 import { InstancesList } from './InstancesList';
 

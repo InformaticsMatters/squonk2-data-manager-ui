@@ -18,7 +18,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
 
-import { useCurrentProject, useCurrentProjectId } from '../state/currentProjectHooks';
+import { useCurrentProject, useCurrentProjectId } from '../../hooks/currentProjectHooks';
 import { WarningDeleteButton } from '../WarningDeleteButton';
 import { AddProject } from './AddProject';
 import { EditProject } from './EditProject';

@@ -22,7 +22,7 @@ import { CenterLoader } from '../components/CenterLoader';
 import { ApplicationCard } from '../components/ExecutionsCard/ApplicationCard';
 import { JobCard } from '../components/ExecutionsCard/JobCard';
 import Layout from '../components/Layout';
-import { useCurrentProject } from '../components/state/currentProjectHooks';
+import { useCurrentProject } from '../hooks/currentProjectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 import { search } from '../utils/search';
 

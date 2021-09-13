@@ -6,7 +6,7 @@ import { Checkbox, Tooltip } from '@material-ui/core';
 import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import StarRoundedIcon from '@material-ui/icons/StarRounded';
 
-import type { ProjectId } from '../../../state/currentProjectHooks';
+import type { ProjectId } from '../../../../hooks/currentProjectHooks';
 import type { SavedFile } from '../../../state/FileSelectionContext';
 import { useSelectedFiles } from '../../../state/FileSelectionContext';
 

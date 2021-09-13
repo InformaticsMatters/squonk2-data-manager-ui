@@ -17,8 +17,8 @@ import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
 import { CenterLoader } from '../CenterLoader';
-import { useProjectBreadcrumbs } from '../state/projectPathHooks';
 import type { FileActionsProps } from './Actions/FileActions';
 import { DataTable } from './DataTable';
 import type { TableDir, TableFile } from './types';

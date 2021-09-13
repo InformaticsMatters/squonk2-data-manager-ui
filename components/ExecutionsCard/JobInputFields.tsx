@@ -3,7 +3,7 @@ import React from 'react';
 
 import { Grid, Typography } from '@material-ui/core';
 
-import type { ProjectId } from '../state/currentProjectHooks';
+import type { ProjectId } from '../../hooks/currentProjectHooks';
 import { FileSelector } from './FileList/FileSelector';
 import type { InputData } from './JobModal';
 

@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import React from 'react';
 
-import { useCurrentProjectId } from '../../state/currentProjectHooks';
+import { useCurrentProjectId } from '../../../hooks/currentProjectHooks';
 import type { TableDir, TableFile } from '../types';
 import { isTableDir } from '../utils';
 import { CreateDatasetFromFileButton } from './Buttons/CreateDatasetFromFileButton';

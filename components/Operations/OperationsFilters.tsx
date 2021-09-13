@@ -22,7 +22,7 @@ import {
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 
-import { useCurrentProjectId } from '../state/currentProjectHooks';
+import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
 
 export interface OperationsFiltersProps {
   operationTypes: string[];

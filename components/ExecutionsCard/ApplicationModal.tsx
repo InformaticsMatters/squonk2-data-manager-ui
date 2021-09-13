@@ -5,7 +5,7 @@ import type { ApplicationSummary } from '@squonk/data-manager-client';
 
 import { Button, Tooltip } from '@material-ui/core';
 
-import type { ProjectId } from '../state/currentProjectHooks';
+import type { ProjectId } from '../../hooks/currentProjectHooks';
 import { ApplicationModalContent } from './ApplicationModalContents';
 
 interface ApplicationModalProps {

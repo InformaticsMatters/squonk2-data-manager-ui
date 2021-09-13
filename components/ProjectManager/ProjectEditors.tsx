@@ -15,7 +15,7 @@ import { Chip, TextField } from '@material-ui/core';
 import type { AutocompleteChangeReason } from '@material-ui/lab';
 import { Autocomplete } from '@material-ui/lab';
 
-import { useCurrentProject } from '../state/currentProjectHooks';
+import { useCurrentProject } from '../../hooks/currentProjectHooks';
 
 export const Editors: FC = () => {
   const { user: currentUser } = useUser();

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 import { Button, Tooltip } from '@material-ui/core';
 
-import type { ProjectId } from '../state/currentProjectHooks';
+import type { ProjectId } from '../../hooks/currentProjectHooks';
 import { JobModal } from './JobModal';
 
 interface RunJobButtonProps {

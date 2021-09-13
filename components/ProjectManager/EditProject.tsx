@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
+import { useCurrentProject } from '../../hooks/currentProjectHooks';
 import { ModalWrapper } from '../Modals/ModalWrapper';
-import { useCurrentProject } from '../state/currentProjectHooks';
 import { Editors } from './ProjectEditors';
 
 interface EditProjectProps {

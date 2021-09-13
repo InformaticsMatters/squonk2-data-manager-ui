@@ -9,9 +9,9 @@ import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager
 import { Grid, MenuItem, TextField } from '@material-ui/core';
 import Form from '@rjsf/material-ui';
 
+import type { ProjectId } from '../../hooks/currentProjectHooks';
 import { CenterLoader } from '../CenterLoader';
 import { ModalWrapper } from '../Modals/ModalWrapper';
-import type { ProjectId } from '../state/currentProjectHooks';
 
 interface ApplicationModalContentProps {
   open: boolean;

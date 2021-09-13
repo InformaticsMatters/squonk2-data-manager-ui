@@ -99,6 +99,7 @@
     "dataset-schema",
     "theme",
     "proxy",
-    "mdx"
+    "mdx",
+    "color-scheme"
   ],
 }

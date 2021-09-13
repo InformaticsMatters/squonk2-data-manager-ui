@@ -27,7 +27,7 @@ import { CenterLoader } from '../components/CenterLoader';
 import Layout from '../components/Layout';
 import { OperationCards } from '../components/Operations/OperationCards';
 import { OperationsFilters } from '../components/Operations/OperationsFilters';
-import { useCurrentProjectId } from '../components/state/currentProjectHooks';
+import { useCurrentProjectId } from '../hooks/currentProjectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {

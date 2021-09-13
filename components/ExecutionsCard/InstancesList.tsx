@@ -45,6 +45,7 @@ export const InstancesList: FC<InstancesListProps> = ({ predicate }) => {
             <ListItem button component="a">
               <ListItemText
                 primary={instance.name}
+                primaryTypographyProps={{ variant: 'body1' }}
                 secondary={<LocalTime utcTimestamp={instance.launched} />}
               />
             </ListItem>

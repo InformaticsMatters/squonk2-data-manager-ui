@@ -60,7 +60,9 @@ export const BaseCard: FC<BaseCardProps> = ({
             </Avatar>
           }
           subheader={header.subtitle}
+          subheaderTypographyProps={{ variant: 'subtitle1' }}
           title={header.title}
+          titleTypographyProps={{ variant: 'body1' }}
         />
       )}
       <CardContent>{children}</CardContent>

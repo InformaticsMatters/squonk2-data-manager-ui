@@ -56,7 +56,7 @@
     "@types/lodash-es": "^4.17.4",
     "@types/mdx-js__react": "^1.5.4",
     "@types/node": "^16.9.1",
-    "@types/react": "^17.0.20",
+    "@types/react": "^17.0.21",
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
     "@typescript-eslint/parser": "^4.31.0",

@@ -50,8 +50,14 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   );
 
   const patchedFileExtensions = allowedFileTypes ?? [];
-  // TODO: allow gzipped files to be uploaded
-  // patchedFileExtensions.push('.gz');
+
+  // Allow .gz files
+  // 1. Browsers limit file selection in native OS file selector to single extensions
+  // So .sdf.gz doesn't work but .gz specifies anything ending in .gz
+  //
+  // 2. This currently requires the body parser in the proxy to be disabled
+  // https://github.com/stegano/next-http-proxy-middleware/issues/33
+  patchedFileExtensions.push('.gz');
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     ...dropzoneOptions,
     onDrop,

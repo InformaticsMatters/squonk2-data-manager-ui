@@ -20,12 +20,14 @@ export const FileUpload = () => {
 
   const [mimeTypeFormDatas, setMimeTypeFormDatas] = useState<FileTypeOptionsState>({});
 
-  const { isLoading: isTypesLoading } = useGetFileTypes(); // Ensure types are prefetched to mime lookup works
+  // Ensure types are prefetched to mime lookup works
+  const { isLoading: isTypesLoading } = useGetFileTypes();
 
   const uploadFiles = () => {
     files
       .filter((file) => !file.done)
       .forEach(async ({ file, rename, mimeType }, index) => {
+        // Prepare the payload for the post request
         const data: DatasetPostBodyBody = {
           dataset_file: file,
           dataset_type: mimeType,
@@ -37,6 +39,7 @@ export const FileUpload = () => {
         };
 
         try {
+          // Can't use the mutate dataset hook here as it doesn't allow a onUploadProgress callback
           const response = await uploadDataset(data, {
             onUploadProgress: (progressEvent: ProgressEvent) => {
               const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
@@ -46,6 +49,8 @@ export const FileUpload = () => {
               setFiles(updatedFiles);
             },
           });
+
+          // A successful request will have a taskId
           if (response.task_id) {
             const updatedFiles = [...files];
             updatedFiles[index].taskId = response.task_id;
@@ -56,6 +61,7 @@ export const FileUpload = () => {
           if (error.isAxiosError) {
             const data = error.response?.data;
 
+            // Add the error to the array of files
             const updatedFiles = [...files];
             updatedFiles[index].errors.push({
               message: data?.error ?? 'Unknown error',
@@ -63,6 +69,7 @@ export const FileUpload = () => {
             });
             setFiles(updatedFiles);
           }
+          throw err;
         }
       });
   };

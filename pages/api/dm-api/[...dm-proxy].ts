@@ -28,9 +28,7 @@ export default withApiAuthRequired(async (req, res) => {
 
 export const config = {
   api: {
-    bodyParser: {
-      sizeLimit: `${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE ?? 25}mb`,
-    },
+    bodyParser: false,
     externalResolver: true, // Prevents noise created by proxy
   },
 };

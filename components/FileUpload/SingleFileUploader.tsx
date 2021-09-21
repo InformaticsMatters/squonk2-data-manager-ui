@@ -159,8 +159,8 @@ export function SingleFileUploadWithProgress({
       {(fileWrapper.progress === 100 && task === undefined) || (task && !task.done) || isLoading ? (
         <LinearProgress />
       ) : null}
-      {errors.map((error) => (
-        <Typography color="error" key={`${error.code}-${error.message}`}>
+      {errors.map((error, index) => (
+        <Typography color="error" key={`${error.code}-${error.message}-${index}`}>
           {error.message}
         </Typography>
       ))}

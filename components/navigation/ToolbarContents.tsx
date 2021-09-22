@@ -6,14 +6,14 @@ import dynamic from 'next/dynamic';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
 import { CenterLoader } from '../CenterLoader';
-import type { ProjectManagerProps } from '../ProjectManager/ProjectManager';
+import type { ProjectManagerProps } from '../ProjectManager';
 import { MobileNavMenu } from './MobileNavMenu';
 import { NavLinks } from './NavLinks';
 import { ProjectModalButton } from './ProjectModalButton';
 import { UserMenu } from './UserMenu';
 
 const ProjectManager = dynamic<ProjectManagerProps>(
-  () => import('../ProjectManager/ProjectManager').then((mod) => mod.ProjectManager),
+  () => import('../ProjectManager').then((mod) => mod.ProjectManager),
   {
     loading: () => <CenterLoader />,
   },

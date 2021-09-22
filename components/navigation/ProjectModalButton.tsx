@@ -5,7 +5,7 @@ import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
 import { ModalWrapper } from '../modals/ModalWrapper';
-import { ProjectManager } from '../ProjectManager/ProjectManager';
+import { ProjectManager } from '../ProjectManager';
 
 export const ProjectModalButton = () => {
   const [open, setOpen] = useState(false);

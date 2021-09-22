@@ -1,4 +1,4 @@
-import type { FC, HTMLProps } from 'react';
+import type { HTMLProps } from 'react';
 import React from 'react';
 
 import { toLocalTimeString } from './utils';
@@ -19,6 +19,8 @@ interface DateTimeLocalTime extends BaseLocalTimeProps {
   showTime: boolean;
 }
 
+export type LocalTimeProps = FormatLocalTime | DateTimeLocalTime;
+
 /**
  * Component using dayjs to display a utc timestamp in local time
  * There are two options:
@@ -27,13 +29,13 @@ interface DateTimeLocalTime extends BaseLocalTimeProps {
  *
  * All other props are passed to the root span element
  */
-export const LocalTime: FC<FormatLocalTime | DateTimeLocalTime> = ({
+export const LocalTime = ({
   utcTimestamp,
   format,
   showDate = true,
   showTime = true,
   ...spanProps
-}) => {
+}: LocalTimeProps) => {
   const localTimestamp = toLocalTimeString(utcTimestamp, showDate, showTime, format);
 
   return <span {...spanProps}>{localTimestamp}</span>;

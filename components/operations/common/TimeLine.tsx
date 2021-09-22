@@ -15,7 +15,7 @@ import {
   TimelineSeparator,
 } from '@material-ui/lab';
 
-import { LocalTime } from '../../LocalTime/LocalTime';
+import { LocalTime } from '../../localTime';
 
 interface TimeLineProps {
   states: NonNullable<

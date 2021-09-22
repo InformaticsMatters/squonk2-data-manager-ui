@@ -4,7 +4,7 @@ import { useUser } from '@auth0/nextjs-auth0';
 import { FormControlLabel, Link, Switch, Typography } from '@material-ui/core';
 import NextLink from 'next/link';
 
-import { useColorScheme } from '../state/colorSchemeContext';
+import { useColorScheme } from '../../context/colorSchemeContext';
 
 export const UserMenuContent = () => {
   const { user, isLoading } = useUser();

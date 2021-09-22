@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { Box, Checkbox, FormControlLabel } from '@material-ui/core';
 
-import { useSelectedFiles } from '../../state/FileSelectionContext';
+import { useSelectedFiles } from '../../../context/fileSelectionContext';
 import { AllFilesList } from './AllFilesList';
 import { FavouritesList } from './FavouritesList';
 import type { SharedProps } from './types';

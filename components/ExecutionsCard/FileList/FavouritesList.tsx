@@ -5,7 +5,7 @@ import { css } from '@emotion/react';
 import { Typography } from '@material-ui/core';
 import FolderSpecialRoundedIcon from '@material-ui/icons/FolderSpecialRounded';
 
-import { useSelectedFiles } from '../../state/FileSelectionContext';
+import { useSelectedFiles } from '../../../context/fileSelectionContext';
 import { FileListItem } from './FileListItem';
 import { ScrollList } from './ScrollList';
 import type { SharedProps } from './types';

@@ -7,7 +7,7 @@ import { ThemeProvider } from '@emotion/react';
 import { CssBaseline } from '@material-ui/core';
 import { StylesProvider, ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 
-import { useColorScheme } from '../components/state/colorSchemeContext';
+import { useColorScheme } from '../context/colorSchemeContext';
 
 const { darkTheme, lightTheme } = generateThemes();
 

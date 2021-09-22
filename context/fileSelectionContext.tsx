@@ -1,7 +1,7 @@
 import React, { useContext, useReducer } from 'react';
 
-import type { ProjectId } from '../../hooks/currentProjectHooks';
-import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
+import type { ProjectId } from '../hooks/currentProjectHooks';
+import { useCurrentProjectId } from '../hooks/currentProjectHooks';
 
 export type SavedFile = {
   path: string;

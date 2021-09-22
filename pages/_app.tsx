@@ -8,10 +8,10 @@ import { UserProvider } from '@auth0/nextjs-auth0';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
-import { MDXComponentProvider } from '../components/MDXComponentProvider';
-import { ColorSchemeProvider } from '../components/state/colorSchemeContext';
-import { SelectedFilesProvider } from '../components/state/FileSelectionContext';
 import { ThemeProviders } from '../components/ThemeProviders';
+import { ColorSchemeProvider } from '../context/colorSchemeContext';
+import { SelectedFilesProvider } from '../context/fileSelectionContext';
+import { MDXComponentProvider } from '../context/MDXComponentProvider';
 
 import '../styles/globalStyles.scss';
 

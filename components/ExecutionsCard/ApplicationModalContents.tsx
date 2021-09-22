@@ -11,7 +11,7 @@ import Form from '@rjsf/material-ui';
 
 import type { ProjectId } from '../../hooks/currentProjectHooks';
 import { CenterLoader } from '../CenterLoader';
-import { ModalWrapper } from '../Modals/ModalWrapper';
+import { ModalWrapper } from '../modals/ModalWrapper';
 
 interface ApplicationModalContentProps {
   open: boolean;

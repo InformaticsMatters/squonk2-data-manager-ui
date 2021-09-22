@@ -22,7 +22,7 @@ import { CheckboxWithLabel, TextField } from 'formik-material-ui';
 import * as yup from 'yup';
 
 import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
-import { FormikModalWrapper } from '../../../Modals/FormikModalWrapper';
+import { FormikModalWrapper } from '../../../modals/FormikModalWrapper';
 
 interface AttachButtonProps {
   datasetId: string;

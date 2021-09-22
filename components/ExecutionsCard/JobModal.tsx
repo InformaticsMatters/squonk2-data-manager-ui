@@ -12,7 +12,7 @@ import dynamic from 'next/dynamic';
 
 import type { ProjectId } from '../../hooks/currentProjectHooks';
 import { CenterLoader } from '../CenterLoader';
-import { ModalWrapper } from '../Modals/ModalWrapper';
+import { ModalWrapper } from '../modals/ModalWrapper';
 import type { JobInputFieldsProps } from './JobInputFields';
 
 const JobInputFields = dynamic<JobInputFieldsProps>(

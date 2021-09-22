@@ -8,7 +8,7 @@ import { IconButton } from '@material-ui/core';
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
 import type { AxiosError } from 'axios';
 
-import { ModalWrapper } from '../Modals/ModalWrapper';
+import { ModalWrapper } from '../modals/ModalWrapper';
 import { FileTypeOptions } from '../Uploads/FileTypeOptions';
 import type { FileTypeOptionsState, UploadableFile } from '../Uploads/types';
 import { BulkUploadDropzone } from './BulkUploadDropzone';

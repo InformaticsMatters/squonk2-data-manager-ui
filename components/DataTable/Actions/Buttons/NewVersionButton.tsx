@@ -10,7 +10,7 @@ import { ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/co
 import { Typography } from '@material-ui/core';
 import BackupRoundedIcon from '@material-ui/icons/BackupRounded';
 
-import { ModalWrapper } from '../../../Modals/ModalWrapper';
+import { ModalWrapper } from '../../../modals/ModalWrapper';
 import { Dropzone } from '../../../Uploads/Dropzone';
 import { FileTypeOptions } from '../../../Uploads/FileTypeOptions';
 import { ProgressBar } from '../../../Uploads/ProgressBar';

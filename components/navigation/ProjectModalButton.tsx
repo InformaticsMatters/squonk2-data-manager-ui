@@ -4,7 +4,7 @@ import { IconButton } from '@material-ui/core';
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
-import { ModalWrapper } from '../Modals/ModalWrapper';
+import { ModalWrapper } from '../modals/ModalWrapper';
 import { ProjectManager } from '../ProjectManager/ProjectManager';
 
 export const ProjectModalButton = () => {

@@ -18,7 +18,7 @@ import {
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
-import { ModalWrapper } from '../../Modals/ModalWrapper';
+import { ModalWrapper } from '../../modals/ModalWrapper';
 import { AttachDatasetButton } from '../Actions/Buttons/AttachDatasetButton';
 import { DeleteDatasetButton } from '../Actions/Buttons/DeleteDatasetButton';
 import { NewVersionButton } from '../Actions/Buttons/NewVersionButton';

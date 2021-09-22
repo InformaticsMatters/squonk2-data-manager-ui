@@ -5,7 +5,7 @@ import React from 'react';
 import { IconButton, ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
 import FindInPageRoundedIcon from '@material-ui/icons/FindInPageRounded';
 
-import { ModalWrapper } from '../../Modals/ModalWrapper';
+import { ModalWrapper } from '../../modals/ModalWrapper';
 import type { DatasetSchemaViewProps } from './DatasetSchemaView';
 import { DatasetSchemaView } from './DatasetSchemaView';
 

@@ -14,7 +14,7 @@ import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 import { useRouter } from 'next/router';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
-import { ModalWrapper } from '../Modals/ModalWrapper';
+import { ModalWrapper } from '../modals/ModalWrapper';
 import { ProjectManager } from '../ProjectManager/ProjectManager';
 import { NavLink } from './NavLink';
 import { UserMenuContent } from './UserMenuContent';

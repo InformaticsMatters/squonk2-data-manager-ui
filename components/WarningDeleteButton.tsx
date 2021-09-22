@@ -4,7 +4,7 @@ import React from 'react';
 
 import { Tooltip, Typography } from '@material-ui/core';
 
-import { ModalWrapper } from './Modals/ModalWrapper';
+import { ModalWrapper } from './modals/ModalWrapper';
 
 export interface DeleteButtonProps {
   isDeleting: boolean;

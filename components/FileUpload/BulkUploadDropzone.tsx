@@ -4,9 +4,9 @@ import React from 'react';
 import { css } from '@emotion/react';
 import { Grid, useTheme } from '@material-ui/core';
 
-import { Dropzone } from '../Uploads/Dropzone';
-import type { UploadableFile } from '../Uploads/types';
-import { mutateAtPosition } from '../Uploads/utils';
+import { Dropzone } from '../uploads/Dropzone';
+import type { UploadableFile } from '../uploads/types';
+import { mutateAtPosition } from '../uploads/utils';
 import { SingleFileUploadWithProgress } from './SingleFileUploader';
 
 interface BulkUploadDropzoneProps {

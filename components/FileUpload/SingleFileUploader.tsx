@@ -18,8 +18,8 @@ import {
 
 import { useFileExtensions } from '../../hooks/useFileExtensions';
 import { useMimeTypeLookup } from '../../hooks/useMimeTypeLookup';
-import { TwiddleIcon } from '../Uploads/TwiddleIcon';
-import type { UploadableFile } from '../Uploads/types';
+import { TwiddleIcon } from '../uploads/TwiddleIcon';
+import type { UploadableFile } from '../uploads/types';
 
 export interface SingleFileUploadWithProgressProps {
   fileWrapper: UploadableFile;

@@ -11,10 +11,10 @@ import { Typography } from '@material-ui/core';
 import BackupRoundedIcon from '@material-ui/icons/BackupRounded';
 
 import { ModalWrapper } from '../../../modals/ModalWrapper';
-import { Dropzone } from '../../../Uploads/Dropzone';
-import { FileTypeOptions } from '../../../Uploads/FileTypeOptions';
-import { ProgressBar } from '../../../Uploads/ProgressBar';
-import type { FileTypeOptionsState, UploadableFile } from '../../../Uploads/types';
+import { Dropzone } from '../../../uploads/Dropzone';
+import { FileTypeOptions } from '../../../uploads/FileTypeOptions';
+import { ProgressBar } from '../../../uploads/ProgressBar';
+import type { FileTypeOptionsState, UploadableFile } from '../../../uploads/types';
 import type { TableDataset } from '../../types';
 
 interface NewVersionButtonProps extends IconButtonProps {

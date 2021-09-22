@@ -19,8 +19,8 @@ import type { AxiosError } from 'axios';
 import Head from 'next/head';
 
 import { CenterLoader } from '../components/CenterLoader';
-import { ApplicationCard } from '../components/ExecutionsCard/ApplicationCard';
-import { JobCard } from '../components/ExecutionsCard/JobCard';
+import { ApplicationCard } from '../components/executionsCards/ApplicationCard';
+import { JobCard } from '../components/executionsCards/JobCard';
 import Layout from '../components/Layout';
 import { useCurrentProject } from '../hooks/currentProjectHooks';
 import { RoleRequired } from '../utils/RoleRequired';

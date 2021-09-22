@@ -5,7 +5,7 @@ import type { InstanceSummary } from '@squonk/data-manager-client';
 
 import { Button } from '@material-ui/core';
 
-import { JobModal } from '../ExecutionsCard/JobModal';
+import { JobModal } from '../executionsCards/JobModal';
 
 interface RerunJobButtonProps {
   instance: InstanceSummary;

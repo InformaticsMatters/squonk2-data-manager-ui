@@ -1,13 +1,13 @@
 import type { FC } from 'react';
 import React from 'react';
 
-import { useCurrentProjectId } from '../../../hooks/currentProjectHooks';
-import type { TableDir, TableFile } from '../types';
-import { isTableDir } from '../utils';
+import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
 import { CreateDatasetFromFileButton } from './Buttons/CreateDatasetFromFileButton';
 import { DeleteUnmanagedFileButton } from './Buttons/DeleteUnmanagedFileButton';
 import { DetachDataset } from './Buttons/DetachDataset';
 import { FavouriteButton } from './Buttons/FavouriteButton';
+import type { TableDir, TableFile } from './types';
+import { isTableDir } from './utils';
 
 export interface FileActionsProps {
   file: TableFile | TableDir;

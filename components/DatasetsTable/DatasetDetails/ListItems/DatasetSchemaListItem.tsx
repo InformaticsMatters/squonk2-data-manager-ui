@@ -1,17 +1,16 @@
-import type { FC } from 'react';
 import { useState } from 'react';
 import React from 'react';
 
 import { IconButton, ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
 import FindInPageRoundedIcon from '@material-ui/icons/FindInPageRounded';
 
-import { ModalWrapper } from '../../modals/ModalWrapper';
-import type { DatasetSchemaViewProps } from './DatasetSchemaView';
-import { DatasetSchemaView } from './DatasetSchemaView';
+import { ModalWrapper } from '../../../modals/ModalWrapper';
+import type { DatasetSchemaViewProps } from '../DatasetSchemaView';
+import { DatasetSchemaView } from '../DatasetSchemaView';
 
 export type DatasetSchemaListItemProps = DatasetSchemaViewProps;
 
-export const DatasetSchemaListItem: FC<DatasetSchemaListItemProps> = ({ datasetId, version }) => {
+export const DatasetSchemaListItem = ({ datasetId, version }: DatasetSchemaListItemProps) => {
   const [open, setOpen] = useState(false);
   return (
     <>

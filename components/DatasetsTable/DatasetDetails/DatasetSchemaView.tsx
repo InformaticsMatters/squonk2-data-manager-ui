@@ -11,7 +11,7 @@ import { Alert } from '@material-ui/lab';
 import type { AxiosError } from 'axios';
 
 import { CenterLoader } from '../../CenterLoader';
-import { DataTable } from '../DataTable';
+import { DataTable } from '../../DataTable';
 
 export interface DatasetSchemaViewProps {
   datasetId: string;

@@ -9,8 +9,8 @@ import dynamic from 'next/dynamic';
 import { combineLabels } from '../../utils/labelUtils';
 import { CenterLoader } from '../CenterLoader';
 import { Chips } from '../Chips';
+import { DataTable } from '../DataTable';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
-import { DataTable } from './DataTable';
 import { LabelChip } from './LabelChip';
 import type { TableDataset } from './types';
 

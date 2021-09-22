@@ -19,11 +19,11 @@ import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
 import { ModalWrapper } from '../../modals/ModalWrapper';
-import { AttachDatasetButton } from '../Actions/Buttons/AttachDatasetButton';
-import { DeleteDatasetButton } from '../Actions/Buttons/DeleteDatasetButton';
-import { NewVersionButton } from '../Actions/Buttons/NewVersionButton';
 import type { TableDataset } from '../types';
-import { DatasetSchemaListItem } from './DatasetSchemaListItem';
+import { AttachDatasetListItem } from './ListItems/AttachDatasetListItem';
+import { DatasetSchemaListItem } from './ListItems/DatasetSchemaListItem';
+import { DeleteDatasetListItem } from './ListItems/DeleteDatasetListItem';
+import { NewVersionListItem } from './ListItems/NewVersionListItem';
 import { Labels } from './Labels';
 import { ManageDatasetEditors } from './ManageDatasetEditors';
 
@@ -65,7 +65,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
 
           {(isEditor || isOwner) && (
             <List>
-              <NewVersionButton dataset={dataset} edge="end" />
+              <NewVersionListItem dataset={dataset} edge="end" />
             </List>
           )}
 
@@ -146,7 +146,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
             </Typography>
             <List>
               {selectedVersion && (
-                <AttachDatasetButton
+                <AttachDatasetListItem
                   datasetId={dataset.dataset_id}
                   fileName={dataset.fileName}
                   version={selectedVersion}
@@ -159,7 +159,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
               />
 
               {selectedVersion && (isEditor || isOwner) && (
-                <DeleteDatasetButton
+                <DeleteDatasetListItem
                   datasetId={dataset.dataset_id}
                   resetSelection={() => {
                     const nextSelectableVersions = dataset.versions.filter(

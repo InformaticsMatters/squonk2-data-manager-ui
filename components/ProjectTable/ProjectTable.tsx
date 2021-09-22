@@ -19,14 +19,14 @@ import { useRouter } from 'next/router';
 
 import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
 import { CenterLoader } from '../CenterLoader';
-import type { FileActionsProps } from './Actions/FileActions';
-import { DataTable } from './DataTable';
+import { DataTable } from '../DataTable';
+import type { FileActionsProps } from './FileActions';
 import type { TableDir, TableFile } from './types';
 import { useRows } from './useRows';
 import { isTableDir } from './utils';
 
 const FileActions = dynamic<FileActionsProps>(
-  () => import('./Actions/FileActions').then((mod) => mod.FileActions),
+  () => import('./FileActions').then((mod) => mod.FileActions),
   {
     loading: () => <CircularProgress size="1rem" />,
   },

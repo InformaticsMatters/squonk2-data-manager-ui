@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
 
-import { FavouriteButton } from '../../DataTable/Actions/Buttons/FavouriteButton';
+import { FavouriteButton } from '../../ProjectTable/Buttons/FavouriteButton';
 import type { FileOrDirectory, NoUndefProjectId } from './types';
 
 export interface FileListItemProps {

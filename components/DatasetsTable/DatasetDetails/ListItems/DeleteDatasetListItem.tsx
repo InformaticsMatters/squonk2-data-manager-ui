@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -17,11 +16,11 @@ interface DeleteDatasetProps {
   resetSelection: () => void;
 }
 
-export const DeleteDatasetButton: FC<DeleteDatasetProps> = ({
+export const DeleteDatasetListItem = ({
   datasetId,
   version,
   resetSelection,
-}) => {
+}: DeleteDatasetProps) => {
   const queryClient = useQueryClient();
   const deleteMutation = useDeleteDataset();
 

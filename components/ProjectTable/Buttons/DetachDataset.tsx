@@ -8,7 +8,7 @@ import { getGetProjectQueryKey } from '@squonk/data-manager-client/project';
 import { IconButton } from '@material-ui/core';
 import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
 
-import { WarningDeleteButton } from '../../../WarningDeleteButton';
+import { WarningDeleteButton } from '../../WarningDeleteButton';
 
 interface DetachDatasetProps {
   fileId: string;

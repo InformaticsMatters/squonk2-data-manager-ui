@@ -9,7 +9,7 @@ import { getGetProjectQueryKey } from '@squonk/data-manager-client/project';
 import { IconButton } from '@material-ui/core';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 
-import { WarningDeleteButton } from '../../../WarningDeleteButton';
+import { WarningDeleteButton } from '../../WarningDeleteButton';
 
 interface DeleteUnmanagedFileButtonProps {
   projectId: DeleteUnmanagedFileParams['project_id'];

@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable unused-imports/no-unused-vars */
+
+/**
+ * Without this override, react-table imports are missing types for functionality added by plugins
+ * This is originally sourced from react-table docs/github issues
+ */
+
 import type {
   // UseColumnOrderInstanceProps,
   // UseColumnOrderState,

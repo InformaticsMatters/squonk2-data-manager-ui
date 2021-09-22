@@ -4,7 +4,7 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { Container } from '@material-ui/core';
 import Head from 'next/head';
 
-import { DataTableManager } from '../components/DataTable/TableManager';
+import { DataTableManager } from '../components/Data/TableManager';
 import Layout from '../components/Layout';
 import { RoleRequired } from '../utils/RoleRequired';
 

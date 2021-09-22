@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -17,11 +16,11 @@ import { ProgressBar } from '../../../uploads/ProgressBar';
 import type { FileTypeOptionsState, UploadableFile } from '../../../uploads/types';
 import type { TableDataset } from '../../types';
 
-interface NewVersionButtonProps extends IconButtonProps {
+interface NewVersionListItemProps extends IconButtonProps {
   dataset: TableDataset;
 }
 
-export const NewVersionButton: FC<NewVersionButtonProps> = ({ dataset }) => {
+export const NewVersionListItem = ({ dataset }: NewVersionListItemProps) => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<UploadableFile>();

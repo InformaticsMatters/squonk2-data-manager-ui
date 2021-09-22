@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -24,7 +23,7 @@ import * as yup from 'yup';
 import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
 import { FormikModalWrapper } from '../../../modals/FormikModalWrapper';
 
-interface AttachButtonProps {
+export interface AttachDatasetListItemProps {
   datasetId: string;
   version: DatasetVersionSummary;
   fileName: string;
@@ -38,7 +37,11 @@ interface FormState {
   isCompress: boolean;
 }
 
-export const AttachDatasetButton: FC<AttachButtonProps> = ({ datasetId, fileName, version }) => {
+export const AttachDatasetListItem = ({
+  datasetId,
+  fileName,
+  version,
+}: AttachDatasetListItemProps) => {
   const [open, setOpen] = useState(false);
 
   const { user, isLoading: isUserLoading } = useKeycloakUser();

@@ -25,8 +25,8 @@ import Head from 'next/head';
 
 import { CenterLoader } from '../components/CenterLoader';
 import Layout from '../components/Layout';
-import { OperationCards } from '../components/Operations/OperationCards';
-import { OperationsFilters } from '../components/Operations/OperationsFilters';
+import { OperationCards } from '../components/operations/OperationCards';
+import { OperationsFilters } from '../components/operations/OperationsFilters';
 import { useCurrentProjectId } from '../hooks/currentProjectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 

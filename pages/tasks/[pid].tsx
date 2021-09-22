@@ -14,8 +14,8 @@ import { useRouter } from 'next/router';
 
 import { CenterLoader } from '../../components/CenterLoader';
 import Layout from '../../components/Layout';
-import { OperationApplicationCard } from '../../components/Operations/OperationApplicationCard';
-import { OperationJobCard } from '../../components/Operations/OperationJobCard';
+import { OperationApplicationCard } from '../../components/operations/OperationApplicationCard';
+import { OperationJobCard } from '../../components/operations/OperationJobCard';
 
 const Tasks: FC = () => {
   const queryClient = useQueryClient();

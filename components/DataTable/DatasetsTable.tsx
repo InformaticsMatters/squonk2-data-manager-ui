@@ -15,7 +15,7 @@ import { LabelChip } from './LabelChip';
 import type { TableDataset } from './types';
 
 const FileUpload = dynamic<Record<string, never>>(
-  () => import('../FileUpload/FileUpload').then((mod) => mod.FileUpload),
+  () => import('../FileUpload').then((mod) => mod.FileUpload),
   {
     loading: () => <CircularProgress size="1rem" />,
   },

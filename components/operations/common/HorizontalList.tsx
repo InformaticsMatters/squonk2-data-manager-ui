@@ -6,7 +6,7 @@ import { List, ListItem, ListItemText, useMediaQuery, useTheme } from '@material
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
-import { DATE_FORMAT, TIME_FORMAT } from '../../localTime/utils';
+import { DATE_FORMAT, TIME_FORMAT } from '../../LocalTime/utils';
 dayjs.extend(utc);
 
 export interface HorizontalListProps {

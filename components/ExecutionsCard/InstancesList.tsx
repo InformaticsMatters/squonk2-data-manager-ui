@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 
 import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
 import { CenterLoader } from '../CenterLoader';
-import { LocalTime } from '../localTime';
+import { LocalTime } from '../LocalTime';
 
 interface InstancesListProps {
   predicate: (instance: InstanceSummary) => boolean;

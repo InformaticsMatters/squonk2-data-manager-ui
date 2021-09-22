@@ -16,10 +16,10 @@ import {
   useTheme,
 } from '@material-ui/core';
 
+import { useFileExtensions } from '../../hooks/useFileExtensions';
+import { useMimeTypeLookup } from '../../hooks/useMimeTypeLookup';
 import { TwiddleIcon } from '../Uploads/TwiddleIcon';
 import type { UploadableFile } from '../Uploads/types';
-import { useFileExtensions } from './useFileExtensions';
-import { useMimeTypeLookup } from './useMimeTypeLookup';
 
 export interface SingleFileUploadWithProgressProps {
   fileWrapper: UploadableFile;

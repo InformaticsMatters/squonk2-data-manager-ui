@@ -6,8 +6,8 @@ import { Grid, useTheme } from '@material-ui/core';
 
 import { Dropzone } from '../Uploads/Dropzone';
 import type { UploadableFile } from '../Uploads/types';
+import { mutateAtPosition } from '../Uploads/utils';
 import { SingleFileUploadWithProgress } from './SingleFileUploader';
-import { mutateAtPosition } from './utils';
 
 interface BulkUploadDropzoneProps {
   files: UploadableFile[];

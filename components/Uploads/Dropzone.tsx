@@ -6,10 +6,10 @@ import { css } from '@emotion/react';
 import { Button, Divider, useTheme } from '@material-ui/core';
 import { v4 as uuidv4 } from 'uuid';
 
-import { useFileExtensions } from '../FileUpload/useFileExtensions';
-import { useMimeTypeLookup } from '../FileUpload/useMimeTypeLookup';
-import { getMimeFromFileName } from '../FileUpload/utils';
+import { useFileExtensions } from '../../hooks/useFileExtensions';
+import { useMimeTypeLookup } from '../../hooks/useMimeTypeLookup';
 import type { UploadableFile } from './types';
+import { getMimeFromFileName } from './utils';
 
 interface DropzoneProps extends DropzoneOptions {
   files: UploadableFile[];

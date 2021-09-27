@@ -7,6 +7,25 @@
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/InformaticsMatters/mini-apps-data-tier-ui)
 
+## Development
+
+This project uses `yarn`.
+
+Notable scripts:
+
+- `yarn install` to install dependencies. This will also setup `husky` git hooks.
+- `yarn dev` starts the development server
+- `yarn dev:debug` same as above but with the Node debugger running. Start the VSCode debugger to connect.
+- `yarn build` will create a production build which includes type-checking and `eslint`
+- `yarn type-check` will run a one-off type check. This is also called pre-push to ensure no type errors are deployed.
+- `yarn format:all` will format all files with the `eslint` config
+
+See `package.json` for all available scripts.
+
+### Code Quality
+
+We use a combination of `Husky`, `lint-staged` and `eslint` to format code to a standard style (see the `.eslintrc` file). Changed lines/files are formatted by when a `git commit` is made.
+
 ## Building
 
 Official builds are handled by GitHub Actions and container images pushed

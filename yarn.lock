@@ -5690,10 +5690,10 @@ xdm-next@^1.0.0:
   resolved "https://registry.yarnpkg.com/xdm-next/-/xdm-next-1.0.0.tgz#9b4a86c97f5a17371e90faf3a9d2df7af244470a"
   integrity sha512-jUQs4lUxGKCQ0Nj3K7A5+oU4teyKTkUUzxcySdCQtD1Vs8mDlonxS0y7p07wHUPmGvaqeltBHdnltSq8bdeibw==
 
-xdm@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/xdm/-/xdm-2.0.3.tgz#5a0e02bf3c98b0cde55b11581994ba25cc0022ee"
-  integrity sha512-4iMjqObkwx0Hhv/Sh2S/1zRtJVlyaSmxN3NKSR0EVdOcx5Mq7kEz1a5b5G9JyaE37/kkt2r89PfP+vS6fCydmA==
+xdm@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/xdm/-/xdm-2.0.5.tgz#5ab46bc34fef15d00c4a7cd6b675583501b57434"
+  integrity sha512-F9GpoeIB+67/p9Y4RhJ8nQCT9ipgox+55HaF6MjO6Tl+CgcbOMputq3A7oh8Ac+3im68a0cXc+Kn4dNkXC6eSg==
   dependencies:
     "@rollup/pluginutils" "^4.0.0"
     "@types/estree-jsx" "^0.0.1"

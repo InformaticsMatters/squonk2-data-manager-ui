@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import { useState } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
@@ -11,14 +10,20 @@ import {
 
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
 import { CenterLoader } from '../../CenterLoader';
-import { ManageEditors } from '../../ManageEditors';
 import type { TableDataset } from '../types';
+import { ManageEditors } from './ManageEditors';
 
 export interface ManageDatasetEditorsProps {
+  /**
+   * Dataset from datasets table
+   */
   dataset: TableDataset;
 }
 
-export const ManageDatasetEditors: FC<ManageDatasetEditorsProps> = ({ dataset }) => {
+/**
+ * MuiAutocomplete with options to add and remove editors from a dataset
+ */
+export const ManageDatasetEditors = ({ dataset }: ManageDatasetEditorsProps) => {
   const { user } = useKeycloakUser();
 
   const queryClient = useQueryClient();
@@ -30,7 +35,11 @@ export const ManageDatasetEditors: FC<ManageDatasetEditorsProps> = ({ dataset })
 
   const [isLoading, setIsLoading] = useState(false);
 
-  return user.username ? (
+  if (!user.username) {
+    return <CenterLoader />;
+  }
+
+  return (
     <ManageEditors
       currentUsername={user.username}
       editorsValue={editors}
@@ -38,11 +47,12 @@ export const ManageDatasetEditors: FC<ManageDatasetEditorsProps> = ({ dataset })
       onRemove={async (value) => {
         setIsLoading(true);
         const username = dataset.editors.find((editor) => !value.includes(editor));
-        username &&
-          (await removeEditor({
+        if (username !== undefined) {
+          await removeEditor({
             datasetid: dataset.dataset_id,
             userid: username,
-          }));
+          });
+        }
 
         await queryClient.invalidateQueries(getGetDatasetsQueryKey());
 
@@ -51,14 +61,14 @@ export const ManageDatasetEditors: FC<ManageDatasetEditorsProps> = ({ dataset })
       onSelect={async (value) => {
         setIsLoading(true);
         const username = value.find((user) => !dataset.editors.includes(user));
-        username && (await addEditor({ datasetid: dataset.dataset_id, userid: username }));
+        if (username !== undefined) {
+          await addEditor({ datasetid: dataset.dataset_id, userid: username });
+        }
 
         await queryClient.invalidateQueries(getGetDatasetsQueryKey());
 
         setIsLoading(false);
       }}
     />
-  ) : (
-    <CenterLoader />
   );
 };

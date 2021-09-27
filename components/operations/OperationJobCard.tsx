@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React, { useState } from 'react';
 
 import type { InstanceSummary } from '@squonk/data-manager-client';
@@ -9,18 +8,25 @@ import { CardContent, ListItem, ListItemIcon, ListItemText, Slide } from '@mater
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 
 import { BaseCard } from '../BaseCard';
+import { DateTimeListItem } from './common/DateTimeListItem';
 import { HorizontalList } from './common/HorizontalList';
 import { StatusIcon } from './common/StatusIcon';
 import { TerminateInstance } from './common/TerminateInstance';
+import type { CommonProps } from './common/types';
 import { JobDetails } from './details/JobDetails';
 import { RerunJobButton } from './RerunJobButton';
 
-interface JobCardProps {
+export interface JobCardProps extends CommonProps {
+  /**
+   * Instance of the job
+   */
   instance: InstanceSummary;
-  collapsedByDefault?: boolean;
 }
 
-export const OperationJobCard: FC<JobCardProps> = ({ instance, collapsedByDefault = true }) => {
+/**
+ * Displays details of an instance of a job
+ */
+export const OperationJobCard = ({ instance, collapsedByDefault = true }: JobCardProps) => {
   const latestState = instance.state;
 
   const { data } = useGetProjects();
@@ -47,7 +53,7 @@ export const OperationJobCard: FC<JobCardProps> = ({ instance, collapsedByDefaul
           }
           collapsedByDefault={collapsedByDefault}
         >
-          <HorizontalList datetimeString={instance.launched}>
+          <HorizontalList>
             <ListItem>
               <ListItemIcon
                 css={css`
@@ -71,6 +77,7 @@ export const OperationJobCard: FC<JobCardProps> = ({ instance, collapsedByDefaul
               </ListItemIcon>
               <ListItemText primary={associatedProject?.name} />
             </ListItem>
+            <DateTimeListItem datetimeString={instance.launched} />
           </HorizontalList>
         </BaseCard>
       </div>

@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React, { useState } from 'react';
 import { QueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
@@ -26,10 +25,11 @@ import Head from 'next/head';
 import { CenterLoader } from '../components/CenterLoader';
 import Layout from '../components/Layout';
 import { OperationCards } from '../components/operations/OperationCards';
-import { OperationsFilters } from '../components/operations/OperationsFilters';
+import { OperationsToolbar } from '../components/operations/OperationsToolbar';
 import { useCurrentProjectId } from '../hooks/currentProjectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 
+// This was a SSR test/example. Not sure if we want to do SSR everywhere but probably should.
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
   const queryClient = new QueryClient();
 
@@ -39,6 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
     const projectId = query.project as string | undefined;
 
     if (projectId) {
+      // Prefetch some data
       const queries = [
         queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
           getProjects({
@@ -83,7 +84,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
   };
 };
 
-const Tasks: FC = () => {
+const Tasks = () => {
   const { projectId } = useCurrentProjectId();
 
   const {
@@ -115,11 +116,11 @@ const Tasks: FC = () => {
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
         <Layout>
           <Container maxWidth="md">
-            <OperationsFilters
+            <OperationsToolbar
               operationTypes={operationTypes}
               searchValue={searchValue}
-              setOperationTypes={setOperationTypes}
-              setSearchValue={setSearchValue}
+              onSearchChange={setSearchValue}
+              onSelectChange={setOperationTypes}
             />
 
             <Grid container spacing={1}>

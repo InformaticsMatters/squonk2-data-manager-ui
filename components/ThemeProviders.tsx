@@ -11,6 +11,9 @@ import { useColorScheme } from '../context/colorSchemeContext';
 
 const { darkTheme, lightTheme } = generateThemes();
 
+/**
+ * Provides the theme for Mui and emotion
+ */
 export const ThemeProviders: FC = ({ children }) => {
   // Color Scheme
   const [scheme] = useColorScheme();

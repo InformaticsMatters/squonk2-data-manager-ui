@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -12,12 +11,18 @@ import { Button } from '@material-ui/core';
 
 import { WarningDeleteButton } from '../../WarningDeleteButton';
 
-interface TerminateInstanceProps {
+export interface TerminateInstanceProps {
+  /**
+   * Instance to terminate
+   */
   instance: InstanceSummary;
+  /**
+   * Called when the delete request is successfully made
+   */
   onTermination?: () => void;
 }
 
-export const TerminateInstance: FC<TerminateInstanceProps> = ({ instance, onTermination }) => {
+export const TerminateInstance = ({ instance, onTermination }: TerminateInstanceProps) => {
   const queryClient = useQueryClient();
   const { mutateAsync: terminateInstance } = useTerminateInstance();
 
@@ -36,11 +41,16 @@ export const TerminateInstance: FC<TerminateInstanceProps> = ({ instance, onTerm
           ),
         ]);
 
+        // Can't just await promises as this component unmounts before `onTermination` is called.
+        // React then gives a setState on unmounted component warning.
+        // Need some more thought on how to resolve this pattern generally.
         onTermination && onTermination();
       }}
     >
       {({ openModal }) => (
         <Button onClick={openModal}>
+          {/* Instances in an end state are deleted but others are still running so are terminated.
+          It's all the same to the API though. */}
           {['FAILURE', 'SUCCESS'].includes(instance.state) ? 'Delete' : 'Terminate'}
         </Button>
       )}

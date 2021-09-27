@@ -48,6 +48,7 @@ const reducer = (state: FileState, { type, projectId, file }: FileStateAction) =
       }
       return { ...state, [projectId]: [file] };
     }
+
     case 'remove-file':
       if (oldSavedFiles !== undefined) {
         return {
@@ -56,6 +57,7 @@ const reducer = (state: FileState, { type, projectId, file }: FileStateAction) =
         };
       }
       return state;
+
     default:
       throw new Error(`${type} is not a valid reducer`);
   }
@@ -81,6 +83,7 @@ export const useSelectedFiles = (projectId?: ProjectId) => {
 
   const { selectedFiles, addFile, removeFile } = useContext(SelectedFilesContext);
 
+  // Allow use of argument or default to context if nothing is provided
   const project = projectId || currentProjectId;
 
   if (project) {

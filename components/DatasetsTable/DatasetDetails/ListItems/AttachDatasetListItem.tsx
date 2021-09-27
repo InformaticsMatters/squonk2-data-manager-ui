@@ -24,9 +24,14 @@ import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
 import { FormikModalWrapper } from '../../../modals/FormikModalWrapper';
 
 export interface AttachDatasetListItemProps {
+  /**
+   * The dataset-id corresponding to the dataset which will be attached.
+   */
   datasetId: string;
+  /**
+   * The {@link DatasetVersionSummary version} of the dataset to be attached
+   */
   version: DatasetVersionSummary;
-  fileName: string;
 }
 
 interface FormState {
@@ -37,11 +42,10 @@ interface FormState {
   isCompress: boolean;
 }
 
-export const AttachDatasetListItem = ({
-  datasetId,
-  fileName,
-  version,
-}: AttachDatasetListItemProps) => {
+/**
+ * MuiListItem with a click action that opens a modal allowing a dataset to be attached to a project
+ */
+export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListItemProps) => {
   const [open, setOpen] = useState(false);
 
   const { user, isLoading: isUserLoading } = useKeycloakUser();
@@ -87,14 +91,17 @@ export const AttachDatasetListItem = ({
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
+
       <FormikModalWrapper
+        // Reinitialize to allow a project to be selected by default after the async action is
+        // completed
         enableReinitialize
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
         id={`attach-dataset-${datasetId}`}
         initialValues={initialValues}
         open={open}
         submitText="Attach"
-        title={`Attach ${fileName} v${version.version} to a Project`}
+        title={`Attach ${version.file_name} v${version.version} to a Project`}
         validationSchema={yup.object({
           path: yup.string().matches(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gm, 'Invalid Path'),
         })}
@@ -112,6 +119,8 @@ export const AttachDatasetListItem = ({
                 path: path || '/',
               },
             });
+
+            // Ensure the views showing project files is updated to include the new addition
             await queryClient.invalidateQueries(getGetProjectQueryKey(project));
             setOpen(false);
           } catch (err) {
@@ -173,6 +182,7 @@ export const AttachDatasetListItem = ({
             name="path"
           />
         </FormControl>
+
         {errorMessage && (
           <Alert severity="error">
             <b>Error:</b> {errorMessage}

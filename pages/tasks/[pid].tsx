@@ -16,6 +16,7 @@ import { CenterLoader } from '../../components/CenterLoader';
 import Layout from '../../components/Layout';
 import { OperationApplicationCard } from '../../components/operations/OperationApplicationCard';
 import { OperationJobCard } from '../../components/operations/OperationJobCard';
+import { RoleRequired } from '../../utils/RoleRequired';
 
 const Tasks: FC = () => {
   const queryClient = useQueryClient();
@@ -36,45 +37,47 @@ const Tasks: FC = () => {
       <Head>
         <title>Squonk | Task {instance?.state}</title>
       </Head>
-      <Layout>
-        <Container maxWidth="md">
-          <div
-            css={css`
-              display: flex;
-              align-items: flex-start;
-            `}
-          >
-            <Typography gutterBottom component="h1" variant="h4">
-              Instance
-            </Typography>
-            <Tooltip title="Refresh Instance">
-              <IconButton
-                css={css`
-                  margin-left: auto;
-                `}
-                onClick={() => refreshOperations.forEach((func) => func())}
-              >
-                <RefreshRoundedIcon />
-              </IconButton>
-            </Tooltip>
-          </div>
-          {instance?.application_type === 'JOB' ? (
-            <Box marginY={1}>
-              <OperationJobCard collapsedByDefault={false} instance={instance} />
-            </Box>
-          ) : instance?.application_type === 'APPLICATION' ? (
-            <OperationApplicationCard collapsedByDefault={false} instance={instance} />
-          ) : (
-            <CenterLoader />
-          )}
-          <NextLink
-            passHref
-            href={{ pathname: '/tasks', query: { project: instance?.project_id } }}
-          >
-            <Button color="primary">See all tasks</Button>
-          </NextLink>
-        </Container>
-      </Layout>
+      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
+        <Layout>
+          <Container maxWidth="md">
+            <div
+              css={css`
+                display: flex;
+                align-items: flex-start;
+              `}
+            >
+              <Typography gutterBottom component="h1" variant="h4">
+                Instance
+              </Typography>
+              <Tooltip title="Refresh Instance">
+                <IconButton
+                  css={css`
+                    margin-left: auto;
+                  `}
+                  onClick={() => refreshOperations.forEach((func) => func())}
+                >
+                  <RefreshRoundedIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+            {instance?.application_type === 'JOB' ? (
+              <Box marginY={1}>
+                <OperationJobCard collapsedByDefault={false} instance={instance} />
+              </Box>
+            ) : instance?.application_type === 'APPLICATION' ? (
+              <OperationApplicationCard collapsedByDefault={false} instance={instance} />
+            ) : (
+              <CenterLoader />
+            )}
+            <NextLink
+              passHref
+              href={{ pathname: '/tasks', query: { project: instance?.project_id } }}
+            >
+              <Button color="primary">See all tasks</Button>
+            </NextLink>
+          </Container>
+        </Layout>
+      </RoleRequired>
     </>
   );
 };

@@ -16,12 +16,25 @@ import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import { SlideUpTransition } from '../SlideUpTransition';
 import type { BaseModalWrapperProps } from './types';
 
-interface ModalWrapperProps extends BaseModalWrapperProps {
+export interface ModalWrapperProps extends BaseModalWrapperProps {
+  /**
+   * Called when the primary action is clicked
+   */
   onSubmit?: () => void;
+
+  /**
+   * Text of the primary action button
+   */
   submitText?: string;
+  /**
+   * Whether the primary action should be in a disabled state.
+   */
   submitDisabled?: boolean;
 }
 
+/**
+ * Generic modal component with submit action
+ */
 export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   id,
   title,

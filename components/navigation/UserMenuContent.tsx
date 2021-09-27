@@ -1,13 +1,17 @@
 import React from 'react';
 
-import { useUser } from '@auth0/nextjs-auth0';
 import { FormControlLabel, Link, Switch, Typography } from '@material-ui/core';
 import NextLink from 'next/link';
 
 import { useColorScheme } from '../../context/colorSchemeContext';
+import { useKeycloakUser } from '../../hooks/useKeycloakUser';
+import { CenterLoader } from '../CenterLoader';
 
+/**
+ * Content of the user menu
+ */
 export const UserMenuContent = () => {
-  const { user, isLoading } = useUser();
+  const { user, isLoading } = useKeycloakUser();
   const [scheme, setScheme] = useColorScheme();
   return (
     <>
@@ -15,10 +19,10 @@ export const UserMenuContent = () => {
         Account
       </Typography>
       {isLoading ? (
-        <Typography>Loading...</Typography>
-      ) : user ? (
+        <CenterLoader />
+      ) : user.username ? (
         <Typography>
-          {user.preferred_username} /{' '}
+          {user.username} /{' '}
           <NextLink passHref href="/api/auth/logout">
             <Link>Logout</Link>
           </NextLink>
@@ -35,7 +39,7 @@ export const UserMenuContent = () => {
         control={
           <Switch
             checked={scheme === 'dark'}
-            inputProps={{ 'aria-label': 'colour-scheme-toggle' }}
+            inputProps={{ 'aria-label': 'color-scheme-toggle' }}
             onChange={(event) => setScheme(event.target.checked ? 'dark' : 'light')}
           />
         }

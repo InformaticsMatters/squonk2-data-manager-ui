@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -11,17 +10,29 @@ import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 
 import { WarningDeleteButton } from '../../WarningDeleteButton';
 
-interface DeleteUnmanagedFileButtonProps {
+export interface DeleteUnmanagedFileButtonProps {
+  /**
+   * ID of the project containing the unmanaged file
+   */
   projectId: DeleteUnmanagedFileParams['project_id'];
+  /**
+   * Path inside the project to the unmanaged file
+   */
   path: DeleteUnmanagedFileParams['path'];
+  /**
+   * Name of the unmanaged file
+   */
   fileName: DeleteUnmanagedFileParams['file'];
 }
 
-export const DeleteUnmanagedFileButton: FC<DeleteUnmanagedFileButtonProps> = ({
+/**
+ * Action to delete an unmanaged file from a project
+ */
+export const DeleteUnmanagedFileButton = ({
   projectId,
   path,
   fileName,
-}) => {
+}: DeleteUnmanagedFileButtonProps) => {
   const queryClient = useQueryClient();
   const { mutateAsync: deleteFile } = useDeleteUnmanagedFile();
 

@@ -52,11 +52,13 @@ export function SingleFileUploadWithProgress({
   const [interval, setInterval] = useState<number | false>(2000);
   const { data: task, isLoading } = useGetTask(fileWrapper.taskId ?? '', undefined, {
     query: {
+      // When a task id has been set, we poll the task endpoint to wait for the file to finish
+      // processing
       refetchInterval: interval,
-      onSuccess: (task) => {
+      onSuccess: async (task) => {
         if (!isLoading && task.done) {
           setInterval(false);
-          queryClient.invalidateQueries(getGetDatasetsQueryKey());
+          await queryClient.invalidateQueries(getGetDatasetsQueryKey());
           changeToDone();
         }
       },
@@ -76,14 +78,7 @@ export function SingleFileUploadWithProgress({
 
   return (
     <>
-      <Grid
-        container
-        alignItems="center"
-        css={css`
-          margin-bottom: ${theme.spacing(1)}px;
-        `}
-        spacing={1}
-      >
+      <Grid container alignItems="center" spacing={1}>
         <Grid item md={9} sm={8} xs={12}>
           <TextField
             fullWidth
@@ -92,11 +87,11 @@ export function SingleFileUploadWithProgress({
             disabled={disabled || task?.done}
             inputRef={fileNameRef}
             placeholder={stem}
-            size="small"
             onChange={() => rename(composeNewFilePath())}
             onClick={(event) => event.stopPropagation()}
           />
         </Grid>
+
         <Grid
           item
           css={css`
@@ -113,7 +108,6 @@ export function SingleFileUploadWithProgress({
             disabled={disabled || task?.done}
             inputRef={fileExtRef}
             label="Ext"
-            size="small"
             onChange={(event) => {
               event.stopPropagation();
               rename(composeNewFilePath());
@@ -129,6 +123,7 @@ export function SingleFileUploadWithProgress({
             ))}
           </TextField>
         </Grid>
+
         <Grid
           item
           css={css`
@@ -153,14 +148,17 @@ export function SingleFileUploadWithProgress({
           </IconButton>
         </Grid>
       </Grid>
+
       {fileWrapper.progress < 100 && fileWrapper.progress > 0 && (
         <LinearProgress value={fileWrapper.progress} variant="determinate" />
       )}
+
       {(fileWrapper.progress === 100 && task === undefined) || (task && !task.done) || isLoading ? (
         <LinearProgress />
       ) : null}
+
       {errors.map((error, index) => (
-        <Typography color="error" key={`${error.code}-${error.message}-${index}`}>
+        <Typography color="error" key={index}>
           {error.message}
         </Typography>
       ))}

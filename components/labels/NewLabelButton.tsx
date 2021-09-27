@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -13,15 +12,21 @@ import { TextField } from 'formik-material-ui';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 import * as yup from 'yup';
 
-import { LowerCaseTextField } from '../../../utils/LowerCaseTextField';
-import type { TableDataset } from '../types';
+import { LowerCaseTextField } from '../../utils/LowerCaseTextField';
+import type { TableDataset } from '../DatasetsTable';
 
 export interface NewLabelButtonProps {
+  /**
+   * ID of the dataset
+   */
   datasetId: TableDataset['dataset_id'];
+  /**
+   * version number of the dataset under which a new label is created
+   */
   datasetVersion: number;
 }
 
-export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVersion }) => {
+export const NewLabelButton = ({ datasetId, datasetVersion }: NewLabelButtonProps) => {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const { mutateAsync: addAnnotations } = useAddAnnotations();
@@ -35,6 +40,7 @@ export const NewLabelButton: FC<NewLabelButtonProps> = ({ datasetId, datasetVers
           <AddCircleOutlineRoundedIcon />
         </IconButton>
       </Tooltip>
+
       <Popover
         css={css`
           .MuiPopover-paper {

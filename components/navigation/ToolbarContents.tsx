@@ -19,6 +19,9 @@ const ProjectManager = dynamic<ProjectManagerProps>(
   },
 );
 
+/**
+ * Desktop / Tablet toolbar contents
+ */
 export const ToolbarContents = () => {
   const theme = useTheme();
   const biggerThanSm = useMediaQuery(theme.breakpoints.up('sm'));
@@ -27,6 +30,7 @@ export const ToolbarContents = () => {
   const isAuthorized = useIsAuthorized();
 
   if (biggerThanMd) {
+    // Desktop
     return (
       <>
         <NavLinks linkWidth={120} />
@@ -37,6 +41,7 @@ export const ToolbarContents = () => {
       </>
     );
   } else if (biggerThanSm) {
+    // Tablet
     return (
       <>
         <NavLinks linkWidth={100} />

@@ -2,11 +2,15 @@ import React, { useState } from 'react';
 
 import { Box, Checkbox, FormControlLabel } from '@material-ui/core';
 
-import { useSelectedFiles } from '../../../context/fileSelectionContext';
+import { useSelectedFiles } from '../../context/fileSelectionContext';
 import { AllFilesList } from './AllFilesList';
 import { FavouritesList } from './FavouritesList';
 import type { SharedProps } from './types';
 
+/**
+ * List of files and directories, either from the list of favourites or project volume, with option
+ * to select them.
+ */
 export const MiniFileList = (props: SharedProps) => {
   const { selectedFiles } = useSelectedFiles(props.projectId);
   const [showFavouritesList, setShowFavouritesList] = useState(

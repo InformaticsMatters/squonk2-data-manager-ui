@@ -24,17 +24,53 @@ import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 type Selection<Data> = Record<IdType<Data>, boolean>;
 
 export interface DataTableProps<Data extends Record<string, any>> {
+  /**
+   * Control whether the table is wrapped inside a MuiPaper. Defaults to `true`
+   */
   tableContainer?: boolean;
+  /**
+   * Array of columns for react-table
+   */
   columns: Column<Data>[];
+  /**
+   * Array of data, compatible with columns, for react-table
+   */
   data: Data[];
+  /**
+   * Child element of the toolbar in the table header
+   */
   ToolbarChild?: ReactNode;
+  /**
+   * Function to uniquely identify a given row of data
+   */
   getRowId?: (row: Data) => IdType<Data>;
+  /**
+   * Whether the search functionality should be enabled. Defaults to true.
+   */
   enableSearch?: boolean;
+  /**
+   * If using row selection, this sets the initial rows that should be selected on first render.
+   */
   initialSelection?: IdType<Data>[];
+  /**
+   * Called when a row is selected or unselected
+   */
   onSelection?: (row: Data, checked: boolean) => void;
+  /**
+   * Custom actions column placed as the last column.
+   */
   useActionsColumnPlugin?: PluginHook<Data>;
 }
 
+// Use a *function* here to avoid the issues with generics in arrow functions
+/**
+ * Generic table component using react-table and MuiTable.
+ *
+ * *Example*:
+ * ```tsx
+ * <DataTable columns={columns} data={datasets} getRowId={(row) => row.dataset_id} />
+ * ```
+ */
 export function DataTable<Data extends Record<string, any>>({
   tableContainer = true,
   columns,

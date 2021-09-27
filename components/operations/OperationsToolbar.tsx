@@ -1,4 +1,4 @@
-import type { Dispatch, FC, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -10,44 +10,53 @@ import {
 import { getGetProjectsQueryKey } from '@squonk/data-manager-client/project';
 
 import { css } from '@emotion/react';
-import {
-  Grid,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  TextField,
-  Tooltip,
-  useTheme,
-} from '@material-ui/core';
+import { Grid, IconButton, MenuItem, TextField, Tooltip } from '@material-ui/core';
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
-import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 
 import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
+import { SearchTextField } from '../SearchTextField';
 
-export interface OperationsFiltersProps {
+export interface OperationsToolbarProps {
+  /**
+   * Value of the multiple select input
+   */
   operationTypes: string[];
-  setOperationTypes: Dispatch<SetStateAction<string[]>>;
+  /**
+   * Called when a change is made to the select input
+   */
+  onSelectChange: Dispatch<SetStateAction<string[]>>;
+  /**
+   * Value of the search input
+   */
   searchValue: string;
-  setSearchValue: Dispatch<SetStateAction<string>>;
+  /**
+   * Called when a change is made to the search input
+   */
+  onSearchChange: Dispatch<SetStateAction<string>>;
 }
 
-export const OperationsFilters: FC<OperationsFiltersProps> = ({
+/**
+ * Filter operations by task or instance and search by operation contents
+ */
+export const OperationsToolbar = ({
   operationTypes,
-  setOperationTypes,
+  onSelectChange,
   searchValue,
-  setSearchValue,
-}) => {
-  const theme = useTheme();
-
+  onSearchChange,
+}: OperationsToolbarProps) => {
   const { projectId } = useCurrentProjectId();
 
   const queryClient = useQueryClient();
 
-  const { data: instancesData } = useGetInstances({
+  const { data } = useGetInstances({
     project_id: projectId,
   });
-  const instances = instancesData?.instances;
+  const instances = data?.instances;
 
+  /**
+   * Array of functions to call when the "refresh button" is pressed
+   * These should be executed in parallel
+   */
   const refreshOperations = [
     () => queryClient.invalidateQueries(getGetProjectsQueryKey()),
     () => queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId })),
@@ -60,14 +69,7 @@ export const OperationsFilters: FC<OperationsFiltersProps> = ({
   ];
 
   return (
-    <Grid
-      container
-      alignItems="center"
-      css={css`
-        margin-bottom: ${theme.spacing(2)}px;
-      `}
-      spacing={2}
-    >
+    <Grid container alignItems="center" spacing={2}>
       <Grid item md={4} sm={5} xs={12}>
         <TextField
           fullWidth
@@ -76,7 +78,7 @@ export const OperationsFilters: FC<OperationsFiltersProps> = ({
           SelectProps={{
             multiple: true,
             onChange: (event) => {
-              setOperationTypes(event.target.value as string[]);
+              onSelectChange(event.target.value as string[]);
             },
           }}
           value={operationTypes}
@@ -85,6 +87,7 @@ export const OperationsFilters: FC<OperationsFiltersProps> = ({
           <MenuItem value="instance">Instances</MenuItem>
         </TextField>
       </Grid>
+
       <Grid
         item
         css={css`
@@ -94,20 +97,13 @@ export const OperationsFilters: FC<OperationsFiltersProps> = ({
         sm={5}
         xs={12}
       >
-        <TextField
+        <SearchTextField
           fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchRoundedIcon />
-              </InputAdornment>
-            ),
-          }}
-          label="Search"
           value={searchValue}
-          onChange={(event) => setSearchValue(event.target.value)}
+          onChange={(event) => onSearchChange(event.target.value)}
         />
       </Grid>
+
       <Grid
         item
         css={css`

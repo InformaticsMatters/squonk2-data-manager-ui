@@ -12,12 +12,33 @@ export interface DeleteButtonProps {
 }
 
 export interface WarningDeleteButtonProps {
+  /**
+   * Title of the modal.
+   */
   title: string;
+  /**
+   * ID of the modal for accessibility.
+   */
   modalId: string;
+  /**
+   * Text displayed in the primary action. Defaults to `"Delete"`.
+   */
   submitText?: string;
+  /**
+   * Text displayed in the tooltip wrapped around the child.
+   */
   tooltipText: string;
+  /**
+   * JDX to be rendered inside the main section of the modal.
+   */
   modalChildren?: ReactNode;
+  /**
+   * Button-like component that control the modal visibility.
+   */
   children: ({ openModal, isDeleting }: DeleteButtonProps) => ReactNode;
+  /**
+   * Called when the primary action is triggered.
+   */
   onDelete: () => Promise<void>;
 }
 
@@ -27,6 +48,9 @@ const defaultChild = (
   </Typography>
 );
 
+/**
+ * Dialog that asks the user to confirm a destructive action
+ */
 export const WarningDeleteButton = ({
   title,
   modalId,
@@ -40,6 +64,10 @@ export const WarningDeleteButton = ({
   const [isDeleting, setIsDeleting] = useState(false);
   return (
     <>
+      <Tooltip title={tooltipText}>
+        <span>{children({ openModal: () => setOpen(true), isDeleting })}</span>
+      </Tooltip>
+
       <ModalWrapper
         id={modalId}
         open={open}
@@ -56,9 +84,6 @@ export const WarningDeleteButton = ({
       >
         {modalChildren}
       </ModalWrapper>
-      <Tooltip title={tooltipText}>
-        <span>{children({ openModal: () => setOpen(true), isDeleting })}</span>
-      </Tooltip>
     </>
   );
 };

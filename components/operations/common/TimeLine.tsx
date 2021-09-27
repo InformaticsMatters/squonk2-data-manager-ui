@@ -1,9 +1,10 @@
-import type { FC } from 'react';
 import React from 'react';
 
 import type { InstanceGetResponse, TaskGetResponse, TaskState } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
+import styled from '@emotion/styled';
+import type { TypographyProps } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
 import {
   Timeline,
@@ -17,7 +18,10 @@ import {
 
 import { LocalTime } from '../../LocalTime';
 
-interface TimeLineProps {
+export interface TimeLineProps {
+  /**
+   * states or events of tasks or instances
+   */
   states: NonNullable<
     | InstanceGetResponse['states']
     | InstanceGetResponse['events']
@@ -26,7 +30,10 @@ interface TimeLineProps {
   >;
 }
 
-export const TimeLine: FC<TimeLineProps> = ({ states }) => {
+/**
+ * Displays a timeline view of the states or events of a task or an instance
+ */
+export const TimeLine = ({ states }: TimeLineProps) => {
   return (
     <Timeline
       css={css`
@@ -39,19 +46,12 @@ export const TimeLine: FC<TimeLineProps> = ({ states }) => {
           css={css`
             min-height: 40px;
           `}
-          key={`${state.time}-${stateIndex}`}
+          key={stateIndex}
         >
           <TimelineOppositeContent>
-            <Typography
-              color="textSecondary"
-              component="code"
-              css={css`
-                font-family: 'Fira Mono', monospace;
-              `}
-              variant="body2"
-            >
+            <TimeLineLabel color="textSecondary">
               <LocalTime showTime showDate={false} utcTimestamp={state.time} />
-            </Typography>
+            </TimeLineLabel>
           </TimelineOppositeContent>
           <TimelineSeparator>
             <TimelineDot />
@@ -59,19 +59,20 @@ export const TimeLine: FC<TimeLineProps> = ({ states }) => {
           </TimelineSeparator>
           {/* When message is undefined we can guarantee that it's a TaskState */}
           <TimelineContent>
-            <Typography
-              component="code"
-              css={css`
-                font-family: 'Fira Mono', monospace;
-                word-break: break-word;
-              `}
-              variant="body2"
-            >
-              {state.message ?? (state as TaskState).state}
-            </Typography>
+            <TimeLineLabel>{state.message ?? (state as TaskState).state}</TimeLineLabel>
           </TimelineContent>
         </TimelineItem>
       ))}
     </Timeline>
   );
 };
+
+const CodeTypography = (props: TypographyProps) => (
+  <Typography {...props} component="code" variant="body2" />
+);
+
+const TimeLineLabel = styled(CodeTypography)`
+  // Use custom mono-spaded font. See fonts in globalStyles
+  font-family: 'Fira Mono', monospace;
+  word-break: break-word;
+`;

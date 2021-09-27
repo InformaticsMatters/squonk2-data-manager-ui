@@ -3,19 +3,31 @@ import React from 'react';
 
 import { toLocalTimeString } from './utils';
 
-interface BaseLocalTimeProps extends HTMLProps<HTMLSpanElement> {
+export interface BaseLocalTimeProps extends HTMLProps<HTMLSpanElement> {
+  /**
+   * UTC timestamp to be parsed
+   */
   utcTimestamp: string;
 }
 
-interface FormatLocalTime extends BaseLocalTimeProps {
+export interface FormatLocalTime extends BaseLocalTimeProps {
+  /**
+   * Custom format code for the output string
+   */
   format?: string;
   showDate?: never;
   showTime?: never;
 }
 
-interface DateTimeLocalTime extends BaseLocalTimeProps {
+export interface DateTimeLocalTime extends BaseLocalTimeProps {
   format?: never;
+  /**
+   * Whether to show the date in the output
+   */
   showDate: boolean;
+  /**
+   * Whether to show the time in the output
+   */
   showTime: boolean;
 }
 

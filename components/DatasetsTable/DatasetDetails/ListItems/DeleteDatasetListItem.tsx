@@ -10,19 +10,28 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 import { WarningDeleteButton } from '../../../WarningDeleteButton';
 
-interface DeleteDatasetProps {
+export interface DeleteDatasetProps {
+  /**
+   * ID of the dataset to delete
+   */
   datasetId: string;
+  /**
+   * version of the dataset to delete
+   */
   version: DatasetVersionSummary;
-  resetSelection: () => void;
+  /**
+   * Called just before the async delete action is called. Used to reset state in the parent scope.
+   * E.g. resetting the selected version.
+   */
+  onDelete: () => void;
 }
 
-export const DeleteDatasetListItem = ({
-  datasetId,
-  version,
-  resetSelection,
-}: DeleteDatasetProps) => {
+/**
+ * MuiListItem with an action that opens a modal with a confirmation to delete a dataset.
+ */
+export const DeleteDatasetListItem = ({ datasetId, version, onDelete }: DeleteDatasetProps) => {
   const queryClient = useQueryClient();
-  const deleteMutation = useDeleteDataset();
+  const { mutateAsync: deleteDataset } = useDeleteDataset();
 
   return (
     <WarningDeleteButton
@@ -30,8 +39,8 @@ export const DeleteDatasetListItem = ({
       title={`Delete v${version.version}`}
       tooltipText="Delete versions of this dataset"
       onDelete={async () => {
-        resetSelection();
-        await deleteMutation.mutateAsync({ datasetid: datasetId, datasetversion: version.version });
+        onDelete();
+        await deleteDataset({ datasetid: datasetId, datasetversion: version.version });
         await queryClient.invalidateQueries(getGetDatasetsQueryKey());
       }}
     >

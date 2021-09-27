@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -7,26 +6,39 @@ import { getGetDatasetsQueryKey, useAddAnnotations } from '@squonk/data-manager-
 
 import { Typography } from '@material-ui/core';
 
-import { Chips } from '../../Chips';
-import { LabelChip } from '../LabelChip';
-import type { TableDataset } from '../types';
+import { Chips } from '../Chips';
+import type { TableDataset } from '../DatasetsTable';
+import { LabelChip } from './LabelChip';
 import { NewLabelButton } from './NewLabelButton';
 
 export interface LabelsProps {
+  /**
+   * ID of the dataset
+   */
   datasetId: TableDataset['dataset_id'];
+  /**
+   * version of the dataset
+   */
   datasetVersion: DatasetVersionSummary;
 }
 
-export const Labels: FC<LabelsProps> = ({ datasetId, datasetVersion }) => {
+/**
+ *  Display formatted labels for a version of a dataset with options to add and remove labels.
+ */
+export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
   const labels = Object.entries((datasetVersion.labels ?? {}) as Record<string, string>);
 
   const queryClient = useQueryClient();
   const { mutateAsync: addAnnotations } = useAddAnnotations();
 
+  if (labels.length === 0) {
+    return <Typography variant="body2">No labels exist for this version</Typography>;
+  }
+
   return (
     <Chips>
-      {labels.length > 0 ? (
-        labels.map(([label, value]) => (
+      <>
+        {labels.map(([label, value]) => (
           <LabelChip
             key={label}
             label={label}
@@ -50,11 +62,9 @@ export const Labels: FC<LabelsProps> = ({ datasetId, datasetVersion }) => {
               queryClient.invalidateQueries(getGetDatasetsQueryKey());
             }}
           />
-        ))
-      ) : (
-        <Typography variant="body2">No labels exist for this version</Typography>
-      )}
-      <NewLabelButton datasetId={datasetId} datasetVersion={datasetVersion.version} />
+        ))}
+        <NewLabelButton datasetId={datasetId} datasetVersion={datasetVersion.version} />
+      </>
     </Chips>
   );
 };

@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React from 'react';
 
 import type { InstanceSummary } from '@squonk/data-manager-client';
@@ -10,18 +9,26 @@ import { CenterLoader } from '../../CenterLoader';
 import { HorizontalList } from '../common/HorizontalList';
 import { TimeLine } from '../common/TimeLine';
 
-interface ApplicationDetailsProps {
+export interface ApplicationDetailsProps {
+  /**
+   * ID of the instance of the application
+   */
   instanceId: InstanceSummary['id'];
 }
 
-export const ApplicationDetails: FC<ApplicationDetailsProps> = ({ instanceId }) => {
+/**
+ * Displays the details of an application based on the ID of an application instance
+ */
+export const ApplicationDetails = ({ instanceId }: ApplicationDetailsProps) => {
   const { data: instance } = useGetInstance(instanceId);
 
-  return instance === undefined ? (
-    <CenterLoader />
-  ) : (
+  if (instance === undefined) {
+    return <CenterLoader />;
+  }
+
+  return (
     <>
-      <HorizontalList datetimeString={instance.launched}>
+      <HorizontalList>
         <ListItem>
           <ListItemText
             primary={instance.application_id}

@@ -13,7 +13,9 @@ export const useCurrentProjectId = () => {
   const projectId = router.query.project as ProjectId;
 
   const setCurrentProjectId = (newProjectId?: string, shallow?: true) => {
+    // Selected project is maintained via the URL "project" query parameter. We use next-js to update it.
     if (newProjectId !== undefined) {
+      // A project has been selected
       router.push(
         {
           pathname: router.pathname,
@@ -27,9 +29,11 @@ export const useCurrentProjectId = () => {
         { shallow },
       );
     } else {
+      // The project has been cleared
       const newQuery = { ...router.query };
       delete newQuery.project;
       delete newQuery.path;
+
       router.push(
         {
           pathname: router.pathname,

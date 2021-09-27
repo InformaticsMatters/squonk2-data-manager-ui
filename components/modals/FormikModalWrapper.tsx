@@ -8,12 +8,30 @@ import { Form, Formik } from 'formik';
 import { ModalWrapper } from './ModalWrapper';
 import type { BaseModalWrapperProps } from './types';
 
-interface FormikModalWrapperProps extends BaseModalWrapperProps {
+export interface FormikModalWrapperProps extends BaseModalWrapperProps {
+  /**
+   * ID given to the aria properties. Required for ensure good accessibility.
+   */
   id: string;
+  /**
+   * Title text of the modal
+   */
   title: string;
+  /**
+   * Text displayed in the submit button
+   */
   submitText: string;
+  /**
+   * Whether the modal is open
+   */
   open: boolean;
+  /**
+   * Called when a close action is initiated. E.g. close button, submit or click-away
+   */
   onClose: () => void;
+  /**
+   * Props forwarded to the MuiDialog component
+   */
   DialogProps?: Partial<DialogProps>;
 }
 

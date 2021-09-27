@@ -1,10 +1,11 @@
-import type { FC } from 'react';
+import type { HTMLProps } from 'react';
 import React, { useState } from 'react';
 
 import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetProjects } from '@squonk/data-manager-client/project';
 
 import { css } from '@emotion/react';
+import type { ButtonProps } from '@material-ui/core';
 import {
   Button,
   CardContent,
@@ -16,23 +17,30 @@ import {
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 
 import { BaseCard } from '../BaseCard';
+import { DateTimeListItem } from './common/DateTimeListItem';
 import { HorizontalList } from './common/HorizontalList';
 import { StatusIcon } from './common/StatusIcon';
 import { TerminateInstance } from './common/TerminateInstance';
+import type { CommonProps } from './common/types';
 import { ApplicationDetails } from './details/ApplicationDetails';
 
 // Button Props doesn't support target and rel when using as a Link
-const HrefButton = Button as any;
+type MissingButtonProps = Pick<HTMLProps<HTMLAnchorElement>, 'target' | 'rel'>;
 
-interface OperationApplicationCardProps {
+// ? odd that typescript doesn't raise an issue here as `MissingButtonProps` contains invalid props
+const HrefButton = (props: ButtonProps & MissingButtonProps) => <Button {...props} />;
+
+export interface OperationApplicationCardProps extends CommonProps {
+  /**
+   * Instance of the application
+   */
   instance: InstanceSummary;
-  collapsedByDefault?: boolean;
 }
 
-export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({
+export const OperationApplicationCard = ({
   instance,
   collapsedByDefault = true,
-}) => {
+}: OperationApplicationCardProps) => {
   const latestState = instance.state;
 
   const { data } = useGetProjects();
@@ -68,7 +76,7 @@ export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({
           }
           collapsedByDefault={collapsedByDefault}
         >
-          <HorizontalList datetimeString={instance.launched}>
+          <HorizontalList>
             <ListItem>
               <ListItemIcon
                 css={css`
@@ -92,6 +100,7 @@ export const OperationApplicationCard: FC<OperationApplicationCardProps> = ({
               </ListItemIcon>
               <ListItemText primary={associatedProject?.name} />
             </ListItem>
+            <DateTimeListItem datetimeString={instance.launched} />
           </HorizontalList>
         </BaseCard>
       </div>

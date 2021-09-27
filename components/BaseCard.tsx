@@ -22,7 +22,7 @@ interface ActionsParams {
   setExpanded: (isExpanded: boolean) => void;
 }
 
-interface BaseCardProps {
+export interface BaseCardProps {
   /**
    * ReactNode or Component to render in the <CardActions> component. Optional - nothing is
    * displayed if not passed.

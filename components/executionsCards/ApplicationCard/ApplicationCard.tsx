@@ -1,27 +1,32 @@
-import type { FC } from 'react';
 import React from 'react';
 
 import type { ApplicationSummary } from '@squonk/data-manager-client';
 
 import { useTheme } from '@material-ui/core';
 
-import type { ProjectId } from '../../hooks/currentProjectHooks';
-import { BaseCard } from '../BaseCard';
-import { ApplicationModal } from './ApplicationModal';
-import { InstancesList } from './InstancesList';
+import { BaseCard } from '../../BaseCard';
+import { InstancesList } from '../InstancesList';
+import type { ApplicationModalButtonProps } from './ApplicationModalButton';
+import { ApplicationModalButton } from './ApplicationModalButton';
 
-interface ApplicationCardProps {
+export interface ApplicationCardProps extends Pick<ApplicationModalButtonProps, 'projectId'> {
+  /**
+   * The application object to display
+   */
   app: ApplicationSummary;
-  projectId: ProjectId;
 }
 
-export const ApplicationCard: FC<ApplicationCardProps> = ({ app, projectId }) => {
+/**
+ * MuiCard that displays a summary of a application with actions to create new instances and view
+ * existing instances.
+ */
+export const ApplicationCard = ({ app, projectId }: ApplicationCardProps) => {
   const theme = useTheme();
 
   return (
     <BaseCard
       actions={({ setExpanded }) => (
-        <ApplicationModal
+        <ApplicationModalButton
           applicationId={app.application_id}
           projectId={projectId}
           onLaunch={() => setExpanded(true)}
@@ -36,6 +41,6 @@ export const ApplicationCard: FC<ApplicationCardProps> = ({ app, projectId }) =>
         avatar: 'A',
         color: theme.palette.secondary.dark,
       }}
-    ></BaseCard>
+    />
   );
 };

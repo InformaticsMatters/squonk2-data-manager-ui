@@ -4,6 +4,8 @@ import React from 'react';
 import { Link, Typography } from '@material-ui/core';
 import { MDXProvider } from '@mdx-js/react';
 
+// We use mdx-js here because, despite using xdm now for rendering, it has the same API.
+
 export const MDXComponentProvider: FC = ({ children }) => {
   return (
     <MDXProvider

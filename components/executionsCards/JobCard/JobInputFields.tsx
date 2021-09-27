@@ -1,10 +1,10 @@
-import type { FC } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
 import { Grid, Typography } from '@material-ui/core';
 
-import type { ProjectId } from '../../hooks/currentProjectHooks';
-import { FileSelector } from './FileList/FileSelector';
+import type { ProjectId } from '../../../hooks/currentProjectHooks';
+import { FileSelector } from '../../FileSelector';
 import type { InputData } from './JobModal';
 
 // Define types for the form schema as the Open API spec doesn't define these (just gives string)
@@ -24,20 +24,35 @@ interface InputSchema {
 }
 
 export interface JobInputFieldsProps {
+  /**
+   * ID of the project from which files will be given
+   */
   projectId: NonNullable<ProjectId>;
+  /**
+   * The schema describing what fields are generated
+   */
   inputs: InputSchema;
+  /**
+   * Optional object with initial value of the field inputs
+   */
   initialValues?: InputData;
+  /**
+   * Object containing the current values of each input
+   */
   inputsData: InputData;
-  setInputsData: (inputData: InputData) => void;
+  /**
+   * Called when inputs are changed. Use this to update inputs state.
+   */
+  onChange: Dispatch<SetStateAction<InputData>>;
 }
 
-export const JobInputFields: FC<JobInputFieldsProps> = ({
+export const JobInputFields = ({
   projectId,
   inputs,
   initialValues,
   inputsData,
-  setInputsData,
-}) => {
+  onChange,
+}: JobInputFieldsProps) => {
   return (
     <>
       {Object.entries(inputs.properties).map(
@@ -54,7 +69,7 @@ export const JobInputFields: FC<JobInputFieldsProps> = ({
                 projectId={projectId}
                 targetType={type}
                 value={initialValues?.[key] || inputsData[key]}
-                onSelect={(selection) => setInputsData({ ...inputsData, [key]: selection })}
+                onSelect={(selection) => onChange({ ...inputsData, [key]: selection })}
               />
             </Grid>
           );

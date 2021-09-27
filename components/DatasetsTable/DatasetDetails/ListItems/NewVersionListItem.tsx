@@ -16,15 +16,23 @@ import { ProgressBar } from '../../../uploads/ProgressBar';
 import type { FileTypeOptionsState, UploadableFile } from '../../../uploads/types';
 import type { TableDataset } from '../../types';
 
-interface NewVersionListItemProps extends IconButtonProps {
+export interface NewVersionListItemProps extends IconButtonProps {
+  /**
+   * Dataset from the table a versioned will be created under.
+   */
   dataset: TableDataset;
 }
 
+/**
+ * MuiListItem with an action that lets the user upload a new file to become a new version of this
+ * dataset.
+ */
 export const NewVersionListItem = ({ dataset }: NewVersionListItemProps) => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<UploadableFile>();
 
+  // State to track per-file-type options for the new dataset version
   const [optionsFormData, setOptionsFormData] = useState<FileTypeOptionsState>({});
 
   return (
@@ -37,6 +45,7 @@ export const NewVersionListItem = ({ dataset }: NewVersionListItemProps) => {
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
+
       <ModalWrapper
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
         id={`version-upload-${dataset.dataset_id}`}
@@ -49,6 +58,8 @@ export const NewVersionListItem = ({ dataset }: NewVersionListItemProps) => {
           const parentVersion = Math.max(...dataset.versions.map((v) => v.version));
           const parent = dataset.versions.find((version) => version.version === parentVersion);
           if (file && parent) {
+            // For consistency with the main file upload, I don't use the mutation hook here. This
+            // allows reliable upload progress tracking.
             const response = await uploadDataset(
               {
                 dataset_file: file.file,
@@ -67,6 +78,7 @@ export const NewVersionListItem = ({ dataset }: NewVersionListItemProps) => {
                 },
               },
             );
+
             setFile({ ...file, taskId: response.task_id });
           }
         }}
@@ -74,7 +86,7 @@ export const NewVersionListItem = ({ dataset }: NewVersionListItemProps) => {
         <Dropzone
           files={file ? [file] : []}
           multiple={false}
-          setFiles={(files) => setFile(files[0])}
+          onNewFiles={(files) => setFile(files[0])}
         />
         <Typography variant="subtitle1">
           <b>Selected File</b>

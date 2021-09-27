@@ -1,18 +1,11 @@
-import type { FC } from 'react';
 import React, { useCallback, useMemo } from 'react';
 import type { CellProps, Column, PluginHook } from 'react-table';
 
-import type {
-  Error as DMError,
-  FilesGetResponse,
-  ProjectDetail,
-} from '@squonk/data-manager-client';
-import { useGetFiles } from '@squonk/data-manager-client/file';
+import type { ProjectDetail } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
 import { Breadcrumbs, CircularProgress, Link, Typography, useTheme } from '@material-ui/core';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
-import type { AxiosError } from 'axios';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -22,7 +15,7 @@ import { CenterLoader } from '../CenterLoader';
 import { DataTable } from '../DataTable';
 import type { FileActionsProps } from './FileActions';
 import type { TableDir, TableFile } from './types';
-import { useRows } from './useRows';
+import { useProjectFileRows } from './useProjectFileRows';
 import { isTableDir } from './utils';
 
 const FileActions = dynamic<FileActionsProps>(
@@ -32,14 +25,23 @@ const FileActions = dynamic<FileActionsProps>(
   },
 );
 
-export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentProject }) => {
+export interface ProjectTable {
+  /**
+   * Project detailing the files to be displayed
+   */
+  currentProject: ProjectDetail;
+}
+
+/**
+ * Data table displaying a project's files with actions to manage the files.
+ */
+export const ProjectTable = ({ currentProject }: ProjectTable) => {
   const theme = useTheme();
 
   const router = useRouter();
 
   // Breadcrumbs
   const breadcrumbs = useProjectBreadcrumbs();
-  const dirPath = '/' + breadcrumbs.join('/');
 
   // Table
   const columns: Column<TableFile | TableDir>[] = useMemo(
@@ -97,15 +99,7 @@ export const ProjectTable: FC<{ currentProject: ProjectDetail }> = ({ currentPro
     [currentProject.project_id, breadcrumbs, router, theme],
   );
 
-  const { data, error, isError, isLoading } = useGetFiles<
-    FilesGetResponse,
-    AxiosError<DMError> | void
-  >({
-    project_id: currentProject.project_id,
-    path: dirPath,
-  });
-
-  const rows = useRows(breadcrumbs, data);
+  const { rows, error, isError, isLoading } = useProjectFileRows(currentProject.project_id);
 
   // react-table plugin to add actions buttons for datasets
   const useActionsColumnPlugin: PluginHook<TableFile | TableDir> = useCallback((hooks) => {

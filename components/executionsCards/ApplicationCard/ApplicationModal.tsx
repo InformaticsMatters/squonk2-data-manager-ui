@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -9,31 +8,33 @@ import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager
 import { Grid, MenuItem, TextField } from '@material-ui/core';
 import Form from '@rjsf/material-ui';
 
-import type { ProjectId } from '../../hooks/currentProjectHooks';
-import { CenterLoader } from '../CenterLoader';
-import { ModalWrapper } from '../modals/ModalWrapper';
+import { CenterLoader } from '../../CenterLoader';
+import { ModalWrapper } from '../../modals/ModalWrapper';
+import type { CommonModalProps } from '../types';
 
-interface ApplicationModalContentProps {
-  open: boolean;
+export interface ApplicationModalProps extends CommonModalProps {
+  /**
+   * ID of the application under which an instance will be created
+   */
   applicationId: ApplicationSummary['application_id'];
-  projectId: ProjectId;
-  onClose: () => void;
-  onLaunch?: () => void;
 }
 
-export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
+/**
+ * Modal with form to create an instance of an application.
+ */
+export const ApplicationModal = ({
   open,
   onClose,
   applicationId,
   projectId,
   onLaunch,
-}) => {
+}: ApplicationModalProps) => {
   const queryClient = useQueryClient();
   const [name, setName] = useState('');
   const [version, setVersion] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>(null);
 
-  const { mutate: createInstance } = useCreateInstance();
+  const { mutateAsync: createInstance } = useCreateInstance();
 
   const { data: application } = useGetApplication(applicationId);
 
@@ -41,32 +42,28 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
 
   const handleCreateInstance = async () => {
     if (projectId) {
-      createInstance(
-        {
-          data: {
-            application_id: applicationId,
-            application_version: versionToUse,
-            as_name: name,
-            project_id: projectId,
-            specification: JSON.stringify({
-              variables: formData,
-            }),
-          },
+      await createInstance({
+        data: {
+          application_id: applicationId,
+          application_version: versionToUse,
+          as_name: name,
+          project_id: projectId,
+          specification: JSON.stringify({
+            variables: formData,
+          }),
         },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries(getGetInstancesQueryKey());
-            onLaunch && onLaunch();
-            onClose();
-          },
-        },
-      );
+      });
+      await queryClient.invalidateQueries(getGetInstancesQueryKey());
+
+      onLaunch && onLaunch();
+      onClose();
     }
   };
 
   const schema = application?.template ? JSON.parse(application.template) : undefined;
 
   if (schema) {
+    // Remove the title from the schema so it isn't rendered by the form generator
     schema.title = undefined;
   }
 
@@ -89,17 +86,16 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
             <TextField
               fullWidth
               label="Instance Name"
-              size="small"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </Grid>
+
           <Grid item xs={12}>
             <TextField
               fullWidth
               select
               label="Version"
-              size="small"
               value={versionToUse}
               onChange={(e) => setVersion(e.target.value)}
             >
@@ -110,15 +106,17 @@ export const ApplicationModalContent: FC<ApplicationModalContentProps> = ({
               ))}
             </TextField>
           </Grid>
+
           <Grid item xs={12}>
             <Form
               liveValidate
               noHtml5Validate
               formData={formData}
               schema={schema}
-              showErrorList={false} // TODO: fix when openapi is updated
+              showErrorList={false}
               onChange={(event) => setFormData(event.formData)}
             >
+              {/* Don't render a submit button */}
               <div />
             </Form>
           </Grid>

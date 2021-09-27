@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -17,15 +16,22 @@ import {
 import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
 import { BaseCard } from '../BaseCard';
 import { WarningDeleteButton } from '../WarningDeleteButton';
+import { DateTimeListItem } from './common/DateTimeListItem';
 import { HorizontalList } from './common/HorizontalList';
 import { StatusIcon } from './common/StatusIcon';
 import { TaskDetails } from './details/TaskDetails';
 
-interface TaskCardProps {
+export interface TaskCardProps {
+  /**
+   * The task which will be displayed
+   */
   task: TaskSummary;
 }
 
-export const OperationTaskCard: FC<TaskCardProps> = ({ task }) => {
+/**
+ * Expandable card that displays details about a task
+ */
+export const OperationTaskCard = ({ task }: TaskCardProps) => {
   const queryClient = useQueryClient();
   const { mutateAsync: deleteTask } = useDeleteTask();
 
@@ -60,13 +66,14 @@ export const OperationTaskCard: FC<TaskCardProps> = ({ task }) => {
             </CardContent>
           }
         >
-          <HorizontalList datetimeString={task.created}>
+          <HorizontalList>
             <ListItem>
               <ListItemIcon>
                 <StatusIcon state={task.processing_stage ?? 'UNKNOWN'} />
               </ListItemIcon>
               <ListItemText primary={task.purpose} secondary={task.processing_stage} />
             </ListItem>
+            <DateTimeListItem datetimeString={task.created} />
           </HorizontalList>
         </BaseCard>
       </div>

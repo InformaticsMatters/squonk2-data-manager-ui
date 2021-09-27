@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import DeleteRoundedIcon from '@material-ui/icons/DeleteRounded';
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 
-interface TwiddleIconProps {
+export interface TwiddleIconProps {
   done: boolean;
 }
 

@@ -1,24 +1,22 @@
-import type { FC } from 'react';
 import React, { useState } from 'react';
 
 import { Button, Tooltip } from '@material-ui/core';
 
-import type { ProjectId } from '../../hooks/currentProjectHooks';
+import type { JobModalProps } from './JobModal';
 import { JobModal } from './JobModal';
 
-interface RunJobButtonProps {
-  projectId: ProjectId;
-  jobId: number;
-  onRun?: () => void;
-}
+export type RunJobButtonProps = Pick<JobModalProps, 'jobId' | 'onLaunch' | 'projectId'>;
 
-export const RunJobButton: FC<RunJobButtonProps> = ({ projectId, jobId, onRun }) => {
+/**
+ * MuiButton that control a modal with options to create a new instance of a job
+ */
+export const RunJobButton = ({ projectId, jobId, onLaunch }: RunJobButtonProps) => {
   const [open, setOpen] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
 
   return (
     <>
-      <Tooltip arrow title="Run this job">
+      <Tooltip title="Run this job">
         <span>
           <Button
             color="primary"
@@ -38,7 +36,7 @@ export const RunJobButton: FC<RunJobButtonProps> = ({ projectId, jobId, onRun })
           open={open}
           projectId={projectId}
           onClose={() => setOpen(false)}
-          onRun={onRun}
+          onLaunch={onLaunch}
         />
       )}
     </>

@@ -1,10 +1,11 @@
 import React, { useContext, useState } from 'react';
 
-const STORAGE_KEY = 'data-manager-ui-colourScheme';
+const STORAGE_KEY =
+  process.env.NEXT_PUBLIC_LOCAL_STORAGE_PREFIX ?? 'data-manager-ui' + '-colorScheme';
 
 type Scheme = 'light' | 'dark';
 interface ColorScheme {
-  version: 1;
+  version: 1; // State saved to localStorage so we need to know if its old data if we update logic here
   scheme: Scheme;
 }
 

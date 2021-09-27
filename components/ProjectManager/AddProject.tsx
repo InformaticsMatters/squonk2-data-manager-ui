@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -17,11 +16,14 @@ import { TextField } from 'formik-material-ui';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 import * as yup from 'yup';
 
-interface AddProjectProps {
-  inverted?: boolean;
-}
+import type { CommonProps } from './types';
 
-export const AddProject: FC<AddProjectProps> = ({ inverted = false }) => {
+export type AddProjectProps = Pick<CommonProps, 'inverted'>;
+
+/**
+ * Button with a Popover that allows the user to create a new project from available entitlements
+ */
+export const AddProject = ({ inverted = false }: AddProjectProps) => {
   const popupState = usePopupState({ variant: 'popover', popupId: `add-project` });
 
   const queryClient = useQueryClient();
@@ -42,7 +44,6 @@ export const AddProject: FC<AddProjectProps> = ({ inverted = false }) => {
   return (
     <>
       <Tooltip
-        arrow
         title={
           entitlementsAvailable
             ? 'Add new project'

@@ -4,23 +4,33 @@ import type { JobSummary } from '@squonk/data-manager-client';
 
 import { Chip, Typography, useTheme } from '@material-ui/core';
 
-import type { ProjectId } from '../../hooks/currentProjectHooks';
-import { BaseCard } from '../BaseCard';
-import { Chips } from '../Chips';
-import { InstancesList } from './InstancesList';
+import { BaseCard } from '../../BaseCard';
+import { Chips } from '../../Chips';
+import { InstancesList } from '../InstancesList';
+import type { RunJobButtonProps } from './RunJobButton';
 import { RunJobButton } from './RunJobButton';
 
-interface ApplicationCardProps {
-  projectId: ProjectId;
+export interface ApplicationCardProps extends Pick<RunJobButtonProps, 'projectId'> {
+  /**
+   * the job to be instantiated
+   */
   job: JobSummary;
 }
 
-export const JobCard: React.FC<ApplicationCardProps> = ({ projectId, job: jobSummary }) => {
+/**
+ * MuiCard that displays a summary of a job with actions to create new instances and view
+ * existing instances.
+ */
+export const JobCard = ({ projectId, job: jobSummary }: ApplicationCardProps) => {
   const theme = useTheme();
   return (
     <BaseCard
       actions={({ setExpanded }) => (
-        <RunJobButton jobId={jobSummary.id} projectId={projectId} onRun={() => setExpanded(true)} />
+        <RunJobButton
+          jobId={jobSummary.id}
+          projectId={projectId}
+          onLaunch={() => setExpanded(true)}
+        />
       )}
       collapsed={
         <InstancesList

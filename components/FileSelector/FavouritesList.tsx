@@ -1,24 +1,25 @@
-import type { FC } from 'react';
 import React from 'react';
 
-import { css } from '@emotion/react';
 import { Typography } from '@material-ui/core';
 import FolderSpecialRoundedIcon from '@material-ui/icons/FolderSpecialRounded';
 
-import { useSelectedFiles } from '../../../context/fileSelectionContext';
+import { useSelectedFiles } from '../../context/fileSelectionContext';
 import { FileListItem } from './FileListItem';
 import { ScrollList } from './ScrollList';
 import type { SharedProps } from './types';
 import { getChecked, getNewValue } from './utils';
 
-export const FavouritesList: FC<SharedProps> = ({
+/**
+ * List of favourited files with option to select them on click.
+ */
+export const FavouritesList = ({
   projectId,
   value,
   mimeTypes,
   targetType,
   multiple,
   onSelect,
-}) => {
+}: SharedProps) => {
   const { selectedFiles } = useSelectedFiles(projectId);
 
   const selectedFilesToDisplay = selectedFiles
@@ -42,12 +43,7 @@ export const FavouritesList: FC<SharedProps> = ({
       ))}
     </ScrollList>
   ) : (
-    <Typography
-      css={css`
-        text-align: center;
-      `}
-      variant="body2"
-    >
+    <Typography align="center" variant="body2">
       You have no favourite files that are of the correct type
     </Typography>
   );

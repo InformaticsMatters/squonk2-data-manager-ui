@@ -8,13 +8,31 @@ import type { AutocompleteChangeReason } from '@material-ui/lab';
 import { Autocomplete } from '@material-ui/lab';
 
 export interface ManageEditorsProps {
+  /**
+   * User's email
+   */
   currentUsername: string;
+  /**
+   * Array of current editors
+   */
   editorsValue: string[];
+  /**
+   * Whether the component should be in a loading state
+   */
   isLoading?: boolean;
+  /**
+   * Called when a editor is selected
+   */
   onSelect: (value: string[]) => Promise<void> | void;
+  /**
+   * Called when an editor is removed
+   */
   onRemove: (value: string[]) => Promise<void> | void;
 }
 
+/**
+ * MuiAutocomplete to manage the editors of a dataset
+ */
 export const ManageEditors: FC<ManageEditorsProps> = ({
   currentUsername,
   editorsValue,

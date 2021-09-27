@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React from 'react';
 
 import type { TaskSummary } from '@squonk/data-manager-client';
@@ -9,16 +8,24 @@ import { Grid } from '@material-ui/core';
 import { CenterLoader } from '../../CenterLoader';
 import { TimeLine } from '../common/TimeLine';
 
-interface TaskDetailsProps {
+export interface TaskDetailsProps {
+  /**
+   * ID of the task
+   */
   taskId: TaskSummary['id'];
 }
 
-export const TaskDetails: FC<TaskDetailsProps> = ({ taskId }) => {
+/**
+ * Displays details of a task based on a task ID
+ */
+export const TaskDetails = ({ taskId }: TaskDetailsProps) => {
   const { data: task } = useGetTask(taskId);
 
-  return task === undefined ? (
-    <CenterLoader />
-  ) : (
+  if (task === undefined) {
+    return <CenterLoader />;
+  }
+
+  return (
     <Grid container spacing={2}>
       <Grid item sm={6} xs={12}>
         <TimeLine states={task.states ?? []} />

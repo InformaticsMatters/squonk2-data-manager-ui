@@ -5,6 +5,9 @@ import { css } from '@emotion/react';
 import { useTheme } from '@material-ui/core';
 
 export interface ChipsProps {
+  /**
+   * Spacing in theme units for the gap between labels. Defaults to 0.5 == 4px.
+   */
   spacing?: number;
 }
 

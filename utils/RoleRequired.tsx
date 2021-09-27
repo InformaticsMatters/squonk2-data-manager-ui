@@ -6,9 +6,15 @@ import Error from 'next/error';
 import { useKeycloakUser } from '../hooks/useKeycloakUser';
 
 export interface RoleRequiredProps {
+  /**
+   * Roles the user is required to have.
+   */
   roles?: string[];
 }
 
+/**
+ * The API is protected by user roles. A authenticated might not be authorized to use the app.
+ */
 export const RoleRequired: FC<RoleRequiredProps> = ({ children, roles }) => {
   const { user } = useKeycloakUser();
 

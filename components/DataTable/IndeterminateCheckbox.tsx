@@ -4,6 +4,10 @@ import React, { forwardRef, useEffect } from 'react';
 import type { CheckboxProps } from '@material-ui/core';
 import { Checkbox } from '@material-ui/core';
 
+/**
+ * Wrapped version of a MuiCheckbox that supports the native indeterminate attribute. Required for
+ * use in react-table. Ref is forwarded to MuiCheckbox and takes same props as MuiCheckbox.
+ */
 export const IndeterminateCheckbox = forwardRef<HTMLInputElement, CheckboxProps>(
   ({ indeterminate, ...rest }, ref) => {
     const defaultRef = React.useRef();

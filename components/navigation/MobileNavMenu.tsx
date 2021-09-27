@@ -11,14 +11,29 @@ import {
   Typography,
 } from '@material-ui/core';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
+import { CenterLoader } from '../CenterLoader';
 import { ModalWrapper } from '../modals/ModalWrapper';
-import { ProjectManager } from '../ProjectManager';
+import type { ProjectManagerProps } from '../ProjectManager';
 import { NavLink } from './NavLink';
 import { UserMenuContent } from './UserMenuContent';
 
+const ProjectManager = dynamic<ProjectManagerProps>(
+  () => import('../ProjectManager').then((mod) => mod.ProjectManager),
+  {
+    loading: () => <CenterLoader />,
+  },
+);
+
+/**
+ * Mobile modal navigation menu with
+ * * Page links
+ * * Project management
+ * * User menu
+ */
 export const MobileNavMenu = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -43,6 +58,7 @@ export const MobileNavMenu = () => {
             </Typography>
             <List aria-label="main-mobile-navigation" component="nav">
               <NavLink
+                // Removes the selected project if the user is already on the data page
                 stripQueryParameters={
                   router.pathname === '/data' ? ['pid', 'project', 'path'] : ['pid', 'path']
                 }
@@ -54,6 +70,7 @@ export const MobileNavMenu = () => {
                   </ListItem>
                 )}
               </NavLink>
+
               <NavLink stripQueryParameters={['pid', 'path']} title="Executions">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
@@ -61,6 +78,7 @@ export const MobileNavMenu = () => {
                   </ListItem>
                 )}
               </NavLink>
+
               <NavLink stripQueryParameters={['pid', 'path']} title="Tasks">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
@@ -70,24 +88,28 @@ export const MobileNavMenu = () => {
               </NavLink>
             </List>
           </Grid>
+
           {isAuthorized && (
             <Grid item xs={12}>
               <Divider />
             </Grid>
           )}
+
           <Grid item xs={12}>
             {isAuthorized && (
               <>
-                <Typography gutterBottom component="h3" variant="h6">
+                <Typography gutterBottom component="h3" variant="h3">
                   Project
                 </Typography>
                 <ProjectManager wrap />
               </>
             )}
           </Grid>
+
           <Grid item xs={12}>
             <Divider />
           </Grid>
+
           <Grid item xs={12}>
             <UserMenuContent />
           </Grid>

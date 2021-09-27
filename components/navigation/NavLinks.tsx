@@ -9,6 +9,9 @@ import { useRouter } from 'next/router';
 import { NavLink } from './NavLink';
 
 export interface NavLinksProps {
+  /**
+   * Maximum width of the link in pixels
+   */
   linkWidth?: number;
 }
 
@@ -35,6 +38,7 @@ export const NavLinks = ({ linkWidth }: NavLinksProps) => {
         }
       `}
     >
+      {/* Div wrappers used to give correct spacing */}
       <div>
         <NavLink
           stripQueryParameters={

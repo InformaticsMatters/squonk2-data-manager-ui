@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React, { Fragment } from 'react';
 
 import type { InstanceSummary } from '@squonk/data-manager-client';
@@ -34,7 +33,10 @@ interface OutputValue {
   'mime-types': string[];
 }
 
-interface JobDetailsProps {
+export interface JobDetailsProps {
+  /**
+   * Instance of the job
+   */
   instanceSummary: InstanceSummary;
 }
 
@@ -58,7 +60,10 @@ const getPathName = (creates: string, type?: 'file' | 'directory'): string[] | u
   return undefined;
 };
 
-export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
+/**
+ * Displays the details of an job based on the instance of a job
+ */
+export const JobDetails = ({ instanceSummary }: JobDetailsProps) => {
   const { query } = useRouter();
 
   const { data: instance } = useGetInstance(instanceSummary.id);
@@ -100,7 +105,7 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
 
       {instance.outputs && (
         <>
-          <Typography component="h3" variant="h6">
+          <Typography component="h3" variant="h4">
             <b>Outputs</b>
           </Typography>
           <List
@@ -164,13 +169,7 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
 
       <Grid container spacing={2}>
         <Grid item md={4} xs={12}>
-          <Typography
-            component="h3"
-            css={css`
-              text-align: center;
-            `}
-            variant="h6"
-          >
+          <Typography align="center" component="h3" variant="h6">
             <b>States</b>
           </Typography>
           <TimeLine states={instance.states} />
@@ -186,9 +185,12 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
           <Typography component="h3" variant="h6">
             <b>Events</b>
           </Typography>
+          {/* Some jobs are simple and are just a time-line of events */}
           {instanceSummary.job_image_type === 'SIMPLE' ? (
             <TimeLine states={instance.events} />
           ) : (
+            // But next-flow jobs only give a single block of text as output so we display these
+            // in a monospace font
             <pre
               css={css`
                 margin: 0;
@@ -197,7 +199,7 @@ export const JobDetails: FC<JobDetailsProps> = ({ instanceSummary }) => {
                 font-family: 'Fira Mono', monospace;
               `}
             >
-              {instance.events[instance.events.length - 1].message}
+              {instance.events[instance.events.length - 1]?.message}
             </pre>
           )}
         </Grid>

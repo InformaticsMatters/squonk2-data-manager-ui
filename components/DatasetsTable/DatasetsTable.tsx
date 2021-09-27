@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import type { Column, Row } from 'react-table';
 
 import { useGetDatasets } from '@squonk/data-manager-client/dataset';
@@ -10,8 +10,8 @@ import { combineLabels } from '../../utils/labelUtils';
 import { CenterLoader } from '../CenterLoader';
 import { Chips } from '../Chips';
 import { DataTable } from '../DataTable';
+import { LabelChip } from '../labels/LabelChip';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
-import { LabelChip } from './LabelChip';
 import type { TableDataset } from './types';
 
 const FileUpload = dynamic<Record<string, never>>(
@@ -21,14 +21,18 @@ const FileUpload = dynamic<Record<string, never>>(
   },
 );
 
-export const AllDatasetsTable = () => {
-  const editorsSorter = useCallback((rowA: Row<TableDataset>, rowB: Row<TableDataset>) => {
-    if (rowA.original.editors.join(' ') > rowB.original.editors.join(' ')) {
-      return 1;
-    }
-    return -1;
-  }, []);
+const editorsSorter = (rowA: Row<TableDataset>, rowB: Row<TableDataset>) => {
+  if (rowA.original.editors.join(' ') > rowB.original.editors.join(' ')) {
+    return 1;
+  }
+  return -1;
+};
 
+/**
+ * MuiTable managed by react-table that displays datasets viewable by the user with option to see
+ * further details of a dataset.
+ */
+export const DatasetsTable = () => {
   const columns: Column<TableDataset>[] = useMemo(
     () => [
       {
@@ -69,7 +73,7 @@ export const AllDatasetsTable = () => {
         Header: 'Versions',
       },
     ],
-    [editorsSorter],
+    [],
   );
 
   const { data } = useGetDatasets();
@@ -103,5 +107,6 @@ export const AllDatasetsTable = () => {
       </>
     );
   }
+
   return <CenterLoader />;
 };

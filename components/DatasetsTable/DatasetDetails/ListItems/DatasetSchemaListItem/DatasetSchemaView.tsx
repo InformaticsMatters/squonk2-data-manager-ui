@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import React, { Fragment } from 'react';
+import React from 'react';
 import type { Column } from 'react-table';
 
 import type { DatasetSchemaGetResponse, Error } from '@squonk/data-manager-client';
@@ -10,21 +10,34 @@ import { Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import type { AxiosError } from 'axios';
 
-import { CenterLoader } from '../../CenterLoader';
-import { DataTable } from '../../DataTable';
+import { CenterLoader } from '../../../../CenterLoader';
+import { DataTable } from '../../../../DataTable';
 
 export interface DatasetSchemaViewProps {
+  /**
+   * ID of the dataset to manage the schema of a dataset version
+   */
   datasetId: string;
+  /**
+   * Version number of the version to manage
+   */
   version: number;
 }
 
+// These types should be defined in the OpenAPI but currently aren't
+// TODO: replace these with types of data-manager-client when they exist there
 interface Field {
   description: string;
   type: 'float' | 'text' | 'integer' | 'object'; // These will be replaced with JSON Schema types
 }
-
 type Fields = Record<string, Field>;
 
+/**
+ * Displays the schema of a version of a dataset in a tabular format.
+ *
+ * TODO: allow editing of the meta description
+ * TODO: allow editing of schema types and descriptions
+ */
 export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, version }) => {
   const {
     data: schema,
@@ -36,6 +49,7 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
   // Need to assert the fields here as the OpenAPI types are wrong
   const typedSchema = schema as ({ fields: Fields } & DatasetSchemaGetResponse) | undefined;
 
+  // table data so we monoize it for react-table
   const fields = useMemo(
     () =>
       typedSchema !== undefined
@@ -44,6 +58,7 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
     [typedSchema],
   );
 
+  // TODO: all custom Cells here to have fields that can be edited
   const columns: Column<NonNullable<typeof fields>[number]>[] = useMemo(
     () => [
       {
@@ -88,9 +103,7 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
 
   return (
     <>
-      <Typography component="h3" variant="h6">
-        {schema?.description}
-      </Typography>
+      <Typography variant="subtitle1">{schema?.description}</Typography>
       <DataTable
         columns={columns}
         data={fields}

@@ -18,13 +18,13 @@ import {
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
+import { Labels } from '../../labels/Labels';
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import type { TableDataset } from '../types';
 import { AttachDatasetListItem } from './ListItems/AttachDatasetListItem';
 import { DatasetSchemaListItem } from './ListItems/DatasetSchemaListItem';
 import { DeleteDatasetListItem } from './ListItems/DeleteDatasetListItem';
 import { NewVersionListItem } from './ListItems/NewVersionListItem';
-import { Labels } from './Labels';
 import { ManageDatasetEditors } from './ManageDatasetEditors';
 
 export interface DatasetDetailsProps {
@@ -51,6 +51,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
       <Link component="button" variant="body1" onClick={() => setOpen(true)}>
         {dataset.fileName}
       </Link>
+
       <ModalWrapper
         DialogProps={{ fullScreen: true }}
         id={`${dataset.dataset_id}-details`}
@@ -146,11 +147,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
             </Typography>
             <List>
               {selectedVersion && (
-                <AttachDatasetListItem
-                  datasetId={dataset.dataset_id}
-                  fileName={dataset.fileName}
-                  version={selectedVersion}
-                />
+                <AttachDatasetListItem datasetId={dataset.dataset_id} version={selectedVersion} />
               )}
 
               <DatasetSchemaListItem
@@ -161,7 +158,9 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
               {selectedVersion && (isEditor || isOwner) && (
                 <DeleteDatasetListItem
                   datasetId={dataset.dataset_id}
-                  resetSelection={() => {
+                  version={selectedVersion}
+                  onDelete={() => {
+                    // Reset selected version as it is being deleted
                     const nextSelectableVersions = dataset.versions.filter(
                       (version) => version.version !== selectedVersionNumber,
                     );
@@ -169,12 +168,12 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
                       setSelectedVersionNumber(nextSelectableVersions[0].version);
                     }
                   }}
-                  version={selectedVersion}
                 />
               )}
             </List>
           </Box>
 
+          {/* DEBUG options. This allows access of dataset-id etc without leaving the UI */}
           {process.env.NODE_ENV === 'development' && (
             <>
               <Typography component="h4" variant="h4">

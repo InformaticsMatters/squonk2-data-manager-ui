@@ -13,6 +13,9 @@ import { FileTypeOptions } from '../uploads/FileTypeOptions';
 import type { FileTypeOptionsState, UploadableFile } from '../uploads/types';
 import { BulkUploadDropzone } from './BulkUploadDropzone';
 
+/**
+ * Button that controls a modal with UI to upload files to the DM API
+ */
 export const FileUpload = () => {
   const [open, setOpen] = useState(false);
   // Array of the user uploaded files with associated errors

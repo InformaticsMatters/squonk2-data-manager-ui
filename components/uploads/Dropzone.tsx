@@ -1,3 +1,4 @@
+import type { FC } from 'react';
 import React, { useCallback } from 'react';
 import type { DropzoneOptions, FileRejection } from 'react-dropzone';
 import { useDropzone } from 'react-dropzone';
@@ -11,15 +12,24 @@ import { useMimeTypeLookup } from '../../hooks/useMimeTypeLookup';
 import type { UploadableFile } from './types';
 import { getMimeFromFileName } from './utils';
 
-interface DropzoneProps extends DropzoneOptions {
+export interface DropzoneProps extends DropzoneOptions {
+  /**
+   * The current files a user has dropped
+   */
   files: UploadableFile[];
-  setFiles: (newFiles: UploadableFile[]) => void;
+  /**
+   * Called when new files are added
+   */
+  onNewFiles: (newFiles: UploadableFile[]) => void;
 }
 
-export const Dropzone: React.FC<DropzoneProps> = ({
+/**
+ * The user can drag-and-drop files into a region
+ */
+export const Dropzone: FC<DropzoneProps> = ({
   children,
   files,
-  setFiles,
+  onNewFiles,
   ...dropzoneOptions
 }) => {
   const allowedFileTypes = useFileExtensions();
@@ -31,6 +41,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
         file,
         mimeType: getMimeFromFileName(file.name, mimeLookup),
         errors: [],
+        // Give files UUIDs to keep track
         id: uuidv4(),
         progress: 0,
         taskId: null,
@@ -44,9 +55,11 @@ export const Dropzone: React.FC<DropzoneProps> = ({
         taskId: null,
         done: false,
       }));
-      setFiles([...mappedAccepted, ...mappedRejected]);
+
+      // TODO: merge the previous files better as this currently overwrites instead of append
+      onNewFiles([...mappedAccepted, ...mappedRejected]);
     },
-    [mimeLookup, setFiles],
+    [mimeLookup, onNewFiles],
   );
 
   const patchedFileExtensions = allowedFileTypes ?? [];

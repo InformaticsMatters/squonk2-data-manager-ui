@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React from 'react';
 
 import type { InstanceSummary } from '@squonk/data-manager-client';
@@ -13,24 +12,38 @@ import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
 import { CenterLoader } from '../CenterLoader';
 import { LocalTime } from '../LocalTime';
 
-interface InstancesListProps {
-  predicate: (instance: InstanceSummary) => boolean;
+type FilterPredicate = (value: InstanceSummary, index: number, array: InstanceSummary[]) => boolean;
+
+export interface InstancesListProps {
+  /**
+   * Predicate of `Array.prototype.filter`
+   */
+  predicate: FilterPredicate;
 }
 
-export const InstancesList: FC<InstancesListProps> = ({ predicate }) => {
+/**
+ * MuiList detailing instances that match a filter.
+ */
+export const InstancesList = ({ predicate }: InstancesListProps) => {
   const { query } = useRouter();
 
   const { projectId } = useCurrentProjectId();
   const { data } = useGetInstances({ project_id: projectId ?? undefined });
   const instances = data?.instances.filter(predicate);
 
-  return instances === undefined ? (
-    <CenterLoader />
-  ) : instances.length === 0 ? (
-    <Box p={2}>
-      <Typography variant="body2">No instances of this type currently exist</Typography>
-    </Box>
-  ) : (
+  if (instances === undefined) {
+    return <CenterLoader />;
+  }
+
+  if (instances.length === 0) {
+    return (
+      <Box p={2}>
+        <Typography variant="body2">No instances of this type currently exist</Typography>
+      </Box>
+    );
+  }
+
+  return (
     <List dense component="ul">
       {instances
         .sort((instanceA, instanceB) =>

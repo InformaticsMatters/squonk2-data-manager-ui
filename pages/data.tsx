@@ -8,6 +8,9 @@ import { DataTableManager } from '../components/Data/TableManager';
 import Layout from '../components/Layout';
 import { RoleRequired } from '../utils/RoleRequired';
 
+/**
+ * The main data page. This page displays project data and datasets
+ */
 const Data = () => {
   return (
     <>

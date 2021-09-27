@@ -1,37 +1,38 @@
-import type { FC } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
-import { css } from '@emotion/react';
-import { Grid, useTheme } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 
 import { Dropzone } from '../uploads/Dropzone';
 import type { UploadableFile } from '../uploads/types';
 import { mutateAtPosition } from '../uploads/utils';
 import { SingleFileUploadWithProgress } from './SingleFileUploader';
 
-interface BulkUploadDropzoneProps {
+export interface BulkUploadDropzoneProps {
+  /**
+   * Array of files their metadata
+   */
   files: UploadableFile[];
-  setFiles: (files: UploadableFile[] | ((files: UploadableFile[]) => UploadableFile[])) => void;
+  /**
+   * Called on file delete, mime-type change, file upload finished, and rename actions
+   */
+  setFiles: Dispatch<SetStateAction<UploadableFile[]>>;
 }
 
-export const BulkUploadDropzone: FC<BulkUploadDropzoneProps> = ({ files, setFiles }) => {
-  const theme = useTheme();
-
+/**
+ * Drag-and-drop file upload with options to rename and choose a mime-type. It also displays upload
+ * and processing progress.
+ */
+export const BulkUploadDropzone = ({ files, setFiles }: BulkUploadDropzoneProps) => {
   const onDelete = (file: File) => {
     setFiles((curr) => curr.filter((fw) => fw.file !== file));
   };
 
   return (
-    <Dropzone files={files} setFiles={setFiles}>
-      <Grid container direction="column">
+    <Dropzone files={files} onNewFiles={setFiles}>
+      <Grid container direction="column" spacing={1}>
         {files.map((fileWrapper, index) => (
-          <Grid
-            item
-            css={css`
-              margin-bottom: ${theme.spacing(1)}px;
-            `}
-            key={fileWrapper.id}
-          >
+          <Grid item key={fileWrapper.id}>
             <SingleFileUploadWithProgress
               changeMimeType={(newType) => {
                 files[index].mimeType = newType;

@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -6,13 +5,13 @@ import type { InstanceSummary, JobSummary } from '@squonk/data-manager-client';
 import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
 import { useGetJob } from '@squonk/data-manager-client/job';
 
-import { Grid, TextField, Typography } from '@material-ui/core';
+import { Box, Grid, TextField, Typography } from '@material-ui/core';
 import type { FormProps } from '@rjsf/core';
 import dynamic from 'next/dynamic';
 
-import type { ProjectId } from '../../hooks/currentProjectHooks';
-import { CenterLoader } from '../CenterLoader';
-import { ModalWrapper } from '../modals/ModalWrapper';
+import { CenterLoader } from '../../CenterLoader';
+import { ModalWrapper } from '../../modals/ModalWrapper';
+import type { CommonModalProps } from '../types';
 import type { JobInputFieldsProps } from './JobInputFields';
 
 const JobInputFields = dynamic<JobInputFieldsProps>(
@@ -35,30 +34,37 @@ interface JobSpecification {
   variables: { [key: string]: string | string[] };
 }
 
-interface JobModalProps {
+export interface JobModalProps extends CommonModalProps {
+  /**
+   * ID of the job to instantiate
+   */
   jobId: JobSummary['id'];
-  open: boolean;
-  projectId: ProjectId;
-  instance?: InstanceSummary; // Allow loading form values from a previous instance
-  onClose: () => void;
-  onRun?: () => void;
+  /**
+   * An existing instance of this job from which fields take their default values.
+   * Allows loading form values from a previous instance
+   */
+  instance?: InstanceSummary;
 }
 
-export const JobModal: FC<JobModalProps> = ({
+/**
+ * Modal with options to create a new instance if a job. An instance can be passed to inherit
+ * default values.
+ */
+export const JobModal = ({
   jobId,
   projectId,
   instance,
   open,
   onClose,
-  onRun,
-}) => {
+  onLaunch,
+}: JobModalProps) => {
   // ? Can we guarantee every job has a parsable spec?
 
   const queryClient = useQueryClient();
 
   const [nameState, setNameState] = useState(instance?.name ?? '');
 
-  const { mutate: createInstance } = useCreateInstance();
+  const { mutateAsync: createInstance } = useCreateInstance();
   // Get extra details about the job
   const { data: job } = useGetJob(jobId);
 
@@ -76,7 +82,7 @@ export const JobModal: FC<JobModalProps> = ({
   // Control for the inputs fields
   const [inputsData, setInputsData] = useState<InputData>({});
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (projectId && job) {
       // Construct the specification
       const specification: JobSpecification = {
@@ -86,25 +92,19 @@ export const JobModal: FC<JobModalProps> = ({
         variables: { ...inputsData, ...optionsFormData },
       };
 
-      createInstance(
-        {
-          data: {
-            application_id: job.application.application_id,
-            application_version: 'v1',
-            as_name: name,
-            project_id: projectId,
-            specification: JSON.stringify(specification),
-          },
+      await createInstance({
+        data: {
+          application_id: job.application.application_id,
+          application_version: 'v1',
+          as_name: name,
+          project_id: projectId,
+          specification: JSON.stringify(specification),
         },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
+      });
+      await queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
 
-            onRun && onRun();
-            onClose();
-          },
-        },
-      );
+      onLaunch && onLaunch();
+      onClose();
     }
   };
 
@@ -120,16 +120,15 @@ export const JobModal: FC<JobModalProps> = ({
     >
       {job !== undefined && projectId !== undefined ? (
         <>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Job name"
-                value={name} // Give a default instance name of job.job
-                onChange={(event) => setNameState(event.target.value)}
-              />
-            </Grid>
-          </Grid>
+          <Box p={2}>
+            <TextField
+              fullWidth
+              label="Job name"
+              value={name} // Give a default instance name of job.job
+              onChange={(event) => setNameState(event.target.value)}
+            />
+          </Box>
+
           {job.variables && (
             <Grid container spacing={2}>
               {job.variables.inputs && (
@@ -144,7 +143,7 @@ export const JobModal: FC<JobModalProps> = ({
                     inputs={JSON.parse(job.variables.inputs)}
                     inputsData={inputsData}
                     projectId={projectId}
-                    setInputsData={setInputsData}
+                    onChange={setInputsData}
                   />
                 </>
               )}

@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import { useMemo } from 'react';
 import React, { useState } from 'react';
 
@@ -12,21 +11,24 @@ import { useGetJobs } from '@squonk/data-manager-client/job';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import { Container, Grid, InputAdornment, MenuItem, TextField, useTheme } from '@material-ui/core';
-import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
+import { Container, Grid, MenuItem, TextField, useTheme } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import type { AxiosError } from 'axios';
 import Head from 'next/head';
 
 import { CenterLoader } from '../components/CenterLoader';
 import { ApplicationCard } from '../components/executionsCards/ApplicationCard';
-import { JobCard } from '../components/executionsCards/JobCard';
+import { JobCard } from '../components/executionsCards/JobCard/JobCard';
 import Layout from '../components/Layout';
+import { SearchTextField } from '../components/SearchTextField';
 import { useCurrentProject } from '../hooks/currentProjectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 import { search } from '../utils/search';
 
-const Executions: FC = () => {
+/**
+ * Page allowing the user to run jobs and applications
+ */
+const Executions = () => {
   const theme = useTheme();
 
   const [executionTypes, setExecutionTypes] = useState(['application', 'job']);
@@ -52,27 +54,33 @@ const Executions: FC = () => {
   const jobs = jobsData?.jobs;
 
   const cards = useMemo(() => {
-    const applicationCards = applications
-      ?.filter(({ kind }) => search([kind], searchValue))
-      ?.map((app) => (
-        <Grid item key={app.application_id} md={3} sm={6} xs={12}>
-          <ApplicationCard app={app} projectId={currentProject?.project_id} />
-        </Grid>
-      ));
+    const applicationCards =
+      applications
+        // Filter the apps by the search value
+        ?.filter(({ kind }) => search([kind], searchValue))
+        // Then create a card for each
+        ?.map((app) => (
+          <Grid item key={app.application_id} md={3} sm={6} xs={12}>
+            <ApplicationCard app={app} projectId={currentProject?.project_id} />
+          </Grid>
+        )) ?? [];
 
-    const jobCards = jobs
-      ?.filter(({ keywords, category, name }) => search([keywords, category, name], searchValue))
-      ?.map((job) => (
-        <Grid item key={job.id} md={3} sm={6} xs={12}>
-          <JobCard job={job} projectId={currentProject?.project_id} />
-        </Grid>
-      ));
+    const jobCards =
+      jobs
+        // Filter the apps by the search value
+        ?.filter(({ keywords, category, name }) => search([keywords, category, name], searchValue))
+        // Then create a card for each
+        ?.map((job) => (
+          <Grid item key={job.id} md={3} sm={6} xs={12}>
+            <JobCard job={job} projectId={currentProject?.project_id} />
+          </Grid>
+        )) ?? [];
 
     const showApplications = executionTypes.includes('application');
     const showJobs = executionTypes.includes('job');
 
     if (showApplications && showJobs) {
-      return [...(applicationCards ?? []), ...(jobCards ?? [])];
+      return [...applicationCards, ...jobCards];
     } else if (showApplications) {
       return applicationCards;
     }
@@ -94,6 +102,7 @@ const Executions: FC = () => {
               `}
               spacing={2}
             >
+              {/* Filter by apps/jobs */}
               <Grid item md={4} sm={6} xs={12}>
                 <TextField
                   fullWidth
@@ -111,6 +120,8 @@ const Executions: FC = () => {
                   <MenuItem value="job">Jobs</MenuItem>
                 </TextField>
               </Grid>
+
+              {/* Search through each card */}
               <Grid
                 item
                 css={css`
@@ -120,21 +131,15 @@ const Executions: FC = () => {
                 sm={6}
                 xs={12}
               >
-                <TextField
+                <SearchTextField
                   fullWidth
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <SearchRoundedIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  label="Search"
                   value={searchValue}
                   onChange={(event) => setSearchValue(event.target.value)}
                 />
               </Grid>
             </Grid>
+
+            {/* Errors */}
             <Grid container spacing={2}>
               {isApplicationsError && (
                 <Grid item xs={12}>
@@ -150,6 +155,8 @@ const Executions: FC = () => {
                   </Alert>
                 </Grid>
               )}
+
+              {/* Actual content */}
               {!isApplicationsLoading && !isJobsLoading ? cards : <CenterLoader />}
             </Grid>
           </Container>

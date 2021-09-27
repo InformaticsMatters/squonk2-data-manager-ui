@@ -1,11 +1,9 @@
 import type { DatasetSummary } from '@squonk/data-manager-client';
 
-interface BaseTableRow {
+/**
+ * Extended {@link TableDataset} with fileName and merged labels.
+ */
+export type TableDataset = DatasetSummary & {
   fileName: string;
-}
-
-// Properties of datasets only
-export type TableDataset = DatasetSummary &
-  BaseTableRow & {
-    labels: Record<string, string | string[]>;
-  };
+  labels: Record<string, string | string[]>;
+};

@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
@@ -14,18 +13,29 @@ import type { ProjectId } from '../../../hooks/currentProjectHooks';
 import { useMimeTypeLookup } from '../../../hooks/useMimeTypeLookup';
 import type { TableFile } from '../types';
 
-interface CreateDatasetFromFileButtonProps {
+export interface CreateDatasetFromFileButtonProps {
+  /**
+   * The ID of the project the file is under
+   */
   projectId: ProjectId;
+  /**
+   * The file object to be made into a dataset
+   */
   file: TableFile;
 }
 
-export const CreateDatasetFromFileButton: FC<CreateDatasetFromFileButtonProps> = ({
+/**
+ * Button allowing a file to be made into a dataset
+ *
+ * TODO: this needs a feedback mechanism
+ */
+export const CreateDatasetFromFileButton = ({
   file,
   projectId,
-}) => {
+}: CreateDatasetFromFileButtonProps) => {
   const queryClient = useQueryClient();
 
-  const createDatasetMutation = useCreateDatasetFromFile();
+  const { mutateAsync: createDataset } = useCreateDatasetFromFile();
 
   const mimeLookup = useMimeTypeLookup();
 
@@ -45,7 +55,7 @@ export const CreateDatasetFromFileButton: FC<CreateDatasetFromFileButtonProps> =
             // Remove the file name from the end the full path
             const path =
               '/' + file.fullPath.substring(0, file.fullPath.indexOf('/' + file.fileName));
-            await createDatasetMutation.mutateAsync({
+            await createDataset({
               data: {
                 project_id: projectId,
                 file_name: file.fileName,

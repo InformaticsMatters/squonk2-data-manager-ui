@@ -41,9 +41,18 @@ jobs:
         yarn add -D wait-on 
 
     - name: Start App
+      env:
+        AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
+        AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
+        TEST_USERNAME: "${{ secrets.TEST_USERNAME }}"
+        AUTH0_SECRET: "LONG_RANDOM_VALUE"
+        BASE_URL: "http://localhost:3000"
+        BASE_PATH: "/data-manager-ui"
+        DATA_MANAGER_API_SERVER: "https://squonk.informaticsmatters.org/data-manager-api"
+        KEYCLOAK_URL: "https://squonk.informaticsmatters.org/auth"
       run: |
-        yarn build
-        yarn start & wait-on ${{ env.BASE_URL }}
+        NODE_ENV="test" && yarn build
+        NODE_ENV="test" && yarn start & wait-on $BASE_URL$BASE_PATH
     
     - name: Test
       run: |

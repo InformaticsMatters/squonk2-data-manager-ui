@@ -27,6 +27,23 @@ on:
     - 'master'
 
 jobs:
+  # Just a skeleton so far
+  test:
+    runs-on: ubuntu-latest
+    environment: data-manager-ui/test
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Start App
+      run: |
+        yarn build
+        yarn start
+    
+    - name: Test
+      run: |
+        yarn test
+
   build:
     runs-on: ubuntu-latest
     steps:

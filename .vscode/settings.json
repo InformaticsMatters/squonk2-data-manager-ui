@@ -135,6 +135,7 @@
     "proxy",
     "mdx",
     "color-scheme",
-    "context"
+    "context",
+    "cypress"
   ],
 }

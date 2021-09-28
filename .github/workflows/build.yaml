@@ -27,6 +27,30 @@ on:
     - 'master'
 
 jobs:
+  # Just a skeleton so far
+  test:
+    runs-on: ubuntu-latest
+    environment: data-manager-ui/test
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Test
+      uses: cypress-io/github-action@v2
+      env:
+        AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
+        AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
+        TEST_USERNAME: "${{ secrets.TEST_USERNAME }}"
+        AUTH0_SECRET: "LONG_RANDOM_VALUE"
+        BASE_URL: "http://localhost:3000"
+        BASE_PATH: "/data-manager-ui"
+        DATA_MANAGER_API_SERVER: "https://squonk.informaticsmatters.org/data-manager-api"
+        KEYCLOAK_URL: "https://squonk.informaticsmatters.org/auth"
+      with:
+        build: yarn build
+        start: yarn start
+        wait-on: 'http://localhost:3000/data-manager-ui'
+
   build:
     runs-on: ubuntu-latest
     steps:

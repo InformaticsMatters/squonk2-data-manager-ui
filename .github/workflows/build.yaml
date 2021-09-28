@@ -49,7 +49,7 @@ jobs:
       with:
         build: yarn build
         start: yarn start
-        wait-on: 'http://localhost:3000'
+        wait-on: 'http://localhost:3000/data-manager-ui'
 
   build:
     runs-on: ubuntu-latest

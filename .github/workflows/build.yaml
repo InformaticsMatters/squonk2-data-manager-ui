@@ -40,7 +40,7 @@ jobs:
       env:
         AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
         AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
-        TEST_USERNAME: "${{ secrets.TEST_USERNAME }}"
+        DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
         AUTH0_SECRET: "LONG_RANDOM_VALUE"
         BASE_URL: "http://localhost:3000"
         BASE_PATH: "/data-manager-ui"

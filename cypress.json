@@ -1,4 +1,8 @@
 {
   "baseUrl": "http://localhost:3000/data-manager-ui",
-  "video": false
+  "video": false,
+  "ignoreTestFiles": [
+    "*.hot-update.js",
+    "**/tsconfig.json"
+  ]
 }

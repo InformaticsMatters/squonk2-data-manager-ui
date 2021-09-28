@@ -35,10 +35,15 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
 
+    - name: Dependencies
+      run: |
+        yarn
+        yarn add -D wait-on 
+
     - name: Start App
       run: |
         yarn build
-        yarn start
+        yarn start & wait-on ${{ env.BASE_URL }}
     
     - name: Test
       run: |

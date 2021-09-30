@@ -1371,10 +1371,10 @@
   resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.5.21-rc.3.tgz#3a7c4a562da003af70c99d2816a5c59bd4ab986b"
   integrity sha512-QeJvo08lVFTnDagFSZ5vp7NG7zu1veMRkUaMNfuvu15SeHZ+wIZBc0hx+1ueQEgZXrso36kGA6Xb25GzhIk/ag==
 
-"@squonk/mui-theme@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@squonk/mui-theme/-/mui-theme-2.0.0.tgz#5b758c7e1730b599ef50285a375e89163fe2df6e"
-  integrity sha512-dHel9ooHVxdLfEALWQYVJYbptTn0bxluSYKNPVDq9wV5cEc5WYDtVSyZ9IiQvnCQt6ItLX9E6ttW+bPo8Mmlrg==
+"@squonk/mui-theme@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@squonk/mui-theme/-/mui-theme-2.0.1.tgz#db14a07de6936f24852058d834fda417294fca7b"
+  integrity sha512-1BpAldxr5MV9z0FaDo4KQNEOHDiq9ValR/byE5RfPXGwLSIuNogxMEQe5uAgYbnb66/syArlJ+do4rJSjbJsxg==
 
 "@szmarczak/http-timer@^4.0.5":
   version "4.0.5"

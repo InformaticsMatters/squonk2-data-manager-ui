@@ -1,36 +1,34 @@
-import { useMemo } from 'react';
-
 import type { TypeSummary } from '@squonk/data-manager-client';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
-
-import { Typography } from '@material-ui/core';
 
 import { AutocompleteFilter } from './AutocompleteFilter';
 
 export interface FileTypeFilterProps {
+  /**
+   * Selected file type.
+   */
   fileType?: TypeSummary;
+  /**
+   * Function to set selected file type.
+   */
   setFileType: (fileType?: TypeSummary) => void;
 }
 
+/**
+ * Component which adjusts filtering of datasets according to file type.
+ */
 export const FileTypeFilter = ({ fileType, setFileType }: FileTypeFilterProps) => {
   const { data, error, isError, isLoading } = useGetFileTypes();
 
-  const fileTypes = useMemo(() => {
-    if (data) {
-      return data.types;
-    }
-    return [];
-  }, [data]);
-
-  if (isError) {
-    return <Typography color="error">{error?.error}</Typography>;
-  }
+  const fileTypes = data?.types || [];
 
   return (
     <AutocompleteFilter
-      disabled={isLoading}
+      error={error}
       getOptionLabel={(value: TypeSummary) => value.mime}
       id="datasets-file-type-filter"
+      isError={isError}
+      isLoading={isLoading}
       label="Filter by file type"
       options={fileTypes}
       value={fileType}

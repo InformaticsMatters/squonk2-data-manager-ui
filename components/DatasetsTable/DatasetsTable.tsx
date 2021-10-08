@@ -12,34 +12,13 @@ import { Chips } from '../Chips';
 import { DataTable } from '../DataTable';
 import { LabelChip } from '../labels/LabelChip';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
-import { DatasetToolbar } from './DatasetToolbar';
-import type { FileTypeFilterProps, LabelFilterProps, UserFilterProps } from './filters';
+import { DatasetsToolbar } from './DatasetsToolbar';
+import { FileTypeFilter, LabelFilter, UserFilter } from './filters';
 import type { TableDataset } from './types';
 import { useDatasetsParams } from './useDatasetsParams';
 
 const FileUpload = dynamic<Record<string, never>>(
   () => import('../FileUpload').then((mod) => mod.FileUpload),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
-);
-
-const UserFilter = dynamic<UserFilterProps>(
-  () => import('./filters').then((mod) => mod.UserFilter),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
-);
-
-const FileTypeFilter = dynamic<FileTypeFilterProps>(
-  () => import('./filters').then((mod) => mod.FileTypeFilter),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
-);
-
-const LabelFilter = dynamic<LabelFilterProps>(
-  () => import('./filters').then((mod) => mod.LabelFilter),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
@@ -129,12 +108,12 @@ export const DatasetsTable = () => {
           data={datasets}
           getRowId={(row) => row.dataset_id}
           ToolbarChild={
-            <DatasetToolbar>
+            <DatasetsToolbar>
               <FileUpload />
               <UserFilter setUser={setUser} user={user} />
               <FileTypeFilter fileType={fileType} setFileType={setFileType} />
               <LabelFilter label={label} setLabel={setLabel} />
-            </DatasetToolbar>
+            </DatasetsToolbar>
           }
         />
       </>

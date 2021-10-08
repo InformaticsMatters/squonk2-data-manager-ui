@@ -3,11 +3,17 @@ import type { ReactNode } from 'react';
 import { css } from '@emotion/react';
 import { Grid, useTheme } from '@material-ui/core';
 
-export interface DatasetToolbarProps {
+export interface DatasetsToolbarProps {
+  /**
+   * Elements to be wrapped by the component.
+   */
   children: ReactNode;
 }
 
-export const DatasetToolbar = ({ children }: DatasetToolbarProps) => {
+/**
+ * Wraps elements in the DataTable toolbar and adds spacing between them.
+ */
+export const DatasetsToolbar = ({ children }: DatasetsToolbarProps) => {
   const theme = useTheme();
   return (
     <Grid

@@ -13,7 +13,7 @@ import { DataTable } from '../DataTable';
 import { LabelChip } from '../labels/LabelChip';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
 import { DatasetToolbar } from './DatasetToolbar';
-import type { UserFilterProps } from './filters';
+import type { FileTypeFilterProps, UserFilterProps } from './filters';
 import type { TableDataset } from './types';
 import { useDatasetsParams } from './useDatasetsParams';
 
@@ -26,6 +26,13 @@ const FileUpload = dynamic<Record<string, never>>(
 
 const UserFilter = dynamic<UserFilterProps>(
   () => import('./filters').then((mod) => mod.UserFilter),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
+
+const FileTypeFilter = dynamic<FileTypeFilterProps>(
+  () => import('./filters').then((mod) => mod.FileTypeFilter),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
@@ -118,6 +125,10 @@ export const DatasetsTable = () => {
             <DatasetToolbar>
               <FileUpload />
               <UserFilter value={username} onChange={changeDatasetsParam('username')} />
+              <FileTypeFilter
+                value={dataset_mime_type}
+                onChange={changeDatasetsParam('dataset_mime_type')}
+              />
             </DatasetToolbar>
           }
         />

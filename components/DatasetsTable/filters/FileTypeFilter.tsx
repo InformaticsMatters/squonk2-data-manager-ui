@@ -1,22 +1,22 @@
 import { useMemo } from 'react';
 
-import { useGetUsers } from '@squonk/data-manager-client/user';
+import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { Typography } from '@material-ui/core';
 
 import { AutocompleteFilter } from './AutocompleteFilter';
 
-export interface UserFilterProps {
+export interface FileTypeFilterProps {
   value?: string;
   onChange: (value: string | null) => void;
 }
 
-export const UserFilter = (props: UserFilterProps) => {
-  const { data, error, isError, isLoading } = useGetUsers();
+export const FileTypeFilter = (props: FileTypeFilterProps) => {
+  const { data, error, isError, isLoading } = useGetFileTypes();
 
-  const usernames = useMemo(() => {
+  const fileTypes = useMemo(() => {
     if (data) {
-      return data.users.map((user) => user.username);
+      return data.types.map((type) => type.mime);
     }
     return [];
   }, [data]);
@@ -28,9 +28,9 @@ export const UserFilter = (props: UserFilterProps) => {
   return (
     <AutocompleteFilter
       disabled={isLoading}
-      id="dataset-user-filter"
-      label="Filter by owner"
-      options={usernames}
+      id="dataset-file-type-filter"
+      label="Filter by file type"
+      options={fileTypes}
       {...props}
     />
   );

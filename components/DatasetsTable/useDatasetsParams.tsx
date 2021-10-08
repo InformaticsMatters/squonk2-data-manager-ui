@@ -14,15 +14,15 @@ export const useDatasetsParams = () => {
   const processLabel = useCallback((lbl: string) => {
     const [key, value] = lbl.split('=');
     const labelObject = {
-      [key]: value ? value : null,
+      [key]: value || null,
     };
     return JSON.stringify(labelObject);
   }, []);
 
   const datasetsParams: GetDatasetsParams = useMemo(
     () => ({
-      dataset_mime_type: fileType ? fileType.mime : undefined,
-      username: user ? user.username : undefined,
+      dataset_mime_type: fileType?.mime,
+      username: user?.username,
       labels: label ? processLabel(label) : undefined,
     }),
     [fileType, user, label, processLabel],

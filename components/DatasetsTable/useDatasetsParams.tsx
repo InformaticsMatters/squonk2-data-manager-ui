@@ -13,7 +13,10 @@ export const useDatasetsParams = () => {
   // Filtering according to label uses JSON format, the label state needs to be parsed
   const processLabel = useCallback((lbl: string) => {
     const [key, value] = lbl.split('=');
-    return `{"${key}":${value ? `"${value}"` : 'null'}}`;
+    const labelObject = {
+      [key]: value ? value : null,
+    };
+    return JSON.stringify(labelObject);
   }, []);
 
   const datasetsParams: GetDatasetsParams = useMemo(

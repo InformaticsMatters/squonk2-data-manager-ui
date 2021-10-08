@@ -25,7 +25,8 @@ See `package.json` for all available scripts.
 
 ### Code Quality
 
-We use a combination of `Husky`, `lint-staged` and `eslint` to format code to a standard style (see the `.eslintrc` file). Changed lines/files are formatted by when a `git commit` is made.
+We use a combination of `Husky`, `lint-staged` and `eslint` to format code to a standard style (see the `.eslintrc` file).
+Changed lines/files are formatted by when a `git commit` is made.
 
 ## Building
 

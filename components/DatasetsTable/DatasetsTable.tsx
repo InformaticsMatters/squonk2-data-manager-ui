@@ -12,10 +12,20 @@ import { Chips } from '../Chips';
 import { DataTable } from '../DataTable';
 import { LabelChip } from '../labels/LabelChip';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
+import { DatasetToolbar } from './DatasetToolbar';
+import type { UserFilterProps } from './filters';
 import type { TableDataset } from './types';
+import { useDatasetsParams } from './useDatasetsParams';
 
 const FileUpload = dynamic<Record<string, never>>(
   () => import('../FileUpload').then((mod) => mod.FileUpload),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
+
+const UserFilter = dynamic<UserFilterProps>(
+  () => import('./filters').then((mod) => mod.UserFilter),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
@@ -76,7 +86,9 @@ export const DatasetsTable = () => {
     [],
   );
 
-  const { data } = useGetDatasets();
+  const { datasetsParams, changeDatasetsParam } = useDatasetsParams();
+  const { dataset_mime_type, labels, username } = datasetsParams;
+  const { data } = useGetDatasets(datasetsParams);
 
   // Transform all datasets to match the data-table props
   const datasets: TableDataset[] | undefined = useMemo(
@@ -102,7 +114,12 @@ export const DatasetsTable = () => {
           columns={columns}
           data={datasets}
           getRowId={(row) => row.dataset_id}
-          ToolbarChild={<FileUpload />}
+          ToolbarChild={
+            <DatasetToolbar>
+              <FileUpload />
+              <UserFilter value={username} onChange={changeDatasetsParam('username')} />
+            </DatasetToolbar>
+          }
         />
       </>
     );

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import type { UserSummary } from '@squonk/data-manager-client';
 import { useGetUsers } from '@squonk/data-manager-client/user';
 
 import { Typography } from '@material-ui/core';
@@ -7,16 +8,16 @@ import { Typography } from '@material-ui/core';
 import { AutocompleteFilter } from './AutocompleteFilter';
 
 export interface UserFilterProps {
-  value?: string;
-  onChange: (value: string | null) => void;
+  user?: UserSummary;
+  setUser: (user?: UserSummary) => void;
 }
 
-export const UserFilter = (props: UserFilterProps) => {
+export const UserFilter = ({ user, setUser }: UserFilterProps) => {
   const { data, error, isError, isLoading } = useGetUsers();
 
-  const usernames = useMemo(() => {
+  const users = useMemo(() => {
     if (data) {
-      return data.users.map((user) => user.username);
+      return data.users;
     }
     return [];
   }, [data]);
@@ -28,10 +29,12 @@ export const UserFilter = (props: UserFilterProps) => {
   return (
     <AutocompleteFilter
       disabled={isLoading}
-      id="dataset-user-filter"
+      getOptionLabel={(value: UserSummary) => value.username}
+      id="datasets-user-filter"
       label="Filter by owner"
-      options={usernames}
-      {...props}
+      options={users}
+      value={user}
+      onChange={setUser}
     />
   );
 };

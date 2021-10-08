@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import type { TypeSummary } from '@squonk/data-manager-client';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { Typography } from '@material-ui/core';
@@ -7,16 +8,16 @@ import { Typography } from '@material-ui/core';
 import { AutocompleteFilter } from './AutocompleteFilter';
 
 export interface FileTypeFilterProps {
-  value?: string;
-  onChange: (value: string | null) => void;
+  fileType?: TypeSummary;
+  setFileType: (fileType?: TypeSummary) => void;
 }
 
-export const FileTypeFilter = (props: FileTypeFilterProps) => {
+export const FileTypeFilter = ({ fileType, setFileType }: FileTypeFilterProps) => {
   const { data, error, isError, isLoading } = useGetFileTypes();
 
   const fileTypes = useMemo(() => {
     if (data) {
-      return data.types.map((type) => type.mime);
+      return data.types;
     }
     return [];
   }, [data]);
@@ -28,10 +29,12 @@ export const FileTypeFilter = (props: FileTypeFilterProps) => {
   return (
     <AutocompleteFilter
       disabled={isLoading}
-      id="dataset-file-type-filter"
+      getOptionLabel={(value: TypeSummary) => value.mime}
+      id="datasets-file-type-filter"
       label="Filter by file type"
       options={fileTypes}
-      {...props}
+      value={fileType}
+      onChange={setFileType}
     />
   );
 };

@@ -13,7 +13,7 @@ import { DataTable } from '../DataTable';
 import { LabelChip } from '../labels/LabelChip';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
 import { DatasetToolbar } from './DatasetToolbar';
-import type { FileTypeFilterProps, UserFilterProps } from './filters';
+import type { FileTypeFilterProps, LabelFilterProps, UserFilterProps } from './filters';
 import type { TableDataset } from './types';
 import { useDatasetsParams } from './useDatasetsParams';
 
@@ -33,6 +33,13 @@ const UserFilter = dynamic<UserFilterProps>(
 
 const FileTypeFilter = dynamic<FileTypeFilterProps>(
   () => import('./filters').then((mod) => mod.FileTypeFilter),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
+
+const LabelFilter = dynamic<LabelFilterProps>(
+  () => import('./filters').then((mod) => mod.LabelFilter),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
@@ -93,8 +100,8 @@ export const DatasetsTable = () => {
     [],
   );
 
-  const { datasetsParams, changeDatasetsParam } = useDatasetsParams();
-  const { dataset_mime_type, labels, username } = datasetsParams;
+  const { datasetsParams, label, setLabel, user, setUser, fileType, setFileType } =
+    useDatasetsParams();
   const { data } = useGetDatasets(datasetsParams);
 
   // Transform all datasets to match the data-table props
@@ -124,11 +131,9 @@ export const DatasetsTable = () => {
           ToolbarChild={
             <DatasetToolbar>
               <FileUpload />
-              <UserFilter value={username} onChange={changeDatasetsParam('username')} />
-              <FileTypeFilter
-                value={dataset_mime_type}
-                onChange={changeDatasetsParam('dataset_mime_type')}
-              />
+              <UserFilter setUser={setUser} user={user} />
+              <FileTypeFilter fileType={fileType} setFileType={setFileType} />
+              <LabelFilter label={label} setLabel={setLabel} />
             </DatasetToolbar>
           }
         />

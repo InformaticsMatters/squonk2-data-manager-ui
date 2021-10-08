@@ -1,27 +1,30 @@
 import { TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
-export interface AutocompleteFilterProps {
+export interface AutocompleteFilterProps<T> {
   id?: string;
   label: string;
-  options: string[];
-  value?: string;
-  onChange: (value: string | null) => void;
+  value?: T;
+  options: T[];
+  getOptionLabel: (value: T) => string;
+  onChange: (value?: T) => void;
   disabled?: boolean;
 }
 
-export const AutocompleteFilter = ({
+export const AutocompleteFilter = <T extends unknown>({
   id,
   label,
-  options,
   value,
+  options,
+  getOptionLabel,
   onChange,
   disabled,
-}: AutocompleteFilterProps) => {
+}: AutocompleteFilterProps<T>) => {
   return (
     <Autocomplete
       autoHighlight
       disabled={disabled}
+      getOptionLabel={getOptionLabel}
       id={id}
       options={options}
       renderInput={(params) => (
@@ -36,8 +39,8 @@ export const AutocompleteFilter = ({
         />
       )}
       style={{ width: 200 }}
-      value={value || null} // ensure the component remains controlled
-      onChange={(event, value) => onChange(value)}
+      value={value}
+      onChange={(event, value) => onChange(value ? value : undefined)}
     />
   );
 };

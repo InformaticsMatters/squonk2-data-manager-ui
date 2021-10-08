@@ -1,15 +1,27 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import type { GetDatasetsParams } from '@squonk/data-manager-client';
+import type { GetDatasetsParams, TypeSummary, UserSummary } from '@squonk/data-manager-client';
 
 export const useDatasetsParams = () => {
-  const [datasetsParams, setDatasetsParams] = useState<GetDatasetsParams>({});
+  const [label, setLabel] = useState<string>('');
+  const [user, setUser] = useState<UserSummary | undefined>();
+  const [fileType, setFileType] = useState<TypeSummary | undefined>();
 
-  const changeDatasetsParam =
-    <K extends keyof GetDatasetsParams>(param: K) =>
-    <T extends GetDatasetsParams[K]>(value: T | null) => {
-      setDatasetsParams((prevState) => ({ ...prevState, [param]: value ? value : undefined }));
-    };
+  const processLabel = useCallback((lbl: string) => {
+    const [key, value] = lbl.split('=');
+    return `{"${key}":${value ? `"${value}"` : 'null'}}`;
+  }, []);
 
-  return { datasetsParams, changeDatasetsParam };
+  const datasetsParams: GetDatasetsParams = useMemo(
+    () => ({
+      dataset_mime_type: fileType ? fileType.mime : undefined,
+      username: user ? user.username : undefined,
+      labels: label ? processLabel(label) : undefined,
+    }),
+    [fileType, user, label, processLabel],
+  );
+
+  console.log(datasetsParams);
+
+  return { datasetsParams, label, setLabel, user, setUser, fileType, setFileType };
 };

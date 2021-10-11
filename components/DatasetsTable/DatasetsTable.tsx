@@ -12,8 +12,10 @@ import { Chips } from '../Chips';
 import { DataTable } from '../DataTable';
 import { LabelChip } from '../labels/LabelChip';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
+import { FileTypeFilter } from './filters/FileTypeFilter';
+import { LabelFilter } from './filters/LabelFilter';
+import { UserFilter } from './filters/UserFilter';
 import { DatasetsToolbar } from './DatasetsToolbar';
-import { FileTypeFilter, LabelFilter, UserFilter } from './filters';
 import type { TableDataset } from './types';
 import { useDatasetsParams } from './useDatasetsParams';
 

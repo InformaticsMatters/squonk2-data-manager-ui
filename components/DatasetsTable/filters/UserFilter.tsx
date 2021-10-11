@@ -1,7 +1,8 @@
-import type { UserSummary } from '@squonk/data-manager-client';
+import type { Error as DMError, UsersGetResponse, UserSummary } from '@squonk/data-manager-client';
 import { useGetUsers } from '@squonk/data-manager-client/user';
 
 import { Typography } from '@material-ui/core';
+import type { AxiosError } from 'axios';
 
 import { AutocompleteFilter } from './AutocompleteFilter';
 
@@ -20,12 +21,12 @@ export interface UserFilterProps {
  * Component which adjusts filtering of datasets according to owner/user.
  */
 export const UserFilter = ({ user, setUser }: UserFilterProps) => {
-  const { data, error, isError, isLoading } = useGetUsers();
+  const { data, error, isError, isLoading } = useGetUsers<UsersGetResponse, AxiosError<DMError>>();
 
   const users = data?.users || [];
 
   if (isError) {
-    return <Typography color="error">{error?.error}</Typography>;
+    return <Typography color="error">{error?.message}</Typography>;
   }
 
   return (

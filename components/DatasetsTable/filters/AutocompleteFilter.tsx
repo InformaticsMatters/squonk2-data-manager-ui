@@ -4,8 +4,6 @@ import { TextField, Typography } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import type { AxiosError } from 'axios';
 
-import { filterSize } from './constants';
-
 export interface AutocompleteFilterProps<T> {
   /**
    * ID of the filter.
@@ -81,7 +79,7 @@ export const AutocompleteFilter = <T extends unknown>({
           variant="outlined"
         />
       )}
-      style={{ width: filterSize }}
+      style={{ width: '100%' }}
       value={value || null} // Prevents making the component uncontrolled
       // If no option is selected, Autocomplete returns null which we transform to undefined
       onChange={(event, value) => onChange(value || undefined)}

@@ -3,8 +3,6 @@ import { useLayoutEffect, useMemo, useState } from 'react';
 import { css } from '@emotion/react';
 import { debounce, TextField } from '@material-ui/core';
 
-import { filterSize } from './constants';
-
 export interface LabelFilterProps {
   /**
    * Current label as string (what user typed).
@@ -47,7 +45,7 @@ export const LabelFilter = ({ label, setLabel }: LabelFilterProps) => {
   return (
     <TextField
       css={css`
-        width: ${filterSize}px;
+        width: 100%;
       `}
       id="datasets-label-filter"
       inputProps={{

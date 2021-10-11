@@ -16,7 +16,7 @@ import { DatasetDetails } from './DatasetDetails/DatasetDetails';
 import { FileTypeFilter } from './filters/FileTypeFilter';
 import { LabelFilter } from './filters/LabelFilter';
 import { UserFilter } from './filters/UserFilter';
-import { DatasetsToolbar } from './DatasetsToolbar';
+import { DatasetsFilterToolbar } from './DatasetsFilterToolbar';
 import type { TableDataset } from './types';
 import { useDatasetsParams } from './useDatasetsParams';
 
@@ -116,12 +116,14 @@ export const DatasetsTable = () => {
         isError={isError}
         isLoading={isLoading}
         ToolbarChild={
-          <DatasetsToolbar>
+          <>
             <FileUpload />
-            <UserFilter setUser={setUser} user={user} />
-            <FileTypeFilter fileType={fileType} setFileType={setFileType} />
-            <LabelFilter label={label} setLabel={setLabel} />
-          </DatasetsToolbar>
+            <DatasetsFilterToolbar>
+              <UserFilter setUser={setUser} user={user} />
+              <FileTypeFilter fileType={fileType} setFileType={setFileType} />
+              <LabelFilter label={label} setLabel={setLabel} />
+            </DatasetsFilterToolbar>
+          </>
         }
       />
     </>

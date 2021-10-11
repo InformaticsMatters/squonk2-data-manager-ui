@@ -21,6 +21,7 @@ import {
   TextField,
   Toolbar,
   Typography,
+  useTheme,
 } from '@material-ui/core';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import type { AxiosError } from 'axios';
@@ -106,6 +107,8 @@ export function DataTable<Data extends Record<string, any>>({
   isError,
   error,
 }: DataTableProps<Data>) {
+  const theme = useTheme();
+
   // According to react-table data passed to it should be memoized to avoid expensive recalculations
   const tableData = useMemo(() => data || [], [data]);
 
@@ -170,7 +173,13 @@ export function DataTable<Data extends Record<string, any>>({
 
   const tableContents = (
     <>
-      <Toolbar>
+      <Toolbar
+        css={css`
+          align-items: flex-start;
+          padding-top: ${theme.spacing(2)}px;
+          gap: ${theme.spacing(1)}px;
+        `}
+      >
         {ToolbarChild}
         {enableSearch && (
           <TextField

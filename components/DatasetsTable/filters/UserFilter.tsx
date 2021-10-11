@@ -21,7 +21,10 @@ export interface UserFilterProps {
  * Component which adjusts filtering of datasets according to owner/user.
  */
 export const UserFilter = ({ user, setUser }: UserFilterProps) => {
-  const { data, error, isError, isLoading } = useGetUsers<UsersGetResponse, AxiosError<DMError>>();
+  const { data, error, isError, isLoading } = useGetUsers<
+    UsersGetResponse,
+    AxiosError<DMError> | void
+  >();
 
   const users = data?.users || [];
 

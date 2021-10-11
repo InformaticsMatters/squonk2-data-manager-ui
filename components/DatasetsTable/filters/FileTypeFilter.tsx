@@ -22,7 +22,7 @@ export interface FileTypeFilterProps {
 export const FileTypeFilter = ({ fileType, setFileType }: FileTypeFilterProps) => {
   const { data, error, isError, isLoading } = useGetFileTypes<
     TypesGetResponse,
-    AxiosError<DMError>
+    AxiosError<DMError> | void
   >();
 
   const fileTypes = data?.types || [];

@@ -42,7 +42,7 @@ export interface AutocompleteFilterProps<T> {
   /**
    * Error encountered while fetching 'options'.
    */
-  error?: AxiosError<DMError> | null;
+  error?: void | AxiosError<DMError> | null;
 }
 
 /**

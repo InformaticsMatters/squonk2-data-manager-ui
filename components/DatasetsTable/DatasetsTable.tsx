@@ -79,6 +79,10 @@ export const DatasetsTable = () => {
         accessor: (row) => row.versions.length,
         Header: 'Versions',
       },
+      {
+        accessor: (row) => row.numberOfProjects,
+        Header: 'Number of projects',
+      },
     ],
     [],
   );
@@ -94,8 +98,13 @@ export const DatasetsTable = () => {
     () =>
       data?.datasets.map((dataset) => {
         const fileName = dataset.versions[0].file_name; // TODO: should either use the newest version or wait for the API to change
+        const numberOfProjects = new Set(
+          dataset.versions.map((version) => version.projects.map((project) => project)).flat(),
+        ).size;
+
         return {
           fileName,
+          numberOfProjects,
           labels: combineLabels(dataset.versions),
           ...dataset,
         };

@@ -16,6 +16,7 @@ import {
   useTheme,
 } from '@material-ui/core';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
+import fileSize from 'filesize';
 
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
 import { Labels } from '../../labels/Labels';
@@ -156,8 +157,10 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
                 name="Number of projects"
                 value={selectedVersion?.projects.length}
               />
-              {/** TODO Add size information */}
-              <VersionInfoListItem name="Size" />
+              <VersionInfoListItem
+                name="Size"
+                value={selectedVersion?.size ? fileSize(selectedVersion.size) : undefined}
+              />
               <VersionInfoListItem
                 name="Published date"
                 value={

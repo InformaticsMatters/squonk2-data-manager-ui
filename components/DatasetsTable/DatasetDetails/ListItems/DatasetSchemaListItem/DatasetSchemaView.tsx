@@ -12,6 +12,8 @@ import type { AxiosError } from 'axios';
 
 import { CenterLoader } from '../../../../CenterLoader';
 import { DataTable } from '../../../../DataTable';
+import { DatasetSchemaEditableCell } from './DatasetSchemaEditableCell';
+import { useEditableSchemaView } from './useEditableSchemaView';
 
 export interface DatasetSchemaViewProps {
   /**
@@ -23,14 +25,6 @@ export interface DatasetSchemaViewProps {
    */
   version: number;
 }
-
-// These types should be defined in the OpenAPI but currently aren't
-// TODO: replace these with types of data-manager-client when they exist there
-interface Field {
-  description: string;
-  type: 'float' | 'text' | 'integer' | 'object'; // These will be replaced with JSON Schema types
-}
-type Fields = Record<string, Field>;
 
 /**
  * Displays the schema of a version of a dataset in a tabular format.
@@ -46,17 +40,7 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
     error: schemaError,
   } = useGetSchema<DatasetSchemaGetResponse, AxiosError<Error>>(datasetId, version);
 
-  // Need to assert the fields here as the OpenAPI types are wrong
-  const typedSchema = schema as ({ fields: Fields } & DatasetSchemaGetResponse) | undefined;
-
-  // table data so we monoize it for react-table
-  const fields = useMemo(
-    () =>
-      typedSchema !== undefined
-        ? Object.entries(typedSchema.fields).map(([name, field]) => ({ name, ...field }))
-        : undefined,
-    [typedSchema],
-  );
+  const { fields, changeSchemaDescription } = useEditableSchemaView(schema);
 
   // TODO: all custom Cells here to have fields that can be edited
   const columns: Column<NonNullable<typeof fields>[number]>[] = useMemo(
@@ -68,13 +52,23 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
       {
         accessor: 'description',
         Header: 'Description',
+        Cell: ({ value, row }) => {
+          return (
+            <DatasetSchemaEditableCell
+              field={row.original.name}
+              fieldKey="description"
+              updateField={changeSchemaDescription}
+              value={value}
+            />
+          );
+        },
       },
       {
         accessor: 'type',
         Header: 'Type',
       },
     ],
-    [],
+    [changeSchemaDescription],
   );
 
   if (isSchemaLoading) {
@@ -106,6 +100,7 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
       <Typography variant="subtitle1">{schema?.description}</Typography>
       <DataTable
         columns={columns}
+        customCellProps={{ padding: 'none' }}
         data={fields}
         getRowId={(row) => row.name}
         tableContainer={false}

@@ -1,12 +1,13 @@
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 import React from 'react';
-import type { CellProps, Column, IdType, PluginHook } from 'react-table';
+import type { CellProps, Column, IdType, PluginHook, TableRowProps } from 'react-table';
 import { useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
 
 import type { Error as DMError } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
+import type { TableCellProps } from '@material-ui/core';
 import {
   Box,
   InputAdornment,
@@ -80,6 +81,7 @@ export interface DataTableProps<Data extends Record<string, any>> {
    * Error to display. The error is displayed only if `isError` is true.
    */
   error?: void | AxiosError<DMError> | null;
+  customCellProps?: Partial<TableRowProps & TableCellProps>;
 }
 
 // Use a *function* here to avoid the issues with generics in arrow functions
@@ -106,6 +108,7 @@ export function DataTable<Data extends Record<string, any>>({
   isLoading,
   isError,
   error,
+  customCellProps,
 }: DataTableProps<Data>) {
   const theme = useTheme();
 
@@ -234,8 +237,12 @@ export function DataTable<Data extends Record<string, any>>({
               // eslint-disable-next-line react/jsx-key
               <TableRow {...row.getRowProps()}>
                 {row.cells.map((cell) => {
-                  // eslint-disable-next-line react/jsx-key
-                  return <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>;
+                  return (
+                    // eslint-disable-next-line react/jsx-key
+                    <TableCell {...cell.getCellProps(customCellProps)}>
+                      {cell.render('Cell')}
+                    </TableCell>
+                  );
                 })}
               </TableRow>
             );

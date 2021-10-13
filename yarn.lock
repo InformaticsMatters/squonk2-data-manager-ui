@@ -1464,10 +1464,10 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.4.tgz#fcf7205c25dff795ee79af1e30da2c9790808f11"
   integrity sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==
 
-"@types/react-table@7.7.5":
-  version "7.7.5"
-  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.7.5.tgz#34603de1f4e745d8eacdb289b90b6853d97f4e6d"
-  integrity sha512-a6KLDyT6ZXxewYTG9sOsB9heoBVTYYwfoyB7+sziNGECOJXqmavdWeRtp548pJl490XHmUSxaWnVeeT9UOW9Gg==
+"@types/react-table@7.7.6":
+  version "7.7.6"
+  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.7.6.tgz#4899ccc46b4a1de08cc1daf120842e37e112e51e"
+  integrity sha512-ZMFHh1sG5AGDmhVRpz9mgGByGmBFAqnZ7QnyqGa5iAlKtcSC3vb/gul47lM0kJ1uvlawc+qN5k+++pe+GBdJ+g==
   dependencies:
     "@types/react" "*"
 

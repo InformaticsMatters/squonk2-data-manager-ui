@@ -30,7 +30,7 @@ export const useProjectFileRows = (project_id: string) => {
 
   const rows = useMemo(() => {
     const files: TableFile[] | undefined = data?.files.map((file) => {
-      const { file_id: fileId, file_name: fileName, owner, immutable, mime_type } = file;
+      const { file_id: fileId, file_name: fileName, owner, immutable, mime_type, stat } = file;
 
       const fullPath = getFullPath(breadcrumbs, fileName);
 
@@ -41,6 +41,7 @@ export const useProjectFileRows = (project_id: string) => {
         owner,
         immutable,
         mime_type,
+        stat,
       };
     });
 

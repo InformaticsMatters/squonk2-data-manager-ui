@@ -11,7 +11,6 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
-import { CenterLoader } from '../CenterLoader';
 import { DataTable } from '../DataTable';
 import type { FileActionsProps } from './FileActions';
 import type { TableDir, TableFile } from './types';
@@ -118,21 +117,6 @@ export const ProjectTable = ({ currentProject }: ProjectTable) => {
     });
   }, []);
 
-  if (isError) {
-    return (
-      <>
-        {error?.message && <Typography color="error">{error.message}</Typography>}
-        {error?.response !== undefined && (
-          <Typography color="error">{error.response.data.error}</Typography>
-        )}
-      </>
-    );
-  }
-
-  if (isLoading || !rows) {
-    return <CenterLoader />;
-  }
-
   return (
     <>
       <Typography gutterBottom component="h1" variant="h4">
@@ -142,7 +126,10 @@ export const ProjectTable = ({ currentProject }: ProjectTable) => {
       <DataTable
         columns={columns}
         data={rows}
+        error={error}
         getRowId={(row) => row.fullPath}
+        isError={isError}
+        isLoading={isLoading}
         ToolbarChild={
           <Breadcrumbs>
             {['root', ...breadcrumbs].map((path, pathIndex) =>

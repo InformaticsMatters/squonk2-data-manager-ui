@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { Box, IconButton, InputBase } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
-export interface DatasetSchemaInputCellProp {
+export interface DatasetSchemaInputCellProps {
   field: string;
   fieldKey: string;
   value: string;
@@ -18,7 +18,7 @@ export const DatasetSchemaInputCell = ({
   fieldKey,
   updateField,
   originalValue,
-}: DatasetSchemaInputCellProp) => {
+}: DatasetSchemaInputCellProps) => {
   const [displayValue, setDisplayValue] = useState(value);
 
   useLayoutEffect(() => {

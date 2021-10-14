@@ -13,6 +13,7 @@ import type { AxiosError } from 'axios';
 import { CenterLoader } from '../../../../CenterLoader';
 import { DataTable } from '../../../../DataTable';
 import { JSON_SCHEMA_TYPES } from './constants';
+import { DatasetSchemaDescriptionInput } from './DatasetSchemaDescriptionInput';
 import { DatasetSchemaInputCell } from './DatasetSchemaInputCell';
 import { DatasetSchemaSelectCell } from './DatasetSchemaSelectCell';
 import { useEditableSchemaView } from './useEditableSchemaView';
@@ -41,7 +42,8 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
     error: schemaError,
   } = useGetSchema<DatasetSchemaGetResponse, AxiosError<Error>>(datasetId, version);
 
-  const { fields, changeSchemaDescription } = useEditableSchemaView(schema);
+  const { fields, description, changeSchemaField, changeSchemaDescription } =
+    useEditableSchemaView(schema);
   type FieldsTableData = NonNullable<typeof fields>[number];
 
   const columns: Column<FieldsTableData>[] = useMemo(
@@ -64,7 +66,7 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
               field={name}
               fieldKey="description"
               originalValue={original}
-              updateField={(value) => changeSchemaDescription(name, 'description', value)}
+              updateField={(value) => changeSchemaField(name, 'description', value)}
               value={value}
             />
           );
@@ -85,14 +87,14 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
               fieldKey="type"
               options={JSON_SCHEMA_TYPES}
               originalValue={original}
-              updateField={(value) => changeSchemaDescription(name, 'type', value)}
+              updateField={(value) => changeSchemaField(name, 'type', value)}
               value={value}
             />
           );
         },
       },
     ],
-    [changeSchemaDescription],
+    [changeSchemaField],
   );
 
   if (isSchemaLoading) {
@@ -121,7 +123,11 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
 
   return (
     <>
-      <Typography variant="subtitle1">{schema?.description}</Typography>
+      <DatasetSchemaDescriptionInput
+        originalValue={description?.original}
+        updateDescription={changeSchemaDescription}
+        value={description?.current}
+      />
       <DataTable
         columns={columns}
         customCellProps={{ padding: 'none' }}

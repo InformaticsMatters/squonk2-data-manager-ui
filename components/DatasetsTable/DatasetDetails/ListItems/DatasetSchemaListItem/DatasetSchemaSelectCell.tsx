@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { Box, IconButton, MenuItem, Select } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
-export interface DatasetSchemaSelectCellProp<V extends readonly string[]> {
+export interface DatasetSchemaSelectCellProps<V extends readonly string[]> {
   field: string;
   fieldKey: string;
   value: V[number];
@@ -20,7 +20,7 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
   updateField,
   originalValue,
   options,
-}: DatasetSchemaSelectCellProp<V>) => {
+}: DatasetSchemaSelectCellProps<V>) => {
   const [displayValue, setDisplayValue] = useState(value);
 
   useLayoutEffect(() => {

@@ -19,9 +19,11 @@ type TypedSchema = { fields: Fields } & DatasetSchemaGetResponse;
 type EditableSchemaStateAction<K extends FieldKey, V extends FieldValue<K>> =
   | { type: 'clear' }
   | { type: 'init'; originalSchema: TypedSchema }
-  | { type: 'changeField'; field: string; fieldKey: K; value: V };
+  | { type: 'changeField'; field: string; fieldKey: K; value: V }
+  | { type: 'changeDescription'; description: string };
 
 type EditedSchemaProps = {
+  description?: string;
   fields: Partial<Record<string, Partial<Field>>>;
 };
 
@@ -49,7 +51,10 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
     case 'changeField': {
       if (state) {
         const { field, fieldKey, value } = action;
-        const editedSchemaProps = { ...state.editedSchemaProps };
+        const editedSchemaProps = {
+          ...state.editedSchemaProps,
+          fields: { ...state.editedSchemaProps.fields },
+        };
 
         const editedField = editedSchemaProps.fields[field] || {};
 
@@ -64,6 +69,25 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
         }
 
         editedSchemaProps.fields[field] = editedField;
+
+        return {
+          ...state,
+          editedSchemaProps,
+        };
+      }
+      return state;
+    }
+    case 'changeDescription': {
+      if (state) {
+        const editedSchemaProps = {
+          ...state.editedSchemaProps,
+        };
+
+        if (state.originalSchema.description === action.description) {
+          delete editedSchemaProps.description;
+        } else {
+          editedSchemaProps.description = action.description;
+        }
 
         return {
           ...state,
@@ -90,12 +114,16 @@ export const useEditableSchemaView = (schema?: DatasetSchemaGetResponse) => {
     }
   }, [schema]);
 
-  const changeSchemaDescription = useCallback(
+  const changeSchemaField = useCallback(
     <K extends FieldKey, V extends FieldValue<K>>(field: string, fieldKey: K, value: V) => {
       dispatch({ type: 'changeField', field, fieldKey, value });
     },
     [],
   );
+
+  const changeSchemaDescription = useCallback((description: string) => {
+    dispatch({ type: 'changeDescription', description });
+  }, []);
 
   // Table data so we memoize it for react-table
   const fields = useMemo(() => {
@@ -119,5 +147,17 @@ export const useEditableSchemaView = (schema?: DatasetSchemaGetResponse) => {
     return undefined;
   }, [editableSchemaState]);
 
-  return { fields, changeSchemaDescription };
+  const description = useMemo(() => {
+    if (editableSchemaState) {
+      return {
+        original: editableSchemaState.originalSchema.description,
+        current:
+          editableSchemaState.editedSchemaProps.description ||
+          editableSchemaState.originalSchema.description,
+      };
+    }
+    return undefined;
+  }, [editableSchemaState]);
+
+  return { fields, description, changeSchemaField, changeSchemaDescription };
 };

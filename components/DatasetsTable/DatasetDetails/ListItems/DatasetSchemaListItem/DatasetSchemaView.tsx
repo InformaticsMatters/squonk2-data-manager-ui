@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import React from 'react';
-import type { Column } from 'react-table';
+import type { Cell, Column } from 'react-table';
 
 import type { DatasetSchemaGetResponse, Error } from '@squonk/data-manager-client';
 import { useGetSchema } from '@squonk/data-manager-client/dataset';
@@ -12,6 +12,7 @@ import type { AxiosError } from 'axios';
 
 import { CenterLoader } from '../../../../CenterLoader';
 import { DataTable } from '../../../../DataTable';
+import { JSON_SCHEMA_TYPES } from './constants';
 import { DatasetSchemaInputCell } from './DatasetSchemaInputCell';
 import { DatasetSchemaSelectCell } from './DatasetSchemaSelectCell';
 import { useEditableSchemaView } from './useEditableSchemaView';
@@ -31,7 +32,6 @@ export interface DatasetSchemaViewProps {
  * Displays the schema of a version of a dataset in a tabular format.
  *
  * TODO: allow editing of the meta description
- * TODO: allow editing of schema types and descriptions
  */
 export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, version }) => {
   const {
@@ -42,37 +42,50 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
   } = useGetSchema<DatasetSchemaGetResponse, AxiosError<Error>>(datasetId, version);
 
   const { fields, changeSchemaDescription } = useEditableSchemaView(schema);
+  type FieldsTableData = NonNullable<typeof fields>[number];
 
-  // TODO: all custom Cells here to have fields that can be edited
-  const columns: Column<NonNullable<typeof fields>[number]>[] = useMemo(
+  const columns: Column<FieldsTableData>[] = useMemo(
     () => [
       {
         accessor: 'name',
         Header: 'Field Name',
       },
       {
-        accessor: 'description',
+        id: 'description',
+        accessor: (row) => row.description.current,
         Header: 'Description',
-        Cell: ({ value, row }) => {
+        Cell: ({ value, row }: Cell<FieldsTableData>) => {
+          const {
+            name,
+            description: { original },
+          } = row.original;
           return (
             <DatasetSchemaInputCell
-              field={row.original.name}
+              field={name}
               fieldKey="description"
-              updateField={changeSchemaDescription}
+              originalValue={original}
+              updateField={(value) => changeSchemaDescription(name, 'description', value)}
               value={value}
             />
           );
         },
       },
       {
-        accessor: 'type',
+        id: 'type',
+        accessor: (row) => row.type.current,
         Header: 'Type',
-        Cell: ({ value, row }) => {
+        Cell: ({ value, row }: Cell<FieldsTableData>) => {
+          const {
+            name,
+            type: { original },
+          } = row.original;
           return (
             <DatasetSchemaSelectCell
-              field={row.original.name}
+              field={name}
               fieldKey="type"
-              updateField={changeSchemaDescription}
+              options={JSON_SCHEMA_TYPES}
+              originalValue={original}
+              updateField={(value) => changeSchemaDescription(name, 'type', value)}
               value={value}
             />
           );

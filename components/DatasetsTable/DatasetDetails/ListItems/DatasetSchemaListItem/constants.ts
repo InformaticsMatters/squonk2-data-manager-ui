@@ -6,4 +6,4 @@ export const JSON_SCHEMA_TYPES = [
   'array',
   'boolean',
   'null',
-];
+] as const;

@@ -4,22 +4,23 @@ import { css } from '@emotion/react';
 import { Box, IconButton, MenuItem, Select } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
-import { JSON_SCHEMA_TYPES } from './constants';
-import type { Field, FieldKey } from './types';
-
-export interface DatasetSchemaSelectCellProp {
+export interface DatasetSchemaSelectCellProp<V extends readonly string[]> {
   field: string;
-  fieldKey: FieldKey;
-  value: Field[FieldKey];
-  updateField: (field: string, fieldKey: FieldKey, value: Field[FieldKey]) => void;
+  fieldKey: string;
+  value: V[number];
+  updateField: (value: V[number]) => void;
+  originalValue: V[number];
+  options: V;
 }
 
-export const DatasetSchemaSelectCell = ({
+export const DatasetSchemaSelectCell = <V extends readonly string[]>({
   value,
   field,
   fieldKey,
   updateField,
-}: DatasetSchemaSelectCellProp) => {
+  originalValue,
+  options,
+}: DatasetSchemaSelectCellProp<V>) => {
   const [displayValue, setDisplayValue] = useState(value);
 
   useLayoutEffect(() => {
@@ -27,10 +28,10 @@ export const DatasetSchemaSelectCell = ({
   }, [value]);
 
   const onRestore = () => {
-    updateField(field, fieldKey, '');
+    updateField(originalValue);
   };
 
-  const hasChanged = true;
+  const hasChanged = displayValue !== originalValue;
 
   return (
     <Box alignItems="stretch" display="flex">
@@ -54,10 +55,10 @@ export const DatasetSchemaSelectCell = ({
             }
           `}
           value={displayValue}
-          onBlur={() => updateField(field, fieldKey, displayValue)}
-          onChange={(event) => setDisplayValue(event.target.value as Field[FieldKey])}
+          onBlur={() => updateField(displayValue)}
+          onChange={(event) => setDisplayValue(event.target.value as V[number])}
         >
-          {JSON_SCHEMA_TYPES.map((type) => {
+          {options.map((type) => {
             return (
               <MenuItem key={type} value={type}>
                 {type}

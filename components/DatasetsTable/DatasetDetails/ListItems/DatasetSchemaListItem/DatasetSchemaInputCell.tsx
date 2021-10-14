@@ -4,13 +4,12 @@ import { css } from '@emotion/react';
 import { Box, IconButton, InputBase } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
-import type { Field, FieldKey } from './types';
-
 export interface DatasetSchemaInputCellProp {
   field: string;
-  fieldKey: FieldKey;
-  value: Field[FieldKey];
-  updateField: (field: string, fieldKey: FieldKey, value: Field[FieldKey]) => void;
+  fieldKey: string;
+  value: string;
+  updateField: (value: string) => void;
+  originalValue: string;
 }
 
 export const DatasetSchemaInputCell = ({
@@ -18,6 +17,7 @@ export const DatasetSchemaInputCell = ({
   field,
   fieldKey,
   updateField,
+  originalValue,
 }: DatasetSchemaInputCellProp) => {
   const [displayValue, setDisplayValue] = useState(value);
 
@@ -26,10 +26,10 @@ export const DatasetSchemaInputCell = ({
   }, [value]);
 
   const onRestore = () => {
-    updateField(field, fieldKey, '');
+    updateField(originalValue);
   };
 
-  const hasChanged = value !== displayValue;
+  const hasChanged = displayValue !== originalValue;
 
   return (
     <Box alignItems="stretch" display="flex">
@@ -57,7 +57,7 @@ export const DatasetSchemaInputCell = ({
           }
           inputProps={{ 'aria-label': `${field} ${fieldKey}` }}
           value={displayValue}
-          onBlur={() => updateField(field, fieldKey, displayValue)}
+          onBlur={() => updateField(displayValue)}
           onChange={(event) => setDisplayValue(event.target.value)}
         />
       </Box>

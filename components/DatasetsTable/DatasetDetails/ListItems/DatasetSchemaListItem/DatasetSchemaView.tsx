@@ -12,7 +12,8 @@ import type { AxiosError } from 'axios';
 
 import { CenterLoader } from '../../../../CenterLoader';
 import { DataTable } from '../../../../DataTable';
-import { DatasetSchemaEditableCell } from './DatasetSchemaEditableCell';
+import { DatasetSchemaInputCell } from './DatasetSchemaInputCell';
+import { DatasetSchemaSelectCell } from './DatasetSchemaSelectCell';
 import { useEditableSchemaView } from './useEditableSchemaView';
 
 export interface DatasetSchemaViewProps {
@@ -54,7 +55,7 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
         Header: 'Description',
         Cell: ({ value, row }) => {
           return (
-            <DatasetSchemaEditableCell
+            <DatasetSchemaInputCell
               field={row.original.name}
               fieldKey="description"
               updateField={changeSchemaDescription}
@@ -66,6 +67,16 @@ export const DatasetSchemaView: FC<DatasetSchemaViewProps> = ({ datasetId, versi
       {
         accessor: 'type',
         Header: 'Type',
+        Cell: ({ value, row }) => {
+          return (
+            <DatasetSchemaSelectCell
+              field={row.original.name}
+              fieldKey="type"
+              updateField={changeSchemaDescription}
+              value={value}
+            />
+          );
+        },
       },
     ],
     [changeSchemaDescription],

@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Box, IconButton, MenuItem, Select } from '@material-ui/core';
+import { Box, IconButton, MenuItem, Select, Tooltip } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
 export interface DatasetSchemaSelectCellProps<V extends readonly string[]> {
@@ -66,15 +66,17 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
             );
           })}
         </Select>
-        <IconButton
-          css={css`
-            ${!hasChanged ? 'visibility: hidden' : undefined}
-          `}
-          size="small"
-          onClick={onRestore}
-        >
-          <Restore fontSize="small" />
-        </IconButton>
+        <Tooltip title="Revert changes">
+          <IconButton
+            css={css`
+              ${!hasChanged ? 'visibility: hidden' : undefined}
+            `}
+            size="small"
+            onClick={onRestore}
+          >
+            <Restore fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </Box>
     </Box>
   );

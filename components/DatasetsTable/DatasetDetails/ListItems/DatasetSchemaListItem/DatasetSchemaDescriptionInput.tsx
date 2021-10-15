@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Box, IconButton, InputBase } from '@material-ui/core';
+import { Box, IconButton, InputBase, Tooltip } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
 export interface DatasetSchemaDescriptionInputProps {
@@ -45,9 +45,11 @@ export const DatasetSchemaDescriptionInput = ({
             `}
             marginLeft={1}
           >
-            <IconButton size="small" onClick={onRestore}>
-              <Restore />
-            </IconButton>
+            <Tooltip title="Revert changes">
+              <IconButton size="small" onClick={onRestore}>
+                <Restore />
+              </IconButton>
+            </Tooltip>
           </Box>
         }
         inputProps={{ 'aria-label': 'dataset schema description' }}

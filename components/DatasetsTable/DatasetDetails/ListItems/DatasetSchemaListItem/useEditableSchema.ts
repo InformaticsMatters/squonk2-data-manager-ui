@@ -1,20 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer } from 'react';
 
-import type { DatasetSchemaGetResponse } from '@squonk/data-manager-client';
-
-import type { JSON_SCHEMA_TYPES } from './constants';
-
-// These types should be defined in the OpenAPI but currently aren't
-// TODO: replace these with types of data-manager-client when they exist there
-interface Field {
-  description: string;
-  type: typeof JSON_SCHEMA_TYPES[number]; // These will be replaced with JSON Schema types
-}
-type Fields = Record<string, Field>;
-type FieldKey = keyof Field;
-type FieldValue<K extends FieldKey> = Field[K];
-
-type TypedSchema = { fields: Fields } & DatasetSchemaGetResponse;
+import type { Field, FieldKey, Fields, FieldValue, TypedSchema } from './types';
 
 type EditableSchemaStateAction<K extends FieldKey, V extends FieldValue<K>> =
   | { type: 'clear' }
@@ -63,12 +49,14 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
 
           if (!Object.keys(editedField).length) {
             delete editedSchemaProps.fields[field];
+          } else {
+            editedSchemaProps.fields[field] = editedField;
           }
         } else {
           editedField[fieldKey] = value;
-        }
 
-        editedSchemaProps.fields[field] = editedField;
+          editedSchemaProps.fields[field] = editedField;
+        }
 
         return {
           ...state,
@@ -101,18 +89,52 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
   }
 };
 
-export const useEditableSchemaView = (schema?: DatasetSchemaGetResponse) => {
+export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
   const [editableSchemaState, dispatch] = useReducer(editableSchemaReducer, null);
 
   useEffect(() => {
-    if (schema) {
-      // Need to assert the fields here as the OpenAPI types are wrong
-      const originalSchema = schema as TypedSchema;
+    if (originalSchema) {
       dispatch({ type: 'init', originalSchema });
     } else {
       dispatch({ type: 'clear' });
     }
-  }, [schema]);
+  }, [originalSchema]);
+
+  const schema = useMemo<TypedSchema | undefined>(() => {
+    if (editableSchemaState) {
+      const { originalSchema, editedSchemaProps } = editableSchemaState;
+
+      const fields: Fields = {};
+      Object.entries(originalSchema.fields).forEach(([name, originalField]) => {
+        const editedField = editedSchemaProps.fields[name];
+
+        const field: Field = {
+          description: editedField?.description ?? originalField.description,
+          type: editedField?.type ?? originalField.type,
+        };
+
+        fields[name] = field;
+      });
+
+      return {
+        ...originalSchema,
+        description: editedSchemaProps.description ?? originalSchema.description,
+        fields,
+      };
+    }
+    return undefined;
+  }, [editableSchemaState]);
+
+  const wasSchemaEdited = useMemo(() => {
+    if (editableSchemaState) {
+      const {
+        editedSchemaProps: { description, fields },
+      } = editableSchemaState;
+
+      return description !== undefined || Object.entries(fields).length;
+    }
+    return false;
+  }, [editableSchemaState]);
 
   const changeSchemaField = useCallback(
     <K extends FieldKey, V extends FieldValue<K>>(field: string, fieldKey: K, value: V) => {
@@ -125,39 +147,44 @@ export const useEditableSchemaView = (schema?: DatasetSchemaGetResponse) => {
     dispatch({ type: 'changeDescription', description });
   }, []);
 
-  // Table data so we memoize it for react-table
-  const fields = useMemo(() => {
+  const getDeltaChanges = () => {
+    const delta: Partial<TypedSchema> = {};
     if (editableSchemaState) {
-      const { originalSchema, editedSchemaProps } = editableSchemaState;
-      return Object.entries(originalSchema.fields).map((fieldEntry) => {
-        const [name, field] = fieldEntry;
-        return {
-          name,
-          description: {
-            original: field.description,
-            current: editedSchemaProps.fields[name]?.description || field.description,
-          },
-          type: {
-            original: field.type,
-            current: editedSchemaProps.fields[name]?.type || field.type,
-          },
-        };
-      });
-    }
-    return undefined;
-  }, [editableSchemaState]);
+      const {
+        editedSchemaProps: { description, fields },
+        originalSchema,
+      } = editableSchemaState;
+      if (description !== undefined) {
+        delta.description = description;
+      }
 
-  const description = useMemo(() => {
-    if (editableSchemaState) {
-      return {
-        original: editableSchemaState.originalSchema.description,
-        current:
-          editableSchemaState.editedSchemaProps.description ||
-          editableSchemaState.originalSchema.description,
-      };
-    }
-    return undefined;
-  }, [editableSchemaState]);
+      const fieldEntries = Object.entries(fields);
+      if (fieldEntries.length) {
+        const deltaFields: Fields = {};
 
-  return { fields, description, changeSchemaField, changeSchemaDescription };
+        fieldEntries.forEach(([name, editedField]) => {
+          const originalField = originalSchema.fields[name];
+
+          const field: Field = {
+            description: editedField?.description ?? originalField.description,
+            type: editedField?.type ?? originalField.type,
+          };
+
+          deltaFields[name] = field;
+        });
+
+        delta.fields = deltaFields;
+      }
+    }
+    return delta;
+  };
+
+  return {
+    originalSchema,
+    schema,
+    wasSchemaEdited,
+    changeSchemaField,
+    changeSchemaDescription,
+    getDeltaChanges,
+  };
 };

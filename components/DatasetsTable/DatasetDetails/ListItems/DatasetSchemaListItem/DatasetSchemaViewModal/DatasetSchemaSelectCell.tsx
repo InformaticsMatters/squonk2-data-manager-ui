@@ -49,10 +49,6 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
     setDisplayValue(value);
   }, [value]);
 
-  const onRestore = () => {
-    setValue(originalValue);
-  };
-
   const hasChanged = displayValue !== originalValue;
 
   return (
@@ -94,7 +90,7 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
               ${!hasChanged ? 'visibility: hidden' : undefined}
             `}
             size="small"
-            onClick={onRestore}
+            onClick={() => setValue(originalValue)}
           >
             <Restore fontSize="small" />
           </IconButton>

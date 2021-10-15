@@ -44,10 +44,6 @@ export const DatasetSchemaInputCell = ({
     setDisplayValue(fieldValue);
   }, [fieldValue]);
 
-  const onRestore = () => {
-    setFieldValue(originalFieldValue);
-  };
-
   const hasChanged = displayValue !== originalFieldValue;
 
   return (
@@ -70,7 +66,7 @@ export const DatasetSchemaInputCell = ({
               marginLeft={1}
             >
               <Tooltip title="Revert changes">
-                <IconButton size="small" onClick={onRestore}>
+                <IconButton size="small" onClick={() => setFieldValue(originalFieldValue)}>
                   <Restore fontSize="small" />
                 </IconButton>
               </Tooltip>

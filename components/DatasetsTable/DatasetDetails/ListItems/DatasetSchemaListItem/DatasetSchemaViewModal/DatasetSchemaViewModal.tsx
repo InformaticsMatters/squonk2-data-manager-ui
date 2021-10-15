@@ -6,26 +6,44 @@ import type { Cell, Column } from 'react-table';
 import { Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
-import { CenterLoader } from '../../../../CenterLoader';
-import { DataTable } from '../../../../DataTable';
-import { ModalWrapper } from '../../../../modals/ModalWrapper';
+import { CenterLoader } from '../../../../../CenterLoader';
+import { DataTable } from '../../../../../DataTable';
+import { ModalWrapper } from '../../../../../modals/ModalWrapper';
 import { JSON_SCHEMA_TYPES } from './constants';
 import { DatasetSchemaDescriptionInput } from './DatasetSchemaDescriptionInput';
 import { DatasetSchemaInputCell } from './DatasetSchemaInputCell';
 import { DatasetSchemaSelectCell } from './DatasetSchemaSelectCell';
-import type { TableSchemaView } from './types';
+import type { JSONSchemaType } from './types';
 import { useDatasetSchema } from './useDatasetSchema';
+
+type TableSchemaView = {
+  name: string;
+  description: {
+    original: string;
+    current: string;
+  };
+  type: {
+    original: JSONSchemaType;
+    current: JSONSchemaType;
+  };
+};
 
 export interface DatasetSchemaViewModalProps {
   /**
-   * ID of the dataset to manage the schema of a dataset version
+   * ID of the dataset to manage the schema of a dataset version.
    */
   datasetId: string;
   /**
-   * Version number of the version to manage
+   * Version number of the version to manage.
    */
   version: number;
+  /**
+   * Whether or not the modal is open.
+   */
   open: boolean;
+  /**
+   * Callback when modal is being closed.
+   */
   onClose: () => void;
 }
 
@@ -48,10 +66,11 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
     savingErrors,
     saveSchema,
   } = useDatasetSchema(datasetId, version);
-  const { originalSchema, schema, wasSchemaEdited, changeSchemaField, changeSchemaDescription } =
+  const { originalSchema, schema, wasSchemaEdited, setSchemaField, setSchemaDescription } =
     editableSchema;
 
-  // Table data so we memoize it for react-table
+  // Memoize data for react-table. Each field (apart from `name`) is represented by an object,
+  // which contains the current value and the original value of dataset schema field.
   const fields = useMemo<TableSchemaView[] | undefined>(() => {
     if (schema && originalSchema) {
       return Object.entries(schema.fields).map(([name, field]) => {
@@ -88,11 +107,11 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
           } = row.original;
           return (
             <DatasetSchemaInputCell
-              field={name}
               fieldKey="description"
-              originalValue={original}
-              updateField={(value) => changeSchemaField(name, 'description', value)}
-              value={current}
+              fieldName={name}
+              fieldValue={current}
+              originalFieldValue={original}
+              setFieldValue={(value) => setSchemaField(name, 'description', value)}
             />
           );
         },
@@ -108,18 +127,18 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
           } = row.original;
           return (
             <DatasetSchemaSelectCell
-              field={name}
               fieldKey="type"
+              fieldName={name}
+              fieldValue={current}
               options={JSON_SCHEMA_TYPES}
-              originalValue={original}
-              updateField={(value) => changeSchemaField(name, 'type', value)}
-              value={current}
+              originalFieldValue={original}
+              setFieldValue={(value) => setSchemaField(name, 'type', value)}
             />
           );
         },
       },
     ],
-    [changeSchemaField],
+    [setSchemaField],
   );
 
   const modalContents = (() => {
@@ -159,7 +178,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
           })}
         <DatasetSchemaDescriptionInput
           originalValue={originalSchema?.description}
-          updateDescription={changeSchemaDescription}
+          setDescription={setSchemaDescription}
           value={schema?.description}
         />
         <DataTable

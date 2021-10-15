@@ -81,6 +81,9 @@ export interface DataTableProps<Data extends Record<string, any>> {
    * Error to display. The error is displayed only if `isError` is true.
    */
   error?: void | AxiosError<DMError> | null;
+  /**
+   * Custom props applied to TableCell. Props can either be react-table props or MaterialUI props.
+   */
   customCellProps?: Partial<TableRowProps & TableCellProps>;
 }
 

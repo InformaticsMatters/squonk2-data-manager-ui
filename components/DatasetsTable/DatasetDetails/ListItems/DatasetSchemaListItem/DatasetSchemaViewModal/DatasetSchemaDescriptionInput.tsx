@@ -5,14 +5,27 @@ import { Box, IconButton, InputBase, Tooltip } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
 export interface DatasetSchemaDescriptionInputProps {
+  /**
+   * Current description value.
+   */
   value?: string;
-  updateDescription: (value: string) => void;
+  /**
+   * Callback to update description once input loses focus.
+   */
+  setDescription: (value: string) => void;
+  /**
+   * Original description value, used to revert changes made to the input.
+   */
   originalValue?: string;
 }
 
+/**
+ * Input which is used for displaying and editing the description of Dataset schema.
+ * The implementation makes a copy of provided value to avoid expensive updates to table data.
+ */
 export const DatasetSchemaDescriptionInput = ({
   value,
-  updateDescription,
+  setDescription,
   originalValue,
 }: DatasetSchemaDescriptionInputProps) => {
   const [displayValue, setDisplayValue] = useState(value || '');
@@ -20,10 +33,6 @@ export const DatasetSchemaDescriptionInput = ({
   useLayoutEffect(() => {
     setDisplayValue(value || '');
   }, [value]);
-
-  const onRestore = () => {
-    updateDescription(originalValue || '');
-  };
 
   const hasChanged = displayValue !== originalValue;
 
@@ -46,7 +55,7 @@ export const DatasetSchemaDescriptionInput = ({
             marginLeft={1}
           >
             <Tooltip title="Revert changes">
-              <IconButton size="small" onClick={onRestore}>
+              <IconButton size="small" onClick={() => setDescription(originalValue || '')}>
                 <Restore />
               </IconButton>
             </Tooltip>
@@ -55,7 +64,7 @@ export const DatasetSchemaDescriptionInput = ({
         inputProps={{ 'aria-label': 'dataset schema description' }}
         placeholder="Insert description here"
         value={displayValue || ''}
-        onBlur={() => updateDescription(displayValue)}
+        onBlur={() => setDescription(displayValue)}
         onChange={(event) => setDisplayValue(event.target.value)}
       />
     </Box>

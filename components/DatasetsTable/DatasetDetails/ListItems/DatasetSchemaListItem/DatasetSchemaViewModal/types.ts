@@ -14,15 +14,3 @@ export type FieldKey = keyof Field;
 export type FieldValue<K extends FieldKey> = Field[K];
 
 export type TypedSchema = { fields: Fields } & DatasetSchemaGetResponse;
-
-export type TableSchemaView = {
-  name: string;
-  description: {
-    original: string;
-    current: string;
-  };
-  type: {
-    original: JSONSchemaType;
-    current: JSONSchemaType;
-  };
-};

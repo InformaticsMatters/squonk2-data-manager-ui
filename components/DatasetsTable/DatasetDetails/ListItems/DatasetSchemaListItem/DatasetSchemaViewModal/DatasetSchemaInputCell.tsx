@@ -5,31 +5,50 @@ import { Box, IconButton, InputBase, Tooltip } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
 export interface DatasetSchemaInputCellProps {
-  field: string;
+  /**
+   * Name of a schema field.
+   */
+  fieldName: string;
+  /**
+   * Key/attribute name of the schema field.
+   */
   fieldKey: string;
-  value: string;
-  updateField: (value: string) => void;
-  originalValue: string;
+  /**
+   * Current value for the key/attribute of the schema field.
+   */
+  fieldValue: string;
+  /**
+   * Callback to set value for the key of the schema field.
+   */
+  setFieldValue: (value: string) => void;
+  /**
+   * Original value for the key/attribute of the schema field.
+   */
+  originalFieldValue: string;
 }
 
+/**
+ * Editable cell for schema field values which are string based.
+ * The implementation makes a copy of provided value to avoid expensive updates to table data.
+ */
 export const DatasetSchemaInputCell = ({
-  value,
-  field,
+  fieldValue,
+  fieldName,
   fieldKey,
-  updateField,
-  originalValue,
+  setFieldValue,
+  originalFieldValue,
 }: DatasetSchemaInputCellProps) => {
-  const [displayValue, setDisplayValue] = useState(value);
+  const [displayValue, setDisplayValue] = useState(fieldValue);
 
   useLayoutEffect(() => {
-    setDisplayValue(value);
-  }, [value]);
+    setDisplayValue(fieldValue);
+  }, [fieldValue]);
 
   const onRestore = () => {
-    updateField(originalValue);
+    setFieldValue(originalFieldValue);
   };
 
-  const hasChanged = displayValue !== originalValue;
+  const hasChanged = displayValue !== originalFieldValue;
 
   return (
     <Box alignItems="stretch" display="flex">
@@ -57,9 +76,9 @@ export const DatasetSchemaInputCell = ({
               </Tooltip>
             </Box>
           }
-          inputProps={{ 'aria-label': `${field} ${fieldKey}` }}
+          inputProps={{ 'aria-label': `${fieldName} ${fieldKey}` }}
           value={displayValue}
-          onBlur={() => updateField(displayValue)}
+          onBlur={() => setFieldValue(displayValue)}
           onChange={(event) => setDisplayValue(event.target.value)}
         />
       </Box>

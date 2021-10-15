@@ -5,7 +5,7 @@ import type { Field, FieldKey, Fields, FieldValue, TypedSchema } from './types';
 type EditableSchemaStateAction<K extends FieldKey, V extends FieldValue<K>> =
   | { type: 'clear' }
   | { type: 'init'; originalSchema: TypedSchema }
-  | { type: 'changeField'; field: string; fieldKey: K; value: V }
+  | { type: 'changeField'; fieldName: string; fieldKey: K; fieldValue: V }
   | { type: 'changeDescription'; description: string };
 
 type EditedSchemaProps = {
@@ -36,26 +36,26 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
     }
     case 'changeField': {
       if (state) {
-        const { field, fieldKey, value } = action;
+        const { fieldName, fieldKey, fieldValue } = action;
         const editedSchemaProps = {
           ...state.editedSchemaProps,
           fields: { ...state.editedSchemaProps.fields },
         };
 
-        const editedField = editedSchemaProps.fields[field] || {};
+        const editedField = editedSchemaProps.fields[fieldName] || {};
 
-        if (state.originalSchema.fields[field][fieldKey] === value) {
+        if (state.originalSchema.fields[fieldName][fieldKey] === fieldValue) {
           delete editedField[fieldKey];
 
           if (!Object.keys(editedField).length) {
-            delete editedSchemaProps.fields[field];
+            delete editedSchemaProps.fields[fieldName];
           } else {
-            editedSchemaProps.fields[field] = editedField;
+            editedSchemaProps.fields[fieldName] = editedField;
           }
         } else {
-          editedField[fieldKey] = value;
+          editedField[fieldKey] = fieldValue;
 
-          editedSchemaProps.fields[field] = editedField;
+          editedSchemaProps.fields[fieldName] = editedField;
         }
 
         return {
@@ -89,10 +89,16 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
   }
 };
 
+/**
+ * A hook which encapsulates logic used to edit dataset's schema. It stores the original copy as
+ * well as a helper object which tracks changes to the schema. It provides the original schema as
+ * well as the edited schema, which is composed from the helper object and the original schema.
+ */
 export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
   const [editableSchemaState, dispatch] = useReducer(editableSchemaReducer, null);
 
   useEffect(() => {
+    // If no original schema has been provided, return undefined state.
     if (originalSchema) {
       dispatch({ type: 'init', originalSchema });
     } else {
@@ -100,6 +106,9 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
     }
   }, [originalSchema]);
 
+  // Calculates the current state of the schema. It loops through the original schema and looks for
+  // changes to its fields in the helper object. If it finds changes, it uses those. If it doesn't,
+  // it uses the original values.
   const schema = useMemo<TypedSchema | undefined>(() => {
     if (editableSchemaState) {
       const { originalSchema, editedSchemaProps } = editableSchemaState;
@@ -125,6 +134,8 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
     return undefined;
   }, [editableSchemaState]);
 
+  // Checks whether or not the schema has been edited. Currently only checks the `description` field
+  // and schema fields.
   const wasSchemaEdited = useMemo(() => {
     if (editableSchemaState) {
       const {
@@ -136,17 +147,23 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
     return false;
   }, [editableSchemaState]);
 
-  const changeSchemaField = useCallback(
-    <K extends FieldKey, V extends FieldValue<K>>(field: string, fieldKey: K, value: V) => {
-      dispatch({ type: 'changeField', field, fieldKey, value });
+  const setSchemaField = useCallback(
+    <K extends FieldKey, V extends FieldValue<K>>(
+      fieldName: string,
+      fieldKey: K,
+      fieldValue: V,
+    ) => {
+      dispatch({ type: 'changeField', fieldName, fieldKey, fieldValue });
     },
     [],
   );
 
-  const changeSchemaDescription = useCallback((description: string) => {
+  const setSchemaDescription = useCallback((description: string) => {
     dispatch({ type: 'changeDescription', description });
   }, []);
 
+  // Returns the changes in the form of the original schema. `Partial` is used because not every
+  // field of the schema has to be changed.
   const getDeltaChanges = () => {
     const delta: Partial<TypedSchema> = {};
     if (editableSchemaState) {
@@ -183,8 +200,8 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
     originalSchema,
     schema,
     wasSchemaEdited,
-    changeSchemaField,
-    changeSchemaDescription,
+    setSchemaField,
+    setSchemaDescription,
     getDeltaChanges,
   };
 };

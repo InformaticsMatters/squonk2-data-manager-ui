@@ -5,20 +5,42 @@ import { Box, IconButton, MenuItem, Select, Tooltip } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
 export interface DatasetSchemaSelectCellProps<V extends readonly string[]> {
-  field: string;
+  /**
+   * Name of a schema field.
+   */
+  fieldName: string;
+  /**
+   * Key/attribute name of the schema field.
+   */
   fieldKey: string;
-  value: V[number];
-  updateField: (value: V[number]) => void;
-  originalValue: V[number];
+  /**
+   * Current value for the key/attribute of the schema field. Must be one from `options`.
+   */
+  fieldValue: V[number];
+  /**
+   * Callback to set value for the key of the schema field.
+   */
+  setFieldValue: (value: V[number]) => void;
+  /**
+   * Original value for the key/attribute of the schema field. Must be one from `options`.
+   */
+  originalFieldValue: V[number];
+  /**
+   * Possible options for the field value.
+   */
   options: V;
 }
 
+/**
+ * Editable cell for schema field values which are picked from a given string set.
+ * The implementation makes a copy of provided value to avoid expensive updates to table data.
+ */
 export const DatasetSchemaSelectCell = <V extends readonly string[]>({
-  value,
-  field,
+  fieldValue: value,
+  fieldName: field,
   fieldKey,
-  updateField,
-  originalValue,
+  setFieldValue: setValue,
+  originalFieldValue: originalValue,
   options,
 }: DatasetSchemaSelectCellProps<V>) => {
   const [displayValue, setDisplayValue] = useState(value);
@@ -28,7 +50,7 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
   }, [value]);
 
   const onRestore = () => {
-    updateField(originalValue);
+    setValue(originalValue);
   };
 
   const hasChanged = displayValue !== originalValue;
@@ -55,7 +77,7 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
             }
           `}
           value={displayValue}
-          onBlur={() => updateField(displayValue)}
+          onBlur={() => setValue(displayValue)}
           onChange={(event) => setDisplayValue(event.target.value as V[number])}
         >
           {options.map((type) => {

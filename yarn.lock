@@ -1304,10 +1304,10 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.2.0.tgz#667bfc6186ae7c9e0b45a08960c551437176e1ca"
   integrity sha512-VkE3KLBmJwcCaVARtQpfuKcKv8gcBmUubrfHGF84dXuuW6jgsRYxPtzcIhPyK9WAPpRt2/xY6zkD9MnRaJzSyw==
 
-"@squonk/data-manager-client@0.5.33-rc.1":
-  version "0.5.33-rc.1"
-  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.5.33-rc.1.tgz#142f39ef75f92f495c5f59b92cb8efa2d1888cef"
-  integrity sha512-32BJPEjhYNropfQ2H2xclLwY8JFjj1omm0LA097eHCgQL8CT74mK3mw19xY8yGWYRrqOgBSYkX6fxiHoCuercw==
+"@squonk/data-manager-client@0.5.35-rc.1":
+  version "0.5.35-rc.1"
+  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.5.35-rc.1.tgz#2265341d85cbd6b73eefbe0d80dbbdf21c1b5be6"
+  integrity sha512-vyeNiNpyk9oMPsHldarxSs3YOH0mL8lzOCp8mM5ilPdVUUoHJJt0dR6tjgOJeVvYs8mYEEJ/QhlneTtwKpLijg==
 
 "@squonk/mui-theme@^2.0.0":
   version "2.0.1"
@@ -4662,6 +4662,11 @@ image-size@1.0.0:
   integrity sha512-JLJ6OwBfO1KcA+TvJT+v8gbE6iWbj24LyDNFgFEN0lzegn6cC6a/p3NIDaepMsJjQjlUWqIC7wJv8lBFxPNjcw==
   dependencies:
     queue "6.0.2"
+
+immer@^9.0.6:
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.6.tgz#7a96bf2674d06c8143e327cbf73539388ddf1a73"
+  integrity sha512-G95ivKpy+EvVAnAab4fVa4YGYn24J1SpEktnJX7JJ45Bd7xqME/SCplFzYFmTbrkwZbQ4xJK1xMTUYBkN6pWsQ==
 
 import-fresh@^3.0.0, import-fresh@^3.1.0, import-fresh@^3.2.1:
   version "3.3.0"
@@ -8708,6 +8713,11 @@ url@^0.11.0, url@~0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
+
+use-immer@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/use-immer/-/use-immer-0.6.0.tgz#ca6aa5ade93018e2c65cf128d19ada54fc23f70d"
+  integrity sha512-dFGRfvWCqPDTOt/S431ETYTg6+uxbpb7A1pptufwXVzGJY3RlXr38+3wyLNpc6SbbmAKjWl6+EP6uW74fkEsXQ==
 
 use-subscription@1.5.1:
   version "1.5.1"

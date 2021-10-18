@@ -13,12 +13,13 @@ import { Chips } from '../Chips';
 import { DataTable } from '../DataTable';
 import { LabelChip } from '../labels/LabelChip';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
+import { EditorFilter } from './filters/EditorFilter';
 import { FileTypeFilter } from './filters/FileTypeFilter';
 import { LabelFilter } from './filters/LabelFilter';
-import { UserFilter } from './filters/UserFilter';
+import { OwnerFilter } from './filters/OwnerFilter';
 import { DatasetsFilterToolbar } from './DatasetsFilterToolbar';
 import type { TableDataset } from './types';
-import { useDatasetsParams } from './useDatasetsParams';
+import { useDatasetsFilter } from './useDatasetsFilter';
 
 const FileUpload = dynamic<Record<string, never>>(
   () => import('../FileUpload').then((mod) => mod.FileUpload),
@@ -82,12 +83,11 @@ export const DatasetsTable = () => {
     [],
   );
 
-  const { datasetsParams, label, setLabel, user, setUser, fileType, setFileType } =
-    useDatasetsParams();
+  const { params, filter, setFilterItem } = useDatasetsFilter();
   const { data, error, isError, isLoading } = useGetDatasets<
     DatasetsGetResponse,
     AxiosError<DMError>
-  >(datasetsParams);
+  >(params);
 
   // Transform all datasets to match the data-table props
   const datasets: TableDataset[] | undefined = useMemo(
@@ -103,6 +103,7 @@ export const DatasetsTable = () => {
     [data],
   );
 
+  const { owner, editor, fileType, label } = filter;
   return (
     <>
       <Typography gutterBottom component="h1" variant="h1">
@@ -119,9 +120,16 @@ export const DatasetsTable = () => {
           <>
             <FileUpload />
             <DatasetsFilterToolbar>
-              <UserFilter setUser={setUser} user={user} />
-              <FileTypeFilter fileType={fileType} setFileType={setFileType} />
-              <LabelFilter label={label} setLabel={setLabel} />
+              <OwnerFilter owner={owner} setOwner={(owner) => setFilterItem('owner', owner)} />
+              <EditorFilter
+                editor={editor}
+                setEditor={(editor) => setFilterItem('editor', editor)}
+              />
+              <FileTypeFilter
+                fileType={fileType}
+                setFileType={(fileType) => setFilterItem('fileType', fileType)}
+              />
+              <LabelFilter label={label} setLabel={(label) => setFilterItem('label', label)} />
             </DatasetsFilterToolbar>
           </>
         }

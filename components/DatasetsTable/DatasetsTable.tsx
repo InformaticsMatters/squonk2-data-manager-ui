@@ -15,7 +15,7 @@ import { LabelChip } from '../labels/LabelChip';
 import { DatasetDetails } from './DatasetDetails/DatasetDetails';
 import { EditorFilter } from './filters/EditorFilter';
 import { FileTypeFilter } from './filters/FileTypeFilter';
-import { LabelFilter } from './filters/LabelFilter';
+import { LabelsFilter } from './filters/LabelsFilter';
 import { OwnerFilter } from './filters/OwnerFilter';
 import { DatasetsFilterToolbar } from './DatasetsFilterToolbar';
 import type { TableDataset } from './types';
@@ -103,7 +103,8 @@ export const DatasetsTable = () => {
     [data],
   );
 
-  const { owner, editor, fileType, label } = filter;
+  const { owner, editor, fileType, labels } = filter;
+
   return (
     <>
       <Typography gutterBottom component="h1" variant="h1">
@@ -119,18 +120,31 @@ export const DatasetsTable = () => {
         ToolbarChild={
           <>
             <FileUpload />
-            <DatasetsFilterToolbar>
-              <OwnerFilter owner={owner} setOwner={(owner) => setFilterItem('owner', owner)} />
-              <EditorFilter
-                editor={editor}
-                setEditor={(editor) => setFilterItem('editor', editor)}
-              />
-              <FileTypeFilter
-                fileType={fileType}
-                setFileType={(fileType) => setFilterItem('fileType', fileType)}
-              />
-              <LabelFilter label={label} setLabel={(label) => setFilterItem('label', label)} />
-            </DatasetsFilterToolbar>
+            <DatasetsFilterToolbar
+              fullWidthFilters={
+                <LabelsFilter
+                  labels={labels}
+                  setLabels={(labels) => setFilterItem('labels', labels)}
+                />
+              }
+              shrinkableFilters={[
+                <OwnerFilter
+                  key="owner"
+                  owner={owner}
+                  setOwner={(owner) => setFilterItem('owner', owner)}
+                />,
+                <EditorFilter
+                  editor={editor}
+                  key="editor"
+                  setEditor={(editor) => setFilterItem('editor', editor)}
+                />,
+                <FileTypeFilter
+                  fileType={fileType}
+                  key="fileType"
+                  setFileType={(fileType) => setFilterItem('fileType', fileType)}
+                />,
+              ]}
+            />
           </>
         }
       />

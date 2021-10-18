@@ -8,14 +8,14 @@ type DatasetsFilter = {
   owner?: UserSummary;
   editor?: UserSummary;
   fileType?: TypeSummary;
-  label: string;
+  labels?: string[];
 };
 
 /**
  * Hook encapsulating the filter state which also calculates the params for useGetDatasets hook.
  */
 export const useDatasetsFilter = () => {
-  const [filter, setFilter] = useImmer<DatasetsFilter>({ label: '' });
+  const [filter, setFilter] = useImmer<DatasetsFilter>({});
 
   const setFilterItem = <K extends keyof DatasetsFilter, V extends DatasetsFilter[K]>(
     key: K,
@@ -27,23 +27,26 @@ export const useDatasetsFilter = () => {
   };
 
   // Filtering according to label uses JSON format, the label state needs to be parsed
-  const processLabel = useCallback((lbl: string) => {
-    const [key, value] = lbl.split('=');
-    const labelObject = {
-      [key]: value || null,
-    };
+  const processLabels = useCallback((labels: string[]) => {
+    const labelObject: Record<string, string | null> = {};
+    labels.forEach((label) => {
+      // In case more `=` were provided, leave them for now
+      const [key, ...value] = label.split('=', 1);
+      labelObject[key] = value.length ? value.join('=') : null;
+    });
+
     return JSON.stringify(labelObject);
   }, []);
 
   const params: GetDatasetsParams = useMemo<GetDatasetsParams>(() => {
-    const { owner, editor, fileType, label } = filter;
+    const { owner, editor, fileType, labels } = filter;
     return {
       dataset_mime_type: fileType?.mime,
       username: owner?.username,
-      labels: label ? processLabel(label) : undefined,
+      labels: labels && labels.length ? processLabels(labels) : undefined,
       editors: editor?.username,
     };
-  }, [filter, processLabel]);
+  }, [filter, processLabels]);
 
   return { params, filter, setFilterItem };
 };

@@ -75,6 +75,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
               key={index}
               label={label}
               size="small"
+              variant="outlined"
               onDelete={() => removeLabel(index)}
             />
           )),

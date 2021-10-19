@@ -183,7 +183,12 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
         />
         <DataTable
           columns={columns}
-          customCellProps={{ padding: 'none' }}
+          customCellProps={{
+            style: {
+              paddingTop: 12,
+              paddingBottom: 12,
+            },
+          }}
           data={fields}
           getRowId={(row) => row.name}
           tableContainer={false}

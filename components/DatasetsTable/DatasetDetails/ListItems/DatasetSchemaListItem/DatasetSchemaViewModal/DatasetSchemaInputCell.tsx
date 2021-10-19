@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Box, IconButton, InputBase, Tooltip } from '@material-ui/core';
+import { Box, IconButton, TextField, Tooltip, useTheme } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
 export interface DatasetSchemaInputCellProps {
@@ -38,6 +38,8 @@ export const DatasetSchemaInputCell = ({
   setFieldValue,
   originalFieldValue,
 }: DatasetSchemaInputCellProps) => {
+  const theme = useTheme();
+
   const [displayValue, setDisplayValue] = useState(fieldValue);
 
   useLayoutEffect(() => {
@@ -47,37 +49,38 @@ export const DatasetSchemaInputCell = ({
   const hasChanged = displayValue !== originalFieldValue;
 
   return (
-    <Box alignItems="stretch" display="flex">
-      <Box
-        alignItems="center"
-        bgcolor={hasChanged ? 'action.hover' : undefined}
-        display="flex"
-        paddingLeft={2}
-        paddingRight={1}
-        width={1}
-      >
-        <InputBase
-          fullWidth
-          endAdornment={
-            <Box
-              css={css`
-                ${!hasChanged ? 'visibility: hidden' : undefined}
-              `}
-              marginLeft={1}
-            >
-              <Tooltip title="Revert changes">
-                <IconButton size="small" onClick={() => setFieldValue(originalFieldValue)}>
-                  <Restore fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          }
-          inputProps={{ 'aria-label': `${fieldName} ${fieldKey}` }}
-          value={displayValue}
-          onBlur={() => setFieldValue(displayValue)}
-          onChange={(event) => setDisplayValue(event.target.value)}
-        />
-      </Box>
-    </Box>
+    <TextField
+      fullWidth
+      css={css`
+        ${hasChanged ? `background: ${theme.palette.action.hover}` : undefined}
+      `}
+      inputProps={{
+        'aria-label': `${fieldName} ${fieldKey}`,
+        style: {
+          paddingTop: 6,
+          paddingBottom: 7,
+        },
+      }}
+      InputProps={{
+        endAdornment: (
+          <Box
+            css={css`
+              ${!hasChanged ? 'visibility: hidden' : undefined}
+            `}
+            marginLeft={1}
+            marginRight={1}
+          >
+            <Tooltip title="Revert changes">
+              <IconButton size="small" onClick={() => setFieldValue(originalFieldValue)}>
+                <Restore fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        ),
+      }}
+      value={displayValue}
+      onBlur={() => setFieldValue(displayValue)}
+      onChange={(event) => setDisplayValue(event.target.value)}
+    />
   );
 };

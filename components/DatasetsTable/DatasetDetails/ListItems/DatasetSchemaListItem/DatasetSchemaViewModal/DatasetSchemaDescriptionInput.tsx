@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Box, IconButton, InputBase, Tooltip } from '@material-ui/core';
+import { Box, IconButton, TextField, Tooltip, useTheme } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
 export interface DatasetSchemaDescriptionInputProps {
@@ -28,6 +28,8 @@ export const DatasetSchemaDescriptionInput = ({
   setDescription,
   originalValue,
 }: DatasetSchemaDescriptionInputProps) => {
+  const theme = useTheme();
+
   const [displayValue, setDisplayValue] = useState(value || '');
 
   useLayoutEffect(() => {
@@ -37,16 +39,14 @@ export const DatasetSchemaDescriptionInput = ({
   const hasChanged = displayValue !== originalValue;
 
   return (
-    <Box
-      bgcolor={hasChanged ? 'action.hover' : undefined}
-      paddingLeft={2}
-      paddingRight={2}
-      width={1}
-    >
-      <InputBase
-        fullWidth
-        multiline
-        endAdornment={
+    <TextField
+      fullWidth
+      multiline
+      css={css`
+        ${hasChanged ? `background: ${theme.palette.action.hover}` : undefined}
+      `}
+      InputProps={{
+        endAdornment: (
           <Box
             alignSelf="flex-start"
             css={css`
@@ -60,13 +60,12 @@ export const DatasetSchemaDescriptionInput = ({
               </IconButton>
             </Tooltip>
           </Box>
-        }
-        inputProps={{ 'aria-label': 'dataset schema description' }}
-        placeholder="Insert description here"
-        value={displayValue || ''}
-        onBlur={() => setDescription(displayValue)}
-        onChange={(event) => setDisplayValue(event.target.value)}
-      />
-    </Box>
+        ),
+      }}
+      label="Schema description"
+      value={displayValue || ''}
+      onBlur={() => setDescription(displayValue)}
+      onChange={(event) => setDisplayValue(event.target.value)}
+    />
   );
 };

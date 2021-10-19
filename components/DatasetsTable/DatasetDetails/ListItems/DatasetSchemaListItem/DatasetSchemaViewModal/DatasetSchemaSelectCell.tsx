@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { Box, IconButton, MenuItem, Select, Tooltip } from '@material-ui/core';
+import { FormControl, IconButton, MenuItem, Select, Tooltip, useTheme } from '@material-ui/core';
 import { Restore } from '@material-ui/icons';
 
 export interface DatasetSchemaSelectCellProps<V extends readonly string[]> {
@@ -43,6 +43,8 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
   originalFieldValue: originalValue,
   options,
 }: DatasetSchemaSelectCellProps<V>) => {
+  const theme = useTheme();
+
   const [displayValue, setDisplayValue] = useState(value);
 
   useLayoutEffect(() => {
@@ -52,50 +54,47 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
   const hasChanged = displayValue !== originalValue;
 
   return (
-    <Box alignItems="stretch" display="flex">
-      <Box
-        alignItems="center"
-        bgcolor={hasChanged ? 'action.hover' : undefined}
-        display="flex"
-        paddingLeft={2}
-        paddingRight={1}
-        width={1}
+    <FormControl fullWidth variant="outlined">
+      <Select
+        fullWidth
+        aria-label={`${field} ${fieldKey}`}
+        css={css`
+          ${hasChanged ? `background: ${theme.palette.action.hover};` : undefined}
+          padding-right: 0;
+          & > div {
+            background-color: unset !important;
+            padding-top: 6px;
+            padding-bottom: 7px;
+            padding-right: 56px !important;
+          }
+        `}
+        endAdornment={
+          <Tooltip title="Revert changes">
+            <IconButton
+              css={css`
+                ${!hasChanged ? 'visibility: hidden;' : undefined}
+                position: absolute;
+                right: 26px;
+              `}
+              size="small"
+              onClick={() => setValue(originalValue)}
+            >
+              <Restore fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        }
+        value={displayValue}
+        onBlur={() => setValue(displayValue)}
+        onChange={(event) => setDisplayValue(event.target.value as V[number])}
       >
-        <Select
-          disableUnderline
-          fullWidth
-          aria-label={`${field} ${fieldKey}`}
-          css={css`
-            padding: 0;
-            align-self: stretch;
-            & > div {
-              background-color: unset !important;
-            }
-          `}
-          value={displayValue}
-          onBlur={() => setValue(displayValue)}
-          onChange={(event) => setDisplayValue(event.target.value as V[number])}
-        >
-          {options.map((type) => {
-            return (
-              <MenuItem key={type} value={type}>
-                {type}
-              </MenuItem>
-            );
-          })}
-        </Select>
-        <Tooltip title="Revert changes">
-          <IconButton
-            css={css`
-              ${!hasChanged ? 'visibility: hidden' : undefined}
-            `}
-            size="small"
-            onClick={() => setValue(originalValue)}
-          >
-            <Restore fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    </Box>
+        {options.map((type) => {
+          return (
+            <MenuItem key={type} value={type}>
+              {type}
+            </MenuItem>
+          );
+        })}
+      </Select>
+    </FormControl>
   );
 };

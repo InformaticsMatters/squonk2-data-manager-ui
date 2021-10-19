@@ -28,6 +28,7 @@ import { AttachDatasetListItem } from './ListItems/AttachDatasetListItem';
 import { DatasetSchemaListItem } from './ListItems/DatasetSchemaListItem';
 import { DeleteDatasetListItem } from './ListItems/DeleteDatasetListItem';
 import { NewVersionListItem } from './ListItems/NewVersionListItem';
+import { ProjectsListItem } from './ListItems/ProjectsListItem';
 import { VersionInfoListItem } from './ListItems/VersionInfoListItem';
 import { ManageDatasetEditors } from './ManageDatasetEditors';
 
@@ -153,10 +154,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
               Version Information
             </Typography>
             <List>
-              <VersionInfoListItem
-                name="Number of projects"
-                value={selectedVersion?.projects.length}
-              />
+              <ProjectsListItem projectIds={selectedVersion?.projects} />
               <VersionInfoListItem
                 name="Size"
                 value={selectedVersion?.size ? fileSize(selectedVersion.size) : undefined}

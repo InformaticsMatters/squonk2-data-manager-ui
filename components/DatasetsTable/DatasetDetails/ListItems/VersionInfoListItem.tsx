@@ -14,10 +14,10 @@ export interface VersionInfoListItemProps {
 /**
  * Component which displays information about a specific dataset version.
  */
-export const VersionInfoListItem = ({ name: attribute, value }: VersionInfoListItemProps) => {
+export const VersionInfoListItem = ({ name, value }: VersionInfoListItemProps) => {
   return (
     <ListItem>
-      <ListItemText primary={attribute} />
+      <ListItemText primary={name} />
       <ListItemText
         primary={value}
         primaryTypographyProps={{

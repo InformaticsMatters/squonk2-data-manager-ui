@@ -66,8 +66,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
     savingErrors,
     saveSchema,
   } = useDatasetSchema(datasetId, version);
-  const { originalSchema, schema, wasSchemaEdited, setSchemaField, setSchemaDescription } =
-    editableSchema;
+  const { originalSchema, schema, setSchemaField, setSchemaDescription } = editableSchema;
 
   // Memoize data for react-table. Each field (apart from `name`) is represented by an object,
   // which contains the current value and the original value of dataset schema field.
@@ -205,7 +204,6 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
       DialogProps={{ maxWidth: 'md', fullWidth: true }}
       id={`${datasetId}-schema`}
       open={open}
-      submitDisabled={!wasSchemaEdited}
       submitText="Save"
       title="Edit Schema"
       onClose={onClose}

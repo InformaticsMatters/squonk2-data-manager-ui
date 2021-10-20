@@ -127,19 +127,6 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
     return undefined;
   }, [editableSchemaState]);
 
-  // Checks whether or not the schema has been edited. Currently only checks the `description` field
-  // and schema fields.
-  const wasSchemaEdited = useMemo(() => {
-    if (editableSchemaState) {
-      const {
-        editedSchemaProps: { description, fields },
-      } = editableSchemaState;
-
-      return description !== undefined || Object.entries(fields).length;
-    }
-    return false;
-  }, [editableSchemaState]);
-
   const setSchemaField = useCallback(
     <K extends FieldKey, V extends FieldValue<K>>(
       fieldName: string,
@@ -195,7 +182,6 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
   return {
     originalSchema,
     schema,
-    wasSchemaEdited,
     setSchemaField,
     setSchemaDescription,
     getDeltaChanges,

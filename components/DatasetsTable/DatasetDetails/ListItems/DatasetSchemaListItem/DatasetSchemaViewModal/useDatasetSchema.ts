@@ -88,12 +88,15 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
       );
     }
 
-    // Run both requests at the same time to avoid waterfall effect. If anyone of them fails,
-    // it will be reported in the `saveErrors` variable.
-    await Promise.allSettled(promises);
+    // Only execute if there are some changes to be made
+    if (promises.length) {
+      // Run both requests at the same time to avoid waterfall effect. If anyone of them fails,
+      // it will be reported in the `saveErrors` variable.
+      await Promise.allSettled(promises);
 
-    // Once updated fetch a fresh copy of dataset's schema.
-    refetchSchema();
+      // Once updated fetch a fresh copy of dataset's schema.
+      refetchSchema();
+    }
   };
 
   return {

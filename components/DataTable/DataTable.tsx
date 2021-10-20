@@ -136,6 +136,7 @@ export function DataTable<Data extends Record<string, any>>({
           ? Object.fromEntries(initialSelection.map((id) => [id, true]))
           : {}) as Selection<Data>,
       },
+      autoResetSortBy: false,
     },
     useGlobalFilter,
     useSortBy,

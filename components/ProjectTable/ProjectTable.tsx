@@ -15,6 +15,7 @@ import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
 import { DataTable } from '../DataTable';
 import { toLocalTimeString } from '../LocalTime';
 import type { FileActionsProps } from './FileActions';
+import { ProjectFileDetails } from './ProjectFileDetails';
 import type { TableDir, TableFile } from './types';
 import { useProjectFileRows } from './useProjectFileRows';
 import { isTableDir } from './utils';
@@ -74,7 +75,7 @@ export const ProjectTable = ({ currentProject }: ProjectTable) => {
               </Link>
             </NextLink>
           ) : (
-            <Typography variant="body1">{value}</Typography>
+            <ProjectFileDetails file={row} />
           );
         },
       },

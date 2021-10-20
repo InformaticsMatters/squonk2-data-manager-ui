@@ -41,14 +41,13 @@ export const DatasetSchemaDescriptionInput = ({
   return (
     <TextField
       fullWidth
-      multiline
       css={css`
-        ${hasChanged ? `background: ${theme.palette.action.hover}` : undefined}
+        ${hasChanged ? `background: ${theme.palette.action.hover};` : undefined}
+        margin-right: ${theme.spacing(2)}px;
       `}
       InputProps={{
         endAdornment: (
           <Box
-            alignSelf="flex-start"
             css={css`
               ${!hasChanged ? 'visibility: hidden' : undefined}
             `}

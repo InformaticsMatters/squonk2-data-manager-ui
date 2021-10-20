@@ -176,11 +176,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
               </Alert>
             );
           })}
-        <DatasetSchemaDescriptionInput
-          originalValue={originalSchema?.description}
-          setDescription={setSchemaDescription}
-          value={schema?.description}
-        />
+
         <DataTable
           columns={columns}
           customCellProps={{
@@ -192,6 +188,13 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
           data={fields}
           getRowId={(row) => row.name}
           tableContainer={false}
+          ToolbarChild={
+            <DatasetSchemaDescriptionInput
+              originalValue={originalSchema?.description}
+              setDescription={setSchemaDescription}
+              value={schema?.description}
+            />
+          }
         />
       </>
     );

@@ -7,9 +7,15 @@ import type { TableFile } from './../types';
 import { FileContents } from './FileContents';
 
 export interface ProjectFileDetailsProps {
+  /**
+   * Selected file.
+   */
   file: TableFile;
 }
 
+/**
+ * Displays details and actions about the selected file.
+ */
 export const ProjectFileDetails = ({ file }: ProjectFileDetailsProps) => {
   const [open, setOpen] = useState(false);
 
@@ -34,7 +40,7 @@ export const ProjectFileDetails = ({ file }: ProjectFileDetailsProps) => {
               <Typography gutterBottom component="h4" variant="h3">
                 File Contents
               </Typography>
-              <FileContents fileId={file.file_id} />
+              <FileContents fileId={file.file_id} fileName={file.fileName} />
             </>
           ) : (
             <Typography variant="body2">There are no actions available for this file.</Typography>

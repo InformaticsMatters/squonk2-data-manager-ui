@@ -1434,6 +1434,11 @@
   dependencies:
     "@types/react" "*"
 
+"@types/mdx@^2.0.0":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@types/mdx/-/mdx-2.0.1.tgz#e4c05d355d092d7b58db1abfe460e53f41102ac8"
+  integrity sha512-JPEv4iAl0I+o7g8yVWDwk30es8mfVrjkvh5UeVR2sYPpZCK44vrAPsbJpIS+rJAUxLgaSAMKTEH5Vn5qd9XsrQ==
+
 "@types/ms@*":
   version "0.7.31"
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.31.tgz#31b7ca6407128a3d2bbc27fe2d21b345397f6197"
@@ -3358,11 +3363,6 @@ emojis-list@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/emojis-list/-/emojis-list-2.1.0.tgz#4daa4d9db00f9819880c79fa457ae5b09a1fd389"
   integrity sha1-TapNnbAPmBmIDHn6RXrlsJof04k=
-
-emojis-list@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/emojis-list/-/emojis-list-3.0.0.tgz#5570662046ad29e2e916e71aae260abdff4f6a78"
-  integrity sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q==
 
 empower-core@^1.2.0:
   version "1.2.0"
@@ -5555,15 +5555,6 @@ loader-utils@1.2.3:
     emojis-list "^2.0.0"
     json5 "^1.0.1"
 
-loader-utils@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-2.0.0.tgz#e4cace5b816d425a166b5f097e10cd12b36064b0"
-  integrity sha512-rP4F0h2RaWSvPEkD7BLDFQnvSf+nK+wr3ESUjNTyAGobqrijmW92zc+SO6d4p4B1wh7+B/Jg1mkQe5NYUEHtHQ==
-  dependencies:
-    big.js "^5.2.2"
-    emojis-list "^3.0.0"
-    json5 "^2.1.2"
-
 locate-path@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-2.0.0.tgz#2b568b265eec944c6d9c0de9c3dbbbca0354cd8e"
@@ -5789,16 +5780,17 @@ mdast-util-mdxjs-esm@^1.0.0:
     mdast-util-from-markdown "^1.0.0"
     mdast-util-to-markdown "^1.0.0"
 
-mdast-util-to-hast@^11.0.0:
-  version "11.3.0"
-  resolved "https://registry.yarnpkg.com/mdast-util-to-hast/-/mdast-util-to-hast-11.3.0.tgz#ea9220617a710e80aa5cc3ac7cc9d4bb0440ae7a"
-  integrity sha512-4o3Cli3hXPmm1LhB+6rqhfsIUBjnKFlIUZvudaermXB+4/KONdd/W4saWWkC+LBLbPMqhFSSTSRgafHsT5fVJw==
+mdast-util-to-hast@^12.0.0:
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/mdast-util-to-hast/-/mdast-util-to-hast-12.0.0.tgz#d697afa58e56b7e66899c03cd8f789f7d44df44b"
+  integrity sha512-BCeq0Bz103NJvmhB7gN0TDmKRT7x3auJmEp7NcYX1xpqZsQeA3JNLazLhFx6VQPqw30e2zes/coKPAiEqxxUuQ==
   dependencies:
     "@types/hast" "^2.0.0"
     "@types/mdast" "^3.0.0"
     "@types/mdurl" "^1.0.0"
     mdast-util-definitions "^5.0.0"
     mdurl "^1.0.0"
+    micromark-util-sanitize-uri "^1.0.0"
     unist-builder "^3.0.0"
     unist-util-generated "^2.0.0"
     unist-util-position "^4.0.0"
@@ -7484,14 +7476,14 @@ remark-parse@^10.0.0:
     mdast-util-from-markdown "^1.0.0"
     unified "^10.0.0"
 
-remark-rehype@^9.0.0:
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/remark-rehype/-/remark-rehype-9.1.0.tgz#e4b5b6e19c125b3780343eb66c3e9b99b0f06a81"
-  integrity sha512-oLa6YmgAYg19zb0ZrBACh40hpBLteYROaPLhBXzLgjqyHQrN+gVP9N/FJvfzuNNuzCutktkroXEZBrxAxKhh7Q==
+remark-rehype@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/remark-rehype/-/remark-rehype-10.0.0.tgz#e45f07701b766a4e958fb7a843e19836082c4290"
+  integrity sha512-WgvJFpfRLfnyHGvQaMgLXVfaXIXVA9FFo7tSky0omLLukZvDJdobZ2V/wYGd2xlScPVZNx6/99fb5kLFT2uFWQ==
   dependencies:
     "@types/hast" "^2.0.0"
     "@types/mdast" "^3.0.0"
-    mdast-util-to-hast "^11.0.0"
+    mdast-util-to-hast "^12.0.0"
     unified "^10.0.0"
 
 remove-accents@0.4.2:
@@ -8957,26 +8949,26 @@ xdm-next@^1.0.0:
   resolved "https://registry.yarnpkg.com/xdm-next/-/xdm-next-1.0.0.tgz#9b4a86c97f5a17371e90faf3a9d2df7af244470a"
   integrity sha512-jUQs4lUxGKCQ0Nj3K7A5+oU4teyKTkUUzxcySdCQtD1Vs8mDlonxS0y7p07wHUPmGvaqeltBHdnltSq8bdeibw==
 
-xdm@2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/xdm/-/xdm-2.0.6.tgz#f729289045446f8f17acb317632dac5de6f300d8"
-  integrity sha512-ZuimrBiRjOqwwg+RQKt/2Wj6IyUyn0JbTnEIYfgxAL0m1DF/0USWo2fe5/gaQ+9gPQz5aYZomyQ30ee88PCuLw==
+xdm@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/xdm/-/xdm-3.1.0.tgz#02962e912f73a2175df21d6015cb5d2f8d48bb15"
+  integrity sha512-WpkJxC0TnkQgPuXtl+I1HAhmmM2nqx/X5gkFAaVaDlVw0IWk1SVfD4Cz2/WSJXT0yJJkmHd7d91UH6KWfbqJ8A==
   dependencies:
     "@rollup/pluginutils" "^4.0.0"
     "@types/estree-jsx" "^0.0.1"
+    "@types/mdx" "^2.0.0"
     astring "^1.6.0"
     estree-util-build-jsx "^2.0.0"
     estree-util-is-identifier-name "^2.0.0"
     estree-walker "^3.0.0"
     got "^11.0.0"
     hast-util-to-estree "^2.0.0"
-    loader-utils "^2.0.0"
     markdown-extensions "^1.0.0"
     mdast-util-mdx "^1.0.0"
     micromark-extension-mdxjs "^1.0.0"
     periscopic "^3.0.0"
     remark-parse "^10.0.0"
-    remark-rehype "^9.0.0"
+    remark-rehype "^10.0.0"
     source-map "^0.7.0"
     unified "^10.0.0"
     unist-util-position-from-estree "^1.0.0"

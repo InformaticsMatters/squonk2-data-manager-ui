@@ -41,12 +41,14 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({
   dataset,
   selectedVersionNumber: selVerNum,
 }) => {
+  const { datasetSummary } = dataset;
+
   const [open, setOpen] = useState(false);
   const [selectedVersionNumber, setSelectedVersionNumber] = useState(
-    selVerNum || dataset.datasetSummary.versions[0].version,
+    selVerNum || datasetSummary.versions[0].version,
   );
 
-  const selectedVersion = dataset.datasetSummary.versions.find(
+  const selectedVersion = datasetSummary.versions.find(
     (version) => version.version === selectedVersionNumber,
   );
 
@@ -106,13 +108,13 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({
               size="medium"
               value={selectedVersionNumber}
               onChange={(event) => {
-                const version = dataset.datasetSummary.versions.find(
+                const version = datasetSummary.versions.find(
                   (version) => version.version === Number(event.target.value),
                 );
                 version && setSelectedVersionNumber(version.version);
               }}
             >
-              {dataset.datasetSummary.versions.map((version) => (
+              {datasetSummary.versions.map((version) => (
                 <MenuItem
                   key={version.version}
                   value={version.version}
@@ -197,7 +199,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({
                   version={selectedVersion}
                   onDelete={() => {
                     // Reset selected version as it is being deleted
-                    const nextSelectableVersions = dataset.datasetSummary.versions.filter(
+                    const nextSelectableVersions = datasetSummary.versions.filter(
                       (version) => version.version !== selectedVersionNumber,
                     );
                     if (nextSelectableVersions.length > 0) {

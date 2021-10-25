@@ -1,8 +1,9 @@
 import type { DatasetSummary } from '@squonk/data-manager-client';
 
 /**
- * Extended {@link TableDataset} with fileName, number of projects the dataset is used in and merged
- * labels.
+ * An item shown in the datasets table. It can either be a row or a sub row - regular rows don't
+ * have a version and non empty subRows array, whereas sub rows have a version and an empty subRows
+ * array. Each row or sub row has a reference to the original Dataset Summary.
  */
 export type TableDataset = {
   fileName: string;

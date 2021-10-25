@@ -59,10 +59,6 @@ export const DatasetsTable = () => {
         },
       },
       {
-        accessor: 'version',
-        Header: 'Version',
-      },
-      {
         accessor: 'labels',
         Cell: ({ value: labels }) => (
           <Chips>
@@ -123,7 +119,7 @@ export const DatasetsTable = () => {
           labels: combineLabels(dataset.versions),
           subRows: dataset.versions.map<TableDataset>((version) => ({
             ...dataset,
-            fileName,
+            fileName: `Version: ${version.version}`,
             numberOfProjects: version.projects.length,
             labels: (version.labels || {}) as Record<string, string | string[]>,
             version: version.version,

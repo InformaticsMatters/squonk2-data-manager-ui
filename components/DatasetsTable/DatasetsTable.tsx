@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import type { Column, Row } from 'react-table';
 
 import type { DatasetsGetResponse, Error as DMError } from '@squonk/data-manager-client';
@@ -53,8 +53,14 @@ export const DatasetsTable = () => {
         accessor: 'fileName',
         Header: 'File Name',
         Cell: ({ row }) => {
-          return <DatasetDetails dataset={row.original} />;
+          return (
+            <DatasetDetails dataset={row.original} selectedVersionNumber={row.original.version} />
+          );
         },
+      },
+      {
+        accessor: 'version',
+        Header: 'Version',
       },
       {
         accessor: 'labels',
@@ -83,7 +89,7 @@ export const DatasetsTable = () => {
       },
       {
         id: 'versions',
-        accessor: (row) => row.versions.length,
+        accessor: (row) => row.subRows.length || '',
         Header: 'Versions',
       },
       {
@@ -101,7 +107,7 @@ export const DatasetsTable = () => {
   >(params);
 
   // Transform all datasets to match the data-table props
-  const datasets: TableDataset[] | undefined = useMemo(
+  const datasets: TableDataset[] = useMemo(
     () =>
       data?.datasets.map((dataset) => {
         const fileName = dataset.versions[0].file_name; // TODO: should either use the newest version or wait for the API to change
@@ -110,16 +116,27 @@ export const DatasetsTable = () => {
         ).size;
 
         return {
+          ...dataset,
           fileName,
           numberOfProjects,
+          datasetSummary: dataset,
           labels: combineLabels(dataset.versions),
-          ...dataset,
+          subRows: dataset.versions.map<TableDataset>((version) => ({
+            ...dataset,
+            fileName,
+            numberOfProjects: version.projects.length,
+            labels: (version.labels || {}) as Record<string, string | string[]>,
+            version: version.version,
+            datasetSummary: dataset,
+            subRows: [],
+          })),
         };
-      }),
+      }) || [],
     [data],
   );
 
   const { owner, editor, fileType, labels } = filter;
+  const getRowId = useCallback((row) => `${row.dataset_id}#${row.version}`, []);
 
   return (
     <>
@@ -127,10 +144,12 @@ export const DatasetsTable = () => {
         Datasets
       </Typography>
       <DataTable
+        subRowsEnabled
         columns={columns}
         data={datasets}
         error={error}
-        getRowId={(row) => row.dataset_id}
+        getRowId={getRowId}
+        initialSelection={[]}
         isError={isError}
         isLoading={isLoading}
         ToolbarChild={

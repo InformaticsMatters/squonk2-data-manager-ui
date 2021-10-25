@@ -34,13 +34,19 @@ import { ManageDatasetEditors } from './ManageDatasetEditors';
 
 export interface DatasetDetailsProps {
   dataset: TableDataset;
+  selectedVersionNumber?: number;
 }
 
-export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
+export const DatasetDetails: FC<DatasetDetailsProps> = ({
+  dataset,
+  selectedVersionNumber: selVerNum,
+}) => {
   const [open, setOpen] = useState(false);
-  const [selectedVersionNumber, setSelectedVersionNumber] = useState(dataset.versions[0].version);
+  const [selectedVersionNumber, setSelectedVersionNumber] = useState(
+    selVerNum || dataset.datasetSummary.versions[0].version,
+  );
 
-  const selectedVersion = dataset.versions.find(
+  const selectedVersion = dataset.datasetSummary.versions.find(
     (version) => version.version === selectedVersionNumber,
   );
 
@@ -100,13 +106,13 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
               size="medium"
               value={selectedVersionNumber}
               onChange={(event) => {
-                const version = dataset.versions.find(
+                const version = dataset.datasetSummary.versions.find(
                   (version) => version.version === Number(event.target.value),
                 );
                 version && setSelectedVersionNumber(version.version);
               }}
             >
-              {dataset.versions.map((version) => (
+              {dataset.datasetSummary.versions.map((version) => (
                 <MenuItem
                   key={version.version}
                   value={version.version}
@@ -191,7 +197,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
                   version={selectedVersion}
                   onDelete={() => {
                     // Reset selected version as it is being deleted
-                    const nextSelectableVersions = dataset.versions.filter(
+                    const nextSelectableVersions = dataset.datasetSummary.versions.filter(
                       (version) => version.version !== selectedVersionNumber,
                     );
                     if (nextSelectableVersions.length > 0) {

@@ -28,6 +28,8 @@ export interface NewVersionListItemProps extends IconButtonProps {
  * dataset.
  */
 export const NewVersionListItem = ({ dataset }: NewVersionListItemProps) => {
+  const { datasetSummary } = dataset;
+
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<UploadableFile>();
@@ -55,8 +57,10 @@ export const NewVersionListItem = ({ dataset }: NewVersionListItemProps) => {
         title={`Upload a New Version to ${dataset.fileName}`}
         onClose={() => setOpen(false)}
         onSubmit={async () => {
-          const parentVersion = Math.max(...dataset.versions.map((v) => v.version));
-          const parent = dataset.versions.find((version) => version.version === parentVersion);
+          const parentVersion = Math.max(...datasetSummary.versions.map((v) => v.version));
+          const parent = datasetSummary.versions.find(
+            (version) => version.version === parentVersion,
+          );
           if (file && parent) {
             // For consistency with the main file upload, I don't use the mutation hook here. This
             // allows reliable upload progress tracking.

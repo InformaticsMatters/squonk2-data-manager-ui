@@ -1,7 +1,16 @@
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 import React from 'react';
-import type { CellProps, Column, IdType, PluginHook, TableProps, TableRowProps } from 'react-table';
+import type {
+  Cell,
+  CellProps,
+  Column,
+  IdType,
+  PluginHook,
+  TableProps,
+  TableRowProps,
+} from 'react-table';
+import { useExpanded } from 'react-table';
 import { useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
 
 import type { Error as DMError } from '@squonk/data-manager-client';
@@ -25,6 +34,8 @@ import {
   Typography,
   useTheme,
 } from '@material-ui/core';
+import { ExpandLess } from '@material-ui/icons';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import type { AxiosError } from 'axios';
 
@@ -88,6 +99,8 @@ export interface DataTableProps<Data extends Record<string, any>> {
    * Custom props applied to TableCell. Props can either be react-table props or MaterialUI props.
    */
   customCellProps?: CustomProps<TableRowProps & TableCellProps>;
+  getSubRows?: (row: Data, relativeIndex: number) => Data[];
+  subRowsEnabled?: boolean;
 }
 
 // Use a *function* here to avoid the issues with generics in arrow functions
@@ -116,6 +129,8 @@ export function DataTable<Data extends Record<string, any>>({
   error,
   customTableProps,
   customCellProps,
+  getSubRows,
+  subRowsEnabled,
 }: DataTableProps<Data>) {
   const theme = useTheme();
 
@@ -135,6 +150,7 @@ export function DataTable<Data extends Record<string, any>>({
       columns,
       data: tableData,
       getRowId,
+      getSubRows,
       initialState: {
         selectedRowIds: (initialSelection
           ? Object.fromEntries(initialSelection.map((id) => [id, true]))
@@ -144,6 +160,7 @@ export function DataTable<Data extends Record<string, any>>({
     },
     useGlobalFilter,
     useSortBy,
+    useExpanded,
     useRowSelect,
     useActionsColumnPlugin, // Option to add an actions column
     (hooks) => {
@@ -177,6 +194,25 @@ export function DataTable<Data extends Record<string, any>>({
                 />
               );
             },
+          },
+          ...columns,
+        ]);
+      subRowsEnabled &&
+        hooks.visibleColumns.unshift((columns) => [
+          {
+            id: 'expander',
+            defaultCanSort: false,
+            Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }) => (
+              <Box {...getToggleAllRowsExpandedProps()} display="flex">
+                {isAllRowsExpanded ? <ExpandLess /> : <ExpandMore />}
+              </Box>
+            ),
+            Cell: ({ row }: Cell<Data>) =>
+              row.canExpand ? (
+                <Box {...row.getToggleRowExpandedProps()} display="flex">
+                  {row.isExpanded ? <ExpandLess /> : <ExpandMore />}
+                </Box>
+              ) : null,
           },
           ...columns,
         ]);
@@ -229,14 +265,16 @@ export function DataTable<Data extends Record<string, any>>({
                     ? column.getHeaderProps()
                     : column.getHeaderProps(column.getSortByToggleProps()))}
                 >
-                  {column.render('Header')}
-                  {column.canSort ? (
-                    <TableSortLabel
-                      active={column.isSorted}
-                      // react-table has a unsorted state which is not treated here
-                      direction={column.isSortedDesc ? 'desc' : 'asc'}
-                    />
-                  ) : null}
+                  <Box display="flex">
+                    {column.render('Header')}
+                    {column.canSort ? (
+                      <TableSortLabel
+                        active={column.isSorted}
+                        // react-table has a unsorted state which is not treated here
+                        direction={column.isSortedDesc ? 'desc' : 'asc'}
+                      />
+                    ) : null}
+                  </Box>
                 </TableCell>
               ))}
             </TableRow>
@@ -251,7 +289,14 @@ export function DataTable<Data extends Record<string, any>>({
                 {row.cells.map((cell) => {
                   return (
                     // eslint-disable-next-line react/jsx-key
-                    <TableCell {...cell.getCellProps(customCellProps)}>
+                    <TableCell
+                      {...cell.getCellProps(customCellProps)}
+                      style={
+                        cell.column.canSort
+                          ? { paddingLeft: 16 + row.depth * 2 * theme.spacing() }
+                          : undefined
+                      }
+                    >
                       {cell.render('Cell')}
                     </TableCell>
                   );

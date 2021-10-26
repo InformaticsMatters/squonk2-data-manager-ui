@@ -8,8 +8,10 @@ if (
 }
 ASSET_URL = process.env.BASE_URL = 'https://squonk.informaticsmatters.org';
 
-/** @type {import('next').NextConfig} */
-module.exports = {
+/**
+ * @type {import('next').NextConfig}
+ */
+const nextConfig = {
   // reactStrictMode: true, // TODO: switch on after MUI-v5 switch
   pageExtensions: ['js', 'ts', 'jsx', 'tsx', 'mdx'],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
@@ -36,3 +38,5 @@ module.exports = {
     return config;
   },
 };
+
+module.exports = nextConfig;

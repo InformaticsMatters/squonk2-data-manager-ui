@@ -1,10 +1,14 @@
 import type { ReactNode } from 'react';
+import { useMemo } from 'react';
 import React from 'react';
 import type { CellProps, Column, IdType, PluginHook } from 'react-table';
 import { useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
 
+import type { Error as DMError } from '@squonk/data-manager-client';
+
 import { css } from '@emotion/react';
 import {
+  Box,
   InputAdornment,
   Paper,
   Table,
@@ -16,9 +20,13 @@ import {
   TableSortLabel,
   TextField,
   Toolbar,
+  Typography,
+  useTheme,
 } from '@material-ui/core';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
+import type { AxiosError } from 'axios';
 
+import { CenterLoader } from '../CenterLoader';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 
 type Selection<Data> = Record<IdType<Data>, boolean>;
@@ -32,10 +40,6 @@ export interface DataTableProps<Data extends Record<string, any>> {
    * Array of columns for react-table
    */
   columns: Column<Data>[];
-  /**
-   * Array of data, compatible with columns, for react-table
-   */
-  data: Data[];
   /**
    * Child element of the toolbar in the table header
    */
@@ -60,6 +64,22 @@ export interface DataTableProps<Data extends Record<string, any>> {
    * Custom actions column placed as the last column.
    */
   useActionsColumnPlugin?: PluginHook<Data>;
+  /**
+   * Array of data, compatible with columns, for react-table.
+   */
+  data?: Data[];
+  /**
+   * If true, displays the loading icon.
+   */
+  isLoading?: boolean;
+  /**
+   * If true, displays the provided `error`.
+   */
+  isError?: boolean;
+  /**
+   * Error to display. The error is displayed only if `isError` is true.
+   */
+  error?: void | AxiosError<DMError> | null;
 }
 
 // Use a *function* here to avoid the issues with generics in arrow functions
@@ -83,7 +103,15 @@ export function DataTable<Data extends Record<string, any>>({
   useActionsColumnPlugin = () => {
     // Do nothing
   },
+  isLoading,
+  isError,
+  error,
 }: DataTableProps<Data>) {
+  const theme = useTheme();
+
+  // According to react-table data passed to it should be memoized to avoid expensive recalculations
+  const tableData = useMemo(() => data || [], [data]);
+
   const {
     getTableProps,
     headerGroups,
@@ -95,7 +123,7 @@ export function DataTable<Data extends Record<string, any>>({
   } = useTable(
     {
       columns,
-      data,
+      data: tableData,
       getRowId,
       initialState: {
         selectedRowIds: (initialSelection
@@ -118,7 +146,7 @@ export function DataTable<Data extends Record<string, any>>({
                 <IndeterminateCheckbox
                   {...props}
                   onChange={(event, checked) => {
-                    onSelection && data.forEach((row) => onSelection(row, checked));
+                    onSelection && tableData.forEach((row) => onSelection(row, checked));
                     // onSelection && onSelection(row, checked);
                     onChange && onChange(event);
                   }}
@@ -145,7 +173,13 @@ export function DataTable<Data extends Record<string, any>>({
 
   const tableContents = (
     <>
-      <Toolbar>
+      <Toolbar
+        css={css`
+          align-items: flex-start;
+          padding-top: ${theme.spacing(2)}px;
+          gap: ${theme.spacing(1)}px;
+        `}
+      >
         {ToolbarChild}
         {enableSearch && (
           <TextField
@@ -208,6 +242,19 @@ export function DataTable<Data extends Record<string, any>>({
           })}
         </TableBody>
       </Table>
+      {(isLoading || isError) && (
+        <Box overflow="hidden" padding={2}>
+          {isLoading && <CenterLoader />}
+          {isError && (
+            <>
+              {error?.message && <Typography color="error">{error.message}</Typography>}
+              {error?.response && (
+                <Typography color="error">{error.response.data.error}</Typography>
+              )}
+            </>
+          )}
+        </Box>
+      )}
     </>
   );
 

@@ -32,7 +32,7 @@
     "@rjsf/material-ui": "3.2.0",
     "@squonk/data-manager-client": "0.5.33-rc.1",
     "@squonk/mui-theme": "2.0.1",
-    "@types/react-table": "7.7.5",
+    "@types/react-table": "7.7.7",
     "axios": "^0.21.4",
     "dayjs": "^1.10.7",
     "formik": "^2.2.9",

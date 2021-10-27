@@ -59,6 +59,10 @@ export interface DataTableProps<Data extends Record<string, any>> {
    */
   ToolbarChild?: ReactNode;
   /**
+   * Toolbar with actions which sits beneath the table header toolbar with search.
+   */
+  ToolbarActionChild?: ReactNode;
+  /**
    * Function to uniquely identify a given row of data
    */
   getRowId?: (row: Data) => IdType<Data>;
@@ -99,8 +103,15 @@ export interface DataTableProps<Data extends Record<string, any>> {
    * Custom props applied to TableCell. Props can either be react-table props or MaterialUI props.
    */
   customCellProps?: CustomProps<TableRowProps & TableCellProps>;
-  getSubRows?: (row: Data, relativeIndex: number) => Data[];
+  /*
+   * Enables sub rows.
+   */
   subRowsEnabled?: boolean;
+  /**
+   * Accessor function to row's sub rows. By default, the sub rows are located in the `subRows`
+   * attribute.
+   */
+  getSubRows?: (row: Data, relativeIndex: number) => Data[];
 }
 
 // Use a *function* here to avoid the issues with generics in arrow functions
@@ -131,6 +142,7 @@ export function DataTable<Data extends Record<string, any>>({
   customCellProps,
   getSubRows,
   subRowsEnabled,
+  ToolbarActionChild,
 }: DataTableProps<Data>) {
   const theme = useTheme();
 
@@ -221,38 +233,42 @@ export function DataTable<Data extends Record<string, any>>({
 
   const tableContents = (
     <>
-      {(ToolbarChild || enableSearch) && (
-        <Toolbar
-          css={css`
-            align-items: flex-start;
-            padding-top: ${theme.spacing(2)}px;
-            gap: ${theme.spacing(1)}px;
-          `}
-        >
-          {ToolbarChild}
-          {enableSearch && (
-            <TextField
-              css={css`
-                margin-left: auto;
-              `}
-              inputProps={{ 'aria-label': 'search' }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchRoundedIcon />
-                  </InputAdornment>
-                ),
-              }}
-              placeholder={`${preGlobalFilteredRows.length} records...`}
-              value={globalFilter || ''}
-              onChange={(e) => {
-                setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
-              }}
-            />
-          )}
-        </Toolbar>
-      )}
-
+      <Toolbar
+        css={css`
+          align-items: flex-start;
+          padding-top: ${theme.spacing(2)}px;
+          gap: ${theme.spacing(1)}px;
+        `}
+      >
+        {ToolbarChild}
+        {enableSearch && (
+          <TextField
+            css={css`
+              margin-left: auto;
+            `}
+            inputProps={{ 'aria-label': 'search' }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchRoundedIcon />
+                </InputAdornment>
+              ),
+            }}
+            placeholder={`${preGlobalFilteredRows.length} records...`}
+            value={globalFilter || ''}
+            onChange={(e) => {
+              setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
+            }}
+          />
+        )}
+      </Toolbar>
+      <Toolbar
+        css={css`
+          min-height: 0;
+        `}
+      >
+        {ToolbarActionChild}
+      </Toolbar>
       <Table {...getTableProps(customTableProps)} size="small">
         <TableHead>
           {headerGroups.map((headerGroup) => (

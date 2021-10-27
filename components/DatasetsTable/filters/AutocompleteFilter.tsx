@@ -46,7 +46,7 @@ export interface AutocompleteFilterProps<T> {
 /**
  * Base component for other autocomplete filters.
  */
-export const AutocompleteFilter = <T extends unknown>({
+export const AutocompleteFilter = <T,>({
   id,
   label,
   value,

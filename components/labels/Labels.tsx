@@ -9,7 +9,6 @@ import { Typography } from '@material-ui/core';
 import { Chips } from '../Chips';
 import type { TableDataset } from '../DatasetsTable';
 import { LabelChip } from './LabelChip';
-import { NewLabelButton } from './NewLabelButton';
 
 export interface LabelsProps {
   /**
@@ -32,7 +31,11 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
   const { mutateAsync: addAnnotations } = useAddAnnotations();
 
   if (labels.length === 0) {
-    return <Typography variant="body2">No labels exist for this version</Typography>;
+    return (
+      <Typography display="inline" variant="body2">
+        No labels exist for this version
+      </Typography>
+    );
   }
 
   return (
@@ -63,7 +66,6 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
             }}
           />
         ))}
-        <NewLabelButton datasetId={datasetId} datasetVersion={datasetVersion.version} />
       </>
     </Chips>
   );

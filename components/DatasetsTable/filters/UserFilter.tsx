@@ -8,19 +8,28 @@ import { AutocompleteFilter } from './AutocompleteFilter';
 
 export interface UserFilterProps {
   /**
-   * Selected owner/user.
+   * Selected user.
    */
   user?: UserSummary;
   /**
-   * Function to set selected owner/user.
+   * Function to set selected user.
    */
   setUser: (user?: UserSummary) => void;
+  /**
+   * ID of the filter.
+   */
+  id?: string;
+  /**
+   * Label which displays filter's functionality.
+   */
+  label: string;
 }
 
 /**
- * Component which adjusts filtering of datasets according to owner/user.
+ * Component which adjusts filtering of datasets according to user. Used as a base for owner and
+ * editor filters.
  */
-export const UserFilter = ({ user, setUser }: UserFilterProps) => {
+export const UserFilter = ({ user, setUser, id, label }: UserFilterProps) => {
   const { data, error, isError, isLoading } = useGetUsers<
     UsersGetResponse,
     AxiosError<DMError> | void
@@ -36,10 +45,10 @@ export const UserFilter = ({ user, setUser }: UserFilterProps) => {
     <AutocompleteFilter
       error={error}
       getOptionLabel={(value: UserSummary) => value.username}
-      id="datasets-user-filter"
+      id={id}
       isError={isError}
       isLoading={isLoading}
-      label="Filter by owner"
+      label={label}
       options={users}
       value={user}
       onChange={setUser}

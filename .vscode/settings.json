@@ -136,6 +136,7 @@
     "mdx",
     "color-scheme",
     "context",
-    "cypress"
+    "cypress",
+    "gitignore"
   ],
 }

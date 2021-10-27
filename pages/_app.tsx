@@ -5,6 +5,7 @@ import { Hydrate } from 'react-query/hydration';
 import { setBaseUrl } from '@squonk/data-manager-client';
 
 import { UserProvider } from '@auth0/nextjs-auth0';
+import { enableMapSet } from 'immer';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
@@ -17,6 +18,8 @@ import '../styles/globalStyles.scss';
 
 // ? Is this the right place to set this?
 setBaseUrl(process.env.NEXT_PUBLIC_BASE_PATH + '/api/dm-api');
+
+enableMapSet();
 
 // Adjust template for material-ui given at
 // https://github.com/mui-org/material-ui/tree/master/examples/nextjs

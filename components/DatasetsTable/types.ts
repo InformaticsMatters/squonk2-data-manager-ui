@@ -6,6 +6,7 @@ import type { DatasetSummary } from '@squonk/data-manager-client';
  * array. Each row or sub row has a reference to the original Dataset Summary.
  */
 export type TableDataset = {
+  type: 'row' | 'subRow';
   fileName: string;
   numberOfProjects: number;
   labels: Record<string, string | string[]>;

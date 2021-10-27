@@ -20,6 +20,7 @@ import { OwnerFilter } from './filters/OwnerFilter';
 import { DatasetsFilterToolbar } from './DatasetsFilterToolbar';
 import type { TableDataset } from './types';
 import { useDatasetsFilter } from './useDatasetsFilter';
+import { useSelectedDatasets } from './useSelectedDatasets';
 
 const FileUpload = dynamic<Record<string, never>>(
   () => import('../FileUpload').then((mod) => mod.FileUpload),
@@ -112,12 +113,14 @@ export const DatasetsTable = () => {
         ).size;
 
         return {
+          type: 'row',
           ...dataset,
           fileName,
           numberOfProjects,
           datasetSummary: dataset,
           labels: combineLabels(dataset.versions),
           subRows: dataset.versions.map<TableDataset>((version) => ({
+            type: 'subRow',
             ...dataset,
             fileName: `Version: ${version.version}`,
             numberOfProjects: version.projects.length,
@@ -130,6 +133,8 @@ export const DatasetsTable = () => {
       }) || [],
     [data],
   );
+
+  const { selected, onSelection } = useSelectedDatasets(datasets);
 
   const { owner, editor, fileType, labels } = filter;
   const getRowId = useCallback((row) => `${row.dataset_id}#${row.version}`, []);
@@ -178,6 +183,7 @@ export const DatasetsTable = () => {
             />
           </>
         }
+        onSelection={onSelection}
       />
     </>
   );

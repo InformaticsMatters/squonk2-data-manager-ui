@@ -17,6 +17,7 @@ import { EditorFilter } from './filters/EditorFilter';
 import { FileTypeFilter } from './filters/FileTypeFilter';
 import { LabelsFilter } from './filters/LabelsFilter';
 import { OwnerFilter } from './filters/OwnerFilter';
+import { DatasetsBulkActions } from './DatasetsBulkActions';
 import { DatasetsFilterToolbar } from './DatasetsFilterToolbar';
 import type { TableDataset } from './types';
 import { useDatasetsFilter } from './useDatasetsFilter';
@@ -134,7 +135,7 @@ export const DatasetsTable = () => {
     [data],
   );
 
-  const { selected, onSelection } = useSelectedDatasets(datasets);
+  const { selectedDatasets, onSelection } = useSelectedDatasets(datasets);
 
   const { owner, editor, fileType, labels } = filter;
   const getRowId = useCallback((row) => `${row.dataset_id}#${row.version}`, []);
@@ -153,6 +154,7 @@ export const DatasetsTable = () => {
         initialSelection={[]}
         isError={isError}
         isLoading={isLoading}
+        ToolbarActionChild={<DatasetsBulkActions selectedDatasets={selectedDatasets} />}
         ToolbarChild={
           <>
             <FileUpload />

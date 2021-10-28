@@ -6,10 +6,10 @@ import {
   useCreateProject,
   useGetProjects,
 } from '@squonk/data-manager-client/project';
-import { getGetUserAccountQueryKey, useGetUserAccount } from '@squonk/data-manager-client/user';
+import { getGetUserAccountQueryKey } from '@squonk/data-manager-client/user';
 
 import { css } from '@emotion/react';
-import { Button, Grid, IconButton, MenuItem, Popover, Tooltip, useTheme } from '@material-ui/core';
+import { Button, Grid, IconButton, Popover, Tooltip, useTheme } from '@material-ui/core';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
@@ -21,7 +21,7 @@ import type { CommonProps } from './types';
 export type AddProjectProps = Pick<CommonProps, 'inverted'>;
 
 /**
- * Button with a Popover that allows the user to create a new project from available entitlements
+ * Button with a Popover that allows the user to create a new project.
  */
 export const AddProject = ({ inverted = false }: AddProjectProps) => {
   const popupState = usePopupState({ variant: 'popover', popupId: `add-project` });
@@ -31,31 +31,15 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
   const { data: projectsData } = useGetProjects();
   const projects = projectsData?.projects;
 
-  const { data: userAccountData } = useGetUserAccount();
-  const availableEntitlements = userAccountData?.project_entitlements.filter(
-    (entitlement) => entitlement.available,
-  );
-  const entitlementsAvailable = (availableEntitlements ?? []).length > 0;
-
   const { mutateAsync: createProject } = useCreateProject();
 
   const theme = useTheme();
 
   return (
     <>
-      <Tooltip
-        title={
-          entitlementsAvailable
-            ? 'Add new project'
-            : 'You do not have any entitlements to create projects'
-        }
-      >
+      <Tooltip title="Add new project">
         <span>
-          <IconButton
-            color={inverted ? 'inherit' : 'default'}
-            {...bindTrigger(popupState)}
-            disabled={!entitlementsAvailable}
-          >
+          <IconButton color={inverted ? 'inherit' : 'default'} {...bindTrigger(popupState)}>
             <AddCircleRoundedIcon />
           </IconButton>
         </span>
@@ -73,7 +57,7 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
       >
         <Formik
           validateOnMount
-          initialValues={{ projectName: '', entitlement: '' }}
+          initialValues={{ projectName: '' }}
           validationSchema={yup.object().shape({
             projectName: yup
               .string()
@@ -84,10 +68,9 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
                 (name) =>
                   name !== undefined && !projects?.map((project) => project.name).includes(name),
               ),
-            entitlement: yup.string().required('A tier must be selected'),
           })}
-          onSubmit={async ({ projectName, entitlement }) => {
-            await createProject({ data: { name: projectName, entitlement_id: entitlement } });
+          onSubmit={async ({ projectName }) => {
+            await createProject({ data: { name: projectName } });
 
             popupState.close();
 
@@ -98,7 +81,7 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
           {({ submitForm, isSubmitting, isValid }) => (
             <Form>
               <Grid container spacing={2}>
-                <Grid item xs={5}>
+                <Grid item xs={10}>
                   <Field
                     autoFocus
                     fullWidth
@@ -106,21 +89,6 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
                     label="Project Name"
                     name="projectName"
                   />
-                </Grid>
-                <Grid item xs={5}>
-                  <Field
-                    fullWidth
-                    select
-                    component={TextField}
-                    label="Select Tier"
-                    name="entitlement"
-                  >
-                    {availableEntitlements?.map((entitlement) => (
-                      <MenuItem key={entitlement.id} value={entitlement.id}>
-                        {entitlement.tier}
-                      </MenuItem>
-                    ))}
-                  </Field>
                 </Grid>
                 <Grid item xs={2}>
                   <Button disabled={isSubmitting || !isValid} onClick={submitForm}>

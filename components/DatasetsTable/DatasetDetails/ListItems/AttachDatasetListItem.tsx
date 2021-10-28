@@ -121,11 +121,14 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
               },
             });
 
-            // Ensure the views showing project files is updated to include the new addition
-            await queryClient.invalidateQueries(getGetProjectQueryKey(project));
-            // Ensure that the dataset's details display the project's name in the used in projects
-            // field
-            await queryClient.invalidateQueries(getGetDatasetsQueryKey());
+            await Promise.all([
+              // Ensure the views showing project files is updated to include the new addition
+              queryClient.invalidateQueries(getGetProjectQueryKey(project)),
+              // Ensure that the dataset's details display the project's name in the used in projects
+              // field
+              queryClient.invalidateQueries(getGetDatasetsQueryKey()),
+            ]);
+
             setOpen(false);
           } catch (err) {
             console.error(err);

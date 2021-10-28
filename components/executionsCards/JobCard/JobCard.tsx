@@ -53,7 +53,7 @@ export const JobCard = ({ projectId, job }: ApplicationCardProps) => {
       <Typography variant="body1">{jobSummary.description}</Typography>
       <Typography variant="body1">
         {jobSummary.version} –{' '}
-        <Link href={jobSummary.doc_url} target="_blank">
+        <Link href={jobSummary.doc_url} rel="noopener noreferrer" target="_blank">
           docs
         </Link>
       </Typography>

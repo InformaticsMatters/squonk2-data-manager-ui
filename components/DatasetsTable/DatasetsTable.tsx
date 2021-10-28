@@ -12,7 +12,7 @@ import { combineLabels } from '../../utils/labelUtils';
 import { Chips } from '../Chips';
 import { DataTable } from '../DataTable';
 import { LabelChip } from '../labels/LabelChip';
-import { DatasetDetails } from './DatasetDetails/DatasetDetails';
+import type { DatasetDetailsProps } from './DatasetDetails/DatasetDetails';
 import { EditorFilter } from './filters/EditorFilter';
 import { FileTypeFilter } from './filters/FileTypeFilter';
 import { LabelsFilter } from './filters/LabelsFilter';
@@ -23,6 +23,13 @@ import { useDatasetsFilter } from './useDatasetsFilter';
 
 const FileUpload = dynamic<Record<string, never>>(
   () => import('../FileUpload').then((mod) => mod.FileUpload),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
+
+const DatasetDetails = dynamic<DatasetDetailsProps>(
+  () => import('./DatasetDetails/DatasetDetails').then((mod) => mod.DatasetDetails),
   {
     loading: () => <CircularProgress size="1rem" />,
   },

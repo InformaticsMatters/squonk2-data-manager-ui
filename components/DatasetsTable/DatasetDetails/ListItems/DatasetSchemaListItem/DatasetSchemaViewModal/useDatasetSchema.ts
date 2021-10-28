@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import type { DatasetAnnotationsPostResponse, Error as DMError } from '@squonk/data-manager-client';
@@ -26,7 +27,6 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
   const { getDeltaChanges, ...editableSchema } = useEditableSchemaView(schema);
 
   const {
-    isLoading: isUpdateMetadataLoading,
     isError: isUpdateMetadataError,
     error: updateMetadataError,
     reset: resetUpdateMetadata,
@@ -34,29 +34,25 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
   } = useUpdateMetadata<void, AxiosError<DMError>>();
 
   const {
-    isLoading: isAddAnnotationsLoading,
     isError: isAddAnnotationsError,
     error: addAnnotationsError,
     reset: resetAddAnnotations,
     mutateAsync: mutateAddAnnotations,
   } = useAddAnnotations<DatasetAnnotationsPostResponse, AxiosError<DMError>>();
 
-  const isSaving = isUpdateMetadataLoading || isAddAnnotationsLoading;
+  const [isSaving, setIsSaving] = useState(false);
+
   const isSavingError = isUpdateMetadataError || isAddAnnotationsError;
+
   // Since 2 endpoints can be called, create an array of arrays. `type` parameters are used as keys
   // for React components
-  const savingErrors = (() => {
-    const errors = [];
-
-    if (updateMetadataError) {
-      errors.push({ type: 'metadata', error: updateMetadataError });
-    }
-
-    if (addAnnotationsError) {
-      errors.push({ type: 'annotations', error: addAnnotationsError });
-    }
-    return errors;
-  })();
+  const savingErrors = [];
+  if (updateMetadataError) {
+    savingErrors.push({ type: 'metadata', error: updateMetadataError });
+  }
+  if (addAnnotationsError) {
+    savingErrors.push({ type: 'annotations', error: addAnnotationsError });
+  }
 
   const saveSchema = async () => {
     resetUpdateMetadata();
@@ -81,7 +77,6 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
 
     // Only update field definitions if they were changed.
     if (fields) {
-      // TODO needs more info on the API to work
       const data = { type: 'FieldsDescriptorAnnotation', origin: 'data-manager-api', fields };
       promises.push(
         mutateAddAnnotations({
@@ -94,12 +89,16 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
 
     // Only execute if there are some changes to be made
     if (promises.length) {
+      setIsSaving(true);
+
       // Run both requests at the same time to avoid waterfall effect. If any one of them fails,
       // it will be reported in the `saveErrors` variable.
       await Promise.allSettled(promises);
 
       // Once updated invalidate fetched schema data
-      queryClient.invalidateQueries(getGetSchemaQueryKey(datasetId, version));
+      await queryClient.invalidateQueries(getGetSchemaQueryKey(datasetId, version));
+
+      setIsSaving(false);
     }
   };
 

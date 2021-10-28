@@ -1,5 +1,8 @@
+import { useQueryClient } from 'react-query';
+
 import type { DatasetAnnotationsPostResponse, Error as DMError } from '@squonk/data-manager-client';
 import {
+  getGetSchemaQueryKey,
   useAddAnnotations,
   useGetSchema,
   useUpdateMetadata,
@@ -11,13 +14,14 @@ import type { TypedSchema } from './types';
 import { useEditableSchemaView } from './useEditableSchema';
 
 export const useDatasetSchema = (datasetId: string, version: number) => {
+  const queryClient = useQueryClient();
+
   // Cast the response to TypedSchema since OpenAPI is missing type definitions.
   const {
     data: schema,
     isLoading: isSchemaLoading,
     isError: isSchemaError,
     error: schemaError,
-    refetch: refetchSchema,
   } = useGetSchema<TypedSchema, AxiosError<DMError>>(datasetId, version);
   const { getDeltaChanges, ...editableSchema } = useEditableSchemaView(schema);
 
@@ -90,12 +94,12 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
 
     // Only execute if there are some changes to be made
     if (promises.length) {
-      // Run both requests at the same time to avoid waterfall effect. If anyone of them fails,
+      // Run both requests at the same time to avoid waterfall effect. If any one of them fails,
       // it will be reported in the `saveErrors` variable.
       await Promise.allSettled(promises);
 
-      // Once updated fetch a fresh copy of dataset's schema.
-      refetchSchema();
+      // Once updated invalidate fetched schema data
+      queryClient.invalidateQueries(getGetSchemaQueryKey(datasetId, version));
     }
   };
 

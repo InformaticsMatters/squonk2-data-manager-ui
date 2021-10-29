@@ -141,6 +141,7 @@
     "dataset-details",
     "add-project",
     "instance-page",
-    "project-details"
+    "project-details",
+    "ui/user-settings"
   ],
 }

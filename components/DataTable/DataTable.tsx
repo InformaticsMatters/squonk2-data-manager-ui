@@ -147,6 +147,7 @@ export function DataTable<Data extends Record<string, any>>({
         hooks.visibleColumns.push((columns) => [
           {
             id: 'selection',
+            defaultCanSort: false,
             Header: ({ getToggleAllRowsSelectedProps }) => {
               const { onChange, ...props } = getToggleAllRowsSelectedProps();
               return (
@@ -180,35 +181,38 @@ export function DataTable<Data extends Record<string, any>>({
 
   const tableContents = (
     <>
-      <Toolbar
-        css={css`
-          align-items: flex-start;
-          padding-top: ${theme.spacing(2)}px;
-          gap: ${theme.spacing(1)}px;
-        `}
-      >
-        {ToolbarChild}
-        {enableSearch && (
-          <TextField
-            css={css`
-              margin-left: auto;
-            `}
-            inputProps={{ 'aria-label': 'search' }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchRoundedIcon />
-                </InputAdornment>
-              ),
-            }}
-            placeholder={`${preGlobalFilteredRows.length} records...`}
-            value={globalFilter || ''}
-            onChange={(e) => {
-              setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
-            }}
-          />
-        )}
-      </Toolbar>
+      {(ToolbarChild || enableSearch) && (
+        <Toolbar
+          css={css`
+            align-items: flex-start;
+            padding-top: ${theme.spacing(2)}px;
+            gap: ${theme.spacing(1)}px;
+          `}
+        >
+          {ToolbarChild}
+          {enableSearch && (
+            <TextField
+              css={css`
+                margin-left: auto;
+              `}
+              inputProps={{ 'aria-label': 'search' }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchRoundedIcon />
+                  </InputAdornment>
+                ),
+              }}
+              placeholder={`${preGlobalFilteredRows.length} records...`}
+              value={globalFilter || ''}
+              onChange={(e) => {
+                setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
+              }}
+            />
+          )}
+        </Toolbar>
+      )}
+
       <Table {...getTableProps()} size="small">
         <TableHead>
           {headerGroups.map((headerGroup) => (
@@ -217,12 +221,12 @@ export function DataTable<Data extends Record<string, any>>({
               {headerGroup.headers.map((column) => (
                 // eslint-disable-next-line react/jsx-key
                 <TableCell
-                  {...(column.id === 'selection'
+                  {...(!column.canSort
                     ? column.getHeaderProps()
                     : column.getHeaderProps(column.getSortByToggleProps()))}
                 >
                   {column.render('Header')}
-                  {column.id !== 'selection' ? (
+                  {column.canSort ? (
                     <TableSortLabel
                       active={column.isSorted}
                       // react-table has a unsorted state which is not treated here

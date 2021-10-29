@@ -67,7 +67,8 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
                 'The name is already used for a project',
                 (name) =>
                   name !== undefined && !projects?.map((project) => project.name).includes(name),
-              ),
+              )
+              .min(2, 'The name is too short'),
           })}
           onSubmit={async ({ projectName }) => {
             await createProject({ data: { name: projectName } });

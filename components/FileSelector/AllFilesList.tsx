@@ -43,7 +43,7 @@ export const AllFilesList = ({
       const fullPath = getFullPath(breadcrumbs, path);
       const type: FileOrDirectory = 'directory';
       return {
-        fullPath: path,
+        fullPath,
         key: fullPath,
         mimeType: undefined,
         title: path,

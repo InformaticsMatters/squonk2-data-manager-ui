@@ -22,6 +22,7 @@ import { HorizontalList } from './common/HorizontalList';
 import { StatusIcon } from './common/StatusIcon';
 import { TerminateInstance } from './common/TerminateInstance';
 import type { CommonProps } from './common/types';
+import type { ApplicationDetailsProps } from './details/ApplicationDetails';
 import { ApplicationDetails } from './details/ApplicationDetails';
 
 // Button Props doesn't support target and rel when using as a Link
@@ -35,11 +36,13 @@ export interface OperationApplicationCardProps extends CommonProps {
    * Instance of the application
    */
   instance: InstanceSummary;
+  poll?: ApplicationDetailsProps['poll'];
 }
 
 export const OperationApplicationCard = ({
   instance,
   collapsedByDefault = true,
+  poll,
 }: OperationApplicationCardProps) => {
   const latestState = instance.state;
 
@@ -71,7 +74,7 @@ export const OperationApplicationCard = ({
           }
           collapsed={
             <CardContent>
-              <ApplicationDetails instanceId={instance.id} />
+              <ApplicationDetails instanceId={instance.id} poll={poll} />
             </CardContent>
           }
           collapsedByDefault={collapsedByDefault}

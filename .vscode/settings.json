@@ -138,6 +138,7 @@
     "context",
     "cypress",
     "gitignore",
-    "add-project"
+    "add-project",
+    "instance-page"
   ],
 }

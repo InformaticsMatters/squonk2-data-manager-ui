@@ -1,7 +1,6 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import type { InstanceSummary } from '@squonk/data-manager-client';
-import { useGetInstance } from '@squonk/data-manager-client/instance';
 
 import { css } from '@emotion/react';
 import {
@@ -25,6 +24,7 @@ import { useRouter } from 'next/router';
 import { CenterLoader } from '../../CenterLoader';
 import { HorizontalList } from '../common/HorizontalList';
 import { TimeLine } from '../common/TimeLine';
+import { usePolledInstance } from './usePolledInstance';
 
 interface OutputValue {
   title: string;
@@ -38,6 +38,10 @@ export interface JobDetailsProps {
    * Instance of the job
    */
   instanceSummary: InstanceSummary;
+  /**
+   * Whether to poll the instance regularly for updates
+   */
+  poll?: boolean;
 }
 
 /**
@@ -63,10 +67,10 @@ const getPathName = (creates: string, type?: 'file' | 'directory'): string[] | u
 /**
  * Displays the details of an job based on the instance of a job
  */
-export const JobDetails = ({ instanceSummary }: JobDetailsProps) => {
+export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) => {
   const { query } = useRouter();
 
-  const { data: instance } = useGetInstance(instanceSummary.id);
+  const { data: instance } = usePolledInstance(instanceSummary.id, poll);
 
   if (instance === undefined) {
     return <CenterLoader />;

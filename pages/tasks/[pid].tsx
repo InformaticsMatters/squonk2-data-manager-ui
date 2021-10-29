@@ -18,7 +18,7 @@ import { OperationApplicationCard } from '../../components/operations/OperationA
 import { OperationJobCard } from '../../components/operations/OperationJobCard';
 import { RoleRequired } from '../../utils/RoleRequired';
 
-const Tasks: FC = () => {
+const Task: FC = () => {
   const queryClient = useQueryClient();
 
   const router = useRouter();
@@ -62,10 +62,10 @@ const Tasks: FC = () => {
             </div>
             {instance?.application_type === 'JOB' ? (
               <Box marginY={1}>
-                <OperationJobCard collapsedByDefault={false} instance={instance} />
+                <OperationJobCard poll collapsedByDefault={false} instance={instance} />
               </Box>
             ) : instance?.application_type === 'APPLICATION' ? (
-              <OperationApplicationCard collapsedByDefault={false} instance={instance} />
+              <OperationApplicationCard poll collapsedByDefault={false} instance={instance} />
             ) : (
               <CenterLoader />
             )}
@@ -82,4 +82,4 @@ const Tasks: FC = () => {
   );
 };
 
-export default withPageAuthRequired(Tasks);
+export default withPageAuthRequired(Task);

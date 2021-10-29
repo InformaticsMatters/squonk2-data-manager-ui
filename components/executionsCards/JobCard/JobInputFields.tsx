@@ -14,9 +14,10 @@ interface InputFieldSchema {
   type: 'directory' | 'file';
   'mime-types'?: string[];
   multiple?: true;
+  default?: string;
 }
 
-interface InputSchema {
+export interface InputSchema {
   required?: string[];
   properties: {
     [key: string]: InputFieldSchema;

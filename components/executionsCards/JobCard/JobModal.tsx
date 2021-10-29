@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import type { InstanceSummary, JobSummary } from '@squonk/data-manager-client';
@@ -12,7 +12,7 @@ import dynamic from 'next/dynamic';
 import { CenterLoader } from '../../CenterLoader';
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import type { CommonModalProps } from '../types';
-import type { JobInputFieldsProps } from './JobInputFields';
+import type { InputSchema, JobInputFieldsProps } from './JobInputFields';
 
 const JobInputFields = dynamic<JobInputFieldsProps>(
   () => import('./JobInputFields').then((mod) => mod.JobInputFields),
@@ -80,7 +80,22 @@ export const JobModal = ({
   const [optionsFormData, setOptionsFormData] = useState<any>(specVariables ?? null);
 
   // Control for the inputs fields
+
+  const inputsDefault = useMemo(() => {
+    // Parse the inputs schema which is untyped
+    const inputs: InputSchema | undefined = JSON.parse(job?.variables?.inputs ?? '{}');
+    // Access the default values and use them for the "initial" values for state
+    return Object.entries(inputs?.properties ?? {})
+      .filter(([, schema]) => schema.default !== undefined)
+      .map(([key, { default: defaultValue }]) => [key, defaultValue as string] as const);
+  }, [job]);
+
   const [inputsData, setInputsData] = useState<InputData>({});
+
+  // Since the default value are obtained async, we have to wait for them to arrive in order to set
+  useEffect(() => {
+    setInputsData(Object.fromEntries(inputsDefault));
+  }, [inputsDefault]);
 
   const handleSubmit = async () => {
     if (projectId && job) {

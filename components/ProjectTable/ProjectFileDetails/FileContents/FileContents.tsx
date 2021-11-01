@@ -1,3 +1,5 @@
+import { css } from '@emotion/react';
+import { Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
 import { CenterLoader } from '../../../CenterLoader';
@@ -28,5 +30,14 @@ export const FileContents = ({ fileId, fileName }: FileContentsProps) => {
     return <Alert severity="error">{error?.response?.data.error}</Alert>;
   }
 
-  return <pre>{data}</pre>;
+  return (
+    <Typography
+      component="pre"
+      css={css`
+        font-family: 'Fira Mono', monospace;
+      `}
+    >
+      {data}
+    </Typography>
+  );
 };

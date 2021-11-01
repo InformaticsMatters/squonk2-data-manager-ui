@@ -139,6 +139,7 @@
     "cypress",
     "gitignore",
     "add-project",
-    "instance-page"
+    "instance-page",
+    "project-details"
   ],
 }

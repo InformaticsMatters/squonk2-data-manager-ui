@@ -137,6 +137,9 @@
     "color-scheme",
     "context",
     "cypress",
+    "gitignore",
+    "add-project",
+    "instance-page",
     "project-details"
   ],
 }

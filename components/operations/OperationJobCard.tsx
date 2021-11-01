@@ -13,6 +13,7 @@ import { HorizontalList } from './common/HorizontalList';
 import { StatusIcon } from './common/StatusIcon';
 import { TerminateInstance } from './common/TerminateInstance';
 import type { CommonProps } from './common/types';
+import type { JobDetailsProps } from './details/JobDetails';
 import { JobDetails } from './details/JobDetails';
 import { RerunJobButton } from './RerunJobButton';
 
@@ -21,12 +22,13 @@ export interface JobCardProps extends CommonProps {
    * Instance of the job
    */
   instance: InstanceSummary;
+  poll?: JobDetailsProps['poll'];
 }
 
 /**
  * Displays details of an instance of a job
  */
-export const OperationJobCard = ({ instance, collapsedByDefault = true }: JobCardProps) => {
+export const OperationJobCard = ({ instance, collapsedByDefault = true, poll }: JobCardProps) => {
   const latestState = instance.state;
 
   const { data } = useGetProjects();
@@ -48,7 +50,7 @@ export const OperationJobCard = ({ instance, collapsedByDefault = true }: JobCar
           }
           collapsed={
             <CardContent>
-              <JobDetails instanceSummary={instance} />
+              <JobDetails instanceSummary={instance} poll={poll} />
             </CardContent>
           }
           collapsedByDefault={collapsedByDefault}

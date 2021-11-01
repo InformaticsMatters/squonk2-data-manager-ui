@@ -19,6 +19,7 @@ import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
 import { Labels } from '../../labels/Labels';
+import { NewLabelButton } from '../../labels/NewLabelButton';
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import type { TableDataset } from '../types';
 import { AttachDatasetListItem } from './ListItems/AttachDatasetListItem';
@@ -134,7 +135,11 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
           {selectedVersion !== undefined && (isEditor || isOwner) && (
             <>
               <Typography gutterBottom component="h4" variant="h4">
-                Labels
+                Labels{' '}
+                <NewLabelButton
+                  datasetId={dataset.dataset_id}
+                  datasetVersion={selectedVersion.version}
+                />
               </Typography>
               <Labels datasetId={dataset.dataset_id} datasetVersion={selectedVersion} />
             </>

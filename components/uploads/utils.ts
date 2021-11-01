@@ -1,4 +1,4 @@
-export const mutateAtPosition = <T extends unknown>(arr: T[], idx: number, val: T) => {
+export const mutateAtPosition = <T>(arr: T[], idx: number, val: T) => {
   const newArr = [...arr];
   newArr[idx] = val;
   return newArr;

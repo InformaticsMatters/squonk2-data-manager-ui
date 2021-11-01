@@ -138,6 +138,8 @@
     "context",
     "cypress",
     "gitignore",
-    "dataset-details"
+    "dataset-details",
+    "add-project",
+    "instance-page"
   ],
 }

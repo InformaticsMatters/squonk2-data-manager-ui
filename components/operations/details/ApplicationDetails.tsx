@@ -1,26 +1,30 @@
 import React from 'react';
 
 import type { InstanceSummary } from '@squonk/data-manager-client';
-import { useGetInstance } from '@squonk/data-manager-client/instance';
 
 import { Grid, ListItem, ListItemText } from '@material-ui/core';
 
 import { CenterLoader } from '../../CenterLoader';
 import { HorizontalList } from '../common/HorizontalList';
 import { TimeLine } from '../common/TimeLine';
+import { usePolledInstance } from './usePolledInstance';
 
 export interface ApplicationDetailsProps {
   /**
    * ID of the instance of the application
    */
   instanceId: InstanceSummary['id'];
+  /**
+   * Whether to poll the instance regularly for updates
+   */
+  poll?: boolean;
 }
 
 /**
  * Displays the details of an application based on the ID of an application instance
  */
-export const ApplicationDetails = ({ instanceId }: ApplicationDetailsProps) => {
-  const { data: instance } = useGetInstance(instanceId);
+export const ApplicationDetails = ({ instanceId, poll }: ApplicationDetailsProps) => {
+  const { data: instance } = usePolledInstance(instanceId, poll);
 
   if (instance === undefined) {
     return <CenterLoader />;

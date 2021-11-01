@@ -140,6 +140,7 @@
     "gitignore",
     "dataset-details",
     "add-project",
-    "instance-page"
+    "instance-page",
+    "project-details"
   ],
 }

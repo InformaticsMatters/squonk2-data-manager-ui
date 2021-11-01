@@ -1,18 +1,21 @@
 import React, { useCallback, useMemo } from 'react';
-import type { CellProps, Column, PluginHook } from 'react-table';
+import type { Cell, CellProps, Column, PluginHook } from 'react-table';
 
 import type { ProjectDetail } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
 import { Breadcrumbs, CircularProgress, Link, Typography, useTheme } from '@material-ui/core';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
+import fileSize from 'filesize';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
 import { DataTable } from '../DataTable';
+import { toLocalTimeString } from '../LocalTime';
 import type { FileActionsProps } from './FileActions';
+import { ProjectFileDetails } from './ProjectFileDetails';
 import type { TableDir, TableFile } from './types';
 import { useProjectFileRows } from './useProjectFileRows';
 import { isTableDir } from './utils';
@@ -72,7 +75,7 @@ export const ProjectTable = ({ currentProject }: ProjectTable) => {
               </Link>
             </NextLink>
           ) : (
-            <Typography variant="body1">{value}</Typography>
+            <ProjectFileDetails file={row} />
           );
         },
       },
@@ -92,6 +95,38 @@ export const ProjectTable = ({ currentProject }: ProjectTable) => {
             return 'editable';
           }
           return 'unmanaged';
+        },
+      },
+      {
+        id: 'fileSize',
+        Header: 'File size',
+        accessor: (row) => {
+          if (isTableDir(row)) {
+            return '-';
+          }
+          return row.stat.size;
+        },
+        Cell: ({ value }: { value: string | number }) => {
+          if (typeof value === 'string') {
+            return value;
+          }
+          return fileSize(value);
+        },
+      },
+      {
+        id: 'lastUpdated',
+        Header: 'Last updated',
+        accessor: (row) => {
+          if (isTableDir(row)) {
+            return '-';
+          }
+          return row.stat.modified;
+        },
+        Cell: ({ value, row }: Cell<TableFile | TableDir>) => {
+          if (isTableDir(row.original)) {
+            return value;
+          }
+          return toLocalTimeString(value, true, true);
         },
       },
     ],

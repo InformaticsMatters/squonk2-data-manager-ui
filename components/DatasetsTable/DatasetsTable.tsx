@@ -12,7 +12,7 @@ import { combineLabels } from '../../utils/labelUtils';
 import { Chips } from '../Chips';
 import { DataTable } from '../DataTable';
 import { LabelChip } from '../labels/LabelChip';
-import { DatasetDetails } from './DatasetDetails/DatasetDetails';
+import type { DatasetDetailsProps } from './DatasetDetails/DatasetDetails';
 import { EditorFilter } from './filters/EditorFilter';
 import { FileTypeFilter } from './filters/FileTypeFilter';
 import { LabelsFilter } from './filters/LabelsFilter';
@@ -23,6 +23,13 @@ import { useDatasetsFilter } from './useDatasetsFilter';
 
 const FileUpload = dynamic<Record<string, never>>(
   () => import('../FileUpload').then((mod) => mod.FileUpload),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
+
+const DatasetDetails = dynamic<DatasetDetailsProps>(
+  () => import('./DatasetDetails/DatasetDetails').then((mod) => mod.DatasetDetails),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
@@ -79,6 +86,10 @@ export const DatasetsTable = () => {
         accessor: (row) => row.versions.length,
         Header: 'Versions',
       },
+      {
+        accessor: (row) => row.numberOfProjects,
+        Header: 'Number of projects',
+      },
     ],
     [],
   );
@@ -94,8 +105,13 @@ export const DatasetsTable = () => {
     () =>
       data?.datasets.map((dataset) => {
         const fileName = dataset.versions[0].file_name; // TODO: should either use the newest version or wait for the API to change
+        const numberOfProjects = new Set(
+          dataset.versions.map((version) => version.projects.map((project) => project)).flat(),
+        ).size;
+
         return {
           fileName,
+          numberOfProjects,
           labels: combineLabels(dataset.versions),
           ...dataset,
         };

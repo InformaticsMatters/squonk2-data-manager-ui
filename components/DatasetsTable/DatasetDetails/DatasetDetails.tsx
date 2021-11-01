@@ -16,16 +16,20 @@ import {
   useTheme,
 } from '@material-ui/core';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
+import fileSize from 'filesize';
 
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
 import { Labels } from '../../labels/Labels';
 import { NewLabelButton } from '../../labels/NewLabelButton';
+import { toLocalTimeString } from '../../LocalTime';
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import type { TableDataset } from '../types';
 import { AttachDatasetListItem } from './ListItems/AttachDatasetListItem';
 import { DatasetSchemaListItem } from './ListItems/DatasetSchemaListItem';
 import { DeleteDatasetListItem } from './ListItems/DeleteDatasetListItem';
 import { NewVersionListItem } from './ListItems/NewVersionListItem';
+import { ProjectsListItem } from './ListItems/ProjectsListItem';
+import { VersionInfoListItem } from './ListItems/VersionInfoListItem';
 import { ManageDatasetEditors } from './ManageDatasetEditors';
 
 export interface DatasetDetailsProps {
@@ -144,6 +148,27 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset }) => {
               <Labels datasetId={dataset.dataset_id} datasetVersion={selectedVersion} />
             </>
           )}
+
+          <Box marginY={2}>
+            <Typography component="h4" variant="h4">
+              Version Information
+            </Typography>
+            <List>
+              <ProjectsListItem projectIds={selectedVersion?.projects} />
+              <VersionInfoListItem
+                name="Size"
+                value={selectedVersion?.size ? fileSize(selectedVersion.size) : undefined}
+              />
+              <VersionInfoListItem
+                name="Published date"
+                value={
+                  selectedVersion
+                    ? toLocalTimeString(selectedVersion.published, true, true)
+                    : undefined
+                }
+              />
+            </List>
+          </Box>
 
           {/* More complex actions requiring a new context */}
           <Box marginY={2}>

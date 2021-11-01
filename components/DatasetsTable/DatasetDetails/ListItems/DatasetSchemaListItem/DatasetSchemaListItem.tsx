@@ -4,15 +4,18 @@ import React from 'react';
 import { IconButton, ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
 import FindInPageRoundedIcon from '@material-ui/icons/FindInPageRounded';
 
-import { ModalWrapper } from '../../../../modals/ModalWrapper';
-import type { DatasetSchemaViewProps } from './DatasetSchemaView';
-import { DatasetSchemaView } from './DatasetSchemaView';
+import { DatasetSchemaViewModal } from './DatasetSchemaViewModal';
 
-/**
- * Props are the same as {@link DatasetSchemaView} but export a copy in case we need to make them
- * differ in the future.
- */
-export type DatasetSchemaListItemProps = DatasetSchemaViewProps;
+export type DatasetSchemaListItemProps = {
+  /**
+   * ID of the dataset to manage the schema of a dataset version
+   */
+  datasetId: string;
+  /**
+   * Version number of the version to manage
+   */
+  version: number;
+};
 
 /**
  * MuiListItem with an action that open a modal that lets the user manage the schema of a version
@@ -34,15 +37,12 @@ export const DatasetSchemaListItem = ({ datasetId, version }: DatasetSchemaListI
         </ListItemSecondaryAction>
       </ListItem>
 
-      <ModalWrapper
-        DialogProps={{ maxWidth: 'md', fullWidth: true }}
-        id={`${datasetId}-schema`}
+      <DatasetSchemaViewModal
+        datasetId={datasetId}
         open={open}
-        title="Edit Schema"
+        version={version}
         onClose={() => setOpen(false)}
-      >
-        <DatasetSchemaView datasetId={datasetId} version={version} />
-      </ModalWrapper>
+      />
     </>
   );
 };

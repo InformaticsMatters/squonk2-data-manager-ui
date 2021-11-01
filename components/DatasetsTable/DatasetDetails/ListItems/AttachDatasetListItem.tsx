@@ -6,6 +6,7 @@ import type {
   Error as DMError,
   FilePostResponse,
 } from '@squonk/data-manager-client';
+import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
 import { useAttachFile } from '@squonk/data-manager-client/file';
 import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-client/project';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
@@ -120,8 +121,14 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
               },
             });
 
-            // Ensure the views showing project files is updated to include the new addition
-            await queryClient.invalidateQueries(getGetProjectQueryKey(project));
+            await Promise.all([
+              // Ensure the views showing project files is updated to include the new addition
+              queryClient.invalidateQueries(getGetProjectQueryKey(project)),
+              // Ensure that the dataset's details display the project's name in the used in projects
+              // field
+              queryClient.invalidateQueries(getGetDatasetsQueryKey()),
+            ]);
+
             setOpen(false);
           } catch (err) {
             console.error(err);

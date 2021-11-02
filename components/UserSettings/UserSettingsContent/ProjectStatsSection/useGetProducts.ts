@@ -3,6 +3,10 @@ import { useMemo } from 'react';
 import { useAccountServerApi } from '../../../../hooks/useAccountServerApi';
 import type { GetProductResponse, ProjectSubscription, StorageSubscription } from './types';
 
+/**
+ * Fetches information about account's subscriptions and divides them into project and storage
+ * subscriptions.
+ */
 export const useGetProducts = () => {
   const { data, isLoading, isError, error } = useAccountServerApi<GetProductResponse>('product');
 

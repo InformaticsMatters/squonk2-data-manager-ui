@@ -2,6 +2,9 @@ import { List, Typography } from '@material-ui/core';
 
 import { DarkModeSwitchListItem } from './DarkModeSwitchListItem';
 
+/**
+ * Displays `User Settings` section in User Settings.
+ */
 export const UserSettingsSection = () => {
   return (
     <>

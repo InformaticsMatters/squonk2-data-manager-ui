@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import type { Cell, Column } from 'react-table';
 
+import { css } from '@emotion/react';
 import { Typography } from '@material-ui/core';
 
 import { DataTable } from '../../../DataTable';
@@ -9,10 +10,25 @@ import { StorageUsageChart } from './StorageUsageChart';
 import type { ProjectSubscription, StorageSubscription } from './types';
 import { useGetProducts } from './useGetProducts';
 
+/**
+ * Formats the tier string, e.g. GOLD -> Gold.
+ */
 const formatTierString = (original: string) => {
   return original.charAt(0).toUpperCase() + original.slice(1).toLowerCase();
 };
 
+/**
+ * Sizes for table columns in percentages. All column widths used in a table should add up to 100%.
+ */
+const columnSizes = {
+  name: 18,
+  usage: 24,
+  rest: 14.5,
+};
+
+/**
+ * Displays `Project stats` section in User Settings.
+ */
 export const ProjectStatsSection = () => {
   const { projectSubscriptions, storageSubscriptions, isLoading, isError, error } =
     useGetProducts();
@@ -29,14 +45,7 @@ export const ProjectStatsSection = () => {
         Header: 'Usage',
         defaultCanSort: false,
         Cell: ({ row }: Cell<ProjectSubscription>) => {
-          return (
-            <ProjectUsageChart
-              allowance={row.original.coins.allowance}
-              instancesUsed={row.original.instance.coins.used}
-              storagePredicted={row.original.coins.billing_prediction}
-              storageUsed={row.original.storage.coins.used}
-            />
-          );
+          return <ProjectUsageChart projectSubscription={row.original} />;
         },
       },
       {
@@ -45,9 +54,14 @@ export const ProjectStatsSection = () => {
         Header: 'Tier',
       },
       {
-        id: 'used',
-        accessor: (row) => row.instance.coins.used + row.storage.coins.used,
-        Header: 'Used',
+        id: 'instancesUsed',
+        accessor: (row) => row.instance.coins.used,
+        Header: 'Instances used',
+      },
+      {
+        id: 'storageUsed',
+        accessor: (row) => row.storage.coins.used,
+        Header: 'Storage used',
       },
       {
         id: 'allowance',
@@ -70,14 +84,12 @@ export const ProjectStatsSection = () => {
         Header: 'Usage',
         defaultCanSort: false,
         Cell: ({ row }: Cell<StorageSubscription>) => {
-          return (
-            <StorageUsageChart
-              allowance={row.original.coins.allowance}
-              storagePredicted={row.original.coins.billing_prediction}
-              storageUsed={row.original.storage.coins.used}
-            />
-          );
+          return <StorageUsageChart storageSubscription={row.original} />;
         },
+      },
+      {
+        id: 'for-layout-only',
+        defaultCanSort: false,
       },
       {
         id: 'used',
@@ -100,6 +112,23 @@ export const ProjectStatsSection = () => {
       </Typography>
       <DataTable
         columns={projectsColumns}
+        customTableProps={{
+          css: css`
+            table-layout: fixed;
+            & td {
+              word-break: break-word;
+            }
+            & th:nth-of-type(1) {
+              width: ${columnSizes.name}%;
+            }
+            & th:nth-of-type(2) {
+              width: ${columnSizes.usage}%;
+            }
+            & th:nth-of-type(3n) {
+              width: ${columnSizes.rest}%;
+            }
+          `,
+        }}
         data={projectSubscriptions}
         enableSearch={false}
         error={error}
@@ -110,6 +139,30 @@ export const ProjectStatsSection = () => {
       <br />
       <DataTable
         columns={storageColumns}
+        customTableProps={{
+          css: css`
+            table-layout: fixed;
+            & td {
+              word-break: break-word;
+            }
+            & th:nth-of-type(1) {
+              width: ${columnSizes.name}%;
+            }
+            & th:nth-of-type(2) {
+              width: ${columnSizes.usage}%;
+            }
+            & th:nth-of-type(3) {
+              width: ${columnSizes.rest * 2}%;
+              visibility: hidden;
+            }
+            & th:nth-of-type(4n) {
+              width: ${columnSizes.rest}%;
+            }
+            & td:nth-of-type(3) {
+              visibility: hidden;
+            }
+          `,
+        }}
         data={storageSubscriptions}
         enableSearch={false}
         error={error}

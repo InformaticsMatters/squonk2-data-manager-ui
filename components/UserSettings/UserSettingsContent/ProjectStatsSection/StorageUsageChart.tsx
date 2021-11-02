@@ -1,16 +1,21 @@
+import type { StorageSubscription } from './types';
 import { UsageChart } from './UsageChart';
 
 export interface StorageUsageChartProps {
-  storageUsed: number;
-  storagePredicted: number;
-  allowance: number;
+  /**
+   * Information about storage subscription.
+   */
+  storageSubscription: StorageSubscription;
 }
 
-export const StorageUsageChart = ({
-  storageUsed,
-  storagePredicted,
-  allowance,
-}: StorageUsageChartProps) => {
+/**
+ * Displays bar chart with storage subscription info.
+ */
+export const StorageUsageChart = ({ storageSubscription }: StorageUsageChartProps) => {
+  const allowance = storageSubscription.coins.allowance;
+  const storagePredicted = storageSubscription.coins.billing_prediction;
+  const storageUsed = storageSubscription.storage.coins.used;
+
   const available = Math.max(allowance - (storageUsed + storagePredicted), 0);
 
   const chartData = [

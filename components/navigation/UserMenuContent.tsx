@@ -5,7 +5,7 @@ import NextLink from 'next/link';
 
 import { useKeycloakUser } from '../../hooks/useKeycloakUser';
 import { CenterLoader } from '../CenterLoader';
-import { UserSettings } from '../UserSettings/UserSettings';
+import { UserSettings } from '../UserSettings';
 
 /**
  * Content of the user menu

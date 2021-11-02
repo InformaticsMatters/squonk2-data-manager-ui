@@ -1,18 +1,22 @@
+import type { ProjectSubscription } from './types';
 import { UsageChart } from './UsageChart';
 
 export interface ProjectUsageChartProps {
-  instancesUsed: number;
-  storageUsed: number;
-  storagePredicted: number;
-  allowance: number;
+  /**
+   * Information about project subscription.
+   */
+  projectSubscription: ProjectSubscription;
 }
 
-export const ProjectUsageChart = ({
-  instancesUsed,
-  storageUsed,
-  storagePredicted,
-  allowance,
-}: ProjectUsageChartProps) => {
+/**
+ * Displays bar chart with project subscription info.
+ */
+export const ProjectUsageChart = ({ projectSubscription }: ProjectUsageChartProps) => {
+  const allowance = projectSubscription.coins.allowance;
+  const instancesUsed = projectSubscription.instance.coins.used;
+  const storagePredicted = projectSubscription.coins.billing_prediction;
+  const storageUsed = projectSubscription.storage.coins.used;
+
   const available = Math.max(allowance - (storageUsed + storagePredicted + instancesUsed), 0);
 
   const chartData = [

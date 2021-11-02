@@ -1,13 +1,14 @@
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 import React from 'react';
-import type { CellProps, Column, IdType, PluginHook, TableRowProps } from 'react-table';
+import type { CellProps, Column, IdType, PluginHook, TableProps, TableRowProps } from 'react-table';
 import { useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
 
 import type { Error as DMError } from '@squonk/data-manager-client';
 
+import type { Interpolation } from '@emotion/react';
 import { css } from '@emotion/react';
-import type { TableCellProps } from '@material-ui/core';
+import type { TableCellProps, TableProps as MuiTableProps, Theme } from '@material-ui/core';
 import {
   Box,
   InputAdornment,
@@ -31,6 +32,7 @@ import { CenterLoader } from '../CenterLoader';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 
 type Selection<Data> = Record<IdType<Data>, boolean>;
+type CustomProps<Props> = Partial<Props & { css?: Interpolation<Theme> }>;
 
 export interface DataTableProps<Data extends Record<string, any>> {
   /**
@@ -81,10 +83,11 @@ export interface DataTableProps<Data extends Record<string, any>> {
    * Error to display. The error is displayed only if `isError` is true.
    */
   error?: void | AxiosError<DMError> | null;
+  customTableProps?: CustomProps<TableProps & MuiTableProps>;
   /**
    * Custom props applied to TableCell. Props can either be react-table props or MaterialUI props.
    */
-  customCellProps?: Partial<TableRowProps & TableCellProps>;
+  customCellProps?: CustomProps<TableRowProps & TableCellProps>;
 }
 
 // Use a *function* here to avoid the issues with generics in arrow functions
@@ -111,6 +114,7 @@ export function DataTable<Data extends Record<string, any>>({
   isLoading,
   isError,
   error,
+  customTableProps,
   customCellProps,
 }: DataTableProps<Data>) {
   const theme = useTheme();
@@ -213,7 +217,7 @@ export function DataTable<Data extends Record<string, any>>({
         </Toolbar>
       )}
 
-      <Table {...getTableProps()} size="small">
+      <Table {...getTableProps(customTableProps)} size="small">
         <TableHead>
           {headerGroups.map((headerGroup) => (
             // eslint-disable-next-line react/jsx-key

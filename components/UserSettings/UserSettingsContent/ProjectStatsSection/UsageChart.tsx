@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import type { UsageChartData } from './types';
 
 const Plot = dynamic(() => import('react-plotly.js'), {
-  ssr: false,
+  ssr: false, // Plotly only works when browser APIs are in scope
   loading: () => <CircularProgress size="1rem" />,
 });
 
@@ -71,7 +71,11 @@ export const UsageChart = ({ chartData }: UsageChartProps) => {
         </Box>
       }
     >
-      <Box alignItems="center" display="flex" height={24} width={200}>
+      <Box alignItems="center" display="flex" height={24} justifyContent="center" width="100%">
+        {/**
+         * `useResizeHandler` makes the chart responsive, see 'Note' in 'Basic Props' (API
+         * Reference) in react-plotly's README here https://github.com/plotly/react-plotly.js/
+         */}
         <Plot
           useResizeHandler
           config={{

@@ -2,6 +2,9 @@ import { ListItem, ListItemSecondaryAction, ListItemText, Switch } from '@materi
 
 import { useColorScheme } from '../../../../context/colorSchemeContext';
 
+/**
+ * Displays a button which controls the theme of the application.
+ */
 export const DarkModeSwitchListItem = () => {
   const [scheme, setScheme] = useColorScheme();
 

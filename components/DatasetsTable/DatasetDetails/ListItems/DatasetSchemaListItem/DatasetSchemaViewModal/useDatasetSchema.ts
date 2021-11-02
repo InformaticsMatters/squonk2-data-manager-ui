@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { DatasetAnnotationsPostResponse, Error as DMError } from '@squonk/data-manager-client';
+import type { Error as DMError } from '@squonk/data-manager-client';
 import {
   getGetSchemaQueryKey,
   useAddAnnotations,
@@ -31,14 +31,14 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
     error: updateMetadataError,
     reset: resetUpdateMetadata,
     mutateAsync: mutateUpdateMetadata,
-  } = useUpdateMetadata<void, AxiosError<DMError>>();
+  } = useUpdateMetadata<AxiosError<DMError>>();
 
   const {
     isError: isAddAnnotationsError,
     error: addAnnotationsError,
     reset: resetAddAnnotations,
     mutateAsync: mutateAddAnnotations,
-  } = useAddAnnotations<DatasetAnnotationsPostResponse, AxiosError<DMError>>();
+  } = useAddAnnotations<AxiosError<DMError>>();
 
   const [isSaving, setIsSaving] = useState(false);
 

@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type {
-  DatasetVersionSummary,
-  Error as DMError,
-  FilePostResponse,
-} from '@squonk/data-manager-client';
+import type { DatasetVersionSummary, Error as DMError } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
 import { useAttachFile } from '@squonk/data-manager-client/file';
 import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-client/project';
@@ -52,7 +48,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
   const { user, isLoading: isUserLoading } = useKeycloakUser();
 
   const queryClient = useQueryClient();
-  const { mutateAsync: attachFile, error } = useAttachFile<FilePostResponse, AxiosError<DMError>>();
+  const { mutateAsync: attachFile, error } = useAttachFile<AxiosError<DMError>>();
   const errorMessage = error?.response?.data.error;
 
   const { data: projectsData, isLoading: isProjectsLoading } = useGetProjects();

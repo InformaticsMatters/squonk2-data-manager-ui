@@ -1,9 +1,17 @@
 import { useState } from 'react';
 
 import { Link } from '@material-ui/core';
+import dynamic from 'next/dynamic';
 
+import { CenterLoader } from '../CenterLoader';
 import { ModalWrapper } from '../modals/ModalWrapper';
-import { UserSettingsContent } from './UserSettingsContent';
+
+const UserSettingsContent = dynamic<any>(
+  () => import('./UserSettingsContent').then((mod) => mod.UserSettingsContent),
+  {
+    loading: () => <CenterLoader />,
+  },
+);
 
 /**
  * A button styled as a link which displays User Settings on click.

@@ -48,3 +48,9 @@ export type ProjectSubscription = Subscription & {
 export type GetProductResponse = {
   products: (StorageSubscription | ProjectSubscription)[];
 };
+
+export type UsageChartData = {
+  type: string;
+  value: number;
+  color: string;
+};

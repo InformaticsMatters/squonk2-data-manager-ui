@@ -1,11 +1,17 @@
 import { useMemo } from 'react';
-import type { Column } from 'react-table';
+import type { Cell, Column } from 'react-table';
 
 import { Typography } from '@material-ui/core';
 
 import { DataTable } from '../../../DataTable';
+import { ProjectUsageChart } from './ProjectUsageChart';
+import { StorageUsageChart } from './StorageUsageChart';
 import type { ProjectSubscription, StorageSubscription } from './types';
 import { useGetProducts } from './useGetProducts';
+
+const formatTierString = (original: string) => {
+  return original.charAt(0).toUpperCase() + original.slice(1).toLowerCase();
+};
 
 export const ProjectStatsSection = () => {
   const { projectSubscriptions, storageSubscriptions, isLoading, isError, error } =
@@ -22,17 +28,31 @@ export const ProjectStatsSection = () => {
         id: 'usage',
         Header: 'Usage',
         defaultCanSort: false,
+        Cell: ({ row }: Cell<ProjectSubscription>) => {
+          return (
+            <ProjectUsageChart
+              allowance={row.original.coins.allowance}
+              instancesUsed={row.original.instance.coins.used}
+              storagePredicted={row.original.coins.billing_prediction}
+              storageUsed={row.original.storage.coins.used}
+            />
+          );
+        },
       },
       {
         id: 'tier',
-        accessor: 'flavour',
+        accessor: (row) => formatTierString(row.flavour),
         Header: 'Tier',
       },
       {
-        id: 'used/quota',
-        accessor: (row) =>
-          `${row.instance.coins.used + row.storage.coins.used} / ${row.coins.allowance}`,
-        Header: 'Used / Quota',
+        id: 'used',
+        accessor: (row) => row.instance.coins.used + row.storage.coins.used,
+        Header: 'Used',
+      },
+      {
+        id: 'allowance',
+        accessor: (row) => row.coins.allowance,
+        Header: 'Allowance',
       },
     ],
     [],
@@ -49,11 +69,25 @@ export const ProjectStatsSection = () => {
         id: 'usage',
         Header: 'Usage',
         defaultCanSort: false,
+        Cell: ({ row }: Cell<StorageSubscription>) => {
+          return (
+            <StorageUsageChart
+              allowance={row.original.coins.allowance}
+              storagePredicted={row.original.coins.billing_prediction}
+              storageUsed={row.original.storage.coins.used}
+            />
+          );
+        },
       },
       {
-        id: 'used/quota',
-        accessor: (row) => `${row.storage.coins.used} / ${row.coins.allowance}`,
-        Header: 'Used / Quota',
+        id: 'used',
+        accessor: (row) => row.storage.coins.used,
+        Header: 'Used',
+      },
+      {
+        id: 'allowance',
+        accessor: (row) => row.coins.allowance,
+        Header: 'Allowance',
       },
     ],
     [],

@@ -5,6 +5,9 @@ import { Link } from '@material-ui/core';
 import { ModalWrapper } from '../modals/ModalWrapper';
 import { UserSettingsContent } from './UserSettingsContent';
 
+/**
+ * A button styled as a link which displays User Settings on click.
+ */
 export const UserSettings = () => {
   const [open, setOpen] = useState(false);
 

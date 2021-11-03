@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import type { PlotParams } from 'react-plotly.js';
 
 import { css } from '@emotion/react';
 import { Box, CircularProgress, Tooltip, Typography } from '@material-ui/core';
@@ -6,7 +7,7 @@ import dynamic from 'next/dynamic';
 
 import type { UsageChartData } from './types';
 
-const Plot = dynamic(() => import('react-plotly.js'), {
+const Plot = dynamic<PlotParams>(() => import('../../../Plot').then((mod) => mod.Plot), {
   ssr: false, // Plotly only works when browser APIs are in scope
   loading: () => <CircularProgress size="1rem" />,
 });

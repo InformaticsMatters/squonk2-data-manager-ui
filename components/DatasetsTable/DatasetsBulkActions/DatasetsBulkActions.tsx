@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { Box, Typography } from '@material-ui/core';
 
 import type { TableDataset } from '..';
@@ -15,12 +16,24 @@ export interface DatasetsBulkActionsProps {
  * datasets versions (sub rows from DatasetsTable).
  */
 export const DatasetsBulkActions = ({ selectedDatasets }: DatasetsBulkActionsProps) => {
-  return selectedDatasets.length ? (
-    <Box alignItems="center" display="flex" flex={1} justifyContent="space-between">
+  return (
+    <Box
+      alignItems="center"
+      css={
+        !selectedDatasets.length
+          ? css`
+              visibility: hidden;
+            `
+          : undefined
+      }
+      display="flex"
+      flex={1}
+      justifyContent="space-between"
+    >
       <Typography>Selected: {selectedDatasets.length}</Typography>
       <Box display="flex">
         <BulkDeleteButton selectedDatasets={selectedDatasets} />
       </Box>
     </Box>
-  ) : null;
+  );
 };

@@ -181,14 +181,13 @@ export function DataTable<Data extends Record<string, any>>({
           {
             id: 'selection',
             defaultCanSort: false,
-            Header: ({ getToggleAllRowsSelectedProps }) => {
+            Header: ({ getToggleAllRowsSelectedProps, rows }) => {
               const { onChange, ...props } = getToggleAllRowsSelectedProps();
               return (
                 <IndeterminateCheckbox
                   {...props}
                   onChange={(event, checked) => {
-                    onSelection && tableData.forEach((row) => onSelection(row, checked));
-                    // onSelection && onSelection(row, checked);
+                    onSelection && rows.forEach((row) => onSelection(row.original, checked));
                     onChange && onChange(event);
                   }}
                 />

@@ -8,6 +8,12 @@ import { DeleteForever } from '@material-ui/icons';
 import { WarningDeleteButton } from '../../../WarningDeleteButton';
 import type { TableDataset } from '../..';
 import { useFilterDeletableDatasets } from './useFilterDeletableDatasets';
+import { useSortUndeletableDatasets } from './useSortUndeletableDatasets';
+
+const formatVersionsString = (datasetGroup: TableDataset[]) => {
+  const versionString = datasetGroup.length > 1 ? 'Versions' : 'Version';
+  return `${versionString} ${datasetGroup.map((dataset) => dataset.version).join(', ')}`;
+};
 
 export interface BulkDeleteButtonProps {
   /**
@@ -25,6 +31,7 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
   const { mutateAsync: deleteDataset } = useDeleteDataset();
 
   const { deletableDatasets, undeletableDatasets } = useFilterDeletableDatasets(selectedDatasets);
+  const sortedUndeletableDatasets = useSortUndeletableDatasets(undeletableDatasets);
 
   const deleteSelectedDatasets = async () => {
     const promises = deletableDatasets
@@ -49,7 +56,7 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
           <Typography>
             Are you sure? <b>This cannot be undone</b>.
           </Typography>
-          {!!undeletableDatasets.length && (
+          {!!sortedUndeletableDatasets.length && (
             <>
               <br />
               <Typography>
@@ -57,10 +64,12 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
                 delete them:
               </Typography>
               <List disablePadding>
-                {undeletableDatasets.map((dataset) => (
-                  <ListItem key={`${dataset.dataset_id}#${dataset.version}`}>
+                {sortedUndeletableDatasets.map((datasetGroup) => (
+                  <ListItem key={datasetGroup[0].dataset_id}>
                     <ListItemText
-                      primary={`${dataset.datasetSummary.versions[0].file_name} - Version: ${dataset.version}`}
+                      primary={`${
+                        datasetGroup[0].datasetSummary.versions[0].file_name
+                      } - ${formatVersionsString(datasetGroup)}`}
                     />
                   </ListItem>
                 ))}

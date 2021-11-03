@@ -1,11 +1,12 @@
-import type { StorageSubscription } from './types';
+import type { ProductDmStorage } from '@squonk/account-server-client';
+
 import { UsageChart } from './UsageChart';
 
 export interface StorageUsageChartProps {
   /**
    * Information about storage subscription.
    */
-  storageSubscription: StorageSubscription;
+  storageSubscription: ProductDmStorage;
 }
 
 /**

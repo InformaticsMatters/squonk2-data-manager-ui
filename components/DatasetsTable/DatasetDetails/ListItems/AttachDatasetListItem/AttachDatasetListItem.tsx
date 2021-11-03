@@ -17,8 +17,9 @@ import { Field } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-material-ui';
 import * as yup from 'yup';
 
-import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
-import { FormikModalWrapper } from '../../../modals/FormikModalWrapper';
+import { useKeycloakUser } from '../../../../../hooks/useKeycloakUser';
+import { FormikModalWrapper } from '../../../../modals/FormikModalWrapper';
+import { useGetAttachedProjectsNames } from './useGetAttachedProjectsNames';
 
 export interface AttachDatasetListItemProps {
   /**
@@ -43,6 +44,8 @@ interface FormState {
  * MuiListItem with a click action that opens a modal allowing a dataset to be attached to a project
  */
 export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListItemProps) => {
+  const { projects: projectIds } = version;
+
   const [open, setOpen] = useState(false);
 
   const { user, isLoading: isUserLoading } = useKeycloakUser();
@@ -67,6 +70,8 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
     isCompress: false,
   };
 
+  const projectNames = useGetAttachedProjectsNames(projectIds, projectsData?.projects);
+
   return (
     <>
       <ListItem
@@ -76,7 +81,17 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
       >
         <ListItemText
           primary="Attach Dataset to a Project"
-          secondary="Creates a file in the project linked to the selected version"
+          secondary={
+            <>
+              Creates a file in the project linked to the selected version
+              {!!projectNames.length && (
+                <>
+                  <br />
+                  Currently attached to: {projectNames.join(', ')}
+                </>
+              )}
+            </>
+          }
         />
         <ListItemSecondaryAction>
           <IconButton

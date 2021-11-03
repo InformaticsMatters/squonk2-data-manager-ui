@@ -1,11 +1,12 @@
-import type { ProjectSubscription } from './types';
+import type { ProductDmProjectTier } from '@squonk/account-server-client';
+
 import { UsageChart } from './UsageChart';
 
 export interface ProjectUsageChartProps {
   /**
    * Information about project subscription.
    */
-  projectSubscription: ProjectSubscription;
+  projectSubscription: ProductDmProjectTier;
 }
 
 /**

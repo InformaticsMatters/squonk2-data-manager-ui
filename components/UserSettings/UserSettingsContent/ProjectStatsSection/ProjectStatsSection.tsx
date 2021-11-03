@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
 import type { Cell, Column } from 'react-table';
 
+import type { ProductDmProjectTier, ProductDmStorage } from '@squonk/account-server-client';
+
 import { css } from '@emotion/react';
 import { Typography } from '@material-ui/core';
 
 import { DataTable } from '../../../DataTable';
 import { ProjectUsageChart } from './ProjectUsageChart';
 import { StorageUsageChart } from './StorageUsageChart';
-import type { ProjectSubscription, StorageSubscription } from './types';
-import { useGetProducts } from './useGetProducts';
+import { useProducts } from './useGetProducts';
 
 /**
  * Formats the tier string, e.g. GOLD -> Gold.
@@ -30,10 +31,9 @@ const columnSizes = {
  * Displays `Project stats` section in User Settings.
  */
 export const ProjectStatsSection = () => {
-  const { projectSubscriptions, storageSubscriptions, isLoading, isError, error } =
-    useGetProducts();
+  const { projectSubscriptions, storageSubscriptions, isLoading, isError, error } = useProducts();
 
-  const projectsColumns: Column<ProjectSubscription>[] = useMemo(
+  const projectsColumns: Column<ProductDmProjectTier>[] = useMemo(
     () => [
       {
         id: 'projectName',
@@ -44,7 +44,7 @@ export const ProjectStatsSection = () => {
         id: 'usage',
         Header: 'Usage',
         defaultCanSort: false,
-        Cell: ({ row }: Cell<ProjectSubscription>) => {
+        Cell: ({ row }: Cell<ProductDmProjectTier>) => {
           return <ProjectUsageChart projectSubscription={row.original} />;
         },
       },
@@ -72,7 +72,7 @@ export const ProjectStatsSection = () => {
     [],
   );
 
-  const storageColumns: Column<StorageSubscription>[] = useMemo(
+  const storageColumns: Column<ProductDmStorage>[] = useMemo(
     () => [
       {
         id: 'storageName',
@@ -83,7 +83,7 @@ export const ProjectStatsSection = () => {
         id: 'usage',
         Header: 'Usage',
         defaultCanSort: false,
-        Cell: ({ row }: Cell<StorageSubscription>) => {
+        Cell: ({ row }: Cell<ProductDmStorage>) => {
           return <StorageUsageChart storageSubscription={row.original} />;
         },
       },

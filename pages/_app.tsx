@@ -2,7 +2,8 @@ import React, { useRef } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Hydrate } from 'react-query/hydration';
 
-import { setBaseUrl } from '@squonk/data-manager-client';
+import { setBaseUrl as setASBaseUrl } from '@squonk/account-server-client';
+import { setBaseUrl as setDMBaseUrl } from '@squonk/data-manager-client';
 
 import { UserProvider } from '@auth0/nextjs-auth0';
 import type { AppProps } from 'next/app';
@@ -16,7 +17,8 @@ import { MDXComponentProvider } from '../context/MDXComponentProvider';
 import '../styles/globalStyles.scss';
 
 // ? Is this the right place to set this?
-setBaseUrl(process.env.NEXT_PUBLIC_BASE_PATH + '/api/dm-api');
+setDMBaseUrl(process.env.NEXT_PUBLIC_BASE_PATH + '/api/dm-api');
+setASBaseUrl('https://squonk.informaticsmatters.org/account-server-api');
 
 // Adjust template for material-ui given at
 // https://github.com/mui-org/material-ui/tree/master/examples/nextjs

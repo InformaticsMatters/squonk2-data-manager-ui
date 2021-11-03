@@ -1,18 +1,28 @@
 import { useMemo } from 'react';
 
-import { useAccountServerApi } from '../../../../hooks/useAccountServerApi';
-import type { GetProductResponse, ProjectSubscription, StorageSubscription } from './types';
+import type {
+  Error as ASError,
+  ProductDmProjectTier,
+  ProductDmStorage,
+  ProductGetResponse,
+} from '@squonk/account-server-client';
+import { useGetProducts } from '@squonk/account-server-client/product';
+
+import type { AxiosError } from 'axios';
 
 /**
  * Fetches information about account's subscriptions and divides them into project and storage
  * subscriptions.
  */
-export const useGetProducts = () => {
-  const { data, isLoading, isError, error } = useAccountServerApi<GetProductResponse>('product');
+export const useProducts = () => {
+  const { data, isLoading, isError, error } = useGetProducts<
+    ProductGetResponse,
+    AxiosError<ASError>
+  >();
 
   const { projectSubscriptions, storageSubscriptions } = useMemo(() => {
-    const projectSubscriptions: ProjectSubscription[] = [];
-    const storageSubscriptions: StorageSubscription[] = [];
+    const projectSubscriptions: ProductDmProjectTier[] = [];
+    const storageSubscriptions: ProductDmStorage[] = [];
 
     if (data) {
       data.products.forEach((product) => {

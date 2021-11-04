@@ -9,13 +9,14 @@ import {
 import { getGetUserAccountQueryKey } from '@squonk/data-manager-client/user';
 
 import { css } from '@emotion/react';
-import { Button, Grid, IconButton, Popover, Tooltip, useTheme } from '@material-ui/core';
+import { Button, Grid, IconButton, MenuItem, Popover, Tooltip, useTheme } from '@material-ui/core';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 import * as yup from 'yup';
 
+import { ORG_ID, PRODUCT_TIERS, UNIT_ID } from '../../utils/ASIdentities';
 import type { CommonProps } from './types';
 
 export type AddProjectProps = Pick<CommonProps, 'inverted'>;
@@ -57,7 +58,7 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
       >
         <Formik
           validateOnMount
-          initialValues={{ projectName: '' }}
+          initialValues={{ projectName: '', tierProductId: '' }}
           validationSchema={yup.object().shape({
             projectName: yup
               .string()
@@ -69,9 +70,17 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
                   name !== undefined && !projects?.map((project) => project.name).includes(name),
               )
               .min(2, 'The name is too short'),
+            tierProductId: yup.string().required('A tier must be selected'),
           })}
-          onSubmit={async ({ projectName }) => {
-            await createProject({ data: { name: projectName } });
+          onSubmit={async ({ projectName, tierProductId }) => {
+            await createProject({
+              data: {
+                name: projectName,
+                organisation_id: ORG_ID,
+                unit_id: UNIT_ID,
+                tier_product_id: tierProductId,
+              },
+            });
 
             popupState.close();
 
@@ -82,7 +91,7 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
           {({ submitForm, isSubmitting, isValid }) => (
             <Form>
               <Grid container spacing={2}>
-                <Grid item xs={10}>
+                <Grid item xs={5}>
                   <Field
                     autoFocus
                     fullWidth
@@ -90,6 +99,17 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
                     label="Project Name"
                     name="projectName"
                   />
+                </Grid>
+                <Grid item xs={5}>
+                  <Field fullWidth select component={TextField} label="Tier" name="tierProductId">
+                    {Object.entries(PRODUCT_TIERS).map(([key, value]) => {
+                      return (
+                        <MenuItem key={value} value={value}>
+                          {key}
+                        </MenuItem>
+                      );
+                    })}
+                  </Field>
                 </Grid>
                 <Grid item xs={2}>
                   <Button disabled={isSubmitting || !isValid} onClick={submitForm}>

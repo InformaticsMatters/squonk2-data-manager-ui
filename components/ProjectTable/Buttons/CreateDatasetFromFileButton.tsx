@@ -11,6 +11,7 @@ import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 
 import type { ProjectId } from '../../../hooks/currentProjectHooks';
 import { useMimeTypeLookup } from '../../../hooks/useMimeTypeLookup';
+import { ORG_ID, UNIT_ID } from '../../../utils/ASIdentities';
 import type { TableFile } from '../types';
 
 export interface CreateDatasetFromFileButtonProps {
@@ -61,6 +62,8 @@ export const CreateDatasetFromFileButton = ({
                 file_name: file.fileName,
                 path,
                 dataset_type: mimeType,
+                organisation_id: ORG_ID,
+                unit_id: UNIT_ID,
               },
             });
           }

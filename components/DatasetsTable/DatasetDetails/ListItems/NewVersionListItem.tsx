@@ -9,6 +9,7 @@ import { ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/co
 import { Typography } from '@material-ui/core';
 import BackupRoundedIcon from '@material-ui/icons/BackupRounded';
 
+import { ORG_ID, UNIT_ID } from '../../../../utils/ASIdentities';
 import { ModalWrapper } from '../../../modals/ModalWrapper';
 import { Dropzone } from '../../../uploads/Dropzone';
 import { FileTypeOptions } from '../../../uploads/FileTypeOptions';
@@ -70,6 +71,8 @@ export const NewVersionListItem = ({ dataset }: NewVersionListItemProps) => {
                 format_extra_variables: optionsFormData[parent.type]
                   ? JSON.stringify(optionsFormData[parent.type])
                   : undefined,
+                organisation_id: ORG_ID,
+                unit_id: UNIT_ID,
               },
               {
                 onUploadProgress: (progressEvent: ProgressEvent) => {

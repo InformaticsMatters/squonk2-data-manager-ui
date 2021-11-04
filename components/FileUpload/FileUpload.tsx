@@ -8,6 +8,7 @@ import { IconButton } from '@material-ui/core';
 import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
 import type { AxiosError } from 'axios';
 
+import { ORG_ID, UNIT_ID } from '../../utils/ASIdentities';
 import { ModalWrapper } from '../modals/ModalWrapper';
 import { FileTypeOptions } from '../uploads/FileTypeOptions';
 import type { FileTypeOptionsState, UploadableFile } from '../uploads/types';
@@ -39,6 +40,8 @@ export const FileUpload = () => {
             ? JSON.stringify(mimeTypeFormDatas[mimeType])
             : undefined,
           skip_molecule_load: false,
+          organisation_id: ORG_ID,
+          unit_id: UNIT_ID,
         };
 
         try {

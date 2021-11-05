@@ -1,4 +1,5 @@
 import { useApi } from '../../../../hooks/useApi';
+import { getQueryParams } from '../../../../utils/requestUtils';
 
 const getDecompressionType = (fileName: string) => {
   // Currently the proper compression is decided based on file extension
@@ -11,13 +12,11 @@ const getDecompressionType = (fileName: string) => {
   return undefined;
 };
 
-const getDecompressionQuery = (fileName: string) => {
-  const type = getDecompressionType(fileName);
-  return type ? `?decompress=${type}` : '';
-};
-
 export const useFileContents = (fileId: string, fileName: string) => {
-  // In case the file is compressed, get its compression format and send it with the request
-  const decompress = getDecompressionQuery(fileName);
-  return useApi<string>(`/file/${fileId}${decompress}`);
+  const params = {
+    // In case the file is compressed, get its compression format and send it with the request
+    decompress: getDecompressionType(fileName),
+    fileSizeLimit: 1000, // 1MB
+  };
+  return useApi<string>(`/file/${fileId}${getQueryParams(params)}`);
 };

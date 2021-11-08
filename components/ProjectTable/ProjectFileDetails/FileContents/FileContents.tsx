@@ -2,8 +2,8 @@ import { css } from '@emotion/react';
 import { Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
+import { useDownloadContents } from '../../../../hooks/useDownloadContents';
 import { CenterLoader } from '../../../CenterLoader';
-import { useFileContents } from './useFileContents';
 
 export interface FileContentsProps {
   /**
@@ -20,7 +20,7 @@ export interface FileContentsProps {
  * Displays file's contents.
  */
 export const FileContents = ({ fileId, fileName }: FileContentsProps) => {
-  const { data, isLoading, isError, error } = useFileContents(fileId, fileName);
+  const { data, isLoading, isError, error } = useDownloadContents(fileId, fileName);
 
   if (isLoading) {
     return <CenterLoader />;

@@ -34,6 +34,7 @@
     "@squonk/data-manager-client": "0.6.2-rc.5",
     "@squonk/mui-theme": "2.0.1",
     "@types/react-table": "7.7.7",
+    "@types/react-virtualized": "^9.21.14",
     "axios": "0.24.0",
     "dayjs": "^1.10.7",
     "filesize": "^8.0.6",
@@ -53,6 +54,7 @@
     "react-plotly.js": "^2.5.1",
     "react-query": "3.32.1",
     "react-table": "^7.7.0",
+    "react-virtualized": "^9.22.3",
     "use-immer": "^0.6.0",
     "uuid": "^8.3.2",
     "yup": "0.32.11"

@@ -6872,10 +6872,10 @@ please-upgrade-node@^3.2.0:
   dependencies:
     semver-compare "^1.0.0"
 
-plotly.js-basic-dist@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/plotly.js-basic-dist/-/plotly.js-basic-dist-2.6.0.tgz#3f697e65f1f152efc32e85718a7374bc57d23393"
-  integrity sha512-4KRk81fU7UXQ4Eq1XKuIa9Uahc/KCT5rOSsrAIOeVXnS1J+bSkowJ4FvRL7vT9MJVDr2z6KcemwAM+selnXEsQ==
+plotly.js-basic-dist@^2.6.2:
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/plotly.js-basic-dist/-/plotly.js-basic-dist-2.6.2.tgz#e2d7c0e3e32bbb6d9705b0dde3c5589d0bb6b839"
+  integrity sha512-m2KvI/s5Gc3hKkcQHxaztaFreNhX2ZMd4g+voNKAjLNwz3YDo2lV5io1XXuL5/DcsZ2zCMVQRhcOeUQQoeRsnw==
 
 popper.js@1.16.1-lts:
   version "1.16.1-lts"

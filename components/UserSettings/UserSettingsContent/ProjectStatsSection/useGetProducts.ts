@@ -6,19 +6,21 @@ import type {
   ProductDmStorage,
   ProductGetResponse,
 } from '@squonk/account-server-client';
-import { useGetProducts } from '@squonk/account-server-client/product';
+import { useGetProductsForUnit } from '@squonk/account-server-client/product';
 
 import type { AxiosError } from 'axios';
+
+import { ORG_ID, UNIT_ID } from '../../../../utils/ASIdentities';
 
 /**
  * Fetches information about account's subscriptions and divides them into project and storage
  * subscriptions.
  */
 export const useProducts = () => {
-  const { data, isLoading, isError, error } = useGetProducts<
+  const { data, isLoading, isError, error } = useGetProductsForUnit<
     ProductGetResponse,
     AxiosError<ASError>
-  >();
+  >(ORG_ID, UNIT_ID);
 
   const { projectSubscriptions, storageSubscriptions } = useMemo(() => {
     const projectSubscriptions: ProductDmProjectTier[] = [];

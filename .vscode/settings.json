@@ -142,6 +142,7 @@
     "add-project",
     "instance-page",
     "project-details",
-    "ui/user-settings"
+    "ui/user-settings",
+    "ui/plain-text-viewer"
   ],
 }

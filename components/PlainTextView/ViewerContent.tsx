@@ -6,6 +6,9 @@ import { AutoSizer } from 'react-virtualized';
 import { css } from '@emotion/react';
 import { Typography, useTheme } from '@material-ui/core';
 
+const ROW_HEIGHT = 18;
+const OVERSCAN = 2;
+
 export interface ViewerContentProps {
   lines: string[];
 }
@@ -21,6 +24,7 @@ export const ViewerContent = ({ lines }: ViewerContentProps) => {
 
   return (
     <div
+      // `overflow: auto` displays the scrollbars inside the container
       css={css`
         flex: 1 1 auto;
         overflow: auto;
@@ -39,10 +43,11 @@ export const ViewerContent = ({ lines }: ViewerContentProps) => {
           >
             <AutoSizer
               disableHeight
+              // By default this element has 0 width which results in the following flex div not
+              // being displayed
               css={css`
                 width: unset !important;
               `}
-              onResize={(t) => console.log(t)}
             >
               {({ width }) => (
                 <div
@@ -52,14 +57,18 @@ export const ViewerContent = ({ lines }: ViewerContentProps) => {
                   `}
                   ref={registerChild}
                 >
+                  {/** Line numbers column */}
                   <List
                     autoContainerWidth
                     autoHeight
+                    css={css`
+                      user-select: none;
+                    `}
                     height={height}
                     isScrolling={isScrolling}
-                    overscanRowCount={2}
+                    overscanRowCount={OVERSCAN}
                     rowCount={lines.length}
-                    rowHeight={18}
+                    rowHeight={ROW_HEIGHT}
                     rowRenderer={({ index, key, style }) => (
                       <Typography
                         align="right"
@@ -76,9 +85,11 @@ export const ViewerContent = ({ lines }: ViewerContentProps) => {
                     width={numberColumnWidth}
                     onScroll={onChildScroll}
                   />
+                  {/** Lines column */}
                   <List
                     autoContainerWidth
                     autoHeight
+                    // Overflow is visible in case a line is longer than the width of the container
                     css={css`
                       overflow: visible !important;
                       & > div {
@@ -87,15 +98,18 @@ export const ViewerContent = ({ lines }: ViewerContentProps) => {
                     `}
                     height={height}
                     isScrolling={isScrolling}
-                    overscanRowCount={2}
+                    overscanRowCount={OVERSCAN}
                     rowCount={lines.length}
-                    rowHeight={18}
+                    rowHeight={ROW_HEIGHT}
                     rowRenderer={({ index, key, style }) => (
                       <Typography component="pre" key={key} style={style}>
                         {lines[index]}
                       </Typography>
                     )}
                     scrollTop={scrollTop}
+                    // Account for the `gap` property. The `1` is subtracted as well since browsers
+                    // can round the number which results in the display of unnecessary scrollbar on
+                    // the X axis.
                     width={width - numberColumnWidth - theme.spacing(2) - 1}
                     onScroll={onChildScroll}
                   />

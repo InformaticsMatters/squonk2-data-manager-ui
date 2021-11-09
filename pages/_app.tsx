@@ -14,12 +14,13 @@ import { ThemeProviders } from '../components/ThemeProviders';
 import { ColorSchemeProvider } from '../context/colorSchemeContext';
 import { SelectedFilesProvider } from '../context/fileSelectionContext';
 import { MDXComponentProvider } from '../context/MDXComponentProvider';
+import { AS_API_URL, DM_API_URL } from '../utils/baseUrls';
 
 import '../styles/globalStyles.scss';
 
 // ? Is this the right place to set this?
-setDMBaseUrl(process.env.NEXT_PUBLIC_BASE_PATH + '/api/dm-api');
-setASBaseUrl('https://squonk.informaticsmatters.org/account-server-api');
+setDMBaseUrl(DM_API_URL);
+setASBaseUrl(AS_API_URL);
 
 enableMapSet();
 

@@ -25,8 +25,9 @@ export interface PlainTextViewProps {
    * Error to display. The error is displayed only if `isError` is true.
    */
   error?: void | AxiosError<DMError> | null;
-  fileSizeLimit?: string | string[];
-  decompress?: string | string[];
+  fileSizeLimit: boolean;
+  decompress: boolean;
+  downloadUrl: string;
 }
 
 export const PlainTextViewer = ({
@@ -36,6 +37,7 @@ export const PlainTextViewer = ({
   error,
   fileSizeLimit,
   decompress,
+  downloadUrl,
 }: PlainTextViewProps) => {
   const lines = data ? data.split(/\r?\n/) : [];
   const buffer = Buffer.from(data || '');
@@ -57,6 +59,7 @@ export const PlainTextViewer = ({
       <>
         <ViewerHeader
           decompress={decompress}
+          downloadUrl={downloadUrl}
           fileSizeLimit={fileSizeLimit}
           lines={lines}
           transferredSize={buffer.length}

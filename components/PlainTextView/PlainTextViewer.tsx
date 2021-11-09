@@ -1,26 +1,15 @@
 import { Fragment } from 'react';
-import type { GridCellRenderer } from 'react-virtualized';
-import { AutoSizer, Grid } from 'react-virtualized';
 
 import type { Error as DMError } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
-import {
-  Box,
-  Chip,
-  Divider,
-  IconButton,
-  Paper,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@material-ui/core';
-import { GetApp } from '@material-ui/icons';
+import { Box, Paper } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import type { AxiosError } from 'axios';
-import fileSize from 'filesize';
 
 import { CenterLoader } from '../CenterLoader';
+import { ViewerContent } from './ViewerContent';
+import { ViewerHeader } from './ViewerHeader';
 
 export interface PlainTextViewProps {
   data?: string;
@@ -48,34 +37,8 @@ export const PlainTextViewer = ({
   fileSizeLimit,
   decompress,
 }: PlainTextViewProps) => {
-  const theme = useTheme();
-
   const lines = data ? data.split(/\r?\n/) : [];
   const buffer = Buffer.from(data || '');
-
-  const cellRenderer: GridCellRenderer = ({ columnIndex, rowIndex, style, key }) => {
-    if (columnIndex === 0) {
-      return (
-        <Typography
-          align="right"
-          component="pre"
-          css={css`
-            padding-right: ${theme.spacing(2)}px;
-            color: ${theme.palette.grey[400]};
-          `}
-          key={key}
-          style={style}
-        >
-          {rowIndex + 1}
-        </Typography>
-      );
-    }
-    return (
-      <Typography component="pre" key={key} style={style}>
-        {lines[rowIndex]}
-      </Typography>
-    );
-  };
 
   const contents = () => {
     if (isLoading) {
@@ -92,92 +55,25 @@ export const PlainTextViewer = ({
 
     return (
       <>
-        <Box
-          css={css`
-            background: ${theme.palette.grey[200]};
-            box-shadow: ${theme.shadows[0]};
-          `}
-          display="flex"
-          paddingX={2}
-          paddingY={1}
-        >
-          <Box
-            alignItems="center"
-            css={css`
-              gap: ${theme.spacing()}px;
-            `}
-            display="flex"
-            flex="1 1 auto"
-          >
-            <Typography>
-              {lines.length} lines ({fileSize(buffer.length)})
-            </Typography>
-            {(decompress || fileSizeLimit) && <Divider flexItem orientation="vertical" />}
-            <Box
-              css={css`
-                gap: ${theme.spacing()}px;
-              `}
-              display="flex"
-            >
-              {decompress && <Chip label="Decompressed" size="small" variant="outlined" />}
-              {fileSizeLimit && <Chip label="Limited view" size="small" variant="outlined" />}
-            </Box>
-          </Box>
-          <Box flex="0 0 auto">
-            <Tooltip title="Download original">
-              <IconButton size="small">
-                <GetApp />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        </Box>
-        <Box flex="1 1 auto">
-          <AutoSizer>
-            {({ width, height }) => {
-              return (
-                <Grid
-                  autoContainerWidth
-                  cellRenderer={cellRenderer}
-                  columnCount={2}
-                  columnWidth={({ index }) => {
-                    const numberWidth = String(lines.length + 1).length * 10 + theme.spacing(2);
-                    if (index === 0) {
-                      return numberWidth;
-                    }
-                    return width - numberWidth - 2 * theme.spacing(2) - 1;
-                  }}
-                  css={css`
-                    overflow-x: auto !important;
-                    padding: 0 ${theme.spacing(2)}px;
-                    & pre {
-                      font-family: 'Fira Mono', monospace;
-                    }
-                    & > div {
-                      overflow: visible !important;
-                    }
-                  `}
-                  height={height}
-                  overscanRowCount={2}
-                  rowCount={lines.length}
-                  rowHeight={18}
-                  style={{ padding: `0 ${theme.spacing(2)}px` }}
-                  width={width}
-                />
-              );
-            }}
-          </AutoSizer>
-        </Box>
+        <ViewerHeader
+          decompress={decompress}
+          fileSizeLimit={fileSizeLimit}
+          lines={lines}
+          transferredSize={buffer.length}
+        />
+        <ViewerContent lines={lines} />
       </>
     );
   };
 
   return (
-    <Box alignItems="stretch" display="flex" minHeight="100vh" padding={3}>
+    <Box alignItems="stretch" display="flex" height="100vh" padding={3} width="100vw">
       <Paper
         css={css`
           flex-grow: 1;
           display: flex;
           flex-direction: column;
+          min-width: 0;
         `}
       >
         {contents()}

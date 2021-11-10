@@ -7,9 +7,9 @@ import { useAttachFile } from '@squonk/data-manager-client/file';
 import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-client/project';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
-import { ListItemSecondaryAction, ListItemText } from '@material-ui/core';
+import { ListItemText } from '@material-ui/core';
 import { ListItem } from '@material-ui/core';
-import { FormControl, FormGroup, IconButton, MenuItem } from '@material-ui/core';
+import { FormControl, FormGroup, MenuItem } from '@material-ui/core';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import { Alert } from '@material-ui/lab';
 import type { AxiosError } from 'axios';
@@ -93,15 +93,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
             </>
           }
         />
-        <ListItemSecondaryAction>
-          <IconButton
-            disabled={isProjectsLoading || isTypesLoading || isUserLoading}
-            edge="end"
-            onClick={() => setOpen(true)}
-          >
-            <AttachFileRoundedIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
+        <AttachFileRoundedIcon color="action" />
       </ListItem>
 
       <FormikModalWrapper

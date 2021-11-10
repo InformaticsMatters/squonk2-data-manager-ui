@@ -7,14 +7,16 @@ import { FileInfoChips } from './FileInfoChips';
 import { useGetFileInfoChips } from './useGetFileInfoChips';
 
 export interface ViewerHeaderProps {
+  title: string;
   lines: string[];
   transferredSize: number;
-  decompress: boolean;
-  fileSizeLimit: boolean;
+  decompress?: string;
+  fileSizeLimit?: number;
   downloadUrl: string;
 }
 
 export const ViewerHeader = ({
+  title,
   lines,
   transferredSize,
   decompress,
@@ -23,7 +25,7 @@ export const ViewerHeader = ({
 }: ViewerHeaderProps) => {
   const theme = useTheme();
 
-  const chips = useGetFileInfoChips(decompress, fileSizeLimit);
+  const chips = useGetFileInfoChips(transferredSize, fileSizeLimit, decompress);
 
   return (
     <Box
@@ -48,6 +50,14 @@ export const ViewerHeader = ({
         display="flex"
         flex="1 1 auto"
       >
+        <Typography
+          css={css`
+            word-break: break-all;
+          `}
+        >
+          {title}
+        </Typography>
+        <Divider flexItem orientation="vertical" />
         <Typography>
           {lines.length} lines ({fileSize(transferredSize)})
         </Typography>

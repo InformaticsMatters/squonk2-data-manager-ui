@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-import { Container, Link, Typography } from '@material-ui/core';
+import { Container, Link, List, Typography } from '@material-ui/core';
 
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import type { TableFile } from './../types';
-import { FileContents } from './FileContents';
+import { FilePlainTextViewerListItem } from './FilePlainTextViewerListItem';
 
 export interface ProjectFileDetailsProps {
   /**
@@ -37,10 +37,12 @@ export const ProjectFileDetails = ({ file }: ProjectFileDetailsProps) => {
           </Typography>
           {file.file_id ? (
             <>
-              <Typography gutterBottom component="h4" variant="h3">
-                File Contents
+              <Typography component="h4" variant="h4">
+                View File
               </Typography>
-              <FileContents fileId={file.file_id} fileName={file.fileName} />
+              <List>
+                <FilePlainTextViewerListItem fileId={file.file_id} />
+              </List>
             </>
           ) : (
             <Typography variant="body2">There are no actions available for this file.</Typography>

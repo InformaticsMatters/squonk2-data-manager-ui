@@ -1,18 +1,13 @@
-import { Fragment } from 'react';
-
-import type { Error as DMError } from '@squonk/data-manager-client';
-
 import { css } from '@emotion/react';
 import { Box, Paper } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import type { AxiosError } from 'axios';
 
 import { CenterLoader } from '../CenterLoader';
 import { ViewerContent } from './ViewerContent';
 import { ViewerHeader } from './ViewerHeader';
 
-export interface PlainTextViewProps {
-  data?: string;
+export interface PlainTextViewerProps {
+  content?: string;
   /**
    * If true, displays the loading icon.
    */
@@ -24,23 +19,25 @@ export interface PlainTextViewProps {
   /**
    * Error to display. The error is displayed only if `isError` is true.
    */
-  error?: void | AxiosError<DMError> | null;
-  fileSizeLimit: boolean;
-  decompress: boolean;
+  error?: Error | null;
+  title: string;
+  fileSizeLimit?: number;
+  decompress?: string;
   downloadUrl: string;
 }
 
 export const PlainTextViewer = ({
-  data,
-  isLoading,
-  isError,
-  error,
+  content,
+  title,
   fileSizeLimit,
   decompress,
   downloadUrl,
-}: PlainTextViewProps) => {
-  const lines = data ? data.split(/\r?\n/) : [];
-  const buffer = Buffer.from(data || '');
+  isLoading,
+  isError,
+  error,
+}: PlainTextViewerProps) => {
+  const lines = content ? content.split(/\r?\n/) : [];
+  const buffer = Buffer.from(content || '', 'ascii');
 
   const contents = () => {
     if (isLoading) {
@@ -52,7 +49,7 @@ export const PlainTextViewer = ({
     }
 
     if (isError) {
-      return <Alert severity="error">{error?.response?.data.error}</Alert>;
+      return <Alert severity="error">{error?.message}</Alert>;
     }
 
     return (
@@ -62,6 +59,7 @@ export const PlainTextViewer = ({
           downloadUrl={downloadUrl}
           fileSizeLimit={fileSizeLimit}
           lines={lines}
+          title={title}
           transferredSize={buffer.length}
         />
         <ViewerContent lines={lines} />

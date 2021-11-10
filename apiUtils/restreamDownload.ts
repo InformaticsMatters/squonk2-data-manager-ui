@@ -26,14 +26,17 @@ const createDecompressTransform = (decompress: string | string[]) => {
 };
 
 const createFixedSizeStreamTransform = (fileSizeLimit: string | string[]) => {
-  const fileSizeLimitNumber = fileSizeLimit as unknown as number;
-  const sizeInBytes = fileSizeLimitNumber * 1000;
-  // Validate that `sizeInBytes` is a safe integer - no other number rounds to it
-  if (isNaN(fileSizeLimitNumber) || !Number.isSafeInteger(sizeInBytes) || fileSizeLimitNumber < 1) {
+  const fileSizeLimitNumber = parseInt(fileSizeLimit as string);
+  // Validate that `fileSizeLimitNumber` is a safe integer - no other number rounds to it
+  if (
+    isNaN(fileSizeLimitNumber) ||
+    !Number.isSafeInteger(fileSizeLimitNumber) ||
+    fileSizeLimitNumber < 1
+  ) {
     throw new BadRequestError(`Invalid limit number '${fileSizeLimit}'`);
   }
 
-  return new FixedSizeStreamTransform(sizeInBytes);
+  return new FixedSizeStreamTransform(fileSizeLimitNumber);
 };
 
 const restreamFilePipeline = (

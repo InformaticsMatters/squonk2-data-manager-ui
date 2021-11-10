@@ -5,12 +5,20 @@ import { useRouter } from 'next/router';
 import { PlainTextViewer } from '../../components/PlainTextView';
 import { useApi } from '../../hooks/useApi';
 import { DM_API_URL } from '../../utils/baseUrls';
+import { getQueryParams } from '../../utils/requestUtils';
 
 const FilePlainTextViewer = () => {
-  const { asPath, query } = useRouter();
-  const { data, isLoading, isError, error } = useApi<string>(asPath);
+  const {
+    asPath,
+    query: { fileId },
+  } = useRouter();
 
-  const { decompress, fileSizeLimit, fileId } = query;
+  const decompress = 'unzip';
+  const fileSizeLimit = 1_000_000; // 1 MB
+
+  const { data, isLoading, isError, error } = useApi<string>(
+    `${asPath}${getQueryParams({ decompress, fileSizeLimit })}`,
+  );
 
   const downloadUrl = `${DM_API_URL}/file/${fileId}`;
 
@@ -20,13 +28,14 @@ const FilePlainTextViewer = () => {
         <title>File Plaintext Viewer</title>
       </Head>
       <PlainTextViewer
-        data={data}
-        decompress={Boolean(decompress)}
+        content={data}
+        decompress={decompress}
         downloadUrl={downloadUrl}
         error={error}
-        fileSizeLimit={Boolean(fileSizeLimit)}
+        fileSizeLimit={fileSizeLimit}
         isError={isError}
         isLoading={isLoading}
+        title=""
       />
     </>
   );

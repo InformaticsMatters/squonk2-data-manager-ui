@@ -25,6 +25,7 @@ import { toLocalTimeString } from '../../LocalTime';
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import type { TableDataset } from '../types';
 import { AttachDatasetListItem } from './ListItems/AttachDatasetListItem';
+import { DatasetPlainTextViewerListItem } from './ListItems/DatasetPlainTextViewerListItem';
 import { DatasetSchemaListItem } from './ListItems/DatasetSchemaListItem';
 import { DeleteDatasetListItem } from './ListItems/DeleteDatasetListItem';
 import { NewVersionListItem } from './ListItems/NewVersionListItem';
@@ -172,6 +173,18 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({
                     ? toLocalTimeString(selectedVersion.published, true, true)
                     : undefined
                 }
+              />
+            </List>
+          </Box>
+
+          <Box marginY={2}>
+            <Typography component="h4" variant="h4">
+              View Version
+            </Typography>
+            <List>
+              <DatasetPlainTextViewerListItem
+                datasetId={dataset.dataset_id}
+                version={selectedVersionNumber}
               />
             </List>
           </Box>

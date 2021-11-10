@@ -1,12 +1,17 @@
 import { ListItem, ListItemText } from '@material-ui/core';
 import { Description } from '@material-ui/icons';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 
 export interface FilePlainTextViewerListItemProps {
   fileId: string;
 }
 
 export const FilePlainTextViewerListItem = ({ fileId }: FilePlainTextViewerListItemProps) => {
+  const {
+    query: { project, path },
+  } = useRouter();
+
   return (
     <NextLink
       passHref
@@ -14,6 +19,8 @@ export const FilePlainTextViewerListItem = ({ fileId }: FilePlainTextViewerListI
         pathname: '/file/[fileId]',
         query: {
           fileId,
+          project,
+          path,
         },
       }}
     >

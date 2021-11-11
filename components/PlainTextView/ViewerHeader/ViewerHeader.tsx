@@ -51,11 +51,12 @@ export const ViewerHeader = ({
         flex="1 1 auto"
       >
         <Typography
+          component="h1"
           css={css`
             word-break: break-all;
           `}
         >
-          {title}
+          <b>{title}</b>
         </Typography>
         <Divider flexItem orientation="vertical" />
         <Typography>
@@ -71,7 +72,7 @@ export const ViewerHeader = ({
       </Box>
       <Box flex="0 0 auto">
         <Tooltip title="Download original file">
-          <IconButton download href={downloadUrl} size="small">
+          <IconButton download href={downloadUrl}>
             <GetApp />
           </IconButton>
         </Tooltip>

@@ -4,9 +4,15 @@ import { Box, Chip, Tooltip, useTheme } from '@material-ui/core';
 import type { FileInfoChip } from './types';
 
 export interface FileInfoChipsProps {
+  /**
+   * Chip data to be displayed.
+   */
   chips: FileInfoChip[];
 }
 
+/**
+ * A container which renders information about a displayed content in the form of Chips.
+ */
 export const FileInfoChips = ({ chips }: FileInfoChipsProps) => {
   const theme = useTheme();
 

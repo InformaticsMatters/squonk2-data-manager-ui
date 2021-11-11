@@ -6,14 +6,29 @@ import { AutoSizer } from 'react-virtualized';
 import { css } from '@emotion/react';
 import { Typography, useTheme } from '@material-ui/core';
 
+/**
+ * Height of a row in pixels.
+ */
 const ROW_HEIGHT = 18;
+/**
+ * Number of rows which are render above and below the currently displayed content. Prevents
+ * flickering.
+ */
 const OVERSCAN = 2;
 
-export interface ViewerContentProps {
+export interface PlaintextViewerContentProps {
+  /**
+   * Lines to be displayed.
+   */
   lines: string[];
 }
 
-export const ViewerContent = ({ lines }: ViewerContentProps) => {
+/**
+ * Displays the lines of a content with a line number per line. The lines are virtualized for
+ * performance reasons. The lines and the line numbers are in two separate columns, which prevents
+ * text selection of the line numbers when highlighting the content of the lines.
+ */
+export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) => {
   const theme = useTheme();
 
   const [scrollElement, setScrollElement] = useState<Element | null>(null);
@@ -34,6 +49,9 @@ export const ViewerContent = ({ lines }: ViewerContentProps) => {
       `}
       ref={setScrollElement}
     >
+      {/** One WindowScroller for both of the columns. Use `window` until `ref` in the previous
+       * div element resolves.
+       */}
       <WindowScroller scrollElement={scrollElement || window}>
         {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
           <div

@@ -6,7 +6,7 @@ import type { AxiosError } from 'axios';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import { PlainTextViewer } from '../../components/PlainTextView';
+import { PlaintextViewer } from '../../components/PlaintextViewer';
 import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
 import { useApi } from '../../hooks/useApi';
 import { DM_API_URL } from '../../utils/baseUrls';
@@ -38,6 +38,15 @@ const selectProjectVersion = (
   return { file, isSelectError: false };
 };
 
+/**
+ * Displays plaintext viewer for a provided project file. The page is statically compiled, though
+ * the content is populated in client. Firstly it parses information from provided `params`, then
+ * fetches information about the project and finds the requested file. Finally it fetches a
+ * limited amount of the file's content, which is then displayed. The helper function (the one
+ * responsible selecting the file) is written in a declarative way. While the whole functionality
+ * can be written imperatively using the `useEffect` hook, this should allows us easier potential
+ * refactoring in the future.
+ */
 const FilePlainTextViewer = () => {
   const {
     query: { project: projectId, fileId },
@@ -83,7 +92,7 @@ const FilePlainTextViewer = () => {
       <Head>
         <title>File Plaintext Viewer</title>
       </Head>
-      <PlainTextViewer
+      <PlaintextViewer
         content={fileContents}
         decompress={decompress}
         downloadUrl={downloadUrl}

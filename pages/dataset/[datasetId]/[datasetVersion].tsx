@@ -10,7 +10,7 @@ import type { AxiosError } from 'axios';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import { PlainTextViewer } from '../../../components/PlainTextView';
+import { PlaintextViewer } from '../../../components/PlaintextViewer';
 import { useApi } from '../../../hooks/useApi';
 import { DM_API_URL } from '../../../utils/baseUrls';
 import { getQueryParams } from '../../../utils/requestUtils';
@@ -39,14 +39,15 @@ const parseDatasetVersion = (datasetVersion?: string | string[]): ParseDatasetVe
 };
 
 const selectDatasetVersion = (
-  datasetVersions?: DatasetDetail,
+  datasetDetail?: DatasetDetail,
   datasetVersion?: number,
 ): SelectDatasetVersionResult => {
-  if (!datasetVersions) {
+  // If `datasetDetail` is not provided, don't return a version, nor an error
+  if (!datasetDetail) {
     return { isSelectError: false };
   }
 
-  const version = datasetVersions.versions.find((version) => version.version === datasetVersion);
+  const version = datasetDetail.versions.find((version) => version.version === datasetVersion);
 
   if (!version) {
     return {
@@ -57,28 +58,37 @@ const selectDatasetVersion = (
   return { version, isSelectError: false };
 };
 
+/**
+ * Displays plaintext viewer for a provided dataset version. The page is statically compiled, though
+ * the content is populated in client. Firstly it parses information from provided `params`, then
+ * fetches information about the dataset and finds the requested version. Finally it fetches a
+ * limited amount of the version's content, which is then displayed. The helper functions (the ones
+ * responsible for parsing `params` and selecting the version) are written in a declarative way.
+ * While the whole functionality can be written imperatively using the `useEffect` hook, this should
+ * allows us easier potential refactoring in the future.
+ */
 const DatasetVersionPlainTextViewer = () => {
-  const { asPath, query } = useRouter();
+  const { query } = useRouter();
   const { datasetId, datasetVersion } = query;
 
   const { datasetVersionNumber, isParseError, parseError } = parseDatasetVersion(datasetVersion);
 
   const {
-    data: datasetVersions,
-    isLoading: isVersionsLoading,
-    isError: isVersionsError,
-    error: versionsAxiosError,
+    data: datasetDetail,
+    isLoading: isDatasetDetailLoading,
+    isError: isDatasetDetailError,
+    error: datasetDetailAxiosError,
   } = useGetVersions<DatasetDetail, AxiosError<DMError>>(datasetId as string, undefined, {
     query: { enabled: !isParseError },
   });
-  const versionsError = versionsAxiosError && new Error(versionsAxiosError.response?.data.error);
+  const datasetDetailError =
+    datasetDetailAxiosError && new Error(datasetDetailAxiosError.response?.data.error);
 
   const { version, isSelectError, selectError } = selectDatasetVersion(
-    datasetVersions,
+    datasetDetail,
     datasetVersionNumber,
   );
 
-  //const decompress = version && getDecompressionType(version.source_ref);
   const decompress = 'unzip';
   const fileSizeLimit = 1_000_000; // 1 MB
 
@@ -87,14 +97,18 @@ const DatasetVersionPlainTextViewer = () => {
     isLoading: isContentsLoading,
     isError: isContentsError,
     error: contentsAxiosError,
-  } = useApi<string>(`${asPath}${getQueryParams({ decompress, fileSizeLimit })}`, undefined, {
-    enabled: Boolean(version),
-  });
+  } = useApi<string>(
+    `/dataset/${datasetId}/${datasetVersion}/${getQueryParams({ decompress, fileSizeLimit })}`,
+    undefined,
+    {
+      enabled: Boolean(version),
+    },
+  );
   const contentsError = contentsAxiosError && new Error(contentsAxiosError.response?.data.error);
 
-  const isLoading = isVersionsLoading || isContentsLoading;
-  const isError = isParseError || isVersionsError || isSelectError || isContentsError;
-  const error = parseError || versionsError || selectError || contentsError;
+  const isLoading = isDatasetDetailLoading || isContentsLoading;
+  const isError = isParseError || isDatasetDetailError || isSelectError || isContentsError;
+  const error = parseError || datasetDetailError || selectError || contentsError;
 
   const downloadUrl = `${DM_API_URL}/dataset/${datasetId}/${datasetVersion}`;
 
@@ -103,7 +117,7 @@ const DatasetVersionPlainTextViewer = () => {
       <Head>
         <title>Dataset Plaintext Viewer</title>
       </Head>
-      <PlainTextViewer
+      <PlaintextViewer
         content={fileContents}
         decompress={decompress}
         downloadUrl={downloadUrl}

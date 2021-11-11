@@ -8733,10 +8733,10 @@ write-file-atomic@^3.0.0:
     signal-exit "^3.0.2"
     typedarray-to-buffer "^3.1.5"
 
-xdm@3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/xdm/-/xdm-3.2.0.tgz#8dabbdb9843222505bb1c5ebf3d0d5ba6e552f05"
-  integrity sha512-piWNFgqE3JCzex1QzBWszyLZhFKLQtmXSw9JXlJOmh6REMTwOz0wzDpKwvH1L4HieM7HekkQCVfcNR0ZyZ4XiQ==
+xdm@3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/xdm/-/xdm-3.3.0.tgz#6080ac156460b1dc6dcbc0b68ef3fdedd6ff7b8b"
+  integrity sha512-h8n2cHkwKX9Ewjow3hsqm7uaXq0qFjRW27ls/kQHRtT6pSesk5PgQcLnCD/VgW4UbLLkXzKu99NUXg75kw50dg==
   dependencies:
     "@rollup/pluginutils" "^4.0.0"
     "@types/estree-jsx" "^0.0.1"

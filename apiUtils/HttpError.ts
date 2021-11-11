@@ -21,4 +21,3 @@ const createErrorFactory = (status: number) => {
 };
 
 export const BadRequestError = createErrorFactory(400);
-export const InternalServerError = createErrorFactory(500);

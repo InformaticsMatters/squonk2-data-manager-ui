@@ -11,6 +11,7 @@ import { HttpError } from './HttpError';
 export const handleApiError = (res: NextApiResponse, error: unknown) => {
   if (error instanceof HttpError) {
     if (error.origin) {
+      // Log the error message and the original error (if provided)
       console.error(error.message);
       console.error(error.origin);
     } else {
@@ -26,5 +27,6 @@ export const handleApiError = (res: NextApiResponse, error: unknown) => {
     return res.status(500).json({ error: error.message });
   }
 
+  // Catch blocks can catch anything thrown, not only instances of the Error class
   return res.status(500).json({ error: String(error) });
 };

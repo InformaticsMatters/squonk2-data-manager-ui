@@ -49,7 +49,7 @@ export const PlainTextViewer = ({
     }
 
     if (isError) {
-      return <Alert severity="error">{error?.message}</Alert>;
+      return <Alert severity="error">{error?.message || 'Failed to view the contents'}</Alert>;
     }
 
     return (

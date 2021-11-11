@@ -10,6 +10,7 @@ import { PlainTextViewer } from '../../components/PlainTextView';
 import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
 import { useApi } from '../../hooks/useApi';
 import { DM_API_URL } from '../../utils/baseUrls';
+import { getDecompressionType } from '../../utils/fileUtils';
 import { getQueryParams } from '../../utils/requestUtils';
 
 type SelectDatasetVersionResult = {
@@ -58,7 +59,7 @@ const FilePlainTextViewer = () => {
 
   const { file, isSelectError, selectError } = selectProjectVersion(files, fileId as string);
 
-  const decompress = 'unzip';
+  const decompress = file && getDecompressionType(file.file_name);
   const fileSizeLimit = 1_000_000; // 1 MB
 
   const {

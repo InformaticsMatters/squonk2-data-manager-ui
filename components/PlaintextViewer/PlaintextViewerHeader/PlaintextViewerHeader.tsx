@@ -6,23 +6,44 @@ import fileSize from 'filesize';
 import { FileInfoChips } from './FileInfoChips';
 import { useGetFileInfoChips } from './useGetFileInfoChips';
 
-export interface ViewerHeaderProps {
+export interface PlaintextViewerHeaderProps {
+  /**
+   * Title for the viewer, displayed in bold.
+   */
   title: string;
-  lines: string[];
+  /**
+   * Number of lines of a displayed content.
+   */
+  numberOfLines: number;
+  /**
+   * Transferred size of the displayed content in bytes.
+   */
   transferredSize: number;
+  /**
+   * Decompression method used to decompress the displayed content,
+   */
   decompress?: string;
+  /**
+   * Maximum size in bytes of the displayed content.
+   */
   fileSizeLimit?: number;
+  /**
+   * URL where to download the content's original file.
+   */
   downloadUrl: string;
 }
 
-export const ViewerHeader = ({
+/**
+ * Displays a header bar for `PlaintextViewer`.
+ */
+export const PlaintextViewerHeader = ({
   title,
-  lines,
+  numberOfLines,
   transferredSize,
   decompress,
   fileSizeLimit,
   downloadUrl,
-}: ViewerHeaderProps) => {
+}: PlaintextViewerHeaderProps) => {
   const theme = useTheme();
 
   const chips = useGetFileInfoChips(transferredSize, fileSizeLimit, decompress);
@@ -60,7 +81,7 @@ export const ViewerHeader = ({
         </Typography>
         <Divider flexItem orientation="vertical" />
         <Typography>
-          {lines.length} lines ({fileSize(transferredSize)})
+          {numberOfLines} lines ({fileSize(transferredSize)})
         </Typography>
         {/** If there are any chips to be displayed, display a separator in front of them */}
         {Boolean(chips.length) && (

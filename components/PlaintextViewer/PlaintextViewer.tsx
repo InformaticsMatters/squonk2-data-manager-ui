@@ -3,10 +3,13 @@ import { Box, Paper } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
 import { CenterLoader } from '../CenterLoader';
-import { ViewerContent } from './ViewerContent';
-import { ViewerHeader } from './ViewerHeader';
+import { PlaintextViewerContent } from './PlaintextViewerContent';
+import { PlaintextViewerHeader } from './PlaintextViewerHeader';
 
-export interface PlainTextViewerProps {
+export interface PlaintextViewerProps {
+  /**
+   * Contents of a file to be displayed.
+   */
   content?: string;
   /**
    * If true, displays the loading icon.
@@ -20,13 +23,29 @@ export interface PlainTextViewerProps {
    * Error to display. The error is displayed only if `isError` is true.
    */
   error?: Error | null;
+  /**
+   * Title for the viewer, which is displayed in the header in bold.
+   */
   title: string;
+  /**
+   * If provided, it means that only a fixed size part of the file was requested.
+   */
   fileSizeLimit?: number;
+  /**
+   * If provided, it means that the contents of the file had to be decompressed.
+   */
   decompress?: string;
+  /**
+   * URL where to download the original file.
+   */
   downloadUrl: string;
 }
 
-export const PlainTextViewer = ({
+/**
+ * Component which displays contents of a file. The contents are provided as string, which is then
+ * parsed into multiple lines and displayed.
+ */
+export const PlaintextViewer = ({
   content,
   title,
   fileSizeLimit,
@@ -35,9 +54,11 @@ export const PlainTextViewer = ({
   isLoading,
   isError,
   error,
-}: PlainTextViewerProps) => {
+}: PlaintextViewerProps) => {
   const lines = content ? content.split(/\r?\n/) : [];
-  const buffer = Buffer.from(content || '', 'ascii');
+  // By default, utf8 is assumed, used to determine whether or not the whole contents of the file
+  // was fetched
+  const buffer = Buffer.from(content || '');
 
   const contents = () => {
     if (isLoading) {
@@ -54,15 +75,15 @@ export const PlainTextViewer = ({
 
     return (
       <>
-        <ViewerHeader
+        <PlaintextViewerHeader
           decompress={decompress}
           downloadUrl={downloadUrl}
           fileSizeLimit={fileSizeLimit}
-          lines={lines}
+          numberOfLines={lines.length}
           title={title}
           transferredSize={buffer.length}
         />
-        <ViewerContent lines={lines} />
+        <PlaintextViewerContent lines={lines} />
       </>
     );
   };

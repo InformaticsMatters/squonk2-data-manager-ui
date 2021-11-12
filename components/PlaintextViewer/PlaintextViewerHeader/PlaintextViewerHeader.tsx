@@ -1,8 +1,8 @@
 import { css } from '@emotion/react';
-import { Box, Divider, IconButton, Tooltip, Typography, useTheme } from '@material-ui/core';
-import { GetApp } from '@material-ui/icons';
+import { Box, Divider, Typography, useTheme } from '@material-ui/core';
 import fileSize from 'filesize';
 
+import { DownloadButton } from '../../DownloadButton';
 import { FileInfoChips } from './FileInfoChips';
 import { useGetFileInfoChips } from './useGetFileInfoChips';
 
@@ -92,11 +92,7 @@ export const PlaintextViewerHeader = ({
         )}
       </Box>
       <Box flex="0 0 auto">
-        <Tooltip title="Download original file">
-          <IconButton download href={downloadUrl}>
-            <GetApp />
-          </IconButton>
-        </Tooltip>
+        <DownloadButton href={downloadUrl} tooltip="Download original file" />
       </Box>
     </Box>
   );

@@ -58,7 +58,7 @@ export const DatasetsTable = () => {
           return (
             <DatasetDetails
               dataset={row.original.datasetSummary}
-              datasetName={row.original.fileName}
+              datasetName={row.original.datasetSummary.versions[0].file_name}
               version={row.original.datasetVersion}
             />
           );

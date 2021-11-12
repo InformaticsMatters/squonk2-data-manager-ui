@@ -58,6 +58,11 @@ const selectDatasetVersion = (
   return { version, isSelectError: false };
 };
 
+// Datasets are always gziped as of now
+const DECOMPRESS = 'unzip';
+// 100 kB
+const FILE_LIMIT_SIZE = 100_000;
+
 /**
  * Displays plaintext viewer for a provided dataset version. The page is statically compiled, though
  * the content is populated in client. Firstly it parses information from provided `params`, then
@@ -89,8 +94,8 @@ const DatasetVersionPlainTextViewer = () => {
     datasetVersionNumber,
   );
 
-  const decompress = 'unzip';
-  const fileSizeLimit = 1_000_000; // 1 MB
+  const decompress = DECOMPRESS;
+  const fileSizeLimit = FILE_LIMIT_SIZE;
 
   const {
     data: fileContents,

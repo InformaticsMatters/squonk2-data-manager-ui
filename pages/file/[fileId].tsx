@@ -38,6 +38,9 @@ const selectProjectVersion = (
   return { file, isSelectError: false };
 };
 
+// 100 kB
+const FILE_LIMIT_SIZE = 100_000;
+
 /**
  * Displays plaintext viewer for a provided project file. The page is statically compiled, though
  * the content is populated in client. Firstly it parses information from provided `params`, then
@@ -69,7 +72,7 @@ const FilePlainTextViewer = () => {
   const { file, isSelectError, selectError } = selectProjectVersion(files, fileId as string);
 
   const decompress = file && getDecompressionType(file.file_name);
-  const fileSizeLimit = 1_000_000; // 1 MB
+  const fileSizeLimit = FILE_LIMIT_SIZE;
 
   const {
     data: fileContents,

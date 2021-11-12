@@ -4,10 +4,10 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 export interface FilePlainTextViewerListItemProps {
-  fileId: string;
+  fileName: string;
 }
 
-export const FilePlainTextViewerListItem = ({ fileId }: FilePlainTextViewerListItemProps) => {
+export const FilePlainTextViewerListItem = ({ fileName }: FilePlainTextViewerListItemProps) => {
   const {
     query: { project, path },
   } = useRouter();
@@ -16,10 +16,10 @@ export const FilePlainTextViewerListItem = ({ fileId }: FilePlainTextViewerListI
     <NextLink
       passHref
       href={{
-        pathname: '/file/[fileId]',
+        pathname: '/project/[projectId]/file',
         query: {
-          fileId,
-          project,
+          projectId: project,
+          file: fileName,
           path,
         },
       }}

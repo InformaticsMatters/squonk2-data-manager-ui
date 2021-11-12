@@ -1,15 +1,16 @@
 import { List } from '@material-ui/core';
 
+import type { TableFile } from '../../types';
 import { FilePlainTextViewerListItem } from './FilePlainTextViewerListItem';
 
 export interface ProjectViewSectionProps {
-  fileId: string;
+  file: TableFile;
 }
 
-export const ProjectViewSection = ({ fileId }: ProjectViewSectionProps) => {
+export const ProjectViewSection = ({ file }: ProjectViewSectionProps) => {
   return (
     <List>
-      <FilePlainTextViewerListItem fileId={fileId} />
+      <FilePlainTextViewerListItem fileName={file.fileName} />
     </List>
   );
 };

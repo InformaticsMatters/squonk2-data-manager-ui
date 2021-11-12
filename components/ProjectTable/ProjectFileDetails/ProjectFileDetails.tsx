@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Container, Link, Typography } from '@material-ui/core';
+import { Container, Link } from '@material-ui/core';
 
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import { PageSection } from './../../PageSection';
@@ -34,13 +34,9 @@ export const ProjectFileDetails = ({ file }: ProjectFileDetailsProps) => {
       >
         <Container maxWidth="md">
           <PageSection level={3} title="Project File Actions">
-            {file.file_id ? (
-              <PageSection title="View File">
-                <ProjectViewSection fileId={file.file_id} />
-              </PageSection>
-            ) : (
-              <Typography variant="body2">There are no actions available for this file.</Typography>
-            )}
+            <PageSection title="View File">
+              <ProjectViewSection file={file} />
+            </PageSection>
           </PageSection>
         </Container>
       </ModalWrapper>

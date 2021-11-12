@@ -6,12 +6,12 @@ import type { AxiosError } from 'axios';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import { PlaintextViewer } from '../../components/PlaintextViewer';
-import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
-import { useApi } from '../../hooks/useApi';
-import { DM_API_URL } from '../../utils/baseUrls';
-import { getDecompressionType } from '../../utils/fileUtils';
-import { getQueryParams } from '../../utils/requestUtils';
+import { PlaintextViewer } from '../../../components/PlaintextViewer';
+import { useProjectBreadcrumbs } from '../../../hooks/projectPathHooks';
+import { useApi } from '../../../hooks/useApi';
+import { DM_API_URL } from '../../../utils/baseUrls';
+import { getDecompressionType } from '../../../utils/fileUtils';
+import { getQueryParams } from '../../../utils/requestUtils';
 
 type SelectDatasetVersionResult = {
   file?: FilePathFile;
@@ -21,13 +21,13 @@ type SelectDatasetVersionResult = {
 
 const selectProjectVersion = (
   files?: FilesGetResponse,
-  fileId?: string,
+  fileName?: string,
 ): SelectDatasetVersionResult => {
   if (!files) {
     return { isSelectError: false };
   }
 
-  const file = files.files.find((file) => file.file_id === fileId);
+  const file = files.files.find((file) => file.file_name === fileName);
 
   if (!file) {
     return {
@@ -52,7 +52,7 @@ const FILE_LIMIT_SIZE = 100_000;
  */
 const FilePlainTextViewer = () => {
   const {
-    query: { project: projectId, fileId },
+    query: { projectId, file: fileName },
   } = useRouter();
 
   const breadcrumbs = useProjectBreadcrumbs();
@@ -69,7 +69,7 @@ const FilePlainTextViewer = () => {
   });
   const filesError = filesAxiosError && new Error(filesAxiosError.response?.data.error);
 
-  const { file, isSelectError, selectError } = selectProjectVersion(files, fileId as string);
+  const { file, isSelectError, selectError } = selectProjectVersion(files, fileName as string);
 
   const decompress = file && getDecompressionType(file.file_name);
   const fileSizeLimit = FILE_LIMIT_SIZE;
@@ -79,16 +79,28 @@ const FilePlainTextViewer = () => {
     isLoading: isContentsLoading,
     isError: isContentsError,
     error: contentsAxiosError,
-  } = useApi<string>(`/file/${fileId}${getQueryParams({ decompress, fileSizeLimit })}`, undefined, {
-    enabled: Boolean(file),
-  });
+  } = useApi<string>(
+    `/project/${projectId}/file${getQueryParams({
+      decompress,
+      fileSizeLimit,
+      path: dirPath,
+      file: fileName,
+    })}`,
+    undefined,
+    {
+      enabled: Boolean(file),
+    },
+  );
   const contentsError = contentsAxiosError && new Error(contentsAxiosError.response?.data.error);
 
   const isLoading = isFilesLoading || isContentsLoading;
   const isError = isFilesError || isSelectError || isContentsError;
   const error = filesError || selectError || contentsError;
 
-  const downloadUrl = `${DM_API_URL}/file/${fileId}`;
+  const downloadUrl = `${DM_API_URL}/project/${projectId}/file${getQueryParams({
+    path: dirPath,
+    file: fileName,
+  })}`;
 
   return (
     <>

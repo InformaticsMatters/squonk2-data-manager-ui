@@ -12,11 +12,11 @@ import { combineLabels } from '../../utils/labelUtils';
 import { Chips } from '../Chips';
 import { DataTable } from '../DataTable';
 import { LabelChip } from '../labels/LabelChip';
-import type { DatasetDetailsProps } from './DatasetDetails/DatasetDetails';
 import { EditorFilter } from './filters/EditorFilter';
 import { FileTypeFilter } from './filters/FileTypeFilter';
 import { LabelsFilter } from './filters/LabelsFilter';
 import { OwnerFilter } from './filters/OwnerFilter';
+import type { DatasetDetailsProps } from './DatasetDetails';
 import { DatasetsBulkActions } from './DatasetsBulkActions';
 import { DatasetsFilterToolbar } from './DatasetsFilterToolbar';
 import type { TableDataset } from './types';
@@ -56,7 +56,11 @@ export const DatasetsTable = () => {
         Header: 'File Name',
         Cell: ({ row }) => {
           return (
-            <DatasetDetails dataset={row.original} selectedVersionNumber={row.original.version} />
+            <DatasetDetails
+              dataset={row.original.datasetSummary}
+              datasetName={row.original.fileName}
+              version={row.original.datasetVersion}
+            />
           );
         },
       },
@@ -120,6 +124,7 @@ export const DatasetsTable = () => {
           numberOfProjects,
           datasetSummary: dataset,
           labels: combineLabels(dataset.versions),
+          datasetVersion: dataset.versions[0],
           subRows: dataset.versions.map<TableDataset>((version) => ({
             type: 'subRow',
             ...dataset,
@@ -128,6 +133,7 @@ export const DatasetsTable = () => {
             labels: (version.labels || {}) as Record<string, string | string[]>,
             version: version.version,
             datasetSummary: dataset,
+            datasetVersion: version,
             subRows: [],
           })),
         };

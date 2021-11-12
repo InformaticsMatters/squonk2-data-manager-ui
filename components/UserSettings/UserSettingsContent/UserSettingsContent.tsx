@@ -1,5 +1,6 @@
 import { Container } from '@material-ui/core';
 
+import { PageSection } from '../../PageSection';
 import { ProjectStatsSection } from './ProjectStatsSection';
 import { UserSettingsSection } from './UserSettingsSection';
 
@@ -9,8 +10,13 @@ import { UserSettingsSection } from './UserSettingsSection';
 export const UserSettingsContent = () => {
   return (
     <Container maxWidth="md">
-      <UserSettingsSection />
-      <ProjectStatsSection />
+      <PageSection level={3} title="User Settings">
+        <UserSettingsSection />
+      </PageSection>
+
+      <PageSection level={3} title="Project Stats">
+        <ProjectStatsSection />
+      </PageSection>
     </Container>
   );
 };

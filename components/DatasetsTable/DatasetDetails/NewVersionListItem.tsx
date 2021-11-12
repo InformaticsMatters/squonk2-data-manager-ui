@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
+import type { DatasetSummary } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, uploadDataset } from '@squonk/data-manager-client/dataset';
 
 import type { IconButtonProps } from '@material-ui/core';
@@ -9,28 +10,29 @@ import { ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/co
 import { Typography } from '@material-ui/core';
 import BackupRoundedIcon from '@material-ui/icons/BackupRounded';
 
-import { ORG_ID, UNIT_ID } from '../../../../utils/ASIdentities';
-import { ModalWrapper } from '../../../modals/ModalWrapper';
-import { Dropzone } from '../../../uploads/Dropzone';
-import { FileTypeOptions } from '../../../uploads/FileTypeOptions';
-import { ProgressBar } from '../../../uploads/ProgressBar';
-import type { FileTypeOptionsState, UploadableFile } from '../../../uploads/types';
-import type { TableDataset } from '../../types';
+import { ORG_ID, UNIT_ID } from '../../../utils/ASIdentities';
+import { ModalWrapper } from '../../modals/ModalWrapper';
+import { Dropzone } from '../../uploads/Dropzone';
+import { FileTypeOptions } from '../../uploads/FileTypeOptions';
+import { ProgressBar } from '../../uploads/ProgressBar';
+import type { FileTypeOptionsState, UploadableFile } from '../../uploads/types';
 
 export interface NewVersionListItemProps extends IconButtonProps {
   /**
    * Dataset from the table a versioned will be created under.
    */
-  dataset: TableDataset;
+  dataset: DatasetSummary;
+  /**
+   * Name of the dataset.
+   */
+  datasetName: string;
 }
 
 /**
  * MuiListItem with an action that lets the user upload a new file to become a new version of this
  * dataset.
  */
-export const NewVersionListItem = ({ dataset }: NewVersionListItemProps) => {
-  const { datasetSummary } = dataset;
-
+export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemProps) => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<UploadableFile>();
@@ -55,13 +57,11 @@ export const NewVersionListItem = ({ dataset }: NewVersionListItemProps) => {
         open={open}
         submitDisabled={!file || !!file.taskId}
         submitText="Upload"
-        title={`Upload a New Version to ${dataset.fileName}`}
+        title={`Upload a New Version to ${datasetName}`}
         onClose={() => setOpen(false)}
         onSubmit={async () => {
-          const parentVersion = Math.max(...datasetSummary.versions.map((v) => v.version));
-          const parent = datasetSummary.versions.find(
-            (version) => version.version === parentVersion,
-          );
+          const parentVersion = Math.max(...dataset.versions.map((v) => v.version));
+          const parent = dataset.versions.find((version) => version.version === parentVersion);
           if (file && parent) {
             // For consistency with the main file upload, I don't use the mutation hook here. This
             // allows reliable upload progress tracking.

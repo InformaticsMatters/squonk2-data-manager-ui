@@ -4,7 +4,6 @@ import type { Cell, Column } from 'react-table';
 import type { ProductDmProjectTier, ProductDmStorage } from '@squonk/account-server-client';
 
 import { css } from '@emotion/react';
-import { Typography } from '@material-ui/core';
 
 import { DataTable } from '../../../DataTable';
 import { ProjectUsageChart } from './ProjectUsageChart';
@@ -107,9 +106,6 @@ export const ProjectStatsSection = () => {
 
   return (
     <>
-      <Typography gutterBottom component="h3" variant="h2">
-        Project Stats
-      </Typography>
       <DataTable
         columns={projectsColumns}
         customTableProps={{

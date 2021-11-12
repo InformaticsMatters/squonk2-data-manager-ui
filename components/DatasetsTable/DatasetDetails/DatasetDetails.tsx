@@ -2,235 +2,109 @@ import type { FC } from 'react';
 import { useState } from 'react';
 import React from 'react';
 
-import { css } from '@emotion/react';
-import {
-  Box,
-  Container,
-  IconButton,
-  Link,
-  List,
-  MenuItem,
-  TextField,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@material-ui/core';
-import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
-import fileSize from 'filesize';
+import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager-client';
+
+import { Container, Link, List } from '@material-ui/core';
 
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
-import { Labels } from '../../labels/Labels';
-import { NewLabelButton } from '../../labels/NewLabelButton';
-import { toLocalTimeString } from '../../LocalTime';
 import { ModalWrapper } from '../../modals/ModalWrapper';
-import type { TableDataset } from '../types';
-import { AttachDatasetListItem } from './ListItems/AttachDatasetListItem';
-import { DatasetPlainTextViewerListItem } from './ListItems/DatasetPlainTextViewerListItem';
-import { DatasetSchemaListItem } from './ListItems/DatasetSchemaListItem';
-import { DeleteDatasetListItem } from './ListItems/DeleteDatasetListItem';
-import { NewVersionListItem } from './ListItems/NewVersionListItem';
-import { VersionInfoListItem } from './ListItems/VersionInfoListItem';
-import { ManageDatasetEditors } from './ManageDatasetEditors';
+import { PageSection } from '../../PageSection';
+import { VersionInfoSection } from './VersionInfoSection/VersionInfoSection';
+import { ManageDatasetEditorsSection } from './ManageDatasetEditorsSection';
+import { NewVersionListItem } from './NewVersionListItem';
+import { VersionActionsSection } from './VersionActionsSection';
+import { VersionViewSection } from './VersionViewSection';
+import { WorkingVersionSection } from './WorkingVersionSection';
 
 export interface DatasetDetailsProps {
-  dataset: TableDataset;
-  selectedVersionNumber?: number;
+  /**
+   * A dataset `version` belongs to.
+   */
+  dataset: DatasetSummary;
+  /**
+   * A selected dataset version.
+   */
+  version: DatasetVersionSummary;
+  /**
+   * Name of the dataset.
+   */
+  datasetName: string;
 }
 
-export const DatasetDetails: FC<DatasetDetailsProps> = ({
-  dataset,
-  selectedVersionNumber: selVerNum,
-}) => {
-  const { datasetSummary } = dataset;
-
+/**
+ * A component which displays details about a selected dataset version with actions related to the
+ * version
+ */
+export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset, version, datasetName }) => {
   const [open, setOpen] = useState(false);
-  const [selectedVersionNumber, setSelectedVersionNumber] = useState(
-    selVerNum || datasetSummary.versions[0].version,
-  );
-
-  const selectedVersion = datasetSummary.versions.find(
-    (version) => version.version === selectedVersionNumber,
-  );
+  const [selectedVersion, setSelectedVersion] = useState(version);
 
   const { user } = useKeycloakUser();
 
   const isEditor = !!user.username && dataset.editors.includes(user.username);
   const isOwner = dataset.owner === user.username;
-
-  const theme = useTheme();
+  const editable = isEditor || isOwner;
 
   return (
     <>
       <Link component="button" variant="body1" onClick={() => setOpen(true)}>
-        {dataset.fileName}
+        {datasetName}
       </Link>
 
       <ModalWrapper
         DialogProps={{ fullScreen: true }}
         id={`${dataset.dataset_id}-details`}
         open={open}
-        title={`Dataset ${dataset.fileName}`}
+        title={`Dataset ${datasetName}`}
         onClose={() => setOpen(false)}
       >
         <Container maxWidth="md">
-          <Typography gutterBottom component="h3" variant="h2">
-            Dataset Actions
-          </Typography>
+          <PageSection level={3} title="Dataset Actions">
+            {editable && (
+              <>
+                <List>
+                  <NewVersionListItem dataset={dataset} datasetName={datasetName} edge="end" />
+                </List>
 
-          {(isEditor || isOwner) && (
-            <List>
-              <NewVersionListItem dataset={dataset} edge="end" />
-            </List>
-          )}
+                <PageSection title="Editors">
+                  <ManageDatasetEditorsSection dataset={dataset} />
+                </PageSection>
+              </>
+            )}
 
-          {(isEditor || isOwner) && (
-            <Box marginBottom={2}>
-              <Typography gutterBottom component="h4" variant="h3">
-                Editors
-              </Typography>
-              <ManageDatasetEditors dataset={dataset} />
-            </Box>
-          )}
-
-          <Typography gutterBottom component="h4" variant="h3">
-            Working Version
-          </Typography>
-          <Typography gutterBottom variant="body1">
-            The options below affect this version
-          </Typography>
-          {/* Display the download button next to the version select */}
-          <Box alignItems="center" display="flex" marginY={1}>
-            {/* Main version selection - this controls the target version for this whole modal */}
-            <TextField
-              fullWidth
-              select
-              label="Select a version"
-              size="medium"
-              value={selectedVersionNumber}
-              onChange={(event) => {
-                const version = datasetSummary.versions.find(
-                  (version) => version.version === Number(event.target.value),
-                );
-                version && setSelectedVersionNumber(version.version);
-              }}
-            >
-              {datasetSummary.versions.map((version) => (
-                <MenuItem
-                  key={version.version}
-                  value={version.version}
-                >{`v${version.version}`}</MenuItem>
-              ))}
-            </TextField>
-
-            {/* Download Dataset Version */}
-            <div
-              css={css`
-                margin-left: ${theme.spacing(2)}px;
-              `}
-            >
-              <Tooltip title="Download this version of the dataset">
-                <span>
-                  <IconButton
-                    download
-                    disabled={!(selectedVersion?.processing_stage === 'DONE')} // Need the dataset to be downloadable
-                    href={`/data-manager-ui/api/dm-api/dataset/${dataset.dataset_id}/${selectedVersionNumber}`}
-                    onClick={() => setOpen(true)}
-                  >
-                    <GetAppRoundedIcon />
-                  </IconButton>
-                </span>
-              </Tooltip>
-            </div>
-          </Box>
-
-          {/* Top level editing - operations that don't have a "submit" */}
-          {selectedVersion !== undefined && (isEditor || isOwner) && (
-            <>
-              <Typography gutterBottom component="h4" variant="h4">
-                Labels{' '}
-                <NewLabelButton
-                  datasetId={dataset.dataset_id}
-                  datasetVersion={selectedVersion.version}
-                />
-              </Typography>
-              <Labels datasetId={dataset.dataset_id} datasetVersion={selectedVersion} />
-            </>
-          )}
-
-          <Box marginY={2}>
-            <Typography component="h4" variant="h4">
-              Version Information
-            </Typography>
-            <List>
-              <VersionInfoListItem
-                name="Size"
-                value={selectedVersion?.size ? fileSize(selectedVersion.size) : undefined}
+            <PageSection title="Working Version">
+              <WorkingVersionSection
+                dataset={dataset}
+                editable={editable}
+                setVersion={setSelectedVersion}
+                version={selectedVersion}
               />
-              <VersionInfoListItem
-                name="Published date"
-                value={
-                  selectedVersion
-                    ? toLocalTimeString(selectedVersion.published, true, true)
-                    : undefined
-                }
+            </PageSection>
+
+            <PageSection title="Information">
+              <VersionInfoSection version={selectedVersion} />
+            </PageSection>
+
+            <PageSection title="View">
+              <VersionViewSection dataset={dataset} version={selectedVersion} />
+            </PageSection>
+
+            <PageSection title="Actions">
+              <VersionActionsSection
+                dataset={dataset}
+                editable={editable}
+                setVersion={setSelectedVersion}
+                version={selectedVersion}
               />
-            </List>
-          </Box>
+            </PageSection>
 
-          <Box marginY={2}>
-            <Typography component="h4" variant="h4">
-              View Version
-            </Typography>
-            <List>
-              <DatasetPlainTextViewerListItem
-                datasetId={dataset.dataset_id}
-                version={selectedVersionNumber}
-              />
-            </List>
-          </Box>
-
-          {/* More complex actions requiring a new context */}
-          <Box marginY={2}>
-            <Typography component="h4" variant="h4">
-              Version Actions
-            </Typography>
-            <List>
-              {selectedVersion && (
-                <AttachDatasetListItem datasetId={dataset.dataset_id} version={selectedVersion} />
-              )}
-
-              <DatasetSchemaListItem
-                datasetId={dataset.dataset_id}
-                version={selectedVersionNumber}
-              />
-
-              {selectedVersion && (isEditor || isOwner) && (
-                <DeleteDatasetListItem
-                  datasetId={dataset.dataset_id}
-                  version={selectedVersion}
-                  onDelete={() => {
-                    // Reset selected version as it is being deleted
-                    const nextSelectableVersions = datasetSummary.versions.filter(
-                      (version) => version.version !== selectedVersionNumber,
-                    );
-                    if (nextSelectableVersions.length > 0) {
-                      setSelectedVersionNumber(nextSelectableVersions[0].version);
-                    }
-                  }}
-                />
-              )}
-            </List>
-          </Box>
-
-          {/* DEBUG options. This allows access of dataset-id etc without leaving the UI */}
-          {process.env.NODE_ENV === 'development' && (
-            <>
-              <Typography component="h4" variant="h4">
-                Technical Information
-              </Typography>
-              <pre>{JSON.stringify(dataset, null, 2)}</pre>
-            </>
-          )}
+            {/* DEBUG options. This allows access of dataset-id etc without leaving the UI */}
+            {process.env.NODE_ENV === 'development' && (
+              <PageSection title="Technical Information">
+                <pre>{JSON.stringify(dataset, null, 2)}</pre>
+              </PageSection>
+            )}
+          </PageSection>
         </Container>
       </ModalWrapper>
     </>

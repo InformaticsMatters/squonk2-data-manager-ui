@@ -98,6 +98,9 @@ export interface DataTableProps<Data extends Record<string, any>> {
    * Error to display. The error is displayed only if `isError` is true.
    */
   error?: void | AxiosError<DMError> | null;
+  /**
+   * Custom props applied to Table. Props can either be react-table props or MaterialUI props.
+   */
   customTableProps?: CustomProps<TableProps & MuiTableProps>;
   /**
    * Custom props applied to TableCell. Props can either be react-table props or MaterialUI props.
@@ -232,35 +235,37 @@ export function DataTable<Data extends Record<string, any>>({
 
   const tableContents = (
     <>
-      <Toolbar
-        css={css`
-          align-items: flex-start;
-          padding-top: ${theme.spacing(2)}px;
-          gap: ${theme.spacing(1)}px;
-        `}
-      >
-        {ToolbarChild}
-        {enableSearch && (
-          <TextField
-            css={css`
-              margin-left: auto;
-            `}
-            inputProps={{ 'aria-label': 'search' }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchRoundedIcon />
-                </InputAdornment>
-              ),
-            }}
-            placeholder={`${preGlobalFilteredRows.length} records...`}
-            value={globalFilter || ''}
-            onChange={(e) => {
-              setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
-            }}
-          />
-        )}
-      </Toolbar>
+      {(ToolbarChild || enableSearch) && (
+        <Toolbar
+          css={css`
+            align-items: flex-start;
+            padding-top: ${theme.spacing(2)}px;
+            gap: ${theme.spacing(1)}px;
+          `}
+        >
+          {ToolbarChild}
+          {enableSearch && (
+            <TextField
+              css={css`
+                margin-left: auto;
+              `}
+              inputProps={{ 'aria-label': 'search' }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchRoundedIcon />
+                  </InputAdornment>
+                ),
+              }}
+              placeholder={`${preGlobalFilteredRows.length} records...`}
+              value={globalFilter || ''}
+              onChange={(e) => {
+                setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
+              }}
+            />
+          )}
+        </Toolbar>
+      )}
       <Toolbar
         css={css`
           min-height: 0;

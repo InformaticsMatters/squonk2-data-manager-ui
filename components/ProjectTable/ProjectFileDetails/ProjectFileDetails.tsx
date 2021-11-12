@@ -1,10 +1,11 @@
 import { useState } from 'react';
 
-import { Container, Link, List, Typography } from '@material-ui/core';
+import { Container, Link, Typography } from '@material-ui/core';
 
 import { ModalWrapper } from '../../modals/ModalWrapper';
+import { PageSection } from './../../PageSection';
 import type { TableFile } from './../types';
-import { FilePlainTextViewerListItem } from './FilePlainTextViewerListItem';
+import { ProjectViewSection } from './ProjectViewSection';
 
 export interface ProjectFileDetailsProps {
   /**
@@ -32,21 +33,15 @@ export const ProjectFileDetails = ({ file }: ProjectFileDetailsProps) => {
         onClose={() => setOpen(false)}
       >
         <Container maxWidth="md">
-          <Typography gutterBottom component="h3" variant="h2">
-            Project File Actions
-          </Typography>
-          {file.file_id ? (
-            <>
-              <Typography component="h4" variant="h4">
-                View File
-              </Typography>
-              <List>
-                <FilePlainTextViewerListItem fileId={file.file_id} />
-              </List>
-            </>
-          ) : (
-            <Typography variant="body2">There are no actions available for this file.</Typography>
-          )}
+          <PageSection level={3} title="Project File Actions">
+            {file.file_id ? (
+              <PageSection title="View File">
+                <ProjectViewSection fileId={file.file_id} />
+              </PageSection>
+            ) : (
+              <Typography variant="body2">There are no actions available for this file.</Typography>
+            )}
+          </PageSection>
         </Container>
       </ModalWrapper>
     </>

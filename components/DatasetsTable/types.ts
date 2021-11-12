@@ -1,4 +1,4 @@
-import type { DatasetSummary } from '@squonk/data-manager-client';
+import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager-client';
 
 /**
  * An item shown in the datasets table. It can either be a row or a sub row - regular rows don't
@@ -7,6 +7,7 @@ import type { DatasetSummary } from '@squonk/data-manager-client';
  */
 export type TableDataset = {
   type: 'row' | 'subRow';
+  // Table data
   fileName: string;
   numberOfProjects: number;
   labels: Record<string, string | string[]>;
@@ -15,5 +16,7 @@ export type TableDataset = {
   owner: string;
   version?: number;
   subRows: TableDataset[];
+  // Pointers
   datasetSummary: DatasetSummary;
+  datasetVersion: DatasetVersionSummary;
 };

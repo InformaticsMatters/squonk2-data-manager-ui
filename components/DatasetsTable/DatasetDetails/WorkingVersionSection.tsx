@@ -1,17 +1,9 @@
 import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
-import {
-  Box,
-  IconButton,
-  MenuItem,
-  TextField,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@material-ui/core';
-import { GetAppRounded } from '@material-ui/icons';
+import { Box, MenuItem, TextField, Typography, useTheme } from '@material-ui/core';
 
+import { DownloadButton } from '../../DownloadButton';
 import { Labels } from '../../labels/Labels';
 import { NewLabelButton } from '../../labels/NewLabelButton';
 
@@ -80,17 +72,11 @@ export const WorkingVersionSection = ({
             margin-left: ${theme.spacing(2)}px;
           `}
         >
-          <Tooltip title="Download this version of the dataset">
-            <span>
-              <IconButton
-                download
-                disabled={!(version.processing_stage === 'DONE')} // Need the dataset to be downloadable
-                href={`/data-manager-ui/api/dm-api/dataset/${dataset.dataset_id}/${version.version}`}
-              >
-                <GetAppRounded />
-              </IconButton>
-            </span>
-          </Tooltip>
+          <DownloadButton
+            disabled={!(version.processing_stage === 'DONE')}
+            href={`/data-manager-ui/api/dm-api/dataset/${dataset.dataset_id}/${version.version}`} // Need the dataset to be downloadable
+            tooltip="Download this version of the dataset"
+          />
         </div>
       </Box>
       {/* Top level editing - operations that don't have a "submit" */}

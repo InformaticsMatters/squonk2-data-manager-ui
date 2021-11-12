@@ -11,7 +11,7 @@ export type QueryParamsObject = Record<string, any>;
 export const getQueryParams = (params: QueryParamsObject) => {
   const queryString = Object.entries(params)
     .filter(([_, value]) => value !== undefined)
-    .map(([key, value]) => `${key}=${String(value)}`)
+    .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
     .join('&');
 
   return queryString ? `?${queryString}` : '';

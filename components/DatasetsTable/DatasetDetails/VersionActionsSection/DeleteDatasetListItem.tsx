@@ -36,7 +36,6 @@ export const DeleteDatasetListItem = ({ datasetId, version, onDelete }: DeleteDa
     <WarningDeleteButton
       modalId={`delete-${datasetId}`}
       title={`Delete v${version.version}`}
-      tooltipText="Delete versions of this dataset"
       onDelete={async () => {
         onDelete();
         await deleteDataset({ datasetid: datasetId, datasetversion: version.version });

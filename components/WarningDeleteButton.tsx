@@ -27,7 +27,7 @@ export interface WarningDeleteButtonProps {
   /**
    * Text displayed in the tooltip wrapped around the child.
    */
-  tooltipText: string;
+  tooltipText?: string;
   /**
    * JDX to be rendered inside the main section of the modal.
    */
@@ -62,11 +62,12 @@ export const WarningDeleteButton = ({
 }: WarningDeleteButtonProps) => {
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const content = <span>{children({ openModal: () => setOpen(true), isDeleting })}</span>;
+
   return (
     <>
-      <Tooltip title={tooltipText}>
-        <span>{children({ openModal: () => setOpen(true), isDeleting })}</span>
-      </Tooltip>
+      {tooltipText !== undefined ? <Tooltip title={tooltipText}>{content}</Tooltip> : content}
 
       <ModalWrapper
         id={modalId}

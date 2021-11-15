@@ -1339,10 +1339,10 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.2.0.tgz#667bfc6186ae7c9e0b45a08960c551437176e1ca"
   integrity sha512-VkE3KLBmJwcCaVARtQpfuKcKv8gcBmUubrfHGF84dXuuW6jgsRYxPtzcIhPyK9WAPpRt2/xY6zkD9MnRaJzSyw==
 
-"@squonk/account-server-client@0.1.0-rc.26":
-  version "0.1.0-rc.26"
-  resolved "https://registry.yarnpkg.com/@squonk/account-server-client/-/account-server-client-0.1.0-rc.26.tgz#60884a11d9082c5ab7768a91a59a40f07aa465bf"
-  integrity sha512-Su+yO95aXgkAgw5p8kqiNdvLz92lZ1h0X5P9W+RdD9UgRn+bPeiQA98kfakEE0n48AQm4r6OaPV+yi7CqXGg4w==
+"@squonk/account-server-client@0.1.0-rc.28":
+  version "0.1.0-rc.28"
+  resolved "https://registry.yarnpkg.com/@squonk/account-server-client/-/account-server-client-0.1.0-rc.28.tgz#2ec5e5361f689e542ab3c7b74677e069a084e730"
+  integrity sha512-gcZbaJavzi/RGwpgw4nPwDBdsAOgm318Wsh94Ou4yDumNWYDaOCuetqGo8jrPVGwgZYf+vXoC2iUIYEg9nhkxg==
 
 "@squonk/data-manager-client@0.6.2-rc.5":
   version "0.6.2-rc.5"

@@ -30,7 +30,7 @@
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@rjsf/core": "3.2.0",
     "@rjsf/material-ui": "3.2.0",
-    "@squonk/account-server-client": "0.1.0-rc.26",
+    "@squonk/account-server-client": "0.1.0-rc.28",
     "@squonk/data-manager-client": "0.6.2-rc.5",
     "@squonk/mui-theme": "2.0.1",
     "axios": "0.24.0",

@@ -12,13 +12,16 @@ export interface JobOutputLinkProps {
 const getPath = (contains: string) => {
   let containsGlob = false;
 
-  const path = contains.split('/').filter((part) => {
-    if (part.includes('*')) {
-      containsGlob = true;
-    }
+  const path = contains
+    .split('/')
+    .filter((part) => part !== '.')
+    .filter((part) => {
+      if (part.includes('*')) {
+        containsGlob = true;
+      }
 
-    return !containsGlob;
-  });
+      return !containsGlob;
+    });
 
   return {
     path,

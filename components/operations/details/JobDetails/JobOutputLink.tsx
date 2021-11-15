@@ -14,7 +14,8 @@ const getPath = (contains: string) => {
 
   const path = contains
     .split('/')
-    .filter((part) => part !== '.')
+    // If the path begins with a '.', remove it
+    .filter((part, i) => !(i === 0 && part === '.'))
     .filter((part) => {
       if (part.includes('*')) {
         containsGlob = true;

@@ -1,4 +1,6 @@
-import { Link } from '@material-ui/core';
+import { css } from '@emotion/react';
+import { Box, IconButton, Link, Tooltip, Typography, useTheme } from '@material-ui/core';
+import { Folder } from '@material-ui/icons';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -9,6 +11,10 @@ export interface JobOutputLinkProps {
   output: OutputValue;
 }
 
+/**
+ * Splits path, provided as string, into path parts and potentially removing leading '.' and
+ * stopping on encountering first glob.
+ */
 const getPath = (contains: string) => {
   let containsGlob = false;
 
@@ -16,6 +22,7 @@ const getPath = (contains: string) => {
     .split('/')
     // If the path begins with a '.', remove it
     .filter((part, i) => !(i === 0 && part === '.'))
+    // Stop at first glob
     .filter((part) => {
       if (part.includes('*')) {
         containsGlob = true;
@@ -30,6 +37,9 @@ const getPath = (contains: string) => {
   };
 };
 
+/**
+ * Gets the file name and the path to the file from provided path.
+ */
 const getFilePathAndName = (path: string[]) => {
   const filePath = path.slice(0, path.length - 2);
   const fileName = path[path.length - 1];
@@ -43,6 +53,7 @@ export const JobOutputLink = ({ output, projectId }: JobOutputLinkProps) => {
   const { type, creates } = output;
 
   const { query } = useRouter();
+  const theme = useTheme();
 
   const { path, containsGlob } = getPath(creates);
 
@@ -50,7 +61,13 @@ export const JobOutputLink = ({ output, projectId }: JobOutputLinkProps) => {
     const { filePath, fileName } = getFilePathAndName(path);
 
     return (
-      <>
+      <Box
+        alignItems="center"
+        css={css`
+          gap: ${theme.spacing()}px;
+        `}
+        display="flex"
+      >
         <NextLink
           passHref
           href={{
@@ -62,9 +79,13 @@ export const JobOutputLink = ({ output, projectId }: JobOutputLinkProps) => {
             },
           }}
         >
-          <Link>🗀{Boolean(filePath.length) && `/${filePath}`}</Link>
+          <Tooltip title="Locate file in project">
+            <IconButton size="small">
+              <Folder color="primary" fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </NextLink>
-        /
+
         <NextLink
           passHref
           href={{
@@ -76,15 +97,24 @@ export const JobOutputLink = ({ output, projectId }: JobOutputLinkProps) => {
             },
           }}
         >
-          <Link rel="noopener noreferrer" target="_blank">
-            {fileName}
-          </Link>
+          <Tooltip title="Open in Plaintext Viewer">
+            <Link rel="noopener noreferrer" target="_blank">
+              <Typography component="span">{creates}</Typography>
+            </Link>
+          </Tooltip>
         </NextLink>
-      </>
+      </Box>
     );
   }
+
   return (
-    <>
+    <Box
+      alignItems="center"
+      css={css`
+        gap: ${theme.spacing()}px;
+      `}
+      display="flex"
+    >
       <NextLink
         passHref
         href={{
@@ -96,9 +126,14 @@ export const JobOutputLink = ({ output, projectId }: JobOutputLinkProps) => {
           },
         }}
       >
-        <Link>🗀</Link>
+        <Tooltip title="Show directory in project">
+          <IconButton size="small">
+            <Folder color="primary" fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </NextLink>
-      /{creates}
-    </>
+
+      <Typography component="span">{creates}</Typography>
+    </Box>
   );
 };

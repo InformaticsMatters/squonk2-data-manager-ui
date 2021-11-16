@@ -110,7 +110,12 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText
-                      primary={value.title}
+                      disableTypography
+                      primary={
+                        <Typography component="span" variant="body1">
+                          {value.title}
+                        </Typography>
+                      }
                       secondary={<JobOutputLink output={value} projectId={instance.project_id} />}
                     />
                   </ListItem>

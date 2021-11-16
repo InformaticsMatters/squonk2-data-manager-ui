@@ -9,23 +9,25 @@ import type { TransformCallback, TransformOptions } from 'stream';
  */
 export class FixedSizeStreamTransform extends Transform {
   private bytesSent: number;
+  private done: boolean;
 
   constructor(private size: number, options?: TransformOptions) {
     super(options);
     this.bytesSent = 0;
+    this.done = false;
   }
 
   _transform(chunk: any, encoding: BufferEncoding, callback: TransformCallback): void {
-    if (this.bytesSent + chunk.length > this.size) {
-      const sizeToSend = this.size - this.bytesSent;
+    if (!this.done) {
+      if (this.bytesSent + chunk.length > this.size) {
+        const sizeToSend = this.size - this.bytesSent;
 
-      this.push(chunk.slice(0, sizeToSend));
-      this.bytesSent += sizeToSend;
-
-      this.end();
-    } else {
-      this.push(chunk);
-      this.bytesSent += chunk.length;
+        this.push(chunk.slice(0, sizeToSend));
+        this.bytesSent += sizeToSend;
+      } else {
+        this.push(chunk);
+        this.bytesSent += chunk.length;
+      }
     }
 
     callback();

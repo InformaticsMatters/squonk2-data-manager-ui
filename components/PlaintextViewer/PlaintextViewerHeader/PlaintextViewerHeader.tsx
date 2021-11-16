@@ -47,6 +47,7 @@ export const PlaintextViewerHeader = ({
   const theme = useTheme();
 
   const chips = useGetFileInfoChips(transferredSize, fileSizeLimit, decompress);
+  const linesText = numberOfLines === 1 ? 'line' : 'lines';
 
   return (
     <Box
@@ -81,7 +82,7 @@ export const PlaintextViewerHeader = ({
         </Typography>
         <Divider flexItem orientation="vertical" />
         <Typography>
-          {numberOfLines} lines ({fileSize(transferredSize)})
+          {numberOfLines} {linesText} ({fileSize(transferredSize)})
         </Typography>
         {/** If there are any chips to be displayed, display a separator in front of them */}
         {Boolean(chips.length) && (

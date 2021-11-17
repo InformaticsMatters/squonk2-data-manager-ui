@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { Box, Grid, Typography } from '@material-ui/core';

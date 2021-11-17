@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Box } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 

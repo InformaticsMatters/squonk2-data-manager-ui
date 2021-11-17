@@ -143,6 +143,7 @@
     "instance-page",
     "project-details",
     "ui/user-settings",
-    "ui/plain-text-viewer"
+    "ui/plain-text-viewer",
+    "jsx-transform"
   ],
 }

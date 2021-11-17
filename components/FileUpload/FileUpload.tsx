@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import type { DatasetPostBodyBody, Error as DMError } from '@squonk/data-manager-client';
 import { uploadDataset } from '@squonk/data-manager-client/dataset';

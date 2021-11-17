@@ -1,5 +1,4 @@
 import type { FC } from 'react';
-import React from 'react';
 
 import { css } from '@emotion/react';
 import { useTheme } from '@material-ui/core';

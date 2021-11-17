@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Typography } from '@material-ui/core';
 import FolderSpecialRoundedIcon from '@material-ui/icons/FolderSpecialRounded';
 

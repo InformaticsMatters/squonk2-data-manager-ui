@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Link, Typography } from '@material-ui/core';
 import NextLink from 'next/link';
 

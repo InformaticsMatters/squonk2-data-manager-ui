@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { IconButton } from '@material-ui/core';
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';

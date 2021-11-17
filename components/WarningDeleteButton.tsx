@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import React from 'react';
 
 import { Tooltip, Typography } from '@material-ui/core';
 

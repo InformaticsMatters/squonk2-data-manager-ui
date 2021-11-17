@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IconButton } from '@material-ui/core';
 import { Tooltip } from '@material-ui/core';
 import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';

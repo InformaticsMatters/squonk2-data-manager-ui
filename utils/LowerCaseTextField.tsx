@@ -1,6 +1,5 @@
 import type { ChangeEvent } from 'react';
 import { useCallback } from 'react';
-import React from 'react';
 
 import { TextField as MuiTextField } from '@material-ui/core';
 import type { TextFieldProps } from 'formik-material-ui';

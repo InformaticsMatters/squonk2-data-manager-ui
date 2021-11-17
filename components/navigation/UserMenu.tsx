@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { css } from '@emotion/react';
 import { IconButton, Popover, Tooltip, useTheme } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';

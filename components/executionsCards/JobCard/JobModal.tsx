@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import type { InstanceSummary, JobSummary } from '@squonk/data-manager-client';

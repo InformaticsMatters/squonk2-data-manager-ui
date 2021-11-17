@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { Column, Row } from 'react-table';
 
 import type { DatasetsGetResponse, Error as DMError } from '@squonk/data-manager-client';

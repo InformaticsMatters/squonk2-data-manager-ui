@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
-import React from 'react';
 import type { Cell, Column } from 'react-table';
 
 import { Typography } from '@material-ui/core';

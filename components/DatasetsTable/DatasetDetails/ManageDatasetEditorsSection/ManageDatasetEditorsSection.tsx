@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import React from 'react';
 import { useQueryClient } from 'react-query';
 
 import type { DatasetSummary } from '@squonk/data-manager-client';

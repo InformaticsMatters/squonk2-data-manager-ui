@@ -1,5 +1,4 @@
 import type { FC } from 'react';
-import React from 'react';
 
 import { Link, Typography } from '@material-ui/core';
 import { MDXProvider } from '@mdx-js/react';

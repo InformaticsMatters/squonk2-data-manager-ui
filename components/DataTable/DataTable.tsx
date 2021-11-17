@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
-import React from 'react';
 import type {
   Cell,
   CellProps,

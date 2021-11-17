@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { css } from '@emotion/react';
 import { ListItem, ListItemText, useMediaQuery, useTheme } from '@material-ui/core';
 import dayjs from 'dayjs';

@@ -1,5 +1,4 @@
 import type { Dispatch, SetStateAction } from 'react';
-import React from 'react';
 
 import { Grid } from '@material-ui/core';
 

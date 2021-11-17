@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { FileError } from 'react-dropzone';
 import { useQueryClient } from 'react-query';
 

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetInstances } from '@squonk/data-manager-client/instance';
 

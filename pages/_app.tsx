@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Hydrate } from 'react-query/hydration';
 
@@ -37,7 +37,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   // Material UI for SSR
-  React.useEffect(() => {
+  useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
     if (jssStyles) {

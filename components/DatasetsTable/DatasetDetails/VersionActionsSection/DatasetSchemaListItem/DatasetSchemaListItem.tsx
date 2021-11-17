@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import React from 'react';
 
 import { ListItem, ListItemText } from '@material-ui/core';
 import FindInPageRoundedIcon from '@material-ui/icons/FindInPageRounded';

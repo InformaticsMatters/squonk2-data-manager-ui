@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { css } from '@emotion/react';
 import { Tooltip, Typography } from '@material-ui/core';
 

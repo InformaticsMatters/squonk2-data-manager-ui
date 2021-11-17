@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { Cell, CellProps, Column, PluginHook } from 'react-table';
 
 import type { ProjectDetail } from '@squonk/data-manager-client';

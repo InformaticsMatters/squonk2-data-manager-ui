@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { useGetFiles } from '@squonk/data-manager-client/file';
 

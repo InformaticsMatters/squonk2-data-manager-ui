@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { InstanceSummary, TaskSummary } from '@squonk/data-manager-client';
 
 import { Grid, Typography } from '@material-ui/core';

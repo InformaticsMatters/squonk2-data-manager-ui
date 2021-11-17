@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 const STORAGE_KEY =
   process.env.NEXT_PUBLIC_LOCAL_STORAGE_PREFIX ?? 'data-manager-ui' + '-colorScheme';
@@ -38,7 +38,7 @@ const initialState: ColorSchemeState = {
   },
 };
 
-export const ColorSchemeContext = React.createContext<ColorSchemeState>(initialState);
+export const ColorSchemeContext = createContext<ColorSchemeState>(initialState);
 
 export const ColorSchemeProvider: React.FC = ({ children }) => {
   const [scheme, setScheme] = useState(initialScheme);

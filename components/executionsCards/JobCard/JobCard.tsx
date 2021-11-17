@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { JobSummary } from '@squonk/data-manager-client';
 
 import { Chip, Link, Typography, useTheme } from '@material-ui/core';

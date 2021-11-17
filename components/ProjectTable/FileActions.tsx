@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
 import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
 import { CreateDatasetFromFileButton } from './Buttons/CreateDatasetFromFileButton';

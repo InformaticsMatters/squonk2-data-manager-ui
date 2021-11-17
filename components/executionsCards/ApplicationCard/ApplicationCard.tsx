@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { ApplicationSummary } from '@squonk/data-manager-client';
 
 import { useTheme } from '@material-ui/core';

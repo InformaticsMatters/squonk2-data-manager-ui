@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import type { DropzoneOptions, FileRejection } from 'react-dropzone';
 import { useDropzone } from 'react-dropzone';
 

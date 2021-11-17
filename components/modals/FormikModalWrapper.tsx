@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { css } from '@emotion/react';
 import type { DialogProps } from '@material-ui/core';
 import type { FormikConfig } from 'formik';

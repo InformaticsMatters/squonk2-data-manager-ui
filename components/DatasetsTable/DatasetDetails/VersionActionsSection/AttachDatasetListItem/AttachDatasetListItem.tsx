@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import type { DatasetVersionSummary, Error as DMError } from '@squonk/data-manager-client';

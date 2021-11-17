@@ -1,5 +1,4 @@
 import type { FC } from 'react';
-import React from 'react';
 
 import { useGetUsers } from '@squonk/data-manager-client/user';
 

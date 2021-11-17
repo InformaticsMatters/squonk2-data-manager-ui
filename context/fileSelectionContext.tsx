@@ -1,4 +1,4 @@
-import React, { useContext, useReducer } from 'react';
+import { createContext, useContext, useReducer } from 'react';
 
 import type { ProjectId } from '../hooks/currentProjectHooks';
 import { useCurrentProjectId } from '../hooks/currentProjectHooks';
@@ -31,7 +31,7 @@ const initialState: SelectedFilesState = {
   },
 };
 
-export const SelectedFilesContext = React.createContext<SelectedFilesState>(initialState);
+export const SelectedFilesContext = createContext<SelectedFilesState>(initialState);
 
 interface FileStateAction {
   type: 'add-file' | 'remove-file';

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { ChipProps } from '@material-ui/core';
 import { Chip } from '@material-ui/core';
 

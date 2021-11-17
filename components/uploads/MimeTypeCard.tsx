@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { TypeSummary } from '@squonk/data-manager-client';
 
 import { Card, CardContent } from '@material-ui/core';

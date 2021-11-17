@@ -1,5 +1,3 @@
-import React from 'react';
-
 import styled from '@emotion/styled';
 import { useMediaQuery, useTheme } from '@material-ui/core';
 import dynamic from 'next/dynamic';

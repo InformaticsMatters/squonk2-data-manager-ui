@@ -1,5 +1,4 @@
 import type { Dispatch, SetStateAction } from 'react';
-import React from 'react';
 import { useQueryClient } from 'react-query';
 
 import {

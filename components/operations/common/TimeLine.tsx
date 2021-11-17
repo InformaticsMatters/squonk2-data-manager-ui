@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { InstanceGetResponse, TaskGetResponse, TaskState } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';

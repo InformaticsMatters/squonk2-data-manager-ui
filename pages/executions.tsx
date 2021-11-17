@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import type {
   ApplicationsGetResponse,

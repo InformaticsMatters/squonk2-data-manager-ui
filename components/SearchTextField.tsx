@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { TextFieldProps } from '@material-ui/core';
 import { InputAdornment, TextField } from '@material-ui/core';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';

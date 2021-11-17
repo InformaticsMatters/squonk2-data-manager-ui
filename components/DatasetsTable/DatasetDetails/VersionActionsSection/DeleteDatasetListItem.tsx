@@ -1,4 +1,3 @@
-import React from 'react';
 import { useQueryClient } from 'react-query';
 
 import type { DatasetVersionSummary } from '@squonk/data-manager-client';

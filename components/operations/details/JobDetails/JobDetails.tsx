@@ -92,31 +92,28 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
           >
             {/* We currently have to assume that the outputs have a consistent type */}
             {Object.entries(JSON.parse(instance.outputs) as Record<string, OutputValue>).map(
-              ([key, value]) => {
+              ([name, output]) => {
+                const isFile = output.type === 'file' || output.type === 'files';
                 return (
                   <ListItem
                     css={css`
                       width: auto;
                     `}
-                    key={key}
+                    key={name}
                   >
                     <ListItemAvatar>
                       <Avatar>
-                        {value.type === 'file' ? (
-                          <InsertDriveFileRoundedIcon />
-                        ) : (
-                          <FolderRoundedIcon />
-                        )}
+                        {isFile ? <InsertDriveFileRoundedIcon /> : <FolderRoundedIcon />}
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText
                       disableTypography
                       primary={
                         <Typography component="span" variant="body1">
-                          {value.title}
+                          {output.title}
                         </Typography>
                       }
-                      secondary={<JobOutputLink output={value} projectId={instance.project_id} />}
+                      secondary={<JobOutputLink output={output} projectId={instance.project_id} />}
                     />
                   </ListItem>
                 );

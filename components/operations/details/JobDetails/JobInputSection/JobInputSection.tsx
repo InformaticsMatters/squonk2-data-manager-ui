@@ -48,6 +48,7 @@ export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
           <ListItem
             css={css`
               width: auto;
+              align-items: flex-start;
             `}
             key={input.name}
           >
@@ -58,6 +59,9 @@ export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
             </ListItemAvatar>
             <ListItemText
               disableTypography
+              css={css`
+                margin: 0;
+              `}
               primary={
                 <Typography component="span" variant="body1">
                   {input.title}

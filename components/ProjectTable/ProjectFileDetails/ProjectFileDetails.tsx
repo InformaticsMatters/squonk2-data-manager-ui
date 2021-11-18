@@ -33,7 +33,7 @@ export const ProjectFileDetails = ({ file }: ProjectFileDetailsProps) => {
         onClose={() => setOpen(false)}
       >
         <Container maxWidth="md">
-          <PageSection level={3} title="Project File Actions">
+          <PageSection level={2} title="Project File Actions">
             <PageSection title="View File">
               <ProjectViewSection file={file} />
             </PageSection>

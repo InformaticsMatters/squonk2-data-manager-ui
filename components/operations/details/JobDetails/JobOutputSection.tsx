@@ -37,6 +37,7 @@ export const JobOutputSection = ({ outputs, projectId }: JobOutputSectionProps) 
           <ListItem
             css={css`
               width: auto;
+              align-items: flex-start;
             `}
             key={name}
           >
@@ -45,6 +46,9 @@ export const JobOutputSection = ({ outputs, projectId }: JobOutputSectionProps) 
             </ListItemAvatar>
             <ListItemText
               disableTypography
+              css={css`
+                margin: 0;
+              `}
               primary={
                 <Typography component="span" variant="body1">
                   {output.title}

@@ -64,7 +64,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset, version, data
         onClose={() => setOpen(false)}
       >
         <Container maxWidth="md">
-          <PageSection level={3} title="Dataset Actions">
+          <PageSection level={2} title="Dataset Actions">
             {editable && (
               <>
                 <List>

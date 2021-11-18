@@ -3,27 +3,17 @@ import React from 'react';
 import type { InstanceSummary } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
-import {
-  Avatar,
-  Grid,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-} from '@material-ui/core';
+import { Grid, ListItem, ListItemIcon, ListItemText, Typography } from '@material-ui/core';
 import AppsRoundedIcon from '@material-ui/icons/AppsRounded';
-import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
-import InsertDriveFileRoundedIcon from '@material-ui/icons/InsertDriveFileRounded';
 import WorkOutlineRoundedIcon from '@material-ui/icons/WorkOutlineRounded';
 
 import { CenterLoader } from '../../../CenterLoader';
+import { PageSection } from '../../../PageSection';
 import { HorizontalList } from '../../common/HorizontalList';
 import { TimeLine } from '../../common/TimeLine';
 import { usePolledInstance } from '../usePolledInstance';
-import { JobOutputLink } from './JobOutputLink';
-import type { OutputValue } from './types';
+import { JobInputSection } from './JobInputSection';
+import { JobOutputSection } from './JobOutputSection';
 
 export interface JobDetailsProps {
   /**
@@ -77,50 +67,17 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
         </ListItem>
       </HorizontalList>
 
+      <PageSection level={3} title="Inputs">
+        <JobInputSection instanceSummary={instanceSummary} />
+      </PageSection>
+
       {instance.outputs && (
-        <>
-          <Typography component="h3" variant="h4">
-            <b>Outputs</b>
-          </Typography>
-          <List
-            aria-label="list of job outputs"
-            component="ul"
-            css={css`
-              display: flex;
-              flex-wrap: wrap;
-            `}
-          >
-            {/* We currently have to assume that the outputs have a consistent type */}
-            {Object.entries(JSON.parse(instance.outputs) as Record<string, OutputValue>).map(
-              ([name, output]) => {
-                const isFile = output.type === 'file' || output.type === 'files';
-                return (
-                  <ListItem
-                    css={css`
-                      width: auto;
-                    `}
-                    key={name}
-                  >
-                    <ListItemAvatar>
-                      <Avatar>
-                        {isFile ? <InsertDriveFileRoundedIcon /> : <FolderRoundedIcon />}
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      disableTypography
-                      primary={
-                        <Typography component="span" variant="body1">
-                          {output.title}
-                        </Typography>
-                      }
-                      secondary={<JobOutputLink output={output} projectId={instance.project_id} />}
-                    />
-                  </ListItem>
-                );
-              },
-            )}
-          </List>
-        </>
+        <PageSection level={3} title="Outputs">
+          <JobOutputSection
+            outputs={JSON.parse(instance.outputs)}
+            projectId={instance.project_id}
+          />
+        </PageSection>
       )}
 
       <Grid container spacing={2}>

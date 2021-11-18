@@ -10,11 +10,11 @@ import { UserSettingsSection } from './UserSettingsSection';
 export const UserSettingsContent = () => {
   return (
     <Container maxWidth="md">
-      <PageSection level={3} title="User Settings">
+      <PageSection level={2} title="User Settings">
         <UserSettingsSection />
       </PageSection>
 
-      <PageSection level={3} title="Project Stats">
+      <PageSection level={2} title="Project Stats">
         <ProjectStatsSection />
       </PageSection>
     </Container>

@@ -4,22 +4,20 @@ import { Folder } from '@material-ui/icons';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import type { OutputValue } from './types';
-
-export interface JobOutputLinkProps {
+export interface JobLinkProps {
   projectId: string;
-  output: OutputValue;
+  path: string;
+  type?: 'file' | 'files' | 'directory';
 }
 
 /**
- * Processes provided path. Returns the path in the form of an array of path parts where leading '.'
- * or double '/' are not present.
+ * Processes provided path. Returns the path in the form of an array of path parts with '.' or
+ * double '/' are not present.
  */
 const getPath = (contains: string) => {
   const path = contains
     .split('/')
-    // If the path begins with a '.', remove it
-    .filter((part, i) => !(i === 0 && part === '.'))
+    .filter((part) => part !== '.')
     // Filter empty parts
     .filter((part) => Boolean(part));
 
@@ -57,15 +55,13 @@ const getFilePathAndName = (path: string[]) => {
 };
 
 /**
- * Creates a link to a task's output depending on the type and path of the output.
+ * Creates a link to a task's input or output depending on the type and path.
  */
-export const JobOutputLink = ({ output, projectId }: JobOutputLinkProps) => {
-  const { type, creates } = output;
-
+export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) => {
   const { query } = useRouter();
   const theme = useTheme();
 
-  const path = getPath(creates);
+  const path = getPath(originalPath);
   const { resolvedPath, containsGlob } = getResolvedPath(path);
   const displayPath = path.join('/');
 

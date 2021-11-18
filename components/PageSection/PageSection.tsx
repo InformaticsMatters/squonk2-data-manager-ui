@@ -37,13 +37,10 @@ export const PageSection: FC<PageSectionProps> = ({ level, title, children }) =>
       ? ((realLevel + 1) as PageSectionLevel) // This is safe since a check is performed
       : LAST_ACCEPTABLE_LEVEL;
 
-  // Used for styling, it's level lower and can go to '1' hence the type
-  const componentLevel = (realLevel - 1) as PageSectionLevel | 1;
-
   return (
     <PageSectionProvider level={nextLevel}>
       <Box component="section" marginBottom={4}>
-        <Typography gutterBottom component={`h${componentLevel}`} variant={`h${realLevel}`}>
+        <Typography gutterBottom component={`h${realLevel}`} variant={`h${nextLevel}`}>
           {title}
         </Typography>
         {children}

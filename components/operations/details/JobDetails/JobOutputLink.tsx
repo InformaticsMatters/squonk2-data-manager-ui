@@ -12,27 +12,37 @@ export interface JobOutputLinkProps {
 }
 
 /**
- * Splits path, provided as string, into path parts and potentially removing leading '.' and
- * stopping on encountering first glob.
+ * Processes provided path. Returns the path in the form of an array of path parts where leading '.'
+ * or double '/' are not present.
  */
 const getPath = (contains: string) => {
-  let containsGlob = false;
-
   const path = contains
     .split('/')
     // If the path begins with a '.', remove it
     .filter((part, i) => !(i === 0 && part === '.'))
-    // Stop at first glob
-    .filter((part) => {
-      if (part.includes('*')) {
-        containsGlob = true;
-      }
+    // Filter empty parts
+    .filter((part) => Boolean(part));
 
-      return !containsGlob;
-    });
+  return path;
+};
+
+/**
+ * Returns a resolved path, which points to the last directory before a glob path part was
+ * encountered, in the same form and a boolean value whether such path part was encountered.
+ */
+const getResolvedPath = (path: string[]) => {
+  let containsGlob = false;
+
+  const resolvedPath = path.filter((part) => {
+    if (part.includes('*')) {
+      containsGlob = true;
+    }
+
+    return !containsGlob;
+  });
 
   return {
-    path,
+    resolvedPath,
     containsGlob,
   };
 };
@@ -55,10 +65,12 @@ export const JobOutputLink = ({ output, projectId }: JobOutputLinkProps) => {
   const { query } = useRouter();
   const theme = useTheme();
 
-  const { path, containsGlob } = getPath(creates);
+  const path = getPath(creates);
+  const { resolvedPath, containsGlob } = getResolvedPath(path);
+  const displayPath = path.join('/');
 
   if (type === 'file' && !containsGlob) {
-    const { filePath, fileName } = getFilePathAndName(path);
+    const { filePath, fileName } = getFilePathAndName(resolvedPath);
 
     return (
       <Box
@@ -99,7 +111,7 @@ export const JobOutputLink = ({ output, projectId }: JobOutputLinkProps) => {
         >
           <Tooltip title="Open in Plaintext Viewer">
             <Link rel="noopener noreferrer" target="_blank">
-              <Typography component="span">{creates}</Typography>
+              <Typography component="span">{displayPath}</Typography>
             </Link>
           </Tooltip>
         </NextLink>
@@ -122,7 +134,7 @@ export const JobOutputLink = ({ output, projectId }: JobOutputLinkProps) => {
           query: {
             ...query,
             project: projectId,
-            path,
+            path: resolvedPath,
           },
         }}
       >
@@ -133,7 +145,7 @@ export const JobOutputLink = ({ output, projectId }: JobOutputLinkProps) => {
         </Tooltip>
       </NextLink>
 
-      <Typography component="span">{creates}</Typography>
+      <Typography component="span">{displayPath}</Typography>
     </Box>
   );
 };

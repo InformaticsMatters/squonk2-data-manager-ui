@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { css } from '@emotion/react';
-import type { CheckboxProps } from '@material-ui/core';
-import { Checkbox, Tooltip } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
 import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import StarRoundedIcon from '@material-ui/icons/StarRounded';
 
@@ -27,47 +26,27 @@ export interface FavouriteButtonProps {
    * Mime-type of the file. Undefined if fullPath corresponds to a directory.
    */
   mimeType: string | undefined;
-  /**
-   * Props forwarded to the MuiCheckbox component.
-   */
-  CheckboxProps?: CheckboxProps;
 }
 
 /**
- * Checkbox that controls a file's favourite state in the selected files context.
+ * Button that controls a file's favourite state in the selected files context.
  */
-export const FavouriteButton = ({
-  projectId,
-  fullPath,
-  type,
-  mimeType,
-  CheckboxProps,
-}: FavouriteButtonProps) => {
+export const FavouriteButton = ({ projectId, fullPath, type, mimeType }: FavouriteButtonProps) => {
   const { selectedFiles, addFile, removeFile } = useSelectedFiles(projectId);
 
   const file = selectedFiles?.find((file) => file.path === fullPath);
 
-  const handleFavouriteChange = (checked: boolean, fullPath: string) => {
-    checked
+  const handleFavouriteChange = () => {
+    !file
       ? addFile && addFile({ path: fullPath, type, mimeType })
       : removeFile && removeFile({ path: fullPath, type, mimeType });
   };
 
   return (
     <Tooltip title="Favourite this file">
-      <Checkbox
-        css={css`
-          padding: 0;
-          margin: 0 3px;
-        `}
-        edge="end"
-        checked={!!file}
-        checkedIcon={<StarRoundedIcon />}
-        icon={<StarBorderRoundedIcon />}
-        size="small"
-        onChange={(_event, checked) => handleFavouriteChange(checked, fullPath)}
-        {...CheckboxProps}
-      />
+      <IconButton size="small" onClick={handleFavouriteChange}>
+        {file ? <StarRoundedIcon /> : <StarBorderRoundedIcon />}
+      </IconButton>
     </Tooltip>
   );
 };

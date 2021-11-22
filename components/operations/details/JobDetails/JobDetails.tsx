@@ -74,16 +74,11 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
           </PageSection>
         </Grid>
 
-        {instance.outputs && (
-          <Grid item sm={6} xs={12}>
-            <PageSection level={3} title="Outputs">
-              <JobOutputSection
-                outputs={JSON.parse(instance.outputs)}
-                projectId={instance.project_id}
-              />
-            </PageSection>
-          </Grid>
-        )}
+        <Grid item sm={6} xs={12}>
+          <PageSection level={3} title="Outputs">
+            <JobOutputSection instanceSummary={instanceSummary} />
+          </PageSection>
+        </Grid>
       </Grid>
 
       <Grid container spacing={2}>

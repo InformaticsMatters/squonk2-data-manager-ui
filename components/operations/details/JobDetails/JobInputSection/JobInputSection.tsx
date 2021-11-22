@@ -17,6 +17,9 @@ import { JobLink } from '../JobLink';
 import { useGetJobInputs } from './useGetJobInputs';
 
 export interface JobInputSectionProps {
+  /**
+   * Instance of the job.
+   */
   instanceSummary: InstanceSummary;
 }
 
@@ -32,6 +35,10 @@ export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
 
   if (isError) {
     return <Alert severity="error">{error?.response?.data.error}</Alert>;
+  }
+
+  if (!inputs.length) {
+    return <Typography>This job has no inputs</Typography>;
   }
 
   return (

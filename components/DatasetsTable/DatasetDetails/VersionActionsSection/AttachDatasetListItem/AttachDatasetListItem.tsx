@@ -3,8 +3,8 @@ import { useQueryClient } from 'react-query';
 
 import type { DatasetVersionSummary, Error as DMError } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
-import { useAttachFile } from '@squonk/data-manager-client/file';
-import { getGetProjectQueryKey, useGetProjects } from '@squonk/data-manager-client/project';
+import { getGetFilesQueryKey, useAttachFile } from '@squonk/data-manager-client/file';
+import { useGetProjects } from '@squonk/data-manager-client/project';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import { ListItemText } from '@material-ui/core';
@@ -111,6 +111,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
         })}
         onClose={() => setOpen(false)}
         onSubmit={async ({ project, type, path, isImmutable, isCompress }, { setSubmitting }) => {
+          const resolvedPath = path || '/';
           try {
             await attachFile({
               data: {
@@ -120,13 +121,15 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
                 immutable: isImmutable,
                 compress: isCompress,
                 as_type: type,
-                path: path || '/',
+                path: resolvedPath,
               },
             });
 
             await Promise.all([
               // Ensure the views showing project files is updated to include the new addition
-              queryClient.invalidateQueries(getGetProjectQueryKey(project)),
+              queryClient.invalidateQueries(
+                getGetFilesQueryKey({ project_id: project, path: resolvedPath }),
+              ),
               // Ensure that the dataset's details display the project's name in the used in projects
               // field
               queryClient.invalidateQueries(getGetDatasetsQueryKey()),

@@ -56,13 +56,13 @@ export const FavouriteButton = ({
   return (
     <Tooltip title="Favourite this file">
       <Checkbox
-        checked={!!file}
-        checkedIcon={<StarRoundedIcon />}
         css={css`
-          padding-top: 0;
-          padding-bottom: 0;
+          padding: 0;
+          margin: 0 3px;
         `}
         edge="end"
+        checked={!!file}
+        checkedIcon={<StarRoundedIcon />}
         icon={<StarBorderRoundedIcon />}
         size="small"
         onChange={(_event, checked) => handleFavouriteChange(checked, fullPath)}

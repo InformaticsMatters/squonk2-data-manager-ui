@@ -2,8 +2,7 @@ import React from 'react';
 import { useQueryClient } from 'react-query';
 
 import type { DeleteUnmanagedFileParams } from '@squonk/data-manager-client';
-import { useDeleteUnmanagedFile } from '@squonk/data-manager-client/file';
-import { getGetProjectQueryKey } from '@squonk/data-manager-client/project';
+import { getGetFilesQueryKey, useDeleteUnmanagedFile } from '@squonk/data-manager-client/file';
 
 import { IconButton } from '@material-ui/core';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
@@ -50,7 +49,7 @@ export const DeleteUnmanagedFileButton = ({
             project_id: projectId,
           },
         });
-        await queryClient.invalidateQueries(getGetProjectQueryKey(projectId));
+        await queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
       }}
     >
       {({ openModal }) => (

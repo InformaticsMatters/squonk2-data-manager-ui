@@ -1,8 +1,7 @@
 import React from 'react';
 import { useQueryClient } from 'react-query';
 
-import { useDeleteFile } from '@squonk/data-manager-client/file';
-import { getGetProjectQueryKey } from '@squonk/data-manager-client/project';
+import { getGetFilesQueryKey, useDeleteFile } from '@squonk/data-manager-client/file';
 
 import { IconButton } from '@material-ui/core';
 import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
@@ -11,19 +10,23 @@ import { WarningDeleteButton } from '../../WarningDeleteButton';
 
 export interface DetachDatasetProps {
   /**
-   * ID of a file
+   * ID of a file.
    */
   fileId: string;
   /**
-   * ID of the project
+   * ID of the project.
    */
   projectId: string;
+  /**
+   * Path inside the project to the managed file.
+   */
+  path: string;
 }
 
 /**
  * Detach a managed file from a project
  */
-export const DetachDataset = ({ fileId, projectId }: DetachDatasetProps) => {
+export const DetachDataset = ({ fileId, projectId, path }: DetachDatasetProps) => {
   const queryClient = useQueryClient();
   const { mutateAsync: detachDataset } = useDeleteFile();
 
@@ -35,7 +38,7 @@ export const DetachDataset = ({ fileId, projectId }: DetachDatasetProps) => {
       tooltipText="Detach File"
       onDelete={async () => {
         await detachDataset({ fileid: fileId });
-        await queryClient.invalidateQueries(getGetProjectQueryKey(projectId));
+        await queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
       }}
     >
       {({ openModal }) => (

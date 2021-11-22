@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
+import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
 import { CreateDatasetFromFileButton } from './Buttons/CreateDatasetFromFileButton';
 import { DeleteUnmanagedFileButton } from './Buttons/DeleteUnmanagedFileButton';
 import { DetachDataset } from './Buttons/DetachDataset';
@@ -20,6 +21,9 @@ export interface FileActionsProps {
  */
 export const FileActions = ({ file }: FileActionsProps) => {
   const { projectId } = useCurrentProjectId();
+
+  const breadcrumbs = useProjectBreadcrumbs();
+  const path = '/' + breadcrumbs.join('/');
 
   if (!projectId) {
     return null;
@@ -42,14 +46,10 @@ export const FileActions = ({ file }: FileActionsProps) => {
       {/* Actions for files only */}
 
       {/* Managed files are "detached" */}
-      {isManagedFile && <DetachDataset fileId={fileId} projectId={projectId} />}
+      {isManagedFile && <DetachDataset fileId={fileId} path={path} projectId={projectId} />}
       {/* Unmanaged files are "deleted" */}
       {!isManagedFile && (
-        <DeleteUnmanagedFileButton
-          fileName={file.fileName}
-          path={'/' + file.fullPath.split('/').slice(0, -1).join('/')}
-          projectId={projectId}
-        />
+        <DeleteUnmanagedFileButton fileName={file.fileName} path={path} projectId={projectId} />
       )}
       {/* Datasets can be created from unmanaged files or managed files at are immutable */}
       {isFile && (!file.immutable || !isManagedFile) && (

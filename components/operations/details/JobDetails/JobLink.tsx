@@ -11,7 +11,7 @@ export interface JobLinkProps {
 }
 
 /**
- * Processes provided path. Returns the path in the form of an array of path parts with '.' or
+ * Processes provided path. Returns the path in the form of an array of path parts where '.' or
  * double '/' are not present.
  */
 const getPath = (contains: string) => {

@@ -67,18 +67,24 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
         </ListItem>
       </HorizontalList>
 
-      <PageSection level={3} title="Inputs">
-        <JobInputSection instanceSummary={instanceSummary} />
-      </PageSection>
+      <Grid container>
+        <Grid item sm={6} xs={12}>
+          <PageSection level={3} title="Inputs">
+            <JobInputSection instanceSummary={instanceSummary} />
+          </PageSection>
+        </Grid>
 
-      {instance.outputs && (
-        <PageSection level={3} title="Outputs">
-          <JobOutputSection
-            outputs={JSON.parse(instance.outputs)}
-            projectId={instance.project_id}
-          />
-        </PageSection>
-      )}
+        {instance.outputs && (
+          <Grid item sm={6} xs={12}>
+            <PageSection level={3} title="Outputs">
+              <JobOutputSection
+                outputs={JSON.parse(instance.outputs)}
+                projectId={instance.project_id}
+              />
+            </PageSection>
+          </Grid>
+        )}
+      </Grid>
 
       <Grid container spacing={2}>
         <Grid item md={4} xs={12}>

@@ -35,19 +35,12 @@ export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
   }
 
   return (
-    <List
-      aria-label="list of job inputs"
-      css={css`
-        display: flex;
-        flex-wrap: wrap;
-      `}
-    >
+    <List aria-label="list of job inputs">
       {/* We currently have to assume that the outputs have a consistent type */}
       {inputs.map((input) => {
         return (
           <ListItem
             css={css`
-              width: auto;
               align-items: flex-start;
             `}
             key={input.name}

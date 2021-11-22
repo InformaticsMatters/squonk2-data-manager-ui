@@ -22,13 +22,7 @@ export interface JobOutputSectionProps {
  */
 export const JobOutputSection = ({ outputs, projectId }: JobOutputSectionProps) => {
   return (
-    <List
-      aria-label="list of job outputs"
-      css={css`
-        display: flex;
-        flex-wrap: wrap;
-      `}
-    >
+    <List aria-label="list of job outputs">
       {/* We currently have to assume that the outputs have a consistent type */}
       {Object.entries(outputs).map(([name, output]) => {
         const isFile = output.type === 'file' || output.type === 'files';
@@ -36,7 +30,6 @@ export const JobOutputSection = ({ outputs, projectId }: JobOutputSectionProps) 
         return (
           <ListItem
             css={css`
-              width: auto;
               align-items: flex-start;
             `}
             key={name}

@@ -6,7 +6,7 @@ import { IconButton, List, ListItem, ListItemText, Typography } from '@material-
 import { DeleteForever } from '@material-ui/icons';
 
 import { WarningDeleteButton } from '../../../WarningDeleteButton';
-import type { TableDataset } from '../..';
+import type { TableDataset, TableDatasetSubRow } from '../..';
 import { useFilterDeletableDatasets } from './useFilterDeletableDatasets';
 import { useSortUndeletableDatasets } from './useSortUndeletableDatasets';
 
@@ -19,7 +19,7 @@ export interface BulkDeleteButtonProps {
   /**
    * Selected datasets versions from DatasetsTable.
    */
-  selectedDatasets: TableDataset[];
+  selectedDatasets: TableDatasetSubRow[];
 }
 
 /**
@@ -34,15 +34,9 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
   const sortedUndeletableDatasets = useSortUndeletableDatasets(undeletableDatasets);
 
   const deleteSelectedDatasets = async () => {
-    const promises = deletableDatasets
-      // In case a non sub row (without version) slips in here
-      .filter((dataset) => dataset.version !== undefined)
-      .map((dataset) =>
-        // Since the array has been filtered to not include items without a version number, this
-        // is safe
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        deleteDataset({ datasetid: dataset.dataset_id, datasetversion: dataset.version! }),
-      );
+    const promises = deletableDatasets.map((dataset) =>
+      deleteDataset({ datasetid: dataset.dataset_id, datasetversion: dataset.version }),
+    );
 
     await Promise.all(promises);
 

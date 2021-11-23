@@ -1,4 +1,4 @@
-import type { TableDataset } from '../..';
+import type { TableDatasetSubRow } from '../..';
 
 /**
  * Sorts undeletable dataset versions in ascending order and groups them by dataset ID. This isn't
@@ -8,9 +8,9 @@ import type { TableDataset } from '../..';
  * selection of all rows, in which case the dataset versions are inserted in the order the API
  * provided, which should already be sorted.
  */
-export const useSortUndeletableDatasets = (undeletableDatasets: TableDataset[]) => {
+export const useSortUndeletableDatasets = (undeletableDatasets: TableDatasetSubRow[]) => {
   // Dataset versions are grouped by dataset ID.
-  const sortedDatasetsMap = new Map<string, TableDataset[]>();
+  const sortedDatasetsMap = new Map<string, TableDatasetSubRow[]>();
 
   // Group the dataset versions
   undeletableDatasets.forEach((dataset) => {
@@ -25,13 +25,7 @@ export const useSortUndeletableDatasets = (undeletableDatasets: TableDataset[]) 
 
   // Transform the map into an array of dataset groups and sort them
   const sortedArray = Array.from(sortedDatasetsMap.values()).map((datasetArray) => {
-    return (
-      datasetArray
-        // In case a non sub row (without version) slips in here
-        .filter((dataset) => dataset.version !== undefined)
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        .sort((a, b) => a.version! - b.version!)
-    );
+    return datasetArray.sort((a, b) => a.version - b.version);
   });
 
   return sortedArray;

@@ -1,14 +1,14 @@
 import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
-import type { TableDataset } from '../..';
+import type { TableDatasetSubRow } from '../..';
 
 /**
  * Splits selected dataset into deletable and undeletable datasets based on user's permission.
  */
-export const useFilterDeletableDatasets = (datasets: TableDataset[]) => {
+export const useFilterDeletableDatasets = (datasets: TableDatasetSubRow[]) => {
   const { user } = useKeycloakUser();
 
-  const deletableDatasets: TableDataset[] = [];
-  const undeletableDatasets: TableDataset[] = [];
+  const deletableDatasets: TableDatasetSubRow[] = [];
+  const undeletableDatasets: TableDatasetSubRow[] = [];
 
   datasets.forEach((dataset) => {
     const isEditor = !!user.username && dataset.editors.includes(user.username);

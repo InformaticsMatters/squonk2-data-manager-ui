@@ -1,14 +1,14 @@
 import { css } from '@emotion/react';
 import { Box, Typography } from '@material-ui/core';
 
-import type { TableDataset } from '..';
+import type { TableDatasetSubRow } from '..';
 import { BulkDeleteButton } from './BulkDeleteButton';
 
 export interface DatasetsBulkActionsProps {
   /**
    * Selected datasets versions from DatasetsTable.
    */
-  selectedDatasets: TableDataset[];
+  selectedDatasets: TableDatasetSubRow[];
 }
 
 /**

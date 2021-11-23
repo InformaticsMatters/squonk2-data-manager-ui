@@ -14,12 +14,27 @@ const Plot = dynamic<PlotParams>(() => import('../../../Plot').then((mod) => mod
 
 export interface UsageChartProps {
   chartData: UsageChartData[];
+  unitCost: number;
 }
 
-export const UsageChart = ({ chartData }: UsageChartProps) => {
+/**
+ * Returns the number of decimal places values should display. This prevents rounding error when
+ * doing calculations (e.g. the 'Available' field). The amount of decimal points is derived from the
+ * `unit_cost` each product has.
+ */
+const getDecimalPoints = (unitCost: number) => {
+  const cost = String(unitCost);
+  const decimalPart = cost.split('.').at(1);
+  const decimalPoints = decimalPart !== undefined ? decimalPart.length : 0;
+  return decimalPoints;
+};
+
+export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
   const valuesSummed = chartData
     .map((data) => data.value)
     .reduce((prevValue, nextValue) => prevValue + nextValue);
+
+  const decimalPoints = getDecimalPoints(unitCost);
 
   return (
     <Tooltip
@@ -52,7 +67,7 @@ export const UsageChart = ({ chartData }: UsageChartProps) => {
                   `}
                   variant="body2"
                 >
-                  {item.value}
+                  {item.value.toFixed(decimalPoints)}
                 </Typography>
                 <Typography component="span" variant="body2">
                   /

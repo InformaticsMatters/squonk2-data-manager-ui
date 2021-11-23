@@ -36,7 +36,7 @@ export const ProjectStatsSection = () => {
     () => [
       {
         id: 'projectName',
-        accessor: 'name',
+        accessor: (row) => row.claim?.name,
         Header: 'Project name',
       },
       {
@@ -49,7 +49,7 @@ export const ProjectStatsSection = () => {
       },
       {
         id: 'tier',
-        accessor: (row) => formatTierString(row.flavour),
+        accessor: (row) => formatTierString(row.product.flavour ?? ''),
         Header: 'Tier',
       },
       {

@@ -25,5 +25,7 @@ export const StorageUsageChart = ({ storageSubscription }: StorageUsageChartProp
     { type: 'Available', value: available, color: 'green' },
   ];
 
-  return <UsageChart chartData={chartData} />;
+  return (
+    <UsageChart chartData={chartData} unitCost={storageSubscription.storage.coins.unit_cost} />
+  );
 };

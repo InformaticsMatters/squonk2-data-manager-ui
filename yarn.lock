@@ -1339,15 +1339,15 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.2.0.tgz#667bfc6186ae7c9e0b45a08960c551437176e1ca"
   integrity sha512-VkE3KLBmJwcCaVARtQpfuKcKv8gcBmUubrfHGF84dXuuW6jgsRYxPtzcIhPyK9WAPpRt2/xY6zkD9MnRaJzSyw==
 
-"@squonk/account-server-client@0.1.0-rc-29":
-  version "0.1.0-rc-29"
-  resolved "https://registry.yarnpkg.com/@squonk/account-server-client/-/account-server-client-0.1.0-rc-29.tgz#7af6ad328e23548ac649ec373750d27d99fa2e5d"
-  integrity sha512-nOMgiEj+ahzXKJP9B1HsiKxv5wcLRMWIy2hw4HlIn/DhMnKPQ4qmuBclQPdiv6zmZyQLk+DBC6nsOf/BlyKPuA==
+"@squonk/account-server-client@0.1.3-rc.1":
+  version "0.1.3-rc.1"
+  resolved "https://registry.yarnpkg.com/@squonk/account-server-client/-/account-server-client-0.1.3-rc.1.tgz#b98e099932f26dbbb78700ae8bffad509f5f9627"
+  integrity sha512-KegW3/D5BYG/vb/zlCNvUZ2Dlm3UPrZaesKVIFtkp8yHDnD9X+FcjaorrcsButef4aKsPd8LYD5pUZZX5qmNEA==
 
-"@squonk/data-manager-client@^0.6.9-rc.1":
-  version "0.6.9-rc.1"
-  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.6.9-rc.1.tgz#2b9b41d7db3eb0081c2ccf04baa3129dbac16380"
-  integrity sha512-NRHVsGx9x/Ih/iAEFcYO5D0eWH1lUHELxYYT9g9d5hFarTNVM+iq8Zjd30gsFMxnRKYAYKLirRdDuTjMZb4rfA==
+"@squonk/data-manager-client@0.6.13-rc.1":
+  version "0.6.13-rc.1"
+  resolved "https://registry.yarnpkg.com/@squonk/data-manager-client/-/data-manager-client-0.6.13-rc.1.tgz#cf3ca283cf86a176d59fc2889473e50b6187887b"
+  integrity sha512-ymIeVZrMb5kJPUsXtY9a8G0rHJb9oN1xHwJVaLhE2cXzZHDfor6uFVOIKW6YW9X1t9t/2xW66XgQ8DY/ZK+PGQ==
 
 "@squonk/mui-theme@^2.0.1":
   version "2.0.1"

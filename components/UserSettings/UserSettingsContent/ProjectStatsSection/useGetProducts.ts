@@ -10,7 +10,7 @@ import { useGetProductsForUnit } from '@squonk/account-server-client/product';
 
 import type { AxiosError } from 'axios';
 
-import { ORG_ID, UNIT_ID } from '../../../../utils/ASIdentities';
+import { UNIT_ID } from '../../../../utils/ASIdentities';
 
 /**
  * Fetches information about account's subscriptions and divides them into project and storage
@@ -20,7 +20,7 @@ export const useProducts = () => {
   const { data, isLoading, isError, error } = useGetProductsForUnit<
     ProductGetResponse,
     AxiosError<ASError>
-  >(ORG_ID, UNIT_ID);
+  >(UNIT_ID);
 
   const { projectSubscriptions, storageSubscriptions } = useMemo(() => {
     const projectSubscriptions: ProductDmProjectTier[] = [];
@@ -28,9 +28,9 @@ export const useProducts = () => {
 
     if (data) {
       data.products.forEach((product) => {
-        switch (product.type) {
+        switch (product.product.type) {
           case 'DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION':
-            projectSubscriptions.push(product);
+            projectSubscriptions.push(product as ProductDmProjectTier);
             break;
           case 'DATA_MANAGER_STORAGE_SUBSCRIPTION':
             storageSubscriptions.push(product);

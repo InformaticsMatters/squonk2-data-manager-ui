@@ -27,5 +27,7 @@ export const ProjectUsageChart = ({ projectSubscription }: ProjectUsageChartProp
     { type: 'Available', value: available, color: 'green' },
   ];
 
-  return <UsageChart chartData={chartData} />;
+  return (
+    <UsageChart chartData={chartData} unitCost={projectSubscription.storage.coins.unit_cost} />
+  );
 };

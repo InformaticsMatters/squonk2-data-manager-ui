@@ -31,7 +31,7 @@ const FileUpload = dynamic<Record<string, never>>(
 );
 
 const DatasetDetails = dynamic<DatasetDetailsProps>(
-  () => import('./DatasetDetails/DatasetDetails').then((mod) => mod.DatasetDetails),
+  () => import('./DatasetDetails').then((mod) => mod.DatasetDetails),
   {
     loading: () => <CircularProgress size="1rem" />,
   },

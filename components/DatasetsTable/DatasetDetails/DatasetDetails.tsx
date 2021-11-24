@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { useLayoutEffect } from 'react';
 import { useState } from 'react';
 import React from 'react';
 
@@ -44,6 +45,10 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset, version, data
   const isEditor = !!user.username && dataset.editors.includes(user.username);
   const isOwner = dataset.owner === user.username;
   const editable = isEditor || isOwner;
+
+  useLayoutEffect(() => {
+    setSelectedVersion(version);
+  }, [version]);
 
   return (
     <>

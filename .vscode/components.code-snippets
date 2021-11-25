@@ -1,0 +1,40 @@
+{
+	"childcomp": {
+		"prefix": "childcomp",
+		"description": "React functional component with FC component type and props interface",
+		"body": [
+			"import type { FC } from 'react';",
+			"",
+			"export interface ${TM_FILENAME_BASE}Props {",
+			"  $1",
+			"}",
+			"",
+			"export const ${TM_FILENAME_BASE}: FC<${TM_FILENAME_BASE}Props> = ({ $2 }) => {",
+			"  return (",
+			"    <>",
+			"      $3",
+			"    </>",
+			"  );",
+			"};",
+			""
+		]
+	},
+	"comp": {
+		"prefix": "comp",
+		"description": "React functional component with props",
+		"body": [
+			"export interface ${TM_FILENAME_BASE}Props {",
+			"  $1",
+			"}",
+			"",
+			"export const ${TM_FILENAME_BASE} = ({ $2 }: ${TM_FILENAME_BASE}Props) => {",
+			"  return (",
+			"    <>",
+			"      $3",
+			"    </>",
+			"  );",
+			"};",
+			""
+		]
+	}
+}

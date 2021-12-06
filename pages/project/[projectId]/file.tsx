@@ -7,9 +7,9 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 import { PlaintextViewer } from '../../../components/PlaintextViewer';
+import { DM_API_URL } from '../../../constants';
 import { useProjectBreadcrumbs } from '../../../hooks/projectPathHooks';
 import { useApi } from '../../../hooks/useApi';
-import { DM_API_URL } from '../../../utils/baseUrls';
 import { getDecompressionType } from '../../../utils/fileUtils';
 import { getQueryParams } from '../../../utils/requestUtils';
 

@@ -11,14 +11,13 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
 import { ThemeProviders } from '../components/ThemeProviders';
+import { AS_API_URL, DM_API_URL } from '../constants';
 import { ColorSchemeProvider } from '../context/colorSchemeContext';
 import { SelectedFilesProvider } from '../context/fileSelectionContext';
 import { MDXComponentProvider } from '../context/MDXComponentProvider';
-import { AS_API_URL, DM_API_URL } from '../utils/baseUrls';
 
 import '../styles/globalStyles.scss';
 
-// ? Is this the right place to set this?
 setDMBaseUrl(DM_API_URL);
 setASBaseUrl(AS_API_URL);
 

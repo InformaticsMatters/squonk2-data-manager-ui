@@ -8,7 +8,8 @@ import { css } from '@emotion/react';
 import { DataTable } from '../../../DataTable';
 import { ProjectUsageChart } from './ProjectUsageChart';
 import { StorageUsageChart } from './StorageUsageChart';
-import { useProducts } from './useGetProducts';
+import { useProjectSubscriptions } from './useProjectSubscriptions';
+import { useStorageSubscriptions } from './useStorageSubscriptions';
 
 /**
  * Formats the tier string, e.g. GOLD -> Gold.
@@ -30,7 +31,19 @@ const columnSizes = {
  * Displays `Project stats` section in User Settings.
  */
 export const ProjectStatsSection = () => {
-  const { projectSubscriptions, storageSubscriptions, isLoading, isError, error } = useProducts();
+  const {
+    projectSubscriptions,
+    isLoading: isProjectSubscriptionsLoading,
+    isError: isProjectSubscriptionsError,
+    error: projectSubscriptionsError,
+  } = useProjectSubscriptions();
+
+  const {
+    storageSubscriptions,
+    isLoading: isStorageSubscriptionsLoading,
+    isError: isStorageSubscriptionsError,
+    error: storageSubscriptionsError,
+  } = useStorageSubscriptions();
 
   const projectsColumns: Column<ProductDmProjectTier>[] = useMemo(
     () => [
@@ -127,9 +140,9 @@ export const ProjectStatsSection = () => {
         }}
         data={projectSubscriptions}
         enableSearch={false}
-        error={error}
-        isError={isError}
-        isLoading={isLoading}
+        error={projectSubscriptionsError}
+        isError={isProjectSubscriptionsError}
+        isLoading={isProjectSubscriptionsLoading}
         tableContainer={false}
       />
       <br />
@@ -161,9 +174,9 @@ export const ProjectStatsSection = () => {
         }}
         data={storageSubscriptions}
         enableSearch={false}
-        error={error}
-        isError={isError}
-        isLoading={isLoading}
+        error={storageSubscriptionsError}
+        isError={isStorageSubscriptionsError}
+        isLoading={isStorageSubscriptionsLoading}
         tableContainer={false}
       />
     </>

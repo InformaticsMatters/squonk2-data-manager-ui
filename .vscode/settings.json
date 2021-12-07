@@ -144,6 +144,7 @@
     "project-details",
     "ui/user-settings",
     "ui/plain-text-viewer",
-    "jsx-transform"
+    "jsx-transform",
+    "roles"
   ],
 }

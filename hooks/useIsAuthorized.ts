@@ -1,10 +1,11 @@
+import { REQUIRED_ROLES } from '../constants/auth';
 import { useKeycloakUser } from './useKeycloakUser';
 
 export const useIsAuthorized = () => {
   const { user } = useKeycloakUser();
 
   if (user.username !== undefined) {
-    if (user.roles?.includes(process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE ?? '')) {
+    if (REQUIRED_ROLES.every((role) => user.roles?.includes(role))) {
       return true;
     }
   }

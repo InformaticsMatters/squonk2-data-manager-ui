@@ -145,6 +145,7 @@
     "ui/user-settings",
     "ui/plain-text-viewer",
     "jsx-transform",
-    "roles"
+    "roles",
+    ".env"
   ],
 }

@@ -12,8 +12,6 @@ import type {
 import { useExpanded } from 'react-table';
 import { useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
 
-import type { Error as DMError } from '@squonk/data-manager-client';
-
 import type { Interpolation } from '@emotion/react';
 import { css } from '@emotion/react';
 import type { TableCellProps, TableProps as MuiTableProps, Theme } from '@material-ui/core';
@@ -36,7 +34,6 @@ import {
 import { ExpandLess } from '@material-ui/icons';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
-import type { AxiosError } from 'axios';
 
 import { CenterLoader } from '../CenterLoader';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
@@ -96,7 +93,7 @@ export interface DataTableProps<Data extends Record<string, any>> {
   /**
    * Error to display. The error is displayed only if `isError` is true.
    */
-  error?: void | AxiosError<DMError> | null;
+  error?: string;
   /**
    * Custom props applied to Table. Props can either be react-table props or MaterialUI props.
    */
@@ -328,14 +325,7 @@ export function DataTable<Data extends Record<string, any>>({
       {(isLoading || isError) && (
         <Box overflow="hidden" padding={2}>
           {isLoading && <CenterLoader />}
-          {isError && (
-            <>
-              {error?.message && <Typography color="error">{error.message}</Typography>}
-              {error?.response && (
-                <Typography color="error">{error.response.data.error}</Typography>
-              )}
-            </>
-          )}
+          {isError && error && <Typography color="error">{error}</Typography>}
         </Box>
       )}
     </>

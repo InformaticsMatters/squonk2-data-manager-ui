@@ -161,7 +161,7 @@ export const ProjectTable = ({ currentProject }: ProjectTable) => {
       <DataTable
         columns={columns}
         data={rows}
-        error={error}
+        error={error?.message}
         getRowId={(row) => row.fullPath}
         isError={isError}
         isLoading={isLoading}

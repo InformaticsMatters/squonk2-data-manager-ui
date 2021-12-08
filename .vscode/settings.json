@@ -146,6 +146,7 @@
     "ui/plain-text-viewer",
     "jsx-transform",
     "roles",
-    ".env"
+    ".env",
+    "as-client"
   ],
 }

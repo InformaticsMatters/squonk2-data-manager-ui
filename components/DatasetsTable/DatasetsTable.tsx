@@ -155,7 +155,7 @@ export const DatasetsTable = () => {
         subRowsEnabled
         columns={columns}
         data={datasets}
-        error={error}
+        error={error?.message}
         getRowId={getRowId}
         initialSelection={[]}
         isError={isError}

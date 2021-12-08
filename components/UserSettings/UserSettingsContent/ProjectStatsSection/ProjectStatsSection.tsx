@@ -140,7 +140,7 @@ export const ProjectStatsSection = () => {
         }}
         data={projectSubscriptions}
         enableSearch={false}
-        error={projectSubscriptionsError}
+        error={projectSubscriptionsError?.message}
         isError={isProjectSubscriptionsError}
         isLoading={isProjectSubscriptionsLoading}
         tableContainer={false}
@@ -174,7 +174,7 @@ export const ProjectStatsSection = () => {
         }}
         data={storageSubscriptions}
         enableSearch={false}
-        error={storageSubscriptionsError}
+        error={storageSubscriptionsError?.message}
         isError={isStorageSubscriptionsError}
         isLoading={isStorageSubscriptionsLoading}
         tableContainer={false}

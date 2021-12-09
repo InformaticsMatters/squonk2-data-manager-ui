@@ -18,6 +18,7 @@ export const createProxyMiddleware = (patternStr: Path, target: string) =>
           Authorization: `Bearer ${accessToken}`,
           cookie: '', // Must override the browser sent authorization code otherwise ingress gives a 400 status
         },
+        secure: !process.env.DANGEROUS__DISABLE_SSL_CERT_CHECK_IN_API_PROXY,
       });
     } catch (error) {
       console.error(error);

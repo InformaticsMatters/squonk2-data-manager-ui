@@ -1,8 +1,7 @@
-import type { Error as DMError, FilePathFile, FilesGetResponse } from '@squonk/data-manager-client';
+import type { FilePathFile, FilesGetResponse } from '@squonk/data-manager-client';
 import { useGetFiles } from '@squonk/data-manager-client/file';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/dist/frontend';
-import type { AxiosError } from 'axios';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
@@ -11,12 +10,13 @@ import { DM_API_URL } from '../../../constants';
 import { useProjectBreadcrumbs } from '../../../hooks/projectPathHooks';
 import { useApi } from '../../../hooks/useApi';
 import { getDecompressionType } from '../../../utils/fileUtils';
+import { getErrorMessage } from '../../../utils/orvalError';
 import { getQueryParams } from '../../../utils/requestUtils';
 
 type SelectDatasetVersionResult = {
   file?: FilePathFile;
   isSelectError: boolean;
-  selectError?: Error;
+  selectError?: string;
 };
 
 const selectProjectVersion = (
@@ -32,7 +32,7 @@ const selectProjectVersion = (
   if (!file) {
     return {
       isSelectError: true,
-      selectError: new Error('No file found for the specified file ID'),
+      selectError: 'No file found for the specified file ID',
     };
   }
   return { file, isSelectError: false };
@@ -62,12 +62,11 @@ const FilePlainTextViewer = () => {
     data: files,
     isLoading: isFilesLoading,
     isError: isFilesError,
-    error: filesAxiosError,
-  } = useGetFiles<FilesGetResponse, AxiosError<DMError> | void>({
+    error: filesError,
+  } = useGetFiles({
     project_id: projectId as string,
     path: dirPath,
   });
-  const filesError = filesAxiosError && new Error(filesAxiosError.response?.data.error);
 
   const { file, isSelectError, selectError } = selectProjectVersion(files, fileName as string);
 
@@ -78,7 +77,7 @@ const FilePlainTextViewer = () => {
     data: fileContents,
     isLoading: isContentsLoading,
     isError: isContentsError,
-    error: contentsAxiosError,
+    error: contentsError,
   } = useApi<string>(
     `/project/${projectId}/file${getQueryParams({
       decompress,
@@ -91,11 +90,10 @@ const FilePlainTextViewer = () => {
       enabled: Boolean(file),
     },
   );
-  const contentsError = contentsAxiosError && new Error(contentsAxiosError.response?.data.error);
 
   const isLoading = isFilesLoading || isContentsLoading;
   const isError = isFilesError || isSelectError || isContentsError;
-  const error = filesError || selectError || contentsError;
+  const error = getErrorMessage(filesError) || selectError || getErrorMessage(contentsError);
 
   const downloadUrl = `${DM_API_URL}/project/${projectId}/file${getQueryParams({
     path: dirPath,

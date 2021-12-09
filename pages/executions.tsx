@@ -1,11 +1,6 @@
 import { useMemo } from 'react';
 import { useState } from 'react';
 
-import type {
-  ApplicationsGetResponse,
-  Error as DMError,
-  JobsGetResponse,
-} from '@squonk/data-manager-client';
 import { useGetApplications } from '@squonk/data-manager-client/application';
 import { useGetJobs } from '@squonk/data-manager-client/job';
 
@@ -13,7 +8,6 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, Grid, MenuItem, TextField, useTheme } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import type { AxiosError } from 'axios';
 import Head from 'next/head';
 
 import { CenterLoader } from '../components/CenterLoader';
@@ -42,7 +36,7 @@ const Executions = () => {
     isLoading: isApplicationsLoading,
     isError: isApplicationsError,
     error: applicationsError,
-  } = useGetApplications<ApplicationsGetResponse, AxiosError<DMError>>();
+  } = useGetApplications();
   const applications = applicationsData?.applications;
 
   const {
@@ -50,7 +44,7 @@ const Executions = () => {
     isLoading: isJobsLoading,
     isError: isJobsError,
     error: jobsError,
-  } = useGetJobs<JobsGetResponse, AxiosError<DMError>>();
+  } = useGetJobs();
   const jobs = jobsData?.jobs;
 
   const cards = useMemo(() => {

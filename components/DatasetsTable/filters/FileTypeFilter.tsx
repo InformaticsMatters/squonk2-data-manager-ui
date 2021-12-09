@@ -1,8 +1,7 @@
-import type { Error as DMError, TypesGetResponse, TypeSummary } from '@squonk/data-manager-client';
+import type { TypeSummary } from '@squonk/data-manager-client';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
-import type { AxiosError } from 'axios';
-
+import { getErrorMessage } from '../../../utils/orvalError';
 import { AutocompleteFilter } from './AutocompleteFilter';
 
 export interface FileTypeFilterProps {
@@ -20,16 +19,13 @@ export interface FileTypeFilterProps {
  * Component which adjusts filtering of datasets according to file type.
  */
 export const FileTypeFilter = ({ fileType, setFileType }: FileTypeFilterProps) => {
-  const { data, error, isError, isLoading } = useGetFileTypes<
-    TypesGetResponse,
-    AxiosError<DMError> | void
-  >();
+  const { data, error, isError, isLoading } = useGetFileTypes();
 
   const fileTypes = data?.types || [];
 
   return (
     <AutocompleteFilter
-      error={error}
+      error={getErrorMessage(error)}
       getOptionLabel={(value: TypeSummary) => value.mime}
       id="datasets-file-type-filter"
       isError={isError}

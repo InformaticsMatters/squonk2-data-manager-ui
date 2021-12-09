@@ -2,11 +2,6 @@ import { useState } from 'react';
 import { QueryClient } from 'react-query';
 import { dehydrate } from 'react-query/hydration';
 
-import type {
-  Error as DMError,
-  InstancesGetResponse,
-  TasksGetResponse,
-} from '@squonk/data-manager-client';
 import {
   getGetInstancesQueryKey,
   getInstances,
@@ -18,7 +13,6 @@ import { getGetTasksQueryKey, getTasks, useGetTasks } from '@squonk/data-manager
 import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { Container, Grid } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import type { AxiosError } from 'axios';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 
@@ -92,7 +86,7 @@ const Tasks = () => {
     isLoading: isInstancesLoading,
     isError: isInstancesError,
     error: instancesError,
-  } = useGetInstances<InstancesGetResponse, AxiosError<DMError>>({
+  } = useGetInstances({
     project_id: projectId,
   });
   const instances = instancesData?.instances;
@@ -102,7 +96,7 @@ const Tasks = () => {
     isLoading: isTasksLoading,
     isError: isTasksError,
     error: tasksError,
-  } = useGetTasks<TasksGetResponse, AxiosError<DMError> | void>({ project_id: projectId });
+  } = useGetTasks({ project_id: projectId });
   const tasks = tasksData?.tasks;
 
   const [operationTypes, setOperationTypes] = useState(['task', 'instance']);

@@ -22,7 +22,7 @@ export interface PlaintextViewerProps {
   /**
    * Error to display. The error is displayed only if `isError` is true.
    */
-  error?: Error | null;
+  error?: string;
   /**
    * Title for the viewer, which is displayed in the header in bold.
    */
@@ -70,7 +70,7 @@ export const PlaintextViewer = ({
     }
 
     if (isError) {
-      return <Alert severity="error">{error?.message || 'Failed to view the contents'}</Alert>;
+      return <Alert severity="error">{error || 'Failed to view the contents'}</Alert>;
     }
 
     return (

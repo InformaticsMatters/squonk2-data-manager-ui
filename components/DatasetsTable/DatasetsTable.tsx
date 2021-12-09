@@ -1,14 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import type { Column, Row } from 'react-table';
 
-import type { DatasetsGetResponse, Error as DMError } from '@squonk/data-manager-client';
 import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 
 import { CircularProgress, Typography } from '@material-ui/core';
-import type { AxiosError } from 'axios';
 import dynamic from 'next/dynamic';
 
 import { combineLabels } from '../../utils/labelUtils';
+import { getErrorMessage } from '../../utils/orvalError';
 import { Chips } from '../Chips';
 import { DataTable } from '../DataTable';
 import { LabelChip } from '../labels/LabelChip';
@@ -103,10 +102,7 @@ export const DatasetsTable = () => {
   );
 
   const { params, filter, setFilterItem } = useDatasetsFilter();
-  const { data, error, isError, isLoading } = useGetDatasets<
-    DatasetsGetResponse,
-    AxiosError<DMError>
-  >(params);
+  const { data, error, isError, isLoading } = useGetDatasets(params);
 
   // Transform all datasets to match the data-table props
   const datasets: TableDataset[] = useMemo(
@@ -155,7 +151,7 @@ export const DatasetsTable = () => {
         subRowsEnabled
         columns={columns}
         data={datasets}
-        error={error?.message}
+        error={getErrorMessage(error)}
         getRowId={getRowId}
         initialSelection={[]}
         isError={isError}

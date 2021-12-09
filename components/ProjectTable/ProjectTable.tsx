@@ -12,6 +12,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
+import { getErrorMessage } from '../../utils/orvalError';
 import { DataTable } from '../DataTable';
 import { toLocalTimeString } from '../LocalTime';
 import type { FileActionsProps } from './FileActions';
@@ -161,7 +162,7 @@ export const ProjectTable = ({ currentProject }: ProjectTable) => {
       <DataTable
         columns={columns}
         data={rows}
-        error={error?.message}
+        error={getErrorMessage(error)}
         getRowId={(row) => row.fullPath}
         isError={isError}
         isLoading={isLoading}

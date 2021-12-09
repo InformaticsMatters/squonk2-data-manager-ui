@@ -1,7 +1,7 @@
 import type { QueryKey, UseQueryOptions } from 'react-query';
 import { useQuery } from 'react-query';
 
-import type { Error as DMError } from '@squonk/data-manager-client';
+import type { DmError } from '@squonk/data-manager-client';
 
 import type { AxiosError, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
@@ -27,7 +27,7 @@ const getKey = (url: string): QueryKey => ['api', url];
  * General react-query hook to send requests to the /api (this app) route and not the /api/dm-api
  * (python app) route.
  */
-export const useApi = <TData = any, TError = AxiosError<DMError>>(
+export const useApi = <TData = any, TError = AxiosError<DmError>>(
   url: string,
   axiosConfig: AxiosRequestConfig = {},
   queryOptions?: UseQueryOptions<TData, TError, TData, QueryKey>,

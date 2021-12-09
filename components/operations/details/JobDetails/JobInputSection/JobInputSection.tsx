@@ -12,6 +12,7 @@ import {
 import { FolderRounded, InsertDriveFileRounded } from '@material-ui/icons';
 import { Alert } from '@material-ui/lab';
 
+import { getErrorMessage } from '../../../../../utils/orvalError';
 import { CenterLoader } from '../../../../CenterLoader';
 import { JobLink } from '../JobLink';
 import { useGetJobInputs } from './useGetJobInputs';
@@ -34,7 +35,7 @@ export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
   }
 
   if (isError) {
-    return <Alert severity="error">{error?.response?.data.error}</Alert>;
+    return <Alert severity="error">{getErrorMessage(error)}</Alert>;
   }
 
   if (!inputs.length) {

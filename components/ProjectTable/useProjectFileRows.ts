@@ -1,9 +1,6 @@
 import { useMemo } from 'react';
 
-import type { Error as DMError, FilesGetResponse } from '@squonk/data-manager-client';
 import { useGetFiles } from '@squonk/data-manager-client/file';
-
-import type { AxiosError } from 'axios';
 
 import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
 import type { TableDir, TableFile } from './types';
@@ -20,10 +17,9 @@ export const useProjectFileRows = (project_id: string) => {
   const breadcrumbs = useProjectBreadcrumbs();
   const dirPath = '/' + breadcrumbs.join('/');
 
-  const { data, error, isError, isLoading } = useGetFiles<
-    FilesGetResponse,
-    AxiosError<DMError> | void
-  >({
+  project_id = 'hello';
+
+  const { data, error, isError, isLoading } = useGetFiles({
     project_id,
     path: dirPath,
   });

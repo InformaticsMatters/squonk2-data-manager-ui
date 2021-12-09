@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { DatasetVersionSummary, Error as DMError } from '@squonk/data-manager-client';
+import type { DatasetVersionSummary } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
 import { getGetFilesQueryKey, useAttachFile } from '@squonk/data-manager-client/file';
 import { useGetProjects } from '@squonk/data-manager-client/project';
@@ -12,12 +12,12 @@ import { ListItem } from '@material-ui/core';
 import { FormControl, FormGroup, MenuItem } from '@material-ui/core';
 import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
 import { Alert } from '@material-ui/lab';
-import type { AxiosError } from 'axios';
 import { Field } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-material-ui';
 import * as yup from 'yup';
 
 import { useKeycloakUser } from '../../../../../hooks/useKeycloakUser';
+import { getErrorMessage } from '../../../../../utils/orvalError';
 import { FormikModalWrapper } from '../../../../modals/FormikModalWrapper';
 import { useGetAttachedProjectsNames } from './useGetAttachedProjectsNames';
 
@@ -51,8 +51,8 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
   const { user, isLoading: isUserLoading } = useKeycloakUser();
 
   const queryClient = useQueryClient();
-  const { mutateAsync: attachFile, error } = useAttachFile<AxiosError<DMError>>();
-  const errorMessage = error?.response?.data.error;
+  const { mutateAsync: attachFile, error } = useAttachFile();
+  const errorMessage = getErrorMessage(error);
 
   const { data: projectsData, isLoading: isProjectsLoading } = useGetProjects();
   const projects = projectsData?.projects.filter(

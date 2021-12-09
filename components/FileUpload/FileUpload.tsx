@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { DatasetPostBodyBody, Error as DMError } from '@squonk/data-manager-client';
+import type { DatasetPostBodyBody, DmError } from '@squonk/data-manager-client';
 import { uploadDataset } from '@squonk/data-manager-client/dataset';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
@@ -63,7 +63,7 @@ export const FileUpload = () => {
             setFiles(updatedFiles);
           }
         } catch (err) {
-          const error = err as AxiosError<DMError>;
+          const error = err as AxiosError<DmError>;
           if (error.isAxiosError) {
             const data = error.response?.data;
 

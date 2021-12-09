@@ -28,12 +28,12 @@ import {
   TableSortLabel,
   TextField,
   Toolbar,
-  Typography,
   useTheme,
 } from '@material-ui/core';
 import { ExpandLess } from '@material-ui/icons';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
+import { Alert } from '@material-ui/lab';
 
 import { CenterLoader } from '../CenterLoader';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
@@ -325,7 +325,7 @@ export function DataTable<Data extends Record<string, any>>({
       {(isLoading || isError) && (
         <Box overflow="hidden" padding={2}>
           {isLoading && <CenterLoader />}
-          {isError && error && <Typography color="error">{error}</Typography>}
+          {isError && error && <Alert severity="error">{error}</Alert>}
         </Box>
       )}
     </>

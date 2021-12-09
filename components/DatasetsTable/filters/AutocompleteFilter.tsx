@@ -1,8 +1,5 @@
-import type { Error as DMError } from '@squonk/data-manager-client';
-
 import { TextField, Typography } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import type { AxiosError } from 'axios';
 
 export interface AutocompleteFilterProps<T> {
   /**
@@ -40,7 +37,7 @@ export interface AutocompleteFilterProps<T> {
   /**
    * Error encountered while fetching 'options'.
    */
-  error?: void | AxiosError<DMError> | null;
+  error?: string;
 }
 
 /**
@@ -58,7 +55,7 @@ export const AutocompleteFilter = <T,>({
   error,
 }: AutocompleteFilterProps<T>) => {
   if (isError) {
-    return <Typography color="error">{error?.message}</Typography>;
+    return <Typography color="error">{error}</Typography>;
   }
 
   return (

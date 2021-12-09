@@ -1,30 +1,26 @@
-import type {
-  DatasetDetail,
-  DatasetVersionDetail,
-  Error as DMError,
-} from '@squonk/data-manager-client';
+import type { DatasetDetail, DatasetVersionDetail } from '@squonk/data-manager-client';
 import { useGetVersions } from '@squonk/data-manager-client/dataset';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/dist/frontend';
-import type { AxiosError } from 'axios';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 import { PlaintextViewer } from '../../../components/PlaintextViewer';
 import { DM_API_URL } from '../../../constants';
 import { useApi } from '../../../hooks/useApi';
+import { getErrorMessage } from '../../../utils/orvalError';
 import { getQueryParams } from '../../../utils/requestUtils';
 
 type ParseDatasetVersionResult = {
   datasetVersionNumber?: number;
   isParseError: boolean;
-  parseError?: Error;
+  parseError?: string;
 };
 
 type SelectDatasetVersionResult = {
   version?: DatasetVersionDetail;
   isSelectError: boolean;
-  selectError?: Error;
+  selectError?: string;
 };
 
 const parseDatasetVersion = (datasetVersion?: string | string[]): ParseDatasetVersionResult => {
@@ -32,7 +28,7 @@ const parseDatasetVersion = (datasetVersion?: string | string[]): ParseDatasetVe
   if (isNaN(datasetVersionParsed)) {
     return {
       isParseError: true,
-      parseError: new Error('Invalid dataset version number was specified'),
+      parseError: 'Invalid dataset version number was specified',
     };
   }
   return { datasetVersionNumber: datasetVersionParsed, isParseError: false };
@@ -52,7 +48,7 @@ const selectDatasetVersion = (
   if (!version) {
     return {
       isSelectError: true,
-      selectError: new Error('No dataset version found for the specified dataset version number'),
+      selectError: 'No dataset version found for the specified dataset version number',
     };
   }
   return { version, isSelectError: false };
@@ -82,12 +78,10 @@ const DatasetVersionPlainTextViewer = () => {
     data: datasetDetail,
     isLoading: isDatasetDetailLoading,
     isError: isDatasetDetailError,
-    error: datasetDetailAxiosError,
-  } = useGetVersions<DatasetDetail, AxiosError<DMError>>(datasetId as string, undefined, {
+    error: datasetDetailError,
+  } = useGetVersions(datasetId as string, undefined, {
     query: { enabled: !isParseError },
   });
-  const datasetDetailError =
-    datasetDetailAxiosError && new Error(datasetDetailAxiosError.response?.data.error);
 
   const { version, isSelectError, selectError } = selectDatasetVersion(
     datasetDetail,
@@ -101,7 +95,7 @@ const DatasetVersionPlainTextViewer = () => {
     data: fileContents,
     isLoading: isContentsLoading,
     isError: isContentsError,
-    error: contentsAxiosError,
+    error: contentsError,
   } = useApi<string>(
     `/dataset/${datasetId}/${datasetVersion}/${getQueryParams({ decompress, fileSizeLimit })}`,
     undefined,
@@ -109,11 +103,14 @@ const DatasetVersionPlainTextViewer = () => {
       enabled: Boolean(version),
     },
   );
-  const contentsError = contentsAxiosError && new Error(contentsAxiosError.response?.data.error);
 
   const isLoading = isDatasetDetailLoading || isContentsLoading;
   const isError = isParseError || isDatasetDetailError || isSelectError || isContentsError;
-  const error = parseError || datasetDetailError || selectError || contentsError;
+  const error =
+    parseError ||
+    getErrorMessage(datasetDetailError) ||
+    selectError ||
+    getErrorMessage(contentsError);
 
   const downloadUrl = `${DM_API_URL}/dataset/${datasetId}/${datasetVersion}`;
 

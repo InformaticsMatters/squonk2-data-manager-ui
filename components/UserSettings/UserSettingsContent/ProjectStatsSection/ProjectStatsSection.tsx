@@ -5,6 +5,7 @@ import type { ProductDmProjectTier, ProductDmStorage } from '@squonk/account-ser
 
 import { css } from '@emotion/react';
 
+import { getErrorMessage } from '../../../../utils/orvalError';
 import { DataTable } from '../../../DataTable';
 import { ProjectUsageChart } from './ProjectUsageChart';
 import { StorageUsageChart } from './StorageUsageChart';
@@ -140,7 +141,7 @@ export const ProjectStatsSection = () => {
         }}
         data={projectSubscriptions}
         enableSearch={false}
-        error={projectSubscriptionsError?.message}
+        error={getErrorMessage(projectSubscriptionsError)}
         isError={isProjectSubscriptionsError}
         isLoading={isProjectSubscriptionsLoading}
         tableContainer={false}
@@ -174,7 +175,7 @@ export const ProjectStatsSection = () => {
         }}
         data={storageSubscriptions}
         enableSearch={false}
-        error={storageSubscriptionsError?.message}
+        error={getErrorMessage(storageSubscriptionsError)}
         isError={isStorageSubscriptionsError}
         isLoading={isStorageSubscriptionsLoading}
         tableContainer={false}

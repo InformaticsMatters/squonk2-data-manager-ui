@@ -1,11 +1,5 @@
-import type {
-  Error as DMError,
-  InstanceSummary,
-  JobGetResponse,
-} from '@squonk/data-manager-client';
+import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetJob } from '@squonk/data-manager-client/job';
-
-import type { AxiosError } from 'axios';
 
 // Contains only fields we are interested in
 type ApplicationSpecification = {
@@ -30,7 +24,7 @@ export const useGetJobInputs = (instanceSummary: InstanceSummary) => {
   const inputsEnabled =
     instanceSummary.job_id !== undefined && instanceSummary.application_specification !== undefined;
 
-  const { data, isLoading, isError, error } = useGetJob<JobGetResponse, AxiosError<DMError>>(
+  const { data, isLoading, isError, error } = useGetJob(
     // Since the query will be disabled if job_id is undefined, providing -1 is fine
     instanceSummary.job_id ?? -1,
     {

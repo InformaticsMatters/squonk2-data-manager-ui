@@ -1,9 +1,9 @@
-import type { Error as DMError, UsersGetResponse, UserSummary } from '@squonk/data-manager-client';
+import type { UserSummary } from '@squonk/data-manager-client';
 import { useGetUsers } from '@squonk/data-manager-client/user';
 
 import { Typography } from '@material-ui/core';
-import type { AxiosError } from 'axios';
 
+import { getErrorMessage } from '../../../utils/orvalError';
 import { AutocompleteFilter } from './AutocompleteFilter';
 
 export interface UserFilterProps {
@@ -30,20 +30,17 @@ export interface UserFilterProps {
  * editor filters.
  */
 export const UserFilter = ({ user, setUser, id, label }: UserFilterProps) => {
-  const { data, error, isError, isLoading } = useGetUsers<
-    UsersGetResponse,
-    AxiosError<DMError> | void
-  >();
+  const { data, error, isError, isLoading } = useGetUsers();
 
   const users = data?.users || [];
 
   if (isError) {
-    return <Typography color="error">{error?.message}</Typography>;
+    return <Typography color="error">{getErrorMessage(error)}</Typography>;
   }
 
   return (
     <AutocompleteFilter
-      error={error}
+      error={getErrorMessage(error)}
       getOptionLabel={(value: UserSummary) => value.username}
       id={id}
       isError={isError}

@@ -5,6 +5,7 @@ import type { Cell, Column } from 'react-table';
 import { Typography } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
+import { getErrorMessage } from '../../../../../../utils/orvalError';
 import { CenterLoader } from '../../../../../CenterLoader';
 import { DataTable } from '../../../../../DataTable';
 import { ModalWrapper } from '../../../../../modals/ModalWrapper';
@@ -145,7 +146,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
     }
 
     if (isSchemaError) {
-      return <Alert severity="warning">{schemaError?.response?.data.error}</Alert>;
+      return <Alert severity="warning">{getErrorMessage(schemaError)}</Alert>;
     }
 
     if (fields === undefined) {
@@ -170,7 +171,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
           savingErrors.map(({ type, error }) => {
             return (
               <Alert key={type} severity="warning">
-                {error.response?.data.error}
+                {getErrorMessage(error)}
               </Alert>
             );
           })}

@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { Error as DMError } from '@squonk/data-manager-client';
 import {
   getGetSchemaQueryKey,
   useAddAnnotations,
   useGetSchema,
   useUpdateMetadata,
 } from '@squonk/data-manager-client/dataset';
-
-import type { AxiosError } from 'axios';
 
 import type { TypedSchema } from './types';
 import { useEditableSchemaView } from './useEditableSchema';
@@ -23,7 +20,7 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
     isLoading: isSchemaLoading,
     isError: isSchemaError,
     error: schemaError,
-  } = useGetSchema<TypedSchema, AxiosError<DMError>>(datasetId, version);
+  } = useGetSchema<TypedSchema>(datasetId, version);
   const { getDeltaChanges, ...editableSchema } = useEditableSchemaView(schema);
 
   const {
@@ -31,14 +28,14 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
     error: updateMetadataError,
     reset: resetUpdateMetadata,
     mutateAsync: mutateUpdateMetadata,
-  } = useUpdateMetadata<AxiosError<DMError>>();
+  } = useUpdateMetadata();
 
   const {
     isError: isAddAnnotationsError,
     error: addAnnotationsError,
     reset: resetAddAnnotations,
     mutateAsync: mutateAddAnnotations,
-  } = useAddAnnotations<AxiosError<DMError>>();
+  } = useAddAnnotations();
 
   const [isSaving, setIsSaving] = useState(false);
 

@@ -1,13 +1,3 @@
-let ASSET_URL;
-
-if (
-  (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') &&
-  !process.env.BASE_URL.includes('localhost')
-) {
-  ASSET_URL = process.env.BASE_URL;
-}
-ASSET_URL = process.env.BASE_URL = 'https://squonk.informaticsmatters.org';
-
 /**
  * @type {import('next').NextConfig}
  */
@@ -16,7 +6,9 @@ const nextConfig = {
   pageExtensions: ['js', 'ts', 'jsx', 'tsx', 'mdx'],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
   sassOptions: {
-    prependData: `$assetsURL: '${ASSET_URL}';`,
+    prependData: `$assetsURL: '${
+      process.env.ASSET_URL || 'https://squonk.informaticsmatters.org'
+    }';`,
   },
   // Allow mdx content and mdx files as pages
   webpack(config) {

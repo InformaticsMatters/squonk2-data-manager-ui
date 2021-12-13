@@ -32,6 +32,14 @@ jobs:
     runs-on: ubuntu-latest
     environment: data-manager-ui/test
     steps:
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16
+    - run: node -v
+    - uses: pnpm/action-setup@v2.0.1
+      with:
+        version: 6.23.6
     - name: Checkout
       uses: actions/checkout@v1
 

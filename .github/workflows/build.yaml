@@ -47,8 +47,8 @@ jobs:
         DATA_MANAGER_API_SERVER: "https://squonk.informaticsmatters.org/data-manager-api"
         KEYCLOAK_URL: "https://squonk.informaticsmatters.org/auth"
       with:
-        build: yarn build
-        start: yarn start
+        build: pnpm build
+        start: pnpm start
         wait-on: 'http://localhost:3000/data-manager-ui'
 
   build:

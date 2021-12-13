@@ -11,7 +11,7 @@ RUN addgroup -g 1001 -S nodejs && \
 
 WORKDIR /app
 COPY package.json ./
-COPY yarn.lock ./
+COPY pnpm-lock.yaml ./
 
 # Replace the application version (in package.json)
 # with any defined 'tag', otherwise leave it at 0.0.0.
@@ -20,14 +20,15 @@ ARG tag=0.0.0
 ENV TAG=$tag
 RUN sed -i s/'"0.0.0"'/'"'${TAG:-0.0.0}'"'/ package.json && \
     head package.json && \
-    yarn install --frozen-lockfile
+    npm i -g pnpm \
+    pnpm i --frozen-lockfile
 
 COPY . .
 
 RUN chown --recursive nextjs:nodejs .
 
 # **DO NOT** set 'NODE_ENV any earlier than this in the Dockerfile.
-# We must run 'yarn install' (above) first, otherwise we'll get
+# We must run 'pnpm install' (above) first, otherwise we'll get
 # the folllowing error at run-time in the docker-entrypoint.sh...
 #
 #   "It looks like you're trying to use TypeScript

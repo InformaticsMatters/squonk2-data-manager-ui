@@ -9,17 +9,17 @@
 
 ## Development
 
-This project uses `yarn`.
+This project uses `pnpm`.
 
 Notable scripts:
 
-- `yarn install` to install dependencies. This will also setup `husky` git hooks.
-- `yarn dev` starts the development server
-- `yarn dev:debug` same as above but with the Node debugger running. Start the VSCode debugger to connect.
-- `yarn cypress` to run the end-to-end tests
-- `yarn build` will create a production build which includes type-checking and `eslint`
-- `yarn type-check` will run a one-off type check. This is also called pre-push to ensure no type errors are deployed.
-- `yarn format:all` will format all files with the `eslint` config
+- `pnpm install` to install dependencies. This will also setup `husky` git hooks.
+- `pnpm dev` starts the development server
+- `pnpm dev:debug` same as above but with the Node debugger running. Start the VSCode debugger to connect.
+- `pnpm cypress` to run the end-to-end tests
+- `pnpm build` will create a production build which includes type-checking and `eslint`
+- `pnpm type-check` will run a one-off type check. This is also called pre-push to ensure no type errors are deployed.
+- `pnpm format:all` will format all files with the `eslint` config
 
 See `package.json` for all available scripts.
 

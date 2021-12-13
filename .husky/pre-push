@@ -1,10 +1,10 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-if [ ! -e "yarn.lock" ]; then
-    echo "yarn.lock is missing! `yarn install` and `git commit --ammend` to fix."
+if [ ! -e "pnpm-lock.yaml" ]; then
+    echo "pnpm-lock.yaml is missing! `pnpm install` and `git commit --ammend` to fix."
     exit 1
 fi
 
-yarn run type-check
+pnpm run type-check
 

@@ -17,8 +17,6 @@ export const useProjectFileRows = (project_id: string) => {
   const breadcrumbs = useProjectBreadcrumbs();
   const dirPath = '/' + breadcrumbs.join('/');
 
-  project_id = 'hello';
-
   const { data, error, isError, isLoading } = useGetFiles({
     project_id,
     path: dirPath,

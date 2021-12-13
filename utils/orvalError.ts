@@ -11,8 +11,9 @@ import type { AxiosError } from 'axios';
 export const getErrorMessage = (
   error: AxiosError<void | DmError | AsError> | null,
 ): string | undefined => {
+  console.log({ error });
   if (error) {
-    return (error.response?.data as unknown as DmError | AsError).error;
+    return (error.response?.data as any).detail;
   }
   return undefined;
 };

@@ -13,6 +13,8 @@ WORKDIR /app
 COPY package.json ./
 COPY pnpm-lock.yaml ./
 
+COPY . .
+
 # Replace the application version (in package.json)
 # with any defined 'tag', otherwise leave it at 0.0.0.
 # Then just display the head of the file for clarification.

@@ -43,6 +43,8 @@ jobs:
       with:
         version: 6.24.0
         run_install: true
+    - run: pnpm -v
+    - run: ls -a
     - name: Test
       uses: cypress-io/github-action@v2
       env:

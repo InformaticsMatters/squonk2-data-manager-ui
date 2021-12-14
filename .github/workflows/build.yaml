@@ -41,7 +41,7 @@ jobs:
       uses: actions/checkout@v1
     - uses: pnpm/action-setup@v2.0.1
       with:
-        version: 6.23
+        version: 6.24.0
         run_install: true
     - name: Test
       uses: cypress-io/github-action@v2

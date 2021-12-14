@@ -15,9 +15,9 @@ specifiers:
   '@rjsf/material-ui': ^3.2.1
   '@squonk/account-server-client': 0.1.7-rc.1
   '@squonk/data-manager-client': 0.6.16-rc.2
-  '@squonk/eslint-config': workspace:^0.2.0
-  '@squonk/mui-theme': workspace:^2.0.1
-  '@squonk/react-sci-components': workspace:^2.0.0-dev.5
+  '@squonk/eslint-config': ^0.2.0
+  '@squonk/mui-theme': ^2.0.1
+  '@squonk/react-sci-components': ^2.0.0-dev.5
   '@types/lodash-es': ^4.17.5
   '@types/mdx-js__react': ^1.5.5
   '@types/node': ^16.11.12

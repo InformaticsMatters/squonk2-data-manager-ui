@@ -37,12 +37,12 @@ jobs:
       with:
         node-version: 16
     - run: node -v
-    - uses: pnpm/action-setup@v2.0.1
-      with:
-        version: 6.23.6
     - name: Checkout
       uses: actions/checkout@v1
-    - run: pnpm i
+    - uses: pnpm/action-setup@v2.0.1
+      with:
+        version: 6.23
+        run_install: true
     - name: Test
       uses: cypress-io/github-action@v2
       env:

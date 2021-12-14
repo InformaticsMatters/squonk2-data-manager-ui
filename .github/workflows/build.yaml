@@ -42,7 +42,7 @@ jobs:
         version: 6.23.6
     - name: Checkout
       uses: actions/checkout@v1
-    - run: pnpm i --frozen-lockfile
+    - run: pnpm i
     - name: Test
       uses: cypress-io/github-action@v2
       env:

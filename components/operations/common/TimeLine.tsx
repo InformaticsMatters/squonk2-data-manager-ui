@@ -1,4 +1,9 @@
-import type { InstanceGetResponse, TaskGetResponse, TaskState } from '@squonk/data-manager-client';
+import type {
+  InstanceGetResponse,
+  TaskEvent,
+  TaskGetResponse,
+  TaskState,
+} from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -15,6 +20,10 @@ import {
 } from '@material-ui/lab';
 
 import { LocalTime } from '../../LocalTime';
+
+const isEvent = (stateOrEvent: TaskState | TaskEvent): stateOrEvent is TaskEvent => {
+  return !(stateOrEvent as TaskState).state;
+};
 
 export interface TimeLineProps {
   /**
@@ -57,7 +66,11 @@ export const TimeLine = ({ states }: TimeLineProps) => {
           </TimelineSeparator>
           {/* When message is undefined we can guarantee that it's a TaskState */}
           <TimelineContent>
-            <TimeLineLabel>{state.message ?? (state as TaskState).state}</TimeLineLabel>
+            <TimeLineLabel>
+              {isEvent(state)
+                ? state.message
+                : `${state.state}${state.message ? ': ' : ''}${state.message || ''}`}
+            </TimeLineLabel>
           </TimelineContent>
         </TimelineItem>
       ))}

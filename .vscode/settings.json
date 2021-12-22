@@ -148,6 +148,7 @@
     "roles",
     ".env",
     "as-client",
-    "tasks/job-files"
+    "tasks/job-files",
+    "lisence"
   ],
 }

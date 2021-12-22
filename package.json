@@ -1,7 +1,7 @@
 {
   "name": "mini-apps-data-tier-ui",
   "author": "Oliver Dudgeon",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "version": "0.0.0",
   "private": true,
   "scripts": {

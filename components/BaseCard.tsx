@@ -80,13 +80,10 @@ export const BaseCard: FC<BaseCardProps> = ({
         <CardHeader
           avatar={
             <Avatar
-              css={
-                header.color
-                  ? css`
-                      background-color: ${header.color};
-                    `
-                  : undefined
-              }
+              css={css`
+                font-family: verdana;
+                background-color: ${header.color || 'transparent'};
+              `}
             >
               {header.avatar?.[0].toUpperCase()}
             </Avatar>

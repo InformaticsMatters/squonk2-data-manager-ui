@@ -36,7 +36,7 @@ export const ApplicationCard = ({ app, projectId }: ApplicationCardProps) => {
       header={{
         title: app.kind,
         subtitle: app.group,
-        avatar: 'A',
+        avatar: app.kind[0],
         color: theme.palette.secondary.dark,
       }}
     />

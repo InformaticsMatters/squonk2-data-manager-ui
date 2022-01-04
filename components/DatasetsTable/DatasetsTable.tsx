@@ -3,7 +3,7 @@ import type { Column, Row } from 'react-table';
 
 import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 
-import { CircularProgress, Typography } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import dynamic from 'next/dynamic';
 
 import { combineLabels } from '../../utils/labelUtils';
@@ -143,52 +143,47 @@ export const DatasetsTable = () => {
   const getRowId = useCallback((row) => `${row.dataset_id}#${row.version}`, []);
 
   return (
-    <>
-      <Typography gutterBottom component="h1" variant="h1">
-        Datasets
-      </Typography>
-      <DataTable
-        subRowsEnabled
-        columns={columns}
-        data={datasets}
-        error={getErrorMessage(error)}
-        getRowId={getRowId}
-        initialSelection={[]}
-        isError={isError}
-        isLoading={isLoading}
-        ToolbarActionChild={<DatasetsBulkActions selectedDatasets={selectedDatasets} />}
-        ToolbarChild={
-          <>
-            <FileUpload />
-            <DatasetsFilterToolbar
-              fullWidthFilters={
-                <LabelsFilter
-                  labels={labels}
-                  setLabels={(labels) => setFilterItem('labels', labels)}
-                />
-              }
-              shrinkableFilters={[
-                <OwnerFilter
-                  key="owner"
-                  owner={owner}
-                  setOwner={(owner) => setFilterItem('owner', owner)}
-                />,
-                <EditorFilter
-                  editor={editor}
-                  key="editor"
-                  setEditor={(editor) => setFilterItem('editor', editor)}
-                />,
-                <FileTypeFilter
-                  fileType={fileType}
-                  key="fileType"
-                  setFileType={(fileType) => setFilterItem('fileType', fileType)}
-                />,
-              ]}
-            />
-          </>
-        }
-        onSelection={onSelection}
-      />
-    </>
+    <DataTable
+      subRowsEnabled
+      columns={columns}
+      data={datasets}
+      error={getErrorMessage(error)}
+      getRowId={getRowId}
+      initialSelection={[]}
+      isError={isError}
+      isLoading={isLoading}
+      ToolbarActionChild={<DatasetsBulkActions selectedDatasets={selectedDatasets} />}
+      ToolbarChild={
+        <>
+          <FileUpload />
+          <DatasetsFilterToolbar
+            fullWidthFilters={
+              <LabelsFilter
+                labels={labels}
+                setLabels={(labels) => setFilterItem('labels', labels)}
+              />
+            }
+            shrinkableFilters={[
+              <OwnerFilter
+                key="owner"
+                owner={owner}
+                setOwner={(owner) => setFilterItem('owner', owner)}
+              />,
+              <EditorFilter
+                editor={editor}
+                key="editor"
+                setEditor={(editor) => setFilterItem('editor', editor)}
+              />,
+              <FileTypeFilter
+                fileType={fileType}
+                key="fileType"
+                setFileType={(fileType) => setFilterItem('fileType', fileType)}
+              />,
+            ]}
+          />
+        </>
+      }
+      onSelection={onSelection}
+    />
   );
 };

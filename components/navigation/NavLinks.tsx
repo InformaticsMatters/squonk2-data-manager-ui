@@ -40,13 +40,13 @@ export const NavLinks = ({ linkWidth }: NavLinksProps) => {
     >
       {/* Div wrappers used to give correct spacing */}
       <div>
-        <NavLink
-          stripQueryParameters={
-            router.pathname === '/data' ? ['pid', 'project', 'path'] : ['pid', 'path']
-          }
-          title="Data"
-        >
-          {({ active }) => <NavButton $active={active}>Data</NavButton>}
+        <NavLink stripQueryParameters={['pid', 'path']} title="Datasets">
+          {({ active }) => <NavButton $active={active}>Datasets</NavButton>}
+        </NavLink>
+      </div>
+      <div>
+        <NavLink stripQueryParameters={['pid', 'path']} title="Project">
+          {({ active }) => <NavButton $active={active}>Project</NavButton>}
         </NavLink>
       </div>
       <div>

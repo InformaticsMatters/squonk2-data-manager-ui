@@ -12,7 +12,7 @@ export const UserMenuContent = () => {
   const { user, isLoading } = useKeycloakUser();
   return (
     <>
-      <Typography gutterBottom component="h3" variant="h3">
+      <Typography gutterBottom variant="h3">
         Account
       </Typography>
       {isLoading ? (

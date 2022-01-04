@@ -23,6 +23,9 @@ const nextConfig = {
       process.env.ASSET_URL || 'https://squonk.informaticsmatters.org'
     }';`,
   },
+  images: {
+    domains: ['squonk.informaticsmatters.org'],
+  },
   // Allow mdx content and mdx files as pages
   webpack(config) {
     config.module.rules.push({

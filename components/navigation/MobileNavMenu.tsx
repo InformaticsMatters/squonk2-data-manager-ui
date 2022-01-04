@@ -98,7 +98,7 @@ export const MobileNavMenu = () => {
           <Grid item xs={12}>
             {isAuthorized && (
               <>
-                <Typography gutterBottom component="h3" variant="h3">
+                <Typography gutterBottom variant="h3">
                   Project
                 </Typography>
                 <ProjectManager wrap />

@@ -57,20 +57,20 @@ export const MobileNavMenu = () => {
               Links
             </Typography>
             <List aria-label="main-mobile-navigation" component="nav">
-              <NavLink
-                // Removes the selected project if the user is already on the data page
-                stripQueryParameters={
-                  router.pathname === '/data' ? ['pid', 'project', 'path'] : ['pid', 'path']
-                }
-                title="Data"
-              >
+              <NavLink stripQueryParameters={['pid', 'path']} title="Datasets">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
-                    <ListItemText primary="Data" />
+                    <ListItemText primary="Datasets" />
                   </ListItem>
                 )}
               </NavLink>
-
+              <NavLink stripQueryParameters={['pid', 'path']} title="Project">
+                {({ active }) => (
+                  <ListItem button component="a" selected={active}>
+                    <ListItemText primary="Project" />
+                  </ListItem>
+                )}
+              </NavLink>
               <NavLink stripQueryParameters={['pid', 'path']} title="Executions">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
@@ -78,7 +78,6 @@ export const MobileNavMenu = () => {
                   </ListItem>
                 )}
               </NavLink>
-
               <NavLink stripQueryParameters={['pid', 'path']} title="Tasks">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>

@@ -48,7 +48,7 @@ export const JobCard = ({ projectId, job }: ApplicationCardProps) => {
       header={{ color: theme.palette.primary.main, title: jobSummary.name, avatar: 'J' }}
       key={projectId} // Reset state when project changes
     >
-      <Typography>{jobSummary.description}</Typography>
+      <Typography gutterBottom>{jobSummary.description}</Typography>
       <Typography variant="body2">
         {jobSummary.version} –{' '}
         <Link href={jobSummary.doc_url} rel="noopener noreferrer" target="_blank">
@@ -56,7 +56,7 @@ export const JobCard = ({ projectId, job }: ApplicationCardProps) => {
         </Link>
       </Typography>
       <Typography gutterBottom>
-        <em>{jobSummary.category}</em>
+        <em>{jobSummary.category}</em> : {jobSummary.collection}
       </Typography>
       <Chips>
         {jobSummary.keywords?.map((word) => (

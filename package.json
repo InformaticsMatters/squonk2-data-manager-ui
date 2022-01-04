@@ -1,7 +1,7 @@
 {
-  "name": "@squonk/data-manager-ui",
-  "author": "Informatics Matters",
-  "license": "MIT",
+  "name": "mini-apps-data-tier-ui",
+  "author": "Oliver Dudgeon",
+  "license": "Apache-2.0",
   "version": "0.0.0",
   "private": true,
   "scripts": {

@@ -32,9 +32,27 @@ jobs:
     runs-on: ubuntu-latest
     environment: data-manager-ui/test
     steps:
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16
+    - run: node -v
     - name: Checkout
       uses: actions/checkout@v1
-
+    - run: rm pnpm-lock.yaml
+    - name: Cache pnpm modules
+      uses: actions/cache@v2
+      with:
+        path: ~/.pnpm-store
+        key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-
+    - uses: pnpm/action-setup@v2.0.1
+      with:
+        version: 6.24.0
+        run_install: true
+    - run: pnpm -v
+    - run: ls -a
     - name: Test
       uses: cypress-io/github-action@v2
       env:
@@ -47,8 +65,9 @@ jobs:
         DATA_MANAGER_API_SERVER: "https://squonk.informaticsmatters.org/data-manager-api"
         KEYCLOAK_URL: "https://squonk.informaticsmatters.org/auth"
       with:
-        build: yarn build
-        start: yarn start
+        install: false
+        build: pnpm build
+        start: pnpm start
         wait-on: 'http://localhost:3000/data-manager-ui'
 
   build:

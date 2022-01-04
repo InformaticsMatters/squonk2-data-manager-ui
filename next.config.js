@@ -1,3 +1,16 @@
+const path = require('path');
+
+if (process.env.MONOREPO) {
+  console.log('info  - Running with webpack aliases for  monorepo compatibility');
+}
+
+const withTM = require('next-transpile-modules')(
+  ['@squonk/react-sci-components', '@squonk/mui-theme'],
+  { debug: false }, // Log which files get transpiled
+);
+
+const resolvePackage = (packageName) => path.resolve(__dirname, '.', 'node_modules', packageName);
+
 /**
  * @type {import('next').NextConfig}
  */
@@ -27,8 +40,15 @@ const nextConfig = {
       ],
     });
 
+    if (process.env.MONOREPO) {
+      const packages = ['react', '@material-ui/core', 'react-query'];
+      packages.forEach(
+        (packageName) => (config.resolve.alias[packageName] = resolvePackage(packageName)),
+      );
+    }
+
     return config;
   },
 };
 
-module.exports = nextConfig;
+module.exports = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;

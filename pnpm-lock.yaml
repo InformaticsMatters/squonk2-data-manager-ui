@@ -17,7 +17,6 @@ specifiers:
   '@squonk/data-manager-client': 0.6.16-rc.2
   '@squonk/eslint-config': ^0.2.0
   '@squonk/mui-theme': ^2.0.1
-  '@squonk/react-sci-components': ^2.0.0-dev.14
   '@types/lodash-es': ^4.17.5
   '@types/mdx-js__react': ^1.5.5
   '@types/node': ^16.11.12
@@ -81,7 +80,6 @@ dependencies:
   '@squonk/account-server-client': 0.1.7-rc.1_axios@0.24.0+react-query@3.34.2
   '@squonk/data-manager-client': 0.6.16-rc.2_axios@0.24.0+react-query@3.34.2
   '@squonk/mui-theme': 2.0.1_@material-ui+core@4.12.3
-  '@squonk/react-sci-components': 2.0.0-dev.14_1cffe088a7cf80bf4022e4181f071f45
   axios: 0.24.0
   dayjs: 1.10.7
   filesize: 8.0.6
@@ -2139,28 +2137,6 @@ packages:
       '@material-ui/core': 4.12.3
     dependencies:
       '@material-ui/core': 4.12.3_5539cae010396b202b015f3568914e95
-    dev: false
-
-  /@squonk/react-sci-components/2.0.0-dev.14_1cffe088a7cf80bf4022e4181f071f45:
-    resolution: {integrity: sha512-okEOlIyFwhEGZqQ1iPZze0VOxtslwg0+lGjS6gvzWfcu+MHYcnXhGQ7S0Q+AZBmMhFueoVbbWIjyuytJ9xYVQg==}
-    peerDependencies:
-      '@material-ui/core': 4.x
-      '@material-ui/icons': 4.x
-      '@material-ui/lab': 4.x
-      '@squonk/data-manager-client': '>=0.6.2-rc.8'
-      axios: ^0.24.0
-      react: 17.0.2
-      react-dom: 17.0.2
-      react-query: ^3.32.1
-    dependencies:
-      '@material-ui/core': 4.12.3_5539cae010396b202b015f3568914e95
-      '@material-ui/icons': 4.11.2_f70bac6576f9b9b57b8e0afbfb28e421
-      '@material-ui/lab': 4.0.0-alpha.60_f70bac6576f9b9b57b8e0afbfb28e421
-      '@squonk/data-manager-client': 0.6.16-rc.2_axios@0.24.0+react-query@3.34.2
-      axios: 0.24.0
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-      react-query: 3.34.2_react-dom@17.0.2+react@17.0.2
     dev: false
 
   /@szmarczak/http-timer/4.0.6:

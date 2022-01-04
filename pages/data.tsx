@@ -1,5 +1,3 @@
-import { FileSelector } from '@squonk/react-sci-components';
-
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { Container } from '@material-ui/core';
 import Head from 'next/head';
@@ -20,16 +18,6 @@ const Data = () => {
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
         <Layout>
           <Container>
-            <FileSelector
-              extensions={[]}
-              mimeTypes={[]}
-              multiple={false}
-              projectId=""
-              targetType="file"
-              value={[]}
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onSelect={() => {}}
-            />
             <DataTableManager />
           </Container>
         </Layout>

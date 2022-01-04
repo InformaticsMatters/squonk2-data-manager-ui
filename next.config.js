@@ -5,7 +5,7 @@ if (process.env.MONOREPO) {
 }
 
 const withTM = require('next-transpile-modules')(
-  ['@squonk/react-sci-components', '@squonk/mui-theme'],
+  ['@squonk/mui-theme'],
   { debug: false }, // Log which files get transpiled
 );
 

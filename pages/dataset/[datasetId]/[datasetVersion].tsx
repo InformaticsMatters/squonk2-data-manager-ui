@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 
 import { PlaintextViewer } from '../../../components/PlaintextViewer';
 import { DM_API_URL } from '../../../constants';
+import { APP_ROUTES } from '../../../constants/routes';
 import { useApi } from '../../../hooks/useApi';
 import { getErrorMessage } from '../../../utils/orvalError';
 import { getQueryParams } from '../../../utils/requestUtils';
@@ -28,7 +29,7 @@ const parseDatasetVersion = (datasetVersion?: string | string[]): ParseDatasetVe
   if (isNaN(datasetVersionParsed)) {
     return {
       isParseError: true,
-      parseError: 'Invalid dataset version number was specified',
+      parseError: 'Invalid dataset version number provided',
     };
   }
   return { datasetVersionNumber: datasetVersionParsed, isParseError: false };
@@ -97,7 +98,10 @@ const DatasetVersionPlainTextViewer = () => {
     isError: isContentsError,
     error: contentsError,
   } = useApi<string>(
-    `/dataset/${datasetId}/${datasetVersion}/${getQueryParams({ decompress, fileSizeLimit })}`,
+    `${APP_ROUTES.dataset['.']}/${datasetId}/${datasetVersion}/${getQueryParams({
+      decompress,
+      fileSizeLimit,
+    })}`,
     undefined,
     {
       enabled: Boolean(version),

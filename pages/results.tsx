@@ -105,7 +105,7 @@ const Tasks = () => {
   return (
     <>
       <Head>
-        <title>Squonk | Tasks</title>
+        <title>Squonk | Results</title>
       </Head>
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
         <Layout>

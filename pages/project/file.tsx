@@ -5,13 +5,13 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0/dist/frontend';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import { PlaintextViewer } from '../../../components/PlaintextViewer';
-import { DM_API_URL } from '../../../constants';
-import { useProjectBreadcrumbs } from '../../../hooks/projectPathHooks';
-import { useApi } from '../../../hooks/useApi';
-import { getDecompressionType } from '../../../utils/fileUtils';
-import { getErrorMessage } from '../../../utils/orvalError';
-import { getQueryParams } from '../../../utils/requestUtils';
+import { PlaintextViewer } from '../../components/PlaintextViewer';
+import { DM_API_URL } from '../../constants';
+import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
+import { useApi } from '../../hooks/useApi';
+import { getDecompressionType } from '../../utils/fileUtils';
+import { getErrorMessage } from '../../utils/orvalError';
+import { getQueryParams } from '../../utils/requestUtils';
 
 type SelectDatasetVersionResult = {
   file?: FilePathFile;

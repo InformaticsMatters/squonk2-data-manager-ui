@@ -4,6 +4,8 @@ import { Folder } from '@material-ui/icons';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import { APP_ROUTES } from '../../../../constants/routes';
+
 export interface JobLinkProps {
   projectId: string;
   path: string;
@@ -79,7 +81,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
         <NextLink
           passHref
           href={{
-            pathname: '/data',
+            pathname: APP_ROUTES.project['.'],
             query: {
               ...query,
               project: projectId,
@@ -97,7 +99,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
         <NextLink
           passHref
           href={{
-            pathname: '/project/[projectId]/file',
+            pathname: APP_ROUTES.project.file,
             query: {
               projectId,
               path: filePath,
@@ -126,7 +128,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
       <NextLink
         passHref
         href={{
-          pathname: '/data',
+          pathname: APP_ROUTES.dataset['.'],
           query: {
             ...query,
             project: projectId,

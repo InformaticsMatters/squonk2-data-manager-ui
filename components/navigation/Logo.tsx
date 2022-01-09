@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import { APP_ROUTES } from '../../constants/routes';
+
 /**
  * Squonk Logo
  */
@@ -12,7 +14,7 @@ export const Logo = () => {
   const { query } = useRouter();
 
   return (
-    <Link passHref href={{ pathname: '/', query }}>
+    <Link passHref href={{ pathname: APP_ROUTES.home, query }}>
       <a
         css={css`
           display: inline-block;

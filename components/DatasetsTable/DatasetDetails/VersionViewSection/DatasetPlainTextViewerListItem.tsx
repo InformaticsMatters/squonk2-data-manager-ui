@@ -2,6 +2,8 @@ import { ListItem, ListItemText } from '@material-ui/core';
 import { Description } from '@material-ui/icons';
 import NextLink from 'next/link';
 
+import { APP_ROUTES } from '../../../../constants/routes';
+
 export interface DatasetPlainTextViewerListItemProps {
   datasetId: string;
   version: number;
@@ -15,11 +17,7 @@ export const DatasetPlainTextViewerListItem = ({
     <NextLink
       passHref
       href={{
-        pathname: '/dataset/[datasetId]/[datasetVersion]',
-        query: {
-          datasetId,
-          datasetVersion: version,
-        },
+        pathname: APP_ROUTES.dataset.version(datasetId, version),
       }}
     >
       <ListItem button component="a" rel="noopener noreferrer" target="_blank">

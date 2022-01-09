@@ -55,8 +55,8 @@ export const NavLinks = ({ linkWidth }: NavLinksProps) => {
         </NavLink>
       </div>
       <div>
-        <NavLink stripQueryParameters={['pid', 'path']} title="Tasks">
-          {({ active }) => <NavButton $active={active}>Tasks</NavButton>}
+        <NavLink stripQueryParameters={['pid', 'path']} title="Results">
+          {({ active }) => <NavButton $active={active}>Results</NavButton>}
         </NavLink>
       </div>
     </nav>

@@ -3,6 +3,8 @@ import { Description } from '@material-ui/icons';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
+import { APP_ROUTES } from '../../../../constants/routes';
+
 export interface FilePlainTextViewerListItemProps {
   fileName: string;
 }
@@ -16,7 +18,7 @@ export const FilePlainTextViewerListItem = ({ fileName }: FilePlainTextViewerLis
     <NextLink
       passHref
       href={{
-        pathname: '/project/[projectId]/file',
+        pathname: APP_ROUTES.project.file,
         query: {
           projectId: project,
           file: fileName,

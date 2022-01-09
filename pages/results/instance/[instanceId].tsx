@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import { useQueryClient } from 'react-query';
 
 import { getGetInstanceQueryKey, useGetInstances } from '@squonk/data-manager-client/instance';
@@ -11,24 +10,25 @@ import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import { CenterLoader } from '../../components/CenterLoader';
-import Layout from '../../components/Layout';
-import { OperationApplicationCard } from '../../components/operations/OperationApplicationCard';
-import { OperationJobCard } from '../../components/operations/OperationJobCard';
-import { RoleRequired } from '../../utils/RoleRequired';
+import { CenterLoader } from '../../../components/CenterLoader';
+import Layout from '../../../components/Layout';
+import { OperationApplicationCard } from '../../../components/operations/OperationApplicationCard';
+import { OperationJobCard } from '../../../components/operations/OperationJobCard';
+import { APP_ROUTES } from '../../../constants/routes';
+import { RoleRequired } from '../../../utils/RoleRequired';
 
-const Task: FC = () => {
+const Result = () => {
   const queryClient = useQueryClient();
 
   const router = useRouter();
-  const { pid } = router.query;
+  const { instanceId } = router.query;
 
   const { data: instances } = useGetInstances(undefined, { query: { refetchInterval: 5000 } });
 
-  const instance = instances?.instances.find((instance) => instance.id === pid);
+  const instance = instances?.instances.find((instance) => instance.id === instanceId);
 
   const refreshOperations = [
-    () => queryClient.invalidateQueries(getGetInstanceQueryKey(pid as string)),
+    () => queryClient.invalidateQueries(getGetInstanceQueryKey(instanceId as string)),
   ];
 
   return (
@@ -70,7 +70,7 @@ const Task: FC = () => {
             )}
             <NextLink
               passHref
-              href={{ pathname: '/tasks', query: { project: instance?.project_id } }}
+              href={{ pathname: APP_ROUTES.results['.'], query: { project: instance?.project_id } }}
             >
               <Button color="primary">See all tasks</Button>
             </NextLink>
@@ -81,4 +81,4 @@ const Task: FC = () => {
   );
 };
 
-export default withPageAuthRequired(Task);
+export default withPageAuthRequired(Result);

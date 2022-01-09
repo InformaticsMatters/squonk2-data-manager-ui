@@ -73,7 +73,7 @@ export const OperationsToolbar = ({
         <TextField
           fullWidth
           select
-          label="Filter Tasks"
+          label="Filter Results"
           SelectProps={{
             multiple: true,
             onChange: (event) => {

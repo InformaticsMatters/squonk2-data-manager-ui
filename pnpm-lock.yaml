@@ -52,6 +52,7 @@ specifiers:
   next-http-proxy-middleware: ^1.1.2
   next-transpile-modules: ^9.0.0
   node-fetch: ^3.1.0
+  notistack: ^1.0.10
   plotly.js-basic-dist: ^2.8.3
   prettier: ^2.5.1
   react: ^17.0.2
@@ -93,6 +94,7 @@ dependencies:
   next-http-proxy-middleware: 1.1.2
   next-transpile-modules: 9.0.0
   node-fetch: 3.1.0
+  notistack: 1.0.10_fced322086cd04afb0b6feec9e866920
   plotly.js-basic-dist: 2.8.3
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
@@ -6360,6 +6362,20 @@ packages:
   /normalize-url/6.1.0:
     resolution: {integrity: sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==}
     engines: {node: '>=10'}
+
+  /notistack/1.0.10_fced322086cd04afb0b6feec9e866920:
+    resolution: {integrity: sha512-z0y4jJaVtOoH3kc3GtNUlhNTY+5LE04QDeLVujX3VPhhzg67zw055mZjrBF+nzpv3V9aiPNph1EgRU4+t8kQTQ==}
+    peerDependencies:
+      '@material-ui/core': ^4.0.0
+      react: ^16.8.0 || ^17.0.0
+      react-dom: ^16.8.0 || ^17.0.0
+    dependencies:
+      '@material-ui/core': 4.12.3_b3482aaf5744fc7c2aeb7941b0e0a78f
+      clsx: 1.1.1
+      hoist-non-react-statics: 3.3.2
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    dev: false
 
   /npm-run-path/4.0.1:
     resolution: {integrity: sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw==}

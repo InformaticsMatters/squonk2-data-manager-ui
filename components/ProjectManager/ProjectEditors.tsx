@@ -1,5 +1,6 @@
 import { useQueryClient } from 'react-query';
 
+import type { DmError } from '@squonk/data-manager-client';
 import {
   getGetProjectsQueryKey,
   useAddEditorToProject,
@@ -13,6 +14,7 @@ import type { AutocompleteChangeReason } from '@material-ui/lab';
 import { Autocomplete } from '@material-ui/lab';
 
 import { useCurrentProject } from '../../hooks/currentProjectHooks';
+import { useEnqueueError } from '../../hooks/useEnqueueStackError';
 import { useKeycloakUser } from '../../hooks/useKeycloakUser';
 
 /**
@@ -21,14 +23,16 @@ import { useKeycloakUser } from '../../hooks/useKeycloakUser';
 export const Editors = () => {
   const { user: currentUser } = useKeycloakUser();
 
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+
   const currentProject = useCurrentProject();
   const { isLoading: isProjectsLoading } = useGetProjects();
 
   const { data, isLoading } = useGetUsers();
   const availableUsers = data?.users;
 
-  const addEditor = useAddEditorToProject();
-  const removeEditor = useRemoveEditorFromProject();
+  const { mutateAsync: addEditor } = useAddEditorToProject();
+  const { mutateAsync: removeEditor } = useRemoveEditorFromProject();
   const queryClient = useQueryClient();
 
   const updateEditors = async (value: string[], reason: AutocompleteChangeReason) => {
@@ -38,10 +42,16 @@ export const Editors = () => {
           // Isolate the user that has been added
           const username = value.find((user) => !currentProject.editors.includes(user));
           if (username) {
-            await addEditor.mutateAsync({
-              projectid: currentProject.project_id,
-              userid: username,
-            });
+            try {
+              await addEditor({
+                projectid: currentProject.project_id,
+                userid: username,
+              });
+            } catch (error) {
+              enqueueError(error);
+            }
+          } else {
+            enqueueSnackbar('Username not found', { variant: 'warning' });
           }
           break;
         }
@@ -50,10 +60,16 @@ export const Editors = () => {
           // Isolate the user that has been removed
           const username = currentProject.editors.find((editor) => !value.includes(editor));
           if (username) {
-            await removeEditor.mutateAsync({
-              projectid: currentProject.project_id,
-              userid: username,
-            });
+            try {
+              await removeEditor({
+                projectid: currentProject.project_id,
+                userid: username,
+              });
+            } catch (error) {
+              enqueueError(error);
+            }
+          } else {
+            enqueueSnackbar('Username not found', { variant: 'warning' });
           }
           break;
         }

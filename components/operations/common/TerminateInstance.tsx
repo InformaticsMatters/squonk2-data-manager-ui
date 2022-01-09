@@ -1,6 +1,6 @@
 import { useQueryClient } from 'react-query';
 
-import type { InstanceSummary } from '@squonk/data-manager-client';
+import type { DmError, InstanceSummary } from '@squonk/data-manager-client';
 import {
   getGetInstancesQueryKey,
   useTerminateInstance,
@@ -8,6 +8,7 @@ import {
 
 import { Button } from '@material-ui/core';
 
+import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { WarningDeleteButton } from '../../WarningDeleteButton';
 
 export interface TerminateInstanceProps {
@@ -25,24 +26,26 @@ export const TerminateInstance = ({ instance, onTermination }: TerminateInstance
   const queryClient = useQueryClient();
   const { mutateAsync: terminateInstance } = useTerminateInstance();
 
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+
   return (
     <WarningDeleteButton
       modalId={`delete-instance-${instance.id}`}
       title="Delete Instance"
       tooltipText="Terminate this instance"
       onDelete={async () => {
-        await terminateInstance({ instanceid: instance.id });
-
-        Promise.all([
-          queryClient.invalidateQueries(getGetInstancesQueryKey()),
+        try {
+          await terminateInstance({ instanceid: instance.id });
+          queryClient.invalidateQueries(getGetInstancesQueryKey());
           queryClient.invalidateQueries(
             getGetInstancesQueryKey({ project_id: instance.project_id }),
-          ),
-        ]);
+          );
 
-        // Can't just await promises as this component unmounts before `onTermination` is called.
-        // React then gives a setState on unmounted component warning.
-        // Need some more thought on how to resolve this pattern generally.
+          enqueueSnackbar('Instance has been terminated', { variant: 'success' });
+        } catch (error) {
+          enqueueError(error);
+        }
+
         onTermination && onTermination();
       }}
     >

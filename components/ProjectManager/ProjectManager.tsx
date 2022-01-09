@@ -1,5 +1,6 @@
 import { useQueryClient } from 'react-query';
 
+import type { DmError } from '@squonk/data-manager-client';
 import {
   getGetProjectsQueryKey,
   useDeleteProject,
@@ -17,6 +18,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
 
 import { useCurrentProject, useCurrentProjectId } from '../../hooks/currentProjectHooks';
+import { useEnqueueError } from '../../hooks/useEnqueueStackError';
 import { useKeycloakUser } from '../../hooks/useKeycloakUser';
 import { WarningDeleteButton } from '../WarningDeleteButton';
 import { AddProject } from './AddProject';
@@ -43,14 +45,23 @@ export const ProjectManager = ({ inverted = false, wrap = false }: ProjectManage
   const currentProject = useCurrentProject();
   const { user } = useKeycloakUser();
 
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+
   const isOwner = user.username === currentProject?.owner;
   const isEditor = !!user.username && !!currentProject?.editors.includes(user.username);
 
-  const deleteProjectMutation = useDeleteProject();
+  const { mutateAsync: deleteProject } = useDeleteProject();
 
   const handleDelete = async () => {
     if (currentProject?.project_id) {
-      await deleteProjectMutation.mutateAsync({ projectid: currentProject.project_id });
+      try {
+        const { task_id } = await deleteProject({ projectid: currentProject.project_id });
+        enqueueSnackbar(`Project deletion started (task: ${task_id})`, { variant: 'info' });
+      } catch (error) {
+        enqueueError(error);
+      }
+    } else {
+      enqueueSnackbar('Project not found', { variant: 'warning' });
     }
     queryClient.invalidateQueries(getGetProjectsQueryKey());
     queryClient.invalidateQueries(getGetUserAccountQueryKey());

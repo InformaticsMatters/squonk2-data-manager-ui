@@ -1,5 +1,6 @@
 import { useQueryClient } from 'react-query';
 
+import type { DmError } from '@squonk/data-manager-client';
 import {
   getGetDatasetsQueryKey,
   useCreateDatasetFromFile,
@@ -9,6 +10,7 @@ import { IconButton, Tooltip } from '@material-ui/core';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 
 import type { ProjectId } from '../../../hooks/currentProjectHooks';
+import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { useMimeTypeLookup } from '../../../hooks/useMimeTypeLookup';
 import { ORG_ID, UNIT_ID } from '../../../utils/ASIdentities';
 import type { TableFile } from '../types';
@@ -39,6 +41,8 @@ export const CreateDatasetFromFileButton = ({
 
   const mimeLookup = useMimeTypeLookup();
 
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+
   return (
     <Tooltip title="Create a dataset from this managed file">
       <IconButton
@@ -55,16 +59,23 @@ export const CreateDatasetFromFileButton = ({
             // Remove the file name from the end the full path
             const path =
               '/' + file.fullPath.substring(0, file.fullPath.indexOf('/' + file.fileName));
-            await createDataset({
-              data: {
-                project_id: projectId,
-                file_name: file.fileName,
-                path,
-                dataset_type: mimeType,
-                organisation_id: ORG_ID,
-                unit_id: UNIT_ID,
-              },
-            });
+
+            try {
+              await createDataset({
+                data: {
+                  project_id: projectId,
+                  file_name: file.fileName,
+                  path,
+                  dataset_type: mimeType,
+                  organisation_id: ORG_ID,
+                  unit_id: UNIT_ID,
+                },
+              });
+
+              enqueueSnackbar('New dataset created', { variant: 'success' });
+            } catch (error) {
+              enqueueError(error);
+            }
           }
           // Force an update of the datasets table which has now changed
           queryClient.invalidateQueries(getGetDatasetsQueryKey());

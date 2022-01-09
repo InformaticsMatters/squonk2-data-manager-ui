@@ -1,5 +1,6 @@
 import { useQueryClient } from 'react-query';
 
+import type { DmError } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useAddAnnotations } from '@squonk/data-manager-client/dataset';
 
 import { css } from '@emotion/react';
@@ -11,6 +12,7 @@ import { TextField } from 'formik-material-ui';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 import * as yup from 'yup';
 
+import { useEnqueueError } from '../../hooks/useEnqueueStackError';
 import { LowerCaseTextField } from '../../utils/LowerCaseTextField';
 import type { TableDataset } from '../DatasetsTable';
 
@@ -29,6 +31,7 @@ export const NewLabelButton = ({ datasetId, datasetVersion }: NewLabelButtonProp
   const theme = useTheme();
   const queryClient = useQueryClient();
   const { mutateAsync: addAnnotations } = useAddAnnotations();
+  const { enqueueError } = useEnqueueError<DmError>();
 
   const popupState = usePopupState({ variant: 'popover', popupId: `add-label-${datasetId}` });
 
@@ -57,23 +60,27 @@ export const NewLabelButton = ({ datasetId, datasetVersion }: NewLabelButtonProp
             label: yup.string().trim().required('A label name is required'),
           })}
           onSubmit={async ({ label, value }) => {
-            await addAnnotations({
-              datasetid: datasetId,
-              datasetversion: datasetVersion,
-              data: {
-                annotations: JSON.stringify([
-                  {
-                    label: label.trim().toLowerCase(),
-                    value: value.trim(),
-                    type: 'LabelAnnotation',
-                    active: true,
-                  },
-                ]),
-              },
-            });
-
-            await queryClient.invalidateQueries(getGetDatasetsQueryKey());
-            popupState.close();
+            try {
+              await addAnnotations({
+                datasetid: datasetId,
+                datasetversion: datasetVersion,
+                data: {
+                  annotations: JSON.stringify([
+                    {
+                      label: label.trim().toLowerCase(),
+                      value: value.trim(),
+                      type: 'LabelAnnotation',
+                      active: true,
+                    },
+                  ]),
+                },
+              });
+              await queryClient.invalidateQueries(getGetDatasetsQueryKey());
+            } catch (error) {
+              enqueueError(error);
+            } finally {
+              popupState.close();
+            }
           }}
         >
           {({ submitForm, isSubmitting, isValid }) => (

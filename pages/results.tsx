@@ -64,7 +64,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
       ];
 
       // Make the queries in parallel
-      await Promise.all(queries);
+      await Promise.allSettled(queries);
     }
   } catch (error) {
     // TODO: smarter handling

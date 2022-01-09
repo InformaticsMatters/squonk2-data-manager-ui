@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { DatasetSummary } from '@squonk/data-manager-client';
+import type { DatasetSummary, DmError } from '@squonk/data-manager-client';
 import {
   getGetDatasetsQueryKey,
   useAddEditorToDataset,
   useRemoveEditorFromDataset,
 } from '@squonk/data-manager-client/dataset';
 
+import { useEnqueueError } from '../../../../hooks/useEnqueueStackError';
 import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
 import { CenterLoader } from '../../../CenterLoader';
 import { ManageEditors } from './ManageEditors';
@@ -34,6 +35,8 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+
   if (!user.username) {
     return <CenterLoader />;
   }
@@ -47,13 +50,20 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
         setIsLoading(true);
         const username = dataset.editors.find((editor) => !value.includes(editor));
         if (username !== undefined) {
-          await removeEditor({
-            datasetid: dataset.dataset_id,
-            userid: username,
-          });
+          try {
+            await removeEditor({
+              datasetid: dataset.dataset_id,
+              userid: username,
+            });
+          } catch (error) {
+            enqueueError(error);
+          }
+        } else {
+          enqueueSnackbar(`Username doesn't exist`, { variant: 'warning' });
         }
 
         await queryClient.invalidateQueries(getGetDatasetsQueryKey());
+        enqueueSnackbar(`User ${username} removed successfully`, { variant: 'success' });
 
         setIsLoading(false);
       }}
@@ -61,10 +71,17 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
         setIsLoading(true);
         const username = value.find((user) => !dataset.editors.includes(user));
         if (username !== undefined) {
-          await addEditor({ datasetid: dataset.dataset_id, userid: username });
+          try {
+            await addEditor({ datasetid: dataset.dataset_id, userid: username });
+          } catch (error) {
+            enqueueError(error);
+          }
+        } else {
+          enqueueSnackbar(`Username doesn't exist`, { variant: 'warning' });
         }
 
         await queryClient.invalidateQueries(getGetDatasetsQueryKey());
+        enqueueSnackbar(`User ${username} added successfully`, { variant: 'success' });
 
         setIsLoading(false);
       }}

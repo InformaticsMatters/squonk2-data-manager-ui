@@ -1,11 +1,12 @@
 import { useQueryClient } from 'react-query';
 
-import type { DeleteUnmanagedFileParams } from '@squonk/data-manager-client';
+import type { DeleteUnmanagedFileParams, DmError } from '@squonk/data-manager-client';
 import { getGetFilesQueryKey, useDeleteUnmanagedFile } from '@squonk/data-manager-client/file';
 
 import { IconButton } from '@material-ui/core';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 
+import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { WarningDeleteButton } from '../../WarningDeleteButton';
 
 export interface DeleteUnmanagedFileButtonProps {
@@ -34,6 +35,8 @@ export const DeleteUnmanagedFileButton = ({
   const queryClient = useQueryClient();
   const { mutateAsync: deleteFile } = useDeleteUnmanagedFile();
 
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+
   return (
     <WarningDeleteButton
       modalId={`delete-file-${path}-${fileName}`}
@@ -41,14 +44,20 @@ export const DeleteUnmanagedFileButton = ({
       title="Delete unmanaged file"
       tooltipText="Delete unmanaged file"
       onDelete={async () => {
-        await deleteFile({
-          params: {
-            file: fileName,
-            path,
-            project_id: projectId,
-          },
-        });
-        await queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
+        try {
+          await deleteFile({
+            params: {
+              file: fileName,
+              path,
+              project_id: projectId,
+            },
+          });
+          await queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
+
+          enqueueSnackbar('Unmanaged file deleted', { variant: 'success' });
+        } catch (error) {
+          enqueueError(error);
+        }
       }}
     >
       {({ openModal }) => (

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { DatasetVersionSummary } from '@squonk/data-manager-client';
+import type { DatasetVersionSummary, DmError } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
 import { getGetFilesQueryKey, useAttachFile } from '@squonk/data-manager-client/file';
 import { useGetProjects } from '@squonk/data-manager-client/project';
@@ -16,6 +16,7 @@ import { Field } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-material-ui';
 import * as yup from 'yup';
 
+import { useEnqueueError } from '../../../../../hooks/useEnqueueStackError';
 import { useKeycloakUser } from '../../../../../hooks/useKeycloakUser';
 import { getErrorMessage } from '../../../../../utils/orvalError';
 import { FormikModalWrapper } from '../../../../modals/FormikModalWrapper';
@@ -72,6 +73,8 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
 
   const projectNames = useGetAttachedProjectsNames(projectIds, projectsData?.projects);
 
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+
   return (
     <>
       <ListItem
@@ -125,7 +128,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
               },
             });
 
-            await Promise.all([
+            await Promise.allSettled([
               // Ensure the views showing project files is updated to include the new addition
               queryClient.invalidateQueries(
                 getGetFilesQueryKey({ project_id: project, path: resolvedPath }),
@@ -135,9 +138,13 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
               queryClient.invalidateQueries(getGetDatasetsQueryKey()),
             ]);
 
+            enqueueSnackbar('The dataset was successfully attached to your project', {
+              variant: 'success',
+            });
+
             setOpen(false);
-          } catch (err) {
-            console.error(err);
+          } catch (error) {
+            enqueueError(error);
           } finally {
             setSubmitting(false);
           }

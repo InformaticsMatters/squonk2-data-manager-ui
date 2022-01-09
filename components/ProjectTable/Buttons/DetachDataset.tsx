@@ -1,10 +1,12 @@
 import { useQueryClient } from 'react-query';
 
+import type { DmError } from '@squonk/data-manager-client';
 import { getGetFilesQueryKey, useDeleteFile } from '@squonk/data-manager-client/file';
 
 import { IconButton } from '@material-ui/core';
 import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
 
+import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { WarningDeleteButton } from '../../WarningDeleteButton';
 
 export interface DetachDatasetProps {
@@ -29,6 +31,8 @@ export const DetachDataset = ({ fileId, projectId, path }: DetachDatasetProps) =
   const queryClient = useQueryClient();
   const { mutateAsync: detachDataset } = useDeleteFile();
 
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+
   return (
     <WarningDeleteButton
       modalId={`detach-dataset-${fileId}`}
@@ -36,8 +40,14 @@ export const DetachDataset = ({ fileId, projectId, path }: DetachDatasetProps) =
       title="Detach File"
       tooltipText="Detach File"
       onDelete={async () => {
-        await detachDataset({ fileid: fileId });
-        await queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
+        try {
+          await detachDataset({ fileid: fileId });
+          await queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
+
+          enqueueSnackbar('The attached dataset was successfully detached');
+        } catch (error) {
+          enqueueError(error);
+        }
       }}
     >
       {({ openModal }) => (

@@ -1,5 +1,6 @@
 import { useQueryClient } from 'react-query';
 
+import type { DmError } from '@squonk/data-manager-client';
 import {
   getGetProjectsQueryKey,
   useCreateProject,
@@ -15,6 +16,7 @@ import { TextField } from 'formik-material-ui';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 import * as yup from 'yup';
 
+import { useEnqueueError } from '../../hooks/useEnqueueStackError';
 import { ORG_ID, PRODUCT_TIERS, UNIT_ID } from '../../utils/ASIdentities';
 import type { CommonProps } from './types';
 
@@ -32,6 +34,7 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
   const projects = projectsData?.projects;
 
   const { mutateAsync: createProject } = useCreateProject();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
   const theme = useTheme();
 
@@ -72,19 +75,24 @@ export const AddProject = ({ inverted = false }: AddProjectProps) => {
             tierProductId: yup.string().required('A tier must be selected'),
           })}
           onSubmit={async ({ projectName, tierProductId }) => {
-            await createProject({
-              data: {
-                name: projectName,
-                organisation_id: ORG_ID,
-                unit_id: UNIT_ID,
-                tier_product_id: tierProductId,
-              },
-            });
+            try {
+              await createProject({
+                data: {
+                  name: projectName,
+                  organisation_id: ORG_ID,
+                  unit_id: UNIT_ID,
+                  tier_product_id: tierProductId,
+                },
+              });
 
+              enqueueSnackbar('Project created');
+
+              queryClient.invalidateQueries(getGetProjectsQueryKey());
+              queryClient.invalidateQueries(getGetUserAccountQueryKey());
+            } catch (error) {
+              enqueueError(error);
+            }
             popupState.close();
-
-            queryClient.invalidateQueries(getGetProjectsQueryKey());
-            queryClient.invalidateQueries(getGetUserAccountQueryKey());
           }}
         >
           {({ submitForm, isSubmitting, isValid }) => (

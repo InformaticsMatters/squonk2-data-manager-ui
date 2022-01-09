@@ -9,10 +9,12 @@ import type { AxiosError } from 'axios';
  * @returns
  */
 export const getErrorMessage = (
-  error: AxiosError<void | DmError | AsError> | null,
+  error: AxiosError<void | DmError | AsError> | null | unknown,
 ): string | undefined => {
-  if (error) {
-    return (error.response?.data as any).detail;
+  const err = error as AxiosError<void | DmError | AsError> | null;
+  if (err) {
+    const e = err.response?.data as any;
+    return e?.error || e?.detail;
   }
   return undefined;
 };

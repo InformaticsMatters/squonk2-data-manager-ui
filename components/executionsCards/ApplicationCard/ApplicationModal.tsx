@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { ApplicationSummary } from '@squonk/data-manager-client';
+import type { ApplicationSummary, DmError } from '@squonk/data-manager-client';
 import { useGetApplication } from '@squonk/data-manager-client/application';
 import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
 
 import { Grid, MenuItem, TextField } from '@material-ui/core';
 import Form from '@rjsf/material-ui';
 
+import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { CenterLoader } from '../../CenterLoader';
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import type { CommonModalProps } from '../types';
@@ -36,27 +37,35 @@ export const ApplicationModal = ({
 
   const { mutateAsync: createInstance } = useCreateInstance();
 
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+
   const { data: application } = useGetApplication(applicationId);
 
   const versionToUse = version ?? application?.versions[0] ?? '';
 
   const handleCreateInstance = async () => {
     if (projectId) {
-      await createInstance({
-        data: {
-          application_id: applicationId,
-          application_version: versionToUse,
-          as_name: name,
-          project_id: projectId,
-          specification: JSON.stringify({
-            variables: formData,
-          }),
-        },
-      });
-      await queryClient.invalidateQueries(getGetInstancesQueryKey());
-
-      onLaunch && onLaunch();
-      onClose();
+      try {
+        await createInstance({
+          data: {
+            application_id: applicationId,
+            application_version: versionToUse,
+            as_name: name,
+            project_id: projectId,
+            specification: JSON.stringify({
+              variables: formData,
+            }),
+          },
+        });
+        await queryClient.invalidateQueries(getGetInstancesQueryKey());
+      } catch (error) {
+        enqueueError(error);
+      } finally {
+        onLaunch && onLaunch();
+        onClose();
+      }
+    } else {
+      enqueueSnackbar('No project provided', { variant: 'warning' });
     }
   };
 

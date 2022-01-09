@@ -9,6 +9,7 @@ import { UserProvider } from '@auth0/nextjs-auth0';
 import { enableMapSet } from 'immer';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+import { SnackbarProvider } from 'notistack';
 
 import { ThemeProviders } from '../components/ThemeProviders';
 import { AS_API_URL, DM_API_URL } from '../constants';
@@ -54,11 +55,13 @@ export default function App({ Component, pageProps }: AppProps) {
           <UserProvider>
             <QueryClientProvider client={queryClientRef.current}>
               <Hydrate state={pageProps.dehydratedState}>
-                <SelectedFilesProvider>
-                  <MDXComponentProvider>
-                    <Component {...pageProps} />
-                  </MDXComponentProvider>
-                </SelectedFilesProvider>
+                <SnackbarProvider>
+                  <SelectedFilesProvider>
+                    <MDXComponentProvider>
+                      <Component {...pageProps} />
+                    </MDXComponentProvider>
+                  </SelectedFilesProvider>
+                </SnackbarProvider>
               </Hydrate>
             </QueryClientProvider>
           </UserProvider>

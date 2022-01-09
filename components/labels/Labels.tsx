@@ -1,10 +1,11 @@
 import { useQueryClient } from 'react-query';
 
-import type { DatasetVersionSummary } from '@squonk/data-manager-client';
+import type { DatasetVersionSummary, DmError } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useAddAnnotations } from '@squonk/data-manager-client/dataset';
 
 import { Typography } from '@material-ui/core';
 
+import { useEnqueueError } from '../../hooks/useEnqueueStackError';
 import { Chips } from '../Chips';
 import type { TableDataset } from '../DatasetsTable';
 import { LabelChip } from './LabelChip';
@@ -29,6 +30,8 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
   const queryClient = useQueryClient();
   const { mutateAsync: addAnnotations } = useAddAnnotations();
 
+  const { enqueueError } = useEnqueueError<DmError>();
+
   if (labels.length === 0) {
     return (
       <Typography display="inline" variant="body2">
@@ -46,22 +49,25 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
             label={label}
             values={value}
             onDelete={async () => {
-              await addAnnotations({
-                datasetid: datasetId,
-                datasetversion: datasetVersion.version,
-                data: {
-                  annotations: JSON.stringify([
-                    {
-                      label,
-                      value,
-                      type: 'LabelAnnotation',
-                      active: false,
-                    },
-                  ]),
-                },
-              });
-
-              queryClient.invalidateQueries(getGetDatasetsQueryKey());
+              try {
+                await addAnnotations({
+                  datasetid: datasetId,
+                  datasetversion: datasetVersion.version,
+                  data: {
+                    annotations: JSON.stringify([
+                      {
+                        label,
+                        value,
+                        type: 'LabelAnnotation',
+                        active: false,
+                      },
+                    ]),
+                  },
+                });
+                queryClient.invalidateQueries(getGetDatasetsQueryKey());
+              } catch (error) {
+                enqueueError(error);
+              }
             }}
           />
         ))}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { TaskSummary } from '@squonk/data-manager-client';
+import type { DmError, TaskSummary } from '@squonk/data-manager-client';
 import { getGetTasksQueryKey, useDeleteTask } from '@squonk/data-manager-client/task';
 
 import {
@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core';
 
 import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
+import { useEnqueueError } from '../../hooks/useEnqueueStackError';
 import { BaseCard } from '../BaseCard';
 import { WarningDeleteButton } from '../WarningDeleteButton';
 import { DateTimeListItem } from './common/DateTimeListItem';
@@ -34,6 +35,7 @@ export interface TaskCardProps {
 export const OperationTaskCard = ({ task }: TaskCardProps) => {
   const queryClient = useQueryClient();
   const { mutateAsync: deleteTask } = useDeleteTask();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
   const { projectId } = useCurrentProjectId();
 
@@ -49,12 +51,17 @@ export const OperationTaskCard = ({ task }: TaskCardProps) => {
               title="Delete Task"
               tooltipText="Delete Task"
               onDelete={async () => {
-                await deleteTask({ taskid: task.id });
-                Promise.all([
-                  queryClient.invalidateQueries(getGetTasksQueryKey()),
-                  queryClient.invalidateQueries(getGetTasksQueryKey({ project_id: projectId })),
-                ]);
-                setSlideIn(false);
+                try {
+                  await deleteTask({ taskid: task.id });
+                  queryClient.invalidateQueries(getGetTasksQueryKey());
+                  queryClient.invalidateQueries(getGetTasksQueryKey({ project_id: projectId }));
+
+                  enqueueSnackbar('Task successfully deleted', { variant: 'success' });
+                } catch (error) {
+                  enqueueError(error);
+                } finally {
+                  setSlideIn(false);
+                }
               }}
             >
               {({ openModal }) => <Button onClick={openModal}>Delete</Button>}

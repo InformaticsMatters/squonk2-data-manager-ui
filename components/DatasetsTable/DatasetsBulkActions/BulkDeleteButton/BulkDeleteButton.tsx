@@ -1,10 +1,12 @@
 import { useQueryClient } from 'react-query';
 
+import type { DmError } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useDeleteDataset } from '@squonk/data-manager-client/dataset';
 
 import { IconButton, List, ListItem, ListItemText, Typography } from '@material-ui/core';
 import { DeleteForever } from '@material-ui/icons';
 
+import { useEnqueueError } from '../../../../hooks/useEnqueueStackError';
 import { WarningDeleteButton } from '../../../WarningDeleteButton';
 import type { TableDataset, TableDatasetSubRow } from '../..';
 import { useFilterDeletableDatasets } from './useFilterDeletableDatasets';
@@ -33,12 +35,22 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
   const { deletableDatasets, undeletableDatasets } = useFilterDeletableDatasets(selectedDatasets);
   const sortedUndeletableDatasets = useSortUndeletableDatasets(undeletableDatasets);
 
+  const { enqueueSnackbar } = useEnqueueError<DmError>();
+
   const deleteSelectedDatasets = async () => {
     const promises = deletableDatasets.map((dataset) =>
       deleteDataset({ datasetid: dataset.dataset_id, datasetversion: dataset.version }),
     );
 
-    await Promise.all(promises);
+    const reasons = (await Promise.allSettled(promises))
+      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+      .map((rejected) => rejected.reason);
+
+    if (reasons.length > 0) {
+      enqueueSnackbar(`${reasons.length} dataset(s) could not be deleted`, { variant: 'warning' });
+    } else {
+      enqueueSnackbar('Datasets deleted successfully', { variant: 'success' });
+    }
 
     await queryClient.invalidateQueries(getGetDatasetsQueryKey());
   };

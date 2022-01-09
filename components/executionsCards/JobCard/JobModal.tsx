@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { InstanceSummary, JobSummary } from '@squonk/data-manager-client';
+import type { DmError, InstanceSummary, JobSummary } from '@squonk/data-manager-client';
 import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
 import { useGetJob } from '@squonk/data-manager-client/job';
 
@@ -9,6 +9,7 @@ import { Box, Grid, TextField, Typography } from '@material-ui/core';
 import type { FormProps } from '@rjsf/core';
 import dynamic from 'next/dynamic';
 
+import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { CenterLoader } from '../../CenterLoader';
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import type { CommonModalProps } from '../types';
@@ -61,6 +62,7 @@ export const JobModal = ({
   // ? Can we guarantee every job has a parsable spec?
 
   const queryClient = useQueryClient();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
   const [nameState, setNameState] = useState(instance?.name ?? '');
 
@@ -106,20 +108,25 @@ export const JobModal = ({
         version: job.version,
         variables: { ...inputsData, ...optionsFormData },
       };
-
-      await createInstance({
-        data: {
-          application_id: job.application.application_id,
-          application_version: 'v1',
-          as_name: name,
-          project_id: projectId,
-          specification: JSON.stringify(specification),
-        },
-      });
-      await queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
-
-      onLaunch && onLaunch();
-      onClose();
+      try {
+        await createInstance({
+          data: {
+            application_id: job.application.application_id,
+            application_version: 'v1',
+            as_name: name,
+            project_id: projectId,
+            specification: JSON.stringify(specification),
+          },
+        });
+        await queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
+      } catch (error) {
+        enqueueError(error);
+      } finally {
+        onLaunch && onLaunch();
+        onClose();
+      }
+    } else {
+      enqueueSnackbar('No project provided', { variant: 'warning' });
     }
   };
 

@@ -20,6 +20,7 @@ import { useFileExtensions } from '../../hooks/useFileExtensions';
 import { useMimeTypeLookup } from '../../hooks/useMimeTypeLookup';
 import { TwiddleIcon } from '../uploads/TwiddleIcon';
 import type { UploadableFile } from '../uploads/types';
+import { separateFileExtensionFromFileName } from '../uploads/utils';
 
 export interface SingleFileUploadWithProgressProps {
   fileWrapper: UploadableFile;
@@ -46,8 +47,8 @@ export function SingleFileUploadWithProgress({
     return `${fileNameRef.current?.value}${fileExtRef.current?.value}`;
   };
 
-  const typeLabelParts = fileWrapper.file.name.split('.');
-  const [stem, ...extensions] = typeLabelParts;
+  const [stem, extension] = separateFileExtensionFromFileName(fileWrapper.file.name);
+  // const typeLabelParts = fileWrapper.file.name.split('.');
 
   const [interval, setInterval] = useState<number | false>(2000);
   const { data: task, isLoading } = useGetTask(fileWrapper.taskId ?? '', undefined, {
@@ -104,7 +105,7 @@ export function SingleFileUploadWithProgress({
           <TextField
             fullWidth
             select
-            defaultValue={`.${extensions.join('.')}`}
+            defaultValue={extension}
             disabled={disabled || task?.done}
             inputRef={fileExtRef}
             label="Ext"

@@ -1,4 +1,5 @@
 import type { InstanceSummary } from '@squonk/data-manager-client';
+import { useGetInstance } from '@squonk/data-manager-client/instance';
 
 import { css } from '@emotion/react';
 import { Grid, ListItem, ListItemIcon, ListItemText, Typography } from '@material-ui/core';
@@ -9,26 +10,24 @@ import { CenterLoader } from '../../../CenterLoader';
 import { PageSection } from '../../../PageSection';
 import { HorizontalList } from '../../common/HorizontalList';
 import { TimeLine } from '../../common/TimeLine';
-import { usePolledInstance } from '../usePolledInstance';
 import { JobInputSection } from './JobInputSection';
 import { JobOutputSection } from './JobOutputSection';
+import type { CommonDetailsProps } from './types';
 
-export interface JobDetailsProps {
+export interface JobDetailsProps extends CommonDetailsProps {
   /**
    * Instance of the job
    */
   instanceSummary: InstanceSummary;
-  /**
-   * Whether to poll the instance regularly for updates
-   */
-  poll?: boolean;
 }
 
 /**
  * Displays the details of an job based on the instance of a job
  */
 export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) => {
-  const { data: instance } = usePolledInstance(instanceSummary.id, poll);
+  const { data: instance } = useGetInstance(instanceSummary.id, undefined, {
+    query: { refetchInterval: poll ? 5000 : undefined },
+  });
 
   if (instance === undefined) {
     return <CenterLoader />;

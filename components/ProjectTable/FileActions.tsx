@@ -1,4 +1,4 @@
-import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
+import { useCurrentProjectId } from '../../hooks/projectHooks';
 import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
 import { CreateDatasetFromFileButton } from './Buttons/CreateDatasetFromFileButton';
 import { DeleteUnmanagedFileButton } from './Buttons/DeleteUnmanagedFileButton';

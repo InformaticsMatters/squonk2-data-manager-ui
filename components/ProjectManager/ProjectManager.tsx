@@ -17,7 +17,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import PersonIcon from '@material-ui/icons/Person';
 import { Autocomplete } from '@material-ui/lab';
 
-import { useCurrentProject, useCurrentProjectId } from '../../hooks/currentProjectHooks';
+import { useCurrentProject, useCurrentProjectId } from '../../hooks/projectHooks';
 import { useEnqueueError } from '../../hooks/useEnqueueStackError';
 import { useKeycloakUser } from '../../hooks/useKeycloakUser';
 import { WarningDeleteButton } from '../WarningDeleteButton';

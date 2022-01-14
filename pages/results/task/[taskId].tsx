@@ -1,40 +1,36 @@
 import { useQueryClient } from 'react-query';
 
-import { getGetInstanceQueryKey, useGetInstances } from '@squonk/data-manager-client/instance';
+import { getGetTaskQueryKey, useGetTask } from '@squonk/data-manager-client/task';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import { Box, Button, Container, IconButton, Tooltip, Typography } from '@material-ui/core';
+import { Container, IconButton, Tooltip, Typography } from '@material-ui/core';
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
+import { Alert } from '@material-ui/lab';
 import Head from 'next/head';
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { CenterLoader } from '../../../components/CenterLoader';
 import Layout from '../../../components/Layout';
-import { ResultApplicationCard } from '../../../components/results/ResultApplicationCard';
-import { ResultJobCard } from '../../../components/results/ResultJobCard';
-import { APP_ROUTES } from '../../../constants/routes';
+import { ResultTaskCard } from '../../../components/results/ResultTaskCard';
+import { getErrorMessage } from '../../../utils/orvalError';
 import { RoleRequired } from '../../../utils/RoleRequired';
 
 const Result = () => {
   const queryClient = useQueryClient();
 
   const router = useRouter();
-  const { instanceId } = router.query;
 
-  const { data: instances } = useGetInstances(undefined, { query: { refetchInterval: 5000 } });
+  const taskId = router.query.taskId as string;
 
-  const instance = instances?.instances.find((instance) => instance.id === instanceId);
+  const { data: task, isLoading, isError, error } = useGetTask(taskId);
 
-  const refreshResults = [
-    () => queryClient.invalidateQueries(getGetInstanceQueryKey(instanceId as string)),
-  ];
+  const refreshResults = [() => queryClient.invalidateQueries(getGetTaskQueryKey(taskId))];
 
   return (
     <>
       <Head>
-        <title>Squonk | Instance {instance?.state}</title>
+        <title>Squonk | Task {task?.states?.slice(-1)[0]?.state}</title>
       </Head>
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
         <Layout>
@@ -46,7 +42,7 @@ const Result = () => {
               `}
             >
               <Typography gutterBottom component="h1" variant="h3">
-                Instance
+                Task
               </Typography>
               <Tooltip title="Refresh Instance">
                 <IconButton
@@ -59,21 +55,13 @@ const Result = () => {
                 </IconButton>
               </Tooltip>
             </div>
-            {instance?.application_type === 'JOB' ? (
-              <Box marginY={1}>
-                <ResultJobCard poll collapsedByDefault={false} instance={instance} />
-              </Box>
-            ) : instance?.application_type === 'APPLICATION' ? (
-              <ResultApplicationCard poll collapsedByDefault={false} instance={instance} />
-            ) : (
+            {isError && error ? (
+              <Alert severity="error">{getErrorMessage(error)}</Alert>
+            ) : isLoading || task === undefined ? (
               <CenterLoader />
+            ) : (
+              <ResultTaskCard poll collapsedByDefault={false} task={{ ...task, id: taskId }} />
             )}
-            <NextLink
-              passHref
-              href={{ pathname: APP_ROUTES.results['.'], query: { project: instance?.project_id } }}
-            >
-              <Button color="primary">See all results</Button>
-            </NextLink>
           </Container>
         </Layout>
       </RoleRequired>

@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { Grid, Typography } from '@material-ui/core';
 
-import type { ProjectId } from '../../../hooks/currentProjectHooks';
+import type { ProjectId } from '../../../hooks/projectHooks';
 import { FileSelector } from '../../FileSelector';
 import type { InputData } from './JobModal';
 

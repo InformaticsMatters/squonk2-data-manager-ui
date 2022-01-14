@@ -18,9 +18,9 @@ import Head from 'next/head';
 
 import { CenterLoader } from '../components/CenterLoader';
 import Layout from '../components/Layout';
-import { OperationCards } from '../components/operations/OperationCards';
-import { OperationsToolbar } from '../components/operations/OperationsToolbar';
-import { useCurrentProjectId } from '../hooks/currentProjectHooks';
+import { ResultCards } from '../components/results/ResultCards';
+import { ResultsToolbar } from '../components/results/ResultToolbar';
+import { useCurrentProjectId } from '../hooks/projectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 
 // This was a SSR test/example. Not sure if we want to do SSR everywhere but probably should.
@@ -99,7 +99,7 @@ const Tasks = () => {
   } = useGetTasks({ project_id: projectId });
   const tasks = tasksData?.tasks;
 
-  const [operationTypes, setOperationTypes] = useState(['task', 'instance']);
+  const [resultTypes, setResultTypes] = useState(['task', 'instance']);
   const [searchValue, setSearchValue] = useState('');
 
   return (
@@ -110,11 +110,11 @@ const Tasks = () => {
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
         <Layout>
           <Container maxWidth="md">
-            <OperationsToolbar
-              operationTypes={operationTypes}
+            <ResultsToolbar
+              resultTypes={resultTypes}
               searchValue={searchValue}
               onSearchChange={setSearchValue}
-              onSelectChange={setOperationTypes}
+              onSelectChange={setResultTypes}
             />
 
             <Grid container spacing={1}>
@@ -138,9 +138,9 @@ const Tasks = () => {
                 {(instances !== undefined || tasks !== undefined) &&
                 !isTasksLoading &&
                 !isInstancesLoading ? (
-                  <OperationCards
+                  <ResultCards
                     instances={instances ?? []}
-                    operationTypes={operationTypes}
+                    resultTypes={resultTypes}
                     searchValue={searchValue}
                     tasks={tasks ?? []}
                   />

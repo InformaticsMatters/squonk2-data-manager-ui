@@ -4,7 +4,6 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import type { ButtonProps } from '@material-ui/core';
 import { Button as MuiButton, useTheme } from '@material-ui/core';
-import { useRouter } from 'next/router';
 
 import { NavLink } from './NavLink';
 
@@ -17,7 +16,6 @@ export interface NavLinksProps {
 
 export const NavLinks = ({ linkWidth }: NavLinksProps) => {
   const theme = useTheme();
-  const router = useRouter();
 
   return (
     <nav
@@ -40,22 +38,22 @@ export const NavLinks = ({ linkWidth }: NavLinksProps) => {
     >
       {/* Div wrappers used to give correct spacing */}
       <div>
-        <NavLink stripQueryParameters={['pid', 'path']} title="Datasets">
+        <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Datasets">
           {({ active }) => <NavButton $active={active}>Datasets</NavButton>}
         </NavLink>
       </div>
       <div>
-        <NavLink stripQueryParameters={['pid', 'path']} title="Project">
+        <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Project">
           {({ active }) => <NavButton $active={active}>Project</NavButton>}
         </NavLink>
       </div>
       <div>
-        <NavLink stripQueryParameters={['pid', 'path']} title="Executions">
+        <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Executions">
           {({ active }) => <NavButton $active={active}>Executions</NavButton>}
         </NavLink>
       </div>
       <div>
-        <NavLink stripQueryParameters={['pid', 'path']} title="Results">
+        <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Results">
           {({ active }) => <NavButton $active={active}>Results</NavButton>}
         </NavLink>
       </div>

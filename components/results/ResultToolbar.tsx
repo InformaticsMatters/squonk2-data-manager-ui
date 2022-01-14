@@ -12,14 +12,14 @@ import { css } from '@emotion/react';
 import { Grid, IconButton, MenuItem, TextField, Tooltip } from '@material-ui/core';
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
 
-import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
+import { useCurrentProjectId } from '../../hooks/projectHooks';
 import { SearchTextField } from '../SearchTextField';
 
-export interface OperationsToolbarProps {
+export interface ResultsToolbarProps {
   /**
    * Value of the multiple select input
    */
-  operationTypes: string[];
+  resultTypes: string[];
   /**
    * Called when a change is made to the select input
    */
@@ -35,14 +35,14 @@ export interface OperationsToolbarProps {
 }
 
 /**
- * Filter operations by task or instance and search by operation contents
+ * Filter results by task or instance and search by result contents
  */
-export const OperationsToolbar = ({
-  operationTypes,
+export const ResultsToolbar = ({
+  resultTypes,
   onSelectChange,
   searchValue,
   onSearchChange,
-}: OperationsToolbarProps) => {
+}: ResultsToolbarProps) => {
   const { projectId } = useCurrentProjectId();
 
   const queryClient = useQueryClient();
@@ -56,7 +56,7 @@ export const OperationsToolbar = ({
    * Array of functions to call when the "refresh button" is pressed
    * These should be executed in parallel
    */
-  const refreshOperations = [
+  const refreshResults = [
     () => queryClient.invalidateQueries(getGetProjectsQueryKey()),
     () => queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId })),
 
@@ -80,7 +80,7 @@ export const OperationsToolbar = ({
               onSelectChange(event.target.value as string[]);
             },
           }}
-          value={operationTypes}
+          value={resultTypes}
         >
           <MenuItem value="task">Tasks</MenuItem>
           <MenuItem value="instance">Instances</MenuItem>
@@ -116,7 +116,7 @@ export const OperationsToolbar = ({
             css={css`
               margin-left: auto;
             `}
-            onClick={() => refreshOperations.forEach((func) => func())}
+            onClick={() => refreshResults.forEach((func) => func())}
           >
             <RefreshRoundedIcon />
           </IconButton>

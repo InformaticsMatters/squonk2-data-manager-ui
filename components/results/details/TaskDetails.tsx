@@ -5,8 +5,9 @@ import { Grid } from '@material-ui/core';
 
 import { CenterLoader } from '../../CenterLoader';
 import { TimeLine } from '../common/TimeLine';
+import type { CommonDetailsProps } from './JobDetails/types';
 
-export interface TaskDetailsProps {
+export interface TaskDetailsProps extends CommonDetailsProps {
   /**
    * ID of the task
    */
@@ -16,8 +17,10 @@ export interface TaskDetailsProps {
 /**
  * Displays details of a task based on a task ID
  */
-export const TaskDetails = ({ taskId }: TaskDetailsProps) => {
-  const { data: task } = useGetTask(taskId);
+export const TaskDetails = ({ taskId, poll = false }: TaskDetailsProps) => {
+  const { data: task } = useGetTask(taskId, undefined, {
+    query: { refetchInterval: poll ? 5000 : undefined },
+  });
 
   if (task === undefined) {
     return <CenterLoader />;

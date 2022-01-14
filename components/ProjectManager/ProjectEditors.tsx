@@ -13,7 +13,7 @@ import { Chip, TextField } from '@material-ui/core';
 import type { AutocompleteChangeReason } from '@material-ui/lab';
 import { Autocomplete } from '@material-ui/lab';
 
-import { useCurrentProject } from '../../hooks/currentProjectHooks';
+import { useCurrentProject } from '../../hooks/projectHooks';
 import { useEnqueueError } from '../../hooks/useEnqueueStackError';
 import { useKeycloakUser } from '../../hooks/useKeycloakUser';
 

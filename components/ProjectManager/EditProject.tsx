@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
-import { useCurrentProject } from '../../hooks/currentProjectHooks';
+import { useCurrentProject } from '../../hooks/projectHooks';
 import { ModalWrapper } from '../modals/ModalWrapper';
 import { Editors } from './ProjectEditors';
 import type { CommonProps } from './types';

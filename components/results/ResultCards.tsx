@@ -4,15 +4,15 @@ import { Grid, Typography } from '@material-ui/core';
 import dayjs from 'dayjs';
 
 import { search } from '../../utils/search';
-import { OperationApplicationCard } from './OperationApplicationCard';
-import { OperationJobCard } from './OperationJobCard';
-import { OperationTaskCard } from './OperationTaskCard';
+import { ResultApplicationCard } from './ResultApplicationCard';
+import { ResultJobCard } from './ResultJobCard';
+import { ResultTaskCard } from './ResultTaskCard';
 
-export interface OperationCardsProps {
+export interface ResultCardsProps {
   /**
-   * Types of operations to display. Others not present are filtered out.
+   * Types of results to display. Others not present are filtered out.
    */
-  operationTypes: string[];
+  resultTypes: string[];
   /**
    * Search argument by which to filter
    */
@@ -50,18 +50,13 @@ const getTimeStamp = (taskOrInstance: TaskSummary | InstanceSummary) => {
 /**
  * Manages the display of all task and instance cards
  */
-export const OperationCards = ({
-  operationTypes,
-  searchValue,
-  instances,
-  tasks,
-}: OperationCardsProps) => {
+export const ResultCards = ({ resultTypes, searchValue, instances, tasks }: ResultCardsProps) => {
   // Tasks and instances are filtered first by search value
   const cards = [
-    ...(operationTypes.includes('instance') ? instances : []).filter(({ job_name, name, state }) =>
+    ...(resultTypes.includes('instance') ? instances : []).filter(({ job_name, name, state }) =>
       search([job_name, name, state], searchValue),
     ),
-    ...(operationTypes.includes('task') ? tasks : [])
+    ...(resultTypes.includes('task') ? tasks : [])
       .filter((task) => task.purpose === 'DATASET' || task.purpose === 'FILE')
       .filter(({ processing_stage, purpose }) => search([processing_stage, purpose], searchValue)),
   ]
@@ -77,18 +72,18 @@ export const OperationCards = ({
         const task = instanceOrTask;
         return (
           <Grid item key={task.id} xs={12}>
-            <OperationTaskCard task={task} />
+            <ResultTaskCard task={task} />
           </Grid>
         );
       }
       const instance = instanceOrTask;
       return instance.application_type === 'JOB' ? (
         <Grid item key={instance.id} xs={12}>
-          <OperationJobCard instance={instance} />
+          <ResultJobCard instance={instance} />
         </Grid>
       ) : (
         <Grid item key={instance.id} xs={12}>
-          <OperationApplicationCard instance={instance} />
+          <ResultApplicationCard instance={instance} />
         </Grid>
       );
     });

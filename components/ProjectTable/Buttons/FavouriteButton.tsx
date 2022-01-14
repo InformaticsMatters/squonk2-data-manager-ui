@@ -5,7 +5,7 @@ import StarRoundedIcon from '@material-ui/icons/StarRounded';
 
 import type { SavedFile } from '../../../context/fileSelectionContext';
 import { useSelectedFiles } from '../../../context/fileSelectionContext';
-import type { ProjectId } from '../../../hooks/currentProjectHooks';
+import type { ProjectId } from '../../../hooks/projectHooks';
 
 export interface FavouriteButtonProps {
   /**

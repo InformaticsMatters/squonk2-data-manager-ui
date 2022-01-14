@@ -61,3 +61,15 @@ export const useCurrentProject = () => {
 
   return projects?.find((project) => project.project_id === projectId) ?? null;
 };
+
+/**
+ * @param projectId Id of the project
+ * @returns The project object matching the ID if it exists
+ */
+export const useProjectFromId = (projectId: string) => {
+  const { data } = useGetProjects();
+
+  const projects = data?.projects;
+
+  return projects?.find((project) => project.project_id === projectId);
+};

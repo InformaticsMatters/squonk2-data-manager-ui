@@ -15,7 +15,7 @@ import { ApplicationCard } from '../components/executionsCards/ApplicationCard';
 import { JobCard } from '../components/executionsCards/JobCard/JobCard';
 import Layout from '../components/Layout';
 import { SearchTextField } from '../components/SearchTextField';
-import { useCurrentProject } from '../hooks/currentProjectHooks';
+import { useCurrentProject } from '../hooks/projectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 import { search } from '../utils/search';
 

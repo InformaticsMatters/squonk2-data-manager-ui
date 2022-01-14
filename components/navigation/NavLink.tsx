@@ -18,8 +18,6 @@ export interface NavLinkProps {
   /**
    * Query parameters that should be removed from those currently in the url when the link is
    * clicked.
-   *
-   * Include 'pid' to remove the value in a dynamic route
    */
   stripQueryParameters?: string[];
   /**

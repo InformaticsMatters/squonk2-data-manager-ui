@@ -7,7 +7,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { APP_ROUTES } from '../../constants/routes';
-import { useCurrentProjectId } from '../../hooks/currentProjectHooks';
+import { useCurrentProjectId } from '../../hooks/projectHooks';
 import { CenterLoader } from '../CenterLoader';
 import { LocalTime } from '../LocalTime';
 

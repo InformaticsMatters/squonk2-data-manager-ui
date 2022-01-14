@@ -18,7 +18,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
  * Parameters passed to actions when a component is passed
  * {@label ActionsParams}
  */
-interface ActionsParams {
+export interface ActionsParams {
   setExpanded: (isExpanded: boolean) => void;
 }
 

@@ -57,28 +57,28 @@ export const MobileNavMenu = () => {
               Links
             </Typography>
             <List aria-label="main-mobile-navigation" component="nav">
-              <NavLink stripQueryParameters={['pid', 'path']} title="Datasets">
+              <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Datasets">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
                     <ListItemText primary="Datasets" />
                   </ListItem>
                 )}
               </NavLink>
-              <NavLink stripQueryParameters={['pid', 'path']} title="Project">
+              <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Project">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
                     <ListItemText primary="Project" />
                   </ListItem>
                 )}
               </NavLink>
-              <NavLink stripQueryParameters={['pid', 'path']} title="Executions">
+              <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Executions">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
                     <ListItemText primary="Executions" />
                   </ListItem>
                 )}
               </NavLink>
-              <NavLink stripQueryParameters={['pid', 'path']} title="Results">
+              <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Results">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
                     <ListItemText primary="Results" />

@@ -9,7 +9,7 @@ import {
 import { IconButton, Tooltip } from '@material-ui/core';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 
-import type { ProjectId } from '../../../hooks/currentProjectHooks';
+import type { ProjectId } from '../../../hooks/projectHooks';
 import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { useMimeTypeLookup } from '../../../hooks/useMimeTypeLookup';
 import { ORG_ID, UNIT_ID } from '../../../utils/ASIdentities';

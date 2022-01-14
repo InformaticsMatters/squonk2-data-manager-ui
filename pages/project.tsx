@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 import Layout from '../components/Layout';
 import { ProjectTable } from '../components/ProjectTable';
-import { useCurrentProject } from '../hooks/currentProjectHooks';
+import { useCurrentProject } from '../hooks/projectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 
 /**

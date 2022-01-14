@@ -1,4 +1,4 @@
-import type { ProjectId } from '../../hooks/currentProjectHooks';
+import type { ProjectId } from '../../hooks/projectHooks';
 
 export interface CommonModalProps {
   /**

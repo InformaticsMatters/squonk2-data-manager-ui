@@ -12,7 +12,6 @@ import {
 } from '@material-ui/core';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
 import { CenterLoader } from '../CenterLoader';
@@ -35,7 +34,6 @@ const ProjectManager = dynamic<ProjectManagerProps>(
  * * User menu
  */
 export const MobileNavMenu = () => {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const isAuthorized = useIsAuthorized();
 

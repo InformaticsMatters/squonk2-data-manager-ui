@@ -1,4 +1,4 @@
-# The Mini-Apps Data Tier UI
+# Squonk Data Manager UI
 
 ![build](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build/badge.svg)
 ![build latest](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build%20latest/badge.svg)

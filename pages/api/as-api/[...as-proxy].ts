@@ -1,4 +1,5 @@
 import { createProxyMiddleware } from '../../../utils/api/apiProxy';
+
 export { config } from '../../../utils/api/apiProxy';
 
 const target = process.env.ACCOUNT_SERVER_API_SERVER;

@@ -1,3 +1,4 @@
+const { withSentryConfig } = require('@sentry/nextjs');
 const path = require('path');
 
 if (process.env.MONOREPO) {
@@ -54,4 +55,10 @@ const nextConfig = {
   },
 };
 
-module.exports = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
+const sentryWebpackPluginOptions = {
+  silent: true, // Suppresses all logs
+};
+
+const nextAndSentryConfig = withSentryConfig(nextConfig, sentryWebpackPluginOptions);
+
+module.exports = process.env.MONOREPO ? withTM(nextAndSentryConfig) : nextAndSentryConfig;

@@ -75,6 +75,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
         alignItems="center"
         css={css`
           gap: ${theme.spacing()}px;
+          word-break: break-all;
         `}
         display="flex"
       >
@@ -90,7 +91,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
           }}
         >
           <Tooltip title="Locate file in project">
-            <IconButton size="small">
+            <IconButton>
               <Folder color="primary" fontSize="small" />
             </IconButton>
           </Tooltip>

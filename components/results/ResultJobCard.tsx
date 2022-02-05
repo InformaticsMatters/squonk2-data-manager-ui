@@ -11,6 +11,7 @@ import type { CommonProps } from './common/types';
 import { useInstanceRouterQuery } from './common/useInstanceRouterQuery';
 import type { JobDetailsProps } from './details/JobDetails';
 import { JobDetails } from './details/JobDetails';
+import { LogsButton } from './LogsButton';
 import { RerunJobButton } from './RerunJobButton';
 
 export interface ResultJobCardProps extends CommonProps {
@@ -40,6 +41,7 @@ export const ResultJobCard = ({
         <>
           <TerminateInstance instance={instance} onTermination={() => setSlideIn(false)} />
           <RerunJobButton instance={instance} />
+          <LogsButton instance={instance} />
         </>
       )}
       collapsed={

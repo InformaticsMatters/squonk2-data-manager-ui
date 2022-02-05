@@ -55,11 +55,7 @@ export const JobOutputSection = ({ instanceSummary }: JobOutputSectionProps) => 
               css={css`
                 margin: 0;
               `}
-              primary={
-                <Typography component="span" variant="body1">
-                  {output.title}
-                </Typography>
-              }
+              primary={<Typography variant="body1">{output.title}</Typography>}
               secondary={
                 <JobLink
                   path={output.creates}

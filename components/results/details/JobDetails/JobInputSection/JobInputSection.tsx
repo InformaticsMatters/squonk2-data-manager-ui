@@ -63,11 +63,7 @@ export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
               css={css`
                 margin: 0;
               `}
-              primary={
-                <Typography component="span" variant="body1">
-                  {input.title}
-                </Typography>
-              }
+              primary={<Typography variant="body1">{input.title}</Typography>}
               secondary={input.value.map((val) => (
                 <JobLink
                   key={val}

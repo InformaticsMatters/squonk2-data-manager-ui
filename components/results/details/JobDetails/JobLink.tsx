@@ -109,7 +109,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
           }}
         >
           <Tooltip title="Open in Plaintext Viewer">
-            <Link rel="noopener noreferrer" target="_blank">
+            <Link color="textSecondary" rel="noopener noreferrer" target="_blank">
               <Typography component="span">{displayPath}</Typography>
             </Link>
           </Tooltip>

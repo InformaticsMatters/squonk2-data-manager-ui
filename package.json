@@ -10,14 +10,14 @@
     "dev:debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc --pretty --noEmit",
+    "tsc": "tsc --pretty --noEmit",
     "lint": "next lint",
-    "lint:fix": "eslint --fix .",
+    "format": "eslint --fix .",
     "test": "cypress run"
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [
-      "npm run lint:fix"
+      "pnpm format"
     ]
   },
   "dependencies": {

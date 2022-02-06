@@ -2,3 +2,13 @@
 . "$(dirname "$0")/_/husky.sh"
 
 pnpm lint-staged
+pnpm run tsc
+
+if git rev-parse --abbrev-ref HEAD | grep -q "master"; then
+  if grep "link:.." pnpm-lock.yaml; then
+    echo "The above package links were found. Run pnpm i:remote in the root of the monorepo"
+    exit 1
+  else
+    echo "No package links found"
+  fi
+fi

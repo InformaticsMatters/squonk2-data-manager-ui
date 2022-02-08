@@ -1,21 +1,13 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMediaQuery, useTheme } from '@material-ui/core';
-import dynamic from 'next/dynamic';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
-import { CenterLoader } from '../CenterLoader';
-import type { ProjectManagerProps } from '../ProjectManager';
+import { CurrentContext } from './CurrentContext';
 import { MobileNavMenu } from './MobileNavMenu';
 import { NavLinks } from './NavLinks';
 import { ProjectModalButton } from './ProjectModalButton';
 import { UserMenu } from './UserMenu';
-
-const ProjectManager = dynamic<ProjectManagerProps>(
-  () => import('../ProjectManager').then((mod) => mod.ProjectManager),
-  {
-    loading: () => <CenterLoader />,
-  },
-);
 
 /**
  * Desktop / Tablet toolbar contents
@@ -33,7 +25,7 @@ export const ToolbarContents = () => {
       <>
         <NavLinks linkWidth={120} />
         <IconsWrapper>
-          {isAuthorized && <ProjectManager inverted />}
+          {isAuthorized && <CurrentContext />}
           <UserMenu />
         </IconsWrapper>
       </>
@@ -44,7 +36,13 @@ export const ToolbarContents = () => {
       <>
         <NavLinks linkWidth={100} />
         <IconsWrapper>
-          <ProjectModalButton />
+          <div
+            css={css`
+              margin: ${theme.spacing()}px;
+            `}
+          >
+            <ProjectModalButton />
+          </div>
           <UserMenu />
         </IconsWrapper>
       </>
@@ -56,6 +54,8 @@ export const ToolbarContents = () => {
 
 const IconsWrapper = styled.div`
   display: flex;
-  margin-left: auto;
+  justify-content: flex-end;
   align-items: center;
+  flex: 1 0;
+  min-width: 0;
 `;

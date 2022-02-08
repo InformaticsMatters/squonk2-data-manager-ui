@@ -1,20 +1,12 @@
 import { useState } from 'react';
 
+import { css } from '@emotion/react';
 import { IconButton } from '@material-ui/core';
 import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
-import dynamic from 'next/dynamic';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
-import { CenterLoader } from '../CenterLoader';
 import { ModalWrapper } from '../modals/ModalWrapper';
-import type { ProjectManagerProps } from '../ProjectManager';
-
-const ProjectManager = dynamic<ProjectManagerProps>(
-  () => import('../ProjectManager').then((mod) => mod.ProjectManager),
-  {
-    loading: () => <CenterLoader />,
-  },
-);
+import { CurrentContext } from './CurrentContext';
 
 /**
  * Button controlling a modal that displays the project management options
@@ -30,8 +22,14 @@ export const ProjectModalButton = () => {
         <AccountTreeRoundedIcon />
       </IconButton>
 
-      <ModalWrapper id="project-menu" open={open} title="Project" onClose={() => setOpen(false)}>
-        <ProjectManager />
+      <ModalWrapper id="project-menu" open={open} title="Context" onClose={() => setOpen(false)}>
+        <div
+          css={css`
+            min-width: 200px;
+          `}
+        >
+          <CurrentContext />
+        </div>
       </ModalWrapper>
     </>
   );

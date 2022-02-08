@@ -16,6 +16,7 @@ import { AS_API_URL, DM_API_URL } from '../constants';
 import { ColorSchemeProvider } from '../context/colorSchemeContext';
 import { SelectedFilesProvider } from '../context/fileSelectionContext';
 import { MDXComponentProvider } from '../context/MDXComponentProvider';
+import { OrganisationUnitProvider } from '../context/organisationUnitContext';
 
 import '../styles/globalStyles.scss';
 
@@ -58,7 +59,9 @@ export default function App({ Component, pageProps }: AppProps) {
                 <SnackbarProvider>
                   <SelectedFilesProvider>
                     <MDXComponentProvider>
-                      <Component {...pageProps} />
+                      <OrganisationUnitProvider>
+                        <Component {...pageProps} />
+                      </OrganisationUnitProvider>
                     </MDXComponentProvider>
                   </SelectedFilesProvider>
                 </SnackbarProvider>

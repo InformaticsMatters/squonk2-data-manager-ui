@@ -1,36 +1,35 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { Dispatch } from 'react';
+import { useReducer } from 'react';
 import { useMemo } from 'react';
 import { useContext } from 'react';
 import { useEffect } from 'react';
 import { useLayoutEffect } from 'react';
-import { useState } from 'react';
 import { createContext } from 'react';
 
+import type { OrganisationDetail, UnitDetail } from '@squonk/account-server-client';
 import { useGetProducts } from '@squonk/account-server-client/product';
 
 import { useCurrentProject } from '../hooks/projectHooks';
 import { useIsAuthorized } from '../hooks/useIsAuthorized';
 
 type OrganisationUnit = {
-  organisation: string;
-  unit: string | null;
+  organisation: OrganisationDetail | null;
+  unit: UnitDetail | null;
 };
 
-type OrganisationUnitSetter = Dispatch<SetStateAction<OrganisationUnit | null>>;
-
 type OrganisationUnitContextValue = {
-  organisationUnit: OrganisationUnit | null;
-  setOrganisationUnit: OrganisationUnitSetter;
+  organisationUnit: OrganisationUnit;
+  dispatchOrganisationUnit: OrganisationUnitSetter;
 };
 
 export const OrganisationUnitContext = createContext<OrganisationUnitContextValue>({
-  organisationUnit: null,
-  setOrganisationUnit: () => {
+  organisationUnit: { organisation: null, unit: null },
+  dispatchOrganisationUnit: () => {
     // Do nothing
   },
 });
 
-const useUpdateOrganisationUnit = (setOrganisationUnit: OrganisationUnitSetter) => {
+const useUpdateOrganisationUnit = (dispatchOrganisationUnit: OrganisationUnitSetter) => {
   const isAuthorized = useIsAuthorized();
 
   const currentProject = useCurrentProject();
@@ -38,15 +37,15 @@ const useUpdateOrganisationUnit = (setOrganisationUnit: OrganisationUnitSetter) 
 
   useLayoutEffect(() => {
     if (!currentProject || !products) {
-      setOrganisationUnit(null);
+      dispatchOrganisationUnit({ type: 'clear' });
     }
-  }, [currentProject, products, setOrganisationUnit]);
+  }, [currentProject, products, dispatchOrganisationUnit]);
 
   useLayoutEffect(() => {
     if (!isAuthorized) {
-      setOrganisationUnit(null);
+      dispatchOrganisationUnit({ type: 'clear' });
     }
-  }, [isAuthorized, setOrganisationUnit]);
+  }, [isAuthorized, dispatchOrganisationUnit]);
 
   useEffect(() => {
     if (currentProject && products) {
@@ -55,24 +54,61 @@ const useUpdateOrganisationUnit = (setOrganisationUnit: OrganisationUnitSetter) 
       );
 
       if (product) {
-        setOrganisationUnit({
-          organisation: product.organisation.name,
-          unit: product.unit.name,
+        dispatchOrganisationUnit({
+          type: 'setOrganisationUnit',
+          payload: {
+            organisation: product.organisation,
+            unit: product.unit,
+          },
         });
       }
     }
-  }, [currentProject, products, setOrganisationUnit]);
+  }, [currentProject, products, dispatchOrganisationUnit]);
+};
+
+type OrganisationUnitActions =
+  | { type: 'clear' }
+  | { type: 'setOrganisation'; payload: OrganisationUnit['organisation'] }
+  | { type: 'setUnit'; payload: OrganisationUnit['unit'] }
+  | { type: 'setOrganisationUnit'; payload: OrganisationUnit };
+
+type OrganisationUnitSetter = Dispatch<OrganisationUnitActions>;
+
+const organisationUnitReducer = (
+  state: OrganisationUnit,
+  action: OrganisationUnitActions,
+): OrganisationUnit => {
+  switch (action.type) {
+    case 'clear': {
+      return { organisation: null, unit: null };
+    }
+    case 'setOrganisation': {
+      return { organisation: action.payload, unit: null };
+    }
+    case 'setUnit': {
+      return { ...state, unit: null };
+    }
+    case 'setOrganisationUnit': {
+      const { organisation, unit } = action.payload;
+      return { organisation, unit };
+    }
+    default:
+      return state;
+  }
 };
 
 export const OrganisationUnitProvider: React.FC = ({ children }) => {
-  const [organisationUnit, setOrganisationUnit] = useState<OrganisationUnit | null>(null);
+  const [organisationUnit, dispatchOrganisationUnit] = useReducer(organisationUnitReducer, {
+    organisation: null,
+    unit: null,
+  });
 
-  useUpdateOrganisationUnit(setOrganisationUnit);
+  useUpdateOrganisationUnit(dispatchOrganisationUnit);
 
   const contextValue = useMemo(
     () => ({
       organisationUnit,
-      setOrganisationUnit,
+      dispatchOrganisationUnit,
     }),
     [organisationUnit],
   );

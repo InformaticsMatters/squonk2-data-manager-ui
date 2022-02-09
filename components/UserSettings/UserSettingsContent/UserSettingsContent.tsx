@@ -1,7 +1,7 @@
 import { Container } from '@material-ui/core';
 
 import { PageSection } from '../../PageSection';
-import { ProjectManager } from '../../ProjectManager';
+import { ContextSection } from './ContextSection';
 import { ProjectStatsSection } from './ProjectStatsSection';
 import { UserSettingsSection } from './UserSettingsSection';
 
@@ -15,7 +15,9 @@ export const UserSettingsContent = () => {
         <UserSettingsSection />
       </PageSection>
 
-      <ProjectManager />
+      <PageSection level={2} title="Context">
+        <ContextSection />
+      </PageSection>
 
       <PageSection level={2} title="Project Stats">
         <ProjectStatsSection />

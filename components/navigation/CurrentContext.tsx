@@ -17,8 +17,8 @@ export const CurrentContext = () => {
         flex-basis: 200px;
       `}
     >
-      <Typography noWrap>Org: {organisation}</Typography>
-      <Typography noWrap>Unit: {unit}</Typography>
+      <Typography noWrap>Org: {organisation?.name}</Typography>
+      <Typography noWrap>Unit: {unit?.name}</Typography>
       <Typography noWrap>Project: {currentProject?.name}</Typography>
     </div>
   );

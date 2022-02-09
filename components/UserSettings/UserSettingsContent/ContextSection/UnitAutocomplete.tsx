@@ -5,6 +5,7 @@ import { DeleteForever } from '@material-ui/icons';
 import { Autocomplete } from '@material-ui/lab';
 
 import { useOrganisationUnit } from '../../../../context/organisationUnitContext';
+import { useCurrentProjectId } from '../../../../hooks/projectHooks';
 import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
 import { getErrorMessage } from '../../../../utils/orvalError';
 import { WarningDeleteButton } from '../../../WarningDeleteButton';
@@ -12,6 +13,7 @@ import { WarningDeleteButton } from '../../../WarningDeleteButton';
 export const UnitAutocomplete = () => {
   const { organisationUnit, dispatchOrganisationUnit } = useOrganisationUnit();
   const { organisation, unit } = organisationUnit;
+  const { setCurrentProjectId } = useCurrentProjectId();
 
   const organisationId = organisation?.id ?? '';
   const { data, isLoading, isError, error } = useGetOrganisationUnits(organisationId, {
@@ -65,6 +67,11 @@ export const UnitAutocomplete = () => {
       )}
       value={unit ?? null}
       onChange={(_, unit) => {
+        // Not the best solution but I couldnt figure out anything better
+        if (unit?.id !== organisationUnit.unit?.id) {
+          setCurrentProjectId();
+        }
+
         dispatchOrganisationUnit({ type: 'setUnit', payload: unit });
       }}
     />

@@ -36,12 +36,6 @@ const useUpdateOrganisationUnit = (dispatchOrganisationUnit: OrganisationUnitSet
   const { data: products } = useGetProducts();
 
   useLayoutEffect(() => {
-    if (!currentProject || !products) {
-      dispatchOrganisationUnit({ type: 'clear' });
-    }
-  }, [currentProject, products, dispatchOrganisationUnit]);
-
-  useLayoutEffect(() => {
     if (!isAuthorized) {
       dispatchOrganisationUnit({ type: 'clear' });
     }

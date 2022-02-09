@@ -18,6 +18,7 @@ export const OrganisationAutocomplete = () => {
     <Autocomplete
       fullWidth
       getOptionLabel={(option) => option.name}
+      //getOptionSelected={(option, value) => option.id === value.id}
       id="organisation-selection"
       loading={isLoading}
       options={data?.organisations ?? []}

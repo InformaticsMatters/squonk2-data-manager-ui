@@ -33,6 +33,7 @@ export const UnitAutocomplete = () => {
     <Autocomplete
       fullWidth
       getOptionLabel={(option) => option.name}
+      //getOptionSelected={(option, value) => option.id === value.id}
       id="unit-selection"
       loading={isLoading}
       options={data?.units ?? []}

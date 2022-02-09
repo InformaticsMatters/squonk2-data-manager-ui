@@ -7,6 +7,7 @@ import { css } from '@emotion/react';
 
 import { getErrorMessage } from '../../../../utils/orvalError';
 import { DataTable } from '../../../DataTable';
+import { ProjectSelectionCheckbox } from './ProjectSelectionCheckbox';
 import { ProjectUsageChart } from './ProjectUsageChart';
 import { StorageUsageChart } from './StorageUsageChart';
 import { useProjectSubscriptions } from './useProjectSubscriptions';
@@ -17,15 +18,6 @@ import { useStorageSubscriptions } from './useStorageSubscriptions';
  */
 const formatTierString = (original: string) => {
   return original.charAt(0).toUpperCase() + original.slice(1).toLowerCase();
-};
-
-/**
- * Sizes for table columns in percentages. All column widths used in a table should add up to 100%.
- */
-const columnSizes = {
-  name: 18,
-  usage: 24,
-  rest: 14.5,
 };
 
 /**
@@ -48,6 +40,13 @@ export const ProjectStatsSection = () => {
 
   const projectsColumns: Column<ProductDmProjectTier>[] = useMemo(
     () => [
+      {
+        id: 'projectSelection',
+        defaultCanSort: false,
+        Cell: ({ row }: Cell<ProductDmProjectTier>) => {
+          return <ProjectSelectionCheckbox projectProduct={row.original} />;
+        },
+      },
       {
         id: 'projectName',
         accessor: (row) => row.claim?.name,
@@ -88,6 +87,10 @@ export const ProjectStatsSection = () => {
   const storageColumns: Column<ProductDmStorage>[] = useMemo(
     () => [
       {
+        id: 'for-layout-only-1',
+        defaultCanSort: false,
+      },
+      {
         id: 'storageName',
         Header: 'Dataset storage',
         defaultCanSort: false,
@@ -101,7 +104,7 @@ export const ProjectStatsSection = () => {
         },
       },
       {
-        id: 'for-layout-only',
+        id: 'for-layout-only-2',
         defaultCanSort: false,
       },
       {
@@ -119,23 +122,21 @@ export const ProjectStatsSection = () => {
   );
 
   return (
-    <>
+    <div
+      css={css`
+        display: grid;
+      `}
+    >
       <DataTable
         columns={projectsColumns}
         customTableProps={{
           css: css`
-            table-layout: fixed;
             & td {
               word-break: break-word;
             }
-            & th:nth-of-type(1) {
-              width: ${columnSizes.name}%;
-            }
-            & th:nth-of-type(2) {
-              width: ${columnSizes.usage}%;
-            }
-            & th:nth-of-type(3n) {
-              width: ${columnSizes.rest}%;
+            & tr {
+              display: grid;
+              grid-template-columns: 61px 1fr 240px 110px 110px 110px 110px;
             }
           `,
         }}
@@ -151,24 +152,15 @@ export const ProjectStatsSection = () => {
         columns={storageColumns}
         customTableProps={{
           css: css`
-            table-layout: fixed;
             & td {
               word-break: break-word;
             }
-            & th:nth-of-type(1) {
-              width: ${columnSizes.name}%;
+            & tr {
+              display: grid;
+              grid-template-columns: 61px 1fr 240px 220px 110px 110px;
             }
-            & th:nth-of-type(2) {
-              width: ${columnSizes.usage}%;
-            }
-            & th:nth-of-type(3) {
-              width: ${columnSizes.rest * 2}%;
-              visibility: hidden;
-            }
-            & th:nth-of-type(4n) {
-              width: ${columnSizes.rest}%;
-            }
-            & td:nth-of-type(3) {
+            & th:nth-of-type(1) > *,
+            th:nth-of-type(4) > * {
               visibility: hidden;
             }
           `,
@@ -180,6 +172,6 @@ export const ProjectStatsSection = () => {
         isLoading={isStorageSubscriptionsLoading}
         tableContainer={false}
       />
-    </>
+    </div>
   );
 };

@@ -13,6 +13,7 @@ import { WarningDeleteButton } from '../../../WarningDeleteButton';
 export const UnitAutocomplete = () => {
   const { organisationUnit, dispatchOrganisationUnit } = useOrganisationUnit();
   const { organisation, unit } = organisationUnit;
+
   const { setCurrentProjectId } = useCurrentProjectId();
 
   const organisationId = organisation?.id ?? '';
@@ -35,7 +36,7 @@ export const UnitAutocomplete = () => {
     <Autocomplete
       fullWidth
       getOptionLabel={(option) => option.name}
-      //getOptionSelected={(option, value) => option.id === value.id}
+      getOptionSelected={(option, value) => option.id === value.id}
       id="unit-selection"
       loading={isLoading}
       options={data?.units ?? []}

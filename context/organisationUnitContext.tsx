@@ -3,7 +3,6 @@ import { useReducer } from 'react';
 import { useMemo } from 'react';
 import { useContext } from 'react';
 import { useEffect } from 'react';
-import { useLayoutEffect } from 'react';
 import { createContext } from 'react';
 
 import type { OrganisationDetail, UnitDetail } from '@squonk/account-server-client';
@@ -35,7 +34,7 @@ const useUpdateOrganisationUnit = (dispatchOrganisationUnit: OrganisationUnitSet
   const currentProject = useCurrentProject();
   const { data: products } = useGetProducts();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!isAuthorized) {
       dispatchOrganisationUnit({ type: 'clear' });
     }
@@ -80,7 +79,7 @@ const organisationUnitReducer = (
       return { organisation: action.payload, unit: null };
     }
     case 'setUnit': {
-      return { ...state, unit: null };
+      return { ...state, unit: action.payload };
     }
     case 'setOrganisationUnit': {
       const { organisation, unit } = action.payload;

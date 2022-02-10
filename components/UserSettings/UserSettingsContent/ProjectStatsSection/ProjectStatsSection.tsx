@@ -137,6 +137,7 @@ export const ProjectStatsSection = () => {
     <div
       css={css`
         display: grid;
+        overflow-x: auto;
       `}
     >
       <DataTable
@@ -148,7 +149,7 @@ export const ProjectStatsSection = () => {
             }
             & tr {
               display: grid;
-              grid-template-columns: 61px 1fr 240px 110px 110px 110px 110px 80px;
+              grid-template-columns: 61px 1fr 220px 110px 100px 100px 100px 80px;
             }
           `,
         }}
@@ -169,7 +170,7 @@ export const ProjectStatsSection = () => {
             }
             & tr {
               display: grid;
-              grid-template-columns: 61px 1fr 240px 220px 110px 110px 80px;
+              grid-template-columns: 61px 1fr 220px 210px 100px 100px 80px;
             }
             & th:nth-of-type(1) > *,
             th:nth-of-type(4) > *,

@@ -10,6 +10,9 @@ import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
 import { getErrorMessage } from '../../../../utils/orvalError';
 import { WarningDeleteButton } from '../../../WarningDeleteButton';
 
+/**
+ * Autocomplete which lists context's organisation's units available to a user to select as context.
+ */
 export const UnitAutocomplete = () => {
   const { organisationUnit, dispatchOrganisationUnit } = useOrganisationUnit();
   const { organisation, unit } = organisationUnit;

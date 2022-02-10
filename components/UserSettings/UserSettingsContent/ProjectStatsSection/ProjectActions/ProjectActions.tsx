@@ -9,9 +9,15 @@ import { DeleteProjectButton } from './DeleteProjectButton';
 import { EditProjectButton } from './EditProjectButton';
 
 export interface ProjectActionsProps {
+  /**
+   * Project product details.
+   */
   projectProduct: ProductDmProjectTier;
 }
 
+/**
+ * Table cell with edit and delete actions for provided project product.
+ */
 export const ProjectActions = ({ projectProduct }: ProjectActionsProps) => {
   const {
     data: project,

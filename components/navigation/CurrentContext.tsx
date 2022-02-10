@@ -4,11 +4,14 @@ import { Typography } from '@material-ui/core';
 import { useOrganisationUnit } from '../../context/organisationUnitContext';
 import { useCurrentProject } from '../../hooks/projectHooks';
 
+/**
+ * Displays current context user is working in.
+ */
 export const CurrentContext = () => {
   const { organisationUnit } = useOrganisationUnit();
   const currentProject = useCurrentProject();
 
-  const { organisation, unit } = organisationUnit || {};
+  const { organisation, unit } = organisationUnit;
 
   return (
     <div

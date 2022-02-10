@@ -15,10 +15,19 @@ import { useKeycloakUser } from '../../../../../hooks/useKeycloakUser';
 import { WarningDeleteButton } from '../../../../WarningDeleteButton';
 
 export interface DeleteProjectButtonProps {
+  /**
+   * Project to be edited.
+   */
   project: ProjectDetail;
+  /**
+   * Project product details.
+   */
   projectProduct: ProductDmProjectTier;
 }
 
+/**
+ * Button with modal which deletes a provided project.
+ */
 export const DeleteProjectButton = ({ project, projectProduct }: DeleteProjectButtonProps) => {
   const { projectId: currentProjectId, setCurrentProjectId } = useCurrentProjectId();
 

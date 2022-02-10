@@ -11,20 +11,21 @@ import { useOrganisationUnit } from '../../../../context/organisationUnitContext
 import { useCurrentProjectId } from '../../../../hooks/projectHooks';
 import { getErrorMessage } from '../../../../utils/orvalError';
 
+// TODO remove these after AS client is updated
 interface OrganisationUnitsGetResponse {
   organisation: OrganisationDetail;
-  /** A list of Units
-   */
   units: UnitDetail[];
 }
 
 interface UnitsGetResponse {
-  /** A list of Units
-   */
   units: OrganisationUnitsGetResponse[];
 }
 
+/**
+ * Autocomplete which lists organisations available to a user to select as context.
+ */
 export const OrganisationAutocomplete = () => {
+  // TODO remove these after AS client is updated
   const { data, isLoading, isError, error } = useQuery<UnitsGetResponse, AsError>(
     `${AS_API_URL}/unit`,
     async () => {

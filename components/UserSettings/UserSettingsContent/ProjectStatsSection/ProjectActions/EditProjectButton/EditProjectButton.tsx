@@ -10,6 +10,9 @@ import { ModalWrapper } from '../../../../../modals/ModalWrapper';
 import { ProjectEditors } from './ProjectEditors';
 
 export interface EditProjectButtonProps {
+  /**
+   * Project to be edited.
+   */
   project: ProjectDetail;
 }
 

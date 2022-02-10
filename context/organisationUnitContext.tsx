@@ -35,12 +35,14 @@ const useUpdateOrganisationUnit = (dispatchOrganisationUnit: OrganisationUnitSet
   const { data: products } = useGetProducts();
 
   useEffect(() => {
+    // On logout clear context
     if (!isAuthorized) {
       dispatchOrganisationUnit({ type: 'clear' });
     }
   }, [isAuthorized, dispatchOrganisationUnit]);
 
   useEffect(() => {
+    // Used in case a user directly navigates to a project's URL
     if (currentProject && products) {
       const product = products.products.find(
         (product) => product.product.id === currentProject.product_id,
@@ -76,9 +78,11 @@ const organisationUnitReducer = (
       return { organisation: null, unit: null };
     }
     case 'setOrganisation': {
+      // If organisation changed, reset unit as well
       return { organisation: action.payload, unit: null };
     }
     case 'setUnit': {
+      // Only change the unit
       return { ...state, unit: action.payload };
     }
     case 'setOrganisationUnit': {

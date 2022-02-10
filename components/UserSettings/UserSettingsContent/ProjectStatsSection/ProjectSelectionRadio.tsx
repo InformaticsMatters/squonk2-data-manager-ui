@@ -6,9 +6,15 @@ import { Radio } from '@material-ui/core';
 import { useCurrentProjectId } from '../../../../hooks/projectHooks';
 
 export interface ProjectSelectionRadioProps {
+  /**
+   * Project product details.
+   */
   projectProduct: ProductDmProjectTier;
 }
 
+/**
+ * Radio button which selects or unselects a project.
+ */
 export const ProjectSelectionRadio = ({ projectProduct }: ProjectSelectionRadioProps) => {
   const { projectId, setCurrentProjectId } = useCurrentProjectId();
 

@@ -16,6 +16,9 @@ import { useEnqueueError } from '../../../../../../hooks/useEnqueueStackError';
 import { useKeycloakUser } from '../../../../../../hooks/useKeycloakUser';
 
 export interface ProjectEditorsProps {
+  /**
+   * Project to be edited.
+   */
   project: ProjectDetail;
 }
 

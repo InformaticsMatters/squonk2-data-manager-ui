@@ -1,8 +1,14 @@
 import { useQueryClient } from 'react-query';
 
+import type { ProductDmProjectTier } from '@squonk/account-server-client';
+import {
+  getGetProductQueryKey,
+  getGetProductsForUnitQueryKey,
+} from '@squonk/account-server-client/product';
 import type { DmError, ProjectDetail } from '@squonk/data-manager-client';
 import {
   getGetProjectQueryKey,
+  getGetProjectsQueryKey,
   useAddEditorToProject,
   useRemoveEditorFromProject,
 } from '@squonk/data-manager-client/project';
@@ -20,12 +26,16 @@ export interface ProjectEditorsProps {
    * Project to be edited.
    */
   project: ProjectDetail;
+  /**
+   * Project product details.
+   */
+  projectProduct: ProductDmProjectTier;
 }
 
 /**
  * MuiAutocomplete to manage the current editors of the selected project
  */
-export const ProjectEditors = ({ project }: ProjectEditorsProps) => {
+export const ProjectEditors = ({ project, projectProduct }: ProjectEditorsProps) => {
   const { user: currentUser } = useKeycloakUser();
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
@@ -75,7 +85,16 @@ export const ProjectEditors = ({ project }: ProjectEditorsProps) => {
         break;
       }
     }
+
+    // DM Queries
     queryClient.invalidateQueries(getGetProjectQueryKey(project.project_id));
+    queryClient.invalidateQueries(getGetProjectsQueryKey());
+
+    // AS queries
+    queryClient.invalidateQueries(getGetProductsForUnitQueryKey(projectProduct.unit.id));
+    queryClient.invalidateQueries(
+      getGetProductQueryKey(projectProduct.unit.id, projectProduct.product.id),
+    );
   };
 
   return !!availableUsers && !!currentUser.username ? (

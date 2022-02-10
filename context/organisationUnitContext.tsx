@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { createContext } from 'react';
 
 import type { OrganisationDetail, UnitDetail } from '@squonk/account-server-client';
-import { useGetProducts } from '@squonk/account-server-client/product';
+import { useGetProduct } from '@squonk/account-server-client/product';
 
 import { useCurrentProject } from '../hooks/projectHooks';
 import { useIsAuthorized } from '../hooks/useIsAuthorized';
@@ -32,7 +32,11 @@ const useUpdateOrganisationUnit = (dispatchOrganisationUnit: OrganisationUnitSet
   const isAuthorized = useIsAuthorized();
 
   const currentProject = useCurrentProject();
-  const { data: products } = useGetProducts();
+  const { data: product } = useGetProduct(
+    currentProject?.unit_id ?? '',
+    currentProject?.product_id ?? '',
+    { query: { enabled: !!currentProject?.unit_id && !!currentProject.product_id } },
+  );
 
   useEffect(() => {
     // On logout clear context
@@ -43,22 +47,16 @@ const useUpdateOrganisationUnit = (dispatchOrganisationUnit: OrganisationUnitSet
 
   useEffect(() => {
     // Used in case a user directly navigates to a project's URL
-    if (currentProject && products) {
-      const product = products.products.find(
-        (product) => product.product.id === currentProject.product_id,
-      );
-
-      if (product) {
-        dispatchOrganisationUnit({
-          type: 'setOrganisationUnit',
-          payload: {
-            organisation: product.organisation,
-            unit: product.unit,
-          },
-        });
-      }
+    if (currentProject && product) {
+      dispatchOrganisationUnit({
+        type: 'setOrganisationUnit',
+        payload: {
+          organisation: product.product.organisation,
+          unit: product.product.unit,
+        },
+      });
     }
-  }, [currentProject, products, dispatchOrganisationUnit]);
+  }, [currentProject, product, dispatchOrganisationUnit]);
 };
 
 type OrganisationUnitActions =

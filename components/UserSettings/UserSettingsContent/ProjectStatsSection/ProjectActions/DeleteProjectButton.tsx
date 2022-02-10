@@ -1,14 +1,22 @@
 import { useQueryClient } from 'react-query';
 
 import type { ProductDmProjectTier } from '@squonk/account-server-client';
-import { getGetProductsForUnitQueryKey } from '@squonk/account-server-client/product';
-import type { DmError, ProjectDetail } from '@squonk/data-manager-client';
-import { getGetProjectsQueryKey, useDeleteProject } from '@squonk/data-manager-client/project';
+import {
+  getGetProductQueryKey,
+  getGetProductsForUnitQueryKey,
+} from '@squonk/account-server-client/product';
+import type { DmError } from '@squonk/data-manager-client';
+import {
+  getGetProjectQueryKey,
+  getGetProjectsQueryKey,
+  useDeleteProject,
+} from '@squonk/data-manager-client/project';
 import { getGetUserAccountQueryKey } from '@squonk/data-manager-client/user';
 
 import { IconButton } from '@material-ui/core';
 import { DeleteForever } from '@material-ui/icons';
 
+import type { ProjectDetailTemp } from '../../../../../hooks/projectHooks';
 import { useCurrentProjectId } from '../../../../../hooks/projectHooks';
 import { useEnqueueError } from '../../../../../hooks/useEnqueueStackError';
 import { useKeycloakUser } from '../../../../../hooks/useKeycloakUser';
@@ -18,7 +26,7 @@ export interface DeleteProjectButtonProps {
   /**
    * Project to be edited.
    */
-  project: ProjectDetail;
+  project: ProjectDetailTemp;
   /**
    * Project product details.
    */
@@ -54,9 +62,16 @@ export const DeleteProjectButton = ({ project, projectProduct }: DeleteProjectBu
     } else {
       enqueueSnackbar('Project not found', { variant: 'warning' });
     }
+    // DM queries
+    queryClient.invalidateQueries(getGetProjectQueryKey(project.project_id));
     queryClient.invalidateQueries(getGetProjectsQueryKey());
     queryClient.invalidateQueries(getGetUserAccountQueryKey());
+
+    // AS queries
     queryClient.invalidateQueries(getGetProductsForUnitQueryKey(projectProduct.unit.id));
+    queryClient.invalidateQueries(
+      getGetProductQueryKey(projectProduct.unit.id, projectProduct.product.id),
+    );
   };
 
   return (

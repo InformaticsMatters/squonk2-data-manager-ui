@@ -7,7 +7,8 @@ import { css } from '@emotion/react';
 
 import { getErrorMessage } from '../../../../utils/orvalError';
 import { DataTable } from '../../../DataTable';
-import { ProjectSelectionCheckbox } from './ProjectSelectionCheckbox';
+import { ProjectActions } from './ProjectActions';
+import { ProjectSelectionRadio } from './ProjectSelectionRadio';
 import { ProjectUsageChart } from './ProjectUsageChart';
 import { StorageUsageChart } from './StorageUsageChart';
 import { useProjectSubscriptions } from './useProjectSubscriptions';
@@ -44,7 +45,7 @@ export const ProjectStatsSection = () => {
         id: 'projectSelection',
         defaultCanSort: false,
         Cell: ({ row }: Cell<ProductDmProjectTier>) => {
-          return <ProjectSelectionCheckbox projectProduct={row.original} />;
+          return <ProjectSelectionRadio projectProduct={row.original} />;
         },
       },
       {
@@ -79,6 +80,13 @@ export const ProjectStatsSection = () => {
         id: 'allowance',
         accessor: (row) => row.coins.allowance,
         Header: 'Allowance',
+      },
+      {
+        id: 'actions',
+        Header: 'Actions',
+        Cell: ({ row }: Cell<ProductDmProjectTier>) => {
+          return <ProjectActions projectProduct={row.original} />;
+        },
       },
     ],
     [],
@@ -117,6 +125,10 @@ export const ProjectStatsSection = () => {
         accessor: (row) => row.coins.allowance,
         Header: 'Allowance',
       },
+      {
+        id: 'for-layout-only-3',
+        defaultCanSort: false,
+      },
     ],
     [],
   );
@@ -136,7 +148,7 @@ export const ProjectStatsSection = () => {
             }
             & tr {
               display: grid;
-              grid-template-columns: 61px 1fr 240px 110px 110px 110px 110px;
+              grid-template-columns: 61px 1fr 240px 110px 110px 110px 110px 80px;
             }
           `,
         }}
@@ -157,10 +169,11 @@ export const ProjectStatsSection = () => {
             }
             & tr {
               display: grid;
-              grid-template-columns: 61px 1fr 240px 220px 110px 110px;
+              grid-template-columns: 61px 1fr 240px 220px 110px 110px 80px;
             }
             & th:nth-of-type(1) > *,
-            th:nth-of-type(4) > * {
+            th:nth-of-type(4) > *,
+            th:nth-of-type(7) > * {
               visibility: hidden;
             }
           `,

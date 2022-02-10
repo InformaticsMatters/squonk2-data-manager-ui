@@ -32,13 +32,15 @@ export const EditProjectButton = ({ project, projectProduct }: EditProjectButton
 
   return (
     <>
-      <Tooltip title={isEditor ? 'Edit Project' : 'Select a project of which you have ownership'}>
-        <span>
-          <IconButton disabled={!isEditor} size="small" onClick={() => setOpen(!open)}>
-            <EditIcon />
-          </IconButton>
-        </span>
-      </Tooltip>
+      {isEditor && (
+        <Tooltip title={'Edit Project'}>
+          <span>
+            <IconButton size="small" onClick={() => setOpen(!open)}>
+              <EditIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
+      )}
       <ModalWrapper
         DialogProps={{ maxWidth: 'sm', fullWidth: true }}
         id="edit-project"

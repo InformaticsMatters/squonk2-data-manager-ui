@@ -4,7 +4,9 @@ import type { Cell, Column } from 'react-table';
 import type { ProductDmProjectTier, ProductDmStorage } from '@squonk/account-server-client';
 
 import { css } from '@emotion/react';
+import { useTheme } from '@material-ui/core';
 
+import { useCurrentProjectId } from '../../../../hooks/projectHooks';
 import { getErrorMessage } from '../../../../utils/orvalError';
 import { DataTable } from '../../../DataTable';
 import { ProjectActions } from './ProjectActions';
@@ -25,6 +27,9 @@ const formatTierString = (original: string) => {
  * Displays `Project stats` section in User Settings.
  */
 export const ProjectStatsSection = () => {
+  const theme = useTheme();
+  const { projectId: currentProjectId } = useCurrentProjectId();
+
   const {
     projectSubscriptions,
     isLoading: isProjectSubscriptionsLoading,
@@ -142,6 +147,11 @@ export const ProjectStatsSection = () => {
     >
       <DataTable
         columns={projectsColumns}
+        customRowProps={(row) =>
+          row.original.claim?.id === currentProjectId
+            ? { style: { backgroundColor: theme.palette.action.hover } }
+            : {}
+        }
         customTableProps={{
           css: css`
             & td {

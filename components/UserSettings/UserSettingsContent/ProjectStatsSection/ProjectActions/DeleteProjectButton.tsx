@@ -78,14 +78,16 @@ export const DeleteProjectButton = ({ project, projectProduct }: DeleteProjectBu
     <WarningDeleteButton
       modalId={`delete-${project.project_id}`}
       title="Delete Project"
-      tooltipText={isOwner ? 'Delete Project' : 'Select a project of which you have ownership'}
+      tooltipText={'Delete Project'}
       onDelete={handleDelete}
     >
-      {({ openModal }) => (
-        <IconButton disabled={!isOwner} size="small" onClick={openModal}>
-          <DeleteForever />
-        </IconButton>
-      )}
+      {({ openModal }) =>
+        isOwner && (
+          <IconButton size="small" onClick={openModal}>
+            <DeleteForever />
+          </IconButton>
+        )
+      }
     </WarningDeleteButton>
   );
 };

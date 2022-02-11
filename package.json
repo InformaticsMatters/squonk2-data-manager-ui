@@ -13,7 +13,9 @@
     "tsc": "tsc --pretty --noEmit",
     "lint": "next lint",
     "format": "eslint --fix .",
-    "test": "cypress run"
+    "test": "export $(cat .env.test.local | xargs) && playwright test",
+    "test:debug": "PWDEBUG=1 pnpm t -- --headed",
+    "test:ci": "playwright test"
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [
@@ -59,10 +61,10 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.9.12",
     "@emotion/babel-preset-css-prop": "^11.2.0",
     "@mdx-js/react": "^1.6.22",
     "@next/eslint-plugin-next": "^12.0.10",
+    "@playwright/test": "^1.18.1",
     "@squonk/eslint-config": "^0.2.0",
     "@types/lodash-es": "^4.17.5",
     "@types/mdx-js__react": "^1.5.5",
@@ -75,8 +77,6 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
-    "cypress": "^9.4.1",
-    "cypress-nextjs-auth0": "^2.0.1",
     "eslint": "^8.8.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

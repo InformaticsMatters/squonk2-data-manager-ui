@@ -51,24 +51,22 @@ jobs:
       with:
         version: 6.24.0
         run_install: true
-    - run: pnpm -v
-    - run: ls -a
-    - name: Test
-      uses: cypress-io/github-action@v2
-      env:
-        AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
-        AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
-        DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
-        AUTH0_SECRET: "LONG_RANDOM_VALUE"
-        BASE_URL: "http://localhost:3000"
-        BASE_PATH: "/data-manager-ui"
-        DATA_MANAGER_API_SERVER: "https://squonk.informaticsmatters.org/data-manager-api"
-        KEYCLOAK_URL: "https://squonk.informaticsmatters.org/auth"
-      with:
-        install: false
-        build: pnpm build
-        start: pnpm start
-        wait-on: 'http://localhost:3000/data-manager-ui'
+    # - name: Test
+    #   uses: cypress-io/github-action@v2
+    #   env:
+    #     AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
+    #     AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
+    #     DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
+    #     AUTH0_SECRET: "LONG_RANDOM_VALUE"
+    #     BASE_URL: "http://localhost:3000"
+    #     BASE_PATH: "/data-manager-ui"
+    #     DATA_MANAGER_API_SERVER: "https://squonk.informaticsmatters.org/data-manager-api"
+    #     KEYCLOAK_URL: "https://squonk.informaticsmatters.org/auth"
+    #   with:
+    #     install: false
+    #     build: pnpm build
+    #     start: pnpm start
+    #     wait-on: 'http://localhost:3000/data-manager-ui'
 
   build:
     runs-on: ubuntu-latest

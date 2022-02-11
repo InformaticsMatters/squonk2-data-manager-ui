@@ -16,10 +16,11 @@ Notable scripts:
 - `pnpm install` to install dependencies. This will also setup `husky` git hooks.
 - `pnpm dev` starts the development server
 - `pnpm dev:debug` same as above but with the Node debugger running. Start the VSCode debugger to connect.
-- `pnpm cypress` to run the end-to-end tests
 - `pnpm build` will create a production build which includes type-checking and `eslint`
-- `pnpm type-check` will run a one-off type check. This is also called pre-push to ensure no type errors are deployed.
-- `pnpm format:all` will format all files with the `eslint` config
+- `pnpm start` starts the production server
+- `pnpm tsc` will run a one-off type check. This is also called pre-push to ensure no type errors are deployed.
+- `pnpm lint` will run the linter with the `eslint` config
+- `pnpm format` will format all files with the `eslint` config
 
 See `package.json` for all available scripts.
 

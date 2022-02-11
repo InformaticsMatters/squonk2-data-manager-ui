@@ -64,7 +64,7 @@ jobs:
           BASE_PATH: "/data-manager-ui"
           DATA_MANAGER_API_SERVER: "https://squonk.informaticsmatters.org/data-manager-api"
           KEYCLOAK_URL: "https://squonk.informaticsmatters.org/auth"
-      run: npm test:ci
+      run: pnpm test:ci
 
   build:
     runs-on: ubuntu-latest

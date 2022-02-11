@@ -1,7 +1,7 @@
 const path = require('path');
 
 if (process.env.MONOREPO) {
-  console.log('info  - Running with webpack aliases for  monorepo compatibility');
+  console.log('info  - Running with webpack aliases for monorepo compatibility');
 }
 
 const withTM = require('next-transpile-modules')(

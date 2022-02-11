@@ -4,7 +4,6 @@ import { useGetProject } from '@squonk/data-manager-client/project';
 import { css } from '@emotion/react';
 import { CircularProgress, Typography } from '@material-ui/core';
 
-import type { ProjectDetailTemp } from '../../../../../hooks/projectHooks';
 import { getErrorMessage } from '../../../../../utils/orvalError';
 import { DeleteProjectButton } from './DeleteProjectButton';
 import { EditProjectButton } from './EditProjectButton';
@@ -25,7 +24,7 @@ export const ProjectActions = ({ projectProduct }: ProjectActionsProps) => {
     isLoading,
     isError,
     error,
-  } = useGetProject<ProjectDetailTemp>(projectProduct.claim?.id ?? '', {
+  } = useGetProject(projectProduct.claim?.id ?? '', {
     query: { enabled: !!projectProduct.claim?.id },
   });
 

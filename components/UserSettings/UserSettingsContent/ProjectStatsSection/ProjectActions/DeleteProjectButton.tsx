@@ -5,7 +5,7 @@ import {
   getGetProductQueryKey,
   getGetProductsForUnitQueryKey,
 } from '@squonk/account-server-client/product';
-import type { DmError } from '@squonk/data-manager-client';
+import type { DmError, ProjectDetail } from '@squonk/data-manager-client';
 import {
   getGetProjectQueryKey,
   getGetProjectsQueryKey,
@@ -16,7 +16,6 @@ import { getGetUserAccountQueryKey } from '@squonk/data-manager-client/user';
 import { IconButton } from '@material-ui/core';
 import { DeleteForever } from '@material-ui/icons';
 
-import type { ProjectDetailTemp } from '../../../../../hooks/projectHooks';
 import { useCurrentProjectId } from '../../../../../hooks/projectHooks';
 import { useEnqueueError } from '../../../../../hooks/useEnqueueStackError';
 import { useKeycloakUser } from '../../../../../hooks/useKeycloakUser';
@@ -26,7 +25,7 @@ export interface DeleteProjectButtonProps {
   /**
    * Project to be edited.
    */
-  project: ProjectDetailTemp;
+  project: ProjectDetail;
   /**
    * Project product details.
    */

@@ -24,6 +24,7 @@ import { TextField } from 'formik-material-ui';
 import * as yup from 'yup';
 
 import { useOrganisationUnit } from '../../../../../../context/organisationUnitContext';
+import { useCurrentProjectId } from '../../../../../../hooks/projectHooks';
 import { useEnqueueError } from '../../../../../../hooks/useEnqueueStackError';
 import { getErrorMessage } from '../../../../../../utils/orvalError';
 import { formatTierString } from '../../../../../../utils/productUtils';
@@ -50,6 +51,8 @@ export const CreateProjectListItem = () => {
   const { mutateAsync: createProduct } = useCreateUnitProduct();
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
+  const { setCurrentProjectId } = useCurrentProjectId();
+
   const create = async (projectName: string, flavour: string, serviceId: number) => {
     if (organisation && unit) {
       try {
@@ -64,7 +67,7 @@ export const CreateProjectListItem = () => {
           } as UnitProductPostBodyBody,
         });
 
-        await createProject({
+        const { project_id } = await createProject({
           data: {
             name: projectName,
             organisation_id: organisation.id,
@@ -79,6 +82,8 @@ export const CreateProjectListItem = () => {
         queryClient.invalidateQueries(getGetUserAccountQueryKey());
 
         queryClient.invalidateQueries(getGetProductsForUnitQueryKey(unit.id));
+
+        setCurrentProjectId(project_id);
       } catch (error) {
         enqueueError(error);
       }

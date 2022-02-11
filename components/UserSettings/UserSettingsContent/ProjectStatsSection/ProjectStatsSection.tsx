@@ -8,6 +8,7 @@ import { useTheme } from '@material-ui/core';
 
 import { useCurrentProjectId } from '../../../../hooks/projectHooks';
 import { getErrorMessage } from '../../../../utils/orvalError';
+import { formatTierString } from '../../../../utils/productUtils';
 import { DataTable } from '../../../DataTable';
 import { ProjectActions } from './ProjectActions';
 import { ProjectSelectionRadio } from './ProjectSelectionRadio';
@@ -15,13 +16,6 @@ import { ProjectUsageChart } from './ProjectUsageChart';
 import { StorageUsageChart } from './StorageUsageChart';
 import { useProjectSubscriptions } from './useProjectSubscriptions';
 import { useStorageSubscriptions } from './useStorageSubscriptions';
-
-/**
- * Formats the tier string, e.g. GOLD -> Gold.
- */
-const formatTierString = (original: string) => {
-  return original.charAt(0).toUpperCase() + original.slice(1).toLowerCase();
-};
 
 /**
  * Displays `Project stats` section in User Settings.

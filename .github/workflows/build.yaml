@@ -54,7 +54,7 @@ jobs:
     - name: Setup Playwright
       run: pnpm dlx playwright install --with-deps
     - name: Test
-      run: PASSWORD=${{ secrets.DMIT_USER_A_PASSWORD }} USERNAME="dmit-user-a" npm test
+      run: PASSWORD=${{ secrets.DMIT_USER_A_PASSWORD }} USERNAME="dmit-user-a" npm test:ci
 
   build:
     runs-on: ubuntu-latest

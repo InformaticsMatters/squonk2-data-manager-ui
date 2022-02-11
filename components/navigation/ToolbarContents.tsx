@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { useMediaQuery, useTheme } from '@material-ui/core';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
-import { CurrentContext } from './CurrentContext';
 import { MobileNavMenu } from './MobileNavMenu';
 import { NavLinks } from './NavLinks';
+import { OUPContext } from './OUPContext';
 import { ProjectModalButton } from './ProjectModalButton';
 import { UserMenu } from './UserMenu';
 
@@ -25,7 +25,7 @@ export const ToolbarContents = () => {
       <>
         <NavLinks linkWidth={120} />
         <IconsWrapper>
-          {isAuthorized && <CurrentContext />}
+          {isAuthorized && <OUPContext />}
           <UserMenu />
         </IconsWrapper>
       </>

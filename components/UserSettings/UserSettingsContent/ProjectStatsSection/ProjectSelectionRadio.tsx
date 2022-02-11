@@ -22,10 +22,10 @@ export const ProjectSelectionRadio = ({ projectProduct }: ProjectSelectionRadioP
 
   return (
     <Radio
+      checked={isProjectSelected}
       css={css`
         padding: 0;
       `}
-      checked={isProjectSelected}
       onClick={() => {
         if (isProjectSelected) {
           setCurrentProjectId();

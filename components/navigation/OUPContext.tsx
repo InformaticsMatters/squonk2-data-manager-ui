@@ -7,7 +7,7 @@ import { useCurrentProject } from '../../hooks/projectHooks';
 /**
  * Displays current context user is working in.
  */
-export const CurrentContext = () => {
+export const OUPContext = () => {
   const { organisationUnit } = useOrganisationUnit();
   const currentProject = useCurrentProject();
 

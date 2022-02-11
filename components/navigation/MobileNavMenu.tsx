@@ -14,8 +14,8 @@ import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
 import { ModalWrapper } from '../modals/ModalWrapper';
-import { CurrentContext } from './CurrentContext';
 import { NavLink } from './NavLink';
+import { OUPContext } from './OUPContext';
 import { UserMenuContent } from './UserMenuContent';
 
 /**
@@ -89,7 +89,7 @@ export const MobileNavMenu = () => {
                 <Typography gutterBottom variant="h3">
                   Project
                 </Typography>
-                <CurrentContext />
+                <OUPContext />
               </>
             )}
           </Grid>

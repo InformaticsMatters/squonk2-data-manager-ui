@@ -6,7 +6,7 @@ import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
 import { ModalWrapper } from '../modals/ModalWrapper';
-import { CurrentContext } from './CurrentContext';
+import { OUPContext } from './OUPContext';
 
 /**
  * Button controlling a modal that displays the project management options
@@ -22,13 +22,18 @@ export const ProjectModalButton = () => {
         <AccountTreeRoundedIcon />
       </IconButton>
 
-      <ModalWrapper id="project-menu" open={open} title="Context" onClose={() => setOpen(false)}>
+      <ModalWrapper
+        id="oup-menu"
+        open={open}
+        title="Org-Unit-Project Context"
+        onClose={() => setOpen(false)}
+      >
         <div
           css={css`
             min-width: 200px;
           `}
         >
-          <CurrentContext />
+          <OUPContext />
         </div>
       </ModalWrapper>
     </>

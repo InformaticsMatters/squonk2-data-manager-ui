@@ -33,8 +33,6 @@ export const BulkUploadDropzone = ({ files, setFiles }: BulkUploadDropzoneProps)
         {files.map((fileWrapper, index) => (
           <Grid item key={fileWrapper.id}>
             <SingleFileUploadWithProgress
-              errors={fileWrapper.errors}
-              fileWrapper={fileWrapper}
               changeMimeType={(newType) => {
                 files[index].mimeType = newType;
                 setFiles(mutateAtPosition(files, index, files[index]));
@@ -43,6 +41,8 @@ export const BulkUploadDropzone = ({ files, setFiles }: BulkUploadDropzoneProps)
                 files[index].done = true;
                 setFiles(mutateAtPosition(files, index, files[index]));
               }}
+              errors={fileWrapper.errors}
+              fileWrapper={fileWrapper}
               rename={(newName) => {
                 files[index].rename = newName;
                 setFiles(mutateAtPosition(files, index, files[index]));

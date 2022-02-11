@@ -121,8 +121,8 @@ export const ApplicationModal = ({
               liveValidate
               noHtml5Validate
               formData={formData}
-              showErrorList={false}
               schema={schema}
+              showErrorList={false}
               onChange={(event) => setFormData(event.formData)}
             >
               {/* Don't render a submit button */}

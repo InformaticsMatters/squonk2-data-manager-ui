@@ -1,0 +1,113 @@
+import { useState } from 'react';
+import { useQueryClient } from 'react-query';
+
+import type { AsError } from '@squonk/account-server-client';
+import {
+  getGetOrganisationUnitsQueryKey,
+  useCreateOrganisationUnit,
+  useGetOrganisationUnits,
+} from '@squonk/account-server-client/unit';
+
+import { Grid, ListItem, ListItemText } from '@material-ui/core';
+import { CreateNewFolder } from '@material-ui/icons';
+import { Field, Form, Formik } from 'formik';
+import { TextField } from 'formik-material-ui';
+import * as yup from 'yup';
+
+import { AS_API_URL } from '../../../../../constants';
+import { useOrganisationUnit } from '../../../../../context/organisationUnitContext';
+import { useEnqueueError } from '../../../../../hooks/useEnqueueStackError';
+import { ModalWrapper } from '../../../../modals/ModalWrapper';
+
+export const CreateUnitListItem = () => {
+  const [open, setOpen] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  const {
+    organisationUnit: { organisation },
+  } = useOrganisationUnit();
+  const { data } = useGetOrganisationUnits(organisation?.id ?? '', {
+    query: { enabled: !!organisation?.id },
+  });
+  const units = data?.units;
+
+  const { mutateAsync: createOrganisationUnit } = useCreateOrganisationUnit();
+
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<AsError>();
+
+  const create = async (name: string) => {
+    if (organisation) {
+      try {
+        const { id: unitId } = await createOrganisationUnit({
+          orgid: organisation.id,
+          data: {
+            name,
+          },
+        });
+
+        enqueueSnackbar('Unit created');
+
+        queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id));
+        queryClient.invalidateQueries(`${AS_API_URL}/unit`); // TODO change this once AS client is updated
+
+        // TODO change to newly created unit?
+      } catch (error) {
+        enqueueError(error);
+      }
+      setOpen(false);
+    }
+  };
+
+  return (
+    <>
+      <ListItem button onClick={() => setOpen(true)}>
+        <ListItemText
+          primary="Create Unit"
+          secondary="Creates a new unit in the currently selected organisation"
+        />
+        <CreateNewFolder color="action" />
+      </ListItem>
+
+      <Formik
+        validateOnMount
+        initialValues={{ name: '' }}
+        validationSchema={yup.object().shape({
+          name: yup
+            .string()
+            .required('A unit name is required')
+            .test(
+              'does-not-exist',
+              'The name is already used for a unit',
+              (name) => name !== undefined && !units?.map((unit) => unit.name).includes(name),
+            )
+            .min(2, 'The name is too short'),
+        })}
+        onSubmit={({ name }) => {
+          create(name);
+        }}
+      >
+        {({ submitForm, isSubmitting, isValid }) => (
+          <ModalWrapper
+            DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+            id="create-unit"
+            open={open}
+            submitDisabled={isSubmitting || !isValid}
+            submitText="Create"
+            title="Create Unit"
+            onClose={() => setOpen(false)}
+            onSubmit={submitForm}
+          >
+            <Form>
+              <Grid container spacing={1}>
+                <Grid container item>
+                  <Field autoFocus fullWidth component={TextField} label="Unit Name" name="name" />
+                </Grid>
+              </Grid>
+            </Form>
+          </ModalWrapper>
+        )}
+      </Formik>
+    </>
+  );
+};

@@ -2,7 +2,9 @@ import { css } from '@emotion/react';
 import { List, Typography, useTheme } from '@material-ui/core';
 
 import { useOrganisationUnit } from '../../../../../context/organisationUnitContext';
+import { useKeycloakUser } from '../../../../../hooks/useKeycloakUser';
 import { CreateProjectListItem } from './CreateProjectListItem';
+import { CreateUnitListItem } from './CreateUnitListItem';
 
 /**
  * Displays actions related to context.
@@ -11,10 +13,13 @@ export const ContextActions = () => {
   const theme = useTheme();
 
   const {
-    organisationUnit: { unit },
+    organisationUnit: { organisation, unit },
   } = useOrganisationUnit();
+  const { user } = useKeycloakUser();
 
-  if (!unit) {
+  const isOrganisationOwner = organisation?.owner_id === user.username;
+
+  if (!unit && !isOrganisationOwner) {
     return (
       <Typography
         component="p"
@@ -30,6 +35,7 @@ export const ContextActions = () => {
 
   return (
     <List>
+      {isOrganisationOwner && <CreateUnitListItem />}
       <CreateProjectListItem />
     </List>
   );

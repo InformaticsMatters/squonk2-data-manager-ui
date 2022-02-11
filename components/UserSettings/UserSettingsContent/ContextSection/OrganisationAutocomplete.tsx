@@ -27,9 +27,9 @@ interface UnitsGetResponse {
 export const OrganisationAutocomplete = () => {
   // TODO remove these after AS client is updated
   const { data, isLoading, isError, error } = useQuery<UnitsGetResponse, AsError>(
-    `${AS_API_URL}/unit`,
+    `${AS_API_URL}/unit`, // TODO change this once AS client is updated
     async () => {
-      const response = await axios.get<UnitsGetResponse>(`${AS_API_URL}/unit`);
+      const response = await axios.get<UnitsGetResponse>(`${AS_API_URL}/unit`); // TODO change this once AS client is updated
       return response.data;
     },
   );

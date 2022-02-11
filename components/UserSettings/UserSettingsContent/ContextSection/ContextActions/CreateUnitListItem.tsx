@@ -19,6 +19,9 @@ import { useOrganisationUnit } from '../../../../../context/organisationUnitCont
 import { useEnqueueError } from '../../../../../hooks/useEnqueueStackError';
 import { ModalWrapper } from '../../../../modals/ModalWrapper';
 
+/**
+ * Button which allows organisation owner to create a new project.
+ */
 export const CreateUnitListItem = () => {
   const [open, setOpen] = useState(false);
 

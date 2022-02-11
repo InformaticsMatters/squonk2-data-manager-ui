@@ -32,7 +32,7 @@ import { ModalWrapper } from '../../../../../modals/ModalWrapper';
 import { useGetProjectProductTypes } from './useGetProjectProductTypes';
 
 /**
- * Button with that allows the user to create a new project.
+ * Button which allows user to create a new project.
  */
 export const CreateProjectListItem = () => {
   const [open, setOpen] = useState(false);

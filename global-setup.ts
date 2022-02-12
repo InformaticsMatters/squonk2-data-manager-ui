@@ -6,7 +6,7 @@ async function globalSetup(_config: FullConfig) {
 
   const browser = await chromium.launch();
   const page = await browser.newPage();
-  await page.goto(baseURL as string);
+  await page.goto(baseURL);
   await page.click('button');
   await page.click('text=Login');
 
@@ -15,7 +15,7 @@ async function globalSetup(_config: FullConfig) {
 
   await page.click('input:has-text("Log In")');
 
-  await page.waitForURL(baseURL as string);
+  await page.waitForURL(baseURL);
   // Save signed-in state to 'storageState.json'.
   await page.context().storageState({ path: 'storageState.json' });
   await browser.close();

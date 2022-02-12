@@ -52,7 +52,9 @@ jobs:
         version: 6.24.0
         run_install: true
     - name: Setup Playwright
-      run: pnpm dlx playwright install --with-deps
+      run: \
+        npx playwright install-deps \
+        npx playwright install chromium
     - name: Test
       continue-on-error: false
       env:

@@ -10,7 +10,7 @@ const config: PlaywrightTestConfig = {
   },
   use: {
     baseURL: 'http://localhost:3000/data-manager-ui',
-    storageState: 'storageState.json',
+    // storageState: 'storageState.json',
   },
 };
 

@@ -39,6 +39,7 @@ jobs:
     - run: node -v
     - name: Checkout
       uses: actions/checkout@v1
+    - run: rm pnpm-lock.yaml
     - name: Cache pnpm modules
       uses: actions/cache@v2
       with:
@@ -48,21 +49,24 @@ jobs:
           ${{ runner.os }}-
     - uses: pnpm/action-setup@v2.0.1
       with:
-        version: 6.24.4
+        version: 6.24.0
         run_install: true
+    - name: NextJS Environment Variables
+      run: |
+        echo "BASE_URL='http://localhost:3000'
+        BASE_PATH='/data-manager-ui'
+        DATA_MANAGER_API_SERVER='https://squonk.informaticsmatters.org/data-manager-api'
+        AUTH0_SECRET='LONG_RANDOM_VALUE'
+        KEYCLOAK_URL='https://squonk.informaticsmatters.org/auth'
+        AUTH0_CLIENT_ID='${{ secrets.AUTH0_CLIENT_ID }}'
+        AUTH0_CLIENT_SECRET='${{ secrets.AUTH0_CLIENT_SECRET }}'" > .env.local
+    - run: cat .env.local
+    - run: cat .env
     - name: Setup Playwright
       run: pnpm dlx playwright install --with-deps chromium
     - name: Test
       continue-on-error: false
       env:
-        BASE_URL: "http://localhost:3000"
-        BASE_PATH: "/data-manager-ui"
-        DATA_MANAGER_API_SERVER: "https://squonk.informaticsmatters.org/data-manager-api"
-        AUTH0_SECRET: "LONG_RANDOM_VALUE"
-        KEYCLOAK_URL: "https://squonk.informaticsmatters.org/auth"
-        AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
-        AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
-
         PW_USERNAME: "dmit-user-a"
         PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
       run: pnpm test:ci

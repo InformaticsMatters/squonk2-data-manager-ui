@@ -6,7 +6,7 @@ async function globalSetup(_config: FullConfig) {
 
   const browser = await chromium.launch();
   const page = await browser.newPage();
-  await page.goto(baseURL);
+  await page.goto(baseURL, { timeout: 60000 });
   await page.click('button');
   await page.click('text=Login');
 

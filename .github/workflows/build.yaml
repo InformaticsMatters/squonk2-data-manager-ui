@@ -39,7 +39,6 @@ jobs:
     - run: node -v
     - name: Checkout
       uses: actions/checkout@v1
-    - run: rm pnpm-lock.yaml
     - name: Cache pnpm modules
       uses: actions/cache@v2
       with:

@@ -53,6 +53,8 @@ jobs:
         run_install: true
     - name: NextJS Environment Variables
       run: echo "BASE_URL='http://localhost:3000'\nBASE_PATH='/data-manager-ui'\nDATA_MANAGER_API_SERVER='https://squonk.informaticsmatters.org/data-manager-api'\nAUTH0_SECRET='LONG_RANDOM_VALUE'\nKEYCLOAK_URL='https://squonk.informaticsmatters.org/auth'\nAUTH0_CLIENT_ID='${{ secrets.AUTH0_CLIENT_ID }}'\nAUTH0_CLIENT_SECRET='${{ secrets.AUTH0_CLIENT_SECRET }}'" > .env.local
+    - run: cat .env.local
+    - run: cat .env
     - name: Setup Playwright
       run: pnpm dlx playwright install --with-deps chromium
     - name: Test

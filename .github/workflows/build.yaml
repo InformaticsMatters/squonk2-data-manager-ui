@@ -39,9 +39,9 @@ jobs:
     - run: node -v
     - name: Checkout
       uses: actions/checkout@v1
-    - uses: pnpm/action-setup@v2.0.1
+    - uses: pnpm/action-setup@v2.1.0
       with:
-        version: 6.24.0
+        version: 6.24.4
         run_install: true
     - name: NextJS Environment Variables
       run: |
@@ -52,8 +52,6 @@ jobs:
         KEYCLOAK_URL='https://squonk.informaticsmatters.org/auth'
         AUTH0_CLIENT_ID='${{ secrets.AUTH0_CLIENT_ID }}'
         AUTH0_CLIENT_SECRET='${{ secrets.AUTH0_CLIENT_SECRET }}'" > .env.local
-    - run: cat .env.local
-    - run: cat .env
     - name: Setup Playwright
       run: pnpm dlx playwright install --with-deps chromium
     - name: Test

@@ -39,13 +39,6 @@ jobs:
     - run: node -v
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Cache pnpm modules
-      uses: actions/cache@v2
-      with:
-        path: ~/.pnpm-store
-        key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-
     - uses: pnpm/action-setup@v2.0.1
       with:
         version: 6.24.0

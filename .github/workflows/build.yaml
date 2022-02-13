@@ -57,9 +57,7 @@ jobs:
         KEYCLOAK_URL: "https://squonk.informaticsmatters.org/auth"
         PW_USERNAME: "dmit-user-a"
         PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
-        TEST_PORT: 3001
-        BASE_URL: "http://localhost:3001"
-        BASE_PATH: '/data-manager-ui'
+        TEST_PORT: 3000
       run: pnpm test:ci
 
   build:

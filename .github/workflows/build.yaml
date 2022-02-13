@@ -39,7 +39,6 @@ jobs:
     - run: node -v
     - name: Checkout
       uses: actions/checkout@v1
-    - run: rm pnpm-lock.yaml
     - uses: pnpm/action-setup@v2.1.0
       with:
         version: 6.24.4
@@ -54,7 +53,7 @@ jobs:
         AUTH0_CLIENT_ID='${{ secrets.AUTH0_CLIENT_ID }}'
         AUTH0_CLIENT_SECRET='${{ secrets.AUTH0_CLIENT_SECRET }}'" > .env.local
     - name: Setup Playwright
-      run: pnpm dlx playwright install --with-deps chromium
+      run: pnpm exec playwright install --with-deps chromium
     - name: Test
       continue-on-error: false
       env:

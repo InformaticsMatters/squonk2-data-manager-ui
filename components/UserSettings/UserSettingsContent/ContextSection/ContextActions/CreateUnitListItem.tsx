@@ -55,25 +55,20 @@ export const CreateUnitListItem = () => {
 
   const create = async (name: string) => {
     if (organisation) {
-      try {
-        const { id: unitId } = await createOrganisationUnit({
-          orgid: organisation.id,
-          data: {
-            name,
-          },
-        });
+      const { id: unitId } = await createOrganisationUnit({
+        orgid: organisation.id,
+        data: {
+          name,
+        },
+      });
 
-        enqueueSnackbar('Unit created');
+      enqueueSnackbar('Unit created');
 
-        queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id));
-        queryClient.invalidateQueries(`${AS_API_URL}/unit`); // TODO change this once AS client is updated
+      queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id));
+      queryClient.invalidateQueries(`${AS_API_URL}/unit`); // TODO change this once AS client is updated
 
-        // Change context outside of this try-catch block
-        changeContext(organisation.id, unitId);
-      } catch (error) {
-        enqueueError(error);
-      }
-      setOpen(false);
+      // Change context outside of this try-catch block
+      changeContext(organisation.id, unitId);
     }
   };
 
@@ -101,8 +96,16 @@ export const CreateUnitListItem = () => {
             )
             .min(2, 'The name is too short'),
         })}
-        onSubmit={({ name }) => {
-          create(name);
+        onSubmit={async ({ name }, { setSubmitting, resetForm }) => {
+          try {
+            await create(name);
+            resetForm();
+          } catch (error) {
+            enqueueError(error);
+          } finally {
+            setOpen(false);
+            setSubmitting(false);
+          }
         }}
       >
         {({ submitForm, isSubmitting, isValid }) => (

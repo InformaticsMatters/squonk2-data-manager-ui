@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import type {
+  AsError,
   UnitProductPostBodyBody,
   UnitProductPostBodyBodyFlavour,
 } from '@squonk/account-server-client';
@@ -27,7 +28,7 @@ import { useOrganisationUnit } from '../../../../../../context/organisationUnitC
 import { useCurrentProjectId } from '../../../../../../hooks/projectHooks';
 import { useEnqueueError } from '../../../../../../hooks/useEnqueueStackError';
 import { getErrorMessage } from '../../../../../../utils/orvalError';
-import { formatTierString } from '../../../../../../utils/productUtils';
+import { formatTierString, getBillingDay } from '../../../../../../utils/productUtils';
 import { ModalWrapper } from '../../../../../modals/ModalWrapper';
 import { useGetProjectProductTypes } from './useGetProjectProductTypes';
 
@@ -49,45 +50,40 @@ export const CreateProjectListItem = () => {
 
   const { mutateAsync: createProject } = useCreateProject();
   const { mutateAsync: createProduct } = useCreateUnitProduct();
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError | AsError>();
 
   const { setCurrentProjectId } = useCurrentProjectId();
 
   const create = async (projectName: string, flavour: string, serviceId: number) => {
     if (organisation && unit) {
-      try {
-        const { id: productId } = await createProduct({
-          unitid: unit.id,
-          data: {
-            name: projectName,
-            type: 'DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION',
-            billing_day: 3,
-            flavour: flavour as UnitProductPostBodyBodyFlavour, // TODO is this recent?
-            service_id: serviceId, // TODO this is missing as well
-          } as UnitProductPostBodyBody,
-        });
+      const { id: productId } = await createProduct({
+        unitid: unit.id,
+        data: {
+          name: projectName,
+          type: 'DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION',
+          billing_day: getBillingDay(),
+          flavour: flavour as UnitProductPostBodyBodyFlavour, // TODO is this recent?
+          service_id: serviceId, // TODO this is missing as well
+        } as UnitProductPostBodyBody,
+      });
 
-        const { project_id } = await createProject({
-          data: {
-            name: projectName,
-            organisation_id: organisation.id,
-            unit_id: unit.id,
-            tier_product_id: productId,
-          },
-        });
+      const { project_id } = await createProject({
+        data: {
+          name: projectName,
+          organisation_id: organisation.id,
+          unit_id: unit.id,
+          tier_product_id: productId,
+        },
+      });
 
-        enqueueSnackbar('Project created');
+      enqueueSnackbar('Project created');
 
-        queryClient.invalidateQueries(getGetProjectsQueryKey());
-        queryClient.invalidateQueries(getGetUserAccountQueryKey());
+      queryClient.invalidateQueries(getGetProjectsQueryKey());
+      queryClient.invalidateQueries(getGetUserAccountQueryKey());
 
-        queryClient.invalidateQueries(getGetProductsForUnitQueryKey(unit.id));
+      queryClient.invalidateQueries(getGetProductsForUnitQueryKey(unit.id));
 
-        setCurrentProjectId(project_id);
-      } catch (error) {
-        enqueueError(error);
-      }
-      setOpen(false);
+      setCurrentProjectId(project_id);
     }
   };
 
@@ -117,8 +113,16 @@ export const CreateProjectListItem = () => {
             .min(2, 'The name is too short'),
           flavour: yup.string().required('A tier must be selected'),
         })}
-        onSubmit={({ projectName, flavour, serviceId }) => {
-          create(projectName, flavour, serviceId);
+        onSubmit={async ({ projectName, flavour, serviceId }, { setSubmitting, resetForm }) => {
+          try {
+            await create(projectName, flavour, serviceId);
+            resetForm();
+          } catch (error) {
+            enqueueError(error);
+          } finally {
+            setSubmitting(false);
+            setOpen(false);
+          }
         }}
       >
         {({ submitForm, isSubmitting, isValid, setFieldValue }) => (

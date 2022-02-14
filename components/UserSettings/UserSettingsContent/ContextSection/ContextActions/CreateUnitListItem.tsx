@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { AsError } from '@squonk/account-server-client';
+import type { AsError, UnitDetail } from '@squonk/account-server-client';
 import {
   getGetOrganisationUnitsQueryKey,
   useCreateOrganisationUnit,
@@ -10,6 +10,7 @@ import {
 
 import { Grid, ListItem, ListItemText } from '@material-ui/core';
 import { CreateNewFolder } from '@material-ui/icons';
+import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
 import * as yup from 'yup';
@@ -29,6 +30,7 @@ export const CreateUnitListItem = () => {
 
   const {
     organisationUnit: { organisation },
+    dispatchOrganisationUnit,
   } = useOrganisationUnit();
   const { data } = useGetOrganisationUnits(organisation?.id ?? '', {
     query: { enabled: !!organisation?.id },
@@ -38,6 +40,18 @@ export const CreateUnitListItem = () => {
   const { mutateAsync: createOrganisationUnit } = useCreateOrganisationUnit();
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<AsError>();
+
+  const changeContext = async (organisationId: string, unitId: string) => {
+    try {
+      const unitResponse = await axios.get<UnitDetail>( // TODO change this once AS client is updated
+        `${AS_API_URL}/organisation/${organisationId}/unit/${unitId}`,
+      );
+      dispatchOrganisationUnit({ type: 'setUnit', payload: unitResponse.data });
+    } catch (error) {
+      // For now only log the error, don't display anything to the user
+      console.error(error);
+    }
+  };
 
   const create = async (name: string) => {
     if (organisation) {
@@ -54,7 +68,8 @@ export const CreateUnitListItem = () => {
         queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id));
         queryClient.invalidateQueries(`${AS_API_URL}/unit`); // TODO change this once AS client is updated
 
-        // TODO change to newly created unit?
+        // Change context outside of this try-catch block
+        changeContext(organisation.id, unitId);
       } catch (error) {
         enqueueError(error);
       }

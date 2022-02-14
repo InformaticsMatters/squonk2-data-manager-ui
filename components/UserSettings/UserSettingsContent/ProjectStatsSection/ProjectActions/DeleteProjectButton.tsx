@@ -13,6 +13,7 @@ import {
 } from '@squonk/data-manager-client/project';
 import { getGetUserAccountQueryKey } from '@squonk/data-manager-client/user';
 
+import { css } from '@emotion/react';
 import { IconButton } from '@material-ui/core';
 import { DeleteForever } from '@material-ui/icons';
 
@@ -82,7 +83,13 @@ export const DeleteProjectButton = ({ project, projectProduct }: DeleteProjectBu
     >
       {({ openModal }) =>
         isOwner && (
-          <IconButton size="small" onClick={openModal}>
+          <IconButton
+            css={css`
+              padding: 1px;
+            `}
+            size="small"
+            onClick={openModal}
+          >
             <DeleteForever />
           </IconButton>
         )

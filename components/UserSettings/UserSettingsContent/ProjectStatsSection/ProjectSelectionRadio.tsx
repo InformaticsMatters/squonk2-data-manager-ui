@@ -24,7 +24,7 @@ export const ProjectSelectionRadio = ({ projectProduct }: ProjectSelectionRadioP
     <Radio
       checked={isProjectSelected}
       css={css`
-        padding: 0;
+        padding: 1px;
       `}
       onClick={() => {
         if (isProjectSelected) {

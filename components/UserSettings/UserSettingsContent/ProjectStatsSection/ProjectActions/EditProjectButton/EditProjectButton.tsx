@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { ProductDmProjectTier } from '@squonk/account-server-client';
 import type { ProjectDetail } from '@squonk/data-manager-client';
 
+import { css } from '@emotion/react';
 import { IconButton, Tooltip, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
@@ -35,7 +36,13 @@ export const EditProjectButton = ({ project, projectProduct }: EditProjectButton
       {isEditor && (
         <Tooltip title={'Edit Project'}>
           <span>
-            <IconButton size="small" onClick={() => setOpen(!open)}>
+            <IconButton
+              css={css`
+                padding: 1px;
+              `}
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
               <EditIcon />
             </IconButton>
           </span>

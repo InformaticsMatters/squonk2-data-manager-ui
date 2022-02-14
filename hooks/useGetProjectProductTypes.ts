@@ -4,7 +4,7 @@ import type { AsError } from '@squonk/account-server-client';
 
 import axios from 'axios';
 
-import { AS_API_URL } from '../../../../../../constants';
+import { AS_API_URL } from '../constants';
 
 type ProductType = {
   service: {

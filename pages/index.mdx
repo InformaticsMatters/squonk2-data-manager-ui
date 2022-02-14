@@ -1,7 +1,8 @@
-import { Button, Container, Grid } from '@material-ui/core'
-import Layout from '../components/Layout'
-import { RoleWarning } from '../components/RoleWarning'
-import Head from 'next/head'
+import { Button, Container, Grid } from "@material-ui/core";
+import Layout from "../components/Layout";
+import { RoleWarning } from "../components/RoleWarning";
+import Head from "next/head";
+import { UserBootstrapper } from "../components/UserBootstrapper";
 
 <Head>
   <title>Data Manager</title>
@@ -15,6 +16,8 @@ import Head from 'next/head'
 
 <RoleWarning />
 
+<UserBootstrapper />
+
 <Grid container spacing={2}>
 <Grid item xs={12} sm={6}>
 
@@ -24,7 +27,7 @@ The **Squonk Data Manager** is at the core of the Squonk 2.0 suite of applicatio
 It provides a managed environment for your datasets and allows execution of applications and jobs that use that data to derive new data.
 Currently it is focussed around **virtual screening** workflows, but the scope will expand over time.
 
-Data is at the heart of the Squonk Data Manager. Your datasets stay in the same place, and applications fire up around the data. This is the *"bring the compute to the data"* paradigm.
+Data is at the heart of the Squonk Data Manager. Your datasets stay in the same place, and applications fire up around the data. This is the _"bring the compute to the data"_ paradigm.
 
 This managed data environment is highly collaborative in nature, allowing sharing of data and skills across a workgroup, but in a secure manner.
 In this public demo site all data is public and computational resources are limited.
@@ -35,14 +38,17 @@ All of this takes place in a Kubernetes cluster, providing high resilience and s
 <Grid item xs={12} sm={6}>
 
 ## Resources
-* [About Squonk](https://discourse.squonk.it/c/about-squonk/9) - Squonk's history and future direction
-* [Knowledge base](https://discourse.squonk.it/c/squonk-data-manager-knowledge-base/14) - User support and ideas
+
+- [About Squonk](https://discourse.squonk.it/c/about-squonk/9) - Squonk's history and future direction
+- [Knowledge base](https://discourse.squonk.it/c/squonk-data-manager-knowledge-base/14) - User support and ideas
 
 ## How to access
+
 The **Squonk Data Manager** is in early stages of development, and access is currently by invitation only.
 Please email us at info@informaticsmatters.com if you would like to evaluate or want further information.
 
 ## Quick start
+
 1. Log in
 2. Create a **Project** or join an existing one.
 3. Upload your datasets in the **Data** tab.

@@ -27,10 +27,10 @@ import * as yup from 'yup';
 import { useOrganisationUnit } from '../../../../../../context/organisationUnitContext';
 import { useCurrentProjectId } from '../../../../../../hooks/projectHooks';
 import { useEnqueueError } from '../../../../../../hooks/useEnqueueStackError';
+import { useGetProjectProductTypes } from '../../../../../../hooks/useGetProjectProductTypes';
 import { getErrorMessage } from '../../../../../../utils/orvalError';
 import { formatTierString, getBillingDay } from '../../../../../../utils/productUtils';
 import { ModalWrapper } from '../../../../../modals/ModalWrapper';
-import { useGetProjectProductTypes } from './useGetProjectProductTypes';
 
 /**
  * Button which allows user to create a new project.

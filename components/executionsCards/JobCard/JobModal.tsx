@@ -180,8 +180,8 @@ export const JobModal = ({
                       liveValidate
                       noHtml5Validate
                       formData={optionsFormData}
-                      schema={JSON.parse(job.variables.options)}
                       showErrorList={false}
+                      schema={JSON.parse(job.variables.options)}
                       uiSchema={{ 'ui:order': job.variables.order?.options }}
                       onChange={(event) => setOptionsFormData(event.formData)}
                     >

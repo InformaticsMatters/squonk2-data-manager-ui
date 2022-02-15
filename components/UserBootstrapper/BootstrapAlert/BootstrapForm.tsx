@@ -24,6 +24,9 @@ import { useGetProjectProductTypes } from '../../../hooks/useGetProjectProductTy
 import { getErrorMessage } from '../../../utils/orvalError';
 import { formatTierString, getBillingDay } from '../../../utils/productUtils';
 
+/**
+ * Form for creating a default unit with a project.
+ */
 export const BootstrapForm = () => {
   const theme = useTheme();
   const biggerThanSm = useMediaQuery(theme.breakpoints.up('sm'));

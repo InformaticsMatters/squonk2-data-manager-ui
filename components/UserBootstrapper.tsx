@@ -53,7 +53,12 @@ export const UserBootstrapper = () => {
       return response.data;
     },
   );
-  const { projectProductTypes, isLoading, isError, error } = useGetProjectProductTypes();
+  const {
+    projectProductTypes,
+    isLoading: isLoadingProductTypes,
+    isError: isProductsTypesError,
+    error: productTypesError,
+  } = useGetProjectProductTypes();
 
   const { mutateAsync: createUnit } = useMutation(`${AS_API_URL}/unit`, async () => {
     const response = await axios.put(`${AS_API_URL}/unit`);
@@ -66,50 +71,41 @@ export const UserBootstrapper = () => {
 
   const { setCurrentProjectId } = useCurrentProjectId();
 
-  //const hasUnits = unitsData?.units.some((u) => u.units.length);
-  const hasUnits = (unitsData?.units || []).length > 1; // TODO remove, only for testing
+  const hasUnits = unitsData?.units.some((u) => u.units.length);
 
   const create = async (projectName: string, flavour: string, serviceId: number) => {
-    const { id: unitId } = await createUnit();
+    const { id: unitId, organisation_id } = await createUnit();
 
-    const unitsResponse = await axios.get<UnitsGetResponse>(`${AS_API_URL}/unit`); // TODO change this once AS client is updated
-    const organisationResponse = unitsResponse.data.units.find((u) =>
-      u.units.some((unit) => unit.id === unitId),
-    );
-    const organisation = organisationResponse?.organisation;
+    const { id: productId } = await createProduct({
+      unitid: unitId,
+      data: {
+        name: projectName,
+        type: 'DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION',
+        billing_day: getBillingDay(),
+        flavour: flavour as UnitProductPostBodyBodyFlavour, // TODO is this recent?
+        service_id: serviceId, // TODO this is missing as well
+      } as UnitProductPostBodyBody,
+    });
 
-    if (organisation) {
-      const { id: productId } = await createProduct({
-        unitid: unitId,
-        data: {
-          name: projectName,
-          type: 'DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION',
-          billing_day: getBillingDay(),
-          flavour: flavour as UnitProductPostBodyBodyFlavour, // TODO is this recent?
-          service_id: serviceId, // TODO this is missing as well
-        } as UnitProductPostBodyBody,
-      });
+    const { project_id } = await createProject({
+      data: {
+        name: projectName,
+        organisation_id,
+        unit_id: unitId,
+        tier_product_id: productId,
+      },
+    });
 
-      const { project_id } = await createProject({
-        data: {
-          name: projectName,
-          organisation_id: organisation.id,
-          unit_id: unitId,
-          tier_product_id: productId,
-        },
-      });
+    enqueueSnackbar('Project created');
 
-      enqueueSnackbar('Project created');
+    // DM
+    queryClient.invalidateQueries(getGetProjectsQueryKey());
+    queryClient.invalidateQueries(getGetUserAccountQueryKey());
 
-      // DM
-      queryClient.invalidateQueries(getGetProjectsQueryKey());
-      queryClient.invalidateQueries(getGetUserAccountQueryKey());
+    // AS
+    queryClient.invalidateQueries(`${AS_API_URL}/unit`); // TODO change this once AS client is updated
 
-      // AS
-      queryClient.invalidateQueries(`${AS_API_URL}/unit`); // TODO change this once AS client is updated
-
-      setCurrentProjectId(project_id);
-    }
+    setCurrentProjectId(project_id);
   };
 
   if (isLoadingUnits) {
@@ -174,11 +170,11 @@ export const UserBootstrapper = () => {
                     label="Project Name"
                     name="projectName"
                   />
-                  {isError ? (
-                    <Typography color="error">{getErrorMessage(error)}</Typography>
+                  {isProductsTypesError ? (
+                    <Typography color="error">{getErrorMessage(productTypesError)}</Typography>
                   ) : (
                     <Field fullWidth select component={TextField} label="Tier" name="flavour">
-                      {isLoading ? (
+                      {isLoadingProductTypes ? (
                         <MenuItem disabled>Loading</MenuItem>
                       ) : (
                         projectProductTypes?.map((product) => {

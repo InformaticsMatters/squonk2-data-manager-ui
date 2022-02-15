@@ -28,7 +28,14 @@ export const OrganisationUnitContext = createContext<OrganisationUnitContextValu
   },
 });
 
-const useUpdateOrganisationUnit = (dispatchOrganisationUnit: OrganisationUnitSetter) => {
+interface OrganisationUnitUpdaterProps {
+  dispatchOrganisationUnit: OrganisationUnitSetter;
+}
+
+/**
+ * Updates organisation unit context based on the user state and project URL.
+ */
+const OrganisationUnitUpdater = ({ dispatchOrganisationUnit }: OrganisationUnitUpdaterProps) => {
   const isAuthorized = useIsAuthorized();
 
   const currentProject = useCurrentProject();
@@ -57,6 +64,8 @@ const useUpdateOrganisationUnit = (dispatchOrganisationUnit: OrganisationUnitSet
       });
     }
   }, [currentProject, product, dispatchOrganisationUnit]);
+
+  return null;
 };
 
 type OrganisationUnitActions =
@@ -93,12 +102,12 @@ const organisationUnitReducer = (
 };
 
 export const OrganisationUnitProvider: React.FC = ({ children }) => {
+  const isAuthorized = useIsAuthorized();
+
   const [organisationUnit, dispatchOrganisationUnit] = useReducer(organisationUnitReducer, {
     organisation: null,
     unit: null,
   });
-
-  useUpdateOrganisationUnit(dispatchOrganisationUnit);
 
   const contextValue = useMemo(
     () => ({
@@ -110,6 +119,9 @@ export const OrganisationUnitProvider: React.FC = ({ children }) => {
 
   return (
     <OrganisationUnitContext.Provider value={contextValue}>
+      {isAuthorized && (
+        <OrganisationUnitUpdater dispatchOrganisationUnit={dispatchOrganisationUnit} />
+      )}
       {children}
     </OrganisationUnitContext.Provider>
   );

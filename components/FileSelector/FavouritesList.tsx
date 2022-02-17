@@ -28,9 +28,9 @@ export const FavouritesList = ({
     <ScrollList dense>
       {selectedFilesToDisplay.map(({ path: fullPath, type, mimeType }) => (
         <FileListItem
+          checked={getChecked(value, fullPath)}
           folderIcon={<FolderSpecialRoundedIcon />}
           fullPath={fullPath}
-          checked={getChecked(value, fullPath)}
           key={fullPath}
           mimeType={mimeType}
           projectId={projectId}

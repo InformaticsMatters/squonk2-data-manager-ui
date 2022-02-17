@@ -88,8 +88,8 @@ export function SingleFileUploadWithProgress({
             disabled={disabled || task?.done}
             inputRef={fileNameRef}
             placeholder={stem}
-            onClick={(event) => event.stopPropagation()}
             onChange={() => rename(composeNewFilePath())}
+            onClick={(event) => event.stopPropagation()}
           />
         </Grid>
 
@@ -109,13 +109,13 @@ export function SingleFileUploadWithProgress({
             disabled={disabled || task?.done}
             inputRef={fileExtRef}
             label="Ext"
-            onClick={(event) => event.stopPropagation()}
             onChange={(event) => {
               event.stopPropagation();
               rename(composeNewFilePath());
 
               changeMimeType(mimeLookup[event.target.value]);
             }}
+            onClick={(event) => event.stopPropagation()}
           >
             {allowedFileTypes?.map((fileType) => (
               <MenuItem key={fileType} value={fileType}>

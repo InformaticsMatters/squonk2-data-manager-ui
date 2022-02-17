@@ -8,11 +8,6 @@
 /.pnp
 .pnp.js
 
-# testing
-/coverage
-cypress/screenshots
-cypress/videos
-
 # next.js
 /.next/
 /out/
@@ -38,6 +33,9 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# Playwright
+storageState.json
 
 # Etc
 tsconfig.tsbuildinfo

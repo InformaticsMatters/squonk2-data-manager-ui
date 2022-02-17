@@ -68,7 +68,7 @@
     "@squonk/eslint-config": "^0.2.0",
     "@types/lodash-es": "^4.17.6",
     "@types/mdx-js__react": "^1.5.5",
-    "@types/node": "^16.11.25",
+    "@types/node": "^17.0.18",
     "@types/plotly.js-basic-dist": "^1.54.0",
     "@types/react": "^17.0.39",
     "@types/react-plotly.js": "^2.5.0",

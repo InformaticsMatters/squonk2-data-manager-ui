@@ -11,12 +11,21 @@ import {
   Typography,
 } from '@material-ui/core';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
+import dynamic from 'next/dynamic';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
+import { CenterLoader } from '../CenterLoader';
 import { ModalWrapper } from '../modals/ModalWrapper';
+import type { ProjectManagerProps } from '../ProjectManager';
 import { NavLink } from './NavLink';
-import { OUPContext } from './OUPContext';
 import { UserMenuContent } from './UserMenuContent';
+
+const ProjectManager = dynamic<ProjectManagerProps>(
+  () => import('../ProjectManager').then((mod) => mod.ProjectManager),
+  {
+    loading: () => <CenterLoader />,
+  },
+);
 
 /**
  * Mobile modal navigation menu with
@@ -89,7 +98,7 @@ export const MobileNavMenu = () => {
                 <Typography gutterBottom variant="h3">
                   Project
                 </Typography>
-                <OUPContext />
+                <ProjectManager wrap />
               </>
             )}
           </Grid>

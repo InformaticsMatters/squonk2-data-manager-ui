@@ -6,8 +6,6 @@ import type {
   Column,
   IdType,
   PluginHook,
-  Row,
-  TableCellProps,
   TableProps,
   TableRowProps,
 } from 'react-table';
@@ -16,12 +14,7 @@ import { useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table'
 
 import type { Interpolation } from '@emotion/react';
 import { css } from '@emotion/react';
-import type {
-  TableCellProps as MuiCellProps,
-  TableProps as MuiTableProps,
-  TableRowProps as MuiRowProps,
-  Theme,
-} from '@material-ui/core';
+import type { TableCellProps, TableProps as MuiTableProps, Theme } from '@material-ui/core';
 import {
   Box,
   InputAdornment,
@@ -47,10 +40,6 @@ import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 
 type Selection<Data> = Record<IdType<Data>, boolean>;
 type CustomProps<Props> = Partial<Props & { css?: Interpolation<Theme> }>;
-
-type CustomRowProps = CustomProps<TableRowProps & MuiRowProps>;
-type CustomCellProps = CustomProps<TableCellProps & MuiCellProps>;
-type CustomTableProps = CustomProps<TableProps & MuiTableProps>;
 
 export interface DataTableProps<Data extends Record<string, any>> {
   /**
@@ -108,15 +97,11 @@ export interface DataTableProps<Data extends Record<string, any>> {
   /**
    * Custom props applied to Table. Props can either be react-table props or MaterialUI props.
    */
-  customTableProps?: CustomTableProps;
+  customTableProps?: CustomProps<TableProps & MuiTableProps>;
   /**
    * Custom props applied to TableCell. Props can either be react-table props or MaterialUI props.
    */
-  customCellProps?: CustomCellProps;
-  /**
-   * Custom props applied to TableRow. Props can either be react-table props or MaterialUI props.
-   */
-  customRowProps?: CustomRowProps | ((row: Row<Data>) => CustomRowProps);
+  customCellProps?: CustomProps<TableRowProps & TableCellProps>;
   /*
    * Enables sub rows.
    */
@@ -154,7 +139,6 @@ export function DataTable<Data extends Record<string, any>>({
   error,
   customTableProps,
   customCellProps,
-  customRowProps,
   getSubRows,
   subRowsEnabled,
   ToolbarActionChild,
@@ -315,13 +299,9 @@ export function DataTable<Data extends Record<string, any>>({
         <TableBody>
           {rows.slice(0, 100).map((row) => {
             prepareRow(row);
-
-            const rowProps =
-              typeof customRowProps === 'function' ? customRowProps(row) : customRowProps;
-
             return (
               // eslint-disable-next-line react/jsx-key
-              <TableRow {...row.getRowProps(rowProps)}>
+              <TableRow {...row.getRowProps()}>
                 {row.cells.map((cell) => {
                   return (
                     // eslint-disable-next-line react/jsx-key

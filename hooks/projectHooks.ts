@@ -1,13 +1,6 @@
-import type { ProjectDetail } from '@squonk/data-manager-client';
 import { useGetProjects } from '@squonk/data-manager-client/project';
 
 import { useRouter } from 'next/router';
-
-// TODO Remove this once DM client is updated
-export type ProjectDetailTemp = ProjectDetail & {
-  org_id?: string;
-  unit_id?: string;
-};
 
 export type ProjectId = string | undefined;
 
@@ -64,7 +57,7 @@ export const useCurrentProjectId = () => {
 export const useCurrentProject = () => {
   const { projectId } = useCurrentProjectId();
   const { data } = useGetProjects();
-  const projects = data?.projects as ProjectDetailTemp[] | undefined;
+  const projects = data?.projects;
 
   return projects?.find((project) => project.project_id === projectId) ?? null;
 };
@@ -76,7 +69,7 @@ export const useCurrentProject = () => {
 export const useProjectFromId = (projectId: string) => {
   const { data } = useGetProjects();
 
-  const projects = data?.projects as ProjectDetailTemp[] | undefined;
+  const projects = data?.projects;
 
   return projects?.find((project) => project.project_id === projectId);
 };

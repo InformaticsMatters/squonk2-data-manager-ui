@@ -71,16 +71,16 @@ export const FileListItem = ({
       {!!onSelect && (
         <ListItemIcon>
           <Checkbox
-            checked={checked}
             css={css`
               padding-top: 0;
               padding-bottom: 0;
             `}
             edge="start"
+            checked={checked}
             inputProps={{ 'aria-labelledby': labelId }}
             size="small"
-            onChange={(_event, checked) => onSelect(checked)}
             onClick={(event) => event.stopPropagation()}
+            onChange={(_event, checked) => onSelect(checked)}
           />
         </ListItemIcon>
       )}

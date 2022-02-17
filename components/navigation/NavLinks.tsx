@@ -20,7 +20,7 @@ export const NavLinks = ({ linkWidth }: NavLinksProps) => {
   return (
     <nav
       css={css`
-        width: 100%;
+        flex: 1;
         display: flex;
         align-items: center;
 

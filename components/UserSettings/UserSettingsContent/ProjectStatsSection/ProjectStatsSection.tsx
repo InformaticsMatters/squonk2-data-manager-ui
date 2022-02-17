@@ -4,34 +4,26 @@ import type { Cell, Column } from 'react-table';
 import type { ProductDmProjectTier, ProductDmStorage } from '@squonk/account-server-client';
 
 import { css } from '@emotion/react';
+import { useTheme } from '@material-ui/core';
 
+import { useCurrentProjectId } from '../../../../hooks/projectHooks';
 import { getErrorMessage } from '../../../../utils/orvalError';
+import { formatTierString } from '../../../../utils/productUtils';
 import { DataTable } from '../../../DataTable';
+import { ProjectActions } from './ProjectActions';
+import { ProjectSelectionRadio } from './ProjectSelectionRadio';
 import { ProjectUsageChart } from './ProjectUsageChart';
 import { StorageUsageChart } from './StorageUsageChart';
 import { useProjectSubscriptions } from './useProjectSubscriptions';
 import { useStorageSubscriptions } from './useStorageSubscriptions';
 
 /**
- * Formats the tier string, e.g. GOLD -> Gold.
- */
-const formatTierString = (original: string) => {
-  return original.charAt(0).toUpperCase() + original.slice(1).toLowerCase();
-};
-
-/**
- * Sizes for table columns in percentages. All column widths used in a table should add up to 100%.
- */
-const columnSizes = {
-  name: 18,
-  usage: 24,
-  rest: 14.5,
-};
-
-/**
  * Displays `Project stats` section in User Settings.
  */
 export const ProjectStatsSection = () => {
+  const theme = useTheme();
+  const { projectId: currentProjectId } = useCurrentProjectId();
+
   const {
     projectSubscriptions,
     isLoading: isProjectSubscriptionsLoading,
@@ -48,6 +40,13 @@ export const ProjectStatsSection = () => {
 
   const projectsColumns: Column<ProductDmProjectTier>[] = useMemo(
     () => [
+      {
+        id: 'projectSelection',
+        defaultCanSort: false,
+        Cell: ({ row }: Cell<ProductDmProjectTier>) => {
+          return <ProjectSelectionRadio projectProduct={row.original} />;
+        },
+      },
       {
         id: 'projectName',
         accessor: (row) => row.claim?.name,
@@ -81,12 +80,23 @@ export const ProjectStatsSection = () => {
         accessor: (row) => row.coins.allowance,
         Header: 'Allowance',
       },
+      {
+        id: 'actions',
+        Header: 'Actions',
+        Cell: ({ row }: Cell<ProductDmProjectTier>) => {
+          return <ProjectActions projectProduct={row.original} />;
+        },
+      },
     ],
     [],
   );
 
   const storageColumns: Column<ProductDmStorage>[] = useMemo(
     () => [
+      {
+        id: 'for-layout-only-1',
+        defaultCanSort: false,
+      },
       {
         id: 'storageName',
         Header: 'Dataset storage',
@@ -101,7 +111,7 @@ export const ProjectStatsSection = () => {
         },
       },
       {
-        id: 'for-layout-only',
+        id: 'for-layout-only-2',
         defaultCanSort: false,
       },
       {
@@ -114,28 +124,36 @@ export const ProjectStatsSection = () => {
         accessor: (row) => row.coins.allowance,
         Header: 'Allowance',
       },
+      {
+        id: 'for-layout-only-3',
+        defaultCanSort: false,
+      },
     ],
     [],
   );
 
   return (
-    <>
+    <div
+      css={css`
+        display: grid;
+        overflow-x: auto;
+      `}
+    >
       <DataTable
         columns={projectsColumns}
+        customRowProps={(row) =>
+          row.original.claim?.id === currentProjectId
+            ? { style: { backgroundColor: theme.palette.action.hover } }
+            : {}
+        }
         customTableProps={{
           css: css`
-            table-layout: fixed;
             & td {
               word-break: break-word;
             }
-            & th:nth-of-type(1) {
-              width: ${columnSizes.name}%;
-            }
-            & th:nth-of-type(2) {
-              width: ${columnSizes.usage}%;
-            }
-            & th:nth-of-type(3n) {
-              width: ${columnSizes.rest}%;
+            & tr {
+              display: grid;
+              grid-template-columns: 61px 1fr 220px 110px 100px 100px 100px 80px;
             }
           `,
         }}
@@ -151,24 +169,16 @@ export const ProjectStatsSection = () => {
         columns={storageColumns}
         customTableProps={{
           css: css`
-            table-layout: fixed;
             & td {
               word-break: break-word;
             }
-            & th:nth-of-type(1) {
-              width: ${columnSizes.name}%;
+            & tr {
+              display: grid;
+              grid-template-columns: 61px 1fr 220px 210px 100px 100px 80px;
             }
-            & th:nth-of-type(2) {
-              width: ${columnSizes.usage}%;
-            }
-            & th:nth-of-type(3) {
-              width: ${columnSizes.rest * 2}%;
-              visibility: hidden;
-            }
-            & th:nth-of-type(4n) {
-              width: ${columnSizes.rest}%;
-            }
-            & td:nth-of-type(3) {
+            & th:nth-of-type(1) > *,
+            th:nth-of-type(4) > *,
+            th:nth-of-type(7) > * {
               visibility: hidden;
             }
           `,
@@ -180,6 +190,6 @@ export const ProjectStatsSection = () => {
         isLoading={isStorageSubscriptionsLoading}
         tableContainer={false}
       />
-    </>
+    </div>
   );
 };

@@ -3,13 +3,19 @@ import { useMemo } from 'react';
 import type { ProductDmStorage } from '@squonk/account-server-client';
 import { useGetProductsForUnit } from '@squonk/account-server-client/product';
 
-import { UNIT_ID } from '../../../../utils/ASIdentities';
+import { useOrganisationUnit } from '../../../../context/organisationUnitContext';
 
 /**
  * Fetches information about account's storage subscriptions.
  */
 export const useStorageSubscriptions = () => {
-  const { data, isLoading, isError, error } = useGetProductsForUnit(UNIT_ID);
+  const {
+    organisationUnit: { unit },
+  } = useOrganisationUnit();
+
+  const { data, isLoading, isError, error } = useGetProductsForUnit(unit?.id ?? '', {
+    query: { enabled: !!unit?.id },
+  });
 
   const storageSubscriptions = useMemo(() => {
     if (!data) {

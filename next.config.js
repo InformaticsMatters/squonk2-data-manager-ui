@@ -1,4 +1,5 @@
 const path = require('path');
+const { withSentryConfig } = require('@sentry/nextjs');
 
 if (process.env.MONOREPO) {
   console.log('info  - Running with webpack aliases for monorepo compatibility');
@@ -54,4 +55,11 @@ const nextConfig = {
   },
 };
 
-module.exports = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
+const sentryWebpackPluginOptions = {
+  silent: true, // Suppresses all logs
+  environment: process.env.NODE_ENV,
+};
+
+const moduleExports = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
+
+module.exports = withSentryConfig(moduleExports, sentryWebpackPluginOptions);

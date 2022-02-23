@@ -39,3 +39,6 @@ storageState.json
 
 # Etc
 tsconfig.tsbuildinfo
+
+# Sentry
+.sentryclirc

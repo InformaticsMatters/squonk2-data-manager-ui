@@ -53,7 +53,7 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
             passHref
             href={{
               pathname: APP_ROUTES.results.instance(instance.id),
-              query: { ...query, project: projectId, instanceId: instance.id },
+              query: { ...query, project: projectId },
             }}
             key={instance.id}
           >

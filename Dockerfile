@@ -1,4 +1,4 @@
-FROM node:16.2.0-alpine3.13
+FROM node:16.13.1-alpine3.13
 
 # Disable anonymous Next.js telemetry data...
 ENV NEXT_TELEMETRY_DISABLED 1

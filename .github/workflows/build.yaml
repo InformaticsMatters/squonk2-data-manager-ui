@@ -39,7 +39,7 @@ jobs:
     - run: node -v
     - name: Checkout
       uses: actions/checkout@v3
-    - uses: pnpm/action-setup@v2.1.0
+    - uses: pnpm/action-setup@v2.2.1
       with:
         version: 6.30.1
         run_install: true

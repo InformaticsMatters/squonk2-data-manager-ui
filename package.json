@@ -11,8 +11,9 @@
     "build": "next build",
     "start": "next start",
     "tsc": "tsc --pretty --noEmit",
-    "lint": "next lint",
-    "format": "eslint --fix .",
+    "lint": "eslint lint --max-warnings=0",
+    "format": "eslint --fix --max-warnings=0",
+    "format:all": "eslint --fix .",
     "test": "export $(cat .env.test.local | xargs) && playwright test",
     "test:debug": "PWDEBUG=1 pnpm t -- --headed",
     "test:ci": "playwright test"

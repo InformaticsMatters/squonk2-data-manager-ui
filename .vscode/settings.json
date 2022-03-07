@@ -14,5 +14,9 @@
     "editor.rulers": [
       100
     ]
+  },
+  "files.associations": {
+    ".env": "shellscript",
+    ".env.*": "shellscript",
   }
 }

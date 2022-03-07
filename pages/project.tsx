@@ -1,11 +1,17 @@
+import { useGetProjects } from '@squonk/data-manager-client/project';
+
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import { Container, Typography } from '@material-ui/core';
+import { Box, Container, Grid, Typography } from '@material-ui/core';
 import Head from 'next/head';
 import Image from 'next/image';
 
+import { CenterLoader } from '../components/CenterLoader';
 import Layout from '../components/Layout';
 import { ProjectTable } from '../components/ProjectTable';
+import { OrganisationAutocomplete } from '../components/userContext/OrganisationAutocomplete';
+import { ProjectAutocomplete } from '../components/userContext/ProjectAutocomplete';
+import { UnitAutocomplete } from '../components/userContext/UnitAutocomplete';
 import { useCurrentProject } from '../hooks/projectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 
@@ -14,6 +20,7 @@ import { RoleRequired } from '../utils/RoleRequired';
  */
 const Project = () => {
   const currentProject = useCurrentProject();
+  const { isLoading } = useGetProjects();
 
   return (
     <>
@@ -23,13 +30,33 @@ const Project = () => {
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
         <Layout>
           <Container>
-            {currentProject ? (
-              <>
-                <Typography gutterBottom variant="h1">
-                  Project: {currentProject.name}
-                </Typography>
+            {isLoading ? (
+              <CenterLoader />
+            ) : currentProject ? (
+              <Grid
+                container
+                css={css`
+                  display: flex;
+                  align-items: center;
+                `}
+              >
+                <Grid item md={6} xs={12}>
+                  <Typography
+                    gutterBottom
+                    component="h1"
+                    css={css`
+                      word-break: break-all;
+                    `}
+                    variant={currentProject.name.length > 16 ? 'h2' : 'h1'}
+                  >
+                    Project: {currentProject.name}
+                  </Typography>
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <ProjectAutocomplete size="medium" />
+                </Grid>
                 <ProjectTable currentProject={currentProject} />
-              </>
+              </Grid>
             ) : (
               <div
                 css={css`
@@ -44,6 +71,19 @@ const Project = () => {
                   src="https://squonk.informaticsmatters.org/assets/sadderSquonk.svg"
                   width={150}
                 />
+                <Box marginY={1}>
+                  <Grid container spacing={1}>
+                    <Grid container item alignItems="center" sm={6}>
+                      <OrganisationAutocomplete />
+                    </Grid>
+                    <Grid container item alignItems="center" sm={6}>
+                      <UnitAutocomplete />
+                    </Grid>
+                    <Grid container item alignItems="center" sm={12}>
+                      <ProjectAutocomplete size="medium" />
+                    </Grid>
+                  </Grid>
+                </Box>
               </div>
             )}
           </Container>

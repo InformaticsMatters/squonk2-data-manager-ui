@@ -1,19 +1,26 @@
+import type { UnitDetail } from '@squonk/account-server-client';
 import { useGetOrganisationUnits } from '@squonk/account-server-client/unit';
 
 import { IconButton, InputAdornment, TextField, Typography } from '@material-ui/core';
 import { DeleteForever } from '@material-ui/icons';
+import type { AutocompleteProps } from '@material-ui/lab';
 import { Autocomplete } from '@material-ui/lab';
 
-import { useOrganisationUnit } from '../../../../context/organisationUnitContext';
-import { useCurrentProjectId } from '../../../../hooks/projectHooks';
-import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
-import { getErrorMessage } from '../../../../utils/orvalError';
-import { WarningDeleteButton } from '../../../WarningDeleteButton';
+import { useOrganisationUnit } from '../../context/organisationUnitContext';
+import { useCurrentProjectId } from '../../hooks/projectHooks';
+import { useKeycloakUser } from '../../hooks/useKeycloakUser';
+import { getErrorMessage } from '../../utils/orvalError';
+import { WarningDeleteButton } from '../WarningDeleteButton';
+
+type UnitAutocompleteProps = Omit<
+  AutocompleteProps<UnitDetail, false, false, false>,
+  'renderInput' | 'options'
+>;
 
 /**
  * Autocomplete which lists context's organisation's units available to a user to select as context.
  */
-export const UnitAutocomplete = () => {
+export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
   const { organisationUnit, dispatchOrganisationUnit } = useOrganisationUnit();
   const { organisation, unit } = organisationUnit;
 
@@ -37,6 +44,7 @@ export const UnitAutocomplete = () => {
 
   return (
     <Autocomplete
+      {...props}
       fullWidth
       getOptionLabel={(option) => option.name}
       getOptionSelected={(option, value) => option.id === value.id}
@@ -66,7 +74,6 @@ export const UnitAutocomplete = () => {
             ),
           }}
           label="Unit"
-          size="medium"
         />
       )}
       value={unit ?? null}

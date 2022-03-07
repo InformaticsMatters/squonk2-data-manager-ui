@@ -1,8 +1,8 @@
 import { Grid } from '@material-ui/core';
 
+import { OrganisationAutocomplete } from '../../../userContext/OrganisationAutocomplete';
+import { UnitAutocomplete } from '../../../userContext/UnitAutocomplete';
 import { ContextActions } from './ContextActions';
-import { OrganisationAutocomplete } from './OrganisationAutocomplete';
-import { UnitAutocomplete } from './UnitAutocomplete';
 
 /**
  * Displays `Context` section in User Settings.

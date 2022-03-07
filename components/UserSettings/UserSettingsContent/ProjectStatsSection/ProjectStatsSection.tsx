@@ -164,7 +164,6 @@ export const ProjectStatsSection = () => {
         isLoading={isProjectSubscriptionsLoading}
         tableContainer={false}
       />
-      <br />
       <DataTable
         columns={storageColumns}
         customTableProps={{

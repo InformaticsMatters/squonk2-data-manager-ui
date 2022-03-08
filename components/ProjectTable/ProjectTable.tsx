@@ -1,10 +1,20 @@
 import { useCallback, useMemo } from 'react';
+import type { DropzoneState } from 'react-dropzone';
 import type { Cell, CellProps, Column, PluginHook } from 'react-table';
 
 import type { ProjectDetail } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
-import { Breadcrumbs, CircularProgress, Link, Typography, useTheme } from '@material-ui/core';
+import {
+  Breadcrumbs,
+  CircularProgress,
+  Grid,
+  IconButton,
+  Link,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
+import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
 import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
 import fileSize from 'filesize';
 import dynamic from 'next/dynamic';
@@ -28,17 +38,21 @@ const FileActions = dynamic<FileActionsProps>(
   },
 );
 
-export interface ProjectTable {
+export interface ProjectTableProps {
   /**
    * Project detailing the files to be displayed
    */
   currentProject: ProjectDetail;
+  /**
+   * Functions that returns props for an input element that opens the file selection UI
+   */
+  openUploadDialog: DropzoneState['open'];
 }
 
 /**
  * Data table displaying a project's files with actions to manage the files.
  */
-export const ProjectTable = ({ currentProject }: ProjectTable) => {
+export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableProps) => {
   const theme = useTheme();
 
   const router = useRouter();
@@ -162,29 +176,49 @@ export const ProjectTable = ({ currentProject }: ProjectTable) => {
       isError={isError}
       isLoading={isLoading}
       ToolbarChild={
-        <Breadcrumbs>
-          {['root', ...breadcrumbs].map((path, pathIndex) =>
-            pathIndex < breadcrumbs.length ? (
-              <NextLink
-                passHref
-                href={{
-                  pathname: router.pathname,
-                  query: {
-                    project: currentProject.project_id,
-                    path: breadcrumbs.slice(0, pathIndex),
-                  },
-                }}
-                key={`${pathIndex}-${path}`}
-              >
-                <Link color="inherit" component="button" variant="body1">
-                  {path}
-                </Link>
-              </NextLink>
-            ) : (
-              <Typography key={`${pathIndex}-${path}`}>{path}</Typography>
-            ),
-          )}
-        </Breadcrumbs>
+        <Grid container>
+          <Grid
+            item
+            css={css`
+              display: flex;
+              align-items: center;
+            `}
+          >
+            <Breadcrumbs>
+              {['root', ...breadcrumbs].map((path, pathIndex) =>
+                pathIndex < breadcrumbs.length ? (
+                  <NextLink
+                    passHref
+                    href={{
+                      pathname: router.pathname,
+                      query: {
+                        project: currentProject.project_id,
+                        path: breadcrumbs.slice(0, pathIndex),
+                      },
+                    }}
+                    key={`${pathIndex}-${path}`}
+                  >
+                    <Link color="inherit" component="button" variant="body1">
+                      {path}
+                    </Link>
+                  </NextLink>
+                ) : (
+                  <Typography key={`${pathIndex}-${path}`}>{path}</Typography>
+                ),
+              )}
+            </Breadcrumbs>
+          </Grid>
+          <Grid
+            item
+            css={css`
+              margin-left: auto;
+            `}
+          >
+            <IconButton onClick={openUploadDialog}>
+              <CloudUploadRoundedIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
       }
       useActionsColumnPlugin={useActionsColumnPlugin}
     />

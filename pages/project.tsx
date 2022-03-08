@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { CenterLoader } from '../components/CenterLoader';
 import Layout from '../components/Layout';
 import { ProjectTable } from '../components/ProjectTable';
+import { ProjectFileUpload } from '../components/ProjectTable/ProjectFileUpload';
 import { OrganisationAutocomplete } from '../components/userContext/OrganisationAutocomplete';
 import { ProjectAutocomplete } from '../components/userContext/ProjectAutocomplete';
 import { UnitAutocomplete } from '../components/userContext/UnitAutocomplete';
@@ -33,30 +34,36 @@ const Project = () => {
             {isLoading ? (
               <CenterLoader />
             ) : currentProject ? (
-              <Grid
-                container
-                css={css`
-                  display: flex;
-                  align-items: center;
-                `}
-              >
-                <Grid item md={6} xs={12}>
-                  <Typography
-                    gutterBottom
-                    component="h1"
-                    css={css`
-                      word-break: break-all;
-                    `}
-                    variant={currentProject.name.length > 16 ? 'h2' : 'h1'}
-                  >
-                    Project: {currentProject.name}
-                  </Typography>
+              <>
+                <Grid
+                  container
+                  css={css`
+                    display: flex;
+                    align-items: center;
+                  `}
+                >
+                  <Grid item md={6} xs={12}>
+                    <Typography
+                      gutterBottom
+                      component="h1"
+                      css={css`
+                        word-break: break-all;
+                      `}
+                      variant={currentProject.name.length > 16 ? 'h2' : 'h1'}
+                    >
+                      Project: {currentProject.name}
+                    </Typography>
+                  </Grid>
+                  <Grid item md={6} xs={12}>
+                    <ProjectAutocomplete size="medium" />
+                  </Grid>
                 </Grid>
-                <Grid item md={6} xs={12}>
-                  <ProjectAutocomplete size="medium" />
-                </Grid>
-                <ProjectTable currentProject={currentProject} />
-              </Grid>
+                <ProjectFileUpload>
+                  {(open) => (
+                    <ProjectTable currentProject={currentProject} openUploadDialog={open} />
+                  )}
+                </ProjectFileUpload>
+              </>
             ) : (
               <div
                 css={css`

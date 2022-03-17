@@ -1,9 +1,4 @@
-import type {
-  InstanceGetResponse,
-  TaskEvent,
-  TaskGetResponse,
-  TaskState,
-} from '@squonk/data-manager-client';
+import type { TaskEvent, TaskGetResponse, TaskState } from '@squonk/data-manager-client';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -29,12 +24,7 @@ export interface TimeLineProps {
   /**
    * states or events of tasks or instances
    */
-  states: NonNullable<
-    | InstanceGetResponse['states']
-    | InstanceGetResponse['events']
-    | TaskGetResponse['states']
-    | TaskGetResponse['events']
-  >;
+  states: NonNullable<TaskGetResponse['states'] | TaskGetResponse['events']>;
 }
 
 /**

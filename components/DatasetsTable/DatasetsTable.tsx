@@ -78,14 +78,8 @@ export const DatasetsTable = () => {
         accessor: 'editors',
         Header: 'Editors',
         sortType: editorsSorter,
-        Cell: ({ value: editors, row }) => {
-          return (
-            <>
-              <i>{row.original.owner}</i>
-              {editors.length > 1 && ', '}
-              {editors.filter((editor) => editor !== row.original.owner).join(', ')}
-            </>
-          );
+        Cell: ({ value: editors }) => {
+          return editors.join(', ');
         },
       },
       {
@@ -131,6 +125,7 @@ export const DatasetsTable = () => {
             datasetSummary: dataset,
             datasetVersion: version,
             subRows: [],
+            owner: version.owner,
           })),
         };
       }) || [],

@@ -86,7 +86,7 @@ const Executions = () => {
       <Head>
         <title>Squonk | Executions</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
+      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(' ')}>
         <Layout>
           <Container>
             <Grid
@@ -138,14 +138,14 @@ const Executions = () => {
               {isApplicationsError && (
                 <Grid item xs={12}>
                   <Alert severity="warning">
-                    Applications failed to load ({applicationsError?.response?.status})
+                    Applications failed to load ({applicationsError.response?.status})
                   </Alert>
                 </Grid>
               )}
               {isJobsError && (
                 <Grid item xs={12}>
                   <Alert severity="warning">
-                    Jobs failed to load ({jobsError?.response?.status})
+                    Jobs failed to load ({jobsError.response?.status})
                   </Alert>
                 </Grid>
               )}

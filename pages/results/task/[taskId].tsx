@@ -55,7 +55,7 @@ const Result = () => {
                 </IconButton>
               </Tooltip>
             </div>
-            {isError && error ? (
+            {isError ? (
               <Alert severity="error">{getErrorMessage(error)}</Alert>
             ) : isLoading || task === undefined ? (
               <CenterLoader />

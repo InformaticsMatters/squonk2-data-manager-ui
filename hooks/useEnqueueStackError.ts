@@ -9,14 +9,12 @@ export const useEnqueueError = <TError>() => {
   const enqueueError = (error: any) => {
     if ((error as AxiosError<TError>).isAxiosError) {
       // Axios errors propagate the API error
-      enqueueSnackbar(getErrorMessage(error), {
-        variant: 'error',
-      });
+      enqueueSnackbar(getErrorMessage(error), { variant: 'error' });
+    } else if (typeof error === 'string') {
+      enqueueSnackbar(error, { variant: 'error' });
     } else {
       // Anything else
-      enqueueSnackbar(getErrorMessage('An unknown error occurred'), {
-        variant: 'error',
-      });
+      enqueueSnackbar('An unknown error occurred', { variant: 'error' });
     }
   };
 

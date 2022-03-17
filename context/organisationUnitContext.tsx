@@ -130,3 +130,13 @@ export const OrganisationUnitProvider: React.FC = ({ children }) => {
 export const useOrganisationUnit = () => {
   return useContext(OrganisationUnitContext);
 };
+
+export const useCurrentOrg = () => {
+  const { organisationUnit } = useOrganisationUnit();
+  return organisationUnit.organisation;
+};
+
+export const useCurrentUnit = () => {
+  const { organisationUnit } = useOrganisationUnit();
+  return organisationUnit.unit;
+};

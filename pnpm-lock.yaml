@@ -14,8 +14,8 @@ specifiers:
   '@rjsf/core': 3.2.1
   '@rjsf/material-ui': 3.2.1
   '@sentry/nextjs': 6.18.1
-  '@squonk/account-server-client': 0.1.16-rc.1
-  '@squonk/data-manager-client': 0.6.28-rc.6
+  '@squonk/account-server-client': 0.1.20-rc.1
+  '@squonk/data-manager-client': 0.7.0-beta.5
   '@squonk/eslint-config': 0.2.0
   '@squonk/mui-theme': 2.0.1
   '@types/lodash-es': 4.17.6
@@ -78,8 +78,8 @@ dependencies:
   '@material-ui/lab': 4.0.0-alpha.60_559d47d5a56c16e6435ddc61509dee08
   '@rjsf/core': 3.2.1_react@17.0.2
   '@rjsf/material-ui': 3.2.1_b9a03db79b8e536d82a37ca5ad601d41
-  '@squonk/account-server-client': 0.1.16-rc.1_axios@0.26.0+react-query@3.34.16
-  '@squonk/data-manager-client': 0.6.28-rc.6_axios@0.26.0+react-query@3.34.16
+  '@squonk/account-server-client': 0.1.20-rc.1_axios@0.26.0+react-query@3.34.16
+  '@squonk/data-manager-client': 0.7.0-beta.5_axios@0.26.0+react-query@3.34.16
   '@squonk/mui-theme': 2.0.1_@material-ui+core@4.12.3
   axios: 0.26.0
   dayjs: 1.10.8
@@ -1483,8 +1483,8 @@ packages:
     resolution: {integrity: sha512-VkE3KLBmJwcCaVARtQpfuKcKv8gcBmUubrfHGF84dXuuW6jgsRYxPtzcIhPyK9WAPpRt2/xY6zkD9MnRaJzSyw==}
     engines: {node: '>=10'}
 
-  /@squonk/account-server-client/0.1.16-rc.1_axios@0.26.0+react-query@3.34.16:
-    resolution: {integrity: sha512-ehzNX9E/mivDB47yaEPw+a78578K5xoRE6387KJIpR4Zd6SrUccZ0r/NLXue09bGcm4igXQY8B6KwgsVEXAIKQ==}
+  /@squonk/account-server-client/0.1.20-rc.1_axios@0.26.0+react-query@3.34.16:
+    resolution: {integrity: sha512-qfsoZf9FaQ0/bsvCOa1fsQBD/ye3/FcojE5Db3GKZXZUXMmYZox5DmDsRgJ/gfckCIxxf35J8uSMbqQqXP7h+A==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
@@ -1493,8 +1493,8 @@ packages:
       react-query: 3.34.16_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/data-manager-client/0.6.28-rc.6_axios@0.26.0+react-query@3.34.16:
-    resolution: {integrity: sha512-AnBPeS6C5Iu8Bo0F9RhXmhIK79M8k03OWv+UIl+2TnwHbWd8WJWC+Sgslj16cgx1qEf5ahqMeRcB/HbZ46KQ/Q==}
+  /@squonk/data-manager-client/0.7.0-beta.5_axios@0.26.0+react-query@3.34.16:
+    resolution: {integrity: sha512-9IdpLtdYbopaJEnkDwy3c6QvQvbXtFtDfG6u+ib/zzJO94ePamFjBGXCqXXw1b5IyKX0zo+a5gbmQv4AtFi2Sw==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'

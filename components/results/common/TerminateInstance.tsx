@@ -53,7 +53,7 @@ export const TerminateInstance = ({ instance, onTermination }: TerminateInstance
         <Button onClick={openModal}>
           {/* Instances in an end state are deleted but others are still running so are terminated.
           It's all the same to the API though. */}
-          {['FAILURE', 'SUCCESS'].includes(instance.state) ? 'Delete' : 'Terminate'}
+          {['Completed', 'Failed'].includes(instance.phase) ? 'Delete' : 'Terminate'}
         </Button>
       )}
     </WarningDeleteButton>

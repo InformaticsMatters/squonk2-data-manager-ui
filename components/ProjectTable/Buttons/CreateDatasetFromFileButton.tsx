@@ -9,10 +9,10 @@ import {
 import { IconButton, Tooltip } from '@material-ui/core';
 import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
 
+import { useCurrentOrg, useCurrentUnit } from '../../../context/organisationUnitContext';
 import type { ProjectId } from '../../../hooks/projectHooks';
 import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { useMimeTypeLookup } from '../../../hooks/useMimeTypeLookup';
-import { ORG_ID, UNIT_ID } from '../../../utils/ASIdentities';
 import type { TableFile } from '../types';
 
 export interface CreateDatasetFromFileButtonProps {
@@ -43,12 +43,15 @@ export const CreateDatasetFromFileButton = ({
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
+  const unit = useCurrentUnit();
+  const org = useCurrentOrg();
+
   return (
     <Tooltip title="Create a dataset from this managed file">
       <IconButton
         size="small"
         onClick={async () => {
-          if (projectId && file.fullPath) {
+          if (projectId && file.fullPath && org && unit) {
             // Get file extensions from the file name
             const [, ...extensions] = file.fileName.split('.');
             // Convert the extension to a mime-type
@@ -67,8 +70,8 @@ export const CreateDatasetFromFileButton = ({
                   file_name: file.fileName,
                   path,
                   dataset_type: mimeType,
-                  organisation_id: ORG_ID,
-                  unit_id: UNIT_ID,
+                  organisation_id: org.id,
+                  unit_id: unit.id,
                 },
               });
 

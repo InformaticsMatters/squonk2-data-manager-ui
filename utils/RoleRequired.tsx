@@ -17,7 +17,7 @@ export interface RoleRequiredProps {
 export const RoleRequired: FC<RoleRequiredProps> = ({ children, roles }) => {
   const { user } = useKeycloakUser();
 
-  if ((roles ?? []).every((role) => user.roles?.includes(role))) {
+  if ((roles ?? []).every((role) => !!user.roles?.includes(role))) {
     return <div>{children}</div>;
   }
 

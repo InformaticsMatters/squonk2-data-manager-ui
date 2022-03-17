@@ -4,8 +4,6 @@ import { css } from '@emotion/react';
 import { Box, MenuItem, TextField, Typography, useTheme } from '@material-ui/core';
 
 import { DownloadButton } from '../../DownloadButton';
-import { Labels } from '../../labels/Labels';
-import { NewLabelButton } from '../../labels/NewLabelButton';
 
 export interface WorkingVersionSectionProps {
   /**
@@ -20,10 +18,6 @@ export interface WorkingVersionSectionProps {
    * Setter to set the selected version.
    */
   setVersion: (version: DatasetVersionSummary) => void;
-  /**
-   * Whether the dataset version is editable.
-   */
-  editable: boolean;
 }
 
 /**
@@ -33,7 +27,6 @@ export const WorkingVersionSection = ({
   dataset,
   version,
   setVersion,
-  editable,
 }: WorkingVersionSectionProps) => {
   const theme = useTheme();
 
@@ -79,16 +72,6 @@ export const WorkingVersionSection = ({
           />
         </div>
       </Box>
-      {/* Top level editing - operations that don't have a "submit" */}
-      {editable && (
-        <>
-          <Typography gutterBottom component="h4" variant="h5">
-            Labels{' '}
-            <NewLabelButton datasetId={dataset.dataset_id} datasetVersion={version.version} />
-          </Typography>
-          <Labels datasetId={dataset.dataset_id} datasetVersion={version} />
-        </>
-      )}
     </>
   );
 };

@@ -4,9 +4,11 @@ import { useState } from 'react';
 
 import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager-client';
 
-import { Container, Link, List } from '@material-ui/core';
+import { Container, Link, List, Typography } from '@material-ui/core';
 
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
+import { Labels } from '../../labels/Labels';
+import { NewLabelButton } from '../../labels/NewLabelButton';
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import { PageSection } from '../../PageSection';
 import { VersionInfoSection } from './VersionInfoSection/VersionInfoSection';
@@ -41,9 +43,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset, version, data
 
   const { user } = useKeycloakUser();
 
-  const isEditor = !!user.username && dataset.editors.includes(user.username);
-  const isOwner = dataset.owner === user.username;
-  const editable = isEditor || isOwner;
+  const editable = !!user.username && dataset.editors.includes(user.username);
 
   useLayoutEffect(() => {
     setSelectedVersion(version);
@@ -73,13 +73,17 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset, version, data
                 <PageSection title="Editors">
                   <ManageDatasetEditorsSection dataset={dataset} />
                 </PageSection>
+
+                <Typography gutterBottom component="h4" variant="h5">
+                  Labels <NewLabelButton datasetId={dataset.dataset_id} />
+                </Typography>
+                <Labels datasetId={dataset.dataset_id} datasetVersion={version} />
               </>
             )}
 
             <PageSection title="Working Version">
               <WorkingVersionSection
                 dataset={dataset}
-                editable={editable}
                 setVersion={setSelectedVersion}
                 version={selectedVersion}
               />

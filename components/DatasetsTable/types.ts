@@ -7,7 +7,6 @@ type TableDatasetBase = {
   labels: Record<string, string | string[]>;
   dataset_id: string;
   editors: string[];
-  owner: string;
   version?: number;
   subRows: TableDataset[];
   // Pointers
@@ -22,6 +21,7 @@ export type TableDatasetRow = TableDatasetBase & {
 export type TableDatasetSubRow = TableDatasetBase & {
   type: 'subRow';
   version: number;
+  owner?: string;
 };
 
 /**

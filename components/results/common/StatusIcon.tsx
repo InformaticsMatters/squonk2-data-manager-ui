@@ -1,6 +1,9 @@
-import type { InstanceSummaryState, TaskSummaryProcessingStage } from '@squonk/data-manager-client';
+import type {
+  InstanceGetResponsePhase,
+  TaskSummaryProcessingStage,
+} from '@squonk/data-manager-client';
 
-import { amber, green, yellow } from '@material-ui/core/colors';
+import { green, yellow } from '@material-ui/core/colors';
 import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
 import ErrorRoundedIcon from '@material-ui/icons/ErrorRounded';
 import FiberManualRecordRoundedIcon from '@material-ui/icons/FiberManualRecordRounded';
@@ -9,7 +12,7 @@ export interface StatusIconProps {
   /**
    * Task or Instance status
    */
-  state: InstanceSummaryState | TaskSummaryProcessingStage;
+  state?: TaskSummaryProcessingStage | InstanceGetResponsePhase;
 }
 
 /**
@@ -17,15 +20,17 @@ export interface StatusIconProps {
  */
 export const StatusIcon = ({ state }: StatusIconProps) => {
   switch (state) {
-    case 'PENDING':
-      return <FiberManualRecordRoundedIcon htmlColor={amber[800]} />;
-    case 'STARTED':
+    case 'COPYING':
     case 'FORMATTING':
+    case 'LOADING':
+    case 'DELETING':
+    case 'RUNNING':
+    case 'PENDING':
       return <FiberManualRecordRoundedIcon htmlColor={yellow[800]} />;
-    case 'SUCCESS':
     case 'DONE':
+    case 'COMPLETED':
+    case 'SUCCEEDED':
       return <CheckCircleRoundedIcon htmlColor={green[800]} />;
-    case 'FAILURE':
     case 'FAILED':
       return <ErrorRoundedIcon color="error" />;
     default:

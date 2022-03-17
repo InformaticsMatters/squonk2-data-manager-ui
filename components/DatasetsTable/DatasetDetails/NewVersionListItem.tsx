@@ -10,7 +10,7 @@ import { ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/co
 import { Typography } from '@material-ui/core';
 import BackupRoundedIcon from '@material-ui/icons/BackupRounded';
 
-import { ORG_ID, UNIT_ID } from '../../../utils/ASIdentities';
+import { useCurrentOrg, useCurrentUnit } from '../../../context/organisationUnitContext';
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import { Dropzone } from '../../uploads/Dropzone';
 import { FileTypeOptions } from '../../uploads/FileTypeOptions';
@@ -40,6 +40,9 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
   // State to track per-file-type options for the new dataset version
   const [optionsFormData, setOptionsFormData] = useState<FileTypeOptionsState>({});
 
+  const unit = useCurrentUnit();
+  const org = useCurrentOrg();
+
   return (
     <>
       <ListItem button onClick={() => setOpen(true)}>
@@ -62,7 +65,7 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
         onSubmit={async () => {
           const parentVersion = Math.max(...dataset.versions.map((v) => v.version));
           const parent = dataset.versions.find((version) => version.version === parentVersion);
-          if (file && parent) {
+          if (file && parent && org && unit) {
             // For consistency with the main file upload, I don't use the mutation hook here. This
             // allows reliable upload progress tracking.
             const response = await uploadDataset(
@@ -70,13 +73,12 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
                 dataset_file: file.file,
                 dataset_type: parent.type,
                 as_filename: parent.file_name,
-                parent_id: dataset.dataset_id,
-                parent_version: parentVersion,
+                dataset_id: dataset.dataset_id,
                 format_extra_variables: optionsFormData[parent.type]
                   ? JSON.stringify(optionsFormData[parent.type])
                   : undefined,
-                organisation_id: ORG_ID,
-                unit_id: UNIT_ID,
+                organisation_id: org.id,
+                unit_id: unit.id,
               },
               {
                 onUploadProgress: (progressEvent: ProgressEvent) => {

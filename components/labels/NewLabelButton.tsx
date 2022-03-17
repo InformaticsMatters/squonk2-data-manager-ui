@@ -1,7 +1,8 @@
 import { useQueryClient } from 'react-query';
 
 import type { DmError } from '@squonk/data-manager-client';
-import { getGetDatasetsQueryKey, useAddAnnotations } from '@squonk/data-manager-client/dataset';
+import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
+import { useAddMetadata } from '@squonk/data-manager-client/metadata';
 
 import { css } from '@emotion/react';
 import { Button, IconButton, Popover, Tooltip } from '@material-ui/core';
@@ -21,16 +22,12 @@ export interface NewLabelButtonProps {
    * ID of the dataset
    */
   datasetId: TableDataset['dataset_id'];
-  /**
-   * version number of the dataset under which a new label is created
-   */
-  datasetVersion: number;
 }
 
-export const NewLabelButton = ({ datasetId, datasetVersion }: NewLabelButtonProps) => {
+export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
   const theme = useTheme();
   const queryClient = useQueryClient();
-  const { mutateAsync: addAnnotations } = useAddAnnotations();
+  const { mutateAsync: addAnnotations } = useAddMetadata();
   const { enqueueError } = useEnqueueError<DmError>();
 
   const popupState = usePopupState({ variant: 'popover', popupId: `add-label-${datasetId}` });
@@ -63,13 +60,12 @@ export const NewLabelButton = ({ datasetId, datasetVersion }: NewLabelButtonProp
             try {
               await addAnnotations({
                 datasetid: datasetId,
-                datasetversion: datasetVersion,
                 data: {
-                  annotations: JSON.stringify([
+                  labels: JSON.stringify([
                     {
+                      type: 'LabelAnnotation',
                       label: label.trim().toLowerCase(),
                       value: value.trim(),
-                      type: 'LabelAnnotation',
                       active: true,
                     },
                   ]),

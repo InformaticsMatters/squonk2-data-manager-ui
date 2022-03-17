@@ -15,7 +15,7 @@ const Datasets = () => {
       <Head>
         <title>Squonk | Datasets</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
+      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(' ')}>
         <Layout>
           <Container>
             <Typography gutterBottom variant="h1">

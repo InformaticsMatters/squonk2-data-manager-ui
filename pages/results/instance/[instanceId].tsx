@@ -34,7 +34,7 @@ const Result = () => {
   return (
     <>
       <Head>
-        <title>Squonk | Instance {instance?.state}</title>
+        <title>Squonk | Instance {instance?.phase}</title>
       </Head>
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
         <Layout>

@@ -31,7 +31,6 @@ export const ResultJobCard = ({
   poll,
 }: ResultJobCardProps) => {
   const query = useInstanceRouterQuery();
-  const latestState = instance.state;
 
   const associatedProject = useProjectFromId(instance.project_id);
 
@@ -53,7 +52,7 @@ export const ResultJobCard = ({
       createdDateTime={instance.launched}
       href={{ pathname: APP_ROUTES.results.instance(instance.id), query }}
       linkTitle="Job"
-      state={latestState}
+      state={instance.phase}
     >
       <ListItem>
         <ListItemText primary={instance.name} secondary={instance.job_name} />

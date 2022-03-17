@@ -1,10 +1,10 @@
 import type { InstanceSummary } from '@squonk/data-manager-client';
 
-import { Grid, ListItem, ListItemText } from '@material-ui/core';
+import { ListItem, ListItemText } from '@material-ui/core';
 
 import { CenterLoader } from '../../CenterLoader';
 import { HorizontalList } from '../common/HorizontalList';
-import { TimeLine } from '../common/TimeLine';
+import { TaskDetails } from '../TaskDetails';
 import { usePolledInstance } from './usePolledInstance';
 
 export interface ApplicationDetailsProps {
@@ -24,6 +24,9 @@ export interface ApplicationDetailsProps {
 export const ApplicationDetails = ({ instanceId, poll }: ApplicationDetailsProps) => {
   const { data: instance } = usePolledInstance(instanceId, poll);
 
+  const tasks = instance?.tasks;
+  const task = tasks?.[tasks.length - 1];
+
   if (instance === undefined) {
     return <CenterLoader />;
   }
@@ -39,14 +42,7 @@ export const ApplicationDetails = ({ instanceId, poll }: ApplicationDetailsProps
         </ListItem>
       </HorizontalList>
 
-      <Grid container spacing={2}>
-        <Grid item sm={6} xs={12}>
-          <TimeLine states={instance.states} />
-        </Grid>
-        <Grid item sm={6} xs={12}>
-          <TimeLine states={instance.events} />
-        </Grid>
-      </Grid>
+      <TaskDetails taskId={task?.id ?? ''} />
     </>
   );
 };

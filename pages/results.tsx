@@ -107,7 +107,7 @@ const Tasks = () => {
       <Head>
         <title>Squonk | Results</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
+      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(' ')}>
         <Layout>
           <Container maxWidth="md">
             <ResultsToolbar
@@ -121,7 +121,7 @@ const Tasks = () => {
               <Grid item xs={12}>
                 {isInstancesError && (
                   <Alert severity="warning">
-                    Instances failed to load ({instancesError?.response?.status})
+                    Instances failed to load ({instancesError.response?.status})
                   </Alert>
                 )}
               </Grid>
@@ -129,7 +129,7 @@ const Tasks = () => {
               <Grid item xs={12}>
                 {isTasksError && (
                   <Alert severity="warning">
-                    Tasks failed to load ({tasksError?.response?.status})
+                    Tasks failed to load ({tasksError.response?.status})
                   </Alert>
                 )}
               </Grid>

@@ -1,7 +1,8 @@
 import { useQueryClient } from 'react-query';
 
 import type { DatasetVersionSummary, DmError } from '@squonk/data-manager-client';
-import { getGetDatasetsQueryKey, useAddAnnotations } from '@squonk/data-manager-client/dataset';
+import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
+import { useAddMetadata } from '@squonk/data-manager-client/metadata';
 
 import { Typography } from '@material-ui/core';
 
@@ -28,7 +29,7 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
   const labels = Object.entries((datasetVersion.labels ?? {}) as Record<string, string>);
 
   const queryClient = useQueryClient();
-  const { mutateAsync: addAnnotations } = useAddAnnotations();
+  const { mutateAsync: addAnnotations } = useAddMetadata();
 
   const { enqueueError } = useEnqueueError<DmError>();
 
@@ -52,9 +53,8 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
               try {
                 await addAnnotations({
                   datasetid: datasetId,
-                  datasetversion: datasetVersion.version,
                   data: {
-                    annotations: JSON.stringify([
+                    labels: JSON.stringify([
                       {
                         label,
                         value,

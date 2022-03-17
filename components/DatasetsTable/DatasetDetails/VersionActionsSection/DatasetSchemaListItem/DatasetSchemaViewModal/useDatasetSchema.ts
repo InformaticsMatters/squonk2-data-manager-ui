@@ -1,12 +1,8 @@
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import {
-  getGetSchemaQueryKey,
-  useAddAnnotations,
-  useGetSchema,
-  useUpdateMetadata,
-} from '@squonk/data-manager-client/dataset';
+import { getGetSchemaQueryKey, useGetSchema } from '@squonk/data-manager-client/dataset';
+import { useAddMetadata, useAddMetadataVersion } from '@squonk/data-manager-client/metadata';
 
 import type { TypedSchema } from './types';
 import { useEditableSchemaView } from './useEditableSchema';
@@ -27,15 +23,15 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
     isError: isUpdateMetadataError,
     error: updateMetadataError,
     reset: resetUpdateMetadata,
-    mutateAsync: mutateUpdateMetadata,
-  } = useUpdateMetadata();
+    // mutateAsync: updateMetadata,
+  } = useAddMetadata();
 
   const {
     isError: isAddAnnotationsError,
     error: addAnnotationsError,
     reset: resetAddAnnotations,
-    mutateAsync: mutateAddAnnotations,
-  } = useAddAnnotations();
+    mutateAsync: addAnnotations,
+  } = useAddMetadataVersion();
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -62,21 +58,21 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
 
     // Only update description if it was changed.
     if (description !== undefined) {
-      const data = { description };
-      promises.push(
-        mutateUpdateMetadata({
-          datasetid: datasetId,
-          datasetversion: version,
-          metaparameters: JSON.stringify(data),
-        }),
-      );
+      // const data = { description };
+      // promises.push(
+      //   updateMetadata({
+      //     datasetid: datasetId,
+      //     datasetversion: version,
+      //     metaparameters: JSON.stringify(data),
+      //   }),
+      // );
     }
 
     // Only update field definitions if they were changed.
     if (fields) {
       const data = { type: 'FieldsDescriptorAnnotation', origin: 'data-manager-api', fields };
       promises.push(
-        mutateAddAnnotations({
+        addAnnotations({
           datasetid: datasetId,
           datasetversion: version,
           data: { annotations: JSON.stringify(data) },

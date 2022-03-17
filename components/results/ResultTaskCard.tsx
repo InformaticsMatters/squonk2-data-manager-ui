@@ -12,8 +12,8 @@ import { useEnqueueError } from '../../hooks/useEnqueueStackError';
 import { ResultCard } from '../results/ResultCard';
 import { WarningDeleteButton } from '../WarningDeleteButton';
 import type { CommonProps } from './common/types';
-import type { TaskDetailsProps } from './details/TaskDetails';
-import { TaskDetails } from './details/TaskDetails';
+import type { TaskDetailsProps } from './TaskDetails';
+import { TaskDetails } from './TaskDetails';
 export interface ResultTaskCardProps extends CommonProps {
   /**
    * The task which will be displayed

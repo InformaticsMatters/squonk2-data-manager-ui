@@ -53,8 +53,8 @@ const getTimeStamp = (taskOrInstance: TaskSummary | InstanceSummary) => {
 export const ResultCards = ({ resultTypes, searchValue, instances, tasks }: ResultCardsProps) => {
   // Tasks and instances are filtered first by search value
   const cards = [
-    ...(resultTypes.includes('instance') ? instances : []).filter(({ job_name, name, state }) =>
-      search([job_name, name, state], searchValue),
+    ...(resultTypes.includes('instance') ? instances : []).filter(({ job_name, name, phase }) =>
+      search([job_name, name, phase], searchValue),
     ),
     ...(resultTypes.includes('task') ? tasks : [])
       .filter((task) => task.purpose === 'DATASET' || task.purpose === 'FILE')

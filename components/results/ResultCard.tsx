@@ -50,7 +50,7 @@ export const ResultCard: FC<ResultCardProps> = ({
           <HorizontalList>
             <ListItem>
               <ListItemIcon>
-                <StatusIcon state={state ?? 'UNKNOWN'} />
+                <StatusIcon state={state} />
               </ListItemIcon>
               <ListItemText
                 primary={

@@ -2,14 +2,14 @@ import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetInstance } from '@squonk/data-manager-client/instance';
 
 import { css } from '@emotion/react';
-import { Grid, ListItem, ListItemIcon, ListItemText, Typography } from '@material-ui/core';
+import { Grid, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import AppsRoundedIcon from '@material-ui/icons/AppsRounded';
 import WorkOutlineRoundedIcon from '@material-ui/icons/WorkOutlineRounded';
 
 import { CenterLoader } from '../../../CenterLoader';
 import { PageSection } from '../../../PageSection';
 import { HorizontalList } from '../../common/HorizontalList';
-import { TimeLine } from '../../common/TimeLine';
+import { TaskDetails } from '../../TaskDetails';
 import { JobInputSection } from './JobInputSection';
 import { JobOutputSection } from './JobOutputSection';
 import type { CommonDetailsProps } from './types';
@@ -25,7 +25,7 @@ export interface JobDetailsProps extends CommonDetailsProps {
  * Displays the details of an job based on the instance of a job
  */
 export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) => {
-  const { data: instance } = useGetInstance(instanceSummary.id, undefined, {
+  const { data: instance } = useGetInstance(instanceSummary.id, {
     query: { refetchInterval: poll ? 5000 : undefined },
   });
 
@@ -78,43 +78,10 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
         </Grid>
       </Grid>
 
-      <Grid container spacing={2}>
-        <Grid item md={4} xs={12}>
-          <Typography align="center" component="h3" variant="h6">
-            <b>States</b>
-          </Typography>
-          <TimeLine states={instance.states} />
-        </Grid>
-        <Grid
-          item
-          css={css`
-            text-align: center;
-          `}
-          md={8}
-          xs={12}
-        >
-          <Typography component="h3" variant="h6">
-            <b>Events</b>
-          </Typography>
-          {/* Some jobs are simple and are just a time-line of events */}
-          {instanceSummary.job_image_type === 'SIMPLE' ? (
-            <TimeLine states={instance.events} />
-          ) : (
-            // But next-flow jobs only give a single block of text as output so we display these
-            // in a monospace font
-            <pre
-              css={css`
-                margin: 0;
-                display: inline-block;
-                text-align: left;
-                font-family: 'Fira Mono', monospace;
-              `}
-            >
-              {instance.events[instance.events.length - 1]?.message}
-            </pre>
-          )}
-        </Grid>
-      </Grid>
+      <TaskDetails
+        eventsVariant={instanceSummary.job_image_type}
+        taskId={instance.tasks[instance.tasks.length - 1].id}
+      />
     </>
   );
 };

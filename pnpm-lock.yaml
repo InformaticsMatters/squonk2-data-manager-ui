@@ -29,7 +29,7 @@ specifiers:
   '@types/uuid': 8.3.4
   '@typescript-eslint/eslint-plugin': 5.13.0
   '@typescript-eslint/parser': 5.13.0
-  axios: 0.26.0
+  axios: 0.26.1
   dayjs: 1.10.8
   eslint: 8.10.0
   eslint-config-prettier: 8.5.0
@@ -78,10 +78,10 @@ dependencies:
   '@material-ui/lab': 4.0.0-alpha.60_559d47d5a56c16e6435ddc61509dee08
   '@rjsf/core': 3.2.1_react@17.0.2
   '@rjsf/material-ui': 3.2.1_b9a03db79b8e536d82a37ca5ad601d41
-  '@squonk/account-server-client': 0.1.20-rc.1_axios@0.26.0+react-query@3.34.16
-  '@squonk/data-manager-client': 0.7.0-beta.5_axios@0.26.0+react-query@3.34.16
+  '@squonk/account-server-client': 0.1.20-rc.1_axios@0.26.1+react-query@3.34.16
+  '@squonk/data-manager-client': 0.7.0-beta.5_axios@0.26.1+react-query@3.34.16
   '@squonk/mui-theme': 2.0.1_@material-ui+core@4.12.3
-  axios: 0.26.0
+  axios: 0.26.1
   dayjs: 1.10.8
   filesize: 8.0.7
   formik: 2.2.9_react@17.0.2
@@ -1483,23 +1483,23 @@ packages:
     resolution: {integrity: sha512-VkE3KLBmJwcCaVARtQpfuKcKv8gcBmUubrfHGF84dXuuW6jgsRYxPtzcIhPyK9WAPpRt2/xY6zkD9MnRaJzSyw==}
     engines: {node: '>=10'}
 
-  /@squonk/account-server-client/0.1.20-rc.1_axios@0.26.0+react-query@3.34.16:
+  /@squonk/account-server-client/0.1.20-rc.1_axios@0.26.1+react-query@3.34.16:
     resolution: {integrity: sha512-qfsoZf9FaQ0/bsvCOa1fsQBD/ye3/FcojE5Db3GKZXZUXMmYZox5DmDsRgJ/gfckCIxxf35J8uSMbqQqXP7h+A==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
     dependencies:
-      axios: 0.26.0
+      axios: 0.26.1
       react-query: 3.34.16_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/data-manager-client/0.7.0-beta.5_axios@0.26.0+react-query@3.34.16:
+  /@squonk/data-manager-client/0.7.0-beta.5_axios@0.26.1+react-query@3.34.16:
     resolution: {integrity: sha512-9IdpLtdYbopaJEnkDwy3c6QvQvbXtFtDfG6u+ib/zzJO94ePamFjBGXCqXXw1b5IyKX0zo+a5gbmQv4AtFi2Sw==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
     dependencies:
-      axios: 0.26.0
+      axios: 0.26.1
       react-query: 3.34.16_react-dom@17.0.2+react@17.0.2
     dev: false
 
@@ -2017,8 +2017,8 @@ packages:
     engines: {node: '>=4'}
     dev: false
 
-  /axios/0.26.0:
-    resolution: {integrity: sha512-lKoGLMYtHvFrPVt3r+RBMp9nh34N0M8zEfCWqdWZx6phynIEhQqAdydpyBAAG211zlhX9Rgu08cOamy6XjE5Og==}
+  /axios/0.26.1:
+    resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
     dependencies:
       follow-redirects: 1.14.9
     transitivePeerDependencies:

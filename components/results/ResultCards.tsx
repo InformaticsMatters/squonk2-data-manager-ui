@@ -1,12 +1,28 @@
 import type { InstanceSummary, TaskSummary } from '@squonk/data-manager-client';
 
-import { Grid, Typography } from '@material-ui/core';
+import { CircularProgress, Grid, Typography } from '@material-ui/core';
 import dayjs from 'dayjs';
+import dynamic from 'next/dynamic';
 
 import { search } from '../../utils/search';
-import { ResultApplicationCard } from './ResultApplicationCard';
-import { ResultJobCard } from './ResultJobCard';
-import { ResultTaskCard } from './ResultTaskCard';
+import type { ResultApplicationCardProps } from './ResultApplicationCard';
+import type { ResultJobCardProps } from './ResultJobCard';
+import type { ResultTaskCardProps } from './ResultTaskCard';
+
+const ResultTaskCard = dynamic<ResultTaskCardProps>(
+  () => import('./ResultTaskCard').then((mod) => mod.ResultTaskCard),
+  { loading: () => <CircularProgress size="1rem" /> },
+);
+
+const ResultJobCard = dynamic<ResultJobCardProps>(
+  () => import('./ResultJobCard').then((mod) => mod.ResultJobCard),
+  { loading: () => <CircularProgress size="1rem" /> },
+);
+
+const ResultApplicationCard = dynamic<ResultApplicationCardProps>(
+  () => import('./ResultApplicationCard').then((mod) => mod.ResultApplicationCard),
+  { loading: () => <CircularProgress size="1rem" /> },
+);
 
 export interface ResultCardsProps {
   /**

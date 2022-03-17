@@ -6,16 +6,30 @@ import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Box, Button, Container, IconButton, Tooltip, Typography } from '@material-ui/core';
 import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { CenterLoader } from '../../../components/CenterLoader';
 import Layout from '../../../components/Layout';
-import { ResultApplicationCard } from '../../../components/results/ResultApplicationCard';
-import { ResultJobCard } from '../../../components/results/ResultJobCard';
+import type { ResultApplicationCardProps } from '../../../components/results/ResultApplicationCard';
+import type { ResultJobCardProps } from '../../../components/results/ResultJobCard';
 import { APP_ROUTES } from '../../../constants/routes';
 import { RoleRequired } from '../../../utils/RoleRequired';
+
+const ResultJobCard = dynamic<ResultJobCardProps>(
+  () => import('../../../components/results/ResultJobCard').then((mod) => mod.ResultJobCard),
+  { loading: () => <CenterLoader /> },
+);
+
+const ResultApplicationCard = dynamic<ResultApplicationCardProps>(
+  () =>
+    import('../../../components/results/ResultApplicationCard').then(
+      (mod) => mod.ResultApplicationCard,
+    ),
+  { loading: () => <CenterLoader /> },
+);
 
 const Result = () => {
   const queryClient = useQueryClient();

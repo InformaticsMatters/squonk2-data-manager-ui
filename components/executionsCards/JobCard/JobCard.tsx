@@ -1,17 +1,27 @@
 import type { JobSummary } from '@squonk/data-manager-client';
 
-import { Chip, Link, Typography, useTheme } from '@material-ui/core';
+import { Chip, CircularProgress, Link, Typography, useTheme } from '@material-ui/core';
+import dynamic from 'next/dynamic';
 
-import { BaseCard } from '../../BaseCard';
+import type { BaseCardProps } from '../../BaseCard';
 import { Chips } from '../../Chips';
-import { InstancesList } from '../InstancesList';
+import type { InstancesListProps } from '../InstancesList';
 import type { RunJobButtonProps } from './RunJobButton';
-import { RunJobButton } from './RunJobButton';
 
-// TODO remove this once the doc_url attribute is in the DM API client
-type JobSummaryWithDocUrl = JobSummary & {
-  doc_url: string;
-};
+const RunJobButton = dynamic<RunJobButtonProps>(
+  () => import('./RunJobButton').then((mod) => mod.RunJobButton),
+  { loading: () => <CircularProgress size="1rem" /> },
+);
+
+const InstancesList = dynamic<InstancesListProps>(
+  () => import('../InstancesList').then((mod) => mod.InstancesList),
+  { loading: () => <CircularProgress size="1rem" /> },
+);
+
+const BaseCard = dynamic<BaseCardProps>(
+  () => import('../../BaseCard').then((mod) => mod.BaseCard),
+  { loading: () => <CircularProgress size="1rem" /> },
+);
 
 export interface ApplicationCardProps extends Pick<RunJobButtonProps, 'projectId'> {
   /**
@@ -26,45 +36,38 @@ export interface ApplicationCardProps extends Pick<RunJobButtonProps, 'projectId
  */
 export const JobCard = ({ projectId, job }: ApplicationCardProps) => {
   // TODO remove this once the doc_url attribute is in the DM API client
-  const jobSummary = job as JobSummaryWithDocUrl;
 
   const theme = useTheme();
   return (
     <BaseCard
       actions={({ setExpanded }) => (
-        <RunJobButton
-          jobId={jobSummary.id}
-          projectId={projectId}
-          onLaunch={() => setExpanded(true)}
-        />
+        <RunJobButton jobId={job.id} projectId={projectId} onLaunch={() => setExpanded(true)} />
       )}
       collapsed={
         <InstancesList
-          predicate={(instance) =>
-            instance.job_id === jobSummary.id && instance.job_job === jobSummary.job
-          }
+          predicate={(instance) => instance.job_id === job.id && instance.job_job === job.job}
         />
       }
       header={{
         color: theme.palette.primary.main,
-        subtitle: jobSummary.name,
-        avatar: jobSummary.job[0],
-        title: jobSummary.job,
+        subtitle: job.name,
+        avatar: job.job[0],
+        title: job.job,
       }}
       key={projectId} // Reset state when project changes
     >
-      <Typography gutterBottom>{jobSummary.description}</Typography>
+      <Typography gutterBottom>{job.description}</Typography>
       <Typography variant="body2">
-        {jobSummary.version} –{' '}
-        <Link href={jobSummary.doc_url} rel="noopener noreferrer" target="_blank">
+        {job.version} –{' '}
+        <Link href={job.doc_url} rel="noopener noreferrer" target="_blank">
           docs
         </Link>
       </Typography>
       <Typography gutterBottom>
-        <em>{jobSummary.category || '<none>'}</em> : {jobSummary.collection}
+        <em>{job.category || '<none>'}</em> : {job.collection}
       </Typography>
       <Chips>
-        {jobSummary.keywords?.map((word) => (
+        {job.keywords?.map((word) => (
           <Chip color="primary" key={word} label={word} size="small" variant="outlined" />
         ))}
       </Chips>

@@ -3,18 +3,38 @@ import { useGetProjects } from '@squonk/data-manager-client/project';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Box, Container, Grid, Typography } from '@material-ui/core';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Image from 'next/image';
 
 import { CenterLoader } from '../components/CenterLoader';
 import Layout from '../components/Layout';
-import { ProjectTable } from '../components/ProjectTable';
-import { ProjectFileUpload } from '../components/ProjectTable/ProjectFileUpload';
-import { OrganisationAutocomplete } from '../components/userContext/OrganisationAutocomplete';
-import { ProjectAutocomplete } from '../components/userContext/ProjectAutocomplete';
-import { UnitAutocomplete } from '../components/userContext/UnitAutocomplete';
+import type { ProjectTableProps } from '../components/ProjectTable';
+import type { ProjectFileUploadProps } from '../components/ProjectTable/ProjectFileUpload';
+import type { ProjectAutocompleteProps } from '../components/userContext/ProjectAutocomplete';
 import { useCurrentProject } from '../hooks/projectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
+
+const ProjectSelection = dynamic<unknown>(
+  () => import('../components/ProjectSelection').then((mod) => mod.ProjectSelection),
+  { loading: () => <CenterLoader /> },
+);
+
+const ProjectTable = dynamic<ProjectTableProps>(
+  () => import('../components/ProjectTable').then((mod) => mod.ProjectTable),
+  { loading: () => <CenterLoader /> },
+);
+
+const ProjectFileUpload = dynamic<ProjectFileUploadProps>(
+  () => import('../components/ProjectTable/ProjectFileUpload').then((mod) => mod.ProjectFileUpload),
+  { loading: () => <CenterLoader /> },
+);
+
+const ProjectAutocomplete = dynamic<ProjectAutocompleteProps>(
+  () =>
+    import('../components/userContext/ProjectAutocomplete').then((mod) => mod.ProjectAutocomplete),
+  { loading: () => <CenterLoader /> },
+);
 
 /**
  * The project page display and allows the user to manage files inside a project.
@@ -79,17 +99,7 @@ const Project = () => {
                   width={150}
                 />
                 <Box marginY={1}>
-                  <Grid container spacing={1}>
-                    <Grid container item alignItems="center" sm={6}>
-                      <OrganisationAutocomplete />
-                    </Grid>
-                    <Grid container item alignItems="center" sm={6}>
-                      <UnitAutocomplete />
-                    </Grid>
-                    <Grid container item alignItems="center" sm={12}>
-                      <ProjectAutocomplete size="medium" />
-                    </Grid>
-                  </Grid>
+                  <ProjectSelection />
                 </Box>
               </div>
             )}

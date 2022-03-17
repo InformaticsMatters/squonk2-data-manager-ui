@@ -1,11 +1,26 @@
 import type { ApplicationSummary } from '@squonk/data-manager-client';
 
-import { useTheme } from '@material-ui/core';
+import { CircularProgress, useTheme } from '@material-ui/core';
+import dynamic from 'next/dynamic';
 
-import { BaseCard } from '../../BaseCard';
-import { InstancesList } from '../InstancesList';
+import type { BaseCardProps } from '../../BaseCard';
+import type { InstancesListProps } from '../InstancesList';
 import type { ApplicationModalButtonProps } from './ApplicationModalButton';
-import { ApplicationModalButton } from './ApplicationModalButton';
+
+const ApplicationModalButton = dynamic<ApplicationModalButtonProps>(
+  () => import('./ApplicationModalButton').then((mod) => mod.ApplicationModalButton),
+  { loading: () => <CircularProgress size="1rem" /> },
+);
+
+const InstancesList = dynamic<InstancesListProps>(
+  () => import('../InstancesList').then((mod) => mod.InstancesList),
+  { loading: () => <CircularProgress size="1rem" /> },
+);
+
+const BaseCard = dynamic<BaseCardProps>(
+  () => import('../../BaseCard').then((mod) => mod.BaseCard),
+  { loading: () => <CircularProgress size="1rem" /> },
+);
 
 export interface ApplicationCardProps extends Pick<ApplicationModalButtonProps, 'projectId'> {
   /**

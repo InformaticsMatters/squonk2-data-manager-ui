@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Hydrate } from 'react-query/hydration';
 
@@ -32,10 +32,7 @@ export default function App({ Component, pageProps }: AppProps) {
   // ! Need resolutions in monorepo package.json for <Theme></Theme> to not cause "invalid hooks usage" error
 
   // React-Query
-  const queryClientRef = useRef<QueryClient | null>(null);
-  if (!queryClientRef.current) {
-    queryClientRef.current = new QueryClient();
-  }
+  const [queryClient] = useState(() => new QueryClient());
 
   // Material UI for SSR
   useEffect(() => {
@@ -54,7 +51,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <ColorSchemeProvider>
         <ThemeProviders>
           <UserProvider>
-            <QueryClientProvider client={queryClientRef.current}>
+            <QueryClientProvider client={queryClient}>
               <Hydrate state={pageProps.dehydratedState}>
                 <SnackbarProvider>
                   <SelectedFilesProvider>

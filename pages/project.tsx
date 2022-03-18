@@ -1,47 +1,67 @@
-import { useGetProjects } from '@squonk/data-manager-client/project';
+import { QueryClient } from 'react-query';
+import { dehydrate } from 'react-query/hydration';
 
-import { withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { getFiles, getGetFilesQueryKey } from '@squonk/data-manager-client/file';
+import { getGetProjectsQueryKey, getProjects } from '@squonk/data-manager-client/project';
+
+import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Box, Container, Grid, Typography } from '@material-ui/core';
-import dynamic from 'next/dynamic';
+import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 
-import { CenterLoader } from '../components/CenterLoader';
 import Layout from '../components/Layout';
-import type { ProjectTableProps } from '../components/ProjectTable';
-import type { ProjectFileUploadProps } from '../components/ProjectTable/ProjectFileUpload';
-import type { ProjectAutocompleteProps } from '../components/userContext/ProjectAutocomplete';
+import { ProjectSelection } from '../components/ProjectSelection';
+import { ProjectTable } from '../components/ProjectTable';
+import { ProjectFileUpload } from '../components/ProjectTable/ProjectFileUpload';
+import { ProjectAutocomplete } from '../components/userContext/ProjectAutocomplete';
 import { useCurrentProject } from '../hooks/projectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
+import { options } from '../utils/ssrQueryOptions';
 
-const ProjectSelection = dynamic<unknown>(
-  () => import('../components/ProjectSelection').then((mod) => mod.ProjectSelection),
-  { loading: () => <CenterLoader /> },
-);
+export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
+  const queryClient = new QueryClient();
 
-const ProjectTable = dynamic<ProjectTableProps>(
-  () => import('../components/ProjectTable').then((mod) => mod.ProjectTable),
-  { loading: () => <CenterLoader /> },
-);
+  try {
+    const { accessToken } = await getAccessToken(req, res);
 
-const ProjectFileUpload = dynamic<ProjectFileUploadProps>(
-  () => import('../components/ProjectTable/ProjectFileUpload').then((mod) => mod.ProjectFileUpload),
-  { loading: () => <CenterLoader /> },
-);
+    const projectId = query.project as string | undefined;
+    const path = query.path as string[] | undefined;
 
-const ProjectAutocomplete = dynamic<ProjectAutocompleteProps>(
-  () =>
-    import('../components/userContext/ProjectAutocomplete').then((mod) => mod.ProjectAutocomplete),
-  { loading: () => <CenterLoader /> },
-);
+    if (projectId && accessToken) {
+      const filesParam = { project_id: projectId, path: '/' + (path?.join('/') ?? '') };
+
+      // Prefetch some data
+      const queries = [
+        queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
+          getProjects(options(accessToken)),
+        ),
+        queryClient.prefetchQuery(getGetFilesQueryKey(filesParam), () =>
+          getFiles(filesParam, options(accessToken)),
+        ),
+      ];
+
+      // Make the queries in parallel
+      await Promise.allSettled(queries);
+    }
+  } catch (error) {
+    // TODO: smarter handling
+    console.error(error);
+  }
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+};
 
 /**
  * The project page display and allows the user to manage files inside a project.
  */
 const Project = () => {
   const currentProject = useCurrentProject();
-  const { isLoading } = useGetProjects();
 
   return (
     <>
@@ -51,9 +71,7 @@ const Project = () => {
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(' ')}>
         <Layout>
           <Container>
-            {isLoading ? (
-              <CenterLoader />
-            ) : currentProject ? (
+            {currentProject ? (
               <>
                 <Grid
                   container

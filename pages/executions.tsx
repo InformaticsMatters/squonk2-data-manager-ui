@@ -1,13 +1,21 @@
 import { useMemo } from 'react';
 import { useState } from 'react';
+import { QueryClient } from 'react-query';
+import { dehydrate } from 'react-query/hydration';
 
-import { useGetApplications } from '@squonk/data-manager-client/application';
-import { useGetJobs } from '@squonk/data-manager-client/job';
+import {
+  getApplications,
+  getGetApplicationsQueryKey,
+  useGetApplications,
+} from '@squonk/data-manager-client/application';
+import { getGetJobsQueryKey, getJobs, useGetJobs } from '@squonk/data-manager-client/job';
+import { getGetProjectsQueryKey, getProjects } from '@squonk/data-manager-client/project';
 
-import { withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
 import { Container, Grid, MenuItem, TextField, useTheme } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 
 import { CenterLoader } from '../components/CenterLoader';
@@ -18,6 +26,42 @@ import { SearchTextField } from '../components/SearchTextField';
 import { useCurrentProject } from '../hooks/projectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 import { search } from '../utils/search';
+import { options } from '../utils/ssrQueryOptions';
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
+  const queryClient = new QueryClient();
+
+  try {
+    const { accessToken } = await getAccessToken(req, res);
+
+    const projectId = query.project as string | undefined;
+
+    if (projectId && accessToken) {
+      // Prefetch some data
+      const queries = [
+        queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
+          getProjects(options(accessToken)),
+        ),
+        queryClient.prefetchQuery(getGetApplicationsQueryKey(), () =>
+          getApplications(options(accessToken)),
+        ),
+        queryClient.prefetchQuery(getGetJobsQueryKey(), () => getJobs(options(accessToken))),
+      ];
+
+      // Make the queries in parallel
+      await Promise.allSettled(queries);
+    }
+  } catch (error) {
+    // TODO: smarter handling
+    console.error(error);
+  }
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+};
 
 /**
  * Page allowing the user to run jobs and applications

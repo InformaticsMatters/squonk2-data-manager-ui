@@ -22,6 +22,7 @@ import { ResultCards } from '../components/results/ResultCards';
 import { ResultsToolbar } from '../components/results/ResultToolbar';
 import { useCurrentProjectId } from '../hooks/projectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
+import { options } from '../utils/ssrQueryOptions';
 
 // This was a SSR test/example. Not sure if we want to do SSR everywhere but probably should.
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
@@ -32,34 +33,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
 
     const projectId = query.project as string | undefined;
 
-    if (projectId) {
+    if (projectId && accessToken) {
       // Prefetch some data
       const queries = [
         queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
-          getProjects({
-            baseURL: process.env.DATA_MANAGER_API_SERVER,
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }),
+          getProjects(options(accessToken)),
         ),
 
         queryClient.prefetchQuery(getGetInstancesQueryKey({ project_id: projectId }), async () =>
-          getInstances(
-            { project_id: projectId },
-            {
-              baseURL: process.env.DATA_MANAGER_API_SERVER,
-              headers: { Authorization: `Bearer ${accessToken}` },
-            },
-          ),
+          getInstances({ project_id: projectId }, options(accessToken)),
         ),
 
         queryClient.prefetchQuery(getGetTasksQueryKey({ project_id: projectId }), () =>
-          getTasks(
-            { project_id: projectId },
-            {
-              baseURL: process.env.DATA_MANAGER_API_SERVER,
-              headers: { Authorization: `Bearer ${accessToken}` },
-            },
-          ),
+          getTasks({ project_id: projectId }, options(accessToken)),
         ),
       ];
 

@@ -15,3 +15,9 @@ export default withSentry(
     }
   }),
 );
+
+export const config = {
+  api: {
+    externalResolver: true,
+  },
+};

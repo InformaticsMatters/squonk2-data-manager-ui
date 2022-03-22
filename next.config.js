@@ -10,6 +10,14 @@ const withTM = require('next-transpile-modules')(
   { debug: false }, // Log which files get transpiled
 );
 
+const withMDX = require('@next/mdx')({
+  extension: /\.mdx?$/,
+  options: {
+    jsxImportSource: '@emotion/react',
+    providerImportSource: '@mdx-js/react',
+  },
+});
+
 const resolvePackage = (packageName) => path.resolve(__dirname, '.', 'node_modules', packageName);
 
 /**
@@ -29,21 +37,6 @@ const nextConfig = {
   },
   // Allow mdx content and mdx files as pages
   webpack(config) {
-    config.module.rules.push({
-      test: /\.mdx$/,
-      use: [
-        {
-          loader: 'xdm/webpack.cjs',
-          options: {
-            // This line allows a configurable provider to configure transformed components
-            providerImportSource: '@mdx-js/react',
-            // This line provides compatibility with the emotion css prop jsx pragma
-            jsxImportSource: '@emotion/react',
-          },
-        },
-      ],
-    });
-
     if (process.env.MONOREPO) {
       const packages = ['react', '@material-ui/core', 'react-query'];
       packages.forEach(
@@ -62,4 +55,4 @@ const sentryWebpackPluginOptions = {
 
 const moduleExports = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
 
-module.exports = withSentryConfig(moduleExports, sentryWebpackPluginOptions);
+module.exports = withMDX(withSentryConfig(moduleExports, sentryWebpackPluginOptions));

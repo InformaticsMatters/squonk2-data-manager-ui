@@ -10,6 +10,7 @@
     "dev:debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
+    "start:vercel": "node vercel.prestart.js && next start",
     "tsc": "tsc --pretty --noEmit",
     "lint": "eslint lint --max-warnings=0",
     "format": "eslint --fix --max-warnings=0",

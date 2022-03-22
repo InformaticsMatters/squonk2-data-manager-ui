@@ -10,7 +10,7 @@ const domain = 'vercel.app';
 
 const url = () => {
   if (ENV === 'production' && REPO_SLUG) {
-    return `${REPO_SLUG}.${domain}`;
+    return `data-manager-ui.${domain}`;
   }
 
   if (COMMIT_REF !== 'master' && COMMIT_REF !== 'main' && REPO_SLUG && COMMIT_REF && REPO_OWNER) {

@@ -21,6 +21,6 @@ const url = () => {
 };
 const vercel_url = url();
 
-console.log(`Deploying to ${vercel_url}`);
+console.info(`Deploying to ${vercel_url}`);
 
-fs.appendFileSync('.env', `\nVERCEL_URL="${vercel_url}"\n`);
+fs.appendFileSync('.env.local', `\nVERCEL_URL="${vercel_url}"\n`);

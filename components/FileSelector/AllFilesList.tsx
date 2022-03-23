@@ -39,30 +39,34 @@ export const AllFilesList = ({
     onSelect(getNewValue(fullPath, checked, multiple, value));
 
   const items = [
-    ...dirs.map((path) => {
-      const fullPath = getFullPath(breadcrumbs, path);
-      const type: FileOrDirectory = 'directory';
-      return {
-        fullPath,
-        key: fullPath,
-        mimeType: undefined,
-        title: path,
-        type,
-        onClick: () => setBreadcrumbs([...breadcrumbs, path]),
-        onSelect: targetType.startsWith('dir') ? handleSelect(fullPath) : undefined,
-      };
-    }),
-    ...files.map((file) => {
-      const fullPath = getFullPath(breadcrumbs, file.file_name);
-      const type: FileOrDirectory = 'file';
-      return {
-        fullPath,
-        mimeType: file.mime_type,
-        title: file.file_name,
-        type,
-        onSelect: handleSelect(fullPath),
-      };
-    }),
+    ...dirs
+      .map((path) => {
+        const fullPath = getFullPath(breadcrumbs, path);
+        const type: FileOrDirectory = 'directory';
+        return {
+          fullPath,
+          key: fullPath,
+          mimeType: undefined,
+          title: path,
+          type,
+          onClick: () => setBreadcrumbs([...breadcrumbs, path]),
+          onSelect: targetType.startsWith('dir') ? handleSelect(fullPath) : undefined,
+        };
+      })
+      .sort((dirA, dirB) => dirA.title.localeCompare(dirB.title)),
+    ...files
+      .map((file) => {
+        const fullPath = getFullPath(breadcrumbs, file.file_name);
+        const type: FileOrDirectory = 'file';
+        return {
+          fullPath,
+          mimeType: file.mime_type,
+          title: file.file_name,
+          type,
+          onSelect: handleSelect(fullPath),
+        };
+      })
+      .sort((fileA, fileB) => fileA.title.localeCompare(fileB.title)),
   ];
 
   if (isLoading) {

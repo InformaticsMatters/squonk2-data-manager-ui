@@ -47,7 +47,7 @@ export const CreateDatasetFromFileButton = ({
   const org = useCurrentOrg();
 
   return (
-    <Tooltip title="Create a dataset from this managed file">
+    <Tooltip title="Create a dataset from this unmanaged file">
       <IconButton
         size="small"
         onClick={async () => {

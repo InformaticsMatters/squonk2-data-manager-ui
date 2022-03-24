@@ -10,8 +10,7 @@ RUN addgroup -g 1001 -S nodejs && \
     apk add --no-cache libc6-compat
 
 WORKDIR /app
-COPY package.json ./
-COPY pnpm-lock.yaml ./
+COPY . .
 
 # Replace the application version (in package.json)
 # with any defined 'tag', otherwise leave it at 0.0.0.
@@ -22,8 +21,6 @@ RUN sed -i s/'"0.0.0"'/'"'${TAG:-0.0.0}'"'/ package.json && \
     head package.json && \
     npm i -g pnpm@6.30.1 && \
     pnpm i
-
-COPY . .
 
 RUN chown --recursive nextjs:nodejs .
 

@@ -90,7 +90,7 @@ export const CreateUnitListItem = () => {
             .string()
             .required('A unit name is required')
             .test(
-              'does-not-exist',
+              'does-not-exist-already',
               'The name is already used for a unit',
               (name) => name !== undefined && !units?.map((unit) => unit.name).includes(name),
             )

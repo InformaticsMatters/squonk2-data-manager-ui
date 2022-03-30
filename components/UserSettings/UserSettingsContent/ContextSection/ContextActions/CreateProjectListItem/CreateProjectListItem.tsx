@@ -103,9 +103,10 @@ export const CreateProjectListItem = () => {
         validationSchema={yup.object().shape({
           projectName: yup
             .string()
+            .matches(/^[A-Za-z0-9-_.][A-Za-z0-9-_. ]*[A-Za-z0-9-_.]$/)
             .required('A project name is required')
             .test(
-              'does-not-exist',
+              'does-not-exist-already',
               'The name is already used for a project',
               (name) =>
                 name !== undefined && !projects?.map((project) => project.name).includes(name),

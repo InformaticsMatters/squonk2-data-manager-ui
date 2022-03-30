@@ -68,7 +68,7 @@ export const JobInputFields = ({
                 multiple={!!multiple}
                 projectId={projectId}
                 targetType={type}
-                value={initialValues?.[key] || inputsData[key]}
+                value={inputsData[key] || initialValues?.[key]}
                 onSelect={(selection) => onChange({ ...inputsData, [key]: selection })}
               />
             </Grid>

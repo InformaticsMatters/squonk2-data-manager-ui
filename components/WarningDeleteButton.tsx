@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { Tooltip, Typography } from '@material-ui/core';
 
+import { useMountedState } from '../hooks/useMountedState';
 import { ModalWrapper } from './modals/ModalWrapper';
 
 export interface DeleteButtonProps {
@@ -59,6 +60,7 @@ export const WarningDeleteButton = ({
   children,
   onDelete,
 }: WarningDeleteButtonProps) => {
+  const isMounted = useMountedState();
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -78,8 +80,10 @@ export const WarningDeleteButton = ({
         onSubmit={async () => {
           setIsDeleting(true);
           await onDelete();
-          setIsDeleting(false);
-          setOpen(false);
+          if (isMounted()) {
+            setIsDeleting(false);
+            setOpen(false);
+          }
         }}
       >
         {modalChildren}

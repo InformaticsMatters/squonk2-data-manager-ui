@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMediaQuery, useTheme } from '@material-ui/core';
 
@@ -6,7 +5,6 @@ import { useIsAuthorized } from '../../hooks/useIsAuthorized';
 import { MobileNavMenu } from './MobileNavMenu';
 import { NavLinks } from './NavLinks';
 import { OUPContext } from './OUPContext';
-import { ProjectModalButton } from './ProjectModalButton';
 import { UserMenu } from './UserMenu';
 
 /**
@@ -14,7 +12,8 @@ import { UserMenu } from './UserMenu';
  */
 export const ToolbarContents = () => {
   const theme = useTheme();
-  const biggerThanSm = useMediaQuery(theme.breakpoints.up('sm'));
+  // Custom breakpoint to match width of nav links text
+  const biggerThanSm = useMediaQuery('@media (min-width:655px)');
   const biggerThanMd = useMediaQuery(theme.breakpoints.up('md'));
 
   const isAuthorized = useIsAuthorized();
@@ -36,14 +35,7 @@ export const ToolbarContents = () => {
       <>
         <NavLinks linkWidth={100} />
         <IconsWrapper>
-          <div
-            css={css`
-              margin: ${theme.spacing()}px;
-            `}
-          >
-            <ProjectModalButton />
-          </div>
-          <UserMenu />
+          <MobileNavMenu />
         </IconsWrapper>
       </>
     );

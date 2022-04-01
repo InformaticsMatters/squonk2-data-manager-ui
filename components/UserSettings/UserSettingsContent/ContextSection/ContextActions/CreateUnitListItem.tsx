@@ -1,21 +1,21 @@
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import type { AsError, UnitDetail } from '@squonk/account-server-client';
+import type { AsError } from '@squonk/account-server-client';
 import {
   getGetOrganisationUnitsQueryKey,
+  getGetUnitsQueryKey,
+  getUnit,
   useCreateOrganisationUnit,
   useGetOrganisationUnits,
 } from '@squonk/account-server-client/unit';
 
 import { Grid, ListItem, ListItemText } from '@material-ui/core';
 import { CreateNewFolder } from '@material-ui/icons';
-import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
 import * as yup from 'yup';
 
-import { AS_API_URL } from '../../../../../constants';
 import { useOrganisationUnit } from '../../../../../context/organisationUnitContext';
 import { useEnqueueError } from '../../../../../hooks/useEnqueueStackError';
 import { ModalWrapper } from '../../../../modals/ModalWrapper';
@@ -43,10 +43,9 @@ export const CreateUnitListItem = () => {
 
   const changeContext = async (organisationId: string, unitId: string) => {
     try {
-      const unitResponse = await axios.get<UnitDetail>( // TODO change this once AS client is updated
-        `${AS_API_URL}/organisation/${organisationId}/unit/${unitId}`,
-      );
-      dispatchOrganisationUnit({ type: 'setUnit', payload: unitResponse.data });
+      const unitResponse = await getUnit(organisationId, unitId);
+      // Currently, UnitDetail == UnitGetResponse so this works fine for now
+      dispatchOrganisationUnit({ type: 'setUnit', payload: unitResponse });
     } catch (error) {
       // For now only log the error, don't display anything to the user
       console.error(error);
@@ -65,7 +64,7 @@ export const CreateUnitListItem = () => {
       enqueueSnackbar('Unit created');
 
       queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id));
-      queryClient.invalidateQueries(`${AS_API_URL}/unit`); // TODO change this once AS client is updated
+      queryClient.invalidateQueries(getGetUnitsQueryKey());
 
       // Change context outside of this try-catch block
       changeContext(organisation.id, unitId);

@@ -1,44 +1,27 @@
-import { useQuery } from 'react-query';
-
-import type { AsError, OrganisationDetail, UnitDetail } from '@squonk/account-server-client';
+import { useGetUnits } from '@squonk/account-server-client/unit';
 
 import { css } from '@emotion/react';
 import { Box } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import axios from 'axios';
 
-import { AS_API_URL } from '../../../constants';
+import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
 import { BootstrapForm } from './BootstrapForm';
-
-// TODO remove these after AS client is updated
-interface OrganisationUnitsGetResponse {
-  organisation: OrganisationDetail;
-  units: UnitDetail[];
-}
-
-interface UnitsGetResponse {
-  units: OrganisationUnitsGetResponse[];
-}
-
 /**
  * Boostraps a user which doesn't have any units with a default unit and a project
  */
 export const BootstrapAlert = () => {
-  const { data: unitsData, isLoading: isLoadingUnits } = useQuery<UnitsGetResponse, AsError>(
-    `${AS_API_URL}/unit`, // TODO change this once AS client is updated
-    async () => {
-      const response = await axios.get<UnitsGetResponse>(`${AS_API_URL}/unit`); // TODO change this once AS client is updated
-      return response.data;
-    },
-  );
+  const { data: unitsData, isLoading: isLoadingUnits } = useGetUnits();
+  const { user } = useKeycloakUser();
 
-  const hasUnits = unitsData?.units.some((u) => u.units.length);
+  const userDefaultUnit = unitsData?.units
+    .find((orgUnit) => orgUnit.organisation.name === 'Default')
+    ?.units.find((unit) => unit.owner_id === user.username);
 
   if (isLoadingUnits) {
     return null;
   }
 
-  if (!hasUnits) {
+  if (!userDefaultUnit) {
     return (
       <Box m={2}>
         <Alert

@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
 
 import type {
   AsError,
@@ -6,18 +6,17 @@ import type {
   UnitProductPostBodyBodyFlavour,
 } from '@squonk/account-server-client';
 import { useCreateUnitProduct } from '@squonk/account-server-client/product';
+import { getGetUnitsQueryKey, useCreateDefaultUnit } from '@squonk/account-server-client/unit';
 import type { DmError } from '@squonk/data-manager-client';
 import { getGetProjectsQueryKey, useCreateProject } from '@squonk/data-manager-client/project';
 import { getGetUserAccountQueryKey } from '@squonk/data-manager-client/user';
 
 import { css } from '@emotion/react';
 import { Button, MenuItem, Typography, useMediaQuery, useTheme } from '@material-ui/core';
-import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
 import { TextField } from 'formik-material-ui';
 import * as yup from 'yup';
 
-import { AS_API_URL } from '../../../constants';
 import { useCurrentProjectId } from '../../../hooks/projectHooks';
 import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { useGetProjectProductTypes } from '../../../hooks/useGetProjectProductTypes';
@@ -40,10 +39,7 @@ export const BootstrapForm = () => {
     error: productTypesError,
   } = useGetProjectProductTypes();
 
-  const { mutateAsync: createUnit } = useMutation(`${AS_API_URL}/unit`, async () => {
-    const response = await axios.put(`${AS_API_URL}/unit`);
-    return response.data;
-  });
+  const { mutateAsync: createUnit } = useCreateDefaultUnit();
   const { mutateAsync: createProject } = useCreateProject();
   const { mutateAsync: createProduct } = useCreateUnitProduct();
 
@@ -74,14 +70,14 @@ export const BootstrapForm = () => {
       },
     });
 
-    enqueueSnackbar('Project created');
+    enqueueSnackbar('Project created', { variant: 'success' });
 
     // DM
     queryClient.invalidateQueries(getGetProjectsQueryKey());
     queryClient.invalidateQueries(getGetUserAccountQueryKey());
 
     // AS
-    queryClient.invalidateQueries(`${AS_API_URL}/unit`); // TODO change this once AS client is updated
+    queryClient.invalidateQueries(getGetUnitsQueryKey());
 
     setCurrentProjectId(project_id);
   };

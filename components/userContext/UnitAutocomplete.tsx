@@ -1,5 +1,11 @@
+import { useQueryClient } from 'react-query';
+
 import type { UnitDetail } from '@squonk/account-server-client';
-import { useGetOrganisationUnits } from '@squonk/account-server-client/unit';
+import {
+  getGetOrganisationUnitsQueryKey,
+  useDeleteDefaultUnit,
+  useGetOrganisationUnits,
+} from '@squonk/account-server-client/unit';
 
 import { IconButton, InputAdornment, TextField, Typography } from '@material-ui/core';
 import { DeleteForever } from '@material-ui/icons';
@@ -31,12 +37,11 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
     query: { enabled: !!organisationId },
   });
 
+  const queryClient = useQueryClient();
+  const { mutateAsync: deleteUnit } = useDeleteDefaultUnit();
+
   const { user } = useKeycloakUser();
   const isOwner = user.username === unit?.owner_id;
-
-  const handleDelete = async () => {
-    // TODO
-  };
 
   if (isError) {
     return <Typography color="error">{getErrorMessage(error)}</Typography>;
@@ -62,7 +67,11 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
                   modalId={`delete-${unit?.id}`}
                   title="Delete Unit"
                   tooltipText="Delete selected unit"
-                  onDelete={handleDelete}
+                  onDelete={async () => {
+                    dispatchOrganisationUnit({ type: 'setUnit', payload: null });
+                    await deleteUnit();
+                    queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisationId));
+                  }}
                 >
                   {({ openModal }) => (
                     <IconButton aria-label="Delete selected unit" onClick={openModal}>

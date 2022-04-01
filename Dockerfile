@@ -17,10 +17,11 @@ COPY . .
 # Then just display the head of the file for clarification.
 ARG tag=0.0.0
 ENV TAG=$tag
-RUN sed -i s/'"0.0.0"'/'"'${TAG:-0.0.0}'"'/ package.json && \
-    head package.json && \
-    npm i -g pnpm@6.30.1 && \
-    pnpm i
+RUN npm i -g pnpm@6.30.1 && \
+    pnpm i \
+    pnpm i -g json \
+    cat package.json | json -e "this.version = '${TAG:-0.0.0}'" | tee package.json \
+    head package.json
 
 RUN chown --recursive nextjs:nodejs .
 

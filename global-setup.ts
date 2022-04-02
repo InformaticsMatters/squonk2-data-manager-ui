@@ -10,7 +10,7 @@ const globalSetup = async (_config: FullConfig) => {
   const page = await browser.newPage();
   await page.goto(baseURL, { timeout: 60000 });
   await page.click('button');
-  await page.click('text=Login');
+  await page.click('text=Login', { timeout: 60000 });
 
   await page.type('input[name=username]', PW_USERNAME as string);
   await page.type('input[name=password]', PW_PASSWORD as string);

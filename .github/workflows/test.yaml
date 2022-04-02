@@ -33,8 +33,9 @@ jobs:
         AUTH0_SECRET: "LONG_RANDOM_VALUE"
         BASE_URL: "http://localhost:3000"
         BASE_PATH: "/data-manager-ui"
-        DATA_MANAGER_API_SERVER: "https://squonk.informaticsmatters.org/data-manager-api"
-        KEYCLOAK_URL: "https://squonk.informaticsmatters.org/auth"
+        DATA_MANAGER_API_SERVER: "https://data-manager.xchem-dev.diamond.ac.uk/data-manager-api"
+        ACCOUNT_SERVER_API_SERVER: "https://account-server.xchem-dev.diamond.ac.uk/account-server-api"
+        KEYCLOAK_URL: "https://keycloak.xchem-dev.diamond.ac.uk/auth/realms/xchem"
         PW_USERNAME: "dmit-user-a"
         PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
         TEST_PORT: 3000

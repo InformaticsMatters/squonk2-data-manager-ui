@@ -1,23 +1,6 @@
 ---
 name: build
 
-# Actions that take place on branches
-# or are driven by pull-requests to the main/master branch.
-# Here we build container images but don't push them
-# and therefore do not require docker credentials.
-
-# -----------------
-# Control variables (GitHub Secrets)
-# -----------------
-#
-# (n/a)
-#
-# -----------
-# Environment (GitHub Environments)
-# -----------
-#
-# Environment         (n/a)
-
 on:
   push:
     branches-ignore:
@@ -27,39 +10,6 @@ on:
     - 'master'
 
 jobs:
-  # Just a skeleton so far
-  test:
-    runs-on: ubuntu-latest
-    environment: data-manager-ui/test
-    steps:
-    - name: Setup Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
-    - run: node -v
-    - name: Checkout
-      uses: actions/checkout@v3
-    - uses: pnpm/action-setup@v2.1.0
-      with:
-        version: 6.30.1
-        run_install: true
-    - name: Setup Playwright
-      run: pnpm exec playwright install --with-deps
-    - name: Test
-      env:
-        AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
-        AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
-        DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
-        AUTH0_SECRET: "LONG_RANDOM_VALUE"
-        BASE_URL: "http://localhost:3000"
-        BASE_PATH: "/data-manager-ui"
-        DATA_MANAGER_API_SERVER: "https://squonk.informaticsmatters.org/data-manager-api"
-        KEYCLOAK_URL: "https://squonk.informaticsmatters.org/auth"
-        PW_USERNAME: "dmit-user-a"
-        PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
-        TEST_PORT: 3000
-      run: pnpm test:ci
-
   build:
     runs-on: ubuntu-latest
     steps:

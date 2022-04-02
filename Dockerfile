@@ -12,16 +12,7 @@ RUN addgroup -g 1001 -S nodejs && \
 WORKDIR /app
 COPY . .
 
-# Replace the application version (in package.json)
-# with any defined 'tag', otherwise leave it at 0.0.0.
-# Then just display the head of the file for clarification.
-ARG tag=0.0.0
-ENV TAG=$tag
-RUN npm i -g pnpm@6.30.1 && \
-    pnpm i \
-    pnpm i -g json \
-    cat package.json | json -e "this.version = '${TAG:-0.0.0}'" | tee package.json \
-    head package.json
+RUN npm i -g pnpm@6.30.1 && pnpm i
 
 RUN chown --recursive nextjs:nodejs .
 

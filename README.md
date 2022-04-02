@@ -32,6 +32,20 @@ Notable scripts:
 
 See `package.json` for all available scripts.
 
+## Testing
+
+This project uses [Playwright](https://playwright.dev/) for integration and e2e testing. To get this setup install all dependencies:
+
+```bash
+pnpm i
+pnpm exec playwright install-deps
+pnpm exec playwright install
+```
+
+Then run:
+
+- `pnpm t` to run the tests in headless
+- `pnpm test:debug` to run the tests headed in debug mode
 ### Code Quality
 
 We use a combination of `Husky`, `lint-staged` and `eslint` to format code to a standard style (see the `.eslintrc` file).

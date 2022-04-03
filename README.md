@@ -5,6 +5,8 @@
 ![build tag](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build%20tag/badge.svg)
 ![build stable](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build%20stable/badge.svg)
 
+[![test](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/actions/workflows/test.yaml/badge.svg)](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/actions/workflows/test.yaml)
+
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/InformaticsMatters/mini-apps-data-tier-ui)
 
 ## Changes

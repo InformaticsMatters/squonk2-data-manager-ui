@@ -54,7 +54,7 @@ specifiers:
   node-fetch: 3.2.3
   notistack: 1.0.10
   plotly.js-basic-dist: 2.11.1
-  prettier: 2.6.1
+  prettier: 2.6.2
   react: 17.0.2
   react-dom: 17.0.2
   react-dropzone: 12.0.4
@@ -113,7 +113,7 @@ devDependencies:
   '@next/eslint-plugin-next': 12.1.3
   '@playwright/test': 1.20.2
   '@sentry/nextjs': 6.19.3_next@12.1.3+react@17.0.2
-  '@squonk/eslint-config': 0.2.0_0fbcbacbd25ad2af07d3043f5ab6d67a
+  '@squonk/eslint-config': 0.2.0_3a40c458d2265db791a3e43aa3a36f5e
   '@types/lodash-es': 4.17.6
   '@types/node': 16.11.26
   '@types/plotly.js-basic-dist': 1.54.0
@@ -126,7 +126,7 @@ devDependencies:
   '@typescript-eslint/parser': 5.18.0_eslint@8.12.0+typescript@4.6.3
   eslint: 8.12.0
   eslint-config-prettier: 8.5.0_eslint@8.12.0
-  eslint-plugin-prettier: 4.0.0_b253a92c95b42c3296c682f11cccb3bd
+  eslint-plugin-prettier: 4.0.0_f2c91d0f54113167d2bd9214a5ab5a36
   eslint-plugin-react: 7.29.4_eslint@8.12.0
   eslint-plugin-react-hooks: 4.4.0_eslint@8.12.0
   eslint-plugin-simple-import-sort: 7.0.0_eslint@8.12.0
@@ -134,7 +134,7 @@ devDependencies:
   husky: 7.0.4
   identity-obj-proxy: 3.0.0
   lint-staged: 12.3.7
-  prettier: 2.6.1
+  prettier: 2.6.2
   sass: 1.49.11
   typescript: 4.6.3
 
@@ -1511,7 +1511,7 @@ packages:
       react-query: 3.34.19_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/eslint-config/0.2.0_0fbcbacbd25ad2af07d3043f5ab6d67a:
+  /@squonk/eslint-config/0.2.0_3a40c458d2265db791a3e43aa3a36f5e:
     resolution: {integrity: sha512-qwZ2/yAixD+yr6FPFKKg7s4fQpxtGyXI2120jUWVdbj34W3LsrHcywAAxNNToPq0kkucjpvLTFVJOGDtjFn/HA==}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^5.6.0
@@ -1529,12 +1529,12 @@ packages:
       '@typescript-eslint/parser': 5.18.0_eslint@8.12.0+typescript@4.6.3
       eslint: 8.12.0
       eslint-config-prettier: 8.5.0_eslint@8.12.0
-      eslint-plugin-prettier: 4.0.0_b253a92c95b42c3296c682f11cccb3bd
+      eslint-plugin-prettier: 4.0.0_f2c91d0f54113167d2bd9214a5ab5a36
       eslint-plugin-react: 7.29.4_eslint@8.12.0
       eslint-plugin-react-hooks: 4.4.0_eslint@8.12.0
       eslint-plugin-simple-import-sort: 7.0.0_eslint@8.12.0
       eslint-plugin-unused-imports: 2.0.0_c735c75cf6c247871ad73fdc37022bd1
-      prettier: 2.6.1
+      prettier: 2.6.2
     dev: true
 
   /@squonk/mui-theme/2.0.1_@material-ui+core@4.12.3:
@@ -2587,7 +2587,7 @@ packages:
       eslint: 8.12.0
     dev: true
 
-  /eslint-plugin-prettier/4.0.0_b253a92c95b42c3296c682f11cccb3bd:
+  /eslint-plugin-prettier/4.0.0_f2c91d0f54113167d2bd9214a5ab5a36:
     resolution: {integrity: sha512-98MqmCJ7vJodoQK359bqQWaxOE0CS8paAz/GgjaZLyex4TTk3g9HugoO89EqWCrFiOqn9EVvcoo7gZzONCWVwQ==}
     engines: {node: '>=6.0.0'}
     peerDependencies:
@@ -2600,7 +2600,7 @@ packages:
     dependencies:
       eslint: 8.12.0
       eslint-config-prettier: 8.5.0_eslint@8.12.0
-      prettier: 2.6.1
+      prettier: 2.6.2
       prettier-linter-helpers: 1.0.0
     dev: true
 
@@ -4769,8 +4769,8 @@ packages:
       fast-diff: 1.2.0
     dev: true
 
-  /prettier/2.6.1:
-    resolution: {integrity: sha512-8UVbTBYGwN37Bs9LERmxCPjdvPxlEowx2urIL6urHzdb3SDq4B/Z6xLFCblrSnE4iKWcS6ziJ3aOYrc1kz/E2A==}
+  /prettier/2.6.2:
+    resolution: {integrity: sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true

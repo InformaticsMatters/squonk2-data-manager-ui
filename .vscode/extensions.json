@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "dbaeumer.vscode-eslint",
-    "idered.npm",
     "vivaxy.vscode-conventional-commits",
     "streetsidesoftware.code-spell-checker"
   ]

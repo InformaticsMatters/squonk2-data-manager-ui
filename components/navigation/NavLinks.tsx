@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import type { ButtonProps } from '@material-ui/core';
 import { Button as MuiButton, useTheme } from '@material-ui/core';
 
+import { useIsUserAProjectOwnerOrEditor } from '../../hooks/projectHooks';
 import { NavLink } from './NavLink';
 
 export interface NavLinksProps {
@@ -16,6 +17,8 @@ export interface NavLinksProps {
 
 export const NavLinks = ({ linkWidth }: NavLinksProps) => {
   const theme = useTheme();
+
+  const isEditorOrOwner = useIsUserAProjectOwnerOrEditor();
 
   return (
     <nav
@@ -34,6 +37,10 @@ export const NavLinks = ({ linkWidth }: NavLinksProps) => {
         & div:first-of-type {
           margin-left: ${theme.spacing(8)}px;
         }
+
+        & div > a.MuiButton-root.Mui-disabled {
+          color: rgba(100, 0, 0, 0.3);
+        }
       `}
     >
       {/* Div wrappers used to give correct spacing */}
@@ -49,12 +56,20 @@ export const NavLinks = ({ linkWidth }: NavLinksProps) => {
       </div>
       <div>
         <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Executions">
-          {({ active }) => <NavButton $active={active}>Executions</NavButton>}
+          {({ active }) => (
+            <NavButton $active={active} disabled={!isEditorOrOwner}>
+              Executions
+            </NavButton>
+          )}
         </NavLink>
       </div>
       <div>
         <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Results">
-          {({ active }) => <NavButton $active={active}>Results</NavButton>}
+          {({ active }) => (
+            <NavButton $active={active} disabled={!isEditorOrOwner}>
+              Results
+            </NavButton>
+          )}
         </NavLink>
       </div>
     </nav>

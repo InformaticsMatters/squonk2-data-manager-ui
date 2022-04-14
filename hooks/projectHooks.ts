@@ -2,6 +2,8 @@ import { useGetProjects } from '@squonk/data-manager-client/project';
 
 import { useRouter } from 'next/router';
 
+import { useKeycloakUser } from './useKeycloakUser';
+
 export type ProjectId = string | undefined;
 
 /**
@@ -72,4 +74,13 @@ export const useProjectFromId = (projectId: string) => {
   const projects = data?.projects;
 
   return projects?.find((project) => project.project_id === projectId);
+};
+
+export const useIsUserAProjectOwnerOrEditor = () => {
+  const { user } = useKeycloakUser();
+  const project = useCurrentProject();
+
+  return (
+    user.username && (project?.editors.includes(user.username) || project?.owner === user.username)
+  );
 };

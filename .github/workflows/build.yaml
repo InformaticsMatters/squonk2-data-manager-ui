@@ -1,6 +1,20 @@
 ---
 name: build
 
+# Actions for any push other than onto master or any PR into master
+
+# -----------------
+# Control variables (GitHub Secrets)
+# -----------------
+#
+# None
+#
+# -----------
+# Environment (GitHub Environments)
+# -----------
+#
+# Environment         (n/a)
+
 on:
   push:
     branches-ignore:

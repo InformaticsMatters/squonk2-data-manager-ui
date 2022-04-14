@@ -3,6 +3,7 @@ import { useQueryClient } from 'react-query';
 import type { UnitDetail } from '@squonk/account-server-client';
 import {
   getGetOrganisationUnitsQueryKey,
+  getGetUnitsQueryKey,
   useDeleteDefaultUnit,
   useGetOrganisationUnits,
 } from '@squonk/account-server-client/unit';
@@ -71,6 +72,7 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
                     dispatchOrganisationUnit({ type: 'setUnit', payload: null });
                     await deleteUnit();
                     queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisationId));
+                    queryClient.invalidateQueries(getGetUnitsQueryKey());
                   }}
                 >
                   {({ openModal }) => (

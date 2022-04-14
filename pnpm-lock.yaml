@@ -25,7 +25,7 @@ specifiers:
   '@types/react': 17.0.43
   '@types/react-plotly.js': 2.5.0
   '@types/react-table': 7.7.10
-  '@types/react-virtualized': 9.21.20
+  '@types/react-virtualized': 9.21.21
   '@types/uuid': 8.3.4
   '@typescript-eslint/eslint-plugin': 5.18.0
   '@typescript-eslint/parser': 5.18.0
@@ -120,7 +120,7 @@ devDependencies:
   '@types/react': 17.0.43
   '@types/react-plotly.js': 2.5.0
   '@types/react-table': 7.7.10
-  '@types/react-virtualized': 9.21.20
+  '@types/react-virtualized': 9.21.21
   '@types/uuid': 8.3.4
   '@typescript-eslint/eslint-plugin': 5.18.0_a07dca3bdfc4bfa60f4dda0c1f9e3287
   '@typescript-eslint/parser': 5.18.0_eslint@8.12.0+typescript@4.6.3
@@ -1702,8 +1702,8 @@ packages:
       '@types/react': 17.0.43
     dev: false
 
-  /@types/react-virtualized/9.21.20:
-    resolution: {integrity: sha512-i8nZf1LpuX5rG4DZLaPGayIQwjxsZwmst5VdNhEznDTENel9p3A735AdRRp2iueFOyOuWBmaEaDxg8AD3GHilA==}
+  /@types/react-virtualized/9.21.21:
+    resolution: {integrity: sha512-Exx6I7p4Qn+BBA1SRyj/UwQlZ0I0Pq7g7uhAp0QQ4JWzZunqEqNBGTmCmMmS/3N9wFgAGWuBD16ap7k8Y14VPA==}
     dependencies:
       '@types/prop-types': 15.7.4
       '@types/react': 17.0.43

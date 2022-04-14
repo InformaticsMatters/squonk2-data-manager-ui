@@ -75,7 +75,7 @@
     "@types/react": "17.0.43",
     "@types/react-plotly.js": "2.5.0",
     "@types/react-table": "7.7.10",
-    "@types/react-virtualized": "9.21.20",
+    "@types/react-virtualized": "9.21.21",
     "@types/uuid": "8.3.4",
     "@typescript-eslint/eslint-plugin": "5.18.0",
     "@typescript-eslint/parser": "5.18.0",

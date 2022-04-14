@@ -47,3 +47,17 @@ jobs:
         tags: |
           informaticsmatters/mini-apps-data-tier-ui:${{ env.GITHUB_REF_SLUG }}
           informaticsmatters/mini-apps-data-tier-ui:stable
+
+  trigger-awx:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: awx/im-main
+    steps:
+    - uses: informaticsmatters/trigger-awx-action@v1
+      with:
+        template: Data Manager UI -production-
+        template-host: ${{ secrets.AWX_HOST }}
+        template-user: ${{ secrets.AWX_USER }}
+        template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
+        template-var: maui_image_tag
+        template-var-value: ${{ env.GITHUB_REF_SLUG }}

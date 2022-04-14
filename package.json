@@ -70,7 +70,7 @@
     "@sentry/nextjs": "6.19.6",
     "@squonk/eslint-config": "0.2.0",
     "@types/lodash-es": "4.17.6",
-    "@types/node": "16.11.26",
+    "@types/node": "16.11.27",
     "@types/plotly.js-basic-dist": "1.54.0",
     "@types/react": "17.0.43",
     "@types/react-plotly.js": "2.5.0",

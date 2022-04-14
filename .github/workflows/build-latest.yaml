@@ -46,16 +46,18 @@ jobs:
         push: true
         tags: informaticsmatters/mini-apps-data-tier-ui:latest
 
-  trigger-awx:
-    needs: build
-    runs-on: ubuntu-latest
-    environment: awx/im-main
-    steps:
-    - uses: informaticsmatters/trigger-awx-action@v1
-      with:
-        template: Data Manager UI -staging-
-        template-host: ${{ secrets.AWX_HOST }}
-        template-user: ${{ secrets.AWX_USER }}
-        template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
-        template-var: ma_image_tag
-        template-var-value: latest
+  # Staging Deployment to the designated Staging site
+  # DISABLED: WE HAVE NO STAGING SITE
+#  trigger-awx:
+#    needs: build
+#    runs-on: ubuntu-latest
+#    environment: awx/im-main
+#    steps:
+#    - uses: informaticsmatters/trigger-awx-action@v1
+#      with:
+#        template: Data Manager UI -staging-
+#        template-host: ${{ secrets.AWX_HOST }}
+#        template-user: ${{ secrets.AWX_USER }}
+#        template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
+#        template-var: maui_image_tag
+#        template-var-value: latest

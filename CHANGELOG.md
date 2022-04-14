@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/v0.1.2...v0.1.3-rc.0) (2022-04-14)
+
+
+### Features
+
+* Prevent the user from accessing the executions and project pages when the user is not an editor or owner ([b3ac115](https://github.com/InformaticsMatters/squonk-frontend/commit/b3ac1153ebe7fda029b479749736ed0e37dbcfa3))
+
+
+### Bug Fixes
+
+* **oup-context:** Fix display of bootstrap when user deletes personal unit ([41c6175](https://github.com/InformaticsMatters/squonk-frontend/commit/41c6175cf5fa96a630987dc0ed87612a5857660b)), closes [#477](https://github.com/InformaticsMatters/squonk-frontend/issues/477)
+
 ### [0.1.2](https://github.com/InformaticsMatters/squonk-frontend/compare/v0.1.2-rc.1...v0.1.2) (2022-04-13)
 
 

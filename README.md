@@ -86,14 +86,14 @@ This project uses [conventional commits](https://www.conventionalcommits.org/en/
 - **Pre-release**:
 
 ```bash
-pnpm dlx standard-version --prerelease rc
+pnpm dlx standard-version --prerelease rc -t "''"
 git push --follow-tags origin master
 ```
 
 
 - **Release**
 ```bash
-pnpm dlx standard-version
+pnpm dlx standard-version -t "''"
 git push --follow-tags origin master
 ```
 

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3-rc.1](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.0...0.1.3-rc.1) (2022-04-19)
+
+
+### Features
+
+* **project:** Persist project selection betwen sessions ([2acda31](https://github.com/InformaticsMatters/squonk-frontend/commit/2acda317eb02c2431e895c2ec0e0500150e2e495))
+
+
+### Bug Fixes
+
+* **deps:** update dependency @emotion/react to v11.9.0 ([d1620a9](https://github.com/InformaticsMatters/squonk-frontend/commit/d1620a9002564bc0ddc42071a2227c2a7d054914))
+* **deps:** update dependency react-dropzone to v12.0.5 ([22a598b](https://github.com/InformaticsMatters/squonk-frontend/commit/22a598be8036132b2ac35e64b2e32e07f1f2080e))
+* **deps:** update dependency use-immer to v0.7.0 ([adda0fd](https://github.com/InformaticsMatters/squonk-frontend/commit/adda0fd58301d2d3a02e76f065008e98968f6f11))
+
 ### [0.1.3-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/v0.1.2...v0.1.3-rc.0) (2022-04-14)
 
 

@@ -9,14 +9,17 @@ import { UserProvider } from '@auth0/nextjs-auth0';
 import { enableMapSet } from 'immer';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { SnackbarProvider } from 'notistack';
 
 import { ThemeProviders } from '../components/ThemeProviders';
-import { AS_API_URL, DM_API_URL } from '../constants';
+import { AS_API_URL, DM_API_URL, PROJECT_LOCAL_STORAGE_KEY } from '../constants';
 import { ColorSchemeProvider } from '../context/colorSchemeContext';
 import { SelectedFilesProvider } from '../context/fileSelectionContext';
 import { MDXComponentProvider } from '../context/MDXComponentProvider';
 import { OrganisationUnitProvider } from '../context/organisationUnitContext';
+import type { ProjectLocalStoragePayload } from '../hooks/projectHooks';
+import { getFromLocalStorage } from '../utils/localStorage';
 
 import '../styles/globalStyles.scss';
 
@@ -41,6 +44,19 @@ export default function App({ Component, pageProps }: AppProps) {
     if (jssStyles) {
       jssStyles.parentElement?.removeChild(jssStyles);
     }
+  }, []);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const { projectId } = getFromLocalStorage<
+      ProjectLocalStoragePayload | Record<string, undefined>
+    >(PROJECT_LOCAL_STORAGE_KEY, {});
+
+    if (projectId) {
+      router.push({ pathname: router.pathname, query: { project: projectId, ...router.query } });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

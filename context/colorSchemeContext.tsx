@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react';
 
-const STORAGE_KEY =
-  process.env.NEXT_PUBLIC_LOCAL_STORAGE_PREFIX ?? 'data-manager-ui' + '-colorScheme';
+import { COLOUR_SCHEME_STORAGE_KEY } from '../constants';
+import { getFromLocalStorage, writeToLocalStorage } from '../utils/localStorage';
 
 type Scheme = 'light' | 'dark';
 interface ColorScheme {
@@ -14,22 +14,12 @@ interface ColorSchemeState {
   setScheme: (scheme: Scheme) => void;
 }
 
-function getFromLocalStorage<StoredValue>(key: string, defaultValue: StoredValue) {
-  try {
-    const value = localStorage.getItem(STORAGE_KEY);
-    if (value !== null) {
-      return JSON.parse(value);
-    }
-    return defaultValue;
-  } catch {
-    return defaultValue;
-  }
-}
-
-const initialScheme: ColorScheme = getFromLocalStorage(STORAGE_KEY, {
+const defaultColorSchemePayload: ColorScheme = {
   version: 1,
   scheme: 'light',
-});
+};
+
+const initialScheme = getFromLocalStorage(COLOUR_SCHEME_STORAGE_KEY, defaultColorSchemePayload);
 
 const initialState: ColorSchemeState = {
   scheme: initialScheme,
@@ -48,7 +38,7 @@ export const ColorSchemeProvider: React.FC = ({ children }) => {
       value={{
         scheme,
         setScheme: (scheme) => {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, scheme }));
+          writeToLocalStorage(COLOUR_SCHEME_STORAGE_KEY, { version: 1, scheme });
           setScheme({ version: 1, scheme });
         },
       }}

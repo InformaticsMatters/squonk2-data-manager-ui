@@ -2,9 +2,12 @@ import { useGetProjects } from '@squonk/data-manager-client/project';
 
 import { useRouter } from 'next/router';
 
+import { PROJECT_LOCAL_STORAGE_KEY } from '../constants';
+import { writeToLocalStorage } from '../utils/localStorage';
 import { useKeycloakUser } from './useKeycloakUser';
 
 export type ProjectId = string | undefined;
+export type ProjectLocalStoragePayload = { projectId: ProjectId; version: number };
 
 /**
  * @returns The selected projectId from the project key of the query parameters
@@ -30,6 +33,10 @@ export const useCurrentProjectId = () => {
         undefined,
         { shallow },
       );
+      writeToLocalStorage<ProjectLocalStoragePayload>(PROJECT_LOCAL_STORAGE_KEY, {
+        version: 1,
+        projectId: newProjectId,
+      });
     } else {
       // The project has been cleared
       const newQuery = { ...router.query };

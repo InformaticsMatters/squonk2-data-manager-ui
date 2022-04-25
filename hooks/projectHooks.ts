@@ -18,6 +18,11 @@ export const useCurrentProjectId = () => {
   const projectId = router.query.project as ProjectId;
 
   const setCurrentProjectId = (newProjectId?: string, shallow?: true) => {
+    writeToLocalStorage<ProjectLocalStoragePayload>(PROJECT_LOCAL_STORAGE_KEY, {
+      version: 1,
+      projectId: newProjectId,
+    });
+
     // Selected project is maintained via the URL "project" query parameter. We use next-js to update it.
     if (newProjectId !== undefined) {
       // A project has been selected
@@ -33,10 +38,6 @@ export const useCurrentProjectId = () => {
         undefined,
         { shallow },
       );
-      writeToLocalStorage<ProjectLocalStoragePayload>(PROJECT_LOCAL_STORAGE_KEY, {
-        version: 1,
-        projectId: newProjectId,
-      });
     } else {
       // The project has been cleared
       const newQuery = { ...router.query };

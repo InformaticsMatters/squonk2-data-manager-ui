@@ -59,7 +59,7 @@ specifiers:
   react-dom: 17.0.2
   react-dropzone: 12.0.5
   react-plotly.js: 2.5.1
-  react-query: 3.34.19
+  react-query: 3.38.0
   react-table: 7.7.0
   react-virtualized: 9.22.3
   sass: 1.50.1
@@ -78,8 +78,8 @@ dependencies:
   '@mdx-js/loader': 2.1.1
   '@rjsf/core': 3.2.1_react@17.0.2
   '@rjsf/material-ui': 3.2.1_93c7b97d80172e7d1303eb5a9f074f83
-  '@squonk/account-server-client': 0.1.28_axios@0.26.1+react-query@3.34.19
-  '@squonk/data-manager-client': 0.7.7_axios@0.26.1+react-query@3.34.19
+  '@squonk/account-server-client': 0.1.28_axios@0.26.1+react-query@3.38.0
+  '@squonk/data-manager-client': 0.7.7_axios@0.26.1+react-query@3.38.0
   '@squonk/mui-theme': 2.0.1_@material-ui+core@4.12.4
   axios: 0.26.1
   dayjs: 1.11.1
@@ -100,7 +100,7 @@ dependencies:
   react-dom: 17.0.2_react@17.0.2
   react-dropzone: 12.0.5_react@17.0.2
   react-plotly.js: 2.5.1_react@17.0.2
-  react-query: 3.34.19_react-dom@17.0.2+react@17.0.2
+  react-query: 3.38.0_react-dom@17.0.2+react@17.0.2
   react-table: 7.7.0_react@17.0.2
   react-virtualized: 9.22.3_react-dom@17.0.2+react@17.0.2
   use-immer: 0.7.0_immer@9.0.12+react@17.0.2
@@ -1496,24 +1496,24 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /@squonk/account-server-client/0.1.28_axios@0.26.1+react-query@3.34.19:
+  /@squonk/account-server-client/0.1.28_axios@0.26.1+react-query@3.38.0:
     resolution: {integrity: sha512-koi438w564vEIE/cmwNhGGphA6slr8nLB2e406UAcSWresQOqlIYuYWMDYVziOLqXElZPvV1iW1UMcG2nbf2BQ==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
     dependencies:
       axios: 0.26.1
-      react-query: 3.34.19_react-dom@17.0.2+react@17.0.2
+      react-query: 3.38.0_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/data-manager-client/0.7.7_axios@0.26.1+react-query@3.34.19:
+  /@squonk/data-manager-client/0.7.7_axios@0.26.1+react-query@3.38.0:
     resolution: {integrity: sha512-DCv1ogugorE4+dvj/2A04sx4soWOBXTfbmbAjyFaPDdcmgo5zNB/KpbRT320M1hbOD4UlZh837OU0ubkUKAAJQ==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
     dependencies:
       axios: 0.26.1
-      react-query: 3.34.19_react-dom@17.0.2+react@17.0.2
+      react-query: 3.38.0_react-dom@17.0.2+react@17.0.2
     dev: false
 
   /@squonk/eslint-config/0.2.0_6ac791b26f05d69949ef2a655b562e57:
@@ -4891,10 +4891,10 @@ packages:
       react: 17.0.2
     dev: false
 
-  /react-query/3.34.19_react-dom@17.0.2+react@17.0.2:
-    resolution: {integrity: sha512-JO0Ymi58WKmvnhgg6bGIrYIeKb64KsKaPWo8JcGnmK2jJxAs2XmMBzlP75ZepSU7CHzcsWtIIyhMrLbX3pb/3w==}
+  /react-query/3.38.0_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-VRbCTRrDfC5FsB70+JfZuxFRv9SAvkZ1h36MsN8+QaDN+NWB6s1vJndqpoLQnJqN0COTG2zsInMq0KFdYze6TA==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: '*'
       react-native: '*'
     peerDependenciesMeta:

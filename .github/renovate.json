@@ -2,7 +2,8 @@
   "dependencyDashboardAutoclose": true,
   "extends": [
     ":disableRateLimiting",
-    "config:js-app"
+    "config:js-app",
+    ":semanticCommitTypeAll(chore)"
   ],
   "labels": [
     "dependencies"

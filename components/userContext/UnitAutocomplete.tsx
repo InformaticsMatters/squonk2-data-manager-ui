@@ -1,6 +1,6 @@
 import { useQueryClient } from 'react-query';
 
-import type { UnitDetail } from '@squonk/account-server-client';
+import type { UnitGetResponse } from '@squonk/account-server-client';
 import {
   getGetOrganisationUnitsQueryKey,
   getGetUnitsQueryKey,
@@ -20,7 +20,7 @@ import { getErrorMessage } from '../../utils/orvalError';
 import { WarningDeleteButton } from '../WarningDeleteButton';
 
 type UnitAutocompleteProps = Omit<
-  AutocompleteProps<UnitDetail, false, false, false>,
+  AutocompleteProps<UnitGetResponse, false, false, false>,
   'renderInput' | 'options'
 >;
 

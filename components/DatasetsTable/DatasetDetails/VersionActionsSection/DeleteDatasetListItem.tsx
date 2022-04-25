@@ -40,7 +40,7 @@ export const DeleteDatasetListItem = ({ datasetId, version, onDelete }: DeleteDa
       onDelete={async () => {
         onDelete();
         try {
-          await deleteDataset({ datasetid: datasetId, datasetversion: version.version });
+          await deleteDataset({ datasetId, datasetVersion: version.version });
         } catch (error) {
           enqueueError(error);
         }

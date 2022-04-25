@@ -55,10 +55,8 @@ export const CreateUnitListItem = () => {
   const create = async (name: string) => {
     if (organisation) {
       const { id: unitId } = await createOrganisationUnit({
-        orgid: organisation.id,
-        data: {
-          name,
-        },
+        orgId: organisation.id,
+        data: { name },
       });
 
       enqueueSnackbar('Unit created');

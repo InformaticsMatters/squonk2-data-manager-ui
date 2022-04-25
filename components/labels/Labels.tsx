@@ -52,7 +52,7 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
             onDelete={async () => {
               try {
                 await addAnnotations({
-                  datasetid: datasetId,
+                  datasetId,
                   data: {
                     labels: JSON.stringify([
                       {

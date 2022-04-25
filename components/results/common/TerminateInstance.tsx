@@ -35,7 +35,7 @@ export const TerminateInstance = ({ instance, onTermination }: TerminateInstance
       tooltipText="Terminate this instance"
       onDelete={async () => {
         try {
-          await terminateInstance({ instanceid: instance.id });
+          await terminateInstance({ instanceId: instance.id });
           queryClient.invalidateQueries(getGetInstancesQueryKey());
           queryClient.invalidateQueries(
             getGetInstancesQueryKey({ project_id: instance.project_id }),

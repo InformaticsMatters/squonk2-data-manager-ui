@@ -59,7 +59,7 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
           onSubmit={async ({ label, value }) => {
             try {
               await addAnnotations({
-                datasetid: datasetId,
+                datasetId,
                 data: {
                   labels: JSON.stringify([
                     {

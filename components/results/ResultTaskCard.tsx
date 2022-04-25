@@ -46,7 +46,7 @@ export const ResultTaskCard = ({ task, collapsedByDefault = true, poll }: Result
           tooltipText="Delete Task"
           onDelete={async () => {
             try {
-              await deleteTask({ taskid: task.id });
+              await deleteTask({ taskId: task.id });
               queryClient.invalidateQueries(getGetTasksQueryKey());
               queryClient.invalidateQueries(getGetTasksQueryKey({ project_id: projectId }));
 

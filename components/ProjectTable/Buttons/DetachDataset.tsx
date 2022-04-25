@@ -41,7 +41,7 @@ export const DetachDataset = ({ fileId, projectId, path }: DetachDatasetProps) =
       tooltipText="Detach File"
       onDelete={async () => {
         try {
-          await detachDataset({ fileid: fileId });
+          await detachDataset({ fileId });
           await queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
 
           enqueueSnackbar('The attached dataset was successfully detached');

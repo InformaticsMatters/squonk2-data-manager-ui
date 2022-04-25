@@ -39,7 +39,7 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
       if (projectId) {
         try {
           await uploadProjectFile({
-            projectid: projectId,
+            projectId,
             data: { as_filename: file.name, file, path },
           });
           enqueueSnackbar(`${file.name} was uploaded`, { variant: 'success' });

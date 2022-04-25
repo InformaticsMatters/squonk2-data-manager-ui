@@ -39,7 +39,7 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
 
   const deleteSelectedDatasets = async () => {
     const promises = deletableDatasets.map((dataset) =>
-      deleteDataset({ datasetid: dataset.dataset_id, datasetversion: dataset.version }),
+      deleteDataset({ datasetId: dataset.dataset_id, datasetVersion: dataset.version }),
     );
 
     const reasons = (await Promise.allSettled(promises))

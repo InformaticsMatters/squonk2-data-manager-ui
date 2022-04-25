@@ -57,7 +57,7 @@ export const CreateProjectListItem = () => {
   const create = async (projectName: string, flavour: string, serviceId: number) => {
     if (organisation && unit) {
       const { id: productId } = await createProduct({
-        unitid: unit.id,
+        unitId: unit.id,
         data: {
           name: projectName,
           type: 'DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION',

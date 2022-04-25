@@ -54,10 +54,7 @@ export const ProjectEditors = ({ project, projectProduct }: ProjectEditorsProps)
         const username = value.find((user) => !project.editors.includes(user));
         if (username) {
           try {
-            await addEditor({
-              projectid: project.project_id,
-              userid: username,
-            });
+            await addEditor({ projectId: project.project_id, userId: username });
           } catch (error) {
             enqueueError(error);
           }
@@ -72,10 +69,7 @@ export const ProjectEditors = ({ project, projectProduct }: ProjectEditorsProps)
         const username = project.editors.find((editor) => !value.includes(editor));
         if (username) {
           try {
-            await removeEditor({
-              projectid: project.project_id,
-              userid: username,
-            });
+            await removeEditor({ projectId: project.project_id, userId: username });
           } catch (error) {
             enqueueError(error);
           }

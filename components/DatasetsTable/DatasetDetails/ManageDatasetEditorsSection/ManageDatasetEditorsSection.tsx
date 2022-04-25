@@ -52,8 +52,8 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
         if (username !== undefined) {
           try {
             await removeEditor({
-              datasetid: dataset.dataset_id,
-              userid: username,
+              datasetId: dataset.dataset_id,
+              userId: username,
             });
           } catch (error) {
             enqueueError(error);
@@ -72,7 +72,7 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
         const username = value.find((user) => !dataset.editors.includes(user));
         if (username !== undefined) {
           try {
-            await addEditor({ datasetid: dataset.dataset_id, userid: username });
+            await addEditor({ datasetId: dataset.dataset_id, userId: username });
           } catch (error) {
             enqueueError(error);
           }

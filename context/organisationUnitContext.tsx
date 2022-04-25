@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { useEffect } from 'react';
 import { createContext } from 'react';
 
-import type { OrganisationDetail, UnitDetail } from '@squonk/account-server-client';
+import type { OrganisationDetail, UnitGetResponse } from '@squonk/account-server-client';
 import { useGetProduct } from '@squonk/account-server-client/product';
 
 import { useCurrentProject } from '../hooks/projectHooks';
@@ -13,7 +13,7 @@ import { useIsAuthorized } from '../hooks/useIsAuthorized';
 
 type OrganisationUnit = {
   organisation: OrganisationDetail | null;
-  unit: UnitDetail | null;
+  unit: UnitGetResponse | null;
 };
 
 type OrganisationUnitContextValue = {

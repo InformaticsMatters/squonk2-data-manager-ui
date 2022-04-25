@@ -51,7 +51,7 @@ export const BootstrapForm = () => {
     const { id: unitId, organisation_id } = await createUnit();
 
     const { id: productId } = await createProduct({
-      unitid: unitId,
+      unitId,
       data: {
         name: projectName,
         type: 'DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION',

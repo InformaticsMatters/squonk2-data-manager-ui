@@ -49,7 +49,7 @@ export const DeleteProjectButton = ({ project, projectProduct }: DeleteProjectBu
   const handleDelete = async () => {
     if (project.project_id) {
       try {
-        const { task_id } = await deleteProject({ projectid: project.project_id });
+        const { task_id } = await deleteProject({ projectId: project.project_id });
         enqueueSnackbar(`Project deletion started (task: ${task_id})`, { variant: 'info' });
 
         // If the project is currently selected, unselect it

@@ -73,8 +73,8 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
       const data = { type: 'FieldsDescriptorAnnotation', origin: 'data-manager-api', fields };
       promises.push(
         addAnnotations({
-          datasetid: datasetId,
-          datasetversion: version,
+          datasetId,
+          datasetVersion: version,
           data: { annotations: JSON.stringify(data) },
         }),
       );

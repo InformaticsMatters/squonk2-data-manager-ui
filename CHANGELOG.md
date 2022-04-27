@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3-rc.2](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.1...0.1.3-rc.2) (2022-04-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency dayjs to v1.11.1 ([e18cb85](https://github.com/InformaticsMatters/squonk-frontend/commit/e18cb850c48f28405d96890acb4d4c385515e1d2))
+* **deps:** update dependency react-query to v3.38.0 ([54d697d](https://github.com/InformaticsMatters/squonk-frontend/commit/54d697deb537ac94be2fad4fd567eef16e0cb41a))
+* **deps:** update material-ui monorepo ([3d6108c](https://github.com/InformaticsMatters/squonk-frontend/commit/3d6108c7a7e7f317e7e24b04b18dc243f6ce92b1))
+* **executions-cards:** Make disabled status of run buttons of execution cards consistent ([08d2305](https://github.com/InformaticsMatters/squonk-frontend/commit/08d2305b42b46228775b2a11a58e2911742dda9f)), closes [#499](https://github.com/InformaticsMatters/squonk-frontend/issues/499)
+* **project-selection:** Fix project not being deselected from local storage when no project is selected ([74f9372](https://github.com/InformaticsMatters/squonk-frontend/commit/74f9372d2dfdd160857ab47673549820e7b1e109))
+
 ### [0.1.3-rc.1](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.0...0.1.3-rc.1) (2022-04-19)
 
 

@@ -1,0 +1,51 @@
+---
+name: lint
+
+# Actions for any push (PR) onto (into) to master
+
+# -----------------
+# Control variables (GitHub Secrets)
+# -----------------
+#
+# At the GitHub 'organisation' or 'project' level you must have the following
+# GitHub 'Repository Secrets' defined (i.e. via 'Settings -> Secrets'): -
+#
+# None
+#
+# -----------
+# Environment (GitHub Environments)
+# -----------
+#
+# Environment         (n/a)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    environment: data-manager-ui/test
+    steps:
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - run: node -v
+    - name: Checkout
+      uses: actions/checkout@v3
+    - uses: pnpm/action-setup@v2.2.1
+      with:
+        version: 6.32.4
+        run_install: true
+  lint:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+    - name: Lint
+      run: pnpm lint .
+  type-check:
+    runs-on: ubuntu-latest
+    needs: setup
+    - name: tsc
+      run: pnpm tsc

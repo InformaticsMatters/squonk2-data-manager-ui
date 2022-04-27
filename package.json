@@ -11,7 +11,7 @@
     "build": "next build",
     "start": "next start",
     "tsc": "tsc --pretty --noEmit",
-    "lint": "eslint --cache lint --max-warnings=0",
+    "lint": "eslint --cache --max-warnings=0",
     "format": "eslint --fix --cache --max-warnings=0",
     "format:all": "eslint --fix --cache .",
     "test": "export $(cat .env.test.local | xargs) && playwright test",

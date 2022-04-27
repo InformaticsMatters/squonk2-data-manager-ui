@@ -14,13 +14,13 @@ specifiers:
   '@playwright/test': 1.21.1
   '@rjsf/core': 3.2.1
   '@rjsf/material-ui': 3.2.1
-  '@sentry/nextjs': 6.19.6
+  '@sentry/nextjs': 6.19.7
   '@squonk/account-server-client': 0.1.28
   '@squonk/data-manager-client': 0.7.7
   '@squonk/eslint-config': 0.2.0
   '@squonk/mui-theme': 2.0.1
   '@types/lodash-es': 4.17.6
-  '@types/node': 16.11.29
+  '@types/node': 16.11.31
   '@types/plotly.js-basic-dist': 1.54.0
   '@types/react': 17.0.44
   '@types/react-plotly.js': 2.5.0
@@ -29,13 +29,13 @@ specifiers:
   '@types/uuid': 8.3.4
   '@typescript-eslint/eslint-plugin': 5.21.0
   '@typescript-eslint/parser': 5.21.0
-  axios: 0.27.0
+  axios: 0.27.2
   dayjs: 1.11.1
   eslint: 8.14.0
   eslint-config-prettier: 8.5.0
   eslint-plugin-prettier: 4.0.0
   eslint-plugin-react: 7.29.4
-  eslint-plugin-react-hooks: 4.4.0
+  eslint-plugin-react-hooks: 4.5.0
   eslint-plugin-simple-import-sort: 7.0.0
   eslint-plugin-unused-imports: 2.0.0
   filesize: 8.0.7
@@ -45,7 +45,7 @@ specifiers:
   husky: 7.0.4
   identity-obj-proxy: 3.0.0
   immer: 9.0.12
-  lint-staged: 12.4.0
+  lint-staged: 12.4.1
   lodash-es: 4.17.21
   material-ui-popup-state: 1.9.3
   next: 12.1.5
@@ -58,7 +58,7 @@ specifiers:
   prettier: 2.6.2
   react: 17.0.2
   react-dom: 17.0.2
-  react-dropzone: 12.0.5
+  react-dropzone: 12.1.0
   react-plotly.js: 2.5.1
   react-query: 3.38.0
   react-table: 7.7.0
@@ -79,10 +79,10 @@ dependencies:
   '@mdx-js/loader': 2.1.1
   '@rjsf/core': 3.2.1_react@17.0.2
   '@rjsf/material-ui': 3.2.1_93c7b97d80172e7d1303eb5a9f074f83
-  '@squonk/account-server-client': 0.1.28_axios@0.27.0+react-query@3.38.0
-  '@squonk/data-manager-client': 0.7.7_axios@0.27.0+react-query@3.38.0
+  '@squonk/account-server-client': 0.1.28_axios@0.27.2+react-query@3.38.0
+  '@squonk/data-manager-client': 0.7.7_axios@0.27.2+react-query@3.38.0
   '@squonk/mui-theme': 2.0.1_@material-ui+core@4.12.4
-  axios: 0.27.0
+  axios: 0.27.2
   dayjs: 1.11.1
   filesize: 8.0.7
   formik: 2.2.9_react@17.0.2
@@ -100,7 +100,7 @@ dependencies:
   plotly.js-basic-dist: 2.11.1
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
-  react-dropzone: 12.0.5_react@17.0.2
+  react-dropzone: 12.1.0_react@17.0.2
   react-plotly.js: 2.5.1_react@17.0.2
   react-query: 3.38.0_react-dom@17.0.2+react@17.0.2
   react-table: 7.7.0_react@17.0.2
@@ -114,10 +114,10 @@ devDependencies:
   '@mdx-js/react': 2.1.1_react@17.0.2
   '@next/eslint-plugin-next': 12.1.5
   '@playwright/test': 1.21.1
-  '@sentry/nextjs': 6.19.6_next@12.1.5+react@17.0.2
-  '@squonk/eslint-config': 0.2.0_d1be058c3c9e2bc614edee3cbac8c353
+  '@sentry/nextjs': 6.19.7_next@12.1.5+react@17.0.2
+  '@squonk/eslint-config': 0.2.0_80e048bfd2619acef317950271ff8974
   '@types/lodash-es': 4.17.6
-  '@types/node': 16.11.29
+  '@types/node': 16.11.31
   '@types/plotly.js-basic-dist': 1.54.0
   '@types/react': 17.0.44
   '@types/react-plotly.js': 2.5.0
@@ -130,12 +130,12 @@ devDependencies:
   eslint-config-prettier: 8.5.0_eslint@8.14.0
   eslint-plugin-prettier: 4.0.0_665eb419c9d7860ca0c224f7f6dcdace
   eslint-plugin-react: 7.29.4_eslint@8.14.0
-  eslint-plugin-react-hooks: 4.4.0_eslint@8.14.0
+  eslint-plugin-react-hooks: 4.5.0_eslint@8.14.0
   eslint-plugin-simple-import-sort: 7.0.0_eslint@8.14.0
   eslint-plugin-unused-imports: 2.0.0_b8847eb0ef3f4354e97e2f7d0b3a686a
   husky: 7.0.4
   identity-obj-proxy: 3.0.0
-  lint-staged: 12.4.0
+  lint-staged: 12.4.1
   prettier: 2.6.2
   sass: 1.51.0
   typescript: 4.6.3
@@ -891,7 +891,7 @@ packages:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 16.11.29
+      '@types/node': 16.11.31
       '@types/yargs': 16.0.4
       chalk: 4.1.2
     dev: true
@@ -1320,13 +1320,13 @@ packages:
       react: 17.0.2
     dev: false
 
-  /@sentry/browser/6.19.6:
-    resolution: {integrity: sha512-V5QyY1cO1iuFCI78dOFbHV7vckbeQEPPq3a5dGSXlBQNYnd9Ec5xoxp5nRNpWQPOZ8/Ixt9IgRxdqVTkWib51g==}
+  /@sentry/browser/6.19.7:
+    resolution: {integrity: sha512-oDbklp4O3MtAM4mtuwyZLrgO1qDVYIujzNJQzXmi9YzymJCuzMLSRDvhY83NNDCRxf0pds4DShgYeZdbSyKraA==}
     engines: {node: '>=6'}
     dependencies:
-      '@sentry/core': 6.19.6
-      '@sentry/types': 6.19.6
-      '@sentry/utils': 6.19.6
+      '@sentry/core': 6.19.7
+      '@sentry/types': 6.19.7
+      '@sentry/utils': 6.19.7
       tslib: 1.14.1
     dev: true
 
@@ -1348,47 +1348,47 @@ packages:
       - supports-color
     dev: true
 
-  /@sentry/core/6.19.6:
-    resolution: {integrity: sha512-biEotGRr44/vBCOegkTfC9rwqaqRKIpFljKGyYU6/NtzMRooktqOhjmjmItNCMRknArdeaQwA8lk2jcZDXX3Og==}
+  /@sentry/core/6.19.7:
+    resolution: {integrity: sha512-tOfZ/umqB2AcHPGbIrsFLcvApdTm9ggpi/kQZFkej7kMphjT+SGBiQfYtjyg9jcRW+ilAR4JXC9BGKsdEQ+8Vw==}
     engines: {node: '>=6'}
     dependencies:
-      '@sentry/hub': 6.19.6
-      '@sentry/minimal': 6.19.6
-      '@sentry/types': 6.19.6
-      '@sentry/utils': 6.19.6
+      '@sentry/hub': 6.19.7
+      '@sentry/minimal': 6.19.7
+      '@sentry/types': 6.19.7
+      '@sentry/utils': 6.19.7
       tslib: 1.14.1
     dev: true
 
-  /@sentry/hub/6.19.6:
-    resolution: {integrity: sha512-PuEOBZxvx3bjxcXmWWZfWXG+orojQiWzv9LQXjIgroVMKM/GG4QtZbnWl1hOckUj7WtKNl4hEGO2g/6PyCV/vA==}
+  /@sentry/hub/6.19.7:
+    resolution: {integrity: sha512-y3OtbYFAqKHCWezF0EGGr5lcyI2KbaXW2Ik7Xp8Mu9TxbSTuwTe4rTntwg8ngPjUQU3SUHzgjqVB8qjiGqFXCA==}
     engines: {node: '>=6'}
     dependencies:
-      '@sentry/types': 6.19.6
-      '@sentry/utils': 6.19.6
+      '@sentry/types': 6.19.7
+      '@sentry/utils': 6.19.7
       tslib: 1.14.1
     dev: true
 
-  /@sentry/integrations/6.19.6:
-    resolution: {integrity: sha512-K2xuA/ByhTh3qfIe0/XIsQSNf1HrRuIgtkC4TbU7T0QosybtXDsh6t/EWK+qzs2RjVE+Iaqldihstpoyew1JgA==}
+  /@sentry/integrations/6.19.7:
+    resolution: {integrity: sha512-yNeeFyuygJaV7Mdc5qWuDa13xVj5mVdECaaw2Xs4pfeHaXmRfRzZY17N8ypWFegKWxKBHynyQRMD10W5pBwJvA==}
     engines: {node: '>=6'}
     dependencies:
-      '@sentry/types': 6.19.6
-      '@sentry/utils': 6.19.6
+      '@sentry/types': 6.19.7
+      '@sentry/utils': 6.19.7
       localforage: 1.10.0
       tslib: 1.14.1
     dev: true
 
-  /@sentry/minimal/6.19.6:
-    resolution: {integrity: sha512-T1NKcv+HTlmd8EbzUgnGPl4ySQGHWMCyZ8a8kXVMZOPDzphN3fVIzkYzWmSftCWp0rpabXPt9aRF2mfBKU+mAQ==}
+  /@sentry/minimal/6.19.7:
+    resolution: {integrity: sha512-wcYmSJOdvk6VAPx8IcmZgN08XTXRwRtB1aOLZm+MVHjIZIhHoBGZJYTVQS/BWjldsamj2cX3YGbGXNunaCfYJQ==}
     engines: {node: '>=6'}
     dependencies:
-      '@sentry/hub': 6.19.6
-      '@sentry/types': 6.19.6
+      '@sentry/hub': 6.19.7
+      '@sentry/types': 6.19.7
       tslib: 1.14.1
     dev: true
 
-  /@sentry/nextjs/6.19.6_next@12.1.5+react@17.0.2:
-    resolution: {integrity: sha512-xV6yj9H1Ieg4uSS4SsT1x5GvrWdifuBNLPWrneQ89kWBuPVFLLH1wZA0gvDuq6AJstRZ3A5pWI2IbwpmQzxMWQ==}
+  /@sentry/nextjs/6.19.7_next@12.1.5+react@17.0.2:
+    resolution: {integrity: sha512-029gpqhR6gHF7zfE9oxFOf3Zm68CShDu8/6azC8mwfIfJtyLC9dqztJJi48j0Uxs+sR1TEkN5Dw3wZbfWtFd8g==}
     engines: {node: '>=6'}
     peerDependencies:
       next: ^10.0.8 || ^11.0 || ^12.0
@@ -1398,13 +1398,13 @@ packages:
       webpack:
         optional: true
     dependencies:
-      '@sentry/core': 6.19.6
-      '@sentry/hub': 6.19.6
-      '@sentry/integrations': 6.19.6
-      '@sentry/node': 6.19.6
-      '@sentry/react': 6.19.6_react@17.0.2
-      '@sentry/tracing': 6.19.6
-      '@sentry/utils': 6.19.6
+      '@sentry/core': 6.19.7
+      '@sentry/hub': 6.19.7
+      '@sentry/integrations': 6.19.7
+      '@sentry/node': 6.19.7
+      '@sentry/react': 6.19.7_react@17.0.2
+      '@sentry/tracing': 6.19.7
+      '@sentry/utils': 6.19.7
       '@sentry/webpack-plugin': 1.18.8
       next: 12.1.5_1b11a9fbd6a82b51c875b786deaf2000
       react: 17.0.2
@@ -1414,14 +1414,14 @@ packages:
       - supports-color
     dev: true
 
-  /@sentry/node/6.19.6:
-    resolution: {integrity: sha512-kHQMfsy40ZxxdS9zMPmXCOOLWOJbQj6/aVSHt/L1QthYcgkAi7NJQNXnQIPWQDe8eP3DfNIWM7dc446coqjXrQ==}
+  /@sentry/node/6.19.7:
+    resolution: {integrity: sha512-gtmRC4dAXKODMpHXKfrkfvyBL3cI8y64vEi3fDD046uqYcrWdgoQsffuBbxMAizc6Ez1ia+f0Flue6p15Qaltg==}
     engines: {node: '>=6'}
     dependencies:
-      '@sentry/core': 6.19.6
-      '@sentry/hub': 6.19.6
-      '@sentry/types': 6.19.6
-      '@sentry/utils': 6.19.6
+      '@sentry/core': 6.19.7
+      '@sentry/hub': 6.19.7
+      '@sentry/types': 6.19.7
+      '@sentry/utils': 6.19.7
       cookie: 0.4.2
       https-proxy-agent: 5.0.0
       lru_map: 0.3.3
@@ -1430,42 +1430,42 @@ packages:
       - supports-color
     dev: true
 
-  /@sentry/react/6.19.6_react@17.0.2:
-    resolution: {integrity: sha512-RnWZ7clg1lRgf/JFNnTOs8ZPCv566E5CwFXXb6swyjPYUMcIn95XujDQU9SU4hXZ4qXd9BRvifxqyxvq0LMXNw==}
+  /@sentry/react/6.19.7_react@17.0.2:
+    resolution: {integrity: sha512-VzJeBg/v41jfxUYPkH2WYrKjWc4YiMLzDX0f4Zf6WkJ4v3IlDDSkX6DfmWekjTKBho6wiMkSNy2hJ1dHfGZ9jA==}
     engines: {node: '>=6'}
     peerDependencies:
       react: 15.x || 16.x || 17.x || 18.x
     dependencies:
-      '@sentry/browser': 6.19.6
-      '@sentry/minimal': 6.19.6
-      '@sentry/types': 6.19.6
-      '@sentry/utils': 6.19.6
+      '@sentry/browser': 6.19.7
+      '@sentry/minimal': 6.19.7
+      '@sentry/types': 6.19.7
+      '@sentry/utils': 6.19.7
       hoist-non-react-statics: 3.3.2
       react: 17.0.2
       tslib: 1.14.1
     dev: true
 
-  /@sentry/tracing/6.19.6:
-    resolution: {integrity: sha512-STZdlEtTBqRmPw6Vjkzi/1kGkGPgiX0zdHaSOhSeA2HXHwx7Wnfu7veMKxtKWdO+0yW9QZGYOYqp0GVf4Swujg==}
+  /@sentry/tracing/6.19.7:
+    resolution: {integrity: sha512-ol4TupNnv9Zd+bZei7B6Ygnr9N3Gp1PUrNI761QSlHtPC25xXC5ssSD3GMhBgyQrcvpuRcCFHVNNM97tN5cZiA==}
     engines: {node: '>=6'}
     dependencies:
-      '@sentry/hub': 6.19.6
-      '@sentry/minimal': 6.19.6
-      '@sentry/types': 6.19.6
-      '@sentry/utils': 6.19.6
+      '@sentry/hub': 6.19.7
+      '@sentry/minimal': 6.19.7
+      '@sentry/types': 6.19.7
+      '@sentry/utils': 6.19.7
       tslib: 1.14.1
     dev: true
 
-  /@sentry/types/6.19.6:
-    resolution: {integrity: sha512-QH34LMJidEUPZK78l+Frt3AaVFJhEmIi05Zf8WHd9/iTt+OqvCHBgq49DDr1FWFqyYWm/QgW/3bIoikFpfsXyQ==}
+  /@sentry/types/6.19.7:
+    resolution: {integrity: sha512-jH84pDYE+hHIbVnab3Hr+ZXr1v8QABfhx39KknxqKWr2l0oEItzepV0URvbEhB446lk/S/59230dlUUIBGsXbg==}
     engines: {node: '>=6'}
     dev: true
 
-  /@sentry/utils/6.19.6:
-    resolution: {integrity: sha512-fAMWcsguL0632eWrROp/vhPgI7sBj/JROWVPzpabwVkm9z3m1rQm6iLFn4qfkZL8Ozy6NVZPXOQ7EXmeU24byg==}
+  /@sentry/utils/6.19.7:
+    resolution: {integrity: sha512-z95ECmE3i9pbWoXQrD/7PgkBAzJYR+iXtPuTkpBjDKs86O3mT+PXOT3BAn79w2wkn7/i3vOGD2xVr1uiMl26dA==}
     engines: {node: '>=6'}
     dependencies:
-      '@sentry/types': 6.19.6
+      '@sentry/types': 6.19.7
       tslib: 1.14.1
     dev: true
 
@@ -1498,27 +1498,27 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /@squonk/account-server-client/0.1.28_axios@0.27.0+react-query@3.38.0:
+  /@squonk/account-server-client/0.1.28_axios@0.27.2+react-query@3.38.0:
     resolution: {integrity: sha512-koi438w564vEIE/cmwNhGGphA6slr8nLB2e406UAcSWresQOqlIYuYWMDYVziOLqXElZPvV1iW1UMcG2nbf2BQ==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
     dependencies:
-      axios: 0.27.0
+      axios: 0.27.2
       react-query: 3.38.0_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/data-manager-client/0.7.7_axios@0.27.0+react-query@3.38.0:
+  /@squonk/data-manager-client/0.7.7_axios@0.27.2+react-query@3.38.0:
     resolution: {integrity: sha512-DCv1ogugorE4+dvj/2A04sx4soWOBXTfbmbAjyFaPDdcmgo5zNB/KpbRT320M1hbOD4UlZh837OU0ubkUKAAJQ==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
     dependencies:
-      axios: 0.27.0
+      axios: 0.27.2
       react-query: 3.38.0_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/eslint-config/0.2.0_d1be058c3c9e2bc614edee3cbac8c353:
+  /@squonk/eslint-config/0.2.0_80e048bfd2619acef317950271ff8974:
     resolution: {integrity: sha512-qwZ2/yAixD+yr6FPFKKg7s4fQpxtGyXI2120jUWVdbj34W3LsrHcywAAxNNToPq0kkucjpvLTFVJOGDtjFn/HA==}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^5.6.0
@@ -1538,7 +1538,7 @@ packages:
       eslint-config-prettier: 8.5.0_eslint@8.14.0
       eslint-plugin-prettier: 4.0.0_665eb419c9d7860ca0c224f7f6dcdace
       eslint-plugin-react: 7.29.4_eslint@8.14.0
-      eslint-plugin-react-hooks: 4.4.0_eslint@8.14.0
+      eslint-plugin-react-hooks: 4.5.0_eslint@8.14.0
       eslint-plugin-simple-import-sort: 7.0.0_eslint@8.14.0
       eslint-plugin-unused-imports: 2.0.0_b8847eb0ef3f4354e97e2f7d0b3a686a
       prettier: 2.6.2
@@ -1570,7 +1570,7 @@ packages:
     dependencies:
       '@types/http-cache-semantics': 4.0.1
       '@types/keyv': 3.1.4
-      '@types/node': 16.11.29
+      '@types/node': 16.11.31
       '@types/responselike': 1.0.0
     dev: false
 
@@ -1615,7 +1615,7 @@ packages:
   /@types/http-proxy/1.17.3:
     resolution: {integrity: sha512-wIPqXANye5BbORbuh74exbwNzj+UWCwWyeEFJzUQ7Fq3W2NSAy+7x7nX1fgbEypr2/TdKqpeuxLnXWgzN533/Q==}
     dependencies:
-      '@types/node': 16.11.29
+      '@types/node': 16.11.31
     dev: false
 
   /@types/istanbul-lib-coverage/2.0.4:
@@ -1640,7 +1640,7 @@ packages:
   /@types/keyv/3.1.4:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
-      '@types/node': 16.11.29
+      '@types/node': 16.11.31
     dev: false
 
   /@types/lodash-es/4.17.6:
@@ -1669,8 +1669,8 @@ packages:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: false
 
-  /@types/node/16.11.29:
-    resolution: {integrity: sha512-9dDdonLyPJQJ/kdOlDxAah+bTI+u2ccF3k62FErhquDuggoCX6piWez7j7o6yNE+rP2IRcZVQ6Tw4N0P38+rWA==}
+  /@types/node/16.11.31:
+    resolution: {integrity: sha512-wh/d0pcu/Ie2mqTIqh4tjd0mLAB4JWxOjHQtLN20HS7sjMHiV4Afr+90hITTyZcxowwha5wjv32jGEn1zkEFMg==}
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
@@ -1726,7 +1726,7 @@ packages:
   /@types/responselike/1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
     dependencies:
-      '@types/node': 16.11.29
+      '@types/node': 16.11.31
     dev: false
 
   /@types/scheduler/0.16.2:
@@ -1758,7 +1758,7 @@ packages:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
     requiresBuild: true
     dependencies:
-      '@types/node': 16.11.29
+      '@types/node': 16.11.31
     dev: true
     optional: true
 
@@ -2036,8 +2036,8 @@ packages:
     engines: {node: '>=4'}
     dev: false
 
-  /axios/0.27.0:
-    resolution: {integrity: sha512-XV/WrPxXfzgZ8j4lcB5i6LyaXmi90yetmV/Fem0kmglGx+mpY06CiweL3YxU6wOTNLmqLUePW4G8h45nGZ/+pA==}
+  /axios/0.27.2:
+    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
       follow-redirects: 1.14.9
       form-data: 4.0.0
@@ -2628,8 +2628,8 @@ packages:
       prettier-linter-helpers: 1.0.0
     dev: true
 
-  /eslint-plugin-react-hooks/4.4.0_eslint@8.14.0:
-    resolution: {integrity: sha512-U3RVIfdzJaeKDQKEJbz5p3NW8/L80PCATJAfuojwbaEL+gBjfGdhUcGde+WGUW46Q5sr/NgxevsIiDtNXrvZaQ==}
+  /eslint-plugin-react-hooks/4.5.0_eslint@8.14.0:
+    resolution: {integrity: sha512-8k1gRt7D7h03kd+SAAlzXkQwWK22BnK6GKZG+FJA6BAGy22CFvl8kCIXKpVux0cCxMWDQUPqSok0LKaZ0aOcCw==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
@@ -2936,8 +2936,8 @@ packages:
       flat-cache: 3.0.4
     dev: true
 
-  /file-selector/0.4.0:
-    resolution: {integrity: sha512-iACCiXeMYOvZqlF1kTiYINzgepRBymz1wwjiuup9u9nayhb6g4fSwiyJ/6adli+EPwrWtpgQAh2PoS7HukEGEg==}
+  /file-selector/0.5.0:
+    resolution: {integrity: sha512-s8KNnmIDTBoD0p9uJ9uD0XY38SCeBOtj0UMXyQSLg1Ypfrfj8+dAvwsLjYQkQ2GjhVtp2HrnF5cJzMhBjfD8HA==}
     engines: {node: '>= 10'}
     dependencies:
       tslib: 2.3.1
@@ -3792,8 +3792,8 @@ packages:
   /lines-and-columns/1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
-  /lint-staged/12.4.0:
-    resolution: {integrity: sha512-3X7MR0h9b7qf4iXf/1n7RlVAx+EzpAZXoCEMhVSpaBlgKDfH2ewf+QUm7BddFyq29v4dgPP+8+uYpWuSWx035A==}
+  /lint-staged/12.4.1:
+    resolution: {integrity: sha512-PTXgzpflrQ+pODQTG116QNB+Q6uUTDg5B5HqGvNhoQSGt8Qy+MA/6zSnR8n38+sxP5TapzeQGTvoKni0KRS8Vg==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     hasBin: true
     dependencies:
@@ -4900,14 +4900,14 @@ packages:
       scheduler: 0.20.2
     dev: false
 
-  /react-dropzone/12.0.5_react@17.0.2:
-    resolution: {integrity: sha512-zUjZigD0VJ91CSm9T1h7ErxFReBLaa9sjS2dUL0+inb0RROZpSJTNDHPY1rrBES5V2NXhF8v0kghmaHc81BMFg==}
+  /react-dropzone/12.1.0_react@17.0.2:
+    resolution: {integrity: sha512-iBYHA1rbopIvtzokEX4QubO6qk5IF/x3BtKGu74rF2JkQDXnwC4uO/lHKpaw4PJIV6iIAYOlwLv2FpiGyqHNog==}
     engines: {node: '>= 10.13'}
     peerDependencies:
       react: '>= 16.8'
     dependencies:
       attr-accept: 2.2.2
-      file-selector: 0.4.0
+      file-selector: 0.5.0
       prop-types: 15.8.1
       react: 17.0.2
     dev: false

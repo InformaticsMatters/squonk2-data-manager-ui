@@ -47,5 +47,6 @@ jobs:
   type-check:
     runs-on: ubuntu-latest
     needs: setup
+    steps:
     - name: tsc
       run: pnpm tsc

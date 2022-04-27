@@ -35,7 +35,7 @@ specifiers:
   eslint-config-prettier: 8.5.0
   eslint-plugin-prettier: 4.0.0
   eslint-plugin-react: 7.29.4
-  eslint-plugin-react-hooks: 4.4.0
+  eslint-plugin-react-hooks: 4.5.0
   eslint-plugin-simple-import-sort: 7.0.0
   eslint-plugin-unused-imports: 2.0.0
   filesize: 8.0.7
@@ -115,7 +115,7 @@ devDependencies:
   '@next/eslint-plugin-next': 12.1.5
   '@playwright/test': 1.21.1
   '@sentry/nextjs': 6.19.6_next@12.1.5+react@17.0.2
-  '@squonk/eslint-config': 0.2.0_d1be058c3c9e2bc614edee3cbac8c353
+  '@squonk/eslint-config': 0.2.0_80e048bfd2619acef317950271ff8974
   '@types/lodash-es': 4.17.6
   '@types/node': 16.11.29
   '@types/plotly.js-basic-dist': 1.54.0
@@ -130,7 +130,7 @@ devDependencies:
   eslint-config-prettier: 8.5.0_eslint@8.14.0
   eslint-plugin-prettier: 4.0.0_665eb419c9d7860ca0c224f7f6dcdace
   eslint-plugin-react: 7.29.4_eslint@8.14.0
-  eslint-plugin-react-hooks: 4.4.0_eslint@8.14.0
+  eslint-plugin-react-hooks: 4.5.0_eslint@8.14.0
   eslint-plugin-simple-import-sort: 7.0.0_eslint@8.14.0
   eslint-plugin-unused-imports: 2.0.0_b8847eb0ef3f4354e97e2f7d0b3a686a
   husky: 7.0.4
@@ -1518,7 +1518,7 @@ packages:
       react-query: 3.38.0_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/eslint-config/0.2.0_d1be058c3c9e2bc614edee3cbac8c353:
+  /@squonk/eslint-config/0.2.0_80e048bfd2619acef317950271ff8974:
     resolution: {integrity: sha512-qwZ2/yAixD+yr6FPFKKg7s4fQpxtGyXI2120jUWVdbj34W3LsrHcywAAxNNToPq0kkucjpvLTFVJOGDtjFn/HA==}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^5.6.0
@@ -1538,7 +1538,7 @@ packages:
       eslint-config-prettier: 8.5.0_eslint@8.14.0
       eslint-plugin-prettier: 4.0.0_665eb419c9d7860ca0c224f7f6dcdace
       eslint-plugin-react: 7.29.4_eslint@8.14.0
-      eslint-plugin-react-hooks: 4.4.0_eslint@8.14.0
+      eslint-plugin-react-hooks: 4.5.0_eslint@8.14.0
       eslint-plugin-simple-import-sort: 7.0.0_eslint@8.14.0
       eslint-plugin-unused-imports: 2.0.0_b8847eb0ef3f4354e97e2f7d0b3a686a
       prettier: 2.6.2
@@ -2628,8 +2628,8 @@ packages:
       prettier-linter-helpers: 1.0.0
     dev: true
 
-  /eslint-plugin-react-hooks/4.4.0_eslint@8.14.0:
-    resolution: {integrity: sha512-U3RVIfdzJaeKDQKEJbz5p3NW8/L80PCATJAfuojwbaEL+gBjfGdhUcGde+WGUW46Q5sr/NgxevsIiDtNXrvZaQ==}
+  /eslint-plugin-react-hooks/4.5.0_eslint@8.14.0:
+    resolution: {integrity: sha512-8k1gRt7D7h03kd+SAAlzXkQwWK22BnK6GKZG+FJA6BAGy22CFvl8kCIXKpVux0cCxMWDQUPqSok0LKaZ0aOcCw==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0

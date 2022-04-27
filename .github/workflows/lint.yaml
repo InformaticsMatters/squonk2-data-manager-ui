@@ -23,7 +23,7 @@ on:
   pull_request:
 
 jobs:
-  Lint & Type Check:
+  Lint-And-Type-Check:
     runs-on: ubuntu-latest
     steps:
     - name: Setup Node

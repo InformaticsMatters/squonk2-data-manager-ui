@@ -29,7 +29,7 @@ specifiers:
   '@types/uuid': 8.3.4
   '@typescript-eslint/eslint-plugin': 5.21.0
   '@typescript-eslint/parser': 5.21.0
-  axios: 0.27.0
+  axios: 0.27.2
   dayjs: 1.11.1
   eslint: 8.14.0
   eslint-config-prettier: 8.5.0
@@ -78,10 +78,10 @@ dependencies:
   '@mdx-js/loader': 2.1.1
   '@rjsf/core': 3.2.1_react@17.0.2
   '@rjsf/material-ui': 3.2.1_93c7b97d80172e7d1303eb5a9f074f83
-  '@squonk/account-server-client': 0.1.28_axios@0.27.0+react-query@3.38.0
-  '@squonk/data-manager-client': 0.7.7_axios@0.27.0+react-query@3.38.0
+  '@squonk/account-server-client': 0.1.28_axios@0.27.2+react-query@3.38.0
+  '@squonk/data-manager-client': 0.7.7_axios@0.27.2+react-query@3.38.0
   '@squonk/mui-theme': 2.0.1_@material-ui+core@4.12.4
-  axios: 0.27.0
+  axios: 0.27.2
   dayjs: 1.11.1
   filesize: 8.0.7
   formik: 2.2.9_react@17.0.2
@@ -1496,23 +1496,23 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /@squonk/account-server-client/0.1.28_axios@0.27.0+react-query@3.38.0:
+  /@squonk/account-server-client/0.1.28_axios@0.27.2+react-query@3.38.0:
     resolution: {integrity: sha512-koi438w564vEIE/cmwNhGGphA6slr8nLB2e406UAcSWresQOqlIYuYWMDYVziOLqXElZPvV1iW1UMcG2nbf2BQ==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
     dependencies:
-      axios: 0.27.0
+      axios: 0.27.2
       react-query: 3.38.0_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/data-manager-client/0.7.7_axios@0.27.0+react-query@3.38.0:
+  /@squonk/data-manager-client/0.7.7_axios@0.27.2+react-query@3.38.0:
     resolution: {integrity: sha512-DCv1ogugorE4+dvj/2A04sx4soWOBXTfbmbAjyFaPDdcmgo5zNB/KpbRT320M1hbOD4UlZh837OU0ubkUKAAJQ==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
     dependencies:
-      axios: 0.27.0
+      axios: 0.27.2
       react-query: 3.38.0_react-dom@17.0.2+react@17.0.2
     dev: false
 
@@ -2034,8 +2034,8 @@ packages:
     engines: {node: '>=4'}
     dev: false
 
-  /axios/0.27.0:
-    resolution: {integrity: sha512-XV/WrPxXfzgZ8j4lcB5i6LyaXmi90yetmV/Fem0kmglGx+mpY06CiweL3YxU6wOTNLmqLUePW4G8h45nGZ/+pA==}
+  /axios/0.27.2:
+    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
       follow-redirects: 1.14.9
       form-data: 4.0.0

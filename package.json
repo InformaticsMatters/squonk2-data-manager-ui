@@ -36,7 +36,7 @@
     "@squonk/account-server-client": "0.1.28",
     "@squonk/data-manager-client": "0.7.7",
     "@squonk/mui-theme": "2.0.1",
-    "axios": "0.27.0",
+    "axios": "0.27.2",
     "dayjs": "1.11.1",
     "filesize": "8.0.7",
     "formik": "2.2.9",

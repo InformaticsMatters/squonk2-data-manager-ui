@@ -9,7 +9,6 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import { useKeycloakUser } from '../../../../../../hooks/useKeycloakUser';
 import { ModalWrapper } from '../../../../../modals/ModalWrapper';
-import { PrivateProjectToggle } from './PrivateProjectToggle';
 import { ProjectEditors } from './ProjectEditors';
 
 export interface EditProjectButtonProps {
@@ -64,8 +63,6 @@ export const EditProjectButton = ({ project, projectProduct }: EditProjectButton
         <Typography gutterBottom>
           <b>Owner</b>: {project.owner}
         </Typography>
-
-        <PrivateProjectToggle isPrivate={false} projectId={project.project_id} />
 
         <ProjectEditors project={project} projectProduct={projectProduct} />
       </ModalWrapper>

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3-rc.5](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.4...0.1.3-rc.5) (2022-04-28)
+
+
+### Features
+
+* **edit-project:** Add switch to toggle whether a project is public or private ([6d66a18](https://github.com/InformaticsMatters/squonk-frontend/commit/6d66a1894753d95f822afeba92e6268483acf1d8))
+
 ### [0.1.3-rc.4](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.3...0.1.3-rc.4) (2022-04-28)
 
 

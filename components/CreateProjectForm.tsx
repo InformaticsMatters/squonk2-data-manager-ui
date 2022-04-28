@@ -12,10 +12,17 @@ import { getGetProjectsQueryKey, useCreateProject } from '@squonk/data-manager-c
 import { getGetUserAccountQueryKey } from '@squonk/data-manager-client/user';
 
 import { css } from '@emotion/react';
-import { Button, MenuItem, Typography, useMediaQuery, useTheme } from '@material-ui/core';
+import {
+  Button,
+  FormControlLabel,
+  MenuItem,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@material-ui/core';
 import type { FormikConfig } from 'formik';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { Checkbox, TextField } from 'formik-material-ui';
 import * as yup from 'yup';
 
 import { PROJECT_SUB } from '../constants/products';
@@ -43,7 +50,7 @@ const getIds = async (orgAndUnit: CreateProjectFormProps['orgAndUnit']) => {
   return orgAndUnit;
 };
 
-const initialValues = { projectName: '', flavour: '' };
+const initialValues = { projectName: '', flavour: '', isPrivate: false };
 
 type ProjectFormikProps = FormikConfig<typeof initialValues>;
 
@@ -65,7 +72,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
 
   const { setCurrentProjectId } = useCurrentProjectId();
 
-  const create = async (projectName: string, flavour: string) => {
+  const create = async ({ projectName, flavour, isPrivate }: typeof initialValues) => {
     const [organisationId, unitId] = await getIds(orgAndUnit);
     // Get the (possibly optional) service ID from the selected product type
     const serviceId = productTypes?.find(
@@ -95,6 +102,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
         organisation_id: organisationId,
         unit_id: unitId,
         tier_product_id: productId,
+        private: isPrivate,
       },
     });
 
@@ -109,12 +117,9 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
     setCurrentProjectId(project_id);
   };
 
-  const handleSubmit: ProjectFormikProps['onSubmit'] = async (
-    { projectName, flavour },
-    { setSubmitting },
-  ) => {
+  const handleSubmit: ProjectFormikProps['onSubmit'] = async (values, { setSubmitting }) => {
     try {
-      await create(projectName, flavour);
+      await create(values);
     } catch (error) {
       enqueueError(error);
     } finally {
@@ -132,16 +137,12 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
         // Make this a styled component
         css={css`
           display: grid;
-          grid-template-columns: ${biggerThanSm ? '1fr 1fr auto' : '1fr'};
+          grid-template-columns: ${biggerThanSm ? '1fr 1fr auto auto' : '1fr'};
           gap: ${theme.spacing()}px;
-          align-items: flex-start;
-          .MuiInputBase-input {
-            background: ${theme.palette.background.paper};
-            border-radius: 4px;
-          }
         `}
       >
         <Field autoFocus fullWidth component={TextField} label="Project Name" name="projectName" />
+
         {isError ? (
           <Typography color="error">{getErrorMessage(error)}</Typography>
         ) : (
@@ -159,6 +160,13 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
             )}
           </Field>
         )}
+
+        <FormControlLabel
+          control={<Field color="primary" component={Checkbox} name="isPrivate" />}
+          label="Private"
+          labelPlacement="start"
+        />
+
         {!modal && (
           <Button disabled={isSubmitting || !isValid} onClick={submitForm}>
             Create

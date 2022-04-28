@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3-rc.4](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.3...0.1.3-rc.4) (2022-04-28)
+
+
+### Features
+
+* **create-project:** Provide option to create private projects ([63449f5](https://github.com/InformaticsMatters/squonk-frontend/commit/63449f5350da39a335ca96a41a2f0e7564eacae2))
+
+
+### Bug Fixes
+
+* Fix broken build ([c938d35](https://github.com/InformaticsMatters/squonk-frontend/commit/c938d351f0a0dfcaeab716b93e59260d051a7f0f))
+
 ### [0.1.3-rc.3](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.2...0.1.3-rc.3) (2022-04-28)
 
 ### [0.1.3-rc.2](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.1...0.1.3-rc.2) (2022-04-27)

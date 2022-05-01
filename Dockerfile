@@ -1,5 +1,7 @@
 FROM node:16.13.1-alpine3.13
 
+RUN apk add --no-cache git
+
 # Disable anonymous Next.js telemetry data...
 ENV NEXT_TELEMETRY_DISABLED 1
 

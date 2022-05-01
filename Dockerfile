@@ -13,6 +13,7 @@ RUN addgroup -g 1001 -S nodejs && \
 
 WORKDIR /app
 COPY . .
+COPY .git .
 
 RUN npm i -g pnpm@6.30.1 && pnpm i
 

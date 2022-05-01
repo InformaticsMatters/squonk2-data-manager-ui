@@ -31,6 +31,8 @@ ENV NODE_ENV production
 USER nextjs
 EXPOSE 3000
 
+RUN pnpm build
+
 # We build, install and start the application at run-time.
 # That's wehere the _real_ '.env' will be provided.
 CMD ["./docker-entrypoint.sh"]

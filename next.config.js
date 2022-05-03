@@ -17,7 +17,7 @@ const resolvePackage = (packageName) => path.resolve(__dirname, '.', 'node_modul
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
-  generateBuildId: () => nextBuildId({ dir: __dirname }),
+  generateBuildId: process.env.GIT_SHA,
   // reactStrictMode: true, // TODO: switch on after MUI-v5 switch
   pageExtensions: ['js', 'ts', 'jsx', 'tsx', 'mdx'],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,

@@ -1,6 +1,9 @@
 FROM node:16.13.1-alpine3.13
 
-RUN apk add --no-cache git
+# Expose an optional GitHub SHA build argument.
+# This is used to personalise the build.
+ARG GIT_SHA
+ENV GIT_SHA=${GIT_SHA:-e66370613c1dd6b9dbec2f1dc08e3d4f45b57a75}
 
 # Disable anonymous Next.js telemetry data...
 ENV NEXT_TELEMETRY_DISABLED 1
@@ -9,15 +12,15 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # Check https://bit.ly/3u8xXQR to understand why libc6-compat might be needed.
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nextjs -u 1001 && \
-    apk add --no-cache libc6-compat
+    apk add --no-cache \
+        libc6-compat
 
 WORKDIR /app
 COPY . .
-COPY .git/ ./.git/
 
-RUN npm i -g pnpm@6.30.1 && pnpm i
-
-RUN chown --recursive nextjs:nodejs .
+RUN npm i -g pnpm@6.30.1 && \
+    pnpm i && \
+    chown --recursive nextjs:nodejs .
 
 # **DO NOT** set 'NODE_ENV any earlier than this in the Dockerfile.
 # We must run 'pnpm install' (above) first, otherwise we'll get

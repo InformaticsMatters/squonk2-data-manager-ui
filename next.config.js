@@ -1,6 +1,5 @@
 const path = require('path');
 const { withSentryConfig } = require('@sentry/nextjs');
-const nextBuildId = require('next-build-id');
 
 if (process.env.MONOREPO) {
   console.log('info  - Running with webpack aliases for monorepo compatibility');
@@ -17,7 +16,7 @@ const resolvePackage = (packageName) => path.resolve(__dirname, '.', 'node_modul
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
-  generateBuildId: process.env.GIT_SHA,
+  generateBuildId: process.env.GITHUB_SHA ? () => process.env.GITHUB_SHA : undefined,
   // reactStrictMode: true, // TODO: switch on after MUI-v5 switch
   pageExtensions: ['js', 'ts', 'jsx', 'tsx', 'mdx'],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,

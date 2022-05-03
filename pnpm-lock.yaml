@@ -49,7 +49,6 @@ specifiers:
   lodash-es: 4.17.21
   material-ui-popup-state: 1.9.3
   next: 12.1.5
-  next-build-id: 3.0.0
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
   node-fetch: 3.2.3
@@ -93,7 +92,6 @@ dependencies:
   lodash-es: 4.17.21
   material-ui-popup-state: 1.9.3_cc46bcf2f067bcfdd4792464191e98d3
   next: 12.1.5_1b11a9fbd6a82b51c875b786deaf2000
-  next-build-id: 3.0.0
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
   node-fetch: 3.2.3
@@ -4397,11 +4395,6 @@ packages:
   /natural-compare/1.4.0:
     resolution: {integrity: sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=}
     dev: true
-
-  /next-build-id/3.0.0:
-    resolution: {integrity: sha512-B3JCsL/9Z/wkmo3EySukQHCgx89Aw0i4LPi2MEhCboQBJ6wpkYTIu1z6hOYKuw/S1Wy8ZRqCEq0dVY/ST6jGqg==}
-    engines: {node: '>=8'}
-    dev: false
 
   /next-http-proxy-middleware/1.2.4:
     resolution: {integrity: sha512-4ScStkj08nFL2IX0doJq8Hwrk1zOdKaOkxFGxRmV+lN4Oh/d6qDSqUKxfSew676qA07bhncj6vbKBVVpLKfZBA==}

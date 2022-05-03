@@ -29,3 +29,4 @@ jobs:
     steps:
     - name: Build
       uses: docker/build-push-action@v2
+      build-args: SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}

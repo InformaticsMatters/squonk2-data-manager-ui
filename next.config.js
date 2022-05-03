@@ -60,6 +60,7 @@ const nextConfig = {
 const sentryWebpackPluginOptions = {
   silent: true, // Suppresses all logs
   environment: process.env.NODE_ENV,
+  token: process.env.SENTRY_AUTH_TOKEN,
 };
 
 const moduleExports = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;

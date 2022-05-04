@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@auth0/nextjs-auth0': 1.7.0
+  '@auth0/nextjs-auth0': 1.8.0
   '@emotion/babel-preset-css-prop': 11.2.0
   '@emotion/react': 11.9.0
   '@emotion/styled': 11.8.1
@@ -70,7 +70,7 @@ specifiers:
   yup: 0.32.11
 
 dependencies:
-  '@auth0/nextjs-auth0': 1.7.0_next@12.1.6
+  '@auth0/nextjs-auth0': 1.8.0_next@12.1.6
   '@emotion/react': 11.9.0_c8e45b4eb687790dba17b4e1c4b4273f
   '@emotion/styled': 11.8.1_d4665d83ebbc6647a0f96304ff31b411
   '@material-ui/core': 4.12.4_b49bddbe4b905ced4713cb857cca91fa
@@ -142,14 +142,14 @@ devDependencies:
 
 packages:
 
-  /@auth0/nextjs-auth0/1.7.0_next@12.1.6:
-    resolution: {integrity: sha512-twz4f1A94i2ShJ6jB3UsFuVhzE0vJ1M/Ukq5bNBm/gpvCK6E/P8Ew2wQloak73+mXcV7eg5S+HOlmiKpcSe6mw==}
+  /@auth0/nextjs-auth0/1.8.0_next@12.1.6:
+    resolution: {integrity: sha512-lOI7i1khyuvVUGD/V9k+YMVxj3LB74KYqrCRQ8Uezai8YEAPHhExGMpIlFUPV7J4iPIuNNhW/4TYa45nkPNr0w==}
     engines: {node: ^10.13.0 || >=12.0.0}
     peerDependencies:
       next: '>=10'
     dependencies:
       base64url: 3.0.1
-      cookie: 0.4.2
+      cookie: 0.5.0
       debug: 4.3.4
       futoin-hkdf: 1.5.0
       http-errors: 1.8.1
@@ -2328,6 +2328,12 @@ packages:
   /cookie/0.4.2:
     resolution: {integrity: sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==}
     engines: {node: '>= 0.6'}
+    dev: true
+
+  /cookie/0.5.0:
+    resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
+    engines: {node: '>= 0.6'}
+    dev: false
 
   /core-js-pure/3.21.1:
     resolution: {integrity: sha512-12VZfFIu+wyVbBebyHmRTuEE/tZrB4tJToWcwAMcsp3h4+sHR+fMJWbKpYiCRWlhFBq+KNyO8rIV9rTkeVmznQ==}

@@ -7,5 +7,6 @@
   ],
   "labels": [
     "dependencies"
-  ]
+  ],
+  "npmrc": "strict-peer-dependencies=false"
 }

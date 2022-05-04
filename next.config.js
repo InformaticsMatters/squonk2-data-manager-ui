@@ -57,6 +57,9 @@ let nextConfig = {
   },
 };
 
+/**
+ * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
+ */
 const sentryWebpackPluginOptions = {
   silent: true, // Suppresses all logs
   environment: process.env.NODE_ENV,

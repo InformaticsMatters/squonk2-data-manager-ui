@@ -3,7 +3,7 @@ FROM node:16.13.1-alpine3.13
 # Expose an optional GitHub SHA build argument.
 # This is used to personalise the build.
 ARG GIT_SHA
-ENV GIT_SHA=${GIT_SHA:-e66370613c1dd6b9dbec2f1dc08e3d4f45b57a75}
+ENV GIT_SHA=${GIT_SHA}
 
 # Disable anonymous Next.js telemetry data...
 ENV NEXT_TELEMETRY_DISABLED 1

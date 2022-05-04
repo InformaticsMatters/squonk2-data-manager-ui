@@ -15,7 +15,7 @@ const resolvePackage = (packageName) => path.resolve(__dirname, '.', 'node_modul
 /**
  * @type {import('next').NextConfig}
  */
-const nextConfig = {
+let nextConfig = {
   generateBuildId: process.env.GITHUB_SHA ? () => process.env.GITHUB_SHA : undefined,
   // reactStrictMode: true, // TODO: switch on after MUI-v5 switch
   pageExtensions: ['js', 'ts', 'jsx', 'tsx', 'mdx'],
@@ -60,9 +60,11 @@ const nextConfig = {
 const sentryWebpackPluginOptions = {
   silent: true, // Suppresses all logs
   environment: process.env.NODE_ENV,
-  token: process.env.SENTRY_AUTH_TOKEN,
 };
 
-const moduleExports = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
+nextConfig = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
+nextConfig = process.env.SENTRY_AUTH_TOKEN
+  ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+  : nextConfig;
 
-module.exports = withSentryConfig(moduleExports, sentryWebpackPluginOptions);
+module.exports = nextConfig;

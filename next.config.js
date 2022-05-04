@@ -1,6 +1,5 @@
 const path = require('path');
 const { withSentryConfig } = require('@sentry/nextjs');
-const nextBuildId = require('next-build-id');
 
 if (process.env.MONOREPO) {
   console.log('info  - Running with webpack aliases for monorepo compatibility');
@@ -16,8 +15,8 @@ const resolvePackage = (packageName) => path.resolve(__dirname, '.', 'node_modul
 /**
  * @type {import('next').NextConfig}
  */
-const nextConfig = {
-  generateBuildId: () => nextBuildId({ dir: __dirname }),
+let nextConfig = {
+  generateBuildId: process.env.GITHUB_SHA ? () => process.env.GITHUB_SHA : undefined,
   // reactStrictMode: true, // TODO: switch on after MUI-v5 switch
   pageExtensions: ['js', 'ts', 'jsx', 'tsx', 'mdx'],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
@@ -58,11 +57,17 @@ const nextConfig = {
   },
 };
 
+/**
+ * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
+ */
 const sentryWebpackPluginOptions = {
   silent: true, // Suppresses all logs
   environment: process.env.NODE_ENV,
 };
 
-const moduleExports = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
+nextConfig = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
+nextConfig = process.env.SENTRY_AUTH_TOKEN
+  ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+  : nextConfig;
 
-module.exports = withSentryConfig(moduleExports, sentryWebpackPluginOptions);
+module.exports = nextConfig;

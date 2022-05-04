@@ -38,6 +38,6 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v2
       with:
-        build-args: tag=${{ env.GITHUB_REF_SLUG }}
+        build-args: GIT_SHA=${{ env.GITHUB_SHA }}
         push: true
         tags: informaticsmatters/mini-apps-data-tier-ui:${{ env.GITHUB_REF_SLUG }}

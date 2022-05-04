@@ -19,7 +19,7 @@ WORKDIR /app
 COPY . .
 
 RUN npm i -g pnpm@6.30.1 && \
-    pnpm i && \
+    pnpm i -P --frozen-lockfile && \
     chown --recursive nextjs:nodejs . && \
     echo "GIT_SHA=${GIT_SHA}"
 

@@ -8,5 +8,7 @@
   "labels": [
     "dependencies"
   ],
-  "npmrc": "strict-peer-dependencies=false"
+  "constraints": {
+    "pnpm": "6"
+  }
 }

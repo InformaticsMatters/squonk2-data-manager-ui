@@ -17,6 +17,8 @@ const resolvePackage = (packageName) => path.resolve(__dirname, '.', 'node_modul
  */
 let nextConfig = {
   generateBuildId: process.env.GITHUB_SHA ? () => process.env.GITHUB_SHA : undefined,
+  typescript: { ignoreBuildErrors: process.env.IS_DOCKER },
+  eslint: { ignoreDuringBuilds: process.env.IS_DOCKER },
   // reactStrictMode: true, // TODO: switch on after MUI-v5 switch
   pageExtensions: ['js', 'ts', 'jsx', 'tsx', 'mdx'],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,

@@ -8,6 +8,9 @@ ENV GIT_SHA=${GIT_SHA}
 # Disable anonymous Next.js telemetry data...
 ENV NEXT_TELEMETRY_DISABLED 1
 
+ARG SKIP_CHECKS
+ENV SKIP_CHECKS=${SKIP_CHECKS}
+
 # Add typical Node/NextJS groups and users
 # Check https://bit.ly/3u8xXQR to understand why libc6-compat might be needed.
 RUN addgroup -g 1001 -S nodejs && \

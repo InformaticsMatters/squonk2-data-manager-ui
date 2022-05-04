@@ -45,7 +45,9 @@ jobs:
       with:
         push: true
         tags: informaticsmatters/mini-apps-data-tier-ui:latest
-        build-args: GIT_SHA=${{ env.GITHUB_SHA }}
+        build-args:
+        - GIT_SHA=${{ env.GITHUB_SHA }}
+        - SKIP_CHECKS=1
 
   # Staging Deployment to the designated Staging site
   # DISABLED: WE HAVE NO STAGING SITE

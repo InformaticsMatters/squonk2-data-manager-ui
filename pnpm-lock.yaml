@@ -18,7 +18,7 @@ specifiers:
   '@squonk/account-server-client': 0.1.30
   '@squonk/data-manager-client': 0.7.9
   '@squonk/eslint-config': 0.2.0
-  '@squonk/mui-theme': 2.0.1
+  '@squonk/mui-theme': 3.0.1
   '@types/lodash-es': 4.17.6
   '@types/node': 16.11.33
   '@types/plotly.js-basic-dist': 1.54.0
@@ -85,7 +85,7 @@ dependencies:
   '@sentry/nextjs': 6.19.7_next@12.1.6+react@17.0.2
   '@squonk/account-server-client': 0.1.30_axios@0.27.2+react-query@3.38.1
   '@squonk/data-manager-client': 0.7.9_axios@0.27.2+react-query@3.38.1
-  '@squonk/mui-theme': 2.0.1_@material-ui+core@4.12.4
+  '@squonk/mui-theme': 3.0.1
   '@types/lodash-es': 4.17.6
   '@types/node': 16.11.33
   '@types/plotly.js-basic-dist': 1.54.0
@@ -1551,12 +1551,10 @@ packages:
       prettier: 2.6.2
     dev: true
 
-  /@squonk/mui-theme/2.0.1_@material-ui+core@4.12.4:
-    resolution: {integrity: sha512-1BpAldxr5MV9z0FaDo4KQNEOHDiq9ValR/byE5RfPXGwLSIuNogxMEQe5uAgYbnb66/syArlJ+do4rJSjbJsxg==}
+  /@squonk/mui-theme/3.0.1:
+    resolution: {integrity: sha512-jUgvP6+IIrE+6E2+8ntMDnTn48moh7/NFt6IcYm6llrbaJULytm6ZvrPnprRxamz6RKY5xKJ+VTL0Bm8FriYqQ==}
     peerDependencies:
-      '@material-ui/core': 4.12.3
-    dependencies:
-      '@material-ui/core': 4.12.4_b49bddbe4b905ced4713cb857cca91fa
+      '@mui/material': '>5'
     dev: false
 
   /@szmarczak/http-timer/4.0.6:

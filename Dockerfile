@@ -24,7 +24,8 @@ COPY . .
 RUN npm i -g pnpm@6.30.1 && \
     pnpm i -P --frozen-lockfile && \
     chown --recursive nextjs:nodejs . && \
-    echo "GIT_SHA=${GIT_SHA}"
+    echo "GIT_SHA=${GIT_SHA}" && \
+    echo "SKIP_CHECKS=${SKIP_CHECKS}"
 
 # **DO NOT** set 'NODE_ENV any earlier than this in the Dockerfile.
 # We must run 'pnpm install' (above) first, otherwise we'll get

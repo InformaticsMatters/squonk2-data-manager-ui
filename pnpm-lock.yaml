@@ -12,7 +12,7 @@ specifiers:
   '@mdx-js/react': 2.1.1
   '@next/eslint-plugin-next': 12.1.6
   '@playwright/test': 1.21.1
-  '@rjsf/core': 3.2.1
+  '@rjsf/core': 4.2.0
   '@rjsf/material-ui': 3.2.1
   '@sentry/nextjs': 6.19.7
   '@squonk/account-server-client': 0.1.30
@@ -80,8 +80,8 @@ dependencies:
   '@mdx-js/loader': 2.1.1
   '@mdx-js/react': 2.1.1_react@17.0.2
   '@next/eslint-plugin-next': 12.1.6
-  '@rjsf/core': 3.2.1_react@17.0.2
-  '@rjsf/material-ui': 3.2.1_93c7b97d80172e7d1303eb5a9f074f83
+  '@rjsf/core': 4.2.0_react@17.0.2
+  '@rjsf/material-ui': 3.2.1_0710232155c072d02ca6705a2d311ddb
   '@sentry/nextjs': 6.19.7_next@12.1.6+react@17.0.2
   '@squonk/account-server-client': 0.1.30_axios@0.27.2+react-query@3.38.1
   '@squonk/data-manager-client': 0.7.9_axios@0.27.2+react-query@3.38.1
@@ -1295,11 +1295,11 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@rjsf/core/3.2.1_react@17.0.2:
-    resolution: {integrity: sha512-dk8ihvxFbcuIwU7G+HiJbFgwyIvaumPt5g5zfnuC26mwTUPlaDGFXKK2yITp8tJ3+hcwS5zEXtAN9wUkfuM4jA==}
+  /@rjsf/core/4.2.0_react@17.0.2:
+    resolution: {integrity: sha512-bGWWCZjXHhBCkzag1Yh6F7a15/D6AqKRyks1szYWdCe+4jwWU3maC3apUxHJlHFRz3V1aBW6j6i/UB6zHmFXLQ==}
     engines: {node: '>=12'}
     peerDependencies:
-      react: '>=16'
+      react: '>=16 || >=17'
     dependencies:
       '@types/json-schema': 7.0.11
       ajv: 6.12.6
@@ -1313,7 +1313,7 @@ packages:
       react-is: 16.13.1
     dev: false
 
-  /@rjsf/material-ui/3.2.1_93c7b97d80172e7d1303eb5a9f074f83:
+  /@rjsf/material-ui/3.2.1_0710232155c072d02ca6705a2d311ddb:
     resolution: {integrity: sha512-8UiDeDbjCImFSfOegGu13otQ7OdP9FOYpcLjeouppnhs+MPeIEAtYS+jCcBKmi3reyTagC15/KVSRhde1wS1vg==}
     peerDependencies:
       '@material-ui/core': ^4.2.0
@@ -1323,7 +1323,7 @@ packages:
     dependencies:
       '@material-ui/core': 4.12.4_b49bddbe4b905ced4713cb857cca91fa
       '@material-ui/icons': 4.11.3_adfe7861a7437881e48c93a537beb7ac
-      '@rjsf/core': 3.2.1_react@17.0.2
+      '@rjsf/core': 4.2.0_react@17.0.2
       react: 17.0.2
     dev: false
 

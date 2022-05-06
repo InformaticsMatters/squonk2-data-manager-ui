@@ -34,7 +34,7 @@
     "@material-ui/icons": "4.11.3",
     "@material-ui/lab": "4.0.0-alpha.61",
     "@mdx-js/loader": "2.1.1",
-    "@rjsf/core": "3.2.1",
+    "@rjsf/core": "4.2.0",
     "@rjsf/material-ui": "3.2.1",
     "@squonk/account-server-client": "0.1.30",
     "@squonk/data-manager-client": "0.7.9",

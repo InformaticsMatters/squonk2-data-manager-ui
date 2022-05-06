@@ -13,7 +13,7 @@ specifiers:
   '@next/eslint-plugin-next': 12.1.6
   '@playwright/test': 1.21.1
   '@rjsf/core': 3.2.1
-  '@rjsf/material-ui': 3.2.1
+  '@rjsf/material-ui': 4.2.0
   '@sentry/nextjs': 6.19.7
   '@squonk/account-server-client': 0.1.30
   '@squonk/data-manager-client': 0.7.9
@@ -81,7 +81,7 @@ dependencies:
   '@mdx-js/react': 2.1.1_react@17.0.2
   '@next/eslint-plugin-next': 12.1.6
   '@rjsf/core': 3.2.1_react@17.0.2
-  '@rjsf/material-ui': 3.2.1_93c7b97d80172e7d1303eb5a9f074f83
+  '@rjsf/material-ui': 4.2.0_c7e2a3ace8446e24b2c9aad2bdc47db8
   '@sentry/nextjs': 6.19.7_next@12.1.6+react@17.0.2
   '@squonk/account-server-client': 0.1.30_axios@0.27.2+react-query@3.38.1
   '@squonk/data-manager-client': 0.7.9_axios@0.27.2+react-query@3.38.1
@@ -1313,18 +1313,41 @@ packages:
       react-is: 16.13.1
     dev: false
 
-  /@rjsf/material-ui/3.2.1_93c7b97d80172e7d1303eb5a9f074f83:
-    resolution: {integrity: sha512-8UiDeDbjCImFSfOegGu13otQ7OdP9FOYpcLjeouppnhs+MPeIEAtYS+jCcBKmi3reyTagC15/KVSRhde1wS1vg==}
+  /@rjsf/material-ui/4.2.0_c7e2a3ace8446e24b2c9aad2bdc47db8:
+    resolution: {integrity: sha512-WQ1dMX1tlMjG5jPbRbFPFkuy5zSb+rDb7HRE2Zx/JgYndBRdxiqAbGB8DcaJKaGUJ+1eURk3MWClU5pWfoN3qg==}
     peerDependencies:
-      '@material-ui/core': ^4.2.0
-      '@material-ui/icons': ^4.2.1
-      '@rjsf/core': ^3.0.0
-      react: '>=16'
+      '@emotion/react': ^11.7.0
+      '@emotion/styled': ^11.6.0
+      '@material-ui/core': ^4.12.3
+      '@material-ui/icons': ^4.11.2
+      '@mui/icons-material': ^5.2.0
+      '@mui/material': ^5.2.2
+      '@rjsf/core': ^4.0.1
+      '@types/react': ^16.8.6 || ^17.0.0
+      react: ^16.8.0 || ^17.0.0
+      react-dom: ^16.8.0 || ^17.0.0
+    peerDependenciesMeta:
+      '@emotion/react':
+        optional: true
+      '@emotion/styled':
+        optional: true
+      '@material-ui/core':
+        optional: true
+      '@material-ui/icons':
+        optional: true
+      '@mui/icons-material':
+        optional: true
+      '@mui/material':
+        optional: true
     dependencies:
+      '@emotion/react': 11.9.0_c8e45b4eb687790dba17b4e1c4b4273f
+      '@emotion/styled': 11.8.1_d4665d83ebbc6647a0f96304ff31b411
       '@material-ui/core': 4.12.4_b49bddbe4b905ced4713cb857cca91fa
       '@material-ui/icons': 4.11.3_adfe7861a7437881e48c93a537beb7ac
       '@rjsf/core': 3.2.1_react@17.0.2
+      '@types/react': 17.0.44
       react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
     dev: false
 
   /@sentry/browser/6.19.7:

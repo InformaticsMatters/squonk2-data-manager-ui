@@ -35,7 +35,7 @@
     "@material-ui/lab": "4.0.0-alpha.61",
     "@mdx-js/loader": "2.1.1",
     "@rjsf/core": "3.2.1",
-    "@rjsf/material-ui": "3.2.1",
+    "@rjsf/material-ui": "4.2.0",
     "@squonk/account-server-client": "0.1.30",
     "@squonk/data-manager-client": "0.7.9",
     "@squonk/mui-theme": "2.0.1",

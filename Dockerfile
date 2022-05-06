@@ -45,6 +45,8 @@ ENV NODE_ENV production
 USER nextjs
 EXPOSE 3000
 
+# We build here and on startup. This is to allow the image to be
+# configurable but the build here speeds up the second build.
 RUN pnpm build
 
 # We build, install and start the application at run-time.

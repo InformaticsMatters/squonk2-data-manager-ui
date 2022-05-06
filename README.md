@@ -46,7 +46,7 @@ pnpm exec playwright install
 
 Then run:
 
-- `pnpm t` to run the tests in headless
+- `pnpm t` to run the tests in headless mode
 - `pnpm test:debug` to run the tests headed in debug mode
 ### Code Quality
 
@@ -61,6 +61,8 @@ build commands, which can be run from the project clone to produce an
 [nginx] web-container: -
 
     $ docker build . \
+        --build-arg GIT_SHA=$(git rev-parse HEAD) \
+        --build-arg SKIP_CHECKS=1 \
         --tag informaticsmatters/mini-apps-data-tier-ui:latest
 
 Deployment to Kubernetes is handled by our AWX-compliant [Ansible playbook repo].
@@ -71,7 +73,9 @@ for numerous environment variables. The `.env` used at build time is
 `.env.staging`, but this can be changed by using the build-arg `FLAVOUR`: -
 
     $ docker build . \
-        --build-arg FLAVOUR=local.example
+        --build-arg FLAVOUR=local.example \
+        --build-arg GIT_SHA=$(git rev-parse HEAD) \
+        --build-arg SKIP_CHECKS=1 \
         --tag informaticsmatters/mini-apps-data-tier-ui:latest
 
 Which can then be started on `http://localhost:8080/data-manager-ui` with: -

@@ -3,8 +3,8 @@ import { useQueryClient } from 'react-query';
 import type { DeleteUnmanagedFileParams, DmError } from '@squonk/data-manager-client';
 import { getGetFilesQueryKey, useDeleteUnmanagedFile } from '@squonk/data-manager-client/file';
 
-import { IconButton } from '@material-ui/core';
-import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
+import { IconButton } from '@mui/material';
 
 import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { WarningDeleteButton } from '../../WarningDeleteButton';

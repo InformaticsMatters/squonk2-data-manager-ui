@@ -1,8 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 
-import { css } from '@emotion/react';
-import { Box, IconButton, TextField, Tooltip, useTheme } from '@material-ui/core';
-import { Restore } from '@material-ui/icons';
+import { Restore } from '@mui/icons-material';
+import { Box, IconButton, TextField, Tooltip } from '@mui/material';
 
 export interface DatasetSchemaDescriptionInputProps {
   /**
@@ -28,8 +27,6 @@ export const DatasetSchemaDescriptionInput = ({
   setDescription,
   originalValue,
 }: DatasetSchemaDescriptionInputProps) => {
-  const theme = useTheme();
-
   const [displayValue, setDisplayValue] = useState(value || '');
 
   useLayoutEffect(() => {
@@ -41,18 +38,9 @@ export const DatasetSchemaDescriptionInput = ({
   return (
     <TextField
       fullWidth
-      css={css`
-        ${hasChanged ? `background: ${theme.palette.action.hover};` : undefined}
-        margin-right: ${theme.spacing(2)}px;
-      `}
       InputProps={{
         endAdornment: (
-          <Box
-            css={css`
-              ${!hasChanged ? 'visibility: hidden' : undefined}
-            `}
-            marginLeft={1}
-          >
+          <Box ml={1} visibility={!hasChanged ? 'hidden' : undefined}>
             <Tooltip title="Revert changes">
               <IconButton size="small" onClick={() => setDescription(originalValue || '')}>
                 <Restore />
@@ -62,6 +50,7 @@ export const DatasetSchemaDescriptionInput = ({
         ),
       }}
       label="Schema description"
+      sx={{ mr: 2, background: hasChanged ? 'action.hover' : undefined }}
       value={displayValue || ''}
       onBlur={() => setDescription(displayValue)}
       onChange={(event) => setDisplayValue(event.target.value)}

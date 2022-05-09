@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, Checkbox, FormControlLabel } from '@material-ui/core';
+import { Box, Checkbox, FormControlLabel } from '@mui/material';
 
 import { useSelectedFiles } from '../../context/fileSelectionContext';
 import { AllFilesList } from './AllFilesList';

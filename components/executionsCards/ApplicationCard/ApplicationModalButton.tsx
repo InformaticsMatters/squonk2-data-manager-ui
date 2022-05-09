@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Button, Tooltip } from '@material-ui/core';
+import { Button, Tooltip } from '@mui/material';
 
 import type { ApplicationModalProps } from './ApplicationModal';
 import { ApplicationModal } from './ApplicationModal';

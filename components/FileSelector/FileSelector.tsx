@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-import { css } from '@emotion/react';
-import { Box, Button, Collapse } from '@material-ui/core';
+import { Box, Button, Collapse } from '@mui/material';
 
 import { MiniFileList } from './MiniFileList';
 import { SelectedFilesLabel } from './SelectedFilesLabel';
@@ -20,28 +19,14 @@ export const FileSelector = ({ value, targetType, ...props }: SharedProps) => {
     <>
       <SelectedFilesLabel files={files} />
 
-      <Button
-        css={css`
-          margin-left: auto;
-        `}
-        size="small"
-        variant="outlined"
-        onClick={() => setExpanded(true)}
-      >
+      <Button size="small" sx={{ ml: 'auto' }} variant="outlined" onClick={() => setExpanded(true)}>
         Select {targetType}
       </Button>
     </>
   );
 
   const closeControls = (
-    <Button
-      css={css`
-        margin-left: auto;
-      `}
-      size="small"
-      variant="outlined"
-      onClick={() => setExpanded(false)}
-    >
+    <Button size="small" sx={{ ml: 'auto' }} variant="outlined" onClick={() => setExpanded(false)}>
       Close
     </Button>
   );

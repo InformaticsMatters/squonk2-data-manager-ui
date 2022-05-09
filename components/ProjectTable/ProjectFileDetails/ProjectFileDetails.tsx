@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Container, Link } from '@material-ui/core';
+import { Container, Link } from '@mui/material';
 
 import { ModalWrapper } from '../../modals/ModalWrapper';
 import { PageSection } from './../../PageSection';

@@ -2,7 +2,7 @@ import type { InstanceSummaryJobImageType, TaskSummary } from '@squonk/data-mana
 import { useGetTask } from '@squonk/data-manager-client/task';
 
 import { css } from '@emotion/react';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 
 import { CenterLoader } from '../CenterLoader';
 import { TimeLine } from './common/TimeLine';

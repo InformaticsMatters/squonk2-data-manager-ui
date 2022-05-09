@@ -1,6 +1,5 @@
-import { css } from '@emotion/react';
-import { ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
+import AccountTreeRoundedIcon from '@mui/icons-material/AccountTreeRounded';
+import { ListItem, ListItemIcon, ListItemText } from '@mui/material';
 
 export interface ProjectListItemProps {
   projectName: string;
@@ -9,11 +8,7 @@ export interface ProjectListItemProps {
 export const ProjectListItem = ({ projectName }: ProjectListItemProps) => {
   return (
     <ListItem>
-      <ListItemIcon
-        css={css`
-          min-width: 40px;
-        `}
-      >
+      <ListItemIcon sx={{ minWidth: '40px' }}>
         <AccountTreeRoundedIcon />
       </ListItemIcon>
       <ListItemText primary={projectName} />

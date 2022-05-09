@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import { ListItem, ListItemText, useMediaQuery, useTheme } from '@material-ui/core';
+import { ListItem, ListItemText, useMediaQuery, useTheme } from '@mui/material';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
@@ -21,15 +20,7 @@ export const DateTimeListItem = ({ datetimeString }: DateTimeListItemProps) => {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up('md'));
 
   return (
-    <ListItem
-      css={
-        biggerThanMd
-          ? css`
-              margin-left: auto;
-            `
-          : undefined
-      }
-    >
+    <ListItem sx={{ ml: biggerThanMd ? 'auto' : undefined }}>
       <ListItemText
         primary={datetime.format(TIME_FORMAT)}
         secondary={datetime.format(DATE_FORMAT)}

@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 
-import { Breadcrumbs, Link, Typography } from '@material-ui/core';
+import { Breadcrumbs, Link, Typography } from '@mui/material';
 
 export interface PathBreadcrumbs {
   /**

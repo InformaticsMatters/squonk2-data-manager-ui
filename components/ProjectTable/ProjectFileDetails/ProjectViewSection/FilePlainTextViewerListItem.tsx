@@ -1,5 +1,5 @@
-import { ListItem, ListItemText } from '@material-ui/core';
-import { Description } from '@material-ui/icons';
+import { Description } from '@mui/icons-material';
+import { ListItem, ListItemText } from '@mui/material';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 

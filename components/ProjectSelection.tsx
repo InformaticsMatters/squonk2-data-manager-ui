@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 
 import { OrganisationAutocomplete } from './userContext/OrganisationAutocomplete';
 import { ProjectAutocomplete } from './userContext/ProjectAutocomplete';

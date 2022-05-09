@@ -4,8 +4,8 @@ import type { DatasetPostBodyBody, DmError } from '@squonk/data-manager-client';
 import { uploadDataset } from '@squonk/data-manager-client/dataset';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
-import { IconButton, Tooltip } from '@material-ui/core';
-import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
+import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
+import { IconButton, Tooltip } from '@mui/material';
 import type { AxiosError } from 'axios';
 
 import { useCurrentOrg, useCurrentUnit } from '../../context/organisationUnitContext';
@@ -96,7 +96,11 @@ export const FileUpload = () => {
     <>
       <Tooltip title={unitOrOrgMissing ? 'Select a organisation and unit' : 'Upload dataset'}>
         <span>
-          <IconButton disabled={unitOrOrgMissing || isTypesLoading} onClick={() => setOpen(true)}>
+          <IconButton
+            disabled={unitOrOrgMissing || isTypesLoading}
+            size="large"
+            onClick={() => setOpen(true)}
+          >
             <CloudUploadRoundedIcon />
           </IconButton>
         </span>

@@ -3,8 +3,8 @@ import { useQueryClient } from 'react-query';
 import type { DmError } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useDeleteDataset } from '@squonk/data-manager-client/dataset';
 
-import { IconButton, List, ListItem, ListItemText, Typography } from '@material-ui/core';
-import { DeleteForever } from '@material-ui/icons';
+import { DeleteForever } from '@mui/icons-material';
+import { IconButton, List, ListItem, ListItemText, Typography } from '@mui/material';
 
 import { useEnqueueError } from '../../../../hooks/useEnqueueStackError';
 import { WarningDeleteButton } from '../../../WarningDeleteButton';
@@ -90,7 +90,12 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
       onDelete={deleteSelectedDatasets}
     >
       {({ isDeleting, openModal }) => (
-        <IconButton aria-label="Delete selected datasets" disabled={isDeleting} onClick={openModal}>
+        <IconButton
+          aria-label="Delete selected datasets"
+          disabled={isDeleting}
+          size="large"
+          onClick={openModal}
+        >
           <DeleteForever />
         </IconButton>
       )}

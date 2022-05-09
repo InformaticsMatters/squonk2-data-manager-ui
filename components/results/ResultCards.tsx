@@ -1,6 +1,6 @@
 import type { InstanceSummary, TaskSummary } from '@squonk/data-manager-client';
 
-import { CircularProgress, Grid, Typography } from '@material-ui/core';
+import { CircularProgress, Grid, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
 

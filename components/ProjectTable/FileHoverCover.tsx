@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
-import { Typography, useTheme } from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
+import { Typography, useTheme } from '@mui/material';
+import { Alert, AlertTitle } from '@mui/material';
 
 export interface FileHoverCoverProps {
   active: boolean;

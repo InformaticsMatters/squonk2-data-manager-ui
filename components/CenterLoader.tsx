@@ -1,13 +1,6 @@
-import { css } from '@emotion/react';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, styled } from '@mui/material';
 
-export const CenterLoader = () => {
-  return (
-    <CircularProgress
-      css={css`
-        position: relative;
-        left: calc(50% - 20px);
-      `}
-    />
-  );
-};
+export const CenterLoader = styled(CircularProgress)({
+  position: 'relative',
+  left: 'calc(50% - 20px)',
+});

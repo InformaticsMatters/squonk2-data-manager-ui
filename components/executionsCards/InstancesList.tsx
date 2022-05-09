@@ -1,7 +1,7 @@
 import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetInstances } from '@squonk/data-manager-client/instance';
 
-import { Box, List, ListItem, ListItemText, Typography } from '@material-ui/core';
+import { Box, List, ListItem, ListItemText, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';

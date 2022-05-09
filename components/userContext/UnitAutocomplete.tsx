@@ -8,10 +8,10 @@ import {
   useGetOrganisationUnits,
 } from '@squonk/account-server-client/unit';
 
-import { IconButton, InputAdornment, TextField, Typography } from '@material-ui/core';
-import { DeleteForever } from '@material-ui/icons';
-import type { AutocompleteProps } from '@material-ui/lab';
-import { Autocomplete } from '@material-ui/lab';
+import { DeleteForever } from '@mui/icons-material';
+import type { AutocompleteProps } from '@mui/material';
+import { IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import { Autocomplete } from '@mui/material';
 
 import { useOrganisationUnit } from '../../context/organisationUnitContext';
 import { useCurrentProjectId } from '../../hooks/projectHooks';
@@ -53,8 +53,8 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
       {...props}
       fullWidth
       getOptionLabel={(option) => option.name}
-      getOptionSelected={(option, value) => option.id === value.id}
       id="unit-selection"
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       loading={isLoading}
       options={data?.units ?? []}
       renderInput={(params) => (
@@ -76,7 +76,7 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
                   }}
                 >
                   {({ openModal }) => (
-                    <IconButton aria-label="Delete selected unit" onClick={openModal}>
+                    <IconButton aria-label="Delete selected unit" size="large" onClick={openModal}>
                       <DeleteForever />
                     </IconButton>
                   )}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { ListItem, ListItemText } from '@material-ui/core';
-import { NoteAdd } from '@material-ui/icons';
+import { NoteAdd } from '@mui/icons-material';
+import { ListItem, ListItemText } from '@mui/material';
 
 import { useOrganisationUnit } from '../../../../../../context/organisationUnitContext';
 import { CreateProjectForm } from '../../../../../CreateProjectForm';

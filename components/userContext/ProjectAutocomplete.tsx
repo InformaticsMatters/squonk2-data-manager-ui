@@ -1,8 +1,7 @@
 import type { ProductDmProjectTier } from '@squonk/account-server-client';
 
-import { TextField } from '@material-ui/core';
-import type { AutocompleteProps } from '@material-ui/lab';
-import { Autocomplete } from '@material-ui/lab';
+import type { AutocompleteProps } from '@mui/material';
+import { Autocomplete, TextField } from '@mui/material';
 
 import { useCurrentProjectId } from '../../hooks/projectHooks';
 import { useProjectSubscriptions } from '../UserSettings/UserSettingsContent/ProjectStatsSection/useProjectSubscriptions';

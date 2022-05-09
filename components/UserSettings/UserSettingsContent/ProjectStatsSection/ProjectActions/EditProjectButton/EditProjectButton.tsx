@@ -3,9 +3,8 @@ import { useState } from 'react';
 import type { ProductDmProjectTier } from '@squonk/account-server-client';
 import type { ProjectDetail } from '@squonk/data-manager-client';
 
-import { css } from '@emotion/react';
-import { IconButton, Tooltip, Typography } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
+import EditIcon from '@mui/icons-material/Edit';
+import { IconButton, Tooltip, Typography } from '@mui/material';
 
 import { useKeycloakUser } from '../../../../../../hooks/useKeycloakUser';
 import { ModalWrapper } from '../../../../../modals/ModalWrapper';
@@ -37,13 +36,7 @@ export const EditProjectButton = ({ project, projectProduct }: EditProjectButton
       {isEditor && (
         <Tooltip title={'Edit Project'}>
           <span>
-            <IconButton
-              css={css`
-                padding: 1px;
-              `}
-              size="small"
-              onClick={() => setOpen(!open)}
-            >
+            <IconButton size="small" sx={{ p: '1px' }} onClick={() => setOpen(!open)}>
               <EditIcon />
             </IconButton>
           </span>

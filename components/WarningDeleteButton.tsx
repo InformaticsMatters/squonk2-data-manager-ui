@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
-import { Tooltip, Typography } from '@material-ui/core';
+import { Tooltip, Typography } from '@mui/material';
 
 import { useMountedState } from '../hooks/useMountedState';
 import { ModalWrapper } from './modals/ModalWrapper';

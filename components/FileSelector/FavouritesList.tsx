@@ -1,5 +1,5 @@
-import { Typography } from '@material-ui/core';
-import FolderSpecialRoundedIcon from '@material-ui/icons/FolderSpecialRounded';
+import FolderSpecialRoundedIcon from '@mui/icons-material/FolderSpecialRounded';
+import { Typography } from '@mui/material';
 
 import { useSelectedFiles } from '../../context/fileSelectionContext';
 import { FileListItem } from './FileListItem';

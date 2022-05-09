@@ -3,7 +3,7 @@ import type { Column, Row } from 'react-table';
 
 import { useGetDatasets } from '@squonk/data-manager-client/dataset';
 
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress } from '@mui/material';
 import dynamic from 'next/dynamic';
 
 import { combineLabels } from '../../utils/labelUtils';

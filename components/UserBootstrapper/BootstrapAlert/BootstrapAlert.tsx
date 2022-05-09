@@ -1,13 +1,11 @@
 import { useGetUnits } from '@squonk/account-server-client/unit';
 
-import { css } from '@emotion/react';
-import { Box } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import { Alert, Box } from '@mui/material';
 
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
 import { BootstrapForm } from './BootstrapForm';
 /**
- * Boostraps a user which doesn't have any units with a default unit and a project
+ * Bootstraps a user which doesn't have any units with a default unit and a project
  */
 export const BootstrapAlert = () => {
   const { data: unitsData, isLoading: isLoadingUnits } = useGetUnits();
@@ -25,12 +23,12 @@ export const BootstrapAlert = () => {
     return (
       <Box m={2}>
         <Alert
-          css={css`
-            .MuiAlert-message {
-              width: 100%;
-            }
-          `}
           severity="info"
+          sx={{
+            '& .MuiAlert-message': {
+              width: '100%',
+            },
+          }}
         >
           You are not part of any units. You may create a project under a new unit in the default
           organisation.

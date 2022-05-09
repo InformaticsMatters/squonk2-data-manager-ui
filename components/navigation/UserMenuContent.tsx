@@ -1,4 +1,4 @@
-import { Link, Typography } from '@material-ui/core';
+import { Link, Typography } from '@mui/material';
 import NextLink from 'next/link';
 
 import { useKeycloakUser } from '../../hooks/useKeycloakUser';

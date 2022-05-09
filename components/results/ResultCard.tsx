@@ -1,7 +1,7 @@
 import type { Dispatch, FC, ReactNode, SetStateAction } from 'react';
 import { useState } from 'react';
 
-import { CardContent, Link, ListItem, ListItemIcon, ListItemText, Slide } from '@material-ui/core';
+import { CardContent, Link, ListItem, ListItemIcon, ListItemText, Slide } from '@mui/material';
 import type { LinkProps } from 'next/link';
 import NextLink from 'next/link';
 

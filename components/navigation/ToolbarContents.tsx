@@ -1,5 +1,4 @@
-import styled from '@emotion/styled';
-import { useMediaQuery, useTheme } from '@material-ui/core';
+import { styled, useMediaQuery, useTheme } from '@mui/material';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
 import { MobileNavMenu } from './MobileNavMenu';
@@ -44,10 +43,10 @@ export const ToolbarContents = () => {
   return <MobileNavMenu />;
 };
 
-const IconsWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  flex: 1 0;
-  min-width: 0;
-`;
+const IconsWrapper = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  flex: '1 0',
+  minWidth: 0,
+});

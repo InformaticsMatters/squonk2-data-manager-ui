@@ -1,15 +1,7 @@
 import type { InstanceSummary } from '@squonk/data-manager-client';
 
-import { css } from '@emotion/react';
-import {
-  Avatar,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Typography,
-} from '@material-ui/core';
-import { FolderRounded, InsertDriveFileRounded } from '@material-ui/icons';
+import { FolderRounded, InsertDriveFileRounded } from '@mui/icons-material';
+import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
 
 import { JobLink } from './JobLink';
 import type { OutputValue } from './types';
@@ -41,20 +33,12 @@ export const JobOutputSection = ({ instanceSummary }: JobOutputSectionProps) => 
         const isFile = output.type === 'file' || output.type === 'files';
 
         return (
-          <ListItem
-            css={css`
-              align-items: flex-start;
-            `}
-            key={name}
-          >
+          <ListItem key={name} sx={{ alignItems: 'flex-start' }}>
             <ListItemAvatar>
               <Avatar>{isFile ? <InsertDriveFileRounded /> : <FolderRounded />}</Avatar>
             </ListItemAvatar>
             <ListItemText
               disableTypography
-              css={css`
-                margin: 0;
-              `}
               primary={<Typography variant="body1">{output.title}</Typography>}
               secondary={
                 <JobLink
@@ -63,6 +47,7 @@ export const JobOutputSection = ({ instanceSummary }: JobOutputSectionProps) => 
                   type={output.type}
                 />
               }
+              sx={{ m: 0 }}
             />
           </ListItem>
         );

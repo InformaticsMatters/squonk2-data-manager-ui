@@ -6,7 +6,7 @@ import { getGetProjectsQueryKey, getProjects } from '@squonk/data-manager-client
 
 import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { css } from '@emotion/react';
-import { Box, Container, Grid, Typography } from '@material-ui/core';
+import { Box, Container, Grid, Typography } from '@mui/material';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -70,7 +70,7 @@ const Project = () => {
       </Head>
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(' ')}>
         <Layout>
-          <Container>
+          <Container maxWidth="xl">
             {currentProject ? (
               <>
                 <Grid
@@ -103,11 +103,7 @@ const Project = () => {
                 </ProjectFileUpload>
               </>
             ) : (
-              <div
-                css={css`
-                  text-align: center;
-                `}
-              >
+              <Box sx={{ textAlign: 'center' }}>
                 <Typography gutterBottom color="textSecondary" variant="h3">
                   Select a project to view
                 </Typography>
@@ -119,7 +115,7 @@ const Project = () => {
                 <Box marginY={1}>
                   <ProjectSelection />
                 </Box>
-              </div>
+              </Box>
             )}
           </Container>
         </Layout>

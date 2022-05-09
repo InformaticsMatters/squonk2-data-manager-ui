@@ -4,11 +4,11 @@ import { useQueryClient } from 'react-query';
 import type { DatasetSummary } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, uploadDataset } from '@squonk/data-manager-client/dataset';
 
-import type { IconButtonProps } from '@material-ui/core';
-import { IconButton } from '@material-ui/core';
-import { ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
-import BackupRoundedIcon from '@material-ui/icons/BackupRounded';
+import BackupRoundedIcon from '@mui/icons-material/BackupRounded';
+import type { IconButtonProps } from '@mui/material';
+import { IconButton } from '@mui/material';
+import { ListItem, ListItemSecondaryAction, ListItemText } from '@mui/material';
+import { Typography } from '@mui/material';
 
 import { useCurrentOrg, useCurrentUnit } from '../../../context/organisationUnitContext';
 import { ModalWrapper } from '../../modals/ModalWrapper';
@@ -48,7 +48,7 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
       <ListItem button onClick={() => setOpen(true)}>
         <ListItemText primary="Create a New Version of this Dataset" />
         <ListItemSecondaryAction>
-          <IconButton edge="end" onClick={() => setOpen(true)}>
+          <IconButton edge="end" size="large" onClick={() => setOpen(true)}>
             <BackupRoundedIcon />
           </IconButton>
         </ListItemSecondaryAction>

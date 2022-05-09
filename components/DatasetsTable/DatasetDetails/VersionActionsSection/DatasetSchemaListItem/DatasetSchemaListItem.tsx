@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { ListItem, ListItemText } from '@material-ui/core';
-import FindInPageRoundedIcon from '@material-ui/icons/FindInPageRounded';
+import FindInPageRoundedIcon from '@mui/icons-material/FindInPageRounded';
+import { ListItem, ListItemText } from '@mui/material';
 
 import { DatasetSchemaViewModal } from './DatasetSchemaViewModal';
 

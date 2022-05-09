@@ -1,7 +1,6 @@
 import type { ProductDmProjectTier } from '@squonk/account-server-client';
 
-import { css } from '@emotion/react';
-import { Radio } from '@material-ui/core';
+import { Radio } from '@mui/material';
 
 import { useCurrentProjectId } from '../../../../hooks/projectHooks';
 
@@ -23,9 +22,7 @@ export const ProjectSelectionRadio = ({ projectProduct }: ProjectSelectionRadioP
   return (
     <Radio
       checked={isProjectSelected}
-      css={css`
-        padding: 1px;
-      `}
+      sx={{ p: '1px' }}
       onClick={() => {
         if (isProjectSelected) {
           setCurrentProjectId();

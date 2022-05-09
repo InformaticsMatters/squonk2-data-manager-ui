@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { Box, Container, Link, Paper, Typography } from '@material-ui/core';
+import { Box, Container, Link, Paper, Typography } from '@mui/material';
 
 export const Footer = () => {
   return (

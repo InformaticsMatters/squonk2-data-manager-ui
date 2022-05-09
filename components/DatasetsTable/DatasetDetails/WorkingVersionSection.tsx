@@ -1,7 +1,6 @@
 import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager-client';
 
-import { css } from '@emotion/react';
-import { Box, MenuItem, TextField, Typography, useTheme } from '@material-ui/core';
+import { Box, MenuItem, TextField, Typography } from '@mui/material';
 
 import { DownloadButton } from '../../DownloadButton';
 
@@ -28,8 +27,6 @@ export const WorkingVersionSection = ({
   version,
   setVersion,
 }: WorkingVersionSectionProps) => {
-  const theme = useTheme();
-
   return (
     <>
       <Typography gutterBottom variant="body1">
@@ -60,17 +57,13 @@ export const WorkingVersionSection = ({
         </TextField>
 
         {/* Download Dataset Version */}
-        <div
-          css={css`
-            margin-left: ${theme.spacing(2)}px;
-          `}
-        >
+        <Box ml={2}>
           <DownloadButton
             disabled={!(version.processing_stage === 'DONE')}
             href={`/data-manager-ui/api/dm-api/dataset/${dataset.dataset_id}/${version.version}`} // Need the dataset to be downloadable
             tooltip="Download this version of the dataset"
           />
-        </div>
+        </Box>
       </Box>
     </>
   );

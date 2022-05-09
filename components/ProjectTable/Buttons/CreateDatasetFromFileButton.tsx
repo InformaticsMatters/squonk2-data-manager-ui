@@ -6,8 +6,8 @@ import {
   useCreateDatasetFromFile,
 } from '@squonk/data-manager-client/dataset';
 
-import { IconButton, Tooltip } from '@material-ui/core';
-import AddCircleRoundedIcon from '@material-ui/icons/AddCircleRounded';
+import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import { IconButton, Tooltip } from '@mui/material';
 
 import { useCurrentOrg, useCurrentUnit } from '../../../context/organisationUnitContext';
 import type { ProjectId } from '../../../hooks/projectHooks';

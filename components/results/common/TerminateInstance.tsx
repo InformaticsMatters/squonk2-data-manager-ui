@@ -6,7 +6,7 @@ import {
   useTerminateInstance,
 } from '@squonk/data-manager-client/instance';
 
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 
 import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { WarningDeleteButton } from '../../WarningDeleteButton';

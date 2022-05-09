@@ -1,7 +1,4 @@
-import type { FC } from 'react';
-
-import { css } from '@emotion/react';
-import { useTheme } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
 
 export interface ChipsProps {
   /**
@@ -11,22 +8,15 @@ export interface ChipsProps {
 }
 
 /**
- * Wrapper component that provides spacing to one or more Material-UI <Chip /> components
+ * Wrapper component that provides spacing to one or more MUI <Chip /> components
  */
-export const Chips: FC<ChipsProps> = ({ children, spacing = 0.5 }) => {
-  const theme = useTheme();
-  return (
-    <div
-      css={css`
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        & > * {
-          margin: ${theme.spacing(spacing)}px;
-        }
-      `}
-    >
-      {children}
-    </div>
-  );
-};
+export const Chips = styled('div', { shouldForwardProp: (prop) => prop !== 'spacing' })<ChipsProps>(
+  ({ spacing = 0.5, theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    '& > *': {
+      margin: theme.spacing(spacing),
+    },
+  }),
+);

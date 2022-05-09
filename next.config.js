@@ -33,7 +33,7 @@ let nextConfig = {
   // Allow mdx content and mdx files as pages
   webpack(config, options) {
     if (process.env.MONOREPO) {
-      const packages = ['react', '@material-ui/core', 'react-query'];
+      const packages = ['react', '@mui/material', 'react-query'];
       packages.forEach(
         (packageName) => (config.resolve.alias[packageName] = resolvePackage(packageName)),
       );

@@ -2,8 +2,8 @@ import type { FC } from 'react';
 import { useMemo } from 'react';
 import type { Cell, Column } from 'react-table';
 
-import { Typography } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import { Typography } from '@mui/material';
+import { Alert } from '@mui/material';
 
 import { getErrorMessage } from '../../../../../../utils/orvalError';
 import { CenterLoader } from '../../../../../CenterLoader';

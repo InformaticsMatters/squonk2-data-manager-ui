@@ -3,7 +3,7 @@ import type { FileError } from 'react-dropzone';
 
 import { useGetTask } from '@squonk/data-manager-client/task';
 
-import { Box, LinearProgress, Typography } from '@material-ui/core';
+import { Box, LinearProgress, Typography } from '@mui/material';
 
 export interface ProgressBarProps {
   /**

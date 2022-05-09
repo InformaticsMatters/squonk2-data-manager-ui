@@ -2,8 +2,8 @@ import type { MutableRefObject } from 'react';
 import { useRef } from 'react';
 import { forwardRef, useEffect } from 'react';
 
-import type { CheckboxProps } from '@material-ui/core';
-import { Checkbox } from '@material-ui/core';
+import type { CheckboxProps } from '@mui/material';
+import { Checkbox } from '@mui/material';
 
 /**
  * Wrapped version of a MuiCheckbox that supports the native indeterminate attribute. Required for

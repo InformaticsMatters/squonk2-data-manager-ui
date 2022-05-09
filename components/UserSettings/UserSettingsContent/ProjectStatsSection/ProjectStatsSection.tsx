@@ -3,8 +3,7 @@ import type { Cell, Column } from 'react-table';
 
 import type { ProductDmProjectTier, ProductDmStorage } from '@squonk/account-server-client';
 
-import { css } from '@emotion/react';
-import { useTheme } from '@material-ui/core';
+import { Box, useTheme } from '@mui/material';
 
 import { useCurrentProjectId } from '../../../../hooks/projectHooks';
 import { getErrorMessage } from '../../../../utils/orvalError';
@@ -133,12 +132,7 @@ export const ProjectStatsSection = () => {
   );
 
   return (
-    <div
-      css={css`
-        display: grid;
-        overflow-x: auto;
-      `}
-    >
+    <Box display="grid" sx={{ overflowX: 'auto' }}>
       <DataTable
         columns={projectsColumns}
         customRowProps={(row) =>
@@ -147,15 +141,15 @@ export const ProjectStatsSection = () => {
             : {}
         }
         customTableProps={{
-          css: css`
-            & td {
-              word-break: break-word;
-            }
-            & tr {
-              display: grid;
-              grid-template-columns: 61px 1fr 220px 110px 100px 100px 100px 80px;
-            }
-          `,
+          sx: {
+            '& td': {
+              wordBreak: 'break-word',
+            },
+            '& tr': {
+              display: 'grid',
+              gridTemplateColumns: '61px 1fr 220px 110px 100px 100px 100px 80px',
+            },
+          },
         }}
         data={projectSubscriptions}
         enableSearch={false}
@@ -167,20 +161,18 @@ export const ProjectStatsSection = () => {
       <DataTable
         columns={storageColumns}
         customTableProps={{
-          css: css`
-            & td {
-              word-break: break-word;
-            }
-            & tr {
-              display: grid;
-              grid-template-columns: 61px 1fr 220px 210px 100px 100px 80px;
-            }
-            & th:nth-of-type(1) > *,
-            th:nth-of-type(4) > *,
-            th:nth-of-type(7) > * {
-              visibility: hidden;
-            }
-          `,
+          sx: {
+            '& td': {
+              wordBreak: 'break-word',
+            },
+            '& tr': {
+              display: 'grid',
+              gridTemplateColumns: '61px 1fr 220px 210px 100px 100px 80px',
+            },
+            '& th:nth-of-type(1) > *, th:nth-of-type(4) > *, th:nth-of-type(7) > *': {
+              visibility: 'hidden',
+            },
+          },
         }}
         data={storageSubscriptions}
         enableSearch={false}
@@ -189,6 +181,6 @@ export const ProjectStatsSection = () => {
         isLoading={isStorageSubscriptionsLoading}
         tableContainer={false}
       />
-    </div>
+    </Box>
   );
 };

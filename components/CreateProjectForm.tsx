@@ -19,10 +19,10 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core';
+} from '@mui/material';
 import type { FormikConfig } from 'formik';
 import { Field, Form, Formik } from 'formik';
-import { Checkbox, TextField } from 'formik-material-ui';
+import { Checkbox, TextField } from 'formik-mui';
 import * as yup from 'yup';
 
 import { PROJECT_SUB } from '../constants/products';
@@ -130,7 +130,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
   const children: ProjectFormikProps['children'] = ({ submitForm, isSubmitting, isValid }) => (
     <Form
       css={css`
-        margin-top: ${theme.spacing()}px;
+        margin-top: ${theme.spacing()};
       `}
     >
       <div
@@ -138,7 +138,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
         css={css`
           display: grid;
           grid-template-columns: ${biggerThanSm ? '1fr 1fr auto auto' : '1fr'};
-          gap: ${theme.spacing()}px;
+          gap: ${theme.spacing()};
         `}
       >
         <Field autoFocus fullWidth component={TextField} label="Project Name" name="projectName" />

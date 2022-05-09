@@ -5,8 +5,8 @@ import type { DmError, InstanceSummary, JobSummary } from '@squonk/data-manager-
 import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
 import { useGetJob } from '@squonk/data-manager-client/job';
 
-import { Box, Grid, TextField, Typography } from '@material-ui/core';
-import type { FormProps } from '@rjsf/core';
+import { Box, Grid, TextField, Typography } from '@mui/material';
+import Form from '@rjsf/material-ui/v5';
 import dynamic from 'next/dynamic';
 
 import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
@@ -21,10 +21,6 @@ const JobInputFields = dynamic<JobInputFieldsProps>(
     loading: () => <CenterLoader />,
   },
 );
-
-const Form = dynamic<FormProps<any>>(() => import('@rjsf/material-ui'), {
-  loading: () => <CenterLoader />,
-});
 
 export type InputData = Record<string, string | string[] | undefined>;
 

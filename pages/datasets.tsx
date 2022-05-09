@@ -1,5 +1,5 @@
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { Container, Typography } from '@material-ui/core';
+import { Container, Typography } from '@mui/material';
 import Head from 'next/head';
 
 import { DatasetsTable } from '../components/DatasetsTable';
@@ -17,7 +17,7 @@ const Datasets = () => {
       </Head>
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(' ')}>
         <Layout>
-          <Container>
+          <Container maxWidth="xl">
             <Typography gutterBottom variant="h1">
               Datasets
             </Typography>

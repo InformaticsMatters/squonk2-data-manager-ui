@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 
-import { Link, Typography } from '@material-ui/core';
 import { MDXProvider } from '@mdx-js/react';
+import { Link, Typography } from '@mui/material';
 
 export const MDXComponentProvider: FC = ({ children }) => {
   return (

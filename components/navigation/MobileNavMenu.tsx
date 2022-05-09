@@ -1,16 +1,7 @@
 import { useState } from 'react';
 
-import { css } from '@emotion/react';
-import {
-  Divider,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-} from '@material-ui/core';
-import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
+import { Divider, Grid, IconButton, List, ListItem, ListItemText, Typography } from '@mui/material';
 
 import { useIsAuthorized } from '../../hooks/useIsAuthorized';
 import { ModalWrapper } from '../modals/ModalWrapper';
@@ -30,13 +21,7 @@ export const MobileNavMenu = () => {
 
   return (
     <>
-      <IconButton
-        color="inherit"
-        css={css`
-          margin-left: auto;
-        `}
-        onClick={() => setOpen(true)}
-      >
+      <IconButton color="inherit" size="large" sx={{ ml: 'auto' }} onClick={() => setOpen(true)}>
         <MenuRoundedIcon />
       </IconButton>
       <ModalWrapper id="mobile-menu" open={open} title="" onClose={() => setOpen(false)}>

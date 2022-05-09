@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react';
 import { Children } from 'react';
 
-import { css } from '@emotion/react';
-import { Grid, useTheme } from '@material-ui/core';
+import { Grid } from '@mui/material';
 
 export interface DatasetsFilterToolbarProps {
   /**
@@ -24,34 +23,15 @@ export const DatasetsFilterToolbar = ({
   shrinkableFilters,
   fullWidthFilters,
 }: DatasetsFilterToolbarProps) => {
-  const theme = useTheme();
-
   return (
-    <Grid
-      container
-      alignItems="center"
-      css={css`
-        margin-right: ${theme.spacing(7)}px;
-      `}
-      spacing={1}
-    >
+    <Grid container alignItems="center" spacing={1} sx={{ mr: 7 }}>
       {Children.map(shrinkableFilters, (child) => (
-        <Grid
-          item
-          css={css`
-            flex: 1 1 200px;
-          `}
-        >
+        <Grid item sx={{ flex: '1 1 200px' }}>
           {child}
         </Grid>
       ))}
       {Children.map(fullWidthFilters, (child) => (
-        <Grid
-          item
-          css={css`
-            flex: 1 1 100%;
-          `}
-        >
+        <Grid item sx={{ flex: '1 1 100%' }}>
           {child}
         </Grid>
       ))}

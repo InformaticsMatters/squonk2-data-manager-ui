@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 
 import { Dropzone } from '../uploads/Dropzone';
 import type { UploadableFile } from '../uploads/types';

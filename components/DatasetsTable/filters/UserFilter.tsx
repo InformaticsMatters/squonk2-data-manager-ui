@@ -1,7 +1,7 @@
 import type { UserSummary } from '@squonk/data-manager-client';
 import { useGetUsers } from '@squonk/data-manager-client/user';
 
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 import { getErrorMessage } from '../../../utils/orvalError';
 import { AutocompleteFilter } from './AutocompleteFilter';

@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import type { DialogProps } from '@material-ui/core';
+import type { DialogProps } from '@mui/material';
 import type { FormikConfig } from 'formik';
 import { Form, Formik } from 'formik';
 
@@ -54,11 +53,7 @@ export function FormikModalWrapper<Values>({
   return (
     <Formik {...formikProps}>
       {({ submitForm, isSubmitting, isValid, ...rest }) => (
-        <Form
-          css={css`
-            display: inline;
-          `}
-        >
+        <Form style={{ display: 'inline' }}>
           <ModalWrapper
             DialogProps={DialogProps}
             id={id}

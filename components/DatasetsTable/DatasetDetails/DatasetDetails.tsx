@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager-client';
 
-import { Container, Link, List, Typography } from '@material-ui/core';
+import { Container, Link, List, Typography } from '@mui/material';
 
 import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
 import { Labels } from '../../labels/Labels';

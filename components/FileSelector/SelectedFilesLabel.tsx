@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import { Tooltip, Typography } from '@material-ui/core';
+import { Tooltip, Typography } from '@mui/material';
 
 export interface SelectedFilesLabelProps {
   /**
@@ -16,14 +15,7 @@ export interface SelectedFilesLabelProps {
  */
 export const SelectedFilesLabel = ({ files }: SelectedFilesLabelProps) => {
   return (
-    <Typography
-      noWrap
-      css={css`
-        white-space: break-spaces;
-      `}
-      display="inline"
-      variant="body2"
-    >
+    <Typography noWrap display="inline" sx={{ whiteSpace: 'break-spaces' }} variant="body2">
       Selected Files:{' '}
       {files.length === 1 ? (
         files[0]

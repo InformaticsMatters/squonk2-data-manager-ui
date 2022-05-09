@@ -1,16 +1,8 @@
 import type { InstanceSummary } from '@squonk/data-manager-client';
 
-import { css } from '@emotion/react';
-import {
-  Avatar,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Typography,
-} from '@material-ui/core';
-import { FolderRounded, InsertDriveFileRounded } from '@material-ui/icons';
-import { Alert } from '@material-ui/lab';
+import { FolderRounded, InsertDriveFileRounded } from '@mui/icons-material';
+import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
+import { Alert } from '@mui/material';
 
 import { getErrorMessage } from '../../../../../utils/orvalError';
 import { CenterLoader } from '../../../../CenterLoader';
@@ -47,12 +39,7 @@ export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
       {/* We currently have to assume that the outputs have a consistent type */}
       {inputs.map((input) => {
         return (
-          <ListItem
-            css={css`
-              align-items: flex-start;
-            `}
-            key={input.name}
-          >
+          <ListItem key={input.name} sx={{ alignItems: 'flex-start' }}>
             <ListItemAvatar>
               <Avatar>
                 {input.type === 'file' ? <InsertDriveFileRounded /> : <FolderRounded />}
@@ -60,9 +47,6 @@ export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
             </ListItemAvatar>
             <ListItemText
               disableTypography
-              css={css`
-                margin: 0;
-              `}
               primary={<Typography variant="body1">{input.title}</Typography>}
               secondary={input.value.map((val) => (
                 <JobLink
@@ -72,6 +56,7 @@ export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
                   type={input.type}
                 />
               ))}
+              sx={{ m: 0 }}
             />
           </ListItem>
         );

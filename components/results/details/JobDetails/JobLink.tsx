@@ -1,6 +1,5 @@
-import { css } from '@emotion/react';
-import { Box, IconButton, Link, Tooltip, Typography, useTheme } from '@material-ui/core';
-import { Folder } from '@material-ui/icons';
+import { Folder } from '@mui/icons-material';
+import { Box, IconButton, Link, Tooltip, Typography } from '@mui/material';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -61,7 +60,6 @@ const getFilePathAndName = (path: string[]) => {
  */
 export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) => {
   const { query } = useRouter();
-  const theme = useTheme();
 
   const path = getPath(originalPath);
   const { resolvedPath, containsGlob } = getResolvedPath(path);
@@ -73,11 +71,9 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
     return (
       <Box
         alignItems="center"
-        css={css`
-          gap: ${theme.spacing()}px;
-          word-break: break-all;
-        `}
         display="flex"
+        gap={(theme) => theme.spacing(1)}
+        sx={{ wordBreak: 'break-all' }}
       >
         <NextLink
           passHref
@@ -91,7 +87,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
           }}
         >
           <Tooltip title="Locate file in project">
-            <IconButton>
+            <IconButton size="large">
               <Folder color="primary" fontSize="small" />
             </IconButton>
           </Tooltip>
@@ -119,13 +115,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
   }
 
   return (
-    <Box
-      alignItems="center"
-      css={css`
-        gap: ${theme.spacing()}px;
-      `}
-      display="flex"
-    >
+    <Box alignItems="center" display="flex" gap={(theme) => theme.spacing(1)}>
       <NextLink
         passHref
         href={{

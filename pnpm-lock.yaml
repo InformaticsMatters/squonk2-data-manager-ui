@@ -44,7 +44,7 @@ specifiers:
   formik: 2.2.9
   formik-mui: 4.0.0-alpha.3
   formik-mui-lab: 1.0.0-alpha.3
-  husky: 7.0.4
+  husky: 8.0.1
   identity-obj-proxy: 3.0.0
   immer: 9.0.12
   lint-staged: 12.4.1
@@ -139,7 +139,7 @@ devDependencies:
   eslint-plugin-react-hooks: 4.5.0_eslint@8.14.0
   eslint-plugin-simple-import-sort: 7.0.0_eslint@8.14.0
   eslint-plugin-unused-imports: 2.0.0_f328d0ba5471adcab2eb9daf728176e8
-  husky: 7.0.4
+  husky: 8.0.1
   identity-obj-proxy: 3.0.0
   lint-staged: 12.4.1
   tsc-files: 1.1.3_typescript@4.6.4
@@ -3544,9 +3544,9 @@ packages:
     engines: {node: '>=10.17.0'}
     dev: true
 
-  /husky/7.0.4:
-    resolution: {integrity: sha512-vbaCKN2QLtP/vD4yvs6iz6hBEo6wkSzs8HpRah1Z6aGmF2KW5PdYuAd7uX5a+OyBZHBhd+TFLqgjUgytQr4RvQ==}
-    engines: {node: '>=12'}
+  /husky/8.0.1:
+    resolution: {integrity: sha512-xs7/chUH/CKdOCs7Zy0Aev9e/dKOMZf3K1Az1nar3tzlv0jfqnYtu235bstsWTmXOR0EfINrPa97yy4Lz6RiKw==}
+    engines: {node: '>=14'}
     hasBin: true
     dev: true
 

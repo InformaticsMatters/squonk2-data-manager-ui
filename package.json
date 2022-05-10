@@ -94,7 +94,7 @@
     "eslint-plugin-react-hooks": "4.5.0",
     "eslint-plugin-simple-import-sort": "7.0.0",
     "eslint-plugin-unused-imports": "2.0.0",
-    "husky": "7.0.4",
+    "husky": "8.0.1",
     "identity-obj-proxy": "3.0.0",
     "lint-staged": "12.4.1",
     "tsc-files": "1.1.3"

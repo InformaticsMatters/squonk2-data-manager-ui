@@ -55,7 +55,7 @@ specifiers:
   next-transpile-modules: 9.0.0
   node-fetch: 3.2.4
   notistack: 2.0.4
-  plotly.js-basic-dist: 2.12.0
+  plotly.js-basic-dist: 2.12.1
   prettier: 2.6.2
   react: 17.0.2
   react-dom: 17.0.2
@@ -112,7 +112,7 @@ dependencies:
   next-transpile-modules: 9.0.0
   node-fetch: 3.2.4
   notistack: 2.0.4_bad1f8f1882313d3c69b67fe9295af24
-  plotly.js-basic-dist: 2.12.0
+  plotly.js-basic-dist: 2.12.1
   prettier: 2.6.2
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
@@ -5039,8 +5039,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /plotly.js-basic-dist/2.12.0:
-    resolution: {integrity: sha512-SJ9yygdBZHL4eVcK47Rr2hRGxeD4W/Ncj1MHvJxFCZ4HBsfYjDadTE5kWwJR36TubSW1J/pM5tHI4dCn43Z4qA==}
+  /plotly.js-basic-dist/2.12.1:
+    resolution: {integrity: sha512-iF3Zt5onAgRpIYNy9DEo3jpAW9bGyR/Al5XPQtBv/W2e9oB8tZ3kLQh9LVqx367wZzJ6loIUV8XfXcFSZM+Wcw==}
     dev: false
 
   /pngjs/4.0.1:

@@ -1,9 +1,7 @@
 import { forwardRef } from 'react';
 
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
-import type { ButtonProps } from '@material-ui/core';
-import { Button as MuiButton, useTheme } from '@material-ui/core';
+import type { ButtonProps } from '@mui/material';
+import { Button, styled } from '@mui/material';
 
 import { useIsUserAProjectOwnerOrEditor } from '../../hooks/projectHooks';
 import { NavLink } from './NavLink';
@@ -15,49 +13,26 @@ export interface NavLinksProps {
   linkWidth?: number;
 }
 
-export const NavLinks = ({ linkWidth }: NavLinksProps) => {
-  const theme = useTheme();
-
+export const NavLinks = ({ linkWidth = 120 }: NavLinksProps) => {
   const isEditorOrOwner = useIsUserAProjectOwnerOrEditor();
 
   return (
-    <nav
-      css={css`
-        flex: 1;
-        display: flex;
-        align-items: center;
-
-        & div {
-          display: inline-block;
-          width: 100%;
-          max-width: ${linkWidth}px;
-          text-align: center;
-        }
-
-        & div:first-of-type {
-          margin-left: ${theme.spacing(8)}px;
-        }
-
-        & div > a.MuiButton-root.Mui-disabled {
-          color: rgba(100, 0, 0, 0.3);
-        }
-      `}
-    >
+    <Nav linkWidth={linkWidth}>
       {/* Div wrappers used to give correct spacing */}
       <div>
         <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Datasets">
-          {({ active }) => <NavButton $active={active}>Datasets</NavButton>}
+          {({ active }) => <NavButton active={active}>Datasets</NavButton>}
         </NavLink>
       </div>
       <div>
         <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Project">
-          {({ active }) => <NavButton $active={active}>Project</NavButton>}
+          {({ active }) => <NavButton active={active}>Project</NavButton>}
         </NavLink>
       </div>
       <div>
         <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Executions">
           {({ active }) => (
-            <NavButton $active={active} disabled={!isEditorOrOwner}>
+            <NavButton active={active} disabled={!isEditorOrOwner}>
               Executions
             </NavButton>
           )}
@@ -66,25 +41,46 @@ export const NavLinks = ({ linkWidth }: NavLinksProps) => {
       <div>
         <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Results">
           {({ active }) => (
-            <NavButton $active={active} disabled={!isEditorOrOwner}>
+            <NavButton active={active} disabled={!isEditorOrOwner}>
               Results
             </NavButton>
           )}
         </NavLink>
       </div>
-    </nav>
+    </Nav>
   );
 };
 
-// N.B. using the transient props pattern
-// https://medium.com/@probablyup/introducing-transient-props-f35fd5203e0c
-const Button = forwardRef<any, ButtonProps & { $active: boolean }>(
-  ({ $active: _$active, ...props }, ref) => <MuiButton ref={ref} {...props} />,
-);
+type NavButtonProps = ButtonProps & { active: boolean };
 
-const NavButton = styled(Button)`
-  font-weight: ${({ $active }) => ($active ? 'bold' : 'normal')};
-  color: white;
-  text-decoration: none;
-  text-transform: none;
-`;
+const NavButton = forwardRef<any, NavButtonProps>(({ active, ...props }, ref) => (
+  <Button
+    ref={ref}
+    variant="text"
+    {...props}
+    sx={{
+      fontWeight: active ? 'bold' : 'normal',
+      color: 'white',
+      textTransform: 'none',
+      ':hover': {
+        bgcolor: 'rgba(50, 0, 0, 0.04)',
+      },
+    }}
+  />
+));
+
+const Nav = styled('nav', { shouldForwardProp: (prop) => prop !== 'linkWidth' })<{
+  linkWidth: number;
+}>(({ linkWidth }) => ({ theme }) => ({
+  flex: 1,
+  display: 'flex',
+  alignItems: 'center',
+
+  '& div': {
+    display: 'inline-block',
+    width: '100%',
+    maxWidth: `${linkWidth}px`,
+    textAlign: 'center',
+  },
+  '& div:first-of-type': { marginLeft: theme.spacing(8) },
+}));

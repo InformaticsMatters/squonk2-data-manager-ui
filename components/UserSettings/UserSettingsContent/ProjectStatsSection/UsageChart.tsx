@@ -1,8 +1,7 @@
 import { Fragment } from 'react';
 import type { PlotParams } from 'react-plotly.js';
 
-import { css } from '@emotion/react';
-import { Box, CircularProgress, Tooltip, Typography } from '@material-ui/core';
+import { Box, CircularProgress, Tooltip, Typography } from '@mui/material';
 import dynamic from 'next/dynamic';
 
 import type { UsageChartData } from './types';
@@ -41,10 +40,10 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
       title={
         <Box
           alignItems="center"
+          columnGap={4}
           display="grid"
-          gridColumnGap={4}
-          gridRowGap={4}
           gridTemplateColumns="repeat(5, auto)"
+          rowGap={4}
         >
           {chartData.map((item) => {
             return (
@@ -60,25 +59,13 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
                 <Typography component="span" variant="body2">
                   {item.type}
                 </Typography>
-                <Typography
-                  component="span"
-                  css={css`
-                    justify-self: end;
-                  `}
-                  variant="body2"
-                >
+                <Typography component="span" sx={{ justifySelf: 'end' }} variant="body2">
                   {item.value.toFixed(decimalPoints)}
                 </Typography>
                 <Typography component="span" variant="body2">
                   /
                 </Typography>
-                <Typography
-                  component="span"
-                  css={css`
-                    justify-self: end;
-                  `}
-                  variant="body2"
-                >
+                <Typography component="span" sx={{ justifySelf: 'end' }} variant="body2">
                   {((item.value / valuesSummed) * 100).toFixed(2)} %
                 </Typography>
               </Fragment>
@@ -94,19 +81,11 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
          */}
         <Plot
           useResizeHandler
-          config={{
-            displayModeBar: false,
-          }}
-          css={css`
-            width: 100%;
-            height: 100%;
-          `}
+          config={{ displayModeBar: false }}
           data={chartData.map((item) => ({
             x: [item.value],
             orientation: 'h',
-            marker: {
-              color: item.color,
-            },
+            marker: { color: item.color },
             type: 'bar',
             xgap: 0,
           }))}
@@ -114,12 +93,7 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
             hovermode: false,
             showlegend: false,
             autosize: true,
-            margin: {
-              b: 0,
-              t: 0,
-              l: 0,
-              r: 0,
-            },
+            margin: { b: 0, t: 0, l: 0, r: 0 },
             barmode: 'stack',
             xaxis: {
               range: [0, valuesSummed],
@@ -138,6 +112,7 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
               fixedrange: true,
             },
           }}
+          style={{ width: '100%', height: '100%' }}
         />
       </Box>
     </Tooltip>

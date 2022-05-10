@@ -1,10 +1,9 @@
 import type { InstanceSummary } from '@squonk/data-manager-client';
 import { useGetInstance } from '@squonk/data-manager-client/instance';
 
-import { css } from '@emotion/react';
-import { Grid, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import AppsRoundedIcon from '@material-ui/icons/AppsRounded';
-import WorkOutlineRoundedIcon from '@material-ui/icons/WorkOutlineRounded';
+import AppsRoundedIcon from '@mui/icons-material/AppsRounded';
+import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded';
+import { Grid, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 
 import { CenterLoader } from '../../../CenterLoader';
 import { PageSection } from '../../../PageSection';
@@ -37,11 +36,7 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
     <>
       <HorizontalList>
         <ListItem>
-          <ListItemIcon
-            css={css`
-              min-width: 40px;
-            `}
-          >
+          <ListItemIcon sx={{ minWidth: '40px' }}>
             <AppsRoundedIcon />
           </ListItemIcon>
           <ListItemText
@@ -50,11 +45,7 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
           />
         </ListItem>
         <ListItem>
-          <ListItemIcon
-            css={css`
-              min-width: 40px;
-            `}
-          >
+          <ListItemIcon sx={{ minWidth: '40px' }}>
             <WorkOutlineRoundedIcon />
           </ListItemIcon>
           <ListItemText

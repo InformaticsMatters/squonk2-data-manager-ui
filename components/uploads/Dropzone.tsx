@@ -3,8 +3,7 @@ import { useCallback } from 'react';
 import type { DropzoneOptions, FileRejection } from 'react-dropzone';
 import { useDropzone } from 'react-dropzone';
 
-import { css } from '@emotion/react';
-import { Button, Divider, useTheme } from '@material-ui/core';
+import { Divider, styled } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 
 import { useFileExtensions } from '../../hooks/useFileExtensions';
@@ -71,52 +70,43 @@ export const Dropzone: FC<DropzoneProps> = ({
   // 2. This currently requires the body parser in the proxy to be disabled
   // https://github.com/stegano/next-http-proxy-middleware/issues/33
   patchedFileExtensions.push('.gz');
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     ...dropzoneOptions,
     onDrop,
     accept: patchedFileExtensions,
   });
 
-  const theme = useTheme();
   return (
-    <div
-      {...getRootProps()}
-      css={css`
-        border: 2px dashed ${isDragActive ? theme.palette.primary.main : theme.palette.grey[600]};
-        border-radius: 8px;
-        padding: ${theme.spacing(1)}px;
-        padding-left: ${theme.spacing(2)}px;
-        padding-right: ${theme.spacing(2)}px;
-        max-height: 40vh;
-        overflow-y: scroll;
-      `}
-    >
+    <Zone {...getRootProps()}>
       <input {...getInputProps()} />
-      <Button
-        css={css`
-          text-transform: none;
-          cursor: pointer;
-          text-align: center;
-          border: none;
-          background: none;
-          display: block;
-          width: 100%;
-          margin-top: ${theme.spacing(2)}px;
-          margin-bottom: ${theme.spacing(2)}px;
-          font-size: 1rem;
-        `}
-      >
-        Drag and drop files here, or click to select files
-      </Button>
-      {!!files.length && children && (
-        <Divider
-          css={css`
-            margin-top: ${theme.spacing(2)}px;
-            margin-bottom: ${theme.spacing(2)}px;
-          `}
-        />
-      )}
+      <UploadButton>Drag and drop files here, or click to select files</UploadButton>
+      {!!files.length && children && <Divider sx={{ my: 2 }} />}
       {children}
-    </div>
+    </Zone>
   );
 };
+
+const Zone = styled('div', { shouldForwardProp: (prop) => prop !== 'isDragActive' })<{
+  isDragActive: boolean;
+}>(({ theme, isDragActive }) => ({
+  border: `2px dashed ${isDragActive ? theme.palette.primary.main : theme.palette.grey[600]}`,
+  borderRadius: 2 * Number(theme.shape.borderRadius),
+  padding: theme.spacing(1),
+  paddingLeft: theme.spacing(2),
+  paddingRight: theme.spacing(2),
+  overflowY: 'scroll',
+  maxHeight: '40vh',
+}));
+
+const UploadButton = styled('button')(({ theme }) => ({
+  textTransform: 'none',
+  cursor: 'pointer',
+  textAlign: 'center',
+  border: 'none',
+  background: 'none',
+  display: 'block',
+  width: '100%',
+  marginTop: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+  fontSize: '1rem',
+}));

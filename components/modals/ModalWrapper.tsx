@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import {
   Button,
   Dialog,
@@ -8,8 +8,7 @@ import {
   IconButton,
   Typography,
   useTheme,
-} from '@material-ui/core';
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
+} from '@mui/material';
 
 import { SlideUpTransition } from '../SlideUpTransition';
 import type { BaseModalWrapperProps } from './types';
@@ -53,19 +52,19 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       TransitionComponent={SlideUpTransition}
       onClose={onClose}
     >
-      <DialogTitle disableTypography id={`${id}-title`}>
-        <Typography component="h2" variant="h3">
+      <DialogTitle id={`${id}-title`}>
+        <Typography component="span" variant="h3">
           {title}
         </Typography>
         <IconButton
-          css={css`
-            z-index: ${theme.zIndex.appBar + 1};
-            position: absolute;
-            right: ${theme.spacing(2)}px;
-            top: ${theme.spacing(2)}px;
-            color: ${theme.palette.text.primary};
-          `}
           size="small"
+          sx={{
+            zIndex: theme.zIndex.appBar + 1,
+            position: 'absolute',
+            right: theme.spacing(2),
+            top: theme.spacing(1.5),
+            color: 'text.primary',
+          }}
           onClick={onClose}
         >
           <CloseRoundedIcon />
@@ -73,9 +72,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       </DialogTitle>
       <DialogContent>{children}</DialogContent>
       <DialogActions>
-        <Button color="default" onClick={onClose}>
-          Close
-        </Button>
+        <Button onClick={onClose}>Close</Button>
         {onSubmit && (
           <Button color="primary" disabled={submitDisabled} onClick={onSubmit}>
             {submitText}

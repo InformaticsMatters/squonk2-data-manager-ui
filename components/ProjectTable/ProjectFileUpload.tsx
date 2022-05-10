@@ -7,7 +7,7 @@ import { useQueryClient } from 'react-query';
 import { getGetFilesQueryKey } from '@squonk/data-manager-client/file';
 import { useAddFileToProject } from '@squonk/data-manager-client/project';
 
-import { css } from '@emotion/react';
+import { Box } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
 import { useCurrentProjectId } from '../../hooks/projectHooks';
@@ -75,15 +75,10 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
   });
 
   return (
-    <div
-      css={css`
-        position: relative;
-      `}
-      {...getRootProps()}
-    >
+    <Box sx={{ position: 'relative' }} {...getRootProps()}>
       <FileHoverCover active={isDragActive} />
       <input {...getInputProps()} />
       {children(open)}
-    </div>
+    </Box>
   );
 };

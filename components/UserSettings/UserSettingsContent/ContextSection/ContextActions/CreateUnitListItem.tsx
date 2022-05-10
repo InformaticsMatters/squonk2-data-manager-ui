@@ -10,10 +10,10 @@ import {
   useGetOrganisationUnits,
 } from '@squonk/account-server-client/unit';
 
-import { Grid, ListItem, ListItemText } from '@material-ui/core';
-import { CreateNewFolder } from '@material-ui/icons';
+import { CreateNewFolder } from '@mui/icons-material';
+import { Grid, ListItem, ListItemText } from '@mui/material';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import * as yup from 'yup';
 
 import { useOrganisationUnit } from '../../../../../context/organisationUnitContext';

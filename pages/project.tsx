@@ -5,8 +5,7 @@ import { getFiles, getGetFilesQueryKey } from '@squonk/data-manager-client/file'
 import { getGetProjectsQueryKey, getProjects } from '@squonk/data-manager-client/project';
 
 import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { css } from '@emotion/react';
-import { Box, Container, Grid, Typography } from '@material-ui/core';
+import { Box, Container, Grid, Typography } from '@mui/material';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -70,23 +69,21 @@ const Project = () => {
       </Head>
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(' ')}>
         <Layout>
-          <Container>
+          <Container maxWidth="xl">
             {currentProject ? (
               <>
                 <Grid
                   container
-                  css={css`
-                    display: flex;
-                    align-items: center;
-                  `}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
                 >
                   <Grid item md={6} xs={12}>
                     <Typography
                       gutterBottom
                       component="h1"
-                      css={css`
-                        word-break: break-all;
-                      `}
+                      sx={{ wordBreak: 'break-all' }}
                       variant={currentProject.name.length > 16 ? 'h2' : 'h1'}
                     >
                       Project: {currentProject.name}
@@ -103,11 +100,7 @@ const Project = () => {
                 </ProjectFileUpload>
               </>
             ) : (
-              <div
-                css={css`
-                  text-align: center;
-                `}
-              >
+              <Box sx={{ textAlign: 'center' }}>
                 <Typography gutterBottom color="textSecondary" variant="h3">
                   Select a project to view
                 </Typography>
@@ -119,7 +112,7 @@ const Project = () => {
                 <Box marginY={1}>
                   <ProjectSelection />
                 </Box>
-              </div>
+              </Box>
             )}
           </Container>
         </Layout>

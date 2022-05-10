@@ -5,16 +5,7 @@ import { useQueryClient } from 'react-query';
 import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
 import { useGetTask } from '@squonk/data-manager-client/task';
 
-import { css } from '@emotion/react';
-import {
-  Grid,
-  IconButton,
-  LinearProgress,
-  MenuItem,
-  TextField,
-  Typography,
-  useTheme,
-} from '@material-ui/core';
+import { Grid, IconButton, LinearProgress, MenuItem, TextField, Typography } from '@mui/material';
 
 import { useFileExtensions } from '../../hooks/useFileExtensions';
 import { useMimeTypeLookup } from '../../hooks/useMimeTypeLookup';
@@ -69,8 +60,6 @@ export function SingleFileUploadWithProgress({
   const allowedFileTypes = useFileExtensions();
   const mimeLookup = useMimeTypeLookup();
 
-  const theme = useTheme();
-
   const disabled =
     (task && !task.done) ||
     (fileWrapper.progress < 100 && fileWrapper.progress > 0) ||
@@ -93,15 +82,7 @@ export function SingleFileUploadWithProgress({
           />
         </Grid>
 
-        <Grid
-          item
-          css={css`
-            text-align: center;
-          `}
-          md={2}
-          sm={3}
-          xs={8}
-        >
+        <Grid item md={2} sm={3} sx={{ textAlign: 'center' }} xs={8}>
           <TextField
             fullWidth
             select
@@ -125,21 +106,11 @@ export function SingleFileUploadWithProgress({
           </TextField>
         </Grid>
 
-        <Grid
-          item
-          css={css`
-            text-align: center;
-          `}
-          md={1}
-          sm={1}
-          xs={4}
-        >
+        <Grid item md={1} sm={1} sx={{ textAlign: 'center' }} xs={4}>
           <IconButton
-            css={css`
-              color: ${theme.palette.success.main};
-            `}
             disabled={disabled}
             size="small"
+            sx={{ color: 'success.main' }}
             onClick={(event) => {
               event.stopPropagation();
               onDelete(fileWrapper.file);

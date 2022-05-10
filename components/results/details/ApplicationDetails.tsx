@@ -1,6 +1,6 @@
 import type { InstanceSummary } from '@squonk/data-manager-client';
 
-import { ListItem, ListItemText } from '@material-ui/core';
+import { ListItem, ListItemText } from '@mui/material';
 
 import { CenterLoader } from '../../CenterLoader';
 import { HorizontalList } from '../common/HorizontalList';

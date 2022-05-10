@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import { Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
 
 import { useOrganisationUnit } from '../../context/organisationUnitContext';
 import { useCurrentProject } from '../../hooks/projectHooks';
@@ -14,15 +13,10 @@ export const OUPContext = () => {
   const { organisation, unit } = organisationUnit;
 
   return (
-    <div
-      css={css`
-        min-width: 0;
-        flex-basis: 200px;
-      `}
-    >
+    <Box flexBasis="200px" sx={{ minWidth: 0 }}>
       <Typography noWrap>Org: {organisation?.name}</Typography>
       <Typography noWrap>Unit: {unit?.name}</Typography>
       <Typography noWrap>Project: {currentProject?.name}</Typography>
-    </div>
+    </Box>
   );
 };

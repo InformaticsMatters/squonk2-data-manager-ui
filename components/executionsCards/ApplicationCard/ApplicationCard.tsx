@@ -1,6 +1,6 @@
 import type { ApplicationSummary } from '@squonk/data-manager-client';
 
-import { CircularProgress, useTheme } from '@material-ui/core';
+import { CircularProgress, useTheme } from '@mui/material';
 import dynamic from 'next/dynamic';
 
 import type { BaseCardProps } from '../../BaseCard';

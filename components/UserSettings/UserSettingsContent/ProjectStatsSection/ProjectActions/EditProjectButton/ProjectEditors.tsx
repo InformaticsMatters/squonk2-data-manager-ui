@@ -14,9 +14,8 @@ import {
 } from '@squonk/data-manager-client/project';
 import { useGetUsers } from '@squonk/data-manager-client/user';
 
-import { Chip, TextField } from '@material-ui/core';
-import type { AutocompleteChangeReason } from '@material-ui/lab';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete, Chip, TextField } from '@mui/material';
+import type { AutocompleteChangeReason } from '@mui/material/useAutocomplete';
 
 import { useEnqueueError } from '../../../../../../hooks/useEnqueueStackError';
 import { useKeycloakUser } from '../../../../../../hooks/useKeycloakUser';
@@ -49,7 +48,7 @@ export const ProjectEditors = ({ project, projectProduct }: ProjectEditorsProps)
 
   const updateEditors = async (value: string[], reason: AutocompleteChangeReason) => {
     switch (reason) {
-      case 'select-option': {
+      case 'selectOption': {
         // Isolate the user that has been added
         const username = value.find((user) => !project.editors.includes(user));
         if (username) {
@@ -64,7 +63,7 @@ export const ProjectEditors = ({ project, projectProduct }: ProjectEditorsProps)
         break;
       }
 
-      case 'remove-option': {
+      case 'removeOption': {
         // Isolate the user that has been removed
         const username = project.editors.find((editor) => !value.includes(editor));
         if (username) {

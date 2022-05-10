@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Link } from '@material-ui/core';
+import { Link } from '@mui/material';
 import dynamic from 'next/dynamic';
 
 import { CenterLoader } from '../CenterLoader';

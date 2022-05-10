@@ -7,13 +7,10 @@ import { getGetFilesQueryKey, useAttachFile } from '@squonk/data-manager-client/
 import { useGetProjects } from '@squonk/data-manager-client/project';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
-import { ListItemText } from '@material-ui/core';
-import { ListItem } from '@material-ui/core';
-import { FormControl, FormGroup, MenuItem } from '@material-ui/core';
-import AttachFileRoundedIcon from '@material-ui/icons/AttachFileRounded';
-import { Alert } from '@material-ui/lab';
+import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
+import { Alert, FormControl, FormGroup, ListItem, ListItemText, MenuItem } from '@mui/material';
 import { Field } from 'formik';
-import { CheckboxWithLabel, TextField } from 'formik-material-ui';
+import { CheckboxWithLabel, TextField } from 'formik-mui';
 import * as yup from 'yup';
 
 import { useEnqueueError } from '../../../../../hooks/useEnqueueStackError';

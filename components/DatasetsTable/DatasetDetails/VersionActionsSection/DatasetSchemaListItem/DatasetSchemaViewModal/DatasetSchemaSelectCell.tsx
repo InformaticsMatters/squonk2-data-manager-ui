@@ -1,8 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 
-import { css } from '@emotion/react';
-import { FormControl, IconButton, MenuItem, Select, Tooltip, useTheme } from '@material-ui/core';
-import { Restore } from '@material-ui/icons';
+import { Restore } from '@mui/icons-material';
+import { FormControl, IconButton, MenuItem, Select, Tooltip } from '@mui/material';
 
 export interface DatasetSchemaSelectCellProps<V extends readonly string[]> {
   /**
@@ -43,8 +42,6 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
   originalFieldValue: originalValue,
   options,
 }: DatasetSchemaSelectCellProps<V>) => {
-  const theme = useTheme();
-
   const [displayValue, setDisplayValue] = useState(value);
 
   useLayoutEffect(() => {
@@ -58,31 +55,31 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
       <Select
         fullWidth
         aria-label={`${field} ${fieldKey}`}
-        css={css`
-          ${hasChanged ? `background: ${theme.palette.action.hover};` : undefined}
-          padding-right: 0;
-          & > div {
-            background-color: unset !important;
-            padding-top: 6px;
-            padding-bottom: 7px;
-            padding-right: 56px !important;
-          }
-        `}
         endAdornment={
           <Tooltip title="Revert changes">
             <IconButton
-              css={css`
-                ${!hasChanged ? 'visibility: hidden;' : undefined}
-                position: absolute;
-                right: 26px;
-              `}
               size="small"
+              sx={{
+                visibility: !hasChanged ? 'hidden' : undefined,
+                position: 'absolute',
+                right: '26px',
+              }}
               onClick={() => setValue(originalValue)}
             >
               <Restore fontSize="small" />
             </IconButton>
           </Tooltip>
         }
+        sx={{
+          background: hasChanged ? 'action.hover' : undefined,
+          pr: 0,
+          '& > div': {
+            bgcolor: 'unset !important',
+            pt: '6px',
+            pb: '7px',
+            pr: '56px !important',
+          },
+        }}
         value={displayValue}
         onBlur={() => setValue(displayValue)}
         onChange={(event) => setDisplayValue(event.target.value as V[number])}

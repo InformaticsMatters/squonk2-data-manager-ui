@@ -1,8 +1,7 @@
 import type { ProductDmProjectTier } from '@squonk/account-server-client';
 import { useGetProject } from '@squonk/data-manager-client/project';
 
-import { css } from '@emotion/react';
-import { CircularProgress, Typography } from '@material-ui/core';
+import { Box, CircularProgress, Typography } from '@mui/material';
 
 import { getErrorMessage } from '../../../../../utils/orvalError';
 import { DeleteProjectButton } from './DeleteProjectButton';
@@ -37,13 +36,9 @@ export const ProjectActions = ({ projectProduct }: ProjectActionsProps) => {
   }
 
   return project ? (
-    <div
-      css={css`
-        display: flex;
-      `}
-    >
+    <Box display="flex">
       <EditProjectButton project={project} projectProduct={projectProduct} />
       <DeleteProjectButton project={project} projectProduct={projectProduct} />
-    </div>
+    </Box>
   ) : null;
 };

@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 
-import { css } from '@emotion/react';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Avatar,
   Card,
@@ -11,8 +11,7 @@ import {
   Collapse,
   IconButton,
   useTheme,
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+} from '@mui/material';
 
 /**
  * Parameters passed to actions when a component is passed
@@ -80,10 +79,10 @@ export const BaseCard: FC<BaseCardProps> = ({
         <CardHeader
           avatar={
             <Avatar
-              css={css`
-                font-family: verdana;
-                background-color: ${header.color || 'transparent'};
-              `}
+              sx={{
+                fontFamily: 'verdana',
+                backgroundColor: header.color || 'transparent',
+              }}
             >
               {header.avatar?.[0].toUpperCase()}
             </Avatar>
@@ -95,26 +94,21 @@ export const BaseCard: FC<BaseCardProps> = ({
         />
       )}
       <CardContent>{children}</CardContent>
-      <CardActions
-        disableSpacing
-        css={css`
-          justify-content: right;
-        `}
-      >
+      <CardActions disableSpacing sx={{ justifyContent: 'right' }}>
         {/* ? should this be a functionCall() or a <ReactElement />
         or should this be separate props with a union and one a never type */}
         {typeof actions === 'function' ? actions({ setExpanded }) : actions}
         {collapsed !== undefined && (
           <IconButton
             aria-expanded={expanded}
-            css={css`
-              margin-left: auto;
-              transform: rotate(${expanded ? 180 : 0}deg);
-              /* transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; */
-              transition: ${theme.transitions.create('transform', {
+            size="large"
+            sx={{
+              marginLeft: 'auto',
+              transform: `rotate(${expanded ? 180 : 0}deg)`,
+              transition: `${theme.transitions.create('transform', {
                 duration: theme.transitions.duration.shortest,
-              })};
-            `}
+              })}`,
+            }}
             onClick={() => {
               setExpanded(!expanded);
               setHasExpanded(true);

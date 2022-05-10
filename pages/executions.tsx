@@ -12,9 +12,7 @@ import { getGetJobsQueryKey, getJobs, useGetJobs } from '@squonk/data-manager-cl
 import { getGetProjectsQueryKey, getProjects } from '@squonk/data-manager-client/project';
 
 import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { css } from '@emotion/react';
-import { Container, Grid, MenuItem, TextField, useTheme } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import { Alert, Container, Grid, MenuItem, TextField } from '@mui/material';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -69,8 +67,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
  * Page allowing the user to run jobs and applications
  */
 const Executions = () => {
-  const theme = useTheme();
-
   const [executionTypes, setExecutionTypes] = useState(['application', 'job']);
   const [searchValue, setSearchValue] = useState('');
 
@@ -142,14 +138,8 @@ const Executions = () => {
       </Head>
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(' ')}>
         <Layout>
-          <Container>
-            <Grid
-              container
-              css={css`
-                margin-bottom: ${theme.spacing(2)}px;
-              `}
-              spacing={2}
-            >
+          <Container maxWidth="xl">
+            <Grid container spacing={2} sx={{ mb: 2 }}>
               {/* Filter by apps/jobs */}
               <Grid item md={4} sm={6} xs={12}>
                 <TextField
@@ -170,15 +160,7 @@ const Executions = () => {
               </Grid>
 
               {/* Search through each card */}
-              <Grid
-                item
-                css={css`
-                  margin-left: auto;
-                `}
-                md={4}
-                sm={6}
-                xs={12}
-              >
+              <Grid item md={4} sm={6} sx={{ ml: 'auto' }} xs={12}>
                 <SearchTextField
                   fullWidth
                   value={searchValue}

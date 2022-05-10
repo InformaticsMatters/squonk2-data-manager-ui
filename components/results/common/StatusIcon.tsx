@@ -3,10 +3,10 @@ import type {
   TaskSummaryProcessingStage,
 } from '@squonk/data-manager-client';
 
-import { green, yellow } from '@material-ui/core/colors';
-import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
-import ErrorRoundedIcon from '@material-ui/icons/ErrorRounded';
-import FiberManualRecordRoundedIcon from '@material-ui/icons/FiberManualRecordRounded';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
+import FiberManualRecordRoundedIcon from '@mui/icons-material/FiberManualRecordRounded';
+import { green, yellow } from '@mui/material/colors';
 
 export interface StatusIconProps {
   /**

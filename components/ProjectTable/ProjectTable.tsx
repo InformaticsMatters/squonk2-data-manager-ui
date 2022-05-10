@@ -4,7 +4,8 @@ import type { Cell, CellProps, Column, PluginHook } from 'react-table';
 
 import type { ProjectDetail } from '@squonk/data-manager-client';
 
-import { css } from '@emotion/react';
+import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
+import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import {
   Breadcrumbs,
   CircularProgress,
@@ -13,9 +14,7 @@ import {
   Link,
   Typography,
   useTheme,
-} from '@material-ui/core';
-import CloudUploadRoundedIcon from '@material-ui/icons/CloudUploadRounded';
-import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
+} from '@mui/material';
 import fileSize from 'filesize';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
@@ -80,10 +79,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
               <Link
                 color="inherit"
                 component="button"
-                css={css`
-                  display: flex;
-                  gap: ${theme.spacing(1)}px;
-                `}
+                sx={{ display: 'flex', gap: theme.spacing(1) }}
                 variant="body1"
               >
                 <FolderRoundedIcon /> {value}
@@ -177,13 +173,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
       isLoading={isLoading}
       ToolbarChild={
         <Grid container>
-          <Grid
-            item
-            css={css`
-              display: flex;
-              align-items: center;
-            `}
-          >
+          <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
             <Breadcrumbs>
               {['root', ...breadcrumbs].map((path, pathIndex) =>
                 pathIndex < breadcrumbs.length ? (
@@ -208,13 +198,8 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
               )}
             </Breadcrumbs>
           </Grid>
-          <Grid
-            item
-            css={css`
-              margin-left: auto;
-            `}
-          >
-            <IconButton onClick={openUploadDialog}>
+          <Grid item sx={{ marginLeft: 'auto' }}>
+            <IconButton size="large" onClick={openUploadDialog}>
               <CloudUploadRoundedIcon />
             </IconButton>
           </Grid>

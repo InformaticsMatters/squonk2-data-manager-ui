@@ -8,9 +8,8 @@ import {
 } from '@squonk/data-manager-client/instance';
 import { getGetProjectsQueryKey } from '@squonk/data-manager-client/project';
 
-import { css } from '@emotion/react';
-import { Grid, IconButton, MenuItem, TextField, Tooltip } from '@material-ui/core';
-import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+import { Grid, IconButton, MenuItem, TextField, Tooltip } from '@mui/material';
 
 import { useCurrentProjectId } from '../../hooks/projectHooks';
 import { SearchTextField } from '../SearchTextField';
@@ -87,15 +86,7 @@ export const ResultsToolbar = ({
         </TextField>
       </Grid>
 
-      <Grid
-        item
-        css={css`
-          margin-left: auto;
-        `}
-        md={4}
-        sm={5}
-        xs={12}
-      >
+      <Grid item md={4} sm={5} sx={{ ml: 'auto' }} xs={12}>
         <SearchTextField
           fullWidth
           value={searchValue}
@@ -103,19 +94,11 @@ export const ResultsToolbar = ({
         />
       </Grid>
 
-      <Grid
-        item
-        css={css`
-          text-align: center;
-        `}
-        sm="auto"
-        xs={12}
-      >
+      <Grid item sm="auto" sx={{ textAlign: 'center' }} xs={12}>
         <Tooltip title="Refresh Tasks">
           <IconButton
-            css={css`
-              margin-left: auto;
-            `}
+            size="large"
+            sx={{ ml: 'auto' }}
             onClick={() => refreshResults.forEach((func) => func())}
           >
             <RefreshRoundedIcon />

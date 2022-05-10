@@ -6,6 +6,8 @@ import { setBaseUrl as setASBaseUrl } from '@squonk/account-server-client';
 import { setBaseUrl as setDMBaseUrl } from '@squonk/data-manager-client';
 
 import { UserProvider } from '@auth0/nextjs-auth0';
+import type { EmotionCache } from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
 import { enableMapSet } from 'immer';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -19,21 +21,27 @@ import { SelectedFilesProvider } from '../context/fileSelectionContext';
 import { MDXComponentProvider } from '../context/MDXComponentProvider';
 import { OrganisationUnitProvider } from '../context/organisationUnitContext';
 import type { ProjectLocalStoragePayload } from '../hooks/projectHooks';
+import createEmotionCache from '../utils/createEmotionCache';
 import { getFromLocalStorage } from '../utils/localStorage';
 
 import '../styles/globalStyles.scss';
+const clientSideEmotionCache = createEmotionCache();
 
 setDMBaseUrl(DM_API_URL);
 setASBaseUrl(AS_API_URL);
 
 enableMapSet();
 
-// Adjust template for material-ui given at
-// https://github.com/mui-org/material-ui/tree/master/examples/nextjs
+// Adjust template for MUI given at
+// https://github.com/mui/material-ui/blob/master/examples/nextjs-with-typescript/pages/_app.tsx
 
-export default function App({ Component, pageProps }: AppProps) {
-  // ! Need resolutions in monorepo package.json for <Theme></Theme> to not cause "invalid hooks usage" error
+type CustomAppProps = AppProps & { emotionCache?: EmotionCache };
 
+export default function App({
+  Component,
+  pageProps,
+  emotionCache = clientSideEmotionCache,
+}: CustomAppProps) {
   // React-Query
   const [queryClient] = useState(() => new QueryClient());
 
@@ -60,7 +68,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <>
+    <CacheProvider value={emotionCache}>
       <Head>
         <meta content="minimum-scale=1, initial-scale=1, width=device-width" name="viewport" />
       </Head>
@@ -83,6 +91,6 @@ export default function App({ Component, pageProps }: AppProps) {
           </UserProvider>
         </ThemeProviders>
       </ColorSchemeProvider>
-    </>
+    </CacheProvider>
   );
 }

@@ -3,10 +3,8 @@ import { useQueryClient } from 'react-query';
 import { getGetTaskQueryKey, useGetTask } from '@squonk/data-manager-client/task';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { css } from '@emotion/react';
-import { Container, IconButton, Tooltip, Typography } from '@material-ui/core';
-import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
-import { Alert } from '@material-ui/lab';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+import { Alert, Box, Container, IconButton, Tooltip, Typography } from '@mui/material';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
@@ -35,26 +33,20 @@ const Result = () => {
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
         <Layout>
           <Container maxWidth="md">
-            <div
-              css={css`
-                display: flex;
-                align-items: flex-start;
-              `}
-            >
+            <Box alignItems="flex-start" display="flex">
               <Typography gutterBottom component="h1" variant="h3">
                 Task
               </Typography>
               <Tooltip title="Refresh Instance">
                 <IconButton
-                  css={css`
-                    margin-left: auto;
-                  `}
+                  size="large"
+                  sx={{ ml: 'auto' }}
                   onClick={() => refreshResults.forEach((func) => func())}
                 >
                   <RefreshRoundedIcon />
                 </IconButton>
               </Tooltip>
-            </div>
+            </Box>
             {isError ? (
               <Alert severity="error">{getErrorMessage(error)}</Alert>
             ) : isLoading || task === undefined ? (

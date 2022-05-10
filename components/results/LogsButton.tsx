@@ -1,6 +1,6 @@
 import type { InstanceSummary } from '@squonk/data-manager-client';
 
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 

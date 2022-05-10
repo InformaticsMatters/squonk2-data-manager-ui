@@ -1,9 +1,5 @@
 import type { TaskEvent, TaskGetResponse, TaskState } from '@squonk/data-manager-client';
 
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
-import type { TypographyProps } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
 import {
   Timeline,
   TimelineConnector,
@@ -12,7 +8,9 @@ import {
   TimelineItem,
   TimelineOppositeContent,
   TimelineSeparator,
-} from '@material-ui/lab';
+} from '@mui/lab';
+import type { TypographyProps } from '@mui/material';
+import { styled, Typography } from '@mui/material';
 
 import { LocalTime } from '../../LocalTime';
 
@@ -32,19 +30,9 @@ export interface TimeLineProps {
  */
 export const TimeLine = ({ states }: TimeLineProps) => {
   return (
-    <Timeline
-      css={css`
-        padding: 0;
-        margin: 0;
-      `}
-    >
+    <Timeline sx={{ p: 0, m: 0 }}>
       {states.map((state, stateIndex) => (
-        <TimelineItem
-          css={css`
-            min-height: 40px;
-          `}
-          key={stateIndex}
-        >
+        <TimelineItem key={stateIndex} sx={{ minHeight: '40px' }}>
           <TimelineOppositeContent>
             <TimeLineLabel color="textSecondary">
               <LocalTime showTime showDate={false} utcTimestamp={state.time} />
@@ -72,8 +60,8 @@ const CodeTypography = (props: TypographyProps) => (
   <Typography {...props} component="code" variant="body2" />
 );
 
-const TimeLineLabel = styled(CodeTypography)`
-  // Use custom mono-spaded font. See fonts in globalStyles
-  font-family: 'Fira Mono', monospace;
-  word-break: break-word;
-`;
+// Use custom mono-spaded font. See fonts in globalStyles
+const TimeLineLabel = styled(CodeTypography)({
+  fontFamily: '"Fira Mono", monospace',
+  wordBreak: 'break-word',
+});

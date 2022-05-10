@@ -1,7 +1,6 @@
-import { IconButton } from '@material-ui/core';
-import { Tooltip } from '@material-ui/core';
-import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
-import StarRoundedIcon from '@material-ui/icons/StarRounded';
+import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
+import StarRoundedIcon from '@mui/icons-material/StarRounded';
+import { IconButton, Tooltip } from '@mui/material';
 
 import type { SavedFile } from '../../../context/fileSelectionContext';
 import { useSelectedFiles } from '../../../context/fileSelectionContext';

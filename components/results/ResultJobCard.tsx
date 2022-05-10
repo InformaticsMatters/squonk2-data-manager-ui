@@ -1,6 +1,6 @@
 import type { InstanceSummary } from '@squonk/data-manager-client';
 
-import { CardContent, ListItem, ListItemText } from '@material-ui/core';
+import { CardContent, ListItem, ListItemText } from '@mui/material';
 
 import { APP_ROUTES } from '../../constants/routes';
 import { useProjectFromId } from '../../hooks/projectHooks';

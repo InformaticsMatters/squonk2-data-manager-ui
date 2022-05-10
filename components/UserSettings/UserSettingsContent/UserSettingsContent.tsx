@@ -1,4 +1,4 @@
-import { Container } from '@material-ui/core';
+import { Container } from '@mui/material';
 
 import { useOrganisationUnit } from '../../../context/organisationUnitContext';
 import { PageSection } from '../../PageSection';
@@ -15,7 +15,7 @@ export const UserSettingsContent = () => {
   } = useOrganisationUnit();
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="lg">
       <PageSection level={2} title="User Settings">
         <UserSettingsSection />
       </PageSection>

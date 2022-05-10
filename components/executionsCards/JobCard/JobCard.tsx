@@ -1,6 +1,6 @@
 import type { JobSummary } from '@squonk/data-manager-client';
 
-import { Chip, CircularProgress, Link, Typography, useTheme } from '@material-ui/core';
+import { Chip, CircularProgress, Link, Typography, useTheme } from '@mui/material';
 import dynamic from 'next/dynamic';
 
 import type { BaseCardProps } from '../../BaseCard';

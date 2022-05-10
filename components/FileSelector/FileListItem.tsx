@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { css } from '@emotion/react';
+import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import {
   Checkbox,
   ListItem,
@@ -8,8 +8,7 @@ import {
   ListItemSecondaryAction,
   ListItemText,
   Tooltip,
-} from '@material-ui/core';
-import FolderRoundedIcon from '@material-ui/icons/FolderRounded';
+} from '@mui/material';
 
 import { FavouriteButton } from '../ProjectTable/Buttons/FavouriteButton';
 import type { SharedProps } from './types';
@@ -72,13 +71,10 @@ export const FileListItem = ({
         <ListItemIcon>
           <Checkbox
             checked={checked}
-            css={css`
-              padding-top: 0;
-              padding-bottom: 0;
-            `}
             edge="start"
             inputProps={{ 'aria-labelledby': labelId }}
             size="small"
+            sx={{ pt: 0, pb: 0 }}
             onChange={(_event, checked) => onSelect(checked)}
             onClick={(event) => event.stopPropagation()}
           />

@@ -3,9 +3,8 @@ import { useQueryClient } from 'react-query';
 import { getGetInstanceQueryKey, useGetInstances } from '@squonk/data-manager-client/instance';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { css } from '@emotion/react';
-import { Box, Button, Container, IconButton, Tooltip, Typography } from '@material-ui/core';
-import RefreshRoundedIcon from '@material-ui/icons/RefreshRounded';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+import { Box, Button, Container, IconButton, Tooltip, Typography } from '@mui/material';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import NextLink from 'next/link';
@@ -53,26 +52,20 @@ const Result = () => {
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
         <Layout>
           <Container maxWidth="md">
-            <div
-              css={css`
-                display: flex;
-                align-items: flex-start;
-              `}
-            >
+            <Box alignItems="flex-start" display="flex">
               <Typography gutterBottom component="h1" variant="h3">
                 Instance
               </Typography>
               <Tooltip title="Refresh Instance">
                 <IconButton
-                  css={css`
-                    margin-left: auto;
-                  `}
+                  size="large"
+                  sx={{ ml: 'auto' }}
                   onClick={() => refreshResults.forEach((func) => func())}
                 >
                   <RefreshRoundedIcon />
                 </IconButton>
               </Tooltip>
-            </div>
+            </Box>
             {instance?.application_type === 'JOB' ? (
               <Box marginY={1}>
                 <ResultJobCard poll collapsedByDefault={false} instance={instance} />

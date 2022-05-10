@@ -1,6 +1,6 @@
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
-import { Box, Grid, Typography } from '@material-ui/core';
+import { Box, Grid, Typography } from '@mui/material';
 
 import { CenterLoader } from '../CenterLoader';
 import type { MimeTypeCardProps } from './MimeTypeCard';

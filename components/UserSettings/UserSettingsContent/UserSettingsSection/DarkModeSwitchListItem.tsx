@@ -1,4 +1,4 @@
-import { ListItem, ListItemSecondaryAction, ListItemText, Switch } from '@material-ui/core';
+import { ListItem, ListItemSecondaryAction, ListItemText, Switch } from '@mui/material';
 
 import { useColorScheme } from '../../../../context/colorSchemeContext';
 

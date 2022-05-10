@@ -1,9 +1,9 @@
 import type { ChangeEvent } from 'react';
 import { useCallback } from 'react';
 
-import { TextField as MuiTextField } from '@material-ui/core';
-import type { TextFieldProps } from 'formik-material-ui';
-import { fieldToTextField } from 'formik-material-ui';
+import { TextField as MuiTextField } from '@mui/material';
+import type { TextFieldProps } from 'formik-mui';
+import { fieldToTextField } from 'formik-mui';
 
 /**
  * Formik binding for a Mui TextField forcing the typed text to lowercase

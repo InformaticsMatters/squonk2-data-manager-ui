@@ -13,9 +13,8 @@ import {
 } from '@squonk/data-manager-client/project';
 import { getGetUserAccountQueryKey } from '@squonk/data-manager-client/user';
 
-import { css } from '@emotion/react';
-import { IconButton } from '@material-ui/core';
-import { DeleteForever } from '@material-ui/icons';
+import { DeleteForever } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
 
 import { useCurrentProjectId } from '../../../../../hooks/projectHooks';
 import { useEnqueueError } from '../../../../../hooks/useEnqueueStackError';
@@ -83,13 +82,7 @@ export const DeleteProjectButton = ({ project, projectProduct }: DeleteProjectBu
     >
       {({ openModal }) =>
         isOwner && (
-          <IconButton
-            css={css`
-              padding: 1px;
-            `}
-            size="small"
-            onClick={openModal}
-          >
+          <IconButton size="small" sx={{ p: '1px' }} onClick={openModal}>
             <DeleteForever />
           </IconButton>
         )

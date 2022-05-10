@@ -1,8 +1,7 @@
 import { useState } from 'react';
 
-import { css } from '@emotion/react';
-import { Chip, IconButton, TextField, useTheme } from '@material-ui/core';
-import { AddCircle } from '@material-ui/icons';
+import { AddCircle } from '@mui/icons-material';
+import { Chip, IconButton, styled, TextField, useTheme } from '@mui/material';
 
 export interface LabelsFilterProps {
   /**
@@ -50,12 +49,6 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
 
   return (
     <TextField
-      // This makes the input field to always be on its own line. This looked better than having
-      // the input field move with the labels in Chip component
-      css={css`
-        width: 100%;
-        flex-basis: 100%;
-      `}
       id="datasets-labels-filter"
       inputProps={{
         autoComplete: 'off', // Disable autocomplete and autofill
@@ -64,48 +57,37 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
         },
       }}
       InputProps={{
-        style: { flexWrap: 'wrap', gap: `0 ${theme.spacing(1 / 2)}px` },
+        style: { flexWrap: 'wrap', gap: `0 ${theme.spacing(1 / 2)}` },
         startAdornment:
           labels &&
           labels.map((label, index) => (
             <Chip
-              css={css`
-                margin-top: 6px;
-              `}
               key={index}
               label={label}
               size="small"
+              sx={{ mt: '6px' }}
               variant="outlined"
               onDelete={() => removeLabel(index)}
             />
           )),
         endAdornment: (
-          <div
-            // MUI Autocomplete implements the end adornment similarly using position: absolute.
-            // This way, the Add button is always on the same bottom line as the input text
-            css={css`
-              ${!currentLabel ? 'visibility: hidden;' : undefined}
-              position: absolute;
-              right: 9px;
-              bottom: 7px;
-            `}
-          >
+          <EndAdornmentWrapper visibility={!!currentLabel}>
             <IconButton
               aria-label="Add label"
               // MUI Autocomplete uses 4px padding for the buttons, keep it consistent
-              css={css`
-                padding: 4px;
-              `}
               size="small"
+              sx={{ p: '4px' }}
               title="Add label"
               onClick={() => addLabel()}
             >
               <AddCircle />
             </IconButton>
-          </div>
+          </EndAdornmentWrapper>
         ),
       }}
       label="Filter by label"
+      // the input field move with the labels in Chip component
+      sx={{ width: '100%', flexBasis: '100%' }}
       value={currentLabel}
       variant="outlined"
       onChange={(event) => setCurrentLabel(event.target.value)}
@@ -113,3 +95,14 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
     />
   );
 };
+
+// MUI Autocomplete implements the end adornment similarly using position: absolute.
+// This way, the Add button is always on the same bottom line as the input text
+const EndAdornmentWrapper = styled('div', { shouldForwardProp: (prop) => prop !== 'visibility' })<{
+  visibility: boolean;
+}>(({ visibility }) => ({
+  visibility: !visibility ? 'hidden' : undefined,
+  position: 'absolute',
+  right: '9px',
+  bottom: '7px',
+}));

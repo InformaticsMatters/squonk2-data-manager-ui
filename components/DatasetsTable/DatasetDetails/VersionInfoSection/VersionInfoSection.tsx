@@ -1,6 +1,6 @@
 import type { DatasetVersionSummary } from '@squonk/data-manager-client';
 
-import { List } from '@material-ui/core';
+import { List } from '@mui/material';
 import fileSize from 'filesize';
 
 import { toLocalTimeString } from '../../../LocalTime';

@@ -1,5 +1,5 @@
-import type { ChipProps } from '@material-ui/core';
-import { Chip } from '@material-ui/core';
+import type { ChipProps } from '@mui/material';
+import { Chip } from '@mui/material';
 
 import { labelFormatter } from '../../utils/labelUtils';
 

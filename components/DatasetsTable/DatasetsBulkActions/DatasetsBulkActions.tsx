@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
 
 import type { TableDatasetSubRow } from '..';
 import { BulkDeleteButton } from './BulkDeleteButton';
@@ -19,16 +18,10 @@ export const DatasetsBulkActions = ({ selectedDatasets }: DatasetsBulkActionsPro
   return (
     <Box
       alignItems="center"
-      css={
-        !selectedDatasets.length
-          ? css`
-              visibility: hidden;
-            `
-          : undefined
-      }
       display="flex"
       flex={1}
       justifyContent="space-between"
+      visibility={!selectedDatasets.length ? 'hidden' : undefined}
     >
       <Typography>Selected: {selectedDatasets.length}</Typography>
       <Box display="flex">

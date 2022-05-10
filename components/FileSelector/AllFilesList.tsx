@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useGetFiles } from '@squonk/data-manager-client/file';
 
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 import { CenterLoader } from '../CenterLoader';
 import { FileListItem } from './FileListItem';

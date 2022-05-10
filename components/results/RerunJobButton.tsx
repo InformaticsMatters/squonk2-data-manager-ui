@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import type { InstanceSummary } from '@squonk/data-manager-client';
 
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 
 import { JobModal } from '../executionsCards/JobCard/JobModal';
 

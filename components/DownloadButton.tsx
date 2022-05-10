@@ -1,5 +1,5 @@
-import { IconButton, Tooltip } from '@material-ui/core';
-import { GetAppRounded } from '@material-ui/icons';
+import { GetAppRounded } from '@mui/icons-material';
+import { IconButton, Tooltip } from '@mui/material';
 
 export interface DownloadButtonProps {
   href: string;
@@ -9,7 +9,7 @@ export interface DownloadButtonProps {
 
 export const DownloadButton = ({ href, disabled, tooltip }: DownloadButtonProps) => {
   const button = (
-    <IconButton download disabled={disabled} href={href}>
+    <IconButton download disabled={disabled} href={href} size="large">
       <GetAppRounded />
     </IconButton>
   );

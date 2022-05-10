@@ -5,8 +5,8 @@ import type { ApplicationSummary, DmError } from '@squonk/data-manager-client';
 import { useGetApplication } from '@squonk/data-manager-client/application';
 import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
 
-import { Grid, MenuItem, TextField } from '@material-ui/core';
-import Form from '@rjsf/material-ui';
+import { Grid, MenuItem, TextField } from '@mui/material';
+import Form from '@rjsf/material-ui/v5';
 
 import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { CenterLoader } from '../../CenterLoader';

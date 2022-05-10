@@ -1,6 +1,4 @@
-import { css } from '@emotion/react';
-import { Box, Paper } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import { Alert, Box, Paper } from '@mui/material';
 
 import { CenterLoader } from '../CenterLoader';
 import { PlaintextViewerContent } from './PlaintextViewerContent';
@@ -90,14 +88,7 @@ export const PlaintextViewer = ({
 
   return (
     <Box alignItems="stretch" display="flex" height="100vh" padding={3} width="100vw">
-      <Paper
-        css={css`
-          flex-grow: 1;
-          display: flex;
-          flex-direction: column;
-          min-width: 0;
-        `}
-      >
+      <Paper sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {contents()}
       </Paper>
     </Box>

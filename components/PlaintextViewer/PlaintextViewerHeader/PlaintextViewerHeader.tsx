@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import { Box, Divider, Typography, useTheme } from '@material-ui/core';
+import { Box, Divider, Typography, useTheme } from '@mui/material';
 import fileSize from 'filesize';
 
 import { DownloadButton } from '../../DownloadButton';
@@ -52,32 +51,19 @@ export const PlaintextViewerHeader = ({
   return (
     <Box
       alignItems="center"
-      css={css`
-        background: ${theme.palette.type === 'light'
-          ? theme.palette.grey[200]
-          : theme.palette.grey[900]};
-        box-shadow: ${theme.shadows[0]};
-        border-radius: ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0;
-        gap: ${theme.spacing(2)}px;
-      `}
       display="flex"
       paddingX={2}
       paddingY={1}
+      sx={{
+        background:
+          theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[900],
+        boxShadow: theme.shadows[0],
+        borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
+        gap: theme.spacing(2),
+      }}
     >
-      <Box
-        alignItems="center"
-        css={css`
-          gap: ${theme.spacing()}px;
-        `}
-        display="flex"
-        flex="1 1 auto"
-      >
-        <Typography
-          component="h1"
-          css={css`
-            word-break: break-all;
-          `}
-        >
+      <Box alignItems="center" display="flex" flex="1 1 auto" sx={{ gap: theme.spacing() }}>
+        <Typography component="h1" sx={{ wordBreak: 'break-all' }}>
           <b>{title}</b>
         </Typography>
         <Divider flexItem orientation="vertical" />

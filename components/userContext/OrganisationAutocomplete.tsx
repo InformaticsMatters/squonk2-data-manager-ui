@@ -1,9 +1,8 @@
 import type { OrganisationDetail } from '@squonk/account-server-client';
 import { useGetUnits } from '@squonk/account-server-client/unit';
 
-import { TextField, Typography } from '@material-ui/core';
-import type { AutocompleteProps } from '@material-ui/lab';
-import { Autocomplete } from '@material-ui/lab';
+import type { AutocompleteProps } from '@mui/material';
+import { Autocomplete, TextField, Typography } from '@mui/material';
 
 import { useOrganisationUnit } from '../../context/organisationUnitContext';
 import { useCurrentProjectId } from '../../hooks/projectHooks';
@@ -33,8 +32,8 @@ export const OrganisationAutocomplete = (props: OrganisationAutocompleteProps) =
       {...props}
       fullWidth
       getOptionLabel={(option) => option.name}
-      getOptionSelected={(option, value) => option.id === value.id}
       id="organisation-selection"
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       loading={isLoading}
       options={organisations}
       renderInput={(params) => <TextField {...params} label="Organisation" />}

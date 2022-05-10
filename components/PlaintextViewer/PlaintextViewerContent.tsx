@@ -3,8 +3,7 @@ import { List } from 'react-virtualized';
 import { WindowScroller } from 'react-virtualized';
 import { AutoSizer } from 'react-virtualized';
 
-import { css } from '@emotion/react';
-import { Typography, useTheme } from '@material-ui/core';
+import { Box, Typography, useTheme } from '@mui/material';
 
 /**
  * Height of a row in pixels.
@@ -38,50 +37,35 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
   const numberColumnColor = theme.palette.grey[400];
 
   return (
-    <div
-      // `overflow: auto` displays the scrollbars inside the container
-      css={css`
-        flex: 1 1 auto;
-        overflow: auto;
-        & pre {
-          font-family: 'Fira Mono', monospace;
-        }
-      `}
+    <Box
+      flex="1 1 auto"
       ref={setScrollElement}
+      sx={{
+        // `overflow: auto` displays the scrollbars inside the container
+        overflow: 'auto',
+        '& pre': {
+          fontFamily: '"Fira Mono", monospace',
+        },
+      }}
     >
       {/** One WindowScroller for both of the columns. Use `window` until `ref` in the previous
        * div element resolves.
        */}
       <WindowScroller scrollElement={scrollElement || window}>
         {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
-          <div
-            css={css`
-              flex: 1 1 auto;
-            `}
-          >
+          <Box flex="1 1 auto">
             <AutoSizer
               disableHeight
               // By default this element has 0 width which results in the following flex div not
               // being displayed
-              css={css`
-                width: unset !important;
-              `}
+              sx={{ w: 'unset !important' }}
             >
               {({ width }) => (
-                <div
-                  css={css`
-                    display: flex;
-                    gap: ${theme.spacing(2)}px;
-                  `}
-                  ref={registerChild}
-                >
+                <Box display="flex" gap={(theme) => theme.spacing(2)} ref={registerChild}>
                   {/** Line numbers column */}
                   <List
                     autoContainerWidth
                     autoHeight
-                    css={css`
-                      user-select: none;
-                    `}
                     height={height}
                     isScrolling={isScrolling}
                     overscanRowCount={OVERSCAN}
@@ -100,6 +84,7 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
                       </Typography>
                     )}
                     scrollTop={scrollTop}
+                    sx={{ userSelect: 'none' }}
                     width={numberColumnWidth}
                     onScroll={onChildScroll}
                   />
@@ -107,13 +92,6 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
                   <List
                     autoContainerWidth
                     autoHeight
-                    // Overflow is visible in case a line is longer than the width of the container
-                    css={css`
-                      overflow: visible !important;
-                      & > div {
-                        overflow: visible !important;
-                      }
-                    `}
                     height={height}
                     isScrolling={isScrolling}
                     overscanRowCount={OVERSCAN}
@@ -125,18 +103,25 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
                       </Typography>
                     )}
                     scrollTop={scrollTop}
+                    sx={{
+                      // Overflow is visible in case a line is longer than the width of the container
+                      overflow: 'visible !important',
+                      '& > div': {
+                        overflow: 'visible !important',
+                      },
+                    }}
                     // Account for the `gap` property. The `1` is subtracted as well since browsers
                     // can round the number which results in the display of unnecessary scrollbar on
                     // the X axis.
-                    width={width - numberColumnWidth - theme.spacing(2) - 1}
+                    width={width - numberColumnWidth - Number(theme.spacing(2).slice(0, -2)) - 1}
                     onScroll={onChildScroll}
                   />
-                </div>
+                </Box>
               )}
             </AutoSizer>
-          </div>
+          </Box>
         )}
       </WindowScroller>
-    </div>
+    </Box>
   );
 };

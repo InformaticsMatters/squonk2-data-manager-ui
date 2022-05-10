@@ -3,8 +3,8 @@ import { useQueryClient } from 'react-query';
 import type { DatasetVersionSummary, DmError } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey, useDeleteDataset } from '@squonk/data-manager-client/dataset';
 
-import { ListItem, ListItemText } from '@material-ui/core';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { ListItem, ListItemText } from '@mui/material';
 
 import { useEnqueueError } from '../../../../hooks/useEnqueueStackError';
 import { WarningDeleteButton } from '../../../WarningDeleteButton';

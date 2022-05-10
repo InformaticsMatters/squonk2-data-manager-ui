@@ -15,14 +15,17 @@ import { useExpanded } from 'react-table';
 import { useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
 
 import type { Interpolation } from '@emotion/react';
-import { css } from '@emotion/react';
+import { ExpandLess } from '@mui/icons-material';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import type {
   TableCellProps as MuiCellProps,
   TableProps as MuiTableProps,
   TableRowProps as MuiRowProps,
   Theme,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
+  Alert,
   Box,
   InputAdornment,
   Paper,
@@ -35,12 +38,7 @@ import {
   TableSortLabel,
   TextField,
   Toolbar,
-  useTheme,
-} from '@material-ui/core';
-import { ExpandLess } from '@material-ui/icons';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
-import { Alert } from '@material-ui/lab';
+} from '@mui/material';
 
 import { CenterLoader } from '../CenterLoader';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
@@ -137,29 +135,29 @@ export interface DataTableProps<Data extends Record<string, any>> {
  * <DataTable columns={columns} data={datasets} getRowId={(row) => row.dataset_id} />
  * ```
  */
-export function DataTable<Data extends Record<string, any>>({
-  tableContainer = true,
-  columns,
-  data,
-  ToolbarChild,
-  getRowId,
-  enableSearch = true,
-  initialSelection,
-  onSelection,
-  useActionsColumnPlugin = () => {
-    // Do nothing
-  },
-  isLoading,
-  isError,
-  error,
-  customTableProps,
-  customCellProps,
-  customRowProps,
-  getSubRows,
-  subRowsEnabled,
-  ToolbarActionChild,
-}: DataTableProps<Data>) {
-  const theme = useTheme();
+export const DataTable = <Data extends Record<string, any>>(props: DataTableProps<Data>) => {
+  const {
+    tableContainer = true,
+    columns,
+    data,
+    ToolbarChild,
+    getRowId,
+    enableSearch = true,
+    initialSelection,
+    onSelection,
+    useActionsColumnPlugin = () => {
+      // Do nothing
+    },
+    isLoading,
+    isError,
+    error,
+    customTableProps,
+    customCellProps,
+    customRowProps,
+    getSubRows,
+    subRowsEnabled,
+    ToolbarActionChild,
+  } = props;
 
   // According to react-table data passed to it should be memoized to avoid expensive recalculations
   const tableData = useMemo(() => data || [], [data]);
@@ -248,19 +246,10 @@ export function DataTable<Data extends Record<string, any>>({
   const tableContents = (
     <>
       {(ToolbarChild || enableSearch) && (
-        <Toolbar
-          css={css`
-            align-items: flex-start;
-            padding-top: ${theme.spacing(2)}px;
-            gap: ${theme.spacing(1)}px;
-          `}
-        >
+        <Toolbar sx={{ pt: 2, alignItems: 'flex-start', gap: (theme) => theme.spacing(1) }}>
           {ToolbarChild}
           {enableSearch && (
             <TextField
-              css={css`
-                margin-left: auto;
-              `}
               inputProps={{ 'aria-label': 'search' }}
               InputProps={{
                 startAdornment: (
@@ -270,6 +259,7 @@ export function DataTable<Data extends Record<string, any>>({
                 ),
               }}
               placeholder={`${preGlobalFilteredRows.length} records...`}
+              sx={{ ml: 'auto' }}
               value={globalFilter || ''}
               onChange={(e) => {
                 setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
@@ -278,13 +268,7 @@ export function DataTable<Data extends Record<string, any>>({
           )}
         </Toolbar>
       )}
-      <Toolbar
-        css={css`
-          min-height: 0;
-        `}
-      >
-        {ToolbarActionChild}
-      </Toolbar>
+      {ToolbarActionChild && <Toolbar>{ToolbarActionChild}</Toolbar>}
       <Table {...getTableProps(customTableProps)} size="small">
         <TableHead>
           {headerGroups.map((headerGroup) => (
@@ -327,11 +311,11 @@ export function DataTable<Data extends Record<string, any>>({
                     // eslint-disable-next-line react/jsx-key
                     <TableCell
                       {...cell.getCellProps(customCellProps)}
-                      style={
-                        cell.column.canSort
-                          ? { paddingLeft: 16 + row.depth * 2 * theme.spacing() }
-                          : undefined
-                      }
+                      sx={{
+                        pl: cell.column.canSort
+                          ? (theme) => theme.spacing(2 + 2 * row.depth)
+                          : undefined,
+                      }}
                     >
                       {cell.render('Cell')}
                     </TableCell>
@@ -358,4 +342,4 @@ export function DataTable<Data extends Record<string, any>>({
   );
 
   return table;
-}
+};

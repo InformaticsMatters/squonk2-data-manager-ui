@@ -4,12 +4,10 @@ import type { DmError } from '@squonk/data-manager-client';
 import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
 import { useAddMetadata } from '@squonk/data-manager-client/metadata';
 
-import { css } from '@emotion/react';
-import { Button, IconButton, Popover, Tooltip } from '@material-ui/core';
-import { useTheme } from '@material-ui/core';
-import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRounded';
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import { Box, Button, IconButton, Popover, Tooltip } from '@mui/material';
 import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-material-ui';
+import { TextField } from 'formik-mui';
 import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
 import * as yup from 'yup';
 
@@ -25,7 +23,6 @@ export interface NewLabelButtonProps {
 }
 
 export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
-  const theme = useTheme();
   const queryClient = useQueryClient();
   const { mutateAsync: addAnnotations } = useAddMetadata();
   const { enqueueError } = useEnqueueError<DmError>();
@@ -41,14 +38,10 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
       </Tooltip>
 
       <Popover
-        css={css`
-          .MuiPopover-paper {
-            padding: ${theme.spacing(1)}px;
-          }
-        `}
+        sx={{ '& .MuiPopover-paper': { p: 1 } }}
         {...bindPopover(popupState)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Formik
           validateOnMount
@@ -81,19 +74,13 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
         >
           {({ submitForm, isSubmitting, isValid }) => (
             <Form>
-              <div
-                css={css`
-                  display: flex;
-                  align-items: baseline;
-                  gap: ${theme.spacing(1)}px;
-                `}
-              >
+              <Box alignItems="baseline" display="flex" gap={(theme) => theme.spacing(1)}>
                 <Field autoFocus component={LowerCaseTextField} label="Name" name="label" />
                 <Field component={TextField} label="Value" name="value" />
                 <Button disabled={isSubmitting || !isValid} onClick={submitForm}>
                   Add
                 </Button>
-              </div>
+              </Box>
             </Form>
           )}
         </Formik>

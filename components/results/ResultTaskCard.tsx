@@ -3,7 +3,7 @@ import { useQueryClient } from 'react-query';
 import type { DmError, TaskSummary } from '@squonk/data-manager-client';
 import { getGetTasksQueryKey, useDeleteTask } from '@squonk/data-manager-client/task';
 
-import { Button, CardContent } from '@material-ui/core';
+import { Button, CardContent } from '@mui/material';
 import { useRouter } from 'next/router';
 
 import { APP_ROUTES } from '../../constants/routes';

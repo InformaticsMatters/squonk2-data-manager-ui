@@ -20,7 +20,6 @@ name: lint
 
 on:
   push:
-  pull_request:
 
 jobs:
   Lint-And-Type-Check:

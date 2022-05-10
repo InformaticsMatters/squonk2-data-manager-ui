@@ -9,7 +9,7 @@ if (!BASE_URL || !BASE_PATH || !TEST_PORT) {
 const config: PlaywrightTestConfig = {
   globalSetup: require.resolve('./global-setup'),
   webServer: {
-    command: `pnpm build && pnpm start -- -p ${TEST_PORT}`,
+    command: `pnpm start -- -p ${TEST_PORT}`,
     port: Number(TEST_PORT),
     timeout: 200 * 1000,
     env: {

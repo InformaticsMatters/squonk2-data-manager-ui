@@ -45,6 +45,17 @@ jobs:
         run_install: true
     - name: Setup Playwright
       run: pnpm exec playwright install --with-deps
+    - name: Build
+      run: pnpm build
+      env:
+        AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
+        AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
+        AUTH0_SECRET: "LONG_RANDOM_VALUE"
+        BASE_URL: "http://localhost:3000"
+        BASE_PATH: "/data-manager-ui"
+        DATA_MANAGER_API_SERVER: "https://data-manager.xchem-dev.diamond.ac.uk/data-manager-api"
+        ACCOUNT_SERVER_API_SERVER: "https://account-server.xchem-dev.diamond.ac.uk/account-server-api"
+        KEYCLOAK_URL: "https://keycloak.xchem-dev.diamond.ac.uk/auth/realms/xchem"
     - name: Test
       env:
         AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"

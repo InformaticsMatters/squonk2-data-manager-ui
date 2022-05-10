@@ -1,5 +1,4 @@
-import { Box } from '@mui/material';
-import { Alert } from '@mui/material';
+import { Alert, Box } from '@mui/material';
 
 import { REQUIRED_ROLES } from '../constants/auth';
 import { useIsAuthorized } from '../hooks/useIsAuthorized';

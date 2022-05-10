@@ -12,8 +12,7 @@ import { getGetJobsQueryKey, getJobs, useGetJobs } from '@squonk/data-manager-cl
 import { getGetProjectsQueryKey, getProjects } from '@squonk/data-manager-client/project';
 
 import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { Container, Grid, MenuItem, TextField } from '@mui/material';
-import { Alert } from '@mui/material';
+import { Alert, Container, Grid, MenuItem, TextField } from '@mui/material';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';

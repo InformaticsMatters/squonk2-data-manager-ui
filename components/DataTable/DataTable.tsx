@@ -25,6 +25,7 @@ import type {
   Theme,
 } from '@mui/material';
 import {
+  Alert,
   Box,
   InputAdornment,
   Paper,
@@ -38,7 +39,6 @@ import {
   TextField,
   Toolbar,
 } from '@mui/material';
-import { Alert } from '@mui/material';
 
 import { CenterLoader } from '../CenterLoader';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';

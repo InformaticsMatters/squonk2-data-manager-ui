@@ -11,8 +11,7 @@ import { getGetProjectsQueryKey, getProjects } from '@squonk/data-manager-client
 import { getGetTasksQueryKey, getTasks, useGetTasks } from '@squonk/data-manager-client/task';
 
 import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { Container, Grid } from '@mui/material';
-import { Alert } from '@mui/material';
+import { Alert, Container, Grid } from '@mui/material';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';

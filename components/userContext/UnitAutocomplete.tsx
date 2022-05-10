@@ -10,8 +10,7 @@ import {
 
 import { DeleteForever } from '@mui/icons-material';
 import type { AutocompleteProps } from '@mui/material';
-import { IconButton, InputAdornment, TextField, Typography } from '@mui/material';
-import { Autocomplete } from '@mui/material';
+import { Autocomplete, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 
 import { useOrganisationUnit } from '../../context/organisationUnitContext';
 import { useCurrentProjectId } from '../../hooks/projectHooks';

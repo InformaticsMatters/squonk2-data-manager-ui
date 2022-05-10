@@ -6,9 +6,13 @@ import { getGetDatasetsQueryKey, uploadDataset } from '@squonk/data-manager-clie
 
 import BackupRoundedIcon from '@mui/icons-material/BackupRounded';
 import type { IconButtonProps } from '@mui/material';
-import { IconButton } from '@mui/material';
-import { ListItem, ListItemSecondaryAction, ListItemText } from '@mui/material';
-import { Typography } from '@mui/material';
+import {
+  IconButton,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  Typography,
+} from '@mui/material';
 
 import { useCurrentOrg, useCurrentUnit } from '../../../context/organisationUnitContext';
 import { ModalWrapper } from '../../modals/ModalWrapper';

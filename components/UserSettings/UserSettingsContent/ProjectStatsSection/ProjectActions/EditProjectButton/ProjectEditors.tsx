@@ -14,8 +14,7 @@ import {
 } from '@squonk/data-manager-client/project';
 import { useGetUsers } from '@squonk/data-manager-client/user';
 
-import { Chip, TextField } from '@mui/material';
-import { Autocomplete } from '@mui/material';
+import { Autocomplete, Chip, TextField } from '@mui/material';
 import type { AutocompleteChangeReason } from '@mui/material/useAutocomplete';
 
 import { useEnqueueError } from '../../../../../../hooks/useEnqueueStackError';

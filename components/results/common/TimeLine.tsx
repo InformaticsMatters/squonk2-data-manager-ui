@@ -10,8 +10,7 @@ import {
   TimelineSeparator,
 } from '@mui/lab';
 import type { TypographyProps } from '@mui/material';
-import { styled } from '@mui/material';
-import { Typography } from '@mui/material';
+import { styled, Typography } from '@mui/material';
 
 import { LocalTime } from '../../LocalTime';
 

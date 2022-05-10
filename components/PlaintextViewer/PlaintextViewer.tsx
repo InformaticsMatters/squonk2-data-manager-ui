@@ -1,5 +1,4 @@
-import { Box, Paper } from '@mui/material';
-import { Alert } from '@mui/material';
+import { Alert, Box, Paper } from '@mui/material';
 
 import { CenterLoader } from '../CenterLoader';
 import { PlaintextViewerContent } from './PlaintextViewerContent';

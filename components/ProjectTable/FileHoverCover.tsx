@@ -1,5 +1,4 @@
-import { styled, Typography } from '@mui/material';
-import { Alert, AlertTitle } from '@mui/material';
+import { Alert, AlertTitle, styled, Typography } from '@mui/material';
 
 export interface FileHoverCoverProps {
   active: boolean;

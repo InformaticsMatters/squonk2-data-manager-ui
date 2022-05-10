@@ -8,10 +8,7 @@ import { useGetProjects } from '@squonk/data-manager-client/project';
 import { useGetFileTypes } from '@squonk/data-manager-client/type';
 
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
-import { ListItemText } from '@mui/material';
-import { ListItem } from '@mui/material';
-import { FormControl, FormGroup, MenuItem } from '@mui/material';
-import { Alert } from '@mui/material';
+import { Alert, FormControl, FormGroup, ListItem, ListItemText, MenuItem } from '@mui/material';
 import { Field } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-mui';
 import * as yup from 'yup';

@@ -3,8 +3,7 @@ import type { HTMLProps } from 'react';
 import type { InstanceSummary } from '@squonk/data-manager-client';
 
 import type { ButtonProps } from '@mui/material';
-import { ListItem, ListItemText } from '@mui/material';
-import { Button, CardContent } from '@mui/material';
+import { Button, CardContent, ListItem, ListItemText } from '@mui/material';
 
 import { APP_ROUTES } from '../../constants/routes';
 import { useProjectFromId } from '../../hooks/projectHooks';

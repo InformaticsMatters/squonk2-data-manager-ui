@@ -2,8 +2,7 @@ import type { FC } from 'react';
 
 import { useGetUsers } from '@squonk/data-manager-client/user';
 
-import { Chip, TextField } from '@mui/material';
-import { Autocomplete } from '@mui/material';
+import { Autocomplete, Chip, TextField } from '@mui/material';
 import type { AutocompleteChangeReason } from '@mui/material/useAutocomplete';
 
 export interface ManageEditorsProps {

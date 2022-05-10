@@ -1,5 +1,4 @@
-import { TextField, Typography } from '@mui/material';
-import { Autocomplete } from '@mui/material';
+import { Autocomplete, TextField, Typography } from '@mui/material';
 
 export interface AutocompleteFilterProps<T> {
   /**

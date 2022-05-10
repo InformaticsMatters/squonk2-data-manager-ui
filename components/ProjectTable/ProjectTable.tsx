@@ -4,7 +4,6 @@ import type { Cell, CellProps, Column, PluginHook } from 'react-table';
 
 import type { ProjectDetail } from '@squonk/data-manager-client';
 
-import { css } from '@emotion/react';
 import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import {
@@ -174,13 +173,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
       isLoading={isLoading}
       ToolbarChild={
         <Grid container>
-          <Grid
-            item
-            css={css`
-              display: flex;
-              align-items: center;
-            `}
-          >
+          <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
             <Breadcrumbs>
               {['root', ...breadcrumbs].map((path, pathIndex) =>
                 pathIndex < breadcrumbs.length ? (
@@ -205,12 +198,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
               )}
             </Breadcrumbs>
           </Grid>
-          <Grid
-            item
-            css={css`
-              margin-left: auto;
-            `}
-          >
+          <Grid item sx={{ marginLeft: 'auto' }}>
             <IconButton size="large" onClick={openUploadDialog}>
               <CloudUploadRoundedIcon />
             </IconButton>

@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import { Box, Container, Link, Paper, Typography } from '@mui/material';
 
 export const Footer = () => {
@@ -7,14 +6,7 @@ export const Footer = () => {
       <Container maxWidth="md">
         <Box p={2}>
           <Typography variant="h4">
-            <strong
-              css={css`
-                font-family: Raleway;
-              `}
-            >
-              Squonk
-            </strong>{' '}
-            Data Manager —{' '}
+            <strong style={{ fontFamily: 'Raleway' }}>Squonk</strong> Data Manager —{' '}
             <Link href="https://discourse.squonk.it/c/squonk-data-manager-knowledge-base/">
               Docs
             </Link>

@@ -1,8 +1,7 @@
 import type { InstanceSummaryJobImageType, TaskSummary } from '@squonk/data-manager-client';
 import { useGetTask } from '@squonk/data-manager-client/task';
 
-import { css } from '@emotion/react';
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 
 import { CenterLoader } from '../CenterLoader';
 import { TimeLine } from './common/TimeLine';
@@ -52,16 +51,17 @@ export const TaskDetails = ({
         ) : (
           // But next-flow jobs only give a single block of text as output so we display these
           // in a monospace font
-          <pre
-            css={css`
-              margin: 0;
-              display: inline-block;
-              text-align: left;
-              font-family: 'Fira Mono', monospace;
-            `}
+          <Box
+            component="pre"
+            sx={{
+              margin: 0,
+              display: 'inline-block',
+              textAlign: 'left',
+              fontFamily: '"Fira Mono", monospace',
+            }}
           >
             {task.events?.[task.events.length - 1]?.message}
-          </pre>
+          </Box>
         )}
       </Grid>
     </Grid>

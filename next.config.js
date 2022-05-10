@@ -48,7 +48,6 @@ let nextConfig = {
           loader: '@mdx-js/loader',
           /** @type {import('@mdx-js/loader').Options} */
           options: {
-            jsxImportSource: '@emotion/react',
             providerImportSource: '@mdx-js/react',
           },
         },

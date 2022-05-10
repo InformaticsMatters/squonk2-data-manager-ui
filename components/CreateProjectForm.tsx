@@ -11,8 +11,8 @@ import type { DmError } from '@squonk/data-manager-client';
 import { getGetProjectsQueryKey, useCreateProject } from '@squonk/data-manager-client/project';
 import { getGetUserAccountQueryKey } from '@squonk/data-manager-client/user';
 
-import { css } from '@emotion/react';
 import {
+  Box,
   Button,
   FormControlLabel,
   MenuItem,
@@ -128,18 +128,13 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
   };
 
   const children: ProjectFormikProps['children'] = ({ submitForm, isSubmitting, isValid }) => (
-    <Form
-      css={css`
-        margin-top: ${theme.spacing()};
-      `}
-    >
-      <div
-        // Make this a styled component
-        css={css`
-          display: grid;
-          grid-template-columns: ${biggerThanSm ? '1fr 1fr auto auto' : '1fr'};
-          gap: ${theme.spacing()};
-        `}
+    <Form style={{ marginTop: theme.spacing() }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: biggerThanSm ? '1fr 1fr auto auto' : '1fr',
+          gap: 1,
+        }}
       >
         <Field autoFocus fullWidth component={TextField} label="Project Name" name="projectName" />
 
@@ -172,7 +167,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
             Create
           </Button>
         )}
-      </div>
+      </Box>
     </Form>
   );
 

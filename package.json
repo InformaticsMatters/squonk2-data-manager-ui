@@ -54,7 +54,7 @@
     "@types/react-virtualized": "9.21.21",
     "@types/uuid": "8.3.4",
     "axios": "0.27.2",
-    "dayjs": "1.11.1",
+    "dayjs": "1.11.2",
     "filesize": "8.0.7",
     "formik": "2.2.9",
     "formik-mui": "4.0.0-alpha.3",

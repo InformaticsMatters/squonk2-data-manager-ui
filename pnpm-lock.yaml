@@ -54,7 +54,7 @@ specifiers:
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
   node-fetch: 3.2.4
-  notistack: 2.0.4
+  notistack: 2.0.5
   plotly.js-basic-dist: 2.12.1
   prettier: 2.6.2
   react: 17.0.2
@@ -111,7 +111,7 @@ dependencies:
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
   node-fetch: 3.2.4
-  notistack: 2.0.4_bad1f8f1882313d3c69b67fe9295af24
+  notistack: 2.0.5_bad1f8f1882313d3c69b67fe9295af24
   plotly.js-basic-dist: 2.12.1
   prettier: 2.6.2
   react: 17.0.2
@@ -4747,8 +4747,8 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /notistack/2.0.4_bad1f8f1882313d3c69b67fe9295af24:
-    resolution: {integrity: sha512-kOJmKvTG91ElMzi4aHu82BDe1liQ0zMrBp+TnWJptgowDsTbeTKbZmsRqJNIj145BmlOtZsEE9xjcrN46zVo3w==}
+  /notistack/2.0.5_bad1f8f1882313d3c69b67fe9295af24:
+    resolution: {integrity: sha512-Ig2T1Muqkc1PaSQcEDrK7diKv6cBxw02Iq6uv074ySfgq524TV5lK41diAb6OSsaiWfp3aRt+T3+0MF8m2EcJQ==}
     peerDependencies:
       '@emotion/react': ^11.4.1
       '@emotion/styled': ^11.3.0

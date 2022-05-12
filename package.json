@@ -59,7 +59,7 @@
     "formik": "2.2.9",
     "formik-mui": "4.0.0-alpha.3",
     "formik-mui-lab": "1.0.0-alpha.3",
-    "immer": "9.0.12",
+    "immer": "9.0.14",
     "lodash-es": "4.17.21",
     "material-ui-popup-state": "2.0.1",
     "next": "12.1.6",

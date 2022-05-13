@@ -49,7 +49,7 @@ specifiers:
   immer: 9.0.14
   lint-staged: 12.4.1
   lodash-es: 4.17.21
-  material-ui-popup-state: 2.0.1
+  material-ui-popup-state: 3.1.1
   next: 12.1.6
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
@@ -106,7 +106,7 @@ dependencies:
   formik-mui-lab: 1.0.0-alpha.3_354928db300e4617a841bcf13bb4042c
   immer: 9.0.14
   lodash-es: 4.17.21
-  material-ui-popup-state: 2.0.1_c8c10a639b2b9753cb2d3f27112f331c
+  material-ui-popup-state: 3.1.1_c8c10a639b2b9753cb2d3f27112f331c
   next: 12.1.6_1b11a9fbd6a82b51c875b786deaf2000
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
@@ -4145,15 +4145,13 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
-  /material-ui-popup-state/2.0.1_c8c10a639b2b9753cb2d3f27112f331c:
-    resolution: {integrity: sha512-YZQdYxO1AtaIJyX24yrHMCqIC7UHpGOSuK16RLnA+MBterKhum1aMiTomEsfHxZKyGADbZ7M56THj1xPDsr0PQ==}
+  /material-ui-popup-state/3.1.1_c8c10a639b2b9753cb2d3f27112f331c:
+    resolution: {integrity: sha512-ACUvVEiAZHngoeptRcledKYxmK6lJMI2KIXpcDpnKaEZXWnxOH6fWzhrgiglXK+52FTfdGRzXWVA6KqKcUAIjg==}
     peerDependencies:
-      react: ^15.0.0 || ^16.0.0 || ^17.0.0
+      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@babel/runtime': 7.17.8
-      '@mui/icons-material': 5.6.2_b9e2324ca9013610dc580d535d72ee01
       '@mui/material': 5.7.0_c8c10a639b2b9753cb2d3f27112f331c
-      '@mui/styles': 5.7.0_3df41e700a554c2356b362be396a0af4
       classnames: 2.3.1
       prop-types: 15.8.1
       react: 17.0.2

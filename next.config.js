@@ -19,7 +19,7 @@ let nextConfig = {
   generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA : undefined,
   typescript: { ignoreBuildErrors: process.env.SKIP_CHECKS },
   eslint: { ignoreDuringBuilds: process.env.SKIP_CHECKS },
-  // reactStrictMode: true, // TODO: switch on after MUI-v5 switch
+  // reactStrictMode: true, // TODO: Block by @rjsf Form using UNSAFE_componentWillReceiveProps
   pageExtensions: ['js', 'ts', 'jsx', 'tsx', 'mdx'],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH,
   sassOptions: {

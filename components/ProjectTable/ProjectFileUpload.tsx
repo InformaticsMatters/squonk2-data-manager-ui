@@ -21,7 +21,7 @@ export interface ProjectFileUploadProps {
 }
 
 export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
-  const allowedFileTypes = useFileExtensions();
+  const { mapping } = useFileExtensions();
 
   const { projectId } = useCurrentProjectId();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -71,7 +71,7 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     noClick: true,
-    accept: allowedFileTypes ?? [],
+    accept: mapping,
   });
 
   return (

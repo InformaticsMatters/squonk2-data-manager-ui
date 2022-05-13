@@ -57,7 +57,7 @@ export function SingleFileUploadWithProgress({
     },
   });
 
-  const allowedFileTypes = useFileExtensions();
+  const { extensions } = useFileExtensions();
   const mimeLookup = useMimeTypeLookup();
 
   const disabled =
@@ -98,7 +98,7 @@ export function SingleFileUploadWithProgress({
             }}
             onClick={(event) => event.stopPropagation()}
           >
-            {allowedFileTypes?.map((fileType) => (
+            {extensions.map((fileType) => (
               <MenuItem key={fileType} value={fileType}>
                 {fileType}
               </MenuItem>

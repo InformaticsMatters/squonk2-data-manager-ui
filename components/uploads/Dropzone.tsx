@@ -31,7 +31,7 @@ export const Dropzone: FC<DropzoneProps> = ({
   onNewFiles,
   ...dropzoneOptions
 }) => {
-  const allowedFileTypes = useFileExtensions();
+  const { mapping } = useFileExtensions();
   const mimeLookup = useMimeTypeLookup();
 
   const onDrop = useCallback(
@@ -61,19 +61,17 @@ export const Dropzone: FC<DropzoneProps> = ({
     [mimeLookup, onNewFiles],
   );
 
-  const patchedFileExtensions = allowedFileTypes ?? [];
-
   // Allow .gz files
   // 1. Browsers limit file selection in native OS file selector to single extensions
   // So .sdf.gz doesn't work but .gz specifies anything ending in .gz
   //
   // 2. This currently requires the body parser in the proxy to be disabled
   // https://github.com/stegano/next-http-proxy-middleware/issues/33
-  patchedFileExtensions.push('.gz');
+  mapping['gzip'] = ['.gz'];
   const { getRootProps, getInputProps } = useDropzone({
     ...dropzoneOptions,
     onDrop,
-    accept: patchedFileExtensions,
+    accept: mapping,
   });
 
   return (

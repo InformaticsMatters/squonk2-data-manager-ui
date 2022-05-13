@@ -16,7 +16,7 @@ const resolvePackage = (packageName) => path.resolve(__dirname, '.', 'node_modul
  * @type {import('next').NextConfig}
  */
 let nextConfig = {
-  generateBuildId: process.env.GITHUB_SHA ? () => process.env.GITHUB_SHA : undefined,
+  generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA : undefined,
   typescript: { ignoreBuildErrors: process.env.SKIP_CHECKS },
   eslint: { ignoreDuringBuilds: process.env.SKIP_CHECKS },
   // reactStrictMode: true, // TODO: switch on after MUI-v5 switch

@@ -12,6 +12,8 @@ import dynamic from 'next/dynamic';
 import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { CenterLoader } from '../../CenterLoader';
 import { ModalWrapper } from '../../modals/ModalWrapper';
+import type { DebugValue } from '../DebugCheckbox';
+import { DebugCheckbox } from '../DebugCheckbox';
 import type { CommonModalProps } from '../types';
 import type { InputSchema, JobInputFieldsProps } from './JobInputFields';
 
@@ -61,6 +63,7 @@ export const JobModal = ({
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
   const [nameState, setNameState] = useState(instance?.name ?? '');
+  const [debug, setDebug] = useState<DebugValue>('0');
 
   const { mutateAsync: createInstance } = useCreateInstance();
   // Get extra details about the job
@@ -107,6 +110,7 @@ export const JobModal = ({
       try {
         await createInstance({
           data: {
+            debug,
             application_id: job.application.application_id,
             application_version: 'v1',
             as_name: name,
@@ -138,7 +142,7 @@ export const JobModal = ({
     >
       {job !== undefined && projectId !== undefined ? (
         <>
-          <Box p={2}>
+          <Box paddingTop={1}>
             <TextField
               fullWidth
               label="Job name"
@@ -147,6 +151,7 @@ export const JobModal = ({
             />
           </Box>
 
+          <DebugCheckbox value={debug} onChange={(debug) => setDebug(debug)} />
           {job.variables && (
             <Grid container spacing={2}>
               {job.variables.inputs && (

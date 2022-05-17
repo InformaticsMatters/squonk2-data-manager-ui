@@ -11,6 +11,8 @@ import Form from '@rjsf/material-ui/v5';
 import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
 import { CenterLoader } from '../../CenterLoader';
 import { ModalWrapper } from '../../modals/ModalWrapper';
+import type { DebugValue } from '../DebugCheckbox';
+import { DebugCheckbox } from '../DebugCheckbox';
 import type { CommonModalProps } from '../types';
 
 export interface ApplicationModalProps extends CommonModalProps {
@@ -32,6 +34,7 @@ export const ApplicationModal = ({
 }: ApplicationModalProps) => {
   const queryClient = useQueryClient();
   const [name, setName] = useState('');
+  const [debug, setDebug] = useState<DebugValue>('0');
   const [version, setVersion] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>(null);
 
@@ -48,6 +51,7 @@ export const ApplicationModal = ({
       try {
         await createInstance({
           data: {
+            debug,
             application_id: applicationId,
             application_version: versionToUse,
             as_name: name,
@@ -99,6 +103,8 @@ export const ApplicationModal = ({
               onChange={(e) => setName(e.target.value)}
             />
           </Grid>
+
+          <DebugCheckbox value={debug} onChange={(debug) => setDebug(debug)} />
 
           <Grid item xs={12}>
             <TextField

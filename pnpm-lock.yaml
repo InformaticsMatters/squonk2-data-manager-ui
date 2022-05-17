@@ -22,7 +22,7 @@ specifiers:
   '@squonk/eslint-config': 0.2.0
   '@squonk/mui-theme': 3.0.1
   '@types/lodash-es': 4.17.6
-  '@types/node': 16.11.35
+  '@types/node': 16.11.36
   '@types/plotly.js-basic-dist': 1.54.0
   '@types/react': 17.0.45
   '@types/react-plotly.js': 2.5.0
@@ -91,7 +91,7 @@ dependencies:
   '@squonk/data-manager-client': 0.7.10_axios@0.27.2+react-query@3.39.0
   '@squonk/mui-theme': 3.0.1_@mui+material@5.7.0
   '@types/lodash-es': 4.17.6
-  '@types/node': 16.11.35
+  '@types/node': 16.11.36
   '@types/plotly.js-basic-dist': 1.54.0
   '@types/react': 17.0.45
   '@types/react-plotly.js': 2.5.0
@@ -1241,7 +1241,7 @@ packages:
     dependencies:
       '@types/http-cache-semantics': 4.0.1
       '@types/keyv': 3.1.4
-      '@types/node': 16.11.35
+      '@types/node': 16.11.36
       '@types/responselike': 1.0.0
     dev: false
 
@@ -1286,7 +1286,7 @@ packages:
   /@types/http-proxy/1.17.3:
     resolution: {integrity: sha512-wIPqXANye5BbORbuh74exbwNzj+UWCwWyeEFJzUQ7Fq3W2NSAy+7x7nX1fgbEypr2/TdKqpeuxLnXWgzN533/Q==}
     dependencies:
-      '@types/node': 16.11.35
+      '@types/node': 16.11.36
     dev: false
 
   /@types/json-schema/7.0.11:
@@ -1295,7 +1295,7 @@ packages:
   /@types/keyv/3.1.4:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
-      '@types/node': 16.11.35
+      '@types/node': 16.11.36
     dev: false
 
   /@types/lodash-es/4.17.6:
@@ -1326,8 +1326,8 @@ packages:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: false
 
-  /@types/node/16.11.35:
-    resolution: {integrity: sha512-QXu45LyepgnhUfnIAj/FyT4uM87ug5KpIrgXfQtUPNAlx8w5hmd8z8emqCLNvG11QkpRSCG9Qg2buMxvqfjfsQ==}
+  /@types/node/16.11.36:
+    resolution: {integrity: sha512-FR5QJe+TaoZ2GsMHkjuwoNabr+UrJNRr2HNOo+r/7vhcuntM6Ee/pRPOnRhhL2XE9OOvX9VLEq+BcXl3VjNoWA==}
     dev: false
 
   /@types/parse-json/4.0.0:
@@ -1397,7 +1397,7 @@ packages:
   /@types/responselike/1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
     dependencies:
-      '@types/node': 16.11.35
+      '@types/node': 16.11.36
     dev: false
 
   /@types/scheduler/0.16.2:

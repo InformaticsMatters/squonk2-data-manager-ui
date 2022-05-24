@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3-rc.9](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/compare/0.1.3-rc.8...0.1.3-rc.9) (2022-05-24)
+
 ### [0.1.3-rc.8](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.7...0.1.3-rc.8) (2022-05-20)
 
 

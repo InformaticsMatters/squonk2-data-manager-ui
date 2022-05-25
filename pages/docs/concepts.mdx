@@ -98,7 +98,9 @@ The application runs as a Kubernetes pod in the Kubernetes cluster in which Data
 Jobs are a bit like very specialised applications. The are designed to process data in a very specific way, but allowing
 the user to specify the parameters of how the processing is performed. We have a wide range of jobs.
 
-To help illustrate this we'll use the [max-min-picker](https://discourse.squonk.it/t/job-max-min-picker/69) job as an example.
+To help illustrate this we'll use the
+[max-min-picker](https://github.com/InformaticsMatters/virtual-screening/blob/main/data-manager/docs/rdkit/max-min-picker.md)
+job as an example.
 This allows a diverse subset of molecules to be selected from a set of input molecules.
 When you run the job you are prompted for various parameters such as the inputs and the number of molecules to pick.
 
@@ -142,7 +144,7 @@ Application and job usage is handled differently. Each time an application or jo
 
 Don't worry, most jobs are free or have such a trivial cost that has no impact.
 But some jobs (e.g. virtual screening using docking) consume lots of CPU so have a real cost of execution.
-Also, some jobs might have significant IP value or use commerical software that has to be paid for so those can have
+Also, some jobs might have significant IP value or use commercial software that has to be paid for so those can have
 significant costs of execution.
 
 As of the time of writing, the mechanism for defining job usage is quite basic and no payment systems are in place so

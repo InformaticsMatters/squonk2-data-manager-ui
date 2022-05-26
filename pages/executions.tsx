@@ -163,15 +163,22 @@ const Executions = () => {
             <Grid container spacing={2}>
               {isApplicationsError && (
                 <Grid item xs={12}>
-                  <Alert severity="warning">
+                  <Alert severity="error">
                     Applications failed to load ({applicationsError.response?.status})
                   </Alert>
                 </Grid>
               )}
               {isJobsError && (
                 <Grid item xs={12}>
+                  <Alert severity="error">Jobs failed to load ({jobsError.response?.status})</Alert>
+                </Grid>
+              )}
+
+              {/* Warnings */}
+              {!currentProject && (
+                <Grid item xs={12}>
                   <Alert severity="warning">
-                    Jobs failed to load ({jobsError.response?.status})
+                    Select a project from the settings to launch apps and run job
                   </Alert>
                 </Grid>
               )}

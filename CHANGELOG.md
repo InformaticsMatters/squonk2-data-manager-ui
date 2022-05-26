@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3...0.1.4) (2022-05-26)
+
+
+### Features
+
+* **executions:** Add warning when no project is selected ([899637f](https://github.com/InformaticsMatters/squonk-frontend/commit/899637f772b25daf36fd0a0893e19f48121b4acb))
+* **project-stats:** Reorder project stats table and add clear selected project button ([d1f54b3](https://github.com/InformaticsMatters/squonk-frontend/commit/d1f54b32d3464e02acd2ac49d81b323fa0f62a2e))
+
+
+### Bug Fixes
+
+* **jobs:** Fix job launching (use correct app version) ([640e202](https://github.com/InformaticsMatters/squonk-frontend/commit/640e2022939c0b1cbff72314d57c9c519df4dd84))
+
 ### [0.1.3](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.10...0.1.3) (2022-05-26)
 
 ### [0.1.3-rc.10](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.9...0.1.3-rc.10) (2022-05-26)

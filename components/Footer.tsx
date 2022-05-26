@@ -6,14 +6,15 @@ export const Footer = () => {
       <Container maxWidth="md">
         <Box p={2}>
           <Typography variant="h4">
-            <strong style={{ fontFamily: 'Raleway' }}>Squonk</strong> Data Manager —{' '}
-            <Link href="https://discourse.squonk.it/c/squonk-data-manager-knowledge-base/">
-              Docs
-            </Link>
+            <strong style={{ fontFamily: 'Raleway' }}>Squonk</strong> Data Manager
           </Typography>
           <Typography variant="subtitle1">
             A product by{' '}
-            <Link href="https://www.informaticsmatters.com/">
+            <Link
+              href="https://www.informaticsmatters.com/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               <strong>Informatics Matters</strong>
             </Link>
           </Typography>

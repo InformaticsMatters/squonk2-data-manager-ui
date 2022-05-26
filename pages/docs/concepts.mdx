@@ -1,0 +1,172 @@
+import { Container } from "@mui/material";
+import Layout from "../../components/Layout";
+import Head from "next/head";
+
+<Head>
+  <title>Data Manager User Documentation - Key Concepts</title>
+</Head>
+
+<Layout>
+{/* Place all page content inside the <Layout /> Tags */}
+{/* Comments should look like these, not <!-- --> as this break xdm */}
+{/* Container narrows the text width, it is configurable */}
+<Container>
+
+# Concepts
+
+This page describes some key concepts that are useful to know when using the Squonk Data Manager
+
+## Users
+
+A user is a user of the Squonk Data Manager. They are defined in our Keycloak Single Sign On (SSO) system.
+You will need an account setting up there in order to become a user. Once done you are potentially able to use
+any of the Squonk applications.
+
+## Projects Organisations and Units
+
+The Squonk Data Manager has the concept of an _Organisation_ (e.g. your company or university) and within that
+Organisation you have _Units_ (e.g. a research group or department).
+A _Project_ is where you can do some work, and _Projects_ belong to a _Unit_.
+A _Project_  allows to isolate your work and restrict access to it to specific users.
+Projects can be shared with users outside your organisation if you wish.
+The _Unit_ is responsible for the usage of all its projects and will (at some stage) need to pay for that usage.
+
+There is a _Default_ Organisation which all users can belong to, and within that _Default_ _Organisation_ you will be
+given your own _Personal_ unit where you can create _Projects_.
+
+## Project tiers
+
+A project is allocated to a particular _Tier_.
+
+* Evaluation - limited quota and all data is public
+* Bronze - limited quota and project can be made private
+* Silver - like bronze but with more quota
+* Gold - like silver but with more quota
+
+_Evaluation_ _Projects_ are always public and visible to all users, but are free to use.
+Projects in other tiers can be made private and restricted to specific users. See below for more info.
+
+## Datasets
+
+Datasets are files that you can work with. You don't need to use datasets to do some work in Squonk Data Manager, but
+using them has the following benefits:
+
+* Datasets can be shared with other users.
+* Datasets can be versioned.
+* Metadata is indexed e.g. descriptions and data types of the fields in a SD-file.
+* Datasets with molecules (e.g. SD-files) are indexed with the RDKit cartridge, which in future will allow structure searches to be performed to identify the use of molecules, or similar molecule sin other Datasets.
+* Other useful operations on datasets will follow.
+
+Datasets visible to you are displayed on the _Datasets_ tab.
+
+## The project Workspace
+
+As already mentioned a _Project_ is where you do your work, which can be kept private or shared with other users.
+Typically you work with normal files in your project. The project can be thought of as a bit of disk space accessible
+only to users of your _Project_. That disk space is accessible when your run applications or jobs (see below).
+You have complete control over what you do in your project.
+
+
+
+Files can be added to a project so that you can work on them.
+_Datasets_ can also be _attached_ to a project, and project files can be added as new _Datasets_.
+
+## Access Control
+
+Only you and people you have added to your project can access the files in your project.
+
+File access is controlled by standard POSIX permissions, with files typically being read and writable by the user and
+the group.
+
+Each user has a unique user id and each project has an unique group id, with all users added to the project being
+members of that group. This means that, with the file permissions described above, users added to your project have
+read-write access to your files. Other users will be able to see the files if the project is a public project but not
+if it is private.
+
+## Applications
+
+An application is something that can be launched and run for a period of time (including several days).
+The application typically has access to your project's bit of disk space so can work with its files.
+
+Currently the only application we have is Jupyter Notebooks. You can start a notebook to work with your files, and
+your notebook .ipynb file is also stored in your project providing a record of your work.
+
+The application runs as a Kubernetes pod in the Kubernetes cluster in which Data Manager is running.
+
+## Jobs
+
+Jobs are a bit like very specialised applications. The are designed to process data in a very specific way, but allowing
+the user to specify the parameters of how the processing is performed. We have a wide range of jobs.
+
+To help illustrate this we'll use the
+[max-min-picker](https://github.com/InformaticsMatters/virtual-screening/blob/main/data-manager/docs/rdkit/max-min-picker.md)
+job as an example.
+This allows a diverse subset of molecules to be selected from a set of input molecules.
+When you run the job you are prompted for various parameters such as the inputs and the number of molecules to pick.
+
+That particular job is implemented as a Python module, using RDKit, but there are lots of ways of creating jobs.
+A guide to creating jobs can be found [here](https://informaticsmatters.gitlab.io/mini-apps-data-tier/0-7/creating-new-jobs.html).
+Creating jobs is a role for a developer, but using them is very easy.
+
+Like applications, jobs run as Kubernetes pods. Some jobs are very simple and complete in seconds, whilst others can run
+complex parallelised workflows.
+
+We encourage 3rd parties to contribute jobs, and would like to point out that there is a mechanism to monitise your
+jobs should you need to so you get paid when other users run you jobs. See the next section for more details.
+
+## Resource Usage
+
+How is this all paid for?
+
+Well, if you are an organisation deploying your own Squonk to your own Kubernetes cluster (or Informatics Matters is
+doing this for you) then you are already paying for the CPU and memory resources being used.
+If you are using our public evaluation site then we make _Evaluation_ tier projects available for free, but all data
+in them is public so visible to any user, and these have limited resource quotas.
+If you want to keep your data private or need more resources then you can subscribe your project to the
+Bronze, Silver or Gold tiers, which differ most in the usage quotas, with Gold having the highest quota.
+
+Billing is not yet implemented, but once it is you will pay monthly fees for Bronze, Silver and Gold Tier projects.
+The responsibility for payment is at the _Unit_ or _Organisation_ level. If you are using your own _Personal_ unit in the
+_Default_ _Organisation_ you are responsible for payment of your Bronze, Silver and Gold Tier projects.
+
+Usage is managed using a concept of _Squonk Coins_ (or coins for short). A coin has a monetary value, and your projects
+get a monthly quota of coins (Gold tier projects get the biggest quota).
+Coins are "consumed" by one of these activities:
+* Storage used by your project (e.g. the size of all the files in GBs)
+* Execution of applications or jobs
+* Dataset storage
+
+Storage usage is fairly straight forward. At regular periods each day the storage is calculated and recorded. The maximum
+daily usage is then used to deduct the appropriate number of coins from your project's account. We also do a linear
+projection of what your current usage will cost by the end of your billing month, but of course this is only an approximation.
+
+Application and job usage is handled differently. Each time an application or job is run it can consume coins that reflect:
+* The CPU, GPU and memory resource needed for execution
+* Any IP or licensing costs
+
+Don't worry, most jobs are free or have such a trivial cost that has no impact.
+But some jobs (e.g. virtual screening using docking) consume lots of CPU so have a real cost of execution.
+Also, some jobs might have significant IP value or use commercial software that has to be paid for so those can have
+significant costs of execution.
+
+As of the time of writing, the mechanism for defining job usage is quite basic and no payment systems are in place so
+there is no need to be concerned about clocking up big bills. And even once in place you can be reassured that the costs
+will be very reasonable! And we believe this "marketplace" concept where one user can provide access to a job or application
+that has high value to other users and the supplier of that IP can get rewarded for it if they wish is a unique concept
+of Squonk that makes total sense.
+
+Also needing some description is _Dataset_ usage. You may recall that you can only use _Datasets_ if you want to (but
+probably you should!). Those datasets consume their own storage outside of any project, so we also have consumption of
+coins for _Datasets_ used by any _Unit_. Typically this is not much of an issue, but if you are wanting to use _Datasets_
+of large size (e.g. many GBs) then this might impact your _Unit's_ costs.
+
+Finally, what happens when you hit your quota limit? Typically you can keep working, but the coins consumed above your
+quota are added to your monthly bill at a higher rate than you get when you buy the Bronze, Silver or Gold tier
+project. If you don't want the unexpected "end of month" bill then your can specify to not exceed your quota (or only
+exceed it by a certain number of coins).
+Once you hit your hard quota limit then operations in the _Data Manager_ that consume coins (adding new files, running
+jobs etc.) are disabled. You can still see your data, and remove unnecessary files. And you can upgrade to a tier with
+a bigger quota.
+
+</Container>
+</Layout>

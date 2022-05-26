@@ -24,23 +24,40 @@ import { UserBootstrapper } from "../components/UserBootstrapper";
 Welcome to the **Squonk Data Manager**, a tool designed for running **scientific workflows**.
 
 The **Squonk Data Manager** is at the core of the Squonk 2.0 suite of applications.
-It provides a managed environment for your datasets and allows execution of applications and jobs that use that data to derive new data.
+It provides a managed environment for your data and allows execution of applications and jobs that use that data to
+derive new data.
 Currently it is focussed around **virtual screening** workflows, but the scope will expand over time.
 
-Data is at the heart of the Squonk Data Manager. Your datasets stay in the same place, and applications fire up around the data. This is the _"bring the compute to the data"_ paradigm.
+Data is at the heart of the Squonk Data Manager. Your datasets stay in the same place, and applications fire up around
+the data. This is the _"bring the compute to the data"_ paradigm.
 
-This managed data environment is highly collaborative in nature, allowing sharing of data and skills across a workgroup, but in a secure manner.
-In this public demo site all data is public and computational resources are limited.
+This managed data environment is highly collaborative in nature, allowing sharing of data and skills across a workgroup,
+but in a secure manner. In this public demo site all data is public and computational resources are limited.
 
-All of this takes place in a Kubernetes cluster, providing high resilience and scalability.
+All of this takes place in a Kubernetes cluster, providing high resilience and potential scalability.
+
+These are some of the things you can do:
+* Select molecules for virtual screening based of molecular properties or chemical similarity ([see here](https://discourse.squonk.it/t/use-case-prepare-candidate-molecules/101))
+* Generate 3D conformers ([see here](https://discourse.squonk.it/t/job-generate-low-energy-conformers/86))
+* Perform target based virtual screening (e.g. docking - [see here](https://discourse.squonk.it/t/use-case-docking-with-rdock/100))
+* Perform ligand based virtual screening (e.g. 3D shape comparison)
+* Run Jupyter Notebooks
 
 </Grid>
 <Grid item xs={12} sm={6}>
 
-## Resources
+## Documentation
+
+- <InternalLink href="/docs/concepts">Concepts</InternalLink> - Concepts that you should understand
+- <InternalLink href="/docs/guided-tour">Guided Tour</InternalLink> - Walk through of the different screens
+- <InternalLink href="/docs/how-to">How to</InternalLink> - How to guides for various tasks
+- <InternalLink href="/docs/jobs">Deployed jobs</InternalLink> - Jobs that have been deployed here
+
+Other Resources:
 
 - [About Squonk](https://discourse.squonk.it/c/about-squonk/9) - Squonk's history and future direction
 - [Knowledge base](https://discourse.squonk.it/c/squonk-data-manager-knowledge-base/14) - User support and ideas
+- Administrator docs (TODO)
 
 ## How to access
 
@@ -50,10 +67,10 @@ Please email us at info@informaticsmatters.com if you would like to evaluate or 
 ## Quick start
 
 1. Log in
-2. Create a **Project** or join an existing one.
-3. Upload your datasets in the **Data** tab.
+2. Create a **Project** or select an existing one.
+3. Upload your datasets in the **Dataset** tab.
 4. Attach those datasets to your project.
-5. Use the **Executions** tab to launch a Jupyter notebook or execute pre-defined jobs to work on those datasets.
+5. Use the **Executions** tab to launch a Jupyter notebook or execute jobs that work on those datasets.
 
 </Grid>
 </Grid>

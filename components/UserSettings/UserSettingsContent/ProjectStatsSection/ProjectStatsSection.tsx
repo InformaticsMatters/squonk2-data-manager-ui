@@ -52,17 +52,17 @@ export const ProjectStatsSection = () => {
         Header: 'Project name',
       },
       {
+        id: 'tier',
+        accessor: (row) => formatTierString(row.product.flavour ?? ''),
+        Header: 'Tier',
+      },
+      {
         id: 'usage',
         Header: 'Usage',
         defaultCanSort: false,
         Cell: ({ row }: Cell<ProductDmProjectTier>) => {
           return <ProjectUsageChart projectSubscription={row.original} />;
         },
-      },
-      {
-        id: 'tier',
-        accessor: (row) => formatTierString(row.product.flavour ?? ''),
-        Header: 'Tier',
       },
       {
         id: 'instancesUsed',
@@ -99,6 +99,11 @@ export const ProjectStatsSection = () => {
       {
         id: 'storageName',
         Header: 'Dataset storage',
+        accessor: (row) => row.product.name,
+        defaultCanSort: false,
+      },
+      {
+        id: 'for-layout-only-2',
         defaultCanSort: false,
       },
       {
@@ -108,10 +113,6 @@ export const ProjectStatsSection = () => {
         Cell: ({ row }: Cell<ProductDmStorage>) => {
           return <StorageUsageChart storageSubscription={row.original} />;
         },
-      },
-      {
-        id: 'for-layout-only-2',
-        defaultCanSort: false,
       },
       {
         id: 'used',
@@ -125,6 +126,10 @@ export const ProjectStatsSection = () => {
       },
       {
         id: 'for-layout-only-3',
+        defaultCanSort: false,
+      },
+      {
+        id: 'for-layout-only-4',
         defaultCanSort: false,
       },
     ],
@@ -147,7 +152,7 @@ export const ProjectStatsSection = () => {
             },
             '& tr': {
               display: 'grid',
-              gridTemplateColumns: '61px 1fr 220px 110px 100px 100px 100px 80px',
+              gridTemplateColumns: '61px 1fr 110px 220px 100px 100px 100px 80px',
             },
           },
         }}
@@ -167,7 +172,7 @@ export const ProjectStatsSection = () => {
             },
             '& tr': {
               display: 'grid',
-              gridTemplateColumns: '61px 1fr 220px 210px 100px 100px 80px',
+              gridTemplateColumns: '61px 1fr 110px 220px 100px 100px 100px 80px',
             },
             '& th:nth-of-type(1) > *, th:nth-of-type(4) > *, th:nth-of-type(7) > *': {
               visibility: 'hidden',

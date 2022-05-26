@@ -1,4 +1,5 @@
-import { Container } from '@mui/material';
+import { Button, Container, Tooltip } from '@mui/material';
+import { useCurrentProjectId } from 'hooks/projectHooks';
 
 import { useOrganisationUnit } from '../../../context/organisationUnitContext';
 import { PageSection } from '../../PageSection';
@@ -14,6 +15,8 @@ export const UserSettingsContent = () => {
     organisationUnit: { unit },
   } = useOrganisationUnit();
 
+  const { setCurrentProjectId } = useCurrentProjectId();
+
   return (
     <Container maxWidth="lg">
       <PageSection level={2} title="User Settings">
@@ -27,6 +30,9 @@ export const UserSettingsContent = () => {
       {unit && (
         <PageSection level={2} title="Project Stats">
           <ProjectStatsSection />
+          <Tooltip title="Deselect project">
+            <Button onClick={() => setCurrentProjectId()}>Clear</Button>
+          </Tooltip>
         </PageSection>
       )}
     </Container>

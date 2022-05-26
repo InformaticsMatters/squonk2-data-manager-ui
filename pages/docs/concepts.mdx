@@ -78,8 +78,8 @@ Only you and people you have added to your project can access the files in your 
 File access is controlled by standard POSIX permissions, with files typically being read and writable by the user and
 the group.
 
-Each user has a unique unix user id and each project has an unique group id, with all users added to the project being
-members of that group. This means that, with the file permissions describe above, users added to your project have
+Each user has a unique user id and each project has an unique group id, with all users added to the project being
+members of that group. This means that, with the file permissions described above, users added to your project have
 read-write access to your files. Other users will be able to see the files if the project is a public project but not
 if it is private.
 
@@ -88,7 +88,7 @@ if it is private.
 An application is something that can be launched and run for a period of time (including several days).
 The application typically has access to your project's bit of disk space so can work with its files.
 
-Currently the only application we have in Jupyter Notebooks. You can fire up a notebook to work with you files, and
+Currently the only application we have is Jupyter Notebooks. You can start a notebook to work with your files, and
 your notebook .ipynb file is also stored in your project providing a record of your work.
 
 The application runs as a Kubernetes pod in the Kubernetes cluster in which Data Manager is running.
@@ -105,7 +105,7 @@ This allows a diverse subset of molecules to be selected from a set of input mol
 When you run the job you are prompted for various parameters such as the inputs and the number of molecules to pick.
 
 That particular job is implemented as a Python module, using RDKit, but there are lots of ways of creating jobs.
-A guide to creating jobs can be found [here](https://github.com/InformaticsMatters/virtual-screening/blob/main/DEVELOPER_GUIDE.md).
+A guide to creating jobs can be found [here](https://informaticsmatters.gitlab.io/mini-apps-data-tier/0-7/creating-new-jobs.html).
 Creating jobs is a role for a developer, but using them is very easy.
 
 Like applications, jobs run as Kubernetes pods. Some jobs are very simple and complete in seconds, whilst others can run
@@ -120,8 +120,9 @@ How is this all paid for?
 
 Well, if you are an organisation deploying your own Squonk to your own Kubernetes cluster (or Informatics Matters is
 doing this for you) then you are already paying for the CPU and memory resources being used.
-If you are using our public evaluations site then we make _Evaluation_ tier projects available for free, but all data
-in them is public so visible to any user. If you want to keep your data private you can subscribe your project to the
+If you are using our public evaluation site then we make _Evaluation_ tier projects available for free, but all data
+in them is public so visible to any user, and these have limited resource quotas.
+If you want to keep your data private or need more resources then you can subscribe your project to the
 Bronze, Silver or Gold tiers, which differ most in the usage quotas, with Gold having the highest quota.
 
 Billing is not yet implemented, but once it is you will pay monthly fees for Bronze, Silver and Gold Tier projects.
@@ -133,6 +134,7 @@ get a monthly quota of coins (Gold tier projects get the biggest quota).
 Coins are "consumed" by one of these activities:
 * Storage used by your project (e.g. the size of all the files in GBs)
 * Execution of applications or jobs
+* Dataset storage
 
 Storage usage is fairly straight forward. At regular periods each day the storage is calculated and recorded. The maximum
 daily usage is then used to deduct the appropriate number of coins from your project's account. We also do a linear

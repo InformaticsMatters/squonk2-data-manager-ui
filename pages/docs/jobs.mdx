@@ -12,12 +12,22 @@ import Head from "next/head";
 {/* Container narrows the text width, it is configurable */}
 <Container>
 
-# Deployed Jobs
+# Squonk Data Manager Jobs
+
+Jobs allow an algorithm to be executed against some inputs with specific parameters. Squonk Data Manager makes it simple
+for a techie guy to define how the job operates and for an end user scientist to execute that job without needing the know
+the nitty gritty of what the techie guy did.
+
+Jobs can be fairly simple (e.g. calculating molecular properties) or quite complex
+(e.g. virtual screening workflows that are run in parallel across the cluster).
+And the output of one job can be the input of the next job.
 
 The administrator of the Squonk Data Manager instance decides which jobs are made available to its users.
+The definition of these jobs is done in Git repositories. The techie guy guide for doing this can be found
+[here](https://informaticsmatters.gitlab.io/mini-apps-data-tier/0-7/creating-new-jobs.html).
 
-The list of available jobs can be found on the <InternalLink href="/executions">executions page</InternalLink>.
-
+The list of available jobs on this Squonk Data Manager can be found on the
+<InternalLink href="/executions">executions page</InternalLink>.
 
 </Container>
 </Layout>

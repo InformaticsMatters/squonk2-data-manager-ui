@@ -15,15 +15,13 @@ import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { Alert, Container, Grid, MenuItem, TextField } from '@mui/material';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 
 import { CenterLoader } from '../components/CenterLoader';
 import { ApplicationCard } from '../components/executionsCards/ApplicationCard';
 import { JobCard } from '../components/executionsCards/JobCard/JobCard';
 import Layout from '../components/Layout';
 import { SearchTextField } from '../components/SearchTextField';
-import { APP_ROUTES } from '../constants/routes';
-import { useCurrentProject, useIsUserAProjectOwnerOrEditor } from '../hooks/projectHooks';
+import { useCurrentProject } from '../hooks/projectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 import { search } from '../utils/search';
 import { options } from '../utils/ssrQueryOptions';
@@ -122,14 +120,6 @@ const Executions = () => {
     }
     return jobCards;
   }, [applications, currentProject?.project_id, executionTypes, jobs, searchValue]);
-
-  const isEditorOrOwner = useIsUserAProjectOwnerOrEditor();
-  const { push } = useRouter();
-
-  if (!isEditorOrOwner) {
-    push(APP_ROUTES.home);
-    return null;
-  }
 
   return (
     <>

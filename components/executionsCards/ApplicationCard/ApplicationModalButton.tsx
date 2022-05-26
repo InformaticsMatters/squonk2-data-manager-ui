@@ -24,16 +24,18 @@ export const ApplicationModalButton = ({
   return (
     <>
       <Tooltip title="Launch application">
-        <Button
-          color="primary"
-          disabled={!projectId}
-          onClick={() => {
-            setOpen(true);
-            setHasOpened(true);
-          }}
-        >
-          Run
-        </Button>
+        <span>
+          <Button
+            color="primary"
+            disabled={!projectId}
+            onClick={() => {
+              setOpen(true);
+              setHasOpened(true);
+            }}
+          >
+            Run
+          </Button>
+        </span>
       </Tooltip>
 
       {hasOpened && (

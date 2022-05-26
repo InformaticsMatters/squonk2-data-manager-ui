@@ -14,14 +14,12 @@ import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { Alert, Container, Grid } from '@mui/material';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 
 import { CenterLoader } from '../components/CenterLoader';
 import Layout from '../components/Layout';
 import { ResultCards } from '../components/results/ResultCards';
 import { ResultsToolbar } from '../components/results/ResultToolbar';
-import { APP_ROUTES } from '../constants/routes';
-import { useCurrentProjectId, useIsUserAProjectOwnerOrEditor } from '../hooks/projectHooks';
+import { useCurrentProjectId } from '../hooks/projectHooks';
 import { RoleRequired } from '../utils/RoleRequired';
 import { options } from '../utils/ssrQueryOptions';
 
@@ -88,14 +86,6 @@ const Tasks = () => {
 
   const [resultTypes, setResultTypes] = useState(['task', 'instance']);
   const [searchValue, setSearchValue] = useState('');
-
-  const isEditorOrOwner = useIsUserAProjectOwnerOrEditor();
-  const { push } = useRouter();
-
-  if (!isEditorOrOwner) {
-    push(APP_ROUTES.home);
-    return null;
-  }
 
   return (
     <>

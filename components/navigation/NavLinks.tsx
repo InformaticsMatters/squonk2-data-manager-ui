@@ -3,7 +3,6 @@ import { forwardRef } from 'react';
 import type { ButtonProps } from '@mui/material';
 import { Button, styled } from '@mui/material';
 
-import { useIsUserAProjectOwnerOrEditor } from '../../hooks/projectHooks';
 import { NavLink } from './NavLink';
 
 export interface NavLinksProps {
@@ -14,8 +13,6 @@ export interface NavLinksProps {
 }
 
 export const NavLinks = ({ linkWidth = 120 }: NavLinksProps) => {
-  const isEditorOrOwner = useIsUserAProjectOwnerOrEditor();
-
   return (
     <Nav linkWidth={linkWidth}>
       {/* Div wrappers used to give correct spacing */}
@@ -31,20 +28,12 @@ export const NavLinks = ({ linkWidth = 120 }: NavLinksProps) => {
       </div>
       <div>
         <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Executions">
-          {({ active }) => (
-            <NavButton active={active} disabled={!isEditorOrOwner}>
-              Executions
-            </NavButton>
-          )}
+          {({ active }) => <NavButton active={active}>Executions</NavButton>}
         </NavLink>
       </div>
       <div>
         <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Results">
-          {({ active }) => (
-            <NavButton active={active} disabled={!isEditorOrOwner}>
-              Results
-            </NavButton>
-          )}
+          {({ active }) => <NavButton active={active}>Results</NavButton>}
         </NavLink>
       </div>
     </Nav>

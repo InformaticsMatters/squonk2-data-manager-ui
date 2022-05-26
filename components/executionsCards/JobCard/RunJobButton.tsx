@@ -16,7 +16,7 @@ export const RunJobButton = ({ projectId, jobId, onLaunch }: RunJobButtonProps) 
 
   return (
     <>
-      <Tooltip title="Run this job">
+      <Tooltip title="Run job">
         <span>
           <Button
             color="primary"

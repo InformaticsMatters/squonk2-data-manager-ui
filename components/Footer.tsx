@@ -2,7 +2,7 @@ import { Box, Container, Link, Paper, Typography } from '@mui/material';
 
 export const Footer = () => {
   return (
-    <Paper square component="footer">
+    <Paper square component="footer" sx={{ marginTop: 'auto' }}>
       <Container maxWidth="md">
         <Box p={2}>
           <Typography variant="h4">

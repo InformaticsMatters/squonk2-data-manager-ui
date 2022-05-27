@@ -178,7 +178,7 @@ const Executions = () => {
               {!currentProject && (
                 <Grid item xs={12}>
                   <Alert severity="warning">
-                    Select a project from the settings to launch apps and run job
+                    Select a project from the settings to launch apps and run jobs
                   </Alert>
                 </Grid>
               )}

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.4...0.1.5) (2022-05-27)
+
+
+### Bug Fixes
+
+* **executions:** Fix typo in warning text when no project is selected ([7f7eda3](https://github.com/InformaticsMatters/squonk-frontend/commit/7f7eda3f4138aa48bc7e6532fc1c0970162876dd))
+
 ### [0.1.4](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3...0.1.4) (2022-05-26)
 
 

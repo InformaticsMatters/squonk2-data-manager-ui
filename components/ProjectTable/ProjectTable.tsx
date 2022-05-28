@@ -6,17 +6,8 @@ import type { ProjectDetail } from '@squonk/data-manager-client';
 
 import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
-import {
-  Breadcrumbs,
-  CircularProgress,
-  Grid,
-  IconButton,
-  Link,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Breadcrumbs, Grid, IconButton, Link, Typography, useTheme } from '@mui/material';
 import fileSize from 'filesize';
-import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -24,18 +15,11 @@ import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
 import { getErrorMessage } from '../../utils/orvalError';
 import { DataTable } from '../DataTable';
 import { toLocalTimeString } from '../LocalTime';
-import type { FileActionsProps } from './FileActions';
+import { FileActions } from './FileActions';
 import { ProjectFileDetails } from './ProjectFileDetails';
 import type { TableDir, TableFile } from './types';
 import { useProjectFileRows } from './useProjectFileRows';
 import { isTableDir } from './utils';
-
-const FileActions = dynamic<FileActionsProps>(
-  () => import('./FileActions').then((mod) => mod.FileActions),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
-);
 
 export interface ProjectTableProps {
   /**

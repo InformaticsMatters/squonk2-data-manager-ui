@@ -1,13 +1,42 @@
+import { CircularProgress } from '@mui/material';
+import dynamic from 'next/dynamic';
+
 import { DM_API_URL } from '../../constants';
 import { useCurrentProjectId } from '../../hooks/projectHooks';
 import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
-import { DownloadButton } from '../DownloadButton';
-import { CreateDatasetFromFileButton } from './Buttons/CreateDatasetFromFileButton';
-import { DeleteUnmanagedFileButton } from './Buttons/DeleteUnmanagedFileButton';
-import { DetachDataset } from './Buttons/DetachDataset';
-import { FavouriteButton } from './Buttons/FavouriteButton';
+import type { DownloadButtonProps } from '../DownloadButton';
+import type { CreateDatasetFromFileButtonProps } from './buttons/CreateDatasetFromFileButton';
+import type { DeleteUnmanagedFileButtonProps } from './buttons/DeleteUnmanagedFileButton';
+import type { DetachDatasetProps } from './buttons/DetachDataset';
+import { FavouriteButton } from './buttons/FavouriteButton';
 import type { TableDir, TableFile } from './types';
 import { isTableDir } from './utils';
+
+const DownloadButton = dynamic<DownloadButtonProps>(
+  () => import('../DownloadButton').then((mod) => mod.DownloadButton),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
+const DetachDataset = dynamic<DetachDatasetProps>(
+  () => import('./buttons/DetachDataset').then((mod) => mod.DetachDataset),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
+const DeleteUnmanagedFileButton = dynamic<DeleteUnmanagedFileButtonProps>(
+  () => import('./buttons/DeleteUnmanagedFileButton').then((mod) => mod.DeleteUnmanagedFileButton),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
+const CreateDatasetFromFileButton = dynamic<CreateDatasetFromFileButtonProps>(
+  () =>
+    import('./buttons/CreateDatasetFromFileButton').then((mod) => mod.CreateDatasetFromFileButton),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
 
 export interface FileActionsProps {
   /**

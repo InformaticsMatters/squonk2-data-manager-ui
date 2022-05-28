@@ -25,6 +25,7 @@ import createEmotionCache from '../utils/createEmotionCache';
 import { getFromLocalStorage } from '../utils/localStorage';
 
 import '../styles/globalStyles.scss';
+
 const clientSideEmotionCache = createEmotionCache();
 
 setDMBaseUrl(DM_API_URL);
@@ -66,6 +67,11 @@ export default function App({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Vercel specific code is only imported if needed
+  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+    import('../utils/vercelRedirect').then(({ vercelRedirect }) => vercelRedirect());
+  }
 
   return (
     <CacheProvider value={emotionCache}>

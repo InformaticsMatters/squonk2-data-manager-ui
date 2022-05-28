@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.7](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.6...0.1.7) (2022-05-28)
+
+
+### Features
+
+* **nextjs:** Add nicer transitions between routes ([08a6f0d](https://github.com/InformaticsMatters/squonk-frontend/commit/08a6f0da740312d5fd47a9f045392480b45e086f))
+
 ### [0.1.6](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.5...0.1.6) (2022-05-28)
 
 

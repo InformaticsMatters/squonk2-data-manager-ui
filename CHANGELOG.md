@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.6](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.5...0.1.6) (2022-05-28)
+
+
+### Features
+
+* **file-download:** Allow user to download managed files on the project page ([0bf2a37](https://github.com/InformaticsMatters/squonk-frontend/commit/0bf2a373883930f444b1f110b4c746e5aadcf5d9)), closes [#312](https://github.com/InformaticsMatters/squonk-frontend/issues/312)
+
+
+### Bug Fixes
+
+* **layout:** Place footer at bottom of screen when content height is small ([0c5450d](https://github.com/InformaticsMatters/squonk-frontend/commit/0c5450dfe6b9af9f937cd800a90ca12fd7bc8e12))
+
 ### [0.1.5](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.4...0.1.5) (2022-05-27)
 
 

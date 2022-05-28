@@ -2,6 +2,7 @@ import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager
 
 import { Box, MenuItem, TextField, Typography } from '@mui/material';
 
+import { DM_API_URL } from '../../../constants';
 import { DownloadButton } from '../../DownloadButton';
 
 export interface WorkingVersionSectionProps {
@@ -60,8 +61,8 @@ export const WorkingVersionSection = ({
         <Box ml={2}>
           <DownloadButton
             disabled={!(version.processing_stage === 'DONE')}
-            href={`/data-manager-ui/api/dm-api/dataset/${dataset.dataset_id}/${version.version}`} // Need the dataset to be downloadable
-            tooltip="Download this version of the dataset"
+            href={`${DM_API_URL}/dataset/${dataset.dataset_id}/${version.version}`}
+            title="Download this version of the dataset"
           />
         </Box>
       </Box>

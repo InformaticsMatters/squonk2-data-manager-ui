@@ -1,15 +1,27 @@
 import { GetAppRounded } from '@mui/icons-material';
+import type { IconButtonProps, TooltipProps } from '@mui/material';
 import { IconButton, Tooltip } from '@mui/material';
 
-export interface DownloadButtonProps {
+type AnchorIconButton = IconButtonProps<'a', any>;
+
+export interface DownloadButtonProps
+  extends Omit<AnchorIconButton, 'title'>,
+    Partial<Pick<TooltipProps, 'title'>> {
+  /**
+   * Link to file to be downloaded. This must be directly downloadable and not started with
+   * javascript on the target page. *The base path needs to be applied*.
+   */
   href: string;
-  disabled?: boolean;
-  tooltip?: string;
 }
 
-export const DownloadButton = ({ href, disabled, tooltip }: DownloadButtonProps) => {
+export const DownloadButton = ({
+  href,
+  disabled,
+  title: tooltip,
+  ...props
+}: DownloadButtonProps) => {
   const button = (
-    <IconButton download disabled={disabled} href={href} size="large">
+    <IconButton {...props} download disabled={disabled} href={href}>
       <GetAppRounded />
     </IconButton>
   );

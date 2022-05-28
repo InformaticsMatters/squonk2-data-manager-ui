@@ -1,5 +1,7 @@
+import { DM_API_URL } from '../../constants';
 import { useCurrentProjectId } from '../../hooks/projectHooks';
 import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
+import { DownloadButton } from '../DownloadButton';
 import { CreateDatasetFromFileButton } from './Buttons/CreateDatasetFromFileButton';
 import { DeleteUnmanagedFileButton } from './Buttons/DeleteUnmanagedFileButton';
 import { DetachDataset } from './Buttons/DetachDataset';
@@ -42,6 +44,14 @@ export const FileActions = ({ file }: FileActionsProps) => {
       />
 
       {/* Actions for files only */}
+
+      {isManagedFile && (
+        <DownloadButton
+          href={`${DM_API_URL}/file/${file.file_id}`}
+          size="small"
+          title="Download managed file"
+        />
+      )}
 
       {/* Managed files are "detached" */}
       {isManagedFile && <DetachDataset fileId={fileId} path={path} projectId={projectId} />}

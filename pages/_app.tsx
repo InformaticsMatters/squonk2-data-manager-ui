@@ -57,16 +57,19 @@ export default function App({
 
   const router = useRouter();
 
-  useEffect(() => {
-    const { projectId } = getFromLocalStorage<
-      ProjectLocalStoragePayload | Record<string, undefined>
-    >(PROJECT_LOCAL_STORAGE_KEY, {});
+  useEffect(
+    () => {
+      const { projectId } = getFromLocalStorage<
+        ProjectLocalStoragePayload | Record<string, undefined>
+      >(PROJECT_LOCAL_STORAGE_KEY, {});
 
-    if (projectId) {
-      router.push({ pathname: router.pathname, query: { project: projectId, ...router.query } });
-    }
+      if (router.isReady && projectId) {
+        router.push({ pathname: router.pathname, query: { project: projectId, ...router.query } });
+      }
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    [router.query.project],
+  );
 
   // Vercel specific code is only imported if needed
   if (process.env.NEXT_PUBLIC_VERCEL_URL) {

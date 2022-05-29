@@ -52,7 +52,7 @@ const FILE_LIMIT_SIZE = 100_000;
  */
 const FilePlainTextViewer = () => {
   const {
-    query: { projectId, file: fileName },
+    query: { project, file: fileName },
   } = useRouter();
 
   const breadcrumbs = useProjectBreadcrumbs();
@@ -64,7 +64,7 @@ const FilePlainTextViewer = () => {
     isError: isFilesError,
     error: filesError,
   } = useGetFiles({
-    project_id: projectId as string,
+    project_id: project as string,
     path: dirPath,
   });
 
@@ -79,23 +79,21 @@ const FilePlainTextViewer = () => {
     isError: isContentsError,
     error: contentsError,
   } = useApi<string>(
-    `/project/${projectId}/file${getQueryParams({
+    `/project/${project}/file${getQueryParams({
       decompress,
       fileSizeLimit,
       path: dirPath,
       file: fileName,
     })}`,
     undefined,
-    {
-      enabled: Boolean(file),
-    },
+    { enabled: !!file },
   );
 
   const isLoading = isFilesLoading || isContentsLoading;
   const isError = isFilesError || isSelectError || isContentsError;
   const error = getErrorMessage(filesError) || selectError || getErrorMessage(contentsError);
 
-  const downloadUrl = `${DM_API_URL}/project/${projectId}/file${getQueryParams({
+  const downloadUrl = `${DM_API_URL}/project/${project}/file${getQueryParams({
     path: dirPath,
     file: fileName,
   })}`;

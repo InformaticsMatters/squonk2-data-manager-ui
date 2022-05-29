@@ -20,7 +20,7 @@ export const FilePlainTextViewerListItem = ({ fileName }: FilePlainTextViewerLis
       href={{
         pathname: APP_ROUTES.project.file,
         query: {
-          projectId: project,
+          project,
           file: fileName,
           path,
         },

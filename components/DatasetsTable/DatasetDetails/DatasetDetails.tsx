@@ -1,6 +1,5 @@
 import type { FC } from 'react';
-import { useLayoutEffect } from 'react';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager-client';
 

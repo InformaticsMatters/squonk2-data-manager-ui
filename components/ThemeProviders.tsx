@@ -17,7 +17,7 @@ const { darkTheme, lightTheme } = generateThemes();
 export const ThemeProviders: FC = ({ children }) => {
   // Color Scheme
   const [scheme] = useColorScheme();
-  const theme = (scheme === 'dark' ? darkTheme : lightTheme) as any;
+  const theme = scheme === 'dark' ? darkTheme : lightTheme;
 
   return (
     <StylesProvider injectFirst>

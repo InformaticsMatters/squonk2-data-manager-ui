@@ -11,8 +11,7 @@ import type {
   TableProps,
   TableRowProps,
 } from 'react-table';
-import { useExpanded } from 'react-table';
-import { useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
+import { useExpanded, useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
 
 import type { Interpolation } from '@emotion/react';
 import { ExpandLess } from '@mui/icons-material';

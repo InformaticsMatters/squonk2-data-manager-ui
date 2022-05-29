@@ -1,8 +1,15 @@
 import type { InstanceSummary } from '@squonk/data-manager-client';
 
 import { FolderRounded, InsertDriveFileRounded } from '@mui/icons-material';
-import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
-import { Alert } from '@mui/material';
+import {
+  Alert,
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+} from '@mui/material';
 
 import { getErrorMessage } from '../../../../../utils/orvalError';
 import { CenterLoader } from '../../../../CenterLoader';

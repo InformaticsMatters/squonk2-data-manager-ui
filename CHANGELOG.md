@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.8-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.7...0.1.8-rc.0) (2022-05-29)
+
+
+### Bug Fixes
+
+* **plaintext-viewer:** Fix display of content in plaintext viewer ([66c4fd8](https://github.com/InformaticsMatters/squonk-frontend/commit/66c4fd83cd7f4d48ca30d94ec30da6bbb73243df))
+* **plaintext-viewer:** Fix query parameters in file page ([75d454a](https://github.com/InformaticsMatters/squonk-frontend/commit/75d454acd33274df09ea46da039eea035c2bcce1))
+
 ### [0.1.7](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.6...0.1.7) (2022-05-28)
 
 

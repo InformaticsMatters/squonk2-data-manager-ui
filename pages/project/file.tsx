@@ -86,7 +86,7 @@ const FilePlainTextViewer = () => {
       file: fileName,
     })}`,
     undefined,
-    { enabled: !!file },
+    { enabled: !!file, refetchOnWindowFocus: false },
   );
 
   const isLoading = isFilesLoading || isContentsLoading;

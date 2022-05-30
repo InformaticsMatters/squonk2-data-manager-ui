@@ -98,7 +98,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
           href={{
             pathname: APP_ROUTES.project.file,
             query: {
-              projectId,
+              project: projectId,
               path: filePath,
               file: fileName,
             },

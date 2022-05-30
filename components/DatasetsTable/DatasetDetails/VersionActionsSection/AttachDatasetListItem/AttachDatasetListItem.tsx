@@ -1,23 +1,23 @@
-import { useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useState } from "react";
+import { useQueryClient } from "react-query";
 
-import type { DatasetVersionSummary, DmError } from '@squonk/data-manager-client';
-import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
-import { getGetFilesQueryKey, useAttachFile } from '@squonk/data-manager-client/file';
-import { useGetProjects } from '@squonk/data-manager-client/project';
-import { useGetFileTypes } from '@squonk/data-manager-client/type';
+import type { DatasetVersionSummary, DmError } from "@squonk/data-manager-client";
+import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
+import { getGetFilesQueryKey, useAttachFile } from "@squonk/data-manager-client/file";
+import { useGetProjects } from "@squonk/data-manager-client/project";
+import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
-import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
-import { Alert, FormControl, FormGroup, ListItem, ListItemText, MenuItem } from '@mui/material';
-import { Field } from 'formik';
-import { CheckboxWithLabel, TextField } from 'formik-mui';
-import * as yup from 'yup';
+import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
+import { Alert, FormControl, FormGroup, ListItem, ListItemText, MenuItem } from "@mui/material";
+import { Field } from "formik";
+import { CheckboxWithLabel, TextField } from "formik-mui";
+import * as yup from "yup";
 
-import { useEnqueueError } from '../../../../../hooks/useEnqueueStackError';
-import { useKeycloakUser } from '../../../../../hooks/useKeycloakUser';
-import { getErrorMessage } from '../../../../../utils/orvalError';
-import { FormikModalWrapper } from '../../../../modals/FormikModalWrapper';
-import { useGetAttachedProjectsNames } from './useGetAttachedProjectsNames';
+import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
+import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
+import { getErrorMessage } from "../../../../../utils/orvalError";
+import { FormikModalWrapper } from "../../../../modals/FormikModalWrapper";
+import { useGetAttachedProjectsNames } from "./useGetAttachedProjectsNames";
 
 export interface AttachDatasetListItemProps {
   /**
@@ -61,9 +61,9 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
   const types = typesData?.types;
 
   const initialValues: FormState = {
-    project: projects?.[0]?.project_id ?? '',
+    project: projects?.[0]?.project_id ?? "",
     type: version.type,
-    path: '',
+    path: "",
     isImmutable: true,
     isCompress: false,
   };
@@ -87,7 +87,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
               {!!projectNames.length && (
                 <>
                   <br />
-                  Currently attached to: {projectNames.join(', ')}
+                  Currently attached to: {projectNames.join(", ")}
                 </>
               )}
             </>
@@ -100,18 +100,18 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
         // Reinitialize to allow a project to be selected by default after the async action is
         // completed
         enableReinitialize
-        DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+        DialogProps={{ maxWidth: "sm", fullWidth: true }}
         id={`attach-dataset-${datasetId}`}
         initialValues={initialValues}
         open={open}
         submitText="Attach"
         title={`Attach ${version.file_name} v${version.version} to a Project`}
         validationSchema={yup.object({
-          path: yup.string().matches(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gm, 'Invalid Path'),
+          path: yup.string().matches(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gm, "Invalid Path"),
         })}
         onClose={() => setOpen(false)}
         onSubmit={async ({ project, type, path, isImmutable, isCompress }, { setSubmitting }) => {
-          const resolvedPath = path || '/';
+          const resolvedPath = path || "/";
           try {
             await attachFile({
               data: {
@@ -135,8 +135,8 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
               queryClient.invalidateQueries(getGetDatasetsQueryKey()),
             ]);
 
-            enqueueSnackbar('The dataset was successfully attached to your project', {
-              variant: 'success',
+            enqueueSnackbar("The dataset was successfully attached to your project", {
+              variant: "success",
             });
 
             setOpen(false);
@@ -179,13 +179,13 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
         <FormGroup row>
           <Field
             component={CheckboxWithLabel}
-            Label={{ label: 'Immutable' }}
+            Label={{ label: "Immutable" }}
             name="isImmutable"
             type="checkbox"
           />
           <Field
             component={CheckboxWithLabel}
-            Label={{ label: 'Compress' }}
+            Label={{ label: "Compress" }}
             name="isCompress"
             type="checkbox"
           />

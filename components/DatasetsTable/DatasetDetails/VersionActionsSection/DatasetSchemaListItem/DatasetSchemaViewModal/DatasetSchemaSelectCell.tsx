@@ -1,7 +1,7 @@
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from "react";
 
-import { Restore } from '@mui/icons-material';
-import { FormControl, IconButton, MenuItem, Select, Tooltip } from '@mui/material';
+import { Restore } from "@mui/icons-material";
+import { FormControl, IconButton, MenuItem, Select, Tooltip } from "@mui/material";
 
 export interface DatasetSchemaSelectCellProps<V extends readonly string[]> {
   /**
@@ -60,9 +60,9 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
             <IconButton
               size="small"
               sx={{
-                visibility: !hasChanged ? 'hidden' : undefined,
-                position: 'absolute',
-                right: '26px',
+                visibility: !hasChanged ? "hidden" : undefined,
+                position: "absolute",
+                right: "26px",
               }}
               onClick={() => setValue(originalValue)}
             >
@@ -71,13 +71,13 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
           </Tooltip>
         }
         sx={{
-          background: hasChanged ? 'action.hover' : undefined,
+          background: hasChanged ? "action.hover" : undefined,
           pr: 0,
-          '& > div': {
-            bgcolor: 'unset !important',
-            pt: '6px',
-            pb: '7px',
-            pr: '56px !important',
+          "& > div": {
+            bgcolor: "unset !important",
+            pt: "6px",
+            pb: "7px",
+            pr: "56px !important",
           },
         }}
         value={displayValue}

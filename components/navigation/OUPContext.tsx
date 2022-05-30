@@ -1,7 +1,7 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography } from "@mui/material";
 
-import { useOrganisationUnit } from '../../context/organisationUnitContext';
-import { useCurrentProject } from '../../hooks/projectHooks';
+import { useOrganisationUnit } from "../../context/organisationUnitContext";
+import { useCurrentProject } from "../../hooks/projectHooks";
 
 /**
  * Displays current context user is working in.

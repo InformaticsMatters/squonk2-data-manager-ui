@@ -1,10 +1,10 @@
-import type { ProductDmProjectTier } from '@squonk/account-server-client';
-import { useGetProjects } from '@squonk/data-manager-client/project';
+import type { ProductDmProjectTier } from "@squonk/account-server-client";
+import { useGetProjects } from "@squonk/data-manager-client/project";
 
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress } from "@mui/material";
 
-import { DeleteProjectButton } from './DeleteProjectButton';
-import { EditProjectButton } from './EditProjectButton';
+import { DeleteProjectButton } from "./DeleteProjectButton";
+import { EditProjectButton } from "./EditProjectButton";
 
 export interface ProjectActionsProps {
   /**

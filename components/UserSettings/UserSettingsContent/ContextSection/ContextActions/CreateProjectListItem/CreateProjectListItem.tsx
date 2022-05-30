@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { NoteAdd } from '@mui/icons-material';
-import { ListItem, ListItemText } from '@mui/material';
+import { NoteAdd } from "@mui/icons-material";
+import { ListItem, ListItemText } from "@mui/material";
 
-import { useOrganisationUnit } from '../../../../../../context/organisationUnitContext';
-import { CreateProjectForm } from '../../../../../CreateProjectForm';
+import { useOrganisationUnit } from "../../../../../../context/organisationUnitContext";
+import { CreateProjectForm } from "../../../../../CreateProjectForm";
 
 /**
  * Button which allows user to create a new project.
@@ -33,9 +33,9 @@ export const CreateProjectListItem = () => {
       {!!organisation && !!unit && (
         <CreateProjectForm
           modal={{
-            id: 'create-project',
-            title: 'Create Project',
-            submitText: 'Create',
+            id: "create-project",
+            title: "Create Project",
+            submitText: "Create",
             open,
             onClose: () => setOpen(false),
           }}

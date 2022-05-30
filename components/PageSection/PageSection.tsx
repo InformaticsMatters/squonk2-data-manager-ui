@@ -1,10 +1,10 @@
-import type { FC } from 'react';
+import type { FC } from "react";
 
-import { Box, Typography } from '@mui/material';
+import { Box, Typography } from "@mui/material";
 
-import { PageSectionProvider } from './PageSectionProvider';
-import type { PageSectionLevel } from './types';
-import { usePageSectionContext } from './usePageSectionContext';
+import { PageSectionProvider } from "./PageSectionProvider";
+import type { PageSectionLevel } from "./types";
+import { usePageSectionContext } from "./usePageSectionContext";
 
 export interface PageSectionProps {
   /**

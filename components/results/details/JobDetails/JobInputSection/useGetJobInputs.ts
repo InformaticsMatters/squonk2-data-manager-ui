@@ -1,5 +1,5 @@
-import type { InstanceSummary } from '@squonk/data-manager-client';
-import { useGetJob } from '@squonk/data-manager-client/job';
+import type { InstanceSummary } from "@squonk/data-manager-client";
+import { useGetJob } from "@squonk/data-manager-client/job";
 
 // Contains only fields we are interested in
 type ApplicationSpecification = {
@@ -9,7 +9,7 @@ type ApplicationSpecification = {
 // Contains only fields we are interested in
 type JobInput = {
   title: string;
-  type: 'file' | 'directory';
+  type: "file" | "directory";
 };
 
 type JobInputs = {

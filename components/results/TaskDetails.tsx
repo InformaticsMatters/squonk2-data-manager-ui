@@ -1,17 +1,17 @@
-import type { InstanceSummaryJobImageType, TaskSummary } from '@squonk/data-manager-client';
-import { useGetTask } from '@squonk/data-manager-client/task';
+import type { InstanceSummaryJobImageType, TaskSummary } from "@squonk/data-manager-client";
+import { useGetTask } from "@squonk/data-manager-client/task";
 
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from "@mui/material";
 
-import { CenterLoader } from '../CenterLoader';
-import { TimeLine } from './common/TimeLine';
-import type { CommonDetailsProps } from './details/JobDetails/types';
+import { CenterLoader } from "../CenterLoader";
+import { TimeLine } from "./common/TimeLine";
+import type { CommonDetailsProps } from "./details/JobDetails/types";
 
 export interface TaskDetailsProps extends CommonDetailsProps {
   /**
    * ID of the task
    */
-  taskId: TaskSummary['id'];
+  taskId: TaskSummary["id"];
   /**
    * Variant of how events should be displayed
    */
@@ -23,7 +23,7 @@ export interface TaskDetailsProps extends CommonDetailsProps {
  */
 export const TaskDetails = ({
   taskId,
-  eventsVariant = 'SIMPLE',
+  eventsVariant = "SIMPLE",
   poll = false,
 }: TaskDetailsProps) => {
   const { data: task } = useGetTask(taskId, undefined, {
@@ -46,7 +46,7 @@ export const TaskDetails = ({
         <Typography align="center" component="h3" variant="h6">
           <b>Events</b>
         </Typography>
-        {eventsVariant === 'SIMPLE' ? (
+        {eventsVariant === "SIMPLE" ? (
           <TimeLine states={task.events ?? []} />
         ) : (
           // But next-flow jobs only give a single block of text as output so we display these
@@ -55,9 +55,9 @@ export const TaskDetails = ({
             component="pre"
             sx={{
               margin: 0,
-              display: 'inline-block',
-              textAlign: 'left',
-              fontFamily: '"Fira Mono", monospace',
+              display: "inline-block",
+              textAlign: "left",
+              fontFamily: "'Fira Mono', monospace",
             }}
           >
             {task.events?.[task.events.length - 1]?.message}

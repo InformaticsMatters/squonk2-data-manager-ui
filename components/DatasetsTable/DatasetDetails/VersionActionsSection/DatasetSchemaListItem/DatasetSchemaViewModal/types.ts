@@ -1,6 +1,6 @@
-import type { DatasetSchemaGetResponse } from '@squonk/data-manager-client';
+import type { DatasetSchemaGetResponse } from "@squonk/data-manager-client";
 
-import type { JSON_SCHEMA_TYPES } from './constants';
+import type { JSON_SCHEMA_TYPES } from "./constants";
 
 export type JSONSchemaType = typeof JSON_SCHEMA_TYPES[number];
 

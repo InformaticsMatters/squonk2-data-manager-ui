@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Container, Link } from '@mui/material';
+import { Container, Link } from "@mui/material";
 
-import { ModalWrapper } from '../../modals/ModalWrapper';
-import { PageSection } from './../../PageSection';
-import type { TableFile } from './../types';
-import { ProjectViewSection } from './ProjectViewSection';
+import { ModalWrapper } from "../../modals/ModalWrapper";
+import { PageSection } from "./../../PageSection";
+import type { TableFile } from "./../types";
+import { ProjectViewSection } from "./ProjectViewSection";
 
 export interface ProjectFileDetailsProps {
   /**

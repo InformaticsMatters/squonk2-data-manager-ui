@@ -12,7 +12,7 @@ export const getQueryParams = (params: QueryParamsObject) => {
   const queryString = Object.entries(params)
     .filter(([_, value]) => value !== undefined)
     .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
-    .join('&');
+    .join("&");
 
-  return queryString ? `?${queryString}` : '';
+  return queryString ? `?${queryString}` : "";
 };

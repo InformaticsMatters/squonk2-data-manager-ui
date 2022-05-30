@@ -1,13 +1,13 @@
-import { pipeline } from 'stream/promises';
-import zlib from 'zlib';
+import { pipeline } from "stream/promises";
+import zlib from "zlib";
 
-import { getAccessToken } from '@auth0/nextjs-auth0';
-import type { NextApiRequest, NextApiResponse } from 'next';
-import fetch from 'node-fetch';
-import type { Transform } from 'stream';
+import { getAccessToken } from "@auth0/nextjs-auth0";
+import type { NextApiRequest, NextApiResponse } from "next";
+import fetch from "node-fetch";
+import type { Transform } from "stream";
 
-import { FixedSizeStreamTransform } from './FixedSizeStreamTransform';
-import { BadRequestError } from './HttpError';
+import { FixedSizeStreamTransform } from "./FixedSizeStreamTransform";
+import { BadRequestError } from "./HttpError";
 
 const decompressMap: { [index: string]: (() => Transform) | undefined } = {
   inflate: zlib.createInflate,
@@ -90,7 +90,7 @@ export const restreamDownload = async (
 
   // In case the body is empty return empty string
   if (!response.body) {
-    return res.send('');
+    return res.send("");
   }
 
   // The types for pipeline API are just weird

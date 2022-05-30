@@ -1,6 +1,6 @@
-import type { NextApiResponse } from 'next';
+import type { NextApiResponse } from "next";
 
-import { HttpError } from './HttpError';
+import { HttpError } from "./HttpError";
 
 /**
  * Helper function to handle errors which occurred in processing of API request. The shape of the

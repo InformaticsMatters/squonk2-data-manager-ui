@@ -1,4 +1,4 @@
-import type { TaskEvent, TaskGetResponse, TaskState } from '@squonk/data-manager-client';
+import type { TaskEvent, TaskGetResponse, TaskState } from "@squonk/data-manager-client";
 
 import {
   Timeline,
@@ -8,11 +8,11 @@ import {
   TimelineItem,
   TimelineOppositeContent,
   TimelineSeparator,
-} from '@mui/lab';
-import type { TypographyProps } from '@mui/material';
-import { styled, Typography } from '@mui/material';
+} from "@mui/lab";
+import type { TypographyProps } from "@mui/material";
+import { styled, Typography } from "@mui/material";
 
-import { LocalTime } from '../../LocalTime';
+import { LocalTime } from "../../LocalTime";
 
 const isEvent = (stateOrEvent: TaskState | TaskEvent): stateOrEvent is TaskEvent => {
   return !(stateOrEvent as TaskState).state;
@@ -22,7 +22,7 @@ export interface TimeLineProps {
   /**
    * states or events of tasks or instances
    */
-  states: NonNullable<TaskGetResponse['states'] | TaskGetResponse['events']>;
+  states: NonNullable<TaskGetResponse["states"] | TaskGetResponse["events"]>;
 }
 
 /**
@@ -32,7 +32,7 @@ export const TimeLine = ({ states }: TimeLineProps) => {
   return (
     <Timeline sx={{ p: 0, m: 0 }}>
       {states.map((state, stateIndex) => (
-        <TimelineItem key={stateIndex} sx={{ minHeight: '40px' }}>
+        <TimelineItem key={stateIndex} sx={{ minHeight: "40px" }}>
           <TimelineOppositeContent>
             <TimeLineLabel color="textSecondary">
               <LocalTime showTime showDate={false} utcTimestamp={state.time} />
@@ -47,7 +47,7 @@ export const TimeLine = ({ states }: TimeLineProps) => {
             <TimeLineLabel>
               {isEvent(state)
                 ? state.message
-                : `${state.state}${state.message ? ': ' : ''}${state.message || ''}`}
+                : `${state.state}${state.message ? ": " : ""}${state.message || ""}`}
             </TimeLineLabel>
           </TimelineContent>
         </TimelineItem>
@@ -62,6 +62,6 @@ const CodeTypography = (props: TypographyProps) => (
 
 // Use custom mono-spaded font. See fonts in globalStyles
 const TimeLineLabel = styled(CodeTypography)({
-  fontFamily: '"Fira Mono", monospace',
-  wordBreak: 'break-word',
+  fontFamily: "'Fira Mono', monospace",
+  wordBreak: "break-word",
 });

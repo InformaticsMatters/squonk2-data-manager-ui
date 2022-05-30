@@ -1,6 +1,6 @@
-import { Box, Chip, Tooltip, useTheme } from '@mui/material';
+import { Box, Chip, Tooltip, useTheme } from "@mui/material";
 
-import type { FileInfoChip } from './types';
+import type { FileInfoChip } from "./types";
 
 export interface FileInfoChipsProps {
   /**

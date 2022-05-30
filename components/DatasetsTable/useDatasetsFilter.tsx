@@ -1,8 +1,8 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from "react";
 
-import type { GetDatasetsParams, TypeSummary, UserSummary } from '@squonk/data-manager-client';
+import type { GetDatasetsParams, TypeSummary, UserSummary } from "@squonk/data-manager-client";
 
-import { useImmer } from 'use-immer';
+import { useImmer } from "use-immer";
 
 type DatasetsFilter = {
   owner?: UserSummary;
@@ -31,8 +31,8 @@ export const useDatasetsFilter = () => {
     const labelObject: Record<string, string | null> = {};
     labels.forEach((label) => {
       // In case more `=` were provided, leave them for now
-      const [key, ...value] = label.split('=', 1);
-      labelObject[key] = value.length ? value.join('=') : null;
+      const [key, ...value] = label.split("=", 1);
+      labelObject[key] = value.length ? value.join("=") : null;
     });
 
     return JSON.stringify(labelObject);

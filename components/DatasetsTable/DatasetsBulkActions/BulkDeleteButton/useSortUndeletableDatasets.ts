@@ -1,4 +1,4 @@
-import type { TableDatasetSubRow } from '../..';
+import type { TableDatasetSubRow } from "../..";
 
 /**
  * Sorts undeletable dataset versions in ascending order and groups them by dataset ID. This isn't

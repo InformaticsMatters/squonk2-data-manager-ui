@@ -1,24 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "react-query";
 
-import type { DmError, InstanceSummary, JobSummary } from '@squonk/data-manager-client';
-import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
-import { useGetJob } from '@squonk/data-manager-client/job';
+import type { DmError, InstanceSummary, JobSummary } from "@squonk/data-manager-client";
+import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
+import { useGetJob } from "@squonk/data-manager-client/job";
 
-import { Box, Grid, TextField, Typography } from '@mui/material';
-import Form from '@rjsf/material-ui/v5';
-import dynamic from 'next/dynamic';
+import { Box, Grid, TextField, Typography } from "@mui/material";
+import Form from "@rjsf/material-ui/v5";
+import dynamic from "next/dynamic";
 
-import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
-import { CenterLoader } from '../../CenterLoader';
-import { ModalWrapper } from '../../modals/ModalWrapper';
-import type { DebugValue } from '../DebugCheckbox';
-import { DebugCheckbox } from '../DebugCheckbox';
-import type { CommonModalProps } from '../types';
-import type { InputSchema, JobInputFieldsProps } from './JobInputFields';
+import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
+import { CenterLoader } from "../../CenterLoader";
+import { ModalWrapper } from "../../modals/ModalWrapper";
+import type { DebugValue } from "../DebugCheckbox";
+import { DebugCheckbox } from "../DebugCheckbox";
+import type { CommonModalProps } from "../types";
+import type { InputSchema, JobInputFieldsProps } from "./JobInputFields";
 
 const JobInputFields = dynamic<JobInputFieldsProps>(
-  () => import('./JobInputFields').then((mod) => mod.JobInputFields),
+  () => import("./JobInputFields").then((mod) => mod.JobInputFields),
   {
     loading: () => <CenterLoader />,
   },
@@ -37,7 +37,7 @@ export interface JobModalProps extends CommonModalProps {
   /**
    * ID of the job to instantiate
    */
-  jobId: JobSummary['id'];
+  jobId: JobSummary["id"];
   /**
    * An existing instance of this job from which fields take their default values.
    * Allows loading form values from a previous instance
@@ -62,14 +62,14 @@ export const JobModal = ({
   const queryClient = useQueryClient();
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
-  const [nameState, setNameState] = useState(instance?.name ?? '');
-  const [debug, setDebug] = useState<DebugValue>('0');
+  const [nameState, setNameState] = useState(instance?.name ?? "");
+  const [debug, setDebug] = useState<DebugValue>("0");
 
   const { mutateAsync: createInstance } = useCreateInstance();
   // Get extra details about the job
   const { data: job } = useGetJob(jobId);
 
-  const name = nameState || (job?.job ?? '');
+  const name = nameState || (job?.job ?? "");
 
   const spec = instance?.application_specification;
   const specVariables =
@@ -84,7 +84,7 @@ export const JobModal = ({
 
   const inputsDefault = useMemo(() => {
     // Parse the inputs schema which is untyped
-    const inputs: InputSchema | undefined = JSON.parse(job?.variables?.inputs ?? '{}');
+    const inputs: InputSchema | undefined = JSON.parse(job?.variables?.inputs ?? "{}");
     // Access the default values and use them for the "initial" values for state
     return Object.entries(inputs?.properties ?? {})
       .filter(([, schema]) => schema.default !== undefined)
@@ -126,17 +126,17 @@ export const JobModal = ({
         onClose();
       }
     } else {
-      enqueueSnackbar('No project provided', { variant: 'warning' });
+      enqueueSnackbar("No project provided", { variant: "warning" });
     }
   };
 
   return (
     <ModalWrapper
-      DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+      DialogProps={{ maxWidth: "sm", fullWidth: true }}
       id={`job-${jobId}`}
       open={open}
       submitText="Run"
-      title={job?.name ?? 'Run Job'}
+      title={job?.name ?? "Run Job"}
       onClose={onClose}
       onSubmit={handleSubmit}
     >
@@ -183,7 +183,7 @@ export const JobModal = ({
                       formData={optionsFormData}
                       schema={JSON.parse(job.variables.options)}
                       showErrorList={false}
-                      uiSchema={{ 'ui:order': job.variables.order?.options }}
+                      uiSchema={{ "ui:order": job.variables.order?.options }}
                       onChange={(event) => setOptionsFormData(event.formData)}
                     >
                       {/* Remove the default submit button */}

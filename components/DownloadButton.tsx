@@ -1,12 +1,12 @@
-import { GetAppRounded } from '@mui/icons-material';
-import type { IconButtonProps, TooltipProps } from '@mui/material';
-import { IconButton, Tooltip } from '@mui/material';
+import { GetAppRounded } from "@mui/icons-material";
+import type { IconButtonProps, TooltipProps } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 
-type AnchorIconButton = IconButtonProps<'a', any>;
+type AnchorIconButton = IconButtonProps<"a", any>;
 
 export interface DownloadButtonProps
-  extends Omit<AnchorIconButton, 'title'>,
-    Partial<Pick<TooltipProps, 'title'>> {
+  extends Omit<AnchorIconButton, "title">,
+    Partial<Pick<TooltipProps, "title">> {
   /**
    * Link to file to be downloaded. This must be directly downloadable and not started with
    * javascript on the target page. *The base path needs to be applied*.

@@ -5,9 +5,9 @@ export const mutateAtPosition = <T>(arr: T[], idx: number, val: T) => {
 };
 
 const divideFileName = (fileName: string) => {
-  const typeLabelParts = fileName.split('.');
+  const typeLabelParts = fileName.split(".");
   if (typeLabelParts.length === 0) {
-    throw new Error('File name is empty');
+    throw new Error("File name is empty");
   }
 
   return typeLabelParts;
@@ -20,7 +20,7 @@ const divideFileName = (fileName: string) => {
  */
 export const isFileNameGzipped = (fileName: string) => {
   // ? Are there any other extensions used for gzipped files?
-  return fileName.endsWith('gz');
+  return fileName.endsWith("gz");
 };
 
 /**
@@ -35,9 +35,9 @@ export const separateFileExtensionFromFileName = (
   const typeLabelParts = divideFileName(fileName);
 
   if (isFileNameGzipped(fileName)) {
-    return [typeLabelParts.slice(0, -2).join('.'), `.${typeLabelParts.slice(-2).join('.')}`];
+    return [typeLabelParts.slice(0, -2).join("."), `.${typeLabelParts.slice(-2).join(".")}`];
   }
-  return [typeLabelParts.slice(0, -1).join('.'), `.${typeLabelParts.slice(-1).join('.')}`];
+  return [typeLabelParts.slice(0, -1).join("."), `.${typeLabelParts.slice(-1).join(".")}`];
 };
 
 /**

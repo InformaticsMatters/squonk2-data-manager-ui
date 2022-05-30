@@ -1,26 +1,26 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import type { UnitGetResponse } from '@squonk/account-server-client';
+import type { UnitGetResponse } from "@squonk/account-server-client";
 import {
   getGetOrganisationUnitsQueryKey,
   getGetUnitsQueryKey,
   useDeleteDefaultUnit,
   useGetOrganisationUnits,
-} from '@squonk/account-server-client/unit';
+} from "@squonk/account-server-client/unit";
 
-import { DeleteForever } from '@mui/icons-material';
-import type { AutocompleteProps } from '@mui/material';
-import { Autocomplete, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import { DeleteForever } from "@mui/icons-material";
+import type { AutocompleteProps } from "@mui/material";
+import { Autocomplete, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
 
-import { useOrganisationUnit } from '../../context/organisationUnitContext';
-import { useCurrentProjectId } from '../../hooks/projectHooks';
-import { useKeycloakUser } from '../../hooks/useKeycloakUser';
-import { getErrorMessage } from '../../utils/orvalError';
-import { WarningDeleteButton } from '../WarningDeleteButton';
+import { useOrganisationUnit } from "../../context/organisationUnitContext";
+import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { getErrorMessage } from "../../utils/orvalError";
+import { WarningDeleteButton } from "../WarningDeleteButton";
 
 type UnitAutocompleteProps = Omit<
   AutocompleteProps<UnitGetResponse, false, false, false>,
-  'renderInput' | 'options'
+  "renderInput" | "options"
 >;
 
 /**
@@ -32,7 +32,7 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
 
   const { setCurrentProjectId } = useCurrentProjectId();
 
-  const organisationId = organisation?.id ?? '';
+  const organisationId = organisation?.id ?? "";
   const { data, isLoading, isError, error } = useGetOrganisationUnits(organisationId, {
     query: { enabled: !!organisationId },
   });
@@ -68,7 +68,7 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
                   title="Delete Unit"
                   tooltipText="Delete selected unit"
                   onDelete={async () => {
-                    dispatchOrganisationUnit({ type: 'setUnit', payload: null });
+                    dispatchOrganisationUnit({ type: "setUnit", payload: null });
                     await deleteUnit();
                     queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisationId));
                     queryClient.invalidateQueries(getGetUnitsQueryKey());
@@ -93,7 +93,7 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
           setCurrentProjectId();
         }
 
-        dispatchOrganisationUnit({ type: 'setUnit', payload: unit });
+        dispatchOrganisationUnit({ type: "setUnit", payload: unit });
       }}
     />
   );

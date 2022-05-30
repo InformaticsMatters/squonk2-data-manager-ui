@@ -1,17 +1,17 @@
-import type { InstanceSummary } from '@squonk/data-manager-client';
-import { useGetInstance } from '@squonk/data-manager-client/instance';
+import type { InstanceSummary } from "@squonk/data-manager-client";
+import { useGetInstance } from "@squonk/data-manager-client/instance";
 
-import AppsRoundedIcon from '@mui/icons-material/AppsRounded';
-import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded';
-import { Grid, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import AppsRoundedIcon from "@mui/icons-material/AppsRounded";
+import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
+import { Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
-import { CenterLoader } from '../../../CenterLoader';
-import { PageSection } from '../../../PageSection';
-import { HorizontalList } from '../../common/HorizontalList';
-import { TaskDetails } from '../../TaskDetails';
-import { JobInputSection } from './JobInputSection';
-import { JobOutputSection } from './JobOutputSection';
-import type { CommonDetailsProps } from './types';
+import { CenterLoader } from "../../../CenterLoader";
+import { PageSection } from "../../../PageSection";
+import { HorizontalList } from "../../common/HorizontalList";
+import { TaskDetails } from "../../TaskDetails";
+import { JobInputSection } from "./JobInputSection";
+import { JobOutputSection } from "./JobOutputSection";
+import type { CommonDetailsProps } from "./types";
 
 export interface JobDetailsProps extends CommonDetailsProps {
   /**
@@ -36,7 +36,7 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
     <>
       <HorizontalList>
         <ListItem>
-          <ListItemIcon sx={{ minWidth: '40px' }}>
+          <ListItemIcon sx={{ minWidth: "40px" }}>
             <AppsRoundedIcon />
           </ListItemIcon>
           <ListItemText
@@ -45,7 +45,7 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
           />
         </ListItem>
         <ListItem>
-          <ListItemIcon sx={{ minWidth: '40px' }}>
+          <ListItemIcon sx={{ minWidth: "40px" }}>
             <WorkOutlineRoundedIcon />
           </ListItemIcon>
           <ListItemText

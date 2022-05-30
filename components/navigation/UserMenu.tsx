@@ -1,15 +1,15 @@
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import { IconButton, Popover, Tooltip } from '@mui/material';
-import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import { IconButton, Popover, Tooltip } from "@mui/material";
+import { bindPopover, bindTrigger, usePopupState } from "material-ui-popup-state/hooks";
 
-import { useKeycloakUser } from '../../hooks/useKeycloakUser';
-import { UserMenuContent } from './UserMenuContent';
+import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { UserMenuContent } from "./UserMenuContent";
 
 /**
  * Popover displaying the user menu options
  */
 export const UserMenu = () => {
-  const popupState = usePopupState({ variant: 'popover', popupId: 'user-menu' });
+  const popupState = usePopupState({ variant: "popover", popupId: "user-menu" });
 
   const { isLoading } = useKeycloakUser();
 
@@ -30,10 +30,10 @@ export const UserMenu = () => {
       </Tooltip>
 
       <Popover
-        sx={{ '& .MuiPopover-paper': { p: 1 } }}
+        sx={{ "& .MuiPopover-paper": { p: 1 } }}
         {...bindPopover(popupState)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
       >
         <UserMenuContent />
       </Popover>

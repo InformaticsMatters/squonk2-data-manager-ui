@@ -1,17 +1,17 @@
-import type { InstanceSummary } from '@squonk/data-manager-client';
+import type { InstanceSummary } from "@squonk/data-manager-client";
 
-import { ListItem, ListItemText } from '@mui/material';
+import { ListItem, ListItemText } from "@mui/material";
 
-import { CenterLoader } from '../../CenterLoader';
-import { HorizontalList } from '../common/HorizontalList';
-import { TaskDetails } from '../TaskDetails';
-import { usePolledInstance } from './usePolledInstance';
+import { CenterLoader } from "../../CenterLoader";
+import { HorizontalList } from "../common/HorizontalList";
+import { TaskDetails } from "../TaskDetails";
+import { usePolledInstance } from "./usePolledInstance";
 
 export interface ApplicationDetailsProps {
   /**
    * ID of the instance of the application
    */
-  instanceId: InstanceSummary['id'];
+  instanceId: InstanceSummary["id"];
   /**
    * Whether to poll the instance regularly for updates
    */
@@ -42,7 +42,7 @@ export const ApplicationDetails = ({ instanceId, poll }: ApplicationDetailsProps
         </ListItem>
       </HorizontalList>
 
-      <TaskDetails taskId={task?.id ?? ''} />
+      <TaskDetails taskId={task?.id ?? ""} />
     </>
   );
 };

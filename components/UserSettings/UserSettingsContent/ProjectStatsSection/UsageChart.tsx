@@ -1,12 +1,12 @@
-import { Fragment } from 'react';
-import type { PlotParams } from 'react-plotly.js';
+import { Fragment } from "react";
+import type { PlotParams } from "react-plotly.js";
 
-import { Box, CircularProgress, Tooltip, Typography } from '@mui/material';
-import dynamic from 'next/dynamic';
+import { Box, CircularProgress, Tooltip, Typography } from "@mui/material";
+import dynamic from "next/dynamic";
 
-import type { UsageChartData } from './types';
+import type { UsageChartData } from "./types";
 
-const Plot = dynamic<PlotParams>(() => import('../../../Plot').then((mod) => mod.Plot), {
+const Plot = dynamic<PlotParams>(() => import("../../../Plot").then((mod) => mod.Plot), {
   ssr: false, // Plotly only works when browser APIs are in scope
   loading: () => <CircularProgress size="1rem" />,
 });
@@ -23,7 +23,7 @@ export interface UsageChartProps {
  */
 const getDecimalPoints = (unitCost: number) => {
   const cost = String(unitCost);
-  const decimalPart = cost.split('.').at(1);
+  const decimalPart = cost.split(".").at(1);
   const decimalPoints = decimalPart !== undefined ? decimalPart.length : 0;
   return decimalPoints;
 };
@@ -59,13 +59,13 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
                 <Typography component="span" variant="body2">
                   {item.type}
                 </Typography>
-                <Typography component="span" sx={{ justifySelf: 'end' }} variant="body2">
+                <Typography component="span" sx={{ justifySelf: "end" }} variant="body2">
                   {item.value.toFixed(decimalPoints)}
                 </Typography>
                 <Typography component="span" variant="body2">
                   /
                 </Typography>
-                <Typography component="span" sx={{ justifySelf: 'end' }} variant="body2">
+                <Typography component="span" sx={{ justifySelf: "end" }} variant="body2">
                   {((item.value / valuesSummed) * 100).toFixed(2)} %
                 </Typography>
               </Fragment>
@@ -84,9 +84,9 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
           config={{ displayModeBar: false }}
           data={chartData.map((item) => ({
             x: [item.value],
-            orientation: 'h',
+            orientation: "h",
             marker: { color: item.color },
-            type: 'bar',
+            type: "bar",
             xgap: 0,
           }))}
           layout={{
@@ -94,7 +94,7 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
             showlegend: false,
             autosize: true,
             margin: { b: 0, t: 0, l: 0, r: 0 },
-            barmode: 'stack',
+            barmode: "stack",
             xaxis: {
               range: [0, valuesSummed],
               showgrid: false,
@@ -112,7 +112,7 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
               fixedrange: true,
             },
           }}
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: "100%", height: "100%" }}
         />
       </Box>
     </Tooltip>

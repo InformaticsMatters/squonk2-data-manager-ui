@@ -1,38 +1,38 @@
-import { CircularProgress } from '@mui/material';
-import dynamic from 'next/dynamic';
+import { CircularProgress } from "@mui/material";
+import dynamic from "next/dynamic";
 
-import { DM_API_URL } from '../../constants';
-import { useCurrentProjectId } from '../../hooks/projectHooks';
-import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
-import type { DownloadButtonProps } from '../DownloadButton';
-import type { CreateDatasetFromFileButtonProps } from './buttons/CreateDatasetFromFileButton';
-import type { DeleteUnmanagedFileButtonProps } from './buttons/DeleteUnmanagedFileButton';
-import type { DetachDatasetProps } from './buttons/DetachDataset';
-import { FavouriteButton } from './buttons/FavouriteButton';
-import type { TableDir, TableFile } from './types';
-import { isTableDir } from './utils';
+import { DM_API_URL } from "../../constants";
+import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
+import type { DownloadButtonProps } from "../DownloadButton";
+import type { CreateDatasetFromFileButtonProps } from "./buttons/CreateDatasetFromFileButton";
+import type { DeleteUnmanagedFileButtonProps } from "./buttons/DeleteUnmanagedFileButton";
+import type { DetachDatasetProps } from "./buttons/DetachDataset";
+import { FavouriteButton } from "./buttons/FavouriteButton";
+import type { TableDir, TableFile } from "./types";
+import { isTableDir } from "./utils";
 
 const DownloadButton = dynamic<DownloadButtonProps>(
-  () => import('../DownloadButton').then((mod) => mod.DownloadButton),
+  () => import("../DownloadButton").then((mod) => mod.DownloadButton),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
 );
 const DetachDataset = dynamic<DetachDatasetProps>(
-  () => import('./buttons/DetachDataset').then((mod) => mod.DetachDataset),
+  () => import("./buttons/DetachDataset").then((mod) => mod.DetachDataset),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
 );
 const DeleteUnmanagedFileButton = dynamic<DeleteUnmanagedFileButtonProps>(
-  () => import('./buttons/DeleteUnmanagedFileButton').then((mod) => mod.DeleteUnmanagedFileButton),
+  () => import("./buttons/DeleteUnmanagedFileButton").then((mod) => mod.DeleteUnmanagedFileButton),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
 );
 const CreateDatasetFromFileButton = dynamic<CreateDatasetFromFileButtonProps>(
   () =>
-    import('./buttons/CreateDatasetFromFileButton').then((mod) => mod.CreateDatasetFromFileButton),
+    import("./buttons/CreateDatasetFromFileButton").then((mod) => mod.CreateDatasetFromFileButton),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
@@ -52,7 +52,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
   const { projectId } = useCurrentProjectId();
 
   const breadcrumbs = useProjectBreadcrumbs();
-  const path = '/' + breadcrumbs.join('/');
+  const path = "/" + breadcrumbs.join("/");
 
   if (!projectId) {
     return null;
@@ -69,7 +69,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
         fullPath={file.fullPath}
         mimeType={isTableDir(file) ? undefined : file.mime_type}
         projectId={projectId}
-        type={isTableDir(file) ? 'directory' : 'file'}
+        type={isTableDir(file) ? "directory" : "file"}
       />
 
       {/* Actions for files only */}

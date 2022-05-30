@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { AutoSizer, List, WindowScroller } from 'react-virtualized';
+import { useState } from "react";
+import { AutoSizer, List, WindowScroller } from "react-virtualized";
 
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from "@mui/material";
 
 /**
  * Height of a row in pixels.
@@ -40,9 +40,9 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
       ref={setScrollElement}
       sx={{
         // `overflow: auto` displays the scrollbars inside the container
-        overflow: 'auto',
-        '& pre': {
-          fontFamily: '"Fira Mono", monospace',
+        overflow: "auto",
+        "& pre": {
+          fontFamily: "'Fira Mono', monospace",
         },
       }}
     >
@@ -56,7 +56,7 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
               disableHeight
               // By default this element has 0 width which results in the following flex div not
               // being displayed
-              style={{ width: 'auto' }}
+              style={{ width: "auto" }}
             >
               {({ width }) => (
                 <Box display="flex" gap={2} overflow="scroll" ref={registerChild}>
@@ -82,7 +82,7 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
                       </Typography>
                     )}
                     scrollTop={scrollTop}
-                    sx={{ userSelect: 'none' }}
+                    sx={{ userSelect: "none" }}
                     width={numberColumnWidth}
                     onScroll={onChildScroll}
                   />
@@ -90,7 +90,7 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
                   <List
                     autoContainerWidth
                     autoHeight
-                    containerStyle={{ overflow: 'scroll' }}
+                    containerStyle={{ overflow: "scroll" }}
                     height={height}
                     isScrolling={isScrolling}
                     overscanRowCount={OVERSCAN}

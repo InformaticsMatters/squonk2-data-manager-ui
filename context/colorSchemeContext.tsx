@@ -1,9 +1,9 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from "react";
 
-import { COLOUR_SCHEME_STORAGE_KEY } from '../constants';
-import { getFromLocalStorage, writeToLocalStorage } from '../utils/localStorage';
+import { COLOUR_SCHEME_STORAGE_KEY } from "../constants";
+import { getFromLocalStorage, writeToLocalStorage } from "../utils/localStorage";
 
-type Scheme = 'light' | 'dark';
+type Scheme = "light" | "dark";
 interface ColorScheme {
   version: 1; // State saved to localStorage so we need to know if its old data if we update logic here
   scheme: Scheme;
@@ -16,7 +16,7 @@ interface ColorSchemeState {
 
 const defaultColorSchemePayload: ColorScheme = {
   version: 1,
-  scheme: 'light',
+  scheme: "light",
 };
 
 const initialScheme = getFromLocalStorage(COLOUR_SCHEME_STORAGE_KEY, defaultColorSchemePayload);

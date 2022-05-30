@@ -1,11 +1,11 @@
-import type { Dispatch } from 'react';
-import { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
+import type { Dispatch } from "react";
+import { createContext, useContext, useEffect, useMemo, useReducer } from "react";
 
-import type { OrganisationDetail, UnitGetResponse } from '@squonk/account-server-client';
-import { useGetProduct } from '@squonk/account-server-client/product';
+import type { OrganisationDetail, UnitGetResponse } from "@squonk/account-server-client";
+import { useGetProduct } from "@squonk/account-server-client/product";
 
-import { useCurrentProject } from '../hooks/projectHooks';
-import { useIsAuthorized } from '../hooks/useIsAuthorized';
+import { useCurrentProject } from "../hooks/projectHooks";
+import { useIsAuthorized } from "../hooks/useIsAuthorized";
 
 type OrganisationUnit = {
   organisation: OrganisationDetail | null;
@@ -36,15 +36,15 @@ const OrganisationUnitUpdater = ({ dispatchOrganisationUnit }: OrganisationUnitU
 
   const currentProject = useCurrentProject();
   const { data: product } = useGetProduct(
-    currentProject?.unit_id ?? '',
-    currentProject?.product_id ?? '',
+    currentProject?.unit_id ?? "",
+    currentProject?.product_id ?? "",
     { query: { enabled: !!currentProject?.unit_id && !!currentProject.product_id } },
   );
 
   useEffect(() => {
     // On logout clear context
     if (!isAuthorized) {
-      dispatchOrganisationUnit({ type: 'clear' });
+      dispatchOrganisationUnit({ type: "clear" });
     }
   }, [isAuthorized, dispatchOrganisationUnit]);
 
@@ -52,7 +52,7 @@ const OrganisationUnitUpdater = ({ dispatchOrganisationUnit }: OrganisationUnitU
     // Used in case a user directly navigates to a project's URL
     if (currentProject && product) {
       dispatchOrganisationUnit({
-        type: 'setOrganisationUnit',
+        type: "setOrganisationUnit",
         payload: {
           organisation: product.product.organisation,
           unit: product.product.unit,
@@ -65,10 +65,10 @@ const OrganisationUnitUpdater = ({ dispatchOrganisationUnit }: OrganisationUnitU
 };
 
 type OrganisationUnitActions =
-  | { type: 'clear' }
-  | { type: 'setOrganisation'; payload: OrganisationUnit['organisation'] }
-  | { type: 'setUnit'; payload: OrganisationUnit['unit'] }
-  | { type: 'setOrganisationUnit'; payload: OrganisationUnit };
+  | { type: "clear" }
+  | { type: "setOrganisation"; payload: OrganisationUnit["organisation"] }
+  | { type: "setUnit"; payload: OrganisationUnit["unit"] }
+  | { type: "setOrganisationUnit"; payload: OrganisationUnit };
 
 type OrganisationUnitSetter = Dispatch<OrganisationUnitActions>;
 
@@ -77,18 +77,18 @@ const organisationUnitReducer = (
   action: OrganisationUnitActions,
 ): OrganisationUnit => {
   switch (action.type) {
-    case 'clear': {
+    case "clear": {
       return { organisation: null, unit: null };
     }
-    case 'setOrganisation': {
+    case "setOrganisation": {
       // If organisation changed, reset unit as well
       return { organisation: action.payload, unit: null };
     }
-    case 'setUnit': {
+    case "setUnit": {
       // Only change the unit
       return { ...state, unit: action.payload };
     }
-    case 'setOrganisationUnit': {
+    case "setOrganisationUnit": {
       const { organisation, unit } = action.payload;
       return { organisation, unit };
     }

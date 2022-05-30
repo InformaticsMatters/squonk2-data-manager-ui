@@ -1,43 +1,43 @@
-import { useCallback, useMemo } from 'react';
-import type { Column, Row } from 'react-table';
+import { useCallback, useMemo } from "react";
+import type { Column, Row } from "react-table";
 
-import { useGetDatasets } from '@squonk/data-manager-client/dataset';
+import { useGetDatasets } from "@squonk/data-manager-client/dataset";
 
-import { CircularProgress } from '@mui/material';
-import dynamic from 'next/dynamic';
+import { CircularProgress } from "@mui/material";
+import dynamic from "next/dynamic";
 
-import { combineLabels } from '../../utils/labelUtils';
-import { getErrorMessage } from '../../utils/orvalError';
-import { Chips } from '../Chips';
-import { DataTable } from '../DataTable';
-import { LabelChip } from '../labels/LabelChip';
-import { EditorFilter } from './filters/EditorFilter';
-import { FileTypeFilter } from './filters/FileTypeFilter';
-import { LabelsFilter } from './filters/LabelsFilter';
-import { OwnerFilter } from './filters/OwnerFilter';
-import type { DatasetDetailsProps } from './DatasetDetails';
-import { DatasetsBulkActions } from './DatasetsBulkActions';
-import { DatasetsFilterToolbar } from './DatasetsFilterToolbar';
-import type { TableDataset } from './types';
-import { useDatasetsFilter } from './useDatasetsFilter';
-import { useSelectedDatasets } from './useSelectedDatasets';
+import { combineLabels } from "../../utils/labelUtils";
+import { getErrorMessage } from "../../utils/orvalError";
+import { Chips } from "../Chips";
+import { DataTable } from "../DataTable";
+import { LabelChip } from "../labels/LabelChip";
+import { EditorFilter } from "./filters/EditorFilter";
+import { FileTypeFilter } from "./filters/FileTypeFilter";
+import { LabelsFilter } from "./filters/LabelsFilter";
+import { OwnerFilter } from "./filters/OwnerFilter";
+import type { DatasetDetailsProps } from "./DatasetDetails";
+import { DatasetsBulkActions } from "./DatasetsBulkActions";
+import { DatasetsFilterToolbar } from "./DatasetsFilterToolbar";
+import type { TableDataset } from "./types";
+import { useDatasetsFilter } from "./useDatasetsFilter";
+import { useSelectedDatasets } from "./useSelectedDatasets";
 
 const FileUpload = dynamic<Record<string, never>>(
-  () => import('../FileUpload').then((mod) => mod.FileUpload),
+  () => import("../FileUpload").then((mod) => mod.FileUpload),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
 );
 
 const DatasetDetails = dynamic<DatasetDetailsProps>(
-  () => import('./DatasetDetails').then((mod) => mod.DatasetDetails),
+  () => import("./DatasetDetails").then((mod) => mod.DatasetDetails),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
 );
 
 const editorsSorter = (rowA: Row<TableDataset>, rowB: Row<TableDataset>) => {
-  if (rowA.original.editors.join(' ') > rowB.original.editors.join(' ')) {
+  if (rowA.original.editors.join(" ") > rowB.original.editors.join(" ")) {
     return 1;
   }
   return -1;
@@ -51,8 +51,8 @@ export const DatasetsTable = () => {
   const columns: Column<TableDataset>[] = useMemo(
     () => [
       {
-        accessor: 'fileName',
-        Header: 'File Name',
+        accessor: "fileName",
+        Header: "File Name",
         Cell: ({ row }) => {
           return (
             <DatasetDetails
@@ -64,7 +64,7 @@ export const DatasetsTable = () => {
         },
       },
       {
-        accessor: 'labels',
+        accessor: "labels",
         Cell: ({ value: labels }) => (
           <Chips>
             {Object.entries(labels).map(([label, values]) => (
@@ -72,24 +72,24 @@ export const DatasetsTable = () => {
             ))}
           </Chips>
         ),
-        Header: 'Labels',
+        Header: "Labels",
       },
       {
-        accessor: 'editors',
-        Header: 'Editors',
+        accessor: "editors",
+        Header: "Editors",
         sortType: editorsSorter,
         Cell: ({ value: editors }) => {
-          return editors.join(', ');
+          return editors.join(", ");
         },
       },
       {
-        id: 'versions',
-        accessor: (row) => row.subRows.length || '',
-        Header: 'Versions',
+        id: "versions",
+        accessor: (row) => row.subRows.length || "",
+        Header: "Versions",
       },
       {
         accessor: (row) => row.numberOfProjects,
-        Header: 'Number of projects',
+        Header: "Number of projects",
       },
     ],
     [],
@@ -108,7 +108,7 @@ export const DatasetsTable = () => {
         ).size;
 
         return {
-          type: 'row',
+          type: "row",
           ...dataset,
           fileName,
           numberOfProjects,
@@ -116,7 +116,7 @@ export const DatasetsTable = () => {
           labels: combineLabels(dataset.versions),
           datasetVersion: dataset.versions[0],
           subRows: dataset.versions.map<TableDataset>((version) => ({
-            type: 'subRow',
+            type: "subRow",
             ...dataset,
             fileName: `Version: ${version.version}`,
             numberOfProjects: version.projects.length,
@@ -155,24 +155,24 @@ export const DatasetsTable = () => {
             fullWidthFilters={
               <LabelsFilter
                 labels={labels}
-                setLabels={(labels) => setFilterItem('labels', labels)}
+                setLabels={(labels) => setFilterItem("labels", labels)}
               />
             }
             shrinkableFilters={[
               <OwnerFilter
                 key="owner"
                 owner={owner}
-                setOwner={(owner) => setFilterItem('owner', owner)}
+                setOwner={(owner) => setFilterItem("owner", owner)}
               />,
               <EditorFilter
                 editor={editor}
                 key="editor"
-                setEditor={(editor) => setFilterItem('editor', editor)}
+                setEditor={(editor) => setFilterItem("editor", editor)}
               />,
               <FileTypeFilter
                 fileType={fileType}
                 key="fileType"
-                setFileType={(fileType) => setFilterItem('fileType', fileType)}
+                setFileType={(fileType) => setFilterItem("fileType", fileType)}
               />,
             ]}
           />

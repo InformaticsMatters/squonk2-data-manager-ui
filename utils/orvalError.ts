@@ -1,7 +1,7 @@
-import type { AsError } from '@squonk/account-server-client';
-import type { DmError } from '@squonk/data-manager-client';
+import type { AsError } from "@squonk/account-server-client";
+import type { DmError } from "@squonk/data-manager-client";
 
-import type { AxiosError } from 'axios';
+import type { AxiosError } from "axios";
 
 /**
  *

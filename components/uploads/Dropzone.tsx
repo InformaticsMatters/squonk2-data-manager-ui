@@ -1,15 +1,15 @@
-import type { FC } from 'react';
-import { useCallback } from 'react';
-import type { DropzoneOptions, FileRejection } from 'react-dropzone';
-import { useDropzone } from 'react-dropzone';
+import type { FC } from "react";
+import { useCallback } from "react";
+import type { DropzoneOptions, FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 
-import { Divider, styled } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
+import { Divider, styled } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 
-import { useFileExtensions } from '../../hooks/useFileExtensions';
-import { useMimeTypeLookup } from '../../hooks/useMimeTypeLookup';
-import type { UploadableFile } from './types';
-import { getMimeFromFileName } from './utils';
+import { useFileExtensions } from "../../hooks/useFileExtensions";
+import { useMimeTypeLookup } from "../../hooks/useMimeTypeLookup";
+import type { UploadableFile } from "./types";
+import { getMimeFromFileName } from "./utils";
 
 export interface DropzoneProps extends DropzoneOptions {
   /**
@@ -67,7 +67,7 @@ export const Dropzone: FC<DropzoneProps> = ({
   //
   // 2. This currently requires the body parser in the proxy to be disabled
   // https://github.com/stegano/next-http-proxy-middleware/issues/33
-  mapping['gzip'] = ['.gz'];
+  mapping["gzip"] = [".gz"];
   const { getRootProps, getInputProps } = useDropzone({
     ...dropzoneOptions,
     onDrop,
@@ -84,7 +84,7 @@ export const Dropzone: FC<DropzoneProps> = ({
   );
 };
 
-const Zone = styled('div', { shouldForwardProp: (prop) => prop !== 'isDragActive' })<{
+const Zone = styled("div", { shouldForwardProp: (prop) => prop !== "isDragActive" })<{
   isDragActive: boolean;
 }>(({ theme, isDragActive }) => ({
   border: `2px dashed ${isDragActive ? theme.palette.primary.main : theme.palette.grey[600]}`,
@@ -92,19 +92,19 @@ const Zone = styled('div', { shouldForwardProp: (prop) => prop !== 'isDragActive
   padding: theme.spacing(1),
   paddingLeft: theme.spacing(2),
   paddingRight: theme.spacing(2),
-  overflowY: 'scroll',
-  maxHeight: '40vh',
+  overflowY: "scroll",
+  maxHeight: "40vh",
 }));
 
-const UploadButton = styled('button')(({ theme }) => ({
-  textTransform: 'none',
-  cursor: 'pointer',
-  textAlign: 'center',
-  border: 'none',
-  background: 'none',
-  display: 'block',
-  width: '100%',
+const UploadButton = styled("button")(({ theme }) => ({
+  textTransform: "none",
+  cursor: "pointer",
+  textAlign: "center",
+  border: "none",
+  background: "none",
+  display: "block",
+  width: "100%",
   marginTop: theme.spacing(2),
   marginBottom: theme.spacing(2),
-  fontSize: '1rem',
+  fontSize: "1rem",
 }));

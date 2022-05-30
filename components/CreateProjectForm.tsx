@@ -1,15 +1,15 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import type { AsError, UnitProductPostBodyBodyFlavour } from '@squonk/account-server-client';
+import type { AsError, UnitProductPostBodyBodyFlavour } from "@squonk/account-server-client";
 import {
   getGetProductsForUnitQueryKey,
   useCreateUnitProduct,
   useGetProductTypes,
-} from '@squonk/account-server-client/product';
-import { getGetUnitsQueryKey } from '@squonk/account-server-client/unit';
-import type { DmError } from '@squonk/data-manager-client';
-import { getGetProjectsQueryKey, useCreateProject } from '@squonk/data-manager-client/project';
-import { getGetUserAccountQueryKey } from '@squonk/data-manager-client/user';
+} from "@squonk/account-server-client/product";
+import { getGetUnitsQueryKey } from "@squonk/account-server-client/unit";
+import type { DmError } from "@squonk/data-manager-client";
+import { getGetProjectsQueryKey, useCreateProject } from "@squonk/data-manager-client/project";
+import { getGetUserAccountQueryKey } from "@squonk/data-manager-client/user";
 
 import {
   Box,
@@ -19,44 +19,44 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@mui/material';
-import type { FormikConfig } from 'formik';
-import { Field, Form, Formik } from 'formik';
-import { Checkbox, TextField } from 'formik-mui';
-import * as yup from 'yup';
+} from "@mui/material";
+import type { FormikConfig } from "formik";
+import { Field, Form, Formik } from "formik";
+import { Checkbox, TextField } from "formik-mui";
+import * as yup from "yup";
 
-import { PROJECT_SUB } from '../constants/products';
-import { useCurrentProjectId } from '../hooks/projectHooks';
-import { useEnqueueError } from '../hooks/useEnqueueStackError';
-import type { Resolve } from '../types';
-import { getErrorMessage } from '../utils/orvalError';
-import { formatTierString, getBillingDay } from '../utils/productUtils';
-import type { FormikModalWrapperProps } from './modals/FormikModalWrapper';
-import { FormikModalWrapper } from './modals/FormikModalWrapper';
+import { PROJECT_SUB } from "../constants/products";
+import { useCurrentProjectId } from "../hooks/projectHooks";
+import { useEnqueueError } from "../hooks/useEnqueueStackError";
+import type { Resolve } from "../types";
+import { getErrorMessage } from "../utils/orvalError";
+import { formatTierString, getBillingDay } from "../utils/productUtils";
+import type { FormikModalWrapperProps } from "./modals/FormikModalWrapper";
+import { FormikModalWrapper } from "./modals/FormikModalWrapper";
 
 export type OrgAndUnitIdTuple = [organisationId: string, unitId: string];
 
 export interface CreateProjectFormProps {
   modal?: Resolve<
-    Pick<FormikModalWrapperProps, 'id' | 'title' | 'submitText' | 'open' | 'onClose'>
+    Pick<FormikModalWrapperProps, "id" | "title" | "submitText" | "open" | "onClose">
   >;
   orgAndUnit: Resolve<OrgAndUnitIdTuple> | (() => Promise<OrgAndUnitIdTuple>);
 }
 
-const getIds = async (orgAndUnit: CreateProjectFormProps['orgAndUnit']) => {
-  if (typeof orgAndUnit === 'function') {
+const getIds = async (orgAndUnit: CreateProjectFormProps["orgAndUnit"]) => {
+  if (typeof orgAndUnit === "function") {
     return orgAndUnit();
   }
   return orgAndUnit;
 };
 
-const initialValues = { projectName: '', flavour: '', isPrivate: false };
+const initialValues = { projectName: "", flavour: "", isPrivate: false };
 
 type ProjectFormikProps = FormikConfig<typeof initialValues>;
 
 export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps) => {
   const theme = useTheme();
-  const biggerThanSm = useMediaQuery(theme.breakpoints.up('sm'));
+  const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
 
   const queryClient = useQueryClient();
 
@@ -82,7 +82,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
     // This would only happen due to an API error
     // TODO: Report this to Sentry
     if (serviceId === undefined) {
-      throw new Error('Service ID was missing in the product type. ');
+      throw new Error("Service ID was missing in the product type. ");
     }
 
     const { id: productId } = await createProduct({
@@ -106,7 +106,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
       },
     });
 
-    enqueueSnackbar('Project created');
+    enqueueSnackbar("Project created");
 
     queryClient.invalidateQueries(getGetProjectsQueryKey());
     queryClient.invalidateQueries(getGetUserAccountQueryKey());
@@ -117,7 +117,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
     setCurrentProjectId(project_id);
   };
 
-  const handleSubmit: ProjectFormikProps['onSubmit'] = async (values, { setSubmitting }) => {
+  const handleSubmit: ProjectFormikProps["onSubmit"] = async (values, { setSubmitting }) => {
     try {
       await create(values);
     } catch (error) {
@@ -127,12 +127,12 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
     }
   };
 
-  const children: ProjectFormikProps['children'] = ({ submitForm, isSubmitting, isValid }) => (
+  const children: ProjectFormikProps["children"] = ({ submitForm, isSubmitting, isValid }) => (
     <Form style={{ marginTop: theme.spacing() }}>
       <Box
         sx={{
-          display: 'grid',
-          gridTemplateColumns: biggerThanSm ? '1fr 1fr auto auto' : '1fr',
+          display: "grid",
+          gridTemplateColumns: biggerThanSm ? "1fr 1fr auto auto" : "1fr",
           gap: 1,
         }}
       >
@@ -148,7 +148,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
               productTypes?.map((product) => {
                 return (
                   <MenuItem key={product.flavour} value={product.flavour}>
-                    {formatTierString(product.flavour ?? 'Unknown Flavour')}
+                    {formatTierString(product.flavour ?? "Unknown Flavour")}
                   </MenuItem>
                 );
               })
@@ -177,9 +177,9 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
     validationSchema: yup.object().shape({
       projectName: yup
         .string()
-        .required('A project name is required')
+        .required("A project name is required")
         .matches(/^[A-Za-z0-9-_.][A-Za-z0-9-_. ]*[A-Za-z0-9-_.]$/),
-      flavour: yup.string().required('A tier is required'),
+      flavour: yup.string().required("A tier is required"),
     }),
     onSubmit: handleSubmit,
   };

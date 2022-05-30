@@ -1,17 +1,17 @@
-import type { FilePathFile, FilesGetResponse } from '@squonk/data-manager-client';
-import { useGetFiles } from '@squonk/data-manager-client/file';
+import type { FilePathFile, FilesGetResponse } from "@squonk/data-manager-client";
+import { useGetFiles } from "@squonk/data-manager-client/file";
 
-import { withPageAuthRequired } from '@auth0/nextjs-auth0/dist/frontend';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/dist/frontend";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
-import { PlaintextViewer } from '../../components/PlaintextViewer';
-import { DM_API_URL } from '../../constants';
-import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
-import { useApi } from '../../hooks/useApi';
-import { getDecompressionType } from '../../utils/fileUtils';
-import { getErrorMessage } from '../../utils/orvalError';
-import { getQueryParams } from '../../utils/requestUtils';
+import { PlaintextViewer } from "../../components/PlaintextViewer";
+import { DM_API_URL } from "../../constants";
+import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
+import { useApi } from "../../hooks/useApi";
+import { getDecompressionType } from "../../utils/fileUtils";
+import { getErrorMessage } from "../../utils/orvalError";
+import { getQueryParams } from "../../utils/requestUtils";
 
 type SelectDatasetVersionResult = {
   file?: FilePathFile;
@@ -32,7 +32,7 @@ const selectProjectVersion = (
   if (!file) {
     return {
       isSelectError: true,
-      selectError: 'No file found for the specified file ID',
+      selectError: "No file found for the specified file ID",
     };
   }
   return { file, isSelectError: false };
@@ -56,7 +56,7 @@ const FilePlainTextViewer = () => {
   } = useRouter();
 
   const breadcrumbs = useProjectBreadcrumbs();
-  const dirPath = '/' + breadcrumbs.join('/');
+  const dirPath = "/" + breadcrumbs.join("/");
 
   const {
     data: files,
@@ -111,7 +111,7 @@ const FilePlainTextViewer = () => {
         fileSizeLimit={fileSizeLimit}
         isError={isError}
         isLoading={isLoading}
-        title={file?.file_name ?? ''}
+        title={file?.file_name ?? ""}
       />
     </>
   );

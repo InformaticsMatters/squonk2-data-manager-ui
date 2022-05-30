@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
 export const useInstanceRouterQuery = () => {
   // Remove the parameter so it doesn't appear as a query parameter

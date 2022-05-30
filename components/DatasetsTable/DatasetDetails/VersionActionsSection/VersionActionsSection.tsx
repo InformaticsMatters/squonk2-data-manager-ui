@@ -1,10 +1,10 @@
-import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager-client';
+import type { DatasetSummary, DatasetVersionSummary } from "@squonk/data-manager-client";
 
-import { List } from '@mui/material';
+import { List } from "@mui/material";
 
-import { AttachDatasetListItem } from './AttachDatasetListItem';
-import { DatasetSchemaListItem } from './DatasetSchemaListItem';
-import { DeleteDatasetListItem } from './DeleteDatasetListItem';
+import { AttachDatasetListItem } from "./AttachDatasetListItem";
+import { DatasetSchemaListItem } from "./DatasetSchemaListItem";
+import { DeleteDatasetListItem } from "./DeleteDatasetListItem";
 
 export interface VersionActionsSectionProps {
   /**

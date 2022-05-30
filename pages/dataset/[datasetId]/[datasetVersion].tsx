@@ -1,16 +1,16 @@
-import type { DatasetDetail, DatasetVersionDetail } from '@squonk/data-manager-client';
-import { useGetVersions } from '@squonk/data-manager-client/dataset';
+import type { DatasetDetail, DatasetVersionDetail } from "@squonk/data-manager-client";
+import { useGetVersions } from "@squonk/data-manager-client/dataset";
 
-import { withPageAuthRequired } from '@auth0/nextjs-auth0/dist/frontend';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/dist/frontend";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
-import { PlaintextViewer } from '../../../components/PlaintextViewer';
-import { DM_API_URL } from '../../../constants';
-import { APP_ROUTES } from '../../../constants/routes';
-import { useApi } from '../../../hooks/useApi';
-import { getErrorMessage } from '../../../utils/orvalError';
-import { getQueryParams } from '../../../utils/requestUtils';
+import { PlaintextViewer } from "../../../components/PlaintextViewer";
+import { DM_API_URL } from "../../../constants";
+import { APP_ROUTES } from "../../../constants/routes";
+import { useApi } from "../../../hooks/useApi";
+import { getErrorMessage } from "../../../utils/orvalError";
+import { getQueryParams } from "../../../utils/requestUtils";
 
 type ParseDatasetVersionResult = {
   datasetVersionNumber?: number;
@@ -29,7 +29,7 @@ const parseDatasetVersion = (datasetVersion?: string | string[]): ParseDatasetVe
   if (isNaN(datasetVersionParsed)) {
     return {
       isParseError: true,
-      parseError: 'Invalid dataset version number provided',
+      parseError: "Invalid dataset version number provided",
     };
   }
   return { datasetVersionNumber: datasetVersionParsed, isParseError: false };
@@ -49,14 +49,14 @@ const selectDatasetVersion = (
   if (!version) {
     return {
       isSelectError: true,
-      selectError: 'No dataset version found for the specified dataset version number',
+      selectError: "No dataset version found for the specified dataset version number",
     };
   }
   return { version, isSelectError: false };
 };
 
 // Datasets are always gziped as of now
-const DECOMPRESS = 'unzip';
+const DECOMPRESS = "unzip";
 // 100 kB
 const FILE_LIMIT_SIZE = 100_000;
 
@@ -98,7 +98,7 @@ const DatasetVersionPlainTextViewer = () => {
     isError: isContentsError,
     error: contentsError,
   } = useApi<string>(
-    `${APP_ROUTES.dataset['.']}/${datasetId}/${datasetVersion}/${getQueryParams({
+    `${APP_ROUTES.dataset["."]}/${datasetId}/${datasetVersion}/${getQueryParams({
       decompress,
       fileSizeLimit,
     })}`,
@@ -131,7 +131,7 @@ const DatasetVersionPlainTextViewer = () => {
         fileSizeLimit={fileSizeLimit}
         isError={isError}
         isLoading={isLoading}
-        title={version?.file_name ?? ''}
+        title={version?.file_name ?? ""}
       />
     </>
   );

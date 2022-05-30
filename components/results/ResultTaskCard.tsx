@@ -1,25 +1,25 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import type { DmError, TaskSummary } from '@squonk/data-manager-client';
-import { getGetTasksQueryKey, useDeleteTask } from '@squonk/data-manager-client/task';
+import type { DmError, TaskSummary } from "@squonk/data-manager-client";
+import { getGetTasksQueryKey, useDeleteTask } from "@squonk/data-manager-client/task";
 
-import { Button, CardContent } from '@mui/material';
-import { useRouter } from 'next/router';
+import { Button, CardContent } from "@mui/material";
+import { useRouter } from "next/router";
 
-import { APP_ROUTES } from '../../constants/routes';
-import { useCurrentProjectId } from '../../hooks/projectHooks';
-import { useEnqueueError } from '../../hooks/useEnqueueStackError';
-import { ResultCard } from '../results/ResultCard';
-import { WarningDeleteButton } from '../WarningDeleteButton';
-import type { CommonProps } from './common/types';
-import type { TaskDetailsProps } from './TaskDetails';
-import { TaskDetails } from './TaskDetails';
+import { APP_ROUTES } from "../../constants/routes";
+import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { useEnqueueError } from "../../hooks/useEnqueueStackError";
+import { ResultCard } from "../results/ResultCard";
+import { WarningDeleteButton } from "../WarningDeleteButton";
+import type { CommonProps } from "./common/types";
+import type { TaskDetailsProps } from "./TaskDetails";
+import { TaskDetails } from "./TaskDetails";
 export interface ResultTaskCardProps extends CommonProps {
   /**
    * The task which will be displayed
    */
   task: TaskSummary;
-  poll?: TaskDetailsProps['poll'];
+  poll?: TaskDetailsProps["poll"];
 }
 
 /**
@@ -50,7 +50,7 @@ export const ResultTaskCard = ({ task, collapsedByDefault = true, poll }: Result
               queryClient.invalidateQueries(getGetTasksQueryKey());
               queryClient.invalidateQueries(getGetTasksQueryKey({ project_id: projectId }));
 
-              enqueueSnackbar('Task successfully deleted', { variant: 'success' });
+              enqueueSnackbar("Task successfully deleted", { variant: "success" });
             } catch (error) {
               enqueueError(error);
             } finally {

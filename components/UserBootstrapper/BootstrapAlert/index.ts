@@ -1,1 +1,1 @@
-export * from './BootstrapAlert';
+export * from "./BootstrapAlert";

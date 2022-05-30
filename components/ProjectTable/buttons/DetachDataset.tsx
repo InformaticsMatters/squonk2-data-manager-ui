@@ -1,13 +1,13 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import type { DmError } from '@squonk/data-manager-client';
-import { getGetFilesQueryKey, useDeleteFile } from '@squonk/data-manager-client/file';
+import type { DmError } from "@squonk/data-manager-client";
+import { getGetFilesQueryKey, useDeleteFile } from "@squonk/data-manager-client/file";
 
-import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
-import { IconButton } from '@mui/material';
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import { IconButton } from "@mui/material";
 
-import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
-import { WarningDeleteButton } from '../../WarningDeleteButton';
+import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
+import { WarningDeleteButton } from "../../WarningDeleteButton";
 
 export interface DetachDatasetProps {
   /**
@@ -44,7 +44,7 @@ export const DetachDataset = ({ fileId, projectId, path }: DetachDatasetProps) =
           await detachDataset({ fileId });
           await queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
 
-          enqueueSnackbar('The attached dataset was successfully detached');
+          enqueueSnackbar("The attached dataset was successfully detached");
         } catch (error) {
           enqueueError(error);
         }

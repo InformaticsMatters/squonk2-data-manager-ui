@@ -1,11 +1,11 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from "react";
 
-import { Grid } from '@mui/material';
+import { Grid } from "@mui/material";
 
-import { Dropzone } from '../uploads/Dropzone';
-import type { UploadableFile } from '../uploads/types';
-import { mutateAtPosition } from '../uploads/utils';
-import { SingleFileUploadWithProgress } from './SingleFileUploader';
+import { Dropzone } from "../uploads/Dropzone";
+import type { UploadableFile } from "../uploads/types";
+import { mutateAtPosition } from "../uploads/utils";
+import { SingleFileUploadWithProgress } from "./SingleFileUploader";
 
 export interface BulkUploadDropzoneProps {
   /**

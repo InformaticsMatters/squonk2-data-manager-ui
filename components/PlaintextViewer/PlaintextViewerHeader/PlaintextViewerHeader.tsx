@@ -1,9 +1,9 @@
-import { Box, Divider, Typography, useTheme } from '@mui/material';
-import fileSize from 'filesize';
+import { Box, Divider, Typography, useTheme } from "@mui/material";
+import fileSize from "filesize";
 
-import { DownloadButton } from '../../DownloadButton';
-import { FileInfoChips } from './FileInfoChips';
-import { useGetFileInfoChips } from './useGetFileInfoChips';
+import { DownloadButton } from "../../DownloadButton";
+import { FileInfoChips } from "./FileInfoChips";
+import { useGetFileInfoChips } from "./useGetFileInfoChips";
 
 export interface PlaintextViewerHeaderProps {
   /**
@@ -46,7 +46,7 @@ export const PlaintextViewerHeader = ({
   const theme = useTheme();
 
   const chips = useGetFileInfoChips(transferredSize, fileSizeLimit, decompress);
-  const linesText = numberOfLines === 1 ? 'line' : 'lines';
+  const linesText = numberOfLines === 1 ? "line" : "lines";
 
   return (
     <Box
@@ -56,14 +56,14 @@ export const PlaintextViewerHeader = ({
       paddingY={1}
       sx={{
         background:
-          theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[900],
+          theme.palette.mode === "light" ? theme.palette.grey[200] : theme.palette.grey[900],
         boxShadow: theme.shadows[0],
         borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
         gap: theme.spacing(2),
       }}
     >
       <Box alignItems="center" display="flex" flex="1 1 auto" sx={{ gap: theme.spacing() }}>
-        <Typography component="h1" sx={{ wordBreak: 'break-all' }}>
+        <Typography component="h1" sx={{ wordBreak: "break-all" }}>
           <b>{title}</b>
         </Typography>
         <Divider flexItem orientation="vertical" />

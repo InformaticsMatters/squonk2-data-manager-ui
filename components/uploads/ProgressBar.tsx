@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import type { FileError } from 'react-dropzone';
+import { useState } from "react";
+import type { FileError } from "react-dropzone";
 
-import { useGetTask } from '@squonk/data-manager-client/task';
+import { useGetTask } from "@squonk/data-manager-client/task";
 
-import { Box, LinearProgress, Typography } from '@mui/material';
+import { Box, LinearProgress, Typography } from "@mui/material";
 
 export interface ProgressBarProps {
   /**
@@ -30,7 +30,7 @@ export interface ProgressBarProps {
  */
 export const ProgressBar: React.FC<ProgressBarProps> = ({ taskId, progress, errors, onDone }) => {
   const [interval, setInterval] = useState<number | false>(2000);
-  const { data: task, isLoading } = useGetTask(taskId ?? '', undefined, {
+  const { data: task, isLoading } = useGetTask(taskId ?? "", undefined, {
     query: {
       // Poll the task until the task is done
       refetchInterval: interval,

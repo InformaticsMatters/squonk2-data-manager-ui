@@ -1,7 +1,7 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography } from "@mui/material";
 
-import type { TableDatasetSubRow } from '..';
-import { BulkDeleteButton } from './BulkDeleteButton';
+import type { TableDatasetSubRow } from "..";
+import { BulkDeleteButton } from "./BulkDeleteButton";
 
 export interface DatasetsBulkActionsProps {
   /**
@@ -21,7 +21,7 @@ export const DatasetsBulkActions = ({ selectedDatasets }: DatasetsBulkActionsPro
       display="flex"
       flex={1}
       justifyContent="space-between"
-      visibility={!selectedDatasets.length ? 'hidden' : undefined}
+      visibility={!selectedDatasets.length ? "hidden" : undefined}
     >
       <Typography>Selected: {selectedDatasets.length}</Typography>
       <Box display="flex">

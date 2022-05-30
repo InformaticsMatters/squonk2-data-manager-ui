@@ -1,25 +1,25 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import type { DmError } from '@squonk/data-manager-client';
-import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
-import { useAddMetadata } from '@squonk/data-manager-client/metadata';
+import type { DmError } from "@squonk/data-manager-client";
+import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
+import { useAddMetadata } from "@squonk/data-manager-client/metadata";
 
-import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
-import { Box, Button, IconButton, Popover, Tooltip } from '@mui/material';
-import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-mui';
-import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
-import * as yup from 'yup';
+import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+import { Box, Button, IconButton, Popover, Tooltip } from "@mui/material";
+import { Field, Form, Formik } from "formik";
+import { TextField } from "formik-mui";
+import { bindPopover, bindTrigger, usePopupState } from "material-ui-popup-state/hooks";
+import * as yup from "yup";
 
-import { useEnqueueError } from '../../hooks/useEnqueueStackError';
-import { LowerCaseTextField } from '../../utils/LowerCaseTextField';
-import type { TableDataset } from '../DatasetsTable';
+import { useEnqueueError } from "../../hooks/useEnqueueStackError";
+import { LowerCaseTextField } from "../../utils/LowerCaseTextField";
+import type { TableDataset } from "../DatasetsTable";
 
 export interface NewLabelButtonProps {
   /**
    * ID of the dataset
    */
-  datasetId: TableDataset['dataset_id'];
+  datasetId: TableDataset["dataset_id"];
 }
 
 export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
@@ -27,7 +27,7 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
   const { mutateAsync: addAnnotations } = useAddMetadata();
   const { enqueueError } = useEnqueueError<DmError>();
 
-  const popupState = usePopupState({ variant: 'popover', popupId: `add-label-${datasetId}` });
+  const popupState = usePopupState({ variant: "popover", popupId: `add-label-${datasetId}` });
 
   return (
     <>
@@ -38,16 +38,16 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
       </Tooltip>
 
       <Popover
-        sx={{ '& .MuiPopover-paper': { p: 1 } }}
+        sx={{ "& .MuiPopover-paper": { p: 1 } }}
         {...bindPopover(popupState)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        transformOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Formik
           validateOnMount
-          initialValues={{ label: '', value: '' }}
+          initialValues={{ label: "", value: "" }}
           validationSchema={yup.object().shape({
-            label: yup.string().trim().required('A label name is required'),
+            label: yup.string().trim().required("A label name is required"),
           })}
           onSubmit={async ({ label, value }) => {
             try {
@@ -56,7 +56,7 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
                 data: {
                   labels: JSON.stringify([
                     {
-                      type: 'LabelAnnotation',
+                      type: "LabelAnnotation",
                       label: label.trim().toLowerCase(),
                       value: value.trim(),
                       active: true,

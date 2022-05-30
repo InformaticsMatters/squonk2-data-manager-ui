@@ -1,4 +1,4 @@
-import type { FileError } from 'react-dropzone';
+import type { FileError } from "react-dropzone";
 
 export interface UploadableFile {
   id: string;

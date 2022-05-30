@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Button, Tooltip } from '@mui/material';
+import { Button, Tooltip } from "@mui/material";
 
-import type { ApplicationModalProps } from './ApplicationModal';
-import { ApplicationModal } from './ApplicationModal';
+import type { ApplicationModalProps } from "./ApplicationModal";
+import { ApplicationModal } from "./ApplicationModal";
 
 export type ApplicationModalButtonProps = Pick<
   ApplicationModalProps,
-  'onLaunch' | 'applicationId' | 'projectId'
+  "onLaunch" | "applicationId" | "projectId"
 >;
 
 /**

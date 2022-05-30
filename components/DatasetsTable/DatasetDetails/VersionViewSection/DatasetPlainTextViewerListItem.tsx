@@ -1,8 +1,8 @@
-import { Description } from '@mui/icons-material';
-import { ListItem, ListItemText } from '@mui/material';
-import NextLink from 'next/link';
+import { Description } from "@mui/icons-material";
+import { ListItem, ListItemText } from "@mui/material";
+import NextLink from "next/link";
 
-import { APP_ROUTES } from '../../../../constants/routes';
+import { APP_ROUTES } from "../../../../constants/routes";
 
 export interface DatasetPlainTextViewerListItemProps {
   datasetId: string;

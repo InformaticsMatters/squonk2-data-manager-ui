@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import FindInPageRoundedIcon from '@mui/icons-material/FindInPageRounded';
-import { ListItem, ListItemText } from '@mui/material';
+import FindInPageRoundedIcon from "@mui/icons-material/FindInPageRounded";
+import { ListItem, ListItemText } from "@mui/material";
 
-import { DatasetSchemaViewModal } from './DatasetSchemaViewModal';
+import { DatasetSchemaViewModal } from "./DatasetSchemaViewModal";
 
 export type DatasetSchemaListItemProps = {
   /**

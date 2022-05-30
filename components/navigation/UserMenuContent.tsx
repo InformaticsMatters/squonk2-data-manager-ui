@@ -1,9 +1,9 @@
-import { Link, Typography } from '@mui/material';
-import NextLink from 'next/link';
+import { Link, Typography } from "@mui/material";
+import NextLink from "next/link";
 
-import { useKeycloakUser } from '../../hooks/useKeycloakUser';
-import { CenterLoader } from '../CenterLoader';
-import { UserSettings } from '../UserSettings';
+import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { CenterLoader } from "../CenterLoader";
+import { UserSettings } from "../UserSettings";
 
 /**
  * Content of the user menu
@@ -20,7 +20,7 @@ export const UserMenuContent = () => {
       ) : user.username ? (
         <>
           <Typography>
-            {user.username} /{' '}
+            {user.username} /{" "}
             <NextLink passHref href="/api/auth/logout">
               <Link>Logout</Link>
             </NextLink>

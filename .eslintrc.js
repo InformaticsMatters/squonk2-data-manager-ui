@@ -1,12 +1,12 @@
 module.exports = {
   parserOptions: {
-    project: 'tsconfig.json',
+    project: "tsconfig.json",
     tsconfigRootDir: __dirname,
   },
-  plugins: ['@next/eslint-plugin-next'],
+  plugins: ["@next/eslint-plugin-next"],
   extends: [
-    '@squonk/eslint-config',
-    'plugin:@next/next/recommended',
-    'plugin:@next/next/core-web-vitals',
+    "plugin:@next/next/recommended",
+    "plugin:@next/next/core-web-vitals",
+    "@squonk/eslint-config",
   ],
 };

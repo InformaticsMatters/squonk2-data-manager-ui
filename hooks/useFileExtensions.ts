@@ -1,4 +1,4 @@
-import { useGetFileTypes } from '@squonk/data-manager-client/type';
+import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
 export type Mapping = Record<string, string[]>;
 

@@ -1,10 +1,10 @@
-import { useGetProjects } from '@squonk/data-manager-client/project';
+import { useGetProjects } from "@squonk/data-manager-client/project";
 
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
-import { PROJECT_LOCAL_STORAGE_KEY } from '../constants';
-import { writeToLocalStorage } from '../utils/localStorage';
-import { useKeycloakUser } from './useKeycloakUser';
+import { PROJECT_LOCAL_STORAGE_KEY } from "../constants";
+import { writeToLocalStorage } from "../utils/localStorage";
+import { useKeycloakUser } from "./useKeycloakUser";
 
 export type ProjectId = string | undefined;
 export type ProjectLocalStoragePayload = { projectId: ProjectId; version: number };

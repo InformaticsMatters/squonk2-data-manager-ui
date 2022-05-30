@@ -1,8 +1,8 @@
-import { Alert, Box, Paper } from '@mui/material';
+import { Alert, Box, Paper } from "@mui/material";
 
-import { CenterLoader } from '../CenterLoader';
-import { PlaintextViewerContent } from './PlaintextViewerContent';
-import { PlaintextViewerHeader } from './PlaintextViewerHeader';
+import { CenterLoader } from "../CenterLoader";
+import { PlaintextViewerContent } from "./PlaintextViewerContent";
+import { PlaintextViewerHeader } from "./PlaintextViewerHeader";
 
 export interface PlaintextViewerProps {
   /**
@@ -56,7 +56,7 @@ export const PlaintextViewer = ({
   const lines = content ? content.split(/\r?\n/) : [];
   // By default, utf8 is assumed, used to determine whether or not the whole contents of the file
   // was fetched
-  const buffer = Buffer.from(content || '');
+  const buffer = Buffer.from(content || "");
 
   const contents = () => {
     if (isLoading) {
@@ -68,7 +68,7 @@ export const PlaintextViewer = ({
     }
 
     if (isError) {
-      return <Alert severity="error">{error || 'Failed to view the contents'}</Alert>;
+      return <Alert severity="error">{error || "Failed to view the contents"}</Alert>;
     }
 
     return (
@@ -88,7 +88,7 @@ export const PlaintextViewer = ({
 
   return (
     <Box alignItems="stretch" display="flex" height="100vh" padding={3} width="100vw">
-      <Paper sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <Paper sx={{ flexGrow: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
         {contents()}
       </Paper>
     </Box>

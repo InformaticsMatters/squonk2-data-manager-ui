@@ -1,7 +1,7 @@
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from "react";
 
-import { Restore } from '@mui/icons-material';
-import { Box, IconButton, TextField, Tooltip } from '@mui/material';
+import { Restore } from "@mui/icons-material";
+import { Box, IconButton, TextField, Tooltip } from "@mui/material";
 
 export interface DatasetSchemaDescriptionInputProps {
   /**
@@ -27,10 +27,10 @@ export const DatasetSchemaDescriptionInput = ({
   setDescription,
   originalValue,
 }: DatasetSchemaDescriptionInputProps) => {
-  const [displayValue, setDisplayValue] = useState(value || '');
+  const [displayValue, setDisplayValue] = useState(value || "");
 
   useLayoutEffect(() => {
-    setDisplayValue(value || '');
+    setDisplayValue(value || "");
   }, [value]);
 
   const hasChanged = displayValue !== originalValue;
@@ -40,9 +40,9 @@ export const DatasetSchemaDescriptionInput = ({
       fullWidth
       InputProps={{
         endAdornment: (
-          <Box ml={1} visibility={!hasChanged ? 'hidden' : undefined}>
+          <Box ml={1} visibility={!hasChanged ? "hidden" : undefined}>
             <Tooltip title="Revert changes">
-              <IconButton size="small" onClick={() => setDescription(originalValue || '')}>
+              <IconButton size="small" onClick={() => setDescription(originalValue || "")}>
                 <Restore />
               </IconButton>
             </Tooltip>
@@ -50,8 +50,8 @@ export const DatasetSchemaDescriptionInput = ({
         ),
       }}
       label="Schema description"
-      sx={{ mr: 2, background: hasChanged ? 'action.hover' : undefined }}
-      value={displayValue || ''}
+      sx={{ mr: 2, background: hasChanged ? "action.hover" : undefined }}
+      value={displayValue || ""}
       onBlur={() => setDescription(displayValue)}
       onChange={(event) => setDisplayValue(event.target.value)}
     />

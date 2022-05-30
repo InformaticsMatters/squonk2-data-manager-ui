@@ -1,1 +1,1 @@
-export * from './UserSettingsSection';
+export * from "./UserSettingsSection";

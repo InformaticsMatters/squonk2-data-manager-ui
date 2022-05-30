@@ -1,8 +1,8 @@
-import type { FC } from 'react';
+import type { FC } from "react";
 
-import Error from 'next/error';
+import Error from "next/error";
 
-import { useKeycloakUser } from '../hooks/useKeycloakUser';
+import { useKeycloakUser } from "../hooks/useKeycloakUser";
 
 export interface RoleRequiredProps {
   /**

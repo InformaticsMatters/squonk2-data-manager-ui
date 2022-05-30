@@ -1,6 +1,6 @@
-import type { ProductDmProjectTier } from '@squonk/account-server-client';
+import type { ProductDmProjectTier } from "@squonk/account-server-client";
 
-import { UsageChart } from './UsageChart';
+import { UsageChart } from "./UsageChart";
 
 export interface ProjectUsageChartProps {
   /**
@@ -21,10 +21,10 @@ export const ProjectUsageChart = ({ projectSubscription }: ProjectUsageChartProp
   const available = Math.max(allowance - (storageUsed + storagePredicted + instancesUsed), 0);
 
   const chartData = [
-    { type: 'Instances used', value: instancesUsed, color: 'darkred' },
-    { type: 'Storage used', value: storageUsed, color: 'red' },
-    { type: 'Storage predicted', value: storagePredicted, color: 'orange' },
-    { type: 'Available', value: available, color: 'green' },
+    { type: "Instances used", value: instancesUsed, color: "darkred" },
+    { type: "Storage used", value: storageUsed, color: "red" },
+    { type: "Storage predicted", value: storagePredicted, color: "orange" },
+    { type: "Available", value: available, color: "green" },
   ];
 
   return (

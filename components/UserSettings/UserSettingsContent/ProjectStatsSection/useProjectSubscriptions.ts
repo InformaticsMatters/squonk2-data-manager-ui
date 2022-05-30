@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import type { ProductDmProjectTier } from '@squonk/account-server-client';
-import { useGetProductsForUnit } from '@squonk/account-server-client/product';
+import type { ProductDmProjectTier } from "@squonk/account-server-client";
+import { useGetProductsForUnit } from "@squonk/account-server-client/product";
 
-import { useOrganisationUnit } from '../../../../context/organisationUnitContext';
+import { useOrganisationUnit } from "../../../../context/organisationUnitContext";
 
 /**
  * Fetches information about account's project subscriptions.
@@ -13,7 +13,7 @@ export const useProjectSubscriptions = () => {
     organisationUnit: { unit },
   } = useOrganisationUnit();
 
-  const { data, isLoading, isError, error } = useGetProductsForUnit(unit?.id ?? '', {
+  const { data, isLoading, isError, error } = useGetProductsForUnit(unit?.id ?? "", {
     query: { enabled: !!unit?.id },
   });
 
@@ -25,7 +25,7 @@ export const useProjectSubscriptions = () => {
     return data.products
       .filter(
         (product): product is ProductDmProjectTier =>
-          product.product.type === 'DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION',
+          product.product.type === "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
       )
       .filter((product) => Boolean(product.claim));
   }, [data]);

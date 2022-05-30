@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Box, Checkbox, FormControlLabel } from '@mui/material';
+import { Box, Checkbox, FormControlLabel } from "@mui/material";
 
-import { useSelectedFiles } from '../../context/fileSelectionContext';
-import { AllFilesList } from './AllFilesList';
-import { FavouritesList } from './FavouritesList';
-import type { SharedProps } from './types';
+import { useSelectedFiles } from "../../context/fileSelectionContext";
+import { AllFilesList } from "./AllFilesList";
+import { FavouritesList } from "./FavouritesList";
+import type { SharedProps } from "./types";
 
 /**
  * List of files and directories, either from the list of favourites or project volume, with option

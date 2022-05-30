@@ -1,24 +1,24 @@
-import { useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useState } from "react";
+import { useQueryClient } from "react-query";
 
-import type { AsError } from '@squonk/account-server-client';
+import type { AsError } from "@squonk/account-server-client";
 import {
   getGetOrganisationUnitsQueryKey,
   getGetUnitsQueryKey,
   getUnit,
   useCreateOrganisationUnit,
   useGetOrganisationUnits,
-} from '@squonk/account-server-client/unit';
+} from "@squonk/account-server-client/unit";
 
-import { CreateNewFolder } from '@mui/icons-material';
-import { Grid, ListItem, ListItemText } from '@mui/material';
-import { Field, Form, Formik } from 'formik';
-import { TextField } from 'formik-mui';
-import * as yup from 'yup';
+import { CreateNewFolder } from "@mui/icons-material";
+import { Grid, ListItem, ListItemText } from "@mui/material";
+import { Field, Form, Formik } from "formik";
+import { TextField } from "formik-mui";
+import * as yup from "yup";
 
-import { useOrganisationUnit } from '../../../../../context/organisationUnitContext';
-import { useEnqueueError } from '../../../../../hooks/useEnqueueStackError';
-import { ModalWrapper } from '../../../../modals/ModalWrapper';
+import { useOrganisationUnit } from "../../../../../context/organisationUnitContext";
+import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
+import { ModalWrapper } from "../../../../modals/ModalWrapper";
 
 /**
  * Button which allows organisation owner to create a new project.
@@ -32,7 +32,7 @@ export const CreateUnitListItem = () => {
     organisationUnit: { organisation },
     dispatchOrganisationUnit,
   } = useOrganisationUnit();
-  const { data } = useGetOrganisationUnits(organisation?.id ?? '', {
+  const { data } = useGetOrganisationUnits(organisation?.id ?? "", {
     query: { enabled: !!organisation?.id },
   });
   const units = data?.units;
@@ -45,7 +45,7 @@ export const CreateUnitListItem = () => {
     try {
       const unitResponse = await getUnit(organisationId, unitId);
       // Currently, UnitDetail == UnitGetResponse so this works fine for now
-      dispatchOrganisationUnit({ type: 'setUnit', payload: unitResponse });
+      dispatchOrganisationUnit({ type: "setUnit", payload: unitResponse });
     } catch (error) {
       // For now only log the error, don't display anything to the user
       console.error(error);
@@ -59,7 +59,7 @@ export const CreateUnitListItem = () => {
         data: { name },
       });
 
-      enqueueSnackbar('Unit created');
+      enqueueSnackbar("Unit created");
 
       queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id));
       queryClient.invalidateQueries(getGetUnitsQueryKey());
@@ -81,17 +81,17 @@ export const CreateUnitListItem = () => {
 
       <Formik
         validateOnMount
-        initialValues={{ name: '' }}
+        initialValues={{ name: "" }}
         validationSchema={yup.object().shape({
           name: yup
             .string()
-            .required('A unit name is required')
+            .required("A unit name is required")
             .test(
-              'does-not-exist-already',
-              'The name is already used for a unit',
+              "does-not-exist-already",
+              "The name is already used for a unit",
               (name) => name !== undefined && !units?.map((unit) => unit.name).includes(name),
             )
-            .min(2, 'The name is too short'),
+            .min(2, "The name is too short"),
         })}
         onSubmit={async ({ name }, { setSubmitting, resetForm }) => {
           try {
@@ -107,7 +107,7 @@ export const CreateUnitListItem = () => {
       >
         {({ submitForm, isSubmitting, isValid }) => (
           <ModalWrapper
-            DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+            DialogProps={{ maxWidth: "sm", fullWidth: true }}
             id="create-unit"
             open={open}
             submitDisabled={isSubmitting || !isValid}

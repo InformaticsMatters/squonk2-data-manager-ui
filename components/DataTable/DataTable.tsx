@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import { useMemo } from 'react';
+import type { ReactNode } from "react";
+import { useMemo } from "react";
 import type {
   Cell,
   CellProps,
@@ -10,19 +10,19 @@ import type {
   TableCellProps,
   TableProps,
   TableRowProps,
-} from 'react-table';
-import { useExpanded, useGlobalFilter, useRowSelect, useSortBy, useTable } from 'react-table';
+} from "react-table";
+import { useExpanded, useGlobalFilter, useRowSelect, useSortBy, useTable } from "react-table";
 
-import type { Interpolation } from '@emotion/react';
-import { ExpandLess } from '@mui/icons-material';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import type { Interpolation } from "@emotion/react";
+import { ExpandLess } from "@mui/icons-material";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import type {
   TableCellProps as MuiCellProps,
   TableProps as MuiTableProps,
   TableRowProps as MuiRowProps,
   Theme,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Alert,
   Box,
@@ -37,10 +37,10 @@ import {
   TableSortLabel,
   TextField,
   Toolbar,
-} from '@mui/material';
+} from "@mui/material";
 
-import { CenterLoader } from '../CenterLoader';
-import { IndeterminateCheckbox } from './IndeterminateCheckbox';
+import { CenterLoader } from "../CenterLoader";
+import { IndeterminateCheckbox } from "./IndeterminateCheckbox";
 
 type Selection<Data> = Record<IdType<Data>, boolean>;
 type CustomProps<Props> = Partial<Props & { css?: Interpolation<Theme> }>;
@@ -191,7 +191,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
       initialSelection &&
         hooks.visibleColumns.push((columns) => [
           {
-            id: 'selection',
+            id: "selection",
             defaultCanSort: false,
             Header: ({ getToggleAllRowsSelectedProps, rows }) => {
               const { onChange, ...props } = getToggleAllRowsSelectedProps();
@@ -223,7 +223,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
       subRowsEnabled &&
         hooks.visibleColumns.unshift((columns) => [
           {
-            id: 'expander',
+            id: "expander",
             defaultCanSort: false,
             Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }) => (
               <Box {...getToggleAllRowsExpandedProps()} display="flex">
@@ -245,11 +245,11 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
   const tableContents = (
     <>
       {(ToolbarChild || enableSearch) && (
-        <Toolbar sx={{ pt: 2, alignItems: 'flex-start', gap: (theme) => theme.spacing(1) }}>
+        <Toolbar sx={{ pt: 2, alignItems: "flex-start", gap: (theme) => theme.spacing(1) }}>
           {ToolbarChild}
           {enableSearch && (
             <TextField
-              inputProps={{ 'aria-label': 'search' }}
+              inputProps={{ "aria-label": "search" }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -258,8 +258,8 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                 ),
               }}
               placeholder={`${preGlobalFilteredRows.length} records...`}
-              sx={{ ml: 'auto' }}
-              value={globalFilter || ''}
+              sx={{ ml: "auto" }}
+              value={globalFilter || ""}
               onChange={(e) => {
                 setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
               }}
@@ -281,12 +281,12 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                     : column.getHeaderProps(column.getSortByToggleProps()))}
                 >
                   <Box display="flex">
-                    {column.render('Header')}
+                    {column.render("Header")}
                     {column.canSort ? (
                       <TableSortLabel
                         active={column.isSorted}
                         // react-table has a unsorted state which is not treated here
-                        direction={column.isSortedDesc ? 'desc' : 'asc'}
+                        direction={column.isSortedDesc ? "desc" : "asc"}
                       />
                     ) : null}
                   </Box>
@@ -300,7 +300,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
             prepareRow(row);
 
             const rowProps =
-              typeof customRowProps === 'function' ? customRowProps(row) : customRowProps;
+              typeof customRowProps === "function" ? customRowProps(row) : customRowProps;
 
             return (
               // eslint-disable-next-line react/jsx-key
@@ -316,7 +316,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                           : undefined,
                       }}
                     >
-                      {cell.render('Cell')}
+                      {cell.render("Cell")}
                     </TableCell>
                   );
                 })}

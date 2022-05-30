@@ -1,20 +1,20 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import type { DatasetVersionSummary, DmError } from '@squonk/data-manager-client';
-import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
-import { useAddMetadata } from '@squonk/data-manager-client/metadata';
+import type { DatasetVersionSummary, DmError } from "@squonk/data-manager-client";
+import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
+import { useAddMetadata } from "@squonk/data-manager-client/metadata";
 
-import { Typography } from '@mui/material';
+import { Typography } from "@mui/material";
 
-import { useEnqueueError } from '../../hooks/useEnqueueStackError';
-import type { TableDataset } from '../DatasetsTable';
-import { LabelChip } from './LabelChip';
+import { useEnqueueError } from "../../hooks/useEnqueueStackError";
+import type { TableDataset } from "../DatasetsTable";
+import { LabelChip } from "./LabelChip";
 
 export interface LabelsProps {
   /**
    * ID of the dataset
    */
-  datasetId: TableDataset['dataset_id'];
+  datasetId: TableDataset["dataset_id"];
   /**
    * version of the dataset
    */
@@ -54,7 +54,7 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
                 datasetId,
                 data: {
                   labels: JSON.stringify([
-                    { label, value, type: 'LabelAnnotation', active: false },
+                    { label, value, type: "LabelAnnotation", active: false },
                   ]),
                 },
               });

@@ -1,15 +1,15 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import type { DmError, InstanceSummary } from '@squonk/data-manager-client';
+import type { DmError, InstanceSummary } from "@squonk/data-manager-client";
 import {
   getGetInstancesQueryKey,
   useTerminateInstance,
-} from '@squonk/data-manager-client/instance';
+} from "@squonk/data-manager-client/instance";
 
-import { Button } from '@mui/material';
+import { Button } from "@mui/material";
 
-import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
-import { WarningDeleteButton } from '../../WarningDeleteButton';
+import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
+import { WarningDeleteButton } from "../../WarningDeleteButton";
 
 export interface TerminateInstanceProps {
   /**
@@ -41,7 +41,7 @@ export const TerminateInstance = ({ instance, onTermination }: TerminateInstance
             getGetInstancesQueryKey({ project_id: instance.project_id }),
           );
 
-          enqueueSnackbar('Instance has been terminated', { variant: 'success' });
+          enqueueSnackbar("Instance has been terminated", { variant: "success" });
         } catch (error) {
           enqueueError(error);
         }
@@ -53,7 +53,7 @@ export const TerminateInstance = ({ instance, onTermination }: TerminateInstance
         <Button onClick={openModal}>
           {/* Instances in an end state are deleted but others are still running so are terminated.
           It's all the same to the API though. */}
-          {['Completed', 'Failed'].includes(instance.phase) ? 'Delete' : 'Terminate'}
+          {["Completed", "Failed"].includes(instance.phase) ? "Delete" : "Terminate"}
         </Button>
       )}
     </WarningDeleteButton>

@@ -2,20 +2,20 @@
 // Function used as value for dynamic routes
 
 export const APP_ROUTES = {
-  home: `/`,
-  datasets: `/datasets`,
+  home: "/",
+  datasets: "/datasets",
   project: {
-    '.': `/project`,
-    file: `/project/file`,
+    ".": "/project",
+    file: "/project/file",
   },
-  executions: `/executions`,
+  executions: "/executions",
   results: {
-    '.': `/results`,
+    ".": "/results",
     task: (taskId: string) => `/results/task/${taskId}`,
     instance: (instanceId: string) => `/results/instance/${instanceId}`,
   },
   dataset: {
-    '.': `/dataset`,
+    ".": "/dataset",
     version: (datasetId: string, datasetVersion: number) =>
       `/dataset/${datasetId}/${datasetVersion}`,
   },

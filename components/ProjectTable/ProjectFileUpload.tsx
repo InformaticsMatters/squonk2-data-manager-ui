@@ -1,23 +1,23 @@
-import type { ReactNode } from 'react';
-import { useCallback } from 'react';
-import type { DropzoneState, FileRejection } from 'react-dropzone';
-import { useDropzone } from 'react-dropzone';
-import { useQueryClient } from 'react-query';
+import type { ReactNode } from "react";
+import { useCallback } from "react";
+import type { DropzoneState, FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
+import { useQueryClient } from "react-query";
 
-import { getGetFilesQueryKey } from '@squonk/data-manager-client/file';
-import { useAddFileToProject } from '@squonk/data-manager-client/project';
+import { getGetFilesQueryKey } from "@squonk/data-manager-client/file";
+import { useAddFileToProject } from "@squonk/data-manager-client/project";
 
-import { Box } from '@mui/material';
-import { useSnackbar } from 'notistack';
+import { Box } from "@mui/material";
+import { useSnackbar } from "notistack";
 
-import { useCurrentProjectId } from '../../hooks/projectHooks';
-import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
-import { useFileExtensions } from '../../hooks/useFileExtensions';
-import { getErrorMessage } from '../../utils/orvalError';
-import { FileHoverCover } from './FileHoverCover';
+import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
+import { useFileExtensions } from "../../hooks/useFileExtensions";
+import { getErrorMessage } from "../../utils/orvalError";
+import { FileHoverCover } from "./FileHoverCover";
 
 export interface ProjectFileUploadProps {
-  children: (open: DropzoneState['open']) => ReactNode;
+  children: (open: DropzoneState["open"]) => ReactNode;
 }
 
 export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
@@ -27,7 +27,7 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const breadcrumbs = useProjectBreadcrumbs();
-  const path = '/' + breadcrumbs.join('/');
+  const path = "/" + breadcrumbs.join("/");
 
   const { mutateAsync: uploadProjectFile } = useAddFileToProject();
 
@@ -42,11 +42,11 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
             projectId,
             data: { as_filename: file.name, file, path },
           });
-          enqueueSnackbar(`${file.name} was uploaded`, { variant: 'success' });
+          enqueueSnackbar(`${file.name} was uploaded`, { variant: "success" });
           queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
         } catch (err) {
           const error = getErrorMessage(err);
-          enqueueSnackbar(`The upload of ${file.name} failed: ${error}`, { variant: 'error' });
+          enqueueSnackbar(`The upload of ${file.name} failed: ${error}`, { variant: "error" });
         }
         closeSnackbar(key);
       }
@@ -63,7 +63,7 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
 
       // Display rejected files and notistack errors
       for (const rejection of rejections) {
-        enqueueSnackbar(`${rejection.file.name} was rejected`, { variant: 'error' });
+        enqueueSnackbar(`${rejection.file.name} was rejected`, { variant: "error" });
       }
     },
     [enqueueSnackbar, uploadFile],
@@ -75,7 +75,7 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
   });
 
   return (
-    <Box sx={{ position: 'relative' }} {...getRootProps()}>
+    <Box sx={{ position: "relative" }} {...getRootProps()}>
       <FileHoverCover active={isDragActive} />
       <input {...getInputProps()} />
       {children(open)}

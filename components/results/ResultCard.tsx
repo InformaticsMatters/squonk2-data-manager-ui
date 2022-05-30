@@ -1,23 +1,23 @@
-import type { Dispatch, FC, ReactNode, SetStateAction } from 'react';
-import { useState } from 'react';
+import type { Dispatch, FC, ReactNode, SetStateAction } from "react";
+import { useState } from "react";
 
-import { CardContent, Link, ListItem, ListItemIcon, ListItemText, Slide } from '@mui/material';
-import type { LinkProps } from 'next/link';
-import NextLink from 'next/link';
+import { CardContent, Link, ListItem, ListItemIcon, ListItemText, Slide } from "@mui/material";
+import type { LinkProps } from "next/link";
+import NextLink from "next/link";
 
-import type { ActionsParams, BaseCardProps } from '../BaseCard';
-import { BaseCard } from '../BaseCard';
-import type { DateTimeListItemProps } from './common/DateTimeListItem';
-import { DateTimeListItem } from './common/DateTimeListItem';
-import { HorizontalList } from './common/HorizontalList';
-import type { StatusIconProps } from './common/StatusIcon';
-import { StatusIcon } from './common/StatusIcon';
+import type { ActionsParams, BaseCardProps } from "../BaseCard";
+import { BaseCard } from "../BaseCard";
+import type { DateTimeListItemProps } from "./common/DateTimeListItem";
+import { DateTimeListItem } from "./common/DateTimeListItem";
+import { HorizontalList } from "./common/HorizontalList";
+import type { StatusIconProps } from "./common/StatusIcon";
+import { StatusIcon } from "./common/StatusIcon";
 
 export interface ResultCardProps extends BaseCardProps {
-  state?: StatusIconProps['state'];
-  href: LinkProps['href'];
+  state?: StatusIconProps["state"];
+  href: LinkProps["href"];
   linkTitle: string;
-  createdDateTime: DateTimeListItemProps['datetimeString'];
+  createdDateTime: DateTimeListItemProps["datetimeString"];
   collapsedByDefault: boolean;
   actions: (
     params: ActionsParams & { setSlideIn: Dispatch<SetStateAction<boolean>>; slideIn: boolean },

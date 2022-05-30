@@ -1,25 +1,25 @@
-import { useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useState } from "react";
+import { useQueryClient } from "react-query";
 
-import type { DatasetSummary } from '@squonk/data-manager-client';
-import { getGetDatasetsQueryKey, uploadDataset } from '@squonk/data-manager-client/dataset';
+import type { DatasetSummary } from "@squonk/data-manager-client";
+import { getGetDatasetsQueryKey, uploadDataset } from "@squonk/data-manager-client/dataset";
 
-import BackupRoundedIcon from '@mui/icons-material/BackupRounded';
-import type { IconButtonProps } from '@mui/material';
+import BackupRoundedIcon from "@mui/icons-material/BackupRounded";
+import type { IconButtonProps } from "@mui/material";
 import {
   IconButton,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
   Typography,
-} from '@mui/material';
+} from "@mui/material";
 
-import { useCurrentOrg, useCurrentUnit } from '../../../context/organisationUnitContext';
-import { ModalWrapper } from '../../modals/ModalWrapper';
-import { Dropzone } from '../../uploads/Dropzone';
-import { FileTypeOptions } from '../../uploads/FileTypeOptions';
-import { ProgressBar } from '../../uploads/ProgressBar';
-import type { FileTypeOptionsState, UploadableFile } from '../../uploads/types';
+import { useCurrentOrg, useCurrentUnit } from "../../../context/organisationUnitContext";
+import { ModalWrapper } from "../../modals/ModalWrapper";
+import { Dropzone } from "../../uploads/Dropzone";
+import { FileTypeOptions } from "../../uploads/FileTypeOptions";
+import { ProgressBar } from "../../uploads/ProgressBar";
+import type { FileTypeOptionsState, UploadableFile } from "../../uploads/types";
 
 export interface NewVersionListItemProps extends IconButtonProps {
   /**
@@ -59,7 +59,7 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
       </ListItem>
 
       <ModalWrapper
-        DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+        DialogProps={{ maxWidth: "sm", fullWidth: true }}
         id={`version-upload-${dataset.dataset_id}`}
         open={open}
         submitDisabled={!file || !!file.taskId}

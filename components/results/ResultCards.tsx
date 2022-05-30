@@ -1,26 +1,26 @@
-import type { InstanceSummary, TaskSummary } from '@squonk/data-manager-client';
+import type { InstanceSummary, TaskSummary } from "@squonk/data-manager-client";
 
-import { CircularProgress, Grid, Typography } from '@mui/material';
-import dayjs from 'dayjs';
-import dynamic from 'next/dynamic';
+import { CircularProgress, Grid, Typography } from "@mui/material";
+import dayjs from "dayjs";
+import dynamic from "next/dynamic";
 
-import { search } from '../../utils/search';
-import type { ResultApplicationCardProps } from './ResultApplicationCard';
-import type { ResultJobCardProps } from './ResultJobCard';
-import type { ResultTaskCardProps } from './ResultTaskCard';
+import { search } from "../../utils/search";
+import type { ResultApplicationCardProps } from "./ResultApplicationCard";
+import type { ResultJobCardProps } from "./ResultJobCard";
+import type { ResultTaskCardProps } from "./ResultTaskCard";
 
 const ResultTaskCard = dynamic<ResultTaskCardProps>(
-  () => import('./ResultTaskCard').then((mod) => mod.ResultTaskCard),
+  () => import("./ResultTaskCard").then((mod) => mod.ResultTaskCard),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 
 const ResultJobCard = dynamic<ResultJobCardProps>(
-  () => import('./ResultJobCard').then((mod) => mod.ResultJobCard),
+  () => import("./ResultJobCard").then((mod) => mod.ResultJobCard),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 
 const ResultApplicationCard = dynamic<ResultApplicationCardProps>(
-  () => import('./ResultApplicationCard').then((mod) => mod.ResultApplicationCard),
+  () => import("./ResultApplicationCard").then((mod) => mod.ResultApplicationCard),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 
@@ -69,11 +69,11 @@ const getTimeStamp = (taskOrInstance: TaskSummary | InstanceSummary) => {
 export const ResultCards = ({ resultTypes, searchValue, instances, tasks }: ResultCardsProps) => {
   // Tasks and instances are filtered first by search value
   const cards = [
-    ...(resultTypes.includes('instance') ? instances : []).filter(({ job_name, name, phase }) =>
+    ...(resultTypes.includes("instance") ? instances : []).filter(({ job_name, name, phase }) =>
       search([job_name, name, phase], searchValue),
     ),
-    ...(resultTypes.includes('task') ? tasks : [])
-      .filter((task) => task.purpose === 'DATASET' || task.purpose === 'FILE')
+    ...(resultTypes.includes("task") ? tasks : [])
+      .filter((task) => task.purpose === "DATASET" || task.purpose === "FILE")
       .filter(({ processing_stage, purpose }) => search([processing_stage, purpose], searchValue)),
   ]
     // Then they are sorted
@@ -93,7 +93,7 @@ export const ResultCards = ({ resultTypes, searchValue, instances, tasks }: Resu
         );
       }
       const instance = instanceOrTask;
-      return instance.application_type === 'JOB' ? (
+      return instance.application_type === "JOB" ? (
         <Grid item key={instance.id} xs={12}>
           <ResultJobCard instance={instance} />
         </Grid>

@@ -54,10 +54,10 @@ import type {
   UseSortByInstanceProps,
   UseSortByOptions,
   UseSortByState,
-} from 'react-table';
+} from "react-table";
 
 // Types are confusing: https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-table
-declare module 'react-table' {
+declare module "react-table" {
   // take this file as-is, or comment out the sections that don't apply to your plugin configuration
 
   export interface TableOptions<D extends Record<string, unknown>>

@@ -1,30 +1,30 @@
-import { useEffect, useState } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Hydrate } from 'react-query/hydration';
+import { useEffect, useState } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Hydrate } from "react-query/hydration";
 
-import { setBaseUrl as setASBaseUrl } from '@squonk/account-server-client';
-import { setBaseUrl as setDMBaseUrl } from '@squonk/data-manager-client';
+import { setBaseUrl as setASBaseUrl } from "@squonk/account-server-client";
+import { setBaseUrl as setDMBaseUrl } from "@squonk/data-manager-client";
 
-import { UserProvider } from '@auth0/nextjs-auth0';
-import type { EmotionCache } from '@emotion/cache';
-import { CacheProvider } from '@emotion/react';
-import { enableMapSet } from 'immer';
-import type { AppProps } from 'next/app';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { SnackbarProvider } from 'notistack';
+import { UserProvider } from "@auth0/nextjs-auth0";
+import type { EmotionCache } from "@emotion/cache";
+import { CacheProvider } from "@emotion/react";
+import { enableMapSet } from "immer";
+import type { AppProps } from "next/app";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { SnackbarProvider } from "notistack";
 
-import { ThemeProviders } from '../components/ThemeProviders';
-import { AS_API_URL, DM_API_URL, PROJECT_LOCAL_STORAGE_KEY } from '../constants';
-import { ColorSchemeProvider } from '../context/colorSchemeContext';
-import { SelectedFilesProvider } from '../context/fileSelectionContext';
-import { MDXComponentProvider } from '../context/MDXComponentProvider';
-import { OrganisationUnitProvider } from '../context/organisationUnitContext';
-import type { ProjectLocalStoragePayload } from '../hooks/projectHooks';
-import createEmotionCache from '../utils/createEmotionCache';
-import { getFromLocalStorage } from '../utils/localStorage';
+import { ThemeProviders } from "../components/ThemeProviders";
+import { AS_API_URL, DM_API_URL, PROJECT_LOCAL_STORAGE_KEY } from "../constants";
+import { ColorSchemeProvider } from "../context/colorSchemeContext";
+import { SelectedFilesProvider } from "../context/fileSelectionContext";
+import { MDXComponentProvider } from "../context/MDXComponentProvider";
+import { OrganisationUnitProvider } from "../context/organisationUnitContext";
+import type { ProjectLocalStoragePayload } from "../hooks/projectHooks";
+import createEmotionCache from "../utils/createEmotionCache";
+import { getFromLocalStorage } from "../utils/localStorage";
 
-import '../styles/globalStyles.scss';
+import "../styles/globalStyles.scss";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -49,7 +49,7 @@ export default function App({
   // Material UI for SSR
   useEffect(() => {
     // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side');
+    const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
       jssStyles.parentElement?.removeChild(jssStyles);
     }
@@ -73,7 +73,7 @@ export default function App({
 
   // Vercel specific code is only imported if needed
   if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-    import('../utils/vercelRedirect').then(({ vercelRedirect }) => vercelRedirect());
+    import("../utils/vercelRedirect").then(({ vercelRedirect }) => vercelRedirect());
   }
 
   return (

@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Link } from '@mui/material';
-import dynamic from 'next/dynamic';
+import { Link } from "@mui/material";
+import dynamic from "next/dynamic";
 
-import { CenterLoader } from '../CenterLoader';
-import { ModalWrapper } from '../modals/ModalWrapper';
+import { CenterLoader } from "../CenterLoader";
+import { ModalWrapper } from "../modals/ModalWrapper";
 
 const UserSettingsContent = dynamic<any>(
-  () => import('./UserSettingsContent').then((mod) => mod.UserSettingsContent),
+  () => import("./UserSettingsContent").then((mod) => mod.UserSettingsContent),
   {
     loading: () => <CenterLoader />,
   },

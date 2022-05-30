@@ -1,28 +1,28 @@
-import type { ApplicationSummary } from '@squonk/data-manager-client';
+import type { ApplicationSummary } from "@squonk/data-manager-client";
 
-import { CircularProgress, useTheme } from '@mui/material';
-import dynamic from 'next/dynamic';
+import { CircularProgress, useTheme } from "@mui/material";
+import dynamic from "next/dynamic";
 
-import type { BaseCardProps } from '../../BaseCard';
-import type { InstancesListProps } from '../InstancesList';
-import type { ApplicationModalButtonProps } from './ApplicationModalButton';
+import type { BaseCardProps } from "../../BaseCard";
+import type { InstancesListProps } from "../InstancesList";
+import type { ApplicationModalButtonProps } from "./ApplicationModalButton";
 
 const ApplicationModalButton = dynamic<ApplicationModalButtonProps>(
-  () => import('./ApplicationModalButton').then((mod) => mod.ApplicationModalButton),
+  () => import("./ApplicationModalButton").then((mod) => mod.ApplicationModalButton),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 
 const InstancesList = dynamic<InstancesListProps>(
-  () => import('../InstancesList').then((mod) => mod.InstancesList),
+  () => import("../InstancesList").then((mod) => mod.InstancesList),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 
 const BaseCard = dynamic<BaseCardProps>(
-  () => import('../../BaseCard').then((mod) => mod.BaseCard),
+  () => import("../../BaseCard").then((mod) => mod.BaseCard),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 
-export interface ApplicationCardProps extends Pick<ApplicationModalButtonProps, 'projectId'> {
+export interface ApplicationCardProps extends Pick<ApplicationModalButtonProps, "projectId"> {
   /**
    * The application object to display
    */

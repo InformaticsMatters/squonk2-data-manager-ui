@@ -1,29 +1,29 @@
-import type { JobSummary } from '@squonk/data-manager-client';
+import type { JobSummary } from "@squonk/data-manager-client";
 
-import { Chip, CircularProgress, Link, Typography, useTheme } from '@mui/material';
-import dynamic from 'next/dynamic';
+import { Chip, CircularProgress, Link, Typography, useTheme } from "@mui/material";
+import dynamic from "next/dynamic";
 
-import type { BaseCardProps } from '../../BaseCard';
-import { Chips } from '../../Chips';
-import type { InstancesListProps } from '../InstancesList';
-import type { RunJobButtonProps } from './RunJobButton';
+import type { BaseCardProps } from "../../BaseCard";
+import { Chips } from "../../Chips";
+import type { InstancesListProps } from "../InstancesList";
+import type { RunJobButtonProps } from "./RunJobButton";
 
 const RunJobButton = dynamic<RunJobButtonProps>(
-  () => import('./RunJobButton').then((mod) => mod.RunJobButton),
+  () => import("./RunJobButton").then((mod) => mod.RunJobButton),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 
 const InstancesList = dynamic<InstancesListProps>(
-  () => import('../InstancesList').then((mod) => mod.InstancesList),
+  () => import("../InstancesList").then((mod) => mod.InstancesList),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 
 const BaseCard = dynamic<BaseCardProps>(
-  () => import('../../BaseCard').then((mod) => mod.BaseCard),
+  () => import("../../BaseCard").then((mod) => mod.BaseCard),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 
-export interface ApplicationCardProps extends Pick<RunJobButtonProps, 'projectId'> {
+export interface ApplicationCardProps extends Pick<RunJobButtonProps, "projectId"> {
   /**
    * the job to be instantiated
    */
@@ -58,13 +58,13 @@ export const JobCard = ({ projectId, job }: ApplicationCardProps) => {
     >
       <Typography gutterBottom>{job.description}</Typography>
       <Typography variant="body2">
-        {job.version} –{' '}
+        {job.version} –{" "}
         <Link href={job.doc_url} rel="noopener noreferrer" target="_blank">
           docs
         </Link>
       </Typography>
       <Typography gutterBottom>
-        <em>{job.category || '<none>'}</em> : {job.collection}
+        <em>{job.category || "<none>"}</em> : {job.collection}
       </Typography>
       <Chips>
         {job.keywords?.map((word) => (

@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
-import { useState } from 'react';
+import type { ReactNode } from "react";
+import { useState } from "react";
 
-import { Tooltip, Typography } from '@mui/material';
+import { Tooltip, Typography } from "@mui/material";
 
-import { useMountedState } from '../hooks/useMountedState';
-import { ModalWrapper } from './modals/ModalWrapper';
+import { useMountedState } from "../hooks/useMountedState";
+import { ModalWrapper } from "./modals/ModalWrapper";
 
 export interface DeleteButtonProps {
   isDeleting: boolean;
@@ -54,7 +54,7 @@ const defaultChild = (
 export const WarningDeleteButton = ({
   title,
   modalId,
-  submitText = 'Delete',
+  submitText = "Delete",
   tooltipText,
   modalChildren = defaultChild,
   children,

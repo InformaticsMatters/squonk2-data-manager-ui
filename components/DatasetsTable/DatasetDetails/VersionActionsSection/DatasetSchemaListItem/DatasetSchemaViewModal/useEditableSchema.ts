@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from "react";
 
-import { useImmerReducer } from 'use-immer';
+import { useImmerReducer } from "use-immer";
 
-import type { Field, FieldKey, Fields, FieldValue, TypedSchema } from './types';
+import type { Field, FieldKey, Fields, FieldValue, TypedSchema } from "./types";
 
 type EditableSchemaStateAction<K extends FieldKey, V extends FieldValue<K>> =
-  | { type: 'clear' }
-  | { type: 'init'; originalSchema: TypedSchema }
-  | { type: 'changeField'; fieldName: string; fieldKey: K; fieldValue: V }
-  | { type: 'changeDescription'; description: string };
+  | { type: "clear" }
+  | { type: "init"; originalSchema: TypedSchema }
+  | { type: "changeField"; fieldName: string; fieldKey: K; fieldValue: V }
+  | { type: "changeDescription"; description: string };
 
 type EditedSchemaProps = {
   description?: string;
@@ -25,10 +25,10 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
   action: EditableSchemaStateAction<K, V>,
 ): EditableSchemaState | void => {
   switch (action.type) {
-    case 'clear': {
+    case "clear": {
       return null;
     }
-    case 'init': {
+    case "init": {
       return {
         originalSchema: action.originalSchema,
         editedSchemaProps: {
@@ -36,7 +36,7 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
         },
       };
     }
-    case 'changeField': {
+    case "changeField": {
       if (draft) {
         const { fieldName, fieldKey, fieldValue } = action;
 
@@ -63,7 +63,7 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
       }
       break;
     }
-    case 'changeDescription': {
+    case "changeDescription": {
       if (draft) {
         // Same explanation like the case above.
         if (draft.originalSchema.description === action.description) {
@@ -93,9 +93,9 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
   useEffect(() => {
     // If no original schema has been provided, return undefined state.
     if (originalSchema) {
-      dispatch({ type: 'init', originalSchema });
+      dispatch({ type: "init", originalSchema });
     } else {
-      dispatch({ type: 'clear' });
+      dispatch({ type: "clear" });
     }
   }, [originalSchema, dispatch]);
 
@@ -133,14 +133,14 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
       fieldKey: K,
       fieldValue: V,
     ) => {
-      dispatch({ type: 'changeField', fieldName, fieldKey, fieldValue });
+      dispatch({ type: "changeField", fieldName, fieldKey, fieldValue });
     },
     [dispatch],
   );
 
   const setSchemaDescription = useCallback(
     (description: string) => {
-      dispatch({ type: 'changeDescription', description });
+      dispatch({ type: "changeDescription", description });
     },
     [dispatch],
   );

@@ -1,8 +1,8 @@
-import type { TypeSummary } from '@squonk/data-manager-client';
-import { useGetFileTypes } from '@squonk/data-manager-client/type';
+import type { TypeSummary } from "@squonk/data-manager-client";
+import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
-import { getErrorMessage } from '../../../utils/orvalError';
-import { AutocompleteFilter } from './AutocompleteFilter';
+import { getErrorMessage } from "../../../utils/orvalError";
+import { AutocompleteFilter } from "./AutocompleteFilter";
 
 export interface FileTypeFilterProps {
   /**

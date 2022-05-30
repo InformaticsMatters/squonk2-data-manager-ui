@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { AddCircle } from '@mui/icons-material';
-import { Chip, IconButton, styled, TextField, useTheme } from '@mui/material';
+import { AddCircle } from "@mui/icons-material";
+import { Chip, IconButton, styled, TextField, useTheme } from "@mui/material";
 
 export interface LabelsFilterProps {
   /**
@@ -21,7 +21,7 @@ export interface LabelsFilterProps {
 export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
   const theme = useTheme();
 
-  const [currentLabel, setCurrentLabel] = useState('');
+  const [currentLabel, setCurrentLabel] = useState("");
 
   // Used to tidy up the code in the `addLabel` and `removeLabel` methods
   const labelsArray = labels || [];
@@ -31,7 +31,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
       const newLabels = [...labelsArray];
       newLabels.push(currentLabel);
       setLabels(newLabels);
-      setCurrentLabel('');
+      setCurrentLabel("");
     }
   };
 
@@ -42,7 +42,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
   };
 
   const addLabelWithKeyboard = (key: string) => {
-    if (key === 'Enter') {
+    if (key === "Enter") {
       addLabel();
     }
   };
@@ -51,13 +51,13 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
     <TextField
       id="datasets-labels-filter"
       inputProps={{
-        autoComplete: 'off', // Disable autocomplete and autofill
+        autoComplete: "off", // Disable autocomplete and autofill
         style: {
-          flexBasis: 'calc(100% - 30px)',
+          flexBasis: "calc(100% - 30px)",
         },
       }}
       InputProps={{
-        style: { flexWrap: 'wrap', gap: `0 ${theme.spacing(1 / 2)}` },
+        style: { flexWrap: "wrap", gap: `0 ${theme.spacing(1 / 2)}` },
         startAdornment:
           labels &&
           labels.map((label, index) => (
@@ -65,7 +65,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
               key={index}
               label={label}
               size="small"
-              sx={{ mt: '6px' }}
+              sx={{ mt: "6px" }}
               variant="outlined"
               onDelete={() => removeLabel(index)}
             />
@@ -76,7 +76,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
               aria-label="Add label"
               // MUI Autocomplete uses 4px padding for the buttons, keep it consistent
               size="small"
-              sx={{ p: '4px' }}
+              sx={{ p: "4px" }}
               title="Add label"
               onClick={() => addLabel()}
             >
@@ -87,7 +87,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
       }}
       label="Filter by label"
       // the input field move with the labels in Chip component
-      sx={{ width: '100%', flexBasis: '100%' }}
+      sx={{ width: "100%", flexBasis: "100%" }}
       value={currentLabel}
       variant="outlined"
       onChange={(event) => setCurrentLabel(event.target.value)}
@@ -98,11 +98,11 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
 
 // MUI Autocomplete implements the end adornment similarly using position: absolute.
 // This way, the Add button is always on the same bottom line as the input text
-const EndAdornmentWrapper = styled('div', { shouldForwardProp: (prop) => prop !== 'visibility' })<{
+const EndAdornmentWrapper = styled("div", { shouldForwardProp: (prop) => prop !== "visibility" })<{
   visibility: boolean;
 }>(({ visibility }) => ({
-  visibility: !visibility ? 'hidden' : undefined,
-  position: 'absolute',
-  right: '9px',
-  bottom: '7px',
+  visibility: !visibility ? "hidden" : undefined,
+  position: "absolute",
+  right: "9px",
+  bottom: "7px",
 }));

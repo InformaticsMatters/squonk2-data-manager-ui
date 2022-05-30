@@ -1,7 +1,7 @@
-import { test } from '@playwright/test';
+import { test } from "@playwright/test";
 
-test.describe('results page', () => {
-  test('loads', async ({ baseURL, page }) => {
-    await page.goto(baseURL + '/results');
+test.describe("results page", () => {
+  test("loads", async ({ baseURL, page }) => {
+    await page.goto(baseURL + "/results");
   });
 });

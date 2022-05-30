@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
-import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
+import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
 import {
   Checkbox,
   ListItem,
@@ -8,12 +8,12 @@ import {
   ListItemSecondaryAction,
   ListItemText,
   Tooltip,
-} from '@mui/material';
+} from "@mui/material";
 
-import { FavouriteButton } from '../ProjectTable/buttons/FavouriteButton';
-import type { SharedProps } from './types';
+import { FavouriteButton } from "../ProjectTable/buttons/FavouriteButton";
+import type { SharedProps } from "./types";
 
-export interface FileListItemProps extends Pick<SharedProps, 'projectId'> {
+export interface FileListItemProps extends Pick<SharedProps, "projectId"> {
   /**
    * Mime type of the file. Used to track mime-type in favourite files.
    * Undefined if directories are being selected.
@@ -22,7 +22,7 @@ export interface FileListItemProps extends Pick<SharedProps, 'projectId'> {
   /**
    * Whether the item is a file or directory
    */
-  type: SharedProps['targetType'];
+  type: SharedProps["targetType"];
   /**
    * Path to teh file or directory.
    */
@@ -72,7 +72,7 @@ export const FileListItem = ({
           <Checkbox
             checked={checked}
             edge="start"
-            inputProps={{ 'aria-labelledby': labelId }}
+            inputProps={{ "aria-labelledby": labelId }}
             size="small"
             sx={{ pt: 0, pb: 0 }}
             onChange={(_event, checked) => onSelect(checked)}
@@ -80,7 +80,7 @@ export const FileListItem = ({
           />
         </ListItemIcon>
       )}
-      {type.startsWith('dir') && <ListItemIcon>{folderIcon ?? <FolderRoundedIcon />}</ListItemIcon>}
+      {type.startsWith("dir") && <ListItemIcon>{folderIcon ?? <FolderRoundedIcon />}</ListItemIcon>}
       <Tooltip title={title}>
         <ListItemText id={labelId} primary={title} primaryTypographyProps={{ noWrap: true }} />
       </Tooltip>

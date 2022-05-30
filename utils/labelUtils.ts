@@ -1,6 +1,6 @@
-import type { DatasetVersionSummary } from '@squonk/data-manager-client';
+import type { DatasetVersionSummary } from "@squonk/data-manager-client";
 
-import { mergeWith } from 'lodash-es';
+import { mergeWith } from "lodash-es";
 
 /**
  *  Formats `[key: string, value: string | string[]]` pairs into a label string
@@ -18,12 +18,12 @@ import { mergeWith } from 'lodash-es';
 export const labelFormatter = (label: string, value: string | string[]) => {
   const uniqueValues = Array.from(new Set(value));
 
-  if (value === '' || (uniqueValues.length === 1 && uniqueValues[0] === '')) {
+  if (value === "" || (uniqueValues.length === 1 && uniqueValues[0] === "")) {
     // case: EMPTY STRING
     return label;
-  } else if (typeof value === 'string' || uniqueValues.length === 1) {
+  } else if (typeof value === "string" || uniqueValues.length === 1) {
     // case: SINGLE VALUE
-    return `${label}=${typeof value === 'string' ? value : value[0]}`;
+    return `${label}=${typeof value === "string" ? value : value[0]}`;
   }
   // case: MULTI_VALUE
   return `${label}=≡`;

@@ -1,4 +1,4 @@
-import { useKeycloakIdToken } from './useKeycloakIdToken';
+import { useKeycloakIdToken } from "./useKeycloakIdToken";
 
 /**
  * React hook to access the currently authenticated user and return their user information

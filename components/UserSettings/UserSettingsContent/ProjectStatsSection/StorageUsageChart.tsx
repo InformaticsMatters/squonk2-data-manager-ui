@@ -1,6 +1,6 @@
-import type { ProductDmStorage } from '@squonk/account-server-client';
+import type { ProductDmStorage } from "@squonk/account-server-client";
 
-import { UsageChart } from './UsageChart';
+import { UsageChart } from "./UsageChart";
 
 export interface StorageUsageChartProps {
   /**
@@ -20,9 +20,9 @@ export const StorageUsageChart = ({ storageSubscription }: StorageUsageChartProp
   const available = Math.max(allowance - (storageUsed + storagePredicted), 0);
 
   const chartData = [
-    { type: 'Storage used', value: storageUsed, color: 'red' },
-    { type: 'Storage predicted', value: storagePredicted, color: 'orange' },
-    { type: 'Available', value: available, color: 'green' },
+    { type: "Storage used", value: storageUsed, color: "red" },
+    { type: "Storage predicted", value: storagePredicted, color: "orange" },
+    { type: "Available", value: available, color: "green" },
   ];
 
   return (

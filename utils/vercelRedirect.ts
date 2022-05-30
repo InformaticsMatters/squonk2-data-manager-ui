@@ -10,7 +10,7 @@ const VERCEL_URL = process.env.NEXT_PUBLIC_VERCEL_URL;
 export const vercelRedirect = () => {
   if (
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    typeof window !== 'undefined' &&
+    typeof window !== "undefined" &&
     VERCEL_URL &&
     !window.location.toString().includes(VERCEL_URL)
   ) {

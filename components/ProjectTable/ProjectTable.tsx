@@ -1,25 +1,25 @@
-import { useCallback, useMemo } from 'react';
-import type { DropzoneState } from 'react-dropzone';
-import type { Cell, CellProps, Column, PluginHook } from 'react-table';
+import { useCallback, useMemo } from "react";
+import type { DropzoneState } from "react-dropzone";
+import type { Cell, CellProps, Column, PluginHook } from "react-table";
 
-import type { ProjectDetail } from '@squonk/data-manager-client';
+import type { ProjectDetail } from "@squonk/data-manager-client";
 
-import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
-import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
-import { Breadcrumbs, Grid, IconButton, Link, Typography, useTheme } from '@mui/material';
-import fileSize from 'filesize';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
+import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
+import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
+import { Breadcrumbs, Grid, IconButton, Link, Typography, useTheme } from "@mui/material";
+import fileSize from "filesize";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 
-import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
-import { getErrorMessage } from '../../utils/orvalError';
-import { DataTable } from '../DataTable';
-import { toLocalTimeString } from '../LocalTime';
-import { FileActions } from './FileActions';
-import { ProjectFileDetails } from './ProjectFileDetails';
-import type { TableDir, TableFile } from './types';
-import { useProjectFileRows } from './useProjectFileRows';
-import { isTableDir } from './utils';
+import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
+import { getErrorMessage } from "../../utils/orvalError";
+import { DataTable } from "../DataTable";
+import { toLocalTimeString } from "../LocalTime";
+import { FileActions } from "./FileActions";
+import { ProjectFileDetails } from "./ProjectFileDetails";
+import type { TableDir, TableFile } from "./types";
+import { useProjectFileRows } from "./useProjectFileRows";
+import { isTableDir } from "./utils";
 
 export interface ProjectTableProps {
   /**
@@ -29,7 +29,7 @@ export interface ProjectTableProps {
   /**
    * Functions that returns props for an input element that opens the file selection UI
    */
-  openUploadDialog: DropzoneState['open'];
+  openUploadDialog: DropzoneState["open"];
 }
 
 /**
@@ -47,8 +47,8 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
   const columns: Column<TableFile | TableDir>[] = useMemo(
     () => [
       {
-        accessor: 'fileName',
-        Header: 'File Name',
+        accessor: "fileName",
+        Header: "File Name",
         Cell: ({ value, row: r }) => {
           // ? This seems to be a bug in the types?
           const row = r.original as unknown as TableFile | TableDir;
@@ -63,7 +63,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
               <Link
                 color="inherit"
                 component="button"
-                sx={{ display: 'flex', gap: theme.spacing(1) }}
+                sx={{ display: "flex", gap: theme.spacing(1) }}
                 variant="body1"
               >
                 <FolderRoundedIcon /> {value}
@@ -75,45 +75,45 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
         },
       },
       {
-        accessor: 'owner',
-        Header: 'Owner',
+        accessor: "owner",
+        Header: "Owner",
       },
       {
-        id: 'mode',
-        Header: 'Mode',
+        id: "mode",
+        Header: "Mode",
         accessor: (row) => {
           if (isTableDir(row)) {
-            return '-';
+            return "-";
           } else if (row.immutable) {
-            return 'immutable';
+            return "immutable";
           } else if (row.file_id) {
-            return 'editable';
+            return "editable";
           }
-          return 'unmanaged';
+          return "unmanaged";
         },
       },
       {
-        id: 'fileSize',
-        Header: 'File size',
+        id: "fileSize",
+        Header: "File size",
         accessor: (row) => {
           if (isTableDir(row)) {
-            return '-';
+            return "-";
           }
           return row.stat.size;
         },
         Cell: ({ value }: { value: string | number }) => {
-          if (typeof value === 'string') {
+          if (typeof value === "string") {
             return value;
           }
           return fileSize(value);
         },
       },
       {
-        id: 'lastUpdated',
-        Header: 'Last updated',
+        id: "lastUpdated",
+        Header: "Last updated",
         accessor: (row) => {
           if (isTableDir(row)) {
-            return '-';
+            return "-";
           }
           return row.stat.modified;
         },
@@ -136,9 +136,9 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
       return [
         ...columns,
         {
-          id: 'actions',
+          id: "actions",
           groupByBoundary: true, // Ensure normal columns can't be ordered before this
-          Header: 'Actions',
+          Header: "Actions",
           Cell: ({ row }: CellProps<TableFile | TableDir, any>) => (
             <FileActions file={row.original} />
           ),
@@ -157,9 +157,9 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
       isLoading={isLoading}
       ToolbarChild={
         <Grid container>
-          <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
+          <Grid item sx={{ display: "flex", alignItems: "center" }}>
             <Breadcrumbs>
-              {['root', ...breadcrumbs].map((path, pathIndex) =>
+              {["root", ...breadcrumbs].map((path, pathIndex) =>
                 pathIndex < breadcrumbs.length ? (
                   <NextLink
                     passHref
@@ -182,7 +182,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
               )}
             </Breadcrumbs>
           </Grid>
-          <Grid item sx={{ marginLeft: 'auto' }}>
+          <Grid item sx={{ marginLeft: "auto" }}>
             <IconButton size="large" onClick={openUploadDialog}>
               <CloudUploadRoundedIcon />
             </IconButton>

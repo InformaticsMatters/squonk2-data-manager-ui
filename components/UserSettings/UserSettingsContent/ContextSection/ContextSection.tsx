@@ -1,8 +1,8 @@
-import { Grid } from '@mui/material';
+import { Grid } from "@mui/material";
 
-import { OrganisationAutocomplete } from '../../../userContext/OrganisationAutocomplete';
-import { UnitAutocomplete } from '../../../userContext/UnitAutocomplete';
-import { ContextActions } from './ContextActions';
+import { OrganisationAutocomplete } from "../../../userContext/OrganisationAutocomplete";
+import { UnitAutocomplete } from "../../../userContext/UnitAutocomplete";
+import { ContextActions } from "./ContextActions";
 
 /**
  * Displays `Context` section in User Settings.

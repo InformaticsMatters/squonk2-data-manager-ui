@@ -1,11 +1,11 @@
-import { createContext, useContext, useReducer } from 'react';
+import { createContext, useContext, useReducer } from "react";
 
-import type { ProjectId } from '../hooks/projectHooks';
-import { useCurrentProjectId } from '../hooks/projectHooks';
+import type { ProjectId } from "../hooks/projectHooks";
+import { useCurrentProjectId } from "../hooks/projectHooks";
 
 export type SavedFile = {
   path: string;
-  type: 'file' | 'directory';
+  type: "file" | "directory";
   mimeType?: string;
 };
 
@@ -34,7 +34,7 @@ const initialState: SelectedFilesState = {
 export const SelectedFilesContext = createContext<SelectedFilesState>(initialState);
 
 interface FileStateAction {
-  type: 'add-file' | 'remove-file';
+  type: "add-file" | "remove-file";
   projectId: string;
   file: SavedFile;
 }
@@ -42,14 +42,14 @@ interface FileStateAction {
 const reducer = (state: FileState, { type, projectId, file }: FileStateAction) => {
   const oldSavedFiles = state[projectId];
   switch (type) {
-    case 'add-file': {
+    case "add-file": {
       if (oldSavedFiles !== undefined) {
         return { ...state, [projectId]: [...oldSavedFiles, file] };
       }
       return { ...state, [projectId]: [file] };
     }
 
-    case 'remove-file':
+    case "remove-file":
       if (oldSavedFiles !== undefined) {
         return {
           ...state,
@@ -67,9 +67,9 @@ export const SelectedFilesProvider: React.FC = ({ children }) => {
   const [selectedFiles, dispatch] = useReducer(reducer, {});
 
   const addFile: UpdateFileSelection = (projectId) => (file) =>
-    dispatch({ type: 'add-file', projectId, file });
+    dispatch({ type: "add-file", projectId, file });
   const removeFile: UpdateFileSelection = (projectId) => (file) =>
-    dispatch({ type: 'remove-file', projectId, file });
+    dispatch({ type: "remove-file", projectId, file });
 
   return (
     <SelectedFilesContext.Provider value={{ selectedFiles, addFile, removeFile }}>

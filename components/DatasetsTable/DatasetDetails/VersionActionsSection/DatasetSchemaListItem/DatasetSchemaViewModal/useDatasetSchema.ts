@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useState } from "react";
+import { useQueryClient } from "react-query";
 
-import { getGetSchemaQueryKey, useGetSchema } from '@squonk/data-manager-client/dataset';
-import { useAddMetadata, useAddMetadataVersion } from '@squonk/data-manager-client/metadata';
+import { getGetSchemaQueryKey, useGetSchema } from "@squonk/data-manager-client/dataset";
+import { useAddMetadata, useAddMetadataVersion } from "@squonk/data-manager-client/metadata";
 
-import type { TypedSchema } from './types';
-import { useEditableSchemaView } from './useEditableSchema';
+import type { TypedSchema } from "./types";
+import { useEditableSchemaView } from "./useEditableSchema";
 
 export const useDatasetSchema = (datasetId: string, version: number) => {
   const queryClient = useQueryClient();
@@ -41,10 +41,10 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
   // for React components
   const savingErrors = [];
   if (updateMetadataError) {
-    savingErrors.push({ type: 'metadata', error: updateMetadataError });
+    savingErrors.push({ type: "metadata", error: updateMetadataError });
   }
   if (addAnnotationsError) {
-    savingErrors.push({ type: 'annotations', error: addAnnotationsError });
+    savingErrors.push({ type: "annotations", error: addAnnotationsError });
   }
 
   const saveSchema = async () => {
@@ -70,7 +70,7 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
 
     // Only update field definitions if they were changed.
     if (fields) {
-      const data = { type: 'FieldsDescriptorAnnotation', origin: 'data-manager-api', fields };
+      const data = { type: "FieldsDescriptorAnnotation", origin: "data-manager-api", fields };
       promises.push(
         addAnnotations({
           datasetId,

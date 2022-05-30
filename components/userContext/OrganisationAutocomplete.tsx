@@ -1,16 +1,16 @@
-import type { OrganisationDetail } from '@squonk/account-server-client';
-import { useGetUnits } from '@squonk/account-server-client/unit';
+import type { OrganisationDetail } from "@squonk/account-server-client";
+import { useGetUnits } from "@squonk/account-server-client/unit";
 
-import type { AutocompleteProps } from '@mui/material';
-import { Autocomplete, TextField, Typography } from '@mui/material';
+import type { AutocompleteProps } from "@mui/material";
+import { Autocomplete, TextField, Typography } from "@mui/material";
 
-import { useOrganisationUnit } from '../../context/organisationUnitContext';
-import { useCurrentProjectId } from '../../hooks/projectHooks';
-import { getErrorMessage } from '../../utils/orvalError';
+import { useOrganisationUnit } from "../../context/organisationUnitContext";
+import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { getErrorMessage } from "../../utils/orvalError";
 
 type OrganisationAutocompleteProps = Omit<
   AutocompleteProps<OrganisationDetail, false, false, false>,
-  'renderInput' | 'options'
+  "renderInput" | "options"
 >;
 
 /**
@@ -44,7 +44,7 @@ export const OrganisationAutocomplete = (props: OrganisationAutocompleteProps) =
           setCurrentProjectId();
         }
 
-        dispatchOrganisationUnit({ type: 'setOrganisation', payload: organisation });
+        dispatchOrganisationUnit({ type: "setOrganisation", payload: organisation });
       }}
     />
   );

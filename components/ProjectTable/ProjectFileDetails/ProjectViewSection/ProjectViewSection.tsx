@@ -1,7 +1,7 @@
-import { List } from '@mui/material';
+import { List } from "@mui/material";
 
-import type { TableFile } from '../../types';
-import { FilePlainTextViewerListItem } from './FilePlainTextViewerListItem';
+import type { TableFile } from "../../types";
+import { FilePlainTextViewerListItem } from "./FilePlainTextViewerListItem";
 
 export interface ProjectViewSectionProps {
   file: TableFile;

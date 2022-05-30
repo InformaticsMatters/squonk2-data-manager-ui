@@ -1,8 +1,8 @@
 export interface OutputValue {
   title: string;
   creates: string;
-  type?: 'file' | 'files' | 'directory';
-  'mime-types': string[];
+  type?: "file" | "files" | "directory";
+  "mime-types": string[];
 }
 
 export interface CommonDetailsProps {

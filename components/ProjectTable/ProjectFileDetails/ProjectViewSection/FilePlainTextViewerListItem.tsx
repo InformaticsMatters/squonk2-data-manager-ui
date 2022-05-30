@@ -1,9 +1,9 @@
-import { Description } from '@mui/icons-material';
-import { ListItem, ListItemText } from '@mui/material';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
+import { Description } from "@mui/icons-material";
+import { ListItem, ListItemText } from "@mui/material";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 
-import { APP_ROUTES } from '../../../../constants/routes';
+import { APP_ROUTES } from "../../../../constants/routes";
 
 export interface FilePlainTextViewerListItemProps {
   fileName: string;

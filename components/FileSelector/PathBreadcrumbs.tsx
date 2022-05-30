@@ -1,6 +1,6 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from "react";
 
-import { Breadcrumbs, Link, Typography } from '@mui/material';
+import { Breadcrumbs, Link, Typography } from "@mui/material";
 
 export interface PathBreadcrumbs {
   /**
@@ -18,7 +18,7 @@ export interface PathBreadcrumbs {
  */
 export const PathBreadcrumbs = ({ breadcrumbs, setBreadcrumbs }: PathBreadcrumbs) => (
   <Breadcrumbs>
-    {['root', ...breadcrumbs].map((path, pathIndex) =>
+    {["root", ...breadcrumbs].map((path, pathIndex) =>
       pathIndex < breadcrumbs.length ? (
         <Link
           color="inherit"

@@ -1,17 +1,17 @@
-import { useRef, useState } from 'react';
-import type { FileError } from 'react-dropzone';
-import { useQueryClient } from 'react-query';
+import { useRef, useState } from "react";
+import type { FileError } from "react-dropzone";
+import { useQueryClient } from "react-query";
 
-import { getGetDatasetsQueryKey } from '@squonk/data-manager-client/dataset';
-import { useGetTask } from '@squonk/data-manager-client/task';
+import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
+import { useGetTask } from "@squonk/data-manager-client/task";
 
-import { Grid, IconButton, LinearProgress, MenuItem, TextField, Typography } from '@mui/material';
+import { Grid, IconButton, LinearProgress, MenuItem, TextField, Typography } from "@mui/material";
 
-import { useFileExtensions } from '../../hooks/useFileExtensions';
-import { useMimeTypeLookup } from '../../hooks/useMimeTypeLookup';
-import { TwiddleIcon } from '../uploads/TwiddleIcon';
-import type { UploadableFile } from '../uploads/types';
-import { separateFileExtensionFromFileName } from '../uploads/utils';
+import { useFileExtensions } from "../../hooks/useFileExtensions";
+import { useMimeTypeLookup } from "../../hooks/useMimeTypeLookup";
+import { TwiddleIcon } from "../uploads/TwiddleIcon";
+import type { UploadableFile } from "../uploads/types";
+import { separateFileExtensionFromFileName } from "../uploads/utils";
 
 export interface SingleFileUploadWithProgressProps {
   fileWrapper: UploadableFile;
@@ -42,7 +42,7 @@ export function SingleFileUploadWithProgress({
   // const typeLabelParts = fileWrapper.file.name.split('.');
 
   const [interval, setInterval] = useState<number | false>(2000);
-  const { data: task, isLoading } = useGetTask(fileWrapper.taskId ?? '', undefined, {
+  const { data: task, isLoading } = useGetTask(fileWrapper.taskId ?? "", undefined, {
     query: {
       // When a task id has been set, we poll the task endpoint to wait for the file to finish
       // processing
@@ -82,7 +82,7 @@ export function SingleFileUploadWithProgress({
           />
         </Grid>
 
-        <Grid item md={2} sm={3} sx={{ textAlign: 'center' }} xs={8}>
+        <Grid item md={2} sm={3} sx={{ textAlign: "center" }} xs={8}>
           <TextField
             fullWidth
             select
@@ -106,11 +106,11 @@ export function SingleFileUploadWithProgress({
           </TextField>
         </Grid>
 
-        <Grid item md={1} sm={1} sx={{ textAlign: 'center' }} xs={4}>
+        <Grid item md={1} sm={1} sx={{ textAlign: "center" }} xs={4}>
           <IconButton
             disabled={disabled}
             size="small"
-            sx={{ color: 'success.main' }}
+            sx={{ color: "success.main" }}
             onClick={(event) => {
               event.stopPropagation();
               onDelete(fileWrapper.file);

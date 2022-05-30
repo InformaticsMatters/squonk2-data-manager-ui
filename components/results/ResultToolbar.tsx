@@ -1,18 +1,18 @@
-import type { Dispatch, SetStateAction } from 'react';
-import { useQueryClient } from 'react-query';
+import type { Dispatch, SetStateAction } from "react";
+import { useQueryClient } from "react-query";
 
 import {
   getGetInstanceQueryKey,
   getGetInstancesQueryKey,
   useGetInstances,
-} from '@squonk/data-manager-client/instance';
-import { getGetProjectsQueryKey } from '@squonk/data-manager-client/project';
+} from "@squonk/data-manager-client/instance";
+import { getGetProjectsQueryKey } from "@squonk/data-manager-client/project";
 
-import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
-import { Grid, IconButton, MenuItem, TextField, Tooltip } from '@mui/material';
+import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import { Grid, IconButton, MenuItem, TextField, Tooltip } from "@mui/material";
 
-import { useCurrentProjectId } from '../../hooks/projectHooks';
-import { SearchTextField } from '../SearchTextField';
+import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { SearchTextField } from "../SearchTextField";
 
 export interface ResultsToolbarProps {
   /**
@@ -86,7 +86,7 @@ export const ResultsToolbar = ({
         </TextField>
       </Grid>
 
-      <Grid item md={4} sm={5} sx={{ ml: 'auto' }} xs={12}>
+      <Grid item md={4} sm={5} sx={{ ml: "auto" }} xs={12}>
         <SearchTextField
           fullWidth
           value={searchValue}
@@ -94,11 +94,11 @@ export const ResultsToolbar = ({
         />
       </Grid>
 
-      <Grid item sm="auto" sx={{ textAlign: 'center' }} xs={12}>
+      <Grid item sm="auto" sx={{ textAlign: "center" }} xs={12}>
         <Tooltip title="Refresh Tasks">
           <IconButton
             size="large"
-            sx={{ ml: 'auto' }}
+            sx={{ ml: "auto" }}
             onClick={() => refreshResults.forEach((func) => func())}
           >
             <RefreshRoundedIcon />

@@ -19,7 +19,7 @@ specifiers:
   '@sentry/nextjs': 6.19.7
   '@squonk/account-server-client': 0.1.31
   '@squonk/data-manager-client': 0.7.11
-  '@squonk/eslint-config': 0.3.1
+  '@squonk/eslint-config': 0.4.2
   '@squonk/mui-theme': 3.0.1
   '@types/lodash-es': 4.17.6
   '@types/node': 16.11.36
@@ -130,7 +130,7 @@ dependencies:
 
 devDependencies:
   '@playwright/test': 1.22.2
-  '@squonk/eslint-config': 0.3.1_d93f6e14be9a44891bd7e47deae7b844
+  '@squonk/eslint-config': 0.4.2_d93f6e14be9a44891bd7e47deae7b844
   '@typescript-eslint/eslint-plugin': 5.26.0_3538258888b78689808cec7bffc2237a
   '@typescript-eslint/parser': 5.26.0_eslint@8.16.0+typescript@4.6.4
   eslint: 8.16.0
@@ -1190,8 +1190,8 @@ packages:
       react-query: 3.39.0_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/eslint-config/0.3.1_d93f6e14be9a44891bd7e47deae7b844:
-    resolution: {integrity: sha512-fWuHJiYVW9ywhoT4OUkLvOZCg9XufMiHHqRSMoeJKCiqpZhZ4UOCa0ek6ZyF/OmUOYOJ/j2BVuurLuCkAmfwHw==}
+  /@squonk/eslint-config/0.4.2_d93f6e14be9a44891bd7e47deae7b844:
+    resolution: {integrity: sha512-+bPuv25LjkbIe56msfmtUp+hM0GmUC5Sjk/1OHEzyMBtZHtv8z6z3ygszxS6iDB5RGwiN/c9NFKM/MXMmldrOA==}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^5.6.0
       '@typescript-eslint/parser': ^5.6.0

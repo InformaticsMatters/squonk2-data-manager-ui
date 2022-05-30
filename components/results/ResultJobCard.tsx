@@ -1,25 +1,25 @@
-import type { InstanceSummary } from '@squonk/data-manager-client';
+import type { InstanceSummary } from "@squonk/data-manager-client";
 
-import { CardContent, ListItem, ListItemText } from '@mui/material';
+import { CardContent, ListItem, ListItemText } from "@mui/material";
 
-import { APP_ROUTES } from '../../constants/routes';
-import { useProjectFromId } from '../../hooks/projectHooks';
-import { ResultCard } from '../results/ResultCard';
-import { ProjectListItem } from './common/ProjectListItem';
-import { TerminateInstance } from './common/TerminateInstance';
-import type { CommonProps } from './common/types';
-import { useInstanceRouterQuery } from './common/useInstanceRouterQuery';
-import type { JobDetailsProps } from './details/JobDetails';
-import { JobDetails } from './details/JobDetails';
-import { LogsButton } from './LogsButton';
-import { RerunJobButton } from './RerunJobButton';
+import { APP_ROUTES } from "../../constants/routes";
+import { useProjectFromId } from "../../hooks/projectHooks";
+import { ResultCard } from "../results/ResultCard";
+import { ProjectListItem } from "./common/ProjectListItem";
+import { TerminateInstance } from "./common/TerminateInstance";
+import type { CommonProps } from "./common/types";
+import { useInstanceRouterQuery } from "./common/useInstanceRouterQuery";
+import type { JobDetailsProps } from "./details/JobDetails";
+import { JobDetails } from "./details/JobDetails";
+import { LogsButton } from "./LogsButton";
+import { RerunJobButton } from "./RerunJobButton";
 
 export interface ResultJobCardProps extends CommonProps {
   /**
    * Instance of the job
    */
   instance: InstanceSummary;
-  poll?: JobDetailsProps['poll'];
+  poll?: JobDetailsProps["poll"];
 }
 
 /**
@@ -57,7 +57,7 @@ export const ResultJobCard = ({
       <ListItem>
         <ListItemText primary={instance.name} secondary={instance.job_name} />
       </ListItem>
-      <ProjectListItem projectName={associatedProject?.name || 'loading...'} />
+      <ProjectListItem projectName={associatedProject?.name || "loading..."} />
     </ResultCard>
   );
 };

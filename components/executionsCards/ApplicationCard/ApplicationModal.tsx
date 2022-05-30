@@ -1,25 +1,25 @@
-import { useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useState } from "react";
+import { useQueryClient } from "react-query";
 
-import type { ApplicationSummary, DmError } from '@squonk/data-manager-client';
-import { useGetApplication } from '@squonk/data-manager-client/application';
-import { getGetInstancesQueryKey, useCreateInstance } from '@squonk/data-manager-client/instance';
+import type { ApplicationSummary, DmError } from "@squonk/data-manager-client";
+import { useGetApplication } from "@squonk/data-manager-client/application";
+import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
 
-import { Grid, MenuItem, TextField } from '@mui/material';
-import Form from '@rjsf/material-ui/v5';
+import { Grid, MenuItem, TextField } from "@mui/material";
+import Form from "@rjsf/material-ui/v5";
 
-import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
-import { CenterLoader } from '../../CenterLoader';
-import { ModalWrapper } from '../../modals/ModalWrapper';
-import type { DebugValue } from '../DebugCheckbox';
-import { DebugCheckbox } from '../DebugCheckbox';
-import type { CommonModalProps } from '../types';
+import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
+import { CenterLoader } from "../../CenterLoader";
+import { ModalWrapper } from "../../modals/ModalWrapper";
+import type { DebugValue } from "../DebugCheckbox";
+import { DebugCheckbox } from "../DebugCheckbox";
+import type { CommonModalProps } from "../types";
 
 export interface ApplicationModalProps extends CommonModalProps {
   /**
    * ID of the application under which an instance will be created
    */
-  applicationId: ApplicationSummary['application_id'];
+  applicationId: ApplicationSummary["application_id"];
 }
 
 /**
@@ -33,8 +33,8 @@ export const ApplicationModal = ({
   onLaunch,
 }: ApplicationModalProps) => {
   const queryClient = useQueryClient();
-  const [name, setName] = useState('');
-  const [debug, setDebug] = useState<DebugValue>('0');
+  const [name, setName] = useState("");
+  const [debug, setDebug] = useState<DebugValue>("0");
   const [version, setVersion] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>(null);
 
@@ -44,7 +44,7 @@ export const ApplicationModal = ({
 
   const { data: application } = useGetApplication(applicationId);
 
-  const versionToUse = version ?? application?.versions[0] ?? '';
+  const versionToUse = version ?? application?.versions[0] ?? "";
 
   const handleCreateInstance = async () => {
     if (projectId) {
@@ -69,7 +69,7 @@ export const ApplicationModal = ({
         onClose();
       }
     } else {
-      enqueueSnackbar('No project provided', { variant: 'warning' });
+      enqueueSnackbar("No project provided", { variant: "warning" });
     }
   };
 
@@ -82,12 +82,12 @@ export const ApplicationModal = ({
 
   return (
     <ModalWrapper
-      DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+      DialogProps={{ maxWidth: "sm", fullWidth: true }}
       id={`app-${applicationId}`}
       open={open}
       submitDisabled={!projectId || !name || !versionToUse}
       submitText="Run"
-      title={application?.kind ?? 'Run Job'}
+      title={application?.kind ?? "Run Job"}
       onClose={onClose}
       onSubmit={handleCreateInstance}
     >

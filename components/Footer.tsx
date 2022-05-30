@@ -1,15 +1,15 @@
-import { Box, Container, Link, Paper, Typography } from '@mui/material';
+import { Box, Container, Link, Paper, Typography } from "@mui/material";
 
 export const Footer = () => {
   return (
-    <Paper square component="footer" sx={{ marginTop: 'auto' }}>
+    <Paper square component="footer" sx={{ marginTop: "auto" }}>
       <Container maxWidth="md">
         <Box p={2}>
           <Typography variant="h4">
-            <strong style={{ fontFamily: 'Raleway' }}>Squonk</strong> Data Manager
+            <strong style={{ fontFamily: "Raleway" }}>Squonk</strong> Data Manager
           </Typography>
           <Typography variant="subtitle1">
-            A product by{' '}
+            A product by{" "}
             <Link
               href="https://www.informaticsmatters.com/"
               rel="noopener noreferrer"

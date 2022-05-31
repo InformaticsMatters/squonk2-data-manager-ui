@@ -1,9 +1,8 @@
-import { API_ROUTES } from "constants/routes";
-
 import type { DatasetSummary, DatasetVersionSummary } from "@squonk/data-manager-client";
 
 import { Box, MenuItem, TextField, Typography } from "@mui/material";
 
+import { API_ROUTES } from "../../../constants/routes";
 import { DownloadButton } from "../../DownloadButton";
 
 export interface WorkingVersionSectionProps {

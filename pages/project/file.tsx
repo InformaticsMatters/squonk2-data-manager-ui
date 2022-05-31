@@ -1,5 +1,3 @@
-import { API_ROUTES } from "constants/routes";
-
 import type { FilePathFile, FilesGetResponse } from "@squonk/data-manager-client";
 import { useGetFiles } from "@squonk/data-manager-client/file";
 
@@ -9,6 +7,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { PlaintextViewer } from "../../components/PlaintextViewer";
+import { API_ROUTES } from "../../constants/routes";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { useApi } from "../../hooks/useApi";
 import { getDecompressionType } from "../../utils/fileUtils";

@@ -1,8 +1,7 @@
-import { API_ROUTES } from "constants/routes";
-
 import { CircularProgress } from "@mui/material";
 import dynamic from "next/dynamic";
 
+import { API_ROUTES } from "../../constants/routes";
 import { useCurrentProject, useIsUserAProjectOwnerOrEditor } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import type { DownloadButtonProps } from "../DownloadButton";

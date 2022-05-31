@@ -1,7 +1,7 @@
 import { Button, Container, Tooltip } from "@mui/material";
-import { useCurrentProjectId } from "hooks/projectHooks";
 
 import { useOrganisationUnit } from "../../../context/organisationUnitContext";
+import { useCurrentProjectId } from "../../../hooks/projectHooks";
 import { PageSection } from "../../PageSection";
 import { ContextSection } from "./ContextSection";
 import { ProjectStatsSection } from "./ProjectStatsSection";

@@ -11,6 +11,7 @@ import fileSize from "filesize";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 
+import { useIsUserAProjectOwnerOrEditor } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { getErrorMessage } from "../../utils/orvalError";
 import { DataTable } from "../DataTable";
@@ -39,6 +40,8 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
   const theme = useTheme();
 
   const router = useRouter();
+
+  const isProjectOwnerOrEditor = useIsUserAProjectOwnerOrEditor();
 
   // Breadcrumbs
   const breadcrumbs = useProjectBreadcrumbs();
@@ -183,7 +186,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
             </Breadcrumbs>
           </Grid>
           <Grid item sx={{ marginLeft: "auto" }}>
-            <IconButton size="large" onClick={openUploadDialog}>
+            <IconButton disabled={!isProjectOwnerOrEditor} size="large" onClick={openUploadDialog}>
               <CloudUploadRoundedIcon />
             </IconButton>
           </Grid>

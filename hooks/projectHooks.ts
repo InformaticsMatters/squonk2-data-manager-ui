@@ -89,6 +89,7 @@ export const useIsUserAProjectOwnerOrEditor = () => {
   const project = useCurrentProject();
 
   return (
-    user.username && (project?.editors.includes(user.username) || project?.owner === user.username)
+    !!user.username &&
+    (project?.editors.includes(user.username) || project?.owner === user.username)
   );
 };

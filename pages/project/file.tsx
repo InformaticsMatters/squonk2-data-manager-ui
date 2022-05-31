@@ -1,12 +1,14 @@
+import { API_ROUTES } from "constants/routes";
+
 import type { FilePathFile, FilesGetResponse } from "@squonk/data-manager-client";
 import { useGetFiles } from "@squonk/data-manager-client/file";
 
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/dist/frontend";
+import Error from "next/error";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { PlaintextViewer } from "../../components/PlaintextViewer";
-import { DM_API_URL } from "../../constants";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { useApi } from "../../hooks/useApi";
 import { getDecompressionType } from "../../utils/fileUtils";
@@ -93,10 +95,16 @@ const FilePlainTextViewer = () => {
   const isError = isFilesError || isSelectError || isContentsError;
   const error = getErrorMessage(filesError) || selectError || getErrorMessage(contentsError);
 
-  const downloadUrl = `${DM_API_URL}/project/${project}/file${getQueryParams({
-    path: dirPath,
-    file: fileName,
-  })}`;
+  if (typeof project !== "string" || typeof fileName !== "string") {
+    return (
+      <Error
+        message="`project` and/or `file` query parameters are not specified correctly."
+        statusCode={400}
+      />
+    );
+  }
+
+  const downloadUrl = API_ROUTES.projectFile(project, dirPath, fileName);
 
   return (
     <>

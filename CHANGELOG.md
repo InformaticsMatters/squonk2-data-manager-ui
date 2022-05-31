@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.11-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.10...0.1.11-rc.0) (2022-05-31)
+
+
+### Features
+
+* **file-download:** Allow all types of files to be downloaded from the project page ([ffba58e](https://github.com/InformaticsMatters/squonk-frontend/commit/ffba58e9e4353f176ed6f4ea93a70238da888dc3))
+
+
+### Bug Fixes
+
+* **delete-files:** Disable delete file buttons when user isn't a project editor ([5f9f284](https://github.com/InformaticsMatters/squonk-frontend/commit/5f9f284c011db2c19c5274a12f9de01450412119))
+* **upload:** Disable project file-upload button when user isn't a project editor or owner ([a5925f2](https://github.com/InformaticsMatters/squonk-frontend/commit/a5925f27285723bc606ec91fcef786479e9c1b9f))
+
 ### [0.1.10](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.10-rc.0...0.1.10) (2022-05-30)
 
 ### [0.1.10-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.9...0.1.10-rc.0) (2022-05-30)

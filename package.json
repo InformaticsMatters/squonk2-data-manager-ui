@@ -2,7 +2,7 @@
   "name": "@squonk/data-manager-ui",
   "author": "Oliver Dudgeon",
   "license": "Apache-2.0",
-  "version": "0.1.11-rc.0",
+  "version": "0.1.11",
   "private": true,
   "scripts": {
     "prepare": "husky install",

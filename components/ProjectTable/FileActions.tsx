@@ -3,7 +3,7 @@ import { API_ROUTES } from "constants/routes";
 import { CircularProgress } from "@mui/material";
 import dynamic from "next/dynamic";
 
-import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { useCurrentProject, useIsUserAProjectOwnerOrEditor } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import type { DownloadButtonProps } from "../DownloadButton";
 import type { CreateDatasetFromFileButtonProps } from "./buttons/CreateDatasetFromFileButton";
@@ -50,12 +50,13 @@ export interface FileActionsProps {
  * Actions the user can execute on a given file
  */
 export const FileActions = ({ file }: FileActionsProps) => {
-  const { projectId } = useCurrentProjectId();
+  const project = useCurrentProject();
+  const isProjectOwnerOrEditor = useIsUserAProjectOwnerOrEditor();
 
   const breadcrumbs = useProjectBreadcrumbs();
   const path = "/" + breadcrumbs.join("/");
 
-  if (!projectId) {
+  if (!project?.project_id) {
     return null;
   }
   const isFile = !isTableDir(file);
@@ -69,21 +70,33 @@ export const FileActions = ({ file }: FileActionsProps) => {
       <FavouriteButton
         fullPath={file.fullPath}
         mimeType={isFile ? file.mime_type : undefined}
-        projectId={projectId}
+        projectId={project.project_id}
         type={isFile ? "file" : "directory"}
       />
       {/* Actions for files only */}
 
       {/* Managed files are "detached" */}
-      {isManagedFile && <DetachDataset fileId={fileId} path={path} projectId={projectId} />}
+      {isManagedFile && (
+        <DetachDataset
+          disabled={!isProjectOwnerOrEditor}
+          fileId={fileId}
+          path={path}
+          projectId={project.project_id}
+        />
+      )}
       {/* Unmanaged files are "deleted" */}
       {!isManagedFile && (
-        <DeleteUnmanagedFileButton fileName={file.fileName} path={path} projectId={projectId} />
+        <DeleteUnmanagedFileButton
+          disabled={!isProjectOwnerOrEditor}
+          fileName={file.fileName}
+          path={path}
+          projectId={project.project_id}
+        />
       )}
 
       {isFile && (
         <DownloadButton
-          href={API_ROUTES.projectFile(projectId, path, file.fileName)}
+          href={API_ROUTES.projectFile(project.project_id, path, file.fileName)}
           size="small"
           title="Download file"
         />
@@ -91,7 +104,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
 
       {/* Datasets can be created from unmanaged files or managed files at are immutable */}
       {isFile && (!file.immutable || !isManagedFile) && (
-        <CreateDatasetFromFileButton file={file} projectId={projectId} />
+        <CreateDatasetFromFileButton file={file} projectId={project.project_id} />
       )}
     </>
   );

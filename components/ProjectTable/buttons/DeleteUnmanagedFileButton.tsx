@@ -4,12 +4,13 @@ import type { DeleteUnmanagedFileParams, DmError } from "@squonk/data-manager-cl
 import { getGetFilesQueryKey, useDeleteUnmanagedFile } from "@squonk/data-manager-client/file";
 
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import type { IconButtonProps } from "@mui/material";
 import { IconButton } from "@mui/material";
 
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { WarningDeleteButton } from "../../WarningDeleteButton";
 
-export interface DeleteUnmanagedFileButtonProps {
+export interface DeleteUnmanagedFileButtonProps extends IconButtonProps {
   /**
    * ID of the project containing the unmanaged file
    */
@@ -31,6 +32,7 @@ export const DeleteUnmanagedFileButton = ({
   projectId,
   path,
   fileName,
+  ...buttonProps
 }: DeleteUnmanagedFileButtonProps) => {
   const queryClient = useQueryClient();
   const { mutateAsync: deleteFile } = useDeleteUnmanagedFile();
@@ -61,7 +63,12 @@ export const DeleteUnmanagedFileButton = ({
       }}
     >
       {({ openModal }) => (
-        <IconButton aria-label="Delete this unmanaged file" size="small" onClick={openModal}>
+        <IconButton
+          {...buttonProps}
+          aria-label="Delete this unmanaged file"
+          size="small"
+          onClick={openModal}
+        >
           <DeleteForeverRoundedIcon />
         </IconButton>
       )}

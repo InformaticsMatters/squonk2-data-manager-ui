@@ -25,7 +25,7 @@ specifiers:
   '@types/node': 16.11.39
   '@types/plotly.js-basic-dist': 1.54.0
   '@types/react': 17.0.45
-  '@types/react-plotly.js': 2.5.0
+  '@types/react-plotly.js': 2.5.1
   '@types/react-table': 7.7.12
   '@types/react-virtualized': 9.21.21
   '@types/uuid': 8.3.4
@@ -95,7 +95,7 @@ dependencies:
   '@types/node': 16.11.39
   '@types/plotly.js-basic-dist': 1.54.0
   '@types/react': 17.0.45
-  '@types/react-plotly.js': 2.5.0
+  '@types/react-plotly.js': 2.5.1
   '@types/react-table': 7.7.12
   '@types/react-virtualized': 9.21.21
   '@types/uuid': 8.3.4
@@ -1364,8 +1364,8 @@ packages:
       '@types/react': 17.0.45
     dev: false
 
-  /@types/react-plotly.js/2.5.0:
-    resolution: {integrity: sha512-bda7N/Y65d1x0FfwhgUXAugGeG9CRIxmkW/yBL8PVFUMvZGpfEnw4bXKjDozBYlOskVfxj6UQ9IKmZI6CZ7/QQ==}
+  /@types/react-plotly.js/2.5.1:
+    resolution: {integrity: sha512-e9sjVl6qEkpMx4l1YRiQZJqTUh1YuyppqgMmZ9S/oT4QYb5MKBWsQLBdFH6OxxRWIyoNO0ypzkAaarrwWJK2eA==}
     dependencies:
       '@types/plotly.js': 1.54.20
       '@types/react': 17.0.45

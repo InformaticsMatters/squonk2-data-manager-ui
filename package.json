@@ -97,7 +97,7 @@
     "eslint-plugin-unused-imports": "2.0.0",
     "husky": "8.0.1",
     "identity-obj-proxy": "3.0.0",
-    "lint-staged": "12.5.0",
+    "lint-staged": "13.0.1",
     "tsc-files": "1.1.3"
   }
 }

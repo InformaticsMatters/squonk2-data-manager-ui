@@ -65,7 +65,7 @@ specifiers:
   react-query: 3.39.1
   react-table: 7.8.0
   react-virtualized: 9.22.3
-  sass: 1.52.2
+  sass: 1.52.3
   tsc-files: 1.1.3
   typescript: 4.6.4
   use-immer: 0.7.0
@@ -108,7 +108,7 @@ dependencies:
   immer: 9.0.14
   lodash-es: 4.17.21
   material-ui-popup-state: 3.1.1_c8c10a639b2b9753cb2d3f27112f331c
-  next: 12.1.6_757e1cdb914f1581201e1269321c5a94
+  next: 12.1.6_2cf032a31c9fb8ca4f852a38a7a97b1f
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
   node-fetch: 3.2.5
@@ -122,7 +122,7 @@ dependencies:
   react-query: 3.39.1_react-dom@17.0.2+react@17.0.2
   react-table: 7.8.0_react@17.0.2
   react-virtualized: 9.22.3_react-dom@17.0.2+react@17.0.2
-  sass: 1.52.2
+  sass: 1.52.3
   typescript: 4.6.4
   use-immer: 0.7.0_immer@9.0.14+react@17.0.2
   uuid: 8.3.2
@@ -161,7 +161,7 @@ packages:
       http-errors: 1.8.1
       joi: 17.6.0
       jose: 2.0.5
-      next: 12.1.6_757e1cdb914f1581201e1269321c5a94
+      next: 12.1.6_2cf032a31c9fb8ca4f852a38a7a97b1f
       on-headers: 1.0.2
       openid-client: 4.9.1
       tslib: 2.4.0
@@ -1078,7 +1078,7 @@ packages:
       '@sentry/tracing': 6.19.7
       '@sentry/utils': 6.19.7
       '@sentry/webpack-plugin': 1.18.8
-      next: 12.1.6_757e1cdb914f1581201e1269321c5a94
+      next: 12.1.6_2cf032a31c9fb8ca4f852a38a7a97b1f
       react: 17.0.2
       tslib: 1.14.1
     transitivePeerDependencies:
@@ -4085,7 +4085,7 @@ packages:
       escalade: 3.1.1
     dev: false
 
-  /next/12.1.6_757e1cdb914f1581201e1269321c5a94:
+  /next/12.1.6_2cf032a31c9fb8ca4f852a38a7a97b1f:
     resolution: {integrity: sha512-cebwKxL3/DhNKfg9tPZDQmbRKjueqykHHbgaoG4VBRH3AHQJ2HO0dbKFiS1hPhe1/qgc2d/hFeadsbPicmLD+A==}
     engines: {node: '>=12.22.0'}
     hasBin: true
@@ -4108,7 +4108,7 @@ packages:
       postcss: 8.4.5
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      sass: 1.52.2
+      sass: 1.52.3
       styled-jsx: 5.0.2_react@17.0.2
     optionalDependencies:
       '@next/swc-android-arm-eabi': 12.1.6
@@ -4796,8 +4796,8 @@ packages:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
     dev: false
 
-  /sass/1.52.2:
-    resolution: {integrity: sha512-mfHB2VSeFS7sZlPv9YohB9GB7yWIgQNTGniQwfQ04EoQN0wsQEv7SwpCwy/x48Af+Z3vDeFXz+iuXM3HK/phZQ==}
+  /sass/1.52.3:
+    resolution: {integrity: sha512-LNNPJ9lafx+j1ArtA7GyEJm9eawXN8KlA1+5dF6IZyoONg1Tyo/g+muOsENWJH/2Q1FHbbV4UwliU0cXMa/VIA==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:

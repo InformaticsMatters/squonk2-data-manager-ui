@@ -69,10 +69,7 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
         </Grid>
       </Grid>
 
-      <TaskDetails
-        eventsVariant={instanceSummary.job_image_type}
-        taskId={instance.tasks[instance.tasks.length - 1].id}
-      />
+      <TaskDetails taskId={instance.tasks[instance.tasks.length - 1].id} />
     </>
   );
 };

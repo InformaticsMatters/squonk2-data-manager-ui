@@ -47,7 +47,7 @@ specifiers:
   formik-mui-lab: 1.0.0-alpha.3
   husky: 8.0.1
   identity-obj-proxy: 3.0.0
-  immer: 9.0.14
+  immer: 9.0.15
   lint-staged: 13.0.1
   lodash-es: 4.17.21
   material-ui-popup-state: 3.1.1
@@ -105,7 +105,7 @@ dependencies:
   formik: 2.2.9_react@17.0.2
   formik-mui: 4.0.0-alpha.3_ab9aba0590869ba6a89c0a88fc8d7701
   formik-mui-lab: 1.0.0-alpha.3_a89871a795afa5d6302a78255e0a042a
-  immer: 9.0.14
+  immer: 9.0.15
   lodash-es: 4.17.21
   material-ui-popup-state: 3.1.1_c8c10a639b2b9753cb2d3f27112f331c
   next: 12.1.6_2cf032a31c9fb8ca4f852a38a7a97b1f
@@ -124,7 +124,7 @@ dependencies:
   react-virtualized: 9.22.3_react-dom@17.0.2+react@17.0.2
   sass: 1.52.3
   typescript: 4.6.4
-  use-immer: 0.7.0_immer@9.0.14+react@17.0.2
+  use-immer: 0.7.0_immer@9.0.15+react@17.0.2
   uuid: 8.3.2
   yup: 0.32.11
 
@@ -3056,8 +3056,8 @@ packages:
     resolution: {integrity: sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=}
     dev: false
 
-  /immer/9.0.14:
-    resolution: {integrity: sha512-ubBeqQutOSLIFCUBN03jGeOS6a3DoYlSYwYJTa+gSKEZKU5redJIqkIdZ3JVv/4RZpfcXdAWH5zCNLWPRv2WDw==}
+  /immer/9.0.15:
+    resolution: {integrity: sha512-2eB/sswms9AEUSkOm4SbV5Y7Vmt/bKRwByd52jfLkW4OLYeaTP3EEiJ9agqU0O/tq6Dk62Zfj+TJSqfm1rLVGQ==}
     dev: false
 
   /immutable/4.0.0:
@@ -5288,13 +5288,13 @@ packages:
     resolution: {integrity: sha512-jk1+QP6ZJqyOiuEI9AEWQfju/nB2Pw466kbA0LEZljHwKeMgd9WrAEgEGxjPDD2+TNbbb37rTyhEfrCXfuKXnA==}
     dev: false
 
-  /use-immer/0.7.0_immer@9.0.14+react@17.0.2:
+  /use-immer/0.7.0_immer@9.0.15+react@17.0.2:
     resolution: {integrity: sha512-Re4hjrP3a/2ABZjAc0b7AK9s626bnO+H33RO2VUhiDZ2StBz5B663K6WNNlr4QtHWaGUmvLpwt3whFvvWuolQw==}
     peerDependencies:
       immer: '>=2.0.0'
       react: ^16.8.0 || ^17.0.1 || ^18.0.0
     dependencies:
-      immer: 9.0.14
+      immer: 9.0.15
       react: 17.0.2
     dev: false
 

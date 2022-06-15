@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.13-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.12...0.1.13-rc.0) (2022-06-15)
+
+
+### Bug Fixes
+
+* **settings:** Change settings popper so it doesn't block the rest of the UI ([cb3bc0f](https://github.com/InformaticsMatters/squonk-frontend/commit/cb3bc0fb5a67ae3f713e521e5df399aff87e3ddf))
+
 ### [0.1.12](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.12-rc.0...0.1.12) (2022-06-13)
 
 ### [0.1.12-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.11...0.1.12-rc.0) (2022-06-13)

@@ -94,17 +94,17 @@ export const ProjectStatsSection = () => {
     () => [
       {
         id: "for-layout-only-1",
-        defaultCanSort: false,
+        disableSortBy: true,
       },
       {
         id: "storageName",
-        Header: "Dataset storage",
+        Header: "", // We don't want a header for this column
         accessor: (row) => row.product.name,
-        defaultCanSort: false,
+        disableSortBy: true,
       },
       {
         id: "for-layout-only-2",
-        defaultCanSort: false,
+        disableSortBy: true,
       },
       {
         id: "usage",
@@ -113,24 +113,27 @@ export const ProjectStatsSection = () => {
         Cell: ({ row }: Cell<ProductDmStorage>) => {
           return <StorageUsageChart storageSubscription={row.original} />;
         },
+        disableSortBy: true,
+      },
+      {
+        id: "for-layout-only-3",
+        disableSortBy: true,
       },
       {
         id: "used",
         accessor: (row) => row.storage.coins.used,
         Header: "Used",
+        disableSortBy: true,
       },
       {
         id: "allowance",
         accessor: (row) => row.coins.allowance,
         Header: "Allowance",
-      },
-      {
-        id: "for-layout-only-3",
-        defaultCanSort: false,
+        disableSortBy: true,
       },
       {
         id: "for-layout-only-4",
-        defaultCanSort: false,
+        disableSortBy: true,
       },
     ],
     [],

@@ -41,7 +41,7 @@ specifiers:
   eslint-plugin-react-hooks: 4.6.0
   eslint-plugin-simple-import-sort: 7.0.0
   eslint-plugin-unused-imports: 2.0.0
-  filesize: 9.0.2
+  filesize: 9.0.7
   formik: 2.2.9
   formik-mui: 4.0.0-alpha.3
   formik-mui-lab: 1.0.0-alpha.3
@@ -101,7 +101,7 @@ dependencies:
   '@types/uuid': 8.3.4
   axios: 0.27.2
   dayjs: 1.11.3
-  filesize: 9.0.2
+  filesize: 9.0.7
   formik: 2.2.9_react@17.0.2
   formik-mui: 4.0.0-alpha.3_ab9aba0590869ba6a89c0a88fc8d7701
   formik-mui-lab: 1.0.0-alpha.3_a89871a795afa5d6302a78255e0a042a
@@ -2630,8 +2630,8 @@ packages:
       tslib: 2.4.0
     dev: false
 
-  /filesize/9.0.2:
-    resolution: {integrity: sha512-54L30Kx9BMxvF+AdOPve5OOQa4jbwbCn8c22XUV9SNnL6RhidUj/NEeRa7orQHILBPZ9ImBXj+RWsWn99weK+g==}
+  /filesize/9.0.7:
+    resolution: {integrity: sha512-Mw5L1VaqunuV9anYHQz1sS04Y/eKDntIHKWGi5L2p6SI9/476E+RAsOsNHmsqARoJ2nWpTfhZ2NCoe8F4IL7rA==}
     engines: {node: '>= 0.4.0'}
     dev: false
 

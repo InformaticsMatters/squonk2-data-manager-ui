@@ -48,7 +48,7 @@
     "@types/lodash-es": "4.17.6",
     "@types/node": "16.11.41",
     "@types/plotly.js-basic-dist": "1.54.0",
-    "@types/react": "17.0.45",
+    "@types/react": "17.0.46",
     "@types/react-plotly.js": "2.5.1",
     "@types/react-table": "7.7.12",
     "@types/react-virtualized": "9.21.21",

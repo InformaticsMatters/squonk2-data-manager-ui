@@ -11,7 +11,7 @@ import {
   TimelineOppositeContent,
   TimelineSeparator,
 } from "@mui/lab";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 
 import { LocalTime } from "../../LocalTime";
 
@@ -61,7 +61,7 @@ export interface TimelineSectionProps {
 const TimelineSection = ({ showConnector, label, time }: TimelineSectionProps) => {
   return (
     <TimelineItem sx={{ minHeight: "40px" }}>
-      <TimelineOppositeContent>
+      <TimelineOppositeContent sx={{ flex: "unset" }}>
         <TimeLineLabel color="textSecondary">
           <LocalTime showTime showDate={false} utcTimestamp={time} />
         </TimeLineLabel>
@@ -70,7 +70,7 @@ const TimelineSection = ({ showConnector, label, time }: TimelineSectionProps) =
         <TimelineDot />
         {showConnector && <TimelineConnector />}
       </TimelineSeparator>
-      <TimelineContent sx={{ overflowX: label.includes("\n") ? "scroll" : undefined }}>
+      <TimelineContent sx={{ overflowX: label.includes("\n") ? "auto" : undefined }}>
         <TimeLineLabel>{label}</TimeLineLabel>
       </TimelineContent>
     </TimelineItem>
@@ -80,16 +80,18 @@ const TimelineSection = ({ showConnector, label, time }: TimelineSectionProps) =
 export type TimeLineLabelProps = ComponentProps<typeof Typography>;
 
 const TimeLineLabel = ({ children, ...typographyProps }: TimeLineLabelProps) => {
+  const theme = useTheme();
+  theme.typography;
   if (typeof children === "string" && children.includes("\n")) {
     return (
       <Box
         component="pre"
+        fontSize="body2.fontSize"
+        m={0}
         sx={{
-          margin: 0,
           display: "inline-block",
           textAlign: "left",
           fontFamily: "'Fira Mono', monospace",
-          // overflowX: "scroll",
         }}
       >
         {children}

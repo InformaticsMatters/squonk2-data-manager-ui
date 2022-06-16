@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.14-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.13...0.1.14-rc.0) (2022-06-16)
+
+
+### Bug Fixes
+
+* **dataset-storage-table:** Adjust columns in dataset storage table in the settings UI ([725f97e](https://github.com/InformaticsMatters/squonk-frontend/commit/725f97e8b114fbba681040b202ab78a6476d7e7e)), closes [#596](https://github.com/InformaticsMatters/squonk-frontend/issues/596)
+* **result-timeline:** Improve display of results timeline ([c2243fb](https://github.com/InformaticsMatters/squonk-frontend/commit/c2243fb4ceeb8e28158b3125b66147a43cc9e827))
+* **settings:** Fix position of user menu popper ([1f836ae](https://github.com/InformaticsMatters/squonk-frontend/commit/1f836ae981ed291e18a37443a00455495c4e86b0))
+
 ### [0.1.13](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.13-rc.0...0.1.13) (2022-06-15)
 
 ### [0.1.13-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.12...0.1.13-rc.0) (2022-06-15)

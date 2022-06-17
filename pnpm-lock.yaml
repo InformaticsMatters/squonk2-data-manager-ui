@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@auth0/nextjs-auth0': 1.9.0
+  '@auth0/nextjs-auth0': 1.9.1
   '@emotion/cache': 11.9.3
   '@emotion/react': 11.9.3
   '@emotion/server': 11.4.0
@@ -73,7 +73,7 @@ specifiers:
   yup: 0.32.11
 
 dependencies:
-  '@auth0/nextjs-auth0': 1.9.0_next@12.1.6
+  '@auth0/nextjs-auth0': 1.9.1_next@12.1.6
   '@emotion/cache': 11.9.3
   '@emotion/react': 11.9.3_8b4bf30df26f470d2d4de6eff5bfade0
   '@emotion/server': 11.4.0
@@ -148,8 +148,8 @@ devDependencies:
 
 packages:
 
-  /@auth0/nextjs-auth0/1.9.0_next@12.1.6:
-    resolution: {integrity: sha512-NYM545sXeF7GNrUIr7eZ5oZo0EVhKRCnDL27v6tw4Og/OfRt/QbzX7D//jjN/pjqg8KWZvmwit+zDa2X7dp+tQ==}
+  /@auth0/nextjs-auth0/1.9.1_next@12.1.6:
+    resolution: {integrity: sha512-GvX1Ke9YzZRogIvSZhRRuZFwvw5DNuQv233VBUHrUwNi+z/XFE6ZRC0y22NgLsz4xsVdG9WicEwqoFT4rNL/Bw==}
     engines: {node: ^10.13.0 || >=12.0.0}
     peerDependencies:
       next: '>=10'
@@ -1880,7 +1880,7 @@ packages:
     dev: true
 
   /clone-response/1.0.2:
-    resolution: {integrity: sha1-0dyXOSAxTfZ/vrlCI7TuNQI56Ws=}
+    resolution: {integrity: sha512-yjLXh88P599UOyPTFX0POsd7WxnbsVsGohcwzHOLspIhhpalPw1BcqED8NblyZLKcGrL8dTgMlcaZxV2jAD41Q==}
     dependencies:
       mimic-response: 1.0.1
     dev: false
@@ -2110,7 +2110,7 @@ packages:
     dev: false
 
   /depd/1.1.2:
-    resolution: {integrity: sha1-m81S4UwJd2PnSbJ0xDRu0uVgtak=}
+    resolution: {integrity: sha512-7emPTl6Dpo6JRXOXjLRxck+FlLRX5847cLKEn00PLAgc3g2hTZZgr+e4c2v6QpSmLeFP3n5yUo7ft6avBK/5jQ==}
     engines: {node: '>= 0.6'}
     dev: false
 
@@ -4911,7 +4911,7 @@ packages:
     dev: false
 
   /statuses/1.5.0:
-    resolution: {integrity: sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=}
+    resolution: {integrity: sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==}
     engines: {node: '>= 0.6'}
     dev: false
 

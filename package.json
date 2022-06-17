@@ -27,7 +27,7 @@
     ]
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "1.9.0",
+    "@auth0/nextjs-auth0": "1.9.1",
     "@emotion/cache": "11.9.3",
     "@emotion/react": "11.9.3",
     "@emotion/server": "11.4.0",

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.15-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.14...0.1.15-rc.0) (2022-06-17)
+
+
+### Bug Fixes
+
+* **jobs-page:** Fix rerun job button not using changes to inputs ([6442cd8](https://github.com/InformaticsMatters/squonk-frontend/commit/6442cd88a423f2ea1ce1c6852996381b84a037cd)), closes [#601](https://github.com/InformaticsMatters/squonk-frontend/issues/601)
+
 ### [0.1.14](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.14-rc.0...0.1.14) (2022-06-16)
 
 ### [0.1.14-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.13...0.1.14-rc.0) (2022-06-16)

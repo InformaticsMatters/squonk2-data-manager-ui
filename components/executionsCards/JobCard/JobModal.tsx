@@ -105,7 +105,7 @@ export const JobModal = ({
         collection: job.collection,
         job: job.job,
         version: job.version,
-        variables: { ...inputsData, ...optionsFormData },
+        variables: { ...optionsFormData, ...inputsData },
       };
       try {
         await createInstance({

@@ -14,6 +14,7 @@ export const useEnqueueError = <TError>() => {
       enqueueSnackbar(error, { variant: "error" });
     } else {
       // Anything else
+      console.error(error);
       enqueueSnackbar("An unknown error occurred", { variant: "error" });
     }
   };

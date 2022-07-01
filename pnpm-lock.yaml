@@ -17,7 +17,7 @@ specifiers:
   '@rjsf/core': 4.2.0
   '@rjsf/material-ui': 4.2.0
   '@sentry/nextjs': 6.19.7
-  '@squonk/account-server-client': 0.1.31
+  '@squonk/account-server-client': 0.1.33
   '@squonk/data-manager-client': 0.7.14
   '@squonk/eslint-config': 0.4.2
   '@squonk/mui-theme': 3.0.1
@@ -88,7 +88,7 @@ dependencies:
   '@rjsf/core': 4.2.0_react@17.0.2
   '@rjsf/material-ui': 4.2.0_63ca8ca43649586ca7032016b489896e
   '@sentry/nextjs': 6.19.7_next@12.1.6+react@17.0.2
-  '@squonk/account-server-client': 0.1.31_axios@0.27.2+react-query@3.39.1
+  '@squonk/account-server-client': 0.1.33_axios@0.27.2+react-query@3.39.1
   '@squonk/data-manager-client': 0.7.14_axios@0.27.2+react-query@3.39.1
   '@squonk/mui-theme': 3.0.1_@mui+material@5.8.4
   '@types/lodash-es': 4.17.6
@@ -1169,8 +1169,8 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /@squonk/account-server-client/0.1.31_axios@0.27.2+react-query@3.39.1:
-    resolution: {integrity: sha512-DOO2UZMG7bt8PcrQNyUc/FWEHgfVvTacEwyMuYPlOC9ZcTdabVg2kyZkc5KuVh9a0xw642sCfVhXEiCywbsmQA==}
+  /@squonk/account-server-client/0.1.33_axios@0.27.2+react-query@3.39.1:
+    resolution: {integrity: sha512-8gtEQM3M4aZ9hctD+D81IXJvfHMWs9d9V4jGXyO5i8kUOlm8g3CvrThxnCFoThRj/fh5HCzNx4A0gPu6NF9MdQ==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
@@ -4464,6 +4464,7 @@ packages:
     resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
     engines: {node: '>=10.13.0'}
     hasBin: true
+    dev: false
 
   /process-nextick-args/2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
@@ -5177,6 +5178,7 @@ packages:
     resolution: {integrity: sha512-9ia/jWHIEbo49HfjrLGfKbZSuWo9iTMwXO+Ca3pRsSpbsMbc7/IU8NKdCZVRRBafVPGnoJeFL76ZOAA84I9fEg==}
     engines: {node: '>=4.2.0'}
     hasBin: true
+    dev: false
 
   /unbox-primitive/1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}

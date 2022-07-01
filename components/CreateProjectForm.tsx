@@ -75,13 +75,13 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
   const create = async ({ projectName, flavour, isPrivate }: typeof initialValues) => {
     const [organisationId, unitId] = await getIds(orgAndUnit);
     // Get the (possibly optional) service ID from the selected product type
-    const serviceId = productTypes?.find(
+    const serviceKind = productTypes?.find(
       (productType) => productType.flavour === flavour && productType.type === PROJECT_SUB,
-    )?.service;
+    )?.service_kind;
     // The service ID is required so we error here - sadly there isn't much the user can do here
     // This would only happen due to an API error
     // TODO: Report this to Sentry
-    if (serviceId === undefined) {
+    if (serviceKind === undefined) {
       throw new Error("Service ID was missing in the product type. ");
     }
 
@@ -92,7 +92,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
         type: PROJECT_SUB,
         billing_day: getBillingDay(),
         flavour: flavour as UnitProductPostBodyBodyFlavour,
-        service_id: serviceId.id,
+        service_id: 1,
       },
     });
 

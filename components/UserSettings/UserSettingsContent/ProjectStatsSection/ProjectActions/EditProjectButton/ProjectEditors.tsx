@@ -85,9 +85,7 @@ export const ProjectEditors = ({ project, projectProduct }: ProjectEditorsProps)
 
     // AS queries
     queryClient.invalidateQueries(getGetProductsForUnitQueryKey(projectProduct.unit.id));
-    queryClient.invalidateQueries(
-      getGetProductQueryKey(projectProduct.unit.id, projectProduct.product.id),
-    );
+    queryClient.invalidateQueries(getGetProductQueryKey(projectProduct.product.id));
   };
 
   return !!availableUsers && !!currentUser.username ? (

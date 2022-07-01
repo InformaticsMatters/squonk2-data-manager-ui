@@ -81,7 +81,6 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
                 format_extra_variables: optionsFormData[parent.type]
                   ? JSON.stringify(optionsFormData[parent.type])
                   : undefined,
-                organisation_id: org.id,
                 unit_id: unit.id,
               },
               {

@@ -70,7 +70,6 @@ export const CreateDatasetFromFileButton = ({
                   file_name: file.fileName,
                   path,
                   dataset_type: mimeType,
-                  organisation_id: org.id,
                   unit_id: unit.id,
                 },
               });

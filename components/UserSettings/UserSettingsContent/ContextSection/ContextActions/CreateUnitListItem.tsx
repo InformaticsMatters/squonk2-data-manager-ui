@@ -41,9 +41,9 @@ export const CreateUnitListItem = () => {
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<AsError>();
 
-  const changeContext = async (organisationId: string, unitId: string) => {
+  const changeContext = async (unitId: string) => {
     try {
-      const unitResponse = await getUnit(organisationId, unitId);
+      const unitResponse = await getUnit(unitId);
       // Currently, UnitDetail == UnitGetResponse so this works fine for now
       dispatchOrganisationUnit({ type: "setUnit", payload: unitResponse });
     } catch (error) {
@@ -65,7 +65,7 @@ export const CreateUnitListItem = () => {
       queryClient.invalidateQueries(getGetUnitsQueryKey());
 
       // Change context outside of this try-catch block
-      changeContext(organisation.id, unitId);
+      changeContext(unitId);
     }
   };
 

@@ -6,8 +6,8 @@ specifiers:
   '@emotion/react': 11.9.3
   '@emotion/server': 11.4.0
   '@emotion/styled': 11.9.3
-  '@mdx-js/loader': 2.1.1
-  '@mdx-js/react': 2.1.1
+  '@mdx-js/loader': 2.1.2
+  '@mdx-js/react': 2.1.2
   '@mui/icons-material': 5.8.4
   '@mui/lab': 5.0.0-alpha.88
   '@mui/material': 5.8.6
@@ -78,8 +78,8 @@ dependencies:
   '@emotion/react': 11.9.3_9506f604383c27787a7cb97c95a04323
   '@emotion/server': 11.4.0
   '@emotion/styled': 11.9.3_08385cda48f1ebef18a5fc9b7c7575cb
-  '@mdx-js/loader': 2.1.1
-  '@mdx-js/react': 2.1.1_react@17.0.2
+  '@mdx-js/loader': 2.1.2
+  '@mdx-js/react': 2.1.2_react@17.0.2
   '@mui/icons-material': 5.8.4_01772d5e85a62bfed077f3abe6a2e54a
   '@mui/lab': 5.0.0-alpha.88_9bcf696cbd5d240a1d9ac4a5fafe0e3b
   '@mui/material': 5.8.6_66581c895a851b16dd21f66d733daa65
@@ -447,8 +447,8 @@ packages:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
 
-  /@mdx-js/loader/2.1.1:
-    resolution: {integrity: sha512-24danl02C30QoXVQTqvoEL84jN1e2BBSYMk9A/DGYBtHWXg5kdVp+A6P4hrFOwHvkEIjRbY0N49jPOSbpOgrOQ==}
+  /@mdx-js/loader/2.1.2:
+    resolution: {integrity: sha512-P7CWhrqE5rZ3ewBngZ9t/zQPbSq42iuty78K3zJ8Bl518qnOX1d106c+n7I/zHODPAmw9JfYMQdbv9WrrHa0DA==}
     peerDependencies:
       webpack: '>=4'
     dependencies:
@@ -482,8 +482,8 @@ packages:
       - supports-color
     dev: false
 
-  /@mdx-js/react/2.1.1_react@17.0.2:
-    resolution: {integrity: sha512-7zlZDf5xmWH8I0kFE4DG91COOkxjaW9DX5f1HWztZpFcVua2gJgMYfIkFaDpO/DH/tWi6Mz+OheW4194r15igg==}
+  /@mdx-js/react/2.1.2_react@17.0.2:
+    resolution: {integrity: sha512-52e3DTJBrjsw3U51ZCdZ3N1IBaqnbzLIngCSXpKtiYiGr7PIqp3/P/+kym0MPTwBL/y9ZBmCieD8FyrXuEDrRw==}
     peerDependencies:
       react: '>=16'
     dependencies:
@@ -3684,7 +3684,7 @@ packages:
     dev: false
 
   /mdurl/1.0.1:
-    resolution: {integrity: sha1-/oWy7HWlkDfyrf7BAP1sYBdhFS4=}
+    resolution: {integrity: sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==}
     dev: false
 
   /merge-stream/2.0.0:

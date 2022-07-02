@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nextjs";
 import type { AxiosError } from "axios";
 import { useSnackbar } from "notistack";
 
@@ -15,7 +16,8 @@ export const useEnqueueError = <TError>() => {
     } else {
       // Anything else
       console.error(error);
-      enqueueSnackbar("An unknown error occurred", { variant: "error" });
+      captureException(error);
+      enqueueSnackbar("An unknown error occurred. This has been reported.", { variant: "error" });
     }
   };
 

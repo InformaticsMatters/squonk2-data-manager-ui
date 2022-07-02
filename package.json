@@ -41,7 +41,7 @@
     "@next/eslint-plugin-next": "12.1.6",
     "@rjsf/core": "4.2.0",
     "@rjsf/material-ui": "4.2.0",
-    "@sentry/nextjs": "6.19.7",
+    "@sentry/nextjs": "7.4.1",
     "@squonk/account-server-client": "0.1.35",
     "@squonk/data-manager-client": "0.7.17rc.1",
     "@squonk/mui-theme": "3.0.1",

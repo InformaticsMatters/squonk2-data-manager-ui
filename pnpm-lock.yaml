@@ -43,7 +43,7 @@ specifiers:
   eslint-plugin-unused-imports: 2.0.0
   filesize: 9.0.11
   formik: 2.2.9
-  formik-mui: 4.0.0-alpha.3
+  formik-mui: 4.0.0
   formik-mui-lab: 1.0.0-alpha.3
   husky: 8.0.1
   identity-obj-proxy: 3.0.0
@@ -103,7 +103,7 @@ dependencies:
   dayjs: 1.11.3
   filesize: 9.0.11
   formik: 2.2.9_react@17.0.2
-  formik-mui: 4.0.0-alpha.3_550d50288436f583ac3a0ad752812519
+  formik-mui: 4.0.0_550d50288436f583ac3a0ad752812519
   formik-mui-lab: 1.0.0-alpha.3_1c4b6f74f0f0c69cc348a41d0113839c
   immer: 9.0.15
   lodash-es: 4.17.21
@@ -2698,8 +2698,8 @@ packages:
       react: 17.0.2
     dev: false
 
-  /formik-mui/4.0.0-alpha.3_550d50288436f583ac3a0ad752812519:
-    resolution: {integrity: sha512-a696XpNIYulBd3LcwPt1+3BqtArdA/1hZryxMXT9azwucNwMcnnpVMR10yn6Qycd7eT//qv8V+r1XTBn0X8S1w==}
+  /formik-mui/4.0.0_550d50288436f583ac3a0ad752812519:
+    resolution: {integrity: sha512-1IzYE83t/Hz05XMQuqs3i/yL7vteqCtjwJDXPBKtomzbif96OrTB2dFk26XEBJaB6ogmtKcxLogrtex3pbOp2A==}
     peerDependencies:
       '@emotion/react': '>=11.4.1'
       '@emotion/styled': '>=11.3.0'

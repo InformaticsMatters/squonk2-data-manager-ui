@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.16-rc.1](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.16-rc.0...0.1.16-rc.1) (2022-07-02)
+
+
+### Bug Fixes
+
+* **project-selection:** Fix column widths and headers ([8edab17](https://github.com/InformaticsMatters/squonk-frontend/commit/8edab179380e4150be21c0a570948a1ec3c46839))
+* **select-organisation:** Show all organisations, not just those with units ([57cd060](https://github.com/InformaticsMatters/squonk-frontend/commit/57cd060a9ed55837ed2189434549651758ecbca0))
+
 ### [0.1.16-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.15...0.1.16-rc.0) (2022-07-02)
 
 

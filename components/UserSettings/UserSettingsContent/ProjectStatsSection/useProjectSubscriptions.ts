@@ -2,22 +2,32 @@ import { useMemo } from "react";
 
 import type { ProductDmProjectTier } from "@squonk/account-server-client";
 import { useGetProductsForUnit } from "@squonk/account-server-client/product";
+import type { ProjectDetail } from "@squonk/data-manager-client";
+import { useGetProjects } from "@squonk/data-manager-client/project";
 
 import { useOrganisationUnit } from "../../../../context/organisationUnitContext";
 
+export type ProductDmProjectTierAndOwner = ProductDmProjectTier & {
+  owner?: ProjectDetail["owner"];
+};
+
 /**
  * Fetches information about account's project subscriptions.
+ * Merges the project owner into each product
  */
 export const useProjectSubscriptions = () => {
   const {
     organisationUnit: { unit },
   } = useOrganisationUnit();
 
+  const { data: projectsData } = useGetProjects();
+  const projects = projectsData?.projects;
+
   const { data, isLoading, isError, error } = useGetProductsForUnit(unit?.id ?? "", {
     query: { enabled: !!unit?.id },
   });
 
-  const projectSubscriptions = useMemo(() => {
+  const projectSubscriptions: ProductDmProjectTierAndOwner[] = useMemo(() => {
     if (!data) {
       return [];
     }
@@ -27,8 +37,12 @@ export const useProjectSubscriptions = () => {
         (product): product is ProductDmProjectTier =>
           product.product.type === "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
       )
-      .filter((product) => Boolean(product.claim));
-  }, [data]);
+      .filter((product) => Boolean(product.claim))
+      .map((product) => {
+        const owner = projects?.find((project) => project.product_id === product.product.id)?.owner;
+        return { ...product, owner };
+      });
+  }, [data, projects]);
 
   return { projectSubscriptions, isLoading, isError, error };
 };

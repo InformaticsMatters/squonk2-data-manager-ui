@@ -13,6 +13,7 @@ import { ProjectActions } from "./ProjectActions";
 import { ProjectSelectionRadio } from "./ProjectSelectionRadio";
 import { ProjectUsageChart } from "./ProjectUsageChart";
 import { StorageUsageChart } from "./StorageUsageChart";
+import type { ProductDmProjectTierAndOwner } from "./useProjectSubscriptions";
 import { useProjectSubscriptions } from "./useProjectSubscriptions";
 import { useStorageSubscriptions } from "./useStorageSubscriptions";
 
@@ -37,7 +38,7 @@ export const ProjectStatsSection = () => {
     error: storageSubscriptionsError,
   } = useStorageSubscriptions();
 
-  const projectsColumns: Column<ProductDmProjectTier>[] = useMemo(
+  const projectsColumns: Column<ProductDmProjectTierAndOwner>[] = useMemo(
     () => [
       {
         id: "projectSelection",
@@ -50,6 +51,11 @@ export const ProjectStatsSection = () => {
         id: "projectName",
         accessor: (row) => row.claim?.name,
         Header: "Project name",
+      },
+      {
+        id: "owner",
+        accessor: (row) => row.owner,
+        Header: "Owner",
       },
       {
         id: "tier",

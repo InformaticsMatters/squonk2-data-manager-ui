@@ -57,7 +57,7 @@
     "dayjs": "1.11.3",
     "filesize": "9.0.11",
     "formik": "2.2.9",
-    "formik-mui": "4.0.0-alpha.3",
+    "formik-mui": "4.0.0",
     "formik-mui-lab": "1.0.0-alpha.3",
     "immer": "9.0.15",
     "lodash-es": "4.17.21",

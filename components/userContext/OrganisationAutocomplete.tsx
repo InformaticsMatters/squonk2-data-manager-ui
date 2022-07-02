@@ -1,5 +1,5 @@
 import type { OrganisationDetail } from "@squonk/account-server-client";
-import { useGetUnits } from "@squonk/account-server-client/unit";
+import { useGetOrganisations } from "@squonk/account-server-client/organisation";
 
 import type { AutocompleteProps } from "@mui/material";
 import { Autocomplete, TextField, Typography } from "@mui/material";
@@ -17,11 +17,11 @@ type OrganisationAutocompleteProps = Omit<
  * Autocomplete which lists organisations available to a user to select as context.
  */
 export const OrganisationAutocomplete = (props: OrganisationAutocompleteProps) => {
-  const { data, isLoading, isError, error } = useGetUnits();
   const { organisationUnit, dispatchOrganisationUnit } = useOrganisationUnit();
   const { setCurrentProjectId } = useCurrentProjectId();
 
-  const organisations = data?.units.map(({ organisation }) => organisation) || [];
+  const { data, isLoading, isError, error } = useGetOrganisations();
+  const organisations = data?.organisations ?? [];
 
   if (isError) {
     return <Typography color="error">{getErrorMessage(error)}</Typography>;

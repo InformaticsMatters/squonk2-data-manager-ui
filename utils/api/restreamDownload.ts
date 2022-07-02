@@ -40,8 +40,8 @@ const createFixedSizeStreamTransform = (fileSizeLimit: string | string[]) => {
 };
 
 const createPipeline = (
-  decompress: string | string[],
-  fileSizeLimit: string | string[],
+  decompress: string | string[] | undefined,
+  fileSizeLimit: string | string[] | undefined,
   res: NextApiResponse,
 ): NodeJS.WritableStream[] => {
   const pipelineElements: NodeJS.WritableStream[] = [];

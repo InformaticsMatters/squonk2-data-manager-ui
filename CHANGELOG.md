@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.16-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.15...0.1.16-rc.0) (2022-07-02)
+
+
+### Features
+
+* **project-selection:** Add owner to settings project/product table ([5e9e978](https://github.com/InformaticsMatters/squonk-frontend/commit/5e9e978bd2b9219f4c6355837a56cf884929be2c))
+* **sentry:** Report "unknonw errors" to Sentry ([6759da3](https://github.com/InformaticsMatters/squonk-frontend/commit/6759da3610e5f9bc629347cfbb5a1408f19afa65))
+
+
+### Bug Fixes
+
+* **create-project:** Fix service id temporarily ([be2d8a8](https://github.com/InformaticsMatters/squonk-frontend/commit/be2d8a8c185a9df5adc929c64c1d726cbfde4199))
+* **create-unit:** Allow org members to create units ([282985f](https://github.com/InformaticsMatters/squonk-frontend/commit/282985f96729494f34b0c9dbb24f6eba7c1c7062))
+* Make UI compatible with breaking changes in squonk APIs ([6a76185](https://github.com/InformaticsMatters/squonk-frontend/commit/6a761853bf78e2b34e60c8965e7d7408e6c07900))
+
 ### [0.1.15](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.15-rc.0...0.1.15) (2022-06-17)
 
 ### [0.1.15-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.14...0.1.15-rc.0) (2022-06-17)

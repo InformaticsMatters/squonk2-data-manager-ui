@@ -26,7 +26,7 @@ export const ContextActions = () => {
 
   return (
     <List>
-      {isOrganisationOwner && <CreateUnitListItem />}
+      {(isOrganisationOwner || organisation?.caller_is_member) && <CreateUnitListItem />}
       <CreateProjectListItem />
     </List>
   );

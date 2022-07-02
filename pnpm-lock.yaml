@@ -36,7 +36,7 @@ specifiers:
   eslint: 8.19.0
   eslint-config-prettier: 8.5.0
   eslint-plugin-import: 2.26.0
-  eslint-plugin-prettier: 4.0.0
+  eslint-plugin-prettier: 4.2.1
   eslint-plugin-react: 7.30.1
   eslint-plugin-react-hooks: 4.6.0
   eslint-plugin-simple-import-sort: 7.0.0
@@ -130,13 +130,13 @@ dependencies:
 
 devDependencies:
   '@playwright/test': 1.23.1
-  '@squonk/eslint-config': 0.4.2_13f5e928f40f99eb8cce87dcd0785509
+  '@squonk/eslint-config': 0.4.2_572a5d1f97fd5b437e6d127e48cb3733
   '@typescript-eslint/eslint-plugin': 5.28.0_3cf3331bf68b93e7f8cebb5943a13caa
   '@typescript-eslint/parser': 5.28.0_eslint@8.19.0+typescript@4.6.4
   eslint: 8.19.0
   eslint-config-prettier: 8.5.0_eslint@8.19.0
   eslint-plugin-import: 2.26.0_fdb2661d0de804dcec39a3d49813c23c
-  eslint-plugin-prettier: 4.0.0_fd2e32b7574349919aac0818c3f895ea
+  eslint-plugin-prettier: 4.2.1_fd2e32b7574349919aac0818c3f895ea
   eslint-plugin-react: 7.30.1_eslint@8.19.0
   eslint-plugin-react-hooks: 4.6.0_eslint@8.19.0
   eslint-plugin-simple-import-sort: 7.0.0_eslint@8.19.0
@@ -1189,7 +1189,7 @@ packages:
       react-query: 3.39.1_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/eslint-config/0.4.2_13f5e928f40f99eb8cce87dcd0785509:
+  /@squonk/eslint-config/0.4.2_572a5d1f97fd5b437e6d127e48cb3733:
     resolution: {integrity: sha512-+bPuv25LjkbIe56msfmtUp+hM0GmUC5Sjk/1OHEzyMBtZHtv8z6z3ygszxS6iDB5RGwiN/c9NFKM/MXMmldrOA==}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^5.6.0
@@ -1207,7 +1207,7 @@ packages:
       '@typescript-eslint/parser': 5.28.0_eslint@8.19.0+typescript@4.6.4
       eslint: 8.19.0
       eslint-config-prettier: 8.5.0_eslint@8.19.0
-      eslint-plugin-prettier: 4.0.0_fd2e32b7574349919aac0818c3f895ea
+      eslint-plugin-prettier: 4.2.1_fd2e32b7574349919aac0818c3f895ea
       eslint-plugin-react: 7.30.1_eslint@8.19.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.19.0
       eslint-plugin-simple-import-sort: 7.0.0_eslint@8.19.0
@@ -2319,9 +2319,9 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-prettier/4.0.0_fd2e32b7574349919aac0818c3f895ea:
-    resolution: {integrity: sha512-98MqmCJ7vJodoQK359bqQWaxOE0CS8paAz/GgjaZLyex4TTk3g9HugoO89EqWCrFiOqn9EVvcoo7gZzONCWVwQ==}
-    engines: {node: '>=6.0.0'}
+  /eslint-plugin-prettier/4.2.1_fd2e32b7574349919aac0818c3f895ea:
+    resolution: {integrity: sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==}
+    engines: {node: '>=12.0.0'}
     peerDependencies:
       eslint: '>=7.28.0'
       eslint-config-prettier: '*'

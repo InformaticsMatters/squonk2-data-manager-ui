@@ -44,7 +44,7 @@ specifiers:
   filesize: 9.0.11
   formik: 2.2.9
   formik-mui: 4.0.0
-  formik-mui-lab: 1.0.0-alpha.3
+  formik-mui-lab: 1.0.0
   husky: 8.0.1
   identity-obj-proxy: 3.0.0
   immer: 9.0.15
@@ -104,7 +104,7 @@ dependencies:
   filesize: 9.0.11
   formik: 2.2.9_react@17.0.2
   formik-mui: 4.0.0_550d50288436f583ac3a0ad752812519
-  formik-mui-lab: 1.0.0-alpha.3_1c4b6f74f0f0c69cc348a41d0113839c
+  formik-mui-lab: 1.0.0_1c4b6f74f0f0c69cc348a41d0113839c
   immer: 9.0.15
   lodash-es: 4.17.21
   material-ui-popup-state: 3.1.1_66581c895a851b16dd21f66d733daa65
@@ -2679,8 +2679,8 @@ packages:
       fetch-blob: 3.1.5
     dev: false
 
-  /formik-mui-lab/1.0.0-alpha.3_1c4b6f74f0f0c69cc348a41d0113839c:
-    resolution: {integrity: sha512-YgiOPAI9y4+/Ko4ObZfyekho/dVfO6wWSZqQtMMFhicxnePTsjHDT8cipqocf1EsRIssdfViIUZm2xiMxykAMw==}
+  /formik-mui-lab/1.0.0_1c4b6f74f0f0c69cc348a41d0113839c:
+    resolution: {integrity: sha512-4YSpaFXJ4fJ+er2Eu/XNcKyrrcUEWQiwxWjnSbki9bxRjjSDiKWCrRlDgM+vdl/HEiO+XrwrxA5I9M+xU4r1tg==}
     peerDependencies:
       '@emotion/react': '>=11.4.1'
       '@emotion/styled': '>=11.3.0'

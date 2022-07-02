@@ -161,7 +161,7 @@ export const ProjectStatsSection = () => {
             },
             "& tr": {
               display: "grid",
-              gridTemplateColumns: "61px 1fr 110px 220px 100px 100px 100px 80px",
+              gridTemplateColumns: "61px 1fr 1fr 110px 220px 100px 100px 100px 80px",
             },
           },
         }}
@@ -182,9 +182,6 @@ export const ProjectStatsSection = () => {
             "& tr": {
               display: "grid",
               gridTemplateColumns: "61px 1fr 110px 220px 100px 100px 100px 80px",
-            },
-            "& th:nth-of-type(1) > *, th:nth-of-type(4) > *, th:nth-of-type(7) > *": {
-              visibility: "hidden",
             },
           },
         }}

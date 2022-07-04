@@ -60,7 +60,7 @@ specifiers:
   prettier: 2.7.1
   react: 17.0.2
   react-dom: 17.0.2
-  react-dropzone: 14.2.1
+  react-dropzone: 14.2.2
   react-plotly.js: 2.5.1
   react-query: 3.39.1
   react-table: 7.8.0
@@ -117,7 +117,7 @@ dependencies:
   prettier: 2.7.1
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
-  react-dropzone: 14.2.1_react@17.0.2
+  react-dropzone: 14.2.2_react@17.0.2
   react-plotly.js: 2.5.1_react@17.0.2
   react-query: 3.39.1_react-dom@17.0.2+react@17.0.2
   react-table: 7.8.0_react@17.0.2
@@ -5318,8 +5318,8 @@ packages:
       scheduler: 0.20.2
     dev: false
 
-  /react-dropzone/14.2.1_react@17.0.2:
-    resolution: {integrity: sha512-jzX6wDtAjlfwZ+Fbg+G17EszWUkQVxhMTWMfAC9qSUq7II2pKglHA8aarbFKl0mLpRPDaNUcy+HD/Sf4gkf76Q==}
+  /react-dropzone/14.2.2_react@17.0.2:
+    resolution: {integrity: sha512-5oyGN/B5rNhop2ggUnxztXBQ6q6zii+OMEftPzsxAR2hhpVWz0nAV+3Ktxo2h5bZzdcCKrpd8bfWAVsveIBM+w==}
     engines: {node: '>= 10.13'}
     peerDependencies:
       react: '>= 16.8 || 18.0.0'

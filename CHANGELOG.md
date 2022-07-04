@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.16-rc.2](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.16-rc.1...0.1.16-rc.2) (2022-07-04)
+
+
+### Bug Fixes
+
+* **create-unit:** Allow units to be created when only a org is selected ([efac5a8](https://github.com/InformaticsMatters/squonk-frontend/commit/efac5a856e006cbb4eb581990408bef3efb3bb70))
+* **typescript:** Fix nextjs types ([45cba71](https://github.com/InformaticsMatters/squonk-frontend/commit/45cba7117823d261461d1699fdc54d80405421a8))
+
 ### [0.1.16-rc.1](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.16-rc.0...0.1.16-rc.1) (2022-07-02)
 
 

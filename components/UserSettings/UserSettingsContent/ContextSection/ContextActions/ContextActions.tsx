@@ -1,4 +1,4 @@
-import { List, Typography } from "@mui/material";
+import { List } from "@mui/material";
 
 import { useOrganisationUnit } from "../../../../../context/organisationUnitContext";
 import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
@@ -16,18 +16,10 @@ export const ContextActions = () => {
 
   const isOrganisationOwner = organisation?.owner_id === user.username;
 
-  if (!unit && !isOrganisationOwner) {
-    return (
-      <Typography component="p" sx={{ mt: 1 }} variant="subtitle2">
-        Please select an organisation and a unit
-      </Typography>
-    );
-  }
-
   return (
     <List>
       {(isOrganisationOwner || organisation?.caller_is_member) && <CreateUnitListItem />}
-      <CreateProjectListItem />
+      {unit && <CreateProjectListItem />}
     </List>
   );
 };

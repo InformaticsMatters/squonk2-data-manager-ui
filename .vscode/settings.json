@@ -13,10 +13,12 @@
     },
     "editor.rulers": [
       100
-    ]
+    ],
   },
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifier": "relative",
   "files.associations": {
     ".env": "shellscript",
     ".env.*": "shellscript",
-  }
+  },
 }

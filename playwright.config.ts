@@ -2,7 +2,7 @@ import type { PlaywrightTestConfig } from "@playwright/test";
 
 const { BASE_URL, BASE_PATH = "", TEST_PORT } = process.env;
 
-if (!BASE_URL || !BASE_PATH || !TEST_PORT) {
+if (!BASE_URL || !TEST_PORT) {
   throw new Error("Possible missing environment variable: BASE_URL or BASE_PATH or TEST_PORT");
 }
 

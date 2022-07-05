@@ -7,7 +7,7 @@ import { CssBaseline } from "@mui/material";
 import { StyledEngineProvider, ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import StylesProvider from "@mui/styles/StylesProvider";
 
-import { useColorScheme } from "../context/colorSchemeContext";
+import { useColorScheme } from "../state/colorScheme";
 
 const { darkTheme, lightTheme } = generateThemes();
 

@@ -16,7 +16,6 @@ import { SnackbarProvider } from "notistack";
 
 import { ThemeProviders } from "../components/ThemeProviders";
 import { AS_API_URL, DM_API_URL, PROJECT_LOCAL_STORAGE_KEY } from "../constants";
-import { ColorSchemeProvider } from "../context/colorSchemeContext";
 import { SelectedFilesProvider } from "../context/fileSelectionContext";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
 import { OrganisationUnitProvider } from "../context/organisationUnitContext";
@@ -81,25 +80,23 @@ export default function App({
       <Head>
         <meta content="minimum-scale=1, initial-scale=1, width=device-width" name="viewport" />
       </Head>
-      <ColorSchemeProvider>
-        <ThemeProviders>
-          <UserProvider>
-            <QueryClientProvider client={queryClient}>
-              <Hydrate state={pageProps.dehydratedState}>
-                <SnackbarProvider>
-                  <SelectedFilesProvider>
-                    <MDXComponentProvider>
-                      <OrganisationUnitProvider>
-                        <Component {...pageProps} />
-                      </OrganisationUnitProvider>
-                    </MDXComponentProvider>
-                  </SelectedFilesProvider>
-                </SnackbarProvider>
-              </Hydrate>
-            </QueryClientProvider>
-          </UserProvider>
-        </ThemeProviders>
-      </ColorSchemeProvider>
+      <ThemeProviders>
+        <UserProvider>
+          <QueryClientProvider client={queryClient}>
+            <Hydrate state={pageProps.dehydratedState}>
+              <SnackbarProvider>
+                <SelectedFilesProvider>
+                  <MDXComponentProvider>
+                    <OrganisationUnitProvider>
+                      <Component {...pageProps} />
+                    </OrganisationUnitProvider>
+                  </MDXComponentProvider>
+                </SelectedFilesProvider>
+              </SnackbarProvider>
+            </Hydrate>
+          </QueryClientProvider>
+        </UserProvider>
+      </ThemeProviders>
     </CacheProvider>
   );
 }

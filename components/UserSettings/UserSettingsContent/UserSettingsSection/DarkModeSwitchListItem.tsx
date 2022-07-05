@@ -1,6 +1,6 @@
 import { ListItem, ListItemSecondaryAction, ListItemText, Switch } from "@mui/material";
 
-import { useColorScheme } from "../../../../context/colorSchemeContext";
+import { useColorScheme } from "../../../../state/colorScheme";
 
 /**
  * Displays a button which controls the theme of the application.

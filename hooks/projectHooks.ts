@@ -18,7 +18,7 @@ export const useCurrentProjectId = () => {
   const projectId = router.query.project as ProjectId;
 
   const setCurrentProjectId = (newProjectId?: string, shallow?: true) => {
-    writeToLocalStorage<ProjectLocalStoragePayload>(PROJECT_LOCAL_STORAGE_KEY, {
+    writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, {
       version: 1,
       projectId: newProjectId,
     });

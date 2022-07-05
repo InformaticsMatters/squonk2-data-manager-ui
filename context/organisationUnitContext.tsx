@@ -36,7 +36,7 @@ const OrganisationUnitUpdater = ({ dispatchOrganisationUnit }: OrganisationUnitU
 
   const currentProject = useCurrentProject();
   const { data: product } = useGetProduct(currentProject?.product_id ?? "", {
-    query: { enabled: !!currentProject?.unit_id && !!currentProject.product_id },
+    query: { enabled: !!currentProject?.product_id },
   });
 
   useEffect(() => {

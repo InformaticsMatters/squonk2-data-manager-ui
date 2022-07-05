@@ -13,6 +13,6 @@ export const getFromLocalStorage = <StoredValue>(
   }
 };
 
-export const writeToLocalStorage = <StoredValue>(key: string, value: StoredValue) => {
+export const writeToLocalStorage = (key: string, value: unknown) => {
   localStorage.setItem(key, JSON.stringify(value));
 };

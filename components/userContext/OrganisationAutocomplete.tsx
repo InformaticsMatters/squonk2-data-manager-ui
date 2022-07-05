@@ -39,9 +39,10 @@ export const OrganisationAutocomplete = (props: OrganisationAutocompleteProps) =
       renderInput={(params) => <TextField {...params} label="Organisation" />}
       value={organisationUnit.organisation ?? null}
       onChange={(_, organisation) => {
-        // Not the best solution but I couldnt figure out anything better
+        // Not the best solution but I couldn't figure out anything better
         if (organisation?.id !== organisationUnit.organisation?.id) {
           setCurrentProjectId();
+          dispatchOrganisationUnit({ type: "setUnit", payload: null });
         }
 
         dispatchOrganisationUnit({ type: "setOrganisation", payload: organisation });

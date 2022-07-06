@@ -13,12 +13,12 @@ interface ColorScheme {
   scheme: Scheme;
 }
 
-const defaultColorSchemePayload: ColorScheme = {
+const initialColorScheme: ColorScheme = {
   version: VERSION,
   scheme: "light",
 };
 
-const colorScheme = atomWithLocalStorage(COLOUR_SCHEME_STORAGE_KEY, defaultColorSchemePayload);
+const colorScheme = atomWithLocalStorage(COLOUR_SCHEME_STORAGE_KEY, initialColorScheme);
 
 /**
  * Hook to access and update the colour scheme for the app

@@ -18,7 +18,8 @@ export const ContextActions = () => {
 
   return (
     <List>
-      {(isOrganisationOwner || organisation?.caller_is_member) && <CreateUnitListItem />}
+      {(isOrganisationOwner || organisation?.caller_is_member) &&
+        organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && <CreateUnitListItem />}
       {unit && <CreateProjectListItem />}
     </List>
   );

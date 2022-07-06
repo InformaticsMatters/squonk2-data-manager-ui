@@ -16,8 +16,9 @@ import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import * as yup from "yup";
 
-import { useOrganisationUnit } from "../../../../../context/organisationUnitContext";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
+import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
+import { useSelectedUnit } from "../../../../../state/unitSelection";
 import { ModalWrapper } from "../../../../modals/ModalWrapper";
 
 /**
@@ -28,10 +29,9 @@ export const CreateUnitListItem = () => {
 
   const queryClient = useQueryClient();
 
-  const {
-    organisationUnit: { organisation },
-    dispatchOrganisationUnit,
-  } = useOrganisationUnit();
+  const [, setUnit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
+
   const { data } = useGetOrganisationUnits(organisation?.id ?? "", {
     query: { enabled: !!organisation?.id },
   });
@@ -44,8 +44,7 @@ export const CreateUnitListItem = () => {
   const changeContext = async (unitId: string) => {
     try {
       const unitResponse = await getUnit(unitId);
-      // Currently, UnitDetail == UnitGetResponse so this works fine for now
-      dispatchOrganisationUnit({ type: "setUnit", payload: unitResponse });
+      setUnit(unitResponse);
     } catch (error) {
       // For now only log the error, don't display anything to the user
       console.error(error);

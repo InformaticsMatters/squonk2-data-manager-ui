@@ -5,7 +5,7 @@ import { useGetProductsForUnit } from "@squonk/account-server-client/product";
 import type { ProjectDetail } from "@squonk/data-manager-client";
 import { useGetProjects } from "@squonk/data-manager-client/project";
 
-import { useOrganisationUnit } from "../../../../context/organisationUnitContext";
+import { useSelectedUnit } from "../../../../state/unitSelection";
 
 export type ProductDmProjectTierAndOwner = ProductDmProjectTier & {
   owner?: ProjectDetail["owner"];
@@ -16,9 +16,7 @@ export type ProductDmProjectTierAndOwner = ProductDmProjectTier & {
  * Merges the project owner into each product
  */
 export const useProjectSubscriptions = () => {
-  const {
-    organisationUnit: { unit },
-  } = useOrganisationUnit();
+  const [unit] = useSelectedUnit();
 
   const { data: projectsData } = useGetProjects();
   const projects = projectsData?.projects;

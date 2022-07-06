@@ -8,8 +8,9 @@ import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
 import { IconButton, Tooltip } from "@mui/material";
 import type { AxiosError } from "axios";
 
-import { useCurrentOrg, useCurrentUnit } from "../../context/organisationUnitContext";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
+import { useSelectedOrganisation } from "../../state/organisationSelection";
+import { useSelectedUnit } from "../../state/unitSelection";
 import { ModalWrapper } from "../modals/ModalWrapper";
 import { FileTypeOptions } from "../uploads/FileTypeOptions";
 import type { FileTypeOptionsState, UploadableFile } from "../uploads/types";
@@ -28,14 +29,14 @@ export const FileUpload = () => {
   // Ensure types are prefetched to mime lookup works
   const { isLoading: isTypesLoading } = useGetFileTypes();
 
-  const unit = useCurrentUnit();
-  const org = useCurrentOrg();
-  const unitOrOrgMissing = !unit || !org;
+  const [unit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
+  const unitOrOrgMissing = !unit || !organisation;
 
   const { enqueueError } = useEnqueueError();
 
   const uploadFiles = () => {
-    if (org && unit) {
+    if (organisation && unit) {
       files
         .filter((file) => !file.done)
         .forEach(async ({ file, rename, mimeType }, index) => {

@@ -4,8 +4,9 @@ import { useGetOrganisations } from "@squonk/account-server-client/organisation"
 import type { AutocompleteProps } from "@mui/material";
 import { Autocomplete, TextField, Typography } from "@mui/material";
 
-import { useOrganisationUnit } from "../../context/organisationUnitContext";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { useSelectedOrganisation } from "../../state/organisationSelection";
+import { useSelectedUnit } from "../../state/unitSelection";
 import { getErrorMessage } from "../../utils/orvalError";
 
 type OrganisationAutocompleteProps = Omit<
@@ -17,7 +18,8 @@ type OrganisationAutocompleteProps = Omit<
  * Autocomplete which lists organisations available to a user to select as context.
  */
 export const OrganisationAutocomplete = (props: OrganisationAutocompleteProps) => {
-  const { organisationUnit, dispatchOrganisationUnit } = useOrganisationUnit();
+  const [, setUnit] = useSelectedUnit();
+  const [organisation, setOrganisation] = useSelectedOrganisation();
   const { setCurrentProjectId } = useCurrentProjectId();
 
   const { data, isLoading, isError, error } = useGetOrganisations();
@@ -37,15 +39,15 @@ export const OrganisationAutocomplete = (props: OrganisationAutocompleteProps) =
       loading={isLoading}
       options={organisations}
       renderInput={(params) => <TextField {...params} label="Organisation" />}
-      value={organisationUnit.organisation ?? null}
-      onChange={(_, organisation) => {
+      value={organisation ?? null}
+      onChange={(_, newOrganisation) => {
         // Not the best solution but I couldn't figure out anything better
-        if (organisation?.id !== organisationUnit.organisation?.id) {
+        if (newOrganisation?.id !== organisation?.id) {
           setCurrentProjectId();
-          dispatchOrganisationUnit({ type: "setUnit", payload: null });
+          setUnit();
         }
 
-        dispatchOrganisationUnit({ type: "setOrganisation", payload: organisation });
+        setOrganisation(newOrganisation ?? undefined);
       }}
     />
   );

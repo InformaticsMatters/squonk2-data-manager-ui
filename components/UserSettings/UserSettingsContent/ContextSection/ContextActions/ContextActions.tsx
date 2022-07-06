@@ -1,7 +1,8 @@
 import { List } from "@mui/material";
 
-import { useOrganisationUnit } from "../../../../../context/organisationUnitContext";
 import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
+import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
+import { useSelectedUnit } from "../../../../../state/unitSelection";
 import { CreateProjectListItem } from "./CreateProjectListItem";
 import { CreateUnitListItem } from "./CreateUnitListItem";
 
@@ -9,9 +10,8 @@ import { CreateUnitListItem } from "./CreateUnitListItem";
  * Displays actions related to context.
  */
 export const ContextActions = () => {
-  const {
-    organisationUnit: { organisation, unit },
-  } = useOrganisationUnit();
+  const [unit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
   const { user } = useKeycloakUser();
 
   const isOrganisationOwner = organisation?.owner_id === user.username;

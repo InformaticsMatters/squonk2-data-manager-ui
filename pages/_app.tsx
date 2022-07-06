@@ -14,9 +14,9 @@ import Head from "next/head";
 import { SnackbarProvider } from "notistack";
 
 import { ThemeProviders } from "../components/ThemeProviders";
+import { TopLevelHooks } from "../components/TopLevelHooks";
 import { AS_API_URL, DM_API_URL } from "../constants";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
-import { OrganisationUnitProvider } from "../context/organisationUnitContext";
 import { useBindProjectFromLSToQParams } from "../hooks/useBindProjectFromLSToQParams";
 import createEmotionCache from "../utils/createEmotionCache";
 
@@ -69,9 +69,9 @@ export default function App({
             <Hydrate state={pageProps.dehydratedState}>
               <SnackbarProvider>
                 <MDXComponentProvider>
-                  <OrganisationUnitProvider>
+                  <TopLevelHooks>
                     <Component {...pageProps} />
-                  </OrganisationUnitProvider>
+                  </TopLevelHooks>
                 </MDXComponentProvider>
               </SnackbarProvider>
             </Hydrate>

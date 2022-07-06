@@ -14,7 +14,8 @@ import {
   Typography,
 } from "@mui/material";
 
-import { useCurrentOrg, useCurrentUnit } from "../../../context/organisationUnitContext";
+import { useSelectedOrganisation } from "../../../state/organisationSelection";
+import { useSelectedUnit } from "../../../state/unitSelection";
 import { ModalWrapper } from "../../modals/ModalWrapper";
 import { Dropzone } from "../../uploads/Dropzone";
 import { FileTypeOptions } from "../../uploads/FileTypeOptions";
@@ -44,8 +45,8 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
   // State to track per-file-type options for the new dataset version
   const [optionsFormData, setOptionsFormData] = useState<FileTypeOptionsState>({});
 
-  const unit = useCurrentUnit();
-  const org = useCurrentOrg();
+  const [unit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
 
   return (
     <>
@@ -69,7 +70,7 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
         onSubmit={async () => {
           const parentVersion = Math.max(...dataset.versions.map((v) => v.version));
           const parent = dataset.versions.find((version) => version.version === parentVersion);
-          if (file && parent && org && unit) {
+          if (file && parent && organisation && unit) {
             // For consistency with the main file upload, I don't use the mutation hook here. This
             // allows reliable upload progress tracking.
             const response = await uploadDataset(

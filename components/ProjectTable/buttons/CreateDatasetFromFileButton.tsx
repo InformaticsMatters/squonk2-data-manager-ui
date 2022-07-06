@@ -9,10 +9,11 @@ import {
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { IconButton, Tooltip } from "@mui/material";
 
-import { useCurrentOrg, useCurrentUnit } from "../../../context/organisationUnitContext";
 import type { ProjectId } from "../../../hooks/projectHooks";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { useMimeTypeLookup } from "../../../hooks/useMimeTypeLookup";
+import { useSelectedOrganisation } from "../../../state/organisationSelection";
+import { useSelectedUnit } from "../../../state/unitSelection";
 import type { TableFile } from "../types";
 
 export interface CreateDatasetFromFileButtonProps {
@@ -43,15 +44,15 @@ export const CreateDatasetFromFileButton = ({
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
-  const unit = useCurrentUnit();
-  const org = useCurrentOrg();
+  const [unit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
 
   return (
     <Tooltip title="Create a dataset from this unmanaged file">
       <IconButton
         size="small"
         onClick={async () => {
-          if (projectId && file.fullPath && org && unit) {
+          if (projectId && file.fullPath && organisation && unit) {
             // Get file extensions from the file name
             const [, ...extensions] = file.fileName.split(".");
             // Convert the extension to a mime-type

@@ -1,6 +1,8 @@
 import { Link, Typography } from "@mui/material";
 
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { useSelectedOrganisation } from "../../state/organisationSelection";
+import { useSelectedUnit } from "../../state/unitSelection";
 import { CenterLoader } from "../CenterLoader";
 import { UserSettings } from "../UserSettings";
 
@@ -9,6 +11,9 @@ import { UserSettings } from "../UserSettings";
  */
 export const UserMenuContent = () => {
   const { user, isLoading } = useKeycloakUser();
+  const [, setUnit] = useSelectedUnit();
+  const [, setOrganisation] = useSelectedOrganisation();
+
   return (
     <>
       <Typography gutterBottom variant="h3">
@@ -20,7 +25,14 @@ export const UserMenuContent = () => {
         <>
           <Typography>
             {user.username} /{" "}
-            <Link href="/api/auth/logout" onClick={() => localStorage.clear()}>
+            <Link
+              href="/api/auth/logout"
+              onClick={() => {
+                localStorage.clear();
+                setUnit();
+                setOrganisation();
+              }}
+            >
               Logout
             </Link>
           </Typography>

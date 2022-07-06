@@ -12,9 +12,10 @@ import { DeleteForever } from "@mui/icons-material";
 import type { AutocompleteProps } from "@mui/material";
 import { Autocomplete, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
 
-import { useOrganisationUnit } from "../../context/organisationUnitContext";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { useSelectedOrganisation } from "../../state/organisationSelection";
+import { useSelectedUnit } from "../../state/unitSelection";
 import { getErrorMessage } from "../../utils/orvalError";
 import { WarningDeleteButton } from "../WarningDeleteButton";
 
@@ -27,8 +28,8 @@ type UnitAutocompleteProps = Omit<
  * Autocomplete which lists context's organisation's units available to a user to select as context.
  */
 export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
-  const { organisationUnit, dispatchOrganisationUnit } = useOrganisationUnit();
-  const { organisation, unit } = organisationUnit;
+  const [unit, setUnit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
 
   const { setCurrentProjectId } = useCurrentProjectId();
 
@@ -36,9 +37,10 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
   const { data, isLoading, isError, error } = useGetOrganisationUnits(organisationId, {
     query: { enabled: !!organisationId },
   });
+  const units = data?.units;
 
   const queryClient = useQueryClient();
-  const { mutateAsync: deleteUnit } = useDeleteDefaultUnit();
+  const { mutateAsync: deleteUnit, isLoading: isDeleting } = useDeleteDefaultUnit();
 
   const { user } = useKeycloakUser();
   const isOwner = user.username === unit?.owner_id;
@@ -55,7 +57,7 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
       id="unit-selection"
       isOptionEqualToValue={(option, value) => option.id === value.id}
       loading={isLoading}
-      options={data?.units ?? []}
+      options={units ?? []}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -68,14 +70,19 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
                   title="Delete Unit"
                   tooltipText="Delete selected unit"
                   onDelete={async () => {
-                    dispatchOrganisationUnit({ type: "setUnit", payload: null });
                     await deleteUnit();
+                    setUnit();
                     queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisationId));
                     queryClient.invalidateQueries(getGetUnitsQueryKey());
                   }}
                 >
                   {({ openModal }) => (
-                    <IconButton aria-label="Delete selected unit" size="large" onClick={openModal}>
+                    <IconButton
+                      aria-label="Delete selected unit"
+                      disabled={isDeleting}
+                      size="large"
+                      onClick={openModal}
+                    >
                       <DeleteForever />
                     </IconButton>
                   )}
@@ -87,13 +94,12 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
         />
       )}
       value={unit ?? null}
-      onChange={(_, unit) => {
-        // Not the best solution but I couldnt figure out anything better
-        if (unit?.id !== organisationUnit.unit?.id) {
+      onChange={(_, newUnit) => {
+        // Not the best solution but I couldn't figure out anything better
+        if (newUnit?.id !== unit?.id) {
           setCurrentProjectId();
         }
-
-        dispatchOrganisationUnit({ type: "setUnit", payload: unit });
+        setUnit(newUnit ?? undefined);
       }}
     />
   );

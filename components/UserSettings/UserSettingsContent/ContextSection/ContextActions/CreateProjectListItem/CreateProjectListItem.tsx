@@ -3,7 +3,8 @@ import { useState } from "react";
 import { NoteAdd } from "@mui/icons-material";
 import { ListItem, ListItemText } from "@mui/material";
 
-import { useOrganisationUnit } from "../../../../../../context/organisationUnitContext";
+import { useSelectedOrganisation } from "../../../../../../state/organisationSelection";
+import { useSelectedUnit } from "../../../../../../state/unitSelection";
 import { CreateProjectForm } from "../../../../../CreateProjectForm";
 
 /**
@@ -12,15 +13,14 @@ import { CreateProjectForm } from "../../../../../CreateProjectForm";
 export const CreateProjectListItem = () => {
   const [open, setOpen] = useState(false);
 
-  const {
-    organisationUnit: { organisation, unit },
-  } = useOrganisationUnit();
+  const [unit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
 
   return (
     <>
       <ListItem
         button
-        disabled={organisation === null || unit === null}
+        disabled={organisation === undefined || unit === undefined}
         onClick={() => setOpen(true)}
       >
         <ListItemText

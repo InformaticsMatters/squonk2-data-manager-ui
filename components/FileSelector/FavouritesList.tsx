@@ -1,7 +1,7 @@
 import FolderSpecialRoundedIcon from "@mui/icons-material/FolderSpecialRounded";
 import { Typography } from "@mui/material";
 
-import { useSelectedFiles } from "../../context/fileSelectionContext";
+import { useSelectedFiles } from "../../state/fileSelection";
 import { FileListItem } from "./FileListItem";
 import { ScrollList } from "./ScrollList";
 import type { SharedProps } from "./types";

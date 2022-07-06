@@ -2,9 +2,9 @@ import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { IconButton, Tooltip } from "@mui/material";
 
-import type { SavedFile } from "../../../context/fileSelectionContext";
-import { useSelectedFiles } from "../../../context/fileSelectionContext";
 import type { ProjectId } from "../../../hooks/projectHooks";
+import type { SavedFile } from "../../../state/fileSelection";
+import { useSelectedFiles } from "../../../state/fileSelection";
 
 export interface FavouriteButtonProps {
   /**

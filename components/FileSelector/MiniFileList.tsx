@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Box, Checkbox, FormControlLabel } from "@mui/material";
 
-import { useSelectedFiles } from "../../context/fileSelectionContext";
+import { useSelectedFiles } from "../../state/fileSelection";
 import { AllFilesList } from "./AllFilesList";
 import { FavouritesList } from "./FavouritesList";
 import type { SharedProps } from "./types";

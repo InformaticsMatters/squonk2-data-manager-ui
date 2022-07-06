@@ -16,7 +16,6 @@ import { SnackbarProvider } from "notistack";
 
 import { ThemeProviders } from "../components/ThemeProviders";
 import { AS_API_URL, DM_API_URL, PROJECT_LOCAL_STORAGE_KEY } from "../constants";
-import { SelectedFilesProvider } from "../context/fileSelectionContext";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
 import { OrganisationUnitProvider } from "../context/organisationUnitContext";
 import type { ProjectLocalStoragePayload } from "../hooks/projectHooks";
@@ -85,13 +84,11 @@ export default function App({
           <QueryClientProvider client={queryClient}>
             <Hydrate state={pageProps.dehydratedState}>
               <SnackbarProvider>
-                <SelectedFilesProvider>
-                  <MDXComponentProvider>
-                    <OrganisationUnitProvider>
-                      <Component {...pageProps} />
-                    </OrganisationUnitProvider>
-                  </MDXComponentProvider>
-                </SelectedFilesProvider>
+                <MDXComponentProvider>
+                  <OrganisationUnitProvider>
+                    <Component {...pageProps} />
+                  </OrganisationUnitProvider>
+                </MDXComponentProvider>
               </SnackbarProvider>
             </Hydrate>
           </QueryClientProvider>

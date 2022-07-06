@@ -1,9 +1,9 @@
 import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
 import { PROJECT_FILE_LOCAL_STORAGE_KEY } from "../constants";
 import type { ProjectId } from "../hooks/projectHooks";
 import { useCurrentProjectId } from "../hooks/projectHooks";
-import { atomWithLocalStorage } from "../utils/state/atomWithLocalStorage";
 
 export type SavedFile = {
   path: string;
@@ -17,7 +17,7 @@ interface FileState {
 
 type UpdateFileSelection = (projectId: string) => (filePath: SavedFile) => void;
 
-const selectedFilesAtom = atomWithLocalStorage(PROJECT_FILE_LOCAL_STORAGE_KEY, {} as FileState);
+const selectedFilesAtom = atomWithStorage(PROJECT_FILE_LOCAL_STORAGE_KEY, {} as FileState);
 
 export const useSelectedFiles = (projectId?: ProjectId) => {
   const { projectId: currentProjectId } = useCurrentProjectId();

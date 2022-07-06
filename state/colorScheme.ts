@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
 import { COLOUR_SCHEME_STORAGE_KEY } from "../constants";
-import { atomWithLocalStorage } from "../utils/state/atomWithLocalStorage";
 
 // State saved to localStorage so we need to know if its old data if we update logic here
 const VERSION = 1;
@@ -18,7 +18,7 @@ const initialColorScheme: ColorScheme = {
   scheme: "light",
 };
 
-const colorScheme = atomWithLocalStorage(COLOUR_SCHEME_STORAGE_KEY, initialColorScheme);
+const colorScheme = atomWithStorage(COLOUR_SCHEME_STORAGE_KEY, initialColorScheme);
 
 /**
  * Hook to access and update the colour scheme for the app

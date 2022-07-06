@@ -11,16 +11,14 @@ import { CacheProvider } from "@emotion/react";
 import { enableMapSet } from "immer";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { SnackbarProvider } from "notistack";
 
 import { ThemeProviders } from "../components/ThemeProviders";
-import { AS_API_URL, DM_API_URL, PROJECT_LOCAL_STORAGE_KEY } from "../constants";
+import { AS_API_URL, DM_API_URL } from "../constants";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
 import { OrganisationUnitProvider } from "../context/organisationUnitContext";
-import type { ProjectLocalStoragePayload } from "../hooks/projectHooks";
+import { useBindProjectFromLSToQParams } from "../hooks/useBindProjectFromLSToQParams";
 import createEmotionCache from "../utils/createEmotionCache";
-import { getFromLocalStorage } from "../utils/localStorage";
 
 import "../styles/globalStyles.scss";
 
@@ -53,21 +51,7 @@ export default function App({
     }
   }, []);
 
-  const router = useRouter();
-
-  useEffect(
-    () => {
-      const { projectId } = getFromLocalStorage<
-        ProjectLocalStoragePayload | Record<string, undefined>
-      >(PROJECT_LOCAL_STORAGE_KEY, {});
-
-      if (router.isReady && projectId) {
-        router.push({ pathname: router.pathname, query: { project: projectId, ...router.query } });
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [router.query.project],
-  );
+  useBindProjectFromLSToQParams();
 
   // Vercel specific code is only imported if needed
   if (process.env.NEXT_PUBLIC_VERCEL_URL) {

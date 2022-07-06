@@ -50,7 +50,7 @@ const getIds = async (orgAndUnit: CreateProjectFormProps["orgAndUnit"]) => {
   return orgAndUnit;
 };
 
-const initialValues = { projectName: "", flavour: "", isPrivate: false };
+const initialValues = { projectName: "", flavour: "", isPrivate: true };
 
 type ProjectFormikProps = FormikConfig<typeof initialValues>;
 
@@ -144,7 +144,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
         )}
 
         <FormControlLabel
-          control={<Field color="primary" component={Checkbox} name="isPrivate" />}
+          control={<Field color="primary" component={Checkbox} name="isPrivate" type="checkbox" />}
           label="Private"
           labelPlacement="start"
         />

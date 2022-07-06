@@ -1,5 +1,4 @@
 import { Link, Typography } from "@mui/material";
-import NextLink from "next/link";
 
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { CenterLoader } from "../CenterLoader";
@@ -21,17 +20,15 @@ export const UserMenuContent = () => {
         <>
           <Typography>
             {user.username} /{" "}
-            <NextLink passHref href="/api/auth/logout">
-              <Link>Logout</Link>
-            </NextLink>
+            <Link href="/api/auth/logout" onClick={() => localStorage.clear()}>
+              Logout
+            </Link>
           </Typography>
           <UserSettings />
         </>
       ) : (
         <Typography>
-          <NextLink passHref href="/api/auth/login">
-            <Link>Login</Link>
-          </NextLink>
+          <Link href="/api/auth/login">Login</Link>
         </Typography>
       )}
     </>

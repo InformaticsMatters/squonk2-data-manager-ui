@@ -1,11 +1,10 @@
 import type { FC } from "react";
+import { useEffect, useState } from "react";
 
 import { generateThemes } from "@squonk/mui-theme";
 
-import { ThemeProvider } from "@emotion/react";
 import { CssBaseline } from "@mui/material";
-import { StyledEngineProvider, ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
-import StylesProvider from "@mui/styles/StylesProvider";
+import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 
 import { useColorScheme } from "../state/colorScheme";
 
@@ -17,16 +16,22 @@ const { darkTheme, lightTheme } = generateThemes();
 export const ThemeProviders: FC = ({ children }) => {
   // Color Scheme
   const [scheme] = useColorScheme();
-  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const [theme, setTheme] = useState(lightTheme);
+
+  // Set the theme client-side since we don't know whether the user has dark mode enabled in their
+  // localStorage
+  useEffect(() => {
+    if (scheme === "dark") {
+      setTheme(darkTheme);
+    } else {
+      setTheme(lightTheme);
+    }
+  }, [scheme]);
 
   return (
-    <StylesProvider injectFirst>
-      <StyledEngineProvider injectFirst>
-        <MuiThemeProvider theme={theme}>
-          <CssBaseline />
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
-        </MuiThemeProvider>
-      </StyledEngineProvider>
-    </StylesProvider>
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </MuiThemeProvider>
   );
 };

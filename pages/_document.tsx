@@ -75,9 +75,9 @@ MyDocument.getInitialProps = async (ctx) => {
   const emotionStyles = extractCriticalToChunks(initialProps.html);
   const emotionStyleTags = emotionStyles.styles.map((style) => (
     <style
+      // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{ __html: style.css }}
       data-emotion={`${style.key} ${style.ids.join(" ")}`}
-      // eslint-disable-next-line react/no-danger
       key={style.key}
     />
   ));

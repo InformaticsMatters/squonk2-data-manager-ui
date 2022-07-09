@@ -68,3 +68,9 @@ jobs:
         PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
         TEST_PORT: 3000
       run: pnpm test:ci
+    - name: Upload Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: Results
+        path: test-results

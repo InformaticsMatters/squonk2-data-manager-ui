@@ -3,7 +3,7 @@ import type { PlaywrightTestConfig } from "@playwright/test";
 const { BASE_URL, BASE_PATH = "", TEST_PORT } = process.env;
 
 if (!BASE_URL || !TEST_PORT) {
-  throw new Error("Possible missing environment variable: BASE_URL or BASE_PATH or TEST_PORT");
+  throw new Error("Possible missing environment variable: BASE_URL or TEST_PORT");
 }
 
 const config: PlaywrightTestConfig = {
@@ -19,6 +19,7 @@ const config: PlaywrightTestConfig = {
   use: {
     baseURL: BASE_URL + BASE_PATH,
     storageState: "storageState.json",
+    screenshot: "on",
   },
   timeout: 60000,
 };

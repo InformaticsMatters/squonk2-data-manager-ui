@@ -9,15 +9,25 @@ const globalSetup = async (_config: FullConfig) => {
   const browser = await chromium.launch();
   const page = await browser.newPage();
   await page.goto(baseURL, { timeout: 60000 });
+
+  await page.screenshot({ path: "test-results/1.png" });
+
   await page.click("button");
   await page.click("text=Login");
 
-  await page.type("input[name=username]", PW_USERNAME as string);
-  await page.type("input[name=password]", PW_PASSWORD as string);
+  await page.screenshot({ path: "test-results/2.png" });
+
+  await page.type("input[name=username]", PW_USERNAME as string, { timeout: 60000 });
+  await page.type("input[name=password]", PW_PASSWORD as string, { timeout: 60000 });
 
   await page.click(`input:has-text("Log In")`);
 
+  await page.screenshot({ path: "test-results/3.png" });
+
   await page.waitForURL(baseURL, { timeout: 60000 });
+
+  await page.screenshot({ path: "test-results/4.png" });
+
   // Save signed-in state to 'storageState.json'.
   await page.context().storageState({ path: "storageState.json" });
   await browser.close();

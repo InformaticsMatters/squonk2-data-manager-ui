@@ -25,7 +25,7 @@ on:
   push:
 
 jobs:
-  test:
+  test-base-path:
     # Setup
     runs-on: ubuntu-latest
     environment: data-manager-ui/test
@@ -82,6 +82,37 @@ jobs:
       with:
         name: Base Path Results
         path: test-results
+  test-no-base-path:
+    # Setup
+    runs-on: ubuntu-latest
+    environment: data-manager-ui/test
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - uses: pnpm/action-setup@v2.2.2
+      with:
+        version: 6.32.25
+        run_install: false
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'pnpm'
+    - name: Install dependencies
+      run: pnpm install
+    - run: node -v
+    - name: Setup Playwright
+      run: pnpm exec playwright install --with-deps
+    - name: Load cached build for speed
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ github.workspace }}/.next/cache
+        # Generate a new cache whenever packages or source files change.
+        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+        # If source files changed but packages didn't, rebuild from a prior cache.
+        restore-keys: |
+          ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
     # Test withOUT base path set
     - name: Build without base path
       run: pnpm build

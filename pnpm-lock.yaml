@@ -48,7 +48,7 @@ specifiers:
   husky: 8.0.1
   identity-obj-proxy: 3.0.0
   immer: 9.0.15
-  jotai: ^1.7.3
+  jotai: 1.7.4
   lint-staged: 13.0.3
   lodash-es: 4.17.21
   material-ui-popup-state: 4.0.1
@@ -107,7 +107,7 @@ dependencies:
   formik-mui: 4.0.0_550d50288436f583ac3a0ad752812519
   formik-mui-lab: 1.0.0_1c4b6f74f0f0c69cc348a41d0113839c
   immer: 9.0.15
-  jotai: 1.7.3_cf4affce01d6402ca73cb3f3803be0a3
+  jotai: 1.7.4_cf4affce01d6402ca73cb3f3803be0a3
   lodash-es: 4.17.21
   material-ui-popup-state: 4.0.1_66581c895a851b16dd21f66d733daa65
   next: 11.1.4_5d388704ff721f4df7508b19dd9aef27
@@ -3774,8 +3774,8 @@ packages:
       '@panva/asn1.js': 1.0.0
     dev: false
 
-  /jotai/1.7.3_cf4affce01d6402ca73cb3f3803be0a3:
-    resolution: {integrity: sha512-7oyKS1cUlwO8bLvhrSrw3/G2tiprmUjt0eK19z4LMiyScsaeqnFwcr+3xaM6N8Ej6iGd0MmBlGhQsmJcnV6+Fw==}
+  /jotai/1.7.4_cf4affce01d6402ca73cb3f3803be0a3:
+    resolution: {integrity: sha512-PvkjL6DA4I0GFNFWt/1MKouTpN6Ohj0qyfuV4LoYGBHQRlf38qF6cPILozYsYZi2Nfeap9MdzWVGSYu1qBElKQ==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
       '@babel/core': '*'
@@ -5229,7 +5229,6 @@ packages:
     resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
     engines: {node: '>=10.13.0'}
     hasBin: true
-    dev: false
 
   /process-nextick-args/2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
@@ -6203,7 +6202,6 @@ packages:
     resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
     engines: {node: '>=4.2.0'}
     hasBin: true
-    dev: false
 
   /unbox-primitive/1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}

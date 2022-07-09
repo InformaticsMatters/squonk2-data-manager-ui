@@ -22,21 +22,41 @@ on:
   push:
 
 jobs:
-  Lint-And-Type-Check:
+  Lint:
     runs-on: ubuntu-latest
     steps:
-    - name: Setup Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
-    - run: node -v
     - name: Checkout
       uses: actions/checkout@v3
     - uses: pnpm/action-setup@v2.2.2
       with:
-        version: 6.32.4
-        run_install: true
+        version: 6.32.25
+        run_install: false
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'pnpm'
+    - name: Install dependencies
+      run: pnpm install
+    - run: node -v
     - name: Lint
       run: pnpm lint .
+  Type-Check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - uses: pnpm/action-setup@v2.2.2
+      with:
+        version: 6.32.25
+        run_install: false
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'pnpm'
+    - name: Install dependencies
+      run: pnpm install
+    - run: node -v
     - name: Type Check
       run: pnpm tsc

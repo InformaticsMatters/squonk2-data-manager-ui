@@ -26,6 +26,7 @@ on:
 
 jobs:
   test:
+    # Setup
     runs-on: ubuntu-latest
     environment: data-manager-ui/test
     steps:
@@ -38,22 +39,16 @@ jobs:
       uses: actions/checkout@v3
     - uses: pnpm/action-setup@v2.2.2
       with:
-        version: 6.32.4
+        version: 6.32.25
         run_install: true
     - name: Setup Playwright
       run: pnpm exec playwright install --with-deps
-    - name: Build
+    # Test WITH base path set
+    - name: Build with base path
       run: pnpm build
       env:
-        AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
-        AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
-        AUTH0_SECRET: "LONG_RANDOM_VALUE"
-        BASE_URL: "http://localhost:3000"
         BASE_PATH: "/data-manager-ui"
-        DATA_MANAGER_API_SERVER: "https://data-manager.xchem-dev.diamond.ac.uk/data-manager-api"
-        ACCOUNT_SERVER_API_SERVER: "https://account-server.xchem-dev.diamond.ac.uk/account-server-api"
-        KEYCLOAK_URL: "https://keycloak.xchem-dev.diamond.ac.uk/auth/realms/xchem"
-    - name: Test
+    - name: Test with base path
       env:
         AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
         AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
@@ -68,9 +63,35 @@ jobs:
         PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
         TEST_PORT: 3000
       run: pnpm test:ci
-    - name: Upload Results
+    - name: Upload results for bath path
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: Results
+        name: Base Path Results
+        path: test-results
+    # Test withOUT base path set
+    - name: Build without base path
+      run: pnpm build
+      env:
+        BASE_PATH: ""
+    - name: Test without base path
+      env:
+        AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
+        AUTH0_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
+        DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
+        AUTH0_SECRET: "LONG_RANDOM_VALUE"
+        BASE_URL: "http://localhost:3000"
+        BASE_PATH: ""
+        DATA_MANAGER_API_SERVER: "https://data-manager.xchem-dev.diamond.ac.uk/data-manager-api"
+        ACCOUNT_SERVER_API_SERVER: "https://account-server.xchem-dev.diamond.ac.uk/account-server-api"
+        KEYCLOAK_URL: "https://keycloak.xchem-dev.diamond.ac.uk/auth/realms/xchem"
+        PW_USERNAME: "dmit-user-a"
+        PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
+        TEST_PORT: 3000
+      run: pnpm test:ci
+    - name: Upload results for no bath path
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: No Base Path Results
         path: test-results

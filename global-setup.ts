@@ -16,8 +16,8 @@ const globalSetup = async (_config: FullConfig) => {
 
   await page.screenshot({ path: "test-results/2.png" });
 
-  await page.type("input[name=username]", PW_USERNAME as string, { timeout: 60000 });
-  await page.type("input[name=password]", PW_PASSWORD as string, { timeout: 60000 });
+  await page.type("input[name=username]", PW_USERNAME as string);
+  await page.type("input[name=password]", PW_PASSWORD as string);
 
   await page.click(`input:has-text("Log In")`);
 

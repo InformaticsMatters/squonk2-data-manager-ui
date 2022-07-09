@@ -13,7 +13,7 @@ specifiers:
   '@mui/material': 5.8.6
   '@mui/styles': 5.8.6
   '@next/eslint-plugin-next': 11.1.4
-  '@playwright/test': 1.23.1
+  '@playwright/test': 1.23.2
   '@rjsf/core': 4.2.0
   '@rjsf/material-ui': 4.2.0
   '@sentry/nextjs': 7.5.0
@@ -131,7 +131,7 @@ dependencies:
   yup: 0.32.11
 
 devDependencies:
-  '@playwright/test': 1.23.1
+  '@playwright/test': 1.23.2
   '@squonk/eslint-config': 0.4.2_c7f035f91f3376defa05c59ee17ddc66
   '@typescript-eslint/eslint-plugin': 5.30.4_0609de381efb8b98a00b8d3fecded23a
   '@typescript-eslint/parser': 5.30.4_eslint@8.19.0+typescript@4.7.4
@@ -943,13 +943,13 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: false
 
-  /@playwright/test/1.23.1:
-    resolution: {integrity: sha512-dKplLPSYPZgnsBk1xxOophhpx3ZVg8DveoNJgLPe096lDCfmaIIreLsYF+4hqzy3PG61IP+aEnG5VAOjC3bhbA==}
+  /@playwright/test/1.23.2:
+    resolution: {integrity: sha512-umaEAIwQGfbezixg3raSOraqbQGSqZP988sOaMdpA2wj3Dr6ykOscrMukyK3U6edxhpS0N8kguAFZoHwCEfTig==}
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
       '@types/node': 16.11.43
-      playwright-core: 1.23.1
+      playwright-core: 1.23.2
     dev: true
 
   /@popperjs/core/2.11.5:
@@ -5185,8 +5185,8 @@ packages:
     resolution: {integrity: sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==}
     dev: false
 
-  /playwright-core/1.23.1:
-    resolution: {integrity: sha512-9CXsE0gawph4KXl6oUaa0ehHRySZjHvly4TybcBXDvzK3N3o6L/eZ8Q6iVWUiMn0LLS5bRFxo1qEtOETlYJxjw==}
+  /playwright-core/1.23.2:
+    resolution: {integrity: sha512-UGbutIr0nBALDHWW/HcXfyK6ZdmefC99Moo4qyTr89VNIkYZuDrW8Sw554FyFUamcFSdKOgDPk6ECSkofGIZjQ==}
     engines: {node: '>=14'}
     hasBin: true
     dev: true

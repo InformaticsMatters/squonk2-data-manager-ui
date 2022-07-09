@@ -12,8 +12,7 @@ const globalSetup = async (_config: FullConfig) => {
 
   await page.screenshot({ path: "test-results/1.png" });
 
-  await page.click("button");
-  await page.click("text=Login");
+  await page.goto(baseURL + "/api/auth/login");
 
   await page.screenshot({ path: "test-results/2.png" });
 

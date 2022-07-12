@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.17-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.16...0.1.17-rc.0) (2022-07-12)
+
+
+### Bug Fixes
+
+* **create-project:** Change default value for private projects to true ([e295ab6](https://github.com/InformaticsMatters/squonk-frontend/commit/e295ab66407c489f5cafccdce22089679ae43bbe))
+* **create-unit:** Prevent users from creating units in the default org ([5edfdbd](https://github.com/InformaticsMatters/squonk-frontend/commit/5edfdbdf3d6b2afc6d2d61b77d75c2690d04e754)), closes [#633](https://github.com/InformaticsMatters/squonk-frontend/issues/633)
+* **nextjs:** Fix types from next 12 ([b689053](https://github.com/InformaticsMatters/squonk-frontend/commit/b68905379c2c9c8275c01031940902ef75650f53))
+* **theme:** Fix loading of dark mode when it's set in local storage ([d4d307c](https://github.com/InformaticsMatters/squonk-frontend/commit/d4d307cd8e235f7cfeaa2663cd77d56348ce91a8))
+* **user:** Clear local storage when user logs out ([47171b9](https://github.com/InformaticsMatters/squonk-frontend/commit/47171b9bb15e00b5ad22aaa7e33f17b5728ab1ef))
+
 ### [0.1.16](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.16-rc.2...0.1.16) (2022-07-04)
 
 ### [0.1.16-rc.2](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.16-rc.1...0.1.16-rc.2) (2022-07-04)

@@ -9,3 +9,4 @@ export const PROJECT_LOCAL_STORAGE_KEY = LOCAL_STORAGE_PREFIX + "-current-projec
 export const UNIT_LOCAL_STORAGE_KEY = LOCAL_STORAGE_PREFIX + "-current-unit";
 export const ORG_LOCAL_STORAGE_KEY = LOCAL_STORAGE_PREFIX + "-current-org";
 export const PROJECT_FILE_LOCAL_STORAGE_KEY = LOCAL_STORAGE_PREFIX + "-selected-files";
+export const EVENT_DEBUG_MODE_STORAGE_KEY = LOCAL_STORAGE_PREFIX + "-event-debug-mode";

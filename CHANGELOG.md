@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.18-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.17...0.1.18-rc.0) (2022-07-16)
+
+
+### Features
+
+* **result-timeline:** Display colour and tooltip for the event type and provide toggle to filter out debug events ([55c444c](https://github.com/InformaticsMatters/squonk-frontend/commit/55c444c2bcba0547387bc86c2ff4b72013864d70))
+* **settings:** Add icons for org and unit selection to show private and membership ([553f23c](https://github.com/InformaticsMatters/squonk-frontend/commit/553f23cd3d6c86f97676113c744db317298c4d87))
+
 ### [0.1.17](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.17-rc.0...0.1.17) (2022-07-12)
 
 ### [0.1.17-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.16...0.1.17-rc.0) (2022-07-12)

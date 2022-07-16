@@ -72,6 +72,7 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
         }}
       />
       {
+        // N.B. This isn't helperText as MUI doesn't make that selectable
         <Typography color="text.secondary" variant="body2">
           {unit?.id}
         </Typography>

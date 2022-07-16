@@ -53,7 +53,7 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   await expect(page).toHaveURL(regexp);
 
   // Click button
-  await page.locator("button").click();
+  await page.locator(`[aria-label="User"] button`).click();
 
   // Click text=Settings
   await page.locator("text=Settings").click();

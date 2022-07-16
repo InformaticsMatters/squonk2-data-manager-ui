@@ -58,9 +58,8 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   // Click text=Settings
   await page.locator("text=Settings").click();
 
-  // Click [aria-label="Delete selected unit"] >> nth=1
-  await page.locator(`[aria-label="Delete selected unit"]`).nth(1).click();
-
+  // Click div[role="button"]:has-text("Delete UnitDeletes the selected unit")
+  await page.locator(`div[role="button"]:has-text("Delete UnitDeletes the selected unit")`).click();
   // Click button:has-text("Delete")
   await page.locator(`button:has-text("Delete")`).click();
 });

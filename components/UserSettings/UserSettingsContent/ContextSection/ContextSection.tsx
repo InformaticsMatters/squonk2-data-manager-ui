@@ -11,10 +11,10 @@ export const ContextSection = () => {
   return (
     <>
       <Grid container spacing={1}>
-        <Grid container item alignItems="center" sm={6}>
+        <Grid container item sm={6}>
           <OrganisationAutocomplete />
         </Grid>
-        <Grid container item alignItems="center" sm={6}>
+        <Grid container item sm={6}>
           <UnitAutocomplete />
         </Grid>
       </Grid>

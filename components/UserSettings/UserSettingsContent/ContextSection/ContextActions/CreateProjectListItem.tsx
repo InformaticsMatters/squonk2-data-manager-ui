@@ -3,9 +3,9 @@ import { useState } from "react";
 import { NoteAdd } from "@mui/icons-material";
 import { ListItem, ListItemText } from "@mui/material";
 
-import { useSelectedOrganisation } from "../../../../../../state/organisationSelection";
-import { useSelectedUnit } from "../../../../../../state/unitSelection";
-import { CreateProjectForm } from "../../../../../CreateProjectForm";
+import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
+import { useSelectedUnit } from "../../../../../state/unitSelection";
+import { CreateProjectForm } from "../../../../CreateProjectForm";
 
 /**
  * Button which allows user to create a new project.

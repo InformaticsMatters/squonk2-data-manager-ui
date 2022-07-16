@@ -26,9 +26,6 @@ on:
 
 jobs:
   test-base-path:
-    concurrency:
-      group:
-        dmui-test
     # Setup
     runs-on: ubuntu-latest
     environment: data-manager-ui/test
@@ -86,9 +83,6 @@ jobs:
         name: Base Path Results
         path: test-results
   test-no-base-path:
-    concurrency:
-        group:
-          dmui-test
     # Setup
     runs-on: ubuntu-latest
     environment: data-manager-ui/test

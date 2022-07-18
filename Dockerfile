@@ -1,54 +1,73 @@
-FROM node:16.13.1-alpine3.13
-
-# Expose an optional GitHub SHA build argument.
-# This is used to personalise the build.
-ARG GIT_SHA
-ENV GIT_SHA=${GIT_SHA}
-
-# Disable anonymous Next.js telemetry data...
-ENV NEXT_TELEMETRY_DISABLED 1
+# Install dependencies only when needed
+FROM node:16.16.0-alpine3.15 AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
 
 # Whether to skip TSC and Eslint Checks
 ARG SKIP_CHECKS
 ENV SKIP_CHECKS=${SKIP_CHECKS:-0}
 RUN echo "SKIP_CHECKS=${SKIP_CHECKS}"
 
-# Add typical Node/NextJS groups and users
-# Check https://bit.ly/3u8xXQR to understand why libc6-compat might be needed.
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001 && \
-    apk add --no-cache libc6-compat
-
-WORKDIR /app
-COPY . .
-
 RUN npm i -g pnpm@6.30.1
 RUN if $SKIP_CHECKS; then pnpm fetch --prod; else pnpm fetch; fi
 RUN if $SKIP_CHECKS; \
     then pnpm i -P --frozen-lockfile --offline --ignore-scripts; \
-    else pnpm i --frozen-lockfile --offline --ignore-scripts; fi && \
-    chown --recursive nextjs:nodejs . && \
-    echo "GIT_SHA=${GIT_SHA}"
+    else pnpm i --frozen-lockfile --offline --ignore-scripts; fi
 
-# **DO NOT** set 'NODE_ENV any earlier than this in the Dockerfile.
-# We must run 'pnpm install' (above) first, otherwise we'll get
-# the folllowing error at run-time in the docker-entrypoint.sh...
-#
-#   "It looks like you're trying to use TypeScript
-#   but do not have the required package(s) installed."
-#
-# Kubernetes can, of course, over-ride this if it wishes.
+# If using npm with a `package-lock.json` comment out above and use below instead
+# COPY package.json package-lock.json ./
+# RUN npm ci
+
+# Rebuild the source code only when needed
+FROM node:16.16.0-alpine3.15 AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Disable anonymous Next.js telemetry data...
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# Expose an optional GitHub SHA build argument.
+# This is used to personalise the build.
+ARG GIT_SHA
+ENV GIT_SHA=${GIT_SHA:-""}
+
+# The base path for the build
+ARG BASE_PATH
+ENV BASE_PATH=${BASE_PATH}
+
+# RUN npm i -g pnpm@6.30.1
+RUN echo "GIT_SHA=${GIT_SHA}" && npm run build
+
+# If using npm comment out above and use below instead
+# RUN npm run build
+
+# Production image, copy all the files and run next
+FROM node:16.16.0-alpine3.15 AS runner
+WORKDIR /app
+
 ENV NODE_ENV production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+# ENV NEXT_TELEMETRY_DISABLED 1
 
-# Switch to the expected image user
-# and indicate port 3000 should be open
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
 USER nextjs
+
 EXPOSE 3000
 
-# We build here and on startup. This is to allow the image to be
-# configurable but the build here speeds up the second build.
-RUN pnpm build
+ENV PORT 3000
 
-# We build, install and start the application at run-time.
-# That's wehere the _real_ '.env' will be provided.
-CMD ["./docker-entrypoint.sh"]
+CMD ["node", "server.js"]

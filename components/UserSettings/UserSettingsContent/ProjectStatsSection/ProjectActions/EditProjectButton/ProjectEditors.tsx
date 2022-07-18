@@ -1,24 +1,24 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import type { ProductDmProjectTier } from '@squonk/account-server-client';
+import type { ProductDmProjectTier } from "@squonk/account-server-client";
 import {
   getGetProductQueryKey,
   getGetProductsForUnitQueryKey,
-} from '@squonk/account-server-client/product';
-import type { DmError, ProjectDetail } from '@squonk/data-manager-client';
+} from "@squonk/account-server-client/product";
+import type { DmError, ProjectDetail } from "@squonk/data-manager-client";
 import {
   getGetProjectQueryKey,
   getGetProjectsQueryKey,
   useAddEditorToProject,
   useRemoveEditorFromProject,
-} from '@squonk/data-manager-client/project';
-import { useGetUsers } from '@squonk/data-manager-client/user';
+} from "@squonk/data-manager-client/project";
+import { useGetUsers } from "@squonk/data-manager-client/user";
 
-import { Autocomplete, Chip, TextField } from '@mui/material';
-import type { AutocompleteChangeReason } from '@mui/material/useAutocomplete';
+import { Autocomplete, Chip, TextField } from "@mui/material";
+import type { AutocompleteChangeReason } from "@mui/material/useAutocomplete";
 
-import { useEnqueueError } from '../../../../../../hooks/useEnqueueStackError';
-import { useKeycloakUser } from '../../../../../../hooks/useKeycloakUser';
+import { useEnqueueError } from "../../../../../../hooks/useEnqueueStackError";
+import { useKeycloakUser } from "../../../../../../hooks/useKeycloakUser";
 
 export interface ProjectEditorsProps {
   /**
@@ -48,7 +48,7 @@ export const ProjectEditors = ({ project, projectProduct }: ProjectEditorsProps)
 
   const updateEditors = async (value: string[], reason: AutocompleteChangeReason) => {
     switch (reason) {
-      case 'selectOption': {
+      case "selectOption": {
         // Isolate the user that has been added
         const username = value.find((user) => !project.editors.includes(user));
         if (username) {
@@ -58,12 +58,12 @@ export const ProjectEditors = ({ project, projectProduct }: ProjectEditorsProps)
             enqueueError(error);
           }
         } else {
-          enqueueSnackbar('Username not found', { variant: 'warning' });
+          enqueueSnackbar("Username not found", { variant: "warning" });
         }
         break;
       }
 
-      case 'removeOption': {
+      case "removeOption": {
         // Isolate the user that has been removed
         const username = project.editors.find((editor) => !value.includes(editor));
         if (username) {
@@ -73,7 +73,7 @@ export const ProjectEditors = ({ project, projectProduct }: ProjectEditorsProps)
             enqueueError(error);
           }
         } else {
-          enqueueSnackbar('Username not found', { variant: 'warning' });
+          enqueueSnackbar("Username not found", { variant: "warning" });
         }
         break;
       }
@@ -85,9 +85,7 @@ export const ProjectEditors = ({ project, projectProduct }: ProjectEditorsProps)
 
     // AS queries
     queryClient.invalidateQueries(getGetProductsForUnitQueryKey(projectProduct.unit.id));
-    queryClient.invalidateQueries(
-      getGetProductQueryKey(projectProduct.unit.id, projectProduct.product.id),
-    );
+    queryClient.invalidateQueries(getGetProductQueryKey(projectProduct.product.id));
   };
 
   return !!availableUsers && !!currentUser.username ? (

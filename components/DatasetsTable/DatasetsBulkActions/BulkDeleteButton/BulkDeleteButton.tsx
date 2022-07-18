@@ -1,20 +1,20 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import type { DmError } from '@squonk/data-manager-client';
-import { getGetDatasetsQueryKey, useDeleteDataset } from '@squonk/data-manager-client/dataset';
+import type { DmError } from "@squonk/data-manager-client";
+import { getGetDatasetsQueryKey, useDeleteDataset } from "@squonk/data-manager-client/dataset";
 
-import { DeleteForever } from '@mui/icons-material';
-import { IconButton, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { DeleteForever } from "@mui/icons-material";
+import { IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
 
-import { useEnqueueError } from '../../../../hooks/useEnqueueStackError';
-import { WarningDeleteButton } from '../../../WarningDeleteButton';
-import type { TableDataset, TableDatasetSubRow } from '../..';
-import { useFilterDeletableDatasets } from './useFilterDeletableDatasets';
-import { useSortUndeletableDatasets } from './useSortUndeletableDatasets';
+import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
+import { WarningDeleteButton } from "../../../WarningDeleteButton";
+import type { TableDataset, TableDatasetSubRow } from "../..";
+import { useFilterDeletableDatasets } from "./useFilterDeletableDatasets";
+import { useSortUndeletableDatasets } from "./useSortUndeletableDatasets";
 
 const formatVersionsString = (datasetGroup: TableDataset[]) => {
-  const versionString = datasetGroup.length > 1 ? 'Versions' : 'Version';
-  return `${versionString} ${datasetGroup.map((dataset) => dataset.version).join(', ')}`;
+  const versionString = datasetGroup.length > 1 ? "Versions" : "Version";
+  return `${versionString} ${datasetGroup.map((dataset) => dataset.version).join(", ")}`;
 };
 
 export interface BulkDeleteButtonProps {
@@ -43,13 +43,13 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
     );
 
     const reasons = (await Promise.allSettled(promises))
-      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+      .filter((result): result is PromiseRejectedResult => result.status === "rejected")
       .map((rejected) => rejected.reason);
 
     if (reasons.length > 0) {
-      enqueueSnackbar(`${reasons.length} dataset(s) could not be deleted`, { variant: 'warning' });
+      enqueueSnackbar(`${reasons.length} dataset(s) could not be deleted`, { variant: "warning" });
     } else {
-      enqueueSnackbar('Datasets deleted successfully', { variant: 'success' });
+      enqueueSnackbar("Datasets deleted successfully", { variant: "success" });
     }
 
     await queryClient.invalidateQueries(getGetDatasetsQueryKey());
@@ -84,8 +84,8 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
           )}
         </>
       }
-      modalId={'delete-selected-datasets'}
-      title={'Delete selected'}
+      modalId={"delete-selected-datasets"}
+      title={"Delete selected"}
       tooltipText="Delete selected datasets"
       onDelete={deleteSelectedDatasets}
     >

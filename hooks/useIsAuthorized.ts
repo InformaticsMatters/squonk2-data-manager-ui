@@ -1,5 +1,5 @@
-import { REQUIRED_ROLES } from '../constants/auth';
-import { useKeycloakUser } from './useKeycloakUser';
+import { REQUIRED_ROLES } from "../constants/auth";
+import { useKeycloakUser } from "./useKeycloakUser";
 
 export const useIsAuthorized = () => {
   const { user } = useKeycloakUser();

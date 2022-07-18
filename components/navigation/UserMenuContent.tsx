@@ -1,15 +1,19 @@
-import { Link, Typography } from '@mui/material';
-import NextLink from 'next/link';
+import { Link, Typography } from "@mui/material";
 
-import { useKeycloakUser } from '../../hooks/useKeycloakUser';
-import { CenterLoader } from '../CenterLoader';
-import { UserSettings } from '../UserSettings';
+import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { useSelectedOrganisation } from "../../state/organisationSelection";
+import { useSelectedUnit } from "../../state/unitSelection";
+import { CenterLoader } from "../CenterLoader";
+import { UserSettings } from "../UserSettings";
 
 /**
  * Content of the user menu
  */
 export const UserMenuContent = () => {
   const { user, isLoading } = useKeycloakUser();
+  const [, setUnit] = useSelectedUnit();
+  const [, setOrganisation] = useSelectedOrganisation();
+
   return (
     <>
       <Typography gutterBottom variant="h3">
@@ -20,18 +24,23 @@ export const UserMenuContent = () => {
       ) : user.username ? (
         <>
           <Typography>
-            {user.username} /{' '}
-            <NextLink passHref href="/api/auth/logout">
-              <Link>Logout</Link>
-            </NextLink>
+            {user.username} /{" "}
+            <Link
+              href={process.env.NEXT_PUBLIC_BASE_PATH + `/api/auth/logout`}
+              onClick={() => {
+                localStorage.clear();
+                setUnit();
+                setOrganisation();
+              }}
+            >
+              Logout
+            </Link>
           </Typography>
           <UserSettings />
         </>
       ) : (
         <Typography>
-          <NextLink passHref href="/api/auth/login">
-            <Link>Login</Link>
-          </NextLink>
+          <Link href={process.env.NEXT_PUBLIC_BASE_PATH + `/api/auth/login`}>Login</Link>
         </Typography>
       )}
     </>

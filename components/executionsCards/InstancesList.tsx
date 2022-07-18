@@ -1,15 +1,15 @@
-import type { InstanceSummary } from '@squonk/data-manager-client';
-import { useGetInstances } from '@squonk/data-manager-client/instance';
+import type { InstanceSummary } from "@squonk/data-manager-client";
+import { useGetInstances } from "@squonk/data-manager-client/instance";
 
-import { Box, List, ListItem, ListItemText, Typography } from '@mui/material';
-import dayjs from 'dayjs';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
+import { Box, List, ListItem, ListItemText, Typography } from "@mui/material";
+import dayjs from "dayjs";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 
-import { APP_ROUTES } from '../../constants/routes';
-import { useCurrentProjectId } from '../../hooks/projectHooks';
-import { CenterLoader } from '../CenterLoader';
-import { LocalTime } from '../LocalTime';
+import { APP_ROUTES } from "../../constants/routes";
+import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { CenterLoader } from "../CenterLoader";
+import { LocalTime } from "../LocalTime";
 
 type FilterPredicate = (value: InstanceSummary, index: number, array: InstanceSummary[]) => boolean;
 
@@ -60,7 +60,7 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
             <ListItem button component="a">
               <ListItemText
                 primary={instance.name}
-                primaryTypographyProps={{ variant: 'body1' }}
+                primaryTypographyProps={{ variant: "body1" }}
                 secondary={<LocalTime utcTimestamp={instance.launched} />}
               />
             </ListItem>

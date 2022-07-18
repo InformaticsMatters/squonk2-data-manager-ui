@@ -1,22 +1,21 @@
-import type { FC } from 'react';
-import { useLayoutEffect } from 'react';
-import { useState } from 'react';
+import type { FC } from "react";
+import { useLayoutEffect, useState } from "react";
 
-import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager-client';
+import type { DatasetSummary, DatasetVersionSummary } from "@squonk/data-manager-client";
 
-import { Container, Link, List, Typography } from '@mui/material';
+import { Container, Link, List, Typography } from "@mui/material";
 
-import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
-import { Labels } from '../../labels/Labels';
-import { NewLabelButton } from '../../labels/NewLabelButton';
-import { ModalWrapper } from '../../modals/ModalWrapper';
-import { PageSection } from '../../PageSection';
-import { VersionInfoSection } from './VersionInfoSection/VersionInfoSection';
-import { ManageDatasetEditorsSection } from './ManageDatasetEditorsSection';
-import { NewVersionListItem } from './NewVersionListItem';
-import { VersionActionsSection } from './VersionActionsSection';
-import { VersionViewSection } from './VersionViewSection';
-import { WorkingVersionSection } from './WorkingVersionSection';
+import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
+import { Labels } from "../../labels/Labels";
+import { NewLabelButton } from "../../labels/NewLabelButton";
+import { ModalWrapper } from "../../modals/ModalWrapper";
+import { PageSection } from "../../PageSection";
+import { VersionInfoSection } from "./VersionInfoSection/VersionInfoSection";
+import { ManageDatasetEditorsSection } from "./ManageDatasetEditorsSection";
+import { NewVersionListItem } from "./NewVersionListItem";
+import { VersionActionsSection } from "./VersionActionsSection";
+import { VersionViewSection } from "./VersionViewSection";
+import { WorkingVersionSection } from "./WorkingVersionSection";
 
 export interface DatasetDetailsProps {
   /**
@@ -107,7 +106,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset, version, data
             </PageSection>
 
             {/* DEBUG options. This allows access of dataset-id etc without leaving the UI */}
-            {process.env.NODE_ENV === 'development' && (
+            {process.env.NODE_ENV === "development" && (
               <PageSection title="Technical Information">
                 <pre>{JSON.stringify(dataset, null, 2)}</pre>
               </PageSection>

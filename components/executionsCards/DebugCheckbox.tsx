@@ -1,6 +1,6 @@
-import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material';
+import { Box, Checkbox, FormControlLabel, Typography } from "@mui/material";
 
-export type DebugValue = '0' | 'debug';
+export type DebugValue = "0" | "debug";
 
 export interface DebugCheckboxProps {
   value: DebugValue;
@@ -13,8 +13,8 @@ export const DebugCheckbox = ({ value, onChange }: DebugCheckboxProps) => {
       <FormControlLabel
         control={
           <Checkbox
-            checked={value === '0' ? false : true}
-            onChange={(_event, checked) => onChange(checked ? 'debug' : '0')}
+            checked={value === "0" ? false : true}
+            onChange={(_event, checked) => onChange(checked ? "debug" : "0")}
           />
         }
         label="Debug"

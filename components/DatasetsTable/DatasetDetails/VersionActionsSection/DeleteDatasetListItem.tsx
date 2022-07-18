@@ -1,13 +1,13 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import type { DatasetVersionSummary, DmError } from '@squonk/data-manager-client';
-import { getGetDatasetsQueryKey, useDeleteDataset } from '@squonk/data-manager-client/dataset';
+import type { DatasetVersionSummary, DmError } from "@squonk/data-manager-client";
+import { getGetDatasetsQueryKey, useDeleteDataset } from "@squonk/data-manager-client/dataset";
 
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { ListItem, ListItemText } from '@mui/material';
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { ListItem, ListItemText } from "@mui/material";
 
-import { useEnqueueError } from '../../../../hooks/useEnqueueStackError';
-import { WarningDeleteButton } from '../../../WarningDeleteButton';
+import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
+import { WarningDeleteButton } from "../../../WarningDeleteButton";
 
 export interface DeleteDatasetProps {
   /**
@@ -45,7 +45,7 @@ export const DeleteDatasetListItem = ({ datasetId, version, onDelete }: DeleteDa
           enqueueError(error);
         }
         await queryClient.invalidateQueries(getGetDatasetsQueryKey());
-        enqueueSnackbar('Dataset deleted', { variant: 'success' });
+        enqueueSnackbar("Dataset deleted", { variant: "success" });
       }}
     >
       {({ isDeleting, openModal }) => (

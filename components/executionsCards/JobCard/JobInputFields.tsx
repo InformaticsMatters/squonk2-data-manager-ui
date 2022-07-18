@@ -1,17 +1,17 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from "react";
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography } from "@mui/material";
 
-import type { ProjectId } from '../../../hooks/projectHooks';
-import { FileSelector } from '../../FileSelector';
-import type { InputData } from './JobModal';
+import type { ProjectId } from "../../../hooks/projectHooks";
+import { FileSelector } from "../../FileSelector";
+import type { InputData } from "./JobModal";
 
 // Define types for the form schema as the Open API spec doesn't define these (just gives string)
 // These might be defined in the form generator types?
 interface InputFieldSchema {
   title: string;
-  type: 'directory' | 'file';
-  'mime-types'?: string[];
+  type: "directory" | "file";
+  "mime-types"?: string[];
   multiple?: true;
   default?: string;
 }
@@ -56,7 +56,7 @@ export const JobInputFields = ({
   return (
     <>
       {Object.entries(inputs.properties).map(
-        ([key, { title, type, multiple, 'mime-types': mimeTypes }]) => {
+        ([key, { title, type, multiple, "mime-types": mimeTypes }]) => {
           return (
             // Expect a grid container in the parent component
             <Grid item key={key} xs={12}>

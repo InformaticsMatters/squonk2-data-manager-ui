@@ -1,4 +1,4 @@
-import { Autocomplete, TextField, Typography } from '@mui/material';
+import { Autocomplete, TextField, Typography } from "@mui/material";
 
 export interface AutocompleteFilterProps<T> {
   /**
@@ -69,13 +69,13 @@ export const AutocompleteFilter = <T,>({
           {...params}
           inputProps={{
             ...params.inputProps,
-            autoComplete: 'off', // Disable autocomplete and autofill
+            autoComplete: "off", // Disable autocomplete and autofill
           }}
           label={label}
           variant="outlined"
         />
       )}
-      style={{ width: '100%' }}
+      style={{ width: "100%" }}
       value={value || null} // Prevents making the component uncontrolled
       // If no option is selected, Autocomplete returns null which we transform to undefined
       onChange={(event, value) => onChange(value || undefined)}

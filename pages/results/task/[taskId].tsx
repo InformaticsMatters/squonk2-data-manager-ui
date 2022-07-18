@@ -1,18 +1,18 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import { getGetTaskQueryKey, useGetTask } from '@squonk/data-manager-client/task';
+import { getGetTaskQueryKey, useGetTask } from "@squonk/data-manager-client/task";
 
-import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
-import { Alert, Box, Container, IconButton, Tooltip, Typography } from '@mui/material';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import { Alert, Box, Container, IconButton, Tooltip, Typography } from "@mui/material";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
-import { CenterLoader } from '../../../components/CenterLoader';
-import Layout from '../../../components/Layout';
-import { ResultTaskCard } from '../../../components/results/ResultTaskCard';
-import { getErrorMessage } from '../../../utils/orvalError';
-import { RoleRequired } from '../../../utils/RoleRequired';
+import { CenterLoader } from "../../../components/CenterLoader";
+import Layout from "../../../components/Layout";
+import { ResultTaskCard } from "../../../components/results/ResultTaskCard";
+import { getErrorMessage } from "../../../utils/orvalError";
+import { RoleRequired } from "../../../utils/RoleRequired";
 
 const Result = () => {
   const queryClient = useQueryClient();
@@ -30,7 +30,7 @@ const Result = () => {
       <Head>
         <title>Squonk | Task {task?.states?.slice(-1)[0]?.state}</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(' ')}>
+      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(" ")}>
         <Layout>
           <Container maxWidth="md">
             <Box alignItems="flex-start" display="flex">
@@ -40,7 +40,7 @@ const Result = () => {
               <Tooltip title="Refresh Instance">
                 <IconButton
                   size="large"
-                  sx={{ ml: 'auto' }}
+                  sx={{ ml: "auto" }}
                   onClick={() => refreshResults.forEach((func) => func())}
                 >
                   <RefreshRoundedIcon />

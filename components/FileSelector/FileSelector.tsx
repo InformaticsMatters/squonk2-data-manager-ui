@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Box, Button, Collapse } from '@mui/material';
+import { Box, Button, Collapse } from "@mui/material";
 
-import { MiniFileList } from './MiniFileList';
-import { SelectedFilesLabel } from './SelectedFilesLabel';
-import type { SharedProps } from './types';
+import { MiniFileList } from "./MiniFileList";
+import { SelectedFilesLabel } from "./SelectedFilesLabel";
+import type { SharedProps } from "./types";
 
 /**
  * General component for selecting files from a project volume or favourite files from that project.
@@ -19,14 +19,14 @@ export const FileSelector = ({ value, targetType, ...props }: SharedProps) => {
     <>
       <SelectedFilesLabel files={files} />
 
-      <Button size="small" sx={{ ml: 'auto' }} variant="outlined" onClick={() => setExpanded(true)}>
+      <Button size="small" sx={{ ml: "auto" }} variant="outlined" onClick={() => setExpanded(true)}>
         Select {targetType}
       </Button>
     </>
   );
 
   const closeControls = (
-    <Button size="small" sx={{ ml: 'auto' }} variant="outlined" onClick={() => setExpanded(false)}>
+    <Button size="small" sx={{ ml: "auto" }} variant="outlined" onClick={() => setExpanded(false)}>
       Close
     </Button>
   );

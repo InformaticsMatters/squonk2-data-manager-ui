@@ -1,4 +1,4 @@
-import type { ProjectDetail } from '@squonk/data-manager-client';
+import type { ProjectDetail } from "@squonk/data-manager-client";
 
 /**
  * Resolves names of the projects a dataset version is attached to. Since a user might not have
@@ -22,7 +22,7 @@ export const useGetAttachedProjectsNames = (projectIds: string[], projects?: Pro
     if (sizeDifference) {
       // In case all of the projects are hidden from the user, displays only the number instead
       // of `and 5 hidden`
-      const prefix = names.length ? 'and ' : '';
+      const prefix = names.length ? "and " : "";
       names.push(`${prefix}${sizeDifference} hidden`);
     }
     return names;

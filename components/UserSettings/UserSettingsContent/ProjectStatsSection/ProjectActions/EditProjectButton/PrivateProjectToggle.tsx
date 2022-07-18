@@ -1,16 +1,16 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
 import {
   getGetProjectQueryKey,
   getGetProjectsQueryKey,
   usePatchProject,
-} from '@squonk/data-manager-client/project';
+} from "@squonk/data-manager-client/project";
 
-import { FormControlLabel, Switch } from '@mui/material';
+import { FormControlLabel, Switch } from "@mui/material";
 
-import type { ProjectId } from '../../../../../../hooks/projectHooks';
-import { useEnqueueError } from '../../../../../../hooks/useEnqueueStackError';
-import { getErrorMessage } from '../../../../../../utils/orvalError';
+import type { ProjectId } from "../../../../../../hooks/projectHooks";
+import { useEnqueueError } from "../../../../../../hooks/useEnqueueStackError";
+import { getErrorMessage } from "../../../../../../utils/orvalError";
 
 export interface PrivateProjectToggleProps {
   projectId: ProjectId;
@@ -45,9 +45,9 @@ export const PrivateProjectToggle = ({ projectId, isPrivate }: PrivateProjectTog
                 queryClient.invalidateQueries(getGetProjectQueryKey(projectId));
 
                 if (checked) {
-                  enqueueSnackbar('The project has been made private', { variant: 'success' });
+                  enqueueSnackbar("The project has been made private", { variant: "success" });
                 } else {
-                  enqueueSnackbar('The project has been made public', { variant: 'success' });
+                  enqueueSnackbar("The project has been made public", { variant: "success" });
                 }
               } catch (error) {
                 enqueueError(getErrorMessage(error));

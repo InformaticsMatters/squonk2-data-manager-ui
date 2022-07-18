@@ -1,7 +1,7 @@
-import { useCreateDefaultUnit } from '@squonk/account-server-client/unit';
+import { useCreateDefaultUnit } from "@squonk/account-server-client/unit";
 
-import type { OrgAndUnitIdTuple } from '../../CreateProjectForm';
-import { CreateProjectForm } from '../../CreateProjectForm';
+import type { OrgAndUnitIdTuple } from "../../CreateProjectForm";
+import { CreateProjectForm } from "../../CreateProjectForm";
 
 /**
  * Form for creating a default unit with a project.

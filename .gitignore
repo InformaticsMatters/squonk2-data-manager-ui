@@ -37,6 +37,7 @@ yarn-error.log*
 
 # Playwright
 storageState.json
+/test-results
 
 # Etc
 tsconfig.tsbuildinfo

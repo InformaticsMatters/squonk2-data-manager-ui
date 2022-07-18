@@ -1,17 +1,18 @@
-import type { FilePathFile, FilesGetResponse } from '@squonk/data-manager-client';
-import { useGetFiles } from '@squonk/data-manager-client/file';
+import type { FilePathFile, FilesGetResponse } from "@squonk/data-manager-client";
+import { useGetFiles } from "@squonk/data-manager-client/file";
 
-import { withPageAuthRequired } from '@auth0/nextjs-auth0/dist/frontend';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/dist/frontend";
+import Error from "next/error";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
-import { PlaintextViewer } from '../../components/PlaintextViewer';
-import { DM_API_URL } from '../../constants';
-import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
-import { useApi } from '../../hooks/useApi';
-import { getDecompressionType } from '../../utils/fileUtils';
-import { getErrorMessage } from '../../utils/orvalError';
-import { getQueryParams } from '../../utils/requestUtils';
+import { PlaintextViewer } from "../../components/PlaintextViewer";
+import { API_ROUTES } from "../../constants/routes";
+import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
+import { useApi } from "../../hooks/useApi";
+import { getDecompressionType } from "../../utils/fileUtils";
+import { getErrorMessage } from "../../utils/orvalError";
+import { getQueryParams } from "../../utils/requestUtils";
 
 type SelectDatasetVersionResult = {
   file?: FilePathFile;
@@ -32,7 +33,7 @@ const selectProjectVersion = (
   if (!file) {
     return {
       isSelectError: true,
-      selectError: 'No file found for the specified file ID',
+      selectError: "No file found for the specified file ID",
     };
   }
   return { file, isSelectError: false };
@@ -52,11 +53,11 @@ const FILE_LIMIT_SIZE = 100_000;
  */
 const FilePlainTextViewer = () => {
   const {
-    query: { projectId, file: fileName },
+    query: { project, file: fileName },
   } = useRouter();
 
   const breadcrumbs = useProjectBreadcrumbs();
-  const dirPath = '/' + breadcrumbs.join('/');
+  const dirPath = "/" + breadcrumbs.join("/");
 
   const {
     data: files,
@@ -64,7 +65,7 @@ const FilePlainTextViewer = () => {
     isError: isFilesError,
     error: filesError,
   } = useGetFiles({
-    project_id: projectId as string,
+    project_id: project as string,
     path: dirPath,
   });
 
@@ -79,26 +80,30 @@ const FilePlainTextViewer = () => {
     isError: isContentsError,
     error: contentsError,
   } = useApi<string>(
-    `/project/${projectId}/file${getQueryParams({
+    `/project/${project}/file${getQueryParams({
       decompress,
       fileSizeLimit,
       path: dirPath,
       file: fileName,
     })}`,
     undefined,
-    {
-      enabled: Boolean(file),
-    },
+    { enabled: !!file, refetchOnWindowFocus: false },
   );
 
   const isLoading = isFilesLoading || isContentsLoading;
   const isError = isFilesError || isSelectError || isContentsError;
   const error = getErrorMessage(filesError) || selectError || getErrorMessage(contentsError);
 
-  const downloadUrl = `${DM_API_URL}/project/${projectId}/file${getQueryParams({
-    path: dirPath,
-    file: fileName,
-  })}`;
+  if (typeof project !== "string" || typeof fileName !== "string") {
+    return (
+      <Error
+        message="`project` and/or `file` query parameters are not specified correctly."
+        statusCode={400}
+      />
+    );
+  }
+
+  const downloadUrl = API_ROUTES.projectFile(project, dirPath, fileName);
 
   return (
     <>
@@ -113,7 +118,7 @@ const FilePlainTextViewer = () => {
         fileSizeLimit={fileSizeLimit}
         isError={isError}
         isLoading={isLoading}
-        title={file?.file_name ?? ''}
+        title={file?.file_name ?? ""}
       />
     </>
   );

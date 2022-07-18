@@ -1,11 +1,10 @@
-import type { ProductDmProjectTier } from '@squonk/account-server-client';
-import { useGetProject } from '@squonk/data-manager-client/project';
+import type { ProductDmProjectTier } from "@squonk/account-server-client";
+import { useGetProjects } from "@squonk/data-manager-client/project";
 
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, CircularProgress } from "@mui/material";
 
-import { getErrorMessage } from '../../../../../utils/orvalError';
-import { DeleteProjectButton } from './DeleteProjectButton';
-import { EditProjectButton } from './EditProjectButton';
+import { DeleteProjectButton } from "./DeleteProjectButton";
+import { EditProjectButton } from "./EditProjectButton";
 
 export interface ProjectActionsProps {
   /**
@@ -18,21 +17,13 @@ export interface ProjectActionsProps {
  * Table cell with edit and delete actions for provided project product.
  */
 export const ProjectActions = ({ projectProduct }: ProjectActionsProps) => {
-  const {
-    data: project,
-    isLoading,
-    isError,
-    error,
-  } = useGetProject(projectProduct.claim?.id ?? '', {
-    query: { enabled: !!projectProduct.claim?.id },
-  });
+  const { data, isLoading } = useGetProjects();
+  const project = data?.projects.find(
+    (project) => project.product_id === projectProduct.product.id,
+  );
 
   if (isLoading) {
     return <CircularProgress size="1rem" />;
-  }
-
-  if (isError) {
-    return <Typography color="error">{getErrorMessage(error)}</Typography>;
   }
 
   return project ? (

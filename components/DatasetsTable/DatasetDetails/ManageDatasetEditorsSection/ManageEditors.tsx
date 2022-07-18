@@ -1,9 +1,9 @@
-import type { FC } from 'react';
+import type { FC } from "react";
 
-import { useGetUsers } from '@squonk/data-manager-client/user';
+import { useGetUsers } from "@squonk/data-manager-client/user";
 
-import { Autocomplete, Chip, TextField } from '@mui/material';
-import type { AutocompleteChangeReason } from '@mui/material/useAutocomplete';
+import { Autocomplete, Chip, TextField } from "@mui/material";
+import type { AutocompleteChangeReason } from "@mui/material/useAutocomplete";
 
 export interface ManageEditorsProps {
   /**
@@ -45,12 +45,12 @@ export const ManageEditors: FC<ManageEditorsProps> = ({
 
   const updateEditors = async (value: string[], reason: AutocompleteChangeReason) => {
     switch (reason) {
-      case 'selectOption': {
+      case "selectOption": {
         // Isolate the user that has been added
         await onSelect(value);
         break;
       }
-      case 'removeOption': {
+      case "removeOption": {
         // Isolate the user that has been removed
         await onRemove(value);
         break;

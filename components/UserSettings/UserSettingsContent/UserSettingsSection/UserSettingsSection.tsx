@@ -1,6 +1,6 @@
-import { List } from '@mui/material';
+import { List } from "@mui/material";
 
-import { DarkModeSwitchListItem } from './DarkModeSwitchListItem';
+import { DarkModeSwitchListItem } from "./DarkModeSwitchListItem";
 
 /**
  * Displays `User Settings` section in User Settings.

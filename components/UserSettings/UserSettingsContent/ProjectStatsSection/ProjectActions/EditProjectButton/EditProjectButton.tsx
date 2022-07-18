@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import type { ProductDmProjectTier } from '@squonk/account-server-client';
-import type { ProjectDetail } from '@squonk/data-manager-client';
+import type { ProductDmProjectTier } from "@squonk/account-server-client";
+import type { ProjectDetail } from "@squonk/data-manager-client";
 
-import EditIcon from '@mui/icons-material/Edit';
-import { IconButton, Tooltip, Typography } from '@mui/material';
+import EditIcon from "@mui/icons-material/Edit";
+import { IconButton, Tooltip, Typography } from "@mui/material";
 
-import { useKeycloakUser } from '../../../../../../hooks/useKeycloakUser';
-import { ModalWrapper } from '../../../../../modals/ModalWrapper';
-import { PrivateProjectToggle } from './PrivateProjectToggle';
-import { ProjectEditors } from './ProjectEditors';
+import { useKeycloakUser } from "../../../../../../hooks/useKeycloakUser";
+import { ModalWrapper } from "../../../../../modals/ModalWrapper";
+import { PrivateProjectToggle } from "./PrivateProjectToggle";
+import { ProjectEditors } from "./ProjectEditors";
 
 export interface EditProjectButtonProps {
   /**
@@ -34,16 +34,16 @@ export const EditProjectButton = ({ project, projectProduct }: EditProjectButton
   return (
     <>
       {isEditor && (
-        <Tooltip title={'Edit Project'}>
+        <Tooltip title={"Edit Project"}>
           <span>
-            <IconButton size="small" sx={{ p: '1px' }} onClick={() => setOpen(!open)}>
+            <IconButton size="small" sx={{ p: "1px" }} onClick={() => setOpen(!open)}>
               <EditIcon />
             </IconButton>
           </span>
         </Tooltip>
       )}
       <ModalWrapper
-        DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+        DialogProps={{ maxWidth: "sm", fullWidth: true }}
         id="edit-project"
         open={open}
         submitText="Save"

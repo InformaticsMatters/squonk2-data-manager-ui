@@ -1,1 +1,1 @@
-export * from './DatasetSchemaListItem';
+export * from "./DatasetSchemaListItem";

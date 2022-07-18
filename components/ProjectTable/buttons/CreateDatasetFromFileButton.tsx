@@ -1,19 +1,20 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from "react-query";
 
-import type { DmError } from '@squonk/data-manager-client';
+import type { DmError } from "@squonk/data-manager-client";
 import {
   getGetDatasetsQueryKey,
   useCreateDatasetFromFile,
-} from '@squonk/data-manager-client/dataset';
+} from "@squonk/data-manager-client/dataset";
 
-import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
-import { IconButton, Tooltip } from '@mui/material';
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import { IconButton, Tooltip } from "@mui/material";
 
-import { useCurrentOrg, useCurrentUnit } from '../../../context/organisationUnitContext';
-import type { ProjectId } from '../../../hooks/projectHooks';
-import { useEnqueueError } from '../../../hooks/useEnqueueStackError';
-import { useMimeTypeLookup } from '../../../hooks/useMimeTypeLookup';
-import type { TableFile } from '../types';
+import type { ProjectId } from "../../../hooks/projectHooks";
+import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
+import { useMimeTypeLookup } from "../../../hooks/useMimeTypeLookup";
+import { useSelectedOrganisation } from "../../../state/organisationSelection";
+import { useSelectedUnit } from "../../../state/unitSelection";
+import type { TableFile } from "../types";
 
 export interface CreateDatasetFromFileButtonProps {
   /**
@@ -43,25 +44,25 @@ export const CreateDatasetFromFileButton = ({
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
-  const unit = useCurrentUnit();
-  const org = useCurrentOrg();
+  const [unit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
 
   return (
     <Tooltip title="Create a dataset from this unmanaged file">
       <IconButton
         size="small"
         onClick={async () => {
-          if (projectId && file.fullPath && org && unit) {
+          if (projectId && file.fullPath && organisation && unit) {
             // Get file extensions from the file name
-            const [, ...extensions] = file.fileName.split('.');
+            const [, ...extensions] = file.fileName.split(".");
             // Convert the extension to a mime-type
-            const mimeType = mimeLookup['.' + extensions.join('.')];
+            const mimeType = mimeLookup["." + extensions.join(".")];
             // Get the path in the format required for the dataset PUT endpoint
             // Must start with a '/'
             // Full path is missing the leading '/'
             // Remove the file name from the end the full path
             const path =
-              '/' + file.fullPath.substring(0, file.fullPath.indexOf('/' + file.fileName));
+              "/" + file.fullPath.substring(0, file.fullPath.indexOf("/" + file.fileName));
 
             try {
               await createDataset({
@@ -70,12 +71,11 @@ export const CreateDatasetFromFileButton = ({
                   file_name: file.fileName,
                   path,
                   dataset_type: mimeType,
-                  organisation_id: org.id,
                   unit_id: unit.id,
                 },
               });
 
-              enqueueSnackbar('New dataset created', { variant: 'success' });
+              enqueueSnackbar("New dataset created", { variant: "success" });
             } catch (error) {
               enqueueError(error);
             }

@@ -1,10 +1,10 @@
-import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
-import StarRoundedIcon from '@mui/icons-material/StarRounded';
-import { IconButton, Tooltip } from '@mui/material';
+import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import { IconButton, Tooltip } from "@mui/material";
 
-import type { SavedFile } from '../../../context/fileSelectionContext';
-import { useSelectedFiles } from '../../../context/fileSelectionContext';
-import type { ProjectId } from '../../../hooks/projectHooks';
+import type { ProjectId } from "../../../hooks/projectHooks";
+import type { SavedFile } from "../../../state/fileSelection";
+import { useSelectedFiles } from "../../../state/fileSelection";
 
 export interface FavouriteButtonProps {
   /**
@@ -18,7 +18,7 @@ export interface FavouriteButtonProps {
   /**
    * Whether the item is a file or a directory.
    */
-  type: SavedFile['type'];
+  type: SavedFile["type"];
   /**
    * Mime-type of the file. Undefined if fullPath corresponds to a directory.
    */

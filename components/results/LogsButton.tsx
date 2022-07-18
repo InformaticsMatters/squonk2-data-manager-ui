@@ -1,10 +1,10 @@
-import type { InstanceSummary } from '@squonk/data-manager-client';
+import type { InstanceSummary } from "@squonk/data-manager-client";
 
-import { Button } from '@mui/material';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { Button } from "@mui/material";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
-import { APP_ROUTES } from '../../constants/routes';
+import { APP_ROUTES } from "../../constants/routes";
 
 export interface LogsButtonProps {
   instance: InstanceSummary;
@@ -16,7 +16,7 @@ export const LogsButton = ({ instance }: LogsButtonProps) => {
     <Link
       passHref
       href={{
-        pathname: APP_ROUTES.project['.'],
+        pathname: APP_ROUTES.project["."],
         query: {
           ...query,
           project: instance.project_id,

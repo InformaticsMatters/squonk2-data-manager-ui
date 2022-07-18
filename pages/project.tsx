@@ -1,23 +1,23 @@
-import { QueryClient } from 'react-query';
-import { dehydrate } from 'react-query/hydration';
+import { QueryClient } from "react-query";
+import { dehydrate } from "react-query/hydration";
 
-import { getFiles, getGetFilesQueryKey } from '@squonk/data-manager-client/file';
-import { getGetProjectsQueryKey, getProjects } from '@squonk/data-manager-client/project';
+import { getFiles, getGetFilesQueryKey } from "@squonk/data-manager-client/file";
+import { getGetProjectsQueryKey, getProjects } from "@squonk/data-manager-client/project";
 
-import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { Box, Container, Grid, Typography } from '@mui/material';
-import type { GetServerSideProps } from 'next';
-import Head from 'next/head';
-import Image from 'next/image';
+import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { Box, Container, Grid, Typography } from "@mui/material";
+import type { GetServerSideProps } from "next";
+import Head from "next/head";
+import Image from "next/image";
 
-import Layout from '../components/Layout';
-import { ProjectSelection } from '../components/ProjectSelection';
-import { ProjectTable } from '../components/ProjectTable';
-import { ProjectFileUpload } from '../components/ProjectTable/ProjectFileUpload';
-import { ProjectAutocomplete } from '../components/userContext/ProjectAutocomplete';
-import { useCurrentProject } from '../hooks/projectHooks';
-import { RoleRequired } from '../utils/RoleRequired';
-import { options } from '../utils/ssrQueryOptions';
+import Layout from "../components/Layout";
+import { ProjectSelection } from "../components/ProjectSelection";
+import { ProjectTable } from "../components/ProjectTable";
+import { ProjectFileUpload } from "../components/ProjectTable/ProjectFileUpload";
+import { ProjectAutocomplete } from "../components/userContext/ProjectAutocomplete";
+import { useCurrentProject } from "../hooks/projectHooks";
+import { RoleRequired } from "../utils/RoleRequired";
+import { options } from "../utils/ssrQueryOptions";
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
   const queryClient = new QueryClient();
@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
     const path = query.path as string[] | undefined;
 
     if (projectId && accessToken) {
-      const filesParam = { project_id: projectId, path: '/' + (path?.join('/') ?? '') };
+      const filesParam = { project_id: projectId, path: "/" + (path?.join("/") ?? "") };
 
       // Prefetch some data
       const queries = [
@@ -67,7 +67,7 @@ const Project = () => {
       <Head>
         <title>Squonk | Project</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(' ')}>
+      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(" ")}>
         <Layout>
           <Container maxWidth="xl">
             {currentProject ? (
@@ -75,16 +75,16 @@ const Project = () => {
                 <Grid
                   container
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
                   <Grid item md={6} xs={12}>
                     <Typography
                       gutterBottom
                       component="h1"
-                      sx={{ wordBreak: 'break-all' }}
-                      variant={currentProject.name.length > 16 ? 'h2' : 'h1'}
+                      sx={{ wordBreak: "break-all" }}
+                      variant={currentProject.name.length > 16 ? "h2" : "h1"}
                     >
                       Project: {currentProject.name}
                     </Typography>
@@ -100,7 +100,7 @@ const Project = () => {
                 </ProjectFileUpload>
               </>
             ) : (
-              <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ textAlign: "center" }}>
                 <Typography gutterBottom color="textSecondary" variant="h3">
                   Select a project to view
                 </Typography>

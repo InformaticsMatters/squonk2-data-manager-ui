@@ -1,15 +1,15 @@
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import { IconButton, Popover, Tooltip } from '@mui/material';
-import { bindPopover, bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import { Box, Fade, IconButton, Paper, Popper, Tooltip } from "@mui/material";
+import { bindPopper, bindToggle, usePopupState } from "material-ui-popup-state/hooks";
 
-import { useKeycloakUser } from '../../hooks/useKeycloakUser';
-import { UserMenuContent } from './UserMenuContent';
+import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { UserMenuContent } from "./UserMenuContent";
 
 /**
  * Popover displaying the user menu options
  */
 export const UserMenu = () => {
-  const popupState = usePopupState({ variant: 'popover', popupId: 'user-menu' });
+  const popupState = usePopupState({ variant: "popper", popupId: "user-menu" });
 
   const { isLoading } = useKeycloakUser();
 
@@ -21,7 +21,7 @@ export const UserMenu = () => {
             color="inherit"
             disabled={isLoading}
             edge="end"
-            {...bindTrigger(popupState)}
+            {...bindToggle(popupState)}
             size="large"
           >
             <AccountCircle />
@@ -29,14 +29,24 @@ export const UserMenu = () => {
         </span>
       </Tooltip>
 
-      <Popover
-        sx={{ '& .MuiPopover-paper': { p: 1 } }}
-        {...bindPopover(popupState)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+      <Popper
+        transition
+        placement="bottom-start"
+        sx={{ "& .MuiPopover-paper": { p: 1 } }}
+        {...bindPopper(popupState)}
+        // anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        // transformOrigin={{ vertical: "top", horizontal: "left" }}
       >
-        <UserMenuContent />
-      </Popover>
+        {({ TransitionProps }) => (
+          <Fade {...TransitionProps} timeout={350}>
+            <Paper>
+              <Box p={1}>
+                <UserMenuContent />
+              </Box>
+            </Paper>
+          </Fade>
+        )}
+      </Popper>
     </>
   );
 };

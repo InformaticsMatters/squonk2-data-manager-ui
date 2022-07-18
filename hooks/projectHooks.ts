@@ -1,10 +1,10 @@
-import { useGetProjects } from '@squonk/data-manager-client/project';
+import { useGetProjects } from "@squonk/data-manager-client/project";
 
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
-import { PROJECT_LOCAL_STORAGE_KEY } from '../constants';
-import { writeToLocalStorage } from '../utils/localStorage';
-import { useKeycloakUser } from './useKeycloakUser';
+import { PROJECT_LOCAL_STORAGE_KEY } from "../constants";
+import { writeToLocalStorage } from "../utils/localStorage";
+import { useKeycloakUser } from "./useKeycloakUser";
 
 export type ProjectId = string | undefined;
 export type ProjectLocalStoragePayload = { projectId: ProjectId; version: number };
@@ -18,7 +18,7 @@ export const useCurrentProjectId = () => {
   const projectId = router.query.project as ProjectId;
 
   const setCurrentProjectId = (newProjectId?: string, shallow?: true) => {
-    writeToLocalStorage<ProjectLocalStoragePayload>(PROJECT_LOCAL_STORAGE_KEY, {
+    writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, {
       version: 1,
       projectId: newProjectId,
     });
@@ -89,6 +89,7 @@ export const useIsUserAProjectOwnerOrEditor = () => {
   const project = useCurrentProject();
 
   return (
-    user.username && (project?.editors.includes(user.username) || project?.owner === user.username)
+    !!user.username &&
+    (project?.editors.includes(user.username) || project?.owner === user.username)
   );
 };

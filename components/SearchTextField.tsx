@@ -1,6 +1,6 @@
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import type { TextFieldProps } from '@mui/material';
-import { InputAdornment, TextField } from '@mui/material';
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import type { TextFieldProps } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 
 /**
  * MuiTextField with a search icon at the end

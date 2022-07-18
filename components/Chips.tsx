@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 
 export interface ChipsProps {
   /**
@@ -10,12 +10,12 @@ export interface ChipsProps {
 /**
  * Wrapper component that provides spacing to one or more MUI <Chip /> components
  */
-export const Chips = styled('div', { shouldForwardProp: (prop) => prop !== 'spacing' })<ChipsProps>(
+export const Chips = styled("div", { shouldForwardProp: (prop) => prop !== "spacing" })<ChipsProps>(
   ({ spacing = 0.5, theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    '& > *': {
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    "& > *": {
       margin: theme.spacing(spacing),
     },
   }),

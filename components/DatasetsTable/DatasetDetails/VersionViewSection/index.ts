@@ -1,1 +1,1 @@
-export * from './VersionViewSection';
+export * from "./VersionViewSection";

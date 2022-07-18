@@ -1,9 +1,9 @@
-import type { DialogProps } from '@mui/material';
-import type { FormikConfig } from 'formik';
-import { Form, Formik } from 'formik';
+import type { DialogProps } from "@mui/material";
+import type { FormikConfig } from "formik";
+import { Form, Formik } from "formik";
 
-import { ModalWrapper } from './ModalWrapper';
-import type { BaseModalWrapperProps } from './types';
+import { ModalWrapper } from "./ModalWrapper";
+import type { BaseModalWrapperProps } from "./types";
 
 export interface FormikModalWrapperProps extends BaseModalWrapperProps {
   /**
@@ -53,7 +53,7 @@ export function FormikModalWrapper<Values>({
   return (
     <Formik {...formikProps}>
       {({ submitForm, isSubmitting, isValid, ...rest }) => (
-        <Form style={{ display: 'inline' }}>
+        <Form style={{ display: "inline" }}>
           <ModalWrapper
             DialogProps={DialogProps}
             id={id}
@@ -64,7 +64,7 @@ export function FormikModalWrapper<Values>({
             onClose={onClose}
             onSubmit={submitForm}
           >
-            {typeof children === 'function'
+            {typeof children === "function"
               ? children({ isValid, submitForm, isSubmitting, ...rest })
               : children}
           </ModalWrapper>

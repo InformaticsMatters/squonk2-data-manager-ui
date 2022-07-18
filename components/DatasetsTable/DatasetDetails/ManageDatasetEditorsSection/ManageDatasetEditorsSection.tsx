@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useState } from "react";
+import { useQueryClient } from "react-query";
 
-import type { DatasetSummary, DmError } from '@squonk/data-manager-client';
+import type { DatasetSummary, DmError } from "@squonk/data-manager-client";
 import {
   getGetDatasetsQueryKey,
   useAddEditorToDataset,
   useRemoveEditorFromDataset,
-} from '@squonk/data-manager-client/dataset';
+} from "@squonk/data-manager-client/dataset";
 
-import { useEnqueueError } from '../../../../hooks/useEnqueueStackError';
-import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
-import { CenterLoader } from '../../../CenterLoader';
-import { ManageEditors } from './ManageEditors';
+import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
+import { useKeycloakUser } from "../../../../hooks/useKeycloakUser";
+import { CenterLoader } from "../../../CenterLoader";
+import { ManageEditors } from "./ManageEditors";
 
 export interface ManageDatasetEditorsSectionProps {
   /**
@@ -59,11 +59,11 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
             enqueueError(error);
           }
         } else {
-          enqueueSnackbar(`Username doesn't exist`, { variant: 'warning' });
+          enqueueSnackbar("Username doesn't exist", { variant: "warning" });
         }
 
         await queryClient.invalidateQueries(getGetDatasetsQueryKey());
-        enqueueSnackbar(`User ${username} removed successfully`, { variant: 'success' });
+        enqueueSnackbar(`User ${username} removed successfully`, { variant: "success" });
 
         setIsLoading(false);
       }}
@@ -77,11 +77,11 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
             enqueueError(error);
           }
         } else {
-          enqueueSnackbar(`Username doesn't exist`, { variant: 'warning' });
+          enqueueSnackbar("Username doesn't exist", { variant: "warning" });
         }
 
         await queryClient.invalidateQueries(getGetDatasetsQueryKey());
-        enqueueSnackbar(`User ${username} added successfully`, { variant: 'success' });
+        enqueueSnackbar(`User ${username} added successfully`, { variant: "success" });
 
         setIsLoading(false);
       }}

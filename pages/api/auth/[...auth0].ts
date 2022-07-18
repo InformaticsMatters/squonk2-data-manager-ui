@@ -1,5 +1,5 @@
-import { handleAuth, handleLogin } from '@auth0/nextjs-auth0';
-import { withSentry } from '@sentry/nextjs';
+import { handleAuth, handleLogin } from "@auth0/nextjs-auth0";
+import { withSentry } from "@sentry/nextjs";
 
 export default withSentry(
   handleAuth({
@@ -8,7 +8,7 @@ export default withSentry(
         await handleLogin(req, res, {
           authorizationParams: {
             // Add the `offline_access` scope to also get a Refresh Token
-            scope: 'openid profile email offline_access',
+            scope: "openid profile email offline_access",
           },
         });
       } catch (error) {

@@ -1,33 +1,29 @@
-import { List, Typography } from '@mui/material';
+import { List } from "@mui/material";
 
-import { useOrganisationUnit } from '../../../../../context/organisationUnitContext';
-import { useKeycloakUser } from '../../../../../hooks/useKeycloakUser';
-import { CreateProjectListItem } from './CreateProjectListItem';
-import { CreateUnitListItem } from './CreateUnitListItem';
+import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
+import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
+import { useSelectedUnit } from "../../../../../state/unitSelection";
+import { CreateProjectListItem } from "./CreateProjectListItem";
+import { CreateUnitListItem } from "./CreateUnitListItem";
+import { DeleteUnitListItem } from "./DeleteUnitListItem";
 
 /**
  * Displays actions related to context.
  */
 export const ContextActions = () => {
-  const {
-    organisationUnit: { organisation, unit },
-  } = useOrganisationUnit();
+  const [unit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
   const { user } = useKeycloakUser();
 
   const isOrganisationOwner = organisation?.owner_id === user.username;
-
-  if (!unit && !isOrganisationOwner) {
-    return (
-      <Typography component="p" sx={{ mt: 1 }} variant="subtitle2">
-        Please select an organisation and a unit
-      </Typography>
-    );
-  }
+  const isUnitOwner = user.username === unit?.owner_id;
 
   return (
     <List>
-      {isOrganisationOwner && <CreateUnitListItem />}
-      <CreateProjectListItem />
+      {(isOrganisationOwner || organisation?.caller_is_member) &&
+        organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && <CreateUnitListItem />}
+      {isUnitOwner && <DeleteUnitListItem />}
+      {unit && <CreateProjectListItem />}
     </List>
   );
 };

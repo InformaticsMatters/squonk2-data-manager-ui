@@ -1,4 +1,4 @@
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import {
   Button,
   Dialog,
@@ -8,10 +8,10 @@ import {
   IconButton,
   Typography,
   useTheme,
-} from '@mui/material';
+} from "@mui/material";
 
-import { SlideUpTransition } from '../SlideUpTransition';
-import type { BaseModalWrapperProps } from './types';
+import { SlideUpTransition } from "../SlideUpTransition";
+import type { BaseModalWrapperProps } from "./types";
 
 export interface ModalWrapperProps extends BaseModalWrapperProps {
   /**
@@ -60,10 +60,10 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
           size="small"
           sx={{
             zIndex: theme.zIndex.appBar + 1,
-            position: 'absolute',
+            position: "absolute",
             right: theme.spacing(2),
             top: theme.spacing(1.5),
-            color: 'text.primary',
+            color: "text.primary",
           }}
           onClick={onClose}
         >

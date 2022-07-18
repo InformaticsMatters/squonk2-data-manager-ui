@@ -1,4 +1,4 @@
-import { Tooltip, Typography } from '@mui/material';
+import { Tooltip, Typography } from "@mui/material";
 
 export interface SelectedFilesLabelProps {
   /**
@@ -15,18 +15,18 @@ export interface SelectedFilesLabelProps {
  */
 export const SelectedFilesLabel = ({ files }: SelectedFilesLabelProps) => {
   return (
-    <Typography noWrap display="inline" sx={{ whiteSpace: 'break-spaces' }} variant="body2">
-      Selected Files:{' '}
+    <Typography noWrap display="inline" sx={{ whiteSpace: "break-spaces" }} variant="body2">
+      Selected Files:{" "}
       {files.length === 1 ? (
         files[0]
       ) : files.length > 1 ? (
-        <Tooltip title={files.slice(1).join(', ')}>
+        <Tooltip title={files.slice(1).join(", ")}>
           <span>
             {files[0]} and <b>{files.length - 1} more</b>
           </span>
         </Tooltip>
       ) : (
-        'None'
+        "None"
       )}
     </Typography>
   );

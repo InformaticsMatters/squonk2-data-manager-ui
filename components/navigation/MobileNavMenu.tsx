@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
-import { Divider, Grid, IconButton, List, ListItem, ListItemText, Typography } from '@mui/material';
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import { Divider, Grid, IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
 
-import { useIsAuthorized } from '../../hooks/useIsAuthorized';
-import { ModalWrapper } from '../modals/ModalWrapper';
-import { NavLink } from './NavLink';
-import { OUPContext } from './OUPContext';
-import { UserMenuContent } from './UserMenuContent';
+import { useIsAuthorized } from "../../hooks/useIsAuthorized";
+import { ModalWrapper } from "../modals/ModalWrapper";
+import { NavLink } from "./NavLink";
+import { OUPContext } from "./OUPContext";
+import { UserMenuContent } from "./UserMenuContent";
 
 /**
  * Mobile modal navigation menu with
@@ -21,7 +21,7 @@ export const MobileNavMenu = () => {
 
   return (
     <>
-      <IconButton color="inherit" size="large" sx={{ ml: 'auto' }} onClick={() => setOpen(true)}>
+      <IconButton color="inherit" size="large" sx={{ ml: "auto" }} onClick={() => setOpen(true)}>
         <MenuRoundedIcon />
       </IconButton>
       <ModalWrapper id="mobile-menu" open={open} title="" onClose={() => setOpen(false)}>
@@ -31,28 +31,28 @@ export const MobileNavMenu = () => {
               Links
             </Typography>
             <List aria-label="main-mobile-navigation" component="nav">
-              <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Datasets">
+              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Datasets">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
                     <ListItemText primary="Datasets" />
                   </ListItem>
                 )}
               </NavLink>
-              <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Project">
+              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Project">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
                     <ListItemText primary="Project" />
                   </ListItem>
                 )}
               </NavLink>
-              <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Executions">
+              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Executions">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
                     <ListItemText primary="Executions" />
                   </ListItem>
                 )}
               </NavLink>
-              <NavLink stripQueryParameters={['taskId', 'instanceId', 'path']} title="Results">
+              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Results">
                 {({ active }) => (
                   <ListItem button component="a" selected={active}>
                     <ListItemText primary="Results" />

@@ -1,4 +1,4 @@
-import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager-client';
+import type { DatasetSummary, DatasetVersionSummary } from "@squonk/data-manager-client";
 
 type TableDatasetBase = {
   // Table data
@@ -15,11 +15,11 @@ type TableDatasetBase = {
 };
 
 export type TableDatasetRow = TableDatasetBase & {
-  type: 'row';
+  type: "row";
 };
 
 export type TableDatasetSubRow = TableDatasetBase & {
-  type: 'subRow';
+  type: "subRow";
   version: number;
   owner?: string;
 };

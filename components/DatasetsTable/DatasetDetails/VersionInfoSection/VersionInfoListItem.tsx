@@ -1,4 +1,4 @@
-import { ListItem, ListItemText } from '@mui/material';
+import { ListItem, ListItemText } from "@mui/material";
 
 export interface VersionInfoListItemProps {
   /**
@@ -21,7 +21,7 @@ export const VersionInfoListItem = ({ name, value }: VersionInfoListItemProps) =
       <ListItemText
         primary={value}
         primaryTypographyProps={{
-          align: 'right',
+          align: "right",
         }}
       />
     </ListItem>

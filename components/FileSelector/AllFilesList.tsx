@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { useGetFiles } from '@squonk/data-manager-client/file';
+import { useGetFiles } from "@squonk/data-manager-client/file";
 
-import { Typography } from '@mui/material';
+import { Typography } from "@mui/material";
 
-import { CenterLoader } from '../CenterLoader';
-import { FileListItem } from './FileListItem';
-import { PathBreadcrumbs } from './PathBreadcrumbs';
-import { ScrollList } from './ScrollList';
-import type { FileOrDirectory, SharedProps } from './types';
-import { getChecked, getFullPath, getNewValue } from './utils';
+import { CenterLoader } from "../CenterLoader";
+import { FileListItem } from "./FileListItem";
+import { PathBreadcrumbs } from "./PathBreadcrumbs";
+import { ScrollList } from "./ScrollList";
+import type { FileOrDirectory, SharedProps } from "./types";
+import { getChecked, getFullPath, getNewValue } from "./utils";
 
 /**
  * Navigable list of files in the project volume in a list format with options to select files or
@@ -24,7 +24,7 @@ export const AllFilesList = ({
   mimeTypes,
 }: SharedProps) => {
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
-  const subPath = '/' + breadcrumbs.join('/');
+  const subPath = "/" + breadcrumbs.join("/");
 
   const { data, isLoading } = useGetFiles({
     project_id: projectId,
@@ -42,7 +42,7 @@ export const AllFilesList = ({
     ...dirs
       .map((path) => {
         const fullPath = getFullPath(breadcrumbs, path);
-        const type: FileOrDirectory = 'directory';
+        const type: FileOrDirectory = "directory";
         return {
           fullPath,
           key: fullPath,
@@ -50,14 +50,14 @@ export const AllFilesList = ({
           title: path,
           type,
           onClick: () => setBreadcrumbs([...breadcrumbs, path]),
-          onSelect: targetType.startsWith('dir') ? handleSelect(fullPath) : undefined,
+          onSelect: targetType.startsWith("dir") ? handleSelect(fullPath) : undefined,
         };
       })
       .sort((dirA, dirB) => dirA.title.localeCompare(dirB.title)),
     ...files
       .map((file) => {
         const fullPath = getFullPath(breadcrumbs, file.file_name);
-        const type: FileOrDirectory = 'file';
+        const type: FileOrDirectory = "file";
         return {
           fullPath,
           mimeType: file.mime_type,
@@ -94,7 +94,7 @@ export const AllFilesList = ({
       <PathBreadcrumbs breadcrumbs={breadcrumbs} setBreadcrumbs={setBreadcrumbs} />
       <ScrollList dense>
         {items
-          .filter((item) => (targetType.startsWith('dir') ? item.type === 'directory' : true))
+          .filter((item) => (targetType.startsWith("dir") ? item.type === "directory" : true))
           .map((item) => (
             <FileListItem
               key={item.fullPath}

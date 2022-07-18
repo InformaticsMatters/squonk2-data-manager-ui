@@ -1,5 +1,5 @@
-import { useKeycloakUser } from '../../../../hooks/useKeycloakUser';
-import type { TableDatasetSubRow } from '../..';
+import { useKeycloakUser } from "../../../../hooks/useKeycloakUser";
+import type { TableDatasetSubRow } from "../..";
 
 /**
  * Splits selected dataset into deletable and undeletable datasets based on user's permission.

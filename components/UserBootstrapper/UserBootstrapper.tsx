@@ -1,5 +1,5 @@
-import { useIsAuthorized } from '../../hooks/useIsAuthorized';
-import { BootstrapAlert } from './BootstrapAlert';
+import { useIsAuthorized } from "../../hooks/useIsAuthorized";
+import { BootstrapAlert } from "./BootstrapAlert";
 
 /**
  * If user is authorized it displays the BoostrappingAlert component.

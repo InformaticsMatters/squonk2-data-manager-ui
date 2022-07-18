@@ -1,19 +1,17 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import type { ProductDmStorage } from '@squonk/account-server-client';
-import { useGetProductsForUnit } from '@squonk/account-server-client/product';
+import type { ProductDmStorage } from "@squonk/account-server-client";
+import { useGetProductsForUnit } from "@squonk/account-server-client/product";
 
-import { useOrganisationUnit } from '../../../../context/organisationUnitContext';
+import { useSelectedUnit } from "../../../../state/unitSelection";
 
 /**
  * Fetches information about account's storage subscriptions.
  */
 export const useStorageSubscriptions = () => {
-  const {
-    organisationUnit: { unit },
-  } = useOrganisationUnit();
+  const [unit] = useSelectedUnit();
 
-  const { data, isLoading, isError, error } = useGetProductsForUnit(unit?.id ?? '', {
+  const { data, isLoading, isError, error } = useGetProductsForUnit(unit?.id ?? "", {
     query: { enabled: !!unit?.id },
   });
 
@@ -24,7 +22,7 @@ export const useStorageSubscriptions = () => {
 
     return data.products.filter(
       (product): product is ProductDmStorage =>
-        product.product.type === 'DATA_MANAGER_STORAGE_SUBSCRIPTION',
+        product.product.type === "DATA_MANAGER_STORAGE_SUBSCRIPTION",
     );
   }, [data]);
 

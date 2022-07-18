@@ -1,8 +1,8 @@
-import type { DatasetSummary, DatasetVersionSummary } from '@squonk/data-manager-client';
+import type { DatasetSummary, DatasetVersionSummary } from "@squonk/data-manager-client";
 
-import { List } from '@mui/material';
+import { List } from "@mui/material";
 
-import { DatasetPlainTextViewerListItem } from './DatasetPlainTextViewerListItem';
+import { DatasetPlainTextViewerListItem } from "./DatasetPlainTextViewerListItem";
 
 export interface VersionViewSectionProps {
   /**

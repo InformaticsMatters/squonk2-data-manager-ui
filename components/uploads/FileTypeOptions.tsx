@@ -1,13 +1,13 @@
-import { useGetFileTypes } from '@squonk/data-manager-client/type';
+import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from "@mui/material";
 
-import { CenterLoader } from '../CenterLoader';
-import type { MimeTypeCardProps } from './MimeTypeCard';
-import { MimeTypeCard } from './MimeTypeCard';
+import { CenterLoader } from "../CenterLoader";
+import type { MimeTypeCardProps } from "./MimeTypeCard";
+import { MimeTypeCard } from "./MimeTypeCard";
 
 export interface FileTypeOptionsProps
-  extends Pick<MimeTypeCardProps, 'formDatas' | 'onFormChange'> {
+  extends Pick<MimeTypeCardProps, "formDatas" | "onFormChange"> {
   /**
    * The set of mime-types to display options for, if options are required
    */

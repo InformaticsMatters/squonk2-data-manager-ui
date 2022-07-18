@@ -1,9 +1,9 @@
-import generateThemes from '@squonk/mui-theme';
+import generateThemes from "@squonk/mui-theme";
 
-import createEmotionServer from '@emotion/server/create-instance';
-import Document, { Head, Html, Main, NextScript } from 'next/document';
+import createEmotionServer from "@emotion/server/create-instance";
+import Document, { Head, Html, Main, NextScript } from "next/document";
 
-import createEmotionCache from '../utils/createEmotionCache';
+import createEmotionCache from "../utils/createEmotionCache";
 
 const { lightTheme } = generateThemes();
 
@@ -75,9 +75,9 @@ MyDocument.getInitialProps = async (ctx) => {
   const emotionStyles = extractCriticalToChunks(initialProps.html);
   const emotionStyleTags = emotionStyles.styles.map((style) => (
     <style
-      dangerouslySetInnerHTML={{ __html: style.css }}
-      data-emotion={`${style.key} ${style.ids.join(' ')}`}
       // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{ __html: style.css }}
+      data-emotion={`${style.key} ${style.ids.join(" ")}`}
       key={style.key}
     />
   ));

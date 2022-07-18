@@ -2,6 +2,177 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.18-rc.1](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.18-rc.0...0.1.18-rc.1) (2022-07-16)
+
+### [0.1.18-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.17...0.1.18-rc.0) (2022-07-16)
+
+
+### Features
+
+* **result-timeline:** Display colour and tooltip for the event type and provide toggle to filter out debug events ([55c444c](https://github.com/InformaticsMatters/squonk-frontend/commit/55c444c2bcba0547387bc86c2ff4b72013864d70))
+* **settings:** Add icons for org and unit selection to show private and membership ([553f23c](https://github.com/InformaticsMatters/squonk-frontend/commit/553f23cd3d6c86f97676113c744db317298c4d87))
+
+### [0.1.17](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.17-rc.0...0.1.17) (2022-07-12)
+
+### [0.1.17-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.16...0.1.17-rc.0) (2022-07-12)
+
+
+### Bug Fixes
+
+* **create-project:** Change default value for private projects to true ([e295ab6](https://github.com/InformaticsMatters/squonk-frontend/commit/e295ab66407c489f5cafccdce22089679ae43bbe))
+* **create-unit:** Prevent users from creating units in the default org ([5edfdbd](https://github.com/InformaticsMatters/squonk-frontend/commit/5edfdbdf3d6b2afc6d2d61b77d75c2690d04e754)), closes [#633](https://github.com/InformaticsMatters/squonk-frontend/issues/633)
+* **nextjs:** Fix types from next 12 ([b689053](https://github.com/InformaticsMatters/squonk-frontend/commit/b68905379c2c9c8275c01031940902ef75650f53))
+* **theme:** Fix loading of dark mode when it's set in local storage ([d4d307c](https://github.com/InformaticsMatters/squonk-frontend/commit/d4d307cd8e235f7cfeaa2663cd77d56348ce91a8))
+* **user:** Clear local storage when user logs out ([47171b9](https://github.com/InformaticsMatters/squonk-frontend/commit/47171b9bb15e00b5ad22aaa7e33f17b5728ab1ef))
+
+### [0.1.16](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.16-rc.2...0.1.16) (2022-07-04)
+
+### [0.1.16-rc.2](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.16-rc.1...0.1.16-rc.2) (2022-07-04)
+
+
+### Bug Fixes
+
+* **create-unit:** Allow units to be created when only a org is selected ([efac5a8](https://github.com/InformaticsMatters/squonk-frontend/commit/efac5a856e006cbb4eb581990408bef3efb3bb70))
+* **typescript:** Fix nextjs types ([45cba71](https://github.com/InformaticsMatters/squonk-frontend/commit/45cba7117823d261461d1699fdc54d80405421a8))
+
+### [0.1.16-rc.1](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.16-rc.0...0.1.16-rc.1) (2022-07-02)
+
+
+### Bug Fixes
+
+* **project-selection:** Fix column widths and headers ([8edab17](https://github.com/InformaticsMatters/squonk-frontend/commit/8edab179380e4150be21c0a570948a1ec3c46839))
+* **select-organisation:** Show all organisations, not just those with units ([57cd060](https://github.com/InformaticsMatters/squonk-frontend/commit/57cd060a9ed55837ed2189434549651758ecbca0))
+
+### [0.1.16-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.15...0.1.16-rc.0) (2022-07-02)
+
+
+### Features
+
+* **project-selection:** Add owner to settings project/product table ([5e9e978](https://github.com/InformaticsMatters/squonk-frontend/commit/5e9e978bd2b9219f4c6355837a56cf884929be2c))
+* **sentry:** Report "unknonw errors" to Sentry ([6759da3](https://github.com/InformaticsMatters/squonk-frontend/commit/6759da3610e5f9bc629347cfbb5a1408f19afa65))
+
+
+### Bug Fixes
+
+* **create-project:** Fix service id temporarily ([be2d8a8](https://github.com/InformaticsMatters/squonk-frontend/commit/be2d8a8c185a9df5adc929c64c1d726cbfde4199))
+* **create-unit:** Allow org members to create units ([282985f](https://github.com/InformaticsMatters/squonk-frontend/commit/282985f96729494f34b0c9dbb24f6eba7c1c7062))
+* Make UI compatible with breaking changes in squonk APIs ([6a76185](https://github.com/InformaticsMatters/squonk-frontend/commit/6a761853bf78e2b34e60c8965e7d7408e6c07900))
+
+### [0.1.15](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.15-rc.0...0.1.15) (2022-06-17)
+
+### [0.1.15-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.14...0.1.15-rc.0) (2022-06-17)
+
+
+### Bug Fixes
+
+* **jobs-page:** Fix rerun job button not using changes to inputs ([6442cd8](https://github.com/InformaticsMatters/squonk-frontend/commit/6442cd88a423f2ea1ce1c6852996381b84a037cd)), closes [#601](https://github.com/InformaticsMatters/squonk-frontend/issues/601)
+
+### [0.1.14](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.14-rc.0...0.1.14) (2022-06-16)
+
+### [0.1.14-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.13...0.1.14-rc.0) (2022-06-16)
+
+
+### Bug Fixes
+
+* **dataset-storage-table:** Adjust columns in dataset storage table in the settings UI ([725f97e](https://github.com/InformaticsMatters/squonk-frontend/commit/725f97e8b114fbba681040b202ab78a6476d7e7e)), closes [#596](https://github.com/InformaticsMatters/squonk-frontend/issues/596)
+* **result-timeline:** Improve display of results timeline ([c2243fb](https://github.com/InformaticsMatters/squonk-frontend/commit/c2243fb4ceeb8e28158b3125b66147a43cc9e827))
+* **settings:** Fix position of user menu popper ([1f836ae](https://github.com/InformaticsMatters/squonk-frontend/commit/1f836ae981ed291e18a37443a00455495c4e86b0))
+
+### [0.1.13](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.13-rc.0...0.1.13) (2022-06-15)
+
+### [0.1.13-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.12...0.1.13-rc.0) (2022-06-15)
+
+
+### Bug Fixes
+
+* **settings:** Change settings popper so it doesn't block the rest of the UI ([cb3bc0f](https://github.com/InformaticsMatters/squonk-frontend/commit/cb3bc0fb5a67ae3f713e521e5df399aff87e3ddf))
+
+### [0.1.12](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.12-rc.0...0.1.12) (2022-06-13)
+
+### [0.1.12-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.11...0.1.12-rc.0) (2022-06-13)
+
+
+### Bug Fixes
+
+* **results-page:** Fix display of nextflow events ([4e3d2be](https://github.com/InformaticsMatters/squonk-frontend/commit/4e3d2bef811dd6f213b41c3e482b52e9944ca08f)), closes [#576](https://github.com/InformaticsMatters/squonk-frontend/issues/576)
+
+### [0.1.11](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.11-rc.0...0.1.11) (2022-05-31)
+
+### [0.1.11-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.10...0.1.11-rc.0) (2022-05-31)
+
+
+### Features
+
+* **file-download:** Allow all types of files to be downloaded from the project page ([ffba58e](https://github.com/InformaticsMatters/squonk-frontend/commit/ffba58e9e4353f176ed6f4ea93a70238da888dc3))
+
+
+### Bug Fixes
+
+* **delete-files:** Disable delete file buttons when user isn't a project editor ([5f9f284](https://github.com/InformaticsMatters/squonk-frontend/commit/5f9f284c011db2c19c5274a12f9de01450412119))
+* **upload:** Disable project file-upload button when user isn't a project editor or owner ([a5925f2](https://github.com/InformaticsMatters/squonk-frontend/commit/a5925f27285723bc606ec91fcef786479e9c1b9f))
+
+### [0.1.10](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.10-rc.0...0.1.10) (2022-05-30)
+
+### [0.1.10-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.9...0.1.10-rc.0) (2022-05-30)
+
+### [0.1.9](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.9-rc.0...0.1.9) (2022-05-30)
+
+### [0.1.9-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.8...0.1.9-rc.0) (2022-05-30)
+
+
+### Bug Fixes
+
+* **results-page:** Fix links to output files ([0146470](https://github.com/InformaticsMatters/squonk-frontend/commit/01464708354515f5d8a4a266e2abc5e26d2e31d7))
+
+### [0.1.8](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.8-rc.0...0.1.8) (2022-05-29)
+
+### [0.1.8-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.7...0.1.8-rc.0) (2022-05-29)
+
+
+### Bug Fixes
+
+* **plaintext-viewer:** Fix display of content in plaintext viewer ([66c4fd8](https://github.com/InformaticsMatters/squonk-frontend/commit/66c4fd83cd7f4d48ca30d94ec30da6bbb73243df))
+* **plaintext-viewer:** Fix query parameters in file page ([75d454a](https://github.com/InformaticsMatters/squonk-frontend/commit/75d454acd33274df09ea46da039eea035c2bcce1))
+
+### [0.1.7](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.6...0.1.7) (2022-05-28)
+
+
+### Features
+
+* **nextjs:** Add nicer transitions between routes ([08a6f0d](https://github.com/InformaticsMatters/squonk-frontend/commit/08a6f0da740312d5fd47a9f045392480b45e086f))
+
+### [0.1.6](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.5...0.1.6) (2022-05-28)
+
+
+### Features
+
+* **file-download:** Allow user to download managed files on the project page ([0bf2a37](https://github.com/InformaticsMatters/squonk-frontend/commit/0bf2a373883930f444b1f110b4c746e5aadcf5d9)), closes [#312](https://github.com/InformaticsMatters/squonk-frontend/issues/312)
+
+
+### Bug Fixes
+
+* **layout:** Place footer at bottom of screen when content height is small ([0c5450d](https://github.com/InformaticsMatters/squonk-frontend/commit/0c5450dfe6b9af9f937cd800a90ca12fd7bc8e12))
+
+### [0.1.5](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.4...0.1.5) (2022-05-27)
+
+
+### Bug Fixes
+
+* **executions:** Fix typo in warning text when no project is selected ([7f7eda3](https://github.com/InformaticsMatters/squonk-frontend/commit/7f7eda3f4138aa48bc7e6532fc1c0970162876dd))
+
+### [0.1.4](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3...0.1.4) (2022-05-26)
+
+
+### Features
+
+* **executions:** Add warning when no project is selected ([899637f](https://github.com/InformaticsMatters/squonk-frontend/commit/899637f772b25daf36fd0a0893e19f48121b4acb))
+* **project-stats:** Reorder project stats table and add clear selected project button ([d1f54b3](https://github.com/InformaticsMatters/squonk-frontend/commit/d1f54b32d3464e02acd2ac49d81b323fa0f62a2e))
+
+
+### Bug Fixes
+
+* **jobs:** Fix job launching (use correct app version) ([640e202](https://github.com/InformaticsMatters/squonk-frontend/commit/640e2022939c0b1cbff72314d57c9c519df4dd84))
+
 ### [0.1.3](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.10...0.1.3) (2022-05-26)
 
 ### [0.1.3-rc.10](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.3-rc.9...0.1.3-rc.10) (2022-05-26)

@@ -24,7 +24,7 @@ export type StorageSubscription = {
     flavour?: string;
     id: string;
     name?: string;
-    type: 'DATA_MANAGER_STORAGE_SUBSCRIPTION';
+    type: "DATA_MANAGER_STORAGE_SUBSCRIPTION";
   };
   storage: {
     coins: {
@@ -71,7 +71,7 @@ export type ProjectSubscription = {
     flavour: string;
     id: string;
     name?: string;
-    type: 'DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION';
+    type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION";
   };
   storage: {
     coins: {

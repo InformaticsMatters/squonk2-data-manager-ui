@@ -5,7 +5,7 @@
  * @returns whether the item is currently selected
  */
 export const getChecked = (value: string[] | string | undefined, fullPath: string): boolean =>
-  !!(fullPath === value || (typeof value !== 'string' && value?.includes(fullPath)));
+  !!(fullPath === value || (typeof value !== "string" && value?.includes(fullPath)));
 
 /**
  * Gets the root relative path to the file or directory
@@ -14,7 +14,7 @@ export const getChecked = (value: string[] | string | undefined, fullPath: strin
  * @returns the generated path
  */
 export const getFullPath = (breadcrumbs: string[], path: string): string =>
-  breadcrumbs.join('/') + (breadcrumbs.length ? '/' : '') + path;
+  breadcrumbs.join("/") + (breadcrumbs.length ? "/" : "") + path;
 
 /**
  * Determines the new value of the selection

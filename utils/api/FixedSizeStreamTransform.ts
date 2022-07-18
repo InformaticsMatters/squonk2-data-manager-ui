@@ -1,6 +1,6 @@
-import { Transform } from 'stream';
+import { Transform } from "stream";
 
-import type { TransformCallback, TransformOptions } from 'stream';
+import type { TransformCallback, TransformOptions } from "stream";
 
 /**
  * Limits the size of a stream to specified number in bytes. It counts the number of sent bytes.

@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
-import { Children } from 'react';
+import type { ReactNode } from "react";
+import { Children } from "react";
 
-import { Grid } from '@mui/material';
+import { Grid } from "@mui/material";
 
 export interface DatasetsFilterToolbarProps {
   /**
@@ -26,12 +26,12 @@ export const DatasetsFilterToolbar = ({
   return (
     <Grid container alignItems="center" spacing={1} sx={{ mr: 7 }}>
       {Children.map(shrinkableFilters, (child) => (
-        <Grid item sx={{ flex: '1 1 200px' }}>
+        <Grid item sx={{ flex: "1 1 200px" }}>
           {child}
         </Grid>
       ))}
       {Children.map(fullWidthFilters, (child) => (
-        <Grid item sx={{ flex: '1 1 100%' }}>
+        <Grid item sx={{ flex: "1 1 100%" }}>
           {child}
         </Grid>
       ))}

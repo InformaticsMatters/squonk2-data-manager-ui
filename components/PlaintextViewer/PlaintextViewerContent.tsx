@@ -1,9 +1,7 @@
-import { useState } from 'react';
-import { List } from 'react-virtualized';
-import { WindowScroller } from 'react-virtualized';
-import { AutoSizer } from 'react-virtualized';
+import { useState } from "react";
+import { AutoSizer, List, WindowScroller } from "react-virtualized";
 
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from "@mui/material";
 
 /**
  * Height of a row in pixels.
@@ -42,9 +40,9 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
       ref={setScrollElement}
       sx={{
         // `overflow: auto` displays the scrollbars inside the container
-        overflow: 'auto',
-        '& pre': {
-          fontFamily: '"Fira Mono", monospace',
+        overflow: "auto",
+        "& pre": {
+          fontFamily: "'Fira Mono', monospace",
         },
       }}
     >
@@ -58,10 +56,10 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
               disableHeight
               // By default this element has 0 width which results in the following flex div not
               // being displayed
-              sx={{ w: 'unset !important' }}
+              style={{ width: "auto" }}
             >
               {({ width }) => (
-                <Box display="flex" gap={(theme) => theme.spacing(2)} ref={registerChild}>
+                <Box display="flex" gap={2} overflow="scroll" ref={registerChild}>
                   {/** Line numbers column */}
                   <List
                     autoContainerWidth
@@ -84,7 +82,7 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
                       </Typography>
                     )}
                     scrollTop={scrollTop}
-                    sx={{ userSelect: 'none' }}
+                    sx={{ userSelect: "none" }}
                     width={numberColumnWidth}
                     onScroll={onChildScroll}
                   />
@@ -92,6 +90,7 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
                   <List
                     autoContainerWidth
                     autoHeight
+                    containerStyle={{ overflow: "scroll" }}
                     height={height}
                     isScrolling={isScrolling}
                     overscanRowCount={OVERSCAN}
@@ -103,13 +102,6 @@ export const PlaintextViewerContent = ({ lines }: PlaintextViewerContentProps) =
                       </Typography>
                     )}
                     scrollTop={scrollTop}
-                    sx={{
-                      // Overflow is visible in case a line is longer than the width of the container
-                      overflow: 'visible !important',
-                      '& > div': {
-                        overflow: 'visible !important',
-                      },
-                    }}
                     // Account for the `gap` property. The `1` is subtracted as well since browsers
                     // can round the number which results in the display of unnecessary scrollbar on
                     // the X axis.

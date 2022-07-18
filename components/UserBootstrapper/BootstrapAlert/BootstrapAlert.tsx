@@ -1,9 +1,9 @@
-import { useGetUnits } from '@squonk/account-server-client/unit';
+import { useGetUnits } from "@squonk/account-server-client/unit";
 
-import { Alert, Box } from '@mui/material';
+import { Alert, Box } from "@mui/material";
 
-import { useKeycloakUser } from '../../../hooks/useKeycloakUser';
-import { BootstrapForm } from './BootstrapForm';
+import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
+import { BootstrapForm } from "./BootstrapForm";
 /**
  * Bootstraps a user which doesn't have any units with a default unit and a project
  */
@@ -12,7 +12,7 @@ export const BootstrapAlert = () => {
   const { user } = useKeycloakUser();
 
   const userDefaultUnit = unitsData?.units
-    .find((orgUnit) => orgUnit.organisation.name === 'Default')
+    .find((orgUnit) => orgUnit.organisation.name === "Default")
     ?.units.find((unit) => unit.owner_id === user.username);
 
   if (isLoadingUnits) {
@@ -25,8 +25,8 @@ export const BootstrapAlert = () => {
         <Alert
           severity="info"
           sx={{
-            '& .MuiAlert-message': {
-              width: '100%',
+            "& .MuiAlert-message": {
+              width: "100%",
             },
           }}
         >

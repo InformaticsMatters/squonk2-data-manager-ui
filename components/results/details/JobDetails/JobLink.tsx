@@ -1,14 +1,14 @@
-import { Folder } from '@mui/icons-material';
-import { Box, IconButton, Link, Tooltip, Typography } from '@mui/material';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
+import { Folder } from "@mui/icons-material";
+import { Box, IconButton, Link, Tooltip, Typography } from "@mui/material";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 
-import { APP_ROUTES } from '../../../../constants/routes';
+import { APP_ROUTES } from "../../../../constants/routes";
 
 export interface JobLinkProps {
   projectId: string;
   path: string;
-  type?: 'file' | 'files' | 'directory';
+  type?: "file" | "files" | "directory";
 }
 
 /**
@@ -17,8 +17,8 @@ export interface JobLinkProps {
  */
 const getPath = (contains: string) => {
   const path = contains
-    .split('/')
-    .filter((part) => part !== '.')
+    .split("/")
+    .filter((part) => part !== ".")
     // Filter empty parts
     .filter((part) => Boolean(part));
 
@@ -33,7 +33,7 @@ const getResolvedPath = (path: string[]) => {
   let containsGlob = false;
 
   const resolvedPath = path.filter((part) => {
-    if (part.includes('*')) {
+    if (part.includes("*")) {
       containsGlob = true;
     }
 
@@ -63,9 +63,9 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
 
   const path = getPath(originalPath);
   const { resolvedPath, containsGlob } = getResolvedPath(path);
-  const displayPath = path.join('/');
+  const displayPath = path.join("/");
 
-  if (type === 'file' && !containsGlob) {
+  if (type === "file" && !containsGlob) {
     const { filePath, fileName } = getFilePathAndName(resolvedPath);
 
     return (
@@ -73,12 +73,12 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
         alignItems="center"
         display="flex"
         gap={(theme) => theme.spacing(1)}
-        sx={{ wordBreak: 'break-all' }}
+        sx={{ wordBreak: "break-all" }}
       >
         <NextLink
           passHref
           href={{
-            pathname: APP_ROUTES.project['.'],
+            pathname: APP_ROUTES.project["."],
             query: {
               ...query,
               project: projectId,
@@ -98,7 +98,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
           href={{
             pathname: APP_ROUTES.project.file,
             query: {
-              projectId,
+              project: projectId,
               path: filePath,
               file: fileName,
             },
@@ -119,7 +119,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
       <NextLink
         passHref
         href={{
-          pathname: APP_ROUTES.dataset['.'],
+          pathname: APP_ROUTES.dataset["."],
           query: {
             ...query,
             project: projectId,

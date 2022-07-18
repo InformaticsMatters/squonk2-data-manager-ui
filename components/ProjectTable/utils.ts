@@ -1,4 +1,4 @@
-import type { TableDir, TableFile } from './types';
+import type { TableDir, TableFile } from "./types";
 
 type Row = TableDir | TableFile;
 
@@ -8,7 +8,7 @@ type Row = TableDir | TableFile;
  * @returns whether the input is a directory
  */
 export const isTableDir = (row: Row): row is TableDir => {
-  if (Object.prototype.hasOwnProperty.call(row, 'path')) {
+  if (Object.prototype.hasOwnProperty.call(row, "path")) {
     return true;
   }
   return false;

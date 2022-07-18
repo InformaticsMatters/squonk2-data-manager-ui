@@ -1,7 +1,7 @@
-import { AppBar, Toolbar } from '@mui/material';
+import { AppBar, Toolbar } from "@mui/material";
 
-import { Logo } from './navigation/Logo';
-import { ToolbarContents } from './navigation/ToolbarContents';
+import { Logo } from "./navigation/Logo";
+import { ToolbarContents } from "./navigation/ToolbarContents";
 
 const Header = () => {
   return (

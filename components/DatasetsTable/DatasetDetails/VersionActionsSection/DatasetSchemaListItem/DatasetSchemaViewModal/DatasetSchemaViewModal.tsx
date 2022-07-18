@@ -1,19 +1,19 @@
-import type { FC } from 'react';
-import { useMemo } from 'react';
-import type { Cell, Column } from 'react-table';
+import type { FC } from "react";
+import { useMemo } from "react";
+import type { Cell, Column } from "react-table";
 
-import { Alert, Typography } from '@mui/material';
+import { Alert, Typography } from "@mui/material";
 
-import { getErrorMessage } from '../../../../../../utils/orvalError';
-import { CenterLoader } from '../../../../../CenterLoader';
-import { DataTable } from '../../../../../DataTable';
-import { ModalWrapper } from '../../../../../modals/ModalWrapper';
-import { JSON_SCHEMA_TYPES } from './constants';
-import { DatasetSchemaDescriptionInput } from './DatasetSchemaDescriptionInput';
-import { DatasetSchemaInputCell } from './DatasetSchemaInputCell';
-import { DatasetSchemaSelectCell } from './DatasetSchemaSelectCell';
-import type { JSONSchemaType } from './types';
-import { useDatasetSchema } from './useDatasetSchema';
+import { getErrorMessage } from "../../../../../../utils/orvalError";
+import { CenterLoader } from "../../../../../CenterLoader";
+import { DataTable } from "../../../../../DataTable";
+import { ModalWrapper } from "../../../../../modals/ModalWrapper";
+import { JSON_SCHEMA_TYPES } from "./constants";
+import { DatasetSchemaDescriptionInput } from "./DatasetSchemaDescriptionInput";
+import { DatasetSchemaInputCell } from "./DatasetSchemaInputCell";
+import { DatasetSchemaSelectCell } from "./DatasetSchemaSelectCell";
+import type { JSONSchemaType } from "./types";
+import { useDatasetSchema } from "./useDatasetSchema";
 
 type TableSchemaView = {
   name: string;
@@ -91,13 +91,13 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
   const columns: Column<TableSchemaView>[] = useMemo(
     () => [
       {
-        accessor: 'name',
-        Header: 'Field Name',
+        accessor: "name",
+        Header: "Field Name",
       },
       {
-        id: 'description',
+        id: "description",
         accessor: (row) => row.description.current,
-        Header: 'Description',
+        Header: "Description",
         Cell: ({ row }: Cell<TableSchemaView>) => {
           const {
             name,
@@ -109,15 +109,15 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
               fieldName={name}
               fieldValue={current}
               originalFieldValue={original}
-              setFieldValue={(value) => setSchemaField(name, 'description', value)}
+              setFieldValue={(value) => setSchemaField(name, "description", value)}
             />
           );
         },
       },
       {
-        id: 'type',
+        id: "type",
         accessor: (row) => row.type.current,
-        Header: 'Type',
+        Header: "Type",
         Cell: ({ row }: Cell<TableSchemaView>) => {
           const {
             name,
@@ -130,7 +130,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
               fieldValue={current}
               options={JSON_SCHEMA_TYPES}
               originalFieldValue={original}
-              setFieldValue={(value) => setSchemaField(name, 'type', value)}
+              setFieldValue={(value) => setSchemaField(name, "type", value)}
             />
           );
         },
@@ -200,7 +200,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
 
   return (
     <ModalWrapper
-      DialogProps={{ maxWidth: 'md', fullWidth: true }}
+      DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`${datasetId}-schema`}
       open={open}
       submitText="Save"

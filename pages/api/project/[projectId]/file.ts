@@ -1,9 +1,9 @@
-import { withApiAuthRequired } from '@auth0/nextjs-auth0';
-import { withSentry } from '@sentry/nextjs';
+import { withApiAuthRequired } from "@auth0/nextjs-auth0";
+import { withSentry } from "@sentry/nextjs";
 
-import { handleApiError } from '../../../../utils/api/handleApiError';
-import { restreamDownload } from '../../../../utils/api/restreamDownload';
-import { getQueryParams } from '../../../../utils/requestUtils';
+import { handleApiError } from "../../../../utils/api/handleApiError";
+import { restreamDownload } from "../../../../utils/api/restreamDownload";
+import { getQueryParams } from "../../../../utils/requestUtils";
 
 export default withSentry(
   withApiAuthRequired(async (req, res) => {

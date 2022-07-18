@@ -1,6 +1,6 @@
-import type { UserSummary } from '@squonk/data-manager-client';
+import type { UserSummary } from "@squonk/data-manager-client";
 
-import { UserFilter } from './UserFilter';
+import { UserFilter } from "./UserFilter";
 
 export interface EditorFilterProps {
   /**

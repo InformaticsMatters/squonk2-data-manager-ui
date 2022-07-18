@@ -1,7 +1,7 @@
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from "react";
 
-import { Restore } from '@mui/icons-material';
-import { Box, IconButton, TextField, Tooltip } from '@mui/material';
+import { Restore } from "@mui/icons-material";
+import { Box, IconButton, TextField, Tooltip } from "@mui/material";
 
 export interface DatasetSchemaInputCellProps {
   /**
@@ -49,7 +49,7 @@ export const DatasetSchemaInputCell = ({
     <TextField
       fullWidth
       inputProps={{
-        'aria-label': `${fieldName} ${fieldKey}`,
+        "aria-label": `${fieldName} ${fieldKey}`,
         style: {
           paddingTop: 6,
           paddingBottom: 7,
@@ -57,7 +57,7 @@ export const DatasetSchemaInputCell = ({
       }}
       InputProps={{
         endAdornment: (
-          <Box ml={1} mr={1} visibility={!hasChanged ? 'hidden' : undefined}>
+          <Box ml={1} mr={1} visibility={!hasChanged ? "hidden" : undefined}>
             <Tooltip title="Revert changes">
               <IconButton size="small" onClick={() => setFieldValue(originalFieldValue)}>
                 <Restore fontSize="small" />
@@ -66,7 +66,7 @@ export const DatasetSchemaInputCell = ({
           </Box>
         ),
       }}
-      sx={{ background: hasChanged ? 'action.hover' : undefined }}
+      sx={{ background: hasChanged ? "action.hover" : undefined }}
       value={displayValue}
       onBlur={() => setFieldValue(displayValue)}
       onChange={(event) => setDisplayValue(event.target.value)}

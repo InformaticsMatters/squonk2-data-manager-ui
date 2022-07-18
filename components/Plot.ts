@@ -1,6 +1,6 @@
-import createPlotlyComponent from 'react-plotly.js/factory';
+import createPlotlyComponent from "react-plotly.js/factory";
 
-import Plotly from 'plotly.js-basic-dist';
+import Plotly from "plotly.js-basic-dist";
 
 /**
  * Exports react-plotly's Plot component using a smaller plotly bundle.

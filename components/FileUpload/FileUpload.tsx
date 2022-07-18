@@ -1,19 +1,20 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import type { DatasetPostBodyBody, DmError } from '@squonk/data-manager-client';
-import { uploadDataset } from '@squonk/data-manager-client/dataset';
-import { useGetFileTypes } from '@squonk/data-manager-client/type';
+import type { DatasetPostBodyBody, DmError } from "@squonk/data-manager-client";
+import { uploadDataset } from "@squonk/data-manager-client/dataset";
+import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
-import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
-import { IconButton, Tooltip } from '@mui/material';
-import type { AxiosError } from 'axios';
+import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
+import { IconButton, Tooltip } from "@mui/material";
+import type { AxiosError } from "axios";
 
-import { useCurrentOrg, useCurrentUnit } from '../../context/organisationUnitContext';
-import { useEnqueueError } from '../../hooks/useEnqueueStackError';
-import { ModalWrapper } from '../modals/ModalWrapper';
-import { FileTypeOptions } from '../uploads/FileTypeOptions';
-import type { FileTypeOptionsState, UploadableFile } from '../uploads/types';
-import { BulkUploadDropzone } from './BulkUploadDropzone';
+import { useEnqueueError } from "../../hooks/useEnqueueStackError";
+import { useSelectedOrganisation } from "../../state/organisationSelection";
+import { useSelectedUnit } from "../../state/unitSelection";
+import { ModalWrapper } from "../modals/ModalWrapper";
+import { FileTypeOptions } from "../uploads/FileTypeOptions";
+import type { FileTypeOptionsState, UploadableFile } from "../uploads/types";
+import { BulkUploadDropzone } from "./BulkUploadDropzone";
 
 /**
  * Button that controls a modal with UI to upload files to the DM API
@@ -28,14 +29,14 @@ export const FileUpload = () => {
   // Ensure types are prefetched to mime lookup works
   const { isLoading: isTypesLoading } = useGetFileTypes();
 
-  const unit = useCurrentUnit();
-  const org = useCurrentOrg();
-  const unitOrOrgMissing = !unit || !org;
+  const [unit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
+  const unitOrOrgMissing = !unit || !organisation;
 
   const { enqueueError } = useEnqueueError();
 
   const uploadFiles = () => {
-    if (org && unit) {
+    if (organisation && unit) {
       files
         .filter((file) => !file.done)
         .forEach(async ({ file, rename, mimeType }, index) => {
@@ -48,7 +49,6 @@ export const FileUpload = () => {
               ? JSON.stringify(mimeTypeFormDatas[mimeType])
               : undefined,
             skip_molecule_load: false,
-            organisation_id: org.id,
             unit_id: unit.id,
           };
 
@@ -77,15 +77,15 @@ export const FileUpload = () => {
 
               // Add the error to the array of files
               const updatedFiles = [...files];
-              const errorMessage = data?.error ?? 'Unknown error';
+              const errorMessage = data?.error ?? "Unknown error";
               updatedFiles[index].errors.push({
                 message: errorMessage,
-                code: (error.response?.status ?? '').toString(),
+                code: (error.response?.status ?? "").toString(),
               });
               setFiles(updatedFiles);
               enqueueError(errorMessage);
             } else {
-              enqueueError('Unknown error'); // TODO: Add Sentry
+              enqueueError("Unknown error"); // TODO: Add Sentry
             }
           }
         });
@@ -94,7 +94,7 @@ export const FileUpload = () => {
 
   return (
     <>
-      <Tooltip title={unitOrOrgMissing ? 'Select a organisation and unit' : 'Upload dataset'}>
+      <Tooltip title={unitOrOrgMissing ? "Select a organisation and unit" : "Upload dataset"}>
         <span>
           <IconButton
             disabled={unitOrOrgMissing || isTypesLoading}

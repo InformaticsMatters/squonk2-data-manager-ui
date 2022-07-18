@@ -1,7 +1,7 @@
-import { forwardRef } from 'react';
+import { forwardRef } from "react";
 
-import type { SlideProps } from '@mui/material';
-import { Slide } from '@mui/material';
+import type { SlideProps } from "@mui/material";
+import { Slide } from "@mui/material";
 
 /**
  * Slide component by locked to the "up" direction

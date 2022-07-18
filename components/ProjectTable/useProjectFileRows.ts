@@ -1,13 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { useGetFiles } from '@squonk/data-manager-client/file';
+import { useGetFiles } from "@squonk/data-manager-client/file";
 
-import { useProjectBreadcrumbs } from '../../hooks/projectPathHooks';
-import type { TableDir, TableFile } from './types';
+import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
+import type { TableDir, TableFile } from "./types";
 
 const getFullPath = (path: string[], fileName: string) => {
   if (path.length > 0) {
-    return path.join('/') + '/' + fileName;
+    return path.join("/") + "/" + fileName;
   }
   return fileName;
 };
@@ -15,7 +15,7 @@ const getFullPath = (path: string[], fileName: string) => {
 export const useProjectFileRows = (project_id: string) => {
   // Breadcrumbs
   const breadcrumbs = useProjectBreadcrumbs();
-  const dirPath = '/' + breadcrumbs.join('/');
+  const dirPath = "/" + breadcrumbs.join("/");
 
   const { data, error, isError, isLoading } = useGetFiles({
     project_id,

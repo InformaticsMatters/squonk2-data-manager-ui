@@ -1,10 +1,10 @@
-import type { DatasetVersionSummary } from '@squonk/data-manager-client';
+import type { DatasetVersionSummary } from "@squonk/data-manager-client";
 
-import { List } from '@mui/material';
-import fileSize from 'filesize';
+import { List } from "@mui/material";
+import fileSize from "filesize";
 
-import { toLocalTimeString } from '../../../LocalTime';
-import { VersionInfoListItem } from './VersionInfoListItem';
+import { toLocalTimeString } from "../../../LocalTime";
+import { VersionInfoListItem } from "./VersionInfoListItem";
 
 export interface VersionInfoSectionProps {
   /**

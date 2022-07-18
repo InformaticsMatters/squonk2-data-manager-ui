@@ -1,7 +1,7 @@
-import type { TypeSummary } from '@squonk/data-manager-client';
+import type { TypeSummary } from "@squonk/data-manager-client";
 
-import { Card, CardContent } from '@mui/material';
-import Form from '@rjsf/material-ui/v5';
+import { Card, CardContent } from "@mui/material";
+import Form from "@rjsf/material-ui/v5";
 
 export interface MimeTypeCardProps {
   /**

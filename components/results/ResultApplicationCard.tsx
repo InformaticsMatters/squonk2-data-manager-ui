@@ -1,22 +1,22 @@
-import type { HTMLProps } from 'react';
+import type { HTMLProps } from "react";
 
-import type { InstanceSummary } from '@squonk/data-manager-client';
+import type { InstanceSummary } from "@squonk/data-manager-client";
 
-import type { ButtonProps } from '@mui/material';
-import { Button, CardContent, ListItem, ListItemText } from '@mui/material';
+import type { ButtonProps } from "@mui/material";
+import { Button, CardContent, ListItem, ListItemText } from "@mui/material";
 
-import { APP_ROUTES } from '../../constants/routes';
-import { useProjectFromId } from '../../hooks/projectHooks';
-import { ResultCard } from '../results/ResultCard';
-import { ProjectListItem } from './common/ProjectListItem';
-import { TerminateInstance } from './common/TerminateInstance';
-import type { CommonProps } from './common/types';
-import { useInstanceRouterQuery } from './common/useInstanceRouterQuery';
-import type { ApplicationDetailsProps } from './details/ApplicationDetails';
-import { ApplicationDetails } from './details/ApplicationDetails';
+import { APP_ROUTES } from "../../constants/routes";
+import { useProjectFromId } from "../../hooks/projectHooks";
+import { ResultCard } from "../results/ResultCard";
+import { ProjectListItem } from "./common/ProjectListItem";
+import { TerminateInstance } from "./common/TerminateInstance";
+import type { CommonProps } from "./common/types";
+import { useInstanceRouterQuery } from "./common/useInstanceRouterQuery";
+import type { ApplicationDetailsProps } from "./details/ApplicationDetails";
+import { ApplicationDetails } from "./details/ApplicationDetails";
 
 // Button Props doesn't support target and rel when using as a Link
-type MissingButtonProps = Pick<HTMLProps<HTMLAnchorElement>, 'target' | 'rel'>;
+type MissingButtonProps = Pick<HTMLProps<HTMLAnchorElement>, "target" | "rel">;
 
 // ? odd that typescript doesn't raise an issue here as `MissingButtonProps` contains invalid props
 const HrefButton = (props: ButtonProps & MissingButtonProps) => <Button {...props} />;
@@ -26,7 +26,7 @@ export interface ResultApplicationCardProps extends CommonProps {
    * Instance of the application
    */
   instance: InstanceSummary;
-  poll?: ApplicationDetailsProps['poll'];
+  poll?: ApplicationDetailsProps["poll"];
 }
 
 export const ResultApplicationCard = ({
@@ -69,7 +69,7 @@ export const ResultApplicationCard = ({
       <ListItem>
         <ListItemText primary={instance.name} />
       </ListItem>
-      <ProjectListItem projectName={associatedProject?.name || 'loading...'} />
+      <ProjectListItem projectName={associatedProject?.name || "loading..."} />
     </ResultCard>
   );
 };

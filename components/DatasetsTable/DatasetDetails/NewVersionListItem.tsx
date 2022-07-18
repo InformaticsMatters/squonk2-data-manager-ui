@@ -1,25 +1,26 @@
-import { useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useState } from "react";
+import { useQueryClient } from "react-query";
 
-import type { DatasetSummary } from '@squonk/data-manager-client';
-import { getGetDatasetsQueryKey, uploadDataset } from '@squonk/data-manager-client/dataset';
+import type { DatasetSummary } from "@squonk/data-manager-client";
+import { getGetDatasetsQueryKey, uploadDataset } from "@squonk/data-manager-client/dataset";
 
-import BackupRoundedIcon from '@mui/icons-material/BackupRounded';
-import type { IconButtonProps } from '@mui/material';
+import BackupRoundedIcon from "@mui/icons-material/BackupRounded";
+import type { IconButtonProps } from "@mui/material";
 import {
   IconButton,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
   Typography,
-} from '@mui/material';
+} from "@mui/material";
 
-import { useCurrentOrg, useCurrentUnit } from '../../../context/organisationUnitContext';
-import { ModalWrapper } from '../../modals/ModalWrapper';
-import { Dropzone } from '../../uploads/Dropzone';
-import { FileTypeOptions } from '../../uploads/FileTypeOptions';
-import { ProgressBar } from '../../uploads/ProgressBar';
-import type { FileTypeOptionsState, UploadableFile } from '../../uploads/types';
+import { useSelectedOrganisation } from "../../../state/organisationSelection";
+import { useSelectedUnit } from "../../../state/unitSelection";
+import { ModalWrapper } from "../../modals/ModalWrapper";
+import { Dropzone } from "../../uploads/Dropzone";
+import { FileTypeOptions } from "../../uploads/FileTypeOptions";
+import { ProgressBar } from "../../uploads/ProgressBar";
+import type { FileTypeOptionsState, UploadableFile } from "../../uploads/types";
 
 export interface NewVersionListItemProps extends IconButtonProps {
   /**
@@ -44,8 +45,8 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
   // State to track per-file-type options for the new dataset version
   const [optionsFormData, setOptionsFormData] = useState<FileTypeOptionsState>({});
 
-  const unit = useCurrentUnit();
-  const org = useCurrentOrg();
+  const [unit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
 
   return (
     <>
@@ -59,7 +60,7 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
       </ListItem>
 
       <ModalWrapper
-        DialogProps={{ maxWidth: 'sm', fullWidth: true }}
+        DialogProps={{ maxWidth: "sm", fullWidth: true }}
         id={`version-upload-${dataset.dataset_id}`}
         open={open}
         submitDisabled={!file || !!file.taskId}
@@ -69,7 +70,7 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
         onSubmit={async () => {
           const parentVersion = Math.max(...dataset.versions.map((v) => v.version));
           const parent = dataset.versions.find((version) => version.version === parentVersion);
-          if (file && parent && org && unit) {
+          if (file && parent && organisation && unit) {
             // For consistency with the main file upload, I don't use the mutation hook here. This
             // allows reliable upload progress tracking.
             const response = await uploadDataset(
@@ -81,7 +82,6 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
                 format_extra_variables: optionsFormData[parent.type]
                   ? JSON.stringify(optionsFormData[parent.type])
                   : undefined,
-                organisation_id: org.id,
                 unit_id: unit.id,
               },
               {

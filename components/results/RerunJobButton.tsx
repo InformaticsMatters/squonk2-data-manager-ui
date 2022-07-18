@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import type { InstanceSummary } from '@squonk/data-manager-client';
+import type { InstanceSummary } from "@squonk/data-manager-client";
 
-import { Button } from '@mui/material';
+import { Button } from "@mui/material";
 
-import { JobModal } from '../executionsCards/JobCard/JobModal';
+import { JobModal } from "../executionsCards/JobCard/JobModal";
 
 export interface RerunJobButtonProps {
   /**

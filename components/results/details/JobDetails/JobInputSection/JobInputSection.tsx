@@ -1,13 +1,20 @@
-import type { InstanceSummary } from '@squonk/data-manager-client';
+import type { InstanceSummary } from "@squonk/data-manager-client";
 
-import { FolderRounded, InsertDriveFileRounded } from '@mui/icons-material';
-import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
-import { Alert } from '@mui/material';
+import { FolderRounded, InsertDriveFileRounded } from "@mui/icons-material";
+import {
+  Alert,
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+} from "@mui/material";
 
-import { getErrorMessage } from '../../../../../utils/orvalError';
-import { CenterLoader } from '../../../../CenterLoader';
-import { JobLink } from '../JobLink';
-import { useGetJobInputs } from './useGetJobInputs';
+import { getErrorMessage } from "../../../../../utils/orvalError";
+import { CenterLoader } from "../../../../CenterLoader";
+import { JobLink } from "../JobLink";
+import { useGetJobInputs } from "./useGetJobInputs";
 
 export interface JobInputSectionProps {
   /**
@@ -39,10 +46,10 @@ export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
       {/* We currently have to assume that the outputs have a consistent type */}
       {inputs.map((input) => {
         return (
-          <ListItem key={input.name} sx={{ alignItems: 'flex-start' }}>
+          <ListItem key={input.name} sx={{ alignItems: "flex-start" }}>
             <ListItemAvatar>
               <Avatar>
-                {input.type === 'file' ? <InsertDriveFileRounded /> : <FolderRounded />}
+                {input.type === "file" ? <InsertDriveFileRounded /> : <FolderRounded />}
               </Avatar>
             </ListItemAvatar>
             <ListItemText

@@ -1,29 +1,27 @@
-import { useState } from 'react';
-import { QueryClient } from 'react-query';
-import { dehydrate } from 'react-query/hydration';
+import { useState } from "react";
+import { QueryClient } from "react-query";
+import { dehydrate } from "react-query/hydration";
 
 import {
   getGetInstancesQueryKey,
   getInstances,
   useGetInstances,
-} from '@squonk/data-manager-client/instance';
-import { getGetProjectsQueryKey, getProjects } from '@squonk/data-manager-client/project';
-import { getGetTasksQueryKey, getTasks, useGetTasks } from '@squonk/data-manager-client/task';
+} from "@squonk/data-manager-client/instance";
+import { getGetProjectsQueryKey, getProjects } from "@squonk/data-manager-client/project";
+import { getGetTasksQueryKey, getTasks, useGetTasks } from "@squonk/data-manager-client/task";
 
-import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { Alert, Container, Grid } from '@mui/material';
-import type { GetServerSideProps } from 'next';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { Alert, Container, Grid } from "@mui/material";
+import type { GetServerSideProps } from "next";
+import Head from "next/head";
 
-import { CenterLoader } from '../components/CenterLoader';
-import Layout from '../components/Layout';
-import { ResultCards } from '../components/results/ResultCards';
-import { ResultsToolbar } from '../components/results/ResultToolbar';
-import { APP_ROUTES } from '../constants/routes';
-import { useCurrentProjectId, useIsUserAProjectOwnerOrEditor } from '../hooks/projectHooks';
-import { RoleRequired } from '../utils/RoleRequired';
-import { options } from '../utils/ssrQueryOptions';
+import { CenterLoader } from "../components/CenterLoader";
+import Layout from "../components/Layout";
+import { ResultCards } from "../components/results/ResultCards";
+import { ResultsToolbar } from "../components/results/ResultToolbar";
+import { useCurrentProjectId } from "../hooks/projectHooks";
+import { RoleRequired } from "../utils/RoleRequired";
+import { options } from "../utils/ssrQueryOptions";
 
 // This was a SSR test/example. Not sure if we want to do SSR everywhere but probably should.
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
@@ -86,23 +84,15 @@ const Tasks = () => {
   } = useGetTasks({ project_id: projectId });
   const tasks = tasksData?.tasks;
 
-  const [resultTypes, setResultTypes] = useState(['task', 'instance']);
-  const [searchValue, setSearchValue] = useState('');
-
-  const isEditorOrOwner = useIsUserAProjectOwnerOrEditor();
-  const { push } = useRouter();
-
-  if (!isEditorOrOwner) {
-    push(APP_ROUTES.home);
-    return null;
-  }
+  const [resultTypes, setResultTypes] = useState(["task", "instance"]);
+  const [searchValue, setSearchValue] = useState("");
 
   return (
     <>
       <Head>
         <title>Squonk | Results</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(' ')}>
+      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(" ")}>
         <Layout>
           <Container maxWidth="md">
             <ResultsToolbar

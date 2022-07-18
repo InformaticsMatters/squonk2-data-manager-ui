@@ -1,10 +1,10 @@
-import type { InstanceSummary } from '@squonk/data-manager-client';
+import type { InstanceSummary } from "@squonk/data-manager-client";
 
-import { FolderRounded, InsertDriveFileRounded } from '@mui/icons-material';
-import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
+import { FolderRounded, InsertDriveFileRounded } from "@mui/icons-material";
+import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
 
-import { JobLink } from './JobLink';
-import type { OutputValue } from './types';
+import { JobLink } from "./JobLink";
+import type { OutputValue } from "./types";
 
 export interface JobOutputSectionProps {
   /**
@@ -30,10 +30,10 @@ export const JobOutputSection = ({ instanceSummary }: JobOutputSectionProps) => 
     <List aria-label="list of job outputs">
       {/* We currently have to assume that the outputs have a consistent type */}
       {outputsEntries.map(([name, output]) => {
-        const isFile = output.type === 'file' || output.type === 'files';
+        const isFile = output.type === "file" || output.type === "files";
 
         return (
-          <ListItem key={name} sx={{ alignItems: 'flex-start' }}>
+          <ListItem key={name} sx={{ alignItems: "flex-start" }}>
             <ListItemAvatar>
               <Avatar>{isFile ? <InsertDriveFileRounded /> : <FolderRounded />}</Avatar>
             </ListItemAvatar>

@@ -1,7 +1,7 @@
-import type { FC } from 'react';
-import { useState } from 'react';
+import type { FC } from "react";
+import { useState } from "react";
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Avatar,
   Card,
@@ -11,7 +11,7 @@ import {
   Collapse,
   IconButton,
   useTheme,
-} from '@mui/material';
+} from "@mui/material";
 
 /**
  * Parameters passed to actions when a component is passed
@@ -80,32 +80,32 @@ export const BaseCard: FC<BaseCardProps> = ({
           avatar={
             <Avatar
               sx={{
-                fontFamily: 'verdana',
-                backgroundColor: header.color || 'transparent',
+                fontFamily: "verdana",
+                backgroundColor: header.color || "transparent",
               }}
             >
               {header.avatar?.[0].toUpperCase()}
             </Avatar>
           }
           subheader={header.subtitle}
-          subheaderTypographyProps={{ variant: 'subtitle1' }}
+          subheaderTypographyProps={{ variant: "subtitle1" }}
           title={header.title}
-          titleTypographyProps={{ variant: 'body1' }}
+          titleTypographyProps={{ variant: "body1" }}
         />
       )}
       <CardContent>{children}</CardContent>
-      <CardActions disableSpacing sx={{ justifyContent: 'right' }}>
+      <CardActions disableSpacing sx={{ justifyContent: "right" }}>
         {/* ? should this be a functionCall() or a <ReactElement />
         or should this be separate props with a union and one a never type */}
-        {typeof actions === 'function' ? actions({ setExpanded }) : actions}
+        {typeof actions === "function" ? actions({ setExpanded }) : actions}
         {collapsed !== undefined && (
           <IconButton
             aria-expanded={expanded}
             size="large"
             sx={{
-              marginLeft: 'auto',
+              marginLeft: "auto",
               transform: `rotate(${expanded ? 180 : 0}deg)`,
-              transition: `${theme.transitions.create('transform', {
+              transition: `${theme.transitions.create("transform", {
                 duration: theme.transitions.duration.shortest,
               })}`,
             }}

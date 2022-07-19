@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.18-rc.2](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.18-rc.1...0.1.18-rc.2) (2022-07-19)
+
+
+### Bug Fixes
+
+* **project-bootstrap:** Don't display project bootstrap if a project is selected ([578e55e](https://github.com/InformaticsMatters/squonk-frontend/commit/578e55eee624cf282c5c09a99099e7a166d8b7d9)), closes [#652](https://github.com/InformaticsMatters/squonk-frontend/issues/652)
+
 ### [0.1.18-rc.1](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.18-rc.0...0.1.18-rc.1) (2022-07-16)
 
 ### [0.1.18-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.17...0.1.18-rc.0) (2022-07-16)

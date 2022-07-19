@@ -1,3 +1,4 @@
+import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useIsAuthorized } from "../../hooks/useIsAuthorized";
 import { BootstrapAlert } from "./BootstrapAlert";
 
@@ -7,7 +8,9 @@ import { BootstrapAlert } from "./BootstrapAlert";
 export const UserBootstrapper = () => {
   const isAuthorized = useIsAuthorized();
 
-  if (!isAuthorized) {
+  const { projectId } = useCurrentProjectId();
+
+  if (!isAuthorized || projectId) {
     return null;
   }
 

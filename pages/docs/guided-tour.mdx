@@ -1,6 +1,12 @@
 import { Container } from "@mui/material";
 import Layout from "../../components/Layout";
 import Head from "next/head";
+import Image from "next/image";
+import login from "./assets/login.png"
+import project_context from "./assets/project-context.png"
+import job_launch from "./assets/job-launch.png"
+import results_1 from "./assets/results-1.png"
+import results_2 from "./assets/results-2.png"
 
 <Head>
   <title>Data Manager User Documentation - Guided tour</title>
@@ -14,14 +20,135 @@ import Head from "next/head";
 
 # Guided Tour
 
-This page lists guides for using the different components of the Squonk Data Manager.
+This page has guides for using the different components of the Squonk Data Manager.
 
-* Logging in
-* The Datasets tab
-* The projects tab
-* The Executions tab
-* The User Settings tab
+## Logging in
 
+To do anything useful in the Squonk Data Manager you must be authenticated. Squonk uses
+[Keycloak](https://www.keycloak.org/) as a Single Sign On (SSO) solution. To be able to use Squonk you must first
+have an account in the appropriate Keycloak instance and then log in using your username and password (or whatever other
+mechanisms that Keycloak instance might offer such as "log in with Google").
+
+The Keycloak instance might allow you to register yourself with an account or might require you to contact an
+administrator to set up the account for your before you can use it.
+
+Once you have an account you can log in to the Squonk Data Manager using the **Account** drop down in the top right
+corner and choosing the **Login** option.
+
+Use the same menu to log out.
+
+<Image src={login} alt="Account menu" />
+
+## Defining your context
+
+Once you are logged in you need to define the project you want to work in.
+The best way to so this is to use the **Settings** option in the **Account** menu in the top right corner.
+The settings panel opens full screen (close it when finished).
+
+You can select a **Context** which includes the **Organisation** and **Unit** within that Organisation that you want to
+work in. The administrators of that Organisation and Unit will need to have added you as member, or given you access to a
+**Project** in Unit.
+
+<Image src={project_context} alt="Project context" />
+
+If you not a member of a **Unit** or **Project** in a named **Organisation** you can create a Project in the **Default**
+Organisation. In that Organisation you will have a **personal** **Unit** that has the same name as your username. You can
+select that **Default** Organisation and your personal unit. These personal units are designed primarily for your own
+private use, though you can still make your projects **public** or add other people to your projects.
+
+One you have a **Unit** selected then you can select a **Project** from that unit, or create a new **Project**.
+
+Finally select the project you want to work in by checking the radio button next to the project name.
+When you close the settings dialog then you will be working in that project, and the name of the Organisation, Unit and
+Project will be displayed in the top right corner.
+
+
+## The Datasets tab
+
+TODO
+
+## The Project tab
+
+This shows the contents (files and directories) in your project.
+The interface is a simple file browser a bit like Windows Explorer and probably doesn't need much explanation.
+Note that the operations you can perform here are quite limited. If you want full control we suggest you run a Jupyter
+notebook in your project and use the file manager of the Jupyter lab interface, or a command line console to perform your
+operations.
+
+
+## The Executions tab
+
+This is where you launch **Applications** and **Jobs**.
+
+Those that are available (defined by the system administrator) are displayed as "cards". You can type into the "Search"
+box to filter these using terms that are defined for each job or app. For instance jobs implemented using RDKit should
+be labelled as "rdkit" so typing "rdkit" into the search box will show only cards that have this label. The labels for
+each job are displayed towards the bottom of the card in red.
+
+Each job belongs to a **category** (the type of job it is e.g. *molecular properties*) and a **collection** (where
+it comes from e.g. *rdkit*). A link the the job's documentation is also present, providing more information about the
+job and how to run it.
+
+To run a job or application click on the *Run* button. A dialog will appear allowing you to define the job inputs and
+options.
+
+<Image src={job_launch} alt="Launch job dialog" />
+
+*Inputs* are project files that form the input to the job. Options are user specified parameters for execution of the
+job e.g. which properties to calculate in the example above. An important option is often the name of the output file.
+We recommend putting the outputs of a job in a new subdirectory so that the output of onejob does not overwrite that of
+another.
+Most jobs are implemented so that you can specify a full path to the file you want, including subdirectories. e.g. you
+can specify `some/where/results.sdf` as the output file name and the directories `some/where/` will be created for you
+(from the project root).
+
+Specify these inputs and options and click the *Run* button at the bottom. The execution will be added to the bottom of
+the card. Click on it to see the execution details in the **Results** tab.
+
+Launching an **Application** is very similar. Currently the only available application is a Jupyter Notebook.
+When launching you need to choose which type of Notebook to use and parameters for the CPU and memory that is made
+available to the running notebook. Once launched go to the running instance in the *Results* tab and click the *Open*
+button to open the Jupyter Lab interface in a new browser tab. Don't forget to terminate the notebook instance once
+you are finished with it.
+
+
+## The Results tab
+
+This shows the execution of your **Applications** and **Jobs**. A high level summary of each running app or job is
+presented along with the ability to drill down into the specific details of each instance.
+
+The following screen shot show 2 jobs and a Jupyter notebook.
+
+<Image src={results_1} alt="3 results" />
+
+For a Jupyter Notebook application you have the options to open the Jupyter Lab interface in a new browser tab and
+to terminate it. Don't forget to terminate it when you are finished!
+
+For **Jobs** a range of information is displayed in the expanded view:
+
+<Image src={results_2} alt="rdkit molprops results" />
+
+Information about the executed job is displayed at the top, and then you see buttons to do the following:
+
+- TERMINATE - delete the job and all the resources it might still be consuming. Remember to do this once your job is
+  complete and you are happy with it. The job's result files are NOT deleted, but intermediate and logs files will be as
+  well as any remaining Kubernetes resources.
+- RUN AGAIN - allows to run the job again with the same or different settings
+- LOGS - view any log files that the job created. This can be useful is something has gone wrong.
+
+A bit further down you see sections for the job inputs and outputs. Clicking on those links lets you see the contents of
+those files.
+
+Then at the bottom are sections for the job's **States** and **Events**. The job goes though a series of states. If things
+have gone to plan you should see that the job was initially in PENDING state, then it STARTED and finally it was in
+SUCCESS state. If the job fails for some reason you will see a different sequence of states.
+
+The **Events** section show the series of *events* that the job reports. This is useful to see at what stage the job is
+in if it is still running, or what has happened if it is complete. Each job will report a different series of *events*
+and deciding which *events* to report is an important responsibility of the job developer.
+
+**Events** are reported in near real time, but you might want to click on the update button on the top right of the page
+to update immediately.
 
 </Container>
 </Layout>

@@ -48,7 +48,7 @@ specifiers:
   husky: 8.0.1
   identity-obj-proxy: 3.0.0
   immer: 9.0.15
-  jotai: 1.7.4
+  jotai: 1.7.6
   lint-staged: 13.0.3
   lodash-es: 4.17.21
   material-ui-popup-state: 4.0.1
@@ -107,7 +107,7 @@ dependencies:
   formik-mui: 4.0.0_0d8d00d92cc26495d76514b96e2840e2
   formik-mui-lab: 1.0.0_7017950cf44a4e98d738da1d454d553f
   immer: 9.0.15
-  jotai: 1.7.4_cf4affce01d6402ca73cb3f3803be0a3
+  jotai: 1.7.6_cf4affce01d6402ca73cb3f3803be0a3
   lodash-es: 4.17.21
   material-ui-popup-state: 4.0.1_66581c895a851b16dd21f66d733daa65
   next: 12.2.2_df754a4e9c71b41a92c3d67e52be7ffe
@@ -3293,8 +3293,8 @@ packages:
       '@panva/asn1.js': 1.0.0
     dev: false
 
-  /jotai/1.7.4_cf4affce01d6402ca73cb3f3803be0a3:
-    resolution: {integrity: sha512-PvkjL6DA4I0GFNFWt/1MKouTpN6Ohj0qyfuV4LoYGBHQRlf38qF6cPILozYsYZi2Nfeap9MdzWVGSYu1qBElKQ==}
+  /jotai/1.7.6_cf4affce01d6402ca73cb3f3803be0a3:
+    resolution: {integrity: sha512-D3R5f6OvwUPUyTPQY3wGP800nb6bDEOl/mqftjxg3gcHVITeFcldr9W9IBK+gXsow357vhNXuci/LfD+rl92PA==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
       '@babel/core': '*'

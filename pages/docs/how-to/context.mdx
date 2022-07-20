@@ -1,0 +1,54 @@
+import { Container } from "@mui/material";
+import Layout from "../../../components/Layout";
+import Head from "next/head";
+import Image from "next/image";
+import project_context from "../assets/project-context.png"
+
+<Head>
+  <title>Setting your work context - a How To guide</title>
+</Head>
+
+<Layout>
+{/* Place all page content inside the <Layout /> Tags */}
+{/* Comments should look like these, not <!-- --> as this break xdm */}
+{/* Container narrows the text width, it is configurable */}
+<Container>
+
+<InternalLink href="/">Home</InternalLink> |
+<InternalLink href="../guided-tour">Guided Tour</InternalLink> |
+<InternalLink href="../how-to">How to guides</InternalLink> |
+<InternalLink href="../concepts">Concepts guide</InternalLink>
+
+## Setting your work context - a How To guide
+
+Most activity in Squonk Data Manager requires you to have selected a **project** you want to work in.
+We refer to this as the **Project context**, or just **context**.
+The best way to do this is to use the **Settings** option in the **Account** menu in the top right corner.
+The settings panel opens full screen (close it when finished).
+
+You can select a **context** which includes the **organisation** and **unit** within that **organisation** that you want to
+work in. The administrators of that **organisation** and **unit** will need to have added you as member, or given you access to a
+**project** in the unit. See the <InternalLink href="/docs/concepts">concepts document</InternalLink> for a description of
+these concepts.
+
+<Image src={project_context} alt="Project context" />
+
+If you not a member of a **unit** or **project** in a named **organisation** you can still create a **project** in the **Default**
+organisation. In that organisation you will have a **personal** **unit** that has the same name as your username. You can
+select that **Default** Organisation and your personal unit. These personal units are designed primarily for your own
+private use, though you can still make your projects **public** or add other people to your project so that you can collaborate.
+
+One you have a **unit** selected then you can select a **project** from that unit, or create a new **project**.
+
+Finally select the project you want to work in by checking the radio button next to the project name.
+When you close the settings dialog then you will be working in that **project**, and the name of the **organisation**,
+**unit** and **project** will be displayed in the top right corner.
+
+Owners of an **organisation** can create a new **unit** within it if you want a different work space (e.g. research
+group, department etc.). The **Default** **organisation** cannot have **units** added to it other than a user's
+**personal** unit.
+
+
+
+</Container>
+</Layout>

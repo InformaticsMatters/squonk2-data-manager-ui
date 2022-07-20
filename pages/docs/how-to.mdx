@@ -2,6 +2,7 @@ import { Container } from "@mui/material";
 import Layout from "../../components/Layout";
 import Head from "next/head";
 
+
 <Head>
   <title>Data Manager User Documentation - How To Guides</title>
 </Head>
@@ -12,16 +13,22 @@ import Head from "next/head";
 {/* Container narrows the text width, it is configurable */}
 <Container>
 
-# How To Guide
+<InternalLink href="/">Home</InternalLink> |
+<InternalLink href="./guided-tour">Guided Tour</InternalLink> |
+<InternalLink href="./concepts">Concepts guide</InternalLink>
+
+# How To Guides
 
 This page lists guides for doing certain things in the Squonk Data Manager.
 
-* Working with datasets
-* Creating projects
+* <InternalLink href="./how-to/login">Logging in</InternalLink> - logging in and authenticating
+* <InternalLink href="./how-to/context">Setting the project context</InternalLink> - defining your workspace
+* <InternalLink href="./how-to/create-project">Creating projects</InternalLink> - and the different types of project
 * Working with project data
-* Running applications
-* Running jobs
-* Inspecting job execution
+* Working with datasets
+* <InternalLink href="/docs/how-to/applications">Running applications</InternalLink> - launching and using Jupyter notebooks
+* <InternalLink href="/docs/how-to/jobs">Running jobs</InternalLink> - launching jobs
+* <InternalLink href="./how-to/execution">Inspecting job and application execution</InternalLink> - using the Results tab
 * Inspecting usage and quotas
 
 

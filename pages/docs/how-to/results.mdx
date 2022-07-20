@@ -1,0 +1,63 @@
+import { Container } from "@mui/material";
+import Layout from "../../../components/Layout";
+import Head from "next/head";
+import Image from "next/image";
+import login from "../assets/login.png"
+import results_1 from "../assets/results-1.png"
+import results_2 from "../assets/results-2.png"
+
+<Head>
+  <title>Inspecting job and application execution - a How To guide</title>
+</Head>
+
+<Layout>
+{/* Place all page content inside the <Layout /> Tags */}
+{/* Comments should look like these, not <!-- --> as this break xdm */}
+{/* Container narrows the text width, it is configurable */}
+<Container>
+
+<InternalLink href="/">Home</InternalLink> |
+<InternalLink href="../guided-tour">Guided Tour</InternalLink> |
+<InternalLink href="../how-to">How to guides</InternalLink> |
+<InternalLink href="../concepts">Concepts guide</InternalLink>
+
+## Inspecting job and application execution - a How To guide
+
+This shows the execution of your **Applications** and **Jobs**. A high level summary of each running app or job is
+presented along with the ability to drill down into the specific details of each instance.
+
+The following screen shot show 2 jobs and a Jupyter notebook.
+
+<Image src={results_1} alt="3 results" />
+
+For a Jupyter Notebook application you have the options to open the Jupyter Lab interface in a new browser tab and
+to terminate it. Don't forget to terminate it when you are finished!
+
+For **Jobs** a range of information is displayed in the expanded view:
+
+<Image src={results_2} alt="rdkit molprops results" />
+
+Information about the executed job is displayed at the top, and then you see buttons to do the following:
+
+- TERMINATE - delete the job and all the resources it might still be consuming. Remember to do this once your job is
+  complete and you are happy with it. The job's result files are NOT deleted, but intermediate and logs files will be as
+  well as any remaining Kubernetes resources.
+- RUN AGAIN - allows to run the job again with the same or different settings
+- LOGS - view any log files that the job created. This can be useful is something has gone wrong.
+
+A bit further down you see sections for the job inputs and outputs. Clicking on those links lets you see the contents of
+those files.
+
+Then at the bottom are sections for the job's **States** and **Events**. The job goes though a series of states. If things
+have gone to plan you should see that the job was initially in PENDING state, then it STARTED and finally it was in
+SUCCESS state. If the job fails for some reason you will see a different sequence of states.
+
+The **Events** section show the series of *events* that the job reports. This is useful to see at what stage the job is
+in if it is still running, or what has happened if it is complete. Each job will report a different series of *events*
+and deciding which *events* to report is an important responsibility of the job developer.
+
+**Events** are reported in near real time, but you might want to click on the update button on the top right of the page
+to update immediately.
+
+</Container>
+</Layout>

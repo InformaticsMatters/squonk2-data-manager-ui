@@ -69,19 +69,31 @@ Deployment to Kubernetes is handled by our AWX-compliant [Ansible playbook repo]
 
 ## Local/alternative configuration
 A `.env` file is injected by Kubernetes at run-time that provides values
-for numerous environment variables. The `.env` used at build time is
-`.env.staging`, but this can be changed by using the build-arg `FLAVOUR`: -
+for numerous environment variables. The `.env.*` used at build time is
+`.env.staging`, but this can be changed by using the build-arg `FLAVOUR`.
+NextJS loads `.env.*` files different depending on the Node environment. Read more
+[here](https://nextjs.org/docs/basic-features/environment-variables#default-environment-variables).
+Build the image using
 
     $ docker build . \
         --build-arg FLAVOUR=local.example \
         --build-arg GIT_SHA=$(git rev-parse HEAD) \
         --build-arg SKIP_CHECKS=1 \
+        --build-arg BASE_PATH="" \
         --tag informaticsmatters/mini-apps-data-tier-ui:latest
 
 Which can then be started on `http://localhost:8080/data-manager-ui` with: -
 
     $ docker run --rm --detach --publish 8080:3000 \
         informaticsmatters/mini-apps-data-tier-ui:latest
+
+In local development the `.env.*` can be loaded by copying it into the container and
+committing it as a image.
+
+1. Crate the container: `docker create --name foo-tmp <temp-tag-name>`
+2. Copy the `.env.*` into the container: docker cp .env.<FLAVOUR> foo-tmp:/app
+3. Commit the container as a new image: `docker commit foo-tmp <new-tag-name>`
+4. Run this image as above
 
 ## Releases
 

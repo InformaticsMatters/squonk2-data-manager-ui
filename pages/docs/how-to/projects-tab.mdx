@@ -1,0 +1,49 @@
+import { Container } from "@mui/material";
+import Layout from "../../../components/Layout";
+import Head from "next/head";
+import Image from "next/image";
+//import login from "../assets/login.png"
+
+
+<Head>
+  <title>Project data - a How To guide</title>
+</Head>
+
+<Layout>
+{/* Place all page content inside the <Layout /> Tags */}
+{/* Comments should look like these, not <!-- --> as this break xdm */}
+{/* Container narrows the text width, it is configurable */}
+<Container>
+
+<InternalLink href="/">Home</InternalLink> |
+<InternalLink href="../guided-tour">Guided Tour</InternalLink> |
+<InternalLink href="../how-to">How to guides</InternalLink> |
+<InternalLink href="../concepts">Concepts guide</InternalLink>
+
+## Project data - a How To guide
+
+Your project has it's own data volume (a directory containing your projects files).
+That volume is accessible to any jobs and applications, providing a simple way to work with your data.
+
+The *Project* tab allows you see that data and perform simple operations on it.
+It's a bit like a simple file manager like Windows Explorer. It lists the files and directories that are present and
+allows to navigate that data.
+
+You an also:
+
+- upload new files to your project
+- download files from your project
+- delete existing files
+- create a dataset from a file (see documentation on Datasets)
+- mark a file as a "favourite" to make is faster to access when running jobs
+- view the contents of text files
+
+Not all operations you might want to do are possible from the *Project* tab.
+If you want to do more then your best bet is to launch the Jupyter Lab application in your project. That will allow you
+to manage your files either with the Jupyter Lab file manager or by opening up a console (bash shell).
+See the <InternalLink href="./applications">Running applications</InternalLink> How To guide for more details on launching
+Jupyter Lab.
+
+
+</Container>
+</Layout>

@@ -17,7 +17,6 @@ import { ThemeProviders } from "../components/ThemeProviders";
 import { TopLevelHooks } from "../components/TopLevelHooks";
 import { AS_API_URL, DM_API_URL } from "../constants";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
-import { useBindProjectFromLSToQParams } from "../hooks/useBindProjectFromLSToQParams";
 import createEmotionCache from "../utils/createEmotionCache";
 
 import "../styles/globalStyles.scss";
@@ -50,8 +49,6 @@ export default function App({
       jssStyles.parentElement?.removeChild(jssStyles);
     }
   }, []);
-
-  useBindProjectFromLSToQParams();
 
   // Vercel specific code is only imported if needed
   if (process.env.NEXT_PUBLIC_VERCEL_URL) {

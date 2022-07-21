@@ -1,7 +1,9 @@
-import { Container } from "@mui/material";
-import Layout from "../../../components/Layout";
 import Head from "next/head";
-import Image from "next/image";
+
+import { Container } from "@mui/material";
+
+import { DocsNav } from "../../../components/DocsNav";
+import Layout from "../../../components/Layout";
 import login from "../assets/login.png"
 import keycloak from "../assets/keycloak.png"
 
@@ -15,10 +17,7 @@ import keycloak from "../assets/keycloak.png"
 {/* Container narrows the text width, it is configurable */}
 <Container>
 
-<InternalLink href="/">Home</InternalLink> |
-<InternalLink href="../guided-tour">Guided Tour</InternalLink> |
-<InternalLink href="../how-to">How to guides</InternalLink> |
-<InternalLink href="../concepts">Concepts guide</InternalLink>
+<DocsNav />
 
 ## Logging in - a How To guide
 

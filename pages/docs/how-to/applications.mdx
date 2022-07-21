@@ -1,12 +1,14 @@
-import { Container } from "@mui/material";
-import Layout from "../../../components/Layout";
 import Head from "next/head";
-import Image from "next/image";
-import jupyter_app from "../assets/jupyter-app.png"
-import jupyter_launch from "../assets/jupyter-launch.png"
-import jupyter_launched from "../assets/jupyter-launched.png"
-import jupyter_instance from "../assets/jupyter-instance.png"
-import jupyter_lab from "../assets/jupyter-lab.png"
+
+import { Container } from "@mui/material";
+
+import Layout from "../../../components/Layout";
+import { DocsNav } from "../../../components/DocsNav";
+import jupyter_app from "../assets/jupyter-app.png";
+import jupyter_launch from "../assets/jupyter-launch.png";
+import jupyter_launched from "../assets/jupyter-launched.png";
+import jupyter_instance from "../assets/jupyter-instance.png";
+import jupyter_lab from "../assets/jupyter-lab.png";
 
 <Head>
   <title>Running applications - a How To guide</title>
@@ -18,10 +20,7 @@ import jupyter_lab from "../assets/jupyter-lab.png"
 {/* Container narrows the text width, it is configurable */}
 <Container>
 
-<InternalLink href="/">Home</InternalLink> |
-<InternalLink href="../guided-tour">Guided Tour</InternalLink> |
-<InternalLink href="../how-to">How to guides</InternalLink> |
-<InternalLink href="../concepts">Concepts guides</InternalLink>
+<DocsNav />
 
 # Running applications - a How To guides
 

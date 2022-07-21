@@ -2,6 +2,7 @@ import type { AnchorHTMLAttributes, DetailedHTMLProps, FC } from "react";
 
 import { MDXProvider } from "@mdx-js/react";
 import { Link, Typography } from "@mui/material";
+import Image from "next/image";
 import NextLink from "next/link";
 
 type LinkProps = DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>;
@@ -21,6 +22,7 @@ export const MDXComponentProvider: FC = ({ children }) => {
             <Link {...props}>{children}</Link>
           </NextLink>
         ),
+        Image,
       }}
     >
       {children}

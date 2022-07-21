@@ -1,7 +1,9 @@
-import { Container } from "@mui/material";
-import Layout from "../../components/Layout";
 import Head from "next/head";
-import Image from "next/image";
+
+import { Container } from "@mui/material";
+
+import Layout from "../../components/Layout";
+import { DocsNav } from "../../components/DocsNav";
 import login from "./assets/login.png"
 import project_context from "./assets/project-context.png"
 import job_launch from "./assets/job-launch.png"
@@ -18,9 +20,7 @@ import results_2 from "./assets/results-2.png"
 {/* Container narrows the text width, it is configurable */}
 <Container>
 
-<InternalLink href="/">Home</InternalLink> |
-<InternalLink href="./how-to">How to guides</InternalLink> |
-<InternalLink href="./concepts">Concepts guide</InternalLink>
+<DocsNav />
 
 # Guided Tour
 

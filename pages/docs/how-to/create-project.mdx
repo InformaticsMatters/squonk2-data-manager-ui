@@ -1,8 +1,10 @@
-import { Container } from "@mui/material";
-import Layout from "../../../components/Layout";
 import Head from "next/head";
-import Image from "next/image";
-import create from "../assets/project-create.png"
+
+import { Container } from "@mui/material";
+
+import Layout from "../../../components/Layout";
+import { DocsNav } from "../../../components/DocsNav";
+import create from "../assets/project-create.png";
 
 
 <Head>
@@ -15,10 +17,7 @@ import create from "../assets/project-create.png"
 {/* Container narrows the text width, it is configurable */}
 <Container>
 
-<InternalLink href="/">Home</InternalLink> |
-<InternalLink href="../guided-tour">Guided Tour</InternalLink> |
-<InternalLink href="../how-to">How to guides</InternalLink> |
-<InternalLink href="../concepts">Concepts guide</InternalLink>
+<DocsNav />
 
 ## Creating projects - a How To guide
 

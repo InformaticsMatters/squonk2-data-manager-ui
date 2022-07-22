@@ -1,0 +1,83 @@
+import { Container } from "@mui/material";
+import Layout from "../../components/Layout";
+import { DocsNav } from "../../components/DocsNav"
+import Head from "next/head";
+
+<Head>
+  <title>Data Manager Developer Documentation</title>
+</Head>
+
+<Layout>
+{/* Place all page content inside the <Layout /> Tags */}
+{/* Comments should look like these, not <!-- --> as this break xdm */}
+{/* Container narrows the text width, it is configurable */}
+<Container>
+
+<DocsNav />
+
+## Quick Links
+
+* [Data Manager docs](https://informaticsmatters.gitlab.io/mini-apps-data-tier/) - design docs for the Data Manager and
+  a guide to creating new jobs
+* [Account Server docs](https://informaticsmatters.gitlab.io/account-server/) - design docs for the Account server
+* [Python client](https://data-manager-api.readthedocs.io/en/latest/index.html) - a client for using the Data Manager API from Python
+
+## A Squonk2 Deployment
+
+What you see as the **Squonk Data Manager** when you use it from the web interface is actually a number of components that
+have been deployed to a [Kubernetes](https://kubernetes.io/) cluster.
+We already have multiple deployments, but examples here refer to our
+[reference site](https://squonk.it/data-manager-ui) that is running on [Amazon Web Services](https://aws.amazon.com/).
+
+Other deployments would have basically the same components but at different URLs.
+
+## Systems Overview
+
+### Keycloak Single Sign On (SSO)
+
+Authentication for all the Squonk products is handled through a [Keycloak server](https://www.keycloak.org/) which
+provides SSO capabilities using the OpenID Connect Identity provider. To do almost anything you must first be authenticated.
+Once you have signed in you get access to all the systems in that deployment that you are allowed access to without
+needing to log in again.
+
+### Data Manager API
+
+This is an [OpenAPI](https://www.openapis.org/) compliant REST API implemented in [Python](https://www.python.org/),
+and available also through a [Swagger UI](https://swagger.io/tools/swagger-ui/). It provides the majority of the functions
+that you see in the UI such as managing datasets and the contents of a project, executing jobs and applications and
+viewing the results of those executions.
+
+The Swagger UI for the reference site can be found [here](https://squonk.it/data-manager-api/api/).
+
+### Account Server API
+
+This is a separate service that handles the concepts of users, organisations, units, accounting and billing.
+The idea is that multiple applications (e.g Data Manager API) would use the same Account Server to that the usage of
+a user, organisation and unit is consolidated in one place. A single subscription gets you access to multiple services.
+
+Typically you don't notice the Account Server as a separate application as it would be seemlessly integrated into the
+client application, which is exactly how it works in the Data Manager web interface - you work with organisations and
+units but don't notice that this is actually being done through interactions with a separate service.
+
+Account Server is also an OpenAPI compliant REST API implemented in Python, available through a Swagger UI.
+
+The Swagger UI for the reference site can be found [here](https://squonk.it/account-server-api/api/).
+
+
+### Data Manager Web interface
+
+If you are reading this document you are probably already using the web interface. This is a web application implemented
+using [Rect](https://reactjs.org/) and [NextJS](https://nextjs.org/) that uses the Data Manager and Account Server APIs.
+It too is deployed to the Kubernetes cluster. If you're not already there here is the location of the
+[reference site](https://squonk.it/data-manager-ui).
+
+### Python client
+
+We have created a Python client for working with the Data Manager API. If you are wanting to work with the API programmatically
+using this might be much easier than using the API directly, but not all functions of the API are available through the client.
+
+Documentation for the client can be found [here](https://data-manager-api.readthedocs.io/en/latest/index.html).
+
+
+</Container>
+</Layout>

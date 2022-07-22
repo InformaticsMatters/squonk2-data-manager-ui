@@ -14,7 +14,7 @@ export interface NavLinksProps {
 
 export const NavLinks = ({ linkWidth = 120 }: NavLinksProps) => {
   return (
-    <Nav linkWidth={linkWidth}>
+    <Nav aria-label="Main" linkWidth={linkWidth} role="navigation">
       {/* Div wrappers used to give correct spacing */}
       <div>
         <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Datasets">

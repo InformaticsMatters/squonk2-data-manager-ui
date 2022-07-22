@@ -1,7 +1,8 @@
 import { Container } from "@mui/material";
-import Layout from "../../components/Layout";
 import Head from "next/head";
 
+import Layout from "../../components/Layout";
+import { DocsNav } from "../../components/DocsNav"
 
 <Head>
   <title>Data Manager User Documentation - How To Guides</title>
@@ -13,9 +14,7 @@ import Head from "next/head";
 {/* Container narrows the text width, it is configurable */}
 <Container>
 
-<InternalLink href="/">Home</InternalLink> |
-<InternalLink href="./guided-tour">Guided Tour</InternalLink> |
-<InternalLink href="./concepts">Concepts guide</InternalLink>
+<DocsNav />
 
 # How To Guides
 

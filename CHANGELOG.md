@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.18](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.18-rc.3...0.1.18) (2022-07-21)
+
+### [0.1.18-rc.3](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.18-rc.2...0.1.18-rc.3) (2022-07-21)
+
 ### [0.1.18-rc.2](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.18-rc.1...0.1.18-rc.2) (2022-07-19)
 
 

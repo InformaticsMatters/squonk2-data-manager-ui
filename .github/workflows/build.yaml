@@ -26,3 +26,8 @@ jobs:
     steps:
     - name: Build
       uses: docker/build-push-action@v2
+      with:
+        build-args: |
+          GIT_SHA=${{ github.sha }}
+          SKIP_CHECKS=1
+          BASE_PATH=/data-manager-ui

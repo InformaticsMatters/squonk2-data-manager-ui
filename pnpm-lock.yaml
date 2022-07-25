@@ -66,7 +66,7 @@ specifiers:
   react-query: 3.39.1
   react-table: 7.8.0
   react-virtualized: 9.22.3
-  sass: 1.53.0
+  sass: 1.54.0
   tsc-files: 1.1.3
   typescript: 4.7.4
   use-immer: 0.7.0
@@ -110,7 +110,7 @@ dependencies:
   jotai: 1.7.4_cf4affce01d6402ca73cb3f3803be0a3
   lodash-es: 4.17.21
   material-ui-popup-state: 4.0.1_66581c895a851b16dd21f66d733daa65
-  next: 12.2.3_df754a4e9c71b41a92c3d67e52be7ffe
+  next: 12.2.3_08a92191866134c8229dedf6ea7189ad
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
   node-fetch: 3.2.6
@@ -124,7 +124,7 @@ dependencies:
   react-query: 3.39.1_react-dom@17.0.2+react@17.0.2
   react-table: 7.8.0_react@17.0.2
   react-virtualized: 9.22.3_react-dom@17.0.2+react@17.0.2
-  sass: 1.53.0
+  sass: 1.54.0
   typescript: 4.7.4
   use-immer: 0.7.0_immer@9.0.15+react@17.0.2
   uuid: 8.3.2
@@ -163,7 +163,7 @@ packages:
       http-errors: 1.8.1
       joi: 17.6.0
       jose: 2.0.5
-      next: 12.2.3_df754a4e9c71b41a92c3d67e52be7ffe
+      next: 12.2.3_08a92191866134c8229dedf6ea7189ad
       on-headers: 1.0.2
       openid-client: 4.9.1
       tslib: 2.4.0
@@ -1080,7 +1080,7 @@ packages:
       '@sentry/types': 7.6.0
       '@sentry/utils': 7.6.0
       '@sentry/webpack-plugin': 1.18.9
-      next: 12.2.3_df754a4e9c71b41a92c3d67e52be7ffe
+      next: 12.2.3_08a92191866134c8229dedf6ea7189ad
       react: 17.0.2
       tslib: 1.14.1
     transitivePeerDependencies:
@@ -4126,7 +4126,7 @@ packages:
       escalade: 3.1.1
     dev: false
 
-  /next/12.2.3_df754a4e9c71b41a92c3d67e52be7ffe:
+  /next/12.2.3_08a92191866134c8229dedf6ea7189ad:
     resolution: {integrity: sha512-TA0tmSA6Dk6S6kfvCNbF7CWYW8468gZUxr/3/30z4KvAQbXnl2ASYZElVe7q/hBW/1F1ee0tSBlHa4/sn+ZIBw==}
     engines: {node: '>=12.22.0'}
     hasBin: true
@@ -4150,7 +4150,7 @@ packages:
       postcss: 8.4.14
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      sass: 1.53.0
+      sass: 1.54.0
       styled-jsx: 5.0.2_react@17.0.2
       use-sync-external-store: 1.2.0_react@17.0.2
     optionalDependencies:
@@ -4844,8 +4844,8 @@ packages:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
     dev: false
 
-  /sass/1.53.0:
-    resolution: {integrity: sha512-zb/oMirbKhUgRQ0/GFz8TSAwRq2IlR29vOUJZOx0l8sV+CkHUfHa4u5nqrG+1VceZp7Jfj59SVW9ogdhTvJDcQ==}
+  /sass/1.54.0:
+    resolution: {integrity: sha512-C4zp79GCXZfK0yoHZg+GxF818/aclhp9F48XBu/+bm9vXEVAYov9iU3FBVRMq3Hx3OA4jfKL+p2K9180mEh0xQ==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:

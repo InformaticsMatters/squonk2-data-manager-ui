@@ -48,6 +48,7 @@ jobs:
         build-args: |
           GIT_SHA=${{ github.sha }}
           SKIP_CHECKS=1
+          BASE_PATH="/data-manager-ui"
 
   # Staging Deployment to the designated Staging site
   # DISABLED: WE HAVE NO STAGING SITE

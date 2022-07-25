@@ -45,6 +45,7 @@ jobs:
         build-args: |
           GIT_SHA=${{ github.sha }}
           SKIP_CHECKS=1
+          BASE_PATH="/data-manager-ui"
         push: true
         tags: |
           informaticsmatters/mini-apps-data-tier-ui:${{ env.GITHUB_REF_SLUG }}

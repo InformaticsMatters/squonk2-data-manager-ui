@@ -67,17 +67,26 @@ The Swagger UI for the reference site can be found [here](https://squonk.it/acco
 ### Data Manager Web interface
 
 If you are reading this document you are probably already using the web interface. This is a web application implemented
-using [Rect](https://reactjs.org/) and [NextJS](https://nextjs.org/) that uses the Data Manager and Account Server APIs.
+using [React](https://reactjs.org/) and [NextJS](https://nextjs.org/) that uses the Data Manager and Account Server APIs.
 It too is deployed to the Kubernetes cluster. If you're not already there here is the location of the
 [reference site](https://squonk.it/data-manager-ui).
 
-### Python client
+### Clients for programatic access
+  
+#### Python
 
 We have created a Python client for working with the Data Manager API. If you are wanting to work with the API programmatically
 using this might be much easier than using the API directly, but not all functions of the API are available through the client.
 
-Documentation for the client can be found [here](https://data-manager-api.readthedocs.io/en/latest/index.html).
+Documentation for the client can be found [here](https://squonk2-python-client.readthedocs.io/en/stable).
 
+
+#### JavaScript / Node
+  
+We have also created a client for accessing the DM. This is used to create the UI. It provides `async` functions to make request along with `react-query` hooks to handle query caching, refetching and so on. This package is generated automatically from the OpenAPI schema and is fully typed with `typescript`. Requests are made with Axios which is compatible in NodeJS and not just in the browser. 
+  
+* The docs are available [here](https://informaticsmatters.github.io/data-manager-npm-client/)
+* The package is published on NPM as [@squonk/data-manager-client](https://www.npmjs.com/package/@squonk/data-manager-client)
 
 </Container>
 </Layout>

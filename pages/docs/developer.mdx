@@ -20,7 +20,9 @@ import Head from "next/head";
 * [Data Manager docs](https://informaticsmatters.gitlab.io/mini-apps-data-tier/) - design docs for the Data Manager and
   a guide to creating new jobs
 * [Account Server docs](https://informaticsmatters.gitlab.io/account-server/) - design docs for the Account server
-* [Python client](https://data-manager-api.readthedocs.io/en/latest/index.html) - a client for using the Data Manager API from Python
+* [Python client](https://squonk2-python-client.readthedocs.io/en/stable) |
+  [Javascript client](https://informaticsmatters.github.io/data-manager-npm-client/) -
+  clients for programmatic use of the Data Manager API
 
 ## A Squonk2 Deployment
 
@@ -71,19 +73,26 @@ using [React](https://reactjs.org/) and [NextJS](https://nextjs.org/) that uses 
 It too is deployed to the Kubernetes cluster. If you're not already there here is the location of the
 [reference site](https://squonk.it/data-manager-ui).
 
-### Clients for programatic access
-  
+### Clients for programmatic access
+
+We have created clients for working with the Data Manager API. If you are wanting to work with the API programmatically
+using this might be much easier than using the API directly, but not all functions of the API are available through the clients.
+
 #### Python
 
-We have created a Python client for working with the Data Manager API. If you are wanting to work with the API programmatically
-using this might be much easier than using the API directly, but not all functions of the API are available through the client.
+A Python client has been created.
 
-Documentation for the client can be found [here](https://squonk2-python-client.readthedocs.io/en/stable).
+* The docs are available [here](https://squonk2-python-client.readthedocs.io/en/stable)
+* An installable PyPi package can be found [here](https://pypi.org/project/im-squonk2-client/)
 
 
 #### JavaScript / Node
-  
-We have also created a client for accessing the DM. This is used to create the UI. It provides `async` functions to make request along with `react-query` hooks to handle query caching, refetching and so on. This package is generated automatically from the OpenAPI schema and is fully typed with `typescript`. Requests are made with Axios which is compatible in NodeJS and not just in the browser. 
+
+We have also created a client for accessing the Data Manager API. This is used to create the Data Manager UI.
+It provides `async` functions to make request along with `react-query` hooks to handle query caching, refetching and so on.
+This package is generated automatically from the OpenAPI schema using [Orval](https://orval.dev/),
+and is fully typed with `typescript`.
+Requests are made with Axios which is compatible in NodeJS and not just in the browser.
   
 * The docs are available [here](https://informaticsmatters.github.io/data-manager-npm-client/)
 * The package is published on NPM as [@squonk/data-manager-client](https://www.npmjs.com/package/@squonk/data-manager-client)

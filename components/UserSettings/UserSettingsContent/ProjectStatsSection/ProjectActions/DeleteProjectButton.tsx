@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useQueryClient } from "react-query";
 
 import type { ProductDmProjectTier } from "@squonk/account-server-client";
 import {
   getGetProductQueryKey,
   getGetProductsForUnitQueryKey,
+  useDeleteProduct,
 } from "@squonk/account-server-client/product";
 import type { DmError, ProjectDetail } from "@squonk/data-manager-client";
 import {
@@ -14,11 +16,12 @@ import {
 import { getGetUserAccountQueryKey } from "@squonk/data-manager-client/user";
 
 import { DeleteForever } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { IconButton, LinearProgress, Typography } from "@mui/material";
 
 import { useCurrentProjectId } from "../../../../../hooks/projectHooks";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
+import { waitUntilTaskDone } from "../../../../../utils/waitUntiTaskDone";
 import { WarningDeleteButton } from "../../../../WarningDeleteButton";
 
 export interface DeleteProjectButtonProps {
@@ -43,13 +46,24 @@ export const DeleteProjectButton = ({ project, projectProduct }: DeleteProjectBu
 
   const queryClient = useQueryClient();
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { mutateAsync: deleteProduct } = useDeleteProduct();
   const { mutateAsync: deleteProject } = useDeleteProject();
+
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     if (project.project_id) {
       try {
         const { task_id } = await deleteProject({ projectId: project.project_id });
         enqueueSnackbar(`Project deletion started (task: ${task_id})`, { variant: "info" });
+        setIsDeleting(true);
+
+        await waitUntilTaskDone(task_id);
+
+        setIsDeleting(false);
+        enqueueSnackbar(`Project deletion finished (task: ${task_id})`, { variant: "info" });
+
+        project.product_id && (await deleteProduct({ productId: project.product_id }));
 
         // If the project is currently selected, unselect it
         if (project.project_id === currentProjectId) {
@@ -73,14 +87,27 @@ export const DeleteProjectButton = ({ project, projectProduct }: DeleteProjectBu
 
   return (
     <WarningDeleteButton
+      modalChildren={
+        <>
+          <Typography variant="body1">
+            Are you sure? <b>This cannot be undone</b>.
+          </Typography>
+          {isDeleting && <LinearProgress />}
+        </>
+      }
       modalId={`delete-${project.project_id}`}
       title="Delete Project"
       tooltipText={"Delete Project"}
       onDelete={handleDelete}
     >
-      {({ openModal }) =>
+      {({ openModal, isDeleting: disabled }) =>
         isOwner && (
-          <IconButton size="small" sx={{ p: "1px" }} onClick={openModal}>
+          <IconButton
+            disabled={disabled || isDeleting}
+            size="small"
+            sx={{ p: "1px" }}
+            onClick={openModal}
+          >
             <DeleteForever />
           </IconButton>
         )

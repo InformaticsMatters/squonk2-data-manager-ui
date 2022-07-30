@@ -22,6 +22,7 @@ const config: PlaywrightTestConfig = {
     screenshot: "on",
   },
   timeout: 60000,
+  retries: 3,
 };
 
 export default config;

@@ -22,7 +22,7 @@ let nextConfig = {
   eslint: { ignoreDuringBuilds: process.env.SKIP_CHECKS },
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
-  basePath: process.env.NEXT_PUBLIC_BASE_PATH,
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   sassOptions: {
     prependData: `$assetsURL: '${
       process.env.ASSET_URL || "https://squonk.informaticsmatters.org"

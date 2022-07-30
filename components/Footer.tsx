@@ -1,5 +1,7 @@
 import { Box, Container, Link, Paper, Typography } from "@mui/material";
 
+import { AppVersions } from "./AppVersions";
+
 export const Footer = () => {
   return (
     <Paper square component="footer" sx={{ marginTop: "auto" }}>
@@ -18,7 +20,7 @@ export const Footer = () => {
               <strong>Informatics Matters</strong>
             </Link>
           </Typography>
-          <Typography variant="body2">Version: {process.env.NEXT_PUBLIC_APP_VERSION}</Typography>
+          <AppVersions />
         </Box>
       </Container>
     </Paper>

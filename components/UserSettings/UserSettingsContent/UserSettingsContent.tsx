@@ -1,7 +1,6 @@
-import { Button, Container, Tooltip } from "@mui/material";
+import { Button, Container, Tooltip, Typography } from "@mui/material";
 
 import { useCurrentProjectId } from "../../../hooks/projectHooks";
-import { useSelectedUnit } from "../../../state/unitSelection";
 import { PageSection } from "../../PageSection";
 import { ContextSection } from "./ContextSection";
 import { ProjectStatsSection } from "./ProjectStatsSection";
@@ -11,8 +10,6 @@ import { UserSettingsSection } from "./UserSettingsSection";
  * Container component which displays various sections for User Settings.
  */
 export const UserSettingsContent = () => {
-  const [unit] = useSelectedUnit();
-
   const { setCurrentProjectId } = useCurrentProjectId();
 
   return (
@@ -21,18 +18,20 @@ export const UserSettingsContent = () => {
         <UserSettingsSection />
       </PageSection>
 
-      <PageSection level={2} title="Context">
+      <PageSection level={2} title="Organisation and Unit">
+        <Typography gutterBottom variant="body2">
+          Filter the projects you are able to see by the organisation and unit a projects belongs
+          to.
+        </Typography>
         <ContextSection />
       </PageSection>
 
-      {unit && (
-        <PageSection level={2} title="Project Stats">
-          <ProjectStatsSection />
-          <Tooltip title="Deselect project">
-            <Button onClick={() => setCurrentProjectId()}>Clear</Button>
-          </Tooltip>
-        </PageSection>
-      )}
+      <PageSection level={2} title="Project Stats">
+        <ProjectStatsSection />
+        <Tooltip title="Deselect project">
+          <Button onClick={() => setCurrentProjectId()}>Clear</Button>
+        </Tooltip>
+      </PageSection>
     </Container>
   );
 };

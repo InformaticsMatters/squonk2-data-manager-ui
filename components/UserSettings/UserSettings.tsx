@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "@mui/material";
 import dynamic from "next/dynamic";
 
+import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { CenterLoader } from "../CenterLoader";
 import { ModalWrapper } from "../modals/ModalWrapper";
 
@@ -18,6 +19,7 @@ const UserSettingsContent = dynamic<any>(
  */
 export const UserSettings = () => {
   const [open, setOpen] = useState(false);
+  const { user } = useKeycloakUser();
 
   return (
     <>
@@ -31,7 +33,7 @@ export const UserSettings = () => {
         title="Settings"
         onClose={() => setOpen(false)}
       >
-        <UserSettingsContent />
+        {!!user.username && <UserSettingsContent />}
       </ModalWrapper>
     </>
   );

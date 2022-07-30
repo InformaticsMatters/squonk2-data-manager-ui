@@ -28,7 +28,6 @@ export const ProjectStatsSection = () => {
     projectSubscriptions,
     isLoading: isProjectSubscriptionsLoading,
     isError: isProjectSubscriptionsError,
-    error: projectSubscriptionsError,
   } = useProjectSubscriptions();
 
   const {
@@ -167,7 +166,6 @@ export const ProjectStatsSection = () => {
         }}
         data={projectSubscriptions}
         enableSearch={false}
-        error={getErrorMessage(projectSubscriptionsError)}
         isError={isProjectSubscriptionsError}
         isLoading={isProjectSubscriptionsLoading}
         tableContainer={false}

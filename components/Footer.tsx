@@ -8,7 +8,12 @@ export const Footer = () => {
       <Container maxWidth="md">
         <Box p={2}>
           <Typography variant="h4">
-            <strong style={{ fontFamily: "Raleway" }}>Squonk</strong> Data Manager
+            <strong style={{ fontFamily: "Raleway" }}>
+              <Link href="https://squonk.it/" rel="noopener noreferrer" target="_blank">
+                Squonk
+              </Link>
+            </strong>{" "}
+            Data Manager
           </Typography>
           <Typography variant="subtitle1">
             A product by{" "}

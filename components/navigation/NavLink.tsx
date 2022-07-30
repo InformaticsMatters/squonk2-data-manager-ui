@@ -43,7 +43,7 @@ export const NavLink = ({ children, title, stripQueryParameters }: NavLinkProps)
   stripQueryParameters?.forEach((param) => delete query[param]);
 
   return (
-    <Link passHref href={{ pathname, query }}>
+    <Link passHref shallow href={{ pathname, query }}>
       {children({ active })}
     </Link>
   );

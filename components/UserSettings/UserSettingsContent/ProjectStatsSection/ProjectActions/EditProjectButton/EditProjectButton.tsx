@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import type { ProductDmProjectTier } from "@squonk/account-server-client";
 import type { ProjectDetail } from "@squonk/data-manager-client";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -16,16 +15,12 @@ export interface EditProjectButtonProps {
    * Project to be edited.
    */
   project: ProjectDetail;
-  /**
-   * Project product details.
-   */
-  projectProduct: ProductDmProjectTier;
 }
 
 /**
  * Button controlling a modal with options to edit the project editors
  */
-export const EditProjectButton = ({ project, projectProduct }: EditProjectButtonProps) => {
+export const EditProjectButton = ({ project }: EditProjectButtonProps) => {
   const [open, setOpen] = useState(false);
 
   const { user } = useKeycloakUser();
@@ -60,7 +55,7 @@ export const EditProjectButton = ({ project, projectProduct }: EditProjectButton
 
         <PrivateProjectToggle isPrivate={project.private} projectId={project.project_id} />
 
-        <ProjectEditors project={project} projectProduct={projectProduct} />
+        <ProjectEditors project={project} />
       </ModalWrapper>
     </>
   );

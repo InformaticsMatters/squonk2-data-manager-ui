@@ -3,6 +3,7 @@ import { useGetProjects } from "@squonk/data-manager-client/project";
 
 import { Box, CircularProgress } from "@mui/material";
 
+import { CopyProjectURL } from "./CopyProjectURL";
 import { DeleteProjectButton } from "./DeleteProjectButton";
 import { EditProjectButton } from "./EditProjectButton";
 
@@ -28,8 +29,9 @@ export const ProjectActions = ({ projectProduct }: ProjectActionsProps) => {
 
   return project ? (
     <Box display="flex">
-      <EditProjectButton project={project} projectProduct={projectProduct} />
-      <DeleteProjectButton project={project} projectProduct={projectProduct} />
+      <CopyProjectURL project={project} />
+      <EditProjectButton project={project} />
+      <DeleteProjectButton project={project} />
     </Box>
   ) : null;
 };

@@ -17,22 +17,22 @@ export const NavLinks = ({ linkWidth = 120 }: NavLinksProps) => {
     <Nav aria-label="Main" linkWidth={linkWidth} role="navigation">
       {/* Div wrappers used to give correct spacing */}
       <div>
-        <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Datasets">
+        <NavLink stripQueryParameters={["path"]} title="Datasets">
           {({ active }) => <NavButton active={active}>Datasets</NavButton>}
         </NavLink>
       </div>
       <div>
-        <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Project">
+        <NavLink stripQueryParameters={["path"]} title="Project">
           {({ active }) => <NavButton active={active}>Project</NavButton>}
         </NavLink>
       </div>
       <div>
-        <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Executions">
+        <NavLink stripQueryParameters={["path"]} title="Executions">
           {({ active }) => <NavButton active={active}>Executions</NavButton>}
         </NavLink>
       </div>
       <div>
-        <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Results">
+        <NavLink stripQueryParameters={["path"]} title="Results">
           {({ active }) => <NavButton active={active}>Results</NavButton>}
         </NavLink>
       </div>

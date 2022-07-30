@@ -1,19 +1,13 @@
 import { useState } from "react";
 import { useQueryClient } from "react-query";
 
-import type { ProductDmProjectTier } from "@squonk/account-server-client";
 import {
-  getGetProductQueryKey,
   getGetProductsForUnitQueryKey,
+  getGetProductsQueryKey,
   useDeleteProduct,
 } from "@squonk/account-server-client/product";
 import type { DmError, ProjectDetail } from "@squonk/data-manager-client";
-import {
-  getGetProjectQueryKey,
-  getGetProjectsQueryKey,
-  useDeleteProject,
-} from "@squonk/data-manager-client/project";
-import { getGetUserAccountQueryKey } from "@squonk/data-manager-client/user";
+import { getGetProjectsQueryKey, useDeleteProject } from "@squonk/data-manager-client/project";
 
 import { DeleteForever } from "@mui/icons-material";
 import { IconButton, LinearProgress, Typography } from "@mui/material";
@@ -29,16 +23,12 @@ export interface DeleteProjectButtonProps {
    * Project to be edited.
    */
   project: ProjectDetail;
-  /**
-   * Project product details.
-   */
-  projectProduct: ProductDmProjectTier;
 }
 
 /**
  * Button with modal which deletes a provided project.
  */
-export const DeleteProjectButton = ({ project, projectProduct }: DeleteProjectButtonProps) => {
+export const DeleteProjectButton = ({ project }: DeleteProjectButtonProps) => {
   const { projectId: currentProjectId, setCurrentProjectId } = useCurrentProjectId();
 
   const { user } = useKeycloakUser();
@@ -75,14 +65,11 @@ export const DeleteProjectButton = ({ project, projectProduct }: DeleteProjectBu
     } else {
       enqueueSnackbar("Project not found", { variant: "warning" });
     }
-    // DM queries
-    queryClient.invalidateQueries(getGetProjectQueryKey(project.project_id));
-    queryClient.invalidateQueries(getGetProjectsQueryKey());
-    queryClient.invalidateQueries(getGetUserAccountQueryKey());
 
-    // AS queries
-    queryClient.invalidateQueries(getGetProductsForUnitQueryKey(projectProduct.unit.id));
-    queryClient.invalidateQueries(getGetProductQueryKey(projectProduct.product.id));
+    queryClient.invalidateQueries(getGetProjectsQueryKey());
+    queryClient.invalidateQueries(getGetProductsQueryKey());
+    project.unit_id &&
+      queryClient.invalidateQueries(getGetProductsForUnitQueryKey(project.unit_id));
   };
 
   return (

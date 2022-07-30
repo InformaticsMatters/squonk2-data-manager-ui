@@ -3,13 +3,12 @@ import { useQueryClient } from "react-query";
 import type { AsError, UnitProductPostBodyBodyFlavour } from "@squonk/account-server-client";
 import {
   getGetProductsForUnitQueryKey,
+  getGetProductsQueryKey,
   useCreateUnitProduct,
   useGetProductTypes,
 } from "@squonk/account-server-client/product";
-import { getGetUnitsQueryKey } from "@squonk/account-server-client/unit";
 import type { DmError } from "@squonk/data-manager-client";
 import { getGetProjectsQueryKey, useCreateProject } from "@squonk/data-manager-client/project";
-import { getGetUserAccountQueryKey } from "@squonk/data-manager-client/user";
 
 import {
   Box,
@@ -96,10 +95,8 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
     enqueueSnackbar("Project created");
 
     queryClient.invalidateQueries(getGetProjectsQueryKey());
-    queryClient.invalidateQueries(getGetUserAccountQueryKey());
-
+    queryClient.invalidateQueries(getGetProductsQueryKey());
     queryClient.invalidateQueries(getGetProductsForUnitQueryKey(unitId));
-    queryClient.invalidateQueries(getGetUnitsQueryKey());
 
     setCurrentProjectId(project_id);
   };
@@ -107,6 +104,7 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
   const handleSubmit: ProjectFormikProps["onSubmit"] = async (values, { setSubmitting }) => {
     try {
       await create(values);
+      modal?.onClose();
     } catch (error) {
       enqueueError(error);
     } finally {

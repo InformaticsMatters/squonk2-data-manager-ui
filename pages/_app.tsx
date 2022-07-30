@@ -17,6 +17,7 @@ import { ThemeProviders } from "../components/ThemeProviders";
 import { TopLevelHooks } from "../components/TopLevelHooks";
 import { AS_API_URL, DM_API_URL } from "../constants";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
+import { useBindProjectFromLSToQParams } from "../hooks/useBindProjectFromLSToQParams";
 import createEmotionCache from "../utils/createEmotionCache";
 
 import "../styles/globalStyles.scss";
@@ -54,6 +55,8 @@ export default function App({
   if (process.env.NEXT_PUBLIC_VERCEL_URL) {
     import("../utils/vercelRedirect").then(({ vercelRedirect }) => vercelRedirect());
   }
+
+  useBindProjectFromLSToQParams();
 
   return (
     <CacheProvider value={emotionCache}>

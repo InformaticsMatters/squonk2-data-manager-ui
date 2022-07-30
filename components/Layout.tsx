@@ -3,6 +3,7 @@ import type { FC } from "react";
 import { Box, LinearProgress } from "@mui/material";
 
 import { useIsTransitioning } from "../hooks/useIsTransitioning";
+import { CookiesBanner } from "./CookiesBanner";
 import { Footer } from "./Footer";
 import Header from "./Header";
 
@@ -19,6 +20,7 @@ const Layout: FC = ({ children }) => {
       </Box>
       {/* </Slide> */}
       <Footer />
+      <CookiesBanner />
     </Box>
   );
 };

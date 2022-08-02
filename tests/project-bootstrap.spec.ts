@@ -74,7 +74,7 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   await page.locator(`div[role="button"]:has-text("")`).click();
 
   // Click text=Evaluation
-  await page.locator("text=Evaluation").click();
+  await page.locator(`li:has-text("Evaluation")`).click();
 
   // Uncheck input[name="isPrivate"]
   await page.locator(`input[name="isPrivate"]`).uncheck();

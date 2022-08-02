@@ -36,7 +36,7 @@ export const VersionViewSection = ({ dataset, version }: VersionViewSectionProps
       >
         <ListItemText
           primary="Browser Viewer"
-          secondary="Displays the file in your browser if it supports the file type"
+          secondary="Displays the file in your browser if it supports the file type, otherwise downloads the file"
         />
         <Description color="action" />
       </ListItem>

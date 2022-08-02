@@ -31,7 +31,7 @@ export const ProjectViewSection = ({ file }: ProjectViewSectionProps) => {
         >
           <ListItemText
             primary="Browser Viewer"
-            secondary="Displays the dataset in your browser if it supports the file type"
+            secondary="Displays the file in your browser if it supports the file type, otherwise downloads the file"
           />
           <Description color="action" />
         </ListItem>

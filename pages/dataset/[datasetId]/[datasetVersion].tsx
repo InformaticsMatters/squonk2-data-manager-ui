@@ -102,7 +102,7 @@ const DatasetVersionPlainTextViewer = () => {
       decompress,
       fileSizeLimit,
     })}`,
-    undefined,
+    { transformResponse: (res) => res },
     {
       enabled: Boolean(version),
     },

@@ -1,9 +1,14 @@
 import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0";
+import type { NextHttpProxyMiddlewareOptions } from "next-http-proxy-middleware";
 import httpProxyMiddleware from "next-http-proxy-middleware";
 
 type Path = `^/api/${string}`;
 
-export const createProxyMiddleware = (patternStr: Path, target: string) =>
+export const createProxyMiddleware = (
+  patternStr: Path,
+  target: string,
+  handleProxyInit: NextHttpProxyMiddlewareOptions["onProxyInit"] = undefined,
+) =>
   withApiAuthRequired(async (req, res) => {
     try {
       const { accessToken } = await getAccessToken(req, res);
@@ -13,6 +18,7 @@ export const createProxyMiddleware = (patternStr: Path, target: string) =>
       // API resolved without sending a response for ..., this may result in stalled requests.
       return await httpProxyMiddleware(req, res, {
         target,
+        onProxyInit: handleProxyInit,
         pathRewrite: [{ patternStr, replaceStr: "" }],
         headers: {
           Authorization: `Bearer ${accessToken}`,

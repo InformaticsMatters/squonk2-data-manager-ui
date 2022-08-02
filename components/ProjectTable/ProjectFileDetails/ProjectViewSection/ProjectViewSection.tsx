@@ -1,5 +1,9 @@
-import { List } from "@mui/material";
+import { Description } from "@mui/icons-material";
+import { List, ListItem, ListItemText } from "@mui/material";
 
+import { API_ROUTES } from "../../../../constants/routes";
+import { useCurrentProjectId } from "../../../../hooks/projectHooks";
+import { useProjectBreadcrumbs } from "../../../../hooks/projectPathHooks";
 import type { TableFile } from "../../types";
 import { FilePlainTextViewerListItem } from "./FilePlainTextViewerListItem";
 
@@ -8,9 +12,27 @@ export interface ProjectViewSectionProps {
 }
 
 export const ProjectViewSection = ({ file }: ProjectViewSectionProps) => {
+  const { projectId } = useCurrentProjectId();
+  const breadcrumbs = useProjectBreadcrumbs();
+  const path = "/" + breadcrumbs.join("/");
   return (
     <List>
       <FilePlainTextViewerListItem fileName={file.fileName} />
+      {projectId && (
+        <ListItem
+          button
+          component="a"
+          href={API_ROUTES.projectFile(projectId, path, file.fileName, true)}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <ListItemText
+            primary="Browser Viewer"
+            secondary="Displays the dataset in your browser if it supports the file type"
+          />
+          <Description color="action" />
+        </ListItem>
+      )}
     </List>
   );
 };

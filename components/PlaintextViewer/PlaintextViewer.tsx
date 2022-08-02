@@ -1,9 +1,9 @@
 import { Alert, Box, Paper } from "@mui/material";
+import Error from "next/error";
 
 import { CenterLoader } from "../CenterLoader";
 import { PlaintextViewerContent } from "./PlaintextViewerContent";
 import { PlaintextViewerHeader } from "./PlaintextViewerHeader";
-
 export interface PlaintextViewerProps {
   /**
    * Contents of a file to be displayed.
@@ -53,6 +53,11 @@ export const PlaintextViewer = ({
   isError,
   error,
 }: PlaintextViewerProps) => {
+  try {
+    content = JSON.stringify(content, null, 2); // content can be JSON
+  } catch (error) {
+    return <Error message="The JSON file was malformed" statusCode={500} />;
+  }
   const lines = content ? content.split(/\r?\n/) : [];
   // By default, utf8 is assumed, used to determine whether or not the whole contents of the file
   // was fetched

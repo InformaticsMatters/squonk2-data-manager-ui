@@ -24,8 +24,10 @@ export const APP_ROUTES = {
 };
 
 export const API_ROUTES = {
-  projectFile: (projectId: string, path: string, fileName: string) =>
-    `${DM_API_URL}/project/${projectId}/file?path=${path}&file=${fileName}`,
-  datasetVersion: (datasetId: string, version: number) =>
-    `${DM_API_URL}/dataset/${datasetId}/${version}`,
+  projectFile: (projectId: string, path: string, fileName: string, viewer = false) =>
+    `${
+      viewer ? "/api/viewer-proxy" : DM_API_URL
+    }/project/${projectId}/file?path=${path}&file=${fileName}`,
+  datasetVersion: (datasetId: string, version: number, viewer = false) =>
+    `${viewer ? "/api/viewer-proxy" : DM_API_URL}/dataset/${datasetId}/${version}`,
 };

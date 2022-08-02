@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.19...1.0.0-rc.0) (2022-08-02)
+
+
+### Features
+
+* **cookie:** add cookie consent banner ([b0a355a](https://github.com/InformaticsMatters/squonk-frontend/commit/b0a355a06b821150ce654ac3c055a8bed1a554f9))
+* **footer:** add link to squonk in footer ([2402a02](https://github.com/InformaticsMatters/squonk-frontend/commit/2402a029304f7d50962ad811133086f70069f601))
+* **footer:** display api versions in the UI footer ([fc9c5f4](https://github.com/InformaticsMatters/squonk-frontend/commit/fc9c5f44dc179eebfb323501b1ada19e44a546b3)), closes [#658](https://github.com/InformaticsMatters/squonk-frontend/issues/658)
+* **project-details:** add button to copy url of a project ([3a259a0](https://github.com/InformaticsMatters/squonk-frontend/commit/3a259a05c46023109ed0c83958b5d2b64db90883)), closes [#658](https://github.com/InformaticsMatters/squonk-frontend/issues/658)
+* **share-project:** display snackbar when url is successfully copied to the clipboard ([87de082](https://github.com/InformaticsMatters/squonk-frontend/commit/87de082a8629604c5b7992f9549ddb2f07bf9251))
+* **viewers:** add browser viewer option to files and datasets to view files in the browsers viewer if supported ([2e6360b](https://github.com/InformaticsMatters/squonk-frontend/commit/2e6360bf73bbfd782b639d7653f9babcaef79ad3))
+
+
+### Bug Fixes
+
+* **nextjs:** fix nextjs warning about base path ([9adf04b](https://github.com/InformaticsMatters/squonk-frontend/commit/9adf04b15ef03e1fa4c6278342c4606766c223c5))
+* **project-bootstrap:** Delete product when deleting a project and wait for project task to be done ([052fe23](https://github.com/InformaticsMatters/squonk-frontend/commit/052fe2379e5bcb72b2fed8e9372dcf1265f153e4))
+
 ### [0.1.19](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.19-rc.0...0.1.19) (2022-07-25)
 
 ### [0.1.19-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/0.1.18...0.1.19-rc.0) (2022-07-25)

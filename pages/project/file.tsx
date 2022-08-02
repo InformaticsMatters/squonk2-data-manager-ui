@@ -86,7 +86,12 @@ const FilePlainTextViewer = () => {
       path: dirPath,
       file: fileName,
     })}`,
-    undefined,
+    {
+      transformResponse: (res) => {
+        // Do your own parsing here if needed ie JSON.parse(res);
+        return res;
+      },
+    },
     { enabled: !!file, refetchOnWindowFocus: false },
   );
 

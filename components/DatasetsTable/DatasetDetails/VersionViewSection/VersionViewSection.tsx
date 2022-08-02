@@ -27,7 +27,10 @@ export const VersionViewSection = ({ dataset, version }: VersionViewSectionProps
       <ListItem
         button
         component="a"
-        href={API_ROUTES.datasetVersion(dataset.dataset_id, version.version, true)}
+        href={
+          process.env.NEXT_PUBLIC_BASE_PATH +
+          API_ROUTES.datasetVersion(dataset.dataset_id, version.version, true)
+        }
         rel="noopener noreferrer"
         target="_blank"
       >

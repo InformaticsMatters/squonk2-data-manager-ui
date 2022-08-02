@@ -22,7 +22,10 @@ export const ProjectViewSection = ({ file }: ProjectViewSectionProps) => {
         <ListItem
           button
           component="a"
-          href={API_ROUTES.projectFile(projectId, path, file.fileName, true)}
+          href={
+            process.env.NEXT_PUBLIC_BASE_PATH +
+            API_ROUTES.projectFile(projectId, path, file.fileName, true)
+          }
           rel="noopener noreferrer"
           target="_blank"
         >

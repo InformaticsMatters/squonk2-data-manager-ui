@@ -2,7 +2,6 @@ import type { InstanceSummary } from "@squonk/data-manager-client";
 
 import { CardContent, ListItem, ListItemText } from "@mui/material";
 
-import { APP_ROUTES } from "../../constants/routes";
 import { useProjectFromId } from "../../hooks/projectHooks";
 import { ResultCard } from "../results/ResultCard";
 import { ProjectListItem } from "./common/ProjectListItem";
@@ -50,7 +49,10 @@ export const ResultJobCard = ({
       }
       collapsedByDefault={collapsedByDefault}
       createdDateTime={instance.launched}
-      href={{ pathname: APP_ROUTES.results.instance(instance.id), query }}
+      href={{
+        pathname: "/results/instance/[instanceId]",
+        query: { ...query, instanceId: instance.id },
+      }}
       linkTitle="Job"
       state={instance.phase}
     >

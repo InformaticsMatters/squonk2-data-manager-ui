@@ -17,7 +17,7 @@ import Head from "next/head";
 
 import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/executionsCards/ApplicationCard";
-import { JobCard } from "../components/executionsCards/JobCard/JobCard";
+import { JobCard } from "../components/executionsCards/JobCard";
 import Layout from "../components/Layout";
 import { SearchTextField } from "../components/SearchTextField";
 import { useCurrentProject } from "../hooks/projectHooks";

@@ -1,33 +1,11 @@
 // Main source of truth for available *pages*
 // Function used as value for dynamic routes
 
-import { DM_API_URL } from ".";
-
-export const APP_ROUTES = {
-  home: "/",
-  datasets: "/datasets",
-  project: {
-    ".": "/project",
-    file: "/project/file",
-  },
-  executions: "/executions",
-  results: {
-    ".": "/results",
-    task: (taskId: string) => `/results/task/${taskId}`,
-    instance: (instanceId: string) => `/results/instance/${instanceId}`,
-  },
-  dataset: {
-    ".": "/dataset",
-    version: (datasetId: string, datasetVersion: number) =>
-      `/dataset/${datasetId}/${datasetVersion}`,
-  },
-};
+type Proxy = "/api/dm-api" | "/api/viewer-proxy" | "";
 
 export const API_ROUTES = {
-  projectFile: (projectId: string, path: string, fileName: string, viewer = false) =>
-    `${
-      viewer ? "/api/viewer-proxy" : DM_API_URL
-    }/project/${projectId}/file?path=${path}&file=${fileName}`,
-  datasetVersion: (datasetId: string, version: number, viewer = false) =>
-    `${viewer ? "/api/viewer-proxy" : DM_API_URL}/dataset/${datasetId}/${version}`,
+  projectFile: (projectId: string, path: string, fileName: string, proxy: Proxy = "") =>
+    `${proxy}/project/${projectId}/file?path=${path}&file=${fileName}`,
+  datasetVersion: (datasetId: string, version: number, proxy: Proxy = "") =>
+    `${proxy}/dataset/${datasetId}/${version}`,
 };

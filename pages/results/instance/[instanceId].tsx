@@ -14,7 +14,6 @@ import { CenterLoader } from "../../../components/CenterLoader";
 import Layout from "../../../components/Layout";
 import type { ResultApplicationCardProps } from "../../../components/results/ResultApplicationCard";
 import type { ResultJobCardProps } from "../../../components/results/ResultJobCard";
-import { APP_ROUTES } from "../../../constants/routes";
 import { RoleRequired } from "../../../utils/RoleRequired";
 
 const ResultJobCard = dynamic<ResultJobCardProps>(
@@ -77,7 +76,7 @@ const Result = () => {
             )}
             <NextLink
               passHref
-              href={{ pathname: APP_ROUTES.results["."], query: { project: instance?.project_id } }}
+              href={{ pathname: "/results", query: { project: instance?.project_id } }}
             >
               <Button color="primary">See all results</Button>
             </NextLink>

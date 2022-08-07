@@ -6,6 +6,7 @@ import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
 import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
 import { IconButton, Tooltip } from "@mui/material";
+import { captureException } from "@sentry/nextjs";
 import type { AxiosError } from "axios";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
@@ -85,7 +86,8 @@ export const FileUpload = () => {
               setFiles(updatedFiles);
               enqueueError(errorMessage);
             } else {
-              enqueueError("Unknown error"); // TODO: Add Sentry
+              captureException(err);
+              enqueueError("Unknown error");
             }
           }
         });

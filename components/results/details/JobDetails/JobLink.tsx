@@ -3,8 +3,6 @@ import { Box, IconButton, Link, Tooltip, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 
-import { APP_ROUTES } from "../../../../constants/routes";
-
 export interface JobLinkProps {
   projectId: string;
   path: string;
@@ -78,7 +76,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
         <NextLink
           passHref
           href={{
-            pathname: APP_ROUTES.project["."],
+            pathname: "/project",
             query: {
               ...query,
               project: projectId,
@@ -96,7 +94,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
         <NextLink
           passHref
           href={{
-            pathname: APP_ROUTES.project.file,
+            pathname: "/project/file",
             query: {
               project: projectId,
               path: filePath,
@@ -119,7 +117,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
       <NextLink
         passHref
         href={{
-          pathname: APP_ROUTES.dataset["."],
+          pathname: "/datasets",
           query: {
             ...query,
             project: projectId,

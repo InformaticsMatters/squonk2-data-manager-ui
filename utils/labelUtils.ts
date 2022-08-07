@@ -1,6 +1,6 @@
 import type { DatasetVersionSummary } from "@squonk/data-manager-client";
 
-import { mergeWith } from "lodash-es";
+import { mergeWith } from "lodash-es"; // No `just` equivalent yet https://github.com/angus-c/just/issues/434
 
 /**
  *  Formats `[key: string, value: string | string[]]` pairs into a label string

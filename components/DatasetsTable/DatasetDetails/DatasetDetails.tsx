@@ -10,10 +10,10 @@ import { Labels } from "../../labels/Labels";
 import { NewLabelButton } from "../../labels/NewLabelButton";
 import { ModalWrapper } from "../../modals/ModalWrapper";
 import { PageSection } from "../../PageSection";
-import { VersionInfoSection } from "./VersionInfoSection/VersionInfoSection";
 import { ManageDatasetEditorsSection } from "./ManageDatasetEditorsSection";
 import { NewVersionListItem } from "./NewVersionListItem";
 import { VersionActionsSection } from "./VersionActionsSection";
+import { VersionInfoSection } from "./VersionInfoSection";
 import { VersionViewSection } from "./VersionViewSection";
 import { WorkingVersionSection } from "./WorkingVersionSection";
 

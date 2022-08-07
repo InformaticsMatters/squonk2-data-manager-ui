@@ -6,7 +6,6 @@ import { getGetTasksQueryKey, useDeleteTask } from "@squonk/data-manager-client/
 import { Button, CardContent } from "@mui/material";
 import { useRouter } from "next/router";
 
-import { APP_ROUTES } from "../../constants/routes";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { ResultCard } from "../results/ResultCard";
@@ -69,8 +68,8 @@ export const ResultTaskCard = ({ task, collapsedByDefault = true, poll }: Result
       collapsedByDefault={collapsedByDefault}
       createdDateTime={task.created}
       href={{
-        pathname: APP_ROUTES.results.task(task.id),
-        query,
+        pathname: "/results/task/[taskId]",
+        query: { ...query, taskId: task.id },
       }}
       linkTitle={task.purpose}
       state={task.processing_stage}

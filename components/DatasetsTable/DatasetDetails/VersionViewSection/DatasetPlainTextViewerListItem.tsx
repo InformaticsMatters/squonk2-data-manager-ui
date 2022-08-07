@@ -2,8 +2,6 @@ import { Description } from "@mui/icons-material";
 import { ListItem, ListItemText } from "@mui/material";
 import NextLink from "next/link";
 
-import { APP_ROUTES } from "../../../../constants/routes";
-
 export interface DatasetPlainTextViewerListItemProps {
   datasetId: string;
   version: number;
@@ -17,7 +15,8 @@ export const DatasetPlainTextViewerListItem = ({
     <NextLink
       passHref
       href={{
-        pathname: APP_ROUTES.dataset.version(datasetId, version),
+        pathname: "/dataset/[datasetId]/[datasetVersion]",
+        query: { datasetId, datasetVersion: String(version) },
       }}
     >
       <ListItem button component="a" rel="noopener noreferrer" target="_blank">

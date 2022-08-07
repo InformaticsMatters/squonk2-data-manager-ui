@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
+import type { Route } from "nextjs-routes";
 
 export interface NavLinkChildProps {
   /**
@@ -34,7 +35,8 @@ export interface NavLinkProps {
 export const NavLink = ({ children, title, stripQueryParameters }: NavLinkProps) => {
   // Generate path from title text "Two Word" => "/twoword"
   // Regex removes white space
-  const pathname = "/" + title.toLowerCase().replace(/ /g, "");
+  // TODO: Can't know if this is a real path so should change this to take the path as input
+  const pathname = ("/" + title.toLowerCase().replace(/ /g, "")) as Route["pathname"];
 
   const router = useRouter();
   const active = router.pathname.startsWith(pathname);

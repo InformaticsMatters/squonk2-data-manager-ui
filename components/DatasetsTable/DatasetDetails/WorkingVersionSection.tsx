@@ -61,7 +61,7 @@ export const WorkingVersionSection = ({
         <Box ml={2}>
           <DownloadButton
             disabled={!(version.processing_stage === "DONE")}
-            href={API_ROUTES.datasetVersion(dataset.dataset_id, version.version)}
+            href={API_ROUTES.datasetVersion(dataset.dataset_id, version.version, "/api/dm-api")}
             title="Download this version of the dataset"
           />
         </Box>

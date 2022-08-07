@@ -1,10 +1,10 @@
-import { pipeline } from "stream/promises";
 import zlib from "zlib";
 
 import { getAccessToken } from "@auth0/nextjs-auth0";
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { Transform } from "node:stream";
+import { pipeline } from "node:stream/promises";
 import fetch from "node-fetch";
-import type { Transform } from "stream";
 
 import { FixedSizeStreamTransform } from "./FixedSizeStreamTransform";
 import { BadRequestError } from "./HttpError";

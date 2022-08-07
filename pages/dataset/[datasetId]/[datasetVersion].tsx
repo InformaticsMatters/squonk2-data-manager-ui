@@ -1,64 +1,43 @@
-import type { DatasetDetail, DatasetVersionDetail } from "@squonk/data-manager-client";
-import { useGetVersions } from "@squonk/data-manager-client/dataset";
-
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/dist/frontend";
-import Head from "next/head";
+import { Container } from "@mui/material";
+import type { GetServerSideProps } from "next";
+import NextError from "next/error";
 import { useRouter } from "next/router";
 
 import { PlaintextViewer } from "../../../components/PlaintextViewer";
-import { DM_API_URL } from "../../../constants";
-import { APP_ROUTES } from "../../../constants/routes";
-import { useApi } from "../../../hooks/useApi";
-import { getErrorMessage } from "../../../utils/orvalError";
-import { getQueryParams } from "../../../utils/requestUtils";
+import { API_ROUTES } from "../../../constants/routes";
+import { createErrorProps } from "../../../utils/api/serverSidePropsError";
+import type { NotSuccessful, Successful } from "../../../utils/plaintextViewerSSR";
+import { plaintextViewerSSR } from "../../../utils/plaintextViewerSSR";
 
-type ParseDatasetVersionResult = {
-  datasetVersionNumber?: number;
-  isParseError: boolean;
-  parseError?: string;
-};
+export type DatasetVersionProps = Successful | NotSuccessful;
 
-type SelectDatasetVersionResult = {
-  version?: DatasetVersionDetail;
-  isSelectError: boolean;
-  selectError?: string;
-};
+const isSuccessful = (props: DatasetVersionProps): props is Successful =>
+  typeof (props as Successful).content === "string";
 
-const parseDatasetVersion = (datasetVersion?: string | string[]): ParseDatasetVersionResult => {
-  const datasetVersionParsed = parseInt(datasetVersion as string);
-  if (isNaN(datasetVersionParsed)) {
-    return {
-      isParseError: true,
-      parseError: "Invalid dataset version number provided",
-    };
-  }
-  return { datasetVersionNumber: datasetVersionParsed, isParseError: false };
-};
+export const getServerSideProps: GetServerSideProps<DatasetVersionProps> = async ({
+  req,
+  res,
+  query,
+}) => {
+  const { datasetId } = query;
+  const { datasetVersion } = query;
 
-const selectDatasetVersion = (
-  datasetDetail?: DatasetDetail,
-  datasetVersion?: number,
-): SelectDatasetVersionResult => {
-  // If `datasetDetail` is not provided, don't return a version, nor an error
-  if (!datasetDetail) {
-    return { isSelectError: false };
+  if (typeof datasetId !== "string" || typeof datasetVersion !== "string") {
+    return createErrorProps(res, 500, "File or path are not valid");
   }
 
-  const version = datasetDetail.versions.find((version) => version.version === datasetVersion);
-
-  if (!version) {
-    return {
-      isSelectError: true,
-      selectError: "No dataset version found for the specified dataset version number",
-    };
+  const version = Number(datasetVersion);
+  if (isNaN(version)) {
+    return createErrorProps(res, 400, "The dataset version must be a whole number");
   }
-  return { version, isSelectError: false };
-};
 
-// Datasets are always gziped as of now
-const DECOMPRESS = "unzip";
-// 100 kB
-const FILE_LIMIT_SIZE = 100_000;
+  const compressed = true;
+
+  const url = process.env.DATA_MANAGER_API_SERVER + API_ROUTES.datasetVersion(datasetId, version);
+
+  return await plaintextViewerSSR(req, res, { url, compressed });
+};
 
 /**
  * Displays plaintext viewer for a provided dataset version. The page is statically compiled, though
@@ -69,72 +48,28 @@ const FILE_LIMIT_SIZE = 100_000;
  * While the whole functionality can be written imperatively using the `useEffect` hook, this should
  * allows us easier potential refactoring in the future.
  */
-const DatasetVersionPlainTextViewer = () => {
+const DatasetVersion = (props: DatasetVersionProps) => {
   const { query } = useRouter();
+
   const { datasetId, datasetVersion } = query;
 
-  const { datasetVersionNumber, isParseError, parseError } = parseDatasetVersion(datasetVersion);
+  if (typeof datasetId !== "string" || typeof datasetVersion !== "string") {
+    return <NextError statusCode={400} />;
+  }
 
-  const {
-    data: datasetDetail,
-    isLoading: isDatasetDetailLoading,
-    isError: isDatasetDetailError,
-    error: datasetDetailError,
-  } = useGetVersions(datasetId as string, undefined, {
-    query: { enabled: !isParseError },
-  });
+  const compressed = true;
+  const title = "";
 
-  const { version, isSelectError, selectError } = selectDatasetVersion(
-    datasetDetail,
-    datasetVersionNumber,
-  );
+  if (isSuccessful(props)) {
+    return (
+      <Container maxWidth="xl">
+        <PlaintextViewer {...props} compressed={compressed} title={title} />
+      </Container>
+    );
+  }
 
-  const decompress = DECOMPRESS;
-  const fileSizeLimit = FILE_LIMIT_SIZE;
-
-  const {
-    data: fileContents,
-    isLoading: isContentsLoading,
-    isError: isContentsError,
-    error: contentsError,
-  } = useApi<string>(
-    `${APP_ROUTES.dataset["."]}/${datasetId}/${datasetVersion}/${getQueryParams({
-      decompress,
-      fileSizeLimit,
-    })}`,
-    { transformResponse: (res) => res },
-    {
-      enabled: Boolean(version),
-    },
-  );
-
-  const isLoading = isDatasetDetailLoading || isContentsLoading;
-  const isError = isParseError || isDatasetDetailError || isSelectError || isContentsError;
-  const error =
-    parseError ||
-    getErrorMessage(datasetDetailError) ||
-    selectError ||
-    getErrorMessage(contentsError);
-
-  const downloadUrl = `${DM_API_URL}/dataset/${datasetId}/${datasetVersion}`;
-
-  return (
-    <>
-      <Head>
-        <title>Dataset Plaintext Viewer</title>
-      </Head>
-      <PlaintextViewer
-        content={fileContents}
-        decompress={decompress}
-        downloadUrl={downloadUrl}
-        error={error}
-        fileSizeLimit={fileSizeLimit}
-        isError={isError}
-        isLoading={isLoading}
-        title={version?.file_name ?? ""}
-      />
-    </>
-  );
+  const { statusCode, statusMessage } = props;
+  return <NextError statusCode={statusCode} statusMessage={statusMessage} />;
 };
 
-export default withPageAuthRequired(DatasetVersionPlainTextViewer);
+export default withPageAuthRequired(DatasetVersion);

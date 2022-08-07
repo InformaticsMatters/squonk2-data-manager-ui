@@ -3,8 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { APP_ROUTES } from "../../constants/routes";
-
 /**
  * Squonk Logo
  */
@@ -12,7 +10,7 @@ export const Logo = () => {
   const { query } = useRouter();
 
   return (
-    <Link passHref href={{ pathname: APP_ROUTES.home, query }}>
+    <Link passHref href={{ pathname: "/", query: { project: query.project } }}>
       <LogoLink>
         <Image
           alt="Squonk (animal) logo with title text 'Squonk' and subtitle 'Data Manager'"

@@ -3,8 +3,6 @@ import { ListItem, ListItemText } from "@mui/material";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 
-import { APP_ROUTES } from "../../../../constants/routes";
-
 export interface FilePlainTextViewerListItemProps {
   fileName: string;
 }
@@ -18,7 +16,7 @@ export const FilePlainTextViewerListItem = ({ fileName }: FilePlainTextViewerLis
     <NextLink
       passHref
       href={{
-        pathname: APP_ROUTES.project.file,
+        pathname: "/project/file",
         query: {
           project,
           file: fileName,

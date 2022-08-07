@@ -95,7 +95,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
 
       {isFile && (
         <DownloadButton
-          href={API_ROUTES.projectFile(project.project_id, path, file.fileName)}
+          href={API_ROUTES.projectFile(project.project_id, path, file.fileName, "/api/dm-api")}
           size="small"
           title="Download file"
         />

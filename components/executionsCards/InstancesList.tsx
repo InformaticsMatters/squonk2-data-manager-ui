@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 
-import { APP_ROUTES } from "../../constants/routes";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { CenterLoader } from "../CenterLoader";
 import { LocalTime } from "../LocalTime";
@@ -52,8 +51,8 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
           <NextLink
             passHref
             href={{
-              pathname: APP_ROUTES.results.instance(instance.id),
-              query: { ...query, project: projectId },
+              pathname: "/results/instance/[instanceId]",
+              query: { ...query, instanceId: instance.id, project: projectId },
             }}
             key={instance.id}
           >

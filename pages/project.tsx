@@ -16,20 +16,30 @@ import { ProjectTable } from "../components/ProjectTable";
 import { ProjectFileUpload } from "../components/ProjectTable/ProjectFileUpload";
 import { ProjectAutocomplete } from "../components/userContext/ProjectAutocomplete";
 import { useCurrentProject } from "../hooks/projectHooks";
+import { pathFromQuery } from "../utils/paths";
 import { RoleRequired } from "../utils/RoleRequired";
 import { options } from "../utils/ssrQueryOptions";
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
   const queryClient = new QueryClient();
 
+  if (
+    query.path === undefined ||
+    typeof query.file !== "string" ||
+    typeof query.project !== "string"
+  ) {
+    return { props: {} };
+  }
+
   try {
     const { accessToken } = await getAccessToken(req, res);
 
     const projectId = query.project as string | undefined;
-    const path = query.path as string[] | undefined;
+
+    const path = pathFromQuery(query.path);
 
     if (projectId && accessToken) {
-      const filesParam = { project_id: projectId, path: "/" + (path?.join("/") ?? "") };
+      const filesParam = { project_id: projectId, path };
 
       // Prefetch some data
       const queries = [

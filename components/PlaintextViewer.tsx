@@ -4,6 +4,7 @@ import fileSize from "filesize";
 
 import { useEffect } from "react";
 
+import Head from "next/head";
 import Prism from "prismjs";
 import "prismjs/plugins/line-numbers/prism-line-numbers.js";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
@@ -41,37 +42,42 @@ export const PlaintextViewer = ({
   }, []);
 
   return (
-    <Paper sx={{ marginY: 2 }}>
-      <Box
-        alignItems="center"
-        display="flex"
-        paddingX={2}
-        paddingY={1}
-        sx={{
-          bgcolor: (theme) => (theme.palette.mode === "light" ? "grey.200" : "grey.900"),
-          boxShadow: 0,
-          gap: 2,
-        }}
-      >
-        <Box alignItems="center" display="flex" flex="1 1 auto" sx={{ gap: 1 }}>
-          <Typography component="h1" fontFamily="monospace" sx={{ wordBreak: "break-all" }}>
-            <b>{title}</b>
-          </Typography>
-          <Divider flexItem orientation="vertical" />
-          <Typography>
-            {numberOfLines} {linesText} of{" "}
-            {originalContentLength ? fileSize(originalContentLength) : "unknown"}
-          </Typography>
-          {(compressed || truncated) && <Divider flexItem orientation="vertical" />}
-          {compressed && <Chip label="Decompressed" size="small" variant="outlined" />}
-          {truncated && <Chip label="Truncated" size="small" variant="outlined" />}
+    <>
+      <Head>
+        <title>{title}</title>
+      </Head>
+      <Paper sx={{ marginY: 2 }}>
+        <Box
+          alignItems="center"
+          display="flex"
+          paddingX={2}
+          paddingY={1}
+          sx={{
+            bgcolor: (theme) => (theme.palette.mode === "light" ? "grey.200" : "grey.900"),
+            boxShadow: 0,
+            gap: 2,
+          }}
+        >
+          <Box alignItems="center" display="flex" flex="1 1 auto" sx={{ gap: 1 }}>
+            <Typography component="h1" fontFamily="monospace" sx={{ wordBreak: "break-all" }}>
+              <b>{title}</b>
+            </Typography>
+            <Divider flexItem orientation="vertical" />
+            <Typography>
+              {numberOfLines} {linesText} of{" "}
+              {originalContentLength ? fileSize(originalContentLength) : "unknown"}
+            </Typography>
+            {(compressed || truncated) && <Divider flexItem orientation="vertical" />}
+            {compressed && <Chip label="Decompressed" size="small" variant="outlined" />}
+            {truncated && <Chip label="Truncated" size="small" variant="outlined" />}
+          </Box>
         </Box>
-      </Box>
-      <Box paddingBottom={1} paddingX={1}>
-        <Box className="line-numbers" component="pre">
-          <code className="language-">{content}</code>
+        <Box paddingBottom={1} paddingX={1}>
+          <Box className="line-numbers" component="pre" sx={{ overflowX: "auto" }}>
+            <code className="language-">{content}</code>
+          </Box>
         </Box>
-      </Box>
-    </Paper>
+      </Paper>
+    </>
   );
 };

@@ -1,5 +1,6 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/dist/frontend";
-import { Container } from "@mui/material";
+import type { Theme } from "@mui/material";
+import { Container, useMediaQuery } from "@mui/material";
 import type { GetServerSideProps } from "next";
 import NextError from "next/error";
 import { useRouter } from "next/router";
@@ -7,6 +8,7 @@ import { useRouter } from "next/router";
 import { PlaintextViewer } from "../../components/PlaintextViewer";
 import { API_ROUTES } from "../../constants/routes";
 import { createErrorProps } from "../../utils/api/serverSidePropsError";
+import { pathFromQuery } from "../../utils/paths";
 import type { NotSuccessful, Successful } from "../../utils/plaintextViewerSSR";
 import { plaintextViewerSSR } from "../../utils/plaintextViewerSSR";
 
@@ -19,13 +21,11 @@ export const getServerSideProps: GetServerSideProps<FileProps> = async ({ req, r
   let { path } = query;
   const { file, project } = query;
 
-  if (typeof path !== "string" || typeof file !== "string" || typeof project !== "string") {
-    return createErrorProps(res, 500, "File or path are not valid");
+  if (path === undefined || typeof file !== "string" || typeof project !== "string") {
+    return createErrorProps(res, 500, "File, path or project are not valid");
   }
 
-  if (path === "") {
-    path = "/";
-  }
+  path = pathFromQuery(path);
 
   let compressed = false;
   if (file.endsWith(".gz") || file.endsWith(".gzip")) {
@@ -38,6 +38,8 @@ export const getServerSideProps: GetServerSideProps<FileProps> = async ({ req, r
 };
 
 export const File = (props: FileProps) => {
+  const biggerThanSm = useMediaQuery<Theme>((theme) => theme.breakpoints.up("sm"));
+
   const { query } = useRouter();
 
   const { file, project, path } = query;
@@ -51,7 +53,7 @@ export const File = (props: FileProps) => {
 
   if (isSuccessful(props)) {
     return (
-      <Container maxWidth="xl">
+      <Container disableGutters={!biggerThanSm} maxWidth="xl">
         <PlaintextViewer {...props} compressed={compressed} title={title} />
       </Container>
     );

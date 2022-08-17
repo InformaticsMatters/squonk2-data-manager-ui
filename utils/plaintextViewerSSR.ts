@@ -78,7 +78,7 @@ export const plaintextViewerSSR = async (
     const data = isJson ? await response.json() : null;
     const error = (data && (data as any).message) || response.status;
     captureException(error);
-    return createErrorProps(res, response.status, response.statusText);
+    return createErrorProps(res, error, response.statusText);
   }
 
   // We use `node-fetch` which supports streaming unlike NextJS's fetch as of v12.2

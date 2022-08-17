@@ -14,8 +14,12 @@ export type ProjectLocalStoragePayload = { projectId: ProjectId; version: number
  */
 export const useCurrentProjectId = () => {
   const router = useRouter();
+  const { query, pathname } = router;
 
-  const projectId = router.query.project as ProjectId;
+  if (Array.isArray(query.project)) {
+    throw new Error("Project is invalid");
+  }
+  const projectId = query.project;
 
   const setCurrentProjectId = (newProjectId?: string, shallow?: true) => {
     writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, {
@@ -28,11 +32,11 @@ export const useCurrentProjectId = () => {
       // A project has been selected
       router.push(
         {
-          pathname: router.pathname,
+          pathname,
           query: {
-            ...router.query,
+            ...query,
             project: newProjectId,
-            path: projectId === newProjectId ? router.query.path : [],
+            path: projectId === newProjectId ? query.path : [],
           },
         },
         undefined,
@@ -40,13 +44,13 @@ export const useCurrentProjectId = () => {
       );
     } else {
       // The project has been cleared
-      const newQuery = { ...router.query };
+      const newQuery = { ...query };
       delete newQuery.project;
       delete newQuery.path;
 
       router.push(
         {
-          pathname: router.pathname,
+          pathname,
           query: newQuery,
         },
         undefined,

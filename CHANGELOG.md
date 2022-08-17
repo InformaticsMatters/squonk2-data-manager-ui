@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0-rc.7](https://github.com/InformaticsMatters/squonk-frontend/compare/1.0.0-rc.6...1.0.0-rc.7) (2022-08-17)
+
+
+### Bug Fixes
+
+* **viewers:** fix viewer opening files on subpaths ([3d923dc](https://github.com/InformaticsMatters/squonk-frontend/commit/3d923dcff664410995035790d18a758d822b4a79))
+
 ## [1.0.0-rc.6](https://github.com/InformaticsMatters/squonk-frontend/compare/1.0.0-rc.5...1.0.0-rc.6) (2022-08-07)
 
 ## [1.0.0-rc.5](https://github.com/InformaticsMatters/squonk-frontend/compare/1.0.0-rc.4...1.0.0-rc.5) (2022-08-02)

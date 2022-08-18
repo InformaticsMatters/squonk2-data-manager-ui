@@ -1,30 +1,39 @@
 import { useEffect } from "react";
 
+import compare from "just-compare";
 import { useRouter } from "next/router";
 
 import { PROJECT_LOCAL_STORAGE_KEY } from "../constants";
 import { getFromLocalStorage } from "../utils/localStorage";
 import type { ProjectLocalStoragePayload } from "./projectHooks";
 
-const PATHS_FOR_UPDATE = ["/datasets", "/project", "/executions", "/results"];
-
+/**
+ * Hook to synchronise the project local storage to query params.
+ * E.g. if the user visits example-ui.com/data-manager-ui/sub/path, the url will be *replaced* with
+ * example-ui.com/data-manager-ui/sub/path?project=project-blah-blah-blah-blah using the project ID
+ * loaded from local storage.
+ *
+ * @private
+ * It could be better to use a local storage event listener here but I find those unreliable
+ * If the project was stored server-side this could be done in a middleware but alas.
+ */
 export const useBindProjectFromLSToQParams = () => {
   const router = useRouter();
 
-  const { isReady, pathname, query, push } = router;
-
-  const shouldNavigate = PATHS_FOR_UPDATE.map((s) => pathname.startsWith(s)).some((b) => b);
+  const { isReady, pathname, query, replace } = router;
 
   useEffect(() => {
     const { projectId } = getFromLocalStorage<
       ProjectLocalStoragePayload | Record<string, undefined>
     >(PROJECT_LOCAL_STORAGE_KEY, {});
 
-    if (isReady && shouldNavigate && projectId) {
-      push({ pathname, query: { project: projectId, ...query } }, undefined, {
-        shallow: true,
-      });
+    if (isReady && projectId) {
+      const newQuery = { ...query, project: projectId };
+      if (!compare(query, newQuery)) {
+        replace({ pathname, query: newQuery }, undefined, {
+          shallow: true,
+        });
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isReady, pathname, replace, query]);
 };

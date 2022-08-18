@@ -10,7 +10,7 @@ export const Logo = () => {
   const { query } = useRouter();
 
   return (
-    <Link passHref href={{ pathname: "/", query: { project: query.project } }}>
+    <Link passHref href={{ pathname: "/", query: query.project ? { project: query.project } : {} }}>
       <LogoLink>
         <Image
           alt="Squonk (animal) logo with title text 'Squonk' and subtitle 'Data Manager'"

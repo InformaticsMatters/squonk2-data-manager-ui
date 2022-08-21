@@ -53,7 +53,7 @@ specifiers:
   just-compare: 2.2.2
   lint-staged: 13.0.3
   lodash-es: 4.17.21
-  material-ui-popup-state: 4.0.1
+  material-ui-popup-state: 4.0.2
   next: 12.2.5
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
@@ -114,7 +114,7 @@ dependencies:
   jotai: 1.8.0_immer@9.0.15+react@17.0.2
   just-compare: 2.2.2
   lodash-es: 4.17.21
-  material-ui-popup-state: 4.0.1_576beb3dbcde2820f0c32176a33325b3
+  material-ui-popup-state: 4.0.2_576beb3dbcde2820f0c32176a33325b3
   next: 12.2.5_131f897ee9d5b331daa81cd37f756119
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
@@ -3527,8 +3527,8 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
-  /material-ui-popup-state/4.0.1_576beb3dbcde2820f0c32176a33325b3:
-    resolution: {integrity: sha512-4Ywj2QFOaS4mirRRtX4xps1waJQPa+IIEnVj/nnA4+aglinEcPkALPq+akAlvzKAjkjkmIjiku8SbdmTl0hTCQ==}
+  /material-ui-popup-state/4.0.2_576beb3dbcde2820f0c32176a33325b3:
+    resolution: {integrity: sha512-N/Dx0QAKkBxpyXGOE5+xaHijFkGZ5Sed/VYDpIk2TMKVDRIxszxuTFoOLoHrsk/SuQflBoCGLzzld/XYAdZymg==}
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
     dependencies:

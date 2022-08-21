@@ -66,7 +66,7 @@ specifiers:
   react-dom: 17.0.2
   react-dropzone: 14.2.2
   react-plotly.js: 2.5.1
-  react-query: 3.39.1
+  react-query: 3.39.2
   react-table: 7.8.0
   react-virtualized: 9.22.3
   sass: 1.54.0
@@ -92,8 +92,8 @@ dependencies:
   '@rjsf/core': 4.2.0_react@17.0.2
   '@rjsf/material-ui': 4.2.0_bd16526a20841a91034f7e7963c2bdce
   '@sentry/nextjs': 7.8.0_next@12.2.5+react@17.0.2
-  '@squonk/account-server-client': 1.0.1_axios@0.27.2+react-query@3.39.1
-  '@squonk/data-manager-client': 1.0.3_axios@0.27.2+react-query@3.39.1
+  '@squonk/account-server-client': 1.0.1_axios@0.27.2+react-query@3.39.2
+  '@squonk/data-manager-client': 1.0.3_axios@0.27.2+react-query@3.39.2
   '@squonk/mui-theme': 3.0.1_@mui+material@5.10.1
   '@types/lodash-es': 4.17.6
   '@types/node': 16.11.43
@@ -111,7 +111,7 @@ dependencies:
   formik-mui: 4.0.0_5f51e4bfbb37e9dd500ae1dec2ee722d
   formik-mui-lab: 1.0.0_7a17c714f04debc0972c36674cf239d7
   immer: 9.0.15
-  jotai: 1.7.6_cf4affce01d6402ca73cb3f3803be0a3
+  jotai: 1.7.6_9f832dee741ee0622b9f528147ddbe6f
   just-compare: 2.2.2
   lodash-es: 4.17.21
   material-ui-popup-state: 4.0.1_576beb3dbcde2820f0c32176a33325b3
@@ -127,7 +127,7 @@ dependencies:
   react-dom: 17.0.2_react@17.0.2
   react-dropzone: 14.2.2_react@17.0.2
   react-plotly.js: 2.5.1_react@17.0.2
-  react-query: 3.39.1_react-dom@17.0.2+react@17.0.2
+  react-query: 3.39.2_react-dom@17.0.2+react@17.0.2
   react-table: 7.8.0_react@17.0.2
   react-virtualized: 9.22.3_react-dom@17.0.2+react@17.0.2
   sass: 1.54.0
@@ -1078,24 +1078,24 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /@squonk/account-server-client/1.0.1_axios@0.27.2+react-query@3.39.1:
+  /@squonk/account-server-client/1.0.1_axios@0.27.2+react-query@3.39.2:
     resolution: {integrity: sha512-dmG8+gFWe+yZZwreW1nUVLvHWQBbDqz2+TjiKAmUBzKmDY+LK7zgK5q6U6+Snd+prKqn1qBQhBlruDvoW97HeQ==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
     dependencies:
       axios: 0.27.2
-      react-query: 3.39.1_react-dom@17.0.2+react@17.0.2
+      react-query: 3.39.2_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/data-manager-client/1.0.3_axios@0.27.2+react-query@3.39.1:
+  /@squonk/data-manager-client/1.0.3_axios@0.27.2+react-query@3.39.2:
     resolution: {integrity: sha512-rfWOyBPZgdABpcT9fZF9Rzb6ibNs4ggjbfFB3WignyMOS430XTdo2d2gcykqfpwMhSQ7hH/YmRBYSSpQ4lQ0sQ==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
     dependencies:
       axios: 0.27.2
-      react-query: 3.39.1_react-dom@17.0.2+react@17.0.2
+      react-query: 3.39.2_react-dom@17.0.2+react@17.0.2
     dev: false
 
   /@squonk/eslint-config/0.4.2_0e280596d10ed149293fe89fe93ef867:
@@ -3205,7 +3205,7 @@ packages:
       '@panva/asn1.js': 1.0.0
     dev: false
 
-  /jotai/1.7.6_cf4affce01d6402ca73cb3f3803be0a3:
+  /jotai/1.7.6_9f832dee741ee0622b9f528147ddbe6f:
     resolution: {integrity: sha512-D3R5f6OvwUPUyTPQY3wGP800nb6bDEOl/mqftjxg3gcHVITeFcldr9W9IBK+gXsow357vhNXuci/LfD+rl92PA==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
@@ -3241,7 +3241,7 @@ packages:
     dependencies:
       immer: 9.0.15
       react: 17.0.2
-      react-query: 3.39.1_react-dom@17.0.2+react@17.0.2
+      react-query: 3.39.2_react-dom@17.0.2+react@17.0.2
     dev: false
 
   /js-sha3/0.8.0:
@@ -4000,7 +4000,7 @@ packages:
     dev: false
 
   /nano-time/1.0.0:
-    resolution: {integrity: sha1-sFVPaa2J4i0JB/ehKwmTpdlhN+8=}
+    resolution: {integrity: sha512-flnngywOoQ0lLQOTRNexn2gGSNuM9bKj9RZAWSzhQ+UJYaAFG9bac4DW9VHjUAzrOaIcajHybCTHe/bkvozQqA==}
     dependencies:
       big-integer: 1.6.51
     dev: false
@@ -4535,8 +4535,8 @@ packages:
       react: 17.0.2
     dev: false
 
-  /react-query/3.39.1_react-dom@17.0.2+react@17.0.2:
-    resolution: {integrity: sha512-qYKT1bavdDiQZbngWZyPotlBVzcBjDYEJg5RQLBa++5Ix5jjfbEYJmHSZRZD+USVHUSvl/ey9Hu+QfF1QAK80A==}
+  /react-query/3.39.2_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-F6hYDKyNgDQfQOuR1Rsp3VRzJnWHx6aRnnIZHMNGGgbL3SBgpZTDg8MQwmxOgpCAoqZJA+JSNCydF1xGJqKOCA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: '*'
@@ -4675,7 +4675,7 @@ packages:
     dev: false
 
   /remove-accents/0.4.2:
-    resolution: {integrity: sha1-CkPTqq4egNuRngeuJUsoXZ4ce7U=}
+    resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==}
     dev: false
 
   /requires-port/1.0.0:

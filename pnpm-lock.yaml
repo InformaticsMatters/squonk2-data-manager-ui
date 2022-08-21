@@ -49,7 +49,7 @@ specifiers:
   husky: 8.0.1
   identity-obj-proxy: 3.0.0
   immer: 9.0.15
-  jotai: 1.7.6
+  jotai: 1.8.0
   just-compare: 2.2.2
   lint-staged: 13.0.3
   lodash-es: 4.17.21
@@ -111,7 +111,7 @@ dependencies:
   formik-mui: 4.0.0_5f51e4bfbb37e9dd500ae1dec2ee722d
   formik-mui-lab: 1.0.0_7a17c714f04debc0972c36674cf239d7
   immer: 9.0.15
-  jotai: 1.7.6_9f832dee741ee0622b9f528147ddbe6f
+  jotai: 1.8.0_immer@9.0.15+react@17.0.2
   just-compare: 2.2.2
   lodash-es: 4.17.21
   material-ui-popup-state: 4.0.1_576beb3dbcde2820f0c32176a33325b3
@@ -3207,17 +3207,17 @@ packages:
       '@panva/asn1.js': 1.0.0
     dev: false
 
-  /jotai/1.7.6_9f832dee741ee0622b9f528147ddbe6f:
-    resolution: {integrity: sha512-D3R5f6OvwUPUyTPQY3wGP800nb6bDEOl/mqftjxg3gcHVITeFcldr9W9IBK+gXsow357vhNXuci/LfD+rl92PA==}
+  /jotai/1.8.0_immer@9.0.15+react@17.0.2:
+    resolution: {integrity: sha512-B77a5hIDGCxePYrYBpHP6YePGyNwivA+vXO6QME+8+t3V0y+OHwwnHu4Wy/LWEChE/G8vI+K7P2tlToT8Zmjng==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
       '@babel/core': '*'
       '@babel/template': '*'
+      '@tanstack/query-core': '*'
       '@urql/core': '*'
       immer: '*'
       optics-ts: '*'
       react: '>=16.8'
-      react-query: '*'
       valtio: '*'
       wonka: '*'
       xstate: '*'
@@ -3226,13 +3226,13 @@ packages:
         optional: true
       '@babel/template':
         optional: true
+      '@tanstack/query-core':
+        optional: true
       '@urql/core':
         optional: true
       immer:
         optional: true
       optics-ts:
-        optional: true
-      react-query:
         optional: true
       valtio:
         optional: true
@@ -3243,7 +3243,6 @@ packages:
     dependencies:
       immer: 9.0.15
       react: 17.0.2
-      react-query: 3.39.2_react-dom@17.0.2+react@17.0.2
     dev: false
 
   /js-sha3/0.8.0:

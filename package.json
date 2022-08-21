@@ -61,7 +61,7 @@
     "formik-mui": "4.0.0",
     "formik-mui-lab": "1.0.0",
     "immer": "9.0.15",
-    "jotai": "1.7.6",
+    "jotai": "1.8.0",
     "just-compare": "2.2.2",
     "lodash-es": "4.17.21",
     "material-ui-popup-state": "4.0.1",

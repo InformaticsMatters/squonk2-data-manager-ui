@@ -80,7 +80,7 @@
     "react-query": "3.39.2",
     "react-table": "7.8.0",
     "react-virtualized": "9.22.3",
-    "sass": "1.54.0",
+    "sass": "1.54.5",
     "typescript": "4.7.4",
     "use-immer": "0.7.0",
     "uuid": "8.3.2",

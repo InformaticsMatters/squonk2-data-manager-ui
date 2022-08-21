@@ -14,7 +14,7 @@ specifiers:
   '@mui/styles': 5.9.3
   '@next/eslint-plugin-next': 12.2.5
   '@playwright/test': 1.25.0
-  '@rjsf/core': 4.2.0
+  '@rjsf/core': 4.2.3
   '@rjsf/material-ui': 4.2.0
   '@sentry/nextjs': 7.8.0
   '@squonk/account-server-client': 1.0.1
@@ -89,8 +89,8 @@ dependencies:
   '@mui/material': 5.10.1_576beb3dbcde2820f0c32176a33325b3
   '@mui/styles': 5.9.3_92a0b3c40fe0c12d8b3d0f9101b74b82
   '@next/eslint-plugin-next': 12.2.5
-  '@rjsf/core': 4.2.0_react@17.0.2
-  '@rjsf/material-ui': 4.2.0_bd16526a20841a91034f7e7963c2bdce
+  '@rjsf/core': 4.2.3_react@17.0.2
+  '@rjsf/material-ui': 4.2.0_df5cd8cd6f59239948e3940e36e00537
   '@sentry/nextjs': 7.8.0_next@12.2.5+react@17.0.2
   '@squonk/account-server-client': 1.0.1_axios@0.27.2+react-query@3.39.2
   '@squonk/data-manager-client': 1.0.3_axios@0.27.2+react-query@3.39.2
@@ -856,8 +856,8 @@ packages:
     resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
     dev: false
 
-  /@rjsf/core/4.2.0_react@17.0.2:
-    resolution: {integrity: sha512-bGWWCZjXHhBCkzag1Yh6F7a15/D6AqKRyks1szYWdCe+4jwWU3maC3apUxHJlHFRz3V1aBW6j6i/UB6zHmFXLQ==}
+  /@rjsf/core/4.2.3_react@17.0.2:
+    resolution: {integrity: sha512-dRXhd1Tac/9OcG0VDrYDF2boNTyKINEEITEtJ4L1Yce2iMVk66U52BhWKIFp/WXDM27vwnOfwQo4NwGiqeQeHw==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16 || >=17'
@@ -868,13 +868,14 @@ packages:
       json-schema-merge-allof: 0.6.0
       jsonpointer: 5.0.0
       lodash: 4.17.21
-      nanoid: 3.3.2
+      lodash-es: 4.17.21
+      nanoid: 3.3.4
       prop-types: 15.8.1
       react: 17.0.2
-      react-is: 16.13.1
+      react-is: 16.9.0
     dev: false
 
-  /@rjsf/material-ui/4.2.0_bd16526a20841a91034f7e7963c2bdce:
+  /@rjsf/material-ui/4.2.0_df5cd8cd6f59239948e3940e36e00537:
     resolution: {integrity: sha512-WQ1dMX1tlMjG5jPbRbFPFkuy5zSb+rDb7HRE2Zx/JgYndBRdxiqAbGB8DcaJKaGUJ+1eURk3MWClU5pWfoN3qg==}
     peerDependencies:
       '@emotion/react': ^11.7.0
@@ -905,7 +906,7 @@ packages:
       '@emotion/styled': 11.9.3_7198939043c0c18fb5e8f1e13be95d10
       '@mui/icons-material': 5.8.4_423f1fbb06c77251fdb68e300799561d
       '@mui/material': 5.10.1_576beb3dbcde2820f0c32176a33325b3
-      '@rjsf/core': 4.2.0_react@17.0.2
+      '@rjsf/core': 4.2.3_react@17.0.2
       '@types/react': 17.0.48
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
@@ -1902,6 +1903,7 @@ packages:
 
   /core-js-pure/3.21.1:
     resolution: {integrity: sha512-12VZfFIu+wyVbBebyHmRTuEE/tZrB4tJToWcwAMcsp3h4+sHR+fMJWbKpYiCRWlhFBq+KNyO8rIV9rTkeVmznQ==}
+    deprecated: core-js-pure@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js-pure.
     requiresBuild: true
     dev: false
 
@@ -4009,12 +4011,6 @@ packages:
     resolution: {integrity: sha512-wynEP02LmIbLpcYw8uBKpcfF6dmg2vcpKqxeH5UcoKEYdExslsdUA4ugFauuaeYdTB76ez6gJW8XAZ6CgkXYxA==}
     dev: false
 
-  /nanoid/3.3.2:
-    resolution: {integrity: sha512-CuHBogktKwpm5g2sRgv83jEy2ijFzBwMoYA60orPDR7ynsLijJDqgsi4RDGj3OJpy3Ieb+LYwiRmIOGyytgITA==}
-    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
-    dev: false
-
   /nanoid/3.3.4:
     resolution: {integrity: sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -4516,6 +4512,10 @@ packages:
 
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+
+  /react-is/16.9.0:
+    resolution: {integrity: sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==}
+    dev: false
 
   /react-is/18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
@@ -5285,28 +5285,28 @@ packages:
     dev: true
 
   /validate.io-array/1.0.6:
-    resolution: {integrity: sha1-W1osr9j4uFq7L4hroVPy2Tond00=}
+    resolution: {integrity: sha512-DeOy7CnPEziggrOO5CZhVKJw6S3Yi7e9e65R1Nl/RTN1vTQKnzjfvks0/8kQ40FP/dsjRAOd4hxmJ7uLa6vxkg==}
     dev: false
 
   /validate.io-function/1.0.2:
-    resolution: {integrity: sha1-NDoZgC7TsZaCaceA5VjpNBHAutc=}
+    resolution: {integrity: sha512-LlFybRJEriSuBnUhQyG5bwglhh50EpTL2ul23MPIuR1odjO7XaMLFV8vHGwp7AZciFxtYOeiSCT5st+XSPONiQ==}
     dev: false
 
   /validate.io-integer-array/1.0.0:
-    resolution: {integrity: sha1-LKveAzKTpry+Bj/q/pHq9GsToIk=}
+    resolution: {integrity: sha512-mTrMk/1ytQHtCY0oNO3dztafHYyGU88KL+jRxWuzfOmQb+4qqnWmI+gykvGp8usKZOM0H7keJHEbRaFiYA0VrA==}
     dependencies:
       validate.io-array: 1.0.6
       validate.io-integer: 1.0.5
     dev: false
 
   /validate.io-integer/1.0.5:
-    resolution: {integrity: sha1-FoSWSAuVviJH7EQ/IjPeT4mHgGg=}
+    resolution: {integrity: sha512-22izsYSLojN/P6bppBqhgUDjCkr5RY2jd+N2a3DCAUey8ydvrZ/OkGvFPR7qfOpwR2LC5p4Ngzxz36g5Vgr/hQ==}
     dependencies:
       validate.io-number: 1.0.3
     dev: false
 
   /validate.io-number/1.0.3:
-    resolution: {integrity: sha1-9j/+2iSL8opnqNSODjtGGhZluvg=}
+    resolution: {integrity: sha512-kRAyotcbNaSYoDnXvb4MHg/0a1egJdLwS6oJ38TJY7aw9n93Fl/3blIXdyYvPOp55CNxywooG/3BcrwNrBpcSg==}
     dev: false
 
   /vfile-message/3.1.2:

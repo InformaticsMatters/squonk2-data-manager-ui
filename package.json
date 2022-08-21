@@ -68,7 +68,7 @@
     "next": "12.2.4",
     "next-http-proxy-middleware": "1.2.4",
     "next-transpile-modules": "9.0.0",
-    "node-fetch": "3.2.6",
+    "node-fetch": "3.2.10",
     "notistack": "2.0.5",
     "plotly.js-basic-dist": "2.13.3",
     "prettier": "2.7.1",

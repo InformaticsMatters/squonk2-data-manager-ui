@@ -57,7 +57,7 @@ specifiers:
   next: 12.2.4
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
-  node-fetch: 3.2.6
+  node-fetch: 3.2.10
   notistack: 2.0.5
   plotly.js-basic-dist: 2.13.3
   prettier: 2.7.1
@@ -118,7 +118,7 @@ dependencies:
   next: 12.2.4_08a92191866134c8229dedf6ea7189ad
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
-  node-fetch: 3.2.6
+  node-fetch: 3.2.10
   notistack: 2.0.5_706639a8811c5ca339182f3d853e7c38
   plotly.js-basic-dist: 2.13.3
   prettier: 2.7.1
@@ -4105,8 +4105,8 @@ packages:
       whatwg-url: 5.0.0
     dev: false
 
-  /node-fetch/3.2.6:
-    resolution: {integrity: sha512-LAy/HZnLADOVkVPubaxHDft29booGglPFDr2Hw0J1AercRh01UiVFm++KMDnJeH9sHgNB4hsXPii7Sgym/sTbw==}
+  /node-fetch/3.2.10:
+    resolution: {integrity: sha512-MhuzNwdURnZ1Cp4XTazr69K0BTizsBroX7Zx3UgDSVcZYKF/6p0CBe4EUb/hLqmzVhl0UpYfgRljQ4yxE+iCxA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dependencies:
       data-uri-to-buffer: 4.0.0

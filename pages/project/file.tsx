@@ -21,8 +21,8 @@ export const getServerSideProps: GetServerSideProps<FileProps> = async ({ req, r
   let { path } = query;
   const { file, project } = query;
 
-  if (path === undefined || typeof file !== "string" || typeof project !== "string") {
-    return createErrorProps(res, 500, "File, path or project are not valid");
+  if (typeof file !== "string" || typeof project !== "string") {
+    return createErrorProps(res, 500, "File or project are not valid");
   }
 
   path = pathFromQuery(path);
@@ -42,10 +42,14 @@ export const File = (props: FileProps) => {
 
   const { query } = useRouter();
 
-  const { file, project, path } = query;
+  const { file, project } = query;
+  let { path = [] } = query;
 
-  if (typeof path !== "string" || typeof file !== "string" || typeof project !== "string") {
-    return <NextError statusCode={400} />;
+  if (Array.isArray(path)) {
+    path = path.join("/");
+  }
+  if (typeof file !== "string" || typeof project !== "string") {
+    return <NextError statusCode={400} statusMessage="File or project are invalid" />;
   }
 
   const title = (path.endsWith("/") ? path : path + "/") + file;

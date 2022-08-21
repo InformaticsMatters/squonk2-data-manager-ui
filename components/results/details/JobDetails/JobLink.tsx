@@ -18,7 +18,7 @@ const getPath = (contains: string) => {
     .split("/")
     .filter((part) => part !== ".")
     // Filter empty parts
-    .filter((part) => Boolean(part));
+    .filter((part) => !!part);
 
   return path;
 };
@@ -58,7 +58,6 @@ const getFilePathAndName = (path: string[]) => {
  */
 export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) => {
   const { query } = useRouter();
-
   const path = getPath(originalPath);
   const { resolvedPath, containsGlob } = getResolvedPath(path);
   const displayPath = path.join("/");

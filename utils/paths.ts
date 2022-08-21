@@ -1,4 +1,4 @@
-export const pathFromQuery = (query: string | string[]) => {
+export const pathFromQuery = (query: string | string[] | undefined = "") => {
   if (query.length === 0) {
     return "/";
   } else if (typeof query === "string") {

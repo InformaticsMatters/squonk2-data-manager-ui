@@ -40,7 +40,7 @@
     "@mui/styles": "5.9.3",
     "@next/eslint-plugin-next": "12.2.5",
     "@rjsf/core": "4.2.3",
-    "@rjsf/material-ui": "4.2.0",
+    "@rjsf/material-ui": "4.2.3",
     "@sentry/nextjs": "7.8.0",
     "@squonk/account-server-client": "1.0.1",
     "@squonk/data-manager-client": "1.0.3",

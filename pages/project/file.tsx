@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps<FileProps> = async ({ req, r
   const { file, project } = query;
 
   if (typeof file !== "string" || typeof project !== "string") {
-    return createErrorProps(res, 500, "File or project are not valid");
+    return createErrorProps(res, 400, "File or project are not valid");
   }
 
   path = pathFromQuery(path);

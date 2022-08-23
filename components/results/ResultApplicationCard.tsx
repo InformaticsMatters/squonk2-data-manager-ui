@@ -1,6 +1,6 @@
 import type { HTMLProps } from "react";
 
-import type { InstanceSummary } from "@squonk/data-manager-client";
+import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 
 import type { ButtonProps } from "@mui/material";
 import { Button, CardContent, ListItem, ListItemText } from "@mui/material";
@@ -22,14 +22,19 @@ const HrefButton = (props: ButtonProps & MissingButtonProps) => <Button {...prop
 
 export interface ResultApplicationCardProps extends CommonProps {
   /**
+   * ID of the instance
+   */
+  instanceId: InstanceSummary["id"];
+  /**
    * Instance of the application
    */
-  instance: InstanceSummary;
+  instance: InstanceSummary | InstanceGetResponse;
   poll?: ApplicationDetailsProps["poll"];
 }
 
 export const ResultApplicationCard = ({
   instance,
+  instanceId,
   collapsedByDefault = true,
   poll,
 }: ResultApplicationCardProps) => {
@@ -41,7 +46,12 @@ export const ResultApplicationCard = ({
     <ResultCard
       actions={({ setSlideIn }) => (
         <>
-          <TerminateInstance instance={instance} onTermination={() => setSlideIn(false)} />
+          <TerminateInstance
+            instanceId={instanceId}
+            phase={instance.phase}
+            projectId={instance.project_id}
+            onTermination={() => setSlideIn(false)}
+          />
           {instance.url && (
             <HrefButton
               color="primary"
@@ -56,14 +66,14 @@ export const ResultApplicationCard = ({
       )}
       collapsed={
         <CardContent>
-          <ApplicationDetails instanceId={instance.id} poll={poll} />
+          <ApplicationDetails instanceId={instanceId} poll={poll} />
         </CardContent>
       }
       collapsedByDefault={collapsedByDefault}
       createdDateTime={instance.launched}
       href={{
         pathname: "/results/instance/[instanceId]",
-        query: { ...query, instanceId: instance.id },
+        query: { ...query, instanceId },
       }}
       linkTitle="App"
       state={instance.phase}

@@ -9,18 +9,10 @@ import {
 import { getGetProjectsQueryKey } from "@squonk/data-manager-client/project";
 
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
-import {
-  FormControlLabel,
-  Grid,
-  IconButton,
-  MenuItem,
-  Switch,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import { Grid, IconButton, MenuItem, TextField, Tooltip } from "@mui/material";
 
 import { useCurrentProjectId } from "../../hooks/projectHooks";
-import { useEventDebugMode } from "../../state/eventDebugMode";
+import { EventDebugSwitch } from "../EventDebugSwitch";
 import { SearchTextField } from "../SearchTextField";
 
 export interface ResultsToolbarProps {
@@ -54,8 +46,6 @@ export const ResultsToolbar = ({
   const { projectId } = useCurrentProjectId();
 
   const queryClient = useQueryClient();
-
-  const [debug, setDebug] = useEventDebugMode();
 
   const { data } = useGetInstances({
     project_id: projectId,
@@ -99,11 +89,7 @@ export const ResultsToolbar = ({
 
       {/* Event Debug Toggle */}
       <Grid item md={1} sm={2}>
-        <FormControlLabel
-          control={<Switch checked={debug} onChange={(_event, checked) => setDebug(checked)} />}
-          label="Event debug"
-          labelPlacement="start"
-        />
+        <EventDebugSwitch />
       </Grid>
 
       <Grid item md={4} sm={5} sx={{ ml: "auto" }} xs={12}>

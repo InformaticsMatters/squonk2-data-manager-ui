@@ -1,10 +1,12 @@
-import type { InstanceSummary } from "@squonk/data-manager-client";
+import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 import { useGetInstance } from "@squonk/data-manager-client/instance";
+import { useGetJob } from "@squonk/data-manager-client/job";
 
 import AppsRoundedIcon from "@mui/icons-material/AppsRounded";
 import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
-import { Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { Alert, Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
+import { getErrorMessage } from "../../../../utils/orvalError";
 import { CenterLoader } from "../../../CenterLoader";
 import { PageSection } from "../../../PageSection";
 import { HorizontalList } from "../../common/HorizontalList";
@@ -17,19 +19,35 @@ export interface JobDetailsProps extends CommonDetailsProps {
   /**
    * Instance of the job
    */
-  instanceSummary: InstanceSummary;
+  instanceId: string;
+  /**
+   * ID of the Job
+   */
+  jobId: NonNullable<InstanceSummary["job_id"] | InstanceGetResponse["job_id"]>;
 }
 
 /**
  * Displays the details of an job based on the instance of a job
  */
-export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) => {
-  const { data: instance } = useGetInstance(instanceSummary.id, {
+export const JobDetails = ({ instanceId, jobId, poll = false }: JobDetailsProps) => {
+  const {
+    data: instance,
+    isLoading: isInstanceLoading,
+    error: instanceError,
+  } = useGetInstance(instanceId, {
     query: { refetchInterval: poll ? 5000 : undefined },
   });
+  const { data: job, isLoading: isJobLoading, error: jobError } = useGetJob(jobId);
 
-  if (instance === undefined) {
+  if (isInstanceLoading || isJobLoading) {
     return <CenterLoader />;
+  }
+
+  if (instanceError) {
+    return <Alert severity="error">{getErrorMessage(instanceError)}</Alert>;
+  }
+  if (jobError) {
+    return <Alert severity="error">{getErrorMessage(jobError)}</Alert>;
   }
 
   return (
@@ -40,36 +58,33 @@ export const JobDetails = ({ instanceSummary, poll = false }: JobDetailsProps) =
             <AppsRoundedIcon />
           </ListItemIcon>
           <ListItemText
-            primary={instance.application_id}
-            secondary={instance.application_version}
+            primary={instance?.application_id}
+            secondary={instance?.application_version}
           />
         </ListItem>
         <ListItem>
           <ListItemIcon sx={{ minWidth: "40px" }}>
             <WorkOutlineRoundedIcon />
           </ListItemIcon>
-          <ListItemText
-            primary={instanceSummary.job_collection}
-            secondary={instanceSummary.job_version}
-          />
+          <ListItemText primary={job?.collection} secondary={job?.version} />
         </ListItem>
       </HorizontalList>
 
       <Grid container>
         <Grid item sm={6} xs={12}>
           <PageSection level={3} title="Inputs">
-            <JobInputSection instanceSummary={instanceSummary} />
+            {instance && <JobInputSection instance={instance} />}
           </PageSection>
         </Grid>
 
         <Grid item sm={6} xs={12}>
           <PageSection level={3} title="Outputs">
-            <JobOutputSection instanceSummary={instanceSummary} />
+            {instance && <JobOutputSection instance={instance} />}
           </PageSection>
         </Grid>
       </Grid>
 
-      <TaskDetails taskId={instance.tasks[instance.tasks.length - 1].id} />
+      {instance && <TaskDetails taskId={instance.tasks[instance.tasks.length - 1].id} />}
     </>
   );
 };

@@ -1,4 +1,4 @@
-import type { InstanceSummary } from "@squonk/data-manager-client";
+import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
 // Contains only fields we are interested in
@@ -20,23 +20,22 @@ type JobInputs = {
  * Returns provided inputs with their information. It matches the provided inputs with their
  * property definition which are provided by the GET /jobs/job_id endpoint
  */
-export const useGetJobInputs = (instanceSummary: InstanceSummary) => {
+export const useGetJobInputs = (instance: InstanceSummary | InstanceGetResponse) => {
   const inputsEnabled =
-    instanceSummary.job_id !== undefined && instanceSummary.application_specification !== undefined;
+    instance.job_id !== undefined && instance.application_specification !== undefined;
 
   const { data, isLoading, isError, error } = useGetJob(
     // Since the query will be disabled if job_id is undefined, providing -1 is fine
-    instanceSummary.job_id ?? -1,
+    instance.job_id ?? -1,
     {
       query: { enabled: inputsEnabled },
     },
   );
 
   // Parse application specification
-  const applicationSpecification: ApplicationSpecification =
-    instanceSummary.application_specification
-      ? JSON.parse(instanceSummary.application_specification)
-      : { variables: {} };
+  const applicationSpecification: ApplicationSpecification = instance.application_specification
+    ? JSON.parse(instance.application_specification)
+    : { variables: {} };
 
   // Parse job inputs
   const jobVariables: JobInputs = data?.variables?.inputs

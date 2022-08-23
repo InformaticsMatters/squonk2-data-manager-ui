@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { InstanceSummary } from "@squonk/data-manager-client";
+import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 
 import { Button } from "@mui/material";
 
@@ -10,7 +10,7 @@ export interface RerunJobButtonProps {
   /**
    * Instance of the job that will be used to provide default options to rerun the job
    */
-  instance: InstanceSummary;
+  instance: InstanceSummary | InstanceGetResponse;
 }
 
 /**

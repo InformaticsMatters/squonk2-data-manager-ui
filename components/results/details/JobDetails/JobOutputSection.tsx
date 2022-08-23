@@ -1,4 +1,4 @@
-import type { InstanceSummary } from "@squonk/data-manager-client";
+import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 
 import { FolderRounded, InsertDriveFileRounded } from "@mui/icons-material";
 import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
@@ -10,16 +10,14 @@ export interface JobOutputSectionProps {
   /**
    * Instance of the job.
    */
-  instanceSummary: InstanceSummary;
+  instance: InstanceSummary | InstanceGetResponse;
 }
 
 /**
  * Displays generated outputs for a task.
  */
-export const JobOutputSection = ({ instanceSummary }: JobOutputSectionProps) => {
-  const outputs: Record<string, OutputValue> = instanceSummary.outputs
-    ? JSON.parse(instanceSummary.outputs)
-    : {};
+export const JobOutputSection = ({ instance: instance }: JobOutputSectionProps) => {
+  const outputs: Record<string, OutputValue> = instance.outputs ? JSON.parse(instance.outputs) : {};
   const outputsEntries = Object.entries(outputs);
 
   if (!outputsEntries.length) {
@@ -41,11 +39,7 @@ export const JobOutputSection = ({ instanceSummary }: JobOutputSectionProps) => 
               disableTypography
               primary={<Typography variant="body1">{output.title}</Typography>}
               secondary={
-                <JobLink
-                  path={output.creates}
-                  projectId={instanceSummary.project_id}
-                  type={output.type}
-                />
+                <JobLink path={output.creates} projectId={instance.project_id} type={output.type} />
               }
               sx={{ m: 0 }}
             />

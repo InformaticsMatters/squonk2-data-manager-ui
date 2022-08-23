@@ -1,6 +1,6 @@
 import { useQueryClient } from "react-query";
 
-import type { DmError, InstanceSummary } from "@squonk/data-manager-client";
+import type { DmError, InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 import {
   getGetInstancesQueryKey,
   useTerminateInstance,
@@ -8,6 +8,7 @@ import {
 
 import { Button } from "@mui/material";
 
+import { DONE_PHASES } from "../../../constants/instances";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { WarningDeleteButton } from "../../WarningDeleteButton";
 
@@ -15,14 +16,21 @@ export interface TerminateInstanceProps {
   /**
    * Instance to terminate
    */
-  instance: InstanceSummary;
+  instanceId: InstanceSummary["id"];
+  phase: InstanceSummary["phase"] | InstanceGetResponse["phase"];
+  projectId: InstanceSummary["project_id"] | InstanceGetResponse["project_id"];
   /**
    * Called when the delete request is successfully made
    */
   onTermination?: () => void;
 }
 
-export const TerminateInstance = ({ instance, onTermination }: TerminateInstanceProps) => {
+export const TerminateInstance = ({
+  instanceId,
+  phase,
+  projectId,
+  onTermination,
+}: TerminateInstanceProps) => {
   const queryClient = useQueryClient();
   const { mutateAsync: terminateInstance } = useTerminateInstance();
 
@@ -30,16 +38,14 @@ export const TerminateInstance = ({ instance, onTermination }: TerminateInstance
 
   return (
     <WarningDeleteButton
-      modalId={`delete-instance-${instance.id}`}
+      modalId={`delete-instance-${instanceId}`}
       title="Delete Instance"
       tooltipText="Terminate this instance"
       onDelete={async () => {
         try {
-          await terminateInstance({ instanceId: instance.id });
+          await terminateInstance({ instanceId });
           queryClient.invalidateQueries(getGetInstancesQueryKey());
-          queryClient.invalidateQueries(
-            getGetInstancesQueryKey({ project_id: instance.project_id }),
-          );
+          queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
 
           enqueueSnackbar("Instance has been terminated", { variant: "success" });
         } catch (error) {
@@ -53,7 +59,7 @@ export const TerminateInstance = ({ instance, onTermination }: TerminateInstance
         <Button onClick={openModal}>
           {/* Instances in an end state are deleted but others are still running so are terminated.
           It's all the same to the API though. */}
-          {["Completed", "Failed"].includes(instance.phase) ? "Delete" : "Terminate"}
+          {DONE_PHASES.includes(phase) ? "Delete" : "Terminate"}
         </Button>
       )}
     </WarningDeleteButton>

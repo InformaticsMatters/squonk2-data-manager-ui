@@ -1,4 +1,4 @@
-import type { InstanceSummary } from "@squonk/data-manager-client";
+import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 
 import { FolderRounded, InsertDriveFileRounded } from "@mui/icons-material";
 import {
@@ -20,14 +20,14 @@ export interface JobInputSectionProps {
   /**
    * Instance of the job.
    */
-  instanceSummary: InstanceSummary;
+  instance: InstanceSummary | InstanceGetResponse;
 }
 
 /**
  * Displays provided inputs for a task.
  */
-export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
-  const { inputs, isLoading, isError, error } = useGetJobInputs(instanceSummary);
+export const JobInputSection = ({ instance }: JobInputSectionProps) => {
+  const { inputs, isLoading, isError, error } = useGetJobInputs(instance);
 
   if (isLoading) {
     return <CenterLoader />;
@@ -56,12 +56,7 @@ export const JobInputSection = ({ instanceSummary }: JobInputSectionProps) => {
               disableTypography
               primary={<Typography variant="body1">{input.title}</Typography>}
               secondary={input.value.map((val) => (
-                <JobLink
-                  key={val}
-                  path={val}
-                  projectId={instanceSummary.project_id}
-                  type={input.type}
-                />
+                <JobLink key={val} path={val} projectId={instance.project_id} type={input.type} />
               ))}
               sx={{ m: 0 }}
             />

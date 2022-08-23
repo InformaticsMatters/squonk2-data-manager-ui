@@ -1,14 +1,21 @@
-import type { InstanceSummary } from "@squonk/data-manager-client";
+import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 
 import { Button } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 export interface LogsButtonProps {
-  instance: InstanceSummary;
+  /**
+   * ID of the instance
+   */
+  instanceId: InstanceSummary["id"];
+  /**
+   * Instance summary or detail
+   */
+  instance: InstanceSummary | InstanceGetResponse;
 }
 
-export const LogsButton = ({ instance }: LogsButtonProps) => {
+export const LogsButton = ({ instanceId, instance }: LogsButtonProps) => {
   const { query } = useRouter();
   return (
     <Link
@@ -18,7 +25,7 @@ export const LogsButton = ({ instance }: LogsButtonProps) => {
         query: {
           ...query,
           project: instance.project_id,
-          path: `.${instance.id}`,
+          path: `.${instanceId}`,
         },
       }}
     >

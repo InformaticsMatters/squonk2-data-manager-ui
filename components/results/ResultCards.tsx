@@ -1,28 +1,11 @@
 import type { InstanceSummary, TaskSummary } from "@squonk/data-manager-client";
 
-import { CircularProgress, Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import dynamic from "next/dynamic";
 
 import { search } from "../../utils/search";
-import type { ResultApplicationCardProps } from "./ResultApplicationCard";
-import type { ResultJobCardProps } from "./ResultJobCard";
-import type { ResultTaskCardProps } from "./ResultTaskCard";
-
-const ResultTaskCard = dynamic<ResultTaskCardProps>(
-  () => import("./ResultTaskCard").then((mod) => mod.ResultTaskCard),
-  { loading: () => <CircularProgress size="1rem" /> },
-);
-
-const ResultJobCard = dynamic<ResultJobCardProps>(
-  () => import("./ResultJobCard").then((mod) => mod.ResultJobCard),
-  { loading: () => <CircularProgress size="1rem" /> },
-);
-
-const ResultApplicationCard = dynamic<ResultApplicationCardProps>(
-  () => import("./ResultApplicationCard").then((mod) => mod.ResultApplicationCard),
-  { loading: () => <CircularProgress size="1rem" /> },
-);
+import { Instance } from "./Instance";
+import { ResultTaskCard } from "./ResultTaskCard";
 
 export interface ResultCardsProps {
   /**
@@ -93,13 +76,9 @@ export const ResultCards = ({ resultTypes, searchValue, instances, tasks }: Resu
         );
       }
       const instance = instanceOrTask;
-      return instance.application_type === "JOB" ? (
+      return (
         <Grid item key={instance.id} xs={12}>
-          <ResultJobCard instance={instance} />
-        </Grid>
-      ) : (
-        <Grid item key={instance.id} xs={12}>
-          <ResultApplicationCard instance={instance} />
+          <Instance instanceId={instance.id} />
         </Grid>
       );
     });

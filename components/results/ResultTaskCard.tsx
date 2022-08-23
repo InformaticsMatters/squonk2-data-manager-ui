@@ -31,10 +31,7 @@ export const ResultTaskCard = ({ task, collapsedByDefault = true, poll }: Result
 
   const { projectId } = useCurrentProjectId();
 
-  // Remove the parameter so it doesn't appear as a query parameter
-  let { query } = useRouter();
-  query = { ...query };
-  delete query.taskId;
+  const { query } = useRouter();
 
   return (
     <ResultCard

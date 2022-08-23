@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "react-query";
 
-import type { DmError, InstanceSummary, JobSummary } from "@squonk/data-manager-client";
+import type {
+  DmError,
+  InstanceGetResponse,
+  InstanceSummary,
+  JobSummary,
+} from "@squonk/data-manager-client";
 import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
@@ -19,9 +24,7 @@ import type { InputSchema, JobInputFieldsProps } from "./JobInputFields";
 
 const JobInputFields = dynamic<JobInputFieldsProps>(
   () => import("./JobInputFields").then((mod) => mod.JobInputFields),
-  {
-    loading: () => <CenterLoader />,
-  },
+  { loading: () => <CenterLoader /> },
 );
 
 export type InputData = Record<string, string | string[] | undefined>;
@@ -42,7 +45,7 @@ export interface JobModalProps extends CommonModalProps {
    * An existing instance of this job from which fields take their default values.
    * Allows loading form values from a previous instance
    */
-  instance?: InstanceSummary;
+  instance?: InstanceSummary | InstanceGetResponse;
 }
 
 /**

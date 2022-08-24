@@ -10,10 +10,10 @@ import { useRouter } from "next/router";
 
 import { EventDebugSwitch } from "../../../components/EventDebugSwitch";
 import Layout from "../../../components/Layout";
+import { AllResultsButton } from "../../../components/results/AllResultsButton";
 import { Instance } from "../../../components/results/Instance";
 import { InstanceTitle } from "../../../components/results/InstanceTitle";
 import { RoleRequired } from "../../../utils/RoleRequired";
-import { AllResultsButton } from "../AllResultsButton";
 
 const Result = () => {
   const queryClient = useQueryClient();

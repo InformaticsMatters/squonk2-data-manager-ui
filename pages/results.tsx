@@ -3,7 +3,6 @@ import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 
 import { getGetInstancesQueryKey, getInstances } from "@squonk/data-manager-client/instance";
-import { getGetProjectsQueryKey, getProjects } from "@squonk/data-manager-client/project";
 import { getGetTasksQueryKey, getTasks } from "@squonk/data-manager-client/task";
 
 import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
@@ -33,24 +32,19 @@ const isNotSuccessful = (props: TasksProps): props is NotSuccessful => {
   return typeof (props as NotSuccessful).statusCode === "number";
 };
 
-// This was a SSR test/example. Not sure if we want to do SSR everywhere but probably should.
 export const getServerSideProps: GetServerSideProps<TasksProps> = async ({ req, res, query }) => {
-  const queryClient = new QueryClient();
+  const projectId = query.project;
 
+  if (Array.isArray(projectId)) {
+    return createErrorProps(res, 400, "Project can't be an array");
+  }
+
+  const queryClient = new QueryClient();
   try {
     const { accessToken } = await getAccessToken(req, res);
 
-    const projectId = query.project;
-
-    if (typeof projectId !== "string") {
-      return createErrorProps(res, 400, "Project ID is invalid");
-    }
-
-    if (projectId && accessToken) {
+    if (accessToken) {
       const queries = [
-        queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
-          getProjects(options(accessToken)),
-        ),
         queryClient.prefetchQuery(getGetInstancesQueryKey({ project_id: projectId }), () =>
           getInstances({ project_id: projectId }, options(accessToken)),
         ),
@@ -61,6 +55,8 @@ export const getServerSideProps: GetServerSideProps<TasksProps> = async ({ req, 
 
       // Make the queries in parallel
       await Promise.allSettled(queries);
+    } else {
+      return createErrorProps(res, 401, "Unauthorized");
     }
   } catch (error) {
     captureException(error);
@@ -75,25 +71,16 @@ export const getServerSideProps: GetServerSideProps<TasksProps> = async ({ req, 
 };
 
 const Tasks = (props: TasksProps) => {
-  const head = (
-    <Head>
-      <title>Squonk | Results</title>
-    </Head>
-  );
-
   if (isNotSuccessful(props)) {
     const { statusCode, statusMessage } = props;
-    return (
-      <>
-        {head}
-        <NextError statusCode={statusCode} statusMessage={statusMessage} />
-      </>
-    );
+    return <NextError statusCode={statusCode} statusMessage={statusMessage} />;
   }
 
   return (
     <>
-      {head}
+      <Head>
+        <title>Squonk | Results</title>
+      </Head>
       <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(" ")}>
         <Layout>
           <ResultsView />

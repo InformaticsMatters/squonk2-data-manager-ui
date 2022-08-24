@@ -11,11 +11,20 @@ import { ResultJobCard } from "./ResultJobCard";
 
 export interface InstanceProps {
   instanceId: InstanceSummary["id"];
+  instanceSummary?: InstanceSummary;
   collapsedByDefault?: boolean;
 }
 
-export const Instance = ({ instanceId, collapsedByDefault = true }: InstanceProps) => {
-  const { data: instance, isLoading, error } = useGetInstance(instanceId);
+export const Instance = ({
+  instanceId,
+  collapsedByDefault = true,
+  instanceSummary,
+}: InstanceProps) => {
+  const { data, isLoading, error } = useGetInstance(instanceId, {
+    query: { enabled: !instanceSummary },
+  });
+
+  const instance = data ?? instanceSummary;
 
   if (!instance && isLoading) {
     return <CenterLoader />;

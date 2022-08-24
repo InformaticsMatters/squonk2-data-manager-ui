@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { Hydrate } from "react-query/hydration";
 
 import { setBaseUrl as setASBaseUrl } from "@squonk/account-server-client";
@@ -66,6 +67,7 @@ export default function App({
       <ThemeProviders>
         <UserProvider>
           <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools />
             <Hydrate state={pageProps.dehydratedState}>
               <SnackbarProvider>
                 <MDXComponentProvider>

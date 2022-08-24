@@ -40,7 +40,7 @@ export const ResultCard: FC<ResultCardProps> = ({
   const [slideIn, setSlideIn] = useState(true);
 
   return (
-    <Slide direction="right" in={slideIn}>
+    <Slide appear={false} direction="right" in={slideIn}>
       <div>
         <BaseCard
           actions={(params) => actions({ ...params, slideIn, setSlideIn })}

@@ -78,7 +78,7 @@ export const ResultCards = ({ resultTypes, searchValue, instances, tasks }: Resu
       const instance = instanceOrTask;
       return (
         <Grid item key={instance.id} xs={12}>
-          <Instance instanceId={instance.id} />
+          <Instance instanceId={instance.id} instanceSummary={instance} />
         </Grid>
       );
     });

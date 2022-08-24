@@ -1,13 +1,18 @@
-import { useGetVersion as useGetASVersion } from "@squonk/account-server-client/state";
-import { useGetVersion as useGetDMVersion } from "@squonk/data-manager-client/accounting";
+import { useQuery } from "react-query";
+
+import { getVersion as getASVersion } from "@squonk/account-server-client/state";
+import { getVersion as getDMVersion } from "@squonk/data-manager-client/accounting";
 
 import { ListItem, ListItemText, Typography } from "@mui/material";
 
 import { HorizontalList } from "./results/common/HorizontalList";
 
+export const getGetDMVersionQueryKey = () => ["data-manager", "/version"];
+export const getGetASVersionQueryKey = () => ["account-server", "/version"];
+
 export const AppVersions = () => {
-  const { data: dmData } = useGetDMVersion();
-  const { data: asData } = useGetASVersion();
+  const { data: dmData } = useQuery(getGetDMVersionQueryKey(), getDMVersion);
+  const { data: asData } = useQuery(getGetASVersionQueryKey(), getASVersion);
 
   return (
     <>

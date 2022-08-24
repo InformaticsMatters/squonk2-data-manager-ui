@@ -6,6 +6,7 @@ import { getGetProjectsQueryKey, getProjects } from "@squonk/data-manager-client
 
 import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { Box, Container, Grid, Typography } from "@mui/material";
+import { captureException } from "@sentry/nextjs";
 import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -16,6 +17,7 @@ import { ProjectTable } from "../components/ProjectTable";
 import { ProjectFileUpload } from "../components/ProjectTable/ProjectFileUpload";
 import { ProjectAutocomplete } from "../components/userContext/ProjectAutocomplete";
 import { useCurrentProject } from "../hooks/projectHooks";
+import { createErrorProps } from "../utils/api/serverSidePropsError";
 import { pathFromQuery } from "../utils/paths";
 import { RoleRequired } from "../utils/RoleRequired";
 import { options } from "../utils/ssrQueryOptions";
@@ -23,18 +25,15 @@ import { options } from "../utils/ssrQueryOptions";
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
   const queryClient = new QueryClient();
 
-  if (
-    query.path === undefined ||
-    typeof query.file !== "string" ||
-    typeof query.project !== "string"
-  ) {
+  // When project isn't specified no requests can be made
+  if (typeof query.project !== "string") {
     return { props: {} };
   }
 
+  const projectId = query.project;
+
   try {
     const { accessToken } = await getAccessToken(req, res);
-
-    const projectId = query.project as string | undefined;
 
     const path = pathFromQuery(query.path);
 
@@ -55,8 +54,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
       await Promise.allSettled(queries);
     }
   } catch (error) {
-    // TODO: smarter handling
-    console.error(error);
+    captureException(error);
+    return createErrorProps(res, 500, "Unknown error on the server");
   }
 
   return {

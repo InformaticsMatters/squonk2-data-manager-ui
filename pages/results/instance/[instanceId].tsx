@@ -8,12 +8,12 @@ import { Box, Container, IconButton, Tooltip } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
-import { EventDebugSwitch } from "../../../components/EventDebugSwitch";
-import Layout from "../../../components/Layout";
+import { RoleRequired } from "../../../components/auth/RoleRequired";
+import { Instance } from "../../../components/instances/Instance";
 import { AllResultsButton } from "../../../components/results/AllResultsButton";
-import { Instance } from "../../../components/results/Instance";
-import { InstanceTitle } from "../../../components/results/InstanceTitle";
-import { RoleRequired } from "../../../utils/RoleRequired";
+import { EventDebugSwitch } from "../../../components/results/EventDebugSwitch";
+import { InstanceTitle } from "../../../features/results/InstanceTitle";
+import Layout from "../../../layouts/Layout";
 
 const Result = () => {
   const queryClient = useQueryClient();

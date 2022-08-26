@@ -2,8 +2,8 @@ import { useGetProjects } from "@squonk/data-manager-client/project";
 
 import { useRouter } from "next/router";
 
-import { PROJECT_LOCAL_STORAGE_KEY } from "../constants";
-import { writeToLocalStorage } from "../utils/localStorage";
+import { PROJECT_LOCAL_STORAGE_KEY } from "../constants/localStorageKeys";
+import { writeToLocalStorage } from "../utils/next/localStorage";
 import { useKeycloakUser } from "./useKeycloakUser";
 
 export type ProjectId = string | undefined;

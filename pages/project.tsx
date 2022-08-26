@@ -11,16 +11,16 @@ import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
 
-import Layout from "../components/Layout";
-import { ProjectSelection } from "../components/ProjectSelection";
-import { ProjectTable } from "../components/ProjectTable";
-import { ProjectFileUpload } from "../components/ProjectTable/ProjectFileUpload";
+import { RoleRequired } from "../components/auth/RoleRequired";
+import { ProjectSelection } from "../components/projects/ProjectSelection";
 import { ProjectAutocomplete } from "../components/userContext/ProjectAutocomplete";
+import { ProjectTable } from "../features/ProjectTable";
+import { ProjectFileUpload } from "../features/ProjectTable/ProjectFileUpload";
 import { useCurrentProject } from "../hooks/projectHooks";
+import Layout from "../layouts/Layout";
 import { createErrorProps } from "../utils/api/serverSidePropsError";
-import { pathFromQuery } from "../utils/paths";
-import { RoleRequired } from "../utils/RoleRequired";
-import { options } from "../utils/ssrQueryOptions";
+import { dmOptions } from "../utils/api/ssrQueryOptions";
+import { pathFromQuery } from "../utils/app/paths";
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
   const queryClient = new QueryClient();
@@ -43,10 +43,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
       // Prefetch some data
       const queries = [
         queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
-          getProjects(options(accessToken)),
+          getProjects(dmOptions(accessToken)),
         ),
         queryClient.prefetchQuery(getGetFilesQueryKey(filesParam), () =>
-          getFiles(filesParam, options(accessToken)),
+          getFiles(filesParam, dmOptions(accessToken)),
         ),
       ];
 

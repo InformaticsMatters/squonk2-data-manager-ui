@@ -2,7 +2,7 @@ import { captureException } from "@sentry/nextjs";
 import type { AxiosError } from "axios";
 import { useSnackbar } from "notistack";
 
-import { getErrorMessage } from "../utils/orvalError";
+import { getErrorMessage } from "../utils/next/orvalError";
 
 export const useEnqueueError = <TError>() => {
   const { enqueueSnackbar, ...rest } = useSnackbar();

@@ -6,8 +6,8 @@ import { useAddMetadata } from "@squonk/data-manager-client/metadata";
 
 import { Typography } from "@mui/material";
 
+import type { TableDataset } from "../../features/DatasetsTable";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
-import type { TableDataset } from "../DatasetsTable";
 import { LabelChip } from "./LabelChip";
 
 export interface LabelsProps {

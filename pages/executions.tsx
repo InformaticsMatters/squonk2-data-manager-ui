@@ -15,15 +15,15 @@ import { Alert, Container, Grid, MenuItem, TextField } from "@mui/material";
 import type { GetServerSideProps } from "next";
 import Head from "next/head";
 
+import { RoleRequired } from "../components/auth/RoleRequired";
 import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/executionsCards/ApplicationCard";
 import { JobCard } from "../components/executionsCards/JobCard";
-import Layout from "../components/Layout";
 import { SearchTextField } from "../components/SearchTextField";
 import { useCurrentProject } from "../hooks/projectHooks";
-import { RoleRequired } from "../utils/RoleRequired";
-import { search } from "../utils/search";
-import { options } from "../utils/ssrQueryOptions";
+import Layout from "../layouts/Layout";
+import { dmOptions } from "../utils/api/ssrQueryOptions";
+import { search } from "../utils/app/searches";
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
   const queryClient = new QueryClient();
@@ -37,12 +37,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
       // Prefetch some data
       const queries = [
         queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
-          getProjects(options(accessToken)),
+          getProjects(dmOptions(accessToken)),
         ),
         queryClient.prefetchQuery(getGetApplicationsQueryKey(), () =>
-          getApplications(options(accessToken)),
+          getApplications(dmOptions(accessToken)),
         ),
-        queryClient.prefetchQuery(getGetJobsQueryKey(), () => getJobs(options(accessToken))),
+        queryClient.prefetchQuery(getGetJobsQueryKey(), () => getJobs(dmOptions(accessToken))),
       ];
 
       // Make the queries in parallel

@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from "@mui/material";
 
-import { FavouriteButton } from "../ProjectTable/buttons/FavouriteButton";
+import { FavouriteButton } from "../../features/ProjectTable/buttons/FavouriteButton";
 import type { SharedProps } from "./types";
 
 export interface FileListItemProps extends Pick<SharedProps, "projectId"> {

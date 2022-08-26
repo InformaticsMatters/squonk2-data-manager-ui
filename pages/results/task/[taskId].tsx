@@ -8,11 +8,11 @@ import { Alert, Box, Container, IconButton, Tooltip, Typography } from "@mui/mat
 import Head from "next/head";
 import { useRouter } from "next/router";
 
+import { RoleRequired } from "../../../components/auth/RoleRequired";
 import { CenterLoader } from "../../../components/CenterLoader";
-import Layout from "../../../components/Layout";
-import { ResultTaskCard } from "../../../components/results/ResultTaskCard";
-import { getErrorMessage } from "../../../utils/orvalError";
-import { RoleRequired } from "../../../utils/RoleRequired";
+import { ResultTaskCard } from "../../../components/tasks/ResultTaskCard";
+import Layout from "../../../layouts/Layout";
+import { getErrorMessage } from "../../../utils/next/orvalError";
 
 const Result = () => {
   const queryClient = useQueryClient();

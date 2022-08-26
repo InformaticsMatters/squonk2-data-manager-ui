@@ -5,7 +5,7 @@ import { getVersion as getDMVersion } from "@squonk/data-manager-client/accounti
 
 import { ListItem, ListItemText, Typography } from "@mui/material";
 
-import { HorizontalList } from "./results/common/HorizontalList";
+import { HorizontalList } from "./HorizontalList";
 
 export const getGetDMVersionQueryKey = () => ["data-manager", "/version"];
 export const getGetASVersionQueryKey = () => ["account-server", "/version"];

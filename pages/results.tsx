@@ -11,11 +11,11 @@ import type { GetServerSideProps } from "next";
 import NextError from "next/error";
 import Head from "next/head";
 
-import Layout from "../components/Layout";
-import { ResultsView } from "../components/ResultsView";
+import { RoleRequired } from "../components/auth/RoleRequired";
+import { ResultsView } from "../features/ResultsView";
+import Layout from "../layouts/Layout";
 import { createErrorProps } from "../utils/api/serverSidePropsError";
-import { RoleRequired } from "../utils/RoleRequired";
-import { options } from "../utils/ssrQueryOptions";
+import { dmOptions } from "../utils/api/ssrQueryOptions";
 
 interface NotSuccessful {
   statusCode: number;
@@ -46,10 +46,10 @@ export const getServerSideProps: GetServerSideProps<TasksProps> = async ({ req, 
     if (accessToken) {
       const queries = [
         queryClient.prefetchQuery(getGetInstancesQueryKey({ project_id: projectId }), () =>
-          getInstances({ project_id: projectId }, options(accessToken)),
+          getInstances({ project_id: projectId }, dmOptions(accessToken)),
         ),
         queryClient.prefetchQuery(getGetTasksQueryKey({ project_id: projectId }), () =>
-          getTasks({ project_id: projectId }, options(accessToken)),
+          getTasks({ project_id: projectId }, dmOptions(accessToken)),
         ),
       ];
 

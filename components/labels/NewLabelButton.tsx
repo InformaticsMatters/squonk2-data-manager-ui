@@ -11,9 +11,9 @@ import { TextField } from "formik-mui";
 import { bindPopover, bindTrigger, usePopupState } from "material-ui-popup-state/hooks";
 import * as yup from "yup";
 
+import type { TableDataset } from "../../features/DatasetsTable";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
-import { LowerCaseTextField } from "../../utils/LowerCaseTextField";
-import type { TableDataset } from "../DatasetsTable";
+import { LowerCaseTextField } from "../LowerCaseTextField";
 
 export interface NewLabelButtonProps {
   /**

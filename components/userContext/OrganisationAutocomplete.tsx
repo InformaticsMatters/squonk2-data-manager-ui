@@ -7,7 +7,7 @@ import { Autocomplete, Box, TextField, Typography } from "@mui/material";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
-import { getErrorMessage } from "../../utils/orvalError";
+import { getErrorMessage } from "../../utils/next/orvalError";
 import { ItemIcons } from "./ItemIcons";
 
 type OrganisationAutocompleteProps = Omit<

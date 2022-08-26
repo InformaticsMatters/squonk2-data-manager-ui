@@ -3,7 +3,7 @@ import generateThemes from "@squonk/mui-theme";
 import createEmotionServer from "@emotion/server/create-instance";
 import Document, { Head, Html, Main, NextScript } from "next/document";
 
-import createEmotionCache from "../utils/createEmotionCache";
+import createEmotionCache from "../utils/next/createEmotionCache";
 
 const { lightTheme } = generateThemes();
 

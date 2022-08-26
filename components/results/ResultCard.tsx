@@ -7,11 +7,11 @@ import NextLink from "next/link";
 
 import type { ActionsParams, BaseCardProps } from "../BaseCard";
 import { BaseCard } from "../BaseCard";
-import type { DateTimeListItemProps } from "./common/DateTimeListItem";
-import { DateTimeListItem } from "./common/DateTimeListItem";
-import { HorizontalList } from "./common/HorizontalList";
-import type { StatusIconProps } from "./common/StatusIcon";
-import { StatusIcon } from "./common/StatusIcon";
+import { HorizontalList } from "../HorizontalList";
+import type { DateTimeListItemProps } from "./DateTimeListItem";
+import { DateTimeListItem } from "./DateTimeListItem";
+import type { StatusIconProps } from "./StatusIcon";
+import { StatusIcon } from "./StatusIcon";
 
 export interface ResultCardProps extends BaseCardProps {
   state?: StatusIconProps["state"];

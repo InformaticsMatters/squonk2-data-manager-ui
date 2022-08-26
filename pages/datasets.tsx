@@ -2,9 +2,9 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { Container, Typography } from "@mui/material";
 import Head from "next/head";
 
-import { DatasetsTable } from "../components/DatasetsTable";
-import Layout from "../components/Layout";
-import { RoleRequired } from "../utils/RoleRequired";
+import { RoleRequired } from "../components/auth/RoleRequired";
+import { DatasetsTable } from "../features/DatasetsTable";
+import Layout from "../layouts/Layout";
 
 /**
  * The datasets page displays datasets the user is able to see and allows the user to manage these.

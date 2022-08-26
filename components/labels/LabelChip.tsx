@@ -1,7 +1,7 @@
 import type { ChipProps } from "@mui/material";
 import { Chip } from "@mui/material";
 
-import { labelFormatter } from "../../utils/labelUtils";
+import { labelFormatter } from "../../utils/app/labels";
 
 export interface LabelChipProps extends ChipProps {
   /**

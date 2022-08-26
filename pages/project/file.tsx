@@ -5,12 +5,12 @@ import type { GetServerSideProps } from "next";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
-import { PlaintextViewer } from "../../components/PlaintextViewer";
 import { API_ROUTES } from "../../constants/routes";
+import { PlaintextViewer } from "../../features/PlaintextViewer";
+import type { NotSuccessful, Successful } from "../../utils/api/plaintextViewerSSR";
+import { plaintextViewerSSR } from "../../utils/api/plaintextViewerSSR";
 import { createErrorProps } from "../../utils/api/serverSidePropsError";
-import { pathFromQuery } from "../../utils/paths";
-import type { NotSuccessful, Successful } from "../../utils/plaintextViewerSSR";
-import { plaintextViewerSSR } from "../../utils/plaintextViewerSSR";
+import { pathFromQuery } from "../../utils/app/paths";
 
 export type FileProps = Successful | NotSuccessful;
 

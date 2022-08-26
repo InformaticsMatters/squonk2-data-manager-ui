@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import compare from "just-compare";
 import { useRouter } from "next/router";
 
-import { PROJECT_LOCAL_STORAGE_KEY } from "../constants";
-import { getFromLocalStorage } from "../utils/localStorage";
+import { PROJECT_LOCAL_STORAGE_KEY } from "../constants/localStorageKeys";
+import { getFromLocalStorage } from "../utils/next/localStorage";
 import type { ProjectLocalStoragePayload } from "./projectHooks";
 
 /**

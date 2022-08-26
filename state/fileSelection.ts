@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import { PROJECT_FILE_LOCAL_STORAGE_KEY } from "../constants";
+import { PROJECT_FILE_LOCAL_STORAGE_KEY } from "../constants/localStorageKeys";
 import type { ProjectId } from "../hooks/projectHooks";
 import { useCurrentProjectId } from "../hooks/projectHooks";
 

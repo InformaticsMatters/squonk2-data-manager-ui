@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import { PROJECT_LOCAL_STORAGE_KEY } from "../constants/localStorageKeys";
 import { writeToLocalStorage } from "../utils/next/localStorage";
+import { useIsAuthorized } from "./useIsAuthorized";
 import { useKeycloakUser } from "./useKeycloakUser";
 
 export type ProjectId = string | undefined;
@@ -69,8 +70,9 @@ export const useCurrentProjectId = () => {
  * @returns The project associated with the project-id in the current url query parameters
  */
 export const useCurrentProject = () => {
+  const isAuthorized = useIsAuthorized();
   const { projectId } = useCurrentProjectId();
-  const { data } = useGetProjects();
+  const { data } = useGetProjects({ query: { enabled: !!isAuthorized } });
   const projects = data?.projects;
 
   return projects?.find((project) => project.project_id === projectId) ?? null;

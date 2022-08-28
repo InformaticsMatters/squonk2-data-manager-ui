@@ -5,14 +5,20 @@ import { getVersion as getDMVersion } from "@squonk/data-manager-client/accounti
 
 import { ListItem, ListItemText, Typography } from "@mui/material";
 
+import { useIsAuthorized } from "../hooks/useIsAuthorized";
 import { HorizontalList } from "./HorizontalList";
 
 export const getGetDMVersionQueryKey = () => ["data-manager", "/version"];
 export const getGetASVersionQueryKey = () => ["account-server", "/version"];
 
 export const AppVersions = () => {
-  const { data: dmData } = useQuery(getGetDMVersionQueryKey(), getDMVersion);
-  const { data: asData } = useQuery(getGetASVersionQueryKey(), getASVersion);
+  const isAuthorized = useIsAuthorized();
+  const { data: dmData } = useQuery(getGetDMVersionQueryKey(), getDMVersion, {
+    enabled: !!isAuthorized,
+  });
+  const { data: asData } = useQuery(getGetASVersionQueryKey(), getASVersion, {
+    enabled: !!isAuthorized,
+  });
 
   return (
     <>

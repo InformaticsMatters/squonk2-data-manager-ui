@@ -9,6 +9,8 @@ import { useProjectFromId } from "../../hooks/projectHooks";
 import { ProjectListItem } from "../projects/ProjectListItem";
 import { ResultCard } from "../results/ResultCard";
 import { ApplicationDetails } from "./ApplicationDetails";
+import { ArchivedStatus } from "./ArchivedStatus";
+import { ArchiveInstance } from "./ArchiveInstance";
 import { TerminateInstance } from "./TerminateInstance";
 import { useInstanceRouterQuery } from "./useInstanceRouterQuery";
 
@@ -62,6 +64,7 @@ export const ResultApplicationCard = ({
               Open
             </HrefButton>
           )}
+          <ArchiveInstance archived={instance.archived} instanceId={instanceId} />
         </>
       )}
       collapsed={
@@ -82,6 +85,7 @@ export const ResultApplicationCard = ({
         <ListItemText primary={instance.name} />
       </ListItem>
       <ProjectListItem projectName={associatedProject?.name || "loading..."} />
+      <ArchivedStatus archived={instance.archived} />
     </ResultCard>
   );
 };

@@ -7,6 +7,8 @@ import { RerunJobButton } from "../../components/results/RerunJobButton";
 import { ResultCard } from "../../components/results/ResultCard";
 import { useProjectFromId } from "../../hooks/projectHooks";
 import { ProjectListItem } from "../projects/ProjectListItem";
+import { ArchivedStatus } from "./ArchivedStatus";
+import { ArchiveInstance } from "./ArchiveInstance";
 import { JobDetails } from "./JobDetails";
 import { TerminateInstance } from "./TerminateInstance";
 import { useInstanceRouterQuery } from "./useInstanceRouterQuery";
@@ -54,6 +56,7 @@ export const ResultJobCard = ({
           />
           <RerunJobButton instance={instance} />
           <LogsButton instance={instance} instanceId={instanceId} />
+          <ArchiveInstance archived={instance.archived} instanceId={instanceId} />
         </>
       )}
       collapsed={
@@ -74,6 +77,7 @@ export const ResultJobCard = ({
         <ListItemText primary={instance.name} secondary={instance.job_name} />
       </ListItem>
       <ProjectListItem projectName={associatedProject?.name || "loading..."} />
+      <ArchivedStatus archived={instance.archived} />
     </ResultCard>
   );
 };

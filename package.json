@@ -21,9 +21,6 @@
   "lint-staged": {
     "*.@(js|ts|tsx)": [
       "pnpm format"
-    ],
-    "*.(ts|tsx)": [
-      "pnpm tsc"
     ]
   },
   "dependencies": {

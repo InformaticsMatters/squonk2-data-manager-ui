@@ -2,6 +2,7 @@
 . "$(dirname "$0")/_/husky.sh"
 
 pnpm lint-staged
+pnpm tsc
 
 if git rev-parse --abbrev-ref HEAD | grep -q "master"; then
   if grep "link:.." pnpm-lock.yaml; then

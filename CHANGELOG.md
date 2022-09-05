@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1-rc.1](https://github.com/InformaticsMatters/squonk-frontend/compare/1.0.1-rc.0...1.0.1-rc.1) (2022-09-05)
+
+
+### Bug Fixes
+
+* disable some queries that run when the user isn't authenticated ([7ae63f9](https://github.com/InformaticsMatters/squonk-frontend/commit/7ae63f9ab36c2b93d7d4c77c04f162fadc6a51cb)), closes [#689](https://github.com/InformaticsMatters/squonk-frontend/issues/689)
+* fix type error ([0ac3086](https://github.com/InformaticsMatters/squonk-frontend/commit/0ac308661f40e8e771c1f469fde4700bbdb361e0))
+* **polling:** fix polling of tasks and instances to be more consistent ([f85ab19](https://github.com/InformaticsMatters/squonk-frontend/commit/f85ab1967502cb0a60fb32b4a20a3ac54d83d2e0))
+
 ### [1.0.1-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/1.0.0...1.0.1-rc.0) (2022-08-24)
 
 

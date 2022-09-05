@@ -52,7 +52,7 @@ const Result = () => {
             ) : isLoading || task === undefined ? (
               <CenterLoader />
             ) : (
-              <ResultTaskCard poll collapsedByDefault={false} task={{ ...task, id: taskId }} />
+              <ResultTaskCard collapsedByDefault={false} task={{ ...task, id: taskId }} />
             )}
           </Container>
         </Layout>

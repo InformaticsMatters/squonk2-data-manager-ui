@@ -44,12 +44,13 @@ export const getServerSideProps: GetServerSideProps<TasksProps> = async ({ req, 
     const { accessToken } = await getAccessToken(req, res);
 
     if (accessToken) {
+      const params = projectId === undefined ? undefined : { project_id: projectId };
       const queries = [
-        queryClient.prefetchQuery(getGetInstancesQueryKey({ project_id: projectId }), () =>
-          getInstances({ project_id: projectId }, dmOptions(accessToken)),
+        queryClient.prefetchQuery(getGetInstancesQueryKey(params), () =>
+          getInstances(params, dmOptions(accessToken)),
         ),
-        queryClient.prefetchQuery(getGetTasksQueryKey({ project_id: projectId }), () =>
-          getTasks({ project_id: projectId }, dmOptions(accessToken)),
+        queryClient.prefetchQuery(getGetTasksQueryKey(params), () =>
+          getTasks(params, dmOptions(accessToken)),
         ),
       ];
 
@@ -62,6 +63,8 @@ export const getServerSideProps: GetServerSideProps<TasksProps> = async ({ req, 
     captureException(error);
     return createErrorProps(res, 500, "Error when fetching data server side");
   }
+
+  console.log(dehydrate(queryClient).queries[0]);
 
   return {
     props: {

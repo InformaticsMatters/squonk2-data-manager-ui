@@ -35,8 +35,6 @@ export interface ApplicationCardProps extends Pick<RunJobButtonProps, "projectId
  * existing instances.
  */
 export const JobCard = ({ projectId, job }: ApplicationCardProps) => {
-  // TODO remove this once the doc_url attribute is in the DM API client
-
   const theme = useTheme();
   return (
     <BaseCard

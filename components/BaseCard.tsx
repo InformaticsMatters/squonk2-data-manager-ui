@@ -41,6 +41,10 @@ export interface BaseCardProps {
    */
   collapsedByDefault?: boolean;
   /**
+   * Whether to unmount the collapsed content mounted after the first time it is expanded
+   */
+  keepCollapsedMounted?: boolean;
+  /**
    * String values to be displayed in the header section of the card. Only title is required.
    * Missing values are not displayed.
    */
@@ -66,6 +70,7 @@ export const BaseCard: FC<BaseCardProps> = ({
   actions,
   header,
   collapsed,
+  keepCollapsedMounted = true,
   collapsedByDefault = true,
 }) => {
   const [hasExpanded, setHasExpanded] = useState(!collapsedByDefault);
@@ -118,7 +123,9 @@ export const BaseCard: FC<BaseCardProps> = ({
           </IconButton>
         )}
       </CardActions>
-      <Collapse in={expanded}>{expanded || hasExpanded ? collapsed : null}</Collapse>
+      <Collapse in={expanded}>
+        {expanded || (keepCollapsedMounted && hasExpanded) ? collapsed : null}
+      </Collapse>
     </Card>
   );
 };

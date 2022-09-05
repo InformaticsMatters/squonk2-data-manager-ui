@@ -10,7 +10,6 @@ import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { ResultCard } from "../results/ResultCard";
 import { WarningDeleteButton } from "../WarningDeleteButton";
-import type { TaskDetailsProps } from "./TaskDetails";
 import { TaskDetails } from "./TaskDetails";
 
 export interface ResultTaskCardProps {
@@ -18,7 +17,6 @@ export interface ResultTaskCardProps {
    * The task which will be displayed
    */
   task: TaskSummary;
-  poll?: TaskDetailsProps["poll"];
   /**
    * Whether the card should have its collapsed content visible immediately. Defaults to true.
    */
@@ -28,7 +26,7 @@ export interface ResultTaskCardProps {
 /**
  * Expandable card that displays details about a task
  */
-export const ResultTaskCard = ({ task, collapsedByDefault = true, poll }: ResultTaskCardProps) => {
+export const ResultTaskCard = ({ task, collapsedByDefault = true }: ResultTaskCardProps) => {
   const queryClient = useQueryClient();
   const { mutateAsync: deleteTask } = useDeleteTask();
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
@@ -63,7 +61,7 @@ export const ResultTaskCard = ({ task, collapsedByDefault = true, poll }: Result
       )}
       collapsed={
         <CardContent>
-          <TaskDetails poll={poll} taskId={task.id} />
+          <TaskDetails taskId={task.id} />
         </CardContent>
       }
       collapsedByDefault={collapsedByDefault}

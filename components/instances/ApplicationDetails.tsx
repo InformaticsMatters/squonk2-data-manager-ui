@@ -2,7 +2,7 @@ import type { InstanceSummary } from "@squonk/data-manager-client";
 
 import { ListItem, ListItemText } from "@mui/material";
 
-import { usePolledInstance } from "../../hooks/usePolledInstance";
+import { usePolledGetInstance } from "../../hooks/usePolledGetInstance";
 import { CenterLoader } from "../CenterLoader";
 import { HorizontalList } from "../HorizontalList";
 import { TaskDetails } from "../tasks/TaskDetails";
@@ -12,17 +12,13 @@ export interface ApplicationDetailsProps {
    * ID of the instance of the application
    */
   instanceId: InstanceSummary["id"];
-  /**
-   * Whether to poll the instance regularly for updates
-   */
-  poll?: boolean;
 }
 
 /**
  * Displays the details of an application based on the ID of an application instance
  */
-export const ApplicationDetails = ({ instanceId, poll }: ApplicationDetailsProps) => {
-  const { data: instance } = usePolledInstance(instanceId, poll);
+export const ApplicationDetails = ({ instanceId }: ApplicationDetailsProps) => {
+  const { data: instance } = usePolledGetInstance(instanceId);
 
   const tasks = instance?.tasks;
   const task = tasks?.[tasks.length - 1];

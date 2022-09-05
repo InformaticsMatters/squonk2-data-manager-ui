@@ -1,8 +1,8 @@
 import type { TaskSummary } from "@squonk/data-manager-client";
-import { useGetTask } from "@squonk/data-manager-client/task";
 
 import { Grid, Typography } from "@mui/material";
 
+import { usePolledGetTask } from "../../hooks/usePolledGetTask";
 import { CenterLoader } from "../CenterLoader";
 import { TimeLine } from "./TimeLine";
 
@@ -11,16 +11,13 @@ export interface TaskDetailsProps {
    * ID of the task
    */
   taskId: TaskSummary["id"];
-  poll?: boolean;
 }
 
 /**
  * Displays details of a task based on a task ID
  */
-export const TaskDetails = ({ taskId, poll = false }: TaskDetailsProps) => {
-  const { data: task } = useGetTask(taskId, undefined, {
-    query: { refetchInterval: poll ? 5000 : undefined },
-  });
+export const TaskDetails = ({ taskId }: TaskDetailsProps) => {
+  const { data: task } = usePolledGetTask(taskId);
 
   if (task === undefined) {
     return <CenterLoader />;

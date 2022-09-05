@@ -46,6 +46,7 @@ export const ResultCard: FC<ResultCardProps> = ({
           actions={(params) => actions({ ...params, slideIn, setSlideIn })}
           collapsed={<CardContent>{collapsed}</CardContent>}
           collapsedByDefault={collapsedByDefault}
+          keepCollapsedMounted={false}
         >
           <HorizontalList>
             <ListItem>

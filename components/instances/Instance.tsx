@@ -20,6 +20,8 @@ export const Instance = ({
   collapsedByDefault = true,
   instanceSummary,
 }: InstanceProps) => {
+  // The instance summary is sufficient but not always provided. If only the ID is provided, the
+  // instance get response is then requested and switched in.
   const { data, isLoading, error } = useGetInstance(instanceId, {
     query: { enabled: !instanceSummary },
   });
@@ -40,7 +42,6 @@ export const Instance = ({
         return (
           <Box marginY={1}>
             <ResultJobCard
-              poll
               collapsedByDefault={collapsedByDefault}
               instance={instance}
               instanceId={instanceId}
@@ -50,7 +51,6 @@ export const Instance = ({
       case "APPLICATION":
         return (
           <ResultApplicationCard
-            poll
             collapsedByDefault={collapsedByDefault}
             instance={instance}
             instanceId={instanceId}

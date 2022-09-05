@@ -23,10 +23,6 @@ export interface ResultJobCardProps {
    * Instance of the job
    */
   instance: InstanceSummary | InstanceGetResponse;
-  poll?: boolean;
-  /**
-   * Whether the card should have its collapsed content visible immediately. Defaults to true.
-   */
   collapsedByDefault?: boolean;
 }
 
@@ -37,7 +33,6 @@ export const ResultJobCard = ({
   instanceId,
   instance,
   collapsedByDefault = true,
-  poll,
 }: ResultJobCardProps) => {
   const query = useInstanceRouterQuery();
 
@@ -63,7 +58,7 @@ export const ResultJobCard = ({
       )}
       collapsed={
         <CardContent>
-          <JobDetails instanceId={instanceId} jobId={instance.job_id} poll={poll} />
+          <JobDetails instanceId={instanceId} jobId={instance.job_id} />
         </CardContent>
       }
       collapsedByDefault={collapsedByDefault}

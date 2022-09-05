@@ -8,7 +8,6 @@ import { Button, CardContent, ListItem, ListItemText } from "@mui/material";
 import { useProjectFromId } from "../../hooks/projectHooks";
 import { ProjectListItem } from "../projects/ProjectListItem";
 import { ResultCard } from "../results/ResultCard";
-import type { ApplicationDetailsProps } from "./ApplicationDetails";
 import { ApplicationDetails } from "./ApplicationDetails";
 import { TerminateInstance } from "./TerminateInstance";
 import { useInstanceRouterQuery } from "./useInstanceRouterQuery";
@@ -28,7 +27,6 @@ export interface ResultApplicationCardProps {
    * Instance of the application
    */
   instance: InstanceSummary | InstanceGetResponse;
-  poll?: ApplicationDetailsProps["poll"];
   /**
    * Whether the card should have its collapsed content visible immediately. Defaults to true.
    */
@@ -39,7 +37,6 @@ export const ResultApplicationCard = ({
   instance,
   instanceId,
   collapsedByDefault = true,
-  poll,
 }: ResultApplicationCardProps) => {
   const query = useInstanceRouterQuery();
 
@@ -69,7 +66,7 @@ export const ResultApplicationCard = ({
       )}
       collapsed={
         <CardContent>
-          <ApplicationDetails instanceId={instanceId} poll={poll} />
+          <ApplicationDetails instanceId={instanceId} />
         </CardContent>
       }
       collapsedByDefault={collapsedByDefault}

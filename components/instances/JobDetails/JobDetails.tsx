@@ -1,11 +1,11 @@
 import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
-import { useGetInstance } from "@squonk/data-manager-client/instance";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
 import AppsRoundedIcon from "@mui/icons-material/AppsRounded";
 import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
 import { Alert, Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
+import { usePolledGetInstance } from "../../../hooks/usePolledGetInstance";
 import { getErrorMessage } from "../../../utils/next/orvalError";
 import { CenterLoader } from "../../CenterLoader";
 import { HorizontalList } from "../../HorizontalList";
@@ -15,7 +15,7 @@ import { JobInputSection } from "./JobInputSection";
 import { JobOutputSection } from "./JobOutputSection";
 
 export interface JobDetailsProps {
-  /*
+  /**
    * Instance of the job
    */
   instanceId: string;
@@ -23,20 +23,17 @@ export interface JobDetailsProps {
    * ID of the Job
    */
   jobId: NonNullable<InstanceSummary["job_id"] | InstanceGetResponse["job_id"]>;
-  poll?: boolean;
 }
 
 /**
  * Displays the details of an job based on the instance of a job
  */
-export const JobDetails = ({ instanceId, jobId, poll = false }: JobDetailsProps) => {
+export const JobDetails = ({ instanceId, jobId }: JobDetailsProps) => {
   const {
     data: instance,
     isLoading: isInstanceLoading,
     error: instanceError,
-  } = useGetInstance(instanceId, {
-    query: { refetchInterval: poll ? 5000 : undefined },
-  });
+  } = usePolledGetInstance(instanceId);
   const { data: job, isLoading: isJobLoading, error: jobError } = useGetJob(jobId);
 
   if (isInstanceLoading || isJobLoading) {

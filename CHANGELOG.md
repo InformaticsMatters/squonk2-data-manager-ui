@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/1.0.1...1.1.0-rc.0) (2022-09-05)
+
+
+### Features
+
+* **archived-instances:** allow instances (jobs/apps) to be archived such that they won't be deleted automatically deleted ([94d511e](https://github.com/InformaticsMatters/squonk-frontend/commit/94d511e6d5f9be15c6ae669b751eeaa3cc156893))
+
+
+### Bug Fixes
+
+* **results-page:** fix results page when no project is selected ([96b956a](https://github.com/InformaticsMatters/squonk-frontend/commit/96b956a73eaec2b3d842f884175dc0e4b7c2bbf9))
+
 ### [1.0.1](https://github.com/InformaticsMatters/squonk-frontend/compare/1.0.1-rc.1...1.0.1) (2022-09-05)
 
 ### [1.0.1-rc.1](https://github.com/InformaticsMatters/squonk-frontend/compare/1.0.1-rc.0...1.0.1-rc.1) (2022-09-05)

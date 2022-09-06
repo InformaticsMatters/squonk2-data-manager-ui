@@ -72,7 +72,7 @@ specifiers:
   sass: 1.54.5
   typescript: 4.7.4
   use-immer: 0.7.0
-  uuid: 8.3.2
+  uuid: 9.0.0
   yup: 0.32.11
 
 dependencies:
@@ -132,7 +132,7 @@ dependencies:
   sass: 1.54.5
   typescript: 4.7.4
   use-immer: 0.7.0_immer@9.0.15+react@17.0.2
-  uuid: 8.3.2
+  uuid: 9.0.0
   yup: 0.32.11
 
 devDependencies:
@@ -6577,8 +6577,8 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: false
 
-  /uuid/8.3.2:
-    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+  /uuid/9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
     hasBin: true
     dev: false
 

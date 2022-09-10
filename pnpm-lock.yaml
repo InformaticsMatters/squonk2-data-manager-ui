@@ -69,7 +69,7 @@ specifiers:
   react-query: 3.39.2
   react-table: 7.8.0
   react-virtualized: 9.22.3
-  sass: 1.54.5
+  sass: 1.54.9
   typescript: 4.7.4
   use-immer: 0.7.0
   uuid: 9.0.0
@@ -114,7 +114,7 @@ dependencies:
   just-compare: 2.2.2
   lodash-es: 4.17.21
   material-ui-popup-state: 4.0.2_66dd7ee1fd75515c66433a85e1fea7e7
-  next: 12.2.5_131f897ee9d5b331daa81cd37f756119
+  next: 12.2.5_861f28c310daad528cf1883c53366814
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
   node-fetch: 3.2.10
@@ -129,7 +129,7 @@ dependencies:
   react-query: 3.39.2_react-dom@17.0.2+react@17.0.2
   react-table: 7.8.0_react@17.0.2
   react-virtualized: 9.22.3_react-dom@17.0.2+react@17.0.2
-  sass: 1.54.5
+  sass: 1.54.9
   typescript: 4.7.4
   use-immer: 0.7.0_immer@9.0.15+react@17.0.2
   uuid: 9.0.0
@@ -175,7 +175,7 @@ packages:
       http-errors: 1.8.1
       joi: 17.6.0
       jose: 2.0.5
-      next: 12.2.5_131f897ee9d5b331daa81cd37f756119
+      next: 12.2.5_861f28c310daad528cf1883c53366814
       on-headers: 1.0.2
       openid-client: 4.9.1
       tslib: 2.4.0
@@ -1441,7 +1441,7 @@ packages:
       '@sentry/webpack-plugin': 1.19.0
       chalk: 3.0.0
       jscodeshift: 0.13.1
-      next: 12.2.5_131f897ee9d5b331daa81cd37f756119
+      next: 12.2.5_861f28c310daad528cf1883c53366814
       react: 17.0.2
       rollup: 2.78.0
       tslib: 1.14.1
@@ -5109,7 +5109,7 @@ packages:
       escalade: 3.1.1
     dev: false
 
-  /next/12.2.5_131f897ee9d5b331daa81cd37f756119:
+  /next/12.2.5_861f28c310daad528cf1883c53366814:
     resolution: {integrity: sha512-tBdjqX5XC/oFs/6gxrZhjmiq90YWizUYU6qOWAfat7zJwrwapJ+BYgX2PmiacunXMaRpeVT4vz5MSPSLgNkrpA==}
     engines: {node: '>=12.22.0'}
     hasBin: true
@@ -5133,7 +5133,7 @@ packages:
       postcss: 8.4.14
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      sass: 1.54.5
+      sass: 1.54.9
       styled-jsx: 5.0.4_react@17.0.2
       use-sync-external-store: 1.2.0_react@17.0.2
     optionalDependencies:
@@ -5983,8 +5983,8 @@ packages:
       ret: 0.1.15
     dev: false
 
-  /sass/1.54.5:
-    resolution: {integrity: sha512-p7DTOzxkUPa/63FU0R3KApkRHwcVZYC0PLnLm5iyZACyp15qSi32x7zVUhRdABAATmkALqgGrjCJAcWvobmhHw==}
+  /sass/1.54.9:
+    resolution: {integrity: sha512-xb1hjASzEH+0L0WI9oFjqhRi51t/gagWnxLiwUNMltA0Ab6jIDkAacgKiGYKM9Jhy109osM7woEEai6SXeJo5Q==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:

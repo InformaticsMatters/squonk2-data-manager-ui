@@ -38,7 +38,7 @@ specifiers:
   eslint-config-prettier: 8.5.0
   eslint-plugin-import: 2.26.0
   eslint-plugin-prettier: 4.2.1
-  eslint-plugin-react: 7.31.7
+  eslint-plugin-react: 7.31.8
   eslint-plugin-react-hooks: 4.6.0
   eslint-plugin-simple-import-sort: 7.0.0
   eslint-plugin-unused-imports: 2.0.0
@@ -137,14 +137,14 @@ dependencies:
 
 devDependencies:
   '@playwright/test': 1.25.2
-  '@squonk/eslint-config': 0.4.2_371fc757fb9f11b6bb48a21d358ed3c0
+  '@squonk/eslint-config': 0.4.2_72f3e0a018e3f889f6b47bece4f7631a
   '@typescript-eslint/eslint-plugin': 5.33.1_ac9d23a22d787f7b7991fddcc31412d2
   '@typescript-eslint/parser': 5.33.1_eslint@8.22.0+typescript@4.7.4
   eslint: 8.22.0
   eslint-config-prettier: 8.5.0_eslint@8.22.0
   eslint-plugin-import: 2.26.0_d84fd6a95fa4dbf27f958da75f46ec9f
   eslint-plugin-prettier: 4.2.1_4684e48c5980d148e4d39aec3317fee1
-  eslint-plugin-react: 7.31.7_eslint@8.22.0
+  eslint-plugin-react: 7.31.8_eslint@8.22.0
   eslint-plugin-react-hooks: 4.6.0_eslint@8.22.0
   eslint-plugin-simple-import-sort: 7.0.0_eslint@8.22.0
   eslint-plugin-unused-imports: 2.0.0_a0a886ad4a676431132f2bd956186e3c
@@ -1553,7 +1553,7 @@ packages:
       react-query: 3.39.2_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/eslint-config/0.4.2_371fc757fb9f11b6bb48a21d358ed3c0:
+  /@squonk/eslint-config/0.4.2_72f3e0a018e3f889f6b47bece4f7631a:
     resolution: {integrity: sha512-+bPuv25LjkbIe56msfmtUp+hM0GmUC5Sjk/1OHEzyMBtZHtv8z6z3ygszxS6iDB5RGwiN/c9NFKM/MXMmldrOA==}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^5.6.0
@@ -1572,7 +1572,7 @@ packages:
       eslint: 8.22.0
       eslint-config-prettier: 8.5.0_eslint@8.22.0
       eslint-plugin-prettier: 4.2.1_4684e48c5980d148e4d39aec3317fee1
-      eslint-plugin-react: 7.31.7_eslint@8.22.0
+      eslint-plugin-react: 7.31.8_eslint@8.22.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.22.0
       eslint-plugin-simple-import-sort: 7.0.0_eslint@8.22.0
       eslint-plugin-unused-imports: 2.0.0_a0a886ad4a676431132f2bd956186e3c
@@ -2924,8 +2924,8 @@ packages:
       eslint: 8.22.0
     dev: true
 
-  /eslint-plugin-react/7.31.7_eslint@8.22.0:
-    resolution: {integrity: sha512-8NldBTeYp/kQoTV1uT0XF6HcmDqbgZ0lNPkN0wlRw8DJKXEnaWu+oh/6gt3xIhzvQ35wB2Y545fJhIbJSZ2NNw==}
+  /eslint-plugin-react/7.31.8_eslint@8.22.0:
+    resolution: {integrity: sha512-5lBTZmgQmARLLSYiwI71tiGVTLUuqXantZM6vlSY39OaDSV0M7+32K5DnLkmFrwTe+Ksz0ffuLUC91RUviVZfw==}
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8

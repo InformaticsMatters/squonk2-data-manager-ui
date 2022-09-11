@@ -32,7 +32,10 @@ enableMapSet();
 // Adjust template for MUI given at
 // https://github.com/mui/material-ui/blob/master/examples/nextjs-with-typescript/pages/_app.tsx
 
-type CustomAppProps = AppProps & { emotionCache?: EmotionCache };
+type CustomAppProps = AppProps & {
+  emotionCache?: EmotionCache;
+  pageProps: { dehydratedState?: unknown };
+};
 
 export default function App({
   Component,

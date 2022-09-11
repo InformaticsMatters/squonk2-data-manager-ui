@@ -2,7 +2,7 @@ import type { AnchorHTMLAttributes, DetailedHTMLProps, FC } from "react";
 
 import { MDXProvider } from "@mdx-js/react";
 import { Link, Typography } from "@mui/material";
-import Image from "next/image";
+import Image from "next/future/image";
 import type { LinkProps } from "next/link";
 import NextLink from "next/link";
 

@@ -8,8 +8,8 @@ import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import type { GetServerSideProps } from "next";
+import Image from "next/future/image";
 import Head from "next/head";
-import Image from "next/image";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
 import { ProjectSelection } from "../components/projects/ProjectSelection";
@@ -114,6 +114,7 @@ const Project = () => {
                   Select a project to view
                 </Typography>
                 <Image
+                  alt="Squonk in tears that you haven't selected a project"
                   height={150}
                   src="https://squonk.informaticsmatters.org/assets/sadderSquonk.svg"
                   width={150}

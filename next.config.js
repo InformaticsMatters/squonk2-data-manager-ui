@@ -31,6 +31,11 @@ let nextConfig = {
   images: {
     domains: ["squonk.informaticsmatters.org"],
   },
+  sentry: {
+    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#use-hidden-source-map
+    // Added to remove a console message, this will become the default in v8 so can be remove then
+    hideSourceMaps: true,
+  },
   // Allow mdx content and mdx files as pages
   webpack(config, options) {
     if (process.env.MONOREPO) {

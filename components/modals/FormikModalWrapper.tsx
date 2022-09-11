@@ -1,5 +1,5 @@
 import type { DialogProps } from "@mui/material";
-import type { FormikConfig } from "formik";
+import type { FormikConfig, FormikValues } from "formik";
 import { Form, Formik } from "formik";
 
 import { ModalWrapper } from "./ModalWrapper";
@@ -40,7 +40,7 @@ export interface FormikModalWrapperProps extends BaseModalWrapperProps {
  *
  * We use a function here instead of arrow functions as generics work better with them
  */
-export function FormikModalWrapper<Values>({
+export function FormikModalWrapper<Values extends FormikValues>({
   id,
   title,
   submitText,

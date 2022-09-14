@@ -2,13 +2,13 @@ import { useGetProjects } from "@squonk/data-manager-client/project";
 
 import { useRouter } from "next/router";
 
-import { PROJECT_LOCAL_STORAGE_KEY } from "../constants/localStorageKeys";
-import { writeToLocalStorage } from "../utils/next/localStorage";
 import { useIsAuthorized } from "./useIsAuthorized";
 import { useKeycloakUser } from "./useKeycloakUser";
 
 export type ProjectId = string | undefined;
 export type ProjectLocalStoragePayload = { projectId: ProjectId; version: number };
+
+export const projectPayload = (projectId: ProjectId) => ({ version: 1, projectId });
 
 /**
  * @returns The selected projectId from the project key of the query parameters
@@ -23,11 +23,6 @@ export const useCurrentProjectId = () => {
   const projectId = query.project;
 
   const setCurrentProjectId = (newProjectId?: string, shallow?: true) => {
-    writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, {
-      version: 1,
-      projectId: newProjectId,
-    });
-
     // Selected project is maintained via the URL "project" query parameter. We use next-js to update it.
     if (newProjectId !== undefined) {
       // A project has been selected

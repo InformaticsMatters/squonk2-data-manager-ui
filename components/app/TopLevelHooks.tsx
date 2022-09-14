@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 
-import { useBindProjectFromLSToQParams } from "../../hooks/useBindProjectFromLSToQParams";
+import { useSyncProject } from "../../hooks/useSyncProject";
 import { useSyncUnitAndOrgFromProduct } from "../../hooks/useSyncUnitAndOrgFromProduct";
 
 export interface TopLevelHooksProps {
@@ -12,7 +12,7 @@ export interface TopLevelHooksProps {
  */
 export const TopLevelHooks = ({ children }: TopLevelHooksProps) => {
   // Depends on react-query and Jotai (implicit) providers existing
-  useBindProjectFromLSToQParams();
+  useSyncProject();
   useSyncUnitAndOrgFromProduct();
 
   return children;

@@ -1,15 +1,15 @@
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import { COLOUR_SCHEME_STORAGE_KEY } from "../constants/localStorageKeys";
+import type { BaseValue } from "../utils/next/localStorage";
+import { COLOUR_SCHEME_STORAGE_KEY } from "../utils/next/localStorage";
 
 // State saved to localStorage so we need to know if its old data if we update logic here
 const VERSION = 1;
 
 type Scheme = "light" | "dark";
 
-interface ColorScheme {
-  version: typeof VERSION;
+export interface ColorScheme extends BaseValue {
   scheme: Scheme;
 }
 

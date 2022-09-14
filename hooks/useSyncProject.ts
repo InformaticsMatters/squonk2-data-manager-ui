@@ -3,9 +3,12 @@ import { useEffect } from "react";
 import compare from "just-compare";
 import { useRouter } from "next/router";
 
-import { PROJECT_LOCAL_STORAGE_KEY } from "../constants/localStorageKeys";
-import { getFromLocalStorage } from "../utils/next/localStorage";
-import type { ProjectLocalStoragePayload } from "./projectHooks";
+import {
+  getFromLocalStorage,
+  PROJECT_LOCAL_STORAGE_KEY,
+  writeToLocalStorage,
+} from "../utils/next/localStorage";
+import { projectPayload } from "./projectHooks";
 
 /**
  * Hook to synchronise the project local storage to query params.
@@ -17,17 +20,25 @@ import type { ProjectLocalStoragePayload } from "./projectHooks";
  * It could be better to use a local storage event listener here but I find those unreliable
  * If the project was stored server-side this could be done in a middleware but alas.
  */
-export const useBindProjectFromLSToQParams = () => {
+export const useSyncProject = () => {
   const router = useRouter();
 
   const { isReady, pathname, query, replace } = router;
+  const { project } = query;
 
+  // Sync the project query parameter to local storage - one way
   useEffect(() => {
-    const { projectId } = getFromLocalStorage<
-      ProjectLocalStoragePayload | Record<string, undefined>
-    >(PROJECT_LOCAL_STORAGE_KEY, {});
+    if (typeof project === "string") {
+      writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(project));
+    }
+  }, [project]);
 
-    if (isReady && projectId) {
+  // Load the project to local storage only when one exists in local storage and one isn't provided
+  // in the url
+  useEffect(() => {
+    const { projectId } = getFromLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
+
+    if (isReady && projectId && !project) {
       const newQuery = { ...query, project: projectId };
       if (!compare(query, newQuery)) {
         replace({ pathname, query: newQuery }, undefined, {
@@ -35,5 +46,5 @@ export const useBindProjectFromLSToQParams = () => {
         });
       }
     }
-  }, [isReady, pathname, replace, query]);
+  }, [isReady, pathname, replace, query, project]);
 };

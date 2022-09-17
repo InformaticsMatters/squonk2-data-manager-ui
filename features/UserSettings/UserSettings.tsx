@@ -27,11 +27,11 @@ export const UserSettings = () => {
         Settings
       </Link>
       <ModalWrapper
-        DialogProps={{ fullScreen: true }}
+
         id="user-settings"
         open={open}
         title="Settings"
-        onClose={() => setOpen(false)}
+        onClose={() => setOpen(false)   t}
       >
         {!!user.username && <UserSettingsContent />}
       </ModalWrapper>

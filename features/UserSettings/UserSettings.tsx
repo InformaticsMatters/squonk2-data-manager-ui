@@ -7,7 +7,7 @@ import { CenterLoader } from "../../components/CenterLoader";
 import { ModalWrapper } from "../../components/modals/ModalWrapper";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 
-const UserSettingsContent = dynamic<any>(
+
   () => import("./UserSettingsContent").then((mod) => mod.UserSettingsContent),
   {
     loading: () => <CenterLoader />,

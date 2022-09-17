@@ -44,7 +44,7 @@ export const PlaintextViewer = ({
   return (
     <>
       <Head>
-        <title>{title}</title>
+
       </Head>
       <Paper sx={{ marginY: 2 }}>
         <Box
@@ -62,11 +62,11 @@ export const PlaintextViewer = ({
             <Typography component="h1" fontFamily="monospace" sx={{ wordBreak: "break-all" }}>
               <b>{title}</b>
             </Typography>
-            <Divider flexItem orientation="vertical" />
+
             <Typography>
-              {numberOfLines} {linesText} of{" "}
+              {numberOfLines} {linesText} of{"
               {originalContentLength ? fileSize(originalContentLength) : "unknown"}
-            </Typography>
+
             {(compressed || truncated) && <Divider flexItem orientation="vertical" />}
             {compressed && <Chip label="Decompressed" size="small" variant="outlined" />}
             {truncated && <Chip label="Truncated" size="small" variant="outlined" />}

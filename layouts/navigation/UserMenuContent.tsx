@@ -1,6 +1,7 @@
 import { Link, Typography } from "@mui/material";
 
 import { CenterLoader } from "../../components/CenterLoader";
+import type { UserSettingsProps } from "../../features/UserSettings";
 import { UserSettings } from "../../features/UserSettings";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
@@ -9,7 +10,7 @@ import { useSelectedUnit } from "../../state/unitSelection";
 /**
  * Content of the user menu
  */
-export const UserMenuContent = () => {
+export const UserMenuContent = (props: UserSettingsProps) => {
   const { user, isLoading } = useKeycloakUser();
   const [, setUnit] = useSelectedUnit();
   const [, setOrganisation] = useSelectedOrganisation();
@@ -36,7 +37,7 @@ export const UserMenuContent = () => {
               Logout
             </Link>
           </Typography>
-          <UserSettings />
+          <UserSettings {...props} />
         </>
       ) : (
         <Typography>

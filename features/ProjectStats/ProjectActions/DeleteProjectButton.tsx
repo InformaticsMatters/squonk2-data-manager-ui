@@ -12,11 +12,11 @@ import { getGetProjectsQueryKey, useDeleteProject } from "@squonk/data-manager-c
 import { DeleteForever } from "@mui/icons-material";
 import { IconButton, LinearProgress, Typography } from "@mui/material";
 
-import { WarningDeleteButton } from "../../../../../components/WarningDeleteButton";
-import { useCurrentProjectId } from "../../../../../hooks/projectHooks";
-import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
-import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
-import { waitUntilTaskDone } from "../../../../../utils/app/waitUntiTaskDone";
+import { WarningDeleteButton } from "../../../components/WarningDeleteButton";
+import { useCurrentProjectId } from "../../../hooks/projectHooks";
+import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
+import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
+import { waitUntilTaskDone } from "../../../utils/app/waitUntiTaskDone";
 
 export interface DeleteProjectButtonProps {
   /**

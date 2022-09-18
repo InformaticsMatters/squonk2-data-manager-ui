@@ -5,8 +5,8 @@ import { useGetProducts } from "@squonk/account-server-client/product";
 import type { ProjectDetail } from "@squonk/data-manager-client";
 import { useGetProjects } from "@squonk/data-manager-client/project";
 
-import { useSelectedOrganisation } from "../../../../state/organisationSelection";
-import { useSelectedUnit } from "../../../../state/unitSelection";
+import { useSelectedOrganisation } from "../../state/organisationSelection";
+import { useSelectedUnit } from "../../state/unitSelection";
 
 export type ProductDmProjectTierAndOwner = ProductDmProjectTier & {
   owner?: ProjectDetail["owner"];

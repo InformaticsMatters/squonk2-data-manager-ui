@@ -10,8 +10,8 @@ import { useRouter } from "next/router";
 
 import { PageSection } from "../../../components/PageSection";
 import { useCurrentProjectId } from "../../../hooks/projectHooks";
+import { ProjectStatsSection } from "../../ProjectStats";
 import { ContextSection } from "./ContextSection";
-import { ProjectStatsSection } from "./ProjectStatsSection";
 import { UserSettingsSection } from "./UserSettingsSection";
 
 /**

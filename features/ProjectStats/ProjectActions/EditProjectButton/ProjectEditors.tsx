@@ -12,8 +12,8 @@ import { useGetUsers } from "@squonk/data-manager-client/user";
 import { Autocomplete, Chip, TextField } from "@mui/material";
 import type { AutocompleteChangeReason } from "@mui/material/useAutocomplete";
 
-import { useEnqueueError } from "../../../../../../hooks/useEnqueueStackError";
-import { useKeycloakUser } from "../../../../../../hooks/useKeycloakUser";
+import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
+import { useKeycloakUser } from "../../../../hooks/useKeycloakUser";
 
 export interface ProjectEditorsProps {
   /**

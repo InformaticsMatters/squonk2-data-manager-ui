@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type { ProductDmStorage } from "@squonk/account-server-client";
 import { useGetProductsForUnit } from "@squonk/account-server-client/product";
 
-import { useSelectedUnit } from "../../../../state/unitSelection";
+import { useSelectedUnit } from "../../state/unitSelection";
 
 /**
  * Fetches information about account's storage subscriptions.

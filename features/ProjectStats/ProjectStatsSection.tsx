@@ -5,10 +5,10 @@ import type { ProductDmProjectTier, ProductDmStorage } from "@squonk/account-ser
 
 import { Box, useTheme } from "@mui/material";
 
-import { DataTable } from "../../../../components/DataTable";
-import { useCurrentProjectId } from "../../../../hooks/projectHooks";
-import { formatTierString } from "../../../../utils/app/products";
-import { getErrorMessage } from "../../../../utils/next/orvalError";
+import { DataTable } from "../../components/DataTable";
+import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { formatTierString } from "../../utils/app/products";
+import { getErrorMessage } from "../../utils/next/orvalError";
 import { ProjectActions } from "./ProjectActions";
 import { ProjectSelectionRadio } from "./ProjectSelectionRadio";
 import { ProjectUsageChart } from "./ProjectUsageChart";

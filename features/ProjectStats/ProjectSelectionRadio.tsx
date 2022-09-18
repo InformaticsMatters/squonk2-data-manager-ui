@@ -2,7 +2,7 @@ import type { ProductDmProjectTier } from "@squonk/account-server-client";
 
 import { Radio } from "@mui/material";
 
-import { useCurrentProjectId } from "../../../../hooks/projectHooks";
+import { useCurrentProjectId } from "../../hooks/projectHooks";
 
 export interface ProjectSelectionRadioProps {
   /**

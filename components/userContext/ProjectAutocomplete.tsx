@@ -3,7 +3,7 @@ import type { ProductDmProjectTier } from "@squonk/account-server-client";
 import type { AutocompleteProps } from "@mui/material";
 import { Autocomplete, TextField } from "@mui/material";
 
-import { useProjectSubscriptions } from "../../features/userSettings/UserSettingsContent/ProjectStatsSection/useProjectSubscriptions";
+import { useProjectSubscriptions } from "../../features/ProjectStats/useProjectSubscriptions";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 
 export type ProjectAutocompleteProps = Omit<

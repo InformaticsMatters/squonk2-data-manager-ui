@@ -8,9 +8,9 @@ import {
 
 import { FormControlLabel, Switch } from "@mui/material";
 
-import type { ProjectId } from "../../../../../../hooks/projectHooks";
-import { useEnqueueError } from "../../../../../../hooks/useEnqueueStackError";
-import { getErrorMessage } from "../../../../../../utils/next/orvalError";
+import type { ProjectId } from "../../../../hooks/projectHooks";
+import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
+import { getErrorMessage } from "../../../../utils/next/orvalError";
 
 export interface PrivateProjectToggleProps {
   projectId: ProjectId;

@@ -7,7 +7,6 @@ import { ModalWrapper } from "../../components/modals/ModalWrapper";
 import { useIsAuthorized } from "../../hooks/useIsAuthorized";
 import { NavLink } from "./NavLink";
 import { OUPContext } from "./OUPContext";
-import type { SettingsControls } from "./ToolbarContents";
 import { UserMenuContent } from "./UserMenuContent";
 
 /**
@@ -16,7 +15,7 @@ import { UserMenuContent } from "./UserMenuContent";
  * * Project management
  * * User menu
  */
-export const MobileNavMenu = (props: SettingsControls) => {
+export const MobileNavMenu = () => {
   const [open, setOpen] = useState(false);
   const isAuthorized = useIsAuthorized();
 
@@ -85,7 +84,7 @@ export const MobileNavMenu = (props: SettingsControls) => {
           </Grid>
 
           <Grid item xs={12}>
-            <UserMenuContent closeOpener={() => setOpen(false)} {...props} />
+            <UserMenuContent />
           </Grid>
         </Grid>
       </ModalWrapper>

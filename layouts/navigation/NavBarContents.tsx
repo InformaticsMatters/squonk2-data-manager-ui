@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import { styled, useMediaQuery, useTheme } from "@mui/material";
+import SettingsIcon from "@mui/icons-material/Settings";
+import { IconButton, styled, useMediaQuery, useTheme } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import { CenterLoader } from "../../components/CenterLoader";
@@ -31,7 +32,7 @@ export interface SettingsControls {
 /**
  * Desktop / Tablet toolbar contents
  */
-export const ToolbarContents = () => {
+export const NavBarContents = () => {
   const theme = useTheme();
   const { user } = useKeycloakUser();
 
@@ -56,7 +57,16 @@ export const ToolbarContents = () => {
         <NavLinks linkWidth={120} />
         <IconsWrapper>
           {isAuthorized && <OUPContext />}
-          <UserMenu {...props} />
+          <IconButton
+            color="inherit"
+            disabled={!isAuthorized}
+            onClick={() => {
+              props.openSettings();
+            }}
+          >
+            <SettingsIcon />
+          </IconButton>
+          <UserMenu />
         </IconsWrapper>
       </>
     );
@@ -66,12 +76,12 @@ export const ToolbarContents = () => {
       <>
         <NavLinks linkWidth={100} />
         <IconsWrapper>
-          <MobileNavMenu {...props} />
+          <MobileNavMenu />
         </IconsWrapper>
       </>
     );
   } else {
-    navContent = <MobileNavMenu {...props} />;
+    navContent = <MobileNavMenu />;
   }
 
   return (

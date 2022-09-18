@@ -1,19 +1,15 @@
 import { Link, Typography } from "@mui/material";
 
 import { CenterLoader } from "../../components/CenterLoader";
+import { DarkModeSwitchListItem } from "../../components/DarkModeSwitchListItem";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
-import type { SettingsControls } from "./ToolbarContents";
-
-export interface UserMenuContentProps extends SettingsControls {
-  closeOpener: () => void;
-}
 
 /**
  * Content of the user menu
  */
-export const UserMenuContent = ({ openSettings, closeOpener }: UserMenuContentProps) => {
+export const UserMenuContent = () => {
   const { user, isLoading } = useKeycloakUser();
   const [, setUnit] = useSelectedUnit();
   const [, setOrganisation] = useSelectedOrganisation();
@@ -23,34 +19,23 @@ export const UserMenuContent = ({ openSettings, closeOpener }: UserMenuContentPr
       <Typography gutterBottom variant="h3">
         Account
       </Typography>
+      <DarkModeSwitchListItem />
       {isLoading ? (
         <CenterLoader />
       ) : user.username ? (
-        <>
-          <Typography>
-            {user.username} /{" "}
-            <Link
-              href={process.env.NEXT_PUBLIC_BASE_PATH + `/api/auth/logout`}
-              onClick={() => {
-                localStorage.clear();
-                setUnit();
-                setOrganisation();
-              }}
-            >
-              Logout
-            </Link>
-          </Typography>
+        <Typography>
+          {user.username} /{" "}
           <Link
-            component="button"
-            variant="body1"
+            href={process.env.NEXT_PUBLIC_BASE_PATH + `/api/auth/logout`}
             onClick={() => {
-              openSettings();
-              closeOpener();
+              localStorage.clear();
+              setUnit();
+              setOrganisation();
             }}
           >
-            Settings
+            Logout
           </Link>
-        </>
+        </Typography>
       ) : (
         <Typography>
           <Link href={process.env.NEXT_PUBLIC_BASE_PATH + `/api/auth/login`}>Login</Link>

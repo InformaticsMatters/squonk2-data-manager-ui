@@ -1,7 +1,7 @@
 import { AppBar, Toolbar } from "@mui/material";
 
 import { Logo } from "./navigation/Logo";
-import { ToolbarContents } from "./navigation/ToolbarContents";
+import { NavBarContents } from "./navigation/NavBarContents";
 
 const Header = () => {
   return (
@@ -9,7 +9,7 @@ const Header = () => {
       <Toolbar>
         <Logo />
 
-        <ToolbarContents />
+        <NavBarContents />
       </Toolbar>
     </AppBar>
   );

@@ -12,11 +12,23 @@ export const OUPContext = () => {
   const [organisation] = useSelectedOrganisation();
   const currentProject = useCurrentProject();
 
-  return (
-    <Box flexBasis="200px" sx={{ minWidth: 0 }}>
-      <Typography noWrap>Org: {organisation?.name}</Typography>
-      <Typography noWrap>Unit: {unit?.name}</Typography>
-      <Typography noWrap>Project: {currentProject?.name}</Typography>
-    </Box>
-  );
+  if (unit || organisation || currentProject) {
+    return (
+      <Box
+        flexBasis="200px"
+        sx={{
+          minWidth: 0,
+          outline: (theme) => `2px solid ${theme.palette.primary.light}`,
+          borderRadius: 2,
+          p: 0.75,
+          mr: 1,
+        }}
+      >
+        <Typography noWrap>Org: {organisation?.name}</Typography>
+        <Typography noWrap>Unit: {unit?.name}</Typography>
+        <Typography noWrap>Project: {currentProject?.name}</Typography>
+      </Box>
+    );
+  }
+  return null;
 };

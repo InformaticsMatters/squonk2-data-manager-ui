@@ -71,5 +71,5 @@ const Nav = styled("nav", { shouldForwardProp: (prop) => prop !== "linkWidth" })
     maxWidth: `${linkWidth}px`,
     textAlign: "center",
   },
-  "& div:first-of-type": { marginLeft: theme.spacing(8) },
+  "& div:first-of-type": { marginLeft: theme.spacing(4) },
 }));

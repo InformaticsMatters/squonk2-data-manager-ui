@@ -9,60 +9,66 @@ import { NavLink } from "./NavLink";
 import { OUPContext } from "./OUPContext";
 import { UserMenuContent } from "./UserMenuContent";
 
+export interface MobileNavMenuProps {
+  links?: boolean;
+}
+
 /**
  * Mobile modal navigation menu with
  * * Page links
  * * Project management
  * * User menu
  */
-export const MobileNavMenu = () => {
+export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
   const [open, setOpen] = useState(false);
   const isAuthorized = useIsAuthorized();
 
   return (
     <>
-      <IconButton color="inherit" size="large" sx={{ ml: "auto" }} onClick={() => setOpen(true)}>
+      <IconButton color="inherit" size="large" onClick={() => setOpen(true)}>
         <MenuRoundedIcon />
       </IconButton>
       <ModalWrapper id="mobile-menu" open={open} title="" onClose={() => setOpen(false)}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Typography component="h3" variant="h6">
-              Links
-            </Typography>
-            <List aria-label="main-mobile-navigation" component="nav">
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Datasets">
-                {({ active }) => (
-                  <ListItem button component="a" selected={active}>
-                    <ListItemText primary="Datasets" />
-                  </ListItem>
-                )}
-              </NavLink>
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Project">
-                {({ active }) => (
-                  <ListItem button component="a" selected={active}>
-                    <ListItemText primary="Project" />
-                  </ListItem>
-                )}
-              </NavLink>
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Executions">
-                {({ active }) => (
-                  <ListItem button component="a" selected={active}>
-                    <ListItemText primary="Executions" />
-                  </ListItem>
-                )}
-              </NavLink>
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Results">
-                {({ active }) => (
-                  <ListItem button component="a" selected={active}>
-                    <ListItemText primary="Results" />
-                  </ListItem>
-                )}
-              </NavLink>
-            </List>
-          </Grid>
+          {links && (
+            <Grid item xs={12}>
+              <Typography component="h3" variant="h6">
+                Links
+              </Typography>
+              <List aria-label="main-mobile-navigation" component="nav">
+                <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Datasets">
+                  {({ active }) => (
+                    <ListItem button component="a" selected={active}>
+                      <ListItemText primary="Datasets" />
+                    </ListItem>
+                  )}
+                </NavLink>
+                <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Project">
+                  {({ active }) => (
+                    <ListItem button component="a" selected={active}>
+                      <ListItemText primary="Project" />
+                    </ListItem>
+                  )}
+                </NavLink>
+                <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Executions">
+                  {({ active }) => (
+                    <ListItem button component="a" selected={active}>
+                      <ListItemText primary="Executions" />
+                    </ListItem>
+                  )}
+                </NavLink>
+                <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Results">
+                  {({ active }) => (
+                    <ListItem button component="a" selected={active}>
+                      <ListItemText primary="Results" />
+                    </ListItem>
+                  )}
+                </NavLink>
+              </List>
+            </Grid>
+          )}
 
-          {isAuthorized && (
+          {isAuthorized && links && (
             <Grid item xs={12}>
               <Divider />
             </Grid>

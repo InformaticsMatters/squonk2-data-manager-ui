@@ -49,6 +49,19 @@ export const NavBarContents = () => {
     openSettings: () => setSettingsOpen(true),
   };
 
+  const settingsButton = (
+    <IconButton
+      color="inherit"
+      disabled={!isAuthorized}
+      sx={{ ml: biggerThanMd ? 0 : "auto" }}
+      onClick={() => {
+        props.openSettings();
+      }}
+    >
+      <SettingsIcon />
+    </IconButton>
+  );
+
   let navContent;
   if (biggerThanMd) {
     // Desktop
@@ -57,31 +70,20 @@ export const NavBarContents = () => {
         <NavLinks linkWidth={120} />
         <IconsWrapper>
           {isAuthorized && <OUPContext />}
-          <IconButton
-            color="inherit"
-            disabled={!isAuthorized}
-            onClick={() => {
-              props.openSettings();
-            }}
-          >
-            <SettingsIcon />
-          </IconButton>
+          {settingsButton}
           <UserMenu />
         </IconsWrapper>
       </>
     );
-  } else if (biggerThanSm) {
-    // Tablet
+  } else {
+    // Tablet & Mobile
     navContent = (
       <>
-        <NavLinks linkWidth={100} />
-        <IconsWrapper>
-          <MobileNavMenu />
-        </IconsWrapper>
+        {biggerThanSm && <NavLinks linkWidth={100} />}
+        {settingsButton}
+        <MobileNavMenu links={false} />
       </>
     );
-  } else {
-    navContent = <MobileNavMenu />;
   }
 
   return (

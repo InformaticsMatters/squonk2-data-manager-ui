@@ -1,9 +1,22 @@
-import { Container, Grid, Link, List, ListItem, Paper, Typography } from "@mui/material";
+import type { Theme } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Link,
+  List,
+  ListItem,
+  Paper,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import NextLink from "next/link";
 
 import { AppVersions } from "../components/AppVersions";
 
 export const Footer = () => {
+  const small = useMediaQuery<Theme>((theme) => theme.breakpoints.up("sm"));
+  const itemStyles = { justifyContent: small ? "right" : "left" };
+
   return (
     <Paper square component="footer" sx={{ marginTop: "auto" }}>
       <Container maxWidth="md">
@@ -29,43 +42,43 @@ export const Footer = () => {
             </Typography>
             <AppVersions />
           </Grid>
-          <Grid item sm={3} textAlign="right" xs={12}>
-            <List dense>
-              <ListItem sx={{ justifyContent: "right" }}>
+          <Grid item sm={3} textAlign="right" xs={6}>
+            <List dense sx={{ p: 0 }}>
+              <ListItem sx={itemStyles}>
                 <NextLink passHref href={{ pathname: "/" }}>
                   <Link>Home</Link>
                 </NextLink>
               </ListItem>
-              <ListItem sx={{ justifyContent: "right" }}>
+              <ListItem sx={itemStyles}>
                 <NextLink passHref href={{ pathname: "/datasets" }}>
                   <Link>Datasets</Link>
                 </NextLink>
               </ListItem>
-              <ListItem sx={{ justifyContent: "right" }}>
+              <ListItem sx={itemStyles}>
                 <NextLink passHref href={{ pathname: "/datasets" }}>
                   <Link>Project</Link>
                 </NextLink>
               </ListItem>
-              <ListItem sx={{ justifyContent: "right" }}>
+              <ListItem sx={itemStyles}>
                 <NextLink passHref href={{ pathname: "/datasets" }}>
                   <Link>Executions</Link>
                 </NextLink>
               </ListItem>
             </List>
           </Grid>
-          <Grid item sm={3} xs={12}>
-            <List>
-              <ListItem sx={{ justifyContent: "right" }}>
+          <Grid item sm={3} xs={6}>
+            <List dense sx={{ p: 0 }}>
+              <ListItem sx={itemStyles}>
                 <NextLink passHref href={{ pathname: "/datasets" }}>
                   <Link>Results</Link>
                 </NextLink>
               </ListItem>
-              <ListItem sx={{ justifyContent: "right" }}>
+              <ListItem sx={itemStyles}>
                 <NextLink passHref href={{ pathname: "/products" }}>
                   <Link>Products</Link>
                 </NextLink>
               </ListItem>
-              <ListItem sx={{ justifyContent: "right" }}>
+              <ListItem sx={itemStyles}>
                 <NextLink passHref href={{ pathname: "/docs/guided-tour" }}>
                   <Link>Docs</Link>
                 </NextLink>

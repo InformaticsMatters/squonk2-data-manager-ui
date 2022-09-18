@@ -1,5 +1,6 @@
 import { useQueryClient } from "react-query";
 
+import type { UnitDetail } from "@squonk/account-server-client";
 import {
   getGetOrganisationUnitsQueryKey,
   getGetUnitsQueryKey,
@@ -11,29 +12,32 @@ import { ListItem, ListItemText } from "@mui/material";
 
 import { WarningDeleteButton } from "../../../../../components/WarningDeleteButton";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
-import { useSelectedUnit } from "../../../../../state/unitSelection";
 
-export const DeleteUnitListItem = () => {
-  const [unit, setUnit] = useSelectedUnit();
+export interface DeleteUnitListItem {
+  unit: UnitDetail;
+  onDelete: () => void;
+}
+
+export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
   const [organisation] = useSelectedOrganisation();
   const queryClient = useQueryClient();
   const { mutateAsync: deleteUnit, isLoading: isDeleting } = useDeleteDefaultUnit();
 
   return (
     <WarningDeleteButton
-      modalId={`delete-${unit?.id}`}
+      modalId={`delete-${unit.id}`}
       title="Delete Unit"
       tooltipText="Delete selected unit"
       onDelete={async () => {
         await deleteUnit();
-        setUnit();
+        onDelete();
         organisation?.id &&
           queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id));
         queryClient.invalidateQueries(getGetUnitsQueryKey());
       }}
     >
       {({ openModal }) => (
-        <ListItem button disabled={unit === undefined || isDeleting} onClick={() => openModal()}>
+        <ListItem button disabled={isDeleting} onClick={() => openModal()}>
           <ListItemText primary="Delete Unit" secondary="Deletes the selected unit" />
           <DeleteForeverIcon color="action" />
         </ListItem>

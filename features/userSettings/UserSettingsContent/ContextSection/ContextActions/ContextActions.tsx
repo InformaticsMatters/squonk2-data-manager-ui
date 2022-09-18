@@ -11,7 +11,7 @@ import { DeleteUnitListItem } from "./DeleteUnitListItem";
  * Displays actions related to context.
  */
 export const ContextActions = () => {
-  const [unit] = useSelectedUnit();
+  const [unit, setUnit] = useSelectedUnit();
   const [organisation] = useSelectedOrganisation();
   const { user } = useKeycloakUser();
 
@@ -22,7 +22,7 @@ export const ContextActions = () => {
     <List>
       {(isOrganisationOwner || organisation?.caller_is_member) &&
         organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && <CreateUnitListItem />}
-      {isUnitOwner && <DeleteUnitListItem />}
+      {isUnitOwner && unit && <DeleteUnitListItem unit={unit} onDelete={() => setUnit()} />}
       {unit && <CreateProjectListItem unit={unit} />}
     </List>
   );

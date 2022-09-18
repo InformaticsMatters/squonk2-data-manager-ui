@@ -1,6 +1,11 @@
 import { useQueryClient } from "react-query";
 
-import type { AsError, UnitProductPostBodyBodyFlavour } from "@squonk/account-server-client";
+import type {
+  AsError,
+  ProductDetail,
+  UnitDetail,
+  UnitProductPostBodyBodyFlavour,
+} from "@squonk/account-server-client";
 import {
   getGetProductsForUnitQueryKey,
   getGetProductsQueryKey,
@@ -33,27 +38,28 @@ import { getErrorMessage } from "../../utils/next/orvalError";
 import type { FormikModalWrapperProps } from "../modals/FormikModalWrapper";
 import { FormikModalWrapper } from "../modals/FormikModalWrapper";
 
-export type OrgAndUnitIdTuple = [organisationId: string, unitId: string];
-
 export interface CreateProjectFormProps {
   modal?: Resolve<
     Pick<FormikModalWrapperProps, "id" | "title" | "submitText" | "open" | "onClose">
   >;
-  orgAndUnit: Resolve<OrgAndUnitIdTuple> | (() => Promise<OrgAndUnitIdTuple>);
+  unitId: UnitDetail["id"] | (() => Promise<UnitDetail["id"]>);
+  product?: ProductDetail;
 }
 
-const getIds = async (orgAndUnit: CreateProjectFormProps["orgAndUnit"]) => {
-  if (typeof orgAndUnit === "function") {
-    return orgAndUnit();
-  }
-  return orgAndUnit;
-};
+export interface Values {
+  projectName: string;
+  flavour: string;
+  isPrivate: boolean;
+}
 
-const initialValues = { projectName: "", flavour: "", isPrivate: true };
+type ProjectFormikProps = FormikConfig<Values>;
 
-type ProjectFormikProps = FormikConfig<typeof initialValues>;
-
-export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps) => {
+export const CreateProjectForm = ({ modal, unitId, product }: CreateProjectFormProps) => {
+  const initialValues: Values = {
+    projectName: "",
+    flavour: product?.flavour ?? "",
+    isPrivate: true,
+  };
   const theme = useTheme();
   const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
 
@@ -71,39 +77,47 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
 
   const { setCurrentProjectId } = useCurrentProjectId();
 
-  const create = async ({ projectName, flavour, isPrivate }: typeof initialValues) => {
-    const [, unitId] = await getIds(orgAndUnit);
+  const create = async (
+    { projectName, flavour, isPrivate }: Values,
+    productId?: ProductDetail["id"],
+  ) => {
+    try {
+      if (!productId) {
+        const { id } = await createProduct({
+          unitId: typeof unitId === "function" ? await unitId() : unitId,
+          data: {
+            name: projectName,
+            type: PROJECT_SUB,
+            billing_day: getBillingDay(),
+            flavour: flavour as UnitProductPostBodyBodyFlavour,
+          },
+        });
+        productId = id;
+      }
 
-    const { id: productId } = await createProduct({
-      unitId,
-      data: {
-        name: projectName,
-        type: PROJECT_SUB,
-        billing_day: getBillingDay(),
-        flavour: flavour as UnitProductPostBodyBodyFlavour,
-      },
-    });
+      const { project_id } = await createProject({
+        data: {
+          name: projectName,
+          tier_product_id: productId,
+          private: isPrivate,
+        },
+      });
+      enqueueSnackbar("Project created");
 
-    const { project_id } = await createProject({
-      data: {
-        name: projectName,
-        tier_product_id: productId,
-        private: isPrivate,
-      },
-    });
+      queryClient.invalidateQueries(getGetProjectsQueryKey());
+      queryClient.invalidateQueries(getGetProductsQueryKey());
+      typeof unitId === "string" &&
+        queryClient.invalidateQueries(getGetProductsForUnitQueryKey(unitId));
 
-    enqueueSnackbar("Project created");
-
-    queryClient.invalidateQueries(getGetProjectsQueryKey());
-    queryClient.invalidateQueries(getGetProductsQueryKey());
-    queryClient.invalidateQueries(getGetProductsForUnitQueryKey(unitId));
-
-    setCurrentProjectId(project_id);
+      setCurrentProjectId(project_id);
+    } catch (error) {
+      enqueueError(error);
+    }
   };
 
   const handleSubmit: ProjectFormikProps["onSubmit"] = async (values, { setSubmitting }) => {
     try {
-      await create(values);
+      await create(values, product?.id);
       modal?.onClose();
     } catch (error) {
       enqueueError(error);
@@ -126,7 +140,14 @@ export const CreateProjectForm = ({ modal, orgAndUnit }: CreateProjectFormProps)
         {isError ? (
           <Typography color="error">{getErrorMessage(error)}</Typography>
         ) : (
-          <Field fullWidth select component={TextField} label="Tier" name="flavour">
+          <Field
+            fullWidth
+            select
+            component={TextField}
+            disabled={!!product?.id}
+            label="Tier"
+            name="flavour"
+          >
             {isLoading ? (
               <MenuItem disabled>Loading</MenuItem>
             ) : (

@@ -1,4 +1,12 @@
-import { Button, Container, Tooltip, Typography } from "@mui/material";
+import {
+  Button,
+  Container,
+  ListItemButton,
+  ListItemText,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { useRouter } from "next/router";
 
 import { PageSection } from "../../../components/PageSection";
 import { useCurrentProjectId } from "../../../hooks/projectHooks";
@@ -11,6 +19,7 @@ import { UserSettingsSection } from "./UserSettingsSection";
  */
 export const UserSettingsContent = () => {
   const { setCurrentProjectId } = useCurrentProjectId();
+  const router = useRouter();
 
   return (
     <Container maxWidth="lg">
@@ -31,6 +40,15 @@ export const UserSettingsContent = () => {
         <Tooltip title="Deselect project">
           <Button onClick={() => setCurrentProjectId()}>Clear</Button>
         </Tooltip>
+        {router.pathname !== "/products" && (
+          <ListItemButton
+            onClick={() => {
+              router.push({ pathname: "/products" });
+            }}
+          >
+            <ListItemText primary="Products" secondary="View all project and dataset products" />
+          </ListItemButton>
+        )}
       </PageSection>
     </Container>
   );

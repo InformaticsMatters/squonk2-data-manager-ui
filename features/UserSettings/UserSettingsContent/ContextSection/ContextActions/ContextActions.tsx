@@ -1,9 +1,9 @@
 import { List } from "@mui/material";
 
+import { CreateProjectListItem } from "../../../../../components/projects/CreateProjectListItem";
 import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
 import { useSelectedUnit } from "../../../../../state/unitSelection";
-import { CreateProjectListItem } from "./CreateProjectListItem";
 import { CreateUnitListItem } from "./CreateUnitListItem";
 import { DeleteUnitListItem } from "./DeleteUnitListItem";
 
@@ -23,7 +23,7 @@ export const ContextActions = () => {
       {(isOrganisationOwner || organisation?.caller_is_member) &&
         organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && <CreateUnitListItem />}
       {isUnitOwner && <DeleteUnitListItem />}
-      {unit && <CreateProjectListItem />}
+      {unit && <CreateProjectListItem unit={unit} />}
     </List>
   );
 };

@@ -1,6 +1,5 @@
 import { useCreateDefaultUnit } from "@squonk/account-server-client/unit";
 
-import type { OrgAndUnitIdTuple } from "../../../components/projects/CreateProjectForm";
 import { CreateProjectForm } from "../../../components/projects/CreateProjectForm";
 
 /**
@@ -8,12 +7,11 @@ import { CreateProjectForm } from "../../../components/projects/CreateProjectFor
  */
 export const BootstrapForm = () => {
   const { mutateAsync: createUnit } = useCreateDefaultUnit();
-
   return (
     <CreateProjectForm
-      orgAndUnit={async () => {
-        const { id: unitId, organisation_id } = await createUnit();
-        return [organisation_id, unitId] as OrgAndUnitIdTuple;
+      unitId={async () => {
+        const { id: unitId } = await createUnit();
+        return unitId;
       }}
     />
   );

@@ -7,9 +7,7 @@ declare module "nextjs-routes" {
   export type Route =
     | { pathname: "/api/as-api/[...asProxy]"; query: Query<{ asProxy: string[] }> }
     | { pathname: "/api/auth/[...auth0]"; query: Query<{ auth0: string[] }> }
-    | { pathname: "/api/dataset/[datasetId]/[datasetVersion]"; query: Query<{ datasetId: string; datasetVersion: string }> }
     | { pathname: "/api/dm-api/[...dmProxy]"; query: Query<{ dmProxy: string[] }> }
-    | { pathname: "/api/project/[projectId]/file"; query: Query<{ projectId: string }> }
     | { pathname: "/api/viewer-proxy/[...viewerProxy]"; query: Query<{ viewerProxy: string[] }> }
     | { pathname: "/dataset/[datasetId]/[datasetVersion]"; query: Query<{ datasetId: string; datasetVersion: string }> }
     | { pathname: "/datasets"; query?: Query | undefined }
@@ -40,6 +38,7 @@ declare module "nextjs-routes" {
     | { pathname: "/docs/jobs"; query?: Query | undefined }
     | { pathname: "/executions"; query?: Query | undefined }
     | { pathname: "/"; query?: Query | undefined }
+    | { pathname: "/products"; query?: Query | undefined }
     | { pathname: "/project/file"; query?: Query | undefined }
     | { pathname: "/project"; query?: Query | undefined }
     | { pathname: "/results/instance/[instanceId]"; query: Query<{ instanceId: string }> }

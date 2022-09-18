@@ -4,10 +4,10 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { Divider, Grid, IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
 
 import { ModalWrapper } from "../../components/modals/ModalWrapper";
-import type { UserSettingsProps } from "../../features/UserSettings";
 import { useIsAuthorized } from "../../hooks/useIsAuthorized";
 import { NavLink } from "./NavLink";
 import { OUPContext } from "./OUPContext";
+import type { SettingsControls } from "./ToolbarContents";
 import { UserMenuContent } from "./UserMenuContent";
 
 /**
@@ -16,7 +16,7 @@ import { UserMenuContent } from "./UserMenuContent";
  * * Project management
  * * User menu
  */
-export const MobileNavMenu = (props: UserSettingsProps) => {
+export const MobileNavMenu = (props: SettingsControls) => {
   const [open, setOpen] = useState(false);
   const isAuthorized = useIsAuthorized();
 
@@ -85,7 +85,7 @@ export const MobileNavMenu = (props: UserSettingsProps) => {
           </Grid>
 
           <Grid item xs={12}>
-            <UserMenuContent {...props} />
+            <UserMenuContent closeOpener={() => setOpen(false)} {...props} />
           </Grid>
         </Grid>
       </ModalWrapper>

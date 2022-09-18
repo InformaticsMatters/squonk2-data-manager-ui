@@ -2,16 +2,15 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import { Box, Fade, IconButton, Paper, Popper, Tooltip } from "@mui/material";
 import { bindPopper, bindToggle, usePopupState } from "material-ui-popup-state/hooks";
 
-import type { UserSettingsProps } from "../../features/UserSettings";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import type { SettingsControls } from "./ToolbarContents";
 import { UserMenuContent } from "./UserMenuContent";
 
 /**
  * Popover displaying the user menu options
  */
-export const UserMenu = (props: UserSettingsProps) => {
+export const UserMenu = (props: SettingsControls) => {
   const popupState = usePopupState({ variant: "popper", popupId: "user-menu" });
-
   const { isLoading } = useKeycloakUser();
 
   return (
@@ -42,7 +41,7 @@ export const UserMenu = (props: UserSettingsProps) => {
           <Fade {...TransitionProps} timeout={350}>
             <Paper>
               <Box p={1}>
-                <UserMenuContent {...props} />
+                <UserMenuContent closeOpener={popupState.close} {...props} />
               </Box>
             </Paper>
           </Fade>

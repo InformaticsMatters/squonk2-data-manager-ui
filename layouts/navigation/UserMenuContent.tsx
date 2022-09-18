@@ -1,16 +1,19 @@
 import { Link, Typography } from "@mui/material";
 
 import { CenterLoader } from "../../components/CenterLoader";
-import type { UserSettingsProps } from "../../features/UserSettings";
-import { UserSettings } from "../../features/UserSettings";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
+import type { SettingsControls } from "./ToolbarContents";
+
+export interface UserMenuContentProps extends SettingsControls {
+  closeOpener: () => void;
+}
 
 /**
  * Content of the user menu
  */
-export const UserMenuContent = (props: UserSettingsProps) => {
+export const UserMenuContent = ({ openSettings, closeOpener }: UserMenuContentProps) => {
   const { user, isLoading } = useKeycloakUser();
   const [, setUnit] = useSelectedUnit();
   const [, setOrganisation] = useSelectedOrganisation();
@@ -37,7 +40,16 @@ export const UserMenuContent = (props: UserSettingsProps) => {
               Logout
             </Link>
           </Typography>
-          <UserSettings {...props} />
+          <Link
+            component="button"
+            variant="body1"
+            onClick={() => {
+              openSettings();
+              closeOpener();
+            }}
+          >
+            Settings
+          </Link>
         </>
       ) : (
         <Typography>

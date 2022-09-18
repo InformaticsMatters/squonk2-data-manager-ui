@@ -14,13 +14,19 @@ import { UserMenu } from "./UserMenu";
 
 const UserSettingsContent = dynamic(
   () =>
-    import("../../features/UserSettings/UserSettingsContent/UserSettingsContent").then(
+    import("../../features/userSettings/UserSettingsContent/UserSettingsContent").then(
       (mod) => mod.UserSettingsContent,
     ),
   {
     loading: () => <CenterLoader />,
   },
 );
+
+export interface SettingsControls {
+  closeSettings: () => void;
+  open: boolean;
+  openSettings: () => void;
+}
 
 /**
  * Desktop / Tablet toolbar contents
@@ -36,7 +42,7 @@ export const ToolbarContents = () => {
 
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const props = {
+  const props: SettingsControls = {
     closeSettings: () => setSettingsOpen(false),
     open: settingsOpen,
     openSettings: () => setSettingsOpen(true),

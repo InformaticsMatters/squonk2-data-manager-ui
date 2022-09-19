@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0-rc.1](https://github.com/InformaticsMatters/squonk-frontend/compare/1.2.0-rc.0...1.2.0-rc.1) (2022-09-19)
+
+
+### Bug Fixes
+
+* **footer:** fix version spacing in footer ([176c268](https://github.com/InformaticsMatters/squonk-frontend/commit/176c268a4073b090a5ad5f1d7e1d8335cf5f3d2f))
+* **navigation:** fix display of links on mobile ([3cbccfa](https://github.com/InformaticsMatters/squonk-frontend/commit/3cbccfab4d73b1ed8223523ff0b0a12e893518f4))
+
 ## [1.2.0-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/1.1.1...1.2.0-rc.0) (2022-09-19)
 
 

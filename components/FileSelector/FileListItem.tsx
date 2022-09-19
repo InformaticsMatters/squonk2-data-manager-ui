@@ -4,6 +4,7 @@ import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
 import {
   Checkbox,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
@@ -65,8 +66,9 @@ export const FileListItem = ({
   onSelect,
 }: FileListItemProps) => {
   const labelId = `file-${fullPath}`;
-  return (
-    <ListItem button={!!onClick as any} key={fullPath} onClick={() => onClick && onClick()}>
+
+  const listItemConent = (
+    <>
       {!!onSelect && (
         <ListItemIcon>
           <Checkbox
@@ -92,6 +94,15 @@ export const FileListItem = ({
           type={type}
         />
       </ListItemSecondaryAction>
-    </ListItem>
+    </>
   );
+  if (onClick) {
+    return (
+      <ListItemButton key={fullPath} onClick={onClick}>
+        {listItemConent}
+      </ListItemButton>
+    );
+  }
+
+  return <ListItem key={fullPath}>{listItemConent}</ListItem>;
 };

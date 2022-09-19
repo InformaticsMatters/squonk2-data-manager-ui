@@ -8,7 +8,7 @@ import BackupRoundedIcon from "@mui/icons-material/BackupRounded";
 import type { IconButtonProps } from "@mui/material";
 import {
   IconButton,
-  ListItem,
+  ListItemButton,
   ListItemSecondaryAction,
   ListItemText,
   Typography,
@@ -50,14 +50,14 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
 
   return (
     <>
-      <ListItem button onClick={() => setOpen(true)}>
+      <ListItemButton onClick={() => setOpen(true)}>
         <ListItemText primary="Create a New Version of this Dataset" />
         <ListItemSecondaryAction>
           <IconButton edge="end" size="large" onClick={() => setOpen(true)}>
             <BackupRoundedIcon />
           </IconButton>
         </ListItemSecondaryAction>
-      </ListItem>
+      </ListItemButton>
 
       <ModalWrapper
         DialogProps={{ maxWidth: "sm", fullWidth: true }}

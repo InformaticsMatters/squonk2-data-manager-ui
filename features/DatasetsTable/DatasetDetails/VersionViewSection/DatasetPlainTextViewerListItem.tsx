@@ -1,5 +1,5 @@
 import { Description } from "@mui/icons-material";
-import { ListItem, ListItemText } from "@mui/material";
+import { ListItemButton, ListItemText } from "@mui/material";
 import NextLink from "next/link";
 
 export interface DatasetPlainTextViewerListItemProps {
@@ -19,13 +19,13 @@ export const DatasetPlainTextViewerListItem = ({
         query: { datasetId, datasetVersion: String(version) },
       }}
     >
-      <ListItem button component="a" rel="noopener noreferrer" target="_blank">
+      <ListItemButton component="a" rel="noopener noreferrer" target="_blank">
         <ListItemText
           primary="Plaintext Viewer"
           secondary="Displays the dataset version as plaintext"
         />
         <Description color="action" />
-      </ListItem>
+      </ListItemButton>
     </NextLink>
   );
 };

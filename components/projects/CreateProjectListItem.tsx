@@ -3,7 +3,7 @@ import { useState } from "react";
 import type { UnitDetail } from "@squonk/account-server-client";
 
 import { NoteAdd } from "@mui/icons-material";
-import { ListItem, ListItemText } from "@mui/material";
+import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
 import { CreateProjectForm } from "./CreateProjectForm";
 
@@ -19,13 +19,15 @@ export const CreateProjectListItem = ({ unit }: CreateProjectListItemProps) => {
 
   return (
     <>
-      <ListItem button onClick={() => setOpen(true)}>
+      <ListItemButton onClick={() => setOpen(true)}>
         <ListItemText
           primary="Create Project"
           secondary="Creates a new project in the currently selected context"
         />
-        <NoteAdd color="action" />
-      </ListItem>
+        <ListItemIcon>
+          <NoteAdd color="action" />
+        </ListItemIcon>
+      </ListItemButton>
 
       <CreateProjectForm
         modal={{

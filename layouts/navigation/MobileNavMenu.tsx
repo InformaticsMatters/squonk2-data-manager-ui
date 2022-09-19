@@ -1,7 +1,15 @@
 import { useState } from "react";
 
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import { Divider, Grid, IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
+import {
+  Divider,
+  Grid,
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemText,
+  Typography,
+} from "@mui/material";
 
 import { ModalWrapper } from "../../components/modals/ModalWrapper";
 import { useIsAuthorized } from "../../hooks/useIsAuthorized";
@@ -38,30 +46,30 @@ export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
               <List aria-label="main-mobile-navigation" component="nav">
                 <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Datasets">
                   {({ active }) => (
-                    <ListItem button component="a" selected={active}>
+                    <ListItemButton component="a" selected={active}>
                       <ListItemText primary="Datasets" />
-                    </ListItem>
+                    </ListItemButton>
                   )}
                 </NavLink>
                 <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Project">
                   {({ active }) => (
-                    <ListItem button component="a" selected={active}>
+                    <ListItemButton component="a" selected={active}>
                       <ListItemText primary="Project" />
-                    </ListItem>
+                    </ListItemButton>
                   )}
                 </NavLink>
                 <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Executions">
                   {({ active }) => (
-                    <ListItem button component="a" selected={active}>
+                    <ListItemButton component="a" selected={active}>
                       <ListItemText primary="Executions" />
-                    </ListItem>
+                    </ListItemButton>
                   )}
                 </NavLink>
                 <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Results">
                   {({ active }) => (
-                    <ListItem button component="a" selected={active}>
+                    <ListItemButton component="a" selected={active}>
                       <ListItemText primary="Results" />
-                    </ListItem>
+                    </ListItemButton>
                   )}
                 </NavLink>
               </List>

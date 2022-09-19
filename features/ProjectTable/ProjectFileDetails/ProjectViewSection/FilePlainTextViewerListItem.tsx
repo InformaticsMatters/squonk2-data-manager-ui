@@ -1,5 +1,5 @@
 import { Description } from "@mui/icons-material";
-import { ListItem, ListItemText } from "@mui/material";
+import { ListItemButton, ListItemText } from "@mui/material";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 
@@ -24,10 +24,10 @@ export const FilePlainTextViewerListItem = ({ fileName }: FilePlainTextViewerLis
         },
       }}
     >
-      <ListItem button component="a" rel="noopener noreferrer" target="_blank">
+      <ListItemButton component="a" rel="noopener noreferrer" target="_blank">
         <ListItemText primary="Plaintext Viewer" secondary="Displays the file as plaintext" />
         <Description color="action" />
-      </ListItem>
+      </ListItemButton>
     </NextLink>
   );
 };

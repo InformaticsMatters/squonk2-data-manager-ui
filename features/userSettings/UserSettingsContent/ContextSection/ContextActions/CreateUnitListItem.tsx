@@ -11,7 +11,7 @@ import {
 } from "@squonk/account-server-client/unit";
 
 import { CreateNewFolder } from "@mui/icons-material";
-import { Grid, ListItem, ListItemText } from "@mui/material";
+import { Grid, ListItemButton, ListItemText } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import * as yup from "yup";
@@ -70,13 +70,13 @@ export const CreateUnitListItem = () => {
 
   return (
     <>
-      <ListItem button onClick={() => setOpen(true)}>
+      <ListItemButton onClick={() => setOpen(true)}>
         <ListItemText
           primary="Create Unit"
           secondary="Creates a new unit in the currently selected organisation"
         />
         <CreateNewFolder color="action" />
-      </ListItem>
+      </ListItemButton>
 
       <Formik
         validateOnMount

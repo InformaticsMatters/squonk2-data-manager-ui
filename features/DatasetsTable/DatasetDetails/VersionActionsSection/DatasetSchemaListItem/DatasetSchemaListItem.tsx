@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import FindInPageRoundedIcon from "@mui/icons-material/FindInPageRounded";
-import { ListItem, ListItemText } from "@mui/material";
+import { ListItemButton, ListItemText } from "@mui/material";
 
 import { DatasetSchemaViewModal } from "./DatasetSchemaViewModal";
 
@@ -24,13 +24,13 @@ export const DatasetSchemaListItem = ({ datasetId, version }: DatasetSchemaListI
   const [open, setOpen] = useState(false);
   return (
     <>
-      <ListItem button onClick={() => setOpen(true)}>
+      <ListItemButton onClick={() => setOpen(true)}>
         <ListItemText
           primary="View and Edit the Dataset Schema"
           secondary="View the available fields and their description and data type"
         />
         <FindInPageRoundedIcon color="action" />
-      </ListItem>
+      </ListItemButton>
 
       <DatasetSchemaViewModal
         datasetId={datasetId}

@@ -8,7 +8,7 @@ import {
 } from "@squonk/account-server-client/unit";
 
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { ListItem, ListItemText } from "@mui/material";
+import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
 import { WarningDeleteButton } from "../../../../../components/WarningDeleteButton";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
@@ -37,10 +37,12 @@ export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
       }}
     >
       {({ openModal }) => (
-        <ListItem button disabled={isDeleting} onClick={() => openModal()}>
+        <ListItemButton disabled={isDeleting} onClick={() => openModal()}>
           <ListItemText primary="Delete Unit" secondary="Deletes the selected unit" />
-          <DeleteForeverIcon color="action" />
-        </ListItem>
+          <ListItemIcon>
+            <DeleteForeverIcon color="action" />
+          </ListItemIcon>
+        </ListItemButton>
       )}
     </WarningDeleteButton>
   );

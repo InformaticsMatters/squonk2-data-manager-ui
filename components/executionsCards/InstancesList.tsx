@@ -1,7 +1,7 @@
 import type { InstanceSummary } from "@squonk/data-manager-client";
 import { useGetInstances } from "@squonk/data-manager-client/instance";
 
-import { Box, List, ListItem, ListItemText, Typography } from "@mui/material";
+import { Box, List, ListItemButton, ListItemText, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -56,13 +56,13 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
             }}
             key={instance.id}
           >
-            <ListItem button component="a">
+            <ListItemButton component="a">
               <ListItemText
                 primary={instance.name}
                 primaryTypographyProps={{ variant: "body1" }}
                 secondary={<LocalTime utcTimestamp={instance.launched} />}
               />
-            </ListItem>
+            </ListItemButton>
           </NextLink>
         ))}
     </List>

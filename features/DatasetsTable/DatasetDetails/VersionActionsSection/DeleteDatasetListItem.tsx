@@ -4,7 +4,7 @@ import type { DatasetVersionSummary, DmError } from "@squonk/data-manager-client
 import { getGetDatasetsQueryKey, useDeleteDataset } from "@squonk/data-manager-client/dataset";
 
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { ListItem, ListItemText } from "@mui/material";
+import { ListItemButton, ListItemText } from "@mui/material";
 
 import { WarningDeleteButton } from "../../../../components/WarningDeleteButton";
 import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
@@ -49,10 +49,10 @@ export const DeleteDatasetListItem = ({ datasetId, version, onDelete }: DeleteDa
       }}
     >
       {({ isDeleting, openModal }) => (
-        <ListItem button disabled={isDeleting} onClick={openModal}>
+        <ListItemButton disabled={isDeleting} onClick={openModal}>
           <ListItemText primary="Delete this Version of the Dataset" />
           <DeleteForeverIcon color="action" />
-        </ListItem>
+        </ListItemButton>
       )}
     </WarningDeleteButton>
   );

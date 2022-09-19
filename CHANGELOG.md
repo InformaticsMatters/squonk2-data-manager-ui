@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0-rc.0](https://github.com/InformaticsMatters/squonk-frontend/compare/1.1.1...1.2.0-rc.0) (2022-09-19)
+
+
+### Features
+
+* **edit-unit:** allow user to change editors of units ([f7d3442](https://github.com/InformaticsMatters/squonk-frontend/commit/f7d34426d7248cf946042341d084f3508f7b54b2)), closes [#675](https://github.com/InformaticsMatters/squonk-frontend/issues/675)
+* **instance-page:** add coins & cost to app and job details ([e35a990](https://github.com/InformaticsMatters/squonk-frontend/commit/e35a9906dfba0a0fb75e72b17aa6a9520960b6c7)), closes [#704](https://github.com/InformaticsMatters/squonk-frontend/issues/704)
+* **products:** add products page a footer links ([1a82135](https://github.com/InformaticsMatters/squonk-frontend/commit/1a82135a09de75903b91b5772b81e4fd7c8287fe)), closes [#673](https://github.com/InformaticsMatters/squonk-frontend/issues/673)
+
+
+### Bug Fixes
+
+* **footer:** fix display of links on small screens ([4d75cf0](https://github.com/InformaticsMatters/squonk-frontend/commit/4d75cf0816a2aa4c60890d281c6dd07465c237b5))
+* **navigation:** make mobile/tablet nav more consistent ([37a90aa](https://github.com/InformaticsMatters/squonk-frontend/commit/37a90aa7ca60636e6b0f472e41b1597726e95b94))
+* **settings:** close menu popper when settings is clicked ([c8c25ba](https://github.com/InformaticsMatters/squonk-frontend/commit/c8c25badcb225c2fdbb119ac7b637e1dab1f063b))
+* **settings:** move dialog to top of navbar tree so it doesn't remount when window width changes ([d4efe6a](https://github.com/InformaticsMatters/squonk-frontend/commit/d4efe6a2e12b1ca9e4cee049409636f037653f2a))
+
 ### [1.1.1](https://github.com/InformaticsMatters/squonk-frontend/compare/1.1.0...1.1.1) (2022-09-08)
 
 

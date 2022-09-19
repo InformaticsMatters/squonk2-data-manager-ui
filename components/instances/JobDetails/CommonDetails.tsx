@@ -15,7 +15,7 @@ export const CommonDetails = ({ instance }: CommonDetailsProps) => {
         <ListItemIcon sx={{ minWidth: "40px" }}>
           <PaymentIcon />
         </ListItemIcon>
-        <ListItemText primary={`Cost: $${instance.cost}`} secondary={`Coins: C${instance.coins}`} />
+        <ListItemText primary={`Coins: C${instance.coins}`} secondary={`Cost: ${instance.cost}`} />
       </ListItem>
       <ListItem>
         <ListItemIcon sx={{ minWidth: "40px" }}>

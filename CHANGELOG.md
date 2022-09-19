@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/InformaticsMatters/squonk-frontend/compare/1.2.0...1.2.1) (2022-09-19)
+
+
+### Bug Fixes
+
+* **footer:** fix footer links ([bd0c576](https://github.com/InformaticsMatters/squonk-frontend/commit/bd0c576a7788b7627f53df8765940b18bf586b12))
+* **instance-page:** fix unit for instance cost ([6c3833a](https://github.com/InformaticsMatters/squonk-frontend/commit/6c3833a4a544fd3e48fb09cd3f2aa9e15068b9c6))
+
 ## [1.2.0](https://github.com/InformaticsMatters/squonk-frontend/compare/1.2.0-rc.1...1.2.0) (2022-09-19)
 
 ## [1.2.0-rc.1](https://github.com/InformaticsMatters/squonk-frontend/compare/1.2.0-rc.0...1.2.0-rc.1) (2022-09-19)

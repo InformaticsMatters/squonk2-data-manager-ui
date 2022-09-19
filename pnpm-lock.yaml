@@ -49,7 +49,7 @@ specifiers:
   husky: 8.0.1
   identity-obj-proxy: 3.0.0
   immer: 9.0.15
-  jotai: 1.8.3
+  jotai: 1.8.4
   just-compare: 2.2.2
   just-group-by: ^2.1.2
   lint-staged: 13.0.3
@@ -111,7 +111,7 @@ dependencies:
   formik-mui: 4.0.0_d029d1d77f536232f1319c11fe5cd66b
   formik-mui-lab: 1.0.0_2cf4d048338ef0934bb7991e423e2953
   immer: 9.0.15
-  jotai: 1.8.3_immer@9.0.15+react@17.0.2
+  jotai: 1.8.4_immer@9.0.15+react@17.0.2
   just-compare: 2.2.2
   just-group-by: 2.1.2
   lodash-es: 4.17.21
@@ -4134,8 +4134,8 @@ packages:
       '@panva/asn1.js': 1.0.0
     dev: false
 
-  /jotai/1.8.3_immer@9.0.15+react@17.0.2:
-    resolution: {integrity: sha512-bNAs/DMD6BEB4xxVku33CI+ZIFyCWG82Ms6JnvYunEvGCnviTTDBl+m0HKgijoHmcNM3fxQ5MARdG+wwokNxog==}
+  /jotai/1.8.4_immer@9.0.15+react@17.0.2:
+    resolution: {integrity: sha512-bkHDHNxm7bU4+bJL4z96fTlJYN34UDRTu3ghEajJrDepayON9YEaxPrXr7xhLnIRntoFC6eDYYhMNA/ilbj2RQ==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
       '@babel/core': '*'

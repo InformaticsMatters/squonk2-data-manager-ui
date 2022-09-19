@@ -4,9 +4,10 @@ import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
 import type { AutocompleteProps } from "@mui/material";
 import { Autocomplete, Box, TextField, Typography } from "@mui/material";
 
-import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { projectPayload, useCurrentProjectId } from "../../hooks/projectHooks";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
+import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next/localStorage";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { ItemIcons } from "./ItemIcons";
 
@@ -67,6 +68,7 @@ export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
           // Not the best solution but I couldn't figure out anything better
           if (newUnit?.id !== unit?.id) {
             setCurrentProjectId();
+            writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
           }
           setUnit(newUnit ?? undefined);
         }}

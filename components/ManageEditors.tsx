@@ -72,14 +72,14 @@ export const ManageEditors: FC<ManageEditorsProps> = ({
       renderInput={(params) => <TextField {...params} label="Editors" />}
       renderTags={(value, getTagProps) =>
         value.map((option: string, index: number) => {
-          const { onDelete, ...chipProps } = getTagProps({ index }) as any; // TODO: find better typing
+          const { onDelete, ...chipProps } = getTagProps({ index });
           return (
             <Chip
-              key={option}
               label={option}
               variant="outlined"
               onDelete={option !== currentUsername ? onDelete : undefined}
               {...chipProps}
+              key={option}
             />
           );
         })

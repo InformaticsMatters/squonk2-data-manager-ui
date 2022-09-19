@@ -9,9 +9,9 @@ import {
 } from "@squonk/data-manager-client/dataset";
 
 import { CenterLoader } from "../../../../components/CenterLoader";
+import { ManageEditors } from "../../../../components/ManageEditors";
 import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../../../hooks/useKeycloakUser";
-import { ManageEditors } from "./ManageEditors";
 
 export interface ManageDatasetEditorsSectionProps {
   /**

@@ -6,6 +6,7 @@ import { useSelectedOrganisation } from "../../../../../state/organisationSelect
 import { useSelectedUnit } from "../../../../../state/unitSelection";
 import { CreateUnitListItem } from "./CreateUnitListItem";
 import { DeleteUnitListItem } from "./DeleteUnitListItem";
+import { EditUnitListItem } from "./EditUnitListItem";
 
 /**
  * Displays actions related to context.
@@ -23,6 +24,7 @@ export const ContextActions = () => {
       {(isOrganisationOwner || organisation?.caller_is_member) &&
         organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && <CreateUnitListItem />}
       {isUnitOwner && unit && <DeleteUnitListItem unit={unit} onDelete={() => setUnit()} />}
+      {isUnitOwner && unit && organisation?.name !== "Default" && <EditUnitListItem unit={unit} />}
       {unit && <CreateProjectListItem unit={unit} />}
     </List>
   );

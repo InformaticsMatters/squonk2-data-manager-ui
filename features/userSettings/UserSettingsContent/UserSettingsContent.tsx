@@ -9,7 +9,8 @@ import {
 import { useRouter } from "next/router";
 
 import { PageSection } from "../../../components/PageSection";
-import { useCurrentProjectId } from "../../../hooks/projectHooks";
+import { projectPayload, useCurrentProjectId } from "../../../hooks/projectHooks";
+import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../../utils/next/localStorage";
 import { ProjectStatsSection } from "../../ProjectStats";
 import { ContextSection } from "./ContextSection";
 
@@ -33,7 +34,14 @@ export const UserSettingsContent = () => {
       <PageSection level={2} title="Project Stats">
         <ProjectStatsSection />
         <Tooltip title="Deselect project">
-          <Button onClick={() => setCurrentProjectId()}>Clear</Button>
+          <Button
+            onClick={() => {
+              setCurrentProjectId();
+              writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
+            }}
+          >
+            Clear
+          </Button>
         </Tooltip>
         {router.pathname !== "/products" && (
           <ListItemButton

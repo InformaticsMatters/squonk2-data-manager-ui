@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import SettingsIcon from "@mui/icons-material/Settings";
-import { IconButton, styled, useMediaQuery, useTheme } from "@mui/material";
+import { IconButton, styled, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import { CenterLoader } from "../../components/CenterLoader";
@@ -50,16 +50,18 @@ export const NavBarContents = () => {
   };
 
   const settingsButton = (
-    <IconButton
-      color="inherit"
-      disabled={!isAuthorized}
-      sx={{ ml: biggerThanMd ? 0 : "auto" }}
-      onClick={() => {
-        props.openSettings();
-      }}
-    >
-      <SettingsIcon />
-    </IconButton>
+    <Tooltip title="Settings">
+      <IconButton
+        color="inherit"
+        disabled={!isAuthorized}
+        sx={{ ml: biggerThanMd ? 0 : "auto" }}
+        onClick={() => {
+          props.openSettings();
+        }}
+      >
+        <SettingsIcon />
+      </IconButton>
+    </Tooltip>
   );
 
   let navContent;

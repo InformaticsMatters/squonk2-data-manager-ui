@@ -55,12 +55,12 @@ export const Footer = () => {
                 </NextLink>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink passHref href={{ pathname: "/datasets" }}>
+                <NextLink passHref href={{ pathname: "/project" }}>
                   <Link>Project</Link>
                 </NextLink>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink passHref href={{ pathname: "/datasets" }}>
+                <NextLink passHref href={{ pathname: "/executions" }}>
                   <Link>Executions</Link>
                 </NextLink>
               </ListItem>
@@ -69,7 +69,7 @@ export const Footer = () => {
           <Grid item sm={3} xs={6}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
-                <NextLink passHref href={{ pathname: "/datasets" }}>
+                <NextLink passHref href={{ pathname: "/results" }}>
                   <Link>Results</Link>
                 </NextLink>
               </ListItem>

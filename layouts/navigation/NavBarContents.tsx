@@ -83,7 +83,7 @@ export const NavBarContents = () => {
       <>
         {biggerThanSm && <NavLinks linkWidth={100} />}
         {settingsButton}
-        <MobileNavMenu links={false} />
+        <MobileNavMenu links={!biggerThanSm} />
       </>
     );
   }

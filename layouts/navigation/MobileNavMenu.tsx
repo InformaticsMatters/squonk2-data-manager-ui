@@ -75,13 +75,11 @@ export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
               </List>
             </Grid>
           )}
-
           {isAuthorized && links && (
             <Grid item xs={12}>
               <Divider />
             </Grid>
           )}
-
           <Grid item xs={12}>
             {isAuthorized && (
               <>
@@ -92,11 +90,9 @@ export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
               </>
             )}
           </Grid>
-
           <Grid item xs={12}>
             <Divider />
           </Grid>
-
           <Grid item xs={12}>
             <UserMenuContent />
           </Grid>

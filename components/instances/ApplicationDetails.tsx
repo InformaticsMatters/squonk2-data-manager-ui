@@ -1,11 +1,10 @@
 import type { InstanceSummary } from "@squonk/data-manager-client";
 
-import { ListItem, ListItemText } from "@mui/material";
-
 import { usePolledGetInstance } from "../../hooks/usePolledGetInstance";
 import { CenterLoader } from "../CenterLoader";
 import { HorizontalList } from "../HorizontalList";
 import { TaskDetails } from "../tasks/TaskDetails";
+import { CommonDetails } from "./JobDetails/CommonDetails";
 
 export interface ApplicationDetailsProps {
   /**
@@ -30,12 +29,7 @@ export const ApplicationDetails = ({ instanceId }: ApplicationDetailsProps) => {
   return (
     <>
       <HorizontalList>
-        <ListItem>
-          <ListItemText
-            primary={instance.application_id}
-            secondary={instance.application_version}
-          />
-        </ListItem>
+        <CommonDetails instance={instance} />
       </HorizontalList>
 
       <TaskDetails taskId={task?.id ?? ""} />

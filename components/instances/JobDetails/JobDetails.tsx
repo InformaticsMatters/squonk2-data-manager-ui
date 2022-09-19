@@ -1,7 +1,6 @@
 import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
-import AppsRoundedIcon from "@mui/icons-material/AppsRounded";
 import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
 import { Alert, Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
@@ -11,6 +10,7 @@ import { CenterLoader } from "../../CenterLoader";
 import { HorizontalList } from "../../HorizontalList";
 import { PageSection } from "../../PageSection";
 import { TaskDetails } from "../../tasks/TaskDetails";
+import { CommonDetails } from "./CommonDetails";
 import { JobInputSection } from "./JobInputSection";
 import { JobOutputSection } from "./JobOutputSection";
 
@@ -36,7 +36,7 @@ export const JobDetails = ({ instanceId, jobId }: JobDetailsProps) => {
   } = usePolledGetInstance(instanceId);
   const { data: job, isLoading: isJobLoading, error: jobError } = useGetJob(jobId);
 
-  if (isInstanceLoading || isJobLoading) {
+  if (!instance && (isInstanceLoading || isJobLoading)) {
     return <CenterLoader />;
   }
 
@@ -50,15 +50,7 @@ export const JobDetails = ({ instanceId, jobId }: JobDetailsProps) => {
   return (
     <>
       <HorizontalList>
-        <ListItem>
-          <ListItemIcon sx={{ minWidth: "40px" }}>
-            <AppsRoundedIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={instance?.application_id}
-            secondary={instance?.application_version}
-          />
-        </ListItem>
+        {instance && <CommonDetails instance={instance} />}
         <ListItem>
           <ListItemIcon sx={{ minWidth: "40px" }}>
             <WorkOutlineRoundedIcon />

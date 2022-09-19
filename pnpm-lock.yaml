@@ -51,7 +51,7 @@ specifiers:
   immer: 9.0.15
   jotai: 1.8.4
   just-compare: 2.2.2
-  just-group-by: ^2.1.2
+  just-group-by: 2.1.2
   lint-staged: 13.0.3
   lodash-es: 4.17.21
   material-ui-popup-state: 4.0.2

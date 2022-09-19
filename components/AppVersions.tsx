@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 
-import { ListItem, ListItemText, Typography } from "@mui/material";
+import { ListItem as MuiListItem, ListItemText, styled, Typography } from "@mui/material";
 import axios from "axios";
 
 import { AS_API_URL, DM_API_URL } from "../constants/proxies";
@@ -38,3 +38,5 @@ export const AppVersions = () => {
     </>
   );
 };
+
+const ListItem = styled(MuiListItem)({ paddingLeft: 0 });

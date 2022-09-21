@@ -44,7 +44,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: informaticsmatters/mini-apps-data-tier-ui:latest
+        tags: informaticsmatters/squonk2-data-manager-ui:latest
         build-args: |
           GIT_SHA=${{ github.sha }}
           SKIP_CHECKS=1

@@ -43,4 +43,4 @@ jobs:
           SKIP_CHECKS=1
           BASE_PATH=/data-manager-ui
         push: true
-        tags: informaticsmatters/mini-apps-data-tier-ui:${{ env.GITHUB_REF_SLUG }}
+        tags: informaticsmatters/squonk2-data-manager-ui:${{ env.GITHUB_REF_SLUG }}

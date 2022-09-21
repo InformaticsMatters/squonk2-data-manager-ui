@@ -4,6 +4,10 @@
   "license": "Apache-2.0",
   "version": "1.2.2-rc.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/InformaticsMatters/squonk2-data-manager-ui"
+  },
   "scripts": {
     "prepare": "husky install",
     "dev": "next dev",

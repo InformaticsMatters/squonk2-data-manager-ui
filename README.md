@@ -1,13 +1,13 @@
 # Squonk Data Manager UI
 
-![build](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build/badge.svg)
-![build latest](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build%20latest/badge.svg)
-![build tag](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build%20tag/badge.svg)
-![build stable](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/workflows/build%20stable/badge.svg)
+![build](https://github.com/InformaticsMatters/squonk-data-manager-ui/workflows/build/badge.svg)
+![build latest](https://github.com/InformaticsMatters/squonk-data-manager-ui/workflows/build%20latest/badge.svg)
+![build tag](https://github.com/InformaticsMatters/squonk-data-manager-ui/workflows/build%20tag/badge.svg)
+![build stable](https://github.com/InformaticsMatters/squonk-data-manager-ui/workflows/build%20stable/badge.svg)
 
-[![test](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/actions/workflows/test.yaml/badge.svg)](https://github.com/InformaticsMatters/mini-apps-data-tier-ui/actions/workflows/test.yaml)
+[![test](https://github.com/InformaticsMatters/squonk-data-manager-ui/actions/workflows/test.yaml/badge.svg)](https://github.com/InformaticsMatters/squonk-data-manager-ui/actions/workflows/test.yaml)
 
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/InformaticsMatters/mini-apps-data-tier-ui)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/InformaticsMatters/squonk-data-manager-ui)
 
 ## Changes
 
@@ -63,7 +63,7 @@ build commands, which can be run from the project clone to produce an
     $ docker build . \
         --build-arg GIT_SHA=$(git rev-parse HEAD) \
         --build-arg SKIP_CHECKS=1 \
-        --tag informaticsmatters/mini-apps-data-tier-ui:latest
+        --tag informaticsmatters/squonk-data-manager-ui:latest
 
 Deployment to Kubernetes is handled by our AWX-compliant [Ansible playbook repo].
 
@@ -80,12 +80,12 @@ Build the image using
         --build-arg GIT_SHA=$(git rev-parse HEAD) \
         --build-arg SKIP_CHECKS=1 \
         --build-arg BASE_PATH="" \
-        --tag informaticsmatters/mini-apps-data-tier-ui:latest
+        --tag informaticsmatters/squonk-data-manager-ui:latest
 
 Which can then be started on `http://localhost:8080/data-manager-ui` with: -
 
     $ docker run --rm --detach --publish 8080:3000 \
-        informaticsmatters/mini-apps-data-tier-ui:latest
+        informaticsmatters/squonk-data-manager-ui:latest
 
 In local development the `.env.*` can be loaded by copying it into the container and
 committing it as a image.
@@ -121,6 +121,6 @@ This will do the following:
 
 ---
 
-[ansible playbook repo]: https://github.com/InformaticsMatters/mini-apps-data-tier-ui-ansible
+[ansible playbook repo]: https://github.com/InformaticsMatters/squonk2-data-manager-ui-ansible
 [nginx]: https://hub.docker.com/_/nginx
 

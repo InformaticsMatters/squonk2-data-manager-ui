@@ -1,4 +1,4 @@
-# Squonk Data Manager UI
+# Squonk 2 Data Manager UI
 
 ![build](https://github.com/InformaticsMatters/squonk2-data-manager-ui/workflows/build/badge.svg)
 ![build latest](https://github.com/InformaticsMatters/squonk2-data-manager-ui/workflows/build%20latest/badge.svg)

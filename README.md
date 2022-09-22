@@ -1,9 +1,9 @@
 # Squonk Data Manager UI
 
-![build](https://github.com/InformaticsMatters/squonk-data-manager-ui/workflows/build/badge.svg)
-![build latest](https://github.com/InformaticsMatters/squonk-data-manager-ui/workflows/build%20latest/badge.svg)
-![build tag](https://github.com/InformaticsMatters/squonk-data-manager-ui/workflows/build%20tag/badge.svg)
-![build stable](https://github.com/InformaticsMatters/squonk-data-manager-ui/workflows/build%20stable/badge.svg)
+![build](https://github.com/InformaticsMatters/squonk2-data-manager-ui/workflows/build/badge.svg)
+![build latest](https://github.com/InformaticsMatters/squonk2-data-manager-ui/workflows/build%20latest/badge.svg)
+![build tag](https://github.com/InformaticsMatters/squonk2-data-manager-ui/workflows/build%20tag/badge.svg)
+![build stable](https://github.com/InformaticsMatters/squonk2-data-manager-ui/workflows/build%20stable/badge.svg)
 
 [![test](https://github.com/InformaticsMatters/squonk-data-manager-ui/actions/workflows/test.yaml/badge.svg)](https://github.com/InformaticsMatters/squonk-data-manager-ui/actions/workflows/test.yaml)
 

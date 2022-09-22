@@ -74,7 +74,7 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
         >
           {({ submitForm, isSubmitting, isValid }) => (
             <Form>
-              <Box alignItems="baseline" display="flex" gap={(theme) => theme.spacing(1)}>
+              <Box alignItems="baseline" display="flex" gap={1}>
                 <Field autoFocus component={LowerCaseTextField} label="Name" name="label" />
                 <Field component={TextField} label="Value" name="value" />
                 <Button disabled={isSubmitting || !isValid} onClick={submitForm}>

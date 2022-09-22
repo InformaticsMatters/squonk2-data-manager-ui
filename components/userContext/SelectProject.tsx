@@ -6,12 +6,12 @@ import { Autocomplete, TextField } from "@mui/material";
 import { useProjectSubscriptions } from "../../features/ProjectStats/useProjectSubscriptions";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 
-export type ProjectAutocompleteProps = Omit<
+export type SelectProjectProps = Omit<
   AutocompleteProps<ProductDmProjectTier, false, false, false>,
   "renderInput" | "options"
 >;
 
-export const ProjectAutocomplete = (props: ProjectAutocompleteProps) => {
+export const SelectProject = (props: SelectProjectProps) => {
   const { projectSubscriptions, isLoading: isProjectSubscriptionsLoading } =
     useProjectSubscriptions();
 

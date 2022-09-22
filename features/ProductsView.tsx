@@ -1,10 +1,13 @@
 import type { ProductDmProjectTier, ProductDmStorage } from "@squonk/account-server-client";
 import { useGetProducts } from "@squonk/account-server-client/product";
 
-import { Alert, Box, Divider, Typography } from "@mui/material";
+import { Alert, Box, Divider, Grid, Typography } from "@mui/material";
 import groupBy from "just-group-by";
 
 import { CenterLoader } from "../components/CenterLoader";
+import { CreateDatasetStorageSubscription } from "../components/CreateDatasetStorageSubscription";
+import { SelectUnit } from "../components/userContext/SelectUnit";
+import { useSelectedUnit } from "../state/unitSelection";
 import { getErrorMessage } from "../utils/next/orvalError";
 import { DatasetProductTable } from "./ProductTables/DatasetProductTable/DatasetProductTable";
 import { ProjectProductTable } from "./ProductTables/ProjectProductTable/ProjectProductTable";
@@ -12,6 +15,8 @@ import { ProjectProductTable } from "./ProductTables/ProjectProductTable/Project
 export const ProductsView = () => {
   const { data, isLoading, error } = useGetProducts();
   const products = data?.products;
+
+  const [unit] = useSelectedUnit();
 
   if (!data && isLoading) {
     return <CenterLoader />;
@@ -46,6 +51,14 @@ export const ProductsView = () => {
       <Typography gutterBottom variant="h2">
         Datasets
       </Typography>
+      <Grid container gap={2} marginY={2}>
+        <Grid item sm={4} xs={12}>
+          <SelectUnit />
+        </Grid>
+        <Grid item sm={7} xs={12}>
+          {unit && <CreateDatasetStorageSubscription unit={unit} />}
+        </Grid>
+      </Grid>
       <DatasetProductTable products={datasetProducts} />
     </>
   );

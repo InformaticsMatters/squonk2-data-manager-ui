@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 
-import { OrganisationAutocomplete } from "../../../../components/userContext/OrganisationAutocomplete";
-import { UnitAutocomplete } from "../../../../components/userContext/UnitAutocomplete";
+import { SelectOrganisation } from "../../../../components/userContext/SelectOrganisation";
+import { SelectUnit } from "../../../../components/userContext/SelectUnit";
 import { ContextActions } from "./ContextActions";
 
 /**
@@ -12,10 +12,10 @@ export const ContextSection = () => {
     <>
       <Grid container spacing={1}>
         <Grid container item sm={6}>
-          <OrganisationAutocomplete />
+          <SelectOrganisation />
         </Grid>
         <Grid container item sm={6}>
-          <UnitAutocomplete />
+          <SelectUnit />
         </Grid>
       </Grid>
       <ContextActions />

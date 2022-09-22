@@ -11,7 +11,7 @@ import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { ItemIcons } from "./ItemIcons";
 
-type UnitAutocompleteProps = Omit<
+export type SelectUnitProps = Omit<
   AutocompleteProps<UnitGetResponse, false, false, false>,
   "renderInput" | "options"
 >;
@@ -19,7 +19,7 @@ type UnitAutocompleteProps = Omit<
 /**
  * Autocomplete which lists context's organisation's units available to a user to select as context.
  */
-export const UnitAutocomplete = (props: UnitAutocompleteProps) => {
+export const SelectUnit = (props: SelectUnitProps) => {
   const [unit, setUnit] = useSelectedUnit();
   const [organisation] = useSelectedOrganisation();
 

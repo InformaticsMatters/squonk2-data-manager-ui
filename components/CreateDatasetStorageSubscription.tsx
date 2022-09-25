@@ -1,9 +1,11 @@
+import { useMemo } from "react";
 import { useQueryClient } from "react-query";
 
 import type { AsError, UnitDetail } from "@squonk/account-server-client";
 import {
   getGetProductsQueryKey,
   useCreateUnitProduct,
+  useGetProductDefaultStorageCost,
 } from "@squonk/account-server-client/product";
 
 import { Box, Button } from "@mui/material";
@@ -26,12 +28,24 @@ const initialValues = {
   name: "Dataset Storage",
 };
 
+const formatter = new Intl.NumberFormat("en-GB", {
+  style: "currency",
+  currency: "GBP",
+});
+
 export const CreateDatasetStorageSubscription = ({
   unit,
 }: CreateDatasetStorageSubscriptionProps) => {
   const { mutateAsync: createProduct } = useCreateUnitProduct();
   const { enqueueError, enqueueSnackbar } = useEnqueueError<AsError>();
   const queryClient = useQueryClient();
+  const { data } = useGetProductDefaultStorageCost();
+  const cost = data?.default_storage_cost.cost;
+  const costNumber = useMemo(() => {
+    if (typeof cost === "string") {
+      return Number.parseFloat(cost);
+    }
+  }, [cost]);
   return (
     <Formik
       initialValues={initialValues}
@@ -61,47 +75,53 @@ export const CreateDatasetStorageSubscription = ({
         }
       }}
     >
-      {({ submitForm, isSubmitting, isValid }) => (
-        <Form>
-          <Box alignItems="baseline" display="flex" flexWrap="wrap" gap={2}>
-            <Field
-              autoFocus
-              component={TextField}
-              label="Name"
-              name="name"
-              sx={{ maxWidth: 150 }}
-            />
-            <Field
-              component={TextField}
-              label="Billing Day"
-              max={28}
-              min={1}
-              name="billingDay"
-              sx={{ maxWidth: 80 }}
-              type="number"
-            />
-            <Field
-              component={TextField}
-              label="Limit"
-              min={1}
-              name="limit"
-              sx={{ maxWidth: 100 }}
-              type="number"
-            />
-            <Field
-              component={TextField}
-              label="Allowance"
-              min={1}
-              name="allowance"
-              sx={{ maxWidth: 100 }}
-              type="number"
-            />
-            <Button disabled={isSubmitting || !isValid} onClick={submitForm}>
-              Create
-            </Button>
-          </Box>
-        </Form>
-      )}
+      {({ submitForm, isSubmitting, isValid, values }) => {
+        return (
+          <Form>
+            <Box alignItems="baseline" display="flex" flexWrap="wrap" gap={2}>
+              <Field
+                autoFocus
+                component={TextField}
+                label="Name"
+                name="name"
+                sx={{ maxWidth: 150 }}
+              />
+              <Field
+                component={TextField}
+                label="Billing Day"
+                max={28}
+                min={1}
+                name="billingDay"
+                sx={{ maxWidth: 80 }}
+                type="number"
+              />
+              <Field
+                component={TextField}
+                label="Limit"
+                min={1}
+                name="limit"
+                sx={{ maxWidth: 100 }}
+                type="number"
+              />
+              <Field
+                component={TextField}
+                label="Allowance"
+                min={1}
+                name="allowance"
+                sx={{ maxWidth: 100 }}
+                type="number"
+              />
+              {costNumber && (
+                <p>Cost: {formatter.format(costNumber * values.allowance).slice(1)}C</p>
+              )}
+              {/* {JSON.stringify(data?.default_storage_cost)} */}
+              <Button disabled={isSubmitting || !isValid} onClick={submitForm}>
+                Create
+              </Button>
+            </Box>
+          </Form>
+        );
+      }}
     </Formik>
   );
 };

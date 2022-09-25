@@ -24,10 +24,10 @@ export interface CreateDatasetStorageSubscriptionProps {
 const initialValues = {
   allowance: 1000,
   billingDay: 1,
-  limit: 1000,
   name: "Dataset Storage",
 };
 
+// TODO: write a custom formatter for Squonk coins
 const formatter = new Intl.NumberFormat("en-GB", {
   style: "currency",
   currency: "GBP",
@@ -55,14 +55,14 @@ export const CreateDatasetStorageSubscription = ({
         allowance: yup.number().min(1).integer().required("An allowance is required"),
         billingDay: yup.number().min(1).max(28).integer().required("A billing day is required"),
       })}
-      onSubmit={async ({ allowance, billingDay, limit, name }) => {
+      onSubmit={async ({ allowance, billingDay, name }) => {
         try {
           await createProduct({
             unitId: unit.id,
             data: {
               allowance,
               billing_day: billingDay,
-              limit,
+              limit: allowance, // TODO: we will implement this properly later
               name,
               type: "DATA_MANAGER_STORAGE_SUBSCRIPTION",
             },
@@ -97,14 +97,6 @@ export const CreateDatasetStorageSubscription = ({
               />
               <Field
                 component={TextField}
-                label="Limit"
-                min={1}
-                name="limit"
-                sx={{ maxWidth: 100 }}
-                type="number"
-              />
-              <Field
-                component={TextField}
                 label="Allowance"
                 min={1}
                 name="allowance"
@@ -112,7 +104,7 @@ export const CreateDatasetStorageSubscription = ({
                 type="number"
               />
               {costNumber && (
-                <p>Cost: {formatter.format(costNumber * values.allowance).slice(1)}C</p>
+                <span>Cost: {formatter.format(costNumber * values.allowance).slice(1)}C</span>
               )}
               {/* {JSON.stringify(data?.default_storage_cost)} */}
               <Button disabled={isSubmitting || !isValid} onClick={submitForm}>

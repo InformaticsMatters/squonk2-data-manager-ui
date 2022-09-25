@@ -3,7 +3,7 @@ import type { DatasetVersionSummary } from "@squonk/data-manager-client";
 import { List } from "@mui/material";
 import fileSize from "filesize";
 
-import { toLocalTimeString } from "../../../../components/LocalTime";
+import { toLocalTimeString } from "../../../../utils/app/datetime";
 import { VersionInfoListItem } from "./VersionInfoListItem";
 
 export interface VersionInfoSectionProps {

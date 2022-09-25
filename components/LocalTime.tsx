@@ -1,6 +1,6 @@
 import type { HTMLProps } from "react";
 
-import { toLocalTimeString } from "./utils";
+import { toLocalTimeString } from "../utils/app/datetime";
 
 export interface BaseLocalTimeProps extends HTMLProps<HTMLSpanElement> {
   /**

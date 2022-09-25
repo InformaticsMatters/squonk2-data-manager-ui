@@ -2,7 +2,7 @@ import type { Column } from "react-table";
 
 import type { ProductsGetResponseProductsItem } from "@squonk/account-server-client";
 
-import { toLocalTimeString } from "../../components/LocalTime";
+import { toLocalTimeString } from "../../utils/app/datetime";
 
 export const sharedProductColumns: Column<ProductsGetResponseProductsItem>[] = [
   { id: "name", Header: "Name", accessor: (row) => row.product.name },

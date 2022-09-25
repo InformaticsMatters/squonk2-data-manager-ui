@@ -4,7 +4,7 @@ import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 
-import { DATE_FORMAT, TIME_FORMAT } from "../LocalTime/utils";
+import { DATE_FORMAT, TIME_FORMAT } from "../../utils/app/datetime";
 
 export interface DateTimeListItemProps {
   /**

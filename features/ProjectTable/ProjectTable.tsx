@@ -12,9 +12,9 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 
 import { DataTable } from "../../components/DataTable";
-import { toLocalTimeString } from "../../components/LocalTime";
 import { useIsUserAProjectOwnerOrEditor } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
+import { toLocalTimeString } from "../../utils/app/datetime";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { FileActions } from "./FileActions";
 import { ProjectFileDetails } from "./ProjectFileDetails";

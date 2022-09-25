@@ -8,6 +8,7 @@ import NextLink from "next/link";
 
 import { DataTable } from "../../../components/DataTable";
 import { CreateProjectButton } from "../../../components/projects/CreateProjectButton";
+import { formatTierString } from "../../../utils/app/products";
 import { sharedProductColumns } from "../columns";
 
 export interface ProjectProductTableProps {
@@ -21,7 +22,7 @@ export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
       {
         id: "flavour",
         Header: "Flavour",
-        accessor: (row) => row.product.flavour?.toLocaleLowerCase(),
+        accessor: (row) => (row.product.flavour ? formatTierString(row.product.flavour) : ""),
       },
       {
         accessor: "claim",

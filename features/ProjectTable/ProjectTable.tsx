@@ -133,7 +133,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
 
   const { rows, error, isError, isLoading } = useProjectFileRows(currentProject.project_id);
 
-  // react-table plugin to add actions buttons for datasets
+  // react-table plugin to add actions buttons for project files
   const useActionsColumnPlugin: PluginHook<TableFile | TableDir> = useCallback((hooks) => {
     hooks.visibleColumns.push((columns) => {
       return [

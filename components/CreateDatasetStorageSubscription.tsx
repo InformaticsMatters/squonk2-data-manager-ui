@@ -1,11 +1,9 @@
-import { useMemo } from "react";
 import { useQueryClient } from "react-query";
 
 import type { AsError, UnitDetail } from "@squonk/account-server-client";
 import {
   getGetProductsQueryKey,
   useCreateUnitProduct,
-  useGetProductDefaultStorageCost,
 } from "@squonk/account-server-client/product";
 
 import { Box, Button } from "@mui/material";
@@ -15,6 +13,9 @@ import { TextField } from "formik-mui";
 import * as yup from "yup";
 
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
+import { useGetStorageCost } from "../hooks/useGetStorageCost";
+import { coinsFormatter } from "../utils/app/coins";
+import { getBillingDay } from "../utils/app/products";
 import { getErrorMessage } from "../utils/next/orvalError";
 
 export interface CreateDatasetStorageSubscriptionProps {
@@ -23,15 +24,9 @@ export interface CreateDatasetStorageSubscriptionProps {
 
 const initialValues = {
   allowance: 1000,
-  billingDay: 1,
+  billingDay: getBillingDay(),
   name: "Dataset Storage",
 };
-
-// TODO: write a custom formatter for Squonk coins
-const formatter = new Intl.NumberFormat("en-GB", {
-  style: "currency",
-  currency: "GBP",
-});
 
 export const CreateDatasetStorageSubscription = ({
   unit,
@@ -39,13 +34,7 @@ export const CreateDatasetStorageSubscription = ({
   const { mutateAsync: createProduct } = useCreateUnitProduct();
   const { enqueueError, enqueueSnackbar } = useEnqueueError<AsError>();
   const queryClient = useQueryClient();
-  const { data } = useGetProductDefaultStorageCost();
-  const cost = data?.default_storage_cost.cost;
-  const costNumber = useMemo(() => {
-    if (typeof cost === "string") {
-      return Number.parseFloat(cost);
-    }
-  }, [cost]);
+  const cost = useGetStorageCost();
   return (
     <Formik
       initialValues={initialValues}
@@ -103,10 +92,9 @@ export const CreateDatasetStorageSubscription = ({
                 sx={{ maxWidth: 100 }}
                 type="number"
               />
-              {costNumber && (
-                <span>Cost: {formatter.format(costNumber * values.allowance).slice(1)}C</span>
+              {cost && (
+                <span>Cost: {coinsFormatter.format(cost * values.allowance).slice(1)}C</span>
               )}
-              {/* {JSON.stringify(data?.default_storage_cost)} */}
               <Button disabled={isSubmitting || !isValid} onClick={submitForm}>
                 Create
               </Button>

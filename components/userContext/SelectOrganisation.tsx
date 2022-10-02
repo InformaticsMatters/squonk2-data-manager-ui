@@ -11,7 +11,7 @@ import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { ItemIcons } from "./ItemIcons";
 
-type OrganisationAutocompleteProps = Omit<
+type SelectOrganisationProps = Omit<
   AutocompleteProps<OrganisationDetail, false, false, false>,
   "renderInput" | "options"
 >;
@@ -19,7 +19,7 @@ type OrganisationAutocompleteProps = Omit<
 /**
  * Autocomplete which lists organisations available to a user to select as context.
  */
-export const OrganisationAutocomplete = (props: OrganisationAutocompleteProps) => {
+export const SelectOrganisation = (props: SelectOrganisationProps) => {
   const [, setUnit] = useSelectedUnit();
   const [organisation, setOrganisation] = useSelectedOrganisation();
   const { setCurrentProjectId } = useCurrentProjectId();

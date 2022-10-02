@@ -9,9 +9,9 @@ import {
   useRemoveEditorFromProject,
 } from "@squonk/data-manager-client/project";
 
-import { ManageEditors } from "../../../../components/ManageEditors";
-import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
-import { useKeycloakUser } from "../../../../hooks/useKeycloakUser";
+import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
+import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
+import { ManageEditors } from "../../ManageEditors";
 
 export interface ProjectEditorsProps {
   /**

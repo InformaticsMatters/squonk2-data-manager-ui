@@ -11,3 +11,9 @@ export const API_ROUTES = {
   datasetVersion: (datasetId: string, version: number, proxy: Proxy = "") =>
     `${proxy}/dataset/${datasetId}/${version}`,
 };
+
+export const projectURL = (projectId: string) =>
+  window.location.origin +
+  (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
+  "/project?" +
+  new URLSearchParams([["project", projectId]]).toString();

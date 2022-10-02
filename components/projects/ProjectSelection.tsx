@@ -1,20 +1,20 @@
 import { Grid } from "@mui/material";
 
-import { OrganisationAutocomplete } from "../userContext/OrganisationAutocomplete";
-import { ProjectAutocomplete } from "../userContext/ProjectAutocomplete";
-import { UnitAutocomplete } from "../userContext/UnitAutocomplete";
+import { SelectOrganisation } from "../userContext/SelectOrganisation";
+import { SelectProject } from "../userContext/SelectProject";
+import { SelectUnit } from "../userContext/SelectUnit";
 
 export const ProjectSelection = () => {
   return (
     <Grid container spacing={1}>
       <Grid container item alignItems="center" sm={6}>
-        <OrganisationAutocomplete />
+        <SelectOrganisation />
       </Grid>
       <Grid container item alignItems="center" sm={6}>
-        <UnitAutocomplete />
+        <SelectUnit />
       </Grid>
       <Grid container item alignItems="center" sm={12}>
-        <ProjectAutocomplete size="medium" />
+        <SelectProject size="medium" />
       </Grid>
     </Grid>
   );

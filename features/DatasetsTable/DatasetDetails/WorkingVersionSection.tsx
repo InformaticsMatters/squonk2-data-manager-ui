@@ -3,7 +3,7 @@ import type { DatasetSummary, DatasetVersionSummary } from "@squonk/data-manager
 import { Box, MenuItem, TextField, Typography } from "@mui/material";
 
 import { DownloadButton } from "../../../components/downloads/DownloadButton";
-import { API_ROUTES } from "../../../constants/routes";
+import { API_ROUTES } from "../../../utils/app/routes";
 
 export interface WorkingVersionSectionProps {
   /**

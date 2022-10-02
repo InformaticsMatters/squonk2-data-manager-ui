@@ -1,13 +1,15 @@
-import { useMemo } from "react";
-import type { Column } from "react-table";
+import { useCallback, useMemo } from "react";
+import type { CellProps, Column, PluginHook } from "react-table";
 
 import type { ProductDmProjectTier } from "@squonk/account-server-client";
 
-import { Button } from "@mui/material";
+import { Link } from "@mui/material";
 import NextLink from "next/link";
 
 import { DataTable } from "../../../components/DataTable";
+import { DeleteProductButton } from "../../../components/products/DeleteProductButton";
 import { CreateProjectButton } from "../../../components/projects/CreateProjectButton";
+import { formatTierString } from "../../../utils/app/products";
 import { sharedProductColumns } from "../columns";
 
 export interface ProjectProductTableProps {
@@ -21,7 +23,7 @@ export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
       {
         id: "flavour",
         Header: "Flavour",
-        accessor: (row) => row.product.flavour?.toLocaleLowerCase(),
+        accessor: (row) => (row.product.flavour ? formatTierString(row.product.flavour) : ""),
       },
       {
         accessor: "claim",
@@ -34,7 +36,7 @@ export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
                 passHref
                 href={{ pathname: "/project", query: { project: product.claim.id } }}
               >
-                <Button color="info">{product.claim.name}</Button>
+                <Link>{product.claim.name}</Link>
               </NextLink>
             );
           }
@@ -45,5 +47,32 @@ export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
     [],
   );
 
-  return <DataTable columns={columns} data={products} />;
+  // react-table plugin to add actions buttons for project files
+  const useActionsColumnPlugin: PluginHook<ProductDmProjectTier> = useCallback((hooks) => {
+    hooks.visibleColumns.push((columns) => {
+      return [
+        ...columns,
+        {
+          id: "actions",
+          groupByBoundary: true, // Ensure normal columns can't be ordered before this
+          Header: "Actions",
+          Cell: ({ row }: CellProps<ProductDmProjectTier, any>) => (
+            <DeleteProductButton
+              disabled={!!row.original.claim?.id}
+              product={row.original.product}
+              tooltip={
+                row.original.claim?.id
+                  ? "You must delete the project first"
+                  : "Delete product permanently"
+              }
+            />
+          ),
+        },
+      ];
+    });
+  }, []);
+
+  return (
+    <DataTable columns={columns} data={products} useActionsColumnPlugin={useActionsColumnPlugin} />
+  );
 };

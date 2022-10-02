@@ -13,7 +13,7 @@ import Head from "next/head";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
 import { ProjectSelection } from "../components/projects/ProjectSelection";
-import { ProjectAutocomplete } from "../components/userContext/ProjectAutocomplete";
+import { SelectProject } from "../components/userContext/SelectProject";
 import { ProjectTable } from "../features/ProjectTable";
 import { ProjectFileUpload } from "../features/ProjectTable/ProjectFileUpload";
 import { useCurrentProject } from "../hooks/projectHooks";
@@ -99,7 +99,7 @@ const Project = () => {
                     </Typography>
                   </Grid>
                   <Grid item md={6} xs={12}>
-                    <ProjectAutocomplete size="medium" />
+                    <SelectProject size="medium" />
                   </Grid>
                 </Grid>
                 <ProjectFileUpload>

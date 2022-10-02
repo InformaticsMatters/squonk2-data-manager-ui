@@ -5,8 +5,8 @@ import type { ProjectDetail } from "@squonk/data-manager-client";
 import EditIcon from "@mui/icons-material/Edit";
 import { IconButton, Tooltip, Typography } from "@mui/material";
 
-import { ModalWrapper } from "../../../../components/modals/ModalWrapper";
-import { useKeycloakUser } from "../../../../hooks/useKeycloakUser";
+import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
+import { ModalWrapper } from "../../modals/ModalWrapper";
 import { PrivateProjectToggle } from "./PrivateProjectToggle";
 import { ProjectEditors } from "./ProjectEditors";
 

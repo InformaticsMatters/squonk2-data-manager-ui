@@ -3,7 +3,7 @@ import type { DatasetSummary, DatasetVersionSummary } from "@squonk/data-manager
 import { Description } from "@mui/icons-material";
 import { List, ListItem, ListItemText } from "@mui/material";
 
-import { API_ROUTES } from "../../../../constants/routes";
+import { API_ROUTES } from "../../../../utils/app/routes";
 import { DatasetPlainTextViewerListItem } from "./DatasetPlainTextViewerListItem";
 
 export interface VersionViewSectionProps {

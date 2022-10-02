@@ -24,7 +24,9 @@ export const CreateProjectButton = ({
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>{buttonText}</Button>
+      <Button variant="outlined" onClick={() => setOpen(true)}>
+        {buttonText}
+      </Button>
 
       <CreateProjectForm
         modal={{

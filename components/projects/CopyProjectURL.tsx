@@ -4,6 +4,8 @@ import ShareIcon from "@mui/icons-material/Share";
 import { IconButton, Tooltip } from "@mui/material";
 import { useSnackbar } from "notistack";
 
+import { projectURL } from "../../utils/app/routes";
+
 export interface CopyProjectURLProps {
   /**
    * Project to copy the permalink to the clipboard
@@ -20,12 +22,7 @@ export const CopyProjectURL = ({ project }: CopyProjectURLProps) => {
         sx={{ p: "1px" }}
         onClick={async () => {
           project.project_id &&
-            (await navigator.clipboard.writeText(
-              window.location.origin +
-                (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
-                "/project?" +
-                new URLSearchParams([["project", project.project_id]]).toString(),
-            ));
+            (await navigator.clipboard.writeText(projectURL(project.project_id)));
           enqueueSnackbar("Copied URL to clipboard", { variant: "info" });
         }}
       >

@@ -23,7 +23,7 @@ specifiers:
   '@squonk/mui-theme': 3.0.1
   '@types/lodash-es': 4.17.6
   '@types/node': 16.11.59
-  '@types/plotly.js-basic-dist': 1.54.0
+  '@types/plotly.js-basic-dist': 1.54.1
   '@types/prismjs': 1.26.0
   '@types/react': 17.0.50
   '@types/react-plotly.js': 2.5.1
@@ -97,7 +97,7 @@ dependencies:
   '@squonk/mui-theme': 3.0.1_@mui+material@5.10.6
   '@types/lodash-es': 4.17.6
   '@types/node': 16.11.59
-  '@types/plotly.js-basic-dist': 1.54.0
+  '@types/plotly.js-basic-dist': 1.54.1
   '@types/prismjs': 1.26.0
   '@types/react': 17.0.50
   '@types/react-plotly.js': 2.5.1
@@ -1314,8 +1314,8 @@ packages:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
     dev: false
 
-  /@types/plotly.js-basic-dist/1.54.0:
-    resolution: {integrity: sha512-sccKjidjBltVJlfVE0bthWG1j/dwBYvZDbKIreToDXqaGaPg5nRU+5NRoP2AbnMa96lu0eVFu8zYwRPA4sS7kQ==}
+  /@types/plotly.js-basic-dist/1.54.1:
+    resolution: {integrity: sha512-PAowclM1Z9nfTGqLn2KrN3dDXF2M9TalggShN/k/6jyUZTkxfgSoJ3HGReyUqjxsRBgUZnWRIPmLOA+sDsGWFA==}
     dependencies:
       '@types/plotly.js': 1.54.20
     dev: false

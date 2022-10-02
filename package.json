@@ -47,7 +47,7 @@
     "@squonk/data-manager-client": "1.0.12",
     "@squonk/mui-theme": "3.0.1",
     "@types/lodash-es": "4.17.6",
-    "@types/node": "16.11.59",
+    "@types/node": "16.11.63",
     "@types/plotly.js-basic-dist": "1.54.1",
     "@types/prismjs": "1.26.0",
     "@types/react": "17.0.50",

@@ -2,9 +2,9 @@ import { CircularProgress } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import type { DownloadButtonProps } from "../../components/downloads/DownloadButton";
-import { API_ROUTES } from "../../constants/routes";
 import { useCurrentProject, useIsUserAProjectOwnerOrEditor } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
+import { API_ROUTES } from "../../utils/app/routes";
 import type { CreateDatasetFromFileButtonProps } from "./buttons/CreateDatasetFromFileButton";
 import type { DeleteUnmanagedFileButtonProps } from "./buttons/DeleteUnmanagedFileButton";
 import type { DetachDatasetProps } from "./buttons/DetachDataset";

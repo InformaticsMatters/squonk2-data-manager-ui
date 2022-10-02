@@ -1,9 +1,9 @@
 import { Description } from "@mui/icons-material";
 import { List, ListItem, ListItemText } from "@mui/material";
 
-import { API_ROUTES } from "../../../../constants/routes";
 import { useCurrentProjectId } from "../../../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../../../hooks/projectPathHooks";
+import { API_ROUTES } from "../../../../utils/app/routes";
 import type { TableFile } from "../../types";
 import { FilePlainTextViewerListItem } from "./FilePlainTextViewerListItem";
 

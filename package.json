@@ -44,7 +44,7 @@
     "@rjsf/material-ui": "4.2.3",
     "@sentry/nextjs": "7.14.0",
     "@squonk/account-server-client": "1.0.10",
-    "@squonk/data-manager-client": "1.0.11",
+    "@squonk/data-manager-client": "1.0.12",
     "@squonk/mui-theme": "3.0.1",
     "@types/lodash-es": "4.17.6",
     "@types/node": "16.11.59",

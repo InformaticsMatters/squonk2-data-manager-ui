@@ -70,7 +70,7 @@ specifiers:
   react-query: 3.39.2
   react-table: 7.8.0
   react-virtualized: 9.22.3
-  sass: 1.54.9
+  sass: 1.55.0
   typescript: 4.8.4
   use-immer: 0.7.0
   uuid: 9.0.0
@@ -116,7 +116,7 @@ dependencies:
   just-group-by: 2.1.2
   lodash-es: 4.17.21
   material-ui-popup-state: 4.1.0_17a1432779ecebed8795c1bcaeaaf2fe
-  next: 12.3.1_861f28c310daad528cf1883c53366814
+  next: 12.3.1_45265acc010aaed884ffc8b80dc22c41
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
   node-fetch: 3.2.10
@@ -131,7 +131,7 @@ dependencies:
   react-query: 3.39.2_react-dom@17.0.2+react@17.0.2
   react-table: 7.8.0_react@17.0.2
   react-virtualized: 9.22.3_react-dom@17.0.2+react@17.0.2
-  sass: 1.54.9
+  sass: 1.55.0
   typescript: 4.8.4
   use-immer: 0.7.0_immer@9.0.15+react@17.0.2
   uuid: 9.0.0
@@ -169,7 +169,7 @@ packages:
       http-errors: 1.8.1
       joi: 17.6.0
       jose: 2.0.5
-      next: 12.3.1_861f28c310daad528cf1883c53366814
+      next: 12.3.1_45265acc010aaed884ffc8b80dc22c41
       on-headers: 1.0.2
       openid-client: 4.9.1
       tslib: 2.4.0
@@ -1049,7 +1049,7 @@ packages:
       '@sentry/utils': 7.14.0
       '@sentry/webpack-plugin': 1.19.0
       chalk: 3.0.0
-      next: 12.3.1_861f28c310daad528cf1883c53366814
+      next: 12.3.1_45265acc010aaed884ffc8b80dc22c41
       react: 17.0.2
       rollup: 2.78.0
       tslib: 1.14.1
@@ -4162,7 +4162,7 @@ packages:
       escalade: 3.1.1
     dev: false
 
-  /next/12.3.1_861f28c310daad528cf1883c53366814:
+  /next/12.3.1_45265acc010aaed884ffc8b80dc22c41:
     resolution: {integrity: sha512-l7bvmSeIwX5lp07WtIiP9u2ytZMv7jIeB8iacR28PuUEFG5j0HGAPnMqyG5kbZNBG2H7tRsrQ4HCjuMOPnANZw==}
     engines: {node: '>=12.22.0'}
     hasBin: true
@@ -4186,7 +4186,7 @@ packages:
       postcss: 8.4.14
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      sass: 1.54.9
+      sass: 1.55.0
       styled-jsx: 5.0.7_react@17.0.2
       use-sync-external-store: 1.2.0_react@17.0.2
     optionalDependencies:
@@ -4913,8 +4913,8 @@ packages:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
     dev: false
 
-  /sass/1.54.9:
-    resolution: {integrity: sha512-xb1hjASzEH+0L0WI9oFjqhRi51t/gagWnxLiwUNMltA0Ab6jIDkAacgKiGYKM9Jhy109osM7woEEai6SXeJo5Q==}
+  /sass/1.55.0:
+    resolution: {integrity: sha512-Pk+PMy7OGLs9WaxZGJMn7S96dvlyVBwwtToX895WmCpAOr5YiJYEUJfiJidMuKb613z2xNWcXCHEuOvjZbqC6A==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:

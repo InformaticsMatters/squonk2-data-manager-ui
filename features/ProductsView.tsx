@@ -6,7 +6,9 @@ import groupBy from "just-group-by";
 
 import { CenterLoader } from "../components/CenterLoader";
 import { CreateDatasetStorageSubscription } from "../components/CreateDatasetStorageSubscription";
+import { SelectOrganisation } from "../components/userContext/SelectOrganisation";
 import { SelectUnit } from "../components/userContext/SelectUnit";
+import { useSelectedOrganisation } from "../state/organisationSelection";
 import { useSelectedUnit } from "../state/unitSelection";
 import { getErrorMessage } from "../utils/next/orvalError";
 import { DatasetProductTable } from "./ProductTables/DatasetProductTable/DatasetProductTable";
@@ -17,6 +19,7 @@ export const ProductsView = () => {
   const products = data?.products;
 
   const [unit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
 
   if (!data && isLoading) {
     return <CenterLoader />;
@@ -52,10 +55,13 @@ export const ProductsView = () => {
         Datasets
       </Typography>
       <Grid container gap={2} marginY={2}>
-        <Grid item sm={4} xs={12}>
-          <SelectUnit />
+        <Grid item sm={3} xs={12}>
+          <SelectOrganisation />
         </Grid>
-        <Grid item sm={7} xs={12}>
+        <Grid item sm={3} xs={12}>
+          {organisation && <SelectUnit />}
+        </Grid>
+        <Grid item sm={5} xs={12}>
           {unit && <CreateDatasetStorageSubscription unit={unit} />}
         </Grid>
       </Grid>

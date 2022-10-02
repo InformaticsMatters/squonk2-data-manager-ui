@@ -38,20 +38,13 @@ export const useCurrentProjectId = () => {
         undefined,
         { shallow },
       );
-    } else {
+    } else if (projectId !== undefined) {
       // The project has been cleared
       const newQuery = { ...query };
       delete newQuery.project;
       delete newQuery.path;
 
-      router.push(
-        {
-          pathname,
-          query: newQuery,
-        },
-        undefined,
-        { shallow },
-      );
+      router.push({ pathname, query: newQuery }, undefined, { shallow, scroll: false });
     }
   };
 

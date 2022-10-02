@@ -54,7 +54,7 @@ specifiers:
   just-group-by: 2.1.2
   lint-staged: 13.0.3
   lodash-es: 4.17.21
-  material-ui-popup-state: 4.0.2
+  material-ui-popup-state: 4.1.0
   next: 12.3.1
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
@@ -115,7 +115,7 @@ dependencies:
   just-compare: 2.2.2
   just-group-by: 2.1.2
   lodash-es: 4.17.21
-  material-ui-popup-state: 4.0.2_17a1432779ecebed8795c1bcaeaaf2fe
+  material-ui-popup-state: 4.1.0_17a1432779ecebed8795c1bcaeaaf2fe
   next: 12.3.1_861f28c310daad528cf1883c53366814
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
@@ -3644,12 +3644,12 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
-  /material-ui-popup-state/4.0.2_17a1432779ecebed8795c1bcaeaaf2fe:
-    resolution: {integrity: sha512-N/Dx0QAKkBxpyXGOE5+xaHijFkGZ5Sed/VYDpIk2TMKVDRIxszxuTFoOLoHrsk/SuQflBoCGLzzld/XYAdZymg==}
+  /material-ui-popup-state/4.1.0_17a1432779ecebed8795c1bcaeaaf2fe:
+    resolution: {integrity: sha512-YAxLT10XALsUuuo46sc81NKD6oKJzlkcKP3e+IqC0pKwzAhOAZIQ+RUHXT6Mz3bXHKoHCsM+NdIQxR4mOH/KEQ==}
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.17.8
+      '@babel/runtime': 7.19.0
       '@mui/material': 5.10.6_17a1432779ecebed8795c1bcaeaaf2fe
       classnames: 2.3.1
       prop-types: 15.8.1

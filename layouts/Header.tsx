@@ -1,13 +1,13 @@
 import { AppBar, Toolbar } from "@mui/material";
 
-import { Logo } from "./navigation/Logo";
+import { HeaderLogo } from "../components/logo/HeaderLogo";
 import { NavBarContents } from "./navigation/NavBarContents";
 
 const Header = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Logo />
+        <HeaderLogo />
 
         <NavBarContents />
       </Toolbar>

@@ -1,5 +1,6 @@
 const path = require("path");
 const { withSentryConfig } = require("@sentry/nextjs");
+const withRoutes = require("nextjs-routes/config")({ outDir: "types" });
 
 if (process.env.MONOREPO) {
   console.log("info  - Running with webpack aliases for monorepo compatibility");
@@ -72,6 +73,7 @@ const sentryWebpackPluginOptions = {
   environment: process.env.NODE_ENV,
 };
 
+nextConfig = withRoutes(nextConfig);
 nextConfig = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
 nextConfig = process.env.SENTRY_AUTH_TOKEN
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)

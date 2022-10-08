@@ -1,24 +1,19 @@
 import { styled } from "@mui/material";
-import Image from "next/future/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
+import { LogoImage } from "./LogoImage";
 
 /**
  * Squonk Logo
  */
-export const Logo = () => {
+export const HeaderLogo = () => {
   const { query } = useRouter();
 
   return (
     <Link passHref href={{ pathname: "/", query: query.project ? { project: query.project } : {} }}>
       <LogoLink>
-        <Image
-          priority
-          alt="Squonk (animal) logo with title text 'Squonk' and subtitle 'Data Manager'"
-          height="60"
-          src={process.env.NEXT_PUBLIC_BASE_PATH + "/DataManager_WhiteOpt2.svg"}
-          width="206"
-        />
+        <LogoImage variant="dark" />
       </LogoLink>
     </Link>
   );

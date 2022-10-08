@@ -58,6 +58,7 @@ specifiers:
   next: 12.3.1
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
+  nextjs-routes: 0.1.2
   node-fetch: 3.2.10
   notistack: 2.0.5
   plotly.js-basic-dist: 2.14.0
@@ -119,6 +120,7 @@ dependencies:
   next: 12.3.1_45265acc010aaed884ffc8b80dc22c41
   next-http-proxy-middleware: 1.2.4
   next-transpile-modules: 9.0.0
+  nextjs-routes: 0.1.2_next@12.3.1
   node-fetch: 3.2.10
   notistack: 2.0.5_4dd279597352502241f4e267f6376ef8
   plotly.js-basic-dist: 2.14.0
@@ -4211,6 +4213,16 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+    dev: false
+
+  /nextjs-routes/0.1.2_next@12.3.1:
+    resolution: {integrity: sha512-mwrFU0kh/EPs+43rhSGl2VH3zZ2nfltE48/TVSe/xybm9o9PkEk66NuqmRblilN9D7xXx1/bsduMjfbgs8qRCA==}
+    hasBin: true
+    peerDependencies:
+      next: '*'
+    dependencies:
+      chokidar: 3.5.3
+      next: 12.3.1_45265acc010aaed884ffc8b80dc22c41
     dev: false
 
   /node-domexception/1.0.0:

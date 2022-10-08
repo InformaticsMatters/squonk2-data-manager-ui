@@ -1,6 +1,9 @@
-import type { Column } from "react-table";
+import type { CellProps, Column } from "react-table";
 
 import type { ProductsGetResponseProductsItem } from "@squonk/account-server-client";
+
+import { Link } from "@mui/material";
+import NextLink from "next/link";
 
 import { toLocalTimeString } from "../../utils/app/datetime";
 
@@ -20,5 +23,21 @@ export const sharedProductColumns: Column<ProductsGetResponseProductsItem>[] = [
     id: "unit",
     Header: "Unit",
     accessor: (row) => row.unit.name,
+  },
+  {
+    id: "id",
+    Header: "Invoice",
+    accessor: (row) => row.product.id,
+    Cell: ({ row }: CellProps<ProductsGetResponseProductsItem>) => (
+      <NextLink
+        passHref
+        href={{
+          pathname: "/product/[productId]/invoice",
+          query: { productId: row.original.product.id },
+        }}
+      >
+        <Link>Invoice</Link>
+      </NextLink>
+    ),
   },
 ];

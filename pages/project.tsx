@@ -21,13 +21,16 @@ import Layout from "../layouts/Layout";
 import { createErrorProps } from "../utils/api/serverSidePropsError";
 import { dmOptions } from "../utils/api/ssrQueryOptions";
 import { pathFromQuery } from "../utils/app/paths";
+import type { NotSuccessful, ReactQueryPageProps } from "../utils/next/ssr";
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
+export type ProjectProps = Record<string, never> | NotSuccessful | ReactQueryPageProps;
+
+export const getServerSideProps: GetServerSideProps<ProjectProps> = async ({ req, res, query }) => {
   const queryClient = new QueryClient();
 
   // When project isn't specified no requests can be made
   if (typeof query.project !== "string") {
-    return { props: {} };
+    return { props: {} as Record<string, never> };
   }
 
   const projectId = query.project;

@@ -1,4 +1,3 @@
-import type { DehydratedState } from "react-query";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 
@@ -16,17 +15,9 @@ import { ResultsView } from "../features/ResultsView";
 import Layout from "../layouts/Layout";
 import { createErrorProps } from "../utils/api/serverSidePropsError";
 import { dmOptions } from "../utils/api/ssrQueryOptions";
+import type { NotSuccessful, ReactQueryPageProps } from "../utils/next/ssr";
 
-interface NotSuccessful {
-  statusCode: number;
-  statusMessage: string;
-}
-
-export type TasksProps =
-  | NotSuccessful
-  | {
-      dehydratedState: DehydratedState;
-    };
+export type TasksProps = NotSuccessful | ReactQueryPageProps;
 
 const isNotSuccessful = (props: TasksProps): props is NotSuccessful => {
   return typeof (props as NotSuccessful).statusCode === "number";

@@ -17,8 +17,8 @@ specifiers:
   '@rjsf/core': 4.2.3
   '@rjsf/material-ui': 4.2.3
   '@sentry/nextjs': 7.14.0
-  '@squonk/account-server-client': 1.0.10
-  '@squonk/data-manager-client': 1.0.12
+  '@squonk/account-server-client': 1.0.12
+  '@squonk/data-manager-client': 1.0.18
   '@squonk/eslint-config': 0.4.2
   '@squonk/mui-theme': 3.0.1
   '@types/lodash-es': 4.17.6
@@ -93,8 +93,8 @@ dependencies:
   '@rjsf/core': 4.2.3_react@17.0.2
   '@rjsf/material-ui': 4.2.3_9d08d35f0a90cbaa1997d22304f606f5
   '@sentry/nextjs': 7.14.0_next@12.3.1+react@17.0.2
-  '@squonk/account-server-client': 1.0.10_axios@0.27.2+react-query@3.39.2
-  '@squonk/data-manager-client': 1.0.12_axios@0.27.2+react-query@3.39.2
+  '@squonk/account-server-client': 1.0.12_axios@0.27.2+react-query@3.39.2
+  '@squonk/data-manager-client': 1.0.18_axios@0.27.2+react-query@3.39.2
   '@squonk/mui-theme': 3.0.1_@mui+material@5.10.7
   '@types/lodash-es': 4.17.6
   '@types/node': 16.11.63
@@ -1143,8 +1143,8 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /@squonk/account-server-client/1.0.10_axios@0.27.2+react-query@3.39.2:
-    resolution: {integrity: sha512-PYM1iqL4Ps5zUbtqAatd9mHZRt6CqjPLw90Wz9mHPO0jo85NDqmjBbXIEw5KkPo5QJU06FUgdgFrRFSgKFxQPg==}
+  /@squonk/account-server-client/1.0.12_axios@0.27.2+react-query@3.39.2:
+    resolution: {integrity: sha512-ZJN4PEqdzTpEFe9suaQoxbSowGTzX61SMIWiFECjELcr7JcHoE/lTSHO9B7cRfht6qIFgeEYvyrkjNvJ1K40qw==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'
@@ -1153,8 +1153,8 @@ packages:
       react-query: 3.39.2_react-dom@17.0.2+react@17.0.2
     dev: false
 
-  /@squonk/data-manager-client/1.0.12_axios@0.27.2+react-query@3.39.2:
-    resolution: {integrity: sha512-nwg82VQe//twqjA3lEdN49/4wphSk3gbnpzSIhTtkAkLXsimggXptfvNoS9slslMIc8w2HajxA/B4S5pkmzL5Q==}
+  /@squonk/data-manager-client/1.0.18_axios@0.27.2+react-query@3.39.2:
+    resolution: {integrity: sha512-bXrPyAFX3r2E389Vc5rOtdNDteMSlcPVF3LKO+QPdmWW8zG51jWhuhBQH0zhBJiDANd54sfjxC7AvW5P4E92Gw==}
     peerDependencies:
       axios: '>=0.23'
       react-query: '>=3'

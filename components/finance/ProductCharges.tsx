@@ -13,6 +13,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import fileSize from "filesize";
 
 import { toLocalTimeString } from "../../utils/app/datetime";
 
@@ -58,6 +59,8 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
             <TableRow>
               <TableCell></TableCell>
               <TableCell>Merchant</TableCell>
+              <TableCell>Job</TableCell>
+              <TableCell>Job Collection</TableCell>
               <TableCell>Closed</TableCell>
               <TableCell colSpan={4}>Charge</TableCell>
             </TableRow>
@@ -68,6 +71,8 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
                 <TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell sx={{ wordBreak: "break-all" }}>{charge.merchant_name}</TableCell>
+                  <TableCell>{charge.charge.additional_data?.job_job}</TableCell>
+                  <TableCell>{charge.charge.additional_data?.job_collection}</TableCell>
                   <TableCell>{charge.closed ? "Yes" : "No"}</TableCell>
                   <TableCell>C&nbsp;{charge.charge.coins}</TableCell>
                   <TableCell>{charge.charge.username}</TableCell>
@@ -96,6 +101,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
             <TableRow>
               <TableCell></TableCell>
               <TableCell>Date</TableCell>
+              <TableCell>Bytes</TableCell>
               <TableCell>Coins</TableCell>
             </TableRow>
           </TableHead>
@@ -105,6 +111,8 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
                 <TableRow key={charge.item_number}>
                   <TableCell>{charge.item_number}</TableCell>
                   <TableCell>{charge.date}</TableCell>
+                  {/* TODO: assert additional_data to interface from data-manager-client when it's updated */}
+                  <TableCell>{fileSize(charge.additional_data?.peak_bytes)}</TableCell>
                   <TableCell>C&nbsp;{charge.coins}</TableCell>
                 </TableRow>
               ))

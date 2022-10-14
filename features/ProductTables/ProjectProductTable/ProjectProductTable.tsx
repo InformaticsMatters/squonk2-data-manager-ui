@@ -59,6 +59,7 @@ export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
           Header: "Actions",
           Cell: ({ row }: CellProps<ProductDmProjectTier, any>) => (
             <>
+              <ChargesLinkIconButton productId={row.original.product.id} />
               <DeleteProductButton
                 disabled={!!row.original.claim?.id}
                 product={row.original.product}
@@ -68,7 +69,6 @@ export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
                     : "Delete product permanently"
                 }
               />
-              <ChargesLinkIconButton productId={row.original.product.id} />
             </>
           ),
         },

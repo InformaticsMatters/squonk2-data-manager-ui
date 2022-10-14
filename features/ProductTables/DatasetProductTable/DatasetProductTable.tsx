@@ -34,15 +34,15 @@ export const DatasetProductTable = ({ products }: DatasetProductTableProps) => {
           Header: "Actions",
           Cell: ({ row }: CellProps<ProductDmStorage, any>) => (
             <>
-              <DeleteProductButton
-                product={row.original.product}
-                tooltip="Delete product permanently"
-              />
+              <ChargesLinkIconButton productId={row.original.product.id} />
               <AdjustProjectProduct
                 allowance={row.original.coins.allowance}
                 product={row.original.product}
               />
-              <ChargesLinkIconButton productId={row.original.product.id} />
+              <DeleteProductButton
+                product={row.original.product}
+                tooltip="Delete product permanently"
+              />
             </>
           ),
         },

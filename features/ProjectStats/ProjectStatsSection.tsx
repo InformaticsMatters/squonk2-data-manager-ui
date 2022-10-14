@@ -160,7 +160,7 @@ export const ProjectStatsSection = () => {
             },
             "& tr": {
               display: "grid",
-              gridTemplateColumns: "61px 1fr 1fr 110px 220px 100px 100px 100px 100px",
+              gridTemplateColumns: "61px 1fr 1fr 110px 220px 100px 100px 100px 110px",
             },
           },
         }}

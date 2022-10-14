@@ -2,28 +2,25 @@ import type { ProductDetail } from "@squonk/account-server-client";
 
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import { IconButton, Tooltip } from "@mui/material";
-import NextLink from "next/link";
 
 export interface ChargesLinkIconButtonProps {
-  productId: ProductDetail["id"];
+  productId?: ProductDetail["id"];
 }
 
 export const ChargesLinkIconButton = ({ productId }: ChargesLinkIconButtonProps) => {
   return (
-    <NextLink
-      passHref
-      href={{
-        pathname: "/product/[productId]/charges",
-        query: { productId },
-      }}
-    >
-      <Tooltip title="View charges">
-        <span>
-          <IconButton size="small">
-            <ReceiptIcon />
-          </IconButton>
-        </span>
-      </Tooltip>
-    </NextLink>
+    <Tooltip title="View charges">
+      <span>
+        <IconButton
+          disabled={!productId}
+          href={`/product/${productId}/charges`}
+          size="small"
+          sx={{ p: "1px" }}
+          target="_blank"
+        >
+          <ReceiptIcon />
+        </IconButton>
+      </span>
+    </Tooltip>
   );
 };

@@ -48,7 +48,7 @@ export const DeleteProductButton = ({
           }}
         >
           {({ openModal }) => (
-            <IconButton disabled={disabled} size="small" onClick={openModal}>
+            <IconButton disabled={disabled} size="small" sx={{ p: "1px" }} onClick={openModal}>
               <DeleteForeverIcon />
             </IconButton>
           )}

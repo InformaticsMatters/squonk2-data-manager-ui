@@ -35,7 +35,7 @@ export const AdjustProjectProduct = ({ product, allowance }: AdjustProjectProduc
 
   return (
     <>
-      <IconButton onClick={() => setOpen(true)}>
+      <IconButton size="small" onClick={() => setOpen(true)}>
         <EditIcon />
       </IconButton>
       <FormikModalWrapper

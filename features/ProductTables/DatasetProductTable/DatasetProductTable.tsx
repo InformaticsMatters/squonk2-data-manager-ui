@@ -5,6 +5,7 @@ import type { ProductDmStorage } from "@squonk/account-server-client";
 
 import { DataTable } from "../../../components/DataTable";
 import { AdjustProjectProduct } from "../../../components/products/AdjustProjectProduct";
+import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkIconButton";
 import { DeleteProductButton } from "../../../components/products/DeleteProductButton";
 import { sharedProductColumns } from "../columns";
 
@@ -41,6 +42,7 @@ export const DatasetProductTable = ({ products }: DatasetProductTableProps) => {
                 allowance={row.original.coins.allowance}
                 product={row.original.product}
               />
+              <ChargesLinkIconButton productId={row.original.product.id} />
             </>
           ),
         },

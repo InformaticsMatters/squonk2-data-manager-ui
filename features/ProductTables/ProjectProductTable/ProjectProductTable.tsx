@@ -7,6 +7,7 @@ import { Link } from "@mui/material";
 import NextLink from "next/link";
 
 import { DataTable } from "../../../components/DataTable";
+import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkIconButton";
 import { DeleteProductButton } from "../../../components/products/DeleteProductButton";
 import { CreateProjectButton } from "../../../components/projects/CreateProjectButton";
 import { formatTierString } from "../../../utils/app/products";
@@ -57,15 +58,18 @@ export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
           groupByBoundary: true, // Ensure normal columns can't be ordered before this
           Header: "Actions",
           Cell: ({ row }: CellProps<ProductDmProjectTier, any>) => (
-            <DeleteProductButton
-              disabled={!!row.original.claim?.id}
-              product={row.original.product}
-              tooltip={
-                row.original.claim?.id
-                  ? "You must delete the project first"
-                  : "Delete product permanently"
-              }
-            />
+            <>
+              <DeleteProductButton
+                disabled={!!row.original.claim?.id}
+                product={row.original.product}
+                tooltip={
+                  row.original.claim?.id
+                    ? "You must delete the project first"
+                    : "Delete product permanently"
+                }
+              />
+              <ChargesLinkIconButton productId={row.original.product.id} />
+            </>
           ),
         },
       ];

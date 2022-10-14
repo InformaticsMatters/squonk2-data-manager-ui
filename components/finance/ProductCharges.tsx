@@ -81,7 +81,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} sx={{ textAlign: "center" }}>
+                <TableCell colSpan={6} sx={{ textAlign: "center" }}>
                   No charges
                 </TableCell>
               </TableRow>
@@ -118,7 +118,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={3} sx={{ textAlign: "center" }}>
+                <TableCell colSpan={4} sx={{ textAlign: "center" }}>
                   No charges
                 </TableCell>
               </TableRow>

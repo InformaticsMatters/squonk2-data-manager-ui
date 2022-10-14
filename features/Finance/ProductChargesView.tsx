@@ -3,13 +3,13 @@ import { useGetProduct } from "@squonk/account-server-client/product";
 
 import Head from "next/head";
 
-import { ProductInvoice } from "../../components/finance/ProductInvoice";
+import { ProductCharges } from "../../components/finance/ProductCharges";
 
-export interface ProductInvoiceViewProps {
+export interface ProductChargesViewProps {
   productId: ProductDetail["id"];
 }
 
-export const ProductInvoiceView = ({ productId }: ProductInvoiceViewProps) => {
+export const ProductChargesView = ({ productId }: ProductChargesViewProps) => {
   const { data } = useGetProduct(productId);
 
   return (
@@ -17,7 +17,7 @@ export const ProductInvoiceView = ({ productId }: ProductInvoiceViewProps) => {
       <Head>
         <title>Squonk | {data?.product.product.name} Invoice</title>
       </Head>
-      <ProductInvoice productId={productId} />
+      <ProductCharges productId={productId} />
     </>
   );
 };

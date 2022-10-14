@@ -13,7 +13,7 @@ export const ChargesLinkIconButton = ({ productId }: ChargesLinkIconButtonProps)
     <NextLink
       passHref
       href={{
-        pathname: "/product/[productId]/invoice",
+        pathname: "/product/[productId]/charges",
         query: { productId },
       }}
     >

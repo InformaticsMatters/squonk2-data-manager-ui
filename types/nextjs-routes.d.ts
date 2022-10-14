@@ -26,7 +26,7 @@ declare module "nextjs-routes" {
     | { pathname: "/docs/jobs"; query?: Query | undefined }
     | { pathname: "/executions"; query?: Query | undefined }
     | { pathname: "/"; query?: Query | undefined }
-    | { pathname: "/product/[productId]/invoice"; query: Query<{ "productId": string }> }
+    | { pathname: "/product/[productId]/charges"; query: Query<{ "productId": string }> }
     | { pathname: "/products"; query?: Query | undefined }
     | { pathname: "/project/file"; query?: Query | undefined }
     | { pathname: "/project"; query?: Query | undefined }

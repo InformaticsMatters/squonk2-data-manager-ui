@@ -14,16 +14,20 @@ import NextError from "next/error";
 import { useRouter } from "next/router";
 
 import { RoleRequired } from "../../../components/auth/RoleRequired";
-import { ProductInvoiceView } from "../../../features/Finance/ProductInvoiceView";
+import { ProductChargesView } from "../../../features/Finance/ProductChargesView";
 import Layout from "../../../layouts/Layout";
 import { createErrorProps } from "../../../utils/api/serverSidePropsError";
 import { asOptions } from "../../../utils/api/ssrQueryOptions";
 import type { NotSuccessful, ReactQueryPageProps } from "../../../utils/next/ssr";
 import { isNotSuccessful } from "../../../utils/next/ssr";
 
-export type InvoiceProps = NotSuccessful | ReactQueryPageProps;
+export type ProductChargesProps = NotSuccessful | ReactQueryPageProps;
 
-export const getServerSideProps: GetServerSideProps<InvoiceProps> = async ({ req, res, query }) => {
+export const getServerSideProps: GetServerSideProps<ProductChargesProps> = async ({
+  req,
+  res,
+  query,
+}) => {
   const { productId } = query;
 
   if (productId !== "" && typeof productId !== "string") {
@@ -60,7 +64,7 @@ export const getServerSideProps: GetServerSideProps<InvoiceProps> = async ({ req
   };
 };
 
-const Invoice = (props: InvoiceProps) => {
+const ProductCharges = (props: ProductChargesProps) => {
   const { query } = useRouter();
   const productId = query.productId;
 
@@ -76,10 +80,10 @@ const Invoice = (props: InvoiceProps) => {
   return (
     <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(" ")}>
       <Layout>
-        <ProductInvoiceView productId={productId} />
+        <ProductChargesView productId={productId} />
       </Layout>
     </RoleRequired>
   );
 };
 
-export default withPageAuthRequired(Invoice);
+export default withPageAuthRequired(ProductCharges);

@@ -32,6 +32,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
   return (
     <Container maxWidth="md">
       <Typography variant="h1">Product Ledger</Typography>
+      <Typography variant="subtitle2">{productData?.product.product.id}</Typography>
       <Typography gutterBottom component="p" variant="h5">
         Charges against: {productData?.product.product.name}
       </Typography>

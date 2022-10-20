@@ -1,9 +1,8 @@
-import { useQueryClient } from "react-query";
-
 import type { DmError, TaskSummary } from "@squonk/data-manager-client";
 import { getGetTasksQueryKey, useDeleteTask } from "@squonk/data-manager-client/task";
 
 import { Button, CardContent } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
 import { useCurrentProjectId } from "../../hooks/projectHooks";

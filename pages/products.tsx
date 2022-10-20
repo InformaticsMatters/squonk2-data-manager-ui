@@ -1,10 +1,9 @@
-import { dehydrate, QueryClient } from "react-query";
-
 import { getGetProductsQueryKey, getProducts } from "@squonk/account-server-client/product";
 
 import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { Container } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import type { GetServerSideProps } from "next";
 import NextError from "next/error";
 import Head from "next/head";

@@ -1,11 +1,9 @@
-import { QueryClient } from "react-query";
-import { dehydrate } from "react-query/hydration";
-
 import { getGetInstancesQueryKey, getInstances } from "@squonk/data-manager-client/instance";
 import { getGetTasksQueryKey, getTasks } from "@squonk/data-manager-client/task";
 
 import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { captureException } from "@sentry/nextjs";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import type { GetServerSideProps } from "next";
 import NextError from "next/error";
 import Head from "next/head";

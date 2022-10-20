@@ -1,5 +1,3 @@
-import { useQueryClient } from "react-query";
-
 import type {
   AsError,
   ProductDetail,
@@ -24,6 +22,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import type { FormikConfig } from "formik";
 import { Field, Form, Formik } from "formik";
 import { Checkbox, TextField } from "formik-mui";
@@ -33,7 +32,7 @@ import { PROJECT_SUB } from "../../constants/products";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import type { Resolve } from "../../types";
-import { formatTierString, getBillingDay } from "../../utils/app/products";
+import { formatTierString } from "../../utils/app/products";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import type { FormikModalWrapperProps } from "../modals/FormikModalWrapper";
 import { FormikModalWrapper } from "../modals/FormikModalWrapper";
@@ -88,7 +87,6 @@ export const CreateProjectForm = ({ modal, unitId, product }: CreateProjectFormP
           data: {
             name: projectName,
             type: PROJECT_SUB,
-            billing_day: getBillingDay(),
             flavour: flavour as UnitProductPostBodyBodyFlavour,
           },
         });

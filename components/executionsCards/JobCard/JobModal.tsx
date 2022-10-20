@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useQueryClient } from "react-query";
 
 import type {
   DmError,
@@ -12,6 +11,7 @@ import { useGetJob } from "@squonk/data-manager-client/job";
 
 import { Box, Grid, TextField, Typography } from "@mui/material";
 import Form from "@rjsf/material-ui/v5";
+import { useQueryClient } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";

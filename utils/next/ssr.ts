@@ -1,4 +1,4 @@
-import type { DehydratedState } from "react-query";
+import type { DehydratedState } from "@tanstack/react-query";
 
 export interface NotSuccessful {
   statusCode: number;

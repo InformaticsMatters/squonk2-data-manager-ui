@@ -1,5 +1,3 @@
-import { dehydrate, QueryClient } from "react-query";
-
 import {
   getGetProductChargesQueryKey,
   getGetProductQueryKey,
@@ -9,6 +7,7 @@ import {
 
 import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { captureException } from "@sentry/nextjs";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import type { GetServerSideProps } from "next";
 import NextError from "next/error";
 import { useRouter } from "next/router";

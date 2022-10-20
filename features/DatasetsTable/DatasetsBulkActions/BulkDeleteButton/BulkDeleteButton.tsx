@@ -1,10 +1,9 @@
-import { useQueryClient } from "react-query";
-
 import type { DmError } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey, useDeleteDataset } from "@squonk/data-manager-client/dataset";
 
 import { DeleteForever } from "@mui/icons-material";
 import { IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../../components/WarningDeleteButton";
 import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";

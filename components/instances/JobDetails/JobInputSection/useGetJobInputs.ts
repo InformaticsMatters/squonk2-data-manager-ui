@@ -27,6 +27,7 @@ export const useGetJobInputs = (instance: InstanceSummary | InstanceGetResponse)
   const { data, isLoading, isError, error } = useGetJob(
     // Since the query will be disabled if job_id is undefined, providing -1 is fine
     instance.job_id ?? -1,
+    undefined,
     {
       query: { enabled: inputsEnabled },
     },

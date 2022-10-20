@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQueryClient } from "react-query";
 
 import type { ProductDetail } from "@squonk/account-server-client";
 import {
@@ -10,6 +9,7 @@ import {
 
 import EditIcon from "@mui/icons-material/Edit";
 import { Box, IconButton } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { Field } from "formik";
 import { TextField } from "formik-mui";
 

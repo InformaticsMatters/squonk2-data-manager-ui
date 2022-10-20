@@ -9,6 +9,6 @@ export const formatTierString = (original: string) => {
  * Gets the billing day for a product in the range of 1-28
  */
 export const getBillingDay = () => {
-  const day = new Date().getDate();
-  return day < 29 ? day : 28;
+  const today = new Date().getDate();
+  return Math.min(28, today - 1);
 };

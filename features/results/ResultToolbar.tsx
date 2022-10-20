@@ -1,5 +1,4 @@
 import type { Dispatch, SetStateAction } from "react";
-import { useQueryClient } from "react-query";
 
 import {
   getGetInstanceQueryKey,
@@ -10,6 +9,7 @@ import { getGetProjectsQueryKey } from "@squonk/data-manager-client/project";
 
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import { Grid, IconButton, MenuItem, TextField, Tooltip } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { EventDebugSwitch } from "../../components/results/EventDebugSwitch";
 import { SearchTextField } from "../../components/SearchTextField";

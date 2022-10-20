@@ -1,5 +1,3 @@
-import { useQueryClient } from "react-query";
-
 import type { UnitDetail } from "@squonk/account-server-client";
 import {
   getGetOrganisationUnitUsersQueryKey,
@@ -8,6 +6,8 @@ import {
   useGetOrganisationUnitUsers,
 } from "@squonk/account-server-client/user";
 import type { DmError } from "@squonk/data-manager-client";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 import { ManageEditors } from "../../../../../components/ManageEditors";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQueryClient } from "react-query";
 
 import {
   getGetProductsForUnitQueryKey,
@@ -11,6 +10,7 @@ import { getGetProjectsQueryKey, useDeleteProject } from "@squonk/data-manager-c
 
 import { DeleteForever } from "@mui/icons-material";
 import { IconButton, LinearProgress, Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../components/WarningDeleteButton";
 import { useCurrentProjectId } from "../../../hooks/projectHooks";

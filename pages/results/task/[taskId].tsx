@@ -1,10 +1,9 @@
-import { useQueryClient } from "react-query";
-
 import { getGetTaskQueryKey, useGetTask } from "@squonk/data-manager-client/task";
 
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import { Alert, Box, Container, IconButton, Tooltip, Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -21,7 +20,7 @@ const Result = () => {
 
   const taskId = router.query.taskId as string;
 
-  const { data: task, isLoading, isError, error } = useGetTask(taskId);
+  const { data: task, error } = useGetTask(taskId);
 
   const refreshResults = [() => queryClient.invalidateQueries(getGetTaskQueryKey(taskId))];
 
@@ -47,9 +46,9 @@ const Result = () => {
                 </IconButton>
               </Tooltip>
             </Box>
-            {isError ? (
+            {error !== null ? (
               <Alert severity="error">{getErrorMessage(error)}</Alert>
-            ) : isLoading || task === undefined ? (
+            ) : task === undefined ? (
               <CenterLoader />
             ) : (
               <ResultTaskCard collapsedByDefault={false} task={{ ...task, id: taskId }} />

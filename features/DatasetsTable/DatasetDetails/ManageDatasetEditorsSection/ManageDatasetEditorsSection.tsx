@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQueryClient } from "react-query";
 
 import type { DatasetSummary, DmError } from "@squonk/data-manager-client";
 import {
@@ -7,6 +6,8 @@ import {
   useAddEditorToDataset,
   useRemoveEditorFromDataset,
 } from "@squonk/data-manager-client/dataset";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 import { CenterLoader } from "../../../../components/CenterLoader";
 import { ManageEditors } from "../../../../components/ManageEditors";

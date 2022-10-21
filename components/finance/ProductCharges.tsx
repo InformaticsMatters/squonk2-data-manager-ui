@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import type { ProductDetail } from "@squonk/account-server-client";
 import { useGetProduct, useGetProductCharges } from "@squonk/account-server-client/product";
 
@@ -5,7 +7,9 @@ import {
   Box,
   Container,
   Divider,
+  MenuItem,
   Paper,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -16,34 +20,58 @@ import {
 import fileSize from "filesize";
 
 import { toLocalTimeString } from "../../utils/app/datetime";
+import { getBillingPeriods } from "../../utils/app/products";
+import { CenterLoader } from "../CenterLoader";
 
 export interface ProductChargesProps {
   productId: ProductDetail["id"];
 }
 
 export const ProductCharges = ({ productId }: ProductChargesProps) => {
-  const { data: chargesData } = useGetProductCharges(productId);
+  const [monthDelta, setMonthDelta] = useState(0);
+  const { data: chargesData } = useGetProductCharges(productId, { pbp: monthDelta });
 
   const processingCharges = chargesData?.processing_charges;
   const storageCharges = chargesData?.storage_charges.items;
 
   const { data: productData } = useGetProduct(productId);
 
+  if (!productData || !chargesData) {
+    return <CenterLoader />;
+  }
+
+  const periods = getBillingPeriods(
+    productData.product.unit.billing_day,
+    productData.product.product.created,
+  );
+
   return (
     <Container maxWidth="md">
       <Typography variant="h1">Product Ledger</Typography>
-      <Typography variant="subtitle2">{productData?.product.product.id}</Typography>
+      <Typography variant="subtitle2">{productData.product.product.id}</Typography>
       <Typography gutterBottom component="p" variant="h5">
-        Charges against: {productData?.product.product.name}
+        Charges against: {productData.product.product.name}
       </Typography>
-      <Typography>
-        <strong>Billed to</strong>: unit <em>{productData?.product.unit.name}</em> belonging to the{" "}
-        <em>{productData?.product.organisation.name}</em> organisation{" "}
+      <Typography gutterBottom>
+        <strong>Billed to</strong>: unit <em>{productData.product.unit.name}</em> belonging to the{" "}
+        <em>{productData.product.organisation.name}</em> organisation{" "}
+      </Typography>
+      <Typography gutterBottom component="h2" variant="h4">
+        Billing period
       </Typography>
 
-      <Typography>
-        For the current billing period: {chargesData?.from} to {chargesData?.until}
-      </Typography>
+      <Select
+        id="select-billing-cycle"
+        size="small"
+        value={monthDelta}
+        onChange={(event) => {
+          setMonthDelta(Number(event.target.value));
+        }}
+      >
+        {periods.map(([i, d1, d2]) => (
+          <MenuItem key={d1} value={i}>{`${d1} — ${d2}`}</MenuItem>
+        ))}
+      </Select>
 
       <Typography gutterBottom sx={{ mt: 2 }} variant="h2">
         Charges
@@ -131,7 +159,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
       <Box textAlign="right">
         <Typography variant="h3">Total Charges</Typography>
         <Typography variant="subtitle1">To be paid by the unit owner</Typography>
-        C&nbsp;{chargesData?.coins}
+        C&nbsp;{chargesData.coins}
       </Box>
     </Container>
   );

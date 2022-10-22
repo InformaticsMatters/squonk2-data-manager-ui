@@ -39,6 +39,9 @@ let nextConfig = {
   },
   // Allow mdx content and mdx files as pages
   webpack(config, options) {
+    if (options.isServer) {
+      config.externals = ["@tanstack/react-query", ...config.externals];
+    }
     if (process.env.MONOREPO) {
       const packages = ["react", "@mui/material", "@tanstack/react-query"];
       packages.forEach(

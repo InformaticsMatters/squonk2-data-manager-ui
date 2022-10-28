@@ -29,14 +29,10 @@ export interface JobDetailsProps {
  * Displays the details of an job based on the instance of a job
  */
 export const JobDetails = ({ instanceId, jobId }: JobDetailsProps) => {
-  const {
-    data: instance,
-    isLoading: isInstanceLoading,
-    error: instanceError,
-  } = usePolledGetInstance(instanceId);
-  const { data: job, isLoading: isJobLoading, error: jobError } = useGetJob(jobId);
+  const { data: instance, error: instanceError } = usePolledGetInstance(instanceId);
+  const { data: job, error: jobError } = useGetJob(jobId);
 
-  if (!instance && (isInstanceLoading || isJobLoading)) {
+  if (!instance) {
     return <CenterLoader />;
   }
 
@@ -50,7 +46,7 @@ export const JobDetails = ({ instanceId, jobId }: JobDetailsProps) => {
   return (
     <>
       <HorizontalList>
-        {instance && <CommonDetails instance={instance} />}
+        <CommonDetails instance={instance} />
         <ListItem>
           <ListItemIcon sx={{ minWidth: "40px" }}>
             <WorkOutlineRoundedIcon />
@@ -62,18 +58,18 @@ export const JobDetails = ({ instanceId, jobId }: JobDetailsProps) => {
       <Grid container>
         <Grid item sm={6} xs={12}>
           <PageSection level={3} title="Inputs">
-            {instance && <JobInputSection instance={instance} />}
+            <JobInputSection instance={instance} />
           </PageSection>
         </Grid>
 
         <Grid item sm={6} xs={12}>
           <PageSection level={3} title="Outputs">
-            {instance && <JobOutputSection instance={instance} />}
+            <JobOutputSection instance={instance} />
           </PageSection>
         </Grid>
       </Grid>
 
-      {instance && <TaskDetails taskId={instance.tasks[instance.tasks.length - 1].id} />}
+      <TaskDetails taskId={instance.tasks[instance.tasks.length - 1].id} />
     </>
   );
 };

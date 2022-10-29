@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQueryClient } from "react-query";
 
 import type { InstanceSummary } from "@squonk/data-manager-client";
 import {
@@ -9,6 +8,7 @@ import {
 } from "@squonk/data-manager-client/instance";
 
 import { Button, Tooltip } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface ArchiveInstanceProps {
   instanceId: InstanceSummary["id"];

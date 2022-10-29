@@ -1,11 +1,10 @@
-import { useQueryClient } from "react-query";
-
 import type { DeleteUnmanagedFileParams, DmError } from "@squonk/data-manager-client";
 import { getGetFilesQueryKey, useDeleteUnmanagedFile } from "@squonk/data-manager-client/file";
 
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import type { IconButtonProps } from "@mui/material";
 import { IconButton } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../components/WarningDeleteButton";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";

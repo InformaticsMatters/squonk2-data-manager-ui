@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useQueryClient } from "react-query";
 
 import { getGetSchemaQueryKey, useGetSchema } from "@squonk/data-manager-client/dataset";
 import { useAddMetadata, useAddMetadataVersion } from "@squonk/data-manager-client/metadata";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 import type { TypedSchema } from "./types";
 import { useEditableSchemaView } from "./useEditableSchema";

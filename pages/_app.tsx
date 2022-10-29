@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
-import { Hydrate } from "react-query/hydration";
 
 import { setBaseUrl as setASBaseUrl } from "@squonk/account-server-client";
 import { setBaseUrl as setDMBaseUrl } from "@squonk/data-manager-client";
@@ -9,6 +6,8 @@ import { setBaseUrl as setDMBaseUrl } from "@squonk/data-manager-client";
 import { UserProvider } from "@auth0/nextjs-auth0";
 import type { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
+import { Hydrate, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { enableMapSet } from "immer";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -67,7 +66,6 @@ export default function App({
       <ThemeProviders>
         <UserProvider>
           <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools />
             <Hydrate state={pageProps.dehydratedState}>
               <SnackbarProvider>
                 <MDXComponentProvider>
@@ -77,6 +75,7 @@ export default function App({
                 </MDXComponentProvider>
               </SnackbarProvider>
             </Hydrate>
+            <ReactQueryDevtools />
           </QueryClientProvider>
         </UserProvider>
       </ThemeProviders>

@@ -6,6 +6,7 @@ import type { ProductDmProjectTier, ProductDmStorage } from "@squonk/account-ser
 import { Box, useTheme } from "@mui/material";
 
 import { DataTable } from "../../components/DataTable";
+import { ChargesLinkIconButton } from "../../components/products/ChargesLinkIconButton";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { formatTierString } from "../../utils/app/products";
 import { getErrorMessage } from "../../utils/next/orvalError";
@@ -137,8 +138,11 @@ export const ProjectStatsSection = () => {
         disableSortBy: true,
       },
       {
-        id: "for-layout-only-4",
-        disableSortBy: true,
+        id: "actions",
+        Header: "Actions",
+        Cell: ({ row }: Cell<ProductDmStorage>) => {
+          return <ChargesLinkIconButton productId={row.original.product.id} />;
+        },
       },
     ],
     [],
@@ -160,7 +164,7 @@ export const ProjectStatsSection = () => {
             },
             "& tr": {
               display: "grid",
-              gridTemplateColumns: "61px 1fr 1fr 110px 220px 100px 100px 100px 100px",
+              gridTemplateColumns: "61px 1fr 1fr 110px 220px 100px 100px 100px 110px",
             },
           },
         }}

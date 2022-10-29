@@ -1,5 +1,3 @@
-import { useQueryClient } from "react-query";
-
 import type { UnitDetail } from "@squonk/account-server-client";
 import {
   getGetOrganisationUnitsQueryKey,
@@ -9,6 +7,7 @@ import {
 
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../../../components/WarningDeleteButton";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";

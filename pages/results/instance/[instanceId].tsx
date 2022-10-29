@@ -1,10 +1,9 @@
-import { useQueryClient } from "react-query";
-
 import { getGetInstanceQueryKey } from "@squonk/data-manager-client/instance";
 
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import { Box, Container, IconButton, Tooltip } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 

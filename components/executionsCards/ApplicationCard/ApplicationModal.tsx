@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQueryClient } from "react-query";
 
 import type { ApplicationSummary, DmError } from "@squonk/data-manager-client";
 import { useGetApplication } from "@squonk/data-manager-client/application";
@@ -7,6 +6,7 @@ import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager
 
 import { Grid, MenuItem, TextField } from "@mui/material";
 import Form from "@rjsf/material-ui/v5";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { CenterLoader } from "../../CenterLoader";

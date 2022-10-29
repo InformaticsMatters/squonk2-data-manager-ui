@@ -1,5 +1,3 @@
-import { useQueryClient } from "react-query";
-
 import {
   getGetProjectQueryKey,
   getGetProjectsQueryKey,
@@ -7,6 +5,7 @@ import {
 } from "@squonk/data-manager-client/project";
 
 import { FormControlLabel, Switch } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import type { ProjectId } from "../../../hooks/projectHooks";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
@@ -30,7 +29,9 @@ export const PrivateProjectToggle = ({ projectId, isPrivate }: PrivateProjectTog
           // Disable the switch until all relevant requests have resolved
           disabled={
             isLoading ||
-            (!!projectId && queryClient.getQueryState(getGetProjectQueryKey(projectId))?.isFetching)
+            (!!projectId &&
+              queryClient.getQueryState(getGetProjectQueryKey(projectId))?.fetchStatus ===
+                "fetching")
           }
           onChange={async (_event, checked) => {
             if (projectId) {

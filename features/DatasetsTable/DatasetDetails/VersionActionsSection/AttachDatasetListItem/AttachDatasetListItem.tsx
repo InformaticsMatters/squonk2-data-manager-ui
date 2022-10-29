@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQueryClient } from "react-query";
 
 import type { DatasetVersionSummary, DmError } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
@@ -9,6 +8,7 @@ import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
 import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
 import { Alert, FormControl, FormGroup, ListItem, ListItemText, MenuItem } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { Field } from "formik";
 import { CheckboxWithLabel, TextField } from "formik-mui";
 import * as yup from "yup";

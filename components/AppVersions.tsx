@@ -1,6 +1,5 @@
-import { useQuery } from "react-query";
-
 import { ListItem as MuiListItem, ListItemText, styled, Typography } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 import { AS_API_URL, DM_API_URL } from "../constants/proxies";

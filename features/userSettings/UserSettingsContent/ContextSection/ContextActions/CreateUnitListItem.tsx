@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQueryClient } from "react-query";
 
 import type { AsError } from "@squonk/account-server-client";
 import {
@@ -12,6 +11,7 @@ import {
 
 import { CreateNewFolder } from "@mui/icons-material";
 import { Grid, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import * as yup from "yup";
@@ -20,6 +20,7 @@ import { ModalWrapper } from "../../../../../components/modals/ModalWrapper";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
 import { useSelectedUnit } from "../../../../../state/unitSelection";
+import { getBillingDay } from "../../../../../utils/app/products";
 
 /**
  * Button which allows organisation owner to create a new project.
@@ -55,7 +56,7 @@ export const CreateUnitListItem = () => {
     if (organisation) {
       const { id: unitId } = await createOrganisationUnit({
         orgId: organisation.id,
-        data: { name },
+        data: { name, billing_day: getBillingDay() },
       });
 
       enqueueSnackbar("Unit created");

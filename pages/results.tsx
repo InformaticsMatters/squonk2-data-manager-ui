@@ -1,12 +1,9 @@
-import type { DehydratedState } from "react-query";
-import { QueryClient } from "react-query";
-import { dehydrate } from "react-query/hydration";
-
 import { getGetInstancesQueryKey, getInstances } from "@squonk/data-manager-client/instance";
 import { getGetTasksQueryKey, getTasks } from "@squonk/data-manager-client/task";
 
 import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { captureException } from "@sentry/nextjs";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import type { GetServerSideProps } from "next";
 import NextError from "next/error";
 import Head from "next/head";
@@ -16,17 +13,9 @@ import { ResultsView } from "../features/ResultsView";
 import Layout from "../layouts/Layout";
 import { createErrorProps } from "../utils/api/serverSidePropsError";
 import { dmOptions } from "../utils/api/ssrQueryOptions";
+import type { NotSuccessful, ReactQueryPageProps } from "../utils/next/ssr";
 
-interface NotSuccessful {
-  statusCode: number;
-  statusMessage: string;
-}
-
-export type TasksProps =
-  | NotSuccessful
-  | {
-      dehydratedState: DehydratedState;
-    };
+export type TasksProps = NotSuccessful | ReactQueryPageProps;
 
 const isNotSuccessful = (props: TasksProps): props is NotSuccessful => {
   return typeof (props as NotSuccessful).statusCode === "number";

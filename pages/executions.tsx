@@ -1,6 +1,4 @@
 import { useMemo, useState } from "react";
-import { QueryClient } from "react-query";
-import { dehydrate } from "react-query/hydration";
 
 import {
   getApplications,
@@ -12,6 +10,7 @@ import { getGetProjectsQueryKey, getProjects } from "@squonk/data-manager-client
 
 import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { Alert, Container, Grid, MenuItem, TextField } from "@mui/material";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import type { GetServerSideProps } from "next";
 import Head from "next/head";
 
@@ -42,7 +41,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
         queryClient.prefetchQuery(getGetApplicationsQueryKey(), () =>
           getApplications(dmOptions(accessToken)),
         ),
-        queryClient.prefetchQuery(getGetJobsQueryKey(), () => getJobs(dmOptions(accessToken))),
+        queryClient.prefetchQuery(getGetJobsQueryKey(), () =>
+          getJobs(undefined, dmOptions(accessToken)),
+        ),
       ];
 
       // Make the queries in parallel

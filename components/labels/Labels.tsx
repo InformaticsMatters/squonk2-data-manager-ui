@@ -1,10 +1,9 @@
-import { useQueryClient } from "react-query";
-
 import type { DatasetVersionSummary, DmError } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
 import { useAddMetadata } from "@squonk/data-manager-client/metadata";
 
 import { Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import type { TableDataset } from "../../features/DatasetsTable";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";

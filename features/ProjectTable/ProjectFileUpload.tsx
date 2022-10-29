@@ -2,12 +2,12 @@ import type { ReactNode } from "react";
 import { useCallback } from "react";
 import type { DropzoneState, FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { useQueryClient } from "react-query";
 
 import { getGetFilesQueryKey } from "@squonk/data-manager-client/file";
 import { useAddFileToProject } from "@squonk/data-manager-client/project";
 
 import { Box } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 
 import { useCurrentProjectId } from "../../hooks/projectHooks";

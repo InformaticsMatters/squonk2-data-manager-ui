@@ -1,12 +1,10 @@
-import { QueryClient } from "react-query";
-import { dehydrate } from "react-query/hydration";
-
 import { getFiles, getGetFilesQueryKey } from "@squonk/data-manager-client/file";
 import { getGetProjectsQueryKey, getProjects } from "@squonk/data-manager-client/project";
 
 import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import type { GetServerSideProps } from "next";
 import Image from "next/future/image";
 import Head from "next/head";
@@ -21,13 +19,16 @@ import Layout from "../layouts/Layout";
 import { createErrorProps } from "../utils/api/serverSidePropsError";
 import { dmOptions } from "../utils/api/ssrQueryOptions";
 import { pathFromQuery } from "../utils/app/paths";
+import type { NotSuccessful, ReactQueryPageProps } from "../utils/next/ssr";
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
+export type ProjectProps = Record<string, never> | NotSuccessful | ReactQueryPageProps;
+
+export const getServerSideProps: GetServerSideProps<ProjectProps> = async ({ req, res, query }) => {
   const queryClient = new QueryClient();
 
   // When project isn't specified no requests can be made
   if (typeof query.project !== "string") {
-    return { props: {} };
+    return { props: {} as Record<string, never> };
   }
 
   const projectId = query.project;

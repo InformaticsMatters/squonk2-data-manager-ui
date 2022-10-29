@@ -5,6 +5,7 @@ import type { ProductDmStorage } from "@squonk/account-server-client";
 
 import { DataTable } from "../../../components/DataTable";
 import { AdjustProjectProduct } from "../../../components/products/AdjustProjectProduct";
+import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkIconButton";
 import { DeleteProductButton } from "../../../components/products/DeleteProductButton";
 import { sharedProductColumns } from "../columns";
 
@@ -33,13 +34,14 @@ export const DatasetProductTable = ({ products }: DatasetProductTableProps) => {
           Header: "Actions",
           Cell: ({ row }: CellProps<ProductDmStorage, any>) => (
             <>
-              <DeleteProductButton
-                product={row.original.product}
-                tooltip="Delete product permanently"
-              />
+              <ChargesLinkIconButton productId={row.original.product.id} />
               <AdjustProjectProduct
                 allowance={row.original.coins.allowance}
                 product={row.original.product}
+              />
+              <DeleteProductButton
+                product={row.original.product}
+                tooltip="Delete product permanently"
               />
             </>
           ),

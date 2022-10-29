@@ -1,5 +1,3 @@
-import { useQueryClient } from "react-query";
-
 import type { AsError, UnitDetail } from "@squonk/account-server-client";
 import {
   getGetProductsQueryKey,
@@ -8,6 +6,7 @@ import {
 
 import { Box, Button } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
+import { useQueryClient } from "@tanstack/react-query";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import * as yup from "yup";
@@ -15,7 +14,6 @@ import * as yup from "yup";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useGetStorageCost } from "../hooks/useGetStorageCost";
 import { coinsFormatter } from "../utils/app/coins";
-import { getBillingDay } from "../utils/app/products";
 import { getErrorMessage } from "../utils/next/orvalError";
 
 export interface CreateDatasetStorageSubscriptionProps {
@@ -24,7 +22,6 @@ export interface CreateDatasetStorageSubscriptionProps {
 
 const initialValues = {
   allowance: 1000,
-  billingDay: getBillingDay(),
   name: "Dataset Storage",
 };
 
@@ -42,15 +39,13 @@ export const CreateDatasetStorageSubscription = ({
         name: yup.string().trim().required("A name is required"),
         limit: yup.number().min(1).integer().required("A limit is required"),
         allowance: yup.number().min(1).integer().required("An allowance is required"),
-        billingDay: yup.number().min(1).max(28).integer().required("A billing day is required"),
       })}
-      onSubmit={async ({ allowance, billingDay, name }) => {
+      onSubmit={async ({ allowance, name }) => {
         try {
           await createProduct({
             unitId: unit.id,
             data: {
               allowance,
-              billing_day: billingDay,
               limit: allowance, // TODO: we will implement this properly later
               name,
               type: "DATA_MANAGER_STORAGE_SUBSCRIPTION",
@@ -74,15 +69,6 @@ export const CreateDatasetStorageSubscription = ({
                 label="Name"
                 name="name"
                 sx={{ maxWidth: 150 }}
-              />
-              <Field
-                component={TextField}
-                label="Billing Day"
-                max={28}
-                min={1}
-                name="billingDay"
-                sx={{ maxWidth: 80 }}
-                type="number"
               />
               <Field
                 component={TextField}

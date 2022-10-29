@@ -1,5 +1,3 @@
-import { useQueryClient } from "react-query";
-
 import type { DmError } from "@squonk/data-manager-client";
 import {
   getGetDatasetsQueryKey,
@@ -8,6 +6,7 @@ import {
 
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { IconButton, Tooltip } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import type { ProjectId } from "../../../hooks/projectHooks";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";

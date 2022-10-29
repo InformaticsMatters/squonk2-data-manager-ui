@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQueryClient } from "react-query";
 
 import type { DatasetSummary } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey, uploadDataset } from "@squonk/data-manager-client/dataset";
@@ -13,6 +12,7 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { ModalWrapper } from "../../../components/modals/ModalWrapper";
 import { Dropzone } from "../../../components/uploads/Dropzone";

@@ -1,5 +1,3 @@
-import { useQueryClient } from "react-query";
-
 import type { DmError, InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 import {
   getGetInstancesQueryKey,
@@ -7,6 +5,7 @@ import {
 } from "@squonk/data-manager-client/instance";
 
 import { Button } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { DONE_PHASES } from "../../constants/instances";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";

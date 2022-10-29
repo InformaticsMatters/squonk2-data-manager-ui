@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
 import type { FileError } from "react-dropzone";
-import { useQueryClient } from "react-query";
 
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
 import { useGetTask } from "@squonk/data-manager-client/task";
 
 import { Grid, IconButton, LinearProgress, MenuItem, TextField, Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { TwiddleIcon } from "../../components/uploads/TwiddleIcon";
 import type { UploadableFile } from "../../components/uploads/types";

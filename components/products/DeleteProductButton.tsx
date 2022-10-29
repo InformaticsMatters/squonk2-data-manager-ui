@@ -1,5 +1,3 @@
-import { useQueryClient } from "react-query";
-
 import type { ProductDetail } from "@squonk/account-server-client";
 import {
   getGetProductQueryKey,
@@ -9,6 +7,7 @@ import {
 
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IconButton, Tooltip } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { getErrorMessage } from "../../utils/next/orvalError";
@@ -48,7 +47,7 @@ export const DeleteProductButton = ({
           }}
         >
           {({ openModal }) => (
-            <IconButton disabled={disabled} onClick={openModal}>
+            <IconButton disabled={disabled} size="small" sx={{ p: "1px" }} onClick={openModal}>
               <DeleteForeverIcon />
             </IconButton>
           )}

@@ -1,5 +1,6 @@
 const path = require("path");
 const { withSentryConfig } = require("@sentry/nextjs");
+const withRoutes = require("nextjs-routes/config")({ outDir: "types" });
 
 if (process.env.MONOREPO) {
   console.log("info  - Running with webpack aliases for monorepo compatibility");
@@ -38,8 +39,11 @@ let nextConfig = {
   },
   // Allow mdx content and mdx files as pages
   webpack(config, options) {
+    if (options.isServer) {
+      config.externals = ["@tanstack/react-query", ...config.externals];
+    }
     if (process.env.MONOREPO) {
-      const packages = ["react", "@mui/material", "react-query"];
+      const packages = ["react", "@mui/material", "@tanstack/react-query"];
       packages.forEach(
         (packageName) => (config.resolve.alias[packageName] = resolvePackage(packageName)),
       );
@@ -72,6 +76,7 @@ const sentryWebpackPluginOptions = {
   environment: process.env.NODE_ENV,
 };
 
+nextConfig = withRoutes(nextConfig);
 nextConfig = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
 nextConfig = process.env.SENTRY_AUTH_TOKEN
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)

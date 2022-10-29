@@ -1,5 +1,3 @@
-import { useQueryClient } from "react-query";
-
 import type { DmError, ProjectDetail } from "@squonk/data-manager-client";
 import {
   getGetProjectQueryKey,
@@ -8,6 +6,8 @@ import {
   useGetProjects,
   useRemoveEditorFromProject,
 } from "@squonk/data-manager-client/project";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";

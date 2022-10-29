@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@auth0/nextjs-auth0': 1.9.1
+  '@auth0/nextjs-auth0': 1.9.2
   '@emotion/cache': 11.10.3
   '@emotion/react': 11.10.4
   '@emotion/server': 11.10.0
@@ -79,7 +79,7 @@ specifiers:
   yup: 0.32.11
 
 dependencies:
-  '@auth0/nextjs-auth0': 1.9.1_next@12.3.1
+  '@auth0/nextjs-auth0': 1.9.2_next@12.3.1
   '@emotion/cache': 11.10.3
   '@emotion/react': 11.10.4_7df2e632d193aca1f14601bd0dc974c3
   '@emotion/server': 11.10.0
@@ -160,8 +160,8 @@ devDependencies:
 
 packages:
 
-  /@auth0/nextjs-auth0/1.9.1_next@12.3.1:
-    resolution: {integrity: sha512-GvX1Ke9YzZRogIvSZhRRuZFwvw5DNuQv233VBUHrUwNi+z/XFE6ZRC0y22NgLsz4xsVdG9WicEwqoFT4rNL/Bw==}
+  /@auth0/nextjs-auth0/1.9.2_next@12.3.1:
+    resolution: {integrity: sha512-QsO6jtDBms0mAb2B1GSqQVEeoj5EIIvUtbWs02O8Tp6FtMXDIvfuJv/EFbPkP/d86e9T/399uiiaUbpgo1g0jg==}
     engines: {node: ^10.13.0 || >=12.0.0}
     peerDependencies:
       next: '>=10'

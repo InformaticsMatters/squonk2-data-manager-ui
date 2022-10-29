@@ -62,7 +62,7 @@ specifiers:
   next-transpile-modules: 9.0.0
   nextjs-routes: 0.1.6
   node-fetch: 3.2.10
-  notistack: 2.0.5
+  notistack: 2.0.8
   plotly.js-basic-dist: 2.14.0
   prettier: 2.7.1
   prismjs: 1.29.0
@@ -125,7 +125,7 @@ dependencies:
   next-transpile-modules: 9.0.0
   nextjs-routes: 0.1.6_next@12.3.1
   node-fetch: 3.2.10
-  notistack: 2.0.5_4dd279597352502241f4e267f6376ef8
+  notistack: 2.0.8_4dd279597352502241f4e267f6376ef8
   plotly.js-basic-dist: 2.14.0
   prettier: 2.7.1
   prismjs: 1.29.0
@@ -4272,8 +4272,8 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /notistack/2.0.5_4dd279597352502241f4e267f6376ef8:
-    resolution: {integrity: sha512-Ig2T1Muqkc1PaSQcEDrK7diKv6cBxw02Iq6uv074ySfgq524TV5lK41diAb6OSsaiWfp3aRt+T3+0MF8m2EcJQ==}
+  /notistack/2.0.8_4dd279597352502241f4e267f6376ef8:
+    resolution: {integrity: sha512-/IY14wkFp5qjPgKNvAdfL5Jp6q90+MjgKTPh4c81r/lW70KeuX6b9pE/4f8L4FG31cNudbN9siiFS5ql1aSLRw==}
     peerDependencies:
       '@emotion/react': ^11.4.1
       '@emotion/styled': ^11.3.0
@@ -4289,7 +4289,7 @@ packages:
       '@emotion/react': 11.10.4_875dbfedd08a96d68e1aa9c8ac5327ba
       '@emotion/styled': 11.10.4_82da93a6f0fdbe7bdf9e7ff074bc5ea3
       '@mui/material': 5.10.7_b1ed35d9499e8a6ddbdb3eea73207592
-      clsx: 1.1.1
+      clsx: 1.2.1
       hoist-non-react-statics: 3.3.2
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2

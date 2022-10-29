@@ -58,7 +58,7 @@ specifiers:
   lodash-es: 4.17.21
   material-ui-popup-state: 4.1.0
   next: 12.3.1
-  next-http-proxy-middleware: 1.2.4
+  next-http-proxy-middleware: 1.2.5
   next-transpile-modules: 9.0.0
   nextjs-routes: 0.1.2
   node-fetch: 3.2.10
@@ -121,7 +121,7 @@ dependencies:
   lodash-es: 4.17.21
   material-ui-popup-state: 4.1.0_17a1432779ecebed8795c1bcaeaaf2fe
   next: 12.3.1_45265acc010aaed884ffc8b80dc22c41
-  next-http-proxy-middleware: 1.2.4
+  next-http-proxy-middleware: 1.2.5
   next-transpile-modules: 9.0.0
   nextjs-routes: 0.1.2_next@12.3.1
   node-fetch: 3.2.10
@@ -4168,8 +4168,8 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /next-http-proxy-middleware/1.2.4:
-    resolution: {integrity: sha512-4ScStkj08nFL2IX0doJq8Hwrk1zOdKaOkxFGxRmV+lN4Oh/d6qDSqUKxfSew676qA07bhncj6vbKBVVpLKfZBA==}
+  /next-http-proxy-middleware/1.2.5:
+    resolution: {integrity: sha512-ni73cl1FKC3s1aTD1aziIhV07TiG5ZrtyCkw8S0yqBRvTIJ2tqII1R+aEgxRav42W2Ht8yTpy96gQuaDJwNOMQ==}
     engines: {node: '>=10.0.0'}
     dependencies:
       '@types/http-proxy': 1.17.3
@@ -4837,7 +4837,7 @@ packages:
     dev: false
 
   /requires-port/1.0.0:
-    resolution: {integrity: sha1-kl0mAdOaxIXgkc8NpcbmlNw9yv8=}
+    resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
     dev: false
 
   /resolve-alpn/1.2.1:

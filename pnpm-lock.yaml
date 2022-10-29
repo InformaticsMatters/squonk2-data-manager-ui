@@ -6,8 +6,8 @@ specifiers:
   '@emotion/react': 11.10.4
   '@emotion/server': 11.10.0
   '@emotion/styled': 11.10.4
-  '@mdx-js/loader': 2.1.3
-  '@mdx-js/react': 2.1.3
+  '@mdx-js/loader': 2.1.5
+  '@mdx-js/react': 2.1.5
   '@mui/icons-material': 5.10.6
   '@mui/lab': 5.0.0-alpha.101
   '@mui/material': 5.10.7
@@ -84,8 +84,8 @@ dependencies:
   '@emotion/react': 11.10.4_875dbfedd08a96d68e1aa9c8ac5327ba
   '@emotion/server': 11.10.0
   '@emotion/styled': 11.10.4_82da93a6f0fdbe7bdf9e7ff074bc5ea3
-  '@mdx-js/loader': 2.1.3
-  '@mdx-js/react': 2.1.3_react@17.0.2
+  '@mdx-js/loader': 2.1.5
+  '@mdx-js/react': 2.1.5_react@17.0.2
   '@mui/icons-material': 5.10.6_ea1e6a937d5d8a46af220ed2b0a75648
   '@mui/lab': 5.0.0-alpha.101_6d1649f17930ebc7f125256e4c19adc9
   '@mui/material': 5.10.7_b1ed35d9499e8a6ddbdb3eea73207592
@@ -449,8 +449,8 @@ packages:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
 
-  /@mdx-js/loader/2.1.3:
-    resolution: {integrity: sha512-7LtklcfzZC9aWWFREop0ivemhwcp/cke2tICHEhnDyGn+hTg7LIbWCfSos68kJv9w7Z47KYfNcg9/8zBD+8eXA==}
+  /@mdx-js/loader/2.1.5:
+    resolution: {integrity: sha512-oXjfTa/iAcMmW8DdQ+hQFodPCLqw5VKT2yoZkLwrZfPVVpUgKrI+5/ZePYq328xxtAUStZmR3ed0PWJrwd5Pkg==}
     peerDependencies:
       webpack: '>=4'
     dependencies:
@@ -484,8 +484,8 @@ packages:
       - supports-color
     dev: false
 
-  /@mdx-js/react/2.1.3_react@17.0.2:
-    resolution: {integrity: sha512-11n4lTvvRyxq3OYbWJwEYM+7q6PE0GxKbk0AwYIIQmrRkxDeljIsjDQkKOgdr/orgRRbYy5zi+iERdnwe01CHQ==}
+  /@mdx-js/react/2.1.5_react@17.0.2:
+    resolution: {integrity: sha512-3Az1I6SAWA9R38rYjz5rXBrGKeZhq96CSSyQtqY+maPj8stBsoUH5pNcmIixuGkufYsh8F5+ka2CVPo2fycWZw==}
     peerDependencies:
       react: '>=16'
     dependencies:

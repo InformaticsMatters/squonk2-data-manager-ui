@@ -59,7 +59,7 @@ specifiers:
   material-ui-popup-state: 4.1.0
   next: 12.3.1
   next-http-proxy-middleware: 1.2.5
-  next-transpile-modules: 9.0.0
+  next-transpile-modules: 9.1.0
   nextjs-routes: 0.1.6
   node-fetch: 3.2.10
   notistack: 2.0.5
@@ -122,7 +122,7 @@ dependencies:
   material-ui-popup-state: 4.1.0_b1ed35d9499e8a6ddbdb3eea73207592
   next: 12.3.1_45265acc010aaed884ffc8b80dc22c41
   next-http-proxy-middleware: 1.2.5
-  next-transpile-modules: 9.0.0
+  next-transpile-modules: 9.1.0
   nextjs-routes: 0.1.6_next@12.3.1
   node-fetch: 3.2.10
   notistack: 2.0.5_4dd279597352502241f4e267f6376ef8
@@ -2208,8 +2208,8 @@ packages:
       once: 1.4.0
     dev: false
 
-  /enhanced-resolve/5.9.2:
-    resolution: {integrity: sha512-GIm3fQfwLJ8YZx2smuHpBKkXC1yOk+OBEmKckVyL0i/ea8mqDEykK3ld5dgH1QYPNyT/lIllxV2LULnxCHaHkA==}
+  /enhanced-resolve/5.10.0:
+    resolution: {integrity: sha512-T0yTFjdpldGY8PmuXXR0PyQ1ufZpEGiHVrp7zHKB7jdR4qlmZHhONVM5AQOAWXuF/w3dnHbEQVrNptJgt7F+cQ==}
     engines: {node: '>=10.13.0'}
     dependencies:
       graceful-fs: 4.2.9
@@ -4174,10 +4174,10 @@ packages:
       - debug
     dev: false
 
-  /next-transpile-modules/9.0.0:
-    resolution: {integrity: sha512-VCNFOazIAnXn1hvgYYSTYMnoWgKgwlYh4lm1pKbSfiB3kj5ZYLcKVhfh3jkPOg1cnd9DP+pte9yCUocdPEUBTQ==}
+  /next-transpile-modules/9.1.0:
+    resolution: {integrity: sha512-yzJji65xDqcIqjvx5vPJcs1M+MYQTzLM1pXH/qf8Q88ohx+bwVGDc1AeV+HKr1NwvMCNTpwVPSFI7cA5WdyeWA==}
     dependencies:
-      enhanced-resolve: 5.9.2
+      enhanced-resolve: 5.10.0
       escalade: 3.1.1
     dev: false
 

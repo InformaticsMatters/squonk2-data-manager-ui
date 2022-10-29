@@ -35,7 +35,7 @@ specifiers:
   '@typescript-eslint/eslint-plugin': 5.38.1
   '@typescript-eslint/parser': 5.38.1
   axios: 0.27.2
-  dayjs: 1.11.5
+  dayjs: 1.11.6
   eslint: 8.24.0
   eslint-config-prettier: 8.5.0
   eslint-plugin-import: 2.26.0
@@ -109,7 +109,7 @@ dependencies:
   '@types/react-virtualized': 9.21.21
   '@types/uuid': 8.3.4
   axios: 0.27.2
-  dayjs: 1.11.5
+  dayjs: 1.11.6
   filesize: 9.0.11
   formik: 2.2.9_react@17.0.2
   formik-mui: 4.0.0_0153a1559dae7d7cfd9254115f5cb0b7
@@ -2065,8 +2065,8 @@ packages:
     engines: {node: '>= 12'}
     dev: false
 
-  /dayjs/1.11.5:
-    resolution: {integrity: sha512-CAdX5Q3YW3Gclyo5Vpqkgpj8fSdLQcRuzfX6mC6Phy0nfJ0eGYOeS7m4mt2plDWLAtA4TqTakvbboHvUxfe4iA==}
+  /dayjs/1.11.6:
+    resolution: {integrity: sha512-zZbY5giJAinCG+7AGaw0wIhNZ6J8AhWuSXKvuc1KAyMiRsvGQWqh4L+MomvhdAYjN+lqvVCMq1I41e3YHvXkyQ==}
     dev: false
 
   /debug/2.6.9:

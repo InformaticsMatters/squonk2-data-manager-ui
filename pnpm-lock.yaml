@@ -50,7 +50,7 @@ specifiers:
   formik-mui-lab: 1.0.0
   husky: 8.0.1
   identity-obj-proxy: 3.0.0
-  immer: 9.0.15
+  immer: 9.0.16
   jotai: 1.8.4
   just-compare: 2.2.2
   just-group-by: 2.1.2
@@ -114,8 +114,8 @@ dependencies:
   formik: 2.2.9_react@17.0.2
   formik-mui: 4.0.0_0153a1559dae7d7cfd9254115f5cb0b7
   formik-mui-lab: 1.0.0_dd77630a910609c9aa7daeede9dfb54c
-  immer: 9.0.15
-  jotai: 1.8.4_immer@9.0.15+react@17.0.2
+  immer: 9.0.16
+  jotai: 1.8.4_immer@9.0.16+react@17.0.2
   just-compare: 2.2.2
   just-group-by: 2.1.2
   lodash-es: 4.17.21
@@ -137,7 +137,7 @@ dependencies:
   react-virtualized: 9.22.3_react-dom@17.0.2+react@17.0.2
   sass: 1.55.0
   typescript: 4.8.4
-  use-immer: 0.7.0_immer@9.0.15+react@17.0.2
+  use-immer: 0.7.0_immer@9.0.16+react@17.0.2
   uuid: 9.0.0
   yup: 0.32.11
 
@@ -3112,8 +3112,8 @@ packages:
     resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
     dev: false
 
-  /immer/9.0.15:
-    resolution: {integrity: sha512-2eB/sswms9AEUSkOm4SbV5Y7Vmt/bKRwByd52jfLkW4OLYeaTP3EEiJ9agqU0O/tq6Dk62Zfj+TJSqfm1rLVGQ==}
+  /immer/9.0.16:
+    resolution: {integrity: sha512-qenGE7CstVm1NrHQbMh8YaSzTZTFNP3zPqr3YU0S0UY441j4bJTg4A2Hh5KAhwgaiU6ZZ1Ar6y/2f4TblnMReQ==}
     dev: false
 
   /immutable/4.0.0:
@@ -3353,7 +3353,7 @@ packages:
       '@panva/asn1.js': 1.0.0
     dev: false
 
-  /jotai/1.8.4_immer@9.0.15+react@17.0.2:
+  /jotai/1.8.4_immer@9.0.16+react@17.0.2:
     resolution: {integrity: sha512-bkHDHNxm7bU4+bJL4z96fTlJYN34UDRTu3ghEajJrDepayON9YEaxPrXr7xhLnIRntoFC6eDYYhMNA/ilbj2RQ==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
@@ -3387,7 +3387,7 @@ packages:
       xstate:
         optional: true
     dependencies:
-      immer: 9.0.15
+      immer: 9.0.16
       react: 17.0.2
     dev: false
 
@@ -5429,13 +5429,13 @@ packages:
     resolution: {integrity: sha512-jk1+QP6ZJqyOiuEI9AEWQfju/nB2Pw466kbA0LEZljHwKeMgd9WrAEgEGxjPDD2+TNbbb37rTyhEfrCXfuKXnA==}
     dev: false
 
-  /use-immer/0.7.0_immer@9.0.15+react@17.0.2:
+  /use-immer/0.7.0_immer@9.0.16+react@17.0.2:
     resolution: {integrity: sha512-Re4hjrP3a/2ABZjAc0b7AK9s626bnO+H33RO2VUhiDZ2StBz5B663K6WNNlr4QtHWaGUmvLpwt3whFvvWuolQw==}
     peerDependencies:
       immer: '>=2.0.0'
       react: ^16.8.0 || ^17.0.1 || ^18.0.0
     dependencies:
-      immer: 9.0.15
+      immer: 9.0.16
       react: 17.0.2
     dev: false
 

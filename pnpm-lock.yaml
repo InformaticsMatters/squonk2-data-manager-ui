@@ -68,7 +68,7 @@ specifiers:
   prismjs: 1.29.0
   react: 17.0.2
   react-dom: 17.0.2
-  react-dropzone: 14.2.2
+  react-dropzone: 14.2.3
   react-plotly.js: 2.6.0
   react-table: 7.8.0
   react-virtualized: 9.22.3
@@ -131,7 +131,7 @@ dependencies:
   prismjs: 1.29.0
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
-  react-dropzone: 14.2.2_react@17.0.2
+  react-dropzone: 14.2.3_react@17.0.2
   react-plotly.js: 2.6.0_react@17.0.2
   react-table: 7.8.0_react@17.0.2
   react-virtualized: 9.22.3_react-dom@17.0.2+react@17.0.2
@@ -4671,8 +4671,8 @@ packages:
       scheduler: 0.20.2
     dev: false
 
-  /react-dropzone/14.2.2_react@17.0.2:
-    resolution: {integrity: sha512-5oyGN/B5rNhop2ggUnxztXBQ6q6zii+OMEftPzsxAR2hhpVWz0nAV+3Ktxo2h5bZzdcCKrpd8bfWAVsveIBM+w==}
+  /react-dropzone/14.2.3_react@17.0.2:
+    resolution: {integrity: sha512-O3om8I+PkFKbxCukfIR3QAGftYXDZfOE2N1mr/7qebQJHs7U+/RSL/9xomJNpRg9kM5h9soQSdf0Gc7OHF5Fug==}
     engines: {node: '>= 10.13'}
     peerDependencies:
       react: '>= 16.8 || 18.0.0'

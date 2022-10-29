@@ -71,7 +71,7 @@
     "material-ui-popup-state": "4.1.0",
     "next": "12.3.1",
     "next-http-proxy-middleware": "1.2.5",
-    "next-transpile-modules": "9.0.0",
+    "next-transpile-modules": "9.1.0",
     "nextjs-routes": "0.1.6",
     "node-fetch": "3.2.10",
     "notistack": "2.0.8",

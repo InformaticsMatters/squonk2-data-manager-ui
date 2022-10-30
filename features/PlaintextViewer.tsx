@@ -1,6 +1,6 @@
 /* eslint-disable simple-import-sort/imports */
 import { Box, Chip, Divider, Paper, Typography } from "@mui/material";
-import fileSize from "filesize";
+import { filesize } from "filesize";
 
 import { useEffect } from "react";
 
@@ -65,7 +65,7 @@ export const PlaintextViewer = ({
             <Divider flexItem orientation="vertical" />
             <Typography>
               {numberOfLines} {linesText} of{" "}
-              {originalContentLength ? fileSize(originalContentLength) : "unknown"}
+              {originalContentLength ? filesize(originalContentLength) : "unknown"}
             </Typography>
             {(compressed || truncated) && <Divider flexItem orientation="vertical" />}
             {compressed && <Chip label="Decompressed" size="small" variant="outlined" />}

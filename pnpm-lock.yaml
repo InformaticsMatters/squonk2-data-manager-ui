@@ -44,7 +44,7 @@ specifiers:
   eslint-plugin-react-hooks: 4.6.0
   eslint-plugin-simple-import-sort: 8.0.0
   eslint-plugin-unused-imports: 2.0.0
-  filesize: 9.0.11
+  filesize: 10.0.5
   formik: 2.2.9
   formik-mui: 4.0.0
   formik-mui-lab: 1.0.0
@@ -73,6 +73,7 @@ specifiers:
   react-table: 7.8.0
   react-virtualized: 9.22.3
   sass: 1.55.0
+  tsafe: ^1.2.1
   typescript: 4.8.4
   use-immer: 0.7.0
   uuid: 9.0.0
@@ -110,7 +111,7 @@ dependencies:
   '@types/uuid': 8.3.4
   axios: 1.1.3
   dayjs: 1.11.6
-  filesize: 9.0.11
+  filesize: 10.0.5
   formik: 2.2.9_react@17.0.2
   formik-mui: 4.0.0_ecabd6c9f8eba5a128fea75c7ea023aa
   formik-mui-lab: 1.0.0_c1343a3580418f8f92701b89e0d7f3b4
@@ -136,6 +137,7 @@ dependencies:
   react-table: 7.8.0_react@17.0.2
   react-virtualized: 9.22.3_react-dom@17.0.2+react@17.0.2
   sass: 1.55.0
+  tsafe: 1.2.1
   typescript: 4.8.4
   use-immer: 0.7.0_immer@9.0.16+react@17.0.2
   uuid: 9.0.0
@@ -2660,9 +2662,9 @@ packages:
       tslib: 2.4.0
     dev: false
 
-  /filesize/9.0.11:
-    resolution: {integrity: sha512-gTAiTtI0STpKa5xesyTA9hA3LX4ga8sm2nWRcffEa1L/5vQwb4mj2MdzMkoHoGv4QzfDshQZuYscQSf8c4TKOA==}
-    engines: {node: '>= 0.4.0'}
+  /filesize/10.0.5:
+    resolution: {integrity: sha512-qrzyt8gLh86nsyYiC3ibI5KyIYRCWg2yqIklYrWF4a0qNfekik4OQfn7AoPJG2hRrPMSlH6fET4VEITweZAzjA==}
+    engines: {node: '>= 14.0.0'}
     dev: false
 
   /fill-range/7.0.1:
@@ -5286,6 +5288,10 @@ packages:
 
   /ts-interface-checker/0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
+    dev: false
+
+  /tsafe/1.2.1:
+    resolution: {integrity: sha512-fDDbPiAG6xjZuyXXakHZi8ewGx7ERxGVJ3dwFtcoex+9lvp/nHm5ROlFAB6lyZSmspG0cjpYpFxrKyRnniiOdQ==}
     dev: false
 
   /tsconfig-paths/3.14.1:

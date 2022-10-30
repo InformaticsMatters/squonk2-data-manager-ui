@@ -7,7 +7,7 @@ import type { ProjectDetail } from "@squonk/data-manager-client";
 import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
 import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
 import { Breadcrumbs, Grid, IconButton, Link, Typography, useTheme } from "@mui/material";
-import fileSize from "filesize";
+import { filesize } from "filesize";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 
@@ -108,7 +108,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
           if (typeof value === "string") {
             return value;
           }
-          return fileSize(value);
+          return filesize(value);
         },
       },
       {

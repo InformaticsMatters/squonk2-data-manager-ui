@@ -17,7 +17,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import fileSize from "filesize";
+import { filesize } from "filesize";
 
 import { toLocalTimeString } from "../../utils/app/datetime";
 import { getBillingPeriods } from "../../utils/app/products";
@@ -141,7 +141,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
                   <TableCell>{charge.item_number}</TableCell>
                   <TableCell>{charge.date}</TableCell>
                   {/* TODO: assert additional_data to interface from data-manager-client when it's updated */}
-                  <TableCell>{fileSize(charge.additional_data?.peak_bytes)}</TableCell>
+                  <TableCell>{filesize(charge.additional_data?.peak_bytes ?? 0)}</TableCell>
                   <TableCell>C&nbsp;{charge.coins}</TableCell>
                 </TableRow>
               ))

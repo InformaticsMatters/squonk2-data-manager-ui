@@ -7,7 +7,7 @@ import { useGetFileTypes } from "@squonk/data-manager-client/type";
 import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
 import { IconButton, Tooltip } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
-import type { AxiosError } from "axios";
+import type { AxiosError, AxiosProgressEvent } from "axios";
 
 import { ModalWrapper } from "../../components/modals/ModalWrapper";
 import { FileTypeOptions } from "../../components/uploads/FileTypeOptions";
@@ -56,12 +56,14 @@ export const FileUpload = () => {
           try {
             // Can't use the mutate dataset hook here as it doesn't allow a onUploadProgress callback
             const response = await uploadDataset(data, {
-              onUploadProgress: (progressEvent: ProgressEvent) => {
-                const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
-                const updatedFiles = [...files];
-                updatedFiles[index] = { ...updatedFiles[index], progress };
+              onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+                if (progressEvent.total) {
+                  const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
+                  const updatedFiles = [...files];
+                  updatedFiles[index] = { ...updatedFiles[index], progress };
 
-                setFiles(updatedFiles);
+                  setFiles(updatedFiles);
+                }
               },
             });
 

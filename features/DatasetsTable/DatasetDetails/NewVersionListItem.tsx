@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
+import type { AxiosProgressEvent } from "axios";
 
 import { ModalWrapper } from "../../../components/modals/ModalWrapper";
 import { Dropzone } from "../../../components/uploads/Dropzone";
@@ -85,9 +86,11 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
                 unit_id: unit.id,
               },
               {
-                onUploadProgress: (progressEvent: ProgressEvent) => {
-                  const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
-                  setFile({ ...file, progress });
+                onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+                  if (progressEvent.total) {
+                    const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
+                    setFile({ ...file, progress });
+                  }
                 },
               },
             );

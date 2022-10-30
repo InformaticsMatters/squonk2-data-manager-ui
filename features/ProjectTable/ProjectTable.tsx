@@ -55,26 +55,26 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
         Cell: ({ value, row: r }) => {
           // ? This seems to be a bug in the types?
           const row = r.original as unknown as TableFile | TableDir;
-          return isTableDir(row) ? (
-            <NextLink
-              passHref
-              href={{
-                pathname: router.pathname,
-                query: { project: currentProject.project_id, path: [...breadcrumbs, row.path] },
-              }}
-            >
-              <Link
-                color="inherit"
-                component="button"
-                sx={{ display: "flex", gap: theme.spacing(1) }}
-                variant="body1"
-              >
-                <FolderRoundedIcon /> {value}
-              </Link>
-            </NextLink>
-          ) : (
-            <ProjectFileDetails file={row} />
-          );
+
+          if (isTableDir(row)) {
+            const href = {
+              pathname: router.pathname,
+              query: { project: currentProject.project_id, path: [...breadcrumbs, row.path] },
+            };
+            return (
+              <NextLink passHref href={href}>
+                <Link
+                  color="inherit"
+                  component="button"
+                  sx={{ display: "flex", gap: theme.spacing(1) }}
+                  variant="body1"
+                >
+                  <FolderRoundedIcon /> {value}
+                </Link>
+              </NextLink>
+            );
+          }
+          return <ProjectFileDetails file={row} />;
         },
       },
       {
@@ -162,27 +162,24 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
         <Grid container>
           <Grid item sx={{ display: "flex", alignItems: "center" }}>
             <Breadcrumbs>
-              {["root", ...breadcrumbs].map((path, pathIndex) =>
-                pathIndex < breadcrumbs.length ? (
-                  <NextLink
-                    passHref
-                    href={{
-                      pathname: router.pathname,
-                      query: {
-                        project: currentProject.project_id,
-                        path: breadcrumbs.slice(0, pathIndex),
-                      },
-                    }}
-                    key={`${pathIndex}-${path}`}
-                  >
+              {["root", ...breadcrumbs].map((path, pathIndex) => {
+                const href = {
+                  pathname: router.pathname,
+                  query: {
+                    project: currentProject.project_id,
+                    path: breadcrumbs.slice(0, pathIndex),
+                  },
+                };
+                return pathIndex < breadcrumbs.length ? (
+                  <NextLink passHref href={href} key={`${pathIndex}-${path}`}>
                     <Link color="inherit" component="button" variant="body1">
                       {path}
                     </Link>
                   </NextLink>
                 ) : (
                   <Typography key={`${pathIndex}-${path}`}>{path}</Typography>
-                ),
-              )}
+                );
+              })}
             </Breadcrumbs>
           </Grid>
           <Grid item sx={{ marginLeft: "auto" }}>

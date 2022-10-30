@@ -1,6 +1,8 @@
 import { useGetProjects } from "@squonk/data-manager-client/project";
 
 import { useRouter } from "next/router";
+import type { RoutedQuery } from "nextjs-routes";
+import { assert, is } from "tsafe";
 
 import { useIsAuthorized } from "./useIsAuthorized";
 import { useKeycloakUser } from "./useKeycloakUser";
@@ -25,26 +27,28 @@ export const useCurrentProjectId = () => {
   const setCurrentProjectId = (newProjectId?: string, shallow?: true) => {
     // Selected project is maintained via the URL "project" query parameter. We use next-js to update it.
     if (newProjectId !== undefined) {
+      assert(is<RoutedQuery<typeof pathname>>(query));
       // A project has been selected
-      router.push(
-        {
-          pathname,
-          query: {
-            ...query,
-            project: newProjectId,
-            path: projectId === newProjectId ? query.path : [],
-          },
+      const href = {
+        pathname,
+        query: {
+          ...query,
+          project: newProjectId,
+          path: projectId === newProjectId ? query.path : [],
         },
-        undefined,
-        { shallow },
-      );
+      };
+
+      router.push(href, undefined, { shallow });
     } else if (projectId !== undefined) {
       // The project has been cleared
       const newQuery = { ...query };
       delete newQuery.project;
       delete newQuery.path;
 
-      router.push({ pathname, query: newQuery }, undefined, { shallow, scroll: false });
+      assert(is<RoutedQuery<typeof pathname>>(query));
+      const href = { pathname, query: newQuery };
+
+      router.push(href, undefined, { shallow, scroll: false });
     }
   };
 

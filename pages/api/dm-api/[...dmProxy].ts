@@ -1,5 +1,3 @@
-import { withSentry } from "@sentry/nextjs";
-
 import { createProxyMiddleware } from "../../../utils/api/apiProxy";
 
 export { config } from "../../../utils/api/apiProxy";
@@ -11,4 +9,4 @@ if (target === undefined) {
   throw Error("Data Manager API environment variable not specified!");
 }
 
-export default withSentry(createProxyMiddleware(`^${prefix}`, target));
+export default createProxyMiddleware(`^${prefix}`, target);

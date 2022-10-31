@@ -1,4 +1,3 @@
-import { withSentry } from "@sentry/nextjs";
 import type { NextHttpProxyMiddlewareOptions } from "next-http-proxy-middleware";
 
 import { createProxyMiddleware } from "../../../utils/api/apiProxy";
@@ -19,4 +18,4 @@ const handleProxyInit: NextHttpProxyMiddlewareOptions["onProxyInit"] = (proxy) =
   });
 };
 
-export default withSentry(createProxyMiddleware(`^${prefix}`, target, handleProxyInit));
+export default createProxyMiddleware(`^${prefix}`, target, handleProxyInit);

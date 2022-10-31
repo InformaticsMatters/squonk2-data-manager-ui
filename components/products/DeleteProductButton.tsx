@@ -6,7 +6,7 @@ import {
 } from "@squonk/account-server-client/product";
 
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { IconButton, Tooltip } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
@@ -28,31 +28,28 @@ export const DeleteProductButton = ({
   const { enqueueError, enqueueSnackbar } = useEnqueueError();
   const queryClient = useQueryClient();
   return (
-    <Tooltip title={tooltip}>
-      <span>
-        <WarningDeleteButton
-          modalId={`delete-${product.id}`}
-          title="Delete Product"
-          onDelete={async () => {
-            try {
-              await deleteProduct({ productId: product.id });
-              await Promise.allSettled([
-                queryClient.invalidateQueries(getGetProductsQueryKey()),
-                queryClient.invalidateQueries(getGetProductQueryKey(product.id)),
-              ]);
-              enqueueSnackbar("Product deleted", { variant: "success" });
-            } catch (error) {
-              enqueueError(getErrorMessage(error));
-            }
-          }}
-        >
-          {({ openModal }) => (
-            <IconButton disabled={disabled} size="small" sx={{ p: "1px" }} onClick={openModal}>
-              <DeleteForeverIcon />
-            </IconButton>
-          )}
-        </WarningDeleteButton>
-      </span>
-    </Tooltip>
+    <WarningDeleteButton
+      modalId={`delete-${product.id}`}
+      title="Delete Product"
+      tooltipText={tooltip}
+      onDelete={async () => {
+        try {
+          await deleteProduct({ productId: product.id });
+          await Promise.allSettled([
+            queryClient.invalidateQueries(getGetProductsQueryKey()),
+            queryClient.invalidateQueries(getGetProductQueryKey(product.id)),
+          ]);
+          enqueueSnackbar("Product deleted", { variant: "success" });
+        } catch (error) {
+          enqueueError(getErrorMessage(error));
+        }
+      }}
+    >
+      {({ openModal }) => (
+        <IconButton disabled={disabled} size="small" sx={{ p: "1px" }} onClick={openModal}>
+          <DeleteForeverIcon />
+        </IconButton>
+      )}
+    </WarningDeleteButton>
   );
 };

@@ -51,16 +51,18 @@ export const NavBarContents = () => {
 
   const settingsButton = (
     <Tooltip title="Settings">
-      <IconButton
-        color="inherit"
-        disabled={!isAuthorized}
-        sx={{ ml: biggerThanMd ? 0 : "auto" }}
-        onClick={() => {
-          props.openSettings();
-        }}
-      >
-        <SettingsIcon />
-      </IconButton>
+      <span>
+        <IconButton
+          color="inherit"
+          disabled={!isAuthorized}
+          sx={{ ml: biggerThanMd ? 0 : "auto" }}
+          onClick={() => {
+            props.openSettings();
+          }}
+        >
+          <SettingsIcon />
+        </IconButton>
+      </span>
     </Tooltip>
   );
 

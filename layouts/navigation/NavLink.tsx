@@ -2,8 +2,7 @@ import type { ReactNode } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
-import type { Route, RoutedQuery } from "nextjs-routes";
-import { assert, is } from "tsafe";
+import type { Route } from "nextjs-routes";
 
 export interface NavLinkChildProps {
   /**
@@ -45,7 +44,6 @@ export const NavLink = ({ children, title, stripQueryParameters }: NavLinkProps)
   const query = { ...router.query };
   stripQueryParameters?.forEach((param) => delete query[param]);
 
-  assert(is<RoutedQuery<typeof pathname>>(query));
   const href = { query, pathname };
   return (
     <Link passHref shallow href={href}>

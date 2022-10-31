@@ -84,7 +84,7 @@ export const DeleteProjectButton = ({ project }: DeleteProjectButtonProps) => {
       }
       modalId={`delete-${project.project_id}`}
       title="Delete Project"
-      tooltipText={"Delete Project"}
+      tooltipText="Delete Project"
       onDelete={handleDelete}
     >
       {({ openModal, isDeleting: disabled }) =>

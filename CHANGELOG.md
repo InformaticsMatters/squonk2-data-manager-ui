@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/1.3.0...1.4.0) (2022-10-31)
+
+
+### Features
+
+* **invoice:** add product invoice page ([dbe7933](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/dbe793377a78bfe3e13b4bc336869577f5e57d8b)), closes [#739](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/739)
+
+
+### Bug Fixes
+
+* **navigation:** add missing span around disabled tooltip child ([e36ba43](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e36ba439365bf3e437301e64052dd22e71df1469))
+* **project-selection:** fix issue when deleting the selected project will cause the browser to hang indefinitely ([367c20b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/367c20b5472a364190717204c2f64db0c4d0a27b))
+* **typescript:** fix a weird ts bug revealed by updating nextjs-routes ([8229091](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/82290916f9b4aa92803d187e31e0016c980c0dc4))
+
 ## [1.3.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/1.2.2...1.3.0) (2022-10-02)
 
 

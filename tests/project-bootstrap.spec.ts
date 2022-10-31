@@ -102,7 +102,7 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   // Wait for the modal to close to imply the unit can now be deleted
   await page.locator(`h2:has-text("Delete Unit")`).waitFor({ state: "detached" });
 
-  await page.locator(`div[role="button"]:has-text("Delete UnitDeletes the selected unit")`).click();
+  await page.locator(`div[role="button"]:has-text("Delete Unit")`).click();
   // Click button:has-text("Delete")
   await page.locator(`button:has-text("Delete")`).click();
 });

@@ -6,7 +6,10 @@
 			"script": "tsc",
 			"problemMatcher": [],
 			"label": "npm: tsc",
-			"detail": "tsc --pretty --noEmit"
+			"detail": "tsc --pretty --noEmit",
+			"presentation": {
+				"close": true
+			}
 		}
 	]
 }

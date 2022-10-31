@@ -2,8 +2,6 @@ import { useEffect } from "react";
 
 import compare from "just-compare";
 import { useRouter } from "next/router";
-import type { RoutedQuery } from "nextjs-routes";
-import { assert, is } from "tsafe";
 
 import {
   getFromLocalStorage,
@@ -43,7 +41,6 @@ export const useSyncProject = () => {
     if (isReady && projectId && !project) {
       const newQuery = { ...query, project: projectId };
       if (!compare(query, newQuery)) {
-        assert(is<RoutedQuery<typeof pathname>>(query));
         const href = { query, pathname };
 
         replace(href, undefined, { shallow: true });

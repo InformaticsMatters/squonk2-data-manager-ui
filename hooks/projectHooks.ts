@@ -1,9 +1,8 @@
 import { useGetProjects } from "@squonk/data-manager-client/project";
 
 import { useRouter } from "next/router";
-import type { RoutedQuery } from "nextjs-routes";
-import { assert, is } from "tsafe";
 
+import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../utils/next/localStorage";
 import { useIsAuthorized } from "./useIsAuthorized";
 import { useKeycloakUser } from "./useKeycloakUser";
 
@@ -27,7 +26,6 @@ export const useCurrentProjectId = () => {
   const setCurrentProjectId = (newProjectId?: string, shallow?: true) => {
     // Selected project is maintained via the URL "project" query parameter. We use next-js to update it.
     if (newProjectId !== undefined) {
-      assert(is<RoutedQuery<typeof pathname>>(query));
       // A project has been selected
       const href = {
         pathname,
@@ -45,9 +43,8 @@ export const useCurrentProjectId = () => {
       delete newQuery.project;
       delete newQuery.path;
 
-      assert(is<RoutedQuery<typeof pathname>>(query));
       const href = { pathname, query: newQuery };
-
+      writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
       router.push(href, undefined, { shallow, scroll: false });
     }
   };

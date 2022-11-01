@@ -131,7 +131,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
     [currentProject.project_id, breadcrumbs, router, theme],
   );
 
-  const { rows, error, isError, isLoading } = useProjectFileRows(currentProject.project_id);
+  const { rows, error, isLoading } = useProjectFileRows(currentProject.project_id);
 
   // react-table plugin to add actions buttons for project files
   const useActionsColumnPlugin: PluginHook<TableFile | TableDir> = useCallback((hooks) => {
@@ -156,7 +156,6 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
       data={rows}
       error={getErrorMessage(error)}
       getRowId={(row) => row.fullPath}
-      isError={isError}
       isLoading={isLoading}
       ToolbarChild={
         <Grid container>

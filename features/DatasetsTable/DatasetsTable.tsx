@@ -96,7 +96,7 @@ export const DatasetsTable = () => {
   );
 
   const { params, filter, setFilterItem } = useDatasetsFilter();
-  const { data, error, isError, isLoading } = useGetDatasets(params);
+  const { data, error, isLoading } = useGetDatasets(params);
 
   // Transform all datasets to match the data-table props
   const datasets: TableDataset[] = useMemo(
@@ -145,7 +145,6 @@ export const DatasetsTable = () => {
       error={getErrorMessage(error)}
       getRowId={getRowId}
       initialSelection={[]}
-      isError={isError}
       isLoading={isLoading}
       ToolbarActionChild={<DatasetsBulkActions selectedDatasets={selectedDatasets} />}
       ToolbarChild={

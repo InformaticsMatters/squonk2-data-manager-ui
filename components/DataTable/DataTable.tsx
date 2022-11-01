@@ -97,10 +97,6 @@ export interface DataTableProps<Data extends Record<string, any>> {
   /**
    * If true, displays the provided `error`.
    */
-  isError?: boolean;
-  /**
-   * Error to display. The error is displayed only if `isError` is true.
-   */
   error?: string;
   /**
    * Custom props applied to Table. Props can either be react-table props or MaterialUI props.

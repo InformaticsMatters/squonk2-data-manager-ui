@@ -25,11 +25,8 @@ export const ProjectStatsSection = () => {
   const theme = useTheme();
   const { projectId: currentProjectId } = useCurrentProjectId();
 
-  const {
-    projectSubscriptions,
-    isLoading: isProjectSubscriptionsLoading,
-    isError: isProjectSubscriptionsError,
-  } = useProjectSubscriptions();
+  const { projectSubscriptions, isLoading: isProjectSubscriptionsLoading } =
+    useProjectSubscriptions();
 
   const {
     storageSubscriptions,
@@ -169,7 +166,6 @@ export const ProjectStatsSection = () => {
         }}
         data={projectSubscriptions}
         enableSearch={false}
-        isError={isProjectSubscriptionsError}
         isLoading={isProjectSubscriptionsLoading}
         tableContainer={false}
       />
@@ -189,7 +185,6 @@ export const ProjectStatsSection = () => {
         data={storageSubscriptions}
         enableSearch={false}
         error={getErrorMessage(storageSubscriptionsError)}
-        isError={!!storageSubscriptionsError}
         isLoading={!storageSubscriptions && isStorageSubscriptionsLoading}
         tableContainer={false}
       />

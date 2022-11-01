@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.0-rc.0...2.0.0-rc.1) (2022-11-01)
+
+
+### Bug Fixes
+
+* **context:** fix loading states in the user settings ([f383d03](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f383d03ec1aba1881645d967a1af79daa27aebcf))
+* **create-unit:** fix billing day logic when creating a unit on the first of the month ([51b4618](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/51b46187c09511d26eeb4d899f1b62b8d0f5df2e))
+
 ## [2.0.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/1.4.0...2.0.0-rc.0) (2022-10-31)
 
 ## [1.4.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/1.3.0...1.4.0) (2022-10-31)

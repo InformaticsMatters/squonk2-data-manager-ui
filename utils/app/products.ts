@@ -16,7 +16,12 @@ export const formatTierString = (original: string) => {
  */
 export const getBillingDay = () => {
   const today = new Date().getDate();
-  return Math.min(28, today - 1);
+  // This gives users the most time from creating the unit to the first bill.
+  // Billing day must be between 1 and 28.
+  // We pick the previous day "yesterday" or the 28 whichever is smaller.
+  // If today is the first day of the month then `today - 1` is zero which is invalid so we loop
+  // back to the 28th
+  return Math.min(28, today - 1 || 28);
 };
 
 export const getBillingPeriods = (billingDay: number, created: string) => {

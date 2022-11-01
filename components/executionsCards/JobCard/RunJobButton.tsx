@@ -1,16 +1,20 @@
 import { useState } from "react";
 
+import type { JobSummary } from "@squonk/data-manager-client";
+
 import { Button, Tooltip } from "@mui/material";
 
 import type { JobModalProps } from "./JobModal";
 import { JobModal } from "./JobModal";
 
-export type RunJobButtonProps = Pick<JobModalProps, "jobId" | "onLaunch" | "projectId">;
+export interface RunJobButtonProps extends Pick<JobModalProps, "jobId" | "onLaunch" | "projectId"> {
+  disabled: JobSummary["disabled"];
+}
 
 /**
  * MuiButton that control a modal with options to create a new instance of a job
  */
-export const RunJobButton = ({ projectId, jobId, onLaunch }: RunJobButtonProps) => {
+export const RunJobButton = ({ projectId, jobId, disabled, onLaunch }: RunJobButtonProps) => {
   const [open, setOpen] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
 
@@ -20,7 +24,7 @@ export const RunJobButton = ({ projectId, jobId, onLaunch }: RunJobButtonProps) 
         <span>
           <Button
             color="primary"
-            disabled={!projectId}
+            disabled={disabled || !projectId}
             onClick={() => {
               setOpen(true);
               setHasOpened(true);

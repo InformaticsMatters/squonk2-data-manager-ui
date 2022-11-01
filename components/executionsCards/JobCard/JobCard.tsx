@@ -1,6 +1,6 @@
 import type { JobSummary } from "@squonk/data-manager-client";
 
-import { Chip, CircularProgress, Link, Typography, useTheme } from "@mui/material";
+import { Alert, Chip, CircularProgress, Link, Typography, useTheme } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import type { BaseCardProps } from "../../BaseCard";
@@ -39,7 +39,12 @@ export const JobCard = ({ projectId, job }: ApplicationCardProps) => {
   return (
     <BaseCard
       actions={({ setExpanded }) => (
-        <RunJobButton jobId={job.id} projectId={projectId} onLaunch={() => setExpanded(true)} />
+        <RunJobButton
+          disabled={job.disabled}
+          jobId={job.id}
+          projectId={projectId}
+          onLaunch={() => setExpanded(true)}
+        />
       )}
       collapsed={
         <InstancesList
@@ -69,6 +74,12 @@ export const JobCard = ({ projectId, job }: ApplicationCardProps) => {
           <Chip color="primary" key={word} label={word} size="small" variant="outlined" />
         ))}
       </Chips>
+
+      {!!job.disabled_reason && (
+        <Alert severity="warning" sx={{ mt: 1, mb: -2 }}>
+          {job.disabled_reason}
+        </Alert>
+      )}
     </BaseCard>
   );
 };

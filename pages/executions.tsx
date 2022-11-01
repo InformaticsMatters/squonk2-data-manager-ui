@@ -84,7 +84,7 @@ const Executions = () => {
     isLoading: isJobsLoading,
     isError: isJobsError,
     error: jobsError,
-  } = useGetJobs();
+  } = useGetJobs({ project_id: currentProject?.project_id });
   const jobs = jobsData?.jobs;
 
   const cards = useMemo(() => {

@@ -34,7 +34,6 @@ export const ProjectStatsSection = () => {
   const {
     storageSubscriptions,
     isLoading: isStorageSubscriptionsLoading,
-    isError: isStorageSubscriptionsError,
     error: storageSubscriptionsError,
   } = useStorageSubscriptions();
 
@@ -190,8 +189,8 @@ export const ProjectStatsSection = () => {
         data={storageSubscriptions}
         enableSearch={false}
         error={getErrorMessage(storageSubscriptionsError)}
-        isError={isStorageSubscriptionsError}
-        isLoading={isStorageSubscriptionsLoading}
+        isError={!!storageSubscriptionsError}
+        isLoading={!storageSubscriptions && isStorageSubscriptionsLoading}
         tableContainer={false}
       />
     </Box>

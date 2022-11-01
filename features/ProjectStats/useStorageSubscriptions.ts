@@ -11,13 +11,13 @@ import { useSelectedUnit } from "../../state/unitSelection";
 export const useStorageSubscriptions = () => {
   const [unit] = useSelectedUnit();
 
-  const { data, isLoading, isError, error } = useGetProductsForUnit(unit?.id ?? "", {
+  const { data, isLoading, error } = useGetProductsForUnit(unit?.id ?? "", {
     query: { enabled: !!unit?.id },
   });
 
   const storageSubscriptions = useMemo(() => {
     if (!data) {
-      return [];
+      return undefined;
     }
 
     return data.products.filter(
@@ -26,5 +26,5 @@ export const useStorageSubscriptions = () => {
     );
   }, [data]);
 
-  return { storageSubscriptions, isLoading, isError, error };
+  return { storageSubscriptions, isLoading: isLoading && unit?.id !== undefined, error };
 };

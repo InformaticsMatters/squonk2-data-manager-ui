@@ -34,11 +34,6 @@ export const useProjectSubscriptions = () => {
   } = useGetProducts();
   const products = productsData?.products;
 
-  // const { data, isLoading, isError, error } = useGetProductsForUnit(unit?.id ?? "", {
-  //   query: { enabled: !!unit?.id },
-  // });
-  // const products = data?.products;
-
   const projectSubscriptions: ProductDmProjectTierAndOwner[] = useMemo(() => {
     const joinedProjectProduct = projects
       ?.map(({ product_id, owner }) => {

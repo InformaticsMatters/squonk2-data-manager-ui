@@ -43,7 +43,7 @@ export const SelectUnit = (props: SelectUnitProps) => {
         getOptionLabel={(option) => option.name}
         id="unit-selection"
         isOptionEqualToValue={(option, value) => option.id === value.id}
-        loading={isLoading}
+        loading={isLoading && !!organisation?.id}
         options={units ?? []}
         renderInput={(params) => (
           <TextField

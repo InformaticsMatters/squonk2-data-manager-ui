@@ -27,6 +27,7 @@ import {
   Alert,
   Box,
   InputAdornment,
+  LinearProgress,
   Paper,
   Table,
   TableBody,
@@ -39,7 +40,6 @@ import {
   Toolbar,
 } from "@mui/material";
 
-import { CenterLoader } from "../CenterLoader";
 import { IndeterminateCheckbox } from "./IndeterminateCheckbox";
 
 type Selection<Data> = Record<IdType<Data>, boolean>;
@@ -148,7 +148,6 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
       // Do nothing
     },
     isLoading,
-    isError,
     error,
     customTableProps,
     customCellProps,
@@ -325,10 +324,10 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
           })}
         </TableBody>
       </Table>
-      {(isLoading || isError) && (
+      {isLoading && <LinearProgress />}
+      {error && (
         <Box overflow="hidden" padding={2}>
-          {isLoading && <CenterLoader />}
-          {isError && error && <Alert severity="error">{error}</Alert>}
+          {<Alert severity="error">{error}</Alert>}
         </Box>
       )}
     </>

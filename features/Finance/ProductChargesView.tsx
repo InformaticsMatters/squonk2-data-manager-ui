@@ -15,7 +15,7 @@ export const ProductChargesView = ({ productId }: ProductChargesViewProps) => {
   return (
     <>
       <Head>
-        <title>Squonk | {data?.product.product.name} Invoice</title>
+        <title>Squonk | {data?.product.product.name} Ledger</title>
       </Head>
       <ProductCharges productId={productId} />
     </>

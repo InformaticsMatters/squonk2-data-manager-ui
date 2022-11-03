@@ -32,7 +32,8 @@ declare module "nextjs-routes" {
     | { pathname: "/project"; query?: Query | undefined }
     | { pathname: "/results/instance/[instanceId]"; query: Query<{ "instanceId": string }> }
     | { pathname: "/results/task/[taskId]"; query: Query<{ "taskId": string }> }
-    | { pathname: "/results"; query?: Query | undefined };
+    | { pathname: "/results"; query?: Query | undefined }
+    | { pathname: "/unit/[unitId]/charges"; query: Query<{ "unitId": string }> };
 
   type Query<Params = {}> = Params & {
     [key: string]: string | string[] | undefined;

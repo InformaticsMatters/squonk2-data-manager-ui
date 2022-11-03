@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-rc.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.0-rc.2...2.0.0-rc.3) (2022-11-03)
+
+
+### Bug Fixes
+
+* **charges-page:** fix title of product charges page ([4950f5f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4950f5f7f847716ac5adac334925a11fa5af1613))
+* **create-dataset-sub:** fix dataset storage sub creation form ([6d2e7ae](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6d2e7ae1cc61a76b9bf9b77716efb344ef3cc4da))
+* fix browser hanging issues ([7bf43b1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7bf43b1fa44aaadb4439bbe2d48df4008f591a2b))
+
 ## [2.0.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.0-rc.1...2.0.0-rc.2) (2022-11-01)
 
 

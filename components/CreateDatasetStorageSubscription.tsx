@@ -37,7 +37,6 @@ export const CreateDatasetStorageSubscription = ({
       initialValues={initialValues}
       validationSchema={yup.object().shape({
         name: yup.string().trim().required("A name is required"),
-        limit: yup.number().min(1).integer().required("A limit is required"),
         allowance: yup.number().min(1).integer().required("An allowance is required"),
       })}
       onSubmit={async ({ allowance, name }) => {

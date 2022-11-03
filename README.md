@@ -9,6 +9,18 @@
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/InformaticsMatters/squonk2-data-manager-ui)
 
+## API Compatibility
+
+The Data Manager UI will usually only work with specific API versions.  A major version bump in the UI (E.g. 1.x to 2.y) will correspond to a major version change in either the data-manager API or the account-server API.
+
+### Compatibility Table
+
+| UI  | DM API | AS API |
+| --- | ------ | ------ |
+| 1   | 1      | 1      |
+| 2   | 1      | 2      |
+___
+
 ## Changes
 
 Checkout the releases for the latest changes or look at [CHANGELOG.md](CHANGELOG.md).

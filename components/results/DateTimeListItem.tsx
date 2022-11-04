@@ -2,9 +2,9 @@ import { ListItem, ListItemText, useMediaQuery, useTheme } from "@mui/material";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
-dayjs.extend(utc);
+import { DATE_FORMAT, TIME_FORMAT } from "../../constants/datetimes";
 
-import { DATE_FORMAT, TIME_FORMAT } from "../../utils/app/datetime";
+dayjs.extend(utc);
 
 export interface DateTimeListItemProps {
   /**

@@ -1,10 +1,9 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
-dayjs.extend(utc);
+import { DATE_FORMAT, TIME_FORMAT } from "../../constants/datetimes";
 
-export const DATE_FORMAT = "DD/MM/YY";
-export const TIME_FORMAT = "HH:mm:ss";
+dayjs.extend(utc);
 
 export const toLocalTimeString = (
   utcTimestamp: string,

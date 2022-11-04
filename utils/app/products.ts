@@ -2,6 +2,8 @@ import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
+import { DATE_FORMAT } from "../../constants/datetimes";
+
 dayjs.extend(utc);
 
 /**
@@ -27,14 +29,7 @@ export const getBillingDay = () => {
 export const getBillingPeriods = (billingDay: number, created: string) => {
   const createdDay = dayjs.utc(created);
 
-  let firstBillingDay: Dayjs;
-  if (billingDay > createdDay.day()) {
-    // Current moths billing day hasn't happened yet
-    firstBillingDay = createdDay.set("day", billingDay);
-  } else {
-    // Current months billing day has already passed
-    firstBillingDay = createdDay.set("day", billingDay).add(1, "month");
-  }
+  const firstBillingDay = createdDay.set("date", billingDay);
 
   let date = firstBillingDay;
   const dates: Dayjs[] = [];
@@ -45,7 +40,7 @@ export const getBillingPeriods = (billingDay: number, created: string) => {
 
   return dates.map((d, index) => [
     index - dates.length + 1,
-    d.local().format("YYYY-MM-DD"),
-    d.local().add(1, "month").subtract(1, "day").format("YYYY-MM-DD"),
+    d.local().format(DATE_FORMAT),
+    d.local().add(1, "month").format(DATE_FORMAT),
   ]);
 };

@@ -20,6 +20,7 @@ import {
 import { filesize } from "filesize";
 
 import { toLocalTimeString } from "../../utils/app/datetime";
+import { formatOrdinals } from "../../utils/app/ordinals";
 import { getBillingPeriods } from "../../utils/app/products";
 import { CenterLoader } from "../CenterLoader";
 
@@ -57,9 +58,9 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
         <em>{productData.product.organisation.name}</em> organisation{" "}
       </Typography>
       <Typography gutterBottom component="h2" variant="h4">
-        Billing period
+        Billing period (Billed on the {formatOrdinals(productData.product.unit.billing_day)} of the
+        month)
       </Typography>
-
       <Select
         id="select-billing-cycle"
         size="small"
@@ -72,7 +73,6 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
           <MenuItem key={d1} value={i}>{`${d1} — ${d2}`}</MenuItem>
         ))}
       </Select>
-
       <Typography gutterBottom sx={{ mt: 2 }} variant="h2">
         Charges
       </Typography>

@@ -1,8 +1,9 @@
 import type { UnitGetResponse } from "@squonk/account-server-client";
 import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
 
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import type { AutocompleteProps } from "@mui/material";
-import { Autocomplete, Box, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, IconButton, TextField, Tooltip, Typography } from "@mui/material";
 
 import { projectPayload, useCurrentProjectId } from "../../hooks/projectHooks";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
@@ -50,7 +51,25 @@ export const SelectUnit = (props: SelectUnitProps) => {
             {...params}
             InputProps={{
               ...params.InputProps,
-              startAdornment: <ItemIcons item={unit} />,
+              startAdornment: (
+                <>
+                  <ItemIcons item={unit} />
+                  {!!unit && (
+                    <Tooltip title="Charges">
+                      <span>
+                        <IconButton
+                          href={`/unit/${unit.id}/charges`}
+                          size="small"
+                          sx={{ p: "1px" }}
+                          target="_blank"
+                        >
+                          <ReceiptIcon />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+                  )}
+                </>
+              ),
             }}
             label="Unit"
           />
@@ -73,12 +92,10 @@ export const SelectUnit = (props: SelectUnitProps) => {
           setUnit(newUnit ?? undefined);
         }}
       />
-      {
-        // N.B. This isn't helperText as MUI doesn't make that selectable
-        <Typography color="text.secondary" variant="body2">
-          {unit?.id}
-        </Typography>
-      }
+      {/* N.B. This isn't helperText as MUI doesn't make that selectable */}
+      <Typography color="text.secondary" variant="body2">
+        {unit?.id}
+      </Typography>
     </>
   );
 };

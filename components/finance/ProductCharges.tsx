@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { filesize } from "filesize";
 
+import { formatCoins } from "../../utils/app/coins";
 import { toLocalTimeString } from "../../utils/app/datetime";
 import { formatOrdinals } from "../../utils/app/ordinals";
 import { CenterLoader } from "../CenterLoader";
@@ -92,7 +93,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
                   <TableCell>{charge.charge.additional_data?.job_job}</TableCell>
                   <TableCell>{charge.charge.additional_data?.job_collection}</TableCell>
                   <TableCell>{charge.closed ? "Yes" : "No"}</TableCell>
-                  <TableCell>C&nbsp;{charge.charge.coins}</TableCell>
+                  <TableCell>{formatCoins(charge.charge.coins)}</TableCell>
                   <TableCell>{charge.charge.username}</TableCell>
                   <TableCell>{toLocalTimeString(charge.charge.timestamp, true, true)}</TableCell>
                 </TableRow>
@@ -131,7 +132,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
                   <TableCell>{charge.date}</TableCell>
                   {/* TODO: assert additional_data to interface from data-manager-client when it's updated */}
                   <TableCell>{filesize(charge.additional_data?.peak_bytes ?? 0)}</TableCell>
-                  <TableCell>C&nbsp;{charge.coins}</TableCell>
+                  <TableCell>{formatCoins(charge.coins)}</TableCell>
                 </TableRow>
               ))
             ) : (
@@ -148,7 +149,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
       <Box textAlign="right">
         <Typography variant="h3">Total Charges</Typography>
         <Typography variant="subtitle1">To be paid by the unit owner</Typography>
-        C&nbsp;{chargesData.coins}
+        {formatCoins(chargesData.coins)}
       </Box>
     </Container>
   );

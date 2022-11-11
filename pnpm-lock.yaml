@@ -60,7 +60,7 @@ specifiers:
   next: 12.3.3
   next-http-proxy-middleware: 1.2.5
   next-transpile-modules: 9.1.0
-  nextjs-routes: 0.1.6
+  nextjs-routes: 0.1.7
   node-fetch: 3.2.10
   notistack: 2.0.8
   plotly.js-basic-dist: 2.16.1
@@ -124,7 +124,7 @@ dependencies:
   next: 12.3.3_45265acc010aaed884ffc8b80dc22c41
   next-http-proxy-middleware: 1.2.5
   next-transpile-modules: 9.1.0
-  nextjs-routes: 0.1.6_next@12.3.3
+  nextjs-routes: 0.1.7_next@12.3.3
   node-fetch: 3.2.10
   notistack: 2.0.8_98c029ce1804ae62072b6a84ab583744
   plotly.js-basic-dist: 2.16.1
@@ -4243,8 +4243,8 @@ packages:
       - babel-plugin-macros
     dev: false
 
-  /nextjs-routes/0.1.6_next@12.3.3:
-    resolution: {integrity: sha512-67y2IH9wTzkwwqu2LRZUz1/PJ2bTFAW3AHrM4IwdFK1Uce6OBj1Cg5uGU5OgjoGXgK30smuJzl51BVIjIqi/OQ==}
+  /nextjs-routes/0.1.7_next@12.3.3:
+    resolution: {integrity: sha512-0zo5lzx8K/I7KwqDXyUD5I8WpKbBFJzUfbnl93+nNJKVzuzty/npnohUJsOpBEbvQvyLzX0P9sAdoMSr5ll3cg==}
     hasBin: true
     peerDependencies:
       next: '*'

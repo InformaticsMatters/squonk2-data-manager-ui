@@ -44,7 +44,7 @@
     "@rjsf/material-ui": "4.2.3",
     "@sentry/nextjs": "7.17.3",
     "@squonk/account-server-client": "2.0.0-rc.1",
-    "@squonk/data-manager-client": "1.0.22",
+    "@squonk/data-manager-client": "1.0.23",
     "@squonk/mui-theme": "3.0.1",
     "@tanstack/react-query": "4.14.1",
     "@tanstack/react-query-devtools": "4.14.1",

@@ -72,7 +72,7 @@ specifiers:
   react-plotly.js: 2.6.0
   react-table: 7.8.0
   react-virtualized: 9.22.3
-  sass: 1.55.0
+  sass: 1.56.1
   tsafe: 1.2.1
   typescript: 4.8.4
   use-immer: 0.7.0
@@ -121,7 +121,7 @@ dependencies:
   just-group-by: 2.1.2
   lodash-es: 4.17.21
   material-ui-popup-state: 4.1.0_d3093269c4d29d903858c73f305659d6
-  next: 12.3.3_45265acc010aaed884ffc8b80dc22c41
+  next: 12.3.3_fafd64a2ccacf84ee323d1fd966a93dd
   next-http-proxy-middleware: 1.2.5
   next-transpile-modules: 9.1.0
   nextjs-routes: 0.1.6_next@12.3.3
@@ -136,7 +136,7 @@ dependencies:
   react-plotly.js: 2.6.0_react@17.0.2
   react-table: 7.8.0_react@17.0.2
   react-virtualized: 9.22.3_react-dom@17.0.2+react@17.0.2
-  sass: 1.55.0
+  sass: 1.56.1
   tsafe: 1.2.1
   typescript: 4.8.4
   use-immer: 0.7.0_immer@9.0.16+react@17.0.2
@@ -175,7 +175,7 @@ packages:
       http-errors: 1.8.1
       joi: 17.6.0
       jose: 2.0.5
-      next: 12.3.3_45265acc010aaed884ffc8b80dc22c41
+      next: 12.3.3_fafd64a2ccacf84ee323d1fd966a93dd
       on-headers: 1.0.2
       openid-client: 4.9.1
       tslib: 2.4.0
@@ -1047,7 +1047,7 @@ packages:
       '@sentry/utils': 7.17.3
       '@sentry/webpack-plugin': 1.19.0
       chalk: 3.0.0
-      next: 12.3.3_45265acc010aaed884ffc8b80dc22c41
+      next: 12.3.3_fafd64a2ccacf84ee323d1fd966a93dd
       react: 17.0.2
       rollup: 2.78.0
       tslib: 1.14.1
@@ -4197,7 +4197,7 @@ packages:
       escalade: 3.1.1
     dev: false
 
-  /next/12.3.3_45265acc010aaed884ffc8b80dc22c41:
+  /next/12.3.3_fafd64a2ccacf84ee323d1fd966a93dd:
     resolution: {integrity: sha512-Rx2Y6Wl5R8E77NOfBupp/B9OPCklqfqD0yN2+rDivhMjd6hjVFH5n0WTDI4PWwDmZsdNcYt6NV85kJ3PLR+eNQ==}
     engines: {node: '>=12.22.0'}
     hasBin: true
@@ -4221,7 +4221,7 @@ packages:
       postcss: 8.4.14
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      sass: 1.55.0
+      sass: 1.56.1
       styled-jsx: 5.0.7_react@17.0.2
       use-sync-external-store: 1.2.0_react@17.0.2
     optionalDependencies:
@@ -4250,7 +4250,7 @@ packages:
       next: '*'
     dependencies:
       chokidar: 3.5.3
-      next: 12.3.3_45265acc010aaed884ffc8b80dc22c41
+      next: 12.3.3_fafd64a2ccacf84ee323d1fd966a93dd
     dev: false
 
   /node-domexception/1.0.0:
@@ -4936,8 +4936,8 @@ packages:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
     dev: false
 
-  /sass/1.55.0:
-    resolution: {integrity: sha512-Pk+PMy7OGLs9WaxZGJMn7S96dvlyVBwwtToX895WmCpAOr5YiJYEUJfiJidMuKb613z2xNWcXCHEuOvjZbqC6A==}
+  /sass/1.56.1:
+    resolution: {integrity: sha512-VpEyKpyBPCxE7qGDtOcdJ6fFbcpOM+Emu7uZLxVrkX8KVU/Dp5UF7WLvzqRuUhB6mqqQt1xffLoG+AndxTZrCQ==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:

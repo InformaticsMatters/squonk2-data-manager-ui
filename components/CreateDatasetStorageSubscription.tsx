@@ -13,7 +13,7 @@ import * as yup from "yup";
 
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useGetStorageCost } from "../hooks/useGetStorageCost";
-import { coinsFormatter } from "../utils/app/coins";
+import { formatCoins } from "../utils/app/coins";
 import { getErrorMessage } from "../utils/next/orvalError";
 
 export interface CreateDatasetStorageSubscriptionProps {
@@ -77,9 +77,7 @@ export const CreateDatasetStorageSubscription = ({
                 sx={{ maxWidth: 100 }}
                 type="number"
               />
-              {cost && (
-                <span>Cost: {coinsFormatter.format(cost * values.allowance).slice(1)}C</span>
-              )}
+              {cost && <span>Cost: {formatCoins(cost * values.allowance)}</span>}
               <Button disabled={isSubmitting || !isValid} onClick={submitForm}>
                 Create
               </Button>

@@ -41,7 +41,6 @@ export const useSyncProject = () => {
     if (isReady && projectId && !project) {
       const newQuery = { ...query, project: projectId };
       if (!compare(query, newQuery)) {
-        console.log(query, newQuery);
         const href = { query: newQuery, pathname };
 
         replace(href, undefined);

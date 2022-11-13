@@ -15,7 +15,7 @@ import { TextField } from "formik-mui";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { useGetStorageCost } from "../../hooks/useGetStorageCost";
-import { coinsFormatter } from "../../utils/app/coins";
+import { formatCoins } from "../../utils/app/coins";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { FormikModalWrapper } from "../modals/FormikModalWrapper";
 
@@ -75,7 +75,7 @@ export const AdjustProjectProduct = ({ product, allowance }: AdjustProjectProduc
               sx={{ maxWidth: 100 }}
               type="number"
             />
-            {cost && <span>Cost: {coinsFormatter.format(cost * values.allowance).slice(1)}C</span>}
+            {cost && <span>Cost: {formatCoins(cost * values.allowance).slice(1)}C</span>}
           </Box>
         )}
       </FormikModalWrapper>

@@ -7,9 +7,7 @@ import {
   Box,
   Container,
   Divider,
-  MenuItem,
   Paper,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -19,10 +17,11 @@ import {
 } from "@mui/material";
 import { filesize } from "filesize";
 
+import { formatCoins } from "../../utils/app/coins";
 import { toLocalTimeString } from "../../utils/app/datetime";
 import { formatOrdinals } from "../../utils/app/ordinals";
-import { getBillingPeriods } from "../../utils/app/products";
 import { CenterLoader } from "../CenterLoader";
+import { SelectBillingCycle } from "./SelectBillingCycle";
 
 export interface ProductChargesProps {
   productId: ProductDetail["id"];
@@ -41,11 +40,6 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
     return <CenterLoader />;
   }
 
-  const periods = getBillingPeriods(
-    productData.product.unit.billing_day,
-    productData.product.product.created,
-  );
-
   return (
     <Container maxWidth="md">
       <Typography variant="h1">Product Ledger</Typography>
@@ -61,18 +55,14 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
         Billing period (Billed on the {formatOrdinals(productData.product.unit.billing_day)} of the
         month)
       </Typography>
-      <Select
-        id="select-billing-cycle"
-        size="small"
-        value={monthDelta}
-        onChange={(event) => {
-          setMonthDelta(Number(event.target.value));
-        }}
-      >
-        {periods.map(([i, d1, d2]) => (
-          <MenuItem key={d1} value={i}>{`${d1} — ${d2}`}</MenuItem>
-        ))}
-      </Select>
+
+      <SelectBillingCycle
+        billingDay={productData.product.unit.billing_day}
+        created={productData.product.product.created}
+        monthDelta={monthDelta}
+        onChange={setMonthDelta}
+      />
+
       <Typography gutterBottom sx={{ mt: 2 }} variant="h2">
         Charges
       </Typography>
@@ -103,7 +93,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
                   <TableCell>{charge.charge.additional_data?.job_job}</TableCell>
                   <TableCell>{charge.charge.additional_data?.job_collection}</TableCell>
                   <TableCell>{charge.closed ? "Yes" : "No"}</TableCell>
-                  <TableCell>C&nbsp;{charge.charge.coins}</TableCell>
+                  <TableCell>{formatCoins(charge.charge.coins)}</TableCell>
                   <TableCell>{charge.charge.username}</TableCell>
                   <TableCell>{toLocalTimeString(charge.charge.timestamp, true, true)}</TableCell>
                 </TableRow>
@@ -142,7 +132,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
                   <TableCell>{charge.date}</TableCell>
                   {/* TODO: assert additional_data to interface from data-manager-client when it's updated */}
                   <TableCell>{filesize(charge.additional_data?.peak_bytes ?? 0)}</TableCell>
-                  <TableCell>C&nbsp;{charge.coins}</TableCell>
+                  <TableCell>{formatCoins(charge.coins)}</TableCell>
                 </TableRow>
               ))
             ) : (
@@ -159,7 +149,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
       <Box textAlign="right">
         <Typography variant="h3">Total Charges</Typography>
         <Typography variant="subtitle1">To be paid by the unit owner</Typography>
-        C&nbsp;{chargesData.coins}
+        {formatCoins(chargesData.coins)}
       </Box>
     </Container>
   );

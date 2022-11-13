@@ -59,7 +59,7 @@ specifiers:
   material-ui-popup-state: 4.1.0
   next: 12.3.3
   next-http-proxy-middleware: 1.2.5
-  next-transpile-modules: 9.1.0
+  next-transpile-modules: 10.0.0
   nextjs-routes: 0.1.7
   node-fetch: 3.3.0
   notistack: 2.0.8
@@ -123,7 +123,7 @@ dependencies:
   material-ui-popup-state: 4.1.0_d3093269c4d29d903858c73f305659d6
   next: 12.3.3_fafd64a2ccacf84ee323d1fd966a93dd
   next-http-proxy-middleware: 1.2.5
-  next-transpile-modules: 9.1.0
+  next-transpile-modules: 10.0.0
   nextjs-routes: 0.1.7_next@12.3.3
   node-fetch: 3.3.0
   notistack: 2.0.8_a9ae13566f647b05d995472288412b4e
@@ -2267,11 +2267,6 @@ packages:
       is-symbol: 1.0.4
     dev: true
 
-  /escalade/3.1.1:
-    resolution: {integrity: sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==}
-    engines: {node: '>=6'}
-    dev: false
-
   /escape-string-regexp/1.0.5:
     resolution: {integrity: sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==}
     engines: {node: '>=0.8.0'}
@@ -4191,11 +4186,10 @@ packages:
       - debug
     dev: false
 
-  /next-transpile-modules/9.1.0:
-    resolution: {integrity: sha512-yzJji65xDqcIqjvx5vPJcs1M+MYQTzLM1pXH/qf8Q88ohx+bwVGDc1AeV+HKr1NwvMCNTpwVPSFI7cA5WdyeWA==}
+  /next-transpile-modules/10.0.0:
+    resolution: {integrity: sha512-FyeJ++Lm2Fq31gbThiRCrJlYpIY9QaI7A3TjuhQLzOix8ChQrvn5ny4MhfIthS5cy6+uK1AhDRvxVdW17y3Xdw==}
     dependencies:
       enhanced-resolve: 5.10.0
-      escalade: 3.1.1
     dev: false
 
   /next/12.3.3_fafd64a2ccacf84ee323d1fd966a93dd:

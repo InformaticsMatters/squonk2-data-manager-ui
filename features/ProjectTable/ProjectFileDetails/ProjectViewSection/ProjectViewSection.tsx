@@ -23,7 +23,7 @@ export const ProjectViewSection = ({ file }: ProjectViewSectionProps) => {
           button
           component="a"
           href={
-            process.env.NEXT_PUBLIC_BASE_PATH +
+            (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
             API_ROUTES.projectFile(projectId, path, file.fileName, "/api/viewer-proxy")
           }
           rel="noopener noreferrer"

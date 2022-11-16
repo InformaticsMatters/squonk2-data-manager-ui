@@ -58,7 +58,9 @@ export const SelectUnit = (props: SelectUnitProps) => {
                     <Tooltip title="Charges">
                       <span>
                         <IconButton
-                          href={`/unit/${unit.id}/charges`}
+                          href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/unit/${
+                            unit.id
+                          }/charges`}
                           size="small"
                           sx={{ p: "1px" }}
                           target="_blank"

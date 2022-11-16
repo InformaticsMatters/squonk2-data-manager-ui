@@ -13,7 +13,7 @@ export const ChargesLinkIconButton = ({ productId }: ChargesLinkIconButtonProps)
       <span>
         <IconButton
           disabled={!productId}
-          href={`/product/${productId}/charges`}
+          href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/product/${productId}/charges`}
           size="small"
           sx={{ p: "1px" }}
           target="_blank"

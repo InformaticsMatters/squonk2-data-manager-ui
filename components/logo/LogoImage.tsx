@@ -8,7 +8,7 @@ export interface LogoImageProps {
 
 const alt = "Squonk (animal) logo with title text 'Squonk' and subtitle 'Data Manager'";
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const LogoImage = ({ variant }: LogoImageProps) => {
   const [scheme] = useColorScheme();

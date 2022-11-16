@@ -26,7 +26,7 @@ export const UserMenuContent = () => {
         <Typography>
           {user.username} /{" "}
           <Link
-            href={process.env.NEXT_PUBLIC_BASE_PATH + `/api/auth/logout`}
+            href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/logout`}
             onClick={() => {
               localStorage.clear();
               setUnit();
@@ -38,7 +38,7 @@ export const UserMenuContent = () => {
         </Typography>
       ) : (
         <Typography>
-          <Link href={process.env.NEXT_PUBLIC_BASE_PATH + `/api/auth/login`}>Login</Link>
+          <Link href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/login`}>Login</Link>
         </Typography>
       )}
     </>

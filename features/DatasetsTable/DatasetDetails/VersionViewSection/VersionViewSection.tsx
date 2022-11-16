@@ -28,7 +28,7 @@ export const VersionViewSection = ({ dataset, version }: VersionViewSectionProps
         button
         component="a"
         href={
-          process.env.NEXT_PUBLIC_BASE_PATH +
+          (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
           API_ROUTES.datasetVersion(dataset.dataset_id, version.version, "/api/viewer-proxy")
         }
         rel="noopener noreferrer"

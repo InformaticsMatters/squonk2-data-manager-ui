@@ -1,4 +1,4 @@
-import type { AnchorHTMLAttributes, DetailedHTMLProps, FC } from "react";
+import type { AnchorHTMLAttributes, DetailedHTMLProps, FC, ReactNode } from "react";
 
 import { MDXProvider } from "@mdx-js/react";
 import { Link, Typography } from "@mui/material";
@@ -12,7 +12,11 @@ type NextLinkProps = Omit<
 > &
   LinkProps;
 
-export const MDXComponentProvider: FC = ({ children }) => {
+export interface MDXComponentProviderProps {
+  children: ReactNode;
+}
+
+export const MDXComponentProvider: FC<MDXComponentProviderProps> = ({ children }) => {
   return (
     <MDXProvider
       components={{

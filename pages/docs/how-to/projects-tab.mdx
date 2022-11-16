@@ -3,16 +3,9 @@ import Layout from "../../../layouts/Layout";
 import Head from "next/head";
 //import login from "../assets/login.png"
 
-
 <Head>
   <title>Project data - a How To guide</title>
 </Head>
-
-<Layout>
-{/* Place all page content inside the <Layout /> Tags */}
-{/* Comments should look like these, not <!-- --> as this break xdm */}
-{/* Container narrows the text width, it is configurable */}
-<Container>
 
 <InternalLink href="/">Home</InternalLink> |
 <InternalLink href="../guided-tour">Guided Tour</InternalLink> |
@@ -43,6 +36,4 @@ to manage your files either with the Jupyter Lab file manager or by opening up a
 See the <InternalLink href="./applications">Running applications</InternalLink> How To guide for more details on launching
 Jupyter Lab.
 
-
-</Container>
-</Layout>
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

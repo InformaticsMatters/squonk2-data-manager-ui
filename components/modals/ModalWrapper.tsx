@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import {
   Button,
@@ -14,6 +16,7 @@ import { SlideUpTransition } from "../SlideUpTransition";
 import type { BaseModalWrapperProps } from "./types";
 
 export interface ModalWrapperProps extends BaseModalWrapperProps {
+  children: ReactNode;
   /**
    * Called when the primary action is clicked
    */

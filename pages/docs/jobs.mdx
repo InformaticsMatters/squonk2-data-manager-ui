@@ -7,12 +7,6 @@ import Head from "next/head";
   <title>Data Manager User Documentation - Description of deployed jobs</title>
 </Head>
 
-<Layout>
-{/* Place all page content inside the <Layout /> Tags */}
-{/* Comments should look like these, not <!-- --> as this break xdm */}
-{/* Container narrows the text width, it is configurable */}
-<Container>
-
 <DocsNav />
 
 # Squonk Data Manager Jobs
@@ -32,5 +26,4 @@ The definition of these jobs is done in Git repositories. The techie guy guide f
 The list of available jobs on this Squonk Data Manager can be found on the
 <InternalLink href="/executions">executions page</InternalLink>.
 
-</Container>
-</Layout>
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

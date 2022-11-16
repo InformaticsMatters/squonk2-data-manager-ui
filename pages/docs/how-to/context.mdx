@@ -10,12 +10,6 @@ import project_context from "../assets/project-context.png"
   <title>Setting your work context - a How To guide</title>
 </Head>
 
-<Layout>
-{/* Place all page content inside the <Layout /> Tags */}
-{/* Comments should look like these, not <!-- --> as this break xdm */}
-{/* Container narrows the text width, it is configurable */}
-<Container>
-
 <DocsNav />
 
 ## Setting your work context - a How To guide
@@ -47,7 +41,4 @@ Owners of an **organisation** can create a new **unit** within it if you want a 
 group, department etc.). The **Default** **organisation** cannot have **units** added to it other than a user's
 **personal** unit.
 
-
-
-</Container>
-</Layout>
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

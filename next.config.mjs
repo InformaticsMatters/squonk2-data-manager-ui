@@ -1,12 +1,21 @@
-const path = require("path");
-const { withSentryConfig } = require("@sentry/nextjs");
-const withRoutes = require("nextjs-routes/config")({ outDir: "types" });
+import nextMDX from "@next/mdx";
+import { withSentryConfig } from "@sentry/nextjs";
+import nextTranspileModules from "next-transpile-modules";
+import nextRoutes from "nextjs-routes/config";
+import path from "node:path";
+
+const withRoutes = nextRoutes({ outDir: "types" });
+
+const withMDX = nextMDX({
+  extension: /\.mdx?$/,
+  options: { providerImportSource: "@mdx-js/react", jsxImportSource: "@emotion/react" },
+});
 
 if (process.env.MONOREPO) {
   console.log("info  - Running with webpack aliases for monorepo compatibility");
 }
 
-const withTM = require("next-transpile-modules")(
+const withTM = nextTranspileModules(
   ["@squonk/mui-theme"],
   { debug: false }, // Log which files get transpiled
 );
@@ -49,21 +58,6 @@ let nextConfig = {
       );
     }
 
-    config.module.rules.push({
-      test: /\.mdx?$/,
-      use: [
-        // The default `babel-loader` used by Next:
-        options.defaultLoaders.babel,
-        {
-          loader: "@mdx-js/loader",
-          /** @type {import('@mdx-js/loader').Options} */
-          options: {
-            providerImportSource: "@mdx-js/react",
-          },
-        },
-      ],
-    });
-
     return config;
   },
 };
@@ -76,10 +70,11 @@ const sentryWebpackPluginOptions = {
   environment: process.env.NODE_ENV,
 };
 
+nextConfig = withMDX(nextConfig);
 nextConfig = withRoutes(nextConfig);
 nextConfig = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
 nextConfig = process.env.SENTRY_AUTH_TOKEN
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
   : nextConfig;
 
-module.exports = nextConfig;
+export default nextConfig;

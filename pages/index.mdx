@@ -8,12 +8,6 @@ import { UserBootstrapper } from "../features/UserBootstrapper";
   <title>Data Manager</title>
 </Head>
 
-<Layout>
-{/* Place all page content inside the <Layout /> Tags */}
-{/* Comments should look like these, not <!-- --> as this break xdm */}
-{/* Container narrows the text width, it is configurable */}
-<Container>
-
 <RoleWarning />
 
 <UserBootstrapper />
@@ -77,5 +71,4 @@ Please email us at info@informaticsmatters.com if you would like to evaluate or 
 </Grid>
 </Grid>
 
-</Container>
-</Layout>
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

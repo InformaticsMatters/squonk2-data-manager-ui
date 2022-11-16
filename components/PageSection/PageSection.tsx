@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 
 import { Box, Typography } from "@mui/material";
 
@@ -7,6 +7,7 @@ import type { PageSectionLevel } from "./types";
 import { usePageSectionContext } from "./usePageSectionContext";
 
 export interface PageSectionProps {
+  children: ReactNode;
   /**
    * If provided, overrides the derived level from PageSectionContext. Used for displaying a heading
    * element.

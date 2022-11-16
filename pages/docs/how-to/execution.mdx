@@ -11,12 +11,6 @@ import results_2 from "../assets/results-2.png"
   <title>Inspecting job and application execution - a How To guide</title>
 </Head>
 
-<Layout>
-{/* Place all page content inside the <Layout /> Tags */}
-{/* Comments should look like these, not <!-- --> as this break xdm */}
-{/* Container narrows the text width, it is configurable */}
-<Container>
-
 <DocsNav />
 
 ## Inspecting job and application execution - a How To guide
@@ -57,7 +51,4 @@ and deciding which *events* to report is an important responsibility of the job 
 **Events** are reported in near real time, but you might want to click on the update button on the top right of the page
 to update immediately.
 
-
-
-</Container>
-</Layout>
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

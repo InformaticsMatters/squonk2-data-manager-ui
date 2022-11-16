@@ -131,7 +131,10 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
                   <TableCell>{charge.item_number}</TableCell>
                   <TableCell>{charge.date}</TableCell>
                   {/* TODO: assert additional_data to interface from data-manager-client when it's updated */}
-                  <TableCell>{filesize(charge.additional_data?.peak_bytes ?? 0)}</TableCell>
+                  {/* TODO: replace the static type assertion with a proper assertion or find way to get string response only from filesize */}
+                  <TableCell>
+                    {filesize(charge.additional_data?.peak_bytes ?? 0) as string}
+                  </TableCell>
                   <TableCell>{formatCoins(charge.coins)}</TableCell>
                 </TableRow>
               ))

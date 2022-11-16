@@ -9,12 +9,6 @@ import Layout from "../../layouts/Layout";
   <title>Data Manager User Documentation - Key Concepts</title>
 </Head>
 
-<Layout>
-{/* Place all page content inside the <Layout /> Tags */}
-{/* Comments should look like these, not <!-- --> as this break xdm */}
-{/* Container narrows the text width, it is configurable */}
-<Container>
-
 <DocsNav />
 
 # Concepts
@@ -174,5 +168,4 @@ Once you hit your hard quota limit then operations in the _Data Manager_ that co
 jobs etc.) are disabled. You can still see your data, and remove unnecessary files. And you can upgrade to a tier with
 a bigger quota.
 
-</Container>
-</Layout>
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

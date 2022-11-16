@@ -8,12 +8,6 @@ import { DocsNav } from "../../components/DocsNav"
   <title>Data Manager User Documentation - How To Guides</title>
 </Head>
 
-<Layout>
-{/* Place all page content inside the <Layout /> Tags */}
-{/* Comments should look like these, not <!-- --> as this break xdm */}
-{/* Container narrows the text width, it is configurable */}
-<Container>
-
 <DocsNav />
 
 # How To Guides
@@ -30,6 +24,4 @@ This page lists guides for doing certain things in the Squonk Data Manager.
 * Working with datasets
 * Inspecting usage and quotas
 
-
-</Container>
-</Layout>
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

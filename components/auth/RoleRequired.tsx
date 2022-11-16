@@ -1,10 +1,11 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 
 import Error from "next/error";
 
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 
 export interface RoleRequiredProps {
+  children?: ReactNode;
   /**
    * Roles the user is required to have.
    */

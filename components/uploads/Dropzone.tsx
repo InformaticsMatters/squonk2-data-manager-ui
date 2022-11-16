@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 import { useCallback } from "react";
 import type { DropzoneOptions, FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
@@ -12,6 +12,7 @@ import type { UploadableFile } from "./types";
 import { getMimeFromFileName } from "./utils";
 
 export interface DropzoneProps extends DropzoneOptions {
+  children?: ReactNode;
   /**
    * The current files a user has dropped
    */

@@ -10,12 +10,6 @@ import job_launch from "../assets/job-launch.png"
   <title>Running jobs - a How To guide</title>
 </Head>
 
-<Layout>
-{/* Place all page content inside the <Layout /> Tags */}
-{/* Comments should look like these, not <!-- --> as this break xdm */}
-{/* Container narrows the text width, it is configurable */}
-<Container>
-
 <DocsNav />
 
 ## Running jobs - a How To guide
@@ -52,7 +46,4 @@ Specify these inputs and options and click the *Run* button at the bottom. The e
 the card. Click on it to see the execution details in the **Results** tab. See the
 <InternalLink href="./execution">Inspecting job and application execution</InternalLink> How To guide for details.
 
-
-
-</Container>
-</Layout>
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

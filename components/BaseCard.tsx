@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { useState } from "react";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -18,10 +18,12 @@ import {
  * {@label ActionsParams}
  */
 export interface ActionsParams {
-  setExpanded: (isExpanded: boolean) => void;
+  [key: string]: unknown;
+  setExpanded: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface BaseCardProps {
+  children?: ReactNode;
   /**
    * ReactNode or Component to render in the <CardActions> component. Optional - nothing is
    * displayed if not passed.
@@ -30,12 +32,12 @@ export interface BaseCardProps {
    *
    * {@label actions}
    */
-  actions?: React.ReactNode | ((actionsParams: ActionsParams) => React.ReactNode);
+  actions?: ReactNode | ((actionsParams: ActionsParams) => ReactNode);
   /**
    * ReactNode to be rendered inside the collapsed part of the card. Optional - nothing is
    * displayed if not passed.
    */
-  collapsed?: React.ReactNode;
+  collapsed?: ReactNode;
   /**
    * Whether the card is collapsed by default. Optional. Defaults to `true`.
    */
@@ -65,14 +67,14 @@ export interface BaseCardProps {
  * * an optional collapsed view that can be enabled by default
  * * children are passed into the main area (unexpanded view) of the component
  */
-export const BaseCard: FC<BaseCardProps> = ({
+export const BaseCard = ({
   children,
   actions,
   header,
   collapsed,
   keepCollapsedMounted = true,
   collapsedByDefault = true,
-}) => {
+}: BaseCardProps) => {
   const [hasExpanded, setHasExpanded] = useState(!collapsedByDefault);
   const [expanded, setExpanded] = useState(!collapsedByDefault);
 

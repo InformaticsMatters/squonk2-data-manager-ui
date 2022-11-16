@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 import { generateThemes } from "@squonk/mui-theme";
@@ -10,10 +10,14 @@ import { useColorScheme } from "../../state/colorScheme";
 
 const { darkTheme, lightTheme } = generateThemes();
 
+export interface ThemeProvidersProps {
+  children: ReactNode;
+}
+
 /**
  * Provides the theme for Mui and emotion
  */
-export const ThemeProviders: FC = ({ children }) => {
+export const ThemeProviders: FC<ThemeProvidersProps> = ({ children }) => {
   // Color Scheme
   const [scheme] = useColorScheme();
   const [theme, setTheme] = useState(lightTheme);

@@ -9,12 +9,6 @@ import { DocsNav } from "../../components/DocsNav";
   <title>Data Manager User Documentation - Guided tour</title>
 </Head>
 
-<Layout>
-{/* Place all page content inside the <Layout /> Tags */}
-{/* Comments should look like these, not <!-- --> as this break xdm */}
-{/* Container narrows the text width, it is configurable */}
-<Container>
-
 <DocsNav />
 
 # Guided Tour
@@ -96,5 +90,4 @@ See the <InternalLink href="./how-to/results">Inspecting job and application exe
 
 TODO
 
-</Container>
-</Layout>
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

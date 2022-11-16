@@ -14,12 +14,6 @@ import jupyter_lab from "../assets/jupyter-lab.png";
   <title>Running applications - a How To guide</title>
 </Head>
 
-<Layout>
-{/* Place all page content inside the <Layout /> Tags */}
-{/* Comments should look like these, not <!-- --> as this break xdm */}
-{/* Container narrows the text width, it is configurable */}
-<Container>
-
 <DocsNav />
 
 # Running applications - a How To guides
@@ -85,6 +79,4 @@ done once in the lifetime of the notebook instance.
 When you are finished with the notebook instance click the *TERMINATE* button in it's instance details panel.
 This frees up all the resources used by the notebook.
 
-
-</Container>
-</Layout>
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

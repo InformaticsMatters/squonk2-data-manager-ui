@@ -13,14 +13,14 @@ import { DateTimeListItem } from "./DateTimeListItem";
 import type { StatusIconProps } from "./StatusIcon";
 import { StatusIcon } from "./StatusIcon";
 
-export interface ResultCardProps extends BaseCardProps {
+export interface ResultCardProps extends Omit<BaseCardProps, "actions"> {
   state?: StatusIconProps["state"];
   href: LinkProps["href"];
   linkTitle: string;
   createdDateTime: DateTimeListItemProps["datetimeString"];
   collapsedByDefault: boolean;
   actions: (
-    params: ActionsParams & { setSlideIn: Dispatch<SetStateAction<boolean>>; slideIn: boolean },
+    params: { slideIn: boolean; setSlideIn: Dispatch<SetStateAction<boolean>> } & ActionsParams,
   ) => ReactNode;
 }
 

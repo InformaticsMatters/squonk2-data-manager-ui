@@ -1,13 +1,17 @@
-import type { FC } from "react";
+import type { ReactNode } from "react";
 
-import { Box, LinearProgress, useMediaQuery } from "@mui/material";
+import { Box, LinearProgress, NoSsr, useMediaQuery } from "@mui/material";
 
 import { CookiesBanner } from "../components/legal/CookiesBanner";
 import { useIsTransitioning } from "../hooks/useIsTransitioning";
 import { Footer } from "./Footer";
 import Header from "./Header";
 
-const Layout: FC = ({ children }) => {
+export interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout = ({ children }: LayoutProps) => {
   const isPrint = useMediaQuery("print");
   const isTransitioning = useIsTransitioning(false);
 
@@ -21,7 +25,7 @@ const Layout: FC = ({ children }) => {
       </Box>
       {/* </Slide> */}
       {!isPrint && <Footer />}
-      {!isPrint && <CookiesBanner />}
+      <NoSsr>{!isPrint && <CookiesBanner />}</NoSsr>
     </Box>
   );
 };

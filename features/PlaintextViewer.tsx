@@ -41,6 +41,10 @@ export const PlaintextViewer = ({
     Prism.highlightAll();
   }, []);
 
+  const contentSummary = `${numberOfLines} ${linesText} of ${
+    originalContentLength ? filesize(originalContentLength) : "unknown"
+  }`;
+
   return (
     <>
       <Head>
@@ -63,10 +67,7 @@ export const PlaintextViewer = ({
               <b>{title}</b>
             </Typography>
             <Divider flexItem orientation="vertical" />
-            <Typography>
-              {numberOfLines} {linesText} of{" "}
-              {originalContentLength ? filesize(originalContentLength) : "unknown"}
-            </Typography>
+            <Typography>{contentSummary}</Typography>
             {(compressed || truncated) && <Divider flexItem orientation="vertical" />}
             {compressed && <Chip label="Decompressed" size="small" variant="outlined" />}
             {truncated && <Chip label="Truncated" size="small" variant="outlined" />}

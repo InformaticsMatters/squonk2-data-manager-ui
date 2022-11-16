@@ -11,12 +11,6 @@ import create from "../assets/project-create.png";
   <title>Creating projects - a How To guide</title>
 </Head>
 
-<Layout>
-{/* Place all page content inside the <Layout /> Tags */}
-{/* Comments should look like these, not <!-- --> as this break xdm */}
-{/* Container narrows the text width, it is configurable */}
-<Container>
-
 <DocsNav />
 
 ## Creating projects - a How To guide
@@ -46,10 +40,4 @@ Once you have made your choices click on the CREATE button to create your projec
 Remember that teh owner of the **unit** is responsible for the costs of your project. In the case of a **personal unit**
 in the **Default organisation** that means you!
 
-
-
-
-
-
-</Container>
-</Layout>
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

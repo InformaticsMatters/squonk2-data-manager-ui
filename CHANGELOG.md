@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-rc.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.0-rc.3...2.0.0-rc.4) (2022-11-16)
+
+
+### Features
+
+* **charges:** add a unit charges page ([#779](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/779)) ([4a792ac](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4a792ac70c9d6c4c1d923de459c9103c46e0f9b0))
+
+
+### Bug Fixes
+
+* **charges-page:** fix billing periods calculation ([be8f6ed](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/be8f6edbb238f27bb7fe51c15c8441e1118ffc2b))
+* fix base path on some links ([0b1f148](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0b1f148771e86db505b9921528158e04ace4ae9a))
+
 ## [2.0.0-rc.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.0-rc.2...2.0.0-rc.3) (2022-11-03)
 
 

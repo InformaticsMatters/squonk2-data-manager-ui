@@ -2,7 +2,6 @@ import { ListItem as MuiListItem, ListItemText, styled, Typography } from "@mui/
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-import { AS_API_URL, DM_API_URL } from "../constants/proxies";
 import { HorizontalList } from "./HorizontalList";
 
 export const getGetDMVersionQueryKey = () => ["data-manager", "/version"];
@@ -10,10 +9,14 @@ export const getGetASVersionQueryKey = () => ["account-server", "/version"];
 
 export const AppVersions = () => {
   const { data: dmData } = useQuery(getGetDMVersionQueryKey(), () =>
-    axios.get(DM_API_URL + "/version").then(({ data }) => data),
+    axios
+      .get(process.env.NEXT_PUBLIC_DATA_MANAGER_API_SERVER + "/version")
+      .then(({ data }) => data),
   );
   const { data: asData } = useQuery(getGetASVersionQueryKey(), () =>
-    axios.get(AS_API_URL + "/version").then(({ data }) => data),
+    axios
+      .get(process.env.NEXT_PUBLIC_ACCOUNT_SERVER_API_SERVER + "/version")
+      .then(({ data }) => data),
   );
 
   return (

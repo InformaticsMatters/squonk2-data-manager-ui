@@ -17,7 +17,7 @@ specifiers:
   '@rjsf/core': 4.2.3
   '@rjsf/material-ui': 4.2.3
   '@sentry/nextjs': 7.19.0
-  '@squonk/account-server-client': 2.0.0-rc.4
+  '@squonk/account-server-client': 2.0.0
   '@squonk/data-manager-client': 1.0.23
   '@squonk/eslint-config': 0.4.2
   '@squonk/mui-theme': 3.0.1
@@ -95,7 +95,7 @@ dependencies:
   '@rjsf/core': 4.2.3_react@17.0.2
   '@rjsf/material-ui': 4.2.3_yp52quf576vccv6ycqny6p4f5m
   '@sentry/nextjs': 7.19.0_next@12.3.3+react@17.0.2
-  '@squonk/account-server-client': 2.0.0-rc.4_d7zvbmeczpbhdzjss4ua454jxe
+  '@squonk/account-server-client': 2.0.0_d7zvbmeczpbhdzjss4ua454jxe
   '@squonk/data-manager-client': 1.0.23_d7zvbmeczpbhdzjss4ua454jxe
   '@squonk/mui-theme': 3.0.1_@mui+material@5.10.13
   '@tanstack/react-query': 4.15.1_sfoxds7t5ydpegc3knd667wn6m
@@ -1138,8 +1138,8 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /@squonk/account-server-client/2.0.0-rc.4_d7zvbmeczpbhdzjss4ua454jxe:
-    resolution: {integrity: sha512-DsqwyQPHCby71RJ3rlJ4alzP6Gu6+UcvejUUOIgVG8n0wTqJ09KWxJyHGuRI1tRYim75fM5NwvFvEYP2SMNvsg==}
+  /@squonk/account-server-client/2.0.0_d7zvbmeczpbhdzjss4ua454jxe:
+    resolution: {integrity: sha512-l+VNWamchu6ztsB6nM1dDxZmmanghGrp4uGpqmMBGQKzYwvqQ/WGbMns+aPzhGObXXVQmn6wVTSR4JDjLnA6hg==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'

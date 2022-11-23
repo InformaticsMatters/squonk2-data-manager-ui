@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.0...2.0.1) (2022-11-23)
+
+
+### Bug Fixes
+
+* **footer:** display api versions in the footer even when not logged in ([8f527f9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8f527f9038a5858f553c83ada031bd45c5792931))
+
 ## [2.0.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.0-rc.4...2.0.0) (2022-11-23)
 
 ## [2.0.0-rc.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.0-rc.3...2.0.0-rc.4) (2022-11-16)

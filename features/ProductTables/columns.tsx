@@ -1,24 +1,19 @@
-import type { Column } from "react-table";
-
 import type { ProductsGetResponseProductsItem } from "@squonk/account-server-client";
+
+import { createColumnHelper } from "@tanstack/react-table";
 
 import { toLocalTimeString } from "../../utils/app/datetime";
 
-export const sharedProductColumns: Column<ProductsGetResponseProductsItem>[] = [
-  { id: "name", Header: "Name", accessor: (row) => row.product.name },
-  {
-    id: "created",
-    Header: "Created",
-    accessor: (row) => toLocalTimeString(row.product.created, true, true),
-  },
-  {
-    id: "organisation",
-    Header: "Organisation",
-    accessor: (row) => row.organisation.name,
-  },
-  {
-    id: "unit",
-    Header: "Unit",
-    accessor: (row) => row.unit.name,
-  },
-];
+export const getSharedColumns = <T extends ProductsGetResponseProductsItem>() => {
+  const columnHelper = createColumnHelper<T>();
+
+  return [
+    columnHelper.accessor((row) => row.product.name, { header: "Name", id: "name" }),
+    columnHelper.accessor((row) => toLocalTimeString(row.product.created, true, true), {
+      header: "Organisation",
+      id: "organisation",
+    }),
+    columnHelper.accessor((row) => row.organisation.name, { header: "Created", id: "created" }),
+    columnHelper.accessor((row) => row.unit.name, { header: "Unit", id: "unit" }),
+  ];
+};

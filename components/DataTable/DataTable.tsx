@@ -1,19 +1,6 @@
 import type { ReactNode } from "react";
-import { useMemo } from "react";
-import type {
-  Cell,
-  CellProps,
-  Column,
-  IdType,
-  PluginHook,
-  Row,
-  TableCellProps,
-  TableProps,
-  TableRowProps,
-} from "react-table";
-import { useExpanded, useGlobalFilter, useRowSelect, useSortBy, useTable } from "react-table";
+import { useMemo, useState } from "react";
 
-import type { Interpolation } from "@emotion/react";
 import { ExpandLess } from "@mui/icons-material";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
@@ -21,13 +8,11 @@ import type {
   TableCellProps as MuiCellProps,
   TableProps as MuiTableProps,
   TableRowProps as MuiRowProps,
-  Theme,
 } from "@mui/material";
 import {
-  Alert,
   Box,
+  IconButton,
   InputAdornment,
-  LinearProgress,
   Paper,
   Table,
   TableBody,
@@ -39,15 +24,30 @@ import {
   TextField,
   Toolbar,
 } from "@mui/material";
+import { rankItem } from "@tanstack/match-sorter-utils";
+import type {
+  ColumnDef,
+  CoreOptions,
+  ExpandedState,
+  FilterFn,
+  Row,
+  RowSelectionState,
+  SortingState,
+  Table as RTable,
+} from "@tanstack/react-table";
+import {
+  flexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getFacetedMinMaxValues,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
 import { IndeterminateCheckbox } from "./IndeterminateCheckbox";
-
-type Selection<Data> = Record<IdType<Data>, boolean>;
-type CustomProps<Props> = Partial<Props & { css?: Interpolation<Theme> }>;
-
-type CustomRowProps = CustomProps<TableRowProps & MuiRowProps>;
-type CustomCellProps = CustomProps<TableCellProps & MuiCellProps>;
-type CustomTableProps = CustomProps<TableProps & MuiTableProps>;
 
 export interface DataTableProps<Data extends Record<string, any>> {
   /**
@@ -57,7 +57,11 @@ export interface DataTableProps<Data extends Record<string, any>> {
   /**
    * Array of columns for react-table
    */
-  columns: Column<Data>[];
+  columns: ColumnDef<Data, any>[];
+  /**
+   * Array of data, compatible with columns, for react-table.
+   */
+  data?: Data[];
   /**
    * Child element of the toolbar in the table header
    */
@@ -69,7 +73,7 @@ export interface DataTableProps<Data extends Record<string, any>> {
   /**
    * Function to uniquely identify a given row of data
    */
-  getRowId?: (row: Data) => IdType<Data>;
+  getRowId?: CoreOptions<Data>["getRowId"];
   /**
    * Whether the search functionality should be enabled. Defaults to true.
    */
@@ -77,40 +81,12 @@ export interface DataTableProps<Data extends Record<string, any>> {
   /**
    * If using row selection, this sets the initial rows that should be selected on first render.
    */
-  initialSelection?: IdType<Data>[];
+  initialSelection?: string[];
   /**
    * Called when a row is selected or unselected
    */
   onSelection?: (row: Data, checked: boolean) => void;
   /**
-   * Custom actions column placed as the last column.
-   */
-  useActionsColumnPlugin?: PluginHook<Data>;
-  /**
-   * Array of data, compatible with columns, for react-table.
-   */
-  data?: Data[];
-  /**
-   * If true, displays the loading icon.
-   */
-  isLoading?: boolean;
-  /**
-   * If true, displays the provided `error`.
-   */
-  error?: string;
-  /**
-   * Custom props applied to Table. Props can either be react-table props or MaterialUI props.
-   */
-  customTableProps?: CustomTableProps;
-  /**
-   * Custom props applied to TableCell. Props can either be react-table props or MaterialUI props.
-   */
-  customCellProps?: CustomCellProps;
-  /**
-   * Custom props applied to TableRow. Props can either be react-table props or MaterialUI props.
-   */
-  customRowProps?: CustomRowProps | ((row: Row<Data>) => CustomRowProps);
-  /*
    * Enables sub rows.
    */
   subRowsEnabled?: boolean;
@@ -119,123 +95,161 @@ export interface DataTableProps<Data extends Record<string, any>> {
    * attribute.
    */
   getSubRows?: (row: Data, relativeIndex: number) => Data[];
+  /**
+   * Custom props applied to Table. Props can either be react-table props or MaterialUI props.
+   */
+  customTableProps?: MuiTableProps;
+  /**
+   * Custom props applied to TableCell. Props can either be react-table props or MaterialUI props.
+   */
+  customCellProps?: MuiCellProps;
+  /**
+   * Custom props applied to TableRow. Props can either be react-table props or MaterialUI props.
+   */
+  customRowProps?: MuiRowProps | ((row: Row<Data>) => MuiRowProps);
+  /**
+   * If true, displays the loading icon.
+   */
+  isLoading?: boolean;
+  /**
+   * If true, displays the provided `error`.
+   */
+  error?: string;
 }
 
-// Use a *function* here to avoid the issues with generics in arrow functions
-/**
- * Generic table component using react-table and MuiTable.
- *
- * *Example*:
- * ```tsx
- * <DataTable columns={columns} data={datasets} getRowId={(row) => row.dataset_id} />
- * ```
- */
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  // Rank the item
+  const itemRank = rankItem(row.getValue(columnId), value);
+
+  // Store the itemRank info
+  addMeta({
+    itemRank,
+  });
+
+  // Return if the item should be filtered in/out
+  return itemRank.passed;
+};
+
+const truncate = <Data,>(table: RTable<Data>) => table.getRowModel().rows.slice(0, 100);
+
 export const DataTable = <Data extends Record<string, any>>(props: DataTableProps<Data>) => {
   const {
     tableContainer = true,
-    columns,
-    data,
-    ToolbarChild,
     getRowId,
     enableSearch = true,
+    columns,
+    data,
+    ToolbarActionChild,
+    ToolbarChild,
     initialSelection,
     onSelection,
-    useActionsColumnPlugin = () => {
-      // Do nothing
-    },
-    isLoading,
-    error,
+    subRowsEnabled,
+    getSubRows,
     customTableProps,
     customCellProps,
     customRowProps,
-    getSubRows,
-    subRowsEnabled,
-    ToolbarActionChild,
   } = props;
-
-  // According to react-table data passed to it should be memoized to avoid expensive recalculations
   const tableData = useMemo(() => data || [], [data]);
 
-  const {
-    getTableProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    preGlobalFilteredRows,
-    setGlobalFilter,
-    state: { globalFilter },
-  } = useTable(
-    {
-      columns,
-      data: tableData,
-      getRowId,
-      getSubRows,
-      initialState: {
-        selectedRowIds: (initialSelection
-          ? Object.fromEntries(initialSelection.map((id) => [id, true]))
-          : {}) as Selection<Data>,
-      },
-      autoResetSortBy: false,
+  // Table State
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  const paddedColumns = useMemo(() => {
+    const workingColumns = [...columns];
+    if (subRowsEnabled) {
+      workingColumns.unshift({
+        id: "expander",
+        enableSorting: false,
+        header: ({ table }) => (
+          <Box display="flex">
+            <IconButton onClick={table.getToggleAllRowsExpandedHandler()}>
+              {table.getIsAllRowsExpanded() ? <ExpandLess /> : <ExpandMore />}
+            </IconButton>
+          </Box>
+        ),
+        cell: ({ row }) =>
+          row.getCanExpand() ? (
+            <Box {...row.getToggleExpandedHandler()} display="flex">
+              {row.getIsExpanded() ? <ExpandLess /> : <ExpandMore />}
+            </Box>
+          ) : null,
+      });
+
+      if (initialSelection) {
+        workingColumns.unshift({
+          id: "selection",
+          enableSorting: false,
+          header: ({ table }) => (
+            <IndeterminateCheckbox
+              checked={table.getIsAllRowsSelected()}
+              indeterminate={table.getIsSomeRowsSelected()}
+              onChange={(event, checked) => {
+                table.getToggleAllRowsSelectedHandler()(event);
+                const rows = truncate(table);
+                onSelection &&
+                  rows
+                    .filter((row) => row.getIsSelected())
+                    .forEach((row) => onSelection(row.original, checked));
+              }}
+            />
+          ),
+          cell: ({ row }) => (
+            <IndeterminateCheckbox
+              checked={row.getIsSelected()}
+              indeterminate={row.getIsSomeSelected()}
+              onChange={(event, checked) => {
+                row.getToggleSelectedHandler()(event);
+                onSelection && onSelection(row.original, checked);
+              }}
+            />
+          ),
+        });
+      }
+    }
+
+    return workingColumns;
+  }, [columns, initialSelection, onSelection, subRowsEnabled]);
+
+  const table = useReactTable({
+    getRowId,
+    data: tableData,
+    columns: paddedColumns,
+    filterFns: {
+      fuzzy: fuzzyFilter,
     },
-    useGlobalFilter,
-    useSortBy,
-    useExpanded,
-    useRowSelect,
-    useActionsColumnPlugin, // Option to add an actions column
-    (hooks) => {
-      initialSelection &&
-        hooks.visibleColumns.push((columns) => [
-          {
-            id: "selection",
-            defaultCanSort: false,
-            Header: ({ getToggleAllRowsSelectedProps, rows }) => {
-              const { onChange, ...props } = getToggleAllRowsSelectedProps();
-              return (
-                <IndeterminateCheckbox
-                  {...props}
-                  onChange={(event, checked) => {
-                    onSelection && rows.forEach((row) => onSelection(row.original, checked));
-                    onChange && onChange(event);
-                  }}
-                />
-              );
-            },
-            Cell: ({ row }: CellProps<Data>) => {
-              const { onChange, ...props } = row.getToggleRowSelectedProps();
-              return (
-                <IndeterminateCheckbox
-                  {...props}
-                  onChange={(event, checked) => {
-                    onSelection && onSelection(row.original, checked);
-                    onChange && onChange(event);
-                  }}
-                />
-              );
-            },
-          },
-          ...columns,
-        ]);
-      subRowsEnabled &&
-        hooks.visibleColumns.unshift((columns) => [
-          {
-            id: "expander",
-            defaultCanSort: false,
-            Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }) => (
-              <Box {...getToggleAllRowsExpandedProps()} display="flex">
-                {isAllRowsExpanded ? <ExpandLess /> : <ExpandMore />}
-              </Box>
-            ),
-            Cell: ({ row }: Cell<Data>) =>
-              row.canExpand ? (
-                <Box {...row.getToggleRowExpandedProps()} display="flex">
-                  {row.isExpanded ? <ExpandLess /> : <ExpandMore />}
-                </Box>
-              ) : null,
-          },
-          ...columns,
-        ]);
+    state: {
+      sorting,
+      globalFilter,
+      expanded,
+      rowSelection,
     },
-  );
+    initialState: {
+      rowSelection: initialSelection
+        ? Object.fromEntries(initialSelection.map((id) => [id, true]))
+        : {},
+    },
+    getSubRows,
+    onExpandedChange: setExpanded,
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    onRowSelectionChange: setRowSelection,
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    getExpandedRowModel: getExpandedRowModel(),
+    debugTable: true,
+    debugHeaders: true,
+    debugColumns: false,
+  });
+
+  const rows = truncate(table);
 
   const tableContents = (
     <>
@@ -252,36 +266,32 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                   </InputAdornment>
                 ),
               }}
-              placeholder={`${preGlobalFilteredRows.length} records...`}
+              placeholder="Search..."
               sx={{ ml: "auto" }}
               value={globalFilter || ""}
-              onChange={(e) => {
-                setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
-              }}
+              onChange={(event) => setGlobalFilter(event.target.value)}
             />
           )}
         </Toolbar>
       )}
       {ToolbarActionChild && <Toolbar>{ToolbarActionChild}</Toolbar>}
-      <Table {...getTableProps(customTableProps)} size="small">
+      <Table size="small" {...customTableProps}>
         <TableHead>
-          {headerGroups.map((headerGroup) => (
-            // eslint-disable-next-line react/jsx-key
-            <TableRow {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                // eslint-disable-next-line react/jsx-key
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
                 <TableCell
-                  {...(!column.canSort
-                    ? column.getHeaderProps()
-                    : column.getHeaderProps(column.getSortByToggleProps()))}
+                  className={header.column.getCanSort() ? "cursor-pointer select-none" : ""}
+                  key={header.id}
+                  onClick={header.column.getToggleSortingHandler()}
                 >
                   <Box display="flex">
-                    {column.render("Header")}
-                    {column.canSort ? (
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.column.getCanSort() ? (
                       <TableSortLabel
-                        active={column.isSorted}
+                        active={!!header.column.getIsSorted()}
                         // react-table has a unsorted state which is not treated here
-                        direction={column.isSortedDesc ? "desc" : "asc"}
+                        direction={header.column.getIsSorted() || undefined}
                       />
                     ) : null}
                   </Box>
@@ -291,27 +301,23 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
           ))}
         </TableHead>
         <TableBody>
-          {rows.slice(0, 100).map((row) => {
-            prepareRow(row);
-
+          {rows.map((row) => {
             const rowProps =
               typeof customRowProps === "function" ? customRowProps(row) : customRowProps;
-
             return (
-              // eslint-disable-next-line react/jsx-key
-              <TableRow {...row.getRowProps(rowProps)}>
-                {row.cells.map((cell) => {
+              <TableRow {...rowProps} key={row.id}>
+                {row.getVisibleCells().map((cell) => {
                   return (
-                    // eslint-disable-next-line react/jsx-key
                     <TableCell
-                      {...cell.getCellProps(customCellProps)}
+                      {...customCellProps}
+                      key={cell.id}
                       sx={{
-                        pl: cell.column.canSort
+                        pl: cell.column.getCanSort()
                           ? (theme) => theme.spacing(2 + 2 * row.depth)
                           : undefined,
                       }}
                     >
-                      {cell.render("Cell")}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   );
                 })}
@@ -320,20 +326,12 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
           })}
         </TableBody>
       </Table>
-      {isLoading && <LinearProgress />}
-      {error && (
-        <Box overflow="hidden" padding={2}>
-          {<Alert severity="error">{error}</Alert>}
-        </Box>
-      )}
     </>
   );
 
-  const table = tableContainer ? (
+  return tableContainer ? (
     <TableContainer component={Paper}>{tableContents}</TableContainer>
   ) : (
     tableContents
   );
-
-  return table;
 };

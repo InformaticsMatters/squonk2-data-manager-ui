@@ -1,12 +1,12 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import type { DropzoneState } from "react-dropzone";
-import type { Cell, CellProps, Column, PluginHook } from "react-table";
 
 import type { ProjectDetail } from "@squonk/data-manager-client";
 
 import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
 import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
 import { Breadcrumbs, Grid, IconButton, Link, Typography, useTheme } from "@mui/material";
+import { createColumnHelper } from "@tanstack/react-table";
 import { filesize } from "filesize";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -33,6 +33,8 @@ export interface ProjectTableProps {
   openUploadDialog: DropzoneState["open"];
 }
 
+const columnHelper = createColumnHelper<TableFile | TableDir>();
+
 /**
  * Data table displaying a project's files with actions to manage the files.
  */
@@ -47,14 +49,12 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
   const breadcrumbs = useProjectBreadcrumbs();
 
   // Table
-  const columns: Column<TableFile | TableDir>[] = useMemo(
+  const columns = useMemo(
     () => [
-      {
-        accessor: "fileName",
-        Header: "File Name",
-        Cell: ({ value, row: r }) => {
-          // ? This seems to be a bug in the types?
-          const row = r.original as unknown as TableFile | TableDir;
+      columnHelper.accessor("fileName", {
+        header: "File Name",
+        cell: ({ getValue, row: r }) => {
+          const row = r.original;
 
           if (isTableDir(row)) {
             const href = {
@@ -69,22 +69,17 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
                   sx={{ display: "flex", gap: theme.spacing(1) }}
                   variant="body1"
                 >
-                  <FolderRoundedIcon /> {value}
+                  <FolderRoundedIcon /> {getValue()}
                 </Link>
               </NextLink>
             );
           }
           return <ProjectFileDetails file={row} />;
         },
-      },
-      {
-        accessor: "owner",
-        Header: "Owner",
-      },
-      {
-        id: "mode",
-        Header: "Mode",
-        accessor: (row) => {
+      }),
+      columnHelper.accessor("owner", { header: "Owner" }),
+      columnHelper.accessor(
+        (row) => {
           if (isTableDir(row)) {
             return "-";
           } else if (row.immutable) {
@@ -94,61 +89,35 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
           }
           return "unmanaged";
         },
-      },
-      {
+        { id: "mode", header: "Mode" },
+      ),
+      columnHelper.accessor((row) => (isTableDir(row) ? "-" : row.stat.size), {
         id: "fileSize",
-        Header: "File size",
-        accessor: (row) => {
-          if (isTableDir(row)) {
-            return "-";
-          }
-          return row.stat.size;
+        header: "File size",
+        cell: ({ getValue }) => {
+          const value = getValue();
+          return typeof value === "string" ? value : filesize(value);
         },
-        Cell: ({ value }: { value: string | number }) => {
-          if (typeof value === "string") {
-            return value;
-          }
-          return filesize(value);
-        },
-      },
-      {
+      }),
+      columnHelper.accessor((row) => (isTableDir(row) ? "-" : row.stat.modified), {
         id: "lastUpdated",
-        Header: "Last updated",
-        accessor: (row) => {
-          if (isTableDir(row)) {
-            return "-";
-          }
-          return row.stat.modified;
+        header: "Last updated",
+        cell: ({ getValue, row }) => {
+          const value = getValue();
+          return isTableDir(row.original) ? value : toLocalTimeString(value, true, true);
         },
-        Cell: ({ value, row }: Cell<TableFile | TableDir>) => {
-          if (isTableDir(row.original)) {
-            return value;
-          }
-          return toLocalTimeString(value, true, true);
-        },
-      },
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => <FileActions file={row.original} />,
+        enableGrouping: false,
+      }),
     ],
     [currentProject.project_id, breadcrumbs, router, theme],
   );
 
   const { rows, error, isLoading } = useProjectFileRows(currentProject.project_id);
-
-  // react-table plugin to add actions buttons for project files
-  const useActionsColumnPlugin: PluginHook<TableFile | TableDir> = useCallback((hooks) => {
-    hooks.visibleColumns.push((columns) => {
-      return [
-        ...columns,
-        {
-          id: "actions",
-          groupByBoundary: true, // Ensure normal columns can't be ordered before this
-          Header: "Actions",
-          Cell: ({ row }: CellProps<TableFile | TableDir, any>) => (
-            <FileActions file={row.original} />
-          ),
-        },
-      ];
-    });
-  }, []);
 
   return (
     <DataTable
@@ -188,7 +157,6 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
           </Grid>
         </Grid>
       }
-      useActionsColumnPlugin={useActionsColumnPlugin}
     />
   );
 };

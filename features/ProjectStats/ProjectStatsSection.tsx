@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import type { Cell, Column } from "react-table";
 
-import type { ProductDmProjectTier, ProductDmStorage } from "@squonk/account-server-client";
+import type { ProductDmStorage } from "@squonk/account-server-client";
 
 import { Box, useTheme } from "@mui/material";
+import { createColumnHelper } from "@tanstack/react-table";
 
 import { DataTable } from "../../components/DataTable";
 import { ChargesLinkIconButton } from "../../components/products/ChargesLinkIconButton";
@@ -17,6 +17,9 @@ import { StorageUsageChart } from "./StorageUsageChart";
 import type { ProductDmProjectTierAndOwner } from "./useProjectSubscriptions";
 import { useProjectSubscriptions } from "./useProjectSubscriptions";
 import { useStorageSubscriptions } from "./useStorageSubscriptions";
+
+const projectColumnHelper = createColumnHelper<ProductDmProjectTierAndOwner>();
+const datasetStorageColumnHelper = createColumnHelper<ProductDmStorage>();
 
 /**
  * Displays `Project stats` section in User Settings.
@@ -34,112 +37,80 @@ export const ProjectStatsSection = () => {
     error: storageSubscriptionsError,
   } = useStorageSubscriptions();
 
-  const projectsColumns: Column<ProductDmProjectTierAndOwner>[] = useMemo(
+  const projectsColumns = useMemo(
     () => [
-      {
+      projectColumnHelper.display({
         id: "projectSelection",
-        defaultCanSort: false,
-        Cell: ({ row }: Cell<ProductDmProjectTier>) => {
-          return <ProjectSelectionRadio projectProduct={row.original} />;
-        },
-      },
-      {
+        enableSorting: false,
+        cell: ({ row }) => <ProjectSelectionRadio projectProduct={row.original} />,
+      }),
+      projectColumnHelper.accessor((row) => row.claim?.name, {
         id: "projectName",
-        accessor: (row) => row.claim?.name,
-        Header: "Project name",
-      },
-      {
-        id: "owner",
-        accessor: (row) => row.owner,
-        Header: "Owner",
-      },
-      {
+        header: "Project name",
+      }),
+      projectColumnHelper.accessor("owner", { header: "Owner" }),
+      projectColumnHelper.accessor((row) => formatTierString(row.product.flavour ?? ""), {
         id: "tier",
-        accessor: (row) => formatTierString(row.product.flavour ?? ""),
-        Header: "Tier",
-      },
-      {
+        header: "Tier",
+      }),
+      projectColumnHelper.display({
         id: "usage",
-        Header: "Usage",
-        defaultCanSort: false,
-        Cell: ({ row }: Cell<ProductDmProjectTier>) => {
-          return <ProjectUsageChart projectSubscription={row.original} />;
-        },
-      },
-      {
+        header: "Usage",
+        enableSorting: false,
+        cell: ({ row }) => <ProjectUsageChart projectSubscription={row.original} />,
+      }),
+      projectColumnHelper.accessor((row) => row.instance.coins.used, {
+        header: "Instances used",
         id: "instancesUsed",
-        accessor: (row) => row.instance.coins.used,
-        Header: "Instances used",
-      },
-      {
+      }),
+      projectColumnHelper.accessor((row) => row.instance.coins.used, {
+        header: "Storage used",
         id: "storageUsed",
-        accessor: (row) => row.storage.coins.used,
-        Header: "Storage used",
-      },
-      {
+      }),
+      projectColumnHelper.accessor((row) => row.coins.allowance, {
+        header: "Allowance",
         id: "allowance",
-        accessor: (row) => row.coins.allowance,
-        Header: "Allowance",
-      },
-      {
+      }),
+      projectColumnHelper.display({
         id: "actions",
-        Header: "Actions",
-        Cell: ({ row }: Cell<ProductDmProjectTier>) => {
-          return <ProjectActions projectProduct={row.original} />;
-        },
-      },
+        header: "Actions",
+        cell: ({ row }) => <ProjectActions projectProduct={row.original} />,
+      }),
     ],
     [],
   );
 
-  const storageColumns: Column<ProductDmStorage>[] = useMemo(
+  const storageColumns = useMemo(
     () => [
-      {
-        id: "for-layout-only-1",
-        disableSortBy: true,
-      },
-      {
+      datasetStorageColumnHelper.display({ id: "for-layout-only-1", enableSorting: false }),
+      datasetStorageColumnHelper.accessor((row) => row.product.name, {
         id: "storageName",
-        Header: "", // We don't want a header for this column
-        accessor: (row) => row.product.name,
-        disableSortBy: true,
-      },
-      {
-        id: "for-layout-only-2",
-        disableSortBy: true,
-      },
-      {
+        header: "",
+        enableSorting: false,
+      }),
+      datasetStorageColumnHelper.display({ id: "for-layout-only-2", enableSorting: false }),
+      datasetStorageColumnHelper.display({
         id: "usage",
-        Header: "Usage",
-        defaultCanSort: false,
-        Cell: ({ row }: Cell<ProductDmStorage>) => {
-          return <StorageUsageChart storageSubscription={row.original} />;
-        },
-        disableSortBy: true,
-      },
-      {
-        id: "for-layout-only-3",
-        disableSortBy: true,
-      },
-      {
+        header: "Usage",
+        enableSorting: false,
+        cell: ({ row }) => <StorageUsageChart storageSubscription={row.original} />,
+      }),
+      datasetStorageColumnHelper.display({ id: "for-layout-only-3", enableSorting: false }),
+      datasetStorageColumnHelper.accessor((row) => row.storage.coins.used, {
         id: "used",
-        accessor: (row) => row.storage.coins.used,
-        Header: "Used",
-        disableSortBy: true,
-      },
-      {
+        header: "Used",
+        enableSorting: false,
+      }),
+      datasetStorageColumnHelper.accessor((row) => row.coins.allowance, {
         id: "allowance",
-        accessor: (row) => row.coins.allowance,
-        Header: "Allowance",
-        disableSortBy: true,
-      },
-      {
+        header: "Allowance",
+        enableSorting: false,
+      }),
+      datasetStorageColumnHelper.display({
         id: "actions",
-        Header: "Actions",
-        Cell: ({ row }: Cell<ProductDmStorage>) => {
-          return <ChargesLinkIconButton productId={row.original.product.id} />;
-        },
-      },
+        header: "Actions",
+        cell: ({ row }) => <ChargesLinkIconButton productId={row.original.product.id} />,
+      }),
     ],
     [],
   );

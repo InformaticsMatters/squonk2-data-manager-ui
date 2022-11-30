@@ -1,56 +1,48 @@
-import { useCallback, useMemo } from "react";
-import type { CellProps, Column, PluginHook } from "react-table";
+import { useMemo } from "react";
 
 import type { ProductDmStorage } from "@squonk/account-server-client";
+
+import { createColumnHelper } from "@tanstack/react-table";
 
 import { DataTable } from "../../../components/DataTable";
 import { AdjustProjectProduct } from "../../../components/products/AdjustProjectProduct";
 import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkIconButton";
 import { DeleteProductButton } from "../../../components/products/DeleteProductButton";
-import { sharedProductColumns } from "../columns";
+import { getSharedColumns } from "../columns";
 
 export interface DatasetProductTableProps {
   products: ProductDmStorage[];
 }
 
+const columnHelper = createColumnHelper<ProductDmStorage>();
+
 export const DatasetProductTable = ({ products }: DatasetProductTableProps) => {
-  const columns: Column<ProductDmStorage>[] = useMemo(
+  const columns = useMemo(
     () => [
-      ...(sharedProductColumns as Column<ProductDmStorage>[]),
-      { id: "size", Header: "Size", accessor: (row) => row.storage.size.current },
-      { id: "coins", Header: "Coins", accessor: (row) => row.storage.coins.used },
+      ...getSharedColumns<ProductDmStorage>(),
+      columnHelper.accessor((row) => row.storage.size.current, { id: "size", header: "Size" }),
+      columnHelper.accessor((row) => row.storage.coins.used, { id: "coins", header: "Coins" }),
+      columnHelper.display({
+        id: "actions",
+        header: "Actions",
+        enableGrouping: false,
+        cell: ({ row }) => (
+          <>
+            <ChargesLinkIconButton productId={row.original.product.id} />
+            <AdjustProjectProduct
+              allowance={row.original.coins.allowance}
+              product={row.original.product}
+            />
+            <DeleteProductButton
+              product={row.original.product}
+              tooltip="Delete product permanently"
+            />
+          </>
+        ),
+      }),
     ],
     [],
   );
 
-  // react-table plugin to add actions buttons for project files
-  const useActionsColumnPlugin: PluginHook<ProductDmStorage> = useCallback((hooks) => {
-    hooks.visibleColumns.push((columns) => {
-      return [
-        ...columns,
-        {
-          id: "actions",
-          groupByBoundary: true, // Ensure normal columns can't be ordered before this
-          Header: "Actions",
-          Cell: ({ row }: CellProps<ProductDmStorage, any>) => (
-            <>
-              <ChargesLinkIconButton productId={row.original.product.id} />
-              <AdjustProjectProduct
-                allowance={row.original.coins.allowance}
-                product={row.original.product}
-              />
-              <DeleteProductButton
-                product={row.original.product}
-                tooltip="Delete product permanently"
-              />
-            </>
-          ),
-        },
-      ];
-    });
-  }, []);
-
-  return (
-    <DataTable columns={columns} data={products} useActionsColumnPlugin={useActionsColumnPlugin} />
-  );
+  return <DataTable columns={columns} data={products} />;
 };

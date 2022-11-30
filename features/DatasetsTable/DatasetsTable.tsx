@@ -1,13 +1,14 @@
 import { useCallback, useMemo } from "react";
-import type { Column, Row } from "react-table";
 
 import { useGetDatasets } from "@squonk/data-manager-client/dataset";
 
 import { CircularProgress } from "@mui/material";
+import type { CoreOptions, Row } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import dynamic from "next/dynamic";
 
 import { Chips } from "../../components/Chips";
-import { DataTable } from "../../components/DataTable";
+import { DataTable } from "../../components/DataTable/DataTable";
 import { LabelChip } from "../../components/labels/LabelChip";
 import { combineLabels } from "../../utils/app/labels";
 import { getErrorMessage } from "../../utils/next/orvalError";
@@ -43,54 +44,47 @@ const editorsSorter = (rowA: Row<TableDataset>, rowB: Row<TableDataset>) => {
   return -1;
 };
 
+const columnHelper = createColumnHelper<TableDataset>();
+
 /**
  * MuiTable managed by react-table that displays datasets viewable by the user with option to see
  * further details of a dataset.
  */
 export const DatasetsTable = () => {
-  const columns: Column<TableDataset>[] = useMemo(
+  const columns = useMemo(
     () => [
-      {
-        accessor: "fileName",
-        Header: "File Name",
-        Cell: ({ row }) => {
-          return (
-            <DatasetDetails
-              dataset={row.original.datasetSummary}
-              datasetName={row.original.datasetSummary.versions[0].file_name}
-              version={row.original.datasetVersion}
-            />
-          );
-        },
-      },
-      {
-        accessor: "labels",
-        Cell: ({ value: labels }) => (
+      columnHelper.accessor("fileName", {
+        header: "File Name",
+        cell: ({ row }) => (
+          <DatasetDetails
+            dataset={row.original.datasetSummary}
+            datasetName={row.original.datasetSummary.versions[0].file_name}
+            version={row.original.datasetVersion}
+          />
+        ),
+      }),
+      columnHelper.accessor("labels", {
+        header: "Labels",
+        cell: ({ getValue }) => (
           <Chips>
-            {Object.entries(labels).map(([label, values]) => (
+            {Object.entries(getValue()).map(([label, values]) => (
               <LabelChip key={label} label={label} values={values} />
             ))}
           </Chips>
         ),
-        Header: "Labels",
-      },
-      {
-        accessor: "editors",
-        Header: "Editors",
-        sortType: editorsSorter,
-        Cell: ({ value: editors }) => {
-          return editors.join(", ");
-        },
-      },
-      {
+      }),
+      columnHelper.accessor("editors", {
+        header: "Editors",
+        sortingFn: editorsSorter,
+        cell: ({ getValue }) => getValue().join(", "),
+      }),
+      columnHelper.accessor((row) => row.subRows.length || "", {
         id: "versions",
-        accessor: (row) => row.subRows.length || "",
-        Header: "Versions",
-      },
-      {
-        accessor: (row) => row.numberOfProjects,
-        Header: "Number of projects",
-      },
+        header: "Versions",
+      }),
+      columnHelper.accessor("numberOfProjects", {
+        header: "Number of projects",
+      }),
     ],
     [],
   );
@@ -135,7 +129,10 @@ export const DatasetsTable = () => {
   const { selectedDatasets, onSelection } = useSelectedDatasets(datasets);
 
   const { owner, editor, fileType, labels } = filter;
-  const getRowId = useCallback((row) => `${row.dataset_id}#${row.version}`, []);
+  const getRowId: CoreOptions<TableDataset>["getRowId"] = useCallback(
+    (row) => `${row.dataset_id}#${row.version}`,
+    [],
+  );
 
   return (
     <DataTable

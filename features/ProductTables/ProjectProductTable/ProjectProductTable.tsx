@@ -1,9 +1,9 @@
-import { useCallback, useMemo } from "react";
-import type { CellProps, Column, PluginHook } from "react-table";
+import { useMemo } from "react";
 
 import type { ProductDmProjectTier } from "@squonk/account-server-client";
 
 import { Link } from "@mui/material";
+import { createColumnHelper } from "@tanstack/react-table";
 import NextLink from "next/link";
 
 import { DataTable } from "../../../components/DataTable";
@@ -11,25 +11,25 @@ import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkI
 import { DeleteProductButton } from "../../../components/products/DeleteProductButton";
 import { CreateProjectButton } from "../../../components/projects/CreateProjectButton";
 import { formatTierString } from "../../../utils/app/products";
-import { sharedProductColumns } from "../columns";
+import { getSharedColumns } from "../columns";
 
 export interface ProjectProductTableProps {
   products: ProductDmProjectTier[];
 }
 
+const columnHelper = createColumnHelper<ProductDmProjectTier>();
+
 export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
-  const columns: Column<ProductDmProjectTier>[] = useMemo(
+  const columns = useMemo(
     () => [
-      ...(sharedProductColumns as Column<ProductDmProjectTier>[]),
-      {
-        id: "flavour",
-        Header: "Flavour",
-        accessor: (row) => (row.product.flavour ? formatTierString(row.product.flavour) : ""),
-      },
-      {
-        accessor: "claim",
-        Header: "Project",
-        Cell: ({ row }) => {
+      ...getSharedColumns<ProductDmProjectTier>(),
+      columnHelper.accessor(
+        (row) => (row.product.flavour ? formatTierString(row.product.flavour) : ""),
+        { id: "flavour", header: "Flavour" },
+      ),
+      columnHelper.accessor("claim", {
+        header: "Project",
+        cell: ({ row }) => {
           const product = row.original;
           if (product.claim?.id) {
             return (
@@ -43,40 +43,29 @@ export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
           }
           return <CreateProjectButton product={product.product} unit={row.original.unit} />;
         },
-      },
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "Actions",
+        enableGrouping: false,
+        cell: ({ row }) => (
+          <>
+            <ChargesLinkIconButton productId={row.original.product.id} />
+            <DeleteProductButton
+              disabled={!!row.original.claim?.id}
+              product={row.original.product}
+              tooltip={
+                row.original.claim?.id
+                  ? "You must delete the project first"
+                  : "Delete product permanently"
+              }
+            />
+          </>
+        ),
+      }),
     ],
     [],
   );
 
-  // react-table plugin to add actions buttons for project files
-  const useActionsColumnPlugin: PluginHook<ProductDmProjectTier> = useCallback((hooks) => {
-    hooks.visibleColumns.push((columns) => {
-      return [
-        ...columns,
-        {
-          id: "actions",
-          groupByBoundary: true, // Ensure normal columns can't be ordered before this
-          Header: "Actions",
-          Cell: ({ row }: CellProps<ProductDmProjectTier, any>) => (
-            <>
-              <ChargesLinkIconButton productId={row.original.product.id} />
-              <DeleteProductButton
-                disabled={!!row.original.claim?.id}
-                product={row.original.product}
-                tooltip={
-                  row.original.claim?.id
-                    ? "You must delete the project first"
-                    : "Delete product permanently"
-                }
-              />
-            </>
-          ),
-        },
-      ];
-    });
-  }, []);
-
-  return (
-    <DataTable columns={columns} data={products} useActionsColumnPlugin={useActionsColumnPlugin} />
-  );
+  return <DataTable columns={columns} data={products} />;
 };

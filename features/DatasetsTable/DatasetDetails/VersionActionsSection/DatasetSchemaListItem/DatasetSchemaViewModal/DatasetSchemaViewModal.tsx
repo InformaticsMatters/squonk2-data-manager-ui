@@ -1,11 +1,12 @@
 import type { FC } from "react";
 import { useMemo } from "react";
-import type { Cell, Column } from "react-table";
 
 import { Alert, Typography } from "@mui/material";
+import type { CoreOptions } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 
 import { CenterLoader } from "../../../../../../components/CenterLoader";
-import { DataTable } from "../../../../../../components/DataTable";
+import { DataTable } from "../../../../../../components/DataTable/DataTable";
 import { ModalWrapper } from "../../../../../../components/modals/ModalWrapper";
 import { getErrorMessage } from "../../../../../../utils/next/orvalError";
 import { JSON_SCHEMA_TYPES } from "./constants";
@@ -45,6 +46,8 @@ export interface DatasetSchemaViewModalProps {
    */
   onClose: () => void;
 }
+
+const columnHelper = createColumnHelper<TableSchemaView>();
 
 /**
  * Displays the schema of a version of a dataset in a tabular format.
@@ -88,17 +91,13 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
     return undefined;
   }, [schema, originalSchema]);
 
-  const columns: Column<TableSchemaView>[] = useMemo(
+  const columns = useMemo(
     () => [
-      {
-        accessor: "name",
-        Header: "Field Name",
-      },
-      {
+      columnHelper.accessor("name", { header: "Field Name" }),
+      columnHelper.accessor((row) => row.description.current, {
         id: "description",
-        accessor: (row) => row.description.current,
-        Header: "Description",
-        Cell: ({ row }: Cell<TableSchemaView>) => {
+        header: "Description",
+        cell: ({ row }) => {
           const {
             name,
             description: { original, current },
@@ -113,12 +112,11 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
             />
           );
         },
-      },
-      {
+      }),
+      columnHelper.accessor((row) => row.type.current, {
         id: "type",
-        accessor: (row) => row.type.current,
-        Header: "Type",
-        Cell: ({ row }: Cell<TableSchemaView>) => {
+        header: "Type",
+        cell: ({ row }) => {
           const {
             name,
             type: { original, current },
@@ -134,7 +132,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
             />
           );
         },
-      },
+      }),
     ],
     [setSchemaField],
   );
@@ -164,6 +162,8 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
       );
     }
 
+    const getRowId: CoreOptions<TableSchemaView>["getRowId"] = (row) => row.name;
+
     return (
       <>
         {isSavingError &&
@@ -184,7 +184,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
             },
           }}
           data={fields}
-          getRowId={(row) => row.name}
+          getRowId={getRowId}
           tableContainer={false}
           ToolbarChild={
             <DatasetSchemaDescriptionInput

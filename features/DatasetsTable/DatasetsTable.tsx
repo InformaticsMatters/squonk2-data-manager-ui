@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 import { useGetDatasets } from "@squonk/data-manager-client/dataset";
 
 import { CircularProgress } from "@mui/material";
-import type { CoreOptions, Row } from "@tanstack/react-table";
+import type { Row } from "@tanstack/react-table";
 import { createColumnHelper } from "@tanstack/react-table";
 import dynamic from "next/dynamic";
 
@@ -129,10 +129,7 @@ export const DatasetsTable = () => {
   const { selectedDatasets, onSelection } = useSelectedDatasets(datasets);
 
   const { owner, editor, fileType, labels } = filter;
-  const getRowId: CoreOptions<TableDataset>["getRowId"] = useCallback(
-    (row) => `${row.dataset_id}#${row.version}`,
-    [],
-  );
+  const getRowId = useCallback((row: TableDataset) => `${row.dataset_id}#${row.version}`, []);
 
   return (
     <DataTable

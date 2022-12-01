@@ -49,6 +49,8 @@ import {
 
 import { IndeterminateCheckbox } from "./IndeterminateCheckbox";
 
+const DEBUG = process.env.NODE_ENV === "development";
+
 export interface DataTableProps<Data extends Record<string, any>> {
   /**
    * Control whether the table is wrapped inside a MuiPaper. Defaults to `true`
@@ -244,9 +246,9 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
     getExpandedRowModel: getExpandedRowModel(),
-    debugTable: true,
-    debugHeaders: true,
-    debugColumns: false,
+    debugTable: DEBUG,
+    debugHeaders: DEBUG,
+    debugColumns: DEBUG,
   });
 
   const rows = truncate(table);

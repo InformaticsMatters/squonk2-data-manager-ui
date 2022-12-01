@@ -75,6 +75,6 @@ nextConfig = withRoutes(nextConfig);
 nextConfig = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
 nextConfig = process.env.SENTRY_AUTH_TOKEN
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
-  : (delete nextConfig.sentry, sentry); // Need to remove sentry config if not using in order to suppress warning
+  : (delete nextConfig.sentry, nextConfig); // Need to remove sentry config if not using in order to suppress warning
 
 export default nextConfig;

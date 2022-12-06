@@ -1,14 +1,27 @@
 {
   "dependencyDashboardAutoclose": true,
   "extends": [
-    ":disableRateLimiting",
-    "config:js-app",
+    ":dependencyDashboard",
+    ":semanticPrefixFixDepsChoreOthers",
+    ":ignoreModulesAndTests",
+    ":autodetectPinVersions",
+    "group:monorepos",
+    "group:recommended",
+    "workarounds:all",
+    ":pinAllExceptPeerDependencies",
     ":semanticCommitTypeAll(chore)"
   ],
   "labels": [
     "dependencies"
   ],
   "constraints": {
-    "pnpm": "6"
-  }
+    "pnpm": "7"
+  },
+  "packageRules": [
+    {
+      "excludePackageNames": [
+        "nextjs-routes"
+      ]
+    }
+  ]
 }

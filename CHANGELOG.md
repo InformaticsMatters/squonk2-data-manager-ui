@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.2-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.1...2.0.2-rc.0) (2022-12-06)
+
+
+### Bug Fixes
+
+* **data-table:** hide logs in prod ([dcd3cc9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/dcd3cc9170a7bc4ff75a41a146559ea956cc8532))
+* **nextjs:** delete sentry config when not using sentry (development) to suppress warning ([81b4da3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/81b4da316f8df7a88b9d9a5df28d8bac517485ce))
+* **nextjs:** fix typo in config ([062c6e7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/062c6e74dedcd99a4b8963c93c6625e61ca126b7))
+* **typescript:** fix error caused by updating ts ([0976ba7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0976ba77320ad221256a72c2a062fef6ffc1927c))
+
 ### [2.0.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.0...2.0.1) (2022-11-23)
 
 

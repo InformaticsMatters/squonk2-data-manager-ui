@@ -1,6 +1,6 @@
 import { getGetInstanceQueryKey } from "@squonk/data-manager-client/instance";
 
-import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import { Box, Container, IconButton, Tooltip } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
@@ -53,4 +53,4 @@ const Result = () => {
   );
 };
 
-export default withPageAuthRequired(Result);
+export default withPageAuthRequiredCSR(Result);

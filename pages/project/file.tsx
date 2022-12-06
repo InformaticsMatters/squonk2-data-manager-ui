@@ -1,7 +1,7 @@
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/dist/frontend";
+import { withPageAuthRequired as withPageAuthRequiredSSR } from "@auth0/nextjs-auth0";
+import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import type { Theme } from "@mui/material";
 import { Container, useMediaQuery } from "@mui/material";
-import type { GetServerSideProps } from "next";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
@@ -17,25 +17,27 @@ export type FileProps = Successful | NotSuccessful;
 const isSuccessful = (props: FileProps): props is Successful =>
   typeof (props as Successful).content === "string";
 
-export const getServerSideProps: GetServerSideProps<FileProps> = async ({ req, res, query }) => {
-  let { path } = query;
-  const { file, project } = query;
+export const getServerSideProps = withPageAuthRequiredSSR<FileProps>({
+  getServerSideProps: async ({ req, res, query }) => {
+    let { path } = query;
+    const { file, project } = query;
 
-  if (typeof file !== "string" || typeof project !== "string") {
-    return createErrorProps(res, 400, "File or project are not valid");
-  }
+    if (typeof file !== "string" || typeof project !== "string") {
+      return createErrorProps(res, 400, "File or project are not valid");
+    }
 
-  path = pathFromQuery(path);
+    path = pathFromQuery(path);
 
-  let compressed = false;
-  if (file.endsWith(".gz") || file.endsWith(".gzip")) {
-    compressed = true;
-  }
+    let compressed = false;
+    if (file.endsWith(".gz") || file.endsWith(".gzip")) {
+      compressed = true;
+    }
 
-  const url = process.env.DATA_MANAGER_API_SERVER + API_ROUTES.projectFile(project, path, file);
+    const url = process.env.DATA_MANAGER_API_SERVER + API_ROUTES.projectFile(project, path, file);
 
-  return await plaintextViewerSSR(req, res, { url, compressed });
-};
+    return await plaintextViewerSSR(req, res, { url, compressed });
+  },
+});
 
 export const File = (props: FileProps) => {
   const biggerThanSm = useMediaQuery<Theme>((theme) => theme.breakpoints.up("sm"));
@@ -67,4 +69,4 @@ export const File = (props: FileProps) => {
   return <NextError statusCode={statusCode} statusMessage={statusMessage} />;
 };
 
-export default withPageAuthRequired(File);
+export default withPageAuthRequiredCSR(File);

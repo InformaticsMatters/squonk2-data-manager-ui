@@ -5,10 +5,13 @@ import {
   getProductCharges,
 } from "@squonk/account-server-client/product";
 
-import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import {
+  getAccessToken,
+  withPageAuthRequired as withPageAuthRequiredSSR,
+} from "@auth0/nextjs-auth0";
+import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { captureException } from "@sentry/nextjs";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
-import type { GetServerSideProps } from "next";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
@@ -22,46 +25,44 @@ import { isNotSuccessful } from "../../../utils/next/ssr";
 
 export type ProductChargesProps = NotSuccessful | ReactQueryPageProps;
 
-export const getServerSideProps: GetServerSideProps<ProductChargesProps> = async ({
-  req,
-  res,
-  query,
-}) => {
-  const { productId } = query;
+export const getServerSideProps = withPageAuthRequiredSSR<ProductChargesProps>({
+  getServerSideProps: async ({ req, res, query }) => {
+    const { productId } = query;
 
-  if (productId !== "" && typeof productId !== "string") {
-    return createErrorProps(res, 400, "Product Id is not valid");
-  }
-
-  const queryClient = new QueryClient();
-
-  try {
-    const { accessToken } = await getAccessToken(req, res);
-
-    if (accessToken) {
-      const queries = [
-        queryClient.prefetchQuery(getGetProductChargesQueryKey(productId), () =>
-          getProductCharges(productId, undefined, asOptions(accessToken)),
-        ),
-        queryClient.prefetchQuery(getGetProductQueryKey(productId), () =>
-          getProduct(productId, asOptions(accessToken)),
-        ),
-      ];
-
-      // Make the queries in parallel
-      await Promise.allSettled(queries);
+    if (productId !== "" && typeof productId !== "string") {
+      return createErrorProps(res, 400, "Product Id is not valid");
     }
-  } catch (error) {
-    captureException(error);
-    return createErrorProps(res, 500, "Unknown error on the server");
-  }
 
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
-};
+    const queryClient = new QueryClient();
+
+    try {
+      const { accessToken } = await getAccessToken(req, res);
+
+      if (accessToken) {
+        const queries = [
+          queryClient.prefetchQuery(getGetProductChargesQueryKey(productId), () =>
+            getProductCharges(productId, undefined, asOptions(accessToken)),
+          ),
+          queryClient.prefetchQuery(getGetProductQueryKey(productId), () =>
+            getProduct(productId, asOptions(accessToken)),
+          ),
+        ];
+
+        // Make the queries in parallel
+        await Promise.allSettled(queries);
+      }
+    } catch (error) {
+      captureException(error);
+      return createErrorProps(res, 500, "Unknown error on the server");
+    }
+
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient),
+      },
+    };
+  },
+});
 
 const ProductCharges = (props: ProductChargesProps) => {
   const { query } = useRouter();
@@ -85,4 +86,4 @@ const ProductCharges = (props: ProductChargesProps) => {
   );
 };
 
-export default withPageAuthRequired(ProductCharges);
+export default withPageAuthRequiredCSR(ProductCharges);

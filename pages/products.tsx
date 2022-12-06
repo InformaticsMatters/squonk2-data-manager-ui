@@ -1,10 +1,13 @@
 import { getGetProductsQueryKey, getProducts } from "@squonk/account-server-client/product";
 
-import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import {
+  getAccessToken,
+  withPageAuthRequired as withPageAuthRequiredSSR,
+} from "@auth0/nextjs-auth0";
+import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Container } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
-import type { GetServerSideProps } from "next";
 import NextError from "next/error";
 import Head from "next/head";
 
@@ -18,36 +21,37 @@ import { isNotSuccessful } from "../utils/next/ssr";
 
 export type ProductsProps = CustomPageProps<Record<string, never>>;
 
-export const getServerSideProps: GetServerSideProps<ProductsProps | ReactQueryPageProps> = async ({
-  req,
-  res,
-}) => {
-  const queryClient = new QueryClient();
+// ProductsProps | ReactQueryPageProps
 
-  try {
-    const { accessToken } = await getAccessToken(req, res);
+export const getServerSideProps = withPageAuthRequiredSSR<ProductsProps | ReactQueryPageProps>({
+  getServerSideProps: async ({ req, res }) => {
+    const queryClient = new QueryClient();
 
-    if (accessToken) {
-      const queries = [
-        queryClient.prefetchQuery(getGetProductsQueryKey(), () =>
-          getProducts(asOptions(accessToken)),
-        ),
-      ];
+    try {
+      const { accessToken } = await getAccessToken(req, res);
 
-      // Make the queries in parallel
-      await Promise.allSettled(queries);
+      if (accessToken) {
+        const queries = [
+          queryClient.prefetchQuery(getGetProductsQueryKey(), () =>
+            getProducts(asOptions(accessToken)),
+          ),
+        ];
+
+        // Make the queries in parallel
+        await Promise.allSettled(queries);
+      }
+    } catch (error) {
+      captureException(error);
+      return createErrorProps(res, 500, "Unknown error on the server");
     }
-  } catch (error) {
-    captureException(error);
-    return createErrorProps(res, 500, "Unknown error on the server");
-  }
 
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
-};
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient),
+      },
+    };
+  },
+});
 
 export const Products = (props: ProductsProps) => {
   if (isNotSuccessful(props)) {
@@ -70,4 +74,4 @@ export const Products = (props: ProductsProps) => {
   );
 };
 
-export default withPageAuthRequired(Products);
+export default withPageAuthRequiredCSR(Products);

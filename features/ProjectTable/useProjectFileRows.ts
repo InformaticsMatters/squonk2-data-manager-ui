@@ -22,8 +22,11 @@ export const useProjectFileRows = (project_id: string) => {
     path: dirPath,
   });
 
+  const dataFiles = data?.files;
+  const paths = data?.paths;
+
   const rows = useMemo(() => {
-    const files: TableFile[] | undefined = data?.files.map((file) => {
+    const files: TableFile[] | undefined = dataFiles?.map((file) => {
       const { file_id: fileId, file_name: fileName, owner, immutable, mime_type, stat } = file;
 
       const fullPath = getFullPath(breadcrumbs, fileName);
@@ -39,7 +42,7 @@ export const useProjectFileRows = (project_id: string) => {
       };
     });
 
-    const dirs: TableDir[] | undefined = data?.paths.map((path) => {
+    const dirs: TableDir[] | undefined = paths?.map((path) => {
       const fullPath = getFullPath(breadcrumbs, path);
 
       return {
@@ -50,7 +53,7 @@ export const useProjectFileRows = (project_id: string) => {
     });
 
     return dirs && files ? [...dirs, ...files] : undefined;
-  }, [data, breadcrumbs]);
+  }, [dataFiles, paths, breadcrumbs]);
 
   return { rows, error, isError, isLoading };
 };

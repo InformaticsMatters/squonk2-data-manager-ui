@@ -1,11 +1,14 @@
 import { getFiles, getGetFilesQueryKey } from "@squonk/data-manager-client/file";
 import { getGetProjectsQueryKey, getProjects } from "@squonk/data-manager-client/project";
 
-import { getAccessToken, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import {
+  getAccessToken,
+  withPageAuthRequired as withPageAuthRequiredSSR,
+} from "@auth0/nextjs-auth0";
+import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
-import type { GetServerSideProps } from "next";
 import Image from "next/future/image";
 import Head from "next/head";
 
@@ -23,48 +26,50 @@ import type { NotSuccessful, ReactQueryPageProps } from "../utils/next/ssr";
 
 export type ProjectProps = Record<string, never> | NotSuccessful | ReactQueryPageProps;
 
-export const getServerSideProps: GetServerSideProps<ProjectProps> = async ({ req, res, query }) => {
-  const queryClient = new QueryClient();
+export const getServerSideProps = withPageAuthRequiredSSR<ProjectProps>({
+  getServerSideProps: async ({ req, res, query }) => {
+    const queryClient = new QueryClient();
 
-  // When project isn't specified no requests can be made
-  if (typeof query.project !== "string") {
-    return { props: {} as Record<string, never> };
-  }
-
-  const projectId = query.project;
-
-  try {
-    const { accessToken } = await getAccessToken(req, res);
-
-    const path = pathFromQuery(query.path);
-
-    if (projectId && accessToken) {
-      const filesParam = { project_id: projectId, path };
-
-      // Prefetch some data
-      const queries = [
-        queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
-          getProjects(dmOptions(accessToken)),
-        ),
-        queryClient.prefetchQuery(getGetFilesQueryKey(filesParam), () =>
-          getFiles(filesParam, dmOptions(accessToken)),
-        ),
-      ];
-
-      // Make the queries in parallel
-      await Promise.allSettled(queries);
+    // When project isn't specified no requests can be made
+    if (typeof query.project !== "string") {
+      return { props: {} as Record<string, never> };
     }
-  } catch (error) {
-    captureException(error);
-    return createErrorProps(res, 500, "Unknown error on the server");
-  }
 
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
-};
+    const projectId = query.project;
+
+    try {
+      const { accessToken } = await getAccessToken(req, res);
+
+      const path = pathFromQuery(query.path);
+
+      if (projectId && accessToken) {
+        const filesParam = { project_id: projectId, path };
+
+        // Prefetch some data
+        const queries = [
+          queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
+            getProjects(dmOptions(accessToken)),
+          ),
+          queryClient.prefetchQuery(getGetFilesQueryKey(filesParam), () =>
+            getFiles(filesParam, dmOptions(accessToken)),
+          ),
+        ];
+
+        // Make the queries in parallel
+        await Promise.allSettled(queries);
+      }
+    } catch (error) {
+      captureException(error);
+      return createErrorProps(res, 500, "Unknown error on the server");
+    }
+
+    return {
+      props: {
+        dehydratedState: dehydrate(queryClient),
+      },
+    };
+  },
+});
 
 /**
  * The project page display and allows the user to manage files inside a project.
@@ -132,4 +137,4 @@ const Project = () => {
   );
 };
 
-export default withPageAuthRequired(Project);
+export default withPageAuthRequiredCSR(Project);

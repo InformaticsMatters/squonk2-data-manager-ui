@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { setBaseUrl as setASBaseUrl } from "@squonk/account-server-client";
 import { setBaseUrl as setDMBaseUrl } from "@squonk/data-manager-client";
 
-import { UserProvider } from "@auth0/nextjs-auth0";
+import { UserProvider } from "@auth0/nextjs-auth0/client";
 import type { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import { Hydrate, QueryClient, QueryClientProvider } from "@tanstack/react-query";

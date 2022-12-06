@@ -34,6 +34,7 @@ export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
           if (product.claim?.id) {
             return (
               <NextLink
+                legacyBehavior
                 passHref
                 href={{ pathname: "/project", query: { project: product.claim.id } }}
               >

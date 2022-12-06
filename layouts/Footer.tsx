@@ -45,22 +45,22 @@ export const Footer = () => {
           <Grid item sm={3} textAlign="right" xs={6}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
-                <NextLink passHref href={{ pathname: "/" }}>
+                <NextLink legacyBehavior passHref href={{ pathname: "/" }}>
                   <Link>Home</Link>
                 </NextLink>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink passHref href={{ pathname: "/datasets" }}>
+                <NextLink legacyBehavior passHref href={{ pathname: "/datasets" }}>
                   <Link>Datasets</Link>
                 </NextLink>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink passHref href={{ pathname: "/project" }}>
+                <NextLink legacyBehavior passHref href={{ pathname: "/project" }}>
                   <Link>Project</Link>
                 </NextLink>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink passHref href={{ pathname: "/executions" }}>
+                <NextLink legacyBehavior passHref href={{ pathname: "/executions" }}>
                   <Link>Executions</Link>
                 </NextLink>
               </ListItem>
@@ -69,17 +69,17 @@ export const Footer = () => {
           <Grid item sm={3} xs={6}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
-                <NextLink passHref href={{ pathname: "/results" }}>
+                <NextLink legacyBehavior passHref href={{ pathname: "/results" }}>
                   <Link>Results</Link>
                 </NextLink>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink passHref href={{ pathname: "/products" }}>
+                <NextLink legacyBehavior passHref href={{ pathname: "/products" }}>
                   <Link>Products</Link>
                 </NextLink>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink passHref href={{ pathname: "/docs/guided-tour" }}>
+                <NextLink legacyBehavior passHref href={{ pathname: "/docs/guided-tour" }}>
                   <Link>Docs</Link>
                 </NextLink>
               </ListItem>

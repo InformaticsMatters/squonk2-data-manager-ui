@@ -72,64 +72,67 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
         gap={(theme) => theme.spacing(1)}
         sx={{ wordBreak: "break-all" }}
       >
-        <NextLink
-          passHref
-          href={{
-            pathname: "/project",
-            query: {
-              ...query,
-              project: projectId,
-              path: filePath,
-            },
-          }}
-        >
-          <Tooltip title="Locate file in project">
+        <Tooltip title="Locate file in project">
+          <NextLink
+            legacyBehavior
+            passHref
+            href={{
+              pathname: "/project",
+              query: {
+                ...query,
+                project: projectId,
+                path: filePath,
+              },
+            }}
+          >
             <IconButton size="large">
               <Folder color="primary" fontSize="small" />
             </IconButton>
-          </Tooltip>
-        </NextLink>
+          </NextLink>
+        </Tooltip>
 
-        <NextLink
-          passHref
-          href={{
-            pathname: "/project/file",
-            query: {
-              project: projectId,
-              path: filePath,
-              file: fileName,
-            },
-          }}
-        >
-          <Tooltip title="Open in Plaintext Viewer">
+        <Tooltip title="Open in Plaintext Viewer">
+          <NextLink
+            legacyBehavior
+            passHref
+            href={{
+              pathname: "/project/file",
+              query: {
+                project: projectId,
+                path: filePath,
+                file: fileName,
+              },
+            }}
+          >
             <Link color="textSecondary" rel="noopener noreferrer" target="_blank">
               <Typography component="span">{displayPath}</Typography>
             </Link>
-          </Tooltip>
-        </NextLink>
+          </NextLink>
+        </Tooltip>
       </Box>
     );
   }
 
   return (
     <Box alignItems="center" display="flex" gap={(theme) => theme.spacing(1)}>
-      <NextLink
-        passHref
-        href={{
-          pathname: "/datasets",
-          query: {
-            ...query,
-            project: projectId,
-            path: resolvedPath,
-          },
-        }}
-      >
-        <Tooltip title="Show directory in project">
+      <Tooltip title="Show directory in project">
+        <NextLink
+          legacyBehavior
+          passHref
+          href={{
+            pathname: "/datasets",
+            query: {
+              ...query,
+              project: projectId,
+              path: resolvedPath,
+            },
+          }}
+        >
           <IconButton size="small">
             <Folder color="primary" fontSize="small" />
           </IconButton>
-        </Tooltip>
-      </NextLink>
+        </NextLink>
+      </Tooltip>
 
       <Typography component="span">{displayPath}</Typography>
     </Box>

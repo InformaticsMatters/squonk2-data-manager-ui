@@ -16,7 +16,7 @@ export const DocsNav = () => {
   return (
     <nav aria-label="Docs" role="navigation">
       {Object.entries(links).map(([href, title]) => (
-        <NextLink passHref href={{ pathname: href as Routes }} key={href}>
+        <NextLink legacyBehavior passHref href={{ pathname: href as Routes }} key={href}>
           <Button disabled={router.pathname === href}>{title}</Button>
         </NextLink>
       ))}

@@ -11,7 +11,11 @@ export const HeaderLogo = () => {
   const { query } = useRouter();
 
   return (
-    <Link passHref href={{ pathname: "/", query: query.project ? { project: query.project } : {} }}>
+    <Link
+      legacyBehavior
+      passHref
+      href={{ pathname: "/", query: query.project ? { project: query.project } : {} }}
+    >
       <LogoLink>
         <LogoImage variant="dark" />
       </LogoLink>

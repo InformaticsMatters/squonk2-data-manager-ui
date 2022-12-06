@@ -5,45 +5,56 @@
 // prettier-ignore
 declare module "nextjs-routes" {
   export type Route =
-    | { pathname: "/api/as-api/[...asProxy]"; query: Query<{ "asProxy": string[] }> }
-    | { pathname: "/api/auth/[...auth0]"; query: Query<{ "auth0": string[] }> }
-    | { pathname: "/api/dm-api/[...dmProxy]"; query: Query<{ "dmProxy": string[] }> }
-    | { pathname: "/api/viewer-proxy/[...viewerProxy]"; query: Query<{ "viewerProxy": string[] }> }
-    | { pathname: "/dataset/[datasetId]/[datasetVersion]"; query: Query<{ "datasetId": string; "datasetVersion": string }> }
-    | { pathname: "/datasets"; query?: Query | undefined }
-    | { pathname: "/docs/concepts"; query?: Query | undefined }
-    | { pathname: "/docs/developer"; query?: Query | undefined }
-    | { pathname: "/docs/guided-tour"; query?: Query | undefined }
-    | { pathname: "/docs/how-to/applications"; query?: Query | undefined }
-    | { pathname: "/docs/how-to/context"; query?: Query | undefined }
-    | { pathname: "/docs/how-to/create-project"; query?: Query | undefined }
-    | { pathname: "/docs/how-to/execution"; query?: Query | undefined }
-    | { pathname: "/docs/how-to/jobs"; query?: Query | undefined }
-    | { pathname: "/docs/how-to/login"; query?: Query | undefined }
-    | { pathname: "/docs/how-to/projects-tab"; query?: Query | undefined }
-    | { pathname: "/docs/how-to/results"; query?: Query | undefined }
-    | { pathname: "/docs/how-to"; query?: Query | undefined }
-    | { pathname: "/docs/jobs"; query?: Query | undefined }
-    | { pathname: "/executions"; query?: Query | undefined }
-    | { pathname: "/"; query?: Query | undefined }
-    | { pathname: "/product/[productId]/charges"; query: Query<{ "productId": string }> }
-    | { pathname: "/products"; query?: Query | undefined }
-    | { pathname: "/project/file"; query?: Query | undefined }
-    | { pathname: "/project"; query?: Query | undefined }
-    | { pathname: "/results/instance/[instanceId]"; query: Query<{ "instanceId": string }> }
-    | { pathname: "/results/task/[taskId]"; query: Query<{ "taskId": string }> }
-    | { pathname: "/results"; query?: Query | undefined }
-    | { pathname: "/unit/[unitId]/charges"; query: Query<{ "unitId": string }> };
+    | DynamicRoute<"/api/as-api/[...asProxy]", { "asProxy": string[] }>
+    | DynamicRoute<"/api/auth/[...auth0]", { "auth0": string[] }>
+    | DynamicRoute<"/api/dm-api/[...dmProxy]", { "dmProxy": string[] }>
+    | DynamicRoute<"/api/viewer-proxy/[...viewerProxy]", { "viewerProxy": string[] }>
+    | DynamicRoute<"/dataset/[datasetId]/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>
+    | StaticRoute<"/datasets">
+    | StaticRoute<"/docs/concepts">
+    | StaticRoute<"/docs/developer">
+    | StaticRoute<"/docs/guided-tour">
+    | StaticRoute<"/docs/how-to/applications">
+    | StaticRoute<"/docs/how-to/context">
+    | StaticRoute<"/docs/how-to/create-project">
+    | StaticRoute<"/docs/how-to/execution">
+    | StaticRoute<"/docs/how-to/jobs">
+    | StaticRoute<"/docs/how-to/login">
+    | StaticRoute<"/docs/how-to/projects-tab">
+    | StaticRoute<"/docs/how-to/results">
+    | StaticRoute<"/docs/how-to">
+    | StaticRoute<"/docs/jobs">
+    | StaticRoute<"/executions">
+    | StaticRoute<"/">
+    | DynamicRoute<"/product/[productId]/charges", { "productId": string }>
+    | StaticRoute<"/products">
+    | StaticRoute<"/project/file">
+    | StaticRoute<"/project">
+    | DynamicRoute<"/results/instance/[instanceId]", { "instanceId": string }>
+    | DynamicRoute<"/results/task/[taskId]", { "taskId": string }>
+    | StaticRoute<"/results">
+    | DynamicRoute<"/unit/[unitId]/charges", { "unitId": string }>;
 
-  type Query<Params = {}> = Params & {
+  interface StaticRoute<Pathname> {
+    pathname: Pathname;
+    query?: Query | undefined;
+    hash?: string | null | undefined;
+  }
+
+  interface DynamicRoute<Pathname, Parameters> {
+    pathname: Pathname;
+    query: Parameters & Query;
+    hash?: string | null | undefined;
+  }
+
+  interface Query {
     [key: string]: string | string[] | undefined;
   };
 
-  type QueryForPathname = {
-    [K in Route as K["pathname"]]: Exclude<K["query"], undefined>;
-  };
-
-  export type RoutedQuery<P extends Route["pathname"]> = QueryForPathname[P];
+  export type RoutedQuery<P extends Route["pathname"]> = Extract<
+    Route,
+    { pathname: P }
+  >["query"];
 
   export type Locale = undefined;
 
@@ -59,14 +70,22 @@ declare module "nextjs-routes" {
 declare module "next/link" {
   import type { Route } from "nextjs-routes";
   import type { LinkProps as NextLinkProps } from "next/dist/client/link";
-  import type { PropsWithChildren, MouseEventHandler } from "react";
+  import type {
+    AnchorHTMLAttributes,
+    DetailedReactHTMLElement,
+    MouseEventHandler,
+    PropsWithChildren,
+  } from "react";
   export * from "next/dist/client/link";
 
   type Query = { query?: { [key: string]: string | string[] | undefined } };
   type StaticRoute = Exclude<Route, { query: any }>["pathname"];
 
-  export interface LinkProps<Href extends Route | Query = Route | Query>
-    extends Omit<NextLinkProps, "href" | "locale"> {
+  export interface LinkProps<
+    Href extends Route | StaticRoute | Query = Route | StaticRoute | Query
+  >
+    extends Omit<NextLinkProps, "href" | "locale">,
+      AnchorHTMLAttributes<HTMLAnchorElement> {
     href: Href;
     locale?: false;
   }
@@ -106,56 +125,55 @@ declare module "next/router" {
 
   interface TransitionOptions extends Omit<NextTransitionOptions, "locale"> {
     locale?: false;
-  };
-
-  export interface NextRouter<P extends Route["pathname"] = Route["pathname"]>
-    extends Omit<
-      Router,
-      | "push"
-      | "replace"
-      | "locale"
-      | "locales"
-      | "defaultLocale"
-      | "domainLocales"
-    > {
-    defaultLocale?: undefined;
-    domainLocales?: undefined;
-    locale?: Locale;
-    locales?: undefined;
-    pathname: P;
-    push(
-      url: Route,
-      as?: string,
-      options?: TransitionOptions
-    ): Promise<boolean>;
-    push(
-      url: StaticRoute,
-      as?: string,
-      options?: TransitionOptions
-    ): Promise<boolean>;
-    push(
-      url: { query: { [key: string]: string | string[] | undefined } },
-      as?: string,
-      options?: TransitionOptions
-    ): Promise<boolean>;
-    query: RoutedQuery<P>;
-    replace(
-      url: Route,
-      as?: string,
-      options?: TransitionOptions
-    ): Promise<boolean>;
-    replace(
-      url: StaticRoute,
-      as?: string,
-      options?: TransitionOptions
-    ): Promise<boolean>;
-    replace(
-      url: { query: { [key: string]: string | string[] | undefined } },
-      as?: string,
-      options?: TransitionOptions
-    ): Promise<boolean>;
-    route: P;
   }
+
+  export type NextRouter<P extends Route["pathname"] = Route["pathname"]> =
+    Extract<Route, { pathname: P }> &
+      Omit<
+        Router,
+        | "push"
+        | "replace"
+        | "locale"
+        | "locales"
+        | "defaultLocale"
+        | "domainLocales"
+      > & {
+        defaultLocale?: undefined;
+        domainLocales?: undefined;
+        locale?: Locale;
+        locales?: undefined;
+        push(
+          url: Route,
+          as?: string,
+          options?: TransitionOptions
+        ): Promise<boolean>;
+        push(
+          url: StaticRoute,
+          as?: string,
+          options?: TransitionOptions
+        ): Promise<boolean>;
+        push(
+          url: { query?: { [key: string]: string | string[] | undefined } },
+          as?: string,
+          options?: TransitionOptions
+        ): Promise<boolean>;
+        replace(
+          url: Route,
+          as?: string,
+          options?: TransitionOptions
+        ): Promise<boolean>;
+        replace(
+          url: StaticRoute,
+          as?: string,
+          options?: TransitionOptions
+        ): Promise<boolean>;
+        replace(
+          url: { query?: { [key: string]: string | string[] | undefined } },
+          as?: string,
+          options?: TransitionOptions
+        ): Promise<boolean>;
+        route: P;
+      };
 
   export function useRouter<P extends Route["pathname"]>(): NextRouter<P>;
 }

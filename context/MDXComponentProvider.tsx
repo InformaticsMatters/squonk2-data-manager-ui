@@ -1,16 +1,11 @@
-import type { AnchorHTMLAttributes, DetailedHTMLProps, FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 
 import { MDXProvider } from "@mdx-js/react";
 import { Link, Typography } from "@mui/material";
-import Image from "next/future/image";
+import Image from "next/image";
 import type { LinkProps } from "next/link";
 import NextLink from "next/link";
-
-type NextLinkProps = Omit<
-  DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>,
-  "href"
-> &
-  LinkProps;
+import type { Route } from "nextjs-routes";
 
 export interface MDXComponentProviderProps {
   children: ReactNode;
@@ -26,12 +21,12 @@ export const MDXComponentProvider: FC<MDXComponentProviderProps> = ({ children }
         ),
         li: (props: any) => <Typography {...props} component="li" />,
         h2: (props: any) => <Typography component="h2" {...props} gutterBottom variant="h2" />,
-        InternalLink: ({ href, children, ref: _ref, ...props }: NextLinkProps) => (
-          <NextLink passHref href={href} {...props}>
+        InternalLink: ({ href, children, ...props }: LinkProps<Route>) => (
+          <NextLink legacyBehavior passHref href={href} {...props}>
             <Link {...props}>{children}</Link>
           </NextLink>
         ),
-        Image,
+        Image: Image as any, // Figure out why this errors after NextJS 13
       }}
     >
       {children}

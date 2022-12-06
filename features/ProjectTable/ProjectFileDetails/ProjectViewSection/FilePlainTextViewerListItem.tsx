@@ -14,6 +14,7 @@ export const FilePlainTextViewerListItem = ({ fileName }: FilePlainTextViewerLis
 
   return (
     <NextLink
+      legacyBehavior
       passHref
       href={{
         pathname: "/project/file",

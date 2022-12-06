@@ -9,8 +9,8 @@ import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-a
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
-import Image from "next/future/image";
 import Head from "next/head";
+import Image from "next/image";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
 import { ProjectSelection } from "../components/projects/ProjectSelection";

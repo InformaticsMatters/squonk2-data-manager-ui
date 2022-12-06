@@ -49,6 +49,7 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
         )
         .map((instance) => (
           <NextLink
+            legacyBehavior
             passHref
             href={{
               pathname: "/results/instance/[instanceId]",

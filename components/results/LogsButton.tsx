@@ -19,6 +19,7 @@ export const LogsButton = ({ instanceId, instance }: LogsButtonProps) => {
   const { query } = useRouter();
   return (
     <Link
+      legacyBehavior
       passHref
       href={{
         pathname: "/project",

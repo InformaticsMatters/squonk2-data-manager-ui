@@ -13,6 +13,7 @@ export const DatasetPlainTextViewerListItem = ({
 }: DatasetPlainTextViewerListItemProps) => {
   return (
     <NextLink
+      legacyBehavior
       passHref
       href={{
         pathname: "/dataset/[datasetId]/[datasetVersion]",

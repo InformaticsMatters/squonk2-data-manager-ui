@@ -46,7 +46,7 @@ export const NavLink = ({ children, title, stripQueryParameters }: NavLinkProps)
 
   const href = { query, pathname };
   return (
-    <Link passHref shallow href={href}>
+    <Link legacyBehavior passHref shallow href={href}>
       {children({ active })}
     </Link>
   );

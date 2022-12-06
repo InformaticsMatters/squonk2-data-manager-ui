@@ -62,7 +62,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
               query: { project: currentProject.project_id, path: [...breadcrumbs, row.path] },
             };
             return (
-              <NextLink passHref href={href}>
+              <NextLink legacyBehavior passHref href={href}>
                 <Link
                   color="inherit"
                   component="button"
@@ -139,7 +139,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
                   },
                 };
                 return pathIndex < breadcrumbs.length ? (
-                  <NextLink passHref href={href} key={`${pathIndex}-${path}`}>
+                  <NextLink legacyBehavior passHref href={href} key={`${pathIndex}-${path}`}>
                     <Link color="inherit" component="button" variant="body1">
                       {path}
                     </Link>

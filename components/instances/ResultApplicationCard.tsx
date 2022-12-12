@@ -1,11 +1,9 @@
-import type { HTMLProps } from "react";
-
 import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 
-import type { ButtonProps } from "@mui/material";
-import { Button, CardContent, ListItem, ListItemText } from "@mui/material";
+import { CardContent, ListItem, ListItemText } from "@mui/material";
 
 import { useProjectFromId } from "../../hooks/projectHooks";
+import { HrefButton } from "../HrefButton";
 import { ProjectListItem } from "../projects/ProjectListItem";
 import { ResultCard } from "../results/ResultCard";
 import { ApplicationDetails } from "./ApplicationDetails";
@@ -13,12 +11,6 @@ import { ArchivedStatus } from "./ArchivedStatus";
 import { ArchiveInstance } from "./ArchiveInstance";
 import { TerminateInstance } from "./TerminateInstance";
 import { useInstanceRouterQuery } from "./useInstanceRouterQuery";
-
-// Button Props doesn't support target and rel when using as a Link
-type MissingButtonProps = Pick<HTMLProps<HTMLAnchorElement>, "target" | "rel">;
-
-// ? odd that typescript doesn't raise an issue here as `MissingButtonProps` contains invalid props
-const HrefButton = (props: ButtonProps & MissingButtonProps) => <Button {...props} />;
 
 export interface ResultApplicationCardProps {
   /**

@@ -1,16 +1,14 @@
 import { Container } from "@mui/material";
 import Layout from "../../../layouts/Layout";
 import Head from "next/head";
+import { DocsNav } from "../../../components/DocsNav";
 //import login from "../assets/login.png"
 
 <Head>
   <title>Project data - a How To guide</title>
 </Head>
 
-<InternalLink href="/">Home</InternalLink> |
-<InternalLink href="../guided-tour">Guided Tour</InternalLink> |
-<InternalLink href="../how-to">How to guides</InternalLink> |
-<InternalLink href="../concepts">Concepts guide</InternalLink>
+<DocsNav />
 
 ## Project data - a How To guide
 
@@ -33,7 +31,7 @@ You an also:
 Not all operations you might want to do are possible from the *Project* tab.
 If you want to do more then your best bet is to launch the Jupyter Lab application in your project. That will allow you
 to manage your files either with the Jupyter Lab file manager or by opening up a console (bash shell).
-See the <InternalLink href="./applications">Running applications</InternalLink> How To guide for more details on launching
+See the [Running applications](./applications) How To guide for more details on launching
 Jupyter Lab.
 
 export default ({ children }) => <Layout><Container>{children}</Container></Layout>

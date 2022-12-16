@@ -19,7 +19,7 @@ specifiers:
   '@rjsf/material-ui': 4.2.3
   '@sentry/nextjs': 7.23.0
   '@squonk/account-server-client': 2.0.0
-  '@squonk/data-manager-client': 1.0.24
+  '@squonk/data-manager-client': 1.0.26
   '@squonk/eslint-config': 0.4.2
   '@squonk/mui-theme': 3.0.1
   '@tanstack/match-sorter-utils': 8.7.0
@@ -98,7 +98,7 @@ dependencies:
   '@rjsf/material-ui': 4.2.3_3vw5ghoi63tpmwnv5ewsulr5ji
   '@sentry/nextjs': 7.23.0_next@13.0.6+react@18.2.0
   '@squonk/account-server-client': 2.0.0_3o5xmtvse4hs7ooroyfdahhyam
-  '@squonk/data-manager-client': 1.0.24_3o5xmtvse4hs7ooroyfdahhyam
+  '@squonk/data-manager-client': 1.0.26_3o5xmtvse4hs7ooroyfdahhyam
   '@squonk/mui-theme': 3.0.1_@mui+material@5.10.17
   '@tanstack/match-sorter-utils': 8.7.0
   '@tanstack/react-query': 4.19.1_biqbaboplfbrettd7655fr4n2y
@@ -1160,8 +1160,8 @@ packages:
       axios: 1.2.1
     dev: false
 
-  /@squonk/data-manager-client/1.0.24_3o5xmtvse4hs7ooroyfdahhyam:
-    resolution: {integrity: sha512-n6rtivv0lDGHBLO1W7GBLYn5owDomI1iFnERusGBmXcvjdb0bcM2rKpVbJgoC9crlVq4XZDYmPrEqEAzvmv+jg==}
+  /@squonk/data-manager-client/1.0.26_3o5xmtvse4hs7ooroyfdahhyam:
+    resolution: {integrity: sha512-NUu3jfZN28J/wk7KcWxwvjkkLeaIlM57CYITXJoswoCMCDjj1ryGtUmPnAxG+664AO0QOlZFeBWLgmPJZwY47Q==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'

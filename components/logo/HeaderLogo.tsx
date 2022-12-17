@@ -1,7 +1,7 @@
 import { styled } from "@mui/material";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { NextLink } from "../NextLink";
 import { LogoImage } from "./LogoImage";
 
 /**
@@ -11,19 +11,16 @@ export const HeaderLogo = () => {
   const { query } = useRouter();
 
   return (
-    <Link
-      legacyBehavior
-      passHref
+    <LogoLink
+      component="a"
       href={{ pathname: "/", query: query.project ? { project: query.project } : {} }}
     >
-      <LogoLink>
-        <LogoImage variant="dark" />
-      </LogoLink>
-    </Link>
+      <LogoImage variant="dark" />
+    </LogoLink>
   );
 };
 
-const LogoLink = styled("a")(({ theme }) => ({
+const LogoLink = styled(NextLink)(({ theme }) => ({
   display: "inline-block",
   maxHeight: "68px",
   paddingTop: theme.spacing(0.5),

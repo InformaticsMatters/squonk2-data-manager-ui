@@ -1,8 +1,8 @@
 import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 
-import { Button } from "@mui/material";
-import Link from "next/link";
 import { useRouter } from "next/router";
+
+import { NextLink } from "../NextLink";
 
 export interface LogsButtonProps {
   /**
@@ -18,9 +18,8 @@ export interface LogsButtonProps {
 export const LogsButton = ({ instanceId, instance }: LogsButtonProps) => {
   const { query } = useRouter();
   return (
-    <Link
-      legacyBehavior
-      passHref
+    <NextLink
+      component="button"
       href={{
         pathname: "/project",
         query: {
@@ -30,7 +29,7 @@ export const LogsButton = ({ instanceId, instance }: LogsButtonProps) => {
         },
       }}
     >
-      <Button>Logs</Button>
-    </Link>
+      Logs
+    </NextLink>
   );
 };

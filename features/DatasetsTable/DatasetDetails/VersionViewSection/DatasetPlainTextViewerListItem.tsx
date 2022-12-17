@@ -1,6 +1,6 @@
 import { Description } from "@mui/icons-material";
 import { ListItemButton, ListItemText } from "@mui/material";
-import NextLink from "next/link";
+import A from "next/link";
 
 export interface DatasetPlainTextViewerListItemProps {
   datasetId: string;
@@ -12,7 +12,7 @@ export const DatasetPlainTextViewerListItem = ({
   version,
 }: DatasetPlainTextViewerListItemProps) => {
   return (
-    <NextLink
+    <A
       legacyBehavior
       passHref
       href={{
@@ -27,6 +27,6 @@ export const DatasetPlainTextViewerListItem = ({
         />
         <Description color="action" />
       </ListItemButton>
-    </NextLink>
+    </A>
   );
 };

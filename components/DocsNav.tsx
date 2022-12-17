@@ -1,6 +1,6 @@
-import { Button } from "@mui/material";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
+
+import { NextLink } from "./NextLink";
 
 const links = {
   "/docs/guided-tour": "Guided Tour",
@@ -16,8 +16,13 @@ export const DocsNav = () => {
   return (
     <nav aria-label="Docs" role="navigation">
       {Object.entries(links).map(([href, title]) => (
-        <NextLink legacyBehavior passHref href={{ pathname: href as Routes }} key={href}>
-          <Button disabled={router.pathname === href}>{title}</Button>
+        <NextLink
+          component="button"
+          disabled={router.pathname === href}
+          href={{ pathname: href as Routes }}
+          key={href}
+        >
+          {title}
         </NextLink>
       ))}
     </nav>

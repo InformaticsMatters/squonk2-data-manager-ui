@@ -57,8 +57,6 @@ export const getServerSideProps = withPageAuthRequiredSSR<TasksProps>({
       return createErrorProps(res, 500, "Error when fetching data server side");
     }
 
-    console.log(dehydrate(queryClient).queries[0]);
-
     return {
       props: {
         dehydratedState: dehydrate(queryClient),

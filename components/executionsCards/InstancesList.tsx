@@ -3,7 +3,7 @@ import { useGetInstances } from "@squonk/data-manager-client/instance";
 
 import { Box, List, ListItemButton, ListItemText, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import NextLink from "next/link";
+import A from "next/link";
 import { useRouter } from "next/router";
 
 import { useCurrentProjectId } from "../../hooks/projectHooks";
@@ -48,7 +48,7 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
           dayjs(instanceA.launched).isBefore(dayjs(instanceB.launched)) ? 1 : -1,
         )
         .map((instance) => (
-          <NextLink
+          <A
             legacyBehavior
             passHref
             href={{
@@ -64,7 +64,7 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
                 secondary={<LocalTime utcTimestamp={instance.launched} />}
               />
             </ListItemButton>
-          </NextLink>
+          </A>
         ))}
     </List>
   );

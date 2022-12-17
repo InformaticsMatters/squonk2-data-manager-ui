@@ -1,14 +1,14 @@
 import type { Dispatch, FC, ReactNode, SetStateAction } from "react";
 import { useState } from "react";
 
-import { CardContent, Link, ListItem, ListItemIcon, ListItemText, Slide } from "@mui/material";
+import { CardContent, ListItem, ListItemIcon, ListItemText, Slide } from "@mui/material";
 import type { LinkProps } from "next/link";
-import NextLink from "next/link";
 import type { Route } from "nextjs-routes";
 
 import type { ActionsParams, BaseCardProps } from "../BaseCard";
 import { BaseCard } from "../BaseCard";
 import { HorizontalList } from "../HorizontalList";
+import { NextLink } from "../NextLink";
 import type { DateTimeListItemProps } from "./DateTimeListItem";
 import { DateTimeListItem } from "./DateTimeListItem";
 import type { StatusIconProps } from "./StatusIcon";
@@ -56,8 +56,8 @@ export const ResultCard: FC<ResultCardProps> = ({
               </ListItemIcon>
               <ListItemText
                 primary={
-                  <NextLink legacyBehavior passHref href={href}>
-                    <Link>{linkTitle}</Link>
+                  <NextLink component="a" href={href}>
+                    {linkTitle}
                   </NextLink>
                 }
                 secondary={state}

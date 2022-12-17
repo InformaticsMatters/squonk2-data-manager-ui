@@ -1,6 +1,6 @@
 import { Description } from "@mui/icons-material";
 import { ListItemButton, ListItemText } from "@mui/material";
-import NextLink from "next/link";
+import A from "next/link";
 import { useRouter } from "next/router";
 
 export interface FilePlainTextViewerListItemProps {
@@ -13,7 +13,7 @@ export const FilePlainTextViewerListItem = ({ fileName }: FilePlainTextViewerLis
   } = useRouter();
 
   return (
-    <NextLink
+    <A
       legacyBehavior
       passHref
       href={{
@@ -29,6 +29,6 @@ export const FilePlainTextViewerListItem = ({ fileName }: FilePlainTextViewerLis
         <ListItemText primary="Plaintext Viewer" secondary="Displays the file as plaintext" />
         <Description color="action" />
       </ListItemButton>
-    </NextLink>
+    </A>
   );
 };

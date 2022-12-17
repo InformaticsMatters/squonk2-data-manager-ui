@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import Link from "next/link";
+import A from "next/link";
 import { useRouter } from "next/router";
 import type { Route } from "nextjs-routes";
 
@@ -46,8 +46,8 @@ export const NavLink = ({ children, title, stripQueryParameters }: NavLinkProps)
 
   const href = { query, pathname };
   return (
-    <Link legacyBehavior passHref shallow href={href}>
+    <A legacyBehavior passHref shallow href={href}>
       {children({ active })}
-    </Link>
+    </A>
   );
 };

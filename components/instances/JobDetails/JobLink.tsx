@@ -1,6 +1,6 @@
 import { Folder } from "@mui/icons-material";
 import { Box, IconButton, Link, Tooltip, Typography } from "@mui/material";
-import NextLink from "next/link";
+import A from "next/link";
 import { useRouter } from "next/router";
 
 export interface JobLinkProps {
@@ -73,7 +73,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
         sx={{ wordBreak: "break-all" }}
       >
         <Tooltip title="Locate file in project">
-          <NextLink
+          <A
             legacyBehavior
             passHref
             href={{
@@ -88,11 +88,11 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
             <IconButton size="large">
               <Folder color="primary" fontSize="small" />
             </IconButton>
-          </NextLink>
+          </A>
         </Tooltip>
 
         <Tooltip title="Open in Plaintext Viewer">
-          <NextLink
+          <A
             legacyBehavior
             passHref
             href={{
@@ -107,7 +107,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
             <Link color="textSecondary" rel="noopener noreferrer" target="_blank">
               <Typography component="span">{displayPath}</Typography>
             </Link>
-          </NextLink>
+          </A>
         </Tooltip>
       </Box>
     );
@@ -116,7 +116,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
   return (
     <Box alignItems="center" display="flex" gap={(theme) => theme.spacing(1)}>
       <Tooltip title="Show directory in project">
-        <NextLink
+        <A
           legacyBehavior
           passHref
           href={{
@@ -131,7 +131,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
           <IconButton size="small">
             <Folder color="primary" fontSize="small" />
           </IconButton>
-        </NextLink>
+        </A>
       </Tooltip>
 
       <Typography component="span">{displayPath}</Typography>

@@ -9,7 +9,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import NextLink from "next/link";
+import A from "next/link";
 
 import { AppVersions } from "../components/AppVersions";
 
@@ -45,43 +45,43 @@ export const Footer = () => {
           <Grid item sm={3} textAlign="right" xs={6}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
-                <NextLink legacyBehavior passHref href={{ pathname: "/" }}>
+                <A legacyBehavior passHref href={{ pathname: "/" }}>
                   <Link>Home</Link>
-                </NextLink>
+                </A>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink legacyBehavior passHref href={{ pathname: "/datasets" }}>
+                <A legacyBehavior passHref href={{ pathname: "/datasets" }}>
                   <Link>Datasets</Link>
-                </NextLink>
+                </A>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink legacyBehavior passHref href={{ pathname: "/project" }}>
+                <A legacyBehavior passHref href={{ pathname: "/project" }}>
                   <Link>Project</Link>
-                </NextLink>
+                </A>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink legacyBehavior passHref href={{ pathname: "/executions" }}>
+                <A legacyBehavior passHref href={{ pathname: "/executions" }}>
                   <Link>Executions</Link>
-                </NextLink>
+                </A>
               </ListItem>
             </List>
           </Grid>
           <Grid item sm={3} xs={6}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
-                <NextLink legacyBehavior passHref href={{ pathname: "/results" }}>
+                <A legacyBehavior passHref href={{ pathname: "/results" }}>
                   <Link>Results</Link>
-                </NextLink>
+                </A>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink legacyBehavior passHref href={{ pathname: "/products" }}>
+                <A legacyBehavior passHref href={{ pathname: "/products" }}>
                   <Link>Products</Link>
-                </NextLink>
+                </A>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <NextLink legacyBehavior passHref href={{ pathname: "/docs/guided-tour" }}>
+                <A legacyBehavior passHref href={{ pathname: "/docs/guided-tour" }}>
                   <Link>Docs</Link>
-                </NextLink>
+                </A>
               </ListItem>
             </List>
           </Grid>

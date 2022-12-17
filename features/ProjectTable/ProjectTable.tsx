@@ -5,13 +5,15 @@ import type { ProjectDetail } from "@squonk/data-manager-client";
 
 import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
 import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
-import { Breadcrumbs, Grid, IconButton, Link, Typography, useTheme } from "@mui/material";
+import { Breadcrumbs, Grid, IconButton, Typography, useTheme } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
 import { filesize } from "filesize";
-import NextLink from "next/link";
+import type { LinkProps } from "next/link";
 import { useRouter } from "next/router";
+import type { Route } from "nextjs-routes";
 
 import { DataTable } from "../../components/DataTable";
+import { NextLink } from "../../components/NextLink";
 import { useIsUserAProjectOwnerOrEditor } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { toLocalTimeString } from "../../utils/app/datetime";
@@ -60,17 +62,21 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
             const href = {
               pathname: router.pathname,
               query: { project: currentProject.project_id, path: [...breadcrumbs, row.path] },
-            };
+            } as LinkProps<Route>["href"];
             return (
-              <NextLink legacyBehavior passHref href={href}>
-                <Link
-                  color="inherit"
-                  component="button"
-                  sx={{ display: "flex", gap: theme.spacing(1) }}
-                  variant="body1"
-                >
-                  <FolderRoundedIcon /> {getValue()}
-                </Link>
+              <NextLink
+                color="inherit"
+                component="button"
+                href={href}
+                size="small"
+                sx={{
+                  display: "flex",
+                  gap: theme.spacing(1),
+                  justifyContent: "left",
+                  maxWidth: "auto",
+                }}
+              >
+                <FolderRoundedIcon /> {getValue()}
               </NextLink>
             );
           }
@@ -137,12 +143,17 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
                     project: currentProject.project_id,
                     path: breadcrumbs.slice(0, pathIndex),
                   },
-                };
+                } as LinkProps<Route>["href"];
                 return pathIndex < breadcrumbs.length ? (
-                  <NextLink legacyBehavior passHref href={href} key={`${pathIndex}-${path}`}>
-                    <Link color="inherit" component="button" variant="body1">
-                      {path}
-                    </Link>
+                  <NextLink
+                    color="inherit"
+                    component="button"
+                    href={href}
+                    key={`${pathIndex}-${path}`}
+                    size="small"
+                    sx={{ textTransform: "none" }}
+                  >
+                    {path}
                   </NextLink>
                 ) : (
                   <Typography key={`${pathIndex}-${path}`}>{path}</Typography>

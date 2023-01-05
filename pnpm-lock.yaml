@@ -54,7 +54,7 @@ specifiers:
   identity-obj-proxy: 3.0.0
   immer: 9.0.17
   jotai: 1.12.1
-  just-compare: 2.2.2
+  just-compare: 2.3.0
   just-group-by: 2.2.0
   lint-staged: 13.1.0
   lodash-es: 4.17.21
@@ -120,7 +120,7 @@ dependencies:
   formik-mui-lab: 1.0.0_rlmorfbzoslick3jkbdggafslu
   immer: 9.0.17
   jotai: 1.12.1_react@18.2.0
-  just-compare: 2.2.2
+  just-compare: 2.3.0
   just-group-by: 2.2.0
   lodash-es: 4.17.21
   material-ui-popup-state: 4.1.0_lskpmcsdi7ipu6qpuapyu56ihm
@@ -3536,8 +3536,8 @@ packages:
       object.assign: 4.1.2
     dev: true
 
-  /just-compare/2.2.2:
-    resolution: {integrity: sha512-CdgzjlMSpfjWv4opv34bKeWmzv89hbKcjoSuJ9Y0ke/DTwFkoGfaLmmdwX5niTfKMldlzX3hJjYgWbX6qE5aRA==}
+  /just-compare/2.3.0:
+    resolution: {integrity: sha512-6shoR7HDT+fzfL3gBahx1jZG3hWLrhPAf+l7nCwahDdT9XDtosB9kIF0ZrzUp5QY8dJWfQVr5rnsPqsbvflDzg==}
     dev: false
 
   /just-group-by/2.2.0:

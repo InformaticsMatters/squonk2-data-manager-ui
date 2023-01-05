@@ -47,7 +47,7 @@
     "@next/mdx": "13.1.1",
     "@rjsf/core": "4.2.3",
     "@rjsf/material-ui": "4.2.3",
-    "@sentry/nextjs": "7.27.0",
+    "@sentry/nextjs": "7.29.0",
     "@squonk/account-server-client": "2.0.1",
     "@squonk/data-manager-client": "1.0.26",
     "@squonk/mui-theme": "3.0.1",

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import FindInPageRoundedIcon from "@mui/icons-material/FindInPageRounded";
+import { FindInPageRounded as FindInPageRoundedIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemText } from "@mui/material";
 
 import { DatasetSchemaViewModal } from "./DatasetSchemaViewModal";

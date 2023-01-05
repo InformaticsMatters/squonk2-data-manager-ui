@@ -7,7 +7,7 @@ import {
 } from "@squonk/data-manager-client/instance";
 import { getGetProjectsQueryKey } from "@squonk/data-manager-client/project";
 
-import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import { Grid, IconButton, MenuItem, TextField, Tooltip } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 

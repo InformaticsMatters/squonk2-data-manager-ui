@@ -1,7 +1,7 @@
 import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
-import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
+import { WorkOutlineRounded as WorkOutlineRoundedIcon } from "@mui/icons-material";
 import { Alert, Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
 import { usePolledGetInstance } from "../../../hooks/usePolledGetInstance";

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import { CloseRounded as CloseRoundedIcon } from "@mui/icons-material";
 import {
   Button,
   Dialog,

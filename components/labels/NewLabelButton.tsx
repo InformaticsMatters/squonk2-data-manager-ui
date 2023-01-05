@@ -2,7 +2,7 @@ import type { DmError } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
 import { useAddMetadata } from "@squonk/data-manager-client/metadata";
 
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+import { AddCircleOutlineRounded as AddCircleOutlineRoundedIcon } from "@mui/icons-material";
 import { Box, Button, IconButton, Popover, Tooltip } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { Field, Form, Formik } from "formik";

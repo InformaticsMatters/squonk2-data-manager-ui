@@ -6,7 +6,7 @@ import { getGetFilesQueryKey, useAttachFile } from "@squonk/data-manager-client/
 import { useGetProjects } from "@squonk/data-manager-client/project";
 import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
-import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
+import { AttachFileRounded as AttachFileRoundedIcon } from "@mui/icons-material";
 import { Alert, FormControl, FormGroup, ListItem, ListItemText, MenuItem } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { Field } from "formik";

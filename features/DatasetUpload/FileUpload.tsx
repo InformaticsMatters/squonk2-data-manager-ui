@@ -4,7 +4,7 @@ import type { DatasetPostBodyBody, DmError } from "@squonk/data-manager-client";
 import { uploadDataset } from "@squonk/data-manager-client/dataset";
 import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
-import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
+import { CloudUploadRounded as CloudUploadRoundedIcon } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import type { AxiosError, AxiosProgressEvent } from "axios";

@@ -5,7 +5,7 @@ import {
   useDeleteProduct,
 } from "@squonk/account-server-client/product";
 
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 

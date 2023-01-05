@@ -1,4 +1,4 @@
-import FolderSpecialRoundedIcon from "@mui/icons-material/FolderSpecialRounded";
+import { FolderSpecialRounded as FolderSpecialRoundedIcon } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 
 import { useSelectedFiles } from "../../state/fileSelection";

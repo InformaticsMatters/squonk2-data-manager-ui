@@ -1,8 +1,10 @@
 import type { OrganisationDetail, UnitDetail } from "@squonk/account-server-client";
 
-import LockIcon from "@mui/icons-material/Lock";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import {
+  Lock as LockIcon,
+  LockOpen as LockOpenIcon,
+  PersonOutline as PersonOutlineIcon,
+} from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 
 export const ItemIcons = ({ item }: { item?: OrganisationDetail | UnitDetail }) => (

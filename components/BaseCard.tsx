@@ -1,7 +1,7 @@
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { useState } from "react";
 
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import {
   Avatar,
   Card,

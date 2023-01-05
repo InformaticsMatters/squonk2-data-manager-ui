@@ -1,7 +1,7 @@
 import { getGetTaskQueryKey, useGetTask } from "@squonk/data-manager-client/task";
 
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
-import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import { Alert, Box, Container, IconButton, Tooltip, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import Head from "next/head";

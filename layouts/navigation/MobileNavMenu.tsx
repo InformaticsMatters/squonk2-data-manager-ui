@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import { MenuRounded as MenuRoundedIcon } from "@mui/icons-material";
 import {
   Divider,
   Grid,

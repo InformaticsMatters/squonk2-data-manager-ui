@@ -5,7 +5,7 @@ import {
   useDeleteDefaultUnit,
 } from "@squonk/account-server-client/unit";
 
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 

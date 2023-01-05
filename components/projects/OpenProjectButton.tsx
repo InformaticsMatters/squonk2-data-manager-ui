@@ -1,4 +1,4 @@
-import OpenInBrowserIcon from "@mui/icons-material/OpenInBrowser";
+import { OpenInBrowser as OpenInBrowserIcon } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 
 import { projectURL } from "../../utils/app/routes";

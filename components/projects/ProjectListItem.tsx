@@ -1,4 +1,4 @@
-import AccountTreeRoundedIcon from "@mui/icons-material/AccountTreeRounded";
+import { AccountTreeRounded as AccountTreeRoundedIcon } from "@mui/icons-material";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
 export interface ProjectListItemProps {

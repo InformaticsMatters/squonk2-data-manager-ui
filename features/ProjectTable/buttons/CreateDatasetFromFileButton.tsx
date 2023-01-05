@@ -4,7 +4,7 @@ import {
   useCreateDatasetFromFile,
 } from "@squonk/data-manager-client/dataset";
 
-import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import { AddCircleRounded as AddCircleRoundedIcon } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 

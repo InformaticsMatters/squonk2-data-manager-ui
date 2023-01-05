@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import type { ProjectDetail } from "@squonk/data-manager-client";
 
-import EditIcon from "@mui/icons-material/Edit";
+import { Edit as EditIcon } from "@mui/icons-material";
 import { IconButton, Tooltip, Typography } from "@mui/material";
 
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";

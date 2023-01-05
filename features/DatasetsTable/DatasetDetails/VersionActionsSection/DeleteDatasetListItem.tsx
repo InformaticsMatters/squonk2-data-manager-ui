@@ -1,7 +1,7 @@
 import type { DatasetVersionSummary, DmError } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey, useDeleteDataset } from "@squonk/data-manager-client/dataset";
 
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemText } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 

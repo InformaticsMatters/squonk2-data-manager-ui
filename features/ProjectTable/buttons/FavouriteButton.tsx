@@ -1,5 +1,7 @@
-import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
-import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import {
+  StarBorderRounded as StarBorderRoundedIcon,
+  StarRounded as StarRoundedIcon,
+} from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 
 import type { ProjectId } from "../../../hooks/projectHooks";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import SettingsIcon from "@mui/icons-material/Settings";
+import { Settings as SettingsIcon } from "@mui/icons-material";
 import { IconButton, styled, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import dynamic from "next/dynamic";
 

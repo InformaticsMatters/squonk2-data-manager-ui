@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
+import { FolderRounded as FolderRoundedIcon } from "@mui/icons-material";
 import {
   Checkbox,
   ListItem,

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import type { UnitDetail } from "@squonk/account-server-client";
 
-import EditIcon from "@mui/icons-material/Edit";
+import { Edit as EditIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 
 import { ModalWrapper } from "../../../../../components/modals/ModalWrapper";

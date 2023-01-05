@@ -3,7 +3,7 @@ import { useState } from "react";
 import type { DatasetSummary } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey, uploadDataset } from "@squonk/data-manager-client/dataset";
 
-import BackupRoundedIcon from "@mui/icons-material/BackupRounded";
+import { BackupRounded as BackupRoundedIcon } from "@mui/icons-material";
 import type { IconButtonProps } from "@mui/material";
 import {
   IconButton,

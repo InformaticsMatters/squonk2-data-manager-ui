@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 
-import { ExpandLess } from "@mui/icons-material";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import {
+  ExpandLess,
+  ExpandMore as ExpandMoreIcon,
+  SearchRounded as SearchRoundedIcon,
+} from "@mui/icons-material";
 import type {
   TableCellProps as MuiCellProps,
   TableProps as MuiTableProps,
@@ -168,14 +170,14 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
         header: ({ table }) => (
           <Box display="flex">
             <IconButton onClick={table.getToggleAllRowsExpandedHandler()}>
-              {table.getIsAllRowsExpanded() ? <ExpandLess /> : <ExpandMore />}
+              {table.getIsAllRowsExpanded() ? <ExpandLess /> : <ExpandMoreIcon />}
             </IconButton>
           </Box>
         ),
         cell: ({ row }) =>
           row.getCanExpand() ? (
             <Box {...row.getToggleExpandedHandler()} display="flex">
-              {row.getIsExpanded() ? <ExpandLess /> : <ExpandMore />}
+              {row.getIsExpanded() ? <ExpandLess /> : <ExpandMoreIcon />}
             </Box>
           ) : null,
       });

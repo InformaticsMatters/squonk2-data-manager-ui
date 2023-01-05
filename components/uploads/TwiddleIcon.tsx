@@ -1,7 +1,9 @@
 import type { FC } from "react";
 
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
+import {
+  DeleteRounded as DeleteRoundedIcon,
+  DoneRounded as DoneRoundedIcon,
+} from "@mui/icons-material";
 import { keyframes } from "@mui/material/styles";
 
 export interface TwiddleIconProps {

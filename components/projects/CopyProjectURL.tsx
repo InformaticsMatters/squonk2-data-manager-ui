@@ -1,6 +1,6 @@
 import type { ProjectDetail } from "@squonk/data-manager-client";
 
-import ShareIcon from "@mui/icons-material/Share";
+import { Share as ShareIcon } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 import { useSnackbar } from "notistack";
 

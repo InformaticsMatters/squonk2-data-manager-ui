@@ -28,6 +28,9 @@ let nextConfig = {
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages: process.env.MONOREPO ? ["@squonk/mui-theme"] : [],
+  modularizeImports: {
+    "@mui/icons-material": { transform: "@mui/icons-material/{{member}}" },
+  },
   sassOptions: {
     prependData: `$assetsURL: '${
       process.env.ASSET_URL || "https://squonk.informaticsmatters.org"

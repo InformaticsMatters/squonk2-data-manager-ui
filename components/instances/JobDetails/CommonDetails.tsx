@@ -1,7 +1,6 @@
 import type { InstanceGetResponse } from "@squonk/data-manager-client";
 
-import AppsRoundedIcon from "@mui/icons-material/AppsRounded";
-import PaymentIcon from "@mui/icons-material/Payment";
+import { AppsRounded as AppsRoundedIcon, Payment as PaymentIcon } from "@mui/icons-material";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
 export interface CommonDetailsProps {

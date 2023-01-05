@@ -7,7 +7,7 @@ import {
   usePatchProduct,
 } from "@squonk/account-server-client/product";
 
-import EditIcon from "@mui/icons-material/Edit";
+import { Edit as EditIcon } from "@mui/icons-material";
 import { Box, IconButton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { Field } from "formik";

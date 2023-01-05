@@ -3,8 +3,10 @@ import type { DropzoneState } from "react-dropzone";
 
 import type { ProjectDetail } from "@squonk/data-manager-client";
 
-import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
-import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
+import {
+  CloudUploadRounded as CloudUploadRoundedIcon,
+  FolderRounded as FolderRoundedIcon,
+} from "@mui/icons-material";
 import { Breadcrumbs, Grid, IconButton, Typography, useTheme } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
 import { filesize } from "filesize";

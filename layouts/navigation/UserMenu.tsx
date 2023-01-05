@@ -1,4 +1,4 @@
-import AccountCircle from "@mui/icons-material/AccountCircle";
+import { AccountCircle as AccountCircleIcon } from "@mui/icons-material";
 import { Box, Fade, IconButton, Paper, Popper, Tooltip } from "@mui/material";
 import { bindPopper, bindToggle, usePopupState } from "material-ui-popup-state/hooks";
 
@@ -23,7 +23,7 @@ export const UserMenu = () => {
             {...bindToggle(popupState)}
             size="large"
           >
-            <AccountCircle />
+            <AccountCircleIcon />
           </IconButton>
         </span>
       </Tooltip>

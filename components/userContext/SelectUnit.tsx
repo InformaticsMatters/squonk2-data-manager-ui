@@ -1,7 +1,7 @@
 import type { UnitGetResponse } from "@squonk/account-server-client";
 import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
 
-import ReceiptIcon from "@mui/icons-material/Receipt";
+import { Receipt as ReceiptIcon } from "@mui/icons-material";
 import type { AutocompleteProps } from "@mui/material";
 import { Autocomplete, Box, IconButton, TextField, Tooltip, Typography } from "@mui/material";
 

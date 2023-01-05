@@ -1,4 +1,4 @@
-import InventoryIcon from "@mui/icons-material/Inventory";
+import { Inventory as InventoryIcon } from "@mui/icons-material";
 import { ListItem, ListItemIcon, Tooltip } from "@mui/material";
 
 export interface ArchivedStatusProps {

@@ -63,7 +63,7 @@
     "@types/react-plotly.js": "2.5.2",
     "@types/react-virtualized": "9.21.21",
     "@types/uuid": "9.0.0",
-    "axios": "1.2.1",
+    "axios": "1.2.2",
     "dayjs": "1.11.7",
     "filesize": "10.0.5",
     "formik": "2.2.9",

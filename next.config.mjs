@@ -1,6 +1,5 @@
 import nextMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
-import nextTranspileModules from "next-transpile-modules";
 import nextRoutes from "nextjs-routes/config";
 import path from "node:path";
 
@@ -15,11 +14,6 @@ if (process.env.MONOREPO) {
   console.log("info  - Running with webpack aliases for monorepo compatibility");
 }
 
-const withTM = nextTranspileModules(
-  ["@squonk/mui-theme"],
-  { debug: false }, // Log which files get transpiled
-);
-
 const resolvePackage = (packageName) => path.resolve(__dirname, ".", "node_modules", packageName);
 
 /**
@@ -33,6 +27,7 @@ let nextConfig = {
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
+  transpilePackages: process.env.MONOREPO ? ["@squonk/mui-theme"] : [],
   sassOptions: {
     prependData: `$assetsURL: '${
       process.env.ASSET_URL || "https://squonk.informaticsmatters.org"
@@ -72,7 +67,6 @@ const sentryWebpackPluginOptions = {
 
 nextConfig = withMDX(nextConfig);
 nextConfig = withRoutes(nextConfig);
-nextConfig = process.env.MONOREPO ? withTM(nextConfig) : nextConfig;
 nextConfig = process.env.SENTRY_AUTH_TOKEN
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
   : (delete nextConfig.sentry, nextConfig); // Need to remove sentry config if not using in order to suppress warning

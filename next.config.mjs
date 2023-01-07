@@ -2,6 +2,9 @@ import nextMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
 import nextRoutes from "nextjs-routes/config";
 import path from "node:path";
+import * as url from "node:url";
+
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 const withRoutes = nextRoutes({ outDir: "types" });
 

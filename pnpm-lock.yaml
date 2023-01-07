@@ -37,7 +37,7 @@ specifiers:
   axios: 1.2.2
   dayjs: 1.11.7
   eslint: 8.31.0
-  filesize: 10.0.5
+  filesize: 10.0.6
   formik: 2.2.9
   formik-mui: 4.0.0
   formik-mui-lab: 1.0.0
@@ -104,7 +104,7 @@ dependencies:
   '@types/uuid': 9.0.0
   axios: 1.2.2
   dayjs: 1.11.7
-  filesize: 10.0.5
+  filesize: 10.0.6
   formik: 2.2.9_react@18.2.0
   formik-mui: 4.0.0_gqtnnath6tg3tebbh5w7nij2bi
   formik-mui-lab: 1.0.0_rlmorfbzoslick3jkbdggafslu
@@ -2713,9 +2713,9 @@ packages:
       tslib: 2.4.0
     dev: false
 
-  /filesize/10.0.5:
-    resolution: {integrity: sha512-qrzyt8gLh86nsyYiC3ibI5KyIYRCWg2yqIklYrWF4a0qNfekik4OQfn7AoPJG2hRrPMSlH6fET4VEITweZAzjA==}
-    engines: {node: '>= 14.0.0'}
+  /filesize/10.0.6:
+    resolution: {integrity: sha512-rzpOZ4C9vMFDqOa6dNpog92CoLYjD79dnjLk2TYDDtImRIyLTOzqojCb05Opd1WuiWjs+fshhCgTd8cl7y5t+g==}
+    engines: {node: '>= 10.4.0'}
     dev: false
 
   /fill-range/7.0.1:

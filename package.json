@@ -65,7 +65,7 @@
     "@types/uuid": "9.0.0",
     "axios": "1.2.2",
     "dayjs": "1.11.7",
-    "filesize": "10.0.5",
+    "filesize": "10.0.6",
     "formik": "2.2.9",
     "formik-mui": "4.0.0",
     "formik-mui-lab": "1.0.0",

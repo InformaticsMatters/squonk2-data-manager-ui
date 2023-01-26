@@ -7,6 +7,7 @@ import {
 
 import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { captureException } from "@sentry/nextjs";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../../../components/WarningDeleteButton";
@@ -36,6 +37,7 @@ export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
           onDelete();
         } catch (error) {
           enqueueError(getErrorMessage(error));
+          captureException(error);
         }
         organisation?.id &&
           queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id));

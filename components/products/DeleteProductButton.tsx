@@ -7,6 +7,7 @@ import {
 
 import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
+import { captureException } from "@sentry/nextjs";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
@@ -42,6 +43,7 @@ export const DeleteProductButton = ({
           enqueueSnackbar("Product deleted", { variant: "success" });
         } catch (error) {
           enqueueError(getErrorMessage(error));
+          captureException(error);
         }
       }}
     >

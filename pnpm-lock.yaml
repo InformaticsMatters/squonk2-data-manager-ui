@@ -22,7 +22,7 @@ specifiers:
   '@squonk/data-manager-client': 1.0.30
   '@squonk/eslint-config': 0.5.0
   '@squonk/mui-theme': 3.0.2
-  '@tanstack/match-sorter-utils': 8.7.2
+  '@tanstack/match-sorter-utils': 8.7.6
   '@tanstack/react-query': 4.19.1
   '@tanstack/react-query-devtools': 4.19.1
   '@tanstack/react-table': 8.7.0
@@ -90,7 +90,7 @@ dependencies:
   '@squonk/account-server-client': 2.0.1_6wgm5i5wuz3htyufgng4cfmmby
   '@squonk/data-manager-client': 1.0.30_6wgm5i5wuz3htyufgng4cfmmby
   '@squonk/mui-theme': 3.0.2_@mui+material@5.11.0
-  '@tanstack/match-sorter-utils': 8.7.2
+  '@tanstack/match-sorter-utils': 8.7.6
   '@tanstack/react-query': 4.19.1_biqbaboplfbrettd7655fr4n2y
   '@tanstack/react-query-devtools': 4.19.1_xnkyuugmv5unvdsxvtkktqsuae
   '@tanstack/react-table': 8.7.0_biqbaboplfbrettd7655fr4n2y
@@ -1207,8 +1207,8 @@ packages:
       tslib: 2.4.0
     dev: false
 
-  /@tanstack/match-sorter-utils/8.7.2:
-    resolution: {integrity: sha512-bptNeoexeDB947fWoCPwUchPSx5FA9gwzU0bkXz0du5pT8Ud2+1ob+xOgHj6EF3VN0kdXtLhwjPyhY7/dJglkg==}
+  /@tanstack/match-sorter-utils/8.7.6:
+    resolution: {integrity: sha512-2AMpRiA6QivHOUiBpQAVxjiHAA68Ei23ZUMNaRJrN6omWiSFLoYrxGcT6BXtuzp0Jw4h6HZCmGGIM/gbwebO2A==}
     engines: {node: '>=12'}
     dependencies:
       remove-accents: 0.4.2
@@ -1225,7 +1225,7 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@tanstack/match-sorter-utils': 8.7.2
+      '@tanstack/match-sorter-utils': 8.7.6
       '@tanstack/react-query': 4.19.1_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0

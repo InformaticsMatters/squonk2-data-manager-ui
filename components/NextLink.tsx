@@ -49,6 +49,8 @@ export const NextLink = ({ href, component = "a", ...props }: NextLinkProps) => 
   }
 
   // Relative URLs
+
+  // ! Passing href in this way causing prop-types error...
   return component === "a" ? (
     <Link
       {...(props as InheritedProps<LProps>)}

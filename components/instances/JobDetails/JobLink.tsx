@@ -1,7 +1,9 @@
 import { Folder } from "@mui/icons-material";
-import { Box, IconButton, Link, Tooltip, Typography } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import A from "next/link";
 import { useRouter } from "next/router";
+
+import { ViewFilePopover } from "../../ViewFilePopover/ViewFilePopover";
 
 export interface JobLinkProps {
   projectId: string;
@@ -65,6 +67,8 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
   if (type === "file" && !containsGlob) {
     const { filePath, fileName } = getFilePathAndName(resolvedPath);
 
+    console.log(filePath);
+
     return (
       <Box
         alignItems="center"
@@ -91,24 +95,7 @@ export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) =
           </A>
         </Tooltip>
 
-        <Tooltip title="Open in Plaintext Viewer">
-          <A
-            legacyBehavior
-            passHref
-            href={{
-              pathname: "/project/file",
-              query: {
-                project: projectId,
-                path: filePath,
-                file: fileName,
-              },
-            }}
-          >
-            <Link color="textSecondary" rel="noopener noreferrer" target="_blank">
-              <Typography component="span">{displayPath}</Typography>
-            </Link>
-          </A>
-        </Tooltip>
+        <ViewFilePopover fileName={fileName} path={filePath.join("/")} />
       </Box>
     );
   }

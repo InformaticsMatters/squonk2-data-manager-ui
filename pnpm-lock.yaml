@@ -64,7 +64,7 @@ specifiers:
   react-virtualized: 9.22.3
   sass: 1.57.0
   sharp: 0.31.3
-  tsafe: 1.4.1
+  tsafe: 1.4.2
   typescript: 4.9.4
   use-immer: 0.7.0
   uuid: 9.0.0
@@ -128,7 +128,7 @@ dependencies:
   react-virtualized: 9.22.3_biqbaboplfbrettd7655fr4n2y
   sass: 1.57.0
   sharp: 0.31.3
-  tsafe: 1.4.1
+  tsafe: 1.4.2
   typescript: 4.9.4
   use-immer: 0.7.0_immer@9.0.19+react@18.2.0
   uuid: 9.0.0
@@ -5366,8 +5366,8 @@ packages:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
     dev: false
 
-  /tsafe/1.4.1:
-    resolution: {integrity: sha512-3IDBalvf6SyvHFS14UiwCWzqdSdo+Q0k2J7DZyJYaHW/iraW9DJpaBKDJpry3yQs3o/t/A+oGaRW3iVt2lKxzA==}
+  /tsafe/1.4.2:
+    resolution: {integrity: sha512-KfP0PYzRjl1LY1DnJPNlD4a0tZSg4uUuZxI4aG04T+j7WJvKZbh1zpaukphhSmtoJMgX1RV8eZVKTEiH8wOGbA==}
     dev: false
 
   /tsconfig-paths/3.14.1:

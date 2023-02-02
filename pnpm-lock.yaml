@@ -52,7 +52,7 @@ specifiers:
   material-ui-popup-state: 4.1.0
   next: 13.1.6
   next-http-proxy-middleware: 1.2.5
-  nextjs-routes: 1.0.4
+  nextjs-routes: 1.0.8
   node-fetch: 3.3.0
   notistack: 2.0.8
   plotly.js-basic-dist: 2.18.1
@@ -116,7 +116,7 @@ dependencies:
   material-ui-popup-state: 4.1.0_rqh7qj4464ntrqrt6banhaqg4q
   next: 13.1.6_ufbfruihzbho6n4jkpynvghrd4
   next-http-proxy-middleware: 1.2.5
-  nextjs-routes: 1.0.4_next@13.1.6
+  nextjs-routes: 1.0.8_next@13.1.6
   node-fetch: 3.3.0
   notistack: 2.0.8_qo5tbv3wjsnulj3odbgeoxieku
   plotly.js-basic-dist: 2.18.1
@@ -4278,8 +4278,8 @@ packages:
       - babel-plugin-macros
     dev: false
 
-  /nextjs-routes/1.0.4_next@13.1.6:
-    resolution: {integrity: sha512-BdlLv1sdiH2+qXWsWrrVfW8N1dR3iV0pjUvpO4JcQyt51fLUwVPX+G5uABA/tLzkWhK3MPUcXUoc3fILfi2cmg==}
+  /nextjs-routes/1.0.8_next@13.1.6:
+    resolution: {integrity: sha512-EWBrzT0VS+SGcrhEbCUGnDlEAS6tjJSiecbSA7x75pBbcW9IYkYw7JxDMNqFhiSrvtYAL8yIWFwbQ8x0Jmz7wg==}
     peerDependencies:
       next: '*'
     dependencies:

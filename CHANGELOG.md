@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.2-rc.0...2.1.0-rc.0) (2023-02-03)
+
+
+### Features
+
+* **context:** add create & edit organisation actions ([9f3e85d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9f3e85db83f103bcb2a571512120446bfdd5114f)), closes [#870](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/870)
+* **viewers:** Replace file viewer UI & provide same options for results ([4c9d923](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4c9d923853f260dd07a39f0177ef30582d77b550)), closes [#882](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/882)
+
+
+### Bug Fixes
+
+* **delete-unit:** display toast on error ([64e44de](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/64e44de587edca0a860a2d9096369c5ddd9c66fa))
+* **nextjs:** fix nextjs routes ([1ce2428](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/1ce2428c17a32b2893e7232d245c8d87e6a2299f))
+
 ### [2.0.2-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.1...2.0.2-rc.0) (2022-12-06)
 
 

@@ -15,7 +15,7 @@ test.describe("home page", () => {
     await page.goto(baseURL);
 
     // Click text=Documentation
-    await page.locator("text=Documentation").click();
+    await page.getByRole("heading", { name: "Documentation" }).click();
     // Click text=Concepts
     await page.locator("text=Concepts").click();
     await expect(page).toHaveURL(baseURL + "/docs/concepts");
@@ -23,7 +23,7 @@ test.describe("home page", () => {
     await page.locator(squonkLogo).click();
     await expect(page).toHaveURL(baseURL);
     // Click text=Documentation
-    await page.locator("text=Documentation").click();
+    await page.getByRole("heading", { name: "Documentation" }).click();
     // Click text=Guided Tour
     await page.locator("text=Guided Tour").click();
     await expect(page).toHaveURL(baseURL + "/docs/guided-tour");
@@ -31,7 +31,7 @@ test.describe("home page", () => {
     await page.locator(squonkLogo).click();
     await expect(page).toHaveURL(baseURL);
     // Click text=Documentation
-    await page.locator("text=Documentation").click();
+    await page.getByRole("heading", { name: "Documentation" }).click();
     // Click text=How To Guides
     await page.locator("text=How To Guides").click();
     await expect(page).toHaveURL(baseURL + "/docs/how-to");
@@ -39,7 +39,7 @@ test.describe("home page", () => {
     await page.locator(squonkLogo).click();
     await expect(page).toHaveURL(baseURL);
     // Click text=Documentation
-    await page.locator("text=Documentation").click();
+    await page.getByRole("heading", { name: "Documentation" }).click();
     // Click text=Deployed jobs
     await page.locator("text=Deployed jobs").click();
     await expect(page).toHaveURL(baseURL + "/docs/jobs");
@@ -47,7 +47,7 @@ test.describe("home page", () => {
     await page.locator(squonkLogo).click();
     await expect(page).toHaveURL(baseURL);
     // Click text=Documentation
-    await page.locator("text=Documentation").click();
+    await page.getByRole("heading", { name: "Documentation" }).click();
     // Click text=Developer docs
     await page.locator("text=Developer docs").click();
     await expect(page).toHaveURL(baseURL + "/docs/developer");

@@ -31,7 +31,7 @@ export const ViewFilePopover = ({ fileName, path }: ViewFilePopoverProps) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         transformOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <FileViewersList fileName={fileName} path={path} />
+        <FileViewersList fileName={fileName} path={path} onClick={() => popupState.close()} />
       </Popover>
     </>
   );

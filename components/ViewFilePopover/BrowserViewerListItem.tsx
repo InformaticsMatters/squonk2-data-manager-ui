@@ -9,12 +9,14 @@ export interface BrowserViewerListItemProps {
   fileName: string;
   path?: string;
   projectId: NonNullable<ProjectId>;
+  onClick: () => void;
 }
 
 export const BrowserViewerListItem = ({
   fileName,
   projectId,
   path,
+  onClick,
 }: BrowserViewerListItemProps) => {
   const breadcrumbs = useProjectBreadcrumbs();
   path === undefined && (path = "/" + breadcrumbs.join("/"));
@@ -28,6 +30,7 @@ export const BrowserViewerListItem = ({
       }
       rel="noopener noreferrer"
       target="_blank"
+      onClick={() => onClick()}
     >
       <ListItemText
         primary="Browser Viewer"

@@ -8,11 +8,13 @@ import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 export interface FilePlainTextViewerListItemProps {
   fileName: string;
   path?: string;
+  onClick: () => void;
 }
 
 export const FilePlainTextViewerListItem = ({
   fileName,
   path,
+  onClick,
 }: FilePlainTextViewerListItemProps) => {
   const router = useRouter();
 
@@ -32,7 +34,12 @@ export const FilePlainTextViewerListItem = ({
         },
       }}
     >
-      <ListItemButton component="a" rel="noopener noreferrer" target="_blank">
+      <ListItemButton
+        component="a"
+        rel="noopener noreferrer"
+        target="_blank"
+        onClick={() => onClick()}
+      >
         <ListItemText primary="Plaintext Viewer" secondary="Displays the file as plaintext" />
         <ListItemIcon sx={{ ml: 2 }}>
           <DescriptionIcon color="action" />

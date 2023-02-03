@@ -7,15 +7,23 @@ import { FilePlainTextViewerListItem } from "./FilePlainTextViewerListItem";
 export interface FileViewersListProps {
   fileName: string;
   path?: string;
+  onClick: () => void;
 }
 
-export const FileViewersList = ({ fileName, path }: FileViewersListProps) => {
+export const FileViewersList = ({ fileName, path, onClick }: FileViewersListProps) => {
   const { projectId } = useCurrentProjectId();
 
   return (
     <List>
-      <FilePlainTextViewerListItem fileName={fileName} path={path} />
-      {projectId && <BrowserViewerListItem fileName={fileName} path={path} projectId={projectId} />}
+      <FilePlainTextViewerListItem fileName={fileName} path={path} onClick={onClick} />
+      {projectId && (
+        <BrowserViewerListItem
+          fileName={fileName}
+          path={path}
+          projectId={projectId}
+          onClick={onClick}
+        />
+      )}
     </List>
   );
 };

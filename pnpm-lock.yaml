@@ -62,7 +62,7 @@ specifiers:
   react-dropzone: 14.2.3
   react-plotly.js: 2.6.0
   react-virtualized: 9.22.3
-  sass: 1.57.0
+  sass: 1.58.0
   sharp: 0.31.3
   tsafe: 1.4.2
   typescript: 4.9.5
@@ -114,7 +114,7 @@ dependencies:
   just-group-by: 2.2.0
   lodash-es: 4.17.21
   material-ui-popup-state: 4.1.0_rqh7qj4464ntrqrt6banhaqg4q
-  next: 13.1.6_ufbfruihzbho6n4jkpynvghrd4
+  next: 13.1.6_5mhhrw5dq6gnbuirj2awdzvyuu
   next-http-proxy-middleware: 1.2.5
   nextjs-routes: 1.0.8_next@13.1.6
   node-fetch: 3.3.0
@@ -126,7 +126,7 @@ dependencies:
   react-dropzone: 14.2.3_react@18.2.0
   react-plotly.js: 2.6.0_react@18.2.0
   react-virtualized: 9.22.3_biqbaboplfbrettd7655fr4n2y
-  sass: 1.57.0
+  sass: 1.58.0
   sharp: 0.31.3
   tsafe: 1.4.2
   typescript: 4.9.5
@@ -156,7 +156,7 @@ packages:
       http-errors: 1.8.1
       joi: 17.6.0
       jose: 4.11.1
-      next: 13.1.6_ufbfruihzbho6n4jkpynvghrd4
+      next: 13.1.6_5mhhrw5dq6gnbuirj2awdzvyuu
       openid-client: 5.3.1
       tslib: 2.4.0
       url-join: 4.0.1
@@ -1056,7 +1056,7 @@ packages:
       '@sentry/utils': 7.29.0
       '@sentry/webpack-plugin': 1.20.0
       chalk: 3.0.0
-      next: 13.1.6_ufbfruihzbho6n4jkpynvghrd4
+      next: 13.1.6_5mhhrw5dq6gnbuirj2awdzvyuu
       react: 18.2.0
       rollup: 2.78.0
       tslib: 1.14.1
@@ -4233,7 +4233,7 @@ packages:
       - debug
     dev: false
 
-  /next/13.1.6_ufbfruihzbho6n4jkpynvghrd4:
+  /next/13.1.6_5mhhrw5dq6gnbuirj2awdzvyuu:
     resolution: {integrity: sha512-hHlbhKPj9pW+Cymvfzc15lvhaOZ54l+8sXDXJWm3OBNBzgrVj6hwGPmqqsXg40xO1Leq+kXpllzRPuncpC0Phw==}
     engines: {node: '>=14.6.0'}
     hasBin: true
@@ -4257,7 +4257,7 @@ packages:
       postcss: 8.4.14
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      sass: 1.57.0
+      sass: 1.58.0
       styled-jsx: 5.1.1_react@18.2.0
     optionalDependencies:
       '@next/swc-android-arm-eabi': 13.1.6
@@ -4284,7 +4284,7 @@ packages:
       next: '*'
     dependencies:
       chokidar: 3.5.3
-      next: 13.1.6_ufbfruihzbho6n4jkpynvghrd4
+      next: 13.1.6_5mhhrw5dq6gnbuirj2awdzvyuu
     dev: false
 
   /node-abi/3.30.0:
@@ -4962,8 +4962,8 @@ packages:
       is-regex: 1.1.4
     dev: true
 
-  /sass/1.57.0:
-    resolution: {integrity: sha512-IZNEJDTK1cF5B1cGA593TPAV/1S0ysUDxq9XHjX/+SMy0QfUny+nfUsq5ZP7wWSl4eEf7wDJcEZ8ABYFmh3m/w==}
+  /sass/1.58.0:
+    resolution: {integrity: sha512-PiMJcP33DdKtZ/1jSjjqVIKihoDc6yWmYr9K/4r3fVVIEDAluD0q7XZiRKrNJcPK3qkLRF/79DND1H5q1LBjgg==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:

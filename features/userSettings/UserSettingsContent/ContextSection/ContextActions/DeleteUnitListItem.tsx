@@ -10,7 +10,9 @@ import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../../../components/WarningDeleteButton";
+import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
+import { getErrorMessage } from "../../../../../utils/next/orvalError";
 
 export interface DeleteUnitListItem {
   unit: UnitDetail;
@@ -21,6 +23,7 @@ export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
   const [organisation] = useSelectedOrganisation();
   const queryClient = useQueryClient();
   const { mutateAsync: deleteUnit, isLoading: isDeleting } = useDeleteDefaultUnit();
+  const { enqueueError } = useEnqueueError();
 
   return (
     <WarningDeleteButton
@@ -28,8 +31,12 @@ export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
       title="Delete Unit"
       tooltipText="Delete selected unit"
       onDelete={async () => {
-        await deleteUnit();
-        onDelete();
+        try {
+          await deleteUnit();
+          onDelete();
+        } catch (error) {
+          enqueueError(getErrorMessage(error));
+        }
         organisation?.id &&
           queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id));
         queryClient.invalidateQueries(getGetUnitsQueryKey());

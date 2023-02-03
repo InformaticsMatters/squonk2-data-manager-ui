@@ -12,7 +12,6 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { filesize } from "filesize";
 import type { LinkProps } from "next/link";
 import { useRouter } from "next/router";
-import type { Route } from "nextjs-routes";
 
 import { DataTable } from "../../components/DataTable";
 import { NextLink } from "../../components/NextLink";
@@ -64,7 +63,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
             const href = {
               pathname: router.pathname,
               query: { project: currentProject.project_id, path: [...breadcrumbs, row.path] },
-            } as LinkProps<Route>["href"];
+            } as LinkProps["href"];
             return (
               <NextLink
                 color="inherit"
@@ -145,7 +144,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
                     project: currentProject.project_id,
                     path: breadcrumbs.slice(0, pathIndex),
                   },
-                } as LinkProps<Route>["href"];
+                } as LinkProps["href"];
                 return pathIndex < breadcrumbs.length ? (
                   <NextLink
                     color="inherit"

@@ -2,12 +2,11 @@ import type { ButtonProps, LinkProps } from "@mui/material";
 import { Button, Link } from "@mui/material";
 import type { LinkProps as NextJSLinkProps } from "next/link";
 import NextJSLink from "next/link";
-import type { Route } from "nextjs-routes";
 
 import { HrefButton } from "./HrefButton";
 
 interface NProps<C extends string> {
-  href: NextJSLinkProps<Route>["href"];
+  href: NextJSLinkProps["href"];
   component: C;
 }
 

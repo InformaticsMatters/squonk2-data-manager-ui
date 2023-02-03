@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import { CardContent, ListItem, ListItemIcon, ListItemText, Slide } from "@mui/material";
 import type { LinkProps } from "next/link";
-import type { Route } from "nextjs-routes";
 
 import type { ActionsParams, BaseCardProps } from "../BaseCard";
 import { BaseCard } from "../BaseCard";
@@ -16,7 +15,7 @@ import { StatusIcon } from "./StatusIcon";
 
 export interface ResultCardProps extends Omit<BaseCardProps, "actions"> {
   state?: StatusIconProps["state"];
-  href: LinkProps<Route>["href"];
+  href: LinkProps["href"];
   linkTitle: string;
   createdDateTime: DateTimeListItemProps["datetimeString"];
   collapsedByDefault: boolean;

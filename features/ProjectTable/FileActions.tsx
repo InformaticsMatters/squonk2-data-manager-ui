@@ -14,28 +14,20 @@ import { isTableDir } from "./utils";
 
 const DownloadButton = dynamic<DownloadButtonProps>(
   () => import("../../components/downloads/DownloadButton").then((mod) => mod.DownloadButton),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
+  { loading: () => <CircularProgress size="1rem" /> },
 );
 const DetachDataset = dynamic<DetachDatasetProps>(
   () => import("./buttons/DetachDataset").then((mod) => mod.DetachDataset),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
+  { loading: () => <CircularProgress size="1rem" /> },
 );
 const DeleteUnmanagedFileButton = dynamic<DeleteUnmanagedFileButtonProps>(
   () => import("./buttons/DeleteUnmanagedFileButton").then((mod) => mod.DeleteUnmanagedFileButton),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
+  { loading: () => <CircularProgress size="1rem" /> },
 );
 const CreateDatasetFromFileButton = dynamic<CreateDatasetFromFileButtonProps>(
   () =>
     import("./buttons/CreateDatasetFromFileButton").then((mod) => mod.CreateDatasetFromFileButton),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
+  { loading: () => <CircularProgress size="1rem" /> },
 );
 
 export interface FileActionsProps {

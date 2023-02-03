@@ -15,12 +15,12 @@ import { useRouter } from "next/router";
 
 import { DataTable } from "../../components/DataTable";
 import { NextLink } from "../../components/NextLink";
+import { ViewFilePopover } from "../../components/ViewFilePopover/ViewFilePopover";
 import { useIsUserAProjectOwnerOrEditor } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { toLocalTimeString } from "../../utils/app/datetime";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { FileActions } from "./FileActions";
-import { ProjectFileDetails } from "./ProjectFileDetails";
 import type { TableDir, TableFile } from "./types";
 import { useProjectFileRows } from "./useProjectFileRows";
 import { isTableDir } from "./utils";
@@ -81,7 +81,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
               </NextLink>
             );
           }
-          return <ProjectFileDetails file={row} />;
+          return <ViewFilePopover fileName={row.fileName} />;
         },
       }),
       columnHelper.accessor("owner", { header: "Owner" }),

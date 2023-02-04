@@ -102,5 +102,10 @@
     "husky": "8.0.3",
     "identity-obj-proxy": "3.0.0",
     "lint-staged": "13.1.0"
+  },
+  "nextBundleAnalysis": {
+    "budget": 358400,
+    "budgetPercentIncreaseRed": 20,
+    "showDetails": true
   }
 }

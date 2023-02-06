@@ -3,6 +3,7 @@ import {
   getGetOrganisationUnitsQueryKey,
   getGetUnitsQueryKey,
   useDeleteDefaultUnit,
+  useDeleteOrganisationUnit,
 } from "@squonk/account-server-client/unit";
 
 import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
@@ -12,19 +13,27 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../../../components/WarningDeleteButton";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
+import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
 import { getErrorMessage } from "../../../../../utils/next/orvalError";
 
 export interface DeleteUnitListItem {
   unit: UnitDetail;
+  /**
+   * Called when deletion _completes successfully_
+   */
   onDelete: () => void;
 }
 
 export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
+  const { user } = useKeycloakUser();
   const [organisation] = useSelectedOrganisation();
   const queryClient = useQueryClient();
-  const { mutateAsync: deleteUnit, isLoading: isDeleting } = useDeleteDefaultUnit();
-  const { enqueueError } = useEnqueueError();
+  const { mutateAsync: deleteDefaultUnit, isLoading: isDefaultDeleting } = useDeleteDefaultUnit();
+  const { mutateAsync: deleteUnit, isLoading: isUnitDeleting } = useDeleteOrganisationUnit();
+  const isDeleting = isDefaultDeleting || isUnitDeleting;
+
+  const { enqueueError, enqueueSnackbar } = useEnqueueError();
 
   return (
     <WarningDeleteButton
@@ -33,7 +42,12 @@ export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
       tooltipText="Delete selected unit"
       onDelete={async () => {
         try {
-          await deleteUnit();
+          if (unit.name === user.username) {
+            await deleteDefaultUnit();
+          } else {
+            await deleteUnit({ unitId: unit.id });
+          }
+          enqueueSnackbar("Unit deleted", { variant: "success" });
           onDelete();
         } catch (error) {
           enqueueError(getErrorMessage(error));

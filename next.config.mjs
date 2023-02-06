@@ -1,3 +1,4 @@
+import bundleAnalyze from "@next/bundle-analyzer";
 import nextMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
 import nextRoutes from "nextjs-routes/config";
@@ -71,6 +72,11 @@ const sentryWebpackPluginOptions = {
   environment: process.env.NODE_ENV,
 };
 
+const withBundleAnalyser = bundleAnalyze({
+  enabled: process.env.ANALYZE === "true",
+});
+
+nextConfig = withBundleAnalyser(nextConfig);
 nextConfig = withMDX(nextConfig);
 nextConfig = withRoutes(nextConfig);
 nextConfig = process.env.SENTRY_AUTH_TOKEN

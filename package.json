@@ -24,7 +24,10 @@
     "format:all": "eslint --fix --cache .",
     "test": "export $(cat .env.test.local | xargs) && playwright test",
     "test:debug": "PWDEBUG=1 pnpm t -- --headed",
-    "test:ci": "playwright test"
+    "test:ci": "playwright test",
+    "analyze": "ANALYZE=true next build",
+    "analyze:server": "BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "BUNDLE_ANALYZE=browser next build"
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [
@@ -96,6 +99,7 @@
     "yup": "0.32.11"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^13.1.6",
     "@playwright/test": "1.30.0",
     "@squonk/eslint-config": "0.5.0",
     "eslint": "8.33.0",

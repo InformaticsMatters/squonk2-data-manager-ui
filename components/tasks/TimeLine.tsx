@@ -57,7 +57,7 @@ export interface TimeLineProps {
 export const TimeLine = ({ states }: TimeLineProps) => {
   const [debug] = useEventDebugMode();
 
-  const items = (states as Array<typeof states[number]>).filter(
+  const items = (states as Array<(typeof states)[number]>).filter(
     (item) => !(!debug && isEvent(item) && item.level === "DEBUG"),
   );
   return (

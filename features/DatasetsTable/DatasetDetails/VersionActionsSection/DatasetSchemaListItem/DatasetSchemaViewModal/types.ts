@@ -2,7 +2,7 @@ import type { DatasetSchemaGetResponse } from "@squonk/data-manager-client";
 
 import type { JSON_SCHEMA_TYPES } from "./constants";
 
-export type JSONSchemaType = typeof JSON_SCHEMA_TYPES[number];
+export type JSONSchemaType = (typeof JSON_SCHEMA_TYPES)[number];
 
 // These types should be defined in the OpenAPI but currently aren't
 export interface Field {

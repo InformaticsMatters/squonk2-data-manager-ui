@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.0-rc.0...2.1.0-rc.1) (2023-02-06)
+
+
+### Bug Fixes
+
+* **delete-unit:** fix unit deletion for units that aren't personal units ([e045c6c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e045c6c8460f5a8ecb8fc1d20c70e7932581b3b8))
+
 ## [2.1.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.0.2-rc.0...2.1.0-rc.0) (2023-02-03)
 
 

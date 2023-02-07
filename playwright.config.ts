@@ -20,6 +20,7 @@ const config: PlaywrightTestConfig = {
     baseURL: BASE_URL + BASE_PATH,
     storageState: "storageState.json",
     screenshot: "on",
+    trace: "on-first-retry", // record traces on first retry of each test
   },
   timeout: 60000,
   retries: 3,

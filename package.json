@@ -102,7 +102,7 @@
     "@next/bundle-analyzer": "13.1.6",
     "@playwright/test": "1.30.0",
     "@squonk/eslint-config": "0.5.0",
-    "eslint": "8.33.0",
+    "eslint": "8.34.0",
     "husky": "8.0.3",
     "identity-obj-proxy": "3.0.0",
     "lint-staged": "13.1.1"

@@ -62,7 +62,7 @@
     "@types/node": "18.13.0",
     "@types/plotly.js-basic-dist": "1.54.1",
     "@types/prismjs": "1.26.0",
-    "@types/react": "18.0.27",
+    "@types/react": "18.0.28",
     "@types/react-plotly.js": "2.6.0",
     "@types/react-virtualized": "9.21.21",
     "@types/uuid": "9.0.0",

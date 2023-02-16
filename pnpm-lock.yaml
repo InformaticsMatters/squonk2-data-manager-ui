@@ -56,7 +56,7 @@ specifiers:
   nextjs-routes: 1.0.8
   node-fetch: 3.3.0
   notistack: 2.0.8
-  plotly.js-basic-dist: 2.18.1
+  plotly.js-basic-dist: 2.18.2
   prismjs: 1.29.0
   react: 18.2.0
   react-dom: 18.2.0
@@ -120,7 +120,7 @@ dependencies:
   nextjs-routes: 1.0.8_next@13.1.6
   node-fetch: 3.3.0
   notistack: 2.0.8_2jzjqnnmrlgpzfrvelta6rhlzm
-  plotly.js-basic-dist: 2.18.1
+  plotly.js-basic-dist: 2.18.2
   prismjs: 1.29.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -4640,8 +4640,8 @@ packages:
     hasBin: true
     dev: true
 
-  /plotly.js-basic-dist/2.18.1:
-    resolution: {integrity: sha512-eP2C+MpGWFMASU/uxABFN6Z1l5aS3tS44nMNowr1jhDhS1Pf3KP6LFPaiaXlMe7yfrSWSNGh3t+qzYtB+ha5HQ==}
+  /plotly.js-basic-dist/2.18.2:
+    resolution: {integrity: sha512-0eF3nteaXZMbsDaHHWdgddYdKS7VL5MyP7yaqTnS2S+aWAXHJhsKVUeuk9/Zd31cSMHOuk6Zv9NUQaPyyB9GIA==}
     dev: false
 
   /postcss/8.4.14:

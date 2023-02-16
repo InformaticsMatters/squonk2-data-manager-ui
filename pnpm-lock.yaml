@@ -35,7 +35,7 @@ specifiers:
   '@types/react-plotly.js': 2.6.0
   '@types/react-virtualized': 9.21.21
   '@types/uuid': 9.0.0
-  axios: 1.3.2
+  axios: 1.3.3
   dayjs: 1.11.7
   eslint: 8.34.0
   filesize: 10.0.6
@@ -88,8 +88,8 @@ dependencies:
   '@rjsf/core': 4.2.3_react@18.2.0
   '@rjsf/material-ui': 4.2.3_s5xv3g6t4lil3bhaipeotvy2vy
   '@sentry/nextjs': 7.36.0_next@13.1.6+react@18.2.0
-  '@squonk/account-server-client': 2.0.2_dw3ckzmqs7rsn3j2vj5ykoehgy
-  '@squonk/data-manager-client': 1.0.32_dw3ckzmqs7rsn3j2vj5ykoehgy
+  '@squonk/account-server-client': 2.0.2_zj2q5s7yvwd66s6xolpiernoey
+  '@squonk/data-manager-client': 1.0.32_zj2q5s7yvwd66s6xolpiernoey
   '@squonk/mui-theme': 3.0.2_@mui+material@5.11.8
   '@tanstack/match-sorter-utils': 8.7.6
   '@tanstack/react-query': 4.24.4_biqbaboplfbrettd7655fr4n2y
@@ -103,7 +103,7 @@ dependencies:
   '@types/react-plotly.js': 2.6.0
   '@types/react-virtualized': 9.21.21
   '@types/uuid': 9.0.0
-  axios: 1.3.2
+  axios: 1.3.3
   dayjs: 1.11.7
   filesize: 10.0.6
   formik: 2.2.9_react@18.2.0
@@ -1171,24 +1171,24 @@ packages:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
     dev: false
 
-  /@squonk/account-server-client/2.0.2_dw3ckzmqs7rsn3j2vj5ykoehgy:
+  /@squonk/account-server-client/2.0.2_zj2q5s7yvwd66s6xolpiernoey:
     resolution: {integrity: sha512-PjkW6WW0taVb4Olv4Y0EYlNCfCr5lWJSfbdIISQgxyKP2cKkRKhAo7dc9Vy1oiHDYDFMoqOIWMjyMhHEng3GbA==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
       '@tanstack/react-query': 4.24.4_biqbaboplfbrettd7655fr4n2y
-      axios: 1.3.2
+      axios: 1.3.3
     dev: false
 
-  /@squonk/data-manager-client/1.0.32_dw3ckzmqs7rsn3j2vj5ykoehgy:
+  /@squonk/data-manager-client/1.0.32_zj2q5s7yvwd66s6xolpiernoey:
     resolution: {integrity: sha512-+6KK9WsIMxEwiyfwF+D7y7AnKkSWgfK0TO5G5t3zifdco/CMrLIZBaIPG3cCItnB1chCjb6/JWu5rNXf3Es7qg==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
       '@tanstack/react-query': 4.24.4_biqbaboplfbrettd7655fr4n2y
-      axios: 1.3.2
+      axios: 1.3.3
     dev: false
 
   /@squonk/eslint-config/0.5.0_7kw3g6rralp5ps6mg3uyzz6azm:
@@ -1770,8 +1770,8 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /axios/1.3.2:
-    resolution: {integrity: sha512-1M3O703bYqYuPhbHeya5bnhpYVsDDRyQSabNja04mZtboLNSuZ4YrltestrLXfHgmzua4TpUqRiVKbiQuo2epw==}
+  /axios/1.3.3:
+    resolution: {integrity: sha512-eYq77dYIFS77AQlhzEL937yUBSepBfPIe8FcgEDN35vMNZKMrs81pgnyrQpwfy4NF4b4XWX1Zgx7yX+25w8QJA==}
     dependencies:
       follow-redirects: 1.15.2
       form-data: 4.0.0

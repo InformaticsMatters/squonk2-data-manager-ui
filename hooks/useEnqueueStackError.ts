@@ -8,7 +8,7 @@ export const useEnqueueError = <TError>() => {
   const { enqueueSnackbar, ...rest } = useSnackbar();
 
   const enqueueError = (error: any) => {
-    if ((error as AxiosError<TError>).isAxiosError) {
+    if (error && (error as AxiosError<TError>).isAxiosError) {
       // Axios errors propagate the API error
       enqueueSnackbar(getErrorMessage(error), { variant: "error" });
     } else if (typeof error === "string") {

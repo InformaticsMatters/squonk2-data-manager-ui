@@ -70,6 +70,7 @@ export const ResultTaskCard = ({ task, collapsedByDefault = true }: ResultTaskCa
         query: { ...query, taskId: task.id },
       }}
       linkTitle={task.purpose}
+      showDuration={false}
       state={task.processing_stage}
     />
   );

@@ -65,7 +65,8 @@ export const ResultJobCard = ({
         </CardContent>
       }
       collapsedByDefault={collapsedByDefault}
-      createdDateTime={instance.launched}
+      createdDateTime={instance.started ?? instance.launched}
+      finishedDateTime={instance.stopped}
       href={{
         pathname: "/results/instance/[instanceId]",
         query: { ...query, instanceId },

@@ -8,16 +8,24 @@ import type { ActionsParams, BaseCardProps } from "../BaseCard";
 import { BaseCard } from "../BaseCard";
 import { HorizontalList } from "../HorizontalList";
 import { NextLink } from "../NextLink";
-import type { DateTimeListItemProps } from "./DateTimeListItem";
-import { DateTimeListItem } from "./DateTimeListItem";
+import type { DateTimeListItemProps } from "./DateTimeListItem/DateTimeListItem";
+import { DateTimeListItem } from "./DateTimeListItem/DateTimeListItem";
 import type { StatusIconProps } from "./StatusIcon";
 import { StatusIcon } from "./StatusIcon";
 
 export interface ResultCardProps extends Omit<BaseCardProps, "actions"> {
+  /**
+   * Current state (task or instance state) of the result
+   */
   state?: StatusIconProps["state"];
   href: LinkProps["href"];
   linkTitle: string;
-  createdDateTime: DateTimeListItemProps["datetimeString"];
+  createdDateTime: DateTimeListItemProps["startTimestamp"];
+  finishedDateTime?: DateTimeListItemProps["endTimestamp"];
+  /**
+   * Whether the duration of the result should be displayed
+   */
+  showDuration?: DateTimeListItemProps["showDuration"];
   collapsedByDefault: boolean;
   actions: (
     params: { slideIn: boolean; setSlideIn: Dispatch<SetStateAction<boolean>> } & ActionsParams,
@@ -33,6 +41,8 @@ export const ResultCard: FC<ResultCardProps> = ({
   linkTitle,
   actions,
   createdDateTime,
+  finishedDateTime,
+  showDuration = true,
   collapsedByDefault = true,
   collapsed,
   children,
@@ -63,7 +73,11 @@ export const ResultCard: FC<ResultCardProps> = ({
               />
             </ListItem>
             {children}
-            <DateTimeListItem datetimeString={createdDateTime} />
+            <DateTimeListItem
+              endTimestamp={finishedDateTime}
+              showDuration={showDuration}
+              startTimestamp={createdDateTime}
+            />
           </HorizontalList>
         </BaseCard>
       </div>

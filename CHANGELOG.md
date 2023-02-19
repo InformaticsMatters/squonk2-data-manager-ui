@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.0-rc.1...2.1.0-rc.2) (2023-02-19)
+
+
+### Features
+
+* **result-card:** report duration of an instance ([33bfa2d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/33bfa2d3dd0cefab1434ae3dd30f5f19466101c8)), closes [#871](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/871)
+
 ## [2.1.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.0-rc.0...2.1.0-rc.1) (2023-02-06)
 
 

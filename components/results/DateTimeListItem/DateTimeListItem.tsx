@@ -1,11 +1,10 @@
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 
 import { Finished } from "./Finished";
 import { InProgress } from "./InProgress";
+
 dayjs.extend(utc);
-dayjs.extend(relativeTime);
 
 export interface DateTimeListItemProps {
   /**
@@ -29,12 +28,15 @@ export const DateTimeListItem = ({
   endTimestamp,
   showDuration,
 }: DateTimeListItemProps) => {
-  const start = dayjs.utc(startTimestamp).local();
-  const end = dayjs.utc(endTimestamp).local();
-
   if (endTimestamp === undefined) {
-    return <InProgress showDuration={showDuration} start={start} />;
+    return <InProgress showDuration={showDuration} startTimestamp={startTimestamp} />;
   }
 
-  return <Finished end={end} showDuration={showDuration} start={start} />;
+  return (
+    <Finished
+      endTimestamp={endTimestamp}
+      showDuration={showDuration}
+      startTimestamp={startTimestamp}
+    />
+  );
 };

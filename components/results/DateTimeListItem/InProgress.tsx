@@ -5,8 +5,8 @@ import utc from "dayjs/plugin/utc";
 
 import { DATE_FORMAT, TIME_FORMAT } from "../../../constants/datetimes";
 import { useElapsedTime } from "../../../hooks/useTimeElapsed";
-import { formatRelativeTime } from "../../../utils/app/datetime";
 import { ResponsiveListItem } from "./ResponsiveListItem";
+import { durationText } from "./utils";
 
 dayjs.extend(utc);
 
@@ -23,7 +23,7 @@ export const InProgress = ({ startTimestamp, showDuration }: InProgressProps) =>
   const duration = (+mountTime.current - +start + useElapsedTime({}) * 1000) / 1000;
 
   const primaryText = `${start.format(DATE_FORMAT)} ${start.format(TIME_FORMAT)} `;
-  const secondaryText = `(Duration: ${formatRelativeTime(duration)})`;
+  const secondaryText = durationText(duration);
 
   return (
     <ResponsiveListItem

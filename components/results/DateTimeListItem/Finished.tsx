@@ -2,8 +2,8 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
 import { DATE_FORMAT, TIME_FORMAT } from "../../../constants/datetimes";
-import { formatRelativeTime } from "../../../utils/app/datetime";
 import { ResponsiveListItem } from "./ResponsiveListItem";
+import { durationText } from "./utils";
 
 dayjs.extend(utc);
 
@@ -19,7 +19,7 @@ export const Finished = ({ startTimestamp, endTimestamp, showDuration }: Finishe
 
   const primaryText = `${start.local().format(DATE_FORMAT)} ${start.local().format(TIME_FORMAT)} `;
   const duration = (+end - +start) / 1000;
-  const secondaryText = `(Duration: ${formatRelativeTime(duration)})`;
+  const secondaryText = durationText(duration);
 
   return (
     <ResponsiveListItem

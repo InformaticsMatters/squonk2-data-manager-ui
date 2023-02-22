@@ -14,7 +14,7 @@ export const UserMenu = () => {
 
   return (
     <>
-      <Tooltip title="User">
+      <Tooltip title="Account">
         <span>
           <IconButton
             color="inherit"

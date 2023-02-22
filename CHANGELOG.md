@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.0...2.1.1) (2023-02-22)
+
+
+### Bug Fixes
+
+* **account-menu:** change tooltip text to account to be consistent with content header ([aeb882e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/aeb882e201e989706188b55c3d3e4aae89e163a6))
+* **products:** show correct header text with org and created columns ([2390045](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/23900455a2a6bcb57b6375183b31de418d79aafe))
+* **project-selection:** fix storage used data ([1bf5483](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/1bf548379411cdffdabd237d677e8f5824fc7808))
+* **upload:** allow and file type to be uploaded to a project ([e6750df](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e6750dfad8c77354d140e42d3e1a3e69eea9eb34))
+
 ## [2.1.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.0-rc.2...2.1.0) (2023-02-19)
 
 ## [2.1.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.0-rc.1...2.1.0-rc.2) (2023-02-19)

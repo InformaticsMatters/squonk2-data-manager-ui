@@ -63,7 +63,7 @@ export const ProjectStatsSection = () => {
         header: "Instances used",
         id: "instancesUsed",
       }),
-      projectColumnHelper.accessor((row) => row.instance.coins.used, {
+      projectColumnHelper.accessor((row) => row.storage.coins.used, {
         header: "Storage used",
         id: "storageUsed",
       }),

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.1...2.1.2) (2023-02-22)
+
+
+### Bug Fixes
+
+* **mdx:** fix links on guided tour page ([f5fa16e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f5fa16efce7aa4067505249712094d5ee9141ad6))
+
 ### [2.1.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.0...2.1.1) (2023-02-22)
 
 

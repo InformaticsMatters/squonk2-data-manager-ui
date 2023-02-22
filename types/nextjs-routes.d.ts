@@ -23,6 +23,7 @@ declare module "nextjs-routes" {
     | StaticRoute<"/docs/how-to/login">
     | StaticRoute<"/docs/how-to/projects-tab">
     | StaticRoute<"/docs/how-to/results">
+    | StaticRoute<"/docs/how-to/usage-quotas">
     | StaticRoute<"/docs/how-to">
     | StaticRoute<"/docs/jobs">
     | StaticRoute<"/executions">

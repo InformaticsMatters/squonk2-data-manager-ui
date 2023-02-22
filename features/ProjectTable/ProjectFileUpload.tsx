@@ -12,7 +12,6 @@ import { useSnackbar } from "notistack";
 
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
-import { useFileExtensions } from "../../hooks/useFileExtensions";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { FileHoverCover } from "./FileHoverCover";
 
@@ -21,8 +20,6 @@ export interface ProjectFileUploadProps {
 }
 
 export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
-  const { mapping } = useFileExtensions();
-
   const { projectId } = useCurrentProjectId();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -71,7 +68,6 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     noClick: true,
-    accept: mapping,
   });
 
   return (

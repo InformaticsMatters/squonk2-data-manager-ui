@@ -107,7 +107,9 @@ const Executions = () => {
     const jobCards =
       jobs
         // Filter the apps by the search value
-        ?.filter(({ keywords, category, name }) => search([keywords, category, name], searchValue))
+        ?.filter(({ keywords, category, name, job, description }) =>
+          search([keywords, category, name, job, description], searchValue),
+        )
         // Then create a card for each
         ?.map((job) => (
           <Grid item key={job.id} md={3} sm={6} xs={12}>

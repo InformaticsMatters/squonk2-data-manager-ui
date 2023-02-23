@@ -1,9 +1,16 @@
 import { useState } from "react";
 
-import { Button, Tooltip } from "@mui/material";
+import { Button, CircularProgress, Tooltip } from "@mui/material";
+import dynamic from "next/dynamic";
 
 import type { ApplicationModalProps } from "./ApplicationModal";
-import { ApplicationModal } from "./ApplicationModal";
+
+const ApplicationModal = dynamic<ApplicationModalProps>(
+  () => import("./ApplicationModal").then((mod) => mod.ApplicationModal),
+  {
+    loading: () => <CircularProgress size="1rem" />,
+  },
+);
 
 export type ApplicationModalButtonProps = Pick<
   ApplicationModalProps,

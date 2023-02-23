@@ -3,7 +3,7 @@ import type { ApplicationSummary } from "@squonk/data-manager-client";
 import { CircularProgress, useTheme } from "@mui/material";
 import dynamic from "next/dynamic";
 
-import type { BaseCardProps } from "../../BaseCard";
+import { BaseCard } from "../../BaseCard";
 import type { InstancesListProps } from "../InstancesList";
 import type { ApplicationModalButtonProps } from "./ApplicationModalButton";
 
@@ -14,11 +14,6 @@ const ApplicationModalButton = dynamic<ApplicationModalButtonProps>(
 
 const InstancesList = dynamic<InstancesListProps>(
   () => import("../InstancesList").then((mod) => mod.InstancesList),
-  { loading: () => <CircularProgress size="1rem" /> },
-);
-
-const BaseCard = dynamic<BaseCardProps>(
-  () => import("../../BaseCard").then((mod) => mod.BaseCard),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 

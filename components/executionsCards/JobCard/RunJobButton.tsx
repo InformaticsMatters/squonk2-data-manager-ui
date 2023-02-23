@@ -2,14 +2,18 @@ import { useState } from "react";
 
 import type { JobSummary } from "@squonk/data-manager-client";
 
-import { Button, Tooltip } from "@mui/material";
+import { Button, CircularProgress, Tooltip } from "@mui/material";
+import dynamic from "next/dynamic";
 
 import type { JobModalProps } from "./JobModal";
-import { JobModal } from "./JobModal";
 
 export interface RunJobButtonProps extends Pick<JobModalProps, "jobId" | "onLaunch" | "projectId"> {
   disabled: JobSummary["disabled"];
 }
+
+const JobModal = dynamic<JobModalProps>(() => import("./JobModal").then((mod) => mod.JobModal), {
+  loading: () => <CircularProgress size="1rem" />,
+});
 
 /**
  * MuiButton that control a modal with options to create a new instance of a job

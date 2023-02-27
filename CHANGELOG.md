@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.3...2.2.0) (2023-02-27)
+
+
+### Features
+
+* **config-page:** Add a configuration page that displays publically available info. This is for easier debug. ([fc11664](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fc11664c0f17fff1f212871cb1ff7c20e2a89a16))
+
+
+### Bug Fixes
+
+* **executions:** job search applies to job and description fields ([71907dd](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/71907dd049adea9cfa847cc33caa306b6334194c))
+
 ### [2.1.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.2...2.1.3) (2023-02-22)
 
 ### [2.1.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.1...2.1.2) (2023-02-22)

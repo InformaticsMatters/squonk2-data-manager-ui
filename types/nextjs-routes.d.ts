@@ -10,6 +10,7 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/api/auth/[...auth0]", { "auth0": string[] }>
     | DynamicRoute<"/api/dm-api/[...dmProxy]", { "dmProxy": string[] }>
     | DynamicRoute<"/api/viewer-proxy/[...viewerProxy]", { "viewerProxy": string[] }>
+    | StaticRoute<"/configuration">
     | DynamicRoute<"/dataset/[datasetId]/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>
     | StaticRoute<"/datasets">
     | StaticRoute<"/docs/concepts">

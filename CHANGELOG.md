@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.2.0...2.2.1) (2023-02-27)
+
+
+### Bug Fixes
+
+* **config-page:** display current env values instead of statically built values ([5afc85e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5afc85ea0611b2a8de07cd0a2cb8b983c4eef57e))
+
 ## [2.2.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.1.3...2.2.0) (2023-02-27)
 
 

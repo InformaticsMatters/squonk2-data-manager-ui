@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.2-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.2.1...2.2.2-rc.0) (2023-02-28)
+
+
+### Bug Fixes
+
+* **project-selection:** fix join of project and product info so all projects are always shown ([478dece](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/478dece78e8207657e7603f99c9c120c809f9d0d))
+
 ### [2.2.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.2.0...2.2.1) (2023-02-27)
 
 

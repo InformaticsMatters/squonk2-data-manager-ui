@@ -1,22 +1,25 @@
-import type { ProductDmProjectTier } from "@squonk/account-server-client";
+import type {
+  ProductCoinsDetail,
+  ProductDmStorageDetail,
+  ProductInstanceDetail,
+} from "@squonk/account-server-client";
 
 import { UsageChart } from "./UsageChart";
 
 export interface ProjectUsageChartProps {
-  /**
-   * Information about project subscription.
-   */
-  projectSubscription: ProductDmProjectTier;
+  coins: ProductCoinsDetail;
+  instance: ProductInstanceDetail;
+  storage: ProductDmStorageDetail;
 }
 
 /**
  * Displays bar chart with project subscription info.
  */
-export const ProjectUsageChart = ({ projectSubscription }: ProjectUsageChartProps) => {
-  const allowance = projectSubscription.coins.allowance;
-  const instancesUsed = projectSubscription.instance.coins.used;
-  const storagePredicted = projectSubscription.coins.billing_prediction;
-  const storageUsed = projectSubscription.storage.coins.used;
+export const ProjectUsageChart = ({ coins, instance, storage }: ProjectUsageChartProps) => {
+  const allowance = coins.allowance;
+  const instancesUsed = instance.coins.used;
+  const storagePredicted = coins.billing_prediction;
+  const storageUsed = storage.coins.used;
 
   const available = Math.max(allowance - (storageUsed + storagePredicted + instancesUsed), 0);
 
@@ -27,7 +30,5 @@ export const ProjectUsageChart = ({ projectSubscription }: ProjectUsageChartProp
     { type: "Available", value: available, color: "green" },
   ];
 
-  return (
-    <UsageChart chartData={chartData} unitCost={projectSubscription.storage.coins.unit_cost} />
-  );
+  return <UsageChart chartData={chartData} unitCost={storage.coins.unit_cost} />;
 };

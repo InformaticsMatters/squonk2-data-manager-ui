@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
-import type { ProductDmStorage } from "@squonk/account-server-client";
+import type { ProductDmProjectTier, ProductDmStorage } from "@squonk/account-server-client";
+import type { ProjectDetail } from "@squonk/data-manager-client";
 
 import { Box, useTheme } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -14,11 +15,10 @@ import { ProjectActions } from "./ProjectActions";
 import { ProjectSelectionRadio } from "./ProjectSelectionRadio";
 import { ProjectUsageChart } from "./ProjectUsageChart";
 import { StorageUsageChart } from "./StorageUsageChart";
-import type { ProductDmProjectTierAndOwner } from "./useProjectSubscriptions";
 import { useProjectSubscriptions } from "./useProjectSubscriptions";
 import { useStorageSubscriptions } from "./useStorageSubscriptions";
 
-const projectColumnHelper = createColumnHelper<ProductDmProjectTierAndOwner>();
+const projectColumnHelper = createColumnHelper<Partial<ProductDmProjectTier> & ProjectDetail>();
 const datasetStorageColumnHelper = createColumnHelper<ProductDmStorage>();
 
 /**
@@ -42,14 +42,14 @@ export const ProjectStatsSection = () => {
       projectColumnHelper.display({
         id: "projectSelection",
         enableSorting: false,
-        cell: ({ row }) => <ProjectSelectionRadio projectProduct={row.original} />,
+        cell: ({ row }) => <ProjectSelectionRadio projectId={row.original.project_id} />,
       }),
-      projectColumnHelper.accessor((row) => row.claim?.name, {
+      projectColumnHelper.accessor((row) => row.name, {
         id: "projectName",
         header: "Project name",
       }),
       projectColumnHelper.accessor("owner", { header: "Owner" }),
-      projectColumnHelper.accessor((row) => formatTierString(row.product.flavour ?? ""), {
+      projectColumnHelper.accessor((row) => formatTierString(row.product?.flavour ?? ""), {
         id: "tier",
         header: "Tier",
       }),
@@ -57,24 +57,34 @@ export const ProjectStatsSection = () => {
         id: "usage",
         header: "Usage",
         enableSorting: false,
-        cell: ({ row }) => <ProjectUsageChart projectSubscription={row.original} />,
+        cell: ({ row }) =>
+          row.original.coins &&
+          row.original.instance &&
+          row.original.storage && (
+            <ProjectUsageChart
+              coins={row.original.coins}
+              instance={row.original.instance}
+              storage={row.original.storage}
+            />
+          ),
       }),
-      projectColumnHelper.accessor((row) => row.instance.coins.used, {
+      projectColumnHelper.accessor((row) => row.instance?.coins.used, {
         header: "Instances used",
         id: "instancesUsed",
       }),
-      projectColumnHelper.accessor((row) => row.storage.coins.used, {
+      projectColumnHelper.accessor((row) => row.storage?.coins.used, {
         header: "Storage used",
         id: "storageUsed",
       }),
-      projectColumnHelper.accessor((row) => row.coins.allowance, {
+      projectColumnHelper.accessor((row) => row.coins?.allowance, {
         header: "Allowance",
         id: "allowance",
       }),
       projectColumnHelper.display({
         id: "actions",
         header: "Actions",
-        cell: ({ row }) => <ProjectActions projectProduct={row.original} />,
+        cell: ({ row }) =>
+          row.original.product && <ProjectActions productId={row.original.product.id} />,
       }),
     ],
     [],
@@ -120,7 +130,7 @@ export const ProjectStatsSection = () => {
       <DataTable
         columns={projectsColumns}
         customRowProps={(row) =>
-          row.original.claim?.id === currentProjectId
+          currentProjectId !== undefined && row.original.project_id === currentProjectId
             ? { style: { backgroundColor: theme.palette.action.hover } }
             : {}
         }
@@ -137,6 +147,7 @@ export const ProjectStatsSection = () => {
         }}
         data={projectSubscriptions}
         enableSearch={false}
+        getRowId={(row) => row.project_id}
         isLoading={isProjectSubscriptionsLoading}
         tableContainer={false}
       />

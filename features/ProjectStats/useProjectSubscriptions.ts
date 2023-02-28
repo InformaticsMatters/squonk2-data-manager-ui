@@ -1,6 +1,7 @@
-import { useMemo } from "react";
-
-import type { ProductDmProjectTier } from "@squonk/account-server-client";
+import type {
+  ProductDmProjectTier,
+  ProductsGetResponseProductsItem,
+} from "@squonk/account-server-client";
 import { useGetProducts } from "@squonk/account-server-client/product";
 import type { ProjectDetail } from "@squonk/data-manager-client";
 import { useGetProjects } from "@squonk/data-manager-client/project";
@@ -8,9 +9,12 @@ import { useGetProjects } from "@squonk/data-manager-client/project";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 
-export type ProductDmProjectTierAndOwner = ProductDmProjectTier & {
-  owner?: ProjectDetail["owner"];
-};
+export type ProjectSubscription = Partial<ProductDmProjectTier> & ProjectDetail;
+
+const isProjectProduct = (
+  product: ProductsGetResponseProductsItem,
+): product is ProductDmProjectTier =>
+  product.product.type === "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION";
 
 /**
  * Fetches information about account's project subscriptions.
@@ -32,41 +36,30 @@ export const useProjectSubscriptions = () => {
     isLoading: isProductsLoading,
     isError: isProductsError,
   } = useGetProducts();
-  const products = productsData?.products;
+  const products = productsData?.products.filter(isProjectProduct);
 
-  const projectSubscriptions: ProductDmProjectTierAndOwner[] = useMemo(() => {
-    const joinedProjectProduct = projects
-      ?.map(({ product_id, owner }) => {
-        const product = products
-          ?.filter(
-            (product): product is ProductDmProjectTier =>
-              product.product.type === "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
-          )
-          ?.find((product) => product.product.id === product_id);
+  // const projectProductIds = projects?.map((project) => project.project_id) ?? [];
+  // const projectsWithoutProductsInResponse = products?.filter(
+  //   (product) => !projectProductIds.includes(product.product.id),
+  // );
 
-        if (product !== undefined) {
-          return { ...product, owner };
-        }
-      })
-      .filter((item): item is NonNullable<typeof item> => item !== undefined);
+  let joinedProjectProducts: ProjectSubscription[] =
+    projects?.map((project) => ({
+      ...products?.find((product) => product.product.id === project.product_id),
+      ...project,
+    })) ?? [];
 
-    if (joinedProjectProduct) {
-      let projects: ProductDmProjectTierAndOwner[] = joinedProjectProduct;
-      if (organisation) {
-        projects = joinedProjectProduct.filter(
-          (project) => project.organisation.id === organisation.id,
-        );
-      }
-      if (unit) {
-        projects = joinedProjectProduct.filter((project) => project.unit.id === unit.id);
-      }
-      return projects;
-    }
-    return [];
-  }, [products, projects, unit, organisation]);
+  if (organisation) {
+    joinedProjectProducts = joinedProjectProducts.filter(
+      (entry) => entry.organisation?.id === organisation.id,
+    );
+  }
+  if (unit) {
+    joinedProjectProducts = joinedProjectProducts.filter((entry) => entry.unit_id === unit.id);
+  }
 
   return {
-    projectSubscriptions,
+    projectSubscriptions: joinedProjectProducts,
     isLoading: isProjectsLoading || isProductsLoading,
     isError: isProjectsError || isProductsError,
   };

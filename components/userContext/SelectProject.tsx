@@ -1,13 +1,12 @@
-import type { ProductDmProjectTier } from "@squonk/account-server-client";
-
 import type { AutocompleteProps } from "@mui/material";
 import { Autocomplete, TextField } from "@mui/material";
 
+import type { ProjectSubscription } from "../../features/ProjectStats/useProjectSubscriptions";
 import { useProjectSubscriptions } from "../../features/ProjectStats/useProjectSubscriptions";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 
 export type SelectProjectProps = Omit<
-  AutocompleteProps<ProductDmProjectTier, false, false, false>,
+  AutocompleteProps<ProjectSubscription, false, false, false>,
   "renderInput" | "options"
 >;
 
@@ -21,11 +20,11 @@ export const SelectProject = (props: SelectProjectProps) => {
     <Autocomplete
       {...props}
       fullWidth
-      getOptionLabel={(option) => option.product.name ?? "Missing name"}
+      getOptionLabel={(option) => option.name}
       loading={isProjectSubscriptionsLoading}
       options={projectSubscriptions}
       renderInput={(params) => <TextField {...params} label="Project" />}
-      value={projectSubscriptions.find((sub) => sub.claim?.id == projectId) ?? null}
+      value={projectSubscriptions.find((sub) => sub.project_id === projectId) ?? null}
       onChange={(_, value) => setCurrentProjectId(value?.claim?.id ?? undefined)}
     />
   );

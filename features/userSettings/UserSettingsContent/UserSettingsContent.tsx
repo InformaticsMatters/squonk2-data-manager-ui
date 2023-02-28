@@ -33,6 +33,10 @@ export const UserSettingsContent = () => {
 
       <PageSection level={2} title="Project Stats">
         <ProjectStatsSection />
+        <Typography sx={{ mt: 1 }} textAlign="right">
+          Missing info in the above tables indicates you are missing access to product stats
+          belonging to another user.
+        </Typography>
         <Tooltip title="Deselect project">
           <Button
             onClick={() => {

@@ -1,0 +1,104 @@
+import Head from "next/head";
+
+import { Container } from "@mui/material";
+
+import { DocsNav } from "../../../components/DocsNav";
+import Layout from "../../../layouts/Layout";
+
+import subscription from "../assets/dataset-subscription.png"
+import listing from "../assets/dataset-listing.png"
+import attach from "../assets/dataset-attach.png"
+
+<Head>
+  <title>Using datasets - a How To guide</title>
+</Head>
+
+<DocsNav />
+
+## Using datasets - a How To guide
+
+Whilst you can handle files ina project, those files are not rigorously managed and you are left to do pretty well
+whatever you want with them. If you want to mange your important data in a more rigorous manner then you should use
+*Datasets*. *Datasets* have the following advantages:
+
+* A dataset is a single copy of a file that can be added to multiple projects
+* Datasets can be versioned
+* Datasets can have labels associated with them, allowing facile filtering
+* Datasets have metadata associated with them to describe how they were created and what data fields they contain
+* Datasets that contain molecules have those molecules indexed by the RDKit cartridge, potentially allowing to find
+  molecules or similar molecules in other datasets.
+
+Datasets use storage, and so to use them you need a dataset subscription. These are managed and billed at the *unit*
+level.
+
+### Creating a dataset subscription
+
+1. Click the *Products* link in the footer to show all products.
+2. In the *Datasets* section select the appropriate *Organisation* and *Unit*, then specify a name and the *Allowance*
+(in MB) and click the *CREATE* button. The subscription will be added to the list.
+
+<Image src={subscription} alt="Dataset subscription" />
+
+### Datasets tab
+
+This is the first of the 4 main tabs. On it you see the list of datasets that are accessible to you.
+You can apply certain filters to restrict the datasets you see.
+
+<Image src={listing} alt="Dataset listing" />
+
+If you click on the details for a dataset you can update the labels and create a new version of the dataset. You can view
+the dataset, delete it or attach it ot a project.
+
+### Uploading a dataset
+
+Click on the upload icon in the top left corner and use the popup you see to choose the files from your computer to
+upload. When you have selected the files click the *UPLOAD* button.
+
+Only particular types of files (specific file extensions) can be uploaded as datasets. We recognise these using well
+defined file extensions and associate a Mime type to each one.
+A (not necessarily complete) list of supported types is:
+
+| Extensions   | Mine type                         | Description              |
+|--------------|-----------------------------------|--------------------------|
+| .json        | squonk/x-dataset-molecule-v2+json | Squonk molecules as JSON |
+| .schema      | squonk/x-dataset-schema+json      | Squonk dataset schema    |
+| .mol         | chemical/x-mdl-molfile            | MDL molfile              |
+| .mol2        | chemical/x-mol2                   | Tripos Mol2 file         |
+| .csv         | text/csv                          | Comma separated text     |
+| .tab         | text/tab-separated-values         | Tab separated text       |
+| .pdb         | chemical/x-pdb                    | Protein Data Bank file   |
+| .prm         | squonk/x-rdock-prm                | rDock config file        |
+| .as          | squonk/x-rdock-as                 | rDock active site definition |
+| .phar         | squonk/align-it-phar              | Silicos-it's pharmacophore file |
+| .smi         | squonk/x-smiles                   | SMILES using Squonk's conventions |
+| .sdf         | chemical/x-mdl-sdfile             | MDL SD-file             |
+
+File must have the specified extensions or be gzipped and have the specified extension followed by .gz e.g. for SD-files
+files named `molecules.sdf` or `molecules.sdf.gz` are allowed. We will add additional types as required.
+
+### Attaching a dataset to a project
+
+When viewing the details of a dataset there is an option to attach the dataset to a project. This applies to the specific
+version of the dataset that you are inspecting.
+
+<Image src={attach} alt="Dataset attach" />
+
+When attaching a dataset to a project you have the following options:
+
+* the project to attach to
+* the name and path of the file to create in the project
+* the format (specified as a mime type). A small number of format conversions are supported, but typically use the original format
+* whether to make the file read-only (immutable)
+* whether to compress the file with gzip
+
+When a dataset is attached to a project the file that is created is a copy of the dataset.
+
+### Making a project file a dataset
+
+By running jobs or applications you may create files that are important and want to make a dataset from the file.
+You can do this using the "Create dataset from this unmanaged file" action in the *Projects* window.
+This will create a new dataset from the file, utilising any metadata that might have been generated if the file had
+been created with a Squonk job.
+
+
+export default ({ children }) => <Layout><Container>{children}</Container></Layout>

@@ -29,9 +29,6 @@ export interface SettingsControls {
   openSettings: () => void;
 }
 
-/**
- * Desktop / Tablet toolbar contents
- */
 export const NavBarContents = () => {
   const theme = useTheme();
   const { user } = useKeycloakUser();

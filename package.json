@@ -73,7 +73,7 @@
     "formik-mui": "4.0.0",
     "formik-mui-lab": "1.0.0",
     "immer": "9.0.19",
-    "jotai": "1.13.1",
+    "jotai": "2.0.3",
     "just-compare": "2.3.0",
     "just-group-by": "2.2.0",
     "ketcher-core": "2.7.2",

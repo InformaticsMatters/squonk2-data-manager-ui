@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.2.2-rc.0...2.3.0-rc.0) (2023-03-05)
+
+
+### Features
+
+* **sketcher:** add option to enter SMILEs in jobs' inputs and a sketcher to draw molecules ([2f80736](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2f80736bc873af883653850668634a518a4dcc3a))
+* **sketcher:** add sketcher smiles input component ([08d9f07](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/08d9f076907517fcbe7816e72faea865150f3afa))
+
+
+### Bug Fixes
+
+* disable run, rerun and delete/terminate buttons when the user isn't a project editor ([342a0af](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/342a0af3be8ee8c3d25bdaffcce4bcca2ce8a476))
+* **instance-page:** fix terminate/delete instance texts ([858af19](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/858af193c80919770452c158c8daa75d46dc6d59))
+* **navigation:** remove instanceId when navigating away from [instanceId] ([4513108](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4513108f38031c4a5b492a512e3e6730f9bf44f3))
+* **project-selection:** display view project button for all projects and filter out projects in magic units ([f24cfd2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f24cfd24af07fecf77edea29321c38fd92bb4b9d))
+
 ### [2.2.2-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.2.1...2.2.2-rc.0) (2023-02-28)
 
 

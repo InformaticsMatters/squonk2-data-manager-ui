@@ -6,6 +6,7 @@ import { useGetProducts } from "@squonk/account-server-client/product";
 import type { ProjectDetail } from "@squonk/data-manager-client";
 import { useGetProjects } from "@squonk/data-manager-client/project";
 
+import { MAGIC_UNIT } from "../../constants/units";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 
@@ -44,10 +45,12 @@ export const useProjectSubscriptions = () => {
   // );
 
   let joinedProjectProducts: ProjectSubscription[] =
-    projects?.map((project) => ({
-      ...products?.find((product) => product.product.id === project.product_id),
-      ...project,
-    })) ?? [];
+    projects
+      ?.filter((project) => project.unit_id !== MAGIC_UNIT)
+      .map((project) => ({
+        ...products?.find((product) => product.product.id === project.product_id),
+        ...project,
+      })) ?? [];
 
   if (organisation) {
     joinedProjectProducts = joinedProjectProducts.filter(

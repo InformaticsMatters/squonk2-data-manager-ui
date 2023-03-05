@@ -1,23 +1,23 @@
-import type { ProductDetail } from "@squonk/account-server-client";
-import { useGetProjects } from "@squonk/data-manager-client/project";
+import { useGetProject } from "@squonk/data-manager-client/project";
 
 import { Box, CircularProgress } from "@mui/material";
 
 import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkIconButton";
 import { EditProjectButton } from "../../../components/projects/EditProjectButton";
 import { OpenProjectButton } from "../../../components/projects/OpenProjectButton";
+import type { ProjectId } from "../../../hooks/projectHooks";
 import { DeleteProjectButton } from "./DeleteProjectButton";
 
 export interface ProjectActionsProps {
-  productId: ProductDetail["id"];
+  projectId: NonNullable<ProjectId>;
+  isEditor: boolean;
 }
 
 /**
  * Table cell with edit and delete actions for provided project product.
  */
-export const ProjectActions = ({ productId }: ProjectActionsProps) => {
-  const { data, isLoading } = useGetProjects();
-  const project = data?.projects.find((project) => project.product_id === productId);
+export const ProjectActions = ({ projectId, isEditor }: ProjectActionsProps) => {
+  const { data: project, isLoading } = useGetProject(projectId);
 
   if (isLoading) {
     return <CircularProgress size="1rem" />;
@@ -25,10 +25,10 @@ export const ProjectActions = ({ productId }: ProjectActionsProps) => {
 
   return project ? (
     <Box display="flex">
-      <OpenProjectButton projectId={project.project_id} />
-      <EditProjectButton project={project} />
-      <DeleteProjectButton project={project} />
-      <ChargesLinkIconButton productId={project.product_id} />
+      <OpenProjectButton projectId={projectId} />
+      {isEditor && <EditProjectButton project={project} />}
+      {isEditor && <DeleteProjectButton project={project} />}
+      {isEditor && <ChargesLinkIconButton productId={project.product_id} />}
     </Box>
   ) : null;
 };

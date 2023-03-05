@@ -9,6 +9,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "../../components/DataTable";
 import { ChargesLinkIconButton } from "../../components/products/ChargesLinkIconButton";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { formatTierString } from "../../utils/app/products";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { ProjectActions } from "./ProjectActions";
@@ -27,6 +28,8 @@ const datasetStorageColumnHelper = createColumnHelper<ProductDmStorage>();
 export const ProjectStatsSection = () => {
   const theme = useTheme();
   const { projectId: currentProjectId } = useCurrentProjectId();
+
+  const { user } = useKeycloakUser();
 
   const { projectSubscriptions, isLoading: isProjectSubscriptionsLoading } =
     useProjectSubscriptions();
@@ -83,11 +86,15 @@ export const ProjectStatsSection = () => {
       projectColumnHelper.display({
         id: "actions",
         header: "Actions",
-        cell: ({ row }) =>
-          row.original.product && <ProjectActions productId={row.original.product.id} />,
+        cell: ({ row }) => (
+          <ProjectActions
+            isEditor={!!user.username && row.original.editors.includes(user.username)}
+            projectId={row.original.project_id}
+          />
+        ),
       }),
     ],
-    [],
+    [user.username],
   );
 
   const storageColumns = useMemo(

@@ -135,7 +135,7 @@ export const JobModal = ({
 
   return (
     <ModalWrapper
-      DialogProps={{ maxWidth: "sm", fullWidth: true }}
+      DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`job-${jobId}`}
       open={open}
       submitText="Run"
@@ -160,8 +160,8 @@ export const JobModal = ({
               {job.variables.inputs && (
                 <>
                   <Grid item xs={12}>
-                    <Typography component="h3" variant="subtitle1">
-                      <b>Inputs</b>
+                    <Typography component="h3" fontWeight="bold" variant="subtitle1">
+                      Inputs
                     </Typography>
                   </Grid>
                   <JobInputFields
@@ -177,8 +177,8 @@ export const JobModal = ({
               <Grid item xs={12}>
                 {job.variables.options && (
                   <>
-                    <Typography component="h3" variant="subtitle1">
-                      <b>Options</b>
+                    <Typography component="h3" fontWeight="bold" variant="subtitle1">
+                      Options
                     </Typography>
                     <Form
                       liveValidate

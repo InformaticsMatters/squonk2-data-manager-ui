@@ -8,7 +8,7 @@ import { ViewFilePopover } from "../../ViewFilePopover/ViewFilePopover";
 export interface JobLinkProps {
   projectId: string;
   path: string;
-  type?: "file" | "files" | "directory";
+  isFile?: boolean;
 }
 
 /**
@@ -58,16 +58,14 @@ const getFilePathAndName = (path: string[]) => {
 /**
  * Creates a link to a task's input or output depending on the type and path.
  */
-export const JobLink = ({ projectId, path: originalPath, type }: JobLinkProps) => {
+export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps) => {
   const { query } = useRouter();
   const path = getPath(originalPath);
   const { resolvedPath, containsGlob } = getResolvedPath(path);
   const displayPath = path.join("/");
 
-  if (type === "file" && !containsGlob) {
+  if (isFile && !containsGlob) {
     const { filePath, fileName } = getFilePathAndName(resolvedPath);
-
-    console.log(filePath);
 
     return (
       <Box

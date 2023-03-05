@@ -1,16 +1,18 @@
-import type { Dispatch, SetStateAction } from "react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 
 import { Grid, Typography } from "@mui/material";
 
 import type { ProjectId } from "../../../hooks/projectHooks";
+import { FILE_PROTOCOL } from "../../../utils/app/urls";
 import { FileSelector } from "../../FileSelector";
 import type { InputData } from "./JobModal";
+import { MultipleMoleculeInput } from "./MultipleMoleculeInput";
 
 // Define types for the form schema as the Open API spec doesn't define these (just gives string)
 // These might be defined in the form generator types?
-interface InputFieldSchema {
+export interface InputFieldSchema {
   title: string;
-  type: "directory" | "file";
+  type: "directory" | "file" | "molecule" | "molecules";
   "mime-types"?: string[];
   multiple?: true;
   default?: string;
@@ -57,24 +59,65 @@ export const JobInputFields = ({
     <>
       {Object.entries(inputs.properties).map(
         ([key, { title, type, multiple, "mime-types": mimeTypes }]) => {
+          if (type === "file" || type === "directory") {
+            return (
+              <InputSection key={key} title={title}>
+                <FileSelector
+                  mimeTypes={mimeTypes}
+                  multiple={!!multiple}
+                  projectId={projectId}
+                  targetType={type}
+                  value={inputsData[key] || initialValues?.[key]}
+                  onSelect={(selection) => onChange({ ...inputsData, [key]: selection })}
+                />
+              </InputSection>
+            );
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          } else if (type === "molecule" || type === "molecules") {
+            // Going to remove the "molecules" type as this is specified by "multiple".
+            // For now though, we assume it's always multiple molecules
+            multiple = true;
+
+            return (
+              <InputSection key={key} title={title}>
+                <MultipleMoleculeInput
+                  mimeTypes={mimeTypes}
+                  projectId={projectId}
+                  protocol={FILE_PROTOCOL}
+                  reset={() => onChange({ ...inputsData, [key]: undefined })}
+                  value={inputsData[key] || initialValues?.[key]}
+                  onFileSelect={(selection) => onChange({ ...inputsData, [key]: selection })}
+                  onMoleculesChange={(newValue) =>
+                    onChange({ ...inputsData, [key]: newValue.join("\n") })
+                  }
+                />
+              </InputSection>
+            );
+          }
           return (
-            // Expect a grid container in the parent component
-            <Grid item key={key} xs={12}>
-              <Typography component="h4" variant="subtitle1">
-                <em>{title}</em>
-              </Typography>
-              <FileSelector
-                mimeTypes={mimeTypes}
-                multiple={!!multiple}
-                projectId={projectId}
-                targetType={type}
-                value={inputsData[key] || initialValues?.[key]}
-                onSelect={(selection) => onChange({ ...inputsData, [key]: selection })}
-              />
-            </Grid>
+            <InputSection key={key} title={title}>
+              <Typography>Job specification is using a unknown input type.</Typography>
+            </InputSection>
           );
         },
       )}
     </>
+  );
+};
+
+interface InputSectionProps {
+  children: ReactNode;
+  title: string;
+}
+
+export const InputSection = ({ children, title }: InputSectionProps) => {
+  return (
+    // Expect a grid container in the parent component
+    <Grid item xs={12}>
+      <Typography component="h4" variant="subtitle1">
+        <em>{title}</em>
+      </Typography>
+      {children}
+    </Grid>
   );
 };

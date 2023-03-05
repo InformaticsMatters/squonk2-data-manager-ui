@@ -1,8 +1,8 @@
 import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 
-import { FolderRounded, InsertDriveFileRounded } from "@mui/icons-material";
-import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
+import { List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
 
+import { InputOutputItemIcon } from "./InputOutputItemIcon";
 import { JobLink } from "./JobLink";
 import type { OutputValue } from "./types";
 
@@ -33,13 +33,17 @@ export const JobOutputSection = ({ instance: instance }: JobOutputSectionProps) 
         return (
           <ListItem key={name} sx={{ alignItems: "flex-start" }}>
             <ListItemAvatar>
-              <Avatar>{isFile ? <InsertDriveFileRounded /> : <FolderRounded />}</Avatar>
+              <InputOutputItemIcon type={isFile ? "file" : "directory"} />
             </ListItemAvatar>
             <ListItemText
               disableTypography
               primary={<Typography variant="body1">{output.title}</Typography>}
               secondary={
-                <JobLink path={output.creates} projectId={instance.project_id} type={output.type} />
+                <JobLink
+                  isFile={output.type === "file" || output.type === "files"}
+                  path={output.creates}
+                  projectId={instance.project_id}
+                />
               }
               sx={{ m: 0 }}
             />

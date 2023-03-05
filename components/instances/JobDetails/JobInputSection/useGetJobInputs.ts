@@ -1,6 +1,8 @@
 import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
+import type { InputFieldSchema } from "../../../executionsCards/JobCard/JobInputFields";
+
 // Contains only fields we are interested in
 type ApplicationSpecification = {
   variables: Record<string, unknown>;
@@ -9,7 +11,7 @@ type ApplicationSpecification = {
 // Contains only fields we are interested in
 type JobInput = {
   title: string;
-  type: "file" | "directory";
+  type: InputFieldSchema["type"];
 };
 
 type JobInputs = {

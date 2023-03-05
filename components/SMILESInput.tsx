@@ -30,6 +30,14 @@ export interface SMILESInputProps {
    * whether the sketcher is displayed by default or not
    */
   initialMode?: "smiles" | "sketcher";
+  /**
+   * Width of sketcher canvas
+   */
+  width?: string | number;
+  /**
+   * Height of sketcher canvas
+   */
+  height?: string | number;
 }
 
 /**
@@ -37,7 +45,13 @@ export interface SMILESInputProps {
  * component can be displayed to allow a structure to be drawn. This is then converted to smiles
  * when the user clicks a save button.
  */
-export const SMILESInput = ({ value, onSave, initialMode = "smiles" }: SMILESInputProps) => {
+export const SMILESInput = ({
+  value,
+  onSave,
+  initialMode = "smiles",
+  width = "500px",
+  height = "500px",
+}: SMILESInputProps) => {
   const { enqueueError } = useEnqueueError();
 
   const [smiles, setSmiles] = useState(value);
@@ -51,9 +65,9 @@ export const SMILESInput = ({ value, onSave, initialMode = "smiles" }: SMILESInp
   if (mode === "smiles") {
     return (
       <>
-        <TextField value={smiles} />
+        <TextField label="SMILES" value={smiles} onChange={(event) => onSave(event.target.value)} />
         <Tooltip title="Use a molecule sketcher">
-          <IconButton onClick={() => setMode("sketcher")}>
+          <IconButton sx={{ ml: 1 }} onClick={() => setMode("sketcher")}>
             <EditIcon />
           </IconButton>
         </Tooltip>
@@ -63,7 +77,7 @@ export const SMILESInput = ({ value, onSave, initialMode = "smiles" }: SMILESInp
 
   return (
     <>
-      <Box height="500px">
+      <Box height={height} width={width}>
         <Sketcher smiles={smiles} />
       </Box>
 

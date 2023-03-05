@@ -58,8 +58,6 @@ export const ManageEditors: FC<ManageEditorsProps> = ({
     }
   };
 
-  console.log(availableUsers);
-
   return availableUsers ? (
     <Autocomplete
       disableClearable

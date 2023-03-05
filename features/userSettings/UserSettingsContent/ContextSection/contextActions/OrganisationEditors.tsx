@@ -34,8 +34,6 @@ export const OrganisationEditors = ({ organisation }: UnitEditorsProps) => {
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
-  console.log(users, currentUser.username);
-
   if (users && currentUser.username) {
     return (
       <ManageEditors

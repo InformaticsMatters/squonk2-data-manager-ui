@@ -1,6 +1,5 @@
 import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 
-import { FolderRounded, InsertDriveFileRounded } from "@mui/icons-material";
 import {
   Alert,
   Avatar,
@@ -11,8 +10,10 @@ import {
   Typography,
 } from "@mui/material";
 
+import { FILE_PROTOCOL, removeFileProtocol } from "../../../../utils/app/urls";
 import { getErrorMessage } from "../../../../utils/next/orvalError";
 import { CenterLoader } from "../../../CenterLoader";
+import { InputOutputItemIcon } from "../InputOutputItemIcon";
 import { JobLink } from "../JobLink";
 import { useGetJobInputs } from "./useGetJobInputs";
 
@@ -45,21 +46,53 @@ export const JobInputSection = ({ instance }: JobInputSectionProps) => {
     <List aria-label="list of job inputs">
       {/* We currently have to assume that the outputs have a consistent type */}
       {inputs.map((input) => {
+        const isFile = input.value.map((val) => val.startsWith(FILE_PROTOCOL)).some((v) => v);
+        const moleculesType = input.type === "molecules" || input.type === "molecule";
+
+        let value = input.value;
+        if (moleculesType && isFile) {
+          value = value.map(removeFileProtocol);
+        }
+
         return (
           <ListItem key={input.name} sx={{ alignItems: "flex-start" }}>
             <ListItemAvatar>
               <Avatar>
-                {input.type === "file" ? <InsertDriveFileRounded /> : <FolderRounded />}
+                <InputOutputItemIcon type={isFile ? "file" : input.type} />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText
-              disableTypography
-              primary={<Typography variant="body1">{input.title}</Typography>}
-              secondary={input.value.map((val) => (
-                <JobLink key={val} path={val} projectId={instance.project_id} type={input.type} />
-              ))}
-              sx={{ m: 0 }}
-            />
+            {moleculesType && !isFile ? (
+              <ListItemText
+                disableTypography
+                primary={<Typography variant="body1">{input.title}</Typography>}
+                secondary={value.map((val) => (
+                  <>
+                    SMILES:{" "}
+                    <Typography
+                      component="code"
+                      key={val}
+                      sx={{ fontFamily: "'Fira Mono', monospace" }}
+                    >
+                      {val.split("\n").join(", ")}
+                    </Typography>
+                  </>
+                ))}
+              />
+            ) : (
+              <ListItemText
+                disableTypography
+                primary={<Typography variant="body1">{input.title}</Typography>}
+                secondary={value.map((val) => (
+                  <JobLink
+                    isFile={input.type === "file" || isFile}
+                    key={val}
+                    path={val}
+                    projectId={instance.project_id}
+                  />
+                ))}
+                sx={{ m: 0 }}
+              />
+            )}
           </ListItem>
         );
       })}

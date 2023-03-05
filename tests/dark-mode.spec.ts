@@ -6,7 +6,7 @@ test("desk mode works", async ({ page, baseURL }) => {
   // Go to http://localhost:3000/
   await page.goto(baseURL);
   // Click [aria-label="User"] button
-  await page.locator(`[aria-label="User"] button`).click();
+  await page.locator(`[aria-label="Account"] button`).click();
   // Check [aria-label="color-scheme-toggle"]
   await page.locator(`[aria-label="color-scheme-toggle"]`).check();
 

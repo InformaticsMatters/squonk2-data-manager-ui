@@ -11,18 +11,22 @@ export interface RerunJobButtonProps {
    * Instance of the job that will be used to provide default options to rerun the job
    */
   instance: InstanceSummary | InstanceGetResponse;
+  /**
+   * Whether the button is disabled
+   */
+  disabled: boolean;
 }
 
 /**
  * Wrapper around the *execution card* job run modal that reloads defaults from an existing instance
  */
-export const RerunJobButton = ({ instance }: RerunJobButtonProps) => {
+export const RerunJobButton = ({ instance, disabled = false }: RerunJobButtonProps) => {
   const [open, setOpen] = useState(false);
 
   // If the job id is undefined, it's probably an application which we don't currently let be rerun.
   return instance.job_id !== undefined ? (
     <>
-      <Button color="primary" onClick={() => setOpen(true)}>
+      <Button color="primary" disabled={disabled} onClick={() => setOpen(true)}>
         Run again
       </Button>
       <JobModal

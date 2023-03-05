@@ -88,3 +88,12 @@ export const useIsUserAProjectOwnerOrEditor = () => {
     (project?.editors.includes(user.username) || project?.owner === user.username)
   );
 };
+
+export const useIsEditorOfCurrentProject = () => {
+  const currentProject = useCurrentProject();
+
+  const { user } = useKeycloakUser();
+  const isEditor = !!user.username && currentProject?.editors.includes(user.username);
+
+  return isEditor;
+};

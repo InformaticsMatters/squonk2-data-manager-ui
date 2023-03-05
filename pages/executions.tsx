@@ -22,7 +22,7 @@ import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/executionsCards/ApplicationCard";
 import { JobCard } from "../components/executionsCards/JobCard";
 import { SearchTextField } from "../components/SearchTextField";
-import { useCurrentProject } from "../hooks/projectHooks";
+import { useCurrentProject, useIsEditorOfCurrentProject } from "../hooks/projectHooks";
 import Layout from "../layouts/Layout";
 import { dmOptions } from "../utils/api/ssrQueryOptions";
 import { search } from "../utils/app/searches";
@@ -75,6 +75,7 @@ const Executions = () => {
 
   const currentProject = useCurrentProject();
 
+  const isEditor = useIsEditorOfCurrentProject();
   // Needs to assert some types here as Orval still doesn't get this right
   const {
     data: applicationsData,
@@ -113,7 +114,7 @@ const Executions = () => {
         // Then create a card for each
         ?.map((job) => (
           <Grid item key={job.id} md={3} sm={6} xs={12}>
-            <JobCard job={job} projectId={currentProject?.project_id} />
+            <JobCard disabled={!isEditor} job={job} projectId={currentProject?.project_id} />
           </Grid>
         )) ?? [];
 
@@ -126,7 +127,7 @@ const Executions = () => {
       return applicationCards;
     }
     return jobCards;
-  }, [applications, currentProject?.project_id, executionTypes, jobs, searchValue]);
+  }, [applications, currentProject?.project_id, executionTypes, jobs, searchValue, isEditor]);
 
   return (
     <>
@@ -185,7 +186,15 @@ const Executions = () => {
               {!currentProject && (
                 <Grid item xs={12}>
                   <Alert severity="warning">
-                    Select a project from the settings to launch apps and run jobs
+                    Select a project from the settings to launch apps and run jobs.
+                  </Alert>
+                </Grid>
+              )}
+
+              {!isEditor && (
+                <Grid item xs={12}>
+                  <Alert severity="warning">
+                    You must be a project editor to run jobs in this project.
                   </Alert>
                 </Grid>
               )}

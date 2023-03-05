@@ -2,7 +2,7 @@ import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-
 
 import { CardContent, ListItem, ListItemText } from "@mui/material";
 
-import { useProjectFromId } from "../../hooks/projectHooks";
+import { useIsEditorOfCurrentProject, useProjectFromId } from "../../hooks/projectHooks";
 import { HrefButton } from "../HrefButton";
 import { ProjectListItem } from "../projects/ProjectListItem";
 import { ResultCard } from "../results/ResultCard";
@@ -36,11 +36,14 @@ export const ResultApplicationCard = ({
 
   const associatedProject = useProjectFromId(instance.project_id);
 
+  const isEditor = useIsEditorOfCurrentProject();
+
   return (
     <ResultCard
       actions={({ setSlideIn }) => (
         <>
           <TerminateInstance
+            disabled={!isEditor}
             instanceId={instanceId}
             phase={instance.phase}
             projectId={instance.project_id}

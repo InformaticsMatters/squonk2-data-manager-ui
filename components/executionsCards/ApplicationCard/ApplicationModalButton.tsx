@@ -12,10 +12,10 @@ const ApplicationModal = dynamic<ApplicationModalProps>(
   },
 );
 
-export type ApplicationModalButtonProps = Pick<
-  ApplicationModalProps,
-  "onLaunch" | "applicationId" | "projectId"
->;
+export interface ApplicationModalButtonProps
+  extends Pick<ApplicationModalProps, "onLaunch" | "applicationId" | "projectId"> {
+  disabled?: boolean;
+}
 
 /**
  * Button controlling a modal that allows the user to create an new instance of an application
@@ -24,6 +24,7 @@ export const ApplicationModalButton = ({
   applicationId,
   projectId,
   onLaunch,
+  disabled,
 }: ApplicationModalButtonProps) => {
   const [open, setOpen] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
@@ -34,7 +35,7 @@ export const ApplicationModalButton = ({
         <span>
           <Button
             color="primary"
-            disabled={!projectId}
+            disabled={!projectId || disabled}
             onClick={() => {
               setOpen(true);
               setHasOpened(true);

@@ -19,20 +19,24 @@ export interface ApplicationCardProps extends Pick<RunJobButtonProps, "projectId
    * the job to be instantiated
    */
   job: JobSummary;
+  /**
+   * Whether to disable the button
+   */
+  disabled?: boolean;
 }
 
 /**
  * MuiCard that displays a summary of a job with actions to create new instances and view
  * existing instances.
  */
-export const JobCard = ({ projectId, job }: ApplicationCardProps) => {
+export const JobCard = ({ projectId, job, disabled = false }: ApplicationCardProps) => {
   const theme = useTheme();
 
   return (
     <BaseCard
       actions={({ setExpanded }) => (
         <RunJobButton
-          disabled={job.disabled}
+          disabled={job.disabled || disabled}
           jobId={job.id}
           projectId={projectId}
           onLaunch={() => setExpanded(true)}

@@ -18,6 +18,7 @@ export interface TerminateInstanceProps {
   instanceId: InstanceSummary["id"];
   phase: InstanceSummary["phase"] | InstanceGetResponse["phase"];
   projectId: InstanceSummary["project_id"] | InstanceGetResponse["project_id"];
+  disabled?: boolean;
   /**
    * Called when the delete request is successfully made
    */
@@ -29,6 +30,7 @@ export const TerminateInstance = ({
   phase,
   projectId,
   onTermination,
+  disabled = false,
 }: TerminateInstanceProps) => {
   const queryClient = useQueryClient();
   const { mutateAsync: terminateInstance } = useTerminateInstance();
@@ -62,7 +64,7 @@ export const TerminateInstance = ({
       }}
     >
       {({ openModal }) => (
-        <Button onClick={openModal}>
+        <Button disabled={disabled} onClick={openModal}>
           {/* Instances in an end state are deleted but others are still running so are terminated.
           It's all the same to the API though. */}
           {verb}

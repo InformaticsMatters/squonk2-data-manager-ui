@@ -35,18 +35,25 @@ export const TerminateInstance = ({
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
+  const done = DONE_PHASES.includes(phase);
+
+  const verb = done ? "Delete" : "Terminate";
+
   return (
     <WarningDeleteButton
       modalId={`delete-instance-${instanceId}`}
-      title="Delete Instance"
-      tooltipText="Terminate this instance"
+      submitText={verb}
+      title={verb + " Instance"}
+      tooltipText={verb + " this instance"}
       onDelete={async () => {
         try {
           await terminateInstance({ instanceId });
           queryClient.invalidateQueries(getGetInstancesQueryKey());
           queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
 
-          enqueueSnackbar("Instance has been terminated", { variant: "success" });
+          enqueueSnackbar(`Instance has been ${done ? "deleted" : "terminated"}`, {
+            variant: "success",
+          });
         } catch (error) {
           enqueueError(error);
         }
@@ -58,7 +65,7 @@ export const TerminateInstance = ({
         <Button onClick={openModal}>
           {/* Instances in an end state are deleted but others are still running so are terminated.
           It's all the same to the API though. */}
-          {DONE_PHASES.includes(phase) ? "Delete" : "Terminate"}
+          {verb}
         </Button>
       )}
     </WarningDeleteButton>

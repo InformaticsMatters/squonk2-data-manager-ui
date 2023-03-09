@@ -48,12 +48,10 @@ export const JobInputSection = ({ instance }: JobInputSectionProps) => {
       {inputs.map((input) => {
         const isFile = input.value.map((val) => val.startsWith(FILE_PROTOCOL)).some((v) => v);
         const moleculesType = input.type === "molecules" || input.type === "molecule";
-
         let value = input.value;
         if (moleculesType && isFile) {
           value = value.map(removeFileProtocol);
         }
-
         return (
           <ListItem key={input.name} sx={{ alignItems: "flex-start" }}>
             <ListItemAvatar>

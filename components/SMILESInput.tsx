@@ -6,6 +6,7 @@ import { captureException } from "@sentry/nextjs";
 import dynamic from "next/dynamic";
 
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
+import { useIsASketcherOpen } from "../state/sketcherState";
 import { getErrorMessage } from "../utils/next/orvalError";
 import { CenterLoader } from "./CenterLoader";
 import type { SketcherProps } from "./Sketcher";
@@ -30,7 +31,15 @@ export interface SMILESInputProps {
    * called when the delete button is clicked
    * @returns nothing
    */
-  onDelete: () => void;
+  onDelete?: () => void;
+  /**
+   * Called when the sketcher opens
+   */
+  onOpen?: () => void;
+  /**
+   * Called when the sketcher closes
+   */
+  onClose?: () => void;
   /**
    * whether the sketcher is displayed by default or not
    */
@@ -43,6 +52,10 @@ export interface SMILESInputProps {
    * Height of sketcher canvas
    */
   height?: string | number;
+  /**
+   * Whether the edit button to enable the sketcher should be disabled
+   */
+  sketcherDisabled: boolean;
 }
 
 /**
@@ -55,13 +68,18 @@ export const SMILESInput = ({
   initialMode = "smiles",
   width = "700px",
   height = "500px",
+  sketcherDisabled,
   onSave,
   onDelete,
+  onOpen,
+  onClose,
 }: SMILESInputProps) => {
   const { enqueueError } = useEnqueueError();
 
   const [smiles, setSmiles] = useState(value);
   const [mode, setMode] = useState(initialMode);
+
+  const [, setIsASketcherOpen] = useIsASketcherOpen();
 
   // Synchronise the controlled prop to the uncontrolled state
   useEffect(() => {
@@ -71,14 +89,29 @@ export const SMILESInput = ({
   if (mode === "smiles") {
     return (
       <>
-        <IconButton sx={{ mr: 1 }} onClick={onDelete}>
-          <DeleteForeverIcon />
-        </IconButton>
-        <TextField label="SMILES" value={smiles} onChange={(event) => onSave(event.target.value)} />
-        <Tooltip title="Use a molecule sketcher">
-          <IconButton sx={{ ml: 1 }} onClick={() => setMode("sketcher")}>
-            <EditIcon />
+        <Tooltip title="Delete this molecule">
+          <IconButton sx={{ mr: 1 }} onClick={onDelete}>
+            <DeleteForeverIcon />
           </IconButton>
+        </Tooltip>
+        <TextField label="SMILES" value={smiles} onChange={(event) => onSave(event.target.value)} />
+        <Tooltip
+          title={
+            sketcherDisabled ? "Only one sketcher may be used at once" : "Use a molecule sketcher"
+          }
+        >
+          <span>
+            <IconButton
+              disabled={sketcherDisabled}
+              sx={{ ml: 1 }}
+              onClick={() => {
+                setMode("sketcher");
+                onOpen && onOpen();
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       </>
     );
@@ -87,13 +120,25 @@ export const SMILESInput = ({
   return (
     <Box display="flex" flexDirection="column" gap={1} width={width}>
       <Box height={height}>
-        <Sketcher smiles={smiles} />
+        <Sketcher smiles={smiles} onUnmount={() => setIsASketcherOpen(false)} />
       </Box>
       <ButtonGroup size="small" sx={{ alignSelf: "end" }} variant="outlined">
-        <Button color="warning" onClick={onDelete}>
+        <Button
+          color="warning"
+          onClick={() => {
+            onDelete && onDelete();
+            onClose && onClose();
+          }}
+        >
           Delete
         </Button>
-        <Button color="info" onClick={() => setMode("smiles")}>
+        <Button
+          color="info"
+          onClick={() => {
+            setMode("smiles");
+            onClose && onClose();
+          }}
+        >
           Cancel
         </Button>
         <Button
@@ -106,6 +151,7 @@ export const SMILESInput = ({
                 setMode("smiles");
                 onSave(smi);
                 global.ketcher = undefined;
+                onClose && onClose();
               } else {
                 enqueueError("Smiles not obtained");
               }

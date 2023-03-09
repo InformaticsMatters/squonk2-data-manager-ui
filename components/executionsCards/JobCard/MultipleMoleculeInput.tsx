@@ -9,7 +9,9 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
+import { nanoid } from "nanoid";
 
+import { useIsASketcherOpen } from "../../../state/sketcherState";
 import type { FILE_PROTOCOL } from "../../../utils/app/urls";
 import { addFileProtocol, removeFileProtocol } from "../../../utils/app/urls";
 import type { FileSelection, SharedProps } from "../../FileSelector";
@@ -58,16 +60,16 @@ export const MultipleMoleculeInput = ({
   onFileSelect,
   reset,
 }: MultipleMoleculeInputProps) => {
-  const id = useRef(Math.floor(Math.random() * 1000)).current;
+  const uuid = useRef(nanoid()).current;
   const [inputMethod, setInputMethod] = useState<InputMethod>("smiles");
 
   return (
     <>
       <FormControl>
-        <FormLabel id={`input-method-${id}`}>Method</FormLabel>
+        <FormLabel id={`input-method-${uuid}`}>Method</FormLabel>
         <RadioGroup
           row
-          aria-labelledby={`input-method-${id}`}
+          aria-labelledby={`input-method-${uuid}`}
           value={inputMethod}
           onChange={(_event, value) => {
             reset();
@@ -109,6 +111,8 @@ export const SketcherInputs = ({ value, onMoleculesChange }: SketcherInputsProps
     value = value.join("\n");
   }
 
+  const [sketcherDisabled, setIsASketcherOpen] = useIsASketcherOpen();
+
   // Then split it into an array
   const valueArray = value.split("\n");
 
@@ -117,16 +121,20 @@ export const SketcherInputs = ({ value, onMoleculesChange }: SketcherInputsProps
       {valueArray.map((smiles, index) => (
         <Box key={index} mb={2}>
           <SMILESInput
+            sketcherDisabled={sketcherDisabled}
             value={smiles}
             onDelete={() => {
               const newValue = [...valueArray];
               newValue.splice(index, 1);
               onMoleculesChange(newValue);
+              setIsASketcherOpen(false);
             }}
+            onOpen={() => setIsASketcherOpen(true)}
             onSave={(smi) => {
               const newValue = [...valueArray];
               newValue[index] = smi;
               onMoleculesChange(newValue);
+              setIsASketcherOpen(false);
             }}
           />
         </Box>

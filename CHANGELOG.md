@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0-rc.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.0-rc.3...2.3.0-rc.4) (2023-03-09)
+
+
+### Bug Fixes
+
+* **sketcher:** allow empty input to be saved ([093814e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/093814ea7733078f5c5f15f07a3e5793021caa10))
+
 ## [2.3.0-rc.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.0-rc.2...2.3.0-rc.3) (2023-03-09)
 
 

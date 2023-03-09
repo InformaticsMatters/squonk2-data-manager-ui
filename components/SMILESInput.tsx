@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { Edit as EditIcon } from "@mui/icons-material";
-import { Box, Button, IconButton, TextField, Tooltip } from "@mui/material";
+import { DeleteForever as DeleteForeverIcon, Edit as EditIcon } from "@mui/icons-material";
+import { Box, Button, ButtonGroup, IconButton, TextField, Tooltip } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import dynamic from "next/dynamic";
 
@@ -21,11 +21,16 @@ export interface SMILESInputProps {
    */
   value: string;
   /**
-   * called when the the sketcher is closed and saved
+   * called when the sketcher is closed and saved
    * @param smiles the new smiles value
    * @returns nothing
    */
   onSave: (smiles: string) => void;
+  /**
+   * called when the delete button is clicked
+   * @returns nothing
+   */
+  onDelete: () => void;
   /**
    * whether the sketcher is displayed by default or not
    */
@@ -47,10 +52,11 @@ export interface SMILESInputProps {
  */
 export const SMILESInput = ({
   value,
-  onSave,
   initialMode = "smiles",
-  width = "500px",
+  width = "700px",
   height = "500px",
+  onSave,
+  onDelete,
 }: SMILESInputProps) => {
   const { enqueueError } = useEnqueueError();
 
@@ -65,6 +71,9 @@ export const SMILESInput = ({
   if (mode === "smiles") {
     return (
       <>
+        <IconButton sx={{ mr: 1 }} onClick={onDelete}>
+          <DeleteForeverIcon />
+        </IconButton>
         <TextField label="SMILES" value={smiles} onChange={(event) => onSave(event.target.value)} />
         <Tooltip title="Use a molecule sketcher">
           <IconButton sx={{ ml: 1 }} onClick={() => setMode("sketcher")}>
@@ -76,35 +85,42 @@ export const SMILESInput = ({
   }
 
   return (
-    <>
-      <Box height={height} width={width}>
+    <Box display="flex" flexDirection="column" gap={1} width={width}>
+      <Box height={height}>
         <Sketcher smiles={smiles} />
       </Box>
-
-      <Button
-        onClick={async () => {
-          const ketcher = global.ketcher;
-          try {
-            const smi = await ketcher?.getSmiles();
-            if (smi) {
-              setSmiles(smi);
-              setMode("smiles");
-              onSave(smi);
-              global.ketcher = undefined;
-            } else {
-              enqueueError("Smiles not obtained");
+      <ButtonGroup size="small" sx={{ alignSelf: "end" }} variant="outlined">
+        <Button color="warning" onClick={onDelete}>
+          Delete
+        </Button>
+        <Button color="info" onClick={() => setMode("smiles")}>
+          Cancel
+        </Button>
+        <Button
+          onClick={async () => {
+            const ketcher = global.ketcher;
+            try {
+              const smi = await ketcher?.getSmiles();
+              if (smi) {
+                setSmiles(smi);
+                setMode("smiles");
+                onSave(smi);
+                global.ketcher = undefined;
+              } else {
+                enqueueError("Smiles not obtained");
+              }
+            } catch (error) {
+              if (error !== undefined) {
+                console.error(error);
+                enqueueError(getErrorMessage(error));
+                captureException(error);
+              }
             }
-          } catch (error) {
-            if (error !== undefined) {
-              console.error(error);
-              enqueueError(getErrorMessage(error));
-              captureException(error);
-            }
-          }
-        }}
-      >
-        Save
-      </Button>
-    </>
+          }}
+        >
+          Save
+        </Button>
+      </ButtonGroup>
+    </Box>
   );
 };

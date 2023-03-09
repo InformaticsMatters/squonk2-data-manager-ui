@@ -1,13 +1,11 @@
 import { useRef, useState } from "react";
 
-import { Clear as RemoveIcon } from "@mui/icons-material";
 import {
   Box,
   Button,
   FormControl,
   FormControlLabel,
   FormLabel,
-  IconButton,
   Radio,
   RadioGroup,
 } from "@mui/material";
@@ -118,18 +116,13 @@ export const SketcherInputs = ({ value, onMoleculesChange }: SketcherInputsProps
     <>
       {valueArray.map((smiles, index) => (
         <Box key={index} mb={2}>
-          <IconButton
-            sx={{ mr: 1 }}
-            onClick={() => {
+          <SMILESInput
+            value={smiles}
+            onDelete={() => {
               const newValue = [...valueArray];
               newValue.splice(index, 1);
               onMoleculesChange(newValue);
             }}
-          >
-            <RemoveIcon />
-          </IconButton>
-          <SMILESInput
-            value={smiles}
             onSave={(smi) => {
               const newValue = [...valueArray];
               newValue[index] = smi;

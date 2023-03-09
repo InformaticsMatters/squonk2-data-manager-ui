@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import { captureException } from "@sentry/nextjs";
 import type { Ketcher } from "ketcher-core";
 import { Editor } from "ketcher-react";
 import { StandaloneStructServiceProvider } from "ketcher-standalone";
@@ -96,7 +97,12 @@ export const Sketcher = ({ smiles, onUnmount }: SketcherProps) => {
       buttons={Object.fromEntries(
         Object.entries(allButtons).map(([name, hidden]) => [name, { hidden }]),
       )}
-      errorHandler={(message) => message && enqueueError(message)}
+      errorHandler={(message) => {
+        if (message) {
+          captureException(message);
+          enqueueError(message);
+        }
+      }}
       staticResourcesUrl="./" // TODO: Config for subpaths
       structServiceProvider={new StandaloneStructServiceProvider()}
       onInit={(ketcher: Ketcher) => {

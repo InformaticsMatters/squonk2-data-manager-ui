@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.0-rc.0...2.3.0-rc.1) (2023-03-09)
+
+
+### Bug Fixes
+
+* **sketcher:** fix some sketcher issues by forcing only one ketcher instance to be in use at once ([6302b1e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6302b1ec23ed97c69cad7964d86e3f648140ccad))
+* **sketcher:** imrpove layout of buttons when sketcher is open ([b6a710c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b6a710cf661d0b0a4a18aae95fe4d2070815d0ac))
+
 ## [2.3.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.2.2-rc.0...2.3.0-rc.0) (2023-03-05)
 
 

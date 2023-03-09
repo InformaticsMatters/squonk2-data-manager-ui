@@ -9,7 +9,7 @@ import type { DmError } from "@squonk/data-manager-client";
 
 import { useQueryClient } from "@tanstack/react-query";
 
-import { ManageEditors } from "../../../../../components/ManageEditors";
+import { ManageUsers } from "../../../../../components/ManageUsers";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 
@@ -36,12 +36,11 @@ export const UnitEditors = ({ unit }: UnitEditorsProps) => {
 
   if (users && currentUser.username) {
     return (
-      <ManageEditors
+      <ManageUsers
         currentUsername={currentUser.username}
-        editorsValue={users
-          .filter((user) => user.id !== currentUser.username)
-          .map((user) => user.id)}
         isLoading={isAdding || isRemoving || isUsersLoading}
+        title="Unit Editors"
+        users={users.filter((user) => user.id !== currentUser.username).map((user) => user.id)}
         onRemove={async (value) => {
           const user = users.find((editor) => !value.includes(editor.id));
           if (user) {

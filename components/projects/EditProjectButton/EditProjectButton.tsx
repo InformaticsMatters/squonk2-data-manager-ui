@@ -3,12 +3,13 @@ import { useState } from "react";
 import type { ProjectDetail } from "@squonk/data-manager-client";
 
 import { Edit as EditIcon } from "@mui/icons-material";
-import { IconButton, Tooltip, Typography } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
 import { ModalWrapper } from "../../modals/ModalWrapper";
 import { PrivateProjectToggle } from "./PrivateProjectToggle";
 import { ProjectEditors } from "./ProjectEditors";
+import { ProjectObservers } from "./ProjectObservers";
 
 export interface EditProjectButtonProps {
   /**
@@ -55,7 +56,10 @@ export const EditProjectButton = ({ project }: EditProjectButtonProps) => {
 
         <PrivateProjectToggle isPrivate={project.private} projectId={project.project_id} />
 
-        <ProjectEditors project={project} />
+        <Box display="flex" flexDirection="column" gap={2}>
+          <ProjectEditors project={project} />
+          <ProjectObservers project={project} />
+        </Box>
       </ModalWrapper>
     </>
   );

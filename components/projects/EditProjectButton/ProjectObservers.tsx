@@ -2,9 +2,9 @@ import type { DmError, ProjectDetail } from "@squonk/data-manager-client";
 import {
   getGetProjectQueryKey,
   getGetProjectsQueryKey,
-  useAddEditorToProject,
+  useAddObserverToProject,
   useGetProjects,
-  useRemoveEditorFromProject,
+  useRemoveObserverFromProject,
 } from "@squonk/data-manager-client/project";
 
 import { useQueryClient } from "@tanstack/react-query";
@@ -13,7 +13,7 @@ import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
 import { ManageUsers } from "../../ManageUsers";
 
-export interface ProjectEditorsProps {
+export interface ProjectObserversProps {
   /**
    * Project to be edited.
    */
@@ -21,14 +21,14 @@ export interface ProjectEditorsProps {
 }
 
 /**
- * MuiAutocomplete to manage the current editors of the selected project
+ * Selector component to manage observers of a project.
  */
-export const ProjectEditors = ({ project }: ProjectEditorsProps) => {
+export const ProjectObservers = ({ project }: ProjectObserversProps) => {
   const { user: currentUser } = useKeycloakUser();
 
   const { isLoading: isProjectsLoading } = useGetProjects();
-  const { mutateAsync: addEditor, isLoading: isAdding } = useAddEditorToProject();
-  const { mutateAsync: removeEditor, isLoading: isRemoving } = useRemoveEditorFromProject();
+  const { mutateAsync: addObserver, isLoading: isAdding } = useAddObserverToProject();
+  const { mutateAsync: removeObserver, isLoading: isRemoving } = useRemoveObserverFromProject();
   const queryClient = useQueryClient();
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
@@ -38,13 +38,13 @@ export const ProjectEditors = ({ project }: ProjectEditorsProps) => {
       <ManageUsers
         currentUsername={currentUser.username}
         isLoading={isAdding || isRemoving || isProjectsLoading}
-        title="Editors"
-        users={project.editors.filter((user) => user !== currentUser.username)}
+        title="Observers"
+        users={project.observers.filter((user) => user !== currentUser.username)}
         onRemove={async (value) => {
-          const username = project.editors.find((editor) => !value.includes(editor));
+          const username = project.observers.find((user) => !value.includes(user));
           if (username) {
             try {
-              await removeEditor({ projectId: project.project_id, userId: username });
+              await removeObserver({ projectId: project.project_id, userId: username });
             } catch (error) {
               enqueueError(error);
             }
@@ -56,10 +56,12 @@ export const ProjectEditors = ({ project }: ProjectEditorsProps) => {
           }
         }}
         onSelect={async (value) => {
-          const username = value.find((user) => !project.editors.includes(user));
+          const username = value.find(
+            (user) => user !== currentUser.username && !project.observers.includes(user),
+          );
           if (username) {
             try {
-              await addEditor({ projectId: project.project_id, userId: username });
+              await addObserver({ projectId: project.project_id, userId: username });
             } catch (error) {
               enqueueError(error);
             }

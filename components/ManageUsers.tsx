@@ -5,45 +5,52 @@ import { useGetUsers } from "@squonk/data-manager-client/user";
 import { Autocomplete, Chip, TextField } from "@mui/material";
 import type { AutocompleteChangeReason } from "@mui/material/useAutocomplete";
 
-export interface ManageEditorsProps {
+export interface ManageUsersProps {
   /**
-   * User's email
+   * User's username
    */
   currentUsername: string;
   /**
-   * Array of current editors
+   * Array of current users
    */
-  editorsValue: string[];
+  users: string[];
   /**
    * Whether the component should be in a loading state
    */
   isLoading?: boolean;
   /**
-   * Called when a editor is selected
+   * Text used for component ID and placeholder text, E.g. "editors".
+   */
+  title: string;
+  /**
+   * Called when a user is selected
    */
   onSelect: (value: string[]) => Promise<void> | void;
   /**
-   * Called when an editor is removed
+   * Called when a user is removed
    */
   onRemove: (value: string[]) => Promise<void> | void;
 }
 
 /**
- * MuiAutocomplete to manage the editors of a dataset
+ * Selector input that manages a list of users.
+ *
+ * The current user is assumed to always be included.
  */
-export const ManageEditors: FC<ManageEditorsProps> = ({
+export const ManageUsers: FC<ManageUsersProps> = ({
   currentUsername,
-  editorsValue,
+  users,
   isLoading = false,
+  title,
   onSelect,
   onRemove,
 }) => {
   const { data, isLoading: isUsersLoading } = useGetUsers();
-  const availableUsers = data?.users;
+  const availableUsers = data?.users ?? [];
 
   const loading = isUsersLoading || isLoading;
 
-  const updateEditors = async (value: string[], reason: AutocompleteChangeReason) => {
+  const updateUsers = async (value: string[], reason: AutocompleteChangeReason) => {
     switch (reason) {
       case "selectOption": {
         // Isolate the user that has been added
@@ -58,7 +65,7 @@ export const ManageEditors: FC<ManageEditorsProps> = ({
     }
   };
 
-  return availableUsers ? (
+  return (
     <Autocomplete
       disableClearable
       freeSolo
@@ -66,10 +73,10 @@ export const ManageEditors: FC<ManageEditorsProps> = ({
       multiple
       disabled={loading}
       getOptionDisabled={(option) => option === currentUsername}
-      id="editors"
+      id={title.toLowerCase().replace(/\s/g, "")}
       loading={loading}
       options={availableUsers.map((user) => user.username)}
-      renderInput={(params) => <TextField {...params} label="Editors" />}
+      renderInput={(params) => <TextField {...params} label={title} />}
       renderTags={(value, getTagProps) =>
         value.map((option: string, index: number) => {
           const { onDelete, ...chipProps } = getTagProps({ index });
@@ -84,8 +91,8 @@ export const ManageEditors: FC<ManageEditorsProps> = ({
           );
         })
       }
-      value={[currentUsername, ...editorsValue]}
-      onChange={(_, value, reason) => updateEditors(value, reason)}
+      value={[currentUsername, ...users]}
+      onChange={(_, value, reason) => updateUsers(value, reason)}
     />
-  ) : null;
+  );
 };

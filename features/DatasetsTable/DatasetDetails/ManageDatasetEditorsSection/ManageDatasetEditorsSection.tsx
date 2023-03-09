@@ -10,7 +10,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 
 import { CenterLoader } from "../../../../components/CenterLoader";
-import { ManageEditors } from "../../../../components/ManageEditors";
+import { ManageUsers } from "../../../../components/ManageUsers";
 import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../../../hooks/useKeycloakUser";
 
@@ -43,10 +43,11 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
   }
 
   return (
-    <ManageEditors
+    <ManageUsers
       currentUsername={user.username}
-      editorsValue={editors}
       isLoading={isLoading}
+      title="Editors"
+      users={editors}
       onRemove={async (value) => {
         setIsLoading(true);
         const username = dataset.editors.find((editor) => !value.includes(editor));

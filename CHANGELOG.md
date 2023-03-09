@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0-rc.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.0-rc.2...2.3.0-rc.3) (2023-03-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* This requires DM API v1.1 or above
+
+* feat!(observers): add option to edit a project's observers ([0b67d23](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0b67d234050761cd4bf7038f0ad2e057df276b04))
+
 ## [2.3.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.0-rc.1...2.3.0-rc.2) (2023-03-09)
 
 

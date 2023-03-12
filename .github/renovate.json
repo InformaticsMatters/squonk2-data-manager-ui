@@ -23,5 +23,10 @@
         "nextjs-routes"
       ]
     }
-  ]
+  ],
+  "force": {
+    "constraints": {
+      "pnpm": "7.15.0"
+    }
+  }
 }

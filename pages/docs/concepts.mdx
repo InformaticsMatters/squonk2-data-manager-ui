@@ -27,7 +27,6 @@ The Data Manager has the concept of an _Organisation_ (e.g. your company or univ
 Organisation you have _Units_ (e.g. a research group or department).
 A _Project_ is where you can do some work and collaborate with others, and _Projects_ belong to a _Unit_.
 A _Project_  allows to isolate your work and provide access to it to specific users.
-Projects can be shared with users outside your organisation if you wish.
 The _Unit_ is responsible for the usage of all its projects and will need to pay the costs for that usage.
 
 There is a _Default_ Organisation which all users can belong to, and within that _Default_ _Organisation_ you will be
@@ -74,6 +73,9 @@ Files will also typically be created in your project by running *applications* a
 ## Access Control
 
 Only you and people you have added to your project can access the files in your project.
+Projects can be shared with users outside your organisation. Users can be added as editors or observers
+of the project. Editors have full access rights, observers can see the content but cannot change anything.
+For public projects all users are effectively observers.
 
 File access is controlled by standard POSIX permissions, with files typically being read and writable by the user and
 the group.

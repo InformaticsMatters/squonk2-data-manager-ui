@@ -5,6 +5,7 @@ import { Container } from "@mui/material";
 import Layout from "../../../layouts/Layout";
 import { DocsNav } from "../../../components/DocsNav";
 import create from "../assets/project-create.png";
+import users from "../assets/project-users.png";
 
 
 <Head>
@@ -39,5 +40,12 @@ The different tiers are described in the [Concepts guide](../concepts).
 Once you have made your choices click on the CREATE button to create your project.
 Remember that the owner of the **unit** is responsible for the costs of your project. In the case of a **personal unit**
 in the **Default organisation** that means you!
+
+You can add additional users to your project. These can either be as *editor* or *observers*. *Editors* have full access
+to the project, effectively the same rights as you, the *owner*. *Observers* can see the content, but cannot change
+anything and cannot execute jobs. To add users to your project click the edit button in the action to the right of your
+project listing and add the users you want to the *Editors* and *Observers* sections.
+
+<Image src={users} alt="Edit project dialog" />
 
 export default ({ children }) => <Layout><Container>{children}</Container></Layout>

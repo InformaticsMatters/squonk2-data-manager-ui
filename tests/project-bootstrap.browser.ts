@@ -7,6 +7,9 @@ import type {
 
 import { expect, test } from "@playwright/test";
 
+const baseURL = new URL(process.env.BASE_URL as string);
+baseURL.pathname = process.env.BASE_PATH ?? "/";
+
 test("Project bootstrap works", async ({ page, baseURL }) => {
   // Display any logs to terminal (for debug)
   page.on("console", async (msg) => {
@@ -20,20 +23,23 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   expect(baseURL).toBeDefined();
 
   const url = new URL(baseURL as string);
-  url.pathname = "/api/as-api/organisation/default";
+  const basePath = url.pathname;
+
+  url.pathname = basePath + "/api/as-api/organisation/default";
+
   const defaultOrg: OrganisationGetDefaultResponse = await (
-    await page.request.get(url.href)
+    await page.request.get(new URL(url).href)
   ).json();
 
   // Ensure default unit and associated projects and products doesn't exist
-  url.pathname = `/api/as-api/organisation/${defaultOrg.id}/unit`;
+  url.pathname = basePath + `/api/as-api/organisation/${defaultOrg.id}/unit`;
   const units = ((await (await page.request.get(url.href)).json()) as OrganisationUnitsGetResponse)
     .units;
 
   const personalUnit = units.find((unit) => unit.name === process.env.PW_USERNAME);
 
   if (personalUnit) {
-    url.pathname = "/api/as-api/product";
+    url.pathname = basePath + "/api/as-api/product";
     const products = ((await (await page.request.get(url.href)).json()) as ProductsGetResponse)
       .products;
 
@@ -44,14 +50,14 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
           product.product.type === "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
       );
     const productPromises = productsToDelete.map(async (product) => {
-      url.pathname = `/api/dm-api/project/${product.claim?.id}`;
+      url.pathname = basePath + `/api/dm-api/project/${product.claim?.id}`;
       page.request.delete(url.href);
-      url.pathname = `/api/as-api/product/${product.product.id}`;
+      url.pathname = basePath + `/api/as-api/product/${product.product.id}`;
       page.request.delete(url.href);
     });
     await Promise.allSettled(productPromises);
 
-    url.pathname = "/api/as-api/unit";
+    url.pathname = basePath + "/api/as-api/unit";
     const res = await page.request.delete(url.href);
 
     const response = await res.json();

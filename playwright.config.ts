@@ -1,9 +1,10 @@
 import { defineConfig } from "@playwright/test";
 import path from "node:path";
 
-const { BASE_URL, BASE_PATH = "" } = process.env;
-
 require("dotenv").config({ path: path.resolve(process.cwd(), ".env.test.local") });
+
+const baseURL = new URL(process.env.BASE_URL as string);
+baseURL.pathname = process.env.BASE_PATH ?? "/";
 
 export default defineConfig({
   projects: [
@@ -11,7 +12,12 @@ export default defineConfig({
     {
       name: "browser",
       dependencies: ["setup"],
-      use: { storageState: "storageState.json" },
+      use: {
+        storageState: "storageState.json",
+        baseURL: baseURL.href,
+        screenshot: "on",
+        trace: "on-first-retry",
+      },
       retries: 3,
       timeout: 60000,
       testMatch: "**/*.browser.ts",
@@ -19,13 +25,13 @@ export default defineConfig({
     { name: "node", testMatch: "**/*.node.ts" },
   ],
   use: {
-    baseURL: BASE_URL + BASE_PATH,
+    baseURL: baseURL.href,
     screenshot: "on",
     trace: "on-first-retry", // record traces on first retry of each test
   },
   webServer: {
     command: `pnpm start`,
-    port: 3000,
+    url: baseURL.href,
     timeout: 200 * 1000,
     env: {
       NODE_ENV: "test",

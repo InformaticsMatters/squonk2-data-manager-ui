@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.1...2.3.2) (2023-03-16)
+
+
+### Bug Fixes
+
+* **deps:** pin nanoid and switch from uuid everywhere ([c087bba](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c087bba4b4e45ad527bc83d85bb3e7f0121506a7))
+* fix linting errors created by yup update ([c24de89](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c24de89c6bccfe0dbd021f78c7e68ef921c5d6c8))
+* **upload:** fix visual issues on dataset upload UI ([fa7c4a5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fa7c4a556f5d308ae9e5e059cda1b7d66acd2188))
+
 ### [2.3.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.0...2.3.1) (2023-03-14)
 
 ## [2.3.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.0-rc.4...2.3.0) (2023-03-12)

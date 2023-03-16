@@ -24,8 +24,8 @@ specifiers:
   '@squonk/eslint-config': 0.5.0
   '@squonk/mui-theme': 3.0.2
   '@tanstack/match-sorter-utils': 8.7.6
-  '@tanstack/react-query': 4.24.9
-  '@tanstack/react-query-devtools': 4.24.9
+  '@tanstack/react-query': 4.26.1
+  '@tanstack/react-query-devtools': 4.26.1
   '@tanstack/react-table': 8.7.9
   '@types/lodash-es': 4.17.6
   '@types/node': 18.14.0
@@ -92,12 +92,12 @@ dependencies:
   '@rjsf/core': 4.2.3_react@18.2.0
   '@rjsf/material-ui': 4.2.3_5ixe62vj3zusybuqizzpo7g67q
   '@sentry/nextjs': 7.38.0_next@13.2.4+react@18.2.0
-  '@squonk/account-server-client': 2.0.3_ggqcmapa7uqzppfqrtiijwfoau
-  '@squonk/data-manager-client': 1.1.0_ggqcmapa7uqzppfqrtiijwfoau
+  '@squonk/account-server-client': 2.0.3_i66fb5a2bne3avsl3ygmzuwkwu
+  '@squonk/data-manager-client': 1.1.0_i66fb5a2bne3avsl3ygmzuwkwu
   '@squonk/mui-theme': 3.0.2_@mui+material@5.11.13
   '@tanstack/match-sorter-utils': 8.7.6
-  '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
-  '@tanstack/react-query-devtools': 4.24.9_bzphmdwvicyhtx5eo3azinrh54
+  '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
+  '@tanstack/react-query-devtools': 4.26.1_brdhmlf72zuns3lsk66phyptty
   '@tanstack/react-table': 8.7.9_biqbaboplfbrettd7655fr4n2y
   '@types/lodash-es': 4.17.6
   '@types/node': 18.14.0
@@ -1235,23 +1235,23 @@ packages:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
     dev: false
 
-  /@squonk/account-server-client/2.0.3_ggqcmapa7uqzppfqrtiijwfoau:
+  /@squonk/account-server-client/2.0.3_i66fb5a2bne3avsl3ygmzuwkwu:
     resolution: {integrity: sha512-abeA5MMjxxEPZ5u0KJnSWTPlGLVrZHRG1Bu86jgLWEMlmXIVI+vprHanexcN14iQI10mvT3oD1YEOgktSEBHvw==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
-      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
       axios: 1.3.3
     dev: false
 
-  /@squonk/data-manager-client/1.1.0_ggqcmapa7uqzppfqrtiijwfoau:
+  /@squonk/data-manager-client/1.1.0_i66fb5a2bne3avsl3ygmzuwkwu:
     resolution: {integrity: sha512-kp2/TJ5QKn9f4JaSVw8lFZegEmkTJ7mA2JYkqsDTDkUUQT82o8xBXN/2QuPmkzddshyBPVblzWIfa/ZUT5TfJw==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
-      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
       axios: 1.3.3
     dev: false
 
@@ -1302,27 +1302,27 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
-  /@tanstack/query-core/4.24.9:
-    resolution: {integrity: sha512-pZQ2NpdaHzx8gPPkAPh06d6zRkjfonUzILSYBXrdHDapP2eaBbGsx5L4/dMF+fyAglFzQZdDDzZgAykbM20QVw==}
+  /@tanstack/query-core/4.26.1:
+    resolution: {integrity: sha512-Zrx2pVQUP4ndnsu6+K/m8zerXSVY8QM+YSbxA1/jbBY21GeCd5oKfYl92oXPK0hPEUtoNuunIdiq0ZMqLos+Zg==}
     dev: false
 
-  /@tanstack/react-query-devtools/4.24.9_bzphmdwvicyhtx5eo3azinrh54:
-    resolution: {integrity: sha512-NPsVf3pLMjH/XNTT5iP1q6isEBNE4kWF/IBSbxNUt0tDWK1nS1qgWr9ySTXwimsAHOWMjHkFuUF8VBRmz+axKg==}
+  /@tanstack/react-query-devtools/4.26.1_brdhmlf72zuns3lsk66phyptty:
+    resolution: {integrity: sha512-ts2mA+fyFYFRi3Cee4xBk8Fx6waSFOM+yCkFqwJfGQRGjjTIMYMZPJv4wkv7vy12IVi1SYhL8au22LRKlXS1Zg==}
     peerDependencies:
-      '@tanstack/react-query': 4.24.9
+      '@tanstack/react-query': 4.26.1
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@tanstack/match-sorter-utils': 8.7.6
-      '@tanstack/react-query': 4.24.9_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query': 4.26.1_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      superjson: 1.10.1
+      superjson: 1.12.2
       use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
-  /@tanstack/react-query/4.24.9_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-6WLwUT9mrngIinRtcZjrWOUENOuLbWvQpKmU6DZCo2iPQVA+qvv3Ji90Amme4AkUyWQ8ZSSRTnAFq8V2tj2ACg==}
+  /@tanstack/react-query/4.26.1_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-i3dnz4TOARGIXrXQ5P7S25Zfi4noii/bxhcwPurh2nrf5EUCcAt/95TB2HSmMweUBx206yIMWUMEQ7ptd6zwDg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -1333,7 +1333,7 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@tanstack/query-core': 4.24.9
+      '@tanstack/query-core': 4.26.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
@@ -2230,11 +2230,11 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
-  /copy-anything/3.0.2:
-    resolution: {integrity: sha512-CzATjGXzUQ0EvuvgOCI6A4BGOo2bcVx8B+eC2nF862iv9fopnPQwlrbACakNCHRIJbCSBj+J/9JeDf60k64MkA==}
+  /copy-anything/3.0.3:
+    resolution: {integrity: sha512-fpW2W/BqEzqPp29QS+MwwfisHCQZtiduTe/m8idFo0xbti9fIZ2WVhAsCv4ggFVH3AgCkVdpoOCtQC6gBrdhjw==}
     engines: {node: '>=12.13'}
     dependencies:
-      is-what: 4.1.7
+      is-what: 4.1.8
     dev: false
 
   /core-js-pure/3.21.1:
@@ -3740,8 +3740,8 @@ packages:
       call-bind: 1.0.2
     dev: true
 
-  /is-what/4.1.7:
-    resolution: {integrity: sha512-DBVOQNiPKnGMxRMLIYSwERAS5MVY1B7xYiGnpgctsOFvVDz9f9PFXXxMcTOHuoqYp4NK9qFYQaIC1NRRxLMpBQ==}
+  /is-what/4.1.8:
+    resolution: {integrity: sha512-yq8gMao5upkPoGEU9LsB2P+K3Kt8Q3fQFCGyNCWOAnJAMzEXVV9drYb0TXr42TTliLLhKIBvulgAXgtLLnwzGA==}
     engines: {node: '>=12.13'}
     dev: false
 
@@ -6141,11 +6141,11 @@ packages:
     resolution: {integrity: sha512-W0xDn7QYcDo9HhHqsmoj4U8pJVqYqnggBUoJixAQXc2MoX71Ef551Np9tyTMX+9Ta6br9MdTbvdpQ/+JP31uPQ==}
     dev: false
 
-  /superjson/1.10.1:
-    resolution: {integrity: sha512-7fvPVDHmkTKg6641B9c6vr6Zz5CwPtF9j0XFExeLxJxrMaeLU2sqebY3/yrI3l0K5zJ+H9QA3H+lIYj5ooCOkg==}
+  /superjson/1.12.2:
+    resolution: {integrity: sha512-ugvUo9/WmvWOjstornQhsN/sR9mnGtWGYeTxFuqLb4AiT4QdUavjGFRALCPKWWnAiUJ4HTpytj5e0t5HoMRkXg==}
     engines: {node: '>=10'}
     dependencies:
-      copy-anything: 3.0.2
+      copy-anything: 3.0.3
     dev: false
 
   /supports-color/5.5.0:

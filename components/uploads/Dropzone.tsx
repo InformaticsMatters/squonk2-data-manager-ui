@@ -4,7 +4,7 @@ import type { DropzoneOptions, FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 
 import { Divider, styled } from "@mui/material";
-import { v4 as uuidv4 } from "uuid";
+import { nanoid } from "nanoid";
 
 import { useFileExtensions } from "../../hooks/useFileExtensions";
 import { useMimeTypeLookup } from "../../hooks/useMimeTypeLookup";
@@ -42,7 +42,7 @@ export const Dropzone: FC<DropzoneProps> = ({
         mimeType: getMimeFromFileName(file.name, mimeLookup),
         errors: [],
         // Give files UUIDs to keep track
-        id: uuidv4(),
+        id: nanoid(),
         progress: 0,
         taskId: null,
         done: false,
@@ -50,7 +50,7 @@ export const Dropzone: FC<DropzoneProps> = ({
       const mappedRejected = rejectedFiles.map((rejection) => ({
         ...rejection,
         mimeType: getMimeFromFileName(rejection.file.name, mimeLookup),
-        id: uuidv4(),
+        id: nanoid(),
         progress: 0,
         taskId: null,
         done: false,

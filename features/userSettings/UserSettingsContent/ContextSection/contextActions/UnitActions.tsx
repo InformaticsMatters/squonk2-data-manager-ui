@@ -19,7 +19,9 @@ export const UnitActions = () => {
 
   return (
     <List sx={{ width: "100%" }}>
-      {isUnitOwner && unit && <DeleteUnitListItem unit={unit} onDelete={() => setUnit()} />}
+      {isUnitOwner && unit && (
+        <DeleteUnitListItem unit={unit} onDelete={() => setUnit(undefined)} />
+      )}
       {isUnitOwner && unit && organisation?.name !== "Default" && <EditUnitListItem unit={unit} />}
       {unit && <CreateProjectListItem unit={unit} />}
     </List>

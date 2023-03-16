@@ -64,7 +64,7 @@ export const SelectOrganisation = (props: SelectOrganisationProps) => {
           // Not the best solution but I couldn't figure out anything better
           if (newOrganisation?.id !== organisation?.id) {
             setCurrentProjectId();
-            setUnit();
+            setUnit(undefined);
             writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
           }
 

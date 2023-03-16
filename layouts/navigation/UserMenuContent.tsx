@@ -29,8 +29,8 @@ export const UserMenuContent = () => {
             href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/logout`}
             onClick={() => {
               localStorage.clear();
-              setUnit();
-              setOrganisation();
+              setUnit(undefined);
+              setOrganisation(undefined);
             }}
           >
             Logout

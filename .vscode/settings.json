@@ -1,6 +1,5 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "iridium.npm.packageManager": "pnpm",
   "editor.tabSize": 2,
   "emmet.includeLanguages": {
     "mdx": "html"
@@ -21,4 +20,5 @@
     ".env": "shellscript",
     ".env.*": "shellscript",
   },
+  "playwright.reuseBrowser": false,
 }

@@ -1,29 +1,35 @@
-import type { PlaywrightTestConfig } from "@playwright/test";
+import { defineConfig } from "@playwright/test";
+import path from "node:path";
 
-const { BASE_URL, BASE_PATH = "", TEST_PORT } = process.env;
+const { BASE_URL, BASE_PATH = "" } = process.env;
 
-if (!BASE_URL || !TEST_PORT) {
-  throw new Error("Possible missing environment variable: BASE_URL or TEST_PORT");
-}
+require("dotenv").config({ path: path.resolve(process.cwd(), ".env.test.local") });
 
-const config: PlaywrightTestConfig = {
-  globalSetup: require.resolve("./global-setup"),
+export default defineConfig({
+  projects: [
+    { name: "setup", testMatch: "**/*.setup.ts" },
+    {
+      name: "browser",
+      dependencies: ["setup"],
+      use: { storageState: "storageState.json" },
+      retries: 3,
+      timeout: 60000,
+      testMatch: "**/*.browser.ts",
+    },
+    { name: "node", testMatch: "**/*.node.ts" },
+  ],
+  use: {
+    baseURL: BASE_URL + BASE_PATH,
+    screenshot: "on",
+    trace: "on-first-retry", // record traces on first retry of each test
+  },
   webServer: {
-    command: `pnpm start -- -p ${TEST_PORT}`,
-    port: Number(TEST_PORT),
+    command: `pnpm start`,
+    port: 3000,
     timeout: 200 * 1000,
     env: {
       NODE_ENV: "test",
     },
   },
-  use: {
-    baseURL: BASE_URL + BASE_PATH,
-    storageState: "storageState.json",
-    screenshot: "on",
-    trace: "on-first-retry", // record traces on first retry of each test
-  },
-  timeout: 60000,
-  retries: 3,
-};
-
-export default config;
+  testDir: "tests",
+});

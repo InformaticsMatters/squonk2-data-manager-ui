@@ -74,7 +74,6 @@ jobs:
         KEYCLOAK_URL: "https://keycloak.xchem-dev.diamond.ac.uk/auth/realms/xchem"
         PW_USERNAME: "dmit-user-a"
         PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
-        TEST_PORT: 3000
       run: pnpm test:ci
     - name: Upload results for bath path
       if: always()

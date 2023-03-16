@@ -5,7 +5,8 @@ import { useGetApplication } from "@squonk/data-manager-client/application";
 import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
 
 import { Grid, MenuItem, TextField } from "@mui/material";
-import Form from "@rjsf/material-ui/v5";
+import Form from "@rjsf/mui";
+import validator from "@rjsf/validator-ajv8";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
@@ -129,6 +130,7 @@ export const ApplicationModal = ({
               formData={formData}
               schema={schema}
               showErrorList={false}
+              validator={validator}
               onChange={(event) => setFormData(event.formData)}
             >
               {/* Don't render a submit button */}

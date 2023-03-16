@@ -16,8 +16,10 @@ specifiers:
   '@next/eslint-plugin-next': 13.2.4
   '@next/mdx': 13.2.4
   '@playwright/test': 1.31.2
-  '@rjsf/core': 4.2.3
-  '@rjsf/material-ui': 4.2.3
+  '@rjsf/core': 5.2.1
+  '@rjsf/mui': ^5.2.1
+  '@rjsf/utils': ^5.2.1
+  '@rjsf/validator-ajv8': ^5.2.1
   '@sentry/nextjs': 7.43.0
   '@squonk/account-server-client': 2.0.3
   '@squonk/data-manager-client': 1.1.0
@@ -87,8 +89,10 @@ dependencies:
   '@mui/styles': 5.11.13_pmekkgnqduwlme35zpnqhenc34
   '@next/eslint-plugin-next': 13.2.4
   '@next/mdx': 13.2.4_msthxdjvrhmdkfpqqalumiidgq
-  '@rjsf/core': 4.2.3_react@18.2.0
-  '@rjsf/material-ui': 4.2.3_5ixe62vj3zusybuqizzpo7g67q
+  '@rjsf/core': 5.2.1_wuouf53pld766fvbudkgkoiyta
+  '@rjsf/mui': 5.2.1_xeqoz5usikjxqqexuekfm5kumm
+  '@rjsf/utils': 5.2.1_react@18.2.0
+  '@rjsf/validator-ajv8': 5.2.1_@rjsf+utils@5.2.1
   '@sentry/nextjs': 7.43.0_next@13.2.4+react@18.2.0
   '@squonk/account-server-client': 2.0.3_zslzhjrn5qray6dbj55ug2hbwm
   '@squonk/data-manager-client': 1.1.0_zslzhjrn5qray6dbj55ug2hbwm
@@ -979,60 +983,68 @@ packages:
       reselect: 4.1.7
     dev: false
 
-  /@rjsf/core/4.2.3_react@18.2.0:
-    resolution: {integrity: sha512-dRXhd1Tac/9OcG0VDrYDF2boNTyKINEEITEtJ4L1Yce2iMVk66U52BhWKIFp/WXDM27vwnOfwQo4NwGiqeQeHw==}
-    engines: {node: '>=12'}
+  /@rjsf/core/5.2.1_wuouf53pld766fvbudkgkoiyta:
+    resolution: {integrity: sha512-r/yY/7IOPKYQNkZj73wyH+AuBNIauygJr/CNXumFctra50y+Cd5zS9H4XJ4TRtKAHOjz29s6nsA1nTaH1fPHDw==}
+    engines: {node: '>=14'}
     peerDependencies:
-      react: '>=16 || >=17'
+      '@rjsf/utils': ^5.0.0
+      react: ^16.14.0 || >=17
     dependencies:
-      '@types/json-schema': 7.0.11
-      ajv: 6.12.6
-      core-js-pure: 3.21.1
-      json-schema-merge-allof: 0.6.0
-      jsonpointer: 5.0.0
+      '@rjsf/utils': 5.2.1_react@18.2.0
       lodash: 4.17.21
       lodash-es: 4.17.21
+      markdown-to-jsx: 7.1.9_react@18.2.0
       nanoid: 3.3.4
       prop-types: 15.8.1
       react: 18.2.0
-      react-is: 16.9.0
     dev: false
 
-  /@rjsf/material-ui/4.2.3_5ixe62vj3zusybuqizzpo7g67q:
-    resolution: {integrity: sha512-BNlIxI730NWvb2ClYzM1jrzfns8FjPh46gvGSH80xzUwOY7l/RWoy+UcdwQeaDVFRfAmR5B+z1n7la7OT+PY4w==}
+  /@rjsf/mui/5.2.1_xeqoz5usikjxqqexuekfm5kumm:
+    resolution: {integrity: sha512-1cPiaxUfLHXhOupEJDeJZfVTqnCBhcpbqc+nLOe0XCoI6qhkfvbPpOJQ8NUeMkkH5svPJJQCbeo9ixJZ4FV8PQ==}
+    engines: {node: '>=14'}
     peerDependencies:
       '@emotion/react': ^11.7.0
       '@emotion/styled': ^11.6.0
-      '@material-ui/core': ^4.12.3
-      '@material-ui/icons': ^4.11.2
       '@mui/icons-material': ^5.2.0
       '@mui/material': ^5.2.2
-      '@rjsf/core': ^4.0.1
-      '@types/react': ^16.8.6 || ^17.0.0
-      react: ^16.8.0 || ^17.0.0
-      react-dom: ^16.8.0 || ^17.0.0
-    peerDependenciesMeta:
-      '@emotion/react':
-        optional: true
-      '@emotion/styled':
-        optional: true
-      '@material-ui/core':
-        optional: true
-      '@material-ui/icons':
-        optional: true
-      '@mui/icons-material':
-        optional: true
-      '@mui/material':
-        optional: true
+      '@rjsf/core': ^5.0.0
+      '@rjsf/utils': ^5.0.0
+      react: '>=17'
     dependencies:
       '@emotion/react': 11.10.6_pmekkgnqduwlme35zpnqhenc34
       '@emotion/styled': 11.10.6_oouaibmszuch5k64ms7uxp2aia
       '@mui/icons-material': 5.11.11_4lyzeezzeeal3x6jtb4ni26w7u
       '@mui/material': 5.11.13_xqeqsl5kvjjtyxwyi3jhw3yuli
-      '@rjsf/core': 4.2.3_react@18.2.0
-      '@types/react': 18.0.28
+      '@rjsf/core': 5.2.1_wuouf53pld766fvbudkgkoiyta
+      '@rjsf/utils': 5.2.1_react@18.2.0
       react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@rjsf/utils/5.2.1_react@18.2.0:
+    resolution: {integrity: sha512-+Evan0KDj0t0NtOAxOFtV+/kPDUWz2NyG9zl9X7LLiOlNY2zOdDeUtYEOklbpu1APOqIkwCQc6z1VefQJNKH8Q==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: ^16.14.0 || >=17
+    dependencies:
+      json-schema-merge-allof: 0.8.1
+      jsonpointer: 5.0.1
+      lodash: 4.17.21
+      lodash-es: 4.17.21
+      react: 18.2.0
+      react-is: 18.2.0
+    dev: false
+
+  /@rjsf/validator-ajv8/5.2.1_@rjsf+utils@5.2.1:
+    resolution: {integrity: sha512-VHxlBECvzMQtpxfLnoB4E5HV7e+LLimID4gfXYBr+kf+tVS5Z3OVRNwTkEmInHLmBK4Zp2hIgBDE7dBIhHvnkg==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@rjsf/utils': ^5.0.0
+    dependencies:
+      '@rjsf/utils': 5.2.1_react@18.2.0
+      ajv: 8.12.0
+      ajv-formats: 2.1.1
+      lodash: 4.17.21
+      lodash-es: 4.17.21
     dev: false
 
   /@rollup/plugin-commonjs/24.0.0_rollup@2.78.0:
@@ -1412,6 +1424,7 @@ packages:
 
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
+    dev: true
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
@@ -1707,6 +1720,15 @@ packages:
       indent-string: 4.0.0
     dev: true
 
+  /ajv-formats/2.1.1:
+    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+    dependencies:
+      ajv: 8.12.0
+    dev: false
+
   /ajv/6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
     dependencies:
@@ -1714,6 +1736,7 @@ packages:
       fast-json-stable-stringify: 2.1.0
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
+    dev: true
 
   /ajv/8.12.0:
     resolution: {integrity: sha512-sRu1kpcO9yLtYxBKvqfTeh9KzZEwO3STyX1HT+4CaDzC6HpTGYhIhPIzj9XuKU7KYDwnaeh5hcOwjy1QuJzBPA==}
@@ -2197,12 +2220,6 @@ packages:
     engines: {node: '>=12.13'}
     dependencies:
       is-what: 4.1.8
-    dev: false
-
-  /core-js-pure/3.21.1:
-    resolution: {integrity: sha512-12VZfFIu+wyVbBebyHmRTuEE/tZrB4tJToWcwAMcsp3h4+sHR+fMJWbKpYiCRWlhFBq+KNyO8rIV9rTkeVmznQ==}
-    deprecated: core-js-pure@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js-pure.
-    requiresBuild: true
     dev: false
 
   /core-js/3.29.0:
@@ -2873,6 +2890,7 @@ packages:
 
   /fast-json-stable-stringify/2.1.0:
     resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
+    dev: true
 
   /fast-levenshtein/2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
@@ -3757,8 +3775,9 @@ packages:
       lodash: 4.17.21
     dev: false
 
-  /json-schema-merge-allof/0.6.0:
-    resolution: {integrity: sha512-LEw4VMQVRceOPLuGRWcxW5orTTiR9ZAtqTAe4rQUjNADTeR81bezBVFa0MqIwp0YmHIM1KkhSjZM7o+IQhaPbQ==}
+  /json-schema-merge-allof/0.8.1:
+    resolution: {integrity: sha512-CTUKmIlPJbsWfzRRnOXz+0MjIqvnleIXwFTzz+t9T86HnYX/Rozria6ZVGLktAU9e+NygNljveP+yxqtQp/Q4w==}
+    engines: {node: '>=12.0.0'}
     dependencies:
       compute-lcm: 1.1.2
       json-schema-compare: 0.2.2
@@ -3767,6 +3786,7 @@ packages:
 
   /json-schema-traverse/0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
+    dev: true
 
   /json-schema-traverse/1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
@@ -3783,8 +3803,8 @@ packages:
       minimist: 1.2.8
     dev: true
 
-  /jsonpointer/5.0.0:
-    resolution: {integrity: sha512-PNYZIdMjVIvVgDSYKTT63Y+KZ6IZvGRNNWcxwD+GNnUz1MKPfv30J8ueCjdwcN0nDx2SlshgyB7Oy0epAzVRRg==}
+  /jsonpointer/5.0.1:
+    resolution: {integrity: sha512-p/nXbhSEcu3pZRdkW1OfJhpsVtW1gd4Wa1fnQc9YLiTfAjn0312eMKimbdIQzuZl9aa9xUGaRlP9T/CJE/ditQ==}
     engines: {node: '>=0.10.0'}
     dev: false
 
@@ -4100,6 +4120,15 @@ packages:
     resolution: {integrity: sha512-Ezda85ToJUBhM6WGaG6veasyym+Tbs3cMAw/ZhOPqXiYsr0jgocBV3j3nx+4lk47plLlIqjwuTm/ywVI+zjJ/A==}
     dependencies:
       repeat-string: 1.6.1
+    dev: false
+
+  /markdown-to-jsx/7.1.9_react@18.2.0:
+    resolution: {integrity: sha512-x4STVIKIJR0mGgZIZ5RyAeQD7FEZd5tS8m/htbcVGlex32J+hlSLj+ExrHCxP6nRKF1EKbcO7i6WhC1GtOpBlA==}
+    engines: {node: '>= 10'}
+    peerDependencies:
+      react: '>= 0.14.0'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /material-ui-popup-state/4.1.0_xqeqsl5kvjjtyxwyi3jhw3yuli:
@@ -5392,10 +5421,6 @@ packages:
 
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
-
-  /react-is/16.9.0:
-    resolution: {integrity: sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==}
-    dev: false
 
   /react-is/17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}

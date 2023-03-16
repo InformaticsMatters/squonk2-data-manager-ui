@@ -1,7 +1,8 @@
 import type { TypeSummary } from "@squonk/data-manager-client";
 
 import { Card, CardContent } from "@mui/material";
-import Form from "@rjsf/material-ui/v5";
+import Form from "@rjsf/mui";
+import validator from "@rjsf/validator-ajv8";
 
 export interface MimeTypeCardProps {
   /**
@@ -31,6 +32,7 @@ export const MimeTypeCard = ({ type, formDatas, onFormChange }: MimeTypeCardProp
             noHtml5Validate
             formData={formDatas[type.mime]}
             schema={type.formatter_options}
+            validator={validator}
             onChange={(event) => onFormChange({ ...formDatas, [type.mime]: event.formData })}
           >
             {/* Disable the default submit button */}

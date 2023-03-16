@@ -20,11 +20,6 @@
     "jsxImportSource": "@emotion/react",
     "incremental": true,
     "baseUrl": ".",
-    "paths": {
-      "@rjsf/material-ui/*": [
-        "node_modules/@rjsf/material-ui/dist/*"
-      ]
-    },
   },
   "exclude": [
     "node_modules",

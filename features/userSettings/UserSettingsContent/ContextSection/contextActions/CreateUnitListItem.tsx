@@ -91,7 +91,7 @@ export const CreateUnitListItem = () => {
             .test(
               "does-not-exist-already",
               "The name is already used for a unit",
-              (name) => name !== undefined && !units?.map((unit) => unit.name).includes(name),
+              (name) => !units?.map((unit) => unit.name).includes(name),
             )
             .min(2, "The name is too short"),
         })}

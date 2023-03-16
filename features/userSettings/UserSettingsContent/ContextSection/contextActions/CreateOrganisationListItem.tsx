@@ -91,9 +91,7 @@ export const CreateOrganisationListItem = () => {
             .test(
               "does-not-exist-already",
               "The name is already used for an organisation",
-              (name) =>
-                name !== undefined &&
-                !organisations?.map((organisation) => organisation.name).includes(name),
+              (name) => !organisations?.map((organisation) => organisation.name).includes(name),
             )
             .min(2, "The name is too short"),
           owner: yup
@@ -102,9 +100,7 @@ export const CreateOrganisationListItem = () => {
             .test(
               "does-not-exist-already",
               "The name is already used for an organisation",
-              (name) =>
-                name !== undefined &&
-                !organisations?.map((organisation) => organisation.name).includes(name),
+              (name) => !organisations?.map((organisation) => organisation.name).includes(name),
             ),
         })}
         onSubmit={async ({ name, owner }, { setSubmitting, resetForm }) => {

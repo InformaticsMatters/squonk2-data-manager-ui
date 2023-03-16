@@ -23,8 +23,8 @@ import type { TableDataset } from "./types";
 import { useDatasetsFilter } from "./useDatasetsFilter";
 import { useSelectedDatasets } from "./useSelectedDatasets";
 
-const FileUpload = dynamic<Record<string, never>>(
-  () => import("../DatasetUpload").then((mod) => mod.FileUpload),
+const DatasetUpload = dynamic<Record<string, never>>(
+  () => import("../DatasetUpload").then((mod) => mod.DatasetUpload),
   {
     loading: () => <CircularProgress size="1rem" />,
   },
@@ -143,7 +143,7 @@ export const DatasetsTable = () => {
       ToolbarActionChild={<DatasetsBulkActions selectedDatasets={selectedDatasets} />}
       ToolbarChild={
         <>
-          <FileUpload />
+          <DatasetUpload />
           <DatasetsFilterToolbar
             fullWidthFilters={
               <LabelsFilter

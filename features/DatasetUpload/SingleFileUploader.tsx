@@ -42,8 +42,13 @@ export function SingleFileUploadWithProgress({
   // const typeLabelParts = fileWrapper.file.name.split('.');
 
   const [interval, setInterval] = useState<number | false>(2000);
-  const { data: task, isLoading } = useGetTask(fileWrapper.taskId ?? "", undefined, {
+  const {
+    data: task,
+    isLoading,
+    isFetching,
+  } = useGetTask(fileWrapper.taskId ?? "", undefined, {
     query: {
+      enabled: fileWrapper.taskId !== null,
       // When a task id has been set, we poll the task endpoint to wait for the file to finish
       // processing
       refetchInterval: interval,
@@ -63,7 +68,7 @@ export function SingleFileUploadWithProgress({
   const disabled =
     (task && !task.done) ||
     (fileWrapper.progress < 100 && fileWrapper.progress > 0) ||
-    isLoading ||
+    isFetching ||
     (fileWrapper.progress === 100 && task === undefined);
 
   return (
@@ -125,7 +130,9 @@ export function SingleFileUploadWithProgress({
         <LinearProgress value={fileWrapper.progress} variant="determinate" />
       )}
 
-      {(fileWrapper.progress === 100 && task === undefined) || (task && !task.done) || isLoading ? (
+      {(fileWrapper.progress === 100 && task === undefined) ||
+      (task && !task.done) ||
+      isFetching ? (
         <LinearProgress />
       ) : null}
 

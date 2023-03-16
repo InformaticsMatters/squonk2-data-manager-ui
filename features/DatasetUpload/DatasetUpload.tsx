@@ -20,7 +20,7 @@ import { BulkUploadDropzone } from "./BulkUploadDropzone";
 /**
  * Button that controls a modal with UI to upload files to the DM API
  */
-export const FileUpload = () => {
+export const DatasetUpload = () => {
   const [open, setOpen] = useState(false);
   // Array of the user uploaded files with associated errors
   const [files, setFiles] = useState<UploadableFile[]>([]);

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.3-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.2...2.3.3-rc.0) (2023-04-20)
+
+
+### Bug Fixes
+
+* **executions:** use new molcules-smi type ([3646501](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/364650185d54ac5e8b6ab4d6ea344f4370bd6ff1))
+
 ### [2.3.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.1...2.3.2) (2023-03-16)
 
 

@@ -12,7 +12,7 @@ import { MultipleMoleculeInput } from "./MultipleMoleculeInput";
 // These might be defined in the form generator types?
 export interface InputFieldSchema {
   title: string;
-  type: "directory" | "file" | "molecule" | "molecules";
+  type: "directory" | "file" | "molecules-smi";
   "mime-types"?: string[];
   multiple?: true;
   default?: string;
@@ -73,8 +73,8 @@ export const JobInputFields = ({
               </InputSection>
             );
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          } else if (type === "molecule" || type === "molecules") {
-            // Going to remove the "molecules" type as this is specified by "multiple".
+          } else if (type === "molecules-smi") {
+            // Going to replace the "molecules-smi" type as this is specified by "multiple".
             // For now though, we assume it's always multiple molecules
             multiple = true;
 

@@ -26,13 +26,7 @@ export const InputOutputItemIcon = ({ type }: InputOutputItemIconProps) => {
           <InsertDriveFileRounded />
         </Avatar>
       );
-    case "molecule":
-      return (
-        <Avatar>
-          <ScienceRounded />
-        </Avatar>
-      );
-    case "molecules":
+    case "molecules-smi":
       return (
         <Avatar>
           <ScienceRounded />

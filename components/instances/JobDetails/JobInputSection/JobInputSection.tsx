@@ -47,7 +47,7 @@ export const JobInputSection = ({ instance }: JobInputSectionProps) => {
       {/* We currently have to assume that the outputs have a consistent type */}
       {inputs.map((input) => {
         const isFile = input.value.map((val) => val.startsWith(FILE_PROTOCOL)).some((v) => v);
-        const moleculesType = input.type === "molecules" || input.type === "molecule";
+        const moleculesType = input.type === "molecules-smi";
         let value = input.value;
         if (moleculesType && isFile) {
           value = value.map(removeFileProtocol);

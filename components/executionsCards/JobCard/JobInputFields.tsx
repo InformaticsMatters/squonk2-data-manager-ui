@@ -61,7 +61,7 @@ export const JobInputFields = ({
         ([key, { title, type, multiple, "mime-types": mimeTypes }]) => {
           if (type === "file" || type === "directory") {
             return (
-              <InputSection key={key} title={title}>
+              <InputSection key={key} required={inputs.required?.includes(key)} title={title}>
                 <FileSelector
                   mimeTypes={mimeTypes}
                   multiple={!!multiple}
@@ -79,7 +79,7 @@ export const JobInputFields = ({
             multiple = true;
 
             return (
-              <InputSection key={key} title={title}>
+              <InputSection key={key} required={inputs.required?.includes(key)} title={title}>
                 <MultipleMoleculeInput
                   mimeTypes={mimeTypes}
                   projectId={projectId}
@@ -108,14 +108,18 @@ export const JobInputFields = ({
 interface InputSectionProps {
   children: ReactNode;
   title: string;
+  required?: boolean;
 }
 
-export const InputSection = ({ children, title }: InputSectionProps) => {
+export const InputSection = ({ children, title, required }: InputSectionProps) => {
   return (
     // Expect a grid container in the parent component
     <Grid item xs={12}>
       <Typography component="h4" variant="subtitle1">
-        <em>{title}</em>
+        <em>
+          {title}
+          {!!required && " *"}
+        </em>
       </Typography>
       {children}
     </Grid>

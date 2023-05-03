@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.3-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.3-rc.0...2.3.3-rc.1) (2023-05-03)
+
+
+### Bug Fixes
+
+* **job-file-inputs:** display required indicator on inputs ([ff16e12](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/ff16e123eda8a9bf9f039ddcf29a6e7c8341620f))
+* **results-page:** fix rerun job functionality when job uses a smiles input ([0430748](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0430748cffb29bb1580ab18fa273f220a2ea5dba))
+
 ### [2.3.3-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.2...2.3.3-rc.0) (2023-04-20)
 
 

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import {
   Box,
@@ -12,8 +12,7 @@ import {
 import { nanoid } from "nanoid";
 
 import { useIsASketcherOpen } from "../../../state/sketcherState";
-import type { FILE_PROTOCOL } from "../../../utils/app/urls";
-import { addFileProtocol, removeFileProtocol } from "../../../utils/app/urls";
+import { addFileProtocol, FILE_PROTOCOL, removeFileProtocol } from "../../../utils/app/urls";
 import type { FileSelection, SharedProps } from "../../FileSelector";
 import { FileSelector } from "../../FileSelector";
 import { SMILESInput } from "../../SMILESInput";
@@ -61,7 +60,17 @@ export const MultipleMoleculeInput = ({
   reset,
 }: MultipleMoleculeInputProps) => {
   const uuid = useRef(nanoid()).current;
-  const [inputMethod, setInputMethod] = useState<InputMethod>("smiles");
+  const initialValue = useRef(value).current;
+  const method = useMemo(() => {
+    if (typeof initialValue === "string") {
+      return initialValue.startsWith(FILE_PROTOCOL) ? "files" : "smiles";
+    }
+    return initialValue?.map((val) => val.startsWith(FILE_PROTOCOL)).every((v) => v)
+      ? "files"
+      : "smiles";
+  }, [initialValue]);
+
+  const [inputMethod, setInputMethod] = useState<InputMethod>(method);
 
   return (
     <>

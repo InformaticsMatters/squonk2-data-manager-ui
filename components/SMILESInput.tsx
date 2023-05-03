@@ -146,7 +146,6 @@ export const SMILESInput = ({
             const ketcher = global.ketcher;
             try {
               const smi = await ketcher?.getSmiles();
-              console.log(smi);
               if (smi !== undefined) {
                 setSmiles(smi);
                 setMode("smiles");

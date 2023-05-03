@@ -1,9 +1,10 @@
 import type { Dispatch, ReactNode, SetStateAction } from "react";
+import { useState } from "react";
 
 import { Grid, Typography } from "@mui/material";
 
 import type { ProjectId } from "../../../hooks/projectHooks";
-import { FILE_PROTOCOL } from "../../../utils/app/urls";
+import { FILE_PROTOCOL, removeFileProtocolFromInputData } from "../../../utils/app/urls";
 import { FileSelector } from "../../FileSelector";
 import type { InputData } from "./JobModal";
 import { MultipleMoleculeInput } from "./MultipleMoleculeInput";
@@ -51,10 +52,12 @@ export interface JobInputFieldsProps {
 export const JobInputFields = ({
   projectId,
   inputs,
-  initialValues,
+  initialValues: initialInitialValues,
   inputsData,
   onChange,
 }: JobInputFieldsProps) => {
+  // capture initialValue in state as we need to mutate it
+  const [initialValues, setInitialValues] = useState(initialInitialValues);
   return (
     <>
       {Object.entries(inputs.properties).map(
@@ -67,7 +70,7 @@ export const JobInputFields = ({
                   multiple={!!multiple}
                   projectId={projectId}
                   targetType={type}
-                  value={inputsData[key] || initialValues?.[key]}
+                  value={inputsData[key] || removeFileProtocolFromInputData(initialValues?.[key])}
                   onSelect={(selection) => onChange({ ...inputsData, [key]: selection })}
                 />
               </InputSection>
@@ -84,7 +87,16 @@ export const JobInputFields = ({
                   mimeTypes={mimeTypes}
                   projectId={projectId}
                   protocol={FILE_PROTOCOL}
-                  reset={() => onChange({ ...inputsData, [key]: undefined })}
+                  reset={() => {
+                    // when using initialValues (from a previous instance) we have to clean this up
+                    // too if E.g. the file/smiles radio is changed
+                    const updatedInitialValue = { ...initialValues };
+                    delete updatedInitialValue[key];
+                    setInitialValues(updatedInitialValue);
+
+                    // Then reset current input data
+                    onChange({ ...inputsData, [key]: undefined });
+                  }}
                   value={inputsData[key] || initialValues?.[key]}
                   onFileSelect={(selection) => onChange({ ...inputsData, [key]: selection })}
                   onMoleculesChange={(newValue) =>

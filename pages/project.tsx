@@ -48,7 +48,7 @@ export const getServerSideProps = withPageAuthRequiredSSR<ProjectProps>({
         // Prefetch some data
         const queries = [
           queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
-            getProjects(dmOptions(accessToken)),
+            getProjects(undefined, dmOptions(accessToken)),
           ),
           queryClient.prefetchQuery(getGetFilesQueryKey(filesParam), () =>
             getFiles(filesParam, dmOptions(accessToken)),

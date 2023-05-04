@@ -61,7 +61,7 @@ export const useCurrentProjectId = () => {
 export const useCurrentProject = () => {
   const isAuthorized = useIsAuthorized();
   const { projectId } = useCurrentProjectId();
-  const { data } = useGetProjects({ query: { enabled: !!isAuthorized } });
+  const { data } = useGetProjects(undefined, { query: { enabled: !!isAuthorized } });
   const projects = data?.projects;
 
   return projects?.find((project) => project.project_id === projectId) ?? null;

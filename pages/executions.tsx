@@ -40,7 +40,7 @@ export const getServerSideProps = withPageAuthRequiredSSR({
         // Prefetch some data
         const queries = [
           queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
-            getProjects(dmOptions(accessToken)),
+            getProjects(undefined, dmOptions(accessToken)),
           ),
           queryClient.prefetchQuery(getGetApplicationsQueryKey(), () =>
             getApplications(dmOptions(accessToken)),

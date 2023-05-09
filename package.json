@@ -94,7 +94,7 @@
     "react-dom": "18.2.0",
     "react-dropzone": "14.2.3",
     "react-plotly.js": "2.6.0",
-    "react-virtualized": "9.22.3",
+    "react-virtualized": "9.22.5",
     "sass": "1.62.1",
     "sharp": "0.31.3",
     "tsafe": "1.5.2",

@@ -30,7 +30,7 @@ specifiers:
   '@tanstack/react-query-devtools': 4.26.1
   '@tanstack/react-table': 8.7.9
   '@types/lodash-es': 4.17.7
-  '@types/node': 18.15.3
+  '@types/node': 18.16.7
   '@types/plotly.js-basic-dist': 1.54.1
   '@types/prismjs': 1.26.0
   '@types/react': 18.0.28
@@ -103,7 +103,7 @@ dependencies:
   '@tanstack/react-query-devtools': 4.26.1_brdhmlf72zuns3lsk66phyptty
   '@tanstack/react-table': 8.7.9_biqbaboplfbrettd7655fr4n2y
   '@types/lodash-es': 4.17.7
-  '@types/node': 18.15.3
+  '@types/node': 18.16.7
   '@types/plotly.js-basic-dist': 1.54.1
   '@types/prismjs': 1.26.0
   '@types/react': 18.0.28
@@ -914,7 +914,7 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
-      '@types/node': 18.15.3
+      '@types/node': 18.16.7
       playwright-core: 1.31.2
     optionalDependencies:
       fsevents: 2.3.2
@@ -1421,7 +1421,7 @@ packages:
   /@types/http-proxy/1.17.3:
     resolution: {integrity: sha512-wIPqXANye5BbORbuh74exbwNzj+UWCwWyeEFJzUQ7Fq3W2NSAy+7x7nX1fgbEypr2/TdKqpeuxLnXWgzN533/Q==}
     dependencies:
-      '@types/node': 18.15.3
+      '@types/node': 18.16.7
     dev: false
 
   /@types/json-schema/7.0.11:
@@ -1464,8 +1464,8 @@ packages:
     resolution: {integrity: sha512-ZOzvDRWp8dCVBmgnkIqYCArgdFOO9YzocZp8Ra25N/RStKiWvMOXHMz+GjSeVNe5TstaTmTWPucGJkDw0XXJWA==}
     dev: true
 
-  /@types/node/18.15.3:
-    resolution: {integrity: sha512-p6ua9zBxz5otCmbpb5D3U4B5Nanw6Pk3PPyX05xnxbB/fRv71N7CPmORg7uAD5P70T0xmx1pzAx/FUfa5X+3cw==}
+  /@types/node/18.16.7:
+    resolution: {integrity: sha512-MFg7ua/bRtnA1hYE3pVyWxGd/r7aMqjNOdHvlSsXV3n8iaeGKkOaPzpJh6/ovf4bEXWcojkeMJpTsq3mzXW4IQ==}
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}

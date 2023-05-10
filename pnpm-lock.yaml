@@ -17,9 +17,9 @@ specifiers:
   '@next/mdx': 13.2.4
   '@playwright/test': 1.33.0
   '@rjsf/core': 5.2.1
-  '@rjsf/mui': ^5.2.1
-  '@rjsf/utils': ^5.2.1
-  '@rjsf/validator-ajv8': ^5.2.1
+  '@rjsf/mui': 5.6.2
+  '@rjsf/utils': 5.6.2
+  '@rjsf/validator-ajv8': 5.6.2
   '@sentry/nextjs': 7.51.2
   '@squonk/account-server-client': 2.0.3
   '@squonk/data-manager-client': 1.1.4-rc.3
@@ -38,7 +38,7 @@ specifiers:
   '@types/react-virtualized': 9.21.21
   axios: 1.4.0
   dayjs: 1.11.7
-  dotenv: ^16.0.3
+  dotenv: 16.0.3
   eslint: 8.36.0
   filesize: 10.0.7
   formik: 2.2.9
@@ -90,10 +90,10 @@ dependencies:
   '@mui/styles': 5.12.3_s3k22s5ab4eu26xuel7hiaraxy
   '@next/eslint-plugin-next': 13.2.4
   '@next/mdx': 13.2.4_msthxdjvrhmdkfpqqalumiidgq
-  '@rjsf/core': 5.2.1_wuouf53pld766fvbudkgkoiyta
-  '@rjsf/mui': 5.2.1_wpun2fpfaus456mop7hjd2z4sq
-  '@rjsf/utils': 5.2.1_react@18.2.0
-  '@rjsf/validator-ajv8': 5.2.1_@rjsf+utils@5.2.1
+  '@rjsf/core': 5.2.1_z3pht4sgsiqwwidxbt3gorpdum
+  '@rjsf/mui': 5.6.2_3itfyyooriuinf6gauy6x3civq
+  '@rjsf/utils': 5.6.2_react@18.2.0
+  '@rjsf/validator-ajv8': 5.6.2_@rjsf+utils@5.6.2
   '@sentry/nextjs': 7.51.2_next@13.2.4+react@18.2.0
   '@squonk/account-server-client': 2.0.3_we4k2ks6s5efxuxkqk7g6kttie
   '@squonk/data-manager-client': 1.1.4-rc.3_we4k2ks6s5efxuxkqk7g6kttie
@@ -1006,14 +1006,14 @@ packages:
       reselect: 4.1.7
     dev: false
 
-  /@rjsf/core/5.2.1_wuouf53pld766fvbudkgkoiyta:
+  /@rjsf/core/5.2.1_z3pht4sgsiqwwidxbt3gorpdum:
     resolution: {integrity: sha512-r/yY/7IOPKYQNkZj73wyH+AuBNIauygJr/CNXumFctra50y+Cd5zS9H4XJ4TRtKAHOjz29s6nsA1nTaH1fPHDw==}
     engines: {node: '>=14'}
     peerDependencies:
       '@rjsf/utils': ^5.0.0
       react: ^16.14.0 || >=17
     dependencies:
-      '@rjsf/utils': 5.2.1_react@18.2.0
+      '@rjsf/utils': 5.6.2_react@18.2.0
       lodash: 4.17.21
       lodash-es: 4.17.21
       markdown-to-jsx: 7.1.9_react@18.2.0
@@ -1022,29 +1022,29 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@rjsf/mui/5.2.1_wpun2fpfaus456mop7hjd2z4sq:
-    resolution: {integrity: sha512-1cPiaxUfLHXhOupEJDeJZfVTqnCBhcpbqc+nLOe0XCoI6qhkfvbPpOJQ8NUeMkkH5svPJJQCbeo9ixJZ4FV8PQ==}
+  /@rjsf/mui/5.6.2_3itfyyooriuinf6gauy6x3civq:
+    resolution: {integrity: sha512-RhoGKpsvozehMJmXuTl4nUQFZCWTEOYbS5lePCHByGcqwnMI7XEpLs45SyBXocHUwAJtDpPZkyKi/YSwUjj4yg==}
     engines: {node: '>=14'}
     peerDependencies:
       '@emotion/react': ^11.7.0
       '@emotion/styled': ^11.6.0
       '@mui/icons-material': ^5.2.0
       '@mui/material': ^5.2.2
-      '@rjsf/core': ^5.0.0
-      '@rjsf/utils': ^5.0.0
+      '@rjsf/core': 5.6.x
+      '@rjsf/utils': 5.6.x
       react: '>=17'
     dependencies:
       '@emotion/react': 11.11.0_s3k22s5ab4eu26xuel7hiaraxy
       '@emotion/styled': 11.11.0_gwsnvbfty4jua3m4tf74x4grui
       '@mui/icons-material': 5.11.16_cihqjpkbuck2futacyun567qmi
       '@mui/material': 5.13.0_iv5go3rgyvd4fx7f3hepohh5uu
-      '@rjsf/core': 5.2.1_wuouf53pld766fvbudkgkoiyta
-      '@rjsf/utils': 5.2.1_react@18.2.0
+      '@rjsf/core': 5.2.1_z3pht4sgsiqwwidxbt3gorpdum
+      '@rjsf/utils': 5.6.2_react@18.2.0
       react: 18.2.0
     dev: false
 
-  /@rjsf/utils/5.2.1_react@18.2.0:
-    resolution: {integrity: sha512-+Evan0KDj0t0NtOAxOFtV+/kPDUWz2NyG9zl9X7LLiOlNY2zOdDeUtYEOklbpu1APOqIkwCQc6z1VefQJNKH8Q==}
+  /@rjsf/utils/5.6.2_react@18.2.0:
+    resolution: {integrity: sha512-uditIzGKHRV5vI9HOz4spSoGplm3zrifsInn+izCWETJfLgV5961hUYHaS21vcD+VTp7qUcTZChfmhiRekSrLA==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^16.14.0 || >=17
@@ -1057,13 +1057,13 @@ packages:
       react-is: 18.2.0
     dev: false
 
-  /@rjsf/validator-ajv8/5.2.1_@rjsf+utils@5.2.1:
-    resolution: {integrity: sha512-VHxlBECvzMQtpxfLnoB4E5HV7e+LLimID4gfXYBr+kf+tVS5Z3OVRNwTkEmInHLmBK4Zp2hIgBDE7dBIhHvnkg==}
+  /@rjsf/validator-ajv8/5.6.2_@rjsf+utils@5.6.2:
+    resolution: {integrity: sha512-aenj8vQ91TJdRTqFGi3Rl3j7j/EjjgYokIopCBlFqYDR3AVcoFSbLZw2JobZAADstw3eIL+ZEYi/LyvJCVV6lw==}
     engines: {node: '>=14'}
     peerDependencies:
-      '@rjsf/utils': ^5.0.0
+      '@rjsf/utils': 5.6.x
     dependencies:
-      '@rjsf/utils': 5.2.1_react@18.2.0
+      '@rjsf/utils': 5.6.2_react@18.2.0
       ajv: 8.12.0
       ajv-formats: 2.1.1
       lodash: 4.17.21

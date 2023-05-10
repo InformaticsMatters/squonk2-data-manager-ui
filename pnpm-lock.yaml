@@ -15,7 +15,7 @@ specifiers:
   '@next/bundle-analyzer': 13.2.4
   '@next/eslint-plugin-next': 13.2.4
   '@next/mdx': 13.2.4
-  '@playwright/test': 1.31.2
+  '@playwright/test': 1.33.0
   '@rjsf/core': 5.2.1
   '@rjsf/mui': ^5.2.1
   '@rjsf/utils': ^5.2.1
@@ -146,7 +146,7 @@ dependencies:
 
 devDependencies:
   '@next/bundle-analyzer': 13.2.4
-  '@playwright/test': 1.31.2
+  '@playwright/test': 1.33.0
   '@squonk/eslint-config': 0.5.0_vgl77cfdswitgr47lm5swmv43m
   dotenv: 16.0.3
   eslint: 8.36.0
@@ -959,13 +959,13 @@ packages:
     resolution: {integrity: sha512-003xWiCuvePbLaPHT+CRuaV4GlyCAVm6XYSbBZDHoWZGn1mNkVKFaDbGJjjxmEFvizUwlCoM6O18FCBMMky2zQ==}
     dev: false
 
-  /@playwright/test/1.31.2:
-    resolution: {integrity: sha512-BYVutxDI4JeZKV1+ups6dt5WiqKhjBtIYowyZIJ3kBDmJgsuPKsqqKNIMFbUePLSCmp2cZu+BDL427RcNKTRYw==}
+  /@playwright/test/1.33.0:
+    resolution: {integrity: sha512-YunBa2mE7Hq4CfPkGzQRK916a4tuZoVx/EpLjeWlTVOnD4S2+fdaQZE0LJkbfhN5FTSKNLdcl7MoT5XB37bTkg==}
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
       '@types/node': 18.16.7
-      playwright-core: 1.31.2
+      playwright-core: 1.33.0
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -5293,8 +5293,8 @@ packages:
     hasBin: true
     dev: true
 
-  /playwright-core/1.31.2:
-    resolution: {integrity: sha512-a1dFgCNQw4vCsG7bnojZjDnPewZcw7tZUNFN0ZkcLYKj+mPmXvg4MpaaKZ5SgqPsOmqIf2YsVRkgqiRDxD+fDQ==}
+  /playwright-core/1.33.0:
+    resolution: {integrity: sha512-aizyPE1Cj62vAECdph1iaMILpT0WUDCq3E6rW6I+dleSbBoGbktvJtzS6VHkZ4DKNEOG9qJpiom/ZxO+S15LAw==}
     engines: {node: '>=14'}
     hasBin: true
     dev: true

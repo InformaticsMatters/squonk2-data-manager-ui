@@ -46,7 +46,7 @@ specifiers:
   formik-mui-lab: 1.0.0
   husky: 8.0.3
   identity-obj-proxy: 3.0.0
-  immer: 9.0.19
+  immer: 9.0.21
   jotai: 2.0.3
   just-compare: 2.3.0
   just-group-by: 2.2.0
@@ -115,7 +115,7 @@ dependencies:
   formik: 2.2.9_react@18.2.0
   formik-mui: 4.0.0_2pqrfyltuehmpzwhixpmsgd2vy
   formik-mui-lab: 1.0.0_xld7dozcdyzrvnk2b3mhpmkzfm
-  immer: 9.0.19
+  immer: 9.0.21
   jotai: 2.0.3_react@18.2.0
   just-compare: 2.3.0
   just-group-by: 2.2.0
@@ -141,7 +141,7 @@ dependencies:
   sharp: 0.31.3
   tsafe: 1.5.2
   typescript: 4.9.5
-  use-immer: 0.7.0_immer@9.0.19+react@18.2.0
+  use-immer: 0.7.0_immer@9.0.21+react@18.2.0
   yup: 1.0.2
 
 devDependencies:
@@ -977,7 +977,7 @@ packages:
       react-redux:
         optional: true
     dependencies:
-      immer: 9.0.19
+      immer: 9.0.21
       react: 18.2.0
       react-redux: 7.2.9_biqbaboplfbrettd7655fr4n2y
       redux: 4.2.1
@@ -3413,8 +3413,8 @@ packages:
     resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
     dev: false
 
-  /immer/9.0.19:
-    resolution: {integrity: sha512-eY+Y0qcsB4TZKwgQzLaE/lqYMlKhv5J9dyd2RhhtGhNo2njPXDqU9XPfcNfa3MIDsdtZt5KlkIsirlo4dHsWdQ==}
+  /immer/9.0.21:
+    resolution: {integrity: sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==}
     dev: false
 
   /immutable/3.7.6:
@@ -6443,13 +6443,13 @@ packages:
     resolution: {integrity: sha512-KmkCs6SjE6t4ihrfW9JelAPQIIIFbJweaaSLTh/4AO+c58JlDcb+GbdPt8yr5lRcFg4rPswRFRRhBGpWwh0K/Q==}
     dev: false
 
-  /use-immer/0.7.0_immer@9.0.19+react@18.2.0:
+  /use-immer/0.7.0_immer@9.0.21+react@18.2.0:
     resolution: {integrity: sha512-Re4hjrP3a/2ABZjAc0b7AK9s626bnO+H33RO2VUhiDZ2StBz5B663K6WNNlr4QtHWaGUmvLpwt3whFvvWuolQw==}
     peerDependencies:
       immer: '>=2.0.0'
       react: ^16.8.0 || ^17.0.1 || ^18.0.0
     dependencies:
-      immer: 9.0.19
+      immer: 9.0.21
       react: 18.2.0
     dev: false
 

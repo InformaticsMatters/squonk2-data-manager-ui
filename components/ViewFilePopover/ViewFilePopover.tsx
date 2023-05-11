@@ -1,5 +1,5 @@
 import { Link, Popover } from "@mui/material";
-import { bindPopover, bindTrigger } from "material-ui-popup-state/core";
+import { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { usePopupState } from "material-ui-popup-state/hooks";
 
 import { FileViewersList } from "./FileViewersList";

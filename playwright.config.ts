@@ -15,8 +15,7 @@ export default defineConfig({
       use: {
         storageState: "storageState.json",
         baseURL: baseURL.href,
-        screenshot: "on",
-        trace: "on-first-retry",
+        trace: "on",
       },
       retries: 3,
       timeout: 60000,
@@ -26,10 +25,11 @@ export default defineConfig({
   ],
   use: {
     baseURL: baseURL.href,
-    screenshot: "on",
-    trace: "on-first-retry", // record traces on first retry of each test
+    trace: "on", // record traces on first retry of each test
   },
   webServer: {
+    // needs to use the package manager here to avoid an error when not running playwright from the
+    // terminal
     command: `pnpm start`,
     url: baseURL.href,
     timeout: 200 * 1000,

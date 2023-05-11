@@ -83,12 +83,6 @@ jobs:
       with:
         name: Base Path Results
         path: test-results
-    - name: Upload traces for bath path
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: Base Path Traces
-        path: trace.zip
   test-no-base-path:
     # Setup
     runs-on: ubuntu-latest
@@ -148,9 +142,3 @@ jobs:
       with:
         name: No Base Path Results
         path: test-results
-    - name: Upload traces for no bath path
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: No Base Path Traces
-        path: trace.zip

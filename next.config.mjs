@@ -24,7 +24,7 @@ const resolvePackage = (packageName) => path.resolve(__dirname, ".", "node_modul
  * @type {import('next').NextConfig}
  */
 let nextConfig = {
-  output: "standalone",
+  output: process.env.DONT_USE_STANDALONE_OUTPUT ? undefined : "standalone",
   generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA : undefined,
   typescript: { ignoreBuildErrors: process.env.SKIP_CHECKS },
   eslint: { ignoreDuringBuilds: process.env.SKIP_CHECKS },

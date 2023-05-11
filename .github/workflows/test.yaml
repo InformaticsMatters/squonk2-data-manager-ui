@@ -69,6 +69,8 @@ jobs:
         AUTH0_SECRET: "LONG_RANDOM_VALUE"
         BASE_URL: "http://localhost:3000"
         BASE_PATH: "/data-manager-ui"
+        DONT_USE_STANDALONE_OUTPUT: true
+        DANGEROUS__DISABLE_SSL_CERT_CHECK_IN_API_PROXY: 1
         DATA_MANAGER_API_SERVER: "https://data-manager-test.xchem-dev.diamond.ac.uk/data-manager-api"
         ACCOUNT_SERVER_API_SERVER: "https://account-server-test.xchem-dev.diamond.ac.uk/account-server-api"
         KEYCLOAK_URL: "https://keycloak.xchem-dev.diamond.ac.uk/auth/realms/xchem"
@@ -130,6 +132,8 @@ jobs:
         DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
         AUTH0_SECRET: "LONG_RANDOM_VALUE"
         BASE_URL: "http://localhost:3000"
+        DONT_USE_STANDALONE_OUTPUT: true
+        DANGEROUS__DISABLE_SSL_CERT_CHECK_IN_API_PROXY: 1
         BASE_PATH: ""
         DATA_MANAGER_API_SERVER: "https://data-manager-test.xchem-dev.diamond.ac.uk/data-manager-api"
         ACCOUNT_SERVER_API_SERVER: "https://account-server-test.xchem-dev.diamond.ac.uk/account-server-api"

@@ -20,7 +20,7 @@ setup("do login", async ({ page }) => {
   await page.waitForURL(baseURL, { timeout: 60000 });
 
   await page.getByRole("button").nth(1).click();
-  expect(page.getByText("Logout").innerText()).toBeDefined();
+  expect(await page.getByText("Logout").innerText()).toBeDefined();
 
   // Save signed-in state to 'storageState.json'.
   await page.context().storageState({ path: "storageState.json" });
@@ -29,5 +29,5 @@ setup("do login", async ({ page }) => {
 
   await page.getByRole("button").nth(1).click();
   expect(page.url()).toBe(baseURL);
-  expect(page.getByText("Login").innerText()).toBeDefined();
+  expect(await page.getByText("Login").innerText()).toBeDefined();
 });

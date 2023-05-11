@@ -39,7 +39,7 @@ export const createProxyMiddleware = (
       }
 
       // API resolved without sending a response for ..., this may result in stalled requests.
-      return await httpProxyMiddleware(req, res, {
+      httpProxyMiddleware(req, res, {
         target,
         onProxyInit: handleProxyInit,
         // * replace the path in the request with the correct path for the API

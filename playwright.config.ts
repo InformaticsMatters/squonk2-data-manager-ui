@@ -30,7 +30,7 @@ export default defineConfig({
     trace: "on-first-retry", // record traces on first retry of each test
   },
   webServer: {
-    command: `next start`,
+    command: `pnpm start`,
     url: baseURL.href,
     timeout: 200 * 1000,
     env: {

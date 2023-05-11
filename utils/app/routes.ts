@@ -4,10 +4,11 @@
 type Proxy = "/api/dm-api" | "/api/viewer-proxy" | "";
 
 export const API_ROUTES = {
-  projectFile: (projectId: string, path: string, fileName: string, proxy: Proxy = "") =>
-    `${proxy}/project/${projectId}/file?path=${encodeURIComponent(path)}&file=${encodeURIComponent(
-      fileName,
-    )}`,
+  projectFile: (projectId: string, path: string, fileName: string, proxy: Proxy = "") => {
+    const params = new URLSearchParams({ file: fileName });
+    path !== "" && params.set("path", path);
+    return `${proxy}/project/${projectId}/file?${params.toString()}`;
+  },
   datasetVersion: (datasetId: string, version: number, proxy: Proxy = "") =>
     `${proxy}/dataset/${datasetId}/${version}`,
 };

@@ -1,6 +1,7 @@
+import { useGetVersion as useGetASAPIVersion } from "@squonk/account-server-client/state";
+import { useGetVersion as useGetDMAPIVersion } from "@squonk/data-manager-client/accounting";
+
 import { ListItem as MuiListItem, ListItemText, styled, Typography } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
 import { HorizontalList } from "./HorizontalList";
 
@@ -8,16 +9,8 @@ export const getGetDMVersionQueryKey = () => ["data-manager", "/version"];
 export const getGetASVersionQueryKey = () => ["account-server", "/version"];
 
 export const AppVersions = () => {
-  const { data: dmData } = useQuery(getGetDMVersionQueryKey(), () =>
-    axios
-      .get(process.env.NEXT_PUBLIC_DATA_MANAGER_API_SERVER + "/version")
-      .then(({ data }) => data),
-  );
-  const { data: asData } = useQuery(getGetASVersionQueryKey(), () =>
-    axios
-      .get(process.env.NEXT_PUBLIC_ACCOUNT_SERVER_API_SERVER + "/version")
-      .then(({ data }) => data),
-  );
+  const { data: dmData } = useGetDMAPIVersion();
+  const { data: asData } = useGetASAPIVersion();
 
   return (
     <>

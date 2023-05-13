@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.5-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.4...2.3.5-rc.0) (2023-05-13)
+
+
+### Bug Fixes
+
+* **api:** cleanup /version API requests in the footer ([9bcdfb6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9bcdfb6be557a7c08e8bc9cdf00ef3c7ae83cc1a)), closes [#951](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/951) [#690](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/690)
+* **auth:** fix auth logout issue ([6e04ce1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6e04ce15582e9ff0b717c184c0960fe226485b81))
+* **deps:** upgrade material-ui-popup-state and fix breaking changes ([26c1bd8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/26c1bd8b0b51000cbf9d2ad708660284d1f8df50))
+* **nextjs:** fix console noise created from last commit ([0e9c6d1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0e9c6d10be0629a64ae18c8a5ff76e0907c31282))
+* **nextjs:** remove console noise created by nextjs update ([f619298](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f619298b9ab1cd7bcfa52beee9a5177316b2c1ea))
+* **viewers:** fix browser viewer for files at the project root ([8d9ce9b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8d9ce9b8dff780286df83904d18768c80efe6ef6)), closes [#953](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/953)
+
 ### [2.3.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.4-rc.0...2.3.4) (2023-05-05)
 
 ### [2.3.4-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.3...2.3.4-rc.0) (2023-05-04)

@@ -50,7 +50,7 @@
     "@next/mdx": "13.4.1",
     "@rjsf/core": "5.6.2",
     "@rjsf/mui": "5.6.2",
-    "@rjsf/utils": "5.6.2",
+    "@rjsf/utils": "5.7.2",
     "@rjsf/validator-ajv8": "5.6.2",
     "@sentry/nextjs": "7.51.2",
     "@squonk/account-server-client": "2.0.3",

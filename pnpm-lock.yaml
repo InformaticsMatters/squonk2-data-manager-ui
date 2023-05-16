@@ -17,7 +17,7 @@ specifiers:
   '@next/mdx': 13.4.1
   '@playwright/test': 1.33.0
   '@rjsf/core': 5.6.2
-  '@rjsf/mui': 5.6.2
+  '@rjsf/mui': 5.7.2
   '@rjsf/utils': 5.6.2
   '@rjsf/validator-ajv8': 5.6.2
   '@sentry/nextjs': 7.51.2
@@ -89,7 +89,7 @@ dependencies:
   '@next/eslint-plugin-next': 13.4.1
   '@next/mdx': 13.4.1_msthxdjvrhmdkfpqqalumiidgq
   '@rjsf/core': 5.6.2_z3pht4sgsiqwwidxbt3gorpdum
-  '@rjsf/mui': 5.6.2_afgpalafvao5l4yaoylghcnigi
+  '@rjsf/mui': 5.7.2_afgpalafvao5l4yaoylghcnigi
   '@rjsf/utils': 5.6.2_react@18.2.0
   '@rjsf/validator-ajv8': 5.6.2_@rjsf+utils@5.6.2
   '@sentry/nextjs': 7.51.2_next@13.4.1+react@18.2.0
@@ -968,16 +968,16 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@rjsf/mui/5.6.2_afgpalafvao5l4yaoylghcnigi:
-    resolution: {integrity: sha512-RhoGKpsvozehMJmXuTl4nUQFZCWTEOYbS5lePCHByGcqwnMI7XEpLs45SyBXocHUwAJtDpPZkyKi/YSwUjj4yg==}
+  /@rjsf/mui/5.7.2_afgpalafvao5l4yaoylghcnigi:
+    resolution: {integrity: sha512-KQ5Wub06NYBw6Ah9El3/HxfAKuDemBpA2k1fAnvuHvnsNseJWXGKg7uIrpEeygRu+r9cBO7H3Z1tMiYP9FoPqA==}
     engines: {node: '>=14'}
     peerDependencies:
       '@emotion/react': ^11.7.0
       '@emotion/styled': ^11.6.0
       '@mui/icons-material': ^5.2.0
       '@mui/material': ^5.2.2
-      '@rjsf/core': 5.6.x
-      '@rjsf/utils': 5.6.x
+      '@rjsf/core': 5.7.x
+      '@rjsf/utils': 5.7.x
       react: '>=17'
     dependencies:
       '@emotion/react': 11.11.0_s3k22s5ab4eu26xuel7hiaraxy

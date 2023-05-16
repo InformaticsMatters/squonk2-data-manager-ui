@@ -16,7 +16,7 @@ specifiers:
   '@next/eslint-plugin-next': 13.4.1
   '@next/mdx': 13.4.1
   '@playwright/test': 1.33.0
-  '@rjsf/core': 5.6.2
+  '@rjsf/core': 5.7.2
   '@rjsf/mui': 5.6.2
   '@rjsf/utils': 5.6.2
   '@rjsf/validator-ajv8': 5.6.2
@@ -88,8 +88,8 @@ dependencies:
   '@mui/styles': 5.12.3_s3k22s5ab4eu26xuel7hiaraxy
   '@next/eslint-plugin-next': 13.4.1
   '@next/mdx': 13.4.1_msthxdjvrhmdkfpqqalumiidgq
-  '@rjsf/core': 5.6.2_z3pht4sgsiqwwidxbt3gorpdum
-  '@rjsf/mui': 5.6.2_afgpalafvao5l4yaoylghcnigi
+  '@rjsf/core': 5.7.2_z3pht4sgsiqwwidxbt3gorpdum
+  '@rjsf/mui': 5.6.2_n2etewix2hafn52t2kgbclh4rm
   '@rjsf/utils': 5.6.2_react@18.2.0
   '@rjsf/validator-ajv8': 5.6.2_@rjsf+utils@5.6.2
   '@sentry/nextjs': 7.51.2_next@13.4.1+react@18.2.0
@@ -952,11 +952,11 @@ packages:
       reselect: 4.1.7
     dev: false
 
-  /@rjsf/core/5.6.2_z3pht4sgsiqwwidxbt3gorpdum:
-    resolution: {integrity: sha512-3N3NZ1ax2XmeJU0Bf6bBIRFawyIukN1bgA5Y5B1vFZ2GwZ9Gn1eiQedAhdgR8+qSlghVxNmC942c9oPR0GzE0A==}
+  /@rjsf/core/5.7.2_z3pht4sgsiqwwidxbt3gorpdum:
+    resolution: {integrity: sha512-ur1OZzPb5gHBkLsLJ3iw4HwYt74ak2t/wF9xejbcU93oUpNq/NAe1j/YS6Fy2iHlAvyXwygd3tbECiIK5diaaA==}
     engines: {node: '>=14'}
     peerDependencies:
-      '@rjsf/utils': 5.6.x
+      '@rjsf/utils': 5.7.x
       react: ^16.14.0 || >=17
     dependencies:
       '@rjsf/utils': 5.6.2_react@18.2.0
@@ -968,7 +968,7 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@rjsf/mui/5.6.2_afgpalafvao5l4yaoylghcnigi:
+  /@rjsf/mui/5.6.2_n2etewix2hafn52t2kgbclh4rm:
     resolution: {integrity: sha512-RhoGKpsvozehMJmXuTl4nUQFZCWTEOYbS5lePCHByGcqwnMI7XEpLs45SyBXocHUwAJtDpPZkyKi/YSwUjj4yg==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -984,7 +984,7 @@ packages:
       '@emotion/styled': 11.11.0_gwsnvbfty4jua3m4tf74x4grui
       '@mui/icons-material': 5.11.16_cihqjpkbuck2futacyun567qmi
       '@mui/material': 5.13.0_iv5go3rgyvd4fx7f3hepohh5uu
-      '@rjsf/core': 5.6.2_z3pht4sgsiqwwidxbt3gorpdum
+      '@rjsf/core': 5.7.2_z3pht4sgsiqwwidxbt3gorpdum
       '@rjsf/utils': 5.6.2_react@18.2.0
       react: 18.2.0
     dev: false

@@ -54,9 +54,9 @@ export default function App({
   }, []);
 
   // Vercel specific code is only imported if needed
-  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-    import("../utils/next/vercelRedirect").then(({ vercelRedirect }) => vercelRedirect());
-  }
+  // if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+  //   import("../utils/next/vercelRedirect").then(({ vercelRedirect }) => vercelRedirect());
+  // }
 
   return (
     <CacheProvider value={emotionCache}>

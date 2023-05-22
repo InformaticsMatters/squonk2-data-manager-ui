@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.5-rc.0...2.4.0) (2023-05-22)
+
+
+### Features
+
+* **api:** add a public ui-version endpoint ([5bb327a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5bb327abbba45fdbcdbfc9c7737b22a86d565f0c))
+
 ### [2.3.5-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.4...2.3.5-rc.0) (2023-05-13)
 
 

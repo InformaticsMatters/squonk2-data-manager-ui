@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.1-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.4.0...2.4.1-rc.0) (2023-05-22)
+
+
+### Bug Fixes
+
+* **auth:** experimental test to fix 404 errors when navigating to certain pages without authentication ([327078b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/327078b69fcf93ab0f4ae697f0e0eafef86b467b))
+
 ## [2.4.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.3.5-rc.0...2.4.0) (2023-05-22)
 
 

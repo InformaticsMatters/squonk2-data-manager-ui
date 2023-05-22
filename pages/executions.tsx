@@ -12,7 +12,6 @@ import {
   getAccessToken,
   withPageAuthRequired as withPageAuthRequiredSSR,
 } from "@auth0/nextjs-auth0";
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Alert, Container, Grid, MenuItem, TextField } from "@mui/material";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import Head from "next/head";
@@ -209,4 +208,4 @@ const Executions = () => {
   );
 };
 
-export default withPageAuthRequiredCSR(Executions);
+export default Executions;

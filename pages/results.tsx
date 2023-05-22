@@ -5,7 +5,6 @@ import {
   getAccessToken,
   withPageAuthRequired as withPageAuthRequiredSSR,
 } from "@auth0/nextjs-auth0";
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { captureException } from "@sentry/nextjs";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import NextError from "next/error";
@@ -18,13 +17,13 @@ import { createErrorProps } from "../utils/api/serverSidePropsError";
 import { dmOptions } from "../utils/api/ssrQueryOptions";
 import type { NotSuccessful, ReactQueryPageProps } from "../utils/next/ssr";
 
-export type TasksProps = NotSuccessful | ReactQueryPageProps;
+export type ResultsProps = NotSuccessful | ReactQueryPageProps;
 
-const isNotSuccessful = (props: TasksProps): props is NotSuccessful => {
+const isNotSuccessful = (props: ResultsProps): props is NotSuccessful => {
   return typeof (props as NotSuccessful).statusCode === "number";
 };
 
-export const getServerSideProps = withPageAuthRequiredSSR<TasksProps>({
+export const getServerSideProps = withPageAuthRequiredSSR<ResultsProps>({
   getServerSideProps: async ({ req, res, query }) => {
     const projectId = query.project;
 
@@ -65,7 +64,7 @@ export const getServerSideProps = withPageAuthRequiredSSR<TasksProps>({
   },
 });
 
-const Tasks = (props: TasksProps) => {
+const Results = (props: ResultsProps) => {
   if (isNotSuccessful(props)) {
     const { statusCode, statusMessage } = props;
     return <NextError statusCode={statusCode} statusMessage={statusMessage} />;
@@ -85,4 +84,4 @@ const Tasks = (props: TasksProps) => {
   );
 };
 
-export default withPageAuthRequiredCSR(Tasks);
+export default Results;

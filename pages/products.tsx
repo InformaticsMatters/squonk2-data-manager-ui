@@ -4,7 +4,6 @@ import {
   getAccessToken,
   withPageAuthRequired as withPageAuthRequiredSSR,
 } from "@auth0/nextjs-auth0";
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Container } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
@@ -74,4 +73,4 @@ export const Products = (props: ProductsProps) => {
   );
 };
 
-export default withPageAuthRequiredCSR(Products);
+export default Products;

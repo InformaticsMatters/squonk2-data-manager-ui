@@ -52,6 +52,7 @@ export const Configuration = ({ dmAPI, asAPI }: ConfigurationProps) => (
       <ReprLi title="Base Path">{process.env.NEXT_PUBLIC_BASE_PATH}</ReprLi>
       <ReprLi title="DM API Server">{dmAPI}</ReprLi>
       <ReprLi title="AS API Server">{asAPI}</ReprLi>
+      <ReprLi title="Auth0 Base URL (PUBLIC)">{process.env.NEXT_PUBLIC_AUTH0_BASE_URL}</ReprLi>
     </ul>
     <h2>Roles</h2>
     <ul>

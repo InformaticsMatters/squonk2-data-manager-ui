@@ -67,12 +67,12 @@ export const Configuration = ({ dmAPI, asAPI }: ConfigurationProps) => (
 
     <h2>Vercel</h2>
     <ul>
-      <ReprLi title="VERCEL_URL">{process.env.VERCEL_URL}</ReprLi>
-      <ReprLi title="VERCEL_ENV">{process.env.VERCEL_ENV}</ReprLi>
-      <ReprLi title="VERCEL_GIT_REPO_SLUG">{process.env.VERCEL_GIT_REPO_SLUG}</ReprLi>
-      <ReprLi title="VERCEL_GIT_REPO_OWNER">{process.env.VERCEL_GIT_REPO_OWNER}</ReprLi>
-      <ReprLi title="VERCEL_GIT_COMMIT_REF">{process.env.VERCEL_GIT_COMMIT_REF}</ReprLi>
-      <ReprLi title="VERCEL_GIT_COMMIT_SHA">{process.env.VERCEL_GIT_COMMIT_SHA}</ReprLi>
+      <ReprLi title="VERCEL_URL">{process.env.NEXT_PUBLIC_VERCEL_URL}</ReprLi>
+      <ReprLi title="VERCEL_ENV">{process.env.NEXT_PUBLIC_VERCEL_ENV}</ReprLi>
+      <ReprLi title="VERCEL_GIT_REPO_SLUG">{process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_SLUG}</ReprLi>
+      <ReprLi title="VERCEL_GIT_REPO_OWNER">{process.env.NEXT_PUBLIC_VERCEL_GIT_REPO_OWNER}</ReprLi>
+      <ReprLi title="VERCEL_GIT_COMMIT_REF">{process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF}</ReprLi>
+      <ReprLi title="VERCEL_GIT_COMMIT_SHA">{process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA}</ReprLi>
     </ul>
   </Container>
 );

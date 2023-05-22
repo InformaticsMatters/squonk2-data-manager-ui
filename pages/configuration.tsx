@@ -64,6 +64,19 @@ export const Configuration = ({ dmAPI, asAPI }: ConfigurationProps) => (
     <ul>
       <ReprLi title="Default Org Name">{process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME}</ReprLi>
     </ul>
+    {!!process.env.VERCEL && (
+      <>
+        <h2>Vercel</h2>
+        <ul>
+          <ReprLi title="VERCEL_URL">{process.env.VERCEL_URL}</ReprLi>
+          <ReprLi title="VERCEL_ENV">{process.env.VERCEL_ENV}</ReprLi>
+          <ReprLi title="VERCEL_GIT_REPO_SLUG">{process.env.VERCEL_GIT_REPO_SLUG}</ReprLi>
+          <ReprLi title="VERCEL_GIT_REPO_OWNER">{process.env.VERCEL_GIT_REPO_OWNER}</ReprLi>
+          <ReprLi title="VERCEL_GIT_COMMIT_REF">{process.env.VERCEL_GIT_COMMIT_REF}</ReprLi>
+          <ReprLi title="VERCEL_GIT_COMMIT_SHA">{process.env.VERCEL_GIT_COMMIT_SHA}</ReprLi>
+        </ul>
+      </>
+    )}
   </Container>
 );
 

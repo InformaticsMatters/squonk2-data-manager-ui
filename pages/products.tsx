@@ -4,6 +4,7 @@ import {
   getAccessToken,
   withPageAuthRequired as withPageAuthRequiredSSR,
 } from "@auth0/nextjs-auth0";
+import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Container } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
@@ -23,6 +24,7 @@ export type ProductsProps = CustomPageProps<Record<string, never>>;
 // ProductsProps | ReactQueryPageProps
 
 export const getServerSideProps = withPageAuthRequiredSSR<ProductsProps | ReactQueryPageProps>({
+  returnTo: process.env.NEXT_PUBLIC_BASE_PATH + "/products",
   getServerSideProps: async ({ req, res }) => {
     const queryClient = new QueryClient();
 
@@ -73,4 +75,4 @@ export const Products = (props: ProductsProps) => {
   );
 };
 
-export default Products;
+export default withPageAuthRequiredCSR(Products);

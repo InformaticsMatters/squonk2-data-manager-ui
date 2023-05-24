@@ -12,6 +12,7 @@ import {
   getAccessToken,
   withPageAuthRequired as withPageAuthRequiredSSR,
 } from "@auth0/nextjs-auth0";
+import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Alert, Container, Grid, MenuItem, TextField } from "@mui/material";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import Head from "next/head";
@@ -27,6 +28,7 @@ import { dmOptions } from "../utils/api/ssrQueryOptions";
 import { search } from "../utils/app/searches";
 
 export const getServerSideProps = withPageAuthRequiredSSR({
+  returnTo: process.env.NEXT_PUBLIC_BASE_PATH + "/executions",
   getServerSideProps: async ({ req, res, query }) => {
     const queryClient = new QueryClient();
 
@@ -208,4 +210,4 @@ const Executions = () => {
   );
 };
 
-export default Executions;
+export default withPageAuthRequiredCSR(Executions);

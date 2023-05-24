@@ -5,6 +5,7 @@ import {
   getAccessToken,
   withPageAuthRequired as withPageAuthRequiredSSR,
 } from "@auth0/nextjs-auth0";
+import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { captureException } from "@sentry/nextjs";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import NextError from "next/error";
@@ -18,12 +19,12 @@ import { dmOptions } from "../utils/api/ssrQueryOptions";
 import type { NotSuccessful, ReactQueryPageProps } from "../utils/next/ssr";
 
 export type ResultsProps = NotSuccessful | ReactQueryPageProps;
-
 const isNotSuccessful = (props: ResultsProps): props is NotSuccessful => {
   return typeof (props as NotSuccessful).statusCode === "number";
 };
 
 export const getServerSideProps = withPageAuthRequiredSSR<ResultsProps>({
+  returnTo: process.env.NEXT_PUBLIC_BASE_PATH + "/results",
   getServerSideProps: async ({ req, res, query }) => {
     const projectId = query.project;
 
@@ -84,4 +85,4 @@ const Results = (props: ResultsProps) => {
   );
 };
 
-export default Results;
+export default withPageAuthRequiredCSR(Results);

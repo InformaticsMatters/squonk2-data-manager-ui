@@ -5,6 +5,7 @@ import {
   getAccessToken,
   withPageAuthRequired as withPageAuthRequiredSSR,
 } from "@auth0/nextjs-auth0";
+import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
@@ -26,6 +27,7 @@ import type { NotSuccessful, ReactQueryPageProps } from "../utils/next/ssr";
 export type ProjectProps = Record<string, never> | NotSuccessful | ReactQueryPageProps;
 
 export const getServerSideProps = withPageAuthRequiredSSR<ProjectProps>({
+  returnTo: process.env.NEXT_PUBLIC_BASE_PATH + "/project",
   getServerSideProps: async ({ req, res, query }) => {
     const queryClient = new QueryClient();
 
@@ -136,4 +138,4 @@ const Project = () => {
   );
 };
 
-export default Project;
+export default withPageAuthRequiredCSR(Project);

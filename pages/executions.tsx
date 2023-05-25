@@ -16,6 +16,7 @@ import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-a
 import { Alert, Container, Grid, MenuItem, TextField } from "@mui/material";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import Head from "next/head";
+import type { GetServerSideProps } from "nextjs-routes";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
 import { CenterLoader } from "../components/CenterLoader";
@@ -26,46 +27,50 @@ import { useCurrentProject, useIsEditorOfCurrentProject } from "../hooks/project
 import Layout from "../layouts/Layout";
 import { dmOptions } from "../utils/api/ssrQueryOptions";
 import { search } from "../utils/app/searches";
+import { getFullReturnTo } from "../utils/next/ssr";
 
-export const getServerSideProps = withPageAuthRequiredSSR({
-  returnTo: process.env.NEXT_PUBLIC_BASE_PATH + "/executions",
-  getServerSideProps: async ({ req, res, query }) => {
-    const queryClient = new QueryClient();
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const returnTo = getFullReturnTo(ctx);
+  return withPageAuthRequiredSSR({
+    returnTo,
+    getServerSideProps: async ({ req, res, query }) => {
+      const queryClient = new QueryClient();
 
-    try {
-      const { accessToken } = await getAccessToken(req, res);
+      try {
+        const { accessToken } = await getAccessToken(req, res);
 
-      const projectId = query.project as string | undefined;
+        const projectId = query.project as string | undefined;
 
-      if (projectId && accessToken) {
-        // Prefetch some data
-        const queries = [
-          queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
-            getProjects(undefined, dmOptions(accessToken)),
-          ),
-          queryClient.prefetchQuery(getGetApplicationsQueryKey(), () =>
-            getApplications(dmOptions(accessToken)),
-          ),
-          queryClient.prefetchQuery(getGetJobsQueryKey(), () =>
-            getJobs(undefined, dmOptions(accessToken)),
-          ),
-        ];
+        if (projectId && accessToken) {
+          // Prefetch some data
+          const queries = [
+            queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
+              getProjects(undefined, dmOptions(accessToken)),
+            ),
+            queryClient.prefetchQuery(getGetApplicationsQueryKey(), () =>
+              getApplications(dmOptions(accessToken)),
+            ),
+            queryClient.prefetchQuery(getGetJobsQueryKey(), () =>
+              getJobs(undefined, dmOptions(accessToken)),
+            ),
+          ];
 
-        // Make the queries in parallel
-        await Promise.allSettled(queries);
+          // Make the queries in parallel
+          await Promise.allSettled(queries);
+        }
+      } catch (error) {
+        // TODO: smarter handling
+        console.error(error);
       }
-    } catch (error) {
-      // TODO: smarter handling
-      console.error(error);
-    }
 
-    return {
-      props: {
-        dehydratedState: dehydrate(queryClient),
-      },
-    };
-  },
-});
+      return {
+        props: {
+          dehydratedState: dehydrate(queryClient),
+        },
+      };
+    },
+  })(ctx);
+};
 
 /**
  * Page allowing the user to run jobs and applications

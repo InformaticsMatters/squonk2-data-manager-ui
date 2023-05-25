@@ -4,6 +4,7 @@ import type { Theme } from "@mui/material";
 import { Container, useMediaQuery } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
+import type { GetServerSideProps } from "nextjs-routes";
 
 import { PlaintextViewer } from "../../features/PlaintextViewer";
 import type { NotSuccessful, Successful } from "../../utils/api/plaintextViewerSSR";
@@ -11,33 +12,38 @@ import { plaintextViewerSSR } from "../../utils/api/plaintextViewerSSR";
 import { createErrorProps } from "../../utils/api/serverSidePropsError";
 import { pathFromQuery } from "../../utils/app/paths";
 import { API_ROUTES } from "../../utils/app/routes";
+import { getFullReturnTo } from "../../utils/next/ssr";
 
 export type FileProps = Successful | NotSuccessful;
 
 const isSuccessful = (props: FileProps): props is Successful =>
   typeof (props as Successful).content === "string";
 
-export const getServerSideProps = withPageAuthRequiredSSR<FileProps>({
-  getServerSideProps: async ({ req, res, query }) => {
-    let { path } = query;
-    const { file, project } = query;
+export const getServerSideProps: GetServerSideProps<FileProps> = async (ctx) => {
+  const returnTo = getFullReturnTo(ctx);
+  return withPageAuthRequiredSSR<FileProps>({
+    returnTo,
+    getServerSideProps: async ({ req, res, query }) => {
+      let { path } = query;
+      const { file, project } = query;
 
-    if (typeof file !== "string" || typeof project !== "string") {
-      return createErrorProps(res, 400, "File or project are not valid");
-    }
+      if (typeof file !== "string" || typeof project !== "string") {
+        return createErrorProps(res, 400, "File or project are not valid");
+      }
 
-    path = pathFromQuery(path);
+      path = pathFromQuery(path);
 
-    let compressed = false;
-    if (file.endsWith(".gz") || file.endsWith(".gzip")) {
-      compressed = true;
-    }
+      let compressed = false;
+      if (file.endsWith(".gz") || file.endsWith(".gzip")) {
+        compressed = true;
+      }
 
-    const url = process.env.DATA_MANAGER_API_SERVER + API_ROUTES.projectFile(project, path, file);
+      const url = process.env.DATA_MANAGER_API_SERVER + API_ROUTES.projectFile(project, path, file);
 
-    return await plaintextViewerSSR(req, res, { url, compressed });
-  },
-});
+      return await plaintextViewerSSR(req, res, { url, compressed });
+    },
+  })(ctx);
+};
 
 export const File = (props: FileProps) => {
   const biggerThanSm = useMediaQuery<Theme>((theme) => theme.breakpoints.up("sm"));

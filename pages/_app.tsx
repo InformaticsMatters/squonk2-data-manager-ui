@@ -64,7 +64,10 @@ export default function App({
         <meta content="minimum-scale=1, initial-scale=1, width=device-width" name="viewport" />
       </Head>
       <ThemeProviders>
-        <UserProvider>
+        <UserProvider
+          loginUrl={`${process.env.NEXT_PUBLIC_BASE_PATH}/api/auth/login`}
+          profileUrl={`${process.env.NEXT_PUBLIC_BASE_PATH}/api/auth/me`}
+        >
           <QueryClientProvider client={queryClient}>
             <Hydrate state={pageProps.dehydratedState}>
               <SnackbarProvider>

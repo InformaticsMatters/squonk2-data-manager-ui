@@ -5,6 +5,8 @@ require("dotenv").config({ path: path.resolve(process.cwd(), ".env.test.local") 
 
 const baseURL = new URL(process.env.BASE_URL as string);
 baseURL.pathname = process.env.BASE_PATH ?? "/";
+const PORT = process.env.TEST_PORT ?? "3001";
+baseURL.port = PORT;
 
 export default defineConfig({
   projects: [
@@ -40,7 +42,7 @@ export default defineConfig({
   webServer: {
     // needs to use the package manager here to avoid an error when not running playwright from the
     // terminal
-    command: `pnpm start`,
+    command: `pnpm start -p ${PORT}`,
     url: baseURL.href,
     timeout: 200 * 1000,
     env: {

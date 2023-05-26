@@ -11,6 +11,16 @@ export default defineConfig({
     { name: "setup", testMatch: "**/*.setup.ts" },
     {
       name: "browser",
+      use: {
+        baseURL: baseURL.href,
+        trace: "on",
+      },
+      retries: 3,
+      timeout: 60000,
+      testMatch: "**/*.browser.ts",
+    },
+    {
+      name: "browser-authenticated",
       dependencies: ["setup"],
       use: {
         storageState: "storageState.json",
@@ -19,7 +29,7 @@ export default defineConfig({
       },
       retries: 3,
       timeout: 60000,
-      testMatch: "**/*.browser.ts",
+      testMatch: "**/*.browser-authenticated.ts",
     },
     { name: "node", testMatch: "**/*.node.ts" },
   ],

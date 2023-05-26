@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("desk mode works", async ({ page, baseURL }) => {
+test("dark mode works", async ({ page, baseURL }) => {
   baseURL = baseURL ?? "";
 
   // Go to http://localhost:3000/

@@ -21,7 +21,7 @@ specifiers:
   '@rjsf/utils': 5.6.2
   '@rjsf/validator-ajv8': 5.6.2
   '@sentry/nextjs': 7.51.2
-  '@squonk/account-server-client': 2.0.3
+  '@squonk/account-server-client': 2.0.4
   '@squonk/data-manager-client': 1.1.4-rc.3
   '@squonk/eslint-config': 0.5.0
   '@squonk/mui-theme': 3.0.2
@@ -93,7 +93,7 @@ dependencies:
   '@rjsf/utils': 5.6.2_react@18.2.0
   '@rjsf/validator-ajv8': 5.6.2_@rjsf+utils@5.6.2
   '@sentry/nextjs': 7.51.2_next@13.4.1+react@18.2.0
-  '@squonk/account-server-client': 2.0.3_we4k2ks6s5efxuxkqk7g6kttie
+  '@squonk/account-server-client': 2.0.4_we4k2ks6s5efxuxkqk7g6kttie
   '@squonk/data-manager-client': 1.1.4-rc.3_we4k2ks6s5efxuxkqk7g6kttie
   '@squonk/mui-theme': 3.0.2_@mui+material@5.13.0
   '@tanstack/match-sorter-utils': 8.8.4
@@ -1218,8 +1218,8 @@ packages:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
     dev: false
 
-  /@squonk/account-server-client/2.0.3_we4k2ks6s5efxuxkqk7g6kttie:
-    resolution: {integrity: sha512-abeA5MMjxxEPZ5u0KJnSWTPlGLVrZHRG1Bu86jgLWEMlmXIVI+vprHanexcN14iQI10mvT3oD1YEOgktSEBHvw==}
+  /@squonk/account-server-client/2.0.4_we4k2ks6s5efxuxkqk7g6kttie:
+    resolution: {integrity: sha512-5cs2uJylI5doGsodHYjV01aPxSF/uVXeOrlahZ3s3fAcvEjKoc8uu2LcURRLZxxcNPZfCJla1dU0eHKPScXRPA==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'

@@ -5,7 +5,7 @@ require("dotenv").config({ path: path.resolve(process.cwd(), ".env.test.local") 
 
 const baseURL = new URL(process.env.BASE_URL as string);
 baseURL.pathname = process.env.BASE_PATH ?? "/";
-const PORT = process.env.TEST_PORT ?? "3001";
+const PORT = process.env.TEST_PORT ?? "3000";
 baseURL.port = PORT;
 
 export default defineConfig({

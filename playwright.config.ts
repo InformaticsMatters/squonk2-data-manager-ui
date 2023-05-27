@@ -45,6 +45,9 @@ export default defineConfig({
     command: `pnpm start -p ${PORT}`,
     url: baseURL.href,
     timeout: 200 * 1000,
+    reuseExistingServer: true,
+    stdout: "pipe",
+    stderr: "pipe",
     env: {
       NODE_ENV: "test",
     },

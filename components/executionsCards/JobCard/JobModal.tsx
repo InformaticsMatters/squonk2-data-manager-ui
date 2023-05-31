@@ -88,7 +88,7 @@ export const JobModal = ({
 
   const inputsDefault = useMemo(() => {
     // Parse the inputs schema which is untyped
-    const inputs: InputSchema | undefined = JSON.parse(job?.variables?.inputs ?? "{}");
+    const inputs = job?.variables?.inputs as InputSchema | undefined; // TODO: should validate this with zod
     // Access the default values and use them for the "initial" values for state
     return Object.entries(inputs?.properties ?? {})
       .filter(([, schema]) => schema.default !== undefined)
@@ -167,7 +167,7 @@ export const JobModal = ({
                   </Grid>
                   <JobInputFields
                     initialValues={specVariables}
-                    inputs={JSON.parse(job.variables.inputs)}
+                    inputs={job.variables.inputs as any} // TODO: should validate this with zod
                     inputsData={inputsData}
                     projectId={projectId}
                     onChange={setInputsData}
@@ -185,7 +185,7 @@ export const JobModal = ({
                       liveValidate
                       noHtml5Validate
                       formData={optionsFormData}
-                      schema={JSON.parse(job.variables.options)}
+                      schema={job.variables.options} // TODO: should validate this with zod
                       showErrorList={false}
                       uiSchema={{ "ui:order": job.variables.order?.options }}
                       validator={validator}

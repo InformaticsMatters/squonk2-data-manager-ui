@@ -41,9 +41,9 @@ export const useGetJobInputs = (instance: InstanceSummary | InstanceGetResponse)
     : { variables: {} };
 
   // Parse job inputs
-  const jobVariables: JobInputs = data?.variables?.inputs
-    ? JSON.parse(data.variables.inputs)
-    : { properties: {} };
+  const jobVariables = data?.variables?.inputs
+    ? (data.variables.inputs as JobInputs)
+    : ({ properties: {} } satisfies JobInputs);
 
   // Get information about inputs that were provided when creating the job with their respective
   // values

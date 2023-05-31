@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.3-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.4.2...2.4.3-rc.0) (2023-05-31)
+
+
+### Bug Fixes
+
+* **api:** fix breaking change caused by job variables inputs chaning from string to object ([aa53bbb](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/aa53bbb636bbed81c83dc8eca51ff6461fceb8f7))
+
 ### [2.4.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.4.1...2.4.2) (2023-05-25)
 
 

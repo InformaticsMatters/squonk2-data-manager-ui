@@ -2,7 +2,7 @@
   "name": "@squonk/data-manager-ui",
   "author": "Oliver Dudgeon",
   "license": "Apache-2.0",
-  "version": "2.4.2",
+  "version": "2.4.3-rc.0",
   "private": true,
   "repository": {
     "type": "git",

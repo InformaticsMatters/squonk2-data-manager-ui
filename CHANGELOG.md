@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.4-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.4.3...2.4.4-rc.0) (2023-06-02)
+
+
+### Bug Fixes
+
+* **run-job:** disable submit button when form is not valid ([f5d07ba](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f5d07bae47156caa763e6be4da381fe9cb92e06e)), closes [#1001](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1001)
+
 ### [2.4.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.4.3-rc.0...2.4.3) (2023-06-02)
 
 ### [2.4.3-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.4.2...2.4.3-rc.0) (2023-05-31)

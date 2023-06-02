@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type {
   DmError,
@@ -49,6 +49,11 @@ export interface JobModalProps extends CommonModalProps {
   instance?: InstanceSummary | InstanceGetResponse;
 }
 
+const validateJobInputs = (required: string[], inputsData: InputData) => {
+  const inputKeys = new Set(Object.keys(inputsData));
+  return required.map((key) => inputKeys.has(key)).every((v) => v);
+};
+
 /**
  * Modal with options to create a new instance if a job. An instance can be passed to inherit
  * default values.
@@ -96,6 +101,13 @@ export const JobModal = ({
   }, [job]);
 
   const [inputsData, setInputsData] = useState<InputData>({});
+  const inputsValid = validateJobInputs(
+    (job?.variables?.inputs as InputSchema | undefined)?.required ?? [],
+    inputsData,
+  );
+  const [optionsValid, setOptionsValid] = useState<boolean>(false);
+
+  const formRef = useRef<any>();
 
   // Since the default value are obtained async, we have to wait for them to arrive in order to set
   useEffect(() => {
@@ -139,6 +151,7 @@ export const JobModal = ({
       DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`job-${jobId}`}
       open={open}
+      submitDisabled={!optionsValid || !inputsValid}
       submitText="Run"
       title={job?.name ?? "Run Job"}
       onClose={onClose}
@@ -185,11 +198,18 @@ export const JobModal = ({
                       liveValidate
                       noHtml5Validate
                       formData={optionsFormData}
+                      ref={formRef}
                       schema={job.variables.options} // TODO: should validate this with zod
                       showErrorList={false}
                       uiSchema={{ "ui:order": job.variables.order?.options }}
                       validator={validator}
-                      onChange={(event) => setOptionsFormData(event.formData)}
+                      onChange={(event) => {
+                        setOptionsValid(formRef.current?.validateForm());
+                        setOptionsFormData(event.formData);
+                      }}
+                      onError={() => {
+                        // do nothing - this just console.errors by default
+                      }}
                     >
                       {/* Remove the default submit button */}
                       <div />

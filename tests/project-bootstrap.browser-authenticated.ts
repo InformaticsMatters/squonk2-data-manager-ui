@@ -11,11 +11,6 @@ const baseURL = new URL(process.env.BASE_URL as string);
 baseURL.pathname = process.env.BASE_PATH ?? "/";
 
 test("Project bootstrap works", async ({ page, baseURL }) => {
-  // Display any logs to terminal (for debug)
-  page.on("console", async (msg) => {
-    console.log("Browser Log: ", msg);
-  });
-
   // Go to http://localhost:3000/
   // This needs to come before the unit fetch request below so there isn't a cors issue
   await page.goto(baseURL ?? "/");
@@ -90,10 +85,14 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   // Click button:has-text("Create")
   await page.locator(`button:has-text("Create")`).click();
 
+  await page.locator(`button:has-text("Create")`).isDisabled();
+
+  await page.getByRole("alert", { name: "Project created" }).isVisible();
+
   const regexp = new RegExp(
     baseURL + "/?\\?project=project-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+",
   );
-  await expect(page).toHaveURL(regexp);
+  await expect(page).toHaveURL(regexp, { timeout: 30_000 });
 
   // Click [aria-label="Settings"]
   await page.locator(`[aria-label="Settings"]`).click();

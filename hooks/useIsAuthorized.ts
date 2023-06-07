@@ -1,14 +1,34 @@
-import { REQUIRED_ROLES } from "../constants/auth";
+import { AS_ROLES, DM_ROLES } from "../constants/auth";
+import type { User } from "./useKeycloakUser";
 import { useKeycloakUser } from "./useKeycloakUser";
 
-export const useIsAuthorized = () => {
-  const { user } = useKeycloakUser();
-
-  if (user.username !== undefined) {
-    if (REQUIRED_ROLES.every((role) => user.roles?.includes(role))) {
-      return true;
+const getPrevailingRole = (user: Partial<User>, roles: string[]) => {
+  const reversedRoles = [...roles].reverse();
+  if (user.username !== undefined && user.roles) {
+    for (const role of reversedRoles) {
+      if (user.roles.includes(role)) {
+        return role;
+      }
     }
   }
+  return undefined;
+};
 
-  return false;
+export const useDMAuthorizationStatus = () => {
+  const { user } = useKeycloakUser();
+  return getPrevailingRole(user, DM_ROLES);
+};
+
+export const useASAuthorizationStatus = () => {
+  const { user } = useKeycloakUser();
+  return getPrevailingRole(user, AS_ROLES);
+};
+
+/**
+ * Gets the users authorization status.
+ *
+ * The user can either be an evaluator, user or and admin
+ */
+export const useIsAuthorized = (): [string | undefined, string | undefined] => {
+  return [useDMAuthorizationStatus(), useASAuthorizationStatus()];
 };

@@ -1,16 +1,16 @@
 import { useCurrentProjectId } from "../../hooks/projectHooks";
-import { useIsAuthorized } from "../../hooks/useIsAuthorized";
+import { useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { BootstrapAlert } from "./BootstrapAlert";
 
 /**
  * If user is authorized it displays the BoostrappingAlert component.
  */
 export const UserBootstrapper = () => {
-  const isAuthorized = useIsAuthorized();
+  const isDMAuthorized = useDMAuthorizationStatus();
 
   const { projectId } = useCurrentProjectId();
 
-  if (!isAuthorized || projectId) {
+  if (!isDMAuthorized || projectId) {
     return null;
   }
 

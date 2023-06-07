@@ -13,6 +13,7 @@ import Head from "next/head";
 import type { GetServerSideProps } from "nextjs-routes";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
+import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { ProductsView } from "../features/ProductsView";
 import Layout from "../layouts/Layout";
 import { createErrorProps } from "../utils/api/serverSidePropsError";
@@ -68,12 +69,14 @@ export const Products = (props: ProductsProps) => {
       <Head>
         <title>Squonk | Project</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(" ")}>
-        <Layout>
-          <Container maxWidth="xl">
-            <ProductsView />
-          </Container>
-        </Layout>
+      <RoleRequired roles={DM_ROLES}>
+        <RoleRequired roles={AS_ROLES}>
+          <Layout>
+            <Container maxWidth="xl">
+              <ProductsView />
+            </Container>
+          </Layout>
+        </RoleRequired>
       </RoleRequired>
     </>
   );

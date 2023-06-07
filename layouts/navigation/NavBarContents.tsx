@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 
 import { CenterLoader } from "../../components/CenterLoader";
 import { ModalWrapper } from "../../components/modals/ModalWrapper";
-import { useIsAuthorized } from "../../hooks/useIsAuthorized";
+import { useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { MobileNavMenu } from "./MobileNavMenu";
 import { NavLinks } from "./NavLinks";
@@ -36,7 +36,7 @@ export const NavBarContents = () => {
   // Custom breakpoint to match width of nav links text
   const biggerThanSm = useMediaQuery("@media (min-width:655px)");
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
-  const isAuthorized = useIsAuthorized();
+  const isDMAuthorized = useDMAuthorizationStatus();
 
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -51,7 +51,7 @@ export const NavBarContents = () => {
       <span>
         <IconButton
           color="inherit"
-          disabled={!isAuthorized}
+          disabled={!isDMAuthorized}
           sx={{ ml: biggerThanMd ? 0 : "auto" }}
           onClick={() => {
             props.openSettings();
@@ -70,7 +70,7 @@ export const NavBarContents = () => {
       <>
         <NavLinks linkWidth={120} />
         <IconsWrapper>
-          {isAuthorized && <OUPContext />}
+          {!!isDMAuthorized && <OUPContext />}
           {settingsButton}
           <UserMenu />
         </IconsWrapper>

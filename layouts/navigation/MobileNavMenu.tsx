@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 
 import { ModalWrapper } from "../../components/modals/ModalWrapper";
-import { useIsAuthorized } from "../../hooks/useIsAuthorized";
+import { useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { NavLink } from "./NavLink";
 import { OUPContext } from "./OUPContext";
 import { UserMenuContent } from "./UserMenuContent";
@@ -29,7 +29,7 @@ export interface MobileNavMenuProps {
  */
 export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
   const [open, setOpen] = useState(false);
-  const isAuthorized = useIsAuthorized();
+  const isDMAuthorized = useDMAuthorizationStatus();
 
   return (
     <>
@@ -75,13 +75,13 @@ export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
               </List>
             </Grid>
           )}
-          {isAuthorized && links && (
+          {!!isDMAuthorized && links && (
             <Grid item xs={12}>
               <Divider />
             </Grid>
           )}
           <Grid item xs={12}>
-            {isAuthorized && (
+            {!!isDMAuthorized && (
               <>
                 <Typography gutterBottom variant="h3">
                   Project

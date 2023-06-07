@@ -23,6 +23,7 @@ import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/executionsCards/ApplicationCard";
 import { JobCard } from "../components/executionsCards/JobCard";
 import { SearchTextField } from "../components/SearchTextField";
+import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { useCurrentProject, useIsEditorOfCurrentProject } from "../hooks/projectHooks";
 import Layout from "../layouts/Layout";
 import { dmOptions } from "../utils/api/ssrQueryOptions";
@@ -140,76 +141,80 @@ const Executions = () => {
       <Head>
         <title>Squonk | Executions</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(" ")}>
-        <Layout>
-          <Container maxWidth="xl">
-            <Grid container spacing={2} sx={{ mb: 2 }}>
-              {/* Filter by apps/jobs */}
-              <Grid item md={4} sm={6} xs={12}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Filter Executions"
-                  SelectProps={{
-                    multiple: true,
-                    onChange: (event) => {
-                      setExecutionTypes(event.target.value as string[]);
-                    },
-                  }}
-                  value={executionTypes}
-                >
-                  <MenuItem value="application">Applications</MenuItem>
-                  <MenuItem value="job">Jobs</MenuItem>
-                </TextField>
+      <RoleRequired roles={DM_ROLES}>
+        <RoleRequired roles={AS_ROLES}>
+          <Layout>
+            <Container maxWidth="xl">
+              <Grid container spacing={2} sx={{ mb: 2 }}>
+                {/* Filter by apps/jobs */}
+                <Grid item md={4} sm={6} xs={12}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Filter Executions"
+                    SelectProps={{
+                      multiple: true,
+                      onChange: (event) => {
+                        setExecutionTypes(event.target.value as string[]);
+                      },
+                    }}
+                    value={executionTypes}
+                  >
+                    <MenuItem value="application">Applications</MenuItem>
+                    <MenuItem value="job">Jobs</MenuItem>
+                  </TextField>
+                </Grid>
+
+                {/* Search through each card */}
+                <Grid item md={4} sm={6} sx={{ ml: "auto" }} xs={12}>
+                  <SearchTextField
+                    fullWidth
+                    value={searchValue}
+                    onChange={(event) => setSearchValue(event.target.value)}
+                  />
+                </Grid>
               </Grid>
 
-              {/* Search through each card */}
-              <Grid item md={4} sm={6} sx={{ ml: "auto" }} xs={12}>
-                <SearchTextField
-                  fullWidth
-                  value={searchValue}
-                  onChange={(event) => setSearchValue(event.target.value)}
-                />
+              {/* Errors */}
+              <Grid container spacing={2}>
+                {isApplicationsError && (
+                  <Grid item xs={12}>
+                    <Alert severity="error">
+                      Applications failed to load ({applicationsError.response?.status})
+                    </Alert>
+                  </Grid>
+                )}
+                {isJobsError && (
+                  <Grid item xs={12}>
+                    <Alert severity="error">
+                      Jobs failed to load ({jobsError.response?.status})
+                    </Alert>
+                  </Grid>
+                )}
+
+                {/* Warnings */}
+                {!currentProject && (
+                  <Grid item xs={12}>
+                    <Alert severity="warning">
+                      Select a project from the settings to launch apps and run jobs.
+                    </Alert>
+                  </Grid>
+                )}
+
+                {!isEditor && (
+                  <Grid item xs={12}>
+                    <Alert severity="warning">
+                      You must be a project editor to run jobs in this project.
+                    </Alert>
+                  </Grid>
+                )}
+
+                {/* Actual content */}
+                {!isApplicationsLoading && !isJobsLoading ? cards : <CenterLoader />}
               </Grid>
-            </Grid>
-
-            {/* Errors */}
-            <Grid container spacing={2}>
-              {isApplicationsError && (
-                <Grid item xs={12}>
-                  <Alert severity="error">
-                    Applications failed to load ({applicationsError.response?.status})
-                  </Alert>
-                </Grid>
-              )}
-              {isJobsError && (
-                <Grid item xs={12}>
-                  <Alert severity="error">Jobs failed to load ({jobsError.response?.status})</Alert>
-                </Grid>
-              )}
-
-              {/* Warnings */}
-              {!currentProject && (
-                <Grid item xs={12}>
-                  <Alert severity="warning">
-                    Select a project from the settings to launch apps and run jobs.
-                  </Alert>
-                </Grid>
-              )}
-
-              {!isEditor && (
-                <Grid item xs={12}>
-                  <Alert severity="warning">
-                    You must be a project editor to run jobs in this project.
-                  </Alert>
-                </Grid>
-              )}
-
-              {/* Actual content */}
-              {!isApplicationsLoading && !isJobsLoading ? cards : <CenterLoader />}
-            </Grid>
-          </Container>
-        </Layout>
+            </Container>
+          </Layout>
+        </RoleRequired>
       </RoleRequired>
     </>
   );

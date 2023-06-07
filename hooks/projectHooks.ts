@@ -3,7 +3,7 @@ import { useGetProjects } from "@squonk/data-manager-client/project";
 import { useRouter } from "next/router";
 
 import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../utils/next/localStorage";
-import { useIsAuthorized } from "./useIsAuthorized";
+import { useDMAuthorizationStatus } from "./useIsAuthorized";
 import { useKeycloakUser } from "./useKeycloakUser";
 
 export type ProjectId = string | undefined;
@@ -59,9 +59,9 @@ export const useCurrentProjectId = () => {
  * @returns The project associated with the project-id in the current url query parameters
  */
 export const useCurrentProject = () => {
-  const isAuthorized = useIsAuthorized();
+  const isDMAuthorized = useDMAuthorizationStatus();
   const { projectId } = useCurrentProjectId();
-  const { data } = useGetProjects(undefined, { query: { enabled: !!isAuthorized } });
+  const { data } = useGetProjects(undefined, { query: { enabled: !!isDMAuthorized } });
   const projects = data?.projects;
 
   return projects?.find((project) => project.project_id === projectId) ?? null;

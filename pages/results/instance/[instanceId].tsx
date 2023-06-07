@@ -11,6 +11,7 @@ import { RoleRequired } from "../../../components/auth/RoleRequired";
 import { Instance } from "../../../components/instances/Instance";
 import { AllResultsButton } from "../../../components/results/AllResultsButton";
 import { EventDebugSwitch } from "../../../components/results/EventDebugSwitch";
+import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
 import { InstanceTitle } from "../../../features/results/InstanceTitle";
 import Layout from "../../../layouts/Layout";
 
@@ -27,28 +28,30 @@ const Result = () => {
   const refreshResults = [() => queryClient.invalidateQueries(getGetInstanceQueryKey(instanceId))];
 
   return (
-    <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(" ")}>
-      <Layout>
-        <Container maxWidth="md">
-          <Box alignItems="flex-start" display="flex">
-            <EventDebugSwitch />
-            <Tooltip title="Refresh Instance">
-              <IconButton
-                size="large"
-                sx={{ ml: "auto" }}
-                onClick={() => refreshResults.forEach((func) => func())}
-              >
-                <RefreshRoundedIcon />
-              </IconButton>
-            </Tooltip>
-          </Box>
+    <RoleRequired roles={DM_ROLES}>
+      <RoleRequired roles={AS_ROLES}>
+        <Layout>
+          <Container maxWidth="md">
+            <Box alignItems="flex-start" display="flex">
+              <EventDebugSwitch />
+              <Tooltip title="Refresh Instance">
+                <IconButton
+                  size="large"
+                  sx={{ ml: "auto" }}
+                  onClick={() => refreshResults.forEach((func) => func())}
+                >
+                  <RefreshRoundedIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
 
-          {instanceId && <InstanceTitle instanceId={instanceId} />}
+            {instanceId && <InstanceTitle instanceId={instanceId} />}
 
-          <Instance collapsedByDefault={false} instanceId={instanceId} />
-          <AllResultsButton instanceId={instanceId} />
-        </Container>
-      </Layout>
+            <Instance collapsedByDefault={false} instanceId={instanceId} />
+            <AllResultsButton instanceId={instanceId} />
+          </Container>
+        </Layout>
+      </RoleRequired>
     </RoleRequired>
   );
 };

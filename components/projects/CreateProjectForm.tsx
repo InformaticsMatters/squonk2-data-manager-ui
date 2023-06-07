@@ -28,7 +28,7 @@ import { Field, Form, Formik } from "formik";
 import { Checkbox, TextField } from "formik-mui";
 import * as yup from "yup";
 
-import { PROJECT_SUB } from "../../constants/products";
+import { DEFAULT_PRODUCT_FLAVOUR, PROJECT_SUB } from "../../constants/products";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import type { Resolve } from "../../types";
@@ -56,7 +56,7 @@ type ProjectFormikProps = FormikConfig<Values>;
 export const CreateProjectForm = ({ modal, unitId, product }: CreateProjectFormProps) => {
   const initialValues: Values = {
     projectName: "",
-    flavour: product?.flavour ?? "",
+    flavour: product?.flavour ?? DEFAULT_PRODUCT_FLAVOUR,
     isPrivate: true,
   };
   const theme = useTheme();

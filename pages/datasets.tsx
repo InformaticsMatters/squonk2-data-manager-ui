@@ -3,6 +3,7 @@ import { Container, Typography } from "@mui/material";
 import Head from "next/head";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
+import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { DatasetsTable } from "../features/DatasetsTable";
 import Layout from "../layouts/Layout";
 
@@ -15,15 +16,17 @@ const Datasets = () => {
       <Head>
         <title>Squonk | Datasets</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(" ")}>
-        <Layout>
-          <Container maxWidth="xl">
-            <Typography gutterBottom variant="h1">
-              Datasets
-            </Typography>
-            <DatasetsTable />
-          </Container>
-        </Layout>
+      <RoleRequired roles={DM_ROLES}>
+        <RoleRequired roles={AS_ROLES}>
+          <Layout>
+            <Container maxWidth="xl">
+              <Typography gutterBottom variant="h1">
+                Datasets
+              </Typography>
+              <DatasetsTable />
+            </Container>
+          </Layout>
+        </RoleRequired>
       </RoleRequired>
     </>
   );

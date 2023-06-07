@@ -1,21 +1,35 @@
 import { Alert, Box } from "@mui/material";
 
-import { REQUIRED_ROLES } from "../../constants/auth";
 import { useIsAuthorized } from "../../hooks/useIsAuthorized";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 
 export const RoleWarning = () => {
-  const isAuthorized = useIsAuthorized();
+  const [dmAuthorization, asAuthorization] = useIsAuthorized();
   const { user } = useKeycloakUser();
 
-  const missingRoles = REQUIRED_ROLES.filter((role) => !user.roles?.includes(role));
-
-  if (user.username !== undefined && !isAuthorized) {
+  if (
+    user.username !== undefined &&
+    (dmAuthorization === undefined || asAuthorization === undefined)
+  ) {
     return (
       <Box m={2}>
         <Alert severity="warning">
-          You are missing required roles ({missingRoles.join(", ")}) to access this service. Please
-          contact an administrator.
+          You are missing required roles to access this service. Please contact an administrator.
+          <Box marginY={1}>
+            {(user.roles ?? []).length > 0 ? (
+              <>
+                {" "}
+                You have the roles:
+                <ul>
+                  {user.roles?.map((role) => (
+                    <li key={role}>{role}</li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              "You have no roles"
+            )}
+          </Box>
         </Alert>
       </Box>
     );

@@ -3,6 +3,7 @@ import NextError from "next/error";
 import { useRouter } from "next/router";
 
 import { RoleRequired } from "../../../components/auth/RoleRequired";
+import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
 import { UnitChargesView } from "../../../features/Finance/UnitChargesView";
 import Layout from "../../../layouts/Layout";
 import type { NotSuccessful, ReactQueryPageProps } from "../../../utils/next/ssr";
@@ -24,10 +25,12 @@ const Charges = (props: UnitChargesProps) => {
   }
 
   return (
-    <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(" ")}>
-      <Layout>
-        <UnitChargesView unitId={unitId} />
-      </Layout>
+    <RoleRequired roles={DM_ROLES}>
+      <RoleRequired roles={AS_ROLES}>
+        <Layout>
+          <UnitChargesView unitId={unitId} />
+        </Layout>
+      </RoleRequired>
     </RoleRequired>
   );
 };

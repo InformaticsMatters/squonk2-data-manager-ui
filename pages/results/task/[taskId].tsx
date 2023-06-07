@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { RoleRequired } from "../../../components/auth/RoleRequired";
 import { CenterLoader } from "../../../components/CenterLoader";
 import { ResultTaskCard } from "../../../components/tasks/ResultTaskCard";
+import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
 import Layout from "../../../layouts/Layout";
 import { getErrorMessage } from "../../../utils/next/orvalError";
 
@@ -29,32 +30,34 @@ const Result = () => {
       <Head>
         <title>Squonk | Task {task?.states?.slice(-1)[0]?.state}</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_USER_ROLE?.split(" ")}>
-        <Layout>
-          <Container maxWidth="md">
-            <Box alignItems="flex-start" display="flex">
-              <Typography gutterBottom component="h1" variant="h3">
-                Task
-              </Typography>
-              <Tooltip title="Refresh Instance">
-                <IconButton
-                  size="large"
-                  sx={{ ml: "auto" }}
-                  onClick={() => refreshResults.forEach((func) => func())}
-                >
-                  <RefreshRoundedIcon />
-                </IconButton>
-              </Tooltip>
-            </Box>
-            {error !== null ? (
-              <Alert severity="error">{getErrorMessage(error)}</Alert>
-            ) : task === undefined ? (
-              <CenterLoader />
-            ) : (
-              <ResultTaskCard collapsedByDefault={false} task={{ ...task, id: taskId }} />
-            )}
-          </Container>
-        </Layout>
+      <RoleRequired roles={DM_ROLES}>
+        <RoleRequired roles={AS_ROLES}>
+          <Layout>
+            <Container maxWidth="md">
+              <Box alignItems="flex-start" display="flex">
+                <Typography gutterBottom component="h1" variant="h3">
+                  Task
+                </Typography>
+                <Tooltip title="Refresh Instance">
+                  <IconButton
+                    size="large"
+                    sx={{ ml: "auto" }}
+                    onClick={() => refreshResults.forEach((func) => func())}
+                  >
+                    <RefreshRoundedIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+              {error !== null ? (
+                <Alert severity="error">{getErrorMessage(error)}</Alert>
+              ) : task === undefined ? (
+                <CenterLoader />
+              ) : (
+                <ResultTaskCard collapsedByDefault={false} task={{ ...task, id: taskId }} />
+              )}
+            </Container>
+          </Layout>
+        </RoleRequired>
       </RoleRequired>
     </>
   );

@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import type { GetServerSideProps } from "nextjs-routes";
 
 import { RoleRequired } from "../../../components/auth/RoleRequired";
+import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
 import { ProductChargesView } from "../../../features/Finance/ProductChargesView";
 import Layout from "../../../layouts/Layout";
 import { createErrorProps } from "../../../utils/api/serverSidePropsError";
@@ -83,10 +84,12 @@ const ProductCharges = (props: ProductChargesProps) => {
   }
 
   return (
-    <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(" ")}>
-      <Layout>
-        <ProductChargesView productId={productId} />
-      </Layout>
+    <RoleRequired roles={DM_ROLES}>
+      <RoleRequired roles={AS_ROLES}>
+        <Layout>
+          <ProductChargesView productId={productId} />
+        </Layout>
+      </RoleRequired>
     </RoleRequired>
   );
 };

@@ -16,6 +16,7 @@ import type { GetServerSideProps } from "nextjs-routes";
 import { RoleRequired } from "../components/auth/RoleRequired";
 import { ProjectSelection } from "../components/projects/ProjectSelection";
 import { SelectProject } from "../components/userContext/SelectProject";
+import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { ProjectTable } from "../features/ProjectTable";
 import { ProjectFileUpload } from "../features/ProjectTable/ProjectFileUpload";
 import { useCurrentProject } from "../hooks/projectHooks";
@@ -88,56 +89,58 @@ const Project = () => {
       <Head>
         <title>Squonk | Project</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(" ")}>
-        <Layout>
-          <Container maxWidth="xl">
-            {currentProject ? (
-              <>
-                <Grid
-                  container
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <Grid item md={6} xs={12}>
-                    <Typography
-                      gutterBottom
-                      component="h1"
-                      sx={{ wordBreak: "break-all" }}
-                      variant={currentProject.name.length > 16 ? "h2" : "h1"}
-                    >
-                      Project: {currentProject.name}
-                    </Typography>
+      <RoleRequired roles={DM_ROLES}>
+        <RoleRequired roles={AS_ROLES}>
+          <Layout>
+            <Container maxWidth="xl">
+              {currentProject ? (
+                <>
+                  <Grid
+                    container
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Grid item md={6} xs={12}>
+                      <Typography
+                        gutterBottom
+                        component="h1"
+                        sx={{ wordBreak: "break-all" }}
+                        variant={currentProject.name.length > 16 ? "h2" : "h1"}
+                      >
+                        Project: {currentProject.name}
+                      </Typography>
+                    </Grid>
+                    <Grid item md={6} xs={12}>
+                      <SelectProject size="medium" />
+                    </Grid>
                   </Grid>
-                  <Grid item md={6} xs={12}>
-                    <SelectProject size="medium" />
-                  </Grid>
-                </Grid>
-                <ProjectFileUpload>
-                  {(open) => (
-                    <ProjectTable currentProject={currentProject} openUploadDialog={open} />
-                  )}
-                </ProjectFileUpload>
-              </>
-            ) : (
-              <Box sx={{ textAlign: "center" }}>
-                <Typography gutterBottom color="textSecondary" variant="h3">
-                  Select a project to view
-                </Typography>
-                <Image
-                  alt="Squonk in tears that you haven't selected a project"
-                  height={150}
-                  src="https://squonk.informaticsmatters.org/assets/sadderSquonk.svg"
-                  width={150}
-                />
-                <Box marginY={1}>
-                  <ProjectSelection />
+                  <ProjectFileUpload>
+                    {(open) => (
+                      <ProjectTable currentProject={currentProject} openUploadDialog={open} />
+                    )}
+                  </ProjectFileUpload>
+                </>
+              ) : (
+                <Box sx={{ textAlign: "center" }}>
+                  <Typography gutterBottom color="textSecondary" variant="h3">
+                    Select a project to view
+                  </Typography>
+                  <Image
+                    alt="Squonk in tears that you haven't selected a project"
+                    height={150}
+                    src="https://squonk.informaticsmatters.org/assets/sadderSquonk.svg"
+                    width={150}
+                  />
+                  <Box marginY={1}>
+                    <ProjectSelection />
+                  </Box>
                 </Box>
-              </Box>
-            )}
-          </Container>
-        </Layout>
+              )}
+            </Container>
+          </Layout>
+        </RoleRequired>
       </RoleRequired>
     </>
   );

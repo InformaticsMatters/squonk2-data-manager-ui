@@ -13,6 +13,7 @@ import Head from "next/head";
 import type { GetServerSideProps } from "nextjs-routes";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
+import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { ResultsView } from "../features/ResultsView";
 import Layout from "../layouts/Layout";
 import { createErrorProps } from "../utils/api/serverSidePropsError";
@@ -81,10 +82,12 @@ const Results = (props: ResultsProps) => {
       <Head>
         <title>Squonk | Results</title>
       </Head>
-      <RoleRequired roles={process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE?.split(" ")}>
-        <Layout>
-          <ResultsView />
-        </Layout>
+      <RoleRequired roles={DM_ROLES}>
+        <RoleRequired roles={AS_ROLES}>
+          <Layout>
+            <ResultsView />
+          </Layout>
+        </RoleRequired>
       </RoleRequired>
     </>
   );

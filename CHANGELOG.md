@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.4-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.4.4-rc.0...2.4.4-rc.1) (2023-06-07)
+
+
+### Bug Fixes
+
+* **authorization:** improve authorization to support evaluation role ([847e500](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/847e500f647c0664c6747f9ecf19a9ee9acad8e8))
+
 ### [2.4.4-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.4.3...2.4.4-rc.0) (2023-06-02)
 
 

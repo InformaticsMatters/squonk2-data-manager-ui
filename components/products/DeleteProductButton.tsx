@@ -1,6 +1,7 @@
-import type { ProductDetail } from "@squonk/account-server-client";
+import type { ProductDetail, UnitDetail } from "@squonk/account-server-client";
 import {
   getGetProductQueryKey,
+  getGetProductsForUnitQueryKey,
   getGetProductsQueryKey,
   useDeleteProduct,
 } from "@squonk/account-server-client/product";
@@ -18,12 +19,14 @@ export interface DeleteProductButtonProps {
   product: ProductDetail;
   disabled?: boolean;
   tooltip: string;
+  unitId?: UnitDetail["id"];
 }
 
 export const DeleteProductButton = ({
   product,
   disabled = false,
   tooltip,
+  unitId,
 }: DeleteProductButtonProps) => {
   const { mutateAsync: deleteProduct } = useDeleteProduct();
   const { enqueueError, enqueueSnackbar } = useEnqueueError();
@@ -39,6 +42,9 @@ export const DeleteProductButton = ({
           await Promise.allSettled([
             queryClient.invalidateQueries(getGetProductsQueryKey()),
             queryClient.invalidateQueries(getGetProductQueryKey(product.id)),
+            queryClient.invalidateQueries(
+              unitId ? getGetProductsForUnitQueryKey(unitId) : undefined,
+            ),
           ]);
           enqueueSnackbar("Product deleted", { variant: "success" });
         } catch (error) {

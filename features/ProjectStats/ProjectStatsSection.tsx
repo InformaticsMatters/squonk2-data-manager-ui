@@ -8,6 +8,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import { DataTable } from "../../components/DataTable";
 import { ChargesLinkIconButton } from "../../components/products/ChargesLinkIconButton";
+import { DeleteProductButton } from "../../components/products/DeleteProductButton";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { formatTierString } from "../../utils/app/products";
@@ -126,7 +127,15 @@ export const ProjectStatsSection = () => {
       datasetStorageColumnHelper.display({
         id: "actions",
         header: "Actions",
-        cell: ({ row }) => <ChargesLinkIconButton productId={row.original.product.id} />,
+        cell: ({ row }) => (
+          <>
+            <DeleteProductButton
+              product={row.original.product}
+              tooltip="Delete this dataset storage product"
+            />
+            <ChargesLinkIconButton productId={row.original.product.id} />
+          </>
+        ),
       }),
     ],
     [],

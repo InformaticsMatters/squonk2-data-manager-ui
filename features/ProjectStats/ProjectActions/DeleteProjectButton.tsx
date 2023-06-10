@@ -75,12 +75,16 @@ export const DeleteProjectButton = ({ project }: DeleteProjectButtonProps) => {
   return (
     <WarningDeleteButton
       modalChildren={
-        <>
+        isDeleting ? (
+          <>
+            <Typography variant="body1">Deletion in progress. Please wait...</Typography>
+            <LinearProgress />
+          </>
+        ) : (
           <Typography variant="body1">
             Are you sure? <b>This cannot be undone</b>.
           </Typography>
-          {isDeleting && <LinearProgress />}
-        </>
+        )
       }
       modalId={`delete-${project.project_id}`}
       title="Delete Project"

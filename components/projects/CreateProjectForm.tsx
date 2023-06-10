@@ -57,7 +57,7 @@ export const CreateProjectForm = ({ modal, unitId, product }: CreateProjectFormP
   const initialValues: Values = {
     projectName: "",
     flavour: product?.flavour ?? DEFAULT_PRODUCT_FLAVOUR,
-    isPrivate: true,
+    isPrivate: false,
   };
   const theme = useTheme();
   const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
@@ -124,7 +124,14 @@ export const CreateProjectForm = ({ modal, unitId, product }: CreateProjectFormP
     }
   };
 
-  const children: ProjectFormikProps["children"] = ({ submitForm, isSubmitting, isValid }) => (
+  const children: ProjectFormikProps["children"] = ({
+    submitForm,
+    isSubmitting,
+    isValid,
+    handleChange,
+    setFieldValue,
+    values,
+  }) => (
     <Form style={{ marginTop: theme.spacing() }}>
       <Box
         sx={{
@@ -145,6 +152,12 @@ export const CreateProjectForm = ({ modal, unitId, product }: CreateProjectFormP
             disabled={!!product?.id}
             label="Tier"
             name="flavour"
+            onChange={(event: any) => {
+              handleChange(event);
+              if (event.target.value === DEFAULT_PRODUCT_FLAVOUR) {
+                setFieldValue("isPrivate", false);
+              }
+            }}
           >
             {isLoading ? (
               <MenuItem disabled>Loading</MenuItem>
@@ -162,6 +175,7 @@ export const CreateProjectForm = ({ modal, unitId, product }: CreateProjectFormP
 
         <FormControlLabel
           control={<Field color="primary" component={Checkbox} name="isPrivate" type="checkbox" />}
+          disabled={values.flavour === DEFAULT_PRODUCT_FLAVOUR}
           label="Private"
           labelPlacement="start"
         />

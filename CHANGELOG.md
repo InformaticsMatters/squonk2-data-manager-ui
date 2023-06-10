@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.4.4-rc.1...2.5.0-rc.0) (2023-06-10)
+
+
+### Features
+
+* **dataset-storage-table:** allow dataset products to be deleted from the settings window ([db3874e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/db3874ef628579f7d0194d2701bb3f65e7e99e66))
+
+
+### Bug Fixes
+
+* **create-project:** prevent private projects for the EVALUATION flavour ([3f91b14](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3f91b1493e73a17cf9545f8a34ad7a38710fad50))
+* **delete-project:** make the delete project dialogue clearer ([d330ac8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d330ac8a8b96db2ec6227f25fc63e4c1ecb0cffe))
+* **products:** prevent evaluating users from creating dataset storage subscriptions ([cf39545](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/cf39545eae32e59291b1950e3616b5ec00140a0c))
+
 ### [2.4.4-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.4.4-rc.0...2.4.4-rc.1) (2023-06-07)
 
 

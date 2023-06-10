@@ -8,6 +8,7 @@ import { CenterLoader } from "../components/CenterLoader";
 import { CreateDatasetStorageSubscription } from "../components/CreateDatasetStorageSubscription";
 import { SelectOrganisation } from "../components/userContext/SelectOrganisation";
 import { SelectUnit } from "../components/userContext/SelectUnit";
+import { useASAuthorizationStatus } from "../hooks/useIsAuthorized";
 import { useSelectedOrganisation } from "../state/organisationSelection";
 import { useSelectedUnit } from "../state/unitSelection";
 import { getErrorMessage } from "../utils/next/orvalError";
@@ -20,6 +21,10 @@ export const ProductsView = () => {
 
   const [unit] = useSelectedUnit();
   const [organisation] = useSelectedOrganisation();
+
+  const accountServerAuthorization = useASAuthorizationStatus();
+  const userIsNotEvaluating =
+    accountServerAuthorization !== process.env.NEXT_PUBLIC_KEYCLOAK_AS_EVALUATOR_ROLE;
 
   if (!data && isLoading) {
     return <CenterLoader />;
@@ -62,7 +67,7 @@ export const ProductsView = () => {
           {organisation && <SelectUnit />}
         </Grid>
         <Grid item sm={5} xs={12}>
-          {unit && <CreateDatasetStorageSubscription unit={unit} />}
+          {unit && userIsNotEvaluating && <CreateDatasetStorageSubscription unit={unit} />}
         </Grid>
       </Grid>
       <DatasetProductTable products={datasetProducts} />

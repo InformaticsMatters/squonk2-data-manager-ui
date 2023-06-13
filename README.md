@@ -114,7 +114,7 @@ This project uses [conventional commits](https://www.conventionalcommits.org/en/
 - **Pre-release**:
 
 ```bash
-pnpm dlx standard-version --prerelease rc -t "''"
+pnpm dlx standard-version --prerelease rc -t "''" --skip.changelog=true
 git push --follow-tags origin master
 ```
 

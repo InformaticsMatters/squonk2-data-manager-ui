@@ -18,7 +18,8 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   expect(baseURL).toBeDefined();
 
   const url = new URL(baseURL as string);
-  const basePath = url.pathname;
+  // normalise the URL - sometimes we get a slash on the end, other times not
+  const basePath = url.pathname.endsWith("/") ? url.pathname.slice(0, -1) : url.pathname;
 
   url.pathname = basePath + "/api/as-api/organisation/default";
 

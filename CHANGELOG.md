@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.5.0-rc.0...2.5.0-rc.1) (2023-06-13)
+
+
+### Bug Fixes
+
+* **create-project:** only show the button when users have permission for the selected unit ([5c82966](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5c829663c8f15f9d2cea509d01f2fb632bfe48dd))
+
 ## [2.5.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.4.4-rc.1...2.5.0-rc.0) (2023-06-10)
 
 

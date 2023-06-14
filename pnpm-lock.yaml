@@ -28,7 +28,7 @@ specifiers:
   '@tanstack/match-sorter-utils': 8.8.4
   '@tanstack/react-query': 4.29.5
   '@tanstack/react-query-devtools': 4.29.6
-  '@tanstack/react-table': 8.9.1
+  '@tanstack/react-table': 8.9.2
   '@types/lodash-es': 4.17.7
   '@types/node': 18.16.7
   '@types/plotly.js-basic-dist': 1.54.1
@@ -99,7 +99,7 @@ dependencies:
   '@tanstack/match-sorter-utils': 8.8.4
   '@tanstack/react-query': 4.29.5_biqbaboplfbrettd7655fr4n2y
   '@tanstack/react-query-devtools': 4.29.6_6ufraba7zs65ngvban5jjen7be
-  '@tanstack/react-table': 8.9.1_biqbaboplfbrettd7655fr4n2y
+  '@tanstack/react-table': 8.9.2_biqbaboplfbrettd7655fr4n2y
   '@types/lodash-es': 4.17.7
   '@types/node': 18.16.7
   '@types/plotly.js-basic-dist': 1.54.1
@@ -1322,20 +1322,20 @@ packages:
       use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
-  /@tanstack/react-table/8.9.1_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-yHs2m6lk5J5RNcu2dNtsDGux66wNXZjEgzxos6MRCX8gL+nqxeW3ZglqP6eANN0bGElPnjvqiUHGQvdACOr3Cw==}
+  /@tanstack/react-table/8.9.2_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-Irvw4wqVF9hhuYzmNrlae4IKdlmgSyoRWnApSLebvYzqHoi5tEsYzBj6YPd0hX78aB/L+4w/jgK2eBQVpGfThQ==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
     dependencies:
-      '@tanstack/table-core': 8.9.1
+      '@tanstack/table-core': 8.9.2
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /@tanstack/table-core/8.9.1:
-    resolution: {integrity: sha512-2+R83n8vMZND0q3W1lSiF7co9nFbeWbjAErFf27xwbeA9E0wtUu5ZDfgj+TZ6JzdAEQAgfxkk/QNFAKiS8E4MA==}
+  /@tanstack/table-core/8.9.2:
+    resolution: {integrity: sha512-ajc0OF+karBAdaSz7OK09rCoAHB1XI1+wEhu+tDNMPc+XcO+dTlXXN/Vc0a8vym4kElvEjXEDd9c8Zfgt4bekA==}
     engines: {node: '>=12'}
     dev: false
 

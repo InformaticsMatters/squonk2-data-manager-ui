@@ -59,7 +59,7 @@
     "@tanstack/match-sorter-utils": "8.8.4",
     "@tanstack/react-query": "4.29.5",
     "@tanstack/react-query-devtools": "4.29.6",
-    "@tanstack/react-table": "8.9.1",
+    "@tanstack/react-table": "8.9.2",
     "@types/lodash-es": "4.17.7",
     "@types/node": "18.16.7",
     "@types/plotly.js-basic-dist": "1.54.1",

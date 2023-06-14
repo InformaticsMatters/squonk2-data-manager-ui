@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.5.0-rc.1...2.5.0) (2023-06-14)
+
 ## [2.5.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.5.0-rc.0...2.5.0-rc.1) (2023-06-13)
 
 

@@ -109,27 +109,29 @@ committing it as a image.
 
 ## Releases
 
-This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). This standardises commits so they can be used to generate changelogs. Use [standard-version](https://github.com/conventional-changelog/standard-version) to do a release (with no un-committed changes).
+This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). This standardises commits so they can be used to generate changelogs. Use [standard-version](https://github.com/conventional-changelog/standard-version) to do a release (ensure you have no un-committed changes, I.e. a clean workspace).
 
 - **Pre-release**:
+
+A prerelease will update the version in the package.json to an appropriate semver version (based on whether the changes since the last tag are fixes, features and whether they contain breaking changes). In this case the `rc` tag is used in the semver string to mark it as a pre-release. It will then update the [CHANGELOG.md](CHANGELOG.md) file with the relevant changes since the last changelog update. These two changes are then committed with a standardised commit message. At this point, a tag is created with the same version number as the version field of the package.json. The second command then pushes both the new commit as well as the new tag.
 
 ```bash
 pnpm dlx standard-version --prerelease rc -t "''" --skip.changelog=true
 git push --follow-tags origin master
 ```
 
-
 - **Release**
+
+This causes the same as above but as a normal release. I.e. no `rc` tag.
+
 ```bash
 pnpm dlx standard-version -t "''"
 git push --follow-tags origin master
 ```
 
-This will do the following:
+## Devcontainers
 
-- Update the [CHANGELOG.md](CHANGELOG.md) with the `fix`es and `feat`ures from the commit messages
-- Update the `package.json` version field to the next semver version. This version is determined from whether the commit messages from the last release are: just fixes (+ 0.0.1); includes features (+0.1.0); has major breaking changes (+ 1.0.0). Additionally a `rc` tag is used for pre-releases.
-- Tag the repo locally with the new version (prefixed with a `v`). This is then pushed to the remote with the second command.
+Due to the use of [MDX](https://mdxjs.com/) and the node-dependent release mechanism, you will need a full development environment to verify changes by using the development server and to run tests. To aids in this, we provide a [devcontainer config file](.devcontainer/devcontainer.json) that sets up the needed Node dependencies and allows you to run the tests and dev server. You may open this dev container in browser or inside a supported editor of your choice given you can run the container on your system. 
 
 ---
 

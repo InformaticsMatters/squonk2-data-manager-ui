@@ -98,7 +98,7 @@
     "tsafe": "1.6.0",
     "typescript": "5.0.4",
     "use-immer": "0.7.0",
-    "yup": "1.1.1"
+    "yup": "1.2.0"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "13.4.5",

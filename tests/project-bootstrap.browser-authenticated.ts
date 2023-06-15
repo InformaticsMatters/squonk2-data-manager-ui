@@ -56,6 +56,9 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
     url.pathname = basePath + "/api/as-api/unit";
     const res = await page.request.delete(url.href);
 
+    console.log("ok: ", res.ok());
+    console.log(await res.json());
+
     expect(!res.ok() && (await res.json()).error !== "The Unit does not exist").toBeFalsy();
   }
 

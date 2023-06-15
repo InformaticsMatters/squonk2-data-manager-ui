@@ -14,7 +14,7 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "yarn install",
+	"postCreateCommand": "pnpm i && pnpm exec playwright install-deps && pnpm exec playwright install",
 	// Configure tool-specific properties.
 	"customizations": {
 		// Configure properties specific to VS Code.
@@ -27,7 +27,27 @@
 				"unifiedjs.vscode-mdx"
 			]
 		}
-	}
+	},
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
+	"secrets": {
+		"DATA_MANAGER_API_SERVER": {
+			"description": "URL the data manager API"
+		},
+		"ACCOUNT_SERVER_API_SERVER": {
+			"description": "URL the account server API"
+		},
+		"AUTH0_SECRET": {
+			"description": "Secret used by auth service. Just needs to be a long alphanumeric string."
+		},
+		"KEYCLOAK_URL": {
+			"description": "URL to Keycloak Realm used for Auth"
+		},
+		"AUTH0_CLIENT_ID": {
+			"description": "Client ID for Keycloak Client"
+		},
+		"AUTH0_CLIENT_SECRET": {
+			"description": "Secret corresponding to Client ID for Keycloak Client"
+		}
+	}
 }

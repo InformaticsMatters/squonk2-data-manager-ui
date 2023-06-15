@@ -9,6 +9,8 @@
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/InformaticsMatters/squonk2-data-manager-ui)
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/informaticsmatters/squonk2-data-manager-ui)
+
 ## API Compatibility
 
 The Data Manager UI will usually only work with specific API versions.  A major version bump in the UI (E.g. 1.x to 2.y) will correspond to a major version change in either the data-manager API or the account-server API.
@@ -131,7 +133,7 @@ git push --follow-tags origin master
 
 ## Devcontainers
 
-Due to the use of [MDX](https://mdxjs.com/) and the node-dependent release mechanism, you will need a full development environment to verify changes by using the development server and to run tests. To aids in this, we provide a [devcontainer config file](.devcontainer/devcontainer.json) that sets up the needed Node dependencies and allows you to run the tests and dev server. You may open this dev container in browser or inside a supported editor of your choice given you can run the container on your system. 
+Due to the use of [MDX](https://mdxjs.com/) and the node-dependent release mechanism, you will need a full development environment to verify changes by using the development server and to run tests. To aids in this, we provide a [devcontainer config file](.devcontainer/devcontainer.json) that sets up the needed Node dependencies and allows you to run the tests and dev server. You may open this dev container in browser or inside a supported editor of your choice given you can run the container on your system. It's recommended you use the `+ New with options` option (from the … menu) when starting your codespace so that you can enter the required secrets to get the app running against APIs.
 
 ---
 

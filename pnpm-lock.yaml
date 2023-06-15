@@ -54,7 +54,7 @@ specifiers:
   ketcher-standalone: 2.9.0
   lint-staged: 13.2.2
   lodash-es: 4.17.21
-  material-ui-popup-state: 5.0.8
+  material-ui-popup-state: 5.0.9
   nanoid: 4.0.2
   next: 13.4.5
   next-http-proxy-middleware: 1.2.5
@@ -120,7 +120,7 @@ dependencies:
   ketcher-react: 2.9.0_ahpghwkyyxs7a7vinwifjyd45i
   ketcher-standalone: 2.9.0
   lodash-es: 4.17.21
-  material-ui-popup-state: 5.0.8_cf5bl3z2gjfwdfs5v3x2ie554i
+  material-ui-popup-state: 5.0.9_cf5bl3z2gjfwdfs5v3x2ie554i
   nanoid: 4.0.2
   next: 13.4.5_txdvpvppf2ilsh27xadmwrzlmm
   next-http-proxy-middleware: 1.2.5
@@ -4114,8 +4114,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /material-ui-popup-state/5.0.8_cf5bl3z2gjfwdfs5v3x2ie554i:
-    resolution: {integrity: sha512-5ptEBQVd68QJpm0PCIYBatpX/F5QIFS+EH0lPpGqjl6HPD6uIHPt7laHbiqWDEm/6Wy5YvWF69ny+3jHXmHizQ==}
+  /material-ui-popup-state/5.0.9_cf5bl3z2gjfwdfs5v3x2ie554i:
+    resolution: {integrity: sha512-NjTm7zdEzOY1CHu+a2to6h1Jr1Y8ra24rZ2JF5teO/+g0wTNiKWwNT04v3oW3McHsLcTfG46yYcqf1iznjst8Q==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:

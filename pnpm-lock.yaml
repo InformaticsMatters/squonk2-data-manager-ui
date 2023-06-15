@@ -40,7 +40,7 @@ specifiers:
   dotenv: 16.0.3
   eslint: 8.40.0
   filesize: 10.0.7
-  formik: 2.2.9
+  formik: 2.4.2
   formik-mui: 4.0.0
   formik-mui-lab: 1.0.0
   husky: 8.0.3
@@ -109,9 +109,9 @@ dependencies:
   axios: 1.4.0
   dayjs: 1.11.7
   filesize: 10.0.7
-  formik: 2.2.9_react@18.2.0
-  formik-mui: 4.0.0_s4xinshutnntgrkvsrflhmsmgq
-  formik-mui-lab: 1.0.0_3vlb5wco2qnhw4duhpy6gmgpby
+  formik: 2.4.2_react@18.2.0
+  formik-mui: 4.0.0_oirlrqgovo6nok7ucdkiquwyxa
+  formik-mui-lab: 1.0.0_ib5doxbeirndjjasddnz4z2s7q
   immer: 9.0.21
   jotai: 2.1.0_react@18.2.0
   just-compare: 2.3.0
@@ -3000,7 +3000,7 @@ packages:
       fetch-blob: 3.2.0
     dev: false
 
-  /formik-mui-lab/1.0.0_3vlb5wco2qnhw4duhpy6gmgpby:
+  /formik-mui-lab/1.0.0_ib5doxbeirndjjasddnz4z2s7q:
     resolution: {integrity: sha512-4YSpaFXJ4fJ+er2Eu/XNcKyrrcUEWQiwxWjnSbki9bxRjjSDiKWCrRlDgM+vdl/HEiO+XrwrxA5I9M+xU4r1tg==}
     peerDependencies:
       '@emotion/react': '>=11.4.1'
@@ -3015,11 +3015,11 @@ packages:
       '@emotion/styled': 11.11.0_o33mozmalvjck4xgd65gutvo34
       '@mui/lab': 5.0.0-alpha.129_v75vbif7oxbzfh67m2r265jiiq
       '@mui/material': 5.13.0_a546lfksfblnum6xd2xu2d7sbu
-      formik: 2.2.9_react@18.2.0
+      formik: 2.4.2_react@18.2.0
       react: 18.2.0
     dev: false
 
-  /formik-mui/4.0.0_s4xinshutnntgrkvsrflhmsmgq:
+  /formik-mui/4.0.0_oirlrqgovo6nok7ucdkiquwyxa:
     resolution: {integrity: sha512-1IzYE83t/Hz05XMQuqs3i/yL7vteqCtjwJDXPBKtomzbif96OrTB2dFk26XEBJaB6ogmtKcxLogrtex3pbOp2A==}
     peerDependencies:
       '@emotion/react': '>=11.4.1'
@@ -3032,12 +3032,12 @@ packages:
       '@emotion/react': 11.11.1_s3k22s5ab4eu26xuel7hiaraxy
       '@emotion/styled': 11.11.0_o33mozmalvjck4xgd65gutvo34
       '@mui/material': 5.13.0_a546lfksfblnum6xd2xu2d7sbu
-      formik: 2.2.9_react@18.2.0
+      formik: 2.4.2_react@18.2.0
       react: 18.2.0
     dev: false
 
-  /formik/2.2.9_react@18.2.0:
-    resolution: {integrity: sha512-LQLcISMmf1r5at4/gyJigGn0gOwFbeEAlji+N9InZF6LIMXnFNkO42sCI8Jt84YZggpD4cPWObAZaxpEFtSzNA==}
+  /formik/2.4.2_react@18.2.0:
+    resolution: {integrity: sha512-C6nx0hifW2uENP3M6HpPmnAE6HFWCcd8/sqBZEOHZY6lpHJ5qehsfAy43ktpFLEmkBmhiZDei726utcUB9leqg==}
     peerDependencies:
       react: '>=16.8.0'
     dependencies:
@@ -3048,7 +3048,7 @@ packages:
       react: 18.2.0
       react-fast-compare: 2.0.4
       tiny-warning: 1.0.3
-      tslib: 1.14.1
+      tslib: 2.5.0
     dev: false
 
   /fs-constants/1.0.0:

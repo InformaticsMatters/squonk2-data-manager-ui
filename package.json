@@ -93,7 +93,7 @@
     "react-dom": "18.2.0",
     "react-dropzone": "14.2.3",
     "react-plotly.js": "2.6.0",
-    "sass": "1.62.1",
+    "sass": "1.63.4",
     "sharp": "0.32.1",
     "tsafe": "1.6.0",
     "typescript": "5.0.4",

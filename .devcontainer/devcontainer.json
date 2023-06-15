@@ -37,9 +37,6 @@
 		"ACCOUNT_SERVER_API_SERVER": {
 			"description": "URL the account server API"
 		},
-		"AUTH0_SECRET": {
-			"description": "Secret used by auth service. Just needs to be a long alphanumeric string."
-		},
 		"KEYCLOAK_URL": {
 			"description": "URL to Keycloak Realm used for Auth"
 		},
@@ -49,5 +46,9 @@
 		"AUTH0_CLIENT_SECRET": {
 			"description": "Secret corresponding to Client ID for Keycloak Client"
 		}
+	},
+	"containerEnv": {
+		"BASE_URL": "$CODESPACE_NAME-3000.$GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN",
+		"AUTH0_SECRET": "LONG_RANDOM_VALUE"
 	}
 }

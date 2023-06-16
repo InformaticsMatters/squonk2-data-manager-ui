@@ -37,7 +37,7 @@ specifiers:
   '@types/react-plotly.js': 2.6.0
   axios: 1.4.0
   dayjs: 1.11.8
-  dotenv: 16.1.4
+  dotenv: 16.3.0
   eslint: 8.42.0
   filesize: 10.0.7
   formik: 2.4.2
@@ -144,7 +144,7 @@ devDependencies:
   '@next/bundle-analyzer': 13.4.5
   '@playwright/test': 1.35.1
   '@squonk/eslint-config': 0.5.0_tizxnkcvjrb4cldxgwq5h3lj5u
-  dotenv: 16.1.4
+  dotenv: 16.3.0
   eslint: 8.42.0
   husky: 8.0.3
   identity-obj-proxy: 3.0.0
@@ -2330,8 +2330,8 @@ packages:
       csstype: 3.1.2
     dev: false
 
-  /dotenv/16.1.4:
-    resolution: {integrity: sha512-m55RtE8AsPeJBpOIFKihEmqUcoVncQIwo7x9U8ZwLEZw9ZpXboz2c+rvog+jUaJvVrZ5kBOeYQBX5+8Aa/OZQw==}
+  /dotenv/16.3.0:
+    resolution: {integrity: sha512-tHB+hmf8MRCkT3VVivGiG8kq9HiGTmQ3FzOKgztfpJQH1IWuZTOvKSJmHNnQPowecAmkCJhLrxdPhOr06LLqIQ==}
     engines: {node: '>=12'}
     dev: true
 

@@ -16,10 +16,10 @@ specifiers:
   '@next/eslint-plugin-next': 13.4.5
   '@next/mdx': 13.4.5
   '@playwright/test': 1.35.1
-  '@rjsf/core': 5.6.2
-  '@rjsf/mui': 5.6.2
-  '@rjsf/utils': 5.6.2
-  '@rjsf/validator-ajv8': 5.6.2
+  '@rjsf/core': 5.8.1
+  '@rjsf/mui': 5.8.1
+  '@rjsf/utils': 5.8.1
+  '@rjsf/validator-ajv8': 5.8.1
   '@sentry/nextjs': 7.55.2
   '@squonk/account-server-client': 2.0.5
   '@squonk/data-manager-client': 1.1.7
@@ -88,10 +88,10 @@ dependencies:
   '@mui/styles': 5.13.2_amj33xoxfucvzb42rb6rqg7bp4
   '@next/eslint-plugin-next': 13.4.5
   '@next/mdx': 13.4.5_msthxdjvrhmdkfpqqalumiidgq
-  '@rjsf/core': 5.6.2_z3pht4sgsiqwwidxbt3gorpdum
-  '@rjsf/mui': 5.6.2_hivnmpx6et7laxhus5dl6rhdyy
-  '@rjsf/utils': 5.6.2_react@18.2.0
-  '@rjsf/validator-ajv8': 5.6.2_@rjsf+utils@5.6.2
+  '@rjsf/core': 5.8.1_hfkvqat3xkrkikno2v3pggfuw4
+  '@rjsf/mui': 5.8.1_qxayws6ckchqfufw4gaoh6tomu
+  '@rjsf/utils': 5.8.1_react@18.2.0
+  '@rjsf/validator-ajv8': 5.8.1_@rjsf+utils@5.8.1
   '@sentry/nextjs': 7.55.2_next@13.4.5+react@18.2.0
   '@squonk/account-server-client': 2.0.5_a2xwp4qutj5ug3snlf6nlr3ege
   '@squonk/data-manager-client': 1.1.7_a2xwp4qutj5ug3snlf6nlr3ege
@@ -924,45 +924,45 @@ packages:
       reselect: 4.1.7
     dev: false
 
-  /@rjsf/core/5.6.2_z3pht4sgsiqwwidxbt3gorpdum:
-    resolution: {integrity: sha512-3N3NZ1ax2XmeJU0Bf6bBIRFawyIukN1bgA5Y5B1vFZ2GwZ9Gn1eiQedAhdgR8+qSlghVxNmC942c9oPR0GzE0A==}
+  /@rjsf/core/5.8.1_hfkvqat3xkrkikno2v3pggfuw4:
+    resolution: {integrity: sha512-+lJKK/fdVO+DqKhSzSY8bjyAv5weoLw44d/DnCn2U8/l9qY0nqfNSvG6gyZIC9kCNnzLS/76XFAltWXgtjjzFQ==}
     engines: {node: '>=14'}
     peerDependencies:
-      '@rjsf/utils': 5.6.x
+      '@rjsf/utils': ^5.8.x
       react: ^16.14.0 || >=17
     dependencies:
-      '@rjsf/utils': 5.6.2_react@18.2.0
+      '@rjsf/utils': 5.8.1_react@18.2.0
       lodash: 4.17.21
       lodash-es: 4.17.21
-      markdown-to-jsx: 7.2.0_react@18.2.0
+      markdown-to-jsx: 7.2.1_react@18.2.0
       nanoid: 3.3.6
       prop-types: 15.8.1
       react: 18.2.0
     dev: false
 
-  /@rjsf/mui/5.6.2_hivnmpx6et7laxhus5dl6rhdyy:
-    resolution: {integrity: sha512-RhoGKpsvozehMJmXuTl4nUQFZCWTEOYbS5lePCHByGcqwnMI7XEpLs45SyBXocHUwAJtDpPZkyKi/YSwUjj4yg==}
+  /@rjsf/mui/5.8.1_qxayws6ckchqfufw4gaoh6tomu:
+    resolution: {integrity: sha512-fe7cXUWPJe9CUP7ex9p5iL2xlnbtBuwvepzd3CEQigGJ0Nxv0+ut5hfiEeEm/YbtgffJhBlD0ovTPPLKNq1+mQ==}
     engines: {node: '>=14'}
     peerDependencies:
       '@emotion/react': ^11.7.0
       '@emotion/styled': ^11.6.0
       '@mui/icons-material': ^5.2.0
       '@mui/material': ^5.2.2
-      '@rjsf/core': 5.6.x
-      '@rjsf/utils': 5.6.x
+      '@rjsf/core': ^5.8.x
+      '@rjsf/utils': ^5.8.x
       react: '>=17'
     dependencies:
       '@emotion/react': 11.11.1_amj33xoxfucvzb42rb6rqg7bp4
       '@emotion/styled': 11.11.0_533ehcmi7sq5dugudeoogi7hmm
       '@mui/icons-material': 5.11.16_rkrahsrzrx2h25jhj6lp34j7hq
       '@mui/material': 5.13.5_cf5bl3z2gjfwdfs5v3x2ie554i
-      '@rjsf/core': 5.6.2_z3pht4sgsiqwwidxbt3gorpdum
-      '@rjsf/utils': 5.6.2_react@18.2.0
+      '@rjsf/core': 5.8.1_hfkvqat3xkrkikno2v3pggfuw4
+      '@rjsf/utils': 5.8.1_react@18.2.0
       react: 18.2.0
     dev: false
 
-  /@rjsf/utils/5.6.2_react@18.2.0:
-    resolution: {integrity: sha512-uditIzGKHRV5vI9HOz4spSoGplm3zrifsInn+izCWETJfLgV5961hUYHaS21vcD+VTp7qUcTZChfmhiRekSrLA==}
+  /@rjsf/utils/5.8.1_react@18.2.0:
+    resolution: {integrity: sha512-kzWVNAW417ADG0nSEPxpqYzLrtzi9tKCCn5rOuwt6FIvSrtkatISBekyKNeycGPUfQR9VkROGrcG8cz10xUs6g==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^16.14.0 || >=17
@@ -975,13 +975,13 @@ packages:
       react-is: 18.2.0
     dev: false
 
-  /@rjsf/validator-ajv8/5.6.2_@rjsf+utils@5.6.2:
-    resolution: {integrity: sha512-aenj8vQ91TJdRTqFGi3Rl3j7j/EjjgYokIopCBlFqYDR3AVcoFSbLZw2JobZAADstw3eIL+ZEYi/LyvJCVV6lw==}
+  /@rjsf/validator-ajv8/5.8.1_@rjsf+utils@5.8.1:
+    resolution: {integrity: sha512-ImMd8nZeQzgt26y90yqEmiD7XPtDCX4LYGfniCr/PeAOk79OKhcdv8OMsdGTh9pGPtHy1qOJvntALKOpHGAeYg==}
     engines: {node: '>=14'}
     peerDependencies:
-      '@rjsf/utils': 5.6.x
+      '@rjsf/utils': ^5.8.x
     dependencies:
-      '@rjsf/utils': 5.6.2_react@18.2.0
+      '@rjsf/utils': 5.8.1_react@18.2.0
       ajv: 8.12.0
       ajv-formats: 2.1.1
       lodash: 4.17.21
@@ -4076,8 +4076,8 @@ packages:
       repeat-string: 1.6.1
     dev: false
 
-  /markdown-to-jsx/7.2.0_react@18.2.0:
-    resolution: {integrity: sha512-3l4/Bigjm4bEqjCR6Xr+d4DtM1X6vvtGsMGSjJYyep8RjjIvcWtrXBS8Wbfe1/P+atKNMccpsraESIaWVplzVg==}
+  /markdown-to-jsx/7.2.1_react@18.2.0:
+    resolution: {integrity: sha512-9HrdzBAo0+sFz9ZYAGT5fB8ilzTW+q6lPocRxrIesMO+aB40V9MgFfbfMXxlGjf22OpRy+IXlvVaQenicdpgbg==}
     engines: {node: '>= 10'}
     peerDependencies:
       react: '>= 0.14.0'

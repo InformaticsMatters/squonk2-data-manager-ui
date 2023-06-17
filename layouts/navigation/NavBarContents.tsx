@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Settings as SettingsIcon } from "@mui/icons-material";
-import { IconButton, styled, Tooltip, useMediaQuery, useTheme } from "@mui/material";
+import { Box, IconButton, styled, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import { CenterLoader } from "../../components/CenterLoader";
@@ -81,7 +81,7 @@ export const NavBarContents = () => {
     navContent = (
       <>
         {biggerThanSm && <NavLinks linkWidth={100} />}
-        {settingsButton}
+        <Box sx={{ marginLeft: biggerThanSm ? undefined : "auto" }}>{settingsButton}</Box>
         <MobileNavMenu links={!biggerThanSm} />
       </>
     );

@@ -19,6 +19,7 @@ import { SelectProject } from "../components/userContext/SelectProject";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { ProjectTable } from "../features/ProjectTable";
 import { ProjectFileUpload } from "../features/ProjectTable/ProjectFileUpload";
+import { UserBootstrapper } from "../features/UserBootstrapper";
 import { useCurrentProject } from "../hooks/projectHooks";
 import Layout from "../layouts/Layout";
 import { createErrorProps } from "../utils/api/serverSidePropsError";
@@ -93,6 +94,7 @@ const Project = () => {
         <RoleRequired roles={AS_ROLES}>
           <Layout>
             <Container maxWidth="xl">
+              <UserBootstrapper />
               {currentProject ? (
                 <>
                   <Grid

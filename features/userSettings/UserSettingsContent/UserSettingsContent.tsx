@@ -12,6 +12,7 @@ import { PageSection } from "../../../components/PageSection";
 import { projectPayload, useCurrentProjectId } from "../../../hooks/projectHooks";
 import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../../utils/next/localStorage";
 import { ProjectStatsSection } from "../../ProjectStats";
+import { UserBootstrapper } from "../../UserBootstrapper";
 import { ContextSection } from "./ContextSection";
 
 /**
@@ -23,6 +24,7 @@ export const UserSettingsContent = () => {
 
   return (
     <Container maxWidth="lg">
+      <UserBootstrapper />
       <PageSection level={2} title="Organisation and Unit">
         <Typography gutterBottom variant="body2">
           Filter the projects you are able to see by the organisation and unit a projects belongs

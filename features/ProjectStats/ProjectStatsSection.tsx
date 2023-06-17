@@ -23,17 +23,21 @@ import { useStorageSubscriptions } from "./useStorageSubscriptions";
 const projectColumnHelper = createColumnHelper<Partial<ProductDmProjectTier> & ProjectDetail>();
 const datasetStorageColumnHelper = createColumnHelper<ProductDmStorage>();
 
+export interface ProjectStatsSectionProps {
+  userFilter?: string;
+}
+
 /**
  * Displays `Project stats` section in User Settings.
  */
-export const ProjectStatsSection = () => {
+export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) => {
   const theme = useTheme();
   const { projectId: currentProjectId } = useCurrentProjectId();
 
   const { user } = useKeycloakUser();
 
   const { projectSubscriptions, isLoading: isProjectSubscriptionsLoading } =
-    useProjectSubscriptions();
+    useProjectSubscriptions(userFilter);
 
   const {
     storageSubscriptions,

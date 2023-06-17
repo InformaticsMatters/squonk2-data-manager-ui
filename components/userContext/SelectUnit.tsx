@@ -12,15 +12,15 @@ import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { ItemIcons } from "./ItemIcons";
 
-export type SelectUnitProps = Omit<
-  AutocompleteProps<UnitGetResponse, false, false, false>,
-  "renderInput" | "options"
->;
+export interface SelectUnitProps
+  extends Omit<AutocompleteProps<UnitGetResponse, false, false, false>, "renderInput" | "options"> {
+  userFilter?: string;
+}
 
 /**
  * Autocomplete which lists context's organisation's units available to a user to select as context.
  */
-export const SelectUnit = (props: SelectUnitProps) => {
+export const SelectUnit = ({ userFilter, ...autocompleteProps }: SelectUnitProps) => {
   const [unit, setUnit] = useSelectedUnit();
   const [organisation] = useSelectedOrganisation();
 
@@ -30,7 +30,7 @@ export const SelectUnit = (props: SelectUnitProps) => {
   const { data, isLoading, isError, error } = useGetOrganisationUnits(organisationId, {
     query: { enabled: !!organisationId },
   });
-  const units = data?.units;
+  const units = data?.units.filter((unit) => !userFilter || unit.owner_id === userFilter);
 
   if (isError) {
     return <Typography color="error">{getErrorMessage(error)}</Typography>;
@@ -39,7 +39,7 @@ export const SelectUnit = (props: SelectUnitProps) => {
   return (
     <>
       <Autocomplete
-        {...props}
+        {...autocompleteProps}
         fullWidth
         getOptionLabel={(option) => option.name}
         id="unit-selection"

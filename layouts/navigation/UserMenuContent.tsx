@@ -3,7 +3,7 @@ import { Box, Chip, Typography, useMediaQuery, useTheme } from "@mui/material";
 
 import { CenterLoader } from "../../components/CenterLoader";
 import { Chips } from "../../components/Chips";
-import { DarkModeSwitchListItem } from "../../components/DarkModeSwitchListItem";
+import { DarkModeSwitch } from "../../components/DarkModeSwitch";
 import { NextLink } from "../../components/NextLink";
 import { useCleanUpOnLogout } from "../../hooks/authHooks";
 import { useASAuthorizationStatus, useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
@@ -64,7 +64,7 @@ export const UserMenuContent = () => {
           </NextLink>
         </Typography>
       )}
-      <DarkModeSwitchListItem />
+      <DarkModeSwitch />
     </Box>
   );
 };

@@ -5,18 +5,22 @@ import { SelectUnit } from "../../../../components/userContext/SelectUnit";
 import { OrganisationActions } from "./contextActions/OrganisationActions";
 import { UnitActions } from "./contextActions/UnitActions";
 
+export interface ContextSectionProps {
+  userFilter?: string;
+}
+
 /**
  * Displays `Context` section in User Settings.
  */
-export const ContextSection = () => {
+export const ContextSection = ({ userFilter }: ContextSectionProps) => {
   return (
     <Grid container spacing={1}>
       <Grid container item alignContent="flex-start" sm={6}>
-        <SelectOrganisation />
+        <SelectOrganisation userFilter={userFilter} />
         <OrganisationActions />
       </Grid>
       <Grid container item alignContent="flex-start" sm={6}>
-        <SelectUnit />
+        <SelectUnit userFilter={userFilter} />
         <UnitActions />
       </Grid>
     </Grid>

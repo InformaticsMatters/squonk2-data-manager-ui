@@ -11,21 +11,31 @@ import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { ItemIcons } from "./ItemIcons";
 
-type SelectOrganisationProps = Omit<
-  AutocompleteProps<OrganisationDetail, false, false, false>,
-  "renderInput" | "options"
->;
+export interface SelectOrganisationProps
+  extends Omit<
+    AutocompleteProps<OrganisationDetail, false, false, false>,
+    "renderInput" | "options"
+  > {
+  userFilter?: string;
+}
 
 /**
  * Autocomplete which lists organisations available to a user to select as context.
  */
-export const SelectOrganisation = (props: SelectOrganisationProps) => {
+export const SelectOrganisation = ({
+  userFilter,
+  ...autoCompleteProps
+}: SelectOrganisationProps) => {
   const [, setUnit] = useSelectedUnit();
   const [organisation, setOrganisation] = useSelectedOrganisation();
   const { setCurrentProjectId } = useCurrentProjectId();
 
   const { data, isLoading, isError, error } = useGetOrganisations();
-  const organisations = data?.organisations ?? [];
+  const organisations =
+    data?.organisations.filter(
+      (organisation) =>
+        !userFilter || organisation.owner_id === userFilter || organisation.name === "Default",
+    ) ?? [];
 
   if (isError) {
     return <Typography color="error">{getErrorMessage(error)}</Typography>;
@@ -34,7 +44,7 @@ export const SelectOrganisation = (props: SelectOrganisationProps) => {
   return (
     <>
       <Autocomplete
-        {...props}
+        {...autoCompleteProps}
         fullWidth
         getOptionLabel={(option) => option.name}
         id="organisation-selection"

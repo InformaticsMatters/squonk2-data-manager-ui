@@ -5,7 +5,7 @@ import { useColorScheme } from "../state/colorScheme";
 /**
  * Displays a button which controls the theme of the application.
  */
-export const DarkModeSwitchListItem = () => {
+export const DarkModeSwitch = () => {
   const [scheme, setScheme] = useColorScheme();
 
   return (

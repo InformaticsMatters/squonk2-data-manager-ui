@@ -18,10 +18,13 @@ const isProjectProduct = (
   product.product.type === "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION";
 
 /**
+ * /**
  * Fetches information about account's project subscriptions.
  * Merges the project owner into each product
+ *
+ * @param userFilter filter projects keeping only those with `owner` matching `userFilter`
  */
-export const useProjectSubscriptions = () => {
+export const useProjectSubscriptions = (userFilter?: string) => {
   const [unit] = useSelectedUnit();
   const [organisation] = useSelectedOrganisation();
 
@@ -30,7 +33,9 @@ export const useProjectSubscriptions = () => {
     isLoading: isProjectsLoading,
     isError: isProjectsError,
   } = useGetProjects();
-  const projects = projectsData?.projects;
+  const projects = projectsData?.projects.filter(
+    (project) => !userFilter || project.owner === userFilter,
+  );
 
   const {
     data: productsData,

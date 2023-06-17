@@ -1,4 +1,4 @@
-import { Box, Switch } from "@mui/material";
+import { Switch } from "@mui/material";
 
 import { useColorScheme } from "../state/colorScheme";
 
@@ -9,13 +9,13 @@ export const DarkModeSwitchListItem = () => {
   const [scheme, setScheme] = useColorScheme();
 
   return (
-    <Box alignItems="center" display="flex">
+    <div>
       Dark Mode
       <Switch
         checked={scheme === "dark"}
         inputProps={{ "aria-label": "color-scheme-toggle" }}
         onChange={(event) => setScheme(event.target.checked ? "dark" : "light")}
       />
-    </Box>
+    </div>
   );
 };

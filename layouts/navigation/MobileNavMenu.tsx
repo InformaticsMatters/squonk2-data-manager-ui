@@ -81,17 +81,7 @@ export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
             </Grid>
           )}
           <Grid item xs={12}>
-            {!!isDMAuthorized && (
-              <>
-                <Typography gutterBottom variant="h3">
-                  Project
-                </Typography>
-                <OUPContext />
-              </>
-            )}
-          </Grid>
-          <Grid item xs={12}>
-            <Divider />
+            {!!isDMAuthorized && <OUPContext header />}
           </Grid>
           <Grid item xs={12}>
             <UserMenuContent />

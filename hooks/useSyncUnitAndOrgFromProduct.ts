@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import { useGetDefaultOrganisation } from "@squonk/account-server-client/organisation";
 import { useGetProduct } from "@squonk/account-server-client/product";
 
 import { useSelectedOrganisation } from "../state/organisationSelection";
@@ -13,6 +14,8 @@ export const useSyncUnitAndOrgFromProduct = () => {
   });
   const product = data?.product;
 
+  const { data: defaultOrg } = useGetDefaultOrganisation();
+
   const [, setUnit] = useSelectedUnit();
   const [, setOrganisation] = useSelectedOrganisation();
 
@@ -21,6 +24,8 @@ export const useSyncUnitAndOrgFromProduct = () => {
     if (currentProject && product) {
       setUnit(product.unit);
       setOrganisation(product.organisation);
+    } else {
+      setOrganisation(defaultOrg);
     }
-  }, [currentProject, product, setUnit, setOrganisation]);
+  }, [currentProject, product, setUnit, setOrganisation, defaultOrg]);
 };

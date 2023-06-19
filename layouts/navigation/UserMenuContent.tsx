@@ -1,11 +1,10 @@
 import { Person as PersonIcon } from "@mui/icons-material";
 import { Box, Chip, Typography, useMediaQuery, useTheme } from "@mui/material";
 
+import { AuthButton } from "../../components/auth/AuthButton";
 import { CenterLoader } from "../../components/CenterLoader";
 import { Chips } from "../../components/Chips";
 import { DarkModeSwitch } from "../../components/DarkModeSwitch";
-import { NextLink } from "../../components/NextLink";
-import { useCleanUpOnLogout } from "../../hooks/authHooks";
 import { useASAuthorizationStatus, useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 
@@ -14,7 +13,6 @@ import { useKeycloakUser } from "../../hooks/useKeycloakUser";
  */
 export const UserMenuContent = () => {
   const { user, isLoading } = useKeycloakUser();
-  const cleanupOnLogout = useCleanUpOnLogout();
   const asRole = useASAuthorizationStatus();
   const dmRole = useDMAuthorizationStatus();
 
@@ -44,24 +42,11 @@ export const UserMenuContent = () => {
               <Chip label={asRole ?? "No AS Role"} size="small" />
             </Chips>
           </Typography>
-          <NextLink
-            component="button"
-            href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/logout` as any}
-            sx={{ marginY: 1 }}
-            onClick={cleanupOnLogout}
-          >
-            Logout
-          </NextLink>
+          <AuthButton mode="logout" sx={{ marginY: 1 }} />
         </>
       ) : (
         <Typography>
-          <NextLink
-            component="button"
-            href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/login` as any}
-            variant="outlined"
-          >
-            Login
-          </NextLink>
+          <AuthButton mode="login" />
         </Typography>
       )}
       <DarkModeSwitch />

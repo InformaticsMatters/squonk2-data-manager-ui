@@ -66,7 +66,11 @@ export const UserSettingsContent = () => {
                 onChange={(event) => setUserIsOwnerOnly(event.target.checked)}
               />
             }
-            label="Only I am the owner"
+            label={
+              <Typography>
+                Owner is <em>{user.username}</em>
+              </Typography>
+            }
             labelPlacement="start"
           />
         </Box>

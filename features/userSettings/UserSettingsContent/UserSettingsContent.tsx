@@ -36,16 +36,17 @@ export const UserSettingsContent = () => {
 
   const [userIsOwnerOnly, setUserIsOwnerOnly] = useState(true);
   const project = useCurrentProject();
+  const owner = project?.owner;
 
   // the user could land on a project via a URL parameter. If we don't sync this state, the selected
   // project could be filtered out if the current user is not the owner.
   // E.g. a user's friend send one of the friend's projects to check out, the current user is not
   // the owner of this project so it wouldn't appear in the table.
   useEffect(() => {
-    if (project?.owner !== user.username) {
+    if (!!owner && owner !== user.username) {
       setUserIsOwnerOnly(false);
     }
-  }, [project?.owner, user.username]);
+  }, [owner, user.username]);
 
   return (
     <Container maxWidth="lg">

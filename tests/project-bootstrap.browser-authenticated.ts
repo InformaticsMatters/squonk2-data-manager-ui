@@ -46,12 +46,15 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
           product.product.type === "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
       );
     const productPromises = productsToDelete.map(async (product) => {
-      url.pathname = basePath + `/api/dm-api/project/${product.claim?.id}`;
-      page.request.delete(url.href);
+      if (product.claim?.id) {
+        url.pathname = basePath + `/api/dm-api/project/${product.claim.id}`;
+        await page.request.delete(url.href);
+      }
+
       url.pathname = basePath + `/api/as-api/product/${product.product.id}`;
-      page.request.delete(url.href);
+      await page.request.delete(url.href);
     });
-    await Promise.allSettled(productPromises);
+    await Promise.all(productPromises); // ensure that all products get deleted successfully
 
     url.pathname = basePath + "/api/as-api/unit";
     const res = await page.request.delete(url.href);

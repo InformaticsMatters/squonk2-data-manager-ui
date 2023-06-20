@@ -19,13 +19,16 @@ export const useSyncUnitAndOrgFromProduct = () => {
   const [, setUnit] = useSelectedUnit();
   const [, setOrganisation] = useSelectedOrganisation();
 
+  // First set the default org as the current org on first load
   useEffect(() => {
-    // Used in case a user directly navigates to a project's URL
+    setOrganisation(defaultOrg);
+  }, [defaultOrg, setOrganisation]);
+
+  // Used in case a user directly navigates to a project's URL
+  useEffect(() => {
     if (currentProject && product) {
       setUnit(product.unit);
-      setOrganisation(product.organisation);
-    } else {
-      setOrganisation(defaultOrg);
+      setOrganisation(product.organisation); // override the default org
     }
   }, [currentProject, product, setUnit, setOrganisation, defaultOrg]);
 };

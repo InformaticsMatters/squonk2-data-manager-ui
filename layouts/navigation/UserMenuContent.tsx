@@ -51,13 +51,13 @@ const UserMenuContentInner = () => {
           </Box>
         )}
         <Typography fontWeight="bold">{user.username}</Typography>
-        <Typography>
+        <Box>
           Roles:
           <Chips>
             <Chip label={dmRole ?? "No DM Role"} size="small" />
             <Chip label={asRole ?? "No AS Role"} size="small" />
           </Chips>
-        </Typography>
+        </Box>
         <AuthButton mode="logout" sx={{ marginY: 1 }} />
       </>
     );

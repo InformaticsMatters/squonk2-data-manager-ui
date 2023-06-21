@@ -30,8 +30,7 @@ export const BootstrapAlert = () => {
             },
           }}
         >
-          You are not part of any units. You may create a project under a new unit in the default
-          organisation.
+          You do not have a personal unit. You may create one and populate it with a project.
           <BootstrapForm />
         </Alert>
       </Box>

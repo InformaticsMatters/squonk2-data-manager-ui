@@ -1,25 +1,18 @@
-import { useGetUnits } from "@squonk/account-server-client/unit";
-
 import { Alert, Box } from "@mui/material";
 
-import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
+import { useGetPersonalUnit } from "../../../hooks/useGetPersonalUnit";
 import { BootstrapForm } from "./BootstrapForm";
 /**
  * Bootstraps a user which doesn't have any units with a default unit and a project
  */
 export const BootstrapAlert = () => {
-  const { data: unitsData, isLoading: isLoadingUnits } = useGetUnits();
-  const { user } = useKeycloakUser();
+  const { data: unit, isLoading } = useGetPersonalUnit();
 
-  const userDefaultUnit = unitsData?.units
-    .find((orgUnit) => orgUnit.organisation.name === "Default")
-    ?.units.find((unit) => unit.owner_id === user.username);
-
-  if (isLoadingUnits) {
+  if (isLoading) {
     return null;
   }
 
-  if (!userDefaultUnit) {
+  if (!unit) {
     return (
       <Box m={2}>
         <Alert

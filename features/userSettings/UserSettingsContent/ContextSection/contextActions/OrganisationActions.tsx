@@ -1,7 +1,9 @@
 import { List } from "@mui/material";
 
+import { useGetPersonalUnit } from "../../../../../hooks/useGetPersonalUnit";
 import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
+import { CreateDefaultUnitListItem } from "./CreateDefaultUnitListItem";
 import { CreateOrganisationListItem } from "./CreateOrganisationListItem";
 import { CreateUnitListItem } from "./CreateUnitListItem";
 import { EditOrganisationListItem } from "./EditOrganisationListItem";
@@ -19,6 +21,9 @@ export const OrganisationActions = () => {
 
   const isOrganisationOwner = organisation?.owner_id === user.username;
 
+  const { data: unit } = useGetPersonalUnit();
+  console.log(unit);
+
   return (
     <List sx={{ width: "100%" }}>
       {hasAdminRole && <CreateOrganisationListItem />}
@@ -27,6 +32,7 @@ export const OrganisationActions = () => {
       )}
       {(isOrganisationOwner || organisation?.caller_is_member) &&
         organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && <CreateUnitListItem />}
+      {unit === undefined && <CreateDefaultUnitListItem />}
     </List>
   );
 };

@@ -171,25 +171,27 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
         isLoading={isProjectSubscriptionsLoading}
         tableContainer={false}
       />
-      <DataTable
-        columns={storageColumns}
-        customTableProps={{
-          sx: {
-            "& td": {
-              wordBreak: "break-word",
+      {(storageSubscriptions ?? []).length > 0 && (
+        <DataTable
+          columns={storageColumns}
+          customTableProps={{
+            sx: {
+              "& td": {
+                wordBreak: "break-word",
+              },
+              "& tr": {
+                display: "grid",
+                gridTemplateColumns: "61px 1fr 110px 220px 100px 100px 100px 100px",
+              },
             },
-            "& tr": {
-              display: "grid",
-              gridTemplateColumns: "61px 1fr 110px 220px 100px 100px 100px 100px",
-            },
-          },
-        }}
-        data={storageSubscriptions}
-        enableSearch={false}
-        error={getErrorMessage(storageSubscriptionsError)}
-        isLoading={!storageSubscriptions && isStorageSubscriptionsLoading}
-        tableContainer={false}
-      />
+          }}
+          data={storageSubscriptions}
+          enableSearch={false}
+          error={getErrorMessage(storageSubscriptionsError)}
+          isLoading={!storageSubscriptions && isStorageSubscriptionsLoading}
+          tableContainer={false}
+        />
+      )}
     </Box>
   );
 };

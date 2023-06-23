@@ -22,20 +22,15 @@ export interface SelectOrganisationProps
 /**
  * Autocomplete which lists organisations available to a user to select as context.
  */
-export const SelectOrganisation = ({
-  userFilter,
-  ...autoCompleteProps
-}: SelectOrganisationProps) => {
+export const SelectOrganisation = (autoCompleteProps: SelectOrganisationProps) => {
   const [, setUnit] = useSelectedUnit();
   const [organisation, setOrganisation] = useSelectedOrganisation();
   const { setCurrentProjectId } = useCurrentProjectId();
 
-  const { data, isLoading, isError, error } = useGetOrganisations();
-  const organisations =
-    data?.organisations.filter(
-      (organisation) =>
-        !userFilter || organisation.owner_id === userFilter || organisation.name === "Default",
-    ) ?? [];
+  const { data, isLoading, isError, error } = useGetOrganisations({
+    query: { select: (data) => data.organisations },
+  });
+  const organisations = data ?? [];
 
   if (isError) {
     return <Typography color="error">{getErrorMessage(error)}</Typography>;

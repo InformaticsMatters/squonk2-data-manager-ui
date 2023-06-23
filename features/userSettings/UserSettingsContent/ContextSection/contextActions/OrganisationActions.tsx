@@ -22,7 +22,6 @@ export const OrganisationActions = () => {
   const isOrganisationOwner = organisation?.owner_id === user.username;
 
   const { data: unit } = useGetPersonalUnit();
-  console.log(unit);
 
   return (
     <List sx={{ width: "100%" }}>

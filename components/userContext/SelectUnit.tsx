@@ -1,5 +1,6 @@
 import type { UnitGetResponse } from "@squonk/account-server-client";
 import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
+import { useGetProjects } from "@squonk/data-manager-client/project";
 
 import { Receipt as ReceiptIcon } from "@mui/icons-material";
 import type { AutocompleteProps } from "@mui/material";
@@ -10,27 +11,53 @@ import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next/localStorage";
 import { getErrorMessage } from "../../utils/next/orvalError";
+import type { PermissionLevelFilter } from "./filter";
+import { filterProjectsByPermissionLevel } from "./filter";
 import { ItemIcons } from "./ItemIcons";
 
 export interface SelectUnitProps
   extends Omit<AutocompleteProps<UnitGetResponse, false, false, false>, "renderInput" | "options"> {
-  userFilter?: string;
+  userFilter: PermissionLevelFilter;
 }
 
 /**
  * Autocomplete which lists context's organisation's units available to a user to select as context.
  */
-export const SelectUnit = ({ userFilter, ...autocompleteProps }: SelectUnitProps) => {
+export const SelectUnit = ({
+  userFilter: [level, user],
+  ...autocompleteProps
+}: SelectUnitProps) => {
   const [unit, setUnit] = useSelectedUnit();
   const [organisation] = useSelectedOrganisation();
 
   const { setCurrentProjectId } = useCurrentProjectId();
 
-  const organisationId = organisation?.id ?? "";
-  const { data, isLoading, isError, error } = useGetOrganisationUnits(organisationId, {
-    query: { enabled: !!organisationId },
+  const { data: projects, isLoading: isProjectsLoading } = useGetProjects(undefined, {
+    query: { select: (data) => data.projects },
   });
-  const units = data?.units.filter((unit) => !userFilter || unit.owner_id === userFilter);
+
+  const organisationId = organisation?.id ?? "";
+  const {
+    data: units,
+    isLoading: isUnitsLoading,
+    isError,
+    error,
+  } = useGetOrganisationUnits(organisationId, {
+    query: {
+      enabled: !!organisationId,
+      select: ({ units }) =>
+        units.filter((unit) => {
+          if (level === "none") {
+            return true;
+          }
+          const projectsForUnit = projects?.filter((project) => project.unit_id === unit.id) ?? [];
+          return (
+            unit.caller_is_member ||
+            filterProjectsByPermissionLevel(level, user, projectsForUnit).length > 0
+          );
+        }),
+    },
+  });
 
   if (isError) {
     return <Typography color="error">{getErrorMessage(error)}</Typography>;
@@ -44,7 +71,7 @@ export const SelectUnit = ({ userFilter, ...autocompleteProps }: SelectUnitProps
         getOptionLabel={(option) => option.name}
         id="unit-selection"
         isOptionEqualToValue={(option, value) => option.id === value.id}
-        loading={isLoading && !!organisation?.id}
+        loading={(isUnitsLoading || isProjectsLoading) && !!organisation?.id}
         options={units ?? []}
         renderInput={(params) => (
           <TextField

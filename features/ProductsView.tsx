@@ -64,7 +64,7 @@ export const ProductsView = () => {
           <SelectOrganisation />
         </Grid>
         <Grid item sm={3} xs={12}>
-          {organisation && <SelectUnit />}
+          {organisation && <SelectUnit userFilter={["none"]} />}
         </Grid>
         <Grid item sm={5} xs={12}>
           {unit && userIsNotEvaluating && <CreateDatasetStorageSubscription unit={unit} />}

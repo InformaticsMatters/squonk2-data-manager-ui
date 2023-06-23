@@ -9,6 +9,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "../../components/DataTable";
 import { ChargesLinkIconButton } from "../../components/products/ChargesLinkIconButton";
 import { DeleteProductButton } from "../../components/products/DeleteProductButton";
+import type { PermissionLevelFilter } from "../../components/userContext/filter";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { formatTierString } from "../../utils/app/products";
@@ -24,7 +25,7 @@ const projectColumnHelper = createColumnHelper<Partial<ProductDmProjectTier> & P
 const datasetStorageColumnHelper = createColumnHelper<ProductDmStorage>();
 
 export interface ProjectStatsSectionProps {
-  userFilter?: string;
+  userFilter: PermissionLevelFilter;
 }
 
 /**

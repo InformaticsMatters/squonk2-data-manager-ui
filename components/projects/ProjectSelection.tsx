@@ -11,7 +11,7 @@ export const ProjectSelection = () => {
         <SelectOrganisation />
       </Grid>
       <Grid container item alignItems="center" sm={6}>
-        <SelectUnit />
+        <SelectUnit userFilter={["none"]} />
       </Grid>
       <Grid container item alignItems="center" sm={12}>
         <SelectProject size="medium" />

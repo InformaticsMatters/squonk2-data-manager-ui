@@ -11,8 +11,7 @@ export type SelectProjectProps = Omit<
 >;
 
 export const SelectProject = (props: SelectProjectProps) => {
-  const { projectSubscriptions, isLoading: isProjectSubscriptionsLoading } =
-    useProjectSubscriptions();
+  const { projectSubscriptions, isLoading } = useProjectSubscriptions(["none"]);
 
   const { projectId, setCurrentProjectId } = useCurrentProjectId();
 
@@ -21,7 +20,7 @@ export const SelectProject = (props: SelectProjectProps) => {
       {...props}
       fullWidth
       getOptionLabel={(option) => option.name}
-      loading={isProjectSubscriptionsLoading}
+      loading={isLoading}
       options={projectSubscriptions}
       renderInput={(params) => <TextField {...params} label="Project" />}
       value={projectSubscriptions.find((sub) => sub.project_id === projectId) ?? null}

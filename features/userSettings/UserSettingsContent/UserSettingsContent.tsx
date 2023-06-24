@@ -1,4 +1,3 @@
-import type { ChangeEventHandler } from "react";
 import { useEffect, useState } from "react";
 
 import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
@@ -10,8 +9,6 @@ import {
   Container,
   ListItemButton,
   ListItemText,
-  MenuItem,
-  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -19,8 +16,9 @@ import { useRouter } from "next/router";
 
 import { CenterLoader } from "../../../components/CenterLoader";
 import { PageSection } from "../../../components/PageSection";
+import { PermissionLevelSelect } from "../../../components/PermissionLevelSelect";
 import type { PermissionLevel } from "../../../components/userContext/filter";
-import { isAPermissionLevel, PERMISSION_LEVELS } from "../../../components/userContext/filter";
+import { isAPermissionLevel } from "../../../components/userContext/filter";
 import {
   projectPayload,
   useCurrentProject,
@@ -30,7 +28,6 @@ import { getUserFilter } from "../../../hooks/useGetVisibleUnits";
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../state/organisationSelection";
 import { useSelectedUnit } from "../../../state/unitSelection";
-import { capitalise } from "../../../utils/app/language";
 import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../../utils/next/localStorage";
 import { ProjectStatsSection } from "../../ProjectStats";
 import { UserBootstrapper } from "../../UserBootstrapper";
@@ -143,22 +140,5 @@ export const UserSettingsContent = () => {
         )}
       </PageSection>
     </Container>
-  );
-};
-
-export interface PermissionLevelSelectProps {
-  value: PermissionLevel;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-}
-
-const PermissionLevelSelect = ({ value, onChange }: PermissionLevelSelectProps) => {
-  return (
-    <TextField select label="Version" size="small" value={value} onChange={onChange}>
-      {PERMISSION_LEVELS.map((level) => (
-        <MenuItem key={level} value={level}>
-          {capitalise(level === "none" ? "any" : level)}
-        </MenuItem>
-      ))}
-    </TextField>
   );
 };

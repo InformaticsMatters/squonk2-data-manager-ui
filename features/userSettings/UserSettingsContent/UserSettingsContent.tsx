@@ -1,6 +1,9 @@
 import type { ChangeEventHandler } from "react";
 import { useEffect, useState } from "react";
 
+import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
+import { useGetProjects } from "@squonk/data-manager-client/project";
+
 import {
   Box,
   Button,
@@ -23,7 +26,9 @@ import {
   useCurrentProject,
   useCurrentProjectId,
 } from "../../../hooks/projectHooks";
+import { getUserFilter } from "../../../hooks/useGetVisibleUnits";
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
+import { useSelectedOrganisation } from "../../../state/organisationSelection";
 import { useSelectedUnit } from "../../../state/unitSelection";
 import { capitalise } from "../../../utils/app/language";
 import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../../utils/next/localStorage";
@@ -36,7 +41,8 @@ import { ContextSection } from "./ContextSection";
  */
 export const UserSettingsContent = () => {
   const { setCurrentProjectId } = useCurrentProjectId();
-  const [, setUnit] = useSelectedUnit();
+  const [unit, setUnit] = useSelectedUnit();
+  const [organisation] = useSelectedOrganisation();
   const router = useRouter();
 
   const { user, isLoading } = useKeycloakUser();
@@ -44,7 +50,12 @@ export const UserSettingsContent = () => {
   const project = useCurrentProject();
 
   const [permissionLevel, setPermissionLevel] = useState<PermissionLevel>("owner");
-  console.log(permissionLevel);
+  const { data: projects } = useGetProjects(undefined, {
+    query: { select: (data) => data.projects },
+  });
+  const { data: units } = useGetOrganisationUnits(organisation?.id ?? "", {
+    query: { select: (data) => data.units },
+  });
 
   // the user could land on a project via a URL parameter. If we don't sync this state, the selected
   // project could be filtered out if the current user is not the owner or editor
@@ -86,9 +97,22 @@ export const UserSettingsContent = () => {
           </Typography>
           <PermissionLevelSelect
             value={permissionLevel}
-            onChange={(event) =>
-              isAPermissionLevel(event.target.value) && setPermissionLevel(event.target.value)
-            }
+            onChange={(event) => {
+              const level = event.target.value;
+              if (isAPermissionLevel(level)) {
+                // always update the permission level state
+                setPermissionLevel(level);
+
+                // then we need to check if the change to the filter means the currently selected
+                // unit is no longer selectable. If so we just reset the user's unit selection.
+                const unitFilter = getUserFilter(level, user.username, projects);
+                const foundUnit = units?.filter(unitFilter).find((u) => u.id === unit?.id);
+
+                if (!foundUnit) {
+                  setUnit(undefined);
+                }
+              }
+            }}
           />
         </Box>
 

@@ -1,18 +1,16 @@
 import type { UnitGetResponse } from "@squonk/account-server-client";
-import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
-import { useGetProjects } from "@squonk/data-manager-client/project";
 
 import { Receipt as ReceiptIcon } from "@mui/icons-material";
 import type { AutocompleteProps } from "@mui/material";
 import { Autocomplete, Box, IconButton, TextField, Tooltip, Typography } from "@mui/material";
 
 import { projectPayload, useCurrentProjectId } from "../../hooks/projectHooks";
+import { useGetVisibleUnits } from "../../hooks/useGetVisibleUnits";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next/localStorage";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import type { PermissionLevelFilter } from "./filter";
-import { filterProjectsByPermissionLevel } from "./filter";
 import { ItemIcons } from "./ItemIcons";
 
 export interface SelectUnitProps
@@ -32,34 +30,9 @@ export const SelectUnit = ({
 
   const { setCurrentProjectId } = useCurrentProjectId();
 
-  const { data: projects, isLoading: isProjectsLoading } = useGetProjects(undefined, {
-    query: { select: (data) => data.projects },
-  });
+  const { data: units, isLoading: isUnitsLoading, error } = useGetVisibleUnits(level, user);
 
-  const organisationId = organisation?.id ?? "";
-  const {
-    data: units,
-    isLoading: isUnitsLoading,
-    isError,
-    error,
-  } = useGetOrganisationUnits(organisationId, {
-    query: {
-      enabled: !!organisationId,
-      select: ({ units }) =>
-        units.filter((unit) => {
-          if (level === "none") {
-            return true;
-          }
-          const projectsForUnit = projects?.filter((project) => project.unit_id === unit.id) ?? [];
-          return (
-            unit.caller_is_member ||
-            filterProjectsByPermissionLevel(level, user, projectsForUnit).length > 0
-          );
-        }),
-    },
-  });
-
-  if (isError) {
+  if (error) {
     return <Typography color="error">{getErrorMessage(error)}</Typography>;
   }
 
@@ -71,7 +44,7 @@ export const SelectUnit = ({
         getOptionLabel={(option) => option.name}
         id="unit-selection"
         isOptionEqualToValue={(option, value) => option.id === value.id}
-        loading={(isUnitsLoading || isProjectsLoading) && !!organisation?.id}
+        loading={isUnitsLoading && !!organisation?.id}
         options={units ?? []}
         renderInput={(params) => (
           <TextField

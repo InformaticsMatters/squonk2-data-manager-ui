@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.6.0-rc.6...2.6.0) (2023-06-29)
+
+
+### Bug Fixes
+
+* **create-unit:** move create unit actions to organisation column, fix when they're displayed and fix text ([f551659](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f5516596143b8a62a01e4549e9948d1e83c6f11b))
+* **settings:** fix filter text and dropdown label in new role selector ([baa1d19](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/baa1d198336f69875a1984c3bc2f19160aae0fec))
+
 ## [2.5.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.5.0-rc.1...2.5.0) (2023-06-14)
 
 ## [2.5.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.5.0-rc.0...2.5.0-rc.1) (2023-06-13)

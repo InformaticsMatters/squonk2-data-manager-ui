@@ -13,7 +13,7 @@ export interface PermissionLevelSelectProps {
 
 export const PermissionLevelSelect = ({ value, onChange }: PermissionLevelSelectProps) => {
   return (
-    <TextField select label="Version" size="small" value={value} onChange={onChange}>
+    <TextField select label="Role" size="small" value={value} onChange={onChange}>
       {PERMISSION_LEVELS.map((level) => (
         <MenuItem key={level} value={level}>
           {capitalise(level === "none" ? "any" : level)}

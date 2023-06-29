@@ -84,13 +84,9 @@ export const UserSettingsContent = () => {
       <UserBootstrapper />
 
       <PageSection level={2} title="Organisation and Unit">
-        <Typography gutterBottom variant="body2">
-          Filter the projects you are able to see by the organisation and unit
-        </Typography>
-
         <Box alignItems="baseline" display="flex" gap={1} marginBottom={1}>
           <Typography>
-            <em>{user.username}</em> is
+            Filter projects for user <em>{user.username}</em> where role is
           </Typography>
           <PermissionLevelSelect
             value={permissionLevel}

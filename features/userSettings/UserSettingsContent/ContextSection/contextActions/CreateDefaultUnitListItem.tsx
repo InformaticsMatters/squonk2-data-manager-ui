@@ -37,8 +37,8 @@ export const CreateDefaultUnitListItem = () => {
       }}
     >
       <ListItemText
-        primary="Create Unit"
-        secondary="Creates a new unit in the currently selected organisation"
+        primary="Create personal unit"
+        secondary="Creates a new unit in the default organisation"
       />
       <ListItemIcon>
         <CreateNewFolder color="action" />

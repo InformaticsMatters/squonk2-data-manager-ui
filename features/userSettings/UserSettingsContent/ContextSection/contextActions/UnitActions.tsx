@@ -1,9 +1,12 @@
 import { List } from "@mui/material";
 
 import { CreateProjectListItem } from "../../../../../components/projects/CreateProjectListItem";
+import { useGetPersonalUnit } from "../../../../../hooks/useGetPersonalUnit";
 import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
 import { useSelectedUnit } from "../../../../../state/unitSelection";
+import { CreateDefaultUnitListItem } from "./CreateDefaultUnitListItem";
+import { CreateUnitListItem } from "./CreateUnitListItem";
 import { DeleteUnitListItem } from "./DeleteUnitListItem";
 import { EditUnitListItem } from "./EditUnitListItem";
 
@@ -17,8 +20,17 @@ export const UnitActions = () => {
 
   const isUnitOwner = user.username === unit?.owner_id;
 
+  const isOrganisationOwner = organisation?.owner_id === user.username;
+
+  const { data: personalUnit, isLoading, error } = useGetPersonalUnit();
+
   return (
     <List sx={{ width: "100%" }}>
+      {(isOrganisationOwner || organisation?.caller_is_member) &&
+        organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && <CreateUnitListItem />}
+      {personalUnit === undefined && !isLoading && !error && organisation?.name !== "Default" && (
+        <CreateDefaultUnitListItem />
+      )}
       {isUnitOwner && unit && (
         <DeleteUnitListItem unit={unit} onDelete={() => setUnit(undefined)} />
       )}

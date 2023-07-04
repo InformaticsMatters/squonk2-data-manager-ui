@@ -59,8 +59,10 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
     url.pathname = basePath + "/api/as-api/unit";
     const res = await page.request.delete(url.href);
 
+    const responseText = await res.text();
+
     console.log("ok: ", res.ok());
-    console.log(await res.json());
+    console.log(responseText);
 
     expect(!res.ok() && (await res.json()).error !== "The Unit does not exist").toBeFalsy();
   }
@@ -94,8 +96,7 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
 
   await page.locator(`button:has-text("Create")`).isDisabled();
 
-  await page.getByRole("alert", { name: "Project created" }).screenshot();
-  // await page.getByRole("alert", { name: "Project created" }).isVisible();
+  await page.getByRole("alert").filter({ hasText: "Project created" }).screenshot();
 
   const regexp = new RegExp(
     baseURL + "/?\\?project=project-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+",

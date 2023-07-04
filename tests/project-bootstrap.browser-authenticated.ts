@@ -94,7 +94,8 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
 
   await page.locator(`button:has-text("Create")`).isDisabled();
 
-  await page.getByRole("alert", { name: "Project created" }).isVisible();
+  await page.getByRole("alert", { name: "Project created" }).screenshot();
+  // await page.getByRole("alert", { name: "Project created" }).isVisible();
 
   const regexp = new RegExp(
     baseURL + "/?\\?project=project-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+",

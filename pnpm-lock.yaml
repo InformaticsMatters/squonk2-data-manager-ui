@@ -46,7 +46,7 @@ specifiers:
   husky: 8.0.3
   identity-obj-proxy: 3.0.0
   immer: 9.0.21
-  jotai: 2.2.0
+  jotai: 2.2.2
   just-compare: 2.3.0
   just-group-by: 2.2.0
   ketcher-core: 2.9.0
@@ -113,7 +113,7 @@ dependencies:
   formik-mui: 4.0.0_qxyt6pgafnh6gy36dvkembb5om
   formik-mui-lab: 1.0.0_6ajdic2tomcf4b6rdvknpaxpeq
   immer: 9.0.21
-  jotai: 2.2.0_react@18.2.0
+  jotai: 2.2.2_react@18.2.0
   just-compare: 2.3.0
   just-group-by: 2.2.0
   ketcher-core: 2.9.0
@@ -3674,8 +3674,8 @@ packages:
     resolution: {integrity: sha512-MSJQC5vXco5Br38mzaQKiq9mwt7lwj2eXpgpRyQYNHYt2lq1PjkWa7DLXX0WVcQLE9HhMh3jPiufS7fhJf+CLQ==}
     dev: false
 
-  /jotai/2.2.0_react@18.2.0:
-    resolution: {integrity: sha512-2gsMVpoaBa6aPHLArNhphck4+n8unZ8xF4Ciqhb+Z+tjsvabn5QFisNFHBMWooMAAmmTNU5TcvBIP8/XAsZy8Q==}
+  /jotai/2.2.2_react@18.2.0:
+    resolution: {integrity: sha512-Cn8hnBg1sc5ppFwEgVGTfMR5WSM0hbAasd/bdAwIwTaum0j3OUPqBSC4tyk3jtB95vicML+RRWgKFOn6gtfN0A==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       react: '>=17.0.0'

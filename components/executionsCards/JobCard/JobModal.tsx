@@ -81,13 +81,16 @@ export const JobModal = ({
   const name = nameState || (job?.job ?? "");
 
   const spec = instance?.application_specification;
-  const specVariables =
-    spec !== undefined
-      ? (JSON.parse(spec).variables as Record<string, string | string[] | undefined>)
-      : undefined;
+  const specVariables = useMemo(
+    () =>
+      spec !== undefined
+        ? (JSON.parse(spec).variables as Record<string, string | string[] | undefined>)
+        : undefined,
+    [spec],
+  );
 
   // Control for generated options form
-  const [optionsFormData, setOptionsFormData] = useState<any>(specVariables ?? null);
+  const [optionsFormData, setOptionsFormData] = useState<any>(specVariables);
 
   // Control for the inputs fields
 
@@ -103,9 +106,9 @@ export const JobModal = ({
   const [inputsData, setInputsData] = useState<InputData>({});
   const inputsValid = validateJobInputs(
     (job?.variables?.inputs as InputSchema | undefined)?.required ?? [],
-    inputsData,
+    Object.keys(inputsData).length > 0 ? inputsData : specVariables ?? {},
   );
-  const [optionsValid, setOptionsValid] = useState<boolean>(false);
+  const [optionsValid, setOptionsValid] = useState<boolean>(!!specVariables);
 
   const formRef = useRef<any>();
 

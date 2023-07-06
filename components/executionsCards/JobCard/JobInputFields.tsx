@@ -63,14 +63,21 @@ export const JobInputFields = ({
       {Object.entries(inputs.properties).map(
         ([key, { title, type, multiple, "mime-types": mimeTypes }]) => {
           if (type === "file" || type === "directory") {
+            const required = inputs.required?.includes(key);
+            const value = inputsData[key] || removeFileProtocolFromInputData(initialValues?.[key]);
             return (
-              <InputSection key={key} required={inputs.required?.includes(key)} title={title}>
+              <InputSection
+                error={required && !value ? "must have required input" : undefined}
+                key={key}
+                required={required}
+                title={title}
+              >
                 <FileSelector
                   mimeTypes={mimeTypes}
                   multiple={!!multiple}
                   projectId={projectId}
                   targetType={type}
-                  value={inputsData[key] || removeFileProtocolFromInputData(initialValues?.[key])}
+                  value={value}
                   onSelect={(selection) => onChange({ ...inputsData, [key]: selection })}
                 />
               </InputSection>
@@ -81,8 +88,16 @@ export const JobInputFields = ({
             // For now though, we assume it's always multiple molecules
             multiple = true;
 
+            const required = inputs.required?.includes(key);
+            const value = inputsData[key] || initialValues?.[key];
+
             return (
-              <InputSection key={key} required={inputs.required?.includes(key)} title={title}>
+              <InputSection
+                error={required && !value ? "must have required input" : undefined}
+                key={key}
+                required={required}
+                title={title}
+              >
                 <MultipleMoleculeInput
                   mimeTypes={mimeTypes}
                   projectId={projectId}
@@ -97,7 +112,7 @@ export const JobInputFields = ({
                     // Then reset current input data
                     onChange({ ...inputsData, [key]: undefined });
                   }}
-                  value={inputsData[key] || initialValues?.[key]}
+                  value={value}
                   onFileSelect={(selection) => onChange({ ...inputsData, [key]: selection })}
                   onMoleculesChange={(newValue) =>
                     onChange({ ...inputsData, [key]: newValue.join("\n") })
@@ -121,19 +136,25 @@ interface InputSectionProps {
   children: ReactNode;
   title: string;
   required?: boolean;
+  error?: string;
 }
 
-export const InputSection = ({ children, title, required }: InputSectionProps) => {
+export const InputSection = ({ children, title, required, error }: InputSectionProps) => {
   return (
     // Expect a grid container in the parent component
     <Grid item xs={12}>
-      <Typography component="h4" variant="subtitle1">
+      <Typography
+        component="h4"
+        sx={{ color: error ? (theme) => theme.palette.error.main : undefined }}
+        variant="subtitle1"
+      >
         <em>
           {title}
           {!!required && " *"}
         </em>
       </Typography>
       {children}
+      <Typography sx={{ color: (theme) => theme.palette.error.main }}>{error}</Typography>
     </Grid>
   );
 };

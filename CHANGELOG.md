@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.6.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.6.1-rc.0...2.6.1) (2023-07-08)
+
+
+### Bug Fixes
+
+* **docs:** add space between docs nav links for a better page experience ([38c3599](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/38c35999427f30dd26a555cb69f22070e9a63f24))
+
 ## [2.6.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/2.6.0-rc.6...2.6.0) (2023-06-29)
 
 

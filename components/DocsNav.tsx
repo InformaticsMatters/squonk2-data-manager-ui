@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import { useRouter } from "next/router";
 
 import { NextLink } from "./NextLink";
@@ -14,7 +15,7 @@ export const DocsNav = () => {
   const router = useRouter();
 
   return (
-    <nav aria-label="Docs" role="navigation">
+    <Box aria-label="Docs" component="nav" display="flex" gap={2} role="navigation">
       {Object.entries(links).map(([href, title]) => (
         <NextLink
           component="button"
@@ -25,6 +26,6 @@ export const DocsNav = () => {
           {title}
         </NextLink>
       ))}
-    </nav>
+    </Box>
   );
 };

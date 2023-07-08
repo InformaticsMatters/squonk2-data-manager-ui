@@ -53,12 +53,18 @@ export const Configuration = ({ dmAPI, asAPI }: ConfigurationProps) => (
       <ReprLi title="DM API Server">{dmAPI}</ReprLi>
       <ReprLi title="AS API Server">{asAPI}</ReprLi>
     </ul>
+    <h2>Auth</h2>
+    <ul>
+      <ReprLi title="Auth0 URL">{process.env.NEXT_PUBLIC_AUTH0_BASE_URL}</ReprLi>
+    </ul>
     <h2>Roles</h2>
     <ul>
       <ReprLi title="DM User Role">{process.env.NEXT_PUBLIC_KEYCLOAK_DM_USER_ROLE}</ReprLi>
       <ReprLi title="DM Admin Role">{process.env.NEXT_PUBLIC_KEYCLOAK_DM_ADMIN_ROLE}</ReprLi>
+      <ReprLi title="DM Eval Role">{process.env.NEXT_PUBLIC_KEYCLOAK_DM_EVALUATOR_ROLE}</ReprLi>
       <ReprLi title="AS User Role">{process.env.NEXT_PUBLIC_KEYCLOAK_AS_USER_ROLE}</ReprLi>
       <ReprLi title="AS Admin Role">{process.env.NEXT_PUBLIC_KEYCLOAK_AS_ADMIN_ROLE}</ReprLi>
+      <ReprLi title="AS Eval Role">{process.env.NEXT_PUBLIC_KEYCLOAK_AS_EVALUATOR_ROLE}</ReprLi>
     </ul>
     <h2>App</h2>
     <ul>

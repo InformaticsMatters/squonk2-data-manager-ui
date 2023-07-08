@@ -55,7 +55,6 @@ export const Configuration = ({ dmAPI, asAPI }: ConfigurationProps) => (
     </ul>
     <h2>Auth</h2>
     <ul>
-      <ReprLi title="Issuer">{process.env.AUTH0_ISSUER_BASE_URL}</ReprLi>
       <ReprLi title="Auth0 URL">{process.env.NEXT_PUBLIC_AUTH0_BASE_URL}</ReprLi>
     </ul>
     <h2>Roles</h2>

@@ -53,7 +53,7 @@ specifiers:
   ketcher-core: 2.9.0
   ketcher-react: 2.9.0
   ketcher-standalone: 2.9.0
-  lint-staged: 13.2.2
+  lint-staged: 13.2.3
   lodash-es: 4.17.21
   material-ui-popup-state: 5.0.9
   nanoid: 4.0.2
@@ -150,7 +150,7 @@ devDependencies:
   eslint: 8.44.0
   husky: 8.0.3
   identity-obj-proxy: 3.0.0
-  lint-staged: 13.2.2
+  lint-staged: 13.2.3
 
 packages:
 
@@ -3957,8 +3957,8 @@ packages:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
     dev: false
 
-  /lint-staged/13.2.2:
-    resolution: {integrity: sha512-71gSwXKy649VrSU09s10uAT0rWCcY3aewhMaHyl2N84oBk4Xs9HgxvUp3AYu+bNsK4NrOYYxvSgg7FyGJ+jGcA==}
+  /lint-staged/13.2.3:
+    resolution: {integrity: sha512-zVVEXLuQIhr1Y7R7YAWx4TZLdvuzk7DnmrsTNL0fax6Z3jrpFcas+vKbzxhhvp6TA55m1SQuWkpzI1qbfDZbAg==}
     engines: {node: ^14.13.1 || >=16.0.0}
     hasBin: true
     dependencies:

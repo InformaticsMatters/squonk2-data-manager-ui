@@ -46,8 +46,8 @@
     "@mui/lab": "5.0.0-alpha.137",
     "@mui/material": "5.14.2",
     "@mui/styles": "5.14.1",
-    "@next/eslint-plugin-next": "13.4.9",
-    "@next/mdx": "13.4.9",
+    "@next/eslint-plugin-next": "13.4.12",
+    "@next/mdx": "13.4.12",
     "@rjsf/core": "5.9.0",
     "@rjsf/mui": "5.9.0",
     "@rjsf/utils": "5.9.0",
@@ -83,7 +83,7 @@
     "lodash-es": "4.17.21",
     "material-ui-popup-state": "5.0.9",
     "nanoid": "4.0.2",
-    "next": "13.4.9",
+    "next": "13.4.12",
     "next-http-proxy-middleware": "1.2.5",
     "nextjs-routes": "2.0.1",
     "node-fetch": "3.3.2",
@@ -102,7 +102,7 @@
     "yup": "1.2.0"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "13.4.9",
+    "@next/bundle-analyzer": "13.4.12",
     "@playwright/test": "1.36.2",
     "@squonk/eslint-config": "0.5.0",
     "dotenv": "16.3.0",

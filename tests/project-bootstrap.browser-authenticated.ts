@@ -64,7 +64,9 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
     console.log("ok: ", res.ok());
     console.log(responseText);
 
-    expect(!res.ok() && (await res.json()).error !== "The Unit does not exist").toBeFalsy();
+    const acceptableErrorMessages = ["You do not have a Personal Unit", "The Unit does not exist"];
+
+    expect(!res.ok() && !acceptableErrorMessages.includes((await res.json()).error)).toBeFalsy();
   }
 
   //

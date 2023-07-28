@@ -16,10 +16,10 @@ specifiers:
   '@next/eslint-plugin-next': 13.4.12
   '@next/mdx': 13.4.12
   '@playwright/test': 1.36.2
-  '@rjsf/core': 5.9.0
-  '@rjsf/mui': 5.9.0
-  '@rjsf/utils': 5.9.0
-  '@rjsf/validator-ajv8': 5.9.0
+  '@rjsf/core': 5.10.0
+  '@rjsf/mui': 5.10.0
+  '@rjsf/utils': 5.10.0
+  '@rjsf/validator-ajv8': 5.10.0
   '@sentry/nextjs': 7.60.1
   '@squonk/account-server-client': 2.0.5
   '@squonk/data-manager-client': 1.1.10
@@ -89,10 +89,10 @@ dependencies:
   '@mui/styles': 5.14.1_tznpbkknyqq5lcv5sgrl332jvu
   '@next/eslint-plugin-next': 13.4.12
   '@next/mdx': 13.4.12_msthxdjvrhmdkfpqqalumiidgq
-  '@rjsf/core': 5.9.0_7rby2gej34p3oa4enygw7ctcvy
-  '@rjsf/mui': 5.9.0_xnnd6bnknkmiayhpm6v7u2be6y
-  '@rjsf/utils': 5.9.0_react@18.2.0
-  '@rjsf/validator-ajv8': 5.9.0_@rjsf+utils@5.9.0
+  '@rjsf/core': 5.10.0_s2unv4nnre55mvnbg7crl5ygym
+  '@rjsf/mui': 5.10.0_24gvn3iaciu7n7xtdn7aj7jhbi
+  '@rjsf/utils': 5.10.0_react@18.2.0
+  '@rjsf/validator-ajv8': 5.10.0_@rjsf+utils@5.10.0
   '@sentry/nextjs': 7.60.1_next@13.4.12+react@18.2.0
   '@squonk/account-server-client': 2.0.5_cytmg2b7y27a353w6jy3d7g7ea
   '@squonk/data-manager-client': 1.1.10_cytmg2b7y27a353w6jy3d7g7ea
@@ -938,14 +938,14 @@ packages:
       reselect: 4.1.7
     dev: false
 
-  /@rjsf/core/5.9.0_7rby2gej34p3oa4enygw7ctcvy:
-    resolution: {integrity: sha512-HYgnWKTGVfbj6bs1O9SYyw4VgBfoISZeQti259aiKK08XDVH+tgThxBMX4CyMjC/K9I4ralRV9KRlGO1un0DzQ==}
+  /@rjsf/core/5.10.0_s2unv4nnre55mvnbg7crl5ygym:
+    resolution: {integrity: sha512-G9KapNurCpP9l/CK4rR3/pQ1rKuaD1BxdzHjaWUWrpUbEqbDTeNu+5630ymUf0y8A04JuSN1guQRVyYl0Dlfxw==}
     engines: {node: '>=14'}
     peerDependencies:
       '@rjsf/utils': ^5.8.x
       react: ^16.14.0 || >=17
     dependencies:
-      '@rjsf/utils': 5.9.0_react@18.2.0
+      '@rjsf/utils': 5.10.0_react@18.2.0
       lodash: 4.17.21
       lodash-es: 4.17.21
       markdown-to-jsx: 7.2.1_react@18.2.0
@@ -954,8 +954,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@rjsf/mui/5.9.0_xnnd6bnknkmiayhpm6v7u2be6y:
-    resolution: {integrity: sha512-wG5GaT8BjLk2btU3nyd5haZeIVS418+837zheAaQ5VkQWhRZ7Zw3eyX3ngRYJjhaOcwDmBvdg/7liWwjZNrf0w==}
+  /@rjsf/mui/5.10.0_24gvn3iaciu7n7xtdn7aj7jhbi:
+    resolution: {integrity: sha512-M0nV5Ris772f8/db41ET+3j1VOMARzEso188B7e7eaIFfQoPJN+bpMQ55cH1GTOuV8yykIljbxRZbiLqXQjcUQ==}
     engines: {node: '>=14'}
     peerDependencies:
       '@emotion/react': ^11.7.0
@@ -970,13 +970,13 @@ packages:
       '@emotion/styled': 11.11.0_ihu55mvnfzooybzcklvkvwcuuy
       '@mui/icons-material': 5.14.1_6w5geayum2x7a6ycw4hls44f5u
       '@mui/material': 5.14.2_aq5jutf6cr66txe4mu4a5j4iuy
-      '@rjsf/core': 5.9.0_7rby2gej34p3oa4enygw7ctcvy
-      '@rjsf/utils': 5.9.0_react@18.2.0
+      '@rjsf/core': 5.10.0_s2unv4nnre55mvnbg7crl5ygym
+      '@rjsf/utils': 5.10.0_react@18.2.0
       react: 18.2.0
     dev: false
 
-  /@rjsf/utils/5.9.0_react@18.2.0:
-    resolution: {integrity: sha512-+UBRrbHgbG/y6Lj32O0U5oiNpbpKZqsFxPKuOCmOqpsfwmb072AyGoHqskc2e05Ur/iURcbBu3xt72aF1azLmQ==}
+  /@rjsf/utils/5.10.0_react@18.2.0:
+    resolution: {integrity: sha512-HGytUxCGtV6OCOw4PbjFcksxrPIxUt0y3T9oqCTsP4xiqnLfve4ZfY9FkbHzPSGOXVp57yCNNEZTWiK6tcV9uA==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^16.14.0 || >=17
@@ -989,13 +989,13 @@ packages:
       react-is: 18.2.0
     dev: false
 
-  /@rjsf/validator-ajv8/5.9.0_@rjsf+utils@5.9.0:
-    resolution: {integrity: sha512-MHMHUxDICWYmenHBjK7SIPqiqPvvm3fwQyttHhH47IZKOw6wpypglK0EaLLwD5GBbEPsTcmKwHe1VydUNcfhnQ==}
+  /@rjsf/validator-ajv8/5.10.0_@rjsf+utils@5.10.0:
+    resolution: {integrity: sha512-KHpQwQsBL9ItP9K4zuknKCXlGYenaochz2VoSzyeP68xmZC+RC3qbWow/2ki7auRQhUNrGYZAYZDLFN85DUuDg==}
     engines: {node: '>=14'}
     peerDependencies:
       '@rjsf/utils': ^5.8.x
     dependencies:
-      '@rjsf/utils': 5.9.0_react@18.2.0
+      '@rjsf/utils': 5.10.0_react@18.2.0
       ajv: 8.12.0
       ajv-formats: 2.1.1
       lodash: 4.17.21

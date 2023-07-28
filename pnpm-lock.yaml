@@ -39,7 +39,7 @@ specifiers:
   dayjs: 1.11.9
   dotenv: 16.3.0
   eslint: 8.46.0
-  filesize: 10.0.7
+  filesize: 10.0.8
   formik: 2.4.2
   formik-mui: 4.0.0
   formik-mui-lab: 1.0.0
@@ -109,7 +109,7 @@ dependencies:
   '@types/react-plotly.js': 2.6.0
   axios: 1.4.0
   dayjs: 1.11.9
-  filesize: 10.0.7
+  filesize: 10.0.8
   formik: 2.4.2_react@18.2.0
   formik-mui: 4.0.0_xvwnvj7svkcgzbklxwi4x5s4km
   formik-mui-lab: 1.0.0_okdvokdxmnfam36tycpqtcj6yy
@@ -2920,8 +2920,8 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /filesize/10.0.7:
-    resolution: {integrity: sha512-iMRG7Qo9nayLoU3PNCiLizYtsy4W1ClrapeCwEgtiQelOAOuRJiw4QaLI+sSr8xr901dgHv+EYP2bCusGZgoiA==}
+  /filesize/10.0.8:
+    resolution: {integrity: sha512-/ylBrxZ1GAjgh2CEemKKLwTtmXfWqTtN1jRl6iqLwnMEucUX5cmaCCUPGstQOHVCcK9uYL6o1cPNakLQU2sasQ==}
     engines: {node: '>= 10.4.0'}
     dev: false
 

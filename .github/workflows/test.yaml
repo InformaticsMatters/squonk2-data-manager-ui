@@ -64,6 +64,15 @@ jobs:
     # Ok for tests/dev but we don't do this on prod. This is to prevent some flakely tests from causing problems
     - name: Disable strict SSL
       run: npm config set strict-ssl=false
+    # Manually add a "test concurrency"
+    # This ensures only one test job runs at a time (across all workflows)
+    # If this workflow is billed by the elapsed time, this will add a lot to this cost
+    - name: Turnstyle
+      uses: softprops/turnstyle@v1
+      with:
+        abort-after-seconds: 600
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Test with base path
       env:
         AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"

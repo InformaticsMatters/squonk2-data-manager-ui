@@ -115,7 +115,7 @@ export const UserSettingsContent = () => {
       <PageSection level={2} title="Project Stats">
         <ProjectStatsSection userFilter={[permissionLevel, user.username]} />
         <Typography sx={{ mt: 1 }} textAlign="right">
-          Missing info in the above tables indicates you are missing access to product stats
+          Missing usage in the above tables indicates you are missing access to product stats
           belonging to another user.
         </Typography>
         <Tooltip title="Deselect project">

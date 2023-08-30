@@ -44,3 +44,20 @@ jobs:
           BASE_PATH=/data-manager-ui
         push: true
         tags: informaticsmatters/squonk2-data-manager-ui:${{ env.GITHUB_REF_SLUG }}
+
+  trigger-awx:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: awx/dls-dev
+    steps:
+    - name: Inject slug/short variables
+      uses: rlespinasse/github-slug-action@v3
+    - name: Trigger AWX
+      uses: informaticsmatters/trigger-awx-action@v1
+      with:
+        template: Squonk/2 Data Manager UI -test-
+        template-host: ${{ secrets.AWX_HOST }}
+        template-user: ${{ secrets.AWX_USER }}
+        template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
+        template-var: maui_image_tag
+        template-var-value: ${{ env.GITHUB_REF_SLUG }}

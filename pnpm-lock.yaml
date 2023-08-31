@@ -46,7 +46,7 @@ specifiers:
   husky: 8.0.3
   identity-obj-proxy: 3.0.0
   immer: 9.0.21
-  jotai: 2.2.2
+  jotai: 2.4.1
   just-compare: 2.3.0
   just-group-by: 2.2.0
   jwt-decode: 3.1.2
@@ -114,7 +114,7 @@ dependencies:
   formik-mui: 4.0.0_xvwnvj7svkcgzbklxwi4x5s4km
   formik-mui-lab: 1.0.0_okdvokdxmnfam36tycpqtcj6yy
   immer: 9.0.21
-  jotai: 2.2.2_react@18.2.0
+  jotai: 2.4.1_e74vmjybjy5dsfplslbsgtbvvi
   just-compare: 2.3.0
   just-group-by: 2.2.0
   jwt-decode: 3.1.2
@@ -3708,15 +3708,19 @@ packages:
     resolution: {integrity: sha512-MSJQC5vXco5Br38mzaQKiq9mwt7lwj2eXpgpRyQYNHYt2lq1PjkWa7DLXX0WVcQLE9HhMh3jPiufS7fhJf+CLQ==}
     dev: false
 
-  /jotai/2.2.2_react@18.2.0:
-    resolution: {integrity: sha512-Cn8hnBg1sc5ppFwEgVGTfMR5WSM0hbAasd/bdAwIwTaum0j3OUPqBSC4tyk3jtB95vicML+RRWgKFOn6gtfN0A==}
+  /jotai/2.4.1_e74vmjybjy5dsfplslbsgtbvvi:
+    resolution: {integrity: sha512-S4CTLpsZV+LABBXL5PgkMl+5jK3ljfbWmcLqtN7CQ2vio/Hrg3T6IKk/vf2/9hnp1imTPDsaFv7D54de/7Sa+w==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
+      '@types/react': '>=17.0.0'
       react: '>=17.0.0'
     peerDependenciesMeta:
+      '@types/react':
+        optional: true
       react:
         optional: true
     dependencies:
+      '@types/react': 18.2.17
       react: 18.2.0
     dev: false
 

@@ -97,7 +97,7 @@
     "sass": "1.64.1",
     "sharp": "0.32.4",
     "tsafe": "1.6.4",
-    "typescript": "5.1.6",
+    "typescript": "5.2.2",
     "use-immer": "0.7.0",
     "yup": "1.2.0"
   },

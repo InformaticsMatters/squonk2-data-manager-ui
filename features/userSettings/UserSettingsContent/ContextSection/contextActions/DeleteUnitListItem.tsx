@@ -15,7 +15,6 @@ import { WarningDeleteButton } from "../../../../../components/WarningDeleteButt
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
-import { getErrorMessage } from "../../../../../utils/next/orvalError";
 
 export interface DeleteUnitListItem {
   unit: UnitDetail;
@@ -50,7 +49,7 @@ export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
           enqueueSnackbar("Unit deleted", { variant: "success" });
           onDelete();
         } catch (error) {
-          enqueueError(getErrorMessage(error));
+          enqueueError(error);
           captureException(error);
         }
         organisation?.id &&

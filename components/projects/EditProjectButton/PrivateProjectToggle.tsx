@@ -9,7 +9,6 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import type { ProjectId } from "../../../hooks/projectHooks";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
-import { getErrorMessage } from "../../../utils/next/orvalError";
 
 export interface PrivateProjectToggleProps {
   projectId: ProjectId;
@@ -51,7 +50,7 @@ export const PrivateProjectToggle = ({ projectId, isPrivate }: PrivateProjectTog
                   enqueueSnackbar("The project has been made public", { variant: "success" });
                 }
               } catch (error) {
-                enqueueError(getErrorMessage(error));
+                enqueueError(error);
               }
             }
           }}

@@ -8,11 +8,10 @@ import { useAddFileToProject } from "@squonk/data-manager-client/project";
 
 import { Box } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSnackbar } from "notistack";
 
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
-import { getErrorMessage } from "../../utils/next/orvalError";
+import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { FileHoverCover } from "./FileHoverCover";
 
 export interface ProjectFileUploadProps {
@@ -21,7 +20,7 @@ export interface ProjectFileUploadProps {
 
 export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
   const { projectId } = useCurrentProjectId();
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueError, enqueueSnackbar, closeSnackbar } = useEnqueueError();
 
   const breadcrumbs = useProjectBreadcrumbs();
   const path = "/" + breadcrumbs.join("/");
@@ -42,13 +41,12 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
           enqueueSnackbar(`${file.name} was uploaded`, { variant: "success" });
           queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
         } catch (err) {
-          const error = getErrorMessage(err);
-          enqueueSnackbar(`The upload of ${file.name} failed: ${error}`, { variant: "error" });
+          enqueueError(err);
         }
         closeSnackbar(key);
       }
     },
-    [closeSnackbar, enqueueSnackbar, path, projectId, queryClient, uploadProjectFile],
+    [closeSnackbar, enqueueError, enqueueSnackbar, path, projectId, queryClient, uploadProjectFile],
   );
 
   const onDrop = useCallback(

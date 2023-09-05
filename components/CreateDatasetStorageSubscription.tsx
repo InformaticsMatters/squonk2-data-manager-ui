@@ -14,7 +14,6 @@ import * as yup from "yup";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useGetStorageCost } from "../hooks/useGetStorageCost";
 import { formatCoins } from "../utils/app/coins";
-import { getErrorMessage } from "../utils/next/orvalError";
 
 export interface CreateDatasetStorageSubscriptionProps {
   unit: UnitDetail;
@@ -53,7 +52,7 @@ export const CreateDatasetStorageSubscription = ({
           enqueueSnackbar("Created product", { variant: "success" });
           queryClient.invalidateQueries(getGetProductsQueryKey());
         } catch (error) {
-          enqueueError(getErrorMessage(error));
+          enqueueError(error);
           captureException(error);
         }
       }}

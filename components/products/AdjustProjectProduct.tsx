@@ -16,7 +16,6 @@ import { TextField } from "formik-mui";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { useGetStorageCost } from "../../hooks/useGetStorageCost";
 import { formatCoins } from "../../utils/app/coins";
-import { getErrorMessage } from "../../utils/next/orvalError";
 import { FormikModalWrapper } from "../modals/FormikModalWrapper";
 
 export interface AdjustProjectProductProps {
@@ -54,7 +53,7 @@ export const AdjustProjectProduct = ({ product, allowance }: AdjustProjectProduc
             ]);
             enqueueSnackbar("Updated product", { variant: "success" });
           } catch (error) {
-            enqueueError(getErrorMessage(error));
+            enqueueError(error);
           }
         }}
       >

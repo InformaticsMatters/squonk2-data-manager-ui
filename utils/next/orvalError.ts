@@ -3,18 +3,44 @@ import type { DmError } from "@squonk/data-manager-client";
 
 import type { AxiosError } from "axios";
 
+const getMessageFromResponse = <TError>(error: AxiosError<TError>, field: keyof TError) => {
+  const apiErrorData = error.response?.data;
+  return apiErrorData?.[field];
+};
+
+type AError = AxiosError<DmError | AsError>;
+type OldAError = AxiosError<{ detail: string }>;
+
 /**
- *
  * @param error The Axios Error object from which to extract the human error message
- * @returns
+ * @returns a string message from the error that hopefully described what went wrong
  */
-export const getErrorMessage = (
-  error: AxiosError<void | DmError | AsError> | null | unknown,
-): string | undefined => {
-  const err = error as AxiosError<void | DmError | AsError> | null;
-  if (err) {
-    const e = err.response?.data as any;
-    return e?.error || e?.detail;
+export const getErrorMessage = (error: AxiosError<unknown> | null): string => {
+  // if we have an error, we try and extract info
+  if (error) {
+    try {
+      // first try get the information assuming is's a well formed API error object
+      const infoFromErrorField = getMessageFromResponse(error as AError, "error");
+      if (infoFromErrorField) {
+        return infoFromErrorField;
+      }
+
+      // next check if it has a detail field instead of an error field
+      // some errors in the past had this
+      // TODO: confirm whether or not the API can still send this type of error response
+      const infoFromDetailField = getMessageFromResponse(error as OldAError, "detail");
+      if (infoFromDetailField) {
+        return infoFromDetailField;
+      }
+    } catch {
+      if (error.message.length > 0) {
+        return error.message;
+      }
+
+      return JSON.stringify(error.toJSON());
+    }
   }
-  return undefined;
+
+  // we haven't got a message from the error
+  return "Unable to get info from error";
 };

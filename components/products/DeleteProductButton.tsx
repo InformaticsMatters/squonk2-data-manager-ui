@@ -12,7 +12,6 @@ import { captureException } from "@sentry/nextjs";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
-import { getErrorMessage } from "../../utils/next/orvalError";
 import { WarningDeleteButton } from "../WarningDeleteButton";
 
 export interface DeleteProductButtonProps {
@@ -48,7 +47,7 @@ export const DeleteProductButton = ({
           ]);
           enqueueSnackbar("Product deleted", { variant: "success" });
         } catch (error) {
-          enqueueError(getErrorMessage(error));
+          enqueueError(error);
           captureException(error);
         }
       }}

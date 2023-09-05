@@ -7,7 +7,6 @@ import dynamic from "next/dynamic";
 
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useIsASketcherOpen } from "../state/sketcherState";
-import { getErrorMessage } from "../utils/next/orvalError";
 import { CenterLoader } from "./CenterLoader";
 import type { SketcherProps } from "./Sketcher";
 
@@ -158,7 +157,7 @@ export const SMILESInput = ({
             } catch (error) {
               if (error !== undefined) {
                 console.error(error);
-                enqueueError(getErrorMessage(error));
+                enqueueError(error);
                 captureException(error);
               }
             }

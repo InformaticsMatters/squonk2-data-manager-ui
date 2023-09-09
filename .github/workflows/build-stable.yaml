@@ -57,7 +57,7 @@ jobs:
     environment: awx/im-main
     steps:
     - name: Inject slug/short variables
-      uses: rlespinasse/github-slug-action@v3
+      uses: rlespinasse/github-slug-action@v4
     - name: Trigger AWX
       uses: informaticsmatters/trigger-awx-action@v1
       with:

@@ -69,7 +69,7 @@ specifiers:
   react-dropzone: 14.2.3
   react-plotly.js: 2.6.0
   sass: 1.64.1
-  sharp: 0.32.4
+  sharp: 0.32.5
   tsafe: 1.6.4
   typescript: 5.2.2
   use-immer: 0.7.0
@@ -136,7 +136,7 @@ dependencies:
   react-dropzone: 14.2.3_react@18.2.0
   react-plotly.js: 2.6.0_react@18.2.0
   sass: 1.64.1
-  sharp: 0.32.4
+  sharp: 0.32.5
   tsafe: 1.6.4
   typescript: 5.2.2
   use-immer: 0.7.0_immer@9.0.21+react@18.2.0
@@ -5804,8 +5804,8 @@ packages:
       tunnel-agent: 0.6.0
     dev: false
 
-  /sharp/0.32.4:
-    resolution: {integrity: sha512-exUnZewqVZC6UXqXuQ8fyJJv0M968feBi04jb9GcUHrWtkRoAKnbJt8IfwT4NJs7FskArbJ14JAFGVuooszoGg==}
+  /sharp/0.32.5:
+    resolution: {integrity: sha512-0dap3iysgDkNaPOaOL4X/0akdu0ma62GcdC2NBQ+93eqpePdDdr2/LM0sFdDSMmN7yS+odyZtPsb7tx/cYBKnQ==}
     engines: {node: '>=14.15.0'}
     requiresBuild: true
     dependencies:

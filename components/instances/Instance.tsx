@@ -33,7 +33,7 @@ export const Instance = ({
   }
 
   if (error) {
-    return <Alert severity="error">{getErrorMessage(error) ?? "Unknown error"}</Alert>; // TODO
+    return <Alert severity="error">{getErrorMessage(error)}</Alert>; // TODO
   }
 
   if (instance !== undefined) {

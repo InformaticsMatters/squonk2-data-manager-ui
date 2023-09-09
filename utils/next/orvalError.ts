@@ -42,5 +42,5 @@ export const getErrorMessage = (error: AxiosError<unknown> | null): string => {
   }
 
   // we haven't got a message from the error
-  return "Unable to get info from error";
+  return "Error: no information provided";
 };

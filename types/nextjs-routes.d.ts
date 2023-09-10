@@ -11,11 +11,8 @@ declare module "nextjs-routes" {
   } from "next";
 
   export type Route =
-    | DynamicRoute<"/api/as-api/[...asProxy]", { "asProxy": string[] }>
     | DynamicRoute<"/api/auth/[auth0]", { "auth0": string }>
     | StaticRoute<"/api/configuration/ui-version">
-    | DynamicRoute<"/api/dm-api/[...dmProxy]", { "dmProxy": string[] }>
-    | DynamicRoute<"/api/viewer-proxy/[...viewerProxy]", { "viewerProxy": string[] }>
     | StaticRoute<"/configuration">
     | DynamicRoute<"/dataset/[datasetId]/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>
     | StaticRoute<"/datasets">

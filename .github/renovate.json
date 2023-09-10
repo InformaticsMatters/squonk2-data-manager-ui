@@ -9,7 +9,8 @@
     "group:recommended",
     "workarounds:all",
     ":pinAllExceptPeerDependencies",
-    ":semanticCommitTypeAll(chore)"
+    ":semanticCommitTypeAll(chore)",
+    ":disableRateLimiting"
   ],
   "labels": [
     "dependencies"

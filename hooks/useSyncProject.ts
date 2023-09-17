@@ -1,5 +1,8 @@
 import { useEffect } from "react";
 
+import { getProject } from "@squonk/data-manager-client/project";
+
+import type { AxiosError } from "axios";
 import compare from "just-compare";
 import { useRouter } from "next/router";
 
@@ -33,18 +36,40 @@ export const useSyncProject = () => {
     }
   }, [project]);
 
-  // Load the project to local storage only when one exists in local storage and one isn't provided
-  // in the url
+  // Load the project from local storage only when one exists in local storage and one isn't
+  // provided in the url
   useEffect(() => {
-    const { projectId } = getFromLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
+    const updateFromLocalStorage = async () => {
+      const { projectId } = getFromLocalStorage(
+        PROJECT_LOCAL_STORAGE_KEY,
+        projectPayload(undefined),
+      );
 
-    if (isReady && projectId && !project) {
-      const newQuery = { ...query, project: projectId };
-      if (!compare(query, newQuery)) {
-        const href = { query: newQuery, pathname };
+      if (projectId !== undefined && projectId !== "") {
+        try {
+          await getProject(projectId);
+          if (isReady && !project) {
+            const newQuery = { ...query, project: projectId };
+            if (!compare(query, newQuery)) {
+              const href = { query: newQuery, pathname };
 
-        replace(href, undefined);
+              replace(href, undefined);
+            }
+          }
+        } catch (error) {
+          const axiosError = error as AxiosError;
+          if (axiosError.isAxiosError && axiosError.response?.status === 404) {
+            // If the project doesn't exist, remove it from local storage
+            writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
+            // And remove it from the url
+            const newQuery = { ...query };
+            delete newQuery["project"];
+            const href = { query: newQuery, pathname };
+            replace(href, undefined);
+          }
+        }
       }
-    }
+    };
+    updateFromLocalStorage();
   }, [isReady, pathname, project, query, replace]);
 };

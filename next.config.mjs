@@ -31,7 +31,7 @@ let nextConfig = {
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
-  transpilePackages: process.env.MONOREPO ? ["@squonk/mui-theme"] : [],
+  transpilePackages: process.env.MONOREPO ? ["@squonk/mui-theme", "@squonk/sdf-parser"] : [],
   modularizeImports: {
     "@mui/icons-material": { transform: "@mui/icons-material/{{member}}" },
   },

@@ -3,6 +3,7 @@ import { List } from "@mui/material";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { BrowserViewerListItem } from "./BrowserViewerListItem";
 import { FilePlainTextViewerListItem } from "./FilePlainTextViewerListItem";
+import { SDFViewerListItem } from "./SDFViewerListItem";
 
 export interface FileViewersListProps {
   fileName: string;
@@ -23,6 +24,9 @@ export const FileViewersList = ({ fileName, path, onClick }: FileViewersListProp
           projectId={projectId}
           onClick={onClick}
         />
+      )}
+      {(fileName.endsWith(".sdf") || fileName.endsWith(".sdf.gz")) && (
+        <SDFViewerListItem fileName={fileName} path={path} onClick={onClick} />
       )}
     </List>
   );

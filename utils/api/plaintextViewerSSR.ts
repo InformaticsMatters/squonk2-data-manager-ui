@@ -4,6 +4,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { createGunzip } from "node:zlib";
 import fetch from "node-fetch";
 
+import { isResponseJson } from "./fetchHelpers";
 import { createErrorProps } from "./serverSidePropsError";
 
 const MAX_BYTES = 100_000;
@@ -74,7 +75,7 @@ export const plaintextViewerSSR = async (
   }
 
   if (!response.ok) {
-    const isJson = response.headers.get("content-type")?.includes("application/json");
+    const isJson = isResponseJson(response);
     const data = isJson ? await response.json() : null;
     const error = (data && (data as any).message) || response.status;
     captureException(error);

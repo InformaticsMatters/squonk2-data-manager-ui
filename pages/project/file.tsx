@@ -11,7 +11,7 @@ import type { NotSuccessful, Successful } from "../../utils/api/plaintextViewerS
 import { plaintextViewerSSR } from "../../utils/api/plaintextViewerSSR";
 import { createErrorProps } from "../../utils/api/serverSidePropsError";
 import { pathFromQuery } from "../../utils/app/paths";
-import { API_ROUTES } from "../../utils/app/routes";
+import { projectFileURL } from "../../utils/app/routes";
 import { getFullReturnTo } from "../../utils/next/ssr";
 
 export type FileProps = Successful | NotSuccessful;
@@ -38,7 +38,7 @@ export const getServerSideProps: GetServerSideProps<FileProps> = async (ctx) => 
         compressed = true;
       }
 
-      const url = process.env.DATA_MANAGER_API_SERVER + API_ROUTES.projectFile(project, path, file);
+      const url = projectFileURL(project, path, file);
 
       return await plaintextViewerSSR(req, res, { url, compressed });
     },

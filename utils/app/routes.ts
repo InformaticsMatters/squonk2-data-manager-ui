@@ -13,6 +13,9 @@ export const API_ROUTES = {
     `${proxy}/dataset/${datasetId}/${version}`,
 };
 
+export const projectFileURL: (typeof API_ROUTES)["projectFile"] = (project, path, file) =>
+  process.env.DATA_MANAGER_API_SERVER + API_ROUTES.projectFile(project, path, file);
+
 export const projectURL = (projectId: string) =>
   window.location.origin +
   (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +

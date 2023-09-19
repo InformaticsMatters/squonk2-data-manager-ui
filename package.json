@@ -70,7 +70,7 @@
     "axios": "1.5.0",
     "dayjs": "1.11.9",
     "filesize": "10.0.12",
-    "formik": "2.4.3",
+    "formik": "2.4.5",
     "formik-mui": "4.0.0",
     "formik-mui-lab": "1.0.0",
     "immer": "9.0.21",

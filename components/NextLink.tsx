@@ -51,11 +51,7 @@ export const NextLink = ({ href, component = "a", ...props }: NextLinkProps) => 
 
   // ! Passing href in this way causing prop-types error...
   return component === "a" ? (
-    <Link
-      {...(props as InheritedProps<LProps>)}
-      component={NextJSLink}
-      href={href as unknown as string}
-    />
+    <Link {...(props as InheritedProps<LProps>)} component={NextJSLink} href={href} />
   ) : (
     // MUI doesn't seem to allow a custom component to be passed when you pass it props that should
     // give an anchor link under-the-hood, so we assert to any here

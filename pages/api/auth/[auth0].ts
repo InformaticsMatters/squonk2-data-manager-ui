@@ -1,6 +1,7 @@
 import { handleAuth, handleLogin, handleProfile } from "@auth0/nextjs-auth0";
 import { captureException } from "@sentry/nextjs";
 import jwtDecode from "jwt-decode";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 export default handleAuth({
   login: handleLogin({
@@ -14,7 +15,7 @@ export default handleAuth({
     res.status(error.status || 500).end();
     captureException(error);
   },
-  profile: async (req, res) => {
+  profile: async (req: NextApiRequest, res: NextApiResponse) => {
     await handleProfile(req, res, {
       refetch: true,
       afterRefetch: (_req, _res, newSession) => {

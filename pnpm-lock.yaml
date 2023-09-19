@@ -53,7 +53,7 @@ specifiers:
   jwt-decode: 3.1.2
   ketcher-core: 2.9.0
   ketcher-react: 2.9.0
-  ketcher-standalone: 2.9.0
+  ketcher-standalone: 2.12.0
   lint-staged: 14.0.1
   lodash-es: 4.17.21
   material-ui-popup-state: 5.0.9
@@ -121,7 +121,7 @@ dependencies:
   jwt-decode: 3.1.2
   ketcher-core: 2.9.0
   ketcher-react: 2.9.0_cccfvuyjnmee77bwg4wjyn6zre
-  ketcher-standalone: 2.9.0
+  ketcher-standalone: 2.12.0
   lodash-es: 4.17.21
   material-ui-popup-state: 5.0.9_z3lur6ypmh5qwbjfxgrqu4qyca
   nanoid: 4.0.2
@@ -3497,8 +3497,8 @@ packages:
     engines: {node: '>=0.8.19'}
     dev: true
 
-  /indigo-ketcher/1.10.0:
-    resolution: {integrity: sha512-tJWH9Og2eVj2n31TEdDPdNUSUAHRfF+PGh3MQeQmudobO9ySrtmIu7dz8SeeojPTAfYQPlti2uC/6IL7/cVDmg==}
+  /indigo-ketcher/1.12.0:
+    resolution: {integrity: sha512-jjJHk3oMeswXb8xHI4ojSt2FklRPRF9aD1TD72LGTBwiMVrmk8K49HGeHuNtN21t7qN/uJlEomde591noBQ8cQ==}
     dependencies:
       looks-same: 8.1.0
     dev: false
@@ -4063,12 +4063,12 @@ packages:
       - supports-color
     dev: false
 
-  /ketcher-standalone/2.9.0:
-    resolution: {integrity: sha512-uAxiN9gQDBCsCc0zvlwG4nWuVbxeazfcBUt0ufUyg6SkGjm8fWfEzONv4yEOqSBYcw5rbgwMBglvo0aqUK1UdQ==}
+  /ketcher-standalone/2.12.0:
+    resolution: {integrity: sha512-ImivV54XqKzhIcJShCeQAXx2Mm1KQaltw+gcRipdgXZJLWG3t9BofXBh4EBLiweACl8wT/aGuZvBTMptU2ofZQ==}
     engines: {node: '>=14'}
     dependencies:
-      '@babel/runtime': 7.21.0
-      indigo-ketcher: 1.10.0
+      '@babel/runtime': 7.22.15
+      indigo-ketcher: 1.12.0
       ketcher-core: 2.9.0
     dev: false
 

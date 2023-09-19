@@ -52,7 +52,7 @@ specifiers:
   just-group-by: 2.2.0
   jwt-decode: 3.1.2
   ketcher-core: 2.9.0
-  ketcher-react: 2.9.0
+  ketcher-react: 2.12.0
   ketcher-standalone: 2.9.0
   lint-staged: 13.2.3
   lodash-es: 4.17.21
@@ -121,7 +121,7 @@ dependencies:
   just-group-by: 2.2.0
   jwt-decode: 3.1.2
   ketcher-core: 2.9.0
-  ketcher-react: 2.9.0_cccfvuyjnmee77bwg4wjyn6zre
+  ketcher-react: 2.12.0_cccfvuyjnmee77bwg4wjyn6zre
   ketcher-standalone: 2.9.0
   lodash-es: 4.17.21
   material-ui-popup-state: 5.0.9_z3lur6ypmh5qwbjfxgrqu4qyca
@@ -2401,6 +2401,7 @@ packages:
   /draft-js-custom-styles/2.1.1_draft-js@0.11.7:
     resolution: {integrity: sha512-i/lTBRuiGQxPybMERRgGAzdx3WcJtshqlBnMgdi+YLVXF82K8zqLvvsXRGGR57TbmzfnnoHRZlDyBlkit22e/Q==}
     engines: {node: '>=4.2.4'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     peerDependencies:
       draft-js: 0.10.x
       immutable: ^3.x
@@ -3979,14 +3980,14 @@ packages:
       svgpath: 2.6.0
     dev: false
 
-  /ketcher-react/2.9.0_cccfvuyjnmee77bwg4wjyn6zre:
-    resolution: {integrity: sha512-1CWQWD6Xxy9OVHWDyUtA5VhYHP0BodqIxvalIMJ3ERWeSYhGCUqF1BHYlvsm7iiSlyJhUdlHQP2oofA+wn8EGw==}
+  /ketcher-react/2.12.0_cccfvuyjnmee77bwg4wjyn6zre:
+    resolution: {integrity: sha512-l9E59iAHm1W5b3Q9mVOSBecbEUOpw47vMtA+EmYqnNAyUZFPShT55MZXwpYrFser8m6AKo2+tWonWzd9Ot337Q==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@babel/runtime': 7.21.0
+      '@babel/runtime': 7.22.6
       '@emotion/react': 11.11.1_dpmmhqj3uzrk25jjzo7arvivk4
       '@emotion/styled': 11.11.0_ul7oermmk4ntjo4qb2vh6lohna
       '@mui/material': 5.14.2_z3lur6ypmh5qwbjfxgrqu4qyca

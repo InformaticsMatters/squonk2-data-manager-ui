@@ -51,7 +51,7 @@ specifiers:
   just-compare: 2.3.0
   just-group-by: 2.2.0
   jwt-decode: 3.1.2
-  ketcher-core: 2.9.0
+  ketcher-core: 2.12.0
   ketcher-react: 2.9.0
   ketcher-standalone: 2.9.0
   lint-staged: 13.2.3
@@ -120,7 +120,7 @@ dependencies:
   just-compare: 2.3.0
   just-group-by: 2.2.0
   jwt-decode: 3.1.2
-  ketcher-core: 2.9.0
+  ketcher-core: 2.12.0
   ketcher-react: 2.9.0_cccfvuyjnmee77bwg4wjyn6zre
   ketcher-standalone: 2.9.0
   lodash-es: 4.17.21
@@ -3967,11 +3967,23 @@ packages:
     resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
     dev: false
 
+  /ketcher-core/2.12.0:
+    resolution: {integrity: sha512-etWdZqu4ho8CdTcDjvgaDCGPSVxXTM5DdNf68THBAJKUBssWf47UaHvqjyCW/82vNJS/w99lUwONG8j9MYn11A==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@babel/runtime': 7.22.6
+      ajv: 8.12.0
+      assert: 2.0.0
+      lodash: 4.17.21
+      raphael: 2.3.0
+      svgpath: 2.6.0
+    dev: false
+
   /ketcher-core/2.9.0:
     resolution: {integrity: sha512-LVIHspCRYgWVRL1Ia2ZMnH6ahX9gQDzksYu2RmonSEr6ocMGYeNcD/pDlvTf7t/z43lfuYuYXc7VotROMddrMw==}
     engines: {node: '>=14'}
     dependencies:
-      '@babel/runtime': 7.21.0
+      '@babel/runtime': 7.22.6
       ajv: 8.12.0
       assert: 2.0.0
       lodash: 4.17.21

@@ -65,7 +65,7 @@ export interface SMILESInputProps {
 export const SMILESInput = ({
   value,
   initialMode = "smiles",
-  width = "700px",
+  width = "850px",
   height = "500px",
   sketcherDisabled,
   onSave,

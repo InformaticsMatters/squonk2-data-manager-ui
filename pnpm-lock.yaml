@@ -51,9 +51,9 @@ specifiers:
   just-compare: 2.3.0
   just-group-by: 2.2.0
   jwt-decode: 3.1.2
-  ketcher-core: 2.9.0
-  ketcher-react: 2.9.0
-  ketcher-standalone: 2.9.0
+  ketcher-core: 2.12.0
+  ketcher-react: 2.12.0
+  ketcher-standalone: 2.12.0
   lint-staged: 14.0.1
   lodash-es: 4.17.21
   material-ui-popup-state: 5.0.9
@@ -119,9 +119,9 @@ dependencies:
   just-compare: 2.3.0
   just-group-by: 2.2.0
   jwt-decode: 3.1.2
-  ketcher-core: 2.9.0
-  ketcher-react: 2.9.0_cccfvuyjnmee77bwg4wjyn6zre
-  ketcher-standalone: 2.9.0
+  ketcher-core: 2.12.0
+  ketcher-react: 2.12.0_cccfvuyjnmee77bwg4wjyn6zre
+  ketcher-standalone: 2.12.0
   lodash-es: 4.17.21
   material-ui-popup-state: 5.0.9_z3lur6ypmh5qwbjfxgrqu4qyca
   nanoid: 5.0.1
@@ -2213,7 +2213,7 @@ packages:
     dev: false
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
 
   /convert-source-map/1.8.0:
     resolution: {integrity: sha512-+OQdjP49zViI/6i7nIJpA8rAl4sV/JdPfU9nZs3VqOwGIgizICvuN2ru6fMd+4llL0tar18UYJXfZ/TWtmhUjA==}
@@ -2425,6 +2425,7 @@ packages:
   /draft-js-custom-styles/2.1.1_draft-js@0.11.7:
     resolution: {integrity: sha512-i/lTBRuiGQxPybMERRgGAzdx3WcJtshqlBnMgdi+YLVXF82K8zqLvvsXRGGR57TbmzfnnoHRZlDyBlkit22e/Q==}
     engines: {node: '>=4.2.4'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     peerDependencies:
       draft-js: 0.10.x
       immutable: ^3.x
@@ -3481,8 +3482,8 @@ packages:
     engines: {node: '>=0.8.19'}
     dev: true
 
-  /indigo-ketcher/1.10.0:
-    resolution: {integrity: sha512-tJWH9Og2eVj2n31TEdDPdNUSUAHRfF+PGh3MQeQmudobO9ySrtmIu7dz8SeeojPTAfYQPlti2uC/6IL7/cVDmg==}
+  /indigo-ketcher/1.12.0:
+    resolution: {integrity: sha512-jjJHk3oMeswXb8xHI4ojSt2FklRPRF9aD1TD72LGTBwiMVrmk8K49HGeHuNtN21t7qN/uJlEomde591noBQ8cQ==}
     dependencies:
       looks-same: 8.1.0
     dev: false
@@ -3982,11 +3983,11 @@ packages:
     resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
     dev: false
 
-  /ketcher-core/2.9.0:
-    resolution: {integrity: sha512-LVIHspCRYgWVRL1Ia2ZMnH6ahX9gQDzksYu2RmonSEr6ocMGYeNcD/pDlvTf7t/z43lfuYuYXc7VotROMddrMw==}
+  /ketcher-core/2.12.0:
+    resolution: {integrity: sha512-etWdZqu4ho8CdTcDjvgaDCGPSVxXTM5DdNf68THBAJKUBssWf47UaHvqjyCW/82vNJS/w99lUwONG8j9MYn11A==}
     engines: {node: '>=14'}
     dependencies:
-      '@babel/runtime': 7.21.0
+      '@babel/runtime': 7.22.15
       ajv: 8.12.0
       assert: 2.0.0
       lodash: 4.17.21
@@ -3994,14 +3995,14 @@ packages:
       svgpath: 2.6.0
     dev: false
 
-  /ketcher-react/2.9.0_cccfvuyjnmee77bwg4wjyn6zre:
-    resolution: {integrity: sha512-1CWQWD6Xxy9OVHWDyUtA5VhYHP0BodqIxvalIMJ3ERWeSYhGCUqF1BHYlvsm7iiSlyJhUdlHQP2oofA+wn8EGw==}
+  /ketcher-react/2.12.0_cccfvuyjnmee77bwg4wjyn6zre:
+    resolution: {integrity: sha512-l9E59iAHm1W5b3Q9mVOSBecbEUOpw47vMtA+EmYqnNAyUZFPShT55MZXwpYrFser8m6AKo2+tWonWzd9Ot337Q==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@babel/runtime': 7.21.0
+      '@babel/runtime': 7.22.15
       '@emotion/react': 11.11.1_dpmmhqj3uzrk25jjzo7arvivk4
       '@emotion/styled': 11.11.0_ul7oermmk4ntjo4qb2vh6lohna
       '@mui/material': 5.14.10_z3lur6ypmh5qwbjfxgrqu4qyca
@@ -4014,7 +4015,7 @@ packages:
       font-face-observer: 1.0.0
       hoist-non-react-statics: 3.3.2
       intersection-observer: 0.12.2
-      ketcher-core: 2.9.0
+      ketcher-core: 2.12.0
       lodash: 4.17.21
       miew-react: 1.0.0_cccfvuyjnmee77bwg4wjyn6zre
       react: 18.2.0
@@ -4047,13 +4048,13 @@ packages:
       - supports-color
     dev: false
 
-  /ketcher-standalone/2.9.0:
-    resolution: {integrity: sha512-uAxiN9gQDBCsCc0zvlwG4nWuVbxeazfcBUt0ufUyg6SkGjm8fWfEzONv4yEOqSBYcw5rbgwMBglvo0aqUK1UdQ==}
+  /ketcher-standalone/2.12.0:
+    resolution: {integrity: sha512-ImivV54XqKzhIcJShCeQAXx2Mm1KQaltw+gcRipdgXZJLWG3t9BofXBh4EBLiweACl8wT/aGuZvBTMptU2ofZQ==}
     engines: {node: '>=14'}
     dependencies:
-      '@babel/runtime': 7.21.0
-      indigo-ketcher: 1.10.0
-      ketcher-core: 2.9.0
+      '@babel/runtime': 7.22.15
+      indigo-ketcher: 1.12.0
+      ketcher-core: 2.12.0
     dev: false
 
   /kleur/4.1.4:

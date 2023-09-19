@@ -1,10 +1,10 @@
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Container, Typography } from "@mui/material";
+import Error from "next/error";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { RoleRequired } from "../../components/auth/RoleRequired";
-import { CenterLoader } from "../../components/CenterLoader";
 import { AS_ROLES, DM_ROLES } from "../../constants/auth";
 import type { SDFViewerProps } from "../../features/SDFViewer";
 import { SDFViewer } from "../../features/SDFViewer";
@@ -15,6 +15,10 @@ const SDF = () => {
 
   const { project, path, file } = query;
 
+  if (typeof project !== "string" || typeof path !== "string" || typeof file !== "string") {
+    return <Error statusCode={404} title="File not found" />;
+  }
+
   return (
     <>
       <Head>
@@ -24,13 +28,7 @@ const SDF = () => {
         <RoleRequired roles={AS_ROLES}>
           <Layout>
             <Container maxWidth="xl">
-              {typeof project !== "string" ||
-              typeof path !== "string" ||
-              typeof file !== "string" ? (
-                <CenterLoader />
-              ) : (
-                <SDFView file={file} path={path} project={project} />
-              )}
+              <SDFView file={file} path={path} project={project} />
             </Container>
           </Layout>
         </RoleRequired>

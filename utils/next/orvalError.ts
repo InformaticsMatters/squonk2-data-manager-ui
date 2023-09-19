@@ -8,16 +8,24 @@ const getMessageFromResponse = <TError>(error: AxiosError<TError>, field: keyof 
   return apiErrorData?.[field];
 };
 
-type AError = AxiosError<DmError | AsError>;
+type APIErrorResponse = DmError | AsError;
+type AError = AxiosError<APIErrorResponse>;
 type OldAError = AxiosError<{ detail: string }>;
+
+const isAPIError = (error: unknown): error is APIErrorResponse =>
+  typeof (error as APIErrorResponse).error === "string";
 
 /**
  * @param error The Axios Error object from which to extract the human error message
  * @returns a string message from the error that hopefully described what went wrong
  */
-export const getErrorMessage = (error: AxiosError<unknown> | null): string => {
+export const getErrorMessage = (error: AxiosError<unknown> | APIErrorResponse | null): string => {
   // if we have an error, we try and extract info
   if (error) {
+    if (isAPIError(error)) {
+      return error.error;
+    }
+
     try {
       // first try get the information assuming is's a well formed API error object
       const infoFromErrorField = getMessageFromResponse(error as AError, "error");

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import type { SDFRecord } from "@squonk/sdf-parser";
 import { createSDFTransformer } from "@squonk/sdf-parser";
 
-import { Box, LinearProgress, Typography } from "@mui/material";
+import { Alert, AlertTitle, Box, LinearProgress, Typography } from "@mui/material";
 import { nanoid } from "nanoid";
 
 import { MolCard } from "../components/MolCard";
@@ -11,6 +11,7 @@ import CalculationsTable from "../components/MolCard/CalculationsTable";
 import { ScatterPlot } from "../components/ScatterPlot/ScatterPlot";
 import { isResponseJson } from "../utils/api/fetchHelpers";
 import { API_ROUTES } from "../utils/app/routes";
+import { getErrorMessage } from "../utils/next/orvalError";
 
 const getCards = (molecules: Must<Molecule>[]) => {
   return molecules.slice(0, 50).map((molecule) => {
@@ -93,13 +94,14 @@ const useSDFRecords = (projectId: string, path: string, fileName: string) => {
       } else {
         const isJson = isResponseJson(response);
         const data = isJson ? await response.json() : null;
-        const error = (data && data.message) || response.status;
+        const error = getErrorMessage(data) || response.status.toString();
         throw new Error(error);
       }
     };
 
     fetchFile().catch((err) => {
       setError(err.message);
+      setIsFetching(false);
     });
   }, [fileName, path, projectId]);
 
@@ -130,7 +132,7 @@ export interface SDFViewerProps {
 }
 
 export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
-  const { records, isPending, isFetching } = useSDFRecords(project, path, file);
+  const { records, isPending, isFetching, error } = useSDFRecords(project, path, file);
 
   const molecules = useMemo(() => recordsToMolecules(records), [records]);
   const properties = useMemo(() => getPropArrayFromRecords(records), [records]);
@@ -143,6 +145,15 @@ export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
         <Typography textAlign="center">Loading and parsing data</Typography>
         <LinearProgress />
       </>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert severity="error">
+        <AlertTitle>Error</AlertTitle>
+        {error}
+      </Alert>
     );
   }
 

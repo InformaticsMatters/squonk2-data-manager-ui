@@ -18,8 +18,6 @@ if (process.env.MONOREPO) {
   console.log("info  - Running with webpack aliases for monorepo compatibility");
 }
 
-console.log("url: ", process.env.NEXT_PUBLIC_AUTH0_BASE_URL);
-
 const resolvePackage = (packageName) => path.resolve(__dirname, ".", "node_modules", packageName);
 
 /**

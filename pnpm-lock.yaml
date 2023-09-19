@@ -57,7 +57,7 @@ specifiers:
   lint-staged: 14.0.1
   lodash-es: 4.17.21
   material-ui-popup-state: 5.0.9
-  nanoid: 4.0.2
+  nanoid: 5.0.1
   next: 13.4.19
   next-http-proxy-middleware: 1.2.5
   nextjs-routes: 2.0.1
@@ -124,7 +124,7 @@ dependencies:
   ketcher-standalone: 2.9.0
   lodash-es: 4.17.21
   material-ui-popup-state: 5.0.9_z3lur6ypmh5qwbjfxgrqu4qyca
-  nanoid: 4.0.2
+  nanoid: 5.0.1
   next: 13.4.19_j3j36rgdl4c26pkb77ua4jtep4
   next-http-proxy-middleware: 1.2.5
   nextjs-routes: 2.0.1_next@13.4.19
@@ -4906,9 +4906,9 @@ packages:
     hasBin: true
     dev: false
 
-  /nanoid/4.0.2:
-    resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
-    engines: {node: ^14 || ^16 || >=18}
+  /nanoid/5.0.1:
+    resolution: {integrity: sha512-vWeVtV5Cw68aML/QaZvqN/3QQXc6fBfIieAlu05m7FZW2Dgb+3f0xc0TTxuJW+7u30t7iSDTV/j3kVI0oJqIfQ==}
+    engines: {node: ^18 || >=20}
     hasBin: true
     dev: false
 

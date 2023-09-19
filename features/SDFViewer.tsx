@@ -59,7 +59,10 @@ const useSDFRecords = (projectId: string, path: string, fileName: string) => {
       let response: Response;
 
       try {
-        response = await fetch(API_ROUTES.projectFile(projectId, path, fileName, "/api/dm-api"));
+        response = await fetch(
+          (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
+            API_ROUTES.projectFile(projectId, path, fileName, "/api/dm-api"),
+        );
       } catch {
         throw new Error("Unable to fetch file due to a network error. Try again.");
       }

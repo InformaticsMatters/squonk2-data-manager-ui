@@ -41,7 +41,7 @@ specifiers:
   dotenv: 16.3.1
   eslint: 8.48.0
   filesize: 10.0.12
-  formik: 2.4.3
+  formik: 2.4.5
   formik-mui: 4.0.0
   formik-mui-lab: 1.0.0
   husky: 8.0.3
@@ -111,9 +111,9 @@ dependencies:
   axios: 1.5.0
   dayjs: 1.11.9
   filesize: 10.0.12
-  formik: 2.4.3_react@18.2.0
-  formik-mui: 4.0.0_rxnyrlt7bryqzxlwrisxdnmviu
-  formik-mui-lab: 1.0.0_4shumjuexwnpxkfirb6ddm7y2u
+  formik: 2.4.5_react@18.2.0
+  formik-mui: 4.0.0_cttrwcqv3a2rsdlatolyeadv7y
+  formik-mui-lab: 1.0.0_g2ctivcccrdyvjyual2puomafy
   immer: 9.0.21
   jotai: 2.4.1_dpmmhqj3uzrk25jjzo7arvivk4
   just-compare: 2.3.0
@@ -3120,7 +3120,7 @@ packages:
       fetch-blob: 3.2.0
     dev: false
 
-  /formik-mui-lab/1.0.0_4shumjuexwnpxkfirb6ddm7y2u:
+  /formik-mui-lab/1.0.0_g2ctivcccrdyvjyual2puomafy:
     resolution: {integrity: sha512-4YSpaFXJ4fJ+er2Eu/XNcKyrrcUEWQiwxWjnSbki9bxRjjSDiKWCrRlDgM+vdl/HEiO+XrwrxA5I9M+xU4r1tg==}
     peerDependencies:
       '@emotion/react': '>=11.4.1'
@@ -3135,11 +3135,11 @@ packages:
       '@emotion/styled': 11.11.0_ul7oermmk4ntjo4qb2vh6lohna
       '@mui/lab': 5.0.0-alpha.145_7gaflyuxodxthieqwsp4bedf4q
       '@mui/material': 5.14.10_z3lur6ypmh5qwbjfxgrqu4qyca
-      formik: 2.4.3_react@18.2.0
+      formik: 2.4.5_react@18.2.0
       react: 18.2.0
     dev: false
 
-  /formik-mui/4.0.0_rxnyrlt7bryqzxlwrisxdnmviu:
+  /formik-mui/4.0.0_cttrwcqv3a2rsdlatolyeadv7y:
     resolution: {integrity: sha512-1IzYE83t/Hz05XMQuqs3i/yL7vteqCtjwJDXPBKtomzbif96OrTB2dFk26XEBJaB6ogmtKcxLogrtex3pbOp2A==}
     peerDependencies:
       '@emotion/react': '>=11.4.1'
@@ -3152,15 +3152,16 @@ packages:
       '@emotion/react': 11.11.1_dpmmhqj3uzrk25jjzo7arvivk4
       '@emotion/styled': 11.11.0_ul7oermmk4ntjo4qb2vh6lohna
       '@mui/material': 5.14.10_z3lur6ypmh5qwbjfxgrqu4qyca
-      formik: 2.4.3_react@18.2.0
+      formik: 2.4.5_react@18.2.0
       react: 18.2.0
     dev: false
 
-  /formik/2.4.3_react@18.2.0:
-    resolution: {integrity: sha512-2Dy79Szw3zlXmZiokUdKsn+n1ow4G8hRrC/n92cOWHNTWXCRpQXlyvz6HcjW7aSQZrldytvDOavYjhfmDnUq8Q==}
+  /formik/2.4.5_react@18.2.0:
+    resolution: {integrity: sha512-Gxlht0TD3vVdzMDHwkiNZqJ7Mvg77xQNfmBRrNtvzcHZs72TJppSTDKHpImCMJZwcWPBJ8jSQQ95GJzXFf1nAQ==}
     peerDependencies:
       react: '>=16.8.0'
     dependencies:
+      '@types/hoist-non-react-statics': 3.3.1
       deepmerge: 2.2.1
       hoist-non-react-statics: 3.3.2
       lodash: 4.17.21

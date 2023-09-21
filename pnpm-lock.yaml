@@ -69,7 +69,7 @@ specifiers:
   react-dom: 18.2.0
   react-dropzone: 14.2.3
   react-plotly.js: 2.6.0
-  sass: 1.67.0
+  sass: 1.68.0
   sharp: 0.32.6
   typescript: 5.2.2
   use-immer: 0.7.0
@@ -125,7 +125,7 @@ dependencies:
   lodash-es: 4.17.21
   material-ui-popup-state: 5.0.9_z3lur6ypmh5qwbjfxgrqu4qyca
   nanoid: 5.0.1
-  next: 13.4.19_j3j36rgdl4c26pkb77ua4jtep4
+  next: 13.4.19_n3jpywigpp4xeheqca3tgmycpy
   next-http-proxy-middleware: 1.2.5
   nextjs-routes: 2.0.1_next@13.4.19
   node-fetch: 3.3.2
@@ -136,7 +136,7 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
   react-dropzone: 14.2.3_react@18.2.0
   react-plotly.js: 2.6.0_react@18.2.0
-  sass: 1.67.0
+  sass: 1.68.0
   sharp: 0.32.6
   typescript: 5.2.2
   use-immer: 0.7.0_immer@9.0.21+react@18.2.0
@@ -170,7 +170,7 @@ packages:
       debug: 4.3.4
       joi: 17.8.4
       jose: 4.13.1
-      next: 13.4.19_j3j36rgdl4c26pkb77ua4jtep4
+      next: 13.4.19_n3jpywigpp4xeheqca3tgmycpy
       oauth4webapi: 2.3.0
       openid-client: 5.4.0
       tslib: 2.5.0
@@ -1174,7 +1174,7 @@ packages:
       '@sentry/utils': 7.69.0
       '@sentry/webpack-plugin': 1.20.0
       chalk: 3.0.0
-      next: 13.4.19_j3j36rgdl4c26pkb77ua4jtep4
+      next: 13.4.19_n3jpywigpp4xeheqca3tgmycpy
       react: 18.2.0
       rollup: 2.78.0
       stacktrace-parser: 0.1.10
@@ -4923,7 +4923,7 @@ packages:
       - debug
     dev: false
 
-  /next/13.4.19_j3j36rgdl4c26pkb77ua4jtep4:
+  /next/13.4.19_n3jpywigpp4xeheqca3tgmycpy:
     resolution: {integrity: sha512-HuPSzzAbJ1T4BD8e0bs6B9C1kWQ6gv8ykZoRWs5AQoiIuqbGHHdQO7Ljuvg05Q0Z24E2ABozHe6FxDvI6HfyAw==}
     engines: {node: '>=16.8.0'}
     hasBin: true
@@ -4945,7 +4945,7 @@ packages:
       postcss: 8.4.14
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      sass: 1.67.0
+      sass: 1.68.0
       styled-jsx: 5.1.1_react@18.2.0
       watchpack: 2.4.0
       zod: 3.21.4
@@ -4971,7 +4971,7 @@ packages:
       next: '*'
     dependencies:
       chokidar: 3.5.3
-      next: 13.4.19_j3j36rgdl4c26pkb77ua4jtep4
+      next: 13.4.19_n3jpywigpp4xeheqca3tgmycpy
     dev: false
 
   /node-abi/3.30.0:
@@ -5893,8 +5893,8 @@ packages:
       is-regex: 1.1.4
     dev: true
 
-  /sass/1.67.0:
-    resolution: {integrity: sha512-SVrO9ZeX/QQyEGtuZYCVxoeAL5vGlYjJ9p4i4HFuekWl8y/LtJ7tJc10Z+ck1c8xOuoBm2MYzcLfTAffD0pl/A==}
+  /sass/1.68.0:
+    resolution: {integrity: sha512-Lmj9lM/fef0nQswm1J2HJcEsBUba4wgNx2fea6yJHODREoMFnwRpZydBnX/RjyXw2REIwdkbqE4hrTo4qfDBUA==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:

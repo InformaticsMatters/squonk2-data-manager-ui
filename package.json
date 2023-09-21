@@ -95,7 +95,7 @@
     "react-dom": "18.2.0",
     "react-dropzone": "14.2.3",
     "react-plotly.js": "2.6.0",
-    "sass": "1.67.0",
+    "sass": "1.68.0",
     "sharp": "0.32.6",
     "typescript": "5.2.2",
     "use-immer": "0.7.0",

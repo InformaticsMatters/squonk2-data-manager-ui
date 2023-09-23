@@ -31,7 +31,7 @@ specifiers:
   '@tanstack/react-query-devtools': 4.35.3
   '@tanstack/react-table': 8.10.0
   '@types/lodash-es': 4.17.9
-  '@types/node': 18.17.17
+  '@types/node': 18.17.19
   '@types/plotly.js-basic-dist': 1.54.1
   '@types/prismjs': 1.26.0
   '@types/react': 18.2.22
@@ -103,7 +103,7 @@ dependencies:
   '@tanstack/react-query-devtools': 4.35.3_yto25xasvf6cn47xhscv3d6muq
   '@tanstack/react-table': 8.10.0_biqbaboplfbrettd7655fr4n2y
   '@types/lodash-es': 4.17.9
-  '@types/node': 18.17.17
+  '@types/node': 18.17.19
   '@types/plotly.js-basic-dist': 1.54.1
   '@types/prismjs': 1.26.0
   '@types/react': 18.2.22
@@ -1436,7 +1436,7 @@ packages:
   /@types/http-proxy/1.17.3:
     resolution: {integrity: sha512-wIPqXANye5BbORbuh74exbwNzj+UWCwWyeEFJzUQ7Fq3W2NSAy+7x7nX1fgbEypr2/TdKqpeuxLnXWgzN533/Q==}
     dependencies:
-      '@types/node': 18.17.17
+      '@types/node': 18.17.19
     dev: false
 
   /@types/json-schema/7.0.13:
@@ -1479,8 +1479,8 @@ packages:
     resolution: {integrity: sha512-sm2aph6cRSsTMFYFgI+RpPLunXO9ClJkpizUVdT7KmGeyfQ14xnjTMT/f3MHcfKqevXqGT6BgVFzW8wcEoDUtA==}
     dev: true
 
-  /@types/node/18.17.17:
-    resolution: {integrity: sha512-cOxcXsQ2sxiwkykdJqvyFS+MLQPLvIdwh5l6gNg8qF6s+C7XSkEWOZjK+XhUZd+mYvHV/180g2cnCcIl4l06Pw==}
+  /@types/node/18.17.19:
+    resolution: {integrity: sha512-+pMhShR3Or5GR0/sp4Da7FnhVmTalWm81M6MkEldbwjETSaPalw138Z4KdpQaistvqQxLB7Cy4xwYdxpbSOs9Q==}
     dev: false
 
   /@types/parse-json/4.0.0:

@@ -33,7 +33,7 @@ specifiers:
   '@types/lodash-es': 4.17.9
   '@types/node': 18.17.17
   '@types/plotly.js-basic-dist': 1.54.1
-  '@types/prismjs': 1.26.0
+  '@types/prismjs': 1.26.1
   '@types/react': 18.2.22
   '@types/react-plotly.js': 2.6.0
   axios: 1.5.0
@@ -105,7 +105,7 @@ dependencies:
   '@types/lodash-es': 4.17.9
   '@types/node': 18.17.17
   '@types/plotly.js-basic-dist': 1.54.1
-  '@types/prismjs': 1.26.0
+  '@types/prismjs': 1.26.1
   '@types/react': 18.2.22
   '@types/react-plotly.js': 2.6.0
   axios: 1.5.0
@@ -1499,8 +1499,8 @@ packages:
       '@types/d3': 3.5.47
     dev: false
 
-  /@types/prismjs/1.26.0:
-    resolution: {integrity: sha512-ZTaqn/qSqUuAq1YwvOFQfVW1AR/oQJlLSZVustdjwI+GZ8kr0MSHBj0tsXPW1EqHubx50gtBEjbPGsdZwQwCjQ==}
+  /@types/prismjs/1.26.1:
+    resolution: {integrity: sha512-Q7jDsRbzcNHIQje15CS/piKhu6lMLb9jwjxSfEIi4KcFKXW23GoJMkwQiJ8VObyfx+VmUaDcJxXaWN+cTCjVog==}
     dev: false
 
   /@types/prop-types/15.7.5:

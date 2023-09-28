@@ -52,7 +52,7 @@
     "@rjsf/mui": "5.13.0",
     "@rjsf/utils": "5.13.0",
     "@rjsf/validator-ajv8": "5.13.0",
-    "@sentry/nextjs": "7.71.0",
+    "@sentry/nextjs": "7.72.0",
     "@squonk/account-server-client": "2.0.6",
     "@squonk/data-manager-client": "1.2.1",
     "@squonk/mui-theme": "3.0.2",

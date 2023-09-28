@@ -35,7 +35,7 @@ specifiers:
   '@types/plotly.js-basic-dist': 1.54.2
   '@types/prismjs': 1.26.1
   '@types/react': 18.2.23
-  '@types/react-plotly.js': 2.6.0
+  '@types/react-plotly.js': 2.6.1
   axios: 1.5.1
   dayjs: 1.11.10
   dotenv: 16.3.1
@@ -107,7 +107,7 @@ dependencies:
   '@types/plotly.js-basic-dist': 1.54.2
   '@types/prismjs': 1.26.1
   '@types/react': 18.2.23
-  '@types/react-plotly.js': 2.6.0
+  '@types/react-plotly.js': 2.6.1
   axios: 1.5.1
   dayjs: 1.11.10
   filesize: 10.0.12
@@ -1518,8 +1518,8 @@ packages:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
     dev: false
 
-  /@types/react-plotly.js/2.6.0:
-    resolution: {integrity: sha512-nJJ57U0/CNDAO+F3dpnMgM8PtjLE/O1I3O6gq4+5Q13uKqrPnHGYOttfdzQJ4D7KYgF609miVzEYakUS2zds8w==}
+  /@types/react-plotly.js/2.6.1:
+    resolution: {integrity: sha512-vFJZRCC2Pav0NdrFm0grPMm9+67ejGZZglDBWqo+J6VFbB4CAatjoNiowfardznuujaaoDNoZ4MSCFwYyVk4aA==}
     dependencies:
       '@types/plotly.js': 1.54.20
       '@types/react': 18.2.23

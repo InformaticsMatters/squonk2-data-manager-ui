@@ -25,7 +25,7 @@ specifiers:
   '@squonk/data-manager-client': 1.2.1
   '@squonk/eslint-config': 0.5.0
   '@squonk/mui-theme': 3.0.2
-  '@squonk/sdf-parser': 1.0.4
+  '@squonk/sdf-parser': 1.1.1
   '@tanstack/match-sorter-utils': 8.8.4
   '@tanstack/react-query': 4.35.3
   '@tanstack/react-query-devtools': 4.35.3
@@ -97,7 +97,7 @@ dependencies:
   '@squonk/account-server-client': 2.0.6_pp2xe3d5naa75zonpi4z35gche
   '@squonk/data-manager-client': 1.2.1_pp2xe3d5naa75zonpi4z35gche
   '@squonk/mui-theme': 3.0.2_@mui+material@5.14.11
-  '@squonk/sdf-parser': 1.0.4
+  '@squonk/sdf-parser': 1.1.1
   '@tanstack/match-sorter-utils': 8.8.4
   '@tanstack/react-query': 4.35.3_biqbaboplfbrettd7655fr4n2y
   '@tanstack/react-query-devtools': 4.35.3_yto25xasvf6cn47xhscv3d6muq
@@ -1326,8 +1326,8 @@ packages:
       '@mui/material': 5.14.11_kvprps2up4r2nf5sxjhu22crvm
     dev: false
 
-  /@squonk/sdf-parser/1.0.4:
-    resolution: {integrity: sha512-sNtUojjkqQsT7BnwecP9Y5m0tSXO3okaJfOFi8z+CJFSKpk8vAcQBpgRhOcUESOybRj5Vw7f4oV5D6q+lIgJzA==}
+  /@squonk/sdf-parser/1.1.1:
+    resolution: {integrity: sha512-jGHo405vUb039kekGDaJDRx48A7UEvv9cHSL2qpKZOTvHPto3acNber2LQ1+OWQOhJU0sgZoqgzl15rOwWUimA==}
     dev: false
 
   /@swc/helpers/0.5.2:

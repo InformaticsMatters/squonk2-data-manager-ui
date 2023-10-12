@@ -41,7 +41,6 @@ Notable scripts:
 - `pnpm tsc` will run a one-off type check. This is also called pre-push to ensure no type errors are deployed.
 - `pnpm lint` will run the linter with the `eslint` config
 - `pnpm format` will format specified files with the `eslint` config
-- `pnpm format:all` will format all files with the `eslint` config
 - `pnpm test` will run the playwright tests
 - `pnpm test:debug` runs the tests with debug mode (headed)
 - `pnpm test:ci` runs the tests but configured for GitHub actions

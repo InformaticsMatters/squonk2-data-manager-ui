@@ -1,14 +1,10 @@
-require("@rushstack/eslint-patch/modern-module-resolution");
-
+/**
+ * @type {import("eslint").Linter.Config}
+ */
 module.exports = {
   parserOptions: {
     project: "tsconfig.json",
     tsconfigRootDir: __dirname,
   },
-  plugins: ["@next/eslint-plugin-next"],
-  extends: [
-    "plugin:@next/next/recommended",
-    "plugin:@next/next/core-web-vitals",
-    "@squonk/eslint-config",
-  ],
+  extends: ["@squonk/eslint-config"],
 };

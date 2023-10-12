@@ -19,9 +19,9 @@
     "build": "next build",
     "start": "next start",
     "tsc": "tsc --pretty --noEmit",
-    "lint": "eslint --cache --max-warnings=0",
-    "format": "eslint --fix --cache --max-warnings=0",
-    "format:all": "eslint --fix --cache .",
+    "lint": "eslint --cache --max-warnings=0 --resolve-plugins-relative-to=\"$(pnpm c --user get MONOREPO && echo '../../libs/eslint-config' || echo './node_modules/@squonk/eslint-config')\"",
+    "format": "eslint --fix --cache --max-warnings=0 --resolve-plugins-relative-to=\"$(pnpm c --user get MONOREPO && echo '../../libs/eslint-config' || echo './node_modules/@squonk/eslint-config')\"",
+    "format:all": "eslint --fix --cache --max-warnings=0 --resolve-plugins-relative-to=\"$(pnpm c --user get MONOREPO && echo '../../libs/eslint-config' || echo './node_modules/@squonk/eslint-config')\" .",
     "test": "playwright test",
     "test:debug": "PWDEBUG=1 pnpm t -- --headed",
     "test:ci": "playwright test",
@@ -31,7 +31,7 @@
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [
-      "pnpm eslint --fix --max-warnings=0"
+      "eslint --max-warnings=0"
     ]
   },
   "dependencies": {
@@ -47,7 +47,7 @@
     "@mui/material": "5.14.11",
     "@mui/styles": "5.14.11",
     "@next/eslint-plugin-next": "13.5.4",
-    "@next/mdx": "13.5.4",
+    "@next/mdx": "13.4.19",
     "@rjsf/core": "5.13.0",
     "@rjsf/mui": "5.13.0",
     "@rjsf/utils": "5.13.0",
@@ -56,7 +56,7 @@
     "@squonk/account-server-client": "2.0.6",
     "@squonk/data-manager-client": "1.2.2",
     "@squonk/mui-theme": "3.0.2",
-    "@squonk/sdf-parser": "1.0.4",
+    "@squonk/sdf-parser": "1.1.1",
     "@tanstack/match-sorter-utils": "8.8.4",
     "@tanstack/react-query": "4.35.3",
     "@tanstack/react-query-devtools": "4.35.3",
@@ -104,7 +104,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "13.5.4",
     "@playwright/test": "1.38.1",
-    "@squonk/eslint-config": "0.5.0",
+    "@squonk/eslint-config": "1.0.0",
     "dotenv": "16.3.1",
     "eslint": "8.50.0",
     "husky": "8.0.3",

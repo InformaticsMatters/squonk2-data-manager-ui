@@ -1,9 +1,6 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.tabSize": 2,
-  "emmet.includeLanguages": {
-    "mdx": "html"
-  },
   "eslint.format.enable": true,
   "[typescriptreact][typescript][javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
@@ -16,9 +13,8 @@
   },
   "javascript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.importModuleSpecifier": "relative",
-  "files.associations": {
-    ".env": "shellscript",
-    ".env.*": "shellscript",
-  },
   "playwright.reuseBrowser": false,
+  "eslint.options": {
+    "resolvePluginsRelativeTo": "../../libs/eslint-config"
+  },
 }

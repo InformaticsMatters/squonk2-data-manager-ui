@@ -35,9 +35,8 @@ export const UnitCharges = ({ unitId }: UnitChargesProps) => {
   const { data: unit } = useGetUnit(unitId);
   const { data: charges } = useGetUnitCharges(unitId, { pbp: monthDelta });
 
-  const processingTotal = charges?.summary.charges.find(
-    (charge) => charge.type === "PROCESSING",
-  )?.coins;
+  const processingTotal = charges?.summary.charges.find((charge) => charge.type === "PROCESSING")
+    ?.coins;
   const storageTotal = charges?.summary.charges.find((charge) => charge.type === "STORAGE")?.coins;
   const totalCharges = charges?.summary.charges
     .map((charge) => charge.coins)

@@ -23,10 +23,13 @@ const getCards = (molecules: Must<Molecule>[]) => {
     return (
       <MolCard key={molecule.id} smiles={smiles}>
         <CalculationsTable
-          calcs={Object.keys(molecule.properties).reduce((acc, key) => {
-            acc[key] = key;
-            return acc;
-          }, {} as Record<string, any>)}
+          calcs={Object.keys(molecule.properties).reduce(
+            (acc, key) => {
+              acc[key] = key;
+              return acc;
+            },
+            {} as Record<string, any>,
+          )}
           fontSize="0.7rem"
           properties={properties}
         />

@@ -56,7 +56,7 @@ specifiers:
   ketcher-standalone: 2.12.0
   lint-staged: 14.0.1
   lodash-es: 4.17.21
-  material-ui-popup-state: 5.0.9
+  material-ui-popup-state: 5.0.10
   nanoid: 5.0.1
   next: 13.5.6
   next-http-proxy-middleware: 1.2.5
@@ -123,7 +123,7 @@ dependencies:
   ketcher-react: 2.12.0_rozludnunfpi5kjcmpzmfi5vca
   ketcher-standalone: 2.12.0
   lodash-es: 4.17.21
-  material-ui-popup-state: 5.0.9_4z6wtzdtg5bs27mf4eud4uxazi
+  material-ui-popup-state: 5.0.10_4z6wtzdtg5bs27mf4eud4uxazi
   nanoid: 5.0.1
   next: 13.5.6_n3jpywigpp4xeheqca3tgmycpy
   next-http-proxy-middleware: 1.2.5
@@ -537,7 +537,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.23.2
       '@floating-ui/react-dom': 2.0.2_biqbaboplfbrettd7655fr4n2y
       '@mui/types': 7.2.4_@types+react@18.2.24
       '@mui/utils': 5.14.13_qplb6sntkpqlhms5ct4t6n64ve
@@ -792,7 +792,7 @@ packages:
       react: ^17.0.0 || ^18.0.0
       react-dom: ^17.0.0 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.23.2
       '@emotion/react': 11.11.1_qplb6sntkpqlhms5ct4t6n64ve
       '@emotion/styled': 11.11.0_6xgwev5jq2jbqmhgrpcxyiti4q
       '@mui/base': 5.0.0-beta.17_rozludnunfpi5kjcmpzmfi5vca
@@ -4375,12 +4375,12 @@ packages:
       react: 18.2.0
     dev: false
 
-  /material-ui-popup-state/5.0.9_4z6wtzdtg5bs27mf4eud4uxazi:
-    resolution: {integrity: sha512-NjTm7zdEzOY1CHu+a2to6h1Jr1Y8ra24rZ2JF5teO/+g0wTNiKWwNT04v3oW3McHsLcTfG46yYcqf1iznjst8Q==}
+  /material-ui-popup-state/5.0.10_4z6wtzdtg5bs27mf4eud4uxazi:
+    resolution: {integrity: sha512-gd0DI8skwCSdth/j/yndoIwNkS2eDusosTe5hyPZ3jbrMzDkbQBs+tBbwapQ9hLfgiVLwICd1mwyerUV9Y5Elw==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.21.0
+      '@babel/runtime': 7.23.2
       '@mui/material': 5.14.11_4z6wtzdtg5bs27mf4eud4uxazi
       classnames: 2.3.1
       prop-types: 15.8.1

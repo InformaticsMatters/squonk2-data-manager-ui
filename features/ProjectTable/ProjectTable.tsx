@@ -75,6 +75,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
                   gap: theme.spacing(1),
                   justifyContent: "left",
                   maxWidth: "auto",
+                  textTransform: "none",
                 }}
               >
                 <FolderRoundedIcon /> {getValue()}

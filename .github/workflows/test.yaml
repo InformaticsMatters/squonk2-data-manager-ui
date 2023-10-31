@@ -1,4 +1,3 @@
----
 name: test
 
 # Actions for any push (PR) onto (into) to master
@@ -25,7 +24,22 @@ on:
   push:
 
 jobs:
+  # check that both APIs are responding normally before running tests
+  check-api:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get DM Version
+      run: |
+        curl -f -X 'GET' \
+          'https://data-manager-test.xchem-dev.diamond.ac.uk/data-manager-api/version' \
+          -H 'accept: application/json'
+    - name: Get AS Version
+      run: |
+        curl -f -X 'GET' \
+          'https://account-server-test.xchem-dev.diamond.ac.uk/account-server-api/version' \
+          -H 'accept: application/json'
   test-base-path:
+    needs: check-api # tests are skipped if APIs are down to avoid false negatives
     # Setup
     runs-on: ubuntu-latest
     environment: data-manager-ui/test

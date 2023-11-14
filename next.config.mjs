@@ -14,7 +14,7 @@ const withMDX = nextMDX({
   options: { providerImportSource: "@mdx-js/react", jsxImportSource: "@emotion/react" },
 });
 
-const MONOREPO_MODE = process.env.npm_config_MONOREPO
+const MONOREPO_MODE = process.env.npm_config_MONOREPO;
 
 if (MONOREPO_MODE) {
   console.log("- info Running with webpack aliases for monorepo compatibility");
@@ -34,9 +34,6 @@ let nextConfig = {
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages: MONOREPO_MODE ? ["@squonk/mui-theme", "@squonk/sdf-parser"] : [],
-  modularizeImports: {
-    "@mui/icons-material": { transform: "@mui/icons-material/{{member}}" },
-  },
   sassOptions: {
     prependData: `$assetsURL: '${
       process.env.ASSET_URL || "https://squonk.informaticsmatters.org"

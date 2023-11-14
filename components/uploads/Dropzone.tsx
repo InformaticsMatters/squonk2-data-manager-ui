@@ -8,8 +8,8 @@ import { nanoid } from "nanoid";
 
 import { useFileExtensions } from "../../hooks/useFileExtensions";
 import { useMimeTypeLookup } from "../../hooks/useMimeTypeLookup";
+import { getMimeFromFileName } from "../../utils/app/files";
 import type { UploadableFile } from "./types";
-import { getMimeFromFileName } from "./utils";
 
 export interface DropzoneProps extends DropzoneOptions {
   children?: ReactNode;

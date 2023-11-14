@@ -16,6 +16,7 @@ interface BaseTableRow {
 // Properties of files only
 interface BaseTableFile extends Omit<FilePathFile, "file_name"> {
   fullPath: FullPath;
+  subRows: TableFile[];
 }
 
 export type TableFile = BaseTableFile & BaseTableRow;

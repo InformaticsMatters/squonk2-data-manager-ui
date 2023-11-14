@@ -9,9 +9,9 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { TwiddleIcon } from "../../components/uploads/TwiddleIcon";
 import type { UploadableFile } from "../../components/uploads/types";
-import { separateFileExtensionFromFileName } from "../../components/uploads/utils";
 import { useFileExtensions } from "../../hooks/useFileExtensions";
 import { useMimeTypeLookup } from "../../hooks/useMimeTypeLookup";
+import { separateFileExtensionFromFileName } from "../../utils/app/files";
 
 export interface SingleFileUploadWithProgressProps {
   fileWrapper: UploadableFile;

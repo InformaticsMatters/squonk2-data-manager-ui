@@ -1,27 +1,31 @@
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useMemo, useState } from "react";
 
 import type { SDFRecord } from "@squonk/sdf-parser";
-import { createSDFTransformer } from "@squonk/sdf-parser";
 
 import { Alert, AlertTitle, Box, LinearProgress, Typography } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 
 import { MolCard } from "../components/MolCard";
 import CalculationsTable from "../components/MolCard/CalculationsTable";
 import { ScatterPlot } from "../components/ScatterPlot/ScatterPlot";
-import { isResponseJson } from "../utils/api/fetchHelpers";
-import { API_ROUTES } from "../utils/app/routes";
-import { getErrorMessage } from "../utils/next/orvalError";
 
 const getCards = (molecules: Must<Molecule>[]) => {
   return molecules.slice(0, 50).map((molecule) => {
-    const smiles = molecule.molFile.split(/\r?\n/)[0];
     const properties = Object.entries(molecule.properties).map((property) => ({
       name: property[0],
       value: property[1],
     }));
     return (
-      <MolCard key={molecule.id} smiles={smiles}>
+      <MolCard
+        depictParams={{
+          depictURL:
+            "https://squonk.informaticsmatters.org/fragnet-depict-api/fragnet-depict/moldepict",
+        }}
+        key={molecule.id}
+        molFile={molecule.molFile}
+        variant="molFile"
+      >
         <CalculationsTable
           calcs={Object.keys(molecule.properties).reduce(
             (acc, key) => {
@@ -49,66 +53,25 @@ const getPropArrayFromRecords = (molecules: Molecule[] | SDFRecord[]): string[] 
   }, []);
 };
 
-const useSDFRecords = (projectId: string, path: string, fileName: string) => {
-  const [records, setRecords] = useState<SDFRecord[]>([]);
-  const [isFetching, setIsFetching] = useState(false);
-  const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string>();
+const useSDFRecords = (project: string, path: string, file: string) => {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  const url = `${basePath}/api/sdf-parser?project=${encodeURIComponent(
+    project,
+  )}&path=${encodeURIComponent(path)}&file=${encodeURIComponent(file)}`;
 
-  useEffect(() => {
-    const compressed = fileName.endsWith(".gz");
-    const fetchFile = async () => {
-      setIsFetching(true);
-
-      let response: Response;
-
-      try {
-        response = await fetch(
-          (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
-            API_ROUTES.projectFile(projectId, path, fileName, "/api/dm-api"),
-        );
-      } catch {
-        throw new Error("Unable to fetch file due to a network error. Try again.");
-      }
-
+  return useQuery<SDFRecord[], Error, SDFRecord[], string[]>(
+    ["sdf", project, path, file],
+    async () => {
+      const response = await fetch(url);
       if (response.ok) {
-        if (response.body !== null) {
-          let stream: ReadableStream = response.body;
-          if (compressed) {
-            stream = response.body.pipeThrough(new DecompressionStream("gzip"));
-          }
-          await stream
-            .pipeThrough(new TextDecoderStream())
-            .pipeThrough(createSDFTransformer())
-            .pipeTo(
-              new WritableStream({
-                write(chunk) {
-                  startTransition(() => {
-                    setRecords((prev) => [...prev, chunk]);
-                  });
-                },
-              }),
-            );
-        } else {
-          throw new Error("No stream from response");
-        }
-
-        setIsFetching(false);
-      } else {
-        const isJson = isResponseJson(response);
-        const data = isJson ? await response.json() : null;
-        const error = getErrorMessage(data) || response.status.toString();
-        throw new Error(error);
+        return response.json();
       }
-    };
-
-    fetchFile().catch((err) => {
-      setError(err.message);
-      setIsFetching(false);
-    });
-  }, [fileName, path, projectId]);
-
-  return { records, isFetching, isPending, error };
+      throw new Error(await response.text());
+    },
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
 };
 
 export interface Molecule extends SDFRecord {
@@ -135,14 +98,16 @@ export interface SDFViewerProps {
 }
 
 export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
-  const { records, isPending, isFetching, error } = useSDFRecords(project, path, file);
+  const { data, isFetching, error } = useSDFRecords(project, path, file);
+
+  const records = useMemo(() => data ?? [], [data]);
 
   const molecules = useMemo(() => recordsToMolecules(records), [records]);
   const properties = useMemo(() => getPropArrayFromRecords(records), [records]);
 
   const [selection, setSelection] = useState<string[]>([]);
 
-  if (isPending || isFetching) {
+  if (isFetching) {
     return (
       <>
         <Typography textAlign="center">Loading and parsing data</Typography>
@@ -155,7 +120,7 @@ export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
     return (
       <Alert severity="error">
         <AlertTitle>Error</AlertTitle>
-        {error}
+        {error.message}
       </Alert>
     );
   }

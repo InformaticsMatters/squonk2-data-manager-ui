@@ -148,7 +148,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     initialSelection,
     onSelection,
     subRowsEnabled,
-    getSubRows,
+    getSubRows = (row) => row.subRows,
     customTableProps,
     customCellProps,
     customRowProps,
@@ -176,9 +176,9 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
         ),
         cell: ({ row }) =>
           row.getCanExpand() ? (
-            <Box {...row.getToggleExpandedHandler()} display="flex">
+            <IconButton sx={{ display: "flex" }} onClick={row.getToggleExpandedHandler()}>
               {row.getIsExpanded() ? <ExpandLess /> : <ExpandMoreIcon />}
-            </Box>
+            </IconButton>
           ) : null,
       });
 

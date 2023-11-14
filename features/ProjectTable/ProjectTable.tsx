@@ -128,6 +128,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
 
   return (
     <DataTable
+      subRowsEnabled
       columns={columns}
       data={rows}
       error={getErrorMessage(error)}

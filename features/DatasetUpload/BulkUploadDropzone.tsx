@@ -4,7 +4,7 @@ import { Grid } from "@mui/material";
 
 import { Dropzone } from "../../components/uploads/Dropzone";
 import type { UploadableFile } from "../../components/uploads/types";
-import { mutateAtPosition } from "../../components/uploads/utils";
+import { mutateAtPosition } from "../../utils/app/files";
 import { SingleFileUploadWithProgress } from "./SingleFileUploader";
 
 export interface BulkUploadDropzoneProps {

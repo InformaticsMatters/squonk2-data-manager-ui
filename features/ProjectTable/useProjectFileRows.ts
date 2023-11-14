@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 
+import type { FilePathFile } from "@squonk/data-manager-client";
 import { useGetFiles } from "@squonk/data-manager-client/file";
 
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
+import { separateFileExtensionFromFileName } from "../../utils/app/files";
 import type { TableDir, TableFile } from "./types";
 
 const getFullPath = (path: string[], fileName: string) => {
@@ -10,6 +12,24 @@ const getFullPath = (path: string[], fileName: string) => {
     return path.join("/") + "/" + fileName;
   }
   return fileName;
+};
+
+const NESTING_EXTENSIONS = [".schema.json", ".meta.json"];
+
+const filePathFileToTableFile = (file: FilePathFile, breadcrumbs: string[]): TableFile => {
+  const { file_id: fileId, file_name: fileName, owner, immutable, mime_type, stat } = file;
+  const fullPath = getFullPath(breadcrumbs, fileName);
+
+  return {
+    fileName,
+    fullPath,
+    file_id: fileId,
+    owner,
+    immutable,
+    mime_type,
+    stat,
+    subRows: [],
+  };
 };
 
 export const useProjectFileRows = (project_id: string) => {
@@ -26,22 +46,32 @@ export const useProjectFileRows = (project_id: string) => {
   const paths = data?.paths;
 
   const rows = useMemo(() => {
-    const files: TableFile[] | undefined = dataFiles?.map((file) => {
-      const { file_id: fileId, file_name: fileName, owner, immutable, mime_type, stat } = file;
+    // split the schema files from the rest
+    // and reshape all files to the format we need
+    const nestedFiles = dataFiles
+      ?.filter((file) => NESTING_EXTENSIONS.some((ext) => file.file_name.endsWith(ext)))
+      .map((file) => filePathFileToTableFile(file, breadcrumbs));
 
-      const fullPath = getFullPath(breadcrumbs, fileName);
+    const topLevelFiles = dataFiles
+      ?.filter((file) => !NESTING_EXTENSIONS.some((ext) => file.file_name.endsWith(ext)))
+      .map((file) => filePathFileToTableFile(file, breadcrumbs));
 
-      return {
-        fileName,
-        fullPath,
-        file_id: fileId,
-        owner,
-        immutable,
-        mime_type,
-        stat,
-      };
+    // group sub items under the main files (e.g. file.schema.json nested under file.sdf)
+    const files: TableFile[] | undefined = topLevelFiles?.map((file) => {
+      const [stem] = separateFileExtensionFromFileName(file.fileName);
+
+      // this will duplicate files under multiple parents for now
+      // hopefully the NESTING_EXTENSIONS becomes sufficiently strict that this is not an issue
+      const subRows = nestedFiles
+        ?.filter((nestedFile) => nestedFile.fileName.startsWith(stem))
+        .map((file) => ({ ...file, subRows: [] }));
+
+      file.subRows = subRows ?? [];
+
+      return file;
     });
 
+    // Then get together all the directories
     const dirs: TableDir[] | undefined = paths?.map((path) => {
       const fullPath = getFullPath(breadcrumbs, path);
 
@@ -52,6 +82,7 @@ export const useProjectFileRows = (project_id: string) => {
       };
     });
 
+    // If we have both, concat them with the dirs first
     return dirs && files ? [...dirs, ...files] : undefined;
   }, [dataFiles, paths, breadcrumbs]);
 

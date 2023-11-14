@@ -111,6 +111,7 @@ jobs:
         name: Base Path Results
         path: test-results
   test-no-base-path:
+    needs: check-api # tests are skipped if APIs are down to avoid false negatives
     # Setup
     runs-on: ubuntu-latest
     environment: data-manager-ui/test

@@ -156,8 +156,8 @@ dependencies:
     specifier: 13.5.6
     version: 13.5.6(react-dom@18.2.0)(react@18.2.0)(sass@1.68.0)
   next-http-proxy-middleware:
-    specifier: 1.2.5
-    version: 1.2.5
+    specifier: 1.2.6
+    version: 1.2.6
   nextjs-routes:
     specifier: 2.0.1
     version: 2.0.1(next@13.5.6)
@@ -6244,8 +6244,8 @@ packages:
     resolution: {integrity: sha512-9iN1ka/9zmX1ZvLV9ewJYEk9h7RyRRtqdK0woXcqohu8EWIerfPUjYJPg0ULy0UqP7cslmdGc8xKDJcojlKiaw==}
     dev: false
 
-  /next-http-proxy-middleware@1.2.5:
-    resolution: {integrity: sha512-ni73cl1FKC3s1aTD1aziIhV07TiG5ZrtyCkw8S0yqBRvTIJ2tqII1R+aEgxRav42W2Ht8yTpy96gQuaDJwNOMQ==}
+  /next-http-proxy-middleware@1.2.6:
+    resolution: {integrity: sha512-vHmtFLeO+HomU4Fx/CoA4MbLnXya1B17yR5qOmpYZqRjzGa17a9dgXh9ONvquSZdMrIn7bUfjoPLxMkYMtKj3Q==}
     engines: {node: '>=10.0.0'}
     dependencies:
       '@types/http-proxy': 1.17.3

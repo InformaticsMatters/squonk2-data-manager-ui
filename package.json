@@ -105,7 +105,7 @@
     "@playwright/test": "1.39.0",
     "@squonk/eslint-config": "1.0.0",
     "dotenv": "16.3.1",
-    "eslint": "8.50.0",
+    "eslint": "8.53.0",
     "husky": "8.0.3",
     "identity-obj-proxy": "3.0.0",
     "lint-staged": "14.0.1"

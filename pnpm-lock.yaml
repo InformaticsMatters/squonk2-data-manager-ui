@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@auth0/nextjs-auth0':
-    specifier: 3.1.0
-    version: 3.1.0(next@13.5.6)
+    specifier: 3.3.0
+    version: 3.3.0(next@13.5.6)
   '@emotion/cache':
     specifier: 11.11.0
     version: 11.11.0
@@ -234,14 +234,14 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /@auth0/nextjs-auth0@3.1.0(next@13.5.6):
-    resolution: {integrity: sha512-K00wD7hlMRcmDgDVRN5pP/SLV7odBnvAXvput1kJHGRJUp9FwFzg6BEGEWVHhr2YOXcn+VdVMMjXlmWYV+aZ1A==}
+  /@auth0/nextjs-auth0@3.3.0(next@13.5.6):
+    resolution: {integrity: sha512-zIBeb2OuLIv0SyNEJaqfBbmwsaPLi1CAlnwOIRloABPI2nX0k0Sp959FiI7uUfJkUzqW8xtCyE56MDl4bs9WLQ==}
     engines: {node: '>=16'}
     peerDependencies:
       next: '>=10'
     dependencies:
       '@panva/hkdf': 1.1.1
-      cookie: 0.5.0
+      cookie: 0.6.0
       debug: 4.3.4
       joi: 17.11.0
       jose: 4.15.4
@@ -2772,6 +2772,11 @@ packages:
 
   /cookie@0.5.0:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
+    engines: {node: '>= 0.6'}
+    dev: false
+
+  /cookie@0.6.0:
+    resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
     dev: false
 

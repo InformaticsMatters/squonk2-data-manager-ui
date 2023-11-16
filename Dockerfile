@@ -10,7 +10,7 @@ ARG SKIP_CHECKS
 ENV SKIP_CHECKS=${SKIP_CHECKS:-0}
 RUN echo "SKIP_CHECKS=${SKIP_CHECKS}"
 
-RUN npm i -g pnpm@6.30.1
+RUN npm i -g pnpm@8.10.5
 RUN if $SKIP_CHECKS; then pnpm fetch --prod; else pnpm fetch; fi
 RUN if $SKIP_CHECKS; \
     then pnpm i -P --frozen-lockfile --offline --ignore-scripts; \
@@ -38,7 +38,7 @@ ENV GIT_SHA=${GIT_SHA:-""}
 ARG BASE_PATH
 ENV BASE_PATH=${BASE_PATH}
 
-# RUN npm i -g pnpm@6.30.1
+# RUN npm i -g pnpm@8.10.5
 RUN echo "GIT_SHA=${GIT_SHA}" && npm run build
 
 # If using npm comment out above and use below instead

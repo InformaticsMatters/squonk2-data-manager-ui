@@ -64,7 +64,7 @@
     "@types/node": "18.18.9",
     "@types/plotly.js-basic-dist": "1.54.4",
     "@types/prismjs": "1.26.3",
-    "@types/react": "18.2.24",
+    "@types/react": "18.2.37",
     "@types/react-plotly.js": "2.6.3",
     "axios": "1.6.2",
     "dayjs": "1.11.10",

@@ -61,7 +61,7 @@
     "@tanstack/react-query-devtools": "4.35.3",
     "@tanstack/react-table": "8.10.3",
     "@types/lodash-es": "4.17.9",
-    "@types/node": "18.18.3",
+    "@types/node": "18.18.9",
     "@types/plotly.js-basic-dist": "1.54.2",
     "@types/prismjs": "1.26.1",
     "@types/react": "18.2.24",

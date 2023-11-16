@@ -154,7 +154,7 @@ dependencies:
     version: 5.0.3
   next:
     specifier: 13.5.6
-    version: 13.5.6(react-dom@18.2.0)(react@18.2.0)(sass@1.68.0)
+    version: 13.5.6(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
   next-http-proxy-middleware:
     specifier: 1.2.6
     version: 1.2.6
@@ -186,8 +186,8 @@ dependencies:
     specifier: 2.6.0
     version: 2.6.0(plotly.js@2.27.1)(react@18.2.0)
   sass:
-    specifier: 1.68.0
-    version: 1.68.0
+    specifier: 1.69.5
+    version: 1.69.5
   sharp:
     specifier: 0.32.6
     version: 0.32.6
@@ -245,7 +245,7 @@ packages:
       debug: 4.3.4
       joi: 17.11.0
       jose: 4.15.4
-      next: 13.5.6(react-dom@18.2.0)(react@18.2.0)(sass@1.68.0)
+      next: 13.5.6(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
       oauth4webapi: 2.4.0
       openid-client: 5.6.1
       tslib: 2.6.2
@@ -1384,7 +1384,7 @@ packages:
       '@sentry/vercel-edge': 7.80.1
       '@sentry/webpack-plugin': 1.20.0
       chalk: 3.0.0
-      next: 13.5.6(react-dom@18.2.0)(react@18.2.0)(sass@1.68.0)
+      next: 13.5.6(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
       react: 18.2.0
       resolve: 1.22.8
       rollup: 2.78.0
@@ -6255,7 +6255,7 @@ packages:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
     dev: false
 
-  /next@13.5.6(react-dom@18.2.0)(react@18.2.0)(sass@1.68.0):
+  /next@13.5.6(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5):
     resolution: {integrity: sha512-Y2wTcTbO4WwEsVb4A8VSnOsG1I9ok+h74q0ZdxkwM3EODqrs4pasq7O0iUxbcS9VtWMicG7f3+HAj0r1+NtKSw==}
     engines: {node: '>=16.14.0'}
     hasBin: true
@@ -6277,7 +6277,7 @@ packages:
       postcss: 8.4.31
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      sass: 1.68.0
+      sass: 1.69.5
       styled-jsx: 5.1.1(react@18.2.0)
       watchpack: 2.4.0
     optionalDependencies:
@@ -6302,7 +6302,7 @@ packages:
       next: '*'
     dependencies:
       chokidar: 3.5.3
-      next: 13.5.6(react-dom@18.2.0)(react@18.2.0)(sass@1.68.0)
+      next: 13.5.6(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
     dev: false
 
   /node-abi@3.51.0:
@@ -7504,8 +7504,8 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: false
 
-  /sass@1.68.0:
-    resolution: {integrity: sha512-Lmj9lM/fef0nQswm1J2HJcEsBUba4wgNx2fea6yJHODREoMFnwRpZydBnX/RjyXw2REIwdkbqE4hrTo4qfDBUA==}
+  /sass@1.69.5:
+    resolution: {integrity: sha512-qg2+UCJibLr2LCVOt3OlPhr/dqVHWOa9XtZf2OjbLs/T4VPSJ00udtgJxH3neXZm+QqX8B+3cU7RaLqp1iVfcQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:

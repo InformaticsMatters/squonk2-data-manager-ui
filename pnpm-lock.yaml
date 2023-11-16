@@ -99,8 +99,8 @@ dependencies:
     specifier: 18.2.24
     version: 18.2.24
   '@types/react-plotly.js':
-    specifier: 2.6.1
-    version: 2.6.1
+    specifier: 2.6.3
+    version: 2.6.3
   axios:
     specifier: 1.5.1
     version: 1.5.1
@@ -1762,8 +1762,8 @@ packages:
     resolution: {integrity: sha512-mxSnDQxPqsZxmeShFH+uwQ4kO4gcJcGahjjMFeLbKE95IAZiiZyiEepGZjtXJ7hN/yfu0bu9xN2ajcU0JcxX6A==}
     dev: false
 
-  /@types/react-plotly.js@2.6.1:
-    resolution: {integrity: sha512-vFJZRCC2Pav0NdrFm0grPMm9+67ejGZZglDBWqo+J6VFbB4CAatjoNiowfardznuujaaoDNoZ4MSCFwYyVk4aA==}
+  /@types/react-plotly.js@2.6.3:
+    resolution: {integrity: sha512-HBQwyGuu/dGXDsWhnQrhH+xcJSsHvjkwfSRjP+YpOsCCWryIuXF78ZCBjpfgO3sCc0Jo8sYp4NOGtqT7Cn3epQ==}
     dependencies:
       '@types/plotly.js': 2.12.30
       '@types/react': 18.2.24

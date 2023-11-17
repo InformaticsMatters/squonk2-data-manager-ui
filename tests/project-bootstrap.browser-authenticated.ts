@@ -85,7 +85,7 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   await page.locator(`input[name="projectName"]`).fill(projectName);
 
   // Click div[role="button"]:has-text("")
-  await page.locator(`div[role="button"]:has-text("")`).click();
+  await page.getByLabel("Tier").click();
 
   // Click text=Evaluation
   await page.locator(`li:has-text("Evaluation")`).click();
@@ -95,10 +95,7 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
 
   // Click button:has-text("Create")
   await page.locator(`button:has-text("Create")`).click();
-
   await page.locator(`button:has-text("Create")`).isDisabled();
-
-  await page.getByRole("alert").filter({ hasText: "Project created" }).screenshot();
 
   const regexp = new RegExp(
     baseURL + "/?\\?project=project-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+",

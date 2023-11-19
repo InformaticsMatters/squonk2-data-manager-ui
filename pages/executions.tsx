@@ -15,6 +15,7 @@ import {
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Alert, Container, Grid, MenuItem, TextField } from "@mui/material";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import type { GetServerSideProps } from "nextjs-routes";
 
@@ -22,6 +23,7 @@ import { RoleRequired } from "../components/auth/RoleRequired";
 import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/executionsCards/ApplicationCard";
 import { JobCard } from "../components/executionsCards/JobCard";
+import { TEST_JOB_ID } from "../components/executionsCards/TestJob/jobId";
 import { SearchTextField } from "../components/SearchTextField";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { useCurrentProject, useIsEditorOfCurrentProject } from "../hooks/projectHooks";
@@ -29,6 +31,13 @@ import Layout from "../layouts/Layout";
 import { dmOptions } from "../utils/api/ssrQueryOptions";
 import { search } from "../utils/app/searches";
 import { getFullReturnTo } from "../utils/next/ssr";
+
+const TestJobCard = dynamic(
+  () => import("../components/executionsCards/TestJob/TestJobCard").then((mod) => mod.TestJobCard),
+  {
+    loading: () => <CenterLoader />,
+  },
+);
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const returnTo = getFullReturnTo(ctx);
@@ -112,18 +121,18 @@ const Executions = () => {
           </Grid>
         )) ?? [];
 
+    // Filter the apps by the search value
+    const filteredJobs = jobs?.filter(({ keywords, category, name, job, description }) =>
+      search([keywords, category, name, job, description], searchValue),
+    );
+
+    // Then create a card for each
     const jobCards =
-      jobs
-        // Filter the apps by the search value
-        ?.filter(({ keywords, category, name, job, description }) =>
-          search([keywords, category, name, job, description], searchValue),
-        )
-        // Then create a card for each
-        ?.map((job) => (
-          <Grid item key={job.id} md={3} sm={6} xs={12}>
-            <JobCard disabled={!isEditor} job={job} projectId={currentProject?.project_id} />
-          </Grid>
-        )) ?? [];
+      filteredJobs?.map((job) => (
+        <Grid item key={job.id} md={3} sm={6} xs={12}>
+          <JobCard disabled={!isEditor} job={job} projectId={currentProject?.project_id} />
+        </Grid>
+      )) ?? [];
 
     const showApplications = executionTypes.includes("application");
     const showJobs = executionTypes.includes("job");
@@ -135,6 +144,8 @@ const Executions = () => {
     }
     return jobCards;
   }, [applications, currentProject?.project_id, executionTypes, jobs, searchValue, isEditor]);
+
+  process.env.NODE_ENV === "development" && cards.push(<TestJobCard key={TEST_JOB_ID} />);
 
   return (
     <>

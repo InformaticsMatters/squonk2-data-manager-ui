@@ -1,0 +1,121 @@
+{
+  "summary": {
+    "id": 999,
+    "collection": "test",
+    "job": "ui-test",
+    "version": "1.0.0",
+    "image_type": "SIMPLE",
+    "name": "UI Test Job",
+    "required_assets": [],
+    "disabled": false
+  },
+  "detail": {
+    "application": {
+      "application_id": "datamanagerjobs.squonk.it",
+      "kind": "DataManagerJob",
+      "latest_version": "v3"
+    },
+    "category": "test",
+    "collection": "rdkit",
+    "command": "echo 'Just a test'",
+    "command_encoding": "JINJA2_3_0",
+    "description": "A mock test job that only makes sense client-side. I.e. this is not part of the /jobs response. It is purely for testing the client-side code.",
+    "disabled": false,
+    "doc_url": "https://example.com",
+    "exchange_rate": "0",
+    "id": 999,
+    "image_name": "",
+    "image_project_directory": "/data",
+    "image_tag": "latest",
+    "image_type": "SIMPLE",
+    "image_working_directory": "/data",
+    "job": "ui-test",
+    "keywords": [
+      "test",
+      "ui"
+    ],
+    "name": "Fake UI Test Job",
+    "required_assets": [],
+    "variables": {
+      "inputs": {
+        "properties": {
+          "inputFile1": {
+            "mime-types": [
+              "squonk/x-smiles",
+              "text/csv"
+            ],
+            "title": "File Input (CSV or SMILES)",
+            "type": "file"
+          },
+          "inputFile2": {
+            "mime-types": [
+              "squonk/x-smiles",
+              "text/csv"
+            ],
+            "title": "Smiles Input via Sketcher or file (CSV or SMILES)",
+            "type": "molecules-smi"
+          }
+        },
+        "required": [
+          "inputFile1",
+          "inputFile2"
+        ],
+        "type": "object"
+      },
+      "options": {
+        "properties": {
+          "alpha": {
+            "default": 1,
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Tversky alpha",
+            "type": "number"
+          },
+          "descriptor": {
+            "default": "rdkit",
+            "enum": [
+              "maccs",
+              "morgan2",
+              "morgan3",
+              "rdkit"
+            ],
+            "title": "Descriptor",
+            "type": "string"
+          },
+          "headerOutputs": {
+            "default": true,
+            "title": "Checkbox",
+            "type": "boolean"
+          },
+          "nbits": {
+            "title": "Number of bits for Morgan bit vector",
+            "type": "integer"
+          },
+          "outputFileName": {
+            "default": "screened.smi",
+            "pattern": "^[A-Za-z0-9_/\\.\\-]+$",
+            "title": "Output file name with pattern",
+            "type": "string"
+          },
+          "threshold": {
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Number with domain",
+            "type": "number"
+          }
+        },
+        "required": [
+          "outputFileName",
+          "descriptor",
+          "threshold"
+        ],
+        "type": "object"
+      },
+      "outputs": {
+        "properties": {},
+        "type": "object"
+      }
+    },
+    "version": "1.0.0"
+  }
+}

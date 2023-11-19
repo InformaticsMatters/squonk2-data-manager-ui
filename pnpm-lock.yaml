@@ -135,14 +135,14 @@ dependencies:
     specifier: 3.1.2
     version: 3.1.2
   ketcher-core:
-    specifier: 2.12.0
-    version: 2.12.0
+    specifier: 2.13.0
+    version: 2.13.0
   ketcher-react:
-    specifier: 2.12.0
-    version: 2.12.0(@types/react@18.2.37)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0)
+    specifier: 2.13.0
+    version: 2.13.0(@types/react@18.2.37)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0)
   ketcher-standalone:
-    specifier: 2.12.0
-    version: 2.12.0
+    specifier: 2.13.0
+    version: 2.13.0
   lodash-es:
     specifier: 4.17.21
     version: 4.17.21
@@ -2613,10 +2613,6 @@ packages:
       color-parse: 1.3.8
     dev: false
 
-  /color-convert@0.5.3:
-    resolution: {integrity: sha512-RwBeO/B/vZR3dfKL1ye/vx8MHZ40ugzpyfeVG5GsiuGnrlMWe2o8wxBbLCpw9CsxV+wHuzYlCiWnybrIA0ling==}
-    dev: false
-
   /color-convert@1.9.3:
     resolution: {integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==}
     dependencies:
@@ -2628,10 +2624,6 @@ packages:
     engines: {node: '>=7.0.0'}
     dependencies:
       color-name: 1.1.4
-
-  /color-diff@1.4.0:
-    resolution: {integrity: sha512-4oDB/o78lNdppbaqrg0HjOp7pHmUc+dfCxWKWFnQg6AB/1dkjtBDop3RZht5386cq9xBUDRvDvSCA7WUlM9Jqw==}
-    dev: false
 
   /color-id@1.1.0:
     resolution: {integrity: sha512-2iRtAn6dC/6/G7bBIo0uupVrIne1NsQJvJxZOBCzQOfk7jRq97feaDZ3RdzuHakRXXnHGNwglto3pqtRx1sX0g==}
@@ -4065,15 +4057,6 @@ packages:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
     dev: false
 
-  /fs-extra@8.1.0:
-    resolution: {integrity: sha512-yhlQgA6mnOJUKOsRUFsgJdQCvkKhcz8tlZG5HBQfReYZy46OwLcY+Zia0mtdHsOo9y/hP+CxMN0TU9QxoOtG4g==}
-    engines: {node: '>=6 <7 || >=8'}
-    dependencies:
-      graceful-fs: 4.2.11
-      jsonfile: 4.0.0
-      universalify: 0.1.2
-    dev: false
-
   /fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
@@ -4640,10 +4623,8 @@ packages:
     engines: {node: '>=0.8.19'}
     dev: true
 
-  /indigo-ketcher@1.12.0:
-    resolution: {integrity: sha512-jjJHk3oMeswXb8xHI4ojSt2FklRPRF9aD1TD72LGTBwiMVrmk8K49HGeHuNtN21t7qN/uJlEomde591noBQ8cQ==}
-    dependencies:
-      looks-same: 8.2.4
+  /indigo-ketcher@1.13.0:
+    resolution: {integrity: sha512-XgXco+2rjIn9ynbeZ+qVFB6NyPN4BQRZ062bBo001u8/BothxhOKM4Y1IcOdxh34W0/wgCQTSEfWvI0XCR9N3Q==}
     dev: false
 
   /inflight@1.0.6:
@@ -5069,11 +5050,6 @@ packages:
       react: 18.2.0
     dev: false
 
-  /js-graph-algorithms@1.0.18:
-    resolution: {integrity: sha512-Gu1wtWzXBzGeye/j9BuyplGHscwqKRZodp/0M1vyBc19RJpblSwKGu099KwwaTx9cRIV+Qupk8xUMfEiGfFqSA==}
-    hasBin: true
-    dev: false
-
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -5124,12 +5100,6 @@ packages:
     dependencies:
       minimist: 1.2.8
     dev: true
-
-  /jsonfile@4.0.0:
-    resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
-    optionalDependencies:
-      graceful-fs: 4.2.11
-    dev: false
 
   /jsonpointer@5.0.1:
     resolution: {integrity: sha512-p/nXbhSEcu3pZRdkW1OfJhpsVtW1gd4Wa1fnQc9YLiTfAjn0312eMKimbdIQzuZl9aa9xUGaRlP9T/CJE/ditQ==}
@@ -5224,8 +5194,8 @@ packages:
     resolution: {integrity: sha512-hRkd6/XW4HTsA9vjVpY9tuXJYLSlelnkTmVFu4M9/7MIYQtFcHpbugAU7UbOfjOiVSVYl2fqgBuJ32JUmRo5Ew==}
     dev: false
 
-  /ketcher-core@2.12.0:
-    resolution: {integrity: sha512-etWdZqu4ho8CdTcDjvgaDCGPSVxXTM5DdNf68THBAJKUBssWf47UaHvqjyCW/82vNJS/w99lUwONG8j9MYn11A==}
+  /ketcher-core@2.13.0:
+    resolution: {integrity: sha512-kE+Ip8149Xwz6Zt/8OH48wI+xZNhR/FFvdGwfDUQ3mMM9cocobXqOUCmnHWgD/8Aap6ldUVHDLdwIAJOHOusyg==}
     engines: {node: '>=14'}
     dependencies:
       '@babel/runtime': 7.23.2
@@ -5236,8 +5206,8 @@ packages:
       svgpath: 2.6.0
     dev: false
 
-  /ketcher-react@2.12.0(@types/react@18.2.37)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-l9E59iAHm1W5b3Q9mVOSBecbEUOpw47vMtA+EmYqnNAyUZFPShT55MZXwpYrFser8m6AKo2+tWonWzd9Ot337Q==}
+  /ketcher-react@2.13.0(@types/react@18.2.37)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Zt5lKc18HFefNbdoInEsvrVt0WyCbkH8uMFhisXbgEImV2MzWCwxquex2+OEzZgytf3lXWBSAIK8kxLr2y6xxA==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.2.0
@@ -5256,7 +5226,7 @@ packages:
       font-face-observer: 1.0.0
       hoist-non-react-statics: 3.3.2
       intersection-observer: 0.12.2
-      ketcher-core: 2.12.0
+      ketcher-core: 2.13.0
       lodash: 4.17.21
       miew-react: 1.0.0(@types/react@18.2.37)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
@@ -5289,13 +5259,13 @@ packages:
       - supports-color
     dev: false
 
-  /ketcher-standalone@2.12.0:
-    resolution: {integrity: sha512-ImivV54XqKzhIcJShCeQAXx2Mm1KQaltw+gcRipdgXZJLWG3t9BofXBh4EBLiweACl8wT/aGuZvBTMptU2ofZQ==}
+  /ketcher-standalone@2.13.0:
+    resolution: {integrity: sha512-K1erHMhwSAI5kf80LEoyQyjetdwKbKTyH9SASZH+W1Gi/6WRAIQTEpXi8NEJl8BoY0+ffoeCFdIWNPaUlB7gJg==}
     engines: {node: '>=14'}
     dependencies:
       '@babel/runtime': 7.23.2
-      indigo-ketcher: 1.12.0
-      ketcher-core: 2.12.0
+      indigo-ketcher: 1.13.0
+      ketcher-core: 2.13.0
     dev: false
 
   /keyv@4.5.4:
@@ -5426,19 +5396,6 @@ packages:
 
   /longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
-    dev: false
-
-  /looks-same@8.2.4:
-    resolution: {integrity: sha512-O+Y3dA2dmHN4oj1Av0FhmuNIxFtCJ5lz7QWtGntsQC3DG2W9PeLQYAJHcBbG3tDWKiKR19LamMxRFJk+7iLuIA==}
-    engines: {node: '>= 12.0.0'}
-    dependencies:
-      color-diff: 1.4.0
-      fs-extra: 8.1.0
-      js-graph-algorithms: 1.0.18
-      lodash: 4.17.21
-      nested-error-stacks: 2.1.1
-      parse-color: 1.0.0
-      sharp: 0.30.7
     dev: false
 
   /loose-envify@1.4.0:
@@ -6252,10 +6209,6 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: false
 
-  /nested-error-stacks@2.1.1:
-    resolution: {integrity: sha512-9iN1ka/9zmX1ZvLV9ewJYEk9h7RyRRtqdK0woXcqohu8EWIerfPUjYJPg0ULy0UqP7cslmdGc8xKDJcojlKiaw==}
-    dev: false
-
   /next-http-proxy-middleware@1.2.6:
     resolution: {integrity: sha512-vHmtFLeO+HomU4Fx/CoA4MbLnXya1B17yR5qOmpYZqRjzGa17a9dgXh9ONvquSZdMrIn7bUfjoPLxMkYMtKj3Q==}
     engines: {node: '>=10.0.0'}
@@ -6325,10 +6278,6 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       semver: 7.5.4
-    dev: false
-
-  /node-addon-api@5.1.0:
-    resolution: {integrity: sha512-eh0GgfEkpnoWDq+VY8OyvYhFEzBk6jIYbRKdIlyTiAXIVJ8PyBaKb0rp7oDtoddbdoHWhq8wwr+XZ81F1rpNdA==}
     dev: false
 
   /node-addon-api@6.1.0:
@@ -6620,12 +6569,6 @@ packages:
 
   /parenthesis@3.1.8:
     resolution: {integrity: sha512-KF/U8tk54BgQewkJPvB4s/US3VQY68BRDpH638+7O/n58TpnwiwnOtGIOsT2/i+M78s61BBpeC83STB88d8sqw==}
-    dev: false
-
-  /parse-color@1.0.0:
-    resolution: {integrity: sha512-fuDHYgFHJGbpGMgw9skY/bj3HL/Jrn4l/5rSspy00DoT4RyLnDcRvPxdZ+r6OFwIsgAuhDh4I09tAId4mI12bw==}
-    dependencies:
-      color-convert: 0.5.3
     dev: false
 
   /parse-entities@2.0.0:
@@ -7591,21 +7534,6 @@ packages:
     resolution: {integrity: sha1-QV9CcC1z2BAzApLMXuhurhoRoXA=}
     dev: false
 
-  /sharp@0.30.7:
-    resolution: {integrity: sha512-G+MY2YW33jgflKPTXXptVO28HvNOo9G3j0MybYAHeEmby+QuD2U98dT6ueht9cv/XDqZspSpIhoSW+BAKJ7Hig==}
-    engines: {node: '>=12.13.0'}
-    requiresBuild: true
-    dependencies:
-      color: 4.2.3
-      detect-libc: 2.0.2
-      node-addon-api: 5.1.0
-      prebuild-install: 7.1.1
-      semver: 7.5.4
-      simple-get: 4.0.1
-      tar-fs: 2.1.1
-      tunnel-agent: 0.6.0
-    dev: false
-
   /sharp@0.32.6:
     resolution: {integrity: sha512-KyLTWwgcR9Oe4d9HwCwNM2l7+J0dUQwn/yf7S0EnTtb0eVS4RxO0eUSvxPtzT4F3SY+C4K6fqdv/DO27sJ/v/w==}
     engines: {node: '>=14.15.0'}
@@ -8418,11 +8346,6 @@ packages:
       '@types/unist': 3.0.2
       unist-util-is: 6.0.0
       unist-util-visit-parents: 6.0.1
-    dev: false
-
-  /universalify@0.1.2:
-    resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
-    engines: {node: '>= 4.0.0'}
     dev: false
 
   /unquote@1.1.1:

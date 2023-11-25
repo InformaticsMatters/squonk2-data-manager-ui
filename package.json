@@ -55,7 +55,7 @@
     "@squonk/account-server-client": "2.0.6",
     "@squonk/data-manager-client": "1.2.3",
     "@squonk/mui-theme": "3.0.2",
-    "@squonk/sdf-parser": "1.1.1",
+    "@squonk/sdf-parser": "1.2.0",
     "@tanstack/match-sorter-utils": "8.8.4",
     "@tanstack/react-query": "4.36.1",
     "@tanstack/react-query-devtools": "4.36.1",

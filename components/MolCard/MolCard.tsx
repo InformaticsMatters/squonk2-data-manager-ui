@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Children, useState } from "react";
+import { useState } from "react";
 
 import type { CardActionsProps, CardProps } from "@mui/material";
 import { Card, CardActions, CardContent } from "@mui/material";
@@ -28,6 +28,8 @@ export const MolCard = ({
 }: MolCardProps) => {
   const [hover, setHover] = useState<boolean>(false);
 
+  const actionsContent = actions(hover);
+
   return (
     <Card
       {...cardProps}
@@ -39,11 +41,13 @@ export const MolCard = ({
     >
       <CardContent>
         <DepictMolecule depictParams={depictParams} {...imgSrc} />
-        {Children.only(children)}
+        {children}
       </CardContent>
-      <CardActions {...actionsProps} disableSpacing>
-        {actions(hover)}
-      </CardActions>
+      {actionsContent && (
+        <CardActions {...actionsProps} disableSpacing>
+          {actionsContent}
+        </CardActions>
+      )}
     </Card>
   );
 };

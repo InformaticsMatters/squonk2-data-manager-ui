@@ -2,7 +2,16 @@ import { useMemo, useState } from "react";
 
 import type { SDFRecord } from "@squonk/sdf-parser";
 
-import { Alert, AlertTitle, Box, LinearProgress, Typography } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  InputLabel,
+  LinearProgress,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 
@@ -10,12 +19,11 @@ import { MolCard } from "../components/MolCard";
 import CalculationsTable from "../components/MolCard/CalculationsTable";
 import { ScatterPlot } from "../components/ScatterPlot/ScatterPlot";
 
-const getCards = (molecules: Must<Molecule>[]) => {
+const getCards = (molecules: Must<Molecule>[], propsToHide: string[] = []) => {
   return molecules.slice(0, 50).map((molecule) => {
-    const properties = Object.entries(molecule.properties).map((property) => ({
-      name: property[0],
-      value: property[1],
-    }));
+    const properties = Object.entries(molecule.properties)
+      .map((property) => ({ name: property[0], value: property[1] }))
+      .filter((property) => !propsToHide.includes(property.name));
     return (
       <MolCard
         depictParams={{
@@ -26,17 +34,7 @@ const getCards = (molecules: Must<Molecule>[]) => {
         molFile={molecule.molFile}
         variant="molFile"
       >
-        <CalculationsTable
-          calcs={Object.keys(molecule.properties).reduce(
-            (acc, key) => {
-              acc[key] = key;
-              return acc;
-            },
-            {} as Record<string, any>,
-          )}
-          fontSize="0.7rem"
-          properties={properties}
-        />
+        {properties.length ? <CalculationsTable fontSize="0.7rem" properties={properties} /> : null}
       </MolCard>
     );
   });
@@ -105,6 +103,8 @@ export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
   const molecules = useMemo(() => recordsToMolecules(records), [records]);
   const properties = useMemo(() => getPropArrayFromRecords(records), [records]);
 
+  const [propsToHide, setPropsToHide] = useState<string[]>([]);
+
   const [selection, setSelection] = useState<string[]>([]);
 
   if (isFetching) {
@@ -142,10 +142,32 @@ export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
           width={600}
         />
       </Box>
+      <Box sx={{ gridColumn: "span 2" }}>
+        <h2>Config</h2>
+        <InputLabel id="properties-to-hide-label">Properties to hide</InputLabel>
+        <Select
+          fullWidth
+          multiple
+          id="properties-to-hide"
+          label="Properties to hide"
+          labelId="properties-to-hide-label"
+          value={propsToHide}
+          onChange={(event) =>
+            Array.isArray(event.target.value) && setPropsToHide(event.target.value)
+          }
+        >
+          {properties.map((property) => (
+            <MenuItem key={property} value={property}>
+              {property}
+            </MenuItem>
+          ))}
+        </Select>
+      </Box>
       {getCards(
         selection
           .map((id) => molecules.find((molecule) => molecule.id === id))
           .filter((molecule): molecule is Must<Molecule> => !!molecule),
+        propsToHide,
       )}
     </Box>
   );

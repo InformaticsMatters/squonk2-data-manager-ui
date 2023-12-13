@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-import type { OrganisationGetResponse } from "@squonk/account-server-client";
 import { useGetDefaultOrganisation } from "@squonk/account-server-client/organisation";
 import { useGetProduct } from "@squonk/account-server-client/product";
 
@@ -15,22 +14,23 @@ export const useSyncUnitAndOrgFromProduct = () => {
   });
   const product = data?.product;
 
-  const { data: defaultOrg } = useGetDefaultOrganisation({
-    query: {
-      // using OrganisationGetResponse here as OrganisationGetDefaultResponse isn't currently importable
-      // this is to patch a lie by the OpenAPI schema. When the default organisation is hidden,
-      // this endpoint returns {} which is not valid according to the generated TS types
-      select: (data: OrganisationGetResponse | undefined) =>
-        data?.id !== undefined ? data : undefined,
-    },
-  });
+  const { data: defaultOrg } = useGetDefaultOrganisation();
 
   const [, setUnit] = useSelectedUnit();
   const [, setOrganisation] = useSelectedOrganisation();
 
   // First set the default org as the current org on first load
   useEffect(() => {
-    setOrganisation(defaultOrg);
+    // ensure the partial org is all there before "asserting" that it's an OrganisationDetail type
+    if (
+      typeof defaultOrg?.id === "string" &&
+      typeof defaultOrg.caller_is_member === "boolean" &&
+      typeof defaultOrg.created === "string" &&
+      typeof defaultOrg.name === "string" &&
+      typeof defaultOrg.private === "boolean"
+    ) {
+      setOrganisation(defaultOrg as Required<typeof defaultOrg>);
+    }
   }, [defaultOrg, setOrganisation]);
 
   // Used in case a user directly navigates to a project's URL

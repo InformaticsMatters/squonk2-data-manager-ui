@@ -60,8 +60,8 @@ dependencies:
     specifier: 7.81.1
     version: 7.81.1(next@14.0.3)(react@18.2.0)(webpack@5.89.0)
   '@squonk/account-server-client':
-    specifier: 2.0.8
-    version: 2.0.8(@tanstack/react-query@4.36.1)(axios@1.6.2)
+    specifier: 2.0.9
+    version: 2.0.9(@tanstack/react-query@4.36.1)(axios@1.6.2)
   '@squonk/data-manager-client':
     specifier: 1.2.5
     version: 1.2.5(@tanstack/react-query@4.36.1)(axios@1.6.2)
@@ -1455,8 +1455,8 @@ packages:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
     dev: false
 
-  /@squonk/account-server-client@2.0.8(@tanstack/react-query@4.36.1)(axios@1.6.2):
-    resolution: {integrity: sha512-3v+aMC0eeLc71NykRhS7i3tesHHigPRz8faAWA5fPSXQoIZzBN/jxO6HGpEes2uZUBvHvmQ7LHxb9Z6R7i7Ugg==}
+  /@squonk/account-server-client@2.0.9(@tanstack/react-query@4.36.1)(axios@1.6.2):
+    resolution: {integrity: sha512-fepRbQRtG0fvCBso8wRNDRZLgBZSPUWBfZd3PZxK93TB/sXEfkTz6WXwFK7+C5uVoK6FqbxroNfsUiEtTkD5uA==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'

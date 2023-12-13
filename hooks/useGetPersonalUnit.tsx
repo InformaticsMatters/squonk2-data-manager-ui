@@ -8,7 +8,7 @@ export const useGetPersonalUnit = (username?: string) => {
     query: {
       select: (units) =>
         units.units
-          .find((orgUnit) => orgUnit.organisation.name === "Default")
+          .find((orgUnit) => orgUnit.organisation.name === process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME)
           ?.units.find((unit) => unit.owner_id === (username ?? user.username)),
     },
   });

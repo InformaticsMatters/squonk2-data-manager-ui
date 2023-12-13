@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import type { OrganisationGetResponse } from "@squonk/account-server-client";
 import { useGetDefaultOrganisation } from "@squonk/account-server-client/organisation";
 import { useGetProduct } from "@squonk/account-server-client/product";
 
@@ -14,7 +15,15 @@ export const useSyncUnitAndOrgFromProduct = () => {
   });
   const product = data?.product;
 
-  const { data: defaultOrg } = useGetDefaultOrganisation();
+  const { data: defaultOrg } = useGetDefaultOrganisation({
+    query: {
+      // using OrganisationGetResponse here as OrganisationGetDefaultResponse isn't currently importable
+      // this is to patch a lie by the OpenAPI schema. When the default organisation is hidden,
+      // this endpoint returns {} which is not valid according to the generated TS types
+      select: (data: OrganisationGetResponse | undefined) =>
+        data?.id !== undefined ? data : undefined,
+    },
+  });
 
   const [, setUnit] = useSelectedUnit();
   const [, setOrganisation] = useSelectedOrganisation();

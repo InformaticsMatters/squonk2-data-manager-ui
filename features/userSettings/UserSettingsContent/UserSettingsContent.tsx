@@ -46,7 +46,7 @@ export const UserSettingsContent = () => {
 
   const project = useCurrentProject();
 
-  const [permissionLevel, setPermissionLevel] = useState<PermissionLevel>("owner");
+  const [permissionLevel, setPermissionLevel] = useState<PermissionLevel>("editor");
   const { data: projects } = useGetProjects(undefined, {
     query: { select: (data) => data.projects },
   });
@@ -86,7 +86,7 @@ export const UserSettingsContent = () => {
       <PageSection level={2} title="Organisation and Unit">
         <Box alignItems="baseline" display="flex" gap={1} marginBottom={1}>
           <Typography>
-            Filter projects for user <em>{user.username}</em> where role is
+            Filter for user <em>{user.username}</em> where role is
           </Typography>
           <PermissionLevelSelect
             value={permissionLevel}

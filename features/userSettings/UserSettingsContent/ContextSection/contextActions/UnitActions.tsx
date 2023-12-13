@@ -31,7 +31,7 @@ export const UnitActions = () => {
       {personalUnit === undefined &&
         !isLoading &&
         !error &&
-        organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && (
+        organisation?.name === process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && (
           <CreateDefaultUnitListItem />
         )}
       {isUnitOwner && unit && (

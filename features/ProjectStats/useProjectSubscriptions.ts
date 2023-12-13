@@ -45,9 +45,9 @@ export const useProjectSubscriptions = ([level, user]: PermissionLevelFilter) =>
             ...products?.find((product) => product.product.id === project.product_id),
             ...project,
           }))
-          // filter by organisation
-          .filter((entry) => !organisation || entry.organisation?.id === organisation.id)
-          // filter by unit
+          // filter by organisation: keep if either no org is selected or the project is in the selected org
+          .filter((entry) => !organisation || entry.organisation_id === organisation.id)
+          // filter by unit: keep if either no unit is selected or the project is in the selected unit
           .filter((entry) => !unit || entry.unit_id === unit.id) satisfies ProjectSubscription[],
     },
   });

@@ -44,5 +44,5 @@ storageState.json
 tsconfig.tsbuildinfo
 .eslintcache
 
-# Sentry
+# Sentry Config File
 .sentryclirc

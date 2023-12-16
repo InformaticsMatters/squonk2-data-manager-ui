@@ -1,13 +1,13 @@
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
-import { Container, Typography } from "@mui/material";
+import { Container } from "@mui/material";
 import Error from "next/error";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { RoleRequired } from "../../components/auth/RoleRequired";
 import { AS_ROLES, DM_ROLES } from "../../constants/auth";
-import type { SDFViewerProps } from "../../features/SDFViewer";
 import { SDFViewer } from "../../features/SDFViewer";
+import type { SDFViewerDataProps } from "../../features/SDFViewer/SDFViewerData";
 import Layout from "../../layouts/Layout";
 
 const SDF = () => {
@@ -37,7 +37,7 @@ const SDF = () => {
   );
 };
 
-const SDFView = ({ project, path, file }: SDFViewerProps) => {
+const SDFView = ({ project, path, file }: Omit<SDFViewerDataProps, "config">) => {
   // path and file to display
   const filePath = path === "" ? file : path + "/" + file;
 
@@ -51,9 +51,7 @@ const SDFView = ({ project, path, file }: SDFViewerProps) => {
       <Head>
         <title>Squonk | {filePath} </title>
       </Head>
-      <Typography gutterBottom variant="h1">
-        {filePath}
-      </Typography>
+
       <SDFViewer file={file} path={path} project={project} />
     </>
   );

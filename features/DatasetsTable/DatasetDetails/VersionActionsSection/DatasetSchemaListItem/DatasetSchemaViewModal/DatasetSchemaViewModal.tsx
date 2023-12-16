@@ -8,12 +8,12 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { CenterLoader } from "../../../../../../components/CenterLoader";
 import { DataTable } from "../../../../../../components/DataTable/DataTable";
 import { ModalWrapper } from "../../../../../../components/modals/ModalWrapper";
+import type { JSON_SCHEMA_TYPE } from "../../../../../../utils/app/jsonSchema";
+import { JSON_SCHEMA_TYPES } from "../../../../../../utils/app/jsonSchema";
 import { getErrorMessage } from "../../../../../../utils/next/orvalError";
-import { JSON_SCHEMA_TYPES } from "./constants";
 import { DatasetSchemaDescriptionInput } from "./DatasetSchemaDescriptionInput";
 import { DatasetSchemaInputCell } from "./DatasetSchemaInputCell";
 import { DatasetSchemaSelectCell } from "./DatasetSchemaSelectCell";
-import type { JSONSchemaType } from "./types";
 import { useDatasetSchema } from "./useDatasetSchema";
 
 type TableSchemaView = {
@@ -23,8 +23,8 @@ type TableSchemaView = {
     current: string;
   };
   type: {
-    original: JSONSchemaType;
-    current: JSONSchemaType;
+    original: JSON_SCHEMA_TYPE;
+    current: JSON_SCHEMA_TYPE;
   };
 };
 

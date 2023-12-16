@@ -14,7 +14,7 @@ import {
 import dynamic from "next/dynamic";
 import type { PlotDatum } from "plotly.js-basic-dist";
 
-import type { Molecule } from "../../features/SDFViewer";
+import type { Molecule } from "../../features/SDFViewer/SDFViewerData";
 
 const Plot = dynamic<PlotParams>(
   () => import("../../components/viz/Plot").then((mod) => mod.Plot),
@@ -32,7 +32,7 @@ const getPropArrayFromMolecules = (molecules: Molecule[], prop: string | null) =
   if (prop === "id") {
     return molecules.map((molecule) => molecule.id);
   }
-  return molecules.map((molecule) => (prop ? molecule.properties[prop] ?? null : null));
+  return molecules.map((molecule) => (prop ? molecule.properties[prop] : null));
 };
 
 type AxisSeries = ReturnType<typeof getPropArrayFromMolecules>;

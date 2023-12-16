@@ -2,22 +2,15 @@ import { useMemo, useState } from "react";
 
 import type { SDFRecord } from "@squonk/sdf-parser";
 
-import {
-  Alert,
-  AlertTitle,
-  Box,
-  InputLabel,
-  LinearProgress,
-  MenuItem,
-  Select,
-  Typography,
-} from "@mui/material";
+import { Alert, AlertTitle, Box, LinearProgress, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 
-import { MolCard } from "../components/MolCard";
-import CalculationsTable from "../components/MolCard/CalculationsTable";
-import { ScatterPlot } from "../components/ScatterPlot/ScatterPlot";
+import { MolCard } from "../../components/MolCard";
+import CalculationsTable from "../../components/MolCard/CalculationsTable";
+import { ScatterPlot } from "../../components/ScatterPlot/ScatterPlot";
+import type { SDFViewerConfig } from "../../utils/api/sdfViewer";
+import { censorConfig } from "../../utils/api/sdfViewer";
 
 const getCards = (molecules: Must<Molecule>[], propsToHide: string[] = []) => {
   return molecules.slice(0, 50).map((molecule) => {
@@ -51,11 +44,16 @@ const getPropArrayFromRecords = (molecules: Molecule[] | SDFRecord[]): string[] 
   }, []);
 };
 
-const useSDFRecords = (project: string, path: string, file: string) => {
+const useSDFRecords = (project: string, path: string, file: string, config: SDFViewerConfig) => {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-  const url = `${basePath}/api/sdf-parser?project=${encodeURIComponent(
+
+  const queryParams = new URLSearchParams({
     project,
-  )}&path=${encodeURIComponent(path)}&file=${encodeURIComponent(file)}`;
+    path,
+    file,
+    config: censorConfig(config),
+  });
+  const url = `${basePath}/api/sdf-parser?${queryParams.toString()}`;
 
   return useQuery<SDFRecord[], Error, SDFRecord[], string[]>(
     ["sdf", project, path, file],
@@ -89,21 +87,24 @@ export const recordsToMolecules = (records: SDFRecord[]): Must<Molecule>[] => {
     }));
 };
 
-export interface SDFViewerProps {
+export interface SDFViewerDataProps {
   project: string;
   path: string;
   file: string;
+  config: SDFViewerConfig;
 }
 
-export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
-  const { data, isFetching, error } = useSDFRecords(project, path, file);
+export const SDFViewerData = ({ project, path, file, config }: SDFViewerDataProps) => {
+  const { data, isFetching, error } = useSDFRecords(project, path, file, config);
 
   const records = useMemo(() => data ?? [], [data]);
 
   const molecules = useMemo(() => recordsToMolecules(records), [records]);
   const properties = useMemo(() => getPropArrayFromRecords(records), [records]);
 
-  const [propsToHide, setPropsToHide] = useState<string[]>([]);
+  const propsToHide = Object.entries(config)
+    .filter(([_field, property]) => !property.cardView)
+    .map((entry) => entry[0]);
 
   const [selection, setSelection] = useState<string[]>([]);
 
@@ -141,27 +142,6 @@ export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
           selectPoints={(points) => setSelection(points)}
           width={600}
         />
-      </Box>
-      <Box sx={{ gridColumn: "span 2" }}>
-        <h2>Config</h2>
-        <InputLabel id="properties-to-hide-label">Properties to hide</InputLabel>
-        <Select
-          fullWidth
-          multiple
-          id="properties-to-hide"
-          label="Properties to hide"
-          labelId="properties-to-hide-label"
-          value={propsToHide}
-          onChange={(event) =>
-            Array.isArray(event.target.value) && setPropsToHide(event.target.value)
-          }
-        >
-          {properties.map((property) => (
-            <MenuItem key={property} value={property}>
-              {property}
-            </MenuItem>
-          ))}
-        </Select>
       </Box>
       {getCards(
         selection

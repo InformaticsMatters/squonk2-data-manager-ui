@@ -69,8 +69,8 @@ dependencies:
     specifier: 3.0.2
     version: 3.0.2(@mui/material@5.14.18)
   '@squonk/sdf-parser':
-    specifier: 1.1.1
-    version: 1.1.1
+    specifier: 1.3.0
+    version: 1.3.0
   '@tanstack/match-sorter-utils':
     specifier: 8.8.4
     version: 8.8.4
@@ -182,6 +182,9 @@ dependencies:
   react-dropzone:
     specifier: 14.2.3
     version: 14.2.3(react@18.2.0)
+  react-hook-form:
+    specifier: 7.48.2
+    version: 7.48.2(react@18.2.0)
   react-plotly.js:
     specifier: 2.6.0
     version: 2.6.0(plotly.js@2.27.1)(react@18.2.0)
@@ -1511,8 +1514,8 @@ packages:
       '@mui/material': 5.14.18(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
-  /@squonk/sdf-parser@1.1.1:
-    resolution: {integrity: sha512-jGHo405vUb039kekGDaJDRx48A7UEvv9cHSL2qpKZOTvHPto3acNber2LQ1+OWQOhJU0sgZoqgzl15rOwWUimA==}
+  /@squonk/sdf-parser@1.3.0:
+    resolution: {integrity: sha512-vnQ1WUOdW8FUtQtUAZP0R/KRf6YzusMSrLdup6esOirRagAc28EUSwRDz30sue6zrWynFuTMY0MElVkC6BgCag==}
     dev: false
 
   /@swc/helpers@0.5.2:
@@ -6999,6 +7002,15 @@ packages:
 
   /react-fast-compare@2.0.4:
     resolution: {integrity: sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==}
+    dev: false
+
+  /react-hook-form@7.48.2(react@18.2.0):
+    resolution: {integrity: sha512-H0T2InFQb1hX7qKtDIZmvpU1Xfn/bdahWBN1fH19gSe4bBEqTfmlr7H3XWTaVtiK4/tpPaI1F3355GPMZYge+A==}
+    engines: {node: '>=12.22.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-intersection-observer@8.34.0(react@18.2.0):

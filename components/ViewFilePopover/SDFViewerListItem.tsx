@@ -1,4 +1,4 @@
-import { Description as DescriptionIcon } from "@mui/icons-material";
+import { Biotech as BiotechIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import A from "next/link";
 import { useRouter } from "next/router";
@@ -37,11 +37,13 @@ export const SDFViewerListItem = ({ fileName, path, onClick }: SDFViewerListItem
         onClick={() => onClick()}
       >
         <ListItemText
-          primary="SDF Viewer"
-          secondary="Displays the records in a card view with a scatter plot to filter those displayed."
+          primary="SDF Viewer (alpha)"
+          secondary="Displays SDF records as molecule cards containing the structure and properties,
+          filterable with a scatter plot selector. This feature is under activate development and
+          may not work as expected. Please provide us feedback."
         />
         <ListItemIcon sx={{ ml: 2 }}>
-          <DescriptionIcon color="action" />
+          <BiotechIcon color="action" />
         </ListItemIcon>
       </ListItemButton>
     </A>

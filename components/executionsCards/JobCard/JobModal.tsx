@@ -108,7 +108,6 @@ export const JobModal = ({
     (job?.variables?.inputs as InputSchema | undefined)?.required ?? [],
     Object.keys(inputsData).length > 0 ? inputsData : specVariables ?? {},
   );
-  const [optionsValid, setOptionsValid] = useState<boolean>(!!specVariables);
 
   const formRef = useRef<any>();
 
@@ -154,7 +153,7 @@ export const JobModal = ({
       DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`job-${jobId}`}
       open={open}
-      submitDisabled={!optionsValid || !inputsValid}
+      submitDisabled={!formRef.current?.validateForm() || !inputsValid}
       submitText="Run"
       title={job?.name ?? "Run Job"}
       onClose={onClose}
@@ -206,13 +205,7 @@ export const JobModal = ({
                       showErrorList={false}
                       uiSchema={{ "ui:order": job.variables.order?.options }}
                       validator={validator}
-                      onChange={(event) => {
-                        setOptionsValid(formRef.current?.validateForm());
-                        setOptionsFormData(event.formData);
-                      }}
-                      onError={() => {
-                        // do nothing - this just console.errors by default
-                      }}
+                      onChange={(event) => setOptionsFormData(event.formData)}
                     >
                       {/* Remove the default submit button */}
                       <div />

@@ -150,6 +150,12 @@ jobs:
     # Ok for tests/dev but we don't do this on prod. This is to prevent some flakely tests from causing problems
     - name: Disable strict SSL
       run: npm config set strict-ssl=false
+    - name: Turnstyle
+      uses: softprops/turnstyle@v1
+      with:
+        abort-after-seconds: 600
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Test without base path
       env:
         AUTH0_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"

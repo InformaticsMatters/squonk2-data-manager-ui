@@ -3,7 +3,8 @@ import { useMemo } from "react";
 import type { ProductDmProjectTier, ProductDmStorage } from "@squonk/account-server-client";
 import type { ProjectDetail } from "@squonk/data-manager-client";
 
-import { Box, useTheme } from "@mui/material";
+import LockIcon from "@mui/icons-material/Lock";
+import { Box, Tooltip, Typography, useTheme } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import { DataTable } from "../../components/DataTable";
@@ -56,6 +57,17 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
       projectColumnHelper.accessor((row) => row.name, {
         id: "projectName",
         header: "Project name",
+        cell: ({ row, getValue }) => (
+          <Typography alignContent="center" display="flex" gap="0.3em" lineHeight="1.5rem">
+            {row.original.private && (
+              <Tooltip title="Private">
+                <LockIcon fontSize="small" />
+              </Tooltip>
+            )}
+
+            {getValue()}
+          </Typography>
+        ),
       }),
       projectColumnHelper.accessor("owner", { header: "Owner" }),
       projectColumnHelper.accessor((row) => formatTierString(row.product?.flavour ?? ""), {

@@ -13,7 +13,8 @@ export const login = async (page: Page) => {
   await page.waitForURL(KEYCLOAK_URL + "/**");
   await page.getByLabel("Username or email").click();
   await page.getByLabel("Username or email").fill(PW_USERNAME as string);
-  await page.getByLabel("Username or email").press("Tab");
-  await page.getByLabel("Password").fill(PW_PASSWORD as string);
-  await page.getByRole("button", { name: "Log In" }).click();
+  await page.getByLabel("Password", { exact: true }).fill(PW_PASSWORD as string);
+  //                                       For keycloak ~v23
+  //                                                 For keycloak ~v14
+  await page.getByRole("button", { name: /(Sign In)|(Log In)/ }).click();
 };

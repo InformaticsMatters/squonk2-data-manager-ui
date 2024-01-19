@@ -17,7 +17,7 @@ export default defineConfig({
         baseURL: baseURL.href,
         trace: "on",
       },
-      retries: 3,
+      retries: 0,
       timeout: 60000,
       testMatch: "**/*.browser.ts",
     },

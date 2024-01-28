@@ -3,13 +3,13 @@ import { useMemo } from "react";
 import type { ProductDmProjectTier, ProductDmStorage } from "@squonk/account-server-client";
 import type { ProjectDetail } from "@squonk/data-manager-client";
 
-import LockIcon from "@mui/icons-material/Lock";
-import { Box, Tooltip, Typography, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import { DataTable } from "../../components/DataTable";
 import { ChargesLinkIconButton } from "../../components/products/ChargesLinkIconButton";
 import { DeleteProductButton } from "../../components/products/DeleteProductButton";
+import { ProjectName } from "../../components/projects/ProjectName";
 import type { PermissionLevelFilter } from "../../components/userContext/filter";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
@@ -58,15 +58,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
         id: "projectName",
         header: "Project name",
         cell: ({ row, getValue }) => (
-          <Typography alignContent="center" display="flex" gap="0.3em" lineHeight="1.5rem">
-            {row.original.private && (
-              <Tooltip title="Private">
-                <LockIcon fontSize="small" />
-              </Tooltip>
-            )}
-
-            {getValue()}
-          </Typography>
+          <ProjectName isPrivate={row.original.private} name={getValue()} />
         ),
       }),
       projectColumnHelper.accessor("owner", { header: "Owner" }),

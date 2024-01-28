@@ -35,7 +35,13 @@ const UserMenuContentInner = () => {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
 
   if (error) {
-    return <Alert severity="error" title={error.message} />;
+    return (
+      <Alert severity="error">
+        <Typography>
+          {error.message || "We couldn't log you in. Please try cleaning cookies and refresh."}
+        </Typography>
+      </Alert>
+    );
   }
 
   if (isLoading) {

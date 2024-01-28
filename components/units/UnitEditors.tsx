@@ -9,9 +9,9 @@ import type { DmError } from "@squonk/data-manager-client";
 
 import { useQueryClient } from "@tanstack/react-query";
 
-import { ManageUsers } from "../../../../../components/ManageUsers";
-import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
-import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
+import { useEnqueueError } from "../../hooks/useEnqueueStackError";
+import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { ManageUsers } from "../ManageUsers";
 
 export interface UnitEditorsProps {
   /**

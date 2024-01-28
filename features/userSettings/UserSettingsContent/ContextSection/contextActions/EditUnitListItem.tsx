@@ -3,10 +3,11 @@ import { useState } from "react";
 import type { UnitDetail } from "@squonk/account-server-client";
 
 import { Edit as EditIcon } from "@mui/icons-material";
-import { ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
+import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 
 import { ModalWrapper } from "../../../../../components/modals/ModalWrapper";
-import { UnitEditors } from "./UnitEditors";
+import { EditUnit } from "../../../../../components/units/EditUnit";
+import { UnitEditors } from "../../../../../components/units/UnitEditors";
 
 export interface EditUnitListItemProps {
   unit: UnitDetail;
@@ -30,10 +31,16 @@ export const EditUnitListItem = ({ unit }: EditUnitListItemProps) => {
         title="Edit Unit"
         onClose={() => setOpen(false)}
       >
-        <Typography gutterBottom variant="h3">
-          Editors
-        </Typography>
-        <UnitEditors unit={unit} />
+        <Box display="flex" flexDirection="column" gap={2}>
+          <Typography component="h3" variant="h4">
+            Name
+          </Typography>
+          <EditUnit unit={unit} />
+          <Typography component="h3" variant="h4">
+            Editors
+          </Typography>
+          <UnitEditors unit={unit} />
+        </Box>
       </ModalWrapper>
     </>
   );

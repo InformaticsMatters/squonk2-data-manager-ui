@@ -99,7 +99,7 @@ jobs:
         DANGEROUS__DISABLE_SSL_CERT_CHECK_IN_API_PROXY: 1
         DATA_MANAGER_API_SERVER: "https://data-manager-test.xchem-dev.diamond.ac.uk/data-manager-api"
         ACCOUNT_SERVER_API_SERVER: "https://account-server-test.xchem-dev.diamond.ac.uk/account-server-api"
-        KEYCLOAK_URL: "https://keycloak.xchem-dev.diamond.ac.uk/auth/realms/xchem"
+        KEYCLOAK_URL: "https://keycloak-test.xchem-dev.diamond.ac.uk/auth/realms/squonk"
         PW_USERNAME: "dmit-user-a"
         PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
         TEST_PORT: 3000
@@ -168,7 +168,7 @@ jobs:
         BASE_PATH: ""
         DATA_MANAGER_API_SERVER: "https://data-manager-test.xchem-dev.diamond.ac.uk/data-manager-api"
         ACCOUNT_SERVER_API_SERVER: "https://account-server-test.xchem-dev.diamond.ac.uk/account-server-api"
-        KEYCLOAK_URL: "https://keycloak.xchem-dev.diamond.ac.uk/auth/realms/xchem"
+        KEYCLOAK_URL: "https://keycloak-test.xchem-dev.diamond.ac.uk/auth/realms/squonk"
         PW_USERNAME: "dmit-user-a"
         PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
         TEST_PORT: 3000

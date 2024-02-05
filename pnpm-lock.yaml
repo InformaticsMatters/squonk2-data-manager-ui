@@ -45,17 +45,17 @@ dependencies:
     specifier: 14.0.3
     version: 14.0.3(@mdx-js/loader@3.0.0)(@mdx-js/react@3.0.0)
   '@rjsf/core':
-    specifier: 5.14.2
-    version: 5.14.2(@rjsf/utils@5.14.2)(react@18.2.0)
+    specifier: 5.17.0
+    version: 5.17.0(@rjsf/utils@5.17.0)(react@18.2.0)
   '@rjsf/mui':
-    specifier: 5.14.2
-    version: 5.14.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@mui/icons-material@5.15.7)(@mui/material@5.15.7)(@rjsf/core@5.14.2)(@rjsf/utils@5.14.2)(react@18.2.0)
+    specifier: 5.17.0
+    version: 5.17.0(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@mui/icons-material@5.15.7)(@mui/material@5.15.7)(@rjsf/core@5.17.0)(@rjsf/utils@5.17.0)(react@18.2.0)
   '@rjsf/utils':
-    specifier: 5.14.2
-    version: 5.14.2(react@18.2.0)
+    specifier: 5.17.0
+    version: 5.17.0(react@18.2.0)
   '@rjsf/validator-ajv8':
-    specifier: 5.14.2
-    version: 5.14.2(@rjsf/utils@5.14.2)
+    specifier: 5.17.0
+    version: 5.17.0(@rjsf/utils@5.17.0)
   '@sentry/nextjs':
     specifier: 7.81.1
     version: 7.81.1(next@14.0.3)(react@18.2.0)(webpack@5.89.0)
@@ -1208,45 +1208,45 @@ packages:
       reselect: 4.1.8
     dev: false
 
-  /@rjsf/core@5.14.2(@rjsf/utils@5.14.2)(react@18.2.0):
-    resolution: {integrity: sha512-SLWZpY3U1IemXfWH2QkjxTa0jjyB/BL3n7aXPpgoiekXKofituWpwE+n7Tf0EeDxOCAJcvzrqGqBc17XUbnbwQ==}
+  /@rjsf/core@5.17.0(@rjsf/utils@5.17.0)(react@18.2.0):
+    resolution: {integrity: sha512-0woSU+VU+t2kbDNSyMQhjxJOXJbk3F6lSHxf8XmS4yV3sXP/yr/vo7J3qcvXbSvCLPYMQHvskBFhCIaQqyHWBg==}
     engines: {node: '>=14'}
     peerDependencies:
-      '@rjsf/utils': ^5.12.x
+      '@rjsf/utils': ^5.16.x
       react: ^16.14.0 || >=17
     dependencies:
-      '@rjsf/utils': 5.14.2(react@18.2.0)
+      '@rjsf/utils': 5.17.0(react@18.2.0)
       lodash: 4.17.21
       lodash-es: 4.17.21
-      markdown-to-jsx: 7.3.2(react@18.2.0)
+      markdown-to-jsx: 7.4.1(react@18.2.0)
       nanoid: 3.3.7
       prop-types: 15.8.1
       react: 18.2.0
     dev: false
 
-  /@rjsf/mui@5.14.2(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@mui/icons-material@5.15.7)(@mui/material@5.15.7)(@rjsf/core@5.14.2)(@rjsf/utils@5.14.2)(react@18.2.0):
-    resolution: {integrity: sha512-hDkLu3Fen6rGgYARhj//3jsyQfsxnRYwbgO0gvRNCuGqdoWUETAuNTSWiGYiZn9KsoPB+lAhMUK4h/MJo1plTQ==}
+  /@rjsf/mui@5.17.0(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@mui/icons-material@5.15.7)(@mui/material@5.15.7)(@rjsf/core@5.17.0)(@rjsf/utils@5.17.0)(react@18.2.0):
+    resolution: {integrity: sha512-K1t10I9LdNjzBgllqWqGB4FJZ15ekc7l1Uqr2IWJUq7ICPw54jey7LdPGZOq8Su0sULW0Q779GbIwUM3+4g+DQ==}
     engines: {node: '>=14'}
     peerDependencies:
       '@emotion/react': ^11.7.0
       '@emotion/styled': ^11.6.0
       '@mui/icons-material': ^5.2.0
       '@mui/material': ^5.2.2
-      '@rjsf/core': ^5.12.x
-      '@rjsf/utils': ^5.12.x
+      '@rjsf/core': ^5.16.x
+      '@rjsf/utils': ^5.16.x
       react: '>=17'
     dependencies:
       '@emotion/react': 11.11.3(@types/react@18.2.53)(react@18.2.0)
       '@emotion/styled': 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.53)(react@18.2.0)
       '@mui/icons-material': 5.15.7(@mui/material@5.15.7)(@types/react@18.2.53)(react@18.2.0)
       '@mui/material': 5.15.7(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.53)(react-dom@18.2.0)(react@18.2.0)
-      '@rjsf/core': 5.14.2(@rjsf/utils@5.14.2)(react@18.2.0)
-      '@rjsf/utils': 5.14.2(react@18.2.0)
+      '@rjsf/core': 5.17.0(@rjsf/utils@5.17.0)(react@18.2.0)
+      '@rjsf/utils': 5.17.0(react@18.2.0)
       react: 18.2.0
     dev: false
 
-  /@rjsf/utils@5.14.2(react@18.2.0):
-    resolution: {integrity: sha512-NyVrYEKYm9gXtnn06TDDUK6hWKs8LVBP1AZWfGeDoyFcBitj+kxMYIt8sB5GuM/lje8BrBM+cBLWi4p/SNymzg==}
+  /@rjsf/utils@5.17.0(react@18.2.0):
+    resolution: {integrity: sha512-Hy2uAxMKWZIZSMzc2AiHrdACYvHj9GDynrdApMgUTxfjpzj5DT7Rghl/FGj7gg8Zy8VtdVNTCbkIzfS8xt4x7g==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^16.14.0 || >=17
@@ -1259,13 +1259,13 @@ packages:
       react-is: 18.2.0
     dev: false
 
-  /@rjsf/validator-ajv8@5.14.2(@rjsf/utils@5.14.2):
-    resolution: {integrity: sha512-779A/NprOtNDCbL8tGbsBxesG1vbdE1IWOdFkTcMkUToTHcbeUw20RhowicOJBmnSTpZSO+2dxWmhXgjhlIHTw==}
+  /@rjsf/validator-ajv8@5.17.0(@rjsf/utils@5.17.0):
+    resolution: {integrity: sha512-ZLTpvZDzBt1+Wftao2AkpRaSvxaVRrutvFX3/oy640/KsWUfl0ofV33ai9O4aptKSnOPjfRiLqPJgbPHgQAhmw==}
     engines: {node: '>=14'}
     peerDependencies:
-      '@rjsf/utils': ^5.12.x
+      '@rjsf/utils': ^5.16.x
     dependencies:
-      '@rjsf/utils': 5.14.2(react@18.2.0)
+      '@rjsf/utils': 5.17.0(react@18.2.0)
       ajv: 8.12.0
       ajv-formats: 2.1.1(ajv@8.12.0)
       lodash: 4.17.21
@@ -5492,8 +5492,8 @@ packages:
       repeat-string: 1.6.1
     dev: false
 
-  /markdown-to-jsx@7.3.2(react@18.2.0):
-    resolution: {integrity: sha512-B+28F5ucp83aQm+OxNrPkS8z0tMKaeHiy0lHJs3LqCyDQFtWuenaIrkaVTgAm1pf1AU85LXltva86hlaT17i8Q==}
+  /markdown-to-jsx@7.4.1(react@18.2.0):
+    resolution: {integrity: sha512-GbrbkTnHp9u6+HqbPRFJbObi369AgJNXi/sGqq5HRsoZW063xR1XDCaConqq+whfEIAlzB1YPnOgsPc7B7bc/A==}
     engines: {node: '>= 10'}
     peerDependencies:
       react: '>= 0.14.0'

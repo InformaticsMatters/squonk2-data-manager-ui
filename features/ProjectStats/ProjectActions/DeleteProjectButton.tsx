@@ -81,9 +81,14 @@ export const DeleteProjectButton = ({ project }: DeleteProjectButtonProps) => {
             <LinearProgress />
           </>
         ) : (
-          <Typography variant="body1">
-            Are you sure? <b>This cannot be undone</b>.
-          </Typography>
+          <>
+            <Typography gutterBottom variant="body1">
+              You are trying to delete the project <b>{project.name}</b>. This cannot be undone.
+            </Typography>
+            <Typography variant="body1">
+              <em>Please note that this will also delete the associated product.</em>
+            </Typography>
+          </>
         )
       }
       modalId={`delete-${project.project_id}`}

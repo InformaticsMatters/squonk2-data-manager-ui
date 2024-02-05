@@ -61,10 +61,10 @@ dependencies:
     version: 7.81.1(next@14.0.3)(react@18.2.0)(webpack@5.89.0)
   '@squonk/account-server-client':
     specifier: 2.0.10
-    version: 2.0.10(@tanstack/react-query@4.36.1)(axios@1.6.2)
+    version: 2.0.10(@tanstack/react-query@4.36.1)(axios@1.6.7)
   '@squonk/data-manager-client':
     specifier: 1.2.7
-    version: 1.2.7(@tanstack/react-query@4.36.1)(axios@1.6.2)
+    version: 1.2.7(@tanstack/react-query@4.36.1)(axios@1.6.7)
   '@squonk/mui-theme':
     specifier: 3.0.2
     version: 3.0.2(@mui/material@5.15.7)
@@ -102,8 +102,8 @@ dependencies:
     specifier: 2.6.3
     version: 2.6.3
   axios:
-    specifier: 1.6.2
-    version: 1.6.2
+    specifier: 1.6.7
+    version: 1.6.7
   dayjs:
     specifier: 1.11.10
     version: 1.11.10
@@ -1475,24 +1475,24 @@ packages:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
     dev: false
 
-  /@squonk/account-server-client@2.0.10(@tanstack/react-query@4.36.1)(axios@1.6.2):
+  /@squonk/account-server-client@2.0.10(@tanstack/react-query@4.36.1)(axios@1.6.7):
     resolution: {integrity: sha512-dtN9V5FQPfVy72lkkfN8nJCPi91jfRRq8dzecynzCrWRcKTA2gu4S+WkFyqFlZVj40MAEKgn7kLGam7YR8h3/g==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
       '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
-      axios: 1.6.2
+      axios: 1.6.7
     dev: false
 
-  /@squonk/data-manager-client@1.2.7(@tanstack/react-query@4.36.1)(axios@1.6.2):
+  /@squonk/data-manager-client@1.2.7(@tanstack/react-query@4.36.1)(axios@1.6.7):
     resolution: {integrity: sha512-v9y2z+ru805jmvNhQJ9QoFhK41CB3YRTGmj3vGo88D/22uDK/QJevx9pir5jSWbyxkahEpQwoptcaTVpLIhtkg==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
       '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
-      axios: 1.6.2
+      axios: 1.6.7
     dev: false
 
   /@squonk/eslint-config@1.0.0(eslint@8.56.0)(prettier@3.1.1)(typescript@5.3.3):
@@ -2323,10 +2323,10 @@ packages:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
     engines: {node: '>= 0.4'}
 
-  /axios@1.6.2:
-    resolution: {integrity: sha512-7i24Ri4pmDRfJTR7LDBhsOTtcm+9kjX5WiY1X3wIisx6G9So3pfMkEiU7emUBe46oceVImccTEM3k6C5dbVW8A==}
+  /axios@1.6.7:
+    resolution: {integrity: sha512-/hDJGff6/c7u0hDkvkGxR/oy6CbCs8ziCsC7SqmhjfozqiJGc8Z11wrv9z9lYfY4K8l+H9TpjcMDX0xOZmx+RA==}
     dependencies:
-      follow-redirects: 1.15.3
+      follow-redirects: 1.15.5
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -3962,6 +3962,16 @@ packages:
 
   /follow-redirects@1.15.3:
     resolution: {integrity: sha512-1VzOtuEM8pC9SFU1E+8KfTjZyMztRsgEfwQl44z8A25uy13jSzTj6dyK2Df52iV0vgHCfBwLhDWevLn95w5v6Q==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: false
+
+  /follow-redirects@1.15.5:
+    resolution: {integrity: sha512-vSFWUON1B+yAw1VN4xMfxgn5fTUiaOzAJCKBwIIgT/+7CuGy9+r+5gITvP62j3RmaD5Ph65UaERdOSRGUzZtgw==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'

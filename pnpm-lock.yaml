@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@auth0/nextjs-auth0':
-    specifier: 3.3.0
-    version: 3.3.0(next@14.0.3)
+    specifier: 3.5.0
+    version: 3.5.0(next@14.0.3)
   '@emotion/cache':
     specifier: 11.11.0
     version: 11.11.0
@@ -237,8 +237,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /@auth0/nextjs-auth0@3.3.0(next@14.0.3):
-    resolution: {integrity: sha512-zIBeb2OuLIv0SyNEJaqfBbmwsaPLi1CAlnwOIRloABPI2nX0k0Sp959FiI7uUfJkUzqW8xtCyE56MDl4bs9WLQ==}
+  /@auth0/nextjs-auth0@3.5.0(next@14.0.3):
+    resolution: {integrity: sha512-uFZEE2QQf1zU+jRK2fwqxRQt+WSqDPYF2tnr7d6BEa7b6L6tpPJ3evzoImbWSY1a7gFdvD7RD/Rvrsx7B5CKVg==}
     engines: {node: '>=16'}
     peerDependencies:
       next: '>=10'

@@ -123,8 +123,8 @@ dependencies:
     specifier: 9.0.21
     version: 9.0.21
   jotai:
-    specifier: 2.6.0
-    version: 2.6.0(@types/react@18.2.38)(react@18.2.0)
+    specifier: 2.6.4
+    version: 2.6.4(@types/react@18.2.38)(react@18.2.0)
   just-compare:
     specifier: 2.3.0
     version: 2.3.0
@@ -4265,7 +4265,7 @@ packages:
     dev: false
 
   /glsl-resolve@0.0.1:
-    resolution: {integrity: sha1-iUvvc5ENeSyBtRQxgANdCnivdtM=}
+    resolution: {integrity: sha512-xxFNsfnhZTK9NBhzJjSBGX6IOqYpvBHxxmo+4vapiljyGNCY0Bekzn0firQkQrazK59c1hYxMDxYS8MDlhw4gA==}
     dependencies:
       resolve: 0.6.3
       xtend: 2.2.0
@@ -5038,8 +5038,8 @@ packages:
     resolution: {integrity: sha512-W+oqK4H+r5sITxfxpSU+MMdr/YSWGvgZMQDIsNoBDGGy4i7GBPTtvFKibQzW06n3U3TqHjhvBJsirShsEJ6eeQ==}
     dev: false
 
-  /jotai@2.6.0(@types/react@18.2.38)(react@18.2.0):
-    resolution: {integrity: sha512-Vt6hsc04Km4j03l+Ax+Sc+FVft5cRJhqgxt6GTz6GM2eM3DyX3CdBdzcG0z2FrlZToL1/0OAkqDghIyARWnSuQ==}
+  /jotai@2.6.4(@types/react@18.2.38)(react@18.2.0):
+    resolution: {integrity: sha512-RniwQPX4893YlNR1muOtyUGHYaTD1fhEN4qnOuZJSrDHj6xdEMrqlRSN/hCm2fshwk78ruecB/P2l+NCVWe6TQ==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=17.0.0'
@@ -5422,7 +5422,7 @@ packages:
     dev: false
 
   /map-limit@0.0.1:
-    resolution: {integrity: sha1-63lhAxwPDo0AG/LVb6toXViCLzg=}
+    resolution: {integrity: sha512-pJpcfLPnIF/Sk3taPW21G/RQsEEirGaFpCW3oXRwH9dnFHPHNGjNyvh++rdmC2fNqEaTw2MhYJraoJWAHx8kEg==}
     dependencies:
       once: 1.3.3
     dev: false
@@ -7544,7 +7544,7 @@ packages:
     dev: false
 
   /shallow-copy@0.0.1:
-    resolution: {integrity: sha1-QV9CcC1z2BAzApLMXuhurhoRoXA=}
+    resolution: {integrity: sha512-b6i4ZpVuUxB9h5gfCxPiusKYkqTMOjEbBs4wMaFbkfia4yFv92UKZ6Df8WXcKbn08JNL/abvg3FnMAOfakDvUw==}
     dev: false
 
   /sharp@0.32.6:
@@ -7667,7 +7667,7 @@ packages:
     dev: false
 
   /stack-trace@0.0.9:
-    resolution: {integrity: sha1-qPbq7KkGdMMz58Q5U/J1tFFRBpU=}
+    resolution: {integrity: sha512-vjUc6sfgtgY0dxCdnc40mK6Oftjo9+2K8H/NG81TMhgL392FtiPA9tn9RLyTxXmTLPJPjF3VyzFp6bsWFLisMQ==}
     dev: false
 
   /stacktrace-parser@0.1.10:

@@ -9,6 +9,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "../../components/DataTable";
 import { ChargesLinkIconButton } from "../../components/products/ChargesLinkIconButton";
 import { DeleteProductButton } from "../../components/products/DeleteProductButton";
+import { ProjectName } from "../../components/projects/ProjectName";
 import type { PermissionLevelFilter } from "../../components/userContext/filter";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
@@ -56,6 +57,9 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
       projectColumnHelper.accessor((row) => row.name, {
         id: "projectName",
         header: "Project name",
+        cell: ({ row, getValue }) => (
+          <ProjectName isPrivate={row.original.private} name={getValue()} />
+        ),
       }),
       projectColumnHelper.accessor("owner", { header: "Owner" }),
       projectColumnHelper.accessor((row) => formatTierString(row.product?.flavour ?? ""), {

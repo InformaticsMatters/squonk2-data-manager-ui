@@ -61,7 +61,7 @@ jobs:
     - name: Setup Playwright
       run: pnpm exec playwright install --with-deps
     - name: Load cached build for speed
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ${{ github.workspace }}/.next/cache
@@ -133,7 +133,7 @@ jobs:
     - name: Setup Playwright
       run: pnpm exec playwright install --with-deps
     - name: Load cached build for speed
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ${{ github.workspace }}/.next/cache

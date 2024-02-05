@@ -93,7 +93,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-dropzone": "14.2.3",
-    "react-hook-form": "7.48.2",
+    "react-hook-form": "7.50.0",
     "react-plotly.js": "2.6.0",
     "sass": "1.69.5",
     "sharp": "0.32.6",

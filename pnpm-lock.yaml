@@ -138,8 +138,8 @@ dependencies:
     specifier: 2.13.0
     version: 2.13.0
   ketcher-react:
-    specifier: 2.13.0
-    version: 2.13.0(@types/react@18.2.55)(immutable@3.7.6)(react-dom@18.2.0)(react@18.2.0)
+    specifier: 2.15.1
+    version: 2.15.1(@types/react@18.2.55)(immutable@3.7.6)(react-dom@18.2.0)(react@18.2.0)
   ketcher-standalone:
     specifier: 2.13.0
     version: 2.13.0
@@ -2925,7 +2925,7 @@ packages:
     dev: false
 
   /concat-map@0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   /concat-stream@1.6.2:
     resolution: {integrity: sha512-27HBghJxjiZtIk3Ycvn/4kbJk/1uZuJFfuPEns6LaEvpvG1f0hTea8lilrouyo9mVc2GWdcEZ8OLoGmSADlrCw==}
@@ -5295,8 +5295,8 @@ packages:
       svgpath: 2.6.0
     dev: false
 
-  /ketcher-react@2.13.0(@types/react@18.2.55)(immutable@3.7.6)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Zt5lKc18HFefNbdoInEsvrVt0WyCbkH8uMFhisXbgEImV2MzWCwxquex2+OEzZgytf3lXWBSAIK8kxLr2y6xxA==}
+  /ketcher-react@2.15.1(@types/react@18.2.55)(immutable@3.7.6)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-9rbKAwahj+4BriZL7TgYeu06ldfaSuI4F5A6u4tA22gQCToZF9LpCJwpwEiMdbvm3HS3fMqXR8toKilQs7GCuQ==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.2.0

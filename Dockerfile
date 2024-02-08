@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:18.12.1-alpine3.15 AS deps
+FROM node:20.11.0-alpine3.18 AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -10,7 +10,7 @@ ARG SKIP_CHECKS
 ENV SKIP_CHECKS=${SKIP_CHECKS:-0}
 RUN echo "SKIP_CHECKS=${SKIP_CHECKS}"
 
-RUN npm i -g pnpm@8.10.5
+RUN npm i -g pnpm@8.15.1
 RUN if $SKIP_CHECKS; then pnpm fetch --prod; else pnpm fetch; fi
 RUN if $SKIP_CHECKS; \
     then pnpm i -P --frozen-lockfile --offline --ignore-scripts; \
@@ -21,7 +21,7 @@ RUN if $SKIP_CHECKS; \
 # RUN npm ci
 
 # Rebuild the source code only when needed
-FROM node:18.12.1-alpine3.15 AS builder
+FROM node:20.11.0-alpine3.18 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -38,14 +38,14 @@ ENV GIT_SHA=${GIT_SHA:-""}
 ARG BASE_PATH
 ENV BASE_PATH=${BASE_PATH}
 
-# RUN npm i -g pnpm@8.10.5
+# RUN npm i -g pnpm@8.15.1
 RUN echo "GIT_SHA=${GIT_SHA}" && npm run build
 
 # If using npm comment out above and use below instead
 # RUN npm run build
 
 # Production image, copy all the files and run next
-FROM node:18.12.1-alpine3.15 AS runner
+FROM node:20.11.0-alpine3.18 AS runner
 WORKDIR /app
 
 ENV NODE_ENV production

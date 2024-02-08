@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import type { FilePathFile } from "@squonk/data-manager-client";
-import { useGetFiles } from "@squonk/data-manager-client/file";
+import { useGetFiles } from "@squonk/data-manager-client/file-and-path";
 
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { separateFileExtensionFromFileName } from "../../utils/app/files";

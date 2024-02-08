@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import type { DatasetVersionSummary, DmError } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
-import { getGetFilesQueryKey, useAttachFile } from "@squonk/data-manager-client/file";
+import { getGetFilesQueryKey, useAttachFile } from "@squonk/data-manager-client/file-and-path";
 import { useGetProjects } from "@squonk/data-manager-client/project";
 import { useGetFileTypes } from "@squonk/data-manager-client/type";
 

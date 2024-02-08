@@ -1,4 +1,4 @@
-import { getFiles, getGetFilesQueryKey } from "@squonk/data-manager-client/file";
+import { getFiles, getGetFilesQueryKey } from "@squonk/data-manager-client/file-and-path";
 import { getGetProjectsQueryKey, getProjects } from "@squonk/data-manager-client/project";
 
 import {

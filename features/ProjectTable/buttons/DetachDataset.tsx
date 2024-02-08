@@ -1,5 +1,5 @@
 import type { DmError } from "@squonk/data-manager-client";
-import { getGetFilesQueryKey, useDeleteFile } from "@squonk/data-manager-client/file";
+import { getGetFilesQueryKey, useDeleteFile } from "@squonk/data-manager-client/file-and-path";
 
 import { DeleteOutlineRounded as DeleteOutlineRoundedIcon } from "@mui/icons-material";
 import type { IconButtonProps } from "@mui/material";

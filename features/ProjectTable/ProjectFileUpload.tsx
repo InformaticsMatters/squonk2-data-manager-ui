@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import type { DropzoneState, FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 
-import { getGetFilesQueryKey } from "@squonk/data-manager-client/file";
+import { getGetFilesQueryKey } from "@squonk/data-manager-client/file-and-path";
 import { useAddFileToProject } from "@squonk/data-manager-client/project";
 
 import { Box } from "@mui/material";

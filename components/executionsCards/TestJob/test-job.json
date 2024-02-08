@@ -37,83 +37,95 @@
     "name": "Fake UI Test Job",
     "required_assets": [],
     "variables": {
+      "order": {
+        "options": [
+          "outputFile",
+          "header",
+          "mode",
+          "minValue",
+          "maxValue"
+        ]
+      },
       "inputs": {
+        "type": "object",
+        "required": [
+          "inputFile"
+        ],
         "properties": {
-          "inputFile1": {
+          "inputFile": {
+            "title": "Input molecules",
             "mime-types": [
+              "chemical/x-mdl-sdfile",
               "squonk/x-smiles",
               "text/csv"
             ],
-            "title": "File Input (CSV or SMILES)",
-            "type": "file"
-          },
-          "inputFile2": {
-            "mime-types": [
-              "squonk/x-smiles",
-              "text/csv"
-            ],
-            "title": "Smiles Input via Sketcher or file (CSV or SMILES)",
             "type": "molecules-smi"
           }
-        },
-        "required": [
-          "inputFile1",
-          "inputFile2"
-        ],
-        "type": "object"
-      },
-      "options": {
-        "properties": {
-          "alpha": {
-            "default": 1,
-            "maximum": 1,
-            "minimum": 0,
-            "title": "Tversky alpha",
-            "type": "number"
-          },
-          "descriptor": {
-            "default": "rdkit",
-            "enum": [
-              "maccs",
-              "morgan2",
-              "morgan3",
-              "rdkit"
-            ],
-            "title": "Descriptor",
-            "type": "string"
-          },
-          "headerOutputs": {
-            "default": true,
-            "title": "Checkbox",
-            "type": "boolean"
-          },
-          "nbits": {
-            "title": "Number of bits for Morgan bit vector",
-            "type": "integer"
-          },
-          "outputFileName": {
-            "default": "screened.smi",
-            "pattern": "^[A-Za-z0-9_/\\.\\-]+$",
-            "title": "Output file name with pattern",
-            "type": "string"
-          },
-          "threshold": {
-            "maximum": 1,
-            "minimum": 0,
-            "title": "Number with domain",
-            "type": "number"
-          }
-        },
-        "required": [
-          "outputFileName",
-          "descriptor",
-          "threshold"
-        ],
-        "type": "object"
+        }
       },
       "outputs": {
-        "properties": {},
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "results": {
+            "title": "Output file name",
+            "mime-types": [
+              "chemical/x-mdl-sdfile"
+            ],
+            "creates": "{{ outputFile }}",
+            "type": "file",
+            "annotation-properties": {
+              "fields-descriptor": {
+                "origin": "squonk2-job",
+                "description": "Pfizer CNS MPO prediction",
+                "fields": {
+                  "Pfizer_CNS_MPO": {
+                    "type": "number",
+                    "description": "Pfizer CNS MPO prediction",
+                    "required": false,
+                    "active": true
+                  }
+                }
+              },
+              "derived-from": "inputFile"
+            }
+          }
+        }
+      },
+      "options": {
+        "type": "object",
+        "required": [
+          "outputFile"
+        ],
+        "properties": {
+          "outputFile": {
+            "title": "Output file (.sdf or .smi)",
+            "type": "string",
+            "default": "output-pfizer-cns-mpo.sdf",
+            "pattern": "^[A-Za-z0-9_/\\.\\-]+$"
+          },
+          "header": {
+            "title": "Include header for .smi output",
+            "type": "boolean",
+            "default": true
+          },
+          "mode": {
+            "title": "Filter mode",
+            "type": "string",
+            "default": "none",
+            "enum": [
+              "pass",
+              "fail"
+            ]
+          },
+          "minValue": {
+            "title": "Min value",
+            "type": "number"
+          },
+          "maxValue": {
+            "title": "Max value",
+            "type": "number"
+          }
+        }
       }
     },
     "version": "1.0.0"

@@ -1,6 +1,6 @@
 import { handleAuth, handleLogin, handleProfile } from "@auth0/nextjs-auth0";
 import { captureException } from "@sentry/nextjs";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default handleAuth({

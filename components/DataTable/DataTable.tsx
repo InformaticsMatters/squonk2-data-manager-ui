@@ -29,6 +29,7 @@ import {
 import { rankItem } from "@tanstack/match-sorter-utils";
 import type {
   ColumnDef,
+  ColumnFiltersState,
   CoreOptions,
   ExpandedState,
   FilterFn,
@@ -82,6 +83,10 @@ export interface DataTableProps<Data extends Record<string, any>> {
    * Whether the search functionality should be enabled. Defaults to true.
    */
   enableSearch?: boolean;
+  /**
+   * Enable column filters for the table.
+   */
+  enableColumnFilters?: boolean;
   /**
    * If using row selection, this sets the initial rows that should be selected on first render.
    */
@@ -141,6 +146,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     tableContainer = true,
     getRowId,
     enableSearch = true,
+    enableColumnFilters = false,
     columns,
     data,
     ToolbarActionChild,
@@ -160,6 +166,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
   const [sorting, setSorting] = useState<SortingState>([]);
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const paddedColumns = useMemo(() => {
     const workingColumns = [...columns];
@@ -218,6 +225,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
   }, [columns, initialSelection, onSelection, subRowsEnabled]);
 
   const table = useReactTable({
+    enableColumnFilters,
     getRowId,
     data: tableData,
     columns: paddedColumns,
@@ -227,6 +235,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     state: {
       sorting,
       globalFilter,
+      columnFilters,
       expanded,
       rowSelection,
     },
@@ -239,6 +248,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     onExpandedChange: setExpanded,
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
     globalFilterFn: fuzzyFilter,
     getCoreRowModel: getCoreRowModel(),
@@ -289,7 +299,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
                 >
-                  <Box display="flex">
+                  <Box>
                     {flexRender(header.column.columnDef.header, header.getContext())}
                     {header.column.getCanSort() ? (
                       <TableSortLabel
@@ -297,6 +307,16 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                         // react-table has a unsorted state which is not treated here
                         direction={header.column.getIsSorted() || undefined}
                       />
+                    ) : null}
+                    {header.column.getCanFilter() ? (
+                      <div>
+                        {/* TODO: debounce this field */}
+                        <TextField
+                          placeholder="Search"
+                          value={header.column.getFilterValue()}
+                          onChange={(event) => header.column.setFilterValue(event.target.value)}
+                        />
+                      </div>
                     ) : null}
                   </Box>
                 </TableCell>

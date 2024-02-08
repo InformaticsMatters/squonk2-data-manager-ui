@@ -60,16 +60,19 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
         cell: ({ row, getValue }) => (
           <ProjectName isPrivate={row.original.private} name={getValue()} />
         ),
+        enableColumnFilter: true,
       }),
-      projectColumnHelper.accessor("owner", { header: "Owner" }),
+      projectColumnHelper.accessor("owner", { header: "Owner", enableColumnFilter: true }),
       projectColumnHelper.accessor((row) => formatTierString(row.product?.flavour ?? ""), {
         id: "tier",
         header: "Tier",
+        enableColumnFilter: false,
       }),
       projectColumnHelper.display({
         id: "usage",
         header: "Usage",
         enableSorting: false,
+        enableColumnFilter: false,
         cell: ({ row }) =>
           row.original.coins &&
           row.original.instance &&
@@ -84,14 +87,17 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
       projectColumnHelper.accessor((row) => row.instance?.coins.used, {
         header: "Instances used",
         id: "instancesUsed",
+        enableColumnFilter: false,
       }),
       projectColumnHelper.accessor((row) => row.storage?.coins.used, {
         header: "Storage used",
         id: "storageUsed",
+        enableColumnFilter: false,
       }),
       projectColumnHelper.accessor((row) => row.coins?.allowance, {
         header: "Allowance",
         id: "allowance",
+        enableColumnFilter: false,
       }),
       projectColumnHelper.display({
         id: "actions",
@@ -102,6 +108,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
             projectId={row.original.project_id}
           />
         ),
+        enableColumnFilter: false,
       }),
     ],
     [user.username],
@@ -171,6 +178,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
           },
         }}
         data={projectSubscriptions}
+        enableColumnFilters={true}
         enableSearch={false}
         getRowId={(row) => row.project_id}
         isLoading={isProjectSubscriptionsLoading}

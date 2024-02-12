@@ -149,7 +149,6 @@ export const SMILESInput = ({
                 setSmiles(smi);
                 setMode("smiles");
                 onSave(smi);
-                global.ketcher = undefined;
                 onClose && onClose();
               } else {
                 enqueueError("Smiles not obtained");

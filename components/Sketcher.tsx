@@ -88,7 +88,6 @@ export const Sketcher = ({ smiles, onUnmount }: SketcherProps) => {
     // do nothing on mount
     return () => {
       onUnmount && onUnmount();
-      global.ketcher = undefined;
     };
   });
 

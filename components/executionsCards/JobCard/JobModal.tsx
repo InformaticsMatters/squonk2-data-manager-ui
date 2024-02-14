@@ -50,8 +50,21 @@ export interface JobModalProps extends CommonModalProps {
 }
 
 const validateJobInputs = (required: string[], inputsData: InputData) => {
+  const inputsDataIsValid = Object.values(inputsData)
+    .map((inputValue) => {
+      if (inputValue === undefined) {
+        return false;
+      }
+      if (Array.isArray(inputValue)) {
+        return inputValue.every((v) => v !== "");
+      }
+      return inputValue.split("\n").every((v) => v !== "");
+    })
+    .every((v) => v);
+
   const inputKeys = new Set(Object.keys(inputsData));
-  return required.map((key) => inputKeys.has(key)).every((v) => v);
+  const haveRequiredInputs = required.map((key) => inputKeys.has(key)).every((v) => v);
+  return inputsDataIsValid && haveRequiredInputs;
 };
 
 /**
@@ -104,6 +117,7 @@ export const JobModal = ({
   }, [job]);
 
   const [inputsData, setInputsData] = useState<InputData>({});
+
   const inputsValid = validateJobInputs(
     (job?.variables?.inputs as InputSchema | undefined)?.required ?? [],
     Object.keys(inputsData).length > 0 ? inputsData : specVariables ?? {},

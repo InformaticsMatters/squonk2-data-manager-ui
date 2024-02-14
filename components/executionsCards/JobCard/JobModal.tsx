@@ -202,7 +202,7 @@ export const JobModal = ({
                       formData={optionsFormData}
                       ref={formRef}
                       schema={job.variables.options} // TODO: should validate this with zod
-                      showErrorList={false}
+                      showErrorList="bottom"
                       uiSchema={{ "ui:order": job.variables.order?.options }}
                       validator={validator}
                       onChange={(event) => setOptionsFormData(event.formData)}

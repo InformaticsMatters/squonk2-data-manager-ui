@@ -23,12 +23,12 @@ export const NavLinks = ({ linkWidth = 120 }: NavLinksProps) => {
       </div>
       <div>
         <NavLink stripQueryParameters={["path", "instanceId"]} title="Project">
-          {({ active }) => <NavButton active={active}>Project</NavButton>}
+          {({ active }) => <NavButton active={active}>Project Data</NavButton>}
         </NavLink>
       </div>
       <div>
-        <NavLink stripQueryParameters={["path", "instanceId"]} title="Executions">
-          {({ active }) => <NavButton active={active}>Executions</NavButton>}
+        <NavLink stripQueryParameters={["path", "instanceId"]} title="Run">
+          {({ active }) => <NavButton active={active}>Apps/Jobs</NavButton>}
         </NavLink>
       </div>
       <div>

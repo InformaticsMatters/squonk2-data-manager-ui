@@ -37,19 +37,19 @@ test("do login via datasets page", async ({ page, baseURL }) => {
   await page.getByRole("heading", { name: "Datasets" }).waitFor();
 });
 
-test("do login via executions page", async ({ page, baseURL }) => {
+test("do login via apps/jobs page", async ({ page, baseURL }) => {
   await page.goto(baseURL as string);
   await page
     .getByRole("navigation", { name: "Main" })
-    .getByRole("link", { name: "Executions" })
+    .getByRole("link", { name: "Apps/Jobs" })
     .click();
 
   // We aren't logged in so ensure we redirect to Keycloak
   await login(page);
 
   // We should return to the page we clicked on
-  await page.waitForURL("**/executions");
-  await page.locator("label").filter({ hasText: "Filter Executions" }).waitFor();
+  await page.waitForURL("**/run");
+  await page.locator("label").filter({ hasText: "Filter" }).waitFor();
 });
 
 test("do login via project page", async ({ page, baseURL }) => {

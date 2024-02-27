@@ -1,7 +1,7 @@
 import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
-import type { InputFieldSchema } from "../../../executionsCards/JobCard/JobInputFields";
+import type { InputFieldSchema } from "../../../runCards/JobCard/JobInputFields";
 
 // Contains only fields we are interested in
 type ApplicationSpecification = {

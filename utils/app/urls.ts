@@ -2,7 +2,7 @@
  * Manage the *file* Protocol used in file selectors
  */
 
-import type { InputData } from "../../components/executionsCards/JobCard/JobModal";
+import type { InputData } from "../../components/runCards/JobCard/JobModal";
 
 export const FILE_PROTOCOL = "file://";
 

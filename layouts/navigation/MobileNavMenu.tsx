@@ -58,10 +58,10 @@ export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
                     </ListItemButton>
                   )}
                 </NavLink>
-                <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Executions">
+                <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Run">
                   {({ active }) => (
                     <ListItemButton component="a" selected={active}>
-                      <ListItemText primary="Executions" />
+                      <ListItemText primary="Apps/Jobs" />
                     </ListItemButton>
                   )}
                 </NavLink>

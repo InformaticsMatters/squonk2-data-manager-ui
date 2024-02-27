@@ -106,7 +106,7 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   await page.locator(`[aria-label="Settings"]`).click();
 
   // Click text=Settings
-  await page.locator("text=Settings").click();
+  await page.getByText("Settings", { exact: true }).click();
 
   // Click [aria-label="Delete Project"] button
   await page.locator(`[aria-label="Delete Project"] button`).click();

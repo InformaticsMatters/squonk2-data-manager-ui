@@ -10,9 +10,9 @@ import Head from "next/head";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
 import { CenterLoader } from "../components/CenterLoader";
-import { ApplicationCard } from "../components/executionsCards/ApplicationCard";
-import { JobCard } from "../components/executionsCards/JobCard";
-import { TEST_JOB_ID } from "../components/executionsCards/TestJob/jobId";
+import { ApplicationCard } from "../components/runCards/ApplicationCard";
+import { JobCard } from "../components/runCards/JobCard";
+import { TEST_JOB_ID } from "../components/runCards/TestJob/jobId";
 import { SearchTextField } from "../components/SearchTextField";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { useCurrentProject, useIsEditorOfCurrentProject } from "../hooks/projectHooks";
@@ -20,7 +20,7 @@ import Layout from "../layouts/Layout";
 import { search } from "../utils/app/searches";
 
 const TestJobCard = dynamic(
-  () => import("../components/executionsCards/TestJob/TestJobCard").then((mod) => mod.TestJobCard),
+  () => import("../components/runCards/TestJob/TestJobCard").then((mod) => mod.TestJobCard),
   {
     loading: () => <CenterLoader />,
   },
@@ -29,7 +29,7 @@ const TestJobCard = dynamic(
 /**
  * Page allowing the user to run jobs and applications
  */
-const Executions = () => {
+const Run = () => {
   const [executionTypes, setExecutionTypes] = useState(["application", "job"]);
   const [searchValue, setSearchValue] = useState("");
 
@@ -94,7 +94,7 @@ const Executions = () => {
   return (
     <>
       <Head>
-        <title>Squonk | Executions</title>
+        <title>Squonk | Apps/Jobs</title>
       </Head>
       <RoleRequired roles={DM_ROLES}>
         <RoleRequired roles={AS_ROLES}>
@@ -106,7 +106,7 @@ const Executions = () => {
                   <TextField
                     fullWidth
                     select
-                    label="Filter Executions"
+                    label="Filter"
                     SelectProps={{
                       multiple: true,
                       onChange: (event) => {
@@ -175,4 +175,4 @@ const Executions = () => {
   );
 };
 
-export default withPageAuthRequiredCSR(Executions);
+export default withPageAuthRequiredCSR(Run);

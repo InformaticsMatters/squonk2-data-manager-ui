@@ -60,8 +60,8 @@ export const Footer = () => {
                 </A>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <A legacyBehavior passHref href={{ pathname: "/executions" }}>
-                  <Link>Executions</Link>
+                <A legacyBehavior passHref href={{ pathname: "/run" }}>
+                  <Link>Apps/Jobs</Link>
                 </A>
               </ListItem>
             </List>

@@ -4,7 +4,7 @@ import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-
 
 import { Button } from "@mui/material";
 
-import { JobModal } from "../executionsCards/JobCard/JobModal";
+import { JobModal } from "../runCards/JobCard/JobModal";
 
 export interface RerunJobButtonProps {
   /**

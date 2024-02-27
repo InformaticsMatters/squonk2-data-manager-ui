@@ -45,17 +45,17 @@ dependencies:
     specifier: 14.1.0
     version: 14.1.0(@mdx-js/loader@3.0.0)(@mdx-js/react@3.0.0)
   '@rjsf/core':
-    specifier: 5.17.0
-    version: 5.17.0(@rjsf/utils@5.17.0)(react@18.2.0)
+    specifier: 5.17.1
+    version: 5.17.1(@rjsf/utils@5.17.1)(react@18.2.0)
   '@rjsf/mui':
-    specifier: 5.17.0
-    version: 5.17.0(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@mui/icons-material@5.15.10)(@mui/material@5.15.10)(@rjsf/core@5.17.0)(@rjsf/utils@5.17.0)(react@18.2.0)
+    specifier: 5.17.1
+    version: 5.17.1(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@mui/icons-material@5.15.10)(@mui/material@5.15.10)(@rjsf/core@5.17.1)(@rjsf/utils@5.17.1)(react@18.2.0)
   '@rjsf/utils':
-    specifier: 5.17.0
-    version: 5.17.0(react@18.2.0)
+    specifier: 5.17.1
+    version: 5.17.1(react@18.2.0)
   '@rjsf/validator-ajv8':
-    specifier: 5.17.0
-    version: 5.17.0(@rjsf/utils@5.17.0)
+    specifier: 5.17.1
+    version: 5.17.1(@rjsf/utils@5.17.1)
   '@sentry/nextjs':
     specifier: 7.103.0
     version: 7.103.0(next@14.1.0)(react@18.2.0)(webpack@5.90.3)
@@ -1433,14 +1433,14 @@ packages:
       reselect: 4.1.8
     dev: false
 
-  /@rjsf/core@5.17.0(@rjsf/utils@5.17.0)(react@18.2.0):
-    resolution: {integrity: sha512-0woSU+VU+t2kbDNSyMQhjxJOXJbk3F6lSHxf8XmS4yV3sXP/yr/vo7J3qcvXbSvCLPYMQHvskBFhCIaQqyHWBg==}
+  /@rjsf/core@5.17.1(@rjsf/utils@5.17.1)(react@18.2.0):
+    resolution: {integrity: sha512-COZSuumwHskWN8Pz3RxdxvuQUP6M/qBMXAkIi+TSWLFLaF6SUugpLiceMT1jGemDCr7fOSTiPxjkToSsgpvueQ==}
     engines: {node: '>=14'}
     peerDependencies:
       '@rjsf/utils': ^5.16.x
       react: ^16.14.0 || >=17
     dependencies:
-      '@rjsf/utils': 5.17.0(react@18.2.0)
+      '@rjsf/utils': 5.17.1(react@18.2.0)
       lodash: 4.17.21
       lodash-es: 4.17.21
       markdown-to-jsx: 7.4.1(react@18.2.0)
@@ -1449,8 +1449,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@rjsf/mui@5.17.0(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@mui/icons-material@5.15.10)(@mui/material@5.15.10)(@rjsf/core@5.17.0)(@rjsf/utils@5.17.0)(react@18.2.0):
-    resolution: {integrity: sha512-K1t10I9LdNjzBgllqWqGB4FJZ15ekc7l1Uqr2IWJUq7ICPw54jey7LdPGZOq8Su0sULW0Q779GbIwUM3+4g+DQ==}
+  /@rjsf/mui@5.17.1(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@mui/icons-material@5.15.10)(@mui/material@5.15.10)(@rjsf/core@5.17.1)(@rjsf/utils@5.17.1)(react@18.2.0):
+    resolution: {integrity: sha512-SToKW8i8dVbYEFo6BDG1oTolfw7ywbrYcvKoFPPIOvoOUv+VJi1cVaWGQ3q0gJQjyXdYYmt5YsLiC4L388LRiA==}
     engines: {node: '>=14'}
     peerDependencies:
       '@emotion/react': ^11.7.0
@@ -1465,13 +1465,13 @@ packages:
       '@emotion/styled': 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.60)(react@18.2.0)
       '@mui/icons-material': 5.15.10(@mui/material@5.15.10)(@types/react@18.2.60)(react@18.2.0)
       '@mui/material': 5.15.10(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.60)(react-dom@18.2.0)(react@18.2.0)
-      '@rjsf/core': 5.17.0(@rjsf/utils@5.17.0)(react@18.2.0)
-      '@rjsf/utils': 5.17.0(react@18.2.0)
+      '@rjsf/core': 5.17.1(@rjsf/utils@5.17.1)(react@18.2.0)
+      '@rjsf/utils': 5.17.1(react@18.2.0)
       react: 18.2.0
     dev: false
 
-  /@rjsf/utils@5.17.0(react@18.2.0):
-    resolution: {integrity: sha512-Hy2uAxMKWZIZSMzc2AiHrdACYvHj9GDynrdApMgUTxfjpzj5DT7Rghl/FGj7gg8Zy8VtdVNTCbkIzfS8xt4x7g==}
+  /@rjsf/utils@5.17.1(react@18.2.0):
+    resolution: {integrity: sha512-q1Igz/cuM2hi+jiXFkoaXqdRTUFB+a0jfVKNmZlHmvPmfYeeJfcfyOTzO8dQ41fHNHUFb15ryxa/TblDQimwkA==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^16.14.0 || >=17
@@ -1484,13 +1484,13 @@ packages:
       react-is: 18.2.0
     dev: false
 
-  /@rjsf/validator-ajv8@5.17.0(@rjsf/utils@5.17.0):
-    resolution: {integrity: sha512-ZLTpvZDzBt1+Wftao2AkpRaSvxaVRrutvFX3/oy640/KsWUfl0ofV33ai9O4aptKSnOPjfRiLqPJgbPHgQAhmw==}
+  /@rjsf/validator-ajv8@5.17.1(@rjsf/utils@5.17.1):
+    resolution: {integrity: sha512-KdvHsjDQ60b04fqnoqhfkiCv7E4n4NIHli8QU8dtpuUAVS/TOqDuOtDJVz6bv/rd/QNROGpxlO/OCccE0rmxLQ==}
     engines: {node: '>=14'}
     peerDependencies:
       '@rjsf/utils': ^5.16.x
     dependencies:
-      '@rjsf/utils': 5.17.0(react@18.2.0)
+      '@rjsf/utils': 5.17.1(react@18.2.0)
       ajv: 8.12.0
       ajv-formats: 2.1.1(ajv@8.12.0)
       lodash: 4.17.21

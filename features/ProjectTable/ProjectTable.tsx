@@ -2,12 +2,14 @@ import { useMemo } from "react";
 import type { DropzoneState } from "react-dropzone";
 
 import type { ProjectDetail } from "@squonk/data-manager-client";
+import { getGetFilesQueryKey } from "@squonk/data-manager-client/file-and-path";
 
 import {
   CloudUploadRounded as CloudUploadRoundedIcon,
   FolderRounded as FolderRoundedIcon,
 } from "@mui/icons-material";
-import { Breadcrumbs, Grid, IconButton, Typography, useTheme } from "@mui/material";
+import { Breadcrumbs, Grid, IconButton, Tooltip, Typography, useTheme } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper } from "@tanstack/react-table";
 import { filesize } from "filesize";
 import type { LinkProps } from "next/link";
@@ -20,6 +22,7 @@ import { useIsUserAProjectOwnerOrEditor } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { toLocalTimeString } from "../../utils/app/datetime";
 import { getErrorMessage } from "../../utils/next/orvalError";
+import { CreateDirectoryButton } from "./CreateDirectoryButton";
 import { FileActions } from "./FileActions";
 import type { TableDir, TableFile } from "./types";
 import { useProjectFileRows } from "./useProjectFileRows";
@@ -125,7 +128,16 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
     [currentProject.project_id, breadcrumbs, router, theme],
   );
 
-  const { rows, error, isLoading } = useProjectFileRows(currentProject.project_id);
+  const dirPath = "/" + breadcrumbs.join("/");
+  const getFilesParams = {
+    project_id: currentProject.project_id,
+    path: dirPath,
+  };
+
+  const queryClient = useQueryClient();
+  const { rows, error, isLoading } = useProjectFileRows(getFilesParams);
+
+  const directories = rows?.filter(isTableDir).map((dir) => dir.path) ?? [];
 
   return (
     <DataTable
@@ -165,9 +177,22 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
             </Breadcrumbs>
           </Grid>
           <Grid item sx={{ marginLeft: "auto" }}>
-            <IconButton disabled={!isProjectOwnerOrEditor} size="large" onClick={openUploadDialog}>
-              <CloudUploadRoundedIcon />
-            </IconButton>
+            <Tooltip title="Upload unmanaged file">
+              <IconButton
+                disabled={!isProjectOwnerOrEditor}
+                size="large"
+                onClick={openUploadDialog}
+              >
+                <CloudUploadRoundedIcon />
+              </IconButton>
+            </Tooltip>
+            <CreateDirectoryButton
+              directories={directories}
+              path={dirPath}
+              onDirectoryCreated={async () => {
+                queryClient.invalidateQueries(getGetFilesQueryKey(getFilesParams));
+              }}
+            />
           </Grid>
         </Grid>
       }

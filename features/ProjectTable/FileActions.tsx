@@ -6,6 +6,7 @@ import { useCurrentProject, useIsUserAProjectOwnerOrEditor } from "../../hooks/p
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { API_ROUTES } from "../../utils/app/routes";
 import type { CreateDatasetFromFileButtonProps } from "./buttons/CreateDatasetFromFileButton";
+import type { DeleteDirectoryButtonProps } from "./buttons/DeleteDirectoryButton";
 import type { DeleteUnmanagedFileButtonProps } from "./buttons/DeleteUnmanagedFileButton";
 import type { DetachDatasetProps } from "./buttons/DetachDataset";
 import { FavouriteButton } from "./buttons/FavouriteButton";
@@ -22,6 +23,10 @@ const DetachDataset = dynamic<DetachDatasetProps>(
 );
 const DeleteUnmanagedFileButton = dynamic<DeleteUnmanagedFileButtonProps>(
   () => import("./buttons/DeleteUnmanagedFileButton").then((mod) => mod.DeleteUnmanagedFileButton),
+  { loading: () => <CircularProgress size="1rem" /> },
+);
+const DeleteDirectoryButton = dynamic<DeleteDirectoryButtonProps>(
+  () => import("./buttons/DeleteDirectoryButton").then((mod) => mod.DeleteDirectoryButton),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 const CreateDatasetFromFileButton = dynamic<CreateDatasetFromFileButtonProps>(
@@ -53,8 +58,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
   const isFile = !isTableDir(file);
 
   const fileId = isFile ? file.file_id : undefined;
-
-  const isManagedFile = isFile && fileId !== undefined;
+  const isManagedFile = fileId !== undefined;
 
   return (
     <>
@@ -75,11 +79,20 @@ export const FileActions = ({ file }: FileActionsProps) => {
           projectId={project.project_id}
         />
       )}
+
       {/* Unmanaged files are "deleted" */}
-      {!isManagedFile && (
+      {isFile && !isManagedFile && (
         <DeleteUnmanagedFileButton
           disabled={!isProjectOwnerOrEditor}
           fileName={file.fileName}
+          path={path}
+          projectId={project.project_id}
+        />
+      )}
+      {!isFile && (
+        <DeleteDirectoryButton
+          directoryName={file.fileName}
+          disabled={!isProjectOwnerOrEditor}
           path={path}
           projectId={project.project_id}
         />

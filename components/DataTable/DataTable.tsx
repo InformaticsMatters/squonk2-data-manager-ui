@@ -297,7 +297,6 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                 <TableCell
                   className={header.column.getCanSort() ? "cursor-pointer select-none" : ""}
                   key={header.id}
-                  onClick={header.column.getToggleSortingHandler()}
                 >
                   <Box>
                     {flexRender(header.column.columnDef.header, header.getContext())}
@@ -306,6 +305,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                         active={!!header.column.getIsSorted()}
                         // react-table has a unsorted state which is not treated here
                         direction={header.column.getIsSorted() || undefined}
+                        onClick={header.column.getToggleSortingHandler()}
                       />
                     ) : null}
                     {header.column.getCanFilter() ? (

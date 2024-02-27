@@ -63,7 +63,7 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
                   ]),
                 },
               });
-              await queryClient.invalidateQueries(getGetDatasetsQueryKey());
+              await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
             } catch (error) {
               enqueueError(error);
             } finally {

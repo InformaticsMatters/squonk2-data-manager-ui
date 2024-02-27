@@ -57,13 +57,16 @@ export const ResultsToolbar = ({
    * These should be executed in parallel
    */
   const refreshResults = [
-    () => queryClient.invalidateQueries(getGetProjectsQueryKey()),
-    () => queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId })),
+    () => queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() }),
+    () =>
+      queryClient.invalidateQueries({
+        queryKey: getGetInstancesQueryKey({ project_id: projectId }),
+      }),
 
     ...(instances ?? []).map(
       ({ id }) =>
         () =>
-          queryClient.invalidateQueries(getGetInstanceQueryKey(id)),
+          queryClient.invalidateQueries({ queryKey: getGetInstanceQueryKey(id) }),
     ),
   ];
 

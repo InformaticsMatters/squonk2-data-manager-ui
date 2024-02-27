@@ -51,7 +51,7 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
       enqueueSnackbar("Datasets deleted successfully", { variant: "success" });
     }
 
-    await queryClient.invalidateQueries(getGetDatasetsQueryKey());
+    await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
   };
 
   return (

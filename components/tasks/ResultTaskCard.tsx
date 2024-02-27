@@ -46,8 +46,10 @@ export const ResultTaskCard = ({ task, collapsedByDefault = true }: ResultTaskCa
           onDelete={async () => {
             try {
               await deleteTask({ taskId: task.id });
-              queryClient.invalidateQueries(getGetTasksQueryKey());
-              queryClient.invalidateQueries(getGetTasksQueryKey({ project_id: projectId }));
+              queryClient.invalidateQueries({ queryKey: getGetTasksQueryKey() });
+              queryClient.invalidateQueries({
+                queryKey: getGetTasksQueryKey({ project_id: projectId }),
+              });
 
               enqueueSnackbar("Task successfully deleted", { variant: "success" });
             } catch (error) {

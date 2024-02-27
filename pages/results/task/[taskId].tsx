@@ -23,7 +23,9 @@ const Result = () => {
 
   const { data: task, error } = useGetTask(taskId);
 
-  const refreshResults = [() => queryClient.invalidateQueries(getGetTaskQueryKey(taskId))];
+  const refreshResults = [
+    () => queryClient.invalidateQueries({ queryKey: getGetTaskQueryKey(taskId) }),
+  ];
 
   return (
     <>

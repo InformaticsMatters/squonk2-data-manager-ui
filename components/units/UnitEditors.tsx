@@ -28,8 +28,8 @@ export const UnitEditors = ({ unit }: UnitEditorsProps) => {
 
   const { data, isLoading: isUsersLoading } = useGetOrganisationUnitUsers(unit.id);
   const users = data?.users;
-  const { mutateAsync: addEditor, isLoading: isAdding } = useAddOrganisationUnitUser();
-  const { mutateAsync: removeEditor, isLoading: isRemoving } = useDeleteOrganisationUnitUser();
+  const { mutateAsync: addEditor, isPending: isAdding } = useAddOrganisationUnitUser();
+  const { mutateAsync: removeEditor, isPending: isRemoving } = useDeleteOrganisationUnitUser();
   const queryClient = useQueryClient();
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
@@ -50,7 +50,9 @@ export const UnitEditors = ({ unit }: UnitEditorsProps) => {
               enqueueError(error);
             }
             // DM Queries
-            queryClient.invalidateQueries(getGetOrganisationUnitUsersQueryKey(unit.id));
+            queryClient.invalidateQueries({
+              queryKey: getGetOrganisationUnitUsersQueryKey(unit.id),
+            });
           } else {
             enqueueSnackbar("Username not found", { variant: "warning" });
           }
@@ -64,7 +66,9 @@ export const UnitEditors = ({ unit }: UnitEditorsProps) => {
               enqueueError(error);
             }
             // DM Queries
-            queryClient.invalidateQueries(getGetOrganisationUnitUsersQueryKey(unit.id));
+            queryClient.invalidateQueries({
+              queryKey: getGetOrganisationUnitUsersQueryKey(unit.id),
+            });
           } else {
             enqueueSnackbar("Username not found", { variant: "warning" });
           }

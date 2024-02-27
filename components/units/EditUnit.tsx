@@ -27,7 +27,7 @@ export const EditUnit = ({ unit }: EditUnitProps) => {
   const [, setUnit] = useSelectedUnit();
   const [name, setName] = useState(unit.name);
 
-  const { mutateAsync: patchUnit, isLoading } = usePatchUnit();
+  const { mutateAsync: patchUnit, isPending } = usePatchUnit();
 
   const queryClient = useQueryClient();
 
@@ -42,7 +42,7 @@ export const EditUnit = ({ unit }: EditUnitProps) => {
         onChange={(e) => setName(e.target.value)}
       />
       <Button
-        disabled={isLoading || name === unit.name}
+        disabled={isPending || name === unit.name}
         onClick={async () => {
           try {
             await patchUnit({
@@ -51,16 +51,16 @@ export const EditUnit = ({ unit }: EditUnitProps) => {
             });
 
             await Promise.all([
-              queryClient.invalidateQueries(getGetUnitsQueryKey()),
-              queryClient.invalidateQueries(getGetUnitQueryKey(unit.id)),
-              queryClient.invalidateQueries(getGetProjectsQueryKey()),
+              queryClient.invalidateQueries({ queryKey: getGetUnitsQueryKey() }),
+              queryClient.invalidateQueries({ queryKey: getGetUnitQueryKey(unit.id) }),
+              queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() }),
               new Promise((resolve, reject) => {
                 if (!organisation?.id) {
                   return resolve(null);
                 }
 
                 queryClient
-                  .invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id))
+                  .invalidateQueries({ queryKey: getGetOrganisationUnitsQueryKey(organisation.id) })
                   .then(resolve)
                   .catch(reject);
               }),

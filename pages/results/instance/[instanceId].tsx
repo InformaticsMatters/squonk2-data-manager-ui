@@ -25,7 +25,9 @@ const Result = () => {
     return <NextError statusCode={400} statusMessage="Instance ID is invalid" />;
   }
 
-  const refreshResults = [() => queryClient.invalidateQueries(getGetInstanceQueryKey(instanceId))];
+  const refreshResults = [
+    () => queryClient.invalidateQueries({ queryKey: getGetInstanceQueryKey(instanceId) }),
+  ];
 
   return (
     <RoleRequired roles={DM_ROLES}>

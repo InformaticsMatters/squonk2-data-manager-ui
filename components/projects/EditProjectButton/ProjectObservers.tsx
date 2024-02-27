@@ -27,8 +27,8 @@ export const ProjectObservers = ({ project }: ProjectObserversProps) => {
   const { user: currentUser } = useKeycloakUser();
 
   const { isLoading: isProjectsLoading } = useGetProjects();
-  const { mutateAsync: addObserver, isLoading: isAdding } = useAddObserverToProject();
-  const { mutateAsync: removeObserver, isLoading: isRemoving } = useRemoveObserverFromProject();
+  const { mutateAsync: addObserver, isPending: isAdding } = useAddObserverToProject();
+  const { mutateAsync: removeObserver, isPending: isRemoving } = useRemoveObserverFromProject();
   const queryClient = useQueryClient();
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
@@ -49,8 +49,8 @@ export const ProjectObservers = ({ project }: ProjectObserversProps) => {
               enqueueError(error);
             }
             // DM Queries
-            queryClient.invalidateQueries(getGetProjectQueryKey(project.project_id));
-            queryClient.invalidateQueries(getGetProjectsQueryKey());
+            queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(project.project_id) });
+            queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
           } else {
             enqueueSnackbar("Username not found", { variant: "warning" });
           }
@@ -66,8 +66,8 @@ export const ProjectObservers = ({ project }: ProjectObserversProps) => {
               enqueueError(error);
             }
             // DM Queries
-            queryClient.invalidateQueries(getGetProjectQueryKey(project.project_id));
-            queryClient.invalidateQueries(getGetProjectsQueryKey());
+            queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(project.project_id) });
+            queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
           } else {
             enqueueSnackbar("Username not found", { variant: "warning" });
           }

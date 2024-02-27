@@ -55,19 +55,17 @@ const useSDFRecords = (project: string, path: string, file: string, config: SDFV
   });
   const url = `${basePath}/api/sdf-parser?${queryParams.toString()}`;
 
-  return useQuery<SDFRecord[], Error, SDFRecord[], string[]>(
-    ["sdf", project, path, file],
-    async () => {
+  return useQuery<SDFRecord[], Error, SDFRecord[], string[]>({
+    queryKey: ["sdf", project, path, file],
+    queryFn: async () => {
       const response = await fetch(url);
       if (response.ok) {
         return response.json();
       }
       throw new Error(await response.text());
     },
-    {
-      refetchOnWindowFocus: false,
-    },
-  );
+    refetchOnWindowFocus: false,
+  });
 };
 
 export interface Molecule extends SDFRecord {

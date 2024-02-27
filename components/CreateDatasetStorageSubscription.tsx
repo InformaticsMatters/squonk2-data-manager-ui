@@ -50,7 +50,7 @@ export const CreateDatasetStorageSubscription = ({
             },
           });
           enqueueSnackbar("Created product", { variant: "success" });
-          queryClient.invalidateQueries(getGetProductsQueryKey());
+          queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
         } catch (error) {
           enqueueError(error);
           captureException(error);

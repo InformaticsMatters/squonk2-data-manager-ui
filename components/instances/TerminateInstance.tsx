@@ -50,8 +50,10 @@ export const TerminateInstance = ({
       onDelete={async () => {
         try {
           await terminateInstance({ instanceId });
-          queryClient.invalidateQueries(getGetInstancesQueryKey());
-          queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
+          queryClient.invalidateQueries({ queryKey: getGetInstancesQueryKey() });
+          queryClient.invalidateQueries({
+            queryKey: getGetInstancesQueryKey({ project_id: projectId }),
+          });
 
           enqueueSnackbar(`Instance has been ${done ? "deleted" : "terminated"}`, {
             variant: "success",

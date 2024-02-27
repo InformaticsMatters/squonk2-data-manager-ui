@@ -80,7 +80,7 @@ export const CreateDatasetFromFileButton = ({
             }
           }
           // Force an update of the datasets table which has now changed
-          queryClient.invalidateQueries(getGetDatasetsQueryKey());
+          queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
         }}
       >
         <AddCircleRoundedIcon />

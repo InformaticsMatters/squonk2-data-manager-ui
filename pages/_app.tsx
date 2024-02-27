@@ -6,7 +6,7 @@ import { setBaseUrl as setDMBaseUrl } from "@squonk/data-manager-client";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 import type { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
-import { Hydrate, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { enableMapSet } from "immer";
 import type { AppProps } from "next/app";
@@ -69,7 +69,7 @@ export default function App({
           profileUrl={`${process.env.NEXT_PUBLIC_BASE_PATH}/api/auth/me`}
         >
           <QueryClientProvider client={queryClient}>
-            <Hydrate state={pageProps.dehydratedState}>
+            <HydrationBoundary state={pageProps.dehydratedState}>
               <SnackbarProvider>
                 <MDXComponentProvider>
                   <TopLevelHooks>
@@ -77,7 +77,7 @@ export default function App({
                   </TopLevelHooks>
                 </MDXComponentProvider>
               </SnackbarProvider>
-            </Hydrate>
+            </HydrationBoundary>
             <ReactQueryDevtools />
           </QueryClientProvider>
         </UserProvider>

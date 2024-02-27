@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FileError } from "react-dropzone";
 
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
@@ -22,14 +22,14 @@ export interface SingleFileUploadWithProgressProps {
   onDelete: (file: File) => void;
 }
 
-export function SingleFileUploadWithProgress({
+export const SingleFileUploadWithProgress = ({
   fileWrapper,
   onDelete,
   errors,
   rename,
   changeToDone,
   changeMimeType,
-}: SingleFileUploadWithProgressProps) {
+}: SingleFileUploadWithProgressProps) => {
   const queryClient = useQueryClient();
   const fileNameRef = useRef<HTMLInputElement>();
   const fileExtRef = useRef<HTMLInputElement>();
@@ -42,25 +42,23 @@ export function SingleFileUploadWithProgress({
   // const typeLabelParts = fileWrapper.file.name.split('.');
 
   const [interval, setInterval] = useState<number | false>(2000);
-  const {
-    data: task,
-    isLoading,
-    isFetching,
-  } = useGetTask(fileWrapper.taskId ?? "", undefined, {
+  const { data: task, isFetching } = useGetTask(fileWrapper.taskId ?? "", undefined, {
     query: {
       enabled: fileWrapper.taskId !== null,
       // When a task id has been set, we poll the task endpoint to wait for the file to finish
       // processing
       refetchInterval: interval,
-      onSuccess: async (task) => {
-        if (!isLoading && task.done) {
-          setInterval(false);
-          await queryClient.invalidateQueries(getGetDatasetsQueryKey());
-          changeToDone();
-        }
-      },
     },
   });
+
+  useEffect(() => {
+    if (task && task.done) {
+      setInterval(false);
+      queryClient
+        .invalidateQueries({ queryKey: getGetDatasetsQueryKey() })
+        .then(() => changeToDone());
+    }
+  }, [changeToDone, queryClient, task]);
 
   const { extensions } = useFileExtensions();
   const mimeLookup = useMimeTypeLookup();
@@ -143,4 +141,4 @@ export function SingleFileUploadWithProgress({
       ))}
     </>
   );
-}
+};

@@ -62,7 +62,7 @@ export const ApplicationModal = ({
             }),
           },
         });
-        await queryClient.invalidateQueries(getGetInstancesQueryKey());
+        await queryClient.invalidateQueries({ queryKey: getGetInstancesQueryKey() });
       } catch (error) {
         enqueueError(error);
       } finally {

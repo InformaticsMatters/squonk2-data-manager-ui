@@ -150,7 +150,9 @@ export const JobModal = ({
             specification: JSON.stringify(specification),
           },
         });
-        await queryClient.invalidateQueries(getGetInstancesQueryKey({ project_id: projectId }));
+        await queryClient.invalidateQueries({
+          queryKey: getGetInstancesQueryKey({ project_id: projectId }),
+        });
       } catch (error) {
         enqueueError(error);
       } finally {

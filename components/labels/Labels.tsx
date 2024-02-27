@@ -57,7 +57,7 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
                   ]),
                 },
               });
-              queryClient.invalidateQueries(getGetDatasetsQueryKey());
+              queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
             } catch (error) {
               enqueueError(error);
             }

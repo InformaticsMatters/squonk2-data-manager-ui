@@ -59,7 +59,7 @@ export const CreateOrganisationListItem = () => {
 
     enqueueSnackbar("Organisation created");
 
-    queryClient.invalidateQueries(getGetOrganisationsQueryKey());
+    queryClient.invalidateQueries({ queryKey: getGetOrganisationsQueryKey() });
 
     // Change context outside of this try-catch block
     changeContext(organisationId);

@@ -127,12 +127,12 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
 
             await Promise.allSettled([
               // Ensure the views showing project files is updated to include the new addition
-              queryClient.invalidateQueries(
-                getGetFilesQueryKey({ project_id: project, path: resolvedPath }),
-              ),
+              queryClient.invalidateQueries({
+                queryKey: getGetFilesQueryKey({ project_id: project, path: resolvedPath }),
+              }),
               // Ensure that the dataset's details display the project's name in the used in projects
               // field
-              queryClient.invalidateQueries(getGetDatasetsQueryKey()),
+              queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() }),
             ]);
 
             enqueueSnackbar("The dataset was successfully attached to your project", {

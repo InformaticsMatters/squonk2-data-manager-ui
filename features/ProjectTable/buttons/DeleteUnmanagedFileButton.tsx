@@ -56,7 +56,9 @@ export const DeleteUnmanagedFileButton = ({
               project_id: projectId,
             },
           });
-          await queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
+          await queryClient.invalidateQueries({
+            queryKey: getGetFilesQueryKey({ project_id: projectId, path }),
+          });
 
           enqueueSnackbar("Unmanaged file deleted", { variant: "success" });
         } catch (error) {

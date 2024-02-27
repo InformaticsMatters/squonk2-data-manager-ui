@@ -90,7 +90,7 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
       await Promise.allSettled(promises);
 
       // Once updated invalidate fetched schema data
-      await queryClient.invalidateQueries(getGetSchemaQueryKey(datasetId, version));
+      await queryClient.invalidateQueries({ queryKey: getGetSchemaQueryKey(datasetId, version) });
 
       setIsSaving(false);
     }

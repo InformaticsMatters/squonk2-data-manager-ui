@@ -102,10 +102,10 @@ export const CreateProjectForm = ({ modal, unitId, product }: CreateProjectFormP
       });
       enqueueSnackbar("Project created");
 
-      queryClient.invalidateQueries(getGetProjectsQueryKey());
-      queryClient.invalidateQueries(getGetProductsQueryKey());
+      queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
       typeof unitId === "string" &&
-        queryClient.invalidateQueries(getGetProductsForUnitQueryKey(unitId));
+        queryClient.invalidateQueries({ queryKey: getGetProductsForUnitQueryKey(unitId) });
 
       setCurrentProjectId(project_id);
     } catch (error) {

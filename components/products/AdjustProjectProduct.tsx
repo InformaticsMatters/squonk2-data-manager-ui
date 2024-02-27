@@ -48,8 +48,8 @@ export const AdjustProjectProduct = ({ product, allowance }: AdjustProjectProduc
           try {
             await adjustProduct({ productId: product.id, data: values });
             await Promise.allSettled([
-              queryClient.invalidateQueries(getGetProductsQueryKey()),
-              queryClient.invalidateQueries(getGetProductQueryKey(product.id)),
+              queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() }),
+              queryClient.invalidateQueries({ queryKey: getGetProductQueryKey(product.id) }),
             ]);
             enqueueSnackbar("Updated product", { variant: "success" });
           } catch (error) {

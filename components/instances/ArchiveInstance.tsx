@@ -24,8 +24,8 @@ export const ArchiveInstance = ({ instanceId, archived }: ArchiveInstanceProps) 
     setArchiving(true);
     await patchInstance({ instanceId, params: { archive: !archived } });
     await Promise.allSettled([
-      queryClient.invalidateQueries(getGetInstanceQueryKey(instanceId)),
-      queryClient.invalidateQueries(getGetInstancesQueryKey()),
+      queryClient.invalidateQueries({ queryKey: getGetInstanceQueryKey(instanceId) }),
+      queryClient.invalidateQueries({ queryKey: getGetInstancesQueryKey() }),
     ]);
     setArchiving(false);
   };

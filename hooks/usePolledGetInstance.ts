@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useGetInstance } from "@squonk/data-manager-client/instance";
 
@@ -6,12 +6,15 @@ import { DONE_PHASES } from "../constants/instances";
 
 export const usePolledGetInstance = (instanceId: string, pollInterval = 5000) => {
   const [refetchInterval, setRefetchInterval] = useState(pollInterval);
-  return useGetInstance(instanceId, {
-    query: {
-      refetchInterval,
-      onSuccess: (newInstance) => {
-        DONE_PHASES.includes(newInstance.phase) && setRefetchInterval(Infinity);
-      },
-    },
+  const query = useGetInstance(instanceId, {
+    query: { refetchInterval },
   });
+
+  const done = query.data?.phase && DONE_PHASES.includes(query.data.phase);
+
+  useEffect(() => {
+    done && setRefetchInterval(Infinity);
+  }, [done]);
+
+  return query;
 };

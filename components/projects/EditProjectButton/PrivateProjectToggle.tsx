@@ -16,7 +16,7 @@ export interface PrivateProjectToggleProps {
 }
 
 export const PrivateProjectToggle = ({ projectId, isPrivate }: PrivateProjectToggleProps) => {
-  const { mutateAsync: adjustProject, isLoading } = usePatchProject();
+  const { mutateAsync: adjustProject, isPending } = usePatchProject();
   const { enqueueError, enqueueSnackbar } = useEnqueueError();
   const queryClient = useQueryClient();
 
@@ -27,7 +27,7 @@ export const PrivateProjectToggle = ({ projectId, isPrivate }: PrivateProjectTog
           checked={isPrivate}
           // Disable the switch until all relevant requests have resolved
           disabled={
-            isLoading ||
+            isPending ||
             (!!projectId &&
               queryClient.getQueryState(getGetProjectQueryKey(projectId))?.fetchStatus ===
                 "fetching")
@@ -41,8 +41,8 @@ export const PrivateProjectToggle = ({ projectId, isPrivate }: PrivateProjectTog
                     private: checked,
                   },
                 });
-                queryClient.invalidateQueries(getGetProjectsQueryKey());
-                queryClient.invalidateQueries(getGetProjectQueryKey(projectId));
+                queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
+                queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
 
                 if (checked) {
                   enqueueSnackbar("The project has been made private", { variant: "success" });

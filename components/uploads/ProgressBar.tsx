@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FileError } from "react-dropzone";
 
 import { useGetTask } from "@squonk/data-manager-client/task";
@@ -28,20 +28,22 @@ export interface ProgressBarProps {
  * File upload progress bar that display upload progress and polls a task to wait for upload
  * processing to finish.
  */
-export const ProgressBar: React.FC<ProgressBarProps> = ({ taskId, progress, errors, onDone }) => {
+export const ProgressBar = ({ taskId, progress, errors, onDone }: ProgressBarProps) => {
   const [interval, setInterval] = useState<number | false>(2000);
   const { data: task, isLoading } = useGetTask(taskId ?? "", undefined, {
     query: {
       // Poll the task until the task is done
       refetchInterval: interval,
-      onSuccess: (task) => {
-        if (!isLoading && task.done) {
-          setInterval(false);
-          onDone();
-        }
-      },
     },
   });
+
+  useEffect(() => {
+    if (task && task.done) {
+      task;
+      setInterval(false);
+      onDone();
+    }
+  }, [task, onDone]);
 
   return (
     <Box paddingTop={1}>

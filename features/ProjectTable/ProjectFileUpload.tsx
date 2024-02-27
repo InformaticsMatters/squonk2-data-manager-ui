@@ -39,7 +39,9 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
             data: { as_filename: file.name, file, path },
           });
           enqueueSnackbar(`${file.name} was uploaded`, { variant: "success" });
-          queryClient.invalidateQueries(getGetFilesQueryKey({ project_id: projectId, path }));
+          queryClient.invalidateQueries({
+            queryKey: getGetFilesQueryKey({ project_id: projectId, path }),
+          });
         } catch (err) {
           enqueueError(err);
         }

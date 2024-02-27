@@ -94,14 +94,12 @@ const getImage = async (molFile: string, { depictURL, ...depictParams }: DepictP
 };
 
 const useGetImage = (molFile: string, depictParams: DepictParameters) =>
-  useQuery(
-    [`depict-mol-${molFile}-${Object.values(depictParams).join(",")}`],
-    () => getImage(molFile, depictParams),
-    {
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-    },
-  );
+  useQuery({
+    queryKey: [`depict-mol-${molFile}-${Object.values(depictParams).join(",")}`],
+    queryFn: () => getImage(molFile, depictParams),
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
+  });
 
 const LazyMolFileImage = (props: Parameters<typeof MolFileImage>[0]) => {
   const [wasSeen, ref] = useWasSeen();

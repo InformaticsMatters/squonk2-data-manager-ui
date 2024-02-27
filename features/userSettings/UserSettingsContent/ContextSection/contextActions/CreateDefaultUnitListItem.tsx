@@ -26,7 +26,7 @@ export const CreateDefaultUnitListItem = () => {
             data: { billing_day: getBillingDay() },
           });
           enqueueSnackbar("Personal unit created", { variant: "success" });
-          queryClient.invalidateQueries(getGetUnitsQueryKey());
+          queryClient.invalidateQueries({ queryKey: getGetUnitsQueryKey() });
 
           const unit = await getUnit(id);
           setUnit(unit);

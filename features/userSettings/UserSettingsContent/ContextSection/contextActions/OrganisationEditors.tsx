@@ -28,8 +28,8 @@ export const OrganisationEditors = ({ organisation }: UnitEditorsProps) => {
 
   const { data, isLoading: isUsersLoading } = useGetOrganisationUsers(organisation.id);
   const users = data?.users;
-  const { mutateAsync: addEditor, isLoading: isAdding } = useAddOrganisationUser();
-  const { mutateAsync: removeEditor, isLoading: isRemoving } = useDeleteOrganisationUser();
+  const { mutateAsync: addEditor, isPending: isAdding } = useAddOrganisationUser();
+  const { mutateAsync: removeEditor, isPending: isRemoving } = useDeleteOrganisationUser();
   const queryClient = useQueryClient();
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
@@ -50,7 +50,9 @@ export const OrganisationEditors = ({ organisation }: UnitEditorsProps) => {
               enqueueError(error);
             }
             // DM Queries
-            queryClient.invalidateQueries(getGetOrganisationUsersQueryKey(organisation.id));
+            queryClient.invalidateQueries({
+              queryKey: getGetOrganisationUsersQueryKey(organisation.id),
+            });
           } else {
             enqueueSnackbar("Username not found", { variant: "warning" });
           }
@@ -64,7 +66,9 @@ export const OrganisationEditors = ({ organisation }: UnitEditorsProps) => {
               enqueueError(error);
             }
             // DM Queries
-            queryClient.invalidateQueries(getGetOrganisationUsersQueryKey(organisation.id));
+            queryClient.invalidateQueries({
+              queryKey: getGetOrganisationUsersQueryKey(organisation.id),
+            });
           } else {
             enqueueSnackbar("Username not found", { variant: "warning" });
           }

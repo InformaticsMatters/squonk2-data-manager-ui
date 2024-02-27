@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import type { DatasetSummary } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey, uploadDataset } from "@squonk/data-manager-client/dataset";
@@ -48,6 +48,12 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
 
   const [unit] = useSelectedUnit();
   const [organisation] = useSelectedOrganisation();
+
+  const onDone = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
+    setFile(undefined);
+    setOpen(false);
+  }, [queryClient]);
 
   return (
     <>
@@ -118,11 +124,7 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
             errors={file.errors}
             progress={file.progress}
             taskId={file.taskId}
-            onDone={() => {
-              queryClient.invalidateQueries(getGetDatasetsQueryKey());
-              setFile(undefined);
-              setOpen(false);
-            }}
+            onDone={onDone}
           />
         )}
         {file && (

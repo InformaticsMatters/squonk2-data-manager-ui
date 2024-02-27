@@ -28,8 +28,8 @@ export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
   const { user } = useKeycloakUser();
   const [organisation] = useSelectedOrganisation();
   const queryClient = useQueryClient();
-  const { mutateAsync: deleteDefaultUnit, isLoading: isDefaultDeleting } = useDeleteDefaultUnit();
-  const { mutateAsync: deleteUnit, isLoading: isUnitDeleting } = useDeleteOrganisationUnit();
+  const { mutateAsync: deleteDefaultUnit, isPending: isDefaultDeleting } = useDeleteDefaultUnit();
+  const { mutateAsync: deleteUnit, isPending: isUnitDeleting } = useDeleteOrganisationUnit();
   const isDeleting = isDefaultDeleting || isUnitDeleting;
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError();
@@ -53,8 +53,10 @@ export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
           captureException(error);
         }
         organisation?.id &&
-          queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id));
-        queryClient.invalidateQueries(getGetUnitsQueryKey());
+          queryClient.invalidateQueries({
+            queryKey: getGetOrganisationUnitsQueryKey(organisation.id),
+          });
+        queryClient.invalidateQueries({ queryKey: getGetUnitsQueryKey() });
       }}
     >
       {({ openModal }) => (

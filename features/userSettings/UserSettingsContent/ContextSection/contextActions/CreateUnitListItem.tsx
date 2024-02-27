@@ -61,8 +61,8 @@ export const CreateUnitListItem = () => {
 
       enqueueSnackbar("Unit created");
 
-      queryClient.invalidateQueries(getGetOrganisationUnitsQueryKey(organisation.id));
-      queryClient.invalidateQueries(getGetUnitsQueryKey());
+      queryClient.invalidateQueries({ queryKey: getGetOrganisationUnitsQueryKey(organisation.id) });
+      queryClient.invalidateQueries({ queryKey: getGetUnitsQueryKey() });
 
       // Change context outside of this try-catch block
       changeContext(unitId);

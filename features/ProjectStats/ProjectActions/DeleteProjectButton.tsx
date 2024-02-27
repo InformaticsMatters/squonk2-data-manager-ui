@@ -66,10 +66,10 @@ export const DeleteProjectButton = ({ project }: DeleteProjectButtonProps) => {
       enqueueSnackbar("Project not found", { variant: "warning" });
     }
 
-    queryClient.invalidateQueries(getGetProjectsQueryKey());
-    queryClient.invalidateQueries(getGetProductsQueryKey());
+    queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
+    queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
     project.unit_id &&
-      queryClient.invalidateQueries(getGetProductsForUnitQueryKey(project.unit_id));
+      queryClient.invalidateQueries({ queryKey: getGetProductsForUnitQueryKey(project.unit_id) });
   };
 
   return (

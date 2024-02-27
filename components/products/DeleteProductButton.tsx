@@ -39,11 +39,11 @@ export const DeleteProductButton = ({
         try {
           await deleteProduct({ productId: product.id });
           await Promise.allSettled([
-            queryClient.invalidateQueries(getGetProductsQueryKey()),
-            queryClient.invalidateQueries(getGetProductQueryKey(product.id)),
-            queryClient.invalidateQueries(
-              unitId ? getGetProductsForUnitQueryKey(unitId) : undefined,
-            ),
+            queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() }),
+            queryClient.invalidateQueries({ queryKey: getGetProductQueryKey(product.id) }),
+            queryClient.invalidateQueries({
+              queryKey: unitId ? getGetProductsForUnitQueryKey(unitId) : undefined,
+            }),
           ]);
           enqueueSnackbar("Product deleted", { variant: "success" });
         } catch (error) {

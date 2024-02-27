@@ -64,7 +64,7 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
           enqueueSnackbar("Username doesn't exist", { variant: "warning" });
         }
 
-        await queryClient.invalidateQueries(getGetDatasetsQueryKey());
+        await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
         enqueueSnackbar(`User ${username} removed successfully`, { variant: "success" });
 
         setIsLoading(false);
@@ -82,7 +82,7 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
           enqueueSnackbar("Username doesn't exist", { variant: "warning" });
         }
 
-        await queryClient.invalidateQueries(getGetDatasetsQueryKey());
+        await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
         enqueueSnackbar(`User ${username} added successfully`, { variant: "success" });
 
         setIsLoading(false);

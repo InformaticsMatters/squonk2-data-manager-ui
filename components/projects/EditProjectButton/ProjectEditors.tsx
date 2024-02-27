@@ -27,8 +27,8 @@ export const ProjectEditors = ({ project }: ProjectEditorsProps) => {
   const { user: currentUser } = useKeycloakUser();
 
   const { isLoading: isProjectsLoading } = useGetProjects();
-  const { mutateAsync: addEditor, isLoading: isAdding } = useAddEditorToProject();
-  const { mutateAsync: removeEditor, isLoading: isRemoving } = useRemoveEditorFromProject();
+  const { mutateAsync: addEditor, isPending: isAdding } = useAddEditorToProject();
+  const { mutateAsync: removeEditor, isPending: isRemoving } = useRemoveEditorFromProject();
   const queryClient = useQueryClient();
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
@@ -49,8 +49,8 @@ export const ProjectEditors = ({ project }: ProjectEditorsProps) => {
               enqueueError(error);
             }
             // DM Queries
-            queryClient.invalidateQueries(getGetProjectQueryKey(project.project_id));
-            queryClient.invalidateQueries(getGetProjectsQueryKey());
+            queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(project.project_id) });
+            queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
           } else {
             enqueueSnackbar("Username not found", { variant: "warning" });
           }
@@ -64,8 +64,8 @@ export const ProjectEditors = ({ project }: ProjectEditorsProps) => {
               enqueueError(error);
             }
             // DM Queries
-            queryClient.invalidateQueries(getGetProjectQueryKey(project.project_id));
-            queryClient.invalidateQueries(getGetProjectsQueryKey());
+            queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(project.project_id) });
+            queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
           } else {
             enqueueSnackbar("Username not found", { variant: "warning" });
           }

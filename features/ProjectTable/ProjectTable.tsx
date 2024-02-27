@@ -190,7 +190,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
               directories={directories}
               path={dirPath}
               onDirectoryCreated={async () => {
-                queryClient.invalidateQueries(getGetFilesQueryKey(getFilesParams));
+                queryClient.invalidateQueries({ queryKey: getGetFilesQueryKey(getFilesParams) });
               }}
             />
           </Grid>

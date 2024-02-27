@@ -43,7 +43,7 @@ export const DeleteDatasetListItem = ({ datasetId, version, onDelete }: DeleteDa
         } catch (error) {
           enqueueError(error);
         }
-        await queryClient.invalidateQueries(getGetDatasetsQueryKey());
+        await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
         enqueueSnackbar("Dataset deleted", { variant: "success" });
       }}
     >

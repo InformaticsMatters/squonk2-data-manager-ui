@@ -1,23 +1,12 @@
 import { useMemo, useState } from "react";
 
-import {
-  getApplications,
-  getGetApplicationsQueryKey,
-  useGetApplications,
-} from "@squonk/data-manager-client/application";
-import { getGetJobsQueryKey, getJobs, useGetJobs } from "@squonk/data-manager-client/job";
-import { getGetProjectsQueryKey, getProjects } from "@squonk/data-manager-client/project";
+import { useGetApplications } from "@squonk/data-manager-client/application";
+import { useGetJobs } from "@squonk/data-manager-client/job";
 
-import {
-  getAccessToken,
-  withPageAuthRequired as withPageAuthRequiredSSR,
-} from "@auth0/nextjs-auth0";
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Alert, Container, Grid, MenuItem, TextField } from "@mui/material";
-import { dehydrate, QueryClient } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import type { GetServerSideProps } from "nextjs-routes";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
 import { CenterLoader } from "../components/CenterLoader";
@@ -28,9 +17,7 @@ import { SearchTextField } from "../components/SearchTextField";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { useCurrentProject, useIsEditorOfCurrentProject } from "../hooks/projectHooks";
 import Layout from "../layouts/Layout";
-import { dmOptions } from "../utils/api/ssrQueryOptions";
 import { search } from "../utils/app/searches";
-import { getFullReturnTo } from "../utils/next/ssr";
 
 const TestJobCard = dynamic(
   () => import("../components/executionsCards/TestJob/TestJobCard").then((mod) => mod.TestJobCard),
@@ -38,49 +25,6 @@ const TestJobCard = dynamic(
     loading: () => <CenterLoader />,
   },
 );
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const returnTo = getFullReturnTo(ctx);
-  return withPageAuthRequiredSSR({
-    returnTo,
-    getServerSideProps: async ({ req, res, query }) => {
-      const queryClient = new QueryClient();
-
-      try {
-        const { accessToken } = await getAccessToken(req, res);
-
-        const projectId = query.project as string | undefined;
-
-        if (projectId && accessToken) {
-          // Prefetch some data
-          const queries = [
-            queryClient.prefetchQuery(getGetProjectsQueryKey(), () =>
-              getProjects(undefined, dmOptions(accessToken)),
-            ),
-            queryClient.prefetchQuery(getGetApplicationsQueryKey(), () =>
-              getApplications(dmOptions(accessToken)),
-            ),
-            queryClient.prefetchQuery(getGetJobsQueryKey(), () =>
-              getJobs(undefined, dmOptions(accessToken)),
-            ),
-          ];
-
-          // Make the queries in parallel
-          await Promise.allSettled(queries);
-        }
-      } catch (error) {
-        // TODO: smarter handling
-        console.error(error);
-      }
-
-      return {
-        props: {
-          dehydratedState: dehydrate(queryClient),
-        },
-      };
-    },
-  })(ctx);
-};
 
 /**
  * Page allowing the user to run jobs and applications

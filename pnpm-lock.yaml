@@ -63,8 +63,8 @@ dependencies:
     specifier: 2.0.10
     version: 2.0.10(@tanstack/react-query@4.36.1)(axios@1.6.7)
   '@squonk/data-manager-client':
-    specifier: 1.2.8
-    version: 1.2.8(@tanstack/react-query@4.36.1)(axios@1.6.7)
+    specifier: 1.2.9
+    version: 1.2.9(@tanstack/react-query@4.36.1)(axios@1.6.7)
   '@squonk/mui-theme':
     specifier: 3.0.2
     version: 3.0.2(@mui/material@5.15.11)
@@ -1729,8 +1729,8 @@ packages:
       axios: 1.6.7
     dev: false
 
-  /@squonk/data-manager-client@1.2.8(@tanstack/react-query@4.36.1)(axios@1.6.7):
-    resolution: {integrity: sha512-trSwxEI1ly+CK41XsU4Kn8ZpZgqMdWfSJJaQ4WHNQ5ctEChUIZ8WGh1pOcHKSdpyNdCBx2FUBQu54ne9/qQ+EQ==}
+  /@squonk/data-manager-client@1.2.9(@tanstack/react-query@4.36.1)(axios@1.6.7):
+    resolution: {integrity: sha512-+g6i9gnfd9YM/ZxBoe+fpvjZu8p6uBg8LA24ybeo9+298Lw1Ort+jxWymrDFcEEtBOLuGYbxp/JU//He4OlsXw==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'

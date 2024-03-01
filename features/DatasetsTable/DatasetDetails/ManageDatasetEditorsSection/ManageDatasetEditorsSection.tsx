@@ -44,7 +44,6 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
 
   return (
     <ManageUsers
-      currentUsername={user.username}
       isLoading={isLoading}
       title="Editors"
       users={editors}

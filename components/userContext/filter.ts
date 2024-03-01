@@ -22,10 +22,12 @@ export const filterProjectsByPermissionLevel = (
 
   switch (level) {
     case "editor":
-      return projects.filter((project) => project.editors.includes(user) || project.owner == user);
+      return projects.filter(
+        (project) => project.editors.includes(user) || project.administrators.includes(user),
+      );
 
     case "owner":
-      return projects.filter((project) => project.owner == user);
+      return projects.filter((project) => project.administrators.includes(user));
 
     default:
       return projects;

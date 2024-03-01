@@ -2,7 +2,10 @@ import { CircularProgress } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import type { DownloadButtonProps } from "../../components/downloads/DownloadButton";
-import { useCurrentProject, useIsUserAProjectOwnerOrEditor } from "../../hooks/projectHooks";
+import {
+  useCurrentProject,
+  useIsUserAdminOrEditorOfCurrentProject,
+} from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { API_ROUTES } from "../../utils/app/routes";
 import type { CreateDatasetFromFileButtonProps } from "./buttons/CreateDatasetFromFileButton";
@@ -47,7 +50,7 @@ export interface FileActionsProps {
  */
 export const FileActions = ({ file }: FileActionsProps) => {
   const project = useCurrentProject();
-  const isProjectOwnerOrEditor = useIsUserAProjectOwnerOrEditor();
+  const isProjectOwnerOrEditor = useIsUserAdminOrEditorOfCurrentProject();
 
   const breadcrumbs = useProjectBreadcrumbs();
   const path = "/" + breadcrumbs.join("/");

@@ -18,7 +18,7 @@ import { useRouter } from "next/router";
 import { DataTable } from "../../components/DataTable";
 import { NextLink } from "../../components/NextLink";
 import { ViewFilePopover } from "../../components/ViewFilePopover/ViewFilePopover";
-import { useIsUserAProjectOwnerOrEditor } from "../../hooks/projectHooks";
+import { useIsUserAdminOrEditorOfCurrentProject } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { toLocalTimeString } from "../../utils/app/datetime";
 import { getErrorMessage } from "../../utils/next/orvalError";
@@ -49,7 +49,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
 
   const router = useRouter();
 
-  const isProjectOwnerOrEditor = useIsUserAProjectOwnerOrEditor();
+  const isProjectOwnerOrEditor = useIsUserAdminOrEditorOfCurrentProject();
 
   // Breadcrumbs
   const breadcrumbs = useProjectBreadcrumbs();

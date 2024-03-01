@@ -3,7 +3,7 @@ import type { ApplicationSummary } from "@squonk/data-manager-client";
 import { CircularProgress, useTheme } from "@mui/material";
 import dynamic from "next/dynamic";
 
-import { useIsEditorOfCurrentProject } from "../../../hooks/projectHooks";
+import { useIsUserAdminOrEditorOfCurrentProject } from "../../../hooks/projectHooks";
 import { BaseCard } from "../../BaseCard";
 import type { InstancesListProps } from "../InstancesList";
 import type { ApplicationModalButtonProps } from "./ApplicationModalButton";
@@ -32,14 +32,14 @@ export interface ApplicationCardProps extends Pick<ApplicationModalButtonProps, 
 export const ApplicationCard = ({ app, projectId }: ApplicationCardProps) => {
   const theme = useTheme();
 
-  const isEditor = useIsEditorOfCurrentProject();
+  const hasPermission = useIsUserAdminOrEditorOfCurrentProject();
 
   return (
     <BaseCard
       actions={({ setExpanded }) => (
         <ApplicationModalButton
           applicationId={app.application_id}
-          disabled={!isEditor}
+          disabled={!hasPermission}
           projectId={projectId}
           onLaunch={() => setExpanded(true)}
         />

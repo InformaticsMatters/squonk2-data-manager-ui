@@ -10,13 +10,14 @@ import { DeleteProjectButton } from "./DeleteProjectButton";
 
 export interface ProjectActionsProps {
   projectId: NonNullable<ProjectId>;
+  isAdministrator: boolean;
   isEditor: boolean;
 }
 
 /**
  * Table cell with edit and delete actions for provided project product.
  */
-export const ProjectActions = ({ projectId, isEditor }: ProjectActionsProps) => {
+export const ProjectActions = ({ projectId, isAdministrator, isEditor }: ProjectActionsProps) => {
   const { data: project, isLoading } = useGetProject(projectId);
 
   if (isLoading) {
@@ -26,9 +27,9 @@ export const ProjectActions = ({ projectId, isEditor }: ProjectActionsProps) => 
   return project ? (
     <Box display="flex">
       <OpenProjectButton projectId={projectId} />
-      {isEditor && <EditProjectButton project={project} />}
-      {isEditor && <DeleteProjectButton project={project} />}
-      {isEditor && <ChargesLinkIconButton productId={project.product_id} />}
+      {(isEditor || isAdministrator) && <EditProjectButton project={project} />}
+      {(isEditor || isAdministrator) && <DeleteProjectButton project={project} />}
+      {(isEditor || isAdministrator) && <ChargesLinkIconButton productId={project.product_id} />}
     </Box>
   ) : null;
 };

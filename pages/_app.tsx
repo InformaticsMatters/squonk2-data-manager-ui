@@ -78,7 +78,7 @@ export default function App({
                 </MDXComponentProvider>
               </SnackbarProvider>
             </HydrationBoundary>
-            <ReactQueryDevtools />
+            <ReactQueryDevtools client={queryClient} />
           </QueryClientProvider>
         </UserProvider>
       </ThemeProviders>

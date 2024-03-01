@@ -2,16 +2,16 @@ import type { ProjectDetail } from "@squonk/data-manager-client";
 import {
   getGetProjectQueryKey,
   getGetProjectsQueryKey,
-  useAddObserverToProject,
+  useAddAdministratorToProject,
   useGetProjects,
-  useRemoveObserverFromProject,
+  useRemoveAdministratorFromProject,
 } from "@squonk/data-manager-client/project";
 
 import { useQueryClient } from "@tanstack/react-query";
 
 import { ProjectMemberSelection } from "./ProjectMemberSelection";
 
-export interface ProjectObserversProps {
+export interface ProjectAdministratorsProps {
   /**
    * Project to be edited.
    */
@@ -19,22 +19,23 @@ export interface ProjectObserversProps {
 }
 
 /**
- * Selector component to manage observers of a project.
+ * MuiAutocomplete to manage the current administrators of the selected project
  */
-export const ProjectObservers = ({ project }: ProjectObserversProps) => {
+export const ProjectAdministrators = ({ project }: ProjectAdministratorsProps) => {
   const { isLoading: isProjectsLoading } = useGetProjects();
 
-  const { mutateAsync: addObserver, isPending: isAdding } = useAddObserverToProject();
-  const { mutateAsync: removeObserver, isPending: isRemoving } = useRemoveObserverFromProject();
+  const { mutateAsync: addAdministrator, isPending: isAdding } = useAddAdministratorToProject();
+  const { mutateAsync: removeAdministrator, isPending: isRemoving } =
+    useRemoveAdministratorFromProject();
   const queryClient = useQueryClient();
 
   return (
     <ProjectMemberSelection
-      addMember={(userId) => addObserver({ projectId: project.project_id, userId })}
+      addMember={(userId) => addAdministrator({ projectId: project.project_id, userId })}
       isLoading={isAdding || isRemoving || isProjectsLoading}
-      memberList={project.observers}
-      removeMember={(userId) => removeObserver({ projectId: project.project_id, userId })}
-      title="Observers"
+      memberList={project.administrators}
+      removeMember={(userId) => removeAdministrator({ projectId: project.project_id, userId })}
+      title="Administrators"
       onSettled={() =>
         Promise.all([
           queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(project.project_id) }),

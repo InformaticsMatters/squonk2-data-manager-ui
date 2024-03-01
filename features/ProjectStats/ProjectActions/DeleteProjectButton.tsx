@@ -32,7 +32,7 @@ export const DeleteProjectButton = ({ project }: DeleteProjectButtonProps) => {
   const { projectId: currentProjectId, setCurrentProjectId } = useCurrentProjectId();
 
   const { user } = useKeycloakUser();
-  const isOwner = user.username === project.owner;
+  const isAdmin = user.username && project.administrators.includes(user.username);
 
   const queryClient = useQueryClient();
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
@@ -97,7 +97,7 @@ export const DeleteProjectButton = ({ project }: DeleteProjectButtonProps) => {
       onDelete={handleDelete}
     >
       {({ openModal, isDeleting: disabled }) =>
-        isOwner && (
+        isAdmin && (
           <IconButton
             disabled={disabled || isDeleting}
             size="small"

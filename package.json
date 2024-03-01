@@ -9,8 +9,8 @@
     "url": "https://github.com/InformaticsMatters/squonk2-data-manager-ui"
   },
   "engines": {
-    "node": ">=16",
-    "pnpm": ">=6"
+    "node": ">=20",
+    "pnpm": ">=8"
   },
   "scripts": {
     "prepare": "husky install",

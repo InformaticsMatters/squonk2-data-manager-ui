@@ -144,7 +144,7 @@ export const JobModal = ({
           data: {
             debug,
             application_id: job.application.application_id,
-            application_version: job.application.latest_version,
+            // application_version: job.application.latest_version,
             as_name: name,
             project_id: projectId,
             specification: JSON.stringify(specification),

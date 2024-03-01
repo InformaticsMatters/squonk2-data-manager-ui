@@ -54,7 +54,7 @@ export const ApplicationModal = ({
           data: {
             debug,
             application_id: applicationId,
-            application_version: versionToUse,
+            // application_version: versionToUse,
             as_name: name,
             project_id: projectId,
             specification: JSON.stringify({

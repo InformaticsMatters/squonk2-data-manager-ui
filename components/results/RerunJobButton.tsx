@@ -29,13 +29,15 @@ export const RerunJobButton = ({ instance, disabled = false }: RerunJobButtonPro
       <Button color="primary" disabled={disabled} onClick={() => setOpen(true)}>
         Run again
       </Button>
-      <JobModal
-        instance={instance}
-        jobId={instance.job_id}
-        open={open}
-        projectId={instance.project_id}
-        onClose={() => setOpen(false)}
-      />
+      {open && (
+        <JobModal
+          instance={instance}
+          jobId={instance.job_id}
+          open={open}
+          projectId={instance.project_id}
+          onClose={() => setOpen(false)}
+        />
+      )}
     </>
   ) : null;
 };

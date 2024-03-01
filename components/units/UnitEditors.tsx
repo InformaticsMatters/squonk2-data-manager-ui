@@ -37,7 +37,6 @@ export const UnitEditors = ({ unit }: UnitEditorsProps) => {
   if (users && currentUser.username) {
     return (
       <ManageUsers
-        currentUsername={currentUser.username}
         isLoading={isAdding || isRemoving || isUsersLoading}
         title="Unit Editors"
         users={users.filter((user) => user.id !== currentUser.username).map((user) => user.id)}

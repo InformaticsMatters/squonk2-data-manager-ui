@@ -59,13 +59,15 @@ export const UserSettingsContent = () => {
   const fallBackToNone =
     project !== null &&
     !!user.username &&
-    project.owner !== user.username &&
+    project.administrators.includes(user.username) &&
     !project.editors.includes(user.username);
+
   const fallBackToEditor =
     project !== null &&
     !!user.username &&
-    project.owner !== user.username &&
+    project.administrators.includes(user.username) &&
     project.editors.includes(user.username);
+
   useEffect(() => {
     if (fallBackToNone) {
       setPermissionLevel("none");

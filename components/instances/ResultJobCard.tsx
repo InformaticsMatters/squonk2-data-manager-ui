@@ -5,7 +5,7 @@ import { Alert, CardContent, ListItem, ListItemText } from "@mui/material";
 import { LogsButton } from "../../components/results/LogsButton";
 import { RerunJobButton } from "../../components/results/RerunJobButton";
 import { ResultCard } from "../../components/results/ResultCard";
-import { useIsEditorOfCurrentProject, useProjectFromId } from "../../hooks/projectHooks";
+import { useIsUserAdminOrEditorOfCurrentProject, useProjectFromId } from "../../hooks/projectHooks";
 import { ProjectListItem } from "../projects/ProjectListItem";
 import { ArchivedStatus } from "./ArchivedStatus";
 import { ArchiveInstance } from "./ArchiveInstance";
@@ -40,7 +40,7 @@ export const ResultJobCard = ({
 
   const associatedProject = useProjectFromId(instance.project_id);
 
-  const isEditor = useIsEditorOfCurrentProject();
+  const hasPermission = useIsUserAdminOrEditorOfCurrentProject();
 
   if (instance.job_id === undefined) {
     return <Alert severity="error">Instance is missing a job ID</Alert>;
@@ -51,13 +51,13 @@ export const ResultJobCard = ({
       actions={({ setSlideIn }) => (
         <>
           <TerminateInstance
-            disabled={!isEditor}
+            disabled={!hasPermission}
             instanceId={instanceId}
             phase={instance.phase}
             projectId={instance.project_id}
             onTermination={() => setSlideIn(false)}
           />
-          <RerunJobButton disabled={!isEditor} instance={instance} />
+          <RerunJobButton disabled={!hasPermission} instance={instance} />
           <LogsButton instance={instance} instanceId={instanceId} />
           <ArchiveInstance archived={instance.archived} instanceId={instanceId} />
         </>

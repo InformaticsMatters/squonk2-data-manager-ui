@@ -5,7 +5,10 @@ import { Button, CardContent } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
-import { useCurrentProjectId, useIsEditorOfCurrentProject } from "../../hooks/projectHooks";
+import {
+  useCurrentProjectId,
+  useIsUserAdminOrEditorOfCurrentProject,
+} from "../../hooks/projectHooks";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { ResultCard } from "../results/ResultCard";
 import { WarningDeleteButton } from "../WarningDeleteButton";
@@ -32,7 +35,7 @@ export const ResultTaskCard = ({ task, collapsedByDefault = true }: ResultTaskCa
 
   const { projectId } = useCurrentProjectId();
 
-  const isEditor = useIsEditorOfCurrentProject();
+  const hasPermission = useIsUserAdminOrEditorOfCurrentProject();
 
   const { query } = useRouter();
 
@@ -60,7 +63,7 @@ export const ResultTaskCard = ({ task, collapsedByDefault = true }: ResultTaskCa
           }}
         >
           {({ openModal }) => (
-            <Button disabled={!isEditor} onClick={openModal}>
+            <Button disabled={!hasPermission} onClick={openModal}>
               Delete
             </Button>
           )}

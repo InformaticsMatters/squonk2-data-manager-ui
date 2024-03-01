@@ -79,13 +79,13 @@ export const useProjectFromId = (projectId: string) => {
   return projects?.find((project) => project.project_id === projectId);
 };
 
-export const useIsUserAProjectOwnerOrEditor = () => {
+export const useIsUserAdminOrEditorOfCurrentProject = () => {
   const { user } = useKeycloakUser();
   const project = useCurrentProject();
 
   return (
     !!user.username &&
-    (project?.editors.includes(user.username) || project?.owner === user.username)
+    (project?.editors.includes(user.username) || project?.administrators.includes(user.username))
   );
 };
 

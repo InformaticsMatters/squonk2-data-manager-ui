@@ -7,10 +7,6 @@ import type { AutocompleteChangeReason } from "@mui/material/useAutocomplete";
 
 export interface ManageUsersProps {
   /**
-   * User's username
-   */
-  currentUsername: string;
-  /**
    * Array of current users
    */
   users: string[];
@@ -38,7 +34,6 @@ export interface ManageUsersProps {
  * The current user is assumed to always be included.
  */
 export const ManageUsers: FC<ManageUsersProps> = ({
-  currentUsername,
   users,
   isLoading = false,
   title,
@@ -72,7 +67,6 @@ export const ManageUsers: FC<ManageUsersProps> = ({
       fullWidth
       multiple
       disabled={loading}
-      getOptionDisabled={(option) => option === currentUsername}
       id={title.toLowerCase().replace(/\s/g, "")}
       loading={loading}
       options={availableUsers.map((user) => user.username)}
@@ -84,14 +78,14 @@ export const ManageUsers: FC<ManageUsersProps> = ({
             <Chip
               label={option}
               variant="outlined"
-              onDelete={option !== currentUsername ? onDelete : undefined}
+              onDelete={onDelete}
               {...chipProps}
               key={option}
             />
           );
         })
       }
-      value={[currentUsername, ...users]}
+      value={users}
       onChange={(_, value, reason) => updateUsers(value, reason)}
     />
   );

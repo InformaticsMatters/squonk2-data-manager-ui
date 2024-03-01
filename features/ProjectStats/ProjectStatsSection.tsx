@@ -56,17 +56,25 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
       }),
       projectColumnHelper.accessor((row) => row.name, {
         id: "projectName",
-        header: "Project name",
+        header: "Name",
         cell: ({ row, getValue }) => (
           <ProjectName isPrivate={row.original.private} name={getValue()} />
         ),
         enableColumnFilter: true,
       }),
-      projectColumnHelper.accessor("owner", { header: "Owner", enableColumnFilter: true }),
+      projectColumnHelper.accessor("creator", {
+        header: "Creator",
+        enableColumnFilter: true,
+      }),
+      projectColumnHelper.accessor("administrators", {
+        header: "Admins",
+        enableColumnFilter: true,
+        cell: ({ row }) => row.original.administrators.join(", "),
+      }),
       projectColumnHelper.accessor((row) => formatTierString(row.product?.flavour ?? ""), {
         id: "tier",
         header: "Tier",
-        enableColumnFilter: false,
+        enableColumnFilter: true,
       }),
       projectColumnHelper.display({
         id: "usage",
@@ -104,6 +112,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
         header: "Actions",
         cell: ({ row }) => (
           <ProjectActions
+            isAdministrator={!!user.username && row.original.administrators.includes(user.username)}
             isEditor={!!user.username && row.original.editors.includes(user.username)}
             projectId={row.original.project_id}
           />
@@ -173,7 +182,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
             },
             "& tr": {
               display: "grid",
-              gridTemplateColumns: "61px 1fr 1fr 110px 220px 100px 100px 100px 110px",
+              gridTemplateColumns: "61px 1fr 1fr 1fr 110px 220px 100px 100px 100px 110px",
             },
           },
         }}

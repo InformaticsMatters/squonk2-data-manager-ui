@@ -15,7 +15,7 @@ import { JobCard } from "../components/runCards/JobCard";
 import { TEST_JOB_ID } from "../components/runCards/TestJob/jobId";
 import { SearchTextField } from "../components/SearchTextField";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
-import { useCurrentProject, useIsEditorOfCurrentProject } from "../hooks/projectHooks";
+import { useCurrentProject, useIsUserAdminOrEditorOfCurrentProject } from "../hooks/projectHooks";
 import Layout from "../layouts/Layout";
 import { search } from "../utils/app/searches";
 
@@ -35,7 +35,7 @@ const Run = () => {
 
   const currentProject = useCurrentProject();
 
-  const isEditor = useIsEditorOfCurrentProject();
+  const hasPermissionToRun = useIsUserAdminOrEditorOfCurrentProject();
   // Needs to assert some types here as Orval still doesn't get this right
   const {
     data: applicationsData,
@@ -74,7 +74,11 @@ const Run = () => {
     const jobCards =
       filteredJobs?.map((job) => (
         <Grid item key={job.id} md={3} sm={6} xs={12}>
-          <JobCard disabled={!isEditor} job={job} projectId={currentProject?.project_id} />
+          <JobCard
+            disabled={!hasPermissionToRun}
+            job={job}
+            projectId={currentProject?.project_id}
+          />
         </Grid>
       )) ?? [];
 
@@ -87,7 +91,14 @@ const Run = () => {
       return applicationCards;
     }
     return jobCards;
-  }, [applications, currentProject?.project_id, executionTypes, jobs, searchValue, isEditor]);
+  }, [
+    applications,
+    currentProject?.project_id,
+    executionTypes,
+    jobs,
+    searchValue,
+    hasPermissionToRun,
+  ]);
 
   process.env.NODE_ENV === "development" && cards.push(<TestJobCard key={TEST_JOB_ID} />);
 
@@ -156,7 +167,7 @@ const Run = () => {
                   </Grid>
                 )}
 
-                {!isEditor && (
+                {!isApplicationsLoading && !isJobsLoading && !hasPermissionToRun && (
                   <Grid item xs={12}>
                     <Alert severity="warning">
                       You must be a project editor to run jobs in this project.

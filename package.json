@@ -79,7 +79,7 @@
     "jwt-decode": "4.0.0",
     "ketcher-core": "2.15.1",
     "ketcher-react": "2.15.1",
-    "ketcher-standalone": "2.15.1",
+    "ketcher-standalone": "2.18.0",
     "lodash-es": "4.17.21",
     "material-ui-popup-state": "5.0.10",
     "nanoid": "5.0.6",

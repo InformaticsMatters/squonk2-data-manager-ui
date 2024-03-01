@@ -135,14 +135,14 @@ dependencies:
     specifier: 4.0.0
     version: 4.0.0
   ketcher-core:
-    specifier: 2.15.1
-    version: 2.15.1
+    specifier: 2.18.0
+    version: 2.18.0(react-dom@18.2.0)(react@18.2.0)
   ketcher-react:
     specifier: 2.15.1
     version: 2.15.1(@types/react@18.2.60)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0)
   ketcher-standalone:
     specifier: 2.15.1
-    version: 2.15.1
+    version: 2.15.1(react-dom@18.2.0)(react@18.2.0)
   lodash-es:
     specifier: 4.17.21
     version: 4.17.21
@@ -5668,8 +5668,8 @@ packages:
     resolution: {integrity: sha512-hRkd6/XW4HTsA9vjVpY9tuXJYLSlelnkTmVFu4M9/7MIYQtFcHpbugAU7UbOfjOiVSVYl2fqgBuJ32JUmRo5Ew==}
     dev: false
 
-  /ketcher-core@2.15.1:
-    resolution: {integrity: sha512-JxcVMU1wXcjZx8X4VvF4TmWTxcR2yCZaGDFHciLkgijDr1Cmt1EH3kHLkD+ISRvIjocbyUtkL3C7LJVQu+N0Aw==}
+  /ketcher-core@2.18.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-d0Dgnb0R8gQkjNfBL5YBEbGde7L8265tBvQrqwzrk4XhraQSnZ2Itozv8NO1SgIzxRveRVKvk/3JaHznurqcrw==}
     engines: {node: '>=14'}
     dependencies:
       '@babel/runtime': 7.23.9
@@ -5678,7 +5678,11 @@ packages:
       d3: 7.8.5
       lodash: 4.17.21
       raphael: 2.3.0
+      react-device-detect: 2.2.3(react-dom@18.2.0)(react@18.2.0)
       svgpath: 2.6.0
+    transitivePeerDependencies:
+      - react
+      - react-dom
     dev: false
 
   /ketcher-react@2.15.1(@types/react@18.2.60)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0):
@@ -5701,7 +5705,7 @@ packages:
       font-face-observer: 1.0.0
       hoist-non-react-statics: 3.3.2
       intersection-observer: 0.12.2
-      ketcher-core: 2.15.1
+      ketcher-core: 2.18.0(react-dom@18.2.0)(react@18.2.0)
       lodash: 4.17.21
       miew-react: 1.0.0(@types/react@18.2.60)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
@@ -5734,13 +5738,16 @@ packages:
       - supports-color
     dev: false
 
-  /ketcher-standalone@2.15.1:
+  /ketcher-standalone@2.15.1(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-eZaRCduRlyB+e1O18v3k+GDcPeQSuYrRHVlKYDFrupymWk1yR05im7jjsySA9ckb5TeVQ8k1iEgPKwM+Jjy55w==}
     engines: {node: '>=14'}
     dependencies:
       '@babel/runtime': 7.23.9
       indigo-ketcher: 1.14.0
-      ketcher-core: 2.15.1
+      ketcher-core: 2.18.0(react-dom@18.2.0)(react@18.2.0)
+    transitivePeerDependencies:
+      - react
+      - react-dom
     dev: false
 
   /keyv@4.5.4:

@@ -66,10 +66,10 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
         header: "Creator",
         enableColumnFilter: true,
       }),
-      projectColumnHelper.accessor("administrators", {
+      projectColumnHelper.accessor((row) => row.administrators.join(", "), {
+        id: "administrators",
         header: "Admins",
         enableColumnFilter: true,
-        cell: ({ row }) => row.original.administrators.join(", "),
       }),
       projectColumnHelper.accessor((row) => formatTierString(row.product?.flavour ?? ""), {
         id: "tier",
@@ -182,7 +182,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
             },
             "& tr": {
               display: "grid",
-              gridTemplateColumns: "61px 1fr 1fr 1fr 110px 220px 100px 100px 100px 110px",
+              gridTemplateColumns: "61px 1fr 1fr 1fr 110px 220px 100px 90px 100px 130px",
             },
           },
         }}
@@ -203,7 +203,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
               },
               "& tr": {
                 display: "grid",
-                gridTemplateColumns: "61px 1fr 110px 220px 100px 100px 100px 100px",
+                gridTemplateColumns: "61px 1fr 110px 220px 100px 90px 100px 130px",
               },
             },
           }}

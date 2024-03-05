@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.0.0-rc.1...3.0.0-rc.2) (2024-03-05)
+
+
+### Bug Fixes
+
+* **run-job:** fix run job button when job has no options ([81709a1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/81709a124b3c191cb4268b0050c6d418e64ccbec)), closes [#1257](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1257)
+* **run-job:** navigate to new instance when re-run job button is used ([827a45c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/827a45c9debae1dba1a978dbfa1791e803aa782c)), closes [#1255](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1255)
+
+
+### Performance Improvements
+
+* **results-page:** use include exclude_purpose parameter to speed up request to tasks ([b893a4a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b893a4af2401438f65b1d4829225351046e77604)), closes [#1251](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1251)
+
+
+### Miscellaneous Chores
+
+* release 3.0.0-rc.2 ([a90ca6a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a90ca6a41aafdd785439d63d26b45908bdfe1915))
+
 ## [3.0.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/v3.0.0-rc.0...3.0.0-rc.1) (2024-03-05)
 
 

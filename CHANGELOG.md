@@ -2,6 +2,123 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/v3.0.0-rc.0...3.0.0-rc.1) (2024-03-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **actions:** Update changelog.md with to remove standard-version wording
+
+### Features
+
+* **api:** add a public ui-version endpoint ([5bb327a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5bb327abbba45fdbcdbfc9c7737b22a86d565f0c))
+* **auth:** display auth error message in user menu ([5b295a1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5b295a106dcf615ff252da45ba72fa5fd0dfe207))
+* **create-unit:** add option to create personal unit ([0df614b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0df614ba301292b5c6916c148960bfc6125195f0)), closes [#1021](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1021)
+* **dataset-storage-table:** allow dataset products to be deleted from the settings window ([db3874e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/db3874ef628579f7d0194d2701bb3f65e7e99e66))
+* improve sdf viewer action text and fix the maximum width of the pop-up ([4440a99](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4440a99ece3f746f6276d51611ac1be4cd46baf4))
+* **project-bootstrap:** add the bstrapper to the settings dialogue and the project page ([b0f6358](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b0f6358f24c90319d942c0c333cb23e1a082176c))
+* **project-bootstrap:** hide bootstrapper if the default org is hidden ([23ad5b4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/23ad5b4bfe98290851145c7a03164f1e56b263a6))
+* **project-delete:** provide the project name in the delete project dialogue ([#1219](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1219)) ([2078676](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/20786768b15c683826088dc025958d84dda7354a)), closes [#1209](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1209)
+* **project-page:** add option to create project directories ([6a0e1d0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6a0e1d0c0bb121dc95f6b4eebc695271c5b5a276))
+* **project-page:** add option to delete directories ([6ff0226](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6ff0226f807bfda5f0f773f4b8dcfb7e50761603))
+* **project-selection:** add a filter by "current user is the owner" option to org, unit and proj ([98299df](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/98299dffdc6403f04f45813629880ef333cc6f82)), closes [#1020](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1020)
+* **project-selection:** add option to filter project name and owner columns ([00ddbd2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/00ddbd2d232483bf0dbbf2b0514eaa5577cc1440))
+* **project-selection:** improve selection filter to give editor option ([1be8cd4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/1be8cd400609ef4d85611a91bf979903ad427b1c))
+* **project-selection:** set the default organisation as the default selection when no project is selected ([4fc2672](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4fc2672ea4ac828fed9c2e91d92c0385e3c88dc1))
+* **project-stats:** add icon to show whether a project is private ([#1220](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1220)) ([be7f640](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/be7f6402313d12366cbd7a1d51460d7795ee094f)), closes [#1204](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1204)
+* **run-job:** add test job card that only shows in development mode ([4098726](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/40987262188265575af4718437c9940fe50b32d4))
+* **sdf-parser:** add first implementation of sdf filtering ([4e07937](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4e07937944fe4206d0d8442c009407d5c9a832b3))
+* **sdf-viewer:** add card view property selection ([663473f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/663473f7a11168f1e02de02932c1f2df3779d431))
+* **unit:** add UI to rename units ([aa8ffe9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/aa8ffe944b0f2551d8b6eb664a0e8ac57795a218)), closes [#1172](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1172)
+* **user:** improve the look and content of the user menu ([fa8e16a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fa8e16a99f3585b8f90bc4b1890c51d0ddacd807))
+* **viewers:** add SDF file viewer ([2e3e282](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2e3e282aa822841b99b2b608b9988719f7eae9ba))
+
+
+### Bug Fixes
+
+* **api:** cleanup /version API requests in the footer ([9bcdfb6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9bcdfb6be557a7c08e8bc9cdf00ef3c7ae83cc1a))
+* **api:** fix admin/editor level permissions for v2 DM api ([35dd06c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/35dd06c5d0b6c49de69ea58802d495d47373d94f))
+* **api:** fix breaking change caused by job variables inputs chaning from string to object ([aa53bbb](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/aa53bbb636bbed81c83dc8eca51ff6461fceb8f7))
+* **auth:** experimental test to fix 404 errors when navigating to certain pages without authentication ([327078b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/327078b69fcf93ab0f4ae697f0e0eafef86b467b))
+* **auth:** final fix for 404 errors when navigating to protected pages when not loged-in ([45e6be0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/45e6be027286799b6dcfeff0c0412cb3319683c4))
+* **auth:** fix auth logout issue ([6e04ce1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6e04ce15582e9ff0b717c184c0960fe226485b81))
+* **auth:** fix datasets link from giving a 404 ([593e121](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/593e121a9ca0ba2d3001330b0b3cff2bd18495f2))
+* **auth:** fix display of auth error messages ([ea68fc9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/ea68fc9ca088a1000b40b5e433d96f3fd11bb876))
+* **auth:** fix login paths on base urls ([a3aff89](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a3aff8961ad8869fd306308076759b3470c507d8))
+* **auth:** fix redirects from login ([dead1b8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/dead1b8b3772c0da5577867e347e60e37e7f2ef3))
+* **authorization:** improve authorization to support evaluation role ([847e500](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/847e500f647c0664c6747f9ecf19a9ee9acad8e8))
+* **context:** fix types ([f0dd662](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f0dd662e23eb7feb1f91cc5f8f72583185fb34ef))
+* **create-project:** only show the button when users have permission for the selected unit ([5c82966](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5c829663c8f15f9d2cea509d01f2fb632bfe48dd))
+* **create-project:** prevent private projects for the EVALUATION flavour ([3f91b14](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3f91b1493e73a17cf9545f8a34ad7a38710fad50))
+* **create-unit:** move create unit actions to organisation column, fix when they're displayed and fix text ([f551659](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f5516596143b8a62a01e4549e9948d1e83c6f11b))
+* **data-table:** fix search field changing sort direction ([d0761ca](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d0761ca441dcf5a9ac252a35b9f405bb6789857e))
+* **dataset-sub-table:** stop showing dataset storage subscriptions when the unit doesn't have any ([dc8531a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/dc8531a24ee8fea4af50ca09564f531abcbbdc5a)), closes [#1022](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1022)
+* **delete-project:** make the delete project dialogue clearer ([d330ac8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d330ac8a8b96db2ec6227f25fc63e4c1ecb0cffe))
+* **deps:** pin nanoid and switch from uuid everywhere ([c087bba](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c087bba4b4e45ad527bc83d85bb3e7f0121506a7))
+* **deps:** update dm client to fix data update issues ([7bee802](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7bee8024815f1c75ef2050ca84f996882641b9cb))
+* **deps:** upgrade material-ui-popup-state and fix breaking changes ([26c1bd8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/26c1bd8b0b51000cbf9d2ad708660284d1f8df50))
+* display directories without text transform ([#1162](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1162)) ([a512883](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a5128832e9a88649ac5c8aa9c55334bb6d5b3f85)), closes [#1098](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1098)
+* **docs:** add space between docs nav links for a better page experience ([38c3599](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/38c35999427f30dd26a555cb69f22070e9a63f24))
+* **executions:** use new molcules-smi type ([3646501](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/364650185d54ac5e8b6ab4d6ea344f4370bd6ff1))
+* **file-download:** fix file download when app is hosted on a sub path ([3c95ff1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3c95ff1ceb3edc42d9f848a0732a6f8b82ea5a6e))
+* fix lint issue and change default error text ([abcd1be](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/abcd1be3457e8494c60f2f6c914ca8c304d1b349))
+* fix linting errors created by yup update ([c24de89](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c24de89c6bccfe0dbd021f78c7e68ef921c5d6c8))
+* **job-file-inputs:** display required indicator on inputs ([ff16e12](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/ff16e123eda8a9bf9f039ddcf29a6e7c8341620f))
+* **navigation:** fix button positions on mobile ([733dfcd](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/733dfcd050f63cfab14e65c905c979677c36c0c5))
+* **nextjs:** fix console noise created from last commit ([0e9c6d1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0e9c6d10be0629a64ae18c8a5ff76e0907c31282))
+* **nextjs:** remove console noise created by nextjs update ([f619298](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f619298b9ab1cd7bcfa52beee9a5177316b2c1ea))
+* **pnpm:** update lockfile ([f0bd671](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f0bd6716e3549a8e3a6f0ab13c15e4ec23dcc69f))
+* **products:** prevent evaluating users from creating dataset storage subscriptions ([cf39545](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/cf39545eae32e59291b1950e3616b5ec00140a0c))
+* **project-selection:** change default filter mode to editor and fix wording ([9df5adb](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9df5adbff15a6a5923a4f091e2086dc21c837a9e))
+* **project-selection:** change text in owner switch ([d92cbe2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d92cbe24d5057f8eff430a073e2321229a5c8edc))
+* **project-selection:** fix create personal unit action appearing incorrectly ([f2d5ba0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f2d5ba065ba6753ff19fd38bf08ef3e27c3e7200))
+* **project-selection:** fix default value of owner only filter ([44ac847](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/44ac847170cc4a61022fe2db4b283e8a2ec1e58b))
+* **project-selection:** fix organisation selection from behaving strange when clearing it ([99252ef](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/99252ef383c26cd05da5e3a256daa122311d53fb))
+* **project-selection:** fix project filtering by unit ([1782a17](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/1782a175e04bc84a55bcca34c7cbcd575950a6d0))
+* **project-selection:** fix some projects not showing up in the table when the user only has project editor permissions but is not a unit member ([559365e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/559365e5a173df7d4176ccfc86fe72cc296a0df7))
+* **project-selection:** fix the selected unit when permission level changes ([a1be809](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a1be8098aca50b9744b8c76b07bb253993c0f368))
+* **project-selection:** fix undefined showing up in selected org ([df5766f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/df5766f215e79d767e9e70649b73d81186239b4a))
+* **project-selection:** fix url and local storage state when a project doesn't exist ([64bb0df](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/64bb0df62a87a3cf8f1059437ee97a59c66c1043))
+* **project-selection:** keep all applicable projects in list if user is a unit member ([de4f5ef](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/de4f5efc2a306d8d4b591201e93083bd1c3d063a))
+* **results-page:** fix rerun job functionality when job uses a smiles input ([0430748](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0430748cffb29bb1580ab18fa273f220a2ea5dba))
+* **results-page:** hotfix result page causing an error when no project selected ([a13fca3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a13fca309335861f760402b9b7aea570f88d6afb))
+* **run-job:** disable submit button when form is not valid ([f5d07ba](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f5d07bae47156caa763e6be4da381fe9cb92e06e)), closes [#1001](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1001)
+* **run-job:** display errors on invalid job inputs ([96c01cb](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/96c01cb73aca8f17dd9bdcb9317a8bc63dda4ed0))
+* **run-job:** enable error list at bottom of options ([938d361](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/938d3612878212abad78c20c3a44f47da0500cb0))
+* **run-job:** fix run button being disabled when using rerun functionality ([1b1c192](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/1b1c19297f7ada37d941fdf05a97a0c432277bff))
+* **run-job:** fix validation check of inputs ([82d68d2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/82d68d2b0083c08493b317b3cfb254fcf22f40a1))
+* **run-job:** improve validility state of run job button ([fde9b28](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fde9b2845e8fc221b4376de414f506c189f74920))
+* **sdf-parser:** fix sdf parser when hosted on a subpath ([8a7fdbd](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8a7fdbd59ad33fc1cd883cbaec9dd9b00d0e2d35))
+* **sdf-viewer:** fix display of error messages ([d0daad7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d0daad7420edad016bef316a8ff5d298bb6e57ee))
+* **sdf-viewer:** use molfile to depict molecule ([1dab054](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/1dab05478a59b496d59b0b2bac691b777a2e5c22))
+* **sdf:** fix card view layout at certain screen sizes ([75e7e01](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/75e7e0198308092062ef1408a5855ecd8ffc5307))
+* **settings:** fix admins column and size of columns in dataset storage section ([cb7cb01](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/cb7cb01a528e7d1748b646192b9c89e934082bb4))
+* **settings:** fix filter text and dropdown label in new role selector ([baa1d19](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/baa1d198336f69875a1984c3bc2f19160aae0fec))
+* **sketcher:** allow empty input to be saved ([093814e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/093814ea7733078f5c5f15f07a3e5793021caa10))
+* **sketcher:** capture errors and send to sentry ([2747ebb](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2747ebb1a5f8040b761a7ab0c6b7d38d14f805f5))
+* **sketcher:** fix molecule sketcher width ([aa7fe82](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/aa7fe82015a69c39099a4a8b88734460bf979fa1))
+* **sketcher:** fix some sketcher issues by forcing only one ketcher instance to be in use at once ([6302b1e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6302b1ec23ed97c69cad7964d86e3f648140ccad))
+* **sketcher:** imrpove layout of buttons when sketcher is open ([b6a710c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b6a710cf661d0b0a4a18aae95fe4d2070815d0ac))
+* **upload:** fix visual issues on dataset upload UI ([fa7c4a5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fa7c4a556f5d308ae9e5e059cda1b7d66acd2188))
+* **user:** fix html error ([880ae82](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/880ae8221f1bf5ec3a71df4e1764866c5d457c70))
+* **viewers:** fix browser viewer for files at the project root ([8d9ce9b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8d9ce9b8dff780286df83904d18768c80efe6ef6))
+
+
+### Performance Improvements
+
+* **nextjs:** drop ssr to improve page load speed ([3288922](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3288922e283cb731fc88a99be7876d8975ec4783))
+
+
+### Miscellaneous Chores
+
+* release 3.0.0-rc.0 ([4118bf9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4118bf9404aa735ac1f44fed57b3d5a07934984b))
+* release 3.0.0-rc.1 ([2d36d5f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2d36d5f642098f999cc44084fbc713a845541356))
+
+
+### Code Refactoring
+
+* **actions:** Update changelog.md with to remove standard-version wording ([d715b34](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d715b34b2788adbe6c42e7101c9ab1834f3c7b30))
+
 ## [3.0.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/data-manager-ui-v2.12.0...data-manager-ui-3.0.0-rc.0) (2024-03-05)
 
 

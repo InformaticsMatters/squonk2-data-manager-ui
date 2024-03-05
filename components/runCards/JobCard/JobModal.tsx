@@ -169,7 +169,10 @@ export const JobModal = ({
       DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`job-${jobId}`}
       open={open}
-      submitDisabled={!formRef.current?.validateForm() || !inputsValid}
+      submitDisabled={
+        (formRef.current?.validateForm() !== undefined && !formRef.current?.validateForm()) ||
+        !inputsValid
+      }
       submitText="Run"
       title={job?.name ?? "Run Job"}
       onClose={onClose}

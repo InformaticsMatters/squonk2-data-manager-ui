@@ -29,7 +29,7 @@ export const ResultsView = () => {
     isLoading: isTasksLoading,
     isError: isTasksError,
     error: tasksError,
-  } = useGetTasks({ project_id: projectId });
+  } = useGetTasks({ project_id: projectId, exclude_purpose: "INSTANCE.PROJECT" });
   const tasks = tasksData?.tasks;
 
   const [resultTypes, setResultTypes] = useState(["task", "instance"]);

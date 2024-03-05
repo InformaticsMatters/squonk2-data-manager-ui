@@ -50,7 +50,7 @@ export const ApplicationModal = ({
   const handleCreateInstance = async () => {
     if (projectId) {
       try {
-        await createInstance({
+        const { instance_id: instanceId } = await createInstance({
           data: {
             debug,
             application_id: applicationId,
@@ -62,11 +62,11 @@ export const ApplicationModal = ({
             }),
           },
         });
+        onLaunch && onLaunch(instanceId);
         await queryClient.invalidateQueries({ queryKey: getGetInstancesQueryKey() });
       } catch (error) {
         enqueueError(error);
       } finally {
-        onLaunch && onLaunch();
         onClose();
       }
     } else {

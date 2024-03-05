@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
 
 import { Button } from "@mui/material";
+import { useRouter } from "next/router";
 
 import { JobModal } from "../runCards/JobCard/JobModal";
 
@@ -23,6 +24,8 @@ export interface RerunJobButtonProps {
 export const RerunJobButton = ({ instance, disabled = false }: RerunJobButtonProps) => {
   const [open, setOpen] = useState(false);
 
+  const { push } = useRouter();
+
   // If the job id is undefined, it's probably an application which we don't currently let be rerun.
   return instance.job_id !== undefined ? (
     <>
@@ -36,6 +39,9 @@ export const RerunJobButton = ({ instance, disabled = false }: RerunJobButtonPro
           open={open}
           projectId={instance.project_id}
           onClose={() => setOpen(false)}
+          onLaunch={(instanceId) =>
+            push({ pathname: "/results/instance/[instanceId]", query: { instanceId } })
+          }
         />
       )}
     </>

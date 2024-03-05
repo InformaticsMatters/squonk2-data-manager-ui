@@ -53,11 +53,12 @@ const validateJobInputs = (required: string[], inputsData: InputData) => {
   const inputsDataIsValid = Object.values(inputsData)
     .map((inputValue) => {
       if (inputValue === undefined) {
-        return false;
+        return false; // when does this happen?
       }
       if (Array.isArray(inputValue)) {
         return inputValue.every((v) => v !== "");
       }
+
       return inputValue.split("\n").every((v) => v !== "");
     })
     .every((v) => v);
@@ -118,9 +119,14 @@ export const JobModal = ({
 
   const [inputsData, setInputsData] = useState<InputData>({});
 
+  const inputKeys = Object.keys(job?.variables?.inputs?.properties ?? {});
+  const specInputs = Object.fromEntries(
+    Object.entries(specVariables ?? {}).filter(([key, _]) => inputKeys.includes(key)),
+  );
+
   const inputsValid = validateJobInputs(
     (job?.variables?.inputs as InputSchema | undefined)?.required ?? [],
-    Object.keys(inputsData).length > 0 ? inputsData : specVariables ?? {},
+    Object.keys(inputsData).length > 0 ? inputsData : specInputs,
   );
 
   const formRef = useRef<any>();
@@ -140,7 +146,7 @@ export const JobModal = ({
         variables: { ...optionsFormData, ...inputsData },
       };
       try {
-        await createInstance({
+        const { instance_id: instanceId } = await createInstance({
           data: {
             debug,
             application_id: job.application.application_id,
@@ -150,13 +156,13 @@ export const JobModal = ({
             specification: JSON.stringify(specification),
           },
         });
+        onLaunch && onLaunch(instanceId);
         await queryClient.invalidateQueries({
           queryKey: getGetInstancesQueryKey({ project_id: projectId }),
         });
       } catch (error) {
         enqueueError(error);
       } finally {
-        onLaunch && onLaunch();
         onClose();
       }
     } else {

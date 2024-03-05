@@ -16,5 +16,5 @@ export interface CommonModalProps {
   /**
    * Called after an instance is created. Optional, skipped if not provided.
    */
-  onLaunch?: () => void;
+  onLaunch?: (instanceId: string) => void;
 }

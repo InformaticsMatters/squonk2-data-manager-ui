@@ -21,6 +21,7 @@ The Data Manager UI will usually only work with specific API versions.  A major 
 | --- | ------ | ------ |
 | 1   | 1      | 1      |
 | 2   | 1      | 2      |
+| 3   | 2      | 2      |
 ___
 
 ## Changes
@@ -110,7 +111,11 @@ committing it as a image.
 
 ## Releases
 
-This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). This standardises commits so they can be used to generate changelogs. Release PRs will be created by [Release Please](https://github.com/googleapis/release-please) based on the changes since the last release.
+This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). This standardises commits so they can be used to generate changelogs. Release PRs will be created by [Release Please](https://github.com/googleapis/release-please) based on the changes since the last release. To force a PR to be generated with a specific version create an empty commit as follows:
+
+```bash
+git commit --allow-empty -m "chore: release 3.0.0-rc.1" -m "Release-As: 3.0.0-rc.1"
+```
 
 ## Devcontainers
 

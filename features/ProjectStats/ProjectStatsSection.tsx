@@ -113,6 +113,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
         cell: ({ row }) => (
           <ProjectActions
             isAdministrator={!!user.username && row.original.administrators.includes(user.username)}
+            isCreator={!!user.username && row.original.creator === user.username}
             isEditor={!!user.username && row.original.editors.includes(user.username)}
             projectId={row.original.project_id}
           />

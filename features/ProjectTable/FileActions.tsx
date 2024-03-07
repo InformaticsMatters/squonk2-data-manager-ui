@@ -50,7 +50,7 @@ export interface FileActionsProps {
  */
 export const FileActions = ({ file }: FileActionsProps) => {
   const project = useCurrentProject();
-  const isProjectOwnerOrEditor = useIsUserAdminOrEditorOfCurrentProject();
+  const isProjectAdminOrEditor = useIsUserAdminOrEditorOfCurrentProject();
 
   const breadcrumbs = useProjectBreadcrumbs();
   const path = "/" + breadcrumbs.join("/");
@@ -76,7 +76,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
       {/* Managed files are "detached" */}
       {isManagedFile && (
         <DetachDataset
-          disabled={!isProjectOwnerOrEditor}
+          disabled={!isProjectAdminOrEditor}
           fileId={fileId}
           path={path}
           projectId={project.project_id}
@@ -86,7 +86,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
       {/* Unmanaged files are "deleted" */}
       {isFile && !isManagedFile && (
         <DeleteUnmanagedFileButton
-          disabled={!isProjectOwnerOrEditor}
+          disabled={!isProjectAdminOrEditor}
           fileName={file.fileName}
           path={path}
           projectId={project.project_id}
@@ -95,7 +95,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
       {!isFile && (
         <DeleteDirectoryButton
           directoryName={file.fileName}
-          disabled={!isProjectOwnerOrEditor}
+          disabled={!isProjectAdminOrEditor}
           path={path}
           projectId={project.project_id}
         />

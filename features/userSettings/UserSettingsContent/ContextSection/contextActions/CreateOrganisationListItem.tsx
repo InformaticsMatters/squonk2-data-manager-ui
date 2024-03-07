@@ -21,7 +21,7 @@ import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
 
 /**
- * Button which allows organisation owner to create a new project.
+ * Button which allows organisation owners to create a new project.
  */
 export const CreateOrganisationListItem = () => {
   const [open, setOpen] = useState(false);

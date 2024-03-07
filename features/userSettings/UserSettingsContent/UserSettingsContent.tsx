@@ -55,7 +55,7 @@ export const UserSettingsContent = () => {
   });
 
   // the user could land on a project via a URL parameter. If we don't sync this state, the selected
-  // project could be filtered out if the current user is not the owner or editor
+  // project could be filtered out if the current user is not an administrator or editor
   const fallBackToNone =
     project !== null &&
     !!user.username &&

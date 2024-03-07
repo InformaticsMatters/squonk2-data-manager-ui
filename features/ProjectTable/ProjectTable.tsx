@@ -49,7 +49,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
 
   const router = useRouter();
 
-  const isProjectOwnerOrEditor = useIsUserAdminOrEditorOfCurrentProject();
+  const isProjectAdminOrEditor = useIsUserAdminOrEditorOfCurrentProject();
 
   // Breadcrumbs
   const breadcrumbs = useProjectBreadcrumbs();
@@ -179,7 +179,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
           <Grid item sx={{ marginLeft: "auto" }}>
             <Tooltip title="Upload unmanaged file">
               <IconButton
-                disabled={!isProjectOwnerOrEditor}
+                disabled={!isProjectAdminOrEditor}
                 size="large"
                 onClick={openUploadDialog}
               >

@@ -46,8 +46,6 @@ export const EditProjectButton = ({ project }: EditProjectButtonProps) => {
           {project.name}
         </Typography>
 
-        <Typography gutterBottom>{/* <b>Owner</b>: {project.owner} */}</Typography>
-
         <PrivateProjectToggle isPrivate={project.private} projectId={project.project_id} />
 
         <Box display="flex" flexDirection="column" gap={2}>

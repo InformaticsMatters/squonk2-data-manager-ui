@@ -23,7 +23,7 @@ import { useSelectedUnit } from "../../../../../state/unitSelection";
 import { getBillingDay } from "../../../../../utils/app/products";
 
 /**
- * Button which allows organisation owner to create a new project.
+ * Button which allows organisation owners to create a new unit.
  */
 export const CreateUnitListItem = () => {
   const [open, setOpen] = useState(false);

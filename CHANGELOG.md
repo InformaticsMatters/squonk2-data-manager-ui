@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0-rc.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.0.0-rc.2...3.0.0-rc.3) (2024-03-07)
+
+
+### Bug Fixes
+
+* **delete-project:** ensure user is creator of project ([548c570](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/548c570644bffaa41fa9243d8838b1b23c285991))
+* **project-page:** fix delete directory logic for sub folders ([be28b40](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/be28b40dda7ff88258fdbc0c491b36b3188aa95a))
+* **project-page:** fix enter key when creating project directories ([d828ceb](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d828ceb6e9db45949f842a96a77e7d226160cf9d))
+* **project-selection:** change permission level sleect to use administrator instead of owner ([7664203](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7664203199ab9b1b7cbe77de12f988fd591ced5c))
+
+
+### Miscellaneous Chores
+
+* release 3.0.0-rc.3 ([748ba80](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/748ba80419e044e37a4348550292837bde08e129))
+
 ## [3.0.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.0.0-rc.1...3.0.0-rc.2) (2024-03-05)
 
 

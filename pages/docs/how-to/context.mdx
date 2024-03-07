@@ -21,10 +21,12 @@ The settings panel opens full screen (close it when finished).
 
 You can select a **context** which includes the **organisation** and **unit** within that **organisation** that you want to
 work in. The administrators of that **organisation** and **unit** will need to have added you as member, or given you access to a
-**project** in the unit. See the [concepts document](/docs/concepts) for a description of
-these concepts.
+**project** in the unit. See the [concepts document](/docs/concepts) for a description of these concepts.
 
 <Image src={projectContext} alt="Project context" />
+
+Also note the *filter* option at the top that allows to filter the projects tht are shown based on your role in the project.
+To see the project you want you may need to adjust this filter.
 
 If you not a member of a **unit** or **project** in a named **organisation** you can still create a **project** in the **Default**
 organisation. In that organisation you will have a **personal** **unit** that has the same name as your username. You can
@@ -39,6 +41,7 @@ When you close the settings dialog then you will be working in that **project**,
 
 Owners of an **organisation** can create a new **unit** within it if you want a different work space (e.g. research
 group, department etc.). The **Default** **organisation** cannot have **units** added to it other than a user's
-**personal** unit.
+**personal** unit. The actions you see for managing **organisations**, **units** and **projects** will depend on your
+role in the selected **organisation**, **unit** and **project**.
 
 export default ({ children }) => <Layout><Container>{children}</Container></Layout>

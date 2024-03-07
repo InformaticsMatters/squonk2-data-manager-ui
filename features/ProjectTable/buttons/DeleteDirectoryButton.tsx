@@ -27,7 +27,12 @@ export const DeleteDirectoryButton = ({
 
   const onDelete = async () => {
     try {
-      await deletePath({ params: { project_id: projectId, path: path + directoryName } });
+      await deletePath({
+        params: {
+          project_id: projectId,
+          path: path.endsWith("/") ? path + directoryName : path + "/" + directoryName,
+        },
+      });
       await queryClient.invalidateQueries({
         queryKey: getGetFilesQueryKey({ project_id: projectId, path }),
       });

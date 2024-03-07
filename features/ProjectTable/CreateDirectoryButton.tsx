@@ -68,17 +68,24 @@ export const CreateDirectoryButton = ({
       >
         <Paper>
           <Box p={1}>
-            <TextField
-              autoFocus
-              error={!isValid}
-              helperText={!isValid ? "Directory already exists" : undefined}
-              label="Directory Name"
-              value={directoryName}
-              onChange={(event) => setDirectoryName(event.target.value)}
-            />
-            <Button disabled={isCreating || !isValid} onClick={createDirectory}>
-              Create
-            </Button>
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                createDirectory();
+              }}
+            >
+              <TextField
+                autoFocus
+                error={!isValid}
+                helperText={!isValid ? "Directory already exists" : undefined}
+                label="Directory Name"
+                value={directoryName}
+                onChange={(event) => setDirectoryName(event.target.value)}
+              />
+              <Button disabled={isCreating || !isValid} onClick={createDirectory}>
+                Create
+              </Button>
+            </form>
           </Box>
         </Paper>
       </Popover>

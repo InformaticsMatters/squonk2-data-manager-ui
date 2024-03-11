@@ -18,7 +18,7 @@ export interface ProjectUsageChartProps {
 export const ProjectUsageChart = ({ coins, instance, storage }: ProjectUsageChartProps) => {
   const allowance = coins.allowance;
   const instancesUsed = instance.coins.used;
-  const storagePredicted = coins.billing_prediction;
+  const storagePredicted = coins.billing_prediction_storage_contribution;
   const storageUsed = storage.coins.used;
 
   const available = Math.max(allowance - (storageUsed + storagePredicted + instancesUsed), 0);

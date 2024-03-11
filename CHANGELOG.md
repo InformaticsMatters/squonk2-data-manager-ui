@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0-rc.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.0.0-rc.3...3.0.0-rc.4) (2024-03-11)
+
+
+### Features
+
+* **results-page:** add title to instance page and make project list item clickable ([3beb834](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3beb834f3780602e4c5100a2219a14bb9f80a769))
+
+
+### Bug Fixes
+
+* **project-selection:** fix predicted storage value in chart ([96dbf9e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/96dbf9e7f8ca17b7b71fde85330f4aa0c77b1a14))
+* **project-stats:** fix text wrap and spacing of chart tooltip ([36d56ec](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/36d56ec0fb71c0965f335c4e67ed00e12387a127))
+
+
+### Miscellaneous Chores
+
+* release 3.0.0-rc.4 ([62f4d81](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/62f4d81fd772bf09a70a12771b9b1acb36584034))
+
 ## [3.0.0-rc.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.0.0-rc.2...3.0.0-rc.3) (2024-03-07)
 
 

@@ -46,11 +46,12 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
           columnGap={4}
           display="grid"
           gridTemplateColumns="repeat(5, auto)"
-          rowGap={4}
+          rowGap={1}
         >
           {chartData.map((item) => {
             return (
               <Fragment key={item.type}>
+                {/* Colour icon box */}
                 <Box
                   bgcolor={item.color}
                   border={1}
@@ -68,7 +69,7 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
                 <Typography component="span" variant="body2">
                   /
                 </Typography>
-                <Typography component="span" sx={{ justifySelf: "end" }} variant="body2">
+                <Typography noWrap component="span" sx={{ justifySelf: "end" }} variant="body2">
                   {((item.value / valuesSummed) * 100).toFixed(2)} %
                 </Typography>
               </Fragment>

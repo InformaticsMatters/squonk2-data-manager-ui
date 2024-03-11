@@ -6,19 +6,22 @@ import { captureException } from "@sentry/nextjs";
 
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { CenterLoader } from "../CenterLoader";
+import type { ProjectListItemProps } from "../projects/ProjectListItem";
 import { ResultApplicationCard } from "./ResultApplicationCard";
 import { ResultJobCard } from "./ResultJobCard";
 
 export interface InstanceProps {
   instanceId: InstanceSummary["id"];
   instanceSummary?: InstanceSummary;
+  projectClickAction: ProjectListItemProps["clickAction"];
   collapsedByDefault?: boolean;
 }
 
 export const Instance = ({
   instanceId,
-  collapsedByDefault = true,
+  projectClickAction,
   instanceSummary,
+  collapsedByDefault = true,
 }: InstanceProps) => {
   // The instance summary is sufficient but not always provided. If only the ID is provided, the
   // instance get response is then requested and switched in.
@@ -45,6 +48,7 @@ export const Instance = ({
               collapsedByDefault={collapsedByDefault}
               instance={instance}
               instanceId={instanceId}
+              projectClickAction={projectClickAction}
             />
           </Box>
         );
@@ -54,6 +58,7 @@ export const Instance = ({
             collapsedByDefault={collapsedByDefault}
             instance={instance}
             instanceId={instanceId}
+            projectClickAction={projectClickAction}
           />
         );
       default:

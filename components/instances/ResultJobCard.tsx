@@ -6,6 +6,7 @@ import { LogsButton } from "../../components/results/LogsButton";
 import { RerunJobButton } from "../../components/results/RerunJobButton";
 import { ResultCard } from "../../components/results/ResultCard";
 import { useIsUserAdminOrEditorOfCurrentProject, useProjectFromId } from "../../hooks/projectHooks";
+import type { ProjectListItemProps } from "../projects/ProjectListItem";
 import { ProjectListItem } from "../projects/ProjectListItem";
 import { ArchivedStatus } from "./ArchivedStatus";
 import { ArchiveInstance } from "./ArchiveInstance";
@@ -25,6 +26,10 @@ export interface ResultJobCardProps {
    * Instance of the job
    */
   instance: InstanceSummary | InstanceGetResponse;
+  /**
+   * Action to take when the project is clicked
+   */
+  projectClickAction: ProjectListItemProps["clickAction"];
   collapsedByDefault?: boolean;
 }
 
@@ -34,6 +39,7 @@ export interface ResultJobCardProps {
 export const ResultJobCard = ({
   instanceId,
   instance,
+  projectClickAction,
   collapsedByDefault = true,
 }: ResultJobCardProps) => {
   const query = useInstanceRouterQuery();
@@ -80,7 +86,9 @@ export const ResultJobCard = ({
       <ListItem>
         <ListItemText primary={instance.name} secondary={instance.job_name} />
       </ListItem>
-      <ProjectListItem projectName={associatedProject?.name || "loading..."} />
+      {associatedProject && (
+        <ProjectListItem clickAction={projectClickAction} project={associatedProject} />
+      )}
       <ArchivedStatus archived={instance.archived} />
     </ResultCard>
   );

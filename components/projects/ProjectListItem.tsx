@@ -1,17 +1,46 @@
+import type { ProjectDetail } from "@squonk/data-manager-client";
+
 import { AccountTreeRounded as AccountTreeRoundedIcon } from "@mui/icons-material";
-import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
+import { useRouter } from "next/router";
+
+import { useCurrentProjectId } from "../../hooks/projectHooks";
+
+type ProjectClickActions = "select-project" | "navigate-to-project";
 
 export interface ProjectListItemProps {
-  projectName: string;
+  project: ProjectDetail;
+  clickAction: ProjectClickActions;
 }
 
-export const ProjectListItem = ({ projectName }: ProjectListItemProps) => {
+export const TOOLTIPS = {
+  "select-project": "Select project",
+  "navigate-to-project": "Go to project",
+} as const satisfies Record<ProjectClickActions, string>;
+
+export const ProjectListItem = ({ project, clickAction }: ProjectListItemProps) => {
+  const { projectId, setCurrentProjectId } = useCurrentProjectId();
+  const { push } = useRouter();
+
+  const action =
+    clickAction === "navigate-to-project" || projectId === project.project_id
+      ? "navigate-to-project"
+      : "select-project";
+
+  const onClick = () => {
+    setCurrentProjectId(project.project_id);
+    if (action === "navigate-to-project") {
+      push("/project");
+    }
+  };
   return (
-    <ListItem>
-      <ListItemIcon sx={{ minWidth: "40px" }}>
-        <AccountTreeRoundedIcon />
-      </ListItemIcon>
-      <ListItemText primary={projectName} />
-    </ListItem>
+    <Tooltip title={TOOLTIPS[action]}>
+      <ListItemButton component="li" sx={{ flexGrow: 0 }} onClick={onClick}>
+        <ListItemIcon sx={{ minWidth: "40px" }}>
+          <AccountTreeRoundedIcon />
+        </ListItemIcon>
+        <ListItemText primary={project.name} />
+      </ListItemButton>
+    </Tooltip>
   );
 };

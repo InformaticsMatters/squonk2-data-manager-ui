@@ -22,6 +22,10 @@ export interface ResultApplicationCardProps {
    */
   instance: InstanceSummary | InstanceGetResponse;
   /**
+   * Action to take when the project is clicked
+   */
+  projectClickAction: "select-project" | "navigate-to-project";
+  /**
    * Whether the card should have its collapsed content visible immediately. Defaults to true.
    */
   collapsedByDefault?: boolean;
@@ -30,6 +34,7 @@ export interface ResultApplicationCardProps {
 export const ResultApplicationCard = ({
   instance,
   instanceId,
+  projectClickAction,
   collapsedByDefault = true,
 }: ResultApplicationCardProps) => {
   const query = useInstanceRouterQuery();
@@ -78,9 +83,11 @@ export const ResultApplicationCard = ({
       state={instance.phase}
     >
       <ListItem>
-        <ListItemText primary={instance.name} />
+        <ListItemText primary={instance.name} secondary={instance.application_id} />
       </ListItem>
-      <ProjectListItem projectName={associatedProject?.name || "loading..."} />
+      {associatedProject && (
+        <ProjectListItem clickAction={projectClickAction} project={associatedProject} />
+      )}
       <ArchivedStatus archived={instance.archived} />
     </ResultCard>
   );

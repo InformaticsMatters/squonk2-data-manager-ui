@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0-rc.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.0.0-rc.4...3.0.0-rc.5) (2024-03-12)
+
+
+### Bug Fixes
+
+* **results-page:** imrpove project link on instances ([3d2de1f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3d2de1ffbfd8f9daa8a573254eb939472957623c))
+
+
+### Miscellaneous Chores
+
+* release 3.0.0-rc.5 ([6602afa](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6602afa914e57d0b3530e54b41e20b68c2554a5f))
+
 ## [3.0.0-rc.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.0.0-rc.3...3.0.0-rc.4) (2024-03-11)
 
 

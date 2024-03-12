@@ -2,6 +2,7 @@ import type { ProjectDetail } from "@squonk/data-manager-client";
 
 import { AccountTreeRounded as AccountTreeRoundedIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 
 import { useCurrentProjectId } from "../../hooks/projectHooks";
@@ -33,9 +34,20 @@ export const ProjectListItem = ({ project, clickAction }: ProjectListItemProps) 
       push("/project");
     }
   };
+
+  const props = {
+    "navigate-to-project": {
+      href: "/project",
+      LinkComponent: NextLink,
+    },
+    "select-project": {
+      onClick,
+    },
+  };
+
   return (
     <Tooltip title={TOOLTIPS[action]}>
-      <ListItemButton component="li" sx={{ flexGrow: 0 }} onClick={onClick}>
+      <ListItemButton sx={{ flexGrow: 0 }} {...props[action]}>
         <ListItemIcon sx={{ minWidth: "40px" }}>
           <AccountTreeRoundedIcon />
         </ListItemIcon>

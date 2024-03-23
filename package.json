@@ -96,7 +96,7 @@
     "react-hook-form": "7.50.1",
     "react-plotly.js": "2.6.0",
     "sass": "1.71.1",
-    "sharp": "0.33.2",
+    "sharp": "0.33.3",
     "typescript": "5.4.2",
     "use-immer": "0.7.0",
     "yup": "1.4.0"

@@ -183,8 +183,8 @@ dependencies:
     specifier: 14.2.3
     version: 14.2.3(react@18.2.0)
   react-hook-form:
-    specifier: 7.50.1
-    version: 7.50.1(react@18.2.0)
+    specifier: 7.51.2
+    version: 7.51.2(react@18.2.0)
   react-plotly.js:
     specifier: 2.6.0
     version: 2.6.0(plotly.js@2.29.1)(react@18.2.0)
@@ -7396,8 +7396,8 @@ packages:
     resolution: {integrity: sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==}
     dev: false
 
-  /react-hook-form@7.50.1(react@18.2.0):
-    resolution: {integrity: sha512-3PCY82oE0WgeOgUtIr3nYNNtNvqtJ7BZjsbxh6TnYNbXButaD5WpjOmTjdxZfheuHKR68qfeFnEDVYoSSFPMTQ==}
+  /react-hook-form@7.51.2(react@18.2.0):
+    resolution: {integrity: sha512-y++lwaWjtzDt/XNnyGDQy6goHskFualmDlf+jzEZvjvz6KWDf7EboL7pUvRCzPTJd0EOPpdekYaQLEvvG6m6HA==}
     engines: {node: '>=12.22.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18

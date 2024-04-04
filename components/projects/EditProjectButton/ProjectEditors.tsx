@@ -15,13 +15,21 @@ export interface ProjectEditorsProps {
   /**
    * Project to be edited.
    */
-  project: ProjectDetail;
+  projectId: ProjectDetail["project_id"];
+  /**
+   * editors
+   */
+  editors: ProjectDetail["editors"];
+  /**
+   * onChange function to be called after the project editors have been updated
+   */
+  onChange?: () => Promise<void>;
 }
 
 /**
  * MuiAutocomplete to manage the current editors of the selected project
  */
-export const ProjectEditors = ({ project }: ProjectEditorsProps) => {
+export const ProjectEditors = ({ projectId, editors, onChange }: ProjectEditorsProps) => {
   const { isLoading: isProjectsLoading } = useGetProjects();
 
   const { mutateAsync: addEditor, isPending: isAdding } = useAddEditorToProject();
@@ -30,17 +38,19 @@ export const ProjectEditors = ({ project }: ProjectEditorsProps) => {
 
   return (
     <ProjectMemberSelection
-      addMember={(userId) => addEditor({ projectId: project.project_id, userId })}
+      addMember={(userId) => addEditor({ projectId, userId })}
       isLoading={isAdding || isRemoving || isProjectsLoading}
-      memberList={project.editors}
-      removeMember={(userId) => removeEditor({ projectId: project.project_id, userId })}
+      memberList={editors}
+      removeMember={(userId) => removeEditor({ projectId, userId })}
       title="Editors"
-      onSettled={() =>
-        Promise.all([
-          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(project.project_id) }),
+      onSettled={() => {
+        const promises = [
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) }),
           queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() }),
-        ])
-      }
+        ];
+        onChange && promises.push(onChange());
+        return Promise.all(promises);
+      }}
     />
   );
 };

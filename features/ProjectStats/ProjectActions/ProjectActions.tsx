@@ -1,6 +1,7 @@
 import { useGetProject } from "@squonk/data-manager-client/project";
 
-import { Box, CircularProgress } from "@mui/material";
+import { Edit as EditIcon } from "@mui/icons-material";
+import { Box, CircularProgress, IconButton, Tooltip } from "@mui/material";
 
 import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkIconButton";
 import { EditProjectButton } from "../../../components/projects/EditProjectButton";
@@ -33,7 +34,21 @@ export const ProjectActions = ({
   return project ? (
     <Box display="flex">
       <OpenProjectButton projectId={projectId} />
-      {(isEditor || isAdministrator) && <EditProjectButton project={project} />}
+      {(isEditor || isAdministrator) && (
+        <EditProjectButton projectId={project.project_id}>
+          {({ openDialog }) => {
+            return (
+              <Tooltip title="Edit Project">
+                <span>
+                  <IconButton size="small" sx={{ p: "1px" }} onClick={openDialog}>
+                    <EditIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            );
+          }}
+        </EditProjectButton>
+      )}
       {isCreator && <DeleteProjectButton project={project} />}
       {(isEditor || isAdministrator) && <ChargesLinkIconButton productId={project.product_id} />}
     </Box>

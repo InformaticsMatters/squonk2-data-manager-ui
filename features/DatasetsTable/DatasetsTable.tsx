@@ -141,7 +141,7 @@ export const DatasetsTable = () => {
       initialSelection={[]}
       isLoading={isLoading}
       ToolbarActionChild={<DatasetsBulkActions selectedDatasets={selectedDatasets} />}
-      ToolbarChild={
+      toolbarContent={
         <>
           <DatasetUpload />
           <DatasetsFilterToolbar

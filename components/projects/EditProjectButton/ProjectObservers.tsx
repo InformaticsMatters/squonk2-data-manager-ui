@@ -15,13 +15,21 @@ export interface ProjectObserversProps {
   /**
    * Project to be edited.
    */
-  project: ProjectDetail;
+  projectId: ProjectDetail["project_id"];
+  /**
+   * observers
+   */
+  observers: ProjectDetail["observers"];
+  /**
+   * onChange function to be called after the project observers have been updated
+   */
+  onChange?: () => Promise<void>;
 }
 
 /**
  * Selector component to manage observers of a project.
  */
-export const ProjectObservers = ({ project }: ProjectObserversProps) => {
+export const ProjectObservers = ({ projectId, observers, onChange }: ProjectObserversProps) => {
   const { isLoading: isProjectsLoading } = useGetProjects();
 
   const { mutateAsync: addObserver, isPending: isAdding } = useAddObserverToProject();
@@ -30,17 +38,19 @@ export const ProjectObservers = ({ project }: ProjectObserversProps) => {
 
   return (
     <ProjectMemberSelection
-      addMember={(userId) => addObserver({ projectId: project.project_id, userId })}
+      addMember={(userId) => addObserver({ projectId, userId })}
       isLoading={isAdding || isRemoving || isProjectsLoading}
-      memberList={project.observers}
-      removeMember={(userId) => removeObserver({ projectId: project.project_id, userId })}
+      memberList={observers}
+      removeMember={(userId) => removeObserver({ projectId, userId })}
       title="Observers"
-      onSettled={() =>
-        Promise.all([
-          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(project.project_id) }),
+      onSettled={() => {
+        const promises = [
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) }),
           queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() }),
-        ])
-      }
+        ];
+        onChange && promises.push(onChange());
+        return Promise.all(promises);
+      }}
     />
   );
 };

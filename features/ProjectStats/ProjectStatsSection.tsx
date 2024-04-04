@@ -132,14 +132,13 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
         header: "",
         enableSorting: false,
       }),
-      datasetStorageColumnHelper.display({ id: "for-layout-only-2", enableSorting: false }),
       datasetStorageColumnHelper.display({
         id: "usage",
         header: "Usage",
         enableSorting: false,
         cell: ({ row }) => <StorageUsageChart storageSubscription={row.original} />,
       }),
-      datasetStorageColumnHelper.display({ id: "for-layout-only-3", enableSorting: false }),
+      datasetStorageColumnHelper.display({ id: "for-layout-only-2", enableSorting: false }),
       datasetStorageColumnHelper.accessor((row) => row.storage.coins.used, {
         id: "used",
         header: "Used",
@@ -183,7 +182,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
             },
             "& tr": {
               display: "grid",
-              gridTemplateColumns: "61px 1fr 1fr 1fr 110px 220px 100px 90px 100px 130px",
+              gridTemplateColumns: "61px repeat(4, 1fr) 220px repeat(4, 130px)",
             },
           },
         }}
@@ -204,7 +203,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
               },
               "& tr": {
                 display: "grid",
-                gridTemplateColumns: "61px 1fr 110px 220px 100px 90px 100px 130px",
+                gridTemplateColumns: "61px 1fr 220px repeat(4, 130px)",
               },
             },
           }}

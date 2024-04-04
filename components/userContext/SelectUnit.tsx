@@ -1,6 +1,8 @@
+import type { ReactNode } from "react";
+
 import type { UnitGetResponse } from "@squonk/account-server-client";
 
-import { Receipt as ReceiptIcon } from "@mui/icons-material";
+import { DataUsage as DataUsageIcon, Receipt as ReceiptIcon } from "@mui/icons-material";
 import type { AutocompleteProps } from "@mui/material";
 import { Autocomplete, Box, IconButton, TextField, Tooltip, Typography } from "@mui/material";
 
@@ -12,6 +14,27 @@ import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next
 import { getErrorMessage } from "../../utils/next/orvalError";
 import type { PermissionLevelFilter } from "./filter";
 import { ItemIcons } from "./ItemIcons";
+
+interface AdornmentProps {
+  title: string;
+  href: string;
+  children: ReactNode;
+}
+
+const Adornment = ({ title, href, children }: AdornmentProps) => (
+  <Tooltip title={title}>
+    <span>
+      <IconButton
+        href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${href}`}
+        size="small"
+        sx={{ p: "1px" }}
+        target="_blank"
+      >
+        {children}
+      </IconButton>
+    </span>
+  </Tooltip>
+);
 
 export interface SelectUnitProps
   extends Omit<AutocompleteProps<UnitGetResponse, false, false, false>, "renderInput" | "options"> {
@@ -55,20 +78,14 @@ export const SelectUnit = ({
                 <>
                   <ItemIcons item={unit} />
                   {!!unit && (
-                    <Tooltip title="Charges">
-                      <span>
-                        <IconButton
-                          href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/unit/${
-                            unit.id
-                          }/charges`}
-                          size="small"
-                          sx={{ p: "1px" }}
-                          target="_blank"
-                        >
-                          <ReceiptIcon />
-                        </IconButton>
-                      </span>
-                    </Tooltip>
+                    <>
+                      <Adornment href={`/unit/${unit.id}/charges`} title="Charges">
+                        <ReceiptIcon />
+                      </Adornment>
+                      <Adornment href={`/unit/${unit.id}/user-usage`} title="User Usage">
+                        <DataUsageIcon />
+                      </Adornment>
+                    </>
                   )}
                 </>
               ),

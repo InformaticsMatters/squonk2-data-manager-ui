@@ -82,7 +82,7 @@ export const UserSettingsContent = () => {
   }
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="xl">
       <UserBootstrapper />
 
       <PageSection level={2} title="Organisation and Unit">

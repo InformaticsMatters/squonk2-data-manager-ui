@@ -70,7 +70,7 @@ export interface DataTableProps<Data extends Record<string, any>> {
   /**
    * Child element of the toolbar in the table header
    */
-  ToolbarChild?: ReactNode;
+  toolbarContent?: ReactNode;
   /**
    * Toolbar with actions which sits beneath the table header toolbar with search.
    */
@@ -150,7 +150,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     columns,
     data,
     ToolbarActionChild,
-    ToolbarChild,
+    toolbarContent: ToolbarChild,
     initialSelection,
     onSelection,
     subRowsEnabled,
@@ -296,29 +296,32 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
               {headerGroup.headers.map((header) => (
                 <TableCell
                   className={header.column.getCanSort() ? "cursor-pointer select-none" : ""}
+                  colSpan={header.colSpan}
                   key={header.id}
                 >
-                  <Box>
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    {header.column.getCanSort() ? (
-                      <TableSortLabel
-                        active={!!header.column.getIsSorted()}
-                        // react-table has a unsorted state which is not treated here
-                        direction={header.column.getIsSorted() || undefined}
-                        onClick={header.column.getToggleSortingHandler()}
-                      />
-                    ) : null}
-                    {header.column.getCanFilter() ? (
-                      <div>
-                        {/* TODO: debounce this field */}
-                        <TextField
-                          placeholder="Search"
-                          value={header.column.getFilterValue()}
-                          onChange={(event) => header.column.setFilterValue(event.target.value)}
+                  {header.isPlaceholder ? null : (
+                    <Box sx={{ textWrap: "nowrap" }}>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.column.getCanSort() ? (
+                        <TableSortLabel
+                          active={!!header.column.getIsSorted()}
+                          // react-table has a unsorted state which is not treated here
+                          direction={header.column.getIsSorted() || undefined}
+                          onClick={header.column.getToggleSortingHandler()}
                         />
-                      </div>
-                    ) : null}
-                  </Box>
+                      ) : null}
+                      {header.column.getCanFilter() ? (
+                        <div>
+                          {/* TODO: debounce this field */}
+                          <TextField
+                            placeholder="Search"
+                            value={header.column.getFilterValue()}
+                            onChange={(event) => header.column.setFilterValue(event.target.value)}
+                          />
+                        </div>
+                      ) : null}
+                    </Box>
+                  )}
                 </TableCell>
               ))}
             </TableRow>

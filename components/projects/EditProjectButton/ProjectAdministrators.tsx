@@ -15,13 +15,25 @@ export interface ProjectAdministratorsProps {
   /**
    * Project to be edited.
    */
-  project: ProjectDetail;
+  projectId: ProjectDetail["project_id"];
+  /**
+   * administrators
+   */
+  administrators: ProjectDetail["administrators"];
+  /**
+   * onChange function to be called after the project administrators have been updated
+   */
+  onChange?: () => Promise<void>;
 }
 
 /**
  * MuiAutocomplete to manage the current administrators of the selected project
  */
-export const ProjectAdministrators = ({ project }: ProjectAdministratorsProps) => {
+export const ProjectAdministrators = ({
+  projectId,
+  administrators,
+  onChange,
+}: ProjectAdministratorsProps) => {
   const { isLoading: isProjectsLoading } = useGetProjects();
 
   const { mutateAsync: addAdministrator, isPending: isAdding } = useAddAdministratorToProject();
@@ -31,17 +43,19 @@ export const ProjectAdministrators = ({ project }: ProjectAdministratorsProps) =
 
   return (
     <ProjectMemberSelection
-      addMember={(userId) => addAdministrator({ projectId: project.project_id, userId })}
+      addMember={(userId) => addAdministrator({ projectId, userId })}
       isLoading={isAdding || isRemoving || isProjectsLoading}
-      memberList={project.administrators}
-      removeMember={(userId) => removeAdministrator({ projectId: project.project_id, userId })}
+      memberList={administrators}
+      removeMember={(userId) => removeAdministrator({ projectId, userId })}
       title="Administrators"
-      onSettled={() =>
-        Promise.all([
-          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(project.project_id) }),
+      onSettled={() => {
+        const promises = [
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) }),
           queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() }),
-        ])
-      }
+        ];
+        onChange && promises.push(onChange());
+        return Promise.all(promises);
+      }}
     />
   );
 };

@@ -11,6 +11,7 @@ import {
   useGetProductTypes,
 } from "@squonk/account-server-client/product";
 import type { DmError } from "@squonk/data-manager-client";
+import { getGetUserInventoryQueryKey } from "@squonk/data-manager-client/inventory";
 import { getGetProjectsQueryKey, useCreateProject } from "@squonk/data-manager-client/project";
 
 import {
@@ -104,8 +105,12 @@ export const CreateProjectForm = ({ modal, unitId, product }: CreateProjectFormP
 
       queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
       queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
-      typeof unitId === "string" &&
+      if (typeof unitId === "string") {
         queryClient.invalidateQueries({ queryKey: getGetProductsForUnitQueryKey(unitId) });
+        queryClient.invalidateQueries({
+          queryKey: getGetUserInventoryQueryKey({ unit_id: unitId }),
+        });
+      }
 
       setCurrentProjectId(project_id);
     } catch (error) {

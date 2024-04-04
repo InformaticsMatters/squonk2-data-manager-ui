@@ -147,7 +147,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
       error={getErrorMessage(error)}
       getRowId={(row) => row.fullPath}
       isLoading={isLoading}
-      ToolbarChild={
+      toolbarContent={
         <Grid container>
           <Grid item sx={{ display: "flex", alignItems: "center" }}>
             <Breadcrumbs>

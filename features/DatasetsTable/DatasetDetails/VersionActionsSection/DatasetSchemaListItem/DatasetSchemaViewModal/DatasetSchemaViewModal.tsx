@@ -186,7 +186,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
           data={fields}
           getRowId={getRowId}
           tableContainer={false}
-          ToolbarChild={
+          toolbarContent={
             <DatasetSchemaDescriptionInput
               originalValue={originalSchema?.description}
               setDescription={setSchemaDescription}

@@ -15,8 +15,6 @@ export const Chips = styled("div", { shouldForwardProp: (prop) => prop !== "spac
     display: "flex",
     alignItems: "center",
     flexWrap: "wrap",
-    "& > *": {
-      margin: theme.spacing(spacing),
-    },
+    gap: theme.spacing(spacing),
   }),
 );

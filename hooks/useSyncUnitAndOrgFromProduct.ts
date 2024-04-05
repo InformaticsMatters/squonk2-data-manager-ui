@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 
+import type { OrganisationDetail } from "@squonk/account-server-client";
+import { OrganisationDetailDefaultProductPrivacy } from "@squonk/account-server-client";
 import { useGetDefaultOrganisation } from "@squonk/account-server-client/organisation";
 import { useGetProduct } from "@squonk/account-server-client/product";
 
@@ -22,14 +24,20 @@ export const useSyncUnitAndOrgFromProduct = () => {
   // First set the default org as the current org on first load
   useEffect(() => {
     // ensure the partial org is all there before "asserting" that it's an OrganisationDetail type
+    // TODO convert this check to use a zod schema
     if (
       typeof defaultOrg?.id === "string" &&
-      typeof defaultOrg.caller_is_member === "boolean" &&
+      defaultOrg.caller_is_member !== undefined &&
       typeof defaultOrg.created === "string" &&
       typeof defaultOrg.name === "string" &&
-      typeof defaultOrg.private === "boolean"
+      defaultOrg.private !== undefined
     ) {
-      setOrganisation(defaultOrg as Required<typeof defaultOrg>);
+      const defaultOrgCopy = {
+        ...defaultOrg,
+        default_product_privacy: OrganisationDetailDefaultProductPrivacy.DEFAULT_PUBLIC,
+      } as OrganisationDetail;
+
+      setOrganisation(defaultOrgCopy);
     }
   }, [defaultOrg, setOrganisation]);
 

@@ -62,22 +62,43 @@ export const UserUsageTable = ({ users, toolbarContent, onChange }: UserUsageTab
         header: "Unit Editor",
         cell: ({ row }) => (row.original.isEditor ? <Done /> : <Close />),
       }),
-      columnHelper.accessor("first_seen", {
-        header: "First Seen",
-        cell: ({ getValue }) => dayjs.utc(getValue()).format(`${DATE_FORMAT} ${TIME_FORMAT}`),
-        sortingFn: (a, b) =>
-          dayjs.utc(a.original.first_seen).diff(dayjs.utc(b.original.first_seen)),
-      }),
-      columnHelper.accessor((user) => user.activity.active_days, {
-        id: "activity",
+      columnHelper.group({
         header: "Activity",
+        columns: [
+          columnHelper.accessor("first_seen", {
+            header: "First Seen",
+            cell: ({ getValue }) => dayjs.utc(getValue()).format(`${DATE_FORMAT} ${TIME_FORMAT}`),
+            sortingFn: (a, b) =>
+              dayjs.utc(a.original.first_seen).diff(dayjs.utc(b.original.first_seen)),
+          }),
+          columnHelper.accessor((user) => user.activity.period_b?.active_days, {
+            id: "activity_b",
+            header: "API Used",
+            cell: ({
+              row: {
+                original: { activity },
+              },
+            }) =>
+              `${activity.period_b?.active_days} of last ${activity.period_b?.monitoring_period}`,
+          }),
+          columnHelper.accessor((user) => user.activity.period_a.active_days, {
+            id: "activity_a",
+            header: "",
+            cell: ({
+              row: {
+                original: { activity },
+              },
+            }) => `${activity.period_a.active_days} of last ${activity.period_a.monitoring_period}`,
+          }),
+          columnHelper.accessor("last_seen_date", {
+            header: "Last Seen",
+            cell: ({ getValue }) => dayjs.utc(getValue()).format(DATE_FORMAT),
+            sortingFn: (a, b) =>
+              dayjs.utc(a.original.last_seen_date).diff(dayjs.utc(b.original.last_seen_date)),
+          }),
+        ],
       }),
-      columnHelper.accessor("last_seen_date", {
-        header: "Last Seen",
-        cell: ({ getValue }) => dayjs.utc(getValue()).format(DATE_FORMAT),
-        sortingFn: (a, b) =>
-          dayjs.utc(a.original.last_seen_date).diff(dayjs.utc(b.original.last_seen_date)),
-      }),
+
       columnHelper.group({
         header: "Datasets",
         columns: [

@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.0.0...3.1.0-rc.1) (2024-04-05)
+
+
+### Features
+
+* **unit-user-usage:** add initial implementation ([a901ec8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a901ec80492d1427185c05914e23e3226229b282))
+
+
+### Bug Fixes
+
+* fix new default_product_privacy property in selected org ([06b1d83](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/06b1d83bf2235e319ab5b6b60b88f1047c52161a))
+* **unit-user-usage:** update activity columns to use new api ([cf756a3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/cf756a3933266b22871be141519d6e636611f60a))
+
+
+### Miscellaneous Chores
+
+* release 3.1.0-rc.1 ([99a5780](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/99a5780b937da0d6d01e4c4fbbd9a6f0d43b646e))
+
 ## [3.0.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.0.0-rc.5...3.0.0) (2024-03-12)
 
 

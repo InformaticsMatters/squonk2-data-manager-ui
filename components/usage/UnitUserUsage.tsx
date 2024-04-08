@@ -13,6 +13,7 @@ dayjs.extend(utc);
 import { useCallback, useState } from "react";
 
 import {
+  Alert,
   Box,
   CircularProgress,
   Container,
@@ -45,11 +46,21 @@ export const UnitUserUsage = ({ unitId }: UnitUserUsageProps) => {
     });
   }, [queryClient, unitId]);
 
-  const { data } = useGetUserInventory({ unit_id: unitId });
-  const { data: unit } = useGetUnit(unitId);
-  const { data: unitUserList } = useGetOrganisationUnitUsers(unitId);
+  const { data, error: inventoryError } = useGetUserInventory({ unit_id: unitId });
+  const { data: unit, error: unitError } = useGetUnit(unitId);
+  const { data: unitUserList, error: unitUsersError } = useGetOrganisationUnitUsers(unitId);
 
   const [pivot, setPivot] = useState(false);
+
+  if (inventoryError) {
+    return <Alert severity="error">{inventoryError.message}</Alert>;
+  }
+  if (unitError) {
+    return <Alert severity="error">{unitError.message}</Alert>;
+  }
+  if (unitUsersError) {
+    return <Alert severity="error">{unitUsersError.message}</Alert>;
+  }
 
   if (data === undefined || unit === undefined || unitUserList === undefined) {
     return <CenterLoader />;

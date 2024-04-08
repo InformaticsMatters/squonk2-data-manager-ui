@@ -25,6 +25,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 
 import { CenterLoader } from "../CenterLoader";
+import { CreateProjectForm } from "../projects/CreateProjectForm";
 import type { UserUsageByProjectTableProps } from "./UserUsageByProjectTable";
 import { UserUsageTable } from "./UserUsageTable";
 
@@ -108,6 +109,9 @@ export const UnitUserUsage = ({ unitId }: UnitUserUsageProps) => {
           <UserUsageTable toolbarContent={pivotToggle} users={users} onChange={invalidateQueries} />
         )}
       </Box>
+
+      <Typography variant="h4">Create Project</Typography>
+      <CreateProjectForm unitId={unit.id} />
     </Container>
   );
 };

@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.1.0-rc.1...3.1.0-rc.2) (2024-04-08)
+
+
+### Features
+
+* **unit-user-usage:** add create project form at bottom of table ([c3beb35](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c3beb3513bee448542faab8eddcc18b7543d5490))
+
+
+### Bug Fixes
+
+* **unit-user-usage:** change page titles and url ([9c3e2bd](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9c3e2bd45dbf46ca5ff7bc6abda1ab81db34b290))
+* **unit-user-usage:** filter out selected projects ([d785342](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d7853429fdb1e2c05ed06ee5f752b30dc445c341))
+* **unit-user-usage:** show error messages when there are api errors ([f8620e2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f8620e210afd6504abbe8afde93a2175aebe81c4))
+* **unit-user-usage:** update dropdown label to "Add Project" ([83314c5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/83314c56e304bf471a2bf5e9136b15e032c41701))
+* **unit-user-usage:** update pivot toggle text ([eb62fe6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/eb62fe64403a30b0787b6b050e8038061c86967c))
+
+
+### Miscellaneous Chores
+
+* release 3.1.0-rc.2 ([2d2b9ab](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2d2b9ab38019a0ac70fc9a84cfdf682cdf86e4db))
+
 ## [3.1.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.0.0...3.1.0-rc.1) (2024-04-05)
 
 

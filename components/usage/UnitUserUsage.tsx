@@ -82,8 +82,8 @@ export const UnitUserUsage = ({ unitId }: UnitUserUsageProps) => {
   const pivotToggle = (
     <FormControlLabel
       control={<Switch checked={pivot} onChange={(event) => setPivot(event.target.checked)} />}
-      label="Pivot"
-      labelPlacement="start"
+      label="By User / Project"
+      labelPlacement="top"
     />
   );
 

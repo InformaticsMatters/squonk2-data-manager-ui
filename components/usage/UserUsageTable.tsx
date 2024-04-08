@@ -259,7 +259,8 @@ const ChipsInput = ({ users, value, group, username, onChange }: ChipsInputProps
         <TextField
           {...params}
           InputProps={{ ...params.InputProps, disableUnderline: true }}
-          label={value.length === 0 ? "Project" : undefined}
+          label={value.length === 0 ? "Add Project" : undefined}
+          sx={{ minWidth: 100 }}
           variant="standard"
         />
       )}

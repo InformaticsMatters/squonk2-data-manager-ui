@@ -91,13 +91,14 @@ export const UnitUserUsage = ({ unitId }: UnitUserUsageProps) => {
   return (
     <Container maxWidth="xl">
       <Typography component="h2" variant="h1">
-        User Usage
+        Unit Inventory
       </Typography>
       <Typography variant="h3">
         Unit: <em>{unit.name}</em>
       </Typography>
 
       <Typography>Owner: {unit.owner_id}</Typography>
+
       <Box marginY={1}>
         {pivot ? (
           <UserUsageByProjectTable

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { InventoryUserDetail } from "@squonk/data-manager-client";
 
 import { Edit } from "@mui/icons-material";
-import { Chip } from "@mui/material";
+import { Chip, Typography } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
 import groupBy from "just-group-by";
 
@@ -132,6 +132,10 @@ export const UserUsageByProjectTable = ({
           onMemberChange={onChange}
         />
       )}
+
+      <Typography gutterBottom variant="h4">
+        Project Members
+      </Typography>
       <DataTable
         columns={columns}
         customRowProps={(row) => ({

@@ -154,6 +154,10 @@ export const UserUsageTable = ({ users, toolbarContent, onChange }: UserUsageTab
 
   return (
     <>
+      <Typography gutterBottom variant="h4">
+        User Usage
+      </Typography>
+
       <DataTable columns={columns} data={users} toolbarContent={toolbarContent} />
       <Typography variant="caption">
         A user is considered active in a given day if they have used the Data Manager API

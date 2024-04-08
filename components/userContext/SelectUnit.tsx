@@ -82,7 +82,7 @@ export const SelectUnit = ({
                       <Adornment href={`/unit/${unit.id}/charges`} title="Charges">
                         <ReceiptIcon />
                       </Adornment>
-                      <Adornment href={`/unit/${unit.id}/user-usage`} title="User Usage">
+                      <Adornment href={`/unit/${unit.id}/inventory`} title="User Usage">
                         <DataUsageIcon />
                       </Adornment>
                     </>

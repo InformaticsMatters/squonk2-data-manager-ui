@@ -249,6 +249,7 @@ const ChipsInput = ({ users, value, group, username, onChange }: ChipsInputProps
   return (
     <Autocomplete
       disableClearable
+      filterSelectedOptions
       multiple
       disabled={isPending}
       getOptionLabel={(option) => option.name}

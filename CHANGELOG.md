@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.0-rc.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.1.0-rc.2...3.1.0-rc.3) (2024-04-09)
+
+
+### Features
+
+* **unit-user-usage:** add activity totals to table ([acdfbe7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/acdfbe73841dea4ef7c85b7bbe1dc7cbf7801bc8))
+
+
+### Bug Fixes
+
+* **unit-user-usage:** disable autofocus on project form on this page only ([196f1c6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/196f1c6e4b4ae369e203a8d57d323795369da1b6))
+
+
+### Miscellaneous Chores
+
+* release 3.1.0-rc.3 ([eff4b97](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/eff4b97f47f3fe666c80b57c74f67bd57952a55b))
+
 ## [3.1.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.1.0-rc.1...3.1.0-rc.2) (2024-04-08)
 
 

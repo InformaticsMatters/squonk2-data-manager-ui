@@ -67,9 +67,17 @@ export const UserUsageTable = ({ users, toolbarContent, onChange }: UserUsageTab
         columns: [
           columnHelper.accessor("first_seen", {
             header: "First Seen",
-            cell: ({ getValue }) => dayjs.utc(getValue()).format(`${DATE_FORMAT} ${TIME_FORMAT}`),
+            cell: ({ getValue, row }) =>
+              dayjs.utc(getValue()).format(`${DATE_FORMAT} ${TIME_FORMAT}`) +
+              `(${row.original.activity.total_days_since_first_seen} days ago)`,
             sortingFn: (a, b) =>
               dayjs.utc(a.original.first_seen).diff(dayjs.utc(b.original.first_seen)),
+          }),
+
+          columnHelper.accessor("activity.total_days_active", {
+            header: "Total",
+            cell: ({ getValue, row }) =>
+              `${getValue()} days (${row.original.activity.total_activity})`,
           }),
           columnHelper.accessor((user) => user.activity.period_b?.active_days, {
             id: "activity_b",

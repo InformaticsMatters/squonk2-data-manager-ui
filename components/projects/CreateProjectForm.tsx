@@ -44,6 +44,7 @@ export interface CreateProjectFormProps {
   >;
   unitId: UnitDetail["id"] | (() => Promise<UnitDetail["id"]>);
   product?: ProductDetail;
+  autoFocus?: boolean;
 }
 
 export interface Values {
@@ -54,7 +55,12 @@ export interface Values {
 
 type ProjectFormikProps = FormikConfig<Values>;
 
-export const CreateProjectForm = ({ modal, unitId, product }: CreateProjectFormProps) => {
+export const CreateProjectForm = ({
+  modal,
+  unitId,
+  product,
+  autoFocus = true,
+}: CreateProjectFormProps) => {
   const initialValues: Values = {
     projectName: "",
     flavour: product?.flavour ?? DEFAULT_PRODUCT_FLAVOUR,
@@ -145,7 +151,13 @@ export const CreateProjectForm = ({ modal, unitId, product }: CreateProjectFormP
           gap: 1,
         }}
       >
-        <Field autoFocus fullWidth component={TextField} label="Project Name" name="projectName" />
+        <Field
+          fullWidth
+          autoFocus={autoFocus}
+          component={TextField}
+          label="Project Name"
+          name="projectName"
+        />
 
         {isError ? (
           <Typography color="error">{getErrorMessage(error)}</Typography>

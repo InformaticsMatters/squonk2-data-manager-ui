@@ -112,7 +112,7 @@ export const UnitUserUsage = ({ unitId }: UnitUserUsageProps) => {
       </Box>
 
       <Typography variant="h4">Create Project</Typography>
-      <CreateProjectForm unitId={unit.id} />
+      <CreateProjectForm autoFocus={false} unitId={unit.id} />
     </Container>
   );
 };

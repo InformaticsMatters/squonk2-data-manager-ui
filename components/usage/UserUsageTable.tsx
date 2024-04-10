@@ -68,16 +68,15 @@ export const UserUsageTable = ({ users, toolbarContent, onChange }: UserUsageTab
           columnHelper.accessor("first_seen", {
             header: "First Seen",
             cell: ({ getValue, row }) =>
-              dayjs.utc(getValue()).format(`${DATE_FORMAT} ${TIME_FORMAT}`) +
-              `(${row.original.activity.total_days_since_first_seen} days ago)`,
+              `${dayjs.utc(getValue()).format(`${DATE_FORMAT} ${TIME_FORMAT}`)} (${
+                row.original.activity.total_days_since_first_seen
+              } days ago)`,
             sortingFn: (a, b) =>
               dayjs.utc(a.original.first_seen).diff(dayjs.utc(b.original.first_seen)),
           }),
-
           columnHelper.accessor("activity.total_days_active", {
             header: "Total",
-            cell: ({ getValue, row }) =>
-              `${getValue()} days (${row.original.activity.total_activity})`,
+            cell: ({ getValue }) => `${getValue()} days`,
           }),
           columnHelper.accessor((user) => user.activity.period_b?.active_days, {
             id: "activity_b",
@@ -106,7 +105,6 @@ export const UserUsageTable = ({ users, toolbarContent, onChange }: UserUsageTab
           }),
         ],
       }),
-
       columnHelper.group({
         header: "Datasets",
         columns: [
@@ -119,6 +117,8 @@ export const UserUsageTable = ({ users, toolbarContent, onChange }: UserUsageTab
         columns: [
           columnHelper.accessor((user) => user.projects.observer, {
             header: "Observer",
+            enableColumnFilter: false,
+            enableSorting: false,
             cell: ({ getValue, row }) => (
               <ChipsInput
                 group="observer"
@@ -131,6 +131,8 @@ export const UserUsageTable = ({ users, toolbarContent, onChange }: UserUsageTab
           }),
           columnHelper.accessor((user) => user.projects.editor, {
             id: "project-editor",
+            enableColumnFilter: false,
+            enableSorting: false,
             header: "Editor",
             cell: ({ getValue, row }) => (
               <ChipsInput
@@ -144,6 +146,8 @@ export const UserUsageTable = ({ users, toolbarContent, onChange }: UserUsageTab
           }),
           columnHelper.accessor((user) => user.projects.administrator, {
             header: "Administrator",
+            enableColumnFilter: false,
+            enableSorting: false,
             cell: ({ getValue, row }) => (
               <ChipsInput
                 group="administrator"

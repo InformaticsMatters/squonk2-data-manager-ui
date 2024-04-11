@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.1.0-rc.3...3.1.0) (2024-04-11)
+
+
+### Bug Fixes
+
+* **unit-user-usage:** remove percentage, fix spacing and disable column filtering for project columns ([4dca281](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4dca2818e91bcf9894ca66a5f2a5eb239ff89518))
+
+
+### Miscellaneous Chores
+
+* release 3.1.0 ([de25b9b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/de25b9b6ea29372d2337b2275a969fb4663cb8c4))
+
 ## [3.1.0-rc.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.1.0-rc.2...3.1.0-rc.3) (2024-04-09)
 
 

@@ -11,7 +11,6 @@ import "ketcher-react/dist/index.css";
 
 export interface SketcherProps {
   smiles: string;
-  onUnmount?: () => void;
 }
 
 export const allButtons = {
@@ -76,20 +75,13 @@ export const allButtons = {
   "enhanced-stereo": false,
 };
 
-export const Sketcher = ({ smiles, onUnmount }: SketcherProps) => {
+export const Sketcher = ({ smiles }: SketcherProps) => {
   const { enqueueError } = useEnqueueError();
 
   // Synchronise the react state to the component
   useEffect(() => {
     global.ketcher?.setMolecule(smiles);
   }, [smiles]);
-
-  useEffect(() => {
-    // do nothing on mount
-    return () => {
-      onUnmount && onUnmount();
-    };
-  });
 
   return (
     <Editor

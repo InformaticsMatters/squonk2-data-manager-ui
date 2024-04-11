@@ -119,23 +119,15 @@ export const SMILESInput = ({
   return (
     <Box display="flex" flexDirection="column" gap={1} width={width}>
       <Box height={height}>
-        <Sketcher smiles={smiles} onUnmount={() => setIsASketcherOpen(false)} />
+        <Sketcher smiles={smiles} />
       </Box>
       <ButtonGroup size="small" sx={{ alignSelf: "end" }} variant="outlined">
-        <Button
-          color="warning"
-          onClick={() => {
-            onDelete && onDelete();
-            onClose && onClose();
-          }}
-        >
-          Delete
-        </Button>
         <Button
           color="info"
           onClick={() => {
             setMode("smiles");
             onClose && onClose();
+            setIsASketcherOpen(false);
           }}
         >
           Cancel
@@ -150,6 +142,7 @@ export const SMILESInput = ({
                 setMode("smiles");
                 onSave(smi);
                 onClose && onClose();
+                setIsASketcherOpen(false);
               } else {
                 enqueueError("Smiles not obtained");
               }

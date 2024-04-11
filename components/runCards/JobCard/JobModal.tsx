@@ -10,7 +10,7 @@ import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager
 import { useGetJob } from "@squonk/data-manager-client/job";
 
 import { Box, Grid, TextField, Typography } from "@mui/material";
-import Form from "@rjsf/mui";
+import type { FormProps } from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
 import { useQueryClient } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
@@ -27,6 +27,11 @@ const JobInputFields = dynamic<JobInputFieldsProps>(
   () => import("./JobInputFields").then((mod) => mod.JobInputFields),
   { loading: () => <CenterLoader /> },
 );
+
+// this dynamic import is necessary to avoid hydration issues with the form
+const Form = dynamic<FormProps>(() => import("@rjsf/mui").then((mod) => mod.Form), {
+  loading: () => <CenterLoader />,
+});
 
 export type InputData = Record<string, string | string[] | undefined>;
 
@@ -161,14 +166,15 @@ export const JobModal = ({
     }
   };
 
+  const validateForm = formRef.current?.validateForm;
+
   return (
     <ModalWrapper
       DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`job-${jobId}`}
       open={open}
       submitDisabled={
-        (formRef.current?.validateForm() !== undefined && !formRef.current?.validateForm()) ||
-        !inputsValid
+        (validateForm && validateForm() !== undefined && validateForm()) || !inputsValid
       }
       submitText="Run"
       title={job?.name ?? "Run Job"}

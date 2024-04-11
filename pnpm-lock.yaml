@@ -135,14 +135,14 @@ dependencies:
     specifier: 4.0.0
     version: 4.0.0
   ketcher-core:
-    specifier: 2.15.1
-    version: 2.15.1
+    specifier: 2.18.0
+    version: 2.18.0(react-dom@18.2.0)(react@18.2.0)
   ketcher-react:
-    specifier: 2.15.1
-    version: 2.15.1(@types/react@18.2.76)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0)
+    specifier: 2.18.0
+    version: 2.18.0(@types/react@18.2.76)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0)
   ketcher-standalone:
-    specifier: 2.15.1
-    version: 2.15.1
+    specifier: 2.18.0
+    version: 2.18.0(react-dom@18.2.0)(react@18.2.0)
   lodash-es:
     specifier: 4.17.21
     version: 4.17.21
@@ -2326,6 +2326,11 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  /adler-32@1.3.1:
+    resolution: {integrity: sha512-ynZ4w/nUUv5rrsR8UUGoe1VC9hZj6V5hU9Qw1HlMDJGEJw5S7TfTErWTjMys6M7vr0YWcPqs3qAr4ss0nDfP+A==}
+    engines: {node: '>=0.8'}
+    dev: false
+
   /agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
@@ -2712,6 +2717,14 @@ packages:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
     dev: false
 
+  /cfb@1.2.2:
+    resolution: {integrity: sha512-KfdUZsSOw19/ObEWasvBP/Ac4reZvAGauZhs6S/gqNhXhI7cKwvlH7ulj+dOEYnca4bm4SGo8C1bTAQvnTjgQA==}
+    engines: {node: '>=0.8'}
+    dependencies:
+      adler-32: 1.3.1
+      crc-32: 1.2.2
+    dev: false
+
   /chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
     engines: {node: '>=4'}
@@ -3009,6 +3022,12 @@ packages:
 
   /country-regex@1.1.0:
     resolution: {integrity: sha512-iSPlClZP8vX7MC3/u6s3lrDuoQyhQukh5LyABJ3hvfzbQ3Yyayd4fp04zjLnfi267B/B2FkumcWWgrbban7sSA==}
+    dev: false
+
+  /crc-32@1.2.2:
+    resolution: {integrity: sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==}
+    engines: {node: '>=0.8'}
+    hasBin: true
     dev: false
 
   /cross-fetch@3.1.8:
@@ -5100,8 +5119,8 @@ packages:
     engines: {node: '>=0.8.19'}
     dev: true
 
-  /indigo-ketcher@1.14.0:
-    resolution: {integrity: sha512-u4BrENVA0fo4JHRaOBo7nvu/58UL5bh+GTtDK2qhUGB50sF72hNIYmq11HaMJgOcMeh47ca9r93mExrezOvvGA==}
+  /indigo-ketcher@1.18.0:
+    resolution: {integrity: sha512-9Xwhni2I9GMC0KxLgOj7aJ79unqrnuv38dJiX/LU4r9/ts0VlMmVTJ0gLLwnsK9MXITP/K8lqWLOQYWCmv9GNA==}
     dev: false
 
   /inflight@1.0.6:
@@ -5662,8 +5681,8 @@ packages:
     resolution: {integrity: sha512-hRkd6/XW4HTsA9vjVpY9tuXJYLSlelnkTmVFu4M9/7MIYQtFcHpbugAU7UbOfjOiVSVYl2fqgBuJ32JUmRo5Ew==}
     dev: false
 
-  /ketcher-core@2.15.1:
-    resolution: {integrity: sha512-JxcVMU1wXcjZx8X4VvF4TmWTxcR2yCZaGDFHciLkgijDr1Cmt1EH3kHLkD+ISRvIjocbyUtkL3C7LJVQu+N0Aw==}
+  /ketcher-core@2.18.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-d0Dgnb0R8gQkjNfBL5YBEbGde7L8265tBvQrqwzrk4XhraQSnZ2Itozv8NO1SgIzxRveRVKvk/3JaHznurqcrw==}
     engines: {node: '>=14'}
     dependencies:
       '@babel/runtime': 7.23.9
@@ -5672,11 +5691,15 @@ packages:
       d3: 7.8.5
       lodash: 4.17.21
       raphael: 2.3.0
+      react-device-detect: 2.2.3(react-dom@18.2.0)(react@18.2.0)
       svgpath: 2.6.0
+    transitivePeerDependencies:
+      - react
+      - react-dom
     dev: false
 
-  /ketcher-react@2.15.1(@types/react@18.2.76)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-9rbKAwahj+4BriZL7TgYeu06ldfaSuI4F5A6u4tA22gQCToZF9LpCJwpwEiMdbvm3HS3fMqXR8toKilQs7GCuQ==}
+  /ketcher-react@2.18.0(@types/react@18.2.76)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-7wpUH0qeA6HyKiGz9WyyjiOSX+b1zTfa7qZ1858e1FFWEqFnyvNRKvH+Oo3FsqC0JAfca7qCbgTgrzJdmMrozQ==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.2.0
@@ -5687,6 +5710,7 @@ packages:
       '@emotion/styled': 11.11.5(@emotion/react@11.11.4)(@types/react@18.2.76)(react@18.2.0)
       '@mui/material': 5.15.15(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@18.2.76)(react-dom@18.2.0)(react@18.2.0)
       ajv: 8.12.0
+      cfb: 1.2.2
       clsx: 1.2.1
       draft-js: 0.11.7(react-dom@18.2.0)(react@18.2.0)
       draft-js-custom-styles: 2.1.1(draft-js@0.11.7)(immutable@3.8.2)
@@ -5695,7 +5719,7 @@ packages:
       font-face-observer: 1.0.0
       hoist-non-react-statics: 3.3.2
       intersection-observer: 0.12.2
-      ketcher-core: 2.15.1
+      ketcher-core: 2.18.0(react-dom@18.2.0)(react@18.2.0)
       lodash: 4.17.21
       miew-react: 1.0.0(@types/react@18.2.76)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
@@ -5728,13 +5752,16 @@ packages:
       - supports-color
     dev: false
 
-  /ketcher-standalone@2.15.1:
-    resolution: {integrity: sha512-eZaRCduRlyB+e1O18v3k+GDcPeQSuYrRHVlKYDFrupymWk1yR05im7jjsySA9ckb5TeVQ8k1iEgPKwM+Jjy55w==}
+  /ketcher-standalone@2.18.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-iYZU6pttZlhqjSNH2KSxgG/8re9gZTFlEJkKVNLSfcOeufhnPGa3HvLvwka5ZDbCrdsRiWTCVIy3ulagYlx/ZA==}
     engines: {node: '>=14'}
     dependencies:
       '@babel/runtime': 7.23.9
-      indigo-ketcher: 1.14.0
-      ketcher-core: 2.15.1
+      indigo-ketcher: 1.18.0
+      ketcher-core: 2.18.0(react-dom@18.2.0)(react@18.2.0)
+    transitivePeerDependencies:
+      - react
+      - react-dom
     dev: false
 
   /keyv@4.5.4:

@@ -13,7 +13,7 @@
     "pnpm": ">=8"
   },
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "husky",
     "dev": "next dev",
     "dev:debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
@@ -107,7 +107,7 @@
     "@squonk/eslint-config": "1.0.0",
     "dotenv": "16.4.5",
     "eslint": "8.57.0",
-    "husky": "8.0.3",
+    "husky": "9.0.11",
     "identity-obj-proxy": "3.0.0",
     "lint-staged": "15.2.2"
   },

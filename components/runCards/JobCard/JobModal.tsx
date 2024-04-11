@@ -231,6 +231,7 @@ export const JobModal = ({
                       uiSchema={{ "ui:order": job.variables.order?.options }}
                       validator={validator}
                       onChange={(event) => setOptionsFormData(event.formData)}
+                      onError={() => {}}
                     >
                       {/* Remove the default submit button */}
                       <div />

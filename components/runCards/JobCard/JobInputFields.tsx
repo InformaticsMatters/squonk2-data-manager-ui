@@ -9,6 +9,17 @@ import { FileSelector } from "../../FileSelector";
 import type { InputData } from "./JobModal";
 import { MultipleMoleculeInput } from "./MultipleMoleculeInput";
 
+export const validateInputData = (inputValue: string | string[] | undefined) => {
+  if (inputValue === undefined) {
+    return false; // when does this happen?
+  }
+  if (Array.isArray(inputValue)) {
+    return inputValue.every((v) => v !== "");
+  }
+
+  return inputValue.split("\n").every((v) => v !== "");
+};
+
 // Define types for the form schema as the Open API spec doesn't define these (just gives string)
 // These might be defined in the form generator types?
 export interface InputFieldSchema {
@@ -67,7 +78,9 @@ export const JobInputFields = ({
             const value = inputsData[key] || removeFileProtocolFromInputData(initialValues?.[key]);
             return (
               <InputSection
-                error={required && !value ? "must have required input" : undefined}
+                error={
+                  required && !validateInputData(value) ? "must have required input" : undefined
+                }
                 key={key}
                 required={required}
                 title={title}
@@ -93,7 +106,9 @@ export const JobInputFields = ({
 
             return (
               <InputSection
-                error={required && !value ? "must have required input" : undefined}
+                error={
+                  required && !validateInputData(value) ? "must have required input" : undefined
+                }
                 key={key}
                 required={required}
                 title={title}

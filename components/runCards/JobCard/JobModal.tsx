@@ -21,7 +21,7 @@ import { ModalWrapper } from "../../modals/ModalWrapper";
 import type { DebugValue } from "../DebugCheckbox";
 import { DebugCheckbox } from "../DebugCheckbox";
 import type { CommonModalProps } from "../types";
-import type { InputSchema, JobInputFieldsProps } from "./JobInputFields";
+import { type InputSchema, type JobInputFieldsProps, validateInputData } from "./JobInputFields";
 
 const JobInputFields = dynamic<JobInputFieldsProps>(
   () => import("./JobInputFields").then((mod) => mod.JobInputFields),
@@ -51,16 +51,7 @@ export interface JobModalProps extends CommonModalProps {
 
 const validateJobInputs = (required: string[], inputsData: InputData) => {
   const inputsDataIsValid = Object.values(inputsData)
-    .map((inputValue) => {
-      if (inputValue === undefined) {
-        return false; // when does this happen?
-      }
-      if (Array.isArray(inputValue)) {
-        return inputValue.every((v) => v !== "");
-      }
-
-      return inputValue.split("\n").every((v) => v !== "");
-    })
+    .map(validateInputData)
     .every((v) => v);
 
   const inputKeys = new Set(Object.keys(inputsData));

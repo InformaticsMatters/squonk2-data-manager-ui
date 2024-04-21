@@ -1,11 +1,14 @@
-import type { ReactNode } from "react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
-import type { CardActionsProps, CardProps } from "@mui/material";
-import { Card, CardActions, CardContent } from "@mui/material";
+import {
+  Card,
+  CardActions,
+  type CardActionsProps,
+  CardContent,
+  type CardProps,
+} from "@mui/material";
 
-import type { DepictParameters, DepictVariants } from "./DepictMolecule";
-import { DepictMolecule } from "./DepictMolecule";
+import { DepictMolecule, type DepictParameters, type DepictVariants } from "./DepictMolecule";
 
 export type MolCardProps = DepictVariants & {
   children?: ReactNode;
@@ -43,7 +46,7 @@ export const MolCard = ({
         <DepictMolecule depictParams={depictParams} {...imgSrc} />
         {children}
       </CardContent>
-      {actionsContent && (
+      {!!actionsContent && (
         <CardActions {...actionsProps} disableSpacing>
           {actionsContent}
         </CardActions>

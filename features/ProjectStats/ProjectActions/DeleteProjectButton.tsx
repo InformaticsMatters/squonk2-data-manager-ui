@@ -5,7 +5,7 @@ import {
   getGetProductsQueryKey,
   useDeleteProduct,
 } from "@squonk/account-server-client/product";
-import type { DmError, ProjectDetail } from "@squonk/data-manager-client";
+import { type DmError, type ProjectDetail } from "@squonk/data-manager-client";
 import { getGetProjectsQueryKey, useDeleteProject } from "@squonk/data-manager-client/project";
 
 import { DeleteForever } from "@mui/icons-material";
@@ -66,10 +66,12 @@ export const DeleteProjectButton = ({ project }: DeleteProjectButtonProps) => {
       enqueueSnackbar("Project not found", { variant: "warning" });
     }
 
-    queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
-    queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
+    void queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
+    void queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
     project.unit_id &&
-      queryClient.invalidateQueries({ queryKey: getGetProductsForUnitQueryKey(project.unit_id) });
+      void queryClient.invalidateQueries({
+        queryKey: getGetProductsForUnitQueryKey(project.unit_id),
+      });
   };
 
   return (

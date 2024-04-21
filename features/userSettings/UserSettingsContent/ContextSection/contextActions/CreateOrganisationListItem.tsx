@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { AsError } from "@squonk/account-server-client";
+import { type AsError } from "@squonk/account-server-client";
 import {
   getGetOrganisationsQueryKey,
   getOrganisation,
@@ -59,10 +59,10 @@ export const CreateOrganisationListItem = () => {
 
     enqueueSnackbar("Organisation created");
 
-    queryClient.invalidateQueries({ queryKey: getGetOrganisationsQueryKey() });
+    void queryClient.invalidateQueries({ queryKey: getGetOrganisationsQueryKey() });
 
     // Change context outside of this try-catch block
-    changeContext(organisationId);
+    void changeContext(organisationId);
   };
 
   return (
@@ -124,7 +124,7 @@ export const CreateOrganisationListItem = () => {
             submitText="Create"
             title="Create Organisation (Admin)"
             onClose={() => setOpen(false)}
-            onSubmit={submitForm}
+            onSubmit={() => void submitForm()}
           >
             <Form>
               <Grid container marginY={2} spacing={1}>

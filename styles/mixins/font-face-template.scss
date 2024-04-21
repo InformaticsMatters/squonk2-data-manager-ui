@@ -1,11 +1,13 @@
 @mixin font-face-template($font-family, $file-name, $style, $weight) {
   @font-face {
     font-family: $font-family;
-  font-style: $style;
-  font-weight: $weight;
-  font-display: swap;
-  src: local($font-family),
-       url($assetsURL + '/assets/fonts/#{$file-name}.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-       url($assetsURL + '/assets/fonts/#{$file-name}.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    font-style: $style;
+    font-weight: $weight;
+    font-display: swap;
+    src:
+      local($font-family),
+      url($assetsURL + "/assets/fonts/#{$file-name}.woff2") format("woff2"),
+      /* Chrome 26+, Opera 23+, Firefox 39+ */ url($assetsURL + "/assets/fonts/#{$file-name}.woff")
+        format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
   }
 }

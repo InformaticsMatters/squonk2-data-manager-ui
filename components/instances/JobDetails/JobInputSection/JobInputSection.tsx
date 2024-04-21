@@ -1,4 +1,4 @@
-import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
 
 import {
   Alert,
@@ -21,7 +21,7 @@ export interface JobInputSectionProps {
   /**
    * Instance of the job.
    */
-  instance: InstanceSummary | InstanceGetResponse;
+  instance: InstanceGetResponse | InstanceSummary;
 }
 
 /**
@@ -38,7 +38,7 @@ export const JobInputSection = ({ instance }: JobInputSectionProps) => {
     return <Alert severity="error">{getErrorMessage(error)}</Alert>;
   }
 
-  if (!inputs.length) {
+  if (inputs.length === 0) {
     return <Typography>This job has no inputs</Typography>;
   }
 
@@ -46,11 +46,11 @@ export const JobInputSection = ({ instance }: JobInputSectionProps) => {
     <List aria-label="list of job inputs">
       {/* We currently have to assume that the outputs have a consistent type */}
       {inputs.map((input) => {
-        const isFile = input.value.map((val) => val.startsWith(FILE_PROTOCOL)).some((v) => v);
+        const isFile = input.value.map((val) => val.startsWith(FILE_PROTOCOL)).some(Boolean);
         const moleculesType = input.type === "molecules-smi";
         let value = input.value;
         if (moleculesType && isFile) {
-          value = value.map(removeFileProtocol);
+          value = value.map((element) => removeFileProtocol(element));
         }
         return (
           <ListItem key={input.name} sx={{ alignItems: "flex-start" }}>

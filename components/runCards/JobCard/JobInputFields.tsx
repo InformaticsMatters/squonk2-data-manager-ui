@@ -1,15 +1,14 @@
-import type { Dispatch, ReactNode, SetStateAction } from "react";
-import { useState } from "react";
+import { type Dispatch, type ReactNode, type SetStateAction, useState } from "react";
 
 import { Grid, Typography } from "@mui/material";
 
-import type { ProjectId } from "../../../hooks/projectHooks";
+import { type ProjectId } from "../../../hooks/projectHooks";
 import { FILE_PROTOCOL, removeFileProtocolFromInputData } from "../../../utils/app/urls";
 import { FileSelector } from "../../FileSelector";
-import type { InputData } from "./JobModal";
+import { type InputData } from "./JobModal";
 import { MultipleMoleculeInput } from "./MultipleMoleculeInput";
 
-export const validateInputData = (inputValue: string | string[] | undefined) => {
+export const validateInputData = (inputValue: string[] | string | undefined) => {
   if (inputValue === undefined) {
     return false; // when does this happen?
   }
@@ -32,9 +31,7 @@ export interface InputFieldSchema {
 
 export interface InputSchema {
   required?: string[];
-  properties: {
-    [key: string]: InputFieldSchema;
-  };
+  properties: Record<string, InputFieldSchema>;
 }
 
 export interface JobInputFieldsProps {
@@ -75,6 +72,7 @@ export const JobInputFields = ({
         ([key, { title, type, multiple, "mime-types": mimeTypes }]) => {
           if (type === "file" || type === "directory") {
             const required = inputs.required?.includes(key);
+            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
             const value = inputsData[key] || removeFileProtocolFromInputData(initialValues?.[key]);
             return (
               <InputSection
@@ -102,6 +100,7 @@ export const JobInputFields = ({
             multiple = true;
 
             const required = inputs.required?.includes(key);
+            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
             const value = inputsData[key] || initialValues?.[key];
 
             return (

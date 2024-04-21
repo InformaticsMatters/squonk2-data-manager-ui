@@ -1,7 +1,6 @@
-import { forwardRef } from "react";
+import { type ForwardedRef, forwardRef } from "react";
 
-import type { ButtonProps } from "@mui/material";
-import { Button, styled } from "@mui/material";
+import { Button, type ButtonProps, styled } from "@mui/material";
 
 import { NavLink } from "./NavLink";
 
@@ -42,7 +41,10 @@ export const NavLinks = ({ linkWidth = 120 }: NavLinksProps) => {
 
 type NavButtonProps = ButtonProps & { active: boolean };
 
-const NavButton = forwardRef<any, NavButtonProps>(({ active, ...props }, ref) => (
+const NavButtonComponent = (
+  { active, ...props }: NavButtonProps,
+  ref: ForwardedRef<HTMLButtonElement>,
+) => (
   <Button
     ref={ref}
     variant="text"
@@ -56,7 +58,9 @@ const NavButton = forwardRef<any, NavButtonProps>(({ active, ...props }, ref) =>
       },
     }}
   />
-));
+);
+
+const NavButton = forwardRef(NavButtonComponent);
 
 const Nav = styled("nav", { shouldForwardProp: (prop) => prop !== "linkWidth" })<{
   linkWidth: number;

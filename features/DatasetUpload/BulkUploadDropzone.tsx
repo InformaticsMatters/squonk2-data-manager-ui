@@ -3,7 +3,7 @@ import { type Dispatch, type SetStateAction, useCallback } from "react";
 import { Grid } from "@mui/material";
 
 import { Dropzone } from "../../components/uploads/Dropzone";
-import type { UploadableFile } from "../../components/uploads/types";
+import { type UploadableFile } from "../../components/uploads/types";
 import { mutateAtPosition } from "../../utils/app/files";
 import { SingleFileUploadWithProgress } from "./SingleFileUploader";
 

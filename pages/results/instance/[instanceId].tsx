@@ -43,14 +43,14 @@ const Result = () => {
                 <IconButton
                   size="large"
                   sx={{ ml: "auto" }}
-                  onClick={() => refreshResults.forEach((func) => func())}
+                  onClick={() => refreshResults.forEach((func) => void func())}
                 >
                   <RefreshRoundedIcon />
                 </IconButton>
               </Tooltip>
             </Box>
 
-            {instanceId && <InstanceTitle instanceId={instanceId} />}
+            {!!instanceId && <InstanceTitle instanceId={instanceId} />}
 
             <Instance
               collapsedByDefault={false}

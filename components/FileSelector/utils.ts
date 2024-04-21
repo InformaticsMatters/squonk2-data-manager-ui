@@ -14,7 +14,7 @@ export const getChecked = (value: string[] | string | undefined, fullPath: strin
  * @returns the generated path
  */
 export const getFullPath = (breadcrumbs: string[], path: string): string =>
-  breadcrumbs.join("/") + (breadcrumbs.length ? "/" : "") + path;
+  breadcrumbs.join("/") + (breadcrumbs.length > 0 ? "/" : "") + path;
 
 /**
  * Determines the new value of the selection
@@ -29,7 +29,7 @@ export const getNewValue = (
   checked: boolean,
   multiple: boolean,
   value: string[] | string | undefined,
-): string | string[] | undefined => {
+): string[] | string | undefined => {
   if (multiple) {
     if (value === undefined) {
       // Case: no files selected
@@ -41,7 +41,7 @@ export const getNewValue = (
 
     if (checked) {
       // Case: file is selected, add it if it doesn't already exist
-      return Array.from(new Set([...[value].flat(), fullPath]));
+      return [...new Set([...[value].flat(), fullPath])];
     }
 
     // Case: file is deselected, remove it

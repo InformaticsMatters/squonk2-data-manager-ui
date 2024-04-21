@@ -30,35 +30,20 @@
     "image_type": "SIMPLE",
     "image_working_directory": "/data",
     "job": "ui-test",
-    "keywords": [
-      "test",
-      "ui"
-    ],
+    "keywords": ["test", "ui"],
     "name": "Fake UI Test Job",
     "required_assets": [],
     "variables": {
       "order": {
-        "options": [
-          "outputFile",
-          "header",
-          "mode",
-          "minValue",
-          "maxValue"
-        ]
+        "options": ["outputFile", "header", "mode", "minValue", "maxValue"]
       },
       "inputs": {
         "type": "object",
-        "required": [
-          "inputFile"
-        ],
+        "required": ["inputFile"],
         "properties": {
           "inputFile": {
             "title": "Input molecules",
-            "mime-types": [
-              "chemical/x-mdl-sdfile",
-              "squonk/x-smiles",
-              "text/csv"
-            ],
+            "mime-types": ["chemical/x-mdl-sdfile", "squonk/x-smiles", "text/csv"],
             "type": "molecules-smi"
           }
         }
@@ -68,9 +53,7 @@
         "properties": {
           "results": {
             "title": "Output file name",
-            "mime-types": [
-              "chemical/x-mdl-sdfile"
-            ],
+            "mime-types": ["chemical/x-mdl-sdfile"],
             "creates": "{{ outputFile }}",
             "type": "file",
             "annotation-properties": {
@@ -93,9 +76,7 @@
       },
       "options": {
         "type": "object",
-        "required": [
-          "outputFile"
-        ],
+        "required": ["outputFile"],
         "properties": {
           "outputFile": {
             "title": "Output file (.sdf or .smi)",
@@ -112,10 +93,7 @@
             "title": "Filter mode",
             "type": "string",
             "default": "none",
-            "enum": [
-              "pass",
-              "fail"
-            ]
+            "enum": ["pass", "fail"]
           },
           "minValue": {
             "title": "Min value",

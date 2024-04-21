@@ -3,8 +3,7 @@ import { useCallback, useMemo } from "react";
 import { useGetDatasets } from "@squonk/data-manager-client/dataset";
 
 import { CircularProgress } from "@mui/material";
-import type { Row } from "@tanstack/react-table";
-import { createColumnHelper } from "@tanstack/react-table";
+import { createColumnHelper, type Row } from "@tanstack/react-table";
 import dynamic from "next/dynamic";
 
 import { Chips } from "../../components/Chips";
@@ -16,10 +15,10 @@ import { EditorFilter } from "./filters/EditorFilter";
 import { FileTypeFilter } from "./filters/FileTypeFilter";
 import { LabelsFilter } from "./filters/LabelsFilter";
 import { OwnerFilter } from "./filters/OwnerFilter";
-import type { DatasetDetailsProps } from "./DatasetDetails";
+import { type DatasetDetailsProps } from "./DatasetDetails";
 import { DatasetsBulkActions } from "./DatasetsBulkActions";
 import { DatasetsFilterToolbar } from "./DatasetsFilterToolbar";
-import type { TableDataset } from "./types";
+import { type TableDataset } from "./types";
 import { useDatasetsFilter } from "./useDatasetsFilter";
 import { useSelectedDatasets } from "./useSelectedDatasets";
 
@@ -78,7 +77,7 @@ export const DatasetsTable = () => {
         sortingFn: editorsSorter,
         cell: ({ getValue }) => getValue().join(", "),
       }),
-      columnHelper.accessor((row) => row.subRows.length || "", {
+      columnHelper.accessor((row) => row.subRows.length > 0 || "", {
         id: "versions",
         header: "Versions",
       }),
@@ -98,7 +97,7 @@ export const DatasetsTable = () => {
       data?.datasets.map((dataset) => {
         const fileName = dataset.versions[0].file_name; // TODO: should either use the newest version or wait for the API to change
         const numberOfProjects = new Set(
-          dataset.versions.map((version) => version.projects.map((project) => project)).flat(),
+          dataset.versions.flatMap((version) => version.projects.map((project) => project)),
         ).size;
 
         return {
@@ -114,7 +113,7 @@ export const DatasetsTable = () => {
             ...dataset,
             fileName: `Version: ${version.version}`,
             numberOfProjects: version.projects.length,
-            labels: (version.labels || {}) as Record<string, string | string[]>,
+            labels: (version.labels ?? {}) as Record<string, string[] | string>,
             version: version.version,
             datasetSummary: dataset,
             datasetVersion: version,
@@ -122,7 +121,7 @@ export const DatasetsTable = () => {
             owner: version.owner,
           })),
         };
-      }) || [],
+      }) ?? [],
     [data],
   );
 

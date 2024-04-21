@@ -1,4 +1,4 @@
-import type { ProductDmProjectTier, ProductDmStorage } from "@squonk/account-server-client";
+import { type ProductDmProjectTier, type ProductDmStorage } from "@squonk/account-server-client";
 import { useGetProducts } from "@squonk/account-server-client/product";
 
 import { Alert, Box, Divider, Grid, Typography } from "@mui/material";
@@ -35,12 +35,9 @@ export const ProductsView = () => {
   }
 
   const groupedProducts = groupBy(products ?? [], (product) => product.product.type);
-  const projectProducts = groupedProducts[
-    "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION"
-  ] as ProductDmProjectTier[];
-  const datasetProducts = groupedProducts[
-    "DATA_MANAGER_STORAGE_SUBSCRIPTION"
-  ] as ProductDmStorage[];
+  const projectProducts =
+    groupedProducts.DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION as ProductDmProjectTier[];
+  const datasetProducts = groupedProducts.DATA_MANAGER_STORAGE_SUBSCRIPTION as ProductDmStorage[];
 
   return (
     <>
@@ -64,10 +61,10 @@ export const ProductsView = () => {
           <SelectOrganisation />
         </Grid>
         <Grid item sm={3} xs={12}>
-          {organisation && <SelectUnit userFilter={["none"]} />}
+          {!!organisation && <SelectUnit userFilter={["none"]} />}
         </Grid>
         <Grid item sm={5} xs={12}>
-          {unit && userIsNotEvaluating && <CreateDatasetStorageSubscription unit={unit} />}
+          {!!unit && !!userIsNotEvaluating && <CreateDatasetStorageSubscription unit={unit} />}
         </Grid>
       </Grid>
       <DatasetProductTable products={datasetProducts} />

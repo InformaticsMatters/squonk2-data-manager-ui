@@ -8,14 +8,19 @@ import { getTask } from "@squonk/data-manager-client/task";
  * @param refetchInterval how often to refetch
  * @returns An empty promise
  */
-export async function waitUntilTaskDone(taskId: string, refetchInterval = 1000) {
-  return await new Promise<void>((resolve) => {
-    const interval = setInterval(async () => {
-      const task = await getTask(taskId);
-      if (task.done) {
-        resolve();
-        clearInterval(interval);
-      }
+export const waitUntilTaskDone = async (taskId: string, refetchInterval = 1000) => {
+  await new Promise<void>((resolve) => {
+    const interval = setInterval(() => {
+      getTask(taskId)
+        .then((task) => {
+          if (task.done) {
+            resolve();
+            clearInterval(interval);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }, refetchInterval);
   });
-}
+};

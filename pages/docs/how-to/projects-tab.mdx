@@ -15,7 +15,7 @@ import { DocsNav } from "../../../components/DocsNav";
 Your project has it's own data volume (a directory containing your projects files).
 That volume is accessible to any jobs and applications, providing a simple way to work with your data.
 
-The *Project Data* tab allows you to see that data and perform simple operations on it.
+The _Project Data_ tab allows you to see that data and perform simple operations on it.
 It's a bit like a simple file manager like Windows Explorer. It lists the files and directories that are present and
 allows to navigate that data.
 
@@ -29,10 +29,14 @@ You an also:
 - mark a file as a "favourite" to make is faster to access when running jobs
 - view the contents of text files
 
-Not all operations you might want to do are possible from the *Project Data* tab.
+Not all operations you might want to do are possible from the _Project Data_ tab.
 If you want to do more then your best bet is to launch the Jupyter Lab application in your project. That will allow you
 to manage your files either with the Jupyter Lab file manager or by opening up a console (bash shell).
 See the [Running applications](./applications) How To guide for more details on launching
 Jupyter Lab.
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

@@ -5,7 +5,7 @@ import { useAddMetadata, useAddMetadataVersion } from "@squonk/data-manager-clie
 
 import { useQueryClient } from "@tanstack/react-query";
 
-import type { TypedSchema } from "./types";
+import { type TypedSchema } from "./types";
 import { useEditableSchemaView } from "./useEditableSchema";
 
 export const useDatasetSchema = (datasetId: string, version: number) => {
@@ -82,7 +82,7 @@ export const useDatasetSchema = (datasetId: string, version: number) => {
     }
 
     // Only execute if there are some changes to be made
-    if (promises.length) {
+    if (promises.length > 0) {
       setIsSaving(true);
 
       // Run both requests at the same time to avoid waterfall effect. If any one of them fails,

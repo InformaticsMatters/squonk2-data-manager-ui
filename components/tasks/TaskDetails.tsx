@@ -1,4 +1,4 @@
-import type { TaskSummary } from "@squonk/data-manager-client";
+import { type TaskSummary } from "@squonk/data-manager-client";
 
 import { Grid, Typography } from "@mui/material";
 

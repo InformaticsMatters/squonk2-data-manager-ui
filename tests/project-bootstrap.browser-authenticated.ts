@@ -1,8 +1,9 @@
-import type {
-  OrganisationGetDefaultResponse,
-  OrganisationUnitsGetResponse,
-  ProductDmProjectTier,
-  ProductsGetResponse,
+/* eslint-disable require-atomic-updates */
+import {
+  type OrganisationGetDefaultResponse,
+  type OrganisationUnitsGetResponse,
+  type ProductDmProjectTier,
+  type ProductsGetResponse,
 } from "@squonk/account-server-client";
 
 import { expect, test } from "@playwright/test";
@@ -61,7 +62,7 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
 
     const responseText = await res.text();
 
-    console.log("ok: ", res.ok());
+    console.log("ok:", res.ok());
     console.log(responseText);
 
     const acceptableErrorMessages = ["You do not have a Personal Unit", "The Unit does not exist"];
@@ -99,6 +100,7 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
 
   const regexp = new RegExp(
     baseURL + "/?\\?project=project-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+",
+    "u",
   );
   await expect(page).toHaveURL(regexp, { timeout: 30_000 });
 

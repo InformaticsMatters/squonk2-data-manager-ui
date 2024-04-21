@@ -1,7 +1,6 @@
-import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 
-import type { InventoryUserDetail } from "@squonk/data-manager-client";
+import { type InventoryUserDetail } from "@squonk/data-manager-client";
 
 import { Edit } from "@mui/icons-material";
 import { Chip, Typography } from "@mui/material";
@@ -57,27 +56,25 @@ const columns = [
 
 const pivotProjects = (users: InventoryUserDetail[]) => {
   // add username to each project and flatten them all to a single array
-  const flat_projects = users
-    .map((user) =>
-      [
-        user.projects.observer.map((project) => ({
-          ...project,
-          username: user.username,
-          permission: "observer",
-        })),
-        user.projects.editor.map((project) => ({
-          ...project,
-          username: user.username,
-          permission: "editor",
-        })),
-        user.projects.administrator.map((project) => ({
-          ...project,
-          username: user.username,
-          permission: "administrator",
-        })),
-      ].flat(),
-    )
-    .flat();
+  const flat_projects = users.flatMap((user) =>
+    [
+      user.projects.observer.map((project) => ({
+        ...project,
+        username: user.username,
+        permission: "observer",
+      })),
+      user.projects.editor.map((project) => ({
+        ...project,
+        username: user.username,
+        permission: "editor",
+      })),
+      user.projects.administrator.map((project) => ({
+        ...project,
+        username: user.username,
+        permission: "administrator",
+      })),
+    ].flat(),
+  );
 
   // group usernames by project
   // create a key from the id and name (even though the id is unique, this is so we keep the name and id together)
@@ -124,7 +121,7 @@ export const UserUsageByProjectTable = ({
 
   return (
     <>
-      {selectedProject && (
+      {!!selectedProject && (
         <EditProjectModal
           open={!!selectedProjectId}
           projectId={selectedProject.project_id}

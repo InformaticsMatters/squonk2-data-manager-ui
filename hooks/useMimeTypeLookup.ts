@@ -10,7 +10,7 @@ export const useMimeTypeLookup = () => {
   const { data } = useGetFileTypes();
 
   const mimeLookup = useMemo(() => {
-    const lookup: { [key: string]: string } = {};
+    const lookup: Record<string, string> = {};
     data?.types.forEach((type) => type.file_extensions.forEach((ext) => (lookup[ext] = type.mime)));
 
     return lookup;

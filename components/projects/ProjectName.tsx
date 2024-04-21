@@ -1,6 +1,5 @@
 import LockIcon from "@mui/icons-material/Lock";
-import type { TypographyProps } from "@mui/material";
-import { Tooltip, Typography } from "@mui/material";
+import { Tooltip, Typography, type TypographyProps } from "@mui/material";
 
 export interface ProjectNameProps extends TypographyProps {
   name: string;
@@ -16,7 +15,7 @@ export const ProjectName = ({ name, isPrivate, ...typographyProps }: ProjectName
       lineHeight="1.5rem"
       {...typographyProps}
     >
-      {isPrivate && (
+      {!!isPrivate && (
         <Tooltip title="Private">
           <LockIcon fontSize="small" />
         </Tooltip>

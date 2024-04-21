@@ -1,4 +1,4 @@
-import type { ProductDetail, UnitDetail } from "@squonk/account-server-client";
+import { type ProductDetail, type UnitDetail } from "@squonk/account-server-client";
 import {
   getGetProductQueryKey,
   getGetProductsForUnitQueryKey,

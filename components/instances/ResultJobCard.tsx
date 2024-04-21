@@ -1,13 +1,12 @@
-import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
 
 import { Alert, CardContent, ListItem, ListItemText } from "@mui/material";
 
-import { LogsButton } from "../../components/results/LogsButton";
-import { RerunJobButton } from "../../components/results/RerunJobButton";
-import { ResultCard } from "../../components/results/ResultCard";
 import { useIsUserAdminOrEditorOfCurrentProject, useProjectFromId } from "../../hooks/projectHooks";
-import type { ProjectListItemProps } from "../projects/ProjectListItem";
-import { ProjectListItem } from "../projects/ProjectListItem";
+import { ProjectListItem, type ProjectListItemProps } from "../projects/ProjectListItem";
+import { LogsButton } from "../results/LogsButton";
+import { RerunJobButton } from "../results/RerunJobButton";
+import { ResultCard } from "../results/ResultCard";
 import { ArchivedStatus } from "./ArchivedStatus";
 import { ArchiveInstance } from "./ArchiveInstance";
 import { JobDetails } from "./JobDetails";
@@ -25,7 +24,7 @@ export interface ResultJobCardProps {
   /**
    * Instance of the job
    */
-  instance: InstanceSummary | InstanceGetResponse;
+  instance: InstanceGetResponse | InstanceSummary;
   /**
    * Action to take when the project is clicked
    */
@@ -86,7 +85,7 @@ export const ResultJobCard = ({
       <ListItem>
         <ListItemText primary={instance.name} secondary={instance.job_name} />
       </ListItem>
-      {associatedProject && (
+      {!!associatedProject && (
         <ProjectListItem clickAction={projectClickAction} project={associatedProject} />
       )}
       <ArchivedStatus archived={instance.archived} />

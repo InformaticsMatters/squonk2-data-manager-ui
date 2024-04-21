@@ -1,9 +1,9 @@
-import type { FC } from "react";
+import { type FC } from "react";
 
 import { useGetUsers } from "@squonk/data-manager-client/user";
 
 import { Autocomplete, Chip, TextField } from "@mui/material";
-import type { AutocompleteChangeReason } from "@mui/material/useAutocomplete";
+import { type AutocompleteChangeReason } from "@mui/material/useAutocomplete";
 
 export interface ManageUsersProps {
   /**
@@ -67,7 +67,7 @@ export const ManageUsers: FC<ManageUsersProps> = ({
       fullWidth
       multiple
       disabled={loading}
-      id={title.toLowerCase().replace(/\s/g, "")}
+      id={title.toLowerCase().replace(/\s/gu, "")}
       loading={loading}
       options={availableUsers.map((user) => user.username)}
       renderInput={(params) => <TextField {...params} label={title} />}
@@ -86,7 +86,7 @@ export const ManageUsers: FC<ManageUsersProps> = ({
         })
       }
       value={users}
-      onChange={(_, value, reason) => updateUsers(value, reason)}
+      onChange={(_, value, reason) => void updateUsers(value, reason)}
     />
   );
 };

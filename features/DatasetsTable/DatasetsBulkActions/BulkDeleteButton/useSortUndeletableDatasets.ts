@@ -1,4 +1,4 @@
-import type { TableDatasetSubRow } from "../..";
+import { type TableDatasetSubRow } from "../..";
 
 /**
  * Sorts undeletable dataset versions in ascending order and groups them by dataset ID. This isn't
@@ -24,7 +24,7 @@ export const useSortUndeletableDatasets = (undeletableDatasets: TableDatasetSubR
   });
 
   // Transform the map into an array of dataset groups and sort them
-  const sortedArray = Array.from(sortedDatasetsMap.values()).map((datasetArray) => {
+  const sortedArray = [...sortedDatasetsMap.values()].map((datasetArray) => {
     return datasetArray.sort((a, b) => a.version - b.version);
   });
 

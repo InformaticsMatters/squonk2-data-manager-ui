@@ -1,10 +1,9 @@
 import { Fragment } from "react";
-import type { SubmitHandler } from "react-hook-form";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 
 import { Alert, Box, Button, Checkbox, MenuItem, TextField, Typography } from "@mui/material";
 
-import type { SDFViewerConfig } from "../../utils/api/sdfViewer";
+import { type SDFViewerConfig } from "../../utils/api/sdfViewer";
 import { type JSON_SCHEMA_TYPE, JSON_SCHEMA_TYPES } from "../../utils/app/jsonSchema";
 
 type Field = {
@@ -35,8 +34,8 @@ const getDefault = (field: string, dtype: JSON_SCHEMA_TYPE) => ({
   dtype,
   include: true,
   cardView: true,
-  min: -Infinity,
-  max: Infinity,
+  min: Number.NEGATIVE_INFINITY,
+  max: Number.POSITIVE_INFINITY,
   sort: "ASC",
 });
 
@@ -79,7 +78,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
   // const onSubmit: SubmitHandler<SDFViewerConfig> = (data) => console.log(data);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={() => void handleSubmit(onSubmit)}>
       <Box display="grid" gap={1} gridTemplateColumns="1fr repeat(6, min-content)">
         <Typography component="h3" variant="h4">
           Field name
@@ -104,6 +103,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
         </Typography>
 
         {Object.entries(fields).map(([key], index) => (
+          // eslint-disable-next-line react/no-array-index-key
           <Fragment key={`${key}${index}`}>
             <Typography>{key}</Typography>
             <TextField

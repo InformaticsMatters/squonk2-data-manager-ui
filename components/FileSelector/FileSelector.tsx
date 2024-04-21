@@ -4,7 +4,7 @@ import { Box, Button, Collapse } from "@mui/material";
 
 import { MiniFileList } from "./MiniFileList";
 import { SelectedFilesLabel } from "./SelectedFilesLabel";
-import type { SharedProps } from "./types";
+import { type SharedProps } from "./types";
 
 /**
  * General component for selecting files from a project volume or favourite files from that project.

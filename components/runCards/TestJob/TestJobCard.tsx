@@ -1,4 +1,4 @@
-import type { JobSummary } from "@squonk/data-manager-client";
+import { type JobSummary } from "@squonk/data-manager-client";
 import { getGetJobQueryKey } from "@squonk/data-manager-client/job";
 
 import { Grid } from "@mui/material";

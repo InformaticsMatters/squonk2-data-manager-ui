@@ -14,6 +14,7 @@ const CalculationsTable = ({ properties, fontSize, tableWidth }: CalculationsTab
           // TODO: round number-like value to 2 sf
           const displayName = name;
           return (
+            // eslint-disable-next-line react/no-array-index-key
             <TableRow key={index}>
               <TableCell
                 component="th"

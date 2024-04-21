@@ -1,4 +1,4 @@
-import type { InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceSummary } from "@squonk/data-manager-client";
 import { useGetInstances } from "@squonk/data-manager-client/instance";
 
 import { Box, List, ListItemButton, ListItemText, Typography } from "@mui/material";
@@ -27,7 +27,9 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
 
   const { projectId } = useCurrentProjectId();
   const { data } = useGetInstances({ project_id: projectId ?? undefined });
-  const instances = data?.instances.filter(predicate);
+  const instances = data?.instances.filter((element, index, array) =>
+    predicate(element, index, array),
+  );
 
   if (instances === undefined) {
     return <CenterLoader />;

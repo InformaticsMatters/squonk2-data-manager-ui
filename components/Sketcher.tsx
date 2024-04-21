@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 import { captureException } from "@sentry/nextjs";
-import type { Ketcher } from "ketcher-core";
+import { type Ketcher } from "ketcher-core";
 import { Editor } from "ketcher-react";
 import { StandaloneStructServiceProvider } from "ketcher-standalone";
 
@@ -80,7 +80,7 @@ export const Sketcher = ({ smiles }: SketcherProps) => {
 
   // Synchronise the react state to the component
   useEffect(() => {
-    global.ketcher?.setMolecule(smiles);
+    void global.ketcher?.setMolecule(smiles);
   }, [smiles]);
 
   return (
@@ -98,7 +98,7 @@ export const Sketcher = ({ smiles }: SketcherProps) => {
       structServiceProvider={new StandaloneStructServiceProvider()}
       onInit={(ketcher: Ketcher) => {
         global.ketcher = ketcher;
-        ketcher.setMolecule(smiles);
+        void ketcher.setMolecule(smiles);
         window.parent.postMessage({ eventType: "init" }, "*");
       }}
     />

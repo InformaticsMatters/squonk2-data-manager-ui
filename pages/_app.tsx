@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 import { setBaseUrl as setASBaseUrl } from "@squonk/account-server-client";
 import { setBaseUrl as setDMBaseUrl } from "@squonk/data-manager-client";
 
 import { UserProvider } from "@auth0/nextjs-auth0/client";
-import type { EmotionCache } from "@emotion/cache";
+import { type EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { enableMapSet } from "immer";
-import type { AppProps } from "next/app";
+import { type AppProps } from "next/app";
 import Head from "next/head";
 import { SnackbarProvider } from "notistack";
 
@@ -36,19 +36,16 @@ type CustomAppProps = AppProps & {
   pageProps: { dehydratedState?: unknown };
 };
 
-export default function App({
-  Component,
-  pageProps,
-  emotionCache = clientSideEmotionCache,
-}: CustomAppProps) {
+const App = ({ Component, pageProps, emotionCache = clientSideEmotionCache }: CustomAppProps) => {
   // React-Query
-  const [queryClient] = useState(() => new QueryClient());
+  const queryClient = useMemo(() => new QueryClient(), []);
 
   // Material UI for SSR
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
+      // eslint-disable-next-line unicorn/prefer-dom-node-remove
       jssStyles.parentElement?.removeChild(jssStyles);
     }
   }, []);
@@ -84,4 +81,6 @@ export default function App({
       </ThemeProviders>
     </CacheProvider>
   );
-}
+};
+
+export default App;

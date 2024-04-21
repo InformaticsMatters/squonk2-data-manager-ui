@@ -5,7 +5,7 @@ import { Box, Checkbox, FormControlLabel } from "@mui/material";
 import { useSelectedFiles } from "../../state/fileSelection";
 import { AllFilesList } from "./AllFilesList";
 import { FavouritesList } from "./FavouritesList";
-import type { SharedProps } from "./types";
+import { type SharedProps } from "./types";
 
 /**
  * List of files and directories, either from the list of favourites or project volume, with option
@@ -14,7 +14,7 @@ import type { SharedProps } from "./types";
 export const MiniFileList = (props: SharedProps) => {
   const { selectedFiles } = useSelectedFiles(props.projectId);
   const [showFavouritesList, setShowFavouritesList] = useState(
-    !!selectedFiles?.filter((file) => file.type.includes(props.targetType))?.length,
+    !!selectedFiles?.filter((file) => file.type.includes(props.targetType)).length,
   );
 
   return (

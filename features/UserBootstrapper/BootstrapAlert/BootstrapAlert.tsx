@@ -2,6 +2,7 @@ import { Alert, Box } from "@mui/material";
 
 import { useGetPersonalUnit } from "../../../hooks/useGetPersonalUnit";
 import { BootstrapForm } from "./BootstrapForm";
+
 /**
  * Bootstraps a user which doesn't have any units with a default unit and a project
  */

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { DatasetVersionSummary, DmError } from "@squonk/data-manager-client";
+import { type DatasetVersionSummary, type DmError } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
 import { getGetFilesQueryKey, useAttachFile } from "@squonk/data-manager-client/file-and-path";
 import { useGetProjects } from "@squonk/data-manager-client/project";
@@ -84,7 +84,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
           secondary={
             <>
               Creates a file in the project linked to the selected version
-              {!!projectNames.length && (
+              {projectNames.length > 0 && (
                 <>
                   <br />
                   Currently attached to: {projectNames.join(", ")}
@@ -107,7 +107,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
         submitText="Attach"
         title={`Attach ${version.file_name} v${version.version} to a Project`}
         validationSchema={yup.object({
-          path: yup.string().matches(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gm, "Invalid Path"),
+          path: yup.string().matches(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gmu, "Invalid Path"),
         })}
         onClose={() => setOpen(false)}
         onSubmit={async ({ project, type, path, isImmutable, isCompress }, { setSubmitting }) => {
@@ -200,7 +200,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
           />
         </FormControl>
 
-        {errorMessage && (
+        {!!errorMessage && (
           <Alert severity="error">
             <b>Error:</b> {errorMessage}
           </Alert>

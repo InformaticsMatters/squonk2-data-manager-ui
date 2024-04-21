@@ -1,4 +1,4 @@
-import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
 
 import { CardContent, ListItem, ListItemText } from "@mui/material";
 
@@ -20,11 +20,11 @@ export interface ResultApplicationCardProps {
   /**
    * Instance of the application
    */
-  instance: InstanceSummary | InstanceGetResponse;
+  instance: InstanceGetResponse | InstanceSummary;
   /**
    * Action to take when the project is clicked
    */
-  projectClickAction: "select-project" | "navigate-to-project";
+  projectClickAction: "navigate-to-project" | "select-project";
   /**
    * Whether the card should have its collapsed content visible immediately. Defaults to true.
    */
@@ -54,7 +54,7 @@ export const ResultApplicationCard = ({
             projectId={instance.project_id}
             onTermination={() => setSlideIn(false)}
           />
-          {instance.url && (
+          {!!instance.url && (
             <HrefButton
               color="primary"
               href={instance.url}
@@ -85,7 +85,7 @@ export const ResultApplicationCard = ({
       <ListItem>
         <ListItemText primary={instance.name} secondary={instance.application_id} />
       </ListItem>
-      {associatedProject && (
+      {!!associatedProject && (
         <ProjectListItem clickAction={projectClickAction} project={associatedProject} />
       )}
       <ArchivedStatus archived={instance.archived} />

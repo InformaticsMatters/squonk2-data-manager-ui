@@ -63,29 +63,24 @@ export const NavBarContents = () => {
     </Tooltip>
   );
 
-  let navContent;
-  if (biggerThanMd) {
-    // Desktop
-    navContent = (
-      <>
-        <NavLinks linkWidth={120} />
-        <IconsWrapper>
-          {!!isDMAuthorized && <OUPContext />}
-          {settingsButton}
-          <UserMenu />
-        </IconsWrapper>
-      </>
-    );
-  } else {
-    // Tablet & Mobile
-    navContent = (
-      <>
-        {biggerThanSm && <NavLinks linkWidth={100} />}
-        <Box sx={{ marginLeft: biggerThanSm ? undefined : "auto" }}>{settingsButton}</Box>
-        <MobileNavMenu links={!biggerThanSm} />
-      </>
-    );
-  }
+  const navContent = biggerThanMd ? (
+    <>
+      {/* Desktop */}
+      <NavLinks linkWidth={120} />
+      <IconsWrapper>
+        {!!isDMAuthorized && <OUPContext />}
+        {settingsButton}
+        <UserMenu />
+      </IconsWrapper>
+    </>
+  ) : (
+    <>
+      {/* Tablet / Mobile */}
+      {!!biggerThanSm && <NavLinks linkWidth={100} />}
+      <Box sx={{ marginLeft: biggerThanSm ? undefined : "auto" }}>{settingsButton}</Box>
+      <MobileNavMenu links={!biggerThanSm} />
+    </>
+  );
 
   return (
     <>
@@ -94,7 +89,7 @@ export const NavBarContents = () => {
         id="user-settings"
         open={settingsOpen}
         title="Settings"
-        onClose={props.closeSettings}
+        onClose={() => props.closeSettings()}
       >
         {!!user.username && <UserSettingsContent />}
       </ModalWrapper>

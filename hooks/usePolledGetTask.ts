@@ -11,7 +11,7 @@ export const usePolledGetTask = (taskId: string, pollInterval = 5000) => {
   const done = query.data?.done;
 
   useEffect(() => {
-    done && setRefetchInterval(Infinity);
+    done && setRefetchInterval(Number.POSITIVE_INFINITY);
   }, [done]);
 
   return query;

@@ -25,7 +25,7 @@ work in. The administrators of that **organisation** and **unit** will need to h
 
 <Image src={projectContext} alt="Project context" />
 
-Also note the *filter* option at the top that allows to filter the projects tht are shown based on your role in the project.
+Also note the _filter_ option at the top that allows to filter the projects tht are shown based on your role in the project.
 To see the project you want you may need to adjust this filter.
 
 If you not a member of a **unit** or **project** in a named **organisation** you can still create a **project** in the **Default**
@@ -44,4 +44,8 @@ group, department etc.). The **Default** **organisation** cannot have **units** 
 **personal** unit. The actions you see for managing **organisations**, **units** and **projects** will depend on your
 role in the selected **organisation**, **unit** and **project**.
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

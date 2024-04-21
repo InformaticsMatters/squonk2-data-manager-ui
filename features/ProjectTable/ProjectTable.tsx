@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import type { DropzoneState } from "react-dropzone";
+import { type DropzoneState } from "react-dropzone";
 
-import type { ProjectDetail } from "@squonk/data-manager-client";
+import { type ProjectDetail } from "@squonk/data-manager-client";
 import { getGetFilesQueryKey } from "@squonk/data-manager-client/file-and-path";
 
 import {
@@ -12,7 +12,7 @@ import { Breadcrumbs, Grid, IconButton, Tooltip, Typography, useTheme } from "@m
 import { useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper } from "@tanstack/react-table";
 import { filesize } from "filesize";
-import type { LinkProps } from "next/link";
+import { type LinkProps } from "next/link";
 import { useRouter } from "next/router";
 
 import { DataTable } from "../../components/DataTable";
@@ -24,7 +24,7 @@ import { toLocalTimeString } from "../../utils/app/datetime";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { CreateDirectoryButton } from "./CreateDirectoryButton";
 import { FileActions } from "./FileActions";
-import type { TableDir, TableFile } from "./types";
+import { type TableDir, type TableFile } from "./types";
 import { useProjectFileRows } from "./useProjectFileRows";
 import { isTableDir } from "./utils";
 
@@ -39,7 +39,7 @@ export interface ProjectTableProps {
   openUploadDialog: DropzoneState["open"];
 }
 
-const columnHelper = createColumnHelper<TableFile | TableDir>();
+const columnHelper = createColumnHelper<TableDir | TableFile>();
 
 /**
  * Data table displaying a project's files with actions to manage the files.
@@ -164,6 +164,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
                     color="inherit"
                     component="button"
                     href={href}
+                    // eslint-disable-next-line react/no-array-index-key
                     key={`${pathIndex}-${path}`}
                     size="small"
                     sx={{ textTransform: "none" }}
@@ -171,6 +172,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
                     {path}
                   </NextLink>
                 ) : (
+                  // eslint-disable-next-line react/no-array-index-key
                   <Typography key={`${pathIndex}-${path}`}>{path}</Typography>
                 );
               })}
@@ -189,8 +191,11 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
             <CreateDirectoryButton
               directories={directories}
               path={dirPath}
+              // eslint-disable-next-line @typescript-eslint/require-await
               onDirectoryCreated={async () => {
-                queryClient.invalidateQueries({ queryKey: getGetFilesQueryKey(getFilesParams) });
+                void queryClient.invalidateQueries({
+                  queryKey: getGetFilesQueryKey(getFilesParams),
+                });
               }}
             />
           </Grid>

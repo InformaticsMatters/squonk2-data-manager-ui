@@ -1,32 +1,32 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "npm",
-			"script": "tsc",
-			"problemMatcher": [],
-			"label": "npm: tsc",
-			"detail": "tsc --pretty --noEmit",
-			"presentation": {
-				"close": true
-			}
-		},
-		{
-			"type": "npm",
-			"script": "build",
-			"problemMatcher": [],
-			"label": "npm: build",
-			"detail": "next build",
-			"presentation": {
-				"close": true
-			}
-		},
-		{
-			"type": "npm",
-			"script": "test",
-			"problemMatcher": [],
-			"label": "npm: test",
-			"detail": "test",
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "tsc",
+      "problemMatcher": [],
+      "label": "npm: tsc",
+      "detail": "tsc --pretty --noEmit",
+      "presentation": {
+        "close": true
+      }
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "problemMatcher": [],
+      "label": "npm: build",
+      "detail": "next build",
+      "presentation": {
+        "close": true
+      }
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "problemMatcher": [],
+      "label": "npm: test",
+      "detail": "test"
+    }
+  ]
 }

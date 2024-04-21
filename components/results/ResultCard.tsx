@@ -1,17 +1,13 @@
-import type { Dispatch, FC, ReactNode, SetStateAction } from "react";
-import { useState } from "react";
+import { type Dispatch, type FC, type ReactNode, type SetStateAction, useState } from "react";
 
 import { CardContent, ListItem, ListItemIcon, ListItemText, Slide } from "@mui/material";
-import type { LinkProps } from "next/link";
+import { type LinkProps } from "next/link";
 
-import type { ActionsParams, BaseCardProps } from "../BaseCard";
-import { BaseCard } from "../BaseCard";
+import { type ActionsParams, BaseCard, type BaseCardProps } from "../BaseCard";
 import { HorizontalList } from "../HorizontalList";
 import { NextLink } from "../NextLink";
-import type { DateTimeListItemProps } from "./DateTimeListItem/DateTimeListItem";
-import { DateTimeListItem } from "./DateTimeListItem/DateTimeListItem";
-import type { StatusIconProps } from "./StatusIcon";
-import { StatusIcon } from "./StatusIcon";
+import { DateTimeListItem, type DateTimeListItemProps } from "./DateTimeListItem/DateTimeListItem";
+import { StatusIcon, type StatusIconProps } from "./StatusIcon";
 
 export interface ResultCardProps extends Omit<BaseCardProps, "actions"> {
   /**
@@ -28,7 +24,7 @@ export interface ResultCardProps extends Omit<BaseCardProps, "actions"> {
   showDuration?: DateTimeListItemProps["showDuration"];
   collapsedByDefault: boolean;
   actions: (
-    params: { slideIn: boolean; setSlideIn: Dispatch<SetStateAction<boolean>> } & ActionsParams,
+    params: ActionsParams & { slideIn: boolean; setSlideIn: Dispatch<SetStateAction<boolean>> },
   ) => ReactNode;
 }
 

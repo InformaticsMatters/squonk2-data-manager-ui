@@ -1,10 +1,10 @@
 import { Fragment } from "react";
-import type { PlotParams } from "react-plotly.js";
+import { type PlotParams } from "react-plotly.js";
 
 import { Box, CircularProgress, Tooltip, Typography } from "@mui/material";
 import dynamic from "next/dynamic";
 
-import type { UsageChartData } from "./types";
+import { type UsageChartData } from "./types";
 
 const Plot = dynamic<PlotParams>(
   () => import("../../components/viz/Plot").then((mod) => mod.Plot),
@@ -27,7 +27,7 @@ export interface UsageChartProps {
 const getDecimalPoints = (unitCost: number) => {
   const cost = String(unitCost);
   const decimalPart = cost.split(".").at(1);
-  const decimalPoints = decimalPart !== undefined ? decimalPart.length : 0;
+  const decimalPoints = decimalPart === undefined ? 0 : decimalPart.length;
   return decimalPoints;
 };
 

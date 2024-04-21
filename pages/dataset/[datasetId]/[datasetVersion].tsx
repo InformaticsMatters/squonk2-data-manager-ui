@@ -3,16 +3,19 @@ import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-a
 import { Container } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
-import type { GetServerSideProps } from "nextjs-routes";
+import { type GetServerSideProps } from "nextjs-routes";
 
 import { PlaintextViewer } from "../../../features/PlaintextViewer";
-import type { NotSuccessful, Successful } from "../../../utils/api/plaintextViewerSSR";
-import { plaintextViewerSSR } from "../../../utils/api/plaintextViewerSSR";
+import {
+  type NotSuccessful,
+  plaintextViewerSSR,
+  type Successful,
+} from "../../../utils/api/plaintextViewerSSR";
 import { createErrorProps } from "../../../utils/api/serverSidePropsError";
 import { API_ROUTES } from "../../../utils/app/routes";
 import { getFullReturnTo } from "../../../utils/next/ssr";
 
-export type DatasetVersionProps = Successful | NotSuccessful;
+export type DatasetVersionProps = NotSuccessful | Successful;
 
 const isSuccessful = (props: DatasetVersionProps): props is Successful =>
   typeof (props as Successful).content === "string";
@@ -30,7 +33,7 @@ export const getServerSideProps: GetServerSideProps<DatasetVersionProps> = async
       }
 
       const version = Number(datasetVersion);
-      if (isNaN(version)) {
+      if (Number.isNaN(version)) {
         return createErrorProps(res, 400, "The dataset version must be a whole number");
       }
 
@@ -39,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<DatasetVersionProps> = async
       const url =
         process.env.DATA_MANAGER_API_SERVER + API_ROUTES.datasetVersion(datasetId, version);
 
-      return await plaintextViewerSSR(req, res, { url, compressed });
+      return plaintextViewerSSR(req, res, { url, compressed });
     },
   })(ctx);
 };

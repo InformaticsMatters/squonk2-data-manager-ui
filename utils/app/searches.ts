@@ -4,7 +4,7 @@
  * @param value value of search box to find
  * @returns whether there is at least one hit
  */
-export function search(args: (string | undefined | string[])[], value: string): boolean {
+export function search(args: (string[] | string | undefined)[], value: string): boolean {
   return args.some((arg) => {
     if (typeof arg === "string") {
       return arg.toLowerCase().includes(value.toLowerCase());

@@ -1,4 +1,4 @@
-import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
 
 import { useRouter } from "next/router";
 
@@ -12,7 +12,7 @@ export interface LogsButtonProps {
   /**
    * Instance summary or detail
    */
-  instance: InstanceSummary | InstanceGetResponse;
+  instance: InstanceGetResponse | InstanceSummary;
 }
 
 export const LogsButton = ({ instanceId, instance }: LogsButtonProps) => {

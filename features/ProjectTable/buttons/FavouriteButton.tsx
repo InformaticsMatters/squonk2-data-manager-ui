@@ -4,9 +4,8 @@ import {
 } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 
-import type { ProjectId } from "../../../hooks/projectHooks";
-import type { SavedFile } from "../../../state/fileSelection";
-import { useSelectedFiles } from "../../../state/fileSelection";
+import { type ProjectId } from "../../../hooks/projectHooks";
+import { type SavedFile, useSelectedFiles } from "../../../state/fileSelection";
 
 export interface FavouriteButtonProps {
   /**
@@ -36,9 +35,9 @@ export const FavouriteButton = ({ projectId, fullPath, type, mimeType }: Favouri
   const file = selectedFiles?.find((file) => file.path === fullPath);
 
   const handleFavouriteChange = () => {
-    !file
-      ? addFile && addFile({ path: fullPath, type, mimeType })
-      : removeFile && removeFile({ path: fullPath, type, mimeType });
+    file
+      ? removeFile && removeFile({ path: fullPath, type, mimeType })
+      : addFile && addFile({ path: fullPath, type, mimeType });
   };
 
   return (

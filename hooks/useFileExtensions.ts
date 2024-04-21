@@ -10,11 +10,8 @@ export const useFileExtensions = () => {
 
   for (const type of types ?? []) {
     const value = mapping[type.mime];
-    if (value !== undefined) {
-      mapping[type.mime] = [...value, ...type.file_extensions];
-    } else {
-      mapping[type.mime] = type.file_extensions;
-    }
+    mapping[type.mime] =
+      value === undefined ? type.file_extensions : [...value, ...type.file_extensions];
   }
 
   const extensions = Object.values(mapping as Mapping).flat();

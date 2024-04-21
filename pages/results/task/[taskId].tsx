@@ -44,18 +44,20 @@ const Result = () => {
                   <IconButton
                     size="large"
                     sx={{ ml: "auto" }}
-                    onClick={() => refreshResults.forEach((func) => func())}
+                    onClick={() => refreshResults.forEach((func) => void func())}
                   >
                     <RefreshRoundedIcon />
                   </IconButton>
                 </Tooltip>
               </Box>
-              {error !== null ? (
-                <Alert severity="error">{getErrorMessage(error)}</Alert>
-              ) : task === undefined ? (
-                <CenterLoader />
+              {error === null ? (
+                task === undefined ? (
+                  <CenterLoader />
+                ) : (
+                  <ResultTaskCard collapsedByDefault={false} task={{ ...task, id: taskId }} />
+                )
               ) : (
-                <ResultTaskCard collapsedByDefault={false} task={{ ...task, id: taskId }} />
+                <Alert severity="error">{getErrorMessage(error)}</Alert>
               )}
             </Container>
           </Layout>

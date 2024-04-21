@@ -1,4 +1,4 @@
-import type { UnitDetail } from "@squonk/account-server-client";
+import { type UnitDetail } from "@squonk/account-server-client";
 import { useGetUnit } from "@squonk/account-server-client/unit";
 
 import Head from "next/head";

@@ -1,15 +1,18 @@
-import type { FilterRule, SDFRecord } from "@squonk/sdf-parser";
-import { filterRecord, NodeSDFTransformer } from "@squonk/sdf-parser";
+import {
+  filterRecord,
+  type FilterRule,
+  NodeSDFTransformer,
+  type SDFRecord,
+} from "@squonk/sdf-parser";
 
 import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { type NextApiRequest, type NextApiResponse } from "next";
 import { Transform } from "node:stream";
 import { createGunzip } from "node:zlib";
 import fetch, { type Response } from "node-fetch";
 
-import type { SDFViewerConfig } from "../../utils/api/sdfViewer";
-import { uncensorConfig } from "../../utils/api/sdfViewer";
-import type { JSON_SCHEMA_TYPE } from "../../utils/app/jsonSchema";
+import { type SDFViewerConfig, uncensorConfig } from "../../utils/api/sdfViewer";
+import { type JSON_SCHEMA_TYPE } from "../../utils/app/jsonSchema";
 import { API_ROUTES } from "../../utils/app/routes";
 
 const getTreatAs = (dtype: JSON_SCHEMA_TYPE): FilterRule["treatAs"] => {
@@ -88,7 +91,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ResponseData>) 
         stream = stream.pipe(createGunzip());
       }
 
-      const decoder = new TextDecoder("utf-8");
+      const decoder = new TextDecoder();
       const decoderTransform = new Transform({
         transform(chunk, _encoding, callback) {
           // Decode the incoming chunk from bytes to text

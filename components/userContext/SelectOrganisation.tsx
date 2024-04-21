@@ -1,8 +1,7 @@
-import type { OrganisationDetail } from "@squonk/account-server-client";
+import { type OrganisationDetail } from "@squonk/account-server-client";
 import { useGetOrganisations } from "@squonk/account-server-client/organisation";
 
-import type { AutocompleteProps } from "@mui/material";
-import { Autocomplete, Box, TextField, Typography } from "@mui/material";
+import { Autocomplete, type AutocompleteProps, Box, TextField, Typography } from "@mui/material";
 
 import { projectPayload, useCurrentProjectId } from "../../hooks/projectHooks";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
@@ -14,7 +13,7 @@ import { ItemIcons } from "./ItemIcons";
 export interface SelectOrganisationProps
   extends Omit<
     AutocompleteProps<OrganisationDetail, false, false, false>,
-    "renderInput" | "options"
+    "options" | "renderInput"
   > {
   userFilter?: string;
 }
@@ -61,7 +60,7 @@ export const SelectOrganisation = (autoCompleteProps: SelectOrganisationProps) =
             <Box component="span" display="inline-block" pr={1}>
               <ItemIcons item={option} />
             </Box>
-            {option.name} {option.owner_id && <>({option.owner_id})</>}
+            {option.name} {!!option.owner_id && <>({option.owner_id})</>}
           </Box>
         )}
         value={organisation ?? null}

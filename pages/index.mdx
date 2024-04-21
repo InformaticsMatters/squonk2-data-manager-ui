@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout";
 import { RoleWarning } from "../components/auth/RoleWarning";
 import Head from "next/head";
 import { UserBootstrapper } from "../features/UserBootstrapper";
-import { NextLink } from "../components/NextLink"
+import { NextLink } from "../components/NextLink";
 
 <Head>
   <title>Data Manager</title>
@@ -31,13 +31,14 @@ but in a secure manner.
 All of this takes place in a Kubernetes cluster, providing high resilience and potential scalability.
 
 These are some of the things you can do:
-* Select molecules for virtual screening based of molecular properties or chemical similarity and generate 3D conformers
+
+- Select molecules for virtual screening based of molecular properties or chemical similarity and generate 3D conformers
   ([see here](https://discourse.squonk.it/t/about-moldb/138))
-* Perform target based virtual screening (e.g. docking - [see here](https://discourse.squonk.it/t/use-case-docking-with-rdock/100))
-* Perform ligand based virtual screening (e.g. 3D shape comparison)
-* Calculate or predict molecular properties and filter based on those properties
-* Execute predictive models for ADMET
-* Run Jupyter Notebooks
+- Perform target based virtual screening (e.g. docking - [see here](https://discourse.squonk.it/t/use-case-docking-with-rdock/100))
+- Perform ligand based virtual screening (e.g. 3D shape comparison)
+- Calculate or predict molecular properties and filter based on those properties
+- Execute predictive models for ADMET
+- Run Jupyter Notebooks
 
 </Grid>
 <Grid item xs={12} sm={6}>
@@ -73,4 +74,8 @@ Please email us at info@informaticsmatters.com if you would like to evaluate or 
 </Grid>
 </Grid>
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

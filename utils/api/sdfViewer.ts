@@ -1,4 +1,4 @@
-import type { JSON_SCHEMA_TYPE } from "../app/jsonSchema";
+import { type JSON_SCHEMA_TYPE } from "../app/jsonSchema";
 
 export interface ConfigForProperty {
   field: string;
@@ -16,17 +16,17 @@ export const censorConfig = (config: SDFViewerConfig): string =>
   JSON.stringify(config, (key, value) => {
     if (key === "min") {
       if (value === "") {
-        value = -Infinity;
+        value = Number.NEGATIVE_INFINITY;
       }
-      if (value === -Infinity) {
+      if (value === Number.NEGATIVE_INFINITY) {
         return { isInfinity: true, sign: -1 };
       }
     }
     if (key === "max") {
       if (value === "") {
-        value = Infinity;
+        value = Number.POSITIVE_INFINITY;
       }
-      if (value === Infinity) {
+      if (value === Number.POSITIVE_INFINITY) {
         return { isInfinity: true, sign: +1 };
       }
     }
@@ -36,10 +36,13 @@ export const censorConfig = (config: SDFViewerConfig): string =>
 
 export const uncensorConfig = (config: string): SDFViewerConfig =>
   JSON.parse(config, (key, value) => {
-    if (key === "min" || key === "max") {
-      if (typeof value === "object" && value !== null && value.isInfinity) {
-        return value.sign * Infinity;
-      }
+    if (
+      (key === "min" || key === "max") &&
+      typeof value === "object" &&
+      value !== null &&
+      value.isInfinity
+    ) {
+      return value.sign * Number.POSITIVE_INFINITY;
     }
 
     return value;

@@ -1,25 +1,25 @@
 import { useCallback, useState } from "react";
 
-import type { DatasetSummary } from "@squonk/data-manager-client";
+import { type DatasetSummary } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey, uploadDataset } from "@squonk/data-manager-client/dataset";
 
 import { BackupRounded as BackupRoundedIcon } from "@mui/icons-material";
-import type { IconButtonProps } from "@mui/material";
 import {
   IconButton,
+  type IconButtonProps,
   ListItemButton,
   ListItemSecondaryAction,
   ListItemText,
   Typography,
 } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import type { AxiosProgressEvent } from "axios";
+import { type AxiosProgressEvent } from "axios";
 
 import { ModalWrapper } from "../../../components/modals/ModalWrapper";
 import { Dropzone } from "../../../components/uploads/Dropzone";
 import { FileTypeOptions } from "../../../components/uploads/FileTypeOptions";
 import { ProgressBar } from "../../../components/uploads/ProgressBar";
-import type { FileTypeOptionsState, UploadableFile } from "../../../components/uploads/types";
+import { type FileTypeOptionsState, type UploadableFile } from "../../../components/uploads/types";
 import { useSelectedOrganisation } from "../../../state/organisationSelection";
 import { useSelectedUnit } from "../../../state/unitSelection";
 
@@ -50,11 +50,41 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
   const [organisation] = useSelectedOrganisation();
 
   const onDone = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
+    void queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
     setFile(undefined);
     setOpen(false);
   }, [queryClient]);
 
+  const newVersionHandler = async () => {
+    const parentVersion = Math.max(...dataset.versions.map((v) => v.version));
+    const parent = dataset.versions.find((version) => version.version === parentVersion);
+    if (file && parent && organisation && unit) {
+      // For consistency with the main file upload, I don't use the mutation hook here. This
+      // allows reliable upload progress tracking.
+      const response = await uploadDataset(
+        {
+          dataset_file: file.file,
+          dataset_type: parent.type,
+          as_filename: parent.file_name,
+          dataset_id: dataset.dataset_id,
+          format_extra_variables: optionsFormData[parent.type]
+            ? JSON.stringify(optionsFormData[parent.type])
+            : undefined,
+          unit_id: unit.id,
+        },
+        {
+          onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+            if (progressEvent.total) {
+              const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
+              setFile({ ...file, progress });
+            }
+          },
+        },
+      );
+
+      setFile({ ...file, taskId: response.task_id });
+    }
+  };
   return (
     <>
       <ListItemButton onClick={() => setOpen(true)}>
@@ -74,36 +104,7 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
         submitText="Upload"
         title={`Upload a New Version to ${datasetName}`}
         onClose={() => setOpen(false)}
-        onSubmit={async () => {
-          const parentVersion = Math.max(...dataset.versions.map((v) => v.version));
-          const parent = dataset.versions.find((version) => version.version === parentVersion);
-          if (file && parent && organisation && unit) {
-            // For consistency with the main file upload, I don't use the mutation hook here. This
-            // allows reliable upload progress tracking.
-            const response = await uploadDataset(
-              {
-                dataset_file: file.file,
-                dataset_type: parent.type,
-                as_filename: parent.file_name,
-                dataset_id: dataset.dataset_id,
-                format_extra_variables: optionsFormData[parent.type]
-                  ? JSON.stringify(optionsFormData[parent.type])
-                  : undefined,
-                unit_id: unit.id,
-              },
-              {
-                onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-                  if (progressEvent.total) {
-                    const progress = Math.floor((progressEvent.loaded * 100) / progressEvent.total);
-                    setFile({ ...file, progress });
-                  }
-                },
-              },
-            );
-
-            setFile({ ...file, taskId: response.task_id });
-          }
-        }}
+        onSubmit={() => void newVersionHandler()}
       >
         <Dropzone
           files={file ? [file] : []}
@@ -119,7 +120,7 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
           </Typography>
         )}
 
-        {file && (
+        {!!file && (
           <ProgressBar
             errors={file.errors}
             progress={file.progress}
@@ -127,7 +128,7 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
             onDone={onDone}
           />
         )}
-        {file && (
+        {!!file && (
           <FileTypeOptions
             column
             formDatas={optionsFormData}

@@ -17,8 +17,7 @@ import { useRouter } from "next/router";
 import { CenterLoader } from "../../../components/CenterLoader";
 import { PageSection } from "../../../components/PageSection";
 import { PermissionLevelSelect } from "../../../components/PermissionLevelSelect";
-import type { PermissionLevel } from "../../../components/userContext/filter";
-import { isAPermissionLevel } from "../../../components/userContext/filter";
+import { isAPermissionLevel, type PermissionLevel } from "../../../components/userContext/filter";
 import {
   projectPayload,
   useCurrentProject,
@@ -132,7 +131,7 @@ export const UserSettingsContent = () => {
           </Button>
         </Tooltip>
         {router.pathname !== "/products" && (
-          <ListItemButton onClick={() => router.push({ pathname: "/products" })}>
+          <ListItemButton onClick={() => void router.push({ pathname: "/products" })}>
             <ListItemText primary="Products" secondary="View all project and dataset products" />
           </ListItemButton>
         )}

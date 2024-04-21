@@ -1,8 +1,8 @@
-import type {
-  AsError,
-  ProductDetail,
-  UnitDetail,
-  UnitProductPostBodyBodyFlavour,
+import {
+  type AsError,
+  type ProductDetail,
+  type UnitDetail,
+  type UnitProductPostBodyBodyFlavour,
 } from "@squonk/account-server-client";
 import {
   getGetProductsForUnitQueryKey,
@@ -10,7 +10,7 @@ import {
   useCreateUnitProduct,
   useGetProductTypes,
 } from "@squonk/account-server-client/product";
-import type { DmError } from "@squonk/data-manager-client";
+import { type DmError } from "@squonk/data-manager-client";
 import { getGetUserInventoryQueryKey } from "@squonk/data-manager-client/inventory";
 import { getGetProjectsQueryKey, useCreateProject } from "@squonk/data-manager-client/project";
 
@@ -24,23 +24,21 @@ import {
   useTheme,
 } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import type { FormikConfig } from "formik";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, type FormikConfig } from "formik";
 import { Checkbox, TextField } from "formik-mui";
 import * as yup from "yup";
 
 import { DEFAULT_PRODUCT_FLAVOUR, PROJECT_SUB } from "../../constants/products";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
-import type { Resolve } from "../../types";
+import { type Resolve } from "../../types";
 import { formatTierString } from "../../utils/app/products";
 import { getErrorMessage } from "../../utils/next/orvalError";
-import type { FormikModalWrapperProps } from "../modals/FormikModalWrapper";
-import { FormikModalWrapper } from "../modals/FormikModalWrapper";
+import { FormikModalWrapper, type FormikModalWrapperProps } from "../modals/FormikModalWrapper";
 
 export interface CreateProjectFormProps {
   modal?: Resolve<
-    Pick<FormikModalWrapperProps, "id" | "title" | "submitText" | "open" | "onClose">
+    Pick<FormikModalWrapperProps, "id" | "onClose" | "open" | "submitText" | "title">
   >;
   unitId: UnitDetail["id"] | (() => Promise<UnitDetail["id"]>);
   product?: ProductDetail;
@@ -79,7 +77,7 @@ export const CreateProjectForm = ({
   const { mutateAsync: createProject } = useCreateProject();
   const { mutateAsync: createProduct } = useCreateUnitProduct();
 
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError | AsError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<AsError | DmError>();
 
   const { setCurrentProjectId } = useCurrentProjectId();
 
@@ -109,11 +107,11 @@ export const CreateProjectForm = ({
       });
       enqueueSnackbar("Project created");
 
-      queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
-      queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
+      void queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
+      void queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
       if (typeof unitId === "string") {
-        queryClient.invalidateQueries({ queryKey: getGetProductsForUnitQueryKey(unitId) });
-        queryClient.invalidateQueries({
+        void queryClient.invalidateQueries({ queryKey: getGetProductsForUnitQueryKey(unitId) });
+        void queryClient.invalidateQueries({
           queryKey: getGetUserInventoryQueryKey({ unit_id: unitId }),
         });
       }
@@ -172,7 +170,7 @@ export const CreateProjectForm = ({
             onChange={(event: any) => {
               handleChange(event);
               if (event.target.value === DEFAULT_PRODUCT_FLAVOUR) {
-                setFieldValue("isPrivate", false);
+                void setFieldValue("isPrivate", false);
               }
             }}
           >
@@ -198,7 +196,7 @@ export const CreateProjectForm = ({
         />
 
         {!modal && (
-          <Button disabled={isSubmitting || !isValid} onClick={submitForm}>
+          <Button disabled={isSubmitting || !isValid} onClick={() => void submitForm()}>
             Create
           </Button>
         )}
@@ -213,7 +211,7 @@ export const CreateProjectForm = ({
       projectName: yup
         .string()
         .required("A project name is required")
-        .matches(/^[A-Za-z0-9-_.][A-Za-z0-9-_. ]*[A-Za-z0-9-_.]$/),
+        .matches(/^[A-Za-z0-9-_.][A-Za-z0-9-_. ]*[A-Za-z0-9-_.]$/u),
       flavour: yup.string().required("A tier is required"),
     }),
     onSubmit: handleSubmit,

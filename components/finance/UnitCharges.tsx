@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { UnitDetail, UnitProductChargeSummary } from "@squonk/account-server-client";
+import { type UnitDetail, type UnitProductChargeSummary } from "@squonk/account-server-client";
 import { useGetUnit, useGetUnitCharges } from "@squonk/account-server-client/unit";
 
 import {
@@ -36,7 +36,6 @@ export const UnitCharges = ({ unitId }: UnitChargesProps) => {
   const { data: charges } = useGetUnitCharges(unitId, { pbp: monthDelta });
 
   const processingTotal = charges?.summary.charges.find(
-    // eslint-disable-next-line prettier/prettier
     (charge) => charge.type === "PROCESSING",
   )?.coins;
   const storageTotal = charges?.summary.charges.find((charge) => charge.type === "STORAGE")?.coins;
@@ -58,7 +57,7 @@ export const UnitCharges = ({ unitId }: UnitChargesProps) => {
         Billing period
       </Typography>
 
-      {unit?.billing_day && unit.created && (
+      {!!unit?.billing_day && !!unit.created && (
         <SelectBillingCycle
           billingDay={unit.billing_day}
           created={unit.created}
@@ -74,7 +73,7 @@ export const UnitCharges = ({ unitId }: UnitChargesProps) => {
         <Table size="small" sx={{ marginBottom: 2 }}>
           <TableHead>
             <TableRow>
-              <TableCell></TableCell>
+              <TableCell />
               <TableCell>Product Type</TableCell>
               <TableCell>Storage Charges</TableCell>
               <TableCell>Processing Charges</TableCell>

@@ -1,4 +1,4 @@
-import type { ProjectDetail } from "@squonk/data-manager-client";
+import { type ProjectDetail } from "@squonk/data-manager-client";
 
 import { AccountTreeRounded as AccountTreeRoundedIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 
-type ProjectClickActions = "select-project" | "navigate-to-project";
+type ProjectClickActions = "navigate-to-project" | "select-project";
 
 export interface ProjectListItemProps {
   project: ProjectDetail;
@@ -31,7 +31,7 @@ export const ProjectListItem = ({ project, clickAction }: ProjectListItemProps) 
   const onClick = () => {
     setCurrentProjectId(project.project_id);
     if (action === "navigate-to-project") {
-      push("/project");
+      void push("/project");
     }
   };
 

@@ -8,7 +8,7 @@ import { CenterLoader } from "../CenterLoader";
 import { FileListItem } from "./FileListItem";
 import { PathBreadcrumbs } from "./PathBreadcrumbs";
 import { ScrollList } from "./ScrollList";
-import type { FileOrDirectory, SharedProps } from "./types";
+import { type FileOrDirectory, type SharedProps } from "./types";
 import { getChecked, getFullPath, getNewValue } from "./utils";
 
 /**

@@ -1,6 +1,6 @@
 import { Container } from "@mui/material";
 import Layout from "../../layouts/Layout";
-import { DocsNav } from "../../components/DocsNav"
+import { DocsNav } from "../../components/DocsNav";
 import Head from "next/head";
 
 <Head>
@@ -26,4 +26,8 @@ The definition of these jobs is done in Git repositories. The techie guy guide f
 The list of available jobs on this Squonk Data Manager can be found on the
 [apps/jobs page](/run).
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

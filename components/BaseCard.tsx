@@ -1,5 +1,4 @@
-import type { Dispatch, ReactNode, SetStateAction } from "react";
-import { useState } from "react";
+import { type Dispatch, type ReactNode, type SetStateAction, useState } from "react";
 
 import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import {
@@ -82,13 +81,13 @@ export const BaseCard = ({
 
   return (
     <Card>
-      {header && (
+      {!!header && (
         <CardHeader
           avatar={
             <Avatar
               sx={{
                 fontFamily: "verdana",
-                backgroundColor: header.color || "transparent",
+                backgroundColor: header.color ?? "transparent",
               }}
             >
               {header.avatar?.[0].toUpperCase()}

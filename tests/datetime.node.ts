@@ -24,12 +24,12 @@ test.describe("relative date-times can be formatted", () => {
   test("hour values", () => {
     expect(formatRelativeTime(3600)).toEqual("1 hr 0 s");
     expect(formatRelativeTime(3601)).toEqual("1 hr 1 s");
-    expect(formatRelativeTime(86399)).toEqual("23 hr 59 min 59 s");
+    expect(formatRelativeTime(86_399)).toEqual("23 hr 59 min 59 s");
   });
 
   test("day values", () => {
-    expect(formatRelativeTime(86400)).toEqual("1 d 0 s");
-    expect(formatRelativeTime(86401)).toEqual("1 d 1 s");
-    expect(formatRelativeTime(10000000000000)).toEqual("115740740 d 17 hr 46 min 40 s");
+    expect(formatRelativeTime(86_400)).toEqual("1 d 0 s");
+    expect(formatRelativeTime(86_401)).toEqual("1 d 1 s");
+    expect(formatRelativeTime(10_000_000_000_000)).toEqual("115740740 d 17 hr 46 min 40 s");
   });
 });

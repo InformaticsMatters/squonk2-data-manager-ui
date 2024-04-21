@@ -60,7 +60,7 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
             <IconButton
               size="small"
               sx={{
-                visibility: !hasChanged ? "hidden" : undefined,
+                visibility: hasChanged ? undefined : "hidden",
                 position: "absolute",
                 right: "26px",
               }}

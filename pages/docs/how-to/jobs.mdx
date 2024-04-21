@@ -4,7 +4,7 @@ import { Container } from "@mui/material";
 
 import { DocsNav } from "../../../components/DocsNav";
 import Layout from "../../../layouts/Layout";
-import job_launch from "../assets/job-launch.png"
+import job_launch from "../assets/job-launch.png";
 
 <Head>
   <title>Running jobs - a How To guide</title>
@@ -14,7 +14,7 @@ import job_launch from "../assets/job-launch.png"
 
 ## Running jobs - a How To guide
 
-Use the *Apps/Jobs* tab to launch **Jobs** to do your work.
+Use the _Apps/Jobs_ tab to launch **Jobs** to do your work.
 Applications are also listed here - see the [Applications](./applications) How To guide
 for details of launching these.
 
@@ -23,18 +23,18 @@ box to filter these using terms that are defined for each job or app. For instan
 be labelled as "rdkit" so typing "rdkit" into the search box will show only cards that have this label. The labels for
 each job are displayed towards the bottom of the card in red.
 
-Each job belongs to a **category** (the type of job it is e.g. *molecular properties*) and a **collection** (where
-it comes from e.g. *rdkit*). A link the the job's documentation is also present, providing more information about the
+Each job belongs to a **category** (the type of job it is e.g. _molecular properties_) and a **collection** (where
+it comes from e.g. _rdkit_). A link the the job's documentation is also present, providing more information about the
 job and how to run it.
 
-To run a job or application click on the *Run* button. A dialog will appear allowing you to define the job inputs and
+To run a job or application click on the _Run_ button. A dialog will appear allowing you to define the job inputs and
 options.
 
 <Image src={job_launch} alt="Launch job dialog" />
 
-*Inputs* are project files that form the input to the job.
+_Inputs_ are project files that form the input to the job.
 
-*Options* are user specified parameters for execution of the
+_Options_ are user specified parameters for execution of the
 job e.g. which properties to calculate in the example above. An important option is often the name of the output file.
 We recommend putting the outputs of a job in a new subdirectory so that the output of one job does not overwrite that of
 another.
@@ -42,8 +42,12 @@ Most jobs are implemented so that you can specify a full path to the file you wa
 can specify `some/where/results.sdf` as the output file name and the directories `some/where/` will be created for you
 (from the project root).
 
-Specify these inputs and options and click the *Run* button at the bottom. The execution will be added to the bottom of
+Specify these inputs and options and click the _Run_ button at the bottom. The execution will be added to the bottom of
 the card. Click on it to see the execution details in the **Results** tab. See the
 [Inspecting job and application execution](./execution) How To guide for details.
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

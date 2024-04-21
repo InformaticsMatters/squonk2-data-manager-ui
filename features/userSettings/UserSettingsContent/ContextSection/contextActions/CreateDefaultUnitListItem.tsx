@@ -18,23 +18,23 @@ export const CreateDefaultUnitListItem = () => {
   const queryClient = useQueryClient();
   const [, setUnit] = useSelectedUnit();
 
-  return (
-    <ListItemButton
-      onClick={async () => {
-        try {
-          const { id } = await createPersonalUnit({
-            data: { billing_day: getBillingDay() },
-          });
-          enqueueSnackbar("Personal unit created", { variant: "success" });
-          queryClient.invalidateQueries({ queryKey: getGetUnitsQueryKey() });
+  const createDefaultUnitHandler = async () => {
+    try {
+      const { id } = await createPersonalUnit({
+        data: { billing_day: getBillingDay() },
+      });
+      enqueueSnackbar("Personal unit created", { variant: "success" });
+      void queryClient.invalidateQueries({ queryKey: getGetUnitsQueryKey() });
 
-          const unit = await getUnit(id);
-          setUnit(unit);
-        } catch (error) {
-          enqueueError(error);
-        }
-      }}
-    >
+      const unit = await getUnit(id);
+      setUnit(unit);
+    } catch (error) {
+      enqueueError(error);
+    }
+  };
+
+  return (
+    <ListItemButton onClick={() => void createDefaultUnitHandler()}>
       <ListItemText
         primary="Create personal unit"
         secondary="Creates a new unit in the default organisation"

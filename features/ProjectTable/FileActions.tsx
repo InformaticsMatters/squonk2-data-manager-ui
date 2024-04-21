@@ -1,19 +1,19 @@
 import { CircularProgress } from "@mui/material";
 import dynamic from "next/dynamic";
 
-import type { DownloadButtonProps } from "../../components/downloads/DownloadButton";
+import { type DownloadButtonProps } from "../../components/downloads/DownloadButton";
 import {
   useCurrentProject,
   useIsUserAdminOrEditorOfCurrentProject,
 } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { API_ROUTES } from "../../utils/app/routes";
-import type { CreateDatasetFromFileButtonProps } from "./buttons/CreateDatasetFromFileButton";
-import type { DeleteDirectoryButtonProps } from "./buttons/DeleteDirectoryButton";
-import type { DeleteUnmanagedFileButtonProps } from "./buttons/DeleteUnmanagedFileButton";
-import type { DetachDatasetProps } from "./buttons/DetachDataset";
+import { type CreateDatasetFromFileButtonProps } from "./buttons/CreateDatasetFromFileButton";
+import { type DeleteDirectoryButtonProps } from "./buttons/DeleteDirectoryButton";
+import { type DeleteUnmanagedFileButtonProps } from "./buttons/DeleteUnmanagedFileButton";
+import { type DetachDatasetProps } from "./buttons/DetachDataset";
 import { FavouriteButton } from "./buttons/FavouriteButton";
-import type { TableDir, TableFile } from "./types";
+import { type TableDir, type TableFile } from "./types";
 import { isTableDir } from "./utils";
 
 const DownloadButton = dynamic<DownloadButtonProps>(
@@ -42,7 +42,7 @@ export interface FileActionsProps {
   /**
    * File the actions act on
    */
-  file: TableFile | TableDir;
+  file: TableDir | TableFile;
 }
 
 /**
@@ -74,7 +74,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
       {/* Actions for files only */}
 
       {/* Managed files are "detached" */}
-      {isManagedFile && (
+      {!!isManagedFile && (
         <DetachDataset
           disabled={!isProjectAdminOrEditor}
           fileId={fileId}
@@ -84,7 +84,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
       )}
 
       {/* Unmanaged files are "deleted" */}
-      {isFile && !isManagedFile && (
+      {!!isFile && !isManagedFile && (
         <DeleteUnmanagedFileButton
           disabled={!isProjectAdminOrEditor}
           fileName={file.fileName}
@@ -101,7 +101,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
         />
       )}
 
-      {isFile && (
+      {!!isFile && (
         <DownloadButton
           href={
             (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
@@ -113,7 +113,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
       )}
 
       {/* Datasets can be created from unmanaged files or managed files at are immutable */}
-      {isFile && (!file.immutable || !isManagedFile) && (
+      {!!isFile && (!file.immutable || !isManagedFile) && (
         <CreateDatasetFromFileButton file={file} projectId={project.project_id} />
       )}
     </>

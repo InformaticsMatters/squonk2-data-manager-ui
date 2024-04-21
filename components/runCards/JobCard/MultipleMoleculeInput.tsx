@@ -13,12 +13,11 @@ import { nanoid } from "nanoid";
 
 import { useIsASketcherOpen } from "../../../state/sketcherState";
 import { addFileProtocol, FILE_PROTOCOL, removeFileProtocol } from "../../../utils/app/urls";
-import type { FileSelection, SharedProps } from "../../FileSelector";
-import { FileSelector } from "../../FileSelector";
+import { type FileSelection, FileSelector, type SharedProps } from "../../FileSelector";
 import { SMILESInput } from "../../SMILESInput";
 
 export interface MultipleMoleculeInputProps
-  extends Omit<SharedProps, "onSelect" | "value" | "targetType" | "multiple"> {
+  extends Omit<SharedProps, "multiple" | "onSelect" | "targetType" | "value"> {
   value: FileSelection;
   onMoleculesChange: (newValue: string[]) => void;
   onFileSelect: (selection: FileSelection) => void;
@@ -26,7 +25,7 @@ export interface MultipleMoleculeInputProps
   protocol?: FILE_PROTOCOL;
 }
 
-export type InputMethod = "smiles" | "files";
+export type InputMethod = "files" | "smiles";
 
 const addProtocolToFiles = (value: FileSelection) => {
   if (value === undefined) {
@@ -36,7 +35,7 @@ const addProtocolToFiles = (value: FileSelection) => {
     return addFileProtocol(value);
   }
 
-  return value.map(addFileProtocol);
+  return value.map((element) => addFileProtocol(element));
 };
 
 const removeProtocolFromFiles = (value: FileSelection) => {
@@ -47,7 +46,7 @@ const removeProtocolFromFiles = (value: FileSelection) => {
     return removeFileProtocol(value);
   }
 
-  return value.map(removeFileProtocol);
+  return value.map((element) => removeFileProtocol(element));
 };
 
 export const MultipleMoleculeInput = ({
@@ -65,7 +64,7 @@ export const MultipleMoleculeInput = ({
     if (typeof initialValue === "string") {
       return initialValue.startsWith(FILE_PROTOCOL) ? "files" : "smiles";
     }
-    return initialValue?.map((val) => val.startsWith(FILE_PROTOCOL)).every((v) => v)
+    return initialValue?.map((val) => val.startsWith(FILE_PROTOCOL)).every(Boolean)
       ? "files"
       : "smiles";
   }, [initialValue]);
@@ -108,7 +107,7 @@ export const MultipleMoleculeInput = ({
 };
 
 interface SketcherInputsProps {
-  value: string | string[] | undefined;
+  value: string[] | string | undefined;
   onMoleculesChange: (newValue: string[]) => void;
 }
 
@@ -128,6 +127,7 @@ export const SketcherInputs = ({ value, onMoleculesChange }: SketcherInputsProps
   return (
     <>
       {valueArray.map((smiles, index) => (
+        // eslint-disable-next-line react/no-array-index-key
         <Box key={index} mb={2}>
           <SMILESInput
             sketcherDisabled={sketcherDisabled}

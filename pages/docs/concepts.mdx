@@ -17,7 +17,7 @@ This page describes some key concepts that are useful to know when using the Squ
 
 ## Users
 
-A *user* is a logged in user of the Data Manager. They are defined in our Keycloak Single Sign On (SSO) system.
+A _user_ is a logged in user of the Data Manager. They are defined in our Keycloak Single Sign On (SSO) system.
 You will need an account setting up there in order to become a user. Once done you are potentially able to use
 any of the Squonk applications.
 
@@ -26,7 +26,7 @@ any of the Squonk applications.
 The Data Manager has the concept of an _Organisation_ (e.g. your company or university) and within that
 Organisation you have _Units_ (e.g. a research group or department).
 A _Project_ is where you can do some work and collaborate with others, and _Projects_ belong to a _Unit_.
-A _Project_  allows to isolate your work and provide access to it to specific users.
+A _Project_ allows to isolate your work and provide access to it to specific users.
 The _Unit_ is responsible for the usage of all its projects and will need to pay the costs for that usage.
 
 There is a _Default_ Organisation which all users can belong to, and within that _Default_ _Organisation_ you will be
@@ -37,10 +37,10 @@ and your coworkers, or can set up a complete Squonk2 environment for you.
 
 A project is allocated to a particular _Tier_.
 
-* Evaluation - limited quota and all data is public
-* Bronze - limited quota and data can be made private
-* Silver - like bronze but with more quota
-* Gold - like silver but with more quota
+- Evaluation - limited quota and all data is public
+- Bronze - limited quota and data can be made private
+- Silver - like bronze but with more quota
+- Gold - like silver but with more quota
 
 _Evaluation_ _Projects_ are always public and visible to all users, but are free to use.
 Projects in other tiers can be made private and restricted to specific users. See below for more info.
@@ -50,12 +50,12 @@ Projects in other tiers can be made private and restricted to specific users. Se
 Datasets are files that you can work with. You don't need to use datasets to do some work in Data Manager, but
 using them has the following benefits:
 
-* Datasets can be shared with other users.
-* Datasets can be versioned.
-* Metadata is indexed e.g. descriptions and data types of the fields in a SD-file.
-* Datasets with molecules (e.g. SD-files) are indexed with the RDKit cartridge, which in future will allow structure
+- Datasets can be shared with other users.
+- Datasets can be versioned.
+- Metadata is indexed e.g. descriptions and data types of the fields in a SD-file.
+- Datasets with molecules (e.g. SD-files) are indexed with the RDKit cartridge, which in future will allow structure
   searches to be performed to identify the use of molecules, or similar molecules in other Datasets.
-* Other useful operations on datasets will follow.
+- Other useful operations on datasets will follow.
 
 Datasets visible to you are displayed on the _Datasets_ tab.
 
@@ -68,7 +68,7 @@ You have complete control over what you do in your project.
 
 Files can be added to a project so that you can work on them.
 _Datasets_ can also be _attached_ to a project, and project files can be added as new _Datasets_.
-Files will also typically be created in your project by running *applications* and *jobs*.
+Files will also typically be created in your project by running _applications_ and _jobs_.
 
 ## Access Control
 
@@ -133,17 +133,19 @@ _Default_ _Organisation_ you are responsible for payment of your Bronze, Silver 
 Usage is managed using a concept of _Squonk Coins_ (or coins for short). A coin has a monetary value, and your projects
 get a monthly quota of coins (Gold tier projects get the biggest quota).
 Coins are "consumed" by one of these activities:
-* Storage used by your project (e.g. the size of all the files in GBs)
-* Execution of applications or jobs
-* Dataset storage
+
+- Storage used by your project (e.g. the size of all the files in GBs)
+- Execution of applications or jobs
+- Dataset storage
 
 Storage usage is fairly straight forward. At regular periods each day the storage is calculated and recorded. The maximum
 daily usage is then used to deduct the appropriate number of coins from your project's account. We also do a linear
 projection of what your current usage will cost by the end of your billing month, but of course this is only an estimate.
 
 Application and job usage is handled differently. Each time an application or job is run it can consume coins that reflect:
-* The CPU, GPU and memory resource needed for execution
-* Any IP or licensing costs
+
+- The CPU, GPU and memory resource needed for execution
+- Any IP or licensing costs
 
 Don't worry, most jobs are free or have such a trivial cost that has no impact.
 But some jobs (e.g. virtual screening using docking) consume lots of CPU so have a real cost of execution.
@@ -169,4 +171,8 @@ Once you hit your hard quota limit then operations in the _Data Manager_ that co
 jobs etc.) are disabled. You can still see your data, and remove unnecessary files. And you can upgrade to a tier with
 a bigger quota.
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

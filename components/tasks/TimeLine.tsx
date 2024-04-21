@@ -1,18 +1,18 @@
-import type { ComponentProps } from "react";
+import { type ComponentProps } from "react";
 
-import type {
-  TaskEvent,
-  TaskEventLevel,
-  TaskGetResponse,
-  TaskState,
+import {
+  type TaskEvent,
+  type TaskEventLevel,
+  type TaskGetResponse,
+  type TaskState,
 } from "@squonk/data-manager-client";
 
-import type { TimelineDotProps } from "@mui/lab";
 import {
   Timeline,
   TimelineConnector,
   TimelineContent,
   TimelineDot,
+  type TimelineDotProps,
   TimelineItem,
   TimelineOppositeContent,
   TimelineSeparator,
@@ -23,7 +23,7 @@ import { useEventDebugMode } from "../../state/eventDebugMode";
 import { LocalTime } from "../LocalTime";
 
 /* When message is undefined we can guarantee that it's a TaskState */
-const isEvent = (stateOrEvent: TaskState | TaskEvent): stateOrEvent is TaskEvent => {
+const isEvent = (stateOrEvent: TaskEvent | TaskState): stateOrEvent is TaskEvent => {
   return !(stateOrEvent as TaskState).state;
 };
 
@@ -48,7 +48,7 @@ export interface TimeLineProps {
   /**
    * states or events of tasks or instances
    */
-  states: NonNullable<TaskGetResponse["states"] | TaskGetResponse["events"]>;
+  states: NonNullable<TaskGetResponse["events"] | TaskGetResponse["states"]>;
 }
 
 /**
@@ -57,7 +57,7 @@ export interface TimeLineProps {
 export const TimeLine = ({ states }: TimeLineProps) => {
   const [debug] = useEventDebugMode();
 
-  const items = (states as Array<(typeof states)[number]>).filter(
+  const items = (states as (typeof states)[number][]).filter(
     (item) => !(!debug && isEvent(item) && item.level === "DEBUG"),
   );
   return (
@@ -65,6 +65,7 @@ export const TimeLine = ({ states }: TimeLineProps) => {
       {items.map((item, itemIndex) => (
         <TimelineSection
           color={isEvent(item) ? getColorFromEventLevel(item.level) : undefined}
+          // eslint-disable-next-line react/no-array-index-key
           key={itemIndex}
           label={
             isEvent(item)
@@ -111,7 +112,7 @@ const TimelineSection = ({
           </Tooltip>
         )}
 
-        {showConnector && <TimelineConnector />}
+        {!!showConnector && <TimelineConnector />}
       </TimelineSeparator>
       <TimelineContent sx={{ overflowX: label.includes("\n") ? "auto" : undefined }}>
         <TimeLineLabel>{label}</TimeLineLabel>

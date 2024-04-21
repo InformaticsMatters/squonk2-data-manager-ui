@@ -1,7 +1,5 @@
-import type { FC, ReactNode } from "react";
-import { useCallback } from "react";
-import type { DropzoneOptions, FileRejection } from "react-dropzone";
-import { useDropzone } from "react-dropzone";
+import { type FC, type ReactNode, useCallback } from "react";
+import { type DropzoneOptions, type FileRejection, useDropzone } from "react-dropzone";
 
 import { Divider, styled } from "@mui/material";
 import { nanoid } from "nanoid";
@@ -9,7 +7,7 @@ import { nanoid } from "nanoid";
 import { useFileExtensions } from "../../hooks/useFileExtensions";
 import { useMimeTypeLookup } from "../../hooks/useMimeTypeLookup";
 import { getMimeFromFileName } from "../../utils/app/files";
-import type { UploadableFile } from "./types";
+import { type UploadableFile } from "./types";
 
 export interface DropzoneProps extends DropzoneOptions {
   children?: ReactNode;
@@ -68,7 +66,7 @@ export const Dropzone: FC<DropzoneProps> = ({
   //
   // 2. This currently requires the body parser in the proxy to be disabled
   // https://github.com/stegano/next-http-proxy-middleware/issues/33
-  mapping["gzip"] = [".gz"];
+  mapping.gzip = [".gz"];
   const { getRootProps, getInputProps } = useDropzone({
     ...dropzoneOptions,
     onDrop,
@@ -79,7 +77,7 @@ export const Dropzone: FC<DropzoneProps> = ({
     <Zone {...getRootProps()}>
       <input {...getInputProps()} />
       <UploadButton>Drag and drop files here, or click to select files</UploadButton>
-      {!!files.length && children && <Divider sx={{ my: 2 }} />}
+      {files.length > 0 && !!children && <Divider sx={{ my: 2 }} />}
       {children}
     </Zone>
   );

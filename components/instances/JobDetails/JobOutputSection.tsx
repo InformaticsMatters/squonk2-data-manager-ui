@@ -1,26 +1,26 @@
-import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
 
 import { List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
 
 import { InputOutputItemIcon } from "./InputOutputItemIcon";
 import { JobLink } from "./JobLink";
-import type { OutputValue } from "./types";
+import { type OutputValue } from "./types";
 
 export interface JobOutputSectionProps {
   /**
    * Instance of the job.
    */
-  instance: InstanceSummary | InstanceGetResponse;
+  instance: InstanceGetResponse | InstanceSummary;
 }
 
 /**
  * Displays generated outputs for a task.
  */
-export const JobOutputSection = ({ instance: instance }: JobOutputSectionProps) => {
+export const JobOutputSection = ({ instance }: JobOutputSectionProps) => {
   const outputs: Record<string, OutputValue> = instance.outputs ? JSON.parse(instance.outputs) : {};
   const outputsEntries = Object.entries(outputs);
 
-  if (!outputsEntries.length) {
+  if (outputsEntries.length === 0) {
     return <Typography>This job has no outputs</Typography>;
   }
 

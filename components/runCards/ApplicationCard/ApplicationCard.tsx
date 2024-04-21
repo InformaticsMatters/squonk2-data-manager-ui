@@ -1,12 +1,12 @@
-import type { ApplicationSummary } from "@squonk/data-manager-client";
+import { type ApplicationSummary } from "@squonk/data-manager-client";
 
 import { CircularProgress, useTheme } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import { useIsUserAdminOrEditorOfCurrentProject } from "../../../hooks/projectHooks";
 import { BaseCard } from "../../BaseCard";
-import type { InstancesListProps } from "../InstancesList";
-import type { ApplicationModalButtonProps } from "./ApplicationModalButton";
+import { type InstancesListProps } from "../InstancesList";
+import { type ApplicationModalButtonProps } from "./ApplicationModalButton";
 
 const ApplicationModalButton = dynamic<ApplicationModalButtonProps>(
   () => import("./ApplicationModalButton").then((mod) => mod.ApplicationModalButton),

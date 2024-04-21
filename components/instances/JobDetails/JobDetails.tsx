@@ -1,4 +1,4 @@
-import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
 import { WorkOutlineRounded as WorkOutlineRoundedIcon } from "@mui/icons-material";
@@ -22,7 +22,7 @@ export interface JobDetailsProps {
   /**
    * ID of the Job
    */
-  jobId: NonNullable<InstanceSummary["job_id"] | InstanceGetResponse["job_id"]>;
+  jobId: NonNullable<InstanceGetResponse["job_id"] | InstanceSummary["job_id"]>;
 }
 
 /**
@@ -43,6 +43,7 @@ export const JobDetails = ({ instanceId, jobId }: JobDetailsProps) => {
     return <Alert severity="error">{getErrorMessage(jobError)}</Alert>;
   }
 
+  const lastTask = instance.tasks.at(-1);
   return (
     <>
       <HorizontalList>
@@ -69,7 +70,7 @@ export const JobDetails = ({ instanceId, jobId }: JobDetailsProps) => {
         </Grid>
       </Grid>
 
-      <TaskDetails taskId={instance.tasks[instance.tasks.length - 1].id} />
+      {!!lastTask && <TaskDetails taskId={lastTask.id} />}
     </>
   );
 };

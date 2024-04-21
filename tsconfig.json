@@ -1,44 +1,42 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
+    // Base Options
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "verbatimModuleSyntax": true,
+    "allowJs": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "moduleDetection": "force",
+    // Strictness
+    "strict": true,
+    "noUncheckedIndexedAccess": false,
+    // If transpiling with TS
+    // "moduleResolution": "NodeNext",
+    // "module": "NodeNext",
+    // If NOT transpiling with TS
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "noEmit": true,
+    // If code runs in the DOM
+    "lib": [
+      "es2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    // If code doesn't run in the DOM
+    // "lib": [
+    //   "es2022"
+    // ]
+    /* If you're building for a library: */
+    "declaration": true,
+    /* If you're building for a library in a monorepo: */
+    // "composite": true,
+    "sourceMap": true,
+    "declarationMap": true,
+    // For this project
     "jsx": "preserve",
     "jsxImportSource": "@emotion/react",
-    "incremental": true,
-    "baseUrl": ".",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
   },
-  "exclude": [
-    "node_modules",
-    ".next",
-    "out"
-  ],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.mjs",
-    "**/.*.js",
-    "**/.*.mjs",
-    ".next/types/**/*.ts"
-  ]
 }

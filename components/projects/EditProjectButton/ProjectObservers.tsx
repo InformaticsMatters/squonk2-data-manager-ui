@@ -1,4 +1,4 @@
-import type { ProjectDetail } from "@squonk/data-manager-client";
+import { type ProjectDetail } from "@squonk/data-manager-client";
 import {
   getGetProjectQueryKey,
   getGetProjectsQueryKey,

@@ -1,6 +1,6 @@
 import { getAccessToken } from "@auth0/nextjs-auth0";
 import { captureException } from "@sentry/nextjs";
-import type { IncomingMessage, ServerResponse } from "node:http";
+import { type IncomingMessage, type ServerResponse } from "node:http";
 import { createGunzip } from "node:zlib";
 import fetch from "node-fetch";
 
@@ -48,9 +48,7 @@ export interface SSRArguments {
 
 // Copied from GetServerSideProps
 type Request = IncomingMessage & {
-  cookies: Partial<{
-    [key: string]: string;
-  }>;
+  cookies: Partial<Record<string, string>>;
 };
 
 export const plaintextViewerSSR = async (

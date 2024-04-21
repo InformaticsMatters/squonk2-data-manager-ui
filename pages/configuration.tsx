@@ -1,8 +1,8 @@
 import { Container } from "@mui/material";
-import type { GetServerSideProps } from "next";
+import { type GetServerSideProps } from "next";
 
 // Format a value so undefined and empty string are visible
-const ReprLi = ({ title, children }: { children: string | undefined | null; title: string }) => {
+const ReprLi = ({ title, children }: { children: string | null | undefined; title: string }) => {
   if (children === "") {
     return (
       <li>
@@ -28,6 +28,7 @@ export interface ConfigurationProps {
   asAPI: string | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps: GetServerSideProps<ConfigurationProps> = async () => {
   // These may change between build and deployment. NextJS statically builds these so just using
   // these "public" variables won't show the correct value.

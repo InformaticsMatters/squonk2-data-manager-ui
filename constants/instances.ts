@@ -1,6 +1,9 @@
-import type { InstanceGetResponsePhase, InstanceSummaryPhase } from "@squonk/data-manager-client";
+import {
+  type InstanceGetResponsePhase,
+  type InstanceSummaryPhase,
+} from "@squonk/data-manager-client";
 
-export const DONE_PHASES: InstanceSummaryPhase[] | InstanceGetResponsePhase[] = [
+export const DONE_PHASES: InstanceGetResponsePhase[] | InstanceSummaryPhase[] = [
   "COMPLETED",
   "SUCCEEDED",
   "FAILED",

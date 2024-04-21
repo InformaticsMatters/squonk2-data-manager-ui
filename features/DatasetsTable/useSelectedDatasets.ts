@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 
 import { useImmer } from "use-immer";
 
-import type { TableDataset, TableDatasetSubRow } from ".";
+import { type TableDataset, type TableDatasetSubRow } from ".";
 
 /**
  * A hook used to save selected sub rows. In case a row has been selected, add/remove only its sub
@@ -34,16 +34,14 @@ export const useSelectedDatasets = (baseData: TableDataset[]) => {
       data.subRows.forEach((subRow) => {
         onSelection(subRow, selected);
       });
+    } else if (selected) {
+      add(data);
     } else {
-      if (selected) {
-        add(data);
-      } else {
-        remove(data);
-      }
+      remove(data);
     }
   };
 
-  const selectedDatasets = useMemo(() => Array.from(selected), [selected]);
+  const selectedDatasets = useMemo(() => [...selected], [selected]);
 
   return { selectedDatasets, onSelection };
 };

@@ -13,7 +13,7 @@ export const usePolledGetInstance = (instanceId: string, pollInterval = 5000) =>
   const done = query.data?.phase && DONE_PHASES.includes(query.data.phase);
 
   useEffect(() => {
-    done && setRefetchInterval(Infinity);
+    done && setRefetchInterval(Number.POSITIVE_INFINITY);
   }, [done]);
 
   return query;

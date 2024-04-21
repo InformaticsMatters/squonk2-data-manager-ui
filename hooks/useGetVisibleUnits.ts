@@ -1,10 +1,12 @@
-import type { UnitDetail } from "@squonk/account-server-client";
+import { type UnitDetail } from "@squonk/account-server-client";
 import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
-import type { ProjectDetail } from "@squonk/data-manager-client";
+import { type ProjectDetail } from "@squonk/data-manager-client";
 import { useGetProjects } from "@squonk/data-manager-client/project";
 
-import type { PermissionLevel } from "../components/userContext/filter";
-import { filterProjectsByPermissionLevel } from "../components/userContext/filter";
+import {
+  filterProjectsByPermissionLevel,
+  type PermissionLevel,
+} from "../components/userContext/filter";
 import { useSelectedOrganisation } from "../state/organisationSelection";
 
 export const getUserFilter =
@@ -37,7 +39,7 @@ export const useGetVisibleUnits = (level: PermissionLevel, user: string | undefi
   } = useGetOrganisationUnits(organisationId, {
     query: {
       enabled: !!organisationId,
-      select: ({ units }) => units.filter(userFilter),
+      select: ({ units }) => units.filter((element) => userFilter(element)),
     },
   });
 

@@ -1,4 +1,4 @@
-import type { HTMLProps } from "react";
+import { type HTMLProps } from "react";
 
 import { toLocalTimeString } from "../utils/app/datetime";
 
@@ -30,7 +30,7 @@ export interface DateTimeLocalTime extends BaseLocalTimeProps {
   showTime: boolean;
 }
 
-export type LocalTimeProps = FormatLocalTime | DateTimeLocalTime;
+export type LocalTimeProps = DateTimeLocalTime | FormatLocalTime;
 
 /**
  * Component using dayjs to display a utc timestamp in local time

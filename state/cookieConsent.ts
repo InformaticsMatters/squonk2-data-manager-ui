@@ -1,8 +1,7 @@
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import type { BaseValue } from "../utils/next/localStorage";
-import { COOKIE_CONSENT_STORAGE_KEY } from "../utils/next/localStorage";
+import { type BaseValue, COOKIE_CONSENT_STORAGE_KEY } from "../utils/next/localStorage";
 
 // State saved to localStorage so we need to know if its old data if we update logic here
 const VERSION = 1;

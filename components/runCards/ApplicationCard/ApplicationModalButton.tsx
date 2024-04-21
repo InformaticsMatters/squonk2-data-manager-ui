@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button, CircularProgress, Tooltip } from "@mui/material";
 import dynamic from "next/dynamic";
 
-import type { ApplicationModalProps } from "./ApplicationModal";
+import { type ApplicationModalProps } from "./ApplicationModal";
 
 const ApplicationModal = dynamic<ApplicationModalProps>(
   () => import("./ApplicationModal").then((mod) => mod.ApplicationModal),
@@ -13,7 +13,7 @@ const ApplicationModal = dynamic<ApplicationModalProps>(
 );
 
 export interface ApplicationModalButtonProps
-  extends Pick<ApplicationModalProps, "onLaunch" | "applicationId" | "projectId"> {
+  extends Pick<ApplicationModalProps, "applicationId" | "onLaunch" | "projectId"> {
   disabled?: boolean;
 }
 
@@ -46,7 +46,7 @@ export const ApplicationModalButton = ({
         </span>
       </Tooltip>
 
-      {hasOpened && (
+      {!!hasOpened && (
         <ApplicationModal
           applicationId={applicationId}
           open={open}

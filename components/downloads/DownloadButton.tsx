@@ -1,8 +1,7 @@
 import { GetAppRounded } from "@mui/icons-material";
-import type { IconButtonProps, TooltipProps } from "@mui/material";
-import { IconButton, Tooltip } from "@mui/material";
+import { IconButton, type IconButtonProps, Tooltip, type TooltipProps } from "@mui/material";
 
-type AnchorIconButton = IconButtonProps<"a", any>;
+type AnchorIconButton = IconButtonProps<"a">;
 
 export interface DownloadButtonProps
   extends Omit<AnchorIconButton, "title">,
@@ -26,5 +25,5 @@ export const DownloadButton = ({
     </IconButton>
   );
 
-  return tooltip !== undefined ? <Tooltip title={tooltip}>{button}</Tooltip> : button;
+  return tooltip === undefined ? button : <Tooltip title={tooltip}>{button}</Tooltip>;
 };

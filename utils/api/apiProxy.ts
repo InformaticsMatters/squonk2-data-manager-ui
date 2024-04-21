@@ -1,8 +1,8 @@
-import type { AccessTokenError } from "@auth0/nextjs-auth0";
-import { getAccessToken } from "@auth0/nextjs-auth0";
-import type { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import type { NextHttpProxyMiddlewareOptions } from "next-http-proxy-middleware";
-import httpProxyMiddleware from "next-http-proxy-middleware";
+import { type AccessTokenError, getAccessToken } from "@auth0/nextjs-auth0";
+import { type NextApiHandler, type NextApiRequest, type NextApiResponse } from "next";
+import httpProxyMiddleware, {
+  type NextHttpProxyMiddlewareOptions,
+} from "next-http-proxy-middleware";
 
 type Path = `^/api/${string}`;
 type Headers = NonNullable<Parameters<typeof httpProxyMiddleware>[2]>["headers"];
@@ -14,7 +14,7 @@ const getAccessTokenErrorWrapped = async (req: NextApiRequest, res: NextApiRespo
   } catch (error) {
     if (error && (error as AccessTokenError).code !== "ERR_MISSING_SESSION") {
       // if this errors for anything other than the user being logged out, then we rethrow
-      throw error;
+      throw error as AccessTokenError;
     }
   }
   // not logged in
@@ -39,7 +39,7 @@ export const createProxyMiddleware = (
       }
 
       // API resolved without sending a response for ..., this may result in stalled requests.
-      httpProxyMiddleware(req, res, {
+      await httpProxyMiddleware(req, res, {
         target,
         onProxyInit: handleProxyInit,
         // * replace the path in the request with the correct path for the API

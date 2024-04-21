@@ -1,4 +1,4 @@
-import type { UnitDetail } from "@squonk/account-server-client";
+import { type UnitDetail } from "@squonk/account-server-client";
 
 import { atom, useAtom } from "jotai";
 

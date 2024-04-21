@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("dark mode works", async ({ page, baseURL }) => {
-  baseURL = baseURL ?? "";
+  baseURL ??= "";
 
   // Go to http://localhost:3000/
   await page.goto(baseURL);
@@ -10,5 +10,5 @@ test("dark mode works", async ({ page, baseURL }) => {
   // Check [aria-label="color-scheme-toggle"]
   await page.locator(`[aria-label="color-scheme-toggle"]`).check();
 
-  expect(page.locator("body")).toHaveCSS("background-color", "rgb(18, 18, 18)");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(18, 18, 18)");
 });

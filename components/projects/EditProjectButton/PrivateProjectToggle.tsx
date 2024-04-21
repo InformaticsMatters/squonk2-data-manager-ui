@@ -7,7 +7,7 @@ import {
 import { FormControlLabel, Switch } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
-import type { ProjectId } from "../../../hooks/projectHooks";
+import { type ProjectId } from "../../../hooks/projectHooks";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 
 export interface PrivateProjectToggleProps {
@@ -19,6 +19,29 @@ export const PrivateProjectToggle = ({ projectId, isPrivate }: PrivateProjectTog
   const { mutateAsync: adjustProject, isPending } = usePatchProject();
   const { enqueueError, enqueueSnackbar } = useEnqueueError();
   const queryClient = useQueryClient();
+
+  const projectPrivacyChangeHandler = async (checked: boolean) => {
+    if (projectId) {
+      try {
+        await adjustProject({
+          projectId,
+          data: {
+            private: checked,
+          },
+        });
+        void queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
+        void queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+
+        if (checked) {
+          enqueueSnackbar("The project has been made private", { variant: "success" });
+        } else {
+          enqueueSnackbar("The project has been made public", { variant: "success" });
+        }
+      } catch (error) {
+        enqueueError(error);
+      }
+    }
+  };
 
   return (
     <FormControlLabel
@@ -32,28 +55,7 @@ export const PrivateProjectToggle = ({ projectId, isPrivate }: PrivateProjectTog
               queryClient.getQueryState(getGetProjectQueryKey(projectId))?.fetchStatus ===
                 "fetching")
           }
-          onChange={async (_event, checked) => {
-            if (projectId) {
-              try {
-                await adjustProject({
-                  projectId,
-                  data: {
-                    private: checked,
-                  },
-                });
-                queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
-                queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
-
-                if (checked) {
-                  enqueueSnackbar("The project has been made private", { variant: "success" });
-                } else {
-                  enqueueSnackbar("The project has been made public", { variant: "success" });
-                }
-              } catch (error) {
-                enqueueError(error);
-              }
-            }
-          }}
+          onChange={(_event, checked) => void projectPrivacyChangeHandler(checked)}
         />
       }
       label="Private"

@@ -10,7 +10,7 @@ const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 const withRoutes = nextRoutes({ outDir: "types" });
 
 const withMDX = nextMDX({
-  extension: /\.mdx?$/,
+  extension: /\.mdx?$/u,
   options: { providerImportSource: "@mdx-js/react", jsxImportSource: "@emotion/react" },
 });
 
@@ -32,10 +32,13 @@ let nextConfig = {
   eslint: { ignoreDuringBuilds: process.env.SKIP_CHECKS },
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
+  // replace empty string with undefined
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages: MONOREPO_MODE ? ["@squonk/mui-theme", "@squonk/sdf-parser"] : [],
   sassOptions: {
     prependData: `$assetsURL: '${
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       process.env.ASSET_URL || "https://squonk.informaticsmatters.org"
     }';`,
   },

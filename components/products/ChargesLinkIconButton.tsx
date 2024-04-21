@@ -1,4 +1,4 @@
-import type { ProductDetail } from "@squonk/account-server-client";
+import { type ProductDetail } from "@squonk/account-server-client";
 
 import { Receipt as ReceiptIcon } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";

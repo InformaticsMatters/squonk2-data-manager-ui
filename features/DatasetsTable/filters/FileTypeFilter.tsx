@@ -1,4 +1,4 @@
-import type { TypeSummary } from "@squonk/data-manager-client";
+import { type TypeSummary } from "@squonk/data-manager-client";
 import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
 import { getErrorMessage } from "../../../utils/next/orvalError";
@@ -21,7 +21,7 @@ export interface FileTypeFilterProps {
 export const FileTypeFilter = ({ fileType, setFileType }: FileTypeFilterProps) => {
   const { data, error, isError, isLoading } = useGetFileTypes();
 
-  const fileTypes = data?.types || [];
+  const fileTypes = data?.types ?? [];
 
   return (
     <AutocompleteFilter

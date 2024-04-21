@@ -1,13 +1,10 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.tabSize": 2,
-  "eslint.format.enable": true,
   "[typescriptreact][typescript][javascript]": {
-    "editor.rulers": [
-      100
-    ],
+    "editor.rulers": [100]
   },
   "javascript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.importModuleSpecifier": "relative",
-  "playwright.reuseBrowser": false,
+  "playwright.reuseBrowser": false
 }

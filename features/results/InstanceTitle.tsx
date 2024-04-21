@@ -1,4 +1,4 @@
-import type { InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceSummary } from "@squonk/data-manager-client";
 import { useGetInstance } from "@squonk/data-manager-client/instance";
 
 import Head from "next/head";

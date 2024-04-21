@@ -1,4 +1,4 @@
-import type { ProjectDetail } from "@squonk/data-manager-client";
+import { type ProjectDetail } from "@squonk/data-manager-client";
 
 export const PERMISSION_LEVELS = ["none", "editor", "administrator"] as const;
 
@@ -8,9 +8,9 @@ export const isAPermissionLevel = (value: string): value is PermissionLevel => {
 
 export type PermissionLevel = (typeof PERMISSION_LEVELS)[number];
 export type PermissionLevelFilter =
-  | [level: PermissionLevel, user: string]
   | [(typeof PERMISSION_LEVELS)[0], undefined]
-  | [(typeof PERMISSION_LEVELS)[0]];
+  | [(typeof PERMISSION_LEVELS)[0]]
+  | [level: PermissionLevel, user: string];
 
 export const filterProjectsByPermissionLevel = (
   level: PermissionLevelFilter[0],

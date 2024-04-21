@@ -2,7 +2,7 @@
  * Manage the *file* Protocol used in file selectors
  */
 
-import type { InputData } from "../../components/runCards/JobCard/JobModal";
+import { type InputData } from "../../components/runCards/JobCard/JobModal";
 
 export const FILE_PROTOCOL = "file://";
 
@@ -16,7 +16,7 @@ export const removeFileProtocol = (file: string) =>
 
 export const removeFileProtocolFromInputData = (file: InputData[string]) => {
   if (Array.isArray(file)) {
-    return file.map(removeFileProtocol);
+    return file.map((f) => removeFileProtocol(f));
   } else if (typeof file === "string") {
     return removeFileProtocol(file);
   }

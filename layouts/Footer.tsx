@@ -1,4 +1,3 @@
-import type { Theme } from "@mui/material";
 import {
   Container,
   Grid,
@@ -6,6 +5,7 @@ import {
   List,
   ListItem,
   Paper,
+  type Theme,
   Typography,
   useMediaQuery,
 } from "@mui/material";

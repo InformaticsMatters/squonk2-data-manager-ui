@@ -1,11 +1,11 @@
-import type { OrganisationDetail } from "@squonk/account-server-client";
+import { type OrganisationDetail } from "@squonk/account-server-client";
 import {
   getGetOrganisationUsersQueryKey,
   useAddOrganisationUser,
   useDeleteOrganisationUser,
   useGetOrganisationUsers,
 } from "@squonk/account-server-client/user";
-import type { DmError } from "@squonk/data-manager-client";
+import { type DmError } from "@squonk/data-manager-client";
 
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -49,7 +49,7 @@ export const OrganisationEditors = ({ organisation }: UnitEditorsProps) => {
               enqueueError(error);
             }
             // DM Queries
-            queryClient.invalidateQueries({
+            void queryClient.invalidateQueries({
               queryKey: getGetOrganisationUsersQueryKey(organisation.id),
             });
           } else {
@@ -65,7 +65,7 @@ export const OrganisationEditors = ({ organisation }: UnitEditorsProps) => {
               enqueueError(error);
             }
             // DM Queries
-            queryClient.invalidateQueries({
+            void queryClient.invalidateQueries({
               queryKey: getGetOrganisationUsersQueryKey(organisation.id),
             });
           } else {

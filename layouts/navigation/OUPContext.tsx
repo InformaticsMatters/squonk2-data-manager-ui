@@ -16,10 +16,10 @@ export const OUPContext = ({ header = false }: OUPContextProps) => {
   const [organisation] = useSelectedOrganisation();
   const currentProject = useCurrentProject();
 
-  if (unit || organisation || currentProject) {
+  if (!!unit || !!organisation || !!currentProject) {
     return (
       <>
-        {header && (
+        {!!header && (
           <Typography gutterBottom variant="h3">
             Project
           </Typography>

@@ -45,19 +45,19 @@ export const ResultsView = () => {
 
       <Grid container spacing={1}>
         <Grid item xs={12}>
-          {isInstancesError && (
+          {!!isInstancesError && (
             <Alert severity="warning">
               Instances failed to load ({getErrorMessage(instancesError)})
             </Alert>
           )}
         </Grid>
         <Grid item xs={12}>
-          {isTasksError && (
+          {!!isTasksError && (
             <Alert severity="warning">Tasks failed to load ({getErrorMessage(tasksError)})</Alert>
           )}
         </Grid>
         <Grid item xs={12}>
-          {(instances && !isInstancesLoading) || (tasks && !isTasksLoading) ? (
+          {!!(instances && !isInstancesLoading) || (tasks && !isTasksLoading) ? (
             <ResultCards
               instances={instances ?? []}
               resultTypes={resultTypes}

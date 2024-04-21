@@ -1,4 +1,4 @@
-import type { DatasetSummary, DatasetVersionSummary } from "@squonk/data-manager-client";
+import { type DatasetSummary, type DatasetVersionSummary } from "@squonk/data-manager-client";
 
 import { List } from "@mui/material";
 
@@ -43,14 +43,14 @@ export const VersionActionsSection = ({
 
         <DatasetSchemaListItem datasetId={dataset.dataset_id} version={version.version} />
 
-        {editable && (
+        {!!editable && (
           <DeleteDatasetListItem
             datasetId={dataset.dataset_id}
             version={version}
             onDelete={() => {
               // Reset selected version as it is being deleted
               const nextSelectableVersions = dataset.versions.filter(
-                (version) => version.version !== version.version,
+                (v) => v.version !== version.version,
               );
               if (nextSelectableVersions.length > 0) {
                 setVersion(nextSelectableVersions[0]);

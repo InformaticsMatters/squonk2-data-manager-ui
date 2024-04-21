@@ -4,8 +4,8 @@ import { Container } from "@mui/material";
 
 import { DocsNav } from "../../../components/DocsNav";
 import Layout from "../../../layouts/Layout";
-import login from "../assets/login.png"
-import keycloak from "../assets/keycloak.png"
+import login from "../assets/login.png";
+import keycloak from "../assets/keycloak.png";
 
 <Head>
   <title>Logging in - a How To guide</title>
@@ -35,4 +35,8 @@ from this example):
 
 To log out use the same **Account** drop down in the top right corner and choosing the **Logout** option.
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

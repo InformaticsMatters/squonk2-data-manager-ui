@@ -1,15 +1,12 @@
-import type { FC } from "react";
-import { useMemo } from "react";
+import { type FC, useMemo } from "react";
 
 import { Alert, Typography } from "@mui/material";
-import type { CoreOptions } from "@tanstack/react-table";
-import { createColumnHelper } from "@tanstack/react-table";
+import { type CoreOptions, createColumnHelper } from "@tanstack/react-table";
 
 import { CenterLoader } from "../../../../../../components/CenterLoader";
 import { DataTable } from "../../../../../../components/DataTable/DataTable";
 import { ModalWrapper } from "../../../../../../components/modals/ModalWrapper";
-import type { JSON_SCHEMA_TYPE } from "../../../../../../utils/app/jsonSchema";
-import { JSON_SCHEMA_TYPES } from "../../../../../../utils/app/jsonSchema";
+import { type JSON_SCHEMA_TYPE, JSON_SCHEMA_TYPES } from "../../../../../../utils/app/jsonSchema";
 import { getErrorMessage } from "../../../../../../utils/next/orvalError";
 import { DatasetSchemaDescriptionInput } from "./DatasetSchemaDescriptionInput";
 import { DatasetSchemaInputCell } from "./DatasetSchemaInputCell";
@@ -166,7 +163,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
 
     return (
       <>
-        {isSavingError &&
+        {!!isSavingError &&
           savingErrors.map(({ type, error }) => {
             return (
               <Alert key={type} severity="warning">
@@ -206,7 +203,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
       submitText="Save"
       title="Edit Schema"
       onClose={onClose}
-      onSubmit={saveSchema}
+      onSubmit={() => void saveSchema()}
     >
       {modalContents}
     </ModalWrapper>

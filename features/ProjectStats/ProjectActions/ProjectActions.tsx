@@ -6,7 +6,7 @@ import { Box, CircularProgress, IconButton, Tooltip } from "@mui/material";
 import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkIconButton";
 import { EditProjectButton } from "../../../components/projects/EditProjectButton";
 import { OpenProjectButton } from "../../../components/projects/OpenProjectButton";
-import type { ProjectId } from "../../../hooks/projectHooks";
+import { type ProjectId } from "../../../hooks/projectHooks";
 import { DeleteProjectButton } from "./DeleteProjectButton";
 
 export interface ProjectActionsProps {
@@ -34,7 +34,7 @@ export const ProjectActions = ({
   return project ? (
     <Box display="flex">
       <OpenProjectButton projectId={projectId} />
-      {(isEditor || isAdministrator) && (
+      {!!(isEditor || isAdministrator) && (
         <EditProjectButton projectId={project.project_id}>
           {({ openDialog }) => {
             return (
@@ -49,8 +49,8 @@ export const ProjectActions = ({
           }}
         </EditProjectButton>
       )}
-      {isCreator && <DeleteProjectButton project={project} />}
-      {(isEditor || isAdministrator) && <ChargesLinkIconButton productId={project.product_id} />}
+      {!!isCreator && <DeleteProjectButton project={project} />}
+      {!!(isEditor || isAdministrator) && <ChargesLinkIconButton productId={project.product_id} />}
     </Box>
   ) : null;
 };

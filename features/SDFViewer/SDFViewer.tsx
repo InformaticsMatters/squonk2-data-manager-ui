@@ -1,13 +1,11 @@
-import type { PropsWithChildren } from "react";
-import { useState } from "react";
+import { type PropsWithChildren, useState } from "react";
 
-import type { DmError, ErrorType } from "@squonk/data-manager-client";
 import { useGetProjectFile } from "@squonk/data-manager-client/project";
 
 import { Button, Typography } from "@mui/material";
 
 import { CenterLoader } from "../../components/CenterLoader";
-import type { SDFViewerConfig } from "../../utils/api/sdfViewer";
+import { type SDFViewerConfig } from "../../utils/api/sdfViewer";
 import { ConfigEditor } from "./ConfigEditor";
 import { SDFViewerData } from "./SDFViewerData";
 
@@ -25,7 +23,7 @@ export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
     data: schema,
     error,
     isLoading,
-  } = useGetProjectFile<any, ErrorType<DmError>>(project, {
+  } = useGetProjectFile<any>(project, {
     path,
     file: schemaFilename,
   });

@@ -1,5 +1,4 @@
-import type { ReactNode } from "react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import { Tooltip, Typography } from "@mui/material";
 
@@ -66,9 +65,18 @@ export const WarningDeleteButton = ({
 
   const content = <span>{children({ openModal: () => setOpen(true), isDeleting })}</span>;
 
+  const submitHandler = async () => {
+    setIsDeleting(true);
+    await onDelete();
+    if (isMounted()) {
+      setIsDeleting(false);
+      setOpen(false);
+    }
+  };
+
   return (
     <>
-      {tooltipText !== undefined ? <Tooltip title={tooltipText}>{content}</Tooltip> : content}
+      {tooltipText === undefined ? content : <Tooltip title={tooltipText}>{content}</Tooltip>}
 
       <ModalWrapper
         id={modalId}
@@ -77,14 +85,7 @@ export const WarningDeleteButton = ({
         submitText={submitText}
         title={title}
         onClose={() => setOpen(false)}
-        onSubmit={async () => {
-          setIsDeleting(true);
-          await onDelete();
-          if (isMounted()) {
-            setIsDeleting(false);
-            setOpen(false);
-          }
-        }}
+        onSubmit={() => void submitHandler()}
       >
         {modalChildren}
       </ModalWrapper>

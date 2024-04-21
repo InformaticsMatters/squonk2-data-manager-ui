@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 
-import type { FilePathFile, GetFilesParams } from "@squonk/data-manager-client";
+import { type FilePathFile, type GetFilesParams } from "@squonk/data-manager-client";
 import { useGetFiles } from "@squonk/data-manager-client/file-and-path";
 
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
 import { separateFileExtensionFromFileName } from "../../utils/app/files";
-import type { TableDir, TableFile } from "./types";
+import { type TableDir, type TableFile } from "./types";
 
 const getFullPath = (path: string[], fileName: string) => {
   if (path.length > 0) {

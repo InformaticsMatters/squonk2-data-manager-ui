@@ -1,10 +1,17 @@
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 
-import type { UnitGetResponse } from "@squonk/account-server-client";
+import { type UnitGetResponse } from "@squonk/account-server-client";
 
 import { DataUsage as DataUsageIcon, Receipt as ReceiptIcon } from "@mui/icons-material";
-import type { AutocompleteProps } from "@mui/material";
-import { Autocomplete, Box, IconButton, TextField, Tooltip, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  type AutocompleteProps,
+  Box,
+  IconButton,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 
 import { projectPayload, useCurrentProjectId } from "../../hooks/projectHooks";
 import { useGetVisibleUnits } from "../../hooks/useGetVisibleUnits";
@@ -12,7 +19,7 @@ import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next/localStorage";
 import { getErrorMessage } from "../../utils/next/orvalError";
-import type { PermissionLevelFilter } from "./filter";
+import { type PermissionLevelFilter } from "./filter";
 import { ItemIcons } from "./ItemIcons";
 
 interface AdornmentProps {
@@ -37,7 +44,7 @@ const Adornment = ({ title, href, children }: AdornmentProps) => (
 );
 
 export interface SelectUnitProps
-  extends Omit<AutocompleteProps<UnitGetResponse, false, false, false>, "renderInput" | "options"> {
+  extends Omit<AutocompleteProps<UnitGetResponse, false, false, false>, "options" | "renderInput"> {
   userFilter: PermissionLevelFilter;
 }
 
@@ -67,7 +74,7 @@ export const SelectUnit = ({
         getOptionLabel={(option) => option.name}
         id="unit-selection"
         isOptionEqualToValue={(option, value) => option.id === value.id}
-        loading={isUnitsLoading && !!organisation?.id}
+        loading={isUnitsLoading ? !!organisation?.id : undefined}
         options={units ?? []}
         renderInput={(params) => (
           <TextField
@@ -98,7 +105,7 @@ export const SelectUnit = ({
             <Box component="span" display="inline-block" pr={1}>
               <ItemIcons item={option} />
             </Box>
-            {option.name} {option.owner_id && <>({option.owner_id})</>}
+            {option.name} {option.owner_id ? <>({option.owner_id})</> : null}
           </Box>
         )}
         value={unit ?? null}

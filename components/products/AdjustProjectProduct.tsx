@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { ProductDetail } from "@squonk/account-server-client";
+import { type ProductDetail } from "@squonk/account-server-client";
 import {
   getGetProductQueryKey,
   getGetProductsQueryKey,
@@ -74,7 +74,7 @@ export const AdjustProjectProduct = ({ product, allowance }: AdjustProjectProduc
               sx={{ maxWidth: 100 }}
               type="number"
             />
-            {cost && <span>Cost: {formatCoins(cost * values.allowance).slice(1)}C</span>}
+            {!!cost && <span>Cost: {formatCoins(cost * values.allowance).slice(1)}C</span>}
           </Box>
         )}
       </FormikModalWrapper>

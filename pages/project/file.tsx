@@ -1,20 +1,22 @@
 import { withPageAuthRequired as withPageAuthRequiredSSR } from "@auth0/nextjs-auth0";
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
-import type { Theme } from "@mui/material";
-import { Container, useMediaQuery } from "@mui/material";
+import { Container, type Theme, useMediaQuery } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
-import type { GetServerSideProps } from "nextjs-routes";
+import { type GetServerSideProps } from "nextjs-routes";
 
 import { PlaintextViewer } from "../../features/PlaintextViewer";
-import type { NotSuccessful, Successful } from "../../utils/api/plaintextViewerSSR";
-import { plaintextViewerSSR } from "../../utils/api/plaintextViewerSSR";
+import {
+  type NotSuccessful,
+  plaintextViewerSSR,
+  type Successful,
+} from "../../utils/api/plaintextViewerSSR";
 import { createErrorProps } from "../../utils/api/serverSidePropsError";
 import { pathFromQuery } from "../../utils/app/paths";
 import { projectFileURL } from "../../utils/app/routes";
 import { getFullReturnTo } from "../../utils/next/ssr";
 
-export type FileProps = Successful | NotSuccessful;
+export type FileProps = NotSuccessful | Successful;
 
 const isSuccessful = (props: FileProps): props is Successful =>
   typeof (props as Successful).content === "string";
@@ -40,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<FileProps> = async (ctx) => 
 
       const url = projectFileURL(project, path, file);
 
-      return await plaintextViewerSSR(req, res, { url, compressed });
+      return plaintextViewerSSR(req, res, { url, compressed });
     },
   })(ctx);
 };

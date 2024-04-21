@@ -1,13 +1,12 @@
-import type { JobSummary } from "@squonk/data-manager-client";
+import { type JobSummary } from "@squonk/data-manager-client";
 
 import { Alert, Chip, CircularProgress, Link, Typography, useTheme } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import { BaseCard } from "../../BaseCard";
 import { Chips } from "../../Chips";
-import type { InstancesListProps } from "../InstancesList";
-import type { RunJobButtonProps } from "./RunJobButton";
-import { RunJobButton } from "./RunJobButton";
+import { type InstancesListProps } from "../InstancesList";
+import { RunJobButton, type RunJobButtonProps } from "./RunJobButton";
 
 const InstancesList = dynamic<InstancesListProps>(
   () => import("../InstancesList").then((mod) => mod.InstancesList),
@@ -63,6 +62,7 @@ export const JobCard = ({ projectId, job, disabled = false }: ApplicationCardPro
         </Link>
       </Typography>
       <Typography gutterBottom>
+        {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
         <em>{job.category || "<none>"}</em> : {job.collection}
       </Typography>
       <Chips>

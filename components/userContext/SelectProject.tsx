@@ -1,13 +1,14 @@
-import type { AutocompleteProps } from "@mui/material";
-import { Autocomplete, TextField } from "@mui/material";
+import { Autocomplete, type AutocompleteProps, TextField } from "@mui/material";
 
-import type { ProjectSubscription } from "../../features/ProjectStats/useProjectSubscriptions";
-import { useProjectSubscriptions } from "../../features/ProjectStats/useProjectSubscriptions";
+import {
+  type ProjectSubscription,
+  useProjectSubscriptions,
+} from "../../features/ProjectStats/useProjectSubscriptions";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 
 export type SelectProjectProps = Omit<
   AutocompleteProps<ProjectSubscription, false, false, false>,
-  "renderInput" | "options"
+  "options" | "renderInput"
 >;
 
 export const SelectProject = (props: SelectProjectProps) => {

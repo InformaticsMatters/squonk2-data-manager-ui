@@ -18,7 +18,7 @@ export default defineConfig({
         trace: "on",
       },
       retries: 0,
-      timeout: 60000,
+      timeout: 60_000,
       testMatch: "**/*.browser.ts",
     },
     {
@@ -30,7 +30,7 @@ export default defineConfig({
         trace: "on",
       },
       retries: 3,
-      timeout: 60000,
+      timeout: 60_000,
       testMatch: "**/*.browser-authenticated.ts",
     },
     { name: "node", testMatch: "**/*.node.ts" },

@@ -12,9 +12,9 @@ import { ProjectFileUpload } from "../features/ProjectTable/ProjectFileUpload";
 import { UserBootstrapper } from "../features/UserBootstrapper";
 import { useCurrentProject } from "../hooks/projectHooks";
 import Layout from "../layouts/Layout";
-import type { NotSuccessful, ReactQueryPageProps } from "../utils/next/ssr";
+import { type NotSuccessful, type ReactQueryPageProps } from "../utils/next/ssr";
 
-export type ProjectProps = Record<string, never> | NotSuccessful | ReactQueryPageProps;
+export type ProjectProps = NotSuccessful | ReactQueryPageProps | Record<string, never>;
 
 /**
  * The project page display and allows the user to manage files inside a project.

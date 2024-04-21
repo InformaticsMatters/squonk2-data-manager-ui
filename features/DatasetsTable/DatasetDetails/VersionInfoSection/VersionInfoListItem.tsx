@@ -8,7 +8,7 @@ export interface VersionInfoListItemProps {
   /**
    * Value of the information displayed on the right side.
    */
-  value?: string | number;
+  value?: number | string;
 }
 
 /**

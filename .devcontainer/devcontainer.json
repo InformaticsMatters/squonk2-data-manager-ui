@@ -1,54 +1,54 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node
 {
-	"name": "Node.js",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/javascript-node:0-18",
-	"features": {
-		"ghcr.io/devcontainers-contrib/features/pnpm:2": {
-			"version": "8.15.4"
-		}
-	},
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pnpm i && pnpm exec playwright install-deps && pnpm exec playwright install",
-	// Configure tool-specific properties.
-	"customizations": {
-		// Configure properties specific to VS Code.
-		"vscode": {
-			// Add the IDs of extensions you want installed when the container is created.
-			"extensions": [
-				"dbaeumer.vscode-eslint",
-				"vivaxy.vscode-conventional-commits",
-				"streetsidesoftware.code-spell-checker",
-				"unifiedjs.vscode-mdx"
-			]
-		}
-	},
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
-	"secrets": {
-		"DATA_MANAGER_API_SERVER": {
-			"description": "URL the data manager API"
-		},
-		"ACCOUNT_SERVER_API_SERVER": {
-			"description": "URL the account server API"
-		},
-		"KEYCLOAK_URL": {
-			"description": "URL to Keycloak Realm used for Auth"
-		},
-		"AUTH0_CLIENT_ID": {
-			"description": "Client ID for Keycloak Client"
-		},
-		"AUTH0_CLIENT_SECRET": {
-			"description": "Secret corresponding to Client ID for Keycloak Client"
-		}
-	},
-	"containerEnv": {
-		"BASE_URL": "${localEnv:CODESPACE_NAME}-3000.${localEnv:GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}",
-		"AUTH0_SECRET": "LONG_RANDOM_VALUE"
-	}
+  "name": "Node.js",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:0-18",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/pnpm:2": {
+      "version": "8.15.4"
+    }
+  },
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  // "features": {},
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "pnpm i && pnpm exec playwright install-deps && pnpm exec playwright install",
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "vivaxy.vscode-conventional-commits",
+        "streetsidesoftware.code-spell-checker",
+        "unifiedjs.vscode-mdx"
+      ]
+    }
+  },
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+  "secrets": {
+    "DATA_MANAGER_API_SERVER": {
+      "description": "URL the data manager API"
+    },
+    "ACCOUNT_SERVER_API_SERVER": {
+      "description": "URL the account server API"
+    },
+    "KEYCLOAK_URL": {
+      "description": "URL to Keycloak Realm used for Auth"
+    },
+    "AUTH0_CLIENT_ID": {
+      "description": "Client ID for Keycloak Client"
+    },
+    "AUTH0_CLIENT_SECRET": {
+      "description": "Secret corresponding to Client ID for Keycloak Client"
+    }
+  },
+  "containerEnv": {
+    "BASE_URL": "${localEnv:CODESPACE_NAME}-3000.${localEnv:GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}",
+    "AUTH0_SECRET": "LONG_RANDOM_VALUE"
+  }
 }

@@ -1,8 +1,7 @@
-import type { FC, ReactNode } from "react";
-import { useMemo } from "react";
+import { type FC, type ReactNode, useMemo } from "react";
 
 import { PageSectionContext } from "./PageSectionContext";
-import type { PageSectionContextType } from "./types";
+import { type PageSectionContextType } from "./types";
 
 export interface PageSectionProviderProps extends PageSectionContextType {
   children: ReactNode;

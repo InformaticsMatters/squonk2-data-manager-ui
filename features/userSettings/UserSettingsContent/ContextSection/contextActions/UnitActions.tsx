@@ -26,7 +26,7 @@ export const UnitActions = () => {
 
   return (
     <List sx={{ width: "100%" }}>
-      {(isOrganisationOwner || organisation?.caller_is_member) &&
+      {!!(isOrganisationOwner || organisation?.caller_is_member) &&
         organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && <CreateUnitListItem />}
       {personalUnit === undefined &&
         !isLoading &&
@@ -34,13 +34,15 @@ export const UnitActions = () => {
         organisation?.name === process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && (
           <CreateDefaultUnitListItem />
         )}
-      {isUnitOwner && unit && (
+      {!!isUnitOwner && !!unit && (
         <DeleteUnitListItem unit={unit} onDelete={() => setUnit(undefined)} />
       )}
-      {isUnitOwner && unit && organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && (
-        <EditUnitListItem unit={unit} />
-      )}
-      {unit && (unit.caller_is_member || unit.owner_id === user.username) && (
+      {!!isUnitOwner &&
+        !!unit &&
+        organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && (
+          <EditUnitListItem unit={unit} />
+        )}
+      {!!unit && !!(unit.caller_is_member || unit.owner_id === user.username) && (
         <CreateProjectListItem unit={unit} />
       )}
     </List>

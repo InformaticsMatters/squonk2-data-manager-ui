@@ -1,16 +1,10 @@
-import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 
 import {
   ExpandLess,
   ExpandMore as ExpandMoreIcon,
   SearchRounded as SearchRoundedIcon,
 } from "@mui/icons-material";
-import type {
-  TableCellProps as MuiCellProps,
-  TableProps as MuiTableProps,
-  TableRowProps as MuiRowProps,
-} from "@mui/material";
 import {
   Box,
   IconButton,
@@ -19,26 +13,23 @@ import {
   Table,
   TableBody,
   TableCell,
+  type TableCellProps as MuiCellProps,
   TableContainer,
   TableHead,
+  type TableProps as MuiTableProps,
   TableRow,
+  type TableRowProps as MuiRowProps,
   TableSortLabel,
   TextField,
   Toolbar,
 } from "@mui/material";
 import { rankItem } from "@tanstack/match-sorter-utils";
-import type {
-  ColumnDef,
-  ColumnFiltersState,
-  CoreOptions,
-  ExpandedState,
-  FilterFn,
-  Row,
-  RowSelectionState,
-  SortingState,
-  Table as RTable,
-} from "@tanstack/react-table";
 import {
+  type ColumnDef,
+  type ColumnFiltersState,
+  type CoreOptions,
+  type ExpandedState,
+  type FilterFn,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -47,6 +38,10 @@ import {
   getFacetedUniqueValues,
   getFilteredRowModel,
   getSortedRowModel,
+  type Row,
+  type RowSelectionState,
+  type SortingState,
+  type Table as RTable,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -159,7 +154,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     customCellProps,
     customRowProps,
   } = props;
-  const tableData = useMemo(() => data || [], [data]);
+  const tableData = useMemo(() => data ?? [], [data]);
 
   // Table State
   const [globalFilter, setGlobalFilter] = useState("");
@@ -267,10 +262,10 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
 
   const tableContents = (
     <>
-      {(ToolbarChild || enableSearch) && (
+      {!!ToolbarChild || !!enableSearch ? (
         <Toolbar sx={{ pt: 2, alignItems: "flex-start", gap: (theme) => theme.spacing(1) }}>
           {ToolbarChild}
-          {enableSearch && (
+          {!!enableSearch && (
             <TextField
               inputProps={{ "aria-label": "search" }}
               InputProps={{
@@ -287,8 +282,8 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
             />
           )}
         </Toolbar>
-      )}
-      {ToolbarActionChild && <Toolbar>{ToolbarActionChild}</Toolbar>}
+      ) : null}
+      {ToolbarActionChild ? <Toolbar>{ToolbarActionChild}</Toolbar> : null}
       <Table size="small" {...customTableProps}>
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (

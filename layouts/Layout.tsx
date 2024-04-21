@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import { Box, LinearProgress, NoSsr, useMediaQuery } from "@mui/material";
 
@@ -18,7 +18,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <Box display="flex" flexDirection="column" minHeight="100vh">
       {!isPrint && <Header />}
-      {isTransitioning && <LinearProgress />}
+      {!!isTransitioning && <LinearProgress />}
       {/* <Slide appear direction="right" in={!isTransitioning}> */}
       <Box component="main" paddingY={2}>
         {children}

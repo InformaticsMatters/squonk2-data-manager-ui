@@ -1,10 +1,10 @@
-import type { DatasetSummary, DatasetVersionSummary } from "@squonk/data-manager-client";
+import { type DatasetSummary, type DatasetVersionSummary } from "@squonk/data-manager-client";
 
 type TableDatasetBase = {
   // Table data
   fileName: string;
   numberOfProjects: number;
-  labels: Record<string, string | string[]>;
+  labels: Record<string, string[] | string>;
   dataset_id: string;
   editors: string[];
   version?: number;

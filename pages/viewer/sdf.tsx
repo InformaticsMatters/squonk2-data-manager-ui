@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { RoleRequired } from "../../components/auth/RoleRequired";
 import { AS_ROLES, DM_ROLES } from "../../constants/auth";
 import { SDFViewer } from "../../features/SDFViewer";
-import type { SDFViewerDataProps } from "../../features/SDFViewer/SDFViewerData";
+import { type SDFViewerDataProps } from "../../features/SDFViewer/SDFViewerData";
 import Layout from "../../layouts/Layout";
 
 const SDF = () => {

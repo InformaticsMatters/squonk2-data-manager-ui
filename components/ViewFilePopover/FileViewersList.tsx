@@ -17,7 +17,7 @@ export const FileViewersList = ({ fileName, path, onClick }: FileViewersListProp
   return (
     <List sx={{ maxWidth: "600px" }}>
       <FilePlainTextViewerListItem fileName={fileName} path={path} onClick={onClick} />
-      {projectId && (
+      {!!projectId && (
         <BrowserViewerListItem
           fileName={fileName}
           path={path}

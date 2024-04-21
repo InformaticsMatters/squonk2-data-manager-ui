@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { ProductDetail } from "@squonk/account-server-client";
+import { type ProductDetail } from "@squonk/account-server-client";
 import { useGetProduct, useGetProductCharges } from "@squonk/account-server-client/product";
 
 import {
@@ -76,7 +76,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
         <Table size="small" sx={{ marginBottom: 2 }}>
           <TableHead>
             <TableRow>
-              <TableCell></TableCell>
+              <TableCell />
               <TableCell>Merchant</TableCell>
               <TableCell>Job</TableCell>
               <TableCell>Job Collection</TableCell>
@@ -87,6 +87,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
           <TableBody>
             {processingCharges?.length ? (
               processingCharges.map((charge, index) => (
+                // eslint-disable-next-line react/no-array-index-key
                 <TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell sx={{ wordBreak: "break-all" }}>{charge.merchant_name}</TableCell>
@@ -118,7 +119,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell></TableCell>
+              <TableCell />
               <TableCell>Date</TableCell>
               <TableCell>Bytes</TableCell>
               <TableCell>Coins</TableCell>

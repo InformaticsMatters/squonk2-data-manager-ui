@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import type { JobSummary } from "@squonk/data-manager-client";
+import { type JobSummary } from "@squonk/data-manager-client";
 
 import { Button, CircularProgress, Tooltip } from "@mui/material";
 import dynamic from "next/dynamic";
 
-import type { JobModalProps } from "./JobModal";
+import { type JobModalProps } from "./JobModal";
 
 export interface RunJobButtonProps extends Pick<JobModalProps, "jobId" | "onLaunch" | "projectId"> {
   disabled: JobSummary["disabled"];
@@ -38,7 +38,7 @@ export const RunJobButton = ({ projectId, jobId, disabled, onLaunch }: RunJobBut
           </Button>
         </span>
       </Tooltip>
-      {hasOpened && (
+      {!!hasOpened && (
         <JobModal
           jobId={jobId}
           open={open}

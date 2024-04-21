@@ -1,4 +1,8 @@
-import type { DmError, InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
+import {
+  type DmError,
+  type InstanceGetResponse,
+  type InstanceSummary,
+} from "@squonk/data-manager-client";
 import {
   getGetInstancesQueryKey,
   useTerminateInstance,
@@ -16,8 +20,8 @@ export interface TerminateInstanceProps {
    * Instance to terminate
    */
   instanceId: InstanceSummary["id"];
-  phase: InstanceSummary["phase"] | InstanceGetResponse["phase"];
-  projectId: InstanceSummary["project_id"] | InstanceGetResponse["project_id"];
+  phase: InstanceGetResponse["phase"] | InstanceSummary["phase"];
+  projectId: InstanceGetResponse["project_id"] | InstanceSummary["project_id"];
   disabled?: boolean;
   /**
    * Called when the delete request is successfully made
@@ -50,8 +54,8 @@ export const TerminateInstance = ({
       onDelete={async () => {
         try {
           await terminateInstance({ instanceId });
-          queryClient.invalidateQueries({ queryKey: getGetInstancesQueryKey() });
-          queryClient.invalidateQueries({
+          void queryClient.invalidateQueries({ queryKey: getGetInstancesQueryKey() });
+          void queryClient.invalidateQueries({
             queryKey: getGetInstancesQueryKey({ project_id: projectId }),
           });
 

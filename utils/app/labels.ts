@@ -1,6 +1,7 @@
-import type { DatasetVersionSummary } from "@squonk/data-manager-client";
+import { type DatasetVersionSummary } from "@squonk/data-manager-client";
 
-import { mergeWith } from "lodash-es"; // No `just` equivalent yet https://github.com/angus-c/just/issues/434
+// No `just` equivalent yet https://github.com/angus-c/just/issues/434
+import { mergeWith } from "lodash-es";
 
 /**
  *  Formats `[key: string, value: string | string[]]` pairs into a label string
@@ -15,8 +16,8 @@ import { mergeWith } from "lodash-es"; // No `just` equivalent yet https://githu
  * @param value value or values of label
  * @returns formatted label string
  */
-export const labelFormatter = (label: string, value: string | string[]) => {
-  const uniqueValues = Array.from(new Set(value));
+export const labelFormatter = (label: string, value: string[] | string) => {
+  const uniqueValues = [...new Set(value)];
 
   if (value === "" || (uniqueValues.length === 1 && uniqueValues[0] === "")) {
     // case: EMPTY STRING
@@ -37,7 +38,7 @@ const reducer = (labelsA: Labels, labelsB: Labels) => {
     // combine the values - this only happens to matches between object keys
     const values = [valuesA, valuesB].filter((value) => value !== undefined).flat();
     // Remove duplicates before returning
-    return Array.from(new Set(values));
+    return [...new Set(values)];
   });
 };
 
@@ -58,7 +59,7 @@ export const combineLabels = (versions: DatasetVersionSummary[]) => {
 
   // In turn combine each object.
   // I use reduce here as the lodash types don't handle spread parameters well
-  const combinedLabels = labels.reduce(reducer);
+  const combinedLabels = labels.reduce((accumulator, element) => reducer(accumulator, element));
 
-  return combinedLabels as Record<string, string | string[]>;
+  return combinedLabels as Record<string, string[] | string>;
 };

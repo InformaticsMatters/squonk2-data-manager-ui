@@ -1,8 +1,8 @@
-import type { Ketcher } from "ketcher-core";
+import { type Ketcher } from "ketcher-core";
 
 // Need to add ketcher type as it abuses the window
 declare global {
-  // eslint-disable-next-line no-var
+  // eslint-disable-next-line no-var, vars-on-top
   var ketcher: Ketcher | undefined;
 }
 

@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 
-import type { OrganisationDetail } from "@squonk/account-server-client";
-import { OrganisationDetailDefaultProductPrivacy } from "@squonk/account-server-client";
+import {
+  type OrganisationDetail,
+  OrganisationDetailDefaultProductPrivacy,
+} from "@squonk/account-server-client";
 import { useGetDefaultOrganisation } from "@squonk/account-server-client/organisation";
 import { useGetProduct } from "@squonk/account-server-client/product";
 

@@ -1,5 +1,4 @@
-import type { Dayjs } from "dayjs";
-import dayjs from "dayjs";
+import dayjs, { type Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 
 import { DATE_FORMAT } from "../../constants/datetimes";

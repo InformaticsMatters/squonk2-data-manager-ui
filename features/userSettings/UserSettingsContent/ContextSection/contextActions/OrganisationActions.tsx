@@ -20,9 +20,9 @@ export const OrganisationActions = () => {
 
   return (
     <List sx={{ width: "100%" }}>
-      {hasAdminRole && <CreateOrganisationListItem />}
-      {isOrganisationOwner &&
-        organisation &&
+      {!!hasAdminRole && <CreateOrganisationListItem />}
+      {!!isOrganisationOwner &&
+        !!organisation &&
         organisation.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && (
           <EditOrganisationListItem organisation={organisation} />
         )}

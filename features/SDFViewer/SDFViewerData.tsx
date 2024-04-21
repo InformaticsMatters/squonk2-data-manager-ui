@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import type { SDFRecord } from "@squonk/sdf-parser";
+import { type SDFRecord } from "@squonk/sdf-parser";
 
 import { Alert, AlertTitle, Box, LinearProgress, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
@@ -9,8 +9,7 @@ import { nanoid } from "nanoid";
 import { MolCard } from "../../components/MolCard";
 import CalculationsTable from "../../components/MolCard/CalculationsTable";
 import { ScatterPlot } from "../../components/ScatterPlot/ScatterPlot";
-import type { SDFViewerConfig } from "../../utils/api/sdfViewer";
-import { censorConfig } from "../../utils/api/sdfViewer";
+import { censorConfig, type SDFViewerConfig } from "../../utils/api/sdfViewer";
 
 const getCards = (molecules: Must<Molecule>[], propsToHide: string[] = []) => {
   return molecules.slice(0, 50).map((molecule) => {
@@ -27,7 +26,9 @@ const getCards = (molecules: Must<Molecule>[], propsToHide: string[] = []) => {
         molFile={molecule.molFile}
         variant="molFile"
       >
-        {properties.length ? <CalculationsTable fontSize="0.7rem" properties={properties} /> : null}
+        {properties.length > 0 ? (
+          <CalculationsTable fontSize="0.7rem" properties={properties} />
+        ) : null}
       </MolCard>
     );
   });

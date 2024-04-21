@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import { CloseRounded as CloseRoundedIcon } from "@mui/icons-material";
 import {
@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 
 import { SlideUpTransition } from "../SlideUpTransition";
-import type { BaseModalWrapperProps } from "./types";
+import { type BaseModalWrapperProps } from "./types";
 
 export interface ModalWrapperProps extends BaseModalWrapperProps {
   children: ReactNode;
@@ -76,7 +76,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       <DialogContent>{children}</DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
-        {onSubmit && (
+        {!!onSubmit && (
           <Button color="primary" disabled={submitDisabled} onClick={onSubmit}>
             {submitText}
           </Button>

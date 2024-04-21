@@ -13,7 +13,7 @@
 
 ## API Compatibility
 
-The Data Manager UI will usually only work with specific API versions.  A major version bump in the UI (E.g. 1.x to 2.y) will correspond to a major version change in either the data-manager API or the account-server API.
+The Data Manager UI will usually only work with specific API versions. A major version bump in the UI (E.g. 1.x to 2.y) will correspond to a major version change in either the data-manager API or the account-server API.
 
 ### Compatibility Table
 
@@ -22,7 +22,8 @@ The Data Manager UI will usually only work with specific API versions.  A major 
 | 1   | 1      | 1      |
 | 2   | 1      | 2      |
 | 3   | 2      | 2      |
-___
+
+---
 
 ## Changes
 
@@ -62,6 +63,7 @@ Then run:
 
 - `pnpm t` to run the tests in headless mode
 - `pnpm test:debug` to run the tests headed in debug mode
+
 ### Code Quality
 
 We use a combination of `Husky`, `lint-staged` and `eslint` to format code to a standard style (see the `.eslintrc` file).
@@ -82,6 +84,7 @@ build commands, which can be run from the project clone to produce an
 Deployment to Kubernetes is handled by our AWX-compliant [Ansible playbook repo].
 
 ## Local/alternative configuration
+
 A `.env` file is injected by Kubernetes at run-time that provides values
 for numerous environment variables. The `.env.*` used at build time is
 `.env.staging`, but this can be changed by using the build-arg `FLAVOUR`.
@@ -125,4 +128,3 @@ Due to the use of [MDX](https://mdxjs.com/) and the node-dependent release mecha
 
 [ansible playbook repo]: https://github.com/InformaticsMatters/squonk2-data-manager-ui-ansible
 [nginx]: https://hub.docker.com/_/nginx
-

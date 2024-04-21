@@ -1,4 +1,4 @@
-import type { InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceSummary } from "@squonk/data-manager-client";
 import { useGetInstance } from "@squonk/data-manager-client/instance";
 
 import { Alert, Box } from "@mui/material";
@@ -6,7 +6,7 @@ import { captureException } from "@sentry/nextjs";
 
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { CenterLoader } from "../CenterLoader";
-import type { ProjectListItemProps } from "../projects/ProjectListItem";
+import { type ProjectListItemProps } from "../projects/ProjectListItem";
 import { ResultApplicationCard } from "./ResultApplicationCard";
 import { ResultJobCard } from "./ResultJobCard";
 

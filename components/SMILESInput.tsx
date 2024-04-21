@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useIsASketcherOpen } from "../state/sketcherState";
 import { CenterLoader } from "./CenterLoader";
-import type { SketcherProps } from "./Sketcher";
+import { type SketcherProps } from "./Sketcher";
 
 const Sketcher = dynamic<SketcherProps>(() => import("./Sketcher").then((mod) => mod.Sketcher), {
   ssr: false,
@@ -42,15 +42,15 @@ export interface SMILESInputProps {
   /**
    * whether the sketcher is displayed by default or not
    */
-  initialMode?: "smiles" | "sketcher";
+  initialMode?: "sketcher" | "smiles";
   /**
    * Width of sketcher canvas
    */
-  width?: string | number;
+  width?: number | string;
   /**
    * Height of sketcher canvas
    */
-  height?: string | number;
+  height?: number | string;
   /**
    * Whether the edit button to enable the sketcher should be disabled
    */
@@ -116,6 +116,28 @@ export const SMILESInput = ({
     );
   }
 
+  const saveHandler = async () => {
+    const ketcher = global.ketcher;
+    try {
+      const smi = await ketcher?.getSmiles();
+      if (smi === undefined) {
+        enqueueError("Smiles not obtained");
+      } else {
+        setSmiles(smi);
+        setMode("smiles");
+        onSave(smi);
+        onClose && onClose();
+        setIsASketcherOpen(false);
+      }
+    } catch (error) {
+      if (error !== undefined) {
+        console.error(error);
+        enqueueError(error);
+        captureException(error);
+      }
+    }
+  };
+
   return (
     <Box display="flex" flexDirection="column" gap={1} width={width}>
       <Box height={height}>
@@ -132,31 +154,7 @@ export const SMILESInput = ({
         >
           Cancel
         </Button>
-        <Button
-          onClick={async () => {
-            const ketcher = global.ketcher;
-            try {
-              const smi = await ketcher?.getSmiles();
-              if (smi !== undefined) {
-                setSmiles(smi);
-                setMode("smiles");
-                onSave(smi);
-                onClose && onClose();
-                setIsASketcherOpen(false);
-              } else {
-                enqueueError("Smiles not obtained");
-              }
-            } catch (error) {
-              if (error !== undefined) {
-                console.error(error);
-                enqueueError(error);
-                captureException(error);
-              }
-            }
-          }}
-        >
-          Save
-        </Button>
+        <Button onClick={() => void saveHandler()}>Save</Button>
       </ButtonGroup>
     </Box>
   );

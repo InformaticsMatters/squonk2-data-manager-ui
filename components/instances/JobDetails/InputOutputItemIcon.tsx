@@ -6,7 +6,7 @@ import {
 } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 
-import type { InputFieldSchema } from "../../runCards/JobCard/JobInputFields";
+import { type InputFieldSchema } from "../../runCards/JobCard/JobInputFields";
 
 export interface InputOutputItemIconProps {
   type: InputFieldSchema["type"];

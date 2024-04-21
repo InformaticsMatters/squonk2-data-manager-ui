@@ -1,9 +1,9 @@
-import type { FC, ReactNode } from "react";
+import { type FC, type ReactNode } from "react";
 
 import { Box, Typography } from "@mui/material";
 
 import { PageSectionProvider } from "./PageSectionProvider";
-import type { PageSectionLevel } from "./types";
+import { type PageSectionLevel } from "./types";
 import { usePageSectionContext } from "./usePageSectionContext";
 
 export interface PageSectionProps {

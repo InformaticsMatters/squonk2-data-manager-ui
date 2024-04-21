@@ -1,20 +1,10 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.tabSize": 2,
-  "eslint.format.enable": true,
   "[typescriptreact][typescript][javascript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
-    },
-    "editor.rulers": [
-      100
-    ],
+    "editor.rulers": [100]
   },
   "javascript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.importModuleSpecifier": "relative",
-  "playwright.reuseBrowser": false,
-  "eslint.options": {
-    "resolvePluginsRelativeTo": "../../libs/eslint-config"
-  },
+  "playwright.reuseBrowser": false
 }

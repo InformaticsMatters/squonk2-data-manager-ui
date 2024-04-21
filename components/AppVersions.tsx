@@ -19,12 +19,12 @@ export const AppVersions = () => {
         <ListItem>
           <ListItemText primary={`UI: ${process.env.NEXT_PUBLIC_APP_VERSION}`} />
         </ListItem>
-        {dmData?.version && (
+        {!!dmData?.version && (
           <ListItem>
             <ListItemText primary={`Data Manager: ${dmData.version}`} />
           </ListItem>
         )}
-        {asData?.version && (
+        {!!asData?.version && (
           <ListItem>
             <ListItemText primary={`Account Server: ${asData.version}`} />
           </ListItem>

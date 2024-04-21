@@ -1,4 +1,4 @@
-import type { DmError, TaskSummary } from "@squonk/data-manager-client";
+import { type DmError, type TaskSummary } from "@squonk/data-manager-client";
 import { getGetTasksQueryKey, useDeleteTask } from "@squonk/data-manager-client/task";
 
 import { Button, CardContent } from "@mui/material";
@@ -49,8 +49,8 @@ export const ResultTaskCard = ({ task, collapsedByDefault = true }: ResultTaskCa
           onDelete={async () => {
             try {
               await deleteTask({ taskId: task.id });
-              queryClient.invalidateQueries({ queryKey: getGetTasksQueryKey() });
-              queryClient.invalidateQueries({
+              void queryClient.invalidateQueries({ queryKey: getGetTasksQueryKey() });
+              void queryClient.invalidateQueries({
                 queryKey: getGetTasksQueryKey({ project_id: projectId }),
               });
 

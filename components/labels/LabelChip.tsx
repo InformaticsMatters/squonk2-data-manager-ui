@@ -1,5 +1,4 @@
-import type { ChipProps } from "@mui/material";
-import { Chip } from "@mui/material";
+import { Chip, type ChipProps } from "@mui/material";
 
 import { labelFormatter } from "../../utils/app/labels";
 
@@ -12,7 +11,7 @@ export interface LabelChipProps extends ChipProps {
    * Determines the text displayed on the right-hand side of the `=`.
    * See the docs for './utils/labelUtils'
    */
-  values: string | string[];
+  values: string[] | string;
 }
 
 /**

@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import type {
-  DmError,
-  InstanceGetResponse,
-  InstanceSummary,
-  JobSummary,
+import {
+  type DmError,
+  type InstanceGetResponse,
+  type InstanceSummary,
+  type JobSummary,
 } from "@squonk/data-manager-client";
 import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
 import { Box, Grid, TextField, Typography } from "@mui/material";
-import type { FormProps } from "@rjsf/core";
+import { type FormProps } from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
 import { useQueryClient } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
@@ -18,9 +18,8 @@ import dynamic from "next/dynamic";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { CenterLoader } from "../../CenterLoader";
 import { ModalWrapper } from "../../modals/ModalWrapper";
-import type { DebugValue } from "../DebugCheckbox";
-import { DebugCheckbox } from "../DebugCheckbox";
-import type { CommonModalProps } from "../types";
+import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
+import { type CommonModalProps } from "../types";
 import { type InputSchema, type JobInputFieldsProps, validateInputData } from "./JobInputFields";
 
 const JobInputFields = dynamic<JobInputFieldsProps>(
@@ -33,13 +32,13 @@ const Form = dynamic<FormProps>(() => import("@rjsf/mui").then((mod) => mod.Form
   loading: () => <CenterLoader />,
 });
 
-export type InputData = Record<string, string | string[] | undefined>;
+export type InputData = Record<string, string[] | string | undefined>;
 
 interface JobSpecification {
   collection: string;
   job: string;
   version: string;
-  variables: { [key: string]: string | string[] };
+  variables: Record<string, string[] | string>;
 }
 
 export interface JobModalProps extends CommonModalProps {
@@ -51,16 +50,16 @@ export interface JobModalProps extends CommonModalProps {
    * An existing instance of this job from which fields take their default values.
    * Allows loading form values from a previous instance
    */
-  instance?: InstanceSummary | InstanceGetResponse;
+  instance?: InstanceGetResponse | InstanceSummary;
 }
 
 const validateJobInputs = (required: string[], inputsData: InputData) => {
   const inputsDataIsValid = Object.values(inputsData)
-    .map(validateInputData)
-    .every((v) => v);
+    .map((element) => validateInputData(element))
+    .every(Boolean);
 
   const inputKeys = new Set(Object.keys(inputsData));
-  const haveRequiredInputs = required.map((key) => inputKeys.has(key)).every((v) => v);
+  const haveRequiredInputs = required.map((key) => inputKeys.has(key)).every(Boolean);
   return inputsDataIsValid && haveRequiredInputs;
 };
 
@@ -93,9 +92,9 @@ export const JobModal = ({
   const spec = instance?.application_specification;
   const specVariables = useMemo(
     () =>
-      spec !== undefined
-        ? (JSON.parse(spec).variables as Record<string, string | string[] | undefined>)
-        : undefined,
+      spec === undefined
+        ? undefined
+        : (JSON.parse(spec).variables as Record<string, string[] | string | undefined>),
     [spec],
   );
 
@@ -179,7 +178,7 @@ export const JobModal = ({
       submitText="Run"
       title={job?.name ?? "Run Job"}
       onClose={onClose}
-      onSubmit={handleSubmit}
+      onSubmit={() => void handleSubmit()}
     >
       {job !== undefined && projectId !== undefined ? (
         <>
@@ -193,9 +192,9 @@ export const JobModal = ({
           </Box>
 
           <DebugCheckbox value={debug} onChange={(debug) => setDebug(debug)} />
-          {job.variables && (
+          {!!job.variables && (
             <Grid container spacing={2}>
-              {job.variables.inputs && (
+              {!!job.variables.inputs && (
                 <>
                   <Grid item xs={12}>
                     <Typography component="h3" fontWeight="bold" variant="subtitle1">
@@ -213,7 +212,7 @@ export const JobModal = ({
               )}
 
               <Grid item xs={12}>
-                {job.variables.options && (
+                {!!job.variables.options && (
                   <>
                     <Typography component="h3" fontWeight="bold" variant="subtitle1">
                       Options

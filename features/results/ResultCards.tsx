@@ -1,4 +1,4 @@
-import type { InstanceSummary, TaskSummary } from "@squonk/data-manager-client";
+import { type InstanceSummary, type TaskSummary } from "@squonk/data-manager-client";
 
 import { Grid, Typography } from "@mui/material";
 import dayjs from "dayjs";
@@ -30,7 +30,7 @@ export interface ResultCardsProps {
  * Type predicate to tell apart `TaskSummary` and `InstanceSummary`
  */
 const isTaskSummary = (
-  taskOrInstance: TaskSummary | InstanceSummary,
+  taskOrInstance: InstanceSummary | TaskSummary,
 ): taskOrInstance is TaskSummary => {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   return (taskOrInstance as TaskSummary).created !== undefined;
@@ -39,7 +39,7 @@ const isTaskSummary = (
 /**
  * Extracts the time stamp from `TaskSummary` and `InstanceSummary`
  */
-const getTimeStamp = (taskOrInstance: TaskSummary | InstanceSummary) => {
+const getTimeStamp = (taskOrInstance: InstanceSummary | TaskSummary) => {
   if (isTaskSummary(taskOrInstance)) {
     return taskOrInstance.created;
   }
@@ -87,7 +87,7 @@ export const ResultCards = ({ resultTypes, searchValue, instances, tasks }: Resu
       );
     });
 
-  return cards.length ? (
+  return cards.length > 0 ? (
     <Grid container spacing={2}>
       {cards}
     </Grid>

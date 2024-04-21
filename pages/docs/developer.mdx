@@ -1,6 +1,6 @@
 import { Container } from "@mui/material";
 import Layout from "../../layouts/Layout";
-import { DocsNav } from "../../components/DocsNav"
+import { DocsNav } from "../../components/DocsNav";
 import Head from "next/head";
 
 <Head>
@@ -11,10 +11,10 @@ import Head from "next/head";
 
 ## Quick Links
 
-* [Data Manager docs](https://informaticsmatters.gitlab.io/squonk2-data-manager/) - design docs for the Data Manager and
+- [Data Manager docs](https://informaticsmatters.gitlab.io/squonk2-data-manager/) - design docs for the Data Manager and
   a guide to creating new jobs
-* [Account Server docs](https://informaticsmatters.gitlab.io/squonk2-account-server/) - design docs for the Account server
-* [Python client](https://squonk2-python-client.readthedocs.io/en/stable) |
+- [Account Server docs](https://informaticsmatters.gitlab.io/squonk2-account-server/) - design docs for the Account server
+- [Python client](https://squonk2-python-client.readthedocs.io/en/stable) |
   [Javascript client](https://informaticsmatters.github.io/data-manager-npm-client/) -
   clients for programmatic use of the Data Manager API
 
@@ -59,7 +59,6 @@ Account Server is also an OpenAPI compliant REST API implemented in Python, avai
 
 The Swagger UI for the reference site can be found [here](https://squonk.it/account-server-api/api/).
 
-
 ### Data Manager Web interface
 
 If you are reading this document you are probably already using the web interface. This is a web application implemented
@@ -76,9 +75,8 @@ using this might be much easier than using the API directly, but not all functio
 
 A Python client has been created.
 
-* The docs are available [here](https://squonk2-python-client.readthedocs.io/en/stable)
-* An installable PyPi package can be found [here](https://pypi.org/project/im-squonk2-client/)
-
+- The docs are available [here](https://squonk2-python-client.readthedocs.io/en/stable)
+- An installable PyPi package can be found [here](https://pypi.org/project/im-squonk2-client/)
 
 #### JavaScript / Node
 
@@ -88,7 +86,11 @@ This package is generated automatically from the OpenAPI schema using [Orval](ht
 and is fully typed with `typescript`.
 Requests are made with Axios which is compatible in NodeJS and not just in the browser.
 
-* The docs are available [here](https://informaticsmatters.github.io/data-manager-npm-client/)
-* The package is published on NPM as [@squonk/data-manager-client](https://www.npmjs.com/package/@squonk/data-manager-client)
+- The docs are available [here](https://informaticsmatters.github.io/data-manager-npm-client/)
+- The package is published on NPM as [@squonk/data-manager-client](https://www.npmjs.com/package/@squonk/data-manager-client)
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

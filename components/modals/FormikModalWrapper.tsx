@@ -1,9 +1,8 @@
-import type { DialogProps } from "@mui/material";
-import type { FormikConfig, FormikValues } from "formik";
-import { Form, Formik } from "formik";
+import { type DialogProps } from "@mui/material";
+import { Form, Formik, type FormikConfig, type FormikValues } from "formik";
 
 import { ModalWrapper } from "./ModalWrapper";
-import type { BaseModalWrapperProps } from "./types";
+import { type BaseModalWrapperProps } from "./types";
 
 export interface FormikModalWrapperProps extends BaseModalWrapperProps {
   /**
@@ -40,7 +39,7 @@ export interface FormikModalWrapperProps extends BaseModalWrapperProps {
  *
  * We use a function here instead of arrow functions as generics work better with them
  */
-export function FormikModalWrapper<Values extends FormikValues>({
+export const FormikModalWrapper = <Values extends FormikValues>({
   id,
   title,
   submitText,
@@ -49,7 +48,7 @@ export function FormikModalWrapper<Values extends FormikValues>({
   children,
   DialogProps,
   ...formikProps
-}: FormikModalWrapperProps & FormikConfig<Values>) {
+}: FormikConfig<Values> & FormikModalWrapperProps) => {
   return (
     <Formik {...formikProps}>
       {({ submitForm, isSubmitting, isValid, ...rest }) => (
@@ -62,7 +61,7 @@ export function FormikModalWrapper<Values extends FormikValues>({
             submitText={submitText}
             title={title}
             onClose={onClose}
-            onSubmit={submitForm}
+            onSubmit={() => void submitForm()}
           >
             {typeof children === "function"
               ? children({ isValid, submitForm, isSubmitting, ...rest })
@@ -72,4 +71,4 @@ export function FormikModalWrapper<Values extends FormikValues>({
       )}
     </Formik>
   );
-}
+};

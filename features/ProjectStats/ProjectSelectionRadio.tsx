@@ -1,7 +1,6 @@
 import { Radio } from "@mui/material";
 
-import type { ProjectId } from "../../hooks/projectHooks";
-import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { type ProjectId, useCurrentProjectId } from "../../hooks/projectHooks";
 
 export interface ProjectSelectionRadioProps {
   /**

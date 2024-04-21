@@ -27,9 +27,11 @@ export const DatasetSchemaDescriptionInput = ({
   setDescription,
   originalValue,
 }: DatasetSchemaDescriptionInputProps) => {
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const [displayValue, setDisplayValue] = useState(value || "");
 
   useLayoutEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     setDisplayValue(value || "");
   }, [value]);
 
@@ -40,8 +42,9 @@ export const DatasetSchemaDescriptionInput = ({
       fullWidth
       InputProps={{
         endAdornment: (
-          <Box ml={1} visibility={!hasChanged ? "hidden" : undefined}>
+          <Box ml={1} visibility={hasChanged ? undefined : "hidden"}>
             <Tooltip title="Revert changes">
+              {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
               <IconButton size="small" onClick={() => setDescription(originalValue || "")}>
                 <Restore />
               </IconButton>

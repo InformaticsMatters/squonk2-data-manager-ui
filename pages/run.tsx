@@ -59,7 +59,7 @@ const Run = () => {
         // Filter the apps by the search value
         ?.filter(({ kind }) => search([kind], searchValue))
         // Then create a card for each
-        ?.map((app) => (
+        .map((app) => (
           <Grid item key={app.application_id} md={3} sm={6} xs={12}>
             <ApplicationCard app={app} projectId={currentProject?.project_id} />
           </Grid>
@@ -143,14 +143,14 @@ const Run = () => {
 
               {/* Errors */}
               <Grid container spacing={2}>
-                {isApplicationsError && (
+                {!!isApplicationsError && (
                   <Grid item xs={12}>
                     <Alert severity="error">
                       Applications failed to load ({applicationsError.response?.status})
                     </Alert>
                   </Grid>
                 )}
-                {isJobsError && (
+                {!!isJobsError && (
                   <Grid item xs={12}>
                     <Alert severity="error">
                       Jobs failed to load ({jobsError.response?.status})

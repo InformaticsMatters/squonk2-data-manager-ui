@@ -76,9 +76,9 @@ export const AutocompleteFilter = <T,>({
         />
       )}
       style={{ width: "100%" }}
-      value={value || null} // Prevents making the component uncontrolled
+      value={value ?? null} // Prevents making the component uncontrolled
       // If no option is selected, Autocomplete returns null which we transform to undefined
-      onChange={(event, value) => onChange(value || undefined)}
+      onChange={(event, value) => onChange(value ?? undefined)}
     />
   );
 };

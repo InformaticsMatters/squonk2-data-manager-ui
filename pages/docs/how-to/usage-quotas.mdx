@@ -23,14 +23,15 @@ The best starting point to find out about the usage and costs of your projects i
 
 This lets you look at all the projects in a particular using and see a high level summary of the usage stats.
 You will see information for:
-* Whether the project is public or private
-* The project creator and administrators
-* The project tier (evaluation, bronze, silver or gold)
-* A bar graph showing usage costs (see below for an explanation)
-* The number of instances used
-* The amount of storage used
-* The allowance (quota) in coins for your project
-* Actions for performing various operation on the project
+
+- Whether the project is public or private
+- The project creator and administrators
+- The project tier (evaluation, bronze, silver or gold)
+- A bar graph showing usage costs (see below for an explanation)
+- The number of instances used
+- The amount of storage used
+- The allowance (quota) in coins for your project
+- Actions for performing various operation on the project
 
 The usage bar shows your consumption in Squonk coins (or coins for short) and is colour coded as follows:
 
@@ -53,14 +54,18 @@ interested in.
 
 <Image src={ledger} alt="Product ledger" />
 
-Note in particular the *Charge* column in the *Processing Charges* table. This shows the cost of your jobs and
+Note in particular the _Charge_ column in the _Processing Charges_ table. This shows the cost of your jobs and
 applications. You will see that not all have an associated cost.
 
-You can also see a summary of charges for all your projects by clicking on the *Product* link in the footer.
-Note: the term *product* relates to the Account Server - a Data Manager *Project* is created as an *Account Server*
-*product*, though the distinction is not that relevant for normal users.
+You can also see a summary of charges for all your projects by clicking on the _Product_ link in the footer.
+Note: the term _product_ relates to the Account Server - a Data Manager _Project_ is created as an _Account Server_
+_product_, though the distinction is not that relevant for normal users.
 
-After clicking that link you see a table showing all your *projects* and allowing you to drill down into any of them.
-You also see a table showing any *Dataset Subscriptions* that you might have.
+After clicking that link you see a table showing all your _projects_ and allowing you to drill down into any of them.
+You also see a table showing any _Dataset Subscriptions_ that you might have.
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

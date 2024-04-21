@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { OrganisationDetail } from "@squonk/account-server-client";
+import { type OrganisationDetail } from "@squonk/account-server-client";
 
 import { Edit as EditIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";

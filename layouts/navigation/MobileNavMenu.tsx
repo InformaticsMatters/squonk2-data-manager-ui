@@ -38,7 +38,7 @@ export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
       </IconButton>
       <ModalWrapper id="mobile-menu" open={open} title="" onClose={() => setOpen(false)}>
         <Grid container spacing={2}>
-          {links && (
+          {!!links && (
             <Grid item xs={12}>
               <Typography component="h3" variant="h6">
                 Links
@@ -75,7 +75,7 @@ export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
               </List>
             </Grid>
           )}
-          {!!isDMAuthorized && links && (
+          {!!isDMAuthorized && !!links && (
             <Grid item xs={12}>
               <Divider />
             </Grid>

@@ -1,19 +1,16 @@
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import type { ProjectId } from "../hooks/projectHooks";
-import { useCurrentProjectId } from "../hooks/projectHooks";
+import { type ProjectId, useCurrentProjectId } from "../hooks/projectHooks";
 import { PROJECT_FILE_LOCAL_STORAGE_KEY } from "../utils/next/localStorage";
 
 export type SavedFile = {
   path: string;
-  type: "file" | "directory";
+  type: "directory" | "file";
   mimeType?: string;
 };
 
-export interface FileState {
-  [projectId: string]: SavedFile[] | undefined;
-}
+export type FileState = Record<string, SavedFile[] | undefined>;
 
 type UpdateFileSelection = (projectId: string) => (filePath: SavedFile) => void;
 
@@ -25,14 +22,14 @@ export const useSelectedFiles = (projectId?: ProjectId) => {
   const [selectedFiles, setSelectedFiles] = useAtom(selectedFilesAtom);
 
   // Allow use of argument or default to context if nothing is provided
-  const project = projectId || currentProjectId;
+  const project = projectId ?? currentProjectId;
   const oldSavedFiles = typeof project === "string" ? selectedFiles[project] : undefined;
 
   const addFile: UpdateFileSelection = (projectId) => (file) => {
-    if (oldSavedFiles !== undefined) {
-      setSelectedFiles({ ...selectedFiles, [projectId]: [...oldSavedFiles, file] });
-    } else {
+    if (oldSavedFiles === undefined) {
       setSelectedFiles({ ...selectedFiles, [projectId]: [file] });
+    } else {
+      setSelectedFiles({ ...selectedFiles, [projectId]: [...oldSavedFiles, file] });
     }
   };
 

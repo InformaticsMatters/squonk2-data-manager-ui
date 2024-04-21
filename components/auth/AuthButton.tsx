@@ -1,5 +1,4 @@
-import type { ButtonProps } from "@mui/material";
-import { Button } from "@mui/material";
+import { Button, type ButtonProps } from "@mui/material";
 
 import { useCleanUpOnLogout } from "../../hooks/authHooks";
 import { capitalise } from "../../utils/app/language";

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import type { ProductDmProjectTier, ProductDmStorage } from "@squonk/account-server-client";
-import type { ProjectDetail } from "@squonk/data-manager-client";
+import { type ProductDmProjectTier, type ProductDmStorage } from "@squonk/account-server-client";
+import { type ProjectDetail } from "@squonk/data-manager-client";
 
 import { Box, useTheme } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -10,7 +10,7 @@ import { DataTable } from "../../components/DataTable";
 import { ChargesLinkIconButton } from "../../components/products/ChargesLinkIconButton";
 import { DeleteProductButton } from "../../components/products/DeleteProductButton";
 import { ProjectName } from "../../components/projects/ProjectName";
-import type { PermissionLevelFilter } from "../../components/userContext/filter";
+import { type PermissionLevelFilter } from "../../components/userContext/filter";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { formatTierString } from "../../utils/app/products";
@@ -169,6 +169,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
   return (
     <Box display="grid" sx={{ overflowX: "auto" }}>
       <DataTable
+        enableColumnFilters
         columns={projectsColumns}
         customRowProps={(row) =>
           currentProjectId !== undefined && row.original.project_id === currentProjectId
@@ -187,7 +188,6 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
           },
         }}
         data={projectSubscriptions}
-        enableColumnFilters={true}
         enableSearch={false}
         getRowId={(row) => row.project_id}
         isLoading={isProjectSubscriptionsLoading}

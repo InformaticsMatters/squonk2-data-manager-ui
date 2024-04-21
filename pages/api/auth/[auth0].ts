@@ -1,7 +1,7 @@
 import { handleAuth, handleLogin, handleProfile } from "@auth0/nextjs-auth0";
 import { captureException } from "@sentry/nextjs";
 import { jwtDecode } from "jwt-decode";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { type NextApiRequest, type NextApiResponse } from "next";
 
 export default handleAuth({
   login: handleLogin({
@@ -12,7 +12,7 @@ export default handleAuth({
   }),
   onError(_req, res, error) {
     console.error(error);
-    res.status(error.status || 500).end();
+    res.status(error.status ?? 500).end();
     captureException(error);
   },
   profile: async (req: NextApiRequest, res: NextApiResponse) => {

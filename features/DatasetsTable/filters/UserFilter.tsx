@@ -1,4 +1,4 @@
-import type { UserSummary } from "@squonk/data-manager-client";
+import { type UserSummary } from "@squonk/data-manager-client";
 import { useGetUsers } from "@squonk/data-manager-client/user";
 
 import { Typography } from "@mui/material";
@@ -32,7 +32,7 @@ export interface UserFilterProps {
 export const UserFilter = ({ user, setUser, id, label }: UserFilterProps) => {
   const { data, error, isError, isLoading } = useGetUsers();
 
-  const users = data?.users || [];
+  const users = data?.users ?? [];
 
   if (isError) {
     return <Typography color="error">{getErrorMessage(error)}</Typography>;

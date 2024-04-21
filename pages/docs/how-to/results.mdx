@@ -4,9 +4,9 @@ import { Container } from "@mui/material";
 
 import { DocsNav } from "../../../components/DocsNav";
 import Layout from "../../../layouts/Layout";
-import login from "../assets/login.png"
-import results_1 from "../assets/results-1.png"
-import results_2 from "../assets/results-2.png"
+import login from "../assets/login.png";
+import results_1 from "../assets/results-1.png";
+import results_2 from "../assets/results-2.png";
 
 <Head>
   <title>Inspecting job and application execution - a How To guide</title>
@@ -45,11 +45,15 @@ Then at the bottom are sections for the job's **States** and **Events**. The job
 have gone to plan you should see that the job was initially in PENDING state, then it STARTED and finally it was in
 SUCCESS state. If the job fails for some reason you will see a different sequence of states.
 
-The **Events** section show the series of *events* that the job reports. This is useful to see at what stage the job is
-in if it is still running, or what has happened if it is complete. Each job will report a different series of *events*
-and deciding which *events* to report is an important responsibility of the job developer.
+The **Events** section show the series of _events_ that the job reports. This is useful to see at what stage the job is
+in if it is still running, or what has happened if it is complete. Each job will report a different series of _events_
+and deciding which _events_ to report is an important responsibility of the job developer.
 
 **Events** are reported in near real time, but you might want to click on the update button on the top right of the page
 to update immediately.
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

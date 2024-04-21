@@ -1,7 +1,6 @@
-import type { ReactNode } from "react";
-import { useMemo } from "react";
+import { type ReactNode, useMemo } from "react";
 
-import type { InventoryProjectDetail, InventoryUserDetail } from "@squonk/data-manager-client";
+import { type InventoryProjectDetail, type InventoryUserDetail } from "@squonk/data-manager-client";
 import {
   useAddAdministratorToProject,
   useAddEditorToProject,
@@ -12,8 +11,13 @@ import {
 } from "@squonk/data-manager-client/project";
 
 import { Close, Done } from "@mui/icons-material";
-import type { UseAutocompleteProps } from "@mui/material";
-import { Autocomplete, Chip, TextField, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  Chip,
+  TextField,
+  Typography,
+  type UseAutocompleteProps,
+} from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -30,8 +34,7 @@ const columnHelper = createColumnHelper<UserEntry>();
 
 const getProjectsList = (users: UserEntry[]) =>
   users
-    .map((user) => Object.values(user.projects).flat())
-    .flat()
+    .flatMap((user) => Object.values(user.projects).flat())
     .reduce<InventoryProjectDetail[]>((uniqueProjects, project) => {
       if (!uniqueProjects.some((p) => p.id === project.id)) {
         uniqueProjects.push(project);
@@ -181,12 +184,15 @@ export const UserUsageTable = ({ users, toolbarContent, onChange }: UserUsageTab
 interface ChipsInputProps {
   users: UserEntry[];
   value: InventoryProjectDetail[];
-  group: "observer" | "editor" | "administrator";
+  group: "administrator" | "editor" | "observer";
   username: string;
   onChange: () => Promise<void>;
 }
 
-type Handler = UseAutocompleteProps<InventoryProjectDetail, true, false, false>["onChange"];
+type Handler = NonNullable<
+  UseAutocompleteProps<InventoryProjectDetail, true, false, false>["onChange"]
+>;
+type AsyncHandler = (...args: Parameters<Handler>) => Promise<ReturnType<Handler>>;
 
 const ChipsInput = ({ users, value, group, username, onChange }: ChipsInputProps) => {
   const projects = useMemo(() => getProjectsList(users), [users]);
@@ -204,7 +210,7 @@ const ChipsInput = ({ users, value, group, username, onChange }: ChipsInputProps
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError();
 
-  const handleChange: Handler = async (_e, _v, reason, details) => {
+  const handleChange: AsyncHandler = async (_e, _v, reason, details) => {
     if (details?.option) {
       try {
         switch (reason) {
@@ -290,7 +296,7 @@ const ChipsInput = ({ users, value, group, username, onChange }: ChipsInputProps
       }
       size="small"
       value={value}
-      onChange={handleChange}
+      onChange={(...args) => void handleChange(...args)}
     />
   );
 };

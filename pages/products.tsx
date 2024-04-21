@@ -7,8 +7,7 @@ import { RoleRequired } from "../components/auth/RoleRequired";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { ProductsView } from "../features/ProductsView";
 import Layout from "../layouts/Layout";
-import type { CustomPageProps } from "../utils/next/ssr";
-import { isNotSuccessful } from "../utils/next/ssr";
+import { type CustomPageProps, isNotSuccessful } from "../utils/next/ssr";
 
 export type ProductsProps = CustomPageProps<Record<string, never>>;
 

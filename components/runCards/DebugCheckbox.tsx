@@ -13,7 +13,7 @@ export const DebugCheckbox = ({ value, onChange }: DebugCheckboxProps) => {
       <FormControlLabel
         control={
           <Checkbox
-            checked={value === "0" ? false : true}
+            checked={value !== "0"}
             onChange={(_event, checked) => onChange(checked ? "debug" : "0")}
           />
         }

@@ -1,4 +1,4 @@
-import type { InstanceGetResponse } from "@squonk/data-manager-client";
+import { type InstanceGetResponse } from "@squonk/data-manager-client";
 
 import { AppsRounded as AppsRoundedIcon, Payment as PaymentIcon } from "@mui/icons-material";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";

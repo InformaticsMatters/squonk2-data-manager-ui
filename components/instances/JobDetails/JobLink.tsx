@@ -50,8 +50,8 @@ const getResolvedPath = (path: string[]) => {
  * Gets the file name and the path to the file from provided path.
  */
 const getFilePathAndName = (path: string[]) => {
-  const filePath = path.slice(0, path.length - 1);
-  const fileName = path[path.length - 1];
+  const filePath = path.slice(0, -1);
+  const fileName = path.at(-1) as string;
   return { filePath, fileName };
 };
 

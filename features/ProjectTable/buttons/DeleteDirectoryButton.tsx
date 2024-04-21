@@ -1,8 +1,7 @@
 import { getGetFilesQueryKey, useDeletePath } from "@squonk/data-manager-client/file-and-path";
 
 import { DeleteForeverRounded as DeleteForeverRoundedIcon } from "@mui/icons-material";
-import type { IconButtonProps } from "@mui/material";
-import { IconButton } from "@mui/material";
+import { IconButton, type IconButtonProps } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../components/WarningDeleteButton";

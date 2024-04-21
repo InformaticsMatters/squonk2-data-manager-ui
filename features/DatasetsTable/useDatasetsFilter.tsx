@@ -1,6 +1,10 @@
 import { useCallback, useMemo } from "react";
 
-import type { GetDatasetsParams, TypeSummary, UserSummary } from "@squonk/data-manager-client";
+import {
+  type GetDatasetsParams,
+  type TypeSummary,
+  type UserSummary,
+} from "@squonk/data-manager-client";
 
 import { useImmer } from "use-immer";
 
@@ -32,7 +36,7 @@ export const useDatasetsFilter = () => {
     labels.forEach((label) => {
       // In case more `=` were provided, leave them for now
       const [key, ...value] = label.split("=", 1);
-      labelObject[key] = value.length ? value.join("=") : null;
+      labelObject[key] = value.length > 0 ? value.join("=") : null;
     });
 
     return JSON.stringify(labelObject);
@@ -43,7 +47,7 @@ export const useDatasetsFilter = () => {
     return {
       dataset_mime_type: fileType?.mime,
       username: owner?.username,
-      labels: labels && labels.length ? processLabels(labels) : undefined,
+      labels: labels?.length ? processLabels(labels) : undefined,
       editors: editor?.username,
     };
   }, [filter, processLabels]);

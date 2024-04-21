@@ -31,18 +31,18 @@ interface DepictMoleculePropsBase {
 
 export type DepictVariants =
   | {
-      variant: "smiles";
-      smiles: string;
-    }
-  | {
       variant: "molFile";
       molFile: string;
+    }
+  | {
+      variant: "smiles";
+      smiles: string;
     };
 
-export type DepictMoleculeProps = {
-  depictParams: DepictParameters;
-} & DepictMoleculePropsBase &
-  DepictVariants;
+export type DepictMoleculeProps = DepictMoleculePropsBase &
+  DepictVariants & {
+    depictParams: DepictParameters;
+  };
 
 type ImageProps = Omit<ComponentProps<"img">, "src">;
 
@@ -98,16 +98,16 @@ const useGetImage = (molFile: string, depictParams: DepictParameters) =>
     queryKey: [`depict-mol-${molFile}-${Object.values(depictParams).join(",")}`],
     queryFn: () => getImage(molFile, depictParams),
     refetchOnWindowFocus: false,
-    staleTime: Infinity,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 
 const LazyMolFileImage = (props: Parameters<typeof MolFileImage>[0]) => {
   const [wasSeen, ref] = useWasSeen();
 
-  return <div ref={ref}>{wasSeen && <MolFileImage {...props} />}</div>;
+  return <div ref={ref}>{!!wasSeen && <MolFileImage {...props} />}</div>;
 };
 
-const SmilesImage = (props: { smiles: string; depictParams: DepictParameters } & ImageProps) => {
+const SmilesImage = (props: ImageProps & { smiles: string; depictParams: DepictParameters }) => {
   const { smiles, depictParams, ...imageProps } = props;
   const { depictURL, ...params } = depictParams;
   const url = new URL(depictURL);
@@ -119,7 +119,7 @@ const SmilesImage = (props: { smiles: string; depictParams: DepictParameters } &
   return <Img {...imageProps} loading="lazy" src={url.toString()} />;
 };
 
-const MolFileImage = (props: { molFile: string; depictParams: DepictParameters } & ImageProps) => {
+const MolFileImage = (props: ImageProps & { molFile: string; depictParams: DepictParameters }) => {
   const { molFile, depictParams, ...rest } = props;
 
   const { data: svg } = useGetImage(molFile, depictParams);

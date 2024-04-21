@@ -1,12 +1,12 @@
-@import '../mixins/font-face-template.scss';
+@import "../mixins/font-face-template.scss";
 
-@include font-face-template ('Open Sans', 'OpenSans-Light', normal, 300);
-@include font-face-template ('Open Sans', 'OpenSans-LightItalic', italic, 300);
-@include font-face-template ('Open Sans', 'OpenSans-Regular', normal, 400);
-@include font-face-template ('Open Sans', 'OpenSans-Italic', italic, 400);
-@include font-face-template ('Open Sans', 'OpenSans-SemiBold', normal, 600);
-@include font-face-template ('Open Sans', 'OpenSans-SemiBoldItalic', italic, 600);
-@include font-face-template ('Open Sans', 'OpenSans-Bold', normal, 700);
-@include font-face-template ('Open Sans', 'OpenSans-BoldItalic', italic, 700);
-@include font-face-template ('Open Sans', 'OpenSans-ExtraBold', normal, 800);
-@include font-face-template ('Open Sans', 'OpenSans-ExtraBoldItalic', italic, 800);
+@include font-face-template("Open Sans", "OpenSans-Light", normal, 300);
+@include font-face-template("Open Sans", "OpenSans-LightItalic", italic, 300);
+@include font-face-template("Open Sans", "OpenSans-Regular", normal, 400);
+@include font-face-template("Open Sans", "OpenSans-Italic", italic, 400);
+@include font-face-template("Open Sans", "OpenSans-SemiBold", normal, 600);
+@include font-face-template("Open Sans", "OpenSans-SemiBoldItalic", italic, 600);
+@include font-face-template("Open Sans", "OpenSans-Bold", normal, 700);
+@include font-face-template("Open Sans", "OpenSans-BoldItalic", italic, 700);
+@include font-face-template("Open Sans", "OpenSans-ExtraBold", normal, 800);
+@include font-face-template("Open Sans", "OpenSans-ExtraBoldItalic", italic, 800);

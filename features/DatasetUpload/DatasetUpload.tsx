@@ -1,17 +1,17 @@
 import { useState } from "react";
 
-import type { DatasetPostBodyBody, DmError } from "@squonk/data-manager-client";
+import { type DatasetPostBodyBody, type DmError } from "@squonk/data-manager-client";
 import { uploadDataset } from "@squonk/data-manager-client/dataset";
 import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
 import { CloudUploadRounded as CloudUploadRoundedIcon } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
-import type { AxiosError, AxiosProgressEvent } from "axios";
+import { type AxiosError, type AxiosProgressEvent } from "axios";
 
 import { ModalWrapper } from "../../components/modals/ModalWrapper";
 import { FileTypeOptions } from "../../components/uploads/FileTypeOptions";
-import type { FileTypeOptionsState, UploadableFile } from "../../components/uploads/types";
+import { type FileTypeOptionsState, type UploadableFile } from "../../components/uploads/types";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
@@ -40,6 +40,7 @@ export const DatasetUpload = () => {
     if (organisation && unit) {
       files
         .filter((file) => !file.done)
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         .forEach(async ({ file, rename, mimeType }, index) => {
           // Prepare the payload for the post request
           const data: DatasetPostBodyBody = {
@@ -73,8 +74,8 @@ export const DatasetUpload = () => {
               updatedFiles[index].taskId = response.task_id;
               setFiles(updatedFiles);
             }
-          } catch (err) {
-            const error = err as AxiosError<DmError>;
+          } catch (error_) {
+            const error = error_ as AxiosError<DmError>;
             if (error.isAxiosError) {
               const data = error.response?.data;
 
@@ -88,7 +89,7 @@ export const DatasetUpload = () => {
               setFiles(updatedFiles);
               enqueueError(errorMessage);
             } else {
-              captureException(err);
+              captureException(error_);
               enqueueError("Unknown error");
             }
           }
@@ -125,7 +126,7 @@ export const DatasetUpload = () => {
         <BulkUploadDropzone files={files} setFiles={setFiles} />
         <FileTypeOptions
           formDatas={mimeTypeFormDatas}
-          mimeTypes={Array.from(new Set(files.map((file) => file.mimeType)))}
+          mimeTypes={[...new Set(files.map((file) => file.mimeType))]}
           onFormChange={setMimeTypeFormDatas}
         />
       </ModalWrapper>

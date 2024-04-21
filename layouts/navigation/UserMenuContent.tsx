@@ -51,7 +51,7 @@ const UserMenuContentInner = () => {
   if (user.username) {
     return (
       <>
-        {biggerThanMd && (
+        {!!biggerThanMd && (
           <Box sx={{ fontSize: 80 }}>
             <PersonIcon color="disabled" fontSize="inherit" />
           </Box>

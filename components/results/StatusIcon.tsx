@@ -1,6 +1,6 @@
-import type {
-  InstanceGetResponsePhase,
-  TaskSummaryProcessingStage,
+import {
+  type InstanceGetResponsePhase,
+  type TaskSummaryProcessingStage,
 } from "@squonk/data-manager-client";
 
 import {
@@ -14,7 +14,7 @@ export interface StatusIconProps {
   /**
    * Task or Instance status
    */
-  state?: TaskSummaryProcessingStage | InstanceGetResponsePhase;
+  state?: InstanceGetResponsePhase | TaskSummaryProcessingStage;
 }
 
 /**

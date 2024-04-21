@@ -1,4 +1,4 @@
-import type { ProductDetail } from "@squonk/account-server-client";
+import { type ProductDetail } from "@squonk/account-server-client";
 import { useGetProduct } from "@squonk/account-server-client/product";
 
 import Head from "next/head";

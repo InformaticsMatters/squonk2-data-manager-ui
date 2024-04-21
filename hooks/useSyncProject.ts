@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { getProject } from "@squonk/data-manager-client/project";
 
-import type { AxiosError } from "axios";
+import { type AxiosError } from "axios";
 import compare from "just-compare";
 import { useRouter } from "next/router";
 
@@ -53,7 +53,7 @@ export const useSyncProject = () => {
             if (!compare(query, newQuery)) {
               const href = { query: newQuery, pathname };
 
-              replace(href, undefined);
+              void replace(href, undefined);
             }
           }
         } catch (error) {
@@ -63,13 +63,13 @@ export const useSyncProject = () => {
             writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
             // And remove it from the url
             const newQuery = { ...query };
-            delete newQuery["project"];
+            delete newQuery.project;
             const href = { query: newQuery, pathname };
-            replace(href, undefined);
+            void replace(href, undefined);
           }
         }
       }
     };
-    updateFromLocalStorage();
+    void updateFromLocalStorage();
   }, [isReady, pathname, project, query, replace]);
 };

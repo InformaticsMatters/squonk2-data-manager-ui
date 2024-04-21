@@ -1,4 +1,4 @@
-import type { ServerResponse } from "node:http";
+import { type ServerResponse } from "node:http";
 
 export const createErrorProps = (res: ServerResponse, code: number, message: string) => {
   const statusCode = code;

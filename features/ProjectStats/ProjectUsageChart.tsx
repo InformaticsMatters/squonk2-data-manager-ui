@@ -1,7 +1,7 @@
-import type {
-  ProductCoinsDetail,
-  ProductDmStorageDetail,
-  ProductInstanceDetail,
+import {
+  type ProductCoinsDetail,
+  type ProductDmStorageDetail,
+  type ProductInstanceDetail,
 } from "@squonk/account-server-client";
 
 import { UsageChart } from "./UsageChart";

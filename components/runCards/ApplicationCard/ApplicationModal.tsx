@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { ApplicationSummary, DmError } from "@squonk/data-manager-client";
+import { type ApplicationSummary, type DmError } from "@squonk/data-manager-client";
 import { useGetApplication } from "@squonk/data-manager-client/application";
 import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
 
@@ -12,9 +12,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { CenterLoader } from "../../CenterLoader";
 import { ModalWrapper } from "../../modals/ModalWrapper";
-import type { DebugValue } from "../DebugCheckbox";
-import { DebugCheckbox } from "../DebugCheckbox";
-import type { CommonModalProps } from "../types";
+import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
+import { type CommonModalProps } from "../types";
 
 export interface ApplicationModalProps extends CommonModalProps {
   /**
@@ -90,7 +89,7 @@ export const ApplicationModal = ({
       submitText="Run"
       title={application?.kind ?? "Run Job"}
       onClose={onClose}
-      onSubmit={handleCreateInstance}
+      onSubmit={() => void handleCreateInstance()}
     >
       {application === undefined ? (
         <CenterLoader />

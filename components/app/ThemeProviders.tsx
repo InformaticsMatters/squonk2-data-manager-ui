@@ -1,5 +1,4 @@
-import type { FC, ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { type FC, type ReactNode, useEffect, useState } from "react";
 
 import { generateThemes } from "@squonk/mui-theme";
 

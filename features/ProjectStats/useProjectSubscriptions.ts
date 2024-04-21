@@ -1,13 +1,15 @@
-import type {
-  ProductDmProjectTier,
-  ProductsGetResponseProductsItem,
+import {
+  type ProductDmProjectTier,
+  type ProductsGetResponseProductsItem,
 } from "@squonk/account-server-client";
 import { useGetProducts } from "@squonk/account-server-client/product";
-import type { ProjectDetail } from "@squonk/data-manager-client";
+import { type ProjectDetail } from "@squonk/data-manager-client";
 import { useGetProjects } from "@squonk/data-manager-client/project";
 
-import type { PermissionLevelFilter } from "../../components/userContext/filter";
-import { filterProjectsByPermissionLevel } from "../../components/userContext/filter";
+import {
+  filterProjectsByPermissionLevel,
+  type PermissionLevelFilter,
+} from "../../components/userContext/filter";
 import { MAGIC_UNIT } from "../../constants/units";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
@@ -32,7 +34,7 @@ export const useProjectSubscriptions = ([level, user]: PermissionLevelFilter) =>
 
   // we need products to add in AS info
   const { data: products, isLoading: isProductsLoading } = useGetProducts({
-    query: { select: ({ products }) => products.filter(isProjectProduct) },
+    query: { select: ({ products }) => products.filter((element) => isProjectProduct(element)) },
   });
 
   const { data: projects, isLoading: isProjectsLoading } = useGetProjects(undefined, {
@@ -57,7 +59,7 @@ export const useProjectSubscriptions = ([level, user]: PermissionLevelFilter) =>
                 // when user is a unit member
                 (unit.caller_is_member ||
                   // or when the user is a project editor
-                  (user && entry.editors.includes(user)) ||
+                  (!!user && entry.editors.includes(user)) ||
                   // or when the project is public but the user doesn't have specific access
                   !entry.private))
             );

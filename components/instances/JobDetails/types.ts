@@ -1,6 +1,6 @@
 export interface OutputValue {
   title: string;
   creates: string;
-  type?: "file" | "files" | "directory";
+  type?: "directory" | "file" | "files";
   "mime-types": string[];
 }

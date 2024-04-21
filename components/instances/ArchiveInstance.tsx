@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceSummary } from "@squonk/data-manager-client";
 import {
   getGetInstanceQueryKey,
   getGetInstancesQueryKey,
@@ -33,7 +33,7 @@ export const ArchiveInstance = ({ instanceId, archived }: ArchiveInstanceProps) 
   return (
     <Tooltip title="Toggle whether an instance will be deleted automatically">
       <span>
-        <Button disabled={archiving} onClick={archiveInstance}>
+        <Button disabled={archiving} onClick={() => void archiveInstance()}>
           {archived ? "Unarchive" : "Archive"}
         </Button>
       </span>

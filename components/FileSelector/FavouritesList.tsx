@@ -4,7 +4,7 @@ import { Typography } from "@mui/material";
 import { useSelectedFiles } from "../../state/fileSelection";
 import { FileListItem } from "./FileListItem";
 import { ScrollList } from "./ScrollList";
-import type { SharedProps } from "./types";
+import { type SharedProps } from "./types";
 import { getChecked, getNewValue } from "./utils";
 
 /**

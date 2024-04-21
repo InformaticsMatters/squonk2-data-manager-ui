@@ -26,7 +26,7 @@ import dynamic from "next/dynamic";
 
 import { CenterLoader } from "../CenterLoader";
 import { CreateProjectForm } from "../projects/CreateProjectForm";
-import type { UserUsageByProjectTableProps } from "./UserUsageByProjectTable";
+import { type UserUsageByProjectTableProps } from "./UserUsageByProjectTable";
 import { UserUsageTable } from "./UserUsageTable";
 
 const UserUsageByProjectTable = dynamic<UserUsageByProjectTableProps>(
@@ -67,7 +67,7 @@ export const UnitUserUsage = ({ unitId }: UnitUserUsageProps) => {
     return <CenterLoader />;
   }
 
-  const unitEditors = unitUserList.users.map((user) => user.id);
+  const unitEditors = new Set(unitUserList.users.map((user) => user.id));
   const users = data.users
     .filter(
       (user) =>
@@ -75,10 +75,10 @@ export const UnitUserUsage = ({ unitId }: UnitUserUsageProps) => {
           user.projects.editor.length +
           user.projects.administrator.length >
           0 ||
-        unitEditors.includes(user.username) ||
+        unitEditors.has(user.username) ||
         user.username === unit.owner_id,
     )
-    .map((user) => ({ ...user, isEditor: unitEditors.includes(user.username) }));
+    .map((user) => ({ ...user, isEditor: unitEditors.has(user.username) }));
 
   const pivotToggle = (
     <FormControlLabel

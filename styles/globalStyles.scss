@@ -1,9 +1,8 @@
 // Should use @use instead but need these sheets to access $assetUrl in the global scope
-@import 'fonts/open-sans';
-@import 'fonts/raleway';
+@import "fonts/open-sans";
+@import "fonts/raleway";
 
-
-@import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap");
 
 :root {
   font-size: 14px;

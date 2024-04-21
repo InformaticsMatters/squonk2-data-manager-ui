@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { DatasetSummary, DmError } from "@squonk/data-manager-client";
+import { type DatasetSummary, type DmError } from "@squonk/data-manager-client";
 import {
   getGetDatasetsQueryKey,
   useAddEditorToDataset,
@@ -50,7 +50,9 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
       onRemove={async (value) => {
         setIsLoading(true);
         const username = dataset.editors.find((editor) => !value.includes(editor));
-        if (username !== undefined) {
+        if (username === undefined) {
+          enqueueSnackbar("Username doesn't exist", { variant: "warning" });
+        } else {
           try {
             await removeEditor({
               datasetId: dataset.dataset_id,
@@ -59,8 +61,6 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
           } catch (error) {
             enqueueError(error);
           }
-        } else {
-          enqueueSnackbar("Username doesn't exist", { variant: "warning" });
         }
 
         await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
@@ -71,14 +71,14 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
       onSelect={async (value) => {
         setIsLoading(true);
         const username = value.find((user) => !dataset.editors.includes(user));
-        if (username !== undefined) {
+        if (username === undefined) {
+          enqueueSnackbar("Username doesn't exist", { variant: "warning" });
+        } else {
           try {
             await addEditor({ datasetId: dataset.dataset_id, userId: username });
           } catch (error) {
             enqueueError(error);
           }
-        } else {
-          enqueueSnackbar("Username doesn't exist", { variant: "warning" });
         }
 
         await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });

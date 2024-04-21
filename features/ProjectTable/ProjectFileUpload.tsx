@@ -1,7 +1,5 @@
-import type { ReactNode } from "react";
-import { useCallback } from "react";
-import type { DropzoneState, FileRejection } from "react-dropzone";
-import { useDropzone } from "react-dropzone";
+import { type ReactNode, useCallback } from "react";
+import { type DropzoneState, type FileRejection, useDropzone } from "react-dropzone";
 
 import { getGetFilesQueryKey } from "@squonk/data-manager-client/file-and-path";
 import { useAddFileToProject } from "@squonk/data-manager-client/project";
@@ -31,7 +29,7 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
 
   const uploadFile = useCallback(
     async (file: File) => {
-      const key = enqueueSnackbar(`Uploading file ${file.name}`, { autoHideDuration: 10000 });
+      const key = enqueueSnackbar(`Uploading file ${file.name}`, { autoHideDuration: 10_000 });
       if (projectId) {
         try {
           await uploadProjectFile({
@@ -39,11 +37,11 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
             data: { as_filename: file.name, file, path },
           });
           enqueueSnackbar(`${file.name} was uploaded`, { variant: "success" });
-          queryClient.invalidateQueries({
+          void queryClient.invalidateQueries({
             queryKey: getGetFilesQueryKey({ project_id: projectId, path }),
           });
-        } catch (err) {
-          enqueueError(err);
+        } catch (error) {
+          enqueueError(error);
         }
         closeSnackbar(key);
       }
@@ -55,7 +53,7 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
     (acceptedFiles: File[], rejections: FileRejection[]) => {
       // Upload each valid file and display updates with notistack
       for (const file of acceptedFiles) {
-        uploadFile(file);
+        void uploadFile(file);
       }
 
       // Display rejected files and notistack errors

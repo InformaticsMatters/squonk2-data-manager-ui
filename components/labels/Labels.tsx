@@ -1,11 +1,11 @@
-import type { DatasetVersionSummary, DmError } from "@squonk/data-manager-client";
+import { type DatasetVersionSummary, type DmError } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
 import { useAddMetadata } from "@squonk/data-manager-client/metadata";
 
 import { Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
-import type { TableDataset } from "../../features/DatasetsTable";
+import { type TableDataset } from "../../features/DatasetsTable";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { LabelChip } from "./LabelChip";
 
@@ -39,6 +39,20 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
     );
   }
 
+  const deleteHandler = async (label: string, value: string) => {
+    try {
+      await addAnnotations({
+        datasetId,
+        data: {
+          labels: JSON.stringify([{ label, value, type: "LabelAnnotation", active: false }]),
+        },
+      });
+      void queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
+    } catch (error) {
+      enqueueError(error);
+    }
+  };
+
   return (
     <>
       {labels.map(([label, value]) => (
@@ -47,21 +61,7 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
           label={label}
           sx={{ m: 0.5 }}
           values={value}
-          onDelete={async () => {
-            try {
-              await addAnnotations({
-                datasetId,
-                data: {
-                  labels: JSON.stringify([
-                    { label, value, type: "LabelAnnotation", active: false },
-                  ]),
-                },
-              });
-              queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
-            } catch (error) {
-              enqueueError(error);
-            }
-          }}
+          onDelete={() => void deleteHandler(label, value)}
         />
       ))}
     </>

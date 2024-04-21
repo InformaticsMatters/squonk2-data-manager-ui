@@ -1,4 +1,4 @@
-import type { FilePathFile } from "@squonk/data-manager-client";
+import { type FilePathFile } from "@squonk/data-manager-client";
 
 /**
  * Root relative path separated by forward slashes including the file name at the end

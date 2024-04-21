@@ -1,6 +1,5 @@
-import type { Dispatch, SetStateAction } from "react";
-import { useState } from "react";
-import type { PlotParams } from "react-plotly.js";
+import { type Dispatch, type SetStateAction, useState } from "react";
+import { type PlotParams } from "react-plotly.js";
 
 import {
   Box,
@@ -12,17 +11,14 @@ import {
   Typography,
 } from "@mui/material";
 import dynamic from "next/dynamic";
-import type { PlotDatum } from "plotly.js-basic-dist";
+import { type PlotDatum } from "plotly.js-basic-dist";
 
-import type { Molecule } from "../../features/SDFViewer/SDFViewerData";
+import { type Molecule } from "../../features/SDFViewer/SDFViewerData";
 
-const Plot = dynamic<PlotParams>(
-  () => import("../../components/viz/Plot").then((mod) => mod.Plot),
-  {
-    ssr: false, // Plotly only works when browser APIs are in scope
-    loading: () => <CircularProgress size="1rem" />,
-  },
-);
+const Plot = dynamic<PlotParams>(() => import("../viz/Plot").then((mod) => mod.Plot), {
+  ssr: false, // Plotly only works when browser APIs are in scope
+  loading: () => <CircularProgress size="1rem" />,
+});
 
 // Utils
 

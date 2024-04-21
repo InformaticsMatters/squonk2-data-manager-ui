@@ -19,7 +19,7 @@ export const useCurrentProjectId = () => {
   const { query, pathname } = router;
 
   if (Array.isArray(query.project)) {
-    throw new Error("Project is invalid");
+    throw new TypeError("Project is invalid");
   }
   const projectId = query.project;
 
@@ -36,7 +36,7 @@ export const useCurrentProjectId = () => {
         },
       };
 
-      router.push(href, undefined, { shallow });
+      void router.push(href, undefined, { shallow });
     } else if (projectId !== undefined) {
       // The project has been cleared
       const newQuery = { ...query };
@@ -45,7 +45,7 @@ export const useCurrentProjectId = () => {
 
       const href = { pathname, query: newQuery };
       writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
-      router.push(href, undefined, { shallow, scroll: false });
+      void router.push(href, undefined, { shallow, scroll: false });
     }
   };
 
@@ -85,7 +85,8 @@ export const useIsUserAdminOrEditorOfCurrentProject = () => {
 
   return (
     !!user.username &&
-    (project?.editors.includes(user.username) || project?.administrators.includes(user.username))
+    (!!project?.editors.includes(user.username) ||
+      !!project?.administrators.includes(user.username))
   );
 };
 

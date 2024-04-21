@@ -1,7 +1,6 @@
-import type { FC } from "react";
-import { useLayoutEffect, useState } from "react";
+import { type FC, useLayoutEffect, useState } from "react";
 
-import type { DatasetSummary, DatasetVersionSummary } from "@squonk/data-manager-client";
+import { type DatasetSummary, type DatasetVersionSummary } from "@squonk/data-manager-client";
 
 import { Container, Link, List, Typography } from "@mui/material";
 
@@ -63,7 +62,7 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({ dataset, version, data
       >
         <Container maxWidth="md">
           <PageSection level={2} title="Dataset Actions">
-            {editable && (
+            {!!editable && (
               <>
                 <List>
                   <NewVersionListItem dataset={dataset} datasetName={datasetName} edge="end" />

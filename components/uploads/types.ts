@@ -1,4 +1,4 @@
-import type { FileError } from "react-dropzone";
+import { type FileError } from "react-dropzone";
 
 export interface UploadableFile {
   id: string;
@@ -11,6 +11,4 @@ export interface UploadableFile {
   done: boolean;
 }
 
-export interface FileTypeOptionsState {
-  [mimeType: string]: any;
-}
+export type FileTypeOptionsState = Record<string, any>;

@@ -1,5 +1,5 @@
 import { captureException } from "@sentry/nextjs";
-import type { AxiosError } from "axios";
+import { type AxiosError } from "axios";
 import { useSnackbar } from "notistack";
 
 import { getErrorMessage } from "../utils/next/orvalError";
@@ -8,8 +8,8 @@ export const useEnqueueError = <TError>() => {
   const { enqueueSnackbar, ...rest } = useSnackbar();
 
   const enqueueError = (error: any) => {
-    const err = error as AxiosError<TError> | undefined | null;
-    if (err && err.isAxiosError) {
+    const err = error as AxiosError<TError> | null | undefined;
+    if (err?.isAxiosError) {
       // Axios errors propagate the API error
       enqueueSnackbar(getErrorMessage(err), { variant: "error" });
     } else if (typeof error === "string") {

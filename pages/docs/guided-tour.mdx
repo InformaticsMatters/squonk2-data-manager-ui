@@ -20,10 +20,10 @@ that are referred to in this document.
 ## Logging in
 
 To do anything useful in the Squonk Data Manager you must login and be authenticated. Do this using the **Account**
-menu in the top right corner and click *login*. You are taken to Keycloak where you authenticate, and, assuming you are
+menu in the top right corner and click _login_. You are taken to Keycloak where you authenticate, and, assuming you are
 successful, you are taken back to the Data Manager where you can perform your work.
 
-When finished use the *Logout* option in the **Account** menu.
+When finished use the _Logout_ option in the **Account** menu.
 
 More details can be found in the [Logging in](./how-to/login) How To guide.
 
@@ -38,7 +38,6 @@ work in and the **Project** you want to work in.
 
 More details can be found in the [Setting your work context](./how-to/context) How To guide.
 
-
 ## The Project Data tab
 
 This shows the contents (files and directories) in your project.
@@ -49,7 +48,6 @@ operations.
 
 Jobs and applications have full access to these project contents.
 
-
 ## The Apps/Jobs tab
 
 This is where you launch **Applications** and **Jobs** to do your work.
@@ -59,20 +57,19 @@ box to filter these using terms that are defined for each job or app. For instan
 be labelled as "rdkit" so typing "rdkit" into the search box will show only cards that have this label. The labels for
 each job are displayed towards the bottom of the card in red.
 
-To run a job or application click on the *Run* button. A dialog will appear allowing you to define the job inputs and
+To run a job or application click on the _Run_ button. A dialog will appear allowing you to define the job inputs and
 options.
 
-*Inputs* are project files that form the input to the job.
-*Options* are user specified parameters for execution of the job.
+_Inputs_ are project files that form the input to the job.
+_Options_ are user specified parameters for execution of the job.
 
-Specify these inputs and options and click the *Run* button at the bottom. The execution will be added to the bottom of
+Specify these inputs and options and click the _Run_ button at the bottom. The execution will be added to the bottom of
 the card. Click on it to see the execution details in the **Results** tab.
 
 See the [Running jobs](./how-to/jobs) How To guide for more details.
 
 Launching an **Application** is very similar. Currently the only available application is a Jupyter Notebook.
 See the [Running applications](./how-to/applications) How To guide for more details.
-
 
 ## The Results tab
 
@@ -90,4 +87,8 @@ See the [Inspecting job and application execution](./how-to/results) How To guid
 
 TODO
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

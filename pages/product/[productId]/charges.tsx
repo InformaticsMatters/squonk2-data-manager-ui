@@ -6,8 +6,11 @@ import { RoleRequired } from "../../../components/auth/RoleRequired";
 import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
 import { ProductChargesView } from "../../../features/Finance/ProductChargesView";
 import Layout from "../../../layouts/Layout";
-import type { NotSuccessful, ReactQueryPageProps } from "../../../utils/next/ssr";
-import { isNotSuccessful } from "../../../utils/next/ssr";
+import {
+  isNotSuccessful,
+  type NotSuccessful,
+  type ReactQueryPageProps,
+} from "../../../utils/next/ssr";
 
 export type ProductChargesProps = NotSuccessful | ReactQueryPageProps;
 

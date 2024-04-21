@@ -68,9 +68,9 @@ export const PlaintextViewer = ({
             </Typography>
             <Divider flexItem orientation="vertical" />
             <Typography>{contentSummary}</Typography>
-            {(compressed || truncated) && <Divider flexItem orientation="vertical" />}
-            {compressed && <Chip label="Decompressed" size="small" variant="outlined" />}
-            {truncated && <Chip label="Truncated" size="small" variant="outlined" />}
+            {!!(compressed || truncated) && <Divider flexItem orientation="vertical" />}
+            {!!compressed && <Chip label="Decompressed" size="small" variant="outlined" />}
+            {!!truncated && <Chip label="Truncated" size="small" variant="outlined" />}
           </Box>
         </Box>
         <Box paddingBottom={1} paddingX={1}>

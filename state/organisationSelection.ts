@@ -1,4 +1,4 @@
-import type { OrganisationDetail } from "@squonk/account-server-client";
+import { type OrganisationDetail } from "@squonk/account-server-client";
 
 import { atom, useAtom } from "jotai";
 

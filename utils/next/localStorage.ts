@@ -1,8 +1,8 @@
-import type { ProjectLocalStoragePayload } from "../../hooks/projectHooks";
-import type { ColorScheme } from "../../state/colorScheme";
-import type { Consent } from "../../state/cookieConsent";
-import type { DebugMode } from "../../state/eventDebugMode";
-import type { FileState } from "../../state/fileSelection";
+import { type ProjectLocalStoragePayload } from "../../hooks/projectHooks";
+import { type ColorScheme } from "../../state/colorScheme";
+import { type Consent } from "../../state/cookieConsent";
+import { type DebugMode } from "../../state/eventDebugMode";
+import { type FileState } from "../../state/fileSelection";
 
 export const COLOUR_SCHEME_STORAGE_KEY = `data-manager-ui-colorScheme`;
 export const PROJECT_LOCAL_STORAGE_KEY = `data-manager-ui-current-project`;
@@ -12,10 +12,10 @@ export const COOKIE_CONSENT_STORAGE_KEY = `data-manager-ui-cookie-consent`;
 
 type Keys =
   | typeof COLOUR_SCHEME_STORAGE_KEY
-  | typeof PROJECT_LOCAL_STORAGE_KEY
-  | typeof PROJECT_FILE_LOCAL_STORAGE_KEY
+  | typeof COOKIE_CONSENT_STORAGE_KEY
   | typeof EVENT_DEBUG_MODE_STORAGE_KEY
-  | typeof COOKIE_CONSENT_STORAGE_KEY;
+  | typeof PROJECT_FILE_LOCAL_STORAGE_KEY
+  | typeof PROJECT_LOCAL_STORAGE_KEY;
 
 export type BaseValue = { version: number };
 
@@ -34,7 +34,7 @@ export const getFromLocalStorage = <Key extends Keys>(
   try {
     const value = localStorage.getItem(key);
     if (value !== null) {
-      return JSON.parse(value);
+      return JSON.parse(value) as Values[Key];
     }
     return defaultValue;
   } catch {

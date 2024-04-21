@@ -1,10 +1,9 @@
-import type { ChangeEventHandler } from "react";
+import { type ChangeEventHandler } from "react";
 
 import { MenuItem, TextField } from "@mui/material";
 
 import { capitalise } from "../utils/app/language";
-import type { PermissionLevel } from "./userContext/filter";
-import { PERMISSION_LEVELS } from "./userContext/filter";
+import { PERMISSION_LEVELS, type PermissionLevel } from "./userContext/filter";
 
 export interface PermissionLevelSelectProps {
   value: PermissionLevel;

@@ -6,7 +6,7 @@ import { RoleRequired } from "../components/auth/RoleRequired";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { ResultsView } from "../features/ResultsView";
 import Layout from "../layouts/Layout";
-import type { NotSuccessful, ReactQueryPageProps } from "../utils/next/ssr";
+import { type NotSuccessful, type ReactQueryPageProps } from "../utils/next/ssr";
 
 export type ResultsProps = NotSuccessful | ReactQueryPageProps;
 const isNotSuccessful = (props: ResultsProps): props is NotSuccessful => {

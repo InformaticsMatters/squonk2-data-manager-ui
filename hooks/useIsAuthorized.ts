@@ -1,6 +1,5 @@
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
-import type { User } from "./useKeycloakUser";
-import { useKeycloakUser } from "./useKeycloakUser";
+import { useKeycloakUser, type User } from "./useKeycloakUser";
 
 const getPrevailingRole = (user: Partial<User>, roles: string[]) => {
   const reversedRoles = [...roles].reverse();

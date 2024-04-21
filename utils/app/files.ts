@@ -43,7 +43,7 @@ export const separateFileExtensionFromFileName = (
 /**
  * Uses the file name to guess the mime type of the file
  */
-export const getMimeFromFileName = (fileName: string, mimeLookup: { [key: string]: string }) => {
+export const getMimeFromFileName = (fileName: string, mimeLookup: Record<string, string>) => {
   const typeLabelParts = divideFileName(fileName);
 
   if (isFileNameGzipped(fileName)) {

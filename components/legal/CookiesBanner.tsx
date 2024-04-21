@@ -9,7 +9,9 @@ export const CookiesBanner = () => {
     setConsent(true);
   };
 
-  if (consent) return null;
+  if (consent) {
+    return null;
+  }
 
   return (
     <Box

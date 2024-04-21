@@ -1,4 +1,4 @@
-import type { DmError } from "@squonk/data-manager-client";
+import { type DmError } from "@squonk/data-manager-client";
 
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
@@ -56,7 +56,7 @@ export const ProjectMemberSelection = ({
           }
         }}
         onSelect={async (value) => {
-          const username = value.slice(-1).pop();
+          const username = value.at(-1);
           if (username) {
             try {
               await addMember(username);

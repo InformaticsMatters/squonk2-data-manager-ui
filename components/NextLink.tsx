@@ -1,7 +1,5 @@
-import type { ButtonProps, LinkProps } from "@mui/material";
-import { Button, Link } from "@mui/material";
-import type { LinkProps as NextJSLinkProps } from "next/link";
-import NextJSLink from "next/link";
+import { Button, type ButtonProps, Link, type LinkProps } from "@mui/material";
+import NextJSLink, { type LinkProps as NextJSLinkProps } from "next/link";
 
 import { HrefButton } from "./HrefButton";
 
@@ -10,14 +8,14 @@ interface NProps<C extends string> {
   component: C;
 }
 
-type InheritedProps<T> = Omit<T, "href" | "component">;
+type InheritedProps<T> = Omit<T, "component" | "href">;
 type LProps = InheritedProps<LinkProps> & NProps<"a">;
 type BProps = InheritedProps<ButtonProps> & NProps<"button">;
 
-export type NextLinkProps = LProps | BProps;
+export type NextLinkProps = BProps | LProps;
 
 // https://stackoverflow.com/questions/10687099/how-to-test-if-a-url-string-is-absolute-or-relative
-const regexp = new RegExp("^(?:[a-z+]+:)?//", "i");
+const regexp = /^(?:[a-z+]+:)?\/\//iu;
 
 /**
  * Generic Link component for all uses.

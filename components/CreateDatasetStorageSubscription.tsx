@@ -1,4 +1,4 @@
-import type { AsError, UnitDetail } from "@squonk/account-server-client";
+import { type AsError, type UnitDetail } from "@squonk/account-server-client";
 import {
   getGetProductsQueryKey,
   useCreateUnitProduct,
@@ -50,7 +50,7 @@ export const CreateDatasetStorageSubscription = ({
             },
           });
           enqueueSnackbar("Created product", { variant: "success" });
-          queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
+          await queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
         } catch (error) {
           enqueueError(error);
           captureException(error);
@@ -76,8 +76,8 @@ export const CreateDatasetStorageSubscription = ({
                 sx={{ maxWidth: 100 }}
                 type="number"
               />
-              {cost && <span>Cost: {formatCoins(cost * values.allowance)}</span>}
-              <Button disabled={isSubmitting || !isValid} onClick={submitForm}>
+              {!!cost && <span>Cost: {formatCoins(cost * values.allowance)}</span>}
+              <Button disabled={isSubmitting || !isValid} onClick={() => void submitForm()}>
                 Create
               </Button>
             </Box>

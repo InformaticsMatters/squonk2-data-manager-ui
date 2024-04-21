@@ -2,7 +2,7 @@ import { Container } from "@mui/material";
 import Head from "next/head";
 
 import Layout from "../../layouts/Layout";
-import { DocsNav } from "../../components/DocsNav"
+import { DocsNav } from "../../components/DocsNav";
 
 <Head>
   <title>Data Manager User Documentation - How To Guides</title>
@@ -14,14 +14,18 @@ import { DocsNav } from "../../components/DocsNav"
 
 This page lists guides for doing certain things in the Squonk Data Manager.
 
-* [Logging in](./how-to/login) - logging in and authenticating
-* [Setting the project context](./how-to/context) - defining your workspace
-* [Creating projects](./how-to/create-project) - and the different types of project
-* [Working with project data](./how-to/projects-tab) - using the Project tab
-* [Running applications](./how-to/applications) - launching and using Jupyter notebooks
-* [Running jobs](./how-to/jobs) - launching jobs
-* [Inspecting job and application execution](./how-to/execution) - using the Results tab
-* Working with datasets
-* [Inspecting usage and quotas](./how-to/usage-quotas) - finding about your costs
+- [Logging in](./how-to/login) - logging in and authenticating
+- [Setting the project context](./how-to/context) - defining your workspace
+- [Creating projects](./how-to/create-project) - and the different types of project
+- [Working with project data](./how-to/projects-tab) - using the Project tab
+- [Running applications](./how-to/applications) - launching and using Jupyter notebooks
+- [Running jobs](./how-to/jobs) - launching jobs
+- [Inspecting job and application execution](./how-to/execution) - using the Results tab
+- Working with datasets
+- [Inspecting usage and quotas](./how-to/usage-quotas) - finding about your costs
 
-export default ({ children }) => <Layout><Container>{children}</Container></Layout>
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

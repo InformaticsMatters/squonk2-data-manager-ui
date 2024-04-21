@@ -1,4 +1,4 @@
-import type { DmError } from "@squonk/data-manager-client";
+import { type DmError } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
 import { useAddMetadata } from "@squonk/data-manager-client/metadata";
 
@@ -10,7 +10,7 @@ import { TextField } from "formik-mui";
 import { bindPopover, bindTrigger, usePopupState } from "material-ui-popup-state/hooks";
 import * as yup from "yup";
 
-import type { TableDataset } from "../../features/DatasetsTable";
+import { type TableDataset } from "../../features/DatasetsTable";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { LowerCaseTextField } from "../LowerCaseTextField";
 
@@ -76,7 +76,7 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
               <Box alignItems="baseline" display="flex" gap={1}>
                 <Field autoFocus component={LowerCaseTextField} label="Name" name="label" />
                 <Field component={TextField} label="Value" name="value" />
-                <Button disabled={isSubmitting || !isValid} onClick={submitForm}>
+                <Button disabled={isSubmitting || !isValid} onClick={() => void submitForm()}>
                   Add
                 </Button>
               </Box>

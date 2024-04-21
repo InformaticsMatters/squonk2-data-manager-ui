@@ -1,9 +1,8 @@
-import type { DmError } from "@squonk/data-manager-client";
+import { type DmError } from "@squonk/data-manager-client";
 import { getGetFilesQueryKey, useDeleteFile } from "@squonk/data-manager-client/file-and-path";
 
 import { DeleteOutlineRounded as DeleteOutlineRoundedIcon } from "@mui/icons-material";
-import type { IconButtonProps } from "@mui/material";
-import { IconButton } from "@mui/material";
+import { IconButton, type IconButtonProps } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../components/WarningDeleteButton";

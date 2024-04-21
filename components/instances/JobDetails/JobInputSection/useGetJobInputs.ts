@@ -1,7 +1,7 @@
-import type { InstanceGetResponse, InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
-import type { InputFieldSchema } from "../../../runCards/JobCard/JobInputFields";
+import { type InputFieldSchema } from "../../../runCards/JobCard/JobInputFields";
 
 // Contains only fields we are interested in
 type ApplicationSpecification = {
@@ -22,7 +22,7 @@ type JobInputs = {
  * Returns provided inputs with their information. It matches the provided inputs with their
  * property definition which are provided by the GET /jobs/job_id endpoint
  */
-export const useGetJobInputs = (instance: InstanceSummary | InstanceGetResponse) => {
+export const useGetJobInputs = (instance: InstanceGetResponse | InstanceSummary) => {
   const inputsEnabled =
     instance.job_id !== undefined && instance.application_specification !== undefined;
 
@@ -51,7 +51,7 @@ export const useGetJobInputs = (instance: InstanceSummary | InstanceGetResponse)
     .filter(([name]) => Boolean(applicationSpecification.variables[name]))
     .map(([name, jobInput]) => {
       // Let's assume inputs can only contain string or array of strings as values
-      const value = applicationSpecification.variables[name] as string | string[];
+      const value = applicationSpecification.variables[name] as string[] | string;
 
       return {
         name,

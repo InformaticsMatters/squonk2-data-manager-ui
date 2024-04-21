@@ -24,7 +24,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
   const [currentLabel, setCurrentLabel] = useState("");
 
   // Used to tidy up the code in the `addLabel` and `removeLabel` methods
-  const labelsArray = labels || [];
+  const labelsArray = labels ?? [];
 
   const addLabel = () => {
     if (currentLabel) {
@@ -38,7 +38,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
   const removeLabel = (index: number) => {
     const newLabels = [...labelsArray];
     newLabels.splice(index, 1);
-    setLabels(newLabels.length ? newLabels : undefined);
+    setLabels(newLabels.length > 0 ? newLabels : undefined);
   };
 
   const addLabelWithKeyboard = (key: string) => {
@@ -58,18 +58,17 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
       }}
       InputProps={{
         style: { flexWrap: "wrap", gap: `0 ${theme.spacing(1 / 2)}` },
-        startAdornment:
-          labels &&
-          labels.map((label, index) => (
-            <Chip
-              key={index}
-              label={label}
-              size="small"
-              sx={{ mt: "6px" }}
-              variant="outlined"
-              onDelete={() => removeLabel(index)}
-            />
-          )),
+        startAdornment: labels?.map((label, index) => (
+          <Chip
+            // eslint-disable-next-line react/no-array-index-key
+            key={index}
+            label={label}
+            size="small"
+            sx={{ mt: "6px" }}
+            variant="outlined"
+            onDelete={() => removeLabel(index)}
+          />
+        )),
         endAdornment: (
           <EndAdornmentWrapper visibility={!!currentLabel}>
             <IconButton
@@ -101,7 +100,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
 const EndAdornmentWrapper = styled("div", { shouldForwardProp: (prop) => prop !== "visibility" })<{
   visibility: boolean;
 }>(({ visibility }) => ({
-  visibility: !visibility ? "hidden" : undefined,
+  visibility: visibility ? undefined : "hidden",
   position: "absolute",
   right: "9px",
   bottom: "7px",

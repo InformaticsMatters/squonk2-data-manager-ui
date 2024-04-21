@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { FileError } from "react-dropzone";
+import { type FileError } from "react-dropzone";
 
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
 import { useGetTask } from "@squonk/data-manager-client/task";
@@ -8,7 +8,7 @@ import { Grid, IconButton, LinearProgress, MenuItem, TextField, Typography } fro
 import { useQueryClient } from "@tanstack/react-query";
 
 import { TwiddleIcon } from "../../components/uploads/TwiddleIcon";
-import type { UploadableFile } from "../../components/uploads/types";
+import { type UploadableFile } from "../../components/uploads/types";
 import { useFileExtensions } from "../../hooks/useFileExtensions";
 import { useMimeTypeLookup } from "../../hooks/useMimeTypeLookup";
 import { separateFileExtensionFromFileName } from "../../utils/app/files";
@@ -52,9 +52,9 @@ export const SingleFileUploadWithProgress = ({
   });
 
   useEffect(() => {
-    if (task && task.done) {
+    if (task?.done) {
       setInterval(false);
-      queryClient
+      void queryClient
         .invalidateQueries({ queryKey: getGetDatasetsQueryKey() })
         .then(() => changeToDone());
     }
@@ -64,7 +64,7 @@ export const SingleFileUploadWithProgress = ({
   const mimeLookup = useMimeTypeLookup();
 
   const disabled =
-    (task && !task.done) ||
+    (!!task && !task.done) ||
     (fileWrapper.progress < 100 && fileWrapper.progress > 0) ||
     isFetching ||
     (fileWrapper.progress === 100 && task === undefined);
@@ -129,12 +129,13 @@ export const SingleFileUploadWithProgress = ({
       )}
 
       {(fileWrapper.progress === 100 && task === undefined) ||
-      (task && !task.done) ||
+      (!!task && !task.done) ||
       isFetching ? (
         <LinearProgress />
       ) : null}
 
       {errors.map((error, index) => (
+        // eslint-disable-next-line react/no-array-index-key
         <Typography color="error" key={index}>
           {error.message}
         </Typography>

@@ -1,4 +1,4 @@
-import type { DmError } from "@squonk/data-manager-client";
+import { type DmError } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey, useDeleteDataset } from "@squonk/data-manager-client/dataset";
 
 import { DeleteForever } from "@mui/icons-material";
@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../../components/WarningDeleteButton";
 import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
-import type { TableDataset, TableDatasetSubRow } from "../..";
+import { type TableDataset, type TableDatasetSubRow } from "../..";
 import { useFilterDeletableDatasets } from "./useFilterDeletableDatasets";
 import { useSortUndeletableDatasets } from "./useSortUndeletableDatasets";
 
@@ -61,7 +61,7 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
           <Typography>
             Are you sure? <b>This cannot be undone</b>.
           </Typography>
-          {!!sortedUndeletableDatasets.length && (
+          {sortedUndeletableDatasets.length > 0 && (
             <>
               <br />
               <Typography>
@@ -83,8 +83,8 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
           )}
         </>
       }
-      modalId={"delete-selected-datasets"}
-      title={"Delete selected"}
+      modalId="delete-selected-datasets"
+      title="Delete selected"
       tooltipText="Delete selected datasets"
       onDelete={deleteSelectedDatasets}
     >

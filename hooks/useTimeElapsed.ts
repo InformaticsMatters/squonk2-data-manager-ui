@@ -40,7 +40,7 @@ export const useElapsedTime = ({ duration, startAt = 0, updateInterval = 0 }: Pr
       startAtRef.current +
       (updateInterval === 0
         ? currentElapsedTime
-        : ((currentElapsedTime / updateInterval) | 0) * updateInterval);
+        : Math.trunc(currentElapsedTime / updateInterval) * updateInterval);
 
     const totalTime = startAtRef.current + currentElapsedTime;
     const isCompleted = typeof duration === "number" && totalTime >= duration;

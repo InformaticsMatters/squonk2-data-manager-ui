@@ -1,4 +1,4 @@
-import type { DatasetVersionSummary, DmError } from "@squonk/data-manager-client";
+import { type DatasetVersionSummary, type DmError } from "@squonk/data-manager-client";
 import { getGetDatasetsQueryKey, useDeleteDataset } from "@squonk/data-manager-client/dataset";
 
 import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";

@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 
-import type { PermissionLevelFilter } from "../../../../components/userContext/filter";
+import { type PermissionLevelFilter } from "../../../../components/userContext/filter";
 import { SelectOrganisation } from "../../../../components/userContext/SelectOrganisation";
 import { SelectUnit } from "../../../../components/userContext/SelectUnit";
 import { OrganisationActions } from "./contextActions/OrganisationActions";

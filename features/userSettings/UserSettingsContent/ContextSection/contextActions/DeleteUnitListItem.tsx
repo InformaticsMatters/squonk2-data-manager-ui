@@ -1,4 +1,4 @@
-import type { UnitDetail } from "@squonk/account-server-client";
+import { type UnitDetail } from "@squonk/account-server-client";
 import {
   getGetOrganisationUnitsQueryKey,
   getGetUnitsQueryKey,
@@ -41,11 +41,9 @@ export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
       tooltipText="Delete selected unit"
       onDelete={async () => {
         try {
-          if (unit.name === user.username) {
-            await deleteDefaultUnit();
-          } else {
-            await deleteUnit({ unitId: unit.id });
-          }
+          await (unit.name === user.username
+            ? deleteDefaultUnit()
+            : deleteUnit({ unitId: unit.id }));
           enqueueSnackbar("Unit deleted", { variant: "success" });
           onDelete();
         } catch (error) {
@@ -53,10 +51,10 @@ export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
           captureException(error);
         }
         organisation?.id &&
-          queryClient.invalidateQueries({
+          void queryClient.invalidateQueries({
             queryKey: getGetOrganisationUnitsQueryKey(organisation.id),
           });
-        queryClient.invalidateQueries({ queryKey: getGetUnitsQueryKey() });
+        void queryClient.invalidateQueries({ queryKey: getGetUnitsQueryKey() });
       }}
     >
       {({ openModal }) => (

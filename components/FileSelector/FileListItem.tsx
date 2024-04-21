@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import { FolderRounded as FolderRoundedIcon } from "@mui/icons-material";
 import {
@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 
 import { FavouriteButton } from "../../features/ProjectTable/buttons/FavouriteButton";
-import type { SharedProps } from "./types";
+import { type SharedProps } from "./types";
 
 export interface FileListItemProps extends Pick<SharedProps, "projectId"> {
   /**

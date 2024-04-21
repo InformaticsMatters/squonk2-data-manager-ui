@@ -1,4 +1,4 @@
-import type { TableDir, TableFile } from "./types";
+import { type TableDir, type TableFile } from "./types";
 
 type Row = TableDir | TableFile;
 

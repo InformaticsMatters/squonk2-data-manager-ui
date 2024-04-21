@@ -2,13 +2,13 @@ import { useCallback, useEffect, useMemo } from "react";
 
 import { useImmerReducer } from "use-immer";
 
-import type { Field, FieldKey, Fields, FieldValue, TypedSchema } from "./types";
+import { type Field, type FieldKey, type Fields, type FieldValue, type TypedSchema } from "./types";
 
 type EditableSchemaStateAction<K extends FieldKey, V extends FieldValue<K>> =
-  | { type: "clear" }
-  | { type: "init"; originalSchema: TypedSchema }
+  | { type: "changeDescription"; description: string }
   | { type: "changeField"; fieldName: string; fieldKey: K; fieldValue: V }
-  | { type: "changeDescription"; description: string };
+  | { type: "clear" }
+  | { type: "init"; originalSchema: TypedSchema };
 
 type EditedSchemaProps = {
   description?: string;
@@ -23,7 +23,7 @@ type EditableSchemaState = {
 const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
   draft: EditableSchemaState,
   action: EditableSchemaStateAction<K, V>,
-): EditableSchemaState | void => {
+): EditableSchemaState | undefined => {
   switch (action.type) {
     case "clear": {
       return null;
@@ -41,6 +41,7 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
         const { fieldName, fieldKey, fieldValue } = action;
 
         // Has to be extracted like this because TS would complain of possibly undefined value.
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         const editedField = draft.editedSchemaProps.fields[fieldName] || {};
 
         // If the provided field value equals to the original, unset the field key in the helper
@@ -50,7 +51,7 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
 
           // If there are no keys remaining for the field, delete the whole field from the helper
           // object.
-          if (!Object.keys(editedField).length) {
+          if (Object.keys(editedField).length === 0) {
             delete draft.editedSchemaProps.fields[fieldName];
           } else {
             draft.editedSchemaProps.fields[fieldName] = editedField;
@@ -159,7 +160,7 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
       }
 
       const fieldEntries = Object.entries(fields);
-      if (fieldEntries.length) {
+      if (fieldEntries.length > 0) {
         const deltaFields: Fields = {};
 
         fieldEntries.forEach(([name, editedField]) => {

@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 
 import {
   getGetInstanceQueryKey,
@@ -108,7 +108,7 @@ export const ResultsToolbar = ({
           <IconButton
             size="large"
             sx={{ ml: "auto" }}
-            onClick={() => refreshResults.forEach((func) => func())}
+            onClick={() => refreshResults.forEach((func) => void func())}
           >
             <RefreshRoundedIcon />
           </IconButton>

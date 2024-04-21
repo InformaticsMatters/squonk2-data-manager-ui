@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { FileError } from "react-dropzone";
+import { type FileError } from "react-dropzone";
 
 import { useGetTask } from "@squonk/data-manager-client/task";
 
@@ -38,7 +38,7 @@ export const ProgressBar = ({ taskId, progress, errors, onDone }: ProgressBarPro
   });
 
   useEffect(() => {
-    if (task && task.done) {
+    if (task?.done) {
       task;
       setInterval(false);
       onDone();
@@ -50,8 +50,9 @@ export const ProgressBar = ({ taskId, progress, errors, onDone }: ProgressBarPro
       {task === undefined && progress < 100 && (
         <LinearProgress value={progress} variant="determinate" />
       )}
-      {!isLoading && task && !task.done && <LinearProgress />}
+      {!isLoading && !!task && !task.done && <LinearProgress />}
       {errors.map((error, index) => (
+        // eslint-disable-next-line react/no-array-index-key
         <Typography color="error" key={`${error.code}-${error.message}-${index}`}>
           {error.message}
         </Typography>

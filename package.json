@@ -104,7 +104,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "14.1.4",
     "@playwright/test": "1.43.0",
-    "@squonk/eslint-config": "1.0.0",
+    "@squonk/eslint-config": "2.0.1",
     "dotenv": "16.4.5",
     "eslint": "8.57.0",
     "husky": "9.0.11",

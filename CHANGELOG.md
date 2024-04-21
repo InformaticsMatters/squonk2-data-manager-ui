@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.1.0...3.1.1) (2024-04-21)
+
+
+### Bug Fixes
+
+* **run-job:** fix hydration issue with the options form ([31184ec](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/31184ecdf58b225a7f7c6a8996e29f52351ed5e4))
+* **run-job:** remove error messages from console when validation fails ([582ca3c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/582ca3ccbd56892049c6bb3e8c7c2c20df4eec09))
+* **run-job:** show error message correctly when empty smiles entries are used ([8d2b6b0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8d2b6b0c769ffa686b44d0170858e0dcef898f5c))
+* **sketcher:** fix some sketcher issues caused by multiple sketchers being open ([ad75496](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/ad7549622f1c9a116d81873807b931b5ae929958))
+
 ## [3.1.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.1.0-rc.3...3.1.0) (2024-04-11)
 
 

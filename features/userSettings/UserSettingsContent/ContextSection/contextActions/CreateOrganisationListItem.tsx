@@ -87,7 +87,7 @@ export const CreateOrganisationListItem = () => {
         validationSchema={yup.object().shape({
           name: yup
             .string()
-            .required("A organisation name is required")
+            .required("An organisation name is required")
             .test(
               "does-not-exist-already",
               "The name is already used for an organisation",

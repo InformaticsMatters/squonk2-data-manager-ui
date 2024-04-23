@@ -99,7 +99,7 @@ export const DatasetUpload = () => {
 
   return (
     <>
-      <Tooltip title={unitOrOrgMissing ? "Select a organisation and unit" : "Upload dataset"}>
+      <Tooltip title={unitOrOrgMissing ? "Select an organisation and unit" : "Upload dataset"}>
         <span>
           <IconButton
             disabled={unitOrOrgMissing || isTypesLoading}

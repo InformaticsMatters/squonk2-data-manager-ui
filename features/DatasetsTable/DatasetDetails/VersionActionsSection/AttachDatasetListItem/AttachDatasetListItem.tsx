@@ -54,7 +54,8 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
 
   const { data: projectsData, isLoading: isProjectsLoading } = useGetProjects();
   const projects = projectsData?.projects.filter(
-    ({ editors }) => user.username && editors.includes(user.username),
+    ({ editors, administrators }) =>
+      user.username && (editors.includes(user.username) || administrators.includes(user.username)),
   );
 
   const { data: typesData, isLoading: isTypesLoading } = useGetFileTypes();

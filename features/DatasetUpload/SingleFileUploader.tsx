@@ -50,15 +50,17 @@ export const SingleFileUploadWithProgress = ({
       refetchInterval: interval,
     },
   });
+  const taskDone = task?.done;
 
   useEffect(() => {
-    if (task?.done) {
+    if (taskDone) {
       setInterval(false);
       void queryClient
         .invalidateQueries({ queryKey: getGetDatasetsQueryKey() })
         .then(() => changeToDone());
     }
-  }, [changeToDone, queryClient, task]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryClient, taskDone]);
 
   const { extensions } = useFileExtensions();
   const mimeLookup = useMimeTypeLookup();

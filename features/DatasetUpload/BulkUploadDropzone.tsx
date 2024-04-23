@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useCallback } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 
 import { Grid } from "@mui/material";
 
@@ -55,10 +55,10 @@ const SingleFile = ({ index, file, setFiles, files }: SingleFileProps) => {
     setFiles((curr) => curr.filter((fw) => fw.file !== file));
   };
 
-  const changeToDone = useCallback(() => {
+  const changeToDone = () => {
     file.done = true;
     setFiles(mutateAtPosition(files, index, files[index]));
-  }, [file, files, index, setFiles]);
+  };
 
   const changeMimeType = (newType: string): void => {
     file.mimeType = newType;

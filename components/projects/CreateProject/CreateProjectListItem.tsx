@@ -30,6 +30,7 @@ export const CreateProjectListItem = ({ unit }: CreateProjectListItemProps) => {
       </ListItemButton>
 
       <CreateProjectForm
+        defaultPrivacy={unit.default_product_privacy}
         modal={{
           id: "create-project",
           title: "Create Project",

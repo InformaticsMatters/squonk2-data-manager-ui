@@ -8,7 +8,7 @@ import { DataTable } from "../../../components/DataTable";
 import { NextLink } from "../../../components/NextLink";
 import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkIconButton";
 import { DeleteProductButton } from "../../../components/products/DeleteProductButton";
-import { CreateProjectButton } from "../../../components/projects/CreateProjectButton";
+import { CreateProjectButton } from "../../../components/projects/CreateProject/CreateProjectButton";
 import { formatTierString } from "../../../utils/app/products";
 import { getSharedColumns } from "../columns";
 

@@ -1,6 +1,6 @@
 import { List } from "@mui/material";
 
-import { CreateProjectListItem } from "../../../../../components/projects/CreateProjectListItem";
+import { CreateProjectListItem } from "../../../../../components/projects/CreateProject/CreateProjectListItem";
 import { useGetPersonalUnit } from "../../../../../hooks/useGetPersonalUnit";
 import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";

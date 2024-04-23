@@ -29,6 +29,7 @@ export const CreateProjectButton = ({
       </Button>
 
       <CreateProjectForm
+        defaultPrivacy={unit.default_product_privacy}
         modal={{
           id: "create-project",
           title: "Create Project",

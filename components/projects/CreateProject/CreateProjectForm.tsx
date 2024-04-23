@@ -1,7 +1,10 @@
 import {
   type AsError,
   type ProductDetail,
+  ProductDetailFlavour,
+  ProductDetailType,
   type UnitDetail,
+  UnitDetailDefaultProductPrivacy,
   type UnitProductPostBodyBodyFlavour,
 } from "@squonk/account-server-client";
 import {
@@ -15,32 +18,36 @@ import { getGetUserInventoryQueryKey } from "@squonk/data-manager-client/invento
 import { getGetProjectsQueryKey, useCreateProject } from "@squonk/data-manager-client/project";
 
 import {
-  Box,
   Button,
-  FormControlLabel,
+  FormControl,
+  FormLabel,
   MenuItem,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { Field, Form, Formik, type FormikConfig } from "formik";
-import { Checkbox, TextField } from "formik-mui";
+import { TextField } from "formik-mui";
 import * as yup from "yup";
 
-import { DEFAULT_PRODUCT_FLAVOUR, PROJECT_SUB } from "../../constants/products";
-import { useCurrentProjectId } from "../../hooks/projectHooks";
-import { useEnqueueError } from "../../hooks/useEnqueueStackError";
-import { type Resolve } from "../../types";
-import { formatTierString } from "../../utils/app/products";
-import { getErrorMessage } from "../../utils/next/orvalError";
-import { FormikModalWrapper, type FormikModalWrapperProps } from "../modals/FormikModalWrapper";
+import { useCurrentProjectId } from "../../../hooks/projectHooks";
+import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
+import { type Resolve } from "../../../types";
+import { formatTierString } from "../../../utils/app/products";
+import { getErrorMessage } from "../../../utils/next/orvalError";
+import { FormikModalWrapper, type FormikModalWrapperProps } from "../../modals/FormikModalWrapper";
+import { PrivacySwitch } from "./PrivacySwitch";
+
+const PROJECT_SUB = ProductDetailType.DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION;
 
 export interface CreateProjectFormProps {
   modal?: Resolve<
     Pick<FormikModalWrapperProps, "id" | "onClose" | "open" | "submitText" | "title">
   >;
   unitId: UnitDetail["id"] | (() => Promise<UnitDetail["id"]>);
+  defaultPrivacy: UnitDetailDefaultProductPrivacy;
   product?: ProductDetail;
   autoFocus?: boolean;
 }
@@ -53,16 +60,32 @@ export interface Values {
 
 type ProjectFormikProps = FormikConfig<Values>;
 
+const isPrivateDefaultValues: Record<UnitDetailDefaultProductPrivacy, boolean> = {
+  ALWAYS_PRIVATE: true,
+  ALWAYS_PUBLIC: false,
+  DEFAULT_PUBLIC: false,
+  DEFAULT_PRIVATE: true,
+};
+
 export const CreateProjectForm = ({
   modal,
   unitId,
+  defaultPrivacy,
   product,
   autoFocus = true,
 }: CreateProjectFormProps) => {
+  const evaluationAllowed = defaultPrivacy !== UnitDetailDefaultProductPrivacy.ALWAYS_PRIVATE;
+  const defaultFlavour = (
+    defaultPrivacy === UnitDetailDefaultProductPrivacy.ALWAYS_PRIVATE ||
+    defaultPrivacy === UnitDetailDefaultProductPrivacy.DEFAULT_PRIVATE
+      ? ProductDetailFlavour.BRONZE
+      : ProductDetailFlavour.EVALUATION
+  ) satisfies ProductDetailFlavour;
+
   const initialValues: Values = {
     projectName: "",
-    flavour: product?.flavour ?? DEFAULT_PRODUCT_FLAVOUR,
-    isPrivate: false,
+    flavour: product?.flavour ?? defaultFlavour,
+    isPrivate: isPrivateDefaultValues[defaultPrivacy],
   };
   const theme = useTheme();
   const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
@@ -142,13 +165,19 @@ export const CreateProjectForm = ({
     values,
   }) => (
     <Form style={{ marginTop: theme.spacing() }}>
-      <Box
+      <FormControl
+        component="fieldset"
         sx={{
           display: "grid",
-          gridTemplateColumns: biggerThanSm ? "1fr 1fr auto auto" : "1fr",
+          gridTemplateColumns: biggerThanSm ? "1fr 1fr auto" + (modal ? "" : " auto") : "1fr",
           gap: 1,
+          alignItems: "baseline",
         }}
       >
+        <FormLabel component="legend" sx={{ mb: 1 }}>
+          Unit default privacy: {defaultPrivacy.split("_").join(" ").toLowerCase()}
+        </FormLabel>
+
         <Field
           fullWidth
           autoFocus={autoFocus}
@@ -169,7 +198,7 @@ export const CreateProjectForm = ({
             name="flavour"
             onChange={(event: any) => {
               handleChange(event);
-              if (event.target.value === DEFAULT_PRODUCT_FLAVOUR) {
+              if (event.target.value === ProductDetailFlavour.EVALUATION) {
                 void setFieldValue("isPrivate", false);
               }
             }}
@@ -179,7 +208,13 @@ export const CreateProjectForm = ({
             ) : (
               productTypes?.map((product) => {
                 return (
-                  <MenuItem key={product.flavour} value={product.flavour}>
+                  <MenuItem
+                    disabled={
+                      product.flavour === ProductDetailFlavour.EVALUATION && !evaluationAllowed
+                    }
+                    key={product.flavour}
+                    value={product.flavour}
+                  >
                     {formatTierString(product.flavour ?? "Unknown Flavour")}
                   </MenuItem>
                 );
@@ -188,19 +223,16 @@ export const CreateProjectForm = ({
           </Field>
         )}
 
-        <FormControlLabel
-          control={<Field color="primary" component={Checkbox} name="isPrivate" type="checkbox" />}
-          disabled={values.flavour === DEFAULT_PRODUCT_FLAVOUR}
-          label="Private"
-          labelPlacement="start"
-        />
+        <Tooltip title="Toggle whether this project can be viewed by other platform users">
+          <PrivacySwitch defaultPrivacy={defaultPrivacy} flavour={values.flavour} />
+        </Tooltip>
 
         {!modal && (
           <Button disabled={isSubmitting || !isValid} onClick={() => void submitForm()}>
             Create
           </Button>
         )}
-      </Box>
+      </FormControl>
     </Form>
   );
 

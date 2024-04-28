@@ -13,6 +13,7 @@ import { type DeleteDirectoryButtonProps } from "./buttons/DeleteDirectoryButton
 import { type DeleteUnmanagedFileButtonProps } from "./buttons/DeleteUnmanagedFileButton";
 import { type DetachDatasetProps } from "./buttons/DetachDataset";
 import { FavouriteButton } from "./buttons/FavouriteButton";
+import { type RenameButtonProps } from "./buttons/RenameButton";
 import { type TableDir, type TableFile } from "./types";
 import { isTableDir } from "./utils";
 
@@ -30,6 +31,10 @@ const DeleteUnmanagedFileButton = dynamic<DeleteUnmanagedFileButtonProps>(
 );
 const DeleteDirectoryButton = dynamic<DeleteDirectoryButtonProps>(
   () => import("./buttons/DeleteDirectoryButton").then((mod) => mod.DeleteDirectoryButton),
+  { loading: () => <CircularProgress size="1rem" /> },
+);
+const RenameButton = dynamic<RenameButtonProps>(
+  () => import("./buttons/RenameButton").then((mod) => mod.RenameButton),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 const CreateDatasetFromFileButton = dynamic<CreateDatasetFromFileButtonProps>(
@@ -71,6 +76,7 @@ export const FileActions = ({ file }: FileActionsProps) => {
         projectId={project.project_id}
         type={isFile ? "file" : "directory"}
       />
+
       {/* Actions for files only */}
 
       {/* Managed files are "detached" */}
@@ -98,6 +104,15 @@ export const FileActions = ({ file }: FileActionsProps) => {
           disabled={!isProjectAdminOrEditor}
           path={path}
           projectId={project.project_id}
+        />
+      )}
+
+      {!isManagedFile && (
+        <RenameButton
+          disabled={!isProjectAdminOrEditor}
+          path={file.fullPath}
+          projectId={project.project_id}
+          type={isFile ? "file" : "directory"}
         />
       )}
 

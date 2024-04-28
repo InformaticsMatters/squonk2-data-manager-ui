@@ -3,6 +3,8 @@ import { type DmError } from "@squonk/data-manager-client";
 
 import { type AxiosError } from "axios";
 
+import { nullEmptyString } from "../text";
+
 const getMessageFromResponse = <TError>(error: AxiosError<TError>, field: keyof TError) => {
   const apiErrorData = error.response?.data;
   return apiErrorData?.[field];
@@ -49,6 +51,11 @@ export const getErrorMessage = (error: APIErrorResponse | AxiosError | null): st
     }
   }
 
-  // we haven't got a message from the error
-  return "Error: no information provided";
+  // try get an error message from the error objects, skipping "", then fallback to a generic message
+  return (
+    (typeof error?.response?.data === "string" ? nullEmptyString(error.response.data) : null) ??
+    nullEmptyString(error?.response?.statusText) ??
+    nullEmptyString(error?.message) ??
+    "Error: no information provided"
+  );
 };

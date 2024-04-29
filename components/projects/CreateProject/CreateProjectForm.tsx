@@ -227,7 +227,10 @@ export const CreateProjectForm = ({
         )}
 
         <Tooltip title="Toggle whether this project can be viewed by other platform users">
-          <PrivacyToggle defaultPrivacy={defaultPrivacy} flavour={values.flavour} />
+          {/* Span to prevent forward ref warning, probably fixed in react 19 */}
+          <span>
+            <PrivacyToggle defaultPrivacy={defaultPrivacy} flavour={values.flavour} />
+          </span>
         </Tooltip>
 
         {!modal && (

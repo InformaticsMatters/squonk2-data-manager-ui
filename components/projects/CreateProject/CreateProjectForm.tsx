@@ -163,6 +163,7 @@ export const CreateProjectForm = ({
     handleChange,
     setFieldValue,
     values,
+    touched,
   }) => (
     <Form style={{ marginTop: theme.spacing() }}>
       <FormControl
@@ -200,6 +201,8 @@ export const CreateProjectForm = ({
               handleChange(event);
               if (event.target.value === ProductDetailFlavour.EVALUATION) {
                 void setFieldValue("isPrivate", false);
+              } else if (!touched.isPrivate) {
+                void setFieldValue("isPrivate", isPrivateDefaultValues[defaultPrivacy]);
               }
             }}
           >

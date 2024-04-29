@@ -79,6 +79,7 @@ export const WarningDeleteButton = ({
       {tooltipText === undefined ? content : <Tooltip title={tooltipText}>{content}</Tooltip>}
 
       <ModalWrapper
+        closeText="Cancel"
         id={modalId}
         open={open}
         submitDisabled={isDeleting}

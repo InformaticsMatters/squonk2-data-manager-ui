@@ -30,6 +30,10 @@ export interface ModalWrapperProps extends BaseModalWrapperProps {
    * Whether the primary action should be in a disabled state.
    */
   submitDisabled?: boolean;
+  /**
+   * Text to be displayed as the close text button. Defaylt is "Close"
+   */
+  closeText?: string;
 }
 
 /**
@@ -40,6 +44,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   title,
   submitText,
   submitDisabled,
+  closeText = "Close",
   children,
   open,
   onClose,
@@ -75,7 +80,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       </DialogTitle>
       <DialogContent>{children}</DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Close</Button>
+        <Button onClick={onClose}>{closeText}</Button>
         {!!onSubmit && (
           <Button color="primary" disabled={submitDisabled} onClick={onSubmit}>
             {submitText}

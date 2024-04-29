@@ -253,7 +253,7 @@ export const CreateProjectForm = ({
   };
 
   return modal ? (
-    <FormikModalWrapper {...modal} {...commonProps}>
+    <FormikModalWrapper {...modal} {...commonProps} closeText="Cancel">
       {children}
     </FormikModalWrapper>
   ) : (

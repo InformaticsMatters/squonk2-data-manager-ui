@@ -18,6 +18,10 @@ export interface FormikModalWrapperProps extends BaseModalWrapperProps {
    */
   submitText: string;
   /**
+   * Text displayed in the close button. Defaults to "Close"
+   */
+  closeText?: string;
+  /**
    * Whether the modal is open
    */
   open: boolean;
@@ -43,6 +47,7 @@ export const FormikModalWrapper = <Values extends FormikValues>({
   id,
   title,
   submitText,
+  closeText,
   open,
   onClose,
   children,
@@ -54,6 +59,7 @@ export const FormikModalWrapper = <Values extends FormikValues>({
       {({ submitForm, isSubmitting, isValid, ...rest }) => (
         <Form style={{ display: "inline" }}>
           <ModalWrapper
+            closeText={closeText}
             DialogProps={DialogProps}
             id={id}
             open={open}

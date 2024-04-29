@@ -5,7 +5,7 @@ import {
 
 import { FormControlLabel } from "@mui/material";
 import { Field } from "formik";
-import { Switch } from "formik-mui";
+import { Checkbox } from "formik-mui";
 
 export interface PrivacySwitchProps {
   /**
@@ -18,7 +18,7 @@ export interface PrivacySwitchProps {
   defaultPrivacy: UnitDetailDefaultProductPrivacy;
 }
 
-export const PrivacySwitch = ({ flavour, defaultPrivacy }: PrivacySwitchProps) => {
+export const PrivacyToggle = ({ flavour, defaultPrivacy }: PrivacySwitchProps) => {
   // Disable the switch if the product is an evaluation product or if the default privacy is set to
   // always private or always public
   const isDisabled =
@@ -28,7 +28,7 @@ export const PrivacySwitch = ({ flavour, defaultPrivacy }: PrivacySwitchProps) =
 
   return (
     <FormControlLabel
-      control={<Field color="primary" component={Switch} name="isPrivate" type="checkbox" />}
+      control={<Field color="primary" component={Checkbox} name="isPrivate" type="checkbox" />}
       disabled={isDisabled}
       label="Private"
       labelPlacement="start"

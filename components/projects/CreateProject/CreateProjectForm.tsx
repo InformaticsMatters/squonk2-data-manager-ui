@@ -38,7 +38,7 @@ import { type Resolve } from "../../../types";
 import { formatTierString } from "../../../utils/app/products";
 import { getErrorMessage } from "../../../utils/next/orvalError";
 import { FormikModalWrapper, type FormikModalWrapperProps } from "../../modals/FormikModalWrapper";
-import { PrivacySwitch } from "./PrivacySwitch";
+import { PrivacyToggle } from "./PrivacyToggle";
 
 const PROJECT_SUB = ProductDetailType.DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION;
 
@@ -224,7 +224,7 @@ export const CreateProjectForm = ({
         )}
 
         <Tooltip title="Toggle whether this project can be viewed by other platform users">
-          <PrivacySwitch defaultPrivacy={defaultPrivacy} flavour={values.flavour} />
+          <PrivacyToggle defaultPrivacy={defaultPrivacy} flavour={values.flavour} />
         </Tooltip>
 
         {!modal && (

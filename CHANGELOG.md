@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.1.1...3.2.0-rc.0) (2024-04-29)
+
+
+### Features
+
+* **create-project:** support the default product privacy of units ([6a99669](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6a996699895a99c9b048c5548676c2729dc40a96))
+* **project-page:** support file and directory rename/move ([e454a7f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e454a7fcec572f847a4ced63f9ccc8ecebc50a23))
+
+
+### Bug Fixes
+
+* **create-project:** change privacy switch back to a checkbox ([d404311](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d4043111c3c412d0c57736195a26cdd720897011))
+* **create-project:** forward ref warning in CreateProjectForm.tsx ([9fe9208](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9fe92089801391f9223f7d3dc318d8b39e4f7b13))
+* **create-project:** restore default project privacy value when changing flavour if field is untouched ([0b9c544](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0b9c544c20cddbad025913a8ac409cd7a09c9aaa))
+* **dataset-actions:** allow user to attach a dataset to a project they are an admin ([43ac2f9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/43ac2f9ff1e28fda732eaa2fb2cf05d8272fe04f))
+* **datasets-page:** stop request spam when upload finishes ([9155956](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9155956432275ed0d23ba8c9442064bc01bf9541))
+* fix typos ([7441bb3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7441bb3b3517dd498cb06c6fb8e4236d0eafd0c8))
+* improve error message relay from api ([af3d025](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/af3d025dd885d31203094a390559a3f8b8af8d2e))
+* **modals:** change some close button text to cancel ([424f3c9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/424f3c9128684a3a31349c8d07b2f9f05c613152))
+* **project-selection:** fix alignment of unit and org inputs ([fa62cca](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fa62ccaa5d740be5766d56d07e3510ff0b746350))
+
+
+### Miscellaneous Chores
+
+* release 3.2.0-rc.0 ([97c6cac](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/97c6cac4dd0648ecd87c32e8a86cc01512aa0757))
+
 ## [3.1.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.1.0...3.1.1) (2024-04-21)
 
 

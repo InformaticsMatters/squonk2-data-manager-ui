@@ -99,10 +99,11 @@ export const RenameButton = ({ projectId, type, path, ...buttonProps }: RenameBu
         <Box p={1}>
           <Field
             autoFocus
+            fullWidth
             component={TextField}
             label="Destination Path"
             name="dstPath"
-            sx={{ minWidth: "300px" }}
+            sx={{ "& input": { width: "100vw" } }}
           />
         </Box>
       </FormikModalWrapper>

@@ -12,7 +12,7 @@ export const useStorageSubscriptions = () => {
   const [unit] = useSelectedUnit();
 
   const { data, isLoading, error } = useGetProductsForUnit(unit?.id ?? "", {
-    query: { enabled: !!unit?.id },
+    query: { enabled: !!unit?.caller_is_member },
   });
 
   const storageSubscriptions = useMemo(() => {

@@ -58,23 +58,23 @@ export const UserSettingsContent = () => {
   const fallBackToNone =
     project !== null &&
     !!user.username &&
-    project.administrators.includes(user.username) &&
+    !project.administrators.includes(user.username) &&
     !project.editors.includes(user.username);
 
   const fallBackToEditor =
     project !== null &&
     !!user.username &&
-    project.administrators.includes(user.username) &&
+    !project.administrators.includes(user.username) &&
     project.editors.includes(user.username);
 
   useEffect(() => {
     if (fallBackToNone) {
       setPermissionLevel("none");
     }
-    if (fallBackToEditor) {
+    if (fallBackToEditor && permissionLevel === "administrator") {
       setPermissionLevel("editor");
     }
-  }, [fallBackToNone, fallBackToEditor, setPermissionLevel]);
+  }, [fallBackToNone, fallBackToEditor, permissionLevel, setPermissionLevel]);
 
   if (isLoading || !user.username) {
     return <CenterLoader />;

@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.2.0-rc.0...3.2.0-rc.1) (2024-05-01)
+
+
+### Features
+
+* **edit-unit:** add option to change a unit's default product privacy ([b6a22a6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b6a22a6622d5c40f8cf4444b174c2722f8682e5b))
+
+
+### Bug Fixes
+
+* fix texts in some file actions ([254b764](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/254b764a3d4d80b38bb920ed42d1e955d8276e63))
+* fix unnecessary request being made when a user isn't a unit member ([3ac4492](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3ac4492be685669618b3dc82b173f58ed151fb3c))
+* improve display of rename file/dir field ([aabcc7c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/aabcc7ce9823785c3c37d6f5d37a9d198f2c6756))
+* **project-selection:** fix project filter level changing when a project is selected ([769c23e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/769c23e5bdba8b3e92a511216c7ca85bd1b50e72))
+
+
+### Miscellaneous Chores
+
+* release 3.2.0-rc.1 ([7864fc9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7864fc91c78f007c11f9310d14b1c08325c67207))
+
 ## [3.2.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.1.1...3.2.0-rc.0) (2024-04-29)
 
 

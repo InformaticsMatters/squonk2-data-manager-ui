@@ -37,7 +37,7 @@ export const CreateDefaultUnitListItem = () => {
     <ListItemButton onClick={() => void createDefaultUnitHandler()}>
       <ListItemText
         primary="Create personal unit"
-        secondary="Creates a new unit in the default organisation"
+        secondary="Create a new unit in the default organisation"
       />
       <ListItemIcon>
         <CreateNewFolder color="action" />

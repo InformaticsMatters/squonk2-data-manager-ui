@@ -19,7 +19,7 @@ export const EditUnitListItem = ({ unit }: EditUnitListItemProps) => {
   return (
     <>
       <ListItemButton onClick={() => setOpen((open) => !open)}>
-        <ListItemText primary="Edit Unit" secondary="Add and remove unit editors" />
+        <ListItemText primary="Edit Unit" secondary="Modify a unit" />
         <ListItemIcon>
           <EditIcon color="action" />
         </ListItemIcon>

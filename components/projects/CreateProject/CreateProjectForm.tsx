@@ -176,7 +176,7 @@ export const CreateProjectForm = ({
         }}
       >
         <FormLabel component="legend" sx={{ mb: 1 }}>
-          Unit default privacy: {defaultPrivacy.split("_").join(" ").toLowerCase()}
+          Unit default privacy: {defaultPrivacy.split("_").join(" ").toLocaleLowerCase()}
         </FormLabel>
 
         <Field

@@ -22,7 +22,7 @@ export const CreateProjectListItem = ({ unit }: CreateProjectListItemProps) => {
       <ListItemButton onClick={() => setOpen(true)}>
         <ListItemText
           primary="Create Project"
-          secondary="Creates a new project in the currently selected context"
+          secondary="Create a new project in the selected unit"
         />
         <ListItemIcon>
           <NoteAdd color="action" />

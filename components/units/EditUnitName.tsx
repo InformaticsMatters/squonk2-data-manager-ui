@@ -14,6 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { type AxiosError } from "axios";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
+import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 import { getErrorMessage } from "../../utils/next/orvalError";
@@ -22,7 +23,9 @@ export interface EditUnitProps {
   unit: UnitDetail;
 }
 
-export const EditUnit = ({ unit }: EditUnitProps) => {
+export const EditUnitName = ({ unit }: EditUnitProps) => {
+  const { user } = useKeycloakUser();
+
   const [organisation] = useSelectedOrganisation();
   const [, setUnit] = useSelectedUnit();
   const [name, setName] = useState(unit.name);
@@ -71,15 +74,33 @@ export const EditUnit = ({ unit }: EditUnitProps) => {
     }
   };
 
+  // const isOrganisationMember = organisation?.caller_is_member;
+  const isUnitOwner = unit.owner_id === user.username;
+  const isPersonalUnit = organisation?.name === process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME;
+
+  // const allowedToEdit = !isPersonalUnit && (isUnitOwner || isOrganisationMember);
+  const allowedToEdit = !isPersonalUnit && isUnitOwner;
+
+  const helperText = isPersonalUnit
+    ? "Names of personal units may not be changed"
+    : allowedToEdit
+      ? undefined
+      : "You must be the unit owner to edit the unit name";
+
   return (
-    <Box display="flex" gap={1}>
+    <Box alignItems="baseline" display="flex" gap={1}>
       <TextField
         fullWidth
+        disabled={!allowedToEdit}
+        helperText={helperText}
         label="Unit Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
-      <Button disabled={isPending || name === unit.name} onClick={() => void updateHandler()}>
+      <Button
+        disabled={isPending || name === unit.name || !allowedToEdit}
+        onClick={() => void updateHandler()}
+      >
         Update
       </Button>
     </Box>

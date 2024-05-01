@@ -7,10 +7,13 @@ import {
 } from "@squonk/account-server-client/user";
 import { type DmError } from "@squonk/data-manager-client";
 
+import { Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { useSelectedOrganisation } from "../../state/organisationSelection";
+import { CenterLoader } from "../CenterLoader";
 import { ManageUsers } from "../ManageUsers";
 
 export interface UnitEditorsProps {
@@ -26,7 +29,11 @@ export interface UnitEditorsProps {
 export const UnitEditors = ({ unit }: UnitEditorsProps) => {
   const { user: currentUser } = useKeycloakUser();
 
-  const { data, isLoading: isUsersLoading } = useGetOrganisationUnitUsers(unit.id);
+  const [organisation] = useSelectedOrganisation();
+
+  const { data, isLoading: isUsersLoading } = useGetOrganisationUnitUsers(unit.id, {
+    query: { enabled: !!unit.caller_is_member || organisation?.caller_is_member },
+  });
   const users = data?.users;
   const { mutateAsync: addEditor, isPending: isAdding } = useAddOrganisationUnitUser();
   const { mutateAsync: removeEditor, isPending: isRemoving } = useDeleteOrganisationUnitUser();
@@ -34,12 +41,21 @@ export const UnitEditors = ({ unit }: UnitEditorsProps) => {
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
+  const isPersonalUnit = organisation?.name === process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME;
+
+  if (isUsersLoading) {
+    return <CenterLoader />;
+  }
+
   if (users && currentUser.username) {
     return (
       <ManageUsers
+        disabled={isPersonalUnit}
+        disabledUsers={[unit.owner_id]}
+        helperText={isPersonalUnit ? "Editors of personal unit may not be changed" : undefined}
         isLoading={isAdding || isRemoving || isUsersLoading}
         title="Unit Editors"
-        users={users.filter((user) => user.id !== currentUser.username).map((user) => user.id)}
+        users={users.map((user) => user.id)}
         onRemove={async (value) => {
           const user = users.find((editor) => !value.includes(editor.id));
           if (user) {
@@ -75,5 +91,5 @@ export const UnitEditors = ({ unit }: UnitEditorsProps) => {
       />
     );
   }
-  return null;
+  return <Typography>You must be a unit or organisation member to modify unit editors</Typography>;
 };

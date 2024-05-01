@@ -6,7 +6,8 @@ import { Edit as EditIcon } from "@mui/icons-material";
 import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 
 import { ModalWrapper } from "../../../../../components/modals/ModalWrapper";
-import { EditUnit } from "../../../../../components/units/EditUnit";
+import { EditDefaultPrivacy } from "../../../../../components/units/EditDefaultPrivacy";
+import { EditUnitName } from "../../../../../components/units/EditUnitName";
 import { UnitEditors } from "../../../../../components/units/UnitEditors";
 
 export interface EditUnitListItemProps {
@@ -32,10 +33,15 @@ export const EditUnitListItem = ({ unit }: EditUnitListItemProps) => {
         onClose={() => setOpen(false)}
       >
         <Box display="flex" flexDirection="column" gap={2}>
+          <Typography variant="subtitle1">Owner: {unit.owner_id}</Typography>
           <Typography component="h3" variant="h4">
             Name
           </Typography>
-          <EditUnit unit={unit} />
+          <EditUnitName unit={unit} />
+          <Typography component="h3" variant="h4">
+            Default Project Privacy
+          </Typography>
+          <EditDefaultPrivacy unit={unit} />
           <Typography component="h3" variant="h4">
             Editors
           </Typography>

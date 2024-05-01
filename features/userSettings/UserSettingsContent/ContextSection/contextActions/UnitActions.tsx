@@ -37,11 +37,8 @@ export const UnitActions = () => {
       {!!isUnitOwner && !!unit && (
         <DeleteUnitListItem unit={unit} onDelete={() => setUnit(undefined)} />
       )}
-      {!!isUnitOwner &&
-        !!unit &&
-        organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && (
-          <EditUnitListItem unit={unit} />
-        )}
+
+      {!!unit && <EditUnitListItem unit={unit} />}
       {!!unit && !!(unit.caller_is_member || unit.owner_id === user.username) && (
         <CreateProjectListItem unit={unit} />
       )}

@@ -32,9 +32,9 @@ import { Field, Form, Formik, type FormikConfig } from "formik";
 import { TextField } from "formik-mui";
 import * as yup from "yup";
 
+import { type Resolve } from "../../../../types";
 import { useCurrentProjectId } from "../../../hooks/projectHooks";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
-import { type Resolve } from "../../../types";
 import { formatTierString } from "../../../utils/app/products";
 import { getErrorMessage } from "../../../utils/next/orvalError";
 import { FormikModalWrapper, type FormikModalWrapperProps } from "../../modals/FormikModalWrapper";

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { formatRelativeTime } from "../utils/app/datetime";
+import { formatRelativeTime } from "../src/utils/app/datetime";
 
 test.describe("relative date-times can be formatted", () => {
   test("negative times", () => {

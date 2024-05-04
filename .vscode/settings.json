@@ -2,7 +2,9 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.tabSize": 2,
   "[typescriptreact][typescript][javascript]": {
-    "editor.rulers": [100]
+    "editor.rulers": [
+      100
+    ]
   },
   "javascript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.importModuleSpecifier": "relative",

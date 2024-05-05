@@ -56,11 +56,11 @@ export const FormikModalWrapper = <Values extends FormikValues>({
 }: FormikConfig<Values> & FormikModalWrapperProps) => {
   return (
     <Formik {...formikProps}>
-      {({ submitForm, isSubmitting, isValid, ...rest }) => (
+      {({ submitForm, isSubmitting, isValid, resetForm, ...rest }) => (
         <Form style={{ display: "inline" }}>
           <ModalWrapper
             closeText={closeText}
-            DialogProps={DialogProps}
+            DialogProps={{ onTransitionExited: () => resetForm(), ...DialogProps }}
             id={id}
             open={open}
             submitDisabled={isSubmitting || !isValid}
@@ -70,7 +70,7 @@ export const FormikModalWrapper = <Values extends FormikValues>({
             onSubmit={() => void submitForm()}
           >
             {typeof children === "function"
-              ? children({ isValid, submitForm, isSubmitting, ...rest })
+              ? children({ isValid, isSubmitting, submitForm, resetForm, ...rest })
               : children}
           </ModalWrapper>
         </Form>

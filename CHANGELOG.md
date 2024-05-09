@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.2.0-rc.1...3.2.0-rc.2) (2024-05-09)
+
+
+### Bug Fixes
+
+* **edit-unit:** fix permissions of editing unit members, names and default privacy ([28289cb](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/28289cb949a3841416206374e7f252e2286bf63c))
+
+
+### Miscellaneous Chores
+
+* release 3.2.0-rc.2 ([f401dbc](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f401dbc028a4695ecd3b95cdf66a9422aff09ce1))
+
 ## [3.2.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.2.0-rc.0...3.2.0-rc.1) (2024-05-01)
 
 

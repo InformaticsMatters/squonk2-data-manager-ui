@@ -8,7 +8,7 @@ import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mu
 import { ModalWrapper } from "../../../../../components/modals/ModalWrapper";
 import { EditDefaultPrivacy } from "../../../../../components/units/EditDefaultPrivacy";
 import { EditUnitName } from "../../../../../components/units/EditUnitName";
-import { UnitEditors } from "../../../../../components/units/UnitEditors";
+import { UnitMembers } from "../../../../../components/units/UnitMembers";
 
 export interface EditUnitListItemProps {
   unit: UnitDetail;
@@ -43,9 +43,9 @@ export const EditUnitListItem = ({ unit }: EditUnitListItemProps) => {
           </Typography>
           <EditDefaultPrivacy unit={unit} />
           <Typography component="h3" variant="h4">
-            Editors
+            Members
           </Typography>
-          <UnitEditors unit={unit} />
+          <UnitMembers unit={unit} />
         </Box>
       </ModalWrapper>
     </>

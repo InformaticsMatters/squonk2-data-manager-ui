@@ -7,7 +7,6 @@ import {
 } from "@squonk/account-server-client/user";
 import { type DmError } from "@squonk/data-manager-client";
 
-import { Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
@@ -16,7 +15,7 @@ import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { CenterLoader } from "../CenterLoader";
 import { ManageUsers } from "../ManageUsers";
 
-export interface UnitEditorsProps {
+export interface UnitMembersProps {
   /**
    * Unit to be edited.
    */
@@ -24,9 +23,9 @@ export interface UnitEditorsProps {
 }
 
 /**
- * MuiAutocomplete to manage the current editors of the selected project
+ * MuiAutocomplete to manage the current members of the selected project
  */
-export const UnitEditors = ({ unit }: UnitEditorsProps) => {
+export const UnitMembers = ({ unit }: UnitMembersProps) => {
   const { user: currentUser } = useKeycloakUser();
 
   const [organisation] = useSelectedOrganisation();
@@ -34,33 +33,41 @@ export const UnitEditors = ({ unit }: UnitEditorsProps) => {
   const { data, isLoading: isUsersLoading } = useGetOrganisationUnitUsers(unit.id, {
     query: { enabled: !!unit.caller_is_member || organisation?.caller_is_member },
   });
-  const users = data?.users;
-  const { mutateAsync: addEditor, isPending: isAdding } = useAddOrganisationUnitUser();
-  const { mutateAsync: removeEditor, isPending: isRemoving } = useDeleteOrganisationUnitUser();
+  const users = data?.users ?? [];
+  const { mutateAsync: addMember, isPending: isAdding } = useAddOrganisationUnitUser();
+  const { mutateAsync: removeMember, isPending: isRemoving } = useDeleteOrganisationUnitUser();
   const queryClient = useQueryClient();
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
+  const isOrganisationMember = organisation?.caller_is_member;
+  const isUnitMember = unit.caller_is_member;
   const isPersonalUnit = organisation?.name === process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME;
+
+  const helperText = isPersonalUnit
+    ? "Members of personal unit may not be changed"
+    : !isOrganisationMember || !isUnitMember
+      ? "You must be a unit or organisation member to view and modify unit members"
+      : undefined;
 
   if (isUsersLoading) {
     return <CenterLoader />;
   }
 
-  if (users && currentUser.username) {
+  if (currentUser.username) {
     return (
       <ManageUsers
-        disabled={isPersonalUnit}
+        disabled={!!helperText}
         disabledUsers={[unit.owner_id]}
-        helperText={isPersonalUnit ? "Editors of personal unit may not be changed" : undefined}
+        helperText={helperText}
         isLoading={isAdding || isRemoving || isUsersLoading}
-        title="Unit Editors"
+        title="Unit Members"
         users={users.map((user) => user.id)}
         onRemove={async (value) => {
-          const user = users.find((editor) => !value.includes(editor.id));
+          const user = users.find((member) => !value.includes(member.id));
           if (user) {
             try {
-              await removeEditor({ unitId: unit.id, userId: user.id });
+              await removeMember({ unitId: unit.id, userId: user.id });
             } catch (error) {
               enqueueError(error);
             }
@@ -76,7 +83,7 @@ export const UnitEditors = ({ unit }: UnitEditorsProps) => {
           const username = value.reverse().find((user) => !users.map((u) => u.id).includes(user));
           if (username) {
             try {
-              await addEditor({ unitId: unit.id, userId: username });
+              await addMember({ unitId: unit.id, userId: username });
             } catch (error) {
               enqueueError(error);
             }
@@ -91,5 +98,6 @@ export const UnitEditors = ({ unit }: UnitEditorsProps) => {
       />
     );
   }
-  return <Typography>You must be a unit or organisation member to modify unit editors</Typography>;
+
+  return null;
 };

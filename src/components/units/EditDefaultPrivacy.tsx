@@ -9,7 +9,6 @@ import { MenuItem, TextField } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
-import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 import { capitalise, shoutSnakeToLowerCase } from "../../utils/app/language";
@@ -19,8 +18,6 @@ export interface EditDefaultPrivacyProps {
 }
 
 export const EditDefaultPrivacy = ({ unit }: EditDefaultPrivacyProps) => {
-  const { user } = useKeycloakUser();
-
   const [organisation] = useSelectedOrganisation();
   const [, setUnit] = useSelectedUnit();
 
@@ -47,12 +44,11 @@ export const EditDefaultPrivacy = ({ unit }: EditDefaultPrivacyProps) => {
     }
   };
 
-  // const isOrganisationMember = organisation?.caller_is_member;
-  const isUnitOwner = unit.owner_id === user.username;
+  const isOrganisationMember = organisation?.caller_is_member;
+  const isUnitMember = unit.caller_is_member;
   const isPersonalUnit = organisation?.name === process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME;
 
-  // const allowedToEdit = !isPersonalUnit && (isUnitOwner || isOrganisationMember);
-  const allowedToEdit = !isPersonalUnit && isUnitOwner;
+  const allowedToEdit = !isPersonalUnit && (!!isOrganisationMember || isUnitMember);
 
   const helperText = isPersonalUnit
     ? "Default project privacy of personal units may not be changed"

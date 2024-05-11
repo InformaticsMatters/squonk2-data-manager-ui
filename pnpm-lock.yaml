@@ -154,7 +154,7 @@ dependencies:
     version: 5.0.7
   next:
     specifier: 14.1.4
-    version: 14.1.4(react-dom@18.2.0)(react@18.2.0)(sass@1.76.0)
+    version: 14.1.4(react-dom@18.2.0)(react@18.2.0)(sass@1.77.1)
   next-http-proxy-middleware:
     specifier: 1.2.6
     version: 1.2.6
@@ -189,8 +189,8 @@ dependencies:
     specifier: 2.6.0
     version: 2.6.0(plotly.js@2.29.1)(react@18.2.0)
   sass:
-    specifier: 1.76.0
-    version: 1.76.0
+    specifier: 1.77.1
+    version: 1.77.1
   sharp:
     specifier: 0.33.3
     version: 0.33.3
@@ -251,7 +251,7 @@ packages:
       debug: 4.3.4
       joi: 17.12.2
       jose: 4.15.4
-      next: 14.1.4(react-dom@18.2.0)(react@18.2.0)(sass@1.76.0)
+      next: 14.1.4(react-dom@18.2.0)(react@18.2.0)(sass@1.77.1)
       oauth4webapi: 2.10.3
       openid-client: 5.6.4
       tslib: 2.6.2
@@ -1658,7 +1658,7 @@ packages:
       '@sentry/vercel-edge': 7.114.0
       '@sentry/webpack-plugin': 1.21.0
       chalk: 3.0.0
-      next: 14.1.4(react-dom@18.2.0)(react@18.2.0)(sass@1.76.0)
+      next: 14.1.4(react-dom@18.2.0)(react@18.2.0)(sass@1.77.1)
       react: 18.2.0
       resolve: 1.22.8
       rollup: 2.78.0
@@ -6999,7 +6999,7 @@ packages:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
     dev: false
 
-  /next@14.1.4(react-dom@18.2.0)(react@18.2.0)(sass@1.76.0):
+  /next@14.1.4(react-dom@18.2.0)(react@18.2.0)(sass@1.77.1):
     resolution: {integrity: sha512-1WTaXeSrUwlz/XcnhGTY7+8eiaFvdet5z9u3V2jb+Ek1vFo0VhHKSAIJvDWfQpttWjnyw14kBeq28TPq7bTeEQ==}
     engines: {node: '>=18.17.0'}
     hasBin: true
@@ -7022,7 +7022,7 @@ packages:
       postcss: 8.4.31
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      sass: 1.76.0
+      sass: 1.77.1
       styled-jsx: 5.1.1(react@18.2.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 14.1.4
@@ -7046,7 +7046,7 @@ packages:
       next: '*'
     dependencies:
       chokidar: 3.6.0
-      next: 14.1.4(react-dom@18.2.0)(react@18.2.0)(sass@1.76.0)
+      next: 14.1.4(react-dom@18.2.0)(react@18.2.0)(sass@1.77.1)
     dev: false
 
   /node-domexception@1.0.0:
@@ -8256,8 +8256,8 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: false
 
-  /sass@1.76.0:
-    resolution: {integrity: sha512-nc3LeqvF2FNW5xGF1zxZifdW3ffIz5aBb7I7tSvOoNu7z1RQ6pFt9MBuiPtjgaI62YWrM/txjWlOCFiGtf2xpw==}
+  /sass@1.77.1:
+    resolution: {integrity: sha512-OMEyfirt9XEfyvocduUIOlUSkWOXS/LAt6oblR/ISXCTukyavjex+zQNm51pPCOiFKY1QpWvEH1EeCkgyV3I6w==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:

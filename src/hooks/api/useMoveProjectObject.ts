@@ -58,7 +58,7 @@ export const useMoveProjectObject = (
     const promises = [
       queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) }),
       queryClient.invalidateQueries({
-        queryKey: getGetFilesQueryKey({ project_id: projectId, path: getPathStem(srcPath) }),
+        queryKey: getGetFilesQueryKey({ project_id: projectId, path: srcPath }),
       }),
     ];
     if (dstPath) {

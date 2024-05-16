@@ -60,11 +60,11 @@ dependencies:
     specifier: 7.114.0
     version: 7.114.0(next@14.1.4)(react@18.2.0)(webpack@5.90.3)
   '@squonk/account-server-client':
-    specifier: 2.1.4
-    version: 2.1.4(@tanstack/react-query@5.35.5)(axios@1.6.8)
+    specifier: 2.2.0
+    version: 2.2.0(@tanstack/react-query@5.35.5)(axios@1.6.8)
   '@squonk/data-manager-client':
-    specifier: 2.0.11-rc.1
-    version: 2.0.11-rc.1(@tanstack/react-query@5.35.5)(axios@1.6.8)
+    specifier: 2.0.11
+    version: 2.0.11(@tanstack/react-query@5.35.5)(axios@1.6.8)
   '@squonk/mui-theme':
     specifier: 3.0.2
     version: 3.0.2(@mui/material@5.15.17)
@@ -1752,8 +1752,8 @@ packages:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
     dev: false
 
-  /@squonk/account-server-client@2.1.4(@tanstack/react-query@5.35.5)(axios@1.6.8):
-    resolution: {integrity: sha512-LRPhkfSisPKe8SNER+v8FUjsPfg6BUkKC80rqkWpum/1a2VpkVkqkf6zeJLVjZ3e15QegylLf+RNGgu7/GkJyQ==}
+  /@squonk/account-server-client@2.2.0(@tanstack/react-query@5.35.5)(axios@1.6.8):
+    resolution: {integrity: sha512-tsQTeDrV/o0R1tRhsorHhhvw8AJbTIZh4uMUSXAjp+8T5f20MODXRdY09DceXCQpLQT6u2ihNowK/UZpqlUdOA==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
@@ -1762,8 +1762,8 @@ packages:
       axios: 1.6.8
     dev: false
 
-  /@squonk/data-manager-client@2.0.11-rc.1(@tanstack/react-query@5.35.5)(axios@1.6.8):
-    resolution: {integrity: sha512-Qw3wHFirObnTBLvOf6Jnv17asPwa7ebYngzK6WHkqYaOm60K5DPIotNvdMHjjOd8Vwybt6UyFSxYjhsg7vRrgw==}
+  /@squonk/data-manager-client@2.0.11(@tanstack/react-query@5.35.5)(axios@1.6.8):
+    resolution: {integrity: sha512-BolWDr05oCY4Ktz+A+fG40XEtg0MyEj2V+ClJ2LRedM8KlrylXeKLXqYJSvXjNgB+J5DGY1fog4g5N8quApp9A==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'

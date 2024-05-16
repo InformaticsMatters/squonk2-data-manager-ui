@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.2.0-rc.2...3.2.0) (2024-05-16)
+
+
+### Bug Fixes
+
+* **move-file-mutation:** fix invalidation of cache when moving a file ([5b974d0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5b974d00f1f515ca0503a1fe0ca64d3cf1420984))
+
+
+### Miscellaneous Chores
+
+* release 3.2.0 ([077cede](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/077cedefbd9fbdef1e7f54c47cd0f9ee5192215c))
+
 ## [3.2.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.2.0-rc.1...3.2.0-rc.2) (2024-05-09)
 
 

@@ -61,10 +61,10 @@ dependencies:
     version: 7.114.0(next@14.1.4)(react@18.2.0)(webpack@5.90.3)
   '@squonk/account-server-client':
     specifier: 2.2.0
-    version: 2.2.0(@tanstack/react-query@5.35.5)(axios@1.6.8)
+    version: 2.2.0(@tanstack/react-query@5.35.5)(axios@1.7.2)
   '@squonk/data-manager-client':
     specifier: 2.0.11
-    version: 2.0.11(@tanstack/react-query@5.35.5)(axios@1.6.8)
+    version: 2.0.11(@tanstack/react-query@5.35.5)(axios@1.7.2)
   '@squonk/mui-theme':
     specifier: 3.0.2
     version: 3.0.2(@mui/material@5.15.17)
@@ -102,8 +102,8 @@ dependencies:
     specifier: 2.6.3
     version: 2.6.3
   axios:
-    specifier: 1.6.8
-    version: 1.6.8
+    specifier: 1.7.2
+    version: 1.7.2
   dayjs:
     specifier: 1.11.11
     version: 1.11.11
@@ -1752,24 +1752,24 @@ packages:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
     dev: false
 
-  /@squonk/account-server-client@2.2.0(@tanstack/react-query@5.35.5)(axios@1.6.8):
+  /@squonk/account-server-client@2.2.0(@tanstack/react-query@5.35.5)(axios@1.7.2):
     resolution: {integrity: sha512-tsQTeDrV/o0R1tRhsorHhhvw8AJbTIZh4uMUSXAjp+8T5f20MODXRdY09DceXCQpLQT6u2ihNowK/UZpqlUdOA==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
       '@tanstack/react-query': 5.35.5(react@18.2.0)
-      axios: 1.6.8
+      axios: 1.7.2
     dev: false
 
-  /@squonk/data-manager-client@2.0.11(@tanstack/react-query@5.35.5)(axios@1.6.8):
+  /@squonk/data-manager-client@2.0.11(@tanstack/react-query@5.35.5)(axios@1.7.2):
     resolution: {integrity: sha512-BolWDr05oCY4Ktz+A+fG40XEtg0MyEj2V+ClJ2LRedM8KlrylXeKLXqYJSvXjNgB+J5DGY1fog4g5N8quApp9A==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
       '@tanstack/react-query': 5.35.5(react@18.2.0)
-      axios: 1.6.8
+      axios: 1.7.2
     dev: false
 
   /@squonk/eslint-config@2.0.1(@typescript-eslint/parser@7.6.0)(eslint-plugin-import@2.29.1)(eslint@8.57.0)(typescript@5.4.5):
@@ -2682,8 +2682,8 @@ packages:
     dependencies:
       possible-typed-array-names: 1.0.0
 
-  /axios@1.6.8:
-    resolution: {integrity: sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==}
+  /axios@1.7.2:
+    resolution: {integrity: sha512-2A8QhOMrbomlDuiLeK9XibIBzuHeRcqqNOHp0Cyp5EoJ1IFDh+XZH3A6BkXtv0K4gFGCI0Y4BM7B1wOEi0Rmgw==}
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
@@ -4662,16 +4662,6 @@ packages:
       dtype: 2.0.0
     dev: false
 
-  /follow-redirects@1.15.5:
-    resolution: {integrity: sha512-vSFWUON1B+yAw1VN4xMfxgn5fTUiaOzAJCKBwIIgT/+7CuGy9+r+5gITvP62j3RmaD5Ph65UaERdOSRGUzZtgw==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dev: false
-
   /follow-redirects@1.15.6:
     resolution: {integrity: sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==}
     engines: {node: '>=4.0'}
@@ -5279,7 +5269,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.5
+      follow-redirects: 1.15.6
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug

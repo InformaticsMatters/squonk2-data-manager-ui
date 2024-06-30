@@ -62,8 +62,8 @@ const App = ({ Component, pageProps, emotionCache = clientSideEmotionCache }: Cu
       </Head>
       <ThemeProviders>
         <UserProvider
-          loginUrl={`${process.env.NEXT_PUBLIC_BASE_PATH}/api/auth/login`}
-          profileUrl={`${process.env.NEXT_PUBLIC_BASE_PATH}/api/auth/me`}
+          loginUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/login`}
+          profileUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/me`}
         >
           <QueryClientProvider client={queryClient}>
             <HydrationBoundary state={pageProps.dehydratedState}>

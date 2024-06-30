@@ -2,7 +2,7 @@ import { type DehydratedState } from "@tanstack/react-query";
 import { type GetServerSidePropsContext } from "nextjs-routes";
 
 export const getFullReturnTo = (ctx: GetServerSidePropsContext): string => {
-  return process.env.NEXT_PUBLIC_BASE_PATH + ctx.resolvedUrl;
+  return (process.env.NEXT_PUBLIC_BASE_PATH ?? "") + ctx.resolvedUrl;
 };
 
 export interface NotSuccessful {

@@ -38,7 +38,7 @@ const UserMenuContentInner = () => {
     return (
       <Alert severity="error">
         <Typography>
-          {error.message || "We couldn't log you in. Please try cleaning cookies and refresh."}
+          {error.message || "We couldn't log you in. Please try clearing cookies and refresh."}
         </Typography>
       </Alert>
     );

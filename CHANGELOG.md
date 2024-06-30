@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.2.0...3.2.1) (2024-06-30)
+
+
+### Bug Fixes
+
+* **auth:** fix error message ([023feee](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/023feee6ccddf992051b3f340166b380a3489b9f))
+* **nextjs:** fix loading of env var as "undefined" ([cf0be89](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/cf0be89888403d7bdcad92d771687abfc656d0e9))
+
 ## [3.2.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.2.0-rc.2...3.2.0) (2024-05-16)
 
 

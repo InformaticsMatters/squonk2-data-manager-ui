@@ -35,6 +35,7 @@ declare module "nextjs-routes" {
     | StaticRoute<"/docs/how-to">
     | StaticRoute<"/docs/jobs">
     | StaticRoute<"/">
+    | DynamicRoute<"/organisation/[organisationId]/inventory", { "organisationId": string }>
     | DynamicRoute<"/product/[productId]/charges", { "productId": string }>
     | StaticRoute<"/products">
     | StaticRoute<"/project/file">

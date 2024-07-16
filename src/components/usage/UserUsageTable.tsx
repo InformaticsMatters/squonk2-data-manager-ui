@@ -19,18 +19,17 @@ import {
   type UseAutocompleteProps,
 } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 
-import { DATE_FORMAT, TIME_FORMAT } from "../../constants/datetimes";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { DataTable } from "../DataTable";
+import { getSharedColumns } from "./sharedColumns";
 
-dayjs.extend(utc);
-
-type UserEntry = InventoryUserDetail & { isEditor: boolean };
+export interface UserEntry extends InventoryUserDetail {
+  isEditor: boolean;
+}
 
 const columnHelper = createColumnHelper<UserEntry>();
+const sharedColumns = getSharedColumns(columnHelper);
 
 const getProjectsList = (users: UserEntry[]) =>
   users
@@ -65,49 +64,7 @@ export const UserUsageTable = ({ users, toolbarContent, onChange }: UserUsageTab
         header: "Unit Editor",
         cell: ({ row }) => (row.original.isEditor ? <Done /> : <Close />),
       }),
-      columnHelper.group({
-        header: "Activity",
-        columns: [
-          columnHelper.accessor("first_seen", {
-            header: "First Seen",
-            cell: ({ getValue, row }) =>
-              `${dayjs.utc(getValue()).format(`${DATE_FORMAT} ${TIME_FORMAT}`)} (${
-                row.original.activity.total_days_since_first_seen
-              } days ago)`,
-            sortingFn: (a, b) =>
-              dayjs.utc(a.original.first_seen).diff(dayjs.utc(b.original.first_seen)),
-          }),
-          columnHelper.accessor("activity.total_days_active", {
-            header: "Total",
-            cell: ({ getValue }) => `${getValue()} days`,
-          }),
-          columnHelper.accessor((user) => user.activity.period_b?.active_days, {
-            id: "activity_b",
-            header: "API Used",
-            cell: ({
-              row: {
-                original: { activity },
-              },
-            }) =>
-              `${activity.period_b?.active_days} of last ${activity.period_b?.monitoring_period}`,
-          }),
-          columnHelper.accessor((user) => user.activity.period_a.active_days, {
-            id: "activity_a",
-            header: "",
-            cell: ({
-              row: {
-                original: { activity },
-              },
-            }) => `${activity.period_a.active_days} of last ${activity.period_a.monitoring_period}`,
-          }),
-          columnHelper.accessor("last_seen_date", {
-            header: "Last Seen",
-            cell: ({ getValue }) => dayjs.utc(getValue()).format(DATE_FORMAT),
-            sortingFn: (a, b) =>
-              dayjs.utc(a.original.last_seen_date).diff(dayjs.utc(b.original.last_seen_date)),
-          }),
-        ],
-      }),
+      ...sharedColumns,
       columnHelper.group({
         header: "Datasets",
         columns: [

@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.2.0...3.3.0-rc.0) (2024-07-16)
+
+
+### Features
+
+* add initial version of organisation inventory ([0515418](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0515418ae6eef71b2c6f844824b6a7243fe50feb))
+
+
+### Bug Fixes
+
+* **auth:** fix error message ([023feee](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/023feee6ccddf992051b3f340166b380a3489b9f))
+* **nextjs:** fix loading of env var as "undefined" ([cf0be89](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/cf0be89888403d7bdcad92d771687abfc656d0e9))
+
+
+### Miscellaneous Chores
+
+* release 3.3.0-rc.0 ([07c1d4f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/07c1d4f0713450c913be52483236c14452fa7420))
+
 ## [3.2.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.2.0-rc.2...3.2.0) (2024-05-16)
 
 

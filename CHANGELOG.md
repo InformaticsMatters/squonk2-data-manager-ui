@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.3.0-rc.0...3.3.0-rc.1) (2024-07-23)
+
+
+### Features
+
+* add button to access organisation inventory page ([64aaa56](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/64aaa5615ba220ec95d02597e04d10574f4536e2))
+
+
+### Miscellaneous Chores
+
+* release 3.3.0-rc.1 ([3a281e6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3a281e6aa5f54884fd035fd8d6f9fd34124b2133))
+
 ## [3.3.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.2.0...3.3.0-rc.0) (2024-07-16)
 
 

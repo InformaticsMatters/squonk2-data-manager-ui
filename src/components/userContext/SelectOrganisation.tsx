@@ -1,6 +1,7 @@
 import { type OrganisationDetail } from "@squonk/account-server-client";
 import { useGetOrganisations } from "@squonk/account-server-client/organisation";
 
+import { DataUsage as DataUsageIcon } from "@mui/icons-material";
 import { Autocomplete, type AutocompleteProps, Box, TextField, Typography } from "@mui/material";
 
 import { projectPayload, useCurrentProjectId } from "../../hooks/projectHooks";
@@ -8,6 +9,7 @@ import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next/localStorage";
 import { getErrorMessage } from "../../utils/next/orvalError";
+import { Adornment } from "./Adornment";
 import { ItemIcons } from "./ItemIcons";
 
 export interface SelectOrganisationProps
@@ -50,7 +52,19 @@ export const SelectOrganisation = (autoCompleteProps: SelectOrganisationProps) =
             {...params}
             InputProps={{
               ...params.InputProps,
-              startAdornment: <ItemIcons item={organisation} />,
+              startAdornment: (
+                <>
+                  <ItemIcons item={organisation} />
+                  {!!organisation && (
+                    <Adornment
+                      href={`/organisation/${organisation.id}/inventory`}
+                      title="User Usage"
+                    >
+                      <DataUsageIcon />
+                    </Adornment>
+                  )}
+                </>
+              ),
             }}
             label="Organisation"
           />

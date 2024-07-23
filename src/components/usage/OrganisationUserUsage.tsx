@@ -37,7 +37,8 @@ export interface OrganisationUserUsageProps {
 }
 
 export const OrganisationUserUsage = ({ organisationId }: OrganisationUserUsageProps) => {
-  const { data: organisation } = useGetOrganisation(organisationId);
+  const { data: organisation, isLoading: isOrganisationLoading } =
+    useGetOrganisation(organisationId);
   const { data: units } = useGetUnits({
     query: { select: (data) => data.units.flatMap((org) => org.units) },
   });
@@ -45,6 +46,7 @@ export const OrganisationUserUsage = ({ organisationId }: OrganisationUserUsageP
     { org_id: organisationId },
     {
       query: {
+        retry: false,
         select: (data) => {
           return data.users.map(({ projects, activity, first_seen, last_seen_date, username }) => ({
             username,
@@ -72,7 +74,7 @@ export const OrganisationUserUsage = ({ organisationId }: OrganisationUserUsageP
   );
   const { data: organisationMembers } = useGetOrganisationUsers(organisationId, {
     query: {
-      enabled: organisation?.caller_is_member === undefined || organisation.caller_is_member,
+      enabled: isOrganisationLoading || !organisation || organisation.caller_is_member,
     },
   });
 
@@ -102,6 +104,10 @@ export const OrganisationUserUsage = ({ organisationId }: OrganisationUserUsageP
     }),
     ...sharedColumns,
   ];
+
+  if (inventoryError?.message === "Request failed with status code 403") {
+    return <Alert severity="error">You do not have permission to view this inventory</Alert>;
+  }
 
   if (inventoryError) {
     return <Alert severity="error">{inventoryError.message}</Alert>;

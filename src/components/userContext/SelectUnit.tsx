@@ -1,17 +1,7 @@
-import { type ReactNode } from "react";
-
 import { type UnitGetResponse } from "@squonk/account-server-client";
 
 import { DataUsage as DataUsageIcon, Receipt as ReceiptIcon } from "@mui/icons-material";
-import {
-  Autocomplete,
-  type AutocompleteProps,
-  Box,
-  IconButton,
-  TextField,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Autocomplete, type AutocompleteProps, Box, TextField, Typography } from "@mui/material";
 
 import { projectPayload, useCurrentProjectId } from "../../hooks/projectHooks";
 import { useGetVisibleUnits } from "../../hooks/useGetVisibleUnits";
@@ -19,29 +9,9 @@ import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next/localStorage";
 import { getErrorMessage } from "../../utils/next/orvalError";
+import { Adornment } from "./Adornment";
 import { type PermissionLevelFilter } from "./filter";
 import { ItemIcons } from "./ItemIcons";
-
-interface AdornmentProps {
-  title: string;
-  href: string;
-  children: ReactNode;
-}
-
-const Adornment = ({ title, href, children }: AdornmentProps) => (
-  <Tooltip title={title}>
-    <span>
-      <IconButton
-        href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${href}`}
-        size="small"
-        sx={{ p: "1px" }}
-        target="_blank"
-      >
-        {children}
-      </IconButton>
-    </span>
-  </Tooltip>
-);
 
 export interface SelectUnitProps
   extends Omit<AutocompleteProps<UnitGetResponse, false, false, false>, "options" | "renderInput"> {

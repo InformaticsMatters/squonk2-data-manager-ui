@@ -87,7 +87,7 @@ export const UserSettingsContent = () => {
       <PageSection level={2} title="Organisation and Unit">
         <Box alignItems="baseline" display="flex" gap={1} marginBottom={1}>
           <Typography>
-            Filter for user <em>{user.username}</em> where role is
+            Filter projects for user <em>{user.username}</em> where role is
           </Typography>
           <PermissionLevelSelect
             value={permissionLevel}

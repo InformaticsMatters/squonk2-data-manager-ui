@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.0-rc.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.3.0-rc.2...3.3.0-rc.3) (2024-08-02)
+
+
+### Bug Fixes
+
+* hide units for which a user is only a project observer ([b3e8c6f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b3e8c6f4f6a2f74a97ccc1de4f37af1bbc1bee58))
+
+
+### Miscellaneous Chores
+
+* release 3.3.0-rc.3 ([a0b428b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a0b428bc17a376cac5ea012c48e81f04b1ddacae))
+
 ## [3.3.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.3.0-rc.1...3.3.0-rc.2) (2024-08-02)
 
 

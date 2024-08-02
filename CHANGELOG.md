@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.3.0-rc.1...3.3.0-rc.2) (2024-08-02)
+
+
+### Features
+
+* include missing units to organisation usage page ([133e410](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/133e4106b162dbbb1490f3a2f32f48e254550943))
+
+
+### Bug Fixes
+
+* text clarification on settings page ([b423520](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b423520a64cd798678f0cccff038afe380be51b8))
+
+
+### Miscellaneous Chores
+
+* release 3.3.0 ([af64de0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/af64de085db6ee73bf8251a206f13f1b7fa1ff91))
+* release 3.3.0-rc.2 ([531ff43](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/531ff43dd98505114591346021889f2df14561e7))
+
 ## [3.3.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.3.0-rc.0...3.3.0-rc.1) (2024-07-23)
 
 

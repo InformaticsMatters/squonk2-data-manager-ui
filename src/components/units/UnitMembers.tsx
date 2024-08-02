@@ -1,4 +1,4 @@
-import { type UnitDetail } from "@squonk/account-server-client";
+import { type UnitAllDetail } from "@squonk/account-server-client";
 import {
   getGetOrganisationUnitUsersQueryKey,
   useAddOrganisationUnitUser,
@@ -19,7 +19,7 @@ export interface UnitMembersProps {
   /**
    * Unit to be edited.
    */
-  unit: UnitDetail;
+  unit: UnitAllDetail;
 }
 
 /**

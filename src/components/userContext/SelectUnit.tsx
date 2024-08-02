@@ -54,7 +54,7 @@ export const SelectUnit = ({
               startAdornment: (
                 <>
                   <ItemIcons item={unit} />
-                  {!!unit && (
+                  {!!unit && !!(unit.caller_is_member || organisation?.caller_is_member) && (
                     <>
                       <Adornment href={`/unit/${unit.id}/charges`} title="Charges">
                         <ReceiptIcon />

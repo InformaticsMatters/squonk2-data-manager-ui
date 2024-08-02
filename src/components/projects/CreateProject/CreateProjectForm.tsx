@@ -3,8 +3,8 @@ import {
   type ProductDetail,
   ProductDetailFlavour,
   ProductDetailType,
-  type UnitDetail,
-  UnitDetailDefaultProductPrivacy,
+  type UnitAllDetail,
+  UnitAllDetailDefaultProductPrivacy,
   type UnitProductPostBodyBodyFlavour,
 } from "@squonk/account-server-client";
 import {
@@ -46,8 +46,8 @@ export interface CreateProjectFormProps {
   modal?: Resolve<
     Pick<FormikModalWrapperProps, "id" | "onClose" | "open" | "submitText" | "title">
   >;
-  unitId: UnitDetail["id"] | (() => Promise<UnitDetail["id"]>);
-  defaultPrivacy: UnitDetailDefaultProductPrivacy;
+  unitId: UnitAllDetail["id"] | (() => Promise<UnitAllDetail["id"]>);
+  defaultPrivacy: UnitAllDetailDefaultProductPrivacy;
   product?: ProductDetail;
   autoFocus?: boolean;
 }
@@ -60,7 +60,7 @@ export interface Values {
 
 type ProjectFormikProps = FormikConfig<Values>;
 
-const isPrivateDefaultValues: Record<UnitDetailDefaultProductPrivacy, boolean> = {
+const isPrivateDefaultValues: Record<UnitAllDetailDefaultProductPrivacy, boolean> = {
   ALWAYS_PRIVATE: true,
   ALWAYS_PUBLIC: false,
   DEFAULT_PUBLIC: false,
@@ -74,10 +74,10 @@ export const CreateProjectForm = ({
   product,
   autoFocus = true,
 }: CreateProjectFormProps) => {
-  const evaluationAllowed = defaultPrivacy !== UnitDetailDefaultProductPrivacy.ALWAYS_PRIVATE;
+  const evaluationAllowed = defaultPrivacy !== UnitAllDetailDefaultProductPrivacy.ALWAYS_PRIVATE;
   const defaultFlavour = (
-    defaultPrivacy === UnitDetailDefaultProductPrivacy.ALWAYS_PRIVATE ||
-    defaultPrivacy === UnitDetailDefaultProductPrivacy.DEFAULT_PRIVATE
+    defaultPrivacy === UnitAllDetailDefaultProductPrivacy.ALWAYS_PRIVATE ||
+    defaultPrivacy === UnitAllDetailDefaultProductPrivacy.DEFAULT_PRIVATE
       ? ProductDetailFlavour.BRONZE
       : ProductDetailFlavour.EVALUATION
   ) satisfies ProductDetailFlavour;

@@ -1,4 +1,4 @@
-import { type AsError, type UnitDetail } from "@squonk/account-server-client";
+import { type AsError, type UnitAllDetail } from "@squonk/account-server-client";
 import {
   getGetProductsQueryKey,
   useCreateUnitProduct,
@@ -16,7 +16,7 @@ import { useGetStorageCost } from "../hooks/useGetStorageCost";
 import { formatCoins } from "../utils/app/coins";
 
 export interface CreateDatasetStorageSubscriptionProps {
-  unit: UnitDetail;
+  unit: UnitAllDetail;
 }
 
 const initialValues = {

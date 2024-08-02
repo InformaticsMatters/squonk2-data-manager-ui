@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type UnitDetail } from "@squonk/account-server-client";
+import { type UnitAllDetail } from "@squonk/account-server-client";
 import {
   getGetOrganisationUnitsQueryKey,
   getGetUnitQueryKey,
@@ -19,7 +19,7 @@ import { useSelectedUnit } from "../../state/unitSelection";
 import { getErrorMessage } from "../../utils/next/orvalError";
 
 export interface EditUnitProps {
-  unit: UnitDetail;
+  unit: UnitAllDetail;
 }
 
 export const EditUnitName = ({ unit }: EditUnitProps) => {

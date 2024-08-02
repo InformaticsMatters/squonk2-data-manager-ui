@@ -1,4 +1,4 @@
-import { type OrganisationDetail, type UnitDetail } from "@squonk/account-server-client";
+import { type OrganisationDetail, type UnitAllDetail } from "@squonk/account-server-client";
 
 import {
   Lock as LockIcon,
@@ -7,7 +7,7 @@ import {
 } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 
-export const ItemIcons = ({ item }: { item?: OrganisationDetail | UnitDetail }) => (
+export const ItemIcons = ({ item }: { item?: OrganisationDetail | UnitAllDetail }) => (
   <>
     {item?.private !== undefined &&
       (item.private ? (

@@ -1,6 +1,6 @@
 import {
   ProductDetailFlavour,
-  UnitDetailDefaultProductPrivacy,
+  UnitAllDetailDefaultProductPrivacy,
 } from "@squonk/account-server-client";
 
 import { FormControlLabel } from "@mui/material";
@@ -15,7 +15,7 @@ export interface PrivacySwitchProps {
   /**
    * Default privacy of the product given by the unit
    */
-  defaultPrivacy: UnitDetailDefaultProductPrivacy;
+  defaultPrivacy: UnitAllDetailDefaultProductPrivacy;
 }
 
 export const PrivacyToggle = ({ flavour, defaultPrivacy }: PrivacySwitchProps) => {
@@ -23,8 +23,8 @@ export const PrivacyToggle = ({ flavour, defaultPrivacy }: PrivacySwitchProps) =
   // always private or always public
   const isDisabled =
     flavour === ProductDetailFlavour.EVALUATION ||
-    defaultPrivacy === UnitDetailDefaultProductPrivacy.ALWAYS_PRIVATE ||
-    defaultPrivacy === UnitDetailDefaultProductPrivacy.ALWAYS_PUBLIC;
+    defaultPrivacy === UnitAllDetailDefaultProductPrivacy.ALWAYS_PRIVATE ||
+    defaultPrivacy === UnitAllDetailDefaultProductPrivacy.ALWAYS_PUBLIC;
 
   return (
     <FormControlLabel

@@ -1,13 +1,14 @@
 import { useState } from "react";
 
-import { type ProductDetail, type UnitDetail } from "@squonk/account-server-client";
+import { type ProductDetail, type UnitAllDetail } from "@squonk/account-server-client";
 
 import { Button } from "@mui/material";
 
 import { CreateProjectForm } from "./CreateProjectForm";
 
 export interface CreateProjectButtonProps {
-  unit: UnitDetail;
+  unitId: UnitAllDetail["id"];
+  unitDefaultProductPrivacy: UnitAllDetail["default_product_privacy"];
   product?: ProductDetail;
   buttonText?: string;
 }
@@ -16,7 +17,8 @@ export interface CreateProjectButtonProps {
  * Button which allows user to create a new project.
  */
 export const CreateProjectButton = ({
-  unit,
+  unitId,
+  unitDefaultProductPrivacy,
   product,
   buttonText = "Create",
 }: CreateProjectButtonProps) => {
@@ -29,7 +31,7 @@ export const CreateProjectButton = ({
       </Button>
 
       <CreateProjectForm
-        defaultPrivacy={unit.default_product_privacy}
+        defaultPrivacy={unitDefaultProductPrivacy}
         modal={{
           id: "create-project",
           title: "Create Project",
@@ -38,7 +40,7 @@ export const CreateProjectButton = ({
           onClose: () => setOpen(false),
         }}
         product={product}
-        unitId={unit.id}
+        unitId={unitId}
       />
     </>
   );

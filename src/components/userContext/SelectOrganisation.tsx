@@ -55,7 +55,7 @@ export const SelectOrganisation = (autoCompleteProps: SelectOrganisationProps) =
               startAdornment: (
                 <>
                   <ItemIcons item={organisation} />
-                  {!!organisation && (
+                  {!!organisation && !!organisation.caller_is_member && (
                     <Adornment
                       href={`/organisation/${organisation.id}/inventory`}
                       title="User Usage"

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type UnitDetail, type UnitProductChargeSummary } from "@squonk/account-server-client";
+import { type UnitAllDetail, type UnitProductChargeSummary } from "@squonk/account-server-client";
 import { useGetUnit, useGetUnitCharges } from "@squonk/account-server-client/unit";
 
 import {
@@ -21,7 +21,7 @@ import { ChargesLinkIconButton } from "../products/ChargesLinkIconButton";
 import { SelectBillingCycle } from "./SelectBillingCycle";
 
 export interface UnitChargesProps {
-  unitId: UnitDetail["id"];
+  unitId: UnitAllDetail["id"];
 }
 
 const productTypes: Record<UnitProductChargeSummary["product_type"], string> = {

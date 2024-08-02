@@ -1,4 +1,4 @@
-import { type UnitDetail } from "@squonk/account-server-client";
+import { type UnitAllDetail } from "@squonk/account-server-client";
 import {
   getGetOrganisationUnitsQueryKey,
   getGetUnitsQueryKey,
@@ -17,7 +17,7 @@ import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
 
 export interface DeleteUnitListItem {
-  unit: UnitDetail;
+  unit: UnitAllDetail;
   /**
    * Called when deletion _completes successfully_
    */

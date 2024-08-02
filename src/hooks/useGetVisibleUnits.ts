@@ -1,4 +1,4 @@
-import { type UnitDetail } from "@squonk/account-server-client";
+import { type UnitAllDetail } from "@squonk/account-server-client";
 import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
 import { type ProjectDetail } from "@squonk/data-manager-client";
 import { useGetProjects } from "@squonk/data-manager-client/project";
@@ -11,7 +11,7 @@ import { useSelectedOrganisation } from "../state/organisationSelection";
 
 export const getUserFilter =
   (level: PermissionLevel, user: string | undefined, projects: ProjectDetail[] | undefined) =>
-  (unit: UnitDetail) => {
+  (unit: UnitAllDetail) => {
     if (level === "none") {
       return true;
     }

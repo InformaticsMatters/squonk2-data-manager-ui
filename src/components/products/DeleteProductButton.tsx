@@ -1,4 +1,4 @@
-import { type ProductDetail, type UnitDetail } from "@squonk/account-server-client";
+import { type ProductDetail, type UnitAllDetail } from "@squonk/account-server-client";
 import {
   getGetProductQueryKey,
   getGetProductsForUnitQueryKey,
@@ -18,7 +18,7 @@ export interface DeleteProductButtonProps {
   product: ProductDetail;
   disabled?: boolean;
   tooltip: string;
-  unitId?: UnitDetail["id"];
+  unitId?: UnitAllDetail["id"];
 }
 
 export const DeleteProductButton = ({

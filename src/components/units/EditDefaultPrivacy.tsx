@@ -1,4 +1,7 @@
-import { type UnitDetail, UnitDetailDefaultProductPrivacy } from "@squonk/account-server-client";
+import {
+  type UnitAllDetail,
+  UnitAllDetailDefaultProductPrivacy,
+} from "@squonk/account-server-client";
 import {
   getGetUnitQueryKey,
   getGetUnitsQueryKey,
@@ -14,7 +17,7 @@ import { useSelectedUnit } from "../../state/unitSelection";
 import { capitalise, shoutSnakeToLowerCase } from "../../utils/app/language";
 
 export interface EditDefaultPrivacyProps {
-  unit: UnitDetail;
+  unit: UnitAllDetail;
 }
 
 export const EditDefaultPrivacy = ({ unit }: EditDefaultPrivacyProps) => {
@@ -25,7 +28,7 @@ export const EditDefaultPrivacy = ({ unit }: EditDefaultPrivacyProps) => {
   const { enqueueError, enqueueSnackbar } = useEnqueueError();
   const queryClient = useQueryClient();
 
-  const handleSelection = async (newValue: UnitDetailDefaultProductPrivacy) => {
+  const handleSelection = async (newValue: UnitAllDetailDefaultProductPrivacy) => {
     try {
       await patchUnit({
         unitId: unit.id,
@@ -37,7 +40,7 @@ export const EditDefaultPrivacy = ({ unit }: EditDefaultPrivacyProps) => {
       await queryClient.invalidateQueries({ queryKey: getGetUnitQueryKey(unit.id) });
       enqueueSnackbar("Unit default privacy updated", { variant: "success" });
 
-      const newUnit = { ...unit, default_product_privacy: newValue } satisfies UnitDetail;
+      const newUnit = { ...unit, default_product_privacy: newValue } satisfies UnitAllDetail;
       setUnit(newUnit);
     } catch (error) {
       enqueueError(error);
@@ -64,10 +67,10 @@ export const EditDefaultPrivacy = ({ unit }: EditDefaultPrivacyProps) => {
       label="Default project privacy"
       value={unit.default_product_privacy}
       onChange={(event) =>
-        void handleSelection(event.target.value as UnitDetailDefaultProductPrivacy)
+        void handleSelection(event.target.value as UnitAllDetailDefaultProductPrivacy)
       }
     >
-      {Object.values(UnitDetailDefaultProductPrivacy).map((rule) => (
+      {Object.values(UnitAllDetailDefaultProductPrivacy).map((rule) => (
         <MenuItem key={rule} value={rule}>
           {capitalise(shoutSnakeToLowerCase(rule))}
         </MenuItem>

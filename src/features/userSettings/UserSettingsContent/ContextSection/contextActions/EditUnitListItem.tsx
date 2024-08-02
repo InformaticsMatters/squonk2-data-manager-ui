@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type UnitDetail } from "@squonk/account-server-client";
+import { type UnitAllDetail } from "@squonk/account-server-client";
 
 import { Edit as EditIcon } from "@mui/icons-material";
 import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
@@ -11,7 +11,7 @@ import { EditUnitName } from "../../../../../components/units/EditUnitName";
 import { UnitMembers } from "../../../../../components/units/UnitMembers";
 
 export interface EditUnitListItemProps {
-  unit: UnitDetail;
+  unit: UnitAllDetail;
 }
 
 export const EditUnitListItem = ({ unit }: EditUnitListItemProps) => {

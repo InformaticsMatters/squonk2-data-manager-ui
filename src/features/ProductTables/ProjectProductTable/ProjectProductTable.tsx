@@ -40,7 +40,13 @@ export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
               </NextLink>
             );
           }
-          return <CreateProjectButton product={product.product} unit={row.original.unit} />;
+          return (
+            <CreateProjectButton
+              product={product.product}
+              unitDefaultProductPrivacy={row.original.unit.default_product_privacy}
+              unitId={row.original.unit.id}
+            />
+          );
         },
       }),
       columnHelper.display({

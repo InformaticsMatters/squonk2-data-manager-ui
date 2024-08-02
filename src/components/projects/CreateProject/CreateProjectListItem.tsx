@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type UnitDetail } from "@squonk/account-server-client";
+import { type UnitAllDetail } from "@squonk/account-server-client";
 
 import { NoteAdd } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
@@ -8,7 +8,7 @@ import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { CreateProjectForm } from "./CreateProjectForm";
 
 export interface CreateProjectListItemProps {
-  unit: UnitDetail;
+  unit: UnitAllDetail;
 }
 
 /**

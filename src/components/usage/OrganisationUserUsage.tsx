@@ -56,16 +56,14 @@ const useOranisationUsersData = (organisationId: string) => {
             .map(({ projects, activity, first_seen, last_seen_date, username }) => {
               // get all the unique units from the projects
               // include the unit name from the units response
-              const inventoryUnits = Object.values(projects)
-                .flat()
+              const touchableProjects = [projects.administrator, projects.editor].flat();
+              const inventoryUnits = touchableProjects
                 .map(({ unit_id }) => ({
                   id: unit_id,
                   name: units?.find((unit) => unit.id === unit_id)?.name,
-                  number_of_projects: Object.values(projects)
-                    .flat()
-                    .reduce((count, project) => {
-                      return project.unit_id === unit_id ? count + 1 : count;
-                    }, 0),
+                  number_of_projects: touchableProjects.reduce((count, project) => {
+                    return project.unit_id === unit_id ? count + 1 : count;
+                  }, 0),
                 }))
                 .reduce<Unit[]>((uniqueUnits, unit) => {
                   // keep only unique units
@@ -98,7 +96,12 @@ const useOranisationUsersData = (organisationId: string) => {
                     id: unit.id,
                     name: unit.name,
                     number_of_projects:
-                      allProjects?.filter((project) => project.unit_id === unit.id).length ?? 0,
+                      allProjects?.filter(
+                        (project) =>
+                          project.unit_id === unit.id &&
+                          (project.editors.includes(username) ||
+                            project.administrators.includes(username)),
+                      ).length ?? 0,
                   })) ?? [];
 
               const allUnits = [...inventoryUnits, ...newUnits];

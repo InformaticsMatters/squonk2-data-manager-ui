@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.3.0-rc.3...3.3.0) (2024-08-02)
+
+
+### Miscellaneous Chores
+
+* release 3.3.0 ([3a37563](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3a375639b2607674684ff2496efbc68018e3f418))
+
 ## [3.3.0-rc.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.3.0-rc.2...3.3.0-rc.3) (2024-08-02)
 
 

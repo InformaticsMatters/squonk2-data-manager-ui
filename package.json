@@ -63,7 +63,7 @@
     "@types/lodash-es": "4.17.12",
     "@types/node": "20.11.26",
     "@types/plotly.js-basic-dist": "1.54.4",
-    "@types/prismjs": "1.26.3",
+    "@types/prismjs": "1.26.4",
     "@types/react": "18.2.76",
     "@types/react-plotly.js": "2.6.3",
     "axios": "1.6.8",

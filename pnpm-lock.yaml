@@ -138,8 +138,8 @@ dependencies:
     specifier: 2.18.0
     version: 2.18.0(react-dom@18.2.0)(react@18.2.0)
   ketcher-react:
-    specifier: 2.18.0
-    version: 2.18.0(@types/react@18.2.76)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0)
+    specifier: 2.21.0
+    version: 2.21.0(@types/react@18.2.76)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0)
   ketcher-standalone:
     specifier: 2.18.0
     version: 2.18.0(react-dom@18.2.0)(react@18.2.0)
@@ -5992,8 +5992,8 @@ packages:
       - react-dom
     dev: false
 
-  /ketcher-react@2.18.0(@types/react@18.2.76)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-7wpUH0qeA6HyKiGz9WyyjiOSX+b1zTfa7qZ1858e1FFWEqFnyvNRKvH+Oo3FsqC0JAfca7qCbgTgrzJdmMrozQ==}
+  /ketcher-react@2.21.0(@types/react@18.2.76)(immutable@3.8.2)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-plFgv1aeINYhfQhvRcM7YXb0wwMdjuEK5+wYs8KBLEODSN73nMz0b/rwfci1Q0/+tWXxISHg1kjach7HrP592Q==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.2.0

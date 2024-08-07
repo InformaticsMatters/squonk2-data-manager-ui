@@ -67,7 +67,7 @@
     "@types/react": "18.2.76",
     "@types/react-plotly.js": "2.6.3",
     "axios": "1.6.8",
-    "dayjs": "1.11.11",
+    "dayjs": "1.11.12",
     "filesize": "10.1.1",
     "formik": "2.4.6",
     "formik-mui": "4.0.0",

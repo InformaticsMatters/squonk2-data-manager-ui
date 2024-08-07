@@ -107,7 +107,7 @@
     "@squonk/eslint-config": "2.0.1",
     "dotenv": "16.4.5",
     "eslint": "8.57.0",
-    "husky": "9.0.11",
+    "husky": "9.1.4",
     "identity-obj-proxy": "3.0.0",
     "lint-staged": "15.2.2",
     "prettier": "3.2.5"

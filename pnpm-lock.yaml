@@ -108,8 +108,8 @@ dependencies:
     specifier: 1.11.12
     version: 1.11.12
   filesize:
-    specifier: 10.1.1
-    version: 10.1.1
+    specifier: 10.1.4
+    version: 10.1.4
   formik:
     specifier: 2.4.6
     version: 2.4.6(react@18.2.0)
@@ -4613,8 +4613,8 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /filesize@10.1.1:
-    resolution: {integrity: sha512-L0cdwZrKlwZQkMSFnCflJ6J2Y+5egO/p3vgRSDQGxQt++QbUZe5gMbRO6kg6gzwQDPvq2Fk9AmoxUNfZ5gdqaQ==}
+  /filesize@10.1.4:
+    resolution: {integrity: sha512-ryBwPIIeErmxgPnm6cbESAzXjuEFubs+yKYLBZvg3CaiNcmkJChoOGcBSrZ6IwkMwPABwPpVXE6IlNdGJJrvEg==}
     engines: {node: '>= 10.4.0'}
     dev: false
 

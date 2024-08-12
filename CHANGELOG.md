@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.3.0...4.0.0-rc.0) (2024-08-12)
+
+
+### Bug Fixes
+
+* fix breaking changes caused by AS 3.0.0 update ([8cb78e1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8cb78e1f7b76979a4fffbb2329b483d835dbe3f9))
+* update nextjs routes file ([da69df9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/da69df9762b43e34e488f4006963e2c78f253d74))
+
+
+### Miscellaneous Chores
+
+* release 4.0.0-rc.0 ([d1cb214](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d1cb2143b57d5468cdd08c6ad5bb51f38d01d1c8))
+
 ## [3.3.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/3.3.0-rc.3...3.3.0) (2024-08-02)
 
 

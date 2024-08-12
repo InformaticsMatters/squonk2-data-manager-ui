@@ -1,7 +1,8 @@
 import { useState } from "react";
 
 import { type ProductDetail } from "@squonk/account-server-client";
-import { useGetProduct, useGetProductCharges } from "@squonk/account-server-client/product";
+import { useGetProductCharges } from "@squonk/account-server-client/charges";
+import { useGetProduct } from "@squonk/account-server-client/product";
 
 import {
   Box,

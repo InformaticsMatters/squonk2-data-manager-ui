@@ -198,8 +198,8 @@ dependencies:
     specifier: 5.5.4
     version: 5.5.4
   use-immer:
-    specifier: 0.7.0
-    version: 0.7.0(immer@9.0.21)(react@18.3.1)
+    specifier: 0.10.0
+    version: 0.10.0(immer@9.0.21)(react@18.3.1)
   yup:
     specifier: 1.4.0
     version: 1.4.0
@@ -9256,10 +9256,10 @@ packages:
     resolution: {integrity: sha512-FOEojW4XReTmtZOB7xqSHmJZhrNTmClhBriwLTmle4iA7bwuCo6ldSfbtsFSb8bTf3E0a3XpfonAdaur9vqq8A==}
     dev: false
 
-  /use-immer@0.7.0(immer@9.0.21)(react@18.3.1):
-    resolution: {integrity: sha512-Re4hjrP3a/2ABZjAc0b7AK9s626bnO+H33RO2VUhiDZ2StBz5B663K6WNNlr4QtHWaGUmvLpwt3whFvvWuolQw==}
+  /use-immer@0.10.0(immer@9.0.21)(react@18.3.1):
+    resolution: {integrity: sha512-/eVwNR4TG9Tm/dd+aHYLLaI0FLfYKlkTqKMkn78Ah/EYVzWd/zJIgpkdoFEKbhQJOGo8XN7/mWrTx0exp1c+Ug==}
     peerDependencies:
-      immer: '>=2.0.0'
+      immer: '>=8.0.0'
       react: ^16.8.0 || ^17.0.1 || ^18.0.0
     dependencies:
       immer: 9.0.21

@@ -61,10 +61,10 @@ dependencies:
     version: 7.118.0(next@14.2.5)(react@18.3.1)(webpack@5.90.3)
   '@squonk/account-server-client':
     specifier: 3.0.0
-    version: 3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.3)
+    version: 3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.7)
   '@squonk/data-manager-client':
     specifier: 3.0.0
-    version: 3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.3)
+    version: 3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.7)
   '@squonk/mui-theme':
     specifier: 3.0.2
     version: 3.0.2(@mui/material@5.16.7)
@@ -102,8 +102,8 @@ dependencies:
     specifier: 2.6.3
     version: 2.6.3
   axios:
-    specifier: 1.7.3
-    version: 1.7.3
+    specifier: 1.7.7
+    version: 1.7.7
   dayjs:
     specifier: 1.11.12
     version: 1.11.12
@@ -1760,24 +1760,24 @@ packages:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
     dev: false
 
-  /@squonk/account-server-client@3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.3):
+  /@squonk/account-server-client@3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.7):
     resolution: {integrity: sha512-ngpgVKMSzlTVzOGCUdoy36giVjycXOmfqZBmIv8/5mGHEJFE4jIXL8jJZw9vcmDuArGapHTVbdDNYZzdV37d6w==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
       '@tanstack/react-query': 5.51.23(react@18.3.1)
-      axios: 1.7.3
+      axios: 1.7.7
     dev: false
 
-  /@squonk/data-manager-client@3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.3):
+  /@squonk/data-manager-client@3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.7):
     resolution: {integrity: sha512-ioxLC07hgGaivEPCgkFa4ty+k1mCiYDTwppvMHUIFT6q1zT5t/LHDRGaifd0BLZaQLVSEQvjelCPA4sfuS+mNQ==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
       '@tanstack/react-query': 5.51.23(react@18.3.1)
-      axios: 1.7.3
+      axios: 1.7.7
     dev: false
 
   /@squonk/eslint-config@2.0.1(@typescript-eslint/parser@7.6.0)(eslint-plugin-import@2.29.1)(eslint@8.57.0)(typescript@5.5.4):
@@ -2699,8 +2699,8 @@ packages:
     dependencies:
       possible-typed-array-names: 1.0.0
 
-  /axios@1.7.3:
-    resolution: {integrity: sha512-Ar7ND9pU99eJ9GpoGQKhKf58GpUOgnzuaB7ueNQ5BMi0p+LZ5oaEnfF999fAArcTIBwXTCHAmGcHOZJaWPq9Nw==}
+  /axios@1.7.7:
+    resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0

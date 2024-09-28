@@ -154,7 +154,7 @@ dependencies:
     version: 5.0.7
   next:
     specifier: 14.2.5
-    version: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
+    version: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.79.4)
   next-http-proxy-middleware:
     specifier: 1.2.6
     version: 1.2.6
@@ -189,8 +189,8 @@ dependencies:
     specifier: 2.6.0
     version: 2.6.0(plotly.js@2.29.1)(react@18.3.1)
   sass:
-    specifier: 1.77.8
-    version: 1.77.8
+    specifier: 1.79.4
+    version: 1.79.4
   sharp:
     specifier: 0.33.4
     version: 0.33.4
@@ -251,7 +251,7 @@ packages:
       debug: 4.3.4
       joi: 17.12.2
       jose: 4.15.4
-      next: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
+      next: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.79.4)
       oauth4webapi: 2.10.3
       openid-client: 5.6.4
       tslib: 2.6.2
@@ -1666,7 +1666,7 @@ packages:
       '@sentry/vercel-edge': 7.118.0
       '@sentry/webpack-plugin': 1.21.0
       chalk: 3.0.0
-      next: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
+      next: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.79.4)
       react: 18.3.1
       resolve: 1.22.8
       rollup: 2.78.0
@@ -2905,6 +2905,13 @@ packages:
       readdirp: 3.6.0
     optionalDependencies:
       fsevents: 2.3.3
+    dev: false
+
+  /chokidar@4.0.1:
+    resolution: {integrity: sha512-n8enUVCED/KVRQlab1hr3MVpcVMvxtZjmEa956u+4YijlmQED223XMSYj2tLuKvr4jcCTzNNMpQDUer72MMmzA==}
+    engines: {node: '>= 14.16.0'}
+    dependencies:
+      readdirp: 4.0.1
     dev: false
 
   /chrome-trace-event@1.0.3:
@@ -7030,7 +7037,7 @@ packages:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
     dev: false
 
-  /next@14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8):
+  /next@14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.79.4):
     resolution: {integrity: sha512-0f8aRfBVL+mpzfBjYfQuLWh2WyAwtJXCRfkPF4UJ5qd2YwrHczsrSzXU4tRMV0OAxR8ZJZWPFn6uhSC56UTsLA==}
     engines: {node: '>=18.17.0'}
     hasBin: true
@@ -7057,7 +7064,7 @@ packages:
       postcss: 8.4.31
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      sass: 1.77.8
+      sass: 1.79.4
       styled-jsx: 5.1.1(react@18.3.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 14.2.5
@@ -7081,7 +7088,7 @@ packages:
       next: '*'
     dependencies:
       chokidar: 3.6.0
-      next: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
+      next: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.79.4)
     dev: false
 
   /node-domexception@1.0.0:
@@ -7935,6 +7942,11 @@ packages:
       picomatch: 2.3.1
     dev: false
 
+  /readdirp@4.0.1:
+    resolution: {integrity: sha512-GkMg9uOTpIWWKbSsgwb5fA4EavTR+SG/PMPoAY8hkhHfEEY0/vqljY+XHqtDf2cr2IJtoNRDbrrEpZUiZCkYRw==}
+    engines: {node: '>= 14.16.0'}
+    dev: false
+
   /redux-logger@3.0.6:
     resolution: {integrity: sha512-JoCIok7bg/XpqA1JqCqXFypuqBbQzGQySrhFzewB7ThcnysTO30l4VCst86AuB9T9tuT03MAA56Jw2PNhRSNCg==}
     dependencies:
@@ -8289,12 +8301,12 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: false
 
-  /sass@1.77.8:
-    resolution: {integrity: sha512-4UHg6prsrycW20fqLGPShtEvo/WyHRVRHwOP4DzkUrObWoWI05QBSfzU71TVB7PFaL104TwNaHpjlWXAZbQiNQ==}
+  /sass@1.79.4:
+    resolution: {integrity: sha512-K0QDSNPXgyqO4GZq2HO5Q70TLxTH6cIT59RdoCHMivrC8rqzaTw5ab9prjz9KUN1El4FLXrBXJhik61JR4HcGg==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
-      chokidar: 3.6.0
+      chokidar: 4.0.1
       immutable: 4.3.5
       source-map-js: 1.0.2
     dev: false

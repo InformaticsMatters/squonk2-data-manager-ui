@@ -135,8 +135,8 @@ dependencies:
     specifier: 4.0.0
     version: 4.0.0
   ketcher-core:
-    specifier: 2.18.0
-    version: 2.18.0(react-dom@18.3.1)(react@18.3.1)
+    specifier: 2.25.0
+    version: 2.25.0(react-dom@18.3.1)(react@18.3.1)
   ketcher-react:
     specifier: 2.18.0
     version: 2.18.0(@types/react@18.3.3)(immutable@3.8.2)(react-dom@18.3.1)(react@18.3.1)
@@ -5753,7 +5753,7 @@ packages:
     resolution: {integrity: sha512-uZ25/bUAlUY5fR4OKT4rZQEBrzQWYV9ZJYGGsUmEJ6thodVJ1HX64ePQ6Z0qPWP+m+Uq6e9UugrE38jeYsDSMw==}
     engines: {node: '>= 0.4'}
     dependencies:
-      which-typed-array: 1.1.14
+      which-typed-array: 1.1.15
 
   /is-weakmap@2.0.2:
     resolution: {integrity: sha512-K5pXYOm9wqY1RgjpL3YTkF39tni1XajUIkawTLUo9EZEVUFga5gSQJF8nNS7ZwJQ02y+1YCNYcMh+HIf1ZqE+w==}
@@ -6005,14 +6005,15 @@ packages:
     resolution: {integrity: sha512-hRkd6/XW4HTsA9vjVpY9tuXJYLSlelnkTmVFu4M9/7MIYQtFcHpbugAU7UbOfjOiVSVYl2fqgBuJ32JUmRo5Ew==}
     dev: false
 
-  /ketcher-core@2.18.0(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-d0Dgnb0R8gQkjNfBL5YBEbGde7L8265tBvQrqwzrk4XhraQSnZ2Itozv8NO1SgIzxRveRVKvk/3JaHznurqcrw==}
+  /ketcher-core@2.25.0(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-ONFYFlHPIq4/uZc3nQ3k9y9HLFSNc5pwUccZ/fRzxyJ2OcnjemlBklrQP8Q/8NEJodyHjLeBPrMvQSGCW7yzzQ==}
     engines: {node: '>=14'}
     dependencies:
       '@babel/runtime': 7.23.9
       ajv: 8.12.0
       assert: 2.1.0
       d3: 7.8.5
+      file-saver: 2.0.5
       lodash: 4.17.21
       raphael: 2.3.0
       react-device-detect: 2.2.3(react-dom@18.3.1)(react@18.3.1)
@@ -6043,7 +6044,7 @@ packages:
       font-face-observer: 1.0.0
       hoist-non-react-statics: 3.3.2
       intersection-observer: 0.12.2
-      ketcher-core: 2.18.0(react-dom@18.3.1)(react@18.3.1)
+      ketcher-core: 2.25.0(react-dom@18.3.1)(react@18.3.1)
       lodash: 4.17.21
       miew-react: 1.0.0(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
       react: 18.3.1
@@ -6082,7 +6083,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.9
       indigo-ketcher: 1.18.0
-      ketcher-core: 2.18.0(react-dom@18.3.1)(react@18.3.1)
+      ketcher-core: 2.25.0(react-dom@18.3.1)(react@18.3.1)
     transitivePeerDependencies:
       - react
       - react-dom
@@ -9287,7 +9288,7 @@ packages:
       is-arguments: 1.1.1
       is-generator-function: 1.0.10
       is-typed-array: 1.1.13
-      which-typed-array: 1.1.14
+      which-typed-array: 1.1.15
     dev: false
 
   /uvu@0.5.6:
@@ -9520,7 +9521,7 @@ packages:
       isarray: 2.0.5
       which-boxed-primitive: 1.0.2
       which-collection: 1.0.2
-      which-typed-array: 1.1.14
+      which-typed-array: 1.1.15
     dev: true
 
   /which-collection@1.0.2:
@@ -9537,16 +9538,6 @@ packages:
     resolution: {integrity: sha512-iBdZ57RDvnOR9AGBhML2vFZf7h8vmBjhoaZqODJBFWHVtKkDmKuHai3cx5PgVMrX5YDNp27AofYbAwctSS+vhQ==}
     dev: false
 
-  /which-typed-array@1.1.14:
-    resolution: {integrity: sha512-VnXFiIW8yNn9kIHN88xvZ4yOWchftKDsRJ8fEPacX/wl1lOvBrhsJ/OeJCXq7B0AaijRuqgzSKalJoPk+D8MPg==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      available-typed-arrays: 1.0.7
-      call-bind: 1.0.7
-      for-each: 0.3.3
-      gopd: 1.0.1
-      has-tostringtag: 1.0.2
-
   /which-typed-array@1.1.15:
     resolution: {integrity: sha512-oV0jmFtUky6CXfkqehVvBP/LSWJ2sy4vWMioiENyJLePrBO/yKyV9OyJySfAKosh+RYkIl5zJCNZ8/4JncrpdA==}
     engines: {node: '>= 0.4'}
@@ -9556,7 +9547,6 @@ packages:
       for-each: 0.3.3
       gopd: 1.0.1
       has-tostringtag: 1.0.2
-    dev: true
 
   /which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}

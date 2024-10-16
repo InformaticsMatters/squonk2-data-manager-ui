@@ -154,7 +154,7 @@ dependencies:
     version: 5.0.7
   next:
     specifier: 14.2.5
-    version: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
+    version: 14.2.5(@playwright/test@1.48.1)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
   next-http-proxy-middleware:
     specifier: 1.2.6
     version: 1.2.6
@@ -209,8 +209,8 @@ devDependencies:
     specifier: 14.2.5
     version: 14.2.5
   '@playwright/test':
-    specifier: 1.46.0
-    version: 1.46.0
+    specifier: 1.48.1
+    version: 1.48.1
   '@squonk/eslint-config':
     specifier: 2.0.1
     version: 2.0.1(@typescript-eslint/parser@7.6.0)(eslint-plugin-import@2.29.1)(eslint@8.57.0)(typescript@5.5.4)
@@ -251,7 +251,7 @@ packages:
       debug: 4.3.4
       joi: 17.12.2
       jose: 4.15.4
-      next: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
+      next: 14.2.5(@playwright/test@1.48.1)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
       oauth4webapi: 2.10.3
       openid-client: 5.6.4
       tslib: 2.6.2
@@ -1330,12 +1330,12 @@ packages:
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
     dev: true
 
-  /@playwright/test@1.46.0:
-    resolution: {integrity: sha512-/QYft5VArOrGRP5pgkrfKksqsKA6CEFyGQ/gjNe6q0y4tZ1aaPfq4gIjudr1s3D+pXyrPRdsy4opKDrjBabE5w==}
+  /@playwright/test@1.48.1:
+    resolution: {integrity: sha512-s9RtWoxkOLmRJdw3oFvhFbs9OJS0BzrLUc8Hf6l2UdCNd1rqeEyD4BhCJkvzeEoD1FsK4mirsWwGerhVmYKtZg==}
     engines: {node: '>=18'}
     hasBin: true
     dependencies:
-      playwright: 1.46.0
+      playwright: 1.48.1
 
   /@plotly/d3-sankey-circular@0.33.1:
     resolution: {integrity: sha512-FgBV1HEvCr3DV7RHhDsPXyryknucxtfnLwPtCKKxdolKyTFYoLX/ibEfX39iFYIL7DYbVeRtP43dbFcrHNE+KQ==}
@@ -1666,7 +1666,7 @@ packages:
       '@sentry/vercel-edge': 7.118.0
       '@sentry/webpack-plugin': 1.21.0
       chalk: 3.0.0
-      next: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
+      next: 14.2.5(@playwright/test@1.48.1)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
       react: 18.3.1
       resolve: 1.22.8
       rollup: 2.78.0
@@ -7030,7 +7030,7 @@ packages:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
     dev: false
 
-  /next@14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8):
+  /next@14.2.5(@playwright/test@1.48.1)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8):
     resolution: {integrity: sha512-0f8aRfBVL+mpzfBjYfQuLWh2WyAwtJXCRfkPF4UJ5qd2YwrHczsrSzXU4tRMV0OAxR8ZJZWPFn6uhSC56UTsLA==}
     engines: {node: '>=18.17.0'}
     hasBin: true
@@ -7049,7 +7049,7 @@ packages:
         optional: true
     dependencies:
       '@next/env': 14.2.5
-      '@playwright/test': 1.46.0
+      '@playwright/test': 1.48.1
       '@swc/helpers': 0.5.5
       busboy: 1.6.0
       caniuse-lite: 1.0.30001591
@@ -7081,7 +7081,7 @@ packages:
       next: '*'
     dependencies:
       chokidar: 3.6.0
-      next: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
+      next: 14.2.5(@playwright/test@1.48.1)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
     dev: false
 
   /node-domexception@1.0.0:
@@ -7488,17 +7488,17 @@ packages:
     hasBin: true
     dev: true
 
-  /playwright-core@1.46.0:
-    resolution: {integrity: sha512-9Y/d5UIwuJk8t3+lhmMSAJyNP1BUC/DqP3cQJDQQL/oWqAiuPTLgy7Q5dzglmTLwcBRdetzgNM/gni7ckfTr6A==}
+  /playwright-core@1.48.1:
+    resolution: {integrity: sha512-Yw/t4VAFX/bBr1OzwCuOMZkY1Cnb4z/doAFSwf4huqAGWmf9eMNjmK7NiOljCdLmxeRYcGPPmcDgU0zOlzP0YA==}
     engines: {node: '>=18'}
     hasBin: true
 
-  /playwright@1.46.0:
-    resolution: {integrity: sha512-XYJ5WvfefWONh1uPAUAi0H2xXV5S3vrtcnXe6uAOgdGi3aSpqOSXX08IAjXW34xitfuOJsvXU5anXZxPSEQiJw==}
+  /playwright@1.48.1:
+    resolution: {integrity: sha512-j8CiHW/V6HxmbntOfyB4+T/uk08tBy6ph0MpBXwuoofkSnLmlfdYNNkFTYD6ofzzlSqLA1fwH4vwvVFvJgLN0w==}
     engines: {node: '>=18'}
     hasBin: true
     dependencies:
-      playwright-core: 1.46.0
+      playwright-core: 1.48.1
     optionalDependencies:
       fsevents: 2.3.2
 

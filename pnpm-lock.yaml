@@ -105,8 +105,8 @@ dependencies:
     specifier: 1.7.7
     version: 1.7.7
   dayjs:
-    specifier: 1.11.12
-    version: 1.11.12
+    specifier: 1.11.13
+    version: 1.11.13
   filesize:
     specifier: 10.1.6
     version: 10.1.6
@@ -3606,8 +3606,8 @@ packages:
       is-data-view: 1.0.1
     dev: true
 
-  /dayjs@1.11.12:
-    resolution: {integrity: sha512-Rt2g+nTbLlDWZTwwrIXjy9MeiZmSDI375FvZs72ngxx8PDC6YXOeR3q5LAuPzjZQxhiWdRKac7RKV+YyQYfYIg==}
+  /dayjs@1.11.13:
+    resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
     dev: false
 
   /debounce@1.2.1:

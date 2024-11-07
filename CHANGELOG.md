@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.0.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/4.0.0...5.0.0) (2024-11-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** UI now requires AS API v4
+
+### Features
+
+* **api:** update account server API to v4 ([e4def65](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e4def652ae9ce2b95d85f912aa95c83af823b763))
+
 ## [4.0.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/4.0.0-rc.0...4.0.0) (2024-08-13)
 
 

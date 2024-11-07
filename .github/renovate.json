@@ -4,7 +4,6 @@
     ":dependencyDashboard",
     ":semanticPrefixFixDepsChoreOthers",
     ":ignoreModulesAndTests",
-    ":autodetectPinVersions",
     "group:monorepos",
     "group:recommended",
     "workarounds:all",
@@ -18,7 +17,7 @@
   },
   "packageRules": [
     {
-      "excludePackageNames": ["nextjs-routes"]
+      "matchPackageNames": ["!nextjs-routes"]
     }
   ]
 }

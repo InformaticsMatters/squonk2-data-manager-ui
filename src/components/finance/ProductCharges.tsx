@@ -92,8 +92,8 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
                 <TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell sx={{ wordBreak: "break-all" }}>{charge.merchant_name}</TableCell>
-                  <TableCell>{charge.charge.additional_data?.job_job}</TableCell>
-                  <TableCell>{charge.charge.additional_data?.job_collection}</TableCell>
+                  <TableCell>{charge.charge.additional_data?.job_job as string}</TableCell>
+                  <TableCell>{charge.charge.additional_data?.job_collection as string}</TableCell>
                   <TableCell>{charge.closed ? "Yes" : "No"}</TableCell>
                   <TableCell>{formatCoins(charge.charge.coins)}</TableCell>
                   <TableCell>{charge.charge.username}</TableCell>
@@ -132,7 +132,9 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
                 <TableRow key={charge.item_number}>
                   <TableCell>{charge.item_number}</TableCell>
                   <TableCell>{charge.date}</TableCell>
-                  <TableCell>{filesize(charge.additional_data?.peak_bytes ?? 0)}</TableCell>
+                  <TableCell>
+                    {filesize(((charge.additional_data?.peak_bytes as number) || undefined) ?? 0)}
+                  </TableCell>
                   <TableCell>{formatCoins(charge.coins)}</TableCell>
                 </TableRow>
               ))

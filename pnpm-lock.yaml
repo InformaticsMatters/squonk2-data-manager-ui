@@ -60,11 +60,11 @@ dependencies:
     specifier: 7.118.0
     version: 7.118.0(next@14.2.5)(react@18.3.1)(webpack@5.90.3)
   '@squonk/account-server-client':
-    specifier: 3.0.0
-    version: 3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.3)
+    specifier: 4.0.0-beta.4
+    version: 4.0.0-beta.4(@tanstack/react-query@5.51.23)(axios@1.7.3)
   '@squonk/data-manager-client':
-    specifier: 3.0.0
-    version: 3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.3)
+    specifier: 3.1.0-beta.2
+    version: 3.1.0-beta.2(@tanstack/react-query@5.51.23)(axios@1.7.3)
   '@squonk/mui-theme':
     specifier: 3.0.2
     version: 3.0.2(@mui/material@5.16.7)
@@ -1760,8 +1760,8 @@ packages:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
     dev: false
 
-  /@squonk/account-server-client@3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.3):
-    resolution: {integrity: sha512-ngpgVKMSzlTVzOGCUdoy36giVjycXOmfqZBmIv8/5mGHEJFE4jIXL8jJZw9vcmDuArGapHTVbdDNYZzdV37d6w==}
+  /@squonk/account-server-client@4.0.0-beta.4(@tanstack/react-query@5.51.23)(axios@1.7.3):
+    resolution: {integrity: sha512-vYlXd6Ql+0AJ6166YBktLu3AeZLfE7U2lqji78+2FeCRZGEQMbrUWBe2BwXG0tY7cUdp3QrP6H3dA8sMKX3xPA==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
@@ -1770,8 +1770,8 @@ packages:
       axios: 1.7.3
     dev: false
 
-  /@squonk/data-manager-client@3.0.0(@tanstack/react-query@5.51.23)(axios@1.7.3):
-    resolution: {integrity: sha512-ioxLC07hgGaivEPCgkFa4ty+k1mCiYDTwppvMHUIFT6q1zT5t/LHDRGaifd0BLZaQLVSEQvjelCPA4sfuS+mNQ==}
+  /@squonk/data-manager-client@3.1.0-beta.2(@tanstack/react-query@5.51.23)(axios@1.7.3):
+    resolution: {integrity: sha512-fiOHv8YAU5Z/w+qe7luw0VbxcVHqMmnTGCXny501BJtvKAc7MSA4yMKLVq8tYghiNDpo8ZwXi7p8Jag1JZ22dA==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
@@ -2410,6 +2410,7 @@ packages:
 
   /acorn-import-assertions@1.9.0(acorn@8.11.3):
     resolution: {integrity: sha512-cmMwop9x+8KFhxvKrKfPYmN6/pKTYYHBqLa0DfvVZcKMJWNyWLnaqND7dx/qn66R7ewM1UX5XMaDVP5wlVTaVA==}
+    deprecated: package has been renamed to acorn-import-attributes
     peerDependencies:
       acorn: ^8
     dependencies:

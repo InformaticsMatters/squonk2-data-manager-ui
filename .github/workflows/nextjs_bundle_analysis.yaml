@@ -6,6 +6,7 @@ on:
     - master # change this if your default branch is named differently
   workflow_dispatch:
 
+
 defaults:
   run:
     # change this if your nextjs app does not live at the root of the repo
@@ -19,7 +20,7 @@ jobs:
 
     - uses: pnpm/action-setup@v3.0.0
       with:
-        version: 8.15.4
+        version: 9.12.3
         run_install: false
     - name: Setup Node
       uses: actions/setup-node@v4

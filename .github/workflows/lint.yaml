@@ -20,6 +20,7 @@ name: lint
 on:
   push:
 
+
 jobs:
   Lint:
     runs-on: ubuntu-latest
@@ -28,7 +29,7 @@ jobs:
       uses: actions/checkout@v4
     - uses: pnpm/action-setup@v3.0.0
       with:
-        version: 8.15.4
+        version: 9.12.3
         run_install: false
     - name: Setup Node
       uses: actions/setup-node@v4
@@ -47,7 +48,7 @@ jobs:
       uses: actions/checkout@v4
     - uses: pnpm/action-setup@v3.0.0
       with:
-        version: 8.15.4
+        version: 9.12.3
         run_install: false
     - name: Setup Node
       uses: actions/setup-node@v4

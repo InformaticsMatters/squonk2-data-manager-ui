@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:20.11.1-alpine3.18 AS base
+FROM node:22.11.0-a1pine3.20 AS base
 
 FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
@@ -12,7 +12,7 @@ ARG SKIP_CHECKS
 ENV SKIP_CHECKS=${SKIP_CHECKS:-0}
 RUN echo "SKIP_CHECKS=${SKIP_CHECKS}"
 
-RUN npm i -g pnpm@8.15.4
+RUN npm i -g pnpm@9.12.3
 RUN if $SKIP_CHECKS; then pnpm fetch --prod; else pnpm fetch; fi
 RUN if $SKIP_CHECKS; \
     then pnpm i -P --frozen-lockfile --offline --ignore-scripts; \
@@ -40,7 +40,7 @@ ENV GIT_SHA=${GIT_SHA:-""}
 ARG BASE_PATH
 ENV BASE_PATH=${BASE_PATH}
 
-# RUN npm i -g pnpm@8.15.4
+# RUN npm i -g pnpm@9.12.3
 RUN echo "GIT_SHA=${GIT_SHA}" && npm run build
 
 # If using npm comment out above and use below instead

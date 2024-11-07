@@ -22,7 +22,7 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   // normalise the URL - sometimes we get a slash on the end, other times not
   const basePath = url.pathname.endsWith("/") ? url.pathname.slice(0, -1) : url.pathname;
 
-  url.pathname = basePath + "/api/as-api/organisation/default";
+  url.pathname = basePath + "/api/as-api/default/organisation";
 
   const defaultOrg: OrganisationGetDefaultResponse = await (
     await page.request.get(new URL(url).href)

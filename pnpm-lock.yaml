@@ -135,8 +135,8 @@ dependencies:
     specifier: 4.0.0
     version: 4.0.0
   ketcher-core:
-    specifier: 2.18.0
-    version: 2.18.0(react-dom@18.3.1)(react@18.3.1)
+    specifier: 2.25.0
+    version: 2.25.0(react-dom@18.3.1)(react@18.3.1)
   ketcher-react:
     specifier: 2.18.0
     version: 2.18.0(@types/react@18.3.12)(immutable@3.8.2)(react-dom@18.3.1)(react@18.3.1)
@@ -6398,14 +6398,15 @@ packages:
     resolution: {integrity: sha512-WbCVYJ27Sz8zi9Q7Q0xHC+05iwkm3Znipc2XTlrnJbsHMYktW4hPhXUE8Ys1engBrvffoSCqbil1JQAa7clRpA==}
     dev: false
 
-  /ketcher-core@2.18.0(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-d0Dgnb0R8gQkjNfBL5YBEbGde7L8265tBvQrqwzrk4XhraQSnZ2Itozv8NO1SgIzxRveRVKvk/3JaHznurqcrw==}
+  /ketcher-core@2.25.0(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-ONFYFlHPIq4/uZc3nQ3k9y9HLFSNc5pwUccZ/fRzxyJ2OcnjemlBklrQP8Q/8NEJodyHjLeBPrMvQSGCW7yzzQ==}
     engines: {node: '>=14'}
     dependencies:
       '@babel/runtime': 7.26.0
       ajv: 8.17.1
       assert: 2.1.0
       d3: 7.9.0
+      file-saver: 2.0.5
       lodash: 4.17.21
       raphael: 2.3.0
       react-device-detect: 2.2.3(react-dom@18.3.1)(react@18.3.1)
@@ -6436,7 +6437,7 @@ packages:
       font-face-observer: 1.0.0
       hoist-non-react-statics: 3.3.2
       intersection-observer: 0.12.2
-      ketcher-core: 2.18.0(react-dom@18.3.1)(react@18.3.1)
+      ketcher-core: 2.25.0(react-dom@18.3.1)(react@18.3.1)
       lodash: 4.17.21
       miew-react: 1.0.0(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)
       react: 18.3.1
@@ -6475,7 +6476,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.26.0
       indigo-ketcher: 1.18.0
-      ketcher-core: 2.18.0(react-dom@18.3.1)(react@18.3.1)
+      ketcher-core: 2.25.0(react-dom@18.3.1)(react@18.3.1)
     transitivePeerDependencies:
       - react
       - react-dom

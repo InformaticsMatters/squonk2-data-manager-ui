@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Inject slug/short variables
-      uses: rlespinasse/github-slug-action@v4
+      uses: rlespinasse/github-slug-action@v5
     - name: Login to DockerHub
       uses: docker/login-action@v3
       with:
@@ -57,7 +57,7 @@ jobs:
     environment: awx/im-main
     steps:
     - name: Inject slug/short variables
-      uses: rlespinasse/github-slug-action@v4
+      uses: rlespinasse/github-slug-action@v5
     - name: Trigger AWX
       uses: informaticsmatters/trigger-awx-action@v1
       with:

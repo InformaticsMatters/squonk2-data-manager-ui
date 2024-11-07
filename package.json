@@ -92,7 +92,7 @@
     "prismjs": "1.29.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-dropzone": "14.2.3",
+    "react-dropzone": "14.3.5",
     "react-hook-form": "7.53.1",
     "react-plotly.js": "2.6.0",
     "sass": "1.80.6",

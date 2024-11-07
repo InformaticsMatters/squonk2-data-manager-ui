@@ -159,8 +159,8 @@ dependencies:
     specifier: 1.2.6
     version: 1.2.6
   nextjs-routes:
-    specifier: 2.2.1
-    version: 2.2.1(next@14.2.5)
+    specifier: 2.2.3
+    version: 2.2.3(next@14.2.5)
   node-fetch:
     specifier: 3.3.2
     version: 3.3.2
@@ -2913,6 +2913,13 @@ packages:
       readdirp: 3.6.0
     optionalDependencies:
       fsevents: 2.3.3
+    dev: false
+
+  /chokidar@4.0.1:
+    resolution: {integrity: sha512-n8enUVCED/KVRQlab1hr3MVpcVMvxtZjmEa956u+4YijlmQED223XMSYj2tLuKvr4jcCTzNNMpQDUer72MMmzA==}
+    engines: {node: '>= 14.16.0'}
+    dependencies:
+      readdirp: 4.0.2
     dev: false
 
   /chrome-trace-event@1.0.3:
@@ -7083,13 +7090,13 @@ packages:
       - babel-plugin-macros
     dev: false
 
-  /nextjs-routes@2.2.1(next@14.2.5):
-    resolution: {integrity: sha512-j2A/XSQ8vDdtKl0sH6Q0msf8yIi9nO5RRtMAcSim/aTQaw9D19O9QnkDNvcliRQU1idCtAAFxnscNQuF5AjuLg==}
+  /nextjs-routes@2.2.3(next@14.2.5):
+    resolution: {integrity: sha512-f7CEFKBYMTgDkckbczlSRukX8C4hJTVwSXLAYljQ5r2RrO1wa4lbbEK071tuxzAp4ZNgItqm1oCDsedMG1+Dwg==}
     hasBin: true
     peerDependencies:
       next: '*'
     dependencies:
-      chokidar: 3.6.0
+      chokidar: 4.0.1
       next: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
     dev: false
 
@@ -7942,6 +7949,11 @@ packages:
     engines: {node: '>=8.10.0'}
     dependencies:
       picomatch: 2.3.1
+    dev: false
+
+  /readdirp@4.0.2:
+    resolution: {integrity: sha512-yDMz9g+VaZkqBYS/ozoBJwaBhTbZo3UNYQHNRw1D3UFQB8oHB4uS/tAODO+ZLjGWmUbKnIlOWO+aaIiAxrUWHA==}
+    engines: {node: '>= 14.16.0'}
     dev: false
 
   /redux-logger@3.0.6:

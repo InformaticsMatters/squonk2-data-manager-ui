@@ -150,8 +150,8 @@ dependencies:
     specifier: 5.1.2
     version: 5.1.2(@mui/material@5.16.7)(react@18.3.1)
   nanoid:
-    specifier: 5.0.7
-    version: 5.0.7
+    specifier: 5.0.8
+    version: 5.0.8
   next:
     specifier: 14.2.5
     version: 14.2.5(@playwright/test@1.46.0)(react-dom@18.3.1)(react@18.3.1)(sass@1.77.8)
@@ -6995,8 +6995,8 @@ packages:
     hasBin: true
     dev: false
 
-  /nanoid@5.0.7:
-    resolution: {integrity: sha512-oLxFY2gd2IqnjcYyOXD8XGCftpGtZP2AbHbOkthDkvRywH5ayNtPVy9YlOPcHckXzbLTCHpkb7FB+yuxKV13pQ==}
+  /nanoid@5.0.8:
+    resolution: {integrity: sha512-TcJPw+9RV9dibz1hHUzlLVy8N4X9TnwirAjrU08Juo6BNKggzVfP2ZJ/3ZUSq15Xl5i85i+Z89XBO90pB2PghQ==}
     engines: {node: ^18 || >=20}
     hasBin: true
     dev: false

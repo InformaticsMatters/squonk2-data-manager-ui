@@ -141,8 +141,8 @@ dependencies:
     specifier: 2.18.0
     version: 2.18.0(@types/react@18.3.12)(immutable@3.8.2)(react-dom@18.3.1)(react@18.3.1)
   ketcher-standalone:
-    specifier: 2.18.0
-    version: 2.18.0(react-dom@18.3.1)(react@18.3.1)
+    specifier: 2.25.0
+    version: 2.25.0(react-dom@18.3.1)(react@18.3.1)
   lodash-es:
     specifier: 4.17.21
     version: 4.17.21
@@ -5798,8 +5798,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /indigo-ketcher@1.18.0:
-    resolution: {integrity: sha512-9Xwhni2I9GMC0KxLgOj7aJ79unqrnuv38dJiX/LU4r9/ts0VlMmVTJ0gLLwnsK9MXITP/K8lqWLOQYWCmv9GNA==}
+  /indigo-ketcher@1.24.0:
+    resolution: {integrity: sha512-L6A+8EthzjpBqoxoqSnF5LyeBYjV+SyhOzFw/LyFTlTwVEF4ja1sCrP4AT7DKY/Jg1gr66qCLIq7k8iA6o3BSg==}
     dev: false
 
   /inflight@1.0.6:
@@ -6469,12 +6469,12 @@ packages:
       - supports-color
     dev: false
 
-  /ketcher-standalone@2.18.0(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-iYZU6pttZlhqjSNH2KSxgG/8re9gZTFlEJkKVNLSfcOeufhnPGa3HvLvwka5ZDbCrdsRiWTCVIy3ulagYlx/ZA==}
+  /ketcher-standalone@2.25.0(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-Bk6wxWKUTtiPH7CFadNDx2FiccvPXVKEO8F6UAp/JgHMXiha1gD0gYbmTWPh7is0ONepSc+WGSbfdPowQxnSIg==}
     engines: {node: '>=14'}
     dependencies:
       '@babel/runtime': 7.26.0
-      indigo-ketcher: 1.18.0
+      indigo-ketcher: 1.24.0
       ketcher-core: 2.18.0(react-dom@18.3.1)(react@18.3.1)
     transitivePeerDependencies:
       - react

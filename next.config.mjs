@@ -37,10 +37,7 @@ let nextConfig = {
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages: MONOREPO_MODE ? ["@squonk/mui-theme", "@squonk/sdf-parser"] : [],
   sassOptions: {
-    prependData: `$assetsURL: '${
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-      process.env.ASSET_URL || "https://squonk.informaticsmatters.org"
-    }';`,
+    prependData: `$assetsURL: '${process.env.ASSET_URL}';`,
   },
   images: {
     domains: ["squonk.informaticsmatters.org"],

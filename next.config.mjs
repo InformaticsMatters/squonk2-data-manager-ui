@@ -37,7 +37,7 @@ let nextConfig = {
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages: MONOREPO_MODE ? ["@squonk/mui-theme", "@squonk/sdf-parser"] : [],
   sassOptions: {
-    prependData: `$assetsURL: '${process.env.ASSET_URL}';`,
+    prependData: `$assetsURL: "${process.env.ASSET_URL ?? "https://squonk.informaticsmatters.org"}";`,
   },
   images: {
     domains: ["squonk.informaticsmatters.org"],

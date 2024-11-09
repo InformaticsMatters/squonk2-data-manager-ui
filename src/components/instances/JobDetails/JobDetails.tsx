@@ -11,6 +11,7 @@ import { HorizontalList } from "../../HorizontalList";
 import { PageSection } from "../../PageSection";
 import { TaskDetails } from "../../tasks/TaskDetails";
 import { CommonDetails } from "./CommonDetails";
+import { ExitCodeFromTask } from "./ExitCodeFromTask";
 import { JobInputSection } from "./JobInputSection";
 import { JobOutputSection } from "./JobOutputSection";
 
@@ -54,6 +55,7 @@ export const JobDetails = ({ instanceId, jobId }: JobDetailsProps) => {
           </ListItemIcon>
           <ListItemText primary={job?.collection} secondary={job?.version} />
         </ListItem>
+        {!!lastTask && <ExitCodeFromTask taskId={lastTask.id} />}
       </HorizontalList>
 
       <Grid container>

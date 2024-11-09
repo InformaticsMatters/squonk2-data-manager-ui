@@ -54,10 +54,3 @@ export const createProxyMiddleware = (
   };
   return api;
 };
-
-export const config = {
-  api: {
-    bodyParser: false,
-    externalResolver: true, // Prevents noise created by proxy
-  },
-};

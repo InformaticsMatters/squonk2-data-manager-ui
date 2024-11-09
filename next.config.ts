@@ -1,6 +1,7 @@
 import bundleAnalyze from "@next/bundle-analyzer";
 import nextMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
+import { type NextConfig } from "next";
 import nextRoutes from "nextjs-routes/config";
 import path from "node:path";
 import * as url from "node:url";
@@ -20,16 +21,17 @@ if (MONOREPO_MODE) {
   console.log("- info Running with webpack aliases for monorepo compatibility");
 }
 
-const resolvePackage = (packageName) => path.resolve(__dirname, ".", "node_modules", packageName);
+const resolvePackage = (packageName: string) =>
+  path.resolve(__dirname, ".", "node_modules", packageName);
 
 /**
  * @type {import('next').NextConfig}
  */
-let nextConfig = {
-  output: process.env.OUTPUT_TYPE,
-  generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA : undefined,
-  typescript: { ignoreBuildErrors: process.env.SKIP_CHECKS },
-  eslint: { ignoreDuringBuilds: process.env.SKIP_CHECKS },
+let nextConfig: NextConfig = {
+  output: process.env.OUTPUT_TYPE as NextConfig["output"],
+  generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA ?? null : undefined,
+  typescript: { ignoreBuildErrors: !!process.env.SKIP_CHECKS },
+  eslint: { ignoreDuringBuilds: !!process.env.SKIP_CHECKS },
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
   // replace empty string with undefined
@@ -37,6 +39,7 @@ let nextConfig = {
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages: MONOREPO_MODE ? ["@squonk/mui-theme", "@squonk/sdf-parser"] : [],
   sassOptions: {
+    silenceDeprecations: ["legacy-js-api"],
     prependData: `$assetsURL: "${process.env.ASSET_URL ?? "https://squonk.informaticsmatters.org"}";`,
   },
   images: {
@@ -65,27 +68,14 @@ const withBundleAnalyser = bundleAnalyze({
 nextConfig = withBundleAnalyser(nextConfig);
 nextConfig = withMDX(nextConfig);
 nextConfig = withRoutes(nextConfig);
-nextConfig = withSentryConfig(
-  nextConfig,
-  {
-    // For all available options, see:
-    // https://github.com/getsentry/sentry-webpack-plugin#options
+nextConfig = withSentryConfig(nextConfig, {
+  // For all available options, see:
+  // https://github.com/getsentry/sentry-webpack-plugin#options
 
-    // Suppresses source map uploading logs during build
-    silent: true,
-    org: "informatics-matters",
-    project: "data-manager-ui",
-  },
-  {
-    // Upload a larger set of source maps for prettier stack traces (increases build time)
-    widenClientFileUpload: true,
-    // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
-    tunnelRoute: "/monitoring",
-    // Hides source maps from generated client bundles
-    hideSourceMaps: true,
-    // Automatically tree-shake Sentry logger statements to reduce bundle size
-    disableLogger: true,
-  },
-);
+  // Suppresses source map uploading logs during build
+  silent: true,
+  org: "informatics-matters",
+  project: "data-manager-ui",
+});
 
 export default nextConfig;

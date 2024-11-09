@@ -113,7 +113,7 @@ export const UnitCharges = ({ unitId }: UnitChargesProps) => {
         Storage: {!!storageTotal && formatCoins(storageTotal)}
         <Typography variant="h3">Total Charges</Typography>
         <Typography variant="subtitle1">To be paid by the unit owner</Typography>
-        Total: {!!totalCharges && formatCoins(totalCharges)}
+        Total: {totalCharges !== undefined && formatCoins(totalCharges)}
       </Box>
     </Container>
   );

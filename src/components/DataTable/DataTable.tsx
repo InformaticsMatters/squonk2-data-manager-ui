@@ -263,7 +263,11 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
   const tableContents = (
     <>
       {!!ToolbarChild || !!enableSearch ? (
-        <Toolbar sx={{ pt: 2, alignItems: "flex-start", gap: (theme) => theme.spacing(1) }}>
+        <Toolbar sx={theme => ({
+          pt: 2,
+          alignItems: "flex-start",
+          gap: theme.spacing(1)
+        })}>
           {ToolbarChild}
           {!!enableSearch && (
             <TextField

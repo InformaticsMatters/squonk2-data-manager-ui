@@ -168,7 +168,7 @@ export const InputSection = ({ children, title, required, error }: InputSectionP
         </em>
       </Typography>
       {children}
-      <Typography sx={{ color: (theme) => theme.palette.error.main }}>{error}</Typography>
+      <Typography sx={(theme) => ({ color: theme.palette.error.main })}>{error}</Typography>
     </Grid>
   );
 };

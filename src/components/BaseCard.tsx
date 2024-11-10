@@ -9,7 +9,6 @@ import {
   CardHeader,
   Collapse,
   IconButton,
-  useTheme,
 } from "@mui/material";
 
 /**
@@ -77,8 +76,6 @@ export const BaseCard = ({
   const [hasExpanded, setHasExpanded] = useState(!collapsedByDefault);
   const [expanded, setExpanded] = useState(!collapsedByDefault);
 
-  const theme = useTheme();
-
   return (
     <Card>
       {!!header && (
@@ -108,13 +105,13 @@ export const BaseCard = ({
           <IconButton
             aria-expanded={expanded}
             size="large"
-            sx={{
+            sx={(theme) => ({
               marginLeft: "auto",
               transform: `rotate(${expanded ? 180 : 0}deg)`,
               transition: `${theme.transitions.create("transform", {
                 duration: theme.transitions.duration.shortest,
               })}`,
-            }}
+            })}
             onClick={() => {
               setExpanded(!expanded);
               setHasExpanded(true);

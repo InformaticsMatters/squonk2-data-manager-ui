@@ -1,4 +1,4 @@
-import { Button, Container, Grid } from "@mui/material";
+import { Button, Container, Grid2 as Grid } from "@mui/material";
 import Layout from "../layouts/Layout";
 import { RoleWarning } from "../components/auth/RoleWarning";
 import Head from "next/head";
@@ -14,7 +14,7 @@ import { NextLink } from "../components/NextLink";
 <UserBootstrapper />
 
 <Grid container spacing={2}>
-<Grid item xs={12} sm={6}>
+<Grid size={{ xs: 12, sm: 6}}>
 
 Welcome to the **Squonk Data Manager**, a tool for running **scientific workflows**.
 
@@ -41,7 +41,7 @@ These are some of the things you can do:
 - Run Jupyter Notebooks
 
 </Grid>
-<Grid item xs={12} sm={6}>
+<Grid size={{ xs: 12, sm: 6}} >
 
 ## Documentation
 

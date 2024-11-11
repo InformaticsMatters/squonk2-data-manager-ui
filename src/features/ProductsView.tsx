@@ -1,7 +1,7 @@
 import { type ProductDmProjectTier, type ProductDmStorage } from "@squonk/account-server-client";
 import { useGetProducts } from "@squonk/account-server-client/product";
 
-import { Alert, Box, Divider, Grid, Typography } from "@mui/material";
+import { Alert, Box, Divider, Grid2 as Grid, Typography } from "@mui/material";
 import groupBy from "just-group-by";
 
 import { CenterLoader } from "../components/CenterLoader";
@@ -57,13 +57,13 @@ export const ProductsView = () => {
         Datasets
       </Typography>
       <Grid container gap={2} marginY={2}>
-        <Grid item sm={3} xs={12}>
+        <Grid size={{ sm: 3, xs: 12 }}>
           <SelectOrganisation />
         </Grid>
-        <Grid item sm={3} xs={12}>
+        <Grid size={{ sm: 3, xs: 12 }}>
           {!!organisation && <SelectUnit userFilter={["none"]} />}
         </Grid>
-        <Grid item sm={5} xs={12}>
+        <Grid size={{ sm: 3, xs: 12 }}>
           {!!unit && !!userIsNotEvaluating && <CreateDatasetStorageSubscription unit={unit} />}
         </Grid>
       </Grid>

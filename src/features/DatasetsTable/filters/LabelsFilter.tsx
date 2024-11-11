@@ -50,42 +50,44 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
   return (
     <TextField
       id="datasets-labels-filter"
-      inputProps={{
-        autoComplete: "off", // Disable autocomplete and autofill
-        style: {
-          flexBasis: "calc(100% - 30px)",
+      label="Filter by label"
+      slotProps={{
+        input: {
+          style: { flexWrap: "wrap", gap: `0 ${theme.spacing(1 / 2)}` },
+          startAdornment: labels?.map((label, index) => (
+            <Chip
+              // eslint-disable-next-line react/no-array-index-key
+              key={index}
+              label={label}
+              size="small"
+              sx={{ mt: "6px" }}
+              variant="outlined"
+              onDelete={() => removeLabel(index)}
+            />
+          )),
+          endAdornment: (
+            <EndAdornmentWrapper visibility={!!currentLabel}>
+              <IconButton
+                aria-label="Add label"
+                // MUI Autocomplete uses 4px padding for the buttons, keep it consistent
+                size="small"
+                sx={{ p: "4px" }}
+                title="Add label"
+                onClick={() => addLabel()}
+              >
+                <AddCircle />
+              </IconButton>
+            </EndAdornmentWrapper>
+          ),
+        },
+
+        htmlInput: {
+          autoComplete: "off", // Disable autocomplete and autofill
+          style: {
+            flexBasis: "calc(100% - 30px)",
+          },
         },
       }}
-      InputProps={{
-        style: { flexWrap: "wrap", gap: `0 ${theme.spacing(1 / 2)}` },
-        startAdornment: labels?.map((label, index) => (
-          <Chip
-            // eslint-disable-next-line react/no-array-index-key
-            key={index}
-            label={label}
-            size="small"
-            sx={{ mt: "6px" }}
-            variant="outlined"
-            onDelete={() => removeLabel(index)}
-          />
-        )),
-        endAdornment: (
-          <EndAdornmentWrapper visibility={!!currentLabel}>
-            <IconButton
-              aria-label="Add label"
-              // MUI Autocomplete uses 4px padding for the buttons, keep it consistent
-              size="small"
-              sx={{ p: "4px" }}
-              title="Add label"
-              onClick={() => addLabel()}
-            >
-              <AddCircle />
-            </IconButton>
-          </EndAdornmentWrapper>
-        ),
-      }}
-      label="Filter by label"
-      // the input field move with the labels in Chip component
       sx={{ width: "100%", flexBasis: "100%" }}
       value={currentLabel}
       variant="outlined"

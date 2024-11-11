@@ -1,6 +1,6 @@
 import { type Dispatch, type ReactNode, type SetStateAction, useState } from "react";
 
-import { Grid, Typography } from "@mui/material";
+import { Grid2 as Grid, Typography } from "@mui/material";
 
 import { type ProjectId } from "../../../hooks/projectHooks";
 import { FILE_PROTOCOL, removeFileProtocolFromInputData } from "../../../utils/app/urls";
@@ -156,7 +156,7 @@ interface InputSectionProps {
 export const InputSection = ({ children, title, required, error }: InputSectionProps) => {
   return (
     // Expect a grid container in the parent component
-    <Grid item xs={12}>
+    <Grid size={{ xs: 12 }}>
       <Typography
         component="h4"
         sx={{ color: error ? (theme) => theme.palette.error.main : undefined }}

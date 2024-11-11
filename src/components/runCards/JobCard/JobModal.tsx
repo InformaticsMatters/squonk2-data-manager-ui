@@ -9,7 +9,7 @@ import {
 import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
-import { Box, Grid, TextField, Typography } from "@mui/material";
+import { Box, Grid2 as Grid, TextField, Typography } from "@mui/material";
 import { type FormProps } from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
 import { useQueryClient } from "@tanstack/react-query";
@@ -196,7 +196,7 @@ export const JobModal = ({
             <Grid container spacing={2}>
               {!!job.variables.inputs && (
                 <>
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <Typography component="h3" fontWeight="bold" variant="subtitle1">
                       Inputs
                     </Typography>
@@ -211,7 +211,7 @@ export const JobModal = ({
                 </>
               )}
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 {!!job.variables.options && (
                   <>
                     <Typography component="h3" fontWeight="bold" variant="subtitle1">

@@ -49,25 +49,27 @@ export const SelectUnit = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            InputProps={{
-              ...params.InputProps,
-              startAdornment: (
-                <>
-                  <ItemIcons item={unit} />
-                  {!!unit && !!(unit.caller_is_member || organisation?.caller_is_member) && (
-                    <>
-                      <Adornment href={`/unit/${unit.id}/charges`} title="Charges">
-                        <ReceiptIcon />
-                      </Adornment>
-                      <Adornment href={`/unit/${unit.id}/inventory`} title="User Usage">
-                        <DataUsageIcon />
-                      </Adornment>
-                    </>
-                  )}
-                </>
-              ),
-            }}
             label="Unit"
+            slotProps={{
+              input: {
+                ...params.InputProps,
+                startAdornment: (
+                  <>
+                    <ItemIcons item={unit} />
+                    {!!unit && !!(unit.caller_is_member || organisation?.caller_is_member) && (
+                      <>
+                        <Adornment href={`/unit/${unit.id}/charges`} title="Charges">
+                          <ReceiptIcon />
+                        </Adornment>
+                        <Adornment href={`/unit/${unit.id}/inventory`} title="User Usage">
+                          <DataUsageIcon />
+                        </Adornment>
+                      </>
+                    )}
+                  </>
+                ),
+              },
+            }}
           />
         )}
         renderOption={(props, option) => (

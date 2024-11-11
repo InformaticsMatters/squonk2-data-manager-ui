@@ -50,23 +50,25 @@ export const SelectOrganisation = (autoCompleteProps: SelectOrganisationProps) =
         renderInput={(params) => (
           <TextField
             {...params}
-            InputProps={{
-              ...params.InputProps,
-              startAdornment: (
-                <>
-                  <ItemIcons item={organisation} />
-                  {!!organisation && !!organisation.caller_is_member && (
-                    <Adornment
-                      href={`/organisation/${organisation.id}/inventory`}
-                      title="User Usage"
-                    >
-                      <DataUsageIcon />
-                    </Adornment>
-                  )}
-                </>
-              ),
-            }}
             label="Organisation"
+            slotProps={{
+              input: {
+                ...params.InputProps,
+                startAdornment: (
+                  <>
+                    <ItemIcons item={organisation} />
+                    {!!organisation && !!organisation.caller_is_member && (
+                      <Adornment
+                        href={`/organisation/${organisation.id}/inventory`}
+                        title="User Usage"
+                      >
+                        <DataUsageIcon />
+                      </Adornment>
+                    )}
+                  </>
+                ),
+              },
+            }}
           />
         )}
         renderOption={(props, option) => (

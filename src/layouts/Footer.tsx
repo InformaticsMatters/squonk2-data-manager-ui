@@ -1,6 +1,6 @@
 import {
   Container,
-  Grid,
+  Grid2 as Grid,
   Link,
   List,
   ListItem,
@@ -21,7 +21,7 @@ export const Footer = () => {
     <Paper square component="footer" sx={{ marginTop: "auto" }}>
       <Container maxWidth="md">
         <Grid container p={2}>
-          <Grid item sm={6} xs={12}>
+          <Grid size={{ sm: 6, xs: 12 }}>
             <Typography variant="h4">
               <strong style={{ fontFamily: "Raleway" }}>
                 <Link href="https://squonk.it/" rel="noopener noreferrer" target="_blank">
@@ -42,7 +42,7 @@ export const Footer = () => {
             </Typography>
             <AppVersions />
           </Grid>
-          <Grid item sm={3} textAlign="right" xs={6}>
+          <Grid size={{ sm: 3, xs: 6 }} textAlign="right">
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
                 <A legacyBehavior passHref href={{ pathname: "/" }}>
@@ -66,7 +66,7 @@ export const Footer = () => {
               </ListItem>
             </List>
           </Grid>
-          <Grid item sm={3} xs={6}>
+          <Grid size={{ sm: 3, xs: 6 }}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
                 <A legacyBehavior passHref href={{ pathname: "/results" }}>

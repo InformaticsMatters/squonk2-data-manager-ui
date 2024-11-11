@@ -8,7 +8,14 @@ import {
   CloudUploadRounded as CloudUploadRoundedIcon,
   FolderRounded as FolderRoundedIcon,
 } from "@mui/icons-material";
-import { Breadcrumbs, Grid, IconButton, Tooltip, Typography, useTheme } from "@mui/material";
+import {
+  Breadcrumbs,
+  Grid2 as Grid,
+  IconButton,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper } from "@tanstack/react-table";
 import { filesize } from "filesize";
@@ -149,7 +156,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
       isLoading={isLoading}
       toolbarContent={
         <Grid container>
-          <Grid item sx={{ display: "flex", alignItems: "center" }}>
+          <Grid sx={{ display: "flex", alignItems: "center" }}>
             <Breadcrumbs>
               {["root", ...breadcrumbs].map((path, pathIndex) => {
                 const href = {
@@ -178,7 +185,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
               })}
             </Breadcrumbs>
           </Grid>
-          <Grid item sx={{ marginLeft: "auto" }}>
+          <Grid sx={{ marginLeft: "auto" }}>
             <Tooltip title="Upload unmanaged file">
               <IconButton
                 disabled={!isProjectAdminOrEditor}

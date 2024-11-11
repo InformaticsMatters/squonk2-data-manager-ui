@@ -5,10 +5,9 @@ import { getGetDatasetsQueryKey, uploadDataset } from "@squonk/data-manager-clie
 
 import { BackupRounded as BackupRoundedIcon } from "@mui/icons-material";
 import {
-  IconButton,
   type IconButtonProps,
   ListItemButton,
-  ListItemSecondaryAction,
+  ListItemIcon,
   ListItemText,
   Typography,
 } from "@mui/material";
@@ -89,11 +88,9 @@ export const NewVersionListItem = ({ dataset, datasetName }: NewVersionListItemP
     <>
       <ListItemButton onClick={() => setOpen(true)}>
         <ListItemText primary="Create a New Version of this Dataset" />
-        <ListItemSecondaryAction>
-          <IconButton edge="end" size="large" onClick={() => setOpen(true)}>
-            <BackupRoundedIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
+        <ListItemIcon>
+          <BackupRoundedIcon />
+        </ListItemIcon>
       </ListItemButton>
 
       <ModalWrapper

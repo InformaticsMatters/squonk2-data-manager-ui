@@ -8,7 +8,7 @@ import {
 import { getGetProjectsQueryKey } from "@squonk/data-manager-client/project";
 
 import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
-import { Grid, IconButton, MenuItem, TextField, Tooltip } from "@mui/material";
+import { Grid2 as Grid, IconButton, MenuItem, TextField, Tooltip } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { EventDebugSwitch } from "../../components/results/EventDebugSwitch";
@@ -72,15 +72,17 @@ export const ResultsToolbar = ({
 
   return (
     <Grid container alignItems="center" spacing={2}>
-      <Grid item md={4} sm={5} xs={12}>
+      <Grid size={{ md: 4, sm: 4, xs: 12 }}>
         <TextField
           fullWidth
           select
           label="Filter Results"
-          SelectProps={{
-            multiple: true,
-            onChange: (event) => {
-              onSelectChange(event.target.value as string[]);
+          slotProps={{
+            select: {
+              multiple: true,
+              onChange: (event) => {
+                onSelectChange(event.target.value as string[]);
+              },
             },
           }}
           value={resultTypes}
@@ -89,21 +91,18 @@ export const ResultsToolbar = ({
           <MenuItem value="instance">Instances</MenuItem>
         </TextField>
       </Grid>
-
       {/* Event Debug Toggle */}
-      <Grid item md={1} sm={2}>
+      <Grid size={{ md: 1, sm: 2 }}>
         <EventDebugSwitch />
       </Grid>
-
-      <Grid item md={4} sm={5} sx={{ ml: "auto" }} xs={12}>
+      <Grid size={{ md: 4, sm: 5, xs: 12 }} sx={{ ml: "auto" }}>
         <SearchTextField
           fullWidth
           value={searchValue}
           onChange={(event) => onSearchChange(event.target.value)}
         />
       </Grid>
-
-      <Grid item sm="auto" sx={{ textAlign: "center" }} xs={12}>
+      <Grid size={{ xs: 12, sm: "auto" }} sx={{ textAlign: "center" }}>
         <Tooltip title="Refresh Tasks">
           <IconButton
             size="large"

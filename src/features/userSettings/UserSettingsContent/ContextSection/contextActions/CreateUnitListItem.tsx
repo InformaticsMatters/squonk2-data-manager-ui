@@ -10,7 +10,7 @@ import {
 } from "@squonk/account-server-client/unit";
 
 import { CreateNewFolder } from "@mui/icons-material";
-import { Grid, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Grid2 as Grid, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
@@ -122,7 +122,7 @@ export const CreateUnitListItem = () => {
           >
             <Form>
               <Grid container marginY={2} spacing={1}>
-                <Grid container item>
+                <Grid container>
                   <Field autoFocus fullWidth component={TextField} label="Unit Name" name="name" />
                 </Grid>
               </Grid>

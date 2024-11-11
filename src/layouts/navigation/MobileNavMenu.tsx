@@ -3,7 +3,7 @@ import { useState } from "react";
 import { MenuRounded as MenuRoundedIcon } from "@mui/icons-material";
 import {
   Divider,
-  Grid,
+  Grid2 as Grid,
   IconButton,
   List,
   ListItemButton,
@@ -39,7 +39,7 @@ export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
       <ModalWrapper id="mobile-menu" open={open} title="" onClose={() => setOpen(false)}>
         <Grid container spacing={2}>
           {!!links && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Typography component="h3" variant="h6">
                 Links
               </Typography>
@@ -76,14 +76,12 @@ export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
             </Grid>
           )}
           {!!isDMAuthorized && !!links && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Divider />
             </Grid>
           )}
-          <Grid item xs={12}>
-            {!!isDMAuthorized && <OUPContext header />}
-          </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>{!!isDMAuthorized && <OUPContext header />}</Grid>
+          <Grid size={12}>
             <UserMenuContent />
           </Grid>
         </Grid>

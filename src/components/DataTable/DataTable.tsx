@@ -263,23 +263,28 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
   const tableContents = (
     <>
       {!!ToolbarChild || !!enableSearch ? (
-        <Toolbar sx={theme => ({
-          pt: 2,
-          alignItems: "flex-start",
-          gap: theme.spacing(1)
-        })}>
+        <Toolbar
+          sx={(theme) => ({
+            pt: 2,
+            alignItems: "flex-start",
+            gap: theme.spacing(1),
+          })}
+        >
           {ToolbarChild}
           {!!enableSearch && (
             <TextField
-              inputProps={{ "aria-label": "search" }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchRoundedIcon />
-                  </InputAdornment>
-                ),
-              }}
               placeholder="Search..."
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchRoundedIcon />
+                    </InputAdornment>
+                  ),
+                },
+
+                htmlInput: { "aria-label": "search" },
+              }}
               sx={{ ml: "auto" }}
               value={globalFilter || ""}
               onChange={(event) => setGlobalFilter(event.target.value)}

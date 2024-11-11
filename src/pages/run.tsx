@@ -4,7 +4,7 @@ import { useGetApplications } from "@squonk/data-manager-client/application";
 import { useGetJobs } from "@squonk/data-manager-client/job";
 
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
-import { Alert, Container, Grid, MenuItem, TextField } from "@mui/material";
+import { Alert, Container, Grid2 as Grid, MenuItem, TextField } from "@mui/material";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 
@@ -60,7 +60,7 @@ const Run = () => {
         ?.filter(({ kind }) => search([kind], searchValue))
         // Then create a card for each
         .map((app) => (
-          <Grid item key={app.application_id} md={3} sm={6} xs={12}>
+          <Grid key={app.application_id} size={{ md: 3, sm: 6, xs: 12 }}>
             <ApplicationCard app={app} projectId={currentProject?.project_id} />
           </Grid>
         )) ?? [];
@@ -73,7 +73,7 @@ const Run = () => {
     // Then create a card for each
     const jobCards =
       filteredJobs?.map((job) => (
-        <Grid item key={job.id} md={3} sm={6} xs={12}>
+        <Grid key={job.id} size={{ md: 3, sm: 6, xs: 12 }}>
           <JobCard
             disabled={!hasPermissionToRun}
             job={job}
@@ -113,15 +113,17 @@ const Run = () => {
             <Container maxWidth="xl">
               <Grid container spacing={2} sx={{ mb: 2 }}>
                 {/* Filter by apps/jobs */}
-                <Grid item md={4} sm={6} xs={12}>
+                <Grid size={{ md: 4, sm: 6, xs: 12 }}>
                   <TextField
                     fullWidth
                     select
                     label="Filter"
-                    SelectProps={{
-                      multiple: true,
-                      onChange: (event) => {
-                        setExecutionTypes(event.target.value as string[]);
+                    slotProps={{
+                      select: {
+                        multiple: true,
+                        onChange: (event) => {
+                          setExecutionTypes(event.target.value as string[]);
+                        },
                       },
                     }}
                     value={executionTypes}
@@ -132,7 +134,7 @@ const Run = () => {
                 </Grid>
 
                 {/* Search through each card */}
-                <Grid item md={4} sm={6} sx={{ ml: "auto" }} xs={12}>
+                <Grid size={{ md: 4, sm: 6, xs: 12 }} sx={{ ml: "auto" }}>
                   <SearchTextField
                     fullWidth
                     value={searchValue}
@@ -144,14 +146,14 @@ const Run = () => {
               {/* Errors */}
               <Grid container spacing={2}>
                 {!!isApplicationsError && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Alert severity="error">
                       Applications failed to load ({applicationsError.response?.status})
                     </Alert>
                   </Grid>
                 )}
                 {!!isJobsError && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Alert severity="error">
                       Jobs failed to load ({jobsError.response?.status})
                     </Alert>
@@ -160,7 +162,7 @@ const Run = () => {
 
                 {/* Warnings */}
                 {!currentProject && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Alert severity="warning">
                       Select a project from the settings to launch apps and run jobs.
                     </Alert>
@@ -168,7 +170,7 @@ const Run = () => {
                 )}
 
                 {!isApplicationsLoading && !isJobsLoading && !hasPermissionToRun && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Alert severity="warning">
                       You must be a project editor to run jobs in this project.
                     </Alert>

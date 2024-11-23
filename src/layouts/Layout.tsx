@@ -16,11 +16,11 @@ const Layout = ({ children }: LayoutProps) => {
   const isTransitioning = useIsTransitioning(false);
 
   return (
-    <Box display="flex" flexDirection="column" minHeight="100vh">
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       {!isPrint && <Header />}
       {!!isTransitioning && <LinearProgress />}
       {/* <Slide appear direction="right" in={!isTransitioning}> */}
-      <Box component="main" paddingY={2}>
+      <Box component="main" sx={{ paddingY: 2 }}>
         {children}
       </Box>
       {/* </Slide> */}

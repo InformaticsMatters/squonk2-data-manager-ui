@@ -16,7 +16,7 @@ export const UserMenuContent = () => {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
-    <Box textAlign={biggerThanMd ? "center" : undefined}>
+    <Box sx={{ textAlign: biggerThanMd ? "center" : undefined }}>
       <Typography gutterBottom variant="h3">
         Account
       </Typography>
@@ -56,7 +56,7 @@ const UserMenuContentInner = () => {
             <PersonIcon color="disabled" fontSize="inherit" />
           </Box>
         )}
-        <Typography fontWeight="bold">{user.username}</Typography>
+        <Typography sx={{ fontWeight: "bold" }}>{user.username}</Typography>
         <Box>
           Roles:
           <Chips>

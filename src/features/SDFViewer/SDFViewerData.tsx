@@ -110,7 +110,7 @@ export const SDFViewerData = ({ project, path, file, config }: SDFViewerDataProp
   if (isFetching) {
     return (
       <>
-        <Typography textAlign="center">Loading and parsing data</Typography>
+        <Typography sx={{ textAlign: "center" }}>Loading and parsing data</Typography>
         <LinearProgress />
       </>
     );

@@ -42,7 +42,7 @@ export const FileTypeOptions = ({
   }
   return (
     <>
-      <Box marginY={2}>
+      <Box sx={{ marginY: 2 }}>
         <Typography component="h2" variant="h5">
           File Type Options
         </Typography>

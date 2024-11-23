@@ -130,9 +130,9 @@ const TimeLineLabel = ({ children, ...typographyProps }: TimeLineLabelProps) => 
     return (
       <Box
         component="pre"
-        fontSize="body2.fontSize"
-        m={0}
         sx={{
+          fontSize: "body2.fontSize",
+          m: 0,
           display: "inline-block",
           textAlign: "left",
           fontFamily: "'Fira Mono', monospace",

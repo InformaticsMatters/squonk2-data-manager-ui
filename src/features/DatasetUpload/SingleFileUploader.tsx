@@ -80,7 +80,7 @@ export const SingleFileUploadWithProgress = ({
 
   return (
     <>
-      <Grid container alignItems="center" spacing={1}>
+      <Grid container spacing={1} sx={{ alignItems: "center" }}>
         <Grid size={{ md: 9, sm: 8, xs: 12 }}>
           <TextField
             fullWidth

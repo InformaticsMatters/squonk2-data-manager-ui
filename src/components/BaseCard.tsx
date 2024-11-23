@@ -81,12 +81,7 @@ export const BaseCard = ({
       {!!header && (
         <CardHeader
           avatar={
-            <Avatar
-              sx={{
-                fontFamily: "verdana",
-                backgroundColor: header.color ?? "transparent",
-              }}
-            >
+            <Avatar sx={{ fontFamily: "verdana", backgroundColor: header.color ?? "transparent" }}>
               {header.avatar?.[0].toUpperCase()}
             </Avatar>
           }

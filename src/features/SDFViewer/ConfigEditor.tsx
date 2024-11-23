@@ -79,7 +79,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
 
   return (
     <form onSubmit={() => void handleSubmit(onSubmit)}>
-      <Box display="grid" gap={1} gridTemplateColumns="1fr repeat(6, min-content)">
+      <Box sx={{ display: "grid", gap: 1, gridTemplateColumns: "1fr repeat(6, min-content)" }}>
         <Typography component="h3" variant="h4">
           Field name
         </Typography>

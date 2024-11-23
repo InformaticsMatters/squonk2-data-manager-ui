@@ -72,7 +72,7 @@ const Project = () => {
                     src="https://squonk.informaticsmatters.org/assets/sadderSquonk.svg"
                     width={150}
                   />
-                  <Box marginY={1}>
+                  <Box sx={{ marginY: 1 }}>
                     <ProjectSelection />
                   </Box>
                 </Box>

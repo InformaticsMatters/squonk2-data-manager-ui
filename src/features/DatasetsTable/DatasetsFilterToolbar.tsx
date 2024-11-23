@@ -23,12 +23,12 @@ export const DatasetsFilterToolbar = ({
   fullWidthFilters,
 }: DatasetsFilterToolbarProps) => {
   return (
-    <Box display="flex" flexWrap="wrap" gap={1} width="100%">
+    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, width: "100%" }}>
       {Children.map(shrinkableFilters, (child) => (
-        <Box flex="1 1 200px">{child}</Box>
+        <Box sx={{ flex: "1 1 200px" }}>{child}</Box>
       ))}
       {Children.map(fullWidthFilters, (child) => (
-        <Box flex="1 1 100%">{child}</Box>
+        <Box sx={{ flex: "1 1 100%" }}>{child}</Box>
       ))}
     </Box>
   );

@@ -71,7 +71,7 @@ export const ResultsToolbar = ({
   ];
 
   return (
-    <Grid container alignItems="center" spacing={2}>
+    <Grid container spacing={2} sx={{ alignItems: "center" }}>
       <Grid size={{ md: 4, sm: 4, xs: 12 }}>
         <TextField
           fullWidth

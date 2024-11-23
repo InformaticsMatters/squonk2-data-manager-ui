@@ -42,23 +42,27 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
     <Tooltip
       title={
         <Box
-          alignItems="center"
-          columnGap={4}
-          display="grid"
-          gridTemplateColumns="repeat(5, auto)"
-          rowGap={1}
+          sx={{
+            alignItems: "center",
+            columnGap: 4,
+            display: "grid",
+            gridTemplateColumns: "repeat(5, auto)",
+            rowGap: 1,
+          }}
         >
           {chartData.map((item) => {
             return (
               <Fragment key={item.type}>
                 {/* Colour icon box */}
                 <Box
-                  bgcolor={item.color}
-                  border={1}
-                  borderColor="white"
-                  display="inline-block"
-                  height={14}
-                  width={14}
+                  sx={{
+                    bgcolor: item.color,
+                    border: 1,
+                    borderColor: "white",
+                    display: "inline-block",
+                    height: 14,
+                    width: 14,
+                  }}
                 />
                 <Typography component="span" variant="body2">
                   {item.type}
@@ -78,7 +82,15 @@ export const UsageChart = ({ chartData, unitCost }: UsageChartProps) => {
         </Box>
       }
     >
-      <Box alignItems="center" display="flex" height={24} justifyContent="center" width="100%">
+      <Box
+        sx={{
+          alignItems: "center",
+          display: "flex",
+          height: 24,
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
         {/**
          * `useResizeHandler` makes the chart responsive, see 'Note' in 'Basic Props' (API
          * Reference) in react-plotly's README here https://github.com/plotly/react-plotly.js/

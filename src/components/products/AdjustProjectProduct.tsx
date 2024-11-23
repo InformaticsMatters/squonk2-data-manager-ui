@@ -58,7 +58,7 @@ export const AdjustProjectProduct = ({ product, allowance }: AdjustProjectProduc
         }}
       >
         {({ values }) => (
-          <Box alignItems="baseline" display="flex" flexWrap="wrap" gap={2} m={2}>
+          <Box sx={{ alignItems: "baseline", display: "flex", flexWrap: "wrap", gap: 2, m: 2 }}>
             <Field
               autoFocus
               component={TextField}

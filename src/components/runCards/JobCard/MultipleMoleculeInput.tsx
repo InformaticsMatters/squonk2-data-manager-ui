@@ -128,7 +128,7 @@ export const SketcherInputs = ({ value, onMoleculesChange }: SketcherInputsProps
     <>
       {valueArray.map((smiles, index) => (
         // eslint-disable-next-line react/no-array-index-key
-        <Box key={index} mb={2}>
+        <Box key={index} sx={{ mb: 2 }}>
           <SMILESInput
             sketcherDisabled={sketcherDisabled}
             value={smiles}

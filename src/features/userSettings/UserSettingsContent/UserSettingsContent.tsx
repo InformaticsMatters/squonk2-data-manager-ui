@@ -85,7 +85,7 @@ export const UserSettingsContent = () => {
       <UserBootstrapper />
 
       <PageSection level={2} title="Organisation and Unit">
-        <Box alignItems="baseline" display="flex" gap={1} marginBottom={1}>
+        <Box sx={{ alignItems: "baseline", display: "flex", gap: 1, marginBottom: 1 }}>
           <Typography>
             Filter projects for user <em>{user.username}</em> where role is
           </Typography>
@@ -112,10 +112,9 @@ export const UserSettingsContent = () => {
 
         <ContextSection userFilter={[permissionLevel, user.username]} />
       </PageSection>
-
       <PageSection level={2} title="Project Stats">
         <ProjectStatsSection userFilter={[permissionLevel, user.username]} />
-        <Typography sx={{ mt: 1 }} textAlign="right">
+        <Typography sx={{ textAlign: "right", mt: 1 }}>
           Missing usage in the above tables indicates you are missing access to product stats
           belonging to another user.
         </Typography>

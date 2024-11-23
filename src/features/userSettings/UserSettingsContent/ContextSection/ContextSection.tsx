@@ -16,11 +16,11 @@ export interface ContextSectionProps {
 export const ContextSection = ({ userFilter }: ContextSectionProps) => {
   return (
     <Grid container spacing={1}>
-      <Grid container alignContent="flex-start" size={6}>
+      <Grid container size={6} sx={{ alignContent: "flex-start" }}>
         <SelectOrganisation />
         <OrganisationActions />
       </Grid>
-      <Grid container alignContent="flex-start" size={6}>
+      <Grid container size={6} sx={{ alignContent: "flex-start" }}>
         <SelectUnit userFilter={userFilter} />
         <UnitActions />
       </Grid>

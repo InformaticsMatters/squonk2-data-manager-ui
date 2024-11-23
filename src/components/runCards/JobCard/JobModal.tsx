@@ -182,7 +182,7 @@ export const JobModal = ({
     >
       {job !== undefined && projectId !== undefined ? (
         <>
-          <Box paddingTop={1}>
+          <Box sx={{ paddingTop: 1 }}>
             <TextField
               fullWidth
               label="Job name"
@@ -197,7 +197,7 @@ export const JobModal = ({
               {!!job.variables.inputs && (
                 <>
                   <Grid size={{ xs: 12 }}>
-                    <Typography component="h3" fontWeight="bold" variant="subtitle1">
+                    <Typography component="h3" sx={{ fontWeight: "bold" }} variant="subtitle1">
                       Inputs
                     </Typography>
                   </Grid>
@@ -214,7 +214,7 @@ export const JobModal = ({
               <Grid size={{ xs: 12 }}>
                 {!!job.variables.options && (
                   <>
-                    <Typography component="h3" fontWeight="bold" variant="subtitle1">
+                    <Typography component="h3" sx={{ fontWeight: "bold" }} variant="subtitle1">
                       Options
                     </Typography>
                     <Form

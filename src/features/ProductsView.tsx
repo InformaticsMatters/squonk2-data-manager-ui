@@ -49,14 +49,14 @@ export const ProductsView = () => {
       </Typography>
       <ProjectProductTable products={projectProducts} />
 
-      <Box marginY={2}>
+      <Box sx={{ marginY: 2 }}>
         <Divider />
       </Box>
 
       <Typography gutterBottom variant="h2">
         Datasets
       </Typography>
-      <Grid container gap={2} marginY={2}>
+      <Grid container sx={{ gap: 2, marginY: 2 }}>
         <Grid size={{ sm: 3, xs: 12 }}>
           <SelectOrganisation />
         </Grid>

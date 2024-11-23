@@ -40,7 +40,7 @@ export const PageSection: FC<PageSectionProps> = ({ level, title, children }) =>
 
   return (
     <PageSectionProvider level={nextLevel}>
-      <Box component="section" marginBottom={4}>
+      <Box component="section" sx={{ marginBottom: 4 }}>
         <Typography gutterBottom component={`h${realLevel}`} variant={`h${nextLevel}`}>
           {title}
         </Typography>

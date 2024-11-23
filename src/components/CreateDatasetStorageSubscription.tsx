@@ -60,7 +60,7 @@ export const CreateDatasetStorageSubscription = ({
       {({ submitForm, isSubmitting, isValid, values }) => {
         return (
           <Form>
-            <Box alignItems="baseline" display="flex" flexWrap="wrap" gap={2}>
+            <Box sx={{ alignItems: "baseline", display: "flex", flexWrap: "wrap", gap: 2 }}>
               <Field
                 autoFocus
                 component={TextField}

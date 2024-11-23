@@ -27,7 +27,7 @@ export const CookiesBanner = () => {
       }}
     >
       <Container>
-        <Grid container alignItems="center">
+        <Grid container sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 10 }}>
             Squonk Data Manager uses cookies for authentication. Some anonymous usage data is
             collected by <Link href="https://sentry.io/">Sentry</Link> to improve how this site

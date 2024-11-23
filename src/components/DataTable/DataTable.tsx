@@ -170,7 +170,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
         id: "expander",
         enableSorting: false,
         header: ({ table }) => (
-          <Box display="flex">
+          <Box sx={{ display: "flex" }}>
             <IconButton onClick={table.getToggleAllRowsExpandedHandler()}>
               {table.getIsAllRowsExpanded() ? <ExpandLess /> : <ExpandMoreIcon />}
             </IconButton>

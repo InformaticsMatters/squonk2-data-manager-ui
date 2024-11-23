@@ -127,7 +127,7 @@ export const CreateOrganisationListItem = () => {
             onSubmit={() => void submitForm()}
           >
             <Form>
-              <Grid container marginY={2} spacing={1}>
+              <Grid container spacing={1} sx={{ marginY: 2 }}>
                 <Grid container>
                   <Field
                     autoFocus

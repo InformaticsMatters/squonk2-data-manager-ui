@@ -25,8 +25,8 @@ export const OUPContext = ({ header = false }: OUPContextProps) => {
           </Typography>
         )}
         <Box
-          flexBasis="200px"
           sx={{
+            flexBasis: "200px",
             minWidth: 0,
             outline: (theme) => `2px solid ${theme.palette.primary.light}`,
             borderRadius: 2,

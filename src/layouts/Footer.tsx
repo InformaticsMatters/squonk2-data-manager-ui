@@ -20,7 +20,7 @@ export const Footer = () => {
   return (
     <Paper square component="footer" sx={{ marginTop: "auto" }}>
       <Container maxWidth="md">
-        <Grid container p={2}>
+        <Grid container sx={{ p: 2 }}>
           <Grid size={{ sm: 6, xs: 12 }}>
             <Typography variant="h4">
               <strong style={{ fontFamily: "Raleway" }}>
@@ -42,7 +42,7 @@ export const Footer = () => {
             </Typography>
             <AppVersions />
           </Grid>
-          <Grid size={{ sm: 3, xs: 6 }} textAlign="right">
+          <Grid size={{ sm: 3, xs: 6 }} sx={{ textAlign: "right" }}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
                 <A legacyBehavior passHref href={{ pathname: "/" }}>

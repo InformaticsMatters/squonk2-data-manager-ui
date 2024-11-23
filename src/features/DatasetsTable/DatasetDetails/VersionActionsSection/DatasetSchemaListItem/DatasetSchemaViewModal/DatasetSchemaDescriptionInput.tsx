@@ -44,7 +44,7 @@ export const DatasetSchemaDescriptionInput = ({
       slotProps={{
         input: {
           endAdornment: (
-            <Box ml={1} visibility={hasChanged ? undefined : "hidden"}>
+            <Box sx={{ ml: 1, visibility: hasChanged ? undefined : "hidden" }}>
               <Tooltip title="Revert changes">
                 {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
                 <IconButton size="small" onClick={() => setDescription(originalValue || "")}>

@@ -155,7 +155,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
       getRowId={(row) => row.fullPath}
       isLoading={isLoading}
       toolbarContent={
-        <Grid container>
+        <Grid container sx={{ width: "100%" }}>
           <Grid sx={{ display: "flex", alignItems: "center" }}>
             <Breadcrumbs>
               {["root", ...breadcrumbs].map((path, pathIndex) => {

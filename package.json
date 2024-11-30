@@ -44,7 +44,7 @@
     "@mui/icons-material": "6.1.6",
     "@mui/lab": "6.0.0-beta.14",
     "@mui/material": "6.1.6",
-    "@mui/material-nextjs": "^6.1.9",
+    "@mui/material-nextjs": "6.1.9",
     "@mui/styles": "6.1.6",
     "@next/eslint-plugin-next": "15.0.3",
     "@next/mdx": "15.0.3",

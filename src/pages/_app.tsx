@@ -12,14 +12,22 @@ import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/r
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { enableMapSet } from "immer";
 import { type AppProps } from "next/app";
+import Head from "next/head";
 import { SnackbarProvider } from "notistack";
 
 import { ThemeProviders } from "../components/app/ThemeProviders";
 import { TopLevelHooks } from "../components/app/TopLevelHooks";
+import { openSansFont } from "../constants/fonts";
 import { AS_API_URL, DM_API_URL } from "../constants/proxies";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
 
 import "../styles/globalStyles.scss";
+
+const openSansFontCss = `
+html {
+  font-family: ${openSansFont.style.fontFamily};
+}
+`;
 
 setDMBaseUrl(DM_API_URL);
 setASBaseUrl(AS_API_URL);
@@ -45,6 +53,9 @@ const App = ({ Component, pageProps }: CustomAppProps) => {
 
   return (
     <AppCacheProvider {...pageProps}>
+      <Head>
+        <style>{openSansFontCss}</style>
+      </Head>
       <ThemeProviders>
         <UserProvider
           loginUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/login`}

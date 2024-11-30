@@ -8,6 +8,7 @@ import Head from "next/head";
 import Prism from "prismjs";
 import "prismjs/plugins/line-numbers/prism-line-numbers.js";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
+import { firaMonoFont } from "../constants/fonts";
 
 export interface PlaintextViewerProps {
   /**
@@ -63,7 +64,11 @@ export const PlaintextViewer = ({
           }}
         >
           <Box sx={{ alignItems: "center", display: "flex", flex: "1 1 auto", gap: 1 }}>
-            <Typography component="h1" sx={{ fontFamily: "monospace", wordBreak: "break-all" }}>
+            <Typography
+              className={firaMonoFont.className}
+              component="h1"
+              sx={{ wordBreak: "break-all" }}
+            >
               <b>{title}</b>
             </Typography>
             <Divider flexItem orientation="vertical" />
@@ -75,7 +80,7 @@ export const PlaintextViewer = ({
         </Box>
         <Box sx={{ paddingBottom: 1, paddingX: 1 }}>
           <Box className="line-numbers" component="pre" sx={{ overflowX: "auto" }}>
-            <code className="language-">{content}</code>
+            <code className={`${firaMonoFont.className} language-`}>{content}</code>
           </Box>
         </Box>
       </Paper>

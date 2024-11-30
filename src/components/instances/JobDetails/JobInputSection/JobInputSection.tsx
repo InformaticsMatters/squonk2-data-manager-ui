@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 
+import { firaMonoFont } from "../../../../constants/fonts";
 import { FILE_PROTOCOL, removeFileProtocol } from "../../../../utils/app/urls";
 import { getErrorMessage } from "../../../../utils/next/orvalError";
 import { CenterLoader } from "../../../CenterLoader";
@@ -66,11 +67,7 @@ export const JobInputSection = ({ instance }: JobInputSectionProps) => {
                 secondary={value.map((val) => (
                   <>
                     SMILES:{" "}
-                    <Typography
-                      component="code"
-                      key={val}
-                      sx={{ fontFamily: "'Fira Mono', monospace" }}
-                    >
+                    <Typography className={firaMonoFont.className} component="code" key={val}>
                       {val.split("\n").join(", ")}
                     </Typography>
                   </>

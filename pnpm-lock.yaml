@@ -171,8 +171,8 @@ dependencies:
     specifier: 3.0.1
     version: 3.0.1(csstype@3.1.3)(react-dom@18.3.1)(react@18.3.1)
   plotly.js-basic-dist:
-    specifier: 2.35.2
-    version: 2.35.2
+    specifier: 2.35.3
+    version: 2.35.3
   prismjs:
     specifier: 1.29.0
     version: 1.29.0
@@ -8936,8 +8936,8 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
 
-  /plotly.js-basic-dist@2.35.2:
-    resolution: {integrity: sha512-cowePSVui1C6jx9hVi0wcYrIDS29Dp95HRjw31M8przgGls9t5jsdeScPzGGQuJ4/OTnQkTRZec25ZXDjfr/yA==}
+  /plotly.js-basic-dist@2.35.3:
+    resolution: {integrity: sha512-mzRn/IMZa/iJJVur3VGqAAUD8J4oz0BoXI7f1FLtokIS8mJURIfgiIonh0G87eKlKnAPuy1jQzic2wLqcngQOA==}
     dev: false
 
   /plotly.js@2.35.2(mapbox-gl@1.13.3)(webpack@5.96.1):

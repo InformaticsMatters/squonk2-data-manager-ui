@@ -64,10 +64,10 @@ dependencies:
     version: 8.37.1(@opentelemetry/core@1.28.0)(@opentelemetry/instrumentation@0.54.2)(@opentelemetry/sdk-trace-base@1.28.0)(next@15.0.3)(react@18.3.1)(webpack@5.96.1)
   '@squonk/account-server-client':
     specifier: 4.0.0
-    version: 4.0.0(@tanstack/react-query@5.59.20)(axios@1.7.7)
+    version: 4.0.0(@tanstack/react-query@5.59.20)(axios@1.7.9)
   '@squonk/data-manager-client':
     specifier: 3.1.0-beta.2
-    version: 3.1.0-beta.2(@tanstack/react-query@5.59.20)(axios@1.7.7)
+    version: 3.1.0-beta.2(@tanstack/react-query@5.59.20)(axios@1.7.9)
   '@squonk/mui-theme':
     specifier: 3.0.2
     version: 3.0.2(@mui/material@6.1.6)
@@ -105,8 +105,8 @@ dependencies:
     specifier: 2.6.3
     version: 2.6.3
   axios:
-    specifier: 1.7.7
-    version: 1.7.7
+    specifier: 1.7.9
+    version: 1.7.9
   dayjs:
     specifier: 1.11.13
     version: 1.11.13
@@ -2842,24 +2842,24 @@ packages:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
     dev: false
 
-  /@squonk/account-server-client@4.0.0(@tanstack/react-query@5.59.20)(axios@1.7.7):
+  /@squonk/account-server-client@4.0.0(@tanstack/react-query@5.59.20)(axios@1.7.9):
     resolution: {integrity: sha512-gj0kF0iFbQhMzVzI57v4X5X+cCbdmMVIhyu5yO4nclMSxhMnhOpQzqMVKJYcw0CI+WzlKYtjaTlscs37sbn35A==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
       '@tanstack/react-query': 5.59.20(react@18.3.1)
-      axios: 1.7.7
+      axios: 1.7.9
     dev: false
 
-  /@squonk/data-manager-client@3.1.0-beta.2(@tanstack/react-query@5.59.20)(axios@1.7.7):
+  /@squonk/data-manager-client@3.1.0-beta.2(@tanstack/react-query@5.59.20)(axios@1.7.9):
     resolution: {integrity: sha512-fiOHv8YAU5Z/w+qe7luw0VbxcVHqMmnTGCXny501BJtvKAc7MSA4yMKLVq8tYghiNDpo8ZwXi7p8Jag1JZ22dA==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
     dependencies:
       '@tanstack/react-query': 5.59.20(react@18.3.1)
-      axios: 1.7.7
+      axios: 1.7.9
     dev: false
 
   /@squonk/eslint-config@2.0.1(@typescript-eslint/parser@7.6.0)(eslint-plugin-import@2.31.0)(eslint@8.57.1)(typescript@5.6.3):
@@ -3856,8 +3856,8 @@ packages:
     dependencies:
       possible-typed-array-names: 1.0.0
 
-  /axios@1.7.7:
-    resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
+  /axios@1.7.9:
+    resolution: {integrity: sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==}
     dependencies:
       follow-redirects: 1.15.9
       form-data: 4.0.1

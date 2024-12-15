@@ -162,8 +162,8 @@ dependencies:
     specifier: 1.2.6
     version: 1.2.6
   nextjs-routes:
-    specifier: 2.2.3
-    version: 2.2.3(next@15.0.3)
+    specifier: 2.2.4
+    version: 2.2.4(next@15.0.3)
   node-fetch:
     specifier: 3.3.2
     version: 3.3.2
@@ -8447,8 +8447,8 @@ packages:
       - babel-plugin-macros
     dev: false
 
-  /nextjs-routes@2.2.3(next@15.0.3):
-    resolution: {integrity: sha512-f7CEFKBYMTgDkckbczlSRukX8C4hJTVwSXLAYljQ5r2RrO1wa4lbbEK071tuxzAp4ZNgItqm1oCDsedMG1+Dwg==}
+  /nextjs-routes@2.2.4(next@15.0.3):
+    resolution: {integrity: sha512-qWNQC3szTQYXFz8cmGXA9vFqQzfiB1WqL7nRSALmtFusAj/GDumQUOtk1nVvtldtTM1o6uZGhDuu/s+IllUcnA==}
     hasBin: true
     peerDependencies:
       next: '*'

@@ -141,8 +141,8 @@ importers:
         specifier: 4.0.0
         version: 4.0.0
       ketcher-core:
-        specifier: 2.25.0
-        version: 2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.26.0
+        version: 2.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       ketcher-react:
         specifier: 2.25.0
         version: 2.25.0(@types/react@18.3.17)(immutable@4.3.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3947,8 +3947,8 @@ packages:
   kdbush@4.0.2:
     resolution: {integrity: sha512-WbCVYJ27Sz8zi9Q7Q0xHC+05iwkm3Znipc2XTlrnJbsHMYktW4hPhXUE8Ys1engBrvffoSCqbil1JQAa7clRpA==}
 
-  ketcher-core@2.25.0:
-    resolution: {integrity: sha512-ONFYFlHPIq4/uZc3nQ3k9y9HLFSNc5pwUccZ/fRzxyJ2OcnjemlBklrQP8Q/8NEJodyHjLeBPrMvQSGCW7yzzQ==}
+  ketcher-core@2.26.0:
+    resolution: {integrity: sha512-NF7/2tepZ0yVeOVB+EtDLlOUQgh/wWgJ634UtecvEjPsg7287yt9k5GOb0fJz2+daiIgHjMvE9HMn39Lw1CYdg==}
     engines: {node: '>=14'}
 
   ketcher-react@2.25.0:
@@ -10404,7 +10404,7 @@ snapshots:
 
   kdbush@4.0.2: {}
 
-  ketcher-core@2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  ketcher-core@2.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.26.0
       ajv: 8.17.1
@@ -10435,7 +10435,7 @@ snapshots:
       font-face-observer: 1.0.0
       hoist-non-react-statics: 3.3.2
       intersection-observer: 0.12.2
-      ketcher-core: 2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      ketcher-core: 2.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       lodash: 4.17.21
       miew-react: 1.0.0(@types/react@18.3.17)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
@@ -10471,7 +10471,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.26.0
       indigo-ketcher: 1.24.0
-      ketcher-core: 2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      ketcher-core: 2.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - react
       - react-dom

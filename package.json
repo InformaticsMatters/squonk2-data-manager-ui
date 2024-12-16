@@ -104,7 +104,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "15.0.3",
-    "@playwright/test": "1.48.2",
+    "@playwright/test": "1.49.1",
     "@squonk/eslint-config": "2.0.1",
     "dotenv": "16.4.7",
     "eslint": "8.57.1",

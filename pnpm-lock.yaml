@@ -126,8 +126,8 @@ dependencies:
     specifier: 9.0.21
     version: 9.0.21
   jotai:
-    specifier: 2.10.1
-    version: 2.10.1(@types/react@18.3.17)(react@18.3.1)
+    specifier: 2.10.4
+    version: 2.10.4(@types/react@18.3.17)(react@18.3.1)
   just-compare:
     specifier: 2.3.0
     version: 2.3.0
@@ -7154,8 +7154,8 @@ packages:
     resolution: {integrity: sha512-1vUQX+IdDMVPj4k8kOxgUqlcK518yluMuGZwqlr44FS1ppZB/5GWh4rZG89erpOBOJjU/OBsnCVFfapsRz6nEA==}
     dev: false
 
-  /jotai@2.10.1(@types/react@18.3.17)(react@18.3.1):
-    resolution: {integrity: sha512-4FycO+BOTl2auLyF2Chvi6KTDqdsdDDtpaL/WHQMs8f3KS1E3loiUShQzAzFA/sMU5cJ0hz/RT1xum9YbG/zaA==}
+  /jotai@2.10.4(@types/react@18.3.17)(react@18.3.1):
+    resolution: {integrity: sha512-/T4ofyMSkAybEs2OvR8S4HACa+/ASUEPLz86SUjFXJqU9RdJKLvZDJrag398suvHC5CR0+Cs4P5m/gtVcryzlw==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=17.0.0'

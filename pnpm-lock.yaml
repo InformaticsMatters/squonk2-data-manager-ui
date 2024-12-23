@@ -144,8 +144,8 @@ importers:
         specifier: 2.25.0
         version: 2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       ketcher-react:
-        specifier: 2.25.0
-        version: 2.25.0(@types/react@18.3.18)(immutable@5.0.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.26.0
+        version: 2.26.0(@types/react@18.3.18)(immutable@5.0.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       ketcher-standalone:
         specifier: 2.25.0
         version: 2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3948,8 +3948,8 @@ packages:
     resolution: {integrity: sha512-ONFYFlHPIq4/uZc3nQ3k9y9HLFSNc5pwUccZ/fRzxyJ2OcnjemlBklrQP8Q/8NEJodyHjLeBPrMvQSGCW7yzzQ==}
     engines: {node: '>=14'}
 
-  ketcher-react@2.25.0:
-    resolution: {integrity: sha512-zQ+MYWGfVJlTZg0iwq/y0H2yUVJdk6Ij5wqNOlEPebJV9YoeBiTLfqUVFil7VZOUE7QepwR0VQ1d1fR32Y+odg==}
+  ketcher-react@2.26.0:
+    resolution: {integrity: sha512-p0T6ZyCOG0qrRWvpphzPcyDAnWXlJXKWsWvyZ3FhrTgYvzHa5TghxUMX8F7+B3wvE+vguLOPalFQte3G78Y71A==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.2.0
@@ -10416,7 +10416,7 @@ snapshots:
       - react
       - react-dom
 
-  ketcher-react@2.25.0(@types/react@18.3.18)(immutable@5.0.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  ketcher-react@2.26.0(@types/react@18.3.18)(immutable@5.0.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.26.0
       '@emotion/react': 11.13.3(@types/react@18.3.18)(react@18.3.1)

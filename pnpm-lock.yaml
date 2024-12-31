@@ -165,8 +165,8 @@ importers:
         specifier: 1.2.6
         version: 1.2.6
       nextjs-routes:
-        specifier: 2.2.4
-        version: 2.2.4(next@15.0.3(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.49.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.83.0))
+        specifier: 2.2.5
+        version: 2.2.5(next@15.0.3(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.49.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.83.0))
       node-fetch:
         specifier: 3.3.2
         version: 3.3.2
@@ -4411,8 +4411,8 @@ packages:
       sass:
         optional: true
 
-  nextjs-routes@2.2.4:
-    resolution: {integrity: sha512-qWNQC3szTQYXFz8cmGXA9vFqQzfiB1WqL7nRSALmtFusAj/GDumQUOtk1nVvtldtTM1o6uZGhDuu/s+IllUcnA==}
+  nextjs-routes@2.2.5:
+    resolution: {integrity: sha512-F8IwFj6JRm00lz0iIo7U7B1aOEClI8flcJVZFQIvwwxIL0eQtaroTi1IAKhxJVvETNfT5pYxVnF3pF0pn16npQ==}
     hasBin: true
     peerDependencies:
       next: '*'
@@ -11217,7 +11217,7 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  nextjs-routes@2.2.4(next@15.0.3(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.49.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.83.0)):
+  nextjs-routes@2.2.5(next@15.0.3(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.49.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.83.0)):
     dependencies:
       chokidar: 4.0.2
       next: 15.0.3(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.49.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.83.0)

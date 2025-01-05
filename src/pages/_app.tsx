@@ -54,6 +54,7 @@ const App = ({ Component, pageProps }: CustomAppProps) => {
   return (
     <AppCacheProvider {...pageProps}>
       <Head>
+        <meta content="minimum-scale=1, initial-scale=1, width=device-width" name="viewport" />
         <style>{openSansFontCss}</style>
       </Head>
       <ThemeProviders>

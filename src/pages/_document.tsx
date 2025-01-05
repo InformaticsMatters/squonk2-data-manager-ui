@@ -11,7 +11,6 @@ const MyDocument = (props: DocumentProps) => {
   return (
     <Html lang="en">
       <Head>
-        <meta content="minimum-scale=1, initial-scale=1, width=device-width" name="viewport" />
         <DocumentHeadTags {...props} />
       </Head>
       <body>

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.1.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.0.0...5.1.0) (2025-01-05)
+
+
+### Features
+
+* display job exit code on result card ([242dd9a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/242dd9a3180ae8221d0518865c0d66ea2069dbce)), closes [#1320](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1320)
+
+
+### Bug Fixes
+
+* fix issues with the ui test job ([b17cc23](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b17cc23d89d030a0135630f202538f22db140a17))
+* fix position of toolbar buttons in the project table ([68c3884](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/68c388476e02306b1f49874e46943b00ffe00dda))
+* fix unit ledger not showing a total amount when it is zero ([ef5c6d1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/ef5c6d1be872ff420a31881e5529e9107ae1973e)), closes [#1431](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1431)
+
 ## [5.0.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/4.0.0...5.0.0) (2024-11-07)
 
 

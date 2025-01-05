@@ -48,7 +48,7 @@ export const getServerSideProps: GetServerSideProps<FileProps> = async (ctx) => 
 };
 
 export const File = (props: FileProps) => {
-  const biggerThanSm = useMediaQuery<Theme>((theme) => theme.breakpoints.up("sm"));
+  const biggerThanSm = useMediaQuery((theme: Theme) => theme.breakpoints.up("sm"));
 
   const { query } = useRouter();
 

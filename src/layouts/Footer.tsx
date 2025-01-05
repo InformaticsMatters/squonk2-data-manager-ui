@@ -14,7 +14,7 @@ import A from "next/link";
 import { AppVersions } from "../components/AppVersions";
 
 export const Footer = () => {
-  const small = useMediaQuery<Theme>((theme) => theme.breakpoints.up("sm"));
+  const small = useMediaQuery((theme: Theme) => theme.breakpoints.up("sm"));
   const itemStyles = { justifyContent: small ? "right" : "left" };
 
   return (

@@ -19,6 +19,7 @@ import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { CenterLoader } from "../../CenterLoader";
 import { ModalWrapper } from "../../modals/ModalWrapper";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
+import { TEST_JOB_ID } from "../TestJob/jobId";
 import { type CommonModalProps } from "../types";
 import { type InputSchema, type JobInputFieldsProps, validateInputData } from "./JobInputFields";
 
@@ -85,8 +86,9 @@ export const JobModal = ({
 
   const { mutateAsync: createInstance } = useCreateInstance();
   // Get extra details about the job
-  const { data: job } = useGetJob(jobId);
-
+  const { data: job } = useGetJob(jobId, undefined, {
+    query: { retry: jobId === TEST_JOB_ID ? 1 : 3 },
+  });
   const name = nameState || (job?.job ?? "");
 
   const spec = instance?.application_specification;

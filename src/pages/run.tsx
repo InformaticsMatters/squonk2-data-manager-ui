@@ -82,6 +82,8 @@ const Run = () => {
         </Grid>
       )) ?? [];
 
+    process.env.NODE_ENV === "development" && jobCards.push(<TestJobCard key={TEST_JOB_ID} />);
+
     const showApplications = executionTypes.includes("application");
     const showJobs = executionTypes.includes("job");
 
@@ -99,8 +101,6 @@ const Run = () => {
     searchValue,
     hasPermissionToRun,
   ]);
-
-  process.env.NODE_ENV === "development" && cards.push(<TestJobCard key={TEST_JOB_ID} />);
 
   return (
     <>

@@ -138,14 +138,14 @@ importers:
         specifier: 4.0.0
         version: 4.0.0
       ketcher-core:
-        specifier: 2.25.0
-        version: 2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.26.0
+        version: 2.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       ketcher-react:
-        specifier: 2.25.0
-        version: 2.25.0(@types/react@18.3.18)(immutable@5.0.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.26.0
+        version: 2.26.0(@types/react@18.3.18)(immutable@5.0.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       ketcher-standalone:
-        specifier: 2.25.0
-        version: 2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 2.26.0
+        version: 2.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       lodash-es:
         specifier: 4.17.21
         version: 4.17.21
@@ -817,14 +817,6 @@ packages:
         optional: true
       '@emotion/styled':
         optional: true
-      '@types/react':
-        optional: true
-
-  '@mui/types@7.2.19':
-    resolution: {integrity: sha512-6XpZEM/Q3epK9RN8ENoXuygnqUQxE+siN/6rGRi2iwJPgBUR25mphYQ9ZI87plGh58YoZ5pp40bFvKYOCDJ3tA==}
-    peerDependencies:
-      '@types/react': ^17.0.0 || ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
       '@types/react':
         optional: true
 
@@ -3599,8 +3591,8 @@ packages:
     resolution: {integrity: sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==}
     engines: {node: '>=8'}
 
-  indigo-ketcher@1.24.0:
-    resolution: {integrity: sha512-L6A+8EthzjpBqoxoqSnF5LyeBYjV+SyhOzFw/LyFTlTwVEF4ja1sCrP4AT7DKY/Jg1gr66qCLIq7k8iA6o3BSg==}
+  indigo-ketcher@1.25.0:
+    resolution: {integrity: sha512-Md6mxlOrqfnFH3AI4s2dSJtOp3OqVc0VCjTz+QXZYKjTIGrAtMz/zBJ5qVBQ2HGV+Mq8igphwn4mPdTcfaU7HQ==}
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
@@ -3828,10 +3820,6 @@ packages:
     resolution: {integrity: sha512-9gGx6GTtCQM73BgmHQXfDmLtfjjTUDSyoxTCbp5WtoixAhfgsDirWIcVQ/IHpvI5Vgd5i/J5F7B9cN/WlVbC/w==}
     engines: {node: '>= 0.4'}
 
-  is-typed-array@1.1.13:
-    resolution: {integrity: sha512-uZ25/bUAlUY5fR4OKT4rZQEBrzQWYV9ZJYGGsUmEJ6thodVJ1HX64ePQ6Z0qPWP+m+Uq6e9UugrE38jeYsDSMw==}
-    engines: {node: '>= 0.4'}
-
   is-typed-array@1.1.15:
     resolution: {integrity: sha512-p3EcsicXjit7SaskXHs1hA91QxgTw46Fv6EFKKGS5DRFLD8yKnohjF3hxoju94b/OcMZoQukzpPpBE9uLVKzgQ==}
     engines: {node: '>= 0.4'}
@@ -3995,19 +3983,19 @@ packages:
   kdbush@4.0.2:
     resolution: {integrity: sha512-WbCVYJ27Sz8zi9Q7Q0xHC+05iwkm3Znipc2XTlrnJbsHMYktW4hPhXUE8Ys1engBrvffoSCqbil1JQAa7clRpA==}
 
-  ketcher-core@2.25.0:
-    resolution: {integrity: sha512-ONFYFlHPIq4/uZc3nQ3k9y9HLFSNc5pwUccZ/fRzxyJ2OcnjemlBklrQP8Q/8NEJodyHjLeBPrMvQSGCW7yzzQ==}
+  ketcher-core@2.26.0:
+    resolution: {integrity: sha512-NF7/2tepZ0yVeOVB+EtDLlOUQgh/wWgJ634UtecvEjPsg7287yt9k5GOb0fJz2+daiIgHjMvE9HMn39Lw1CYdg==}
     engines: {node: '>=14'}
 
-  ketcher-react@2.25.0:
-    resolution: {integrity: sha512-zQ+MYWGfVJlTZg0iwq/y0H2yUVJdk6Ij5wqNOlEPebJV9YoeBiTLfqUVFil7VZOUE7QepwR0VQ1d1fR32Y+odg==}
+  ketcher-react@2.26.0:
+    resolution: {integrity: sha512-p0T6ZyCOG0qrRWvpphzPcyDAnWXlJXKWsWvyZ3FhrTgYvzHa5TghxUMX8F7+B3wvE+vguLOPalFQte3G78Y71A==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  ketcher-standalone@2.25.0:
-    resolution: {integrity: sha512-Bk6wxWKUTtiPH7CFadNDx2FiccvPXVKEO8F6UAp/JgHMXiha1gD0gYbmTWPh7is0ONepSc+WGSbfdPowQxnSIg==}
+  ketcher-standalone@2.26.0:
+    resolution: {integrity: sha512-xBPoxSDIGnCaaPe1aniRU608qDoDkYTPAyyXpbgIEA4o1Cv011fABksgp0+pym/K4poReCZ6nlN1h0PuG72t0Q==}
     engines: {node: '>=14'}
 
   keyv@4.5.4:
@@ -4575,10 +4563,6 @@ packages:
 
   object-keys@1.1.1:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
-    engines: {node: '>= 0.4'}
-
-  object.assign@4.1.5:
-    resolution: {integrity: sha512-byy+U7gp+FVwmyzKPYhW2h5l3crpmGsxl7X2s8y43IgxvG4g3QZ6CffDtsNQy1WsmZpQbO+ybo0AlW7TY6DcBQ==}
     engines: {node: '>= 0.4'}
 
   object.assign@4.1.7:
@@ -5968,10 +5952,6 @@ packages:
   which-module@2.0.1:
     resolution: {integrity: sha512-iBdZ57RDvnOR9AGBhML2vFZf7h8vmBjhoaZqODJBFWHVtKkDmKuHai3cx5PgVMrX5YDNp27AofYbAwctSS+vhQ==}
 
-  which-typed-array@1.1.16:
-    resolution: {integrity: sha512-g+N+GAWiRj66DngFwHvISJd+ITsyphZvD1vChfVg6cEdnzy53GzB3oy0fUNlvhz7H7+MiqhYr26qxQShCpKTTQ==}
-    engines: {node: '>= 0.4'}
-
   which-typed-array@1.1.18:
     resolution: {integrity: sha512-qEcY+KJYlWyLH9vNbsr6/5j59AXk5ni5aakf8ldzBvGde6Iz4sxZGkJyWSAueTG7QhOvNRYb1lDdFmL5Td0QKA==}
     engines: {node: '>= 0.4'}
@@ -6608,7 +6588,7 @@ snapshots:
       '@babel/runtime': 7.26.0
       '@mui/core-downloads-tracker': 5.16.11
       '@mui/system': 5.16.8(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1)
-      '@mui/types': 7.2.19(@types/react@18.3.18)
+      '@mui/types': 7.2.21(@types/react@18.3.18)
       '@mui/utils': 5.16.8(@types/react@18.3.18)(react@18.3.1)
       '@popperjs/core': 2.11.8
       '@types/react-transition-group': 4.4.12(@types/react@18.3.18)
@@ -6715,7 +6695,7 @@ snapshots:
       '@babel/runtime': 7.26.0
       '@mui/private-theming': 5.16.8(@types/react@18.3.18)(react@18.3.1)
       '@mui/styled-engine': 5.16.8(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
-      '@mui/types': 7.2.19(@types/react@18.3.18)
+      '@mui/types': 7.2.21(@types/react@18.3.18)
       '@mui/utils': 5.16.8(@types/react@18.3.18)(react@18.3.1)
       clsx: 2.1.1
       csstype: 3.1.3
@@ -6742,10 +6722,6 @@ snapshots:
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1)
       '@types/react': 18.3.18
 
-  '@mui/types@7.2.19(@types/react@18.3.18)':
-    optionalDependencies:
-      '@types/react': 18.3.18
-
   '@mui/types@7.2.21(@types/react@18.3.18)':
     optionalDependencies:
       '@types/react': 18.3.18
@@ -6753,7 +6729,7 @@ snapshots:
   '@mui/utils@5.16.8(@types/react@18.3.18)(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.26.0
-      '@mui/types': 7.2.19(@types/react@18.3.18)
+      '@mui/types': 7.2.21(@types/react@18.3.18)
       '@types/prop-types': 15.7.14
       clsx: 2.1.1
       prop-types: 15.8.1
@@ -8298,7 +8274,7 @@ snapshots:
       call-bind: 1.0.8
       is-nan: 1.3.2
       object-is: 1.1.6
-      object.assign: 4.1.5
+      object.assign: 4.1.7
       util: 0.12.5
 
   astring@1.9.0: {}
@@ -10186,7 +10162,7 @@ snapshots:
 
   indent-string@4.0.0: {}
 
-  indigo-ketcher@1.24.0: {}
+  indigo-ketcher@1.25.0: {}
 
   inflight@1.0.6:
     dependencies:
@@ -10387,10 +10363,6 @@ snapshots:
       has-symbols: 1.1.0
       safe-regex-test: 1.1.0
 
-  is-typed-array@1.1.13:
-    dependencies:
-      which-typed-array: 1.1.16
-
   is-typed-array@1.1.15:
     dependencies:
       which-typed-array: 1.1.18
@@ -10558,7 +10530,7 @@ snapshots:
 
   kdbush@4.0.2: {}
 
-  ketcher-core@2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  ketcher-core@2.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.26.0
       ajv: 8.17.1
@@ -10573,7 +10545,7 @@ snapshots:
       - react
       - react-dom
 
-  ketcher-react@2.25.0(@types/react@18.3.18)(immutable@5.0.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  ketcher-react@2.26.0(@types/react@18.3.18)(immutable@5.0.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.26.0
       '@emotion/react': 11.14.0(@types/react@18.3.18)(react@18.3.1)
@@ -10589,7 +10561,7 @@ snapshots:
       font-face-observer: 1.0.0
       hoist-non-react-statics: 3.3.2
       intersection-observer: 0.12.2
-      ketcher-core: 2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      ketcher-core: 2.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       lodash: 4.17.21
       miew-react: 1.0.0(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
@@ -10621,11 +10593,11 @@ snapshots:
       - react-native
       - supports-color
 
-  ketcher-standalone@2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  ketcher-standalone@2.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.26.0
-      indigo-ketcher: 1.24.0
-      ketcher-core: 2.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      indigo-ketcher: 1.25.0
+      ketcher-core: 2.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - react
       - react-dom
@@ -11487,13 +11459,6 @@ snapshots:
   object-keys@0.4.0: {}
 
   object-keys@1.1.1: {}
-
-  object.assign@4.1.5:
-    dependencies:
-      call-bind: 1.0.8
-      define-properties: 1.2.1
-      has-symbols: 1.1.0
-      object-keys: 1.1.1
 
   object.assign@4.1.7:
     dependencies:
@@ -13020,8 +12985,8 @@ snapshots:
       inherits: 2.0.4
       is-arguments: 1.2.0
       is-generator-function: 1.0.10
-      is-typed-array: 1.1.13
-      which-typed-array: 1.1.16
+      is-typed-array: 1.1.15
+      which-typed-array: 1.1.18
 
   uuid@9.0.1: {}
 
@@ -13202,14 +13167,6 @@ snapshots:
       is-weakset: 2.0.4
 
   which-module@2.0.1: {}
-
-  which-typed-array@1.1.16:
-    dependencies:
-      available-typed-arrays: 1.0.7
-      call-bind: 1.0.8
-      for-each: 0.3.3
-      gopd: 1.2.0
-      has-tostringtag: 1.0.2
 
   which-typed-array@1.1.18:
     dependencies:

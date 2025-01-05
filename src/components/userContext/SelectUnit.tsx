@@ -72,8 +72,8 @@ export const SelectUnit = ({
             }}
           />
         )}
-        renderOption={(props, option) => (
-          <Box component="li" {...props}>
+        renderOption={({ key, ...props }, option) => (
+          <Box component="li" key={key} {...props}>
             <Box component="span" sx={{ display: "inline-block", pr: 1 }}>
               <ItemIcons item={option} />
             </Box>

@@ -38,8 +38,8 @@ export const SingleFileUploadWithProgress = ({
   changeMimeType,
 }: SingleFileUploadWithProgressProps) => {
   const queryClient = useQueryClient();
-  const fileNameRef = useRef<HTMLInputElement>();
-  const fileExtRef = useRef<HTMLInputElement>();
+  const fileNameRef = useRef<HTMLInputElement>(null);
+  const fileExtRef = useRef<HTMLInputElement>(null);
 
   const composeNewFilePath = () => {
     return `${fileNameRef.current?.value}${fileExtRef.current?.value}`;

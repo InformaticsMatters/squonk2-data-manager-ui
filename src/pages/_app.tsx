@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { StrictMode, useMemo } from "react";
 
 import { setBaseUrl as setASBaseUrl } from "@squonk/account-server-client";
 import { setBaseUrl as setDMBaseUrl } from "@squonk/data-manager-client";
@@ -52,31 +52,33 @@ const App = ({ Component, pageProps }: CustomAppProps) => {
   // }
 
   return (
-    <AppCacheProvider {...pageProps}>
-      <Head>
-        <meta content="minimum-scale=1, initial-scale=1, width=device-width" name="viewport" />
-        <style>{openSansFontCss}</style>
-      </Head>
-      <ThemeProviders>
-        <UserProvider
-          loginUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/login`}
-          profileUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/me`}
-        >
-          <QueryClientProvider client={queryClient}>
-            <HydrationBoundary state={pageProps.dehydratedState}>
-              <SnackbarProvider>
-                <MDXComponentProvider>
-                  <TopLevelHooks>
-                    <Component {...pageProps} />
-                  </TopLevelHooks>
-                </MDXComponentProvider>
-              </SnackbarProvider>
-            </HydrationBoundary>
-            <ReactQueryDevtools client={queryClient} />
-          </QueryClientProvider>
-        </UserProvider>
-      </ThemeProviders>
-    </AppCacheProvider>
+    <StrictMode>
+      <AppCacheProvider {...pageProps}>
+        <Head>
+          <meta content="minimum-scale=1, initial-scale=1, width=device-width" name="viewport" />
+          <style>{openSansFontCss}</style>
+        </Head>
+        <ThemeProviders>
+          <UserProvider
+            loginUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/login`}
+            profileUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/me`}
+          >
+            <QueryClientProvider client={queryClient}>
+              <HydrationBoundary state={pageProps.dehydratedState}>
+                <SnackbarProvider>
+                  <MDXComponentProvider>
+                    <TopLevelHooks>
+                      <Component {...pageProps} />
+                    </TopLevelHooks>
+                  </MDXComponentProvider>
+                </SnackbarProvider>
+              </HydrationBoundary>
+              <ReactQueryDevtools client={queryClient} />
+            </QueryClientProvider>
+          </UserProvider>
+        </ThemeProviders>
+      </AppCacheProvider>
+    </StrictMode>
   );
 };
 

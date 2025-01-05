@@ -126,7 +126,7 @@ export const JobModal = ({
     Object.keys(inputsData).length > 0 ? inputsData : specInputs,
   );
 
-  const formRef = useRef<any>();
+  const formRef = useRef<any>(null);
 
   // Since the default value are obtained async, we have to wait for them to arrive in order to set
   useEffect(() => {

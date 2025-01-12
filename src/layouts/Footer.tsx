@@ -12,6 +12,7 @@ import {
 import A from "next/link";
 
 import { AppVersions } from "../components/AppVersions";
+import { ralewayFont } from "../constants/fonts";
 
 export const Footer = () => {
   const small = useMediaQuery((theme: Theme) => theme.breakpoints.up("sm"));
@@ -23,7 +24,7 @@ export const Footer = () => {
         <Grid container sx={{ p: 2 }}>
           <Grid size={{ sm: 6, xs: 12 }}>
             <Typography variant="h4">
-              <strong style={{ fontFamily: "Raleway" }}>
+              <strong style={{ fontFamily: ralewayFont.style.fontFamily }}>
                 <Link href="https://squonk.it/" rel="noopener noreferrer" target="_blank">
                   Squonk
                 </Link>

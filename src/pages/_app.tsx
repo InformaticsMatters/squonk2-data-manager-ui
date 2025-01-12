@@ -21,11 +21,10 @@ import { openSansFont } from "../constants/fonts";
 import { AS_API_URL, DM_API_URL } from "../constants/proxies";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
 
-import "../styles/globalStyles.scss";
-
 const openSansFontCss = `
-html {
+:root {
   font-family: ${openSansFont.style.fontFamily};
+  font-size: 14px;
 }
 `;
 

@@ -3,6 +3,7 @@ import { Box, Container, Grid2 as Grid, Typography } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
 
+import sadderSquonk from "../../assets/graphics/sadder-squonk.svg";
 import { RoleRequired } from "../components/auth/RoleRequired";
 import { ProjectSelection } from "../components/projects/ProjectSelection";
 import { SelectProject } from "../components/userContext/SelectProject";
@@ -69,7 +70,7 @@ const Project = () => {
                   <Image
                     alt="Squonk in tears that you haven't selected a project"
                     height={150}
-                    src="https://squonk.informaticsmatters.org/assets/sadderSquonk.svg"
+                    src={sadderSquonk}
                     width={150}
                   />
                   <Box sx={{ marginY: 1 }}>

@@ -4,7 +4,7 @@ import { Alert, Box, Chip, Typography, useMediaQuery, useTheme } from "@mui/mate
 import { AuthButton } from "../../components/auth/AuthButton";
 import { CenterLoader } from "../../components/CenterLoader";
 import { Chips } from "../../components/Chips";
-import { DarkModeSwitch } from "../../components/DarkModeSwitch";
+import { ColourSchemeSelection } from "../../components/ColourSchemeSelection";
 import { useASAuthorizationStatus, useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 
@@ -21,7 +21,7 @@ export const UserMenuContent = () => {
         Account
       </Typography>
       <UserMenuContentInner />
-      <DarkModeSwitch />
+      <ColourSchemeSelection />
     </Box>
   );
 };

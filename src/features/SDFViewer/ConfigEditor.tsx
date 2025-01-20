@@ -78,7 +78,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
   // const onSubmit: SubmitHandler<SDFViewerConfig> = (data) => console.log(data);
 
   return (
-    <form onSubmit={() => void handleSubmit(onSubmit)}>
+    <form onSubmit={(event) => void handleSubmit(onSubmit, (errors) => console.log(errors))(event)}>
       <Box sx={{ display: "grid", gap: 1, gridTemplateColumns: "1fr repeat(6, min-content)" }}>
         <Typography component="h3" variant="h4">
           Field name
@@ -119,7 +119,6 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 </MenuItem>
               ))}
             </TextField>
-
             <Controller
               control={control}
               defaultValue={config[key].include}
@@ -144,7 +143,6 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 />
               )}
             />
-
             <TextField
               defaultValue={config[key].min}
               disabled={!getIsNumeric(key)}
@@ -165,7 +163,6 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
               sx={{ width: "7em" }}
               type="number"
             />
-
             <TextField
               disabled
               select

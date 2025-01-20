@@ -15,7 +15,9 @@ export const SDFViewerListItem = ({ fileName, path, onClick }: SDFViewerListItem
   const router = useRouter();
 
   const breadcrumbs = useProjectBreadcrumbs();
-  path === undefined && (path = breadcrumbs.join("/"));
+  if (path === undefined) {
+    path = breadcrumbs.join("/");
+  }
 
   return (
     <A

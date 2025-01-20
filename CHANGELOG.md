@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.1.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.1.0...5.1.0-rc.0) (2025-01-20)
+
+
+### Bug Fixes
+
+* fix sdf viewer from giving 404 error when submitting config ([9769c22](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9769c224dd9f6a5ea3f71abe5cd7bfe46f6fff04))
+
+
+### Miscellaneous Chores
+
+* release 5.1.1-rc.0 ([b432010](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b432010d2e475d8891c60c501bf810226ae6c485))
+
 ## [5.1.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.0.0...5.1.0) (2025-01-05)
 
 

@@ -24,6 +24,7 @@ export const CookiesBanner = () => {
         left: 0,
         padding: "0.5rem",
         boxShadow: 10,
+        displayPrint: "none",
       }}
     >
       <Container>

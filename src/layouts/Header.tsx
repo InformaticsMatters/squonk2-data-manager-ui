@@ -5,7 +5,7 @@ import { NavBarContents } from "./navigation/NavBarContents";
 
 const Header = () => {
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ displayPrint: "none" }}>
       <Toolbar>
         <HeaderLogo />
 

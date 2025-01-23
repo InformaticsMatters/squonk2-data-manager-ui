@@ -19,7 +19,7 @@ export const Footer = () => {
   const itemStyles = { justifyContent: small ? "right" : "left" };
 
   return (
-    <Paper square component="footer" sx={{ marginTop: "auto" }}>
+    <Paper square component="footer" sx={{ marginTop: "auto", displayPrint: "none" }}>
       <Container maxWidth="md">
         <Grid container sx={{ p: 2 }}>
           <Grid size={{ sm: 6, xs: 12 }}>

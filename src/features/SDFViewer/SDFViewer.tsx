@@ -23,10 +23,18 @@ export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
     data: schema,
     error,
     isLoading,
-  } = useGetProjectFile<any>(project, {
-    path,
-    file: schemaFilename,
-  });
+  } = useGetProjectFile<any>(
+    project,
+    {
+      path,
+      file: schemaFilename,
+    },
+    {
+      query: {
+        retry: 0,
+      },
+    },
+  );
 
   const [isEditingConfig, setIsEditingConfig] = useState(true);
   const [config, setConfig] = useState<SDFViewerConfig | undefined>(undefined);
@@ -34,6 +42,15 @@ export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
   if (error) {
     // handle error
     // SDF schema might not exist
+    if (error.status === 404) {
+      return (
+        <Header title={file}>
+          <Typography color="error" variant="body1">
+            No schema found for this SDF
+          </Typography>
+        </Header>
+      );
+    }
     return null;
   }
 

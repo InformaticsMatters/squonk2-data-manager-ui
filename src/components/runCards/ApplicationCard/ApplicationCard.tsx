@@ -1,6 +1,6 @@
 import { type ApplicationSummary } from "@squonk/data-manager-client";
 
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, LinearProgress } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import { useIsUserAdminOrEditorOfCurrentProject } from "../../../hooks/projectHooks";
@@ -15,7 +15,7 @@ const ApplicationModalButton = dynamic<ApplicationModalButtonProps>(
 
 const InstancesList = dynamic<InstancesListProps>(
   () => import("../InstancesList").then((mod) => mod.InstancesList),
-  { loading: () => <CircularProgress size="1rem" /> },
+  { loading: () => <LinearProgress /> },
 );
 
 export interface ApplicationCardProps extends Pick<ApplicationModalButtonProps, "projectId"> {

@@ -1,6 +1,6 @@
 import { type JobSummary } from "@squonk/data-manager-client";
 
-import { Alert, Chip, CircularProgress, Link, Typography } from "@mui/material";
+import { Alert, Chip, LinearProgress, Link, Typography } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import { BaseCard } from "../../BaseCard";
@@ -10,7 +10,7 @@ import { RunJobButton, type RunJobButtonProps } from "./RunJobButton";
 
 const InstancesList = dynamic<InstancesListProps>(
   () => import("../InstancesList").then((mod) => mod.InstancesList),
-  { loading: () => <CircularProgress size="1rem" /> },
+  { loading: () => <LinearProgress /> },
 );
 
 export interface ApplicationCardProps extends Pick<RunJobButtonProps, "projectId"> {

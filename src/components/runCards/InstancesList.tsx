@@ -1,13 +1,12 @@
 import { type InstanceSummary } from "@squonk/data-manager-client";
 import { useGetInstances } from "@squonk/data-manager-client/instance";
 
-import { Box, List, ListItemButton, ListItemText, Typography } from "@mui/material";
+import { Box, LinearProgress, List, ListItemButton, ListItemText, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import A from "next/link";
 import { useRouter } from "next/router";
 
 import { useCurrentProjectId } from "../../hooks/projectHooks";
-import { CenterLoader } from "../CenterLoader";
 import { LocalTime } from "../LocalTime";
 
 type FilterPredicate = (value: InstanceSummary, index: number, array: InstanceSummary[]) => boolean;
@@ -32,7 +31,7 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
   );
 
   if (instances === undefined) {
-    return <CenterLoader />;
+    return <LinearProgress />;
   }
 
   if (instances.length === 0) {

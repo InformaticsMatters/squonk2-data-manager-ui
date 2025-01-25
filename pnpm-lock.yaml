@@ -123,8 +123,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0(xp6c5mqs3pxdfxblgnwqwjs7ji)
       immer:
-        specifier: 9.0.21
-        version: 9.0.21
+        specifier: 10.1.1
+        version: 10.1.1
       jotai:
         specifier: 2.11.0
         version: 2.11.0(@types/react@19.0.7)(react@19.0.0)
@@ -199,7 +199,7 @@ importers:
         version: 5.7.2
       use-immer:
         specifier: 0.7.0
-        version: 0.7.0(immer@9.0.21)(react@19.0.0)
+        version: 0.7.0(immer@10.1.1)(react@19.0.0)
       yup:
         specifier: 1.6.1
         version: 1.6.1
@@ -3455,6 +3455,9 @@ packages:
   ignore@6.0.2:
     resolution: {integrity: sha512-InwqeHHN2XpumIkMvpl/DCJVrAHgCsG5+cn1XlnLWGwtZBm8QJfSusItfrwx81CTp5agNZqpKU2J/ccC5nGT4A==}
     engines: {node: '>= 4'}
+
+  immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
 
   immer@9.0.21:
     resolution: {integrity: sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==}
@@ -9856,6 +9859,8 @@ snapshots:
 
   ignore@6.0.2: {}
 
+  immer@10.1.1: {}
+
   immer@9.0.21: {}
 
   immutable@3.7.6: {}
@@ -12659,9 +12664,9 @@ snapshots:
 
   url-search-params-polyfill@8.2.5: {}
 
-  use-immer@0.7.0(immer@9.0.21)(react@19.0.0):
+  use-immer@0.7.0(immer@10.1.1)(react@19.0.0):
     dependencies:
-      immer: 9.0.21
+      immer: 10.1.1
       react: 19.0.0
 
   use-resize-observer@7.0.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0):

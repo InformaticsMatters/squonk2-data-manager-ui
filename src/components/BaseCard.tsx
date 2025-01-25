@@ -103,9 +103,9 @@ export const BaseCard = ({
             sx={(theme) => ({
               marginLeft: "auto",
               transform: `rotate(${expanded ? 180 : 0}deg)`,
-              transition: `${theme.transitions.create("transform", {
+              transition: theme.transitions.create("transform", {
                 duration: theme.transitions.duration.shortest,
-              })}`,
+              }),
             })}
             onClick={() => {
               setExpanded(!expanded);

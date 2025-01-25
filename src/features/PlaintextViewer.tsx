@@ -53,15 +53,21 @@ export const PlaintextViewer = ({
       </Head>
       <Paper sx={{ marginY: 2 }}>
         <Box
-          sx={{
-            alignItems: "center",
-            display: "flex",
-            paddingX: 2,
-            paddingY: 1,
-            bgcolor: (theme) => (theme.palette.mode === "light" ? "grey.200" : "grey.900"),
-            boxShadow: 0,
-            gap: 2,
-          }}
+          sx={[
+            {
+              alignItems: "center",
+              display: "flex",
+              paddingX: 2,
+              paddingY: 1,
+              bgcolor: "grey.200",
+              boxShadow: 0,
+              gap: 2,
+            },
+            (theme) =>
+              theme.applyStyles("dark", {
+                bgcolor: "grey.900",
+              }),
+          ]}
         >
           <Box sx={{ alignItems: "center", display: "flex", flex: "1 1 auto", gap: 1 }}>
             <Typography

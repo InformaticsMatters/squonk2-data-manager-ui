@@ -17,7 +17,7 @@ import {
   TimelineOppositeContent,
   TimelineSeparator,
 } from "@mui/lab";
-import { Box, Tooltip, Typography, useTheme } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 
 import { firaMonoFont } from "../../constants/fonts";
 import { useEventDebugMode } from "../../state/eventDebugMode";
@@ -125,8 +125,6 @@ const TimelineSection = ({
 export type TimeLineLabelProps = ComponentProps<typeof Typography>;
 
 const TimeLineLabel = ({ children, ...typographyProps }: TimeLineLabelProps) => {
-  const theme = useTheme();
-  theme.typography;
   if (typeof children === "string" && children.includes("\n")) {
     return (
       <Box

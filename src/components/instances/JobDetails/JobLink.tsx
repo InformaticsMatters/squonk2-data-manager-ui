@@ -72,7 +72,7 @@ export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps)
         sx={{
           alignItems: "center",
           display: "flex",
-          gap: (theme) => theme.spacing(1),
+          gap: 1,
           wordBreak: "break-all",
         }}
       >
@@ -101,7 +101,7 @@ export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps)
   }
 
   return (
-    <Box sx={{ alignItems: "center", display: "flex", gap: (theme) => theme.spacing(1) }}>
+    <Box sx={{ alignItems: "center", display: "flex", gap: 1 }}>
       <Tooltip title="Show directory in project">
         <A
           legacyBehavior

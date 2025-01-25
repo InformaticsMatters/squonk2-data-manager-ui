@@ -1,6 +1,6 @@
 import { type JobSummary } from "@squonk/data-manager-client";
 
-import { Alert, Chip, CircularProgress, Link, Typography, useTheme } from "@mui/material";
+import { Alert, Chip, CircularProgress, Link, Typography } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import { BaseCard } from "../../BaseCard";
@@ -29,8 +29,6 @@ export interface ApplicationCardProps extends Pick<RunJobButtonProps, "projectId
  * existing instances.
  */
 export const JobCard = ({ projectId, job, disabled = false }: ApplicationCardProps) => {
-  const theme = useTheme();
-
   return (
     <BaseCard
       actions={({ setExpanded }) => (
@@ -47,7 +45,7 @@ export const JobCard = ({ projectId, job, disabled = false }: ApplicationCardPro
         />
       }
       header={{
-        color: theme.palette.primary.main,
+        color: "primary.main",
         subtitle: job.name,
         avatar: job.job[0],
         title: job.job,

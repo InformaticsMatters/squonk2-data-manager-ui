@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Settings as SettingsIcon } from "@mui/icons-material";
-import { Box, IconButton, styled, Tooltip, useMediaQuery, useTheme } from "@mui/material";
+import { Box, IconButton, Tooltip } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import { CenterLoader } from "../../components/CenterLoader";
@@ -18,69 +18,31 @@ const UserSettingsContent = dynamic(
     import("../../features/userSettings/UserSettingsContent/UserSettingsContent").then(
       (mod) => mod.UserSettingsContent,
     ),
-  {
-    loading: () => <CenterLoader />,
-  },
+  { loading: () => <CenterLoader /> },
 );
 
-export interface SettingsControls {
-  closeSettings: () => void;
-  open: boolean;
-  openSettings: () => void;
-}
+const SettingsButton = ({ disabled, onClick }: { disabled: boolean; onClick: () => void }) => (
+  <Tooltip title="Settings">
+    <span>
+      <IconButton
+        color="inherit"
+        disabled={disabled}
+        sx={{ ml: { xs: "auto", md: 0 } }}
+        onClick={onClick}
+      >
+        <SettingsIcon />
+      </IconButton>
+    </span>
+  </Tooltip>
+);
 
 export const NavBarContents = () => {
-  const theme = useTheme();
   const { user } = useKeycloakUser();
-
-  // Custom breakpoint to match width of nav links text
-  const biggerThanSm = useMediaQuery("@media (min-width:655px)");
-  const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   const isDMAuthorized = useDMAuthorizationStatus();
-
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const props: SettingsControls = {
-    closeSettings: () => setSettingsOpen(false),
-    open: settingsOpen,
-    openSettings: () => setSettingsOpen(true),
-  };
-
-  const settingsButton = (
-    <Tooltip title="Settings">
-      <span>
-        <IconButton
-          color="inherit"
-          disabled={!isDMAuthorized}
-          sx={{ ml: biggerThanMd ? 0 : "auto" }}
-          onClick={() => {
-            props.openSettings();
-          }}
-        >
-          <SettingsIcon />
-        </IconButton>
-      </span>
-    </Tooltip>
-  );
-
-  const navContent = biggerThanMd ? (
-    <>
-      {/* Desktop */}
-      <NavLinks linkWidth={120} />
-      <IconsWrapper>
-        {!!isDMAuthorized && <OUPContext />}
-        {settingsButton}
-        <UserMenu />
-      </IconsWrapper>
-    </>
-  ) : (
-    <>
-      {/* Tablet / Mobile */}
-      {!!biggerThanSm && <NavLinks linkWidth={100} />}
-      <Box sx={{ marginLeft: biggerThanSm ? undefined : "auto" }}>{settingsButton}</Box>
-      <MobileNavMenu links={!biggerThanSm} />
-    </>
-  );
+  const handleCloseSettings = () => setSettingsOpen(false);
+  const handleOpenSettings = () => setSettingsOpen(true);
 
   return (
     <>
@@ -89,19 +51,66 @@ export const NavBarContents = () => {
         id="user-settings"
         open={settingsOpen}
         title="Settings"
-        onClose={() => props.closeSettings()}
+        onClose={handleCloseSettings}
       >
         {!!user.username && <UserSettingsContent />}
       </ModalWrapper>
-      {navContent}
+
+      {/* Desktop Navigation */}
+      <Box
+        sx={{
+          display: { xs: "none", md: "block" },
+          flex: 1,
+        }}
+      >
+        <NavLinks linkWidth={120} />
+      </Box>
+
+      {/* Tablet Navigation */}
+      <Box
+        sx={{
+          display: { xs: "none", md: "none", "@media (min-width:655px)": "block" },
+          flex: 1,
+        }}
+      >
+        <NavLinks linkWidth={100} />
+      </Box>
+
+      {/* Desktop Controls */}
+      <Box
+        sx={{
+          display: { xs: "none", md: "flex" },
+          justifyContent: "flex-end",
+          alignItems: "center",
+          flex: "1 0",
+          minWidth: 0,
+          ml: "auto",
+        }}
+      >
+        {!!isDMAuthorized && <OUPContext />}
+        <SettingsButton disabled={!isDMAuthorized} onClick={handleOpenSettings} />
+        <UserMenu />
+      </Box>
+
+      {/* Mobile/Tablet Controls */}
+      <Box
+        sx={{
+          display: { xs: "flex", md: "none" },
+          flex: 1,
+          justifyContent: "flex-end",
+          alignItems: "center",
+          ml: { xs: "auto", "@media (min-width:655px)": 0 },
+        }}
+      >
+        <SettingsButton disabled={!isDMAuthorized} onClick={handleOpenSettings} />
+        <Box
+          sx={{
+            display: { "@media (min-width:655px)": "none" },
+          }}
+        >
+          <MobileNavMenu links />
+        </Box>
+      </Box>
     </>
   );
 };
-
-const IconsWrapper = styled("div")({
-  display: "flex",
-  justifyContent: "flex-end",
-  alignItems: "center",
-  flex: "1 0",
-  minWidth: 0,
-});

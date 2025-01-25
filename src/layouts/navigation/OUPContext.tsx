@@ -28,7 +28,8 @@ export const OUPContext = ({ header = false }: OUPContextProps) => {
           sx={{
             flexBasis: "200px",
             minWidth: 0,
-            outline: (theme) => `2px solid ${theme.palette.primary.light}`,
+            outline: "2px solid",
+            outlineColor: "primary.light",
             borderRadius: 2,
             p: 0.75,
             mr: 1,

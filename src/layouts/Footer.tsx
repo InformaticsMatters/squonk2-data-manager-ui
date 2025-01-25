@@ -1,22 +1,11 @@
-import {
-  Container,
-  Grid2 as Grid,
-  Link,
-  List,
-  ListItem,
-  Paper,
-  type Theme,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+import { Container, Grid2 as Grid, Link, List, ListItem, Paper, Typography } from "@mui/material";
 import A from "next/link";
 
 import { AppVersions } from "../components/AppVersions";
 import { ralewayFont } from "../constants/fonts";
 
 export const Footer = () => {
-  const small = useMediaQuery((theme: Theme) => theme.breakpoints.up("sm"));
-  const itemStyles = { justifyContent: small ? "right" : "left" };
+  const itemStyles = { justifyContent: { xs: "left", sm: "right" } };
 
   return (
     <Paper square component="footer" sx={{ marginTop: "auto", displayPrint: "none" }}>

@@ -159,7 +159,7 @@ export const InputSection = ({ children, title, required, error }: InputSectionP
     <Grid size={{ xs: 12 }}>
       <Typography
         component="h4"
-        sx={{ color: error ? (theme) => theme.palette.error.main : undefined }}
+        sx={{ color: error ? "error.main" : undefined }}
         variant="subtitle1"
       >
         <em>
@@ -168,7 +168,7 @@ export const InputSection = ({ children, title, required, error }: InputSectionP
         </em>
       </Typography>
       {children}
-      <Typography sx={(theme) => ({ color: theme.palette.error.main })}>{error}</Typography>
+      <Typography sx={{ color: "error.main" }}>{error}</Typography>
     </Grid>
   );
 };

@@ -64,7 +64,7 @@ const NavButton = forwardRef(NavButtonComponent);
 
 const Nav = styled("nav", { shouldForwardProp: (prop) => prop !== "linkWidth" })<{
   linkWidth: number;
-}>(({ linkWidth }) => ({ theme }) => ({
+}>(({ linkWidth, theme }) => ({
   flex: 1,
   display: "flex",
   alignItems: "center",

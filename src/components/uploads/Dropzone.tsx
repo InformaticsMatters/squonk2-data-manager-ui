@@ -87,8 +87,9 @@ export const Dropzone: FC<DropzoneProps> = ({
 
 const Zone = styled("div", { shouldForwardProp: (prop) => prop !== "isDragActive" })<{
   isDragActive: boolean;
-}>(({ theme, isDragActive }) => ({
-  border: `2px dashed ${isDragActive ? theme.palette.primary.main : theme.palette.grey[600]}`,
+}>(({ isDragActive, theme }) => ({
+  border: "2px dashed",
+  borderColor: isDragActive ? "primary.main" : "grey.600",
   borderRadius: 2 * Number(theme.shape.borderRadius),
   padding: theme.spacing(1),
   paddingLeft: theme.spacing(2),

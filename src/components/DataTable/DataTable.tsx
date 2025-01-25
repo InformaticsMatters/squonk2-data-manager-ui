@@ -263,13 +263,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
   const tableContents = (
     <>
       {!!ToolbarChild || !!enableSearch ? (
-        <Toolbar
-          sx={(theme) => ({
-            pt: 2,
-            alignItems: "flex-start",
-            gap: theme.spacing(1),
-          })}
-        >
+        <Toolbar sx={{ pt: 2, alignItems: "flex-start", gap: 1 }}>
           {ToolbarChild}
           {!!enableSearch && (
             <TextField
@@ -342,11 +336,9 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                     <TableCell
                       {...customCellProps}
                       key={cell.id}
-                      sx={{
-                        pl: cell.column.getCanSort()
-                          ? (theme) => theme.spacing(2 + 2 * row.depth)
-                          : undefined,
-                      }}
+                      sx={(theme) => ({
+                        pl: cell.column.getCanSort() ? theme.spacing(2 + 2 * row.depth) : undefined,
+                      })}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>

@@ -97,7 +97,7 @@
     "react-plotly.js": "2.6.0",
     "sharp": "0.33.5",
     "typescript": "5.7.2",
-    "use-immer": "0.7.0",
+    "use-immer": "0.11.0",
     "yup": "1.6.1"
   },
   "devDependencies": {

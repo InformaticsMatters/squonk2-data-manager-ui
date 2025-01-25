@@ -3,6 +3,10 @@
   "include-v-in-tag": false,
   "include-component-in-tag": false,
   "packages": {
-    ".": {}
-  }
+    ".": {
+      "prerelease": true,
+      "prerelease-type": "rc"
+    }
+  },
+  "separate-pull-requests": true
 }

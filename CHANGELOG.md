@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.1.1-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.1.0-rc.0...5.1.1-rc.0) (2025-01-25)
+
+
+### Bug Fixes
+
+* show error when no sdf schema if found ([02a32d2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/02a32d2c9575e8907922615f0078ce0bda1b87e3))
+
 ## [5.1.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.1.0...5.1.0-rc.0) (2025-01-20)
 
 

@@ -92,7 +92,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
       value={currentLabel}
       variant="outlined"
       onChange={(event) => setCurrentLabel(event.target.value)}
-      onKeyPress={(event) => addLabelWithKeyboard(event.key)}
+      onKeyUp={(event) => addLabelWithKeyboard(event.key)}
     />
   );
 };

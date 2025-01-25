@@ -83,7 +83,7 @@ export const FileListItem = ({
       )}
       {type.startsWith("dir") && <ListItemIcon>{folderIcon ?? <FolderRoundedIcon />}</ListItemIcon>}
       <Tooltip title={title}>
-        <ListItemText id={labelId} primary={title} primaryTypographyProps={{ noWrap: true }} />
+        <ListItemText id={labelId} primary={title} slotProps={{ primary: { noWrap: true } }} />
       </Tooltip>
       <FavouriteButton fullPath={fullPath} mimeType={mimeType} projectId={projectId} type={type} />
     </>

@@ -85,10 +85,12 @@ export const BaseCard = ({
               {header.avatar?.[0].toUpperCase()}
             </Avatar>
           }
+          slotProps={{
+            subheader: { variant: "subtitle1" },
+            title: { variant: "body1" },
+          }}
           subheader={header.subtitle}
-          subheaderTypographyProps={{ variant: "subtitle1" }}
           title={header.title}
-          titleTypographyProps={{ variant: "body1" }}
         />
       )}
       <CardContent>{children}</CardContent>

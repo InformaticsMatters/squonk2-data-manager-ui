@@ -138,14 +138,14 @@ importers:
         specifier: 4.0.0
         version: 4.0.0
       ketcher-core:
-        specifier: 2.26.0
-        version: 2.26.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 2.27.0
+        version: 2.27.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ketcher-react:
-        specifier: 2.26.0
-        version: 2.26.0(@types/react@19.0.8)(immutable@5.0.3)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 2.27.0
+        version: 2.27.0(@types/react@19.0.8)(immutable@5.0.3)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ketcher-standalone:
-        specifier: 2.26.0
-        version: 2.26.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 2.27.0
+        version: 2.27.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       lodash-es:
         specifier: 4.17.21
         version: 4.17.21
@@ -3503,8 +3503,8 @@ packages:
     resolution: {integrity: sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==}
     engines: {node: '>=8'}
 
-  indigo-ketcher@1.25.0:
-    resolution: {integrity: sha512-Md6mxlOrqfnFH3AI4s2dSJtOp3OqVc0VCjTz+QXZYKjTIGrAtMz/zBJ5qVBQ2HGV+Mq8igphwn4mPdTcfaU7HQ==}
+  indigo-ketcher@1.26.0:
+    resolution: {integrity: sha512-XjiILPt2pjkS+mmqv0+LmFjI2Z+75d0LSO/TTZAn33Rmazhd6wgGh5zz2VOtgIJP8I5DwU890RJKFbeMbnw6SA==}
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
@@ -3895,19 +3895,19 @@ packages:
   kdbush@4.0.2:
     resolution: {integrity: sha512-WbCVYJ27Sz8zi9Q7Q0xHC+05iwkm3Znipc2XTlrnJbsHMYktW4hPhXUE8Ys1engBrvffoSCqbil1JQAa7clRpA==}
 
-  ketcher-core@2.26.0:
-    resolution: {integrity: sha512-NF7/2tepZ0yVeOVB+EtDLlOUQgh/wWgJ634UtecvEjPsg7287yt9k5GOb0fJz2+daiIgHjMvE9HMn39Lw1CYdg==}
+  ketcher-core@2.27.0:
+    resolution: {integrity: sha512-Fb0BIQiBqwR/sp6vJMdNLxX8v7glNbbQPXJNHCFrHxdsjgWRvltJlqiP7A5zmk/o5G0ipqvhMNEBzo2ks10wSw==}
     engines: {node: '>=14'}
 
-  ketcher-react@2.26.0:
-    resolution: {integrity: sha512-p0T6ZyCOG0qrRWvpphzPcyDAnWXlJXKWsWvyZ3FhrTgYvzHa5TghxUMX8F7+B3wvE+vguLOPalFQte3G78Y71A==}
+  ketcher-react@2.27.0:
+    resolution: {integrity: sha512-4WLdTMquenQJr8e7BFJ6TZCI8TL5wFCkMzDzkfIvwnIBZIeBSR++pAi+g752H6CIew3uzERQXa3H8glx2ASYMA==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  ketcher-standalone@2.26.0:
-    resolution: {integrity: sha512-xBPoxSDIGnCaaPe1aniRU608qDoDkYTPAyyXpbgIEA4o1Cv011fABksgp0+pym/K4poReCZ6nlN1h0PuG72t0Q==}
+  ketcher-standalone@2.27.0:
+    resolution: {integrity: sha512-92+IE9ozb0s9IoWRcJdTUtQjvZ0WzWkFevAADbYl2DpPyfXS4QbIQhSkuF2rPG0pDNdZaSLi4O6nRgdlnh4vZQ==}
     engines: {node: '>=14'}
 
   keyv@4.5.4:
@@ -9940,7 +9940,7 @@ snapshots:
 
   indent-string@4.0.0: {}
 
-  indigo-ketcher@1.25.0: {}
+  indigo-ketcher@1.26.0: {}
 
   inflight@1.0.6:
     dependencies:
@@ -10307,7 +10307,7 @@ snapshots:
 
   kdbush@4.0.2: {}
 
-  ketcher-core@2.26.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  ketcher-core@2.27.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.26.0
       ajv: 8.17.1
@@ -10322,7 +10322,7 @@ snapshots:
       - react
       - react-dom
 
-  ketcher-react@2.26.0(@types/react@19.0.8)(immutable@5.0.3)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  ketcher-react@2.27.0(@types/react@19.0.8)(immutable@5.0.3)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.26.0
       '@emotion/react': 11.14.0(@types/react@19.0.8)(react@19.0.0)
@@ -10338,7 +10338,7 @@ snapshots:
       font-face-observer: 1.0.0
       hoist-non-react-statics: 3.3.2
       intersection-observer: 0.12.2
-      ketcher-core: 2.26.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      ketcher-core: 2.27.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       lodash: 4.17.21
       miew-react: 1.0.0(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react: 19.0.0
@@ -10370,11 +10370,11 @@ snapshots:
       - react-native
       - supports-color
 
-  ketcher-standalone@2.26.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  ketcher-standalone@2.27.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.26.0
-      indigo-ketcher: 1.25.0
-      ketcher-core: 2.26.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      indigo-ketcher: 1.26.0
+      ketcher-core: 2.27.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
     transitivePeerDependencies:
       - react
       - react-dom

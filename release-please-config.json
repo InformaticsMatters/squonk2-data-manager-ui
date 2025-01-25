@@ -7,6 +7,5 @@
       "prerelease": true,
       "prerelease-type": "rc"
     }
-  },
-  "separate-pull-requests": true
+  }
 }

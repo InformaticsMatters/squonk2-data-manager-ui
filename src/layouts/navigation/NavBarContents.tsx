@@ -59,56 +59,43 @@ export const NavBarContents = () => {
       {/* Desktop Navigation */}
       <Box
         sx={{
-          display: { xs: "none", md: "block" },
+          display: { xs: "none" },
+          "@media (min-width:655px)": {
+            display: "block",
+          },
           flex: 1,
         }}
       >
         <NavLinks linkWidth={120} />
       </Box>
 
-      {/* Tablet Navigation */}
-      <Box
-        sx={{
-          display: { xs: "none", md: "none", "@media (min-width:655px)": "block" },
-          flex: 1,
-        }}
-      >
-        <NavLinks linkWidth={100} />
-      </Box>
-
       {/* Desktop Controls */}
       <Box
         sx={{
-          display: { xs: "none", md: "flex" },
           justifyContent: "flex-end",
           alignItems: "center",
           flex: "1 0",
           minWidth: 0,
           ml: "auto",
+          display: "flex",
         }}
       >
-        {!!isDMAuthorized && <OUPContext />}
+        {!!isDMAuthorized && <OUPContext sx={{ display: { xs: "none", md: "flex" } }} />}
         <SettingsButton disabled={!isDMAuthorized} onClick={handleOpenSettings} />
-        <UserMenu />
-      </Box>
 
-      {/* Mobile/Tablet Controls */}
-      <Box
-        sx={{
-          display: { xs: "flex", md: "none" },
-          flex: 1,
-          justifyContent: "flex-end",
-          alignItems: "center",
-          ml: { xs: "auto", "@media (min-width:655px)": 0 },
-        }}
-      >
-        <SettingsButton disabled={!isDMAuthorized} onClick={handleOpenSettings} />
         <Box
           sx={{
-            display: { "@media (min-width:655px)": "none" },
+            display: { xs: "none", md: "block" },
           }}
         >
-          <MobileNavMenu links />
+          <UserMenu />
+        </Box>
+        <Box
+          sx={{
+            display: { xs: "block", md: "none" },
+          }}
+        >
+          <MobileNavMenu />
         </Box>
       </Box>
     </>

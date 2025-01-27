@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.2.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.1.1-rc.0...5.2.0-rc.0) (2025-01-27)
+
+
+### Features
+
+* **sdf:** add basic support for sdf without a schema ([4f8dec4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4f8dec488a43e73dd6660c21f79aacecbba18d2b))
+
+
+### Bug Fixes
+
+* **navigation:** fix navigation issues that appeared in recent commit ([e624325](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e6243254163f829110bf2657a17cb96ac4fb502f))
+
 ## [5.1.1-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.1.0-rc.0...5.1.1-rc.0) (2025-01-25)
 
 

@@ -6,12 +6,12 @@ import { Alert, Box, Button, Checkbox, MenuItem, TextField, Typography } from "@
 import { type SDFViewerConfig } from "../../utils/api/sdfViewer";
 import { type JSON_SCHEMA_TYPE, JSON_SCHEMA_TYPES } from "../../utils/app/jsonSchema";
 
-type Field = {
+export type Field = {
   type: JSON_SCHEMA_TYPE;
   description: string;
 };
 
-interface Schema {
+export interface Schema {
   $schema: string;
   $id: string;
   title: string;

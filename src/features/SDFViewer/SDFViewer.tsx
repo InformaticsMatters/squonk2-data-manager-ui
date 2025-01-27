@@ -1,13 +1,12 @@
 import { type PropsWithChildren, useState } from "react";
 
-import { useGetProjectFile } from "@squonk/data-manager-client/project";
-
 import { Button, Typography } from "@mui/material";
 
 import { CenterLoader } from "../../components/CenterLoader";
 import { type SDFViewerConfig } from "../../utils/api/sdfViewer";
 import { ConfigEditor } from "./ConfigEditor";
 import { SDFViewerData } from "./SDFViewerData";
+import { useGetSDFSchema } from "./useGetSDFSchema";
 
 export interface SDFViewerProps {
   project: string;
@@ -15,44 +14,11 @@ export interface SDFViewerProps {
   file: string;
 }
 
-const getSchemaFileNameFromSDFFileName = (fname: string) => fname.slice(0, -4) + ".schema.json";
-
 export const SDFViewer = ({ project, path, file }: SDFViewerProps) => {
-  const schemaFilename = getSchemaFileNameFromSDFFileName(file);
-  const {
-    data: schema,
-    error,
-    isLoading,
-  } = useGetProjectFile<any>(
-    project,
-    {
-      path,
-      file: schemaFilename,
-    },
-    {
-      query: {
-        retry: 0,
-      },
-    },
-  );
+  const { schema, isLoading } = useGetSDFSchema(project, path, file);
 
   const [isEditingConfig, setIsEditingConfig] = useState(true);
   const [config, setConfig] = useState<SDFViewerConfig | undefined>(undefined);
-
-  if (error) {
-    // handle error
-    // SDF schema might not exist
-    if (error.status === 404) {
-      return (
-        <Header title={file}>
-          <Typography color="error" variant="body1">
-            No schema found for this SDF
-          </Typography>
-        </Header>
-      );
-    }
-    return null;
-  }
 
   if (isLoading) {
     // TODO: add loading page

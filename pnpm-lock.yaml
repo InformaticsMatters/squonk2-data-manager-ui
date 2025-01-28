@@ -64,10 +64,10 @@ importers:
         version: 8.51.0(@opentelemetry/core@1.29.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.56.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.29.0(@opentelemetry/api@1.9.0))(next@15.1.6(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.83.1))(react@19.0.0)(webpack@5.97.1)
       '@squonk/account-server-client':
         specifier: 4.0.0
-        version: 4.0.0(@tanstack/react-query@5.64.2(react@19.0.0))(axios@1.7.9)
+        version: 4.0.0(@tanstack/react-query@5.65.1(react@19.0.0))(axios@1.7.9)
       '@squonk/data-manager-client':
         specifier: 3.2.0
-        version: 3.2.0(@tanstack/react-query@5.64.2(react@19.0.0))(axios@1.7.9)
+        version: 3.2.0(@tanstack/react-query@5.65.1(react@19.0.0))(axios@1.7.9)
       '@squonk/mui-theme':
         specifier: 4.0.0
         version: 4.0.0(@mui/material@6.4.1(@emotion/react@11.14.0(@types/react@19.0.8)(react@19.0.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.8)(react@19.0.0))(@types/react@19.0.8)(react@19.0.0))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))
@@ -78,11 +78,11 @@ importers:
         specifier: 8.19.4
         version: 8.19.4
       '@tanstack/react-query':
-        specifier: 5.64.2
-        version: 5.64.2(react@19.0.0)
+        specifier: 5.65.1
+        version: 5.65.1(react@19.0.0)
       '@tanstack/react-query-devtools':
-        specifier: 5.64.2
-        version: 5.64.2(@tanstack/react-query@5.64.2(react@19.0.0))(react@19.0.0)
+        specifier: 5.65.1
+        version: 5.65.1(@tanstack/react-query@5.65.1(react@19.0.0))(react@19.0.0)
       '@tanstack/react-table':
         specifier: 8.20.6
         version: 8.20.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -628,6 +628,7 @@ packages:
   '@mui/base@5.0.0-beta.69':
     resolution: {integrity: sha512-r2YyGUXpZxj8rLAlbjp1x2BnMERTZ/dMqd9cClKj2OJ7ALAuiv/9X5E9eHfRc9o/dGRuLSMq/WTjREktJVjxVA==}
     engines: {node: '>=14.0.0'}
+    deprecated: This package has been replaced by @base-ui-components/react
     peerDependencies:
       '@types/react': ^17.0.0 || ^18.0.0 || ^19.0.0
       react: ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -1526,20 +1527,20 @@ packages:
     resolution: {integrity: sha512-Wo1iKt2b9OT7d+YGhvEPD3DXvPv2etTusIMhMUoG7fbhmxcXCtIjJDEygy91Y2JFlwGyjqiBPRozme7UD8hoqg==}
     engines: {node: '>=12'}
 
-  '@tanstack/query-core@5.64.2':
-    resolution: {integrity: sha512-hdO8SZpWXoADNTWXV9We8CwTkXU88OVWRBcsiFrk7xJQnhm6WRlweDzMD+uH+GnuieTBVSML6xFa17C2cNV8+g==}
+  '@tanstack/query-core@5.65.0':
+    resolution: {integrity: sha512-Bnnq/1axf00r2grRT6gUyIkZRKzhHs+p4DijrCQ3wMlA3D3TTT71gtaSLtqnzGddj73/7X5JDGyjiSLdjvQN4w==}
 
-  '@tanstack/query-devtools@5.64.2':
-    resolution: {integrity: sha512-3DautR5UpVZdk/qNIhioZVF7g8fdQZ1U98sBEEk4Tzz3tihSBNMPgwlP40nzgbPEDBIrn/j/oyyvNBVSo083Vw==}
+  '@tanstack/query-devtools@5.65.0':
+    resolution: {integrity: sha512-g5y7zc07U9D3esMdqUfTEVu9kMHoIaVBsD0+M3LPdAdD710RpTcLiNvJY1JkYXqkq9+NV+CQoemVNpQPBXVsJg==}
 
-  '@tanstack/react-query-devtools@5.64.2':
-    resolution: {integrity: sha512-+ZjJVnPzc8BUV/Eklu2k9T/IAyAyvwoCHqOaOrk2sbU33LFhM52BpX4eyENXn0bx5LwV3DJZgEQlIzucoemfGQ==}
+  '@tanstack/react-query-devtools@5.65.1':
+    resolution: {integrity: sha512-PKUBz7+FAP3eI1zoWrP5vxNQXs+elPz3u/3cILGhNZl2dufgbU9OJRpbC+BAptLXTsGxTwkAlrWBIZbD/c7CDw==}
     peerDependencies:
-      '@tanstack/react-query': ^5.64.2
+      '@tanstack/react-query': ^5.65.1
       react: ^18 || ^19
 
-  '@tanstack/react-query@5.64.2':
-    resolution: {integrity: sha512-3pakNscZNm8KJkxmovvtZ4RaXLyiYYobwleTMvpIGUoKRa8j8VlrQKNl5W8VUEfVfZKkikvXVddLuWMbcSCA1Q==}
+  '@tanstack/react-query@5.65.1':
+    resolution: {integrity: sha512-BSpjo4RQdJ75Mw3pqM1AJYNhanNxJE3ct7RmCZUAv9cUJg/Qmonzc/Xy2kKXeQA1InuKATSuc6pOZciWOF8TYQ==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -7476,14 +7477,14 @@ snapshots:
 
   '@sideway/pinpoint@2.0.0': {}
 
-  '@squonk/account-server-client@4.0.0(@tanstack/react-query@5.64.2(react@19.0.0))(axios@1.7.9)':
+  '@squonk/account-server-client@4.0.0(@tanstack/react-query@5.65.1(react@19.0.0))(axios@1.7.9)':
     dependencies:
-      '@tanstack/react-query': 5.64.2(react@19.0.0)
+      '@tanstack/react-query': 5.65.1(react@19.0.0)
       axios: 1.7.9
 
-  '@squonk/data-manager-client@3.2.0(@tanstack/react-query@5.64.2(react@19.0.0))(axios@1.7.9)':
+  '@squonk/data-manager-client@3.2.0(@tanstack/react-query@5.65.1(react@19.0.0))(axios@1.7.9)':
     dependencies:
-      '@tanstack/react-query': 5.64.2(react@19.0.0)
+      '@tanstack/react-query': 5.65.1(react@19.0.0)
       axios: 1.7.9
 
   '@squonk/eslint-config@2.1.0(eslint@8.57.1)(typescript@5.7.3)':
@@ -7525,19 +7526,19 @@ snapshots:
     dependencies:
       remove-accents: 0.5.0
 
-  '@tanstack/query-core@5.64.2': {}
+  '@tanstack/query-core@5.65.0': {}
 
-  '@tanstack/query-devtools@5.64.2': {}
+  '@tanstack/query-devtools@5.65.0': {}
 
-  '@tanstack/react-query-devtools@5.64.2(@tanstack/react-query@5.64.2(react@19.0.0))(react@19.0.0)':
+  '@tanstack/react-query-devtools@5.65.1(@tanstack/react-query@5.65.1(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@tanstack/query-devtools': 5.64.2
-      '@tanstack/react-query': 5.64.2(react@19.0.0)
+      '@tanstack/query-devtools': 5.65.0
+      '@tanstack/react-query': 5.65.1(react@19.0.0)
       react: 19.0.0
 
-  '@tanstack/react-query@5.64.2(react@19.0.0)':
+  '@tanstack/react-query@5.65.1(react@19.0.0)':
     dependencies:
-      '@tanstack/query-core': 5.64.2
+      '@tanstack/query-core': 5.65.0
       react: 19.0.0
 
   '@tanstack/react-table@8.20.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':

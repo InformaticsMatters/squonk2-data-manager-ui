@@ -85,7 +85,7 @@
     "nanoid": "5.0.8",
     "next": "15.0.3",
     "next-http-proxy-middleware": "1.2.6",
-    "nextjs-routes": "2.2.3",
+    "nextjs-routes": "2.2.5",
     "node-fetch": "3.3.2",
     "notistack": "3.0.1",
     "plotly.js-basic-dist": "2.35.2",

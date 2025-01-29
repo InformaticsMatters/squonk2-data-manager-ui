@@ -4,14 +4,7 @@ import { type FileError } from "react-dropzone";
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
 import { useGetTask } from "@squonk/data-manager-client/task";
 
-import {
-  Grid2 as Grid,
-  IconButton,
-  LinearProgress,
-  MenuItem,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Grid, IconButton, LinearProgress, MenuItem, TextField, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { TwiddleIcon } from "../../components/uploads/TwiddleIcon";
@@ -38,8 +31,8 @@ export const SingleFileUploadWithProgress = ({
   changeMimeType,
 }: SingleFileUploadWithProgressProps) => {
   const queryClient = useQueryClient();
-  const fileNameRef = useRef<HTMLInputElement>(null);
-  const fileExtRef = useRef<HTMLInputElement>(null);
+  const fileNameRef = useRef<HTMLInputElement>();
+  const fileExtRef = useRef<HTMLInputElement>();
 
   const composeNewFilePath = () => {
     return `${fileNameRef.current?.value}${fileExtRef.current?.value}`;
@@ -80,8 +73,8 @@ export const SingleFileUploadWithProgress = ({
 
   return (
     <>
-      <Grid container spacing={1} sx={{ alignItems: "center" }}>
-        <Grid size={{ md: 9, sm: 8, xs: 12 }}>
+      <Grid container alignItems="center" spacing={1}>
+        <Grid item md={9} sm={8} xs={12}>
           <TextField
             fullWidth
             required
@@ -94,7 +87,7 @@ export const SingleFileUploadWithProgress = ({
           />
         </Grid>
 
-        <Grid size={{ md: 2, sm: 3, xs: 8 }} sx={{ textAlign: "center" }}>
+        <Grid item md={2} sm={3} sx={{ textAlign: "center" }} xs={8}>
           <TextField
             fullWidth
             select
@@ -118,7 +111,7 @@ export const SingleFileUploadWithProgress = ({
           </TextField>
         </Grid>
 
-        <Grid size={{ md: 1, sm: 1, xs: 4 }} sx={{ textAlign: "center" }}>
+        <Grid item md={1} sm={1} sx={{ textAlign: "center" }} xs={4}>
           <IconButton
             disabled={disabled}
             size="small"

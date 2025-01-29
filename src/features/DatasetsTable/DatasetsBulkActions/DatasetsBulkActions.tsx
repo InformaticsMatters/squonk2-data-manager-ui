@@ -17,16 +17,14 @@ export interface DatasetsBulkActionsProps {
 export const DatasetsBulkActions = ({ selectedDatasets }: DatasetsBulkActionsProps) => {
   return (
     <Box
-      sx={{
-        alignItems: "center",
-        display: "flex",
-        flex: 1,
-        justifyContent: "space-between",
-        visibility: selectedDatasets.length === 0 ? "hidden" : undefined,
-      }}
+      alignItems="center"
+      display="flex"
+      flex={1}
+      justifyContent="space-between"
+      visibility={selectedDatasets.length === 0 ? "hidden" : undefined}
     >
       <Typography>Selected: {selectedDatasets.length}</Typography>
-      <Box sx={{ display: "flex" }}>
+      <Box display="flex">
         <BulkDeleteButton selectedDatasets={selectedDatasets} />
       </Box>
     </Box>

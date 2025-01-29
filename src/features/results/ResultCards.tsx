@@ -1,6 +1,6 @@
 import { type InstanceSummary, type TaskSummary } from "@squonk/data-manager-client";
 
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import dayjs from "dayjs";
 
 import { Instance } from "../../components/instances/Instance";
@@ -70,14 +70,14 @@ export const ResultCards = ({ resultTypes, searchValue, instances, tasks }: Resu
       if (isTaskSummary(instanceOrTask)) {
         const task = instanceOrTask;
         return (
-          <Grid key={task.id} size={{ xs: 12 }}>
+          <Grid item key={task.id} xs={12}>
             <ResultTaskCard task={task} />
           </Grid>
         );
       }
       const instance = instanceOrTask;
       return (
-        <Grid key={instance.id} size={{ xs: 12 }}>
+        <Grid item key={instance.id} xs={12}>
           <Instance
             instanceId={instance.id}
             instanceSummary={instance}

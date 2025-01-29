@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useGetInstances } from "@squonk/data-manager-client/instance";
 import { useGetTasks } from "@squonk/data-manager-client/task";
 
-import { Alert, Container, Grid2 as Grid } from "@mui/material";
+import { Alert, Container, Grid } from "@mui/material";
 
 import { CenterLoader } from "../components/CenterLoader";
 import { useCurrentProjectId } from "../hooks/projectHooks";
@@ -44,19 +44,19 @@ export const ResultsView = () => {
       />
 
       <Grid container spacing={1}>
-        <Grid size={12}>
+        <Grid item xs={12}>
           {!!isInstancesError && (
             <Alert severity="warning">
               Instances failed to load ({getErrorMessage(instancesError)})
             </Alert>
           )}
         </Grid>
-        <Grid size={12}>
+        <Grid item xs={12}>
           {!!isTasksError && (
             <Alert severity="warning">Tasks failed to load ({getErrorMessage(tasksError)})</Alert>
           )}
         </Grid>
-        <Grid size={12}>
+        <Grid item xs={12}>
           {!!(instances && !isInstancesLoading) || (tasks && !isTasksLoading) ? (
             <ResultCards
               instances={instances ?? []}

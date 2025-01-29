@@ -1,4 +1,4 @@
-import { Box, Button, Container, Grid2 as Grid, Link } from "@mui/material";
+import { Box, Button, Container, Grid, Link } from "@mui/material";
 
 import { useCookieConsent } from "../../state/cookieConsent";
 
@@ -24,17 +24,16 @@ export const CookiesBanner = () => {
         left: 0,
         padding: "0.5rem",
         boxShadow: 10,
-        displayPrint: "none",
       }}
     >
       <Container>
-        <Grid container sx={{ alignItems: "center" }}>
-          <Grid size={{ xs: 10 }}>
+        <Grid container alignItems="center">
+          <Grid item xs={10}>
             Squonk Data Manager uses cookies for authentication. Some anonymous usage data is
             collected by <Link href="https://sentry.io/">Sentry</Link> to improve how this site
             functions.
           </Grid>
-          <Grid>
+          <Grid item>
             <Button variant="contained" onClick={handleConsent}>
               I understand
             </Button>

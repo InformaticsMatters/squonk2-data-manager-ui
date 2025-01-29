@@ -135,21 +135,21 @@ export const ScatterPlot = ({ molecules, properties, selectPoints, width }: Scat
           points?.length && selectPoints(points.map((p) => p.customdata) as string[]);
         }}
       />
-      <Box sx={{ display: "flex", gap: 2 }}>
+      <Box display="flex" gap={2}>
         <div>
-          <Typography gutterBottom component="label" sx={{ display: "block" }} variant="h5">
+          <Typography gutterBottom component="label" display="block" variant="h5">
             x-axis
           </Typography>
           <AxisSelector prop={xprop} properties={properties} onPropChange={setXprop} />
         </div>
         <div>
-          <Typography gutterBottom component="label" sx={{ display: "block" }} variant="h5">
+          <Typography gutterBottom component="label" display="block" variant="h5">
             y-axis
           </Typography>
           <AxisSelector prop={yprop} properties={properties} onPropChange={setYprop} />
         </div>
         <div>
-          <Typography gutterBottom component="label" sx={{ display: "block" }} variant="h5">
+          <Typography gutterBottom component="label" display="block" variant="h5">
             colour-axis
           </Typography>
           <AxisSelector prop={cprop} properties={properties} onPropChange={setCprop} />
@@ -157,11 +157,11 @@ export const ScatterPlot = ({ molecules, properties, selectPoints, width }: Scat
             <Switch checked={showColourBar} onChange={() => setShowColourBar(!showColourBar)} />
           </Tooltip>
           {/* <div>
-          <em>({colourExtent.min !== undefined && `${colourExtent.min}–${colourExtent.max}`})</em>
-        </div> */}
+            <em>({colourExtent.min !== undefined && `${colourExtent.min}–${colourExtent.max}`})</em>
+          </div> */}
         </div>
         <div>
-          <Typography gutterBottom component="label" sx={{ display: "block" }} variant="h5">
+          <Typography gutterBottom component="label" display="block" variant="h5">
             size-axis
           </Typography>
           <AxisSelector prop={sprop} properties={properties} onPropChange={setSprop} />

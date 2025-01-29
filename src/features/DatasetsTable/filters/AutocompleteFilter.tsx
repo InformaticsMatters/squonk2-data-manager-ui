@@ -67,13 +67,11 @@ export const AutocompleteFilter = <T,>({
       renderInput={(params) => (
         <TextField
           {...params}
-          label={label}
-          slotProps={{
-            htmlInput: {
-              ...params.inputProps,
-              autoComplete: "off", // Disable autocomplete and autofill
-            },
+          inputProps={{
+            ...params.inputProps,
+            autoComplete: "off", // Disable autocomplete and autofill
           }}
+          label={label}
           variant="outlined"
         />
       )}

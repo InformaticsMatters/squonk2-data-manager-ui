@@ -1,0 +1,37 @@
+@use "mixins/font-face-template" with ($base_url: $assetsURL);
+
+@include font-face-template.font-face-template("Open Sans", "OpenSans-Light", normal, 300);
+@include font-face-template.font-face-template("Open Sans", "OpenSans-LightItalic", italic, 300);
+@include font-face-template.font-face-template("Open Sans", "OpenSans-Regular", normal, 400);
+@include font-face-template.font-face-template("Open Sans", "OpenSans-Italic", italic, 400);
+@include font-face-template.font-face-template("Open Sans", "OpenSans-SemiBold", normal, 600);
+@include font-face-template.font-face-template("Open Sans", "OpenSans-SemiBoldItalic", italic, 600);
+@include font-face-template.font-face-template("Open Sans", "OpenSans-Bold", normal, 700);
+@include font-face-template.font-face-template("Open Sans", "OpenSans-BoldItalic", italic, 700);
+@include font-face-template.font-face-template("Open Sans", "OpenSans-ExtraBold", normal, 800);
+@include font-face-template.font-face-template("Open Sans", "OpenSans-ExtraBoldItalic", italic, 800);
+
+@include font-face-template.font-face-template("Raleway", "Raleway-Thin", normal, 100);
+@include font-face-template.font-face-template("Raleway", "Raleway-ThinItalic", italic, 100);
+@include font-face-template.font-face-template("Raleway", "Raleway-ExtraLight", normal, 200);
+@include font-face-template.font-face-template("Raleway", "Raleway-ExtraLightItalic", italic, 200);
+@include font-face-template.font-face-template("Raleway", "Raleway-Light", normal, 300);
+@include font-face-template.font-face-template("Raleway", "Raleway-LightItalic", italic, 300);
+@include font-face-template.font-face-template("Raleway", "Raleway-Regular", normal, normal);
+@include font-face-template.font-face-template("Raleway", "Raleway-Italic", italic, normal);
+@include font-face-template.font-face-template("Raleway", "Raleway-Medium", normal, 500);
+@include font-face-template.font-face-template("Raleway", "Raleway-MediumItalic", italic, 500);
+@include font-face-template.font-face-template("Raleway", "Raleway-SemiBold", normal, 600);
+@include font-face-template.font-face-template("Raleway", "Raleway-SemiBoldItalic", italic, 600);
+@include font-face-template.font-face-template("Raleway", "Raleway-BoldItalic", italic, bold);
+@include font-face-template.font-face-template("Raleway", "Raleway-Bold", normal, bold);
+@include font-face-template.font-face-template("Raleway", "Raleway-ExtraBold", normal, 800);
+@include font-face-template.font-face-template("Raleway", "Raleway-ExtraBoldItalic", italic, 800);
+@include font-face-template.font-face-template("Raleway", "Raleway-Black", normal, 900);
+@include font-face-template.font-face-template("Raleway", "Raleway-BlackItalic", italic, 900);
+
+@import url("https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap");
+
+:root {
+  font-size: 14px;
+}

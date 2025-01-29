@@ -170,7 +170,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
         id: "expander",
         enableSorting: false,
         header: ({ table }) => (
-          <Box sx={{ display: "flex" }}>
+          <Box display="flex">
             <IconButton onClick={table.getToggleAllRowsExpandedHandler()}>
               {table.getIsAllRowsExpanded() ? <ExpandLess /> : <ExpandMoreIcon />}
             </IconButton>
@@ -263,22 +263,19 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
   const tableContents = (
     <>
       {!!ToolbarChild || !!enableSearch ? (
-        <Toolbar sx={{ pt: 2, alignItems: "flex-start", gap: 1 }}>
+        <Toolbar sx={{ pt: 2, alignItems: "flex-start", gap: (theme) => theme.spacing(1) }}>
           {ToolbarChild}
           {!!enableSearch && (
             <TextField
-              placeholder="Search..."
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchRoundedIcon />
-                    </InputAdornment>
-                  ),
-                },
-
-                htmlInput: { "aria-label": "search" },
+              inputProps={{ "aria-label": "search" }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchRoundedIcon />
+                  </InputAdornment>
+                ),
               }}
+              placeholder="Search..."
               sx={{ ml: "auto" }}
               value={globalFilter || ""}
               onChange={(event) => setGlobalFilter(event.target.value)}
@@ -336,9 +333,11 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                     <TableCell
                       {...customCellProps}
                       key={cell.id}
-                      sx={(theme) => ({
-                        pl: cell.column.getCanSort() ? theme.spacing(2 + 2 * row.depth) : undefined,
-                      })}
+                      sx={{
+                        pl: cell.column.getCanSort()
+                          ? (theme) => theme.spacing(2 + 2 * row.depth)
+                          : undefined,
+                      }}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>

@@ -139,8 +139,8 @@ export const SMILESInput = ({
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 1, width }}>
-      <Box sx={{ height }}>
+    <Box display="flex" flexDirection="column" gap={1} width={width}>
+      <Box height={height}>
         <Sketcher smiles={smiles} />
       </Box>
       <ButtonGroup size="small" sx={{ alignSelf: "end" }} variant="outlined">

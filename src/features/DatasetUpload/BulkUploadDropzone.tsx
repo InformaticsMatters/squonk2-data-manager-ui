@@ -1,6 +1,6 @@
 import { type Dispatch, type SetStateAction } from "react";
 
-import { Grid2 as Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 
 import { Dropzone } from "../../components/uploads/Dropzone";
 import { type UploadableFile } from "../../components/uploads/types";
@@ -27,9 +27,13 @@ export const BulkUploadDropzone = ({ files, setFiles }: BulkUploadDropzoneProps)
     <Dropzone files={files} onNewFiles={setFiles}>
       <Grid container direction="column" spacing={1}>
         {files.map((fileWrapper, index) => (
-          <Grid key={fileWrapper.id}>
-            <SingleFile file={fileWrapper} files={files} index={index} setFiles={setFiles} />
-          </Grid>
+          <SingleFile
+            file={fileWrapper}
+            files={files}
+            index={index}
+            key={fileWrapper.id}
+            setFiles={setFiles}
+          />
         ))}
       </Grid>
     </Dropzone>
@@ -67,13 +71,15 @@ const SingleFile = ({ index, file, setFiles, files }: SingleFileProps) => {
   };
 
   return (
-    <SingleFileUploadWithProgress
-      changeMimeType={changeMimeType}
-      changeToDone={changeToDone}
-      errors={file.errors}
-      fileWrapper={file}
-      rename={rename}
-      onDelete={onDelete}
-    />
+    <Grid item>
+      <SingleFileUploadWithProgress
+        changeMimeType={changeMimeType}
+        changeToDone={changeToDone}
+        errors={file.errors}
+        fileWrapper={file}
+        rename={rename}
+        onDelete={onDelete}
+      />
+    </Grid>
   );
 };

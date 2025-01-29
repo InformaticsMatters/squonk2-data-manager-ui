@@ -40,21 +40,19 @@ export const DatasetSchemaDescriptionInput = ({
   return (
     <TextField
       fullWidth
-      label="Schema description"
-      slotProps={{
-        input: {
-          endAdornment: (
-            <Box sx={{ ml: 1, visibility: hasChanged ? undefined : "hidden" }}>
-              <Tooltip title="Revert changes">
-                {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
-                <IconButton size="small" onClick={() => setDescription(originalValue || "")}>
-                  <Restore />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          ),
-        },
+      InputProps={{
+        endAdornment: (
+          <Box ml={1} visibility={hasChanged ? undefined : "hidden"}>
+            <Tooltip title="Revert changes">
+              {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+              <IconButton size="small" onClick={() => setDescription(originalValue || "")}>
+                <Restore />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        ),
       }}
+      label="Schema description"
       sx={{ mr: 2, background: hasChanged ? "action.hover" : undefined }}
       value={displayValue || ""}
       onBlur={() => setDescription(displayValue)}

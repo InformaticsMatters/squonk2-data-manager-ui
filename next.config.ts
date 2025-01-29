@@ -38,6 +38,13 @@ let nextConfig: NextConfig = {
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages: MONOREPO_MODE ? ["@squonk/mui-theme", "@squonk/sdf-parser"] : [],
+  sassOptions: {
+    silenceDeprecations: ["legacy-js-api"],
+    prependData: `$assetsURL: "${process.env.ASSET_URL ?? "https://squonk.informaticsmatters.org"}";`,
+  },
+  images: {
+    domains: ["squonk.informaticsmatters.org"],
+  },
   // Allow mdx content and mdx files as pages
   webpack(config, options) {
     if (options.isServer) {

@@ -51,16 +51,6 @@ Notable scripts:
 
 See `package.json` for all available scripts.
 
-### Assets
-The `/assets` folder is a Git subtree. Manage this with the following commands.
-```bash
-# Add the subtree
-git subtree add --prefix assets git@github.com:InformaticsMatters/squonk-assets.git main --squash
-
-# Update the subtree when needed
-git subtree pull --prefix assets git@github.com:InformaticsMatters/squonk-assets.git main --squash
-```
-
 ## Testing
 
 This project uses [Playwright](https://playwright.dev/) for integration and e2e testing. To get this setup install all dependencies:

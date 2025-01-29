@@ -15,7 +15,7 @@ export interface SelectedFilesLabelProps {
  */
 export const SelectedFilesLabel = ({ files }: SelectedFilesLabelProps) => {
   return (
-    <Typography noWrap sx={{ display: "inline", whiteSpace: "break-spaces" }} variant="body2">
+    <Typography noWrap display="inline" sx={{ whiteSpace: "break-spaces" }} variant="body2">
       Selected Files:{" "}
       {files.length === 1 ? (
         files[0]

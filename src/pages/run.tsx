@@ -4,7 +4,7 @@ import { useGetApplications } from "@squonk/data-manager-client/application";
 import { useGetJobs } from "@squonk/data-manager-client/job";
 
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
-import { Alert, Container, Grid2 as Grid, MenuItem, TextField } from "@mui/material";
+import { Alert, Container, Grid, MenuItem, TextField } from "@mui/material";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 
@@ -60,7 +60,7 @@ const Run = () => {
         ?.filter(({ kind }) => search([kind], searchValue))
         // Then create a card for each
         .map((app) => (
-          <Grid key={app.application_id} size={{ md: 3, sm: 6, xs: 12 }}>
+          <Grid item key={app.application_id} md={3} sm={6} xs={12}>
             <ApplicationCard app={app} projectId={currentProject?.project_id} />
           </Grid>
         )) ?? [];
@@ -73,7 +73,7 @@ const Run = () => {
     // Then create a card for each
     const jobCards =
       filteredJobs?.map((job) => (
-        <Grid key={job.id} size={{ md: 3, sm: 6, xs: 12 }}>
+        <Grid item key={job.id} md={3} sm={6} xs={12}>
           <JobCard
             disabled={!hasPermissionToRun}
             job={job}
@@ -81,8 +81,6 @@ const Run = () => {
           />
         </Grid>
       )) ?? [];
-
-    process.env.NODE_ENV === "development" && jobCards.push(<TestJobCard key={TEST_JOB_ID} />);
 
     const showApplications = executionTypes.includes("application");
     const showJobs = executionTypes.includes("job");
@@ -102,6 +100,8 @@ const Run = () => {
     hasPermissionToRun,
   ]);
 
+  process.env.NODE_ENV === "development" && cards.push(<TestJobCard key={TEST_JOB_ID} />);
+
   return (
     <>
       <Head>
@@ -113,17 +113,15 @@ const Run = () => {
             <Container maxWidth="xl">
               <Grid container spacing={2} sx={{ mb: 2 }}>
                 {/* Filter by apps/jobs */}
-                <Grid size={{ md: 4, sm: 6, xs: 12 }}>
+                <Grid item md={4} sm={6} xs={12}>
                   <TextField
                     fullWidth
                     select
                     label="Filter"
-                    slotProps={{
-                      select: {
-                        multiple: true,
-                        onChange: (event) => {
-                          setExecutionTypes(event.target.value as string[]);
-                        },
+                    SelectProps={{
+                      multiple: true,
+                      onChange: (event) => {
+                        setExecutionTypes(event.target.value as string[]);
                       },
                     }}
                     value={executionTypes}
@@ -134,7 +132,7 @@ const Run = () => {
                 </Grid>
 
                 {/* Search through each card */}
-                <Grid size={{ md: 4, sm: 6, xs: 12 }} sx={{ ml: "auto" }}>
+                <Grid item md={4} sm={6} sx={{ ml: "auto" }} xs={12}>
                   <SearchTextField
                     fullWidth
                     value={searchValue}
@@ -146,14 +144,14 @@ const Run = () => {
               {/* Errors */}
               <Grid container spacing={2}>
                 {!!isApplicationsError && (
-                  <Grid size={12}>
+                  <Grid item xs={12}>
                     <Alert severity="error">
                       Applications failed to load ({applicationsError.response?.status})
                     </Alert>
                   </Grid>
                 )}
                 {!!isJobsError && (
-                  <Grid size={12}>
+                  <Grid item xs={12}>
                     <Alert severity="error">
                       Jobs failed to load ({jobsError.response?.status})
                     </Alert>
@@ -162,7 +160,7 @@ const Run = () => {
 
                 {/* Warnings */}
                 {!currentProject && (
-                  <Grid size={12}>
+                  <Grid item xs={12}>
                     <Alert severity="warning">
                       Select a project from the settings to launch apps and run jobs.
                     </Alert>
@@ -170,7 +168,7 @@ const Run = () => {
                 )}
 
                 {!isApplicationsLoading && !isJobsLoading && !hasPermissionToRun && (
-                  <Grid size={12}>
+                  <Grid item xs={12}>
                     <Alert severity="warning">
                       You must be a project editor to run jobs in this project.
                     </Alert>

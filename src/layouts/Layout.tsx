@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 
-import { Box, LinearProgress, NoSsr } from "@mui/material";
+import { Box, LinearProgress, NoSsr, useMediaQuery } from "@mui/material";
 
 import { CookiesBanner } from "../components/legal/CookiesBanner";
 import { useIsTransitioning } from "../hooks/useIsTransitioning";
@@ -12,21 +12,20 @@ export interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
+  const isPrint = useMediaQuery("print");
   const isTransitioning = useIsTransitioning(false);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Header />
+    <Box display="flex" flexDirection="column" minHeight="100vh">
+      {!isPrint && <Header />}
       {!!isTransitioning && <LinearProgress />}
       {/* <Slide appear direction="right" in={!isTransitioning}> */}
-      <Box component="main" sx={{ paddingY: 2 }}>
+      <Box component="main" paddingY={2}>
         {children}
       </Box>
       {/* </Slide> */}
-      <Footer />
-      <NoSsr>
-        <CookiesBanner />
-      </NoSsr>
+      {!isPrint && <Footer />}
+      <NoSsr>{!isPrint && <CookiesBanner />}</NoSsr>
     </Box>
   );
 };

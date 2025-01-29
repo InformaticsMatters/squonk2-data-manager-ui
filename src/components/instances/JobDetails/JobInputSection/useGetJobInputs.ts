@@ -2,7 +2,6 @@ import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-man
 import { useGetJob } from "@squonk/data-manager-client/job";
 
 import { type InputFieldSchema } from "../../../runCards/JobCard/JobInputFields";
-import { TEST_JOB_ID } from "../../../runCards/TestJob/jobId";
 
 // Contains only fields we are interested in
 type ApplicationSpecification = {
@@ -32,7 +31,7 @@ export const useGetJobInputs = (instance: InstanceGetResponse | InstanceSummary)
     instance.job_id ?? -1,
     undefined,
     {
-      query: { enabled: inputsEnabled, retry: instance.job_id === TEST_JOB_ID ? 1 : 3 },
+      query: { enabled: inputsEnabled },
     },
   );
 

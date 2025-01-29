@@ -7,14 +7,7 @@ import { useGetProjects } from "@squonk/data-manager-client/project";
 import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
 import { AttachFileRounded as AttachFileRoundedIcon } from "@mui/icons-material";
-import {
-  Alert,
-  FormControl,
-  FormGroup,
-  ListItemButton,
-  ListItemText,
-  MenuItem,
-} from "@mui/material";
+import { Alert, FormControl, FormGroup, ListItem, ListItemText, MenuItem } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { Field } from "formik";
 import { CheckboxWithLabel, TextField } from "formik-mui";
@@ -82,7 +75,8 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
 
   return (
     <>
-      <ListItemButton
+      <ListItem
+        button
         disabled={isProjectsLoading || isTypesLoading || isUserLoading}
         onClick={() => setOpen(true)}
       >
@@ -101,7 +95,8 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
           }
         />
         <AttachFileRoundedIcon color="action" />
-      </ListItemButton>
+      </ListItem>
+
       <FormikModalWrapper
         // Reinitialize to allow a project to be selected by default after the async action is
         // completed

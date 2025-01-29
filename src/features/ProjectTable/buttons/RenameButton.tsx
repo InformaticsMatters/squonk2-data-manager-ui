@@ -54,7 +54,7 @@ export const RenameButton = ({ projectId, type, path, ...buttonProps }: RenameBu
           handleMove(dstPath, { onSettled: () => resetForm() });
         }}
       >
-        <Box sx={{ p: 1 }}>
+        <Box p={1}>
           <Field
             autoFocus
             fullWidth

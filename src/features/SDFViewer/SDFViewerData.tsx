@@ -110,7 +110,7 @@ export const SDFViewerData = ({ project, path, file, config }: SDFViewerDataProp
   if (isFetching) {
     return (
       <>
-        <Typography sx={{ textAlign: "center" }}>Loading and parsing data</Typography>
+        <Typography textAlign="center">Loading and parsing data</Typography>
         <LinearProgress />
       </>
     );
@@ -130,7 +130,7 @@ export const SDFViewerData = ({ project, path, file, config }: SDFViewerDataProp
       sx={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(144px, auto))",
-        gridGap: 2,
+        gridGap: (theme) => theme.spacing(2),
         alignItems: "start",
       }}
     >

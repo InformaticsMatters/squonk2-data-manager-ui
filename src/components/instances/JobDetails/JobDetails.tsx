@@ -2,7 +2,7 @@ import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-man
 import { useGetJob } from "@squonk/data-manager-client/job";
 
 import { WorkOutlineRounded as WorkOutlineRoundedIcon } from "@mui/icons-material";
-import { Alert, Grid2 as Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { Alert, Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
 import { usePolledGetInstance } from "../../../hooks/usePolledGetInstance";
 import { getErrorMessage } from "../../../utils/next/orvalError";
@@ -59,13 +59,13 @@ export const JobDetails = ({ instanceId, jobId }: JobDetailsProps) => {
       </HorizontalList>
 
       <Grid container>
-        <Grid size={{ sm: 6, xs: 12 }}>
+        <Grid item sm={6} xs={12}>
           <PageSection level={3} title="Inputs">
             <JobInputSection instance={instance} />
           </PageSection>
         </Grid>
 
-        <Grid size={{ sm: 6, xs: 12 }}>
+        <Grid item sm={6} xs={12}>
           <PageSection level={3} title="Outputs">
             <JobOutputSection instance={instance} />
           </PageSection>

@@ -9,7 +9,7 @@ export interface DebugCheckboxProps {
 
 export const DebugCheckbox = ({ value, onChange }: DebugCheckboxProps) => {
   return (
-    <Box sx={{ marginX: 1 }}>
+    <Box marginX={1}>
       <FormControlLabel
         control={
           <Checkbox

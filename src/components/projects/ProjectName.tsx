@@ -9,7 +9,10 @@ export interface ProjectNameProps extends TypographyProps {
 export const ProjectName = ({ name, isPrivate, ...typographyProps }: ProjectNameProps) => {
   return (
     <Typography
-      sx={{ alignContent: "center", display: "flex", gap: "0.3em", lineHeight: "1.5rem" }}
+      alignContent="center"
+      display="flex"
+      gap="0.3em"
+      lineHeight="1.5rem"
       {...typographyProps}
     >
       {!!isPrivate && (

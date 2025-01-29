@@ -9,6 +9,7 @@ import {
   CardHeader,
   Collapse,
   IconButton,
+  useTheme,
 } from "@mui/material";
 
 /**
@@ -76,21 +77,26 @@ export const BaseCard = ({
   const [hasExpanded, setHasExpanded] = useState(!collapsedByDefault);
   const [expanded, setExpanded] = useState(!collapsedByDefault);
 
+  const theme = useTheme();
+
   return (
     <Card>
       {!!header && (
         <CardHeader
           avatar={
-            <Avatar sx={{ fontFamily: "verdana", backgroundColor: header.color ?? "transparent" }}>
+            <Avatar
+              sx={{
+                fontFamily: "verdana",
+                backgroundColor: header.color ?? "transparent",
+              }}
+            >
               {header.avatar?.[0].toUpperCase()}
             </Avatar>
           }
-          slotProps={{
-            subheader: { variant: "subtitle1" },
-            title: { variant: "body1" },
-          }}
           subheader={header.subtitle}
+          subheaderTypographyProps={{ variant: "subtitle1" }}
           title={header.title}
+          titleTypographyProps={{ variant: "body1" }}
         />
       )}
       <CardContent>{children}</CardContent>
@@ -102,13 +108,13 @@ export const BaseCard = ({
           <IconButton
             aria-expanded={expanded}
             size="large"
-            sx={(theme) => ({
+            sx={{
               marginLeft: "auto",
               transform: `rotate(${expanded ? 180 : 0}deg)`,
-              transition: theme.transitions.create("transform", {
+              transition: `${theme.transitions.create("transform", {
                 duration: theme.transitions.duration.shortest,
-              }),
-            })}
+              })}`,
+            }}
             onClick={() => {
               setExpanded(!expanded);
               setHasExpanded(true);

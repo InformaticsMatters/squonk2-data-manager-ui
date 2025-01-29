@@ -15,7 +15,7 @@ export const DocsNav = () => {
   const router = useRouter();
 
   return (
-    <Box aria-label="Docs" component="nav" role="navigation" sx={{ display: "flex", gap: 2 }}>
+    <Box aria-label="Docs" component="nav" display="flex" gap={2} role="navigation">
       {Object.entries(links).map(([href, title]) => (
         <NextLink
           component="button"

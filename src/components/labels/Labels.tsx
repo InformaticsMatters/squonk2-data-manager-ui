@@ -33,7 +33,7 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
 
   if (labels.length === 0) {
     return (
-      <Typography sx={{ display: "inline" }} variant="body2">
+      <Typography display="inline" variant="body2">
         No labels exist for this version
       </Typography>
     );

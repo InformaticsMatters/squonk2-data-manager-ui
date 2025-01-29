@@ -5,44 +5,46 @@ import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 
 export interface OUPContextProps {
-  sx?: any;
+  header?: boolean;
 }
 
 /**
  * Displays current context user is working in.
  */
-export const OUPContext = ({ sx }: OUPContextProps) => {
+export const OUPContext = ({ header = false }: OUPContextProps) => {
   const [unit] = useSelectedUnit();
   const [organisation] = useSelectedOrganisation();
   const currentProject = useCurrentProject();
 
   if (!!unit || !!organisation || !!currentProject) {
     return (
-      <Box
-        sx={[
-          {
-            flexBasis: "200px",
-            flexDirection: "column",
+      <>
+        {!!header && (
+          <Typography gutterBottom variant="h3">
+            Project
+          </Typography>
+        )}
+        <Box
+          flexBasis="200px"
+          sx={{
             minWidth: 0,
-            outline: "2px solid",
-            outlineColor: "primary.light",
+            outline: (theme) => `2px solid ${theme.palette.primary.light}`,
             borderRadius: 2,
             p: 0.75,
             mr: 1,
-          },
-          sx,
-        ]}
-      >
-        <Typography noWrap>
-          <em>Org</em>: {organisation?.name}
-        </Typography>
-        <Typography noWrap>
-          <em>Unit</em>: {unit?.name}
-        </Typography>
-        <Typography noWrap>
-          <em>Project</em>: {currentProject?.name}
-        </Typography>
-      </Box>
+          }}
+        >
+          <Typography noWrap>
+            <em>Org</em>: {organisation?.name}
+          </Typography>
+          <Typography noWrap>
+            <em>Unit</em>: {unit?.name}
+          </Typography>
+          <Typography noWrap>
+            <em>Project</em>: {currentProject?.name}
+          </Typography>
+        </Box>
+      </>
     );
   }
   return null;

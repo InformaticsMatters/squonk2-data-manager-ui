@@ -2,9 +2,8 @@ import { useState } from "react";
 
 import { MenuRounded as MenuRoundedIcon } from "@mui/icons-material";
 import {
-  Box,
   Divider,
-  Grid2 as Grid,
+  Grid,
   IconButton,
   List,
   ListItemButton,
@@ -18,13 +17,17 @@ import { NavLink } from "./NavLink";
 import { OUPContext } from "./OUPContext";
 import { UserMenuContent } from "./UserMenuContent";
 
+export interface MobileNavMenuProps {
+  links?: boolean;
+}
+
 /**
  * Mobile modal navigation menu with
  * * Page links
  * * Project management
  * * User menu
  */
-export const MobileNavMenu = () => {
+export const MobileNavMenu = ({ links = true }: MobileNavMenuProps) => {
   const [open, setOpen] = useState(false);
   const isDMAuthorized = useDMAuthorizationStatus();
 
@@ -35,62 +38,52 @@ export const MobileNavMenu = () => {
       </IconButton>
       <ModalWrapper id="mobile-menu" open={open} title="" onClose={() => setOpen(false)}>
         <Grid container spacing={2}>
-          <Grid
-            size={12}
-            sx={{ display: { xs: "block" }, "@media (min-width:655px)": { display: "none" } }}
-          >
-            <Typography component="h3" variant="h6">
-              Links
-            </Typography>
-            <List aria-label="main-mobile-navigation" component="nav">
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Datasets">
-                {({ active }) => (
-                  <ListItemButton component="a" selected={active}>
-                    <ListItemText primary="Datasets" />
-                  </ListItemButton>
-                )}
-              </NavLink>
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Project">
-                {({ active }) => (
-                  <ListItemButton component="a" selected={active}>
-                    <ListItemText primary="Project" />
-                  </ListItemButton>
-                )}
-              </NavLink>
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Run">
-                {({ active }) => (
-                  <ListItemButton component="a" selected={active}>
-                    <ListItemText primary="Apps/Jobs" />
-                  </ListItemButton>
-                )}
-              </NavLink>
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Results">
-                {({ active }) => (
-                  <ListItemButton component="a" selected={active}>
-                    <ListItemText primary="Results" />
-                  </ListItemButton>
-                )}
-              </NavLink>
-            </List>
+          {!!links && (
+            <Grid item xs={12}>
+              <Typography component="h3" variant="h6">
+                Links
+              </Typography>
+              <List aria-label="main-mobile-navigation" component="nav">
+                <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Datasets">
+                  {({ active }) => (
+                    <ListItemButton component="a" selected={active}>
+                      <ListItemText primary="Datasets" />
+                    </ListItemButton>
+                  )}
+                </NavLink>
+                <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Project">
+                  {({ active }) => (
+                    <ListItemButton component="a" selected={active}>
+                      <ListItemText primary="Project" />
+                    </ListItemButton>
+                  )}
+                </NavLink>
+                <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Run">
+                  {({ active }) => (
+                    <ListItemButton component="a" selected={active}>
+                      <ListItemText primary="Apps/Jobs" />
+                    </ListItemButton>
+                  )}
+                </NavLink>
+                <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Results">
+                  {({ active }) => (
+                    <ListItemButton component="a" selected={active}>
+                      <ListItemText primary="Results" />
+                    </ListItemButton>
+                  )}
+                </NavLink>
+              </List>
+            </Grid>
+          )}
+          {!!isDMAuthorized && !!links && (
+            <Grid item xs={12}>
+              <Divider />
+            </Grid>
+          )}
+          <Grid item xs={12}>
+            {!!isDMAuthorized && <OUPContext header />}
           </Grid>
-          <Grid
-            size={12}
-            sx={{ display: { xs: "block" }, "@media (min-width:655px)": { display: "none" } }}
-          >
-            <Divider />
-          </Grid>
-          <Grid size={12}>
-            {!!isDMAuthorized && (
-              <Box>
-                <Typography gutterBottom variant="h3">
-                  Project
-                </Typography>
-
-                <OUPContext />
-              </Box>
-            )}
-          </Grid>
-          <Grid size={12}>
+          <Grid item xs={12}>
             <UserMenuContent />
           </Grid>
         </Grid>

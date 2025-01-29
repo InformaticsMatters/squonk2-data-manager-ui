@@ -9,6 +9,7 @@ import {
   DialogTitle,
   IconButton,
   Typography,
+  useTheme,
 } from "@mui/material";
 
 import { SlideUpTransition } from "../SlideUpTransition";
@@ -50,6 +51,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   onSubmit,
   DialogProps,
 }) => {
+  const theme = useTheme();
   return (
     <Dialog
       {...DialogProps}
@@ -64,13 +66,13 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
         </Typography>
         <IconButton
           size="small"
-          sx={(theme) => ({
+          sx={{
             zIndex: theme.zIndex.appBar + 1,
             position: "absolute",
             right: theme.spacing(2),
             top: theme.spacing(1.5),
             color: "text.primary",
-          })}
+          }}
           onClick={onClose}
         >
           <CloseRoundedIcon />

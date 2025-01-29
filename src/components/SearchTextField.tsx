@@ -8,14 +8,12 @@ export const SearchTextField = (TextFieldProps: TextFieldProps) => (
   <TextField
     label="Search"
     {...TextFieldProps}
-    slotProps={{
-      input: {
-        endAdornment: (
-          <InputAdornment position="end">
-            <SearchRoundedIcon />
-          </InputAdornment>
-        ),
-      },
+    InputProps={{
+      endAdornment: (
+        <InputAdornment position="end">
+          <SearchRoundedIcon />
+        </InputAdornment>
+      ),
     }}
   />
 );

@@ -4,7 +4,7 @@ import { type ApplicationSummary, type DmError } from "@squonk/data-manager-clie
 import { useGetApplication } from "@squonk/data-manager-client/application";
 import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
 
-import { Grid2 as Grid, MenuItem, TextField } from "@mui/material";
+import { Grid, MenuItem, TextField } from "@mui/material";
 import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 import { useQueryClient } from "@tanstack/react-query";
@@ -95,7 +95,7 @@ export const ApplicationModal = ({
         <CenterLoader />
       ) : (
         <Grid container spacing={1}>
-          <Grid size={{ xs: 12 }}>
+          <Grid item xs={12}>
             <TextField
               fullWidth
               label="Instance Name"
@@ -106,7 +106,7 @@ export const ApplicationModal = ({
 
           <DebugCheckbox value={debug} onChange={(debug) => setDebug(debug)} />
 
-          <Grid size={{ xs: 12 }}>
+          <Grid item xs={12}>
             <TextField
               fullWidth
               select
@@ -122,7 +122,7 @@ export const ApplicationModal = ({
             </TextField>
           </Grid>
 
-          <Grid size={{ xs: 12 }}>
+          <Grid item xs={12}>
             <Form
               liveValidate
               noHtml5Validate

@@ -1,6 +1,6 @@
 import { withPageAuthRequired as withPageAuthRequiredSSR } from "@auth0/nextjs-auth0";
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
-import { Container } from "@mui/material";
+import { Container, type Theme, useMediaQuery } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 import { type GetServerSideProps } from "nextjs-routes";
@@ -48,6 +48,8 @@ export const getServerSideProps: GetServerSideProps<FileProps> = async (ctx) => 
 };
 
 export const File = (props: FileProps) => {
+  const biggerThanSm = useMediaQuery<Theme>((theme) => theme.breakpoints.up("sm"));
+
   const { query } = useRouter();
 
   const { file, project } = query;
@@ -65,7 +67,7 @@ export const File = (props: FileProps) => {
 
   if (isSuccessful(props)) {
     return (
-      <Container maxWidth="xl" sx={{ paddingX: { sm: 0 } }}>
+      <Container disableGutters={!biggerThanSm} maxWidth="xl">
         <PlaintextViewer {...props} compressed={compressed} title={title} />
       </Container>
     );

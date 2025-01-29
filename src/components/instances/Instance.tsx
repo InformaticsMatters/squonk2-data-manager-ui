@@ -43,7 +43,7 @@ export const Instance = ({
     switch (instance.application_type) {
       case "JOB":
         return (
-          <Box sx={{ marginY: 1 }}>
+          <Box marginY={1}>
             <ResultJobCard
               collapsedByDefault={collapsedByDefault}
               instance={instance}

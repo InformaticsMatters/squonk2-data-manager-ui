@@ -1,6 +1,6 @@
 import { useGetFileTypes } from "@squonk/data-manager-client/type";
 
-import { Box, Grid2 as Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 
 import { CenterLoader } from "../CenterLoader";
 import { MimeTypeCard, type MimeTypeCardProps } from "./MimeTypeCard";
@@ -42,7 +42,7 @@ export const FileTypeOptions = ({
   }
   return (
     <>
-      <Box sx={{ marginY: 2 }}>
+      <Box marginY={2}>
         <Typography component="h2" variant="h5">
           File Type Options
         </Typography>
@@ -54,7 +54,7 @@ export const FileTypeOptions = ({
         {mimeTypesToShow.map((mimeType) => {
           const type = types.find((type) => mimeType === type.mime);
           return (
-            <Grid key={mimeType} size={{ md: column ? 12 : 4, sm: column ? 12 : 6, xs: 12 }}>
+            <Grid item key={mimeType} md={column ? 12 : 4} sm={column ? 12 : 6} xs={12}>
               <MimeTypeCard formDatas={formDatas} type={type} onFormChange={onFormChange} />
             </Grid>
           );

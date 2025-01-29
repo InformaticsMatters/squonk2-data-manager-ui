@@ -18,7 +18,12 @@ export const VersionInfoListItem = ({ name, value }: VersionInfoListItemProps) =
   return (
     <ListItem>
       <ListItemText primary={name} />
-      <ListItemText primary={value} slotProps={{ primary: { align: "right" } }} />
+      <ListItemText
+        primary={value}
+        primaryTypographyProps={{
+          align: "right",
+        }}
+      />
     </ListItem>
   );
 };

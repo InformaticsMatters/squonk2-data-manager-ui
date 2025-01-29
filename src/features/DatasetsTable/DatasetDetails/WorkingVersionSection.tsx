@@ -34,7 +34,7 @@ export const WorkingVersionSection = ({
         The options below affect this version
       </Typography>
       {/* Display the download button next to the version select */}
-      <Box sx={{ alignItems: "center", display: "flex", marginY: 1 }}>
+      <Box alignItems="center" display="flex" marginY={1}>
         {/* Main version selection - this controls the target version for this whole modal */}
         <TextField
           fullWidth
@@ -58,11 +58,7 @@ export const WorkingVersionSection = ({
         </TextField>
 
         {/* Download Dataset Version */}
-        <Box
-          sx={{
-            ml: 2,
-          }}
-        >
+        <Box ml={2}>
           <DownloadButton
             disabled={!(version.processing_stage === "DONE")}
             href={API_ROUTES.datasetVersion(dataset.dataset_id, version.version, "/api/dm-api")}

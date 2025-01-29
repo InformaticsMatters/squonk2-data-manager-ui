@@ -1,4 +1,4 @@
-import { Grid2 as Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 
 import { type PermissionLevelFilter } from "../../../../components/userContext/filter";
 import { SelectOrganisation } from "../../../../components/userContext/SelectOrganisation";
@@ -16,11 +16,11 @@ export interface ContextSectionProps {
 export const ContextSection = ({ userFilter }: ContextSectionProps) => {
   return (
     <Grid container spacing={1}>
-      <Grid container size={6} sx={{ alignContent: "flex-start" }}>
+      <Grid container item alignContent="flex-start" sm={6}>
         <SelectOrganisation />
         <OrganisationActions />
       </Grid>
-      <Grid container size={6} sx={{ alignContent: "flex-start" }}>
+      <Grid container item alignContent="flex-start" sm={6}>
         <SelectUnit userFilter={userFilter} />
         <UnitActions />
       </Grid>

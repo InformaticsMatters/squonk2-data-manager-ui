@@ -23,5 +23,6 @@ export const HeaderLogo = () => {
 const LogoLink = styled(NextLink)(({ theme }) => ({
   display: "inline-block",
   maxHeight: "68px",
-  padding: theme.spacing(0.5, 0),
+  paddingTop: theme.spacing(0.5),
+  paddingBottom: theme.spacing(0.5),
 }));

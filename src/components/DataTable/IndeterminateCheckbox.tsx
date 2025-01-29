@@ -1,4 +1,4 @@
-import { type ForwardedRef, forwardRef, type RefObject, useEffect, useRef } from "react";
+import { type ForwardedRef, forwardRef, type MutableRefObject, useEffect, useRef } from "react";
 
 import { Checkbox, type CheckboxProps } from "@mui/material";
 
@@ -10,8 +10,8 @@ const IndeterminateCheckboxComponent = (
   { indeterminate, ...rest }: CheckboxProps,
   ref: ForwardedRef<HTMLInputElement>,
 ) => {
-  const defaultRef = useRef<HTMLButtonElement>(null);
-  const resolvedRef = (ref ?? defaultRef) as RefObject<HTMLButtonElement>;
+  const defaultRef = useRef();
+  const resolvedRef = (ref ?? defaultRef) as MutableRefObject<HTMLButtonElement>;
 
   useEffect(() => {
     (resolvedRef.current as HTMLInputElement).indeterminate = !!(indeterminate ?? false);

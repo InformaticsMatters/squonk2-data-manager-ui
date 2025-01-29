@@ -1,9 +1,8 @@
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
-import { Box, Container, Grid2 as Grid, Typography } from "@mui/material";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
 
-import sadderSquonk from "../../assets/graphics/sadder-squonk.svg";
 import { RoleRequired } from "../components/auth/RoleRequired";
 import { ProjectSelection } from "../components/projects/ProjectSelection";
 import { SelectProject } from "../components/userContext/SelectProject";
@@ -42,7 +41,7 @@ const Project = () => {
                       alignItems: "center",
                     }}
                   >
-                    <Grid size={{ md: 6, xs: 12 }}>
+                    <Grid item md={6} xs={12}>
                       <Typography
                         gutterBottom
                         component="h1"
@@ -52,7 +51,7 @@ const Project = () => {
                         Project: {currentProject.name}
                       </Typography>
                     </Grid>
-                    <Grid size={{ md: 6, xs: 12 }}>
+                    <Grid item md={6} xs={12}>
                       <SelectProject size="medium" />
                     </Grid>
                   </Grid>
@@ -70,10 +69,10 @@ const Project = () => {
                   <Image
                     alt="Squonk in tears that you haven't selected a project"
                     height={150}
-                    src={sadderSquonk}
+                    src="https://squonk.informaticsmatters.org/assets/sadderSquonk.svg"
                     width={150}
                   />
-                  <Box sx={{ marginY: 1 }}>
+                  <Box marginY={1}>
                     <ProjectSelection />
                   </Box>
                 </Box>

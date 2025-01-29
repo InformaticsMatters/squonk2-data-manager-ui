@@ -18,7 +18,7 @@ export const MiniFileList = (props: SharedProps) => {
   );
 
   return (
-    <Box sx={{ border: "2px dashed", borderColor: "grey.600", borderRadius: 8, px: 2, py: 1 }}>
+    <Box border="2px dashed" borderColor="grey.600" borderRadius={8} px={2} py={1}>
       <FormControlLabel
         control={
           <Checkbox

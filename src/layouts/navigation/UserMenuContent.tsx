@@ -4,7 +4,7 @@ import { Alert, Box, Chip, Typography, useMediaQuery, useTheme } from "@mui/mate
 import { AuthButton } from "../../components/auth/AuthButton";
 import { CenterLoader } from "../../components/CenterLoader";
 import { Chips } from "../../components/Chips";
-import { ColourSchemeSelection } from "../../components/ColourSchemeSelection";
+import { DarkModeSwitch } from "../../components/DarkModeSwitch";
 import { useASAuthorizationStatus, useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 
@@ -16,12 +16,12 @@ export const UserMenuContent = () => {
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
-    <Box sx={{ textAlign: biggerThanMd ? "center" : undefined }}>
+    <Box textAlign={biggerThanMd ? "center" : undefined}>
       <Typography gutterBottom variant="h3">
         Account
       </Typography>
       <UserMenuContentInner />
-      <ColourSchemeSelection />
+      <DarkModeSwitch />
     </Box>
   );
 };
@@ -56,7 +56,7 @@ const UserMenuContentInner = () => {
             <PersonIcon color="disabled" fontSize="inherit" />
           </Box>
         )}
-        <Typography sx={{ fontWeight: "bold" }}>{user.username}</Typography>
+        <Typography fontWeight="bold">{user.username}</Typography>
         <Box>
           Roles:
           <Chips>

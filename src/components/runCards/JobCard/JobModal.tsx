@@ -9,7 +9,7 @@ import {
 import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
-import { Box, Grid2 as Grid, TextField, Typography } from "@mui/material";
+import { Box, Grid, TextField, Typography } from "@mui/material";
 import { type FormProps } from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
 import { useQueryClient } from "@tanstack/react-query";
@@ -19,7 +19,6 @@ import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { CenterLoader } from "../../CenterLoader";
 import { ModalWrapper } from "../../modals/ModalWrapper";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
-import { TEST_JOB_ID } from "../TestJob/jobId";
 import { type CommonModalProps } from "../types";
 import { type InputSchema, type JobInputFieldsProps, validateInputData } from "./JobInputFields";
 
@@ -86,9 +85,8 @@ export const JobModal = ({
 
   const { mutateAsync: createInstance } = useCreateInstance();
   // Get extra details about the job
-  const { data: job } = useGetJob(jobId, undefined, {
-    query: { retry: jobId === TEST_JOB_ID ? 1 : 3 },
-  });
+  const { data: job } = useGetJob(jobId);
+
   const name = nameState || (job?.job ?? "");
 
   const spec = instance?.application_specification;
@@ -126,7 +124,7 @@ export const JobModal = ({
     Object.keys(inputsData).length > 0 ? inputsData : specInputs,
   );
 
-  const formRef = useRef<any>(null);
+  const formRef = useRef<any>();
 
   // Since the default value are obtained async, we have to wait for them to arrive in order to set
   useEffect(() => {
@@ -184,7 +182,7 @@ export const JobModal = ({
     >
       {job !== undefined && projectId !== undefined ? (
         <>
-          <Box sx={{ paddingTop: 1 }}>
+          <Box paddingTop={1}>
             <TextField
               fullWidth
               label="Job name"
@@ -198,8 +196,8 @@ export const JobModal = ({
             <Grid container spacing={2}>
               {!!job.variables.inputs && (
                 <>
-                  <Grid size={{ xs: 12 }}>
-                    <Typography component="h3" sx={{ fontWeight: "bold" }} variant="subtitle1">
+                  <Grid item xs={12}>
+                    <Typography component="h3" fontWeight="bold" variant="subtitle1">
                       Inputs
                     </Typography>
                   </Grid>
@@ -213,10 +211,10 @@ export const JobModal = ({
                 </>
               )}
 
-              <Grid size={{ xs: 12 }}>
+              <Grid item xs={12}>
                 {!!job.variables.options && (
                   <>
-                    <Typography component="h3" sx={{ fontWeight: "bold" }} variant="subtitle1">
+                    <Typography component="h3" fontWeight="bold" variant="subtitle1">
                       Options
                     </Typography>
                     <Form

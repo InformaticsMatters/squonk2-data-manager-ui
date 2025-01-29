@@ -99,7 +99,7 @@ export const UnitUserUsage = ({ unitId }: UnitUserUsageProps) => {
 
       <Typography>Owner: {unit.owner_id}</Typography>
 
-      <Box sx={{ marginY: 1 }}>
+      <Box marginY={1}>
         {pivot ? (
           <UserUsageByProjectTable
             toolbarContent={pivotToggle}

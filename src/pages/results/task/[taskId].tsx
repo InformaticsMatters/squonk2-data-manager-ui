@@ -36,7 +36,7 @@ const Result = () => {
         <RoleRequired roles={AS_ROLES}>
           <Layout>
             <Container maxWidth="md">
-              <Box sx={{ alignItems: "flex-start", display: "flex" }}>
+              <Box alignItems="flex-start" display="flex">
                 <Typography gutterBottom component="h1" variant="h3">
                   Task
                 </Typography>

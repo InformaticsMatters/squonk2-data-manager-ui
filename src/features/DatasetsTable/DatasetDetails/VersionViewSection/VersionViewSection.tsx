@@ -1,8 +1,7 @@
 import { type DatasetSummary, type DatasetVersionSummary } from "@squonk/data-manager-client";
 
 import { Description } from "@mui/icons-material";
-import { List, ListItemText } from "@mui/material";
-import ListItemButton from "@mui/material/ListItemButton";
+import { List, ListItem, ListItemText } from "@mui/material";
 
 import { API_ROUTES } from "../../../../utils/app/routes";
 import { DatasetPlainTextViewerListItem } from "./DatasetPlainTextViewerListItem";
@@ -25,7 +24,8 @@ export const VersionViewSection = ({ dataset, version }: VersionViewSectionProps
   return (
     <List>
       <DatasetPlainTextViewerListItem datasetId={dataset.dataset_id} version={version.version} />
-      <ListItemButton
+      <ListItem
+        button
         component="a"
         href={
           (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
@@ -39,7 +39,7 @@ export const VersionViewSection = ({ dataset, version }: VersionViewSectionProps
           secondary="Displays the file in your browser if it supports the file type, otherwise downloads the file"
         />
         <Description color="action" />
-      </ListItemButton>
+      </ListItem>
     </List>
   );
 };

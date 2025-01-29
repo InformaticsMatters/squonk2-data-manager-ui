@@ -16,7 +16,7 @@ const SDF = () => {
   const { project, path, file } = query;
 
   if (typeof project !== "string" || typeof path !== "string" || typeof file !== "string") {
-    return <Error statusCode={404} title="URL is Malformed" />;
+    return <Error statusCode={404} title="File not found" />;
   }
 
   return (

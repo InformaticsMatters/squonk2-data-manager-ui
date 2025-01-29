@@ -50,30 +50,28 @@ export const SelectOrganisation = (autoCompleteProps: SelectOrganisationProps) =
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Organisation"
-            slotProps={{
-              input: {
-                ...params.InputProps,
-                startAdornment: (
-                  <>
-                    <ItemIcons item={organisation} />
-                    {!!organisation && !!organisation.caller_is_member && (
-                      <Adornment
-                        href={`/organisation/${organisation.id}/inventory`}
-                        title="User Usage"
-                      >
-                        <DataUsageIcon />
-                      </Adornment>
-                    )}
-                  </>
-                ),
-              },
+            InputProps={{
+              ...params.InputProps,
+              startAdornment: (
+                <>
+                  <ItemIcons item={organisation} />
+                  {!!organisation && !!organisation.caller_is_member && (
+                    <Adornment
+                      href={`/organisation/${organisation.id}/inventory`}
+                      title="User Usage"
+                    >
+                      <DataUsageIcon />
+                    </Adornment>
+                  )}
+                </>
+              ),
             }}
+            label="Organisation"
           />
         )}
         renderOption={(props, option) => (
           <Box component="li" {...props}>
-            <Box component="span" sx={{ display: "inline-block", pr: 1 }}>
+            <Box component="span" display="inline-block" pr={1}>
               <ItemIcons item={option} />
             </Box>
             {option.name} {!!option.owner_id && <>({option.owner_id})</>}
@@ -93,7 +91,7 @@ export const SelectOrganisation = (autoCompleteProps: SelectOrganisationProps) =
       />
       {
         // N.B. This isn't helperText as MUI doesn't make that selectable
-        <Typography sx={{ color: "text.secondary" }} variant="body2">
+        <Typography color="text.secondary" variant="body2">
           {organisation?.id}
         </Typography>
       }

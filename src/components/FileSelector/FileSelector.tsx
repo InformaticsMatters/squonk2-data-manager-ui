@@ -36,9 +36,7 @@ export const FileSelector = ({ value, targetType, ...props }: SharedProps) => {
       <Collapse in={expanded}>
         <MiniFileList {...props} targetType={targetType} value={value} />
       </Collapse>
-      <Box display="flex" paddingY={1}>
-        {expanded ? closeControls : openControls}
-      </Box>
+      <Box sx={{ display: "flex", paddingY: 1 }}>{expanded ? closeControls : openControls}</Box>
     </>
   );
 };

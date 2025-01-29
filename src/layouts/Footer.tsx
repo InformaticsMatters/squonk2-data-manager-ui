@@ -1,29 +1,19 @@
-import {
-  Container,
-  Grid,
-  Link,
-  List,
-  ListItem,
-  Paper,
-  type Theme,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+import { Container, Grid2 as Grid, Link, List, ListItem, Paper, Typography } from "@mui/material";
 import A from "next/link";
 
 import { AppVersions } from "../components/AppVersions";
+import { ralewayFont } from "../constants/fonts";
 
 export const Footer = () => {
-  const small = useMediaQuery<Theme>((theme) => theme.breakpoints.up("sm"));
-  const itemStyles = { justifyContent: small ? "right" : "left" };
+  const itemStyles = { justifyContent: { xs: "left", sm: "right" } };
 
   return (
-    <Paper square component="footer" sx={{ marginTop: "auto" }}>
+    <Paper square component="footer" sx={{ marginTop: "auto", displayPrint: "none" }}>
       <Container maxWidth="md">
-        <Grid container p={2}>
-          <Grid item sm={6} xs={12}>
+        <Grid container sx={{ p: 2 }}>
+          <Grid size={{ sm: 6, xs: 12 }}>
             <Typography variant="h4">
-              <strong style={{ fontFamily: "Raleway" }}>
+              <strong style={{ fontFamily: ralewayFont.style.fontFamily }}>
                 <Link href="https://squonk.it/" rel="noopener noreferrer" target="_blank">
                   Squonk
                 </Link>
@@ -42,7 +32,7 @@ export const Footer = () => {
             </Typography>
             <AppVersions />
           </Grid>
-          <Grid item sm={3} textAlign="right" xs={6}>
+          <Grid size={{ sm: 3, xs: 6 }} sx={{ textAlign: "right" }}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
                 <A legacyBehavior passHref href={{ pathname: "/" }}>
@@ -66,7 +56,7 @@ export const Footer = () => {
               </ListItem>
             </List>
           </Grid>
-          <Grid item sm={3} xs={6}>
+          <Grid size={{ sm: 3, xs: 6 }}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
                 <A legacyBehavior passHref href={{ pathname: "/results" }}>

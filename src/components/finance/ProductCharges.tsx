@@ -68,7 +68,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
         Charges
       </Typography>
       <Paper>
-        <Box padding={2}>
+        <Box sx={{ padding: 2 }}>
           <Typography variant="h4">Processing Charges</Typography>
           <Typography variant="subtitle1">
             Charges from computations, e.g. running Data Manager Jobs
@@ -111,7 +111,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
         </Table>
       </Paper>
       <Paper>
-        <Box padding={2}>
+        <Box sx={{ padding: 2 }}>
           <Typography variant="h4">Storage Charges</Typography>
           <Typography variant="subtitle1">
             Charges for stored data, e.g. Data Manager Datasets and project volumes
@@ -149,7 +149,7 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
         </Table>
       </Paper>
       <Divider sx={{ my: 2 }} />
-      <Box textAlign="right">
+      <Box sx={{ textAlign: "right" }}>
         <Typography variant="h3">Total Charges</Typography>
         <Typography variant="subtitle1">To be paid by the unit owner</Typography>
         {formatCoins(chargesData.coins)}

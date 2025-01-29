@@ -8,8 +8,15 @@ export interface ExitCodeFromTaskProps {
 }
 
 export const ExitCodeFromTask = ({ taskId }: ExitCodeFromTaskProps) => {
-  const { data } = useGetTask(taskId);
-  const code = data?.exit_code;
+  const { data: code, isLoading } = useGetTask(taskId, undefined, {
+    query: {
+      select: (data) => data.exit_code,
+    },
+  });
+
+  if (code === undefined && !isLoading) {
+    return null;
+  }
 
   return (
     <ListItem>
@@ -18,11 +25,17 @@ export const ExitCodeFromTask = ({ taskId }: ExitCodeFromTaskProps) => {
       </ListItemIcon>
       <ListItemText
         primary="Exit Code"
-        secondary={code}
-        secondaryTypographyProps={{
-          color: code === 0 ? "green" : "error",
-          fontWeight: "bold",
-        }}
+        secondary={isLoading ? "Loading..." : code}
+        slotProps={
+          isLoading
+            ? undefined
+            : {
+                secondary: {
+                  color: code === 0 ? "green" : "error",
+                  fontWeight: "bold",
+                },
+              }
+        }
       />
     </ListItem>
   );

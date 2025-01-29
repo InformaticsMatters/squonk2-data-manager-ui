@@ -8,7 +8,7 @@ import {
   CloudUploadRounded as CloudUploadRoundedIcon,
   FolderRounded as FolderRoundedIcon,
 } from "@mui/icons-material";
-import { Breadcrumbs, Grid, IconButton, Tooltip, Typography, useTheme } from "@mui/material";
+import { Box, Breadcrumbs, Grid2 as Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper } from "@tanstack/react-table";
 import { filesize } from "filesize";
@@ -45,8 +45,6 @@ const columnHelper = createColumnHelper<TableDir | TableFile>();
  * Data table displaying a project's files with actions to manage the files.
  */
 export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableProps) => {
-  const theme = useTheme();
-
   const router = useRouter();
 
   const isProjectAdminOrEditor = useIsUserAdminOrEditorOfCurrentProject();
@@ -75,7 +73,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
                 size="small"
                 sx={{
                   display: "flex",
-                  gap: theme.spacing(1),
+                  gap: 1,
                   justifyContent: "left",
                   maxWidth: "auto",
                   textTransform: "none",
@@ -125,7 +123,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
         enableGrouping: false,
       }),
     ],
-    [currentProject.project_id, breadcrumbs, router, theme],
+    [currentProject.project_id, breadcrumbs, router],
   );
 
   const dirPath = "/" + breadcrumbs.join("/");
@@ -140,67 +138,80 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
   const directories = rows?.filter(isTableDir).map((dir) => dir.path) ?? [];
 
   return (
-    <DataTable
-      subRowsEnabled
-      columns={columns}
-      data={rows}
-      error={getErrorMessage(error)}
-      getRowId={(row) => row.fullPath}
-      isLoading={isLoading}
-      toolbarContent={
-        <Grid container>
-          <Grid item sx={{ display: "flex", alignItems: "center" }}>
-            <Breadcrumbs>
-              {["root", ...breadcrumbs].map((path, pathIndex) => {
-                const href = {
-                  pathname: router.pathname,
-                  query: {
-                    project: currentProject.project_id,
-                    path: breadcrumbs.slice(0, pathIndex),
-                  },
-                } as LinkProps["href"];
-                return pathIndex < breadcrumbs.length ? (
-                  <NextLink
-                    color="inherit"
-                    component="button"
-                    href={href}
+    <Box
+      sx={{
+        "& .MuiPaper-root": {
+          // Set height to fill remaining space, pushing footer just off screen
+          // 164px is the height of the header and toolbar
+          height: "calc(100vh - 164px)",
+          "@supports (height: 100dvh)": {
+            height: "calc(100dvh - 164px)",
+          },
+        },
+      }}
+    >
+      <DataTable
+        subRowsEnabled
+        columns={columns}
+        data={rows}
+        error={getErrorMessage(error)}
+        getRowId={(row) => row.fullPath}
+        isLoading={isLoading}
+        toolbarContent={
+          <Grid container sx={{ width: "100%" }}>
+            <Grid sx={{ display: "flex", alignItems: "center" }}>
+              <Breadcrumbs>
+                {["root", ...breadcrumbs].map((path, pathIndex) => {
+                  const href = {
+                    pathname: router.pathname,
+                    query: {
+                      project: currentProject.project_id,
+                      path: breadcrumbs.slice(0, pathIndex),
+                    },
+                  } as LinkProps["href"];
+                  return pathIndex < breadcrumbs.length ? (
+                    <NextLink
+                      color="inherit"
+                      component="button"
+                      href={href}
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={`${pathIndex}-${path}`}
+                      size="small"
+                      sx={{ textTransform: "none" }}
+                    >
+                      {path}
+                    </NextLink>
+                  ) : (
                     // eslint-disable-next-line react/no-array-index-key
-                    key={`${pathIndex}-${path}`}
-                    size="small"
-                    sx={{ textTransform: "none" }}
-                  >
-                    {path}
-                  </NextLink>
-                ) : (
-                  // eslint-disable-next-line react/no-array-index-key
-                  <Typography key={`${pathIndex}-${path}`}>{path}</Typography>
-                );
-              })}
-            </Breadcrumbs>
+                    <Typography key={`${pathIndex}-${path}`}>{path}</Typography>
+                  );
+                })}
+              </Breadcrumbs>
+            </Grid>
+            <Grid sx={{ marginLeft: "auto" }}>
+              <Tooltip title="Upload unmanaged file">
+                <IconButton
+                  disabled={!isProjectAdminOrEditor}
+                  size="large"
+                  onClick={openUploadDialog}
+                >
+                  <CloudUploadRoundedIcon />
+                </IconButton>
+              </Tooltip>
+              <CreateDirectoryButton
+                directories={directories}
+                path={dirPath}
+                // eslint-disable-next-line @typescript-eslint/require-await
+                onDirectoryCreated={async () => {
+                  void queryClient.invalidateQueries({
+                    queryKey: getGetFilesQueryKey(getFilesParams),
+                  });
+                }}
+              />
+            </Grid>
           </Grid>
-          <Grid item sx={{ marginLeft: "auto" }}>
-            <Tooltip title="Upload unmanaged file">
-              <IconButton
-                disabled={!isProjectAdminOrEditor}
-                size="large"
-                onClick={openUploadDialog}
-              >
-                <CloudUploadRoundedIcon />
-              </IconButton>
-            </Tooltip>
-            <CreateDirectoryButton
-              directories={directories}
-              path={dirPath}
-              // eslint-disable-next-line @typescript-eslint/require-await
-              onDirectoryCreated={async () => {
-                void queryClient.invalidateQueries({
-                  queryKey: getGetFilesQueryKey(getFilesParams),
-                });
-              }}
-            />
-          </Grid>
-        </Grid>
-      }
-    />
+        }
+      />
+    </Box>
   );
 };

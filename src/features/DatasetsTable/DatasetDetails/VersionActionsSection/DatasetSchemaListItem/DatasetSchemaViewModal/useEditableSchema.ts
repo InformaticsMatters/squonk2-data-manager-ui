@@ -86,10 +86,10 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
  * well as the edited schema, which is composed from the helper object and the original schema.
  */
 export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
-  const [editableSchemaState, dispatch] = useImmerReducer<EditableSchemaState>(
-    editableSchemaReducer,
-    null,
-  );
+  const [editableSchemaState, dispatch] = useImmerReducer<
+    EditableSchemaState,
+    EditableSchemaStateAction<FieldKey, FieldValue<FieldKey>>
+  >(editableSchemaReducer, null);
 
   useEffect(() => {
     // If no original schema has been provided, return undefined state.

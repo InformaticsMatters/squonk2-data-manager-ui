@@ -67,7 +67,7 @@ export const CreateDirectoryButton = ({
         {...bindPopover(popupState)}
       >
         <Paper>
-          <Box p={1}>
+          <Box sx={{ p: 1 }}>
             <form
               onSubmit={(event) => {
                 event.preventDefault();

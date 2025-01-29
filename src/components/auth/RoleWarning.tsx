@@ -12,10 +12,10 @@ export const RoleWarning = () => {
     (dmAuthorization === undefined || asAuthorization === undefined)
   ) {
     return (
-      <Box m={2}>
+      <Box sx={{ m: 2 }}>
         <Alert severity="warning">
           You are missing required roles to access this service. Please contact an administrator.
-          <Box marginY={1}>
+          <Box sx={{ marginY: 1 }}>
             {(user.roles ?? []).length > 0 ? (
               <>
                 {" "}

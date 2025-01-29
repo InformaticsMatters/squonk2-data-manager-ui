@@ -42,7 +42,13 @@ export const FavouriteButton = ({ projectId, fullPath, type, mimeType }: Favouri
 
   return (
     <Tooltip title="Favourite this file">
-      <IconButton size="small" onClick={handleFavouriteChange}>
+      <IconButton
+        size="small"
+        onClick={(event) => {
+          event.stopPropagation();
+          handleFavouriteChange();
+        }}
+      >
         {file ? <StarRoundedIcon /> : <StarBorderRoundedIcon />}
       </IconButton>
     </Tooltip>

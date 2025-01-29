@@ -6,12 +6,12 @@ import { Alert, Box, Button, Checkbox, MenuItem, TextField, Typography } from "@
 import { type SDFViewerConfig } from "../../utils/api/sdfViewer";
 import { type JSON_SCHEMA_TYPE, JSON_SCHEMA_TYPES } from "../../utils/app/jsonSchema";
 
-type Field = {
+export type Field = {
   type: JSON_SCHEMA_TYPE;
   description: string;
 };
 
-interface Schema {
+export interface Schema {
   $schema: string;
   $id: string;
   title: string;
@@ -78,8 +78,8 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
   // const onSubmit: SubmitHandler<SDFViewerConfig> = (data) => console.log(data);
 
   return (
-    <form onSubmit={() => void handleSubmit(onSubmit)}>
-      <Box display="grid" gap={1} gridTemplateColumns="1fr repeat(6, min-content)">
+    <form onSubmit={(event) => void handleSubmit(onSubmit, (errors) => console.log(errors))(event)}>
+      <Box sx={{ display: "grid", gap: 1, gridTemplateColumns: "1fr repeat(6, min-content)" }}>
         <Typography component="h3" variant="h4">
           Field name
         </Typography>
@@ -109,7 +109,9 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
             <TextField
               select
               defaultValue={config[key].dtype}
-              inputProps={register(`${key}.dtype`)}
+              slotProps={{
+                htmlInput: register(`${key}.dtype`),
+              }}
             >
               {JSON_SCHEMA_TYPES.map((type) => (
                 <MenuItem key={type} value={type}>
@@ -117,7 +119,6 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 </MenuItem>
               ))}
             </TextField>
-
             <Controller
               control={control}
               defaultValue={config[key].include}
@@ -142,12 +143,13 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 />
               )}
             />
-
             <TextField
               defaultValue={config[key].min}
               disabled={!getIsNumeric(key)}
               inputMode="numeric"
-              inputProps={{ ...register(`${key}.min`), step: getStep(key) }}
+              slotProps={{
+                htmlInput: { ...register(`${key}.min`), step: getStep(key) },
+              }}
               sx={{ width: "7em" }}
               type="number"
             />
@@ -155,16 +157,19 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
               defaultValue={config[key].max}
               disabled={!getIsNumeric(key)}
               inputMode="numeric"
-              inputProps={{ ...register(`${key}.max`), step: getStep(key) }}
+              slotProps={{
+                htmlInput: { ...register(`${key}.max`), step: getStep(key) },
+              }}
               sx={{ width: "7em" }}
               type="number"
             />
-
             <TextField
               disabled
               select
               defaultValue={config[key].sort}
-              inputProps={register(`${key}.sort`)}
+              slotProps={{
+                htmlInput: register(`${key}.sort`),
+              }}
             >
               <MenuItem key="ASC" value="ASC">
                 ASC

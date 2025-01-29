@@ -6,5 +6,5 @@ declare global {
   var ketcher: Ketcher | undefined;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export type Resolve<T> = T extends Function ? T : { [K in keyof T]: T[K] };

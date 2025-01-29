@@ -1,4 +1,4 @@
-import { ListItem, ListItemText, useMediaQuery, useTheme } from "@mui/material";
+import { ListItem, ListItemText } from "@mui/material";
 
 export interface ResponsiveListItemProps {
   primary: string;
@@ -6,10 +6,8 @@ export interface ResponsiveListItemProps {
 }
 
 export const ResponsiveListItem = ({ primary, secondary }: ResponsiveListItemProps) => {
-  const theme = useTheme();
-  const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
   return (
-    <ListItem sx={{ ml: biggerThanMd ? "auto" : undefined }}>
+    <ListItem sx={{ ml: { xs: undefined, md: "auto" } }}>
       <ListItemText primary={primary} secondary={secondary} />
     </ListItem>
   );

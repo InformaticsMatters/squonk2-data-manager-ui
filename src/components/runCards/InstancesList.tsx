@@ -1,13 +1,12 @@
 import { type InstanceSummary } from "@squonk/data-manager-client";
 import { useGetInstances } from "@squonk/data-manager-client/instance";
 
-import { Box, List, ListItemButton, ListItemText, Typography } from "@mui/material";
+import { Box, LinearProgress, List, ListItemButton, ListItemText, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import A from "next/link";
 import { useRouter } from "next/router";
 
 import { useCurrentProjectId } from "../../hooks/projectHooks";
-import { CenterLoader } from "../CenterLoader";
 import { LocalTime } from "../LocalTime";
 
 type FilterPredicate = (value: InstanceSummary, index: number, array: InstanceSummary[]) => boolean;
@@ -32,12 +31,12 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
   );
 
   if (instances === undefined) {
-    return <CenterLoader />;
+    return <LinearProgress />;
   }
 
   if (instances.length === 0) {
     return (
-      <Box p={2}>
+      <Box sx={{ p: 2 }}>
         <Typography variant="body2">No instances of this type currently exist</Typography>
       </Box>
     );
@@ -62,8 +61,8 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
             <ListItemButton component="a">
               <ListItemText
                 primary={instance.name}
-                primaryTypographyProps={{ variant: "body1" }}
                 secondary={<LocalTime utcTimestamp={instance.launched} />}
+                slotProps={{ primary: { variant: "body1" } }}
               />
             </ListItemButton>
           </A>

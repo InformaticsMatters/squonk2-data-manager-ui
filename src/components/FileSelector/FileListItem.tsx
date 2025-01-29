@@ -6,7 +6,6 @@ import {
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemSecondaryAction,
   ListItemText,
   Tooltip,
 } from "@mui/material";
@@ -67,7 +66,7 @@ export const FileListItem = ({
 }: FileListItemProps) => {
   const labelId = `file-${fullPath}`;
 
-  const listItemConent = (
+  const listItemContent = (
     <>
       {!!onSelect && (
         <ListItemIcon>
@@ -84,25 +83,18 @@ export const FileListItem = ({
       )}
       {type.startsWith("dir") && <ListItemIcon>{folderIcon ?? <FolderRoundedIcon />}</ListItemIcon>}
       <Tooltip title={title}>
-        <ListItemText id={labelId} primary={title} primaryTypographyProps={{ noWrap: true }} />
+        <ListItemText id={labelId} primary={title} slotProps={{ primary: { noWrap: true } }} />
       </Tooltip>
-      <ListItemSecondaryAction>
-        <FavouriteButton
-          fullPath={fullPath}
-          mimeType={mimeType}
-          projectId={projectId}
-          type={type}
-        />
-      </ListItemSecondaryAction>
+      <FavouriteButton fullPath={fullPath} mimeType={mimeType} projectId={projectId} type={type} />
     </>
   );
   if (onClick) {
     return (
       <ListItemButton key={fullPath} onClick={onClick}>
-        {listItemConent}
+        {listItemContent}
       </ListItemButton>
     );
   }
 
-  return <ListItem key={fullPath}>{listItemConent}</ListItem>;
+  return <ListItem key={fullPath}>{listItemContent}</ListItem>;
 };

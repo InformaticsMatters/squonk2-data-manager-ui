@@ -37,7 +37,7 @@ const Result = () => {
             <Typography component="h1" variant="h1">
               Instance
             </Typography>
-            <Box alignItems="flex-start" display="flex">
+            <Box sx={{ alignItems: "flex-start", display: "flex" }}>
               <EventDebugSwitch />
               <Tooltip title="Refresh Instance">
                 <IconButton

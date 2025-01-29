@@ -11,13 +11,17 @@
     ":semanticCommitTypeAll(chore)",
     ":disableRateLimiting"
   ],
-  "labels": ["dependencies"],
+  "labels": [
+    "dependencies"
+  ],
   "constraints": {
-    "pnpm": "8"
+    "pnpm": "9"
   },
   "packageRules": [
     {
-      "matchPackageNames": ["!nextjs-routes"]
+      "matchPackageNames": [
+        "!nextjs-routes"
+      ]
     }
   ]
 }

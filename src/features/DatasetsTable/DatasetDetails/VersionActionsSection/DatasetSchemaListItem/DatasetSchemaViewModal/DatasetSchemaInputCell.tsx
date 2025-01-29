@@ -48,23 +48,26 @@ export const DatasetSchemaInputCell = ({
   return (
     <TextField
       fullWidth
-      inputProps={{
-        "aria-label": `${fieldName} ${fieldKey}`,
-        style: {
-          paddingTop: 6,
-          paddingBottom: 7,
+      slotProps={{
+        input: {
+          endAdornment: (
+            <Box sx={{ ml: 1, mr: 1, visibility: hasChanged ? undefined : "hidden" }}>
+              <Tooltip title="Revert changes">
+                <IconButton size="small" onClick={() => setFieldValue(originalFieldValue)}>
+                  <Restore fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          ),
         },
-      }}
-      InputProps={{
-        endAdornment: (
-          <Box ml={1} mr={1} visibility={hasChanged ? undefined : "hidden"}>
-            <Tooltip title="Revert changes">
-              <IconButton size="small" onClick={() => setFieldValue(originalFieldValue)}>
-                <Restore fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        ),
+
+        htmlInput: {
+          "aria-label": `${fieldName} ${fieldKey}`,
+          style: {
+            paddingTop: 6,
+            paddingBottom: 7,
+          },
+        },
       }}
       sx={{ background: hasChanged ? "action.hover" : undefined }}
       value={displayValue}

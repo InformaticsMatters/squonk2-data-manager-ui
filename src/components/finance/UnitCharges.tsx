@@ -106,7 +106,7 @@ export const UnitCharges = ({ unitId }: UnitChargesProps) => {
       </Paper>
 
       <Divider sx={{ my: 2 }} />
-      <Box textAlign="right">
+      <Box sx={{ textAlign: "right" }}>
         <Typography variant="h4">Subtotal Total</Typography>
         Processing: {!!processingTotal && formatCoins(processingTotal)}
         <br />

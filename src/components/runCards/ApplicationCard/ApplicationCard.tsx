@@ -1,6 +1,6 @@
 import { type ApplicationSummary } from "@squonk/data-manager-client";
 
-import { CircularProgress, useTheme } from "@mui/material";
+import { CircularProgress, LinearProgress } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import { useIsUserAdminOrEditorOfCurrentProject } from "../../../hooks/projectHooks";
@@ -15,7 +15,7 @@ const ApplicationModalButton = dynamic<ApplicationModalButtonProps>(
 
 const InstancesList = dynamic<InstancesListProps>(
   () => import("../InstancesList").then((mod) => mod.InstancesList),
-  { loading: () => <CircularProgress size="1rem" /> },
+  { loading: () => <LinearProgress /> },
 );
 
 export interface ApplicationCardProps extends Pick<ApplicationModalButtonProps, "projectId"> {
@@ -30,8 +30,6 @@ export interface ApplicationCardProps extends Pick<ApplicationModalButtonProps, 
  * existing instances.
  */
 export const ApplicationCard = ({ app, projectId }: ApplicationCardProps) => {
-  const theme = useTheme();
-
   const hasPermission = useIsUserAdminOrEditorOfCurrentProject();
 
   return (
@@ -51,7 +49,7 @@ export const ApplicationCard = ({ app, projectId }: ApplicationCardProps) => {
         title: app.kind,
         subtitle: app.group,
         avatar: app.kind[0],
-        color: theme.palette.secondary.dark,
+        color: "secondary.dark",
       }}
     />
   );

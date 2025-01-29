@@ -32,7 +32,7 @@ export const EditUnitListItem = ({ unit }: EditUnitListItemProps) => {
         title="Edit Unit"
         onClose={() => setOpen(false)}
       >
-        <Box display="flex" flexDirection="column" gap={2}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Typography variant="subtitle1">Owner: {unit.owner_id}</Typography>
           <Typography component="h3" variant="h4">
             Name

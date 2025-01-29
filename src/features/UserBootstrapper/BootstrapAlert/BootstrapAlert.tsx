@@ -15,7 +15,7 @@ export const BootstrapAlert = () => {
 
   if (!unit) {
     return (
-      <Box m={2}>
+      <Box sx={{ m: 2 }}>
         <Alert
           severity="info"
           sx={{

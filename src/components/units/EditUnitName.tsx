@@ -84,7 +84,7 @@ export const EditUnitName = ({ unit }: EditUnitProps) => {
       : "You must be the unit owner to edit the unit name";
 
   return (
-    <Box alignItems="baseline" display="flex" gap={1}>
+    <Box sx={{ alignItems: "baseline", display: "flex", gap: 1 }}>
       <TextField
         fullWidth
         disabled={!allowedToEdit}

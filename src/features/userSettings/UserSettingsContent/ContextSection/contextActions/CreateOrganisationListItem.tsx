@@ -9,7 +9,7 @@ import {
 } from "@squonk/account-server-client/organisation";
 
 import { CreateNewFolder } from "@mui/icons-material";
-import { Grid, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Grid2 as Grid, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
@@ -127,8 +127,8 @@ export const CreateOrganisationListItem = () => {
             onSubmit={() => void submitForm()}
           >
             <Form>
-              <Grid container marginY={2} spacing={1}>
-                <Grid container item>
+              <Grid container spacing={1} sx={{ marginY: 2 }}>
+                <Grid container>
                   <Field
                     autoFocus
                     fullWidth
@@ -137,7 +137,7 @@ export const CreateOrganisationListItem = () => {
                     name="name"
                   />
                 </Grid>
-                <Grid container item>
+                <Grid container>
                   <Field
                     autoFocus
                     fullWidth

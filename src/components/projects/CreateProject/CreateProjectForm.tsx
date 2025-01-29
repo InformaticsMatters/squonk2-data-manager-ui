@@ -24,7 +24,6 @@ import {
   MenuItem,
   Tooltip,
   Typography,
-  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
@@ -88,8 +87,6 @@ export const CreateProjectForm = ({
     isPrivate: isPrivateDefaultValues[defaultPrivacy],
   };
   const theme = useTheme();
-  const biggerThanSm = useMediaQuery(theme.breakpoints.up("sm"));
-
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useGetProductTypes();
@@ -170,7 +167,10 @@ export const CreateProjectForm = ({
         component="fieldset"
         sx={{
           display: "grid",
-          gridTemplateColumns: biggerThanSm ? "1fr 1fr auto" + (modal ? "" : " auto") : "1fr",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "1fr 1fr auto" + (modal ? "" : " auto"),
+          },
           gap: 1,
           alignItems: "baseline",
         }}

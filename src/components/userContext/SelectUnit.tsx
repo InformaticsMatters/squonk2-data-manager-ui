@@ -49,30 +49,32 @@ export const SelectUnit = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            InputProps={{
-              ...params.InputProps,
-              startAdornment: (
-                <>
-                  <ItemIcons item={unit} />
-                  {!!unit && !!(unit.caller_is_member || organisation?.caller_is_member) && (
-                    <>
-                      <Adornment href={`/unit/${unit.id}/charges`} title="Charges">
-                        <ReceiptIcon />
-                      </Adornment>
-                      <Adornment href={`/unit/${unit.id}/inventory`} title="User Usage">
-                        <DataUsageIcon />
-                      </Adornment>
-                    </>
-                  )}
-                </>
-              ),
-            }}
             label="Unit"
+            slotProps={{
+              input: {
+                ...params.InputProps,
+                startAdornment: (
+                  <>
+                    <ItemIcons item={unit} />
+                    {!!unit && !!(unit.caller_is_member || organisation?.caller_is_member) && (
+                      <>
+                        <Adornment href={`/unit/${unit.id}/charges`} title="Charges">
+                          <ReceiptIcon />
+                        </Adornment>
+                        <Adornment href={`/unit/${unit.id}/inventory`} title="User Usage">
+                          <DataUsageIcon />
+                        </Adornment>
+                      </>
+                    )}
+                  </>
+                ),
+              },
+            }}
           />
         )}
-        renderOption={(props, option) => (
-          <Box component="li" {...props}>
-            <Box component="span" display="inline-block" pr={1}>
+        renderOption={({ key, ...props }, option) => (
+          <Box component="li" key={key} {...props}>
+            <Box component="span" sx={{ display: "inline-block", pr: 1 }}>
               <ItemIcons item={option} />
             </Box>
             {option.name} {option.owner_id ? <>({option.owner_id})</> : null}
@@ -89,7 +91,7 @@ export const SelectUnit = ({
         }}
       />
       {/* N.B. This isn't helperText as MUI doesn't make that selectable */}
-      <Typography color="text.secondary" variant="body2">
+      <Typography sx={{ color: "text.secondary" }} variant="body2">
         {unit?.id}
       </Typography>
     </>

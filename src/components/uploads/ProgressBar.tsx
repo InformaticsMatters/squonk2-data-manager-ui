@@ -46,7 +46,7 @@ export const ProgressBar = ({ taskId, progress, errors, onDone }: ProgressBarPro
   }, [task, onDone]);
 
   return (
-    <Box paddingTop={1}>
+    <Box sx={{ paddingTop: 1 }}>
       {task === undefined && progress < 100 && (
         <LinearProgress value={progress} variant="determinate" />
       )}

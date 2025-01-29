@@ -42,7 +42,7 @@ export const EditProjectModal = ({
 
       <PrivateProjectToggle isPrivate={project.private} projectId={project.project_id} />
 
-      <Box display="flex" flexDirection="column" gap={2}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <ProjectAdministrators
           administrators={project.administrators}
           projectId={project.project_id}

@@ -39,7 +39,7 @@ export const UserMenu = () => {
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
             <Paper>
-              <Box p={1}>
+              <Box sx={{ p: 1 }}>
                 <UserMenuContent />
               </Box>
             </Paper>

@@ -17,8 +17,9 @@ import {
   TimelineOppositeContent,
   TimelineSeparator,
 } from "@mui/lab";
-import { Box, Tooltip, Typography, useTheme } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 
+import { firaMonoFont } from "../../constants/fonts";
 import { useEventDebugMode } from "../../state/eventDebugMode";
 import { LocalTime } from "../LocalTime";
 
@@ -124,18 +125,16 @@ const TimelineSection = ({
 export type TimeLineLabelProps = ComponentProps<typeof Typography>;
 
 const TimeLineLabel = ({ children, ...typographyProps }: TimeLineLabelProps) => {
-  const theme = useTheme();
-  theme.typography;
   if (typeof children === "string" && children.includes("\n")) {
     return (
       <Box
+        className={firaMonoFont.className}
         component="pre"
-        fontSize="body2.fontSize"
-        m={0}
         sx={{
+          fontSize: "body2.fontSize",
+          m: 0,
           display: "inline-block",
           textAlign: "left",
-          fontFamily: "'Fira Mono', monospace",
         }}
       >
         {children}
@@ -144,11 +143,9 @@ const TimeLineLabel = ({ children, ...typographyProps }: TimeLineLabelProps) => 
   }
   return (
     <Typography
+      className={firaMonoFont.className}
       component="code"
-      sx={{
-        fontFamily: "'Fira Mono', monospace",
-        wordBreak: "break-word",
-      }}
+      sx={{ wordBreak: "break-word" }}
       variant="body2"
       {...typographyProps}
     >

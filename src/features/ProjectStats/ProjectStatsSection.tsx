@@ -167,7 +167,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
   );
 
   return (
-    <Box display="grid" sx={{ overflowX: "auto" }}>
+    <Box sx={{ display: "grid", overflowX: "auto" }}>
       <DataTable
         enableColumnFilters
         columns={projectsColumns}

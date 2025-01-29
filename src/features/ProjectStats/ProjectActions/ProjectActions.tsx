@@ -32,7 +32,7 @@ export const ProjectActions = ({
   }
 
   return project ? (
-    <Box display="flex">
+    <Box sx={{ display: "flex" }}>
       <OpenProjectButton projectId={projectId} />
       {!!(isEditor || isAdministrator) && (
         <EditProjectButton projectId={project.project_id}>

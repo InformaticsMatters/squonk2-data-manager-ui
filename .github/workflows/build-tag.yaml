@@ -48,12 +48,12 @@ jobs:
   trigger-awx:
     needs: build
     runs-on: ubuntu-latest
-    environment: awx/dls-dev
+    environment: awx/dls-test
     steps:
     - name: Inject slug/short variables
       uses: rlespinasse/github-slug-action@v5
     - name: Trigger AWX
-      uses: informaticsmatters/trigger-awx-action@v1
+      uses: informaticsmatters/trigger-awx-action@v2
       with:
         template: Squonk/2 Data Manager UI -test-
         template-host: ${{ secrets.AWX_HOST }}

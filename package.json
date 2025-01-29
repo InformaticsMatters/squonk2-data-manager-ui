@@ -53,7 +53,7 @@
     "@rjsf/validator-ajv8": "5.22.3",
     "@sentry/nextjs": "8.37.1",
     "@squonk/account-server-client": "4.0.0-beta.4",
-    "@squonk/data-manager-client": "3.1.0-beta.2",
+    "@squonk/data-manager-client": "3.2.0",
     "@squonk/mui-theme": "3.0.2",
     "@squonk/sdf-parser": "1.3.0",
     "@tanstack/match-sorter-utils": "8.19.4",

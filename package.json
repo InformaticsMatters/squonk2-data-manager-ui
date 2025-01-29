@@ -88,7 +88,7 @@
     "nextjs-routes": "2.2.3",
     "node-fetch": "3.3.2",
     "notistack": "3.0.1",
-    "plotly.js-basic-dist": "2.35.2",
+    "plotly.js-basic-dist": "3.0.0",
     "prismjs": "1.29.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",

@@ -130,7 +130,7 @@ export const SDFViewerData = ({ project, path, file, config }: SDFViewerDataProp
       sx={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(144px, auto))",
-        gridGap: 2,
+        gap: 2,
         alignItems: "start",
       }}
     >

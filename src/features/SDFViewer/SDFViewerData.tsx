@@ -18,10 +18,7 @@ const getCards = (molecules: Must<Molecule>[], propsToHide: string[] = []) => {
       .filter((property) => !propsToHide.includes(property.name));
     return (
       <MolCard
-        depictParams={{
-          depictURL:
-            "https://squonk.informaticsmatters.org/fragnet-depict-api/fragnet-depict/moldepict",
-        }}
+        depictParams={{ depictURL: process.env.NEXT_PUBLIC_DEPICT_API_SERVER ?? "" }}
         key={molecule.id}
         molFile={molecule.molFile}
         variant="molFile"

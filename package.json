@@ -73,7 +73,7 @@
     "formik-mui": "4.0.0",
     "formik-mui-lab": "1.0.0",
     "immer": "10.1.1",
-    "jotai": "2.11.1",
+    "jotai": "2.11.2",
     "just-compare": "2.3.0",
     "just-group-by": "2.2.0",
     "jwt-decode": "4.0.0",

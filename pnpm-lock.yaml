@@ -63,8 +63,8 @@ importers:
         specifier: 8.52.1
         version: 8.52.1(@opentelemetry/core@1.29.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.56.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.29.0(@opentelemetry/api@1.9.0))(next@15.1.6(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.83.1))(react@19.0.0)(webpack@5.97.1)
       '@squonk/account-server-client':
-        specifier: 4.0.0
-        version: 4.0.0(@tanstack/react-query@5.66.0(react@19.0.0))(axios@1.7.9)
+        specifier: 4.1.0
+        version: 4.1.0(@tanstack/react-query@5.66.0(react@19.0.0))(axios@1.7.9)
       '@squonk/data-manager-client':
         specifier: 3.2.0
         version: 3.2.0(@tanstack/react-query@5.66.0(react@19.0.0))(axios@1.7.9)
@@ -1491,8 +1491,8 @@ packages:
   '@sideway/pinpoint@2.0.0':
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
 
-  '@squonk/account-server-client@4.0.0':
-    resolution: {integrity: sha512-gj0kF0iFbQhMzVzI57v4X5X+cCbdmMVIhyu5yO4nclMSxhMnhOpQzqMVKJYcw0CI+WzlKYtjaTlscs37sbn35A==}
+  '@squonk/account-server-client@4.1.0':
+    resolution: {integrity: sha512-Z/Sjf72bhPRd7ow4VOiqByCmDQCjLfJ7gzsvV8PJDeVY1t4r191QVMPapZEI91k7QC6/hOgKDHPjyZLQzJ3H4w==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
@@ -7477,7 +7477,7 @@ snapshots:
 
   '@sideway/pinpoint@2.0.0': {}
 
-  '@squonk/account-server-client@4.0.0(@tanstack/react-query@5.66.0(react@19.0.0))(axios@1.7.9)':
+  '@squonk/account-server-client@4.1.0(@tanstack/react-query@5.66.0(react@19.0.0))(axios@1.7.9)':
     dependencies:
       '@tanstack/react-query': 5.66.0(react@19.0.0)
       axios: 1.7.9

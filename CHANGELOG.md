@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.2.1-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.2.0-rc.0...5.2.1-rc.0) (2025-02-01)
+
+
+### Bug Fixes
+
+* fix spacing of molcards ([8222c95](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8222c95d5fc25b6667d0d01a65fb3e31d4264f44))
+
 ## [5.2.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.1.1-rc.0...5.2.0-rc.0) (2025-01-27)
 
 

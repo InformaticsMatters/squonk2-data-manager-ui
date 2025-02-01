@@ -28,7 +28,7 @@ export const SelectOrganisation = (autoCompleteProps: SelectOrganisationProps) =
   const [organisation, setOrganisation] = useSelectedOrganisation();
   const { setCurrentProjectId } = useCurrentProjectId();
 
-  const { data, isLoading, isError, error } = useGetOrganisations({
+  const { data, isLoading, isError, error } = useGetOrganisations(undefined, {
     query: { select: (data) => data.organisations },
   });
   const organisations = data ?? [];

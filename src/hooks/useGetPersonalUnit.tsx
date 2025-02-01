@@ -4,7 +4,7 @@ import { useKeycloakUser } from "./useKeycloakUser";
 
 export const useGetPersonalUnit = (username?: string) => {
   const { user } = useKeycloakUser();
-  return useGetUnits({
+  return useGetUnits(undefined, {
     query: {
       select: (units) =>
         units.units

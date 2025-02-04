@@ -66,8 +66,8 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(@tanstack/react-query@5.66.0(react@19.0.0))(axios@1.7.9)
       '@squonk/data-manager-client':
-        specifier: 3.3.0
-        version: 3.3.0(@tanstack/react-query@5.66.0(react@19.0.0))(axios@1.7.9)
+        specifier: 3.3.1
+        version: 3.3.1(@tanstack/react-query@5.66.0(react@19.0.0))(axios@1.7.9)
       '@squonk/mui-theme':
         specifier: 4.0.0
         version: 4.0.0(@mui/material@6.4.2(@emotion/react@11.14.0(@types/react@19.0.8)(react@19.0.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.8)(react@19.0.0))(@types/react@19.0.8)(react@19.0.0))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))
@@ -1497,8 +1497,8 @@ packages:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
 
-  '@squonk/data-manager-client@3.3.0':
-    resolution: {integrity: sha512-iI3Z00l8E0HH7LMCiMLkN2NMIqT9bIxuWErO2KG+wocPtkGLMBRFnX/1DBFhwFVSq6PhOKeSeoJLy7LVSu5q8Q==}
+  '@squonk/data-manager-client@3.3.1':
+    resolution: {integrity: sha512-DTxbD4kGw5RzQ73BYZwCg4B+BAekXC8cmYSgmkHNf79VQIgWOjIAU0U8DniwQGAQKXNFaNc2B0qVZd+m8EgpOw==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
@@ -7482,7 +7482,7 @@ snapshots:
       '@tanstack/react-query': 5.66.0(react@19.0.0)
       axios: 1.7.9
 
-  '@squonk/data-manager-client@3.3.0(@tanstack/react-query@5.66.0(react@19.0.0))(axios@1.7.9)':
+  '@squonk/data-manager-client@3.3.1(@tanstack/react-query@5.66.0(react@19.0.0))(axios@1.7.9)':
     dependencies:
       '@tanstack/react-query': 5.66.0(react@19.0.0)
       axios: 1.7.9

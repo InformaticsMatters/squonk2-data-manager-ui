@@ -17,6 +17,7 @@ import { SnackbarProvider } from "notistack";
 
 import { ThemeProviders } from "../components/app/ThemeProviders";
 import { TopLevelHooks } from "../components/app/TopLevelHooks";
+import { EventStream } from "../components/EventStream";
 import { openSansFont } from "../constants/fonts";
 import { AS_API_URL, DM_API_URL } from "../constants/proxies";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
@@ -65,6 +66,7 @@ const App = ({ Component, pageProps }: CustomAppProps) => {
             <QueryClientProvider client={queryClient}>
               <HydrationBoundary state={pageProps.dehydratedState}>
                 <SnackbarProvider>
+                  <EventStream />
                   <MDXComponentProvider>
                     <TopLevelHooks>
                       <Component {...pageProps} />

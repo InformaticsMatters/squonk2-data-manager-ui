@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.3.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.2.1...5.3.0-rc.0) (2025-03-15)
+
+
+### Features
+
+* setup event stream connection via web socket and display events ([01e1adb](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/01e1adb827c5bb84599bd6d53d3f26dc53148638))
+
+
+### Miscellaneous Chores
+
+* release 5.3.0-rc.0 ([da9c183](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/da9c183bc021f805b59d4ce0e3f13e04b4190f70))
+
 ## [5.2.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.2.0-rc.0...5.2.1) (2025-03-15)
 
 

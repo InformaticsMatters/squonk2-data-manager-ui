@@ -4,12 +4,11 @@ import {
   useCreateUnitProduct,
 } from "@squonk/account-server-client/product";
 
-import { Box, Button } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
+import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-mui";
-import * as yup from "yup";
+import { z } from "zod";
 
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useGetStorageCost } from "../hooks/useGetStorageCost";
@@ -19,8 +18,6 @@ export interface CreateDatasetStorageSubscriptionProps {
   unit: UnitAllDetail;
 }
 
-const initialValues = { allowance: 1000, name: "Dataset Storage" };
-
 export const CreateDatasetStorageSubscription = ({
   unit,
 }: CreateDatasetStorageSubscriptionProps) => {
@@ -28,61 +25,83 @@ export const CreateDatasetStorageSubscription = ({
   const { enqueueError, enqueueSnackbar } = useEnqueueError<AsError>();
   const queryClient = useQueryClient();
   const cost = useGetStorageCost();
+
+  // Define Zod schema for validation
+  const productSchema = z.object({
+    name: z.string().min(1, "A name is required"),
+    allowance: z
+      .number()
+      .min(1, "Allowance must be at least 1")
+      .int("Allowance must be an integer"),
+  });
+
+  const form = useForm({
+    defaultValues: {
+      allowance: 1000,
+      name: "Dataset Storage",
+    },
+    validators: {
+      onChange: productSchema,
+    },
+    onSubmit: async ({ value }) => {
+      try {
+        await createProduct({
+          unitId: unit.id,
+          data: {
+            allowance: value.allowance,
+            limit: value.allowance, // TODO: we will implement this properly later
+            name: value.name,
+            type: "DATA_MANAGER_STORAGE_SUBSCRIPTION",
+          },
+        });
+        enqueueSnackbar("Created product", { variant: "success" });
+        await queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
+        form.reset();
+      } catch (error) {
+        enqueueError(error);
+        captureException(error);
+      }
+    },
+  });
+
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={yup
-        .object()
-        .shape({
-          name: yup.string().trim().required("A name is required"),
-          allowance: yup.number().min(1).integer().required("An allowance is required"),
-        })}
-      onSubmit={async ({ allowance, name }) => {
-        try {
-          await createProduct({
-            unitId: unit.id,
-            data: {
-              allowance,
-              limit: allowance, // TODO: we will implement this properly later
-              name,
-              type: "DATA_MANAGER_STORAGE_SUBSCRIPTION",
-            },
-          });
-          enqueueSnackbar("Created product", { variant: "success" });
-          await queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() });
-        } catch (error) {
-          enqueueError(error);
-          captureException(error);
-        }
-      }}
-    >
-      {({ submitForm, isSubmitting, isValid, values }) => {
-        return (
-          <Form>
-            <Box sx={{ alignItems: "baseline", display: "flex", flexWrap: "wrap", gap: 2 }}>
-              <Field
-                autoFocus
-                component={TextField}
-                label="Name"
-                name="name"
-                sx={{ maxWidth: 150 }}
-              />
-              <Field
-                component={TextField}
-                label="Allowance"
-                min={1}
-                name="allowance"
-                sx={{ maxWidth: 100 }}
-                type="number"
-              />
-              {!!cost && <span>Cost: {formatCoins(cost * values.allowance)}</span>}
-              <Button disabled={isSubmitting || !isValid} onClick={() => void submitForm()}>
-                Create
-              </Button>
-            </Box>
-          </Form>
-        );
-      }}
-    </Formik>
+    <Box sx={{ alignItems: "baseline", display: "flex", flexWrap: "wrap", gap: 2 }}>
+      <form.Field name="name">
+        {(field) => (
+          <TextField
+            autoFocus
+            error={field.state.meta.errors.length > 0}
+            helperText={field.state.meta.errors.map((error) => error?.message)[0]}
+            label="Name"
+            sx={{ maxWidth: 150 }}
+            value={field.state.value}
+            onBlur={field.handleBlur}
+            onChange={(e) => field.handleChange(e.target.value)}
+          />
+        )}
+      </form.Field>
+
+      <form.Field name="allowance">
+        {(field) => (
+          <TextField
+            error={field.state.meta.errors.length > 0}
+            helperText={field.state.meta.errors.map((error) => error?.message)[0]}
+            label="Allowance"
+            slotProps={{ htmlInput: { min: 1 } }}
+            sx={{ maxWidth: 100 }}
+            type="number"
+            value={field.state.value}
+            onBlur={field.handleBlur}
+            onChange={(e) => field.handleChange(Number(e.target.value))}
+          />
+        )}
+      </form.Field>
+
+      {!!cost && <span>Cost: {formatCoins(cost * form.state.values.allowance)}</span>}
+
+      <Button disabled={!form.state.canSubmit} onClick={() => void form.handleSubmit()}>
+        Create
+      </Button>
+    </Box>
   );
 };

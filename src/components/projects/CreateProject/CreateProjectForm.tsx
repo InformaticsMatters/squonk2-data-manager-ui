@@ -22,29 +22,26 @@ import {
   FormControl,
   FormLabel,
   MenuItem,
+  TextField,
   Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
+import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { Field, Form, Formik, type FormikConfig } from "formik";
-import { TextField } from "formik-mui";
-import * as yup from "yup";
+import { z } from "zod";
 
-import { type Resolve } from "../../../../types";
 import { useCurrentProjectId } from "../../../hooks/projectHooks";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { formatTierString } from "../../../utils/app/products";
 import { getErrorMessage } from "../../../utils/next/orvalError";
-import { FormikModalWrapper, type FormikModalWrapperProps } from "../../modals/FormikModalWrapper";
+import { FormModalWrapper, type FormModalWrapperProps } from "../../modals/FormModalWrapper";
 import { PrivacyToggle } from "./PrivacyToggle";
 
 const PROJECT_SUB = ProductDetailType.DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION;
 
 export interface CreateProjectFormProps {
-  modal?: Resolve<
-    Pick<FormikModalWrapperProps, "id" | "onClose" | "open" | "submitText" | "title">
-  >;
+  modal?: Pick<FormModalWrapperProps, "id" | "onClose" | "open" | "submitText" | "title">;
   unitId: UnitAllDetail["id"] | (() => Promise<UnitAllDetail["id"]>);
   defaultPrivacy: UnitAllDetailDefaultProductPrivacy;
   product?: ProductDetail;
@@ -57,14 +54,22 @@ export interface Values {
   isPrivate: boolean;
 }
 
-type ProjectFormikProps = FormikConfig<Values>;
-
 const isPrivateDefaultValues: Record<UnitAllDetailDefaultProductPrivacy, boolean> = {
   ALWAYS_PRIVATE: true,
   ALWAYS_PUBLIC: false,
   DEFAULT_PUBLIC: false,
   DEFAULT_PRIVATE: true,
 };
+
+// Create Zod schema for validation
+const formSchema = z.object({
+  projectName: z
+    .string()
+    .min(1, "A project name is required")
+    .regex(/^[A-Za-z0-9-_.][A-Za-z0-9-_. ]*[A-Za-z0-9-_.]$/u, "Invalid project name format"),
+  flavour: z.string().min(1, "A tier is required"),
+  isPrivate: z.boolean(),
+});
 
 export const CreateProjectForm = ({
   modal,
@@ -86,6 +91,7 @@ export const CreateProjectForm = ({
     flavour: product?.flavour ?? defaultFlavour,
     isPrivate: isPrivateDefaultValues[defaultPrivacy],
   };
+
   const theme = useTheme();
   const queryClient = useQueryClient();
 
@@ -101,25 +107,26 @@ export const CreateProjectForm = ({
 
   const { setCurrentProjectId } = useCurrentProjectId();
 
-  const create = async (
-    { projectName, flavour, isPrivate }: Values,
-    productId?: ProductDetail["id"],
-  ) => {
+  const create = async (values: Values, productId?: ProductDetail["id"]) => {
     try {
       if (!productId) {
         const { id } = await createProduct({
           unitId: typeof unitId === "function" ? await unitId() : unitId,
           data: {
-            name: projectName,
+            name: values.projectName,
             type: PROJECT_SUB,
-            flavour: flavour as UnitProductPostBodyBodyFlavour,
+            flavour: values.flavour as UnitProductPostBodyBodyFlavour,
           },
         });
         productId = id;
       }
 
       const { project_id } = await createProject({
-        data: { name: projectName, tier_product_id: productId, private: isPrivate },
+        data: {
+          name: values.projectName,
+          tier_product_id: productId,
+          private: values.isPrivate,
+        },
       });
       enqueueSnackbar("Project created");
 
@@ -138,27 +145,23 @@ export const CreateProjectForm = ({
     }
   };
 
-  const handleSubmit: ProjectFormikProps["onSubmit"] = async (values, { setSubmitting }) => {
-    try {
-      await create(values, product?.id);
-      modal?.onClose();
-    } catch (error) {
-      enqueueError(error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const form = useForm({
+    defaultValues: initialValues as z.infer<typeof formSchema>,
+    onSubmit: async ({ value }) => {
+      try {
+        await create(value, product?.id);
+        modal?.onClose();
+      } catch (error) {
+        enqueueError(error);
+      }
+    },
+    validators: {
+      onChange: formSchema,
+    },
+  });
 
-  const children: ProjectFormikProps["children"] = ({
-    submitForm,
-    isSubmitting,
-    isValid,
-    handleChange,
-    setFieldValue,
-    values,
-    touched,
-  }) => (
-    <Form style={{ marginTop: theme.spacing() }}>
+  const formContent = () => (
+    <div style={{ marginTop: theme.spacing() }}>
       <FormControl
         component="fieldset"
         sx={{
@@ -172,87 +175,112 @@ export const CreateProjectForm = ({
           Unit default privacy: {defaultPrivacy.split("_").join(" ").toLocaleLowerCase()}
         </FormLabel>
 
-        <Field
-          fullWidth
-          autoFocus={autoFocus}
-          component={TextField}
-          label="Project Name"
-          name="projectName"
-        />
+        <form.Field name="projectName">
+          {(field) => (
+            <TextField
+              fullWidth
+              autoFocus={autoFocus}
+              error={field.state.meta.errors.length > 0}
+              helperText={field.state.meta.errors.map((error) => error?.message)[0]}
+              label="Project Name"
+              name="projectName"
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+          )}
+        </form.Field>
 
         {isError ? (
           <Typography color="error">{getErrorMessage(error)}</Typography>
         ) : (
-          <Field
-            fullWidth
-            select
-            component={TextField}
-            disabled={!!product?.id}
-            label="Tier"
-            name="flavour"
-            onChange={(event: any) => {
-              handleChange(event);
-              if (event.target.value === ProductDetailFlavour.EVALUATION) {
-                void setFieldValue("isPrivate", false);
-              } else if (!touched.isPrivate) {
-                void setFieldValue("isPrivate", isPrivateDefaultValues[defaultPrivacy]);
-              }
-            }}
-          >
-            {isLoading ? (
-              <MenuItem disabled>Loading</MenuItem>
-            ) : (
-              productTypes?.map((product) => {
-                return (
-                  <MenuItem
-                    disabled={
-                      product.flavour === ProductDetailFlavour.EVALUATION && !evaluationAllowed
-                    }
-                    key={product.flavour}
-                    value={product.flavour}
-                  >
-                    {formatTierString(product.flavour ?? "Unknown Flavour")}
-                  </MenuItem>
-                );
-              })
+          <form.Field name="flavour">
+            {(field) => (
+              <TextField
+                fullWidth
+                select
+                disabled={!!product?.id}
+                error={field.state.meta.errors.length > 0}
+                helperText={field.state.meta.errors.map((error) => error?.message)[0]}
+                label="Tier"
+                name="flavour"
+                value={field.state.value}
+                onChange={(e) => {
+                  field.handleChange(e.target.value);
+                  // Set isPrivate to false for evaluation tier
+                  if (e.target.value === ProductDetailFlavour.EVALUATION) {
+                    form.setFieldValue("isPrivate", false);
+                  } else {
+                    // Otherwise set to default value
+                    form.setFieldValue("isPrivate", isPrivateDefaultValues[defaultPrivacy]);
+                  }
+                }}
+              >
+                {isLoading ? (
+                  <MenuItem disabled>Loading</MenuItem>
+                ) : (
+                  productTypes?.map((product) => {
+                    return (
+                      <MenuItem
+                        disabled={
+                          product.flavour === ProductDetailFlavour.EVALUATION && !evaluationAllowed
+                        }
+                        key={product.flavour}
+                        value={product.flavour}
+                      >
+                        {formatTierString(product.flavour ?? "Unknown Flavour")}
+                      </MenuItem>
+                    );
+                  })
+                )}
+              </TextField>
             )}
-          </Field>
+          </form.Field>
         )}
 
         <Tooltip title="Toggle whether this project can be viewed by other platform users">
           {/* Span to prevent forward ref warning, probably fixed in react 19 */}
           <span>
-            <PrivacyToggle defaultPrivacy={defaultPrivacy} flavour={values.flavour} />
+            <form.Field name="isPrivate">
+              {(field) => (
+                <PrivacyToggle
+                  defaultPrivacy={defaultPrivacy}
+                  field={{
+                    state: {
+                      value: field.state.value,
+                    },
+                    handleChange: field.handleChange,
+                  }}
+                  flavour={form.state.values.flavour}
+                />
+              )}
+            </form.Field>
           </span>
         </Tooltip>
 
         {!modal && (
-          <Button disabled={isSubmitting || !isValid} onClick={() => void submitForm()}>
+          <Button
+            disabled={!form.state.canSubmit || form.state.isSubmitting}
+            onClick={() => void form.handleSubmit()}
+          >
             Create
           </Button>
         )}
       </FormControl>
-    </Form>
+    </div>
   );
 
-  const commonProps: ProjectFormikProps = {
-    validateOnMount: true,
-    initialValues,
-    validationSchema: yup.object().shape({
-      projectName: yup
-        .string()
-        .required("A project name is required")
-        .matches(/^[A-Za-z0-9-_.][A-Za-z0-9-_. ]*[A-Za-z0-9-_.]$/u),
-      flavour: yup.string().required("A tier is required"),
-    }),
-    onSubmit: handleSubmit,
-  };
-
   return modal ? (
-    <FormikModalWrapper {...modal} {...commonProps} closeText="Cancel">
-      {children}
-    </FormikModalWrapper>
+    <FormModalWrapper {...modal} closeText="Cancel" form={form}>
+      {formContent()}
+    </FormModalWrapper>
   ) : (
-    <Formik {...commonProps}>{children}</Formik>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        void form.handleSubmit();
+      }}
+    >
+      {formContent()}
+    </form>
   );
 };

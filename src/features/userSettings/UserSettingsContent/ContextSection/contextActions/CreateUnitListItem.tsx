@@ -10,11 +10,16 @@ import {
 } from "@squonk/account-server-client/unit";
 
 import { CreateNewFolder } from "@mui/icons-material";
-import { Grid2 as Grid, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import {
+  Grid2 as Grid,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  TextField,
+} from "@mui/material";
+import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-mui";
-import * as yup from "yup";
+import { z } from "zod";
 
 import { ModalWrapper } from "../../../../../components/modals/ModalWrapper";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
@@ -71,6 +76,35 @@ export const CreateUnitListItem = () => {
     }
   };
 
+  // Define Zod schema for validation
+  const unitSchema = z.object({
+    name: z
+      .string()
+      .min(2, "The name is too short")
+      .refine((name) => !units?.map((unit) => unit.name).includes(name), {
+        message: "The name is already used for a unit",
+      }),
+  });
+
+  const form = useForm({
+    defaultValues: {
+      name: "",
+    } as z.infer<typeof unitSchema>,
+    validators: {
+      onChange: unitSchema,
+    },
+    onSubmit: async ({ value }) => {
+      try {
+        await create(value.name);
+        form.reset();
+      } catch (error) {
+        enqueueError(error);
+      } finally {
+        setOpen(false);
+      }
+    },
+  });
+
   return (
     <>
       <ListItemButton onClick={() => setOpen(true)}>
@@ -83,53 +117,42 @@ export const CreateUnitListItem = () => {
         </ListItemIcon>
       </ListItemButton>
 
-      <Formik
-        validateOnMount
-        initialValues={{ name: "" }}
-        validationSchema={yup.object().shape({
-          name: yup
-            .string()
-            .required("A unit name is required")
-            .test(
-              "does-not-exist-already",
-              "The name is already used for a unit",
-              (name) => !units?.map((unit) => unit.name).includes(name),
-            )
-            .min(2, "The name is too short"),
-        })}
-        onSubmit={async ({ name }, { setSubmitting, resetForm }) => {
-          try {
-            await create(name);
-            resetForm();
-          } catch (error) {
-            enqueueError(error);
-          } finally {
-            setOpen(false);
-            setSubmitting(false);
-          }
-        }}
+      <ModalWrapper
+        DialogProps={{ maxWidth: "sm", fullWidth: true }}
+        id="create-unit"
+        open={open}
+        submitDisabled={!form.state.canSubmit}
+        submitText="Create"
+        title="Create Unit"
+        onClose={() => setOpen(false)}
+        onSubmit={() => void form.handleSubmit()}
       >
-        {({ submitForm, isSubmitting, isValid }) => (
-          <ModalWrapper
-            DialogProps={{ maxWidth: "sm", fullWidth: true }}
-            id="create-unit"
-            open={open}
-            submitDisabled={isSubmitting || !isValid}
-            submitText="Create"
-            title="Create Unit"
-            onClose={() => setOpen(false)}
-            onSubmit={() => void submitForm()}
-          >
-            <Form>
-              <Grid container spacing={1} sx={{ marginY: 2 }}>
-                <Grid container>
-                  <Field autoFocus fullWidth component={TextField} label="Unit Name" name="name" />
-                </Grid>
-              </Grid>
-            </Form>
-          </ModalWrapper>
-        )}
-      </Formik>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void form.handleSubmit();
+          }}
+        >
+          <Grid container spacing={1} sx={{ marginY: 2 }}>
+            <Grid container>
+              <form.Field name="name">
+                {(field) => (
+                  <TextField
+                    autoFocus
+                    fullWidth
+                    error={field.state.meta.errors.length > 0}
+                    helperText={field.state.meta.errors.map((error) => error?.message)[0]}
+                    label="Unit Name"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                )}
+              </form.Field>
+            </Grid>
+          </Grid>
+        </form>
+      </ModalWrapper>
     </>
   );
 };

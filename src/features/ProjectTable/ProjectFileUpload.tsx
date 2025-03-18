@@ -32,10 +32,7 @@ export const ProjectFileUpload = ({ children }: ProjectFileUploadProps) => {
       const key = enqueueSnackbar(`Uploading file ${file.name}`, { autoHideDuration: 10_000 });
       if (projectId) {
         try {
-          await uploadProjectFile({
-            projectId,
-            data: { as_filename: file.name, file, path },
-          });
+          await uploadProjectFile({ projectId, data: { as_filename: file.name, file, path } });
           enqueueSnackbar(`${file.name} was uploaded`, { variant: "success" });
           void queryClient.invalidateQueries({
             queryKey: getGetFilesQueryKey({ project_id: projectId, path }),

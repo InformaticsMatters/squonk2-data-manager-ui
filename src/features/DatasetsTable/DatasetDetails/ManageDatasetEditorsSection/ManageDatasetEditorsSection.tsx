@@ -54,10 +54,7 @@ export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSec
           enqueueSnackbar("Username doesn't exist", { variant: "warning" });
         } else {
           try {
-            await removeEditor({
-              datasetId: dataset.dataset_id,
-              userId: username,
-            });
+            await removeEditor({ datasetId: dataset.dataset_id, userId: username });
           } catch (error) {
             enqueueError(error);
           }

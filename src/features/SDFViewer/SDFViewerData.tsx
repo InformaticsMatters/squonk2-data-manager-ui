@@ -45,12 +45,7 @@ const getPropArrayFromRecords = (molecules: Molecule[] | SDFRecord[]): string[] 
 const useSDFRecords = (project: string, path: string, file: string, config: SDFViewerConfig) => {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
-  const queryParams = new URLSearchParams({
-    project,
-    path,
-    file,
-    config: censorConfig(config),
-  });
+  const queryParams = new URLSearchParams({ project, path, file, config: censorConfig(config) });
   const url = `${basePath}/api/sdf-parser?${queryParams.toString()}`;
 
   return useQuery<SDFRecord[], Error, SDFRecord[], string[]>({
@@ -70,17 +65,12 @@ export interface Molecule extends SDFRecord {
   id: string;
 }
 
-export type Must<T> = {
-  [P in keyof T]-?: NonNullable<T[P]>;
-};
+export type Must<T> = { [P in keyof T]-?: NonNullable<T[P]> };
 
 export const recordsToMolecules = (records: SDFRecord[]): Must<Molecule>[] => {
   return records
     .filter((record): record is Must<SDFRecord> => !!record.molFile)
-    .map((record) => ({
-      id: nanoid(),
-      ...record,
-    }));
+    .map((record) => ({ id: nanoid(), ...record }));
 };
 
 export interface SDFViewerDataProps {

@@ -6,10 +6,7 @@ import { Alert, Box, Button, Checkbox, MenuItem, TextField, Typography } from "@
 import { type SDFViewerConfig } from "../../utils/api/sdfViewer";
 import { type JSON_SCHEMA_TYPE, JSON_SCHEMA_TYPES } from "../../utils/app/jsonSchema";
 
-export type Field = {
-  type: JSON_SCHEMA_TYPE;
-  description: string;
-};
+export type Field = { type: JSON_SCHEMA_TYPE; description: string };
 
 export interface Schema {
   $schema: string;
@@ -109,9 +106,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
             <TextField
               select
               defaultValue={config[key].dtype}
-              slotProps={{
-                htmlInput: register(`${key}.dtype`),
-              }}
+              slotProps={{ htmlInput: register(`${key}.dtype`) }}
             >
               {JSON_SCHEMA_TYPES.map((type) => (
                 <MenuItem key={type} value={type}>
@@ -147,9 +142,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
               defaultValue={config[key].min}
               disabled={!getIsNumeric(key)}
               inputMode="numeric"
-              slotProps={{
-                htmlInput: { ...register(`${key}.min`), step: getStep(key) },
-              }}
+              slotProps={{ htmlInput: { ...register(`${key}.min`), step: getStep(key) } }}
               sx={{ width: "7em" }}
               type="number"
             />
@@ -157,9 +150,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
               defaultValue={config[key].max}
               disabled={!getIsNumeric(key)}
               inputMode="numeric"
-              slotProps={{
-                htmlInput: { ...register(`${key}.max`), step: getStep(key) },
-              }}
+              slotProps={{ htmlInput: { ...register(`${key}.max`), step: getStep(key) } }}
               sx={{ width: "7em" }}
               type="number"
             />
@@ -167,9 +158,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
               disabled
               select
               defaultValue={config[key].sort}
-              slotProps={{
-                htmlInput: register(`${key}.sort`),
-              }}
+              slotProps={{ htmlInput: register(`${key}.sort`) }}
             >
               <MenuItem key="ASC" value="ASC">
                 ASC

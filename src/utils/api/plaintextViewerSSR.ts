@@ -47,9 +47,7 @@ export interface SSRArguments {
 }
 
 // Copied from GetServerSideProps
-type Request = IncomingMessage & {
-  cookies: Partial<Record<string, string>>;
-};
+type Request = IncomingMessage & { cookies: Partial<Record<string, string>> };
 
 export const plaintextViewerSSR = async (
   req: Request,

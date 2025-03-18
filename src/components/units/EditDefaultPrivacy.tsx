@@ -30,12 +30,7 @@ export const EditDefaultPrivacy = ({ unit }: EditDefaultPrivacyProps) => {
 
   const handleSelection = async (newValue: UnitAllDetailDefaultProductPrivacy) => {
     try {
-      await patchUnit({
-        unitId: unit.id,
-        data: {
-          default_product_privacy: newValue,
-        },
-      });
+      await patchUnit({ unitId: unit.id, data: { default_product_privacy: newValue } });
       await queryClient.invalidateQueries({ queryKey: getGetUnitsQueryKey() });
       await queryClient.invalidateQueries({ queryKey: getGetUnitQueryKey(unit.id) });
       enqueueSnackbar("Unit default privacy updated", { variant: "success" });

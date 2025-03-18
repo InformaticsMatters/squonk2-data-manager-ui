@@ -8,24 +8,12 @@ export const openSansFont = openSans({
   display: "swap",
 });
 
-export const firaMonoFont = firaMono({
-  weight: "400",
-  subsets: ["latin"],
-});
+export const firaMonoFont = firaMono({ weight: "400", subsets: ["latin"] });
 
 export const ralewayFont = localFont({
   src: [
-    {
-      path: "../../assets/fonts/Raleway/Raleway-Regular.woff2",
-      style: "normal",
-    },
-    {
-      path: "../../assets/fonts/Raleway/Raleway-Italic.woff2",
-      style: "italic",
-    },
-    {
-      path: "../../assets/fonts/Raleway/Raleway-Bold.woff2",
-      weight: "700",
-    },
+    { path: "../../assets/fonts/Raleway/Raleway-Regular.woff2", style: "normal" },
+    { path: "../../assets/fonts/Raleway/Raleway-Italic.woff2", style: "italic" },
+    { path: "../../assets/fonts/Raleway/Raleway-Bold.woff2", weight: "700" },
   ],
 });

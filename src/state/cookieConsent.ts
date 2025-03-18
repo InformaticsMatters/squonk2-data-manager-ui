@@ -10,10 +10,7 @@ export interface Consent extends BaseValue {
   consent: boolean;
 }
 
-const initialConsent: Consent = {
-  version: VERSION,
-  consent: false,
-};
+const initialConsent: Consent = { version: VERSION, consent: false };
 
 const cookieConsent = atomWithStorage(COOKIE_CONSENT_STORAGE_KEY, initialConsent);
 

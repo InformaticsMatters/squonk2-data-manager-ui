@@ -4,11 +4,7 @@ import { atomWithStorage } from "jotai/utils";
 import { type ProjectId, useCurrentProjectId } from "../hooks/projectHooks";
 import { PROJECT_FILE_LOCAL_STORAGE_KEY } from "../utils/next/localStorage";
 
-export type SavedFile = {
-  path: string;
-  type: "directory" | "file";
-  mimeType?: string;
-};
+export type SavedFile = { path: string; type: "directory" | "file"; mimeType?: string };
 
 export type FileState = Record<string, SavedFile[] | undefined>;
 

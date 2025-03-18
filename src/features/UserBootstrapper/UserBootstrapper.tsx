@@ -15,9 +15,7 @@ export const UserBootstrapper = () => {
 
   const { projectId } = useCurrentProjectId();
 
-  const { data, isLoading } = useGetDefaultOrganisation({
-    query: { enabled: !!isDMAuthorized },
-  });
+  const { data, isLoading } = useGetDefaultOrganisation({ query: { enabled: !!isDMAuthorized } });
 
   const defaultOrganisation = data; // {};
 

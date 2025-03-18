@@ -22,9 +22,7 @@ export interface RenameButtonProps extends Omit<IconButtonProps, "type"> {
 
 export const RenameButton = ({ projectId, type, path, ...buttonProps }: RenameButtonProps) => {
   const [open, setOpen] = useState(false);
-  const initialValues = {
-    dstPath: path,
-  };
+  const initialValues = { dstPath: path };
 
   const { handleMove } = useMoveProjectObject(projectId, path, type, () => setOpen(false));
 
@@ -41,14 +39,19 @@ export const RenameButton = ({ projectId, type, path, ...buttonProps }: RenameBu
         open={open}
         submitText="Rename / Move"
         title="Rename / Move"
-        validationSchema={yup.object().shape({
-          dstPath: yup
-            .string()
-            .matches(PATH_PATTERN, "The path is invalid. It should not start or end with a slash.")
-            .trim()
-            .required("A destination path is required")
-            .max(255),
-        })}
+        validationSchema={yup
+          .object()
+          .shape({
+            dstPath: yup
+              .string()
+              .matches(
+                PATH_PATTERN,
+                "The path is invalid. It should not start or end with a slash.",
+              )
+              .trim()
+              .required("A destination path is required")
+              .max(255),
+          })}
         onClose={() => setOpen(false)}
         onSubmit={({ dstPath }, { resetForm }) => {
           handleMove(dstPath, { onSettled: () => resetForm() });

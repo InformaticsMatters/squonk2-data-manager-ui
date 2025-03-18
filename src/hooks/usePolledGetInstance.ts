@@ -6,9 +6,7 @@ import { DONE_PHASES } from "../constants/instances";
 
 export const usePolledGetInstance = (instanceId: string, pollInterval = 5000) => {
   const [refetchInterval, setRefetchInterval] = useState(pollInterval);
-  const query = useGetInstance(instanceId, {
-    query: { refetchInterval },
-  });
+  const query = useGetInstance(instanceId, { query: { refetchInterval } });
 
   const done = query.data?.phase && DONE_PHASES.includes(query.data.phase);
 

@@ -7,9 +7,7 @@ import { type ApplicationModalProps } from "./ApplicationModal";
 
 const ApplicationModal = dynamic<ApplicationModalProps>(
   () => import("./ApplicationModal").then((mod) => mod.ApplicationModal),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
+  { loading: () => <CircularProgress size="1rem" /> },
 );
 
 export interface ApplicationModalButtonProps

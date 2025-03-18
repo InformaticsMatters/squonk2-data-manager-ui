@@ -53,9 +53,7 @@ const NavButtonComponent = (
       fontWeight: active ? "bold" : "normal",
       color: "white",
       textTransform: "none",
-      ":hover": {
-        bgcolor: "rgba(50, 0, 0, 0.04)",
-      },
+      ":hover": { bgcolor: "rgba(50, 0, 0, 0.04)" },
     }}
   />
 );

@@ -15,12 +15,7 @@ export const FileHoverCover = ({ active }: FileHoverCoverProps) => {
   return (
     <>
       <HoverBox
-        sx={{
-          top: 0,
-          bottom: 0,
-          backgroundColor: "grey.600",
-          opacity: active ? "40%" : "0%",
-        }}
+        sx={{ top: 0, bottom: 0, backgroundColor: "grey.600", opacity: active ? "40%" : "0%" }}
       />
 
       <HoverBox

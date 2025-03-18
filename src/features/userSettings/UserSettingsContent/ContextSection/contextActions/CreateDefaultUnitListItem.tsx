@@ -20,9 +20,7 @@ export const CreateDefaultUnitListItem = () => {
 
   const createDefaultUnitHandler = async () => {
     try {
-      const { id } = await createPersonalUnit({
-        data: { billing_day: getBillingDay() },
-      });
+      const { id } = await createPersonalUnit({ data: { billing_day: getBillingDay() } });
       enqueueSnackbar("Personal unit created", { variant: "success" });
       void queryClient.invalidateQueries({ queryKey: getGetUnitsQueryKey() });
 

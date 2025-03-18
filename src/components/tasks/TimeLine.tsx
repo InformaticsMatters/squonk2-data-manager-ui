@@ -130,12 +130,7 @@ const TimeLineLabel = ({ children, ...typographyProps }: TimeLineLabelProps) => 
       <Box
         className={firaMonoFont.className}
         component="pre"
-        sx={{
-          fontSize: "body2.fontSize",
-          m: 0,
-          display: "inline-block",
-          textAlign: "left",
-        }}
+        sx={{ fontSize: "body2.fontSize", m: 0, display: "inline-block", textAlign: "left" }}
       >
         {children}
       </Box>

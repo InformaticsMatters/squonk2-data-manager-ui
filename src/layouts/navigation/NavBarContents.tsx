@@ -58,13 +58,7 @@ export const NavBarContents = () => {
 
       {/* Desktop Navigation */}
       <Box
-        sx={{
-          display: { xs: "none" },
-          "@media (min-width:655px)": {
-            display: "block",
-          },
-          flex: 1,
-        }}
+        sx={{ display: { xs: "none" }, "@media (min-width:655px)": { display: "block" }, flex: 1 }}
       >
         <NavLinks linkWidth={120} />
       </Box>
@@ -83,18 +77,10 @@ export const NavBarContents = () => {
         {!!isDMAuthorized && <OUPContext sx={{ display: { xs: "none", md: "flex" } }} />}
         <SettingsButton disabled={!isDMAuthorized} onClick={handleOpenSettings} />
 
-        <Box
-          sx={{
-            display: { xs: "none", md: "block" },
-          }}
-        >
+        <Box sx={{ display: { xs: "none", md: "block" } }}>
           <UserMenu />
         </Box>
-        <Box
-          sx={{
-            display: { xs: "block", md: "none" },
-          }}
-        >
+        <Box sx={{ display: { xs: "block", md: "none" } }}>
           <MobileNavMenu />
         </Box>
       </Box>

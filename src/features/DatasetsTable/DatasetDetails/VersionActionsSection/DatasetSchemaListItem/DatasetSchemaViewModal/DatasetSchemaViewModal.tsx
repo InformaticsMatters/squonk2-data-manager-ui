@@ -15,14 +15,8 @@ import { useDatasetSchema } from "./useDatasetSchema";
 
 type TableSchemaView = {
   name: string;
-  description: {
-    original: string;
-    current: string;
-  };
-  type: {
-    original: JSON_SCHEMA_TYPE;
-    current: JSON_SCHEMA_TYPE;
-  };
+  description: { original: string; current: string };
+  type: { original: JSON_SCHEMA_TYPE; current: JSON_SCHEMA_TYPE };
 };
 
 export interface DatasetSchemaViewModalProps {
@@ -78,10 +72,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
             current: field.description,
             original: originalSchema.fields[name].description,
           },
-          type: {
-            current: field.type,
-            original: originalSchema.fields[name].type,
-          },
+          type: { current: field.type, original: originalSchema.fields[name].type },
         };
       });
     }
@@ -174,12 +165,7 @@ export const DatasetSchemaViewModal: FC<DatasetSchemaViewModalProps> = ({
 
         <DataTable
           columns={columns}
-          customCellProps={{
-            style: {
-              paddingTop: 12,
-              paddingBottom: 12,
-            },
-          }}
+          customCellProps={{ style: { paddingTop: 12, paddingBottom: 12 } }}
           data={fields}
           getRowId={getRowId}
           tableContainer={false}

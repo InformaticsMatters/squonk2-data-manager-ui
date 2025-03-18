@@ -20,9 +20,7 @@ export const BootstrapForm = () => {
     <CreateProjectForm
       defaultPrivacy={organisation.default_product_privacy}
       unitId={async () => {
-        const { id: unitId } = await createUnit({
-          data: { billing_day: getBillingDay() },
-        });
+        const { id: unitId } = await createUnit({ data: { billing_day: getBillingDay() } });
         return unitId;
       }}
     />

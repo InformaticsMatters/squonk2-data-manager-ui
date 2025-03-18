@@ -49,9 +49,7 @@ export const CreateOrganisationListItem = () => {
   };
 
   const create = async (name: string, owner: string) => {
-    const { id: organisationId } = await createOrganisation({
-      data: { name, owner },
-    });
+    const { id: organisationId } = await createOrganisation({ data: { name, owner } });
 
     const newOrganisation = await getOrganisation(organisationId);
 

@@ -35,13 +35,7 @@ const Project = () => {
               <UserBootstrapper />
               {currentProject ? (
                 <>
-                  <Grid
-                    container
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
+                  <Grid container sx={{ display: "flex", alignItems: "center" }}>
                     <Grid size={{ md: 6, xs: 12 }}>
                       <Typography
                         gutterBottom

@@ -10,10 +10,7 @@ type EditableSchemaStateAction<K extends FieldKey, V extends FieldValue<K>> =
   | { type: "clear" }
   | { type: "init"; originalSchema: TypedSchema };
 
-type EditedSchemaProps = {
-  description?: string;
-  fields: Partial<Record<string, Partial<Field>>>;
-};
+type EditedSchemaProps = { description?: string; fields: Partial<Record<string, Partial<Field>>> };
 
 type EditableSchemaState = {
   originalSchema: TypedSchema;
@@ -29,12 +26,7 @@ const editableSchemaReducer = <K extends FieldKey, V extends FieldValue<K>>(
       return null;
     }
     case "init": {
-      return {
-        originalSchema: action.originalSchema,
-        editedSchemaProps: {
-          fields: {},
-        },
-      };
+      return { originalSchema: action.originalSchema, editedSchemaProps: { fields: {} } };
     }
     case "changeField": {
       if (draft) {
@@ -180,11 +172,5 @@ export const useEditableSchemaView = (originalSchema?: TypedSchema) => {
     return delta;
   };
 
-  return {
-    originalSchema,
-    schema,
-    setSchemaField,
-    setSchemaDescription,
-    getDeltaChanges,
-  };
+  return { originalSchema, schema, setSchemaField, setSchemaDescription, getDeltaChanges };
 };

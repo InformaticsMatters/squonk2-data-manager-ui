@@ -5,19 +5,12 @@ import { type InputFieldSchema } from "../../../runCards/JobCard/JobInputFields"
 import { TEST_JOB_ID } from "../../../runCards/TestJob/jobId";
 
 // Contains only fields we are interested in
-type ApplicationSpecification = {
-  variables: Record<string, unknown>;
-};
+type ApplicationSpecification = { variables: Record<string, unknown> };
 
 // Contains only fields we are interested in
-type JobInput = {
-  title: string;
-  type: InputFieldSchema["type"];
-};
+type JobInput = { title: string; type: InputFieldSchema["type"] };
 
-type JobInputs = {
-  properties: Record<string, JobInput>;
-};
+type JobInputs = { properties: Record<string, JobInput> };
 
 /**
  * Returns provided inputs with their information. It matches the provided inputs with their
@@ -31,9 +24,7 @@ export const useGetJobInputs = (instance: InstanceGetResponse | InstanceSummary)
     // Since the query will be disabled if job_id is undefined, providing -1 is fine
     instance.job_id ?? -1,
     undefined,
-    {
-      query: { enabled: inputsEnabled, retry: instance.job_id === TEST_JOB_ID ? 1 : 3 },
-    },
+    { query: { enabled: inputsEnabled, retry: instance.job_id === TEST_JOB_ID ? 1 : 3 } },
   );
 
   // Parse application specification
@@ -62,10 +53,5 @@ export const useGetJobInputs = (instance: InstanceGetResponse | InstanceSummary)
       };
     });
 
-  return {
-    inputs: usedInputs,
-    isLoading,
-    isError,
-    error,
-  };
+  return { inputs: usedInputs, isLoading, isError, error };
 };

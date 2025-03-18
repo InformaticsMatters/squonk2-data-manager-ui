@@ -30,19 +30,11 @@ interface DepictMoleculePropsBase {
 }
 
 export type DepictVariants =
-  | {
-      variant: "molFile";
-      molFile: string;
-    }
-  | {
-      variant: "smiles";
-      smiles: string;
-    };
+  | { variant: "molFile"; molFile: string }
+  | { variant: "smiles"; smiles: string };
 
 export type DepictMoleculeProps = DepictMoleculePropsBase &
-  DepictVariants & {
-    depictParams: DepictParameters;
-  };
+  DepictVariants & { depictParams: DepictParameters };
 
 type ImageProps = Omit<ComponentProps<"img">, "src">;
 

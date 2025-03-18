@@ -46,10 +46,7 @@ const columns = [
         header: "Administrators",
         cell: ({ getValue }) => <UserChips users={getValue()} />,
       }),
-      columnHelper.display({
-        id: "icon",
-        cell: () => <Edit />,
-      }),
+      columnHelper.display({ id: "icon", cell: () => <Edit /> }),
     ],
   }),
 ];

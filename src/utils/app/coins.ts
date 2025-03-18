@@ -1,8 +1,5 @@
 // TODO: write a custom formatter for Squonk coins
-const coinsFormatter = new Intl.NumberFormat("en-GB", {
-  style: "currency",
-  currency: "GBP",
-});
+const coinsFormatter = new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" });
 
 const COINS_SYMBOL = "C";
 

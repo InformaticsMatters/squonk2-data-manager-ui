@@ -239,9 +239,7 @@ const ChipsInput = ({ users, value, group, username, onChange }: ChipsInputProps
         <TextField
           {...params}
           label={value.length === 0 ? "Add Project" : undefined}
-          slotProps={{
-            input: { ...params.InputProps, disableUnderline: true },
-          }}
+          slotProps={{ input: { ...params.InputProps, disableUnderline: true } }}
           sx={{ minWidth: 100 }}
           variant="standard"
         />

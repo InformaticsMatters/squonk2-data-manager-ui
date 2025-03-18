@@ -40,10 +40,7 @@ const getResolvedPath = (path: string[]) => {
     return !containsGlob;
   });
 
-  return {
-    resolvedPath,
-    containsGlob,
-  };
+  return { resolvedPath, containsGlob };
 };
 
 /**
@@ -68,26 +65,12 @@ export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps)
     const { filePath, fileName } = getFilePathAndName(resolvedPath);
 
     return (
-      <Box
-        sx={{
-          alignItems: "center",
-          display: "flex",
-          gap: 1,
-          wordBreak: "break-all",
-        }}
-      >
+      <Box sx={{ alignItems: "center", display: "flex", gap: 1, wordBreak: "break-all" }}>
         <Tooltip title="Locate file in project">
           <A
             legacyBehavior
             passHref
-            href={{
-              pathname: "/project",
-              query: {
-                ...query,
-                project: projectId,
-                path: filePath,
-              },
-            }}
+            href={{ pathname: "/project", query: { ...query, project: projectId, path: filePath } }}
           >
             <IconButton size="large">
               <Folder color="primary" fontSize="small" />
@@ -108,11 +91,7 @@ export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps)
           passHref
           href={{
             pathname: "/datasets",
-            query: {
-              ...query,
-              project: projectId,
-              path: resolvedPath,
-            },
+            query: { ...query, project: projectId, path: resolvedPath },
           }}
         >
           <IconButton size="small">

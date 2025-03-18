@@ -76,10 +76,7 @@ export const ResultTaskCard = ({ task, collapsedByDefault = true }: ResultTaskCa
       }
       collapsedByDefault={collapsedByDefault}
       createdDateTime={task.created}
-      href={{
-        pathname: "/results/task/[taskId]",
-        query: { ...query, taskId: task.id },
-      }}
+      href={{ pathname: "/results/task/[taskId]", query: { ...query, taskId: task.id } }}
       linkTitle={task.purpose}
       showDuration={false}
       state={task.processing_stage}

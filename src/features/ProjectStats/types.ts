@@ -1,5 +1,1 @@
-export type UsageChartData = {
-  type: string;
-  value: number;
-  color: string;
-};
+export type UsageChartData = { type: string; value: number; color: string };

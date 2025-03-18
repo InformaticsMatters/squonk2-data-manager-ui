@@ -47,9 +47,7 @@ export const ResultsToolbar = ({
 
   const queryClient = useQueryClient();
 
-  const { data } = useGetInstances({
-    project_id: projectId,
-  });
+  const { data } = useGetInstances({ project_id: projectId });
   const instances = data?.instances;
 
   /**

@@ -21,9 +21,7 @@ import { search } from "../utils/app/searches";
 
 const TestJobCard = dynamic(
   () => import("../components/runCards/TestJob/TestJobCard").then((mod) => mod.TestJobCard),
-  {
-    loading: () => <CenterLoader />,
-  },
+  { loading: () => <CenterLoader /> },
 );
 
 /**

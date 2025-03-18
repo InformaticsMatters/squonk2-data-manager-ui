@@ -24,16 +24,12 @@ import { useSelectedDatasets } from "./useSelectedDatasets";
 
 const DatasetUpload = dynamic<Record<string, never>>(
   () => import("../DatasetUpload").then((mod) => mod.DatasetUpload),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
+  { loading: () => <CircularProgress size="1rem" /> },
 );
 
 const DatasetDetails = dynamic<DatasetDetailsProps>(
   () => import("./DatasetDetails").then((mod) => mod.DatasetDetails),
-  {
-    loading: () => <CircularProgress size="1rem" />,
-  },
+  { loading: () => <CircularProgress size="1rem" /> },
 );
 
 const editorsSorter = (rowA: Row<TableDataset>, rowB: Row<TableDataset>) => {
@@ -81,9 +77,7 @@ export const DatasetsTable = () => {
         id: "versions",
         header: "Versions",
       }),
-      columnHelper.accessor("numberOfProjects", {
-        header: "Number of projects",
-      }),
+      columnHelper.accessor("numberOfProjects", { header: "Number of projects" }),
     ],
     [],
   );

@@ -16,14 +16,7 @@ export const BootstrapAlert = () => {
   if (!unit) {
     return (
       <Box sx={{ m: 2 }}>
-        <Alert
-          severity="info"
-          sx={{
-            "& .MuiAlert-message": {
-              width: "100%",
-            },
-          }}
-        >
+        <Alert severity="info" sx={{ "& .MuiAlert-message": { width: "100%" } }}>
           You do not have a personal unit. You may create one and populate it with a project.
           <BootstrapForm />
         </Alert>

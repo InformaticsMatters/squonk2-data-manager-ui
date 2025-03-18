@@ -73,12 +73,7 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
         sx={{
           background: hasChanged ? "action.hover" : undefined,
           pr: 0,
-          "& > div": {
-            bgcolor: "unset !important",
-            pt: "6px",
-            pb: "7px",
-            pr: "56px !important",
-          },
+          "& > div": { bgcolor: "unset !important", pt: "6px", pb: "7px", pr: "56px !important" },
         }}
         value={displayValue}
         onBlur={() => setValue(displayValue)}

@@ -35,10 +35,7 @@ export const EditUnitName = ({ unit }: EditUnitProps) => {
 
   const updateHandler = async () => {
     try {
-      await patchUnit({
-        unitId: unit.id,
-        data: { name },
-      });
+      await patchUnit({ unitId: unit.id, data: { name } });
 
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: getGetUnitsQueryKey() }),

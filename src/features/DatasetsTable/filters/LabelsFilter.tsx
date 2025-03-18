@@ -83,9 +83,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
 
         htmlInput: {
           autoComplete: "off", // Disable autocomplete and autofill
-          style: {
-            flexBasis: "calc(100% - 30px)",
-          },
+          style: { flexBasis: "calc(100% - 30px)" },
         },
       }}
       sx={{ width: "100%", flexBasis: "100%" }}

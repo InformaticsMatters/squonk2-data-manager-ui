@@ -56,9 +56,7 @@ export const ApplicationModal = ({
             // application_version: versionToUse,
             as_name: name,
             project_id: projectId,
-            specification: JSON.stringify({
-              variables: formData,
-            }),
+            specification: JSON.stringify({ variables: formData }),
           },
         });
         onLaunch && onLaunch(instanceId);

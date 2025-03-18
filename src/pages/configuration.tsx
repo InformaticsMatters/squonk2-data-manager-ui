@@ -35,9 +35,7 @@ export const getServerSideProps: GetServerSideProps<ConfigurationProps> = async 
   // When undefined a null is passed as undefined isn't valid json.
   const dmAPI = process.env.NEXT_PUBLIC_DATA_MANAGER_API_SERVER ?? null;
   const asAPI = process.env.NEXT_PUBLIC_ACCOUNT_SERVER_API_SERVER ?? null;
-  return {
-    props: { dmAPI, asAPI },
-  };
+  return { props: { dmAPI, asAPI } };
 };
 
 export const Configuration = ({ dmAPI, asAPI }: ConfigurationProps) => (

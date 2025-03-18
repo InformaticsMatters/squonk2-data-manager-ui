@@ -23,12 +23,7 @@ export const PrivateProjectToggle = ({ projectId, isPrivate }: PrivateProjectTog
   const projectPrivacyChangeHandler = async (checked: boolean) => {
     if (projectId) {
       try {
-        await adjustProject({
-          projectId,
-          data: {
-            private: checked,
-          },
-        });
+        await adjustProject({ projectId, data: { private: checked } });
         void queryClient.invalidateQueries({ queryKey: getGetProjectsQueryKey() });
         void queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
 

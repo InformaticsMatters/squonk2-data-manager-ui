@@ -22,11 +22,7 @@ export const LogsButton = ({ instanceId, instance }: LogsButtonProps) => {
       component="button"
       href={{
         pathname: "/project",
-        query: {
-          ...query,
-          project: instance.project_id,
-          path: `.${instanceId}`,
-        },
+        query: { ...query, project: instance.project_id, path: `.${instanceId}` },
       }}
     >
       Logs

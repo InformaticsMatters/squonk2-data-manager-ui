@@ -9,9 +9,7 @@ export interface ExitCodeFromTaskProps {
 
 export const ExitCodeFromTask = ({ taskId }: ExitCodeFromTaskProps) => {
   const { data: code, isLoading } = useGetTask(taskId, undefined, {
-    query: {
-      select: (data) => data.exit_code,
-    },
+    query: { select: (data) => data.exit_code },
   });
 
   if (code === undefined && !isLoading) {
@@ -29,12 +27,7 @@ export const ExitCodeFromTask = ({ taskId }: ExitCodeFromTaskProps) => {
         slotProps={
           isLoading
             ? undefined
-            : {
-                secondary: {
-                  color: code === 0 ? "green" : "error",
-                  fontWeight: "bold",
-                },
-              }
+            : { secondary: { color: code === 0 ? "green" : "error", fontWeight: "bold" } }
         }
       />
     </ListItem>

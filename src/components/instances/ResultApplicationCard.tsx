@@ -75,10 +75,7 @@ export const ResultApplicationCard = ({
       collapsedByDefault={collapsedByDefault}
       createdDateTime={instance.started ?? instance.launched}
       finishedDateTime={instance.stopped}
-      href={{
-        pathname: "/results/instance/[instanceId]",
-        query: { ...query, instanceId },
-      }}
+      href={{ pathname: "/results/instance/[instanceId]", query: { ...query, instanceId } }}
       linkTitle="App"
       state={instance.phase}
     >

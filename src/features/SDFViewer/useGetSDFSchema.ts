@@ -29,10 +29,7 @@ const getSDFFields = async (project: string, path: string, file: string) => {
     );
 
   const fields = [...properties].reduce<Record<string, Field>>((acc, property) => {
-    acc[property] = {
-      type: "string",
-      description: "",
-    };
+    acc[property] = { type: "string", description: "" };
     return acc;
   }, {});
 
@@ -64,9 +61,7 @@ const useGetSDFSchema = (project: string, path: string, file: string) => {
   } = useGetProjectFile<any>(
     project,
     { path, file: schemaFilename },
-    {
-      query: { retry: 0, enabled: true, refetchOnWindowFocus: false },
-    },
+    { query: { retry: 0, enabled: true, refetchOnWindowFocus: false } },
   );
 
   const {

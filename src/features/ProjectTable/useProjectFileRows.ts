@@ -20,16 +20,7 @@ const filePathFileToTableFile = (file: FilePathFile, breadcrumbs: string[]): Tab
   const { file_id: fileId, file_name: fileName, owner, immutable, mime_type, stat } = file;
   const fullPath = getFullPath(breadcrumbs, fileName);
 
-  return {
-    fileName,
-    fullPath,
-    file_id: fileId,
-    owner,
-    immutable,
-    mime_type,
-    stat,
-    subRows: [],
-  };
+  return { fileName, fullPath, file_id: fileId, owner, immutable, mime_type, stat, subRows: [] };
 };
 
 export const useProjectFileRows = (params: GetFilesParams) => {
@@ -70,11 +61,7 @@ export const useProjectFileRows = (params: GetFilesParams) => {
     const dirs: TableDir[] | undefined = paths?.map((path) => {
       const fullPath = getFullPath(breadcrumbs, path);
 
-      return {
-        fileName: path,
-        fullPath,
-        path,
-      };
+      return { fileName: path, fullPath, path };
     });
 
     // If we have both, concat them with the dirs first

@@ -38,9 +38,7 @@ enableMapSet();
 // https://github.com/mui/material-ui/blob/master/examples/nextjs-with-typescript/pages/_app.tsx
 
 type CustomAppProps = AppProps &
-  EmotionCacheProviderProps & {
-    pageProps: { dehydratedState?: unknown };
-  };
+  EmotionCacheProviderProps & { pageProps: { dehydratedState?: unknown } };
 
 const App = ({ Component, pageProps }: CustomAppProps) => {
   // React-Query

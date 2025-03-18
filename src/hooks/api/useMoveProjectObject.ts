@@ -134,13 +134,7 @@ export const useMoveProjectObject = (
     mutationOptions?: Parameters<typeof moveDirectory>[1],
   ) => {
     moveDirectory(
-      {
-        params: {
-          project_id: projectId,
-          dst_path: "/" + dstPath,
-          src_path: "/" + srcPath,
-        },
-      },
+      { params: { project_id: projectId, dst_path: "/" + dstPath, src_path: "/" + srcPath } },
       mutationOptions,
     );
   };

@@ -20,11 +20,7 @@ import { DataTable } from "../DataTable";
 import { NextLink } from "../NextLink";
 import { getSharedColumns, type UserActivity } from "./sharedColumns";
 
-type Unit = {
-  id: string;
-  name?: string;
-  number_of_projects: number;
-};
+type Unit = { id: string; name?: string; number_of_projects: number };
 
 type InventoryWithUnit = UserActivity & {
   username: InventoryUserDetail["username"];
@@ -129,9 +125,7 @@ export const OrganisationUserUsage = ({ organisationId }: OrganisationUserUsageP
     useGetOrganisation(organisationId);
 
   const { data: organisationMembers } = useGetOrganisationUsers(organisationId, {
-    query: {
-      enabled: isOrganisationLoading || !organisation || organisation.caller_is_member,
-    },
+    query: { enabled: isOrganisationLoading || !organisation || organisation.caller_is_member },
   });
   const { data, error: inventoryError } = useOranisationUsersData(organisationId);
 

@@ -48,12 +48,7 @@ export interface BaseCardProps {
    * String values to be displayed in the header section of the card. Only title is required.
    * Missing values are not displayed.
    */
-  header?: {
-    title: string;
-    subtitle?: string;
-    avatar?: string;
-    color?: string;
-  };
+  header?: { title: string; subtitle?: string; avatar?: string; color?: string };
 }
 
 /**
@@ -85,10 +80,7 @@ export const BaseCard = ({
               {header.avatar?.[0].toUpperCase()}
             </Avatar>
           }
-          slotProps={{
-            subheader: { variant: "subtitle1" },
-            title: { variant: "body1" },
-          }}
+          slotProps={{ subheader: { variant: "subtitle1" }, title: { variant: "body1" } }}
           subheader={header.subtitle}
           title={header.title}
         />

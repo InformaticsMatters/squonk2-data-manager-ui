@@ -63,10 +63,7 @@ export const PlaintextViewer = ({
               boxShadow: 0,
               gap: 2,
             },
-            (theme) =>
-              theme.applyStyles("dark", {
-                bgcolor: "grey.900",
-              }),
+            (theme) => theme.applyStyles("dark", { bgcolor: "grey.900" }),
           ]}
         >
           <Box sx={{ alignItems: "center", display: "flex", flex: "1 1 auto", gap: 1 }}>

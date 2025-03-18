@@ -25,11 +25,7 @@ export const SDFViewerListItem = ({ fileName, path, onClick }: SDFViewerListItem
       passHref
       href={{
         pathname: "/viewer/sdf",
-        query: {
-          project: router.query.project,
-          file: fileName,
-          path,
-        },
+        query: { project: router.query.project, file: fileName, path },
       }}
     >
       <ListItemButton

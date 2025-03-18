@@ -62,10 +62,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
         ),
         enableColumnFilter: true,
       }),
-      projectColumnHelper.accessor("creator", {
-        header: "Creator",
-        enableColumnFilter: true,
-      }),
+      projectColumnHelper.accessor("creator", { header: "Creator", enableColumnFilter: true }),
       projectColumnHelper.accessor((row) => row.administrators.join(", "), {
         id: "administrators",
         header: "Admins",
@@ -178,9 +175,7 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
         }
         customTableProps={{
           sx: {
-            "& td": {
-              wordBreak: "break-word",
-            },
+            "& td": { wordBreak: "break-word" },
             "& tr": {
               display: "grid",
               gridTemplateColumns: "61px repeat(4, 1fr) 220px repeat(4, 130px)",
@@ -198,13 +193,8 @@ export const ProjectStatsSection = ({ userFilter }: ProjectStatsSectionProps) =>
           columns={storageColumns}
           customTableProps={{
             sx: {
-              "& td": {
-                wordBreak: "break-word",
-              },
-              "& tr": {
-                display: "grid",
-                gridTemplateColumns: "61px 1fr 220px repeat(4, 130px)",
-              },
+              "& td": { wordBreak: "break-word" },
+              "& tr": { display: "grid", gridTemplateColumns: "61px 1fr 220px repeat(4, 130px)" },
             },
           }}
           data={storageSubscriptions}

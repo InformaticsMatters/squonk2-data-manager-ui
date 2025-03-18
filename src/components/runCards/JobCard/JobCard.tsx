@@ -44,12 +44,7 @@ export const JobCard = ({ projectId, job, disabled = false }: ApplicationCardPro
           predicate={(instance) => instance.job_id === job.id && instance.job_job === job.job}
         />
       }
-      header={{
-        color: "primary.main",
-        subtitle: job.name,
-        avatar: job.job[0],
-        title: job.job,
-      }}
+      header={{ color: "primary.main", subtitle: job.name, avatar: job.job[0], title: job.job }}
       key={projectId} // Reset state when project changes
     >
       <Typography gutterBottom>{job.description}</Typography>

@@ -1,8 +1,6 @@
 import { useUser } from "@auth0/nextjs-auth0/client";
 
-type RealmAccess = {
-  roles: string[];
-};
+type RealmAccess = { roles: string[] };
 
 export const useKeycloakIdToken = () => {
   // Get the id token via auth0

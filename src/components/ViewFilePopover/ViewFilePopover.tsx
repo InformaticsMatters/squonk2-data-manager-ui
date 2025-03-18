@@ -16,10 +16,7 @@ export interface ViewFilePopoverProps {
 }
 
 export const ViewFilePopover = ({ fileName, path }: ViewFilePopoverProps) => {
-  const popupState = usePopupState({
-    variant: "popover",
-    popupId: `file-viewers-${fileName}`,
-  });
+  const popupState = usePopupState({ variant: "popover", popupId: `file-viewers-${fileName}` });
 
   return (
     <>

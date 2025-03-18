@@ -14,9 +14,7 @@ type TableDatasetBase = {
   datasetVersion: DatasetVersionSummary;
 };
 
-export type TableDatasetRow = TableDatasetBase & {
-  type: "row";
-};
+export type TableDatasetRow = TableDatasetBase & { type: "row" };
 
 export type TableDatasetSubRow = TableDatasetBase & {
   type: "subRow";

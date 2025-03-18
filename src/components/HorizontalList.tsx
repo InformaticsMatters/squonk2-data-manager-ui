@@ -8,7 +8,5 @@ export const HorizontalList = styled(List)({
   display: "flex",
   flexDirection: "row",
   flexWrap: "wrap",
-  "& > li": {
-    width: "auto",
-  },
+  "& > li": { width: "auto" },
 });

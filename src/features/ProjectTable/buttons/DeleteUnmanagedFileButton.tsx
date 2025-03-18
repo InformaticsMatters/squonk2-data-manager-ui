@@ -48,13 +48,7 @@ export const DeleteUnmanagedFileButton = ({
       tooltipText="Delete unmanaged file"
       onDelete={async () => {
         try {
-          await deleteFile({
-            params: {
-              file: fileName,
-              path,
-              project_id: projectId,
-            },
-          });
+          await deleteFile({ params: { file: fileName, path, project_id: projectId } });
           await queryClient.invalidateQueries({
             queryKey: getGetFilesQueryKey({ project_id: projectId, path }),
           });

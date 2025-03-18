@@ -58,11 +58,7 @@ export const WorkingVersionSection = ({
         </TextField>
 
         {/* Download Dataset Version */}
-        <Box
-          sx={{
-            ml: 2,
-          }}
-        >
+        <Box sx={{ ml: 2 }}>
           <DownloadButton
             disabled={!(version.processing_stage === "DONE")}
             href={API_ROUTES.datasetVersion(dataset.dataset_id, version.version, "/api/dm-api")}

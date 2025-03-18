@@ -28,18 +28,11 @@ export default handleAuth({
         const decodedAccessToken = jwtDecode<Record<string, any>>(accessToken);
         return {
           ...newSession,
-          user: {
-            ...newSession.user,
-            realm_access: decodedAccessToken.realm_access,
-          },
+          user: { ...newSession.user, realm_access: decodedAccessToken.realm_access },
         };
       },
     });
   },
 });
 
-export const config = {
-  api: {
-    externalResolver: true,
-  },
-};
+export const config = { api: { externalResolver: true } };

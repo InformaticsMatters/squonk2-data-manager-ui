@@ -34,9 +34,7 @@
     "name": "Fake UI Test Job",
     "required_assets": [],
     "variables": {
-      "order": {
-        "options": ["outputFile", "header", "mode", "minValue", "maxValue"]
-      },
+      "order": { "options": ["outputFile", "header", "mode", "minValue", "maxValue"] },
       "inputs": {
         "type": "object",
         "required": ["inputFile"],
@@ -95,14 +93,8 @@
             "default": "none",
             "enum": ["pass", "fail"]
           },
-          "minValue": {
-            "title": "Min value",
-            "type": "number"
-          },
-          "maxValue": {
-            "title": "Max value",
-            "type": "number"
-          }
+          "minValue": { "title": "Min value", "type": "number" },
+          "maxValue": { "title": "Max value", "type": "number" }
         }
       }
     },

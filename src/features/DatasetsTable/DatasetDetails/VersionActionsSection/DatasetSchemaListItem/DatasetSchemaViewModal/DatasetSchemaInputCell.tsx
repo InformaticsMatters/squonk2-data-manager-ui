@@ -63,10 +63,7 @@ export const DatasetSchemaInputCell = ({
 
         htmlInput: {
           "aria-label": `${fieldName} ${fieldKey}`,
-          style: {
-            paddingTop: 6,
-            paddingBottom: 7,
-          },
+          style: { paddingTop: 6, paddingBottom: 7 },
         },
       }}
       sx={{ background: hasChanged ? "action.hover" : undefined }}

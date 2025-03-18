@@ -19,9 +19,7 @@ export const ResultsView = () => {
     isLoading: isInstancesLoading,
     isError: isInstancesError,
     error: instancesError,
-  } = useGetInstances({
-    project_id: projectId,
-  });
+  } = useGetInstances({ project_id: projectId });
   const instances = instancesData?.instances;
 
   const {

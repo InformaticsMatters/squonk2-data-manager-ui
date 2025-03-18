@@ -36,13 +36,8 @@ export const ProjectListItem = ({ project, clickAction }: ProjectListItemProps) 
   };
 
   const props = {
-    "navigate-to-project": {
-      href: "/project",
-      LinkComponent: NextLink,
-    },
-    "select-project": {
-      onClick,
-    },
+    "navigate-to-project": { href: "/project", LinkComponent: NextLink },
+    "select-project": { onClick },
   };
 
   return (

@@ -127,10 +127,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
   );
 
   const dirPath = "/" + breadcrumbs.join("/");
-  const getFilesParams = {
-    project_id: currentProject.project_id,
-    path: dirPath,
-  };
+  const getFilesParams = { project_id: currentProject.project_id, path: dirPath };
 
   const queryClient = useQueryClient();
   const { rows, error, isLoading } = useProjectFileRows(getFilesParams);
@@ -144,9 +141,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
           // Set height to fill remaining space, pushing footer just off screen
           // 164px is the height of the header and toolbar
           height: "calc(100vh - 164px)",
-          "@supports (height: 100dvh)": {
-            height: "calc(100dvh - 164px)",
-          },
+          "@supports (height: 100dvh)": { height: "calc(100dvh - 164px)" },
         },
       }}
     >

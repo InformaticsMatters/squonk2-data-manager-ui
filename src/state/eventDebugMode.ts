@@ -9,10 +9,7 @@ export interface DebugMode extends BaseValue {
   debug: boolean;
 }
 
-const initialDebugMode: DebugMode = {
-  version: VERSION,
-  debug: false,
-};
+const initialDebugMode: DebugMode = { version: VERSION, debug: false };
 
 const debugMode = atomWithStorage(EVENT_DEBUG_MODE_STORAGE_KEY, initialDebugMode);
 

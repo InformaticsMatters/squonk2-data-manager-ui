@@ -27,11 +27,7 @@ export const FilePlainTextViewerListItem = ({
       passHref
       href={{
         pathname: "/project/file",
-        query: {
-          project: router.query.project,
-          file: fileName,
-          path,
-        },
+        query: { project: router.query.project, file: fileName, path },
       }}
     >
       <ListItemButton

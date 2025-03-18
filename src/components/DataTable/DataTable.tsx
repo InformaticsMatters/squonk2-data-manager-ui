@@ -126,9 +126,7 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value);
 
   // Store the itemRank info
-  addMeta({
-    itemRank,
-  });
+  addMeta({ itemRank });
 
   // Return if the item should be filtered in/out
   return itemRank.passed;
@@ -224,16 +222,8 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     getRowId,
     data: tableData,
     columns: paddedColumns,
-    filterFns: {
-      fuzzy: fuzzyFilter,
-    },
-    state: {
-      sorting,
-      globalFilter,
-      columnFilters,
-      expanded,
-      rowSelection,
-    },
+    filterFns: { fuzzy: fuzzyFilter },
+    state: { sorting, globalFilter, columnFilters, expanded, rowSelection },
     initialState: {
       rowSelection: initialSelection
         ? Object.fromEntries(initialSelection.map((id) => [id, true]))

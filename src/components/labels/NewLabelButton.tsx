@@ -45,9 +45,9 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
         <Formik
           validateOnMount
           initialValues={{ label: "", value: "" }}
-          validationSchema={yup.object().shape({
-            label: yup.string().trim().required("A label name is required"),
-          })}
+          validationSchema={yup
+            .object()
+            .shape({ label: yup.string().trim().required("A label name is required") })}
           onSubmit={async ({ label, value }) => {
             try {
               await addAnnotations({

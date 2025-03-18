@@ -121,7 +121,7 @@ importers:
         version: 4.0.0(@emotion/react@11.14.0(@types/react@19.0.11)(react@19.0.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.11)(react@19.0.0))(@types/react@19.0.11)(react@19.0.0))(@mui/material@6.4.2(@emotion/react@11.14.0(@types/react@19.0.11)(react@19.0.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.11)(react@19.0.0))(@types/react@19.0.11)(react@19.0.0))(@types/react@19.0.11)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(formik@2.4.6(react@19.0.0))(react@19.0.0)(tiny-warning@1.0.3)
       formik-mui-lab:
         specifier: 1.0.0
-        version: 1.0.0(uzsgudursbvo556l6d6f4s3eg4)
+        version: 1.0.0(71d46bbf681dfc3095221dfaafd785a4)
       immer:
         specifier: 10.1.1
         version: 10.1.1
@@ -9558,7 +9558,7 @@ snapshots:
     dependencies:
       fetch-blob: 3.2.0
 
-  formik-mui-lab@1.0.0(uzsgudursbvo556l6d6f4s3eg4):
+  formik-mui-lab@1.0.0(71d46bbf681dfc3095221dfaafd785a4):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.0.11)(react@19.0.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.0.11)(react@19.0.0))(@types/react@19.0.11)(react@19.0.0)

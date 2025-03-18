@@ -49,10 +49,7 @@ export const useCurrentProjectId = () => {
     }
   };
 
-  return {
-    projectId,
-    setCurrentProjectId,
-  };
+  return { projectId, setCurrentProjectId };
 };
 
 /**

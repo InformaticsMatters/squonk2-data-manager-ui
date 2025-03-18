@@ -66,9 +66,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ResponseData>) 
         return;
       }
 
-      const headers = new Headers({
-        Authorization: `Bearer ${accessToken}`,
-      });
+      const headers = new Headers({ Authorization: `Bearer ${accessToken}` });
 
       response = await fetch(
         process.env.DATA_MANAGER_API_SERVER + API_ROUTES.projectFile(projectId, path, fileName),

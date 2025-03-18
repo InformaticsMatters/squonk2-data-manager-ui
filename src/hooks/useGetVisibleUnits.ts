@@ -43,10 +43,5 @@ export const useGetVisibleUnits = (level: PermissionLevel, user: string | undefi
     },
   });
 
-  return {
-    ...extra,
-    isLoading: isProjectsLoading || isUnitsLoading,
-    data: units,
-    error,
-  };
+  return { ...extra, isLoading: isProjectsLoading || isUnitsLoading, data: units, error };
 };

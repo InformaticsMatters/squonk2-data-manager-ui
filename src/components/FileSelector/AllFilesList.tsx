@@ -26,10 +26,7 @@ export const AllFilesList = ({
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
   const subPath = "/" + breadcrumbs.join("/");
 
-  const { data, isLoading } = useGetFiles({
-    project_id: projectId,
-    path: subPath,
-  });
+  const { data, isLoading } = useGetFiles({ project_id: projectId, path: subPath });
 
   const files =
     data?.files.filter((file) => !file.mime_type || mimeTypes?.includes(file.mime_type)) ?? [];

@@ -19,10 +19,7 @@ export interface CreateDatasetStorageSubscriptionProps {
   unit: UnitAllDetail;
 }
 
-const initialValues = {
-  allowance: 1000,
-  name: "Dataset Storage",
-};
+const initialValues = { allowance: 1000, name: "Dataset Storage" };
 
 export const CreateDatasetStorageSubscription = ({
   unit,
@@ -34,10 +31,12 @@ export const CreateDatasetStorageSubscription = ({
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={yup.object().shape({
-        name: yup.string().trim().required("A name is required"),
-        allowance: yup.number().min(1).integer().required("An allowance is required"),
-      })}
+      validationSchema={yup
+        .object()
+        .shape({
+          name: yup.string().trim().required("A name is required"),
+          allowance: yup.number().min(1).integer().required("An allowance is required"),
+        })}
       onSubmit={async ({ allowance, name }) => {
         try {
           await createProduct({

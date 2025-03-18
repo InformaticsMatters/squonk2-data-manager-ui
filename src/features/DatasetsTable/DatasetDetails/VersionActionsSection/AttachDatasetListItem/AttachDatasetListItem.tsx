@@ -9,18 +9,20 @@ import { useGetFileTypes } from "@squonk/data-manager-client/type";
 import { AttachFileRounded as AttachFileRoundedIcon } from "@mui/icons-material";
 import {
   Alert,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   FormGroup,
   ListItemButton,
   ListItemText,
   MenuItem,
+  TextField,
 } from "@mui/material";
+import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { Field } from "formik";
-import { CheckboxWithLabel, TextField } from "formik-mui";
-import * as yup from "yup";
+import { z } from "zod";
 
-import { FormikModalWrapper } from "../../../../../components/modals/FormikModalWrapper";
+import { FormModalWrapper } from "../../../../../components/modals/FormModalWrapper";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 import { getErrorMessage } from "../../../../../utils/next/orvalError";
@@ -37,13 +39,19 @@ export interface AttachDatasetListItemProps {
   version: DatasetVersionSummary;
 }
 
-interface FormState {
-  project: string;
-  type: string;
-  path: string;
-  isImmutable: boolean;
-  isCompress: boolean;
-}
+// Define schema for validation
+const schema = z.object({
+  project: z.string().min(1, "A project is required"),
+  type: z.string().min(1, "A file type is required"),
+  path: z
+    .string()
+    .regex(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gmu, "Invalid Path")
+    .or(z.literal("")),
+  isImmutable: z.boolean(),
+  isCompress: z.boolean(),
+});
+
+type FormType = z.infer<typeof schema>;
 
 /**
  * MuiListItem with a click action that opens a modal allowing a dataset to be attached to a project
@@ -68,17 +76,68 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
   const { data: typesData, isLoading: isTypesLoading } = useGetFileTypes();
   const types = typesData?.types;
 
-  const initialValues: FormState = {
-    project: projects?.[0]?.project_id ?? "",
-    type: version.type,
-    path: "",
-    isImmutable: true,
-    isCompress: false,
-  };
-
   const projectNames = useGetAttachedProjectsNames(projectIds, projectsData?.projects);
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+
+  const form = useForm({
+    defaultValues: {
+      project: projects?.[0]?.project_id ?? "",
+      type: version.type,
+      path: "",
+      isImmutable: true,
+      isCompress: false,
+    } as FormType,
+    validators: { onChange: schema },
+    onSubmit: async (values) => {
+      const { project, type, path, isImmutable, isCompress } = values.value;
+      const resolvedPath = path || "/";
+
+      try {
+        await attachFile({
+          data: {
+            dataset_version: version.version,
+            dataset_id: datasetId,
+            project_id: project,
+            immutable: isImmutable,
+            compress: isCompress,
+            as_type: type,
+            path: resolvedPath,
+          },
+        });
+
+        await Promise.allSettled([
+          // Ensure the views showing project files is updated to include the new addition
+          queryClient.invalidateQueries({
+            queryKey: getGetFilesQueryKey({ project_id: project, path: resolvedPath }),
+          }),
+          // Ensure that the dataset's details display the project's name in the used in projects
+          // field
+          queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() }),
+        ]);
+
+        enqueueSnackbar("The dataset was successfully attached to your project", {
+          variant: "success",
+        });
+        setOpen(false);
+        return {};
+      } catch (error) {
+        enqueueError(error);
+        return {};
+      }
+    },
+  });
+
+  const formWrapper = {
+    handleSubmit: () => form.handleSubmit(),
+    reset: () => {
+      form.reset();
+    },
+    state: {
+      canSubmit: form.state.canSubmit,
+      isSubmitting: form.state.isSubmitting,
+    },
+  };
 
   return (
     <>
@@ -102,108 +161,108 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
         />
         <AttachFileRoundedIcon color="action" />
       </ListItemButton>
-      <FormikModalWrapper
-        // Reinitialize to allow a project to be selected by default after the async action is
-        // completed
-        enableReinitialize
+      <FormModalWrapper
         DialogProps={{ maxWidth: "sm", fullWidth: true }}
+        form={formWrapper}
         id={`attach-dataset-${datasetId}`}
-        initialValues={initialValues}
         open={open}
         submitText="Attach"
         title={`Attach ${version.file_name} v${version.version} to a Project`}
-        validationSchema={yup.object({
-          path: yup.string().matches(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gmu, "Invalid Path"),
-        })}
         onClose={() => setOpen(false)}
-        onSubmit={async ({ project, type, path, isImmutable, isCompress }, { setSubmitting }) => {
-          const resolvedPath = path || "/";
-          try {
-            await attachFile({
-              data: {
-                dataset_version: version.version,
-                dataset_id: datasetId,
-                project_id: project,
-                immutable: isImmutable,
-                compress: isCompress,
-                as_type: type,
-                path: resolvedPath,
-              },
-            });
-
-            await Promise.allSettled([
-              // Ensure the views showing project files is updated to include the new addition
-              queryClient.invalidateQueries({
-                queryKey: getGetFilesQueryKey({ project_id: project, path: resolvedPath }),
-              }),
-              // Ensure that the dataset's details display the project's name in the used in projects
-              // field
-              queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() }),
-            ]);
-
-            enqueueSnackbar("The dataset was successfully attached to your project", {
-              variant: "success",
-            });
-
-            setOpen(false);
-          } catch (error) {
-            enqueueError(error);
-          } finally {
-            setSubmitting(false);
-          }
-        }}
       >
         <FormControl fullWidth margin="dense">
-          <Field select component={TextField} id="select-project" label="Project" name="project">
-            {(projects ?? []).map((project) => (
-              <MenuItem key={project.project_id} value={project.project_id}>
-                {project.name}
-              </MenuItem>
-            ))}
-          </Field>
+          <form.Field name="project">
+            {(field) => (
+              <TextField
+                select
+                error={!!field.state.meta.errors[0]}
+                helperText={field.state.meta.errors[0]?.message}
+                id="select-project"
+                label="Project"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              >
+                {(projects ?? []).map((project) => (
+                  <MenuItem key={project.project_id} value={project.project_id}>
+                    {project.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          </form.Field>
         </FormControl>
 
         <FormControl fullWidth margin="dense">
-          <Field
-            select
-            component={TextField}
-            helperText="The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset."
-            id="select-type"
-            label="File Type"
-            name="type"
-          >
-            {(types ?? [])
-              .sort((a, b) => a.mime.localeCompare(b.mime)) // Sort alphabetically
-              .map((type) => (
-                <MenuItem key={type.mime} value={type.mime}>
-                  {type.mime}
-                </MenuItem>
-              ))}
-          </Field>
+          <form.Field name="type">
+            {(field) => (
+              <TextField
+                select
+                error={!!field.state.meta.errors[0]}
+                helperText={
+                  field.state.meta.errors[0]?.message ??
+                  "The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset."
+                }
+                id="select-type"
+                label="File Type"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              >
+                {(types ?? [])
+                  .sort((a, b) => a.mime.localeCompare(b.mime)) // Sort alphabetically
+                  .map((type) => (
+                    <MenuItem key={type.mime} value={type.mime}>
+                      {type.mime}
+                    </MenuItem>
+                  ))}
+              </TextField>
+            )}
+          </form.Field>
         </FormControl>
 
         <FormGroup row>
-          <Field
-            component={CheckboxWithLabel}
-            Label={{ label: "Immutable" }}
-            name="isImmutable"
-            type="checkbox"
-          />
-          <Field
-            component={CheckboxWithLabel}
-            Label={{ label: "Compress" }}
-            name="isCompress"
-            type="checkbox"
-          />
+          <form.Field name="isImmutable">
+            {(field) => (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.checked)}
+                  />
+                }
+                label="Immutable"
+              />
+            )}
+          </form.Field>
+          <form.Field name="isCompress">
+            {(field) => (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.checked)}
+                  />
+                }
+                label="Compress"
+              />
+            )}
+          </form.Field>
         </FormGroup>
 
         <FormControl fullWidth margin="normal">
-          <Field
-            component={TextField}
-            helperText="A path within the Project to add the File, default is the project root ('/'), the mount-point within the application container. For example a valid path is '/path/subpath'."
-            label="Path"
-            name="path"
-          />
+          <form.Field name="path">
+            {(field) => (
+              <TextField
+                error={!!field.state.meta.errors[0]}
+                helperText={
+                  field.state.meta.errors[0]?.message ??
+                  "A path within the Project to add the File, default is the project root ('/'), the mount-point within the application container. For example a valid path is '/path/subpath'."
+                }
+                label="Path"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+              />
+            )}
+          </form.Field>
         </FormControl>
 
         {!!errorMessage && (
@@ -211,7 +270,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
             <b>Error:</b> {errorMessage}
           </Alert>
         )}
-      </FormikModalWrapper>
+      </FormModalWrapper>
     </>
   );
 };

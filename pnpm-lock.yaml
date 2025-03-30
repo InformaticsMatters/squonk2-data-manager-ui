@@ -156,8 +156,8 @@ importers:
         specifier: 15.1.6
         version: 15.1.6(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.83.1)
       next-http-proxy-middleware:
-        specifier: 1.2.6
-        version: 1.2.6
+        specifier: 1.2.7
+        version: 1.2.7
       nextjs-routes:
         specifier: 2.2.5
         version: 2.2.5(next@15.1.6(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.83.1))
@@ -4344,8 +4344,8 @@ packages:
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
-  next-http-proxy-middleware@1.2.6:
-    resolution: {integrity: sha512-vHmtFLeO+HomU4Fx/CoA4MbLnXya1B17yR5qOmpYZqRjzGa17a9dgXh9ONvquSZdMrIn7bUfjoPLxMkYMtKj3Q==}
+  next-http-proxy-middleware@1.2.7:
+    resolution: {integrity: sha512-SasEovBqKMZzvY1elvWa33BxDWT5cc8G4KASS3ygADNV7v1O12y0rjA8F9eOD9aCNXYxJfnRHzauOE0rPSqISg==}
     engines: {node: '>=10.0.0'}
 
   next-tick@1.1.0:
@@ -11059,7 +11059,7 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  next-http-proxy-middleware@1.2.6:
+  next-http-proxy-middleware@1.2.7:
     dependencies:
       '@types/http-proxy': 1.17.3
       http-proxy: 1.18.1

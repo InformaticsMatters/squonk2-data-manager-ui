@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@auth0/nextjs-auth0':
-        specifier: 3.6.0
-        version: 3.6.0(next@15.1.6(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.83.1))
+        specifier: 3.7.0
+        version: 3.7.0(next@15.1.6(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.83.1))
       '@emotion/cache':
         specifier: 11.14.0
         version: 11.14.0
@@ -238,11 +238,11 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@auth0/nextjs-auth0@3.6.0':
-    resolution: {integrity: sha512-d29jmwmmmhQKJBrdBHQNlBf4rZLH/qz1522cyf8HQTGQYXqHRLh+X1KOG0FyNkao2GN4Xnb856/o1XIlPt5ELQ==}
+  '@auth0/nextjs-auth0@3.7.0':
+    resolution: {integrity: sha512-MxJl2rf3j09bwugggVBmrzOhO8H4yv7lZbXe7xPuQSYTuk1jJjjofHEQrZiOJnYV9dZbjYvNhEunFRFJM1PyVw==}
     engines: {node: '>=16'}
     peerDependencies:
-      next: '>=10'
+      next: ^10.0.0 || ^11.0.0 || ^12.3.5 || ^13.5.9 || ^14.2.25 || ^15.2.3
 
   '@babel/code-frame@7.26.2':
     resolution: {integrity: sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ==}
@@ -6031,7 +6031,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@auth0/nextjs-auth0@3.6.0(next@15.1.6(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.83.1))':
+  '@auth0/nextjs-auth0@3.7.0(next@15.1.6(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.83.1))':
     dependencies:
       '@panva/hkdf': 1.2.1
       cookie: 0.7.2

@@ -1,6 +1,6 @@
 import { type ComponentProps } from "react";
 
-import { styled } from "@mui/styles";
+import { styled } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 
 import { useWasSeen } from "../../hooks/useWasSeen";

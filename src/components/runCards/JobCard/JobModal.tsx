@@ -175,7 +175,7 @@ export const JobModal = ({
       id={`job-${jobId}`}
       open={open}
       submitDisabled={
-        (validateForm && validateForm() !== undefined && validateForm()) || !inputsValid
+        (validateForm && validateForm() !== undefined && validateForm()) ?? !inputsValid
       }
       submitText="Run"
       title={job?.name ?? "Run Job"}

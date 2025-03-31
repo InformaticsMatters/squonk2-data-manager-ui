@@ -73,7 +73,7 @@ export const plaintextViewerSSR = async (
   if (!response.ok) {
     const isJson = isResponseJson(response);
     const data = isJson ? await response.json() : null;
-    const error = (data && (data as any).message) || response.status;
+    const error = (data && (data as any).message) ?? response.status;
     captureException(error);
     return createErrorProps(res, error, response.statusText);
   }

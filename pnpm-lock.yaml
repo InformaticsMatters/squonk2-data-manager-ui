@@ -141,8 +141,8 @@ importers:
         specifier: 3.1.0
         version: 3.1.0(@types/react@19.0.12)(immutable@5.0.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ketcher-standalone:
-        specifier: 2.27.0
-        version: 2.27.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 3.1.0
+        version: 3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       lodash-es:
         specifier: 4.17.21
         version: 4.17.21
@@ -3619,8 +3619,8 @@ packages:
     resolution: {integrity: sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==}
     engines: {node: '>=8'}
 
-  indigo-ketcher@1.26.0:
-    resolution: {integrity: sha512-XjiILPt2pjkS+mmqv0+LmFjI2Z+75d0LSO/TTZAn33Rmazhd6wgGh5zz2VOtgIJP8I5DwU890RJKFbeMbnw6SA==}
+  indigo-ketcher@1.29.0:
+    resolution: {integrity: sha512-50OGDLIVVsqP1LhKaGPoNbHLFTwvVHX5QyjEIDwNZI6QdB+tJsSj+QMW1lsjGvaNkMLvYW9gG93Gj2L+NSkiXg==}
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
@@ -3991,8 +3991,8 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  ketcher-standalone@2.27.0:
-    resolution: {integrity: sha512-92+IE9ozb0s9IoWRcJdTUtQjvZ0WzWkFevAADbYl2DpPyfXS4QbIQhSkuF2rPG0pDNdZaSLi4O6nRgdlnh4vZQ==}
+  ketcher-standalone@3.1.0:
+    resolution: {integrity: sha512-pBSrtwU1sU0KkMeJ+x0fL3V+6ygrrkjpN/54Y37R7R/T2yDHQy/+DY4BkEsYrfkYlP2CtfEnUVknskjtcfXQuQ==}
     engines: {node: '>=14'}
 
   keyv@4.5.4:
@@ -10078,7 +10078,7 @@ snapshots:
 
   indent-string@4.0.0: {}
 
-  indigo-ketcher@1.26.0: {}
+  indigo-ketcher@1.29.0: {}
 
   inflight@1.0.6:
     dependencies:
@@ -10456,10 +10456,10 @@ snapshots:
       - react-native
       - supports-color
 
-  ketcher-standalone@2.27.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  ketcher-standalone@3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@babel/runtime': 7.26.0
-      indigo-ketcher: 1.26.0
+      indigo-ketcher: 1.29.0
       ketcher-core: 3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     transitivePeerDependencies:
       - react

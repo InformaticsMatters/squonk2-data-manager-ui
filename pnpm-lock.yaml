@@ -63,8 +63,8 @@ importers:
         specifier: 4.2.0-rc.3
         version: 4.2.0-rc.3(@tanstack/react-query@5.71.1(react@19.1.0))(axios@1.8.4)
       '@squonk/data-manager-client':
-        specifier: 3.3.1
-        version: 3.3.1(@tanstack/react-query@5.71.1(react@19.1.0))(axios@1.8.4)
+        specifier: 3.3.2
+        version: 3.3.2(@tanstack/react-query@5.71.1(react@19.1.0))(axios@1.8.4)
       '@squonk/mui-theme':
         specifier: 5.0.0
         version: 5.0.0(@mui/material@6.4.10(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
@@ -118,7 +118,7 @@ importers:
         version: 4.0.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@mui/material@6.4.10(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(formik@2.4.6(react@19.1.0))(react@19.1.0)(tiny-warning@1.0.3)
       formik-mui-lab:
         specifier: 1.0.0
-        version: 1.0.0(3ef3086b498cfb8f6a3193f8e758907a)
+        version: 1.0.0(y5exalc2zqx57e2zsddgebbxuu)
       immer:
         specifier: 10.1.1
         version: 10.1.1
@@ -1533,8 +1533,8 @@ packages:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
 
-  '@squonk/data-manager-client@3.3.1':
-    resolution: {integrity: sha512-DTxbD4kGw5RzQ73BYZwCg4B+BAekXC8cmYSgmkHNf79VQIgWOjIAU0U8DniwQGAQKXNFaNc2B0qVZd+m8EgpOw==}
+  '@squonk/data-manager-client@3.3.2':
+    resolution: {integrity: sha512-gFV55egL4eW8HG15yBgb3d2WcT+H1cfzLNkz8wLbkaLA+Q4sLRpuuvY0mpOEy2zKZifsOIPdmCdWoQsCYh8xPg==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
@@ -7566,7 +7566,7 @@ snapshots:
       '@tanstack/react-query': 5.71.1(react@19.1.0)
       axios: 1.8.4
 
-  '@squonk/data-manager-client@3.3.1(@tanstack/react-query@5.71.1(react@19.1.0))(axios@1.8.4)':
+  '@squonk/data-manager-client@3.3.2(@tanstack/react-query@5.71.1(react@19.1.0))(axios@1.8.4)':
     dependencies:
       '@tanstack/react-query': 5.71.1(react@19.1.0)
       axios: 1.8.4
@@ -9550,7 +9550,7 @@ snapshots:
     dependencies:
       fetch-blob: 3.2.0
 
-  formik-mui-lab@1.0.0(3ef3086b498cfb8f6a3193f8e758907a):
+  formik-mui-lab@1.0.0(y5exalc2zqx57e2zsddgebbxuu):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.0.12)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0)

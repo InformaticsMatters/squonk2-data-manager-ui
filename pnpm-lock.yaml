@@ -60,8 +60,8 @@ importers:
         specifier: 8.55.0
         version: 8.55.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@15.2.4(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.51.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.83.1))(react@19.1.0)(webpack@5.97.1)
       '@squonk/account-server-client':
-        specifier: 4.2.0-rc.3
-        version: 4.2.0-rc.3(@tanstack/react-query@5.71.1(react@19.1.0))(axios@1.8.4)
+        specifier: 4.2.0-rc.7
+        version: 4.2.0-rc.7(@tanstack/react-query@5.71.1(react@19.1.0))(axios@1.8.4)
       '@squonk/data-manager-client':
         specifier: 3.3.1
         version: 3.3.1(@tanstack/react-query@5.71.1(react@19.1.0))(axios@1.8.4)
@@ -118,7 +118,7 @@ importers:
         version: 4.0.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@mui/material@6.4.10(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(formik@2.4.6(react@19.1.0))(react@19.1.0)(tiny-warning@1.0.3)
       formik-mui-lab:
         specifier: 1.0.0
-        version: 1.0.0(3ef3086b498cfb8f6a3193f8e758907a)
+        version: 1.0.0(y5exalc2zqx57e2zsddgebbxuu)
       immer:
         specifier: 10.1.1
         version: 10.1.1
@@ -1527,8 +1527,8 @@ packages:
   '@sideway/pinpoint@2.0.0':
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
 
-  '@squonk/account-server-client@4.2.0-rc.3':
-    resolution: {integrity: sha512-GfFQoMB6uPAxiGU4Bj+p6x3ygpjuI6YReiVXXFtBRA80GdjgAb23o+gyMrWYnaVNd5+sYoIg06IbGQ2x0I9K/Q==}
+  '@squonk/account-server-client@4.2.0-rc.7':
+    resolution: {integrity: sha512-/p3Y0sDyuHr7+fpo4ubYbySwXkE+hAgBAF5W56DzWstp8Ctlw94/9FX4ykjZxvGLR4My+t6mIeshJz7h72bihQ==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
@@ -7561,7 +7561,7 @@ snapshots:
 
   '@sideway/pinpoint@2.0.0': {}
 
-  '@squonk/account-server-client@4.2.0-rc.3(@tanstack/react-query@5.71.1(react@19.1.0))(axios@1.8.4)':
+  '@squonk/account-server-client@4.2.0-rc.7(@tanstack/react-query@5.71.1(react@19.1.0))(axios@1.8.4)':
     dependencies:
       '@tanstack/react-query': 5.71.1(react@19.1.0)
       axios: 1.8.4
@@ -9550,7 +9550,7 @@ snapshots:
     dependencies:
       fetch-blob: 3.2.0
 
-  formik-mui-lab@1.0.0(3ef3086b498cfb8f6a3193f8e758907a):
+  formik-mui-lab@1.0.0(y5exalc2zqx57e2zsddgebbxuu):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.0.12)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0)

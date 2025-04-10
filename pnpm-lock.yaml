@@ -118,7 +118,7 @@ importers:
         version: 4.0.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@mui/material@6.4.10(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(formik@2.4.6(react@19.1.0))(react@19.1.0)(tiny-warning@1.0.3)
       formik-mui-lab:
         specifier: 1.0.0
-        version: 1.0.0(3ef3086b498cfb8f6a3193f8e758907a)
+        version: 1.0.0(y5exalc2zqx57e2zsddgebbxuu)
       immer:
         specifier: 10.1.1
         version: 10.1.1
@@ -214,8 +214,8 @@ importers:
         specifier: 2.2.0
         version: 2.2.0(eslint@8.57.1)(typescript@5.8.2)
       dotenv:
-        specifier: 16.4.7
-        version: 16.4.7
+        specifier: 16.5.0
+        version: 16.5.0
       eslint:
         specifier: 8.57.1
         version: 8.57.1
@@ -2746,8 +2746,8 @@ packages:
   dom-helpers@5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
 
-  dotenv@16.4.7:
-    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+  dotenv@16.5.0:
+    resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
     engines: {node: '>=12'}
 
   draft-js-custom-styles@2.1.1:
@@ -7403,7 +7403,7 @@ snapshots:
       '@babel/core': 7.26.0
       '@sentry/babel-plugin-component-annotate': 2.22.7
       '@sentry/cli': 2.39.1
-      dotenv: 16.4.7
+      dotenv: 16.5.0
       find-up: 5.0.0
       glob: 9.3.5
       magic-string: 0.30.8
@@ -8879,7 +8879,7 @@ snapshots:
       '@babel/runtime': 7.26.0
       csstype: 3.1.3
 
-  dotenv@16.4.7: {}
+  dotenv@16.5.0: {}
 
   draft-js-custom-styles@2.1.1(draft-js@0.11.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(immutable@5.0.3):
     dependencies:
@@ -9550,7 +9550,7 @@ snapshots:
     dependencies:
       fetch-blob: 3.2.0
 
-  formik-mui-lab@1.0.0(3ef3086b498cfb8f6a3193f8e758907a):
+  formik-mui-lab@1.0.0(y5exalc2zqx57e2zsddgebbxuu):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.0.12)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0)

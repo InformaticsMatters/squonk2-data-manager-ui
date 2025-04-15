@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.3.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.3.0-rc.0...5.3.0-rc.1) (2025-04-15)
+
+
+### Features
+
+* display realtime event messages ([0dc1a5a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0dc1a5a20edc4e6ca63249571432b30451fee9b0))
+
+
+### Miscellaneous Chores
+
+* release 5.3.0-rc.1 ([672b4f3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/672b4f37c0c67dcc8ecac9d2c5cf0002fc7fe6e2))
+
 ## [5.3.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.2.1...5.3.0-rc.0) (2025-03-15)
 
 

@@ -6,35 +6,24 @@ import {
 } from "@squonk/account-server-client/event-stream";
 
 import { useSnackbar } from "notistack";
-import * as protobuf from "protobufjs";
+
+import { getMessageFromEvent, protoBlobToText } from "../protobuf/protobuf";
+import { EventMessage } from "./eventMessages/EventMessage";
 
 export const EventStream = () => {
-  const [eventStreamId, setEventStreamId] = useState<number | null>(null);
   const [location, setLocation] = useState<string | null>(null);
-  const [websocket, setWebsocket] = useState<WebSocket | null>(null);
-  const [protoRoot, setProtoRoot] = useState<protobuf.Root | null>(null);
   const { enqueueSnackbar } = useSnackbar();
+
   const { data, error } = useGetEventStream();
 
   useEffect(() => {
-    // Initialize protobuf root
-    const root = new protobuf.Root();
-    // You would typically load your proto definitions here
-    // For example: root.load("path/to/proto/file.proto", { keepCase: true })
-    setProtoRoot(root);
-  }, []);
-
-  useEffect(() => {
     if (data) {
-      setEventStreamId(data.id);
       setLocation(data.location);
     }
   }, [data]);
-
   const { mutate: createEventStream } = useCreateEventStream({
     mutation: {
       onSuccess: (data) => {
-        setEventStreamId(data.id);
         setLocation(data.location);
       },
     },
@@ -42,12 +31,12 @@ export const EventStream = () => {
 
   useEffect(() => {
     if (error?.response?.status === 404) {
-      createEventStream();
+      createEventStream({ data: { format: "JSON_STRING" } });
     }
   }, [error, createEventStream]);
 
   useEffect(() => {
-    if (location && protoRoot) {
+    if (location) {
       // Create WebSocket connection
       const ws = new WebSocket(location);
 
@@ -73,22 +62,22 @@ export const EventStream = () => {
       });
 
       ws.addEventListener("message", (event) => {
-        enqueueSnackbar(`Received event: ${event.data}`, {
-          variant: "info",
-          anchorOrigin: { horizontal: "right", vertical: "bottom" },
+        void protoBlobToText(event.data).then((data) => {
+          const message = getMessageFromEvent(data);
+          message &&
+            enqueueSnackbar(<EventMessage message={message} />, {
+              variant: "default",
+              anchorOrigin: { horizontal: "right", vertical: "bottom" },
+              autoHideDuration: 100_000,
+            });
         });
       });
-
-      setWebsocket(ws);
 
       return () => {
         ws.close();
       };
     }
-  }, [location, protoRoot, enqueueSnackbar]);
-
-  console.log(eventStreamId);
-  console.log(websocket);
+  }, [location, enqueueSnackbar]);
 
   return null;
 };

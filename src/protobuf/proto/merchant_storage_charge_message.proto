@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package informaticsmatters.protobuf.accountserver;
+
+enum StorageReasonEnum {
+  STORAGE_REASON_ENUM_UNSPECIFIED = 0;
+  STORAGE_REASON_ENUM_DATASET = 1;
+  STORAGE_REASON_ENUM_PROJECT = 2;
+}
+
+// A Storage Charge message (originated by a Merchant).
+//
+// Storage charges are sent my Merchants and represent the number of
+// bytes that have been consumed (or released) on behalf of a User (Product).
+// The total storage used is maintained and billed (in COINS) based on the
+// peak usage that has been observed each day for corresponding Product.
+message MerchantStorageChargeMessage {
+  // Fields 1..15
+  //
+  // An ISO8601 UTC string that includes a timezone.
+  // Typically something like 2021-12-31T00:00:00.00Z
+  string timestamp = 1;
+
+  // The merchant responsible for submitting the charge.
+  string merchant_kind = 2;
+  string merchant_name = 3;
+  uint32 merchant_id = 4;
+
+  // Is this charge for Dataset or Project storage?
+  StorageReasonEnum reason = 5;
+
+  // All charges have an authorisation code.
+  // This will have been provided by the Account Server.
+  // All related charges will contain the same authorisation code.
+  uint32 auth_code = 6;
+
+  // Name assigned to the charge
+  string name = 7;
+
+  // The bytes value.
+  // A humanised string representation of storage bytes.
+  // The value is either an absolute record of bytes, e.g. "2,045,023"
+  // or a change (increase or decrease), e.g. "+4,096" or "-4,096".
+  string bytes = 8;
+
+  // Fields 16..2047
+
+  // The User, Product (or Unit or Organisation) providing the funds.
+  // The User is optional and one of Product or Unit or Organisation
+  // will be provided but not necessarily all.
+  string user = 16;
+  string product = 17;
+  string unit = 18;
+  string organisation = 19;
+
+  // Any charge-specific additional material.
+  // If encountered this should be a string representation of
+  // a dictionary/map. The keys and values are not
+  // interpreted, they're simply passed-on verbatim.
+  string additional_data = 30;
+}

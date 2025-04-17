@@ -121,7 +121,7 @@ importers:
         version: 4.0.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@mui/material@6.4.10(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(formik@2.4.6(react@19.1.0))(react@19.1.0)(tiny-warning@1.0.3)
       formik-mui-lab:
         specifier: 1.0.0
-        version: 1.0.0(3ef3086b498cfb8f6a3193f8e758907a)
+        version: 1.0.0(y5exalc2zqx57e2zsddgebbxuu)
       immer:
         specifier: 10.1.1
         version: 10.1.1
@@ -138,8 +138,8 @@ importers:
         specifier: 4.0.0
         version: 4.0.0
       ketcher-core:
-        specifier: 3.1.0
-        version: 3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 3.2.0
+        version: 3.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ketcher-react:
         specifier: 3.1.0
         version: 3.1.0(@types/react@19.0.12)(immutable@5.0.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -3988,8 +3988,8 @@ packages:
   kdbush@4.0.2:
     resolution: {integrity: sha512-WbCVYJ27Sz8zi9Q7Q0xHC+05iwkm3Znipc2XTlrnJbsHMYktW4hPhXUE8Ys1engBrvffoSCqbil1JQAa7clRpA==}
 
-  ketcher-core@3.1.0:
-    resolution: {integrity: sha512-hyH6cbcfizfTdEc9x0Bqmo9P8Z99+izYkkE5KYICoef51OESx3NDw/dv8kGKk452b0ScEONStgE4EVzB0dzCfQ==}
+  ketcher-core@3.2.0:
+    resolution: {integrity: sha512-j+joWHIanQVFdCHazjMS+7gOYb9Zd015qBG0fdIspntXOPZa+5NDrSHF2SnTSLQFoH4RlU5/lnfw1XFw1iOUZA==}
     engines: {node: '>=14'}
 
   ketcher-react@3.1.0:
@@ -9625,7 +9625,7 @@ snapshots:
     dependencies:
       fetch-blob: 3.2.0
 
-  formik-mui-lab@1.0.0(3ef3086b498cfb8f6a3193f8e758907a):
+  formik-mui-lab@1.0.0(y5exalc2zqx57e2zsddgebbxuu):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.0.12)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0)
@@ -10396,7 +10396,7 @@ snapshots:
 
   kdbush@4.0.2: {}
 
-  ketcher-core@3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  ketcher-core@3.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@babel/runtime': 7.26.0
       assert: 2.1.0
@@ -10426,7 +10426,7 @@ snapshots:
       font-face-observer: 1.0.0
       hoist-non-react-statics: 3.3.2
       intersection-observer: 0.12.2
-      ketcher-core: 3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      ketcher-core: 3.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       lodash: 4.17.21
       miew-react: 1.0.0(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react: 19.1.0
@@ -10462,7 +10462,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.26.0
       indigo-ketcher: 1.29.0
-      ketcher-core: 3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      ketcher-core: 3.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     transitivePeerDependencies:
       - react
       - react-dom

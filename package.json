@@ -104,7 +104,7 @@
     "@bufbuild/buf": "^1.52.1",
     "@bufbuild/protoc-gen-es": "^2.2.5",
     "@next/bundle-analyzer": "15.2.4",
-    "@playwright/test": "1.51.1",
+    "@playwright/test": "1.52.0",
     "@squonk/eslint-config": "2.2.0",
     "dotenv": "16.4.7",
     "eslint": "8.57.1",

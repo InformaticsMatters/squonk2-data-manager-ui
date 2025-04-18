@@ -121,7 +121,7 @@ importers:
         version: 4.0.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@mui/material@6.4.10(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(formik@2.4.6(react@19.1.0))(react@19.1.0)(tiny-warning@1.0.3)
       formik-mui-lab:
         specifier: 1.0.0
-        version: 1.0.0(3ef3086b498cfb8f6a3193f8e758907a)
+        version: 1.0.0(y5exalc2zqx57e2zsddgebbxuu)
       immer:
         specifier: 10.1.1
         version: 10.1.1
@@ -144,8 +144,8 @@ importers:
         specifier: 3.1.0
         version: 3.1.0(@types/react@19.0.12)(immutable@5.0.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ketcher-standalone:
-        specifier: 3.1.0
-        version: 3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 3.2.0
+        version: 3.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       lodash-es:
         specifier: 4.17.21
         version: 4.17.21
@@ -3630,8 +3630,8 @@ packages:
     resolution: {integrity: sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==}
     engines: {node: '>=8'}
 
-  indigo-ketcher@1.29.0:
-    resolution: {integrity: sha512-50OGDLIVVsqP1LhKaGPoNbHLFTwvVHX5QyjEIDwNZI6QdB+tJsSj+QMW1lsjGvaNkMLvYW9gG93Gj2L+NSkiXg==}
+  indigo-ketcher@1.30.0:
+    resolution: {integrity: sha512-lhh93xiT8PGhmPFhKg91D/4oa2erraT3EGjMrQUSvLFngIlGU63xqAmgU/OPVYBKb+diy+fuSKqJwqvNsMzOJw==}
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
@@ -4002,8 +4002,8 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  ketcher-standalone@3.1.0:
-    resolution: {integrity: sha512-pBSrtwU1sU0KkMeJ+x0fL3V+6ygrrkjpN/54Y37R7R/T2yDHQy/+DY4BkEsYrfkYlP2CtfEnUVknskjtcfXQuQ==}
+  ketcher-standalone@3.2.0:
+    resolution: {integrity: sha512-vRaMFuKJu47yVIzeQMog7bRTN+A6kvUA7iJbQEm8WJolBeIyWtyUzP9dC3uXg4WE7bgopNeHVDH0DetUooCq2w==}
     engines: {node: '>=14'}
 
   keyv@4.5.4:
@@ -9631,7 +9631,7 @@ snapshots:
     dependencies:
       fetch-blob: 3.2.0
 
-  formik-mui-lab@1.0.0(3ef3086b498cfb8f6a3193f8e758907a):
+  formik-mui-lab@1.0.0(y5exalc2zqx57e2zsddgebbxuu):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.0.12)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0)
@@ -10086,7 +10086,7 @@ snapshots:
 
   indent-string@4.0.0: {}
 
-  indigo-ketcher@1.29.0: {}
+  indigo-ketcher@1.30.0: {}
 
   inflight@1.0.6:
     dependencies:
@@ -10464,10 +10464,10 @@ snapshots:
       - react-native
       - supports-color
 
-  ketcher-standalone@3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  ketcher-standalone@3.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@babel/runtime': 7.26.0
-      indigo-ketcher: 1.29.0
+      indigo-ketcher: 1.30.0
       ketcher-core: 3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     transitivePeerDependencies:
       - react

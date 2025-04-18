@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "3.7.0",
-    "@bufbuild/protobuf": "^2.2.5",
+    "@bufbuild/protobuf": "2.2.5",
     "@emotion/cache": "11.14.0",
     "@emotion/react": "11.14.0",
     "@emotion/server": "11.11.0",
@@ -95,15 +95,15 @@
     "react-dropzone": "14.3.8",
     "react-hook-form": "7.54.2",
     "react-plotly.js": "2.6.0",
-    "react-use-websocket": "^4.13.0",
+    "react-use-websocket": "4.13.0",
     "sharp": "0.33.5",
     "typescript": "5.8.2",
     "use-immer": "0.11.0",
     "yup": "1.6.1"
   },
   "devDependencies": {
-    "@bufbuild/buf": "^1.52.1",
-    "@bufbuild/protoc-gen-es": "^2.2.5",
+    "@bufbuild/buf": "1.52.1",
+    "@bufbuild/protoc-gen-es": "2.2.5",
     "@next/bundle-analyzer": "15.2.4",
     "@playwright/test": "1.51.1",
     "@squonk/eslint-config": "2.2.0",

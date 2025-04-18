@@ -121,7 +121,7 @@ importers:
         version: 4.0.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@mui/material@6.4.10(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(formik@2.4.6(react@19.1.0))(react@19.1.0)(tiny-warning@1.0.3)
       formik-mui-lab:
         specifier: 1.0.0
-        version: 1.0.0(3ef3086b498cfb8f6a3193f8e758907a)
+        version: 1.0.0(y5exalc2zqx57e2zsddgebbxuu)
       immer:
         specifier: 10.1.1
         version: 10.1.1
@@ -235,8 +235,8 @@ importers:
         specifier: 3.0.0
         version: 3.0.0
       lint-staged:
-        specifier: 15.5.0
-        version: 15.5.0
+        specifier: 15.5.1
+        version: 15.5.1
       prettier:
         specifier: 3.5.3
         version: 3.5.3
@@ -4032,8 +4032,8 @@ packages:
     resolution: {integrity: sha512-wM1+Z03eypVAVUCE7QdSqpVIvelbOakn1M0bPDoA4SGWPx3sNDVUiMo3L6To6WWGClB7VyXnhQ4Sn7gxiJbE6A==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  lint-staged@15.5.0:
-    resolution: {integrity: sha512-WyCzSbfYGhK7cU+UuDDkzUiytbfbi0ZdPy2orwtM75P3WTtQBzmG40cCxIa8Ii2+XjfxzLH6Be46tUfWS85Xfg==}
+  lint-staged@15.5.1:
+    resolution: {integrity: sha512-6m7u8mue4Xn6wK6gZvSCQwBvMBR36xfY24nF5bMTf2MHDYG6S3yhJuOgdYVw99hsjyDt2d4z168b3naI8+NWtQ==}
     engines: {node: '>=18.12.0'}
     hasBin: true
 
@@ -9631,7 +9631,7 @@ snapshots:
     dependencies:
       fetch-blob: 3.2.0
 
-  formik-mui-lab@1.0.0(3ef3086b498cfb8f6a3193f8e758907a):
+  formik-mui-lab@1.0.0(y5exalc2zqx57e2zsddgebbxuu):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.0.12)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0)
@@ -10492,7 +10492,7 @@ snapshots:
 
   lines-and-columns@2.0.4: {}
 
-  lint-staged@15.5.0:
+  lint-staged@15.5.1:
     dependencies:
       chalk: 5.4.1
       commander: 13.1.0

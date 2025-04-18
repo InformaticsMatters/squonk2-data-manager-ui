@@ -13,8 +13,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { enableMapSet } from "immer";
 import { type AppProps } from "next/app";
 import Head from "next/head";
-import { SnackbarProvider } from "notistack";
 
+import { ConfiguredSnackbarProvider } from "../components/app/ConfiguredSnackbarProvider";
 import { ThemeProviders } from "../components/app/ThemeProviders";
 import { TopLevelHooks } from "../components/app/TopLevelHooks";
 import { EventStream } from "../components/EventStream";
@@ -63,14 +63,14 @@ const App = ({ Component, pageProps }: CustomAppProps) => {
           >
             <QueryClientProvider client={queryClient}>
               <HydrationBoundary state={pageProps.dehydratedState}>
-                <SnackbarProvider>
+                <ConfiguredSnackbarProvider>
                   <EventStream />
                   <MDXComponentProvider>
                     <TopLevelHooks>
                       <Component {...pageProps} />
                     </TopLevelHooks>
                   </MDXComponentProvider>
-                </SnackbarProvider>
+                </ConfiguredSnackbarProvider>
               </HydrationBoundary>
               <ReactQueryDevtools client={queryClient} />
             </QueryClientProvider>

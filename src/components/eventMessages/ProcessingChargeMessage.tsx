@@ -40,7 +40,7 @@ export const ProcessingChargeMessage = ({ coins, product }: ProcessingChargeMess
 
         <Typography>
           <Button
-            color="secondary"
+            color="info"
             href={projectURL(productData.claim.id)}
             rel="noreferrer"
             sx={{ textTransform: "none" }}

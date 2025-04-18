@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.3.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.3.0-rc.1...5.3.0-rc.2) (2025-04-18)
+
+
+### Features
+
+* improve appearance of toast messages ([6aa35bc](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6aa35bc9ee2b79df1a0845c5059f08a935647aed))
+
+
+### Bug Fixes
+
+* improve websocket error handling ([380d03a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/380d03ac2f6ec83452cf852cc534979cadb7adf0))
+
+
+### Miscellaneous Chores
+
+* release 5.3.0-rc.2 ([61d8599](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/61d8599b6b23ccb440918817a7fb99e61e4ebc50))
+
 ## [5.3.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.3.0-rc.0...5.3.0-rc.1) (2025-04-15)
 
 

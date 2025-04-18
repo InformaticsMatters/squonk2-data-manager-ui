@@ -121,7 +121,7 @@ importers:
         version: 4.0.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@mui/material@6.4.10(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(formik@2.4.6(react@19.1.0))(react@19.1.0)(tiny-warning@1.0.3)
       formik-mui-lab:
         specifier: 1.0.0
-        version: 1.0.0(3ef3086b498cfb8f6a3193f8e758907a)
+        version: 1.0.0(y5exalc2zqx57e2zsddgebbxuu)
       immer:
         specifier: 10.1.1
         version: 10.1.1
@@ -141,8 +141,8 @@ importers:
         specifier: 3.1.0
         version: 3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ketcher-react:
-        specifier: 3.1.0
-        version: 3.1.0(@types/react@19.0.12)(immutable@5.0.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react@19.0.12)(immutable@5.0.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ketcher-standalone:
         specifier: 3.1.0
         version: 3.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -3995,8 +3995,8 @@ packages:
     resolution: {integrity: sha512-hyH6cbcfizfTdEc9x0Bqmo9P8Z99+izYkkE5KYICoef51OESx3NDw/dv8kGKk452b0ScEONStgE4EVzB0dzCfQ==}
     engines: {node: '>=14'}
 
-  ketcher-react@3.1.0:
-    resolution: {integrity: sha512-DwdSmxXf5o763toTtuQeoF4xvownTD8nGcM0DQiH9M/kc+psk/MhxGH5KT1BRDI/wuqMKFIHvRwoNKQS3r5jSQ==}
+  ketcher-react@3.2.0:
+    resolution: {integrity: sha512-oF3UbbDTaHdXgPOobTYKDZoNCJPmiXnM8zLiiCeOtXk5iS1CKrwokhVm65fv8PBUWzJKNJ0MKx40etnaoHBKgg==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.2.0
@@ -9631,7 +9631,7 @@ snapshots:
     dependencies:
       fetch-blob: 3.2.0
 
-  formik-mui-lab@1.0.0(3ef3086b498cfb8f6a3193f8e758907a):
+  formik-mui-lab@1.0.0(y5exalc2zqx57e2zsddgebbxuu):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.0.12)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0)
@@ -10416,7 +10416,7 @@ snapshots:
       - react
       - react-dom
 
-  ketcher-react@3.1.0(@types/react@19.0.12)(immutable@5.0.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  ketcher-react@3.2.0(@types/react@19.0.12)(immutable@5.0.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@babel/runtime': 7.26.0
       '@emotion/react': 11.14.0(@types/react@19.0.12)(react@19.1.0)

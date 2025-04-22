@@ -5,7 +5,8 @@ FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json pnpm-lock.yaml patches ./
+COPY package.json pnpm-lock.yaml ./
+COPY patches ./patches/
 
 # Whether to skip TSC and Eslint Checks
 ARG SKIP_CHECKS
@@ -13,10 +14,10 @@ ENV SKIP_CHECKS=${SKIP_CHECKS:-0}
 RUN echo "SKIP_CHECKS=${SKIP_CHECKS}"
 
 RUN npm i -g pnpm@9.12.3
-RUN if $SKIP_CHECKS; then pnpm fetch --prod; else pnpm fetch; fi
-RUN if $SKIP_CHECKS; \
-    then pnpm i -P --frozen-lockfile --offline --ignore-scripts; \
-    else pnpm i --frozen-lockfile --offline --ignore-scripts; fi
+RUN if [ "$SKIP_CHECKS" = "1" ]; then pnpm fetch --prod; else pnpm fetch; fi
+RUN if [ "$SKIP_CHECKS" = "1" ]; \
+    then pnpm i -P --ignore-scripts; \
+    else pnpm i --ignore-scripts; fi
 
 # If using npm with a `package-lock.json` comment out above and use below instead
 # COPY package.json package-lock.json ./
@@ -29,7 +30,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Disable anonymous Next.js telemetry data...
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Expose an optional GitHub SHA build argument.
 # This is used to personalise the build.
@@ -50,9 +51,9 @@ RUN echo "GIT_SHA=${GIT_SHA}" && npm run build
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
+# ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -71,6 +72,6 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
+ENV PORT=3000
 
 CMD ["node", "server.js"]

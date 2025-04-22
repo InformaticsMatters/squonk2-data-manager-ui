@@ -7977,7 +7977,7 @@ snapshots:
       - supports-color
     optional: true
 
-  '@typescript-eslint/eslint-plugin@8.31.0(@typescript-eslint/parser@8.31.0(eslint@9.25.1)(typescript@5.8.3))(eslint@9.25.1)(typescript@5.8.3)':
+  '@typescript-eslint/eslint-plugin@8.31.0(@typescript-eslint/parser@8.31.0(eslint@9.25.1)(typescript@5.8.2))(eslint@9.25.1)(typescript@5.8.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.1
       '@typescript-eslint/parser': 8.31.0(eslint@9.25.1)(typescript@5.8.3)
@@ -12743,7 +12743,7 @@ snapshots:
 
   typescript-eslint@8.31.0(eslint@9.25.1)(typescript@5.8.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.31.0(@typescript-eslint/parser@8.31.0(eslint@9.25.1)(typescript@5.8.3))(eslint@9.25.1)(typescript@5.8.3)
+      '@typescript-eslint/eslint-plugin': 8.31.0(@typescript-eslint/parser@8.31.0(eslint@9.25.1)(typescript@5.8.2))(eslint@9.25.1)(typescript@5.8.3)
       '@typescript-eslint/parser': 8.31.0(eslint@9.25.1)(typescript@5.8.3)
       '@typescript-eslint/utils': 8.31.0(eslint@9.25.1)(typescript@5.8.3)
       eslint: 9.25.1

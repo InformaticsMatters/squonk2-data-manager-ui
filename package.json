@@ -99,7 +99,7 @@
     "zod": "3.24.3"
   },
   "devDependencies": {
-    "@bufbuild/buf": "1.52.1",
+    "@bufbuild/buf": "1.53.0",
     "@bufbuild/protoc-gen-es": "2.2.5",
     "@next/bundle-analyzer": "15.2.4",
     "@playwright/test": "1.51.1",

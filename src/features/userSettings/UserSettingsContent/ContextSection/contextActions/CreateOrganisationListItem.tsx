@@ -9,11 +9,16 @@ import {
 } from "@squonk/account-server-client/organisation";
 
 import { CreateNewFolder } from "@mui/icons-material";
-import { Grid2 as Grid, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import {
+  Grid2 as Grid,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  TextField,
+} from "@mui/material";
+import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-mui";
-import * as yup from "yup";
+import { z } from "zod";
 
 import { ModalWrapper } from "../../../../../components/modals/ModalWrapper";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
@@ -63,6 +68,37 @@ export const CreateOrganisationListItem = () => {
     void changeContext(organisationId);
   };
 
+  // Define Zod schema for validation
+  const orgSchema = z.object({
+    name: z
+      .string()
+      .min(2, "The name is too short")
+      .refine((name) => !organisations?.map((org) => org.name).includes(name), {
+        message: "The name is already used for an organisation",
+      }),
+    owner: z.string().min(1, "The username for the owner is required"),
+  });
+
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      owner: user.username ?? "",
+    } as z.infer<typeof orgSchema>,
+    validators: {
+      onChange: orgSchema,
+    },
+    onSubmit: async ({ value }) => {
+      try {
+        await create(value.name, value.owner);
+        form.reset();
+      } catch (error) {
+        enqueueError(error);
+      } finally {
+        setOpen(false);
+      }
+    },
+  });
+
   return (
     <>
       <ListItemButton onClick={() => setOpen(true)}>
@@ -79,76 +115,52 @@ export const CreateOrganisationListItem = () => {
         </ListItemIcon>
       </ListItemButton>
 
-      <Formik
-        validateOnMount
-        initialValues={{ name: "", owner: user.username ?? "" }}
-        validationSchema={yup.object().shape({
-          name: yup
-            .string()
-            .required("An organisation name is required")
-            .test(
-              "does-not-exist-already",
-              "The name is already used for an organisation",
-              (name) => !organisations?.map((organisation) => organisation.name).includes(name),
-            )
-            .min(2, "The name is too short"),
-          owner: yup
-            .string()
-            .required("The username for the owner is required")
-            .test(
-              "does-not-exist-already",
-              "The name is already used for an organisation",
-              (name) => !organisations?.map((organisation) => organisation.name).includes(name),
-            ),
-        })}
-        onSubmit={async ({ name, owner }, { setSubmitting, resetForm }) => {
-          try {
-            await create(name, owner);
-            resetForm();
-          } catch (error) {
-            enqueueError(error);
-          } finally {
-            setOpen(false);
-            setSubmitting(false);
-          }
-        }}
+      <ModalWrapper
+        DialogProps={{ maxWidth: "sm", fullWidth: true }}
+        id="create-organisation"
+        open={open}
+        submitDisabled={!form.state.canSubmit}
+        submitText="Create"
+        title="Create Organisation (Admin)"
+        onClose={() => setOpen(false)}
+        onSubmit={() => void form.handleSubmit()}
       >
-        {({ submitForm, isSubmitting, isValid }) => (
-          <ModalWrapper
-            DialogProps={{ maxWidth: "sm", fullWidth: true }}
-            id="create-organisation"
-            open={open}
-            submitDisabled={isSubmitting || !isValid}
-            submitText="Create"
-            title="Create Organisation (Admin)"
-            onClose={() => setOpen(false)}
-            onSubmit={() => void submitForm()}
-          >
-            <Form>
-              <Grid container spacing={1} sx={{ marginY: 2 }}>
-                <Grid container>
-                  <Field
-                    autoFocus
-                    fullWidth
-                    component={TextField}
-                    label="Organisation Name"
-                    name="name"
-                  />
-                </Grid>
-                <Grid container>
-                  <Field
-                    autoFocus
-                    fullWidth
-                    component={TextField}
-                    label="Owner (username)"
-                    name="owner"
-                  />
-                </Grid>
-              </Grid>
-            </Form>
-          </ModalWrapper>
-        )}
-      </Formik>
+        <Grid container spacing={1} sx={{ marginY: 2 }}>
+          <Grid container>
+            <form.Field name="name">
+              {(field) => (
+                <TextField
+                  autoFocus
+                  fullWidth
+                  error={field.state.meta.errors.length > 0}
+                  helperText={field.state.meta.errors.map((error) => error?.message)[0]}
+                  label="Organisation Name"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              )}
+            </form.Field>
+          </Grid>
+          <Grid container>
+            <form.Field name="owner">
+              {(field) => (
+                <TextField
+                  fullWidth
+                  // Prevents password managers from suggesting credentials for this field
+                  autoComplete="off"
+                  error={field.state.meta.errors.length > 0}
+                  helperText={field.state.meta.errors.map((error) => error?.message)[0]}
+                  label="Owner (username)"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              )}
+            </form.Field>
+          </Grid>
+        </Grid>
+      </ModalWrapper>
     </>
   );
 };

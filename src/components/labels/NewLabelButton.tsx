@@ -3,16 +3,14 @@ import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
 import { useAddMetadata } from "@squonk/data-manager-client/metadata";
 
 import { AddCircleOutlineRounded as AddCircleOutlineRoundedIcon } from "@mui/icons-material";
-import { Box, Button, IconButton, Popover, Tooltip } from "@mui/material";
+import { Box, Button, IconButton, Popover, TextField, Tooltip } from "@mui/material";
+import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { Field, Form, Formik } from "formik";
-import { TextField } from "formik-mui";
 import { bindPopover, bindTrigger, usePopupState } from "material-ui-popup-state/hooks";
-import * as yup from "yup";
+import { z } from "zod";
 
 import { type TableDataset } from "../../features/DatasetsTable";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
-import { LowerCaseTextField } from "../LowerCaseTextField";
 
 export interface NewLabelButtonProps {
   /**
@@ -28,6 +26,45 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
 
   const popupState = usePopupState({ variant: "popover", popupId: `add-label-${datasetId}` });
 
+  // Define Zod schema for validation
+  const labelSchema = z.object({
+    label: z.string().trim().min(1, "A label name is required"),
+    value: z.string(),
+  });
+
+  const form = useForm({
+    defaultValues: {
+      label: "",
+      value: "",
+    },
+    validators: {
+      onChange: labelSchema,
+    },
+    onSubmit: async ({ value }) => {
+      try {
+        await addAnnotations({
+          datasetId,
+          data: {
+            labels: JSON.stringify([
+              {
+                type: "LabelAnnotation",
+                label: value.label.trim().toLowerCase(),
+                value: value.value.trim(),
+                active: true,
+              },
+            ]),
+          },
+        });
+        await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
+        form.reset();
+      } catch (error) {
+        enqueueError(error);
+      } finally {
+        popupState.close();
+      }
+    },
+  });
+
   return (
     <>
       <Tooltip title="Add a new label">
@@ -42,47 +79,43 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         transformOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Formik
-          validateOnMount
-          initialValues={{ label: "", value: "" }}
-          validationSchema={yup
-            .object()
-            .shape({ label: yup.string().trim().required("A label name is required") })}
-          onSubmit={async ({ label, value }) => {
-            try {
-              await addAnnotations({
-                datasetId,
-                data: {
-                  labels: JSON.stringify([
-                    {
-                      type: "LabelAnnotation",
-                      label: label.trim().toLowerCase(),
-                      value: value.trim(),
-                      active: true,
-                    },
-                  ]),
-                },
-              });
-              await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
-            } catch (error) {
-              enqueueError(error);
-            } finally {
-              popupState.close();
-            }
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void form.handleSubmit();
           }}
         >
-          {({ submitForm, isSubmitting, isValid }) => (
-            <Form>
-              <Box sx={{ alignItems: "baseline", display: "flex", gap: 1 }}>
-                <Field autoFocus component={LowerCaseTextField} label="Name" name="label" />
-                <Field component={TextField} label="Value" name="value" />
-                <Button disabled={isSubmitting || !isValid} onClick={() => void submitForm()}>
-                  Add
-                </Button>
-              </Box>
-            </Form>
-          )}
-        </Formik>
+          <Box sx={{ alignItems: "baseline", display: "flex", gap: 1 }}>
+            <form.Field name="label">
+              {(field) => (
+                <TextField
+                  autoFocus
+                  error={field.state.meta.errors.length > 0}
+                  helperText={field.state.meta.errors.map((error) => error?.message)[0]}
+                  label="Name"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value.toLowerCase())}
+                />
+              )}
+            </form.Field>
+            <form.Field name="value">
+              {(field) => (
+                <TextField
+                  error={field.state.meta.errors.length > 0}
+                  helperText={field.state.meta.errors.map((error) => error?.message)[0]}
+                  label="Value"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              )}
+            </form.Field>
+            <Button disabled={!form.state.canSubmit} type="submit">
+              Add
+            </Button>
+          </Box>
+        </form>
       </Popover>
     </>
   );

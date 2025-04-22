@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import useWebSocket, { ReadyState } from "react-use-websocket";
+import useWebSocket from "react-use-websocket";
 
 import {
   useCreateEventStream,
@@ -8,33 +8,20 @@ import {
 
 import { useSnackbar } from "notistack";
 
+import { useASAuthorizationStatus } from "../hooks/useIsAuthorized";
 import { getMessageFromEvent, protoBlobToText } from "../protobuf/protobuf";
 import { EventMessage } from "./eventMessages/EventMessage";
-
-// Helper function to get readable state name
-const getConnectionStatus = (readyState: ReadyState) => {
-  const stateMap: Record<ReadyState, string> = {
-    [ReadyState.CONNECTING]: "Connecting",
-    [ReadyState.OPEN]: "Open",
-    [ReadyState.CLOSING]: "Closing",
-    [ReadyState.CLOSED]: "Closed",
-    [ReadyState.UNINSTANTIATED]: "Uninstantiated",
-  };
-  return stateMap[readyState];
-};
 
 export const EventStream = () => {
   const [location, setLocation] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
-
+  const asRole = useASAuthorizationStatus();
   const { data, error: streamError } = useGetEventStream({
-    query: { select: (data) => data.location },
+    query: {
+      select: (data) => data.location,
+      enabled: !!asRole,
+    },
   });
-
-  useEffect(() => {
-    data && setLocation(data);
-  }, [data]);
-
   const { mutate: createEventStream } = useCreateEventStream({
     mutation: {
       onSuccess: (eventStreamResponse) => {
@@ -43,13 +30,7 @@ export const EventStream = () => {
     },
   });
 
-  useEffect(() => {
-    if (streamError?.response?.status === 404) {
-      console.log("EventStream: No active stream found, creating one...");
-      createEventStream({ data: { format: "JSON_STRING" } });
-    }
-  }, [streamError, createEventStream]);
-
+  // Define callbacks *before* useWebSocket hook
   const handleWebSocketOpen = useCallback(() => {
     enqueueSnackbar("Connected to event stream", {
       variant: "success",
@@ -117,7 +98,7 @@ export const EventStream = () => {
     [enqueueSnackbar],
   );
 
-  const { readyState } = useWebSocket(location, {
+  useWebSocket(asRole ? location : null, {
     onOpen: handleWebSocketOpen,
     onClose: handleWebSocketClose,
     onError: handleWebSocketError,
@@ -128,9 +109,18 @@ export const EventStream = () => {
     reconnectInterval: 3000,
   });
 
+  // Effects can now safely use the hook results or return early based on auth
   useEffect(() => {
-    console.log(`WebSocket Status: ${getConnectionStatus(readyState)}`);
-  }, [readyState]);
+    if (asRole && data) {
+      setLocation(data);
+    }
+  }, [asRole, data]);
+
+  useEffect(() => {
+    if (asRole && streamError?.response?.status === 404) {
+      createEventStream({ data: { format: "JSON_STRING" } });
+    }
+  }, [asRole, streamError, createEventStream]);
 
   return null;
 };

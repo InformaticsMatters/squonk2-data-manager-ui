@@ -1,8 +1,10 @@
-import { type ForwardedRef, forwardRef } from "react";
+import { forwardRef } from "react";
 
 import { Button, type ButtonProps, styled } from "@mui/material";
+import A, { type LinkProps as NextLinkProps } from "next/link";
+import { useRouter } from "next/router";
 
-import { NavLink } from "./NavLink";
+import { NAV_LINKS, NAV_PARAMS_TO_STRIP, type NavLinkData } from "./navigationConstants";
 
 export interface NavLinksProps {
   /**
@@ -12,53 +14,52 @@ export interface NavLinksProps {
 }
 
 export const NavLinks = ({ linkWidth = 120 }: NavLinksProps) => {
+  const router = useRouter();
+
   return (
     <Nav aria-label="Main" linkWidth={linkWidth} role="navigation">
-      {/* Div wrappers used to give correct spacing */}
-      <div>
-        <NavLink stripQueryParameters={["path", "instanceId"]} title="Datasets">
-          {({ active }) => <NavButton active={active}>Datasets</NavButton>}
-        </NavLink>
-      </div>
-      <div>
-        <NavLink stripQueryParameters={["path", "instanceId"]} title="Project">
-          {({ active }) => <NavButton active={active}>Project Data</NavButton>}
-        </NavLink>
-      </div>
-      <div>
-        <NavLink stripQueryParameters={["path", "instanceId"]} title="Run">
-          {({ active }) => <NavButton active={active}>Apps/Jobs</NavButton>}
-        </NavLink>
-      </div>
-      <div>
-        <NavLink stripQueryParameters={["path", "instanceId"]} title="Results">
-          {({ active }) => <NavButton active={active}>Results</NavButton>}
-        </NavLink>
-      </div>
+      {NAV_LINKS.map(({ title, path, text }: NavLinkData) => {
+        const active = router.pathname.startsWith(path);
+        const query = { ...router.query };
+        NAV_PARAMS_TO_STRIP.forEach((param: string) => delete query[param]);
+        const href = { query, pathname: path };
+
+        return (
+          <div key={title}>
+            <NavButton active={active} component={A} href={href}>
+              {text}
+            </NavButton>
+          </div>
+        );
+      })}
     </Nav>
   );
 };
 
-type NavButtonProps = ButtonProps & { active: boolean };
+type NavButtonProps = Omit<ButtonProps, "href"> & {
+  active: boolean;
+  href?: NextLinkProps["href"];
+};
 
-const NavButtonComponent = (
-  { active, ...props }: NavButtonProps,
-  ref: ForwardedRef<HTMLButtonElement>,
-) => (
-  <Button
-    ref={ref}
-    variant="text"
-    {...props}
-    sx={{
-      fontWeight: active ? "bold" : "normal",
-      color: "white",
-      textTransform: "none",
-      ":hover": { bgcolor: "rgba(50, 0, 0, 0.04)" },
-    }}
-  />
+const NavButton = forwardRef<HTMLAnchorElement | HTMLButtonElement, NavButtonProps>(
+  ({ active, ...props }, ref) => (
+    <Button
+      ref={ref}
+      variant="text"
+      // Type assertion needed due to complex polymorphic props (ButtonProps + NextLinkProps)
+      // and MUI Button overload complexity.
+      {...(props as any)}
+      sx={{
+        fontWeight: active ? "bold" : "normal",
+        color: "white",
+        textTransform: "none",
+        ":hover": { bgcolor: "rgba(50, 0, 0, 0.04)" },
+      }}
+    />
+  ),
 );
 
-const NavButton = forwardRef(NavButtonComponent);
+NavButton.displayName = "NavButton";
 
 const Nav = styled("nav", { shouldForwardProp: (prop) => prop !== "linkWidth" })<{
   linkWidth: number;

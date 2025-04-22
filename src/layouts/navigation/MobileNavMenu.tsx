@@ -11,10 +11,12 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import A from "next/link";
+import { useRouter } from "next/router";
 
 import { ModalWrapper } from "../../components/modals/ModalWrapper";
 import { useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
-import { NavLink } from "./NavLink";
+import { NAV_LINKS, NAV_PARAMS_TO_STRIP, type NavLinkData } from "./navigationConstants";
 import { OUPContext } from "./OUPContext";
 import { UserMenuContent } from "./UserMenuContent";
 
@@ -27,6 +29,7 @@ import { UserMenuContent } from "./UserMenuContent";
 export const MobileNavMenu = () => {
   const [open, setOpen] = useState(false);
   const isDMAuthorized = useDMAuthorizationStatus();
+  const router = useRouter();
 
   return (
     <>
@@ -43,34 +46,23 @@ export const MobileNavMenu = () => {
               Links
             </Typography>
             <List aria-label="main-mobile-navigation" component="nav">
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Datasets">
-                {({ active }) => (
-                  <ListItemButton component="a" selected={active}>
-                    <ListItemText primary="Datasets" />
+              {NAV_LINKS.map(({ title, path, text }: NavLinkData) => {
+                const active = router.pathname.startsWith(path);
+                const query = { ...router.query };
+                NAV_PARAMS_TO_STRIP.forEach((param: string) => delete query[param]);
+                const href = { query, pathname: path };
+
+                return (
+                  <ListItemButton
+                    component={A}
+                    href={href}
+                    key={title}
+                    selected={active}
+                  >
+                    <ListItemText primary={text} />
                   </ListItemButton>
-                )}
-              </NavLink>
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Project">
-                {({ active }) => (
-                  <ListItemButton component="a" selected={active}>
-                    <ListItemText primary="Project" />
-                  </ListItemButton>
-                )}
-              </NavLink>
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Run">
-                {({ active }) => (
-                  <ListItemButton component="a" selected={active}>
-                    <ListItemText primary="Apps/Jobs" />
-                  </ListItemButton>
-                )}
-              </NavLink>
-              <NavLink stripQueryParameters={["taskId", "instanceId", "path"]} title="Results">
-                {({ active }) => (
-                  <ListItemButton component="a" selected={active}>
-                    <ListItemText primary="Results" />
-                  </ListItemButton>
-                )}
-              </NavLink>
+                );
+              })}
             </List>
           </Grid>
           <Grid

@@ -22,25 +22,20 @@ export const FilePlainTextViewerListItem = ({
   path === undefined && (path = breadcrumbs.join("/"));
 
   return (
-    <A
-      legacyBehavior
-      passHref
+    <ListItemButton
+      component={A}
       href={{
         pathname: "/project/file",
         query: { project: router.query.project, file: fileName, path },
       }}
+      rel="noopener noreferrer"
+      target="_blank"
+      onClick={() => onClick()}
     >
-      <ListItemButton
-        component="a"
-        rel="noopener noreferrer"
-        target="_blank"
-        onClick={() => onClick()}
-      >
-        <ListItemText primary="Plaintext Viewer" secondary="Displays the file as plaintext" />
-        <ListItemIcon sx={{ ml: 2 }}>
-          <DescriptionIcon color="action" />
-        </ListItemIcon>
-      </ListItemButton>
-    </A>
+      <ListItemText primary="Plaintext Viewer" secondary="Displays the file as plaintext" />
+      <ListItemIcon sx={{ ml: 2 }}>
+        <DescriptionIcon color="action" />
+      </ListItemIcon>
+    </ListItemButton>
   );
 };

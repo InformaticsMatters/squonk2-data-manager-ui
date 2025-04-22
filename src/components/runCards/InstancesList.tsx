@@ -49,23 +49,20 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
           dayjs(instanceA.launched).isBefore(dayjs(instanceB.launched)) ? 1 : -1,
         )
         .map((instance) => (
-          <A
-            legacyBehavior
-            passHref
+          <ListItemButton
+            component={A}
             href={{
               pathname: "/results/instance/[instanceId]",
               query: { ...query, instanceId: instance.id, project: projectId },
             }}
             key={instance.id}
           >
-            <ListItemButton component="a">
-              <ListItemText
-                primary={instance.name}
-                secondary={<LocalTime utcTimestamp={instance.launched} />}
-                slotProps={{ primary: { variant: "body1" } }}
-              />
-            </ListItemButton>
-          </A>
+            <ListItemText
+              primary={instance.name}
+              secondary={<LocalTime utcTimestamp={instance.launched} />}
+              slotProps={{ primary: { variant: "body1" } }}
+            />
+          </ListItemButton>
         ))}
     </List>
   );

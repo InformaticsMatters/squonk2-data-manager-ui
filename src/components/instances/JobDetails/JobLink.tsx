@@ -68,7 +68,6 @@ export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps)
       <Box sx={{ alignItems: "center", display: "flex", gap: 1, wordBreak: "break-all" }}>
         <Tooltip title="Locate file in project">
           <A
-            legacyBehavior
             passHref
             href={{ pathname: "/project", query: { ...query, project: projectId, path: filePath } }}
           >
@@ -87,7 +86,6 @@ export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps)
     <Box sx={{ alignItems: "center", display: "flex", gap: 1 }}>
       <Tooltip title="Show directory in project">
         <A
-          legacyBehavior
           passHref
           href={{
             pathname: "/datasets",

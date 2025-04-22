@@ -18,30 +18,25 @@ export const SDFViewerListItem = ({ fileName, path, onClick }: SDFViewerListItem
   path ??= breadcrumbs.join("/");
 
   return (
-    <A
-      legacyBehavior
-      passHref
+    <ListItemButton
+      component={A}
       href={{
         pathname: "/viewer/sdf",
         query: { project: router.query.project, file: fileName, path },
       }}
+      rel="noopener noreferrer"
+      target="_blank"
+      onClick={() => onClick()}
     >
-      <ListItemButton
-        component="a"
-        rel="noopener noreferrer"
-        target="_blank"
-        onClick={() => onClick()}
-      >
-        <ListItemText
-          primary="SDF Viewer (alpha)"
-          secondary="Displays SDF records as molecule cards containing the structure and properties,
+      <ListItemText
+        primary="SDF Viewer (alpha)"
+        secondary="Displays SDF records as molecule cards containing the structure and properties,
           filterable with a scatter plot selector. This feature is under activate development and
           may not work as expected. Please provide us feedback."
-        />
-        <ListItemIcon sx={{ ml: 2 }}>
-          <BiotechIcon color="action" />
-        </ListItemIcon>
-      </ListItemButton>
-    </A>
+      />
+      <ListItemIcon sx={{ ml: 2 }}>
+        <BiotechIcon color="action" />
+      </ListItemIcon>
+    </ListItemButton>
   );
 };

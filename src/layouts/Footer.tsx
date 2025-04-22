@@ -35,43 +35,43 @@ export const Footer = () => {
           <Grid size={{ sm: 3, xs: 6 }} sx={{ textAlign: "right" }}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
-                <A legacyBehavior passHref href={{ pathname: "/" }}>
-                  <Link>Home</Link>
-                </A>
+                <Link component={A} href={{ pathname: "/" }}>
+                  Home
+                </Link>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <A legacyBehavior passHref href={{ pathname: "/datasets" }}>
-                  <Link>Datasets</Link>
-                </A>
+                <Link component={A} href={{ pathname: "/datasets" }}>
+                  Datasets
+                </Link>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <A legacyBehavior passHref href={{ pathname: "/project" }}>
-                  <Link>Project</Link>
-                </A>
+                <Link component={A} href={{ pathname: "/project" }}>
+                  Project
+                </Link>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <A legacyBehavior passHref href={{ pathname: "/run" }}>
-                  <Link>Apps/Jobs</Link>
-                </A>
+                <Link component={A} href={{ pathname: "/run" }}>
+                  Apps/Jobs
+                </Link>
               </ListItem>
             </List>
           </Grid>
           <Grid size={{ sm: 3, xs: 6 }}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
-                <A legacyBehavior passHref href={{ pathname: "/results" }}>
-                  <Link>Results</Link>
-                </A>
+                <Link component={A} href={{ pathname: "/results" }}>
+                  Results
+                </Link>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <A legacyBehavior passHref href={{ pathname: "/products" }}>
-                  <Link>Products</Link>
-                </A>
+                <Link component={A} href={{ pathname: "/products" }}>
+                  Products
+                </Link>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <A legacyBehavior passHref href={{ pathname: "/docs/guided-tour" }}>
-                  <Link>Docs</Link>
-                </A>
+                <Link component={A} href={{ pathname: "/docs/guided-tour" }}>
+                  Docs
+                </Link>
               </ListItem>
             </List>
           </Grid>

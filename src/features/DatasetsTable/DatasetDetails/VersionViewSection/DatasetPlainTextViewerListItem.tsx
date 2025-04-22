@@ -12,21 +12,20 @@ export const DatasetPlainTextViewerListItem = ({
   version,
 }: DatasetPlainTextViewerListItemProps) => {
   return (
-    <A
-      legacyBehavior
-      passHref
+    <ListItemButton
+      component={A}
       href={{
         pathname: "/dataset/[datasetId]/[datasetVersion]",
         query: { datasetId, datasetVersion: String(version) },
       }}
+      rel="noopener noreferrer"
+      target="_blank"
     >
-      <ListItemButton component="a" rel="noopener noreferrer" target="_blank">
-        <ListItemText
-          primary="Plaintext Viewer"
-          secondary="Displays the dataset version as plaintext"
-        />
-        <Description color="action" />
-      </ListItemButton>
-    </A>
+      <ListItemText
+        primary="Plaintext Viewer"
+        secondary="Displays the dataset version as plaintext"
+      />
+      <Description color="action" />
+    </ListItemButton>
   );
 };

@@ -10,6 +10,7 @@ import { useGetProduct } from "@squonk/account-server-client/product";
 import { useSelectedOrganisation } from "../state/organisationSelection";
 import { useSelectedUnit } from "../state/unitSelection";
 import { useCurrentProject } from "./projectHooks";
+import { useDMAuthorizationStatus } from "./useIsAuthorized";
 
 export const useSyncUnitAndOrgFromProduct = () => {
   const currentProject = useCurrentProject();
@@ -18,7 +19,8 @@ export const useSyncUnitAndOrgFromProduct = () => {
   });
   const product = data?.product;
 
-  const { data: defaultOrg } = useGetDefaultOrganisation();
+  const isDMAuthorized = useDMAuthorizationStatus();
+  const { data: defaultOrg } = useGetDefaultOrganisation({ query: { enabled: !!isDMAuthorized } });
 
   const [, setUnit] = useSelectedUnit();
   const [, setOrganisation] = useSelectedOrganisation();

@@ -28,6 +28,9 @@ const resolvePackage = (packageName: string) =>
  * @type {import('next').NextConfig}
  */
 let nextConfig: NextConfig = {
+  experimental: {
+    reactCompiler: true,
+  },
   output: process.env.OUTPUT_TYPE as NextConfig["output"],
   generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA ?? null : undefined,
   typescript: { ignoreBuildErrors: !!process.env.SKIP_CHECKS },

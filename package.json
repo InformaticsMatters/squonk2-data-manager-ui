@@ -55,7 +55,7 @@
     "@squonk/account-server-client": "4.2.0-rc.7",
     "@squonk/data-manager-client": "4.0.0-sc-3210.1768240399",
     "@squonk/mui-theme": "5.0.0",
-    "@squonk/sdf-parser": "1.3.0",
+    "@squonk/sdf-parser": "1.3.1",
     "@tanstack/match-sorter-utils": "8.19.4",
     "@tanstack/react-form": "1.6.3",
     "@tanstack/react-query": "5.71.1",
@@ -115,5 +115,10 @@
     "budget": 358400,
     "budgetPercentIncreaseRed": 20,
     "showDetails": true
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "ketcher-standalone": "patches/ketcher-standalone.patch"
+    }
   }
 }

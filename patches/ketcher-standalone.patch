@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index 30f524826c68a1c5cb4b471a0298eb6fa69fb031..d1c5ae940920b85f54fcc7baa947d7987a63a0c8 100644
+--- a/package.json
++++ b/package.json
+@@ -81,6 +81,7 @@
+   "exports": {
+     ".": {
+       "import": "./dist/main.js",
++      "types": "./dist/index.d.ts",
+       "require": "./dist/cjs/main.js"
+     },
+     "./dist/binaryWasm": {

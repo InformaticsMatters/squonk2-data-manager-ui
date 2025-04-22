@@ -28,6 +28,7 @@ const resolvePackage = (packageName: string) =>
  */
 let nextConfig: NextConfig = {
   outputFileTracingRoot: __dirname,
+  experimental: { reactCompiler: true },
   output: process.env.OUTPUT_TYPE as NextConfig["output"],
   generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA ?? null : undefined,
   typescript: { ignoreBuildErrors: true },

@@ -12,7 +12,7 @@ importers:
         specifier: 3.7.0
         version: 3.7.0(next@15.2.4(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.51.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.83.1))
       '@bufbuild/protobuf':
-        specifier: ^2.2.5
+        specifier: 2.2.5
         version: 2.2.5
       '@emotion/cache':
         specifier: 11.14.0
@@ -121,7 +121,7 @@ importers:
         version: 4.0.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@mui/material@6.4.10(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(formik@2.4.6(react@19.1.0))(react@19.1.0)(tiny-warning@1.0.3)
       formik-mui-lab:
         specifier: 1.0.0
-        version: 1.0.0(3ef3086b498cfb8f6a3193f8e758907a)
+        version: 1.0.0(y5exalc2zqx57e2zsddgebbxuu)
       immer:
         specifier: 10.1.1
         version: 10.1.1
@@ -192,7 +192,7 @@ importers:
         specifier: 2.6.0
         version: 2.6.0(plotly.js@2.35.3(mapbox-gl@1.13.3)(webpack@5.97.1))(react@19.1.0)
       react-use-websocket:
-        specifier: ^4.13.0
+        specifier: 4.13.0
         version: 4.13.0
       sharp:
         specifier: 0.33.5
@@ -208,10 +208,10 @@ importers:
         version: 1.6.1
     devDependencies:
       '@bufbuild/buf':
-        specifier: ^1.52.1
+        specifier: 1.52.1
         version: 1.52.1
       '@bufbuild/protoc-gen-es':
-        specifier: ^2.2.5
+        specifier: 2.2.5
         version: 2.2.5(@bufbuild/protobuf@2.2.5)
       '@next/bundle-analyzer':
         specifier: 15.2.4
@@ -4477,6 +4477,7 @@ packages:
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
+    deprecated: Use your platform's native DOMException instead
 
   node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
@@ -9631,7 +9632,7 @@ snapshots:
     dependencies:
       fetch-blob: 3.2.0
 
-  formik-mui-lab@1.0.0(3ef3086b498cfb8f6a3193f8e758907a):
+  formik-mui-lab@1.0.0(y5exalc2zqx57e2zsddgebbxuu):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.0.12)(react@19.1.0)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0)

@@ -61,14 +61,22 @@ const withBundleAnalyser = bundleAnalyze({
 nextConfig = withBundleAnalyser(nextConfig);
 nextConfig = withMDX(nextConfig);
 nextConfig = withRoutes(nextConfig);
-nextConfig = withSentryConfig(nextConfig, {
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options
+nextConfig = withSentryConfig(
+  nextConfig,
+  {
+    // Suppresses source map uploading logs during build
+    silent: true,
+    org: "informatics-matters",
+    project: "data-manager-ui",
 
-  // Suppresses source map uploading logs during build
-  silent: true,
-  org: "informatics-matters",
-  project: "data-manager-ui",
-});
+    // Automatically delete source maps after uploading them to Sentry
+    sourcemaps: {
+      deleteSourcemapsAfterUpload: true,
+    },
+
+    // Hides source maps from generated client bundles
+    hideSourceMaps: true,
+  },
+);
 
 export default nextConfig;

@@ -97,6 +97,7 @@ export const JobInputFields = ({
           } else if (type === "molecules-smi") {
             // Going to replace the "molecules-smi" type as this is specified by "multiple".
             // For now though, we assume it's always multiple molecules
+            // eslint-disable-next-line no-useless-assignment
             multiple = true;
 
             const required = inputs.required?.includes(key);

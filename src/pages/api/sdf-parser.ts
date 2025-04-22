@@ -3,7 +3,7 @@ import {
   type FilterRule,
   NodeSDFTransformer,
   type SDFRecord,
-} from "@squonk/sdf-parser";
+} from "@squonk/sdf-parser/node";
 
 import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { type NextApiRequest, type NextApiResponse } from "next";

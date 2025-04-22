@@ -117,7 +117,7 @@ export const SMILESInput = ({
   }
 
   const saveHandler = async () => {
-    const ketcher = global.ketcher;
+    const ketcher = globalThis.ketcher;
     try {
       const smi = await ketcher?.getSmiles();
       if (smi === undefined) {

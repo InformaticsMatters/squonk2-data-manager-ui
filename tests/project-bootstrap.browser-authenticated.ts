@@ -99,7 +99,7 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   await page.locator(`button:has-text("Create")`).isDisabled();
 
   const regexp = new RegExp(
-    baseURL + "/?\\?project=project-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+-[\\w\\d]+",
+    baseURL + String.raw`/?\?project=project-[\w\d]+-[\w\d]+-[\w\d]+-[\w\d]+-[\w\d]+`,
     "u",
   );
   await expect(page).toHaveURL(regexp, { timeout: 30_000 });

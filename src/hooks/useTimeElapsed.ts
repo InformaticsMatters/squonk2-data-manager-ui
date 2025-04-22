@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-const useIsomorphicEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+const useIsomorphicEffect = globalThis.window === undefined ? useEffect : useLayoutEffect;
 
 export interface Props {
   /** Animation duration in seconds */

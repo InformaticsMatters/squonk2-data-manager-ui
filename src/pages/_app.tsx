@@ -44,11 +44,6 @@ const App = ({ Component, pageProps }: CustomAppProps) => {
   // React-Query
   const queryClient = useMemo(() => new QueryClient(), []);
 
-  // Vercel specific code is only imported if needed
-  // if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-  //   import("../utils/next/vercelRedirect").then(({ vercelRedirect }) => vercelRedirect());
-  // }
-
   return (
     <StrictMode>
       <AppCacheProvider {...pageProps}>

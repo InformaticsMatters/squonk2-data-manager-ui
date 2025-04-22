@@ -80,7 +80,7 @@ export const Sketcher = ({ smiles }: SketcherProps) => {
 
   // Synchronise the react state to the component
   useEffect(() => {
-    void global.ketcher?.setMolecule(smiles);
+    void globalThis.ketcher?.setMolecule(smiles);
   }, [smiles]);
 
   return (
@@ -97,7 +97,7 @@ export const Sketcher = ({ smiles }: SketcherProps) => {
       staticResourcesUrl="./" // TODO: Config for subpaths
       structServiceProvider={new StandaloneStructServiceProvider()}
       onInit={(ketcher: Ketcher) => {
-        global.ketcher = ketcher;
+        globalThis.ketcher = ketcher;
         void ketcher.setMolecule(smiles);
         window.parent.postMessage({ eventType: "init" }, "*");
       }}

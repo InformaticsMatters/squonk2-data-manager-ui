@@ -1,5 +1,5 @@
 import { useGetProjectFile } from "@squonk/data-manager-client/project";
-import { createSDFTransformer } from "@squonk/sdf-parser";
+import { createSDFTransformer } from "@squonk/sdf-parser/web";
 
 import { useQuery } from "@tanstack/react-query";
 

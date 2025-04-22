@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { type SDFRecord } from "@squonk/sdf-parser";
+import { type SDFRecord } from "@squonk/sdf-parser/web";
 
 import { Alert, AlertTitle, Box, LinearProgress, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";

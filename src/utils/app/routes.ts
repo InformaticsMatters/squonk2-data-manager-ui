@@ -17,7 +17,7 @@ export const projectFileURL: (typeof API_ROUTES)["projectFile"] = (project, path
   process.env.DATA_MANAGER_API_SERVER + API_ROUTES.projectFile(project, path, file);
 
 export const projectURL = (projectId: string) =>
-  window.location.origin +
+  globalThis.location.origin +
   (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
   "/project?" +
   new URLSearchParams([["project", projectId]]).toString();

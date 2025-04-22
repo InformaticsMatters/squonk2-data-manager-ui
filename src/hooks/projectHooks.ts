@@ -23,7 +23,7 @@ export const useCurrentProjectId = () => {
   }
   const projectId = query.project;
 
-  const setCurrentProjectId = (newProjectId?: string, shallow?: true) => {
+  const setCurrentProjectId = (newProjectId?: string) => {
     // Selected project is maintained via the URL "project" query parameter. We use next-js to update it.
     if (newProjectId !== undefined) {
       // A project has been selected
@@ -36,7 +36,7 @@ export const useCurrentProjectId = () => {
         },
       };
 
-      void router.push(href, undefined, { shallow });
+      void router.push(href, undefined);
     } else if (projectId !== undefined) {
       // The project has been cleared
       const newQuery = { ...query };
@@ -45,7 +45,7 @@ export const useCurrentProjectId = () => {
 
       const href = { pathname, query: newQuery };
       writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
-      void router.push(href, undefined, { shallow, scroll: false });
+      void router.push(href, undefined, { scroll: false });
     }
   };
 

@@ -90,7 +90,6 @@ build commands, which can be run from the project clone to produce an
 
     $ docker build . \
         --build-arg GIT_SHA=$(git rev-parse HEAD) \
-        --build-arg SKIP_CHECKS=1 \
         --tag informaticsmatters/squonk-data-manager-ui:latest
 
 Deployment to Kubernetes is handled by our AWX-compliant [Ansible playbook repo].
@@ -107,7 +106,6 @@ Build the image using
     $ docker build . \
         --build-arg FLAVOUR=local.example \
         --build-arg GIT_SHA=$(git rev-parse HEAD) \
-        --build-arg SKIP_CHECKS=1 \
         --build-arg BASE_PATH="" \
         --tag informaticsmatters/squonk-data-manager-ui:latest
 

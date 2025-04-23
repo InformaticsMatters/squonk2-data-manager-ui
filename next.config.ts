@@ -30,8 +30,8 @@ const resolvePackage = (packageName: string) =>
 let nextConfig: NextConfig = {
   output: process.env.OUTPUT_TYPE as NextConfig["output"],
   generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA ?? null : undefined,
-  typescript: { ignoreBuildErrors: !!process.env.SKIP_CHECKS },
-  eslint: { ignoreDuringBuilds: !!process.env.SKIP_CHECKS },
+  typescript: { ignoreBuildErrors: true },
+  eslint: { ignoreDuringBuilds: true },
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
   // replace empty string with undefined

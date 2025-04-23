@@ -15,7 +15,7 @@
     "dependencies"
   ],
   "constraints": {
-    "pnpm": "9"
+    "pnpm": "10"
   },
   "packageRules": [
     {

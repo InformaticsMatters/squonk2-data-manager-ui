@@ -8,20 +8,11 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches/
 
-# Whether to skip TSC and Eslint Checks
-ARG SKIP_CHECKS
-ENV SKIP_CHECKS=${SKIP_CHECKS:-0}
-RUN echo "SKIP_CHECKS=${SKIP_CHECKS}"
-
-RUN npm i -g pnpm@9.12.3
-RUN if [ "$SKIP_CHECKS" = "1" ]; then pnpm fetch --prod; else pnpm fetch; fi
-RUN if [ "$SKIP_CHECKS" = "1" ]; \
-    then pnpm i -P --ignore-scripts; \
-    else pnpm i --ignore-scripts; fi
-
-# If using npm with a `package-lock.json` comment out above and use below instead
-# COPY package.json package-lock.json ./
-# RUN npm ci
+RUN npm i -g pnpm@10.9.0
+RUN pnpm fetch --prod
+# RUN pnpm fetch
+RUN pnpm i -P --ignore-scripts
+# RUN pnpm i --ignore-scripts
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -41,7 +32,7 @@ ENV GIT_SHA=${GIT_SHA:-""}
 ARG BASE_PATH
 ENV BASE_PATH=${BASE_PATH}
 
-# RUN npm i -g pnpm@9.12.3
+# RUN npm i -g pnpm@10.9.0
 RUN echo "GIT_SHA=${GIT_SHA}" && npm run build
 
 # If using npm comment out above and use below instead

@@ -117,6 +117,13 @@
     "showDetails": true
   },
   "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@sentry/cli",
+      "core-js",
+      "es5-ext",
+      "sharp"
+    ],
     "patchedDependencies": {
       "ketcher-standalone": "patches/ketcher-standalone.patch"
     }

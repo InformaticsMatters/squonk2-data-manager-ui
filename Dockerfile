@@ -9,6 +9,7 @@ COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches/
 
 RUN npm i -g pnpm@10.9.0
+RUN pnpm approve-builds
 RUN pnpm fetch --prod
 # RUN pnpm fetch
 RUN pnpm i -P --ignore-scripts

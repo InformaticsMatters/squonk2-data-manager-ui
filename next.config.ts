@@ -1,4 +1,3 @@
-import bundleAnalyze from "@next/bundle-analyzer";
 import nextMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
 import { type NextConfig } from "next";
@@ -54,11 +53,6 @@ let nextConfig: NextConfig = {
   },
 };
 
-const withBundleAnalyser = bundleAnalyze({
-  enabled: process.env.ANALYZE === "true",
-});
-
-nextConfig = withBundleAnalyser(nextConfig);
 nextConfig = withMDX(nextConfig);
 nextConfig = withRoutes(nextConfig);
 nextConfig = withSentryConfig(

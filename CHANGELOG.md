@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.3.1-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.3.0-rc.2...5.3.1-rc.2) (2025-04-24)
+
+
+### Bug Fixes
+
+* avoid connecting to event stream when user is not authenticated ([c824c91](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c824c91bf33328b0f30d43e65d634f86eddcd571))
+* fix layout shift caused by navigation progress bar ([e8cfdad](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e8cfdadcefd5b550242aa78628a11efdb86b5653))
+
 ## [5.3.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.3.0-rc.1...5.3.0-rc.2) (2025-04-18)
 
 

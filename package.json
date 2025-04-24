@@ -101,7 +101,7 @@
   "devDependencies": {
     "@bufbuild/buf": "1.53.0",
     "@bufbuild/protoc-gen-es": "2.2.5",
-    "@playwright/test": "1.51.1",
+    "@playwright/test": "1.52.0",
     "@squonk/eslint-config": "3.0.0",
     "dotenv": "16.4.7",
     "eslint": "9.25.1",

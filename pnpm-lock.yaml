@@ -125,8 +125,8 @@ importers:
         specifier: 10.1.1
         version: 10.1.1
       jotai:
-        specifier: 2.12.3
-        version: 2.12.3(@types/react@19.0.12)(react@19.1.0)
+        specifier: 2.12.4
+        version: 2.12.4(@types/react@19.0.12)(react@19.1.0)
       just-compare:
         specifier: 2.3.0
         version: 2.3.0
@@ -3897,8 +3897,8 @@ packages:
   jose@4.15.9:
     resolution: {integrity: sha512-1vUQX+IdDMVPj4k8kOxgUqlcK518yluMuGZwqlr44FS1ppZB/5GWh4rZG89erpOBOJjU/OBsnCVFfapsRz6nEA==}
 
-  jotai@2.12.3:
-    resolution: {integrity: sha512-DpoddSkmPGXMFtdfnoIHfueFeGP643nqYUWC6REjUcME+PG2UkAtYnLbffRDw3OURI9ZUTcRWkRGLsOvxuWMCg==}
+  jotai@2.12.4:
+    resolution: {integrity: sha512-eFXLJol4oOLM8BS1+QV+XwaYQITG8n1tatBCFl4F5HE3zR5j2WIK8QpMt7VJIYmlogNUZfvB7wjwLoVk+umB9Q==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=17.0.0'
@@ -10257,7 +10257,7 @@ snapshots:
 
   jose@4.15.9: {}
 
-  jotai@2.12.3(@types/react@19.0.12)(react@19.1.0):
+  jotai@2.12.4(@types/react@19.0.12)(react@19.1.0):
     optionalDependencies:
       '@types/react': 19.0.12
       react: 19.1.0

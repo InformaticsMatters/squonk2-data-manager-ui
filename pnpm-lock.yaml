@@ -149,8 +149,8 @@ importers:
         specifier: 4.17.21
         version: 4.17.21
       material-ui-popup-state:
-        specifier: 5.3.5
-        version: 5.3.5(@mui/material@6.4.11(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@types/react@19.0.12)(react@19.1.0)
+        specifier: 5.3.6
+        version: 5.3.6(@mui/material@6.4.11(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@types/react@19.0.12)(react@19.1.0)
       nanoid:
         specifier: 5.1.5
         version: 5.1.5
@@ -4119,8 +4119,8 @@ packages:
     peerDependencies:
       react: '>= 0.14.0'
 
-  material-ui-popup-state@5.3.5:
-    resolution: {integrity: sha512-2p+CuTwQiTiFctlCCi5m8iKMB0ruk4TelMlko05GSaH4MDm9mTKUmJDQOx96DjQh5mMLzUVdeHF5vjwleQb4dw==}
+  material-ui-popup-state@5.3.6:
+    resolution: {integrity: sha512-tGpq417auecyK9iKMGxSQfyv6pwg0Wii2Isi9RuL92YDDkdnXlorl5c3+S4Zg8MH6Hk4NUa/5Y9PPEWgKakzOw==}
     engines: {node: '>=16'}
     peerDependencies:
       '@mui/material': ^5.0.0 || ^6.0.0 || ^7.0.0
@@ -10560,7 +10560,7 @@ snapshots:
     dependencies:
       react: 19.1.0
 
-  material-ui-popup-state@5.3.5(@mui/material@6.4.11(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@types/react@19.0.12)(react@19.1.0):
+  material-ui-popup-state@5.3.6(@mui/material@6.4.11(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@types/react@19.0.12)(react@19.1.0):
     dependencies:
       '@babel/runtime': 7.26.0
       '@mui/material': 6.4.11(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)

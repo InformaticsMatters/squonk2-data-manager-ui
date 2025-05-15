@@ -18,6 +18,15 @@ export interface CreateDatasetStorageSubscriptionProps {
   unit: UnitAllDetail;
 }
 
+// Define Zod schema for validation
+const productSchema = z.object({
+  name: z.string().min(1, "A name is required"),
+  allowance: z
+    .number()
+    .min(1, "Allowance must be at least 1")
+    .int("Allowance must be an integer"),
+});
+
 export const CreateDatasetStorageSubscription = ({
   unit,
 }: CreateDatasetStorageSubscriptionProps) => {
@@ -26,19 +35,10 @@ export const CreateDatasetStorageSubscription = ({
   const queryClient = useQueryClient();
   const cost = useGetStorageCost();
 
-  // Define Zod schema for validation
-  const productSchema = z.object({
-    name: z.string().min(1, "A name is required"),
-    allowance: z
-      .number()
-      .min(1, "Allowance must be at least 1")
-      .int("Allowance must be an integer"),
-  });
-
   const form = useForm({
     defaultValues: {
-      allowance: 1000,
       name: "Dataset Storage",
+      allowance: 1000,
     },
     validators: {
       onChange: productSchema,
@@ -70,8 +70,10 @@ export const CreateDatasetStorageSubscription = ({
         {(field) => (
           <TextField
             autoFocus
-            error={field.state.meta.errors.length > 0}
-            helperText={field.state.meta.errors.map((error) => error?.message)[0]}
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            error={field.state.meta.errors?.length > 0}
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            helperText={field.state.meta.errors?.map((error) => error?.message)[0]}
             label="Name"
             sx={{ maxWidth: 150 }}
             value={field.state.value}
@@ -84,8 +86,10 @@ export const CreateDatasetStorageSubscription = ({
       <form.Field name="allowance">
         {(field) => (
           <TextField
-            error={field.state.meta.errors.length > 0}
-            helperText={field.state.meta.errors.map((error) => error?.message)[0]}
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            error={field.state.meta.errors?.length > 0}
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            helperText={field.state.meta.errors?.map((error) => error?.message)[0]}
             label="Allowance"
             slotProps={{ htmlInput: { min: 1 } }}
             sx={{ maxWidth: 100 }}

@@ -13,7 +13,6 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../../../components/WarningDeleteButton";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
-import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
 
 export interface DeleteUnitListItem {
@@ -25,7 +24,6 @@ export interface DeleteUnitListItem {
 }
 
 export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
-  const { user } = useKeycloakUser();
   const [organisation] = useSelectedOrganisation();
   const queryClient = useQueryClient();
   const { mutateAsync: deleteDefaultUnit, isPending: isDefaultDeleting } = useDeleteDefaultUnit();
@@ -41,7 +39,7 @@ export const DeleteUnitListItem = ({ unit, onDelete }: DeleteUnitListItem) => {
       tooltipText="Delete selected unit"
       onDelete={async () => {
         try {
-          await (unit.name === user.username
+          await (unit.name === unit.owner_id
             ? deleteDefaultUnit()
             : deleteUnit({ unitId: unit.id }));
           enqueueSnackbar("Unit deleted", { variant: "success" });

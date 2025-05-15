@@ -2,6 +2,7 @@ import { List } from "@mui/material";
 
 import { CreateProjectListItem } from "../../../../../components/projects/CreateProject/CreateProjectListItem";
 import { useGetPersonalUnit } from "../../../../../hooks/useGetPersonalUnit";
+import { useASAuthorizationStatus } from "../../../../../hooks/useIsAuthorized";
 import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../../../state/organisationSelection";
 import { useSelectedUnit } from "../../../../../state/unitSelection";
@@ -24,20 +25,20 @@ export const UnitActions = () => {
 
   const { data: personalUnit, isLoading, error } = useGetPersonalUnit();
 
+  const isAdminUser = useASAuthorizationStatus() === process.env.NEXT_PUBLIC_KEYCLOAK_AS_ADMIN_ROLE;
+
+  const organisationIsDefault = organisation?.name === process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME;
+
   return (
     <List sx={{ width: "100%" }}>
-      {!!(isOrganisationOwner || organisation?.caller_is_member) &&
-        organisation?.name !== process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && <CreateUnitListItem />}
-      {personalUnit === undefined &&
-        !isLoading &&
-        !error &&
-        organisation?.name === process.env.NEXT_PUBLIC_DEFAULT_ORG_NAME && (
-          <CreateDefaultUnitListItem />
-        )}
-      {!!isUnitOwner && !!unit && (
+      {!!(isAdminUser || isOrganisationOwner || !!organisation?.caller_is_member) &&
+        !organisationIsDefault && <CreateUnitListItem />}
+      {personalUnit === undefined && !isLoading && !error && !!organisationIsDefault && (
+        <CreateDefaultUnitListItem />
+      )}
+      {!!(isAdminUser || isUnitOwner) && !!unit && (
         <DeleteUnitListItem unit={unit} onDelete={() => setUnit(undefined)} />
       )}
-
       {!!unit && <EditUnitListItem unit={unit} />}
       {!!unit && !!(unit.caller_is_member || unit.owner_id === user.username) && (
         <CreateProjectListItem unit={unit} />

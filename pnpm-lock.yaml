@@ -140,8 +140,8 @@ importers:
         specifier: 3.2.0
         version: 3.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ketcher-react:
-        specifier: 3.1.0
-        version: 3.1.0(@types/react@19.0.12)(immutable@5.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react@19.0.12)(immutable@5.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ketcher-standalone:
         specifier: 3.2.0
         version: 3.2.0(patch_hash=9094b8cd49120e5bcedfbbe07c3fb7646f8adbde58f91232824a648e3f8edc96)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -4098,8 +4098,8 @@ packages:
     resolution: {integrity: sha512-j+joWHIanQVFdCHazjMS+7gOYb9Zd015qBG0fdIspntXOPZa+5NDrSHF2SnTSLQFoH4RlU5/lnfw1XFw1iOUZA==}
     engines: {node: '>=14'}
 
-  ketcher-react@3.1.0:
-    resolution: {integrity: sha512-DwdSmxXf5o763toTtuQeoF4xvownTD8nGcM0DQiH9M/kc+psk/MhxGH5KT1BRDI/wuqMKFIHvRwoNKQS3r5jSQ==}
+  ketcher-react@3.2.0:
+    resolution: {integrity: sha512-oF3UbbDTaHdXgPOobTYKDZoNCJPmiXnM8zLiiCeOtXk5iS1CKrwokhVm65fv8PBUWzJKNJ0MKx40etnaoHBKgg==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^18.2.0
@@ -10513,7 +10513,7 @@ snapshots:
       - react
       - react-dom
 
-  ketcher-react@3.1.0(@types/react@19.0.12)(immutable@5.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  ketcher-react@3.2.0(@types/react@19.0.12)(immutable@5.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@babel/runtime': 7.26.0
       '@emotion/react': 11.14.0(@types/react@19.0.12)(react@19.1.0)

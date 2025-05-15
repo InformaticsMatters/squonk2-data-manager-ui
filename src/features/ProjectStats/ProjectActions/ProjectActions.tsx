@@ -22,7 +22,7 @@ export interface ProjectActionsProps {
 export const ProjectActions = ({
   projectId,
   isCreator,
-  isAdministrator,
+  isAdministrator: isProjectAdministrator,
   isEditor,
 }: ProjectActionsProps) => {
   const { data: project, isLoading } = useGetProject(projectId);
@@ -34,7 +34,7 @@ export const ProjectActions = ({
   return project ? (
     <Box sx={{ display: "flex" }}>
       <OpenProjectButton projectId={projectId} />
-      {!!(isEditor || isAdministrator) && (
+      {!!(isEditor || isProjectAdministrator) && (
         <EditProjectButton projectId={project.project_id}>
           {({ openDialog }) => {
             return (
@@ -50,7 +50,9 @@ export const ProjectActions = ({
         </EditProjectButton>
       )}
       {!!isCreator && <DeleteProjectButton project={project} />}
-      {!!(isEditor || isAdministrator) && <ChargesLinkIconButton productId={project.product_id} />}
+      {!!(isEditor || isProjectAdministrator) && (
+        <ChargesLinkIconButton productId={project.product_id} />
+      )}
     </Box>
   ) : null;
 };

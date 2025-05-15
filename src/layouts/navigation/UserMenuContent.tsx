@@ -1,5 +1,15 @@
 import { Person as PersonIcon } from "@mui/icons-material";
-import { Alert, Box, Chip, Typography, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Chip,
+  FormControlLabel,
+  Switch,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import { useAtom } from "jotai";
 
 import { AuthButton } from "../../components/auth/AuthButton";
 import { CenterLoader } from "../../components/CenterLoader";
@@ -7,6 +17,7 @@ import { Chips } from "../../components/Chips";
 import { ColourSchemeSelection } from "../../components/ColourSchemeSelection";
 import { useASAuthorizationStatus, useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { eventStreamEnabledAtom } from "../../state/eventStream";
 
 /**
  * Content of the user menu
@@ -14,6 +25,7 @@ import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 export const UserMenuContent = () => {
   const theme = useTheme();
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  const [eventStreamEnabled, setEventStreamEnabled] = useAtom(eventStreamEnabledAtom);
 
   return (
     <Box sx={{ textAlign: biggerThanMd ? "center" : undefined }}>
@@ -22,6 +34,17 @@ export const UserMenuContent = () => {
       </Typography>
       <UserMenuContentInner />
       <ColourSchemeSelection />
+      <FormControlLabel
+        control={
+          <Switch
+            checked={eventStreamEnabled}
+            color="primary"
+            onChange={(_, checked) => setEventStreamEnabled(checked)}
+          />
+        }
+        label="Event stream (alpha)"
+        sx={{ mb: 2 }}
+      />
     </Box>
   );
 };

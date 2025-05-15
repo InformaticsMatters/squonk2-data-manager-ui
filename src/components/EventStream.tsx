@@ -6,10 +6,12 @@ import {
   useGetEventStream,
 } from "@squonk/account-server-client/event-stream";
 
+import { useAtom } from "jotai";
 import { useSnackbar } from "notistack";
 
 import { useASAuthorizationStatus } from "../hooks/useIsAuthorized";
 import { getMessageFromEvent, protoBlobToText } from "../protobuf/protobuf";
+import { eventStreamEnabledAtom } from "../state/eventStream";
 import { EventMessage } from "./eventMessages/EventMessage";
 
 export const EventStream = () => {
@@ -17,10 +19,7 @@ export const EventStream = () => {
   const { enqueueSnackbar } = useSnackbar();
   const asRole = useASAuthorizationStatus();
   const { data, error: streamError } = useGetEventStream({
-    query: {
-      select: (data) => data.location,
-      enabled: !!asRole,
-    },
+    query: { select: (data) => data.location, enabled: !!asRole },
   });
   const { mutate: createEventStream } = useCreateEventStream({
     mutation: {
@@ -29,6 +28,7 @@ export const EventStream = () => {
       },
     },
   });
+  const [eventStreamEnabled] = useAtom(eventStreamEnabledAtom);
 
   // Define callbacks *before* useWebSocket hook
   const handleWebSocketOpen = useCallback(() => {
@@ -40,15 +40,14 @@ export const EventStream = () => {
 
   const handleWebSocketClose = useCallback(
     (event: CloseEvent) => {
+      console.log(event);
       if (event.wasClean) {
         enqueueSnackbar("Disconnected from event stream", {
           variant: "info",
           anchorOrigin: { horizontal: "right", vertical: "bottom" },
         });
       } else {
-        console.warn(
-          "EventStream: WebSocket closed unexpectedly. Reconnection attempts are handled by react-use-websocket.",
-        );
+        console.warn("EventStream: WebSocket closed unexpectedly.");
         enqueueSnackbar("Event stream disconnected unexpectedly. Attempting to reconnect...", {
           variant: "warning",
           anchorOrigin: { horizontal: "right", vertical: "bottom" },
@@ -98,7 +97,9 @@ export const EventStream = () => {
     [enqueueSnackbar],
   );
 
-  useWebSocket(asRole ? location : null, {
+  const wsUrl = eventStreamEnabled && asRole ? (location?.replace("ws", "wss") ?? null) : null;
+
+  useWebSocket(wsUrl, {
     onOpen: handleWebSocketOpen,
     onClose: handleWebSocketClose,
     onError: handleWebSocketError,

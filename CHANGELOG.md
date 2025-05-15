@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.4.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.3.0-rc.2...5.4.0) (2025-05-15)
+
+
+### Features
+
+* add option to toggle event stream functionality ([14faede](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/14faede7d79eda7ecdc192a0b36ae128d6d2e2be))
+
+
+### Bug Fixes
+
+* avoid connecting to event stream when user is not authenticated ([c824c91](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c824c91bf33328b0f30d43e65d634f86eddcd571))
+* correct permissions for unit actions ([df1c820](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/df1c8205ace5ba0e5c181f5aedf0afddb16d472e))
+* correct permissions project actions ([b0bca9d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b0bca9d4c22a507dd741e8b0d0f751ee1b7cc1fb))
+* fix layout shift caused by navigation progress bar ([e8cfdad](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e8cfdadcefd5b550242aa78628a11efdb86b5653))
+* fix, temporarily, an error when selecting projects from the settings dialog when on the products page ([37c07d3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/37c07d31b1753a22fb72533a016954318d754fcd))
+
+
+### Miscellaneous Chores
+
+* release 5.4.0 ([77e4b06](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/77e4b06fe1179c4fda84a8b4517fa01f73d32b1b))
+
 ## [5.3.0-rc.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.3.0-rc.1...5.3.0-rc.2) (2025-04-18)
 
 

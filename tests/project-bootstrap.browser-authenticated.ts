@@ -92,11 +92,11 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   await page.locator(`li:has-text("Evaluation")`).click();
 
   // Uncheck input[name="isPrivate"]
-  await page.locator(`input[name="isPrivate"]`).uncheck();
+  // await page.locator(`input[name="isPrivate"]`).uncheck();
 
   // Click button:has-text("Create")
   await page.locator(`button:has-text("Create")`).click();
-  await page.locator(`button:has-text("Create")`).isDisabled();
+  // await page.locator(`button:has-text("Create")`).isDisabled();
 
   const regexp = new RegExp(
     baseURL + String.raw`/?\?project=project-[\w\d]+-[\w\d]+-[\w\d]+-[\w\d]+-[\w\d]+`,

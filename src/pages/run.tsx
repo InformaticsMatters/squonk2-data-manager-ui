@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useGetApplications } from "@squonk/data-manager-client/application";
 import { useGetJobs } from "@squonk/data-manager-client/job";
@@ -6,6 +6,7 @@ import { useGetJobs } from "@squonk/data-manager-client/job";
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Alert, Container, Grid2 as Grid, MenuItem, TextField } from "@mui/material";
 import groupBy from "just-group-by";
+import { debounce } from "lodash-es";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 
@@ -17,6 +18,7 @@ import { TEST_JOB_ID } from "../components/runCards/TestJob/jobId";
 import { SearchTextField } from "../components/SearchTextField";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { useCurrentProject, useIsUserAdminOrEditorOfCurrentProject } from "../hooks/projectHooks";
+import { useKeyboardFocus } from "../hooks/useKeyboardFocus";
 import Layout from "../layouts/Layout";
 import { search } from "../utils/app/searches";
 
@@ -30,6 +32,20 @@ const TestJobCard = dynamic(
 const Run = () => {
   const [executionTypes, setExecutionTypes] = useState(["application", "job"]);
   const [searchValue, setSearchValue] = useState("");
+  const [debouncedSearchValue, setDebouncedSearchValue] = useState("");
+  const inputRef = useKeyboardFocus();
+
+  // Create debounced search function
+  const debouncedSetSearch = useMemo(
+    () => debounce((value: string) => setDebouncedSearchValue(value), 300),
+    []
+  );
+
+  // Update debounced value when search value changes
+  useEffect(() => {
+    debouncedSetSearch(searchValue);
+    return () => debouncedSetSearch.cancel();
+  }, [searchValue, debouncedSetSearch]);
 
   const currentProject = useCurrentProject();
 
@@ -53,27 +69,41 @@ const Run = () => {
     { query: { select: (data) => data.jobs } },
   );
 
+  // Memoize filtered applications
+  const filteredApplications = useMemo(() => {
+    if (!applications) {return [];}
+    return applications.filter(({ kind }) => search([kind], debouncedSearchValue));
+  }, [applications, debouncedSearchValue]);
+
+  // Memoize filtered and grouped jobs
+  const filteredAndGroupedJobs = useMemo(() => {
+    if (!jobs) {return {};}
+    const filteredJobs = jobs
+      .filter(({ keywords, category, name, job, description }) =>
+        search([keywords, category, name, job, description], debouncedSearchValue),
+      )
+      .filter(job => !job.replaced_by);
+
+    return groupBy(filteredJobs, (job) => `${job.collection}+${job.job}`);
+  }, [jobs, debouncedSearchValue]);
+
+  // Memoize event handlers
+  const handleSearchChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  }, []);
+
+  const handleExecutionTypesChange = useCallback((event: any) => {
+    setExecutionTypes(event.target.value as string[]);
+  }, []);
+
   const cards = useMemo(() => {
-    const applicationCards =
-      applications
-        // Filter the apps by the search value
-        ?.filter(({ kind }) => search([kind], searchValue))
-        // Then create a card for each
-        .map((app) => (
-          <Grid key={app.application_id} size={{ md: 3, sm: 6, xs: 12 }}>
-            <ApplicationCard app={app} projectId={currentProject?.project_id} />
-          </Grid>
-        )) ?? [];
+    const applicationCards = filteredApplications.map((app) => (
+      <Grid key={app.application_id} size={{ md: 3, sm: 6, xs: 12 }}>
+        <ApplicationCard app={app} projectId={currentProject?.project_id} />
+      </Grid>
+    ));
 
-    // Filter the apps by the search value
-    const filteredJobs = (jobs ?? []).filter(({ keywords, category, name, job, description }) =>
-      search([keywords, category, name, job, description], searchValue),
-    ).filter(job => !job.replaced_by);
-
-    const groupedJobObjects = groupBy(filteredJobs, (job) => `${job.collection}+${job.job}`)
-
-    // Then create a card for each
-    const jobCards = Object.entries(groupedJobObjects).map(([key, jobs]) => (
+    const jobCards = Object.entries(filteredAndGroupedJobs).map(([key, jobs]) => (
       <Grid key={key} size={{ md: 3, sm: 6, xs: 12 }}>
         <JobCard disabled={!hasPermissionToRun} job={jobs} projectId={currentProject?.project_id} />
       </Grid>
@@ -91,11 +121,10 @@ const Run = () => {
     }
     return jobCards;
   }, [
-    applications,
+    filteredApplications,
+    filteredAndGroupedJobs,
     currentProject?.project_id,
     executionTypes,
-    jobs,
-    searchValue,
     hasPermissionToRun,
   ]);
 
@@ -118,9 +147,7 @@ const Run = () => {
                     slotProps={{
                       select: {
                         multiple: true,
-                        onChange: (event) => {
-                          setExecutionTypes(event.target.value as string[]);
-                        },
+                        onChange: handleExecutionTypesChange,
                       },
                     }}
                     value={executionTypes}
@@ -134,8 +161,9 @@ const Run = () => {
                 <Grid size={{ md: 4, sm: 6, xs: 12 }} sx={{ ml: "auto" }}>
                   <SearchTextField
                     fullWidth
+                    ref={inputRef}
                     value={searchValue}
-                    onChange={(event) => setSearchValue(event.target.value)}
+                    onChange={handleSearchChange}
                   />
                 </Grid>
               </Grid>

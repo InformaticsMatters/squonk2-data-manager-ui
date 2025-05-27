@@ -26,7 +26,7 @@ export const TestJobCard = () => {
     <Grid key={job.id} size={{ md: 3, sm: 6, xs: 12 }}>
       <JobCard
         disabled={!hasPermission}
-        job={job as JobSummary} // assertion needed as JSON loader doesn't use string literal types
+        job={[job] as JobSummary[]} // assertion needed as JSON loader doesn't use string literal types
         projectId={currentProject?.project_id}
       />
     </Grid>

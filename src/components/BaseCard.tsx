@@ -86,14 +86,13 @@ export const BaseCard = ({
         />
       )}
       <CardContent>{children}</CardContent>
-      <CardActions disableSpacing sx={{ justifyContent: "right" }}>
+      <CardActions disableSpacing sx={{ justifyContent: "right", display: "flex", alignItems: "flex-start", gap: 1 }}>
         {/* ? should this be a functionCall() or a <ReactElement />
         or should this be separate props with a union and one a never type */}
         {typeof actions === "function" ? actions({ setExpanded }) : actions}
         {collapsed !== undefined && (
           <IconButton
             aria-expanded={expanded}
-            size="large"
             sx={(theme) => ({
               marginLeft: "auto",
               transform: `rotate(${expanded ? 180 : 0}deg)`,

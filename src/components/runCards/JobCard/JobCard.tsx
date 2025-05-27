@@ -1,12 +1,20 @@
+import { useState } from "react";
+
 import { type JobSummary } from "@squonk/data-manager-client";
 
-import { Alert, Chip, LinearProgress, Link, Typography } from "@mui/material";
+import { Alert, Chip, LinearProgress, Link, MenuItem, TextField, Typography } from "@mui/material";
 import dynamic from "next/dynamic";
+import semver from "semver";
 
 import { BaseCard } from "../../BaseCard";
 import { Chips } from "../../Chips";
 import { type InstancesListProps } from "../InstancesList";
 import { RunJobButton, type RunJobButtonProps } from "./RunJobButton";
+
+const compareJobs = (a: JobSummary, b: JobSummary) => {
+  return -semver.compare(a.version, b.version);
+};
+
 
 const InstancesList = dynamic<InstancesListProps>(
   () => import("../InstancesList").then((mod) => mod.InstancesList),
@@ -15,9 +23,9 @@ const InstancesList = dynamic<InstancesListProps>(
 
 export interface ApplicationCardProps extends Pick<RunJobButtonProps, "projectId"> {
   /**
-   * the job to be instantiated
+   * the list of jobs (different versions) to be instantiated
    */
-  job: JobSummary;
+  job: JobSummary[];
   /**
    * Whether to disable the button
    */
@@ -28,16 +36,37 @@ export interface ApplicationCardProps extends Pick<RunJobButtonProps, "projectId
  * MuiCard that displays a summary of a job with actions to create new instances and view
  * existing instances.
  */
-export const JobCard = ({ projectId, job, disabled = false }: ApplicationCardProps) => {
+export const JobCard = ({ projectId, job: jobs, disabled = false }: ApplicationCardProps) => {
+  jobs.sort(compareJobs);
+  const [selectedJobId, setSelectedJobId] = useState(jobs[0]?.id || "");
+  const job = jobs.find(j => j.id === selectedJobId) as JobSummary;
+
   return (
     <BaseCard
       actions={({ setExpanded }) => (
-        <RunJobButton
-          disabled={job.disabled || disabled}
-          jobId={job.id}
-          projectId={projectId}
-          onLaunch={() => setExpanded(true)}
-        />
+        <>
+          <TextField
+            select
+            disabled={jobs.length === 1}
+            label="Version"
+            size="small"
+            sx={{ minWidth: 120 }}
+            value={selectedJobId}
+            onChange={(e) => setSelectedJobId(e.target.value)}
+          >
+            {jobs.map((jobVersion) => (
+              <MenuItem key={jobVersion.id} value={jobVersion.id}>
+                {jobVersion.version}
+              </MenuItem>
+            ))}
+          </TextField>
+          <RunJobButton
+            disabled={job.disabled || disabled}
+            jobId={job.id}
+            projectId={projectId}
+            onLaunch={() => setExpanded(true)}
+          />
+        </>
       )}
       collapsed={
         <InstancesList

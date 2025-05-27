@@ -38,7 +38,7 @@ const Run = () => {
   // Create debounced search function
   const debouncedSetSearch = useMemo(
     () => debounce((value: string) => setDebouncedSearchValue(value), 300),
-    []
+    [],
   );
 
   // Update debounced value when search value changes
@@ -71,18 +71,22 @@ const Run = () => {
 
   // Memoize filtered applications
   const filteredApplications = useMemo(() => {
-    if (!applications) {return [];}
+    if (!applications) {
+      return [];
+    }
     return applications.filter(({ kind }) => search([kind], debouncedSearchValue));
   }, [applications, debouncedSearchValue]);
 
   // Memoize filtered and grouped jobs
   const filteredAndGroupedJobs = useMemo(() => {
-    if (!jobs) {return {};}
+    if (!jobs) {
+      return {};
+    }
     const filteredJobs = jobs
       .filter(({ keywords, category, name, job, description }) =>
         search([keywords, category, name, job, description], debouncedSearchValue),
       )
-      .filter(job => !job.replaced_by);
+      .filter((job) => !job.replaced_by);
 
     return groupBy(filteredJobs, (job) => `${job.collection}+${job.job}`);
   }, [jobs, debouncedSearchValue]);
@@ -144,12 +148,7 @@ const Run = () => {
                     fullWidth
                     select
                     label="Filter"
-                    slotProps={{
-                      select: {
-                        multiple: true,
-                        onChange: handleExecutionTypesChange,
-                      },
-                    }}
+                    slotProps={{ select: { multiple: true, onChange: handleExecutionTypesChange } }}
                     value={executionTypes}
                   >
                     <MenuItem value="application">Applications</MenuItem>

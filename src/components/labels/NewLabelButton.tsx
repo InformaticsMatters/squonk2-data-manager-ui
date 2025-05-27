@@ -33,13 +33,8 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
   });
 
   const form = useForm({
-    defaultValues: {
-      label: "",
-      value: "",
-    },
-    validators: {
-      onChange: labelSchema,
-    },
+    defaultValues: { label: "", value: "" },
+    validators: { onChange: labelSchema },
     onSubmit: async ({ value }) => {
       try {
         await addAnnotations({

@@ -53,12 +53,7 @@ export const MobileNavMenu = () => {
                 const href = { query, pathname: path };
 
                 return (
-                  <ListItemButton
-                    component={A}
-                    href={href}
-                    key={title}
-                    selected={active}
-                  >
+                  <ListItemButton component={A} href={href} key={title} selected={active}>
                     <ListItemText primary={text} />
                   </ListItemButton>
                 );

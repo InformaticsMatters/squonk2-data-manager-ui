@@ -2,15 +2,15 @@
  * Detects if the current platform is macOS using modern APIs
  */
 export const isMac = () => {
-  if (typeof navigator === 'undefined') {
+  if (typeof navigator === "undefined") {
     return false;
   }
 
   // Modern approach using userAgentData (Chrome 90+)
-  if ('userAgentData' in navigator) {
+  if ("userAgentData" in navigator) {
     const userAgentData = (navigator as any).userAgentData;
     if (userAgentData?.platform) {
-      return userAgentData.platform === 'macOS';
+      return userAgentData.platform === "macOS";
     }
   }
 
@@ -22,5 +22,5 @@ export const isMac = () => {
  * Returns the platform-specific keyboard shortcut text for search
  */
 export const getSearchShortcut = () => {
-  return isMac() ? '⌘F' : 'Ctrl+F';
+  return isMac() ? "⌘F" : "Ctrl+F";
 };

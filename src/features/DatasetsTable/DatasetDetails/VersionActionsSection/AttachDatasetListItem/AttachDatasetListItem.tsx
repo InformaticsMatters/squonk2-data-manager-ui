@@ -133,10 +133,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
     reset: () => {
       form.reset();
     },
-    state: {
-      canSubmit: form.state.canSubmit,
-      isSubmitting: form.state.isSubmitting,
-    },
+    state: { canSubmit: form.state.canSubmit, isSubmitting: form.state.isSubmitting },
   };
 
   return (

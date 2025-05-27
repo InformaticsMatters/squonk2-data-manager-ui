@@ -9,8 +9,11 @@ import type { Message } from "@bufbuild/protobuf";
 /**
  * Describes the file merchant_storage_charge_message.proto.
  */
-export const file_merchant_storage_charge_message: GenFile = /*@__PURE__*/
-  fileDesc("CiVtZXJjaGFudF9zdG9yYWdlX2NoYXJnZV9tZXNzYWdlLnByb3RvEilpbmZvcm1hdGljc21hdHRlcnMucHJvdG9idWYuYWNjb3VudHNlcnZlciLOAgocTWVyY2hhbnRTdG9yYWdlQ2hhcmdlTWVzc2FnZRIRCgl0aW1lc3RhbXAYASABKAkSFQoNbWVyY2hhbnRfa2luZBgCIAEoCRIVCg1tZXJjaGFudF9uYW1lGAMgASgJEhMKC21lcmNoYW50X2lkGAQgASgNEkwKBnJlYXNvbhgFIAEoDjI8LmluZm9ybWF0aWNzbWF0dGVycy5wcm90b2J1Zi5hY2NvdW50c2VydmVyLlN0b3JhZ2VSZWFzb25FbnVtEhEKCWF1dGhfY29kZRgGIAEoDRIMCgRuYW1lGAcgASgJEg0KBWJ5dGVzGAggASgJEgwKBHVzZXIYECABKAkSDwoHcHJvZHVjdBgRIAEoCRIMCgR1bml0GBIgASgJEhQKDG9yZ2FuaXNhdGlvbhgTIAEoCRIXCg9hZGRpdGlvbmFsX2RhdGEYHiABKAkqegoRU3RvcmFnZVJlYXNvbkVudW0SIwofU1RPUkFHRV9SRUFTT05fRU5VTV9VTlNQRUNJRklFRBAAEh8KG1NUT1JBR0VfUkVBU09OX0VOVU1fREFUQVNFVBABEh8KG1NUT1JBR0VfUkVBU09OX0VOVU1fUFJPSkVDVBACYgZwcm90bzM");
+export const file_merchant_storage_charge_message: GenFile =
+  /*@__PURE__*/
+  fileDesc(
+    "CiVtZXJjaGFudF9zdG9yYWdlX2NoYXJnZV9tZXNzYWdlLnByb3RvEilpbmZvcm1hdGljc21hdHRlcnMucHJvdG9idWYuYWNjb3VudHNlcnZlciLOAgocTWVyY2hhbnRTdG9yYWdlQ2hhcmdlTWVzc2FnZRIRCgl0aW1lc3RhbXAYASABKAkSFQoNbWVyY2hhbnRfa2luZBgCIAEoCRIVCg1tZXJjaGFudF9uYW1lGAMgASgJEhMKC21lcmNoYW50X2lkGAQgASgNEkwKBnJlYXNvbhgFIAEoDjI8LmluZm9ybWF0aWNzbWF0dGVycy5wcm90b2J1Zi5hY2NvdW50c2VydmVyLlN0b3JhZ2VSZWFzb25FbnVtEhEKCWF1dGhfY29kZRgGIAEoDRIMCgRuYW1lGAcgASgJEg0KBWJ5dGVzGAggASgJEgwKBHVzZXIYECABKAkSDwoHcHJvZHVjdBgRIAEoCRIMCgR1bml0GBIgASgJEhQKDG9yZ2FuaXNhdGlvbhgTIAEoCRIXCg9hZGRpdGlvbmFsX2RhdGEYHiABKAkqegoRU3RvcmFnZVJlYXNvbkVudW0SIwofU1RPUkFHRV9SRUFTT05fRU5VTV9VTlNQRUNJRklFRBAAEh8KG1NUT1JBR0VfUkVBU09OX0VOVU1fREFUQVNFVBABEh8KG1NUT1JBR0VfUkVBU09OX0VOVU1fUFJPSkVDVBACYgZwcm90bzM",
+  );
 
 /**
  * A Storage Charge message (originated by a Merchant).
@@ -22,107 +25,109 @@ export const file_merchant_storage_charge_message: GenFile = /*@__PURE__*/
  *
  * @generated from message informaticsmatters.protobuf.accountserver.MerchantStorageChargeMessage
  */
-export type MerchantStorageChargeMessage = Message<"informaticsmatters.protobuf.accountserver.MerchantStorageChargeMessage"> & {
-  /**
-   * Fields 1..15
-   *
-   * An ISO8601 UTC string that includes a timezone.
-   * Typically something like 2021-12-31T00:00:00.00Z
-   *
-   * @generated from field: string timestamp = 1;
-   */
-  timestamp: string;
+export type MerchantStorageChargeMessage =
+  Message<"informaticsmatters.protobuf.accountserver.MerchantStorageChargeMessage"> & {
+    /**
+     * Fields 1..15
+     *
+     * An ISO8601 UTC string that includes a timezone.
+     * Typically something like 2021-12-31T00:00:00.00Z
+     *
+     * @generated from field: string timestamp = 1;
+     */
+    timestamp: string;
 
-  /**
-   * The merchant responsible for submitting the charge.
-   *
-   * @generated from field: string merchant_kind = 2;
-   */
-  merchantKind: string;
+    /**
+     * The merchant responsible for submitting the charge.
+     *
+     * @generated from field: string merchant_kind = 2;
+     */
+    merchantKind: string;
 
-  /**
-   * @generated from field: string merchant_name = 3;
-   */
-  merchantName: string;
+    /**
+     * @generated from field: string merchant_name = 3;
+     */
+    merchantName: string;
 
-  /**
-   * @generated from field: uint32 merchant_id = 4;
-   */
-  merchantId: number;
+    /**
+     * @generated from field: uint32 merchant_id = 4;
+     */
+    merchantId: number;
 
-  /**
-   * Is this charge for Dataset or Project storage?
-   *
-   * @generated from field: informaticsmatters.protobuf.accountserver.StorageReasonEnum reason = 5;
-   */
-  reason: StorageReasonEnum;
+    /**
+     * Is this charge for Dataset or Project storage?
+     *
+     * @generated from field: informaticsmatters.protobuf.accountserver.StorageReasonEnum reason = 5;
+     */
+    reason: StorageReasonEnum;
 
-  /**
-   * All charges have an authorisation code.
-   * This will have been provided by the Account Server.
-   * All related charges will contain the same authorisation code.
-   *
-   * @generated from field: uint32 auth_code = 6;
-   */
-  authCode: number;
+    /**
+     * All charges have an authorisation code.
+     * This will have been provided by the Account Server.
+     * All related charges will contain the same authorisation code.
+     *
+     * @generated from field: uint32 auth_code = 6;
+     */
+    authCode: number;
 
-  /**
-   * Name assigned to the charge
-   *
-   * @generated from field: string name = 7;
-   */
-  name: string;
+    /**
+     * Name assigned to the charge
+     *
+     * @generated from field: string name = 7;
+     */
+    name: string;
 
-  /**
-   * The bytes value.
-   * A humanised string representation of storage bytes.
-   * The value is either an absolute record of bytes, e.g. "2,045,023"
-   * or a change (increase or decrease), e.g. "+4,096" or "-4,096".
-   *
-   * @generated from field: string bytes = 8;
-   */
-  bytes: string;
+    /**
+     * The bytes value.
+     * A humanised string representation of storage bytes.
+     * The value is either an absolute record of bytes, e.g. "2,045,023"
+     * or a change (increase or decrease), e.g. "+4,096" or "-4,096".
+     *
+     * @generated from field: string bytes = 8;
+     */
+    bytes: string;
 
-  /**
-   * The User, Product (or Unit or Organisation) providing the funds.
-   * The User is optional and one of Product or Unit or Organisation
-   * will be provided but not necessarily all.
-   *
-   * @generated from field: string user = 16;
-   */
-  user: string;
+    /**
+     * The User, Product (or Unit or Organisation) providing the funds.
+     * The User is optional and one of Product or Unit or Organisation
+     * will be provided but not necessarily all.
+     *
+     * @generated from field: string user = 16;
+     */
+    user: string;
 
-  /**
-   * @generated from field: string product = 17;
-   */
-  product: string;
+    /**
+     * @generated from field: string product = 17;
+     */
+    product: string;
 
-  /**
-   * @generated from field: string unit = 18;
-   */
-  unit: string;
+    /**
+     * @generated from field: string unit = 18;
+     */
+    unit: string;
 
-  /**
-   * @generated from field: string organisation = 19;
-   */
-  organisation: string;
+    /**
+     * @generated from field: string organisation = 19;
+     */
+    organisation: string;
 
-  /**
-   * Any charge-specific additional material.
-   * If encountered this should be a string representation of
-   * a dictionary/map. The keys and values are not
-   * interpreted, they're simply passed-on verbatim.
-   *
-   * @generated from field: string additional_data = 30;
-   */
-  additionalData: string;
-};
+    /**
+     * Any charge-specific additional material.
+     * If encountered this should be a string representation of
+     * a dictionary/map. The keys and values are not
+     * interpreted, they're simply passed-on verbatim.
+     *
+     * @generated from field: string additional_data = 30;
+     */
+    additionalData: string;
+  };
 
 /**
  * Describes the message informaticsmatters.protobuf.accountserver.MerchantStorageChargeMessage.
  * Use `create(MerchantStorageChargeMessageSchema)` to create a new message.
  */
-export const MerchantStorageChargeMessageSchema: GenMessage<MerchantStorageChargeMessage> = /*@__PURE__*/
+export const MerchantStorageChargeMessageSchema: GenMessage<MerchantStorageChargeMessage> =
+  /*@__PURE__*/
   messageDesc(file_merchant_storage_charge_message, 0);
 
 /**
@@ -148,6 +153,6 @@ export enum StorageReasonEnum {
 /**
  * Describes the enum informaticsmatters.protobuf.accountserver.StorageReasonEnum.
  */
-export const StorageReasonEnumSchema: GenEnum<StorageReasonEnum> = /*@__PURE__*/
+export const StorageReasonEnumSchema: GenEnum<StorageReasonEnum> =
+  /*@__PURE__*/
   enumDesc(file_merchant_storage_charge_message, 0);
-

@@ -40,10 +40,7 @@ export interface FormModalWrapperProps extends BaseModalWrapperProps {
   form: {
     handleSubmit: () => Promise<void>;
     reset: () => void;
-    state: {
-      canSubmit: boolean;
-      isSubmitting?: boolean;
-    };
+    state: { canSubmit: boolean; isSubmitting?: boolean };
   };
   /**
    * Children can be a function that receives the form instance
@@ -76,10 +73,7 @@ export const FormModalWrapper = ({
     >
       <ModalWrapper
         closeText={closeText}
-        DialogProps={{
-          onTransitionExited: () => form.reset(),
-          ...DialogProps,
-        }}
+        DialogProps={{ onTransitionExited: () => form.reset(), ...DialogProps }}
         id={id}
         open={open}
         submitDisabled={!form.state.canSubmit || !!form.state.isSubmitting}

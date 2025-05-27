@@ -18,9 +18,7 @@ const Layout = ({ children }: LayoutProps) => {
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />
       {/* Reserve space for the LinearProgress to avoid layout shift */}
-      <Box sx={{ minHeight: 4 }}>
-        {!!isTransitioning && <LinearProgress />}
-      </Box>
+      <Box sx={{ minHeight: 4 }}>{!!isTransitioning && <LinearProgress />}</Box>
       {/* <Slide appear direction="right" in={!isTransitioning}> */}
       <Box component="main" sx={{ paddingY: 2 }}>
         {children}

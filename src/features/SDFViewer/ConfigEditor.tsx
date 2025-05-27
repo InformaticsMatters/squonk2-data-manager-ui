@@ -99,7 +99,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
           Sort
         </Typography>
 
-        {Object.entries(fields).map(([key,], index) => (
+        {Object.entries(fields).map(([key], index) => (
           // eslint-disable-next-line react/no-array-index-key
           <Fragment key={`${key}${index}`}>
             <Typography>{key}</Typography>
@@ -145,9 +145,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                     <TextField
                       disabled={!getIsNumeric(currentType)}
                       inputMode="numeric"
-                      slotProps={{
-                        htmlInput: { step: getStep(key, currentType) },
-                      }}
+                      slotProps={{ htmlInput: { step: getStep(key, currentType) } }}
                       sx={{ width: "7em" }}
                       type="number"
                       value={field.state.value}
@@ -168,9 +166,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                     <TextField
                       disabled={!getIsNumeric(currentType)}
                       inputMode="numeric"
-                      slotProps={{
-                        htmlInput: { step: getStep(key, currentType) },
-                      }}
+                      slotProps={{ htmlInput: { step: getStep(key, currentType) } }}
                       sx={{ width: "7em" }}
                       type="number"
                       value={field.state.value}

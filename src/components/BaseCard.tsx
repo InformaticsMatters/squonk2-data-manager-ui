@@ -86,7 +86,10 @@ export const BaseCard = ({
         />
       )}
       <CardContent>{children}</CardContent>
-      <CardActions disableSpacing sx={{ justifyContent: "right", display: "flex", alignItems: "flex-start", gap: 1 }}>
+      <CardActions
+        disableSpacing
+        sx={{ justifyContent: "right", display: "flex", alignItems: "flex-start", gap: 1 }}
+      >
         {/* ? should this be a functionCall() or a <ReactElement />
         or should this be separate props with a union and one a never type */}
         {typeof actions === "function" ? actions({ setExpanded }) : actions}

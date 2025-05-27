@@ -9,8 +9,11 @@ import type { Message } from "@bufbuild/protobuf";
 /**
  * Describes the file merchant_processing_charge_message.proto.
  */
-export const file_merchant_processing_charge_message: GenFile = /*@__PURE__*/
-  fileDesc("CihtZXJjaGFudF9wcm9jZXNzaW5nX2NoYXJnZV9tZXNzYWdlLnByb3RvEilpbmZvcm1hdGljc21hdHRlcnMucHJvdG9idWYuYWNjb3VudHNlcnZlciKdAgofTWVyY2hhbnRQcm9jZXNzaW5nQ2hhcmdlTWVzc2FnZRIRCgl0aW1lc3RhbXAYASABKAkSFQoNbWVyY2hhbnRfa2luZBgCIAEoCRIVCg1tZXJjaGFudF9uYW1lGAMgASgJEhMKC21lcmNoYW50X2lkGAQgASgNEhEKCWF1dGhfY29kZRgGIAEoDRIMCgRuYW1lGAcgASgJEg0KBWNvaW5zGAggASgJEgsKA3NxbhgJIAEoDRILCgNlb2MYCiABKAgSDAoEdXNlchgQIAEoCRIPCgdwcm9kdWN0GBEgASgJEgwKBHVuaXQYEiABKAkSFAoMb3JnYW5pc2F0aW9uGBMgASgJEhcKD2FkZGl0aW9uYWxfZGF0YRgeIAEoCWIGcHJvdG8z");
+export const file_merchant_processing_charge_message: GenFile =
+  /*@__PURE__*/
+  fileDesc(
+    "CihtZXJjaGFudF9wcm9jZXNzaW5nX2NoYXJnZV9tZXNzYWdlLnByb3RvEilpbmZvcm1hdGljc21hdHRlcnMucHJvdG9idWYuYWNjb3VudHNlcnZlciKdAgofTWVyY2hhbnRQcm9jZXNzaW5nQ2hhcmdlTWVzc2FnZRIRCgl0aW1lc3RhbXAYASABKAkSFQoNbWVyY2hhbnRfa2luZBgCIAEoCRIVCg1tZXJjaGFudF9uYW1lGAMgASgJEhMKC21lcmNoYW50X2lkGAQgASgNEhEKCWF1dGhfY29kZRgGIAEoDRIMCgRuYW1lGAcgASgJEg0KBWNvaW5zGAggASgJEgsKA3NxbhgJIAEoDRILCgNlb2MYCiABKAgSDAoEdXNlchgQIAEoCRIPCgdwcm9kdWN0GBEgASgJEgwKBHVuaXQYEiABKAkSFAoMb3JnYW5pc2F0aW9uGBMgASgJEhcKD2FkZGl0aW9uYWxfZGF0YRgeIAEoCWIGcHJvdG8z",
+  );
 
 /**
  * A Processing Charge message (originated by a Merchant).
@@ -21,117 +24,118 @@ export const file_merchant_processing_charge_message: GenFile = /*@__PURE__*/
  *
  * @generated from message informaticsmatters.protobuf.accountserver.MerchantProcessingChargeMessage
  */
-export type MerchantProcessingChargeMessage = Message<"informaticsmatters.protobuf.accountserver.MerchantProcessingChargeMessage"> & {
-  /**
-   * Fields 1..15
-   *
-   * An ISO8601 UTC string that includes a timezone.
-   * Typically something like 2021-12-31T00:00:00.00Z
-   *
-   * @generated from field: string timestamp = 1;
-   */
-  timestamp: string;
+export type MerchantProcessingChargeMessage =
+  Message<"informaticsmatters.protobuf.accountserver.MerchantProcessingChargeMessage"> & {
+    /**
+     * Fields 1..15
+     *
+     * An ISO8601 UTC string that includes a timezone.
+     * Typically something like 2021-12-31T00:00:00.00Z
+     *
+     * @generated from field: string timestamp = 1;
+     */
+    timestamp: string;
 
-  /**
-   * The merchant responsible for submitting the charge.
-   *
-   * @generated from field: string merchant_kind = 2;
-   */
-  merchantKind: string;
+    /**
+     * The merchant responsible for submitting the charge.
+     *
+     * @generated from field: string merchant_kind = 2;
+     */
+    merchantKind: string;
 
-  /**
-   * @generated from field: string merchant_name = 3;
-   */
-  merchantName: string;
+    /**
+     * @generated from field: string merchant_name = 3;
+     */
+    merchantName: string;
 
-  /**
-   * @generated from field: uint32 merchant_id = 4;
-   */
-  merchantId: number;
+    /**
+     * @generated from field: uint32 merchant_id = 4;
+     */
+    merchantId: number;
 
-  /**
-   * All charges have an authorisation code.
-   * This will have been provided by the Account Server.
-   * All related charges will contain the same authorisation code.
-   *
-   * @generated from field: uint32 auth_code = 6;
-   */
-  authCode: number;
+    /**
+     * All charges have an authorisation code.
+     * This will have been provided by the Account Server.
+     * All related charges will contain the same authorisation code.
+     *
+     * @generated from field: uint32 auth_code = 6;
+     */
+    authCode: number;
 
-  /**
-   * Name assigned to the charge
-   *
-   * @generated from field: string name = 7;
-   */
-  name: string;
+    /**
+     * Name assigned to the charge
+     *
+     * @generated from field: string name = 7;
+     */
+    name: string;
 
-  /**
-   * The coin value.
-   * A string representation of Coins,
-   * a string representation of a Python Decimal rather.
-   * Financial information will always use a decimal representation.
-   *
-   * @generated from field: string coins = 8;
-   */
-  coins: string;
+    /**
+     * The coin value.
+     * A string representation of Coins,
+     * a string representation of a Python Decimal rather.
+     * Financial information will always use a decimal representation.
+     *
+     * @generated from field: string coins = 8;
+     */
+    coins: string;
 
-  /**
-   * Processing charges often have 'sequence number',
-   * providing a logical ordering of charges.
-   *
-   * @generated from field: uint32 sqn = 9;
-   */
-  sqn: number;
+    /**
+     * Processing charges often have 'sequence number',
+     * providing a logical ordering of charges.
+     *
+     * @generated from field: uint32 sqn = 9;
+     */
+    sqn: number;
 
-  /**
-   * End of charge?
-   * The final charge in any sequence will set the 'eoc' property
-   * indicating that no further charges for this authorisation code
-   * are expected.
-   *
-   * @generated from field: bool eoc = 10;
-   */
-  eoc: boolean;
+    /**
+     * End of charge?
+     * The final charge in any sequence will set the 'eoc' property
+     * indicating that no further charges for this authorisation code
+     * are expected.
+     *
+     * @generated from field: bool eoc = 10;
+     */
+    eoc: boolean;
 
-  /**
-   * The User, Product (or Unit or Organisation) providing the funds.
-   * The User is optional and one of Product or Unit or Organisation
-   * will be provided but not necessarily all.
-   *
-   * @generated from field: string user = 16;
-   */
-  user: string;
+    /**
+     * The User, Product (or Unit or Organisation) providing the funds.
+     * The User is optional and one of Product or Unit or Organisation
+     * will be provided but not necessarily all.
+     *
+     * @generated from field: string user = 16;
+     */
+    user: string;
 
-  /**
-   * @generated from field: string product = 17;
-   */
-  product: string;
+    /**
+     * @generated from field: string product = 17;
+     */
+    product: string;
 
-  /**
-   * @generated from field: string unit = 18;
-   */
-  unit: string;
+    /**
+     * @generated from field: string unit = 18;
+     */
+    unit: string;
 
-  /**
-   * @generated from field: string organisation = 19;
-   */
-  organisation: string;
+    /**
+     * @generated from field: string organisation = 19;
+     */
+    organisation: string;
 
-  /**
-   * Any charge-specific additional material.
-   * If encountered this should be a string representation of
-   * a dictionary/map. The keys and values are not
-   * interpreted, they're simply passed-on verbatim.
-   *
-   * @generated from field: string additional_data = 30;
-   */
-  additionalData: string;
-};
+    /**
+     * Any charge-specific additional material.
+     * If encountered this should be a string representation of
+     * a dictionary/map. The keys and values are not
+     * interpreted, they're simply passed-on verbatim.
+     *
+     * @generated from field: string additional_data = 30;
+     */
+    additionalData: string;
+  };
 
 /**
  * Describes the message informaticsmatters.protobuf.accountserver.MerchantProcessingChargeMessage.
  * Use `create(MerchantProcessingChargeMessageSchema)` to create a new message.
  */
-export const MerchantProcessingChargeMessageSchema: GenMessage<MerchantProcessingChargeMessage> = /*@__PURE__*/
+export const MerchantProcessingChargeMessageSchema: GenMessage<MerchantProcessingChargeMessage> =
+  /*@__PURE__*/
   messageDesc(file_merchant_processing_charge_message, 0);
-

@@ -10,16 +10,18 @@ export const useKeyboardFocus = () => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      const isCorrectModifier = isMac() ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
+      const isCorrectModifier = isMac()
+        ? event.metaKey && !event.ctrlKey
+        : event.ctrlKey && !event.metaKey;
 
-      if (isCorrectModifier && event.key === 'f') {
+      if (isCorrectModifier && event.key === "f") {
         event.preventDefault();
-        inputRef.current?.querySelector('input')?.focus();
+        inputRef.current?.querySelector("input")?.focus();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return inputRef;

@@ -42,10 +42,7 @@ export const AdjustProjectProduct = ({ product, allowance }: AdjustProjectProduc
     defaultValues: { name: product.name, allowance },
     validators: { onChange: formSchema },
     onSubmit: (values) => {
-      return adjustProduct({
-        productId: product.id,
-        data: values.value,
-      })
+      return adjustProduct({ productId: product.id, data: values.value })
         .then(() => {
           return Promise.allSettled([
             queryClient.invalidateQueries({ queryKey: getGetProductsQueryKey() }),
@@ -70,10 +67,7 @@ export const AdjustProjectProduct = ({ product, allowance }: AdjustProjectProduc
       form.reset();
       setCurrentAllowance(allowance);
     },
-    state: {
-      canSubmit: form.state.canSubmit,
-      isSubmitting: form.state.isSubmitting,
-    },
+    state: { canSubmit: form.state.canSubmit, isSubmitting: form.state.isSubmitting },
   };
 
   useEffect(() => {

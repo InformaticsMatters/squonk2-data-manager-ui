@@ -23,8 +23,10 @@ type GetLastSegment<S extends string> = S extends `${string}.${infer R}`
   : S;
 
 // Helper to get the string before the last segment
-type GetBeforeLastSegment<S extends string, Last extends string = GetLastSegment<S>> =
-    S extends `${infer Head}.${Last}` ? Head : "";
+type GetBeforeLastSegment<
+  S extends string,
+  Last extends string = GetLastSegment<S>,
+> = S extends `${infer Head}.${Last}` ? Head : "";
 
 // Helper to get the second-to-last segment
 type GetSecondLastSegment<S extends string> = GetLastSegment<GetBeforeLastSegment<S>>;
@@ -34,13 +36,15 @@ type RemoveMessageSuffix<S extends string> = S extends `${infer Base}Message` ? 
 
 // Combined type helper for "Segment.BaseName" format
 type ExtractPrefixedMessageName<S extends string> =
-    GetSecondLastSegment<S> extends ""
+  GetSecondLastSegment<S> extends ""
     ? RemoveMessageSuffix<GetLastSegment<S>> // If no second last segment, just return the modified last one
     : `${GetSecondLastSegment<S>}.${RemoveMessageSuffix<GetLastSegment<S>>}`;
 // --- End Type Helpers ---
 
 // --- Define Derived Literal Types using MessageType["$typeName"] ---
-type AuthorityTypeName = ExtractPrefixedMessageName<MerchantAuthorityRequestResponseMessage["$typeName"]>;
+type AuthorityTypeName = ExtractPrefixedMessageName<
+  MerchantAuthorityRequestResponseMessage["$typeName"]
+>;
 type ProcessingTypeName = ExtractPrefixedMessageName<MerchantProcessingChargeMessage["$typeName"]>;
 type StorageTypeName = ExtractPrefixedMessageName<MerchantStorageChargeMessage["$typeName"]>;
 // --- End Derived Literal Types ---
@@ -77,7 +81,6 @@ export const storageType = getPrefixedMessageNameFromSchema(
   MerchantStorageChargeMessageSchema,
 ) as StorageTypeName;
 // --- End Runtime Constants ---
-
 
 type ProcessingMessagePayload = {
   type: ProcessingTypeName;
@@ -133,17 +136,12 @@ export const getMessageFromEvent = (event: EventStreamMessage): ChargeMessage | 
         type: processingType,
         name: parsed.name,
         coins: parsed.coins,
-        product: parsed.product
+        product: parsed.product,
       };
     }
     case storageType: {
       const parsed = fromJson(MerchantStorageChargeMessageSchema, event.message_body);
-      return {
-        type: storageType,
-        name: parsed.name,
-        bytes: parsed.bytes,
-        reason: parsed.reason,
-      };
+      return { type: storageType, name: parsed.name, bytes: parsed.bytes, reason: parsed.reason };
     }
     default:
       return null;

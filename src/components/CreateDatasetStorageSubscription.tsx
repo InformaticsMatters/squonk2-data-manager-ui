@@ -21,10 +21,7 @@ export interface CreateDatasetStorageSubscriptionProps {
 // Define Zod schema for validation
 const productSchema = z.object({
   name: z.string().min(1, "A name is required"),
-  allowance: z
-    .number()
-    .min(1, "Allowance must be at least 1")
-    .int("Allowance must be an integer"),
+  allowance: z.number().min(1, "Allowance must be at least 1").int("Allowance must be an integer"),
 });
 
 export const CreateDatasetStorageSubscription = ({
@@ -36,13 +33,8 @@ export const CreateDatasetStorageSubscription = ({
   const cost = useGetStorageCost();
 
   const form = useForm({
-    defaultValues: {
-      name: "Dataset Storage",
-      allowance: 1000,
-    },
-    validators: {
-      onChange: productSchema,
-    },
+    defaultValues: { name: "Dataset Storage", allowance: 1000 },
+    validators: { onChange: productSchema },
     onSubmit: async ({ value }) => {
       try {
         await createProduct({

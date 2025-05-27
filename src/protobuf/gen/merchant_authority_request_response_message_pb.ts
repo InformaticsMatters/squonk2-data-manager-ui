@@ -9,8 +9,11 @@ import type { Message } from "@bufbuild/protobuf";
 /**
  * Describes the file merchant_authority_request_response_message.proto.
  */
-export const file_merchant_authority_request_response_message: GenFile = /*@__PURE__*/
-  fileDesc("CjFtZXJjaGFudF9hdXRob3JpdHlfcmVxdWVzdF9yZXNwb25zZV9tZXNzYWdlLnByb3RvEilpbmZvcm1hdGljc21hdHRlcnMucHJvdG9idWYuYWNjb3VudHNlcnZlciKuAwonTWVyY2hhbnRBdXRob3JpdHlSZXF1ZXN0UmVzcG9uc2VNZXNzYWdlEhEKCXRpbWVzdGFtcBgBIAEoCRIVCg1tZXJjaGFudF9raW5kGAIgASgJEhUKDW1lcmNoYW50X25hbWUYAyABKAkSEwoLbWVyY2hhbnRfaWQYBCABKA0SGAoQYWN0aW9uX29wZXJhdGlvbhgFIAEoCRIUCgxhY3Rpb25fdmFsdWUYBiABKAkSHQoVYWN0aW9uX3JlZmVyZW5jZV9uYW1lGAcgASgJEhsKE2FjdGlvbl9yZWZlcmVuY2VfaWQYCCABKAkSUgoIcmVzcG9uc2UYCiABKA4yQC5pbmZvcm1hdGljc21hdHRlcnMucHJvdG9idWYuYWNjb3VudHNlcnZlci5BdXRob3JpdHlSZXNwb25zZUVudW0SGgoSYXV0aG9yaXNhdGlvbl9jb2RlGAsgASgNEg4KBnJlYXNvbhgMIAEoCRIMCgR1c2VyGBAgASgJEg8KB3Byb2R1Y3QYESABKAkSDAoEdW5pdBgSIAEoCRIUCgxvcmdhbmlzYXRpb24YEyABKAkqiQEKFUF1dGhvcml0eVJlc3BvbnNlRW51bRInCiNBVVRIT1JJVFlfUkVTUE9OU0VfRU5VTV9VTlNQRUNJRklFRBAAEiMKH0FVVEhPUklUWV9SRVNQT05TRV9FTlVNX0dSQU5URUQQARIiCh5BVVRIT1JJVFlfUkVTUE9OU0VfRU5VTV9ERU5JRUQQAmIGcHJvdG8z");
+export const file_merchant_authority_request_response_message: GenFile =
+  /*@__PURE__*/
+  fileDesc(
+    "CjFtZXJjaGFudF9hdXRob3JpdHlfcmVxdWVzdF9yZXNwb25zZV9tZXNzYWdlLnByb3RvEilpbmZvcm1hdGljc21hdHRlcnMucHJvdG9idWYuYWNjb3VudHNlcnZlciKuAwonTWVyY2hhbnRBdXRob3JpdHlSZXF1ZXN0UmVzcG9uc2VNZXNzYWdlEhEKCXRpbWVzdGFtcBgBIAEoCRIVCg1tZXJjaGFudF9raW5kGAIgASgJEhUKDW1lcmNoYW50X25hbWUYAyABKAkSEwoLbWVyY2hhbnRfaWQYBCABKA0SGAoQYWN0aW9uX29wZXJhdGlvbhgFIAEoCRIUCgxhY3Rpb25fdmFsdWUYBiABKAkSHQoVYWN0aW9uX3JlZmVyZW5jZV9uYW1lGAcgASgJEhsKE2FjdGlvbl9yZWZlcmVuY2VfaWQYCCABKAkSUgoIcmVzcG9uc2UYCiABKA4yQC5pbmZvcm1hdGljc21hdHRlcnMucHJvdG9idWYuYWNjb3VudHNlcnZlci5BdXRob3JpdHlSZXNwb25zZUVudW0SGgoSYXV0aG9yaXNhdGlvbl9jb2RlGAsgASgNEg4KBnJlYXNvbhgMIAEoCRIMCgR1c2VyGBAgASgJEg8KB3Byb2R1Y3QYESABKAkSDAoEdW5pdBgSIAEoCRIUCgxvcmdhbmlzYXRpb24YEyABKAkqiQEKFUF1dGhvcml0eVJlc3BvbnNlRW51bRInCiNBVVRIT1JJVFlfUkVTUE9OU0VfRU5VTV9VTlNQRUNJRklFRBAAEiMKH0FVVEhPUklUWV9SRVNQT05TRV9FTlVNX0dSQU5URUQQARIiCh5BVVRIT1JJVFlfUkVTUE9OU0VfRU5VTV9ERU5JRUQQAmIGcHJvdG8z",
+  );
 
 /**
  * An Authority Request (and Response) message (originated by a Merchant).
@@ -28,104 +31,106 @@ export const file_merchant_authority_request_response_message: GenFile = /*@__PU
  *
  * @generated from message informaticsmatters.protobuf.accountserver.MerchantAuthorityRequestResponseMessage
  */
-export type MerchantAuthorityRequestResponseMessage = Message<"informaticsmatters.protobuf.accountserver.MerchantAuthorityRequestResponseMessage"> & {
-  /**
-   * Fields 1..15
-   *
-   * An ISO8601 UTC string that includes a timezone.
-   * Typically something like 2021-12-31T00:00:00.00Z
-   *
-   * @generated from field: string timestamp = 1;
-   */
-  timestamp: string;
+export type MerchantAuthorityRequestResponseMessage =
+  Message<"informaticsmatters.protobuf.accountserver.MerchantAuthorityRequestResponseMessage"> & {
+    /**
+     * Fields 1..15
+     *
+     * An ISO8601 UTC string that includes a timezone.
+     * Typically something like 2021-12-31T00:00:00.00Z
+     *
+     * @generated from field: string timestamp = 1;
+     */
+    timestamp: string;
 
-  /**
-   * The merchant responsible for submitting the authority request.
-   *
-   * @generated from field: string merchant_kind = 2;
-   */
-  merchantKind: string;
+    /**
+     * The merchant responsible for submitting the authority request.
+     *
+     * @generated from field: string merchant_kind = 2;
+     */
+    merchantKind: string;
 
-  /**
-   * @generated from field: string merchant_name = 3;
-   */
-  merchantName: string;
+    /**
+     * @generated from field: string merchant_name = 3;
+     */
+    merchantName: string;
 
-  /**
-   * @generated from field: uint32 merchant_id = 4;
-   */
-  merchantId: number;
+    /**
+     * @generated from field: uint32 merchant_id = 4;
+     */
+    merchantId: number;
 
-  /**
-   * The merchant's AuthorisableAction.
-   * What is being done that requires authority.
-   *
-   * @generated from field: string action_operation = 5;
-   */
-  actionOperation: string;
+    /**
+     * The merchant's AuthorisableAction.
+     * What is being done that requires authority.
+     *
+     * @generated from field: string action_operation = 5;
+     */
+    actionOperation: string;
 
-  /**
-   * @generated from field: string action_value = 6;
-   */
-  actionValue: string;
+    /**
+     * @generated from field: string action_value = 6;
+     */
+    actionValue: string;
 
-  /**
-   * @generated from field: string action_reference_name = 7;
-   */
-  actionReferenceName: string;
+    /**
+     * @generated from field: string action_reference_name = 7;
+     */
+    actionReferenceName: string;
 
-  /**
-   * @generated from field: string action_reference_id = 8;
-   */
-  actionReferenceId: string;
+    /**
+     * @generated from field: string action_reference_id = 8;
+     */
+    actionReferenceId: string;
 
-  /**
-   * Authority response which includes a code if GRANTED and a reason if DENIED
-   *
-   * @generated from field: informaticsmatters.protobuf.accountserver.AuthorityResponseEnum response = 10;
-   */
-  response: AuthorityResponseEnum;
+    /**
+     * Authority response which includes a code if GRANTED and a reason if DENIED
+     *
+     * @generated from field: informaticsmatters.protobuf.accountserver.AuthorityResponseEnum response = 10;
+     */
+    response: AuthorityResponseEnum;
 
-  /**
-   * @generated from field: uint32 authorisation_code = 11;
-   */
-  authorisationCode: number;
+    /**
+     * @generated from field: uint32 authorisation_code = 11;
+     */
+    authorisationCode: number;
 
-  /**
-   * @generated from field: string reason = 12;
-   */
-  reason: string;
+    /**
+     * @generated from field: string reason = 12;
+     */
+    reason: string;
 
-  /**
-   * The User, Product (or Unit or Organisation) providing the funds.
-   * The User is optional and one of Product or Unit or Organisation
-   * will be provided but not necessarily all.
-   *
-   * @generated from field: string user = 16;
-   */
-  user: string;
+    /**
+     * The User, Product (or Unit or Organisation) providing the funds.
+     * The User is optional and one of Product or Unit or Organisation
+     * will be provided but not necessarily all.
+     *
+     * @generated from field: string user = 16;
+     */
+    user: string;
 
-  /**
-   * @generated from field: string product = 17;
-   */
-  product: string;
+    /**
+     * @generated from field: string product = 17;
+     */
+    product: string;
 
-  /**
-   * @generated from field: string unit = 18;
-   */
-  unit: string;
+    /**
+     * @generated from field: string unit = 18;
+     */
+    unit: string;
 
-  /**
-   * @generated from field: string organisation = 19;
-   */
-  organisation: string;
-};
+    /**
+     * @generated from field: string organisation = 19;
+     */
+    organisation: string;
+  };
 
 /**
  * Describes the message informaticsmatters.protobuf.accountserver.MerchantAuthorityRequestResponseMessage.
  * Use `create(MerchantAuthorityRequestResponseMessageSchema)` to create a new message.
  */
-export const MerchantAuthorityRequestResponseMessageSchema: GenMessage<MerchantAuthorityRequestResponseMessage> = /*@__PURE__*/
+export const MerchantAuthorityRequestResponseMessageSchema: GenMessage<MerchantAuthorityRequestResponseMessage> =
+  /*@__PURE__*/
   messageDesc(file_merchant_authority_request_response_message, 0);
 
 /**
@@ -151,6 +156,6 @@ export enum AuthorityResponseEnum {
 /**
  * Describes the enum informaticsmatters.protobuf.accountserver.AuthorityResponseEnum.
  */
-export const AuthorityResponseEnumSchema: GenEnum<AuthorityResponseEnum> = /*@__PURE__*/
+export const AuthorityResponseEnumSchema: GenEnum<AuthorityResponseEnum> =
+  /*@__PURE__*/
   enumDesc(file_merchant_authority_request_response_message, 0);
-

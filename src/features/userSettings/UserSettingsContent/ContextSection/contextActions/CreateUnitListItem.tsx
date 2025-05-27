@@ -87,12 +87,8 @@ export const CreateUnitListItem = () => {
   });
 
   const form = useForm({
-    defaultValues: {
-      name: "",
-    } as z.infer<typeof unitSchema>,
-    validators: {
-      onChange: unitSchema,
-    },
+    defaultValues: { name: "" } as z.infer<typeof unitSchema>,
+    validators: { onChange: unitSchema },
     onSubmit: async ({ value }) => {
       try {
         await create(value.name);

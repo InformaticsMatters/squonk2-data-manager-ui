@@ -80,13 +80,8 @@ export const CreateOrganisationListItem = () => {
   });
 
   const form = useForm({
-    defaultValues: {
-      name: "",
-      owner: user.username ?? "",
-    } as z.infer<typeof orgSchema>,
-    validators: {
-      onChange: orgSchema,
-    },
+    defaultValues: { name: "", owner: user.username ?? "" } as z.infer<typeof orgSchema>,
+    validators: { onChange: orgSchema },
     onSubmit: async ({ value }) => {
       try {
         await create(value.name, value.owner);

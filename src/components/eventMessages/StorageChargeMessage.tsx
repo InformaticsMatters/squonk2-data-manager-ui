@@ -19,7 +19,8 @@ export const StorageChargeMessage = ({ bytes, reason }: StorageChargeMessageProp
       </Typography>
 
       <Typography>
-        {reason === StorageReasonEnum.DATASET ? "Dataset" : "Project"} storage charge. {filesize(parsedBytes)} consumed.
+        {reason === StorageReasonEnum.DATASET ? "Dataset" : "Project"} storage charge.{" "}
+        {filesize(parsedBytes)} consumed.
       </Typography>
     </div>
   );

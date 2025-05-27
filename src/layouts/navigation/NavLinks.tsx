@@ -36,10 +36,7 @@ export const NavLinks = ({ linkWidth = 120 }: NavLinksProps) => {
   );
 };
 
-type NavButtonProps = Omit<ButtonProps, "href"> & {
-  active: boolean;
-  href?: NextLinkProps["href"];
-};
+type NavButtonProps = Omit<ButtonProps, "href"> & { active: boolean; href?: NextLinkProps["href"] };
 
 const NavButton = forwardRef<HTMLAnchorElement | HTMLButtonElement, NavButtonProps>(
   ({ active, ...props }, ref) => (

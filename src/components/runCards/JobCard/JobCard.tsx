@@ -15,7 +15,6 @@ const compareJobs = (a: JobSummary, b: JobSummary) => {
   return -semver.compare(a.version, b.version);
 };
 
-
 const InstancesList = dynamic<InstancesListProps>(
   () => import("../InstancesList").then((mod) => mod.InstancesList),
   { loading: () => <LinearProgress /> },
@@ -39,7 +38,7 @@ export interface ApplicationCardProps extends Pick<RunJobButtonProps, "projectId
 export const JobCard = ({ projectId, job: jobs, disabled = false }: ApplicationCardProps) => {
   jobs.sort(compareJobs);
   const [selectedJobId, setSelectedJobId] = useState(jobs[0]?.id || "");
-  const job = jobs.find(j => j.id === selectedJobId) as JobSummary;
+  const job = jobs.find((j) => j.id === selectedJobId) as JobSummary;
 
   return (
     <BaseCard

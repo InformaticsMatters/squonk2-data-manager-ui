@@ -35,12 +35,8 @@ export const RenameButton = ({ projectId, type, path, ...buttonProps }: RenameBu
   });
 
   const form = useForm({
-    defaultValues: {
-      dstPath: path,
-    },
-    validators: {
-      onChange: schema,
-    },
+    defaultValues: { dstPath: path },
+    validators: { onChange: schema },
     onSubmit: ({ value }) => {
       handleMove(value.dstPath, { onSettled: () => form.reset() });
       return {};
@@ -50,10 +46,7 @@ export const RenameButton = ({ projectId, type, path, ...buttonProps }: RenameBu
   const formWrapper = {
     handleSubmit: () => form.handleSubmit(),
     reset: () => form.reset(),
-    state: {
-      canSubmit: form.state.canSubmit,
-      isSubmitting: form.state.isSubmitting,
-    },
+    state: { canSubmit: form.state.canSubmit, isSubmitting: form.state.isSubmitting },
   };
 
   return (

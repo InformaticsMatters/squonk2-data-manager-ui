@@ -8,14 +8,14 @@ export const useKeyboardFocus = () => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+      if ((event.ctrlKey || event.metaKey) && event.key === "f") {
         event.preventDefault();
-        inputRef.current?.querySelector('input')?.focus();
+        inputRef.current?.querySelector("input")?.focus();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return inputRef;

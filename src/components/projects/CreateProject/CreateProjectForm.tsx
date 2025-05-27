@@ -122,11 +122,7 @@ export const CreateProjectForm = ({
       }
 
       const { project_id } = await createProject({
-        data: {
-          name: values.projectName,
-          tier_product_id: productId,
-          private: values.isPrivate,
-        },
+        data: { name: values.projectName, tier_product_id: productId, private: values.isPrivate },
       });
       enqueueSnackbar("Project created");
 
@@ -155,9 +151,7 @@ export const CreateProjectForm = ({
         enqueueError(error);
       }
     },
-    validators: {
-      onChange: formSchema,
-    },
+    validators: { onChange: formSchema },
   });
 
   const formContent = () => (
@@ -244,12 +238,7 @@ export const CreateProjectForm = ({
               {(field) => (
                 <PrivacyToggle
                   defaultPrivacy={defaultPrivacy}
-                  field={{
-                    state: {
-                      value: field.state.value,
-                    },
-                    handleChange: field.handleChange,
-                  }}
+                  field={{ state: { value: field.state.value }, handleChange: field.handleChange }}
                   flavour={form.state.values.flavour}
                 />
               )}

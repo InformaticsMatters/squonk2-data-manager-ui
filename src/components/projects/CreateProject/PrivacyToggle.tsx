@@ -17,12 +17,7 @@ export interface PrivacyToggleProps {
   /**
    * Field object from Tanstack Form
    */
-  field: {
-    state: {
-      value: boolean;
-    };
-    handleChange: (value: boolean) => void;
-  };
+  field: { state: { value: boolean }; handleChange: (value: boolean) => void };
 }
 
 export const PrivacyToggle = ({ flavour, defaultPrivacy, field }: PrivacyToggleProps) => {

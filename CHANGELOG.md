@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.5.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.4.0...5.5.0) (2025-05-27)
+
+
+### Features
+
+* add keyboard shortcut for search field ([76df00a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/76df00aff22c16ad7c0cb78c75ad477088b4b53c))
+* group jobs by their versions ([0754dab](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0754dab057e614e720f6f04f799c087b2721ff54))
+
+
+### Bug Fixes
+
+* update lockfile ([c056355](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c056355a03edf80e69ff68eb781233202898fb59))
+
 ## [5.4.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.3.0-rc.2...5.4.0) (2025-05-15)
 
 

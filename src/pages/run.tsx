@@ -5,6 +5,7 @@ import { useGetJobs } from "@squonk/data-manager-client/job";
 
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Alert, Container, Grid2 as Grid, MenuItem, TextField } from "@mui/material";
+import groupBy from "just-group-by";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 
@@ -23,7 +24,6 @@ const TestJobCard = dynamic(
   () => import("../components/runCards/TestJob/TestJobCard").then((mod) => mod.TestJobCard),
   { loading: () => <CenterLoader /> },
 );
-
 /**
  * Page allowing the user to run jobs and applications
  */
@@ -44,12 +44,14 @@ const Run = () => {
   const applications = applicationsData?.applications;
 
   const {
-    data: jobsData,
+    data: jobs,
     isLoading: isJobsLoading,
     isError: isJobsError,
     error: jobsError,
-  } = useGetJobs({ project_id: currentProject?.project_id });
-  const jobs = jobsData?.jobs;
+  } = useGetJobs(
+    { project_id: currentProject?.project_id },
+    { query: { select: (data) => data.jobs } },
+  );
 
   const cards = useMemo(() => {
     const applicationCards =
@@ -64,21 +66,18 @@ const Run = () => {
         )) ?? [];
 
     // Filter the apps by the search value
-    const filteredJobs = jobs?.filter(({ keywords, category, name, job, description }) =>
+    const filteredJobs = (jobs ?? []).filter(({ keywords, category, name, job, description }) =>
       search([keywords, category, name, job, description], searchValue),
-    );
+    ).filter(job => !job.replaced_by);
+
+    const groupedJobObjects = groupBy(filteredJobs, (job) => `${job.collection}+${job.job}`)
 
     // Then create a card for each
-    const jobCards =
-      filteredJobs?.map((job) => (
-        <Grid key={job.id} size={{ md: 3, sm: 6, xs: 12 }}>
-          <JobCard
-            disabled={!hasPermissionToRun}
-            job={job}
-            projectId={currentProject?.project_id}
-          />
-        </Grid>
-      )) ?? [];
+    const jobCards = Object.entries(groupedJobObjects).map(([key, jobs]) => (
+      <Grid key={key} size={{ md: 3, sm: 6, xs: 12 }}>
+        <JobCard disabled={!hasPermissionToRun} job={jobs} projectId={currentProject?.project_id} />
+      </Grid>
+    ));
 
     process.env.NODE_ENV === "development" && jobCards.push(<TestJobCard key={TEST_JOB_ID} />);
 

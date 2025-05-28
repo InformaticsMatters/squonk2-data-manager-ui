@@ -9,11 +9,8 @@ import {
 import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
 import { useGetJob } from "@squonk/data-manager-client/job";
 
-import { Box, Grid2 as Grid, TextField, Typography } from "@mui/material";
-import { type FormProps } from "@rjsf/core";
-import validator from "@rjsf/validator-ajv8";
+import { Box, TextField } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import dynamic from "next/dynamic";
 
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { CenterLoader } from "../../CenterLoader";
@@ -21,17 +18,8 @@ import { ModalWrapper } from "../../modals/ModalWrapper";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
 import { TEST_JOB_ID } from "../TestJob/jobId";
 import { type CommonModalProps } from "../types";
-import { type InputSchema, type JobInputFieldsProps, validateInputData } from "./JobInputFields";
-
-const JobInputFields = dynamic<JobInputFieldsProps>(
-  () => import("./JobInputFields").then((mod) => mod.JobInputFields),
-  { loading: () => <CenterLoader /> },
-);
-
-// this dynamic import is necessary to avoid hydration issues with the form
-const Form = dynamic<FormProps>(() => import("@rjsf/mui").then((mod) => mod.Form), {
-  loading: () => <CenterLoader />,
-});
+import { type InputSchema, validateInputData } from "./JobInputFields";
+import { JobInputsAndOptionsForm } from "./JobInputsAndOptionsForm";
 
 export type InputData = Record<string, string[] | string | undefined>;
 
@@ -167,16 +155,14 @@ export const JobModal = ({
     }
   };
 
-  const validateForm = formRef.current?.validateForm;
+  const variables = job?.variables;
 
   return (
     <ModalWrapper
       DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`job-${jobId}`}
       open={open}
-      submitDisabled={
-        (validateForm && validateForm() !== undefined && validateForm()) ?? !inputsValid
-      }
+      submitDisabled={!inputsValid}
       submitText="Run"
       title={job?.name ?? "Run Job"}
       onClose={onClose}
@@ -194,51 +180,18 @@ export const JobModal = ({
           </Box>
 
           <DebugCheckbox value={debug} onChange={(debug) => setDebug(debug)} />
-          {!!job.variables && (
-            <Grid container spacing={2}>
-              {!!job.variables.inputs && (
-                <>
-                  <Grid size={{ xs: 12 }}>
-                    <Typography component="h3" sx={{ fontWeight: "bold" }} variant="subtitle1">
-                      Inputs
-                    </Typography>
-                  </Grid>
-                  <JobInputFields
-                    initialValues={specVariables}
-                    inputs={job.variables.inputs as any} // TODO: should validate this with zod
-                    inputsData={inputsData}
-                    projectId={projectId}
-                    onChange={setInputsData}
-                  />
-                </>
-              )}
-
-              <Grid size={{ xs: 12 }}>
-                {!!job.variables.options && (
-                  <>
-                    <Typography component="h3" sx={{ fontWeight: "bold" }} variant="subtitle1">
-                      Options
-                    </Typography>
-                    <Form
-                      liveValidate
-                      noHtml5Validate
-                      formData={optionsFormData}
-                      ref={formRef}
-                      schema={job.variables.options} // TODO: should validate this with zod
-                      showErrorList="bottom"
-                      uiSchema={{ "ui:order": job.variables.order?.options }}
-                      validator={validator}
-                      onChange={(event) => setOptionsFormData(event.formData)}
-                      onError={() => {}}
-                    >
-                      {/* Remove the default submit button */}
-                      <div />
-                    </Form>
-                  </>
-                )}
-              </Grid>
-            </Grid>
-          )}
+          <JobInputsAndOptionsForm
+            formRef={formRef}
+            inputs={variables?.inputs}
+            inputsData={inputsData}
+            options={variables?.options}
+            optionsFormData={optionsFormData}
+            order={variables?.order?.options ?? []}
+            projectId={projectId}
+            setInputsData={setInputsData}
+            setOptionsFormData={setOptionsFormData}
+            specVariables={specVariables}
+          />
         </>
       ) : (
         <CenterLoader />

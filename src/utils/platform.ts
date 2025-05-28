@@ -14,8 +14,10 @@ export const isMac = () => {
     }
   }
 
+  const pattern = /Mac|iPhone|iPad|iPod/u;
+
   // Fallback to userAgent string parsing
-  return (/Mac|iPhone|iPad|iPod/u).test(navigator.userAgent);
+  return pattern.test(navigator.userAgent);
 };
 
 /**

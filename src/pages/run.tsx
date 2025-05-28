@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useGetApplications } from "@squonk/data-manager-client/application";
 import { useGetJobs } from "@squonk/data-manager-client/job";
+import { useGetWorkflows } from "@squonk/data-manager-client/workflow";
 
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Alert, Container, Grid2 as Grid, MenuItem, TextField } from "@mui/material";
@@ -15,6 +16,7 @@ import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/runCards/ApplicationCard";
 import { JobCard } from "../components/runCards/JobCard";
 import { TEST_JOB_ID } from "../components/runCards/TestJob/jobId";
+import { WorkflowCard } from "../components/runCards/WorkflowCard/WorkflowCard";
 import { SearchTextField } from "../components/SearchTextField";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { useCurrentProject, useIsUserAdminOrEditorOfCurrentProject } from "../hooks/projectHooks";
@@ -26,11 +28,18 @@ const TestJobCard = dynamic(
   () => import("../components/runCards/TestJob/TestJobCard").then((mod) => mod.TestJobCard),
   { loading: () => <CenterLoader /> },
 );
+
+type FilterOptions = "application" | "job" | "workflow";
+
 /**
  * Page allowing the user to run jobs and applications
  */
 const Run = () => {
-  const [executionTypes, setExecutionTypes] = useState(["application", "job"]);
+  const [executionTypes, setExecutionTypes] = useState<FilterOptions[]>([
+    "workflow",
+    "application",
+    "job",
+  ]);
   const [searchValue, setSearchValue] = useState("");
   const [debouncedSearchValue, setDebouncedSearchValue] = useState("");
   const inputRef = useKeyboardFocus();
@@ -96,9 +105,23 @@ const Run = () => {
     setSearchValue(event.target.value);
   }, []);
 
-  const handleExecutionTypesChange = useCallback((event: any) => {
-    setExecutionTypes(event.target.value as string[]);
-  }, []);
+  const {
+    data: workflows,
+    isError: isWorkflowsError,
+    error: workflowsError,
+  } = useGetWorkflows({ query: { select: (data) => data.workflows } });
+
+  // Memoize filtered and grouped jobs
+  const filteredAndGroupedWorkflows = useMemo(() => {
+    if (!workflows) {
+      return {};
+    }
+    const filteredWorkflows = workflows.filter(({ workflow_name, workflow_description }) =>
+      search([workflow_name, workflow_description], debouncedSearchValue),
+    );
+
+    return groupBy(filteredWorkflows, (workflow) => workflow.name);
+  }, [workflows, debouncedSearchValue]);
 
   const cards = useMemo(() => {
     const applicationCards = filteredApplications.map((app) => (
@@ -113,22 +136,32 @@ const Run = () => {
       </Grid>
     ));
 
+    const workflowCards = Object.entries(filteredAndGroupedWorkflows).map(
+      ([name, workflowGroup]) => (
+        <Grid key={name} size={{ md: 3, sm: 6, xs: 12 }}>
+          <WorkflowCard workflow={workflowGroup[0]} />
+        </Grid>
+      ),
+    );
+
     process.env.NODE_ENV === "development" && jobCards.push(<TestJobCard key={TEST_JOB_ID} />);
 
-    const showApplications = executionTypes.includes("application");
-    const showJobs = executionTypes.includes("job");
+    // Create a map of execution types to their corresponding card arrays
+    const cardsByType = { application: applicationCards, job: jobCards, workflow: workflowCards };
 
-    if (showApplications && showJobs) {
-      return [...applicationCards, ...jobCards];
-    } else if (showApplications) {
-      return applicationCards;
-    }
-    return jobCards;
+    // Filter and flatten the card arrays based on selected execution types
+    const visibleCards = executionTypes
+      .map((type) => cardsByType[type])
+      .filter(Boolean)
+      .flat();
+
+    return visibleCards.length > 0 ? visibleCards : [];
   }, [
     filteredApplications,
     filteredAndGroupedJobs,
-    currentProject?.project_id,
+    filteredAndGroupedWorkflows,
     executionTypes,
+    currentProject?.project_id,
     hasPermissionToRun,
   ]);
 
@@ -148,9 +181,17 @@ const Run = () => {
                     fullWidth
                     select
                     label="Filter"
-                    slotProps={{ select: { multiple: true, onChange: handleExecutionTypesChange } }}
+                    slotProps={{
+                      select: {
+                        multiple: true,
+                        onChange: (event) => {
+                          setExecutionTypes(event.target.value as FilterOptions[]);
+                        },
+                      },
+                    }}
                     value={executionTypes}
                   >
+                    <MenuItem value="workflow">Workflows</MenuItem>
                     <MenuItem value="application">Applications</MenuItem>
                     <MenuItem value="job">Jobs</MenuItem>
                   </TextField>
@@ -183,7 +224,13 @@ const Run = () => {
                     </Alert>
                   </Grid>
                 )}
-
+                {!!isWorkflowsError && (
+                  <Grid size={12}>
+                    <Alert severity="error">
+                      Workflows failed to load ({workflowsError.response?.status})
+                    </Alert>
+                  </Grid>
+                )}
                 {/* Warnings */}
                 {!currentProject && (
                   <Grid size={12}>

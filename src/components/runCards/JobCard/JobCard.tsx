@@ -77,7 +77,6 @@ export const JobCard = ({ projectId, job: jobs, disabled = false }: ApplicationC
     >
       <Typography gutterBottom>{job.description}</Typography>
       <Typography variant="body2">
-        {job.version} –{" "}
         <Link href={job.doc_url} rel="noopener noreferrer" target="_blank">
           docs
         </Link>

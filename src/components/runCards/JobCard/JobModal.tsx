@@ -69,7 +69,6 @@ export const JobModal = ({
   const queryClient = useQueryClient();
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
-  const [nameState, setNameState] = useState(instance?.name ?? "");
   const [debug, setDebug] = useState<DebugValue>("0");
 
   const { mutateAsync: createInstance } = useCreateInstance();
@@ -77,7 +76,10 @@ export const JobModal = ({
   const { data: job } = useGetJob(jobId, undefined, {
     query: { retry: jobId === TEST_JOB_ID ? 1 : 3 },
   });
-  const name = nameState || (job?.job ?? "");
+  const [nameState, setNameState] = useState(instance?.name ?? "");
+  useEffect(() => {
+    job?.name && setNameState(job.name);
+  }, [job?.name]);
 
   const spec = instance?.application_specification;
   const specVariables = useMemo(
@@ -136,7 +138,7 @@ export const JobModal = ({
             debug,
             application_id: job.application.application_id,
             // application_version: job.application.latest_version,
-            as_name: name,
+            as_name: nameState,
             project_id: projectId,
             specification: JSON.stringify(specification),
           },
@@ -174,7 +176,7 @@ export const JobModal = ({
             <TextField
               fullWidth
               label="Job name"
-              value={name} // Give a default instance name of job.job
+              value={nameState} // Give a default instance name of job.job
               onChange={(event) => setNameState(event.target.value)}
             />
           </Box>

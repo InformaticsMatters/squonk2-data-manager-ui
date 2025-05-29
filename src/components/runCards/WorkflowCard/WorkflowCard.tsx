@@ -20,6 +20,7 @@ export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
       actions={() => (
         <RunWorkflowButton
           disabled={!projectId}
+          name={workflow.workflow_name ?? workflow.name}
           projectId={projectId ?? ""}
           workflowId={workflow.id}
         />

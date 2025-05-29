@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 
 export interface RunWorkflowButtonProps {
   workflowId: WorkflowSummary["id"];
+  name: WorkflowSummary["name"];
   projectId: string;
   onLaunch?: (instanceId: string) => void;
   disabled?: boolean;
@@ -22,6 +23,7 @@ const WorkflowModal = dynamic<any>(
  */
 export const RunWorkflowButton = ({
   workflowId,
+  name,
   projectId,
   onLaunch,
   disabled,
@@ -47,6 +49,7 @@ export const RunWorkflowButton = ({
       </Tooltip>
       {!!hasOpened && (
         <WorkflowModal
+          name={name}
           open={open}
           projectId={projectId}
           workflowId={workflowId}

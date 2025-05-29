@@ -1,9 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { type DmError } from "@squonk/data-manager-client";
 import { useGetWorkflow, useRunWorkflow } from "@squonk/data-manager-client/workflow";
 
 import { Box, TextField } from "@mui/material";
 
+import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { ModalWrapper } from "../../modals/ModalWrapper";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
 import { JobInputsAndOptionsForm } from "../JobCard/JobInputsAndOptionsForm";
@@ -21,10 +23,17 @@ export interface WorkflowModalProps {
  * Modal for running a workflow instance. Fetches workflow details and displays the correct form.
  */
 export const WorkflowModal = ({ workflowId, projectId, open, onClose }: WorkflowModalProps) => {
+  const { enqueueError } = useEnqueueError<DmError>();
+
   const { data: workflow } = useGetWorkflow(workflowId);
   const specVariables = workflow?.variables;
 
   const [nameState, setNameState] = useState("");
+
+  useEffect(() => {
+    workflow?.workflow_name && setNameState(workflow.workflow_name);
+  }, [workflow?.workflow_name]);
+
   const [debug, setDebug] = useState<DebugValue>("0");
 
   const [inputsData, setInputsData] = useState<InputData>({});
@@ -34,21 +43,23 @@ export const WorkflowModal = ({ workflowId, projectId, open, onClose }: Workflow
 
   const { mutateAsync: runWorkflow } = useRunWorkflow();
 
-  console.log(specVariables);
-  console.log(inputsData);
-
   const handleSubmit = async () => {
-    workflow?.id &&
-      (await runWorkflow({
-        workflowId: workflow.id,
-        data: {
-          as_name: nameState,
-          debug,
-          project_id: projectId,
-          variables: JSON.stringify({ ...optionsFormData, ...inputsData }),
-        },
-      }));
-    onClose();
+    try {
+      workflow?.id &&
+        (await runWorkflow({
+          workflowId: workflow.id,
+          data: {
+            as_name: nameState,
+            debug,
+            project_id: projectId,
+            variables: JSON.stringify({ ...optionsFormData, ...inputsData }),
+          },
+        }));
+    } catch (error) {
+      enqueueError(error);
+    } finally {
+      onClose();
+    }
   };
 
   return (
@@ -67,7 +78,10 @@ export const WorkflowModal = ({ workflowId, projectId, open, onClose }: Workflow
           fullWidth
           label="Workflow name"
           value={nameState}
-          onChange={(event) => setNameState(event.target.value)}
+          onChange={(event) => {
+            console.log(event.target.value);
+            return setNameState(event.target.value);
+          }}
         />
       </Box>
 
@@ -79,7 +93,7 @@ export const WorkflowModal = ({ workflowId, projectId, open, onClose }: Workflow
           inputsData={inputsData}
           options={specVariables?.options}
           optionsFormData={optionsFormData}
-          order={[]}
+          order={(specVariables?.options as any).properties}
           projectId={projectId}
           setInputsData={setInputsData}
           setOptionsFormData={setOptionsFormData}

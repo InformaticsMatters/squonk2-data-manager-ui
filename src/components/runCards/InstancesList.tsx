@@ -59,7 +59,7 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
           >
             <ListItemText
               primary={instance.name}
-              secondary={<LocalTime utcTimestamp={instance.launched} />}
+              secondary={<><LocalTime utcTimestamp={instance.launched} /> - version: {instance.job_version}</>}
               slotProps={{ primary: { variant: "body1" } }}
             />
           </ListItemButton>

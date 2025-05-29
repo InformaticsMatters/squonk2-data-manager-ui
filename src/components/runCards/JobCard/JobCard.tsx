@@ -69,7 +69,7 @@ export const JobCard = ({ projectId, job: jobs, disabled = false }: ApplicationC
       )}
       collapsed={
         <InstancesList
-          predicate={(instance) => instance.job_id === job.id && instance.job_job === job.job}
+          predicate={(instance) => instance.job_collection === job.collection && instance.job_job === job.job}
         />
       }
       header={{ color: "primary.main", subtitle: job.name, avatar: job.job[0], title: job.job }}

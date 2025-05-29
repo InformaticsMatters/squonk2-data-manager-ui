@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.6.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.6.0-rc.0...5.6.0-rc.1) (2025-05-29)
+
+
+### Bug Fixes
+
+* fix workflows with options ([54ce29a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/54ce29a049164b09d0bb7a0d3abcef18405c5561))
+* show all instances in the list with their version ([a51042e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a51042ea4b25582617f7453fe7f9213e84b0adc7))
+
+
+### Miscellaneous Chores
+
+* release 5.6.0-rc.1 ([1da8cf6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/1da8cf692780676deb9acfd3dc91f8acfab408a6))
+
 ## [5.6.0-rc.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.5.0...5.6.0-rc.0) (2025-05-28)
 
 

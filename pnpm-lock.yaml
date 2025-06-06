@@ -213,8 +213,8 @@ importers:
         specifier: 1.54.0
         version: 1.54.0
       '@bufbuild/protoc-gen-es':
-        specifier: 2.5.1
-        version: 2.5.1(@bufbuild/protobuf@2.5.1)
+        specifier: 2.5.2
+        version: 2.5.2(@bufbuild/protobuf@2.5.1)
       '@playwright/test':
         specifier: 1.52.0
         version: 1.52.0
@@ -369,18 +369,21 @@ packages:
   '@bufbuild/protobuf@2.5.1':
     resolution: {integrity: sha512-lut4UTvKL8tqtend0UDu7R79/n9jA7Jtxf77RNPbxtmWqfWI4qQ9bTjf7KCS4vfqLmpQbuHr1ciqJumAgJODdw==}
 
-  '@bufbuild/protoc-gen-es@2.5.1':
-    resolution: {integrity: sha512-qsRqmwWWd3W+/xb76gKv1fsLfNohrXm54rfqPzFX0RkAhh+YEEPeUyG3Ecgeomi22pH/gD+TaptkQl8dpbj13w==}
+  '@bufbuild/protobuf@2.5.2':
+    resolution: {integrity: sha512-foZ7qr0IsUBjzWIq+SuBLfdQCpJ1j8cTuNNT4owngTHoN5KsJb8L9t65fzz7SCeSWzescoOil/0ldqiL041ABg==}
+
+  '@bufbuild/protoc-gen-es@2.5.2':
+    resolution: {integrity: sha512-G9rvJ3CH1MXxUTppBJLdhc+wS2m6LR1Tvi0sGoDDChmiqJVkOhIeYrqtGMqqLqiE44I7uJGDaYcn1PG3aIGJUg==}
     engines: {node: '>=14'}
     hasBin: true
     peerDependencies:
-      '@bufbuild/protobuf': 2.5.1
+      '@bufbuild/protobuf': 2.5.2
     peerDependenciesMeta:
       '@bufbuild/protobuf':
         optional: true
 
-  '@bufbuild/protoplugin@2.5.1':
-    resolution: {integrity: sha512-viJAgCqPUw1JZQxYTdhbRmMy5+C0afS52ak7CgeKL8R7bwVHWb8HjOFMMvJwPXb8fkDQqxIEBdWP7Yn00Dnikw==}
+  '@bufbuild/protoplugin@2.5.2':
+    resolution: {integrity: sha512-7d/NUae/ugs/qgHEYOwkVWGDE3Bf/xjuGviVFs38+MLRdwiHNTiuvzPVwuIPo/1wuZCZn3Nax1cg1owLuY72xw==}
 
   '@choojs/findup@0.2.1':
     resolution: {integrity: sha512-YstAqNb0MCN8PjdLCDfRsBcGVRN41f3vgLvaI0IrIcBp4AqILRSS0DeWNGkicC+f/zRIPJLc+9RURVSepwvfBw==}
@@ -6223,17 +6226,19 @@ snapshots:
 
   '@bufbuild/protobuf@2.5.1': {}
 
-  '@bufbuild/protoc-gen-es@2.5.1(@bufbuild/protobuf@2.5.1)':
+  '@bufbuild/protobuf@2.5.2': {}
+
+  '@bufbuild/protoc-gen-es@2.5.2(@bufbuild/protobuf@2.5.1)':
     dependencies:
-      '@bufbuild/protoplugin': 2.5.1
+      '@bufbuild/protoplugin': 2.5.2
     optionalDependencies:
       '@bufbuild/protobuf': 2.5.1
     transitivePeerDependencies:
       - supports-color
 
-  '@bufbuild/protoplugin@2.5.1':
+  '@bufbuild/protoplugin@2.5.2':
     dependencies:
-      '@bufbuild/protobuf': 2.5.1
+      '@bufbuild/protobuf': 2.5.2
       '@typescript/vfs': 1.6.1(typescript@5.4.5)
       typescript: 5.4.5
     transitivePeerDependencies:

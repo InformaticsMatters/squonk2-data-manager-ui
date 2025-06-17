@@ -101,7 +101,7 @@
     "zod": "3.25.32"
   },
   "devDependencies": {
-    "@bufbuild/buf": "1.54.0",
+    "@bufbuild/buf": "1.55.1",
     "@bufbuild/protoc-gen-es": "2.5.1",
     "@playwright/test": "1.52.0",
     "@squonk/eslint-config": "3.0.0",

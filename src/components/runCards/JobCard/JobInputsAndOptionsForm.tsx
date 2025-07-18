@@ -37,19 +37,21 @@ export const JobInputsAndOptionsForm = ({
   return (
     <Grid container spacing={2}>
       <>
-        <Grid size={{ xs: 12 }}>
-          <Typography component="h3" sx={{ fontWeight: "bold" }} variant="subtitle1">
-            Inputs
-          </Typography>
-        </Grid>
         {!!inputs && (
-          <JobInputFields
-            initialValues={specVariables}
-            inputs={inputs}
-            inputsData={inputsData}
-            projectId={projectId}
-            onChange={setInputsData}
-          />
+          <>
+            <Grid size={{ xs: 12 }}>
+              <Typography component="h3" sx={{ fontWeight: "bold" }} variant="subtitle1">
+                Inputs
+              </Typography>
+            </Grid>
+            <JobInputFields
+              initialValues={specVariables}
+              inputs={inputs}
+              inputsData={inputsData}
+              projectId={projectId}
+              onChange={setInputsData}
+            />
+          </>
         )}
       </>
       <Grid size={{ xs: 12 }}>

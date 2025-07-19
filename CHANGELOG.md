@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.6.0-dev.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.6.0-rc.1...5.6.0-dev.0) (2025-07-19)
+
+
+### Features
+
+* display workflows in result page ([167b54c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/167b54c6a4a5f9dfc220a3e918a0df377c117f53))
+
+
+### Bug Fixes
+
+* fix crash when order is undefined ([832ca50](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/832ca504f43e083e920e16fd7f1f0c428e51ae64))
+* show header only when there is an input ([a745a42](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a745a4254a04be80dcd529f87f6672f45a9392e2))
+
+
+### Miscellaneous Chores
+
+* release 5.6.0-dev.0 ([6e3eefc](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6e3eefc82dd46e1073f4baa5e28028194a03078a))
+
 ## [5.6.0-rc.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.6.0-rc.0...5.6.0-rc.1) (2025-05-29)
 
 

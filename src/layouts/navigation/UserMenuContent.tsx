@@ -1,23 +1,13 @@
 import { Person as PersonIcon } from "@mui/icons-material";
-import {
-  Alert,
-  Box,
-  Chip,
-  FormControlLabel,
-  Switch,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
-import { useAtom } from "jotai";
+import { Alert, Box, Chip, Typography, useMediaQuery, useTheme } from "@mui/material";
 
 import { AuthButton } from "../../components/auth/AuthButton";
 import { CenterLoader } from "../../components/CenterLoader";
 import { Chips } from "../../components/Chips";
 import { ColourSchemeSelection } from "../../components/ColourSchemeSelection";
+import { EventStreamToggle } from "../../components/eventStream/EventStreamToggle";
 import { useASAuthorizationStatus, useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
-import { eventStreamEnabledAtom } from "../../state/eventStream";
 
 /**
  * Content of the user menu
@@ -25,7 +15,7 @@ import { eventStreamEnabledAtom } from "../../state/eventStream";
 export const UserMenuContent = () => {
   const theme = useTheme();
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
-  const [eventStreamEnabled, setEventStreamEnabled] = useAtom(eventStreamEnabledAtom);
+  // Removed eventStreamEnabledAtom usage, now handled in EventStreamToggle
 
   return (
     <Box sx={{ textAlign: biggerThanMd ? "center" : undefined }}>
@@ -34,17 +24,7 @@ export const UserMenuContent = () => {
       </Typography>
       <UserMenuContentInner />
       <ColourSchemeSelection />
-      <FormControlLabel
-        control={
-          <Switch
-            checked={eventStreamEnabled}
-            color="primary"
-            onChange={(_, checked) => setEventStreamEnabled(checked)}
-          />
-        }
-        label="Event stream (alpha)"
-        sx={{ mb: 2 }}
-      />
+      <EventStreamToggle />
     </Box>
   );
 };

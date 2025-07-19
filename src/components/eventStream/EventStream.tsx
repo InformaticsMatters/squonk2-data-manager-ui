@@ -9,17 +9,20 @@ import {
 import { useAtom } from "jotai";
 import { useSnackbar } from "notistack";
 
-import { useASAuthorizationStatus } from "../hooks/useIsAuthorized";
-import { getMessageFromEvent, protoBlobToText } from "../protobuf/protobuf";
-import { eventStreamEnabledAtom } from "../state/eventStream";
-import { EventMessage } from "./eventMessages/EventMessage";
+import { useASAuthorizationStatus } from "../../hooks/useIsAuthorized";
+import { getMessageFromEvent, protoBlobToText } from "../../protobuf/protobuf";
+import { eventStreamEnabledAtom } from "../../state/eventStream";
+import { EventMessage } from "../eventMessages/EventMessage";
+import { useIsEventStreamInstalled } from "./useIsEventStreamInstalled";
 
 export const EventStream = () => {
+  const isEventStreamInstalled = useIsEventStreamInstalled();
   const [location, setLocation] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
   const asRole = useASAuthorizationStatus();
+
   const { data, error: streamError } = useGetEventStream({
-    query: { select: (data) => data.location, enabled: !!asRole },
+    query: { select: (data) => data.location, enabled: !!asRole && isEventStreamInstalled },
   });
   const { mutate: createEventStream } = useCreateEventStream({
     mutation: {

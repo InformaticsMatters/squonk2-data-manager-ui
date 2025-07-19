@@ -17,7 +17,7 @@ import Head from "next/head";
 import { ConfiguredSnackbarProvider } from "../components/app/ConfiguredSnackbarProvider";
 import { ThemeProviders } from "../components/app/ThemeProviders";
 import { TopLevelHooks } from "../components/app/TopLevelHooks";
-import { EventStream } from "../components/EventStream";
+import { EventStream } from "../components/eventStream/EventStream";
 import { openSansFont } from "../constants/fonts";
 import { AS_API_URL, DM_API_URL } from "../constants/proxies";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";

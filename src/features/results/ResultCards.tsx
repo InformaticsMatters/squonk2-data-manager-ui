@@ -1,11 +1,59 @@
-import { type InstanceSummary, type TaskSummary } from "@squonk/data-manager-client";
+import {
+  type InstanceSummary,
+  type RunningWorkflowSummary,
+  type TaskSummary,
+} from "@squonk/data-manager-client";
 
 import { Grid2 as Grid, Typography } from "@mui/material";
 import dayjs from "dayjs";
 
 import { Instance } from "../../components/instances/Instance";
+import { RunningWorkflowCard } from "../../components/RunningWorkflowCard/RunningWorkflowCard";
 import { ResultTaskCard } from "../../components/tasks/ResultTaskCard";
 import { search } from "../../utils/app/searches";
+
+// Discriminated union type for result cards
+export type ResultCardItem =
+  | { type: "instance"; data: InstanceSummary }
+  | { type: "task"; data: TaskSummary }
+  | { type: "workflow"; data: RunningWorkflowSummary; time: string };
+
+// Utility to map to discriminated union card objects
+const mapToCardObjs = (
+  instances: InstanceSummary[],
+  tasks: TaskSummary[],
+  workflows: RunningWorkflowSummary[],
+): ResultCardItem[] => {
+  const todayIso = dayjs().toISOString();
+  const instanceCardObjs = instances.map((instance) => ({
+    type: "instance" as const,
+    data: instance,
+  }));
+  const taskCardObjs = tasks.map((task) => ({ type: "task" as const, data: task }));
+  const workflowCardObjs = workflows.map((workflow) => ({
+    type: "workflow" as const,
+    data: workflow,
+    time: todayIso,
+  }));
+  return [...instanceCardObjs, ...taskCardObjs, ...workflowCardObjs];
+};
+
+// Utility to get the timestamp for sorting and rendering
+const getTime = (card: ResultCardItem): string => {
+  switch (card.type) {
+    case "task":
+      return card.data.created;
+    case "instance":
+      return card.data.launched;
+    case "workflow":
+      return card.time;
+    default: {
+      // Exhaustive check: if a new type is added, this will error
+      const _exhaustive: never = card;
+      return _exhaustive;
+    }
+  }
+};
 
 export interface ResultCardsProps {
   /**
@@ -24,67 +72,82 @@ export interface ResultCardsProps {
    * Tasks that might be displayed
    */
   tasks: TaskSummary[];
+  /**
+   * Workflows that might be displayed
+   */
+  workflows: RunningWorkflowSummary[];
 }
 
 /**
- * Type predicate to tell apart `TaskSummary` and `InstanceSummary`
+ * ResultCards displays filtered and sorted cards for instances, tasks, and workflows.
+ * Workflows are scaffolded as placeholders until a real component is available.
+ *
  */
-const isTaskSummary = (
-  taskOrInstance: InstanceSummary | TaskSummary,
-): taskOrInstance is TaskSummary => {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  return (taskOrInstance as TaskSummary).created !== undefined;
-};
+export const ResultCards = ({
+  resultTypes,
+  searchValue,
+  instances,
+  tasks,
+  workflows,
+}: ResultCardsProps) => {
+  // Tasks, instances, and workflows are filtered first by search value
+  const instanceCards = (resultTypes.includes("instance") ? instances : []).filter(
+    ({ job_name, name, phase }: InstanceSummary) => search([job_name, name, phase], searchValue),
+  );
 
-/**
- * Extracts the time stamp from `TaskSummary` and `InstanceSummary`
- */
-const getTimeStamp = (taskOrInstance: InstanceSummary | TaskSummary) => {
-  if (isTaskSummary(taskOrInstance)) {
-    return taskOrInstance.created;
-  }
-  return taskOrInstance.launched;
-};
+  const taskCards = (resultTypes.includes("task") ? tasks : [])
+    .filter((task: TaskSummary) => task.purpose === "DATASET" || task.purpose === "FILE")
+    .filter(({ processing_stage, purpose }: TaskSummary) =>
+      search([processing_stage, purpose], searchValue),
+    );
 
-/**
- * Manages the display of all task and instance cards
- */
-export const ResultCards = ({ resultTypes, searchValue, instances, tasks }: ResultCardsProps) => {
-  // Tasks and instances are filtered first by search value
-  const cards = [
-    ...(resultTypes.includes("instance") ? instances : []).filter(({ job_name, name, phase }) =>
-      search([job_name, name, phase], searchValue),
-    ),
-    ...(resultTypes.includes("task") ? tasks : [])
-      .filter((task) => task.purpose === "DATASET" || task.purpose === "FILE")
-      .filter(({ processing_stage, purpose }) => search([processing_stage, purpose], searchValue)),
-  ]
-    // Then they are sorted
+  const workflowCards = (resultTypes.includes("workflow") ? workflows : []).filter(
+    ({ name, id }: RunningWorkflowSummary) => search([name, id], searchValue),
+  );
+
+  // Use utility to map to discriminated union
+  const cards = mapToCardObjs(instanceCards, taskCards, workflowCards)
     .sort((a, b) => {
-      const aTime = getTimeStamp(a);
-      const bTime = getTimeStamp(b);
+      const aTime = getTime(a);
+      const bTime = getTime(b);
       return dayjs(aTime).isBefore(dayjs(bTime)) ? 1 : -1;
     })
-    // And lastly, a card is created from each
-    .map((instanceOrTask) => {
-      if (isTaskSummary(instanceOrTask)) {
-        const task = instanceOrTask;
-        return (
-          <Grid key={task.id} size={{ xs: 12 }}>
-            <ResultTaskCard task={task} />
-          </Grid>
-        );
+    .map((item) => {
+      switch (item.type) {
+        case "workflow": {
+          const workflow = item.data;
+          return (
+            <Grid key={workflow.id} size={{ xs: 12 }}>
+              <RunningWorkflowCard runningWorkflowId={workflow.id} workflowSummary={workflow} />
+            </Grid>
+          );
+        }
+        case "task": {
+          const task = item.data;
+          return (
+            <Grid key={task.id} size={{ xs: 12 }}>
+              <ResultTaskCard task={task} />
+            </Grid>
+          );
+        }
+        case "instance": {
+          const instance = item.data;
+          return (
+            <Grid key={instance.id} size={{ xs: 12 }}>
+              <Instance
+                instanceId={instance.id}
+                instanceSummary={instance}
+                projectClickAction="select-project"
+              />
+            </Grid>
+          );
+        }
+        default: {
+          // Exhaustive check
+          const _exhaustive: never = item;
+          return _exhaustive;
+        }
       }
-      const instance = instanceOrTask;
-      return (
-        <Grid key={instance.id} size={{ xs: 12 }}>
-          <Instance
-            instanceId={instance.id}
-            instanceSummary={instance}
-            projectClickAction="select-project"
-          />
-        </Grid>
-      );
     });
 
   return cards.length > 0 ? (
@@ -93,7 +156,7 @@ export const ResultCards = ({ resultTypes, searchValue, instances, tasks }: Resu
     </Grid>
   ) : (
     <Typography align="center" variant="body2">
-      There are no tasks or instances to display.
+      There are no tasks, instances, or workflows to display.
     </Typography>
   );
 };

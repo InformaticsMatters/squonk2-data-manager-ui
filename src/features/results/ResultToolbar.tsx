@@ -14,16 +14,17 @@ import { useQueryClient } from "@tanstack/react-query";
 import { EventDebugSwitch } from "../../components/results/EventDebugSwitch";
 import { SearchTextField } from "../../components/SearchTextField";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { type ResultType } from "../ResultsView";
 
 export interface ResultsToolbarProps {
   /**
    * Value of the multiple select input
    */
-  resultTypes: string[];
+  resultTypes: ResultType[];
   /**
    * Called when a change is made to the select input
    */
-  onSelectChange: Dispatch<SetStateAction<string[]>>;
+  onSelectChange: Dispatch<SetStateAction<ResultType[]>>;
   /**
    * Value of the search input
    */
@@ -79,12 +80,13 @@ export const ResultsToolbar = ({
             select: {
               multiple: true,
               onChange: (event) => {
-                onSelectChange(event.target.value as string[]);
+                onSelectChange(event.target.value as ResultType[]);
               },
             },
           }}
           value={resultTypes}
         >
+          <MenuItem value="workflow">Workflows</MenuItem>
           <MenuItem value="task">Tasks</MenuItem>
           <MenuItem value="instance">Instances</MenuItem>
         </TextField>

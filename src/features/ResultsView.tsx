@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { useGetInstances } from "@squonk/data-manager-client/instance";
 import { useGetTasks } from "@squonk/data-manager-client/task";
+import { useGetRunningWorkflows } from "@squonk/data-manager-client/workflow";
 
 import { Alert, Container, Grid2 as Grid } from "@mui/material";
 
@@ -11,26 +12,26 @@ import { getErrorMessage } from "../utils/next/orvalError";
 import { ResultCards } from "./results/ResultCards";
 import { ResultsToolbar } from "./results/ResultToolbar";
 
+export type ResultType = "instance" | "task" | "workflow";
+
 export const ResultsView = () => {
   const { projectId } = useCurrentProjectId();
 
-  const {
-    data: instancesData,
-    isLoading: isInstancesLoading,
-    isError: isInstancesError,
-    error: instancesError,
-  } = useGetInstances({ project_id: projectId });
-  const instances = instancesData?.instances;
+  const { data: instances, error: instancesError } = useGetInstances(
+    { project_id: projectId },
+    { query: { select: (data) => data.instances } },
+  );
 
-  const {
-    data: tasksData,
-    isLoading: isTasksLoading,
-    isError: isTasksError,
-    error: tasksError,
-  } = useGetTasks({ project_id: projectId, exclude_purpose: "INSTANCE.PROJECT" });
-  const tasks = tasksData?.tasks;
+  const { data: tasks, error: tasksError } = useGetTasks(
+    { project_id: projectId, exclude_purpose: "INSTANCE.PROJECT" },
+    { query: { select: (data) => data.tasks } },
+  );
 
-  const [resultTypes, setResultTypes] = useState(["task", "instance"]);
+  const { data: workflows, error: workflowsError } = useGetRunningWorkflows(undefined, {
+    query: { select: (data) => data.running_workflows },
+  });
+
+  const [resultTypes, setResultTypes] = useState<ResultType[]>(["workflow", "task", "instance"]);
   const [searchValue, setSearchValue] = useState("");
   return (
     <Container maxWidth="md">
@@ -43,24 +44,32 @@ export const ResultsView = () => {
 
       <Grid container spacing={1}>
         <Grid size={12}>
-          {!!isInstancesError && (
+          {!!instancesError && (
             <Alert severity="warning">
               Instances failed to load ({getErrorMessage(instancesError)})
             </Alert>
           )}
         </Grid>
         <Grid size={12}>
-          {!!isTasksError && (
+          {!!tasksError && (
             <Alert severity="warning">Tasks failed to load ({getErrorMessage(tasksError)})</Alert>
           )}
         </Grid>
         <Grid size={12}>
-          {!!(instances && !isInstancesLoading) || (tasks && !isTasksLoading) ? (
+          {!!workflowsError && (
+            <Alert severity="warning">
+              Workflows failed to load ({getErrorMessage(workflowsError)})
+            </Alert>
+          )}
+        </Grid>
+        <Grid size={12}>
+          {!!instances || !!tasks || !!workflows ? (
             <ResultCards
               instances={instances ?? []}
               resultTypes={resultTypes}
               searchValue={searchValue}
               tasks={tasks ?? []}
+              workflows={workflows ?? []}
             />
           ) : (
             <CenterLoader />

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useGetApplications } from "@squonk/data-manager-client/application";
 import { useGetJobs } from "@squonk/data-manager-client/job";
-import { useGetWorkflows } from "@squonk/data-manager-client/workflow";
+import { useGetRunningWorkflows, useGetWorkflows } from "@squonk/data-manager-client/workflow";
 
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Alert, Container, Grid2 as Grid, MenuItem, TextField } from "@mui/material";
@@ -16,7 +16,10 @@ import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/runCards/ApplicationCard";
 import { JobCard } from "../components/runCards/JobCard";
 import { TEST_JOB_ID } from "../components/runCards/TestJob/jobId";
-import { WorkflowCard } from "../components/runCards/WorkflowCard/WorkflowCard";
+import {
+  WorkflowCard,
+  type WorkflowRunListItem,
+} from "../components/runCards/WorkflowCard/WorkflowCard";
 import { SearchTextField } from "../components/SearchTextField";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { useCurrentProject, useIsUserAdminOrEditorOfCurrentProject } from "../hooks/projectHooks";
@@ -111,6 +114,11 @@ const Run = () => {
     error: workflowsError,
   } = useGetWorkflows({ query: { select: (data) => data.workflows } });
 
+  // Fetch running workflows (instances of workflow definitions)
+  const { data: runningWorkflowsData } = useGetRunningWorkflows(undefined, {
+    query: { select: (data) => data.running_workflows },
+  });
+
   // Memoize filtered and grouped jobs
   const filteredAndGroupedWorkflows = useMemo(() => {
     if (!workflows) {
@@ -136,12 +144,20 @@ const Run = () => {
       </Grid>
     ));
 
+    const runningWorkflows = runningWorkflowsData ?? [];
     const workflowCards = Object.entries(filteredAndGroupedWorkflows).map(
-      ([name, workflowGroup]) => (
-        <Grid key={name} size={{ md: 3, sm: 6, xs: 12 }}>
-          <WorkflowCard workflow={workflowGroup[0]} />
-        </Grid>
-      ),
+      ([name, workflowGroup]) => {
+        // Find all runs for this workflow definition
+        const runs: WorkflowRunListItem[] = runningWorkflows
+          .filter((rw) => rw.workflow.id === workflowGroup[0].id)
+          .map((rw) => ({ id: rw.id, name: rw.name }));
+
+        return (
+          <Grid key={name} size={{ md: 3, sm: 6, xs: 12 }}>
+            <WorkflowCard runningWorkflows={runs} workflow={workflowGroup[0]} />
+          </Grid>
+        );
+      },
     );
 
     process.env.NODE_ENV === "development" && jobCards.push(<TestJobCard key={TEST_JOB_ID} />);
@@ -159,6 +175,7 @@ const Run = () => {
   }, [
     filteredApplications,
     filteredAndGroupedJobs,
+    runningWorkflowsData,
     filteredAndGroupedWorkflows,
     executionTypes,
     currentProject?.project_id,

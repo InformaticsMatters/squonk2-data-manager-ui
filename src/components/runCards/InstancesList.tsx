@@ -37,7 +37,9 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
   if (instances.length === 0) {
     return (
       <Box sx={{ p: 2 }}>
-        <Typography variant="body2">No instances of this type currently exist</Typography>
+        <Typography color="text.secondary" variant="body2">
+          No instances currently exist
+        </Typography>
       </Box>
     );
   }
@@ -59,7 +61,11 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
           >
             <ListItemText
               primary={instance.name}
-              secondary={<><LocalTime utcTimestamp={instance.launched} /> - version: {instance.job_version}</>}
+              secondary={
+                <>
+                  <LocalTime utcTimestamp={instance.launched} /> - version: {instance.job_version}
+                </>
+              }
               slotProps={{ primary: { variant: "body1" } }}
             />
           </ListItemButton>

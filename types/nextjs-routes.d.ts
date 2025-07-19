@@ -43,6 +43,7 @@ declare module "nextjs-routes" {
     | StaticRoute<"/results">
     | DynamicRoute<"/results/instance/[instanceId]", { "instanceId": string }>
     | DynamicRoute<"/results/task/[taskId]", { "taskId": string }>
+    | DynamicRoute<"/results/workflow/[workflowId]", { "workflowId": string }>
     | StaticRoute<"/run">
     | DynamicRoute<"/unit/[unitId]/charges", { "unitId": string }>
     | DynamicRoute<"/unit/[unitId]/inventory", { "unitId": string }>

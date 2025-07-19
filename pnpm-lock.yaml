@@ -69,10 +69,10 @@ importers:
         version: 8.55.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@15.3.2(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.83.1))(react@19.1.0)(webpack@5.97.1)
       '@squonk/account-server-client':
         specifier: 4.2.5
-        version: 4.2.5(@tanstack/react-query@5.77.2(react@19.1.0))(axios@1.9.0)
+        version: 4.2.5(@tanstack/react-query@5.77.2(react@19.1.0))(axios@1.10.0)
       '@squonk/data-manager-client':
         specifier: 4.2.0
-        version: 4.2.0(@tanstack/react-query@5.77.2(react@19.1.0))(axios@1.9.0)
+        version: 4.2.0(@tanstack/react-query@5.77.2(react@19.1.0))(axios@1.10.0)
       '@squonk/mui-theme':
         specifier: 5.0.0
         version: 5.0.0(@mui/material@6.4.11(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
@@ -116,8 +116,8 @@ importers:
         specifier: 7.7.0
         version: 7.7.0
       axios:
-        specifier: 1.9.0
-        version: 1.9.0
+        specifier: 1.10.0
+        version: 1.10.0
       dayjs:
         specifier: 1.11.13
         version: 1.11.13
@@ -2251,8 +2251,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axios@1.9.0:
-    resolution: {integrity: sha512-re4CqKTJaURpzbLHtIi6XpDv20/CnpXOtjRY5/CU32L8gU8ek9UIivcfvSWvmKEngmVbrUtPpdDwWDWL7DNHvg==}
+  axios@1.10.0:
+    resolution: {integrity: sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==}
 
   babel-plugin-macros@3.1.0:
     resolution: {integrity: sha512-Cg7TFGpIr01vOQNODXOOaGz2NpCU5gl8x1qJFbb6hbZxR7XrcE2vtbAsTAbJ7/xwJtUuJEw8K8Zr/AE0LHlesg==}
@@ -7669,15 +7669,15 @@ snapshots:
 
   '@sideway/pinpoint@2.0.0': {}
 
-  '@squonk/account-server-client@4.2.5(@tanstack/react-query@5.77.2(react@19.1.0))(axios@1.9.0)':
+  '@squonk/account-server-client@4.2.5(@tanstack/react-query@5.77.2(react@19.1.0))(axios@1.10.0)':
     dependencies:
       '@tanstack/react-query': 5.77.2(react@19.1.0)
-      axios: 1.9.0
+      axios: 1.10.0
 
-  '@squonk/data-manager-client@4.2.0(@tanstack/react-query@5.77.2(react@19.1.0))(axios@1.9.0)':
+  '@squonk/data-manager-client@4.2.0(@tanstack/react-query@5.77.2(react@19.1.0))(axios@1.10.0)':
     dependencies:
       '@tanstack/react-query': 5.77.2(react@19.1.0)
-      axios: 1.9.0
+      axios: 1.10.0
 
   '@squonk/eslint-config@3.0.0(@typescript-eslint/eslint-plugin@8.31.0(@typescript-eslint/parser@8.31.0(eslint@9.25.1)(typescript@5.8.3))(eslint@9.25.1)(typescript@5.8.3))':
     dependencies:
@@ -8404,7 +8404,7 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.0.0
 
-  axios@1.9.0:
+  axios@1.10.0:
     dependencies:
       follow-redirects: 1.15.9
       form-data: 4.0.1

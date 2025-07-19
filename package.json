@@ -68,7 +68,7 @@
     "@types/react": "19.1.6",
     "@types/react-plotly.js": "2.6.3",
     "@types/semver": "7.7.0",
-    "axios": "1.9.0",
+    "axios": "1.10.0",
     "dayjs": "1.11.13",
     "filesize": "10.1.6",
     "immer": "10.1.1",

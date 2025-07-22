@@ -12,6 +12,7 @@ import { useSnackbar } from "notistack";
 import { useASAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { getMessageFromEvent, protoBlobToText } from "../../protobuf/protobuf";
 import { eventStreamEnabledAtom } from "../../state/eventStream";
+import { useUnreadEventCount } from "../../state/notifications";
 import { EventMessage } from "../eventMessages/EventMessage";
 import { useIsEventStreamInstalled } from "./useIsEventStreamInstalled";
 
@@ -19,6 +20,7 @@ export const EventStream = () => {
   const isEventStreamInstalled = useIsEventStreamInstalled();
   const [location, setLocation] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
+  const { incrementCount } = useUnreadEventCount();
   const asRole = useASAuthorizationStatus();
 
   const { data, error: streamError } = useGetEventStream({
@@ -69,11 +71,13 @@ export const EventStream = () => {
 
   const handleWebSocketMessage = useCallback(
     (event: MessageEvent) => {
+      console.log("message");
       if (event.data instanceof Blob) {
         protoBlobToText(event.data)
           .then((textData) => {
             const message = getMessageFromEvent(textData);
             if (message) {
+              incrementCount();
               enqueueSnackbar(<EventMessage message={message} />, {
                 variant: "default",
                 anchorOrigin: { horizontal: "right", vertical: "bottom" },
@@ -97,10 +101,19 @@ export const EventStream = () => {
         console.warn("Received non-Blob WebSocket message:", event.data);
       }
     },
-    [enqueueSnackbar],
+    [enqueueSnackbar, incrementCount],
   );
 
-  const wsUrl = eventStreamEnabled && asRole ? (location?.replace("ws", "wss") ?? null) : null;
+  let wsUrl = null;
+  if (eventStreamEnabled && asRole && location) {
+    const url = new URL(location);
+    url.protocol = "wss:";
+    url.search = new URLSearchParams({
+      // stream_from_timestamp: encodeURIComponent("2025-07-1T12:00:00Z"),
+      stream_from_ordinal: "1",
+    }).toString();
+    wsUrl = url.toString();
+  }
 
   useWebSocket(wsUrl, {
     onOpen: handleWebSocketOpen,

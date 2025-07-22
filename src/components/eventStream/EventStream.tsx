@@ -12,7 +12,7 @@ import { useAtom } from "jotai";
 import { useSnackbar } from "notistack";
 
 import { useASAuthorizationStatus } from "../../hooks/useIsAuthorized";
-import { getMessageFromEvent } from "../../protobuf/protobuf";
+import { getMessageFromEvent, protoBlobToText } from "../../protobuf/protobuf";
 import {
   eventStreamEnabledAtom,
   useEventStream,
@@ -145,19 +145,41 @@ export const EventStream = () => {
 
   const handleWebSocketMessage = useCallback(
     (event: MessageEvent) => {
-      const message = getMessageFromEvent(JSON.parse(event.data));
+      const processMessage = (payload: unknown) => {
+        const message = getMessageFromEvent(payload);
 
-      if (
-        message &&
-        addEvent(message) && // Only show toast for events newer than session start
-        isEventNewerThanSession(message)
-      ) {
-        enqueueSnackbar(<EventMessage message={message} />, {
-          variant: "default",
-          anchorOrigin: { horizontal: "right", vertical: "bottom" },
-          autoHideDuration: 10_000,
-        });
-        incrementCount();
+        if (
+          message &&
+          addEvent(message) && // Only show toast for events newer than session start
+          isEventNewerThanSession(message)
+        ) {
+          enqueueSnackbar(<EventMessage message={message} />, {
+            variant: "default",
+            anchorOrigin: { horizontal: "right", vertical: "bottom" },
+            autoHideDuration: 10_000,
+          });
+          incrementCount();
+        }
+      };
+
+      if (event.data instanceof Blob) {
+        protoBlobToText(event.data)
+          .then((textData) => processMessage(textData))
+          .catch((error) => {
+            console.error("Error processing protobuf message:", error);
+            enqueueSnackbar("Error processing incoming event", {
+              variant: "error",
+              anchorOrigin: { horizontal: "right", vertical: "bottom" },
+            });
+          });
+      } else {
+        let parsed: unknown = event.data;
+        try {
+          parsed = JSON.parse(event.data as string);
+        } catch {
+          // Non-JSON payload; proceed with raw data
+        }
+        processMessage(parsed);
       }
     },
     [enqueueSnackbar, incrementCount, addEvent, isEventNewerThanSession],
@@ -190,7 +212,6 @@ export const EventStream = () => {
   const handleWebSocketError = useCallback(
     (error: Event) => {
       logWebSocketError(error);
-
       enqueueSnackbar("Event stream connection error. Reconnection attempts may follow.", {
         variant: "error",
         anchorOrigin: { horizontal: "right", vertical: "bottom" },

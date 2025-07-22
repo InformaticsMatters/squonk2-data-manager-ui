@@ -82,19 +82,24 @@ export const storageType = getPrefixedMessageNameFromSchema(
 ) as StorageTypeName;
 // --- End Runtime Constants ---
 
-type ProcessingMessagePayload = {
+interface MessageBase {
+  timestamp: string;
+  ordinal: number;
+}
+
+interface ProcessingMessagePayload extends MessageBase {
   type: ProcessingTypeName;
   name: string;
   coins: string;
   product: string;
-};
+}
 
-type StorageMessagePayload = {
+interface StorageMessagePayload extends MessageBase {
   type: StorageTypeName;
   name: string;
   bytes: string;
   reason: StorageReasonEnum;
-};
+}
 
 // Discriminated union type representing the possible charge message payloads
 // derived from Protobuf messages (Processing or Storage).
@@ -103,6 +108,8 @@ export type ChargeMessage = ProcessingMessagePayload | StorageMessagePayload;
 interface EventStreamMessage {
   message_type: string;
   message_body: any;
+  ess_timestamp: string;
+  ess_ordinal: number;
 }
 
 /**
@@ -133,6 +140,8 @@ export const getMessageFromEvent = (event: EventStreamMessage): ChargeMessage | 
     case processingType: {
       const parsed = fromJson(MerchantProcessingChargeMessageSchema, event.message_body);
       return {
+        timestamp: parsed.timestamp,
+        ordinal: event.ess_ordinal,
         type: processingType,
         name: parsed.name,
         coins: parsed.coins,
@@ -141,7 +150,14 @@ export const getMessageFromEvent = (event: EventStreamMessage): ChargeMessage | 
     }
     case storageType: {
       const parsed = fromJson(MerchantStorageChargeMessageSchema, event.message_body);
-      return { type: storageType, name: parsed.name, bytes: parsed.bytes, reason: parsed.reason };
+      return {
+        timestamp: parsed.timestamp,
+        ordinal: event.ess_ordinal,
+        type: storageType,
+        name: parsed.name,
+        bytes: parsed.bytes,
+        reason: parsed.reason,
+      };
     }
     default:
       return null;

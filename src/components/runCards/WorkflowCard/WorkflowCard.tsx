@@ -1,6 +1,6 @@
 import { type WorkflowSummary } from "@squonk/data-manager-client";
 
-import { Box, Chip, List, ListItemButton, ListItemText, Typography } from "@mui/material";
+import { Box, List, ListItemButton, ListItemText, Typography } from "@mui/material";
 import A from "next/link";
 
 import { useCurrentProjectId } from "../../../hooks/projectHooks";
@@ -99,14 +99,6 @@ export const WorkflowCard = ({ workflow, runningWorkflows = [] }: WorkflowCardPr
       <Typography gutterBottom variant="body2">
         Scope: {workflow.scope}
         {workflow.scope_id ? ` (${workflow.scope_id})` : null}
-      </Typography>
-      <Typography gutterBottom variant="body2">
-        Validated:{" "}
-        {workflow.validated ? (
-          <Chip color="success" label="Validated" size="small" />
-        ) : (
-          <Chip color="warning" label="Not validated" size="small" />
-        )}
       </Typography>
       {!!workflow.source_id && (
         <Typography gutterBottom variant="body2">

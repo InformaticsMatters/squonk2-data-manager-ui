@@ -5,12 +5,12 @@
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20",
   "features": {
-    "ghcr.io/devcontainers-contrib/features/pnpm:2": {
-      "version": "10.9.0"
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20",
+      "nodeGypDependencies": true,
+      "pnpmVersion": "10.9.0"
     }
   },
-  // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
   // Use 'postCreateCommand' to run commands after the container is created.

@@ -37,6 +37,8 @@ let nextConfig: NextConfig = {
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages: MONOREPO_MODE ? ["@squonk/mui-theme", "@squonk/sdf-parser"] : [],
+  // Enable production source maps for Sentry error reporting
+  productionBrowserSourceMaps: true,
   // Allow mdx content and mdx files as pages
   webpack(config, options) {
     if (options.isServer) {
@@ -55,22 +57,17 @@ let nextConfig: NextConfig = {
 
 nextConfig = withMDX(nextConfig);
 nextConfig = withRoutes(nextConfig);
-nextConfig = withSentryConfig(
-  nextConfig,
-  {
-    // Suppresses source map uploading logs during build
-    silent: true,
-    org: "informatics-matters",
-    project: "data-manager-ui",
+nextConfig = withSentryConfig(nextConfig, {
+  // Suppresses source map uploading logs during build
+  silent: true,
+  org: "informatics-matters",
+  project: "data-manager-ui",
 
-    // Automatically delete source maps after uploading them to Sentry
-    sourcemaps: {
-      deleteSourcemapsAfterUpload: true,
-    },
+  // Automatically delete source maps after uploading them to Sentry
+  sourcemaps: { deleteSourcemapsAfterUpload: true },
 
-    // Hides source maps from generated client bundles
-    hideSourceMaps: true,
-  },
-);
+  // Hides source maps from generated client bundles
+  hideSourceMaps: true,
+});
 
 export default nextConfig;

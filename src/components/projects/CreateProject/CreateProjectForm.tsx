@@ -86,12 +86,6 @@ export const CreateProjectForm = ({
       : ProductDetailFlavour.EVALUATION
   ) satisfies ProductDetailFlavour;
 
-  const initialValues: Values = {
-    projectName: "",
-    flavour: product?.flavour ?? defaultFlavour,
-    isPrivate: isPrivateDefaultValues[defaultPrivacy],
-  };
-
   const theme = useTheme();
   const queryClient = useQueryClient();
 
@@ -106,6 +100,13 @@ export const CreateProjectForm = ({
   const { enqueueError, enqueueSnackbar } = useEnqueueError<AsError | DmError>();
 
   const { setCurrentProjectId } = useCurrentProjectId();
+
+  // Calculate initial values based on data availability
+  const initialValues: Values = {
+    projectName: "",
+    flavour: product?.flavour ?? (isLoading ? "" : defaultFlavour),
+    isPrivate: isPrivateDefaultValues[defaultPrivacy],
+  };
 
   const create = async (values: Values, productId?: ProductDetail["id"]) => {
     try {

@@ -238,7 +238,6 @@ export const EventStream = () => {
   useEffect(() => {
     setWebSocketStatus(readyState);
   }, [readyState, setWebSocketStatus]);
-
   useEffect(() => {
     if (asRole && data) {
       setLocation(data);

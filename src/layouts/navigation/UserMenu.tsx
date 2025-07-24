@@ -44,7 +44,7 @@ export const UserMenu = () => {
       <Popper
         transition
         placement="bottom-start"
-        sx={{ "& .MuiPopover-paper": { p: 1 } }}
+        sx={{ "& .MuiPopover-paper": { p: 1 }, zIndex: (theme) => theme.zIndex.appBar + 1 }}
         {...bindPopper(popupState)}
         // anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         // transformOrigin={{ vertical: "top", horizontal: "left" }}

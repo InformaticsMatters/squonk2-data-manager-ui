@@ -42,7 +42,7 @@ const UserMenuContentInner = () => {
         <Typography sx={{ fontWeight: "bold" }}>{user.username}</Typography>
         <Box>
           Roles:
-          <Chips>
+          <Chips sx={{ justifyContent: "center" }}>
             <Chip label={dmRole ?? "No DM Role"} size="small" />
             <Chip label={asRole ?? "No AS Role"} size="small" />
           </Chips>

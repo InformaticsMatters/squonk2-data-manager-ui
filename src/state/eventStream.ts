@@ -1,3 +1,5 @@
+import { ReadyState } from "react-use-websocket";
+
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { atom, useAtom } from "jotai";
@@ -15,6 +17,21 @@ export const eventsAtom = atom<ChargeMessage[]>([]);
  * Atom to track when the user's session started
  */
 export const sessionStartTimeAtom = atom<dayjs.Dayjs | null>(null);
+
+/**
+ * Atom to track WebSocket connection status
+ */
+export const webSocketStatusAtom = atom<ReadyState>(ReadyState.CLOSED);
+
+/**
+ * Utility function to derive boolean status flags from ReadyState
+ */
+export const getWebSocketStatusFlags = (readyState: ReadyState) => ({
+  isConnected: readyState === ReadyState.OPEN,
+  isConnecting: readyState === ReadyState.CONNECTING,
+  isDisconnected: readyState === ReadyState.CLOSED,
+  isReconnecting: readyState === ReadyState.CLOSING,
+});
 
 /**
  * Hook to manage events with deduplication and sorting
@@ -56,7 +73,14 @@ export const useEventStream = () => {
     setEvents([]);
   };
 
-  return { events, addEvent, isEventNewerThanSession, initializeSession, clearEvents };
+  return {
+    events,
+    addEvent,
+    isEventNewerThanSession,
+    initializeSession,
+    clearEvents,
+    sessionStartTime,
+  };
 };
 
 /**

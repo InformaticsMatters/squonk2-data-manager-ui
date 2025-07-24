@@ -13,7 +13,11 @@ import { useSnackbar } from "notistack";
 
 import { useASAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { getMessageFromEvent } from "../../protobuf/protobuf";
-import { eventStreamEnabledAtom, useEventStream } from "../../state/eventStream";
+import {
+  eventStreamEnabledAtom,
+  useEventStream,
+  webSocketStatusAtom,
+} from "../../state/eventStream";
 import { useUnreadEventCount } from "../../state/notifications";
 import { EventMessage } from "../eventMessages/EventMessage";
 import { useIsEventStreamInstalled } from "./useIsEventStreamInstalled";
@@ -26,6 +30,10 @@ dayjs.extend(utc);
 const buildWebSocketUrl = (location: string): string => {
   const url = new URL(location);
   url.protocol = "wss:";
+
+  // Add ordinal parameter to get all historical messages
+  url.searchParams.set("stream_from_ordinal", "0");
+
   return url.toString();
 };
 
@@ -49,6 +57,7 @@ export const EventStream = () => {
   });
 
   const [eventStreamEnabled] = useAtom(eventStreamEnabledAtom);
+  const [, setWebSocketStatus] = useAtom(webSocketStatusAtom);
 
   const handleWebSocketMessage = useCallback(
     (event: MessageEvent) => {
@@ -101,7 +110,7 @@ export const EventStream = () => {
   // Build WebSocket URL
   const wsUrl = eventStreamEnabled && asRole && location ? buildWebSocketUrl(location) : null;
 
-  useWebSocket(wsUrl, {
+  const { readyState } = useWebSocket(wsUrl, {
     onOpen: handleWebSocketOpen,
     onClose: handleWebSocketClose,
     onError: handleWebSocketError,
@@ -111,6 +120,11 @@ export const EventStream = () => {
     reconnectAttempts: 5,
     reconnectInterval: 3000,
   });
+
+  // Expose connection status for status indicator
+  useEffect(() => {
+    setWebSocketStatus(readyState);
+  }, [readyState, setWebSocketStatus]);
 
   useEffect(() => {
     if (asRole && data) {

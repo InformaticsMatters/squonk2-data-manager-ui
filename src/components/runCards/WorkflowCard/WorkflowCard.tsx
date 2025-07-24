@@ -90,21 +90,19 @@ export const WorkflowCard = ({ workflow, runningWorkflows = [] }: WorkflowCardPr
       }}
       key={workflow.id}
     >
+      <Typography
+        color="text.secondary"
+        sx={{ textTransform: "uppercase", fontWeight: "bold" }}
+        variant="caption"
+      >
+        Workflow
+      </Typography>
       <Typography gutterBottom>
         {workflow.workflow_description ?? <em>No description</em>}
       </Typography>
       <Typography gutterBottom variant="body2">
         Version: {workflow.version ?? <em>n/a</em>}
       </Typography>
-      <Typography gutterBottom variant="body2">
-        Scope: {workflow.scope}
-        {workflow.scope_id ? ` (${workflow.scope_id})` : null}
-      </Typography>
-      {!!workflow.source_id && (
-        <Typography gutterBottom variant="body2">
-          Source Workflow ID: {workflow.source_id}
-        </Typography>
-      )}
     </BaseCard>
   );
 };

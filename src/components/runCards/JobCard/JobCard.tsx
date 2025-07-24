@@ -2,7 +2,18 @@ import { useState } from "react";
 
 import { type JobSummary } from "@squonk/data-manager-client";
 
-import { Alert, Chip, LinearProgress, Link, MenuItem, TextField, Typography } from "@mui/material";
+import { Launch as LaunchIcon } from "@mui/icons-material";
+import {
+  Alert,
+  Box,
+  Chip,
+  IconButton,
+  LinearProgress,
+  MenuItem,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import dynamic from "next/dynamic";
 import semver from "semver";
 
@@ -77,24 +88,57 @@ export const JobCard = ({ projectId, job: jobs, disabled = false }: ApplicationC
       header={{ color: "primary.main", subtitle: job.name, avatar: job.job[0], title: job.job }}
       key={projectId} // Reset state when project changes
     >
-      <Typography gutterBottom>{job.description}</Typography>
-      <Typography variant="body2">
-        <Link href={job.doc_url} rel="noopener noreferrer" target="_blank">
-          docs
-        </Link>
+      <Typography
+        color="text.secondary"
+        sx={{ textTransform: "uppercase", fontWeight: "bold" }}
+        variant="caption"
+      >
+        Job
       </Typography>
-      <Typography gutterBottom>
-        {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
-        <em>{job.category || "<none>"}</em> : {job.collection}
-      </Typography>
-      <Chips>
-        {job.keywords?.map((word) => (
-          <Chip color="primary" key={word} label={word} size="small" variant="outlined" />
-        ))}
-      </Chips>
+
+      {!!job.description && (
+        <Typography sx={{ mt: 1, mb: 2, textWrap: "pretty" }} variant="body1">
+          {job.description}
+          {!!job.doc_url && (
+            <Tooltip title="View documentation">
+              <IconButton
+                href={job.doc_url}
+                rel="noopener noreferrer"
+                size="small"
+                sx={{ ml: 0.5, p: 0.25, verticalAlign: "middle" }}
+                target="_blank"
+              >
+                <LaunchIcon sx={{ fontSize: "0.875rem" }} />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Typography>
+      )}
+
+      <Box sx={{ mb: 2 }}>
+        <Typography gutterBottom color="text.secondary" variant="body2">
+          Category & Collection:
+        </Typography>
+        <Typography variant="body1">
+          <em>{job.category ?? "No category"}</em> • {job.collection}
+        </Typography>
+      </Box>
+
+      {!!job.keywords && job.keywords.length > 0 && (
+        <Box sx={{ mb: 2 }}>
+          <Typography gutterBottom color="text.secondary" variant="body2">
+            Keywords:
+          </Typography>
+          <Chips>
+            {job.keywords.map((word) => (
+              <Chip color="primary" key={word} label={word} size="small" variant="outlined" />
+            ))}
+          </Chips>
+        </Box>
+      )}
 
       {!!job.disabled_reason && (
-        <Alert severity="warning" sx={{ mt: 1, mb: -2 }}>
+        <Alert severity="warning" sx={{ mt: 1 }}>
           {job.disabled_reason}
         </Alert>
       )}

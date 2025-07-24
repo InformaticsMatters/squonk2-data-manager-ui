@@ -59,6 +59,7 @@ export interface BaseCardProps {
  * * optional actions that are always displayed - {@link actions}
  * * an optional collapsed view that can be enabled by default
  * * children are passed into the main area (unexpanded view) of the component
+ * * coloured top border using the header color
  */
 export const BaseCard = ({
   children,
@@ -72,7 +73,7 @@ export const BaseCard = ({
   const [expanded, setExpanded] = useState(!collapsedByDefault);
 
   return (
-    <Card>
+    <Card sx={{ borderTop: header?.color ? "3px solid" : "none", borderTopColor: header?.color }}>
       {!!header && (
         <CardHeader
           avatar={

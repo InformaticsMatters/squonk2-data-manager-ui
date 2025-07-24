@@ -1,6 +1,6 @@
 import { type ApplicationSummary } from "@squonk/data-manager-client";
 
-import { CircularProgress, LinearProgress } from "@mui/material";
+import { CircularProgress, LinearProgress, Typography } from "@mui/material";
 import dynamic from "next/dynamic";
 
 import { useIsUserAdminOrEditorOfCurrentProject } from "../../../hooks/projectHooks";
@@ -51,6 +51,14 @@ export const ApplicationCard = ({ app, projectId }: ApplicationCardProps) => {
         avatar: app.kind[0],
         color: "secondary.dark",
       }}
-    />
+    >
+      <Typography
+        color="text.secondary"
+        sx={{ textTransform: "uppercase", fontWeight: "bold" }}
+        variant="caption"
+      >
+        Application
+      </Typography>
+    </BaseCard>
   );
 };

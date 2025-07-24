@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.6.0-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.6.0-dev.1...5.6.0-dev.2) (2025-07-24)
+
+
+### Features
+
+* improve event stream connection logging ([aa8235d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/aa8235d090bcd448032d5ffbd3aa868a4d53c9c1))
+
+
+### Miscellaneous Chores
+
+* release 5.6.0-dev.2 ([22cc9aa](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/22cc9aa95c82d2fe66c4538b0198cc0b399caa17))
+
 ## [5.6.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.6.0-dev.0...5.6.0-dev.1) (2025-07-24)
 
 

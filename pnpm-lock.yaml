@@ -140,8 +140,8 @@ importers:
         specifier: 4.0.0
         version: 4.0.0
       ketcher-core:
-        specifier: 3.2.0
-        version: 3.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 3.4.0
+        version: 3.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ketcher-react:
         specifier: 3.2.0
         version: 3.2.0(@types/react@19.1.8)(immutable@5.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -305,6 +305,10 @@ packages:
 
   '@babel/runtime@7.26.0':
     resolution: {integrity: sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.27.6':
+    resolution: {integrity: sha512-vbavdySgbTTrmFE+EsiqUTzlOr5bzlnJtUv9PynGCAKvfQqjIXbvFdumPM/GxMDfyuGMJaJAU6TO4zc1Jf1i8Q==}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.25.9':
@@ -4060,8 +4064,8 @@ packages:
   kdbush@4.0.2:
     resolution: {integrity: sha512-WbCVYJ27Sz8zi9Q7Q0xHC+05iwkm3Znipc2XTlrnJbsHMYktW4hPhXUE8Ys1engBrvffoSCqbil1JQAa7clRpA==}
 
-  ketcher-core@3.2.0:
-    resolution: {integrity: sha512-j+joWHIanQVFdCHazjMS+7gOYb9Zd015qBG0fdIspntXOPZa+5NDrSHF2SnTSLQFoH4RlU5/lnfw1XFw1iOUZA==}
+  ketcher-core@3.4.0:
+    resolution: {integrity: sha512-B+mS4y/iSQmHxA/5nLDNRZcm6gDfDOpepD40tCMWrPaMJu3eDxueyHb5+vAciprkH05CogwV+BVEbI/Zm8CNyg==}
     engines: {node: '>=14'}
 
   ketcher-react@3.2.0:
@@ -5980,10 +5984,6 @@ packages:
   which-module@2.0.1:
     resolution: {integrity: sha512-iBdZ57RDvnOR9AGBhML2vFZf7h8vmBjhoaZqODJBFWHVtKkDmKuHai3cx5PgVMrX5YDNp27AofYbAwctSS+vhQ==}
 
-  which-typed-array@1.1.18:
-    resolution: {integrity: sha512-qEcY+KJYlWyLH9vNbsr6/5j59AXk5ni5aakf8ldzBvGde6Iz4sxZGkJyWSAueTG7QhOvNRYb1lDdFmL5Td0QKA==}
-    engines: {node: '>= 0.4'}
-
   which-typed-array@1.1.19:
     resolution: {integrity: sha512-rEvr90Bck4WZt9HHFC4DJMsjvu7x+r6bImz0/BrbWb7A2djJ8hnZMrWnHo9F8ssv0OMErasDhftrfROTyqSDrw==}
     engines: {node: '>= 0.4'}
@@ -6175,6 +6175,8 @@ snapshots:
   '@babel/runtime@7.26.0':
     dependencies:
       regenerator-runtime: 0.14.1
+
+  '@babel/runtime@7.27.6': {}
 
   '@babel/template@7.25.9':
     dependencies:
@@ -10350,7 +10352,7 @@ snapshots:
 
   is-typed-array@1.1.15:
     dependencies:
-      which-typed-array: 1.1.18
+      which-typed-array: 1.1.19
 
   is-weakmap@2.0.2: {}
 
@@ -10464,9 +10466,9 @@ snapshots:
 
   kdbush@4.0.2: {}
 
-  ketcher-core@3.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  ketcher-core@3.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
-      '@babel/runtime': 7.26.0
+      '@babel/runtime': 7.27.6
       assert: 2.1.0
       d3: 7.9.0
       file-saver: 2.0.5
@@ -10494,7 +10496,7 @@ snapshots:
       font-face-observer: 1.0.0
       hoist-non-react-statics: 3.3.2
       intersection-observer: 0.12.2
-      ketcher-core: 3.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      ketcher-core: 3.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       lodash: 4.17.21
       miew-react: 1.0.0(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react: 19.1.0
@@ -10530,7 +10532,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.26.0
       indigo-ketcher: 1.30.0
-      ketcher-core: 3.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      ketcher-core: 3.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     transitivePeerDependencies:
       - react
       - react-dom
@@ -12899,7 +12901,7 @@ snapshots:
       is-arguments: 1.2.0
       is-generator-function: 1.0.10
       is-typed-array: 1.1.15
-      which-typed-array: 1.1.18
+      which-typed-array: 1.1.19
 
   uuid@9.0.1: {}
 
@@ -13061,15 +13063,6 @@ snapshots:
       is-weakset: 2.0.4
 
   which-module@2.0.1: {}
-
-  which-typed-array@1.1.18:
-    dependencies:
-      available-typed-arrays: 1.0.7
-      call-bind: 1.0.8
-      call-bound: 1.0.4
-      for-each: 0.3.3
-      gopd: 1.2.0
-      has-tostringtag: 1.0.2
 
   which-typed-array@1.1.19:
     dependencies:

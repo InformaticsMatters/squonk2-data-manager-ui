@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.6.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.6.0-dev.0...5.6.0-dev.1) (2025-07-24)
+
+
+### Features
+
+* add event stream history ([#1691](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1691)) ([50d289f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/50d289fcf43c33dd14ab1ee475fe67b18975e961))
+* improve design of app, job and workflow cards ([3007b98](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3007b9892daa599179aafe210e6ac1faa3c9ab73))
+
+
+### Bug Fixes
+
+* avoid es connections when it is not installed ([8379209](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8379209ddb379ae59e4ef6e09c5568c789a74889))
+* fix default name for jobs to be usable ([fd1ae2f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fd1ae2f3d3e7c1610c38be7a0bc95d372e6a047a))
+* fix MUI warning for project flavour ([89389df](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/89389df1dfc43872dd0a287c7e35bd63311ab634))
+* pin nodejs version in devcontainer ([2e7dbf6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2e7dbf60195492924ceff8ab19be53e29d6d03b2))
+
+
+### Miscellaneous Chores
+
+* release 5.6.0-dev.1 ([76d5289](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/76d528988673fc1402ac12dd275bdc012fdf46fd))
+
 ## [5.6.0-dev.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.6.0-rc.1...5.6.0-dev.0) (2025-07-19)
 
 

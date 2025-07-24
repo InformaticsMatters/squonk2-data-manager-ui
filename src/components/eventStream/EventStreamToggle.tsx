@@ -23,7 +23,11 @@ export const EventStreamToggle = () => {
         />
       }
       label={`Event stream ${isEventStreamInstalled ? "(alpha)" : "(not available)"}`}
-      sx={{ mb: 2 }}
+      sx={{
+        margin: 0,
+        alignItems: "center",
+        "& .MuiFormControlLabel-label": { fontSize: "0.875rem", lineHeight: 1.2 },
+      }}
     />
   );
 };

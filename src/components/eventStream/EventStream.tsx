@@ -6,34 +6,79 @@ import {
   useGetEventStream,
 } from "@squonk/account-server-client/event-stream";
 
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { useAtom } from "jotai";
 import { useSnackbar } from "notistack";
 
 import { useASAuthorizationStatus } from "../../hooks/useIsAuthorized";
-import { getMessageFromEvent, protoBlobToText } from "../../protobuf/protobuf";
-import { eventStreamEnabledAtom } from "../../state/eventStream";
+import { getMessageFromEvent } from "../../protobuf/protobuf";
+import {
+  eventStreamEnabledAtom,
+  useEventStream,
+  webSocketStatusAtom,
+} from "../../state/eventStream";
+import { useUnreadEventCount } from "../../state/notifications";
 import { EventMessage } from "../eventMessages/EventMessage";
 import { useIsEventStreamInstalled } from "./useIsEventStreamInstalled";
 
+dayjs.extend(utc);
+
+/**
+ * Builds WebSocket URL
+ */
+const buildWebSocketUrl = (location: string): string => {
+  const url = new URL(location);
+  url.protocol = "wss:";
+
+  // Add ordinal parameter to get all historical messages
+  url.searchParams.set("stream_from_ordinal", "1");
+
+  return url.toString();
+};
+
+/**
+ * Manages WebSocket connection for event stream and displays toast notifications
+ */
 export const EventStream = () => {
   const isEventStreamInstalled = useIsEventStreamInstalled();
   const [location, setLocation] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
+  const { incrementCount } = useUnreadEventCount();
   const asRole = useASAuthorizationStatus();
+  const { addEvent, isEventNewerThanSession, initializeSession } = useEventStream();
 
   const { data, error: streamError } = useGetEventStream({
     query: { select: (data) => data.location, enabled: !!asRole && isEventStreamInstalled },
   });
-  const { mutate: createEventStream } = useCreateEventStream({
-    mutation: {
-      onSuccess: (eventStreamResponse) => {
-        setLocation(eventStreamResponse.location);
-      },
-    },
-  });
-  const [eventStreamEnabled] = useAtom(eventStreamEnabledAtom);
 
-  // Define callbacks *before* useWebSocket hook
+  const { mutate: createEventStream } = useCreateEventStream({
+    mutation: { onSuccess: (eventStreamResponse) => setLocation(eventStreamResponse.location) },
+  });
+
+  const [eventStreamEnabled] = useAtom(eventStreamEnabledAtom);
+  const [, setWebSocketStatus] = useAtom(webSocketStatusAtom);
+
+  const handleWebSocketMessage = useCallback(
+    (event: MessageEvent) => {
+      const message = getMessageFromEvent(JSON.parse(event.data));
+
+      if (
+        message &&
+        addEvent(message) && // Only show toast for events newer than session start
+        isEventNewerThanSession(message)
+      ) {
+        enqueueSnackbar(<EventMessage message={message} />, {
+          variant: "default",
+          anchorOrigin: { horizontal: "right", vertical: "bottom" },
+          autoHideDuration: 10_000,
+        });
+        incrementCount();
+      }
+    },
+    [enqueueSnackbar, incrementCount, addEvent, isEventNewerThanSession],
+  );
+
   const handleWebSocketOpen = useCallback(() => {
     enqueueSnackbar("Connected to event stream", {
       variant: "success",
@@ -43,19 +88,14 @@ export const EventStream = () => {
 
   const handleWebSocketClose = useCallback(
     (event: CloseEvent) => {
-      console.log(event);
-      if (event.wasClean) {
-        enqueueSnackbar("Disconnected from event stream", {
-          variant: "info",
-          anchorOrigin: { horizontal: "right", vertical: "bottom" },
-        });
-      } else {
-        console.warn("EventStream: WebSocket closed unexpectedly.");
-        enqueueSnackbar("Event stream disconnected unexpectedly. Attempting to reconnect...", {
-          variant: "warning",
-          anchorOrigin: { horizontal: "right", vertical: "bottom" },
-        });
-      }
+      const message = event.wasClean
+        ? "Disconnected from event stream"
+        : "Event stream disconnected unexpectedly. Attempting to reconnect...";
+
+      enqueueSnackbar(message, {
+        variant: event.wasClean ? "info" : "warning",
+        anchorOrigin: { horizontal: "right", vertical: "bottom" },
+      });
     },
     [enqueueSnackbar],
   );
@@ -67,42 +107,10 @@ export const EventStream = () => {
     });
   }, [enqueueSnackbar]);
 
-  const handleWebSocketMessage = useCallback(
-    (event: MessageEvent) => {
-      if (event.data instanceof Blob) {
-        protoBlobToText(event.data)
-          .then((textData) => {
-            const message = getMessageFromEvent(textData);
-            if (message) {
-              enqueueSnackbar(<EventMessage message={message} />, {
-                variant: "default",
-                anchorOrigin: { horizontal: "right", vertical: "bottom" },
-                autoHideDuration: 10_000,
-              });
-            } else {
-              console.warn(
-                "Received event data could not be parsed into a known message type:",
-                textData,
-              );
-            }
-          })
-          .catch((error) => {
-            console.error("Error processing protobuf message:", error);
-            enqueueSnackbar("Error processing incoming event", {
-              variant: "error",
-              anchorOrigin: { horizontal: "right", vertical: "bottom" },
-            });
-          });
-      } else {
-        console.warn("Received non-Blob WebSocket message:", event.data);
-      }
-    },
-    [enqueueSnackbar],
-  );
+  // Build WebSocket URL
+  const wsUrl = eventStreamEnabled && asRole && location ? buildWebSocketUrl(location) : null;
 
-  const wsUrl = eventStreamEnabled && asRole ? (location?.replace("ws", "wss") ?? null) : null;
-
-  useWebSocket(wsUrl, {
+  const { readyState } = useWebSocket(wsUrl, {
     onOpen: handleWebSocketOpen,
     onClose: handleWebSocketClose,
     onError: handleWebSocketError,
@@ -113,7 +121,11 @@ export const EventStream = () => {
     reconnectInterval: 3000,
   });
 
-  // Effects can now safely use the hook results or return early based on auth
+  // Expose connection status for status indicator
+  useEffect(() => {
+    setWebSocketStatus(readyState);
+  }, [readyState, setWebSocketStatus]);
+
   useEffect(() => {
     if (asRole && data) {
       setLocation(data);
@@ -125,6 +137,11 @@ export const EventStream = () => {
       createEventStream({ data: { format: "JSON_STRING" } });
     }
   }, [asRole, streamError, createEventStream]);
+
+  // Initialize session on client side only
+  useEffect(() => {
+    initializeSession();
+  }, [initializeSession]);
 
   return null;
 };

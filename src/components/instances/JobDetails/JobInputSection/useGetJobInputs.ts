@@ -27,8 +27,6 @@ export const useGetJobInputs = (instance: InstanceGetResponse | InstanceSummary)
     { query: { enabled: inputsEnabled, retry: instance.job_id === TEST_JOB_ID ? 1 : 3 } },
   );
 
-  console.log(instance);
-
   // Parse application specification
   const applicationSpecification: ApplicationSpecification = instance.application_specification
     ? JSON.parse(instance.application_specification)

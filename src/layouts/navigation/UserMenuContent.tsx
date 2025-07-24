@@ -5,29 +5,9 @@ import { AuthButton } from "../../components/auth/AuthButton";
 import { CenterLoader } from "../../components/CenterLoader";
 import { Chips } from "../../components/Chips";
 import { ColourSchemeSelection } from "../../components/ColourSchemeSelection";
-import { EventStreamToggle } from "../../components/eventStream/EventStreamToggle";
+import { EventStreamMessages } from "../../components/eventStream/EventStreamMessages";
 import { useASAuthorizationStatus, useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
-
-/**
- * Content of the user menu
- */
-export const UserMenuContent = () => {
-  const theme = useTheme();
-  const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
-  // Removed eventStreamEnabledAtom usage, now handled in EventStreamToggle
-
-  return (
-    <Box sx={{ textAlign: biggerThanMd ? "center" : undefined }}>
-      <Typography gutterBottom variant="h3">
-        Account
-      </Typography>
-      <UserMenuContentInner />
-      <ColourSchemeSelection />
-      <EventStreamToggle />
-    </Box>
-  );
-};
 
 const UserMenuContentInner = () => {
   const asRole = useASAuthorizationStatus();
@@ -62,7 +42,7 @@ const UserMenuContentInner = () => {
         <Typography sx={{ fontWeight: "bold" }}>{user.username}</Typography>
         <Box>
           Roles:
-          <Chips>
+          <Chips sx={{ justifyContent: "center" }}>
             <Chip label={dmRole ?? "No DM Role"} size="small" />
             <Chip label={asRole ?? "No AS Role"} size="small" />
           </Chips>
@@ -73,4 +53,24 @@ const UserMenuContentInner = () => {
   }
 
   return <AuthButton mode="login" />;
+};
+
+/**
+ * Content of the user menu
+ */
+export const UserMenuContent = () => {
+  const theme = useTheme();
+  const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  // Removed eventStreamEnabledAtom usage, now handled in EventStreamToggle
+
+  return (
+    <Box sx={{ textAlign: biggerThanMd ? "center" : undefined }}>
+      <Typography gutterBottom variant="h3">
+        Account
+      </Typography>
+      <UserMenuContentInner />
+      <ColourSchemeSelection />
+      <EventStreamMessages />
+    </Box>
+  );
 };

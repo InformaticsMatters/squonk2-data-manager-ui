@@ -53,6 +53,7 @@ export const JobCard = ({ projectId, job: jobs, disabled = false }: ApplicationC
 
   return (
     <BaseCard
+      accentColor="primary.main"
       actions={({ setExpanded }) => (
         <>
           <TextField
@@ -85,7 +86,7 @@ export const JobCard = ({ projectId, job: jobs, disabled = false }: ApplicationC
           }
         />
       }
-      header={{ color: "primary.main", subtitle: job.name, avatar: job.job[0], title: job.job }}
+      header={{ subtitle: job.name, avatar: job.job[0], title: job.job }}
       key={projectId} // Reset state when project changes
     >
       <Typography

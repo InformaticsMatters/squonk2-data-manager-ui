@@ -34,6 +34,7 @@ export const ApplicationCard = ({ app, projectId }: ApplicationCardProps) => {
 
   return (
     <BaseCard
+      accentColor="secondary.dark"
       actions={({ setExpanded }) => (
         <ApplicationModalButton
           applicationId={app.application_id}
@@ -45,12 +46,7 @@ export const ApplicationCard = ({ app, projectId }: ApplicationCardProps) => {
       collapsed={
         <InstancesList predicate={(instance) => instance.application_id === app.application_id} />
       }
-      header={{
-        title: app.kind,
-        subtitle: app.group,
-        avatar: app.kind[0],
-        color: "secondary.dark",
-      }}
+      header={{ title: app.kind, subtitle: app.group, avatar: app.kind[0] }}
     >
       <Typography
         color="text.secondary"

@@ -44,6 +44,7 @@ export const WorkflowCard = ({ workflow, runningWorkflows = [] }: WorkflowCardPr
 
   return (
     <BaseCard
+      accentColor="#f1c40f"
       actions={() => (
         <RunWorkflowButton
           disabled={!projectId}
@@ -83,7 +84,6 @@ export const WorkflowCard = ({ workflow, runningWorkflows = [] }: WorkflowCardPr
         )
       }
       header={{
-        color: "#f1c40f",
         subtitle: workflow.name,
         avatar: workflow.name[0],
         title: workflow.workflow_name ?? workflow.name,

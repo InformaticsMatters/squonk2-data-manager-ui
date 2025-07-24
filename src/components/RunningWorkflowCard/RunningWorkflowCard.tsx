@@ -199,6 +199,7 @@ export const RunningWorkflowCard = ({
 
   return (
     <ResultCard
+      accentColor="#f1c40f"
       actions={() => null}
       collapsed={collapsed}
       collapsedByDefault={collapsedByDefault}

@@ -76,10 +76,10 @@ export const JobModal = ({
   const { data: job } = useGetJob(jobId, undefined, {
     query: { retry: jobId === TEST_JOB_ID ? 1 : 3 },
   });
-  const [nameState, setNameState] = useState(instance?.name ?? "");
+  const [nameState, setNameState] = useState(instance?.job_name ?? "");
   useEffect(() => {
-    job?.name && setNameState(job.name);
-  }, [job?.name]);
+    job?.job && setNameState(job.job);
+  }, [job?.job]);
 
   const spec = instance?.application_specification;
   const specVariables = useMemo(

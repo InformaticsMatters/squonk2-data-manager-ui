@@ -42,6 +42,7 @@ export const ResultCard: FC<ResultCardProps> = ({
   collapsedByDefault = true,
   collapsed,
   children,
+  accentColor,
 }) => {
   const [slideIn, setSlideIn] = useState(true);
 
@@ -49,6 +50,7 @@ export const ResultCard: FC<ResultCardProps> = ({
     <Slide appear={false} direction="right" in={slideIn}>
       <div>
         <BaseCard
+          accentColor={accentColor}
           actions={(params) => actions({ ...params, slideIn, setSlideIn })}
           collapsed={<CardContent>{collapsed}</CardContent>}
           collapsedByDefault={collapsedByDefault}

@@ -48,7 +48,11 @@ export interface BaseCardProps {
    * String values to be displayed in the header section of the card. Only title is required.
    * Missing values are not displayed.
    */
-  header?: { title: string; subtitle?: string; avatar?: string; color?: string };
+  header?: { title: string; subtitle?: string; avatar?: string };
+  /**
+   * Color for the avatar background and top border
+   */
+  accentColor?: string;
 }
 
 /**
@@ -68,16 +72,17 @@ export const BaseCard = ({
   collapsed,
   keepCollapsedMounted = true,
   collapsedByDefault = true,
+  accentColor,
 }: BaseCardProps) => {
   const [hasExpanded, setHasExpanded] = useState(!collapsedByDefault);
   const [expanded, setExpanded] = useState(!collapsedByDefault);
 
   return (
-    <Card sx={{ borderTop: header?.color ? "3px solid" : "none", borderTopColor: header?.color }}>
+    <Card sx={{ borderTop: accentColor ? "3px solid" : "none", borderTopColor: accentColor }}>
       {!!header && (
         <CardHeader
           avatar={
-            <Avatar sx={{ fontFamily: "verdana", backgroundColor: header.color ?? "transparent" }}>
+            <Avatar sx={{ fontFamily: "verdana", backgroundColor: accentColor ?? "transparent" }}>
               {header.avatar?.[0].toUpperCase()}
             </Avatar>
           }

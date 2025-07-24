@@ -53,6 +53,7 @@ export const ResultJobCard = ({
 
   return (
     <ResultCard
+      accentColor="primary.main"
       actions={({ setSlideIn }) => (
         <>
           <TerminateInstance

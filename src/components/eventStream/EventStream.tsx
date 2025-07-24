@@ -25,6 +25,90 @@ import { useIsEventStreamInstalled } from "./useIsEventStreamInstalled";
 dayjs.extend(utc);
 
 /**
+ * Logs WebSocket connection open event
+ */
+const logWebSocketOpen = () => {
+  console.log("[EventStream] WebSocket connection opened successfully");
+};
+
+/**
+ * Logs detailed WebSocket close event information
+ */
+const logWebSocketClose = (event: CloseEvent) => {
+  const closeInfo = {
+    code: event.code,
+    reason: event.reason || "No reason provided",
+    wasClean: event.wasClean,
+    timestamp: new Date().toISOString(),
+  };
+
+  console.log("[EventStream] WebSocket connection closed:", closeInfo);
+
+  // Log specific close codes for debugging
+  switch (event.code) {
+    case 1000:
+      console.log("[EventStream] Normal closure - connection completed successfully");
+      break;
+    case 1001:
+      console.log("[EventStream] Going away - server is shutting down or client navigating away");
+      break;
+    case 1002:
+      console.log("[EventStream] Protocol error - invalid data received");
+      break;
+    case 1003:
+      console.log("[EventStream] Unsupported data - received data type not supported");
+      break;
+    case 1005:
+      console.log("[EventStream] No status received - no close code provided");
+      break;
+    case 1006:
+      console.log("[EventStream] Abnormal closure - connection lost without close frame");
+      break;
+    case 1007:
+      console.log("[EventStream] Invalid frame payload data - received inconsistent data");
+      break;
+    case 1008:
+      console.log("[EventStream] Policy violation - message violates server policy");
+      break;
+    case 1009:
+      console.log("[EventStream] Message too big - message exceeds size limit");
+      break;
+    case 1010:
+      console.log("[EventStream] Client error - client terminated connection");
+      break;
+    case 1011:
+      console.log("[EventStream] Server error - server encountered error");
+      break;
+    case 1012:
+      console.log("[EventStream] Service restart - server restarting");
+      break;
+    case 1013:
+      console.log("[EventStream] Try again later - temporary server condition");
+      break;
+    case 1014:
+      console.log("[EventStream] Bad gateway - invalid response from upstream");
+      break;
+    case 1015:
+      console.log("[EventStream] TLS handshake - TLS handshake failed");
+      break;
+    default:
+      console.log(`[EventStream] Unknown close code: ${event.code}`);
+  }
+};
+
+/**
+ * Logs WebSocket error event details
+ */
+const logWebSocketError = (error: Event) => {
+  console.error("[EventStream] WebSocket connection error:", error);
+  console.error("[EventStream] Error details:", {
+    type: error.type,
+    target: error.target,
+    timestamp: new Date().toISOString(),
+  });
+};
+
+/**
  * Builds WebSocket URL
  */
 const buildWebSocketUrl = (location: string): string => {
@@ -80,6 +164,7 @@ export const EventStream = () => {
   );
 
   const handleWebSocketOpen = useCallback(() => {
+    logWebSocketOpen();
     enqueueSnackbar("Connected to event stream", {
       variant: "success",
       anchorOrigin: { horizontal: "right", vertical: "bottom" },
@@ -88,6 +173,8 @@ export const EventStream = () => {
 
   const handleWebSocketClose = useCallback(
     (event: CloseEvent) => {
+      logWebSocketClose(event);
+
       const message = event.wasClean
         ? "Disconnected from event stream"
         : "Event stream disconnected unexpectedly. Attempting to reconnect...";
@@ -100,12 +187,17 @@ export const EventStream = () => {
     [enqueueSnackbar],
   );
 
-  const handleWebSocketError = useCallback(() => {
-    enqueueSnackbar("Event stream connection error. Reconnection attempts may follow.", {
-      variant: "error",
-      anchorOrigin: { horizontal: "right", vertical: "bottom" },
-    });
-  }, [enqueueSnackbar]);
+  const handleWebSocketError = useCallback(
+    (error: Event) => {
+      logWebSocketError(error);
+
+      enqueueSnackbar("Event stream connection error. Reconnection attempts may follow.", {
+        variant: "error",
+        anchorOrigin: { horizontal: "right", vertical: "bottom" },
+      });
+    },
+    [enqueueSnackbar],
+  );
 
   // Build WebSocket URL
   const wsUrl = eventStreamEnabled && asRole && location ? buildWebSocketUrl(location) : null;

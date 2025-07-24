@@ -32,7 +32,7 @@ const buildWebSocketUrl = (location: string): string => {
   url.protocol = "wss:";
 
   // Add ordinal parameter to get all historical messages
-  url.searchParams.set("stream_from_ordinal", "0");
+  url.searchParams.set("stream_from_ordinal", "1");
 
   return url.toString();
 };

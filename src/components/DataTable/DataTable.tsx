@@ -6,6 +6,7 @@ import {
   SearchRounded as SearchRoundedIcon,
 } from "@mui/icons-material";
 import {
+  Alert,
   Box,
   IconButton,
   InputAdornment,
@@ -116,7 +117,7 @@ export interface DataTableProps<Data extends Record<string, any>> {
    */
   isLoading?: boolean;
   /**
-   * If true, displays the provided `error`.
+   * If truthy, displays the provided `error`.
    */
   error?: string;
 }
@@ -151,6 +152,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     customTableProps,
     customCellProps,
     customRowProps,
+    error,
   } = props;
   const tableData = useMemo(() => data ?? [], [data]);
 
@@ -252,6 +254,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
 
   const tableContents = (
     <>
+      {error ? <Alert severity="error">{error}</Alert> : null}
       {!!ToolbarChild || !!enableSearch ? (
         <Toolbar sx={{ pt: 2, alignItems: "flex-start", gap: 1 }}>
           {ToolbarChild}

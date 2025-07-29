@@ -137,7 +137,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
   return (
     <Box
       sx={{
-        "& .MuiPaper-root": {
+        "& .MuiPaper-root:last-child": {
           // Set height to fill remaining space, pushing footer just off screen
           // 164px is the height of the header and toolbar
           height: "calc(100vh - 164px)",
@@ -149,7 +149,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
         subRowsEnabled
         columns={columns}
         data={rows}
-        error={getErrorMessage(error)}
+        error={error ? getErrorMessage(error) : undefined}
         getRowId={(row) => row.fullPath}
         isLoading={isLoading}
         toolbarContent={

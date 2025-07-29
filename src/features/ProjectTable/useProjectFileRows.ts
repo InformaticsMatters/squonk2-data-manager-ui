@@ -26,7 +26,16 @@ const filePathFileToTableFile = (file: FilePathFile, breadcrumbs: string[]): Tab
 export const useProjectFileRows = (params: GetFilesParams) => {
   const breadcrumbs = useProjectBreadcrumbs();
 
-  const { data, error, isError, isLoading } = useGetFiles(params);
+  const { data, error, isError, isLoading } = useGetFiles(params, {
+    query: {
+      retry: (failureCount, error) => {
+        if (error.response?.status === 404) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+    },
+  });
 
   const dataFiles = data?.files;
   const paths = data?.paths;

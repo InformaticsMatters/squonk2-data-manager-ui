@@ -1,7 +1,5 @@
 import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
 
-import { useRouter } from "next/router";
-
 import { NextLink } from "../NextLink";
 
 export interface LogsButtonProps {
@@ -16,13 +14,12 @@ export interface LogsButtonProps {
 }
 
 export const LogsButton = ({ instanceId, instance }: LogsButtonProps) => {
-  const { query } = useRouter();
   return (
     <NextLink
       component="button"
       href={{
         pathname: "/project",
-        query: { ...query, project: instance.project_id, path: `.${instanceId}` },
+        query: { project: instance.project_id, path: `.${instanceId}` },
       }}
     >
       Logs

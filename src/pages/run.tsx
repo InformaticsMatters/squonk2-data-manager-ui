@@ -16,10 +16,7 @@ import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/runCards/ApplicationCard";
 import { JobCard } from "../components/runCards/JobCard";
 import { TEST_JOB_ID } from "../components/runCards/TestJob/jobId";
-import {
-  WorkflowCard,
-  type WorkflowRunListItem,
-} from "../components/runCards/WorkflowCard/WorkflowCard";
+import { WorkflowCard } from "../components/runCards/WorkflowCard/WorkflowCard";
 import { SearchTextField } from "../components/SearchTextField";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { useCurrentProject, useIsUserAdminOrEditorOfCurrentProject } from "../hooks/projectHooks";
@@ -148,9 +145,7 @@ const Run = () => {
     const workflowCards = Object.entries(filteredAndGroupedWorkflows).map(
       ([name, workflowGroup]) => {
         // Find all runs for this workflow definition
-        const runs: WorkflowRunListItem[] = runningWorkflows
-          .filter((rw) => rw.workflow.id === workflowGroup[0].id)
-          .map((rw) => ({ id: rw.id, name: rw.name }));
+        const runs = runningWorkflows.filter((rw) => rw.workflow.id === workflowGroup[0].id);
 
         return (
           <Grid key={name} size={{ md: 3, sm: 6, xs: 12 }}>

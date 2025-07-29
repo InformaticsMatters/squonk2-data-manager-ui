@@ -16,13 +16,19 @@ export interface WorkflowModalProps {
   projectId: string;
   open: boolean;
   onClose: () => void;
-  onLaunch?: (instanceId: string) => void;
+  onLaunch?: (runningWorkflowId: string) => void;
 }
 
 /**
  * Modal for running a workflow instance. Fetches workflow details and displays the correct form.
  */
-export const WorkflowModal = ({ workflowId, projectId, open, onClose }: WorkflowModalProps) => {
+export const WorkflowModal = ({
+  workflowId,
+  projectId,
+  open,
+  onClose,
+  onLaunch,
+}: WorkflowModalProps) => {
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
   const { data: workflow } = useGetWorkflow(workflowId);
@@ -45,8 +51,8 @@ export const WorkflowModal = ({ workflowId, projectId, open, onClose }: Workflow
 
   const handleSubmit = async () => {
     try {
-      workflow?.id &&
-        (await runWorkflow({
+      if (workflow?.id) {
+        const { id } = await runWorkflow({
           workflowId: workflow.id,
           data: {
             as_name: nameState,
@@ -54,8 +60,10 @@ export const WorkflowModal = ({ workflowId, projectId, open, onClose }: Workflow
             project_id: projectId,
             variables: JSON.stringify({ ...optionsFormData, ...inputsData }),
           },
-        }));
-      enqueueSnackbar("Workflow instance started successfully", { variant: "success" });
+        });
+        enqueueSnackbar("Workflow instance started successfully", { variant: "success" });
+        onLaunch && onLaunch(id);
+      }
     } catch (error) {
       enqueueError(error);
     } finally {

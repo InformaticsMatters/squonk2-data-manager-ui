@@ -1,5 +1,6 @@
 import {
   type InstanceGetResponsePhase,
+  type RunningWorkflowGetResponseStatus,
   type TaskSummaryProcessingStage,
 } from "@squonk/data-manager-client";
 
@@ -14,7 +15,7 @@ export interface StatusIconProps {
   /**
    * Task or Instance status
    */
-  state?: InstanceGetResponsePhase | TaskSummaryProcessingStage;
+  state?: InstanceGetResponsePhase | RunningWorkflowGetResponseStatus | TaskSummaryProcessingStage;
 }
 
 /**
@@ -30,11 +31,17 @@ export const StatusIcon = ({ state }: StatusIconProps) => {
     case "PENDING":
       return <FiberManualRecordRoundedIcon htmlColor={yellow[800]} />;
     case "DONE":
+    case "SUCCESS":
     case "COMPLETED":
     case "SUCCEEDED":
       return <CheckCircleRoundedIcon htmlColor={green[800]} />;
     case "FAILED":
+    case "FAILURE":
+    case "CRASH_LOOP_BACKOFF":
+    case "IMAGE_PULL_BACKOFF":
       return <ErrorRoundedIcon color="error" />;
+    case "USER_STOPPED":
+      return <ErrorRoundedIcon color="warning" />;
     default:
       return <FiberManualRecordRoundedIcon />;
   }

@@ -11,7 +11,7 @@ import {
 import { Button } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { DONE_PHASES } from "../../constants/instances";
+import { INSTANCE_DONE_PHASES } from "../../constants/results";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { WarningDeleteButton } from "../WarningDeleteButton";
 
@@ -41,7 +41,7 @@ export const TerminateInstance = ({
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
-  const done = DONE_PHASES.includes(phase);
+  const done = INSTANCE_DONE_PHASES.includes(phase);
 
   const verb = done ? "Delete" : "Terminate";
 

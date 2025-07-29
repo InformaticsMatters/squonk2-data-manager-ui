@@ -78,10 +78,7 @@ export const WorkflowModal = ({ workflowId, projectId, open, onClose }: Workflow
           fullWidth
           label="Workflow name"
           value={nameState}
-          onChange={(event) => {
-            console.log(event.target.value);
-            return setNameState(event.target.value);
-          }}
+          onChange={(event) => setNameState(event.target.value)}
         />
       </Box>
 

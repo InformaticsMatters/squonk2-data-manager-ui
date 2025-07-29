@@ -22,7 +22,7 @@
     "lint": "eslint --cache --max-warnings=0",
     "format": "eslint --fix --cache --max-warnings=0",
     "test": "playwright test",
-    "test:debug": "PWDEBUG=1 pnpm t -- --headed",
+    "test:debug": "PWDEBUG=1 playwright test -- --headed",
     "test:ci": "playwright test",
     "analyze": "ANALYZE=true next build",
     "analyze:server": "BUNDLE_ANALYZE=server next build",

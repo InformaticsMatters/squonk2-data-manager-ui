@@ -24,7 +24,6 @@ const mapToCardObjs = (
   tasks: TaskSummary[],
   workflows: RunningWorkflowSummary[],
 ): ResultCardItem[] => {
-  const todayIso = dayjs().toISOString();
   const instanceCardObjs = instances.map((instance) => ({
     type: "instance" as const,
     data: instance,
@@ -33,7 +32,7 @@ const mapToCardObjs = (
   const workflowCardObjs = workflows.map((workflow) => ({
     type: "workflow" as const,
     data: workflow,
-    time: todayIso,
+    time: workflow.started ?? dayjs().toISOString(), // Use the `started` property for workflows
   }));
   return [...instanceCardObjs, ...taskCardObjs, ...workflowCardObjs];
 };
@@ -110,7 +109,7 @@ export const ResultCards = ({
     .sort((a, b) => {
       const aTime = getTime(a);
       const bTime = getTime(b);
-      return dayjs(aTime).isBefore(dayjs(bTime)) ? 1 : -1;
+      return dayjs(bTime).isBefore(dayjs(aTime)) ? -1 : 1;
     })
     .map((item) => {
       switch (item.type) {

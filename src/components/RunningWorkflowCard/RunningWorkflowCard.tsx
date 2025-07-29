@@ -5,8 +5,8 @@ import { Alert } from "@mui/material";
 
 import { useIsUserAdminOrEditorOfCurrentProject } from "../../hooks/projectHooks";
 import { CenterLoader } from "../CenterLoader";
+import { DeleteWorkflowButton } from "../DeleteWorkflowButton";
 import { ResultCard } from "../results/ResultCard";
-import { TerminateWorkflowButton } from "../TerminateWorkflowButton";
 import { RunningWorkflowCollapsed } from "./RunningWorkflowCollapsed";
 
 export interface RunningWorkflowCardProps {
@@ -49,7 +49,7 @@ export const RunningWorkflowCard = ({
     <ResultCard
       accentColor="#f1c40f"
       actions={() => (
-        <TerminateWorkflowButton
+        <DeleteWorkflowButton
           disabled={!hasPermission}
           runningWorkflowId={runningWorkflowId}
           status={workflow?.status ?? workflowSummary?.status}

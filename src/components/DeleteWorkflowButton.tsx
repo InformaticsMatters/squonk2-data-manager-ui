@@ -3,6 +3,7 @@ import {
   getGetRunningWorkflowQueryKey,
   getGetRunningWorkflowsQueryKey,
   useDeleteRunningWorkflow,
+  useStopRunningWorkflow,
 } from "@squonk/data-manager-client/workflow";
 
 import { Button } from "@mui/material";
@@ -12,47 +13,47 @@ import { WORKFLOW_DONE_PHASES } from "../constants/results";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { WarningDeleteButton } from "./WarningDeleteButton";
 
-interface TerminateWorkflowButtonProps {
+interface DeleteWorkflowButtonProps {
   runningWorkflowId: string;
   status?: RunningWorkflowGetResponseStatus;
   disabled?: boolean;
 }
 
-export const TerminateWorkflowButton = ({
+export const DeleteWorkflowButton = ({
   runningWorkflowId,
   status,
   disabled = false,
-}: TerminateWorkflowButtonProps) => {
+}: DeleteWorkflowButtonProps) => {
   const queryClient = useQueryClient();
   const { mutateAsync: deleteWorkflow } = useDeleteRunningWorkflow();
+  const { mutateAsync: stopWorkflow } = useStopRunningWorkflow();
   const { enqueueError, enqueueSnackbar } = useEnqueueError();
 
   const done = WORKFLOW_DONE_PHASES.includes(status ?? RunningWorkflowGetResponseStatus.RUNNING);
 
-  const verb = done ? "Delete" : "Terminate";
+  const verb = done ? "Delete" : "Stop";
 
-  const handleTerminate = async () => {
+  const handleClick = async () => {
     try {
-      await deleteWorkflow({ runningWorkflowId });
+      await (done ? deleteWorkflow({ runningWorkflowId }) : stopWorkflow({ runningWorkflowId }));
+      enqueueSnackbar(`Workflow has been ${done ? "deleted" : "stopped"}`, { variant: "success" });
+    } catch (error) {
+      enqueueError(error);
+    } finally {
       void queryClient.invalidateQueries({
         queryKey: getGetRunningWorkflowQueryKey(runningWorkflowId),
       });
       void queryClient.invalidateQueries({ queryKey: getGetRunningWorkflowsQueryKey() });
-      enqueueSnackbar(`Workflow has been ${done ? "deleted" : "terminated"}`, {
-        variant: "success",
-      });
-    } catch (error) {
-      enqueueError(error);
     }
   };
 
   return (
     <WarningDeleteButton
-      modalId={`terminate-workflow-${runningWorkflowId}`}
+      modalId={`stop-workflow-${runningWorkflowId}`}
       submitText={verb}
       title={`${verb} Workflow`}
       tooltipText={`${verb} this workflow`}
-      onDelete={handleTerminate}
+      onDelete={handleClick}
     >
       {({ openModal }) => (
         <Button disabled={disabled} onClick={openModal}>

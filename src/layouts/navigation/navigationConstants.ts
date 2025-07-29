@@ -14,7 +14,7 @@ export interface NavLinkData {
 export const NAV_LINKS: NavLinkData[] = [
   { title: "Datasets", path: "/datasets", text: "Datasets" },
   { title: "Project", path: "/project", text: "Project Data" },
-  { title: "Run", path: "/run", text: "Apps/Jobs" },
+  { title: "Run", path: "/run", text: "Run" },
   { title: "Results", path: "/results", text: "Results" },
 ];
 

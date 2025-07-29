@@ -180,14 +180,13 @@ const Run = () => {
   return (
     <>
       <Head>
-        <title>Squonk | Apps/Jobs</title>
+        <title>Squonk | Run</title>
       </Head>
       <RoleRequired roles={DM_ROLES}>
         <RoleRequired roles={AS_ROLES}>
           <Layout>
             <Container maxWidth="xl">
               <Grid container spacing={2} sx={{ mb: 2 }}>
-                {/* Filter by apps/jobs */}
                 <Grid size={{ md: 4, sm: 6, xs: 12 }}>
                   <TextField
                     fullWidth

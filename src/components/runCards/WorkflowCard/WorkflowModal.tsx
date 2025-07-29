@@ -23,7 +23,7 @@ export interface WorkflowModalProps {
  * Modal for running a workflow instance. Fetches workflow details and displays the correct form.
  */
 export const WorkflowModal = ({ workflowId, projectId, open, onClose }: WorkflowModalProps) => {
-  const { enqueueError } = useEnqueueError<DmError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
   const { data: workflow } = useGetWorkflow(workflowId);
   const specVariables = workflow?.variables;
@@ -55,6 +55,7 @@ export const WorkflowModal = ({ workflowId, projectId, open, onClose }: Workflow
             variables: JSON.stringify({ ...optionsFormData, ...inputsData }),
           },
         }));
+      enqueueSnackbar("Workflow instance started successfully", { variant: "success" });
     } catch (error) {
       enqueueError(error);
     } finally {

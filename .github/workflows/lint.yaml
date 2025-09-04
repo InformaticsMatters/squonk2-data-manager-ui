@@ -32,7 +32,7 @@ jobs:
         version: 10.9.0
         run_install: false
     - name: Setup Node
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: 20
         cache: 'pnpm'
@@ -51,7 +51,7 @@ jobs:
         version: 10.9.0
         run_install: false
     - name: Setup Node
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: 20
         cache: 'pnpm'

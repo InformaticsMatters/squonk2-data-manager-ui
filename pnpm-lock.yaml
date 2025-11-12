@@ -71,8 +71,8 @@ importers:
         specifier: 4.2.5
         version: 4.2.5(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)
       '@squonk/data-manager-client':
-        specifier: 4.2.0
-        version: 4.2.0(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)
+        specifier: 4.3.0
+        version: 4.3.0(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)
       '@squonk/mui-theme':
         specifier: 5.0.0
         version: 5.0.0(@mui/material@6.4.11(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
@@ -1617,8 +1617,8 @@ packages:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
 
-  '@squonk/data-manager-client@4.2.0':
-    resolution: {integrity: sha512-o7UsCGmDaPeAnFioYruxTSEVbvKpDt8qb2mNfJOshhdyITgC9uCA1o2QINzamM2Owoc2bi4Qnlh0PA2uzBRBJg==}
+  '@squonk/data-manager-client@4.3.0':
+    resolution: {integrity: sha512-dTNUQ2n+XcwQxlzbt5ddMIJjx9f/6SCqhwjfBT72EkgbIUI85D2a36wKocxBckcw88Sv8eLDEjzxz641z6B1mA==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
@@ -3736,6 +3736,7 @@ packages:
 
   intersection-observer@0.12.2:
     resolution: {integrity: sha512-7m1vEcPCxXYI8HqnL8CKI6siDyD+eIWSwgB3DZA+ZTogxk9I4CDnj4wilt9x/+/QbHI4YG5YZNmC6458/e9Ktg==}
+    deprecated: The Intersection Observer polyfill is no longer needed and can safely be removed. Intersection Observer has been Baseline since 2019.
 
   is-alphabetical@1.0.4:
     resolution: {integrity: sha512-DwzsA04LQ10FHTZuL0/grVDk4rFoVH1pjAToYwBrHSxcrBIGQuXrQMtD5U1b0U2XVgKZCTLLP8u2Qxqhy3l2Vg==}
@@ -7674,7 +7675,7 @@ snapshots:
       '@tanstack/react-query': 5.83.0(react@19.1.0)
       axios: 1.10.0
 
-  '@squonk/data-manager-client@4.2.0(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)':
+  '@squonk/data-manager-client@4.3.0(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)':
     dependencies:
       '@tanstack/react-query': 5.83.0(react@19.1.0)
       axios: 1.10.0

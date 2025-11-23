@@ -32,7 +32,7 @@ const mapToCardObjs = (
   const workflowCardObjs = workflows.map((workflow) => ({
     type: "workflow" as const,
     data: workflow,
-    time: workflow.started ?? dayjs().toISOString(), // Use the `started` property for workflows
+    time: workflow.started,
   }));
   return [...instanceCardObjs, ...taskCardObjs, ...workflowCardObjs];
 };

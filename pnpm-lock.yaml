@@ -68,11 +68,11 @@ importers:
         specifier: 8.55.0
         version: 8.55.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@15.3.2(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.83.1))(react@19.1.0)(webpack@5.97.1)
       '@squonk/account-server-client':
-        specifier: 4.2.5
-        version: 4.2.5(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)
+        specifier: 4.4.0-4-4.2174353771
+        version: 4.4.0-4-4.2174353771(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)
       '@squonk/data-manager-client':
-        specifier: 4.2.0
-        version: 4.2.0(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)
+        specifier: 5.0.0-5-0.2173783690
+        version: 5.0.0-5-0.2173783690(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)
       '@squonk/mui-theme':
         specifier: 5.0.0
         version: 5.0.0(@mui/material@6.4.11(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
@@ -1611,14 +1611,14 @@ packages:
   '@sideway/pinpoint@2.0.0':
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
 
-  '@squonk/account-server-client@4.2.5':
-    resolution: {integrity: sha512-dCuxW0pIeScY38A9dKF2oHly8i9vN1akJR4r5XWVl9y3bZGugOdmvhws+bVJzCH/9U2JLrIgzCzmw5vRCoZoCg==}
+  '@squonk/account-server-client@4.4.0-4-4.2174353771':
+    resolution: {integrity: sha512-AE5aqwGNxBH7fjmNlTFPDTBJFmbIZ2HREn5WgDyEe1wjcUabYjybwTAkr3UzMVI5oSoDPYeRzgLEwTkROKKkSw==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
 
-  '@squonk/data-manager-client@4.2.0':
-    resolution: {integrity: sha512-o7UsCGmDaPeAnFioYruxTSEVbvKpDt8qb2mNfJOshhdyITgC9uCA1o2QINzamM2Owoc2bi4Qnlh0PA2uzBRBJg==}
+  '@squonk/data-manager-client@5.0.0-5-0.2173783690':
+    resolution: {integrity: sha512-qBt2BCpLuoWYpGaxJv/850N/y/axRbqlfHK9aNgJPsUPJlcvbkeMO5gHWM0Fxm7Z44b2mtf1YPCFBiYPMnrsDQ==}
     peerDependencies:
       '@tanstack/react-query': '>=4'
       axios: '>=0.23'
@@ -7669,12 +7669,12 @@ snapshots:
 
   '@sideway/pinpoint@2.0.0': {}
 
-  '@squonk/account-server-client@4.2.5(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)':
+  '@squonk/account-server-client@4.4.0-4-4.2174353771(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)':
     dependencies:
       '@tanstack/react-query': 5.83.0(react@19.1.0)
       axios: 1.10.0
 
-  '@squonk/data-manager-client@4.2.0(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)':
+  '@squonk/data-manager-client@5.0.0-5-0.2173783690(@tanstack/react-query@5.83.0(react@19.1.0))(axios@1.10.0)':
     dependencies:
       '@tanstack/react-query': 5.83.0(react@19.1.0)
       axios: 1.10.0

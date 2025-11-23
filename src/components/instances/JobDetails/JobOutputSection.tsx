@@ -17,7 +17,7 @@ export interface JobOutputSectionProps {
  * Displays generated outputs for a task.
  */
 export const JobOutputSection = ({ instance }: JobOutputSectionProps) => {
-  const outputs: Record<string, OutputValue> = instance.outputs ? JSON.parse(instance.outputs) : {};
+  const outputs = (instance.outputs ?? {}) as Record<string, OutputValue>;
   const outputsEntries = Object.entries(outputs);
 
   if (outputsEntries.length === 0) {

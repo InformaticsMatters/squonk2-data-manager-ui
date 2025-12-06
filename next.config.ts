@@ -40,10 +40,7 @@ let nextConfig: NextConfig = {
   // Enable production source maps for Sentry error reporting
   productionBrowserSourceMaps: true,
   // Allow mdx content and mdx files as pages
-  webpack(config, options) {
-    if (options.isServer) {
-      config.externals = ["@tanstack/react-query", ...config.externals];
-    }
+  webpack(config, _options) {
     if (MONOREPO_MODE) {
       const packages = ["react", "@mui/material", "@tanstack/react-query"];
       packages.forEach(

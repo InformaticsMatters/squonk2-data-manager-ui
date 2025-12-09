@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.0.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.6.0-dev.3...6.0.0-dev.1) (2025-12-09)
+
+### ⚠ BREAKING CHANGES
+
+* Now requires DM v5.0 and AS v4.4
+
+### Bug Fixes
+
+* remove redundent fallback value ([db5ea3d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/db5ea3d569c9a0c6aa587db9f87e93adf453a7c0))
+
 ## [5.6.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.6.0-dev.2...5.6.0-dev.3) (2025-07-29)
 
 

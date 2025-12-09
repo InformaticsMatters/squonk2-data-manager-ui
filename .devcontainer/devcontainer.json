@@ -6,9 +6,9 @@
   "image": "mcr.microsoft.com/devcontainers/javascript-node:3-20",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "20.18.2",
+      "version": "22.21.1",
       "nodeGypDependencies": true,
-      "pnpmVersion": "10.9.0"
+      "pnpmVersion": "10.24.0"
     }
   },
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

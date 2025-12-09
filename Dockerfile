@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches/
 
-RUN npm i -g pnpm@10.9.0
+RUN npm i -g pnpm@10.24.0
 RUN pnpm fetch --prod
 RUN pnpm approve-builds
 # RUN pnpm fetch
@@ -33,7 +33,7 @@ ENV GIT_SHA=${GIT_SHA:-""}
 ARG BASE_PATH
 ENV BASE_PATH=${BASE_PATH}
 
-# RUN npm i -g pnpm@10.9.0
+# RUN npm i -g pnpm@10.24.0
 RUN echo "GIT_SHA=${GIT_SHA}" && npm run build
 
 # If using npm comment out above and use below instead

@@ -84,7 +84,7 @@ jobs:
     # This ensures only one test job runs at a time (across all workflows)
     # If this workflow is billed by the elapsed time, this will add a lot to this cost
     - name: Turnstyle
-      uses: softprops/turnstyle@v2
+      uses: softprops/turnstyle@v3
       with:
         abort-after-seconds: 600
       env:
@@ -155,7 +155,7 @@ jobs:
     - name: Disable strict SSL
       run: npm config set strict-ssl=false
     - name: Turnstyle
-      uses: softprops/turnstyle@v2
+      uses: softprops/turnstyle@v3
       with:
         abort-after-seconds: 600
       env:

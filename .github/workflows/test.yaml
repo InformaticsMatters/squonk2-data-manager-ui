@@ -109,7 +109,7 @@ jobs:
       run: pnpm test:ci
     - name: Upload results for bath path
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: Base Path Results
         path: test-results
@@ -180,7 +180,7 @@ jobs:
       run: pnpm test:ci
     - name: Upload results for no bath path
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: No Base Path Results
         path: test-results

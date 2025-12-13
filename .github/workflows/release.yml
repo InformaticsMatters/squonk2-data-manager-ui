@@ -45,6 +45,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SEMANTIC_RELEASE_DEBUG: true
+          RELEASE_AS: 6.0.0-dev.2
         run: pnpm exec semantic-release
 
       - name: Compute version

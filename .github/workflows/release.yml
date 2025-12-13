@@ -21,11 +21,6 @@ jobs:
           fetch-tags: true
           ref: ${{ github.ref }}
 
-      - name: Fetch tags
-        run: |
-          git fetch --force --tags origin '+refs/tags/*:refs/tags/*'
-          git tag --list | tail -n 20
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -45,7 +40,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SEMANTIC_RELEASE_DEBUG: true
-          RELEASE_AS: 6.0.0-dev.2
         run: pnpm exec semantic-release
 
       - name: Compute version

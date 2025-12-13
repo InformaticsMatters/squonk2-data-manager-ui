@@ -68,8 +68,8 @@ importers:
         specifier: 8.55.0
         version: 8.55.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@15.5.7(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.83.1))(react@19.2.3)(webpack@5.97.1)
       '@squonk/account-server-client':
-        specifier: 4.4.0-4-4.2199390673
-        version: 4.4.0-4-4.2199390673(@tanstack/react-query@5.83.0(react@19.2.3))(axios@1.10.0)(zod@3.25.76)
+        specifier: 4.4.0
+        version: 4.4.0(@tanstack/react-query@5.83.0(react@19.2.3))(axios@1.10.0)(zod@3.25.76)
       '@squonk/data-manager-client':
         specifier: 5.0.0-5-0.2199565672
         version: 5.0.0-5-0.2199565672(@tanstack/react-query@5.83.0(react@19.2.3))(axios@1.10.0)(zod@3.25.76)
@@ -1794,8 +1794,8 @@ packages:
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
 
-  '@squonk/account-server-client@4.4.0-4-4.2199390673':
-    resolution: {integrity: sha512-VopbSKmjfrtovIoMfzPSFaUwsstDP8uCMyk4OthqHejSmhgCEeTe8Fd9pWqizWDYZEs8qQfCkGSA578Lrhgg9Q==}
+  '@squonk/account-server-client@4.4.0':
+    resolution: {integrity: sha512-ZNkLcdVeZ7d12BLVWqz7TPpDFZOx7qGtpcYkyyfkx8goPQfdD99aNBLmu2v4kWUPxxjsAukwTkkREwQscdt7dA==}
     engines: {node: '>=22', pnpm: '>=8'}
     peerDependencies:
       '@tanstack/react-query': '>=5'
@@ -8748,7 +8748,7 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@squonk/account-server-client@4.4.0-4-4.2199390673(@tanstack/react-query@5.83.0(react@19.2.3))(axios@1.10.0)(zod@3.25.76)':
+  '@squonk/account-server-client@4.4.0(@tanstack/react-query@5.83.0(react@19.2.3))(axios@1.10.0)(zod@3.25.76)':
     dependencies:
       '@tanstack/react-query': 5.83.0(react@19.2.3)
       axios: 1.10.0

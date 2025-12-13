@@ -16,6 +16,7 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/api/auth/[auth0]", { "auth0": string }>
     | StaticRoute<"/api/configuration/ui-version">
     | DynamicRoute<"/api/dm-api/[...dmProxy]", { "dmProxy": string[] }>
+    | StaticRoute<"/api/motd">
     | StaticRoute<"/api/sdf-parser">
     | DynamicRoute<"/api/viewer-proxy/[...viewerProxy]", { "viewerProxy": string[] }>
     | StaticRoute<"/configuration">

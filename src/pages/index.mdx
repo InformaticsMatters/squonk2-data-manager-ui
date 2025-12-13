@@ -4,6 +4,7 @@ import { RoleWarning } from "../components/auth/RoleWarning";
 import Head from "next/head";
 import { UserBootstrapper } from "../features/UserBootstrapper";
 import { NextLink } from "../components/NextLink";
+import { Motd } from "../components/Motd";
 
 <Head>
   <title>Data Manager</title>
@@ -12,6 +13,8 @@ import { NextLink } from "../components/NextLink";
 <RoleWarning />
 
 <UserBootstrapper />
+
+<Motd />
 
 <Grid container spacing={2}>
 <Grid size={{ xs: 12, sm: 6}}>

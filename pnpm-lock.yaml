@@ -68,8 +68,8 @@ importers:
         specifier: 8.55.0
         version: 8.55.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@15.5.7(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.83.1))(react@19.2.1)(webpack@5.97.1)
       '@squonk/account-server-client':
-        specifier: 4.4.0-4-4.2199390673
-        version: 4.4.0-4-4.2199390673(@tanstack/react-query@5.83.0(react@19.2.1))(axios@1.10.0)(zod@3.25.76)
+        specifier: 4.4.0
+        version: 4.4.0(@tanstack/react-query@5.83.0(react@19.2.1))(axios@1.10.0)(zod@3.25.76)
       '@squonk/data-manager-client':
         specifier: 5.0.0-5-0.2199565672
         version: 5.0.0-5-0.2199565672(@tanstack/react-query@5.83.0(react@19.2.1))(axios@1.10.0)(zod@3.25.76)
@@ -205,6 +205,9 @@ importers:
       use-immer:
         specifier: 0.11.0
         version: 0.11.0(immer@10.1.1)(react@19.2.1)
+      yaml:
+        specifier: 2.8.2
+        version: 2.8.2
       zod:
         specifier: 3.25.76
         version: 3.25.76
@@ -1794,8 +1797,8 @@ packages:
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
 
-  '@squonk/account-server-client@4.4.0-4-4.2199390673':
-    resolution: {integrity: sha512-VopbSKmjfrtovIoMfzPSFaUwsstDP8uCMyk4OthqHejSmhgCEeTe8Fd9pWqizWDYZEs8qQfCkGSA578Lrhgg9Q==}
+  '@squonk/account-server-client@4.4.0':
+    resolution: {integrity: sha512-ZNkLcdVeZ7d12BLVWqz7TPpDFZOx7qGtpcYkyyfkx8goPQfdD99aNBLmu2v4kWUPxxjsAukwTkkREwQscdt7dA==}
     engines: {node: '>=22', pnpm: '>=8'}
     peerDependencies:
       '@tanstack/react-query': '>=5'
@@ -6908,9 +6911,9 @@ packages:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
 
-  yaml@2.7.0:
-    resolution: {integrity: sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==}
-    engines: {node: '>= 14'}
+  yaml@2.8.2:
+    resolution: {integrity: sha512-mplynKqc1C2hTVYxd0PU2xQAc22TI1vShAYGksCCfxbn/dFwnHTNi1bvYsBTkhdUNtGIf5xNOg938rrSSYvS9A==}
+    engines: {node: '>= 14.6'}
     hasBin: true
 
   yargs-parser@18.1.3:
@@ -8743,7 +8746,7 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@squonk/account-server-client@4.4.0-4-4.2199390673(@tanstack/react-query@5.83.0(react@19.2.1))(axios@1.10.0)(zod@3.25.76)':
+  '@squonk/account-server-client@4.4.0(@tanstack/react-query@5.83.0(react@19.2.1))(axios@1.10.0)(zod@3.25.76)':
     dependencies:
       '@tanstack/react-query': 5.83.0(react@19.2.1)
       axios: 1.10.0
@@ -11937,7 +11940,7 @@ snapshots:
       micromatch: 4.0.8
       pidtree: 0.6.0
       string-argv: 0.3.2
-      yaml: 2.7.0
+      yaml: 2.8.2
     transitivePeerDependencies:
       - supports-color
 
@@ -14419,7 +14422,7 @@ snapshots:
       vfile-message: 4.0.2
       vfile-reporter: 8.1.1
       vfile-statistics: 3.0.0
-      yaml: 2.7.0
+      yaml: 2.8.2
     transitivePeerDependencies:
       - bluebird
       - supports-color
@@ -14808,7 +14811,7 @@ snapshots:
 
   yaml@1.10.2: {}
 
-  yaml@2.7.0: {}
+  yaml@2.8.2: {}
 
   yargs-parser@18.1.3:
     dependencies:

@@ -1,9 +1,7 @@
 # Squonk 2 Data Manager UI
 
 ![build](https://github.com/InformaticsMatters/squonk2-data-manager-ui/workflows/build/badge.svg)
-![build latest](https://github.com/InformaticsMatters/squonk2-data-manager-ui/workflows/build%20latest/badge.svg)
-![build tag](https://github.com/InformaticsMatters/squonk2-data-manager-ui/workflows/build%20tag/badge.svg)
-![build stable](https://github.com/InformaticsMatters/squonk2-data-manager-ui/workflows/build%20stable/badge.svg)
+![release](https://github.com/InformaticsMatters/squonk2-data-manager-ui/workflows/release/badge.svg)
 
 [![test](https://github.com/InformaticsMatters/squonk2-data-manager-ui/actions/workflows/test.yaml/badge.svg)](https://github.com/InformaticsMatters/squonk2-data-manager-ui/actions/workflows/test.yaml)
 
@@ -125,11 +123,18 @@ committing it as a image.
 
 ## Releases
 
-This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). This standardises commits so they can be used to generate changelogs. Release PRs will be created by [Release Please](https://github.com/googleapis/release-please) based on the changes since the last release. To force a PR to be generated with a specific version create an empty commit as follows:
+We use [semantic-release](https://semantic-release.gitbook.io/) with conventional commits:
 
-```bash
-git commit --no-verify --allow-empty -m "chore: release 3.0.0-rc.1" -m "Release-As: 3.0.0-rc.1"
-```
+- `dev` branch → prerelease tags `X.Y.Z-dev.N` (no `v` prefix), GitHub prereleases, changelog updates, Docker image push, AWX test deployment.
+- `master` branch → stable tags `X.Y.Z` (no `v` prefix), GitHub releases, changelog updates, Docker image push (including `:stable`), AWX production deployment.
+- `package.json` version is kept in sync by semantic-release; no manual bumping.
+
+Workflow summary:
+
+- `release.yml` runs on pushes to `dev` and `master`, runs semantic-release, pushes tags, builds/pushes Docker images, and triggers AWX (test for prerelease, prod for stable).
+- `build.yaml` runs a non-pushing build on non-master branch pushes for sanity checks.
+
+If you need a manual prerelease bump, use a conventional commit on `dev`; semantic-release will compute the next `X.Y.Z-dev.N` automatically.
 
 ## Devcontainers
 

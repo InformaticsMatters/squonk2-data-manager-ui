@@ -27,6 +27,7 @@ const resolvePackage = (packageName: string) =>
  * @type {import('next').NextConfig}
  */
 let nextConfig: NextConfig = {
+  outputFileTracingRoot: __dirname,
   output: process.env.OUTPUT_TYPE as NextConfig["output"],
   generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA ?? null : undefined,
   typescript: { ignoreBuildErrors: true },

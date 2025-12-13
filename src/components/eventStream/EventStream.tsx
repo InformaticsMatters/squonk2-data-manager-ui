@@ -145,7 +145,7 @@ export const EventStream = () => {
 
   const handleWebSocketMessage = useCallback(
     (event: MessageEvent) => {
-      const processMessage = (payload: unknown) => {
+      const processMessage = (payload: any) => {
         const message = getMessageFromEvent(payload);
 
         if (

@@ -20,7 +20,11 @@ export const RoleWarning = () => {
               <>
                 {" "}
                 You have the roles:
-                <ul>{user.roles?.map((role) => <li key={role}>{role}</li>)}</ul>
+                <ul>
+                  {user.roles?.map((role) => (
+                    <li key={role}>{role}</li>
+                  ))}
+                </ul>
               </>
             ) : (
               "You have no roles"

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { type DmError } from "@squonk/data-manager-client";
 import { useGetWorkflow, useRunWorkflow } from "@squonk/data-manager-client/workflow";
@@ -17,7 +17,32 @@ export interface WorkflowModalProps {
   open: boolean;
   onClose: () => void;
   onLaunch?: (runningWorkflowId: string) => void;
+  initialName?: string;
+  initialDebug?: DebugValue;
+  initialVariables?: Record<string, unknown> | string;
 }
+
+const normaliseDebug = (debug?: DebugValue): DebugValue => (debug === "debug" ? "debug" : "0");
+
+const parseInitialVariables = (
+  initialVariables?: Record<string, unknown> | string,
+): Record<string, unknown> | undefined => {
+  if (initialVariables === undefined) {
+    return undefined;
+  }
+
+  if (typeof initialVariables === "string") {
+    try {
+      return JSON.parse(initialVariables) as Record<string, unknown>;
+    } catch {
+      return undefined;
+    }
+  }
+
+  return typeof initialVariables === "object" && !Array.isArray(initialVariables)
+    ? initialVariables
+    : undefined;
+};
 
 /**
  * Modal for running a workflow instance. Fetches workflow details and displays the correct form.
@@ -28,22 +53,38 @@ export const WorkflowModal = ({
   open,
   onClose,
   onLaunch,
+  initialName,
+  initialDebug,
+  initialVariables,
 }: WorkflowModalProps) => {
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
   const { data: workflow } = useGetWorkflow(workflowId);
   const specVariables = workflow?.variables;
 
-  const [nameState, setNameState] = useState("");
+  const parsedInitialVariables = useMemo(
+    () => parseInitialVariables(initialVariables),
+    [initialVariables],
+  );
+
+  const [nameState, setNameState] = useState(initialName ?? "");
 
   useEffect(() => {
-    workflow?.workflow_name && setNameState(workflow.workflow_name);
-  }, [workflow?.workflow_name]);
+    if (!initialName && workflow?.workflow_name) {
+      setNameState(workflow.workflow_name);
+    }
+  }, [initialName, workflow?.workflow_name]);
 
-  const [debug, setDebug] = useState<DebugValue>("0");
+  const [debug, setDebug] = useState<DebugValue>(normaliseDebug(initialDebug));
 
   const [inputsData, setInputsData] = useState<InputData>({});
-  const [optionsFormData, setOptionsFormData] = useState(specVariables);
+  const [optionsFormData, setOptionsFormData] = useState(parsedInitialVariables ?? specVariables);
+
+  useEffect(() => {
+    if (!parsedInitialVariables && specVariables) {
+      setOptionsFormData(specVariables);
+    }
+  }, [parsedInitialVariables, specVariables]);
 
   const formRef = useRef<any>(null);
 
@@ -103,7 +144,7 @@ export const WorkflowModal = ({
           projectId={projectId}
           setInputsData={setInputsData}
           setOptionsFormData={setOptionsFormData}
-          specVariables={specVariables}
+          specVariables={parsedInitialVariables ?? specVariables}
         />
       )}
     </ModalWrapper>

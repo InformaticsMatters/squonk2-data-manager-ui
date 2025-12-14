@@ -49,7 +49,7 @@ export const RunWorkflowButton = ({
       </Tooltip>
       {!!hasOpened && (
         <WorkflowModal
-          name={name}
+          initialName={name}
           open={open}
           projectId={projectId}
           workflowId={workflowId}

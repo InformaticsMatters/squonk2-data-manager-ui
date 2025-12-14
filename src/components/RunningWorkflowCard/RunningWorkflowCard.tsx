@@ -6,6 +6,7 @@ import { Alert } from "@mui/material";
 import { useIsUserAdminOrEditorOfCurrentProject } from "../../hooks/projectHooks";
 import { CenterLoader } from "../CenterLoader";
 import { DeleteWorkflowButton } from "../DeleteWorkflowButton";
+import { RerunWorkflowButton } from "../results/RerunWorkflowButton";
 import { ResultCard } from "../results/ResultCard";
 import { RunningWorkflowCollapsed } from "./RunningWorkflowCollapsed";
 
@@ -49,11 +50,19 @@ export const RunningWorkflowCard = ({
     <ResultCard
       accentColor="#f1c40f"
       actions={() => (
-        <DeleteWorkflowButton
-          disabled={!hasPermission}
-          runningWorkflowId={runningWorkflowId}
-          status={workflow?.status ?? workflowSummary?.status}
-        />
+        <>
+          {!!workflow && (
+            <RerunWorkflowButton
+              disabled={!hasPermission || !workflow.project.id}
+              runningWorkflow={workflow}
+            />
+          )}
+          <DeleteWorkflowButton
+            disabled={!hasPermission}
+            runningWorkflowId={runningWorkflowId}
+            status={workflow?.status ?? workflowSummary?.status}
+          />
+        </>
       )}
       collapsed={<RunningWorkflowCollapsed runningWorkflowId={runningWorkflowId} />}
       collapsedByDefault={collapsedByDefault}

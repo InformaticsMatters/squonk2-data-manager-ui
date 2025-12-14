@@ -5,7 +5,7 @@
       "type": "npm",
       "script": "tsc",
       "problemMatcher": [],
-      "label": "npm: tsc",
+      "label": "tsc",
       "detail": "tsc --pretty --noEmit",
       "presentation": {
         "close": true
@@ -15,8 +15,28 @@
       "type": "npm",
       "script": "build",
       "problemMatcher": [],
-      "label": "npm: build",
+      "label": "build",
       "detail": "next build",
+      "presentation": {
+        "close": true
+      }
+    },
+    {
+      "type": "npm",
+      "script": "lint",
+      "problemMatcher": [],
+      "label": "lint",
+      "detail": "eslint --cache --max-warnings=0 .",
+      "presentation": {
+        "close": true
+      }
+    },
+    {
+      "type": "npm",
+      "script": "format",
+      "problemMatcher": [],
+      "label": "format",
+      "detail": "eslint --fix --cache --max-warnings=0 .",
       "presentation": {
         "close": true
       }
@@ -25,7 +45,7 @@
       "type": "npm",
       "script": "test",
       "problemMatcher": [],
-      "label": "npm: test",
+      "label": "test",
       "detail": "test"
     }
   ]

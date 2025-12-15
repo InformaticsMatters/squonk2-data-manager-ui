@@ -17,8 +17,8 @@ importers:
         specifier: 3.8.0
         version: 3.8.0(next@15.5.9(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.83.1))
       '@bufbuild/protobuf':
-        specifier: 2.6.1
-        version: 2.6.1
+        specifier: 2.10.2
+        version: 2.10.2
       '@emotion/cache':
         specifier: 11.14.0
         version: 11.14.0
@@ -214,7 +214,7 @@ importers:
         version: 1.61.0
       '@bufbuild/protoc-gen-es':
         specifier: 2.6.1
-        version: 2.6.1(@bufbuild/protobuf@2.6.1)
+        version: 2.6.1(@bufbuild/protobuf@2.10.2)
       '@playwright/test':
         specifier: 1.54.1
         version: 1.54.1
@@ -386,6 +386,9 @@ packages:
     resolution: {integrity: sha512-9kKZK/GjhIDUj50pngmjtC6bGFl6U1rFDH2gZJATRfp2vNnQPsb6BqZ+2lea37bgHBYdAYttlve8wnXszXmftA==}
     engines: {node: '>=12'}
     hasBin: true
+
+  '@bufbuild/protobuf@2.10.2':
+    resolution: {integrity: sha512-uFsRXwIGyu+r6AMdz+XijIIZJYpoWeYzILt5yZ2d3mCjQrWUTVpVD9WL/jZAbvp+Ed04rOhrsk7FiTcEDseB5A==}
 
   '@bufbuild/protobuf@2.6.1':
     resolution: {integrity: sha512-DaG6XlyKpz08bmHY5SGX2gfIllaqtDJ/KwVoxsmP22COOLYwDBe7yD3DZGwXem/Xq7QOc9cuR7R3MpAv5CFfDw==}
@@ -7063,13 +7066,15 @@ snapshots:
       '@bufbuild/buf-win32-arm64': 1.61.0
       '@bufbuild/buf-win32-x64': 1.61.0
 
+  '@bufbuild/protobuf@2.10.2': {}
+
   '@bufbuild/protobuf@2.6.1': {}
 
-  '@bufbuild/protoc-gen-es@2.6.1(@bufbuild/protobuf@2.6.1)':
+  '@bufbuild/protoc-gen-es@2.6.1(@bufbuild/protobuf@2.10.2)':
     dependencies:
       '@bufbuild/protoplugin': 2.6.1
     optionalDependencies:
-      '@bufbuild/protobuf': 2.6.1
+      '@bufbuild/protobuf': 2.10.2
     transitivePeerDependencies:
       - supports-color
 

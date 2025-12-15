@@ -1,0 +1,99 @@
+name: release
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ github.ref }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SEMANTIC_RELEASE_DEBUG: true
+        run: pnpm exec semantic-release
+
+      - name: Compute version
+        run: echo "VERSION=$(git describe --tags --abbrev=0 --match '*')" >> "$GITHUB_ENV"
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push image (version)
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          build-args: |
+            GIT_SHA=${{ github.sha }}
+            SKIP_CHECKS=1
+            BASE_PATH=/data-manager-ui
+          tags: |
+            informaticsmatters/squonk2-data-manager-ui:${{ env.VERSION }}
+
+      - name: Build and push image (stable tag)
+        if: ${{ !contains(env.VERSION, '-dev.') }}
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          build-args: |
+            GIT_SHA=${{ github.sha }}
+            SKIP_CHECKS=1
+            BASE_PATH=/data-manager-ui
+          tags: |
+            informaticsmatters/squonk2-data-manager-ui:${{ env.VERSION }}
+            informaticsmatters/squonk2-data-manager-ui:stable
+            informaticsmatters/squonk2-data-manager-ui:latest
+
+      - name: Trigger AWX test
+        if: ${{ contains(env.VERSION, '-dev.') }}
+        uses: informaticsmatters/trigger-awx-action@v2
+        with:
+          template: Squonk/2 Data Manager UI -test-
+          template-host: ${{ secrets.AWX_HOST }}
+          template-user: ${{ secrets.AWX_USER }}
+          template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
+          template-var: maui_image_tag
+          template-var-value: ${{ env.VERSION }}
+
+      - name: Trigger AWX production
+        if: ${{ !contains(env.VERSION, '-dev.') }}
+        uses: informaticsmatters/trigger-awx-action@v1
+        with:
+          template: Data Manager UI -production-
+          template-host: ${{ secrets.AWX_HOST }}
+          template-user: ${{ secrets.AWX_USER }}
+          template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
+          template-var: maui_image_tag
+          template-var-value: ${{ env.VERSION }}

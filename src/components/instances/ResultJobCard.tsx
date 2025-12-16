@@ -2,7 +2,7 @@ import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-man
 
 import { Alert, CardContent, ListItem, ListItemText } from "@mui/material";
 
-import { useIsUserAdminOrEditorOfCurrentProject, useProjectFromId } from "../../hooks/projectHooks";
+import { useHasProjectRole, useProjectFromId } from "../../hooks/projectHooks";
 import { ProjectListItem, type ProjectListItemProps } from "../projects/ProjectListItem";
 import { LogsButton } from "../results/LogsButton";
 import { RerunJobButton } from "../results/RerunJobButton";
@@ -45,7 +45,7 @@ export const ResultJobCard = ({
 
   const associatedProject = useProjectFromId(instance.project_id);
 
-  const hasPermission = useIsUserAdminOrEditorOfCurrentProject();
+  const hasPermission = useHasProjectRole(instance.project_id, ["editor", "administrator"]);
 
   if (instance.job_id === undefined) {
     return <Alert severity="error">Instance is missing a job ID</Alert>;

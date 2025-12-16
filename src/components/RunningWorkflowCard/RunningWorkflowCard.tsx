@@ -3,7 +3,7 @@ import { useGetRunningWorkflow } from "@squonk/data-manager-client/workflow";
 
 import { Alert } from "@mui/material";
 
-import { useIsUserAdminOrEditorOfCurrentProject } from "../../hooks/projectHooks";
+import { useHasProjectRole } from "../../hooks/projectHooks";
 import { CenterLoader } from "../CenterLoader";
 import { DeleteWorkflowButton } from "../DeleteWorkflowButton";
 import { RerunWorkflowButton } from "../results/RerunWorkflowButton";
@@ -37,7 +37,7 @@ export const RunningWorkflowCard = ({
 }: RunningWorkflowCardProps) => {
   const { data: workflow, isLoading, error } = useGetRunningWorkflow(runningWorkflowId);
 
-  const hasPermission = useIsUserAdminOrEditorOfCurrentProject();
+  const hasPermission = useHasProjectRole(workflow?.project.id, ["editor", "administrator"]);
 
   if (isLoading) {
     return <CenterLoader />;

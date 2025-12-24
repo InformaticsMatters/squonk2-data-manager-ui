@@ -1,3 +1,52 @@
+# [6.0.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.5.0...6.0.0) (2025-12-24)
+
+
+* feat!: upgrade dm client to v5 ([fa10a6b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fa10a6b5eb37856c6ee1045c34e385cbb66e8802))
+
+
+### Bug Fixes
+
+* add missing toast when workflows are launched ([8c3849a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8c3849a3db39fc7f564f7a1f7c9c9dc403bfeec8))
+* avoid es connections when it is not installed ([8379209](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8379209ddb379ae59e4ef6e09c5568c789a74889))
+* change apps/job tab to run ([f0b714a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f0b714ade739a1045d0af7730d2329133a2d0b9a))
+* **deps:** update nextjs to avoid new exploits ([4c5c3e9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4c5c3e9575b74149aa75946d6ee7ee712e7b88e9))
+* fix crash when order is undefined ([832ca50](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/832ca504f43e083e920e16fd7f1f0c428e51ae64))
+* fix default name for jobs to be usable ([fd1ae2f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fd1ae2f3d3e7c1610c38be7a0bc95d372e6a047a))
+* fix MUI warning for project flavour ([89389df](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/89389df1dfc43872dd0a287c7e35bd63311ab634))
+* fix running workflows list not opening when a workflow is run ([daff7f7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/daff7f730d8ab5a8f0b22f7920fb4b8260d629e7))
+* fix sorting of workflows in the results page ([f7f9d7d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f7f9d7d154d8b3bb5d65e48ceb226c90ff7ac196))
+* fix workflows with options ([54ce29a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/54ce29a049164b09d0bb7a0d3abcef18405c5561))
+* implement stopping workflows before deletion ([b8f3d7b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b8f3d7b9fffe7d957105ae08402eea975a96d32f))
+* improve retry logic for project table ([cdaff6a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/cdaff6a8f3508f8cb98735d2a7f1ae9a69690622))
+* pass correct params in logs button ([34f0137](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/34f01377b9bc10f852f84503ae9fc6bbfaeb592a))
+* pin nodejs version in devcontainer ([2e7dbf6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2e7dbf60195492924ceff8ab19be53e29d6d03b2))
+* remove redundent fallback value ([db5ea3d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/db5ea3d569c9a0c6aa587db9f87e93adf453a7c0))
+* show all instances in the list with their version ([a51042e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a51042ea4b25582617f7453fe7f9213e84b0adc7))
+* show errors in data tables ([92da10e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/92da10e1140e1d5a49b606af0b75b1b484ca0062))
+* show header only when there is an input ([a745a42](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a745a4254a04be80dcd529f87f6672f45a9392e2))
+
+
+### chore
+
+* **deps:** upgrade squonk API clients, NodeJS and React ([8f35693](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8f3569308f2ffdfe0ce9d8664d54e00e96d782d5))
+
+
+### Features
+
+* add delete workflow button ([b3aa584](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b3aa5845338eca0ad3672e63a6de79a624c9dfe4))
+* add event stream history ([#1691](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1691)) ([50d289f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/50d289fcf43c33dd14ab1ee475fe67b18975e961))
+* add workflows to run page ([aae3495](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/aae34953c1f7868b425371d6dbbc4345ecc61912))
+* display workflows in result page ([167b54c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/167b54c6a4a5f9dfc220a3e918a0df377c117f53))
+* improve design of app, job and workflow cards ([3007b98](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3007b9892daa599179aafe210e6ac1faa3c9ab73))
+* improve event stream connection logging ([aa8235d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/aa8235d090bcd448032d5ffbd3aa868a4d53c9c1))
+
+
+### BREAKING CHANGES
+
+* **deps:** Node v22 now minimum, pnpm v10 required
+Upgrade react to fix CVE-2025-55182
+* Now requires DM v5
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

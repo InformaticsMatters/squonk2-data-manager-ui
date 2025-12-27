@@ -26,11 +26,6 @@
     {
       "matchPackageNames": ["@squonk/**"],
       "minimumReleaseAge": null
-    },
-    {
-      "matchPackageNames": [
-        "!nextjs-routes"
-      ]
     }
   ]
 }

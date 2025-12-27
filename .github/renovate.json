@@ -24,8 +24,19 @@
   "minimumReleaseAge": "2 days",
   "packageRules": [
     {
+      "description": "Allow latest squonk packages by ignoring minimum release age",
       "matchPackageNames": ["@squonk/**"],
       "minimumReleaseAge": null
+    },
+    {
+      "description": "Group Bufbuild packages together",
+      "matchPackageNames": ["@bufbuild/**"],
+      "groupName": "Bufbuild monorepo"
+    },
+    {
+      "description": "Group Ketcher packages together",
+      "matchPackageNames": ["ketcher-*"],
+      "groupName": "Ketcher monorepo"
     }
   ]
 }

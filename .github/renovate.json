@@ -17,7 +17,7 @@
   "constraints": {
     "pnpm": "10"
   },
-  "baseBranches": [
+  "baseBranchPatterns": [
     "dev"
   ],
   "packageRules": [

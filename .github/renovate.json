@@ -37,6 +37,11 @@
       "description": "Group Ketcher packages together",
       "matchPackageNames": ["ketcher-*"],
       "groupName": "Ketcher monorepo"
+    },
+    {
+      "description": "Keep NodeJS at LTS",
+      "matchPackageNames": ["@types/node"],
+      "versioning": "node,"
     }
   ]
 }

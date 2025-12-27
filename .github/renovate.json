@@ -20,7 +20,12 @@
   "baseBranchPatterns": [
     "dev"
   ],
+  "minimumReleaseAge": "2 days",
   "packageRules": [
+    {
+      "matchPackagePatterns": ["^@squonk/"],
+      "minimumReleaseAge": null
+    },
     {
       "matchPackageNames": [
         "!nextjs-routes"

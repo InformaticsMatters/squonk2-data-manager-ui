@@ -40,7 +40,7 @@
     },
     {
       "description": "Keep NodeJS at LTS",
-      "matchPackageNames": ["@types/node"],
+      "matchPackageNames": ["node", "@types/node"],
       "versioning": "node,"
     }
   ]

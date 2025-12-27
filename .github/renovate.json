@@ -1,4 +1,5 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboardAutoclose": true,
   "extends": [
     ":dependencyDashboard",
@@ -23,7 +24,7 @@
   "minimumReleaseAge": "2 days",
   "packageRules": [
     {
-      "matchPackagePatterns": ["^@squonk/"],
+      "matchPackageNames": ["@squonk/**"],
       "minimumReleaseAge": null
     },
     {

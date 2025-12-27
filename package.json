@@ -102,7 +102,7 @@
   },
   "devDependencies": {
     "@bufbuild/buf": "1.61.0",
-    "@bufbuild/protoc-gen-es": "2.6.1",
+    "@bufbuild/protoc-gen-es": "2.10.2",
     "@playwright/test": "1.54.1",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/commit-analyzer": "13.0.1",

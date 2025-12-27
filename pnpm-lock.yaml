@@ -213,8 +213,8 @@ importers:
         specifier: 1.61.0
         version: 1.61.0
       '@bufbuild/protoc-gen-es':
-        specifier: 2.6.1
-        version: 2.6.1(@bufbuild/protobuf@2.10.2)
+        specifier: 2.10.2
+        version: 2.10.2(@bufbuild/protobuf@2.10.2)
       '@playwright/test':
         specifier: 1.54.1
         version: 1.54.1
@@ -390,21 +390,18 @@ packages:
   '@bufbuild/protobuf@2.10.2':
     resolution: {integrity: sha512-uFsRXwIGyu+r6AMdz+XijIIZJYpoWeYzILt5yZ2d3mCjQrWUTVpVD9WL/jZAbvp+Ed04rOhrsk7FiTcEDseB5A==}
 
-  '@bufbuild/protobuf@2.6.1':
-    resolution: {integrity: sha512-DaG6XlyKpz08bmHY5SGX2gfIllaqtDJ/KwVoxsmP22COOLYwDBe7yD3DZGwXem/Xq7QOc9cuR7R3MpAv5CFfDw==}
-
-  '@bufbuild/protoc-gen-es@2.6.1':
-    resolution: {integrity: sha512-LIxXANgj27QHGZrCekfB/v9zEWzuxDBQyE+91BjY7KbvrELcNQyN0kFGRLy/Eu2bLC4+n1hlCL9TIjN49wV2Fw==}
-    engines: {node: '>=14'}
+  '@bufbuild/protoc-gen-es@2.10.2':
+    resolution: {integrity: sha512-vbjPsuofbtZwZXuOP7Y16CQsxrwCjuRONffmJSBEhoC7PQu/Cabp0+Fu/poLPm9CNM0tDCQA0xvgobgudaEYxQ==}
+    engines: {node: '>=20'}
     hasBin: true
     peerDependencies:
-      '@bufbuild/protobuf': 2.6.1
+      '@bufbuild/protobuf': 2.10.2
     peerDependenciesMeta:
       '@bufbuild/protobuf':
         optional: true
 
-  '@bufbuild/protoplugin@2.6.1':
-    resolution: {integrity: sha512-pheV/ysWCMSCyRnR7oE2qjEM2QEFFkwYOtHaS86VbxbGfSohcw64rorU7ldCVFZHlFjIsSAqd/yIuTy4J3Itlg==}
+  '@bufbuild/protoplugin@2.10.2':
+    resolution: {integrity: sha512-RAWVs9tCzRqSS3tUtaFhOcauOAazCrm7tlGh0WHFq/44n5Fj6YgefdlZEPIaAK6VAA+FdOoFgtOJK2Ji5U24pw==}
 
   '@choojs/findup@0.2.1':
     resolution: {integrity: sha512-YstAqNb0MCN8PjdLCDfRsBcGVRN41f3vgLvaI0IrIcBp4AqILRSS0DeWNGkicC+f/zRIPJLc+9RURVSepwvfBw==}
@@ -2125,8 +2122,8 @@ packages:
     resolution: {integrity: sha512-7RW7CMYoskiz5OOGAWjJFxgb7c5UNjTG292gYhWeOAcFmYCtVCSqjqSBj5zMhxbXo2JOW95YYrUWJfU0zrpaGQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@typescript/vfs@1.6.1':
-    resolution: {integrity: sha512-JwoxboBh7Oz1v38tPbkrZ62ZXNHAk9bJ7c9x0eI5zBfBnBYGhURdbnh7Z4smN/MV48Y5OCcZb58n972UtbazsA==}
+  '@typescript/vfs@1.6.2':
+    resolution: {integrity: sha512-hoBwJwcbKHmvd2QVebiytN1aELvpk9B74B4L1mFm/XT1Q/VOYAWl2vQ9AWRFtQq8zmz6enTpfTV8WRc4ATjW/g==}
     peerDependencies:
       typescript: '*'
 
@@ -7068,20 +7065,18 @@ snapshots:
 
   '@bufbuild/protobuf@2.10.2': {}
 
-  '@bufbuild/protobuf@2.6.1': {}
-
-  '@bufbuild/protoc-gen-es@2.6.1(@bufbuild/protobuf@2.10.2)':
+  '@bufbuild/protoc-gen-es@2.10.2(@bufbuild/protobuf@2.10.2)':
     dependencies:
-      '@bufbuild/protoplugin': 2.6.1
+      '@bufbuild/protoplugin': 2.10.2
     optionalDependencies:
       '@bufbuild/protobuf': 2.10.2
     transitivePeerDependencies:
       - supports-color
 
-  '@bufbuild/protoplugin@2.6.1':
+  '@bufbuild/protoplugin@2.10.2':
     dependencies:
-      '@bufbuild/protobuf': 2.6.1
-      '@typescript/vfs': 1.6.1(typescript@5.4.5)
+      '@bufbuild/protobuf': 2.10.2
+      '@typescript/vfs': 1.6.2(typescript@5.4.5)
       typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
@@ -9137,7 +9132,7 @@ snapshots:
       '@typescript-eslint/types': 8.33.0
       eslint-visitor-keys: 4.2.0
 
-  '@typescript/vfs@1.6.1(typescript@5.4.5)':
+  '@typescript/vfs@1.6.2(typescript@5.4.5)':
     dependencies:
       debug: 4.4.0
       typescript: 5.4.5

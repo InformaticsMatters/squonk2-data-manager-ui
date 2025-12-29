@@ -1,4 +1,4 @@
-import { Container, Grid2 as Grid, Link, List, ListItem, Paper, Typography } from "@mui/material";
+import { Container, Grid, Link, List, ListItem, Paper, Typography } from "@mui/material";
 import A from "next/link";
 
 import { AppVersions } from "../components/AppVersions";

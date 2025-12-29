@@ -5,7 +5,7 @@ import { useGetJobs } from "@squonk/data-manager-client/job";
 import { useGetRunningWorkflows, useGetWorkflows } from "@squonk/data-manager-client/workflow";
 
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
-import { Alert, Container, Grid2 as Grid, MenuItem, TextField } from "@mui/material";
+import { Alert, Container, Grid, MenuItem, TextField } from "@mui/material";
 import groupBy from "just-group-by";
 import { debounce } from "lodash-es";
 import dynamic from "next/dynamic";

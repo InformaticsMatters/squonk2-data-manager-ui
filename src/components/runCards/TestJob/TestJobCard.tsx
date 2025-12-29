@@ -1,7 +1,7 @@
 import { type JobSummary } from "@squonk/data-manager-client";
 import { getGetJobQueryKey } from "@squonk/data-manager-client/job";
 
-import { Grid2 as Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import {

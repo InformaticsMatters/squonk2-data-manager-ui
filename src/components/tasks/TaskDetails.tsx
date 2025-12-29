@@ -1,6 +1,6 @@
 import { type TaskSummary } from "@squonk/data-manager-client";
 
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
 import { usePolledGetTask } from "../../hooks/usePolledGetTask";
 import { CenterLoader } from "../CenterLoader";

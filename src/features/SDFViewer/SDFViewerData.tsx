@@ -10,6 +10,7 @@ import { MolCard } from "../../components/MolCard";
 import CalculationsTable from "../../components/MolCard/CalculationsTable";
 import { ScatterPlot } from "../../components/ScatterPlot/ScatterPlot";
 import { censorConfig, type SDFViewerConfig } from "../../utils/api/sdfViewer";
+import { withBasePath } from "../../utils/app/basePath";
 
 const getCards = (molecules: Must<Molecule>[], propsToHide: string[] = []) => {
   return molecules.slice(0, 50).map((molecule) => {
@@ -43,10 +44,8 @@ const getPropArrayFromRecords = (molecules: Molecule[] | SDFRecord[]): string[] 
 };
 
 const useSDFRecords = (project: string, path: string, file: string, config: SDFViewerConfig) => {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-
   const queryParams = new URLSearchParams({ project, path, file, config: censorConfig(config) });
-  const url = `${basePath}/api/sdf-parser?${queryParams.toString()}`;
+  const url = withBasePath(`/api/sdf-parser?${queryParams.toString()}`);
 
   return useQuery<SDFRecord[], Error, SDFRecord[], string[]>({
     queryKey: ["sdf", project, path, file],

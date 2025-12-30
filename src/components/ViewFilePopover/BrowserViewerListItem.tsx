@@ -3,6 +3,7 @@ import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
 import { type ProjectId } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
+import { withBasePath } from "../../utils/app/basePath";
 import { API_ROUTES } from "../../utils/app/routes";
 
 export interface BrowserViewerListItemProps {
@@ -24,10 +25,7 @@ export const BrowserViewerListItem = ({
   return (
     <ListItemButton
       component="a"
-      href={
-        (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
-        API_ROUTES.projectFile(projectId, path, fileName, "/api/viewer-proxy")
-      }
+      href={withBasePath(API_ROUTES.projectFile(projectId, path, fileName, "/api/viewer-proxy"))}
       rel="noopener noreferrer"
       target="_blank"
       onClick={() => onClick()}

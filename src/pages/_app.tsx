@@ -21,6 +21,7 @@ import { EventStream } from "../components/eventStream/EventStream";
 import { openSansFont } from "../constants/fonts";
 import { AS_API_URL, DM_API_URL } from "../constants/proxies";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
+import { withBasePath } from "../utils/app/basePath";
 
 const openSansFontCss = `
 :root {
@@ -53,8 +54,8 @@ const App = ({ Component, pageProps }: CustomAppProps) => {
         </Head>
         <ThemeProviders>
           <UserProvider
-            loginUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/login`}
-            profileUrl={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/me`}
+            loginUrl={withBasePath("/api/auth/login")}
+            profileUrl={withBasePath("/api/auth/me")}
           >
             <QueryClientProvider client={queryClient}>
               <HydrationBoundary state={pageProps.dehydratedState}>

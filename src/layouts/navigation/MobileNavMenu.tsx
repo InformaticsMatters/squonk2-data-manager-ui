@@ -4,7 +4,7 @@ import { MenuRounded as MenuRoundedIcon } from "@mui/icons-material";
 import {
   Box,
   Divider,
-  Grid2 as Grid,
+  Grid,
   IconButton,
   List,
   ListItemButton,

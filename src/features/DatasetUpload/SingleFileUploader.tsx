@@ -4,14 +4,7 @@ import { type FileError } from "react-dropzone";
 import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
 import { useGetTask } from "@squonk/data-manager-client/task";
 
-import {
-  Grid2 as Grid,
-  IconButton,
-  LinearProgress,
-  MenuItem,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Grid, IconButton, LinearProgress, MenuItem, TextField, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { TwiddleIcon } from "../../components/uploads/TwiddleIcon";

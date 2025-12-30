@@ -2,7 +2,7 @@ import { type Dispatch, type RefObject, type SetStateAction } from "react";
 
 import { type JobOrderDetail } from "@squonk/data-manager-client";
 
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { Form } from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 

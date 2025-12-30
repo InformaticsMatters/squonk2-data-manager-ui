@@ -4,7 +4,7 @@ import { type ApplicationSummary, type DmError } from "@squonk/data-manager-clie
 import { useGetApplication } from "@squonk/data-manager-client/application";
 import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
 
-import { Grid2 as Grid, MenuItem, TextField } from "@mui/material";
+import { Grid, MenuItem, TextField } from "@mui/material";
 import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 import { useQueryClient } from "@tanstack/react-query";

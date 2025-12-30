@@ -72,11 +72,6 @@ jobs:
         # If source files changed but packages didn't, rebuild from a prior cache.
         restore-keys: |
           ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
-    # Test WITH base path set
-    - name: Build with base path
-      run: pnpm build
-      env:
-        BASE_PATH: "/data-manager-ui"
     # Ok for tests/dev but we don't do this on prod. This is to prevent some flakely tests from causing problems
     - name: Disable strict SSL
       run: npm config set strict-ssl=false

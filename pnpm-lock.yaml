@@ -74,8 +74,8 @@ importers:
         specifier: 5.0.0
         version: 5.0.0(@tanstack/react-query@5.90.14(react@19.2.3))(axios@1.13.2)(zod@3.25.76)
       '@squonk/mui-theme':
-        specifier: 5.0.0
-        version: 5.0.0(@mui/material@7.3.6(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))
+        specifier: 6.0.0
+        version: 6.0.0(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@mui/material@7.3.6(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))
       '@squonk/sdf-parser':
         specifier: 1.3.1
         version: 1.3.1
@@ -1817,10 +1817,12 @@ packages:
   '@squonk/eslint-config@3.0.0':
     resolution: {integrity: sha512-4vytRw86V+wCCgZ2Vm4WuiRxni3jVhRc33wkgsTQ4wYgHGvRUk5r2IKSinZsMa40eoWRJZsEXSWYJV0+48eXHw==}
 
-  '@squonk/mui-theme@5.0.0':
-    resolution: {integrity: sha512-WQkxykkD1obZSWcawtfWgWcRF2oubNq/v24FrUXV1Es1Z4MRaDSeCqERDuG0v2oF4YkGK4A8ik7/5EhsR+n9vA==}
+  '@squonk/mui-theme@6.0.0':
+    resolution: {integrity: sha512-Dg2/bydBJCKU2VaR4hEhylM7mk12jHGZoHj/ulWlxHA3aheUD++wtSkU1CqB76giqKZqure1rBE8M7rU1JmHzw==}
     peerDependencies:
-      '@mui/material': '>5'
+      '@emotion/react': '>=11'
+      '@emotion/styled': '>=11'
+      '@mui/material': '>=7.3'
 
   '@squonk/sdf-parser@1.3.1':
     resolution: {integrity: sha512-P2yWPEDQQ5/fuFwg9RMoeYLPRUXZJrL3kmWcJbAnyw8vlVNlxWtlilLmm0UAJiIFLxp6oXxRMQm2nVrp0Vzcjg==}
@@ -8717,7 +8719,7 @@ snapshots:
       '@next/eslint-plugin-next': 15.3.1
       '@types/node': 22.14.1
       eslint: 9.25.1
-      eslint-import-resolver-typescript: 4.3.4(eslint-plugin-import-x@4.10.6(eslint@9.25.1)(typescript@5.8.3))(eslint@9.25.1)
+      eslint-import-resolver-typescript: 4.3.4(eslint-plugin-import-x@4.10.6(eslint@9.25.1)(typescript@5.9.3))(eslint@9.25.1)
       eslint-mdx: 3.4.1(eslint@9.25.1)
       eslint-plugin-import-x: 4.10.6(eslint@9.25.1)(typescript@5.8.3)
       eslint-plugin-mdx: 3.4.1(eslint@9.25.1)
@@ -8736,8 +8738,10 @@ snapshots:
       - remark-lint-file-extension
       - supports-color
 
-  '@squonk/mui-theme@5.0.0(@mui/material@7.3.6(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))':
+  '@squonk/mui-theme@6.0.0(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@mui/material@7.3.6(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))':
     dependencies:
+      '@emotion/react': 11.14.0(@types/react@19.2.7)(react@19.2.3)
+      '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3)
       '@mui/material': 7.3.6(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
 
   '@squonk/sdf-parser@1.3.1': {}
@@ -10527,7 +10531,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@4.3.4(eslint-plugin-import-x@4.10.6(eslint@9.25.1)(typescript@5.8.3))(eslint@9.25.1):
+  eslint-import-resolver-typescript@4.3.4(eslint-plugin-import-x@4.10.6(eslint@9.25.1)(typescript@5.9.3))(eslint@9.25.1):
     dependencies:
       debug: 4.4.0
       eslint: 9.25.1

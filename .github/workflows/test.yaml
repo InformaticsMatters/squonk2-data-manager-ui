@@ -60,9 +60,17 @@ jobs:
       with:
         node-version: 22.21.1
         cache: 'pnpm'
+        cache-dependency-path: pnpm-lock.yaml
     - name: Install dependencies
       run: pnpm install
     - run: node -v
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-ms-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-ms-playwright-
     - name: Setup Playwright
       run: pnpm exec playwright install --with-deps
     - name: Load cached build for speed

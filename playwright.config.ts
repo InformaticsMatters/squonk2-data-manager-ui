@@ -15,7 +15,6 @@ export default defineConfig({
     {
       name: "browser",
       use: { baseURL: baseURL.href, trace: "on" },
-      retries: 0,
       timeout: 60_000,
       testMatch: "**/*.browser.ts",
     },
@@ -23,7 +22,6 @@ export default defineConfig({
       name: "browser-authenticated",
       dependencies: ["setup"],
       use: { storageState: "storageState.json", baseURL: baseURL.href, trace: "on" },
-      retries: 3,
       timeout: 60_000,
       testMatch: "**/*.browser-authenticated.ts",
     },

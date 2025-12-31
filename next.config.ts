@@ -2,9 +2,9 @@ import nextMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
 import { type NextConfig } from "next";
 import nextRoutes from "nextjs-routes/config";
-import * as url from "node:url";
+import { fileURLToPath } from "node:url";
 
-const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 const withRoutes = nextRoutes({ outDir: "types" });
 
@@ -13,13 +13,23 @@ const withMDX = nextMDX({
   options: { providerImportSource: "@mdx-js/react", jsxImportSource: "@emotion/react" },
 });
 
-const MONOREPO_MODE = process.env.npm_config_MONOREPO;
-console.log(MONOREPO_MODE);
+const isPackageLocal = (packageName: string) => {
+  try {
+    const resolved = import.meta.resolve(packageName);
+    const resolvedPath = resolved.startsWith("file:") ? fileURLToPath(resolved) : resolved;
+    return !resolvedPath.includes(".pnpm");
+  } catch (error) {
+    // Fallback: If import.meta.resolve fails (e.g. older node), assume false
+    console.warn(` ⚠️ warn Could not resolve package ${packageName}: ${(error as Error).message}`);
+    return false;
+  }
+};
 
-if (MONOREPO_MODE) {
-  console.log("- info Running with webpack aliases for monorepo compatibility");
-}
+const transpilePackages = ["@squonk/mui-theme", "@squonk/sdf-parser"].filter((pkg) =>
+  isPackageLocal(pkg),
+);
 
+console.log("Transpiling packages:", transpilePackages);
 /**
  * @type {import('next').NextConfig}
  */
@@ -34,7 +44,7 @@ let nextConfig: NextConfig = {
   // replace empty string with undefined
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
-  transpilePackages: MONOREPO_MODE ? ["@squonk/mui-theme", "@squonk/sdf-parser"] : [],
+  transpilePackages,
   // Enable production source maps for Sentry error reporting
   productionBrowserSourceMaps: true,
 };

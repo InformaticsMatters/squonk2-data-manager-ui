@@ -62,16 +62,13 @@ jobs:
         cache: 'pnpm'
         cache-dependency-path: pnpm-lock.yaml
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm install --frozen-lockfile
     - run: node -v
-    - name: Get Playwright version
-      id: pw-version
-      run: node -e "console.log('version=' + require('playwright-core/package.json').version)" >> "$GITHUB_OUTPUT"
     - name: Cache Playwright browsers
       uses: actions/cache@v4
       with:
         path: ~/.cache/ms-playwright
-        key: ${{ runner.os }}-ms-playwright-${{ steps.pw-version.outputs.version }}
+        key: ${{ runner.os }}-ms-playwright-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-ms-playwright-
     - name: Setup Playwright (chromium only)

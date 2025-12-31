@@ -2,7 +2,7 @@ import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { useKeycloakUser, type User } from "./useKeycloakUser";
 
 const getPrevailingRole = (user: Partial<User>, roles: string[]) => {
-  const reversedRoles = [...roles].reverse();
+  const reversedRoles = roles.toReversed();
   if (user.username !== undefined && user.roles) {
     for (const role of reversedRoles) {
       if (user.roles.includes(role)) {

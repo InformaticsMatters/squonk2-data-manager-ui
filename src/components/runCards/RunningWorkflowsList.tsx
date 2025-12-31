@@ -24,7 +24,7 @@ export const RunningWorkflowsList = ({ runningWorkflows }: RunningWorkflowsListP
   }
 
   // Sort by started descending (most recent first)
-  const sortedRuns = [...runningWorkflows].sort((a, b) => {
+  const sortedRuns = runningWorkflows.toSorted((a, b) => {
     if (a.started && b.started) {
       return new Date(b.started).getTime() - new Date(a.started).getTime();
     }

@@ -59,7 +59,7 @@ export const ApplicationModal = ({
             specification: JSON.stringify({ variables: formData }),
           },
         });
-        onLaunch && onLaunch(instanceId);
+        onLaunch?.(instanceId);
         await queryClient.invalidateQueries({ queryKey: getGetInstancesQueryKey() });
       } catch (error) {
         enqueueError(error);

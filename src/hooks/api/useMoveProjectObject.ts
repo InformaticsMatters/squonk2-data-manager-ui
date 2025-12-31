@@ -80,7 +80,7 @@ export const useMoveProjectObject = (
     mutation: {
       onSettled: async (_data, _error, { params: { src_path, dst_file } }) => {
         await invalidateQueries(src_path as string, dst_file as string);
-        onSettled && onSettled();
+        onSettled?.();
       },
       onSuccess: () => {
         enqueueSnackbar({ message: "File renamed and/or moved", variant: "success" });
@@ -97,7 +97,7 @@ export const useMoveProjectObject = (
     mutation: {
       onSettled: async (_data, _error, { params: { src_path } }) => {
         await invalidateQueries(src_path as string);
-        onSettled && onSettled();
+        onSettled?.();
       },
       onSuccess: () => {
         enqueueSnackbar({ message: "Directory renamed and/or moved", variant: "success" });

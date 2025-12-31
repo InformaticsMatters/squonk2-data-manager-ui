@@ -208,7 +208,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
               indeterminate={row.getIsSomeSelected()}
               onChange={(event, checked) => {
                 row.getToggleSelectedHandler()(event);
-                onSelection && onSelection(row.original, checked);
+                onSelection?.(row.original, checked);
               }}
             />
           ),

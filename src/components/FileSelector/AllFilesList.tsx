@@ -50,7 +50,7 @@ export const AllFilesList = ({
           onSelect: targetType.startsWith("dir") ? handleSelect(fullPath) : undefined,
         };
       })
-      .sort((dirA, dirB) => dirA.title.localeCompare(dirB.title)),
+      .toSorted((dirA, dirB) => dirA.title.localeCompare(dirB.title)),
     ...files
       .map((file) => {
         const fullPath = getFullPath(breadcrumbs, file.file_name);
@@ -63,7 +63,7 @@ export const AllFilesList = ({
           onSelect: handleSelect(fullPath),
         };
       })
-      .sort((fileA, fileB) => fileA.title.localeCompare(fileB.title)),
+      .toSorted((fileA, fileB) => fileA.title.localeCompare(fileB.title)),
   ];
 
   if (isLoading) {

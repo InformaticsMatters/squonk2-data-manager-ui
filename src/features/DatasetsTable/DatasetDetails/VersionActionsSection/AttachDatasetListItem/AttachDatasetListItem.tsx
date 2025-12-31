@@ -205,7 +205,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
                 onChange={(e) => field.handleChange(e.target.value)}
               >
                 {(types ?? [])
-                  .sort((a, b) => a.mime.localeCompare(b.mime)) // Sort alphabetically
+                  .toSorted((a, b) => a.mime.localeCompare(b.mime)) // Sort alphabetically
                   .map((type) => (
                     <MenuItem key={type.mime} value={type.mime}>
                       {type.mime}

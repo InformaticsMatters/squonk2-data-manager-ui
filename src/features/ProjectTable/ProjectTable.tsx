@@ -132,7 +132,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
   const queryClient = useQueryClient();
   const { rows, error, isLoading } = useProjectFileRows(getFilesParams);
 
-  const directories = rows?.filter(isTableDir).map((dir) => dir.path) ?? [];
+  const directories = rows?.filter((dir) => isTableDir(dir)).map((dir) => dir.path) ?? [];
 
   return (
     <Box

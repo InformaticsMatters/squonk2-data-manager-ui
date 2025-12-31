@@ -47,7 +47,7 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
   return (
     <List dense component="ul">
       {instances
-        .sort((instanceA, instanceB) =>
+        .toSorted((instanceA, instanceB) =>
           dayjs(instanceA.launched).isBefore(dayjs(instanceB.launched)) ? 1 : -1,
         )
         .map((instance) => (

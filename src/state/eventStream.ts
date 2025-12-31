@@ -49,7 +49,7 @@ export const useEventStream = () => {
     }
 
     const newEvents = [...events, event]
-      .sort((a, b) => dayjs.utc(b.timestamp).valueOf() - dayjs.utc(a.timestamp).valueOf())
+      .toSorted((a, b) => dayjs.utc(b.timestamp).valueOf() - dayjs.utc(a.timestamp).valueOf())
       .slice(-100); // Keep last 100 events
 
     setEvents(newEvents);

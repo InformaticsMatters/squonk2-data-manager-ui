@@ -2,7 +2,7 @@ import { type Ketcher } from "ketcher-core";
 
 // Need to add ketcher type as it abuses the window
 declare global {
-  // eslint-disable-next-line no-var, vars-on-top
+  // eslint-disable-next-line vars-on-top
   var ketcher: Ketcher | undefined;
 }
 

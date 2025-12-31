@@ -28,8 +28,7 @@ export const LabelsFilter = ({ labels, setLabels }: LabelsFilterProps) => {
 
   const addLabel = () => {
     if (currentLabel) {
-      const newLabels = [...labelsArray];
-      newLabels.push(currentLabel);
+      const newLabels = [...labelsArray, currentLabel];
       setLabels(newLabels);
       setCurrentLabel("");
     }

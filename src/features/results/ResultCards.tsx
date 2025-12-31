@@ -106,7 +106,7 @@ export const ResultCards = ({
 
   // Use utility to map to discriminated union
   const cards = mapToCardObjs(instanceCards, taskCards, workflowCards)
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       const aTime = getTime(a);
       const bTime = getTime(b);
       return dayjs(bTime).isBefore(dayjs(aTime)) ? -1 : 1;

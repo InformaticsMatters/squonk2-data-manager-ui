@@ -100,7 +100,9 @@ export const UserSettingsContent = () => {
                 // then we need to check if the change to the filter means the currently selected
                 // unit is no longer selectable. If so we just reset the user's unit selection.
                 const unitFilter = getUserFilter(level, user.username, projects);
-                const foundUnit = units?.filter(unitFilter).find((u) => u.id === unit?.id);
+                const foundUnit = units
+                  ?.filter((unit) => unitFilter(unit))
+                  .find((u) => u.id === unit?.id);
 
                 if (!foundUnit) {
                   setUnit(undefined);

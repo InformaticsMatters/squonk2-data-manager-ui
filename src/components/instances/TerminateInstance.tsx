@@ -66,7 +66,7 @@ export const TerminateInstance = ({
           enqueueError(error);
         }
 
-        onTermination && onTermination();
+        onTermination?.();
       }}
     >
       {({ openModal }) => (

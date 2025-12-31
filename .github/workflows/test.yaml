@@ -45,6 +45,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: data-manager-ui/test
     steps:
+    - name: Prevent concurrent test runs
+      uses: softprops/turnstyle@v3
+      with:
+        same-branch-only: false
     - name: Checkout
       uses: actions/checkout@v4
     - uses: pnpm/action-setup@v4.1.0

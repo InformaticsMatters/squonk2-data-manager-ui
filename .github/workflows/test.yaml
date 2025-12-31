@@ -64,15 +64,20 @@ jobs:
     - name: Install dependencies
       run: pnpm install
     - run: node -v
+    - name: Get Playwright version
+      id: pw-version
+      run: echo "version=$(node -p \"require('playwright-core/package.json').version\")" >> "$GITHUB_OUTPUT"
     - name: Cache Playwright browsers
       uses: actions/cache@v4
       with:
         path: ~/.cache/ms-playwright
-        key: ${{ runner.os }}-ms-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+        key: ${{ runner.os }}-ms-playwright-${{ steps.pw-version.outputs.version }}
         restore-keys: |
           ${{ runner.os }}-ms-playwright-
-    - name: Setup Playwright
-      run: pnpm exec playwright install --with-deps
+    - name: Setup Playwright (chromium only)
+      run: pnpm exec playwright install --with-deps chromium
+      env:
+        PLAYWRIGHT_BROWSERS_PATH: ~/.cache/ms-playwright
     - name: Load cached build for speed
       uses: actions/cache@v4
       with:

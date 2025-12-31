@@ -112,7 +112,7 @@
     "@semantic-release/release-notes-generator": "14.1.0",
     "@squonk/eslint-config": "3.0.1",
     "dotenv": "16.6.1",
-    "eslint": "9.25.1",
+    "eslint": "9.39.2",
     "husky": "9.1.7",
     "identity-obj-proxy": "3.0.0",
     "lint-staged": "15.5.2",

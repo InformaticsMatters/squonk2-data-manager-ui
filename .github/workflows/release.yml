@@ -51,6 +51,10 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           SEMANTIC_RELEASE_DEBUG: true
 
+      - name: Capture release SHA
+        id: release-sha
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Login to DockerHub
         # Only login if we are actually going to build (a release happened)
         if: steps.semantic.outputs.new_release_published == 'true'
@@ -76,7 +80,7 @@ jobs:
         with:
           push: true
           build-args: |
-            GIT_SHA=${{ github.sha }}
+            GIT_SHA=${{ steps.release-sha.outputs.sha }}
             SKIP_CHECKS=1
             BASE_PATH=/data-manager-ui
           tags: ${{ steps.meta.outputs.tags }}

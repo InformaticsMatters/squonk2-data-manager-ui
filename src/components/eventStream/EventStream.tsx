@@ -8,13 +8,14 @@ import {
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useSnackbar } from "notistack";
 
 import { useASAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { getMessageFromEvent } from "../../protobuf/protobuf";
 import {
   eventStreamEnabledAtom,
+  eventStreamSidebarOpenAtom,
   useEventStream,
   webSocketStatusAtom,
 } from "../../state/eventStream";
@@ -126,6 +127,7 @@ export const EventStream = () => {
   const isEventStreamInstalled = useIsEventStreamInstalled();
   const [location, setLocation] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
+  const isSidebarOpen = useAtomValue(eventStreamSidebarOpenAtom);
   const { incrementCount } = useUnreadEventCount();
   const asRole = useASAuthorizationStatus();
   const { addEvent, isEventNewerThanSession, initializeSession } = useEventStream();
@@ -150,15 +152,19 @@ export const EventStream = () => {
         addEvent(message) && // Only show toast for events newer than session start
         isEventNewerThanSession(message)
       ) {
-        enqueueSnackbar(<EventMessage message={message} />, {
-          variant: "default",
-          anchorOrigin: { horizontal: "right", vertical: "bottom" },
-          autoHideDuration: 10_000,
-        });
+        const isDocked = isSidebarOpen;
+
+        if (!isDocked) {
+          enqueueSnackbar(<EventMessage message={message} />, {
+            variant: "default",
+            anchorOrigin: { horizontal: "right", vertical: "bottom" },
+            autoHideDuration: 10_000,
+          });
+        }
         incrementCount();
       }
     },
-    [enqueueSnackbar, incrementCount, addEvent, isEventNewerThanSession],
+    [enqueueSnackbar, incrementCount, addEvent, isEventNewerThanSession, isSidebarOpen],
   );
 
   const handleWebSocketOpen = useCallback(() => {

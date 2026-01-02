@@ -87,3 +87,8 @@ export const useEventStream = () => {
  * Atom to control event stream enablement
  */
 export const eventStreamEnabledAtom = atom(true);
+
+/**
+ * Atom to control visibility of the event stream sidebar
+ */
+export const eventStreamSidebarOpenAtom = atom(false);

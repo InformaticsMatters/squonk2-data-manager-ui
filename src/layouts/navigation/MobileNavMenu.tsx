@@ -78,7 +78,7 @@ export const MobileNavMenu = () => {
             )}
           </Grid>
           <Grid size={12}>
-            <UserMenuContent />
+            <UserMenuContent onEventStreamToggle={() => setOpen(false)} />
           </Grid>
         </Grid>
       </ModalWrapper>

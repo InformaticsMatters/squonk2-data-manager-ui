@@ -1,7 +1,7 @@
 import { type JobSummary } from "@squonk/data-manager-client";
 import { getGetJobQueryKey } from "@squonk/data-manager-client/job";
 
-import { Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -23,12 +23,12 @@ export const TestJobCard = () => {
   queryClient.setQueryData(getGetJobQueryKey(TEST_JOB_ID), testJob.detail);
 
   return (
-    <Grid key={job.id} size={{ md: 3, sm: 6, xs: 12 }}>
+    <Box key={job.id}>
       <JobCard
         disabled={!hasPermission}
         job={[job] as JobSummary[]} // assertion needed as JSON loader doesn't use string literal types
         projectId={currentProject?.project_id}
       />
-    </Grid>
+    </Box>
   );
 };

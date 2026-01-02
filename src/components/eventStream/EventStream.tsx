@@ -24,6 +24,48 @@ import { useIsEventStreamInstalled } from "./useIsEventStreamInstalled";
 
 dayjs.extend(utc);
 
+const WebSocketCloseCode = {
+  NORMAL: 1000,
+  GOING_AWAY: 1001,
+  PROTOCOL_ERROR: 1002,
+  UNSUPPORTED_DATA: 1003,
+  NO_STATUS: 1005,
+  ABNORMAL: 1006,
+  INVALID_PAYLOAD: 1007,
+  POLICY_VIOLATION: 1008,
+  MESSAGE_TOO_BIG: 1009,
+  CLIENT_TERMINATED: 1010,
+  SERVER_ERROR: 1011,
+  SERVICE_RESTART: 1012,
+  TRY_AGAIN_LATER: 1013,
+  BAD_GATEWAY: 1014,
+  TLS_HANDSHAKE_FAIL: 1015,
+  POLICY_UNAUTHORIZED: 4401,
+  POLICY_FORBIDDEN: 4403,
+} as const;
+
+type WebSocketCloseCodeValue = (typeof WebSocketCloseCode)[keyof typeof WebSocketCloseCode];
+
+const closeCodeDescriptions: Record<WebSocketCloseCodeValue, string> = {
+  [WebSocketCloseCode.NORMAL]: "Normal closure - connection completed successfully",
+  [WebSocketCloseCode.GOING_AWAY]: "Going away - server is shutting down or client navigating away",
+  [WebSocketCloseCode.PROTOCOL_ERROR]: "Protocol error - invalid data received",
+  [WebSocketCloseCode.UNSUPPORTED_DATA]: "Unsupported data - received data type not supported",
+  [WebSocketCloseCode.NO_STATUS]: "No status received - no close code provided",
+  [WebSocketCloseCode.ABNORMAL]: "Abnormal closure - connection lost without close frame",
+  [WebSocketCloseCode.INVALID_PAYLOAD]: "Invalid frame payload data - received inconsistent data",
+  [WebSocketCloseCode.POLICY_VIOLATION]: "Policy violation - message violates server policy",
+  [WebSocketCloseCode.MESSAGE_TOO_BIG]: "Message too big - message exceeds size limit",
+  [WebSocketCloseCode.CLIENT_TERMINATED]: "Client error - client terminated connection",
+  [WebSocketCloseCode.SERVER_ERROR]: "Server error - server encountered error",
+  [WebSocketCloseCode.SERVICE_RESTART]: "Service restart - server restarting",
+  [WebSocketCloseCode.TRY_AGAIN_LATER]: "Try again later - temporary server condition",
+  [WebSocketCloseCode.BAD_GATEWAY]: "Bad gateway - invalid response from upstream",
+  [WebSocketCloseCode.TLS_HANDSHAKE_FAIL]: "TLS handshake - TLS handshake failed",
+  [WebSocketCloseCode.POLICY_UNAUTHORIZED]: "Policy violation - unauthorized",
+  [WebSocketCloseCode.POLICY_FORBIDDEN]: "Policy violation - forbidden",
+};
+
 /**
  * Logs WebSocket connection open event
  */
@@ -44,55 +86,11 @@ const logWebSocketClose = (event: CloseEvent) => {
 
   console.log("[EventStream] WebSocket connection closed:", closeInfo);
 
-  // Log specific close codes for debugging
-  switch (event.code) {
-    case 1000:
-      console.log("[EventStream] Normal closure - connection completed successfully");
-      break;
-    case 1001:
-      console.log("[EventStream] Going away - server is shutting down or client navigating away");
-      break;
-    case 1002:
-      console.log("[EventStream] Protocol error - invalid data received");
-      break;
-    case 1003:
-      console.log("[EventStream] Unsupported data - received data type not supported");
-      break;
-    case 1005:
-      console.log("[EventStream] No status received - no close code provided");
-      break;
-    case 1006:
-      console.log("[EventStream] Abnormal closure - connection lost without close frame");
-      break;
-    case 1007:
-      console.log("[EventStream] Invalid frame payload data - received inconsistent data");
-      break;
-    case 1008:
-      console.log("[EventStream] Policy violation - message violates server policy");
-      break;
-    case 1009:
-      console.log("[EventStream] Message too big - message exceeds size limit");
-      break;
-    case 1010:
-      console.log("[EventStream] Client error - client terminated connection");
-      break;
-    case 1011:
-      console.log("[EventStream] Server error - server encountered error");
-      break;
-    case 1012:
-      console.log("[EventStream] Service restart - server restarting");
-      break;
-    case 1013:
-      console.log("[EventStream] Try again later - temporary server condition");
-      break;
-    case 1014:
-      console.log("[EventStream] Bad gateway - invalid response from upstream");
-      break;
-    case 1015:
-      console.log("[EventStream] TLS handshake - TLS handshake failed");
-      break;
-    default:
-      console.log(`[EventStream] Unknown close code: ${event.code}`);
+  const description = closeCodeDescriptions[event.code as WebSocketCloseCodeValue];
+  if (description) {
+    console.log(`[EventStream] ${description}`);
+  } else {
+    console.log(`[EventStream] Unknown close code: ${event.code}`);
   }
 };
 
@@ -207,7 +205,6 @@ export const EventStream = () => {
     onClose: handleWebSocketClose,
     onError: handleWebSocketError,
     onMessage: handleWebSocketMessage,
-    shouldReconnect: () => true,
     retryOnError: true,
     reconnectAttempts: 5,
     reconnectInterval: 3000,

@@ -1,3 +1,10 @@
+# [6.1.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.0.0...6.1.0-dev.1) (2026-01-02)
+
+
+### Features
+
+* display events in dockable sidebar instead of inside the user menu ([e2fecfc](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e2fecfc21e6b15ddf567bf0c1003ffa5d20b3df9))
+
 # [6.0.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.5.0...6.0.0) (2025-12-24)
 
 

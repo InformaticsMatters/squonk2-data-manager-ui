@@ -28,7 +28,7 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Box sx={{ zIndex: 1 }}>
+      <Box sx={{ zIndex: 1, displayPrint: "none" }}>
         <Header />
       </Box>
       {/* Reserve space for the LinearProgress to avoid layout shift */}
@@ -70,7 +70,7 @@ const Layout = ({ children }: LayoutProps) => {
         {!!isDesktop && !!isEventSidebarOpen && <Box sx={{ clear: "both" }} />}
       </Box>
 
-      <Box sx={{ zIndex: 1 }}>
+      <Box sx={{ zIndex: 1, marginTop: "auto", displayPrint: "none" }}>
         <Footer />
       </Box>
       <NoSsr>

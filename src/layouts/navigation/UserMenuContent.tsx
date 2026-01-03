@@ -1,3 +1,5 @@
+import { Activity } from "react";
+
 import {
   Launch as LaunchIcon,
   Person as PersonIcon,
@@ -14,6 +16,7 @@ import { EventStreamMessages } from "../../components/eventStream/EventStreamMes
 import { useASAuthorizationStatus, useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { eventStreamSidebarOpenAtom } from "../../state/eventStream";
+import { useUnreadEventCount } from "../../state/notifications";
 
 interface UserMenuContentInnerProps {
   onEventStreamToggle?: () => void;
@@ -31,6 +34,7 @@ const UserMenuContentInner = ({ onEventStreamToggle }: UserMenuContentInnerProps
 
   const theme = useTheme();
   const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
+  const { count } = useUnreadEventCount();
 
   if (error) {
     return (
@@ -49,11 +53,11 @@ const UserMenuContentInner = ({ onEventStreamToggle }: UserMenuContentInnerProps
   if (user.username) {
     return (
       <>
-        {!!biggerThanMd && (
+        <Activity mode={biggerThanMd ? "visible" : "hidden"}>
           <Box sx={{ fontSize: 80 }}>
             <PersonIcon color="disabled" fontSize="inherit" />
           </Box>
-        )}
+        </Activity>
         <Typography sx={{ fontWeight: "bold" }}>{user.username}</Typography>
         <Box>
           Roles:
@@ -63,7 +67,7 @@ const UserMenuContentInner = ({ onEventStreamToggle }: UserMenuContentInnerProps
           </Chips>
         </Box>
         <AuthButton mode="logout" sx={{ marginY: 1 }} />
-        {!!biggerThanMd && (
+        <Activity mode={biggerThanMd ? "visible" : "hidden"}>
           <Button
             fullWidth
             size="small"
@@ -80,9 +84,9 @@ const UserMenuContentInner = ({ onEventStreamToggle }: UserMenuContentInnerProps
               })
             }
           >
-            {isSidebarOpen ? "Hide event stream" : "Show event stream"}
+            {isSidebarOpen ? "Hide event stream" : `Show event stream ${count} message(s)`}
           </Button>
-        )}
+        </Activity>
       </>
     );
   }

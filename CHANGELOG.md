@@ -1,3 +1,10 @@
+# [6.1.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.2...6.1.0-dev.3) (2026-01-03)
+
+
+### Bug Fixes
+
+* fix awx triggers ([2b1c938](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2b1c938202ef2e9ae0b9488455e8c55bd3a82cfe))
+
 # [6.1.0-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.1...6.1.0-dev.2) (2026-01-03)
 
 

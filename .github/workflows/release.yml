@@ -65,9 +65,15 @@ jobs:
         id: release-sha
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
+  build-image:
+    needs: release
+    if: needs.release.outputs.new_release_published == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Login to DockerHub
-        # Only login if we are actually going to build (a release happened)
-        if: steps.semantic.outputs.new_release_published == 'true'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -75,29 +81,27 @@ jobs:
 
       - name: Docker Metadata
         id: meta
-        if: steps.semantic.outputs.new_release_published == 'true'
         uses: docker/metadata-action@v5
         with:
           images: informaticsmatters/squonk2-data-manager-ui
           tags: |
-            type=raw,value=${{ steps.semantic.outputs.new_release_version }}
-            type=raw,value=stable,enable=${{ !contains(steps.semantic.outputs.new_release_version, '-dev.') }}
-            type=raw,value=latest,enable=${{ !contains(steps.semantic.outputs.new_release_version, '-dev.') }}
+            type=raw,value=${{ needs.release.outputs.new_release_version }}
+            type=raw,value=stable,enable=${{ !contains(needs.release.outputs.new_release_version, '-dev.') }}
+            type=raw,value=latest,enable=${{ !contains(needs.release.outputs.new_release_version, '-dev.') }}
 
       - name: Build and push image
-        if: steps.semantic.outputs.new_release_published == 'true'
         uses: docker/build-push-action@v6
         with:
           push: true
           build-args: |
-            GIT_SHA=${{ steps.release-sha.outputs.sha }}
+            GIT_SHA=${{ needs.release.outputs.release_sha }}
             SKIP_CHECKS=1
             BASE_PATH=/data-manager-ui
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
   trigger-awx-test:
-    needs: release
+    needs: [release, build-image]
     if: needs.release.outputs.new_release_published == 'true' && contains(needs.release.outputs.new_release_version, '-dev.')
     runs-on: ubuntu-latest
     environment: awx/dls-test
@@ -113,7 +117,7 @@ jobs:
           template-var-value: ${{ needs.release.outputs.new_release_version }}
 
   trigger-awx-production:
-    needs: release
+    needs: [release, build-image]
     if: needs.release.outputs.new_release_published == 'true' && !contains(needs.release.outputs.new_release_version, '-dev.')
     runs-on: ubuntu-latest
     environment: awx/im-main

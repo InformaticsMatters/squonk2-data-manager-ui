@@ -1,3 +1,15 @@
+# [6.1.0-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.1...6.1.0-dev.2) (2026-01-03)
+
+
+### Bug Fixes
+
+* fix footer layout ([5c5492f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5c5492fd3316a1a7d170f48bf87f3109e9b5da3a))
+
+
+### Features
+
+* display unread event count in event stream toggle button ([7bc8c23](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7bc8c23bc5c6367540f71236d6bd0bb6bf0ac144))
+
 # [6.1.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.0.0...6.1.0-dev.1) (2026-01-02)
 
 

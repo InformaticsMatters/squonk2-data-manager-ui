@@ -20,6 +20,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     environment: semantic-release
+    outputs:
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
+      release_sha: ${{ steps.release-sha.outputs.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -92,9 +96,13 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+  trigger-awx-test:
+    needs: release
+    if: needs.release.outputs.new_release_published == 'true' && contains(needs.release.outputs.new_release_version, '-dev.')
+    runs-on: ubuntu-latest
+    environment: awx/dls-test
+    steps:
       - name: Trigger AWX test
-        # Run only if released AND it is a dev version
-        if: ${{ steps.semantic.outputs.new_release_published == 'true' && contains(steps.semantic.outputs.new_release_version, '-dev.') }}
         uses: informaticsmatters/trigger-awx-action@v2
         with:
           template: Squonk/2 Data Manager UI -test-
@@ -102,11 +110,15 @@ jobs:
           template-user: ${{ secrets.AWX_USER }}
           template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
           template-var: maui_image_tag
-          template-var-value: ${{ steps.semantic.outputs.new_release_version }}
+          template-var-value: ${{ needs.release.outputs.new_release_version }}
 
+  trigger-awx-production:
+    needs: release
+    if: needs.release.outputs.new_release_published == 'true' && !contains(needs.release.outputs.new_release_version, '-dev.')
+    runs-on: ubuntu-latest
+    environment: awx/im-main
+    steps:
       - name: Trigger AWX production
-        # Run only if released AND it is NOT a dev version
-        if: ${{ steps.semantic.outputs.new_release_published == 'true' && !contains(steps.semantic.outputs.new_release_version, '-dev.') }}
         uses: informaticsmatters/trigger-awx-action@v1
         with:
           template: Data Manager UI -production-
@@ -114,4 +126,4 @@ jobs:
           template-user: ${{ secrets.AWX_USER }}
           template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
           template-var: maui_image_tag
-          template-var-value: ${{ steps.semantic.outputs.new_release_version }}
+          template-var-value: ${{ needs.release.outputs.new_release_version }}

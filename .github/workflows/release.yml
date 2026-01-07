@@ -105,6 +105,8 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
+          context: .
+          file: ./Dockerfile
           push: true
           build-args: |
             GIT_SHA=${{ needs.release.outputs.release_sha }}

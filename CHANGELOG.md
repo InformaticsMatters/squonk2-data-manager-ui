@@ -1,3 +1,10 @@
+# [6.1.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.4...6.1.0-dev.5) (2026-01-07)
+
+
+### Bug Fixes
+
+* update checkout ref to use new_release_git_tag in release workflow ([90fb649](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/90fb649944d1588ad96aca7ad08188b9d4f8f4c9))
+
 # [6.1.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.3...6.1.0-dev.4) (2026-01-07)
 
 

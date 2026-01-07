@@ -1,3 +1,10 @@
+# [6.1.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.3...6.1.0-dev.4) (2026-01-07)
+
+
+### Bug Fixes
+
+* set fetch-depth and ref for checkout in build-image job ([9b02d84](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9b02d84e09135d582d6f6aca0b7e83ed81fedded))
+
 # [6.1.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.2...6.1.0-dev.3) (2026-01-03)
 
 

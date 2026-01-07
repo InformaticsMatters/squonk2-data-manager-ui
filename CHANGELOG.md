@@ -1,3 +1,10 @@
+# [6.1.0-dev.7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.6...6.1.0-dev.7) (2026-01-07)
+
+
+### Bug Fixes
+
+* update checkout step to fetch tags and use release SHA ([59df3a7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/59df3a73a6d3d19f78a4058455209658a1037d97))
+
 # [6.1.0-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.5...6.1.0-dev.6) (2026-01-07)
 
 

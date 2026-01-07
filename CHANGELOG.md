@@ -1,3 +1,10 @@
+# [6.1.0-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.5...6.1.0-dev.6) (2026-01-07)
+
+
+### Bug Fixes
+
+* update checkout ref to use correct format ([9ed6400](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9ed6400f74fc6a7d890cc0f388b4ca8ab781caa1))
+
 # [6.1.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.4...6.1.0-dev.5) (2026-01-07)
 
 

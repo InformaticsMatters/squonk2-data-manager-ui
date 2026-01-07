@@ -10,7 +10,6 @@ COPY patches ./patches/
 
 RUN npm i -g pnpm@10.24.0
 RUN pnpm fetch --prod
-RUN pnpm approve-builds
 # RUN pnpm fetch
 RUN pnpm i -P --ignore-scripts
 # RUN pnpm i --ignore-scripts

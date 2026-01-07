@@ -1,3 +1,11 @@
+# [6.1.0-dev.8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.7...6.1.0-dev.8) (2026-01-07)
+
+
+### Bug Fixes
+
+* remove unnecessary pnpm approve-builds command from Dockerfile ([a85991c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a85991cd00f6910900c735bf73b456ec6517c8d9))
+* specify context and Dockerfile path in build and push image step ([6afbe50](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6afbe505c9b385588ba6a7eea51647b37eabddb3))
+
 # [6.1.0-dev.7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.6...6.1.0-dev.7) (2026-01-07)
 
 

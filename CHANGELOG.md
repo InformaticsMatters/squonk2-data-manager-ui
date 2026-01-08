@@ -1,3 +1,11 @@
+# [6.1.0-dev.9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.8...6.1.0-dev.9) (2026-01-08)
+
+
+### Bug Fixes
+
+* adjust maxHeight of event list box to 100% ([0329e4d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0329e4d385642f9be5e5964d2242e271e7a063b5))
+* update event stream button text to include 'new' for clarity ([a3aedae](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a3aedaed417f7689173d57d628310858bf776e6c))
+
 # [6.1.0-dev.8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.7...6.1.0-dev.8) (2026-01-07)
 
 

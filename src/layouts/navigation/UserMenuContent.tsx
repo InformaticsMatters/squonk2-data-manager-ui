@@ -84,7 +84,7 @@ const UserMenuContentInner = ({ onEventStreamToggle }: UserMenuContentInnerProps
               })
             }
           >
-            {isSidebarOpen ? "Hide event stream" : `Show event stream ${count} message(s)`}
+            {isSidebarOpen ? "Hide event stream" : `Show event stream - ${count} new message(s)`}
           </Button>
         </Activity>
       </>

@@ -1,3 +1,10 @@
+# [6.1.0-dev.10](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.9...6.1.0-dev.10) (2026-01-08)
+
+
+### Bug Fixes
+
+* add zIndex to CookiesBanner to fix overlapping issue caused by layout change ([4cd775d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4cd775dc343774cb905c87a80a0a0400adeb2e89))
+
 # [6.1.0-dev.9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.8...6.1.0-dev.9) (2026-01-08)
 
 

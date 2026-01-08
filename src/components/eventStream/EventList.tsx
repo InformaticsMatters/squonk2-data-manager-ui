@@ -25,7 +25,7 @@ export const EventList = () => {
   }
 
   return (
-    <Box sx={{ maxHeight: 400, overflow: "auto" }}>
+    <Box sx={{ maxHeight: "100%", overflow: "auto" }}>
       <Typography sx={{ p: 1, fontWeight: "bold" }} variant="subtitle2">
         Events ({events.length})
       </Typography>

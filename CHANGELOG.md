@@ -1,3 +1,10 @@
+# [6.1.0-dev.11](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.10...6.1.0-dev.11) (2026-01-12)
+
+
+### Bug Fixes
+
+* fix event panel layout on systems when viewport width is reduced by the browser scrollbar ([34c93df](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/34c93df1e2a13360ff69b2b495bdd8300f03862d))
+
 # [6.1.0-dev.10](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.9...6.1.0-dev.10) (2026-01-08)
 
 

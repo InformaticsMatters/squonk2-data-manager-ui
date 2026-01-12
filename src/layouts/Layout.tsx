@@ -42,7 +42,7 @@ const Layout = ({ children }: LayoutProps) => {
           component="main"
           sx={{
             paddingY: 2,
-            width: `calc(100vw - ${isEventSidebarOpen ? WIDE_DESKTOP_SIDEBAR_WIDTH : 0}px)`,
+            width: `calc(calc(100vw - (100vw - 100%)) - ${isEventSidebarOpen ? WIDE_DESKTOP_SIDEBAR_WIDTH : 0}px)`,
             float: "left",
           }}
         >

@@ -23,7 +23,7 @@ export const FavouritesList = ({
   const selectedFilesToDisplay = selectedFiles
     ?.filter((file) => file.type.includes(targetType))
     .filter((file) => !file.mimeType || mimeTypes?.includes(file.mimeType))
-    .sort((fileA, fileB) => fileA.path.localeCompare(fileB.path));
+    .toSorted((fileA, fileB) => fileA.path.localeCompare(fileB.path));
 
   return selectedFilesToDisplay?.length ? (
     <ScrollList dense>

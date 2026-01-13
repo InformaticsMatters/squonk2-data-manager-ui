@@ -143,7 +143,7 @@ export const JobModal = ({
             specification: JSON.stringify(specification),
           },
         });
-        onLaunch && onLaunch(instanceId);
+        onLaunch?.(instanceId);
         await queryClient.invalidateQueries({
           queryKey: getGetInstancesQueryKey({ project_id: projectId }),
         });

@@ -36,8 +36,8 @@ export const FavouriteButton = ({ projectId, fullPath, type, mimeType }: Favouri
 
   const handleFavouriteChange = () => {
     file
-      ? removeFile && removeFile({ path: fullPath, type, mimeType })
-      : addFile && addFile({ path: fullPath, type, mimeType });
+      ? removeFile?.({ path: fullPath, type, mimeType })
+      : addFile?.({ path: fullPath, type, mimeType });
   };
 
   return (

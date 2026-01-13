@@ -20,7 +20,7 @@ export const ApplicationDetails = ({ instanceId }: ApplicationDetailsProps) => {
   const { data: instance } = usePolledGetInstance(instanceId);
 
   const tasks = instance?.tasks;
-  const task = tasks?.[tasks.length - 1];
+  const task = tasks?.at(-1);
 
   if (instance === undefined) {
     return <CenterLoader />;

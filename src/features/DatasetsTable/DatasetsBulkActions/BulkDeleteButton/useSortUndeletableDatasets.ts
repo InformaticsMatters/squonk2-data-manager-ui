@@ -25,7 +25,7 @@ export const useSortUndeletableDatasets = (undeletableDatasets: TableDatasetSubR
 
   // Transform the map into an array of dataset groups and sort them
   const sortedArray = [...sortedDatasetsMap.values()].map((datasetArray) => {
-    return datasetArray.sort((a, b) => a.version - b.version);
+    return datasetArray.toSorted((a, b) => a.version - b.version);
   });
 
   return sortedArray;

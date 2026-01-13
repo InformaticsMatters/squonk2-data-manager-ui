@@ -62,7 +62,7 @@ export const WorkflowModal = ({
           },
         });
         enqueueSnackbar("Workflow instance started successfully", { variant: "success" });
-        onLaunch && onLaunch(id);
+        onLaunch?.(id);
       }
     } catch (error) {
       enqueueError(error);

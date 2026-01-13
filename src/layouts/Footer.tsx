@@ -1,4 +1,4 @@
-import { Container, Grid2 as Grid, Link, List, ListItem, Paper, Typography } from "@mui/material";
+import { Container, Grid, Link, List, ListItem, Paper, Typography } from "@mui/material";
 import A from "next/link";
 
 import { AppVersions } from "../components/AppVersions";
@@ -8,7 +8,7 @@ export const Footer = () => {
   const itemStyles = { justifyContent: { xs: "left", sm: "right" } };
 
   return (
-    <Paper square component="footer" sx={{ marginTop: "auto", displayPrint: "none" }}>
+    <Paper square component="footer">
       <Container maxWidth="md">
         <Grid container sx={{ p: 2 }}>
           <Grid size={{ sm: 6, xs: 12 }}>

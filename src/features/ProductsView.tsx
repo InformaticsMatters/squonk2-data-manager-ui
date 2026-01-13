@@ -1,7 +1,7 @@
 import { type ProductDmProjectTier, type ProductDmStorage } from "@squonk/account-server-client";
 import { useGetProducts } from "@squonk/account-server-client/product";
 
-import { Alert, Box, Divider, Grid2 as Grid, Typography } from "@mui/material";
+import { Alert, Box, Divider, Grid, Typography } from "@mui/material";
 import groupBy from "just-group-by";
 
 import { CenterLoader } from "../components/CenterLoader";

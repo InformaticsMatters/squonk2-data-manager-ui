@@ -1,6 +1,7 @@
 import { Button, type ButtonProps } from "@mui/material";
 
 import { useCleanUpOnLogout } from "../../hooks/authHooks";
+import { withBasePath } from "../../utils/app/basePath";
 import { capitalise } from "../../utils/app/language";
 
 type ClickableHandler = "login" | "logout";
@@ -20,12 +21,11 @@ export interface AuthButtonPros extends ButtonProps {
  */
 export const AuthButton = ({ mode, ...ButtonProps }: AuthButtonPros) => {
   const cleanupOnLogout = useCleanUpOnLogout();
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
   return (
     <Button
       {...ButtonProps}
-      href={`${basePath}/api/auth/${mode}` satisfies LinkPropsWithBaseURL}
+      href={withBasePath(`/api/auth/${mode}` satisfies LinkPropsWithBaseURL)}
       onClick={mode === "logout" ? cleanupOnLogout : undefined}
     >
       {capitalise(mode)}

@@ -30,7 +30,7 @@ const Result = () => {
   return (
     <>
       <Head>
-        <title>Squonk | Task {task?.states?.slice(-1)[0]?.state}</title>
+        <title>Squonk | Task {task?.states?.at(-1)?.state}</title>
       </Head>
       <RoleRequired roles={DM_ROLES}>
         <RoleRequired roles={AS_ROLES}>

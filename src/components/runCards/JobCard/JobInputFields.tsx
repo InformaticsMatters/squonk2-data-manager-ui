@@ -1,6 +1,6 @@
 import { type Dispatch, type ReactNode, type SetStateAction, useState } from "react";
 
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
 import { type ProjectId } from "../../../hooks/projectHooks";
 import { FILE_PROTOCOL, removeFileProtocolFromInputData } from "../../../utils/app/urls";

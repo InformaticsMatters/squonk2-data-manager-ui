@@ -1,3 +1,5 @@
+import { withBasePath } from "./basePath";
+
 // Main source of truth for available *pages*
 // Function used as value for dynamic routes
 
@@ -18,6 +20,4 @@ export const projectFileURL: (typeof API_ROUTES)["projectFile"] = (project, path
 
 export const projectURL = (projectId: string) =>
   globalThis.location.origin +
-  (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
-  "/project?" +
-  new URLSearchParams([["project", projectId]]).toString();
+  withBasePath("/project?" + new URLSearchParams([["project", projectId]]).toString());

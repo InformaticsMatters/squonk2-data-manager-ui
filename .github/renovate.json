@@ -1,4 +1,5 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboardAutoclose": true,
   "extends": [
     ":dependencyDashboard",
@@ -17,14 +18,30 @@
   "constraints": {
     "pnpm": "10"
   },
-  "baseBranches": [
+  "baseBranchPatterns": [
     "dev"
   ],
+  "minimumReleaseAge": "2 days",
   "packageRules": [
     {
-      "matchPackageNames": [
-        "!nextjs-routes"
-      ]
+      "description": "Allow latest squonk packages by ignoring minimum release age",
+      "matchPackageNames": ["@squonk/**"],
+      "minimumReleaseAge": null
+    },
+    {
+      "description": "Group Bufbuild packages together",
+      "matchPackageNames": ["@bufbuild/**"],
+      "groupName": "Bufbuild monorepo"
+    },
+    {
+      "description": "Group Ketcher packages together",
+      "matchPackageNames": ["ketcher-*"],
+      "groupName": "Ketcher monorepo"
+    },
+    {
+      "description": "Keep NodeJS at LTS",
+      "matchPackageNames": ["node", "@types/node"],
+      "versioning": "node,"
     }
   ]
 }

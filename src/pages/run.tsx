@@ -5,7 +5,7 @@ import { useGetJobs } from "@squonk/data-manager-client/job";
 import { useGetRunningWorkflows, useGetWorkflows } from "@squonk/data-manager-client/workflow";
 
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
-import { Alert, Container, Grid2 as Grid, MenuItem, TextField } from "@mui/material";
+import { Alert, Box, Container, Grid, MenuItem, TextField } from "@mui/material";
 import groupBy from "just-group-by";
 import { debounce } from "lodash-es";
 import dynamic from "next/dynamic";
@@ -130,15 +130,15 @@ const Run = () => {
 
   const cards = useMemo(() => {
     const applicationCards = filteredApplications.map((app) => (
-      <Grid key={app.application_id} size={{ md: 3, sm: 6, xs: 12 }}>
+      <Box key={app.application_id}>
         <ApplicationCard app={app} projectId={currentProject?.project_id} />
-      </Grid>
+      </Box>
     ));
 
     const jobCards = Object.entries(filteredAndGroupedJobs).map(([key, jobs]) => (
-      <Grid key={key} size={{ md: 3, sm: 6, xs: 12 }}>
+      <Box key={key}>
         <JobCard disabled={!hasPermissionToRun} job={jobs} projectId={currentProject?.project_id} />
-      </Grid>
+      </Box>
     ));
 
     const runningWorkflows = runningWorkflowsData ?? [];
@@ -148,14 +148,20 @@ const Run = () => {
         const runs = runningWorkflows.filter((rw) => rw.workflow.id === workflowGroup[0].id);
 
         return (
-          <Grid key={name} size={{ md: 3, sm: 6, xs: 12 }}>
+          <Box key={name}>
             <WorkflowCard runningWorkflows={runs} workflow={workflowGroup[0]} />
-          </Grid>
+          </Box>
         );
       },
     );
 
-    process.env.NODE_ENV === "development" && jobCards.push(<TestJobCard key={TEST_JOB_ID} />);
+    if (process.env.NODE_ENV === "development") {
+      jobCards.push(
+        <Box key={TEST_JOB_ID}>
+          <TestJobCard />
+        </Box>,
+      );
+    }
 
     // Create a map of execution types to their corresponding card arrays
     const cardsByType = { application: applicationCards, job: jobCards, workflow: workflowCards };
@@ -185,7 +191,10 @@ const Run = () => {
       <RoleRequired roles={DM_ROLES}>
         <RoleRequired roles={AS_ROLES}>
           <Layout>
-            <Container maxWidth="xl">
+            <Container
+              maxWidth="xl"
+              sx={{ containerType: "inline-size", containerName: "run-page" }}
+            >
               <Grid container spacing={2} sx={{ mb: 2 }}>
                 <Grid size={{ md: 4, sm: 6, xs: 12 }}>
                   <TextField
@@ -260,7 +269,25 @@ const Run = () => {
                 )}
 
                 {/* Actual content */}
-                {!isApplicationsLoading && !isJobsLoading ? cards : <CenterLoader />}
+                {!isApplicationsLoading && !isJobsLoading ? (
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gap: 2,
+                      gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+                      "@container run-page (max-width: 1100px)": {
+                        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                      },
+                      "@container run-page (max-width: 800px)": {
+                        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+                      },
+                    }}
+                  >
+                    {cards}
+                  </Box>
+                ) : (
+                  <CenterLoader />
+                )}
               </Grid>
             </Container>
           </Layout>

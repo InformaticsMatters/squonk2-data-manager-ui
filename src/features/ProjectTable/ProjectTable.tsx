@@ -8,7 +8,7 @@ import {
   CloudUploadRounded as CloudUploadRoundedIcon,
   FolderRounded as FolderRoundedIcon,
 } from "@mui/icons-material";
-import { Box, Breadcrumbs, Grid2 as Grid, IconButton, Tooltip, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper } from "@tanstack/react-table";
 import { filesize } from "filesize";
@@ -132,7 +132,7 @@ export const ProjectTable = ({ currentProject, openUploadDialog }: ProjectTableP
   const queryClient = useQueryClient();
   const { rows, error, isLoading } = useProjectFileRows(getFilesParams);
 
-  const directories = rows?.filter(isTableDir).map((dir) => dir.path) ?? [];
+  const directories = rows?.filter((dir) => isTableDir(dir)).map((dir) => dir.path) ?? [];
 
   return (
     <Box

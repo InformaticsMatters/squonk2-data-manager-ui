@@ -1,3 +1,87 @@
+# [6.1.0-dev.11](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.10...6.1.0-dev.11) (2026-01-12)
+
+
+### Bug Fixes
+
+* fix event panel layout on systems when viewport width is reduced by the browser scrollbar ([34c93df](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/34c93df1e2a13360ff69b2b495bdd8300f03862d))
+
+# [6.1.0-dev.10](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.9...6.1.0-dev.10) (2026-01-08)
+
+
+### Bug Fixes
+
+* add zIndex to CookiesBanner to fix overlapping issue caused by layout change ([4cd775d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/4cd775dc343774cb905c87a80a0a0400adeb2e89))
+
+# [6.1.0-dev.9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.8...6.1.0-dev.9) (2026-01-08)
+
+
+### Bug Fixes
+
+* adjust maxHeight of event list box to 100% ([0329e4d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0329e4d385642f9be5e5964d2242e271e7a063b5))
+* update event stream button text to include 'new' for clarity ([a3aedae](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a3aedaed417f7689173d57d628310858bf776e6c))
+
+# [6.1.0-dev.8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.7...6.1.0-dev.8) (2026-01-07)
+
+
+### Bug Fixes
+
+* remove unnecessary pnpm approve-builds command from Dockerfile ([a85991c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a85991cd00f6910900c735bf73b456ec6517c8d9))
+* specify context and Dockerfile path in build and push image step ([6afbe50](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6afbe505c9b385588ba6a7eea51647b37eabddb3))
+
+# [6.1.0-dev.7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.6...6.1.0-dev.7) (2026-01-07)
+
+
+### Bug Fixes
+
+* update checkout step to fetch tags and use release SHA ([59df3a7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/59df3a73a6d3d19f78a4058455209658a1037d97))
+
+# [6.1.0-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.5...6.1.0-dev.6) (2026-01-07)
+
+
+### Bug Fixes
+
+* update checkout ref to use correct format ([9ed6400](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9ed6400f74fc6a7d890cc0f388b4ca8ab781caa1))
+
+# [6.1.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.4...6.1.0-dev.5) (2026-01-07)
+
+
+### Bug Fixes
+
+* update checkout ref to use new_release_git_tag in release workflow ([90fb649](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/90fb649944d1588ad96aca7ad08188b9d4f8f4c9))
+
+# [6.1.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.3...6.1.0-dev.4) (2026-01-07)
+
+
+### Bug Fixes
+
+* set fetch-depth and ref for checkout in build-image job ([9b02d84](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9b02d84e09135d582d6f6aca0b7e83ed81fedded))
+
+# [6.1.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.2...6.1.0-dev.3) (2026-01-03)
+
+
+### Bug Fixes
+
+* fix awx triggers ([2b1c938](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2b1c938202ef2e9ae0b9488455e8c55bd3a82cfe))
+
+# [6.1.0-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.1...6.1.0-dev.2) (2026-01-03)
+
+
+### Bug Fixes
+
+* fix footer layout ([5c5492f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5c5492fd3316a1a7d170f48bf87f3109e9b5da3a))
+
+
+### Features
+
+* display unread event count in event stream toggle button ([7bc8c23](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7bc8c23bc5c6367540f71236d6bd0bb6bf0ac144))
+
+# [6.1.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.0.0...6.1.0-dev.1) (2026-01-02)
+
+
+### Features
+
+* display events in dockable sidebar instead of inside the user menu ([e2fecfc](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e2fecfc21e6b15ddf567bf0c1003ffa5d20b3df9))
+
 # [6.0.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/5.5.0...6.0.0) (2025-12-24)
 
 

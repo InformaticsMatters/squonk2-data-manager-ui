@@ -57,7 +57,9 @@ export const OrganisationEditors = ({ organisation }: UnitEditorsProps) => {
           }
         }}
         onSelect={async (value) => {
-          const username = value.reverse().find((user) => !users.map((u) => u.id).includes(user));
+          const username = value
+            .toReversed()
+            .find((user) => !users.map((u) => u.id).includes(user));
           if (username) {
             try {
               await addEditor({ orgId: organisation.id, userId: username });

@@ -1,5 +1,5 @@
 import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
-import { Box, Container, Grid2 as Grid, Typography } from "@mui/material";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
 

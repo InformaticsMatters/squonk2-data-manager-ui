@@ -2,6 +2,8 @@ import { type ReactNode } from "react";
 
 import { IconButton, Tooltip } from "@mui/material";
 
+import { withBasePath } from "../../utils/app/basePath";
+
 export interface AdornmentProps {
   title: string;
   href: string;
@@ -11,12 +13,7 @@ export interface AdornmentProps {
 export const Adornment = ({ title, href, children }: AdornmentProps) => (
   <Tooltip title={title}>
     <span>
-      <IconButton
-        href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${href}`}
-        size="small"
-        sx={{ p: "1px" }}
-        target="_blank"
-      >
+      <IconButton href={withBasePath(href)} size="small" sx={{ p: "1px" }} target="_blank">
         {children}
       </IconButton>
     </span>

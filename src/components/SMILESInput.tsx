@@ -105,7 +105,7 @@ export const SMILESInput = ({
               sx={{ ml: 1 }}
               onClick={() => {
                 setMode("sketcher");
-                onOpen && onOpen();
+                onOpen?.();
               }}
             >
               <EditIcon />
@@ -126,7 +126,7 @@ export const SMILESInput = ({
         setSmiles(smi);
         setMode("smiles");
         onSave(smi);
-        onClose && onClose();
+        onClose?.();
         setIsASketcherOpen(false);
       }
     } catch (error) {
@@ -148,7 +148,7 @@ export const SMILESInput = ({
           color="info"
           onClick={() => {
             setMode("smiles");
-            onClose && onClose();
+            onClose?.();
             setIsASketcherOpen(false);
           }}
         >

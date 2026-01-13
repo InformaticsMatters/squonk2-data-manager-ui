@@ -4,7 +4,7 @@ import { useGetInstances } from "@squonk/data-manager-client/instance";
 import { useGetTasks } from "@squonk/data-manager-client/task";
 import { useGetRunningWorkflows } from "@squonk/data-manager-client/workflow";
 
-import { Alert, Container, Grid2 as Grid } from "@mui/material";
+import { Alert, Container, Grid } from "@mui/material";
 
 import { CenterLoader } from "../components/CenterLoader";
 import { useCurrentProjectId } from "../hooks/projectHooks";

@@ -1,4 +1,4 @@
-import { Grid2 as Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 
 import { SelectOrganisation } from "../userContext/SelectOrganisation";
 import { SelectProject } from "../userContext/SelectProject";

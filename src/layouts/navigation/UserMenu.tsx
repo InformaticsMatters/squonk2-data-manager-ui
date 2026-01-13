@@ -23,6 +23,10 @@ export const UserMenu = () => {
     handleToggle.onClick(event);
   };
 
+  const handleClosePopover = () => {
+    popupState.close();
+  };
+
   return (
     <>
       <Tooltip title="Account">
@@ -53,7 +57,7 @@ export const UserMenu = () => {
           <Fade {...TransitionProps} timeout={350}>
             <Paper>
               <Box sx={{ p: 1 }}>
-                <UserMenuContent />
+                <UserMenuContent onEventStreamToggle={handleClosePopover} />
               </Box>
             </Paper>
           </Fade>

@@ -1,4 +1,4 @@
-import { Box, Button, Container, Grid2 as Grid, Link } from "@mui/material";
+import { Box, Button, Container, Grid, Link } from "@mui/material";
 
 import { useCookieConsent } from "../../state/cookieConsent";
 
@@ -25,6 +25,7 @@ export const CookiesBanner = () => {
         padding: "0.5rem",
         boxShadow: 10,
         displayPrint: "none",
+        zIndex: 2,
       }}
     >
       <Container>

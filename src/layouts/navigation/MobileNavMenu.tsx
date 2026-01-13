@@ -4,7 +4,7 @@ import { MenuRounded as MenuRoundedIcon } from "@mui/icons-material";
 import {
   Box,
   Divider,
-  Grid2 as Grid,
+  Grid,
   IconButton,
   List,
   ListItemButton,
@@ -78,7 +78,7 @@ export const MobileNavMenu = () => {
             )}
           </Grid>
           <Grid size={12}>
-            <UserMenuContent />
+            <UserMenuContent onEventStreamToggle={() => setOpen(false)} />
           </Grid>
         </Grid>
       </ModalWrapper>

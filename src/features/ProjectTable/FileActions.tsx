@@ -7,6 +7,7 @@ import {
   useIsUserAdminOrEditorOfCurrentProject,
 } from "../../hooks/projectHooks";
 import { useProjectBreadcrumbs } from "../../hooks/projectPathHooks";
+import { withBasePath } from "../../utils/app/basePath";
 import { API_ROUTES } from "../../utils/app/routes";
 import { type CreateDatasetFromFileButtonProps } from "./buttons/CreateDatasetFromFileButton";
 import { type DeleteDirectoryButtonProps } from "./buttons/DeleteDirectoryButton";
@@ -118,10 +119,9 @@ export const FileActions = ({ file }: FileActionsProps) => {
 
       {!!isFile && (
         <DownloadButton
-          href={
-            (process.env.NEXT_PUBLIC_BASE_PATH ?? "") +
-            API_ROUTES.projectFile(project.project_id, path, file.fileName, "/api/dm-api")
-          }
+          href={withBasePath(
+            API_ROUTES.projectFile(project.project_id, path, file.fileName, "/api/dm-api"),
+          )}
           size="small"
           title="Download file"
         />

@@ -2,7 +2,7 @@ import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-man
 import { useGetJob } from "@squonk/data-manager-client/job";
 
 import { WorkOutlineRounded as WorkOutlineRoundedIcon } from "@mui/icons-material";
-import { Alert, Grid2 as Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { Alert, Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
 import { usePolledGetInstance } from "../../../hooks/usePolledGetInstance";
 import { getErrorMessage } from "../../../utils/next/orvalError";

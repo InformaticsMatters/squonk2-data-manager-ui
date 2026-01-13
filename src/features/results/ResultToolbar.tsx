@@ -8,7 +8,7 @@ import {
 import { getGetProjectsQueryKey } from "@squonk/data-manager-client/project";
 
 import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
-import { Grid2 as Grid, IconButton, MenuItem, TextField, Tooltip } from "@mui/material";
+import { Grid, IconButton, MenuItem, TextField, Tooltip } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { EventDebugSwitch } from "../../components/results/EventDebugSwitch";

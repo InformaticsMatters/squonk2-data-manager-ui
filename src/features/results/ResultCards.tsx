@@ -4,7 +4,7 @@ import {
   type TaskSummary,
 } from "@squonk/data-manager-client";
 
-import { Grid2 as Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import dayjs from "dayjs";
 
 import { Instance } from "../../components/instances/Instance";
@@ -106,7 +106,7 @@ export const ResultCards = ({
 
   // Use utility to map to discriminated union
   const cards = mapToCardObjs(instanceCards, taskCards, workflowCards)
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       const aTime = getTime(a);
       const bTime = getTime(b);
       return dayjs(bTime).isBefore(dayjs(aTime)) ? -1 : 1;

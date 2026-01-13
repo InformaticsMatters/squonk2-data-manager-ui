@@ -80,7 +80,9 @@ export const UnitMembers = ({ unit }: UnitMembersProps) => {
           }
         }}
         onSelect={async (value) => {
-          const username = value.reverse().find((user) => !users.map((u) => u.id).includes(user));
+          const username = value
+            .toReversed()
+            .find((user) => !users.map((u) => u.id).includes(user));
           if (username) {
             try {
               await addMember({ unitId: unit.id, userId: username });

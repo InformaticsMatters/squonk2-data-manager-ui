@@ -6,7 +6,7 @@
   "image": "mcr.microsoft.com/devcontainers/javascript-node:3-20",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "22.21.1",
+      "version": "24.13.0",
       "nodeGypDependencies": true,
       "pnpmVersion": "10.24.0"
     }

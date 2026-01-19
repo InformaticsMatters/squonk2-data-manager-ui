@@ -70,7 +70,7 @@
     "@types/semver": "7.7.1",
     "axios": "1.13.2",
     "dayjs": "1.11.19",
-    "filesize": "10.1.6",
+    "filesize": "11.0.13",
     "immer": "10.2.0",
     "jotai": "2.16.1",
     "just-compare": "2.3.0",

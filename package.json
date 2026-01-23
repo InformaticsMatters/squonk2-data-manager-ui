@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "3.8.0",
-    "@bufbuild/protobuf": "2.10.2",
+    "@bufbuild/protobuf": "2.11.0",
     "@emotion/cache": "11.14.0",
     "@emotion/react": "11.14.0",
     "@emotion/server": "11.11.0",
@@ -101,8 +101,8 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
-    "@bufbuild/buf": "1.61.0",
-    "@bufbuild/protoc-gen-es": "2.10.2",
+    "@bufbuild/buf": "1.64.0",
+    "@bufbuild/protoc-gen-es": "2.11.0",
     "@playwright/test": "1.57.0",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/commit-analyzer": "13.0.1",

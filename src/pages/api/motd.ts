@@ -9,15 +9,15 @@ import { z } from "zod";
 dayjs.extend(utc);
 
 // Zod schema for MOTD entry
-const MotdEntrySchema = z.object({
-  message: z.string().min(1, "MOTD entry must have a message"),
-  title: z.string().optional(),
-  url: z.string().url().optional(),
+export const MotdEntrySchema = z.object({
   begin: z.string().optional(),
   end: z.string().optional(),
+  title: z.string().min(1, "MOTD entry must have a title"),
+  message: z.string().min(1, "MOTD entry must have a message"),
+  url: z.string().url().optional(),
 });
 
-const MotdFileSchema = z.object({ motd: z.array(MotdEntrySchema).optional() });
+export const MotdFileSchema = z.object({ motd: z.array(MotdEntrySchema).optional() });
 
 const MOTD_PATH = path.join(process.cwd(), "motd.yaml");
 
@@ -56,34 +56,30 @@ function validateMotdFile(parsed: unknown): z.infer<typeof MotdFileSchema> | nul
   return motdFileResult.data;
 }
 
-const readActiveMotd = async (): Promise<z.infer<typeof MotdEntrySchema> | null> => {
+const readActiveMotd = async (): Promise<z.infer<typeof MotdEntrySchema>[]> => {
   const fileContents = await fs.readFile(MOTD_PATH, "utf8").catch(() => null);
   if (!fileContents) {
-    return null;
+    return [];
   }
 
   const parsed = parseYamlSafe(fileContents);
   if (!parsed) {
-    return null;
+    return [];
   }
 
   const motdFile = validateMotdFile(parsed);
   if (!motdFile?.motd || !Array.isArray(motdFile.motd)) {
-    return null;
+    return [];
   }
 
   const now = dayjs.utc();
-  return motdFile.motd.find((entry) => isActive(entry, now)) ?? null;
+  const result = motdFile.motd.filter((entry) => isActive(entry, now));
+  return result;
 };
 
 export default async function handler(_req: NextApiRequest, res: NextApiResponse): Promise<void> {
   try {
     const motd = await readActiveMotd();
-
-    if (!motd) {
-      res.status(204).end();
-      return;
-    }
 
     res.setHeader("Cache-Control", "no-store");
     // Return all fields for the active entry

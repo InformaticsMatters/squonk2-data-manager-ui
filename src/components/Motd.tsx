@@ -1,7 +1,10 @@
 import { Alert, AlertTitle, Box, Button, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
+import { type z } from "zod";
 
-type MotdResponse = { message: string; title?: string; url?: string; begin?: string; end?: string };
+import { type MotdEntrySchema } from "../pages/api/motd";
+
+type MotdResponse = z.infer<typeof MotdEntrySchema>[];
 
 const fetchMotd = async (): Promise<MotdResponse | null> => {
   const response = await fetch("/api/motd", { cache: "no-store" });
@@ -43,9 +46,7 @@ export const Motd = () => {
     return null;
   }
 
-  const { title, message, url, begin, end } = data;
-
-  return (
+  return data.map(({ title, message, url, begin, end }) => (
     <Alert
       action={
         url ? (
@@ -60,6 +61,7 @@ export const Motd = () => {
           </Button>
         ) : undefined
       }
+      key={`${title}-${message}`}
       severity="info"
       sx={{ mb: 2 }}
     >
@@ -76,5 +78,5 @@ export const Motd = () => {
         )}
       </Box>
     </Alert>
-  );
+  ));
 };

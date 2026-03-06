@@ -33,6 +33,9 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# motd file
+motd.yaml
+
 # vercel
 .vercel
 

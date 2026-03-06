@@ -1,3 +1,10 @@
+# [6.1.0-dev.12](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0-dev.11...6.1.0-dev.12) (2026-03-06)
+
+
+### Features
+
+* add MOTD feature ([0abcc35](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0abcc35fd2df9df7eebd22799437f970a9ca0bff))
+
 # [6.1.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.0.0...6.1.0) (2026-01-13)
 
 

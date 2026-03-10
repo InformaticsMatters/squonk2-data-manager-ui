@@ -115,7 +115,7 @@ jobs:
     environment: awx/dls-test
     steps:
       - name: Trigger AWX test
-        uses: informaticsmatters/trigger-awx-action@v2
+        uses: informaticsmatters/trigger-awx-action@v3
         with:
           template: Squonk/2 Data Manager UI -test-
           template-host: ${{ secrets.AWX_HOST }}
@@ -131,7 +131,7 @@ jobs:
     environment: awx/im-main
     steps:
       - name: Trigger AWX production
-        uses: informaticsmatters/trigger-awx-action@v1
+        uses: informaticsmatters/trigger-awx-action@v3
         with:
           template: Data Manager UI -production-
           template-host: ${{ secrets.AWX_HOST }}

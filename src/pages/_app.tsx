@@ -9,9 +9,9 @@ import {
   type EmotionCacheProviderProps,
 } from "@mui/material-nextjs/v15-pagesRouter";
 import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { enableMapSet } from "immer";
 import { type AppProps } from "next/app";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 
 import { ConfiguredSnackbarProvider } from "../components/app/ConfiguredSnackbarProvider";
@@ -22,6 +22,11 @@ import { openSansFont } from "../constants/fonts";
 import { AS_API_URL, DM_API_URL } from "../constants/proxies";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
 import { withBasePath } from "../utils/app/basePath";
+
+const ReactQueryDevtools = dynamic(
+  () => import("@tanstack/react-query-devtools").then((mod) => mod.ReactQueryDevtools),
+  { ssr: false },
+);
 
 const openSansFontCss = `
 :root {

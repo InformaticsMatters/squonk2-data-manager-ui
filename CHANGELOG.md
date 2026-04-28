@@ -1,3 +1,10 @@
+# [6.2.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0-dev.2...6.2.0-dev.3) (2026-04-28)
+
+
+### Bug Fixes
+
+* update semantic release ([a2b0b47](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a2b0b47610cd8e26df52ca5d4df06054d232e55e))
+
 # [6.2.0-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0-dev.1...6.2.0-dev.2) (2026-03-10)
 
 

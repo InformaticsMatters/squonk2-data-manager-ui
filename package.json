@@ -80,7 +80,7 @@
     "ketcher-react": "3.2.0",
     "ketcher-standalone": "3.2.0",
     "lodash-es": "4.17.22",
-    "material-ui-popup-state": "5.3.6",
+    "material-ui-popup-state": "5.3.7",
     "nanoid": "5.1.6",
     "next": "15.5.9",
     "next-http-proxy-middleware": "1.2.7",

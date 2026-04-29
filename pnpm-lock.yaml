@@ -161,8 +161,8 @@ importers:
         specifier: 15.5.9
         version: 15.5.9(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.83.1)
       next-http-proxy-middleware:
-        specifier: 1.2.7
-        version: 1.2.7
+        specifier: 1.2.8
+        version: 1.2.8
       nextjs-routes:
         specifier: 2.2.5
         version: 2.2.5(next@15.5.9(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.83.1))
@@ -3841,11 +3841,13 @@ packages:
 
   glob@10.5.0:
     resolution: {integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@9.3.5:
     resolution: {integrity: sha512-e1LleDykUz2Iu+MTYdkSsuWX8lvAjAcs0Xef0lNIu0S2wOAzuTxCJtcd9S3cijlwYF18EsU3rzb8jPVobxDh9Q==}
     engines: {node: '>=16 || 14 >=14.17'}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-prefix@4.0.0:
     resolution: {integrity: sha512-w0Uf9Y9/nyHinEk5vMJKRie+wa4kR5hmDbEhGGds/kG1PwGLLHKRoNMeJOyCQjjBkANlnScqgzcFwGHgmgLkVA==}
@@ -5019,8 +5021,8 @@ packages:
   nerf-dart@1.0.0:
     resolution: {integrity: sha512-EZSPZB70jiVsivaBLYDCyntd5eH8NTSMOn3rB+HxwdmKThGELLdYv8qVIMWvZEFy9w8ZZpW9h9OB32l1rGtj7g==}
 
-  next-http-proxy-middleware@1.2.7:
-    resolution: {integrity: sha512-SasEovBqKMZzvY1elvWa33BxDWT5cc8G4KASS3ygADNV7v1O12y0rjA8F9eOD9aCNXYxJfnRHzauOE0rPSqISg==}
+  next-http-proxy-middleware@1.2.8:
+    resolution: {integrity: sha512-6IKpZbc7caidbl+w0tc++uiMsWPmTC18fYtJwlkBNAZoaStXByCj+SOnY3tOngVx6Hv+XGsrcyQKsigUowB+vQ==}
     engines: {node: '>=10.0.0'}
 
   next-tick@1.1.0:
@@ -12589,7 +12591,7 @@ snapshots:
 
   nerf-dart@1.0.0: {}
 
-  next-http-proxy-middleware@1.2.7:
+  next-http-proxy-middleware@1.2.8:
     dependencies:
       '@types/http-proxy': 1.17.3
       http-proxy: 1.18.1

@@ -1,3 +1,16 @@
+# [6.2.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0...6.2.0) (2026-04-29)
+
+
+### Bug Fixes
+
+* manual trigger of semantic release ([958b3cc](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/958b3cc611da4f28b92221b6df9c47be38c99987))
+* update semantic release ([a2b0b47](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a2b0b47610cd8e26df52ca5d4df06054d232e55e))
+
+
+### Features
+
+* add MOTD feature ([9f006ee](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9f006ee275f3f44e25e5c1cac206abacd5856622))
+
 # [6.2.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0-dev.2...6.2.0-dev.3) (2026-04-28)
 
 

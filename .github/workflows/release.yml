@@ -56,7 +56,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v6
+        uses: cycjimmy/semantic-release-action@v6.0.0
         id: semantic
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}

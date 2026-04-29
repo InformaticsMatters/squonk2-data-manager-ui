@@ -98,7 +98,7 @@
     "sharp": "0.34.5",
     "typescript": "5.9.3",
     "use-immer": "0.11.0",
-    "yaml": "2.8.2",
+    "yaml": "2.8.3",
     "zod": "3.25.76"
   },
   "devDependencies": {

@@ -43,8 +43,6 @@ let nextConfig = {
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages,
-  // Enable production source maps for Sentry error reporting
-  productionBrowserSourceMaps: true,
 };
 
 nextConfig = withMDX(nextConfig);
@@ -57,9 +55,6 @@ nextConfig = withSentryConfig(nextConfig, {
 
   // Automatically delete source maps after uploading them to Sentry
   sourcemaps: { deleteSourcemapsAfterUpload: true },
-
-  // Hides source maps from generated client bundles
-  hideSourceMaps: true,
 });
 
 export default nextConfig;

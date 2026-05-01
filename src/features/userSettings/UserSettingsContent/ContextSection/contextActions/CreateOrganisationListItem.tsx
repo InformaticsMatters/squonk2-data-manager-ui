@@ -73,8 +73,10 @@ export const CreateOrganisationListItem = () => {
     owner: z.string().min(1, "The username for the owner is required"),
   });
 
+  const defaultValues: z.infer<typeof orgSchema> = { name: "", owner: user.username ?? "" };
+
   const form = useForm({
-    defaultValues: { name: "", owner: user.username ?? "" } as z.infer<typeof orgSchema>,
+    defaultValues,
     validators: { onChange: orgSchema },
     onSubmit: async ({ value }) => {
       try {

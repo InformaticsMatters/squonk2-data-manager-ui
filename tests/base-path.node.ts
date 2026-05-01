@@ -11,7 +11,7 @@ const withMockedLocation = (origin: string) => {
   Object.defineProperty(globalThis, "location", {
     configurable: true,
     writable: true,
-    value: { origin } as Location,
+    value: { origin },
   });
 
   return () => {

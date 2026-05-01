@@ -79,7 +79,7 @@ export const useMoveProjectObject = (
   } = useMoveFileInProject({
     mutation: {
       onSettled: async (_data, _error, { params: { src_path, dst_file } }) => {
-        await invalidateQueries(src_path as string, dst_file as string);
+        await invalidateQueries(src_path as string, dst_file);
         onSettled?.();
       },
       onSuccess: () => {

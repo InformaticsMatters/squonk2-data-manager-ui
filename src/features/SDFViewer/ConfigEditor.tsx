@@ -186,7 +186,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                   disabled
                   select
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value as Updater<string>)}
+                  onChange={(e) => field.handleChange(e.target.value)}
                 >
                   <MenuItem key="ASC" value="ASC">
                     ASC

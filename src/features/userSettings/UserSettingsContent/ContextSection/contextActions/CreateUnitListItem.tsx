@@ -80,8 +80,10 @@ export const CreateUnitListItem = () => {
       }),
   });
 
+  const defaultValues: z.infer<typeof unitSchema> = { name: "" };
+
   const form = useForm({
-    defaultValues: { name: "" } as z.infer<typeof unitSchema>,
+    defaultValues,
     validators: { onChange: unitSchema },
     onSubmit: async ({ value }) => {
       try {

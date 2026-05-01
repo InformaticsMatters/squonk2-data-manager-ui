@@ -48,12 +48,6 @@ export interface CreateProjectFormProps {
   autoFocus?: boolean;
 }
 
-export interface Values {
-  projectName: string;
-  flavour: string;
-  isPrivate: boolean;
-}
-
 const isPrivateDefaultValues: Record<UnitAllDetailDefaultProductPrivacy, boolean> = {
   ALWAYS_PRIVATE: true,
   ALWAYS_PUBLIC: false,
@@ -70,6 +64,8 @@ const formSchema = z.object({
   flavour: z.string().min(1, "A tier is required"),
   isPrivate: z.boolean(),
 });
+
+export type Values = z.infer<typeof formSchema>;
 
 export const CreateProjectForm = ({
   modal,
@@ -143,7 +139,7 @@ export const CreateProjectForm = ({
   };
 
   const form = useForm({
-    defaultValues: initialValues as z.infer<typeof formSchema>,
+    defaultValues: initialValues,
     onSubmit: async ({ value }) => {
       try {
         await create(value, product?.id);

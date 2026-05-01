@@ -33,6 +33,7 @@ export const useGetJobInputs = (instance: InstanceGetResponse | InstanceSummary)
     : { variables: {} };
 
   // Parse job inputs
+  // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
   const jobVariables = data?.variables?.inputs
     ? (data.variables.inputs as JobInputs)
     : ({ properties: {} } satisfies JobInputs);

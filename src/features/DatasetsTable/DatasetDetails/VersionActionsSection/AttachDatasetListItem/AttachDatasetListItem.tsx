@@ -80,14 +80,16 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
+  const defaultValues: FormType = {
+    project: projects?.[0]?.project_id ?? "",
+    type: version.type,
+    path: "",
+    isImmutable: true,
+    isCompress: false,
+  };
+
   const form = useForm({
-    defaultValues: {
-      project: projects?.[0]?.project_id ?? "",
-      type: version.type,
-      path: "",
-      isImmutable: true,
-      isCompress: false,
-    } as FormType,
+    defaultValues,
     validators: { onChange: schema },
     onSubmit: async (values) => {
       const { project, type, path, isImmutable, isCompress } = values.value;

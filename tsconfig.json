@@ -2,9 +2,8 @@
   "compilerOptions": {
     "target": "es2023",
     "lib": [
-      "es2023",
-      "DOM",
-      "DOM.Iterable"
+      "es2025",
+      "DOM"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -19,7 +18,9 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "incremental": true,
-    "baseUrl": ".",
+    "types": [
+      "node"
+    ],
     "plugins": [
       {
         "name": "next"

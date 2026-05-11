@@ -1,3 +1,11 @@
+# [6.2.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0-dev.3...6.2.0-dev.4) (2026-05-11)
+
+
+### Bug Fixes
+
+* support mui v9 ([34f2fb3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/34f2fb3d421c3685dc2b675179ffda6941dd4d73))
+* update import path for routes types ([779ec03](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/779ec03b03734060ed0d300a635aa88db0ee33c8))
+
 # [6.2.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0...6.2.0) (2026-04-29)
 
 

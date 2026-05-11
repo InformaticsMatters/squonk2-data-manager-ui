@@ -17,7 +17,7 @@ export const EventList = () => {
   if (events.length === 0) {
     return (
       <Box sx={{ p: 2, textAlign: "center" }}>
-        <Typography color="text.secondary" variant="body2">
+        <Typography sx={{ color: "text.secondary" }} variant="body2">
           No events to display
         </Typography>
       </Box>
@@ -29,7 +29,6 @@ export const EventList = () => {
       <Typography sx={{ p: 1, fontWeight: "bold" }} variant="subtitle2">
         Events ({events.length})
       </Typography>
-
       <List dense>
         {events.map((event) => {
           const eventTime = dayjs.utc(event.timestamp);
@@ -38,8 +37,7 @@ export const EventList = () => {
             <ListItem key={`${event.timestamp}-${event.ordinal}`} sx={{ mb: 1, borderRadius: 1 }}>
               <Box sx={{ width: "100%" }}>
                 <Typography
-                  color="text.secondary"
-                  sx={{ display: "block", mb: 0.5 }}
+                  sx={{ color: "text.secondary", display: "block", mb: 0.5 }}
                   variant="caption"
                 >
                   {eventTime.local().format(TIME_FORMAT)} • {eventTime.local().format(DATE_FORMAT)}

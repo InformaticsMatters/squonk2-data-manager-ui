@@ -89,9 +89,9 @@ export const ManageUsers: FC<ManageUsersProps> = ({
       loading={loading}
       options={availableUsers.map((user) => user.username)}
       renderInput={(params) => <TextField {...params} helperText={helperText} label={title} />}
-      renderTags={(value, getTagProps) =>
+      renderValue={(value, getItemProps) =>
         value.map((option: string, index: number) => {
-          const { onDelete, ...chipProps } = getTagProps({ index });
+          const { onDelete, ...chipProps } = getItemProps({ index });
           return (
             <Chip
               label={option}

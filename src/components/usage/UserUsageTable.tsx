@@ -239,14 +239,17 @@ const ChipsInput = ({ users, value, group, username, onChange }: ChipsInputProps
         <TextField
           {...params}
           label={value.length === 0 ? "Add Project" : undefined}
-          slotProps={{ input: { ...params.InputProps, disableUnderline: true } }}
+          slotProps={{
+            ...params.slotProps,
+            input: { ...params.slotProps.input, disableUnderline: true },
+          }}
           sx={{ minWidth: 100 }}
           variant="standard"
         />
       )}
-      renderTags={(value, getTagProps) =>
+      renderValue={(value, getItemProps) =>
         value.map((option, index) => {
-          const { key, ...props } = getTagProps({ index });
+          const { key, ...props } = getItemProps({ index });
 
           return <Chip key={key} label={option.name} variant="outlined" {...props} />;
         })

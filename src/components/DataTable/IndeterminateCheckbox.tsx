@@ -23,10 +23,10 @@ const IndeterminateCheckboxComponent = (
   return (
     <Checkbox
       indeterminate={indeterminate}
-      inputRef={inputRef}
       ref={resolvedRef}
       size="small"
       {...rest}
+      slotProps={{ input: { ref: inputRef } }}
     />
   );
 };

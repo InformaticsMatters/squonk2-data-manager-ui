@@ -56,14 +56,12 @@ export const ProductCharges = ({ productId }: ProductChargesProps) => {
         Billing period (Billed on the {formatOrdinals(productData.product.unit.billing_day)} of the
         month)
       </Typography>
-
       <SelectBillingCycle
         billingDay={productData.product.unit.billing_day}
         created={productData.product.product.created}
         monthDelta={monthDelta}
         onChange={setMonthDelta}
       />
-
       <Typography gutterBottom sx={{ mt: 2 }} variant="h2">
         Charges
       </Typography>

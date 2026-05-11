@@ -71,7 +71,7 @@ export const Motd = () => {
           {message}
         </Typography>
         {!!(begin ?? end) && (
-          <Typography color="text.secondary" variant="caption">
+          <Typography sx={{ color: "text.secondary" }} variant="caption">
             {!!begin && `From: ${formatDate(begin)} `}
             {!!end && `Until: ${formatDate(end)}`}
           </Typography>

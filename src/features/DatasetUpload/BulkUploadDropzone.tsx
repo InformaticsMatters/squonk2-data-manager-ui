@@ -25,7 +25,7 @@ export interface BulkUploadDropzoneProps {
 export const BulkUploadDropzone = ({ files, setFiles }: BulkUploadDropzoneProps) => {
   return (
     <Dropzone files={files} onNewFiles={setFiles}>
-      <Grid container direction="column" spacing={1}>
+      <Grid container spacing={1} sx={{ flexDirection: "column" }}>
         {files.map((fileWrapper, index) => (
           <Grid key={fileWrapper.id}>
             <SingleFile file={fileWrapper} files={files} index={index} setFiles={setFiles} />

@@ -51,8 +51,10 @@ export const SelectOrganisation = (autoCompleteProps: SelectOrganisationProps) =
             {...params}
             label="Organisation"
             slotProps={{
+              ...params.slotProps,
+
               input: {
-                ...params.InputProps,
+                ...params.slotProps.input,
                 startAdornment: (
                   <>
                     <ItemIcons item={organisation} />

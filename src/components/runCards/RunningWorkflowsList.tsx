@@ -16,7 +16,7 @@ export const RunningWorkflowsList = ({ runningWorkflows }: RunningWorkflowsListP
   if (runningWorkflows.length === 0) {
     return (
       <Box sx={{ p: 2 }}>
-        <Typography color="text.secondary" variant="body2">
+        <Typography sx={{ color: "text.secondary" }} variant="body2">
           No workflows currently exist
         </Typography>
       </Box>

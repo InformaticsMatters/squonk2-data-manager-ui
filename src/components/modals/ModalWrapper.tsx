@@ -55,7 +55,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       {...DialogProps}
       aria-labelledby={`${id}-title`}
       open={open}
-      TransitionComponent={SlideUpTransition}
+      slots={{ transition: SlideUpTransition }}
       onClose={onClose}
     >
       <DialogTitle id={`${id}-title`}>

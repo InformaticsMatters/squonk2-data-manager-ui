@@ -90,13 +90,11 @@ export const JobCard = ({ projectId, job: jobs, disabled = false }: ApplicationC
       key={projectId} // Reset state when project changes
     >
       <Typography
-        color="text.secondary"
-        sx={{ textTransform: "uppercase", fontWeight: "bold" }}
+        sx={{ color: "text.secondary", textTransform: "uppercase", fontWeight: "bold" }}
         variant="caption"
       >
         Job
       </Typography>
-
       {!!job.description && (
         <Typography sx={{ mt: 1, mb: 2, textWrap: "pretty" }} variant="body1">
           {job.description}
@@ -115,19 +113,17 @@ export const JobCard = ({ projectId, job: jobs, disabled = false }: ApplicationC
           )}
         </Typography>
       )}
-
       <Box sx={{ mb: 2 }}>
-        <Typography gutterBottom color="text.secondary" variant="body2">
+        <Typography gutterBottom sx={{ color: "text.secondary" }} variant="body2">
           Category & Collection:
         </Typography>
         <Typography variant="body1">
           <em>{job.category ?? "No category"}</em> • {job.collection}
         </Typography>
       </Box>
-
       {!!job.keywords && job.keywords.length > 0 && (
         <Box sx={{ mb: 2 }}>
-          <Typography gutterBottom color="text.secondary" variant="body2">
+          <Typography gutterBottom sx={{ color: "text.secondary" }} variant="body2">
             Keywords:
           </Typography>
           <Chips>
@@ -137,7 +133,6 @@ export const JobCard = ({ projectId, job: jobs, disabled = false }: ApplicationC
           </Chips>
         </Box>
       )}
-
       {!!job.disabled_reason && (
         <Alert severity="warning" sx={{ mt: 1 }}>
           {job.disabled_reason}

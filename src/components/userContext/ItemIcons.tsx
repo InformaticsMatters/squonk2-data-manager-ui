@@ -3,7 +3,7 @@ import { type OrganisationDetail, type UnitAllDetail } from "@squonk/account-ser
 import {
   Lock as LockIcon,
   LockOpen as LockOpenIcon,
-  PersonOutline as PersonOutlineIcon,
+  PersonOutlined as PersonOutlineIcon,
 } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 

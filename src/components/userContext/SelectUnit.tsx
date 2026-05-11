@@ -53,8 +53,10 @@ export const SelectUnit = ({
             {...params}
             label="Unit"
             slotProps={{
+              ...params.slotProps,
+
               input: {
-                ...params.InputProps,
+                ...params.slotProps.input,
                 startAdornment: (
                   <>
                     <ItemIcons item={unit} />

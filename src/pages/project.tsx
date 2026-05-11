@@ -1,10 +1,10 @@
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
 
 import sadderSquonk from "../../assets/graphics/sadder-squonk.svg";
 import { RoleRequired } from "../components/auth/RoleRequired";
+import { withPageAuthRequired } from "../components/auth/withPageAuthRequired";
 import { ProjectSelection } from "../components/projects/ProjectSelection";
 import { SelectProject } from "../components/userContext/SelectProject";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
@@ -80,4 +80,4 @@ const Project = () => {
   );
 };
 
-export default withPageAuthRequiredCSR(Project);
+export default withPageAuthRequired(Project);

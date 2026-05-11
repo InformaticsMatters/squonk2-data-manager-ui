@@ -1,7 +1,7 @@
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { useRouter } from "next/router";
 
 import { RoleRequired } from "../../../components/auth/RoleRequired";
+import { withPageAuthRequired } from "../../../components/auth/withPageAuthRequired";
 import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
 import { OrganisationUsageView } from "../../../features/usage/OrganisationUsageView";
 import Layout from "../../../layouts/Layout";
@@ -25,4 +25,4 @@ const UserUsage = () => {
   );
 };
 
-export default withPageAuthRequiredCSR(UserUsage);
+export default withPageAuthRequired(UserUsage);

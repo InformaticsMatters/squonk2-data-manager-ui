@@ -1,6 +1,5 @@
 import { getGetRunningWorkflowQueryKey } from "@squonk/data-manager-client/workflow";
 
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import { Box, Container, IconButton, Tooltip, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
@@ -8,6 +7,7 @@ import NextError from "next/error";
 import { useRouter } from "next/router";
 
 import { RoleRequired } from "../../../components/auth/RoleRequired";
+import { withPageAuthRequired } from "../../../components/auth/withPageAuthRequired";
 import { RunningWorkflowCard } from "../../../components/RunningWorkflowCard/RunningWorkflowCard";
 import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
 import Layout from "../../../layouts/Layout";
@@ -53,4 +53,4 @@ const WorkflowResult = () => {
   );
 };
 
-export default withPageAuthRequiredCSR(WorkflowResult);
+export default withPageAuthRequired(WorkflowResult);

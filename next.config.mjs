@@ -2,7 +2,6 @@ import nextMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
 import nextRoutes from "nextjs-routes/config";
 import { fileURLToPath } from "node:url";
-import { resolve } from "node:path";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -32,12 +31,6 @@ const transpilePackages = ["@squonk/mui-theme", "@squonk/sdf-parser"].filter((pk
 
 console.log("Transpiling packages:", transpilePackages);
 
-// paper.js (a dep of ketcher-core) requires jsdom internals in its Node.js canvas
-// integration. Since the `canvas` npm package is not installed, this code never
-// runs, but bundlers still try to resolve the import statically.
-// Turbopack also doesn't honour paper's own `browser` field which maps this to false.
-const jsdomUtilsStub = resolve(__dirname, "src/stubs/jsdom-utils.stub.js");
-
 /** @type {import("next").NextConfig} */
 let nextConfig = {
   outputFileTracingRoot: __dirname,
@@ -50,22 +43,6 @@ let nextConfig = {
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages,
-  // Keep paper out of the SSR bundle entirely; it's only needed client-side via
-  // the ssr:false dynamic import in SMILESInput and will be loaded by Node.js
-  // natively when required (canvas isn't installed so the jsdom path is never hit).
-  serverExternalPackages: ["paper"],
-  turbopack: {
-    // Turbopack doesn't honour paper's browser field which already maps this to
-    // false. Provide the stub explicitly. Path must be relative (not absolute)
-    // so Turbopack can resolve it for both server and browser chunks.
-    resolveAlias: {
-      "jsdom/lib/jsdom/living/generated/utils": "./src/stubs/jsdom-utils.stub.js",
-    },
-  },
-  webpack: (config) => {
-    config.resolve.alias["jsdom/lib/jsdom/living/generated/utils"] = jsdomUtilsStub;
-    return config;
-  },
 };
 
 nextConfig = withMDX(nextConfig);

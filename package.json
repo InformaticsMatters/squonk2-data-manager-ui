@@ -14,9 +14,9 @@
   },
   "scripts": {
     "prepare": "husky",
-    "dev": "next dev",
-    "dev:debug": "NODE_OPTIONS='--inspect' next dev",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "dev:debug": "NODE_OPTIONS='--inspect' next dev --webpack",
+    "build": "next build --webpack",
     "start": "next start",
     "tsc": "tsc --pretty --noEmit",
     "lint": "eslint --cache --max-warnings=0",
@@ -24,9 +24,9 @@
     "test": "playwright test",
     "test:debug": "PWDEBUG=1 playwright test -- --headed",
     "test:ci": "playwright test",
-    "analyze": "ANALYZE=true next build",
-    "analyze:server": "BUNDLE_ANALYZE=server next build",
-    "analyze:browser": "BUNDLE_ANALYZE=browser next build"
+    "analyze": "ANALYZE=true next build --webpack",
+    "analyze:server": "BUNDLE_ANALYZE=server next build --webpack",
+    "analyze:browser": "BUNDLE_ANALYZE=browser next build --webpack"
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [
@@ -34,7 +34,7 @@
     ]
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "3.8.0",
+    "better-auth": "1.6.10",
     "@bufbuild/protobuf": "2.10.2",
     "@emotion/cache": "11.14.0",
     "@emotion/react": "11.14.0",

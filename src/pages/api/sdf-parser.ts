@@ -5,12 +5,13 @@ import {
   type SDFRecord,
 } from "@squonk/sdf-parser/node";
 
-import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0";
+import { fromNodeHeaders } from "better-auth/node";
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { Transform } from "node:stream";
 import { createGunzip } from "node:zlib";
 import fetch, { type Response } from "node-fetch";
 
+import { auth } from "../../lib/auth";
 import { type SDFViewerConfig, uncensorConfig } from "../../utils/api/sdfViewer";
 import { type JSON_SCHEMA_TYPE } from "../../utils/app/jsonSchema";
 import { API_ROUTES } from "../../utils/app/routes";
@@ -28,6 +29,12 @@ const getTreatAs = (dtype: JSON_SCHEMA_TYPE): FilterRule["treatAs"] => {
 type ResponseData = SDFRecord[] | { error: string };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<ResponseData>) => {
+  const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
+  if (!session) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
   const { method } = req;
   if (method === "GET") {
     const { project: projectId, path, file: fileName, config: configString } = req.query;
@@ -60,9 +67,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ResponseData>) 
 
     let response: Response;
     try {
-      const { accessToken } = await getAccessToken(req, res);
+      const result = await auth.api.getAccessToken({
+        body: { providerId: "keycloak" },
+        headers: fromNodeHeaders(req.headers),
+      });
+      const accessToken = result.accessToken;
       if (!accessToken) {
-        res.status(500).json({ error: "No access token" }); // should this be 401?
+        res.status(500).json({ error: "No access token" });
         return;
       }
 
@@ -124,4 +135,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ResponseData>) 
   res.status(405).json({ error: `Method ${method} Not Allowed` });
 };
 
-export default withApiAuthRequired(handler);
+export default handler;

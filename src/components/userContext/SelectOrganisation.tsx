@@ -12,11 +12,10 @@ import { getErrorMessage } from "../../utils/next/orvalError";
 import { Adornment } from "./Adornment";
 import { ItemIcons } from "./ItemIcons";
 
-export interface SelectOrganisationProps
-  extends Omit<
-    AutocompleteProps<OrganisationDetail, false, false, false>,
-    "options" | "renderInput"
-  > {
+export interface SelectOrganisationProps extends Omit<
+  AutocompleteProps<OrganisationDetail, false, false, false>,
+  "options" | "renderInput"
+> {
   userFilter?: string;
 }
 

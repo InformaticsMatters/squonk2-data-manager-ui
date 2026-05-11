@@ -9,7 +9,7 @@ test("dark mode works", async ({ page, baseURL }) => {
 
   await page.locator(`[aria-label="Account"] button`).click();
   // Check [aria-label="color-scheme-toggle"]
-  await page.getByRole('radio', { name: 'Dark' }).check();
+  await page.getByRole("radio", { name: "Dark" }).check();
 
   await expect(page.locator("body")).toHaveCSS("background-color", "rgb(18, 18, 18)");
 });

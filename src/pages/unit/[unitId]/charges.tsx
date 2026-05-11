@@ -1,8 +1,8 @@
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
 import { RoleRequired } from "../../../components/auth/RoleRequired";
+import { withPageAuthRequired } from "../../../components/auth/withPageAuthRequired";
 import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
 import { UnitChargesView } from "../../../features/Finance/UnitChargesView";
 import Layout from "../../../layouts/Layout";
@@ -38,4 +38,4 @@ const Charges = (props: UnitChargesProps) => {
   );
 };
 
-export default withPageAuthRequiredCSR(Charges);
+export default withPageAuthRequired(Charges);

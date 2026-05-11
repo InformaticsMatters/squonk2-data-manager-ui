@@ -119,7 +119,7 @@ export interface DataTableProps<Data extends Record<string, any>> {
   /**
    * If truthy, displays the provided `error`.
    */
-  error?: string;
+  error?: string | null;
 }
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {

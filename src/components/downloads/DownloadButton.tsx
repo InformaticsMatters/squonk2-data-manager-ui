@@ -4,8 +4,7 @@ import { IconButton, type IconButtonProps, Tooltip, type TooltipProps } from "@m
 type AnchorIconButton = IconButtonProps<"a">;
 
 export interface DownloadButtonProps
-  extends Omit<AnchorIconButton, "title">,
-    Partial<Pick<TooltipProps, "title">> {
+  extends Omit<AnchorIconButton, "title">, Partial<Pick<TooltipProps, "title">> {
   /**
    * Link to file to be downloaded. This must be directly downloadable and not started with
    * javascript on the target page. *The base path needs to be applied*.

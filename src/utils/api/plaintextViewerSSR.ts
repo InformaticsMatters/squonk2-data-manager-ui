@@ -1,9 +1,10 @@
-import { getAccessToken } from "@auth0/nextjs-auth0";
 import { captureException } from "@sentry/nextjs";
+import { fromNodeHeaders } from "better-auth/node";
 import { type IncomingMessage, type ServerResponse } from "node:http";
 import { createGunzip } from "node:zlib";
 import fetch from "node-fetch";
 
+import { auth } from "../../lib/auth";
 import { isResponseJson } from "./fetchHelpers";
 import { createErrorProps } from "./serverSidePropsError";
 
@@ -56,7 +57,11 @@ export const plaintextViewerSSR = async (
 ) => {
   let accessToken;
   try {
-    accessToken = (await getAccessToken(req, res)).accessToken;
+    const result = await auth.api.getAccessToken({
+      body: { providerId: "keycloak" },
+      headers: fromNodeHeaders(req.headers),
+    });
+    accessToken = result.accessToken;
   } catch (error) {
     captureException(error);
     return createErrorProps(res, 500, "Unable to authenticate user server side");

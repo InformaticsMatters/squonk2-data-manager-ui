@@ -1,8 +1,8 @@
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Container, Typography } from "@mui/material";
 import Head from "next/head";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
+import { withPageAuthRequired } from "../components/auth/withPageAuthRequired";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { DatasetsTable } from "../features/DatasetsTable";
 import Layout from "../layouts/Layout";

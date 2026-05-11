@@ -4,7 +4,6 @@ import { useGetApplications } from "@squonk/data-manager-client/application";
 import { useGetJobs } from "@squonk/data-manager-client/job";
 import { useGetRunningWorkflows, useGetWorkflows } from "@squonk/data-manager-client/workflow";
 
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Alert, Box, Container, Grid, MenuItem, TextField } from "@mui/material";
 import groupBy from "just-group-by";
 import { debounce } from "lodash-es";
@@ -12,6 +11,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
+import { withPageAuthRequired } from "../components/auth/withPageAuthRequired";
 import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/runCards/ApplicationCard";
 import { JobCard } from "../components/runCards/JobCard";
@@ -297,4 +297,4 @@ const Run = () => {
   );
 };
 
-export default withPageAuthRequiredCSR(Run);
+export default withPageAuthRequired(Run);

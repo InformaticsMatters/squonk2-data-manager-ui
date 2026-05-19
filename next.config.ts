@@ -1,5 +1,6 @@
 import nextMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
+import { type NextConfig } from "next";
 import nextRoutes from "nextjs-routes/config";
 import { fileURLToPath } from "node:url";
 
@@ -12,7 +13,7 @@ const withMDX = nextMDX({
   options: { providerImportSource: "@mdx-js/react", jsxImportSource: "@emotion/react" },
 });
 
-const isPackageLocal = (packageName) => {
+const isPackageLocal = (packageName: string) => {
   try {
     const resolved = import.meta.resolve(packageName);
     const resolvedPath = resolved.startsWith("file:") ? fileURLToPath(resolved) : resolved;
@@ -31,10 +32,9 @@ const transpilePackages = ["@squonk/mui-theme", "@squonk/sdf-parser"].filter((pk
 
 console.log("Transpiling packages:", transpilePackages);
 
-/** @type {import("next").NextConfig} */
-let nextConfig = {
+let nextConfig: NextConfig = {
   outputFileTracingRoot: __dirname,
-  output: /** @type {import("next").NextConfig["output"]} */ (process.env.OUTPUT_TYPE),
+  output: process.env.OUTPUT_TYPE as NextConfig["output"],
   generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA ?? null : undefined,
   typescript: { ignoreBuildErrors: true },
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps

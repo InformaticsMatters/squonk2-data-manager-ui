@@ -1,3 +1,10 @@
+# [6.2.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0-dev.4...6.2.0-dev.5) (2026-05-19)
+
+
+### Bug Fixes
+
+* fix failing build ([fcab9e2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fcab9e2e6df16329a53e5efc613544dd7a9aecfe))
+
 # [6.2.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0-dev.3...6.2.0-dev.4) (2026-05-11)
 
 

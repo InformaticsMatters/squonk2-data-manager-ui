@@ -1,3 +1,10 @@
+## [6.2.1-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.1...6.2.1-dev.2) (2026-05-19)
+
+
+### Bug Fixes
+
+* fix sentry warnings ([1283a79](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/1283a799b897f36f63ffab2abc2793b01ec18469))
+
 ## [6.2.1-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0...6.2.1-dev.1) (2026-05-19)
 
 

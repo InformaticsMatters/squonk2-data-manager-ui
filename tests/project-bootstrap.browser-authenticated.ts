@@ -1,4 +1,3 @@
-/* eslint-disable require-atomic-updates */
 import {
   type OrganisationGetDefaultResponse,
   type OrganisationUnitsGetResponse,
@@ -11,6 +10,9 @@ import { expect, test } from "@playwright/test";
 const baseURL = new URL(process.env.BASE_URL as string);
 baseURL.pathname = process.env.BASE_PATH ?? "/";
 
+const AS_API = process.env.ACCOUNT_SERVER_API_SERVER as string;
+const DM_API = process.env.DATA_MANAGER_API_SERVER as string;
+
 test("Project bootstrap works", async ({ page, baseURL }) => {
   // Go to http://localhost:3000/
   // This needs to come before the unit fetch request below so there isn't a cors issue
@@ -22,23 +24,35 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
   // normalise the URL - sometimes we get a slash on the end, other times not
   const basePath = url.pathname.endsWith("/") ? url.pathname.slice(0, -1) : url.pathname;
 
-  url.pathname = basePath + "/api/as-api/default/organisation";
+  url.pathname = basePath + "/api/auth/get-access-token";
+  const tokenRes = await page.request.post(url.href, {
+    data: { providerId: "keycloak" },
+    headers: { Origin: url.origin },
+  });
+  const { accessToken } = (await tokenRes.json()) as { accessToken: string };
+  const authHeaders = { Authorization: `Bearer ${accessToken}` };
 
   const defaultOrg: OrganisationGetDefaultResponse = await (
-    await page.request.get(new URL(url).href)
+    await page.request.get(`${AS_API}/default/organisation`, { headers: authHeaders })
   ).json();
 
   // Ensure default unit and associated projects and products doesn't exist
-  url.pathname = basePath + `/api/as-api/organisation/${defaultOrg.id}/unit`;
-  const units = ((await (await page.request.get(url.href)).json()) as OrganisationUnitsGetResponse)
-    .units;
+  const units = (
+    (await (
+      await page.request.get(`${AS_API}/organisation/${defaultOrg.id}/unit`, {
+        headers: authHeaders,
+      })
+    ).json()) as OrganisationUnitsGetResponse
+  ).units;
 
   const personalUnit = units.find((unit) => unit.name === process.env.PW_USERNAME);
 
   if (personalUnit) {
-    url.pathname = basePath + "/api/as-api/product";
-    const products = ((await (await page.request.get(url.href)).json()) as ProductsGetResponse)
-      .products;
+    const products = (
+      (await (
+        await page.request.get(`${AS_API}/product`, { headers: authHeaders })
+      ).json()) as ProductsGetResponse
+    ).products;
 
     const productsToDelete = products
       .filter((product) => product.unit.id === personalUnit.id)
@@ -48,17 +62,18 @@ test("Project bootstrap works", async ({ page, baseURL }) => {
       );
     const productPromises = productsToDelete.map(async (product) => {
       if (product.claim?.id) {
-        url.pathname = basePath + `/api/dm-api/project/${product.claim.id}`;
-        await page.request.delete(url.href);
+        await page.request.delete(`${DM_API}/project/${product.claim.id}`, {
+          headers: authHeaders,
+        });
       }
 
-      url.pathname = basePath + `/api/as-api/product/${product.product.id}`;
-      await page.request.delete(url.href);
+      await page.request.delete(`${AS_API}/product/${product.product.id}`, {
+        headers: authHeaders,
+      });
     });
     await Promise.all(productPromises); // ensure that all products get deleted successfully
 
-    url.pathname = basePath + "/api/as-api/unit";
-    const res = await page.request.delete(url.href);
+    const res = await page.request.delete(`${AS_API}/unit`, { headers: authHeaders });
 
     const responseText = await res.text();
 

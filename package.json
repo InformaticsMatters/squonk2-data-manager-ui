@@ -30,7 +30,11 @@
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [
+      "prettier --write",
       "eslint --max-warnings=0"
+    ],
+    "*.@(json|md|mdx|css|scss|html)": [
+      "prettier --write"
     ]
   },
   "dependencies": {

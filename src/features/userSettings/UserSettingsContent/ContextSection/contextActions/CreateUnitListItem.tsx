@@ -13,7 +13,7 @@ import { CreateNewFolder } from "@mui/icons-material";
 import { Grid, ListItemButton, ListItemIcon, ListItemText, TextField } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
+import { z } from "zod/mini";
 
 import { ModalWrapper } from "../../../../../components/modals/ModalWrapper";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
@@ -72,12 +72,12 @@ export const CreateUnitListItem = () => {
 
   // Define Zod schema for validation
   const unitSchema = z.object({
-    name: z
-      .string()
-      .min(2, "The name is too short")
-      .refine((name) => !units?.map((unit) => unit.name).includes(name), {
+    name: z.string().check(
+      z.minLength(2, "The name is too short"),
+      z.refine((name) => !units?.map((unit) => unit.name).includes(name), {
         message: "The name is already used for a unit",
       }),
+    ),
   });
 
   const defaultValues: z.infer<typeof unitSchema> = { name: "" };

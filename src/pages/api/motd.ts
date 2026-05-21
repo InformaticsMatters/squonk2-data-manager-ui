@@ -4,20 +4,20 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import fs from "node:fs/promises";
 import path from "node:path";
 import yaml from "yaml";
-import { z } from "zod";
+import { z } from "zod/mini";
 
 dayjs.extend(utc);
 
 // Zod schema for MOTD entry
 export const MotdEntrySchema = z.object({
-  begin: z.string().optional(),
-  end: z.string().optional(),
-  title: z.string().min(1, "MOTD entry must have a title"),
-  message: z.string().min(1, "MOTD entry must have a message"),
-  url: z.string().url().optional(),
+  begin: z.optional(z.string()),
+  end: z.optional(z.string()),
+  title: z.string().check(z.minLength(1, "MOTD entry must have a title")),
+  message: z.string().check(z.minLength(1, "MOTD entry must have a message")),
+  url: z.optional(z.url()),
 });
 
-export const MotdFileSchema = z.object({ motd: z.array(MotdEntrySchema).optional() });
+export const MotdFileSchema = z.object({ motd: z.optional(z.array(MotdEntrySchema)) });
 
 const MOTD_PATH = path.join(process.cwd(), "motd.yaml");
 

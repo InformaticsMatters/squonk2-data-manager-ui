@@ -1,6 +1,6 @@
 import { Alert, AlertTitle, Box, Button, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { type z } from "zod";
+import { type z } from "zod/mini";
 
 import { type MotdEntrySchema } from "../pages/api/motd";
 

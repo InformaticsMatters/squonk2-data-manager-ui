@@ -7,7 +7,7 @@ import { Box, Button, IconButton, Popover, TextField, Tooltip } from "@mui/mater
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { bindPopover, bindTrigger, usePopupState } from "material-ui-popup-state/hooks";
-import { z } from "zod";
+import { z } from "zod/mini";
 
 import { type TableDataset } from "../../features/DatasetsTable";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
@@ -28,7 +28,7 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
 
   // Define Zod schema for validation
   const labelSchema = z.object({
-    label: z.string().trim().min(1, "A label name is required"),
+    label: z.string().check(z.trim(), z.minLength(1, "A label name is required")),
     value: z.string(),
   });
 

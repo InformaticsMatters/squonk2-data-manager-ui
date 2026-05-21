@@ -29,7 +29,7 @@ import {
 } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
+import { z } from "zod/mini";
 
 import { useCurrentProjectId } from "../../../hooks/projectHooks";
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
@@ -59,9 +59,11 @@ const isPrivateDefaultValues: Record<UnitAllDetailDefaultProductPrivacy, boolean
 const formSchema = z.object({
   projectName: z
     .string()
-    .min(1, "A project name is required")
-    .regex(/^[A-Za-z0-9-_.][A-Za-z0-9-_. ]*[A-Za-z0-9-_.]$/u, "Invalid project name format"),
-  flavour: z.string().min(1, "A tier is required"),
+    .check(
+      z.minLength(1, "A project name is required"),
+      z.regex(/^[A-Za-z0-9-_.][A-Za-z0-9-_. ]*[A-Za-z0-9-_.]$/u, "Invalid project name format"),
+    ),
+  flavour: z.string().check(z.minLength(1, "A tier is required")),
   isPrivate: z.boolean(),
 });
 

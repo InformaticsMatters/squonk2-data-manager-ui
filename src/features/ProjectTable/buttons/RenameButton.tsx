@@ -3,7 +3,7 @@ import { useState } from "react";
 import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";
 import { Box, IconButton, type IconButtonProps, TextField, Tooltip } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
-import { z } from "zod";
+import { z } from "zod/mini";
 
 import { FormModalWrapper } from "../../../components/modals/FormModalWrapper";
 import {
@@ -25,13 +25,13 @@ export const RenameButton = ({ projectId, type, path, ...buttonProps }: RenameBu
 
   // Define validation schema
   const schema = z.object({
-    dstPath: z
-      .string()
-      .min(1, "A destination path is required")
-      .max(255, "Path cannot exceed 255 characters")
-      .refine((val) => PATH_PATTERN.test(val), {
+    dstPath: z.string().check(
+      z.minLength(1, "A destination path is required"),
+      z.maxLength(255, "Path cannot exceed 255 characters"),
+      z.refine((val) => PATH_PATTERN.test(val), {
         message: "The path is invalid. It should not start or end with a slash.",
       }),
+    ),
   });
 
   const form = useForm({

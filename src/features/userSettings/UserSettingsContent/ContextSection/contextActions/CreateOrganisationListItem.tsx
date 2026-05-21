@@ -12,7 +12,7 @@ import { CreateNewFolder } from "@mui/icons-material";
 import { Grid, ListItemButton, ListItemIcon, ListItemText, TextField } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
+import { z } from "zod/mini";
 
 import { ModalWrapper } from "../../../../../components/modals/ModalWrapper";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
@@ -64,13 +64,13 @@ export const CreateOrganisationListItem = () => {
 
   // Define Zod schema for validation
   const orgSchema = z.object({
-    name: z
-      .string()
-      .min(2, "The name is too short")
-      .refine((name) => !organisations?.map((org) => org.name).includes(name), {
+    name: z.string().check(
+      z.minLength(2, "The name is too short"),
+      z.refine((name) => !organisations?.map((org) => org.name).includes(name), {
         message: "The name is already used for an organisation",
       }),
-    owner: z.string().min(1, "The username for the owner is required"),
+    ),
+    owner: z.string().check(z.minLength(1, "The username for the owner is required")),
   });
 
   const defaultValues: z.infer<typeof orgSchema> = { name: "", owner: user.username ?? "" };

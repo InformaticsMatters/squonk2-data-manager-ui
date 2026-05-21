@@ -5,7 +5,7 @@
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "image": "mcr.microsoft.com/devcontainers/javascript-node:4-20",
   "features": {
-    "ghcr.io/devcontainers/features/node:1": {
+    "ghcr.io/devcontainers/features/node:2.0.0": {
       "version": "24.15.0",
       "nodeGypDependencies": true,
       "pnpmVersion": "11.2.2"
@@ -32,18 +32,10 @@
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
   // "remoteUser": "root"
   "secrets": {
-    "DATA_MANAGER_API_SERVER": {
-      "description": "URL the data manager API"
-    },
-    "ACCOUNT_SERVER_API_SERVER": {
-      "description": "URL the account server API"
-    },
-    "KEYCLOAK_URL": {
-      "description": "URL to Keycloak Realm used for Auth"
-    },
-    "AUTH0_CLIENT_ID": {
-      "description": "Client ID for Keycloak Client"
-    },
+    "DATA_MANAGER_API_SERVER": { "description": "URL the data manager API" },
+    "ACCOUNT_SERVER_API_SERVER": { "description": "URL the account server API" },
+    "KEYCLOAK_URL": { "description": "URL to Keycloak Realm used for Auth" },
+    "AUTH0_CLIENT_ID": { "description": "Client ID for Keycloak Client" },
     "AUTH0_CLIENT_SECRET": {
       "description": "Secret corresponding to Client ID for Keycloak Client"
     }

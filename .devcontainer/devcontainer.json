@@ -8,7 +8,7 @@
     "ghcr.io/devcontainers/features/node:1": {
       "version": "24.15.0",
       "nodeGypDependencies": true,
-      "pnpmVersion": "10.24.0"
+      "pnpmVersion": "11.2.2"
     }
   },
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

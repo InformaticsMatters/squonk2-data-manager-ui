@@ -92,9 +92,9 @@ importers:
       '@types/node':
         specifier: 24.12.4
         version: 24.12.4
-      '@types/plotly.js-basic-dist':
-        specifier: 1.54.4
-        version: 1.54.4
+      '@types/plotly.js':
+        specifier: 3.0.10
+        version: 3.0.10
       '@types/prismjs':
         specifier: 1.26.6
         version: 1.26.6
@@ -168,8 +168,8 @@ importers:
         specifier: 3.0.2
         version: 3.0.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       plotly.js-basic-dist:
-        specifier: 2.35.3
-        version: 2.35.3
+        specifier: 3.5.1
+        version: 3.5.1
       prismjs:
         specifier: 1.30.0
         version: 1.30.0
@@ -2099,11 +2099,11 @@ packages:
   '@types/pg@8.15.6':
     resolution: {integrity: sha512-NoaMtzhxOrubeL/7UZuNTrejB4MPAJ0RpxZqXQf2qXuVlTPuG6Y8p4u9dKRaue4yjmC7ZhzVO2/Yyyn25znrPQ==}
 
-  '@types/plotly.js-basic-dist@1.54.4':
-    resolution: {integrity: sha512-4Hwb5fB4sa3+SlgIDu4kfnUzhfJO789Drh7w5LvU6VglzYRcziztckvejbsnaP/TTRuiqIzLLRwqoflD6o1mKg==}
-
   '@types/plotly.js@2.35.1':
     resolution: {integrity: sha512-9fTHC8qeJNEDpGJK1qIJAEcRxrI9uPrap32I8cbCLPKsqwFmafOYHecaBzvIJXEPhLIUiQocN9Bc/tIV9CjsxQ==}
+
+  '@types/plotly.js@3.0.10':
+    resolution: {integrity: sha512-q+MgO4aajC2HrO7FllTYWzrpdfbTjboSMfjkz/aXKjg1v7HNo1zMEFfAW7quKfk6SL+bH74A5ThBEps/7hZxOA==}
 
   '@types/prismjs@1.26.6':
     resolution: {integrity: sha512-vqlvI7qlMvcCBbVe0AKAb4f97//Hy0EBTaiW8AalRnG/xAN5zOiWWyrNqNXeq8+KAuvRewjCVY1+IPxk4RdNYw==}
@@ -5600,8 +5600,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  plotly.js-basic-dist@2.35.3:
-    resolution: {integrity: sha512-mzRn/IMZa/iJJVur3VGqAAUD8J4oz0BoXI7f1FLtokIS8mJURIfgiIonh0G87eKlKnAPuy1jQzic2wLqcngQOA==}
+  plotly.js-basic-dist@3.5.1:
+    resolution: {integrity: sha512-YIx43vVI40llmPjFX3wmcgO666AVYFAe+SepxznMIagJAAiaxIle7MhQrIY/ce28rTJp7QkKgRt55o7ooUvycg==}
 
   plotly.js@2.35.3:
     resolution: {integrity: sha512-7RaC6FxmCUhpD6H4MpD+QLUu3hCn76I11rotRefrh3m1iDvWqGnVqVk9dSaKmRAhFD3vsNsYea0OxnR1rc2IzQ==}
@@ -9042,11 +9042,9 @@ snapshots:
       pg-protocol: 1.7.0
       pg-types: 2.2.0
 
-  '@types/plotly.js-basic-dist@1.54.4':
-    dependencies:
-      '@types/plotly.js': 2.35.1
-
   '@types/plotly.js@2.35.1': {}
+
+  '@types/plotly.js@3.0.10': {}
 
   '@types/prismjs@1.26.6': {}
 
@@ -9083,7 +9081,7 @@ snapshots:
 
   '@types/use-sync-external-store@0.0.6': {}
 
-  '@typescript-eslint/eslint-plugin@8.59.1(@typescript-eslint/parser@8.59.1(eslint@10.2.1)(typescript@6.0.3))(eslint@10.2.1)(typescript@6.0.3)':
+  '@typescript-eslint/eslint-plugin@8.59.1(@typescript-eslint/parser@8.59.1(eslint@10.4.0)(typescript@6.0.3))(eslint@10.2.1)(typescript@6.0.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
       '@typescript-eslint/parser': 8.59.1(eslint@10.2.1)(typescript@6.0.3)
@@ -13098,7 +13096,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.2
 
-  plotly.js-basic-dist@2.35.3: {}
+  plotly.js-basic-dist@3.5.1: {}
 
   plotly.js@2.35.3(mapbox-gl@1.13.3)(webpack@5.97.1(postcss@8.5.15)):
     dependencies:
@@ -14374,7 +14372,7 @@ snapshots:
 
   typescript-eslint@8.59.1(eslint@10.2.1)(typescript@6.0.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.59.1(@typescript-eslint/parser@8.59.1(eslint@10.2.1)(typescript@6.0.3))(eslint@10.2.1)(typescript@6.0.3)
+      '@typescript-eslint/eslint-plugin': 8.59.1(@typescript-eslint/parser@8.59.1(eslint@10.4.0)(typescript@6.0.3))(eslint@10.2.1)(typescript@6.0.3)
       '@typescript-eslint/parser': 8.59.1(eslint@10.2.1)(typescript@6.0.3)
       '@typescript-eslint/typescript-estree': 8.59.1(typescript@6.0.3)
       '@typescript-eslint/utils': 8.59.1(eslint@10.2.1)(typescript@6.0.3)

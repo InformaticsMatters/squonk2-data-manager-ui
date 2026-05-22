@@ -1,7 +1,7 @@
 import { defineConfig } from "@playwright/test";
 import path from "node:path";
 
-require("dotenv").config({ path: path.resolve(process.cwd(), ".env.test.local") });
+process.loadEnvFile(path.resolve(__dirname, ".env.test.local"));
 
 const baseURL = new URL(process.env.BASE_URL as string);
 baseURL.pathname = process.env.BASE_PATH ?? "/";

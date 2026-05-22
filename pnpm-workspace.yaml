@@ -1,0 +1,10 @@
+allowBuilds:
+  '@bufbuild/buf': set this to true or false
+  '@sentry/cli': set this to true or false
+  core-js: set this to true or false
+  es5-ext: set this to true or false
+  sharp: set this to true or false
+  unrs-resolver: set this to true or false
+minimumReleaseAge: 2880 # in minutes (2 days)
+minimumReleaseAgeExclude:
+  - '@squonk/*'

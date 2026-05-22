@@ -57,7 +57,7 @@ jobs:
         node-version: 24.15.0
         cache: 'pnpm'
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm ci
     - run: node -v
     - name: Setup Playwright
       run: pnpm exec playwright install --with-deps

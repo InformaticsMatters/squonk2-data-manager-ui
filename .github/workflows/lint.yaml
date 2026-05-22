@@ -37,7 +37,7 @@ jobs:
         node-version: 24.15.0
         cache: 'pnpm'
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm ci
     - run: node -v
     - name: Lint
       run: pnpm lint .
@@ -56,7 +56,7 @@ jobs:
         node-version: 24.15.0
         cache: 'pnpm'
     - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      run: pnpm ci
     - run: node -v
     - name: Type Check
       run: pnpm tsc

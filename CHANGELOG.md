@@ -1,3 +1,10 @@
+## [6.2.1-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.4...6.2.1-dev.5) (2026-05-22)
+
+
+### Bug Fixes
+
+* remove dotenv dependency and update environment loading in Playwright config ([6c183f5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6c183f537f68f88741cf7209dbede6badfaa9622))
+
 ## [6.2.1-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.3...6.2.1-dev.4) (2026-05-22)
 
 

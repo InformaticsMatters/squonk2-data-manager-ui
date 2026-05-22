@@ -82,8 +82,8 @@ jobs:
       run: npm config set strict-ssl=false
     - name: Test with base path
       env:
-        BETTER_AUTH_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
-        BETTER_AUTH_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
+        KEYCLOAK_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
+        KEYCLOAK_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
         DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
         BETTER_AUTH_SECRET: "LONG_RANDOM_VALUE"
         BASE_URL: "http://localhost:3000"

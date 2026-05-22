@@ -21,7 +21,7 @@
   "baseBranchPatterns": [
     "dev"
   ],
-  "minimumReleaseAge": "2 days",
+  "minimumReleaseAge": "1 days",
   "packageRules": [
     {
       "description": "Allow latest squonk packages by ignoring minimum release age",

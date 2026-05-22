@@ -1,9 +1,9 @@
 allowBuilds:
-  '@bufbuild/buf': set this to true or false
-  '@sentry/cli': set this to true or false
-  core-js: set this to true or false
-  es5-ext: set this to true or false
-  sharp: set this to true or false
-  unrs-resolver: set this to true or false
+  '@bufbuild/buf': true
+  '@sentry/cli': false
+  core-js: false
+  es5-ext: false
+  sharp: true
+  unrs-resolver: false
 minimumReleaseAgeExclude:
-  - '@squonk/*'
+- '@squonk/*'

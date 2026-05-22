@@ -1,3 +1,11 @@
+## [6.2.1-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.2...6.2.1-dev.3) (2026-05-22)
+
+
+### Bug Fixes
+
+* fix environment variables for the configuration page. ([2880990](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/288099018cebdc5cb91c108cb5ac36d8f6bd086d))
+* fix test workflow environment variables. ([1566632](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/156663277e931ae2a2fccfd1edd4037f99c18031))
+
 ## [6.2.1-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.1...6.2.1-dev.2) (2026-05-19)
 
 

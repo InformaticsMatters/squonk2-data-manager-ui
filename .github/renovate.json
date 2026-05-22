@@ -12,15 +12,9 @@
     ":semanticCommitTypeAll(chore)",
     ":disableRateLimiting"
   ],
-  "labels": [
-    "dependencies"
-  ],
-  "constraints": {
-    "pnpm": "11.2.2"
-  },
-  "baseBranchPatterns": [
-    "dev"
-  ],
+  "labels": ["dependencies"],
+  "constraints": { "node": "24", "pnpm": "11.2.2" },
+  "baseBranchPatterns": ["dev"],
   "minimumReleaseAge": "1 days",
   "packageRules": [
     {

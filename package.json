@@ -75,7 +75,7 @@
     "axios": "1.16.1",
     "better-auth": "1.6.11",
     "dayjs": "1.11.20",
-    "filesize": "10.1.6",
+    "filesize": "11.0.17",
     "immer": "10.2.0",
     "jotai": "2.20.0",
     "just-compare": "2.3.0",

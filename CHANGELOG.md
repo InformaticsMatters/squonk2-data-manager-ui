@@ -1,3 +1,10 @@
+## [6.2.1-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.3...6.2.1-dev.4) (2026-05-22)
+
+
+### Bug Fixes
+
+* update plotly.js-basic-dist to v3 and adapt to breaking changes ([#1551](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1551)) ([a45762f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a45762f519f7a0b3bfd83a27add2cade902d1c13))
+
 ## [6.2.1-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.2...6.2.1-dev.3) (2026-05-22)
 
 

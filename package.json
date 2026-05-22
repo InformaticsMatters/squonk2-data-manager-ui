@@ -38,7 +38,6 @@
     ]
   },
   "dependencies": {
-    "better-auth": "1.6.11",
     "@bufbuild/protobuf": "2.10.2",
     "@emotion/cache": "11.14.0",
     "@emotion/react": "11.14.0",
@@ -69,10 +68,11 @@
     "@types/node": "24.12.4",
     "@types/plotly.js-basic-dist": "1.54.4",
     "@types/prismjs": "1.26.6",
-    "@types/react": "19.2.14",
+    "@types/react": "19.2.15",
     "@types/react-plotly.js": "2.6.4",
     "@types/semver": "7.7.1",
     "axios": "1.16.1",
+    "better-auth": "1.6.11",
     "dayjs": "1.11.20",
     "filesize": "10.1.6",
     "immer": "10.2.0",

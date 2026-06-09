@@ -63,8 +63,8 @@ importers:
         specifier: 4.4.0
         version: 4.4.0(@tanstack/react-query@5.100.11(react@19.2.6))(axios@1.16.1)(zod@4.4.3)
       '@squonk/data-manager-client':
-        specifier: 5.0.2
-        version: 5.0.2(@tanstack/react-query@5.100.11(react@19.2.6))(axios@1.16.1)(zod@4.4.3)
+        specifier: 5.4.0
+        version: 5.4.0(@tanstack/react-query@5.100.11(react@19.2.6))(axios@1.16.1)(zod@4.4.3)
       '@squonk/mui-theme':
         specifier: 6.0.1
         version: 6.0.1(@emotion/react@11.14.0(@types/react@19.2.15)(react@19.2.6))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.15)(react@19.2.6))(@types/react@19.2.15)(react@19.2.6))(@mui/material@9.0.1(@emotion/react@11.14.0(@types/react@19.2.15)(react@19.2.6))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.15)(react@19.2.6))(@types/react@19.2.15)(react@19.2.6))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
@@ -1893,8 +1893,8 @@ packages:
       zod:
         optional: true
 
-  '@squonk/data-manager-client@5.0.2':
-    resolution: {integrity: sha512-WGhkBxCKl7JhU/ghLEw0Rt1oQtlw4evhl9IcdvyQnZGry8HR8PvRvU8hxtCw5puQkt0gC/P89bcBI21wfvzPWw==}
+  '@squonk/data-manager-client@5.4.0':
+    resolution: {integrity: sha512-4X6MhRJsss5xIu1DecWdrLKqhcjH0jvXO1s8LAFUUekTQPGir3ILo1msGU9V4ZqTy9f1LctKIKo8IRtrWXDgRQ==}
     engines: {node: '>=22', pnpm: '>=8'}
     peerDependencies:
       '@tanstack/react-query': '>=5'
@@ -8794,7 +8794,7 @@ snapshots:
     optionalDependencies:
       zod: 4.4.3
 
-  '@squonk/data-manager-client@5.0.2(@tanstack/react-query@5.100.11(react@19.2.6))(axios@1.16.1)(zod@4.4.3)':
+  '@squonk/data-manager-client@5.4.0(@tanstack/react-query@5.100.11(react@19.2.6))(axios@1.16.1)(zod@4.4.3)':
     dependencies:
       '@tanstack/react-query': 5.100.11(react@19.2.6)
       axios: 1.16.1

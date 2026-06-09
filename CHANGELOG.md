@@ -1,3 +1,10 @@
+## [6.2.1-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.5...6.2.1-dev.6) (2026-06-09)
+
+
+### Bug Fixes
+
+* fix flash of 403 page when changing tabs ([bf84695](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/bf84695ea6b0323cad7033aa7be293ee7e6dc720))
+
 ## [6.2.1-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.4...6.2.1-dev.5) (2026-05-22)
 
 

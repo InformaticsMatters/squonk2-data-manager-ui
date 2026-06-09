@@ -73,8 +73,8 @@ export const FileListItem = ({
           <Checkbox
             checked={checked}
             edge="start"
-            inputProps={{ "aria-labelledby": labelId }}
             size="small"
+            slotProps={{ input: { "aria-labelledby": labelId } }}
             sx={{ pt: 0, pb: 0 }}
             onChange={(_event, checked) => onSelect(checked)}
             onClick={(event) => event.stopPropagation()}

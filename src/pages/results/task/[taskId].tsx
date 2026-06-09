@@ -1,6 +1,5 @@
 import { getGetTaskQueryKey, useGetTask } from "@squonk/data-manager-client/task";
 
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import { Alert, Box, Container, IconButton, Tooltip, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
@@ -8,6 +7,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { RoleRequired } from "../../../components/auth/RoleRequired";
+import { withPageAuthRequired } from "../../../components/auth/withPageAuthRequired";
 import { CenterLoader } from "../../../components/CenterLoader";
 import { ResultTaskCard } from "../../../components/tasks/ResultTaskCard";
 import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
@@ -67,4 +67,4 @@ const Result = () => {
   );
 };
 
-export default withPageAuthRequiredCSR(Result);
+export default withPageAuthRequired(Result);

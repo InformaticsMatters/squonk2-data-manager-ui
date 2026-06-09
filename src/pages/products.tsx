@@ -1,9 +1,9 @@
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Container } from "@mui/material";
 import NextError from "next/error";
 import Head from "next/head";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
+import { withPageAuthRequired } from "../components/auth/withPageAuthRequired";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { ProductsView } from "../features/ProductsView";
 import Layout from "../layouts/Layout";
@@ -34,4 +34,4 @@ export const Products = (props: ProductsProps) => {
   );
 };
 
-export default withPageAuthRequiredCSR(Products);
+export default withPageAuthRequired(Products);

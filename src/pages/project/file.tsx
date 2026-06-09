@@ -1,10 +1,9 @@
-import { withPageAuthRequired as withPageAuthRequiredSSR } from "@auth0/nextjs-auth0";
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Container } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 import { type GetServerSideProps } from "nextjs-routes";
 
+import { withPageAuthRequired } from "../../components/auth/withPageAuthRequired";
 import { PlaintextViewer } from "../../features/PlaintextViewer";
 import {
   type NotSuccessful,
@@ -15,6 +14,7 @@ import { createErrorProps } from "../../utils/api/serverSidePropsError";
 import { pathFromQuery } from "../../utils/app/paths";
 import { projectFileURL } from "../../utils/app/routes";
 import { getFullReturnTo } from "../../utils/next/ssr";
+import { withPageAuthRequiredSSR } from "../../utils/next/withPageAuthRequiredSSR";
 
 export type FileProps = NotSuccessful | Successful;
 
@@ -75,4 +75,4 @@ export const File = (props: FileProps) => {
   return <NextError statusCode={statusCode} statusMessage={statusMessage} />;
 };
 
-export default withPageAuthRequiredCSR(File);
+export default withPageAuthRequired(File);

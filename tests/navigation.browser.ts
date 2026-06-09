@@ -19,7 +19,7 @@ test("do login via results page", async ({ page, baseURL }) => {
 
   // We should return to the page we clicked on
   await page.waitForURL("**/results");
-  await page.locator("label").filter({ hasText: "Filter Results" }).waitFor();
+  await page.getByRole("combobox", { name: "Filter Results" }).waitFor();
 });
 
 test("do login via datasets page", async ({ page, baseURL }) => {
@@ -46,7 +46,7 @@ test("do login via run page", async ({ page, baseURL }) => {
 
   // We should return to the page we clicked on
   await page.waitForURL("**/run");
-  await page.locator("label").filter({ hasText: "Filter" }).waitFor();
+  await page.getByRole("combobox", { name: "Filter" }).waitFor();
 });
 
 test("do login via project page", async ({ page, baseURL }) => {

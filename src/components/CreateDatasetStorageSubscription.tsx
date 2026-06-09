@@ -8,7 +8,7 @@ import { Box, Button, TextField } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
+import { z } from "zod/mini";
 
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useGetStorageCost } from "../hooks/useGetStorageCost";
@@ -20,8 +20,10 @@ export interface CreateDatasetStorageSubscriptionProps {
 
 // Define Zod schema for validation
 const productSchema = z.object({
-  name: z.string().min(1, "A name is required"),
-  allowance: z.number().min(1, "Allowance must be at least 1").int("Allowance must be an integer"),
+  name: z.string().check(z.minLength(1, "A name is required")),
+  allowance: z
+    .number()
+    .check(z.minimum(1, "Allowance must be at least 1"), z.int("Allowance must be an integer")),
 });
 
 export const CreateDatasetStorageSubscription = ({

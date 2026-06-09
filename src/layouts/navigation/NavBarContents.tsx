@@ -11,7 +11,14 @@ import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { MobileNavMenu } from "./MobileNavMenu";
 import { NavLinks } from "./NavLinks";
 import { OUPContext } from "./OUPContext";
-import { UserMenu } from "./UserMenu";
+
+// Auth-dependent controls render only on the client. better-auth's
+// useSession is client-only, so SSR has no session info while the client
+// can resolve it synchronously from the cookie cache — that divergence
+// trips MUI's IconButton `disabled || loading` logic and causes a button-
+// level hydration mismatch. Skipping SSR for these controls sidesteps the
+// issue entirely; users see a brief empty slot before the buttons mount.
+const UserMenu = dynamic(() => import("./UserMenu").then((mod) => mod.UserMenu), { ssr: false });
 
 const UserSettingsContent = dynamic(
   () =>
@@ -21,12 +28,13 @@ const UserSettingsContent = dynamic(
   { loading: () => <CenterLoader /> },
 );
 
-const SettingsButton = ({ disabled, onClick }: { disabled: boolean; onClick: () => void }) => (
+const SettingsButtonImpl = ({ disabled, onClick }: { disabled: boolean; onClick: () => void }) => (
   <Tooltip title="Settings">
     <span>
       <IconButton
         color="inherit"
         disabled={disabled}
+        loading={false}
         sx={{ ml: { xs: "auto", md: 0 } }}
         onClick={onClick}
       >
@@ -35,6 +43,8 @@ const SettingsButton = ({ disabled, onClick }: { disabled: boolean; onClick: () 
     </span>
   </Tooltip>
 );
+
+const SettingsButton = dynamic(() => Promise.resolve(SettingsButtonImpl), { ssr: false });
 
 export const NavBarContents = () => {
   const { user } = useKeycloakUser();

@@ -1,33 +1,39 @@
 import { Button, type ButtonProps } from "@mui/material";
+import { useRouter } from "next/router";
 
 import { useCleanUpOnLogout } from "../../hooks/authHooks";
+import { authClient } from "../../lib/auth-client";
 import { withBasePath } from "../../utils/app/basePath";
 import { capitalise } from "../../utils/app/language";
 
 type ClickableHandler = "login" | "logout";
-type LinkPropsWithBaseURL = `${string}/${ClickableHandler}`;
 
 export interface AuthButtonPros extends ButtonProps {
   mode: ClickableHandler;
 }
 
-/**
- * Button component implemented as an anchor link to handle login and logout
- *
- * This needs to be an normal anchor link despite it being a relative path. See @nextjs-auth0
- * examples on their GitHub.
- *
- * This extends the props of the MuiButton to allow customisation
- */
 export const AuthButton = ({ mode, ...ButtonProps }: AuthButtonPros) => {
   const cleanupOnLogout = useCleanUpOnLogout();
+  const router = useRouter();
+
+  const handleClick = async () => {
+    if (mode === "logout") {
+      cleanupOnLogout();
+      await authClient.signOut();
+      const issuer = process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER_URL;
+      const clientId = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID;
+      const postLogout = encodeURIComponent(globalThis.location.origin + withBasePath("/"));
+      globalThis.location.href = `${issuer}/protocol/openid-connect/logout?post_logout_redirect_uri=${postLogout}&client_id=${clientId}`;
+    } else {
+      await authClient.signIn.oauth2({
+        providerId: "keycloak",
+        callbackURL: withBasePath(router.asPath),
+      });
+    }
+  };
 
   return (
-    <Button
-      {...ButtonProps}
-      href={withBasePath(`/api/auth/${mode}` satisfies LinkPropsWithBaseURL)}
-      onClick={mode === "logout" ? cleanupOnLogout : undefined}
-    >
+    <Button {...ButtonProps} onClick={() => void handleClick()}>
       {capitalise(mode)}
     </Button>
   );

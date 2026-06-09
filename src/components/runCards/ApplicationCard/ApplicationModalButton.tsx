@@ -10,8 +10,10 @@ const ApplicationModal = dynamic<ApplicationModalProps>(
   { loading: () => <CircularProgress size="1rem" /> },
 );
 
-export interface ApplicationModalButtonProps
-  extends Pick<ApplicationModalProps, "applicationId" | "onLaunch" | "projectId"> {
+export interface ApplicationModalButtonProps extends Pick<
+  ApplicationModalProps,
+  "applicationId" | "onLaunch" | "projectId"
+> {
   disabled?: boolean;
 }
 

@@ -1,6 +1,6 @@
 import { Alert, AlertTitle, Box, Button, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { type z } from "zod";
+import { type z } from "zod/mini";
 
 import { type MotdEntrySchema } from "../pages/api/motd";
 
@@ -71,7 +71,7 @@ export const Motd = () => {
           {message}
         </Typography>
         {!!(begin ?? end) && (
-          <Typography color="text.secondary" variant="caption">
+          <Typography sx={{ color: "text.secondary" }} variant="caption">
             {!!begin && `From: ${formatDate(begin)} `}
             {!!end && `Until: ${formatDate(end)}`}
           </Typography>

@@ -13,8 +13,10 @@ import { Adornment } from "./Adornment";
 import { type PermissionLevelFilter } from "./filter";
 import { ItemIcons } from "./ItemIcons";
 
-export interface SelectUnitProps
-  extends Omit<AutocompleteProps<UnitGetResponse, false, false, false>, "options" | "renderInput"> {
+export interface SelectUnitProps extends Omit<
+  AutocompleteProps<UnitGetResponse, false, false, false>,
+  "options" | "renderInput"
+> {
   userFilter: PermissionLevelFilter;
 }
 
@@ -51,8 +53,10 @@ export const SelectUnit = ({
             {...params}
             label="Unit"
             slotProps={{
+              ...params.slotProps,
+
               input: {
-                ...params.InputProps,
+                ...params.slotProps.input,
                 startAdornment: (
                   <>
                     <ItemIcons item={unit} />

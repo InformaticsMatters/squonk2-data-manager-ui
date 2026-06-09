@@ -27,7 +27,7 @@ export const ExitCodeFromTask = ({ taskId }: ExitCodeFromTaskProps) => {
         slotProps={
           isLoading
             ? undefined
-            : { secondary: { color: code === 0 ? "green" : "error", fontWeight: "bold" } }
+            : { secondary: { sx: { color: code === 0 ? "green" : "error", fontWeight: "bold" } } }
         }
       />
     </ListItem>

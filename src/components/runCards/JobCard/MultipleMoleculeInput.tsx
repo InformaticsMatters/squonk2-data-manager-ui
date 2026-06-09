@@ -16,8 +16,10 @@ import { addFileProtocol, FILE_PROTOCOL, removeFileProtocol } from "../../../uti
 import { type FileSelection, FileSelector, type SharedProps } from "../../FileSelector";
 import { SMILESInput } from "../../SMILESInput";
 
-export interface MultipleMoleculeInputProps
-  extends Omit<SharedProps, "multiple" | "onSelect" | "targetType" | "value"> {
+export interface MultipleMoleculeInputProps extends Omit<
+  SharedProps,
+  "multiple" | "onSelect" | "targetType" | "value"
+> {
   value: FileSelection;
   onMoleculesChange: (newValue: string[]) => void;
   onFileSelect: (selection: FileSelection) => void;

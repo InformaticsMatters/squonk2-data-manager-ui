@@ -77,7 +77,7 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
         }}
         value={displayValue}
         onBlur={() => setValue(displayValue)}
-        onChange={(event) => setDisplayValue(event.target.value as V[number])}
+        onChange={(event) => setDisplayValue(event.target.value)}
       >
         {options.map((type) => {
           return (

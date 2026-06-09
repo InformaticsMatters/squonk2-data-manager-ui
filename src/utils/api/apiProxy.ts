@@ -1,24 +1,25 @@
-import { type AccessTokenError, getAccessToken } from "@auth0/nextjs-auth0";
-import { type NextApiHandler, type NextApiRequest, type NextApiResponse } from "next";
+import { fromNodeHeaders } from "better-auth/node";
+import { type NextApiHandler, type NextApiRequest } from "next";
 import httpProxyMiddleware, {
   type NextHttpProxyMiddlewareOptions,
 } from "next-http-proxy-middleware";
 
+import { auth } from "../../lib/auth";
+
 type Path = `^/api/${string}`;
 type Headers = NonNullable<Parameters<typeof httpProxyMiddleware>[2]>["headers"];
 
-const getAccessTokenErrorWrapped = async (req: NextApiRequest, res: NextApiResponse) => {
+const getAccessTokenErrorWrapped = async (req: NextApiRequest) => {
   try {
-    // user is logged in
-    return (await getAccessToken(req, res)).accessToken;
-  } catch (error) {
-    if (error && (error as AccessTokenError).code !== "ERR_MISSING_SESSION") {
-      // if this errors for anything other than the user being logged out, then we rethrow
-      throw error as AccessTokenError;
-    }
+    const result = await auth.api.getAccessToken({
+      body: { providerId: "keycloak" },
+      headers: fromNodeHeaders(req.headers),
+    });
+    return result.accessToken;
+  } catch {
+    // User is not logged in — return undefined to allow unauthenticated requests
+    return undefined;
   }
-  // not logged in
-  // returns undefined here when not authenticated
 };
 
 export const createProxyMiddleware = (
@@ -31,7 +32,7 @@ export const createProxyMiddleware = (
       const headers: Headers = {
         cookie: "", // Must override the browser sent authorization code otherwise ingress gives a 400 status
       };
-      const accessToken = await getAccessTokenErrorWrapped(req, res);
+      const accessToken = await getAccessTokenErrorWrapped(req);
       if (accessToken) {
         // add Authorization when the user is Authorized, we allow users to attempt to make
         // unauthorized requests and expect the API to block unauthorized requests where needed

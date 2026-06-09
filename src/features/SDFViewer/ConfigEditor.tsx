@@ -103,7 +103,6 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
           // eslint-disable-next-line react/no-array-index-key
           <Fragment key={`${key}${index}`}>
             <Typography>{key}</Typography>
-
             <form.Field defaultValue={config[key].dtype} name={`${key}.dtype`}>
               {(field) => (
                 <TextField
@@ -119,7 +118,6 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 </TextField>
               )}
             </form.Field>
-
             <form.Field defaultValue={config[key].include} name={`${key}.include`}>
               {(field) => (
                 <Checkbox
@@ -128,7 +126,6 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 />
               )}
             </form.Field>
-
             <form.Field defaultValue={config[key].cardView} name={`${key}.cardView`}>
               {(field) => (
                 <Checkbox
@@ -137,7 +134,6 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 />
               )}
             </form.Field>
-
             <form.Field defaultValue={config[key].min} name={`${key}.min`}>
               {(field) => (
                 <form.Subscribe selector={(state) => state.values[key].dtype}>
@@ -158,7 +154,6 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 </form.Subscribe>
               )}
             </form.Field>
-
             <form.Field defaultValue={config[key].max} name={`${key}.max`}>
               {(field) => (
                 <form.Subscribe selector={(state) => state.values[key].dtype}>
@@ -179,14 +174,13 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 </form.Subscribe>
               )}
             </form.Field>
-
             <form.Field defaultValue={config[key].sort} name={`${key}.sort`}>
               {(field) => (
                 <TextField
                   disabled
                   select
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value as Updater<string>)}
+                  onChange={(e) => field.handleChange(e.target.value)}
                 >
                   <MenuItem key="ASC" value="ASC">
                     ASC

@@ -7,7 +7,12 @@ import { useUnreadEventCount } from "../../state/notifications";
 import { UserMenuContent } from "./UserMenuContent";
 
 /**
- * Popover displaying the user menu options
+ * Popover displaying the user menu options. Rendered client-only via
+ * `dynamic({ ssr: false })` in NavBarContents — better-auth's useSession is
+ * client-only, so SSR has no session info while the client can resolve a
+ * session synchronously from the cookie cache; the resulting prop drift
+ * trips MUI's IconButton `disabled || loading = null` quirk on the
+ * underlying <button>. Skipping SSR for this control avoids that path.
  */
 export const UserMenu = () => {
   const popupState = usePopupState({ variant: "popper", popupId: "user-menu" });
@@ -36,6 +41,7 @@ export const UserMenu = () => {
               color="inherit"
               disabled={isLoading}
               edge="end"
+              loading={false}
               size="large"
               onClick={handleMenuToggle}
             >

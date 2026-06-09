@@ -11,7 +11,6 @@ import {
   Typography,
 } from "@mui/material";
 import dynamic from "next/dynamic";
-import { type PlotDatum } from "plotly.js-basic-dist";
 
 import { type Molecule } from "../../features/SDFViewer/SDFViewerData";
 
@@ -125,13 +124,13 @@ export const ScatterPlot = ({ molecules, properties, selectPoints, width }: Scat
           dragmode: "select",
           selectionrevision: 1,
           hovermode: "closest",
-          xaxis: { title: xprop },
-          yaxis: { title: yprop },
+          xaxis: { title: { text: xprop } },
+          yaxis: { title: { text: yprop } },
         }}
         onDeselect={() => selectPoints([])}
         onSelected={(event) => {
           // @types is wrong here, we need `?.` as points can be undefined (double click event)
-          const points = event.points as PlotDatum[] | undefined;
+          const points = event.points as typeof event.points | undefined;
           points?.length && selectPoints(points.map((p) => p.customdata) as string[]);
         }}
       />

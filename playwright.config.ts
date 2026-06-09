@@ -1,7 +1,7 @@
 import { defineConfig } from "@playwright/test";
 import path from "node:path";
 
-require("dotenv").config({ path: path.resolve(process.cwd(), ".env.test.local") });
+process.loadEnvFile(path.resolve(__dirname, ".env.test.local"));
 
 const baseURL = new URL(process.env.BASE_URL as string);
 baseURL.pathname = process.env.BASE_PATH ?? "/";
@@ -13,10 +13,7 @@ export default defineConfig({
     { name: "setup", testMatch: "**/*.setup.ts" },
     {
       name: "browser",
-      use: {
-        baseURL: baseURL.href,
-        trace: "on",
-      },
+      use: { baseURL: baseURL.href, trace: "on" },
       retries: 0,
       timeout: 60_000,
       testMatch: "**/*.browser.ts",
@@ -24,11 +21,7 @@ export default defineConfig({
     {
       name: "browser-authenticated",
       dependencies: ["setup"],
-      use: {
-        storageState: "storageState.json",
-        baseURL: baseURL.href,
-        trace: "on",
-      },
+      use: { storageState: "storageState.json", baseURL: baseURL.href, trace: "on" },
       retries: 3,
       timeout: 60_000,
       testMatch: "**/*.browser-authenticated.ts",
@@ -48,9 +41,7 @@ export default defineConfig({
     reuseExistingServer: true,
     stdout: "pipe",
     stderr: "pipe",
-    env: {
-      NODE_ENV: "test",
-    },
+    env: { NODE_ENV: "test" },
   },
   testDir: "tests",
 });

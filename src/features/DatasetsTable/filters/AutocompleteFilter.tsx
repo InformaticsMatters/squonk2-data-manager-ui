@@ -36,7 +36,7 @@ export interface AutocompleteFilterProps<T> {
   /**
    * Error encountered while fetching 'options'.
    */
-  error?: string;
+  error?: string | null;
 }
 
 /**
@@ -69,8 +69,10 @@ export const AutocompleteFilter = <T,>({
           {...params}
           label={label}
           slotProps={{
+            ...params.slotProps,
+
             htmlInput: {
-              ...params.inputProps,
+              ...params.slotProps.htmlInput,
               autoComplete: "off", // Disable autocomplete and autofill
             },
           }}

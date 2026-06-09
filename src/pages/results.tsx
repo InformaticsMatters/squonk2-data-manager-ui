@@ -1,8 +1,8 @@
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import NextError from "next/error";
 import Head from "next/head";
 
 import { RoleRequired } from "../components/auth/RoleRequired";
+import { withPageAuthRequired } from "../components/auth/withPageAuthRequired";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { ResultsView } from "../features/ResultsView";
 import Layout from "../layouts/Layout";
@@ -35,4 +35,4 @@ const Results = (props: ResultsProps) => {
   );
 };
 
-export default withPageAuthRequiredCSR(Results);
+export default withPageAuthRequired(Results);

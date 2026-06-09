@@ -1,0 +1,9 @@
+allowBuilds:
+  '@bufbuild/buf': true
+  '@sentry/cli': false
+  core-js: false
+  es5-ext: false
+  sharp: true
+  unrs-resolver: false
+minimumReleaseAgeExclude:
+- '@squonk/*'

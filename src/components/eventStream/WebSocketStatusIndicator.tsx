@@ -78,8 +78,12 @@ export const WebSocketStatusIndicator = () => {
           }}
         />
         <Typography
-          color="text.secondary"
-          sx={{ fontSize: "0.75rem", lineHeight: 1.2, whiteSpace: "nowrap" }}
+          sx={{
+            color: "text.secondary",
+            fontSize: "0.75rem",
+            lineHeight: 1.2,
+            whiteSpace: "nowrap",
+          }}
           variant="caption"
         >
           {config.text}

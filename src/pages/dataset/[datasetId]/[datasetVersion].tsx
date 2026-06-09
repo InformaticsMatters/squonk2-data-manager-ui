@@ -1,10 +1,9 @@
-import { withPageAuthRequired as withPageAuthRequiredSSR } from "@auth0/nextjs-auth0";
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Container } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 import { type GetServerSideProps } from "nextjs-routes";
 
+import { withPageAuthRequired } from "../../../components/auth/withPageAuthRequired";
 import { PlaintextViewer } from "../../../features/PlaintextViewer";
 import {
   type NotSuccessful,
@@ -14,6 +13,7 @@ import {
 import { createErrorProps } from "../../../utils/api/serverSidePropsError";
 import { API_ROUTES } from "../../../utils/app/routes";
 import { getFullReturnTo } from "../../../utils/next/ssr";
+import { withPageAuthRequiredSSR } from "../../../utils/next/withPageAuthRequiredSSR";
 
 export type DatasetVersionProps = NotSuccessful | Successful;
 
@@ -71,4 +71,4 @@ const DatasetVersion = (props: DatasetVersionProps) => {
   return <NextError statusCode={statusCode} statusMessage={statusMessage} />;
 };
 
-export default withPageAuthRequiredCSR(DatasetVersion);
+export default withPageAuthRequired(DatasetVersion);

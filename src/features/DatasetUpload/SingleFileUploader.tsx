@@ -125,17 +125,14 @@ export const SingleFileUploadWithProgress = ({
           </IconButton>
         </Grid>
       </Grid>
-
       {fileWrapper.progress < 100 && fileWrapper.progress > 0 && (
         <LinearProgress value={fileWrapper.progress} variant="determinate" />
       )}
-
       {(fileWrapper.progress === 100 && task === undefined) ||
       (!!task && !task.done) ||
       isFetching ? (
         <LinearProgress />
       ) : null}
-
       {errors.map((error, index) => (
         // eslint-disable-next-line react/no-array-index-key
         <Typography color="error" key={index}>

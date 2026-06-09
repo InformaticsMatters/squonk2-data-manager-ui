@@ -11,7 +11,7 @@ import { Edit as EditIcon } from "@mui/icons-material";
 import { Box, IconButton, TextField } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
+import { z } from "zod/mini";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { useGetStorageCost } from "../../hooks/useGetStorageCost";
@@ -25,8 +25,8 @@ export interface AdjustProjectProductProps {
 
 // Define Zod schema for validation
 const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  allowance: z.number().min(1, "Allowance must be at least 1"),
+  name: z.string().check(z.minLength(1, "Name is required")),
+  allowance: z.number().check(z.minimum(1, "Allowance must be at least 1")),
 });
 
 export const AdjustProjectProduct = ({ product, allowance }: AdjustProjectProductProps) => {

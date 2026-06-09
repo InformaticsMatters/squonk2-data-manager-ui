@@ -12,12 +12,23 @@ const IndeterminateCheckboxComponent = (
 ) => {
   const defaultRef = useRef<HTMLButtonElement>(null);
   const resolvedRef = (ref ?? defaultRef) as RefObject<HTMLButtonElement>;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    (resolvedRef.current as HTMLInputElement).indeterminate = !!(indeterminate ?? false);
-  }, [resolvedRef, indeterminate]);
+    if (inputRef.current) {
+      inputRef.current.indeterminate = !!(indeterminate ?? false);
+    }
+  }, [indeterminate]);
 
-  return <Checkbox indeterminate={indeterminate} ref={resolvedRef} size="small" {...rest} />;
+  return (
+    <Checkbox
+      indeterminate={indeterminate}
+      ref={resolvedRef}
+      size="small"
+      {...rest}
+      slotProps={{ input: { ref: inputRef } }}
+    />
+  );
 };
 
 export const IndeterminateCheckbox = forwardRef<HTMLInputElement, CheckboxProps>(

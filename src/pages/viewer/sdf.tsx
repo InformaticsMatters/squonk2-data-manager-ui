@@ -1,10 +1,10 @@
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { Container } from "@mui/material";
 import Error from "next/error";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { RoleRequired } from "../../components/auth/RoleRequired";
+import { withPageAuthRequired } from "../../components/auth/withPageAuthRequired";
 import { AS_ROLES, DM_ROLES } from "../../constants/auth";
 import { SDFViewer } from "../../features/SDFViewer";
 import { type SDFViewerDataProps } from "../../features/SDFViewer/SDFViewerData";
@@ -57,4 +57,4 @@ const SDFView = ({ project, path, file }: Omit<SDFViewerDataProps, "config">) =>
   );
 };
 
-export default withPageAuthRequiredCSR(SDF);
+export default withPageAuthRequired(SDF);

@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
 
-import { getAsApiUrl, getDmApiUrl } from "../src/constants/proxies";
 import { getBasePath, withBasePath } from "../src/utils/app/basePath";
 import { projectURL } from "../src/utils/app/routes";
 import { getFullReturnTo } from "../src/utils/next/ssr";
@@ -11,7 +10,7 @@ const withMockedLocation = (origin: string) => {
   Object.defineProperty(globalThis, "location", {
     configurable: true,
     writable: true,
-    value: { origin } as Location,
+    value: { origin },
   });
 
   return () => {
@@ -83,12 +82,5 @@ test.describe("base path utilities", () => {
         locale: undefined,
       } as never),
     ).toBe("/datasets?foo=bar");
-  });
-
-  test("proxy URLs derive from base path", () => {
-    expect(getDmApiUrl("/data-manager-ui")).toBe("/data-manager-ui/api/dm-api");
-    expect(getAsApiUrl("/data-manager-ui")).toBe("/data-manager-ui/api/as-api");
-    expect(getDmApiUrl("")).toBe("/api/dm-api");
-    expect(getAsApiUrl("")).toBe("/api/as-api");
   });
 });

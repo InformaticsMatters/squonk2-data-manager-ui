@@ -1,14 +1,14 @@
 # Install dependencies only when needed
-FROM node:22.11.0-alpine3.19 AS base
+FROM node:24.15.0-alpine3.23 AS base
 
 FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY patches ./patches/
 
-RUN npm i -g pnpm@10.24.0
+RUN npm i -g pnpm@11.2.2
 RUN pnpm fetch --prod
 # RUN pnpm fetch
 RUN pnpm i -P --ignore-scripts
@@ -32,7 +32,7 @@ ENV GIT_SHA=${GIT_SHA:-""}
 ARG BASE_PATH
 ENV BASE_PATH=${BASE_PATH}
 
-# RUN npm i -g pnpm@10.24.0
+# RUN npm i -g pnpm@11.2.2
 RUN echo "GIT_SHA=${GIT_SHA}" && npm run build
 
 # If using npm comment out above and use below instead
@@ -49,7 +49,7 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/next.config.ts ./
+COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/.env ./.env

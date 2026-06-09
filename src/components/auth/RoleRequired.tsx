@@ -3,6 +3,7 @@ import { type FC, type ReactNode } from "react";
 import Error from "next/error";
 
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { CenterLoader } from "../CenterLoader";
 
 export interface RoleRequiredProps {
   children?: ReactNode;
@@ -16,7 +17,11 @@ export interface RoleRequiredProps {
  * The API is protected by user roles. A authenticated might not be authorized to use the app.
  */
 export const RoleRequired: FC<RoleRequiredProps> = ({ children, roles }) => {
-  const { user } = useKeycloakUser();
+  const { user, isLoading } = useKeycloakUser();
+
+  if (isLoading) {
+    return <CenterLoader />;
+  }
 
   if ((roles ?? []).some((role) => !!user.roles?.includes(role))) {
     return <div>{children}</div>;

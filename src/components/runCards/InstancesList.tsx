@@ -37,7 +37,7 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
   if (instances.length === 0) {
     return (
       <Box sx={{ p: 2 }}>
-        <Typography color="text.secondary" variant="body2">
+        <Typography sx={{ color: "text.secondary" }} variant="body2">
           No instances currently exist
         </Typography>
       </Box>

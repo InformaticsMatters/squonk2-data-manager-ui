@@ -1,3 +1,78 @@
+## [6.2.1-dev.7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.6...6.2.1-dev.7) (2026-06-09)
+
+
+### Bug Fixes
+
+* fix pnpm rules by copying workspace earlier in dockerfile ([743b8ec](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/743b8ec956196ae8882b5b4bd9efb15956922dbe))
+
+## [6.2.1-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.5...6.2.1-dev.6) (2026-06-09)
+
+
+### Bug Fixes
+
+* fix flash of 403 page when changing tabs ([bf84695](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/bf84695ea6b0323cad7033aa7be293ee7e6dc720))
+
+## [6.2.1-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.4...6.2.1-dev.5) (2026-05-22)
+
+
+### Bug Fixes
+
+* remove dotenv dependency and update environment loading in Playwright config ([6c183f5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6c183f537f68f88741cf7209dbede6badfaa9622))
+
+## [6.2.1-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.3...6.2.1-dev.4) (2026-05-22)
+
+
+### Bug Fixes
+
+* update plotly.js-basic-dist to v3 and adapt to breaking changes ([#1551](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1551)) ([a45762f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a45762f519f7a0b3bfd83a27add2cade902d1c13))
+
+## [6.2.1-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.2...6.2.1-dev.3) (2026-05-22)
+
+
+### Bug Fixes
+
+* fix environment variables for the configuration page. ([2880990](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/288099018cebdc5cb91c108cb5ac36d8f6bd086d))
+* fix test workflow environment variables. ([1566632](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/156663277e931ae2a2fccfd1edd4037f99c18031))
+
+## [6.2.1-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.1...6.2.1-dev.2) (2026-05-19)
+
+
+### Bug Fixes
+
+* fix sentry warnings ([1283a79](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/1283a799b897f36f63ffab2abc2793b01ec18469))
+
+## [6.2.1-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0...6.2.1-dev.1) (2026-05-19)
+
+
+### Bug Fixes
+
+* actually fix the build ([c0e8f8c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c0e8f8c8d551b57044322738fce961a18aa5a9c0))
+* fix failing build ([fcab9e2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fcab9e2e6df16329a53e5efc613544dd7a9aecfe))
+* support mui v9 ([34f2fb3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/34f2fb3d421c3685dc2b675179ffda6941dd4d73))
+* update import path for routes types ([779ec03](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/779ec03b03734060ed0d300a635aa88db0ee33c8))
+
+# [6.2.0-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0-dev.5...6.2.0-dev.6) (2026-05-19)
+
+
+### Bug Fixes
+
+* actually fix the build ([c0e8f8c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c0e8f8c8d551b57044322738fce961a18aa5a9c0))
+
+# [6.2.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0-dev.4...6.2.0-dev.5) (2026-05-19)
+
+
+### Bug Fixes
+
+* fix failing build ([fcab9e2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fcab9e2e6df16329a53e5efc613544dd7a9aecfe))
+
+# [6.2.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0-dev.3...6.2.0-dev.4) (2026-05-11)
+
+
+### Bug Fixes
+
+* support mui v9 ([34f2fb3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/34f2fb3d421c3685dc2b675179ffda6941dd4d73))
+* update import path for routes types ([779ec03](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/779ec03b03734060ed0d300a635aa88db0ee33c8))
+
 # [6.2.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.1.0...6.2.0) (2026-04-29)
 
 

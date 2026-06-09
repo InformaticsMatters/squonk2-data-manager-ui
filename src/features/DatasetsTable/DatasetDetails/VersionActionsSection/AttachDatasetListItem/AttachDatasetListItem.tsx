@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
+import { z } from "zod/mini";
 
 import { FormModalWrapper } from "../../../../../components/modals/FormModalWrapper";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
@@ -41,12 +41,12 @@ export interface AttachDatasetListItemProps {
 
 // Define schema for validation
 const schema = z.object({
-  project: z.string().min(1, "A project is required"),
-  type: z.string().min(1, "A file type is required"),
-  path: z
-    .string()
-    .regex(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gmu, "Invalid Path")
-    .or(z.literal("")),
+  project: z.string().check(z.minLength(1, "A project is required")),
+  type: z.string().check(z.minLength(1, "A file type is required")),
+  path: z.union([
+    z.string().check(z.regex(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gmu, "Invalid Path")),
+    z.literal(""),
+  ]),
   isImmutable: z.boolean(),
   isCompress: z.boolean(),
 });
@@ -80,14 +80,16 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
+  const defaultValues: FormType = {
+    project: projects?.[0]?.project_id ?? "",
+    type: version.type,
+    path: "",
+    isImmutable: true,
+    isCompress: false,
+  };
+
   const form = useForm({
-    defaultValues: {
-      project: projects?.[0]?.project_id ?? "",
-      type: version.type,
-      path: "",
-      isImmutable: true,
-      isCompress: false,
-    } as FormType,
+    defaultValues,
     validators: { onChange: schema },
     onSubmit: async (values) => {
       const { project, type, path, isImmutable, isCompress } = values.value;

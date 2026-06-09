@@ -3,12 +3,12 @@
 {
   "name": "Node.js",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:3-20",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:4-20",
   "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "22.21.1",
+    "ghcr.io/devcontainers/features/node:2.0.0": {
+      "version": "24.15.0",
       "nodeGypDependencies": true,
-      "pnpmVersion": "10.24.0"
+      "pnpmVersion": "11.2.2"
     }
   },
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -32,24 +32,16 @@
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
   // "remoteUser": "root"
   "secrets": {
-    "DATA_MANAGER_API_SERVER": {
-      "description": "URL the data manager API"
-    },
-    "ACCOUNT_SERVER_API_SERVER": {
-      "description": "URL the account server API"
-    },
-    "KEYCLOAK_URL": {
-      "description": "URL to Keycloak Realm used for Auth"
-    },
-    "AUTH0_CLIENT_ID": {
-      "description": "Client ID for Keycloak Client"
-    },
-    "AUTH0_CLIENT_SECRET": {
+    "DATA_MANAGER_API_SERVER": { "description": "URL the data manager API" },
+    "ACCOUNT_SERVER_API_SERVER": { "description": "URL the account server API" },
+    "KEYCLOAK_URL": { "description": "URL to Keycloak Realm used for Auth" },
+    "KEYCLOAK_CLIENT_ID": { "description": "Client ID for Keycloak Client" },
+    "KEYCLOAK_CLIENT_SECRET": {
       "description": "Secret corresponding to Client ID for Keycloak Client"
     }
   },
   "containerEnv": {
     "BASE_URL": "${localEnv:CODESPACE_NAME}-3000.${localEnv:GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}",
-    "AUTH0_SECRET": "LONG_RANDOM_VALUE"
+    "BETTER_AUTH_SECRET": "LONG_RANDOM_VALUE"
   }
 }

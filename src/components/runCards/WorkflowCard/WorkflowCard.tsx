@@ -40,8 +40,7 @@ export const WorkflowCard = ({ workflow, runningWorkflows = [] }: WorkflowCardPr
       key={workflow.id}
     >
       <Typography
-        color="text.secondary"
-        sx={{ textTransform: "uppercase", fontWeight: "bold" }}
+        sx={{ color: "text.secondary", textTransform: "uppercase", fontWeight: "bold" }}
         variant="caption"
       >
         Workflow

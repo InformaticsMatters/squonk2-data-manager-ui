@@ -12,16 +12,10 @@
     ":semanticCommitTypeAll(chore)",
     ":disableRateLimiting"
   ],
-  "labels": [
-    "dependencies"
-  ],
-  "constraints": {
-    "pnpm": "10"
-  },
-  "baseBranchPatterns": [
-    "dev"
-  ],
-  "minimumReleaseAge": "2 days",
+  "labels": ["dependencies"],
+  "constraints": { "node": "24", "pnpm": "11.2.2" },
+  "baseBranchPatterns": ["dev"],
+  "minimumReleaseAge": "1 days",
   "packageRules": [
     {
       "description": "Allow latest squonk packages by ignoring minimum release age",

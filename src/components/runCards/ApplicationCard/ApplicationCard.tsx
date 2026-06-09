@@ -49,8 +49,7 @@ export const ApplicationCard = ({ app, projectId }: ApplicationCardProps) => {
       header={{ title: app.kind, subtitle: app.group, avatar: app.kind[0] }}
     >
       <Typography
-        color="text.secondary"
-        sx={{ textTransform: "uppercase", fontWeight: "bold" }}
+        sx={{ color: "text.secondary", textTransform: "uppercase", fontWeight: "bold" }}
         variant="caption"
       >
         Application

@@ -1,6 +1,5 @@
 import { getGetInstanceQueryKey } from "@squonk/data-manager-client/instance";
 
-import { withPageAuthRequired as withPageAuthRequiredCSR } from "@auth0/nextjs-auth0/client";
 import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import { Box, Container, IconButton, Tooltip, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
@@ -8,6 +7,7 @@ import NextError from "next/error";
 import { useRouter } from "next/router";
 
 import { RoleRequired } from "../../../components/auth/RoleRequired";
+import { withPageAuthRequired } from "../../../components/auth/withPageAuthRequired";
 import { Instance } from "../../../components/instances/Instance";
 import { AllResultsButton } from "../../../components/results/AllResultsButton";
 import { EventDebugSwitch } from "../../../components/results/EventDebugSwitch";
@@ -65,4 +65,4 @@ const Result = () => {
   );
 };
 
-export default withPageAuthRequiredCSR(Result);
+export default withPageAuthRequired(Result);

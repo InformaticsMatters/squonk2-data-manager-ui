@@ -61,6 +61,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          HUSKY: 0
           SEMANTIC_RELEASE_DEBUG: true
 
       - name: Capture release SHA

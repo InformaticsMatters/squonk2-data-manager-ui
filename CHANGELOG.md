@@ -1,3 +1,10 @@
+## [6.2.1-dev.7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.6...6.2.1-dev.7) (2026-06-09)
+
+
+### Bug Fixes
+
+* fix pnpm rules by copying workspace earlier in dockerfile ([743b8ec](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/743b8ec956196ae8882b5b4bd9efb15956922dbe))
+
 ## [6.2.1-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1-dev.5...6.2.1-dev.6) (2026-06-09)
 
 

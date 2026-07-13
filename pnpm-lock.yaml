@@ -180,8 +180,8 @@ importers:
         specifier: 19.2.6
         version: 19.2.6(react@19.2.6)
       react-dropzone:
-        specifier: 15.0.0
-        version: 15.0.0(react@19.2.6)
+        specifier: 16.0.0
+        version: 16.0.0(react@19.2.6)
       react-plotly.js:
         specifier: 2.6.0
         version: 2.6.0(plotly.js@2.35.3(mapbox-gl@1.13.3)(webpack@5.97.1(postcss@8.5.15)))(react@19.2.6)
@@ -5798,9 +5798,9 @@ packages:
     peerDependencies:
       react: '>= 16.8'
 
-  react-dropzone@15.0.0:
-    resolution: {integrity: sha512-lGjYV/EoqEjEWPnmiSvH4v5IoIAwQM2W4Z1C0Q/Pw2xD0eVzKPS359BQTUMum+1fa0kH2nrKjuavmTPOGhpLPg==}
-    engines: {node: '>= 10.13'}
+  react-dropzone@16.0.0:
+    resolution: {integrity: sha512-Se0fi/i0/ymOJONQpZIC2qNzF9iis4RW/GQniOARVhJax4xb0qR/dV/Uw1aEVS3qwtjRqAO0RXpPOBC6FaSo3Q==}
+    engines: {node: '>= 20'}
     peerDependencies:
       react: '>= 16.8 || 18.0.0'
 
@@ -13324,7 +13324,7 @@ snapshots:
       prop-types: 15.8.1
       react: 19.2.6
 
-  react-dropzone@15.0.0(react@19.2.6):
+  react-dropzone@16.0.0(react@19.2.6):
     dependencies:
       attr-accept: 2.2.5
       file-selector: 2.1.2

@@ -119,7 +119,7 @@ jobs:
         uses: informaticsmatters/trigger-awx-action@v3
         with:
           template: Squonk/2 Data Manager UI -test-
-          template-host: ${{ secrets.AWX_HOST }}
+          template-host: https://awx.xchem-dev.diamond.ac.uk
           template-user: ${{ secrets.AWX_USER }}
           template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
           template-var: maui_image_tag
@@ -135,7 +135,7 @@ jobs:
         uses: informaticsmatters/trigger-awx-action@v3
         with:
           template: Data Manager UI -production-
-          template-host: ${{ secrets.AWX_HOST }}
+          template-host: https://awx-scw.informaticsmatters.com
           template-user: ${{ secrets.AWX_USER }}
           template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
           template-var: maui_image_tag

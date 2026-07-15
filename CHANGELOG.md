@@ -1,3 +1,10 @@
+## [6.2.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1...6.2.2) (2026-07-15)
+
+
+### Bug Fixes
+
+* update release workflow host ([78ae737](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/78ae7373858521901ff5622a0d13a802e161fe6d))
+
 ## [6.2.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.0...6.2.1) (2026-06-09)
 
 

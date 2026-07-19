@@ -180,8 +180,8 @@ importers:
         specifier: 19.2.6
         version: 19.2.6(react@19.2.6)
       react-dropzone:
-        specifier: 15.0.0
-        version: 15.0.0(react@19.2.6)
+        specifier: 18.0.1
+        version: 18.0.1(react@19.2.6)
       react-plotly.js:
         specifier: 2.6.0
         version: 2.6.0(plotly.js@2.35.3(mapbox-gl@1.13.3)(webpack@5.97.1(postcss@8.5.15)))(react@19.2.6)
@@ -3792,9 +3792,9 @@ packages:
     resolution: {integrity: sha512-iACCiXeMYOvZqlF1kTiYINzgepRBymz1wwjiuup9u9nayhb6g4fSwiyJ/6adli+EPwrWtpgQAh2PoS7HukEGEg==}
     engines: {node: '>= 10'}
 
-  file-selector@2.1.2:
-    resolution: {integrity: sha512-QgXo+mXTe8ljeqUFaX3QVHc5osSItJ/Km+xpocx0aSqWGMSCf6qYs/VnzZgS864Pjn5iceMRFigeAV7AfTlaig==}
-    engines: {node: '>= 12'}
+  file-selector@4.0.1:
+    resolution: {integrity: sha512-xRKq3z5daY2myzSME3wKMTIDdmESnM4/8QKqKD85L49sUMW/ZxGeZSsyvJK3E8B2gJlCmL3Js4mQPeGhc+lCbQ==}
+    engines: {node: '>= 20'}
 
   filesize@11.0.17:
     resolution: {integrity: sha512-oHLTvMLw6imZUl1se/RBQrFlyy50nXce4sU7yGR6Qc0JgCwqnfiFsAnEwotdGmfKLD7SArGUk2/5STU0k8LOBQ==}
@@ -5798,11 +5798,11 @@ packages:
     peerDependencies:
       react: '>= 16.8'
 
-  react-dropzone@15.0.0:
-    resolution: {integrity: sha512-lGjYV/EoqEjEWPnmiSvH4v5IoIAwQM2W4Z1C0Q/Pw2xD0eVzKPS359BQTUMum+1fa0kH2nrKjuavmTPOGhpLPg==}
-    engines: {node: '>= 10.13'}
+  react-dropzone@18.0.1:
+    resolution: {integrity: sha512-+2mDTQMrhfXspKCYzN1/kKaryMX/B9Gw5t+bHTQCpqTnJCC2wBEYujIwl/qIy+MPNWgVS+UQXrm5BXKWkX3+8Q==}
+    engines: {node: '>= 20'}
     peerDependencies:
-      react: '>= 16.8 || 18.0.0'
+      react: '>= 18'
 
   react-intersection-observer@9.16.0:
     resolution: {integrity: sha512-w9nJSEp+DrW9KmQmeWHQyfaP6b03v+TdXynaoA964Wxt7mdR3An11z4NNCQgL4gKSK7y1ver2Fq+JKH6CWEzUA==}
@@ -10982,9 +10982,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  file-selector@2.1.2:
-    dependencies:
-      tslib: 2.8.1
+  file-selector@4.0.1: {}
 
   filesize@11.0.17: {}
 
@@ -13324,11 +13322,10 @@ snapshots:
       prop-types: 15.8.1
       react: 19.2.6
 
-  react-dropzone@15.0.0(react@19.2.6):
+  react-dropzone@18.0.1(react@19.2.6):
     dependencies:
       attr-accept: 2.2.5
-      file-selector: 2.1.2
-      prop-types: 15.8.1
+      file-selector: 4.0.1
       react: 19.2.6
 
   react-intersection-observer@9.16.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6):

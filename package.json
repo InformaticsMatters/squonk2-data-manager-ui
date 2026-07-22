@@ -95,7 +95,7 @@
     "plotly.js-basic-dist": "3.5.1",
     "prismjs": "1.30.0",
     "react": "19.2.6",
-    "react-dom": "19.2.6",
+    "react-dom": "19.2.8",
     "react-dropzone": "15.0.0",
     "react-plotly.js": "2.6.0",
     "react-use-websocket": "4.13.0",

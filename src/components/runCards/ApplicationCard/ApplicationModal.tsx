@@ -4,7 +4,7 @@ import { type ApplicationSummary, type DmError } from "@squonk/data-manager-clie
 import { useGetApplication } from "@squonk/data-manager-client/application";
 import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
 
-import { Grid, MenuItem, TextField } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 import { useQueryClient } from "@tanstack/react-query";
@@ -35,7 +35,6 @@ export const ApplicationModal = ({
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [debug, setDebug] = useState<DebugValue>("0");
-  const [version, setVersion] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>(null);
 
   const { mutateAsync: createInstance } = useCreateInstance();
@@ -44,8 +43,6 @@ export const ApplicationModal = ({
 
   const { data: application } = useGetApplication(applicationId);
 
-  const versionToUse = version ?? application?.versions[0] ?? "";
-
   const handleCreateInstance = async () => {
     if (projectId) {
       try {
@@ -53,7 +50,6 @@ export const ApplicationModal = ({
           data: {
             debug,
             application_id: applicationId,
-            // application_version: versionToUse,
             as_name: name,
             project_id: projectId,
             specification: JSON.stringify({ variables: formData }),
@@ -83,7 +79,7 @@ export const ApplicationModal = ({
       DialogProps={{ maxWidth: "sm", fullWidth: true }}
       id={`app-${applicationId}`}
       open={open}
-      submitDisabled={!projectId || !name || !versionToUse}
+      submitDisabled={!projectId || !name}
       submitText="Run"
       title={application?.kind ?? "Run Job"}
       onClose={onClose}
@@ -103,22 +99,6 @@ export const ApplicationModal = ({
           </Grid>
 
           <DebugCheckbox value={debug} onChange={(debug) => setDebug(debug)} />
-
-          <Grid size={{ xs: 12 }}>
-            <TextField
-              fullWidth
-              select
-              label="Version"
-              value={versionToUse}
-              onChange={(e) => setVersion(e.target.value)}
-            >
-              {application.versions.map((version) => (
-                <MenuItem key={version} value={version}>
-                  {version}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
 
           <Grid size={{ xs: 12 }}>
             <Form

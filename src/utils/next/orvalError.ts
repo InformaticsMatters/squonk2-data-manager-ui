@@ -1,18 +1,27 @@
 import { type AsError } from "@squonk/account-server-client";
 import { type DmError } from "@squonk/data-manager-client";
 
-import { type AxiosError } from "axios";
-
 import { nullEmptyString } from "../text";
 
-const getMessageFromResponse = <TError>(error: AxiosError<TError>, field: keyof TError) => {
+type AxiosLikeError<TError = unknown> = {
+  response?: { data?: TError | string; statusText?: string };
+  message?: string;
+  toJSON?: () => unknown;
+};
+
+const getMessageFromResponse = <TError>(error: AxiosLikeError<TError>, field: keyof TError) => {
   const apiErrorData = error.response?.data;
-  return apiErrorData?.[field];
+
+  if (!apiErrorData || typeof apiErrorData === "string") {
+    return undefined;
+  }
+
+  return apiErrorData[field];
 };
 
 type APIErrorResponse = AsError | DmError;
-type AError = AxiosError<APIErrorResponse>;
-type OldAError = AxiosError<{ detail: string }>;
+type AError = AxiosLikeError<APIErrorResponse>;
+type OldAError = AxiosLikeError<{ detail: string }>;
 
 const isAPIError = (error: unknown): error is APIErrorResponse =>
   typeof (error as APIErrorResponse).error === "string";
@@ -23,7 +32,7 @@ const isAPIError = (error: unknown): error is APIErrorResponse =>
  *          or `null` when no error was supplied
  */
 export const getErrorMessage = (
-  error: APIErrorResponse | AxiosError | null | undefined,
+  error: APIErrorResponse | AxiosLikeError | null | undefined,
 ): string | null => {
   if (!error) {
     return null;
@@ -48,11 +57,11 @@ export const getErrorMessage = (
       return infoFromDetailField;
     }
   } catch {
-    if (error.message.length > 0) {
+    if (error.message && error.message.length > 0) {
       return error.message;
     }
 
-    return JSON.stringify(error.toJSON());
+    return JSON.stringify(error.toJSON?.());
   }
 
   // try get an error message from the error objects, skipping "", then fallback to a generic message

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { useGetDefaultOrganisation } from "@squonk/account-server-client/organisation";
 
 import { Box } from "@mui/material";
@@ -10,7 +12,7 @@ import { BootstrapAlert } from "./BootstrapAlert";
 /**
  * If user is authorized it displays the BoostrappingAlert component.
  */
-export const UserBootstrapper = () => {
+const ClientUserBootstrapper = () => {
   const isDMAuthorized = useDMAuthorizationStatus();
 
   const { projectId } = useCurrentProjectId();
@@ -36,4 +38,12 @@ export const UserBootstrapper = () => {
   }
 
   return <BootstrapAlert />;
+};
+
+export const UserBootstrapper = () => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => setIsClient(true), []);
+
+  return isClient ? <ClientUserBootstrapper /> : null;
 };

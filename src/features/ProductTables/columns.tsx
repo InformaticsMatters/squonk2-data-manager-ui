@@ -1,10 +1,12 @@
-import { type ProductsGetResponseProductsItem } from "@squonk/account-server-client";
+import { type getProducts } from "@squonk/account-server-client/product";
 
 import { createColumnHelper } from "@tanstack/react-table";
 
 import { toLocalTimeString } from "../../utils/app/datetime";
 
-export const getSharedColumns = <T extends ProductsGetResponseProductsItem>() => {
+type Product = Awaited<ReturnType<typeof getProducts>>["products"][number];
+
+export const getSharedColumns = <T extends Product>() => {
   const columnHelper = createColumnHelper<T>();
 
   return [

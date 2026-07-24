@@ -15,18 +15,22 @@ import {
 } from "@mui/material-nextjs/v15-pagesRouter";
 import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { type InternalAxiosRequestConfig } from "axios";
 import { enableMapSet } from "immer";
 import { type AppProps } from "next/app";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 
 import { ConfiguredSnackbarProvider } from "../components/app/ConfiguredSnackbarProvider";
 import { ThemeProviders } from "../components/app/ThemeProviders";
 import { TopLevelHooks } from "../components/app/TopLevelHooks";
-import { EventStream } from "../components/eventStream/EventStream";
 import { openSansFont } from "../constants/fonts";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
 import { awaitTokenGate } from "../utils/api/tokenGate";
+
+const EventStream = dynamic(
+  () => import("../components/eventStream/EventStream").then((mod) => mod.EventStream),
+  { ssr: false },
+);
 
 const openSansFontCss = `
 :root {
@@ -48,8 +52,10 @@ setASBaseUrl(AS_API_URL);
 // After the gate opens, re-read Authorization from the instance's current defaults.
 // We can't rely on what was merged into the config at request-initiation time because
 // setAuthToken() may not have been called yet when the request was first queued.
-const makeGateInterceptor =
-  (instance: typeof DM_INSTANCE) => async (config: InternalAxiosRequestConfig) => {
+const makeGateInterceptor = (instance: typeof DM_INSTANCE) => {
+  const interceptor: NonNullable<Parameters<typeof instance.interceptors.request.use>[0]> = async (
+    config,
+  ) => {
     await awaitTokenGate();
     const auth = instance.defaults.headers.common.Authorization as string | undefined;
     if (auth) {
@@ -57,6 +63,9 @@ const makeGateInterceptor =
     }
     return config;
   };
+
+  return interceptor;
+};
 DM_INSTANCE.interceptors.request.use(makeGateInterceptor(DM_INSTANCE));
 AS_INSTANCE.interceptors.request.use(makeGateInterceptor(AS_INSTANCE));
 

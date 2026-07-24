@@ -1,8 +1,5 @@
-import {
-  type ProductDmProjectTier,
-  type ProductsGetResponseProductsItem,
-} from "@squonk/account-server-client";
-import { useGetProducts } from "@squonk/account-server-client/product";
+import { type ProductDmProjectTier } from "@squonk/account-server-client";
+import { type getProducts, useGetProducts } from "@squonk/account-server-client/product";
 import { type ProjectDetail } from "@squonk/data-manager-client";
 import { useGetProjects } from "@squonk/data-manager-client/project";
 
@@ -16,9 +13,9 @@ import { useSelectedUnit } from "../../state/unitSelection";
 
 export type ProjectSubscription = Partial<ProductDmProjectTier> & ProjectDetail;
 
-const isProjectProduct = (
-  product: ProductsGetResponseProductsItem,
-): product is ProductDmProjectTier =>
+type Product = Awaited<ReturnType<typeof getProducts>>["products"][number];
+
+const isProjectProduct = (product: Product): product is ProductDmProjectTier =>
   product.product.type === "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION";
 
 /**

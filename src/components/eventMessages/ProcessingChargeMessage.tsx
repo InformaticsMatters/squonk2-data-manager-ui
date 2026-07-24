@@ -1,18 +1,16 @@
-import {
-  ProductDetailType,
-  type ProductDmProjectTier,
-  type ProductUnitGetResponseProduct,
-} from "@squonk/account-server-client";
-import { useGetProduct } from "@squonk/account-server-client/product";
+import { ProductDetailType, type ProductDmProjectTier } from "@squonk/account-server-client";
+import { type getProduct, useGetProduct } from "@squonk/account-server-client/product";
 
 import { Button, Typography } from "@mui/material";
 
 import { formatCoins } from "../../utils/app/coins";
 import { projectURL } from "../../utils/app/routes";
 
+type Product = Awaited<ReturnType<typeof getProduct>>["product"];
+
 // Type guard function to check if a product is ProductDmProjectTier
 function isProductDmProjectTier(
-  product: ProductUnitGetResponseProduct | null | undefined,
+  product: Product | null | undefined,
 ): product is ProductDmProjectTier {
   return (
     !!product && // Check if product is defined

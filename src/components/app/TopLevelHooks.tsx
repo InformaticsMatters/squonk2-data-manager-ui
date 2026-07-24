@@ -1,4 +1,4 @@
-import { type ReactElement } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 
 import { useSetupApiClients } from "../../hooks/useSetupApiClients";
 import { useSyncProject } from "../../hooks/useSyncProject";
@@ -11,10 +11,23 @@ export interface TopLevelHooksProps {
 /**
  * "No-op" component that only calls hooks that require providers higher up in the tree
  */
-export const TopLevelHooks = ({ children }: TopLevelHooksProps) => {
+const ClientTopLevelHooks = () => {
   useSyncProject();
   useSyncUnitAndOrgFromProduct();
   useSetupApiClients();
 
-  return children;
+  return null;
+};
+
+export const TopLevelHooks = ({ children }: TopLevelHooksProps) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => setIsClient(true), []);
+
+  return (
+    <>
+      {!!isClient && <ClientTopLevelHooks />}
+      {children}
+    </>
+  );
 };

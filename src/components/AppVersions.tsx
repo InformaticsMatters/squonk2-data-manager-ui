@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { useGetVersion as useGetASAPIVersion } from "@squonk/account-server-client/state";
 import { useGetVersion as useGetDMAPIVersion } from "@squonk/data-manager-client/accounting";
 
@@ -8,9 +10,30 @@ import { HorizontalList } from "./HorizontalList";
 export const getGetDMVersionQueryKey = () => ["data-manager", "/version"];
 export const getGetASVersionQueryKey = () => ["account-server", "/version"];
 
-export const AppVersions = () => {
+const ApiVersions = () => {
   const { data: dmData } = useGetDMAPIVersion();
   const { data: asData } = useGetASAPIVersion();
+
+  return (
+    <>
+      {!!dmData?.version && (
+        <ListItem>
+          <ListItemText primary={`Data Manager: ${dmData.version}`} />
+        </ListItem>
+      )}
+      {!!asData?.version && (
+        <ListItem>
+          <ListItemText primary={`Account Server: ${asData.version}`} />
+        </ListItem>
+      )}
+    </>
+  );
+};
+
+export const AppVersions = () => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => setIsClient(true), []);
 
   return (
     <>
@@ -19,16 +42,7 @@ export const AppVersions = () => {
         <ListItem>
           <ListItemText primary={`UI: ${process.env.NEXT_PUBLIC_APP_VERSION}`} />
         </ListItem>
-        {!!dmData?.version && (
-          <ListItem>
-            <ListItemText primary={`Data Manager: ${dmData.version}`} />
-          </ListItem>
-        )}
-        {!!asData?.version && (
-          <ListItem>
-            <ListItemText primary={`Account Server: ${asData.version}`} />
-          </ListItem>
-        )}
+        {!!isClient && <ApiVersions />}
       </HorizontalList>
     </>
   );

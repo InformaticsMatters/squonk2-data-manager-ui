@@ -39,6 +39,7 @@ declare module "nextjs-routes" {
     | StaticRoute<"/products">
     | StaticRoute<"/project">
     | StaticRoute<"/project/file">
+    | StaticRoute<"/prototype/scope-interaction">
     | StaticRoute<"/results">
     | DynamicRoute<"/results/instance/[instanceId]", { "instanceId": string }>
     | DynamicRoute<"/results/task/[taskId]", { "taskId": string }>

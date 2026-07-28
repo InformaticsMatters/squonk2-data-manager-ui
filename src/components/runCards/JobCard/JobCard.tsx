@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type JobSummary } from "@squonk/data-manager-client";
+import { type JobSummary } from "@/api/data-manager";
 
 import { Launch as LaunchIcon } from "@mui/icons-material";
 import {

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { type ProductDmStorage } from "@squonk/account-server-client";
+import { type ProductDmStorage } from "@/api/account-server";
 
 import { createColumnHelper } from "@tanstack/react-table";
 

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useGetFileTypes } from "@squonk/data-manager-client/type";
+import { useGetFileTypes } from "@/api/data-manager/type";
 
 /**
  * Hook that consumes the types endpoint and returns a mapping from a file extension to a mime-type

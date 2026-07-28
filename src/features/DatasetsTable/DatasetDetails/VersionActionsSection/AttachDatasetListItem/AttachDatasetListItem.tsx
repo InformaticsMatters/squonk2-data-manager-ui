@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-import { type DatasetVersionSummary, type DmError } from "@squonk/data-manager-client";
-import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
-import { getGetFilesQueryKey, useAttachFile } from "@squonk/data-manager-client/file-and-path";
-import { useGetProjects } from "@squonk/data-manager-client/project";
-import { useGetFileTypes } from "@squonk/data-manager-client/type";
+import { type DatasetVersionSummary, type DmError } from "@/api/data-manager";
+import { getGetDatasetsQueryKey } from "@/api/data-manager/dataset";
+import { getGetFilesQueryKey, useAttachFile } from "@/api/data-manager/file-and-path";
+import { useGetProjects } from "@/api/data-manager/project";
+import { useGetFileTypes } from "@/api/data-manager/type";
 
 import { AttachFileRounded as AttachFileRoundedIcon } from "@mui/icons-material";
 import {

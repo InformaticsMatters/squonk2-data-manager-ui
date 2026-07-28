@@ -1,7 +1,4 @@
-import {
-  ProductDetailFlavour,
-  UnitAllDetailDefaultProductPrivacy,
-} from "@squonk/account-server-client";
+import { ProductDetailFlavour, UnitAllDetailDefaultProductPrivacy } from "@/api/account-server";
 
 import { Checkbox, FormControlLabel } from "@mui/material";
 

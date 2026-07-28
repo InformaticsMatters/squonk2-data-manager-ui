@@ -1,4 +1,4 @@
-import { useGetOrganisation } from "@squonk/account-server-client/organisation";
+import { useGetOrganisation } from "@/api/account-server/organisation";
 
 import Head from "next/head";
 

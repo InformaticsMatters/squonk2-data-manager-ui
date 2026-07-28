@@ -1,4 +1,4 @@
-import { type ApplicationSummary } from "@squonk/data-manager-client";
+import { type ApplicationSummary } from "@/api/data-manager";
 
 import { CircularProgress, LinearProgress, Typography } from "@mui/material";
 import dynamic from "next/dynamic";

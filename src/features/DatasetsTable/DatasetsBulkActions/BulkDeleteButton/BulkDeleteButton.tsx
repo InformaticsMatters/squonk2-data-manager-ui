@@ -1,5 +1,5 @@
-import { type DmError } from "@squonk/data-manager-client";
-import { getGetDatasetsQueryKey, useDeleteDataset } from "@squonk/data-manager-client/dataset";
+import { type DmError } from "@/api/data-manager";
+import { getGetDatasetsQueryKey, useDeleteDataset } from "@/api/data-manager/dataset";
 
 import { DeleteForever } from "@mui/icons-material";
 import { IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";

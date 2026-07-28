@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { type ProductDetail } from "@squonk/account-server-client";
+import { type ProductDetail } from "@/api/account-server";
 import {
   getGetProductQueryKey,
   getGetProductsQueryKey,
   usePatchProduct,
-} from "@squonk/account-server-client/product";
+} from "@/api/account-server/product";
 
 import { Edit as EditIcon } from "@mui/icons-material";
 import { Box, IconButton, TextField } from "@mui/material";

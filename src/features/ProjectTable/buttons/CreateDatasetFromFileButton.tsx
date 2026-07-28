@@ -1,8 +1,5 @@
-import { type DmError } from "@squonk/data-manager-client";
-import {
-  getGetDatasetsQueryKey,
-  useCreateDatasetFromFile,
-} from "@squonk/data-manager-client/dataset";
+import { type DmError } from "@/api/data-manager";
+import { getGetDatasetsQueryKey, useCreateDatasetFromFile } from "@/api/data-manager/dataset";
 
 import { AddCircleRounded as AddCircleRoundedIcon } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";

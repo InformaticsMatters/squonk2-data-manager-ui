@@ -1,4 +1,4 @@
-import { type DmError } from "@squonk/data-manager-client";
+import { type DmError } from "@/api/data-manager";
 
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";

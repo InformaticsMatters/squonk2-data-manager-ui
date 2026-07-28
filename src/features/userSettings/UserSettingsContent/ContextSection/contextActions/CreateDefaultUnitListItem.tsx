@@ -1,8 +1,4 @@
-import {
-  getGetUnitsQueryKey,
-  getUnit,
-  useCreateDefaultUnit,
-} from "@squonk/account-server-client/unit";
+import { getGetUnitsQueryKey, getUnit, useCreateDefaultUnit } from "@/api/account-server/unit";
 
 import { CreateNewFolder } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";

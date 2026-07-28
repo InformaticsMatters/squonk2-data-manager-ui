@@ -1,4 +1,4 @@
-import { type DatasetSummary, type DatasetVersionSummary } from "@squonk/data-manager-client";
+import { type DatasetSummary, type DatasetVersionSummary } from "@/api/data-manager";
 
 import { Description } from "@mui/icons-material";
 import { List, ListItemText } from "@mui/material";

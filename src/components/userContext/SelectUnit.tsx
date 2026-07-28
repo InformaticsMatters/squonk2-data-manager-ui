@@ -1,4 +1,4 @@
-import { type UnitGetResponse } from "@squonk/account-server-client";
+import { type UnitGetResponse } from "@/api/account-server";
 
 import { DataUsage as DataUsageIcon, Receipt as ReceiptIcon } from "@mui/icons-material";
 import { Autocomplete, type AutocompleteProps, Box, TextField, Typography } from "@mui/material";

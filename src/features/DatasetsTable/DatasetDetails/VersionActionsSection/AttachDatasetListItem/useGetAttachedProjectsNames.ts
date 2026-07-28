@@ -1,4 +1,4 @@
-import { type ProjectDetail } from "@squonk/data-manager-client";
+import { type ProjectDetail } from "@/api/data-manager";
 
 /**
  * Resolves names of the projects a dataset version is attached to. Since a user might not have

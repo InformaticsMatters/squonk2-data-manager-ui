@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { useGetDefaultOrganisation } from "@squonk/account-server-client/organisation";
+import { useGetDefaultOrganisation } from "@/api/account-server/organisation";
 
 import { Box } from "@mui/material";
 

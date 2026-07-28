@@ -3,7 +3,7 @@ import {
   type OrganisationUnitsGetResponse,
   type ProductDmProjectTier,
   type ProductsGetResponse,
-} from "@squonk/account-server-client";
+} from "@/api/account-server";
 
 import { expect, test } from "@playwright/test";
 

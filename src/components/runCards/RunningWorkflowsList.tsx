@@ -1,4 +1,4 @@
-import { type RunningWorkflowSummary } from "@squonk/data-manager-client";
+import { type RunningWorkflowSummary } from "@/api/data-manager";
 
 import { Box, List, ListItemButton, ListItemText, Typography } from "@mui/material";
 import A from "next/link";

@@ -1,5 +1,5 @@
-import { type ProductDetail } from "@squonk/account-server-client";
-import { useGetProduct } from "@squonk/account-server-client/product";
+import { type ProductDetail } from "@/api/account-server";
+import { useGetProduct } from "@/api/account-server/product";
 
 import Head from "next/head";
 

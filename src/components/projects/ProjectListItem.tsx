@@ -1,4 +1,4 @@
-import { type ProjectDetail } from "@squonk/data-manager-client";
+import { type ProjectDetail } from "@/api/data-manager";
 
 import { AccountTreeRounded as AccountTreeRoundedIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material";

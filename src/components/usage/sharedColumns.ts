@@ -1,4 +1,4 @@
-import { type UserActivityDetail } from "@squonk/data-manager-client";
+import { type UserActivityDetail } from "@/api/data-manager";
 
 import { type Column, type ColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";

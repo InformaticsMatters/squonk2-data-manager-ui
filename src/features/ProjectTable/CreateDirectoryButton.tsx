@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useCreatePath } from "@squonk/data-manager-client/file-and-path";
+import { useCreatePath } from "@/api/data-manager/file-and-path";
 
 import { CreateNewFolderRounded as CreateNewFolderRoundedIcon } from "@mui/icons-material";
 import { Box, Button, IconButton, Paper, Popover, TextField, Tooltip } from "@mui/material";

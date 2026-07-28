@@ -4,8 +4,8 @@ import {
   getGetInstanceQueryKey,
   getGetInstancesQueryKey,
   useGetInstances,
-} from "@squonk/data-manager-client/instance";
-import { getGetProjectsQueryKey } from "@squonk/data-manager-client/project";
+} from "@/api/data-manager/instance";
+import { getGetProjectsQueryKey } from "@/api/data-manager/project";
 
 import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import { Grid, IconButton, MenuItem, TextField, Tooltip } from "@mui/material";

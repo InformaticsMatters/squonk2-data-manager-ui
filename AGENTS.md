@@ -10,12 +10,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - React 19, Material-UI v9, Emotion (CSS-in-JS, `jsxImportSource: @emotion/react`), TanStack Query/Form/Table.
 - Package manager: **pnpm** (Node 24). Run commands from this app directory.
 - Auth: better-auth client using keycloak on the front-end
-- api clients are generated using orval and packaged into clients @squonk/data-manager-ui and @squonk/account-server-client. Both axios and fetch clients are generated along with zod client validators.
+- API clients are generated with Orval and committed as application source under `src/api/data-manager` and `src/api/account-server`. Import their root, tag, Fetch, and Zod interfaces through `@/api/...`; keep handwritten runtime adapters under `src/api/runtime` outside the replaceable generated trees.
 
 ## Commands
 
 - `pnpm dev` — dev server (uses `--webpack`, not Turbopack).
-- `pnpm build` — production build; runs TypeScript + ESLint checks.
+- `pnpm build` — production build. Run the separate strict TypeScript and ESLint commands too.
+- `pnpm generate:client:data-manager` / `pnpm generate:client:account-server` — regenerate one local OpenAPI client from its ignored input in `openapi/`.
+- `pnpm generate:clients` — transactionally regenerate both local OpenAPI clients.
 - `pnpm tsc` — typecheck only (`tsc --noEmit`).
 - `pnpm lint` / `pnpm format` — ESLint with `--max-warnings=0`. **Any warning fails CI**, so leave the tree warning-free.
 - `pnpm test` — Playwright E2E tests and unit tests.

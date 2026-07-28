@@ -1,6 +1,6 @@
-import { type DatasetVersionSummary } from "@squonk/data-manager-client";
-
 // No `just` equivalent yet https://github.com/angus-c/just/issues/434
+import { type DatasetVersionSummary } from "@/api/data-manager";
+
 import { mergeWith } from "lodash-es";
 
 /**

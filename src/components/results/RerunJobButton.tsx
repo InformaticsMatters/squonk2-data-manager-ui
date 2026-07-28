@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
 
 import { Button } from "@mui/material";
 import { useRouter } from "next/router";

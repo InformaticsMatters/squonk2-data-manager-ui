@@ -39,7 +39,7 @@ Notable scripts:
 - `pnpm install` to install dependencies. This will also setup `husky` git hooks via the `postinstall` script.
 - `pnpm dev` starts the development server
 - `pnpm dev:debug` same as above but with the Node debugger running. Start the VSCode debugger to connect.
-- `pnpm build` will create a production build which includes type-checking and `eslint`
+- `pnpm build` will create a production build
 - `pnpm start` starts the production server
 - `pnpm tsc` will run a one-off type check. This is also called pre-push to ensure no type errors are deployed.
 - `pnpm lint` will run the linter with the `eslint` config
@@ -50,8 +50,31 @@ Notable scripts:
 
 See `package.json` for all available scripts.
 
+### OpenAPI clients
+
+The Data Manager and Account Server clients are generated with Orval and saved at `src/api/data-manager` and `src/api/account-server`. Application code imports their local root, tag, Fetch, and Zod interfaces through `@/api/...`; the generated trees are implementation details.
+
+To update a client, download the OpenAPI yaml files to these ignored local inputs:
+
+```text
+openapi/data-manager.yaml
+openapi/account-server.yaml
+```
+
+Generate either client independently, or stage and replace both together:
+
+```bash
+pnpm generate:client:data-manager
+pnpm generate:client:account-server
+pnpm generate:clients
+```
+
+Each command stages and formats all requested output before replacing committed source, and the aggregate command leaves both clients unchanged if either client cannot be generated. Commit generated client changes with the application changes that consume them.
+
 ### Assets
+
 The `/assets` folder is a Git subtree. Manage this with the following commands.
+
 ```bash
 # Add the subtree
 git subtree add --prefix assets git@github.com:InformaticsMatters/squonk-assets.git main --squash

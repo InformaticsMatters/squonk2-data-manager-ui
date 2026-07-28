@@ -1,4 +1,4 @@
-import { useGetRunningWorkflowSteps } from "@squonk/data-manager-client/workflow";
+import { useGetRunningWorkflowSteps } from "@/api/data-manager/workflow";
 
 import {
   AccountTreeRounded as AccountTreeRoundedIcon,

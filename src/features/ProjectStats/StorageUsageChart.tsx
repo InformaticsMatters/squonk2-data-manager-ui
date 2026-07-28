@@ -1,4 +1,4 @@
-import { type ProductDmStorage } from "@squonk/account-server-client";
+import { type ProductDmStorage } from "@/api/account-server";
 
 import { UsageChart } from "./UsageChart";
 

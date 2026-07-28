@@ -5,9 +5,9 @@ import {
   type InstanceGetResponse,
   type InstanceSummary,
   type JobSummary,
-} from "@squonk/data-manager-client";
-import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
-import { useGetJob } from "@squonk/data-manager-client/job";
+} from "@/api/data-manager";
+import { getGetInstancesQueryKey, useCreateInstance } from "@/api/data-manager/instance";
+import { useGetJob } from "@/api/data-manager/job";
 
 import { Box, TextField } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

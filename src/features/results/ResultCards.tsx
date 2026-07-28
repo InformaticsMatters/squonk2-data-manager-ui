@@ -2,7 +2,7 @@ import {
   type InstanceSummary,
   type RunningWorkflowSummary,
   type TaskSummary,
-} from "@squonk/data-manager-client";
+} from "@/api/data-manager";
 
 import { Grid, Typography } from "@mui/material";
 import dayjs from "dayjs";

@@ -1,5 +1,5 @@
-import { type DmError, type TaskSummary } from "@squonk/data-manager-client";
-import { getGetTasksQueryKey, useDeleteTask } from "@squonk/data-manager-client/task";
+import { type DmError, type TaskSummary } from "@/api/data-manager";
+import { getGetTasksQueryKey, useDeleteTask } from "@/api/data-manager/task";
 
 import { Button, CardContent } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

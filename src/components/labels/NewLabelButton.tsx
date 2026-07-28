@@ -1,6 +1,6 @@
-import { type DmError } from "@squonk/data-manager-client";
-import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
-import { useAddMetadata } from "@squonk/data-manager-client/metadata";
+import { type DmError } from "@/api/data-manager";
+import { getGetDatasetsQueryKey } from "@/api/data-manager/dataset";
+import { useAddMetadata } from "@/api/data-manager/metadata";
 
 import { AddCircleOutlineRounded as AddCircleOutlineRoundedIcon } from "@mui/icons-material";
 import { Box, Button, IconButton, Popover, TextField, Tooltip } from "@mui/material";

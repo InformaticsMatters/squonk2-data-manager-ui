@@ -3,7 +3,7 @@ import {
   type InstanceSummaryPhase,
   type RunningWorkflowGetResponseStatus,
   type RunningWorkflowSummaryStatus,
-} from "@squonk/data-manager-client";
+} from "@/api/data-manager";
 
 type JobPhase = InstanceGetResponsePhase | InstanceSummaryPhase;
 type WorkflowPhase = RunningWorkflowGetResponseStatus | RunningWorkflowSummaryStatus;

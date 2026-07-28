@@ -1,4 +1,4 @@
-import { useGetProject } from "@squonk/data-manager-client/project";
+import { useGetProject } from "@/api/data-manager/project";
 
 import { Box, Typography } from "@mui/material";
 

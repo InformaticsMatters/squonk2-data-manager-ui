@@ -2,8 +2,8 @@ import {
   getGetFilesQueryKey,
   useMoveFileInProject,
   useMovePath,
-} from "@squonk/data-manager-client/file-and-path";
-import { getGetProjectQueryKey } from "@squonk/data-manager-client/project";
+} from "@/api/data-manager/file-and-path";
+import { getGetProjectQueryKey } from "@/api/data-manager/project";
 
 import { useQueryClient } from "@tanstack/react-query";
 

@@ -1,5 +1,5 @@
-import { type UserSummary } from "@squonk/data-manager-client";
-import { useGetUsers } from "@squonk/data-manager-client/user";
+import { type UserSummary } from "@/api/data-manager";
+import { useGetUsers } from "@/api/data-manager/user";
 
 import { Typography } from "@mui/material";
 

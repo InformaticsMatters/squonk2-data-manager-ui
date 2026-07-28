@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import { type ProductDmProjectTier, type ProductDmStorage } from "@squonk/account-server-client";
-import { type ProjectDetail } from "@squonk/data-manager-client";
+import { type ProductDmProjectTier, type ProductDmStorage } from "@/api/account-server";
+import { type ProjectDetail } from "@/api/data-manager";
 
 import { Box, useTheme } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";

@@ -6,16 +6,16 @@ import {
   type UnitAllDetail,
   UnitAllDetailDefaultProductPrivacy,
   type UnitProductPostBodyBodyFlavour,
-} from "@squonk/account-server-client";
+} from "@/api/account-server";
 import {
   getGetProductsForUnitQueryKey,
   getGetProductsQueryKey,
   useCreateUnitProduct,
   useGetProductTypes,
-} from "@squonk/account-server-client/product";
-import { type DmError } from "@squonk/data-manager-client";
-import { getGetUserInventoryQueryKey } from "@squonk/data-manager-client/inventory";
-import { getGetProjectsQueryKey, useCreateProject } from "@squonk/data-manager-client/project";
+} from "@/api/account-server/product";
+import { type DmError } from "@/api/data-manager";
+import { getGetUserInventoryQueryKey } from "@/api/data-manager/inventory";
+import { getGetProjectsQueryKey, useCreateProject } from "@/api/data-manager/project";
 
 import {
   Button,

@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { type UnitAllDetail, type UnitProductChargeSummary } from "@squonk/account-server-client";
-import { useGetUnitCharges } from "@squonk/account-server-client/charges";
-import { useGetUnit } from "@squonk/account-server-client/unit";
+import { type UnitAllDetail, type UnitProductChargeSummary } from "@/api/account-server";
+import { useGetUnitCharges } from "@/api/account-server/charges";
+import { useGetUnit } from "@/api/account-server/unit";
 
 import {
   Box,

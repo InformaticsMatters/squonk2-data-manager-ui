@@ -1,5 +1,5 @@
-import { type InstanceSummary } from "@squonk/data-manager-client";
-import { useGetInstances } from "@squonk/data-manager-client/instance";
+import { type InstanceSummary } from "@/api/data-manager";
+import { useGetInstances } from "@/api/data-manager/instance";
 
 import { Box, LinearProgress, List, ListItemButton, ListItemText, Typography } from "@mui/material";
 import dayjs from "dayjs";

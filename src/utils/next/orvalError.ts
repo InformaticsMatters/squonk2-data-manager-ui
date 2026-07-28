@@ -1,5 +1,5 @@
-import { type AsError } from "@squonk/account-server-client";
-import { type DmError } from "@squonk/data-manager-client";
+import { type AsError } from "@/api/account-server";
+import { type DmError } from "@/api/data-manager";
 
 import { nullEmptyString } from "../text";
 

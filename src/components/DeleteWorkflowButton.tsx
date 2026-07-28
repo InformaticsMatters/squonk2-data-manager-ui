@@ -1,10 +1,10 @@
-import { RunningWorkflowGetResponseStatus } from "@squonk/data-manager-client";
+import { RunningWorkflowGetResponseStatus } from "@/api/data-manager";
 import {
   getGetRunningWorkflowQueryKey,
   getGetRunningWorkflowsQueryKey,
   useDeleteRunningWorkflow,
   useStopRunningWorkflow,
-} from "@squonk/data-manager-client/workflow";
+} from "@/api/data-manager/workflow";
 
 import { Button } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

@@ -1,11 +1,11 @@
-import { type UnitAllDetail } from "@squonk/account-server-client";
+import { type UnitAllDetail } from "@/api/account-server";
 import {
   getGetOrganisationUnitUsersQueryKey,
   useAddOrganisationUnitUser,
   useDeleteOrganisationUnitUser,
   useGetOrganisationUnitUsers,
-} from "@squonk/account-server-client/user";
-import { type DmError } from "@squonk/data-manager-client";
+} from "@/api/account-server/user";
+import { type DmError } from "@/api/data-manager";
 
 import { useQueryClient } from "@tanstack/react-query";
 

@@ -1,4 +1,4 @@
-import { useGetUnits } from "@squonk/account-server-client/unit";
+import { useGetUnits } from "@/api/account-server/unit";
 
 import { useKeycloakUser } from "./useKeycloakUser";
 

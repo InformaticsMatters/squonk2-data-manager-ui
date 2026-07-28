@@ -1,4 +1,4 @@
-import { type getProducts } from "@squonk/account-server-client/product";
+import { type getProducts } from "@/api/account-server/product";
 
 import { createColumnHelper } from "@tanstack/react-table";
 

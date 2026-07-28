@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
-import { useGetProjects } from "@squonk/data-manager-client/project";
+import { useGetOrganisationUnits } from "@/api/account-server/unit";
+import { useGetProjects } from "@/api/data-manager/project";
 
 import {
   Box,

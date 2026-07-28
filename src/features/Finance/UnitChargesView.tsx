@@ -1,5 +1,5 @@
-import { type UnitAllDetail } from "@squonk/account-server-client";
-import { useGetUnit } from "@squonk/account-server-client/unit";
+import { type UnitAllDetail } from "@/api/account-server";
+import { useGetUnit } from "@/api/account-server/unit";
 
 import Head from "next/head";
 

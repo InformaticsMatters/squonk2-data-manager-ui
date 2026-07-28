@@ -1,5 +1,5 @@
-import { type OrganisationDetail } from "@squonk/account-server-client";
-import { useGetOrganisations } from "@squonk/account-server-client/organisation";
+import { type OrganisationDetail } from "@/api/account-server";
+import { useGetOrganisations } from "@/api/account-server/organisation";
 
 import { DataUsage as DataUsageIcon } from "@mui/icons-material";
 import { Autocomplete, type AutocompleteProps, Box, TextField, Typography } from "@mui/material";

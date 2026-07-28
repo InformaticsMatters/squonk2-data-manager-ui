@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import { type ProductDmStorage } from "@squonk/account-server-client";
-import { useGetProductsForUnit } from "@squonk/account-server-client/product";
+import { type ProductDmStorage } from "@/api/account-server";
+import { useGetProductsForUnit } from "@/api/account-server/product";
 
 import { useSelectedUnit } from "../../state/unitSelection";
 

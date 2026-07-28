@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { getProject } from "@squonk/data-manager-client/project";
+import { getProject } from "@/api/data-manager/project";
 
 import { type AxiosError } from "axios";
 import compare from "just-compare";

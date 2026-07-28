@@ -1,4 +1,4 @@
-import { useGetUnit } from "@squonk/account-server-client/unit";
+import { useGetUnit } from "@/api/account-server/unit";
 
 import Head from "next/head";
 

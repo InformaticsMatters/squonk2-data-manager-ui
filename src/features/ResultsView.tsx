@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { useGetInstances } from "@squonk/data-manager-client/instance";
-import { useGetTasks } from "@squonk/data-manager-client/task";
-import { useGetRunningWorkflows } from "@squonk/data-manager-client/workflow";
+import { useGetInstances } from "@/api/data-manager/instance";
+import { useGetTasks } from "@/api/data-manager/task";
+import { useGetRunningWorkflows } from "@/api/data-manager/workflow";
 
 import { Alert, Container, Grid } from "@mui/material";
 

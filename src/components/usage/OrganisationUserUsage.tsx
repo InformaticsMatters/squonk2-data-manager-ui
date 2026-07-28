@@ -1,16 +1,16 @@
-import { useGetUserInventory } from "@squonk/data-manager-client/inventory";
+import { useGetUserInventory } from "@/api/data-manager/inventory";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 
-import { type UserDetail } from "@squonk/account-server-client";
-import { useGetOrganisation } from "@squonk/account-server-client/organisation";
-import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
-import { useGetOrganisationUsers } from "@squonk/account-server-client/user";
-import { type InventoryUserDetail } from "@squonk/data-manager-client";
-import { useGetProjects } from "@squonk/data-manager-client/project";
+import { type UserDetail } from "@/api/account-server";
+import { useGetOrganisation } from "@/api/account-server/organisation";
+import { useGetOrganisationUnits } from "@/api/account-server/unit";
+import { useGetOrganisationUsers } from "@/api/account-server/user";
+import { type InventoryUserDetail } from "@/api/data-manager";
+import { useGetProjects } from "@/api/data-manager/project";
 
 import { Alert, Container, Typography } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";

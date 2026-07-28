@@ -1,9 +1,6 @@
-import { useGetUnit } from "@squonk/account-server-client/unit";
-import { useGetOrganisationUnitUsers } from "@squonk/account-server-client/user";
-import {
-  getGetUserInventoryQueryKey,
-  useGetUserInventory,
-} from "@squonk/data-manager-client/inventory";
+import { useGetUnit } from "@/api/account-server/unit";
+import { useGetOrganisationUnitUsers } from "@/api/account-server/user";
+import { getGetUserInventoryQueryKey, useGetUserInventory } from "@/api/data-manager/inventory";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";

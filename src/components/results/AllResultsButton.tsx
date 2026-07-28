@@ -1,4 +1,4 @@
-import { useGetInstance } from "@squonk/data-manager-client/instance";
+import { useGetInstance } from "@/api/data-manager/instance";
 
 import { Button } from "@mui/material";
 import A from "next/link";

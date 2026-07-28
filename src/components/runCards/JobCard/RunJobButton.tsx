@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type JobSummary } from "@squonk/data-manager-client";
+import { type JobSummary } from "@/api/data-manager";
 
 import { Button, CircularProgress, Tooltip } from "@mui/material";
 import dynamic from "next/dynamic";

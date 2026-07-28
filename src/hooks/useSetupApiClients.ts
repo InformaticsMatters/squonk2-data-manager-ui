@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-import { setAuthToken as setASAuthToken } from "@squonk/account-server-client";
-import { setAuthToken as setDMAuthToken } from "@squonk/data-manager-client";
+import { setAuthToken as setASAuthToken } from "@/api/account-server";
+import { setAuthToken as setDMAuthToken } from "@/api/data-manager";
 
 import { authClient } from "../lib/auth-client";
 import { releaseTokenGate } from "../utils/api/tokenGate";

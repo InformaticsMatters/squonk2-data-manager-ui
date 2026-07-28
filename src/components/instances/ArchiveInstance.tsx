@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import { type InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceSummary } from "@/api/data-manager";
 import {
   getGetInstanceQueryKey,
   getGetInstancesQueryKey,
   usePatchInstance,
-} from "@squonk/data-manager-client/instance";
+} from "@/api/data-manager/instance";
 
 import { Button, Tooltip } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

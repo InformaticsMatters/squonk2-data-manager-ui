@@ -1,5 +1,5 @@
-import { ProductDetailType, type ProductDmProjectTier } from "@squonk/account-server-client";
-import { type getProduct, useGetProduct } from "@squonk/account-server-client/product";
+import { ProductDetailType, type ProductDmProjectTier } from "@/api/account-server";
+import { type getProduct, useGetProduct } from "@/api/account-server/product";
 
 import { Button, Typography } from "@mui/material";
 

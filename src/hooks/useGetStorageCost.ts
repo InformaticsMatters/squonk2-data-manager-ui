@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useGetProductDefaultStorageCost } from "@squonk/account-server-client/product";
+import { useGetProductDefaultStorageCost } from "@/api/account-server/product";
 
 export const useGetStorageCost = () => {
   const { data } = useGetProductDefaultStorageCost();

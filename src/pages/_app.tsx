@@ -1,13 +1,7 @@
 import { StrictMode, useMemo } from "react";
 
-import {
-  AXIOS_INSTANCE as AS_INSTANCE,
-  setBaseUrl as setASBaseUrl,
-} from "@squonk/account-server-client";
-import {
-  AXIOS_INSTANCE as DM_INSTANCE,
-  setBaseUrl as setDMBaseUrl,
-} from "@squonk/data-manager-client";
+import { AXIOS_INSTANCE as AS_INSTANCE, setBaseUrl as setASBaseUrl } from "@/api/account-server";
+import { AXIOS_INSTANCE as DM_INSTANCE, setBaseUrl as setDMBaseUrl } from "@/api/data-manager";
 
 import {
   AppCacheProvider,

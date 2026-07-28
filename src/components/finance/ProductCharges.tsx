@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { type ProductDetail } from "@squonk/account-server-client";
-import { useGetProductCharges } from "@squonk/account-server-client/charges";
-import { useGetProduct } from "@squonk/account-server-client/product";
+import { type ProductDetail } from "@/api/account-server";
+import { useGetProductCharges } from "@/api/account-server/charges";
+import { useGetProduct } from "@/api/account-server/product";
 
 import {
   Box,

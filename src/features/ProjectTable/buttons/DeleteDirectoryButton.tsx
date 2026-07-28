@@ -1,4 +1,4 @@
-import { getGetFilesQueryKey, useDeletePath } from "@squonk/data-manager-client/file-and-path";
+import { getGetFilesQueryKey, useDeletePath } from "@/api/data-manager/file-and-path";
 
 import { DeleteForeverRounded as DeleteForeverRoundedIcon } from "@mui/icons-material";
 import { IconButton, type IconButtonProps } from "@mui/material";

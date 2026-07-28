@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { type FileError } from "react-dropzone";
 
-import { useGetTask } from "@squonk/data-manager-client/task";
+import { useGetTask } from "@/api/data-manager/task";
 
 import { Box, LinearProgress, Typography } from "@mui/material";
 

@@ -1,4 +1,4 @@
-import { type InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceSummary } from "@/api/data-manager";
 
 import { usePolledGetInstance } from "../../hooks/usePolledGetInstance";
 import { CenterLoader } from "../CenterLoader";

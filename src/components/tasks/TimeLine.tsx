@@ -5,7 +5,7 @@ import {
   type TaskEventLevel,
   type TaskGetResponse,
   type TaskState,
-} from "@squonk/data-manager-client";
+} from "@/api/data-manager";
 
 import {
   Timeline,

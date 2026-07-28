@@ -1,12 +1,5 @@
-import {
-  type DmError,
-  type InstanceGetResponse,
-  type InstanceSummary,
-} from "@squonk/data-manager-client";
-import {
-  getGetInstancesQueryKey,
-  useTerminateInstance,
-} from "@squonk/data-manager-client/instance";
+import { type DmError, type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
+import { getGetInstancesQueryKey, useTerminateInstance } from "@/api/data-manager/instance";
 
 import { Button } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

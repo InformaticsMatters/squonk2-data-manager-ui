@@ -78,16 +78,12 @@ A Python client has been created.
 - The docs are available [here](https://squonk2-python-client.readthedocs.io/en/stable)
 - An installable PyPi package can be found [here](https://pypi.org/project/im-squonk2-client/)
 
-#### JavaScript / Node
+#### JavaScript / TypeScript
 
-We have also created a client for accessing the Data Manager API. This is used to create the Data Manager UI.
-It provides `async` functions to make request along with `react-query` hooks to handle query caching, refetching and so on.
-This package is generated automatically from the OpenAPI schema using [Orval](https://orval.dev/),
-and is fully typed with `typescript`.
-Requests are made with Axios which is compatible in NodeJS and not just in the browser.
-
-- The docs are available [here](https://informaticsmatters.github.io/data-manager-npm-client/)
-- The package is published on NPM as [@squonk/data-manager-client](https://www.npmjs.com/package/@squonk/data-manager-client)
+The Data Manager UI uses a private TypeScript client generated from the OpenAPI schema with
+[Orval](https://orval.dev/). It is maintained as part of the UI rather than published as a separate
+Node package. Other integrations should use the Data Manager API directly or the supported Python
+client above.
 
 export default ({ children }) => (
   <Layout>

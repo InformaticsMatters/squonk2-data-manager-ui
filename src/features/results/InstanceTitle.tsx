@@ -1,5 +1,5 @@
-import { type InstanceSummary } from "@squonk/data-manager-client";
-import { useGetInstance } from "@squonk/data-manager-client/instance";
+import { type InstanceSummary } from "@/api/data-manager";
+import { useGetInstance } from "@/api/data-manager/instance";
 
 import Head from "next/head";
 

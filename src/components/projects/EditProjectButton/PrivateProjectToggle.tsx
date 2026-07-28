@@ -2,7 +2,7 @@ import {
   getGetProjectQueryKey,
   getGetProjectsQueryKey,
   usePatchProject,
-} from "@squonk/data-manager-client/project";
+} from "@/api/data-manager/project";
 
 import { FormControlLabel, Switch } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

@@ -1,4 +1,4 @@
-import { getGetInstanceQueryKey } from "@squonk/data-manager-client/instance";
+import { getGetInstanceQueryKey } from "@/api/data-manager/instance";
 
 import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import { Box, Container, IconButton, Tooltip, Typography } from "@mui/material";

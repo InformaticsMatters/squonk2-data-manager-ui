@@ -1,4 +1,4 @@
-import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
+import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
 
 import { List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
 

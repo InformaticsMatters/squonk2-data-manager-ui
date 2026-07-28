@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { type ApplicationSummary, type DmError } from "@squonk/data-manager-client";
-import { useGetApplication } from "@squonk/data-manager-client/application";
-import { getGetInstancesQueryKey, useCreateInstance } from "@squonk/data-manager-client/instance";
+import { type ApplicationSummary, type DmError } from "@/api/data-manager";
+import { useGetApplication } from "@/api/data-manager/application";
+import { getGetInstancesQueryKey, useCreateInstance } from "@/api/data-manager/instance";
 
 import { Grid, TextField } from "@mui/material";
 import Form from "@rjsf/mui";

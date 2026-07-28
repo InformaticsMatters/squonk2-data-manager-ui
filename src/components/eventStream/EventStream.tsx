@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
 
-import {
-  useCreateEventStream,
-  useGetEventStream,
-} from "@squonk/account-server-client/event-stream";
+import { useCreateEventStream, useGetEventStream } from "@/api/account-server/event-stream";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";

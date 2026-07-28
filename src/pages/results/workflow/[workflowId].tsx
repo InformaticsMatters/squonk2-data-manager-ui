@@ -1,4 +1,4 @@
-import { getGetRunningWorkflowQueryKey } from "@squonk/data-manager-client/workflow";
+import { getGetRunningWorkflowQueryKey } from "@/api/data-manager/workflow";
 
 import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import { Box, Container, IconButton, Tooltip, Typography } from "@mui/material";

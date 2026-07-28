@@ -1,11 +1,11 @@
-import { type ProjectDetail } from "@squonk/data-manager-client";
+import { type ProjectDetail } from "@/api/data-manager";
 import {
   getGetProjectQueryKey,
   getGetProjectsQueryKey,
   useAddAdministratorToProject,
   useGetProjects,
   useRemoveAdministratorFromProject,
-} from "@squonk/data-manager-client/project";
+} from "@/api/data-manager/project";
 
 import { useQueryClient } from "@tanstack/react-query";
 

@@ -1,6 +1,6 @@
 import { type FC } from "react";
 
-import { useGetUsers } from "@squonk/data-manager-client/user";
+import { useGetUsers } from "@/api/data-manager/user";
 
 import { Autocomplete, Chip, TextField } from "@mui/material";
 import { type AutocompleteChangeReason } from "@mui/material/useAutocomplete";

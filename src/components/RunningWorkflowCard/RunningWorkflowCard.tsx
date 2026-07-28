@@ -1,5 +1,5 @@
-import { type RunningWorkflowSummary } from "@squonk/data-manager-client";
-import { useGetRunningWorkflow } from "@squonk/data-manager-client/workflow";
+import { type RunningWorkflowSummary } from "@/api/data-manager";
+import { useGetRunningWorkflow } from "@/api/data-manager/workflow";
 
 import { Alert } from "@mui/material";
 

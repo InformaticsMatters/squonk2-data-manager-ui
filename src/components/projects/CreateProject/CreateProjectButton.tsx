@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type ProductDetail, type UnitAllDetail } from "@squonk/account-server-client";
+import { type ProductDetail, type UnitAllDetail } from "@/api/account-server";
 
 import { Button } from "@mui/material";
 

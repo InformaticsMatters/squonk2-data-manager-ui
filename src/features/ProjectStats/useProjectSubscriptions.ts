@@ -1,7 +1,7 @@
-import { type ProductDmProjectTier } from "@squonk/account-server-client";
-import { type getProducts, useGetProducts } from "@squonk/account-server-client/product";
-import { type ProjectDetail } from "@squonk/data-manager-client";
-import { useGetProjects } from "@squonk/data-manager-client/project";
+import { type ProductDmProjectTier } from "@/api/account-server";
+import { type getProducts, useGetProducts } from "@/api/account-server/product";
+import { type ProjectDetail } from "@/api/data-manager";
+import { useGetProjects } from "@/api/data-manager/project";
 
 import {
   filterProjectsByPermissionLevel,

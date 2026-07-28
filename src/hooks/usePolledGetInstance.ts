@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { useGetInstance } from "@squonk/data-manager-client/instance";
+import { useGetInstance } from "@/api/data-manager/instance";
 
 import { INSTANCE_DONE_PHASES } from "../constants/results";
 

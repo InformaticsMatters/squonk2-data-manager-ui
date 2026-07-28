@@ -1,10 +1,10 @@
-import { type UnitAllDetail } from "@squonk/account-server-client";
+import { type UnitAllDetail } from "@/api/account-server";
 import {
   getGetOrganisationUnitsQueryKey,
   getGetUnitsQueryKey,
   useDeleteDefaultUnit,
   useDeleteOrganisationUnit,
-} from "@squonk/account-server-client/unit";
+} from "@/api/account-server/unit";
 
 import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";

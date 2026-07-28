@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-import { type AsError } from "@squonk/account-server-client";
+import { type AsError } from "@/api/account-server";
 import {
   getGetOrganisationsQueryKey,
   getOrganisation,
   useCreateOrganisation,
   useGetOrganisations,
-} from "@squonk/account-server-client/organisation";
+} from "@/api/account-server/organisation";
 
 import { CreateNewFolder } from "@mui/icons-material";
 import { Grid, ListItemButton, ListItemIcon, ListItemText, TextField } from "@mui/material";

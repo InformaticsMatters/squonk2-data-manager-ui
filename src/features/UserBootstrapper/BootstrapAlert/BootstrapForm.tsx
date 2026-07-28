@@ -1,4 +1,4 @@
-import { useCreateDefaultUnit } from "@squonk/account-server-client/unit";
+import { useCreateDefaultUnit } from "@/api/account-server/unit";
 
 import { CreateProjectForm } from "../../../components/projects/CreateProject/CreateProjectForm";
 import { useSelectedOrganisation } from "../../../state/organisationSelection";

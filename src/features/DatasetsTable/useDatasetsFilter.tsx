@@ -1,10 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import {
-  type GetDatasetsParams,
-  type TypeSummary,
-  type UserSummary,
-} from "@squonk/data-manager-client";
+import { type GetDatasetsParams, type TypeSummary, type UserSummary } from "@/api/data-manager";
 
 import { useImmer } from "use-immer";
 

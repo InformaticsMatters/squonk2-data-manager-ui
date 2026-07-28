@@ -1,8 +1,5 @@
-import { type AsError, type UnitAllDetail } from "@squonk/account-server-client";
-import {
-  getGetProductsQueryKey,
-  useCreateUnitProduct,
-} from "@squonk/account-server-client/product";
+import { type AsError, type UnitAllDetail } from "@/api/account-server";
+import { getGetProductsQueryKey, useCreateUnitProduct } from "@/api/account-server/product";
 
 import { Box, Button, TextField } from "@mui/material";
 import { captureException } from "@sentry/nextjs";

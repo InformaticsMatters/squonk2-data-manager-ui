@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import { useGetDatasets } from "@squonk/data-manager-client/dataset";
+import { useGetDatasets } from "@/api/data-manager/dataset";
 
 import { CircularProgress } from "@mui/material";
 import { createColumnHelper, type Row } from "@tanstack/react-table";

@@ -1,5 +1,5 @@
-import { type ProductDmProjectTier, type ProductDmStorage } from "@squonk/account-server-client";
-import { useGetProducts } from "@squonk/account-server-client/product";
+import { type ProductDmProjectTier, type ProductDmStorage } from "@/api/account-server";
+import { useGetProducts } from "@/api/account-server/product";
 
 import { Alert, Box, Divider, Grid, Typography } from "@mui/material";
 import groupBy from "just-group-by";

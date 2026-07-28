@@ -1,5 +1,5 @@
-import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
-import { useGetJob } from "@squonk/data-manager-client/job";
+import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
+import { useGetJob } from "@/api/data-manager/job";
 
 import { WorkOutlineRounded as WorkOutlineRoundedIcon } from "@mui/icons-material";
 import { Alert, Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";

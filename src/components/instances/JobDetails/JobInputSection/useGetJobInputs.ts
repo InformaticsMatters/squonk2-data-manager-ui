@@ -1,5 +1,5 @@
-import { type InstanceGetResponse, type InstanceSummary } from "@squonk/data-manager-client";
-import { useGetJob } from "@squonk/data-manager-client/job";
+import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
+import { useGetJob } from "@/api/data-manager/job";
 
 import { type InputFieldSchema } from "../../../runCards/JobCard/JobInputFields";
 import { TEST_JOB_ID } from "../../../runCards/TestJob/jobId";

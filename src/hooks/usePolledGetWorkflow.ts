@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 
-import {
-  useGetRunningWorkflow,
-  useGetRunningWorkflowSteps,
-} from "@squonk/data-manager-client/workflow";
+import { useGetRunningWorkflow, useGetRunningWorkflowSteps } from "@/api/data-manager/workflow";
 
 import { WORKFLOW_DONE_PHASES } from "../constants/results";
 

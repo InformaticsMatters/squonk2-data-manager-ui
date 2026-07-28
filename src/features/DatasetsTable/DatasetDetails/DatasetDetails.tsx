@@ -1,6 +1,6 @@
 import { type FC, useLayoutEffect, useState } from "react";
 
-import { type DatasetSummary, type DatasetVersionSummary } from "@squonk/data-manager-client";
+import { type DatasetSummary, type DatasetVersionSummary } from "@/api/data-manager";
 
 import { Container, Link, List, Typography } from "@mui/material";
 

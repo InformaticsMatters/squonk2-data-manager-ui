@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import { type DatasetSummary, type DmError } from "@squonk/data-manager-client";
+import { type DatasetSummary, type DmError } from "@/api/data-manager";
 import {
   getGetDatasetsQueryKey,
   useAddEditorToDataset,
   useRemoveEditorFromDataset,
-} from "@squonk/data-manager-client/dataset";
+} from "@/api/data-manager/dataset";
 
 import { useQueryClient } from "@tanstack/react-query";
 

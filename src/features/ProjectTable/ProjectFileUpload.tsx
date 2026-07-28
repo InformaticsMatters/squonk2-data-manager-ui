@@ -1,10 +1,7 @@
 import { type ReactNode, useCallback } from "react";
 import { type DropzoneState, type FileRejection, useDropzone } from "react-dropzone";
 
-import {
-  getGetFilesQueryKey,
-  useAddFileToProject,
-} from "@squonk/data-manager-client/file-and-path";
+import { getGetFilesQueryKey, useAddFileToProject } from "@/api/data-manager/file-and-path";
 
 import { Box } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

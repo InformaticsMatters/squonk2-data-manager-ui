@@ -1,4 +1,4 @@
-import { getGetTaskQueryKey, useGetTask } from "@squonk/data-manager-client/task";
+import { getGetTaskQueryKey, useGetTask } from "@/api/data-manager/task";
 
 import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import { Alert, Box, Container, IconButton, Tooltip, Typography } from "@mui/material";

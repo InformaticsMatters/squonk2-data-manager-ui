@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { type DatasetPostBodyBody, type DmError } from "@squonk/data-manager-client";
-import { uploadDataset } from "@squonk/data-manager-client/dataset";
-import { useGetFileTypes } from "@squonk/data-manager-client/type";
+import { type DatasetPostBodyBody, type DmError } from "@/api/data-manager";
+import { uploadDataset } from "@/api/data-manager/dataset";
+import { useGetFileTypes } from "@/api/data-manager/type";
 
 import { CloudUploadRounded as CloudUploadRoundedIcon } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";

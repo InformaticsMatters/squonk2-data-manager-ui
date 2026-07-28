@@ -1,8 +1,5 @@
-import { type DeleteUnmanagedFileParams, type DmError } from "@squonk/data-manager-client";
-import {
-  getGetFilesQueryKey,
-  useDeleteUnmanagedFile,
-} from "@squonk/data-manager-client/file-and-path";
+import { type DeleteUnmanagedFileParams, type DmError } from "@/api/data-manager";
+import { getGetFilesQueryKey, useDeleteUnmanagedFile } from "@/api/data-manager/file-and-path";
 
 import { DeleteForeverRounded as DeleteForeverRoundedIcon } from "@mui/icons-material";
 import { IconButton, type IconButtonProps } from "@mui/material";

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { type DropzoneState } from "react-dropzone";
 
-import { type ProjectDetail } from "@squonk/data-manager-client";
-import { getGetFilesQueryKey } from "@squonk/data-manager-client/file-and-path";
+import { type ProjectDetail } from "@/api/data-manager";
+import { getGetFilesQueryKey } from "@/api/data-manager/file-and-path";
 
 import {
   CloudUploadRounded as CloudUploadRoundedIcon,

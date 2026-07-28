@@ -1,4 +1,4 @@
-import { useGetTask } from "@squonk/data-manager-client/task";
+import { useGetTask } from "@/api/data-manager/task";
 
 import { ExitToApp as ExitToAppIcon } from "@mui/icons-material";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";

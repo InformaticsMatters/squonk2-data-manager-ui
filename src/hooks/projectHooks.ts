@@ -1,5 +1,5 @@
-import { type ProjectDetail } from "@squonk/data-manager-client";
-import { useGetProjects } from "@squonk/data-manager-client/project";
+import { type ProjectDetail } from "@/api/data-manager";
+import { useGetProjects } from "@/api/data-manager/project";
 
 import { useRouter } from "next/router";
 

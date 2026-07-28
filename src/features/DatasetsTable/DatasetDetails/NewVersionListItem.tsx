@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 
-import { type DatasetSummary } from "@squonk/data-manager-client";
-import { getGetDatasetsQueryKey, uploadDataset } from "@squonk/data-manager-client/dataset";
+import { type DatasetSummary } from "@/api/data-manager";
+import { getGetDatasetsQueryKey, uploadDataset } from "@/api/data-manager/dataset";
 
 import { BackupRounded as BackupRoundedIcon } from "@mui/icons-material";
 import {

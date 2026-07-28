@@ -1,6 +1,6 @@
 import { type ReactNode, useMemo, useState } from "react";
 
-import { type InventoryUserDetail } from "@squonk/data-manager-client";
+import { type InventoryUserDetail } from "@/api/data-manager";
 
 import { Edit } from "@mui/icons-material";
 import { Chip, Typography } from "@mui/material";

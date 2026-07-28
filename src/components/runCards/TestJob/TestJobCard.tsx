@@ -1,5 +1,5 @@
-import { type JobSummary } from "@squonk/data-manager-client";
-import { getGetJobQueryKey } from "@squonk/data-manager-client/job";
+import { type JobSummary } from "@/api/data-manager";
+import { getGetJobQueryKey } from "@/api/data-manager/job";
 
 import { Box } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

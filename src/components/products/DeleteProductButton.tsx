@@ -1,10 +1,10 @@
-import { type ProductDetail, type UnitAllDetail } from "@squonk/account-server-client";
+import { type ProductDetail, type UnitAllDetail } from "@/api/account-server";
 import {
   getGetProductQueryKey,
   getGetProductsForUnitQueryKey,
   getGetProductsQueryKey,
   useDeleteProduct,
-} from "@squonk/account-server-client/product";
+} from "@/api/account-server/product";
 
 import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { IconButton } from "@mui/material";

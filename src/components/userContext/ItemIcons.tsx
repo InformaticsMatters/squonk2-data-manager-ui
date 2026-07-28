@@ -1,4 +1,4 @@
-import { type OrganisationDetail, type UnitAllDetail } from "@squonk/account-server-client";
+import { type OrganisationDetail, type UnitAllDetail } from "@/api/account-server";
 
 import {
   Lock as LockIcon,

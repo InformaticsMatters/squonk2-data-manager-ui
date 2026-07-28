@@ -1,4 +1,4 @@
-import { type ProjectDetail } from "@squonk/data-manager-client";
+import { type ProjectDetail } from "@/api/data-manager";
 
 export const PERMISSION_LEVELS = ["none", "editor", "administrator"] as const;
 

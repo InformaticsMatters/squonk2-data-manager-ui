@@ -1,4 +1,4 @@
-import { useGetProject } from "@squonk/data-manager-client/project";
+import { useGetProject } from "@/api/data-manager/project";
 
 import { Edit as EditIcon } from "@mui/icons-material";
 import { Box, CircularProgress, IconButton, Tooltip } from "@mui/material";

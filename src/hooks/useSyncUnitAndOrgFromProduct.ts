@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import {
   type OrganisationDetail,
   OrganisationDetailDefaultProductPrivacy,
-} from "@squonk/account-server-client";
-import { useGetDefaultOrganisation } from "@squonk/account-server-client/organisation";
-import { useGetProduct } from "@squonk/account-server-client/product";
+} from "@/api/account-server";
+import { useGetDefaultOrganisation } from "@/api/account-server/organisation";
+import { useGetProduct } from "@/api/account-server/product";
 
 import { useSelectedOrganisation } from "../state/organisationSelection";
 import { useSelectedUnit } from "../state/unitSelection";

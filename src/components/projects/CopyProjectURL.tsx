@@ -1,4 +1,4 @@
-import { type ProjectDetail } from "@squonk/data-manager-client";
+import { type ProjectDetail } from "@/api/data-manager";
 
 import { Share as ShareIcon } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";

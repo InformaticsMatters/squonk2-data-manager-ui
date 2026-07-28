@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useGetApplications } from "@squonk/data-manager-client/application";
-import { useGetJobs } from "@squonk/data-manager-client/job";
-import { useGetRunningWorkflows, useGetWorkflows } from "@squonk/data-manager-client/workflow";
+import { useGetApplications } from "@/api/data-manager/application";
+import { useGetJobs } from "@/api/data-manager/job";
+import { useGetRunningWorkflows, useGetWorkflows } from "@/api/data-manager/workflow";
 
 import { Alert, Box, Container, Grid, MenuItem, TextField } from "@mui/material";
 import groupBy from "just-group-by";

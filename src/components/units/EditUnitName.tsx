@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-import { type UnitAllDetail } from "@squonk/account-server-client";
+import { type UnitAllDetail } from "@/api/account-server";
 import {
   getGetOrganisationUnitsQueryKey,
   getGetUnitQueryKey,
   getGetUnitsQueryKey,
   usePatchUnit,
-} from "@squonk/account-server-client/unit";
-import { getGetProjectsQueryKey } from "@squonk/data-manager-client/project";
+} from "@/api/account-server/unit";
+import { getGetProjectsQueryKey } from "@/api/data-manager/project";
 
 import { Box, Button, TextField } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

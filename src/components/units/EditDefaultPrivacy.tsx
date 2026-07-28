@@ -1,12 +1,5 @@
-import {
-  type UnitAllDetail,
-  UnitAllDetailDefaultProductPrivacy,
-} from "@squonk/account-server-client";
-import {
-  getGetUnitQueryKey,
-  getGetUnitsQueryKey,
-  usePatchUnit,
-} from "@squonk/account-server-client/unit";
+import { type UnitAllDetail, UnitAllDetailDefaultProductPrivacy } from "@/api/account-server";
+import { getGetUnitQueryKey, getGetUnitsQueryKey, usePatchUnit } from "@/api/account-server/unit";
 
 import { MenuItem, TextField } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

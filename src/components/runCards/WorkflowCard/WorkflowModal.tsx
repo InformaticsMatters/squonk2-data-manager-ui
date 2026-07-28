@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
-import { type DmError } from "@squonk/data-manager-client";
-import { useGetWorkflow, useRunWorkflow } from "@squonk/data-manager-client/workflow";
+import { type DmError } from "@/api/data-manager";
+import { useGetWorkflow, useRunWorkflow } from "@/api/data-manager/workflow";
 
 import { Box, TextField } from "@mui/material";
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { useGetVersion as useGetASAPIVersion } from "@squonk/account-server-client/state";
-import { useGetVersion as useGetDMAPIVersion } from "@squonk/data-manager-client/accounting";
+import { useGetVersion as useGetASAPIVersion } from "@/api/account-server/state";
+import { useGetVersion as useGetDMAPIVersion } from "@/api/data-manager/accounting";
 
 import { ListItem as MuiListItem, ListItemText, styled, Typography } from "@mui/material";
 

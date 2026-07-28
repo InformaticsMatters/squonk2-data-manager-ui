@@ -1,6 +1,6 @@
-import { type DatasetVersionSummary, type DmError } from "@squonk/data-manager-client";
-import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
-import { useAddMetadata } from "@squonk/data-manager-client/metadata";
+import { type DatasetVersionSummary, type DmError } from "@/api/data-manager";
+import { getGetDatasetsQueryKey } from "@/api/data-manager/dataset";
+import { useAddMetadata } from "@/api/data-manager/metadata";
 
 import { Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

@@ -1,4 +1,4 @@
-import { type RunningWorkflowSummary, type WorkflowSummary } from "@squonk/data-manager-client";
+import { type RunningWorkflowSummary, type WorkflowSummary } from "@/api/data-manager";
 
 import { Typography } from "@mui/material";
 

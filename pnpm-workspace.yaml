@@ -3,7 +3,8 @@ allowBuilds:
   '@sentry/cli': false
   core-js: false
   es5-ext: false
+  esbuild: true
   sharp: true
   unrs-resolver: false
 minimumReleaseAgeExclude:
-- '@squonk/*'
+  - '@squonk/*'

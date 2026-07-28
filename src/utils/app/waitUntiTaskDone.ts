@@ -1,4 +1,4 @@
-import { getTask } from "@squonk/data-manager-client/task";
+import { getTask } from "@/api/data-manager/task";
 
 /**
  * Waits for a task's `done` property to be `true`.

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { useGetTask } from "@squonk/data-manager-client/task";
+import { useGetTask } from "@/api/data-manager/task";
 
 export const usePolledGetTask = (taskId: string, pollInterval = 5000) => {
   const [refetchInterval, setRefetchInterval] = useState(pollInterval);

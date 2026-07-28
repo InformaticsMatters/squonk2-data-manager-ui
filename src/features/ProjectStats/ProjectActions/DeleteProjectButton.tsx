@@ -4,9 +4,9 @@ import {
   getGetProductsForUnitQueryKey,
   getGetProductsQueryKey,
   useDeleteProduct,
-} from "@squonk/account-server-client/product";
-import { type DmError, type ProjectDetail } from "@squonk/data-manager-client";
-import { getGetProjectsQueryKey, useDeleteProject } from "@squonk/data-manager-client/project";
+} from "@/api/account-server/product";
+import { type DmError, type ProjectDetail } from "@/api/data-manager";
+import { getGetProjectsQueryKey, useDeleteProject } from "@/api/data-manager/project";
 
 import { DeleteForever } from "@mui/icons-material";
 import { IconButton, LinearProgress, Typography } from "@mui/material";

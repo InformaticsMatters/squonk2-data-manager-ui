@@ -2,7 +2,7 @@ import {
   type ProductCoinsDetail,
   type ProductDmStorageDetail,
   type ProductInstanceDetail,
-} from "@squonk/account-server-client";
+} from "@/api/account-server";
 
 import { UsageChart } from "./UsageChart";
 

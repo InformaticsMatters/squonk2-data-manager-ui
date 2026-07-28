@@ -1,6 +1,6 @@
 import { type ReactNode, useMemo } from "react";
 
-import { type InventoryProjectDetail, type InventoryUserDetail } from "@squonk/data-manager-client";
+import { type InventoryProjectDetail, type InventoryUserDetail } from "@/api/data-manager";
 import {
   useAddAdministratorToProject,
   useAddEditorToProject,
@@ -8,7 +8,7 @@ import {
   useRemoveAdministratorFromProject,
   useRemoveEditorFromProject,
   useRemoveObserverFromProject,
-} from "@squonk/data-manager-client/project";
+} from "@/api/data-manager/project";
 
 import { Close, Done } from "@mui/icons-material";
 import {

@@ -1,7 +1,7 @@
-import { type UnitAllDetail } from "@squonk/account-server-client";
-import { useGetOrganisationUnits } from "@squonk/account-server-client/unit";
-import { type ProjectDetail } from "@squonk/data-manager-client";
-import { useGetProjects } from "@squonk/data-manager-client/project";
+import { type UnitAllDetail } from "@/api/account-server";
+import { useGetOrganisationUnits } from "@/api/account-server/unit";
+import { type ProjectDetail } from "@/api/data-manager";
+import { useGetProjects } from "@/api/data-manager/project";
 
 import {
   filterProjectsByPermissionLevel,

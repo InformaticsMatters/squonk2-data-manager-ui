@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { type FileError } from "react-dropzone";
 
-import { getGetDatasetsQueryKey } from "@squonk/data-manager-client/dataset";
-import { useGetTask } from "@squonk/data-manager-client/task";
+import { getGetDatasetsQueryKey } from "@/api/data-manager/dataset";
+import { useGetTask } from "@/api/data-manager/task";
 
 import { Grid, IconButton, LinearProgress, MenuItem, TextField, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";

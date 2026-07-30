@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 
 import { SharedScopePage } from "../../../../prototypes/routeArchitecture/sharedScope/page";
+import { SuspenseHooksPage } from "../../../../prototypes/routeArchitecture/suspenseHooks/page";
 import { VerticalHooksPage } from "../../../../prototypes/routeArchitecture/verticalHooks/page";
 import { VerticalProviderPage } from "../../../../prototypes/routeArchitecture/verticalProvider/page";
 
@@ -15,6 +16,8 @@ const RouteArchitecturePrototype = () => {
       return <VerticalHooksPage projectId={router.query.projectId} />;
     case "C":
       return <SharedScopePage projectId={router.query.projectId} />;
+    case "D":
+      return <SuspenseHooksPage projectId={router.query.projectId} />;
     default:
       return <VerticalProviderPage projectId={router.query.projectId} />;
   }

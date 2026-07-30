@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 
-type Variant = "A" | "B" | "C";
+type Variant = "A" | "B" | "C" | "D";
 
 export const PrototypeFrame = ({
   variant,
@@ -17,7 +17,7 @@ export const PrototypeFrame = ({
     <p style={{ color: "#9b1c1c", fontWeight: 700 }}>THROWAWAY ARCHITECTURE PROTOTYPE</p>
     <h1>Route-owned module boundaries</h1>
     <nav style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 24 }}>
-      {(["A", "B", "C"] as const).map((candidate) => (
+      {(["A", "B", "C", "D"] as const).map((candidate) => (
         <a
           href={`/prototype/route-architecture/${projectId}/files?variant=${candidate}`}
           key={candidate}

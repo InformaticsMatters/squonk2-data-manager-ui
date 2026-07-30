@@ -55,7 +55,7 @@ type AdministrationTask = "charges" | "organisation-access" | "subscriptions" | 
 type Primary = "administration" | "datasets" | "home" | "projects";
 type ProjectSection = "files" | "manage" | "results" | "run";
 type Screen = "administration" | "dataset" | "datasets" | "home" | "project" | "projects";
-type VariantKey = "A" | "B" | "C";
+type VariantKey = "A" | "B" | "C" | "D";
 
 interface Project {
   id: string;
@@ -130,6 +130,7 @@ const variantNames: Record<VariantKey, string> = {
   A: "Layered masthead",
   B: "Workspace frame",
   C: "Compact command deck",
+  D: "Split identity masthead",
 };
 
 const queryValue = (value: string[] | string | undefined) =>
@@ -273,6 +274,82 @@ const LayeredMasthead = ({
             <PrimaryTabs current={activePrimary(state.screen)} onNavigate={onNavigate} />
           </Box>
           <IconButton sx={{ display: { xs: "none", sm: "inline-flex" } }}>
+            <PersonRounded />
+          </IconButton>
+        </Toolbar>
+        <Box sx={{ display: { sm: "none" }, overflowX: "auto", px: 1 }}>
+          <PrimaryTabs current={activePrimary(state.screen)} onNavigate={onNavigate} />
+        </Box>
+        {!!projectOpen && (
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Stack
+              direction={{ xs: "column", md: "row" }}
+              sx={{ alignItems: { md: "center" }, maxWidth: 1180, mx: "auto", px: 2 }}
+            >
+              <Box sx={{ minWidth: 230, py: 1 }}>
+                <Typography sx={{ fontWeight: 850 }}>{project.name}</Typography>
+                <Typography color="text.secondary" sx={{ fontSize: 12 }}>
+                  {project.unit} · {project.organisation}
+                </Typography>
+              </Box>
+              <Box sx={{ ml: { md: "auto" }, maxWidth: "100%" }}>
+                <ProjectTabs section={state.projectSection} onProjectSection={onProjectSection} />
+              </Box>
+            </Stack>
+          </Box>
+        )}
+      </AppBar>
+      <ContentFrame state={state}>{children}</ContentFrame>
+    </Box>
+  );
+};
+
+const SplitIdentityMasthead = ({
+  children,
+  onChangeOrganisation,
+  onNavigate,
+  onProjectSection,
+  state,
+}: ShellProps) => {
+  const project = selectedProject(state);
+  const projectOpen = state.screen === "project";
+
+  return (
+    <Box sx={{ bgcolor: "#f4f7f6", minHeight: "100vh", pb: 10 }}>
+      <AppBar color="inherit" elevation={0} position="static">
+        <Toolbar disableGutters sx={{ borderBottom: 1, borderColor: "divider", minHeight: 64 }}>
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: "center",
+              alignSelf: "stretch",
+              bgcolor: "#20262b",
+              color: "white",
+              minWidth: { sm: 390 },
+              px: { xs: 1.5, sm: 2.5 },
+            }}
+          >
+            <Button color="inherit" sx={{ minWidth: 0, p: 0 }} onClick={() => onNavigate("home")}>
+              <ScienceRounded />
+              <Typography sx={{ display: { xs: "none", sm: "block" }, fontWeight: 900, ml: 1 }}>
+                SQUONK
+              </Typography>
+            </Button>
+            <Divider
+              flexItem
+              orientation="vertical"
+              sx={{ borderColor: "rgba(255,255,255,.18)", mx: 2 }}
+            />
+            <OrganisationMark
+              compact
+              organisation={state.organisation}
+              onChange={onChangeOrganisation}
+            />
+          </Stack>
+          <Box sx={{ display: { xs: "none", sm: "block" }, ml: "auto" }}>
+            <PrimaryTabs current={activePrimary(state.screen)} onNavigate={onNavigate} />
+          </Box>
+          <IconButton sx={{ display: { xs: "none", sm: "inline-flex" }, mr: 2 }}>
             <PersonRounded />
           </IconButton>
         </Toolbar>
@@ -777,7 +854,7 @@ const DatasetDetail = ({
 
 const PrototypeSwitcher = ({ current }: { current: VariantKey }) => {
   const router = useRouter();
-  const keys: VariantKey[] = ["A", "B", "C"];
+  const keys: VariantKey[] = ["A", "B", "C", "D"];
   const move = (offset: number) => {
     const next = keys[(keys.indexOf(current) + offset + keys.length) % keys.length];
     void router.replace(
@@ -848,7 +925,8 @@ const ApplicationShellPrototype = () => {
   const [uploadDialog, setUploadDialog] = useState(false);
   const [attachmentDialog, setAttachmentDialog] = useState(false);
   const variantValue = queryValue(router.query.variant);
-  const variant: VariantKey = variantValue === "B" || variantValue === "C" ? variantValue : "A";
+  const variant: VariantKey =
+    variantValue === "B" || variantValue === "C" || variantValue === "D" ? variantValue : "A";
   const screenValue = queryValue(router.query.prototypeScreen);
   const validScreens: Screen[] = [
     "administration",
@@ -963,6 +1041,7 @@ const ApplicationShellPrototype = () => {
       {variant === "A" && <LayeredMasthead {...shellProps}>{content}</LayeredMasthead>}
       {variant === "B" && <WorkspaceFrame {...shellProps}>{content}</WorkspaceFrame>}
       {variant === "C" && <CompactCommandDeck {...shellProps}>{content}</CompactCommandDeck>}
+      {variant === "D" && <SplitIdentityMasthead {...shellProps}>{content}</SplitIdentityMasthead>}
 
       {screen === "dataset" && (
         <DatasetDetail

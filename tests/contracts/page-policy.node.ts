@@ -1,4 +1,6 @@
 import { expect, test } from "@playwright/test";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 
 import {
   pagePolicies,
@@ -13,6 +15,11 @@ test.describe("page composition policy", () => {
     const policyPage = withPagePolicy(pagePolicies.application, EmptyPage);
     expect(policyPage).toBe(EmptyPage);
     expect(policyPage.pagePolicy).toEqual(pagePolicies.application);
+  });
+
+  test("assigns the production Datasets entry to its named family", () => {
+    const source = readFileSync(path.resolve(__dirname, "../../src/pages/datasets.tsx"), "utf8");
+    expect(source).toContain('withPagePolicy(pagePolicies.datasets("list"), Datasets)');
   });
 
   test("selects public composition", () => {

@@ -11,27 +11,64 @@ const runningWorkflowId = "r-workflow-00000000-0000-4000-8000-000000000006";
 
 test.describe("Project route contract", () => {
   const canonicalHrefs = [
-    projectLinks.index(),
-    projectLinks.index({ search: "screening" }),
-    projectLinks.create(),
-    projectLinks.create({ subscriptionId: productId }),
-    projectLinks.deletion(taskId, { subscriptionId: productId }),
-    projectLinks.files(projectId),
-    projectLinks.files(projectId, { path: "/inputs" }),
-    projectLinks.fileView(projectId, { path: "/inputs/library.sdf", viewer: "sdf" }),
-    projectLinks.run(projectId, { search: "docking", types: ["workflow", "job"] }),
-    projectLinks.runDefinition(projectId, "jobs", "42", { search: "docking" }),
-    projectLinks.runDefinition(projectId, "applications", "jupyter-lab"),
-    projectLinks.runDefinition(projectId, "workflows", workflowId),
-    projectLinks.results(projectId, { search: "completed", types: ["task", "instance"] }),
-    projectLinks.result(projectId, "tasks", taskId),
-    projectLinks.result(projectId, "instances", instanceId),
-    projectLinks.result(projectId, "workflows", runningWorkflowId),
-    projectLinks.manage(projectId),
-  ];
+    ["/projects", () => projectLinks.index()],
+    ["/projects?search=screening", () => projectLinks.index({ search: "screening" })],
+    ["/projects/new", () => projectLinks.create()],
+    [
+      `/projects/new?subscription=${productId}`,
+      () => projectLinks.create({ subscriptionId: productId }),
+    ],
+    [
+      `/projects/deletions/${taskId}?subscription=${productId}`,
+      () => projectLinks.deletion(taskId, { subscriptionId: productId }),
+    ],
+    [`/projects/${projectId}/files`, () => projectLinks.files(projectId)],
+    [
+      `/projects/${projectId}/files?path=%2Finputs`,
+      () => projectLinks.files(projectId, { path: "/inputs" }),
+    ],
+    [
+      `/projects/${projectId}/files/view?path=%2Finputs%2Flibrary.sdf&viewer=sdf`,
+      () => projectLinks.fileView(projectId, { path: "/inputs/library.sdf", viewer: "sdf" }),
+    ],
+    [
+      `/projects/${projectId}/run?search=docking&type=workflow&type=job`,
+      () => projectLinks.run(projectId, { search: "docking", types: ["workflow", "job"] }),
+    ],
+    [
+      `/projects/${projectId}/run/jobs/42?search=docking`,
+      () => projectLinks.runDefinition(projectId, "jobs", "42", { search: "docking" }),
+    ],
+    [
+      `/projects/${projectId}/run/applications/jupyter-lab`,
+      () => projectLinks.runDefinition(projectId, "applications", "jupyter-lab"),
+    ],
+    [
+      `/projects/${projectId}/run/workflows/${workflowId}`,
+      () => projectLinks.runDefinition(projectId, "workflows", workflowId),
+    ],
+    [
+      `/projects/${projectId}/results?search=completed&type=task&type=instance`,
+      () => projectLinks.results(projectId, { search: "completed", types: ["task", "instance"] }),
+    ],
+    [
+      `/projects/${projectId}/results/tasks/${taskId}`,
+      () => projectLinks.result(projectId, "tasks", taskId),
+    ],
+    [
+      `/projects/${projectId}/results/instances/${instanceId}`,
+      () => projectLinks.result(projectId, "instances", instanceId),
+    ],
+    [
+      `/projects/${projectId}/results/workflows/${runningWorkflowId}`,
+      () => projectLinks.result(projectId, "workflows", runningWorkflowId),
+    ],
+    [`/projects/${projectId}/manage`, () => projectLinks.manage(projectId)],
+  ] as const;
 
-  for (const href of canonicalHrefs) {
+  for (const [href, buildHref] of canonicalHrefs) {
     test(`round trips ${href}`, () => {
+      expect(buildHref()).toBe(href);
       expect(parseProjectRoute(href)).toMatchObject({
         kind: "valid",
         canonicalHref: href,

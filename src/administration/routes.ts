@@ -1,4 +1,11 @@
-import { isOrganisationId, isProductId, isUnitId } from "../routing/identifiers";
+import {
+  isOrganisationId,
+  isProductId,
+  isUnitId,
+  type OrganisationId,
+  type ProductId,
+  type UnitId,
+} from "../routing/identifiers";
 import {
   assertRouteValue,
   localNotFoundRoute,
@@ -8,29 +15,45 @@ import {
   validRoute,
 } from "../routing/routeContract";
 
-export type OrganisationAccessCollection = "organisations" | "units";
-export type ChargeCollection = "organisations" | "products" | "units";
-export type UsageInventoryCollection = "organisations" | "units";
+const resourceValidators = {
+  organisations: isOrganisationId,
+  products: isProductId,
+  units: isUnitId,
+} as const;
 
-type ChargeResourceRoute = {
-  kind: "charge-resource";
-  collection: ChargeCollection;
-  resourceId: string;
-};
+const sectionCollections = {
+  charges: ["organisations", "products", "units"],
+  organisationAccess: ["organisations", "units"],
+  usageInventory: ["organisations", "units"],
+} as const;
+
+type ResourceIdByCollection = { organisations: OrganisationId; products: ProductId; units: UnitId };
+type ResourceCollection = keyof ResourceIdByCollection;
+export type OrganisationAccessCollection = (typeof sectionCollections.organisationAccess)[number];
+export type ChargeCollection = (typeof sectionCollections.charges)[number];
+export type UsageInventoryCollection = (typeof sectionCollections.usageInventory)[number];
+
+type ResourceRoute<TKind extends string, TCollection extends ResourceCollection> = {
+  [TCurrentCollection in TCollection]: {
+    kind: TKind;
+    collection: TCurrentCollection;
+    resourceId: ResourceIdByCollection[TCurrentCollection];
+  };
+}[TCollection];
+
+type ChargeResourceRoute = ResourceRoute<"charge-resource", ChargeCollection>;
 type ChargesRoute = { kind: "charges" };
-type OrganisationAccessResourceRoute = {
-  kind: "organisation-access-resource";
-  collection: OrganisationAccessCollection;
-  resourceId: string;
-};
+type OrganisationAccessResourceRoute = ResourceRoute<
+  "organisation-access-resource",
+  OrganisationAccessCollection
+>;
 type OrganisationAccessRoute = { kind: "organisation-access" };
-type SubscriptionRoute = { kind: "subscription"; productId: string };
+type SubscriptionRoute = { kind: "subscription"; productId: ProductId };
 type SubscriptionsRoute = { kind: "subscriptions" };
-type UsageInventoryResourceRoute = {
-  kind: "usage-inventory-resource";
-  collection: UsageInventoryCollection;
-  resourceId: string;
-};
+type UsageInventoryResourceRoute = ResourceRoute<
+  "usage-inventory-resource",
+  UsageInventoryCollection
+>;
 type UsageInventoryRoute = { kind: "usage-inventory" };
 
 export type AdministrationRoute =
@@ -46,41 +69,51 @@ export type AdministrationRoute =
 const resourceIdIsValid = (
   collection: ChargeCollection | OrganisationAccessCollection | UsageInventoryCollection,
   resourceId: string,
-): boolean => {
-  switch (collection) {
-    case "organisations":
-      return isOrganisationId(resourceId);
-    case "units":
-      return isUnitId(resourceId);
-    case "products":
-      return isProductId(resourceId);
-  }
-};
+): boolean => resourceValidators[collection](resourceId);
 
-const resourcePath = <TCollection extends string>(
-  base: string,
+const parseResourceId = <TCollection extends ResourceCollection>(
   collection: TCollection,
   resourceId: string,
+): ResourceIdByCollection[TCollection] | null =>
+  resourceIdIsValid(collection, resourceId)
+    ? (resourceId as ResourceIdByCollection[TCollection])
+    : null;
+
+const isCollection = <TCollection extends string>(
+  value: string,
+  collections: readonly TCollection[],
+): value is TCollection => collections.includes(value as TCollection);
+
+const resourcePath = <TCollection extends ResourceCollection>(
+  base: string,
+  collection: TCollection,
+  resourceId: ResourceIdByCollection[TCollection],
 ) =>
   `${base}/${collection}/${assertRouteValue(
     resourceId,
-    (value) => resourceIdIsValid(collection as ChargeCollection, value),
+    (value) => resourceIdIsValid(collection, value),
     `${collection} resource ID`,
   )}`;
 
 export const administrationLinks = {
   organisationAccess: () => "/administration/organisation-access",
-  organisationAccessResource: (collection: OrganisationAccessCollection, resourceId: string) =>
-    resourcePath("/administration/organisation-access", collection, resourceId),
+  organisationAccessResource: <TCollection extends OrganisationAccessCollection>(
+    collection: TCollection,
+    resourceId: ResourceIdByCollection[TCollection],
+  ) => resourcePath("/administration/organisation-access", collection, resourceId),
   subscriptions: () => "/administration/subscriptions",
-  subscription: (productId: string) =>
+  subscription: (productId: ProductId) =>
     `/administration/subscriptions/${assertRouteValue(productId, isProductId, "product ID")}`,
   charges: () => "/administration/charges",
-  chargeResource: (collection: ChargeCollection, resourceId: string) =>
-    resourcePath("/administration/charges", collection, resourceId),
+  chargeResource: <TCollection extends ChargeCollection>(
+    collection: TCollection,
+    resourceId: ResourceIdByCollection[TCollection],
+  ) => resourcePath("/administration/charges", collection, resourceId),
   usageInventory: () => "/administration/usage-inventory",
-  usageInventoryResource: (collection: UsageInventoryCollection, resourceId: string) =>
-    resourcePath("/administration/usage-inventory", collection, resourceId),
+  usageInventoryResource: <TCollection extends UsageInventoryCollection>(
+    collection: TCollection,
+    resourceId: ResourceIdByCollection[TCollection],
+  ) => resourcePath("/administration/usage-inventory", collection, resourceId),
 };
 
 export const parseAdministrationRoute = (href: string): RouteParseResult<AdministrationRoute> => {
@@ -96,19 +129,19 @@ export const parseAdministrationRoute = (href: string): RouteParseResult<Adminis
   }
 
   if (segments.length === 4 && segments[1] === "organisation-access") {
-    const collection = segments[2] as OrganisationAccessCollection;
-    const resourceId = segments[3];
-    if (
-      !(["organisations", "units"] as const).includes(collection) ||
-      !resourceIdIsValid(collection, resourceId)
-    ) {
+    const collection = segments[2];
+    if (!isCollection(collection, sectionCollections.organisationAccess)) {
       return localNotFoundRoute("administration", "organisation-access");
     }
-    const route: AdministrationRoute = {
+    const resourceId = parseResourceId(collection, segments[3]);
+    if (!resourceId) {
+      return localNotFoundRoute("administration", "organisation-access");
+    }
+    const route = {
       kind: "organisation-access-resource",
       collection,
       resourceId,
-    };
+    } as OrganisationAccessResourceRoute;
     return validRoute(
       location,
       route,
@@ -136,15 +169,15 @@ export const parseAdministrationRoute = (href: string): RouteParseResult<Adminis
   }
 
   if (segments.length === 4 && segments[1] === "charges") {
-    const collection = segments[2] as ChargeCollection;
-    const resourceId = segments[3];
-    if (
-      !(["organisations", "units", "products"] as const).includes(collection) ||
-      !resourceIdIsValid(collection, resourceId)
-    ) {
+    const collection = segments[2];
+    if (!isCollection(collection, sectionCollections.charges)) {
       return localNotFoundRoute("administration", "charges");
     }
-    const route: AdministrationRoute = { kind: "charge-resource", collection, resourceId };
+    const resourceId = parseResourceId(collection, segments[3]);
+    if (!resourceId) {
+      return localNotFoundRoute("administration", "charges");
+    }
+    const route = { kind: "charge-resource", collection, resourceId } as ChargeResourceRoute;
     return validRoute(location, route, administrationLinks.chargeResource(collection, resourceId));
   }
 
@@ -154,15 +187,19 @@ export const parseAdministrationRoute = (href: string): RouteParseResult<Adminis
   }
 
   if (segments.length === 4 && segments[1] === "usage-inventory") {
-    const collection = segments[2] as UsageInventoryCollection;
-    const resourceId = segments[3];
-    if (
-      !(["organisations", "units"] as const).includes(collection) ||
-      !resourceIdIsValid(collection, resourceId)
-    ) {
+    const collection = segments[2];
+    if (!isCollection(collection, sectionCollections.usageInventory)) {
       return localNotFoundRoute("administration", "usage-inventory");
     }
-    const route: AdministrationRoute = { kind: "usage-inventory-resource", collection, resourceId };
+    const resourceId = parseResourceId(collection, segments[3]);
+    if (!resourceId) {
+      return localNotFoundRoute("administration", "usage-inventory");
+    }
+    const route = {
+      kind: "usage-inventory-resource",
+      collection,
+      resourceId,
+    } as UsageInventoryResourceRoute;
     return validRoute(
       location,
       route,

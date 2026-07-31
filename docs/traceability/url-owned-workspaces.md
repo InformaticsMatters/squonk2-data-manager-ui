@@ -28,7 +28,7 @@ evidence.
 | ----------- | ------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | COMP-01     | Page composition    | `public` policy                                                                          | Public shell and content only; public route entries attach the policy explicitly                                        | `tests/contracts/page-policy.node.ts`; production build                                                      |
 | COMP-02     | Page composition    | `application` policy                                                                     | Authentication, API readiness, application shell, then content; protected route entries attach the policy explicitly    | `tests/contracts/page-policy.node.ts`; production build                                                      |
-| COMP-03     | Family composition  | Every named Projects, Datasets, and Administration section                               | Authentication and API readiness precede the family error/Suspense boundaries and shells                                | `tests/contracts/page-policy.node.ts` family matrix                                                          |
+| COMP-03     | Family composition  | Every named Projects, Datasets, and Administration section                               | Canonical route enforcement, authentication, and API readiness precede the family error/Suspense boundaries and shells  | `tests/contracts/family-route.node.ts`; `tests/contracts/page-compositions.node.ts`; production build        |
 | FAIL-01     | HTTP status         | Axios failures, native Fetch responses, and generated Fetch-shaped objects               | Confirmed `403`, `404`, `429`, and `5xx` receive distinct transport classifications                                     | `tests/contracts/transport-failure.node.ts` status matrix                                                    |
 | FAIL-02     | Transient transport | Axios timeout, Fetch timeout, Axios network failure, and runtime-wrapped Fetch rejection | Timeout and network failures remain separately recoverable                                                              | `tests/contracts/transport-failure.node.ts` transient cases                                                  |
 | FAIL-03     | Unknown transport   | Unsupported status, ordinary error, primitive, or malformed input                        | Unknown classification retains confirmed status when present and never parses messages                                  | `tests/contracts/transport-failure.node.ts` unknown cases                                                    |
@@ -45,5 +45,7 @@ evidence.
   `PagePolicyComposer` before rendering the page.
 - `src/api/runtime/classifyTransportFailure.ts` classifies transport facts only. Route families retain
   ownership of non-disclosing parent failures, local child failures, stale-data behavior, and rendering.
-- Route parsers operate on canonical relative hrefs before resource queries. Unknown query keys never
-  appear in parsed route models and therefore cannot become generated query arguments.
+- `FamilyRouteBoundary` withholds named-family descendants until the router is ready and the family
+  parser accepts a canonical relative href. Unknown query keys never appear in parsed route models and
+  therefore cannot become generated query arguments. Legacy global scope hooks remain confined to the
+  temporary plain `application` composition.

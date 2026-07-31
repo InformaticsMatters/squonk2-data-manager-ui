@@ -1,4 +1,6 @@
 import {
+  type ApplicationId,
+  type InstanceId,
   isApplicationId,
   isInstanceId,
   isPositiveInteger,
@@ -7,6 +9,12 @@ import {
   isRunningWorkflowId,
   isTaskId,
   isWorkflowId,
+  type PositiveIntegerString,
+  type ProductId,
+  type ProjectId,
+  type RunningWorkflowId,
+  type TaskId,
+  type WorkflowId,
 } from "../routing/identifiers";
 import {
   assertRouteValue,
@@ -23,56 +31,90 @@ import {
   validRoute,
 } from "../routing/routeContract";
 
-export type FileViewer = "browser" | "sdf" | "text";
-export type RunDefinitionType = "applications" | "jobs" | "workflows";
-export type RunFilterType = "application" | "job" | "workflow";
-export type ResultCollection = "instances" | "tasks" | "workflows";
-export type ResultFilterType = "instance" | "task" | "workflow";
+const viewers = ["text", "sdf", "browser"] as const;
+const runFilterTypes = ["workflow", "application", "job"] as const;
+const resultFilterTypes = ["workflow", "task", "instance"] as const;
+
+const isJobId = (value: string): value is PositiveIntegerString =>
+  isPositiveInteger(value) && Number.isSafeInteger(Number(value));
+
+const definitionIdValidators = {
+  applications: isApplicationId,
+  jobs: isJobId,
+  workflows: isWorkflowId,
+} as const;
+
+const resultIdValidators = {
+  instances: isInstanceId,
+  tasks: isTaskId,
+  workflows: isRunningWorkflowId,
+} as const;
+
+export type FileViewer = (typeof viewers)[number];
+export type RunDefinitionType = keyof typeof definitionIdValidators;
+export type RunFilterType = (typeof runFilterTypes)[number];
+export type ResultCollection = keyof typeof resultIdValidators;
+export type ResultFilterType = (typeof resultFilterTypes)[number];
 
 type SearchState = { search?: string };
 type RunState = SearchState & { types?: readonly RunFilterType[] };
 type ResultsState = SearchState & { types?: readonly ResultFilterType[] };
 
-export type ProjectRoute =
-  | { kind: "create"; subscriptionId?: string }
-  | { kind: "deletion"; taskId: string; subscriptionId?: string }
-  | { kind: "file-view"; projectId: string; path: string; viewer?: FileViewer }
-  | { kind: "files"; projectId: string; path?: string }
-  | { kind: "manage"; projectId: string }
-  | (ResultsState & {
-      kind: "result";
-      projectId: string;
-      collection: ResultCollection;
-      resultId: string;
-    })
-  | (ResultsState & { kind: "results"; projectId: string })
-  | (RunState & {
-      kind: "run-definition";
-      projectId: string;
-      definitionType: RunDefinitionType;
-      definitionId: string;
-    })
-  | (RunState & { kind: "run"; projectId: string })
-  | (SearchState & { kind: "index" });
+type DefinitionIdByType = {
+  applications: ApplicationId;
+  jobs: PositiveIntegerString;
+  workflows: WorkflowId;
+};
 
-const viewers = ["text", "sdf", "browser"] as const;
-const runFilterTypes = ["workflow", "application", "job"] as const;
-const resultFilterTypes = ["workflow", "task", "instance"] as const;
+type ResultIdByCollection = { instances: InstanceId; tasks: TaskId; workflows: RunningWorkflowId };
+
+type RunDefinitionRoute = {
+  [TType in RunDefinitionType]: RunState & {
+    kind: "run-definition";
+    projectId: ProjectId;
+    definitionType: TType;
+    definitionId: DefinitionIdByType[TType];
+  };
+}[RunDefinitionType];
+
+type ResultRoute = {
+  [TCollection in ResultCollection]: ResultsState & {
+    kind: "result";
+    projectId: ProjectId;
+    collection: TCollection;
+    resultId: ResultIdByCollection[TCollection];
+  };
+}[ResultCollection];
+
+export type ProjectRoute =
+  | ResultRoute
+  | RunDefinitionRoute
+  | { kind: "create"; subscriptionId?: ProductId }
+  | { kind: "deletion"; taskId: TaskId; subscriptionId?: ProductId }
+  | { kind: "file-view"; projectId: ProjectId; path: string; viewer?: FileViewer }
+  | { kind: "files"; projectId: ProjectId; path?: string }
+  | { kind: "manage"; projectId: ProjectId }
+  | (ResultsState & { kind: "results"; projectId: ProjectId })
+  | (RunState & { kind: "run"; projectId: ProjectId })
+  | (SearchState & { kind: "index" });
 
 const optionalSearch = (searchParams: URLSearchParams) =>
   readOptionalQuery(searchParams, "search", isSearch);
 
-const parseRunState = (searchParams: URLSearchParams): RunState => {
+const parseFilterState = <TValue extends string>(
+  searchParams: URLSearchParams,
+  filterTypes: readonly TValue[],
+): SearchState & { types?: readonly TValue[] } => {
   const search = optionalSearch(searchParams);
-  const types = readEnumQuery(searchParams, "type", runFilterTypes);
+  const types = readEnumQuery(searchParams, "type", filterTypes);
   return { ...(search ? { search } : {}), ...(types ? { types } : {}) };
 };
 
-const parseResultsState = (searchParams: URLSearchParams): ResultsState => {
-  const search = optionalSearch(searchParams);
-  const types = readEnumQuery(searchParams, "type", resultFilterTypes);
-  return { ...(search ? { search } : {}), ...(types ? { types } : {}) };
-};
+const parseRunState = (searchParams: URLSearchParams): RunState =>
+  parseFilterState(searchParams, runFilterTypes);
+
+const parseResultsState = (searchParams: URLSearchParams): ResultsState =>
+  parseFilterState(searchParams, resultFilterTypes);
 
 const canonicalEnumValues = <TValue extends string>(
   values: readonly TValue[] | undefined,
@@ -82,27 +124,23 @@ const canonicalEnumValues = <TValue extends string>(
 const parseSubscription = (searchParams: URLSearchParams) =>
   readOptionalQuery(searchParams, "subscription", isProductId);
 
-const definitionIdIsValid = (type: RunDefinitionType, value: string): boolean => {
-  switch (type) {
-    case "jobs":
-      return isPositiveInteger(value) && Number.isSafeInteger(Number(value));
-    case "applications":
-      return isApplicationId(value);
-    case "workflows":
-      return isWorkflowId(value);
-  }
-};
+const isDefinitionType = (value: string): value is RunDefinitionType =>
+  Object.hasOwn(definitionIdValidators, value);
 
-const resultIdIsValid = (collection: ResultCollection, value: string): boolean => {
-  switch (collection) {
-    case "tasks":
-      return isTaskId(value);
-    case "instances":
-      return isInstanceId(value);
-    case "workflows":
-      return isRunningWorkflowId(value);
-  }
-};
+const parseDefinitionId = <TType extends RunDefinitionType>(
+  type: TType,
+  value: string,
+): DefinitionIdByType[TType] | null =>
+  definitionIdValidators[type](value) ? (value as DefinitionIdByType[TType]) : null;
+
+const isResultCollection = (value: string): value is ResultCollection =>
+  Object.hasOwn(resultIdValidators, value);
+
+const parseResultId = <TCollection extends ResultCollection>(
+  collection: TCollection,
+  value: string,
+): ResultIdByCollection[TCollection] | null =>
+  resultIdValidators[collection](value) ? (value as ResultIdByCollection[TCollection]) : null;
 
 const assertProjectId = (value: string) => assertRouteValue(value, isProjectId, "project ID");
 
@@ -156,7 +194,7 @@ export const projectLinks = {
     buildHref(
       `/projects/${assertProjectId(projectId)}/run/${definitionType}/${assertRouteValue(
         definitionId,
-        (value) => definitionIdIsValid(definitionType, value),
+        (value) => parseDefinitionId(definitionType, value) !== null,
         `${definitionType} definition ID`,
       )}`,
       [
@@ -178,7 +216,7 @@ export const projectLinks = {
     buildHref(
       `/projects/${assertProjectId(projectId)}/results/${collection}/${assertRouteValue(
         resultId,
-        (value) => resultIdIsValid(collection, value),
+        (value) => parseResultId(collection, value) !== null,
         `${collection} result ID`,
       )}`,
       [
@@ -204,7 +242,10 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
 
   if (segments.length === 2 && segments[1] === "new") {
     const subscriptionId = parseSubscription(searchParams);
-    const route: ProjectRoute = { kind: "create", ...(subscriptionId ? { subscriptionId } : {}) };
+    const route: Extract<ProjectRoute, { kind: "create" }> = {
+      kind: "create",
+      ...(subscriptionId ? { subscriptionId } : {}),
+    };
     return validRoute(location, route, projectLinks.create(route));
   }
 
@@ -214,7 +255,7 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
       return notFoundRoute;
     }
     const subscriptionId = parseSubscription(searchParams);
-    const route: ProjectRoute = {
+    const route: Extract<ProjectRoute, { kind: "deletion" }> = {
       kind: "deletion",
       taskId,
       ...(subscriptionId ? { subscriptionId } : {}),
@@ -266,22 +307,22 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
   }
 
   if (segments.length === 5 && segments[2] === "run") {
-    const definitionType = segments[3] as RunDefinitionType;
-    const definitionId = segments[4];
-    if (
-      !(["jobs", "applications", "workflows"] as const).includes(definitionType) ||
-      !definitionIdIsValid(definitionType, definitionId)
-    ) {
+    const definitionType = segments[3];
+    if (!isDefinitionType(definitionType)) {
+      return localNotFoundRoute("projects", "run", projectId);
+    }
+    const definitionId = parseDefinitionId(definitionType, segments[4]);
+    if (!definitionId) {
       return localNotFoundRoute("projects", "run", projectId);
     }
     const state = parseRunState(searchParams);
-    const route: ProjectRoute = {
+    const route = {
       kind: "run-definition",
       projectId,
       definitionType,
       definitionId,
       ...state,
-    };
+    } as RunDefinitionRoute;
     return validRoute(
       location,
       route,
@@ -296,16 +337,16 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
   }
 
   if (segments.length === 5 && segments[2] === "results") {
-    const collection = segments[3] as ResultCollection;
-    const resultId = segments[4];
-    if (
-      !(["tasks", "instances", "workflows"] as const).includes(collection) ||
-      !resultIdIsValid(collection, resultId)
-    ) {
+    const collection = segments[3];
+    if (!isResultCollection(collection)) {
+      return localNotFoundRoute("projects", "results", projectId);
+    }
+    const resultId = parseResultId(collection, segments[4]);
+    if (!resultId) {
       return localNotFoundRoute("projects", "results", projectId);
     }
     const state = parseResultsState(searchParams);
-    const route: ProjectRoute = { kind: "result", projectId, collection, resultId, ...state };
+    const route = { kind: "result", projectId, collection, resultId, ...state } as ResultRoute;
     return validRoute(location, route, projectLinks.result(projectId, collection, resultId, state));
   }
 

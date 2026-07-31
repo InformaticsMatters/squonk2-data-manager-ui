@@ -1,19 +1,16 @@
 import { createContext, type ReactNode, useContext } from "react";
 
 import { type AppProps } from "next/app";
-import dynamic from "next/dynamic";
 
-import { TopLevelHooks } from "../components/app/TopLevelHooks";
-import { AuthenticationBoundary } from "../components/auth/AuthenticationBoundary";
-import { ApiClientReadyBoundary, ApiClientSetup } from "./ApiClientReadyBoundary";
+import { FamilyRouteBoundary } from "./FamilyRouteBoundary";
+import {
+  createApplicationComposition,
+  createFamilyComposition,
+  createPublicComposition,
+} from "./PageCompositions";
 import { type PageComposition, type PagePolicy, resolvePageComposition } from "./pagePolicy";
 
 const PageCompositionContext = createContext<PageComposition | null>(null);
-
-const EventStream = dynamic(
-  () => import("../components/eventStream/EventStream").then((module) => module.EventStream),
-  { ssr: false },
-);
 
 export const usePageComposition = (): PageComposition => {
   const composition = useContext(PageCompositionContext);
@@ -23,19 +20,6 @@ export const usePageComposition = (): PageComposition => {
   return composition;
 };
 
-const ApplicationComposition = ({ children }: { children: ReactNode }) => (
-  <AuthenticationBoundary>
-    <ApiClientReadyBoundary>
-      <TopLevelHooks>
-        <>
-          <EventStream />
-          {children}
-        </>
-      </TopLevelHooks>
-    </ApiClientReadyBoundary>
-  </AuthenticationBoundary>
-);
-
 export const PagePolicyComposer = ({
   children,
   policy,
@@ -44,15 +28,24 @@ export const PagePolicyComposer = ({
   policy: PagePolicy;
 }) => {
   const composition = resolvePageComposition(policy);
-  const content =
-    composition.kind === "public" ? (
-      <>
-        <ApiClientSetup />
-        <TopLevelHooks>{children}</TopLevelHooks>
-      </>
-    ) : (
-      <ApplicationComposition>{children}</ApplicationComposition>
-    );
+  let content: ReactNode;
+  switch (policy.kind) {
+    case "public":
+      content = createPublicComposition(children);
+      break;
+    case "application":
+      content = createApplicationComposition(children);
+      break;
+    case "projects":
+    case "datasets":
+    case "administration":
+      content = (
+        <FamilyRouteBoundary policy={policy}>
+          {createFamilyComposition(policy, children)}
+        </FamilyRouteBoundary>
+      );
+      break;
+  }
 
   return <PageCompositionContext value={composition}>{content}</PageCompositionContext>;
 };

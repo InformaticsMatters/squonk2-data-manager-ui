@@ -1,5 +1,19 @@
+type LocalFailureSections = {
+  administration: "charges" | "organisation-access" | "subscriptions" | "usage-inventory";
+  datasets: "detail";
+  projects: "files" | "results" | "run";
+};
+
+type RouteNotFoundParent = {
+  [TFamily in keyof LocalFailureSections]: {
+    family: TFamily;
+    resourceId?: string;
+    section: LocalFailureSections[TFamily];
+  };
+}[keyof LocalFailureSections];
+
 export type RouteParseResult<TRoute> =
-  | { kind: "not-found"; parent?: { family: string; resourceId?: string; section: string } }
+  | { kind: "not-found"; parent?: RouteNotFoundParent }
   | { kind: "valid"; route: TRoute; canonicalHref: string; needsReplace: boolean };
 
 export type ParsedRouteLocation = {
@@ -45,13 +59,13 @@ export const validRoute = <TRoute>(
 
 export const notFoundRoute = { kind: "not-found" } as const;
 
-export const localNotFoundRoute = (
-  family: string,
-  section: string,
+export const localNotFoundRoute = <TFamily extends keyof LocalFailureSections>(
+  family: TFamily,
+  section: LocalFailureSections[TFamily],
   resourceId?: string,
 ): RouteParseResult<never> => ({
   kind: "not-found",
-  parent: { family, section, ...(resourceId ? { resourceId } : {}) },
+  parent: { family, section, ...(resourceId ? { resourceId } : {}) } as RouteNotFoundParent,
 });
 
 export const buildHref = (
@@ -73,14 +87,24 @@ export const buildHref = (
   return query ? `${pathname}?${query}` : pathname;
 };
 
-export const readOptionalQuery = (
+export function readOptionalQuery<TValue extends string>(
+  searchParams: URLSearchParams,
+  key: string,
+  validate: (value: string) => value is TValue,
+): TValue | undefined;
+export function readOptionalQuery(
   searchParams: URLSearchParams,
   key: string,
   validate: (value: string) => boolean,
-): string | undefined => {
+): string | undefined;
+export function readOptionalQuery(
+  searchParams: URLSearchParams,
+  key: string,
+  validate: (value: string) => boolean,
+): string | undefined {
   const values = searchParams.getAll(key);
   return values.length === 1 && validate(values[0]) ? values[0] : undefined;
-};
+}
 
 export const readRequiredQuery = (
   searchParams: URLSearchParams,
@@ -138,13 +162,23 @@ export const isFileSystemPath = (value: string): boolean => {
   return parts.every((part) => part.length > 0 && part !== "." && part !== "..");
 };
 
-export const assertRouteValue = (
+export function assertRouteValue<TValue extends string>(
+  value: string,
+  validate: (candidate: string) => candidate is TValue,
+  name: string,
+): TValue;
+export function assertRouteValue(
   value: string,
   validate: (candidate: string) => boolean,
   name: string,
-): string => {
+): string;
+export function assertRouteValue(
+  value: string,
+  validate: (candidate: string) => boolean,
+  name: string,
+): string {
   if (!validate(value)) {
     throw new TypeError(`Invalid ${name}`);
   }
   return value;
-};
+}

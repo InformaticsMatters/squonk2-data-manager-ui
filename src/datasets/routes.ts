@@ -1,6 +1,6 @@
 import { appApiDatasetGetQueryUsernameRegExp } from "@/api/data-manager/dataset/zod";
 
-import { isDatasetId, isDatasetVersion } from "../routing/identifiers";
+import { type DatasetId, isDatasetId, isDatasetVersion } from "../routing/identifiers";
 import {
   assertRouteValue,
   buildHref,
@@ -23,10 +23,10 @@ export type DatasetListState = {
 };
 
 export type DatasetRoute =
-  | (DatasetListState & { kind: "dataset"; datasetId: string })
+  | (DatasetListState & { kind: "dataset"; datasetId: DatasetId })
   | (DatasetListState & { kind: "index" })
-  | (DatasetListState & { kind: "version"; datasetId: string; datasetVersion: number })
-  | (DatasetListState & { kind: "viewer"; datasetId: string; datasetVersion: number });
+  | (DatasetListState & { kind: "version"; datasetId: DatasetId; datasetVersion: number })
+  | (DatasetListState & { kind: "viewer"; datasetId: DatasetId; datasetVersion: number });
 
 const isUsername = (value: string) =>
   value.length >= 3 && value.length <= 80 && appApiDatasetGetQueryUsernameRegExp.test(value);

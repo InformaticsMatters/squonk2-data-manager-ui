@@ -1,29 +1,68 @@
 import { expect, test } from "@playwright/test";
 
 import { administrationLinks, parseAdministrationRoute } from "../../src/administration/routes";
+import { isOrganisationId, isProductId, isUnitId } from "../../src/routing/identifiers";
+import { assertRouteValue } from "../../src/routing/routeContract";
 
-const organisationId = "org-00000000-0000-4000-8000-000000000001";
-const unitId = "unit-00000000-0000-4000-8000-000000000002";
-const productId = "product-00000000-0000-4000-8000-000000000003";
+const organisationId = assertRouteValue(
+  "org-00000000-0000-4000-8000-000000000001",
+  isOrganisationId,
+  "organisation ID fixture",
+);
+const unitId = assertRouteValue(
+  "unit-00000000-0000-4000-8000-000000000002",
+  isUnitId,
+  "unit ID fixture",
+);
+const productId = assertRouteValue(
+  "product-00000000-0000-4000-8000-000000000003",
+  isProductId,
+  "product ID fixture",
+);
 
 test.describe("Administration route contract", () => {
   const canonicalHrefs = [
-    administrationLinks.organisationAccess(),
-    administrationLinks.organisationAccessResource("organisations", organisationId),
-    administrationLinks.organisationAccessResource("units", unitId),
-    administrationLinks.subscriptions(),
-    administrationLinks.subscription(productId),
-    administrationLinks.charges(),
-    administrationLinks.chargeResource("organisations", organisationId),
-    administrationLinks.chargeResource("units", unitId),
-    administrationLinks.chargeResource("products", productId),
-    administrationLinks.usageInventory(),
-    administrationLinks.usageInventoryResource("organisations", organisationId),
-    administrationLinks.usageInventoryResource("units", unitId),
-  ];
+    ["/administration/organisation-access", () => administrationLinks.organisationAccess()],
+    [
+      `/administration/organisation-access/organisations/${organisationId}`,
+      () => administrationLinks.organisationAccessResource("organisations", organisationId),
+    ],
+    [
+      `/administration/organisation-access/units/${unitId}`,
+      () => administrationLinks.organisationAccessResource("units", unitId),
+    ],
+    ["/administration/subscriptions", () => administrationLinks.subscriptions()],
+    [
+      `/administration/subscriptions/${productId}`,
+      () => administrationLinks.subscription(productId),
+    ],
+    ["/administration/charges", () => administrationLinks.charges()],
+    [
+      `/administration/charges/organisations/${organisationId}`,
+      () => administrationLinks.chargeResource("organisations", organisationId),
+    ],
+    [
+      `/administration/charges/units/${unitId}`,
+      () => administrationLinks.chargeResource("units", unitId),
+    ],
+    [
+      `/administration/charges/products/${productId}`,
+      () => administrationLinks.chargeResource("products", productId),
+    ],
+    ["/administration/usage-inventory", () => administrationLinks.usageInventory()],
+    [
+      `/administration/usage-inventory/organisations/${organisationId}`,
+      () => administrationLinks.usageInventoryResource("organisations", organisationId),
+    ],
+    [
+      `/administration/usage-inventory/units/${unitId}`,
+      () => administrationLinks.usageInventoryResource("units", unitId),
+    ],
+  ] as const;
 
-  for (const href of canonicalHrefs) {
+  for (const [href, buildHref] of canonicalHrefs) {
     test(`round trips ${href}`, () => {
+      expect(buildHref()).toBe(href);
       expect(parseAdministrationRoute(href)).toMatchObject({
         kind: "valid",
         canonicalHref: href,
@@ -73,7 +112,13 @@ test.describe("Administration route contract", () => {
   });
 
   test("builders reject collection and identity mismatches", () => {
-    expect(() => administrationLinks.organisationAccessResource("organisations", unitId)).toThrow();
-    expect(() => administrationLinks.chargeResource("products", organisationId)).toThrow();
+    expect(() => {
+      // @ts-expect-error Unit IDs cannot identify an organisation resource.
+      administrationLinks.organisationAccessResource("organisations", unitId);
+    }).toThrow();
+    expect(() => {
+      // @ts-expect-error Organisation IDs cannot identify a product resource.
+      administrationLinks.chargeResource("products", organisationId);
+    }).toThrow();
   });
 });

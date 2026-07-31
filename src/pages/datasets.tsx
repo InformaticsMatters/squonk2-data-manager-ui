@@ -32,4 +32,4 @@ const Datasets = () => {
   );
 };
 
-export default withPagePolicy(pagePolicies.application, Datasets);
+export default withPagePolicy(pagePolicies.datasets("list"), Datasets);

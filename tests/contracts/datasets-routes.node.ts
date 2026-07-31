@@ -13,16 +13,26 @@ const listState = {
 } as const;
 
 test.describe("Datasets route contract", () => {
+  const listQuery =
+    "search=kinase&owner=owner%40example.org&editor=editor%40example.org" +
+    "&type=chemical%2Fx-mdl-sdfile&label=campaign&label=source%3Dscreen";
   const canonicalHrefs = [
-    datasetLinks.index(),
-    datasetLinks.index(listState),
-    datasetLinks.dataset(datasetId, listState),
-    datasetLinks.version(datasetId, 1, listState),
-    datasetLinks.view(datasetId, 12, listState),
-  ];
+    ["/datasets", () => datasetLinks.index()],
+    [`/datasets?${listQuery}`, () => datasetLinks.index(listState)],
+    [`/datasets/${datasetId}?${listQuery}`, () => datasetLinks.dataset(datasetId, listState)],
+    [
+      `/datasets/${datasetId}/versions/1?${listQuery}`,
+      () => datasetLinks.version(datasetId, 1, listState),
+    ],
+    [
+      `/datasets/${datasetId}/versions/12/view?${listQuery}`,
+      () => datasetLinks.view(datasetId, 12, listState),
+    ],
+  ] as const;
 
-  for (const href of canonicalHrefs) {
+  for (const [href, buildHref] of canonicalHrefs) {
     test(`round trips ${href}`, () => {
+      expect(buildHref()).toBe(href);
       expect(parseDatasetRoute(href)).toMatchObject({
         kind: "valid",
         canonicalHref: href,

@@ -14,8 +14,8 @@ test("fixture capabilities are deterministic and isolated by identity", async ({
   const headers = { Authorization: `Bearer ${tokenFor(subject)}` };
   const otherHeaders = { Authorization: `Bearer ${tokenFor(otherSubject)}` };
 
-  await request.put(`http://127.0.0.1:4314/scenario/${subject}`);
-  await request.put(`http://127.0.0.1:4314/scenario/${otherSubject}`);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}`);
+  await request.put(`${acceptanceUrls.control}/scenario/${otherSubject}`);
 
   const projects = await (
     await request.get(`${acceptanceUrls.dataManager}/project`, { headers })
@@ -71,9 +71,11 @@ test("fixture capabilities are deterministic and isolated by identity", async ({
   }
   expect(taskStates).toEqual(["PENDING", "STARTED", "SUCCESS"]);
 
-  const diagnostic = await (await request.get(`http://127.0.0.1:4314/scenario/${subject}`)).json();
+  const diagnostic = await (
+    await request.get(`${acceptanceUrls.control}/scenario/${subject}`)
+  ).json();
   const otherDiagnostic = await (
-    await request.get(`http://127.0.0.1:4314/scenario/${otherSubject}`)
+    await request.get(`${acceptanceUrls.control}/scenario/${otherSubject}`)
   ).json();
   expect(diagnostic).toMatchObject({ pollingIndex: 3, upload: { bytes: expect.any(Number) } });
   expect(otherDiagnostic).toMatchObject({
@@ -87,7 +89,7 @@ test("production build logs in and performs an authenticated generated-client re
   request,
 }, testInfo) => {
   const subject = `acceptance-worker-${testInfo.parallelIndex}`;
-  await request.put(`http://127.0.0.1:4314/scenario/${subject}`);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}`);
 
   await page.goto("datasets");
   await expect(page.getByRole("heading", { name: "Acceptance identity provider" })).toBeVisible();
@@ -100,7 +102,9 @@ test("production build logs in and performs an authenticated generated-client re
   await expect(page.getByText("Data Manager: 6.7.0-acceptance")).toBeVisible();
   await expect(page.getByText("Account Server: 4.7.0-acceptance")).toBeVisible();
 
-  const diagnostic = await (await request.get(`http://127.0.0.1:4314/scenario/${subject}`)).json();
+  const diagnostic = await (
+    await request.get(`${acceptanceUrls.control}/scenario/${subject}`)
+  ).json();
   const generatedClientRequest = diagnostic.requests.find(
     (entry: { method: string; path: string }) =>
       entry.method === "GET" && entry.path === "/version",

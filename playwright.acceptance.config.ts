@@ -26,7 +26,7 @@ export default defineConfig({
       stderr: "pipe",
       stdout: "pipe",
       timeout: 30_000,
-      url: "http://127.0.0.1:4314/health",
+      url: `${acceptanceUrls.control}/health`,
     },
     {
       command: `pnpm start -p ${acceptanceEnvironment.TEST_PORT}`,

@@ -1,7 +1,7 @@
 import { createHash, createPrivateKey, generateKeyPairSync, randomUUID, sign } from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 
-import { acceptanceEnvironment } from "../environment";
+import { acceptanceEnvironment, acceptanceUrls } from "../environment";
 import { binaryFixture, fixtureIds } from "./fixtures";
 import { getScenario, type RequestRecord, resetScenario } from "./state";
 
@@ -259,7 +259,7 @@ const accountServer = createServer((request, response) => {
 });
 
 const handleControl = async (request: IncomingMessage, response: ServerResponse) => {
-  const url = new URL(request.url ?? "/", "http://127.0.0.1:4314");
+  const url = new URL(request.url ?? "/", acceptanceUrls.control);
   const subject = decodeURIComponent(url.pathname.split("/").at(-1) ?? "anonymous");
   if (url.pathname === "/health") {
     return json(response, 200, { ready: true });
@@ -304,8 +304,8 @@ process.once("SIGINT", close);
 process.once("SIGTERM", close);
 
 void Promise.all([
-  listen(oidcServer, 4311, "OIDC"),
-  listen(dataManagerServer, 4312, "Data Manager"),
-  listen(accountServer, 4313, "Account Server"),
-  listen(controlServer, 4314, "Control"),
+  listen(oidcServer, Number(new URL(acceptanceUrls.oidc).port), "OIDC"),
+  listen(dataManagerServer, Number(new URL(acceptanceUrls.dataManager).port), "Data Manager"),
+  listen(accountServer, Number(new URL(acceptanceUrls.accountServer).port), "Account Server"),
+  listen(controlServer, Number(new URL(acceptanceUrls.control).port), "Control"),
 ]);

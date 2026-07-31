@@ -3,6 +3,8 @@ import { betterAuth } from "better-auth";
 import { genericOAuth, keycloak } from "better-auth/plugins";
 import { jwtDecode } from "jwt-decode";
 
+import { withBasePath } from "../utils/app/basePath";
+
 // No database config → better-auth defaults to memory adapter + cookie cache (stateless sessions)
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
@@ -32,6 +34,10 @@ export const auth = betterAuth({
             clientId: process.env.KEYCLOAK_CLIENT_ID as string,
             clientSecret: process.env.KEYCLOAK_CLIENT_SECRET as string,
             issuer: process.env.KEYCLOAK_ISSUER_URL as string,
+            redirectURI: new URL(
+              withBasePath("/api/auth/callback/keycloak"),
+              process.env.BETTER_AUTH_BASE_URL,
+            ).href,
             scopes: ["openid", "profile", "email", "offline_access"],
             overrideUserInfo: true, // refresh realm_access roles on every re-login
           }),

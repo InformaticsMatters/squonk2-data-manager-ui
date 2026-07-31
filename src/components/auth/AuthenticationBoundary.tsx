@@ -3,6 +3,7 @@ import { type ReactNode, useEffect } from "react";
 import { useRouter } from "next/router";
 
 import { authClient } from "../../lib/auth-client";
+import { withBasePath } from "../../utils/app/basePath";
 import { CenterLoader } from "../CenterLoader";
 
 export const AuthenticationBoundary = ({ children }: { children: ReactNode }) => {
@@ -11,7 +12,10 @@ export const AuthenticationBoundary = ({ children }: { children: ReactNode }) =>
 
   useEffect(() => {
     if (!isPending && !session) {
-      void authClient.signIn.oauth2({ providerId: "keycloak", callbackURL: router.asPath });
+      void authClient.signIn.oauth2({
+        providerId: "keycloak",
+        callbackURL: withBasePath(router.asPath),
+      });
     }
   }, [isPending, session, router]);
 

@@ -34,7 +34,10 @@ console.log("Transpiling packages:", transpilePackages);
 /** @type {import("next").NextConfig} */
 let nextConfig = {
   outputFileTracingRoot: __dirname,
-  output: /** @type {import("next").NextConfig["output"]} */ (process.env.OUTPUT_TYPE),
+  output:
+    process.env.DONT_USE_STANDALONE_OUTPUT === "true"
+      ? undefined
+      : /** @type {import("next").NextConfig["output"]} */ (process.env.OUTPUT_TYPE),
   generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA ?? null : undefined,
   typescript: { ignoreBuildErrors: true },
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps

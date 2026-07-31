@@ -6,8 +6,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
+import { pagePolicies, withPagePolicy } from "../../../application/pagePolicy";
 import { RoleRequired } from "../../../components/auth/RoleRequired";
-import { withPageAuthRequired } from "../../../components/auth/withPageAuthRequired";
 import { Instance } from "../../../components/instances/Instance";
 import { AllResultsButton } from "../../../components/results/AllResultsButton";
 import { EventDebugSwitch } from "../../../components/results/EventDebugSwitch";
@@ -65,4 +65,4 @@ const Result = () => {
   );
 };
 
-export default withPageAuthRequired(Result);
+export default withPagePolicy(pagePolicies.application, Result);

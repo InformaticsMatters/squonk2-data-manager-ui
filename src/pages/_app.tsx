@@ -11,20 +11,14 @@ import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/r
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { enableMapSet } from "immer";
 import { type AppProps } from "next/app";
-import dynamic from "next/dynamic";
 import Head from "next/head";
 
+import { PagePolicyComposer, type PolicyAppComponent } from "../application/PagePolicyComposer";
 import { ConfiguredSnackbarProvider } from "../components/app/ConfiguredSnackbarProvider";
 import { ThemeProviders } from "../components/app/ThemeProviders";
-import { TopLevelHooks } from "../components/app/TopLevelHooks";
 import { openSansFont } from "../constants/fonts";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
 import { awaitTokenGate } from "../utils/api/tokenGate";
-
-const EventStream = dynamic(
-  () => import("../components/eventStream/EventStream").then((mod) => mod.EventStream),
-  { ssr: false },
-);
 
 const openSansFontCss = `
 :root {
@@ -68,11 +62,18 @@ enableMapSet();
 // Adjust template for MUI given at
 // https://github.com/mui/material-ui/blob/master/examples/nextjs-with-typescript/pages/_app.tsx
 
-type CustomAppProps = AppProps &
-  EmotionCacheProviderProps & { pageProps: { dehydratedState?: unknown } };
+type CustomAppProps = EmotionCacheProviderProps &
+  Omit<AppProps, "Component"> & {
+    Component: PolicyAppComponent;
+    pageProps: { dehydratedState?: unknown };
+  };
 
 const App = (props: CustomAppProps) => {
   const { Component, pageProps } = props;
+  const pagePolicy = (Component as Partial<PolicyAppComponent>).pagePolicy;
+  if (!pagePolicy) {
+    throw new Error("Pages must declare a page composition policy");
+  }
   // React-Query
   const queryClient = useMemo(() => new QueryClient(), []);
 
@@ -87,11 +88,10 @@ const App = (props: CustomAppProps) => {
           <QueryClientProvider client={queryClient}>
             <HydrationBoundary state={pageProps.dehydratedState}>
               <ConfiguredSnackbarProvider>
-                <EventStream />
                 <MDXComponentProvider>
-                  <TopLevelHooks>
+                  <PagePolicyComposer policy={pagePolicy}>
                     <Component {...pageProps} />
-                  </TopLevelHooks>
+                  </PagePolicyComposer>
                 </MDXComponentProvider>
               </ConfiguredSnackbarProvider>
             </HydrationBoundary>

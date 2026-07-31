@@ -6,8 +6,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
+import { pagePolicies, withPagePolicy } from "../../../application/pagePolicy";
 import { RoleRequired } from "../../../components/auth/RoleRequired";
-import { withPageAuthRequired } from "../../../components/auth/withPageAuthRequired";
 import { RunningWorkflowCard } from "../../../components/RunningWorkflowCard/RunningWorkflowCard";
 import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
 import Layout from "../../../layouts/Layout";
@@ -53,4 +53,4 @@ const WorkflowResult = () => {
   );
 };
 
-export default withPageAuthRequired(WorkflowResult);
+export default withPagePolicy(pagePolicies.application, WorkflowResult);

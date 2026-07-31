@@ -10,8 +10,8 @@ import { debounce } from "lodash-es";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 
+import { pagePolicies, withPagePolicy } from "../application/pagePolicy";
 import { RoleRequired } from "../components/auth/RoleRequired";
-import { withPageAuthRequired } from "../components/auth/withPageAuthRequired";
 import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/runCards/ApplicationCard";
 import { JobCard } from "../components/runCards/JobCard";
@@ -297,4 +297,4 @@ const Run = () => {
   );
 };
 
-export default withPageAuthRequired(Run);
+export default withPagePolicy(pagePolicies.application, Run);

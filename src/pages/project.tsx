@@ -3,8 +3,8 @@ import Head from "next/head";
 import Image from "next/image";
 
 import sadderSquonk from "../../assets/graphics/sadder-squonk.svg";
+import { pagePolicies, withPagePolicy } from "../application/pagePolicy";
 import { RoleRequired } from "../components/auth/RoleRequired";
-import { withPageAuthRequired } from "../components/auth/withPageAuthRequired";
 import { ProjectSelection } from "../components/projects/ProjectSelection";
 import { SelectProject } from "../components/userContext/SelectProject";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
@@ -80,4 +80,4 @@ const Project = () => {
   );
 };
 
-export default withPageAuthRequired(Project);
+export default withPagePolicy(pagePolicies.application, Project);

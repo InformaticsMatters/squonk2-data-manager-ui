@@ -3,8 +3,8 @@ import Error from "next/error";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
+import { pagePolicies, withPagePolicy } from "../../application/pagePolicy";
 import { RoleRequired } from "../../components/auth/RoleRequired";
-import { withPageAuthRequired } from "../../components/auth/withPageAuthRequired";
 import { AS_ROLES, DM_ROLES } from "../../constants/auth";
 import { SDFViewer } from "../../features/SDFViewer";
 import { type SDFViewerDataProps } from "../../features/SDFViewer/SDFViewerData";
@@ -57,4 +57,4 @@ const SDFView = ({ project, path, file }: Omit<SDFViewerDataProps, "config">) =>
   );
 };
 
-export default withPageAuthRequired(SDF);
+export default withPagePolicy(pagePolicies.application, SDF);

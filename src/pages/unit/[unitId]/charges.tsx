@@ -1,8 +1,8 @@
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
+import { pagePolicies, withPagePolicy } from "../../../application/pagePolicy";
 import { RoleRequired } from "../../../components/auth/RoleRequired";
-import { withPageAuthRequired } from "../../../components/auth/withPageAuthRequired";
 import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
 import { UnitChargesView } from "../../../features/Finance/UnitChargesView";
 import Layout from "../../../layouts/Layout";
@@ -38,4 +38,4 @@ const Charges = (props: UnitChargesProps) => {
   );
 };
 
-export default withPageAuthRequired(Charges);
+export default withPagePolicy(pagePolicies.application, Charges);

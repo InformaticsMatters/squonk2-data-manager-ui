@@ -1,11 +1,10 @@
-import { type ReactElement, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
-import { useSetupApiClients } from "../../hooks/useSetupApiClients";
 import { useSyncProject } from "../../hooks/useSyncProject";
 import { useSyncUnitAndOrgFromProduct } from "../../hooks/useSyncUnitAndOrgFromProduct";
 
 export interface TopLevelHooksProps {
-  children: ReactElement;
+  children: ReactNode;
 }
 
 /**
@@ -14,7 +13,6 @@ export interface TopLevelHooksProps {
 const ClientTopLevelHooks = () => {
   useSyncProject();
   useSyncUnitAndOrgFromProduct();
-  useSetupApiClients();
 
   return null;
 };

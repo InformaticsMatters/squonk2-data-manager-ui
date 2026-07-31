@@ -1,8 +1,8 @@
 import NextError from "next/error";
 import Head from "next/head";
 
+import { pagePolicies, withPagePolicy } from "../application/pagePolicy";
 import { RoleRequired } from "../components/auth/RoleRequired";
-import { withPageAuthRequired } from "../components/auth/withPageAuthRequired";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { ResultsView } from "../features/ResultsView";
 import Layout from "../layouts/Layout";
@@ -35,4 +35,4 @@ const Results = (props: ResultsProps) => {
   );
 };
 
-export default withPageAuthRequired(Results);
+export default withPagePolicy(pagePolicies.application, Results);

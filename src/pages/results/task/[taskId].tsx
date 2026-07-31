@@ -6,8 +6,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
+import { pagePolicies, withPagePolicy } from "../../../application/pagePolicy";
 import { RoleRequired } from "../../../components/auth/RoleRequired";
-import { withPageAuthRequired } from "../../../components/auth/withPageAuthRequired";
 import { CenterLoader } from "../../../components/CenterLoader";
 import { ResultTaskCard } from "../../../components/tasks/ResultTaskCard";
 import { AS_ROLES, DM_ROLES } from "../../../constants/auth";
@@ -67,4 +67,4 @@ const Result = () => {
   );
 };
 
-export default withPageAuthRequired(Result);
+export default withPagePolicy(pagePolicies.application, Result);

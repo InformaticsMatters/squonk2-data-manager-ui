@@ -3,7 +3,7 @@ import NextError from "next/error";
 import { useRouter } from "next/router";
 import { type GetServerSideProps } from "nextjs-routes";
 
-import { withPageAuthRequired } from "../../components/auth/withPageAuthRequired";
+import { pagePolicies, withPagePolicy } from "../../application/pagePolicy";
 import { PlaintextViewer } from "../../features/PlaintextViewer";
 import {
   type NotSuccessful,
@@ -75,4 +75,4 @@ export const File = (props: FileProps) => {
   return <NextError statusCode={statusCode} statusMessage={statusMessage} />;
 };
 
-export default withPageAuthRequired(File);
+export default withPagePolicy(pagePolicies.application, File);

@@ -2,8 +2,8 @@ import { Container } from "@mui/material";
 import NextError from "next/error";
 import Head from "next/head";
 
+import { pagePolicies, withPagePolicy } from "../application/pagePolicy";
 import { RoleRequired } from "../components/auth/RoleRequired";
-import { withPageAuthRequired } from "../components/auth/withPageAuthRequired";
 import { AS_ROLES, DM_ROLES } from "../constants/auth";
 import { ProductsView } from "../features/ProductsView";
 import Layout from "../layouts/Layout";
@@ -34,4 +34,4 @@ export const Products = (props: ProductsProps) => {
   );
 };
 
-export default withPageAuthRequired(Products);
+export default withPagePolicy(pagePolicies.application, Products);

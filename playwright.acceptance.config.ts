@@ -6,7 +6,7 @@ export default defineConfig({
   expect: { timeout: 15_000 },
   fullyParallel: true,
   outputDir: "test-results/acceptance",
-  projects: [{ name: "acceptance", use: { browserName: "chromium" } }],
+  projects: [{ name: "acceptance", use: { browserName: "chromium", timezoneId: "UTC" } }],
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
   retries: process.env.CI ? 1 : 0,
   testDir: "tests",

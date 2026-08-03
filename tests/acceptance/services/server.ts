@@ -68,6 +68,19 @@ const json = (response: ServerResponse, status: number, body: unknown) => {
   response.end(JSON.stringify(body));
 };
 
+const datasetFailureControls = [
+  {
+    error: "unsupported-dataset-failure",
+    pathSuffix: "/dataset-failure",
+    stateKey: "datasetFailure",
+  },
+  {
+    error: "unsupported-dataset-content-failure",
+    pathSuffix: "/dataset-content-failure",
+    stateKey: "datasetContentFailure",
+  },
+] as const;
+
 const cors = (request: IncomingMessage, response: ServerResponse) => {
   response.setHeader("access-control-allow-headers", "authorization,content-type");
   response.setHeader("access-control-allow-methods", "GET,POST,PUT,OPTIONS");
@@ -331,28 +344,19 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
     getScenario(subject).productFailure = true;
     return json(response, 200, { productFailure: true, subject });
   }
-  if (url.pathname.endsWith("/dataset-failure") && request.method === "POST") {
+  const datasetFailureControl = datasetFailureControls.find(({ pathSuffix }) =>
+    url.pathname.endsWith(pathSuffix),
+  );
+  if (datasetFailureControl && request.method === "POST") {
     const status = Number(url.searchParams.get("status"));
     if (![429, 503].includes(status)) {
-      return json(response, 400, { error: "unsupported-dataset-failure", status });
+      return json(response, 400, { error: datasetFailureControl.error, status });
     }
-    getScenario(subject).datasetFailure = status as 429 | 503;
-    return json(response, 200, { datasetFailure: status, subject });
+    getScenario(subject)[datasetFailureControl.stateKey] = status as 429 | 503;
+    return json(response, 200, { [datasetFailureControl.stateKey]: status, subject });
   }
-  if (url.pathname.endsWith("/dataset-failure") && request.method === "DELETE") {
-    getScenario(subject).datasetFailure = undefined;
-    return json(response, 200, { subject });
-  }
-  if (url.pathname.endsWith("/dataset-content-failure") && request.method === "POST") {
-    const status = Number(url.searchParams.get("status"));
-    if (![429, 503].includes(status)) {
-      return json(response, 400, { error: "unsupported-dataset-content-failure", status });
-    }
-    getScenario(subject).datasetContentFailure = status as 429 | 503;
-    return json(response, 200, { datasetContentFailure: status, subject });
-  }
-  if (url.pathname.endsWith("/dataset-content-failure") && request.method === "DELETE") {
-    getScenario(subject).datasetContentFailure = undefined;
+  if (datasetFailureControl && request.method === "DELETE") {
+    getScenario(subject)[datasetFailureControl.stateKey] = undefined;
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/product-failure") && request.method === "DELETE") {

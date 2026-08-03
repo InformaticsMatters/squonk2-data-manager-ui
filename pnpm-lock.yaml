@@ -180,8 +180,8 @@ importers:
         specifier: 19.2.6
         version: 19.2.6(react@19.2.6)
       react-dropzone:
-        specifier: 15.0.0
-        version: 15.0.0(react@19.2.6)
+        specifier: 19.3.0
+        version: 19.3.0(@types/react@19.2.15)(react@19.2.6)
       react-plotly.js:
         specifier: 2.6.0
         version: 2.6.0(plotly.js@2.35.3(mapbox-gl@1.13.3)(webpack@5.97.1(postcss@8.5.15)))(react@19.2.6)
@@ -1470,6 +1470,7 @@ packages:
   '@plotly/mapbox-gl@1.13.4':
     resolution: {integrity: sha512-sR3/Pe5LqT/fhYgp4rT4aSFf1rTsxMbGiH6Hojc7PH36ny5Bn17iVFUjpzycafETURuFbLZUfjODO8LvSI+5zQ==}
     engines: {node: '>=6.4.0'}
+    deprecated: This package is deprecated as of August 2026. plotly.js v4 uses MapLibre for map traces — see https://github.com/maplibre/maplibre-gl-js.
 
   '@plotly/point-cluster@3.1.9':
     resolution: {integrity: sha512-MwaI6g9scKf68Orpr1pHZ597pYx9uP8UEFXLPbsCmuw3a84obwz6pnMXGc90VhgDNeNiLEdlmuK7CPo+5PIxXw==}
@@ -3792,9 +3793,9 @@ packages:
     resolution: {integrity: sha512-iACCiXeMYOvZqlF1kTiYINzgepRBymz1wwjiuup9u9nayhb6g4fSwiyJ/6adli+EPwrWtpgQAh2PoS7HukEGEg==}
     engines: {node: '>= 10'}
 
-  file-selector@2.1.2:
-    resolution: {integrity: sha512-QgXo+mXTe8ljeqUFaX3QVHc5osSItJ/Km+xpocx0aSqWGMSCf6qYs/VnzZgS864Pjn5iceMRFigeAV7AfTlaig==}
-    engines: {node: '>= 12'}
+  file-selector@4.1.0:
+    resolution: {integrity: sha512-Io1mP8CI3zec5Bxy3P3TxdrKnt35Cm8vNIHnZsvyj43l4YFjD4NRInBp240S5bDJQ0EP1jnh7nCAwXsO818OCg==}
+    engines: {node: '>= 20'}
 
   filesize@11.0.17:
     resolution: {integrity: sha512-oHLTvMLw6imZUl1se/RBQrFlyy50nXce4sU7yGR6Qc0JgCwqnfiFsAnEwotdGmfKLD7SArGUk2/5STU0k8LOBQ==}
@@ -5798,11 +5799,15 @@ packages:
     peerDependencies:
       react: '>= 16.8'
 
-  react-dropzone@15.0.0:
-    resolution: {integrity: sha512-lGjYV/EoqEjEWPnmiSvH4v5IoIAwQM2W4Z1C0Q/Pw2xD0eVzKPS359BQTUMum+1fa0kH2nrKjuavmTPOGhpLPg==}
-    engines: {node: '>= 10.13'}
+  react-dropzone@19.3.0:
+    resolution: {integrity: sha512-H16cE2atFhWleWm/fihusM+FoVM/qjZ7w7WndC+gnCVg0lDKhGlKRwrpWI89divejSUoxBavEzEXmWwX7kRbTg==}
+    engines: {node: '>= 20'}
     peerDependencies:
-      react: '>= 16.8 || 18.0.0'
+      '@types/react': '*'
+      react: '>= 18'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   react-intersection-observer@9.16.0:
     resolution: {integrity: sha512-w9nJSEp+DrW9KmQmeWHQyfaP6b03v+TdXynaoA964Wxt7mdR3An11z4NNCQgL4gKSK7y1ver2Fq+JKH6CWEzUA==}
@@ -10982,9 +10987,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  file-selector@2.1.2:
-    dependencies:
-      tslib: 2.8.1
+  file-selector@4.1.0: {}
 
   filesize@11.0.17: {}
 
@@ -13324,12 +13327,13 @@ snapshots:
       prop-types: 15.8.1
       react: 19.2.6
 
-  react-dropzone@15.0.0(react@19.2.6):
+  react-dropzone@19.3.0(@types/react@19.2.15)(react@19.2.6):
     dependencies:
       attr-accept: 2.2.5
-      file-selector: 2.1.2
-      prop-types: 15.8.1
+      file-selector: 4.1.0
       react: 19.2.6
+    optionalDependencies:
+      '@types/react': 19.2.15
 
   react-intersection-observer@9.16.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:

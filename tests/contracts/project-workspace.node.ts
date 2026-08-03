@@ -1,9 +1,13 @@
 import { type ProductUnitGetResponse, type UnitsGetResponse } from "@/api/account-server";
+import { getGetProductQueryKey } from "@/api/account-server/product";
 import { type ProjectDetail } from "@/api/data-manager";
+import { getGetProjectQueryKey } from "@/api/data-manager/project";
 
 import { expect, test } from "@playwright/test";
+import { QueryClient } from "@tanstack/react-query";
 
-import { resolveProjectAncestry } from "../../src/projects/projectAncestry";
+import { requireLinkedProject, resolveProjectAncestry } from "../../src/projects/projectAncestry";
+import { removeUnavailableProject } from "../../src/projects/projectCache";
 import { buildProjectIndexItems } from "../../src/projects/projectIndex";
 import {
   readRecentProjectIds,
@@ -81,15 +85,18 @@ test("project ancestry comes from the linked generated Product response", () => 
     },
   } as ProductUnitGetResponse;
 
-  expect(resolveProjectAncestry(project(), response)).toEqual({
+  expect(resolveProjectAncestry(requireLinkedProject(project()), response)).toEqual({
     organisation: response.product.organisation,
     product: response.product,
     unit: response.product.unit,
   });
   expect(() =>
-    resolveProjectAncestry(project({ organisation_id: "organisation-two" }), response),
+    resolveProjectAncestry(
+      requireLinkedProject(project({ organisation_id: "organisation-two" })),
+      response,
+    ),
   ).toThrow("does not match its linked product ancestry");
-  expect(() => resolveProjectAncestry(project({ product_id: undefined }), response)).toThrow(
+  expect(() => requireLinkedProject(project({ product_id: undefined }))).toThrow(
     "does not identify a linked product",
   );
 });
@@ -106,4 +113,28 @@ test("confirmed project loss removes only that project from recents", () => {
   removeRecentProject(storage, "project-two");
 
   expect(readRecentProjectIds(storage)).toEqual(["project-one"]);
+});
+
+test("confirmed project loss removes only generated ancestry cache identities", () => {
+  const queryClient = new QueryClient();
+  const storageValues = new Map<string, string>();
+  const storage = {
+    getItem: (key: string) => storageValues.get(key) ?? null,
+    setItem: (key: string, value: string) => storageValues.set(key, value),
+  };
+  const linkedProject = requireLinkedProject(project({ project_id: "project-two" }));
+  const projectKey = getGetProjectQueryKey(linkedProject.project_id);
+  const productKey = getGetProductQueryKey(linkedProject.product_id);
+  const unrelatedKey = ["unrelated", { projectId: linkedProject.project_id }] as const;
+  queryClient.setQueryData(projectKey, linkedProject);
+  queryClient.setQueryData(productKey, { product: {} });
+  queryClient.setQueryData(unrelatedKey, "retain me");
+  recordRecentProject(storage, linkedProject.project_id);
+
+  removeUnavailableProject(queryClient, storage, linkedProject.project_id);
+
+  expect(queryClient.getQueryData(projectKey)).toBeUndefined();
+  expect(queryClient.getQueryData(productKey)).toBeUndefined();
+  expect(queryClient.getQueryData(unrelatedKey)).toBe("retain me");
+  expect(readRecentProjectIds(storage)).toEqual([]);
 });

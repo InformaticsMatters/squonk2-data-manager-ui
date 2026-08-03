@@ -79,11 +79,22 @@ test("Project 403 and 404 share a non-disclosing result and clear recent content
     .poll(() => page.evaluate((key) => localStorage.getItem(key), RECENT_PROJECTS_STORAGE_KEY))
     .not.toContain(fixtureIds.project);
 
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/project-failure`);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+  await expect
+    .poll(() => page.evaluate((key) => localStorage.getItem(key), RECENT_PROJECTS_STORAGE_KEY))
+    .toContain(fixtureIds.project);
+
   await request.post(`${acceptanceUrls.control}/scenario/${subject}/project-failure?status=404`);
   await page.reload();
   await expect(
     page.getByText("This project is unavailable or you no longer have access."),
   ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Files" })).not.toBeVisible();
+  await expect
+    .poll(() => page.evaluate((key) => localStorage.getItem(key), RECENT_PROJECTS_STORAGE_KEY))
+    .not.toContain(fixtureIds.project);
   await expect(page).toHaveURL(`${acceptanceUrls.app}${projectPath}`);
 });
 
@@ -93,12 +104,18 @@ test("transient Project failure retains chrome and retries without changing scop
 }, testInfo) => {
   const subject = subjectFor(testInfo);
   const projectPath = `projects/${fixtureIds.project}/files`;
-  await request.post(`${acceptanceUrls.control}/scenario/${subject}/project-failure?status=503`);
   await login(page, projectPath, testInfo);
+  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+  await page.getByRole("link", { name: "Squonk Home" }).click();
+  await expect(page).toHaveURL(acceptanceUrls.app.slice(0, -1));
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/project-failure?status=503`);
+  await page.goBack();
 
   await expect(
     page.getByText("Project data could not be loaded. Retry this project."),
   ).toBeVisible();
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await expect(page.getByText("Acceptance Unit · Acceptance Organisation")).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${projectPath}`);
 

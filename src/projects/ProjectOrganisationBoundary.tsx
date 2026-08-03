@@ -1,7 +1,6 @@
 import { type ReactNode, useEffect } from "react";
 
 import { useGetProductSuspense } from "@/api/account-server/product";
-import { type ProjectDetail } from "@/api/data-manager";
 import { useGetProjectSuspense } from "@/api/data-manager/project";
 
 import { ErrorBoundary } from "@sentry/nextjs";
@@ -10,7 +9,11 @@ import dynamic from "next/dynamic";
 
 import { CenterLoader } from "../components/CenterLoader";
 import { useSelectedOrganisation } from "../state/organisationSelection";
-import { resolveProjectAncestry } from "./projectAncestry";
+import {
+  type LinkedProject,
+  requireLinkedProject,
+  resolveProjectAncestry,
+} from "./projectAncestry";
 import { recordRecentProject } from "./recentProjects";
 import { RouteProjectProvider, useRouteProjectId } from "./useRouteProject";
 
@@ -18,8 +21,6 @@ const ProjectFailure = dynamic(
   () => import("./ProjectFailure").then((module) => module.ProjectFailure),
   { ssr: false },
 );
-
-type LinkedProject = ProjectDetail & { product_id: string };
 
 const LinkedProductBoundary = ({
   children,
@@ -55,21 +56,17 @@ const LinkedProductBoundary = ({
 };
 
 const ProjectBoundary = ({ children, projectId }: { children: ReactNode; projectId: string }) => {
-  const projectQuery = useGetProjectSuspense(projectId, { query: { retry: false } });
+  const projectQuery = useGetProjectSuspense(projectId, {
+    query: { refetchOnMount: "always", retry: false },
+  });
   if (projectQuery.error) {
     throw projectQuery.error;
   }
   if (projectQuery.data.project_id !== projectId) {
     throw new Error(`Project response does not match URL project ${projectId}`);
   }
-  if (!projectQuery.data.product_id) {
-    throw new Error(`Project ${projectId} does not identify a linked product`);
-  }
-  return (
-    <LinkedProductBoundary project={projectQuery.data as LinkedProject}>
-      {children}
-    </LinkedProductBoundary>
-  );
+  const project = requireLinkedProject(projectQuery.data);
+  return <LinkedProductBoundary project={project}>{children}</LinkedProductBoundary>;
 };
 
 export const ProjectOrganisationBoundary = ({ children }: { children: ReactNode }) => {

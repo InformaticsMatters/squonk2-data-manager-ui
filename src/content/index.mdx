@@ -5,6 +5,7 @@ import Head from "next/head";
 import { UserBootstrapper } from "../features/UserBootstrapper";
 import { NextLink } from "../components/NextLink";
 import { Motd } from "../components/Motd";
+import { AuthenticatedHomeRecents } from "../components/home/AuthenticatedHomeRecents";
 
 <Head>
   <title>Data Manager</title>
@@ -15,6 +16,8 @@ import { Motd } from "../components/Motd";
 <UserBootstrapper />
 
 <Motd />
+
+<AuthenticatedHomeRecents />
 
 <Grid container spacing={2}>
 <Grid size={{ xs: 12, sm: 6}}>

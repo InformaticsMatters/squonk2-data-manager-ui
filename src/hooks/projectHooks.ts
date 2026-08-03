@@ -3,7 +3,6 @@ import { useGetProjects } from "@/api/data-manager/project";
 
 import { useRouter } from "next/router";
 
-import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../utils/next/localStorage";
 import { useDMAuthorizationStatus } from "./useIsAuthorized";
 import { useKeycloakUser } from "./useKeycloakUser";
 
@@ -148,7 +147,6 @@ export const useCurrentProjectId = () => {
       delete newQuery.path;
 
       const href = { pathname, query: newQuery };
-      writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
       void router.push(href, undefined, { scroll: false });
     }
   };

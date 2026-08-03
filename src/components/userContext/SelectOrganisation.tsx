@@ -4,10 +4,9 @@ import { useGetOrganisations } from "@/api/account-server/organisation";
 import { DataUsage as DataUsageIcon } from "@mui/icons-material";
 import { Autocomplete, type AutocompleteProps, Box, TextField, Typography } from "@mui/material";
 
-import { projectPayload, useCurrentProjectId } from "../../hooks/projectHooks";
+import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
-import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next/localStorage";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { Adornment } from "./Adornment";
 import { ItemIcons } from "./ItemIcons";
@@ -86,7 +85,6 @@ export const SelectOrganisation = (autoCompleteProps: SelectOrganisationProps) =
           if (newOrganisation?.id !== organisation?.id) {
             setCurrentProjectId();
             setUnit(undefined);
-            writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
           }
 
           setOrganisation(newOrganisation ?? undefined);

@@ -3,11 +3,10 @@ import { type UnitGetResponse } from "@/api/account-server";
 import { DataUsage as DataUsageIcon, Receipt as ReceiptIcon } from "@mui/icons-material";
 import { Autocomplete, type AutocompleteProps, Box, TextField, Typography } from "@mui/material";
 
-import { projectPayload, useCurrentProjectId } from "../../hooks/projectHooks";
+import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useGetVisibleUnits } from "../../hooks/useGetVisibleUnits";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
-import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../utils/next/localStorage";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { Adornment } from "./Adornment";
 import { type PermissionLevelFilter } from "./filter";
@@ -89,7 +88,6 @@ export const SelectUnit = ({
           // Not the best solution but I couldn't figure out anything better
           if (newUnit?.id !== unit?.id) {
             setCurrentProjectId();
-            writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
           }
           setUnit(newUnit ?? undefined);
         }}

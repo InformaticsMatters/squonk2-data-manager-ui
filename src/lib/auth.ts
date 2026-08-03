@@ -10,6 +10,7 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_BASE_URL,
   basePath: "/api/auth",
+  rateLimit: { enabled: process.env.BETTER_AUTH_RATE_LIMIT_DISABLED !== "true" },
 
   user: {
     additionalFields: {

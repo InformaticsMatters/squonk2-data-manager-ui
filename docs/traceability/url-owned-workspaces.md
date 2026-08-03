@@ -1,9 +1,9 @@
 # URL-owned workspace traceability
 
-This matrix records the production contracts introduced for issue
-[#1915](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1915). Later vertical
-workspace tickets extend this file with their screens, capabilities, commands, and lifecycle
-evidence.
+This matrix records the production contracts introduced for issues
+[#1915](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1915) and
+[#1917](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1917). Later vertical
+workspace tickets extend this file with their screens, capabilities, commands, and lifecycle evidence.
 
 ## Route And Link Contracts
 
@@ -33,6 +33,17 @@ evidence.
 | FAIL-02     | Transient transport | Axios timeout, Fetch timeout, Axios network failure, and runtime-wrapped Fetch rejection | Timeout and network failures remain separately recoverable                                                              | `tests/contracts/transport-failure.node.ts` transient cases                                                  |
 | FAIL-03     | Unknown transport   | Unsupported status, ordinary error, primitive, or malformed input                        | Unknown classification retains confirmed status when present and never parses messages                                  | `tests/contracts/transport-failure.node.ts` unknown cases                                                    |
 | CACHE-01    | Generated endpoints | Future family composition using generated endpoint data                                  | Generated query options and key factories remain the sole endpoint cache identity; no family aggregate key is permitted | Architectural seam: route-family modules contain no query cache or aggregate fetch layer; strict review gate |
+
+## Application Shell Contracts
+
+| Contract ID | Area                  | Input or fixture                                                                          | Expected external outcome                                                                                                                                                                  | Automated evidence                                                                      |
+| ----------- | --------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| SHELL-01    | Public shell          | Logged-out Home and Documentation                                                         | Public Home/Documentation navigation remains available and configuration is not advertised                                                                                                 | `tests/acceptance/application-shell.acceptance.ts` public navigation journey            |
+| SHELL-02    | Protected deep link   | Canonical Project Results route with repeated allowed filters and an unknown key          | Login returns to the exact canonical route; the unknown key is removed                                                                                                                     | `tests/acceptance/application-shell.acceptance.ts` deep-link journey                    |
+| SHELL-03    | Split identity        | Authenticated project route at desktop and narrow widths                                  | Squonk, organisation, application navigation, account control, project identity, and project tabs retain distinct ownership                                                                | `tests/acceptance/application-shell.acceptance.ts` Home and narrow-layout journeys      |
+| SHELL-04    | Home exit             | Project Files route with route-owned path state                                           | Squonk logo enters neutral Home; recents remain direct links; Back/Forward restores exact canonical history                                                                                | `tests/acceptance/application-shell.acceptance.ts` Home/history journey                 |
+| SHELL-05    | Organisation identity | Explicit change from Acceptance Organisation to Partner Organisation inside a project     | Navigation reaches Home before the new identity is committed; project content is absent under the new identity                                                                             | `tests/acceptance/application-shell.acceptance.ts` organisation-change journey          |
+| SHELL-06    | Persistence           | Versioned current-organisation payload plus seeded legacy scope and unrelated preferences | Only the organisation ID is retained as domain identity and resolved through the generated organisation query; legacy project/file scope is removed without clearing unrelated preferences | `tests/contracts/application-identity.node.ts`; organisation refresh acceptance journey |
 
 ## Ownership Notes
 

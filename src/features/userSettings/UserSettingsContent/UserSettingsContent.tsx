@@ -18,16 +18,11 @@ import { CenterLoader } from "../../../components/CenterLoader";
 import { PageSection } from "../../../components/PageSection";
 import { PermissionLevelSelect } from "../../../components/PermissionLevelSelect";
 import { isAPermissionLevel, type PermissionLevel } from "../../../components/userContext/filter";
-import {
-  projectPayload,
-  useCurrentProject,
-  useCurrentProjectId,
-} from "../../../hooks/projectHooks";
+import { useCurrentProject, useCurrentProjectId } from "../../../hooks/projectHooks";
 import { getUserFilter } from "../../../hooks/useGetVisibleUnits";
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
 import { useSelectedOrganisation } from "../../../state/organisationSelection";
 import { useSelectedUnit } from "../../../state/unitSelection";
-import { PROJECT_LOCAL_STORAGE_KEY, writeToLocalStorage } from "../../../utils/next/localStorage";
 import { ProjectStatsSection } from "../../ProjectStats";
 import { UserBootstrapper } from "../../UserBootstrapper";
 import { ContextSection } from "./ContextSection";
@@ -125,7 +120,6 @@ export const UserSettingsContent = () => {
             onClick={() => {
               setCurrentProjectId();
               setUnit(undefined);
-              writeToLocalStorage(PROJECT_LOCAL_STORAGE_KEY, projectPayload(undefined));
             }}
           >
             Clear

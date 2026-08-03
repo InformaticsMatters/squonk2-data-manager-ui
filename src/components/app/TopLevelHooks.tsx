@@ -1,6 +1,5 @@
 import { type ReactNode, useEffect, useState } from "react";
 
-import { useSyncProject } from "../../hooks/useSyncProject";
 import { useSyncUnitAndOrgFromProduct } from "../../hooks/useSyncUnitAndOrgFromProduct";
 
 export interface TopLevelHooksProps {
@@ -11,7 +10,6 @@ export interface TopLevelHooksProps {
  * "No-op" component that only calls hooks that require providers higher up in the tree
  */
 const ClientTopLevelHooks = () => {
-  useSyncProject();
   useSyncUnitAndOrgFromProduct();
 
   return null;

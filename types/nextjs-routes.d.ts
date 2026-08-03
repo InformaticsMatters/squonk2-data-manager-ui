@@ -12,6 +12,11 @@ declare module "nextjs-routes" {
 
   export type Route =
     | StaticRoute<"/">
+    | StaticRoute<"/administration">
+    | StaticRoute<"/administration/charges">
+    | StaticRoute<"/administration/organisation-access">
+    | StaticRoute<"/administration/subscriptions">
+    | StaticRoute<"/administration/usage-inventory">
     | DynamicRoute<"/api/auth/[...all]", { "all": string[] }>
     | StaticRoute<"/api/configuration/ui-version">
     | StaticRoute<"/api/motd">
@@ -39,6 +44,12 @@ declare module "nextjs-routes" {
     | StaticRoute<"/products">
     | StaticRoute<"/project">
     | StaticRoute<"/project/file">
+    | StaticRoute<"/projects">
+    | DynamicRoute<"/projects/[projectId]/files", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/manage", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/results", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/run", { "projectId": string }>
+    | StaticRoute<"/projects/new">
     | StaticRoute<"/results">
     | DynamicRoute<"/results/instance/[instanceId]", { "instanceId": string }>
     | DynamicRoute<"/results/task/[taskId]", { "taskId": string }>

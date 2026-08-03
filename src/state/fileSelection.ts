@@ -1,8 +1,6 @@
-import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+import { atom, useAtom } from "jotai";
 
 import { type ProjectId, useCurrentProjectId } from "../hooks/projectHooks";
-import { PROJECT_FILE_LOCAL_STORAGE_KEY } from "../utils/next/localStorage";
 
 export type SavedFile = { path: string; type: "directory" | "file"; mimeType?: string };
 
@@ -10,7 +8,7 @@ export type FileState = Record<string, SavedFile[] | undefined>;
 
 type UpdateFileSelection = (projectId: string) => (filePath: SavedFile) => void;
 
-const selectedFilesAtom = atomWithStorage(PROJECT_FILE_LOCAL_STORAGE_KEY, {} as FileState);
+const selectedFilesAtom = atom<FileState>({});
 
 export const useSelectedFiles = (projectId?: ProjectId) => {
   const { projectId: currentProjectId } = useCurrentProjectId();

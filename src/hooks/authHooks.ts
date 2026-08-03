@@ -1,3 +1,5 @@
+import { clearLegacyScopeStorage } from "../application/applicationIdentity";
+import { RECENT_PROJECTS_STORAGE_KEY } from "../projects/recentProjects";
 import { useSelectedOrganisation } from "../state/organisationSelection";
 import { useSelectedUnit } from "../state/unitSelection";
 
@@ -6,7 +8,8 @@ export const useCleanUpOnLogout = () => {
   const [, setOrganisation] = useSelectedOrganisation();
 
   return () => {
-    localStorage.clear();
+    clearLegacyScopeStorage(localStorage);
+    localStorage.removeItem(RECENT_PROJECTS_STORAGE_KEY);
     setUnit(undefined);
     setOrganisation(undefined);
   };

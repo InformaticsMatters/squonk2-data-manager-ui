@@ -199,6 +199,9 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   if (url.pathname === "/project") {
     return json(response, 200, state.fixtures.projects);
   }
+  if (url.pathname === `/project/${fixtureIds.project}`) {
+    return json(response, 200, state.fixtures.projects.projects[0]);
+  }
   if (url.pathname === "/type") {
     return json(response, 200, state.fixtures.types);
   }
@@ -248,6 +251,12 @@ const accountServer = createServer((request, response) => {
   }
   if (url.pathname === "/organisation") {
     return json(response, 200, state.fixtures.organisations);
+  }
+  if (url.pathname === `/organisation/${fixtureIds.organisation}`) {
+    return json(response, 200, state.fixtures.organisation);
+  }
+  if (url.pathname === `/organisation/${fixtureIds.otherOrganisation}`) {
+    return json(response, 200, state.fixtures.otherOrganisation);
   }
   if (url.pathname === "/unit") {
     return json(response, 200, state.fixtures.units);

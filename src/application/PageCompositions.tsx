@@ -7,6 +7,7 @@ import NextError from "next/error";
 import { TopLevelHooks } from "../components/app/TopLevelHooks";
 import { AuthenticationBoundary } from "../components/auth/AuthenticationBoundary";
 import { CenterLoader } from "../components/CenterLoader";
+import { ProjectOrganisationBoundary } from "../projects/ProjectOrganisationBoundary";
 import { ApiClientReadyBoundary, ApiClientSetup } from "./ApiClientReadyBoundary";
 import { type FamilyPagePolicy } from "./familyRoute";
 
@@ -16,7 +17,9 @@ const EventStream = dynamic(
 );
 
 const PublicShell = ({ children }: { children: ReactNode }) => children;
-const ProjectsShell = ({ children }: { children: ReactNode }) => children;
+const ProjectsShell = ({ children }: { children: ReactNode }) => (
+  <ProjectOrganisationBoundary>{children}</ProjectOrganisationBoundary>
+);
 const DatasetsShell = ({ children }: { children: ReactNode }) => children;
 const AdministrationShell = ({ children }: { children: ReactNode }) => children;
 

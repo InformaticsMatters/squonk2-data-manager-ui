@@ -2,7 +2,7 @@ import { createHash, createPrivateKey, generateKeyPairSync, randomUUID, sign } f
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 
 import { acceptanceEnvironment, acceptanceUrls } from "../environment";
-import { binaryFixture, fixtureIds, isScenarioProfile } from "./fixtures";
+import { datasetContentFixtures, fixtureIds, isScenarioProfile } from "./fixtures";
 import { getScenario, type RequestRecord, resetScenario } from "./state";
 
 const issuer = acceptanceEnvironment.KEYCLOAK_URL;
@@ -228,15 +228,27 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     state.pollingIndex += 1;
     return json(response, 200, state.fixtures.taskTransitions[index]);
   }
+  if (url.pathname === `/dataset/${fixtureIds.dataset}/schema/1`) {
+    return json(response, 200, state.fixtures.datasetSchemas[1]);
+  }
+  if (url.pathname === `/dataset/${fixtureIds.dataset}/schema/2`) {
+    return json(response, 200, state.fixtures.datasetSchemas[2]);
+  }
   if (
     url.pathname === `/dataset/${fixtureIds.dataset}/1` ||
     url.pathname === `/dataset/${fixtureIds.dataset}/2`
   ) {
+    if (state.datasetContentFailure) {
+      return json(response, state.datasetContentFailure, state.fixtures.failures.serverError);
+    }
+    const content = url.pathname.endsWith("/1")
+      ? datasetContentFixtures[1]
+      : datasetContentFixtures[2];
     response.writeHead(200, {
-      "content-length": binaryFixture.length,
+      "content-length": content.length,
       "content-type": "application/octet-stream",
     });
-    return response.end(binaryFixture);
+    return response.end(content);
   }
   if (url.pathname.startsWith("/__failure/")) {
     const status = Number(url.pathname.slice("/__failure/".length));
@@ -329,6 +341,18 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/dataset-failure") && request.method === "DELETE") {
     getScenario(subject).datasetFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/dataset-content-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![429, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-dataset-content-failure", status });
+    }
+    getScenario(subject).datasetContentFailure = status as 429 | 503;
+    return json(response, 200, { datasetContentFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/dataset-content-failure") && request.method === "DELETE") {
+    getScenario(subject).datasetContentFailure = undefined;
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/product-failure") && request.method === "DELETE") {

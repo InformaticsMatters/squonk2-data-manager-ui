@@ -8,6 +8,7 @@ export type RequestRecord = {
 };
 
 export type ScenarioState = {
+  datasetContentFailure?: 429 | 503;
   datasetFailure?: 429 | 503;
   fixtures: ReturnType<typeof createScenarioFixtures>;
   pollingIndex: number;

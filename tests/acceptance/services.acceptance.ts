@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { binaryFixture, fixtureIds } from "./services/fixtures";
+import { datasetContentFixtures, fixtureIds } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
 
 const tokenFor = (subject: string) =>
@@ -45,7 +45,7 @@ test("fixture capabilities are deterministic and isolated by identity", async ({
     `${acceptanceUrls.dataManager}/dataset/${fixtureIds.dataset}/1`,
     { headers },
   );
-  expect(await binary.body()).toEqual(binaryFixture);
+  expect(await binary.body()).toEqual(datasetContentFixtures[1]);
 
   const upload = await request.post(`${acceptanceUrls.dataManager}/dataset`, {
     headers,

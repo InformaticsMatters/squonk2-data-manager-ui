@@ -22,7 +22,6 @@ export const FileTypeFilter = ({ fileType, setFileType }: FileTypeFilterProps) =
   const { data, error, isError, isLoading } = useGetFileTypes();
 
   const fileTypes = data?.types ?? [];
-  const selectedFileType = fileTypes.find(({ mime }) => mime === fileType?.mime) ?? fileType;
 
   return (
     <AutocompleteFilter
@@ -31,9 +30,10 @@ export const FileTypeFilter = ({ fileType, setFileType }: FileTypeFilterProps) =
       id="datasets-file-type-filter"
       isError={isError}
       isLoading={isLoading}
+      isOptionEqualToValue={(option, value) => option.mime === value.mime}
       label="Filter by file type"
       options={fileTypes}
-      value={selectedFileType}
+      value={fileType}
       onChange={setFileType}
     />
   );

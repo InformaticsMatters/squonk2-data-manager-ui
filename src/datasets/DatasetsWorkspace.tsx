@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 
-import { Alert, Button, Container, Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
-import { CenterLoader } from "../components/CenterLoader";
 import { DatasetsTable } from "../features/DatasetsTable";
 import { DatasetDetails } from "../features/DatasetsTable/DatasetDetails";
 import Layout from "../layouts/Layout";
+import { DatasetResolutionBoundary } from "./DatasetResolutionBoundary";
 import { datasetLinks, datasetListState, type DatasetRoute } from "./routes";
 import { useDatasetVersionResolution } from "./useDatasetVersionResolution";
 
@@ -31,44 +31,30 @@ const DatasetDetail = ({ route }: { route: Exclude<DatasetRoute, { kind: "index"
     }
   }, [canonicalHref, router]);
 
-  if (error) {
-    return (
-      <Alert
-        action={
-          <Button color="inherit" size="small" onClick={() => void refetch()}>
-            Retry
-          </Button>
-        }
-        severity="error"
-        sx={{ position: "fixed", inset: 16, zIndex: (theme) => theme.zIndex.modal + 1 }}
-      >
-        Dataset data could not be loaded. Retry this dataset without changing the requested version.
-      </Alert>
-    );
-  }
-  if (isLoading || canonicalHref) {
-    return <CenterLoader />;
-  }
-  if (!resolution || resolution.kind === "dataset-not-found") {
-    return <NextError statusCode={404} title="Dataset not found" />;
-  }
-  if (resolution.kind === "version-not-found") {
-    return <NextError statusCode={404} title="Dataset version not found" />;
-  }
-
-  const { dataset, version } = resolution;
   return (
-    <DatasetDetails
-      dataset={dataset}
-      datasetName={version.file_name}
-      version={version}
-      onClose={() => void router.replace(datasetLinks.index(state) as never)}
-      onVersionChange={(nextVersion) =>
-        void router.push(
-          datasetLinks.version(dataset.dataset_id, nextVersion.version, state) as never,
-        )
-      }
-    />
+    <DatasetResolutionBoundary
+      error={error}
+      errorMessage="Dataset data could not be loaded. Retry this dataset without changing the requested version."
+      errorSx={{ position: "fixed", inset: 16, zIndex: (theme) => theme.zIndex.modal + 1 }}
+      isLoading={isLoading}
+      isPending={!!canonicalHref}
+      resolution={resolution}
+      onRetry={() => void refetch()}
+    >
+      {({ dataset, version }) => (
+        <DatasetDetails
+          dataset={dataset}
+          datasetName={version.file_name}
+          version={version}
+          onClose={() => void router.replace(datasetLinks.index(state) as never)}
+          onVersionChange={(nextVersion) =>
+            void router.push(
+              datasetLinks.version(dataset.dataset_id, nextVersion.version, state) as never,
+            )
+          }
+        />
+      )}
+    </DatasetResolutionBoundary>
   );
 };
 

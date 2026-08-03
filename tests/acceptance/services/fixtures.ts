@@ -22,6 +22,7 @@ const created = "2026-01-02T03:04:05Z";
 
 export const fixtureIds = {
   dataset: "dataset-11111111-1111-1111-1111-111111111111",
+  missingDataset: "dataset-eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
   otherDataset: "dataset-cccccccc-cccc-4ccc-8ccc-cccccccccccc",
   versionlessDataset: "dataset-dddddddd-dddd-4ddd-8ddd-dddddddddddd",
   organisation: "org-22222222-2222-2222-2222-222222222222",
@@ -36,7 +37,10 @@ export const fixtureIds = {
   otherUnit: "unit-bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
 } as const;
 
-export const binaryFixture = gzipSync(Buffer.from("acceptance dataset\n"));
+export const datasetContentFixtures = {
+  1: gzipSync(Buffer.from("acceptance dataset version 1\n")),
+  2: gzipSync(Buffer.from("acceptance dataset version 2\n")),
+} as const;
 
 export const scenarioProfiles = ["default", "empty-products", "read-only"] as const;
 export type ScenarioProfile = (typeof scenarioProfiles)[number];
@@ -126,7 +130,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
               processing_stage: "DONE",
               projects: [],
               published: "2026-01-03T03:04:05Z",
-              size: binaryFixture.length,
+              size: datasetContentFixtures[2].length,
               source_ref: "acceptance-dataset-v2.sdf",
               type: "chemical/x-mdl-sdfile",
               version: 2,
@@ -138,7 +142,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
               processing_stage: "DONE",
               projects: [fixtureIds.project],
               published: created,
-              size: binaryFixture.length,
+              size: datasetContentFixtures[1].length,
               source_ref: "acceptance-dataset-v1.sdf",
               type: "chemical/x-mdl-sdfile",
               version: 1,
@@ -165,6 +169,26 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         { dataset_id: fixtureIds.versionlessDataset, editors: [subject], versions: [] },
       ],
     }),
+    datasetSchemas: {
+      1: {
+        description: "Version one schema",
+        fields: {
+          version_one_field: { description: "Only present in version one", type: "string" },
+        },
+        required: ["version_one_field"],
+        title: "Version one",
+        type: "object",
+      },
+      2: {
+        description: "Version two schema",
+        fields: {
+          version_two_field: { description: "Only present in version two", type: "string" },
+        },
+        required: ["version_two_field"],
+        title: "Version two",
+        type: "object",
+      },
+    },
     dataManagerVersion: AppApiVersionGetResponse.parse({ version: "6.7.0-acceptance" }),
     eventStream: AppApiEventStreamGetEventStreamVersionResponse.parse({
       name: "deterministic-fixture",

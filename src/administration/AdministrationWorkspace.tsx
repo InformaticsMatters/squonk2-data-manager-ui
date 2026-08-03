@@ -28,6 +28,7 @@ import {
   type ProductId,
   type UnitId,
 } from "../routing/identifiers";
+import { withBasePath } from "../utils/app/basePath";
 import { AdministrationFrame } from "./AdministrationShell";
 import { administrationLinks, type AdministrationRoute } from "./routes";
 
@@ -39,6 +40,11 @@ type AdministrationResourceRoute = Exclude<
   | { kind: "subscriptions" }
   | { kind: "usage-inventory" }
 >;
+type ProductResourceRoute = Extract<
+  AdministrationResourceRoute,
+  { collection: "products" } | { kind: "subscription" }
+>;
+type AccessResourceRoute = Exclude<AdministrationResourceRoute, ProductResourceRoute>;
 
 const taskTitles = {
   charges: "Charges",
@@ -67,7 +73,7 @@ const ResourceLink = ({
   type: string;
 }) => (
   <Card variant="outlined">
-    <CardActionArea href={href}>
+    <CardActionArea href={withBasePath(href)}>
       <CardContent>
         <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 0.5 }}>
           <Typography component="h3" variant="h6">
@@ -290,61 +296,26 @@ const UsageInventoryIndex = () => {
   );
 };
 
-const ResourceDetails = ({ route }: { route: AdministrationResourceRoute }) => {
-  const { organisations, units } = useAccessIndex();
-  const { data: productData } = useGetProductsSuspense();
-  let name: string | undefined;
-  let id: string;
-  let ancestry: string | undefined;
-  let type: string;
-
-  if (route.kind === "subscription") {
-    const subscription = productData.products.find(
-      (candidate) => candidate.product.id === route.productId,
-    );
-    id = route.productId;
-    name = subscription ? (subscription.product.name ?? "Subscription") : undefined;
-    ancestry = subscription
-      ? `${subscription.organisation.name} / ${subscription.unit.name}`
-      : undefined;
-    type = "Subscription";
-  } else {
-    id = route.resourceId;
-    if (route.collection === "organisations") {
-      const organisation = organisations.find((candidate) => candidate.id === route.resourceId);
-      name = organisation?.name;
-      type = "Organisation";
-    } else if (route.collection === "units") {
-      const match = units.find(({ unit }) => unit.id === route.resourceId);
-      name = match?.unit.name;
-      ancestry = match?.organisation.name;
-      type = "Unit";
-    } else {
-      const subscription = productData.products.find(
-        (candidate) => candidate.product.id === route.resourceId,
-      );
-      name = subscription?.product.name;
-      ancestry = subscription
-        ? `${subscription.organisation.name} / ${subscription.unit.name}`
-        : undefined;
-      type = "Subscription";
-    }
-  }
-
+const ResourceDetailsView = ({
+  ancestry,
+  id,
+  name,
+  readOnly,
+  task,
+  type,
+}: {
+  ancestry?: string;
+  id: string;
+  name?: string;
+  readOnly: boolean;
+  task: string;
+  type: string;
+}) => {
   if (!name) {
     return (
       <Alert severity="warning">This resource is unavailable or you no longer have access.</Alert>
     );
   }
-
-  const task =
-    route.kind === "subscription"
-      ? "Subscriptions"
-      : route.kind === "charge-resource"
-        ? "Charges"
-        : route.kind === "usage-inventory-resource"
-          ? "Usage & inventory"
-          : "Organisation & access";
 
   return (
     <>
@@ -360,7 +331,7 @@ const ResourceDetails = ({ route }: { route: AdministrationResourceRoute }) => {
       <Typography component="code" sx={{ overflowWrap: "anywhere" }}>
         {id}
       </Typography>
-      {(route.kind === "charge-resource" || route.kind === "usage-inventory-resource") && (
+      {!!readOnly && (
         <Alert severity="info" sx={{ mt: 2 }}>
           This view is read-only. Use Organisation & access or Project Manage for membership
           changes.
@@ -369,6 +340,66 @@ const ResourceDetails = ({ route }: { route: AdministrationResourceRoute }) => {
     </>
   );
 };
+
+const AccessResourceDetails = ({ route }: { route: AccessResourceRoute }) => {
+  const { organisations, units } = useAccessIndex();
+  const task =
+    route.kind === "charge-resource"
+      ? "Charges"
+      : route.kind === "usage-inventory-resource"
+        ? "Usage & inventory"
+        : "Organisation & access";
+
+  if (route.collection === "organisations") {
+    const organisation = organisations.find((candidate) => candidate.id === route.resourceId);
+    return (
+      <ResourceDetailsView
+        id={route.resourceId}
+        name={organisation?.name}
+        readOnly={route.kind !== "organisation-access-resource"}
+        task={task}
+        type="Organisation"
+      />
+    );
+  }
+
+  const match = units.find(({ unit }) => unit.id === route.resourceId);
+  return (
+    <ResourceDetailsView
+      ancestry={match?.organisation.name}
+      id={route.resourceId}
+      name={match?.unit.name}
+      readOnly={route.kind !== "organisation-access-resource"}
+      task={task}
+      type="Unit"
+    />
+  );
+};
+
+const ProductResourceDetails = ({ route }: { route: ProductResourceRoute }) => {
+  const { data } = useGetProductsSuspense();
+  const id = route.kind === "subscription" ? route.productId : route.resourceId;
+  const subscription = data.products.find((candidate) => candidate.product.id === id);
+  return (
+    <ResourceDetailsView
+      ancestry={
+        subscription ? `${subscription.organisation.name} / ${subscription.unit.name}` : undefined
+      }
+      id={id}
+      name={subscription ? (subscription.product.name ?? "Subscription") : undefined}
+      readOnly={route.kind === "charge-resource"}
+      task={route.kind === "subscription" ? "Subscriptions" : "Charges"}
+      type="Subscription"
+    />
+  );
+};
+
+const ResourceDetails = ({ route }: { route: AdministrationResourceRoute }) =>
+  route.kind === "subscription" || route.collection === "products" ? (
+    <ProductResourceDetails route={route} />
+  ) : (
+    <AccessResourceDetails route={route} />
+  );
 
 const AdministrationContent = () => {
   const context = useFamilyRoute();

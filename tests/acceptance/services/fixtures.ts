@@ -30,15 +30,22 @@ export const fixtureIds = {
 
 export const binaryFixture = Buffer.from([0, 1, 2, 3, 254, 255]);
 
-export const createScenarioFixtures = (subject: string) => {
+export const scenarioProfiles = ["default", "empty-products", "read-only"] as const;
+export type ScenarioProfile = (typeof scenarioProfiles)[number];
+export const isScenarioProfile = (value: string): value is ScenarioProfile =>
+  scenarioProfiles.includes(value as ScenarioProfile);
+
+export const createScenarioFixtures = (subject: string, profile: ScenarioProfile = "default") => {
   const colleague = `${subject}-observer`;
+  const readOnly = profile === "read-only";
+  const owner = readOnly ? `${subject}-owner` : subject;
   const organisation = {
-    caller_is_member: true,
+    caller_is_member: !readOnly,
     created,
     default_product_privacy: "DEFAULT_PRIVATE" as const,
     id: fixtureIds.organisation,
     name: "Acceptance Organisation",
-    owner_id: subject,
+    owner_id: owner,
     private: true,
     users: [{ id: subject }, { id: colleague }],
   };
@@ -47,6 +54,51 @@ export const createScenarioFixtures = (subject: string) => {
     id: fixtureIds.otherOrganisation,
     name: "Partner Organisation",
   };
+  const unit = {
+    billing_day: 1,
+    caller_is_member: !readOnly,
+    created,
+    default_product_privacy: "DEFAULT_PRIVATE" as const,
+    id: fixtureIds.unit,
+    name: "Acceptance Unit",
+    owner_id: owner,
+    private: true,
+    users: [{ id: subject }, { id: colleague }],
+  };
+  const products = AppApiProductGetResponse.parse({
+    count: 1,
+    products: [
+      {
+        claimable: true,
+        coins: {
+          allowance: 100,
+          allowance_multiplier: 1,
+          at_limit: false,
+          billing_day: 1,
+          billing_prediction: 0,
+          billing_prediction_storage_contribution: 0,
+          current_burn_rate: 0,
+          limit: 100,
+          overspend_multiplier: 1,
+          remaining_days: 30,
+          used: 0,
+        },
+        instance: { coins: { used: 0 } },
+        organisation,
+        product: {
+          created,
+          flavour: "BRONZE",
+          id: fixtureIds.product,
+          type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
+        },
+        storage: {
+          coins: { unit_cost: 1, used: 0 },
+          size: { current: "0 B", peak: "0 B", unit_size: "1 GB", units_used: 0 },
+        },
+        unit,
+      },
+    ],
+  });
 
   return {
     accountServerVersion: AppApiStateGetVersionResponse.parse({ version: "4.7.0-acceptance" }),
@@ -109,7 +161,10 @@ export const createScenarioFixtures = (subject: string) => {
         },
       ],
     }),
-    products: AppApiProductGetResponse.parse({ count: 0, products: [] }),
+    products:
+      profile === "empty-products"
+        ? AppApiProductGetResponse.parse({ count: 0, products: [] })
+        : products,
     taskTransitions: [
       AppApiTaskGetTaskResponse.parse({
         created,
@@ -141,27 +196,7 @@ export const createScenarioFixtures = (subject: string) => {
       count: 1,
       types: [{ file_extensions: [".sdf"], mime: "chemical/x-mdl-sdfile" }],
     }),
-    units: AppApiUnitGetResponse.parse({
-      units: [
-        {
-          count: 1,
-          organisation,
-          units: [
-            {
-              billing_day: 1,
-              caller_is_member: true,
-              created,
-              default_product_privacy: "DEFAULT_PRIVATE",
-              id: fixtureIds.unit,
-              name: "Acceptance Unit",
-              owner_id: subject,
-              private: true,
-              users: [{ id: subject }, { id: colleague }],
-            },
-          ],
-        },
-      ],
-    }),
+    units: AppApiUnitGetResponse.parse({ units: [{ count: 1, organisation, units: [unit] }] }),
     uploadResponse: AppApiDatasetPostResponse.parse({
       dataset_id: fixtureIds.dataset,
       dataset_version: 1,

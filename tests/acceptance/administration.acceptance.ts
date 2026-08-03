@@ -37,7 +37,7 @@ test("Administration entry and task navigation are canonical and stable", async 
 
   await page.getByRole("link", { name: "Subscriptions" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}administration/subscriptions`);
-  await expect(page.getByText(/No subscriptions are available/u)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Subscription Subscription" })).toBeVisible();
 
   await page.getByRole("link", { name: "Charges" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}administration/charges`);
@@ -49,6 +49,22 @@ test("Administration entry and task navigation are canonical and stable", async 
   await expect(page).toHaveURL(`${acceptanceUrls.app}administration/charges`);
   await page.goForward();
   await expect(page).toHaveURL(`${acceptanceUrls.app}administration/usage-inventory`);
+});
+
+test("Administration remains available without mutation capability", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=read-only`);
+  await login(page, "administration", testInfo);
+
+  await expect(page).toHaveURL(`${acceptanceUrls.app}administration/organisation-access`);
+  await expect(
+    page.getByRole("navigation", { name: "Administration tasks" }).getByRole("link"),
+  ).toHaveText(["Organisation & access", "Subscriptions", "Charges", "Usage & inventory"]);
+  await expect(
+    page.getByRole("link", { name: /Acceptance Organisation Organisation/u }),
+  ).toBeVisible();
 });
 
 test("direct resources retain ancestry through refresh", async ({ page }, testInfo) => {
@@ -65,6 +81,53 @@ test("direct resources retain ancestry through refresh", async ({ page }, testIn
   await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toBeVisible();
 });
 
+test("organisation resources do not depend on product access", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/product-failure`);
+  await login(
+    page,
+    `administration/organisation-access/organisations/${fixtureIds.organisation}`,
+    testInfo,
+  );
+
+  await expect(page.getByRole("heading", { name: "Acceptance Organisation" })).toBeVisible();
+  await expect(page.getByText(fixtureIds.organisation, { exact: true })).toBeVisible();
+});
+
+test("unnamed products retain canonical subscription and charge links", async ({
+  page,
+}, testInfo) => {
+  await login(page, "administration/subscriptions", testInfo);
+
+  await page.getByRole("link", { name: "Subscription Subscription" }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/subscriptions/${fixtureIds.product}`,
+  );
+  await expect(page.getByRole("heading", { name: "Subscription", level: 3 })).toBeVisible();
+  await expect(page.getByText(fixtureIds.product, { exact: true })).toBeVisible();
+
+  await page.goto(`${acceptanceUrls.app}administration/charges`);
+  await page.getByRole("link", { name: "Subscription Subscription ledger" }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/charges/products/${fixtureIds.product}`,
+  );
+  await expect(page.getByRole("heading", { name: "Subscription", level: 3 })).toBeVisible();
+  await expect(page.getByText(fixtureIds.product, { exact: true })).toBeVisible();
+});
+
+test("empty subscriptions explain how to obtain access", async ({ page, request }, testInfo) => {
+  await request.put(
+    `${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=empty-products`,
+  );
+  await login(page, "administration/subscriptions", testInfo);
+
+  await expect(page.getByText(/No subscriptions are available/u)).toBeVisible();
+  await expect(page.getByText(/Contact an organisation owner/u)).toBeVisible();
+});
+
 test("malformed resources retain their Administration task", async ({ page }, testInfo) => {
   await login(page, "administration/charges/units/not-a-unit", testInfo);
 
@@ -77,7 +140,11 @@ test("malformed resources retain their Administration task", async ({ page }, te
 });
 
 test("missing opaque resources do not render as real subscriptions", async ({ page }, testInfo) => {
-  await login(page, `administration/subscriptions/${fixtureIds.product}`, testInfo);
+  await login(
+    page,
+    "administration/subscriptions/product-99999999-9999-9999-9999-999999999999",
+    testInfo,
+  );
 
   await expect(page.getByRole("navigation", { name: "Administration tasks" })).toBeVisible();
   await expect(
@@ -101,5 +168,5 @@ test("recoverable failures retain the task and retry in place", async ({
 
   await request.delete(`${acceptanceUrls.control}/scenario/${subject}/product-failure`);
   await page.getByRole("button", { name: "Retry" }).click();
-  await expect(page.getByText(/No subscriptions are available/u)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Subscription Subscription" })).toBeVisible();
 });

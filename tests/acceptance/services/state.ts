@@ -1,4 +1,4 @@
-import { createScenarioFixtures } from "./fixtures";
+import { createScenarioFixtures, type ScenarioProfile } from "./fixtures";
 
 export type RequestRecord = {
   authorization: string | undefined;
@@ -17,9 +17,9 @@ export type ScenarioState = {
 
 const scenarios = new Map<string, ScenarioState>();
 
-export const resetScenario = (subject: string) => {
+export const resetScenario = (subject: string, profile: ScenarioProfile = "default") => {
   const state: ScenarioState = {
-    fixtures: createScenarioFixtures(subject),
+    fixtures: createScenarioFixtures(subject, profile),
     pollingIndex: 0,
     productFailure: false,
     requests: [],

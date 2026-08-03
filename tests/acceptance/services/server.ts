@@ -2,7 +2,7 @@ import { createHash, createPrivateKey, generateKeyPairSync, randomUUID, sign } f
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 
 import { acceptanceEnvironment, acceptanceUrls } from "../environment";
-import { binaryFixture, fixtureIds } from "./fixtures";
+import { binaryFixture, fixtureIds, isScenarioProfile } from "./fixtures";
 import { getScenario, type RequestRecord, resetScenario } from "./state";
 
 const issuer = acceptanceEnvironment.KEYCLOAK_URL;
@@ -280,8 +280,12 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
     return json(response, 200, { ready: true });
   }
   if (url.pathname.startsWith("/scenario/") && request.method === "PUT") {
-    resetScenario(subject);
-    return json(response, 200, { subject });
+    const profile = url.searchParams.get("profile") ?? "default";
+    if (!isScenarioProfile(profile)) {
+      return json(response, 400, { error: "unknown-scenario-profile", profile });
+    }
+    resetScenario(subject, profile);
+    return json(response, 200, { profile, subject });
   }
   if (url.pathname.startsWith("/scenario/") && request.method === "GET") {
     const state = getScenario(subject);

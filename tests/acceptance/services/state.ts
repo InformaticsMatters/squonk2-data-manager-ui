@@ -11,6 +11,7 @@ export type ScenarioState = {
   fixtures: ReturnType<typeof createScenarioFixtures>;
   pollingIndex: number;
   productFailure: boolean;
+  projectFailure?: number;
   requests: RequestRecord[];
   upload?: { body: Buffer; contentType: string };
 };

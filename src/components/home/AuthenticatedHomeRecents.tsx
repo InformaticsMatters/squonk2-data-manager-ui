@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { useGetOrganisations } from "@/api/account-server/organisation";
+import { useGetUnits } from "@/api/account-server/unit";
 import { useGetProjects } from "@/api/data-manager/project";
 
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
@@ -13,13 +15,21 @@ import { projectLinks } from "../../projects/routes";
 export const AuthenticatedHomeRecents = () => {
   const { data: session } = authClient.useSession();
   const { data } = useGetProjects(undefined, { query: { enabled: !!session } });
+  const { data: organisations } = useGetOrganisations(undefined, { query: { enabled: !!session } });
+  const { data: units } = useGetUnits(undefined, { query: { enabled: !!session } });
   const [recentIds, setRecentIds] = useState<string[]>([]);
 
-  useEffect(() => setRecentIds(readRecentProjectIds(localStorage)), []);
+  useEffect(() => setRecentIds(readRecentProjectIds(localStorage)), [data, session?.user.id]);
 
   const projects = recentIds
     .map((id) => data?.projects.find((project) => project.project_id === id))
     .filter((project) => project !== undefined);
+  const organisationNames = new Map(
+    organisations?.organisations.map((organisation) => [organisation.id, organisation.name]),
+  );
+  const unitNames = new Map(
+    units?.units.flatMap((group) => group.units.map((unit) => [unit.id, unit.name] as const)),
+  );
 
   if (!session || projects.length === 0) {
     return null;
@@ -37,7 +47,12 @@ export const AuthenticatedHomeRecents = () => {
         {projects.map((project) => (
           <Paper key={project.project_id} sx={{ flex: 1, p: 2 }} variant="outlined">
             <Typography sx={{ fontWeight: 800 }}>{project.name}</Typography>
-            <ProjectIdentity organisationId={project.organisation_id} unitId={project.unit_id} />
+            <ProjectIdentity
+              organisationLabel={
+                organisationNames.get(project.organisation_id ?? "") ?? project.organisation_id
+              }
+              unitLabel={unitNames.get(project.unit_id ?? "") ?? project.unit_id}
+            />
             <Button component={Link} href={projectLinks.files(project.project_id)} sx={{ mt: 1 }}>
               Open files
             </Button>

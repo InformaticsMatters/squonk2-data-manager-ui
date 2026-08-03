@@ -30,3 +30,11 @@ export const recordRecentProject = (
   );
   storage.setItem(RECENT_PROJECTS_STORAGE_KEY, JSON.stringify(ids));
 };
+
+export const removeRecentProject = (
+  storage: Pick<Storage, "getItem" | "setItem">,
+  projectId: string,
+) => {
+  const ids = readRecentProjectIds(storage).filter((id) => id !== projectId);
+  storage.setItem(RECENT_PROJECTS_STORAGE_KEY, JSON.stringify(ids));
+};

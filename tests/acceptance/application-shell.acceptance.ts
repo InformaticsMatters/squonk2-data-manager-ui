@@ -31,6 +31,24 @@ const login = async (page: Page, path: string, testInfo: TestInfo) => {
   await page.getByRole("button", { name: "Sign in" }).click();
 };
 
+const observeProjectIdentityMismatch = async (page: Page, storageKey: string) => {
+  await page.evaluate((key) => {
+    sessionStorage.removeItem(key);
+    const observer = new MutationObserver(() => {
+      const filesHeading = [...document.querySelectorAll("h1, h2")].some(
+        (heading) => heading.textContent === "Files",
+      );
+      const partnerIdentity = [...document.querySelectorAll("button")].some((button) =>
+        button.textContent.includes("Partner Organisation"),
+      );
+      if (filesHeading && partnerIdentity) {
+        sessionStorage.setItem(key, "true");
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }, storageKey);
+};
+
 test("public Home and Documentation retain public navigation", async ({ page }) => {
   await page.goto(".");
   await expect(page.getByRole("navigation", { name: "Main" })).toContainText("Documentation");
@@ -96,21 +114,7 @@ test("organisation change reaches Home before persisting the new identity", asyn
   await expect(page.getByText("Acceptance Organisation", { exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: "Change organisation" }).click();
-  await page.evaluate(() => {
-    sessionStorage.removeItem("organisation-project-mismatch");
-    const observer = new MutationObserver(() => {
-      const filesHeading = [...document.querySelectorAll("h1, h2")].some(
-        (heading) => heading.textContent === "Files",
-      );
-      const partnerIdentity = [...document.querySelectorAll("button")].some((button) =>
-        button.textContent.includes("Partner Organisation"),
-      );
-      if (filesHeading && partnerIdentity) {
-        sessionStorage.setItem("organisation-project-mismatch", "true");
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-  });
+  await observeProjectIdentityMismatch(page, "organisation-project-mismatch");
   await page.getByRole("menuitem", { name: /Partner Organisation/u }).click();
 
   await expect(page).toHaveURL(homeUrl);
@@ -128,10 +132,16 @@ test("organisation change reaches Home before persisting the new identity", asyn
   await page.reload();
   await expect(page.getByText("Partner Organisation", { exact: true })).toBeVisible();
 
+  await observeProjectIdentityMismatch(page, "organisation-project-adoption-mismatch");
   await page.getByRole("link", { name: "Open files" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}projects/${fixtureIds.project}/files`);
   await expect(page.getByText("Acceptance Organisation", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(() => sessionStorage.getItem("organisation-project-adoption-mismatch")),
+    )
+    .toBeNull();
 });
 
 test("narrow project layout retains organisation and project navigation cues", async ({

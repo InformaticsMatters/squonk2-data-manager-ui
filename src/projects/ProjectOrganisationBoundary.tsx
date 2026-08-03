@@ -1,35 +1,97 @@
 import { type ReactNode, useEffect } from "react";
 
-import { useGetOrganisation } from "@/api/account-server/organisation";
+import { useGetProductSuspense } from "@/api/account-server/product";
+import { type ProjectDetail } from "@/api/data-manager";
+import { useGetProjectSuspense } from "@/api/data-manager/project";
+
+import { ErrorBoundary } from "@sentry/nextjs";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
 
 import { CenterLoader } from "../components/CenterLoader";
 import { useSelectedOrganisation } from "../state/organisationSelection";
+import { resolveProjectAncestry } from "./projectAncestry";
 import { recordRecentProject } from "./recentProjects";
-import { useRouteProject } from "./useRouteProject";
+import { RouteProjectProvider, useRouteProjectId } from "./useRouteProject";
 
-export const ProjectOrganisationBoundary = ({ children }: { children: ReactNode }) => {
-  const { project, projectId } = useRouteProject();
+const ProjectFailure = dynamic(
+  () => import("./ProjectFailure").then((module) => module.ProjectFailure),
+  { ssr: false },
+);
+
+type LinkedProject = ProjectDetail & { product_id: string };
+
+const LinkedProductBoundary = ({
+  children,
+  project,
+}: {
+  children: ReactNode;
+  project: LinkedProject;
+}) => {
+  const productQuery = useGetProductSuspense(project.product_id, { query: { retry: false } });
+  if (productQuery.error) {
+    throw productQuery.error;
+  }
+  const workspace = { project, ...resolveProjectAncestry(project, productQuery.data) };
   const [, setOrganisation, organisationId] = useSelectedOrganisation();
-  const owningOrganisationId = project?.organisation_id;
-  const { data: owningOrganisation } = useGetOrganisation(owningOrganisationId ?? "", {
-    query: { enabled: !!owningOrganisationId && owningOrganisationId !== organisationId },
-  });
 
   useEffect(() => {
-    if (projectId && project) {
-      recordRecentProject(localStorage, projectId);
+    if (workspace.organisation.id !== organisationId) {
+      setOrganisation(workspace.organisation);
     }
-  }, [project, projectId]);
+  }, [organisationId, setOrganisation, workspace.organisation]);
 
   useEffect(() => {
-    if (owningOrganisation && owningOrganisation.id !== organisationId) {
-      setOrganisation(owningOrganisation);
+    if (workspace.organisation.id === organisationId) {
+      recordRecentProject(localStorage, project.project_id);
     }
-  }, [organisationId, owningOrganisation, setOrganisation]);
+  }, [organisationId, project.project_id, workspace.organisation.id]);
 
-  if (projectId && (!project || owningOrganisationId !== organisationId)) {
+  if (workspace.organisation.id !== organisationId) {
     return <CenterLoader />;
   }
 
-  return children;
+  return <RouteProjectProvider workspace={workspace}>{children}</RouteProjectProvider>;
+};
+
+const ProjectBoundary = ({ children, projectId }: { children: ReactNode; projectId: string }) => {
+  const projectQuery = useGetProjectSuspense(projectId, { query: { retry: false } });
+  if (projectQuery.error) {
+    throw projectQuery.error;
+  }
+  if (projectQuery.data.project_id !== projectId) {
+    throw new Error(`Project response does not match URL project ${projectId}`);
+  }
+  if (!projectQuery.data.product_id) {
+    throw new Error(`Project ${projectId} does not identify a linked product`);
+  }
+  return (
+    <LinkedProductBoundary project={projectQuery.data as LinkedProject}>
+      {children}
+    </LinkedProductBoundary>
+  );
+};
+
+export const ProjectOrganisationBoundary = ({ children }: { children: ReactNode }) => {
+  const projectId = useRouteProjectId();
+
+  if (!projectId) {
+    return children;
+  }
+
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary
+          fallback={({ error, resetError }) => (
+            <ProjectFailure error={error} projectId={projectId} retry={resetError} />
+          )}
+          key={projectId}
+          onReset={reset}
+        >
+          <ProjectBoundary projectId={projectId}>{children}</ProjectBoundary>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  );
 };

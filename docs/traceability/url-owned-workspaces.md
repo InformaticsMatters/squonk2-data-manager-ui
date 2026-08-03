@@ -3,7 +3,8 @@
 This matrix records the production contracts introduced for issues
 [#1915](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1915) and
 [#1917](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1917), and
-[#1918](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1918). Later vertical
+[#1918](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1918), and
+[#1919](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1919). Later vertical
 workspace tickets extend this file with their screens, capabilities, commands, and lifecycle evidence.
 
 ## Route And Link Contracts
@@ -56,6 +57,19 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 | ADMIN-04    | Local route failure      | Malformed unit ID beneath Charges                                    | URL is not guessed or redirected; the Charges task frame retains a local not-found state                     | `tests/contracts/family-route.node.ts`; malformed-resource acceptance journey      |
 | ADMIN-05    | Recoverable read failure | Account Server product read returns `503`, then recovers             | Task frame remains visible and Retry resets the generated query without changing scope                       | `tests/acceptance/administration.acceptance.ts` recoverable-failure journey        |
 | ADMIN-06    | Read-only reports        | Charges and Usage & inventory organisation/unit resources            | Explicit canonical resource links and read-only mutation-owner guidance are presented                        | `tests/acceptance/administration.acceptance.ts`; production build                  |
+
+## Project Workspace Contracts
+
+| Contract ID | Area                        | Input or fixture                                                                   | Expected external outcome                                                                                              | Automated evidence                                                                 |
+| ----------- | --------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| PROJECT-01  | Organisation-scoped index   | Current and partner organisation projects, including a duplicate name in two units | Only current-organisation projects appear; search matches project/unit names; duplicate names expose containing units  | `tests/contracts/project-workspace.node.ts`; Project index acceptance journey      |
+| PROJECT-02  | Explicit entry              | Ordinary link for the Acceptance Project                                           | Navigation enters the selected project's canonical Files root without changing another open project                    | Project index acceptance journey; `tests/contracts/projects-routes.node.ts`        |
+| PROJECT-03  | Persistent identity         | Direct Files, Run, Results, and Manage routes                                      | Project, containing unit, owning organisation, and all four section links remain visible                               | Project index, application-shell deep-link, history, and narrow-layout journeys    |
+| PROJECT-04  | Generated ancestry          | Project with linked Product, Unit, and Organisation                                | Generated Project then Product queries resolve ancestry using their generated cache identities                         | `tests/contracts/project-workspace.node.ts`; fixture request diagnostics           |
+| PROJECT-05  | Organisation adoption       | Project owned by an organisation different from the persisted masthead identity    | Owning organisation is adopted before project content mounts                                                           | `tests/acceptance/application-shell.acceptance.ts` organisation-change journey     |
+| PROJECT-06  | Confirmed parent loss       | Project endpoint returns `403`, then `404`                                         | Both responses produce the same non-disclosing result, remove loaded project queries/recents, and never change scope   | Project parent-failure acceptance journey; recent-removal contract                 |
+| PROJECT-07  | Recoverable parent failure  | Project endpoint returns `503`, then recovers                                      | Application/project chrome and URL remain stable; Retry resets generated queries and mounts only the requested project | Project transient-recovery acceptance journey                                      |
+| PROJECT-08  | Browser history and recents | Direct project deep link, Home exit, recent link, Back, and Forward                | Recents remain links rather than scope; browser navigation restores exact canonical state                              | `tests/acceptance/application-shell.acceptance.ts` Home/history and adoption paths |
 
 ## Ownership Notes
 

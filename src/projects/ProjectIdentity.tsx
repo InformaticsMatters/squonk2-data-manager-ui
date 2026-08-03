@@ -1,12 +1,12 @@
 import { Typography } from "@mui/material";
 
 interface ProjectIdentityProps {
-  organisationId?: string;
-  unitId?: string;
+  organisationLabel?: string;
+  unitLabel?: string;
 }
 
-export const ProjectIdentity = ({ organisationId, unitId }: ProjectIdentityProps) => (
+export const ProjectIdentity = ({ organisationLabel, unitLabel }: ProjectIdentityProps) => (
   <Typography color="text.secondary" component="span" sx={{ display: "block", fontSize: 12 }}>
-    {[unitId, organisationId].filter(Boolean).join(" · ")}
+    {[unitLabel, organisationLabel].filter(Boolean).join(" · ")}
   </Typography>
 );

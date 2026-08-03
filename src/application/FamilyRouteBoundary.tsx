@@ -21,8 +21,10 @@ type FamilyRouteContextValue =
 
 const FamilyRouteContext = createContext<FamilyRouteContextValue | null>(null);
 
+export const useOptionalFamilyRoute = () => useContext(FamilyRouteContext);
+
 export const useFamilyRoute = (): FamilyRouteContextValue => {
-  const route = useContext(FamilyRouteContext);
+  const route = useOptionalFamilyRoute();
   if (!route) {
     throw new Error("Family route is unavailable");
   }

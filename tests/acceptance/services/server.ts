@@ -200,6 +200,15 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     return json(response, 200, state.fixtures.projects);
   }
   if (url.pathname === `/project/${fixtureIds.project}`) {
+    if (state.projectFailure) {
+      const body =
+        state.projectFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.projectFailure === 503
+            ? state.fixtures.failures.serverError
+            : { error: "fixture-not-found" };
+      return json(response, state.projectFailure, body);
+    }
     return json(response, 200, state.fixtures.projects.projects[0]);
   }
   if (url.pathname === "/type") {
@@ -267,6 +276,9 @@ const accountServer = createServer((request, response) => {
     }
     return json(response, 200, state.fixtures.products);
   }
+  if (url.pathname === `/product/${fixtureIds.product}`) {
+    return json(response, 200, { product: state.fixtures.products.products[0] });
+  }
   if (url.pathname === "/version") {
     return json(response, 200, state.fixtures.accountServerVersion);
   }
@@ -304,6 +316,18 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   if (url.pathname.endsWith("/product-failure") && request.method === "DELETE") {
     getScenario(subject).productFailure = false;
     return json(response, 200, { productFailure: false, subject });
+  }
+  if (url.pathname.endsWith("/project-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 404, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-project-failure", status });
+    }
+    getScenario(subject).projectFailure = status;
+    return json(response, 200, { projectFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/project-failure") && request.method === "DELETE") {
+    getScenario(subject).projectFailure = undefined;
+    return json(response, 200, { subject });
   }
   if (request.method === "POST") {
     await readBody(request);

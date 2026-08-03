@@ -24,8 +24,12 @@ export const fixtureIds = {
   otherOrganisation: "org-66666666-6666-6666-6666-666666666666",
   product: "product-77777777-7777-7777-7777-777777777777",
   project: "project-33333333-3333-3333-3333-333333333333",
+  sharedProjectOne: "project-88888888-8888-4888-8888-888888888888",
+  sharedProjectTwo: "project-99999999-9999-4999-8999-999999999999",
+  partnerProject: "project-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
   task: "task-44444444-4444-4444-4444-444444444444",
   unit: "unit-55555555-5555-5555-5555-555555555555",
+  otherUnit: "unit-bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
 } as const;
 
 export const binaryFixture = Buffer.from([0, 1, 2, 3, 254, 255]);
@@ -65,11 +69,13 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     private: true,
     users: [{ id: subject }, { id: colleague }],
   };
+  const otherUnit = { ...unit, id: fixtureIds.otherUnit, name: "Screening Unit" };
   const products = AppApiProductGetResponse.parse({
     count: 1,
     products: [
       {
         claimable: true,
+        claim: { id: fixtureIds.project, name: "Acceptance Project" },
         coins: {
           allowance: 100,
           allowance_multiplier: 1,
@@ -143,7 +149,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     }),
     otherOrganisation: AppApiOrganisationGetOrgResponse.parse(otherOrganisation),
     projects: AppApiProjectGetResponse.parse({
-      count: 1,
+      count: 4,
       projects: [
         {
           administrators: [subject],
@@ -155,7 +161,50 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
           observers: [colleague],
           organisation_id: fixtureIds.organisation,
           private: true,
+          product_id: fixtureIds.product,
           project_id: fixtureIds.project,
+          size: 0,
+          unit_id: fixtureIds.unit,
+        },
+        {
+          administrators: [subject],
+          created,
+          creator: subject,
+          editors: [subject],
+          files: [],
+          name: "Shared Project",
+          observers: [],
+          organisation_id: fixtureIds.organisation,
+          private: true,
+          project_id: fixtureIds.sharedProjectOne,
+          size: 0,
+          unit_id: fixtureIds.unit,
+        },
+        {
+          administrators: [subject],
+          created,
+          creator: subject,
+          editors: [subject],
+          files: [],
+          name: "Shared Project",
+          observers: [],
+          organisation_id: fixtureIds.organisation,
+          private: true,
+          project_id: fixtureIds.sharedProjectTwo,
+          size: 0,
+          unit_id: fixtureIds.otherUnit,
+        },
+        {
+          administrators: [subject],
+          created,
+          creator: subject,
+          editors: [subject],
+          files: [],
+          name: "Partner Project",
+          observers: [],
+          organisation_id: fixtureIds.otherOrganisation,
+          private: true,
+          project_id: fixtureIds.partnerProject,
           size: 0,
           unit_id: fixtureIds.unit,
         },
@@ -196,7 +245,9 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       count: 1,
       types: [{ file_extensions: [".sdf"], mime: "chemical/x-mdl-sdfile" }],
     }),
-    units: AppApiUnitGetResponse.parse({ units: [{ count: 1, organisation, units: [unit] }] }),
+    units: AppApiUnitGetResponse.parse({
+      units: [{ count: 2, organisation, units: [unit, otherUnit] }],
+    }),
     uploadResponse: AppApiDatasetPostResponse.parse({
       dataset_id: fixtureIds.dataset,
       dataset_version: 1,

@@ -15,7 +15,7 @@ const projectSections = [
 
 export const ProjectNavigation = () => {
   const router = useRouter();
-  const { project, projectId } = useRouteProject();
+  const { organisation, project, projectId, unit } = useRouteProject();
 
   if (!projectId) {
     return null;
@@ -27,11 +27,8 @@ export const ProjectNavigation = () => {
       sx={{ alignItems: { md: "center" }, borderBottom: 1, borderColor: "divider", px: 2 }}
     >
       <Box sx={{ minWidth: 260, py: 1 }}>
-        <Typography sx={{ fontWeight: 850 }}>{project?.name ?? "Project"}</Typography>
-        <ProjectIdentity
-          organisationId={project?.organisation_id}
-          unitId={project?.unit_id ?? projectId}
-        />
+        <Typography sx={{ fontWeight: 850 }}>{project?.name ?? "Project unavailable"}</Typography>
+        <ProjectIdentity organisationLabel={organisation?.name} unitLabel={unit?.name} />
       </Box>
       <Stack
         aria-label="Project"

@@ -261,6 +261,12 @@ const accountServer = createServer((request, response) => {
   if (url.pathname === "/unit") {
     return json(response, 200, state.fixtures.units);
   }
+  if (url.pathname === "/product") {
+    if (state.productFailure) {
+      return json(response, 503, state.fixtures.failures.serverError);
+    }
+    return json(response, 200, state.fixtures.products);
+  }
   if (url.pathname === "/version") {
     return json(response, 200, state.fixtures.accountServerVersion);
   }
@@ -269,7 +275,7 @@ const accountServer = createServer((request, response) => {
 
 const handleControl = async (request: IncomingMessage, response: ServerResponse) => {
   const url = new URL(request.url ?? "/", acceptanceUrls.control);
-  const subject = decodeURIComponent(url.pathname.split("/").at(-1) ?? "anonymous");
+  const subject = decodeURIComponent(url.pathname.split("/").filter(Boolean)[1] ?? "anonymous");
   if (url.pathname === "/health") {
     return json(response, 200, { ready: true });
   }
@@ -286,6 +292,14 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
         ? { bytes: state.upload.body.length, contentType: state.upload.contentType }
         : undefined,
     });
+  }
+  if (url.pathname.endsWith("/product-failure") && request.method === "POST") {
+    getScenario(subject).productFailure = true;
+    return json(response, 200, { productFailure: true, subject });
+  }
+  if (url.pathname.endsWith("/product-failure") && request.method === "DELETE") {
+    getScenario(subject).productFailure = false;
+    return json(response, 200, { productFailure: false, subject });
   }
   if (request.method === "POST") {
     await readBody(request);

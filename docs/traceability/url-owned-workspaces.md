@@ -2,7 +2,8 @@
 
 This matrix records the production contracts introduced for issues
 [#1915](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1915) and
-[#1917](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1917). Later vertical
+[#1917](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1917), and
+[#1918](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1918). Later vertical
 workspace tickets extend this file with their screens, capabilities, commands, and lifecycle evidence.
 
 ## Route And Link Contracts
@@ -44,6 +45,17 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 | SHELL-04    | Home exit             | Project Files route with route-owned path state                                           | Squonk logo enters neutral Home; recents remain direct links; Back/Forward restores exact canonical history                                                                                | `tests/acceptance/application-shell.acceptance.ts` Home/history journey                 |
 | SHELL-05    | Organisation identity | Explicit change from Acceptance Organisation to Partner Organisation inside a project     | Navigation reaches Home before the new identity is committed; project content is absent under the new identity                                                                             | `tests/acceptance/application-shell.acceptance.ts` organisation-change journey          |
 | SHELL-06    | Persistence           | Versioned current-organisation payload plus seeded legacy scope and unrelated preferences | Only the organisation ID is retained as domain identity and resolved through the generated organisation query; legacy project/file scope is removed without clearing unrelated preferences | `tests/contracts/application-identity.node.ts`; organisation refresh acceptance journey |
+
+## Administration Contracts
+
+| Contract ID | Area                     | Input or fixture                                                     | Expected external outcome                                                                                    | Automated evidence                                                                 |
+| ----------- | ------------------------ | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| ADMIN-01    | Entry and task frame     | Authenticated entry through `/administration`                        | Replace-canonicalises to Organisation & access and exposes all four tasks in their stable order              | `tests/acceptance/administration.acceptance.ts` entry and navigation journey       |
+| ADMIN-02    | Global resource indexing | Two accessible organisations, one grouped unit, and no subscriptions | Resources remain visible across masthead identity with ancestry in content; empty Subscriptions is explained | `tests/acceptance/administration.acceptance.ts` navigation and empty-state journey |
+| ADMIN-03    | Direct resource identity | Canonical opaque unit resource URL                                   | Unit and organisation ancestry survive direct entry and refresh                                              | `tests/acceptance/administration.acceptance.ts` direct-resource journey            |
+| ADMIN-04    | Local route failure      | Malformed unit ID beneath Charges                                    | URL is not guessed or redirected; the Charges task frame retains a local not-found state                     | `tests/contracts/family-route.node.ts`; malformed-resource acceptance journey      |
+| ADMIN-05    | Recoverable read failure | Account Server product read returns `503`, then recovers             | Task frame remains visible and Retry resets the generated query without changing scope                       | `tests/acceptance/administration.acceptance.ts` recoverable-failure journey        |
+| ADMIN-06    | Read-only reports        | Charges and Usage & inventory organisation/unit resources            | Explicit canonical resource links and read-only mutation-owner guidance are presented                        | `tests/acceptance/administration.acceptance.ts`; production build                  |
 
 ## Ownership Notes
 

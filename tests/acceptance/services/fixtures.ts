@@ -3,6 +3,7 @@ import {
   AppApiOrganisationGetOrgResponse,
   AppApiOrganisationGetResponse,
 } from "@/api/account-server/organisation/zod";
+import { AppApiProductGetResponse } from "@/api/account-server/product/zod";
 import { AppApiStateGetVersionResponse } from "@/api/account-server/state/zod";
 import { AppApiUnitGetResponse } from "@/api/account-server/unit/zod";
 import { AppApiVersionGetResponse } from "@/api/data-manager/accounting/zod";
@@ -19,8 +20,9 @@ const created = "2026-01-02T03:04:05Z";
 
 export const fixtureIds = {
   dataset: "dataset-11111111-1111-1111-1111-111111111111",
-  organisation: "organisation-22222222-2222-2222-2222-222222222222",
-  otherOrganisation: "organisation-66666666-6666-6666-6666-666666666666",
+  organisation: "org-22222222-2222-2222-2222-222222222222",
+  otherOrganisation: "org-66666666-6666-6666-6666-666666666666",
+  product: "product-77777777-7777-7777-7777-777777777777",
   project: "project-33333333-3333-3333-3333-333333333333",
   task: "task-44444444-4444-4444-4444-444444444444",
   unit: "unit-55555555-5555-5555-5555-555555555555",
@@ -107,6 +109,7 @@ export const createScenarioFixtures = (subject: string) => {
         },
       ],
     }),
+    products: AppApiProductGetResponse.parse({ count: 0, products: [] }),
     taskTransitions: [
       AppApiTaskGetTaskResponse.parse({
         created,

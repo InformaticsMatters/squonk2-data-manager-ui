@@ -15,7 +15,9 @@ import { useRouter } from "next/router";
 import { CenterLoader } from "../components/CenterLoader";
 import { type FamilyPagePolicy, type FamilyRoute, resolveFamilyRoute } from "./familyRoute";
 
-type FamilyRouteContextValue = { policy: FamilyPagePolicy; route: FamilyRoute };
+type FamilyRouteContextValue =
+  | { localNotFound: false; policy: FamilyPagePolicy; route: FamilyRoute }
+  | { localNotFound: true; policy: FamilyPagePolicy; route: null };
 
 const FamilyRouteContext = createContext<FamilyRouteContextValue | null>(null);
 
@@ -39,10 +41,15 @@ export const FamilyRouteBoundary = ({
     () => resolveFamilyRoute(policy, router.asPath, router.isReady),
     [policy, router.asPath, router.isReady],
   );
-  const routeContext = useMemo<FamilyRouteContextValue | null>(
-    () => (decision.kind === "ready" ? { policy, route: decision.route } : null),
-    [decision, policy],
-  );
+  const routeContext = useMemo<FamilyRouteContextValue | null>(() => {
+    if (decision.kind === "ready") {
+      return { localNotFound: false, policy, route: decision.route };
+    }
+    if (decision.kind === "local-not-found") {
+      return { localNotFound: true, policy, route: null };
+    }
+    return null;
+  }, [decision, policy]);
   const canonicalHref = decision.kind === "replace" ? decision.canonicalHref : null;
   const replacingHref = useRef<string | null>(null);
   const [failedHref, setFailedHref] = useState<string | null>(null);

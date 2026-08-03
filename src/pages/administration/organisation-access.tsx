@@ -1,7 +1,7 @@
+import { AdministrationWorkspace } from "../../administration/AdministrationWorkspace";
 import { pagePolicies, withPagePolicy } from "../../application/pagePolicy";
-import { WorkspacePlaceholder } from "../../components/workspaces/WorkspacePlaceholder";
 
-const OrganisationAccessPage = () => <WorkspacePlaceholder title="Organisation & access" />;
+const OrganisationAccessPage = () => <AdministrationWorkspace />;
 
 export default withPagePolicy(
   pagePolicies.administration("organisation-access"),

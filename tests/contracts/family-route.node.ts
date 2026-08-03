@@ -36,6 +36,16 @@ test.describe("family route enforcement", () => {
     ).toEqual({ kind: "not-found" });
   });
 
+  test("retains the Administration task for a malformed child route", () => {
+    expect(
+      resolveFamilyRoute(
+        pagePolicies.administration("charges"),
+        "/administration/charges/units/not-a-unit",
+        true,
+      ),
+    ).toEqual({ kind: "local-not-found", section: "charges" });
+  });
+
   test("rejects a canonical route owned by a different section", () => {
     expect(resolveFamilyRoute(pagePolicies.datasets("viewer"), "/datasets", true)).toEqual({
       kind: "not-found",

@@ -10,6 +10,7 @@ export type RequestRecord = {
 export type ScenarioState = {
   fixtures: ReturnType<typeof createScenarioFixtures>;
   pollingIndex: number;
+  productFailure: boolean;
   requests: RequestRecord[];
   upload?: { body: Buffer; contentType: string };
 };
@@ -20,6 +21,7 @@ export const resetScenario = (subject: string) => {
   const state: ScenarioState = {
     fixtures: createScenarioFixtures(subject),
     pollingIndex: 0,
+    productFailure: false,
     requests: [],
   };
   scenarios.set(subject, state);

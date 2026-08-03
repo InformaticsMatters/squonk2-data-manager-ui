@@ -13,6 +13,7 @@ export type FamilyPagePolicy = Exclude<PagePolicy, { kind: "application" | "publ
 export type FamilyRoute = AdministrationRoute | DatasetRoute | ProjectRoute;
 
 export type FamilyRouteDecision =
+  | { kind: "local-not-found"; section: AdministrationSection }
   | { kind: "not-found" }
   | { kind: "pending" }
   | { kind: "ready"; route: FamilyRoute }
@@ -82,10 +83,19 @@ export const resolveFamilyRoute = (
         parseDatasetRoute(href),
         (route) => datasetSections[route.kind] === policy.section,
       );
-    case "administration":
+    case "administration": {
+      const parsed = parseAdministrationRoute(href);
+      if (
+        parsed.kind === "not-found" &&
+        parsed.parent?.family === "administration" &&
+        parsed.parent.section === policy.section
+      ) {
+        return { kind: "local-not-found", section: policy.section };
+      }
       return decideParsedRoute(
-        parseAdministrationRoute(href),
+        parsed,
         (route) => administrationSections[route.kind] === policy.section,
       );
+    }
   }
 };

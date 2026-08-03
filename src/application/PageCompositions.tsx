@@ -22,7 +22,6 @@ const ProjectsShell = ({ children }: { children: ReactNode }) => (
 );
 const DatasetsShell = ({ children }: { children: ReactNode }) => children;
 const AdministrationShell = ({ children }: { children: ReactNode }) => children;
-
 const familyShells = {
   projects: ProjectsShell,
   datasets: DatasetsShell,

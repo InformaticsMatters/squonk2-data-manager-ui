@@ -15,9 +15,9 @@ export interface WorkingVersionSectionProps {
    */
   version: DatasetVersionSummary;
   /**
-   * Setter to set the selected version.
+   * Navigates to the selected version.
    */
-  setVersion: (version: DatasetVersionSummary) => void;
+  onVersionChange: (version: DatasetVersionSummary) => void;
 }
 
 /**
@@ -26,7 +26,7 @@ export interface WorkingVersionSectionProps {
 export const WorkingVersionSection = ({
   dataset,
   version,
-  setVersion,
+  onVersionChange,
 }: WorkingVersionSectionProps) => {
   return (
     <>
@@ -46,7 +46,7 @@ export const WorkingVersionSection = ({
             const version = dataset.versions.find(
               (version) => version.version === Number(event.target.value),
             );
-            version && setVersion(version);
+            version && onVersionChange(version);
           }}
         >
           {dataset.versions.map((version) => (

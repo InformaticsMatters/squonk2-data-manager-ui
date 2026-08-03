@@ -87,6 +87,27 @@ export const datasetLinks = {
     ),
 };
 
+export const datasetListState = (route: DatasetRoute): DatasetListState => ({
+  ...(route.search ? { search: route.search } : {}),
+  ...(route.owner ? { owner: route.owner } : {}),
+  ...(route.editor ? { editor: route.editor } : {}),
+  ...(route.mimeType ? { mimeType: route.mimeType } : {}),
+  ...(route.labels ? { labels: route.labels } : {}),
+});
+
+export const datasetRouteHref = (route: DatasetRoute, state = datasetListState(route)) => {
+  switch (route.kind) {
+    case "index":
+      return datasetLinks.index(state);
+    case "dataset":
+      return datasetLinks.dataset(route.datasetId, state);
+    case "version":
+      return datasetLinks.version(route.datasetId, route.datasetVersion, state);
+    case "viewer":
+      return datasetLinks.view(route.datasetId, route.datasetVersion, state);
+  }
+};
+
 export const parseDatasetRoute = (href: string): RouteParseResult<DatasetRoute> => {
   const location = parseRouteLocation(href);
   if (location?.segments[0] !== "datasets") {

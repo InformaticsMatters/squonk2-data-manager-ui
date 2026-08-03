@@ -33,6 +33,7 @@ export const UserFilter = ({ user, setUser, id, label }: UserFilterProps) => {
   const { data, error, isError, isLoading } = useGetUsers();
 
   const users = data?.users ?? [];
+  const selectedUser = users.find(({ username }) => username === user?.username) ?? user;
 
   if (isError) {
     return <Typography color="error">{getErrorMessage(error)}</Typography>;
@@ -47,7 +48,7 @@ export const UserFilter = ({ user, setUser, id, label }: UserFilterProps) => {
       isLoading={isLoading}
       label={label}
       options={users}
-      value={user}
+      value={selectedUser}
       onChange={setUser}
     />
   );

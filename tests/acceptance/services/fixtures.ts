@@ -16,10 +16,14 @@ import { AppApiTaskGetTaskResponse } from "@/api/data-manager/task/zod";
 import { AppApiTypeGetResponse } from "@/api/data-manager/type/zod";
 import { AppApiUserGetResponse } from "@/api/data-manager/user/zod";
 
+import { gzipSync } from "node:zlib";
+
 const created = "2026-01-02T03:04:05Z";
 
 export const fixtureIds = {
   dataset: "dataset-11111111-1111-1111-1111-111111111111",
+  otherDataset: "dataset-cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+  versionlessDataset: "dataset-dddddddd-dddd-4ddd-8ddd-dddddddddddd",
   organisation: "org-22222222-2222-2222-2222-222222222222",
   otherOrganisation: "org-66666666-6666-6666-6666-666666666666",
   product: "product-77777777-7777-7777-7777-777777777777",
@@ -32,7 +36,7 @@ export const fixtureIds = {
   otherUnit: "unit-bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
 } as const;
 
-export const binaryFixture = Buffer.from([0, 1, 2, 3, 254, 255]);
+export const binaryFixture = gzipSync(Buffer.from("acceptance dataset\n"));
 
 export const scenarioProfiles = ["default", "empty-products", "read-only"] as const;
 export type ScenarioProfile = (typeof scenarioProfiles)[number];
@@ -109,26 +113,56 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
   return {
     accountServerVersion: AppApiStateGetVersionResponse.parse({ version: "4.7.0-acceptance" }),
     dataset: AppApiDatasetGetResponse.parse({
-      count: 1,
+      count: 3,
       datasets: [
         {
           dataset_id: fixtureIds.dataset,
           editors: [subject],
           versions: [
             {
-              file_name: "acceptance-dataset.sdf",
+              file_name: "acceptance-dataset-v2.sdf",
+              labels: { scenario: ["current"] },
+              owner: subject,
+              processing_stage: "DONE",
+              projects: [],
+              published: "2026-01-03T03:04:05Z",
+              size: binaryFixture.length,
+              source_ref: "acceptance-dataset-v2.sdf",
+              type: "chemical/x-mdl-sdfile",
+              version: 2,
+            },
+            {
+              file_name: "acceptance-dataset-v1.sdf",
               labels: { scenario: ["deterministic"] },
               owner: subject,
               processing_stage: "DONE",
               projects: [fixtureIds.project],
               published: created,
               size: binaryFixture.length,
-              source_ref: "acceptance-dataset.sdf",
+              source_ref: "acceptance-dataset-v1.sdf",
               type: "chemical/x-mdl-sdfile",
               version: 1,
             },
           ],
         },
+        {
+          dataset_id: fixtureIds.otherDataset,
+          editors: [colleague],
+          versions: [
+            {
+              file_name: "globally-shared.csv",
+              owner: colleague,
+              processing_stage: "DONE",
+              projects: [],
+              published: created,
+              size: 12,
+              source_ref: "globally-shared.csv",
+              type: "text/csv",
+              version: 1,
+            },
+          ],
+        },
+        { dataset_id: fixtureIds.versionlessDataset, editors: [subject], versions: [] },
       ],
     }),
     dataManagerVersion: AppApiVersionGetResponse.parse({ version: "6.7.0-acceptance" }),

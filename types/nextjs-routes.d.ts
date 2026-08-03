@@ -29,6 +29,9 @@ declare module "nextjs-routes" {
     | StaticRoute<"/configuration">
     | DynamicRoute<"/dataset/[datasetId]/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>
     | StaticRoute<"/datasets">
+    | DynamicRoute<"/datasets/[datasetId]", { "datasetId": string }>
+    | DynamicRoute<"/datasets/[datasetId]/versions/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>
+    | DynamicRoute<"/datasets/[datasetId]/versions/[datasetVersion]/view", { "datasetId": string; "datasetVersion": string }>
     | StaticRoute<"/docs/concepts">
     | StaticRoute<"/docs/developer">
     | StaticRoute<"/docs/guided-tour">

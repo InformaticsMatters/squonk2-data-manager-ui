@@ -4,7 +4,8 @@ This matrix records the production contracts introduced for issues
 [#1915](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1915) and
 [#1917](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1917), and
 [#1918](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1918), and
-[#1919](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1919). Later vertical
+[#1919](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1919), and
+[#1920](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1920). Later vertical
 workspace tickets extend this file with their screens, capabilities, commands, and lifecycle evidence.
 
 ## Route And Link Contracts
@@ -70,6 +71,18 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 | PROJECT-06  | Confirmed parent loss       | Project endpoint returns `403`, then `404`                                         | Both responses produce the same non-disclosing result, remove loaded project queries/recents, and never change scope   | Project parent-failure acceptance journey; recent-removal contract                 |
 | PROJECT-07  | Recoverable parent failure  | Project endpoint returns `503`, then recovers                                      | Application/project chrome and URL remain stable; Retry resets generated queries and mounts only the requested project | Project transient-recovery acceptance journey                                      |
 | PROJECT-08  | Browser history and recents | Direct project deep link, Home exit, recent link, Back, and Forward                | Recents remain links rather than scope; browser navigation restores exact canonical state                              | `tests/acceptance/application-shell.acceptance.ts` Home/history and adoption paths |
+
+## Dataset Workspace Contracts
+
+| Contract ID | Area                        | Input or fixture                                                            | Expected external outcome                                                                                      | Automated evidence                                                               |
+| ----------- | --------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| DATASET-01  | Global collection           | Caller-visible datasets owned by the caller and another user                | Both datasets are listed without unit scope; only approved route filters become generated collection arguments | Dataset list acceptance journey; `tests/contracts/dataset-query.node.ts`         |
+| DATASET-02  | Convenience resolution      | Dataset-only route with versions returned out of order                      | Highest available version is selected and replace-canonicalised to its explicit route                          | Dataset direct-route acceptance journey; dataset-resolution matrix               |
+| DATASET-03  | Exact version identity      | Explicit version route and generated detail/viewer links                    | Metadata, actions, download, schema, viewer, and working-version control all receive the requested version     | Dataset list/history and viewer acceptance journeys; dataset-resolution matrix   |
+| DATASET-04  | Route-driven modal history  | Open, switch version, Close, Back, Forward, refresh, and direct entry       | Full-screen detail remains over the list while URL and browser history restore exact list/version state        | `tests/acceptance/datasets.acceptance.ts` list/history and direct-route journeys |
+| DATASET-05  | Deterministic missing state | Missing dataset, missing version, and malformed version identity            | Dataset/version absence is distinguished after lookup; malformed identity is ordinary not-found                | Dataset-resolution matrix; dataset direct-route acceptance journey               |
+| DATASET-06  | Recoverable collection read | Generated dataset collection returns `503`, then recovers                   | Retry retains the requested dataset/version URL and opens only that version                                    | Dataset recoverable-failure acceptance journey                                   |
+| DATASET-07  | Query ownership             | Search, owner, editor, MIME type, repeated labels, and an unknown query key | Owned state survives detail links; unknown state is removed and cannot affect generated request arguments      | Dataset route/query matrices; dataset list acceptance journey                    |
 
 ## Ownership Notes
 

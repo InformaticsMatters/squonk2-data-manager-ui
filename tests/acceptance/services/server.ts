@@ -187,6 +187,9 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   const url = new URL(request.url ?? "/", acceptanceEnvironment.DATA_MANAGER_API_SERVER);
   const { state } = record(request, url.pathname);
   if (url.pathname === "/dataset" && request.method === "GET") {
+    if (state.datasetFailure) {
+      return json(response, state.datasetFailure, state.fixtures.failures.serverError);
+    }
     return json(response, 200, state.fixtures.dataset);
   }
   if (url.pathname === "/dataset" && request.method === "POST") {
@@ -225,7 +228,10 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     state.pollingIndex += 1;
     return json(response, 200, state.fixtures.taskTransitions[index]);
   }
-  if (url.pathname === `/dataset/${fixtureIds.dataset}/1`) {
+  if (
+    url.pathname === `/dataset/${fixtureIds.dataset}/1` ||
+    url.pathname === `/dataset/${fixtureIds.dataset}/2`
+  ) {
     response.writeHead(200, {
       "content-length": binaryFixture.length,
       "content-type": "application/octet-stream",
@@ -312,6 +318,18 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   if (url.pathname.endsWith("/product-failure") && request.method === "POST") {
     getScenario(subject).productFailure = true;
     return json(response, 200, { productFailure: true, subject });
+  }
+  if (url.pathname.endsWith("/dataset-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![429, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-dataset-failure", status });
+    }
+    getScenario(subject).datasetFailure = status as 429 | 503;
+    return json(response, 200, { datasetFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/dataset-failure") && request.method === "DELETE") {
+    getScenario(subject).datasetFailure = undefined;
+    return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/product-failure") && request.method === "DELETE") {
     getScenario(subject).productFailure = false;

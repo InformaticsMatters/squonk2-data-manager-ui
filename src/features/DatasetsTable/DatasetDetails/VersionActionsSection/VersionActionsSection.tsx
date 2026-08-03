@@ -16,9 +16,9 @@ export interface VersionActionsSectionProps {
    */
   version: DatasetVersionSummary;
   /**
-   * Setter to set the selected version.
+   * Navigates to another available version.
    */
-  setVersion: (version: DatasetVersionSummary) => void;
+  onVersionChange: (version: DatasetVersionSummary) => void;
   /**
    * Whether the dataset version is editable.
    */
@@ -31,7 +31,7 @@ export interface VersionActionsSectionProps {
 export const VersionActionsSection = ({
   dataset,
   version,
-  setVersion,
+  onVersionChange,
   editable,
 }: VersionActionsSectionProps) => {
   return (
@@ -53,7 +53,7 @@ export const VersionActionsSection = ({
                 (v) => v.version !== version.version,
               );
               if (nextSelectableVersions.length > 0) {
-                setVersion(nextSelectableVersions[0]);
+                onVersionChange(nextSelectableVersions[0]);
               }
             }}
           />

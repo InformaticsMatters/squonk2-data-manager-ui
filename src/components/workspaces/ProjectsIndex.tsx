@@ -3,6 +3,7 @@ import { useGetProjects } from "@/api/data-manager/project";
 import { Button, Container, List, ListItemButton, ListItemText, Typography } from "@mui/material";
 
 import Layout from "../../layouts/Layout";
+import { ProjectIdentity } from "../../projects/ProjectIdentity";
 import { projectLinks } from "../../projects/routes";
 
 export const ProjectsIndex = () => {
@@ -26,7 +27,12 @@ export const ProjectsIndex = () => {
             >
               <ListItemText
                 primary={project.name}
-                secondary={`${project.unit_id} · ${project.organisation_id}`}
+                secondary={
+                  <ProjectIdentity
+                    organisationId={project.organisation_id}
+                    unitId={project.unit_id}
+                  />
+                }
               />
             </ListItemButton>
           ))}

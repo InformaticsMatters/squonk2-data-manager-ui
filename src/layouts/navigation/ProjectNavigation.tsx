@@ -1,9 +1,9 @@
-import { useGetProject } from "@/api/data-manager/project";
-
 import { Box, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
+import { ProjectIdentity } from "../../projects/ProjectIdentity";
 import { projectLinks } from "../../projects/routes";
+import { useRouteProject } from "../../projects/useRouteProject";
 import { NavigationTab } from "./NavigationTab";
 
 const projectSections = [
@@ -15,8 +15,7 @@ const projectSections = [
 
 export const ProjectNavigation = () => {
   const router = useRouter();
-  const projectId = typeof router.query.projectId === "string" ? router.query.projectId : undefined;
-  const { data: project } = useGetProject(projectId ?? "", { query: { enabled: !!projectId } });
+  const { project, projectId } = useRouteProject();
 
   if (!projectId) {
     return null;
@@ -29,9 +28,10 @@ export const ProjectNavigation = () => {
     >
       <Box sx={{ minWidth: 260, py: 1 }}>
         <Typography sx={{ fontWeight: 850 }}>{project?.name ?? "Project"}</Typography>
-        <Typography color="text.secondary" sx={{ fontSize: 12 }}>
-          {project?.unit_id ?? projectId} · {project?.organisation_id ?? ""}
-        </Typography>
+        <ProjectIdentity
+          organisationId={project?.organisation_id}
+          unitId={project?.unit_id ?? projectId}
+        />
       </Box>
       <Stack
         aria-label="Project"

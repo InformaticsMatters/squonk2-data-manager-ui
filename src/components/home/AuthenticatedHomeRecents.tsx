@@ -6,6 +6,7 @@ import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 
 import { authClient } from "../../lib/auth-client";
+import { ProjectIdentity } from "../../projects/ProjectIdentity";
 import { readRecentProjectIds } from "../../projects/recentProjects";
 import { projectLinks } from "../../projects/routes";
 
@@ -36,9 +37,7 @@ export const AuthenticatedHomeRecents = () => {
         {projects.map((project) => (
           <Paper key={project.project_id} sx={{ flex: 1, p: 2 }} variant="outlined">
             <Typography sx={{ fontWeight: 800 }}>{project.name}</Typography>
-            <Typography color="text.secondary" sx={{ fontSize: 12 }}>
-              {project.unit_id} · {project.organisation_id}
-            </Typography>
+            <ProjectIdentity organisationId={project.organisation_id} unitId={project.unit_id} />
             <Button component={Link} href={projectLinks.files(project.project_id)} sx={{ mt: 1 }}>
               Open files
             </Button>

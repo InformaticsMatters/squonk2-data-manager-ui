@@ -17,7 +17,6 @@ export const acceptanceEnvironment = {
   BASE_PATH: basePath,
   BASE_URL: appUrl,
   BETTER_AUTH_BASE_URL: appUrl,
-  BETTER_AUTH_RATE_LIMIT_DISABLED: "true",
   BETTER_AUTH_SECRET: "acceptance-only-secret-at-least-thirty-two-characters",
   CONTROL_SERVER: controlUrl,
   DATA_MANAGER_API_SERVER: dataManagerUrl,

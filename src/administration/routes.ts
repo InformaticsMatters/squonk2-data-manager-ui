@@ -8,9 +8,11 @@ import {
 } from "../routing/identifiers";
 import {
   assertRouteValue,
+  buildHref,
   localNotFoundRoute,
   notFoundRoute,
   parseRouteLocation,
+  readOptionalQuery,
   type RouteParseResult,
   validRoute,
 } from "../routing/routeContract";
@@ -29,6 +31,7 @@ const sectionCollections = {
 
 type ResourceIdByCollection = { organisations: OrganisationId; products: ProductId; units: UnitId };
 type ResourceCollection = keyof ResourceIdByCollection;
+export type ChargeRouteState = { billingCycle: number };
 export type OrganisationAccessCollection = (typeof sectionCollections.organisationAccess)[number];
 export type ChargeCollection = (typeof sectionCollections.charges)[number];
 export type UsageInventoryCollection = (typeof sectionCollections.usageInventory)[number];
@@ -41,7 +44,9 @@ type ResourceRoute<TKind extends string, TCollection extends ResourceCollection>
   };
 }[TCollection];
 
-type ChargeResourceRoute = ResourceRoute<"charge-resource", ChargeCollection>;
+export type ChargeResourceRoute = ResourceRoute<"charge-resource", ChargeCollection> & {
+  state: ChargeRouteState;
+};
 type ChargesRoute = { kind: "charges" };
 type OrganisationAccessResourceRoute = ResourceRoute<
   "organisation-access-resource",
@@ -95,6 +100,30 @@ const resourcePath = <TCollection extends ResourceCollection>(
     `${collection} resource ID`,
   )}`;
 
+const isBillingCycle = (value: string): boolean => {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed >= -23 && parsed <= 0 && String(parsed) === value;
+};
+
+const parseChargeState = (searchParams: URLSearchParams): ChargeRouteState => ({
+  billingCycle: Number(readOptionalQuery(searchParams, "billing-cycle", isBillingCycle) ?? 0),
+});
+
+const chargeResourcePath = <TCollection extends ChargeCollection>(
+  collection: TCollection,
+  resourceId: ResourceIdByCollection[TCollection],
+  state?: ChargeRouteState,
+) => {
+  const billingCycle = assertRouteValue(
+    String(state?.billingCycle ?? 0),
+    isBillingCycle,
+    "billing cycle",
+  );
+  return buildHref(resourcePath("/administration/charges", collection, resourceId), [
+    ["billing-cycle", billingCycle === "0" ? undefined : billingCycle],
+  ]);
+};
+
 export const administrationLinks = {
   organisationAccess: () => "/administration/organisation-access",
   organisationAccessResource: <TCollection extends OrganisationAccessCollection>(
@@ -108,7 +137,8 @@ export const administrationLinks = {
   chargeResource: <TCollection extends ChargeCollection>(
     collection: TCollection,
     resourceId: ResourceIdByCollection[TCollection],
-  ) => resourcePath("/administration/charges", collection, resourceId),
+    state?: ChargeRouteState,
+  ) => chargeResourcePath(collection, resourceId, state),
   usageInventory: () => "/administration/usage-inventory",
   usageInventoryResource: <TCollection extends UsageInventoryCollection>(
     collection: TCollection,
@@ -177,8 +207,13 @@ export const parseAdministrationRoute = (href: string): RouteParseResult<Adminis
     if (!resourceId) {
       return localNotFoundRoute("administration", "charges");
     }
-    const route = { kind: "charge-resource", collection, resourceId } as ChargeResourceRoute;
-    return validRoute(location, route, administrationLinks.chargeResource(collection, resourceId));
+    const state = parseChargeState(location.searchParams);
+    const route = { kind: "charge-resource", collection, resourceId, state } as ChargeResourceRoute;
+    return validRoute(
+      location,
+      route,
+      administrationLinks.chargeResource(collection, resourceId, state),
+    );
   }
 
   if (segments.length === 2 && segments[1] === "usage-inventory") {

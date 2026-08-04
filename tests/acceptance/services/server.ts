@@ -411,6 +411,24 @@ const accountServer = createServer((request, response) => {
   if (url.pathname === `/organisation/${fixtureIds.otherOrganisation}`) {
     return json(response, 200, state.fixtures.otherOrganisation);
   }
+  if (url.pathname === `/charges/organisation/${fixtureIds.organisation}`) {
+    if (state.chargeFailure) {
+      return json(response, state.chargeFailure, state.fixtures.failures.serverError);
+    }
+    return json(response, 200, state.fixtures.organisationCharges);
+  }
+  if (url.pathname === `/charges/unit/${fixtureIds.unit}`) {
+    if (state.chargeFailure) {
+      return json(response, state.chargeFailure, state.fixtures.failures.serverError);
+    }
+    return json(response, 200, state.fixtures.unitCharges);
+  }
+  if (url.pathname === `/charges/product/${fixtureIds.product}`) {
+    if (state.chargeFailure) {
+      return json(response, state.chargeFailure, state.fixtures.failures.serverError);
+    }
+    return json(response, 200, state.fixtures.productCharges);
+  }
   if (url.pathname === "/unit") {
     return json(response, 200, state.fixtures.units);
   }
@@ -456,6 +474,18 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   if (url.pathname.endsWith("/product-failure") && request.method === "POST") {
     getScenario(subject).productFailure = true;
     return json(response, 200, { productFailure: true, subject });
+  }
+  if (url.pathname.endsWith("/charge-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 429, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-charge-failure", status });
+    }
+    getScenario(subject).chargeFailure = status as 403 | 429 | 503;
+    return json(response, 200, { chargeFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/charge-failure") && request.method === "DELETE") {
+    getScenario(subject).chargeFailure = undefined;
+    return json(response, 200, { subject });
   }
   const datasetFailureControl = datasetFailureControls.find(({ pathSuffix }) =>
     url.pathname.endsWith(pathSuffix),

@@ -8,6 +8,7 @@ import { classifyTransportFailure } from "../api/runtime/classifyTransportFailur
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
 import Layout from "../layouts/Layout";
 import { NavigationTab } from "../layouts/navigation/NavigationTab";
+import { presentAdministrationFailure } from "./failures";
 import { administrationLinks } from "./routes";
 
 const tasks = [
@@ -61,21 +62,32 @@ export const AdministrationFrame = ({ children }: { children: ReactNode }) => {
             <ErrorBoundary
               fallback={({ error, resetError }) => {
                 const failure = classifyTransportFailure(error);
-                const unavailable = failure.kind === "forbidden" || failure.kind === "not-found";
+                const presentation =
+                  policy.section === "charges"
+                    ? presentAdministrationFailure(failure)
+                    : {
+                        message:
+                          failure.kind === "forbidden" || failure.kind === "not-found"
+                            ? "Administration data is unavailable or you no longer have access."
+                            : "Administration data could not be loaded. Retry this task.",
+                        retryable: failure.kind !== "forbidden" && failure.kind !== "not-found",
+                        severity:
+                          failure.kind === "forbidden" || failure.kind === "not-found"
+                            ? ("warning" as const)
+                            : ("error" as const),
+                      };
                 return (
                   <Alert
                     action={
-                      unavailable ? undefined : (
+                      presentation.retryable ? (
                         <Button color="inherit" size="small" onClick={resetError}>
                           Retry
                         </Button>
-                      )
+                      ) : undefined
                     }
-                    severity={unavailable ? "warning" : "error"}
+                    severity={presentation.severity}
                   >
-                    {unavailable
-                      ? "Administration data is unavailable or you no longer have access."
-                      : "Administration data could not be loaded. Retry this task."}
+                    {presentation.message}
                   </Alert>
                 );
               }}

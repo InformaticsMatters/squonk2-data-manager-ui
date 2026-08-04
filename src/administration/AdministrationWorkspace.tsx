@@ -30,6 +30,7 @@ import {
 } from "../routing/identifiers";
 import { withBasePath } from "../utils/app/basePath";
 import { AdministrationFrame } from "./AdministrationShell";
+import { ChargeLedger } from "./ChargeLedgers";
 import { administrationLinks, type AdministrationRoute } from "./routes";
 
 type UnitWithOrganisation = { organisation: OrganisationAllDetail; unit: UnitAllDetail };
@@ -395,7 +396,9 @@ const ProductResourceDetails = ({ route }: { route: ProductResourceRoute }) => {
 };
 
 const ResourceDetails = ({ route }: { route: AdministrationResourceRoute }) =>
-  route.kind === "subscription" || route.collection === "products" ? (
+  route.kind === "charge-resource" ? (
+    <ChargeLedger route={route} />
+  ) : route.kind === "subscription" ? (
     <ProductResourceDetails route={route} />
   ) : (
     <AccessResourceDetails route={route} />

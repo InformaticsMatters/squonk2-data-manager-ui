@@ -1,3 +1,8 @@
+import {
+  AppApiOrganisationGetChargesResponse,
+  AppApiProductGetChargesResponse,
+  AppApiUnitGetChargesResponse,
+} from "@/api/account-server/charges/zod";
 import { AppApiEventStreamGetEventStreamVersionResponse } from "@/api/account-server/event-stream/zod";
 import {
   AppApiOrganisationGetOrgResponse,
@@ -42,7 +47,12 @@ export const datasetContentFixtures = {
   2: gzipSync(Buffer.from("acceptance dataset version 2\n")),
 } as const;
 
-export const scenarioProfiles = ["default", "empty-products", "read-only"] as const;
+export const scenarioProfiles = [
+  "default",
+  "empty-charges",
+  "empty-products",
+  "read-only",
+] as const;
 export type ScenarioProfile = (typeof scenarioProfiles)[number];
 export const isScenarioProfile = (value: string): value is ScenarioProfile =>
   scenarioProfiles.includes(value as ScenarioProfile);
@@ -50,6 +60,7 @@ export const isScenarioProfile = (value: string): value is ScenarioProfile =>
 export const createScenarioFixtures = (subject: string, profile: ScenarioProfile = "default") => {
   const colleague = `${subject}-observer`;
   const readOnly = profile === "read-only";
+  const emptyCharges = profile === "empty-charges";
   const owner = readOnly ? `${subject}-owner` : subject;
   const organisation = {
     caller_is_member: !readOnly,
@@ -206,6 +217,32 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       organisations: [organisation, otherOrganisation],
     }),
     otherOrganisation: AppApiOrganisationGetOrgResponse.parse(otherOrganisation),
+    organisationCharges: AppApiOrganisationGetChargesResponse.parse({
+      coins: emptyCharges ? "0" : "7.5",
+      name: organisation.name,
+      organisation_id: organisation.id,
+      summary: emptyCharges
+        ? []
+        : [
+            { coins: "2.5", type: "PROCESSING" },
+            { coins: "5", type: "STORAGE" },
+          ],
+      unit_charges: emptyCharges
+        ? []
+        : [
+            {
+              billing_day: unit.billing_day,
+              from: "2026-07-01",
+              name: unit.name,
+              summary: [
+                { coins: "2.5", type: "PROCESSING" },
+                { coins: "5", type: "STORAGE" },
+              ],
+              unit_id: unit.id,
+              until: "2026-08-01",
+            },
+          ],
+    }),
     projects: AppApiProjectGetResponse.parse({
       count: 4,
       projects: [
@@ -272,6 +309,32 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       profile === "empty-products"
         ? AppApiProductGetResponse.parse({ count: 0, products: [] })
         : products,
+    productCharges: AppApiProductGetChargesResponse.parse({
+      billing_day: unit.billing_day,
+      claim: { id: fixtureIds.project, name: "Acceptance Project" },
+      claimable: true,
+      coins: emptyCharges ? "0" : "7.5",
+      count: emptyCharges ? 0 : 2,
+      from: "2026-07-01",
+      processing_charges: emptyCharges
+        ? []
+        : [
+            {
+              charge: { coins: "2.5", id: 1, sqn: 1, timestamp: created, username: subject },
+              final: true,
+              merchant_api_hostname: "data-manager.example.test",
+              merchant_kind: "DATA_MANAGER",
+              merchant_name: "Data Manager",
+            },
+          ],
+      product_id: fixtureIds.product,
+      product_type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
+      storage_charges: {
+        items: emptyCharges ? [] : [{ coins: "5", date: "2026-07-31", item_number: 1 }],
+        num_items: emptyCharges ? 0 : 1,
+      },
+      until: "2026-08-01",
+    }),
     taskTransitions: [
       AppApiTaskGetTaskResponse.parse({
         created,
@@ -305,6 +368,39 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     }),
     units: AppApiUnitGetResponse.parse({
       units: [{ count: 2, organisation, units: [unit, otherUnit] }],
+    }),
+    unitCharges: AppApiUnitGetChargesResponse.parse({
+      billing_day: unit.billing_day,
+      caller_is_member: true,
+      coins: emptyCharges ? "0" : "7.5",
+      count: emptyCharges ? 0 : 1,
+      created: unit.created,
+      from: "2026-07-01",
+      name: unit.name,
+      owner_id: unit.owner_id,
+      private: unit.private,
+      products: emptyCharges
+        ? []
+        : [
+            {
+              charges: [
+                { coins: "2.5", type: "PROCESSING" },
+                { coins: "5", type: "STORAGE" },
+              ],
+              product_id: fixtureIds.product,
+              product_type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
+            },
+          ],
+      summary: {
+        charges: emptyCharges
+          ? []
+          : [
+              { coins: "2.5", type: "PROCESSING" },
+              { coins: "5", type: "STORAGE" },
+            ],
+      },
+      unit_id: unit.id,
+      until: "2026-08-01",
     }),
     uploadResponse: AppApiDatasetPostResponse.parse({
       dataset_id: fixtureIds.dataset,

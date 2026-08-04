@@ -118,6 +118,88 @@ test("unnamed products retain canonical subscription and charge links", async ({
   await expect(page.getByText(fixtureIds.product, { exact: true })).toBeVisible();
 });
 
+test("Charges traverses organisation, unit, and product ledgers with ancestry", async ({
+  page,
+}, testInfo) => {
+  await login(page, "administration/charges", testInfo);
+
+  await expect(
+    page.getByRole("link", { name: /Acceptance Unit Unit ledger Acceptance Organisation/u }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", {
+      name: /Subscription Subscription ledger Acceptance Organisation \/ Acceptance Unit/u,
+    }),
+  ).toBeVisible();
+
+  await page.getByRole("link", { name: /Acceptance Organisation Organisation ledger/u }).click();
+  await expect(page.getByRole("heading", { name: "Organisation ledger" })).toBeVisible();
+  await page.getByRole("link", { name: "Acceptance Unit" }).click();
+  await expect(page.getByRole("heading", { name: "Unit ledger" })).toBeVisible();
+  await expect(
+    page.getByRole("main").getByText("Acceptance Organisation", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: /data manager project tier subscription/u }).click();
+  await expect(page.getByRole("heading", { name: "Product ledger" })).toBeVisible();
+  await expect(page.getByText("Acceptance Organisation / Acceptance Unit")).toBeVisible();
+  await expect(page.getByText("This charge ledger is read-only.")).toBeVisible();
+  await expect(page.getByRole("button", { name: /create|edit|delete|manage/u })).toHaveCount(0);
+});
+
+test("billing-cycle history survives refresh, Back, and Forward", async ({ page }, testInfo) => {
+  const path = `administration/charges/products/${fixtureIds.product}`;
+  await login(page, path, testInfo);
+
+  await page.getByLabel("Billing cycle").click();
+  await page.getByRole("option", { name: "2 billing cycles ago", exact: true }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}?billing-cycle=-2`);
+  await page.reload();
+  await expect(page.getByLabel("Billing cycle")).toHaveText("2 billing cycles ago");
+
+  await page.getByLabel("Billing cycle").click();
+  await page.getByRole("option", { name: "1 billing cycle ago", exact: true }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}?billing-cycle=-1`);
+  await page.goBack();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}?billing-cycle=-2`);
+  await expect(page.getByLabel("Billing cycle")).toHaveText("2 billing cycles ago");
+  await page.goForward();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}?billing-cycle=-1`);
+  await expect(page.getByLabel("Billing cycle")).toHaveText("1 billing cycle ago");
+});
+
+test("empty charge ledgers retain their selected resource", async ({ page, request }, testInfo) => {
+  await request.put(
+    `${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=empty-charges`,
+  );
+  const path = `administration/charges/units/${fixtureIds.unit}`;
+  await login(page, path, testInfo);
+
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+  await expect(
+    page.getByText("No product charges were recorded for this billing cycle."),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Total charges: C 0.00" })).toBeVisible();
+});
+
+test("charge failures retry without losing resource or billing cycle", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/charge-failure?status=503`);
+  const path = `administration/charges/units/${fixtureIds.unit}?billing-cycle=-3`;
+  await login(page, path, testInfo);
+
+  await expect(
+    page.getByText("The Administration service failed to respond. Retry this task."),
+  ).toBeVisible();
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/charge-failure`);
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+  await expect(page.getByRole("heading", { name: "Unit ledger" })).toBeVisible();
+  await expect(page.getByLabel("Billing cycle")).toHaveText("3 billing cycles ago");
+});
+
 test("empty subscriptions explain how to obtain access", async ({ page, request }, testInfo) => {
   await request.put(
     `${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=empty-products`,

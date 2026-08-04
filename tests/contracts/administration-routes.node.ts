@@ -97,6 +97,45 @@ test.describe("Administration route contract", () => {
     });
   });
 
+  test("round trips Charges-owned billing-cycle state", () => {
+    const href = administrationLinks.chargeResource("units", unitId, { billingCycle: -3 });
+
+    expect(href).toBe(`/administration/charges/units/${unitId}?billing-cycle=-3`);
+    expect(parseAdministrationRoute(href)).toEqual({
+      kind: "valid",
+      route: {
+        kind: "charge-resource",
+        collection: "units",
+        resourceId: unitId,
+        state: { billingCycle: -3 },
+      },
+      canonicalHref: href,
+      needsReplace: false,
+    });
+  });
+
+  test("defaults malformed billing-cycle state and removes unrelated state", () => {
+    const pathname = `/administration/charges/products/${productId}`;
+
+    expect(parseAdministrationRoute(`${pathname}?billing-cycle=-24&project=secret`)).toEqual({
+      kind: "valid",
+      route: {
+        kind: "charge-resource",
+        collection: "products",
+        resourceId: productId,
+        state: { billingCycle: 0 },
+      },
+      canonicalHref: pathname,
+      needsReplace: true,
+    });
+  });
+
+  test("rejects invalid billing-cycle link state", () => {
+    expect(() =>
+      administrationLinks.chargeResource("organisations", organisationId, { billingCycle: 1 }),
+    ).toThrow();
+  });
+
   test("validates identity against its typed collection", () => {
     for (const href of [
       `/administration/organisation-access/organisations/${unitId}`,

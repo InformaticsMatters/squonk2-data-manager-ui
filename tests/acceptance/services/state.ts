@@ -8,6 +8,7 @@ export type RequestRecord = {
 };
 
 export type ScenarioState = {
+  chargeFailure?: 403 | 429 | 503;
   datasetContentFailure?: 429 | 503;
   datasetFailure?: 429 | 503;
   datasetMutationFailure?: 403 | 503;

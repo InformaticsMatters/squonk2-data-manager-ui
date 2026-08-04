@@ -46,7 +46,8 @@ declare module "nextjs-routes" {
     | StaticRoute<"/run">
     | DynamicRoute<"/unit/[unitId]/charges", { "unitId": string }>
     | DynamicRoute<"/unit/[unitId]/inventory", { "unitId": string }>
-    | StaticRoute<"/viewer/sdf">;
+    | StaticRoute<"/viewer/sdf">
+    | StaticRoute<"/workflow-builder">;
 
   interface StaticRoute<Pathname> {
     pathname: Pathname;

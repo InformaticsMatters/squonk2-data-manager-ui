@@ -320,7 +320,18 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         ? []
         : [
             {
-              charge: { coins: "2.5", id: 1, sqn: 1, timestamp: created, username: subject },
+              charge: {
+                additional_data: {
+                  job_collection: "Acceptance Collection",
+                  job_job: "Acceptance Job",
+                },
+                coins: "2.5",
+                id: 1,
+                sqn: 1,
+                timestamp: created,
+                username: subject,
+              },
+              closed: "2026-01-02T04:04:05Z",
               final: true,
               merchant_api_hostname: "data-manager.example.test",
               merchant_kind: "DATA_MANAGER",
@@ -330,7 +341,16 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       product_id: fixtureIds.product,
       product_type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
       storage_charges: {
-        items: emptyCharges ? [] : [{ coins: "5", date: "2026-07-31", item_number: 1 }],
+        items: emptyCharges
+          ? []
+          : [
+              {
+                additional_data: { peak_bytes: 1_000_000 },
+                coins: "5",
+                date: "2026-07-31",
+                item_number: 1,
+              },
+            ],
         num_items: emptyCharges ? 0 : 1,
       },
       until: "2026-08-01",

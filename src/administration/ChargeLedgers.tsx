@@ -1,6 +1,11 @@
 import { type ChangeEvent } from "react";
 
-import { type ChargeSummary } from "@/api/account-server";
+import {
+  type ChargeSummary,
+  type ProcessingCharges,
+  type StorageChargeItem,
+  type UnitProductChargeSummary,
+} from "@/api/account-server";
 import {
   useGetOrganisationChargesSuspense,
   useGetProductChargesSuspense,
@@ -26,17 +31,25 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { filesize } from "filesize";
 import { useRouter } from "next/router";
 
 import { isProductId, isUnitId } from "../routing/identifiers";
 import { withBasePath } from "../utils/app/basePath";
 import { formatCoins } from "../utils/app/coins";
+import { toLocalTimeString } from "../utils/app/datetime";
+import { formatOrdinals } from "../utils/app/ordinals";
 import { administrationLinks, type ChargeResourceRoute } from "./routes";
 
 const chargeFor = (summary: ChargeSummary[], type: ChargeSummary["type"]) =>
   summary.find((charge) => charge.type === type)?.coins ?? "0";
 
 const chargeRequest = { timeout: 30_000 };
+
+const productTypes: Record<UnitProductChargeSummary["product_type"], string> = {
+  DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION: "Project Subscription",
+  DATA_MANAGER_STORAGE_SUBSCRIPTION: "Dataset Subscription",
+};
 
 const BillingCycleSelect = ({ route }: { route: ChargeResourceRoute }) => {
   const router = useRouter();
@@ -156,9 +169,108 @@ const ChargesTable = ({
 );
 
 const Total = ({ coins }: { coins: string }) => (
-  <Typography sx={{ mt: 2, textAlign: "right" }} variant="h5">
-    Total charges: {formatCoins(coins)}
-  </Typography>
+  <Box sx={{ mt: 2, textAlign: "right" }}>
+    <Typography variant="h5">Total charges: {formatCoins(coins)}</Typography>
+  </Box>
+);
+
+const ProductChargesTables = ({
+  processing,
+  storage,
+}: {
+  processing: ProcessingCharges[];
+  storage: StorageChargeItem[];
+}) => (
+  <Stack spacing={2}>
+    <Paper variant="outlined">
+      <Box sx={{ p: 2 }}>
+        <Typography component="h3" variant="h5">
+          Processing charges
+        </Typography>
+        <Typography color="text.secondary">
+          Charges from computations, such as running Data Manager jobs.
+        </Typography>
+      </Box>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Merchant</TableCell>
+            <TableCell>Job</TableCell>
+            <TableCell>Job collection</TableCell>
+            <TableCell>Closed</TableCell>
+            <TableCell align="right">Coins</TableCell>
+            <TableCell>Username</TableCell>
+            <TableCell>Timestamp</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {processing.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={7} sx={{ textAlign: "center" }}>
+                No processing charges were recorded for this billing cycle.
+              </TableCell>
+            </TableRow>
+          ) : (
+            processing.map((charge) => (
+              <TableRow key={`${charge.merchant_api_hostname}-${charge.charge.id}`}>
+                <TableCell sx={{ wordBreak: "break-all" }}>{charge.merchant_name}</TableCell>
+                <TableCell>
+                  {(charge.charge.additional_data?.job_job as string | undefined) ?? ""}
+                </TableCell>
+                <TableCell>
+                  {(charge.charge.additional_data?.job_collection as string | undefined) ?? ""}
+                </TableCell>
+                <TableCell>{charge.closed ? "Yes" : "No"}</TableCell>
+                <TableCell align="right">{formatCoins(charge.charge.coins)}</TableCell>
+                <TableCell>{charge.charge.username}</TableCell>
+                <TableCell>{toLocalTimeString(charge.charge.timestamp, true, true)}</TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </Paper>
+    <Paper variant="outlined">
+      <Box sx={{ p: 2 }}>
+        <Typography component="h3" variant="h5">
+          Storage charges
+        </Typography>
+        <Typography color="text.secondary">
+          Charges for stored data, such as Data Manager datasets and project volumes.
+        </Typography>
+      </Box>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Item</TableCell>
+            <TableCell>Date</TableCell>
+            <TableCell>Bytes</TableCell>
+            <TableCell align="right">Coins</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {storage.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={4} sx={{ textAlign: "center" }}>
+                No storage charges were recorded for this billing cycle.
+              </TableCell>
+            </TableRow>
+          ) : (
+            storage.map((charge) => (
+              <TableRow key={charge.item_number}>
+                <TableCell>{charge.item_number}</TableCell>
+                <TableCell>{charge.date}</TableCell>
+                <TableCell>
+                  {filesize(Number(charge.additional_data?.peak_bytes ?? 0), { standard: "si" })}
+                </TableCell>
+                <TableCell align="right">{formatCoins(charge.coins)}</TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </Paper>
+  </Stack>
 );
 
 const OrganisationLedger = ({ route }: { route: ChargeResourceRoute }) => {
@@ -209,6 +321,10 @@ const UnitLedger = ({ route }: { route: ChargeResourceRoute }) => {
         route={route}
         type="Unit"
       />
+      <Typography sx={{ mb: 2 }}>
+        <strong>Billed to:</strong> unit <em>{data.name ?? match?.unit.name ?? "Unit"}</em>
+        {data.owner_id ? ` (owner: ${data.owner_id})` : null}
+      </Typography>
       <ChargesTable
         empty="No product charges were recorded for this billing cycle."
         rows={data.products.map((product) => ({
@@ -216,11 +332,20 @@ const UnitLedger = ({ route }: { route: ChargeResourceRoute }) => {
             ? administrationLinks.chargeResource("products", product.product_id, route.state)
             : undefined,
           id: product.product_id,
-          name: product.product_type.replaceAll("_", " ").toLowerCase(),
+          name: productTypes[product.product_type],
           processing: chargeFor(product.charges, "PROCESSING"),
           storage: chargeFor(product.charges, "STORAGE"),
         }))}
       />
+      <Box sx={{ mt: 2, textAlign: "right" }}>
+        <Typography>
+          Processing subtotal: {formatCoins(chargeFor(data.summary.charges, "PROCESSING"))}
+        </Typography>
+        <Typography>
+          Storage subtotal: {formatCoins(chargeFor(data.summary.charges, "STORAGE"))}
+        </Typography>
+        <Typography color="text.secondary">To be paid by the unit owner</Typography>
+      </Box>
       <Total coins={data.coins} />
     </>
   );
@@ -234,18 +359,6 @@ const ProductLedger = ({ route }: { route: ChargeResourceRoute }) => {
     { pbp: route.state.billingCycle },
     { request: chargeRequest },
   );
-  const processing = data.processing_charges.map((charge, index) => ({
-    id: `${charge.merchant_name}-${index}`,
-    name: charge.merchant_name,
-    processing: charge.charge.coins,
-    storage: "0",
-  }));
-  const storage = data.storage_charges.items.map((charge) => ({
-    id: String(charge.item_number),
-    name: charge.date,
-    processing: "0",
-    storage: charge.coins,
-  }));
 
   return (
     <>
@@ -253,14 +366,23 @@ const ProductLedger = ({ route }: { route: ChargeResourceRoute }) => {
         ancestry={product ? `${product.organisation.name} / ${product.unit.name}` : undefined}
         id={data.product_id}
         name={product?.product.name ?? "Subscription"}
-        period={`${data.from} to ${data.until}`}
+        period={`${data.from} to ${data.until}${product ? ` (billed on the ${formatOrdinals(product.unit.billing_day)} of the month)` : ""}`}
         route={route}
         type="Product"
       />
-      <ChargesTable
-        empty="No charges were recorded for this billing cycle."
-        rows={[...processing, ...storage]}
+      {product ? (
+        <Typography sx={{ mb: 2 }}>
+          <strong>Billed to:</strong> unit <em>{product.unit.name}</em> belonging to the{" "}
+          <em>{product.organisation.name}</em> organisation
+        </Typography>
+      ) : null}
+      <ProductChargesTables
+        processing={data.processing_charges}
+        storage={data.storage_charges.items}
       />
+      <Typography color="text.secondary" sx={{ mt: 2, textAlign: "right" }}>
+        To be paid by the unit owner
+      </Typography>
       <Total coins={data.coins} />
     </>
   );

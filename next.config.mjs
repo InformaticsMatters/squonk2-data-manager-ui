@@ -42,6 +42,18 @@ let nextConfig = {
   typescript: { ignoreBuildErrors: true },
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
+  redirects: () => Promise.resolve([
+    {
+      destination: "/administration/charges/units/:unitId",
+      permanent: true,
+      source: "/unit/:unitId/charges",
+    },
+    {
+      destination: "/administration/charges/products/:productId",
+      permanent: true,
+      source: "/product/:productId/charges",
+    },
+  ]),
   // replace empty string with undefined
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,

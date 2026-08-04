@@ -134,37 +134,84 @@ test("Charges traverses organisation, unit, and product ledgers with ancestry", 
 
   await page.getByRole("link", { name: /Acceptance Organisation Organisation ledger/u }).click();
   await expect(page.getByRole("heading", { name: "Organisation ledger" })).toBeVisible();
+  const organisationUnitRow = page.getByRole("row").filter({ hasText: "Acceptance Unit" });
+  await expect(organisationUnitRow.getByText("C 5.00", { exact: true })).toBeVisible();
+  await expect(organisationUnitRow.getByText("C 2.50", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Total charges: C 7.50" })).toBeVisible();
   await page.getByRole("link", { name: "Acceptance Unit" }).click();
   await expect(page.getByRole("heading", { name: "Unit ledger" })).toBeVisible();
   await expect(
     page.getByRole("main").getByText("Acceptance Organisation", { exact: true }),
   ).toBeVisible();
-  await page.getByRole("link", { name: /data manager project tier subscription/u }).click();
+  await expect(page.getByText(`(owner: ${subjectFor(testInfo)})`, { exact: false })).toBeVisible();
+  await expect(page.getByText("Processing subtotal: C 2.50")).toBeVisible();
+  await expect(page.getByText("Storage subtotal: C 5.00")).toBeVisible();
+  await expect(page.getByText("To be paid by the unit owner")).toBeVisible();
+  await page.getByRole("link", { name: /Project Subscription/u }).click();
   await expect(page.getByRole("heading", { name: "Product ledger" })).toBeVisible();
   await expect(page.getByText("Acceptance Organisation / Acceptance Unit")).toBeVisible();
+  const processingRow = page.getByRole("row").filter({ hasText: "Acceptance Job" });
+  await expect(
+    processingRow.getByRole("cell", { name: "Data Manager", exact: true }),
+  ).toBeVisible();
+  await expect(
+    processingRow.getByRole("cell", { name: "Acceptance Job", exact: true }),
+  ).toBeVisible();
+  await expect(
+    processingRow.getByRole("cell", { name: "Acceptance Collection", exact: true }),
+  ).toBeVisible();
+  await expect(
+    processingRow.getByRole("cell", { name: subjectFor(testInfo), exact: true }),
+  ).toBeVisible();
+  await expect(processingRow.getByRole("cell", { name: "Yes", exact: true })).toBeVisible();
+  await expect(processingRow.getByRole("cell", { name: "C 2.50", exact: true })).toBeVisible();
+  await expect(
+    processingRow.getByRole("cell", { name: /\d{2}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/u }),
+  ).toBeVisible();
+  const storageRow = page.getByRole("row").filter({ hasText: "2026-07-31" });
+  await expect(storageRow.getByRole("cell", { name: "1 MB", exact: true })).toBeVisible();
+  await expect(storageRow.getByRole("cell", { name: "C 5.00", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Total charges: C 7.50" })).toBeVisible();
   await expect(page.getByText("This charge ledger is read-only.")).toBeVisible();
   await expect(page.getByRole("button", { name: /create|edit|delete|manage/u })).toHaveCount(0);
+});
+
+test("legacy charge URLs redirect to canonical Administration ledgers", async ({
+  page,
+}, testInfo) => {
+  await login(page, `unit/${fixtureIds.unit}/charges`, testInfo);
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/charges/units/${fixtureIds.unit}`,
+  );
+  await expect(page.getByRole("heading", { name: "Unit ledger" })).toBeVisible();
+
+  await page.goto(`${acceptanceUrls.app}product/${fixtureIds.product}/charges`);
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/charges/products/${fixtureIds.product}`,
+  );
+  await expect(page.getByRole("heading", { name: "Product ledger" })).toBeVisible();
 });
 
 test("billing-cycle history survives refresh, Back, and Forward", async ({ page }, testInfo) => {
   const path = `administration/charges/products/${fixtureIds.product}`;
   await login(page, path, testInfo);
+  const billingCycle = page.getByRole("combobox", { name: "Billing cycle" });
 
-  await page.getByLabel("Billing cycle").click();
+  await billingCycle.click();
   await page.getByRole("option", { name: "2 billing cycles ago", exact: true }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${path}?billing-cycle=-2`);
   await page.reload();
-  await expect(page.getByLabel("Billing cycle")).toHaveText("2 billing cycles ago");
+  await expect(billingCycle).toHaveText("2 billing cycles ago");
 
-  await page.getByLabel("Billing cycle").click();
+  await billingCycle.click();
   await page.getByRole("option", { name: "1 billing cycle ago", exact: true }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${path}?billing-cycle=-1`);
   await page.goBack();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${path}?billing-cycle=-2`);
-  await expect(page.getByLabel("Billing cycle")).toHaveText("2 billing cycles ago");
+  await expect(billingCycle).toHaveText("2 billing cycles ago");
   await page.goForward();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${path}?billing-cycle=-1`);
-  await expect(page.getByLabel("Billing cycle")).toHaveText("1 billing cycle ago");
+  await expect(billingCycle).toHaveText("1 billing cycle ago");
 });
 
 test("empty charge ledgers retain their selected resource", async ({ page, request }, testInfo) => {
@@ -197,7 +244,9 @@ test("charge failures retry without losing resource or billing cycle", async ({
   await page.getByRole("button", { name: "Retry" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
   await expect(page.getByRole("heading", { name: "Unit ledger" })).toBeVisible();
-  await expect(page.getByLabel("Billing cycle")).toHaveText("3 billing cycles ago");
+  await expect(page.getByRole("combobox", { name: "Billing cycle" })).toHaveText(
+    "3 billing cycles ago",
+  );
 });
 
 test("empty subscriptions explain how to obtain access", async ({ page, request }, testInfo) => {

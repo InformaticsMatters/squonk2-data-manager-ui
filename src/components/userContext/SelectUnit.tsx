@@ -3,8 +3,10 @@ import { type UnitGetResponse } from "@/api/account-server";
 import { DataUsage as DataUsageIcon, Receipt as ReceiptIcon } from "@mui/icons-material";
 import { Autocomplete, type AutocompleteProps, Box, TextField, Typography } from "@mui/material";
 
+import { administrationLinks } from "../../administration/routes";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
 import { useGetVisibleUnits } from "../../hooks/useGetVisibleUnits";
+import { isUnitId } from "../../routing/identifiers";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 import { getErrorMessage } from "../../utils/next/orvalError";
@@ -61,7 +63,14 @@ export const SelectUnit = ({
                     <ItemIcons item={unit} />
                     {!!unit && !!(unit.caller_is_member || organisation?.caller_is_member) && (
                       <>
-                        <Adornment href={`/unit/${unit.id}/charges`} title="Charges">
+                        <Adornment
+                          href={
+                            isUnitId(unit.id)
+                              ? administrationLinks.chargeResource("units", unit.id)
+                              : administrationLinks.charges()
+                          }
+                          title="Charges"
+                        >
                           <ReceiptIcon />
                         </Adornment>
                         <Adornment href={`/unit/${unit.id}/inventory`} title="User Usage">

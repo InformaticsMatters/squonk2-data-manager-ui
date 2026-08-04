@@ -47,7 +47,6 @@ declare module "nextjs-routes" {
     | StaticRoute<"/docs/how-to/usage-quotas">
     | StaticRoute<"/docs/jobs">
     | DynamicRoute<"/organisation/[organisationId]/inventory", { "organisationId": string }>
-    | DynamicRoute<"/product/[productId]/charges", { "productId": string }>
     | StaticRoute<"/products">
     | StaticRoute<"/project">
     | StaticRoute<"/project/file">
@@ -62,7 +61,6 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/results/task/[taskId]", { "taskId": string }>
     | DynamicRoute<"/results/workflow/[workflowId]", { "workflowId": string }>
     | StaticRoute<"/run">
-    | DynamicRoute<"/unit/[unitId]/charges", { "unitId": string }>
     | DynamicRoute<"/unit/[unitId]/inventory", { "unitId": string }>
     | StaticRoute<"/viewer/sdf">;
 

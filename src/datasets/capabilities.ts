@@ -5,20 +5,22 @@ export type DatasetCapability =
   | { status: "enabled"; reason?: string }
   | { status: "hidden" };
 
+export type DatasetFactsFreshness = "current" | "missing" | "stale";
+
 type DatasetCapabilityFacts = {
   caller: { username?: string };
   dataset: DatasetSummary;
   version: DatasetVersionSummary;
-  facts?: "current" | "missing" | "stale";
+  freshness?: DatasetFactsFreshness;
 };
 
 const evaluateDatasetEditAuthority = ({
   caller,
   dataset,
   version,
-  facts = "current",
+  freshness = "current",
 }: DatasetCapabilityFacts): DatasetCapability => {
-  if (facts !== "current" || !caller.username) {
+  if (freshness !== "current" || !caller.username) {
     return {
       status: "enabled",
       reason: "Your permission will be confirmed when you use this action.",
@@ -37,7 +39,10 @@ export const evaluateDatasetEditorCapability = (
   facts: DatasetCapabilityFacts,
 ): DatasetCapability => {
   const authority = evaluateDatasetEditAuthority(facts);
-  if (authority.status !== "enabled" || (facts.facts !== undefined && facts.facts !== "current")) {
+  if (
+    authority.status !== "enabled" ||
+    (facts.freshness !== undefined && facts.freshness !== "current")
+  ) {
     return authority;
   }
   if (facts.version.processing_stage !== "DONE") {
@@ -53,7 +58,10 @@ export const evaluateDatasetDeletionCapability = (
   facts: DatasetCapabilityFacts,
 ): DatasetCapability => {
   const authority = evaluateDatasetEditAuthority(facts);
-  if (authority.status !== "enabled" || (facts.facts !== undefined && facts.facts !== "current")) {
+  if (
+    authority.status !== "enabled" ||
+    (facts.freshness !== undefined && facts.freshness !== "current")
+  ) {
     return authority;
   }
   const deletableStages: readonly DatasetVersionSummary["processing_stage"][] = [

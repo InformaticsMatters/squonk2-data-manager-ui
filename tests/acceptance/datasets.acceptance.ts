@@ -220,13 +220,28 @@ test("dataset mutations retain version scope and recover from authoritative reje
   await expect(datasetDialog.getByText("assay=validated", { exact: true })).not.toBeVisible();
 
   const colleague = `${subject}-observer`;
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/dataset-mutation-failure?status=403`,
+  );
   await page.getByLabel("Editors").fill(colleague);
+  await page.getByRole("option", { name: colleague }).click();
+  await expect(
+    page.getByText(
+      `You no longer have permission to manage editors for dataset ${fixtureIds.dataset} version 1. The displayed dataset version has not changed.`,
+    ),
+  ).toBeVisible();
+  await expect(page.getByLabel("Editors")).toHaveValue(colleague);
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/dataset-mutation-failure`);
+  await page.getByLabel("Editors").click();
   await page.getByRole("option", { name: colleague }).click();
   await expect(page.getByText(`User ${colleague} added successfully`)).toBeVisible();
   await expect(page.getByLabel("Select a version")).toHaveText("v1");
   await page.getByLabel(`Remove ${colleague}`).click();
   await expect(page.getByText(`User ${colleague} removed successfully`)).toBeVisible();
 
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/concurrent-dataset-version`);
   await request.post(`${acceptanceUrls.control}/scenario/${subject}/task-failure`);
   await page.getByText("Delete this Version of the Dataset", { exact: true }).click();
   const deleteVersionOneDialog = page.getByRole("dialog", { name: "Delete v1" });
@@ -241,9 +256,17 @@ test("dataset mutations retain version scope and recover from authoritative reje
 
   await request.delete(`${acceptanceUrls.control}/scenario/${subject}/task-failure`);
   await deleteVersionOneDialog.getByRole("button", { name: "Delete" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}datasets/${fixtureIds.dataset}/versions/3`);
+  await expect(page.getByLabel("Select a version")).toHaveText("v3");
+  await expect(page.getByText("Dataset version deleted", { exact: true })).toBeVisible();
+
+  await page.getByText("Delete this Version of the Dataset", { exact: true }).click();
+  await page
+    .getByRole("dialog", { name: "Delete v3" })
+    .getByRole("button", { name: "Delete" })
+    .click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}datasets/${fixtureIds.dataset}/versions/2`);
   await expect(page.getByLabel("Select a version")).toHaveText("v2");
-  await expect(page.getByText("Dataset version deleted", { exact: true })).toBeVisible();
 
   await page.getByText("Delete this Version of the Dataset", { exact: true }).click();
   await page
@@ -264,6 +287,7 @@ test("dataset mutations retain version scope and recover from authoritative reje
       { method: "PUT", path: `/dataset/${fixtureIds.dataset}/editor/${colleague}` },
       { method: "DELETE", path: `/dataset/${fixtureIds.dataset}/editor/${colleague}` },
       { method: "DELETE", path: `/dataset/${fixtureIds.dataset}/1` },
+      { method: "DELETE", path: `/dataset/${fixtureIds.dataset}/3` },
       { method: "DELETE", path: `/dataset/${fixtureIds.dataset}/2` },
     ]),
   );
@@ -272,4 +296,56 @@ test("dataset mutations retain version scope and recover from authoritative reje
       ({ method, path }) => method === "DELETE" && path === `/dataset/${fixtureIds.dataset}/1`,
     ),
   ).toHaveLength(1);
+});
+
+test("bulk deletion retains mixed permissions and retries accepted work", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/undeletable-dataset-version`);
+  await login(page, "datasets", testInfo);
+
+  const ownedDatasetRow = page
+    .getByRole("row")
+    .filter({ has: page.getByRole("link", { name: "acceptance-dataset-v2.sdf" }) });
+  const sharedDatasetRow = page.getByRole("row").filter({ hasText: "globally-shared.csv" });
+  await ownedDatasetRow.getByRole("checkbox").check();
+  await sharedDatasetRow.getByRole("checkbox").check();
+  await expect(page.getByText("Selected: 3")).toBeVisible();
+
+  await page.getByRole("button", { name: "Delete selected datasets" }).click();
+  const confirmation = page.getByRole("dialog", { name: "Delete selected" });
+  await expect(confirmation.getByText("globally-shared.csv", { exact: false })).toBeVisible();
+
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/task-failure`);
+  await confirmation.getByRole("button", { name: "Delete" }).click();
+  await expect(page.getByText("2 dataset(s) could not be deleted")).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(page.getByText("Selected: 3")).toBeVisible();
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/task-failure`);
+  await page.getByRole("button", { name: "Delete selected datasets" }).click();
+  await page
+    .getByRole("dialog", { name: "Delete selected" })
+    .getByRole("button", { name: "Delete" })
+    .click();
+  await expect(page.getByText("Datasets deleted successfully")).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText("globally-shared.csv", { exact: true })).toBeVisible();
+  await expect(page.getByText("acceptance-dataset-v2.sdf", { exact: true })).not.toBeVisible();
+
+  const diagnostics = await request
+    .get(`${acceptanceUrls.control}/scenario/${subject}`)
+    .then(
+      (response) => response.json() as Promise<{ requests: { method: string; path: string }[] }>,
+    );
+  for (const version of [1, 2]) {
+    expect(
+      diagnostics.requests.filter(
+        ({ method, path }) =>
+          method === "DELETE" && path === `/dataset/${fixtureIds.dataset}/${version}`,
+      ),
+    ).toHaveLength(1);
+  }
 });

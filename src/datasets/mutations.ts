@@ -3,6 +3,9 @@ import { type DatasetVersionSummary } from "@/api/data-manager";
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
 
 export type DatasetDeletionTask = { done: boolean; exit_code?: number };
+export type DatasetDeletionDestination =
+  | { status: "list" }
+  | { status: "version"; version: number };
 
 export class DatasetDeletionError extends Error {
   constructor(
@@ -35,7 +38,7 @@ export const datasetDeletionLifecycle = (
 export const nextVersionAfterDeletion = (
   versions: readonly DatasetVersionSummary[],
   deletedVersion: number,
-): { status: "list" } | { status: "version"; version: number } => {
+): DatasetDeletionDestination => {
   const nextVersion = versions
     .filter(({ version }) => version !== deletedVersion)
     .map(({ version }) => version)

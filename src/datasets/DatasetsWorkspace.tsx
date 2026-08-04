@@ -9,14 +9,14 @@ import { DatasetsTable } from "../features/DatasetsTable";
 import { DatasetDetails } from "../features/DatasetsTable/DatasetDetails";
 import Layout from "../layouts/Layout";
 import { DatasetResolutionBoundary } from "./DatasetResolutionBoundary";
-import { nextVersionAfterDeletion } from "./mutations";
+import { type DatasetDeletionDestination } from "./mutations";
 import { datasetLinks, datasetListState, type DatasetRoute } from "./routes";
 import { useDatasetVersionResolution } from "./useDatasetVersionResolution";
 
 const DatasetDetail = ({ route }: { route: Exclude<DatasetRoute, { kind: "index" }> }) => {
   const router = useRouter();
   const requestedVersion = route.kind === "dataset" ? undefined : route.datasetVersion;
-  const { error, isLoading, refetch, resolution } = useDatasetVersionResolution(
+  const { error, isFetching, isLoading, refetch, resolution } = useDatasetVersionResolution(
     route.datasetId,
     requestedVersion,
   );
@@ -46,6 +46,7 @@ const DatasetDetail = ({ route }: { route: Exclude<DatasetRoute, { kind: "index"
         <DatasetDetails
           dataset={dataset}
           datasetName={version.file_name}
+          freshness={isFetching ? "stale" : "current"}
           version={version}
           onClose={() => void router.replace(datasetLinks.index(state) as never)}
           onVersionChange={(nextVersion) =>
@@ -53,8 +54,7 @@ const DatasetDetail = ({ route }: { route: Exclude<DatasetRoute, { kind: "index"
               datasetLinks.version(dataset.dataset_id, nextVersion.version, state) as never,
             )
           }
-          onVersionDeleted={() => {
-            const next = nextVersionAfterDeletion(dataset.versions, version.version);
+          onVersionDeleted={(next: DatasetDeletionDestination) => {
             const href =
               next.status === "version"
                 ? datasetLinks.version(dataset.dataset_id, next.version, state)

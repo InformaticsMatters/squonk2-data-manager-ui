@@ -27,6 +27,7 @@ export interface ManageUsersProps {
    * Text to display under the field
    */
   helperText?: string;
+  inputValue?: string;
   /**
    * Text used for component ID and placeholder text, E.g. "editors".
    */
@@ -39,6 +40,7 @@ export interface ManageUsersProps {
    * Called when a user is removed
    */
   onRemove: (value: string[], changedUser?: string) => Promise<void> | void;
+  onInputChange?: (value: string) => void;
 }
 
 /**
@@ -53,8 +55,10 @@ export const ManageUsers: FC<ManageUsersProps> = ({
   disabled = false,
   title,
   helperText,
+  inputValue,
   onSelect,
   onRemove,
+  onInputChange,
 }) => {
   const { data, isLoading: isUsersLoading } = useGetUsers();
   const availableUsers = data?.users ?? [];
@@ -91,6 +95,7 @@ export const ManageUsers: FC<ManageUsersProps> = ({
       disabled={disabled || loading}
       getOptionDisabled={(user) => disabledUsers.includes(user)}
       id={title.toLowerCase().replace(/\s/gu, "")}
+      inputValue={inputValue}
       loading={loading}
       options={availableUsers.map((user) => user.username)}
       renderInput={(params) => <TextField {...params} helperText={helperText} label={title} />}
@@ -111,6 +116,7 @@ export const ManageUsers: FC<ManageUsersProps> = ({
       }
       value={users}
       onChange={(_, value, reason) => void updateUsers(value, reason)}
+      onInputChange={(_, value) => onInputChange?.(value)}
     />
   );
 };

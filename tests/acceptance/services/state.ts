@@ -11,10 +11,11 @@ export type ScenarioState = {
   datasetContentFailure?: 429 | 503;
   datasetFailure?: 429 | 503;
   datasetMutationFailure?: 403 | 503;
+  deletionPollingIndexes: Map<string, number>;
+  deletionTaskVersions: Map<string, number>;
   deletionExitCode?: number;
   fixtures: ReturnType<typeof createScenarioFixtures>;
   pollingIndex: number;
-  pendingDeletionVersion?: number;
   productFailure: boolean;
   projectFailure?: number;
   requests: RequestRecord[];
@@ -27,6 +28,8 @@ const scenarios = new Map<string, ScenarioState>();
 export const resetScenario = (subject: string, profile: ScenarioProfile = "default") => {
   const state: ScenarioState = {
     fixtures: createScenarioFixtures(subject, profile),
+    deletionPollingIndexes: new Map(),
+    deletionTaskVersions: new Map(),
     pollingIndex: 0,
     productFailure: false,
     requests: [],

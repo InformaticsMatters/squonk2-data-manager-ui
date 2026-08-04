@@ -3,6 +3,7 @@ import { type DatasetSummary, type DatasetVersionSummary } from "@/api/data-mana
 import { List } from "@mui/material";
 
 import { type DatasetCapability } from "../../../../datasets/capabilities";
+import { type DatasetDeletionDestination } from "../../../../datasets/mutations";
 import { AttachDatasetListItem } from "./AttachDatasetListItem";
 import { DatasetSchemaListItem } from "./DatasetSchemaListItem";
 import { DeleteDatasetListItem } from "./DeleteDatasetListItem";
@@ -19,7 +20,7 @@ export interface VersionActionsSectionProps {
   /**
    * Navigates to another available version.
    */
-  onVersionDeleted: () => void;
+  onVersionDeleted: (next: DatasetDeletionDestination) => void;
   /**
    * Whether the dataset version is editable.
    */

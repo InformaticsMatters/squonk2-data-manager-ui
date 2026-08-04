@@ -48,19 +48,18 @@ test.describe("Dataset mutation capabilities", () => {
   }
 
   test("missing and stale facts remain discoverable for authoritative evaluation", () => {
-    for (const facts of ["missing", "stale"] as const) {
+    const incompleteFacts = [
+      { freshness: "missing", username: undefined },
+      { freshness: "stale", username: "editor@example.org" },
+    ] as const;
+    for (const { freshness, username } of incompleteFacts) {
       for (const evaluate of [
         evaluateDatasetLabelCapability,
         evaluateDatasetEditorCapability,
         evaluateDatasetDeletionCapability,
       ]) {
         expect(
-          evaluate({
-            caller: { username: undefined },
-            dataset: dataset(),
-            facts,
-            version: version(1),
-          }),
+          evaluate({ caller: { username }, dataset: dataset(), freshness, version: version(1) }),
         ).toEqual({
           reason: "Your permission will be confirmed when you use this action.",
           status: "enabled",

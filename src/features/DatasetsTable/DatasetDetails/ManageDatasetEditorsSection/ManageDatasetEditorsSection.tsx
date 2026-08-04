@@ -33,6 +33,7 @@ export const ManageDatasetEditorsSection = ({
   const editors = dataset.editors.filter((editor) => editor !== user.username);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [editorInput, setEditorInput] = useState("");
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
@@ -40,9 +41,11 @@ export const ManageDatasetEditorsSection = ({
     <ManageUsers
       disabled={capability.status !== "enabled"}
       helperText={capability.status === "hidden" ? undefined : capability.reason}
+      inputValue={editorInput}
       isLoading={isLoading}
       title="Editors"
       users={editors}
+      onInputChange={setEditorInput}
       onRemove={async (_, changedUser) => {
         setIsLoading(true);
         const username = changedUser;
@@ -68,11 +71,13 @@ export const ManageDatasetEditorsSection = ({
       onSelect={async (_, changedUser) => {
         setIsLoading(true);
         const username = changedUser;
+        setEditorInput(username ?? "");
         if (username === undefined) {
           enqueueSnackbar("Username doesn't exist", { variant: "warning" });
         } else {
           try {
             await commands.addEditor(dataset.dataset_id, username);
+            setEditorInput("");
             enqueueSnackbar(`User ${username} added successfully`, { variant: "success" });
           } catch (error) {
             const message = datasetMutationFailureMessage(

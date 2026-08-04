@@ -9,10 +9,12 @@ import { NewLabelButton } from "../../../components/labels/NewLabelButton";
 import { ModalWrapper } from "../../../components/modals/ModalWrapper";
 import { PageSection } from "../../../components/PageSection";
 import {
+  type DatasetFactsFreshness,
   evaluateDatasetDeletionCapability,
   evaluateDatasetEditorCapability,
   evaluateDatasetLabelCapability,
 } from "../../../datasets/capabilities";
+import { type DatasetDeletionDestination } from "../../../datasets/mutations";
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
 import { ManageDatasetEditorsSection } from "./ManageDatasetEditorsSection";
 import { NewVersionListItem } from "./NewVersionListItem";
@@ -34,9 +36,10 @@ export interface DatasetDetailsProps {
    * Name of the dataset.
    */
   datasetName: string;
+  freshness: DatasetFactsFreshness;
   onClose: () => void;
   onVersionChange: (version: DatasetVersionSummary) => void;
-  onVersionDeleted: () => void;
+  onVersionDeleted: (next: DatasetDeletionDestination) => void;
 }
 
 /**
@@ -47,12 +50,19 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({
   dataset,
   version,
   datasetName,
+  freshness,
   onClose,
   onVersionChange,
   onVersionDeleted,
 }) => {
   const { user } = useKeycloakUser();
-  const capabilityFacts = { caller: { username: user.username }, dataset, version };
+  const capabilityFreshness: DatasetFactsFreshness = user.username ? freshness : "missing";
+  const capabilityFacts = {
+    caller: { username: user.username },
+    dataset,
+    freshness: capabilityFreshness,
+    version,
+  };
   const labelCapability = evaluateDatasetLabelCapability(capabilityFacts);
   const editorCapability = evaluateDatasetEditorCapability(capabilityFacts);
   const deletionCapability = evaluateDatasetDeletionCapability(capabilityFacts);

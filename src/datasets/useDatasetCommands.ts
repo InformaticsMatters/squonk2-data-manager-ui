@@ -2,6 +2,7 @@ import { useRef } from "react";
 
 import {
   getGetDatasetsQueryKey,
+  getGetDatasetsQueryOptions,
   useAddEditorToDataset,
   useDeleteDataset,
   useRemoveEditorFromDataset,
@@ -15,6 +16,7 @@ import {
   DatasetDeletionError,
   datasetDeletionLifecycle,
   DatasetDeletionPollingError,
+  nextVersionAfterDeletion,
 } from "./mutations";
 
 const deletionPollIntervalMs = 500;
@@ -25,8 +27,13 @@ const wait = (milliseconds: number) =>
     setTimeout(resolve, milliseconds);
   });
 
-export const invalidateDatasetQueries = (queryClient: QueryClient) =>
-  queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
+const refreshDatasets = async (queryClient: QueryClient) => {
+  await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
+  return queryClient.fetchQuery({
+    ...getGetDatasetsQueryOptions(),
+    staleTime: Number.POSITIVE_INFINITY,
+  });
+};
 
 const waitForDeletion = async (queryClient: QueryClient, taskId: string) => {
   for (let attempt = 0; attempt < deletionPollLimit; attempt += 1) {
@@ -68,13 +75,13 @@ export const useDatasetCommands = () => {
         annotations: JSON.stringify(labels.map((label) => ({ ...label, type: "LabelAnnotation" }))),
       },
     });
-    await invalidateDatasetQueries(queryClient);
+    await refreshDatasets(queryClient);
   };
 
   return {
     addEditor: async (datasetId: string, userId: string) => {
       await addEditor.mutateAsync({ datasetId, userId });
-      await invalidateDatasetQueries(queryClient);
+      await refreshDatasets(queryClient);
     },
     addLabel: (datasetId: string, datasetVersion: number, label: string, value: string) =>
       updateLabels(datasetId, datasetVersion, [{ active: true, label, value }]),
@@ -89,8 +96,12 @@ export const useDatasetCommands = () => {
       try {
         await waitForDeletion(queryClient, taskId);
         acceptedDeletionTasks.current.delete(deletionKey);
-        await invalidateDatasetQueries(queryClient);
-        return taskId;
+        const datasets = await refreshDatasets(queryClient);
+        const dataset = datasets.datasets.find(({ dataset_id }) => dataset_id === datasetId);
+        return {
+          nextVersion: nextVersionAfterDeletion(dataset?.versions ?? [], datasetVersion),
+          taskId,
+        };
       } catch (error) {
         if (error instanceof DatasetDeletionError) {
           acceptedDeletionTasks.current.delete(deletionKey);
@@ -101,7 +112,7 @@ export const useDatasetCommands = () => {
     isLabelPending: addMetadata.isPending,
     removeEditor: async (datasetId: string, userId: string) => {
       await removeEditor.mutateAsync({ datasetId, userId });
-      await invalidateDatasetQueries(queryClient);
+      await refreshDatasets(queryClient);
     },
     removeLabel: (
       datasetId: string,

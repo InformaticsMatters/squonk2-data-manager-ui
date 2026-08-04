@@ -5,7 +5,10 @@ import { ListItemButton, ListItemText } from "@mui/material";
 
 import { WarningDeleteButton } from "../../../../components/WarningDeleteButton";
 import { type DatasetCapability } from "../../../../datasets/capabilities";
-import { datasetMutationFailureMessage } from "../../../../datasets/mutations";
+import {
+  type DatasetDeletionDestination,
+  datasetMutationFailureMessage,
+} from "../../../../datasets/mutations";
 import { useDatasetCommands } from "../../../../datasets/useDatasetCommands";
 import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
 
@@ -19,10 +22,9 @@ export interface DeleteDatasetProps {
    */
   version: DatasetVersionSummary;
   /**
-   * Called just before the async delete action is called. Used to reset state in the parent scope.
-   * E.g. resetting the selected version.
+   * Called after deletion with a destination derived from refreshed dataset data.
    */
-  onDeleted: () => void;
+  onDeleted: (next: DatasetDeletionDestination) => void;
   capability: DatasetCapability;
 }
 
@@ -46,9 +48,9 @@ export const DeleteDatasetListItem = ({
       tooltipText={capability.status === "disabled" ? capability.reason : undefined}
       onDelete={async () => {
         try {
-          await deleteVersion(datasetId, version.version);
+          const { nextVersion } = await deleteVersion(datasetId, version.version);
           enqueueSnackbar("Dataset version deleted", { variant: "success" });
-          onDeleted();
+          onDeleted(nextVersion);
         } catch (error) {
           const message = datasetMutationFailureMessage(
             error,

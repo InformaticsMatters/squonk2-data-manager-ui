@@ -1,5 +1,11 @@
+import {
+  AppApiDatasetPostDatasetVersionMetaBody,
+  AppApiDatasetPostDatasetVersionMetaResponse,
+} from "@/api/data-manager/metadata/zod";
+
 import { createHash, createPrivateKey, generateKeyPairSync, randomUUID, sign } from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { z } from "zod";
 
 import { acceptanceEnvironment, acceptanceUrls } from "../environment";
 import { datasetContentFixtures, fixtureIds, isScenarioProfile } from "./fixtures";
@@ -80,6 +86,13 @@ const datasetFailureControls = [
     stateKey: "datasetContentFailure",
   },
 ] as const;
+
+const LabelAnnotation = z.object({
+  active: z.boolean(),
+  label: z.string(),
+  type: z.literal("LabelAnnotation"),
+  value: z.string(),
+});
 
 const cors = (request: IncomingMessage, response: ServerResponse) => {
   response.setHeader("access-control-allow-headers", "authorization,content-type");
@@ -221,11 +234,8 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     }
     const datasetVersion = Number(url.pathname.split("/").at(-1));
     const form = new URLSearchParams((await readBody(request)).toString());
-    const annotations = JSON.parse(form.get("annotations") ?? "[]") as {
-      active: boolean;
-      label: string;
-      value: string;
-    }[];
+    const body = AppApiDatasetPostDatasetVersionMetaBody.parse(Object.fromEntries(form));
+    const annotations = z.array(LabelAnnotation).parse(JSON.parse(body.annotations ?? "[]"));
     const version = state.fixtures.dataset.datasets[0].versions.find(
       (candidate) => candidate.version === datasetVersion,
     );
@@ -243,7 +253,21 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       }
     }
     version.labels = labels;
-    return json(response, 200, { labels });
+    return json(
+      response,
+      200,
+      AppApiDatasetPostDatasetVersionMetaResponse.parse({
+        annotations,
+        created: version.published,
+        created_by: version.owner,
+        dataset_id: fixtureIds.dataset,
+        dataset_name: version.file_name,
+        description: "Acceptance dataset metadata",
+        labels: Object.entries(labels),
+        last_updated: version.published,
+        metadata_version: String(datasetVersion),
+      }),
+    );
   }
   if (url.pathname.startsWith(`/dataset/${fixtureIds.dataset}/editor/`)) {
     if (state.datasetMutationFailure) {
@@ -283,23 +307,37 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   if (url.pathname === "/version") {
     return json(response, 200, state.fixtures.dataManagerVersion);
   }
-  if (url.pathname === `/task/${fixtureIds.task}`) {
+  if (url.pathname.startsWith("/task/")) {
+    const taskId = url.pathname.slice("/task/".length);
+    const deletionVersion = state.deletionTaskVersions.get(taskId);
+    if (taskId !== fixtureIds.task && deletionVersion === undefined) {
+      return json(response, 404, { error: "fixture-task-not-found" });
+    }
     if (state.taskFailure) {
       return json(response, state.taskFailure, state.fixtures.failures.serverError);
     }
-    const index = Math.min(state.pollingIndex, state.fixtures.taskTransitions.length - 1);
-    state.pollingIndex += 1;
+    const pollingIndex =
+      deletionVersion === undefined
+        ? state.pollingIndex
+        : (state.deletionPollingIndexes.get(taskId) ?? 0);
+    const index = Math.min(pollingIndex, state.fixtures.taskTransitions.length - 1);
+    if (deletionVersion === undefined) {
+      state.pollingIndex += 1;
+    } else {
+      state.deletionPollingIndexes.set(taskId, pollingIndex + 1);
+    }
     const task = state.fixtures.taskTransitions[index];
     const responseTask =
       task.done && state.deletionExitCode !== undefined
         ? { ...task, exit_code: state.deletionExitCode }
         : task;
-    if (responseTask.done && responseTask.exit_code === 0 && state.pendingDeletionVersion) {
+    if (responseTask.done && responseTask.exit_code === 0 && deletionVersion !== undefined) {
       state.fixtures.dataset.datasets[0].versions =
         state.fixtures.dataset.datasets[0].versions.filter(
-          (version) => version.version !== state.pendingDeletionVersion,
+          (version) => version.version !== deletionVersion,
         );
-      state.pendingDeletionVersion = undefined;
+      state.deletionPollingIndexes.delete(taskId);
+      state.deletionTaskVersions.delete(taskId);
     }
     return json(response, 200, responseTask);
   }
@@ -311,16 +349,16 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   }
   if (
     request.method === "DELETE" &&
-    (url.pathname === `/dataset/${fixtureIds.dataset}/1` ||
-      url.pathname === `/dataset/${fixtureIds.dataset}/2`)
+    [1, 2, 3].some((version) => url.pathname === `/dataset/${fixtureIds.dataset}/${version}`)
   ) {
     if (state.datasetMutationFailure) {
       return json(response, state.datasetMutationFailure, state.fixtures.failures.forbidden);
     }
     const datasetVersion = Number(url.pathname.split("/").at(-1));
-    state.pendingDeletionVersion = datasetVersion;
-    state.pollingIndex = 0;
-    return json(response, 202, { task_id: fixtureIds.task });
+    const taskId = `task-44444444-4444-4444-4444-${String(datasetVersion).padStart(12, "0")}`;
+    state.deletionPollingIndexes.set(taskId, 0);
+    state.deletionTaskVersions.set(taskId, datasetVersion);
+    return json(response, 202, { task_id: taskId });
   }
   if (
     (request.method === "GET" && url.pathname === `/dataset/${fixtureIds.dataset}/1`) ||
@@ -444,6 +482,22 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/dataset-mutation-failure") && request.method === "DELETE") {
     getScenario(subject).datasetMutationFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/concurrent-dataset-version") && request.method === "POST") {
+    const state = getScenario(subject);
+    const currentVersion = state.fixtures.dataset.datasets[0].versions[0];
+    state.fixtures.dataset.datasets[0].versions.unshift({
+      ...currentVersion,
+      file_name: "acceptance-dataset-v3.sdf",
+      source_ref: "acceptance-dataset-v3.sdf",
+      version: 3,
+    });
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/undeletable-dataset-version") && request.method === "POST") {
+    const state = getScenario(subject);
+    state.fixtures.dataset.datasets[1].versions[0].processing_stage = "COPYING";
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/deletion-exit-code") && request.method === "POST") {

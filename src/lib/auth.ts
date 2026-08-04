@@ -1,6 +1,6 @@
 import { captureException } from "@sentry/nextjs";
 import { betterAuth } from "better-auth";
-import { genericOAuth, keycloak } from "better-auth/plugins";
+import { genericOAuth, type GenericOAuthConfig, keycloak } from "better-auth/plugins";
 import { jwtDecode } from "jwt-decode";
 
 import { withBasePath } from "../utils/app/basePath";
@@ -39,6 +39,9 @@ export const auth = betterAuth({
               process.env.BETTER_AUTH_BASE_URL,
             ).href,
             scopes: ["openid", "profile", "email", "offline_access"],
+            // better-auth always sends code_verifier when exchanging the code, so the
+            // challenge has to be on the authorize request or Keycloak rejects the exchange
+            pkce: true,
             overrideUserInfo: true, // refresh realm_access roles on every re-login
           }),
           // eslint-disable-next-line @typescript-eslint/require-await
@@ -65,6 +68,16 @@ export const auth = betterAuth({
               realm_access: JSON.stringify(realmAccess ?? { roles: [] }),
             };
           },
+          // better-auth only keeps id/email/emailVerified/image/name from getUserInfo and
+          // spreads whatever mapProfileToUser returns, so the additionalFields have to be
+          // carried across here or the session loses realm_access and every role gate 403s.
+          // The cast is needed because mapProfileToUser is typed against the base user only.
+          mapProfileToUser: ((profile: Record<string, unknown>) => ({
+            preferred_username: profile.preferred_username,
+            given_name: profile.given_name,
+            family_name: profile.family_name,
+            realm_access: profile.realm_access,
+          })) as GenericOAuthConfig["mapProfileToUser"],
         },
       ],
     }),

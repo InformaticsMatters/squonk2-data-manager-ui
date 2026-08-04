@@ -28,9 +28,11 @@ export function withPageAuthRequiredSSR<T>(options: {
         );
         const location = signInRes.headers.get("location");
         if (location) {
-          const setCookie = signInRes.headers.get("set-cookie");
-          if (setCookie) {
-            ctx.res.setHeader("Set-Cookie", setCookie);
+          // getSetCookie keeps each cookie separate; headers.get would join them into one
+          // malformed header and lose the OAuth state that carries the PKCE code verifier
+          const setCookies = signInRes.headers.getSetCookie();
+          if (setCookies.length > 0) {
+            ctx.res.setHeader("Set-Cookie", setCookies);
           }
           return { redirect: { destination: location, permanent: false } };
         }

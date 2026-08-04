@@ -178,13 +178,24 @@ const handleOidc = async (request: IncomingMessage, response: ServerResponse) =>
     if (pending?.redirectUri !== form.get("redirect_uri")) {
       return json(response, 400, { error: "invalid_grant" });
     }
+    const verifier = form.get("code_verifier");
     if (pending.challenge) {
       const actual = createHash("sha256")
-        .update(form.get("code_verifier") ?? "")
+        .update(verifier ?? "")
         .digest("base64url");
       if (actual !== pending.challenge) {
-        return json(response, 400, { error: "invalid_grant" });
+        return json(response, 400, {
+          error: "invalid_grant",
+          error_description: "PKCE verification failed: incorrect code verifier",
+        });
       }
+    } else if (verifier) {
+      // Keycloak rejects a verifier that was never matched by a challenge on /authorize
+      return json(response, 400, {
+        error: "invalid_grant",
+        error_description:
+          "PKCE verification failed: Code verifier was specified but authorization code challenge was not",
+      });
     }
     codes.delete(code);
     const accessToken = createToken(pending.subject);

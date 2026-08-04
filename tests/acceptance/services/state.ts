@@ -10,11 +10,15 @@ export type RequestRecord = {
 export type ScenarioState = {
   datasetContentFailure?: 429 | 503;
   datasetFailure?: 429 | 503;
+  datasetMutationFailure?: 403 | 503;
+  deletionExitCode?: number;
   fixtures: ReturnType<typeof createScenarioFixtures>;
   pollingIndex: number;
+  pendingDeletionVersion?: number;
   productFailure: boolean;
   projectFailure?: number;
   requests: RequestRecord[];
+  taskFailure?: 503;
   upload?: { body: Buffer; contentType: string };
 };
 

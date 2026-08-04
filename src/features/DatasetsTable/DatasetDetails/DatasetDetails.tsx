@@ -8,6 +8,11 @@ import { Labels } from "../../../components/labels/Labels";
 import { NewLabelButton } from "../../../components/labels/NewLabelButton";
 import { ModalWrapper } from "../../../components/modals/ModalWrapper";
 import { PageSection } from "../../../components/PageSection";
+import {
+  evaluateDatasetDeletionCapability,
+  evaluateDatasetEditorCapability,
+  evaluateDatasetLabelCapability,
+} from "../../../datasets/capabilities";
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
 import { ManageDatasetEditorsSection } from "./ManageDatasetEditorsSection";
 import { NewVersionListItem } from "./NewVersionListItem";
@@ -31,6 +36,7 @@ export interface DatasetDetailsProps {
   datasetName: string;
   onClose: () => void;
   onVersionChange: (version: DatasetVersionSummary) => void;
+  onVersionDeleted: () => void;
 }
 
 /**
@@ -43,10 +49,14 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({
   datasetName,
   onClose,
   onVersionChange,
+  onVersionDeleted,
 }) => {
   const { user } = useKeycloakUser();
-
-  const editable = !!user.username && dataset.editors.includes(user.username);
+  const capabilityFacts = { caller: { username: user.username }, dataset, version };
+  const labelCapability = evaluateDatasetLabelCapability(capabilityFacts);
+  const editorCapability = evaluateDatasetEditorCapability(capabilityFacts);
+  const deletionCapability = evaluateDatasetDeletionCapability(capabilityFacts);
+  const editable = labelCapability.status === "enabled";
 
   return (
     <ModalWrapper
@@ -58,22 +68,40 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({
     >
       <Container maxWidth="md">
         <PageSection level={2} title="Dataset Actions">
-          {!!editable && (
-            <>
+          <>
+            {!!editable && (
               <List>
                 <NewVersionListItem dataset={dataset} datasetName={datasetName} edge="end" />
               </List>
+            )}
 
-              <PageSection title="Editors">
-                <ManageDatasetEditorsSection dataset={dataset} />
-              </PageSection>
+            <PageSection title="Editors">
+              <ManageDatasetEditorsSection
+                capability={editorCapability}
+                dataset={dataset}
+                version={version}
+              />
+            </PageSection>
 
-              <Typography gutterBottom component="h4" variant="h5">
-                Labels <NewLabelButton datasetId={dataset.dataset_id} />
+            <Typography gutterBottom component="h4" variant="h5">
+              Labels{" "}
+              <NewLabelButton
+                capability={labelCapability}
+                datasetId={dataset.dataset_id}
+                datasetVersion={version.version}
+              />
+            </Typography>
+            {labelCapability.status === "disabled" && (
+              <Typography color="text.secondary" variant="body2">
+                {labelCapability.reason}
               </Typography>
-              <Labels datasetId={dataset.dataset_id} datasetVersion={version} />
-            </>
-          )}
+            )}
+            <Labels
+              capability={labelCapability}
+              datasetId={dataset.dataset_id}
+              datasetVersion={version}
+            />
+          </>
 
           <PageSection title="Working Version">
             <WorkingVersionSection
@@ -94,9 +122,9 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({
           <PageSection title="Actions">
             <VersionActionsSection
               dataset={dataset}
-              editable={editable}
+              deletionCapability={deletionCapability}
               version={version}
-              onVersionChange={onVersionChange}
+              onVersionDeleted={onVersionDeleted}
             />
           </PageSection>
 

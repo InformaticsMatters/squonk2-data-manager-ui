@@ -1,14 +1,14 @@
 import { type DmError } from "@/api/data-manager";
-import { getGetDatasetsQueryKey } from "@/api/data-manager/dataset";
-import { useAddMetadata } from "@/api/data-manager/metadata";
 
 import { AddCircleOutlineRounded as AddCircleOutlineRoundedIcon } from "@mui/icons-material";
 import { Box, Button, IconButton, Popover, TextField, Tooltip } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
-import { useQueryClient } from "@tanstack/react-query";
 import { bindPopover, bindTrigger, usePopupState } from "material-ui-popup-state/hooks";
 import { z } from "zod/mini";
 
+import { type DatasetCapability } from "../../datasets/capabilities";
+import { datasetMutationFailureMessage } from "../../datasets/mutations";
+import { useDatasetCommands } from "../../datasets/useDatasetCommands";
 import { type TableDataset } from "../../features/DatasetsTable";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 
@@ -17,12 +17,13 @@ export interface NewLabelButtonProps {
    * ID of the dataset
    */
   datasetId: TableDataset["dataset_id"];
+  datasetVersion: number;
+  capability: DatasetCapability;
 }
 
-export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
-  const queryClient = useQueryClient();
-  const { mutateAsync: addAnnotations } = useAddMetadata();
-  const { enqueueError } = useEnqueueError<DmError>();
+export const NewLabelButton = ({ datasetId, datasetVersion, capability }: NewLabelButtonProps) => {
+  const { addLabel, isLabelPending } = useDatasetCommands();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
   const popupState = usePopupState({ variant: "popover", popupId: `add-label-${datasetId}` });
 
@@ -37,35 +38,39 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
     validators: { onChange: labelSchema },
     onSubmit: async ({ value }) => {
       try {
-        await addAnnotations({
+        await addLabel(
           datasetId,
-          data: {
-            labels: JSON.stringify([
-              {
-                type: "LabelAnnotation",
-                label: value.label.trim().toLowerCase(),
-                value: value.value.trim(),
-                active: true,
-              },
-            ]),
-          },
-        });
-        await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
+          datasetVersion,
+          value.label.trim().toLowerCase(),
+          value.value.trim(),
+        );
         form.reset();
-      } catch (error) {
-        enqueueError(error);
-      } finally {
         popupState.close();
+      } catch (error) {
+        const message = datasetMutationFailureMessage(
+          error,
+          "change labels for",
+          datasetId,
+          datasetVersion,
+        );
+        message ? enqueueSnackbar(message, { variant: "error" }) : enqueueError(error);
       }
     },
   });
 
   return (
     <>
-      <Tooltip title="Add a new label">
-        <IconButton size="small" {...bindTrigger(popupState)}>
-          <AddCircleOutlineRoundedIcon />
-        </IconButton>
+      <Tooltip title={capability.status === "disabled" ? capability.reason : "Add a new label"}>
+        <span>
+          <IconButton
+            aria-label="Add a new label"
+            disabled={capability.status !== "enabled"}
+            size="small"
+            {...bindTrigger(popupState)}
+          >
+            <AddCircleOutlineRoundedIcon />
+          </IconButton>
+        </span>
       </Tooltip>
 
       <Popover
@@ -106,7 +111,7 @@ export const NewLabelButton = ({ datasetId }: NewLabelButtonProps) => {
                 />
               )}
             </form.Field>
-            <Button disabled={!form.state.canSubmit} type="submit">
+            <Button disabled={!form.state.canSubmit || isLabelPending} type="submit">
               Add
             </Button>
           </Box>

@@ -9,6 +9,7 @@ import { DatasetsTable } from "../features/DatasetsTable";
 import { DatasetDetails } from "../features/DatasetsTable/DatasetDetails";
 import Layout from "../layouts/Layout";
 import { DatasetResolutionBoundary } from "./DatasetResolutionBoundary";
+import { nextVersionAfterDeletion } from "./mutations";
 import { datasetLinks, datasetListState, type DatasetRoute } from "./routes";
 import { useDatasetVersionResolution } from "./useDatasetVersionResolution";
 
@@ -52,6 +53,14 @@ const DatasetDetail = ({ route }: { route: Exclude<DatasetRoute, { kind: "index"
               datasetLinks.version(dataset.dataset_id, nextVersion.version, state) as never,
             )
           }
+          onVersionDeleted={() => {
+            const next = nextVersionAfterDeletion(dataset.versions, version.version);
+            const href =
+              next.status === "version"
+                ? datasetLinks.version(dataset.dataset_id, next.version, state)
+                : datasetLinks.index(state);
+            void router.replace(href as never);
+          }}
         />
       )}
     </DatasetResolutionBoundary>

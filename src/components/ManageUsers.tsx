@@ -2,6 +2,7 @@ import { type FC } from "react";
 
 import { useGetUsers } from "@/api/data-manager/user";
 
+import { Cancel as CancelIcon } from "@mui/icons-material";
 import { Autocomplete, Chip, TextField } from "@mui/material";
 import { type AutocompleteChangeReason } from "@mui/material/useAutocomplete";
 
@@ -33,11 +34,11 @@ export interface ManageUsersProps {
   /**
    * Called when a user is selected
    */
-  onSelect: (value: string[]) => Promise<void> | void;
+  onSelect: (value: string[], changedUser?: string) => Promise<void> | void;
   /**
    * Called when a user is removed
    */
-  onRemove: (value: string[]) => Promise<void> | void;
+  onRemove: (value: string[], changedUser?: string) => Promise<void> | void;
 }
 
 /**
@@ -63,13 +64,17 @@ export const ManageUsers: FC<ManageUsersProps> = ({
   const updateUsers = async (value: string[], reason: AutocompleteChangeReason) => {
     switch (reason) {
       case "selectOption": {
-        // Isolate the user that has been added
-        await onSelect(value);
+        await onSelect(
+          value,
+          value.find((user) => !users.includes(user)),
+        );
         break;
       }
       case "removeOption": {
-        // Isolate the user that has been removed
-        await onRemove(value);
+        await onRemove(
+          value,
+          users.find((user) => !value.includes(user)),
+        );
         break;
       }
     }
@@ -94,6 +99,7 @@ export const ManageUsers: FC<ManageUsersProps> = ({
           const { onDelete, ...chipProps } = getItemProps({ index });
           return (
             <Chip
+              deleteIcon={<CancelIcon aria-label={`Remove ${option}`} />}
               label={option}
               variant="outlined"
               onDelete={onDelete}

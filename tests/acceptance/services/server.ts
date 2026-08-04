@@ -83,7 +83,7 @@ const datasetFailureControls = [
 
 const cors = (request: IncomingMessage, response: ServerResponse) => {
   response.setHeader("access-control-allow-headers", "authorization,content-type");
-  response.setHeader("access-control-allow-methods", "GET,POST,PUT,OPTIONS");
+  response.setHeader("access-control-allow-methods", "DELETE,GET,POST,PUT,OPTIONS");
   response.setHeader("access-control-allow-origin", request.headers.origin ?? "*");
 };
 
@@ -212,6 +212,53 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     };
     return json(response, 202, state.fixtures.uploadResponse);
   }
+  if (
+    url.pathname === `/dataset/${fixtureIds.dataset}/meta/1` ||
+    url.pathname === `/dataset/${fixtureIds.dataset}/meta/2`
+  ) {
+    if (state.datasetMutationFailure) {
+      return json(response, state.datasetMutationFailure, state.fixtures.failures.forbidden);
+    }
+    const datasetVersion = Number(url.pathname.split("/").at(-1));
+    const form = new URLSearchParams((await readBody(request)).toString());
+    const annotations = JSON.parse(form.get("annotations") ?? "[]") as {
+      active: boolean;
+      label: string;
+      value: string;
+    }[];
+    const version = state.fixtures.dataset.datasets[0].versions.find(
+      (candidate) => candidate.version === datasetVersion,
+    );
+    if (!version) {
+      return json(response, 404, { error: "fixture-version-not-found" });
+    }
+    const labels = (version.labels ?? {}) as Record<string, string[]>;
+    for (const annotation of annotations) {
+      const values = labels[annotation.label] ?? [];
+      labels[annotation.label] = annotation.active
+        ? [...new Set([...values, annotation.value])]
+        : values.filter((value) => value !== annotation.value);
+      if (labels[annotation.label].length === 0) {
+        delete labels[annotation.label];
+      }
+    }
+    version.labels = labels;
+    return json(response, 200, { labels });
+  }
+  if (url.pathname.startsWith(`/dataset/${fixtureIds.dataset}/editor/`)) {
+    if (state.datasetMutationFailure) {
+      return json(response, state.datasetMutationFailure, state.fixtures.failures.forbidden);
+    }
+    const username = decodeURIComponent(url.pathname.split("/").at(-1) ?? "");
+    const editors = state.fixtures.dataset.datasets[0].editors;
+    if (request.method === "PUT" && !editors.includes(username)) {
+      editors.push(username);
+    }
+    if (request.method === "DELETE") {
+      state.fixtures.dataset.datasets[0].editors = editors.filter((editor) => editor !== username);
+    }
+    return json(response, 204, undefined);
+  }
   if (url.pathname === "/project") {
     return json(response, 200, state.fixtures.projects);
   }
@@ -237,9 +284,24 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     return json(response, 200, state.fixtures.dataManagerVersion);
   }
   if (url.pathname === `/task/${fixtureIds.task}`) {
+    if (state.taskFailure) {
+      return json(response, state.taskFailure, state.fixtures.failures.serverError);
+    }
     const index = Math.min(state.pollingIndex, state.fixtures.taskTransitions.length - 1);
     state.pollingIndex += 1;
-    return json(response, 200, state.fixtures.taskTransitions[index]);
+    const task = state.fixtures.taskTransitions[index];
+    const responseTask =
+      task.done && state.deletionExitCode !== undefined
+        ? { ...task, exit_code: state.deletionExitCode }
+        : task;
+    if (responseTask.done && responseTask.exit_code === 0 && state.pendingDeletionVersion) {
+      state.fixtures.dataset.datasets[0].versions =
+        state.fixtures.dataset.datasets[0].versions.filter(
+          (version) => version.version !== state.pendingDeletionVersion,
+        );
+      state.pendingDeletionVersion = undefined;
+    }
+    return json(response, 200, responseTask);
   }
   if (url.pathname === `/dataset/${fixtureIds.dataset}/schema/1`) {
     return json(response, 200, state.fixtures.datasetSchemas[1]);
@@ -248,8 +310,21 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     return json(response, 200, state.fixtures.datasetSchemas[2]);
   }
   if (
-    url.pathname === `/dataset/${fixtureIds.dataset}/1` ||
-    url.pathname === `/dataset/${fixtureIds.dataset}/2`
+    request.method === "DELETE" &&
+    (url.pathname === `/dataset/${fixtureIds.dataset}/1` ||
+      url.pathname === `/dataset/${fixtureIds.dataset}/2`)
+  ) {
+    if (state.datasetMutationFailure) {
+      return json(response, state.datasetMutationFailure, state.fixtures.failures.forbidden);
+    }
+    const datasetVersion = Number(url.pathname.split("/").at(-1));
+    state.pendingDeletionVersion = datasetVersion;
+    state.pollingIndex = 0;
+    return json(response, 202, { task_id: fixtureIds.task });
+  }
+  if (
+    (request.method === "GET" && url.pathname === `/dataset/${fixtureIds.dataset}/1`) ||
+    (request.method === "GET" && url.pathname === `/dataset/${fixtureIds.dataset}/2`)
   ) {
     if (state.datasetContentFailure) {
       return json(response, state.datasetContentFailure, state.fixtures.failures.serverError);
@@ -357,6 +432,34 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (datasetFailureControl && request.method === "DELETE") {
     getScenario(subject)[datasetFailureControl.stateKey] = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/dataset-mutation-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-dataset-mutation-failure", status });
+    }
+    getScenario(subject).datasetMutationFailure = status as 403 | 503;
+    return json(response, 200, { datasetMutationFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/dataset-mutation-failure") && request.method === "DELETE") {
+    getScenario(subject).datasetMutationFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/deletion-exit-code") && request.method === "POST") {
+    getScenario(subject).deletionExitCode = Number(url.searchParams.get("value"));
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/deletion-exit-code") && request.method === "DELETE") {
+    getScenario(subject).deletionExitCode = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/task-failure") && request.method === "POST") {
+    getScenario(subject).taskFailure = 503;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/task-failure") && request.method === "DELETE") {
+    getScenario(subject).taskFailure = undefined;
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/product-failure") && request.method === "DELETE") {

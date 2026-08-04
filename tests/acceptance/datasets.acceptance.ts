@@ -185,3 +185,91 @@ test("recoverable dataset failure retries the same exact version", async ({
     `/dataset/${fixtureIds.dataset}/1`,
   );
 });
+
+test("dataset mutations retain version scope and recover from authoritative rejection", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const path = `datasets/${fixtureIds.dataset}/versions/1`;
+  await login(page, path, testInfo);
+  const datasetDialog = page.getByRole("dialog", { name: "Dataset acceptance-dataset-v1.sdf" });
+  await expect(page.getByLabel("Select a version")).toHaveText("v1");
+
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/dataset-mutation-failure?status=403`,
+  );
+  await page.getByRole("button", { name: "Add a new label" }).click();
+  await page.getByLabel("Name").fill("assay");
+  await page.getByLabel("Value").fill("validated");
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(
+    page.getByText(
+      `You no longer have permission to change labels for dataset ${fixtureIds.dataset} version 1. The displayed dataset version has not changed.`,
+    ),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+  await expect(page.getByLabel("Name")).toHaveValue("assay");
+  await expect(page.getByLabel("Value")).toHaveValue("validated");
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/dataset-mutation-failure`);
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(datasetDialog.getByText("assay=validated", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Select a version")).toHaveText("v1");
+  await datasetDialog.getByLabel("Remove assay=validated").click();
+  await expect(datasetDialog.getByText("assay=validated", { exact: true })).not.toBeVisible();
+
+  const colleague = `${subject}-observer`;
+  await page.getByLabel("Editors").fill(colleague);
+  await page.getByRole("option", { name: colleague }).click();
+  await expect(page.getByText(`User ${colleague} added successfully`)).toBeVisible();
+  await expect(page.getByLabel("Select a version")).toHaveText("v1");
+  await page.getByLabel(`Remove ${colleague}`).click();
+  await expect(page.getByText(`User ${colleague} removed successfully`)).toBeVisible();
+
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/task-failure`);
+  await page.getByText("Delete this Version of the Dataset", { exact: true }).click();
+  const deleteVersionOneDialog = page.getByRole("dialog", { name: "Delete v1" });
+  await deleteVersionOneDialog.getByRole("button", { name: "Delete" }).click();
+  await expect(
+    page.getByText(
+      `Could not delete dataset ${fixtureIds.dataset} version 1. The displayed dataset version has not changed; retry is available.`,
+    ),
+  ).toBeVisible({ timeout: 20_000 });
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+  await expect(deleteVersionOneDialog).toBeVisible();
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/task-failure`);
+  await deleteVersionOneDialog.getByRole("button", { name: "Delete" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}datasets/${fixtureIds.dataset}/versions/2`);
+  await expect(page.getByLabel("Select a version")).toHaveText("v2");
+  await expect(page.getByText("Dataset version deleted", { exact: true })).toBeVisible();
+
+  await page.getByText("Delete this Version of the Dataset", { exact: true }).click();
+  await page
+    .getByRole("dialog", { name: "Delete v2" })
+    .getByRole("button", { name: "Delete" })
+    .click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}datasets`);
+  await expect(page.getByRole("dialog")).not.toBeVisible();
+
+  const diagnostics = await request
+    .get(`${acceptanceUrls.control}/scenario/${subject}`)
+    .then(
+      (response) => response.json() as Promise<{ requests: { method: string; path: string }[] }>,
+    );
+  expect(diagnostics.requests.map(({ method, path }) => ({ method, path }))).toEqual(
+    expect.arrayContaining([
+      { method: "POST", path: `/dataset/${fixtureIds.dataset}/meta/1` },
+      { method: "PUT", path: `/dataset/${fixtureIds.dataset}/editor/${colleague}` },
+      { method: "DELETE", path: `/dataset/${fixtureIds.dataset}/editor/${colleague}` },
+      { method: "DELETE", path: `/dataset/${fixtureIds.dataset}/1` },
+      { method: "DELETE", path: `/dataset/${fixtureIds.dataset}/2` },
+    ]),
+  );
+  expect(
+    diagnostics.requests.filter(
+      ({ method, path }) => method === "DELETE" && path === `/dataset/${fixtureIds.dataset}/1`,
+    ),
+  ).toHaveLength(1);
+});

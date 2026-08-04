@@ -1,14 +1,10 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-`data-manager-ui` is a Next.js app inside the `squonk-frontend` pnpm-workspace monorepo. Shared code lives in `../../libs/` (`@squonk/*` packages, e.g. `mui-theme`, `sdf-parser`, `eslint-config`).
+# AGENTS.md
 
 ## Stack
 
 - Next.js 16 using the **Pages Router** (`src/pages/`), not the App Router.
 - React 19, Material-UI v9, Emotion (CSS-in-JS, `jsxImportSource: @emotion/react`), TanStack Query/Form/Table.
-- Package manager: **pnpm** (Node 24). Run commands from this app directory.
+- Package manager: **pnpm** v11 (Node 24). Run commands from this app directory.
 - Auth: better-auth client using keycloak on the front-end
 - API clients are generated with Orval and committed as application source under `src/api/data-manager` and `src/api/account-server`. Import their root, tag, Fetch, and Zod interfaces through `@/api/...`; keep handwritten runtime adapters under `src/api/runtime` outside the replaceable generated trees.
 

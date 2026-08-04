@@ -5,13 +5,18 @@ import {
 } from "@/api/account-server";
 import {
   useGetDefaultOrganisation,
+  useGetOrganisation,
   useGetOrganisationsSuspense,
 } from "@/api/account-server/organisation";
-import { useGetPersonalUnit, useGetUnitsSuspense } from "@/api/account-server/unit";
+import { useGetPersonalUnit, useGetUnit, useGetUnitsSuspense } from "@/api/account-server/unit";
 import { useGetUserAccount } from "@/api/account-server/user";
 
-import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
+import {
+  classifyTransportFailure,
+  type TransportFailure,
+} from "../api/runtime/classifyTransportFailure";
 import { type AccessCaller, type AccessFactsFreshness } from "./capabilities";
+import { administrationReadIsAuthoritative } from "./failures";
 
 export type UnitWithOrganisation = { organisation: OrganisationAllDetail; unit: UnitAllDetail };
 
@@ -30,6 +35,56 @@ export const useAccessIndex = () => {
   const { data: unitGroups } = useGetUnitsSuspense();
   return { organisations: organisations.organisations, units: flattenUnits(unitGroups.units) };
 };
+
+/**
+ * What the addressed resource itself answered. `unavailable` carries the authoritative transport
+ * fact so the screen can explain a denial and an absence apart; retryable facts never reach here
+ * because they are rethrown to the task-level retry boundary.
+ */
+export type AddressedResource<TResource> =
+  | { kind: "available"; resource: TResource }
+  | { kind: "pending" }
+  | { kind: "unavailable"; failure: TransportFailure };
+
+/**
+ * The addressed resource is read from its own generated resource, never from the caller's index, so
+ * a resource the caller may read but does not list is not mistaken for an absent one.
+ */
+const addressedResourceQuery = {
+  retry: (failureCount: number, error: unknown) =>
+    !administrationReadIsAuthoritative(error) && failureCount < 3,
+  throwOnError: (error: unknown) => !administrationReadIsAuthoritative(error),
+};
+
+const toAddressedResource = <TResource>({
+  data,
+  error,
+  isError,
+}: {
+  data: TResource | undefined;
+  error: unknown;
+  isError: boolean;
+}): AddressedResource<TResource> => {
+  if (isError) {
+    return { failure: classifyTransportFailure(error), kind: "unavailable" };
+  }
+  return data === undefined ? { kind: "pending" } : { kind: "available", resource: data };
+};
+
+export const useAddressedOrganisation = (
+  organisationId: string,
+): AddressedResource<OrganisationAllDetail> =>
+  toAddressedResource(useGetOrganisation(organisationId, { query: addressedResourceQuery }));
+
+export const useAddressedUnit = (unitId: string): AddressedResource<UnitAllDetail> =>
+  toAddressedResource(useGetUnit(unitId, { query: addressedResourceQuery }));
+
+/**
+ * The organisation a unit belongs to is only ever named by the caller's grouped units, so a unit
+ * readable outside that index keeps its identity and loses nothing but its ancestry.
+ */
+export const useUnitAncestry = (unitId: string): OrganisationAllDetail | undefined =>
+  useAccessIndex().units.find(({ unit }) => unit.id === unitId)?.organisation;
 
 /**
  * Resolves caller authority, personal-unit identity, and default-organisation identity from their

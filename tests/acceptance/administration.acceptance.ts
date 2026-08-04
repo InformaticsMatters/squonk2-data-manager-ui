@@ -560,6 +560,84 @@ test("transient Organisation & access reads retry without changing scope", async
   await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
 });
 
+test("resources readable outside the caller's index open from a direct link", async ({
+  page,
+}, testInfo) => {
+  const path = `administration/organisation-access/units/${fixtureIds.unlistedUnit}`;
+  await login(page, path, testInfo);
+
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+  await expect(page.getByRole("heading", { name: "Unlisted Unit" })).toBeVisible();
+  await expect(
+    page.getByRole("main").getByText(fixtureIds.unlistedUnit, { exact: true }),
+  ).toBeVisible();
+
+  await page.goto(
+    `${acceptanceUrls.app}administration/organisation-access/organisations/${fixtureIds.unlistedOrganisation}`,
+  );
+  await expect(page.getByRole("heading", { name: "Unlisted Organisation" })).toBeVisible();
+  await expect(
+    page.getByRole("main").getByText(fixtureIds.unlistedOrganisation, { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("This organisation has no units you can see.")).toBeVisible();
+});
+
+test("access-denied resources explain the denial without leaving the task", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/addressed-read-failure?status=403`,
+  );
+  const path = `administration/organisation-access/units/${fixtureIds.unit}`;
+  await login(page, path, testInfo);
+
+  await expect(page.getByRole("navigation", { name: "Administration tasks" })).toBeVisible();
+  await expect(
+    page.getByText("You do not have access to this Administration resource."),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toHaveCount(0);
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+});
+
+test("transient addressed resource reads retry without changing scope", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const path = `administration/organisation-access/units/${fixtureIds.unit}`;
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/addressed-read-failure?status=503`,
+  );
+  await login(page, path, testInfo);
+
+  await expect(page.getByRole("navigation", { name: "Administration tasks" })).toBeVisible();
+  await expect(
+    page.getByText("Administration data could not be loaded. Retry this task."),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/addressed-read-failure`);
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+});
+
+test("an empty Organisation & access index explains how to obtain access", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=no-access`);
+  await login(page, "administration/organisation-access", testInfo);
+
+  await expect(page.getByRole("heading", { name: "Organisation & access", level: 2 })).toHaveCount(
+    1,
+  );
+  await expect(page.getByText(/No organisations or units are available/u)).toBeVisible();
+  await expect(page.getByText(/Contact an organisation owner/u)).toBeVisible();
+});
+
 test("unknown and wrongly typed Organisation & access resources stay local", async ({
   page,
 }, testInfo) => {
@@ -573,7 +651,7 @@ test("unknown and wrongly typed Organisation & access resources stay local", asy
     page.getByRole("heading", { name: "Organisation & access", level: 2 }),
   ).toBeVisible();
   await expect(
-    page.getByText("This resource is unavailable or you no longer have access."),
+    page.getByText("This Administration resource is no longer available."),
   ).toBeVisible();
 
   await page.goto(

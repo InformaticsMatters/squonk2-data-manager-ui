@@ -58,6 +58,14 @@ export const presentAdministrationFailure = (
   }
 };
 
+/**
+ * An authoritative read failure is answered by the addressed resource itself, so the task, its
+ * navigation, and the canonical route survive. Every retryable failure stays with the task-level
+ * retry boundary instead.
+ */
+export const administrationReadIsAuthoritative = (error: unknown): boolean =>
+  !presentAdministrationFailure(classifyTransportFailure(error)).retryable;
+
 /** Names an Administration resource in command feedback without disclosing anything beyond its ID. */
 export const administrationResourceLabel = {
   newOrganisation: "an organisation",

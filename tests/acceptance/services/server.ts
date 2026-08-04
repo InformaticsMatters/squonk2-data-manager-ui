@@ -407,6 +407,16 @@ const personalUnitOf = (state: ScenarioState): UnitFixture | undefined =>
 
 const organisationsOf = (state: ScenarioState) => state.fixtures.organisations.organisations;
 
+/** A single addressed organisation or unit read fails with the body its status describes. */
+const addressedReadFailure = (state: ScenarioState, response: ServerResponse) =>
+  json(
+    response,
+    state.addressedReadFailure ?? 503,
+    state.addressedReadFailure === 403
+      ? state.fixtures.failures.forbidden
+      : state.fixtures.failures.serverError,
+  );
+
 const changeMembers = (users: { id: string }[], userId: string, add: boolean) => {
   if (add) {
     if (!users.some((user) => user.id === userId)) {
@@ -579,13 +589,27 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     return json(response, 204, undefined);
   }
   if (segments[0] === "unit" && segments.length === 2 && request.method === "GET") {
-    const unit = findUnit(state, segments[1]);
+    if (state.addressedReadFailure) {
+      return addressedReadFailure(state, response);
+    }
+    // The unlisted unit answers for itself while `/unit` never groups it, so a direct link to a
+    // readable resource outside the caller's index is not the same as an absent resource.
+    const unit =
+      segments[1] === fixtureIds.unlistedUnit
+        ? state.fixtures.unlistedUnit
+        : findUnit(state, segments[1]);
     return unit
       ? json(response, 200, unit)
       : json(response, 404, { error: "fixture-unit-not-found" });
   }
   if (segments[0] === "organisation" && segments.length === 2) {
-    const organisation = organisationsOf(state).find((candidate) => candidate.id === segments[1]);
+    if (state.addressedReadFailure) {
+      return addressedReadFailure(state, response);
+    }
+    const organisation =
+      segments[1] === fixtureIds.unlistedOrganisation
+        ? state.fixtures.unlistedOrganisation
+        : organisationsOf(state).find((candidate) => candidate.id === segments[1]);
     return organisation
       ? json(response, 200, organisation)
       : json(response, 404, { error: "fixture-organisation-not-found" });
@@ -676,6 +700,18 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   );
   if (accessReadControl) {
     getScenario(subject)[accessReadControl.stateKey] = request.method === "POST" ? 503 : undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/addressed-read-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-addressed-read-failure", status });
+    }
+    getScenario(subject).addressedReadFailure = status as 403 | 503;
+    return json(response, 200, { addressedReadFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/addressed-read-failure") && request.method === "DELETE") {
+    getScenario(subject).addressedReadFailure = undefined;
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/access-failure") && request.method === "POST") {

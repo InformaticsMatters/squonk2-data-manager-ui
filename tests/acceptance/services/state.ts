@@ -21,6 +21,7 @@ export type ScenarioState = {
   productFailure: boolean;
   projectFailure?: number;
   requests: RequestRecord[];
+  addressedReadFailure?: 403 | 503;
   semanticsFailure?: 503;
   taskFailure?: 503;
   unitsReadFailure?: 503;

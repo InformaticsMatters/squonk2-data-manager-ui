@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from "react";
+import { Fragment, type ReactNode, useState } from "react";
 
 import {
   type AsError,
@@ -18,7 +18,15 @@ import { ModalWrapper } from "../components/modals/ModalWrapper";
 import { WarningDeleteButton } from "../components/WarningDeleteButton";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { capitalise, shoutSnakeToLowerCase } from "../utils/app/language";
-import { type UnitWithOrganisation, useAccessFacts, useAccessIndex } from "./accessFacts";
+import {
+  type AddressedResource,
+  type UnitWithOrganisation,
+  useAccessFacts,
+  useAccessIndex,
+  useAddressedOrganisation,
+  useAddressedUnit,
+  useUnitAncestry,
+} from "./accessFacts";
 import {
   type AdministrationCapability,
   capabilityReason,
@@ -34,7 +42,14 @@ import {
 } from "./capabilities";
 import { administrationMutationFailureMessage, administrationResourceLabel } from "./failures";
 import { assertOrganisationId, assertUnitId } from "./identifiers";
-import { MissingResource, PageTitle, ResourceIdentity, ResourceLink } from "./resources";
+import {
+  EmptyTask,
+  PageTitle,
+  PendingResource,
+  ResourceIdentity,
+  ResourceLink,
+  UnavailableResource,
+} from "./resources";
 import { administrationLinks, type AdministrationRoute } from "./routes";
 import { useAccessCommands } from "./useAccessCommands";
 
@@ -45,7 +60,8 @@ export type OrganisationAccessResourceRoute = Extract<
 
 const task = "Organisation & access";
 
-const nameSchema = (existingNames: string[], subject: string) =>
+/** Only a form that collects an owner requires one; every other owner is decided by the server. */
+const createResourceSchema = (existingNames: string[], subject: string, collectsOwner: boolean) =>
   z.object({
     name: z.string().check(
       z.minLength(2, "The name is too short"),
@@ -53,7 +69,9 @@ const nameSchema = (existingNames: string[], subject: string) =>
         message: `The name is already used for a ${subject}`,
       }),
     ),
-    owner: z.string().check(z.minLength(1, "The username for the owner is required")),
+    owner: collectsOwner
+      ? z.string().check(z.minLength(1, "The username for the owner is required"))
+      : z.string(),
   });
 
 /**
@@ -111,9 +129,9 @@ const ResourceChip = ({ label }: { label: string }) => (
 );
 
 /**
- * Collects the name, and for organisations the owner, of a resource about to be created. The owner
- * defaults to the caller but stays editable, because a platform administrator creates organisations
- * on behalf of other users.
+ * Collects the name of a resource about to be created, and its owner when the resource names one.
+ * An offered owner defaults to the caller but stays editable, because a platform administrator
+ * creates organisations on behalf of other users.
  */
 const CreateResourceModal = ({
   defaultOwner,
@@ -124,9 +142,9 @@ const CreateResourceModal = ({
   open,
   subject,
   title,
-  withOwner = false,
 }: {
-  defaultOwner: string;
+  /** Present only for resources that name their own owner; absent forms neither show nor require one. */
+  defaultOwner?: string;
   existingNames: string[];
   id: string;
   onClose: () => void;
@@ -134,11 +152,11 @@ const CreateResourceModal = ({
   open: boolean;
   subject: string;
   title: string;
-  withOwner?: boolean;
 }) => {
+  const collectsOwner = defaultOwner !== undefined;
   const form = useForm({
-    defaultValues: { name: "", owner: defaultOwner },
-    validators: { onChange: nameSchema(existingNames, subject) },
+    defaultValues: { name: "", owner: defaultOwner ?? "" },
+    validators: { onChange: createResourceSchema(existingNames, subject, collectsOwner) },
     onSubmit: async ({ value }) => {
       await onSubmit(value);
     },
@@ -170,7 +188,7 @@ const CreateResourceModal = ({
             />
           )}
         </form.Field>
-        {!!withOwner && (
+        {!!collectsOwner && (
           <form.Field name="owner">
             {(field) => (
               <TextField
@@ -302,7 +320,6 @@ const CreateOrganisationAction = ({
         )}
       </CapabilityAction>
       <CreateResourceModal
-        withOwner
         defaultOwner={owner}
         existingNames={organisations.map((organisation) => organisation.name)}
         id="create-organisation"
@@ -334,7 +351,10 @@ export const OrganisationAccessIndex = () => {
         <CreateOrganisationAction organisations={organisations} />
       </Box>
       {organisations.length === 0 && units.length === 0 ? (
-        <MissingResource task={task} />
+        <EmptyTask>
+          No organisations or units are available. Organisation or unit membership is required to
+          manage a resource.
+        </EmptyTask>
       ) : (
         <Stack spacing={2}>
           {organisations.map((organisation) => (
@@ -410,7 +430,6 @@ const CreateUnitAction = ({
         )}
       </CapabilityAction>
       <CreateResourceModal
-        defaultOwner={organisation.owner_id ?? ""}
         existingNames={existingNames}
         id={`create-unit-${organisation.id}`}
         open={open}
@@ -669,14 +688,23 @@ const DeleteUnitAction = ({
   );
 };
 
-const UnitResource = ({ organisation, unit }: UnitWithOrganisation) => {
+const UnitResource = ({
+  organisation,
+  unit,
+}: {
+  /** Absent when the addressed unit is readable but is not among the caller's grouped units. */
+  organisation?: OrganisationAllDetail;
+  unit: UnitAllDetail;
+}) => {
   const commands = useAccessCommands();
   const { caller, defaultOrganisationId, freshness, personalUnitId } = useAccessFacts();
   const isPersonalUnit = isPersonalUnitResource(unit.id, personalUnitId);
   const facts = {
     caller,
     freshness,
-    isDefaultOrganisation: isDefaultOrganisationResource(organisation.id, defaultOrganisationId),
+    isDefaultOrganisation:
+      organisation !== undefined &&
+      isDefaultOrganisationResource(organisation.id, defaultOrganisationId),
     isPersonalUnit,
     organisation,
     unit,
@@ -687,7 +715,7 @@ const UnitResource = ({ organisation, unit }: UnitWithOrganisation) => {
     <>
       <PageTitle>{task}</PageTitle>
       <ResourceChip label={unitTypeLabel(unit.id, personalUnitId)} />
-      <ResourceIdentity ancestry={organisation.name} id={unit.id} name={unit.name} type="Unit" />
+      <ResourceIdentity ancestry={organisation?.name} id={unit.id} name={unit.name} type="Unit" />
       <Typography color="text.secondary" sx={{ mt: 1 }}>
         Owner: {unit.owner_id}
       </Typography>
@@ -724,28 +752,61 @@ const UnitResource = ({ organisation, unit }: UnitWithOrganisation) => {
   );
 };
 
+/**
+ * Renders whatever the addressed resource answered. Keying the rendered resource by its identity
+ * keeps entered values owned by the resource in the address bar, so a route change never carries
+ * another unit's name into the rename field.
+ */
+const AddressedResourceView = <TResource extends { id: string }>({
+  addressed,
+  children,
+}: {
+  addressed: AddressedResource<TResource>;
+  children: (resource: TResource) => ReactNode;
+}) => {
+  if (addressed.kind === "pending") {
+    return <PendingResource task={task} />;
+  }
+  if (addressed.kind === "unavailable") {
+    return <UnavailableResource failure={addressed.failure} task={task} />;
+  }
+  return <Fragment key={addressed.resource.id}>{children(addressed.resource)}</Fragment>;
+};
+
+const AddressedOrganisation = ({ organisationId }: { organisationId: string }) => {
+  const { units } = useAccessIndex();
+  const addressed = useAddressedOrganisation(organisationId);
+
+  return (
+    <AddressedResourceView addressed={addressed}>
+      {(organisation) => <OrganisationResource organisation={organisation} units={units} />}
+    </AddressedResourceView>
+  );
+};
+
+const AddressedUnit = ({ unitId }: { unitId: string }) => {
+  const organisation = useUnitAncestry(unitId);
+  const addressed = useAddressedUnit(unitId);
+
+  return (
+    <AddressedResourceView addressed={addressed}>
+      {(unit) => <UnitResource organisation={organisation} unit={unit} />}
+    </AddressedResourceView>
+  );
+};
+
+/**
+ * The resource in the address bar answers for itself through its own generated resource, so a
+ * resource the caller may read but does not list keeps its identity, and a denial and an absence
+ * are told apart by the Administration failure contract rather than by index membership.
+ */
 export const OrganisationAccessResource = ({
   route,
 }: {
   route: OrganisationAccessResourceRoute;
-}) => {
-  const { organisations, units } = useAccessIndex();
-
-  if (route.collection === "organisations") {
-    const organisation = organisations.find((candidate) => candidate.id === route.resourceId);
-    return organisation ? (
-      <OrganisationResource key={organisation.id} organisation={organisation} units={units} />
-    ) : (
-      <MissingResource task={task} />
-    );
-  }
-
-  const match = units.find(({ unit }) => unit.id === route.resourceId);
-  return match ? (
-    // Keying by identity keeps entered values owned by the resource in the address bar, so a
-    // route change never carries another unit's name into the rename field.
-    <UnitResource key={match.unit.id} organisation={match.organisation} unit={match.unit} />
+}) =>
+  route.collection === "organisations" ? (
+    <AddressedOrganisation organisationId={route.resourceId} />
   ) : (
-    <MissingResource task={task} />
+    <AddressedUnit unitId={route.resourceId} />
   );
-};

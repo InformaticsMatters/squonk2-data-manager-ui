@@ -13,6 +13,7 @@ import { AppApiProductGetResponse } from "@/api/account-server/product/zod";
 import { AppApiStateGetVersionResponse } from "@/api/account-server/state/zod";
 import {
   AppApiUnitGetResponse,
+  AppApiUnitGetUnitResponse,
   AppApiUnitPersonalGetResponse,
 } from "@/api/account-server/unit/zod";
 import { AppApiUserGetAccountResponse } from "@/api/account-server/user/zod";
@@ -49,6 +50,9 @@ export const fixtureIds = {
   task: "task-44444444-4444-4444-4444-444444444444",
   unit: "unit-55555555-5555-5555-5555-555555555555",
   otherUnit: "unit-bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  /** Readable through their own resource, but absent from the caller's organisation and unit index. */
+  unlistedOrganisation: "org-1c1c1c1c-1c1c-4c1c-8c1c-1c1c1c1c1c1c",
+  unlistedUnit: "unit-1f1f1f1f-1f1f-4f1f-8f1f-1f1f1f1f1f1f",
 } as const;
 
 export const datasetContentFixtures = {
@@ -60,6 +64,7 @@ export const scenarioProfiles = [
   "default",
   "empty-charges",
   "empty-products",
+  "no-access",
   "no-personal-unit",
   "platform-admin",
   "read-only",
@@ -111,6 +116,21 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     users: [{ id: subject }, { id: colleague }],
   };
   const otherUnit = { ...unit, id: fixtureIds.otherUnit, name: "Screening Unit" };
+  // Readable through their own resource while the caller's index never lists them, which is what a
+  // creator or platform administrator following a direct link sees.
+  const unlistedOrganisation = {
+    ...organisation,
+    caller_is_member: false,
+    id: fixtureIds.unlistedOrganisation,
+    name: "Unlisted Organisation",
+  };
+  const unlistedUnit = {
+    ...unit,
+    caller_is_member: false,
+    id: fixtureIds.unlistedUnit,
+    name: "Unlisted Unit",
+    users: [],
+  };
   const personalUnit = {
     billing_day: 1,
     caller_is_member: true,
@@ -122,7 +142,8 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     private: true,
     users: [{ id: subject }],
   };
-  const hasPersonalUnit = profile !== "no-personal-unit";
+  const noAccess = profile === "no-access";
+  const hasPersonalUnit = profile !== "no-personal-unit" && !noAccess;
   const products = AppApiProductGetResponse.parse({
     count: 1,
     products: [
@@ -256,9 +277,11 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     subject,
     organisation: AppApiOrganisationGetOrgResponse.parse(organisation),
     organisations: AppApiOrganisationGetResponse.parse({
-      count: 3,
-      organisations: [organisation, otherOrganisation, defaultOrganisation],
+      count: noAccess ? 0 : 3,
+      organisations: noAccess ? [] : [organisation, otherOrganisation, defaultOrganisation],
     }),
+    unlistedOrganisation: AppApiOrganisationGetOrgResponse.parse(unlistedOrganisation),
+    unlistedUnit: AppApiUnitGetUnitResponse.parse(unlistedUnit),
     otherOrganisation: AppApiOrganisationGetOrgResponse.parse(otherOrganisation),
     organisationCharges: AppApiOrganisationGetChargesResponse.parse({
       coins: emptyCharges ? "0" : "7.5",
@@ -431,7 +454,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     }),
     units: AppApiUnitGetResponse.parse({
       units: [
-        { count: 2, organisation, units: [unit, otherUnit] },
+        ...(noAccess ? [] : [{ count: 2, organisation, units: [unit, otherUnit] }]),
         ...(hasPersonalUnit
           ? [{ count: 1, organisation: defaultOrganisation, units: [personalUnit] }]
           : []),

@@ -18,9 +18,11 @@ export type OrganisationCapabilityFacts = {
   organisation: Pick<OrganisationAllDetail, "caller_is_member" | "id" | "owner_id">;
 };
 
-export type UnitCapabilityFacts = OrganisationCapabilityFacts & {
+export type UnitCapabilityFacts = Omit<OrganisationCapabilityFacts, "organisation"> & {
   /** Resolved from the generated personal unit resource, never from a name. */
   isPersonalUnit: boolean;
+  /** Absent when the addressed unit is readable but its organisation is not. */
+  organisation?: OrganisationCapabilityFacts["organisation"];
   unit: Pick<UnitAllDetail, "caller_is_member" | "id" | "owner_id">;
 };
 
@@ -36,7 +38,10 @@ const unconfirmed: AdministrationCapability = {
   reason: "Your permission will be confirmed when you use this action.",
 };
 
-const factsAreConfirmed = ({ caller, freshness = "current" }: OrganisationCapabilityFacts) =>
+const factsAreConfirmed = ({
+  caller,
+  freshness = "current",
+}: Pick<OrganisationCapabilityFacts, "caller" | "freshness">) =>
   freshness === "current" && !!caller.username;
 
 /** Hidden capabilities never explain themselves; every other status may carry a reason. */
@@ -118,7 +123,7 @@ const evaluateUnitAuthority = (facts: UnitCapabilityFacts): AdministrationCapabi
     facts.caller.isPlatformAdministrator ||
     facts.unit.owner_id === facts.caller.username ||
     facts.unit.caller_is_member ||
-    facts.organisation.caller_is_member
+    facts.organisation?.caller_is_member === true
   ) {
     return { status: "enabled" };
   }

@@ -10,7 +10,10 @@ import {
   Typography,
 } from "@mui/material";
 
+import { type TransportFailure } from "../api/runtime/classifyTransportFailure";
+import { CenterLoader } from "../components/CenterLoader";
 import { withBasePath } from "../utils/app/basePath";
+import { presentAdministrationFailure } from "./failures";
 
 export const EmptyTask = ({ children }: { children: string }) => (
   <Alert severity="info">
@@ -61,6 +64,34 @@ export const MissingResource = ({ task }: { task: string }) => (
     <Alert severity="warning">This resource is unavailable or you no longer have access.</Alert>
   </>
 );
+
+/** The addressed resource has not answered yet; the task and its canonical route already have. */
+export const PendingResource = ({ task }: { task: string }) => (
+  <>
+    <PageTitle>{task}</PageTitle>
+    <CenterLoader />
+  </>
+);
+
+/**
+ * The addressed resource answered authoritatively that it cannot be shown. The shared Administration
+ * failure contract owns the wording, so a denial and an absence read the same way everywhere.
+ */
+export const UnavailableResource = ({
+  failure,
+  task,
+}: {
+  failure: TransportFailure;
+  task: string;
+}) => {
+  const { message, severity } = presentAdministrationFailure(failure);
+  return (
+    <>
+      <PageTitle>{task}</PageTitle>
+      <Alert severity={severity}>{message}</Alert>
+    </>
+  );
+};
 
 export const ResourceIdentity = ({
   ancestry,

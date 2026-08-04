@@ -11,7 +11,10 @@ import {
   isDefaultOrganisationResource,
   isPersonalUnitResource,
 } from "../../src/administration/capabilities";
-import { administrationMutationFailureMessage } from "../../src/administration/failures";
+import {
+  administrationMutationFailureMessage,
+  administrationReadIsAuthoritative,
+} from "../../src/administration/failures";
 
 const organisationId = "org-00000000-0000-4000-8000-000000000001";
 const defaultOrganisationId = "org-00000000-0000-4000-8000-0000000000de";
@@ -234,6 +237,32 @@ test.describe("Unit capabilities", () => {
     ).toEqual({ status: "enabled" });
   });
 
+  test("units readable outside the caller's organisations evaluate on unit facts alone", () => {
+    const withoutOrganisation = (unit: { caller_is_member: boolean; owner_id: string }) => ({
+      caller: caller(member),
+      isDefaultOrganisation: false,
+      isPersonalUnit: false,
+      unit: { ...unit, id: unitId },
+    });
+
+    expect(
+      evaluateUnitEditCapability(withoutOrganisation({ caller_is_member: true, owner_id: owner })),
+    ).toEqual({ status: "enabled" });
+    expect(
+      evaluateUnitDeletionCapability(
+        withoutOrganisation({ caller_is_member: true, owner_id: member }),
+      ),
+    ).toEqual({ status: "enabled" });
+    expect(
+      evaluateUnitMembershipCapability(
+        withoutOrganisation({ caller_is_member: false, owner_id: owner }),
+      ),
+    ).toEqual({
+      reason: "You must be a unit or organisation member to change unit members.",
+      status: "disabled",
+    });
+  });
+
   test("unresolved and stale facts remain discoverable for authoritative evaluation", () => {
     const deniedFacts = unitFacts({
       callerIsMember: false,
@@ -297,5 +326,22 @@ test.describe("Administration mutation failures", () => {
     expect(administrationMutationFailureMessage(new Error("boom"), "update", resource)).toBe(
       undefined,
     );
+  });
+});
+
+test.describe("Administration read failures", () => {
+  test("access denial and confirmed absence are answered by the addressed resource", () => {
+    expect(administrationReadIsAuthoritative(httpFailure(403))).toBe(true);
+    expect(administrationReadIsAuthoritative(httpFailure(404))).toBe(true);
+  });
+
+  test("transient and unclassified failures stay with the task retry boundary", () => {
+    for (const status of [429, 500, 503]) {
+      expect(administrationReadIsAuthoritative(httpFailure(status))).toBe(false);
+    }
+    expect(administrationReadIsAuthoritative({ isAxiosError: true, code: "ERR_NETWORK" })).toBe(
+      false,
+    );
+    expect(administrationReadIsAuthoritative(new Error("boom"))).toBe(false);
   });
 });

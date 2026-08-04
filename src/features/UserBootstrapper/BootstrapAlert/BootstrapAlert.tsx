@@ -7,9 +7,9 @@ import { BootstrapForm } from "./BootstrapForm";
  * Bootstraps a user which doesn't have any units with a default unit and a project
  */
 export const BootstrapAlert = () => {
-  const { data: unit, isLoading } = useGetPersonalUnit();
+  const { data: unit, isPending } = useGetPersonalUnit();
 
-  if (isLoading) {
+  if (isPending) {
     return null;
   }
 

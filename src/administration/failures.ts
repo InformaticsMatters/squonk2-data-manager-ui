@@ -1,4 +1,7 @@
-import { type TransportFailure } from "../api/runtime/classifyTransportFailure";
+import {
+  classifyTransportFailure,
+  type TransportFailure,
+} from "../api/runtime/classifyTransportFailure";
 
 export type AdministrationFailurePresentation = {
   message: string;
@@ -52,5 +55,38 @@ export const presentAdministrationFailure = (
         retryable: true,
         severity: "error",
       };
+  }
+};
+
+/** Names an Administration resource in command feedback without disclosing anything beyond its ID. */
+export const administrationResourceLabel = {
+  newOrganisation: "an organisation",
+  organisation: (organisationId: string) => `organisation ${organisationId}`,
+  personalUnit: "your personal unit",
+  unit: (unitId: string) => `unit ${unitId}`,
+};
+
+/**
+ * Presents an authoritative rejection of an Administration command. The displayed resource and its
+ * canonical route are never changed by a rejection, so every message says so explicitly. Unknown
+ * transport facts return `undefined` so the shared error presentation stays in charge.
+ */
+export const administrationMutationFailureMessage = (
+  error: unknown,
+  action: string,
+  resource: string,
+): string | undefined => {
+  switch (classifyTransportFailure(error).kind) {
+    case "forbidden":
+      return `You no longer have permission to ${action} ${resource}. The displayed resource has not changed.`;
+    case "not-found":
+      return `${resource} is no longer available. The displayed resource has not changed.`;
+    case "network":
+    case "rate-limited":
+    case "server":
+    case "timeout":
+      return `Could not ${action} ${resource}. The displayed resource has not changed; retry is available.`;
+    case "unknown":
+      return undefined;
   }
 };

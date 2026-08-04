@@ -1,39 +1,16 @@
-import {
-  type OrganisationAllDetail,
-  type OrganisationUnitsGetResponse,
-  type UnitAllDetail,
-} from "@/api/account-server";
-import { useGetOrganisationsSuspense } from "@/api/account-server/organisation";
 import { useGetProductsSuspense } from "@/api/account-server/product";
-import { useGetUnitsSuspense } from "@/api/account-server/unit";
 
-import {
-  Alert,
-  Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  Chip,
-  Divider,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Alert, Stack, Typography } from "@mui/material";
 
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
-import {
-  isOrganisationId,
-  isProductId,
-  isUnitId,
-  type OrganisationId,
-  type ProductId,
-  type UnitId,
-} from "../routing/identifiers";
-import { withBasePath } from "../utils/app/basePath";
+import { useAccessIndex } from "./accessFacts";
 import { AdministrationFrame } from "./AdministrationShell";
 import { ChargeLedger } from "./ChargeLedgers";
+import { assertOrganisationId, assertProductId, assertUnitId } from "./identifiers";
+import { OrganisationAccessIndex, OrganisationAccessResource } from "./OrganisationAccess";
+import { EmptyTask, PageTitle, ResourceDetailsView, ResourceLink } from "./resources";
 import { administrationLinks, type AdministrationRoute } from "./routes";
 
-type UnitWithOrganisation = { organisation: OrganisationAllDetail; unit: UnitAllDetail };
 type AdministrationResourceRoute = Exclude<
   AdministrationRoute,
   | { kind: "charges" }
@@ -45,7 +22,10 @@ type ProductResourceRoute = Extract<
   AdministrationResourceRoute,
   { collection: "products" } | { kind: "subscription" }
 >;
-type AccessResourceRoute = Exclude<AdministrationResourceRoute, ProductResourceRoute>;
+type ReadOnlyResourceRoute = Exclude<
+  AdministrationResourceRoute,
+  ProductResourceRoute | { kind: "organisation-access-resource" }
+>;
 
 const taskTitles = {
   charges: "Charges",
@@ -53,119 +33,6 @@ const taskTitles = {
   subscriptions: "Subscriptions",
   "usage-inventory": "Usage & inventory",
 } as const;
-
-const EmptyTask = ({ children }: { children: string }) => (
-  <Alert severity="info">
-    {children} Contact an organisation owner or your Squonk administrator if you need access.
-  </Alert>
-);
-
-const ResourceLink = ({
-  ancestry,
-  href,
-  id,
-  name,
-  type,
-}: {
-  ancestry?: string;
-  href: string;
-  id: string;
-  name: string;
-  type: string;
-}) => (
-  <Card variant="outlined">
-    <CardActionArea href={withBasePath(href)}>
-      <CardContent>
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 0.5 }}>
-          <Typography component="h3" variant="h6">
-            {name}
-          </Typography>
-          <Chip label={type} size="small" variant="outlined" />
-        </Stack>
-        {ancestry ? <Typography color="text.secondary">{ancestry}</Typography> : null}
-        <Typography color="text.secondary" sx={{ overflowWrap: "anywhere" }} variant="caption">
-          {id}
-        </Typography>
-      </CardContent>
-    </CardActionArea>
-  </Card>
-);
-
-const PageTitle = ({ children }: { children: string }) => (
-  <Typography component="h2" sx={{ mb: 2 }} variant="h4">
-    {children}
-  </Typography>
-);
-
-const flattenUnits = (groups: OrganisationUnitsGetResponse[]): UnitWithOrganisation[] =>
-  groups.flatMap(({ organisation, units }) => units.map((unit) => ({ organisation, unit })));
-
-const organisationId = (value: string): OrganisationId => {
-  if (!isOrganisationId(value)) {
-    throw new Error("Account Server returned an invalid organisation ID");
-  }
-  return value;
-};
-
-const unitId = (value: string): UnitId => {
-  if (!isUnitId(value)) {
-    throw new Error("Account Server returned an invalid unit ID");
-  }
-  return value;
-};
-
-const productId = (value: string): ProductId => {
-  if (!isProductId(value)) {
-    throw new Error("Account Server returned an invalid product ID");
-  }
-  return value;
-};
-
-const useAccessIndex = () => {
-  const { data: organisations } = useGetOrganisationsSuspense();
-  const { data: unitGroups } = useGetUnitsSuspense();
-  return { organisations: organisations.organisations, units: flattenUnits(unitGroups.units) };
-};
-
-const OrganisationAccessIndex = () => {
-  const { organisations, units } = useAccessIndex();
-  return (
-    <>
-      <PageTitle>Organisation & access</PageTitle>
-      {organisations.length === 0 && units.length === 0 ? (
-        <EmptyTask>
-          No organisations or units are available. Membership of an organisation or unit is required
-          to manage access.
-        </EmptyTask>
-      ) : (
-        <Stack spacing={2}>
-          {organisations.map((organisation) => (
-            <ResourceLink
-              href={administrationLinks.organisationAccessResource(
-                "organisations",
-                organisationId(organisation.id),
-              )}
-              id={organisation.id}
-              key={organisation.id}
-              name={organisation.name}
-              type="Organisation"
-            />
-          ))}
-          {units.map(({ organisation, unit }) => (
-            <ResourceLink
-              ancestry={organisation.name}
-              href={administrationLinks.organisationAccessResource("units", unitId(unit.id))}
-              id={unit.id}
-              key={unit.id}
-              name={unit.name}
-              type="Unit"
-            />
-          ))}
-        </Stack>
-      )}
-    </>
-  );
-};
 
 const SubscriptionsIndex = () => {
   const { data } = useGetProductsSuspense();
@@ -182,7 +49,7 @@ const SubscriptionsIndex = () => {
           {data.products.map((subscription) => (
             <ResourceLink
               ancestry={`${subscription.organisation.name} / ${subscription.unit.name}`}
-              href={administrationLinks.subscription(productId(subscription.product.id))}
+              href={administrationLinks.subscription(assertProductId(subscription.product.id))}
               id={subscription.product.id}
               key={subscription.product.id}
               name={subscription.product.name ?? "Subscription"}
@@ -216,7 +83,7 @@ const ChargesIndex = () => {
             <ResourceLink
               href={administrationLinks.chargeResource(
                 "organisations",
-                organisationId(organisation.id),
+                assertOrganisationId(organisation.id),
               )}
               id={organisation.id}
               key={organisation.id}
@@ -227,7 +94,7 @@ const ChargesIndex = () => {
           {units.map(({ organisation, unit }) => (
             <ResourceLink
               ancestry={organisation.name}
-              href={administrationLinks.chargeResource("units", unitId(unit.id))}
+              href={administrationLinks.chargeResource("units", assertUnitId(unit.id))}
               id={unit.id}
               key={unit.id}
               name={unit.name}
@@ -239,7 +106,7 @@ const ChargesIndex = () => {
               ancestry={`${subscription.organisation.name} / ${subscription.unit.name}`}
               href={administrationLinks.chargeResource(
                 "products",
-                productId(subscription.product.id),
+                assertProductId(subscription.product.id),
               )}
               id={subscription.product.id}
               key={subscription.product.id}
@@ -273,7 +140,7 @@ const UsageInventoryIndex = () => {
             <ResourceLink
               href={administrationLinks.usageInventoryResource(
                 "organisations",
-                organisationId(organisation.id),
+                assertOrganisationId(organisation.id),
               )}
               id={organisation.id}
               key={organisation.id}
@@ -284,7 +151,7 @@ const UsageInventoryIndex = () => {
           {units.map(({ organisation, unit }) => (
             <ResourceLink
               ancestry={organisation.name}
-              href={administrationLinks.usageInventoryResource("units", unitId(unit.id))}
+              href={administrationLinks.usageInventoryResource("units", assertUnitId(unit.id))}
               id={unit.id}
               key={unit.id}
               name={unit.name}
@@ -297,67 +164,17 @@ const UsageInventoryIndex = () => {
   );
 };
 
-const ResourceDetailsView = ({
-  ancestry,
-  id,
-  name,
-  readOnly,
-  task,
-  type,
-}: {
-  ancestry?: string;
-  id: string;
-  name?: string;
-  readOnly: boolean;
-  task: string;
-  type: string;
-}) => {
-  if (!name) {
-    return (
-      <Alert severity="warning">This resource is unavailable or you no longer have access.</Alert>
-    );
-  }
-
-  return (
-    <>
-      <PageTitle>{task}</PageTitle>
-      <Typography component="h3" variant="h5">
-        {name}
-      </Typography>
-      {ancestry ? <Typography color="text.secondary">{ancestry}</Typography> : null}
-      <Box sx={{ my: 2 }}>
-        <Divider />
-      </Box>
-      <Typography sx={{ mb: 0.5 }}>{type} ID</Typography>
-      <Typography component="code" sx={{ overflowWrap: "anywhere" }}>
-        {id}
-      </Typography>
-      {!!readOnly && (
-        <Alert severity="info" sx={{ mt: 2 }}>
-          This view is read-only. Use Organisation & access or Project Manage for membership
-          changes.
-        </Alert>
-      )}
-    </>
-  );
-};
-
-const AccessResourceDetails = ({ route }: { route: AccessResourceRoute }) => {
+const ReadOnlyResourceDetails = ({ route }: { route: ReadOnlyResourceRoute }) => {
   const { organisations, units } = useAccessIndex();
-  const task =
-    route.kind === "charge-resource"
-      ? "Charges"
-      : route.kind === "usage-inventory-resource"
-        ? "Usage & inventory"
-        : "Organisation & access";
+  const task = route.kind === "charge-resource" ? "Charges" : "Usage & inventory";
 
   if (route.collection === "organisations") {
     const organisation = organisations.find((candidate) => candidate.id === route.resourceId);
     return (
       <ResourceDetailsView
+        readOnly
         id={route.resourceId}
         name={organisation?.name}
-        readOnly={route.kind !== "organisation-access-resource"}
         task={task}
         type="Organisation"
       />
@@ -367,10 +184,10 @@ const AccessResourceDetails = ({ route }: { route: AccessResourceRoute }) => {
   const match = units.find(({ unit }) => unit.id === route.resourceId);
   return (
     <ResourceDetailsView
+      readOnly
       ancestry={match?.organisation.name}
       id={route.resourceId}
       name={match?.unit.name}
-      readOnly={route.kind !== "organisation-access-resource"}
       task={task}
       type="Unit"
     />
@@ -395,14 +212,18 @@ const ProductResourceDetails = ({ route }: { route: ProductResourceRoute }) => {
   );
 };
 
-const ResourceDetails = ({ route }: { route: AdministrationResourceRoute }) =>
-  route.kind === "charge-resource" ? (
-    <ChargeLedger route={route} />
-  ) : route.kind === "subscription" ? (
-    <ProductResourceDetails route={route} />
-  ) : (
-    <AccessResourceDetails route={route} />
-  );
+const ResourceDetails = ({ route }: { route: AdministrationResourceRoute }) => {
+  if (route.kind === "organisation-access-resource") {
+    return <OrganisationAccessResource route={route} />;
+  }
+  if (route.kind === "charge-resource") {
+    return <ChargeLedger route={route} />;
+  }
+  if (route.kind === "subscription") {
+    return <ProductResourceDetails route={route} />;
+  }
+  return <ReadOnlyResourceDetails route={route} />;
+};
 
 const AdministrationContent = () => {
   const context = useFamilyRoute();

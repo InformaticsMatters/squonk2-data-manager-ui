@@ -7,7 +7,8 @@ This matrix records the production contracts introduced for issues
 [#1919](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1919), and
 [#1920](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1920), and
 [#1921](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1921), and
-[#1922](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1922). Later vertical
+[#1922](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1922), and
+[#1923](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1923). Later vertical
 workspace tickets extend this file with their screens, capabilities, commands, and lifecycle evidence.
 
 ## Route And Link Contracts
@@ -65,6 +66,21 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 | CHARGE-03   | Billing-cycle ownership  | `billing-cycle` values from `0` through `-23`                                  | Selection enters browser history and survives direct entry, refresh, Back, and Forward                          | Administration route matrix; billing-cycle history acceptance journey              |
 | CHARGE-04   | Failure outcomes         | Forbidden, missing, rate-limited, timeout, network, server, and unknown reads  | Outcomes have distinct non-disclosing copy and retry behavior; retries retain resource and cycle                | `tests/contracts/administration-failures.node.ts`; charge retry acceptance journey |
 
+## Organisation And Access Contracts
+
+| Contract ID | Area                         | Input or fixture                                                                           | Expected external outcome                                                                                                    | Automated evidence                                                                             |
+| ----------- | ---------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ACCESS-01   | Canonical lifecycle index    | Accessible organisations, grouped units, the default organisation, and a personal unit     | Every organisation and unit is a canonical opaque resource link with ancestry and personal/default typing                    | `tests/acceptance/administration.acceptance.ts` lifecycle index journey                        |
+| ACCESS-02   | Generated resource semantics | Generated caller-account, default-organisation, and personal-unit resources                | Personal and default behavior is decided by generated identity; organisation and unit names never decide it                  | `tests/contracts/administration-access.node.ts` semantics cases; personal-unit journeys        |
+| ACCESS-03   | URL-owned creation           | Organisation resource in the address bar; duplicate unit name                              | Units are created against the addressed organisation and land on the new unit's canonical route                              | Create-unit acceptance journey                                                                 |
+| ACCESS-04   | Personal unit lifecycle      | Default organisation resource with and without a personal unit                             | Creation is offered once and explained when present; the personal-unit resource owns creation and deletion                   | Personal-unit acceptance journeys                                                              |
+| ACCESS-05   | URL-owned rename and edit    | Unit resource route                                                                        | Rename, default project privacy, and members target the addressed unit and survive refresh and index navigation              | Rename and member acceptance journeys                                                          |
+| ACCESS-06   | URL-owned deletion           | Unit resource route                                                                        | Deletion removes only the addressed unit and returns to the Organisation & access index                                      | Unit deletion acceptance journey                                                               |
+| ACCESS-07   | Named capability evaluators  | Owner, member, non-member, platform administrator, personal unit, default organisation     | Ordinary actions remain discoverable with reasons; platform-only creation is hidden; incomplete facts defer to the server    | `tests/contracts/administration-access.node.ts`; read-only and platform-administrator journeys |
+| ACCESS-08   | Mutation command ownership   | Successful create, rename, privacy, member, editor, and deletion commands                  | One command owner invalidates the generated organisation, unit, personal-unit, default-organisation, and project prefixes    | `src/administration/useAccessCommands.ts`; lifecycle journeys; strict review gate              |
+| ACCESS-09   | Authoritative rejection      | Rename rejected with `403`, then restored access                                           | Resource, canonical route, and entered values are retained with non-disclosing copy; the retry succeeds in place             | Rejected-mutation acceptance journey; `administration-access.node.ts` failure matrix           |
+| ACCESS-10   | Failure outcomes             | Unknown organisation, unit ID under `organisations`, `503` unit read, unresolved semantics | Missing is non-disclosing, wrong-parent stays a local not-found, transient reads retry in place, stale facts defer authority | Missing/wrong-parent, transient-read, and stale-semantics acceptance journeys                  |
+
 ## Project Workspace Contracts
 
 | Contract ID | Area                        | Input or fixture                                                                   | Expected external outcome                                                                                              | Automated evidence                                                                 |
@@ -104,6 +120,14 @@ workspace tickets extend this file with their screens, capabilities, commands, a
   arbitrary layout, authentication, provider, or fallback flags.
 - Every UI page entry attaches one policy with `withPagePolicy`; `_app` resolves it through
   `PagePolicyComposer` before rendering the page.
+- `src/administration/capabilities.ts` is the only place that decides Administration authority. It
+  reads generated resource facts and never reads organisation or unit names, and it exposes personal
+  and default resolution as named predicates. `src/administration/accessFacts.ts` is the only place
+  that gathers those facts, from the generated caller-account, default-organisation, and
+  personal-unit resources; `src/hooks/useGetPersonalUnit.tsx` resolves the same way, so no screen
+  identifies a personal unit by an organisation name.
+- `src/administration/useAccessCommands.ts` is the only Organisation & access command owner and the
+  only place that invalidates generated Account Server prefixes after a lifecycle command.
 - `src/api/runtime/classifyTransportFailure.ts` classifies transport facts only. Route families retain
   ownership of non-disclosing parent failures, local child failures, stale-data behavior, and rendering.
 - `FamilyRouteBoundary` withholds named-family descendants until the router is ready and the family

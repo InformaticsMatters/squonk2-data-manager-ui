@@ -301,3 +301,286 @@ test("recoverable failures retain the task and retry in place", async ({
   await page.getByRole("button", { name: "Retry" }).click();
   await expect(page.getByRole("link", { name: "Subscription Subscription" })).toBeVisible();
 });
+
+test("Organisation & access exposes lifecycle resources with generated semantics", async ({
+  page,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, "administration/organisation-access", testInfo);
+
+  await expect(
+    page.getByRole("link", { name: /Default Organisation Default organisation/u }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: /Acceptance Organisation Organisation/u }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", {
+      name: new RegExp(`${subject} Personal unit Default Organisation`, "u"),
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: /Acceptance Unit Unit Acceptance Organisation/u }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Create organisation" })).toHaveCount(0);
+});
+
+test("units are created from the organisation resource in the address bar", async ({
+  page,
+}, testInfo) => {
+  await login(
+    page,
+    `administration/organisation-access/organisations/${fixtureIds.organisation}`,
+    testInfo,
+  );
+
+  await page.getByRole("button", { name: "Create unit" }).click();
+  await page.getByLabel("Unit name").fill("Acceptance Unit");
+  await expect(page.getByText("The name is already used for a unit")).toBeVisible();
+  await page.getByLabel("Unit name").fill("Formulation Unit");
+  await page.getByRole("button", { name: "Create", exact: true }).click();
+
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/organisation-access/units/${fixtureIds.createdUnit}`,
+  );
+  await expect(page.getByRole("heading", { name: "Formulation Unit" })).toBeVisible();
+  await expect(
+    page.getByRole("main").getByText("Acceptance Organisation", { exact: true }),
+  ).toBeVisible();
+});
+
+test("renaming a unit targets the URL resource and survives refresh", async ({
+  page,
+}, testInfo) => {
+  const path = `administration/organisation-access/units/${fixtureIds.unit}`;
+  await login(page, path, testInfo);
+
+  await page.getByLabel("Unit name").fill("Renamed Unit");
+  await page.getByRole("button", { name: "Update" }).click();
+  await expect(page.getByRole("heading", { name: "Renamed Unit" })).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Renamed Unit" })).toBeVisible();
+  await page.goto(`${acceptanceUrls.app}administration/organisation-access`);
+  await expect(page.getByRole("link", { name: /Renamed Unit Unit/u })).toBeVisible();
+});
+
+test("unit members and privacy are managed on the unit resource", async ({ page }, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const path = `administration/organisation-access/units/${fixtureIds.unit}`;
+  await login(page, path, testInfo);
+
+  const colleague = `${subject}-observer`;
+  await page.getByLabel(`Remove ${colleague}`).click();
+  await expect(page.getByText(`Member ${colleague} removed`)).toBeVisible();
+  await expect(page.getByRole("button", { name: colleague, exact: true })).toHaveCount(0);
+
+  await page.getByRole("combobox", { name: "Unit members" }).click();
+  await page.getByRole("option", { name: colleague, exact: true }).click();
+  await expect(page.getByText(`Member ${colleague} added`)).toBeVisible();
+  await expect(page.getByRole("button", { name: colleague, exact: true })).toBeVisible();
+
+  await page.getByRole("combobox", { name: "Default project privacy" }).click();
+  await page.getByRole("option", { name: "Always public" }).click();
+  await expect(page.getByText("Unit default privacy updated")).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "Default project privacy" })).toHaveText(
+    "Always Public",
+  );
+});
+
+test("deleting a unit returns to the Organisation & access index", async ({ page }, testInfo) => {
+  await login(page, `administration/organisation-access/units/${fixtureIds.unit}`, testInfo);
+
+  await page.getByRole("button", { name: "Delete unit" }).click();
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
+
+  await expect(page).toHaveURL(`${acceptanceUrls.app}administration/organisation-access`);
+  await expect(page.getByRole("link", { name: /Acceptance Unit Unit/u })).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: /Screening Unit Unit Acceptance Organisation/u }),
+  ).toBeVisible();
+});
+
+test("personal units explain what cannot be changed", async ({ page }, testInfo) => {
+  await login(
+    page,
+    `administration/organisation-access/units/${fixtureIds.personalUnit}`,
+    testInfo,
+  );
+
+  await expect(page.getByText("Personal unit", { exact: true })).toBeVisible();
+  await expect(page.getByText("Personal units cannot be renamed or reconfigured.")).toHaveCount(2);
+  await expect(page.getByText("Members of a personal unit cannot be changed.")).toBeVisible();
+  await expect(page.getByLabel("Unit name")).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Delete unit" })).toBeEnabled();
+
+  await page.goto(
+    `${acceptanceUrls.app}administration/organisation-access/organisations/${fixtureIds.defaultOrganisation}`,
+  );
+  await expect(page.getByRole("button", { name: "Create unit" })).toBeDisabled();
+  await expect(
+    page.getByText("The default organisation only contains personal units."),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Create personal unit" })).toBeDisabled();
+  await expect(page.getByText("You already have a personal unit.")).toBeVisible();
+});
+
+test("a missing personal unit can be created from the default organisation", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(
+    `${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=no-personal-unit`,
+  );
+  await login(
+    page,
+    `administration/organisation-access/organisations/${fixtureIds.defaultOrganisation}`,
+    testInfo,
+  );
+
+  await expect(page.getByText("This organisation has no units you can see.")).toBeVisible();
+  await page.getByRole("button", { name: "Create personal unit" }).click();
+
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/organisation-access/units/${fixtureIds.personalUnit}`,
+  );
+  await expect(page.getByText("Personal unit", { exact: true })).toBeVisible();
+});
+
+test("organisation creation is a hidden platform-administrator action", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(
+    `${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=platform-admin`,
+  );
+  await login(page, "administration/organisation-access", testInfo);
+
+  await page.getByRole("button", { name: "Create organisation" }).click();
+  await page.getByLabel("Organisation name").fill("Discovery Organisation");
+  await expect(page.getByLabel("Owner (username)")).toHaveValue(subjectFor(testInfo));
+  await page.getByLabel("Owner (username)").fill(`${subjectFor(testInfo)}-observer`);
+  await page.getByRole("button", { name: "Create", exact: true }).click();
+
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/organisation-access/organisations/${fixtureIds.createdOrganisation}`,
+  );
+  await expect(page.getByRole("heading", { name: "Discovery Organisation" })).toBeVisible();
+  await expect(page.getByText(`Owner: ${subjectFor(testInfo)}-observer`)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Create unit" })).toBeEnabled();
+});
+
+test("read-only callers keep every action explained", async ({ page, request }, testInfo) => {
+  await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=read-only`);
+  await login(page, `administration/organisation-access/units/${fixtureIds.unit}`, testInfo);
+
+  await expect(page.getByLabel("Unit name")).toBeDisabled();
+  await expect(
+    page.getByText("You must be a member of this unit or its organisation.").first(),
+  ).toBeVisible();
+  await expect(
+    page.getByText("You must be a unit or organisation member to change unit members."),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Delete unit" })).toBeDisabled();
+  await expect(page.getByText("You must be the unit owner to delete this unit.")).toBeVisible();
+
+  await page.goto(
+    `${acceptanceUrls.app}administration/organisation-access/organisations/${fixtureIds.organisation}`,
+  );
+  await expect(page.getByRole("button", { name: "Create unit" })).toBeDisabled();
+  await expect(
+    page.getByText("You must be a member or the owner of this organisation."),
+  ).toBeVisible();
+  await expect(page.getByText("You must be the owner of this organisation.")).toBeVisible();
+});
+
+test("rejected mutations retain the resource, the route, and entered values", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const path = `administration/organisation-access/units/${fixtureIds.unit}`;
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/access-failure?status=403`);
+  await login(page, path, testInfo);
+
+  await page.getByLabel("Unit name").fill("Rejected Unit");
+  await page.getByRole("button", { name: "Update" }).click();
+  await expect(
+    page.getByText(
+      `You no longer have permission to rename unit ${fixtureIds.unit}. The displayed resource has not changed.`,
+    ),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+  await expect(page.getByLabel("Unit name")).toHaveValue("Rejected Unit");
+  await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toBeVisible();
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/access-failure`);
+  await page.getByRole("button", { name: "Update" }).click();
+  await expect(page.getByRole("heading", { name: "Rejected Unit" })).toBeVisible();
+});
+
+test("unresolved resource semantics defer every capability to the server", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/semantics-failure`);
+  await login(
+    page,
+    `administration/organisation-access/units/${fixtureIds.personalUnit}`,
+    testInfo,
+  );
+
+  await expect(
+    page.getByText("Your permission will be confirmed when you use this action.").first(),
+  ).toBeVisible();
+  await expect(page.getByLabel("Unit name")).toBeEnabled();
+  await expect(page.getByText("Personal unit", { exact: true })).toHaveCount(0);
+});
+
+test("transient Organisation & access reads retry without changing scope", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const path = `administration/organisation-access/units/${fixtureIds.unit}`;
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/units-read-failure`);
+  await login(page, path, testInfo);
+
+  await expect(page.getByRole("navigation", { name: "Administration tasks" })).toBeVisible();
+  await expect(
+    page.getByText("Administration data could not be loaded. Retry this task."),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/units-read-failure`);
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+});
+
+test("unknown and wrongly typed Organisation & access resources stay local", async ({
+  page,
+}, testInfo) => {
+  await login(
+    page,
+    "administration/organisation-access/organisations/org-99999999-9999-4999-8999-999999999999",
+    testInfo,
+  );
+
+  await expect(
+    page.getByRole("heading", { name: "Organisation & access", level: 2 }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("This resource is unavailable or you no longer have access."),
+  ).toBeVisible();
+
+  await page.goto(
+    `${acceptanceUrls.app}administration/organisation-access/organisations/${fixtureIds.unit}`,
+  );
+  await expect(page.getByRole("navigation", { name: "Administration tasks" })).toBeVisible();
+  await expect(
+    page.getByText("The requested Administration resource was not found."),
+  ).toBeVisible();
+});

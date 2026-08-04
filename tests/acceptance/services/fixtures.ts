@@ -5,12 +5,17 @@ import {
 } from "@/api/account-server/charges/zod";
 import { AppApiEventStreamGetEventStreamVersionResponse } from "@/api/account-server/event-stream/zod";
 import {
+  AppApiOrganisationGetDefaultResponse,
   AppApiOrganisationGetOrgResponse,
   AppApiOrganisationGetResponse,
 } from "@/api/account-server/organisation/zod";
 import { AppApiProductGetResponse } from "@/api/account-server/product/zod";
 import { AppApiStateGetVersionResponse } from "@/api/account-server/state/zod";
-import { AppApiUnitGetResponse } from "@/api/account-server/unit/zod";
+import {
+  AppApiUnitGetResponse,
+  AppApiUnitPersonalGetResponse,
+} from "@/api/account-server/unit/zod";
+import { AppApiUserGetAccountResponse } from "@/api/account-server/user/zod";
 import { AppApiVersionGetResponse } from "@/api/data-manager/accounting/zod";
 import {
   AppApiDatasetGetResponse,
@@ -26,7 +31,11 @@ import { gzipSync } from "node:zlib";
 const created = "2026-01-02T03:04:05Z";
 
 export const fixtureIds = {
+  createdOrganisation: "org-0a0a0a0a-0a0a-4a0a-8a0a-0a0a0a0a0a0a",
+  createdUnit: "unit-0b0b0b0b-0b0b-4b0b-8b0b-0b0b0b0b0b0b",
   dataset: "dataset-11111111-1111-1111-1111-111111111111",
+  defaultOrganisation: "org-0d0d0d0d-0d0d-4d0d-8d0d-0d0d0d0d0d0d",
+  personalUnit: "unit-0e0e0e0e-0e0e-4e0e-8e0e-0e0e0e0e0e0e",
   missingDataset: "dataset-eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
   otherDataset: "dataset-cccccccc-cccc-4ccc-8ccc-cccccccccccc",
   versionlessDataset: "dataset-dddddddd-dddd-4ddd-8ddd-dddddddddddd",
@@ -51,6 +60,8 @@ export const scenarioProfiles = [
   "default",
   "empty-charges",
   "empty-products",
+  "no-personal-unit",
+  "platform-admin",
   "read-only",
 ] as const;
 export type ScenarioProfile = (typeof scenarioProfiles)[number];
@@ -61,9 +72,11 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
   const colleague = `${subject}-observer`;
   const readOnly = profile === "read-only";
   const emptyCharges = profile === "empty-charges";
-  const owner = readOnly ? `${subject}-owner` : subject;
+  const platformAdmin = profile === "platform-admin";
+  const owner = readOnly || platformAdmin ? `${subject}-owner` : subject;
+  const callerIsMember = !readOnly && !platformAdmin;
   const organisation = {
-    caller_is_member: !readOnly,
+    caller_is_member: callerIsMember,
     created,
     default_product_privacy: "DEFAULT_PRIVATE" as const,
     id: fixtureIds.organisation,
@@ -77,9 +90,18 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     id: fixtureIds.otherOrganisation,
     name: "Partner Organisation",
   };
+  const defaultOrganisation = {
+    caller_is_member: platformAdmin,
+    created,
+    default_product_privacy: "ALWAYS_PRIVATE" as const,
+    id: fixtureIds.defaultOrganisation,
+    name: "Default Organisation",
+    private: false,
+    users: [],
+  };
   const unit = {
     billing_day: 1,
-    caller_is_member: !readOnly,
+    caller_is_member: callerIsMember,
     created,
     default_product_privacy: "DEFAULT_PRIVATE" as const,
     id: fixtureIds.unit,
@@ -89,6 +111,18 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     users: [{ id: subject }, { id: colleague }],
   };
   const otherUnit = { ...unit, id: fixtureIds.otherUnit, name: "Screening Unit" };
+  const personalUnit = {
+    billing_day: 1,
+    caller_is_member: true,
+    created,
+    default_product_privacy: "ALWAYS_PRIVATE" as const,
+    id: fixtureIds.personalUnit,
+    name: subject,
+    owner_id: subject,
+    private: true,
+    users: [{ id: subject }],
+  };
+  const hasPersonalUnit = profile !== "no-personal-unit";
   const products = AppApiProductGetResponse.parse({
     count: 1,
     products: [
@@ -211,10 +245,19 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       rateLimited: { error: "fixture-rate-limited" },
       serverError: { error: "fixture-server-error" },
     },
+    callerAccount: AppApiUserGetAccountResponse.parse({
+      account_server_roles: platformAdmin ? ["admin", "user"] : ["user"],
+      caller_has_admin_privilege: platformAdmin,
+      user: { id: subject },
+    }),
+    defaultOrganisation: AppApiOrganisationGetDefaultResponse.parse(defaultOrganisation),
+    defaultOrganisationDetail: defaultOrganisation,
+    personalUnit: AppApiUnitPersonalGetResponse.parse(personalUnit),
+    subject,
     organisation: AppApiOrganisationGetOrgResponse.parse(organisation),
     organisations: AppApiOrganisationGetResponse.parse({
-      count: 2,
-      organisations: [organisation, otherOrganisation],
+      count: 3,
+      organisations: [organisation, otherOrganisation, defaultOrganisation],
     }),
     otherOrganisation: AppApiOrganisationGetOrgResponse.parse(otherOrganisation),
     organisationCharges: AppApiOrganisationGetChargesResponse.parse({
@@ -387,7 +430,12 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       types: [{ file_extensions: [".sdf"], mime: "chemical/x-mdl-sdfile" }],
     }),
     units: AppApiUnitGetResponse.parse({
-      units: [{ count: 2, organisation, units: [unit, otherUnit] }],
+      units: [
+        { count: 2, organisation, units: [unit, otherUnit] },
+        ...(hasPersonalUnit
+          ? [{ count: 1, organisation: defaultOrganisation, units: [personalUnit] }]
+          : []),
+      ],
     }),
     unitCharges: AppApiUnitGetChargesResponse.parse({
       billing_day: unit.billing_day,

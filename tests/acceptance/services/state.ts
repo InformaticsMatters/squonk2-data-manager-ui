@@ -8,6 +8,7 @@ export type RequestRecord = {
 };
 
 export type ScenarioState = {
+  accessFailure?: 403 | 503;
   chargeFailure?: 403 | 429 | 503;
   datasetContentFailure?: 429 | 503;
   datasetFailure?: 429 | 503;
@@ -20,7 +21,9 @@ export type ScenarioState = {
   productFailure: boolean;
   projectFailure?: number;
   requests: RequestRecord[];
+  semanticsFailure?: 503;
   taskFailure?: 503;
+  unitsReadFailure?: 503;
   upload?: { body: Buffer; contentType: string };
 };
 

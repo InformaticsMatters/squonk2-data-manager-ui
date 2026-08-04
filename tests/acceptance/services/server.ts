@@ -9,7 +9,7 @@ import { z } from "zod";
 
 import { acceptanceEnvironment, acceptanceUrls } from "../environment";
 import { datasetContentFixtures, fixtureIds, isScenarioProfile } from "./fixtures";
-import { getScenario, type RequestRecord, resetScenario } from "./state";
+import { getScenario, type RequestRecord, resetScenario, type ScenarioState } from "./state";
 
 const issuer = acceptanceEnvironment.KEYCLOAK_URL;
 const clientId = acceptanceEnvironment.KEYCLOAK_CLIENT_ID;
@@ -392,24 +392,203 @@ const dataManagerServer = createServer(
   (request, response) => void handleDataManager(request, response),
 );
 
-const accountServer = createServer((request, response) => {
+type UnitFixture = ScenarioState["fixtures"]["units"]["units"][number]["units"][number];
+
+const findUnitGroup = (state: ScenarioState, unitId: string) =>
+  state.fixtures.units.units.find((group) => group.units.some((unit) => unit.id === unitId));
+
+const findUnit = (state: ScenarioState, unitId: string): UnitFixture | undefined =>
+  findUnitGroup(state, unitId)?.units.find((unit) => unit.id === unitId);
+
+const personalUnitOf = (state: ScenarioState): UnitFixture | undefined =>
+  state.fixtures.units.units.find(
+    (group) => group.organisation.id === fixtureIds.defaultOrganisation,
+  )?.units[0];
+
+const organisationsOf = (state: ScenarioState) => state.fixtures.organisations.organisations;
+
+const changeMembers = (users: { id: string }[], userId: string, add: boolean) => {
+  if (add) {
+    if (!users.some((user) => user.id === userId)) {
+      users.push({ id: userId });
+    }
+    return users;
+  }
+  return users.filter((user) => user.id !== userId);
+};
+
+const handleAccountServer = async (request: IncomingMessage, response: ServerResponse) => {
   cors(request, response);
   if (request.method === "OPTIONS") {
     return response.end();
   }
   const url = new URL(request.url ?? "/", acceptanceEnvironment.ACCOUNT_SERVER_API_SERVER);
   const { state } = record(request, url.pathname);
+  const segments = url.pathname.split("/").filter(Boolean);
+  const isWrite = request.method !== "GET";
+  if (isWrite && state.accessFailure) {
+    await readBody(request);
+    return json(
+      response,
+      state.accessFailure,
+      state.accessFailure === 403
+        ? state.fixtures.failures.forbidden
+        : state.fixtures.failures.serverError,
+    );
+  }
   if (url.pathname === "/event-stream/version") {
     return json(response, 200, state.fixtures.eventStream);
+  }
+  if (url.pathname === "/user/account") {
+    return state.semanticsFailure
+      ? json(response, state.semanticsFailure, state.fixtures.failures.serverError)
+      : json(response, 200, state.fixtures.callerAccount);
+  }
+  if (url.pathname === "/default/organisation") {
+    return state.semanticsFailure
+      ? json(response, state.semanticsFailure, state.fixtures.failures.serverError)
+      : json(response, 200, state.fixtures.defaultOrganisation);
+  }
+  if (url.pathname === "/personal-unit" && request.method === "GET") {
+    if (state.semanticsFailure) {
+      return json(response, state.semanticsFailure, state.fixtures.failures.serverError);
+    }
+    const personalUnit = personalUnitOf(state);
+    return personalUnit
+      ? json(response, 200, personalUnit)
+      : json(response, 404, { error: "fixture-personal-unit-not-found" });
+  }
+  if (url.pathname === "/personal-unit" && request.method === "PUT") {
+    await readBody(request);
+    if (personalUnitOf(state)) {
+      return json(response, 409, { error: "fixture-personal-unit-exists" });
+    }
+    const personalUnit = state.fixtures.personalUnit;
+    state.fixtures.units.units.push({
+      count: 1,
+      organisation: state.fixtures.defaultOrganisationDetail,
+      units: [personalUnit],
+    });
+    return json(response, 201, {
+      id: personalUnit.id,
+      organisation_id: fixtureIds.defaultOrganisation,
+    });
+  }
+  if (url.pathname === "/personal-unit" && request.method === "DELETE") {
+    state.fixtures.units.units = state.fixtures.units.units.filter(
+      (group) => group.organisation.id !== fixtureIds.defaultOrganisation,
+    );
+    return json(response, 204, undefined);
+  }
+  if (url.pathname === "/organisation" && request.method === "POST") {
+    const body = JSON.parse((await readBody(request)).toString()) as {
+      name: string;
+      owner: string;
+    };
+    organisationsOf(state).push({
+      caller_is_member: true,
+      created: state.fixtures.organisation.created,
+      default_product_privacy: "DEFAULT_PRIVATE",
+      id: fixtureIds.createdOrganisation,
+      name: body.name,
+      owner_id: body.owner,
+      private: true,
+      users: [],
+    });
+    return json(response, 201, { id: fixtureIds.createdOrganisation });
   }
   if (url.pathname === "/organisation") {
     return json(response, 200, state.fixtures.organisations);
   }
-  if (url.pathname === `/organisation/${fixtureIds.organisation}`) {
-    return json(response, 200, state.fixtures.organisation);
+  if (segments[0] === "organisation" && segments[2] === "unit" && request.method === "POST") {
+    const body = JSON.parse((await readBody(request)).toString()) as { name: string };
+    const organisation = organisationsOf(state).find((candidate) => candidate.id === segments[1]);
+    if (!organisation) {
+      return json(response, 404, { error: "fixture-organisation-not-found" });
+    }
+    const created: UnitFixture = {
+      billing_day: 1,
+      caller_is_member: true,
+      created: organisation.created,
+      default_product_privacy: "DEFAULT_PRIVATE",
+      id: fixtureIds.createdUnit,
+      name: body.name,
+      owner_id: state.fixtures.subject,
+      private: true,
+      users: [{ id: state.fixtures.subject }],
+    };
+    const group = state.fixtures.units.units.find(
+      (candidate) => candidate.organisation.id === organisation.id,
+    );
+    group
+      ? group.units.push(created)
+      : state.fixtures.units.units.push({ count: 1, organisation, units: [created] });
+    return json(response, 201, { id: created.id });
   }
-  if (url.pathname === `/organisation/${fixtureIds.otherOrganisation}`) {
-    return json(response, 200, state.fixtures.otherOrganisation);
+  if (segments[0] === "organisation" && segments[2] === "unit") {
+    const group = state.fixtures.units.units.find(
+      (candidate) => candidate.organisation.id === segments[1],
+    );
+    return group
+      ? json(response, 200, group)
+      : json(response, 404, { error: "fixture-organisation-not-found" });
+  }
+  if (segments[0] === "organisation" && segments[2] === "user" && segments.length === 4) {
+    const organisation = organisationsOf(state).find((candidate) => candidate.id === segments[1]);
+    if (!organisation) {
+      return json(response, 404, { error: "fixture-organisation-not-found" });
+    }
+    organisation.users = changeMembers(
+      organisation.users,
+      decodeURIComponent(segments[3]),
+      request.method === "PUT",
+    );
+    return json(response, 204, undefined);
+  }
+  if (segments[0] === "unit" && segments[2] === "user" && segments.length === 4) {
+    const unit = findUnit(state, segments[1]);
+    if (!unit) {
+      return json(response, 404, { error: "fixture-unit-not-found" });
+    }
+    unit.users = changeMembers(
+      unit.users,
+      decodeURIComponent(segments[3]),
+      request.method === "PUT",
+    );
+    return json(response, 204, undefined);
+  }
+  if (segments[0] === "unit" && segments.length === 2 && request.method === "PATCH") {
+    const body = JSON.parse((await readBody(request)).toString()) as {
+      default_product_privacy?: UnitFixture["default_product_privacy"];
+      name?: string;
+    };
+    const unit = findUnit(state, segments[1]);
+    if (!unit) {
+      return json(response, 404, { error: "fixture-unit-not-found" });
+    }
+    unit.name = body.name ?? unit.name;
+    unit.default_product_privacy = body.default_product_privacy ?? unit.default_product_privacy;
+    return json(response, 200, {});
+  }
+  if (segments[0] === "unit" && segments.length === 2 && request.method === "DELETE") {
+    const group = findUnitGroup(state, segments[1]);
+    if (!group) {
+      return json(response, 404, { error: "fixture-unit-not-found" });
+    }
+    group.units = group.units.filter((unit) => unit.id !== segments[1]);
+    return json(response, 204, undefined);
+  }
+  if (segments[0] === "unit" && segments.length === 2 && request.method === "GET") {
+    const unit = findUnit(state, segments[1]);
+    return unit
+      ? json(response, 200, unit)
+      : json(response, 404, { error: "fixture-unit-not-found" });
+  }
+  if (segments[0] === "organisation" && segments.length === 2) {
+    const organisation = organisationsOf(state).find((candidate) => candidate.id === segments[1]);
+    return organisation
+      ? json(response, 200, organisation)
+      : json(response, 404, { error: "fixture-organisation-not-found" });
   }
   if (url.pathname === `/charges/organisation/${fixtureIds.organisation}`) {
     if (state.chargeFailure) {
@@ -430,7 +609,9 @@ const accountServer = createServer((request, response) => {
     return json(response, 200, state.fixtures.productCharges);
   }
   if (url.pathname === "/unit") {
-    return json(response, 200, state.fixtures.units);
+    return state.unitsReadFailure
+      ? json(response, state.unitsReadFailure, state.fixtures.failures.serverError)
+      : json(response, 200, state.fixtures.units);
   }
   if (url.pathname === "/product") {
     if (state.productFailure) {
@@ -445,7 +626,10 @@ const accountServer = createServer((request, response) => {
     return json(response, 200, state.fixtures.accountServerVersion);
   }
   return json(response, 404, { error: "as-route-not-found", path: url.pathname });
-});
+};
+const accountServer = createServer(
+  (request, response) => void handleAccountServer(request, response),
+);
 
 const handleControl = async (request: IncomingMessage, response: ServerResponse) => {
   const url = new URL(request.url ?? "/", acceptanceUrls.control);
@@ -482,6 +666,29 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
     }
     getScenario(subject).chargeFailure = status as 403 | 429 | 503;
     return json(response, 200, { chargeFailure: status, subject });
+  }
+  const accessReadControls = [
+    { pathSuffix: "/units-read-failure", stateKey: "unitsReadFailure" },
+    { pathSuffix: "/semantics-failure", stateKey: "semanticsFailure" },
+  ] as const;
+  const accessReadControl = accessReadControls.find(({ pathSuffix }) =>
+    url.pathname.endsWith(pathSuffix),
+  );
+  if (accessReadControl) {
+    getScenario(subject)[accessReadControl.stateKey] = request.method === "POST" ? 503 : undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/access-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-access-failure", status });
+    }
+    getScenario(subject).accessFailure = status as 403 | 503;
+    return json(response, 200, { accessFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/access-failure") && request.method === "DELETE") {
+    getScenario(subject).accessFailure = undefined;
+    return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/charge-failure") && request.method === "DELETE") {
     getScenario(subject).chargeFailure = undefined;

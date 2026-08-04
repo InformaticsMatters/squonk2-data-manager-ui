@@ -20,6 +20,7 @@ export type ScenarioState = {
   pollingIndex: number;
   productFailure: boolean;
   projectFailure?: number;
+  projectMutationFailure?: 403 | 503;
   requests: RequestRecord[];
   addressedReadFailure?: 403 | 503;
   semanticsFailure?: 503;

@@ -223,6 +223,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   }
   const url = new URL(request.url ?? "/", acceptanceEnvironment.DATA_MANAGER_API_SERVER);
   const { state } = record(request, url.pathname);
+  const segments = url.pathname.split("/").filter(Boolean);
   if (url.pathname === "/dataset" && request.method === "GET") {
     if (state.datasetFailure) {
       return json(response, state.datasetFailure, state.fixtures.failures.serverError);
@@ -297,6 +298,29 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   if (url.pathname === "/project") {
     return json(response, 200, state.fixtures.projects);
   }
+  if (segments[0] === "project" && segments[2] === "administrator" && segments.length === 4) {
+    if (state.projectMutationFailure) {
+      return json(
+        response,
+        state.projectMutationFailure,
+        state.projectMutationFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    const project = state.fixtures.projects.projects.find(
+      (candidate) => candidate.project_id === segments[1],
+    );
+    if (!project) {
+      return json(response, 404, { error: "fixture-project-not-found" });
+    }
+    const username = decodeURIComponent(segments[3]);
+    project.administrators =
+      request.method === "PUT"
+        ? [...new Set([...project.administrators, username])]
+        : project.administrators.filter((administrator) => administrator !== username);
+    return json(response, 204, undefined);
+  }
   if (url.pathname === `/project/${fixtureIds.project}`) {
     if (state.projectFailure) {
       const body =
@@ -311,6 +335,9 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   }
   if (url.pathname === "/type") {
     return json(response, 200, state.fixtures.types);
+  }
+  if (url.pathname === "/user/account") {
+    return json(response, 200, state.fixtures.dataManagerAccount);
   }
   if (url.pathname === "/user") {
     return json(response, 200, state.fixtures.users);
@@ -814,6 +841,18 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/project-failure") && request.method === "DELETE") {
     getScenario(subject).projectFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/project-mutation-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-project-mutation-failure", status });
+    }
+    getScenario(subject).projectMutationFailure = status as 403 | 503;
+    return json(response, 200, { projectMutationFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/project-mutation-failure") && request.method === "DELETE") {
+    getScenario(subject).projectMutationFailure = undefined;
     return json(response, 200, { subject });
   }
   if (request.method === "POST") {

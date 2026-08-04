@@ -25,7 +25,10 @@ import {
 import { AppApiProjectGetResponse } from "@/api/data-manager/project/zod";
 import { AppApiTaskGetTaskResponse } from "@/api/data-manager/task/zod";
 import { AppApiTypeGetResponse } from "@/api/data-manager/type/zod";
-import { AppApiUserGetResponse } from "@/api/data-manager/user/zod";
+import {
+  AppApiUserGetAccountResponse as AppApiDataManagerUserGetAccountResponse,
+  AppApiUserGetResponse,
+} from "@/api/data-manager/user/zod";
 
 import { gzipSync } from "node:zlib";
 
@@ -141,6 +144,16 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     owner_id: subject,
     private: true,
     users: [{ id: subject }],
+  };
+  // Project membership follows the same profiles: `read-only` observes the project it can read and
+  // `platform-admin` holds no project role at all, so platform privilege is the only thing on offer.
+  const projectOwner = readOnly || platformAdmin ? colleague : subject;
+  const projectObservers = readOnly ? [subject] : platformAdmin ? [] : [colleague];
+  const projectRoles = {
+    administrators: [projectOwner],
+    creator: projectOwner,
+    editors: [projectOwner],
+    observers: projectObservers,
   };
   const noAccess = profile === "no-access";
   const hasPersonalUnit = profile !== "no-personal-unit" && !noAccess;
@@ -271,6 +284,13 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       caller_has_admin_privilege: platformAdmin,
       user: { id: subject },
     }),
+    dataManagerAccount: AppApiDataManagerUserGetAccountResponse.parse({
+      caller_has_admin_privilege: platformAdmin,
+      data_manager_roles: platformAdmin
+        ? ["data-manager-user", "data-manager-admin"]
+        : ["data-manager-user"],
+      user: { private: false, username: subject },
+    }),
     defaultOrganisation: AppApiOrganisationGetDefaultResponse.parse(defaultOrganisation),
     defaultOrganisationDetail: defaultOrganisation,
     personalUnit: AppApiUnitPersonalGetResponse.parse(personalUnit),
@@ -313,13 +333,10 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       count: 4,
       projects: [
         {
-          administrators: [subject],
+          ...projectRoles,
           created,
-          creator: subject,
-          editors: [subject],
           files: [],
           name: "Acceptance Project",
-          observers: [colleague],
           organisation_id: fixtureIds.organisation,
           private: true,
           product_id: fixtureIds.product,

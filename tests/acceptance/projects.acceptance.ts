@@ -125,3 +125,118 @@ test("transient Project failure retains chrome and retries without changing scop
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${projectPath}`);
 });
+
+const managePath = `projects/${fixtureIds.project}/manage`;
+
+/** Manage renders each fact as one list item whose text begins with that fact's label. */
+const factRow = (page: Page, label: string) =>
+  page.getByRole("listitem").filter({ hasText: new RegExp(`^${label}`, "u") });
+
+test("Manage presents project facts and available actions to a project administrator", async ({
+  page,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, managePath, testInfo);
+
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
+  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Acceptance Project" })).toBeVisible();
+  await expect(page.getByText("Private", { exact: true }).first()).toBeVisible();
+  await expect(factRow(page, "Privacy")).toContainText("Private");
+  await expect(page.getByText("You have read-only access to this project.")).toHaveCount(0);
+
+  await expect(factRow(page, "Your access")).toContainText("Administrator, Creator, Editor");
+  await expect(factRow(page, "Containing unit")).toContainText("Acceptance Unit");
+  await expect(factRow(page, "Owning organisation")).toContainText("Acceptance Organisation");
+  await expect(factRow(page, "Administrators")).toContainText(subject);
+  await expect(factRow(page, "Observers")).toContainText(`${subject}-observer`);
+
+  for (const label of ["Change privacy", "Change administrators", "Change files", "Run work"]) {
+    await expect(factRow(page, label)).toContainText("Available to you.");
+  }
+
+  await expect(factRow(page, "Tier")).toContainText("Bronze");
+  await expect(factRow(page, "Coin allowance")).toContainText("100");
+  // Support owns every diagnostic identifier, so each is stated exactly once.
+  await expect(factRow(page, "Project ID")).toContainText(fixtureIds.project);
+  await expect(factRow(page, "Subscription ID")).toContainText(fixtureIds.product);
+  await expect(factRow(page, "Unit ID")).toContainText(fixtureIds.unit);
+  await expect(factRow(page, "Organisation ID")).toContainText(fixtureIds.organisation);
+  await expect(page.getByRole("link", { name: "View subscription" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/administration/subscriptions/${fixtureIds.product}`,
+  );
+
+  // The one exclusively platform-administrator action is absent, not merely unavailable.
+  await expect(page.getByRole("button", { name: "Take project administration" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Platform administration" })).toHaveCount(0);
+});
+
+test("Manage stays available to a project viewer and explains every unavailable action", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=read-only`);
+  await login(page, managePath, testInfo);
+
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
+  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
+  await expect(page.getByText("Acceptance Unit · Acceptance Organisation")).toBeVisible();
+  await expect(factRow(page, "Your access")).toContainText("Observer");
+  await expect(page.getByText("You have read-only access to this project.")).toBeVisible();
+
+  await expect(
+    page.getByText("You must be a project administrator to change project privacy."),
+  ).toBeVisible();
+  await expect(
+    page.getByText("You must be a project administrator to change project administrators."),
+  ).toBeVisible();
+  await expect(
+    page.getByText("You must be a project administrator to delete this project."),
+  ).toBeVisible();
+  await expect(
+    page.getByText("You must be a project editor or administrator to change project files."),
+  ).toBeVisible();
+  await expect(
+    page.getByText("You must be a project editor or administrator to run work in this project."),
+  ).toBeVisible();
+  // Readable facts remain useful even though nothing here can be changed.
+  await expect(factRow(page, "Tier")).toContainText("Bronze");
+  await expect(page.getByRole("button", { name: "Take project administration" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Platform administration" })).toHaveCount(0);
+});
+
+test("the platform-administrator action is offered alone and its rejection changes nothing", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=platform-admin`);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/project-mutation-failure?status=403`,
+  );
+  await login(page, managePath, testInfo);
+
+  const takeAdministration = page.getByRole("button", { name: "Take project administration" });
+  await expect(takeAdministration).toBeEnabled();
+  await expect(factRow(page, "Your access")).toContainText("No project role");
+
+  await takeAdministration.click();
+  await expect(
+    page.getByText(
+      `You do not have permission to take administration of project ${fixtureIds.project}. The displayed project has not changed.`,
+    ),
+  ).toBeVisible();
+  // An authoritative rejection is feedback, never navigation or a change of scope.
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
+  await expect(page.getByRole("heading", { level: 2, name: "Acceptance Project" })).toBeVisible();
+  await expect(page.getByText("Acceptance Unit · Acceptance Organisation")).toBeVisible();
+  await expect(factRow(page, "Your access")).toContainText("No project role");
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/project-mutation-failure`);
+  await takeAdministration.click();
+  await expect(page.getByText("You now administer this project.")).toBeVisible();
+  await expect(factRow(page, "Your access")).toContainText("Administrator");
+  await expect(page.getByText("You already administer this project.")).toBeVisible();
+});

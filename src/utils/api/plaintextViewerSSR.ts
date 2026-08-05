@@ -77,10 +77,12 @@ export const plaintextViewerSSR = async (
 
   if (!response.ok) {
     const isJson = isResponseJson(response);
-    const data = isJson ? await response.json() : null;
-    const error = (data && (data as any).message) ?? response.status;
-    captureException(error);
-    return createErrorProps(res, error, response.statusText);
+    const data = isJson ? ((await response.json()) as { message?: unknown } | null) : null;
+    const reported = typeof data?.message === "string" ? data.message : response.statusText;
+    const message = reported || `The request failed with status ${response.status}`;
+    // The response status is the only status fact. A message is diagnostic detail, never a status.
+    captureException(new Error(`Unable to fetch file (${response.status}): ${message}`));
+    return createErrorProps(res, response.status, message);
   }
 
   // We use `node-fetch` which supports streaming unlike NextJS's fetch as of v12.2

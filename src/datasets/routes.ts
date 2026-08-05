@@ -13,6 +13,7 @@ import {
   type RouteParseResult,
   validRoute,
 } from "../routing/routeContract";
+import { withBasePath } from "../utils/app/basePath";
 
 export type DatasetListState = {
   search?: string;
@@ -85,6 +86,24 @@ export const datasetLinks = {
       `/datasets/${assertDatasetId(datasetId)}/versions/${assertVersion(datasetVersion)}/view`,
       listStateEntries(state),
     ),
+};
+
+/**
+ * Data Manager resource path of one dataset version. Server-side transports prefix it with the
+ * Data Manager API server; browser transports prefix it with a proxy and the base path.
+ */
+export const datasetVersionResourcePath = (datasetId: string, datasetVersion: number) =>
+  `/dataset/${assertDatasetId(datasetId)}/${assertVersion(datasetVersion)}`;
+
+/**
+ * Transport hrefs for a dataset version. These leave the Pages Router for the Data Manager proxies,
+ * so they carry the deployment base path and address the exact version rather than route state.
+ */
+export const datasetTransportLinks = {
+  browserView: (datasetId: string, datasetVersion: number) =>
+    withBasePath(`/api/viewer-proxy${datasetVersionResourcePath(datasetId, datasetVersion)}`),
+  download: (datasetId: string, datasetVersion: number) =>
+    withBasePath(`/api/dm-api${datasetVersionResourcePath(datasetId, datasetVersion)}`),
 };
 
 export const datasetListState = (route: DatasetRoute): DatasetListState => ({

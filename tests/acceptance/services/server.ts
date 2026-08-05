@@ -79,11 +79,13 @@ const datasetFailureControls = [
     error: "unsupported-dataset-failure",
     pathSuffix: "/dataset-failure",
     stateKey: "datasetFailure",
+    statuses: [429, 503],
   },
   {
     error: "unsupported-dataset-content-failure",
     pathSuffix: "/dataset-content-failure",
     stateKey: "datasetContentFailure",
+    statuses: [403, 429, 503],
   },
 ] as const;
 
@@ -403,7 +405,13 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     (request.method === "GET" && url.pathname === `/dataset/${fixtureIds.dataset}/2`)
   ) {
     if (state.datasetContentFailure) {
-      return json(response, state.datasetContentFailure, state.fixtures.failures.serverError);
+      return json(
+        response,
+        state.datasetContentFailure,
+        state.datasetContentFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
     }
     const content = url.pathname.endsWith("/1")
       ? datasetContentFixtures[1]
@@ -773,10 +781,15 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   );
   if (datasetFailureControl && request.method === "POST") {
     const status = Number(url.searchParams.get("status"));
-    if (![429, 503].includes(status)) {
+    if (!(datasetFailureControl.statuses as readonly number[]).includes(status)) {
       return json(response, 400, { error: datasetFailureControl.error, status });
     }
-    getScenario(subject)[datasetFailureControl.stateKey] = status as 429 | 503;
+    const state = getScenario(subject);
+    if (datasetFailureControl.stateKey === "datasetContentFailure") {
+      state.datasetContentFailure = status as 403 | 429 | 503;
+    } else {
+      state.datasetFailure = status as 429 | 503;
+    }
     return json(response, 200, { [datasetFailureControl.stateKey]: status, subject });
   }
   if (datasetFailureControl && request.method === "DELETE") {

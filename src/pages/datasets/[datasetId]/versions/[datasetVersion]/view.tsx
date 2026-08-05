@@ -2,10 +2,14 @@ import { type GetServerSideProps } from "nextjs-routes";
 
 import { pagePolicies, withPagePolicy } from "../../../../../application/pagePolicy";
 import { DatasetViewer, type DatasetViewerProps } from "../../../../../datasets/DatasetViewer";
+import { datasetVersionResourcePath } from "../../../../../datasets/routes";
+import {
+  concealDatasetVersionAbsence,
+  DATASET_VERSION_NOT_FOUND,
+} from "../../../../../datasets/viewerContent";
 import { isDatasetId, isDatasetVersion } from "../../../../../routing/identifiers";
 import { plaintextViewerSSR } from "../../../../../utils/api/plaintextViewerSSR";
 import { createErrorProps } from "../../../../../utils/api/serverSidePropsError";
-import { API_ROUTES } from "../../../../../utils/app/routes";
 import { getFullReturnTo } from "../../../../../utils/next/ssr";
 import { withPageAuthRequiredSSR } from "../../../../../utils/next/withPageAuthRequiredSSR";
 
@@ -21,12 +25,13 @@ export const getServerSideProps: GetServerSideProps<DatasetViewerProps> = async 
         !isDatasetId(datasetId) ||
         !isDatasetVersion(datasetVersion)
       ) {
-        return createErrorProps(res, 404, "Dataset version not found");
+        return createErrorProps(res, 404, DATASET_VERSION_NOT_FOUND);
       }
       const version = Number(datasetVersion);
       const url =
-        process.env.DATA_MANAGER_API_SERVER + API_ROUTES.datasetVersion(datasetId, version);
-      return plaintextViewerSSR(req, res, { url, compressed: true });
+        process.env.DATA_MANAGER_API_SERVER + datasetVersionResourcePath(datasetId, version);
+      const content = await plaintextViewerSSR(req, res, { url, compressed: true });
+      return concealDatasetVersionAbsence(res, content);
     },
   })(ctx);
 };

@@ -1,4 +1,5 @@
 import { expect, type Page, test, type TestInfo } from "@playwright/test";
+import { gunzipSync } from "node:zlib";
 
 import { fixtureIds } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
@@ -64,7 +65,7 @@ test("Datasets keeps global list state and exact version identity in browser his
   );
   await expect(
     page.getByRole("link", { name: "Download this version of the dataset" }),
-  ).toHaveAttribute("href", `/api/dm-api/dataset/${fixtureIds.dataset}/1`);
+  ).toHaveAttribute("href", `/data-manager-ui/api/dm-api/dataset/${fixtureIds.dataset}/1`);
   await page.getByText("View and Edit the Dataset Schema", { exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Edit Schema" })).toBeVisible();
   await expect(page.getByLabel("Schema description")).toHaveValue("Version one schema");
@@ -183,6 +184,108 @@ test("recoverable dataset failure retries the same exact version", async ({
     .then((response) => response.json() as Promise<{ requests: { path: string }[] }>);
   expect(diagnostics.requests.map(({ path }) => path)).toContain(
     `/dataset/${fixtureIds.dataset}/1`,
+  );
+});
+
+test("dataset version viewers keep canonical identity across every transport", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const versionOne = `datasets/${fixtureIds.dataset}/versions/1`;
+  const viewerPath = `${versionOne}/view?search=acceptance`;
+  await login(page, `${versionOne}/view?unowned=ignored&search=acceptance`, testInfo);
+
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${viewerPath}`);
+  await expect(page.getByRole("heading", { name: "acceptance-dataset-v1.sdf" })).toBeVisible();
+  await expect(page.getByText("acceptance dataset version 1", { exact: true })).toBeVisible();
+
+  await page.reload();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${viewerPath}`);
+  await expect(page.getByRole("heading", { name: "acceptance-dataset-v1.sdf" })).toBeVisible();
+  await expect(page.getByText("acceptance dataset version 1", { exact: true })).toBeVisible();
+
+  const downloadHref = `/data-manager-ui/api/dm-api/dataset/${fixtureIds.dataset}/1`;
+  const browserViewHref = `/data-manager-ui/api/viewer-proxy/dataset/${fixtureIds.dataset}/1`;
+  const transportUrl = (href: string) => new URL(href, acceptanceUrls.app).toString();
+  const download = await page.request.get(transportUrl(downloadHref));
+  expect(download.status()).toBe(200);
+  expect(gunzipSync(await download.body()).toString()).toBe("acceptance dataset version 1\n");
+
+  const browserView = await page.request.get(transportUrl(browserViewHref));
+  expect(browserView.status()).toBe(200);
+  expect(browserView.headers()["content-disposition"]).toBe("inline");
+  expect(gunzipSync(await browserView.body()).toString()).toBe("acceptance dataset version 1\n");
+
+  await page.getByRole("link", { name: "Back to dataset version" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${versionOne}?search=acceptance`);
+  const datasetDialog = page.getByRole("dialog", { name: "Dataset acceptance-dataset-v1.sdf" });
+  await expect(datasetDialog).toBeVisible();
+  await expect(page.getByRole("link", { name: "Browser Viewer" })).toHaveAttribute(
+    "href",
+    browserViewHref,
+  );
+  await expect(
+    page.getByRole("link", { name: "Download this version of the dataset" }),
+  ).toHaveAttribute("href", downloadHref);
+
+  await page.getByRole("link", { name: "Plaintext Viewer" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${viewerPath}`);
+  await expect(page.getByText("acceptance dataset version 1", { exact: true })).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${versionOne}?search=acceptance`);
+  await expect(datasetDialog).toBeVisible();
+
+  const diagnostics = await request
+    .get(`${acceptanceUrls.control}/scenario/${subject}`)
+    .then(
+      (response) => response.json() as Promise<{ requests: { method: string; path: string }[] }>,
+    );
+  expect(diagnostics.requests).toContainEqual(
+    expect.objectContaining({ method: "GET", path: `/dataset/${fixtureIds.dataset}/1` }),
+  );
+  expect(diagnostics.requests).not.toContainEqual(
+    expect.objectContaining({ method: "GET", path: `/dataset/${fixtureIds.dataset}/2` }),
+  );
+});
+
+test("viewer absence, denial, and the removed legacy route never adopt another version", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const versionOne = `datasets/${fixtureIds.dataset}/versions/1`;
+  await login(page, `${versionOne}/view`, testInfo);
+  await expect(page.getByText("acceptance dataset version 1", { exact: true })).toBeVisible();
+
+  const missing = await page.goto(`datasets/${fixtureIds.dataset}/versions/99/view`);
+  expect(missing?.status()).toBe(404);
+  await expect(page.getByText("Dataset version not found")).toBeVisible();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}datasets/${fixtureIds.dataset}/versions/99/view`,
+  );
+
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/dataset-content-failure?status=403`,
+  );
+  const denied = await page.goto(`${versionOne}/view`);
+  expect(denied?.status()).toBe(missing?.status());
+  await expect(page.getByText("Dataset version not found")).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${versionOne}/view`);
+  await expect(page.getByText("acceptance dataset version 1", { exact: true })).not.toBeVisible();
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/dataset-content-failure`);
+  await page.reload();
+  await expect(page.getByText("acceptance dataset version 1", { exact: true })).toBeVisible();
+
+  await page.goto(`dataset/${fixtureIds.dataset}/1`);
+  await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
+
+  const diagnostics = await request
+    .get(`${acceptanceUrls.control}/scenario/${subject}`)
+    .then((response) => response.json() as Promise<{ requests: { path: string }[] }>);
+  expect(diagnostics.requests.map(({ path }) => path)).not.toContain(
+    `/dataset/${fixtureIds.dataset}/2`,
   );
 });
 

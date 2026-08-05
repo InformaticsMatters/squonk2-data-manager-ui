@@ -5,14 +5,13 @@ import { withBasePath } from "./basePath";
 
 type Proxy = "" | "/api/dm-api" | "/api/viewer-proxy";
 
+// Dataset version transports are owned by the Datasets family in `src/datasets/routes.ts`.
 export const API_ROUTES = {
   projectFile: (projectId: string, path: string, fileName: string, proxy: Proxy = "") => {
     const params = new URLSearchParams({ file: fileName });
     path !== "" && params.set("path", path);
     return `${proxy}/project/${projectId}/file?${params.toString()}`;
   },
-  datasetVersion: (datasetId: string, version: number, proxy: Proxy = "") =>
-    `${proxy}/dataset/${datasetId}/${version}`,
 };
 
 export const projectFileURL: (typeof API_ROUTES)["projectFile"] = (project, path, file) =>

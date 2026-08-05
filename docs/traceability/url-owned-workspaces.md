@@ -9,7 +9,8 @@ This matrix records the production contracts introduced for issues
 [#1921](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1921), and
 [#1922](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1922), and
 [#1923](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1923), and
-[#1924](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1924). Later vertical
+[#1924](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1924), and
+[#1925](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1925). Later vertical
 workspace tickets extend this file with their screens, capabilities, commands, and lifecycle evidence.
 
 ## Route And Link Contracts
@@ -120,6 +121,17 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 | DATASET-11  | Deletion lifecycle          | Detail and mixed-capability bulk deletion, task failure/retry, and concurrent data | Success requires terminal exit code zero; retries reuse accepted work and refreshed data selects the next route     | Dataset mutation lifecycle matrix; dataset mutation acceptance journey           |
 | DATASET-12  | Mutation invalidation       | Successful labels, editor, and deletion commands                                   | Family command owner invalidates the generated dataset collection prefix and synchronizes list/detail               | Dataset mutation acceptance journey; strict review gate                          |
 
+## Dataset Version Viewer Contracts
+
+| Contract ID | Area                         | Input or fixture                                                                         | Expected external outcome                                                                                                                                          | Automated evidence                                                                                                         |
+| ----------- | ---------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| VIEWER-01   | Viewer link identity         | Plaintext, browser-viewer, and download links beside explicit version 1                  | Every link addresses the displayed version through family builders that reject malformed identity and carry the deployment base path                               | `tests/contracts/datasets-routes.node.ts` transport matrix; dataset list and viewer acceptance journeys                    |
+| VIEWER-02   | Direct viewer entry          | Logged-out entry at the version viewer route carrying list state and an unknown key      | Authentication returns to the exact viewer route, the unknown key is removed, and only the requested version is fetched                                            | `tests/acceptance/datasets.acceptance.ts` viewer transport journey                                                         |
+| VIEWER-03   | Download and proxy transport | Authenticated requests to the Data Manager and browser-viewer proxies                    | Both return that version's bytes; the browser viewer forces inline display                                                                                         | Dataset viewer transport journey                                                                                           |
+| VIEWER-04   | Viewer history and refresh   | Explicit return, browser Back, and refresh from the viewer                               | An explicit return replaces the viewer with its dataset version detail, Back from the viewer restores that detail, and refresh keeps the viewer and its list state | Dataset viewer transport and direct-route acceptance journeys                                                              |
+| VIEWER-05   | Viewer failure outcomes      | Missing version, forbidden content, `401`/`429`/`503` content, and unusable status facts | Absence and denial answer identically in the response and the page and never adopt another version; anything unconfirmed retries the same version                  | `tests/contracts/dataset-viewer.node.ts` content and concealment matrices; viewer absence and recoverable-failure journeys |
+| VIEWER-06   | Viewer cutover               | Legacy `/dataset/[datasetId]/[datasetVersion]` route and its shared link builder         | The legacy route is ordinary not-found and the removed builder no longer exists                                                                                    | `tests/contracts/dataset-viewer.node.ts` cutover cases; viewer transport journey                                           |
+
 ## Ownership Notes
 
 - `src/projects/routes.ts`, `src/datasets/routes.ts`, and `src/administration/routes.ts` are the only
@@ -149,6 +161,13 @@ workspace tickets extend this file with their screens, capabilities, commands, a
   invalidates generated project prefixes after a project command. `src/projects/failures.ts` owns
   how an authoritative rejection reads, so no project command navigates or changes scope in response
   to a server `403`.
+- `src/datasets/routes.ts` also owns the dataset version transport hrefs. The Data Manager resource
+  path is built once and reused by the server-rendered viewer, the browser viewer proxy, and the
+  download proxy, so no screen composes a dataset version URL of its own.
+  `src/datasets/viewerContent.ts` is the only place that decides what the viewer shows for the
+  version named by the URL, and the only place that makes a denied version answer exactly as a
+  missing one. `src/utils/api/plaintextViewerSSR.ts` reports transport facts only: the response
+  status is the status, and an upstream message is never one.
 - `src/api/runtime/classifyTransportFailure.ts` classifies transport facts only. Route families retain
   ownership of non-disclosing parent failures, local child failures, stale-data behavior, and rendering.
 - `FamilyRouteBoundary` withholds named-family descendants until the router is ready and the family

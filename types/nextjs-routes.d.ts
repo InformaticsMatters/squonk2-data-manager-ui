@@ -23,11 +23,11 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/administration/usage-inventory/[collection]/[resourceId]", { "collection": string; "resourceId": string }>
     | DynamicRoute<"/api/auth/[...all]", { "all": string[] }>
     | StaticRoute<"/api/configuration/ui-version">
+    | DynamicRoute<"/api/dm-api/[...dmProxy]", { "dmProxy": string[] }>
     | StaticRoute<"/api/motd">
     | StaticRoute<"/api/sdf-parser">
     | DynamicRoute<"/api/viewer-proxy/[...viewerProxy]", { "viewerProxy": string[] }>
     | StaticRoute<"/configuration">
-    | DynamicRoute<"/dataset/[datasetId]/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>
     | StaticRoute<"/datasets">
     | DynamicRoute<"/datasets/[datasetId]", { "datasetId": string }>
     | DynamicRoute<"/datasets/[datasetId]/versions/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>

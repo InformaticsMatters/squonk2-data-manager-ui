@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { datasetLinks, parseDatasetRoute } from "../../src/datasets/routes";
+import { datasetLinks, datasetTransportLinks, parseDatasetRoute } from "../../src/datasets/routes";
 
 const datasetId = "dataset-00000000-0000-4000-8000-000000000001";
 
@@ -103,5 +103,50 @@ test.describe("Datasets route contract", () => {
   test("builders reject malformed required identity", () => {
     expect(() => datasetLinks.dataset("not-a-dataset")).toThrow();
     expect(() => datasetLinks.version(datasetId, 0)).toThrow();
+  });
+});
+
+const withEnvBasePath = <TResult>(basePath: string | undefined, read: () => TResult) => {
+  const previous = process.env.NEXT_PUBLIC_BASE_PATH;
+  if (basePath === undefined) {
+    delete process.env.NEXT_PUBLIC_BASE_PATH;
+  } else {
+    process.env.NEXT_PUBLIC_BASE_PATH = basePath;
+  }
+  try {
+    return read();
+  } finally {
+    if (previous === undefined) {
+      delete process.env.NEXT_PUBLIC_BASE_PATH;
+    } else {
+      process.env.NEXT_PUBLIC_BASE_PATH = previous;
+    }
+  }
+};
+
+test.describe("Dataset version transport contract", () => {
+  test("transport hrefs address the exact dataset version", () => {
+    expect(withEnvBasePath(undefined, () => datasetTransportLinks.download(datasetId, 12))).toBe(
+      `/api/dm-api/dataset/${datasetId}/12`,
+    );
+    expect(withEnvBasePath(undefined, () => datasetTransportLinks.browserView(datasetId, 12))).toBe(
+      `/api/viewer-proxy/dataset/${datasetId}/12`,
+    );
+  });
+
+  test("transport hrefs carry the deployment base path", () => {
+    expect(
+      withEnvBasePath("/data-manager-ui", () => datasetTransportLinks.download(datasetId, 1)),
+    ).toBe(`/data-manager-ui/api/dm-api/dataset/${datasetId}/1`);
+    expect(
+      withEnvBasePath("/data-manager-ui", () => datasetTransportLinks.browserView(datasetId, 1)),
+    ).toBe(`/data-manager-ui/api/viewer-proxy/dataset/${datasetId}/1`);
+  });
+
+  test("transport builders reject malformed identity", () => {
+    expect(() => datasetTransportLinks.download("not-a-dataset", 1)).toThrow();
+    expect(() => datasetTransportLinks.browserView("not-a-dataset", 1)).toThrow();
+    expect(() => datasetTransportLinks.download(datasetId, 0)).toThrow();
+    expect(() => datasetTransportLinks.browserView(datasetId, 1.5)).toThrow();
   });
 });

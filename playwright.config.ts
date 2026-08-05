@@ -1,7 +1,14 @@
 import { defineConfig } from "@playwright/test";
+import { existsSync } from "node:fs";
 import path from "node:path";
 
-process.loadEnvFile(path.resolve(__dirname, ".env.test.local"));
+// Local runs keep their secrets in this (gitignored) file; CI passes the same values as job-level
+// environment variables and has no file to load. `process.loadEnvFile` throws on a missing path,
+// unlike the `dotenv` call it replaced, so the existence check is what keeps CI working.
+const envFile = path.resolve(__dirname, ".env.test.local");
+if (existsSync(envFile)) {
+  process.loadEnvFile(envFile);
+}
 
 const baseURL = new URL(process.env.BASE_URL as string);
 baseURL.pathname = process.env.BASE_PATH ?? "/";

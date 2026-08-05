@@ -1,6 +1,6 @@
 import { type ServerResponse } from "node:http";
 
-const MAX_REASON_PHRASE = 200;
+const MAX_REASON_PHRASE_LENGTH = 200;
 
 // A reason phrase carries printable latin1 only: no control characters, no wider code points.
 const FIRST_PRINTABLE = 32;
@@ -23,7 +23,7 @@ const asReasonPhrase = (message: string, code: number) => {
     .join("")
     .replaceAll(/\s+/gu, " ")
     .trim()
-    .slice(0, MAX_REASON_PHRASE);
+    .slice(0, MAX_REASON_PHRASE_LENGTH);
   return phrase || `Request failed with status ${code}`;
 };
 
@@ -44,7 +44,11 @@ export const describeTransportFailure = (
   response: { status: number; statusText: string },
   data: { message?: unknown } | null,
 ) => {
-  const statusMessage = response.statusText || `Unable to fetch file (${response.status})`;
   const reported = typeof data?.message === "string" ? data.message.trim() : "";
-  return { diagnostic: reported || statusMessage, statusMessage };
+  return {
+    diagnostic: reported || response.statusText || "no message",
+    // A transport that offers no phrase says nothing here: `createErrorProps` owns the only
+    // fallback, so the status line is never described in two voices.
+    statusMessage: response.statusText,
+  };
 };

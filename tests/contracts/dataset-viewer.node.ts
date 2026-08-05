@@ -97,18 +97,41 @@ test.describe("Dataset version viewer cutover", () => {
   });
 
   const typescriptSource = /\.tsx?$/u;
-  const datasetProxy = /\/api\/(?:dm-api|viewer-proxy)/u;
+  const dataManagerProxy = /\/api\/(?:dm-api|viewer-proxy)/u;
+  // Building the path, rather than calling the builder, is what makes a second owner.
+  const composedResourcePath = /`\/dataset\/\$\{/u;
+  // The Orval trees are regenerated from the OpenAPI documents, so they own no handwritten route.
+  const generated = /(?:^|\/)generated\//u;
+
+  /** Handwritten modules whose source matches, as forward-slash paths relative to `src`. */
+  const handwrittenMatching = (matches: RegExp) => {
+    const root = path.join(process.cwd(), "src");
+    return readdirSync(root, { recursive: true, withFileTypes: true })
+      .filter((entry) => entry.isFile() && typescriptSource.test(entry.name))
+      .map((entry) =>
+        path.relative(root, path.join(entry.parentPath, entry.name)).split(path.sep).join("/"),
+      )
+      .filter((file) => !generated.test(file))
+      .filter((file) => matches.test(readFileSync(path.join(root, file), "utf8")))
+      .toSorted();
+  };
 
   test("dataset version transport hrefs have one owner", () => {
-    const root = path.join(process.cwd(), "src");
-    const composers = readdirSync(root, { recursive: true, withFileTypes: true })
-      .filter((entry) => entry.isFile() && typescriptSource.test(entry.name))
-      .map((entry) => path.relative(root, path.join(entry.parentPath, entry.name)))
-      .filter((file) => {
-        const source = readFileSync(path.join(root, file), "utf8");
-        return datasetProxy.test(source) && source.includes("/dataset/");
-      });
+    // Every module allowed to name a Data Manager proxy, and the resource each addresses through
+    // it. A module reaching a proxy from anywhere else fails this list rather than quietly becoming
+    // a second owner of a transport href.
+    expect(handwrittenMatching(dataManagerProxy)).toEqual([
+      "components/ViewFilePopover/BrowserViewerListItem.tsx", // project file
+      "datasets/routes.ts", // dataset version — the only owner
+      "features/ProjectTable/FileActions.tsx", // project file
+      "features/SDFViewer/useGetSDFSchema.ts", // project file
+      "pages/api/dm-api/[...dmProxy].ts", // the proxy itself
+      "pages/api/viewer-proxy/[...viewerProxy].ts", // the proxy itself
+      "utils/app/routes.ts", // project file builder
+    ]);
+  });
 
-    expect(composers).toEqual(["datasets/routes.ts"]);
+  test("no second module composes a dataset version resource path", () => {
+    expect(handwrittenMatching(composedResourcePath)).toEqual(["datasets/routes.ts"]);
   });
 });

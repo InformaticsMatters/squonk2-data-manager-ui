@@ -128,16 +128,13 @@ const PlatformAdministrationAction = ({
 }: {
   capability: ProjectCapability;
   projectId: string;
-  username: string | undefined;
+  username: string;
 }) => {
   const commands = useProjectCommands();
   const [feedback, setFeedback] = useState<{ message: string; rejected: boolean } | undefined>();
   const [isPending, setIsPending] = useState(false);
 
   const take = async () => {
-    if (username === undefined) {
-      return;
-    }
     setIsPending(true);
     setFeedback(undefined);
     try {
@@ -160,7 +157,7 @@ const PlatformAdministrationAction = ({
   return (
     <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
       <Button
-        disabled={capability.status === "disabled" || isPending || username === undefined}
+        disabled={capability.status === "disabled" || isPending}
         variant="outlined"
         onClick={() => void take()}
       >
@@ -243,7 +240,9 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
         </Facts>
       </Section>
 
-      {platformAdministration.status === "hidden" ? null : (
+      {/* A non-hidden capability already implies a resolved caller; this only narrows the name the
+          command sends, and decides nothing about authority. */}
+      {platformAdministration.status === "hidden" || !facts.caller.username ? null : (
         <Section title="Platform administration">
           <PlatformAdministrationAction
             capability={platformAdministration}

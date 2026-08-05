@@ -157,6 +157,8 @@ test("Manage presents project facts and available actions to a project administr
 
   await expect(factRow(page, "Tier")).toContainText("Bronze");
   await expect(factRow(page, "Coin allowance")).toContainText("100");
+  // Only a subscription that accounts for instances can be run against, so it says that it does.
+  await expect(factRow(page, "Instance coins used")).toContainText("0");
   // Support owns every diagnostic identifier, so each is stated exactly once.
   await expect(factRow(page, "Project ID")).toContainText(fixtureIds.project);
   await expect(factRow(page, "Subscription ID")).toContainText(fixtureIds.product);
@@ -221,11 +223,16 @@ test("the platform-administrator action is offered alone and its rejection chang
   const takeAdministration = page.getByRole("button", { name: "Take project administration" });
   await expect(takeAdministration).toBeEnabled();
   await expect(factRow(page, "Your access")).toContainText("No project role");
+  // The realm role offers its own action alone; it is not ordinary authority over the project.
+  await expect(page.getByText("You have read-only access to this project.")).toBeVisible();
+  await expect(factRow(page, "Change privacy")).toContainText(
+    "You must be a project administrator to change project privacy.",
+  );
 
   await takeAdministration.click();
   await expect(
     page.getByText(
-      `You do not have permission to take administration of project ${fixtureIds.project}. The displayed project has not changed.`,
+      `You cannot take administration of project ${fixtureIds.project}. It is unavailable or you do not have access. The displayed project has not changed.`,
     ),
   ).toBeVisible();
   // An authoritative rejection is feedback, never navigation or a change of scope.
@@ -239,4 +246,7 @@ test("the platform-administrator action is offered alone and its rejection chang
   await expect(page.getByText("You now administer this project.")).toBeVisible();
   await expect(factRow(page, "Your access")).toContainText("Administrator");
   await expect(page.getByText("You already administer this project.")).toBeVisible();
+  // Ordinary authority arrives with the membership the server granted, not with the realm role.
+  await expect(page.getByText("You have read-only access to this project.")).toHaveCount(0);
+  await expect(factRow(page, "Change privacy")).toContainText("Available to you.");
 });

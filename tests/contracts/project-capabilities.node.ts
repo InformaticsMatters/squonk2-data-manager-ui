@@ -40,24 +40,23 @@ const project = (overrides: Partial<ProjectDetail> = {}) =>
   }) as ProjectCapabilityFacts["project"];
 
 type FactOptions = Partial<ProjectDetail> & {
+  accountsForInstances?: boolean;
   atLimit?: boolean;
   freshness?: "current" | "stale";
   isPlatformAdministrator?: boolean;
-  /** Passing these explicitly as `undefined` is the point of several cases, so neither defaults. */
-  subscription?: { atLimit: boolean };
+  /** Passing this explicitly as `undefined` is the point of several cases, so it never defaults. */
   username?: string;
 };
 
 const facts = (options: FactOptions = {}): ProjectCapabilityFacts => {
   const {
+    accountsForInstances = true,
     atLimit = false,
     freshness,
     isPlatformAdministrator = false,
-    subscription,
     username,
     ...projectOverrides
   } = options;
-  const billing = "subscription" in options ? subscription : { atLimit };
   const caller = {
     isPlatformAdministrator,
     username: "username" in options ? username : administrator,
@@ -66,8 +65,8 @@ const facts = (options: FactOptions = {}): ProjectCapabilityFacts => {
   return {
     caller,
     project: project(projectOverrides),
+    subscription: { accountsForInstances, atLimit },
     ...(freshness ? { freshness } : {}),
-    ...(billing ? { subscription: billing } : {}),
   };
 };
 
@@ -79,8 +78,8 @@ const unconfirmed = (requirement: string) => ({
   status: "enabled",
 });
 
-const platformAdministrationRequirement =
-  "Taking administration of a project you are not a member of requires the Data Manager administrator role.";
+const unaccountableExecutionReason =
+  "This project's subscription does not account for instances, so running work cannot be established as safe.";
 
 const enabled = { status: "enabled" };
 
@@ -115,15 +114,11 @@ const editorActions = [
     evaluate: evaluateProjectFileMutationCapability,
     limitReason: "This project's subscription is at its coin limit, so files cannot be changed.",
     requirement: "You must be a project editor or administrator to change project files.",
-    unsafeReason:
-      "This project's subscription could not be read, so file changes cannot be established as safe.",
   },
   {
     evaluate: evaluateProjectExecutionCapability,
     limitReason: "This project's subscription is at its coin limit, so work cannot be run.",
     requirement: "You must be a project editor or administrator to run work in this project.",
-    unsafeReason:
-      "This project's subscription could not be read, so running work cannot be established as safe.",
   },
 ] as const;
 
@@ -224,7 +219,11 @@ test.describe("Ordinary project capabilities", () => {
       expect(evaluate(facts({ username: editor }))).toEqual(disabled(reason));
       expect(evaluate(facts({ username: observer }))).toEqual(disabled(reason));
       expect(evaluate(facts({ username: stranger }))).toEqual(disabled(reason));
+      // Platform privilege is not ordinary project authority; it only offers its own action.
       expect(evaluate(facts({ isPlatformAdministrator: true, username: stranger }))).toEqual(
+        disabled(reason),
+      );
+      expect(evaluate(facts({ isPlatformAdministrator: true, username: administrator }))).toEqual(
         enabled,
       );
     }
@@ -238,8 +237,9 @@ test.describe("Ordinary project capabilities", () => {
       expect(evaluate(facts({ username: creator }))).toEqual(disabled(requirement));
       expect(evaluate(facts({ username: stranger }))).toEqual(disabled(requirement));
       expect(evaluate(facts({ isPlatformAdministrator: true, username: stranger }))).toEqual(
-        enabled,
+        disabled(requirement),
       );
+      expect(evaluate(facts({ isPlatformAdministrator: true, username: editor }))).toEqual(enabled);
     }
   });
 
@@ -277,7 +277,11 @@ test.describe("Read-only project access", () => {
     expect(projectIsReadOnly(facts({ username: creator }))).toBe(true);
     expect(projectIsReadOnly(facts({ username: administrator }))).toBe(false);
     expect(projectIsReadOnly(facts({ username: editor }))).toBe(false);
+    // A platform administrator reads the project like any other viewer until they take it on.
     expect(projectIsReadOnly(facts({ isPlatformAdministrator: true, username: stranger }))).toBe(
+      true,
+    );
+    expect(projectIsReadOnly(facts({ isPlatformAdministrator: true, username: editor }))).toBe(
       false,
     );
     // An editor stopped only by the coin limit still has authority over the project.
@@ -309,23 +313,32 @@ test.describe("Incomplete and stale project facts", () => {
   });
 
   test("spending stays disabled with an explicit reason when safety cannot be established", () => {
-    for (const { evaluate, unsafeReason } of editorActions) {
-      // Missing billing facts outrank both the stale fallback and the caller's authority.
-      expect(evaluate(facts({ subscription: undefined, username: administrator }))).toEqual(
-        disabled(unsafeReason),
-      );
-      expect(
-        evaluate(facts({ freshness: "stale", subscription: undefined, username: administrator })),
-      ).toEqual(disabled(unsafeReason));
-      expect(
-        evaluate(
-          facts({ isPlatformAdministrator: true, subscription: undefined, username: stranger }),
-        ),
-      ).toEqual(disabled(unsafeReason));
-    }
-    // Administration never spends coins, so absent billing facts leave it unaffected.
+    // Only a project-tier subscription accounts for instances, so work run against any other
+    // linked subscription could not be charged for, whatever authority the caller holds.
+    const unaccountable = (options: FactOptions) =>
+      evaluateProjectExecutionCapability(facts({ accountsForInstances: false, ...options }));
+    expect(unaccountable({ username: administrator })).toEqual(
+      disabled(unaccountableExecutionReason),
+    );
+    expect(unaccountable({ username: editor })).toEqual(disabled(unaccountableExecutionReason));
+    // It outranks the optimistic stale fallback, so incomplete facts still explain the safety.
+    expect(unaccountable({ freshness: "stale", username: administrator })).toEqual(
+      disabled(unaccountableExecutionReason),
+    );
+    expect(unaccountable({ username: undefined })).toEqual(disabled(unaccountableExecutionReason));
+    // A confirmed lack of authority stays the more useful explanation, exactly as at the coin limit.
+    expect(unaccountable({ username: observer })).toEqual(
+      disabled("You must be a project editor or administrator to run work in this project."),
+    );
+
+    // Every linked subscription accounts for storage, and administration never spends coins.
+    expect(
+      evaluateProjectFileMutationCapability(
+        facts({ accountsForInstances: false, username: administrator }),
+      ),
+    ).toEqual(enabled);
     for (const { evaluate } of administratorActions) {
-      expect(evaluate(facts({ subscription: undefined, username: administrator }))).toEqual(
+      expect(evaluate(facts({ accountsForInstances: false, username: administrator }))).toEqual(
         enabled,
       );
     }
@@ -358,11 +371,17 @@ test.describe("Exclusively platform-administrator project capability", () => {
         facts({ isPlatformAdministrator: true, username: administrator }),
       ),
     ).toEqual(disabled("You already administer this project."));
+    // A privileged action is never advertised on facts that cannot yet establish the role.
     expect(
       evaluateProjectPlatformAdministrationCapability(
         facts({ freshness: "stale", isPlatformAdministrator: true, username: stranger }),
       ),
-    ).toEqual(unconfirmed(platformAdministrationRequirement));
+    ).toEqual({ status: "hidden" });
+    expect(
+      evaluateProjectPlatformAdministrationCapability(
+        facts({ isPlatformAdministrator: true, username: undefined }),
+      ),
+    ).toEqual({ status: "hidden" });
   });
 
   test("only hidden capabilities withhold their reason", () => {
@@ -411,6 +430,7 @@ test.describe("Project subscription facts", () => {
     } as ProductDmProjectTier;
 
     expect(describeProjectSubscription(product)).toEqual({
+      accountsForInstances: true,
       allowance: 100,
       atLimit: false,
       billingDay: 1,
@@ -441,6 +461,7 @@ test.describe("Project subscription facts", () => {
     } as ProductDmStorage;
 
     expect(describeProjectSubscription(product)).toEqual({
+      accountsForInstances: false,
       allowance: 100,
       atLimit: true,
       billingDay: 1,
@@ -465,14 +486,18 @@ test.describe("Authoritative project command feedback", () => {
 
   test("a server 403 is reported as authorization feedback that changed nothing", () => {
     expect(projectMutationFailureMessage(rejection(403), action, resource)).toBe(
-      `You do not have permission to ${action} ${resource}. The displayed project has not changed.`,
+      `You cannot ${action} ${resource}. It is unavailable or you do not have access. The displayed project has not changed.`,
     );
   });
 
-  test("every other confirmed status keeps the displayed project and offers retry", () => {
+  test("a rejection and a missing resource are indistinguishable", () => {
+    // Comparing the two answers must never reveal whether the addressed resource exists.
     expect(projectMutationFailureMessage(rejection(404), action, resource)).toBe(
-      `${resource} is no longer available. The displayed project has not changed.`,
+      projectMutationFailureMessage(rejection(403), action, resource),
     );
+  });
+
+  test("every retryable status keeps the displayed project and offers retry", () => {
     for (const status of [429, 500, 503]) {
       expect(projectMutationFailureMessage(rejection(status), action, resource)).toBe(
         `Could not ${action} ${resource}. The displayed project has not changed; retry is available.`,

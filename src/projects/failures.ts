@@ -3,9 +3,10 @@ import { classifyTransportFailure } from "../api/runtime/classifyTransportFailur
 /**
  * Presents an authoritative rejection of a project command. The server is the authorization
  * authority, so a `403` is reported as feedback about the attempted action alone: the displayed
- * project, its organisation identity, and the canonical route are all left exactly as they were,
- * and nothing is said about resources the caller has not already read. Unknown transport facts
- * return `undefined` so the shared error presentation stays in charge.
+ * project, its organisation identity, and the canonical route are all left exactly as they were.
+ * A refusal and a missing resource read identically, so comparing the two can never reveal whether
+ * a resource the caller has not read exists. Unknown transport facts return `undefined` so the
+ * shared error presentation stays in charge.
  */
 export const projectMutationFailureMessage = (
   error: unknown,
@@ -14,9 +15,8 @@ export const projectMutationFailureMessage = (
 ): string | undefined => {
   switch (classifyTransportFailure(error).kind) {
     case "forbidden":
-      return `You do not have permission to ${action} ${resource}. The displayed project has not changed.`;
     case "not-found":
-      return `${resource} is no longer available. The displayed project has not changed.`;
+      return `You cannot ${action} ${resource}. It is unavailable or you do not have access. The displayed project has not changed.`;
     case "network":
     case "rate-limited":
     case "server":

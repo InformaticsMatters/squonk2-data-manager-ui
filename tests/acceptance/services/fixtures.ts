@@ -157,41 +157,41 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
   };
   const noAccess = profile === "no-access";
   const hasPersonalUnit = profile !== "no-personal-unit" && !noAccess;
-  const products = AppApiProductGetResponse.parse({
-    count: 1,
-    products: [
-      {
-        claimable: true,
-        claim: { id: fixtureIds.project, name: "Acceptance Project" },
-        coins: {
-          allowance: 100,
-          allowance_multiplier: 1,
-          at_limit: false,
-          billing_day: 1,
-          billing_prediction: 0,
-          billing_prediction_storage_contribution: 0,
-          current_burn_rate: 0,
-          limit: 100,
-          overspend_multiplier: 1,
-          remaining_days: 30,
-          used: 0,
-        },
-        instance: { coins: { used: 0 } },
-        organisation,
-        product: {
-          created,
-          flavour: "BRONZE",
-          id: fixtureIds.product,
-          type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
-        },
-        storage: {
-          coins: { unit_cost: 1, used: 0 },
-          size: { current: "0 B", peak: "0 B", unit_size: "1 GB", units_used: 0 },
-        },
-        unit,
-      },
-    ],
-  });
+  const projectTierProduct = {
+    claimable: true,
+    claim: { id: fixtureIds.project, name: "Acceptance Project" },
+    coins: {
+      allowance: 100,
+      allowance_multiplier: 1,
+      at_limit: false,
+      billing_day: 1,
+      billing_prediction: 0,
+      billing_prediction_storage_contribution: 0,
+      current_burn_rate: 0,
+      limit: 100,
+      overspend_multiplier: 1,
+      remaining_days: 30,
+      used: 0,
+    },
+    instance: { coins: { used: 0 } },
+    organisation,
+    product: {
+      created,
+      flavour: "BRONZE",
+      id: fixtureIds.product,
+      type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
+    },
+    storage: {
+      coins: { unit_cost: 1, used: 0 },
+      size: { current: "0 B", peak: "0 B", unit_size: "1 GB", units_used: 0 },
+    },
+    unit,
+  };
+  // The generated products union lists the storage shape first, so a project-tier product validates
+  // against that member and parses back without its instance accounting. The fixture is checked by
+  // the generated schema but served exactly as the Account Server sends it.
+  AppApiProductGetResponse.parse({ count: 1, products: [projectTierProduct] });
+  const products = { count: 1, products: [projectTierProduct] };
 
   return {
     accountServerVersion: AppApiStateGetVersionResponse.parse({ version: "4.7.0-acceptance" }),

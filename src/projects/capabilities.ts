@@ -28,15 +28,22 @@ export type ProjectMembershipFacts = {
   observers: string[];
 };
 
+/**
+ * The state of the project's linked subscription. `accountsForInstances` is false for a linked
+ * subscription that declares no instance accounting, so work run in the project could not be
+ * charged for; `atLimit` is its own coin state.
+ */
+export type ProjectSubscriptionState = { accountsForInstances: boolean; atLimit: boolean };
+
 export type ProjectCapabilityFacts = {
   caller: ProjectCaller;
   freshness?: ProjectFactsFreshness;
   project: ProjectMembershipFacts;
   /**
-   * Absent while the linked subscription has not answered. Spending actions cannot be established
-   * as safe without it, so they say so explicitly rather than staying optimistically available.
+   * The project's linked subscription is resolved before the project mounts, so its state is always
+   * a concrete fact here rather than something a spending action has to guess at.
    */
-  subscription?: { atLimit: boolean };
+  subscription: ProjectSubscriptionState;
 };
 
 /**
@@ -90,15 +97,24 @@ const factsAreConfirmed = ({ caller, freshness = "current" }: ProjectCapabilityF
 const roles = (facts: ProjectCapabilityFacts) =>
   resolveProjectRoles(facts.project, facts.caller.username);
 
-const administers = (facts: ProjectCapabilityFacts) =>
-  facts.caller.isPlatformAdministrator || roles(facts).isAdministrator;
+/**
+ * Ordinary authority is a fact of the project's own membership lists alone. Platform privilege is
+ * deliberately not folded in: a platform administrator who is not a member of a project holds no
+ * ordinary authority over it until they take administration of it, which is the one action their
+ * realm role does offer.
+ */
+const administers = (facts: ProjectCapabilityFacts) => roles(facts).isAdministrator;
 
-const edits = (facts: ProjectCapabilityFacts) => administers(facts) || roles(facts).isEditor;
+const edits = (facts: ProjectCapabilityFacts) => {
+  const held = roles(facts);
+  return held.isAdministrator || held.isEditor;
+};
 
 /**
  * True only when the caller holds no mutation authority over the project at all. A caller whose
  * actions are merely blocked — by a coin limit, say — is not a read-only caller, and unconfirmed
- * facts never claim read-only access before the server has answered.
+ * facts never claim read-only access before the server has answered. A platform administrator who
+ * holds no project role reads the project like any other viewer until they take administration.
  */
 export const projectIsReadOnly = (facts: ProjectCapabilityFacts): boolean =>
   factsAreConfirmed(facts) && !edits(facts);
@@ -117,29 +133,39 @@ const evaluateAdministratorAction =
   };
 
 /**
- * A spending action is only offered once its billing facts are known. Missing facts outrank both
- * the stale fallback and the caller's authority, because an action that cannot be established as
- * safe is explained rather than left available.
+ * A spending action is only offered once the linked subscription can account for it. A subscription
+ * that cannot outranks the optimistic stale fallback, because an action that cannot be established
+ * as safe is explained rather than left available; a confirmed lack of authority is still the more
+ * useful explanation, so it is reported first, exactly as the coin limit is.
  */
 const evaluateSpendingAction =
   ({
     limitReason,
     requirement,
-    unsafeReason,
+    unaccountableReason,
   }: {
     limitReason: string;
     requirement: string;
-    unsafeReason: string;
+    /**
+     * Absent for an action every linked subscription accounts for. Present for an action that needs
+     * instance accounting, which only a project-tier subscription declares.
+     */
+    unaccountableReason?: string;
   }) =>
   (facts: ProjectCapabilityFacts): ProjectCapability => {
-    if (!facts.subscription) {
-      return { status: "disabled", reason: unsafeReason };
-    }
+    const unaccountable: ProjectCapability | undefined =
+      unaccountableReason !== undefined && !facts.subscription.accountsForInstances
+        ? { status: "disabled", reason: unaccountableReason }
+        : undefined;
+
     if (!factsAreConfirmed(facts)) {
-      return unconfirmed(requirement);
+      return unaccountable ?? unconfirmed(requirement);
     }
     if (!edits(facts)) {
       return { status: "disabled", reason: requirement };
+    }
+    if (unaccountable) {
+      return unaccountable;
     }
     return facts.subscription.atLimit
       ? { status: "disabled", reason: limitReason }
@@ -166,38 +192,33 @@ export const evaluateProjectDeletionCapability = evaluateAdministratorAction(
   "You must be a project administrator to delete this project.",
 );
 
+/** Every linked subscription accounts for storage, so file changes need no instance accounting. */
 export const evaluateProjectFileMutationCapability = evaluateSpendingAction({
   limitReason: "This project's subscription is at its coin limit, so files cannot be changed.",
   requirement: "You must be a project editor or administrator to change project files.",
-  unsafeReason:
-    "This project's subscription could not be read, so file changes cannot be established as safe.",
 });
 
 export const evaluateProjectExecutionCapability = evaluateSpendingAction({
   limitReason: "This project's subscription is at its coin limit, so work cannot be run.",
   requirement: "You must be a project editor or administrator to run work in this project.",
-  unsafeReason:
-    "This project's subscription could not be read, so running work cannot be established as safe.",
+  unaccountableReason:
+    "This project's subscription does not account for instances, so running work cannot be established as safe.",
 });
-
-const platformAdministrationRequirement =
-  "Taking administration of a project you are not a member of requires the Data Manager administrator role.";
 
 /**
  * Taking administration of a project the caller has no membership in is exclusively a platform
  * administrator's action, so it is the one project capability that hides itself. Facts that cannot
- * establish the role leave it hidden rather than advertising a privileged operation.
+ * establish both the caller and the role leave it hidden rather than advertising a privileged
+ * operation; the command names the caller, so an unresolved caller is as disqualifying as a
+ * missing role.
  */
 export const evaluateProjectPlatformAdministrationCapability = (
   facts: ProjectCapabilityFacts,
 ): ProjectCapability => {
-  if (!facts.caller.isPlatformAdministrator || !facts.caller.username) {
+  if (!facts.caller.isPlatformAdministrator || !factsAreConfirmed(facts)) {
     return { status: "hidden" };
   }
-  if (!factsAreConfirmed(facts)) {
-    return unconfirmed(platformAdministrationRequirement);
-  }
-  return roles(facts).isAdministrator
+  return administers(facts)
     ? { status: "disabled", reason: "You already administer this project." }
     : { status: "enabled" };
 };

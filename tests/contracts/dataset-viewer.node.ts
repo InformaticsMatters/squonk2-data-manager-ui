@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { type ServerResponse } from "node:http";
 import path from "node:path";
 
@@ -7,7 +7,6 @@ import {
   classifyDatasetVersionContent,
   concealDatasetVersionAbsence,
 } from "../../src/datasets/viewerContent";
-import { API_ROUTES } from "../../src/utils/app/routes";
 
 const successful = {
   content: "acceptance dataset version 1\n",
@@ -97,7 +96,19 @@ test.describe("Dataset version viewer cutover", () => {
     expect(existsSync(path.join(process.cwd(), "src/pages/dataset"))).toBe(false);
   });
 
+  const typescriptSource = /\.tsx?$/u;
+  const datasetProxy = /\/api\/(?:dm-api|viewer-proxy)/u;
+
   test("dataset version transport hrefs have one owner", () => {
-    expect(Object.keys(API_ROUTES)).toEqual(["projectFile"]);
+    const root = path.join(process.cwd(), "src");
+    const composers = readdirSync(root, { recursive: true, withFileTypes: true })
+      .filter((entry) => entry.isFile() && typescriptSource.test(entry.name))
+      .map((entry) => path.relative(root, path.join(entry.parentPath, entry.name)))
+      .filter((file) => {
+        const source = readFileSync(path.join(root, file), "utf8");
+        return datasetProxy.test(source) && source.includes("/dataset/");
+      });
+
+    expect(composers).toEqual(["datasets/routes.ts"]);
   });
 });

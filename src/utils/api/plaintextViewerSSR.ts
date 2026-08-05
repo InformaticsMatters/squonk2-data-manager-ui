@@ -6,7 +6,7 @@ import fetch from "node-fetch";
 
 import { auth } from "../../lib/auth";
 import { isResponseJson } from "./fetchHelpers";
-import { createErrorProps } from "./serverSidePropsError";
+import { createErrorProps, describeTransportFailure } from "./serverSidePropsError";
 
 const MAX_BYTES = 100_000;
 
@@ -78,11 +78,10 @@ export const plaintextViewerSSR = async (
   if (!response.ok) {
     const isJson = isResponseJson(response);
     const data = isJson ? ((await response.json()) as { message?: unknown } | null) : null;
-    const reported = typeof data?.message === "string" ? data.message : response.statusText;
-    const message = reported || `The request failed with status ${response.status}`;
     // The response status is the only status fact. A message is diagnostic detail, never a status.
-    captureException(new Error(`Unable to fetch file (${response.status}): ${message}`));
-    return createErrorProps(res, response.status, message);
+    const { diagnostic, statusMessage } = describeTransportFailure(response, data);
+    captureException(new Error(`Unable to fetch file (${response.status}): ${diagnostic}`));
+    return createErrorProps(res, response.status, statusMessage);
   }
 
   // We use `node-fetch` which supports streaming unlike NextJS's fetch as of v12.2

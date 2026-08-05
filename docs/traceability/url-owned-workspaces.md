@@ -131,6 +131,7 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 | VIEWER-04   | Viewer history and refresh   | Explicit return, browser Back, and refresh from the viewer                               | An explicit return replaces the viewer with its dataset version detail, Back from the viewer restores that detail, and refresh keeps the viewer and its list state | Dataset viewer transport and direct-route acceptance journeys                                                              |
 | VIEWER-05   | Viewer failure outcomes      | Missing version, forbidden content, `401`/`429`/`503` content, and unusable status facts | Absence and denial answer identically in the response and the page and never adopt another version; anything unconfirmed retries the same version                  | `tests/contracts/dataset-viewer.node.ts` content and concealment matrices; viewer absence and recoverable-failure journeys |
 | VIEWER-06   | Viewer cutover               | Legacy `/dataset/[datasetId]/[datasetVersion]` route and its shared link builder         | The legacy route is ordinary not-found and the removed builder no longer exists                                                                                    | `tests/contracts/dataset-viewer.node.ts` cutover cases; viewer transport journey                                           |
+| VIEWER-07   | Rejected transport reporting | Upstream rejections carrying a message with newlines, non-latin1 text, or nothing at all | The response still renders its own status: the upstream message is reported to Sentry only, and the status line stays a phrase the transport can carry             | `tests/contracts/viewer-transport-status.node.ts` status line and transport failure matrices                               |
 
 ## Ownership Notes
 
@@ -168,6 +169,10 @@ workspace tickets extend this file with their screens, capabilities, commands, a
   version named by the URL, and the only place that makes a denied version answer exactly as a
   missing one. `src/utils/api/plaintextViewerSSR.ts` reports transport facts only: the response
   status is the status, and an upstream message is never one.
+- `src/utils/api/serverSidePropsError.ts` owns how a server-rendered failure reports itself. It
+  decides the status line, so no upstream message can reach it and destroy the response, and it
+  decides what a rejected transport says, so upstream text stays a Sentry diagnostic rather than
+  page content.
 - `src/api/runtime/classifyTransportFailure.ts` classifies transport facts only. Route families retain
   ownership of non-disclosing parent failures, local child failures, stale-data behavior, and rendering.
 - `FamilyRouteBoundary` withholds named-family descendants until the router is ready and the family

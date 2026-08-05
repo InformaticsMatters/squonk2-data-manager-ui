@@ -26,11 +26,12 @@ import {
   filterResultItems,
   resolveResultReadState,
   resolveResultsFreshness,
-  resolveResultsReadState,
+  resolveResultsFreshnessByCollection,
+  resolveResultsReadReport,
   resultListRequests,
   selectProjectResults,
 } from "../../src/projects/resultFacts";
-import { parseProjectRoute, projectLinks } from "../../src/projects/routes";
+import { parseProjectRoute, projectLinks, resultsListState } from "../../src/projects/routes";
 
 const projectId = "project-33333333-3333-4333-8333-333333333333";
 const otherProjectId = "project-99999999-9999-4999-8999-999999999999";
@@ -156,31 +157,26 @@ test("route filter state selects types and searches result content", () => {
 });
 
 test("confirmed absence or refusal clears content while everything else retries", () => {
-  expect(resolveResultsReadState([null, undefined])).toEqual({ kind: "available" });
-  expect(resolveResultsReadState([new Response(null, { status: 403 })])).toEqual({
+  for (const noFailure of [null, undefined]) {
+    expect(resolveResultReadState(noFailure)).toEqual({ kind: "available" });
+  }
+  expect(resolveResultReadState(new Response(null, { status: 403 }))).toEqual({
     kind: "unavailable",
   });
-  expect(resolveResultsReadState([new Response(null, { status: 404 })])).toEqual({
+  expect(resolveResultReadState(new Response(null, { status: 404 }))).toEqual({
     kind: "unavailable",
   });
   for (const status of [429, 500, 503]) {
-    expect(resolveResultsReadState([new Response(null, { status })])).toEqual({
+    expect(resolveResultReadState(new Response(null, { status }))).toEqual({
       kind: "recoverable",
       retryable: true,
     });
   }
   // An unusable transport fact is never reported as success.
-  expect(resolveResultsReadState([new Error("no status")])).toEqual({
+  expect(resolveResultReadState(new Error("no status"))).toEqual({
     kind: "recoverable",
     retryable: true,
   });
-  // One confirmed loss outranks a transient failure on another read.
-  expect(
-    resolveResultsReadState([
-      new Response(null, { status: 503 }),
-      new Response(null, { status: 403 }),
-    ]),
-  ).toEqual({ kind: "unavailable" });
 
   expect(resolveResultsFreshness({ kind: "available" })).toBe("current");
   expect(resolveResultsFreshness({ kind: "recoverable", retryable: true })).toBe("stale");
@@ -324,21 +320,48 @@ test("unconfirmed caller facts leave ordinary result actions available with thei
 test("a collection that fails does not decide what the other collections may show", () => {
   // Each collection is classified on its own, so the section keeps the content it could read.
   const readStates = {
-    instances: resolveResultReadState(new Response(null, { status: 403 })),
-    tasks: resolveResultReadState(null),
-    workflows: resolveResultReadState(new Response(null, { status: 503 })),
+    instance: resolveResultReadState(new Response(null, { status: 403 })),
+    task: resolveResultReadState(null),
+    workflow: resolveResultReadState(new Response(null, { status: 503 })),
   };
 
-  expect(readStates.instances).toEqual({ kind: "unavailable" });
-  expect(readStates.tasks).toEqual({ kind: "available" });
-  expect(readStates.workflows).toEqual({ kind: "recoverable", retryable: true });
+  expect(readStates.instance).toEqual({ kind: "unavailable" });
+  expect(readStates.task).toEqual({ kind: "available" });
+  expect(readStates.workflow).toEqual({ kind: "recoverable", retryable: true });
   // The readable collections still contribute their results.
   expect(
     results({
-      instances: readStates.instances.kind === "unavailable" ? [] : [instance()],
-      workflows: readStates.workflows.kind === "unavailable" ? [] : [workflow()],
+      instances: readStates.instance.kind === "unavailable" ? [] : [instance()],
+      workflows: readStates.workflow.kind === "unavailable" ? [] : [workflow()],
     }).map(({ kind }) => kind),
   ).toEqual(["workflow", "task"]);
+
+  // A refusal on one collection never silences the retry the transient one needs: both outcomes
+  // are reported, so the caller is told what was lost *and* offered the retry that can recover.
+  expect(resolveResultsReadReport(readStates)).toEqual({ retryable: true, unavailable: true });
+
+  // Only the collection that could not be refreshed is locked. The refused one cleared its content
+  // and the readable one stays actionable, so no result is disabled for another collection's read.
+  expect(resolveResultsFreshnessByCollection(readStates)).toEqual({
+    instance: "current",
+    task: "current",
+    workflow: "stale",
+  });
+});
+
+test("the section reports nothing when every collection answered", () => {
+  const readStates = {
+    instance: resolveResultReadState(null),
+    task: resolveResultReadState(null),
+    workflow: resolveResultReadState(null),
+  };
+
+  expect(resolveResultsReadReport(readStates)).toEqual({ retryable: false, unavailable: false });
+  expect(resolveResultsFreshnessByCollection(readStates)).toEqual({
+    instance: "current",
+    task: "current",
+    workflow: "current",
+  });
 });
 
 test("one addressed result answers by the same rule as the collection it belongs to", () => {
@@ -412,6 +435,37 @@ test("Results state is owned by Results alone and never follows a project or sec
   expect(projectLinks.entry(otherProjectId)).toBe(`/projects/${otherProjectId}`);
 });
 
+/** The Results route one canonical href parses to, so a test can read the state it carries. */
+const resultsRouteFor = (href: string) => {
+  const parsed = parseProjectRoute(href);
+  if (parsed.kind !== "valid") {
+    throw new Error(`${href} must parse as a canonical route`);
+  }
+  const { route } = parsed;
+  if (route.kind !== "results" && route.kind !== "result") {
+    throw new Error(`${href} must parse as a Results route`);
+  }
+  return route;
+};
+
+test("Results state resets to the route it is on, so no project inherits another's filters", () => {
+  const filtered = resultsRouteFor(
+    `/projects/${projectId}/results?search=acceptance&type=instance`,
+  );
+  const entered = resultsRouteFor(`/projects/${otherProjectId}/results`);
+
+  // The state is read from the route being rendered, never carried over from the previous one, so
+  // arriving at a second project's Results resets the filters to that route's own — which is none.
+  expect(resultsListState(filtered)).toEqual({ search: "acceptance", types: ["instance"] });
+  expect(resultsListState(entered)).toEqual({});
+
+  // Filter state is never a request argument either, so a reset changes what is shown and never
+  // what was fetched: both projects issue the same project-constrained reads regardless of state.
+  expect(resultListRequests(filtered.projectId)).toEqual(resultListRequests(projectId));
+  expect(resultListRequests(entered.projectId)).toEqual(resultListRequests(otherProjectId));
+  expect(filterResultItems(results(), resultsListState(entered))).toHaveLength(results().length);
+});
+
 test.describe("Results cutover", () => {
   test("the legacy global Results routes no longer exist", () => {
     for (const legacy of ["src/pages/results.tsx", "src/pages/results"]) {
@@ -466,6 +520,39 @@ test.describe("Results cutover", () => {
       expect(readFileSync(path.join(root, sourceFile), "utf8")).not.toMatch(
         /useCurrentProject|useIsUserAdminOrEditorOfCurrentProject|useProjectFromId/u,
       );
+    }
+  });
+
+  test("useResultCommands is the only owner of Results mutations and their invalidation", () => {
+    const root = path.join(process.cwd(), "src");
+    const commandOwner = "projects/useResultCommands.ts";
+
+    // Every component that changes a result routes the change through the one command owner, so
+    // no card mutates or invalidates on its own.
+    for (const card of [
+      "components/instances/ArchiveInstance.tsx",
+      "components/instances/TerminateInstance.tsx",
+      "components/DeleteWorkflowButton.tsx",
+      "components/tasks/ResultTaskCard.tsx",
+    ]) {
+      const source = readFileSync(path.join(root, card), "utf8");
+      expect(source).toContain("useResultCommands");
+      expect(source).not.toMatch(/useQueryClient|invalidateQueries/u);
+      expect(source).not.toMatch(
+        /usePatchInstance|useTerminateInstance|useDeleteTask|useDeleteRunningWorkflow|useStopRunningWorkflow/u,
+      );
+    }
+
+    // The owner's own collection keys are all built from a project's list request, so a Results
+    // command can never invalidate an unprojected — and therefore cross-project — collection.
+    const owner = readFileSync(path.join(root, commandOwner), "utf8");
+    for (const collectionKey of [
+      "getGetInstancesQueryKey",
+      "getGetTasksQueryKey",
+      "getGetRunningWorkflowsQueryKey",
+    ]) {
+      expect(owner).toContain(`${collectionKey}(resultListRequests(projectId)`);
+      expect(owner).not.toMatch(new RegExp(String.raw`${collectionKey}\(\s*\)`, "u"));
     }
   });
 });

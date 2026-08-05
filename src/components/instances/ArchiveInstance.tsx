@@ -1,38 +1,38 @@
 import { useState } from "react";
 
 import { type InstanceSummary } from "@/api/data-manager";
-import {
-  getGetInstanceQueryKey,
-  getGetInstancesQueryKey,
-  usePatchInstance,
-} from "@/api/data-manager/instance";
 
 import { Button, Tooltip } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
+
+import { useResultCommands } from "../../projects/useResultCommands";
 
 export interface ArchiveInstanceProps {
   instanceId: InstanceSummary["id"];
+  /**
+   * The project the instance itself declares it belongs to, so the command refreshes that
+   * project's own collection rather than every project's.
+   */
+  projectId: string;
   archived: boolean;
   disabled?: boolean;
 }
 
 export const ArchiveInstance = ({
   instanceId,
+  projectId,
   archived,
   disabled = false,
 }: ArchiveInstanceProps) => {
-  const { mutateAsync: patchInstance } = usePatchInstance();
-  const queryClient = useQueryClient();
+  const commands = useResultCommands();
   const [archiving, setArchiving] = useState(false);
 
   const archiveInstance = async () => {
     setArchiving(true);
-    await patchInstance({ instanceId, params: { archive: !archived } });
-    await Promise.allSettled([
-      queryClient.invalidateQueries({ queryKey: getGetInstanceQueryKey(instanceId) }),
-      queryClient.invalidateQueries({ queryKey: getGetInstancesQueryKey() }),
-    ]);
-    setArchiving(false);
+    try {
+      await commands.archiveInstance(projectId, instanceId, !archived);
+    } finally {
+      setArchiving(false);
+    }
   };
 
   return (

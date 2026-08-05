@@ -1,11 +1,10 @@
 import { type DmError, type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
-import { getGetInstancesQueryKey, useTerminateInstance } from "@/api/data-manager/instance";
 
 import { Button } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { INSTANCE_DONE_PHASES } from "../../constants/results";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
+import { useResultCommands } from "../../projects/useResultCommands";
 import { WarningDeleteButton } from "../WarningDeleteButton";
 
 export interface TerminateInstanceProps {
@@ -29,8 +28,7 @@ export const TerminateInstance = ({
   onTermination,
   disabled = false,
 }: TerminateInstanceProps) => {
-  const queryClient = useQueryClient();
-  const { mutateAsync: terminateInstance } = useTerminateInstance();
+  const commands = useResultCommands();
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
@@ -46,12 +44,7 @@ export const TerminateInstance = ({
       tooltipText={verb + " this instance"}
       onDelete={async () => {
         try {
-          await terminateInstance({ instanceId });
-          void queryClient.invalidateQueries({ queryKey: getGetInstancesQueryKey() });
-          void queryClient.invalidateQueries({
-            queryKey: getGetInstancesQueryKey({ project_id: projectId }),
-          });
-
+          await commands.terminateInstance(projectId, instanceId);
           enqueueSnackbar(`Instance has been ${done ? "deleted" : "terminated"}`, {
             variant: "success",
           });

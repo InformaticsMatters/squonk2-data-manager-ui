@@ -284,3 +284,55 @@ test("results that cannot be refreshed are marked stale, locked, and retryable",
   await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
   await expect(page.getByRole("link", { name: "DATASET", exact: true })).toBeVisible();
 });
+
+test("a refused collection never withholds the retry a transient one needs", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, acceptanceResults, testInfo);
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+
+  // Instances are refused outright while running workflows merely fail to refresh. The two
+  // outcomes are different and both are the caller's to act on, so neither silences the other.
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/results-failure?status=403&collection=/instance`,
+  );
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/results-failure?status=503&collection=/running-workflow`,
+  );
+  await page.reload();
+
+  await expect(
+    page.getByText("These results are unavailable or you no longer have access to them."),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Results could not be refreshed. The results shown may be out of date, so they cannot be changed until they load again.",
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Retry" })).toBeVisible();
+
+  // The refused collection's content is gone; the collection that answered is untouched and still
+  // actionable, because it is not stale and was never refused.
+  await expect(page.getByText("Acceptance Instance")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "DATASET", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Delete" }).first()).toBeEnabled();
+
+  // Retrying recovers the transient collection in place, without restoring the refused one and
+  // without any change of project or route.
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/results-failure`);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/results-failure?status=403&collection=/instance`,
+  );
+  await page.getByRole("button", { name: "Retry" }).click();
+
+  await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
+  await expect(page.getByText("Acceptance Instance")).toHaveCount(0);
+  await expect(
+    page.getByText("These results are unavailable or you no longer have access to them."),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}`);
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+});

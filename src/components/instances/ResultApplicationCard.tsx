@@ -71,6 +71,7 @@ export const ResultApplicationCard = ({
             archived={instance.archived}
             disabled={!capabilityIsEnabled(capabilities.archive)}
             instanceId={instanceId}
+            projectId={projectId}
           />
           <CapabilityReasons capabilities={[capabilities.termination, capabilities.archive]} />
         </>

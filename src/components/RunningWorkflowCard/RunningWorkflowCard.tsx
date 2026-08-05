@@ -70,6 +70,7 @@ export const RunningWorkflowCard = ({
         <>
           <DeleteWorkflowButton
             disabled={!capabilityIsEnabled(capabilities.workflowLifecycle)}
+            projectId={projectId}
             runningWorkflowId={runningWorkflowId}
             status={workflow?.status ?? workflowSummary?.status}
           />

@@ -24,8 +24,11 @@ export type ScenarioState = {
   projectFailure?: number;
   projectMutationFailure?: 403 | 503;
   requests: RequestRecord[];
-  /** Optionally narrowed to one Results collection path, e.g. `/instance`. */
-  resultsFailure?: { collection?: string; status: 403 | 503 };
+  /**
+   * Results read failures in effect. Each is optionally narrowed to one collection path, e.g.
+   * `/instance`, so collections can be made to fail differently and at the same time.
+   */
+  resultsFailures: { collection?: string; status: 403 | 503 }[];
   addressedReadFailure?: 403 | 503;
   semanticsFailure?: 503;
   taskFailure?: 503;
@@ -43,6 +46,7 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     pollingIndex: 0,
     productFailure: false,
     requests: [],
+    resultsFailures: [],
   };
   scenarios.set(subject, state);
   return state;

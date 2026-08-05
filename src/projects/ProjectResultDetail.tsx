@@ -41,7 +41,9 @@ const RecoverableResult = ({ onRetry }: { onRetry: () => void }) => (
 
 /**
  * Presents one addressed result once it has answered for itself. A result that names a project
- * other than the addressed one is not found here, whatever it contains.
+ * other than the addressed one is not found here, whatever it contains. A read that merely failed
+ * to refresh keeps whatever it last loaded on screen, marked stale and offering retry, so the
+ * addressed result follows the same rule its collection does.
  */
 const AddressedResult = <TResource,>({
   children,
@@ -51,7 +53,7 @@ const AddressedResult = <TResource,>({
   refetch,
   resource,
 }: {
-  children: (resource: TResource) => ReactNode;
+  children: (resource: TResource, content: "current" | "stale") => ReactNode;
   error: unknown;
   /** The project the resource declares; `undefined` when it declares none of its own. */
   owner: (resource: TResource) => string | undefined;
@@ -59,18 +61,31 @@ const AddressedResult = <TResource,>({
   refetch: () => void;
   resource: TResource | undefined;
 }) => {
-  if (error) {
-    return resolveResultReadState(error).kind === "unavailable" ? (
-      <ResultNotFound />
-    ) : (
-      <RecoverableResult onRetry={refetch} />
-    );
+  const readState = resolveResultReadState(error);
+
+  if (readState.kind === "unavailable") {
+    return <ResultNotFound />;
   }
   if (!resource) {
-    return <CenterLoader />;
+    return readState.kind === "recoverable" ? (
+      <RecoverableResult onRetry={refetch} />
+    ) : (
+      <CenterLoader />
+    );
   }
   const declared = owner(resource);
-  return declared !== undefined && declared !== projectId ? <ResultNotFound /> : children(resource);
+  if (declared !== undefined && declared !== projectId) {
+    return <ResultNotFound />;
+  }
+  if (readState.kind === "recoverable") {
+    return (
+      <>
+        <RecoverableResult onRetry={refetch} />
+        {children(resource, "stale")}
+      </>
+    );
+  }
+  return children(resource, "current");
 };
 
 const InstanceResult = ({
@@ -90,9 +105,10 @@ const InstanceResult = ({
       refetch={() => void instance.refetch()}
       resource={instance.data}
     >
-      {(resource) => (
+      {(resource, content) => (
         <Instance
           capabilities={resolveResultCapabilities(facts, {
+            content,
             owningProjectId: instanceOwner(resource) ?? route.projectId,
             routeProjectId: route.projectId,
           })}
@@ -122,9 +138,10 @@ const WorkflowResult = ({
       refetch={() => void workflow.refetch()}
       resource={workflow.data}
     >
-      {(resource) => (
+      {(resource, content) => (
         <RunningWorkflowCard
           capabilities={resolveResultCapabilities(facts, {
+            content,
             owningProjectId: runningWorkflowOwner(resource) ?? route.projectId,
             routeProjectId: route.projectId,
           })}
@@ -160,7 +177,7 @@ const TaskResult = ({
     return (
       <ResultTaskCard
         capabilities={resolveResultCapabilities(facts, {
-          content: results.freshness,
+          content: results.freshness.task,
           owningProjectId: item.owningProjectId,
           routeProjectId: route.projectId,
         })}
@@ -174,9 +191,10 @@ const TaskResult = ({
   if (results.isLoading) {
     return <CenterLoader />;
   }
-  // A collection that could not be read cannot place the task either way; the section already says
-  // what happened to it and offers the retry.
-  return results.readState.kind === "available" ? <ResultNotFound /> : null;
+  // Only the task collection can place a task, so only its own read decides this: a task is absent
+  // here when that collection answered and did not contain it. A task collection that could not be
+  // read says so through the section, which already offers the retry.
+  return results.readStates.task.kind === "available" ? <ResultNotFound /> : null;
 };
 
 export const ProjectResultDetail = ({

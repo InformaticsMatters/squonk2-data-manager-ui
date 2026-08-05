@@ -320,8 +320,10 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     if (!projectId) {
       return json(response, 400, { error: "fixture-unscoped-results-request" });
     }
-    const failure = state.resultsFailure;
-    if (failure && (!failure.collection || failure.collection === url.pathname)) {
+    const failure = state.resultsFailures.find(
+      ({ collection }) => !collection || collection === url.pathname,
+    );
+    if (failure) {
       return json(
         response,
         failure.status,
@@ -959,11 +961,19 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
       return json(response, 400, { error: "unsupported-results-failure", status });
     }
     const collection = url.searchParams.get("collection") ?? undefined;
-    getScenario(subject).resultsFailure = { collection, status: status as 403 | 503 };
+    const scenario = getScenario(subject);
+    // A collection-scoped failure joins any others already in effect, so two collections can be
+    // made to fail differently at once; an unscoped one replaces them all.
+    scenario.resultsFailures = collection
+      ? [
+          ...scenario.resultsFailures.filter((failure) => failure.collection !== collection),
+          { collection, status: status as 403 | 503 },
+        ]
+      : [{ status: status as 403 | 503 }];
     return json(response, 200, { collection, resultsFailure: status, subject });
   }
   if (url.pathname.endsWith("/results-failure") && request.method === "DELETE") {
-    getScenario(subject).resultsFailure = undefined;
+    getScenario(subject).resultsFailures = [];
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/project-failure") && request.method === "POST") {

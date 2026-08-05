@@ -147,22 +147,42 @@ export type ResultsReadState =
   | { kind: "unavailable" };
 
 /**
- * One addressed result answers by the same rule as the collections it belongs to: a refusal and an
- * absence are the same non-disclosing outcome, and anything else is retried rather than believed.
+ * One read answers for itself, whether it returned a collection or one addressed result: a refusal
+ * and an absence are the same non-disclosing outcome, and anything else is retried rather than
+ * believed.
  */
-export const resolveResultReadState = (error: unknown): ResultsReadState =>
-  resolveResultsReadState([error]);
-
-export const resolveResultsReadState = (errors: readonly unknown[]): ResultsReadState => {
-  const failures = errors.filter((error) => error !== null && error !== undefined);
-  if (failures.length === 0) {
+export const resolveResultReadState = (error: unknown): ResultsReadState => {
+  if (error === null || error === undefined) {
     return { kind: "available" };
   }
-  const unavailable = failures.some((error) => {
-    const kind = classifyTransportFailure(error).kind;
-    return kind === "forbidden" || kind === "not-found";
-  });
-  return unavailable ? { kind: "unavailable" } : { kind: "recoverable", retryable: true };
+  const kind = classifyTransportFailure(error).kind;
+  return kind === "forbidden" || kind === "not-found"
+    ? { kind: "unavailable" }
+    : { kind: "recoverable", retryable: true };
+};
+
+/** How each Results collection's own last read answered, keyed by the results it carries. */
+export type ResultsReadStates = Record<ResultFilterType, ResultsReadState>;
+
+/**
+ * What the section must say about the reads it made. A refusal and a transient failure can happen
+ * in the same render and have different consequences — one collection's content is gone, another's
+ * is merely stale and worth retrying — so each is reported on its own. Aggregating them into a
+ * single worst state would let a refused collection silence the retry the transient one needs.
+ */
+export type ResultsReadReport = {
+  /** Any collection could not be refreshed, so a retry is offered for it. */
+  retryable: boolean;
+  /** Any collection's content was cleared by a confirmed refusal or absence. */
+  unavailable: boolean;
+};
+
+export const resolveResultsReadReport = (states: ResultsReadStates): ResultsReadReport => {
+  const readStates = Object.values(states);
+  return {
+    retryable: readStates.some((state) => state.kind === "recoverable"),
+    unavailable: readStates.some((state) => state.kind === "unavailable"),
+  };
 };
 
 /**
@@ -171,3 +191,15 @@ export const resolveResultsReadState = (errors: readonly unknown[]): ResultsRead
  */
 export const resolveResultsFreshness = (readState: ResultsReadState) =>
   readState.kind === "recoverable" ? ("stale" as const) : ("current" as const);
+
+/**
+ * Each collection's content is only as fresh as its own last read, so a collection that answered
+ * is never locked because a different one failed.
+ */
+export const resolveResultsFreshnessByCollection = (
+  states: ResultsReadStates,
+): Record<ResultFilterType, "current" | "stale"> => ({
+  instance: resolveResultsFreshness(states.instance),
+  task: resolveResultsFreshness(states.task),
+  workflow: resolveResultsFreshness(states.workflow),
+});

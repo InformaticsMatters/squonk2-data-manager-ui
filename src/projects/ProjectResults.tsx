@@ -202,7 +202,7 @@ const ResultsList = ({
       {items.map((item) => (
         <Grid key={`${item.kind}-${item.id}`} size={{ xs: 12 }}>
           <ResultItemCard
-            content={results.freshness}
+            content={results.freshness[item.kind]}
             facts={facts}
             item={item}
             resultsState={state}
@@ -239,12 +239,14 @@ const ResultsSection = ({ route }: { route: ResultsRoute }) => {
         </Typography>
         <ResultsToolbar state={state} onRefresh={handleRefresh} onStateChange={handleStateChange} />
 
-        {results.readState.kind === "unavailable" && (
+        {/* A refused collection and a collection that merely failed to refresh are reported
+        separately, so losing access to one never withholds the retry another one needs. */}
+        {results.report.unavailable ? (
           <Alert severity="warning" sx={{ mb: 2 }}>
             These results are unavailable or you no longer have access to them.
           </Alert>
-        )}
-        {results.readState.kind === "recoverable" && (
+        ) : null}
+        {results.report.retryable ? (
           <Alert
             action={
               <Button color="inherit" size="small" onClick={handleRetry}>
@@ -257,7 +259,7 @@ const ResultsSection = ({ route }: { route: ResultsRoute }) => {
             Results could not be refreshed. The results shown may be out of date, so they cannot be
             changed until they load again.
           </Alert>
-        )}
+        ) : null}
 
         {facts === undefined ? (
           <CenterLoader />

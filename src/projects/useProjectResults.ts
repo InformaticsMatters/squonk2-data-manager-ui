@@ -16,13 +16,16 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import {
   resolveResultReadState,
-  resolveResultsFreshness,
-  resolveResultsReadState,
+  resolveResultsFreshnessByCollection,
+  resolveResultsReadReport,
   type ResultItem,
   resultListRequests,
+  type ResultsReadReport,
   type ResultsReadState,
+  type ResultsReadStates,
   selectProjectResults,
 } from "./resultFacts";
+import { type ResultFilterType } from "./routes";
 
 /** The generated detail cache identity of one displayed result, refreshed alongside its list. */
 const resultKey = (item: ResultItem) => {
@@ -41,11 +44,15 @@ const readable = <TResult>(state: ResultsReadState, data: TResult[] | undefined)
   state.kind === "unavailable" ? [] : (data ?? []);
 
 export type ProjectResults = {
-  freshness: "current" | "stale";
+  /** Each collection's content is only as fresh as its own last read. */
+  freshness: Record<ResultFilterType, "current" | "stale">;
   isLoading: boolean;
   /** Every result the addressed project owns, before the section's route state narrows them. */
   items: ResultItem[];
-  readState: ResultsReadState;
+  /** How each collection's own read answered, so one never speaks for another. */
+  readStates: ResultsReadStates;
+  /** What the section must tell the caller about those reads. */
+  report: ResultsReadReport;
   /** Refreshes the displayed results without changing what is displayed. */
   refresh: () => void;
   /** Retries the reads that failed, leaving the addressed project and route untouched. */
@@ -72,19 +79,19 @@ export const useProjectResults = (projectId: string): ProjectResults => {
   });
 
   // Each collection answers for itself, so one refused or failing read never decides what the
-  // other two may show.
-  const readStates = {
-    instances: resolveResultReadState(instances.error),
-    tasks: resolveResultReadState(tasks.error),
-    workflows: resolveResultReadState(workflows.error),
+  // other two may show, how fresh they are, or whether they are worth retrying.
+  const readStates: ResultsReadStates = {
+    instance: resolveResultReadState(instances.error),
+    task: resolveResultReadState(tasks.error),
+    workflow: resolveResultReadState(workflows.error),
   };
-  const readState = resolveResultsReadState([instances.error, tasks.error, workflows.error]);
-  const freshness = resolveResultsFreshness(readState);
+  const report = resolveResultsReadReport(readStates);
+  const freshness = resolveResultsFreshnessByCollection(readStates);
   const items = selectProjectResults({
-    instances: readable(readStates.instances, instances.data),
+    instances: readable(readStates.instance, instances.data),
     projectId,
-    tasks: readable(readStates.tasks, tasks.data),
-    workflows: readable(readStates.workflows, workflows.data),
+    tasks: readable(readStates.task, tasks.data),
+    workflows: readable(readStates.workflow, workflows.data),
   });
 
   const refresh = () => {
@@ -103,7 +110,8 @@ export const useProjectResults = (projectId: string): ProjectResults => {
     freshness,
     isLoading: instances.isLoading || tasks.isLoading || workflows.isLoading,
     items,
-    readState,
+    readStates,
+    report,
     refresh,
     retry: () => {
       void instances.refetch();

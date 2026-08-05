@@ -10,7 +10,8 @@ This matrix records the production contracts introduced for issues
 [#1922](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1922), and
 [#1923](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1923), and
 [#1924](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1924), and
-[#1925](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1925). Later vertical
+[#1925](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1925), and
+[#1926](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1926). Later vertical
 workspace tickets extend this file with their screens, capabilities, commands, and lifecycle evidence.
 
 ## Route And Link Contracts
@@ -104,6 +105,22 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 | MANAGE-06   | Readable-only project       | Observer, creator, stranger, platform administrator, and an editor blocked only by a coin limit  | Read-only means no mutation authority at all, never merely a blocked action, and unconfirmed facts never claim it; every unavailable ordinary action explains what it requires                                                   | `tests/contracts/project-capabilities.node.ts` read-only matrix; Manage viewer acceptance journey                                                    |
 | MANAGE-07   | Authoritative rejection     | Generated project command answered `403`, then `404`, `429`, `5xx`, and unknown                  | A rejection is authorization feedback only: no navigation, no adopted scope, and the displayed project is unchanged; `403` and `404` read identically, so no answer discloses whether the addressed resource exists              | `tests/contracts/project-capabilities.node.ts` feedback cases; platform-administrator acceptance journey                                             |
 
+## Project Results Contracts
+
+| Contract ID | Area                           | Input or fixture                                                                                              | Expected external outcome                                                                                                                                                 | Automated evidence                                                                                                 |
+| ----------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| RESULT-01   | Project-constrained reads      | Generated instance, task, and running-workflow collections for two projects                                   | Every Results read names the URL project, caches under its generated key, and no global or undefined-project read is ever issued                                          | `tests/contracts/project-results.node.ts` request matrix; Results adversarial acceptance journey                   |
+| RESULT-02   | Owner-derived content          | A response carrying an instance and a running workflow belonging to another project                           | A result whose own resource names another project is dropped rather than displayed; a task belongs to the constrained request that returned it                            | `tests/contracts/project-results.node.ts` ownership cases; Results adversarial acceptance journey                  |
+| RESULT-03   | Retained list and filters      | Instance, task, and running-workflow cards, type filter, search, refresh, and event-debug controls            | Lists, cards, filters, search, refresh, and quick-action presentation are retained inside the project workspace                                                           | `tests/contracts/project-results.node.ts` filter cases; Results acceptance journeys                                |
+| RESULT-04   | Generated child links          | Instance, task, and running-workflow cards, instance logs, and rerun destinations                             | Every generated link addresses the result's own owning project through the family builders; no card mutates global project scope                                          | Results adversarial and detail acceptance journeys; `tests/contracts/project-results.node.ts` link/cutover cases   |
+| RESULT-05   | Result capabilities            | Editor, viewer, unconfirmed caller, coin limit, subscription without instance accounting, and a foreign owner | Each result action is enabled, or disabled with a concise reason, from the concrete result and its owning project alone; a foreign result is never actionable             | `tests/contracts/project-results.node.ts` capability matrices; Results viewer acceptance journey                   |
+| RESULT-06   | Route-owned state              | `search`, repeated `type`, an unknown key, section navigation, and a second project                           | Unknown state is removed and cannot reach a request argument; Results state survives its own child links and never follows the caller into another section or project     | `tests/contracts/projects-routes.node.ts`; `tests/contracts/project-results.node.ts`; Results filter journey       |
+| RESULT-07   | Stale and lost content         | Results collections return `503`, then recover, then `403`, then recover                                      | A failed refresh marks its content stale, disables changes with a reason, and offers retry; a confirmed loss clears the content in place; restored access shows it again  | `tests/contracts/project-results.node.ts` read-state matrix; Results recovery acceptance journey                   |
+| RESULT-11   | Independent collections        | One collection refused while another fails transiently and a third succeeds                                   | Each collection answers for itself: readable results stay on screen, only the refused collection's content is cleared, and the transient one retries                      | `tests/contracts/project-results.node.ts` per-collection read-state case; Results recovery acceptance journey      |
+| RESULT-08   | Wrong-scope child              | A valid instance ID paired with the project that does not own it                                              | A section-local not-found with no redirect, no owner discovery, and no change to the addressed project; absence and denial read identically                               | Results adversarial acceptance journey; `tests/contracts/project-results.node.ts` addressed-result read-state case |
+| RESULT-09   | Results cutover                | Legacy `/results`, `/results/instance`, `/results/task`, and `/results/workflow` routes                       | The removed routes are ordinary not-found, their pages no longer exist, and no handwritten module composes one or reads a selected project inside Results                 | `tests/contracts/project-results.node.ts` cutover cases                                                            |
+| RESULT-10   | Cross-project regression #1277 | Two visibly distinct projects entered in one session, with Back and Forward                                   | URL, shell identity, request filters, visible results, owner-derived capabilities, generated links, wrong-scope resistance, and browser history all name the same project | `tests/acceptance/results.acceptance.ts` release-blocking adversarial journey                                      |
+
 ## Dataset Workspace Contracts
 
 | Contract ID | Area                        | Input or fixture                                                                   | Expected external outcome                                                                                           | Automated evidence                                                               |
@@ -158,6 +175,18 @@ workspace tickets extend this file with their screens, capabilities, commands, a
   project's own membership lists alone, so the Data Manager administrator role offers nothing but its
   own action. There is no shared permission engine and no global capability context, and the
   Administration and Projects evaluators share no code.
+- `src/projects/resultFacts.ts` is the only place that decides which results belong to the addressed
+  project and what the section may show for the reads it made, for a collection and for one
+  addressed result alike. `src/projects/useProjectResults.ts` is the only Results composition hook;
+  it uses the generated instance, task, and running-workflow query options as their sole cache
+  identity and keeps no aggregate of its own. `src/projects/resultCapabilities.ts` adds only the
+  result being looked at to the facts `projectFacts.ts` gathered, and the result evaluators live
+  beside the other project evaluators in `src/projects/capabilities.ts`, so project authority still
+  has exactly one owner. Capabilities are resolved per displayed result from that result's own
+  owning project. `src/projects/useResultCommands.ts` is the only owner of Results mutations and of
+  the generated invalidation that follows them. Result cards receive the owning project and their
+  capabilities as props and build every link through `projectLinks`, so no card reads or changes
+  global project scope.
 - `src/projects/useProjectCommands.ts` is the only project command owner and the only place that
   invalidates generated project prefixes after a project command. `src/projects/failures.ts` owns
   how an authoritative rejection reads, so no project command navigates or changes scope in response

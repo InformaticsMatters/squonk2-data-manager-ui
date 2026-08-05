@@ -1,6 +1,4 @@
 import { pagePolicies, withPagePolicy } from "../../../application/pagePolicy";
-import { WorkspacePlaceholder } from "../../../components/workspaces/WorkspacePlaceholder";
+import { ProjectResults } from "../../../projects/ProjectResults";
 
-const ProjectResultsPage = () => <WorkspacePlaceholder title="Results" />;
-
-export default withPagePolicy(pagePolicies.projects("results"), ProjectResultsPage);
+export default withPagePolicy(pagePolicies.projects("results"), ProjectResults);

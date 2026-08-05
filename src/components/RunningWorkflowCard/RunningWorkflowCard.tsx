@@ -3,15 +3,30 @@ import { useGetRunningWorkflow } from "@/api/data-manager/workflow";
 
 import { Alert } from "@mui/material";
 
-import { useIsUserAdminOrEditorOfCurrentProject } from "../../hooks/projectHooks";
+import { capabilityIsEnabled } from "../../projects/capabilities";
+import { type ResultCapabilities } from "../../projects/resultCapabilities";
+import { projectLinks, type ResultsState } from "../../projects/routes";
 import { CenterLoader } from "../CenterLoader";
 import { DeleteWorkflowButton } from "../DeleteWorkflowButton";
+import { CapabilityReasons } from "../results/CapabilityReasons";
 import { ResultCard } from "../results/ResultCard";
 import { RunningWorkflowCollapsed } from "./RunningWorkflowCollapsed";
 
 export interface RunningWorkflowCardProps {
   runningWorkflowId: string;
   workflowSummary?: RunningWorkflowSummary;
+  /**
+   * The project the running workflow itself declares it belongs to.
+   */
+  projectId: string;
+  /**
+   * What the caller may do with this running workflow in that project.
+   */
+  capabilities: ResultCapabilities;
+  /**
+   * Results list state this card's links preserve.
+   */
+  resultsState?: ResultsState;
   collapsedByDefault?: boolean;
 }
 
@@ -32,16 +47,19 @@ function mapWorkflowStatusToState(status?: string) {
 export const RunningWorkflowCard = ({
   runningWorkflowId,
   workflowSummary,
+  projectId,
+  capabilities,
+  resultsState,
   collapsedByDefault = true,
 }: RunningWorkflowCardProps) => {
   const { data: workflow, isLoading, error } = useGetRunningWorkflow(runningWorkflowId);
 
-  const hasPermission = useIsUserAdminOrEditorOfCurrentProject();
-
-  if (isLoading) {
+  if (isLoading && !workflowSummary) {
     return <CenterLoader />;
   }
-  if (error) {
+  // The summary the collection already returned still describes this workflow, so a failed detail
+  // read leaves the card readable rather than replacing it with an error.
+  if (error && !workflowSummary) {
     return <Alert severity="error">Failed to load workflow</Alert>;
   }
 
@@ -49,20 +67,22 @@ export const RunningWorkflowCard = ({
     <ResultCard
       accentColor="#f1c40f"
       actions={() => (
-        <DeleteWorkflowButton
-          disabled={!hasPermission}
-          runningWorkflowId={runningWorkflowId}
-          status={workflow?.status ?? workflowSummary?.status}
-        />
+        <>
+          <DeleteWorkflowButton
+            disabled={!capabilityIsEnabled(capabilities.workflowLifecycle)}
+            runningWorkflowId={runningWorkflowId}
+            status={workflow?.status ?? workflowSummary?.status}
+          />
+          <CapabilityReasons capabilities={[capabilities.workflowLifecycle]} />
+        </>
       )}
-      collapsed={<RunningWorkflowCollapsed runningWorkflowId={runningWorkflowId} />}
+      collapsed={
+        <RunningWorkflowCollapsed projectId={projectId} runningWorkflowId={runningWorkflowId} />
+      }
       collapsedByDefault={collapsedByDefault}
       createdDateTime={workflow?.started ?? workflowSummary?.started ?? ""}
       finishedDateTime={workflow?.stopped ?? workflowSummary?.stopped ?? ""}
-      href={{
-        pathname: "/results/workflow/[workflowId]",
-        query: { workflowId: workflow?.id ?? workflowSummary?.id ?? "" },
-      }}
+      href={projectLinks.result(projectId, "workflows", runningWorkflowId, resultsState)}
       linkTitle={workflow?.name ?? workflowSummary?.name ?? "Workflow"}
       state={mapWorkflowStatusToState(workflow?.status ?? workflowSummary?.status)}
     />

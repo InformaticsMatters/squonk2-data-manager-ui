@@ -58,7 +58,7 @@ export type ResultFilterType = (typeof resultFilterTypes)[number];
 
 type SearchState = { search?: string };
 type RunState = SearchState & { types?: readonly RunFilterType[] };
-type ResultsState = SearchState & { types?: readonly ResultFilterType[] };
+export type ResultsState = SearchState & { types?: readonly ResultFilterType[] };
 
 type DefinitionIdByType = {
   applications: ApplicationId;
@@ -226,6 +226,17 @@ export const projectLinks = {
     ),
   manage: (projectId: string) => `/projects/${assertProjectId(projectId)}/manage`,
 };
+
+/**
+ * The Results list state one Results route carries. Only Results owns these values, so nothing a
+ * child link preserves can reach another section or another project.
+ */
+export const resultsListState = (
+  route: Extract<ProjectRoute, { kind: "result" | "results" }>,
+): ResultsState => ({
+  ...(route.search ? { search: route.search } : {}),
+  ...(route.types ? { types: route.types } : {}),
+});
 
 export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> => {
   const location = parseRouteLocation(href);

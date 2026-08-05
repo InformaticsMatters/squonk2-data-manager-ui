@@ -2,8 +2,10 @@ import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manag
 
 import { Alert, CardContent, ListItem, ListItemText } from "@mui/material";
 
-import { useIsUserAdminOrEditorOfCurrentProject, useProjectFromId } from "../../hooks/projectHooks";
-import { ProjectListItem, type ProjectListItemProps } from "../projects/ProjectListItem";
+import { capabilityIsEnabled } from "../../projects/capabilities";
+import { type ResultCapabilities } from "../../projects/resultCapabilities";
+import { projectLinks, type ResultsState } from "../../projects/routes";
+import { CapabilityReasons } from "../results/CapabilityReasons";
 import { LogsButton } from "../results/LogsButton";
 import { RerunJobButton } from "../results/RerunJobButton";
 import { ResultCard } from "../results/ResultCard";
@@ -11,7 +13,6 @@ import { ArchivedStatus } from "./ArchivedStatus";
 import { ArchiveInstance } from "./ArchiveInstance";
 import { JobDetails } from "./JobDetails";
 import { TerminateInstance } from "./TerminateInstance";
-import { useInstanceRouterQuery } from "./useInstanceRouterQuery";
 
 export interface ResultJobCardProps {
   /**
@@ -26,30 +27,34 @@ export interface ResultJobCardProps {
    */
   instance: InstanceGetResponse | InstanceSummary;
   /**
-   * Action to take when the project is clicked
+   * What the caller may do with this instance, decided from the instance itself and the project
+   * that owns it rather than from any selected project.
    */
-  projectClickAction: ProjectListItemProps["clickAction"];
+  capabilities: ResultCapabilities;
+  /**
+   * Results list state this card's links preserve.
+   */
+  resultsState?: ResultsState;
   collapsedByDefault?: boolean;
 }
 
 /**
- * Displays details of an instance of a job
+ * Displays details of an instance of a job. Every link and action it generates addresses the
+ * project the instance itself declares, so a card can neither act on nor navigate into another
+ * project's scope.
  */
 export const ResultJobCard = ({
   instanceId,
   instance,
-  projectClickAction,
+  capabilities,
+  resultsState,
   collapsedByDefault = true,
 }: ResultJobCardProps) => {
-  const query = useInstanceRouterQuery();
-
-  const associatedProject = useProjectFromId(instance.project_id);
-
-  const hasPermission = useIsUserAdminOrEditorOfCurrentProject();
-
   if (instance.job_id === undefined) {
     return <Alert severity="error">Instance is missing a job ID</Alert>;
   }
+
+  const projectId = instance.project_id;
 
   return (
     <ResultCard
@@ -57,15 +62,26 @@ export const ResultJobCard = ({
       actions={({ setSlideIn }) => (
         <>
           <TerminateInstance
-            disabled={!hasPermission}
+            disabled={!capabilityIsEnabled(capabilities.termination)}
             instanceId={instanceId}
             phase={instance.phase}
-            projectId={instance.project_id}
+            projectId={projectId}
             onTermination={() => setSlideIn(false)}
           />
-          <RerunJobButton disabled={!hasPermission} instance={instance} />
-          <LogsButton instance={instance} instanceId={instanceId} />
-          <ArchiveInstance archived={instance.archived} instanceId={instanceId} />
+          <RerunJobButton
+            disabled={!capabilityIsEnabled(capabilities.rerun)}
+            instance={instance}
+            resultsState={resultsState}
+          />
+          <LogsButton instanceId={instanceId} projectId={projectId} />
+          <ArchiveInstance
+            archived={instance.archived}
+            disabled={!capabilityIsEnabled(capabilities.archive)}
+            instanceId={instanceId}
+          />
+          <CapabilityReasons
+            capabilities={[capabilities.termination, capabilities.rerun, capabilities.archive]}
+          />
         </>
       )}
       collapsed={
@@ -76,16 +92,13 @@ export const ResultJobCard = ({
       collapsedByDefault={collapsedByDefault}
       createdDateTime={instance.started ?? instance.launched}
       finishedDateTime={instance.stopped}
-      href={{ pathname: "/results/instance/[instanceId]", query: { ...query, instanceId } }}
+      href={projectLinks.result(projectId, "instances", instanceId, resultsState)}
       linkTitle="Job"
       state={instance.phase}
     >
       <ListItem>
         <ListItemText primary={instance.name} secondary={instance.job_name} />
       </ListItem>
-      {!!associatedProject && (
-        <ProjectListItem clickAction={projectClickAction} project={associatedProject} />
-      )}
       <ArchivedStatus archived={instance.archived} />
     </ResultCard>
   );

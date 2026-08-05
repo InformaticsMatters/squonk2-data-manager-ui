@@ -13,9 +13,14 @@ import { useQueryClient } from "@tanstack/react-query";
 export interface ArchiveInstanceProps {
   instanceId: InstanceSummary["id"];
   archived: boolean;
+  disabled?: boolean;
 }
 
-export const ArchiveInstance = ({ instanceId, archived }: ArchiveInstanceProps) => {
+export const ArchiveInstance = ({
+  instanceId,
+  archived,
+  disabled = false,
+}: ArchiveInstanceProps) => {
   const { mutateAsync: patchInstance } = usePatchInstance();
   const queryClient = useQueryClient();
   const [archiving, setArchiving] = useState(false);
@@ -33,7 +38,7 @@ export const ArchiveInstance = ({ instanceId, archived }: ArchiveInstanceProps) 
   return (
     <Tooltip title="Toggle whether an instance will be deleted automatically">
       <span>
-        <Button disabled={archiving} onClick={() => void archiveInstance()}>
+        <Button disabled={archiving || disabled} onClick={() => void archiveInstance()}>
           {archived ? "Unarchive" : "Archive"}
         </Button>
       </span>

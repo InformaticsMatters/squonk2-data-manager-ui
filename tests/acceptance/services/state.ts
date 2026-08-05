@@ -4,6 +4,8 @@ export type RequestRecord = {
   authorization: string | undefined;
   method: string;
   path: string;
+  /** The request's query string, including its leading `?` when it has one. */
+  query: string;
   subject: string;
 };
 
@@ -22,6 +24,8 @@ export type ScenarioState = {
   projectFailure?: number;
   projectMutationFailure?: 403 | 503;
   requests: RequestRecord[];
+  /** Optionally narrowed to one Results collection path, e.g. `/instance`. */
+  resultsFailure?: { collection?: string; status: 403 | 503 };
   addressedReadFailure?: 403 | 503;
   semanticsFailure?: 503;
   taskFailure?: 503;

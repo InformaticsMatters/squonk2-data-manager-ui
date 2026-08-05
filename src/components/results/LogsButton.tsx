@@ -1,5 +1,6 @@
-import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
+import { type InstanceSummary } from "@/api/data-manager";
 
+import { projectLinks } from "../../projects/routes";
 import { NextLink } from "../NextLink";
 
 export interface LogsButtonProps {
@@ -8,19 +9,17 @@ export interface LogsButtonProps {
    */
   instanceId: InstanceSummary["id"];
   /**
-   * Instance summary or detail
+   * The project the instance itself declares it belongs to
    */
-  instance: InstanceGetResponse | InstanceSummary;
+  projectId: string;
 }
 
-export const LogsButton = ({ instanceId, instance }: LogsButtonProps) => {
+/** Opens the instance's own log directory in the Files section of the project that owns it. */
+export const LogsButton = ({ instanceId, projectId }: LogsButtonProps) => {
   return (
     <NextLink
       component="button"
-      href={{
-        pathname: "/project",
-        query: { project: instance.project_id, path: `.${instanceId}` },
-      }}
+      href={projectLinks.files(projectId, { path: `/.${instanceId}` }) as never}
     >
       Logs
     </NextLink>

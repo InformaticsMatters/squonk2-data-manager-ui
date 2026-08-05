@@ -59,8 +59,8 @@ export const Footer = () => {
           <Grid size={{ sm: 3, xs: 6 }}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
-                <Link component={A} href={{ pathname: "/results" }}>
-                  Results
+                <Link component={A} href={{ pathname: "/projects" }}>
+                  Projects
                 </Link>
               </ListItem>
               <ListItem sx={itemStyles}>

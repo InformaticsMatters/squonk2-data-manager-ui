@@ -4,9 +4,9 @@ import { useGetInstances } from "@/api/data-manager/instance";
 import { Box, LinearProgress, List, ListItemButton, ListItemText, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import A from "next/link";
-import { useRouter } from "next/router";
 
 import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { projectLinks } from "../../projects/routes";
 import { LocalTime } from "../LocalTime";
 
 type FilterPredicate = (value: InstanceSummary, index: number, array: InstanceSummary[]) => boolean;
@@ -22,8 +22,6 @@ export interface InstancesListProps {
  * MuiList detailing instances that match a filter.
  */
 export const InstancesList = ({ predicate }: InstancesListProps) => {
-  const { query } = useRouter();
-
   const { projectId } = useCurrentProjectId();
   const { data } = useGetInstances({ project_id: projectId ?? undefined });
   const instances = data?.instances.filter((element, index, array) =>
@@ -53,10 +51,7 @@ export const InstancesList = ({ predicate }: InstancesListProps) => {
         .map((instance) => (
           <ListItemButton
             component={A}
-            href={{
-              pathname: "/results/instance/[instanceId]",
-              query: { ...query, instanceId: instance.id, project: projectId },
-            }}
+            href={projectLinks.result(instance.project_id, "instances", instance.id) as never}
             key={instance.id}
           >
             <ListItemText

@@ -2,15 +2,16 @@ import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manag
 
 import { CardContent, ListItem, ListItemText } from "@mui/material";
 
-import { useIsUserAdminOrEditorOfCurrentProject, useProjectFromId } from "../../hooks/projectHooks";
+import { capabilityIsEnabled } from "../../projects/capabilities";
+import { type ResultCapabilities } from "../../projects/resultCapabilities";
+import { projectLinks, type ResultsState } from "../../projects/routes";
 import { HrefButton } from "../HrefButton";
-import { ProjectListItem } from "../projects/ProjectListItem";
+import { CapabilityReasons } from "../results/CapabilityReasons";
 import { ResultCard } from "../results/ResultCard";
 import { ApplicationDetails } from "./ApplicationDetails";
 import { ArchivedStatus } from "./ArchivedStatus";
 import { ArchiveInstance } from "./ArchiveInstance";
 import { TerminateInstance } from "./TerminateInstance";
-import { useInstanceRouterQuery } from "./useInstanceRouterQuery";
 
 export interface ResultApplicationCardProps {
   /**
@@ -22,9 +23,14 @@ export interface ResultApplicationCardProps {
    */
   instance: InstanceGetResponse | InstanceSummary;
   /**
-   * Action to take when the project is clicked
+   * What the caller may do with this instance, decided from the instance itself and the project
+   * that owns it.
    */
-  projectClickAction: "navigate-to-project" | "select-project";
+  capabilities: ResultCapabilities;
+  /**
+   * Results list state this card's links preserve.
+   */
+  resultsState?: ResultsState;
   /**
    * Whether the card should have its collapsed content visible immediately. Defaults to true.
    */
@@ -34,24 +40,21 @@ export interface ResultApplicationCardProps {
 export const ResultApplicationCard = ({
   instance,
   instanceId,
-  projectClickAction,
+  capabilities,
+  resultsState,
   collapsedByDefault = true,
 }: ResultApplicationCardProps) => {
-  const query = useInstanceRouterQuery();
-
-  const associatedProject = useProjectFromId(instance.project_id);
-
-  const hasPermission = useIsUserAdminOrEditorOfCurrentProject();
+  const projectId = instance.project_id;
 
   return (
     <ResultCard
       actions={({ setSlideIn }) => (
         <>
           <TerminateInstance
-            disabled={!hasPermission}
+            disabled={!capabilityIsEnabled(capabilities.termination)}
             instanceId={instanceId}
             phase={instance.phase}
-            projectId={instance.project_id}
+            projectId={projectId}
             onTermination={() => setSlideIn(false)}
           />
           {!!instance.url && (
@@ -64,7 +67,12 @@ export const ResultApplicationCard = ({
               Open
             </HrefButton>
           )}
-          <ArchiveInstance archived={instance.archived} instanceId={instanceId} />
+          <ArchiveInstance
+            archived={instance.archived}
+            disabled={!capabilityIsEnabled(capabilities.archive)}
+            instanceId={instanceId}
+          />
+          <CapabilityReasons capabilities={[capabilities.termination, capabilities.archive]} />
         </>
       )}
       collapsed={
@@ -75,16 +83,13 @@ export const ResultApplicationCard = ({
       collapsedByDefault={collapsedByDefault}
       createdDateTime={instance.started ?? instance.launched}
       finishedDateTime={instance.stopped}
-      href={{ pathname: "/results/instance/[instanceId]", query: { ...query, instanceId } }}
+      href={projectLinks.result(projectId, "instances", instanceId, resultsState)}
       linkTitle="App"
       state={instance.phase}
     >
       <ListItem>
         <ListItemText primary={instance.name} secondary={instance.application_id} />
       </ListItem>
-      {!!associatedProject && (
-        <ProjectListItem clickAction={projectClickAction} project={associatedProject} />
-      )}
       <ArchivedStatus archived={instance.archived} />
     </ResultCard>
   );

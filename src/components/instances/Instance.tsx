@@ -4,23 +4,26 @@ import { useGetInstance } from "@/api/data-manager/instance";
 import { Alert, Box } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 
+import { type ResultCapabilities } from "../../projects/resultCapabilities";
+import { type ResultsState } from "../../projects/routes";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { CenterLoader } from "../CenterLoader";
-import { type ProjectListItemProps } from "../projects/ProjectListItem";
 import { ResultApplicationCard } from "./ResultApplicationCard";
 import { ResultJobCard } from "./ResultJobCard";
 
 export interface InstanceProps {
   instanceId: InstanceSummary["id"];
   instanceSummary?: InstanceSummary;
-  projectClickAction: ProjectListItemProps["clickAction"];
+  capabilities: ResultCapabilities;
+  resultsState?: ResultsState;
   collapsedByDefault?: boolean;
 }
 
 export const Instance = ({
   instanceId,
-  projectClickAction,
+  capabilities,
   instanceSummary,
+  resultsState,
   collapsedByDefault = true,
 }: InstanceProps) => {
   // The instance summary is sufficient but not always provided. If only the ID is provided, the
@@ -45,20 +48,22 @@ export const Instance = ({
         return (
           <Box sx={{ marginY: 1 }}>
             <ResultJobCard
+              capabilities={capabilities}
               collapsedByDefault={collapsedByDefault}
               instance={instance}
               instanceId={instanceId}
-              projectClickAction={projectClickAction}
+              resultsState={resultsState}
             />
           </Box>
         );
       case "APPLICATION":
         return (
           <ResultApplicationCard
+            capabilities={capabilities}
             collapsedByDefault={collapsedByDefault}
             instance={instance}
             instanceId={instanceId}
-            projectClickAction={projectClickAction}
+            resultsState={resultsState}
           />
         );
       default:

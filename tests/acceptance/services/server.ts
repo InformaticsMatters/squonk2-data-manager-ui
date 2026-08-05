@@ -102,13 +102,23 @@ const cors = (request: IncomingMessage, response: ServerResponse) => {
   response.setHeader("access-control-allow-origin", request.headers.origin ?? "*");
 };
 
-const record = (request: IncomingMessage, path: string) => {
+/** The result tasks a project owns; a project that ran none owns an empty collection. */
+const resultTasksOf = (state: ScenarioState, projectId: string) =>
+  Object.entries(state.fixtures.resultTasks).find(([owner]) => owner === projectId)?.[1] ?? {
+    count: 0,
+    tasks: [],
+  };
+
+const record = (request: IncomingMessage, url: URL) => {
   const authorization = request.headers.authorization;
   const subject = decodeSubject(authorization);
   const requestRecord: RequestRecord = {
     authorization,
     method: request.method ?? "GET",
-    path,
+    path: url.pathname,
+    // Kept apart from the path so a test can state exactly which arguments a read was constrained
+    // by without every other diagnostic having to know about them.
+    query: url.search,
     subject,
   };
   getScenario(subject).requests.push(requestRecord);
@@ -224,7 +234,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     return response.end();
   }
   const url = new URL(request.url ?? "/", acceptanceEnvironment.DATA_MANAGER_API_SERVER);
-  const { state } = record(request, url.pathname);
+  const { state } = record(request, url);
   const segments = url.pathname.split("/").filter(Boolean);
   if (url.pathname === "/dataset" && request.method === "GET") {
     if (state.datasetFailure) {
@@ -300,6 +310,77 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   if (url.pathname === "/project") {
     return json(response, 200, state.fixtures.projects);
   }
+  // Results collections. Each answers for exactly the project it was asked about, and a request
+  // that named no project is refused, because the Data Manager is never asked for global results.
+  if (
+    ["/instance", "/task", "/running-workflow"].includes(url.pathname) &&
+    request.method === "GET"
+  ) {
+    const projectId = url.searchParams.get("project_id");
+    if (!projectId) {
+      return json(response, 400, { error: "fixture-unscoped-results-request" });
+    }
+    const failure = state.resultsFailure;
+    if (failure && (!failure.collection || failure.collection === url.pathname)) {
+      return json(
+        response,
+        failure.status,
+        failure.status === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    if (url.pathname === "/instance") {
+      const instances = state.fixtures.instances.instances.filter(
+        (instance) => instance.project_id === projectId,
+      );
+      return json(response, 200, { count: instances.length, instances });
+    }
+    if (url.pathname === "/task") {
+      return json(response, 200, resultTasksOf(state, projectId));
+    }
+    const runningWorkflows = state.fixtures.runningWorkflows.running_workflows.filter(
+      (workflow) => workflow.project.id === projectId,
+    );
+    return json(response, 200, {
+      count: runningWorkflows.length,
+      running_workflows: runningWorkflows,
+    });
+  }
+  if (segments[0] === "instance" && segments.length === 2 && request.method === "GET") {
+    const instance = state.fixtures.instances.instances.find(
+      (candidate) => candidate.id === segments[1],
+    );
+    const instanceTask =
+      instance?.project_id === fixtureIds.project
+        ? fixtureIds.resultTask
+        : fixtureIds.screeningResultTask;
+    return instance
+      ? json(response, 200, {
+          ...instance,
+          has_valid_callback_token: false,
+          outputs: {},
+          tasks: [{ id: instanceTask, purpose: "CREATE" }],
+        })
+      : json(response, 404, { error: "fixture-instance-not-found" });
+  }
+  if (segments[0] === "running-workflow" && segments[2] === "steps") {
+    return json(response, 200, { count: 0, running_workflow_steps: [] });
+  }
+  if (segments[0] === "running-workflow" && segments.length === 2 && request.method === "GET") {
+    const workflow = state.fixtures.runningWorkflows.running_workflows.find(
+      (candidate) => candidate.id === segments[1],
+    );
+    return workflow
+      ? json(response, 200, {
+          ...workflow,
+          done: true,
+          running_user: state.fixtures.subject,
+          success: true,
+          variables: {},
+        })
+      : json(response, 404, { error: "fixture-running-workflow-not-found" });
+  }
   if (segments[0] === "project" && segments[2] === "administrator" && segments.length === 4) {
     if (state.projectMutationFailure) {
       return json(
@@ -323,6 +404,14 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
         : project.administrators.filter((administrator) => administrator !== username);
     return json(response, 204, undefined);
   }
+  if (url.pathname === `/project/${fixtureIds.screeningProject}`) {
+    const screening = state.fixtures.projects.projects.find(
+      (candidate) => candidate.project_id === fixtureIds.screeningProject,
+    );
+    return screening
+      ? json(response, 200, screening)
+      : json(response, 404, { error: "fixture-project-not-found" });
+  }
   if (url.pathname === `/project/${fixtureIds.project}`) {
     if (state.projectFailure) {
       const body =
@@ -334,6 +423,9 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       return json(response, state.projectFailure, body);
     }
     return json(response, 200, state.fixtures.projects.projects[0]);
+  }
+  if (url.pathname === `/job/${state.fixtures.job.id}`) {
+    return json(response, 200, state.fixtures.job);
   }
   if (url.pathname === "/type") {
     return json(response, 200, state.fixtures.types);
@@ -349,6 +441,20 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   }
   if (url.pathname.startsWith("/task/")) {
     const taskId = url.pathname.slice("/task/".length);
+    // A result task is a settled fact of the project that ran it rather than a polling sequence.
+    const resultTask = Object.values(state.fixtures.resultTasks)
+      .flatMap((collection) => collection.tasks)
+      .find((candidate) => candidate.id === taskId);
+    if (resultTask) {
+      return json(response, 200, {
+        created: resultTask.created,
+        done: true,
+        exit_code: 0,
+        purpose: resultTask.purpose,
+        purpose_id: resultTask.purpose_id,
+        states: [{ state: "SUCCESS", time: resultTask.created }],
+      });
+    }
     const deletionVersion = state.deletionTaskVersions.get(taskId);
     if (taskId !== fixtureIds.task && deletionVersion === undefined) {
       return json(response, 404, { error: "fixture-task-not-found" });
@@ -479,7 +585,7 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     return response.end();
   }
   const url = new URL(request.url ?? "/", acceptanceEnvironment.ACCOUNT_SERVER_API_SERVER);
-  const { state } = record(request, url.pathname);
+  const { state } = record(request, url);
   const segments = url.pathname.split("/").filter(Boolean);
   const isWrite = request.method !== "GET";
   if (isWrite && state.accessFailure) {
@@ -692,6 +798,9 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
   if (url.pathname === `/product/${fixtureIds.product}`) {
     return json(response, 200, { product: state.fixtures.products.products[0] });
   }
+  if (url.pathname === `/product/${fixtureIds.screeningProduct}`) {
+    return json(response, 200, { product: state.fixtures.screeningProduct });
+  }
   if (url.pathname === "/version") {
     return json(response, 200, state.fixtures.accountServerVersion);
   }
@@ -843,6 +952,19 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   if (url.pathname.endsWith("/product-failure") && request.method === "DELETE") {
     getScenario(subject).productFailure = false;
     return json(response, 200, { productFailure: false, subject });
+  }
+  if (url.pathname.endsWith("/results-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-results-failure", status });
+    }
+    const collection = url.searchParams.get("collection") ?? undefined;
+    getScenario(subject).resultsFailure = { collection, status: status as 403 | 503 };
+    return json(response, 200, { collection, resultsFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/results-failure") && request.method === "DELETE") {
+    getScenario(subject).resultsFailure = undefined;
+    return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/project-failure") && request.method === "POST") {
     const status = Number(url.searchParams.get("status"));

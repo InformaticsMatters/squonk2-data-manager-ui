@@ -22,13 +22,16 @@ import {
   AppApiDatasetGetResponse,
   AppApiDatasetPostResponse,
 } from "@/api/data-manager/dataset/zod";
+import { AppApiInstanceGetResponse } from "@/api/data-manager/instance/zod";
+import { AppApiJobGetJobResponse } from "@/api/data-manager/job/zod";
 import { AppApiProjectGetResponse } from "@/api/data-manager/project/zod";
-import { AppApiTaskGetTaskResponse } from "@/api/data-manager/task/zod";
+import { AppApiTaskGetResponse, AppApiTaskGetTaskResponse } from "@/api/data-manager/task/zod";
 import { AppApiTypeGetResponse } from "@/api/data-manager/type/zod";
 import {
   AppApiUserGetAccountResponse as AppApiDataManagerUserGetAccountResponse,
   AppApiUserGetResponse,
 } from "@/api/data-manager/user/zod";
+import { AppApiWorkflowGetRunningResponse } from "@/api/data-manager/workflow/zod";
 
 import { gzipSync } from "node:zlib";
 
@@ -47,6 +50,16 @@ export const fixtureIds = {
   otherOrganisation: "org-66666666-6666-6666-6666-666666666666",
   product: "product-77777777-7777-7777-7777-777777777777",
   project: "project-33333333-3333-3333-3333-333333333333",
+  /** A second entered project, used to prove Results cannot cross a project boundary. */
+  screeningProject: "project-6b6b6b6b-6b6b-4b6b-8b6b-6b6b6b6b6b6b",
+  screeningProduct: "product-6c6c6c6c-6c6c-4c6c-8c6c-6c6c6c6c6c6c",
+  instance: "instance-1a1a1a1a-1a1a-4a1a-8a1a-1a1a1a1a1a1a",
+  screeningInstance: "instance-2b2b2b2b-2b2b-4b2b-8b2b-2b2b2b2b2b2b",
+  resultTask: "task-3c3c3c3c-3c3c-4c3c-8c3c-3c3c3c3c3c3c",
+  screeningResultTask: "task-4d4d4d4d-4d4d-4d4d-8d4d-4d4d4d4d4d4d",
+  runningWorkflow: "r-workflow-5e5e5e5e-5e5e-4e5e-8e5e-5e5e5e5e5e5e",
+  screeningRunningWorkflow: "r-workflow-6f6f6f6f-6f6f-4f6f-8f6f-6f6f6f6f6f6f",
+  workflow: "workflow-7a7a7a7a-7a7a-4a7a-8a7a-7a7a7a7a7a7a",
   sharedProjectOne: "project-88888888-8888-4888-8888-888888888888",
   sharedProjectTwo: "project-99999999-9999-4999-8999-999999999999",
   partnerProject: "project-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
@@ -155,6 +168,15 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     editors: [projectOwner],
     observers: projectObservers,
   };
+  // The second project deliberately grants the caller less than the first one does. Two projects
+  // the same caller holds different authority in are what makes capability presentation provably
+  // a fact of the project a result belongs to rather than of the caller alone.
+  const screeningRoles = {
+    administrators: [colleague],
+    creator: colleague,
+    editors: [colleague],
+    observers: [subject],
+  };
   const noAccess = profile === "no-access";
   const hasPersonalUnit = profile !== "no-personal-unit" && !noAccess;
   const projectTierProduct = {
@@ -192,6 +214,15 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
   // the generated schema but served exactly as the Account Server sends it.
   AppApiProductGetResponse.parse({ count: 1, products: [projectTierProduct] });
   const products = { count: 1, products: [projectTierProduct] };
+  // The second project's subscription answers for itself without joining the caller's product
+  // index, which keeps the Subscriptions task exactly as it was while a second project can still
+  // resolve its own ancestry.
+  const screeningProduct = {
+    ...projectTierProduct,
+    claim: { id: fixtureIds.screeningProject, name: "Screening Project" },
+    product: { ...projectTierProduct.product, id: fixtureIds.screeningProduct },
+    unit: otherUnit,
+  };
 
   return {
     accountServerVersion: AppApiStateGetVersionResponse.parse({ version: "4.7.0-acceptance" }),
@@ -330,7 +361,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
           ],
     }),
     projects: AppApiProjectGetResponse.parse({
-      count: 4,
+      count: 5,
       projects: [
         {
           ...projectRoles,
@@ -343,6 +374,18 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
           project_id: fixtureIds.project,
           size: 0,
           unit_id: fixtureIds.unit,
+        },
+        {
+          ...screeningRoles,
+          created,
+          files: [],
+          name: "Screening Project",
+          organisation_id: fixtureIds.organisation,
+          private: true,
+          product_id: fixtureIds.screeningProduct,
+          project_id: fixtureIds.screeningProject,
+          size: 0,
+          unit_id: fixtureIds.otherUnit,
         },
         {
           administrators: [subject],
@@ -392,6 +435,120 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       profile === "empty-products"
         ? AppApiProductGetResponse.parse({ count: 0, products: [] })
         : products,
+    screeningProduct,
+    // Results of work run in each project. Every one names the project it belongs to, so a
+    // response that ignored a project argument would be recognisable rather than believable.
+    instances: AppApiInstanceGetResponse.parse({
+      count: 2,
+      instances: [
+        {
+          application_id: "acceptance-application",
+          application_type: "JOB",
+          application_version: "1.0.0",
+          archived: false,
+          id: fixtureIds.instance,
+          job_collection: "acceptance",
+          job_id: 1,
+          job_job: "acceptance-job",
+          job_name: "Acceptance Job",
+          job_version: "1.0.0",
+          launched: created,
+          name: "Acceptance Instance",
+          owner: subject,
+          phase: "COMPLETED",
+          project_id: fixtureIds.project,
+          run_time: "0:01:00",
+          started: created,
+          stopped: "2026-01-02T03:05:05Z",
+        },
+        {
+          application_id: "screening-application",
+          application_type: "APPLICATION",
+          application_version: "1.0.0",
+          archived: false,
+          id: fixtureIds.screeningInstance,
+          launched: created,
+          name: "Screening Instance",
+          owner: subject,
+          phase: "COMPLETED",
+          project_id: fixtureIds.screeningProject,
+          run_time: "0:02:00",
+          started: created,
+          stopped: "2026-01-02T03:06:05Z",
+        },
+      ],
+    }),
+    job: AppApiJobGetJobResponse.parse({
+      application: { application_id: "acceptance-application", kind: "DataManagerJobOperator" },
+      collection: "acceptance",
+      command: "acceptance",
+      command_encoding: "JINJA2_3_0",
+      disabled: false,
+      exchange_rate: "1",
+      id: 1,
+      image_name: "acceptance/job",
+      image_project_directory: "/data",
+      image_tag: "1.0.0",
+      job: "acceptance-job",
+      name: "Acceptance Job",
+      required_assets: [],
+      version: "1.0.0",
+    }),
+    resultTasks: {
+      [fixtureIds.project]: AppApiTaskGetResponse.parse({
+        count: 1,
+        tasks: [
+          {
+            created: "2026-01-02T02:04:05Z",
+            done: true,
+            exit_code: 0,
+            id: fixtureIds.resultTask,
+            processing_stage: "DONE",
+            purpose: "DATASET",
+            purpose_id: fixtureIds.dataset,
+          },
+        ],
+      }),
+      [fixtureIds.screeningProject]: AppApiTaskGetResponse.parse({
+        count: 1,
+        tasks: [
+          {
+            created: "2026-01-02T02:04:05Z",
+            done: true,
+            exit_code: 0,
+            id: fixtureIds.screeningResultTask,
+            processing_stage: "DONE",
+            purpose: "FILE",
+            purpose_id: fixtureIds.dataset,
+          },
+        ],
+      }),
+    },
+    runningWorkflows: AppApiWorkflowGetRunningResponse.parse({
+      count: 2,
+      running_workflows: [
+        {
+          error_num: 0,
+          id: fixtureIds.runningWorkflow,
+          name: "Acceptance Workflow",
+          project: { id: fixtureIds.project, name: "Acceptance Project" },
+          started: "2026-01-02T04:04:05Z",
+          status: "SUCCESS",
+          stopped: "2026-01-02T04:14:05Z",
+          workflow: { id: fixtureIds.workflow, name: "acceptance-workflow", version: "1.0.0" },
+        },
+        {
+          error_num: 0,
+          id: fixtureIds.screeningRunningWorkflow,
+          name: "Screening Workflow",
+          project: { id: fixtureIds.screeningProject, name: "Screening Project" },
+          started: "2026-01-02T04:04:05Z",
+          status: "SUCCESS",
+          stopped: "2026-01-02T04:24:05Z",
+          workflow: { id: fixtureIds.workflow, name: "acceptance-workflow", version: "1.0.0" },
+        },
+      ],
+    }),
     productCharges: AppApiProductGetChargesResponse.parse({
       billing_day: unit.billing_day,
       claim: { id: fixtureIds.project, name: "Acceptance Project" },

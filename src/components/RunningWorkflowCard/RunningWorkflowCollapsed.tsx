@@ -17,24 +17,31 @@ import {
   Alert,
   Box,
   Divider,
+  Link,
   ListItem,
   ListItemIcon,
   ListItemText,
   Typography,
 } from "@mui/material";
+import NextJsLink from "next/link";
 
 import { usePolledGetWorkflow } from "../../hooks/usePolledGetWorkflow";
+import { projectLinks } from "../../projects/routes";
 import { getErrorMessage } from "../../utils/next/orvalError";
 import { CenterLoader } from "../CenterLoader";
 import { HorizontalList } from "../HorizontalList";
 import { LocalTime } from "../LocalTime";
-import { NextLink } from "../NextLink";
 
 export interface RunningWorkflowCollapsedProps {
   runningWorkflowId: string;
+  /** The project the running workflow itself declares; its step instances run in that project. */
+  projectId: string;
 }
 
-export const RunningWorkflowCollapsed = ({ runningWorkflowId }: RunningWorkflowCollapsedProps) => {
+export const RunningWorkflowCollapsed = ({
+  projectId,
+  runningWorkflowId,
+}: RunningWorkflowCollapsedProps) => {
   const {
     data: workflow,
     isLoading: isWorkflowLoading,
@@ -102,15 +109,12 @@ export const RunningWorkflowCollapsed = ({ runningWorkflowId }: RunningWorkflowC
               <TimelineContent>
                 <Typography variant="subtitle2">
                   {step.instance_id ? (
-                    <NextLink
-                      component="a"
-                      href={{
-                        pathname: "/results/instance/[instanceId]",
-                        query: { instanceId: step.instance_id },
-                      }}
+                    <Link
+                      component={NextJsLink}
+                      href={projectLinks.result(projectId, "instances", step.instance_id) as never}
                     >
                       {step.name}
-                    </NextLink>
+                    </Link>
                   ) : (
                     step.name
                   )}

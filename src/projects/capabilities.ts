@@ -59,6 +59,10 @@ const unconfirmed = (requirement: string): ProjectCapability => ({
 export const capabilityReason = (capability: ProjectCapability): string | undefined =>
   capability.status === "hidden" ? undefined : capability.reason;
 
+/** A control is offered only by an enabled capability, so the two can never disagree. */
+export const capabilityIsEnabled = (capability: ProjectCapability): boolean =>
+  capability.status === "enabled";
+
 export const resolveProjectRoles = (
   project: ProjectMembershipFacts,
   username: string | undefined,
@@ -118,6 +122,20 @@ const edits = (facts: ProjectCapabilityFacts) => {
  */
 export const projectIsReadOnly = (facts: ProjectCapabilityFacts): boolean =>
   factsAreConfirmed(facts) && !edits(facts);
+
+/**
+ * An ordinary editor action never spends coins, so a coin limit does not withhold it: stopping,
+ * deleting, or archiving work a project already paid for stays available to anyone who may change
+ * the project.
+ */
+const evaluateEditorAction =
+  (requirement: string) =>
+  (facts: ProjectCapabilityFacts): ProjectCapability => {
+    if (!factsAreConfirmed(facts)) {
+      return unconfirmed(requirement);
+    }
+    return edits(facts) ? { status: "enabled" } : { status: "disabled", reason: requirement };
+  };
 
 /**
  * An ordinary administrator action never spends coins, so it depends on nothing but the caller's
@@ -204,6 +222,77 @@ export const evaluateProjectExecutionCapability = evaluateSpendingAction({
   unaccountableReason:
     "This project's subscription does not account for instances, so running work cannot be established as safe.",
 });
+
+/**
+ * What a result action reads in addition to the project's own facts: which project the result
+ * itself belongs to, which project the URL addresses, and whether the displayed result content
+ * could last be established. No result action reads a selected or current project.
+ */
+export type ProjectResultFacts = ProjectCapabilityFacts & {
+  /** `stale` for content a failed refresh left on screen. */
+  content?: "current" | "stale";
+  owningProjectId: string;
+  routeProjectId: string;
+};
+
+const foreignResultReason =
+  "This result belongs to another project, so it cannot be changed from this project.";
+
+const staleResultReason =
+  "This result could not be refreshed, so changing it cannot be established as safe.";
+
+/**
+ * Wraps one project action as a result action. A result the addressed project does not own is
+ * never actionable here, whatever authority the caller holds over the project in the URL. A
+ * confirmed lack of authority is still the more useful explanation than stale content, so it is
+ * reported first, and anything that merely could not be refreshed is disabled rather than offered.
+ */
+const evaluateResultAction =
+  (evaluate: (facts: ProjectCapabilityFacts) => ProjectCapability) =>
+  (facts: ProjectResultFacts): ProjectCapability => {
+    if (facts.owningProjectId !== facts.routeProjectId) {
+      return { status: "disabled", reason: foreignResultReason };
+    }
+    const capability = evaluate(facts);
+    if (capability.status === "disabled" || facts.content !== "stale") {
+      return capability;
+    }
+    return { status: "disabled", reason: staleResultReason };
+  };
+
+export const evaluateResultTerminationCapability = evaluateResultAction(
+  evaluateEditorAction(
+    "You must be a project editor or administrator to stop or delete instances in this project.",
+  ),
+);
+
+export const evaluateResultArchiveCapability = evaluateResultAction(
+  evaluateEditorAction(
+    "You must be a project editor or administrator to archive instances in this project.",
+  ),
+);
+
+export const evaluateResultTaskDeletionCapability = evaluateResultAction(
+  evaluateEditorAction(
+    "You must be a project editor or administrator to delete tasks in this project.",
+  ),
+);
+
+export const evaluateResultWorkflowLifecycleCapability = evaluateResultAction(
+  evaluateEditorAction(
+    "You must be a project editor or administrator to stop or delete workflows in this project.",
+  ),
+);
+
+/** Running work again spends coins in the owning project, so it answers to its subscription too. */
+export const evaluateResultRerunCapability = evaluateResultAction(
+  evaluateSpendingAction({
+    limitReason: "This project's subscription is at its coin limit, so work cannot be run.",
+    requirement: "You must be a project editor or administrator to run work in this project.",
+    unaccountableReason:
+      "This project's subscription does not account for instances, so running work cannot be established as safe.",
+  }),
+);
 
 /**
  * Taking administration of a project the caller has no membership in is exclusively a platform

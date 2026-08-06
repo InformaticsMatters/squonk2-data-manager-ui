@@ -13,6 +13,9 @@ import { expect, test } from "@playwright/test";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
+import { CenterLoader } from "../../src/components/CenterLoader";
+import { InstancesList } from "../../src/components/runCards/InstancesList";
+import { RunningWorkflowsList } from "../../src/components/runCards/RunningWorkflowsList";
 import {
   evaluateRunLaunchCapability,
   type ProjectCapabilityFacts,
@@ -320,8 +323,14 @@ test("the section resolves one definition's capabilities from the project facts 
   const facts = runFacts() as ProjectCapabilityFacts;
   const projectFacts = facts as Parameters<typeof resolveRunCapabilities>[0];
 
-  expect(resolveRunCapabilities(projectFacts)).toEqual({ launch: { status: "enabled" } });
+  expect(resolveRunCapabilities(projectFacts)).toEqual({
+    availability: { status: "enabled" },
+    launch: { status: "enabled" },
+  });
+  // A catalogue that could not be refreshed locks the launch, but says nothing about whether the
+  // Data Manager would run this definition — only the definition itself declares that.
   expect(resolveRunCapabilities(projectFacts, { content: "stale" })).toEqual({
+    availability: { status: "enabled" },
     launch: {
       status: "disabled",
       reason:
@@ -447,13 +456,51 @@ test("a card and a modal answer alike about the version each of them addresses",
     ],
   });
   const jobItem = items.find((item) => item.kind === "job");
-  const facts = runFacts() as Parameters<typeof resolveRunCapabilities>[0];
-  const resolve = jobItem && resolveDefinitionCapabilities(facts, jobItem, "current");
+  const resolveFor = (username: string) =>
+    jobItem &&
+    resolveDefinitionCapabilities(
+      runFacts({ username }) as Parameters<typeof resolveRunCapabilities>[0],
+      jobItem,
+      "current",
+    );
 
   // The card shows one version at a time and links to that version's own route, so it must refuse
   // a disabled version with the same reason the modal that addresses it gives.
-  expect(resolve?.("1")).toEqual({ launch: { status: "disabled", reason: "No assets" } });
-  expect(resolve?.("2")).toEqual({ launch: { status: "enabled" } });
+  expect(resolveFor(editor)?.("1")).toEqual({
+    availability: { status: "disabled", reason: "No assets" },
+    launch: { status: "disabled", reason: "No assets" },
+  });
+  expect(resolveFor(editor)?.("2")).toEqual({
+    availability: { status: "enabled" },
+    launch: { status: "enabled" },
+  });
+  // A caller who also lacks authority is told what they lack first, but the version's own reason
+  // is never replaced by it: both are stated, so nobody is left thinking the version is runnable.
+  expect(resolveFor(observer)?.("1")).toEqual({
+    availability: { status: "disabled", reason: "No assets" },
+    launch: {
+      status: "disabled",
+      reason: "You must be a project editor or administrator to run work in this project.",
+    },
+  });
+});
+
+/** What one list component returns, so the branch it took can be read without a DOM. */
+const rendered = <TProps>(list: (props: TProps) => unknown, props: TProps) => list(props);
+
+test("a card waits for the collection it lists before saying it has none", () => {
+  const loader = { type: CenterLoader };
+
+  // Each list is given its own collection's read state, so a card that lists instances is never
+  // held up by the running-workflow read, and neither claims emptiness before its read answers.
+  expect(rendered(InstancesList, { instances: [], isLoading: true })).toMatchObject(loader);
+  expect(rendered(RunningWorkflowsList, { isLoading: true, runningWorkflows: [] })).toMatchObject(
+    loader,
+  );
+  expect(rendered(InstancesList, { instances: [], isLoading: false })).not.toMatchObject(loader);
+  expect(
+    rendered(RunningWorkflowsList, { isLoading: false, runningWorkflows: [] }),
+  ).not.toMatchObject(loader);
 });
 
 test("an execution that declares no project belongs to the read that returned it", () => {
@@ -489,11 +536,16 @@ test.describe("Run cutover", () => {
   });
 
   test("one page entry serves every URL beneath a project's Run section", () => {
-    const runPages = path.join(process.cwd(), "src/pages/projects/[projectId]/run");
+    const projectPages = path.join(process.cwd(), "src/pages/projects/[projectId]");
 
     // A definition route and a URL Run cannot address must reach the same section, so a mistyped
-    // path is answered beneath the project rather than by the application's own not-found.
-    expect(readdirSync(runPages)).toEqual(["[...definition].tsx"]);
+    // path is answered beneath the project rather than by the application's own not-found. Run
+    // itself is the only other Run entry: nothing else may claim part of the section's URL space.
+    expect(readdirSync(projectPages).filter((entry) => entry.startsWith("run"))).toEqual([
+      "run",
+      "run.tsx",
+    ]);
+    expect(readdirSync(path.join(projectPages, "run"))).toEqual(["[...definition].tsx"]);
   });
 
   test("no handwritten module composes a Run route or reads a selected project", () => {

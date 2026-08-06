@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Container, Typography } from "@mui/material";
+import { Alert, Box, Container, Typography } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
@@ -27,6 +27,7 @@ import {
   type RunDefinitionItem,
   runDefinitionRunningWorkflows,
 } from "./runFacts";
+import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
 import { type SectionFilterOption, SectionToolbar } from "./SectionToolbar";
 import { type ProjectRunCatalogue, useProjectRun } from "./useProjectRun";
@@ -76,29 +77,24 @@ const RunDefinitionCard = ({
   // one it is showing, so a version the Data Manager itself disabled says so on the card that
   // offers it as well as in the modal that addresses it.
   const resolveCapabilities = resolveDefinitionCapabilities(facts, item, run.freshness[item.kind]);
-  const cardProps = { isLoading: run.executionsLoading, projectId, resolveCapabilities, runState };
+  const cardProps = { projectId, resolveCapabilities, runState };
+  // A card waits only on the collection it lists, so a slow running-workflow read never holds up a
+  // job's instances, or the other way round.
+  const instanceProps = {
+    executionsLoading: run.executionsLoading.instances,
+    instances: runDefinitionInstances(item, run.instances, projectId),
+  };
 
   switch (item.kind) {
     case "application":
-      return (
-        <ApplicationCard
-          {...cardProps}
-          application={item.data}
-          instances={runDefinitionInstances(item, run.instances, projectId)}
-        />
-      );
+      return <ApplicationCard {...cardProps} {...instanceProps} application={item.data} />;
     case "job":
-      return (
-        <JobCard
-          {...cardProps}
-          instances={runDefinitionInstances(item, run.instances, projectId)}
-          jobs={item.data}
-        />
-      );
+      return <JobCard {...cardProps} {...instanceProps} jobs={item.data} />;
     case "workflow":
       return (
         <WorkflowCard
           {...cardProps}
+          executionsLoading={run.executionsLoading.runningWorkflows}
           runningWorkflows={runDefinitionRunningWorkflows(item, run.runningWorkflows, projectId)}
           workflow={item.data}
         />
@@ -224,27 +220,12 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
           onStateChange={handleStateChange}
         />
 
-        {/* A refused read and a read that merely failed to refresh are reported separately, so
-        losing access to one never withholds the retry another one needs. */}
-        {run.report.unavailable ? (
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            Some Run content is unavailable or you no longer have access to it.
-          </Alert>
-        ) : null}
-        {run.report.retryable ? (
-          <Alert
-            action={
-              <Button color="inherit" size="small" onClick={() => run.retry()}>
-                Retry
-              </Button>
-            }
-            severity="error"
-            sx={{ mb: 2 }}
-          >
-            Some Run content could not be refreshed. It may be out of date, and definitions that
-            could not be refreshed cannot be run until they load again.
-          </Alert>
-        ) : null}
+        <SectionReadAlerts
+          report={run.report}
+          retryableMessage="Some Run content could not be refreshed. It may be out of date, and definitions that could not be refreshed cannot be run until they load again."
+          unavailableMessage="Some Run content is unavailable or you no longer have access to it."
+          onRetry={() => run.retry()}
+        />
         {/* However a definition failed to be addressed, it is reported in the one place, so a
         malformed identity and one the project does not offer are indistinguishable. */}
         {localNotFound === true || definitionAbsent ? <DefinitionNotFound /> : null}

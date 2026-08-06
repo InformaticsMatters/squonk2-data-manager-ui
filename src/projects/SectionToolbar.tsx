@@ -46,29 +46,38 @@ export const SectionToolbar = <TFilter extends string>({
   state: SectionListState<TFilter>;
 }) => {
   const allTypes = filterOptions.map(({ value }) => value);
-  const [search, setSearch] = useState(state.search ?? "");
-  const [typing, setTyping] = useState(false);
+  // A value that has been typed but has not reached the route yet. The route remains the state:
+  // this only exists between a keystroke and the route carrying it.
+  const [draft, setDraft] = useState<string | null>(null);
+  const search = draft ?? state.search ?? "";
   const searchRef = useKeyboardFocus();
 
-  // The route is the state, so the settled value is written against whatever the route says then,
+  // The route is the state, so a settled value is written against whatever the route says then,
   // not against the render the keystroke happened in.
   const latest = useRef({ onStateChange, state });
   useEffect(() => {
     latest.current = { onStateChange, state };
   });
 
-  useEffect(() => setSearch(state.search ?? ""), [state.search]);
+  // The draft is given up only once the route carries it, so a route that has not caught up yet —
+  // the one this field was replacing when the next keystroke arrived — can never overwrite what is
+  // being typed.
+  useEffect(() => {
+    if (draft !== null && draft === (state.search ?? "")) {
+      setDraft(null);
+    }
+  }, [draft, state.search]);
 
   useEffect(() => {
-    if (!typing) {
+    if (draft === null) {
       return;
     }
-    const settle = setTimeout(() => {
-      setTyping(false);
-      latest.current.onStateChange({ ...latest.current.state, search: search || undefined });
-    }, searchSettleMs);
+    const settle = setTimeout(
+      () => latest.current.onStateChange({ ...latest.current.state, search: draft || undefined }),
+      searchSettleMs,
+    );
     return () => clearTimeout(settle);
-  }, [search, typing]);
+  }, [draft]);
 
   return (
     <Grid container spacing={2} sx={{ alignItems: "center", mb: 2 }}>
@@ -110,10 +119,7 @@ export const SectionToolbar = <TFilter extends string>({
           fullWidth
           ref={searchRef}
           value={search}
-          onChange={(event) => {
-            setSearch(event.target.value);
-            setTyping(true);
-          }}
+          onChange={(event) => setDraft(event.target.value)}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: "auto" }} sx={{ textAlign: "center" }}>

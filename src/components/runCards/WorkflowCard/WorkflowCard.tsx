@@ -10,8 +10,8 @@ import { RunDefinitionButton } from "../RunDefinitionButton";
 import { RunningWorkflowsList } from "../RunningWorkflowsList";
 
 export interface WorkflowCardProps {
-  /** Those running workflows are still being listed, so the card cannot say it has none. */
-  isLoading?: boolean;
+  /** The read listing this project's running workflows has not answered yet. */
+  executionsLoading?: boolean;
   projectId: string;
   /** What the project in the URL decides about the definition this card addresses. */
   resolveCapabilities: (definitionId: string) => RunCapabilities;
@@ -26,43 +26,51 @@ export interface WorkflowCardProps {
  * definition route and listing the addressed project's running workflows of it.
  */
 export const WorkflowCard = ({
-  isLoading,
+  executionsLoading,
   projectId,
   resolveCapabilities,
   runningWorkflows,
   runState,
   workflow,
-}: WorkflowCardProps) => (
-  <BaseCard
-    accentColor="#f1c40f"
-    actions={
-      <>
-        <CapabilityReasons capabilities={[resolveCapabilities(workflow.id).launch]} />
-        <RunDefinitionButton
-          definitionId={workflow.id}
-          definitionLabel={workflow.workflow_name ?? workflow.name}
-          definitionType="workflows"
-          projectId={projectId}
-          runState={runState}
-        />
-      </>
-    }
-    collapsed={<RunningWorkflowsList isLoading={isLoading} runningWorkflows={runningWorkflows} />}
-    header={{
-      subtitle: workflow.name,
-      avatar: workflow.name[0],
-      title: workflow.workflow_name ?? workflow.name,
-    }}
-  >
-    <Typography
-      sx={{ color: "text.secondary", textTransform: "uppercase", fontWeight: "bold" }}
-      variant="caption"
+}: WorkflowCardProps) => {
+  const capabilities = resolveCapabilities(workflow.id);
+
+  return (
+    <BaseCard
+      accentColor="#f1c40f"
+      actions={
+        <>
+          <CapabilityReasons capabilities={[capabilities.launch, capabilities.availability]} />
+          <RunDefinitionButton
+            definitionId={workflow.id}
+            definitionLabel={workflow.workflow_name ?? workflow.name}
+            definitionType="workflows"
+            projectId={projectId}
+            runState={runState}
+          />
+        </>
+      }
+      collapsed={
+        <RunningWorkflowsList isLoading={executionsLoading} runningWorkflows={runningWorkflows} />
+      }
+      header={{
+        subtitle: workflow.name,
+        avatar: workflow.name[0],
+        title: workflow.workflow_name ?? workflow.name,
+      }}
     >
-      Workflow
-    </Typography>
-    <Typography gutterBottom>{workflow.workflow_description ?? <em>No description</em>}</Typography>
-    <Typography gutterBottom variant="body2">
-      Version: {workflow.version ?? <em>n/a</em>}
-    </Typography>
-  </BaseCard>
-);
+      <Typography
+        sx={{ color: "text.secondary", textTransform: "uppercase", fontWeight: "bold" }}
+        variant="caption"
+      >
+        Workflow
+      </Typography>
+      <Typography gutterBottom>
+        {workflow.workflow_description ?? <em>No description</em>}
+      </Typography>
+      <Typography gutterBottom variant="body2">
+        Version: {workflow.version ?? <em>n/a</em>}
+      </Typography>
+    </BaseCard>
+  );
+};

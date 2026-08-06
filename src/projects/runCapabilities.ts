@@ -7,6 +7,12 @@ import { type ProjectFacts } from "./projectFacts";
 import { type RunDefinitionItem, runDefinitionUnavailability } from "./runFacts";
 
 export type RunCapabilities = {
+  /**
+   * Whether the Data Manager itself will run the version being looked at. It is stated in its own
+   * right as well as folded into the launch, because a caller who also lacks authority is told
+   * what they lack first and would otherwise never learn the version is unavailable at all.
+   */
+  availability: ProjectCapability;
   /** Running the definition being looked at, in the project the URL addresses. */
   launch: ProjectCapability;
 };
@@ -27,7 +33,13 @@ export const resolveRunCapabilities = (
 ): RunCapabilities => {
   const runFacts: ProjectRunFacts = { ...facts, content, definitionUnavailability };
 
-  return { launch: evaluateRunLaunchCapability(runFacts) };
+  return {
+    availability:
+      definitionUnavailability === undefined
+        ? { status: "enabled" }
+        : { status: "disabled", reason: definitionUnavailability },
+    launch: evaluateRunLaunchCapability(runFacts),
+  };
 };
 
 /**

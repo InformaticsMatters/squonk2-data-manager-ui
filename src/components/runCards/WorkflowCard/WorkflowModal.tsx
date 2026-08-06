@@ -99,7 +99,7 @@ export const WorkflowModal = ({
           <Typography variant="body2">
             {workflow.workflow_description ?? <em>No description</em>}
           </Typography>
-          <CapabilityReasons capabilities={[capabilities.launch]} />
+          <CapabilityReasons capabilities={[capabilities.launch, capabilities.availability]} />
           <Box sx={{ paddingTop: 1 }}>
             <TextField
               fullWidth

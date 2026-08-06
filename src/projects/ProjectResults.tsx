@@ -22,6 +22,7 @@ import {
   resultsListState,
   type ResultsState,
 } from "./routes";
+import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
 import { type SectionFilterOption, SectionToolbar } from "./SectionToolbar";
 import { type ProjectResults as ProjectResultsData, useProjectResults } from "./useProjectResults";
@@ -182,27 +183,12 @@ const ResultsSection = ({
           </Grid>
         </SectionToolbar>
 
-        {/* A refused collection and a collection that merely failed to refresh are reported
-        separately, so losing access to one never withholds the retry another one needs. */}
-        {results.report.unavailable ? (
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            These results are unavailable or you no longer have access to them.
-          </Alert>
-        ) : null}
-        {results.report.retryable ? (
-          <Alert
-            action={
-              <Button color="inherit" size="small" onClick={handleRetry}>
-                Retry
-              </Button>
-            }
-            severity="error"
-            sx={{ mb: 2 }}
-          >
-            Some results could not be refreshed. Those results may be out of date, so they cannot be
-            changed until they load again.
-          </Alert>
-        ) : null}
+        <SectionReadAlerts
+          report={results.report}
+          retryableMessage="Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again."
+          unavailableMessage="These results are unavailable or you no longer have access to them."
+          onRetry={handleRetry}
+        />
 
         {localNotFound ? (
           <Alert severity="warning" sx={{ mb: 2 }}>

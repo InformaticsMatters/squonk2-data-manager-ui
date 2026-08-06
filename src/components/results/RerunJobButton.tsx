@@ -43,7 +43,9 @@ export const RerunJobButton = ({ instance, rerun, resultsState }: RerunJobButton
       </Button>
       {!!open && (
         <JobModal
-          capabilities={{ launch: rerun }}
+          // A rerun addresses an instance rather than a catalogue version, so the Data Manager
+          // declares no availability of its own here; only the owning project decides.
+          capabilities={{ availability: { status: "enabled" }, launch: rerun }}
           instance={instance}
           jobId={instance.job_id}
           open={open}

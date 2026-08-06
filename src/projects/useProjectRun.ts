@@ -32,10 +32,11 @@ import {
 
 export type ProjectRunCatalogue = {
   /**
-   * The addressed project's own executions are still being read. They are read separately from the
-   * definitions they came from, so a card must not answer that it has none until they arrive.
+   * The addressed project's own executions are still being read, per collection. They are read
+   * separately from the definitions they came from, so a card must not answer that it has none
+   * until they arrive — and a card waits only on the collection it actually lists.
    */
-  executionsLoading: boolean;
+  executionsLoading: { instances: boolean; runningWorkflows: boolean };
   /** Each catalogue's content is only as fresh as its own last read. */
   freshness: Record<RunFilterType, "current" | "stale">;
   /** Existing instances of the addressed project, offered beside the definitions that made them. */
@@ -108,7 +109,10 @@ export const useProjectRun = (projectId: string): ProjectRunCatalogue => {
   });
 
   return {
-    executionsLoading: instances.isLoading || runningWorkflows.isLoading,
+    executionsLoading: {
+      instances: instances.isLoading,
+      runningWorkflows: runningWorkflows.isLoading,
+    },
     freshness,
     instances: readableContent(executionReadStates.instance, instances.data),
     isLoading: applications.isLoading || jobs.isLoading || workflows.isLoading,

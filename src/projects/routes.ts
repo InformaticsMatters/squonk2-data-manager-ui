@@ -112,7 +112,9 @@ const filterState = <TValue extends string>(
   types: readonly TValue[] | undefined,
 ): SearchState & { types?: readonly TValue[] } => ({
   ...(search ? { search } : {}),
-  ...(types ? { types } : {}),
+  // A state that narrows to no type narrows to nothing at all, so it is the same absent value the
+  // link builder and the list already read it as.
+  ...(types?.length ? { types } : {}),
 });
 
 const parseFilterState = <TValue extends string>(

@@ -95,7 +95,7 @@ export const ApplicationModal = ({
             <Typography variant="body2">{application.group}</Typography>
           </Grid>
           <Grid size={{ xs: 12 }}>
-            <CapabilityReasons capabilities={[capabilities.launch]} />
+            <CapabilityReasons capabilities={[capabilities.launch, capabilities.availability]} />
           </Grid>
           <Grid size={{ xs: 12 }}>
             <TextField

@@ -14,10 +14,10 @@ import { InstancesList } from "../InstancesList";
 import { RunDefinitionButton } from "../RunDefinitionButton";
 
 export interface JobCardProps {
+  /** The read listing this project's instances has not answered yet. */
+  executionsLoading?: boolean;
   /** This job's existing instances inside the project that owns them. */
   instances: readonly InstanceSummary[];
-  /** Those instances are still being listed, so the card cannot say it has none. */
-  isLoading?: boolean;
   /**
    * Every version of one job, newest first. Each version has its own canonical definition route.
    */
@@ -33,8 +33,8 @@ export interface JobCardProps {
  * version selected on the card and listing the instances the addressed project already has of it.
  */
 export const JobCard = ({
+  executionsLoading,
   instances,
-  isLoading,
   jobs,
   projectId,
   resolveCapabilities,
@@ -52,7 +52,7 @@ export const JobCard = ({
       accentColor="primary.main"
       actions={
         <>
-          <CapabilityReasons capabilities={[capabilities.launch]} />
+          <CapabilityReasons capabilities={[capabilities.launch, capabilities.availability]} />
           <TextField
             select
             disabled={jobs.length === 1}
@@ -77,7 +77,7 @@ export const JobCard = ({
           />
         </>
       }
-      collapsed={<InstancesList instances={instances} isLoading={isLoading} />}
+      collapsed={<InstancesList instances={instances} isLoading={executionsLoading} />}
       header={{ subtitle: job.name, avatar: job.job[0], title: job.job }}
     >
       <Typography

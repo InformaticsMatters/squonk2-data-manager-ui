@@ -210,14 +210,27 @@ test("searching narrows the catalogue and settles into the route that owns it", 
   await login(page, acceptanceRun, testInfo);
   await expect(page.getByText("AcceptanceNotebook")).toBeVisible();
 
-  // The field stays responsive while it is typed into, and the route follows once typing settles.
-  await page.getByLabel(/Search/u).fill("docking");
+  // The shortcut reaches the field without the caller having to find it.
+  await page.keyboard.press(process.platform === "darwin" ? "Meta+f" : "Control+f");
+  await expect(page.getByLabel(/Search/u)).toBeFocused();
+
+  // Typed one character at a time, the field keeps every keystroke and the route is written only
+  // once typing settles — never once per character, and never rolled back to a half-typed value.
+  const search = page.getByLabel(/Search/u);
+  await search.pressSequentially("docking", { delay: 40 });
+  await expect(search).toHaveValue("docking");
   await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}?search=docking`);
   await expect(page.getByText("acceptance-job", { exact: true })).toBeVisible();
   await expect(page.getByText("AcceptanceNotebook")).toHaveCount(0);
 
+  // Typing on past a value the route has just taken keeps what was typed rather than the route's
+  // older answer, so a settled write can never undo the keystrokes that followed it.
+  await search.pressSequentially("-run", { delay: 40 });
+  await expect(search).toHaveValue("docking-run");
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}?search=docking-run`);
+
   // Clearing it returns the catalogue and leaves no state behind on the route.
-  await page.getByLabel(/Search/u).fill("");
+  await search.fill("");
   await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}`);
   await expect(page.getByText("AcceptanceNotebook")).toBeVisible();
 });

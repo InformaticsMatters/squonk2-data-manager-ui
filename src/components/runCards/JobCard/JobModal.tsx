@@ -180,7 +180,7 @@ export const JobModal = ({
           <Typography variant="body2">
             {job.collection} • version {job.version}
           </Typography>
-          <CapabilityReasons capabilities={[capabilities.launch]} />
+          <CapabilityReasons capabilities={[capabilities.launch, capabilities.availability]} />
           <Box sx={{ paddingTop: 1 }}>
             <TextField
               fullWidth

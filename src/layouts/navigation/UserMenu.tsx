@@ -38,6 +38,7 @@ export const UserMenu = () => {
         <span>
           <Badge badgeContent={count} color="success" max={99}>
             <IconButton
+              aria-label="Account"
               color="inherit"
               disabled={isLoading}
               edge="end"

@@ -132,6 +132,20 @@ const managePath = `projects/${fixtureIds.project}/manage`;
 const factRow = (page: Page, label: string) =>
   page.getByRole("listitem").filter({ hasText: new RegExp(`^${label}`, "u") });
 
+/** Each project change Manage owns is one labelled region containing its control and its answer. */
+const members = (page: Page, role: string) => page.getByRole("region", { name: role });
+const privacyControl = (page: Page) => page.getByRole("region", { name: "Privacy" });
+const privacySwitch = (page: Page) => privacyControl(page).getByRole("switch", { name: "Private" });
+
+/** One member of a list, as the chip the control shows for them. */
+const memberChip = (page: Page, role: string, username: string) =>
+  members(page, role).getByRole("button", { name: username, exact: true });
+
+const addMember = async (page: Page, role: string, username: string) => {
+  await members(page, role).getByRole("combobox").click();
+  await page.getByRole("option", { name: username, exact: true }).click();
+};
+
 test("Manage presents project facts and available actions to a project administrator", async ({
   page,
 }, testInfo) => {
@@ -148,10 +162,15 @@ test("Manage presents project facts and available actions to a project administr
   await expect(factRow(page, "Your access")).toContainText("Administrator, Creator, Editor");
   await expect(factRow(page, "Containing unit")).toContainText("Acceptance Unit");
   await expect(factRow(page, "Owning organisation")).toContainText("Acceptance Organisation");
-  await expect(factRow(page, "Administrators")).toContainText(subject);
-  await expect(factRow(page, "Observers")).toContainText(`${subject}-observer`);
+  await expect(memberChip(page, "Administrators", subject)).toBeVisible();
+  await expect(memberChip(page, "Observers", `${subject}-observer`)).toBeVisible();
 
-  for (const label of ["Change privacy", "Change administrators", "Change files", "Run work"]) {
+  // Manage owns these changes, so an administrator is offered the controls themselves.
+  await expect(privacySwitch(page)).toBeEnabled();
+  for (const role of ["Administrators", "Editors", "Observers"]) {
+    await expect(members(page, role).getByRole("combobox")).toBeEnabled();
+  }
+  for (const label of ["Change files", "Run work"]) {
     await expect(factRow(page, label)).toContainText("Available to you.");
   }
 
@@ -188,12 +207,27 @@ test("Manage stays available to a project viewer and explains every unavailable 
   await expect(factRow(page, "Your access")).toContainText("Observer");
   await expect(page.getByText("You have read-only access to this project.")).toBeVisible();
 
+  // An ordinary unavailable control stays visible and disabled, with the reason beside it.
+  await expect(privacySwitch(page)).toBeDisabled();
   await expect(
-    page.getByText("You must be a project administrator to change project privacy."),
+    privacyControl(page).getByText(
+      "You must be a project administrator to change project privacy.",
+    ),
   ).toBeVisible();
-  await expect(
-    page.getByText("You must be a project administrator to change project administrators."),
-  ).toBeVisible();
+  for (const [role, requirement] of [
+    ["Administrators", "administrators"],
+    ["Editors", "editors"],
+    ["Observers", "observers"],
+  ]) {
+    await expect(members(page, role).getByRole("combobox")).toBeDisabled();
+    await expect(
+      members(page, role).getByText(
+        `You must be a project administrator to change project ${requirement}.`,
+      ),
+    ).toBeVisible();
+  }
+  // A viewer still reads the memberships they cannot change.
+  await expect(memberChip(page, "Observers", subjectFor(testInfo))).toBeVisible();
   await expect(
     page.getByText("You must be a project administrator to delete this project."),
   ).toBeVisible();
@@ -225,7 +259,8 @@ test("the platform-administrator action is offered alone and its rejection chang
   await expect(factRow(page, "Your access")).toContainText("No project role");
   // The realm role offers its own action alone; it is not ordinary authority over the project.
   await expect(page.getByText("You have read-only access to this project.")).toBeVisible();
-  await expect(factRow(page, "Change privacy")).toContainText(
+  await expect(privacySwitch(page)).toBeDisabled();
+  await expect(privacyControl(page)).toContainText(
     "You must be a project administrator to change project privacy.",
   );
 
@@ -248,5 +283,133 @@ test("the platform-administrator action is offered alone and its rejection chang
   await expect(page.getByText("You already administer this project.")).toBeVisible();
   // Ordinary authority arrives with the membership the server granted, not with the realm role.
   await expect(page.getByText("You have read-only access to this project.")).toHaveCount(0);
-  await expect(factRow(page, "Change privacy")).toContainText("Available to you.");
+  await expect(privacySwitch(page)).toBeEnabled();
+});
+
+test("Manage owns project privacy and every project role change", async ({ page }, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const colleague = `${subject}-observer`;
+  await login(page, managePath, testInfo);
+  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
+
+  // Privacy. The project's own state answers, and the change is stated where it was made.
+  await expect(privacySwitch(page)).toBeChecked();
+  await privacySwitch(page).click();
+  await expect(privacyControl(page).getByText("This project is now public.")).toBeVisible();
+  await expect(factRow(page, "Privacy")).toContainText("Public");
+  await expect(page.getByText("Public", { exact: true }).first()).toBeVisible();
+
+  await privacySwitch(page).click();
+  await expect(privacyControl(page).getByText("This project is now private.")).toBeVisible();
+  await expect(factRow(page, "Privacy")).toContainText("Private");
+
+  // Each membership list is changed here and nowhere else.
+  await addMember(page, "Administrators", colleague);
+  await expect(
+    members(page, "Administrators").getByText(
+      `${colleague} is now an administrator of this project.`,
+    ),
+  ).toBeVisible();
+  await expect(memberChip(page, "Administrators", colleague)).toBeVisible();
+
+  await addMember(page, "Editors", colleague);
+  await expect(
+    members(page, "Editors").getByText(`${colleague} is now an editor of this project.`),
+  ).toBeVisible();
+  await expect(memberChip(page, "Editors", colleague)).toBeVisible();
+
+  await members(page, "Observers").getByLabel(`Remove ${colleague}`).click();
+  await expect(
+    members(page, "Observers").getByText(`${colleague} is no longer an observer of this project.`),
+  ).toBeVisible();
+  await expect(memberChip(page, "Observers", colleague)).toHaveCount(0);
+
+  // The refreshed project is what is displayed, and the URL never moved.
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
+  await page.reload();
+  await expect(memberChip(page, "Administrators", colleague)).toBeVisible();
+  await expect(memberChip(page, "Editors", colleague)).toBeVisible();
+  await expect(memberChip(page, "Observers", colleague)).toHaveCount(0);
+  await expect(factRow(page, "Privacy")).toContainText("Private");
+});
+
+test("a rejected project change is feedback alone, and restored access succeeds", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const colleague = `${subject}-observer`;
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/project-mutation-failure?status=403`,
+  );
+  await login(page, managePath, testInfo);
+  await expect(privacySwitch(page)).toBeEnabled();
+
+  await privacySwitch(page).click();
+  await expect(
+    privacyControl(page).getByText(
+      `You cannot change the privacy of project ${fixtureIds.project}. It is unavailable or you do not have access. The displayed project has not changed.`,
+    ),
+  ).toBeVisible();
+  // A refusal changes neither the displayed project, nor its organisation, nor the route.
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
+  await expect(page.getByText("Acceptance Unit · Acceptance Organisation")).toBeVisible();
+  await expect(factRow(page, "Privacy")).toContainText("Private");
+  await expect(privacySwitch(page)).toBeChecked();
+
+  await addMember(page, "Editors", colleague);
+  await expect(
+    members(page, "Editors").getByText(
+      `You cannot change the editors of project ${fixtureIds.project}. It is unavailable or you do not have access. The displayed project has not changed.`,
+    ),
+  ).toBeVisible();
+  await expect(memberChip(page, "Editors", colleague)).toHaveCount(0);
+
+  // Restored access needs no reload: the same control is still the next step.
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/project-mutation-failure`);
+  await addMember(page, "Editors", colleague);
+  await expect(
+    members(page, "Editors").getByText(`${colleague} is now an editor of this project.`),
+  ).toBeVisible();
+  await expect(memberChip(page, "Editors", colleague)).toBeVisible();
+});
+
+test("unconfirmed project facts leave changes available and defer to the server", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/caller-account-failure`);
+  await login(page, managePath, testInfo);
+  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
+
+  // Facts that cannot establish the caller never claim authority, and never claim its absence.
+  await expect(factRow(page, "Your access")).toContainText("No project role");
+  await expect(page.getByText("You have read-only access to this project.")).toHaveCount(0);
+  await expect(privacySwitch(page)).toBeEnabled();
+  await expect(privacyControl(page)).toContainText(
+    "You must be a project administrator to change project privacy. Your permission will be confirmed when you use this action.",
+  );
+
+  // A transport failure states that nothing changed and leaves the control usable.
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/project-mutation-failure?status=503`,
+  );
+  await privacySwitch(page).click();
+  await expect(
+    privacyControl(page).getByText(
+      `Could not change the privacy of project ${fixtureIds.project}. The displayed project has not changed; retry is available.`,
+    ),
+  ).toBeVisible();
+  await expect(factRow(page, "Privacy")).toContainText("Private");
+  await expect(privacySwitch(page)).toBeChecked();
+
+  // Once the caller and the server both answer, the same control completes the change.
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/project-mutation-failure`);
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/caller-account-failure`);
+  await page.reload();
+  await expect(factRow(page, "Your access")).toContainText("Administrator, Creator, Editor");
+  await privacySwitch(page).click();
+  await expect(privacyControl(page).getByText("This project is now public.")).toBeVisible();
+  await expect(factRow(page, "Privacy")).toContainText("Public");
 });

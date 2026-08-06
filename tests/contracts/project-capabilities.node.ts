@@ -19,7 +19,6 @@ import {
   resolvePlatformAdministrator,
   resolveProjectRoles,
 } from "../../src/projects/capabilities";
-import { projectMutationFailureMessage } from "../../src/projects/failures";
 import { describeProjectSubscription } from "../../src/projects/projectSubscription";
 
 const administrator = "administrator@example.org";
@@ -27,7 +26,6 @@ const editor = "editor@example.org";
 const observer = "observer@example.org";
 const creator = "creator@example.org";
 const stranger = "stranger@example.org";
-const projectId = "project-33333333-3333-4333-8333-333333333333";
 const productId = "product-77777777-7777-4777-8777-777777777777";
 
 const project = (overrides: Partial<ProjectDetail> = {}) =>
@@ -69,8 +67,6 @@ const facts = (options: FactOptions = {}): ProjectCapabilityFacts => {
     ...(freshness ? { freshness } : {}),
   };
 };
-
-const rejection = (status: number) => new Response(null, { status });
 
 /** An unconfirmed capability stays available, but still states what the action requires. */
 const unconfirmed = (requirement: string) => ({
@@ -477,36 +473,5 @@ test.describe("Project subscription facts", () => {
       type: "DATA_MANAGER_STORAGE_SUBSCRIPTION",
       used: 25,
     });
-  });
-});
-
-test.describe("Authoritative project command feedback", () => {
-  const action = "take administration of";
-  const resource = `project ${projectId}`;
-
-  test("a server 403 is reported as authorization feedback that changed nothing", () => {
-    expect(projectMutationFailureMessage(rejection(403), action, resource)).toBe(
-      `You cannot ${action} ${resource}. It is unavailable or you do not have access. The displayed project has not changed.`,
-    );
-  });
-
-  test("a rejection and a missing resource are indistinguishable", () => {
-    // Comparing the two answers must never reveal whether the addressed resource exists.
-    expect(projectMutationFailureMessage(rejection(404), action, resource)).toBe(
-      projectMutationFailureMessage(rejection(403), action, resource),
-    );
-  });
-
-  test("every retryable status keeps the displayed project and offers retry", () => {
-    for (const status of [429, 500, 503]) {
-      expect(projectMutationFailureMessage(rejection(status), action, resource)).toBe(
-        `Could not ${action} ${resource}. The displayed project has not changed; retry is available.`,
-      );
-    }
-  });
-
-  test("unclassifiable transport facts defer to the shared error presentation", () => {
-    expect(projectMutationFailureMessage(new Error("boom"), action, resource)).toBeUndefined();
-    expect(projectMutationFailureMessage(rejection(418), action, resource)).toBeUndefined();
   });
 });

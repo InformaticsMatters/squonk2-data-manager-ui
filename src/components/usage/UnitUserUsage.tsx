@@ -1,13 +1,13 @@
 import { useGetUnit } from "@/api/account-server/unit";
 import { useGetOrganisationUnitUsers } from "@/api/account-server/user";
-import { getGetUserInventoryQueryKey, useGetUserInventory } from "@/api/data-manager/inventory";
+import { useGetUserInventory } from "@/api/data-manager/inventory";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
 import {
   Alert,
@@ -18,7 +18,6 @@ import {
   Switch,
   Typography,
 } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 
 import { CenterLoader } from "../CenterLoader";
@@ -36,14 +35,6 @@ export interface UnitUserUsageProps {
 }
 
 export const UnitUserUsage = ({ unitId }: UnitUserUsageProps) => {
-  const queryClient = useQueryClient();
-
-  const invalidateQueries = useCallback(async () => {
-    await queryClient.invalidateQueries({
-      queryKey: getGetUserInventoryQueryKey({ unit_id: unitId }),
-    });
-  }, [queryClient, unitId]);
-
   const { data, error: inventoryError } = useGetUserInventory({ unit_id: unitId });
   const { data: unit, error: unitError } = useGetUnit(unitId);
   const { data: unitUserList, error: unitUsersError } = useGetOrganisationUnitUsers(unitId);
@@ -98,13 +89,9 @@ export const UnitUserUsage = ({ unitId }: UnitUserUsageProps) => {
 
       <Box sx={{ marginY: 1 }}>
         {pivot ? (
-          <UserUsageByProjectTable
-            toolbarContent={pivotToggle}
-            users={users}
-            onChange={invalidateQueries}
-          />
+          <UserUsageByProjectTable toolbarContent={pivotToggle} users={users} />
         ) : (
-          <UserUsageTable toolbarContent={pivotToggle} users={users} onChange={invalidateQueries} />
+          <UserUsageTable toolbarContent={pivotToggle} users={users} />
         )}
       </Box>
 

@@ -11,6 +11,8 @@ export type RequestRecord = {
 
 export type ScenarioState = {
   accessFailure?: 403 | 503;
+  /** The caller's own Data Manager account read, whose failure leaves project facts unconfirmed. */
+  callerAccountFailure?: 503;
   chargeFailure?: 403 | 429 | 503;
   datasetContentFailure?: 403 | 429 | 503;
   datasetFailure?: 429 | 503;

@@ -1,15 +1,16 @@
-import { type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useMemo } from "react";
 
 import { type InventoryUserDetail } from "@/api/data-manager";
 
-import { Edit } from "@mui/icons-material";
-import { Chip, Typography } from "@mui/material";
+import { Chip, Link as MuiLink, Typography } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
 import groupBy from "just-group-by";
+import Link from "next/link";
 
+import { projectLinks } from "../../projects/routes";
+import { isProjectId } from "../../routing/identifiers";
 import { Chips } from "../Chips";
 import { DataTable } from "../DataTable";
-import { EditProjectModal } from "../projects/EditProjectButton/EditProjectModal";
 
 type PivotProject = {
   project_id: string;
@@ -46,7 +47,17 @@ const columns = [
         header: "Administrators",
         cell: ({ getValue }) => <UserChips users={getValue()} />,
       }),
-      columnHelper.display({ id: "icon", cell: () => <Edit /> }),
+      // This report is read-only: a project's roles are changed on that project's Manage route. An
+      // identifier the route family would not accept keeps its row rather than failing the report.
+      columnHelper.display({
+        id: "manage",
+        cell: ({ row }) =>
+          isProjectId(row.original.project_id) ? (
+            <MuiLink component={Link} href={projectLinks.manage(row.original.project_id) as never}>
+              Manage project
+            </MuiLink>
+          ) : null,
+      }),
     ],
   }),
 ];
@@ -98,10 +109,6 @@ export interface UserUsageByProjectTableProps {
    */
   users: InventoryUserDetail[];
   /**
-   * callback for when a change is made, usually used to invalidate queries
-   */
-  onChange: () => Promise<void>;
-  /**
    * toolbar content
    */
   toolbarContent?: ReactNode;
@@ -109,39 +116,16 @@ export interface UserUsageByProjectTableProps {
 
 export const UserUsageByProjectTable = ({
   users,
-  onChange,
   toolbarContent,
 }: UserUsageByProjectTableProps) => {
   const projects = useMemo(() => pivotProjects(users), [users]);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>(undefined);
-  const selectedProject = projects.find((project) => project.project_id === selectedProjectId);
 
   return (
     <>
-      {!!selectedProject && (
-        <EditProjectModal
-          open={!!selectedProjectId}
-          projectId={selectedProject.project_id}
-          onClose={() => setSelectedProjectId(undefined)}
-          onMemberChange={onChange}
-        />
-      )}
-
       <Typography gutterBottom variant="h4">
         Project Members
       </Typography>
-      <DataTable
-        columns={columns}
-        customRowProps={(row) => ({
-          hover: true,
-          sx: { cursor: "pointer" },
-          onClick: () => {
-            setSelectedProjectId(row.original.project_id);
-          },
-        })}
-        data={projects}
-        toolbarContent={toolbarContent}
-      />
+      <DataTable columns={columns} data={projects} toolbarContent={toolbarContent} />
     </>
   );
 };

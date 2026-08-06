@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from "react";
+import { type ReactNode } from "react";
 
 import { Alert, Box, Button, Chip, Container, Stack, Typography } from "@mui/material";
 import Link from "next/link";
@@ -9,7 +9,6 @@ import Layout from "../layouts/Layout";
 import { isProductId } from "../routing/identifiers";
 import { toLocalTimeString } from "../utils/app/datetime";
 import {
-  capabilityReason,
   evaluateProjectAdministratorsCapability,
   evaluateProjectDeletionCapability,
   evaluateProjectEditorsCapability,
@@ -22,10 +21,13 @@ import {
   projectIsReadOnly,
   type ProjectRoles,
 } from "./capabilities";
-import { projectMutationFailureMessage } from "./failures";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
+import {
+  PlatformAdministrationAction,
+  ProjectMembersControl,
+  ProjectPrivacyControl,
+} from "./ProjectManageActions";
 import { type ProjectSubscriptionFacts } from "./projectSubscription";
-import { useProjectCommands } from "./useProjectCommands";
 
 const atLimitMessage = "This project's subscription is at its coin limit.";
 
@@ -88,8 +90,6 @@ const accessLabel = (roles: ProjectRoles) => {
   return held.length > 0 ? held.join(", ") : "No project role";
 };
 
-const userList = (users: string[]) => (users.length > 0 ? users.join(", ") : "None");
-
 const SubscriptionFacts = ({ subscription }: { subscription: ProjectSubscriptionFacts }) => (
   <>
     {!!subscription.atLimit && (
@@ -115,65 +115,6 @@ const SubscriptionFacts = ({ subscription }: { subscription: ProjectSubscription
     </Facts>
   </>
 );
-
-/**
- * The one exclusively platform-administrator project action. Its rejection is presented in place:
- * the project in the URL, the adopted organisation, and the canonical route are untouched, because
- * the server response is authorization feedback rather than a navigation event.
- */
-const PlatformAdministrationAction = ({
-  capability,
-  projectId,
-  username,
-}: {
-  capability: ProjectCapability;
-  projectId: string;
-  username: string;
-}) => {
-  const commands = useProjectCommands();
-  const [feedback, setFeedback] = useState<{ message: string; rejected: boolean } | undefined>();
-  const [isPending, setIsPending] = useState(false);
-
-  const take = async () => {
-    setIsPending(true);
-    setFeedback(undefined);
-    try {
-      await commands.takeProjectAdministration(projectId, username);
-      setFeedback({ message: "You now administer this project.", rejected: false });
-    } catch (error) {
-      const message = projectMutationFailureMessage(
-        error,
-        "take administration of",
-        `project ${projectId}`,
-      );
-      setFeedback({
-        message: message ?? "Could not take administration of this project.",
-        rejected: true,
-      });
-    }
-    setIsPending(false);
-  };
-
-  return (
-    <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
-      <Button
-        disabled={capability.status === "disabled" || isPending}
-        variant="outlined"
-        onClick={() => void take()}
-      >
-        Take project administration
-      </Button>
-      {capabilityReason(capability) ? (
-        <Typography color="text.secondary" variant="body2">
-          {capabilityReason(capability)}
-        </Typography>
-      ) : null}
-      {feedback ? (
-        <Alert severity={feedback.rejected ? "warning" : "success"}>{feedback.message}</Alert>
-      ) : null}
-    </Stack>
-  );
-};
 
 const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
   const { organisation, product, project, subscription, unit } = facts;
@@ -213,19 +154,37 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
           <Fact label="Containing unit" value={unit.name} />
           <Fact label="Owning organisation" value={organisation.name} />
           <Fact label="Privacy" value={project.private ? "Private" : "Public"} />
-          <CapabilityFact capability={privacy} label="Change privacy" />
         </Facts>
+        <ProjectPrivacyControl
+          capability={privacy}
+          isPrivate={project.private}
+          projectId={project.project_id}
+        />
       </Section>
 
+      {/* Manage is the only owner of these lists. Each control reads the project in the URL and
+          answers to its own capability, so no other screen has to decide who may change them. */}
       <Section title="People">
-        <Facts>
-          <Fact label="Administrators" value={userList(project.administrators)} />
-          <CapabilityFact capability={administrators} label="Change administrators" />
-          <Fact label="Editors" value={userList(project.editors)} />
-          <CapabilityFact capability={editors} label="Change editors" />
-          <Fact label="Observers" value={userList(project.observers)} />
-          <CapabilityFact capability={observers} label="Change observers" />
-        </Facts>
+        <Stack spacing={3}>
+          <ProjectMembersControl
+            capability={administrators}
+            members={project.administrators}
+            projectId={project.project_id}
+            role="administrator"
+          />
+          <ProjectMembersControl
+            capability={editors}
+            members={project.editors}
+            projectId={project.project_id}
+            role="editor"
+          />
+          <ProjectMembersControl
+            capability={observers}
+            members={project.observers}
+            projectId={project.project_id}
+            role="observer"
+          />
+        </Stack>
       </Section>
 
       <Section title="Subscription and usage">

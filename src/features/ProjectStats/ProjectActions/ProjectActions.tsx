@@ -1,12 +1,13 @@
 import { useGetProject } from "@/api/data-manager/project";
 
-import { Edit as EditIcon } from "@mui/icons-material";
+import { Settings as ManageIcon } from "@mui/icons-material";
 import { Box, CircularProgress, IconButton, Tooltip } from "@mui/material";
+import Link from "next/link";
 
 import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkIconButton";
-import { EditProjectButton } from "../../../components/projects/EditProjectButton";
 import { OpenProjectButton } from "../../../components/projects/OpenProjectButton";
 import { type ProjectId } from "../../../hooks/projectHooks";
+import { projectLinks } from "../../../projects/routes";
 import { DeleteProjectButton } from "./DeleteProjectButton";
 
 export interface ProjectActionsProps {
@@ -34,21 +35,19 @@ export const ProjectActions = ({
   return project ? (
     <Box sx={{ display: "flex" }}>
       <OpenProjectButton projectId={projectId} />
-      {!!(isEditor || isProjectAdministrator) && (
-        <EditProjectButton projectId={project.project_id}>
-          {({ openDialog }) => {
-            return (
-              <Tooltip title="Edit Project">
-                <span>
-                  <IconButton size="small" sx={{ p: "1px" }} onClick={openDialog}>
-                    <EditIcon />
-                  </IconButton>
-                </span>
-              </Tooltip>
-            );
-          }}
-        </EditProjectButton>
-      )}
+      {/* Project privacy and membership belong to the project's own Manage route, so this report
+          links there rather than owning a second way to change them. Manage is readable by every
+          project viewer and explains what it cannot offer, so the link is not gated on authority. */}
+      <Tooltip title="Manage project">
+        <IconButton
+          component={Link}
+          href={projectLinks.manage(project.project_id) as never}
+          size="small"
+          sx={{ p: "1px" }}
+        >
+          <ManageIcon />
+        </IconButton>
+      </Tooltip>
       {!!isCreator && <DeleteProjectButton project={project} />}
       {!!(isEditor || isProjectAdministrator) && (
         <ChargesLinkIconButton productId={project.product_id} />

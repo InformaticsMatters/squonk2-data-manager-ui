@@ -60,10 +60,12 @@ export const ManageUsers: FC<ManageUsersProps> = ({
   onRemove,
   onInputChange,
 }) => {
-  const { data, isLoading: isUsersLoading } = useGetUsers();
+  // The directory is only needed to offer someone new, so a list the caller may not change reads
+  // the memberships it already holds without asking who else exists.
+  const { data, isLoading: isUsersLoading } = useGetUsers({ query: { enabled: !disabled } });
   const availableUsers = data?.users ?? [];
 
-  const loading = isUsersLoading || isLoading;
+  const loading = (!disabled && isUsersLoading) || isLoading;
 
   const updateUsers = async (value: string[], reason: AutocompleteChangeReason) => {
     switch (reason) {

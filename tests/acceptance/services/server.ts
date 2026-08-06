@@ -102,6 +102,26 @@ const cors = (request: IncomingMessage, response: ServerResponse) => {
   response.setHeader("access-control-allow-origin", request.headers.origin ?? "*");
 };
 
+/** The generated project resource's membership list each addressable role writes to. */
+const membershipLists = {
+  administrator: "administrators",
+  editor: "editors",
+  observer: "observers",
+} as const;
+
+const isMembershipRole = (segment: string): segment is keyof typeof membershipLists =>
+  segment in membershipLists;
+
+/** One project command rejection, so a refusal and a transport failure are told apart by status. */
+const projectMutationFailure = (state: ScenarioState, response: ServerResponse) =>
+  json(
+    response,
+    state.projectMutationFailure ?? 503,
+    state.projectMutationFailure === 403
+      ? state.fixtures.failures.forbidden
+      : state.fixtures.failures.serverError,
+  );
+
 /** The result tasks a project owns; a project that ran none owns an empty collection. */
 const resultTasksOf = (state: ScenarioState, projectId: string) =>
   Object.entries(state.fixtures.resultTasks).find(([owner]) => owner === projectId)?.[1] ?? {
@@ -401,15 +421,11 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
         })
       : json(response, 404, { error: "fixture-running-workflow-not-found" });
   }
-  if (segments[0] === "project" && segments[2] === "administrator" && segments.length === 4) {
+  // Every project membership list is addressed the same way, so one handler answers for all three
+  // and a test cannot accidentally exercise a role the fixture treats specially.
+  if (segments[0] === "project" && segments.length === 4 && isMembershipRole(segments[2])) {
     if (state.projectMutationFailure) {
-      return json(
-        response,
-        state.projectMutationFailure,
-        state.projectMutationFailure === 403
-          ? state.fixtures.failures.forbidden
-          : state.fixtures.failures.serverError,
-      );
+      return projectMutationFailure(state, response);
     }
     const project = state.fixtures.projects.projects.find(
       (candidate) => candidate.project_id === segments[1],
@@ -418,11 +434,33 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       return json(response, 404, { error: "fixture-project-not-found" });
     }
     const username = decodeURIComponent(segments[3]);
-    project.administrators =
+    const list = membershipLists[segments[2]];
+    project[list] =
       request.method === "PUT"
-        ? [...new Set([...project.administrators, username])]
-        : project.administrators.filter((administrator) => administrator !== username);
+        ? [...new Set([...project[list], username])]
+        : project[list].filter((member) => member !== username);
     return json(response, 204, undefined);
+  }
+  if (segments[0] === "project" && segments.length === 2 && request.method === "PATCH") {
+    // The body is drained before anything else answers, so a refused command leaves no unread
+    // request behind on a connection the next one reuses.
+    const form = new URLSearchParams((await readBody(request)).toString());
+    if (state.projectMutationFailure) {
+      return projectMutationFailure(state, response);
+    }
+    // A patch changes the project it addressed, so a command that named the wrong one would be
+    // recognisable rather than silently applied to whichever project the fixture lists first.
+    const project = state.fixtures.projects.projects.find(
+      (candidate) => candidate.project_id === segments[1],
+    );
+    if (!project) {
+      return json(response, 404, { error: "fixture-project-not-found" });
+    }
+    const isPrivate = form.get("private");
+    if (isPrivate !== null) {
+      project.private = isPrivate === "true";
+    }
+    return json(response, 200, project);
   }
   if (url.pathname === `/project/${fixtureIds.screeningProject}`) {
     const screening = state.fixtures.projects.projects.find(
@@ -547,7 +585,11 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     return json(response, 200, state.fixtures.types);
   }
   if (url.pathname === "/user/account") {
-    return json(response, 200, state.fixtures.dataManagerAccount);
+    // The caller's own account is what confirms who they are, so a failure here is exactly the
+    // state in which project facts cannot establish authority.
+    return state.callerAccountFailure
+      ? json(response, state.callerAccountFailure, state.fixtures.failures.serverError)
+      : json(response, 200, state.fixtures.dataManagerAccount);
   }
   if (url.pathname === "/user") {
     return json(response, 200, state.fixtures.users);
@@ -1145,6 +1187,14 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/project-mutation-failure") && request.method === "DELETE") {
     getScenario(subject).projectMutationFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/caller-account-failure") && request.method === "POST") {
+    getScenario(subject).callerAccountFailure = 503;
+    return json(response, 200, { callerAccountFailure: 503, subject });
+  }
+  if (url.pathname.endsWith("/caller-account-failure") && request.method === "DELETE") {
+    getScenario(subject).callerAccountFailure = undefined;
     return json(response, 200, { subject });
   }
   if (request.method === "POST") {

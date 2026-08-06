@@ -225,6 +225,14 @@ test.describe("Project mutation ownership", () => {
     expect(owner).not.toMatch(/useCurrentProject|useRouteProject|useSelectedOrganisation/u);
   });
 
+  test("a failed project command is presented once, where the control is", () => {
+    // The classified message is the only sentence any screen shows, so Manage does not also hand
+    // the same failure to the shared error presentation and report it a second time elsewhere.
+    const screen = readFileSync(path.join(root, "projects/ProjectManageActions.tsx"), "utf8");
+    expect(screen).toContain("classifyProjectCommandFailure");
+    expect(screen).not.toMatch(/enqueueError|enqueueSnackbar/u);
+  });
+
   test("Manage is the only screen that changes project privacy or membership", () => {
     const callers = handwrittenSources().filter((file) =>
       readFileSync(path.join(root, file), "utf8").includes("useProjectCommands()"),

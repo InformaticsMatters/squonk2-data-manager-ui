@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Alert, Box, Button, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
 
 import { ManageUsers } from "../components/ManageUsers";
-import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { capabilityIsEnabled, capabilityReason, type ProjectCapability } from "./capabilities";
 import { classifyProjectCommandFailure } from "./failures";
 import {
@@ -23,7 +22,6 @@ type Feedback = { message: string; severity: "error" | "info" | "success" | "war
  * usable, so the next step is always available without leaving the project.
  */
 const useProjectMutation = () => {
-  const { enqueueError } = useEnqueueError();
   const [feedback, setFeedback] = useState<Feedback | undefined>();
   const [isPending, setIsPending] = useState(false);
 
@@ -41,12 +39,10 @@ const useProjectMutation = () => {
         severity: outcome.kind === "unchanged" ? "info" : "success",
       });
     } catch (error) {
+      // Every failure is classified into the one sentence the caller shows. Handing the same
+      // failure to the shared error presentation as well would answer one command twice, in two
+      // places, so the control that was used is the only place any of them is reported.
       const failure = classifyProjectCommandFailure(error, action, `project ${projectId}`);
-      if (failure.kind === "unknown") {
-        // Nothing about the transport is established, so the shared error presentation stays in
-        // charge of the detail while the control still says the project is unchanged.
-        enqueueError(error);
-      }
       setFeedback({
         message: failure.message,
         severity: failure.kind === "rejected" ? "warning" : "error",
@@ -80,20 +76,29 @@ export const ProjectPrivacyControl = ({
 }) => {
   const commands = useProjectCommands();
   const { feedback, isPending, run } = useProjectMutation();
+  const [requested, setRequested] = useState<boolean | undefined>();
   const reason = capabilityReason(capability);
+
+  const change = async (checked: boolean) => {
+    setRequested(checked);
+    await run(projectId, "change the privacy of", () =>
+      commands.setProjectPrivacy(projectId, isPrivate, checked),
+    );
+    // The project is the authority on its own privacy, so once it has answered the switch states
+    // the privacy the project has rather than the privacy that was asked for.
+    setRequested(undefined);
+  };
 
   return (
     <Box aria-label="Privacy" component="section">
       <FormControlLabel
         control={
           <Switch
-            checked={isPrivate}
+            // While a change is in flight the switch states the privacy it is applying, so a sent
+            // change never reads as one the project refused.
+            checked={requested ?? isPrivate}
             disabled={!capabilityIsEnabled(capability) || isPending}
-            onChange={(_event, checked) =>
-              void run(projectId, "change the privacy of", () =>
-                commands.setProjectPrivacy(projectId, isPrivate, checked),
-              )
-            }
+            onChange={(_event, checked) => void change(checked)}
           />
         }
         label="Private"

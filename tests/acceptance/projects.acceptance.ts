@@ -146,6 +146,29 @@ const addMember = async (page: Page, role: string, username: string) => {
   await page.getByRole("option", { name: username, exact: true }).click();
 };
 
+/** The other way a name reaches a list: typed and committed, without choosing a listed option. */
+const typeMember = async (page: Page, role: string, text: string) => {
+  const combobox = members(page, role).getByRole("combobox");
+  await combobox.click();
+  await combobox.fill(text);
+  await combobox.press("Enter");
+};
+
+/**
+ * Holds the addressed project's next privacy change until the returned release is called, so a
+ * command that has been sent and not yet answered is an observable state rather than a race.
+ */
+const holdPrivacyChange = async (page: Page) => {
+  const held = Promise.withResolvers<undefined>();
+  await page.route(`${acceptanceUrls.dataManager}/project/${fixtureIds.project}`, async (route) => {
+    if (route.request().method() === "PATCH") {
+      await held.promise;
+    }
+    await route.continue();
+  });
+  return () => held.resolve(undefined);
+};
+
 test("Manage presents project facts and available actions to a project administrator", async ({
   page,
 }, testInfo) => {
@@ -331,6 +354,53 @@ test("Manage owns project privacy and every project role change", async ({ page 
   await expect(memberChip(page, "Editors", colleague)).toBeVisible();
   await expect(memberChip(page, "Observers", colleague)).toHaveCount(0);
   await expect(factRow(page, "Privacy")).toContainText("Private");
+});
+
+test("a typed member name is a command, and one that names nobody says so", async ({
+  page,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  // Someone the directory does not list, so the name can only have arrived by being typed.
+  const newcomer = `${subject}-newcomer`;
+  await login(page, managePath, testInfo);
+  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
+
+  await typeMember(page, "Editors", newcomer);
+  await expect(
+    members(page, "Editors").getByText(`${newcomer} is now an editor of this project.`),
+  ).toBeVisible();
+  await expect(memberChip(page, "Editors", newcomer)).toBeVisible();
+
+  // A name that spells no user is declined where it was typed rather than silently dropped.
+  await typeMember(page, "Editors", "   ");
+  await expect(
+    members(page, "Editors").getByText("Enter a username to add as an editor."),
+  ).toBeVisible();
+  await expect(memberChip(page, "Editors", newcomer)).toHaveCount(1);
+
+  await page.reload();
+  await expect(memberChip(page, "Editors", newcomer)).toBeVisible();
+});
+
+test("a sent privacy change states what it is applying until the server answers", async ({
+  page,
+}, testInfo) => {
+  await login(page, managePath, testInfo);
+  await expect(privacySwitch(page)).toBeChecked();
+
+  const release = await holdPrivacyChange(page);
+  await privacySwitch(page).click();
+  // The control shows the privacy it is applying, so a sent change never reads as one that was
+  // refused, and it cannot be sent twice while the first is unanswered.
+  await expect(privacySwitch(page)).not.toBeChecked();
+  await expect(privacySwitch(page)).toBeDisabled();
+  await expect(factRow(page, "Privacy")).toContainText("Private");
+
+  release();
+  await expect(privacyControl(page).getByText("This project is now public.")).toBeVisible();
+  await expect(privacySwitch(page)).not.toBeChecked();
+  await expect(privacySwitch(page)).toBeEnabled();
+  await expect(factRow(page, "Privacy")).toContainText("Public");
 });
 
 test("a rejected project change is feedback alone, and restored access succeeds", async ({

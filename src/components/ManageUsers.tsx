@@ -69,11 +69,15 @@ export const ManageUsers: FC<ManageUsersProps> = ({
 
   const updateUsers = async (value: string[], reason: AutocompleteChangeReason) => {
     switch (reason) {
+      // A name the directory offers and a name that was typed are both a name this list was asked
+      // to hold, so committing typed text is a change its owner answers for rather than a keystroke
+      // the field drops. The owner decides what an unusable name means; this field never does.
+      case "createOption":
       case "selectOption": {
-        await onSelect(
-          value,
-          value.find((user) => !users.includes(user)),
-        );
+        // Surrounding whitespace is never part of a name, and text that spells no name at all names
+        // no user, so the list still carries what was committed while the changed user stays absent.
+        const added = value.find((user) => !users.includes(user))?.trim();
+        await onSelect(value, added === "" ? undefined : added);
         break;
       }
       case "removeOption": {

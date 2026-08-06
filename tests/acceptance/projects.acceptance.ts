@@ -156,17 +156,24 @@ const typeMember = async (page: Page, role: string, text: string) => {
 
 /**
  * Holds the addressed project's next privacy change until the returned release is called, so a
- * command that has been sent and not yet answered is an observable state rather than a race.
+ * command that has been sent and not yet answered is an observable state rather than a race. This
+ * is the one fixture behaviour a scenario cannot carry: what is under test is how long the browser
+ * waits, which only the browser's own view of the request can decide. Releasing also stops holding,
+ * so a scenario the test moves on to is answered normally.
  */
 const holdPrivacyChange = async (page: Page) => {
+  const projectUrl = `${acceptanceUrls.dataManager}/project/${fixtureIds.project}`;
   const held = Promise.withResolvers<undefined>();
-  await page.route(`${acceptanceUrls.dataManager}/project/${fixtureIds.project}`, async (route) => {
+  await page.route(projectUrl, async (route) => {
     if (route.request().method() === "PATCH") {
       await held.promise;
     }
     await route.continue();
   });
-  return () => held.resolve(undefined);
+  return async () => {
+    held.resolve(undefined);
+    await page.unroute(projectUrl);
+  };
 };
 
 test("Manage presents project facts and available actions to a project administrator", async ({
@@ -396,7 +403,7 @@ test("a sent privacy change states what it is applying until the server answers"
   await expect(privacySwitch(page)).toBeDisabled();
   await expect(factRow(page, "Privacy")).toContainText("Private");
 
-  release();
+  await release();
   await expect(privacyControl(page).getByText("This project is now public.")).toBeVisible();
   await expect(privacySwitch(page)).not.toBeChecked();
   await expect(privacySwitch(page)).toBeEnabled();

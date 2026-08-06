@@ -3,8 +3,8 @@ import { classifyTransportFailure } from "../api/runtime/classifyTransportFailur
 /**
  * What an authoritative answer to a project command was. `rejected` is the server's authorization
  * verdict, `retryable` is a transport fact that says nothing about authority, and `unknown`
- * establishes neither, so its detail belongs to the shared error presentation. Every kind carries
- * the sentence the caller shows, so no screen writes a rejection of its own.
+ * establishes neither. Every kind carries the whole sentence its caller shows, so no screen writes
+ * a rejection of its own and no failure is answered a second time somewhere else.
  */
 export type ProjectCommandFailure = { kind: "rejected" | "retryable" | "unknown"; message: string };
 

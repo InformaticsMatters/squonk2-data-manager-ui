@@ -74,8 +74,9 @@ export const ManageUsers: FC<ManageUsersProps> = ({
       // the field drops. The owner decides what an unusable name means; this field never does.
       case "createOption":
       case "selectOption": {
-        // Surrounding whitespace is never part of a name, and text that spells no name at all names
-        // no user, so the list still carries what was committed while the changed user stays absent.
+        // The named user is the one an owner acts on directly, so text that spells no name names
+        // nobody. The list itself still carries exactly what was committed, for an owner that reads
+        // the whole edit and shapes it for itself.
         const added = value.find((user) => !users.includes(user))?.trim();
         await onSelect(value, added === "" ? undefined : added);
         break;

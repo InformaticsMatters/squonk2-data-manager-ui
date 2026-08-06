@@ -46,37 +46,49 @@ export const useResultCommands = () => {
     await Promise.all(queryKeys.map((queryKey) => queryClient.invalidateQueries({ queryKey })));
   };
 
+  /**
+   * Every command refreshes what it addressed whether or not it succeeded, because a rejected
+   * command still leaves the displayed result in doubt, and rethrows so its caller can report the
+   * rejection itself.
+   */
+  const command = async (
+    mutate: () => Promise<unknown>,
+    queryKeys: readonly (readonly unknown[])[],
+  ) => {
+    try {
+      await mutate();
+    } finally {
+      await invalidate(queryKeys);
+    }
+  };
+
   return {
-    archiveInstance: async (projectId: string, instanceId: string, archive: boolean) => {
-      await patchInstance.mutateAsync({ instanceId, params: { archive } });
-      await invalidate(instanceKeys(projectId, instanceId));
-    },
+    archiveInstance: async (projectId: string, instanceId: string, archive: boolean) =>
+      command(
+        () => patchInstance.mutateAsync({ instanceId, params: { archive } }),
+        instanceKeys(projectId, instanceId),
+      ),
 
-    deleteResultTask: async (projectId: string, taskId: string) => {
-      await deleteTask.mutateAsync({ taskId });
-      await invalidate([
-        getGetTasksQueryKey(resultListRequests(projectId).tasks),
-        getGetTaskQueryKey(taskId),
-      ]);
-    },
+    deleteResultTask: async (projectId: string, taskId: string) =>
+      command(
+        () => deleteTask.mutateAsync({ taskId }),
+        [getGetTasksQueryKey(resultListRequests(projectId).tasks), getGetTaskQueryKey(taskId)],
+      ),
 
-    /**
-     * Stops a running workflow, or deletes one that has already finished. The workflow's own state
-     * is refreshed either way, because a rejected command still leaves what is displayed in doubt.
-     */
-    endRunningWorkflow: async (projectId: string, runningWorkflowId: string, done: boolean) => {
-      try {
-        await (done
-          ? deleteRunningWorkflow.mutateAsync({ runningWorkflowId })
-          : stopRunningWorkflow.mutateAsync({ runningWorkflowId }));
-      } finally {
-        await invalidate(runningWorkflowKeys(projectId, runningWorkflowId));
-      }
-    },
+    /** Stops a running workflow, or deletes one that has already finished. */
+    endRunningWorkflow: async (projectId: string, runningWorkflowId: string, done: boolean) =>
+      command(
+        () =>
+          done
+            ? deleteRunningWorkflow.mutateAsync({ runningWorkflowId })
+            : stopRunningWorkflow.mutateAsync({ runningWorkflowId }),
+        runningWorkflowKeys(projectId, runningWorkflowId),
+      ),
 
-    terminateInstance: async (projectId: string, instanceId: string) => {
-      await terminateInstance.mutateAsync({ instanceId });
-      await invalidate(instanceKeys(projectId, instanceId));
-    },
+    terminateInstance: async (projectId: string, instanceId: string) =>
+      command(
+        () => terminateInstance.mutateAsync({ instanceId }),
+        instanceKeys(projectId, instanceId),
+      ),
   };
 };

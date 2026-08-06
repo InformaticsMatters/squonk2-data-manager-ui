@@ -11,7 +11,12 @@ import { RunningWorkflowCard } from "../components/RunningWorkflowCard/RunningWo
 import { ResultTaskCard } from "../components/tasks/ResultTaskCard";
 import { type ProjectFacts } from "./projectFacts";
 import { resolveResultCapabilities } from "./resultCapabilities";
-import { instanceOwner, resolveResultReadState, runningWorkflowOwner } from "./resultFacts";
+import {
+  instanceOwner,
+  resolveResultReadState,
+  resultReadFailure,
+  runningWorkflowOwner,
+} from "./resultFacts";
 import { type ProjectRoute, resultsListState } from "./routes";
 import { type ProjectResults } from "./useProjectResults";
 
@@ -99,7 +104,7 @@ const InstanceResult = ({
 
   return (
     <AddressedResult
-      error={instance.error}
+      error={resultReadFailure(instance)}
       owner={instanceOwner}
       projectId={route.projectId}
       refetch={() => void instance.refetch()}
@@ -114,6 +119,7 @@ const InstanceResult = ({
           })}
           collapsedByDefault={false}
           instanceId={route.resultId}
+          instanceSummary={resource}
           resultsState={resultsListState(route)}
         />
       )}
@@ -132,7 +138,7 @@ const WorkflowResult = ({
 
   return (
     <AddressedResult
-      error={workflow.error}
+      error={resultReadFailure(workflow)}
       owner={runningWorkflowOwner}
       projectId={route.projectId}
       refetch={() => void workflow.refetch()}
@@ -149,6 +155,7 @@ const WorkflowResult = ({
           projectId={route.projectId}
           resultsState={resultsListState(route)}
           runningWorkflowId={route.resultId}
+          workflowSummary={resource}
         />
       )}
     </AddressedResult>

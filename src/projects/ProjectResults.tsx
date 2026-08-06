@@ -256,7 +256,7 @@ const ResultsSection = ({ route }: { route: ResultsRoute }) => {
             severity="error"
             sx={{ mb: 2 }}
           >
-            Results could not be refreshed. The results shown may be out of date, so they cannot be
+            Some results could not be refreshed. Those results may be out of date, so they cannot be
             changed until they load again.
           </Alert>
         ) : null}

@@ -192,6 +192,21 @@ test("Results filters are owned by Results and do not follow the caller elsewher
   await page.getByRole("link", { name: "Results", exact: true }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}`);
   await expect(page.getByText("Acceptance Instance")).toBeVisible();
+
+  // Results state is local to the route it is on: entering a second project's Results resets the
+  // search box and the type filter to that route's own state rather than inheriting the first's.
+  await page.goto(`${acceptanceResults}?search=acceptance+workflow&type=workflow`);
+  await expect(page.getByLabel(/Search/u)).toHaveValue("acceptance workflow");
+  await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "DATASET", exact: true })).toHaveCount(0);
+
+  await page.goto(screeningResults);
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${screeningResults}`);
+  await expect(page.getByLabel(/Search/u)).toHaveValue("");
+  // Nothing the first project filtered narrows the second: its own unfiltered results are shown.
+  await expect(page.getByText("Screening Instance")).toBeVisible();
+  await expect(page.getByRole("link", { name: "FILE", exact: true })).toBeVisible();
+  await expect(page.getByText("Acceptance Instance")).toHaveCount(0);
 });
 
 test("a project viewer reads results and is told what each unavailable action requires", async ({
@@ -244,7 +259,7 @@ test("results that cannot be refreshed are marked stale, locked, and retryable",
   await page.reload();
   await expect(
     page.getByText(
-      "Results could not be refreshed. The results shown may be out of date, so they cannot be changed until they load again.",
+      "Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again.",
     ),
   ).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}`);
@@ -308,7 +323,7 @@ test("a refused collection never withholds the retry a transient one needs", asy
   ).toBeVisible();
   await expect(
     page.getByText(
-      "Results could not be refreshed. The results shown may be out of date, so they cannot be changed until they load again.",
+      "Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again.",
     ),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Retry" })).toBeVisible();
@@ -335,4 +350,51 @@ test("a refused collection never withholds the retry a transient one needs", asy
   ).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}`);
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+});
+
+test("only the collection that could not be refreshed is marked stale and locked", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, acceptanceResults, testInfo);
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Archive" })).toBeEnabled();
+
+  // Refreshing in place keeps what already loaded, so a collection that fails this time is stale
+  // rather than absent — which is the only way the per-collection lock is observable at all.
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/results-failure?status=503&collection=/instance`,
+  );
+  await page.getByRole("button", { name: "Refresh results" }).click();
+
+  await expect(
+    page.getByText(
+      "Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again.",
+    ),
+  ).toBeVisible();
+
+  // The instance is still readable, and says why it cannot be changed.
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Archive" })).toBeDisabled();
+  await expect(
+    page
+      .getByText(
+        "This result could not be refreshed, so changing it cannot be established as safe.",
+      )
+      .first(),
+  ).toBeVisible();
+
+  // The collections that did answer are untouched: neither stale nor locked.
+  await expect(page.getByRole("link", { name: "DATASET", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Delete" }).first()).toBeEnabled();
+
+  // An addressed result answers for itself, so a stale collection does not lock it: its own read
+  // succeeded, and it stays readable and changeable at its own route.
+  await page.goto(`${acceptanceResults}/instances/${fixtureIds.instance}`);
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Archive" })).toBeEnabled();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.instance}`,
+  );
 });

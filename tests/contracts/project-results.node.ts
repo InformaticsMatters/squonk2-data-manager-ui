@@ -29,6 +29,7 @@ import {
   resolveResultsFreshnessByCollection,
   resolveResultsReadReport,
   resultListRequests,
+  resultReadFailure,
   selectProjectResults,
 } from "../../src/projects/resultFacts";
 import { parseProjectRoute, projectLinks, resultsListState } from "../../src/projects/routes";
@@ -349,6 +350,25 @@ test("a collection that fails does not decide what the other collections may sho
   });
 });
 
+test("a failed refresh is noticed even though the content it left behind is still there", () => {
+  const transport = new Response(null, { status: 503 });
+
+  // A read with nothing to show reports its failure as `error`.
+  expect(resultReadFailure({ error: transport, failureReason: null })).toBe(transport);
+  // A read whose refresh failed keeps its data and reports the failure as `failureReason` alone.
+  // This is the only case in which stale content exists, so missing it would leave content that
+  // could not be refreshed looking current and changeable.
+  expect(resultReadFailure({ error: null, failureReason: transport })).toBe(transport);
+  expect(
+    resolveResultReadState(resultReadFailure({ error: null, failureReason: transport })),
+  ).toEqual({ kind: "recoverable", retryable: true });
+  // A read that succeeded reports neither.
+  expect(resultReadFailure({ error: null, failureReason: null })).toBeNull();
+  expect(resolveResultReadState(resultReadFailure({ error: null, failureReason: null }))).toEqual({
+    kind: "available",
+  });
+});
+
 test("the section reports nothing when every collection answered", () => {
   const readStates = {
     instance: resolveResultReadState(null),
@@ -522,37 +542,37 @@ test.describe("Results cutover", () => {
       );
     }
   });
+});
 
-  test("useResultCommands is the only owner of Results mutations and their invalidation", () => {
-    const root = path.join(process.cwd(), "src");
-    const commandOwner = "projects/useResultCommands.ts";
+test("useResultCommands is the only owner of Results mutations and their invalidation", () => {
+  const root = path.join(process.cwd(), "src");
+  const commandOwner = "projects/useResultCommands.ts";
 
-    // Every component that changes a result routes the change through the one command owner, so
-    // no card mutates or invalidates on its own.
-    for (const card of [
-      "components/instances/ArchiveInstance.tsx",
-      "components/instances/TerminateInstance.tsx",
-      "components/DeleteWorkflowButton.tsx",
-      "components/tasks/ResultTaskCard.tsx",
-    ]) {
-      const source = readFileSync(path.join(root, card), "utf8");
-      expect(source).toContain("useResultCommands");
-      expect(source).not.toMatch(/useQueryClient|invalidateQueries/u);
-      expect(source).not.toMatch(
-        /usePatchInstance|useTerminateInstance|useDeleteTask|useDeleteRunningWorkflow|useStopRunningWorkflow/u,
-      );
-    }
+  // Every component that changes a result routes the change through the one command owner, so
+  // no card mutates or invalidates on its own.
+  for (const card of [
+    "components/instances/ArchiveInstance.tsx",
+    "components/instances/TerminateInstance.tsx",
+    "components/DeleteWorkflowButton.tsx",
+    "components/tasks/ResultTaskCard.tsx",
+  ]) {
+    const source = readFileSync(path.join(root, card), "utf8");
+    expect(source).toContain("useResultCommands");
+    expect(source).not.toMatch(/useQueryClient|invalidateQueries/u);
+    expect(source).not.toMatch(
+      /usePatchInstance|useTerminateInstance|useDeleteTask|useDeleteRunningWorkflow|useStopRunningWorkflow/u,
+    );
+  }
 
-    // The owner's own collection keys are all built from a project's list request, so a Results
-    // command can never invalidate an unprojected — and therefore cross-project — collection.
-    const owner = readFileSync(path.join(root, commandOwner), "utf8");
-    for (const collectionKey of [
-      "getGetInstancesQueryKey",
-      "getGetTasksQueryKey",
-      "getGetRunningWorkflowsQueryKey",
-    ]) {
-      expect(owner).toContain(`${collectionKey}(resultListRequests(projectId)`);
-      expect(owner).not.toMatch(new RegExp(String.raw`${collectionKey}\(\s*\)`, "u"));
-    }
-  });
+  // The owner's own collection keys are all built from a project's list request, so a Results
+  // command can never invalidate an unprojected — and therefore cross-project — collection.
+  const owner = readFileSync(path.join(root, commandOwner), "utf8");
+  for (const collectionKey of [
+    "getGetInstancesQueryKey",
+    "getGetTasksQueryKey",
+    "getGetRunningWorkflowsQueryKey",
+  ]) {
+    expect(owner).toContain(`${collectionKey}(resultListRequests(projectId)`);
+    expect(owner).not.toMatch(new RegExp(String.raw`${collectionKey}\(\s*\)`, "u"));
+  }
 });

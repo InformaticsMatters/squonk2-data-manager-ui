@@ -349,6 +349,24 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       running_workflows: runningWorkflows,
     });
   }
+  // An addressed result read can be made to fail on its own path, so a stale addressed result is
+  // distinguishable from a stale collection.
+  if (
+    ["instance", "running-workflow"].includes(segments[0] ?? "") &&
+    segments.length === 2 &&
+    request.method === "GET"
+  ) {
+    const failure = state.resultsFailures.find(({ collection }) => collection === url.pathname);
+    if (failure) {
+      return json(
+        response,
+        failure.status,
+        failure.status === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+  }
   if (segments[0] === "instance" && segments.length === 2 && request.method === "GET") {
     const instance = state.fixtures.instances.instances.find(
       (candidate) => candidate.id === segments[1],

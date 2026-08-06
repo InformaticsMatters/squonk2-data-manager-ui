@@ -1,4 +1,4 @@
-import { type RunningWorkflowSummary } from "@/api/data-manager";
+import { type RunningWorkflowGetResponse, type RunningWorkflowSummary } from "@/api/data-manager";
 import { useGetRunningWorkflow } from "@/api/data-manager/workflow";
 
 import { Alert } from "@mui/material";
@@ -14,7 +14,10 @@ import { RunningWorkflowCollapsed } from "./RunningWorkflowCollapsed";
 
 export interface RunningWorkflowCardProps {
   runningWorkflowId: string;
-  workflowSummary?: RunningWorkflowSummary;
+  /**
+   * The running workflow a caller has already resolved, kept on screen even if a later read fails.
+   */
+  workflowSummary?: RunningWorkflowGetResponse | RunningWorkflowSummary;
   /**
    * The project the running workflow itself declares it belongs to.
    */

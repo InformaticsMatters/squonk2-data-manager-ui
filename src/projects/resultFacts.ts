@@ -161,6 +161,15 @@ export const resolveResultReadState = (error: unknown): ResultsReadState => {
     : { kind: "recoverable", retryable: true };
 };
 
+/**
+ * The failure one generated query is reporting. A query with nothing to show reports it as
+ * `error`, but a query whose *refresh* failed keeps the data it already had and reports the
+ * failure as `failureReason` instead. Stale content only exists in the second case, so a section
+ * that must notice it has to read both.
+ */
+export const resultReadFailure = (query: { error: unknown; failureReason: unknown }): unknown =>
+  query.error ?? query.failureReason;
+
 /** How each Results collection's own last read answered, keyed by the results it carries. */
 export type ResultsReadStates = Record<ResultFilterType, ResultsReadState>;
 

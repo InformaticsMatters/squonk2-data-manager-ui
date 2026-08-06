@@ -20,6 +20,7 @@ import {
   resolveResultsReadReport,
   type ResultItem,
   resultListRequests,
+  resultReadFailure,
   type ResultsReadReport,
   type ResultsReadState,
   type ResultsReadStates,
@@ -81,9 +82,9 @@ export const useProjectResults = (projectId: string): ProjectResults => {
   // Each collection answers for itself, so one refused or failing read never decides what the
   // other two may show, how fresh they are, or whether they are worth retrying.
   const readStates: ResultsReadStates = {
-    instance: resolveResultReadState(instances.error),
-    task: resolveResultReadState(tasks.error),
-    workflow: resolveResultReadState(workflows.error),
+    instance: resolveResultReadState(resultReadFailure(instances)),
+    task: resolveResultReadState(resultReadFailure(tasks)),
+    workflow: resolveResultReadState(resultReadFailure(workflows)),
   };
   const report = resolveResultsReadReport(readStates);
   const freshness = resolveResultsFreshnessByCollection(readStates);

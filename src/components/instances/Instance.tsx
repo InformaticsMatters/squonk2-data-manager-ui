@@ -1,4 +1,4 @@
-import { type InstanceSummary } from "@/api/data-manager";
+import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
 import { useGetInstance } from "@/api/data-manager/instance";
 
 import { Alert, Box } from "@mui/material";
@@ -13,7 +13,11 @@ import { ResultJobCard } from "./ResultJobCard";
 
 export interface InstanceProps {
   instanceId: InstanceSummary["id"];
-  instanceSummary?: InstanceSummary;
+  /**
+   * The instance a caller has already resolved. Supplying it means this component never fetches
+   * the instance again, and the card keeps describing it even if a later read fails.
+   */
+  instanceSummary?: InstanceGetResponse | InstanceSummary;
   capabilities: ResultCapabilities;
   resultsState?: ResultsState;
   collapsedByDefault?: boolean;
@@ -38,7 +42,10 @@ export const Instance = ({
     return <CenterLoader />;
   }
 
-  if (error) {
+  // An instance a caller already resolved still describes itself, so a failed read leaves the card
+  // readable rather than replacing it with an error. Whether it is safe to change is decided by
+  // the capabilities it was given, not here.
+  if (error && !instance) {
     return <Alert severity="error">{getErrorMessage(error)}</Alert>; // TODO
   }
 

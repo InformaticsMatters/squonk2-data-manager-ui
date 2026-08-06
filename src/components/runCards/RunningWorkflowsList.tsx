@@ -4,16 +4,26 @@ import { Box, List, ListItem, ListItemButton, ListItemText, Typography } from "@
 import A from "next/link";
 
 import { projectLinks } from "../../projects/routes";
+import { CenterLoader } from "../CenterLoader";
 import { LocalTime } from "../LocalTime";
 
 export interface RunningWorkflowsListProps {
+  /** The read that lists them has not answered yet, so the list cannot say it has none. */
+  isLoading?: boolean;
   runningWorkflows: readonly RunningWorkflowSummary[];
 }
 
 /**
  * MuiList detailing running workflows.
  */
-export const RunningWorkflowsList = ({ runningWorkflows }: RunningWorkflowsListProps) => {
+export const RunningWorkflowsList = ({
+  isLoading = false,
+  runningWorkflows,
+}: RunningWorkflowsListProps) => {
+  if (isLoading) {
+    return <CenterLoader />;
+  }
+
   if (runningWorkflows.length === 0) {
     return (
       <Box sx={{ p: 2 }}>

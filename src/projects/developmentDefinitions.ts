@@ -3,6 +3,7 @@ import { getGetJobQueryKey } from "@/api/data-manager/job";
 
 import { type QueryClient } from "@tanstack/react-query";
 
+import { TEST_JOB_ID } from "../components/runCards/TestJob/jobId";
 import testJob from "../components/runCards/TestJob/test-job.json";
 
 const inDevelopment = process.env.NODE_ENV === "development";
@@ -25,5 +26,5 @@ export const seedDevelopmentDefinitions = (queryClient: QueryClient) => {
   if (!inDevelopment) {
     return;
   }
-  queryClient.setQueryData(getGetJobQueryKey(testJob.summary.id), testJob.detail);
+  queryClient.setQueryData(getGetJobQueryKey(TEST_JOB_ID), testJob.detail);
 };

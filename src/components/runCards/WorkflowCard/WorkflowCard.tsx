@@ -10,8 +10,11 @@ import { RunDefinitionButton } from "../RunDefinitionButton";
 import { RunningWorkflowsList } from "../RunningWorkflowsList";
 
 export interface WorkflowCardProps {
-  capabilities: RunCapabilities;
+  /** Those running workflows are still being listed, so the card cannot say it has none. */
+  isLoading?: boolean;
   projectId: string;
+  /** What the project in the URL decides about the definition this card addresses. */
+  resolveCapabilities: (definitionId: string) => RunCapabilities;
   /** This definition's running workflows inside the project that owns them. */
   runningWorkflows: readonly RunningWorkflowSummary[];
   runState: RunState;
@@ -23,8 +26,9 @@ export interface WorkflowCardProps {
  * definition route and listing the addressed project's running workflows of it.
  */
 export const WorkflowCard = ({
-  capabilities,
+  isLoading,
   projectId,
+  resolveCapabilities,
   runningWorkflows,
   runState,
   workflow,
@@ -33,7 +37,7 @@ export const WorkflowCard = ({
     accentColor="#f1c40f"
     actions={
       <>
-        <CapabilityReasons capabilities={[capabilities.launch]} />
+        <CapabilityReasons capabilities={[resolveCapabilities(workflow.id).launch]} />
         <RunDefinitionButton
           definitionId={workflow.id}
           definitionLabel={workflow.workflow_name ?? workflow.name}
@@ -43,7 +47,7 @@ export const WorkflowCard = ({
         />
       </>
     }
-    collapsed={<RunningWorkflowsList runningWorkflows={runningWorkflows} />}
+    collapsed={<RunningWorkflowsList isLoading={isLoading} runningWorkflows={runningWorkflows} />}
     header={{
       subtitle: workflow.name,
       avatar: workflow.name[0],

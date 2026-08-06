@@ -14,10 +14,13 @@ export interface ApplicationCardProps {
    * The application definition to display
    */
   application: ApplicationSummary;
-  capabilities: RunCapabilities;
   /** This application's existing instances inside the project that owns them. */
   instances: readonly InstanceSummary[];
+  /** Those instances are still being listed, so the card cannot say it has none. */
+  isLoading?: boolean;
   projectId: string;
+  /** What the project in the URL decides about the definition this card addresses. */
+  resolveCapabilities: (definitionId: string) => RunCapabilities;
   runState: RunState;
 }
 
@@ -27,16 +30,19 @@ export interface ApplicationCardProps {
  */
 export const ApplicationCard = ({
   application,
-  capabilities,
   instances,
+  isLoading,
   projectId,
+  resolveCapabilities,
   runState,
 }: ApplicationCardProps) => (
   <BaseCard
     accentColor="secondary.dark"
     actions={
       <>
-        <CapabilityReasons capabilities={[capabilities.launch]} />
+        <CapabilityReasons
+          capabilities={[resolveCapabilities(application.application_id).launch]}
+        />
         <RunDefinitionButton
           definitionId={application.application_id}
           definitionLabel={application.kind}
@@ -46,7 +52,7 @@ export const ApplicationCard = ({
         />
       </>
     }
-    collapsed={<InstancesList instances={instances} />}
+    collapsed={<InstancesList instances={instances} isLoading={isLoading} />}
     header={{ title: application.kind, subtitle: application.group, avatar: application.kind[0] }}
   >
     <Typography

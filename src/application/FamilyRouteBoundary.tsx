@@ -16,7 +16,7 @@ import { CenterLoader } from "../components/CenterLoader";
 import { type RouteNotFoundParent } from "../routing/routeContract";
 import { type FamilyPagePolicy, type FamilyRoute, resolveFamilyRoute } from "./familyRoute";
 
-type FamilyRouteContextValue =
+export type FamilyRouteContextValue =
   | { localNotFound: false; parent?: undefined; policy: FamilyPagePolicy; route: FamilyRoute }
   /** The parent the unaddressable child named, so the section can keep rendering beneath it. */
   | { localNotFound: true; parent: RouteNotFoundParent; policy: FamilyPagePolicy; route: null };

@@ -5,7 +5,7 @@ import {
 } from "@/api/data-manager";
 
 import { search } from "../utils/app/searches";
-import { type ResultFilterType } from "./routes";
+import { type ResultFilterType, showsType } from "./routes";
 import {
   resolveSectionFreshnessByKey,
   resolveSectionReadReport,
@@ -57,7 +57,14 @@ export const instanceOwner = (instance: Pick<InstanceSummary, "project_id">) =>
 export const runningWorkflowOwner = (workflow: Pick<RunningWorkflowSummary, "project">) =>
   declaredOwner(workflow.project.id);
 
-const ownedBy = (declaredOwner: string | undefined, projectId: string) =>
+/**
+ * Whether an execution belongs to the addressed project. An execution that declares an owner is
+ * believed over the request that returned it, which is what lets a cross-project row be recognised
+ * rather than displayed; one that declares none has no ownership fact but the constrained request
+ * it came back from, so it belongs to the project that request named. Run and Results both list
+ * the same executions, so both decide this the same way.
+ */
+export const ownedBy = (declaredOwner: string | undefined, projectId: string) =>
   declaredOwner === undefined || declaredOwner === projectId;
 
 export type ProjectResultsInput = {
@@ -137,7 +144,7 @@ export const filterResultItems = (
   }: { search?: string; types?: readonly ResultFilterType[] } = {},
 ): ResultItem[] =>
   items
-    .filter((item) => !types || types.includes(item.kind))
+    .filter((item) => showsType(types, item.kind))
     .filter((item) => matchesSearch(item, searchValue));
 
 /** How each Results collection's own last read answered, keyed by the results it carries. */

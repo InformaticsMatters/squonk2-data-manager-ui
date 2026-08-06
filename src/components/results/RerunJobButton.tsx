@@ -5,7 +5,7 @@ import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manag
 import { Button } from "@mui/material";
 import { useRouter } from "next/router";
 
-import { type ProjectCapability } from "../../projects/capabilities";
+import { capabilityIsEnabled, type ProjectCapability } from "../../projects/capabilities";
 import { projectLinks, type ResultsState } from "../../projects/routes";
 import { JobModal } from "../runCards/JobCard/JobModal";
 
@@ -15,11 +15,8 @@ export interface RerunJobButtonProps {
    */
   instance: InstanceGetResponse | InstanceSummary;
   /**
-   * Whether the button is disabled
-   */
-  disabled: boolean;
-  /**
-   * What running this instance's job again requires, as its owning project decides it.
+   * What running this instance's job again requires, as its owning project decides it. It is the
+   * only thing that decides whether the button is offered, so no caller can disable it separately.
    */
   rerun: ProjectCapability;
   /**
@@ -32,12 +29,7 @@ export interface RerunJobButtonProps {
  * Wrapper around the *execution card* job run modal that reloads defaults from an existing
  * instance. The rerun targets, and opens, the project the instance itself belongs to.
  */
-export const RerunJobButton = ({
-  instance,
-  disabled = false,
-  rerun,
-  resultsState,
-}: RerunJobButtonProps) => {
+export const RerunJobButton = ({ instance, rerun, resultsState }: RerunJobButtonProps) => {
   const [open, setOpen] = useState(false);
 
   const { push } = useRouter();
@@ -46,7 +38,7 @@ export const RerunJobButton = ({
   // If the job id is undefined, it's probably an application which we don't currently let be rerun.
   return instance.job_id === undefined ? null : (
     <>
-      <Button color="primary" disabled={disabled} onClick={() => setOpen(true)}>
+      <Button color="primary" disabled={!capabilityIsEnabled(rerun)} onClick={() => setOpen(true)}>
         Run again
       </Button>
       {!!open && (

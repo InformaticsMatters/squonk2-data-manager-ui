@@ -192,6 +192,34 @@ test("a malformed definition route is Run-local and never guessed at", async ({
   await expect(page).toHaveURL(`${acceptanceUrls.app}${absent}`);
   await expect(page.getByText("This definition was not found in this project.")).toBeVisible();
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+
+  // A URL beneath Run that is not shaped like a definition route at all is still Run's to answer,
+  // so a mistyped path never costs the project frame it was addressed beneath.
+  for (const misshapen of [`${acceptanceRun}/jobs`, `${acceptanceRun}/jobs/1/versions/1`]) {
+    await page.goto(misshapen);
+    await expect(page).toHaveURL(`${acceptanceUrls.app}${misshapen}`);
+    await expect(page.getByText("This definition was not found in this project.")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Run" })).toBeVisible();
+    await expect(page.getByText("acceptance-job", { exact: true })).toBeVisible();
+  }
+});
+
+test("searching narrows the catalogue and settles into the route that owns it", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceRun, testInfo);
+  await expect(page.getByText("AcceptanceNotebook")).toBeVisible();
+
+  // The field stays responsive while it is typed into, and the route follows once typing settles.
+  await page.getByLabel(/Search/u).fill("docking");
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}?search=docking`);
+  await expect(page.getByText("acceptance-job", { exact: true })).toBeVisible();
+  await expect(page.getByText("AcceptanceNotebook")).toHaveCount(0);
+
+  // Clearing it returns the catalogue and leaves no state behind on the route.
+  await page.getByLabel(/Search/u).fill("");
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}`);
+  await expect(page.getByText("AcceptanceNotebook")).toBeVisible();
 });
 
 test("launching opens the execution it created inside the project that ran it", async ({

@@ -19,7 +19,10 @@ import {
   type ProjectRunFacts,
 } from "../../src/projects/capabilities";
 import { parseProjectRoute, projectLinks, runCatalogueState } from "../../src/projects/routes";
-import { resolveRunCapabilities } from "../../src/projects/runCapabilities";
+import {
+  resolveDefinitionCapabilities,
+  resolveRunCapabilities,
+} from "../../src/projects/runCapabilities";
 import {
   filterRunItems,
   findRunDefinition,
@@ -426,6 +429,56 @@ test("closing a definition returns to the catalogue state it was opened from", (
   );
 });
 
+test("emptying the type filter clears it rather than leaving a state no URL can carry", () => {
+  const items = catalogue();
+
+  // A route carries only the types it narrows to, so "every type" and "no type at all" are the
+  // same absent value in the link, in the parsed route, and in what the catalogue then shows.
+  expect(projectLinks.run(projectId, { types: [] })).toBe(`/projects/${projectId}/run`);
+  expect(runCatalogueState(runRouteFor(projectLinks.run(projectId, { types: [] })))).toEqual({});
+  expect(filterRunItems(items, { types: [] })).toHaveLength(items.length);
+});
+
+test("a card and a modal answer alike about the version each of them addresses", () => {
+  const items = catalogue({
+    jobs: [
+      job({ id: 1, disabled: true, disabled_reason: "No assets", version: "1.0.0" }),
+      job({ id: 2, version: "2.0.0" }),
+    ],
+  });
+  const jobItem = items.find((item) => item.kind === "job");
+  const facts = runFacts() as Parameters<typeof resolveRunCapabilities>[0];
+  const resolve = jobItem && resolveDefinitionCapabilities(facts, jobItem, "current");
+
+  // The card shows one version at a time and links to that version's own route, so it must refuse
+  // a disabled version with the same reason the modal that addresses it gives.
+  expect(resolve?.("1")).toEqual({ launch: { status: "disabled", reason: "No assets" } });
+  expect(resolve?.("2")).toEqual({ launch: { status: "enabled" } });
+});
+
+test("an execution that declares no project belongs to the read that returned it", () => {
+  const [workflowItem, , jobItem] = catalogue();
+  const undeclared = instance({ id: "instance-undeclared", project_id: undefined });
+  const undeclaredWorkflow = runningWorkflow({
+    id: "r-workflow-undeclared",
+    project: { id: "", name: "" },
+  });
+
+  // The list request that returned it named the addressed project and nothing about the execution
+  // disagrees, so it belongs there; an execution that names another project never does.
+  expect(runDefinitionInstances(jobItem, [undeclared], projectId).map(({ id }) => id)).toEqual([
+    undeclared.id,
+  ]);
+  expect(
+    runDefinitionInstances(jobItem, [instance({ project_id: otherProjectId })], projectId),
+  ).toEqual([]);
+  expect(
+    runDefinitionRunningWorkflows(workflowItem, [undeclaredWorkflow], projectId).map(
+      ({ id }) => id,
+    ),
+  ).toEqual([undeclaredWorkflow.id]);
+});
+
 test.describe("Run cutover", () => {
   test("the legacy global Run route no longer exists", () => {
     expect(existsSync(path.join(process.cwd(), "src/pages/run.tsx"))).toBe(false);
@@ -433,6 +486,14 @@ test.describe("Run cutover", () => {
     for (const href of ["/run", `/run?project=${projectId}`]) {
       expect(parseProjectRoute(href)).toEqual({ kind: "not-found" });
     }
+  });
+
+  test("one page entry serves every URL beneath a project's Run section", () => {
+    const runPages = path.join(process.cwd(), "src/pages/projects/[projectId]/run");
+
+    // A definition route and a URL Run cannot address must reach the same section, so a mistyped
+    // path is answered beneath the project rather than by the application's own not-found.
+    expect(readdirSync(runPages)).toEqual(["[...definition].tsx"]);
   });
 
   test("no handwritten module composes a Run route or reads a selected project", () => {

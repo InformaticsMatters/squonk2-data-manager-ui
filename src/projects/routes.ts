@@ -102,14 +102,23 @@ export type ProjectRoute =
 const optionalSearch = (searchParams: URLSearchParams) =>
   readOptionalQuery(searchParams, "search", isSearch);
 
+/**
+ * The list state a section carries, built the same way whether it was read from a URL or taken
+ * from an already-parsed route, so a route and the link that rebuilds it can never disagree about
+ * which values a section owns.
+ */
+const filterState = <TValue extends string>(
+  search: string | undefined,
+  types: readonly TValue[] | undefined,
+): SearchState & { types?: readonly TValue[] } => ({
+  ...(search ? { search } : {}),
+  ...(types ? { types } : {}),
+});
+
 const parseFilterState = <TValue extends string>(
   searchParams: URLSearchParams,
   filterTypes: readonly TValue[],
-): SearchState & { types?: readonly TValue[] } => {
-  const search = optionalSearch(searchParams);
-  const types = readEnumQuery(searchParams, "type", filterTypes);
-  return { ...(search ? { search } : {}), ...(types ? { types } : {}) };
-};
+) => filterState(optionalSearch(searchParams), readEnumQuery(searchParams, "type", filterTypes));
 
 const parseRunState = (searchParams: URLSearchParams): RunState =>
   parseFilterState(searchParams, runFilterTypes);
@@ -145,29 +154,38 @@ const parseResultId = <TCollection extends ResultCollection>(
 
 const assertProjectId = (value: string) => assertRouteValue(value, isProjectId, "project ID");
 
+/** The one way a section's search value reaches a link, so a malformed one is never written. */
+const searchQuery = (search: string | undefined) =>
+  [["search", search && isSearch(search) ? search : undefined]] as const;
+
+/**
+ * The query state a filtered list owns. Every link that preserves a list's state writes it through
+ * here, so the canonical order of the types is decided in one place.
+ */
+const filterQuery = <TValue extends string>(
+  state: SearchState & { types?: readonly TValue[] },
+  order: readonly TValue[],
+) => [...searchQuery(state.search), ["type", canonicalEnumValues(state.types, order)]] as const;
+
+const subscriptionQuery = (subscriptionId: string | undefined) =>
+  [
+    [
+      "subscription",
+      subscriptionId
+        ? assertRouteValue(subscriptionId, isProductId, "subscription product ID")
+        : undefined,
+    ],
+  ] as const;
+
 export const projectLinks = {
-  index: (state: SearchState = {}) =>
-    buildHref("/projects", [
-      ["search", state.search && isSearch(state.search) ? state.search : undefined],
-    ]),
+  index: (state: SearchState = {}) => buildHref("/projects", searchQuery(state.search)),
   create: ({ subscriptionId }: { subscriptionId?: string } = {}) =>
-    buildHref("/projects/new", [
-      [
-        "subscription",
-        subscriptionId
-          ? assertRouteValue(subscriptionId, isProductId, "subscription product ID")
-          : undefined,
-      ],
-    ]),
+    buildHref("/projects/new", subscriptionQuery(subscriptionId)),
   deletion: (taskId: string, { subscriptionId }: { subscriptionId?: string } = {}) =>
-    buildHref(`/projects/deletions/${assertRouteValue(taskId, isTaskId, "deletion task ID")}`, [
-      [
-        "subscription",
-        subscriptionId
-          ? assertRouteValue(subscriptionId, isProductId, "subscription product ID")
-          : undefined,
-      ],
-    ]),
+    buildHref(
+      `/projects/deletions/${assertRouteValue(taskId, isTaskId, "deletion task ID")}`,
+      subscriptionQuery(subscriptionId),
+    ),
   entry: (projectId: string) => `/projects/${assertProjectId(projectId)}`,
   files: (projectId: string, { path }: { path?: string } = {}) =>
     buildHref(`/projects/${assertProjectId(projectId)}/files`, [
@@ -182,10 +200,7 @@ export const projectLinks = {
       ["viewer", viewer],
     ]),
   run: (projectId: string, state: RunState = {}) =>
-    buildHref(`/projects/${assertProjectId(projectId)}/run`, [
-      ["search", state.search && isSearch(state.search) ? state.search : undefined],
-      ["type", canonicalEnumValues(state.types, runFilterTypes)],
-    ]),
+    buildHref(`/projects/${assertProjectId(projectId)}/run`, filterQuery(state, runFilterTypes)),
   runDefinition: (
     projectId: string,
     definitionType: RunDefinitionType,
@@ -198,16 +213,13 @@ export const projectLinks = {
         (value) => parseDefinitionId(definitionType, value) !== null,
         `${definitionType} definition ID`,
       )}`,
-      [
-        ["search", state.search && isSearch(state.search) ? state.search : undefined],
-        ["type", canonicalEnumValues(state.types, runFilterTypes)],
-      ],
+      filterQuery(state, runFilterTypes),
     ),
   results: (projectId: string, state: ResultsState = {}) =>
-    buildHref(`/projects/${assertProjectId(projectId)}/results`, [
-      ["search", state.search && isSearch(state.search) ? state.search : undefined],
-      ["type", canonicalEnumValues(state.types, resultFilterTypes)],
-    ]),
+    buildHref(
+      `/projects/${assertProjectId(projectId)}/results`,
+      filterQuery(state, resultFilterTypes),
+    ),
   result: (
     projectId: string,
     collection: ResultCollection,
@@ -220,13 +232,20 @@ export const projectLinks = {
         (value) => parseResultId(collection, value) !== null,
         `${collection} result ID`,
       )}`,
-      [
-        ["search", state.search && isSearch(state.search) ? state.search : undefined],
-        ["type", canonicalEnumValues(state.types, resultFilterTypes)],
-      ],
+      filterQuery(state, resultFilterTypes),
     ),
   manage: (projectId: string) => `/projects/${assertProjectId(projectId)}/manage`,
 };
+
+/**
+ * Whether a section's list state shows one type. A route carries only the types it narrows to, so
+ * a state that narrows to none narrows to nothing at all: a list, its filter control, and the link
+ * that rebuilds its route therefore all read an emptied filter as a cleared one.
+ */
+export const showsType = <TValue extends string>(
+  types: readonly TValue[] | undefined,
+  value: TValue,
+) => types === undefined || types.length === 0 || types.includes(value);
 
 /**
  * The project a Projects-family local not-found was addressed beneath. A child the section could
@@ -245,10 +264,7 @@ export const localNotFoundProjectId = (parent: RouteNotFoundParent): ProjectId |
  */
 export const runCatalogueState = (
   route: Extract<ProjectRoute, { kind: "run-definition" | "run" }>,
-): RunState => ({
-  ...(route.search ? { search: route.search } : {}),
-  ...(route.types ? { types: route.types } : {}),
-});
+): RunState => filterState(route.search, route.types);
 
 /**
  * The Results list state one Results route carries. Only Results owns these values, so nothing a
@@ -256,10 +272,7 @@ export const runCatalogueState = (
  */
 export const resultsListState = (
   route: Extract<ProjectRoute, { kind: "result" | "results" }>,
-): ResultsState => ({
-  ...(route.search ? { search: route.search } : {}),
-  ...(route.types ? { types: route.types } : {}),
-});
+): ResultsState => filterState(route.search, route.types);
 
 export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> => {
   const location = parseRouteLocation(href);
@@ -362,6 +375,13 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
       route,
       projectLinks.runDefinition(projectId, definitionType, definitionId, state),
     );
+  }
+
+  if (segments.length > 3 && segments[2] === "run") {
+    // A URL beneath Run that is not shaped like a definition route at all is still addressed
+    // beneath a project this family accepts, so Run answers for it locally. Losing the project
+    // frame here would make a mistyped path indistinguishable from a missing project.
+    return localNotFoundRoute("projects", "run", projectId);
   }
 
   if (segments.length === 3 && segments[2] === "results") {

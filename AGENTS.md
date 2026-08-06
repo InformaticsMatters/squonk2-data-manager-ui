@@ -24,8 +24,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Testing quirks
 
-- Tests are split by filename suffix into Playwright projects: `*.setup.ts`, `*.browser.ts`, `*.browser-authenticated.ts` (depends on login/`storageState.json`), `*.node.ts`.
-- Tests hit **real external APIs** and load `.env.test.local`; CI health-checks the APIs first and skips when they're down.
+- `pnpm test:acceptance` (`tests/acceptance/*.acceptance.ts`) is the ordinary gate: deterministic, needs no external services or credentials. See `docs/testing.md`.
+- `playwright.config.ts` covers the rest, split by filename suffix into Playwright projects: `*.setup.ts`, `*.browser.ts`, `*.browser-authenticated.ts` (depends on login/`storageState.json`), `*.node.ts`.
+- Those tests hit **real external APIs** and load `.env.test.local`; CI health-checks the APIs first and skips when they're down.
 
 ## Setup gotchas
 

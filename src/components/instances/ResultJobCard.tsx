@@ -69,7 +69,6 @@ export const ResultJobCard = ({
             onTermination={() => setSlideIn(false)}
           />
           <RerunJobButton
-            disabled={!capabilityIsEnabled(capabilities.rerun)}
             instance={instance}
             rerun={capabilities.rerun}
             resultsState={resultsState}

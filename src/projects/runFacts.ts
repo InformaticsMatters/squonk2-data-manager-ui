@@ -9,8 +9,8 @@ import {
 import semver from "semver";
 
 import { search } from "../utils/app/searches";
-import { instanceOwner, runningWorkflowOwner } from "./resultFacts";
-import { type RunDefinitionType, type RunFilterType } from "./routes";
+import { instanceOwner, ownedBy, runningWorkflowOwner } from "./resultFacts";
+import { type RunDefinitionType, type RunFilterType, showsType } from "./routes";
 import { resolveSectionFreshnessByKey, type SectionReadState } from "./sectionReads";
 
 /**
@@ -147,20 +147,18 @@ export const filterRunItems = (
   { search: searchValue = "", types }: { search?: string; types?: readonly RunFilterType[] } = {},
 ): RunDefinitionItem[] =>
   items
-    .filter((item) => !types || types.includes(item.kind))
+    .filter((item) => showsType(types, item.kind))
     .filter((item) => matchesSearch(item, searchValue));
 
+const definitionCatalogues = {
+  applications: "application",
+  jobs: "job",
+  workflows: "workflow",
+} as const satisfies Record<RunDefinitionType, RunFilterType>;
+
 /** The catalogue that publishes one definition type, and therefore answers for it alone. */
-export const runCatalogueOf = (definitionType: RunDefinitionType): RunFilterType => {
-  switch (definitionType) {
-    case "applications":
-      return "application";
-    case "jobs":
-      return "job";
-    case "workflows":
-      return "workflow";
-  }
-};
+export const runCatalogueOf = (definitionType: RunDefinitionType): RunFilterType =>
+  definitionCatalogues[definitionType];
 
 /**
  * The one definition a canonical definition route addresses, or `undefined` when the catalogue
@@ -197,11 +195,7 @@ export const runDefinitionUnavailability = (
   return job.disabled_reason ?? "This job is disabled, so it cannot be run.";
 };
 
-/**
- * The existing instances of one definition inside the addressed project. Only instances the
- * project owns are matched, so a response that ignored the project argument still cannot put
- * another project's work on a card.
- */
+/** Whether one existing instance came from the definition a card is offering. */
 const instantiates = (item: RunDefinitionItem, instance: InstanceSummary): boolean => {
   switch (item.kind) {
     case "application":
@@ -215,13 +209,18 @@ const instantiates = (item: RunDefinitionItem, instance: InstanceSummary): boole
   }
 };
 
+/**
+ * The existing instances of one definition inside the addressed project. Only instances the
+ * project owns are matched, on the same terms Results matches them, so a response that declared
+ * another project still cannot put that project's work on a card.
+ */
 export const runDefinitionInstances = (
   item: RunDefinitionItem,
   instances: readonly InstanceSummary[],
   projectId: string,
 ): InstanceSummary[] =>
   instances
-    .filter((instance) => (instanceOwner(instance) ?? projectId) === projectId)
+    .filter((instance) => ownedBy(instanceOwner(instance), projectId))
     .filter((instance) => instantiates(item, instance))
     .toSorted((left, right) => right.launched.localeCompare(left.launched));
 
@@ -233,7 +232,7 @@ export const runDefinitionRunningWorkflows = (
 ): RunningWorkflowSummary[] =>
   item.kind === "workflow"
     ? runningWorkflows
-        .filter((workflow) => (runningWorkflowOwner(workflow) ?? projectId) === projectId)
+        .filter((workflow) => ownedBy(runningWorkflowOwner(workflow), projectId))
         .filter((workflow) => workflow.workflow.id === item.data.id)
         .toSorted((left, right) => right.started.localeCompare(left.started))
     : [];

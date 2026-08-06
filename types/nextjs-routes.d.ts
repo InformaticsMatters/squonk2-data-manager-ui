@@ -56,7 +56,7 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/projects/[projectId]/results", { "projectId": string }>
     | DynamicRoute<"/projects/[projectId]/results/[collection]/[resultId]", { "projectId": string; "collection": string; "resultId": string }>
     | DynamicRoute<"/projects/[projectId]/run", { "projectId": string }>
-    | DynamicRoute<"/projects/[projectId]/run/[definitionType]/[definitionId]", { "projectId": string; "definitionType": string; "definitionId": string }>
+    | DynamicRoute<"/projects/[projectId]/run/[...definition]", { "projectId": string; "definition": string[] }>
     | StaticRoute<"/projects/new">
     | DynamicRoute<"/unit/[unitId]/inventory", { "unitId": string }>
     | StaticRoute<"/viewer/sdf">;

@@ -1,119 +1,59 @@
-import { useEffect, useState } from "react";
-
-import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
-import {
-  Alert,
-  Box,
-  Button,
-  Container,
-  Grid,
-  IconButton,
-  MenuItem,
-  TextField,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Button, Container, Typography } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
+import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
 import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/runCards/ApplicationCard";
 import { JobCard } from "../components/runCards/JobCard";
 import { WorkflowCard } from "../components/runCards/WorkflowCard/WorkflowCard";
-import { SearchTextField } from "../components/SearchTextField";
 import Layout from "../layouts/Layout";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
-import { DefinitionNotFound, ProjectRunDefinition } from "./ProjectRunDefinition";
+import { ProjectRunDefinition } from "./ProjectRunDefinition";
 import {
-  localNotFoundProjectId,
   projectLinks,
   type ProjectRoute,
   runCatalogueState,
   type RunFilterType,
   type RunState,
 } from "./routes";
-import { resolveRunCapabilities } from "./runCapabilities";
+import { resolveDefinitionCapabilities } from "./runCapabilities";
 import {
   filterRunItems,
+  findRunDefinition,
+  runCatalogueOf,
   runDefinitionInstances,
   type RunDefinitionItem,
   runDefinitionRunningWorkflows,
 } from "./runFacts";
+import { resolveProjectSectionRoute } from "./sectionRoute";
+import { type SectionFilterOption, SectionToolbar } from "./SectionToolbar";
 import { type ProjectRunCatalogue, useProjectRun } from "./useProjectRun";
 import { type LaunchOutcome } from "./useRunCommands";
 
 type RunRoute = Extract<ProjectRoute, { kind: "run-definition" | "run" }>;
 
-const filterOptions = [
+const isRunRoute = (route: FamilyRoute): route is RunRoute =>
+  route.kind === "run" || route.kind === "run-definition";
+
+const filterOptions: readonly SectionFilterOption<RunFilterType>[] = [
   { label: "Workflows", value: "workflow" },
   { label: "Applications", value: "application" },
   { label: "Jobs", value: "job" },
-] as const satisfies readonly { label: string; value: RunFilterType }[];
+];
 
-const allTypes = filterOptions.map(({ value }) => value);
-
-const RunToolbar = ({
-  onRefresh,
-  onStateChange,
-  state,
-}: {
-  onRefresh: () => void;
-  onStateChange: (change: RunState) => void;
-  state: RunState;
-}) => {
-  const [search, setSearch] = useState(state.search ?? "");
-
-  useEffect(() => setSearch(state.search ?? ""), [state.search]);
-
-  return (
-    <Grid container spacing={2} sx={{ alignItems: "center", mb: 2 }}>
-      <Grid size={{ md: 4, sm: 6, xs: 12 }}>
-        <TextField
-          fullWidth
-          select
-          label="Filter"
-          slotProps={{
-            select: {
-              multiple: true,
-              onChange: (event) => {
-                const selected = event.target.value as RunFilterType[];
-                onStateChange({
-                  ...state,
-                  types: selected.length === allTypes.length ? undefined : selected,
-                });
-              },
-            },
-          }}
-          value={state.types ?? allTypes}
-        >
-          {filterOptions.map(({ label, value }) => (
-            <MenuItem key={value} value={value}>
-              {label}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Grid>
-      <Grid size={{ md: 4, sm: 5, xs: 12 }} sx={{ ml: "auto" }}>
-        <SearchTextField
-          fullWidth
-          value={search}
-          onChange={(event) => {
-            setSearch(event.target.value);
-            onStateChange({ ...state, search: event.target.value || undefined });
-          }}
-        />
-      </Grid>
-      <Grid size={{ xs: 12, sm: "auto" }} sx={{ textAlign: "center" }}>
-        <Tooltip title="Refresh catalogue">
-          <IconButton size="large" sx={{ ml: "auto" }} onClick={onRefresh}>
-            <RefreshRoundedIcon />
-          </IconButton>
-        </Tooltip>
-      </Grid>
-    </Grid>
-  );
-};
+/**
+ * A definition that is absent, refused, not offered by this project, or addressed through a URL
+ * Run cannot read at all answers identically. The addressed project and its catalogue stay
+ * displayed and nothing is redirected or discovered, so pairing an identity with a project that
+ * does not offer it reveals nothing about it.
+ */
+const DefinitionNotFound = () => (
+  <Alert severity="warning" sx={{ mb: 2 }}>
+    This definition was not found in this project.
+  </Alert>
+);
 
 /**
  * One definition, offered with the capabilities the project in the URL decides. Nothing about the
@@ -132,39 +72,34 @@ const RunDefinitionCard = ({
   run: ProjectRunCatalogue;
   runState: RunState;
 }) => {
-  // A card offers every version of its definition, so it states only what the project decides. A
-  // version the Data Manager itself disabled says so on the card that offers it and in the modal
-  // that addresses it, where the version being run is known.
-  const capabilities = resolveRunCapabilities(facts, { content: run.freshness[item.kind] });
+  // A card offers every version of its definition and states what the project decides about the
+  // one it is showing, so a version the Data Manager itself disabled says so on the card that
+  // offers it as well as in the modal that addresses it.
+  const resolveCapabilities = resolveDefinitionCapabilities(facts, item, run.freshness[item.kind]);
+  const cardProps = { isLoading: run.executionsLoading, projectId, resolveCapabilities, runState };
 
   switch (item.kind) {
     case "application":
       return (
         <ApplicationCard
+          {...cardProps}
           application={item.data}
-          capabilities={capabilities}
           instances={runDefinitionInstances(item, run.instances, projectId)}
-          projectId={projectId}
-          runState={runState}
         />
       );
     case "job":
       return (
         <JobCard
-          capabilities={capabilities}
+          {...cardProps}
           instances={runDefinitionInstances(item, run.instances, projectId)}
           jobs={item.data}
-          projectId={projectId}
-          runState={runState}
         />
       );
     case "workflow":
       return (
         <WorkflowCard
-          capabilities={capabilities}
-          projectId={projectId}
+          {...cardProps}
           runningWorkflows={runDefinitionRunningWorkflows(item, run.runningWorkflows, projectId)}
-          runState={runState}
           workflow={item.data}
         />
       );
@@ -231,6 +166,24 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
   const run = useProjectRun(projectId);
   const facts = useProjectFacts();
 
+  const addressed =
+    route.kind === "run-definition"
+      ? {
+          catalogue: runCatalogueOf(route.definitionType),
+          definitionId: route.definitionId,
+          item: findRunDefinition(run.items, route.definitionType, route.definitionId),
+        }
+      : undefined;
+  // Only the catalogue that publishes this definition type can place it, so only that catalogue's
+  // own read decides this: a definition is absent here when its own catalogue answered and did not
+  // offer it. A catalogue that could not be read says so through the retry the section already
+  // offers, and never reports the definition as absent.
+  const definitionAbsent =
+    addressed !== undefined &&
+    addressed.item === undefined &&
+    !run.isLoading &&
+    run.readStates[addressed.catalogue].kind === "available";
+
   const handleStateChange = (change: RunState) => {
     const href =
       route.kind === "run"
@@ -261,7 +214,11 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
         <Typography gutterBottom component="h1" variant="h4">
           Run
         </Typography>
-        <RunToolbar
+        <SectionToolbar
+          filterLabel="Filter"
+          filterOptions={filterOptions}
+          filterSize={{ md: 4, sm: 6, xs: 12 }}
+          refreshLabel="Refresh catalogue"
           state={state}
           onRefresh={() => run.refresh()}
           onStateChange={handleStateChange}
@@ -288,18 +245,22 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
             could not be refreshed cannot be run until they load again.
           </Alert>
         ) : null}
-        {localNotFound ? <DefinitionNotFound /> : null}
+        {/* However a definition failed to be addressed, it is reported in the one place, so a
+        malformed identity and one the project does not offer are indistinguishable. */}
+        {localNotFound === true || definitionAbsent ? <DefinitionNotFound /> : null}
 
         {facts === undefined ? (
           <CenterLoader />
         ) : (
           <>
             <RunCatalogue facts={facts} projectId={projectId} run={run} state={state} />
-            {route.kind === "run-definition" ? (
+            {addressed?.item ? (
               <ProjectRunDefinition
+                content={run.freshness[addressed.item.kind]}
+                definitionId={addressed.definitionId}
                 facts={facts}
-                route={route}
-                run={run}
+                item={addressed.item}
+                projectId={projectId}
                 onClose={handleClose}
                 onLaunched={handleLaunched}
               />
@@ -317,23 +278,16 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
  * or previously current project.
  */
 export const ProjectRun = () => {
-  const familyRoute = useFamilyRoute();
+  const section = resolveProjectSectionRoute(useFamilyRoute(), isRunRoute);
 
-  // A definition route the section could not address keeps the project and its catalogue rather
-  // than guessing a correction for it.
-  if (familyRoute.localNotFound) {
-    const projectId = localNotFoundProjectId(familyRoute.parent);
-    return projectId ? (
-      <RunSection localNotFound route={{ kind: "run", projectId }} />
-    ) : (
-      <NextError statusCode={404} />
-    );
+  switch (section.kind) {
+    case "not-found":
+      return <NextError statusCode={404} />;
+    // A definition route the section could not address keeps the project and its catalogue rather
+    // than guessing a correction for it.
+    case "local-not-found":
+      return <RunSection localNotFound route={{ kind: "run", projectId: section.projectId }} />;
+    case "route":
+      return <RunSection route={section.route} />;
   }
-
-  const { route } = familyRoute;
-  if (route.kind !== "run" && route.kind !== "run-definition") {
-    return <NextError statusCode={404} />;
-  }
-
-  return <RunSection route={route} />;
 };

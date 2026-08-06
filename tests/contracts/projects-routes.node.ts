@@ -157,6 +157,11 @@ test.describe("Project route contract", () => {
     [`/projects/${projectId}/run/jobs/not-a-number`, "run"],
     [`/projects/${projectId}/run/applications/Invalid`, "run"],
     [`/projects/${projectId}/run/workflows/not-a-workflow`, "run"],
+    // A URL beneath Run that is not shaped like a definition route at all is answered by Run too,
+    // so a mistyped path never costs the project frame it was addressed beneath.
+    [`/projects/${projectId}/run/jobs`, "run"],
+    [`/projects/${projectId}/run/jobs/42/versions`, "run"],
+    [`/projects/${projectId}/run/jobs/42/versions/1`, "run"],
     [`/projects/${projectId}/results/tasks/not-a-task`, "results"],
     [`/projects/${projectId}/results/instances/not-an-instance`, "results"],
     [`/projects/${projectId}/results/workflows/not-a-running-workflow`, "results"],

@@ -31,10 +31,16 @@ import {
 } from "./sectionReads";
 
 export type ProjectRunCatalogue = {
+  /**
+   * The addressed project's own executions are still being read. They are read separately from the
+   * definitions they came from, so a card must not answer that it has none until they arrive.
+   */
+  executionsLoading: boolean;
   /** Each catalogue's content is only as fresh as its own last read. */
   freshness: Record<RunFilterType, "current" | "stale">;
   /** Existing instances of the addressed project, offered beside the definitions that made them. */
   instances: InstanceSummary[];
+  /** The definition catalogues are still being read, so nothing can be said about what they offer. */
   isLoading: boolean;
   /** Every definition the catalogue offers, before the section's route state narrows them. */
   items: RunDefinitionItem[];
@@ -102,6 +108,7 @@ export const useProjectRun = (projectId: string): ProjectRunCatalogue => {
   });
 
   return {
+    executionsLoading: instances.isLoading || runningWorkflows.isLoading,
     freshness,
     instances: readableContent(executionReadStates.instance, instances.data),
     isLoading: applications.isLoading || jobs.isLoading || workflows.isLoading,

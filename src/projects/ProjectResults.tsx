@@ -1,27 +1,14 @@
-import { useEffect, useState } from "react";
-
-import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
-import {
-  Alert,
-  Button,
-  Container,
-  Grid,
-  IconButton,
-  MenuItem,
-  TextField,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Alert, Button, Container, Grid, Typography } from "@mui/material";
 import NextError from "next/error";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
 import { CenterLoader } from "../components/CenterLoader";
 import { Instance } from "../components/instances/Instance";
 import { EventDebugSwitch } from "../components/results/EventDebugSwitch";
 import { RunningWorkflowCard } from "../components/RunningWorkflowCard/RunningWorkflowCard";
-import { SearchTextField } from "../components/SearchTextField";
 import { ResultTaskCard } from "../components/tasks/ResultTaskCard";
 import Layout from "../layouts/Layout";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
@@ -29,89 +16,26 @@ import { ProjectResultDetail } from "./ProjectResultDetail";
 import { resolveResultCapabilities } from "./resultCapabilities";
 import { filterResultItems, type ResultItem } from "./resultFacts";
 import {
-  localNotFoundProjectId,
   projectLinks,
   type ProjectRoute,
   type ResultFilterType,
   resultsListState,
   type ResultsState,
 } from "./routes";
+import { resolveProjectSectionRoute } from "./sectionRoute";
+import { type SectionFilterOption, SectionToolbar } from "./SectionToolbar";
 import { type ProjectResults as ProjectResultsData, useProjectResults } from "./useProjectResults";
 
 type ResultsRoute = Extract<ProjectRoute, { kind: "result" | "results" }>;
 
-const filterOptions = [
+const isResultsRoute = (route: FamilyRoute): route is ResultsRoute =>
+  route.kind === "results" || route.kind === "result";
+
+const filterOptions: readonly SectionFilterOption<ResultFilterType>[] = [
   { label: "Workflows", value: "workflow" },
   { label: "Tasks", value: "task" },
   { label: "Instances", value: "instance" },
-] as const satisfies readonly { label: string; value: ResultFilterType }[];
-
-const allTypes = filterOptions.map(({ value }) => value);
-
-const ResultsToolbar = ({
-  onRefresh,
-  onStateChange,
-  state,
-}: {
-  onRefresh: () => void;
-  onStateChange: (change: ResultsState) => void;
-  state: ResultsState;
-}) => {
-  const [search, setSearch] = useState(state.search ?? "");
-
-  useEffect(() => setSearch(state.search ?? ""), [state.search]);
-
-  return (
-    <Grid container spacing={2} sx={{ alignItems: "center", mb: 2 }}>
-      <Grid size={{ md: 4, sm: 4, xs: 12 }}>
-        <TextField
-          fullWidth
-          select
-          label="Filter Results"
-          slotProps={{
-            select: {
-              multiple: true,
-              onChange: (event) => {
-                const selected = event.target.value as ResultFilterType[];
-                onStateChange({
-                  ...state,
-                  types: selected.length === allTypes.length ? undefined : selected,
-                });
-              },
-            },
-          }}
-          value={state.types ?? allTypes}
-        >
-          {filterOptions.map(({ label, value }) => (
-            <MenuItem key={value} value={value}>
-              {label}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Grid>
-      <Grid size={{ md: 1, sm: 2 }}>
-        <EventDebugSwitch />
-      </Grid>
-      <Grid size={{ md: 4, sm: 5, xs: 12 }} sx={{ ml: "auto" }}>
-        <SearchTextField
-          fullWidth
-          value={search}
-          onChange={(event) => {
-            setSearch(event.target.value);
-            onStateChange({ ...state, search: event.target.value || undefined });
-          }}
-        />
-      </Grid>
-      <Grid size={{ xs: 12, sm: "auto" }} sx={{ textAlign: "center" }}>
-        <Tooltip title="Refresh results">
-          <IconButton size="large" sx={{ ml: "auto" }} onClick={onRefresh}>
-            <RefreshRoundedIcon />
-          </IconButton>
-        </Tooltip>
-      </Grid>
-    </Grid>
-  );
-};
+];
 
 /**
  * One result, offered with the capabilities its own owning project decides. Nothing about the card
@@ -244,7 +168,19 @@ const ResultsSection = ({
         <Typography gutterBottom component="h1" variant="h4">
           Results
         </Typography>
-        <ResultsToolbar state={state} onRefresh={handleRefresh} onStateChange={handleStateChange} />
+        <SectionToolbar
+          filterLabel="Filter Results"
+          filterOptions={filterOptions}
+          filterSize={{ md: 4, sm: 4, xs: 12 }}
+          refreshLabel="Refresh results"
+          state={state}
+          onRefresh={handleRefresh}
+          onStateChange={handleStateChange}
+        >
+          <Grid size={{ md: 1, sm: 2 }}>
+            <EventDebugSwitch />
+          </Grid>
+        </SectionToolbar>
 
         {/* A refused collection and a collection that merely failed to refresh are reported
         separately, so losing access to one never withholds the retry another one needs. */}
@@ -297,23 +233,18 @@ const ResultsSection = ({
  * or previously current project.
  */
 export const ProjectResults = () => {
-  const familyRoute = useFamilyRoute();
+  const section = resolveProjectSectionRoute(useFamilyRoute(), isResultsRoute);
 
-  // A result route the section could not address keeps the project and its list rather than
-  // guessing a correction for it.
-  if (familyRoute.localNotFound) {
-    const projectId = localNotFoundProjectId(familyRoute.parent);
-    return projectId ? (
-      <ResultsSection localNotFound route={{ kind: "results", projectId }} />
-    ) : (
-      <NextError statusCode={404} />
-    );
+  switch (section.kind) {
+    case "not-found":
+      return <NextError statusCode={404} />;
+    // A result route the section could not address keeps the project and its list rather than
+    // guessing a correction for it.
+    case "local-not-found":
+      return (
+        <ResultsSection localNotFound route={{ kind: "results", projectId: section.projectId }} />
+      );
+    case "route":
+      return <ResultsSection route={section.route} />;
   }
-
-  const { route } = familyRoute;
-  if (route.kind !== "results" && route.kind !== "result") {
-    return <NextError statusCode={404} />;
-  }
-
-  return <ResultsSection route={route} />;
 };

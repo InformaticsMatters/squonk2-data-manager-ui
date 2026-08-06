@@ -4,6 +4,7 @@ import { Box, List, ListItemButton, ListItemText, Typography } from "@mui/materi
 import A from "next/link";
 
 import { projectLinks } from "../../projects/routes";
+import { CenterLoader } from "../CenterLoader";
 import { LocalTime } from "../LocalTime";
 
 export interface InstancesListProps {
@@ -11,6 +12,8 @@ export interface InstancesListProps {
    * The instances of one definition, already constrained to the project that owns them.
    */
   instances: readonly InstanceSummary[];
+  /** The read that lists them has not answered yet, so the list cannot say it has none. */
+  isLoading?: boolean;
 }
 
 /**
@@ -18,7 +21,11 @@ export interface InstancesListProps {
  * the list neither issues a read of its own nor consults a project other than the one that owns
  * each instance it links to.
  */
-export const InstancesList = ({ instances }: InstancesListProps) => {
+export const InstancesList = ({ instances, isLoading = false }: InstancesListProps) => {
+  if (isLoading) {
+    return <CenterLoader />;
+  }
+
   if (instances.length === 0) {
     return (
       <Box sx={{ p: 2 }}>

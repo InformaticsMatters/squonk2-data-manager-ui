@@ -25,7 +25,7 @@ on:
 
 
 jobs:
-  # check that both APIs are responding normally before running tests
+  # check the APIs are responding normally before running tests
   check-api:
     runs-on: ubuntu-latest
     steps:
@@ -38,6 +38,13 @@ jobs:
       run: |
         curl -f -X 'GET' \
           'https://account-server-test.xchem-dev.diamond.ac.uk/account-server-api/version' \
+          -H 'accept: application/json'
+    # Every login test depends on Keycloak, so an unreachable one otherwise shows up as a handful
+    # of opaque `waitForURL` timeouts several minutes into the run rather than a fast, clear signal.
+    - name: Get Keycloak OIDC configuration
+      run: |
+        curl -f -X 'GET' \
+          'https://keycloak-test.xchem-dev.diamond.ac.uk/auth/realms/squonk/.well-known/openid-configuration' \
           -H 'accept: application/json'
   test:
     needs: check-api # tests are skipped if APIs are down to avoid false negatives

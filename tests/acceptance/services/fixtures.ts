@@ -19,11 +19,15 @@ import {
 import { AppApiUserGetAccountResponse } from "@/api/account-server/user/zod";
 import { AppApiVersionGetResponse } from "@/api/data-manager/accounting/zod";
 import {
+  AppApiApplicationGetApplicationResponse,
+  AppApiApplicationGetResponse,
+} from "@/api/data-manager/application/zod";
+import {
   AppApiDatasetGetResponse,
   AppApiDatasetPostResponse,
 } from "@/api/data-manager/dataset/zod";
 import { AppApiInstanceGetResponse } from "@/api/data-manager/instance/zod";
-import { AppApiJobGetJobResponse } from "@/api/data-manager/job/zod";
+import { AppApiJobGetJobResponse, AppApiJobGetResponse } from "@/api/data-manager/job/zod";
 import { AppApiProjectGetResponse } from "@/api/data-manager/project/zod";
 import { AppApiTaskGetResponse, AppApiTaskGetTaskResponse } from "@/api/data-manager/task/zod";
 import { AppApiTypeGetResponse } from "@/api/data-manager/type/zod";
@@ -31,7 +35,11 @@ import {
   AppApiUserGetAccountResponse as AppApiDataManagerUserGetAccountResponse,
   AppApiUserGetResponse,
 } from "@/api/data-manager/user/zod";
-import { AppApiWorkflowGetRunningResponse } from "@/api/data-manager/workflow/zod";
+import {
+  AppApiWorkflowGetResponse,
+  AppApiWorkflowGetRunningResponse,
+  AppApiWorkflowGetWorkflowResponse,
+} from "@/api/data-manager/workflow/zod";
 
 import { gzipSync } from "node:zlib";
 
@@ -60,6 +68,9 @@ export const fixtureIds = {
   runningWorkflow: "r-workflow-5e5e5e5e-5e5e-4e5e-8e5e-5e5e5e5e5e5e",
   screeningRunningWorkflow: "r-workflow-6f6f6f6f-6f6f-4f6f-8f6f-6f6f6f6f6f6f",
   workflow: "workflow-7a7a7a7a-7a7a-4a7a-8a7a-7a7a7a7a7a7a",
+  /** The executions a launch from the Run catalogue creates. */
+  launchedInstance: "instance-8a8a8a8a-8a8a-4a8a-8a8a-8a8a8a8a8a8a",
+  launchedRunningWorkflow: "r-workflow-9b9b9b9b-9b9b-4b9b-8b9b-9b9b9b9b9b9b",
   sharedProjectOne: "project-88888888-8888-4888-8888-888888888888",
   sharedProjectTwo: "project-99999999-9999-4999-8999-999999999999",
   partnerProject: "project-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
@@ -478,21 +489,122 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         },
       ],
     }),
-    job: AppApiJobGetJobResponse.parse({
-      application: { application_id: "acceptance-application", kind: "DataManagerJobOperator" },
-      collection: "acceptance",
-      command: "acceptance",
-      command_encoding: "JINJA2_3_0",
-      disabled: false,
-      exchange_rate: "1",
-      id: 1,
-      image_name: "acceptance/job",
-      image_project_directory: "/data",
-      image_tag: "1.0.0",
-      job: "acceptance-job",
-      name: "Acceptance Job",
-      required_assets: [],
+    // The Run catalogue. Applications and workflow definitions are catalogues the Data Manager
+    // does not scope by project; jobs are, so they answer for the project they were asked about.
+    applications: AppApiApplicationGetResponse.parse({
+      count: 1,
+      applications: [
+        {
+          application_id: "acceptance-application",
+          group: "notebooks",
+          kind: "AcceptanceNotebook",
+        },
+      ],
+    }),
+    applicationDetail: AppApiApplicationGetApplicationResponse.parse({
+      cost: "0",
+      group: "notebooks",
+      id: "acceptance-application",
+      instances: [],
+      kind: "AcceptanceNotebook",
+      template: JSON.stringify({ properties: {}, type: "object" }),
+      versions: ["1.0.0"],
+    }),
+    jobs: AppApiJobGetResponse.parse({
+      count: 3,
+      jobs: [
+        {
+          collection: "acceptance",
+          description: "Docks a library against a protein",
+          disabled: false,
+          id: 1,
+          image_type: "SIMPLE",
+          job: "acceptance-job",
+          keywords: ["docking"],
+          name: "Acceptance Job",
+          required_assets: [],
+          version: "1.0.0",
+        },
+        {
+          collection: "acceptance",
+          description: "Docks a library against a protein",
+          disabled: false,
+          id: 2,
+          image_type: "SIMPLE",
+          job: "acceptance-job",
+          keywords: ["docking"],
+          name: "Acceptance Job",
+          required_assets: [],
+          version: "2.0.0",
+        },
+        {
+          collection: "acceptance",
+          disabled: true,
+          disabled_reason: "This job's container image is missing.",
+          id: 3,
+          image_type: "SIMPLE",
+          job: "unavailable-job",
+          name: "Unavailable Job",
+          required_assets: [],
+          version: "1.0.0",
+        },
+      ],
+    }),
+    jobDetails: Object.fromEntries(
+      [
+        { id: 1, disabled: false, job: "acceptance-job", name: "Acceptance Job", version: "1.0.0" },
+        { id: 2, disabled: false, job: "acceptance-job", name: "Acceptance Job", version: "2.0.0" },
+        {
+          id: 3,
+          disabled: true,
+          job: "unavailable-job",
+          name: "Unavailable Job",
+          version: "1.0.0",
+        },
+      ].map((detail) => [
+        detail.id,
+        AppApiJobGetJobResponse.parse({
+          application: { application_id: "acceptance-application", kind: "DataManagerJobOperator" },
+          collection: "acceptance",
+          command: "acceptance",
+          command_encoding: "JINJA2_3_0",
+          disabled: detail.disabled,
+          exchange_rate: "1",
+          id: detail.id,
+          image_name: "acceptance/job",
+          image_project_directory: "/data",
+          image_tag: detail.version,
+          job: detail.job,
+          name: detail.name,
+          required_assets: [],
+          version: detail.version,
+        }),
+      ]),
+    ),
+    workflows: AppApiWorkflowGetResponse.parse({
+      count: 1,
+      workflows: [
+        {
+          id: fixtureIds.workflow,
+          name: "acceptance-workflow",
+          scope: "GLOBAL",
+          validated: true,
+          version: "1.0.0",
+          workflow_description: "Screens a library against a target",
+          workflow_name: "Acceptance Workflow Definition",
+        },
+      ],
+    }),
+    workflowDetail: AppApiWorkflowGetWorkflowResponse.parse({
+      created,
+      id: fixtureIds.workflow,
+      name: "acceptance-workflow",
+      scope: "GLOBAL",
+      validated: true,
+      variables: {},
       version: "1.0.0",
+      workflow_description: "Screens a library against a target",
+      workflow_name: "Acceptance Workflow Definition",
     }),
     resultTasks: {
       [fixtureIds.project]: AppApiTaskGetResponse.parse({

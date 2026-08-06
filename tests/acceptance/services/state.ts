@@ -29,6 +29,13 @@ export type ScenarioState = {
    * `/instance`, so collections can be made to fail differently and at the same time.
    */
   resultsFailures: { collection?: string; status: 403 | 503 }[];
+  /**
+   * Run catalogue read failures in effect, each optionally narrowed to one catalogue path, e.g.
+   * `/application`, so catalogues can be made to fail differently and at the same time.
+   */
+  runFailures: { collection?: string; status: 403 | 503 }[];
+  /** A launch the Data Manager refuses or cannot complete. */
+  launchFailure?: 403 | 503;
   addressedReadFailure?: 403 | 503;
   semanticsFailure?: 503;
   taskFailure?: 503;
@@ -47,6 +54,7 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     productFailure: false,
     requests: [],
     resultsFailures: [],
+    runFailures: [],
   };
   scenarios.set(subject, state);
   return state;

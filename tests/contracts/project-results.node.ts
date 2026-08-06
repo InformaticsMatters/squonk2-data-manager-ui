@@ -24,15 +24,17 @@ import {
 import { resolveResultCapabilities } from "../../src/projects/resultCapabilities";
 import {
   filterResultItems,
-  resolveResultReadState,
-  resolveResultsFreshness,
   resolveResultsFreshnessByCollection,
   resolveResultsReadReport,
   resultListRequests,
-  resultReadFailure,
   selectProjectResults,
 } from "../../src/projects/resultFacts";
 import { parseProjectRoute, projectLinks, resultsListState } from "../../src/projects/routes";
+import {
+  resolveSectionFreshness,
+  resolveSectionReadState,
+  sectionReadFailure,
+} from "../../src/projects/sectionReads";
 
 const projectId = "project-33333333-3333-4333-8333-333333333333";
 const otherProjectId = "project-99999999-9999-4999-8999-999999999999";
@@ -159,29 +161,29 @@ test("route filter state selects types and searches result content", () => {
 
 test("confirmed absence or refusal clears content while everything else retries", () => {
   for (const noFailure of [null, undefined]) {
-    expect(resolveResultReadState(noFailure)).toEqual({ kind: "available" });
+    expect(resolveSectionReadState(noFailure)).toEqual({ kind: "available" });
   }
-  expect(resolveResultReadState(new Response(null, { status: 403 }))).toEqual({
+  expect(resolveSectionReadState(new Response(null, { status: 403 }))).toEqual({
     kind: "unavailable",
   });
-  expect(resolveResultReadState(new Response(null, { status: 404 }))).toEqual({
+  expect(resolveSectionReadState(new Response(null, { status: 404 }))).toEqual({
     kind: "unavailable",
   });
   for (const status of [429, 500, 503]) {
-    expect(resolveResultReadState(new Response(null, { status }))).toEqual({
+    expect(resolveSectionReadState(new Response(null, { status }))).toEqual({
       kind: "recoverable",
       retryable: true,
     });
   }
   // An unusable transport fact is never reported as success.
-  expect(resolveResultReadState(new Error("no status"))).toEqual({
+  expect(resolveSectionReadState(new Error("no status"))).toEqual({
     kind: "recoverable",
     retryable: true,
   });
 
-  expect(resolveResultsFreshness({ kind: "available" })).toBe("current");
-  expect(resolveResultsFreshness({ kind: "recoverable", retryable: true })).toBe("stale");
-  expect(resolveResultsFreshness({ kind: "unavailable" })).toBe("current");
+  expect(resolveSectionFreshness({ kind: "available" })).toBe("current");
+  expect(resolveSectionFreshness({ kind: "recoverable", retryable: true })).toBe("stale");
+  expect(resolveSectionFreshness({ kind: "unavailable" })).toBe("current");
 });
 
 const project = (overrides: Partial<ProjectDetail> = {}) =>
@@ -321,9 +323,9 @@ test("unconfirmed caller facts leave ordinary result actions available with thei
 test("a collection that fails does not decide what the other collections may show", () => {
   // Each collection is classified on its own, so the section keeps the content it could read.
   const readStates = {
-    instance: resolveResultReadState(new Response(null, { status: 403 })),
-    task: resolveResultReadState(null),
-    workflow: resolveResultReadState(new Response(null, { status: 503 })),
+    instance: resolveSectionReadState(new Response(null, { status: 403 })),
+    task: resolveSectionReadState(null),
+    workflow: resolveSectionReadState(new Response(null, { status: 503 })),
   };
 
   expect(readStates.instance).toEqual({ kind: "unavailable" });
@@ -354,26 +356,26 @@ test("a failed refresh is noticed even though the content it left behind is stil
   const transport = new Response(null, { status: 503 });
 
   // A read with nothing to show reports its failure as `error`.
-  expect(resultReadFailure({ error: transport, failureReason: null })).toBe(transport);
+  expect(sectionReadFailure({ error: transport, failureReason: null })).toBe(transport);
   // A read whose refresh failed keeps its data and reports the failure as `failureReason` alone.
   // This is the only case in which stale content exists, so missing it would leave content that
   // could not be refreshed looking current and changeable.
-  expect(resultReadFailure({ error: null, failureReason: transport })).toBe(transport);
+  expect(sectionReadFailure({ error: null, failureReason: transport })).toBe(transport);
   expect(
-    resolveResultReadState(resultReadFailure({ error: null, failureReason: transport })),
+    resolveSectionReadState(sectionReadFailure({ error: null, failureReason: transport })),
   ).toEqual({ kind: "recoverable", retryable: true });
   // A read that succeeded reports neither.
-  expect(resultReadFailure({ error: null, failureReason: null })).toBeNull();
-  expect(resolveResultReadState(resultReadFailure({ error: null, failureReason: null }))).toEqual({
-    kind: "available",
-  });
+  expect(sectionReadFailure({ error: null, failureReason: null })).toBeNull();
+  expect(resolveSectionReadState(sectionReadFailure({ error: null, failureReason: null }))).toEqual(
+    { kind: "available" },
+  );
 });
 
 test("the section reports nothing when every collection answered", () => {
   const readStates = {
-    instance: resolveResultReadState(null),
-    task: resolveResultReadState(null),
-    workflow: resolveResultReadState(null),
+    instance: resolveSectionReadState(null),
+    task: resolveSectionReadState(null),
+    workflow: resolveSectionReadState(null),
   };
 
   expect(resolveResultsReadReport(readStates)).toEqual({ retryable: false, unavailable: false });
@@ -385,17 +387,17 @@ test("the section reports nothing when every collection answered", () => {
 });
 
 test("one addressed result answers by the same rule as the collection it belongs to", () => {
-  expect(resolveResultReadState(new Response(null, { status: 403 }))).toEqual({
+  expect(resolveSectionReadState(new Response(null, { status: 403 }))).toEqual({
     kind: "unavailable",
   });
-  expect(resolveResultReadState(new Response(null, { status: 404 }))).toEqual({
+  expect(resolveSectionReadState(new Response(null, { status: 404 }))).toEqual({
     kind: "unavailable",
   });
-  expect(resolveResultReadState(new Response(null, { status: 503 }))).toEqual({
+  expect(resolveSectionReadState(new Response(null, { status: 503 }))).toEqual({
     kind: "recoverable",
     retryable: true,
   });
-  expect(resolveResultReadState(null)).toEqual({ kind: "available" });
+  expect(resolveSectionReadState(null)).toEqual({ kind: "available" });
 });
 
 test("every displayed result is offered the capabilities its own owning project decides", () => {

@@ -15,18 +15,20 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 
 import {
-  resolveResultReadState,
   resolveResultsFreshnessByCollection,
   resolveResultsReadReport,
   type ResultItem,
   resultListRequests,
-  resultReadFailure,
-  type ResultsReadReport,
-  type ResultsReadState,
   type ResultsReadStates,
   selectProjectResults,
 } from "./resultFacts";
 import { type ResultFilterType } from "./routes";
+import {
+  readableContent,
+  resolveSectionReadState,
+  sectionReadFailure,
+  type SectionReadReport,
+} from "./sectionReads";
 
 /** The generated detail cache identity of one displayed result, refreshed alongside its list. */
 const resultKey = (item: ResultItem) => {
@@ -40,10 +42,6 @@ const resultKey = (item: ResultItem) => {
   }
 };
 
-/** Content the caller is known to have lost access to is not shown, however recently it loaded. */
-const readable = <TResult>(state: ResultsReadState, data: TResult[] | undefined): TResult[] =>
-  state.kind === "unavailable" ? [] : (data ?? []);
-
 export type ProjectResults = {
   /** Each collection's content is only as fresh as its own last read. */
   freshness: Record<ResultFilterType, "current" | "stale">;
@@ -53,7 +51,7 @@ export type ProjectResults = {
   /** How each collection's own read answered, so one never speaks for another. */
   readStates: ResultsReadStates;
   /** What the section must tell the caller about those reads. */
-  report: ResultsReadReport;
+  report: SectionReadReport;
   /** Refreshes the displayed results without changing what is displayed. */
   refresh: () => void;
   /** Retries the reads that failed, leaving the addressed project and route untouched. */
@@ -82,17 +80,17 @@ export const useProjectResults = (projectId: string): ProjectResults => {
   // Each collection answers for itself, so one refused or failing read never decides what the
   // other two may show, how fresh they are, or whether they are worth retrying.
   const readStates: ResultsReadStates = {
-    instance: resolveResultReadState(resultReadFailure(instances)),
-    task: resolveResultReadState(resultReadFailure(tasks)),
-    workflow: resolveResultReadState(resultReadFailure(workflows)),
+    instance: resolveSectionReadState(sectionReadFailure(instances)),
+    task: resolveSectionReadState(sectionReadFailure(tasks)),
+    workflow: resolveSectionReadState(sectionReadFailure(workflows)),
   };
   const report = resolveResultsReadReport(readStates);
   const freshness = resolveResultsFreshnessByCollection(readStates);
   const items = selectProjectResults({
-    instances: readable(readStates.instance, instances.data),
+    instances: readableContent(readStates.instance, instances.data),
     projectId,
-    tasks: readable(readStates.task, tasks.data),
-    workflows: readable(readStates.workflow, workflows.data),
+    tasks: readableContent(readStates.task, tasks.data),
+    workflows: readableContent(readStates.workflow, workflows.data),
   });
 
   const refresh = () => {

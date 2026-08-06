@@ -1,40 +1,44 @@
 import { useEffect, useRef, useState } from "react";
 
 import { type DmError } from "@/api/data-manager";
-import { useGetWorkflow, useRunWorkflow } from "@/api/data-manager/workflow";
+import { useGetWorkflow } from "@/api/data-manager/workflow";
 
-import { Box, TextField } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
+import { capabilityIsEnabled } from "../../../projects/capabilities";
+import { useRunCommands } from "../../../projects/useRunCommands";
+import { CenterLoader } from "../../CenterLoader";
 import { ModalWrapper } from "../../modals/ModalWrapper";
+import { CapabilityReasons } from "../../results/CapabilityReasons";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
 import { JobInputsAndOptionsForm } from "../JobCard/JobInputsAndOptionsForm";
 import { type InputData } from "../JobCard/JobModal";
+import { type RunModalProps } from "../types";
 
-export interface WorkflowModalProps {
+export interface WorkflowModalProps extends RunModalProps {
   workflowId: string;
-  projectId: string;
-  open: boolean;
-  onClose: () => void;
-  onLaunch?: (runningWorkflowId: string) => void;
 }
 
 /**
- * Modal for running a workflow instance. Fetches workflow details and displays the correct form.
+ * Modal for running a workflow in the project the URL addresses. Fetches the workflow definition
+ * and displays the form its variables describe.
  */
 export const WorkflowModal = ({
+  capabilities,
   workflowId,
   projectId,
   open,
   onClose,
-  onLaunch,
+  onLaunched,
 }: WorkflowModalProps) => {
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueError } = useEnqueueError<DmError>();
 
   const { data: workflow } = useGetWorkflow(workflowId);
   const specVariables = workflow?.variables;
 
   const [nameState, setNameState] = useState("");
+  const [launching, setLaunching] = useState(false);
 
   useEffect(() => {
     workflow?.workflow_name && setNameState(workflow.workflow_name);
@@ -47,27 +51,27 @@ export const WorkflowModal = ({
 
   const formRef = useRef<any>(null);
 
-  const { mutateAsync: runWorkflow } = useRunWorkflow();
+  const { launchWorkflow } = useRunCommands();
 
-  const handleSubmit = async () => {
+  // A rejected launch keeps the modal, its route, and everything entered, so a recoverable failure
+  // can be retried rather than reported as a launch that happened.
+  const handleLaunch = async () => {
+    if (!workflow?.id) {
+      return;
+    }
+    setLaunching(true);
     try {
-      if (workflow?.id) {
-        const { id } = await runWorkflow({
-          workflowId: workflow.id,
-          data: {
-            as_name: nameState,
-            debug,
-            project_id: projectId,
-            variables: JSON.stringify({ ...optionsFormData, ...inputsData }),
-          },
-        });
-        enqueueSnackbar("Workflow instance started successfully", { variant: "success" });
-        onLaunch?.(id);
-      }
+      onLaunched(
+        await launchWorkflow(projectId, workflow.id, {
+          debug,
+          name: nameState,
+          variables: JSON.stringify({ ...optionsFormData, ...inputsData }),
+        }),
+      );
     } catch (error) {
       enqueueError(error);
     } finally {
-      onClose();
+      setLaunching(false);
     }
   };
 
@@ -76,35 +80,49 @@ export const WorkflowModal = ({
       DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`workflow-${workflowId}`}
       open={open}
-      submitDisabled={false}
+      submitDisabled={!capabilityIsEnabled(capabilities.launch) || launching}
       submitText="Run"
-      title={workflow?.name ?? ""}
+      title={workflow?.workflow_name ?? workflow?.name ?? "Run workflow"}
       onClose={onClose}
-      onSubmit={() => void handleSubmit()}
+      onSubmit={() => void handleLaunch()}
     >
-      <Box sx={{ paddingTop: 1 }}>
-        <TextField
-          fullWidth
-          label="Workflow name"
-          value={nameState}
-          onChange={(event) => setNameState(event.target.value)}
-        />
-      </Box>
+      {workflow === undefined ? (
+        <CenterLoader />
+      ) : (
+        <>
+          <Typography
+            sx={{ color: "text.secondary", textTransform: "uppercase", fontWeight: "bold" }}
+            variant="caption"
+          >
+            Workflow
+          </Typography>
+          <Typography variant="body2">
+            {workflow.workflow_description ?? <em>No description</em>}
+          </Typography>
+          <CapabilityReasons capabilities={[capabilities.launch]} />
+          <Box sx={{ paddingTop: 1 }}>
+            <TextField
+              fullWidth
+              label="Workflow name"
+              value={nameState}
+              onChange={(event) => setNameState(event.target.value)}
+            />
+          </Box>
 
-      <DebugCheckbox value={debug} onChange={(debug) => setDebug(debug)} />
-      {!!workflow && (
-        <JobInputsAndOptionsForm
-          formRef={formRef}
-          inputs={specVariables?.inputs}
-          inputsData={inputsData}
-          options={specVariables?.options}
-          optionsFormData={optionsFormData}
-          order={(specVariables?.options as any)?.properties}
-          projectId={projectId}
-          setInputsData={setInputsData}
-          setOptionsFormData={setOptionsFormData}
-          specVariables={specVariables}
-        />
+          <DebugCheckbox value={debug} onChange={(debug) => setDebug(debug)} />
+          <JobInputsAndOptionsForm
+            formRef={formRef}
+            inputs={specVariables?.inputs}
+            inputsData={inputsData}
+            options={specVariables?.options}
+            optionsFormData={optionsFormData}
+            order={(specVariables?.options as any)?.properties}
+            projectId={projectId}
+            setInputsData={setInputsData}
+            setOptionsFormData={setOptionsFormData}
+            specVariables={specVariables}
+          />
+        </>
       )}
     </ModalWrapper>
   );

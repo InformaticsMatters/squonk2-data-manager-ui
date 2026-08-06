@@ -49,11 +49,6 @@ export const Footer = () => {
                   Project
                 </Link>
               </ListItem>
-              <ListItem sx={itemStyles}>
-                <Link component={A} href={{ pathname: "/run" }}>
-                  Apps/Jobs
-                </Link>
-              </ListItem>
             </List>
           </Grid>
           <Grid size={{ sm: 3, xs: 6 }}>

@@ -4,9 +4,14 @@ import {
   type TaskSummary,
 } from "@/api/data-manager";
 
-import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
 import { search } from "../utils/app/searches";
 import { type ResultFilterType } from "./routes";
+import {
+  resolveSectionFreshnessByKey,
+  resolveSectionReadReport,
+  type SectionReadReport,
+  type SectionReadState,
+} from "./sectionReads";
 
 /** Only these task purposes are results of work a project user asked for. */
 const listedTaskPurposes = new Set(["DATASET", "FILE"]);
@@ -135,71 +140,12 @@ export const filterResultItems = (
     .filter((item) => !types || types.includes(item.kind))
     .filter((item) => matchesSearch(item, searchValue));
 
-/**
- * What the section may show for the reads it made. A confirmed refusal or absence clears the
- * content, because loaded results must not remain visible once access to them is known to be gone.
- * Everything else — including an unclassifiable failure — is treated as recoverable, so a
- * transient outage marks its content stale and offers retry rather than claiming access was lost.
- */
-export type ResultsReadState =
-  | { kind: "available" }
-  | { kind: "recoverable"; retryable: true }
-  | { kind: "unavailable" };
-
-/**
- * One read answers for itself, whether it returned a collection or one addressed result: a refusal
- * and an absence are the same non-disclosing outcome, and anything else is retried rather than
- * believed.
- */
-export const resolveResultReadState = (error: unknown): ResultsReadState => {
-  if (error === null || error === undefined) {
-    return { kind: "available" };
-  }
-  const kind = classifyTransportFailure(error).kind;
-  return kind === "forbidden" || kind === "not-found"
-    ? { kind: "unavailable" }
-    : { kind: "recoverable", retryable: true };
-};
-
-/**
- * The failure one generated query is reporting. A query with nothing to show reports it as
- * `error`, but a query whose *refresh* failed keeps the data it already had and reports the
- * failure as `failureReason` instead. Stale content only exists in the second case, so a section
- * that must notice it has to read both.
- */
-export const resultReadFailure = (query: { error: unknown; failureReason: unknown }): unknown =>
-  query.error ?? query.failureReason;
-
 /** How each Results collection's own last read answered, keyed by the results it carries. */
-export type ResultsReadStates = Record<ResultFilterType, ResultsReadState>;
+export type ResultsReadStates = Record<ResultFilterType, SectionReadState>;
 
-/**
- * What the section must say about the reads it made. A refusal and a transient failure can happen
- * in the same render and have different consequences — one collection's content is gone, another's
- * is merely stale and worth retrying — so each is reported on its own. Aggregating them into a
- * single worst state would let a refused collection silence the retry the transient one needs.
- */
-export type ResultsReadReport = {
-  /** Any collection could not be refreshed, so a retry is offered for it. */
-  retryable: boolean;
-  /** Any collection's content was cleared by a confirmed refusal or absence. */
-  unavailable: boolean;
-};
-
-export const resolveResultsReadReport = (states: ResultsReadStates): ResultsReadReport => {
-  const readStates = Object.values(states);
-  return {
-    retryable: readStates.some((state) => state.kind === "recoverable"),
-    unavailable: readStates.some((state) => state.kind === "unavailable"),
-  };
-};
-
-/**
- * Content that could not be refreshed is stale. Stale content is still worth reading, so it stays
- * on screen and says so, but nothing it describes can be established as safe to change.
- */
-export const resolveResultsFreshness = (readState: ResultsReadState) =>
-  readState.kind === "recoverable" ? ("stale" as const) : ("current" as const);
+/** What the section must say about the reads it made, each collection reported on its own. */
+export const resolveResultsReadReport = (states: ResultsReadStates): SectionReadReport =>
+  resolveSectionReadReport(Object.values(states));
 
 /**
  * Each collection's content is only as fresh as its own last read, so a collection that answered
@@ -207,8 +153,4 @@ export const resolveResultsFreshness = (readState: ResultsReadState) =>
  */
 export const resolveResultsFreshnessByCollection = (
   states: ResultsReadStates,
-): Record<ResultFilterType, "current" | "stale"> => ({
-  instance: resolveResultsFreshness(states.instance),
-  task: resolveResultsFreshness(states.task),
-  workflow: resolveResultsFreshness(states.workflow),
-});
+): Record<ResultFilterType, "current" | "stale"> => resolveSectionFreshnessByKey(states);

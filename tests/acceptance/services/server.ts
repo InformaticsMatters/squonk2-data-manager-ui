@@ -444,8 +444,104 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     }
     return json(response, 200, state.fixtures.projects.projects[0]);
   }
-  if (url.pathname === `/job/${state.fixtures.job.id}`) {
-    return json(response, 200, state.fixtures.job);
+  // The Run catalogue. Jobs are scoped by project, so a request that names no project is refused;
+  // applications and workflow definitions are catalogues the Data Manager does not scope.
+  if (["/application", "/job", "/workflow"].includes(url.pathname) && request.method === "GET") {
+    if (url.pathname === "/job" && !url.searchParams.get("project_id")) {
+      return json(response, 400, { error: "fixture-unscoped-job-request" });
+    }
+    const failure = state.runFailures.find(
+      ({ collection }) => !collection || collection === url.pathname,
+    );
+    if (failure) {
+      return json(
+        response,
+        failure.status,
+        failure.status === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    if (url.pathname === "/application") {
+      return json(response, 200, state.fixtures.applications);
+    }
+    if (url.pathname === "/job") {
+      return json(response, 200, state.fixtures.jobs);
+    }
+    return json(response, 200, state.fixtures.workflows);
+  }
+  if (url.pathname === "/application/acceptance-application") {
+    return json(response, 200, state.fixtures.applicationDetail);
+  }
+  if (url.pathname === `/workflow/${fixtureIds.workflow}` && request.method === "GET") {
+    return json(response, 200, state.fixtures.workflowDetail);
+  }
+  if (segments[0] === "job" && segments.length === 2 && request.method === "GET") {
+    const detail = Object.entries(state.fixtures.jobDetails).find(
+      ([id]) => id === segments[1],
+    )?.[1];
+    return detail
+      ? json(response, 200, detail)
+      : json(response, 404, { error: "fixture-job-not-found" });
+  }
+  // Launching work. A launch names the project it runs in, and the execution it creates joins that
+  // project's own results, so the execution a successful launch opens is one that exists.
+  if (url.pathname === "/instance" && request.method === "POST") {
+    const form = new URLSearchParams((await readBody(request)).toString());
+    if (state.launchFailure) {
+      return json(
+        response,
+        state.launchFailure,
+        state.launchFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    state.fixtures.instances.instances.unshift({
+      application_id: form.get("application_id") ?? "acceptance-application",
+      application_type: "JOB",
+      application_version: "1.0.0",
+      archived: false,
+      id: fixtureIds.launchedInstance,
+      job_collection: "acceptance",
+      job_id: 1,
+      job_job: "acceptance-job",
+      job_name: form.get("as_name") ?? "Launched Instance",
+      job_version: "1.0.0",
+      launched: "2026-01-02T05:04:05Z",
+      name: form.get("as_name") ?? "Launched Instance",
+      owner: state.fixtures.subject,
+      phase: "RUNNING",
+      project_id: form.get("project_id") ?? "",
+      run_time: "0:00:10",
+      started: "2026-01-02T05:04:05Z",
+    });
+    return json(response, 201, {
+      instance_id: fixtureIds.launchedInstance,
+      task_id: fixtureIds.task,
+    });
+  }
+  if (segments[0] === "workflow" && segments[2] === "run" && request.method === "POST") {
+    const form = new URLSearchParams((await readBody(request)).toString());
+    if (state.launchFailure) {
+      return json(
+        response,
+        state.launchFailure,
+        state.launchFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    state.fixtures.runningWorkflows.running_workflows.unshift({
+      error_num: 0,
+      id: fixtureIds.launchedRunningWorkflow,
+      name: form.get("as_name") ?? "Launched Workflow",
+      project: { id: form.get("project_id") ?? "", name: "Acceptance Project" },
+      started: "2026-01-02T05:04:05Z",
+      status: "RUNNING",
+      workflow: { id: segments[1], name: "acceptance-workflow", version: "1.0.0" },
+    });
+    return json(response, 201, { id: fixtureIds.launchedRunningWorkflow });
   }
   if (url.pathname === "/type") {
     return json(response, 200, state.fixtures.types);
@@ -992,6 +1088,39 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/results-failure") && request.method === "DELETE") {
     getScenario(subject).resultsFailures = [];
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/run-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-run-failure", status });
+    }
+    const collection = url.searchParams.get("collection") ?? undefined;
+    const scenario = getScenario(subject);
+    // A catalogue-scoped failure joins any others already in effect, so two catalogues can be made
+    // to fail differently at once; an unscoped one replaces them all.
+    scenario.runFailures = collection
+      ? [
+          ...scenario.runFailures.filter((failure) => failure.collection !== collection),
+          { collection, status: status as 403 | 503 },
+        ]
+      : [{ status: status as 403 | 503 }];
+    return json(response, 200, { collection, runFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/run-failure") && request.method === "DELETE") {
+    getScenario(subject).runFailures = [];
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/launch-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-launch-failure", status });
+    }
+    getScenario(subject).launchFailure = status as 403 | 503;
+    return json(response, 200, { launchFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/launch-failure") && request.method === "DELETE") {
+    getScenario(subject).launchFailure = undefined;
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/project-failure") && request.method === "POST") {

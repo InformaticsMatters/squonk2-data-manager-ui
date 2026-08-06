@@ -5,6 +5,7 @@ import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manag
 import { Button } from "@mui/material";
 import { useRouter } from "next/router";
 
+import { type ProjectCapability } from "../../projects/capabilities";
 import { projectLinks, type ResultsState } from "../../projects/routes";
 import { JobModal } from "../runCards/JobCard/JobModal";
 
@@ -18,6 +19,10 @@ export interface RerunJobButtonProps {
    */
   disabled: boolean;
   /**
+   * What running this instance's job again requires, as its owning project decides it.
+   */
+  rerun: ProjectCapability;
+  /**
    * Results list state the new instance's route preserves.
    */
   resultsState?: ResultsState;
@@ -30,6 +35,7 @@ export interface RerunJobButtonProps {
 export const RerunJobButton = ({
   instance,
   disabled = false,
+  rerun,
   resultsState,
 }: RerunJobButtonProps) => {
   const [open, setOpen] = useState(false);
@@ -45,16 +51,25 @@ export const RerunJobButton = ({
       </Button>
       {!!open && (
         <JobModal
+          capabilities={{ launch: rerun }}
           instance={instance}
           jobId={instance.job_id}
           open={open}
           projectId={projectId}
           onClose={() => setOpen(false)}
-          onLaunch={(instanceId) =>
-            void push(
-              projectLinks.result(projectId, "instances", instanceId, resultsState) as never,
-            )
-          }
+          onLaunched={(outcome) => {
+            setOpen(false);
+            if (outcome.kind === "instance") {
+              void push(
+                projectLinks.result(
+                  projectId,
+                  "instances",
+                  outcome.instanceId,
+                  resultsState,
+                ) as never,
+              );
+            }
+          }}
         />
       )}
     </>

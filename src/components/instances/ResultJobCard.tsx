@@ -71,6 +71,7 @@ export const ResultJobCard = ({
           <RerunJobButton
             disabled={!capabilityIsEnabled(capabilities.rerun)}
             instance={instance}
+            rerun={capabilities.rerun}
             resultsState={resultsState}
           />
           <LogsButton instanceId={instanceId} projectId={projectId} />

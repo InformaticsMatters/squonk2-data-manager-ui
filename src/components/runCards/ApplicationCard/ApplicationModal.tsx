@@ -2,20 +2,21 @@ import { useState } from "react";
 
 import { type ApplicationSummary, type DmError } from "@/api/data-manager";
 import { useGetApplication } from "@/api/data-manager/application";
-import { getGetInstancesQueryKey, useCreateInstance } from "@/api/data-manager/instance";
 
-import { Grid, TextField } from "@mui/material";
+import { Grid, TextField, Typography } from "@mui/material";
 import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
+import { capabilityIsEnabled } from "../../../projects/capabilities";
+import { useRunCommands } from "../../../projects/useRunCommands";
 import { CenterLoader } from "../../CenterLoader";
 import { ModalWrapper } from "../../modals/ModalWrapper";
+import { CapabilityReasons } from "../../results/CapabilityReasons";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
-import { type CommonModalProps } from "../types";
+import { type RunModalProps } from "../types";
 
-export interface ApplicationModalProps extends CommonModalProps {
+export interface ApplicationModalProps extends RunModalProps {
   /**
    * ID of the application under which an instance will be created
    */
@@ -23,47 +24,42 @@ export interface ApplicationModalProps extends CommonModalProps {
 }
 
 /**
- * Modal with form to create an instance of an application.
+ * Modal with a form to create an instance of an application in the project the URL addresses.
  */
 export const ApplicationModal = ({
-  open,
-  onClose,
   applicationId,
+  capabilities,
+  open,
   projectId,
-  onLaunch,
+  onClose,
+  onLaunched,
 }: ApplicationModalProps) => {
-  const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [debug, setDebug] = useState<DebugValue>("0");
   const [formData, setFormData] = useState<any>(null);
+  const [launching, setLaunching] = useState(false);
 
-  const { mutateAsync: createInstance } = useCreateInstance();
-
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
-
+  const { launchInstance } = useRunCommands();
+  const { enqueueError } = useEnqueueError<DmError>();
   const { data: application } = useGetApplication(applicationId);
 
-  const handleCreateInstance = async () => {
-    if (projectId) {
-      try {
-        const { instance_id: instanceId } = await createInstance({
-          data: {
-            debug,
-            application_id: applicationId,
-            as_name: name,
-            project_id: projectId,
-            specification: JSON.stringify({ variables: formData }),
-          },
-        });
-        onLaunch?.(instanceId);
-        await queryClient.invalidateQueries({ queryKey: getGetInstancesQueryKey() });
-      } catch (error) {
-        enqueueError(error);
-      } finally {
-        onClose();
-      }
-    } else {
-      enqueueSnackbar("No project provided", { variant: "warning" });
+  // A rejected launch keeps the modal, its route, and everything entered, so a recoverable failure
+  // can be retried rather than reported as a launch that happened.
+  const handleLaunch = async () => {
+    setLaunching(true);
+    try {
+      onLaunched(
+        await launchInstance(projectId, {
+          applicationId,
+          debug,
+          name,
+          specification: JSON.stringify({ variables: formData }),
+        }),
+      );
+    } catch (error) {
+      enqueueError(error);
+    } finally {
+      setLaunching(false);
     }
   };
 
@@ -79,16 +75,28 @@ export const ApplicationModal = ({
       DialogProps={{ maxWidth: "sm", fullWidth: true }}
       id={`app-${applicationId}`}
       open={open}
-      submitDisabled={!projectId || !name}
+      submitDisabled={!capabilityIsEnabled(capabilities.launch) || !name || launching}
       submitText="Run"
-      title={application?.kind ?? "Run Job"}
+      title={application?.kind ?? "Run application"}
       onClose={onClose}
-      onSubmit={() => void handleCreateInstance()}
+      onSubmit={() => void handleLaunch()}
     >
       {application === undefined ? (
         <CenterLoader />
       ) : (
         <Grid container spacing={1}>
+          <Grid size={{ xs: 12 }}>
+            <Typography
+              sx={{ color: "text.secondary", textTransform: "uppercase", fontWeight: "bold" }}
+              variant="caption"
+            >
+              Application
+            </Typography>
+            <Typography variant="body2">{application.group}</Typography>
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            <CapabilityReasons capabilities={[capabilities.launch]} />
+          </Grid>
           <Grid size={{ xs: 12 }}>
             <TextField
               fullWidth

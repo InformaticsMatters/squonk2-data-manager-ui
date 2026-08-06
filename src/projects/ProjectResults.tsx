@@ -29,6 +29,7 @@ import { ProjectResultDetail } from "./ProjectResultDetail";
 import { resolveResultCapabilities } from "./resultCapabilities";
 import { filterResultItems, type ResultItem } from "./resultFacts";
 import {
+  localNotFoundProjectId,
   projectLinks,
   type ProjectRoute,
   type ResultFilterType,
@@ -214,7 +215,13 @@ const ResultsList = ({
   );
 };
 
-const ResultsSection = ({ route }: { route: ResultsRoute }) => {
+const ResultsSection = ({
+  localNotFound,
+  route,
+}: {
+  localNotFound?: boolean;
+  route: ResultsRoute;
+}) => {
   const router = useRouter();
   const { projectId } = route;
   const state = resultsListState(route);
@@ -261,6 +268,12 @@ const ResultsSection = ({ route }: { route: ResultsRoute }) => {
           </Alert>
         ) : null}
 
+        {localNotFound ? (
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            This result was not found in this project.
+          </Alert>
+        ) : null}
+
         {facts === undefined ? (
           <CenterLoader />
         ) : route.kind === "result" ? (
@@ -285,9 +298,20 @@ const ResultsSection = ({ route }: { route: ResultsRoute }) => {
  */
 export const ProjectResults = () => {
   const familyRoute = useFamilyRoute();
-  const route = familyRoute.localNotFound ? null : familyRoute.route;
 
-  if (!route || (route.kind !== "results" && route.kind !== "result")) {
+  // A result route the section could not address keeps the project and its list rather than
+  // guessing a correction for it.
+  if (familyRoute.localNotFound) {
+    const projectId = localNotFoundProjectId(familyRoute.parent);
+    return projectId ? (
+      <ResultsSection localNotFound route={{ kind: "results", projectId }} />
+    ) : (
+      <NextError statusCode={404} />
+    );
+  }
+
+  const { route } = familyRoute;
+  if (route.kind !== "results" && route.kind !== "result") {
     return <NextError statusCode={404} />;
   }
 

@@ -1,7 +1,7 @@
 import { type AdministrationRoute, parseAdministrationRoute } from "../administration/routes";
 import { type DatasetRoute, parseDatasetRoute } from "../datasets/routes";
 import { parseProjectRoute, type ProjectRoute } from "../projects/routes";
-import { type RouteParseResult } from "../routing/routeContract";
+import { type RouteNotFoundParent, type RouteParseResult } from "../routing/routeContract";
 import {
   type AdministrationSection,
   type DatasetSection,
@@ -13,7 +13,8 @@ export type FamilyPagePolicy = Exclude<PagePolicy, { kind: "application" | "publ
 export type FamilyRoute = AdministrationRoute | DatasetRoute | ProjectRoute;
 
 export type FamilyRouteDecision =
-  | { kind: "local-not-found"; section: AdministrationSection }
+  /** A child the family cannot address beneath a parent the family still owns. */
+  | { kind: "local-not-found"; parent: RouteNotFoundParent }
   | { kind: "not-found" }
   | { kind: "pending" }
   | { kind: "ready"; route: FamilyRoute }
@@ -50,11 +51,24 @@ const administrationSections = {
   "usage-inventory-resource": "usage-inventory",
 } as const satisfies Record<AdministrationRoute["kind"], AdministrationSection>;
 
+/**
+ * A parse failure that named a parent this very section owns is that section's own child failure.
+ * The section therefore keeps its frame — and, in Projects, the project the parent names — instead
+ * of the whole route disappearing, which is what distinguishes a missing child from a missing
+ * parent. Anything else is an ordinary not-found.
+ */
 const decideParsedRoute = <TRoute extends FamilyRoute>(
   parsed: RouteParseResult<TRoute>,
+  policy: FamilyPagePolicy,
   sectionMatches: (route: TRoute) => boolean,
 ): FamilyRouteDecision => {
-  if (parsed.kind === "not-found" || !sectionMatches(parsed.route)) {
+  if (parsed.kind === "not-found") {
+    const { parent } = parsed;
+    return parent?.family === policy.kind && parent.section === policy.section
+      ? { kind: "local-not-found", parent }
+      : { kind: "not-found" };
+  }
+  if (!sectionMatches(parsed.route)) {
     return { kind: "not-found" };
   }
   if (parsed.needsReplace) {
@@ -76,26 +90,20 @@ export const resolveFamilyRoute = (
     case "projects":
       return decideParsedRoute(
         parseProjectRoute(href),
+        policy,
         (route) => projectSections[route.kind] === policy.section,
       );
     case "datasets":
       return decideParsedRoute(
         parseDatasetRoute(href),
+        policy,
         (route) => datasetSections[route.kind] === policy.section,
       );
-    case "administration": {
-      const parsed = parseAdministrationRoute(href);
-      if (
-        parsed.kind === "not-found" &&
-        parsed.parent?.family === "administration" &&
-        parsed.parent.section === policy.section
-      ) {
-        return { kind: "local-not-found", section: policy.section };
-      }
+    case "administration":
       return decideParsedRoute(
-        parsed,
+        parseAdministrationRoute(href),
+        policy,
         (route) => administrationSections[route.kind] === policy.section,
       );
-    }
   }
 };

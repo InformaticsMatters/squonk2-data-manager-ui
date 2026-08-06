@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type JobSummary } from "@/api/data-manager";
+import { type InstanceSummary, type JobSummary } from "@/api/data-manager";
 
 import { Launch as LaunchIcon } from "@mui/icons-material";
 import {
@@ -8,86 +8,74 @@ import {
   Box,
   Chip,
   IconButton,
-  LinearProgress,
   MenuItem,
   TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
-import dynamic from "next/dynamic";
-import semver from "semver";
 
+import { type RunState } from "../../../projects/routes";
+import { type RunCapabilities } from "../../../projects/runCapabilities";
 import { BaseCard } from "../../BaseCard";
 import { Chips } from "../../Chips";
-import { type InstancesListProps } from "../InstancesList";
-import { RunJobButton, type RunJobButtonProps } from "./RunJobButton";
+import { CapabilityReasons } from "../../results/CapabilityReasons";
+import { InstancesList } from "../InstancesList";
+import { RunDefinitionButton } from "../RunDefinitionButton";
 
-const compareJobs = (a: JobSummary, b: JobSummary) => {
-  return -semver.compare(a.version, b.version);
-};
-
-const InstancesList = dynamic<InstancesListProps>(
-  () => import("../InstancesList").then((mod) => mod.InstancesList),
-  { loading: () => <LinearProgress /> },
-);
-
-export interface ApplicationCardProps extends Pick<RunJobButtonProps, "projectId"> {
+export interface JobCardProps {
+  capabilities: RunCapabilities;
+  /** This job's existing instances inside the project that owns them. */
+  instances: readonly InstanceSummary[];
   /**
-   * the list of jobs (different versions) to be instantiated
+   * Every version of one job, newest first. Each version has its own canonical definition route.
    */
-  job: JobSummary[];
-  /**
-   * Whether to disable the button
-   */
-  disabled?: boolean;
+  jobs: JobSummary[];
+  projectId: string;
+  runState: RunState;
 }
 
 /**
- * MuiCard that displays a summary of a job with actions to create new instances and view
- * existing instances.
+ * MuiCard that displays a summary of a job, linking to the canonical definition route of the
+ * version selected on the card and listing the instances the addressed project already has of it.
  */
-export const JobCard = ({ projectId, job: jobs, disabled = false }: ApplicationCardProps) => {
-  jobs.sort(compareJobs);
-  const [selectedJobId, setSelectedJobId] = useState(jobs[0]?.id || "");
-  const job = jobs.find((j) => j.id === selectedJobId) as JobSummary;
+export const JobCard = ({ capabilities, instances, jobs, projectId, runState }: JobCardProps) => {
+  // Which version the card offers is ephemeral card state: the definition route it links to is
+  // what makes a chosen version shareable.
+  const [selectedJobId, setSelectedJobId] = useState(String(jobs[0].id));
+  const job = jobs.find((candidate) => String(candidate.id) === selectedJobId) ?? jobs[0];
 
   return (
     <BaseCard
       accentColor="primary.main"
-      actions={({ setExpanded }) => (
+      actions={
         <>
+          <CapabilityReasons capabilities={[capabilities.launch]} />
           <TextField
             select
             disabled={jobs.length === 1}
             label="Version"
             size="small"
             sx={{ minWidth: 120 }}
-            value={selectedJobId}
-            onChange={(e) => setSelectedJobId(e.target.value)}
+            value={String(job.id)}
+            onChange={(event) => setSelectedJobId(event.target.value)}
           >
             {jobs.map((jobVersion) => (
-              <MenuItem key={jobVersion.id} value={jobVersion.id}>
+              <MenuItem key={jobVersion.id} value={String(jobVersion.id)}>
                 {jobVersion.version}
               </MenuItem>
             ))}
           </TextField>
-          <RunJobButton
-            disabled={job.disabled || disabled}
-            jobId={job.id}
+          <RunDefinitionButton
+            definitionId={String(job.id)}
+            definitionLabel={job.job}
+            definitionType="jobs"
             projectId={projectId}
-            onLaunch={() => setExpanded(true)}
+            runState={runState}
           />
         </>
-      )}
-      collapsed={
-        <InstancesList
-          predicate={(instance) =>
-            instance.job_collection === job.collection && instance.job_job === job.job
-          }
-        />
       }
+      collapsed={<InstancesList instances={instances} />}
       header={{ subtitle: job.name, avatar: job.job[0], title: job.job }}
-      key={projectId} // Reset state when project changes
     >
       <Typography
         sx={{ color: "text.secondary", textTransform: "uppercase", fontWeight: "bold" }}

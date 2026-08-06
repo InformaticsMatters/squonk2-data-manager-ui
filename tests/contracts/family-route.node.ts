@@ -43,7 +43,33 @@ test.describe("family route enforcement", () => {
         "/administration/charges/units/not-a-unit",
         true,
       ),
-    ).toEqual({ kind: "local-not-found", section: "charges" });
+    ).toEqual({
+      kind: "local-not-found",
+      parent: { family: "administration", section: "charges" },
+    });
+  });
+
+  test("retains the project a malformed Projects child route was addressed beneath", () => {
+    expect(
+      resolveFamilyRoute(
+        pagePolicies.projects("run"),
+        `/projects/${projectId}/run/jobs/not-a-number`,
+        true,
+      ),
+    ).toEqual({
+      kind: "local-not-found",
+      parent: { family: "projects", resourceId: projectId, section: "run" },
+    });
+  });
+
+  test("keeps a malformed child of one section out of another section", () => {
+    expect(
+      resolveFamilyRoute(
+        pagePolicies.projects("results"),
+        `/projects/${projectId}/run/jobs/not-a-number`,
+        true,
+      ),
+    ).toEqual({ kind: "not-found" });
   });
 
   test("rejects a canonical route owned by a different section", () => {

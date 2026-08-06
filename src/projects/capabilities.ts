@@ -224,6 +224,40 @@ export const evaluateProjectExecutionCapability = evaluateSpendingAction({
 });
 
 /**
+ * What launching a definition reads in addition to the project's own facts: whether the catalogue
+ * content describing that definition could last be established, and whether the definition itself
+ * declares it cannot be run. Neither is a fact of any project other than the one in the URL.
+ */
+export type ProjectRunFacts = ProjectCapabilityFacts & {
+  /** `stale` for catalogue content a failed refresh left on screen. */
+  content?: "current" | "stale";
+  /** The definition's own reason for being unrunnable, as the Data Manager gave it. */
+  definitionUnavailability?: string;
+};
+
+const staleDefinitionReason =
+  "This definition could not be refreshed, so running it cannot be established as safe.";
+
+/**
+ * Running one definition in the project in the URL. A confirmed lack of authority is the most
+ * useful explanation, so it is reported first; a definition the Data Manager itself disabled is
+ * reported next, because no authority overrides it; and catalogue content that merely could not be
+ * refreshed disables the launch rather than leaving it offered.
+ */
+export const evaluateRunLaunchCapability = (facts: ProjectRunFacts): ProjectCapability => {
+  const capability = evaluateProjectExecutionCapability(facts);
+  if (capability.status === "disabled") {
+    return capability;
+  }
+  if (facts.definitionUnavailability !== undefined) {
+    return { status: "disabled", reason: facts.definitionUnavailability };
+  }
+  return facts.content === "stale"
+    ? { status: "disabled", reason: staleDefinitionReason }
+    : capability;
+};
+
+/**
  * What a result action reads in addition to the project's own facts: which project the result
  * itself belongs to, which project the URL addresses, and whether the displayed result content
  * could last be established. No result action reads a selected or current project.

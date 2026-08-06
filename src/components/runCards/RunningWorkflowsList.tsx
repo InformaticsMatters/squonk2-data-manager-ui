@@ -7,7 +7,7 @@ import { projectLinks } from "../../projects/routes";
 import { LocalTime } from "../LocalTime";
 
 export interface RunningWorkflowsListProps {
-  runningWorkflows: RunningWorkflowSummary[];
+  runningWorkflows: readonly RunningWorkflowSummary[];
 }
 
 /**

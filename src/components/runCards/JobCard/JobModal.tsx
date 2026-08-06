@@ -6,18 +6,19 @@ import {
   type InstanceSummary,
   type JobSummary,
 } from "@/api/data-manager";
-import { getGetInstancesQueryKey, useCreateInstance } from "@/api/data-manager/instance";
 import { useGetJob } from "@/api/data-manager/job";
 
-import { Box, TextField } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
+import { Box, TextField, Typography } from "@mui/material";
 
 import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
+import { capabilityIsEnabled } from "../../../projects/capabilities";
+import { useRunCommands } from "../../../projects/useRunCommands";
 import { CenterLoader } from "../../CenterLoader";
 import { ModalWrapper } from "../../modals/ModalWrapper";
+import { CapabilityReasons } from "../../results/CapabilityReasons";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
 import { TEST_JOB_ID } from "../TestJob/jobId";
-import { type CommonModalProps } from "../types";
+import { type RunModalProps } from "../types";
 import { type InputSchema, validateInputData } from "./JobInputFields";
 import { JobInputsAndOptionsForm } from "./JobInputsAndOptionsForm";
 
@@ -30,7 +31,7 @@ interface JobSpecification {
   variables: Record<string, string[] | string>;
 }
 
-export interface JobModalProps extends CommonModalProps {
+export interface JobModalProps extends RunModalProps {
   /**
    * ID of the job to instantiate
    */
@@ -53,25 +54,26 @@ const validateJobInputs = (required: string[], inputsData: InputData) => {
 };
 
 /**
- * Modal with options to create a new instance if a job. An instance can be passed to inherit
- * default values.
+ * Modal with options to create a new instance of a job in the project the URL addresses. An
+ * instance can be passed to inherit default values.
  */
 export const JobModal = ({
+  capabilities,
   jobId,
   projectId,
   instance,
   open,
   onClose,
-  onLaunch,
+  onLaunched,
 }: JobModalProps) => {
   // ? Can we guarantee every job has a parsable spec?
 
-  const queryClient = useQueryClient();
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueError } = useEnqueueError<DmError>();
 
   const [debug, setDebug] = useState<DebugValue>("0");
+  const [launching, setLaunching] = useState(false);
 
-  const { mutateAsync: createInstance } = useCreateInstance();
+  const { launchInstance } = useRunCommands();
   // Get extra details about the job
   const { data: job } = useGetJob(jobId, undefined, {
     query: { retry: jobId === TEST_JOB_ID ? 1 : 3 },
@@ -123,37 +125,32 @@ export const JobModal = ({
     setInputsData(Object.fromEntries(inputsDefault));
   }, [inputsDefault]);
 
-  const handleSubmit = async () => {
-    if (projectId && job) {
-      // Construct the specification
-      const specification: JobSpecification = {
-        collection: job.collection,
-        job: job.job,
-        version: job.version,
-        variables: { ...optionsFormData, ...inputsData },
-      };
-      try {
-        const { instance_id: instanceId } = await createInstance({
-          data: {
-            debug,
-            application_id: job.application.application_id,
-            // application_version: job.application.latest_version,
-            as_name: nameState,
-            project_id: projectId,
-            specification: JSON.stringify(specification),
-          },
-        });
-        onLaunch?.(instanceId);
-        await queryClient.invalidateQueries({
-          queryKey: getGetInstancesQueryKey({ project_id: projectId }),
-        });
-      } catch (error) {
-        enqueueError(error);
-      } finally {
-        onClose();
-      }
-    } else {
-      enqueueSnackbar("No project provided", { variant: "warning" });
+  // A rejected launch keeps the modal, its route, and everything entered, so a recoverable failure
+  // can be retried rather than reported as a launch that happened.
+  const handleLaunch = async () => {
+    if (!job) {
+      return;
+    }
+    const specification: JobSpecification = {
+      collection: job.collection,
+      job: job.job,
+      version: job.version,
+      variables: { ...optionsFormData, ...inputsData },
+    };
+    setLaunching(true);
+    try {
+      onLaunched(
+        await launchInstance(projectId, {
+          applicationId: job.application.application_id,
+          debug,
+          name: nameState,
+          specification: JSON.stringify(specification),
+        }),
+      );
+    } catch (error) {
+      enqueueError(error);
+    } finally {
+      setLaunching(false);
     }
   };
 
@@ -164,14 +161,26 @@ export const JobModal = ({
       DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`job-${jobId}`}
       open={open}
-      submitDisabled={!inputsValid}
+      submitDisabled={!capabilityIsEnabled(capabilities.launch) || !inputsValid || launching}
       submitText="Run"
-      title={job?.name ?? "Run Job"}
+      title={job?.name ?? "Run job"}
       onClose={onClose}
-      onSubmit={() => void handleSubmit()}
+      onSubmit={() => void handleLaunch()}
     >
-      {job !== undefined && projectId !== undefined ? (
+      {job === undefined ? (
+        <CenterLoader />
+      ) : (
         <>
+          <Typography
+            sx={{ color: "text.secondary", textTransform: "uppercase", fontWeight: "bold" }}
+            variant="caption"
+          >
+            Job
+          </Typography>
+          <Typography variant="body2">
+            {job.collection} • version {job.version}
+          </Typography>
+          <CapabilityReasons capabilities={[capabilities.launch]} />
           <Box sx={{ paddingTop: 1 }}>
             <TextField
               fullWidth
@@ -195,8 +204,6 @@ export const JobModal = ({
             specVariables={specVariables}
           />
         </>
-      ) : (
-        <CenterLoader />
       )}
     </ModalWrapper>
   );

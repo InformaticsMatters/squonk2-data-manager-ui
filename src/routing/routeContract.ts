@@ -4,7 +4,7 @@ type LocalFailureSections = {
   projects: "files" | "results" | "run";
 };
 
-type RouteNotFoundParent = {
+export type RouteNotFoundParent = {
   [TFamily in keyof LocalFailureSections]: {
     family: TFamily;
     resourceId?: string;

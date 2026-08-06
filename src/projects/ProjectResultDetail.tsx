@@ -11,13 +11,9 @@ import { RunningWorkflowCard } from "../components/RunningWorkflowCard/RunningWo
 import { ResultTaskCard } from "../components/tasks/ResultTaskCard";
 import { type ProjectFacts } from "./projectFacts";
 import { resolveResultCapabilities } from "./resultCapabilities";
-import {
-  instanceOwner,
-  resolveResultReadState,
-  resultReadFailure,
-  runningWorkflowOwner,
-} from "./resultFacts";
+import { instanceOwner, runningWorkflowOwner } from "./resultFacts";
 import { type ProjectRoute, resultsListState } from "./routes";
+import { resolveSectionReadState, sectionReadFailure } from "./sectionReads";
 import { type ProjectResults } from "./useProjectResults";
 
 type ResultRoute = Extract<ProjectRoute, { kind: "result" }>;
@@ -66,7 +62,7 @@ const AddressedResult = <TResource,>({
   refetch: () => void;
   resource: TResource | undefined;
 }) => {
-  const readState = resolveResultReadState(error);
+  const readState = resolveSectionReadState(error);
 
   if (readState.kind === "unavailable") {
     return <ResultNotFound />;
@@ -104,7 +100,7 @@ const InstanceResult = ({
 
   return (
     <AddressedResult
-      error={resultReadFailure(instance)}
+      error={sectionReadFailure(instance)}
       owner={instanceOwner}
       projectId={route.projectId}
       refetch={() => void instance.refetch()}
@@ -138,7 +134,7 @@ const WorkflowResult = ({
 
   return (
     <AddressedResult
-      error={resultReadFailure(workflow)}
+      error={sectionReadFailure(workflow)}
       owner={runningWorkflowOwner}
       projectId={route.projectId}
       refetch={() => void workflow.refetch()}

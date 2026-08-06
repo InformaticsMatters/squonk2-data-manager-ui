@@ -11,7 +11,8 @@ This matrix records the production contracts introduced for issues
 [#1923](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1923), and
 [#1924](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1924), and
 [#1925](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1925), and
-[#1926](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1926). Later vertical
+[#1926](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1926), and
+[#1927](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1927). Later vertical
 workspace tickets extend this file with their screens, capabilities, commands, and lifecycle evidence.
 
 ## Route And Link Contracts
@@ -105,6 +106,23 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 | MANAGE-06   | Readable-only project       | Observer, creator, stranger, platform administrator, and an editor blocked only by a coin limit  | Read-only means no mutation authority at all, never merely a blocked action, and unconfirmed facts never claim it; every unavailable ordinary action explains what it requires                                                   | `tests/contracts/project-capabilities.node.ts` read-only matrix; Manage viewer acceptance journey                                                    |
 | MANAGE-07   | Authoritative rejection     | Generated project command answered `403`, then `404`, `429`, `5xx`, and unknown                  | A rejection is authorization feedback only: no navigation, no adopted scope, and the displayed project is unchanged; `403` and `404` read identically, so no answer discloses whether the addressed resource exists              | `tests/contracts/project-capabilities.node.ts` feedback cases; platform-administrator acceptance journey                                             |
 
+## Project Run Contracts
+
+| Contract ID | Area                         | Input or fixture                                                                                                                  | Expected external outcome                                                                                                                                                                              | Automated evidence                                                                                         |
+| ----------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| RUN-01      | Project-constrained reads    | Generated job, existing-instance, and running-workflow reads for two projects                                                     | Every read the Data Manager scopes by project names the URL project and caches under its generated key; the application and workflow-definition catalogues it does not scope get no guessed one        | `tests/contracts/project-run.node.ts` request matrix; Run catalogue acceptance journey                     |
+| RUN-02      | Retained catalogue and cards | Application, job, and workflow-definition cards, type filter, search, refresh, and definition detail                              | Cards, versions, descriptions, keywords, categories, existing instances, running workflows, filters, search, and refresh are retained inside the project workspace                                     | `tests/contracts/project-run.node.ts` catalogue and filter cases; Run catalogue and filter journeys        |
+| RUN-03      | Typed definition routes      | Application, job, and workflow definition identities, including a non-newest job version                                          | Each definition type has its own canonical modal route, every job version is addressable, and identity is never guessed across types                                                                   | `tests/contracts/projects-routes.node.ts`; `project-run.node.ts` lookup cases; direct-link journey         |
+| RUN-04      | Route-driven modal history   | Open from a card, Close, Back, and Forward                                                                                        | Opening pushes history and the catalogue stays beneath; Close replace-navigates to Run with only Run-owned state; Back restores the catalogue and never reopens a closed definition                    | `tests/acceptance/run.acceptance.ts` modal history journey                                                 |
+| RUN-05      | Route-owned state            | `search`, repeated `type`, an unknown key, section navigation, and a second project                                               | Unknown state is removed and cannot reach a request argument; Run state survives its definition links, resets to the route it is on, and never follows the caller into another section                 | `tests/contracts/project-run.node.ts` state-ownership cases; Run filter and direct-link journey            |
+| RUN-06      | Owner-derived executions     | Instances and running workflows belonging to another project                                                                      | A card lists only executions the addressed project owns, and every generated link addresses the execution's own owning project                                                                         | `tests/contracts/project-run.node.ts` execution-association cases; Run catalogue journey                   |
+| RUN-07      | Launch capabilities          | Editor, observer, unconfirmed caller, coin limit, subscription without instance accounting                                        | The launch is enabled, or disabled with a concise reason, from the URL project's own membership and subscription; browsing the catalogue is never withheld with it                                     | `tests/contracts/project-run.node.ts` capability matrices; Run observer acceptance journey                 |
+| RUN-08      | Definition availability      | A job the Data Manager reports as disabled with a reason                                                                          | The version's own reason is presented and its launch is disabled wherever that version is addressed, whatever authority the caller holds; a confirmed lack of authority is still reported first        | `tests/contracts/project-run.node.ts` availability cases; disabled-definition acceptance journey           |
+| RUN-09      | Launch outcomes              | Job and workflow launches, and a launch answered `503`                                                                            | A launch is reported only once the Data Manager accepts it: success opens the created instance or running workflow inside the project that ran it; a rejection keeps the definition and its route      | Launch and rejected-launch acceptance journeys                                                             |
+| RUN-10      | Stale and lost catalogues    | One catalogue refused while another fails transiently and a third succeeds; the project's own instance and running-workflow reads | Each read answers for itself: refused content is cleared, only content that could not be refreshed is stale and locked with a reason, both outcomes are reported together, and retry recovers in place | `tests/contracts/project-run.node.ts` read-state cases; Run stale-catalogue acceptance journey             |
+| RUN-11      | Local definition failure     | Malformed job identity and a well-formed identity the project does not offer                                                      | The URL is not guessed or corrected; the project, its identity, and the catalogue remain while the definition reports a Run-local not-found                                                            | `tests/contracts/family-route.node.ts`; `projects-routes.node.ts`; malformed-definition acceptance journey |
+| RUN-12      | Run cutover                  | Legacy global `/run` route and its navigation entries                                                                             | The removed route is ordinary not-found, its page no longer exists, and no handwritten module composes one or reads a selected project inside Run                                                      | `tests/contracts/project-run.node.ts` cutover cases                                                        |
+
 ## Project Results Contracts
 
 | Contract ID | Area                           | Input or fixture                                                                                              | Expected external outcome                                                                                                                                                                                                                           | Automated evidence                                                                                                                                                                            |
@@ -193,6 +211,26 @@ workspace tickets extend this file with their screens, capabilities, commands, a
   every read on its own and reports the section's outcomes as a pair rather than a single worst
   state, so a refused collection clears only its own content while a collection that merely could
   not be refreshed is the only one marked stale and is still offered its retry.
+- `src/projects/sectionReads.ts` owns how one generated read is classified, how a group of them is
+  reported, and what a section may show for each. Results and Run share it because the generated
+  collections they read fail in exactly the same ways; neither section shares how it presents the
+  outcome, and it decides no authority.
+- `src/projects/runFacts.ts` is the only place that decides what the Run catalogue offers, which
+  definition a canonical route addresses, and which of the addressed project's executions belong
+  beside it. `src/projects/useProjectRun.ts` is the only Run composition hook; it uses the generated
+  application, job, workflow, instance, and running-workflow query options as their sole cache
+  identity and keeps no aggregate of its own. `src/projects/runCapabilities.ts` adds only the
+  definition being looked at to the facts `projectFacts.ts` gathered, and the launch evaluator lives
+  beside the other project evaluators in `src/projects/capabilities.ts`, so project authority still
+  has exactly one owner. `src/projects/useRunCommands.ts` is the only owner of Run mutations and of
+  the invalidation that follows them: no modal holds a query client or a generated mutation of its
+  own, every collection key it invalidates is built from a project's own list request, and a launch
+  is reported only after the Data Manager has accepted it. Run cards receive the addressed project
+  and their capabilities as props and build every link through `projectLinks`, so no card reads or
+  changes global project scope.
+- `src/projects/developmentDefinitions.ts` is the only place a development-only definition enters the
+  catalogue. It is empty outside development and adds nothing to any read, so no deployed catalogue
+  depends on it.
 - `src/projects/useProjectCommands.ts` is the only project command owner and the only place that
   invalidates generated project prefixes after a project command. `src/projects/failures.ts` owns
   how an authoritative rejection reads, so no project command navigates or changes scope in response
@@ -213,4 +251,7 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 - `FamilyRouteBoundary` withholds named-family descendants until the router is ready and the family
   parser accepts a canonical relative href. Unknown query keys never appear in parsed route models and
   therefore cannot become generated query arguments. Legacy global scope hooks remain confined to the
-  temporary plain `application` composition.
+  temporary plain `application` composition. A parse failure that names a parent the rendering
+  section itself owns is that section's own child failure: the boundary keeps the section mounted and
+  passes the named parent through, so a missing child never removes the parent along with it. The
+  Projects family re-validates that parent through `localNotFoundProjectId` rather than trusting it.

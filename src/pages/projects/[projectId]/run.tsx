@@ -1,6 +1,4 @@
 import { pagePolicies, withPagePolicy } from "../../../application/pagePolicy";
-import { WorkspacePlaceholder } from "../../../components/workspaces/WorkspacePlaceholder";
+import { ProjectRun } from "../../../projects/ProjectRun";
 
-const ProjectRunPage = () => <WorkspacePlaceholder title="Run" />;
-
-export default withPagePolicy(pagePolicies.projects("run"), ProjectRunPage);
+export default withPagePolicy(pagePolicies.projects("run"), ProjectRun);

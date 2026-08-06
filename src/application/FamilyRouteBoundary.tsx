@@ -13,11 +13,13 @@ import NextError from "next/error";
 import { useRouter } from "next/router";
 
 import { CenterLoader } from "../components/CenterLoader";
+import { type RouteNotFoundParent } from "../routing/routeContract";
 import { type FamilyPagePolicy, type FamilyRoute, resolveFamilyRoute } from "./familyRoute";
 
 type FamilyRouteContextValue =
-  | { localNotFound: false; policy: FamilyPagePolicy; route: FamilyRoute }
-  | { localNotFound: true; policy: FamilyPagePolicy; route: null };
+  | { localNotFound: false; parent?: undefined; policy: FamilyPagePolicy; route: FamilyRoute }
+  /** The parent the unaddressable child named, so the section can keep rendering beneath it. */
+  | { localNotFound: true; parent: RouteNotFoundParent; policy: FamilyPagePolicy; route: null };
 
 const FamilyRouteContext = createContext<FamilyRouteContextValue | null>(null);
 
@@ -48,7 +50,7 @@ export const FamilyRouteBoundary = ({
       return { localNotFound: false, policy, route: decision.route };
     }
     if (decision.kind === "local-not-found") {
-      return { localNotFound: true, policy, route: null };
+      return { localNotFound: true, parent: decision.parent, policy, route: null };
     }
     return null;
   }, [decision, policy]);

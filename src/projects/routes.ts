@@ -27,6 +27,7 @@ import {
   readEnumQuery,
   readOptionalQuery,
   readRequiredQuery,
+  type RouteNotFoundParent,
   type RouteParseResult,
   validRoute,
 } from "../routing/routeContract";
@@ -57,7 +58,7 @@ export type ResultCollection = keyof typeof resultIdValidators;
 export type ResultFilterType = (typeof resultFilterTypes)[number];
 
 type SearchState = { search?: string };
-type RunState = SearchState & { types?: readonly RunFilterType[] };
+export type RunState = SearchState & { types?: readonly RunFilterType[] };
 export type ResultsState = SearchState & { types?: readonly ResultFilterType[] };
 
 type DefinitionIdByType = {
@@ -226,6 +227,28 @@ export const projectLinks = {
     ),
   manage: (projectId: string) => `/projects/${assertProjectId(projectId)}/manage`,
 };
+
+/**
+ * The project a Projects-family local not-found was addressed beneath. A child the section could
+ * not address still names a valid parent, and that parent is re-validated here rather than
+ * trusted, so a section rendering beneath it is rendering beneath a project identity the family
+ * itself accepts.
+ */
+export const localNotFoundProjectId = (parent: RouteNotFoundParent): ProjectId | undefined =>
+  parent.family === "projects" && parent.resourceId !== undefined && isProjectId(parent.resourceId)
+    ? parent.resourceId
+    : undefined;
+
+/**
+ * The catalogue state one Run route carries. Only Run owns these values, so nothing a definition
+ * link preserves can reach another section or another project.
+ */
+export const runCatalogueState = (
+  route: Extract<ProjectRoute, { kind: "run-definition" | "run" }>,
+): RunState => ({
+  ...(route.search ? { search: route.search } : {}),
+  ...(route.types ? { types: route.types } : {}),
+});
 
 /**
  * The Results list state one Results route carries. Only Results owns these values, so nothing a

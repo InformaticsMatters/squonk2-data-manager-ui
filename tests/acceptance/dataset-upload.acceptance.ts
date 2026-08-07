@@ -83,15 +83,18 @@ test("an upload requires an explicit billing unit and only then invalidates the 
   await expect(billingUnit(page)).toBeDisabled();
   expect(await rememberedUnitId(page)).toContain(fixtureIds.unit);
 
-  const diagnostics = await request
-    .get(`${acceptanceUrls.control}/scenario/${subject}`)
-    .then(
-      (response) =>
-        response.json() as Promise<{
-          requests: { method: string; path: string }[];
-          upload?: object;
-        }>,
-    );
+  const readDiagnostics = () =>
+    request
+      .get(`${acceptanceUrls.control}/scenario/${subject}`)
+      .then(
+        (response) =>
+          response.json() as Promise<{
+            requests: { method: string; path: string }[];
+            upload?: object;
+          }>,
+      );
+
+  const diagnostics = await readDiagnostics();
   expect(diagnostics.upload).toBeDefined();
   expect(diagnostics.requests).toContainEqual(
     expect.objectContaining({ method: "POST", path: "/dataset" }),
@@ -99,6 +102,23 @@ test("an upload requires an explicit billing unit and only then invalidates the 
   expect(diagnostics.requests).toContainEqual(
     expect.objectContaining({ method: "GET", path: `/task/${fixtureIds.task}` }),
   );
+
+  // The collection is only re-read once a task actually finished, so a dataset list request made
+  // after the task settled is what proves the invalidation happened, and happened for that reason.
+  await expect
+    .poll(
+      async () => {
+        const { requests } = await readDiagnostics();
+        const settled = requests.findLastIndex(
+          ({ method, path }) => method === "GET" && path === `/task/${fixtureIds.task}`,
+        );
+        return requests.findIndex(
+          ({ method, path }, index) => index > settled && method === "GET" && path === "/dataset",
+        );
+      },
+      { timeout: 15_000 },
+    )
+    .toBeGreaterThan(-1);
 });
 
 test("a remembered billing unit is reused only while it is still eligible", async ({

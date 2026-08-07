@@ -10,12 +10,12 @@ import { FileTypeOptions } from "../../components/uploads/FileTypeOptions";
 import { type FileTypeOptionsState, type UploadableFile } from "../../components/uploads/types";
 import {
   datasetUploadBatchIsCommitted,
+  datasetUploadIsSendable,
   type DatasetUploadRecord,
   datasetUploadRecordOf,
   type DatasetUploadRecords,
   pendingUploadFileIds,
   resetDatasetUploads,
-  retryDatasetUpload,
   withDatasetUploadRecord,
 } from "../../datasets/uploadLifecycle";
 import { useBillingUnits, useDatasetSubscription } from "../../datasets/useDatasetUploadBilling";
@@ -26,6 +26,25 @@ import { BulkUploadDropzone } from "./BulkUploadDropzone";
 import { MissingSubscriptionAlert } from "./MissingSubscriptionAlert";
 
 /**
+ * The batch as one value, because the two halves answer for each other: which files are in the form
+ * and what the Data Manager has said about each. Held together, a drop that lands while a file is
+ * being deleted or the form closed is reconciled against the same list the removal was computed
+ * from, so no update is ever applied to a batch that has since moved on.
+ */
+type DatasetUploadBatch = { files: UploadableFile[]; records: DatasetUploadRecords };
+
+const emptyBatch: DatasetUploadBatch = { files: [], records: {} };
+
+/** Files leave the form together with the records that were only ever about them. */
+const retainFiles = (
+  { files, records }: DatasetUploadBatch,
+  keep: (file: UploadableFile) => boolean,
+): DatasetUploadBatch => {
+  const retained = files.filter((file) => keep(file));
+  return { files: retained, records: resetDatasetUploads(records, retained) };
+};
+
+/**
  * Button that controls a modal with UI to upload new datasets.
  *
  * The batch names one eligible member unit as its billing context, and each file carries its own
@@ -33,9 +52,9 @@ import { MissingSubscriptionAlert } from "./MissingSubscriptionAlert";
  */
 export const DatasetUpload = () => {
   const [open, setOpen] = useState(false);
-  const [files, setFiles] = useState<UploadableFile[]>([]);
-  const [records, setRecords] = useState<DatasetUploadRecords>({});
+  const [batch, setBatch] = useState<DatasetUploadBatch>(emptyBatch);
   const [mimeTypeFormDatas, setMimeTypeFormDatas] = useState<FileTypeOptionsState>({});
+  const { files, records } = batch;
 
   // Ensure types are prefetched so mime lookup works
   const { isLoading: isTypesLoading } = useGetFileTypes();
@@ -47,9 +66,22 @@ export const DatasetUpload = () => {
   const committed = datasetUploadBatchIsCommitted(records);
   const pendingIds = pendingUploadFileIds(files, records);
 
+  const updateRecord = useCallback(
+    (
+      fileId: string,
+      next: DatasetUploadRecord | ((current: DatasetUploadRecord) => DatasetUploadRecord),
+    ) => {
+      setBatch((current) => ({
+        ...current,
+        records: withDatasetUploadRecord(current.records, fileId, next),
+      }));
+    },
+    [],
+  );
+
   const onSettled = useCallback(
     (fileId: string, settled: DatasetUploadRecord) => {
-      setRecords((current) => withDatasetUploadRecord(current, fileId, settled));
+      updateRecord(fileId, settled);
       // Datasets only change once the Data Manager has actually finished processing one, so this is
       // the only thing that refreshes the collection, and the only thing that makes a billing unit
       // worth remembering.
@@ -60,7 +92,7 @@ export const DatasetUpload = () => {
         }
       }
     },
-    [refreshDatasets, remember, selected],
+    [refreshDatasets, remember, selected, updateRecord],
   );
 
   const sendFile = async (fileWrapper: UploadableFile, unitId: string) => {
@@ -74,20 +106,23 @@ export const DatasetUpload = () => {
         unitId,
       },
       (progress) =>
-        setRecords((current) =>
-          withDatasetUploadRecord(current, fileWrapper.id, (sending) =>
-            // Progress only ever advances a request still in flight, so a file that has already
-            // been answered is never dragged back into sending by a late callback.
-            sending.kind === "sending" ? { kind: "sending", progress } : sending,
-          ),
+        updateRecord(fileWrapper.id, (sending) =>
+          // Progress only ever advances a request still in flight, so a file that has already
+          // been answered is never dragged back into sending by a late callback.
+          sending.kind === "sending" ? { kind: "sending", progress } : sending,
         ),
     );
-    setRecords((current) => withDatasetUploadRecord(current, fileWrapper.id, record));
+    updateRecord(fileWrapper.id, record);
     if (record.kind === "request-failed") {
       enqueueError(record.reason);
     }
   };
 
+  /**
+   * Sending is decided by the file's own record rather than by whichever control asked, so a retry
+   * and a submission answer to the same rule and neither can enter work the Data Manager has
+   * already accepted or finished.
+   */
   const send = (fileIds: readonly string[]) => {
     const unitId = selected?.unit.id;
     if (!unitId) {
@@ -95,43 +130,36 @@ export const DatasetUpload = () => {
     }
     for (const fileId of fileIds) {
       const fileWrapper = files.find(({ id }) => id === fileId);
-      if (fileWrapper) {
-        setRecords((current) =>
-          withDatasetUploadRecord(current, fileId, { kind: "sending", progress: 0 }),
-        );
+      if (fileWrapper && datasetUploadIsSendable(datasetUploadRecordOf(records, fileId))) {
+        updateRecord(fileId, { kind: "sending", progress: 0 });
         void sendFile(fileWrapper, unitId);
       }
     }
   };
 
-  const onRetry = (fileId: string) => {
-    setRecords((current) => retryDatasetUpload(current, fileId));
-    send([fileId]);
-  };
-
   const onDelete = (fileId: string) => {
-    const remaining = files.filter(({ id }) => id !== fileId);
-    setFiles(remaining);
-    setRecords((current) => resetDatasetUploads(current, remaining));
+    setBatch((current) => retainFiles(current, ({ id }) => id !== fileId));
   };
 
   const onFileChange = (fileId: string, change: Partial<UploadableFile>) => {
-    setFiles((current) =>
-      current.map((fileWrapper) =>
+    setBatch((current) => ({
+      ...current,
+      files: current.files.map((fileWrapper) =>
         fileWrapper.id === fileId ? { ...fileWrapper, ...change } : fileWrapper,
       ),
-    );
+    }));
   };
 
   const onClose = () => {
     setOpen(false);
     // Files the Data Manager has finished with leave the form; everything else, including a failed
     // file's own reason, is kept so the batch can be retried without being entered again.
-    const retained = files.filter(
-      ({ id }) => datasetUploadRecordOf(records, id).kind !== "processed",
+    setBatch((current) =>
+      retainFiles(
+        current,
+        ({ id }) => datasetUploadRecordOf(current.records, id).kind !== "processed",
+      ),
     );
-    setFiles(retained);
-    setRecords((current) => resetDatasetUploads(current, retained));
   };
 
   const uploadIsBlocked =
@@ -178,8 +206,10 @@ export const DatasetUpload = () => {
           records={records}
           onDelete={onDelete}
           onFileChange={onFileChange}
-          onNewFiles={(newFiles) => setFiles((current) => [...current, ...newFiles])}
-          onRetry={onRetry}
+          onNewFiles={(newFiles) =>
+            setBatch((current) => ({ ...current, files: [...current.files, ...newFiles] }))
+          }
+          onRetry={(fileId) => send([fileId])}
           onSettled={onSettled}
         />
         <FileTypeOptions

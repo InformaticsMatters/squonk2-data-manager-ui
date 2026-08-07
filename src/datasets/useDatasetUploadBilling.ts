@@ -63,7 +63,8 @@ export const useBillingUnits = () => {
 
 export type DatasetSubscriptionState =
   | { kind: "available" }
-  | { kind: "missing"; recovery: DatasetSubscriptionRecovery }
+  /** `recovery` is absent while what this caller could do about it is still being established. */
+  | { kind: "missing"; recovery?: DatasetSubscriptionRecovery }
   | { kind: "unresolved" };
 
 /**
@@ -72,7 +73,10 @@ export type DatasetSubscriptionState =
  * Both facts are read from generated resources: the unit's own products decide the subscription,
  * and the personal-unit resource decides whether an evaluation account may subscribe this unit. A
  * products read that has not answered stays unresolved, leaving the Data Manager the authority on
- * whether the upload is funded rather than refusing it here on a fact nobody established.
+ * whether the upload is funded rather than refusing it here on a fact nobody established. Once it
+ * has answered, a unit with no subscription is missing one whatever the caller may do about it, so
+ * a personal-unit read still in flight withholds the guidance alone: an evaluator is not told, for
+ * as long as that read takes, to contact someone about a unit that may be its own.
  */
 export const useDatasetSubscription = (
   billingUnit: BillingUnit | undefined,
@@ -81,7 +85,7 @@ export const useDatasetSubscription = (
   const { data, isError, isPending } = useGetProductsForUnit(unitId ?? "", {
     query: { enabled: !!unitId },
   });
-  const { data: personalUnit } = useGetPersonalUnit();
+  const { data: personalUnit, isPending: personalUnitIsPending } = useGetPersonalUnit();
   // `AS_ROLES` is ordered so each role is a superset of the one before it, which is why the
   // prevailing role is the answer: an account that also holds the user role is not an evaluator.
   const [evaluatorRole] = AS_ROLES;
@@ -98,7 +102,8 @@ export const useDatasetSubscription = (
     kind: "missing",
     recovery: evaluateDatasetSubscriptionRecovery({
       caller: { isEvaluator },
-      isPersonalUnit: personalUnit?.id === unitId,
+      // A personal-unit read that failed answered all the same: the caller has no personal unit.
+      isPersonalUnit: personalUnitIsPending ? undefined : personalUnit?.id === unitId,
       organisation: billingUnit.organisation,
       unit: billingUnit.unit,
     }),

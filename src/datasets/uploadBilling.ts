@@ -72,7 +72,9 @@ export type DatasetSubscriptionRecovery =
  *
  * The Account Server creates a unit product for a member of the unit or of its organisation, except
  * that an evaluator may only create one in its own personal unit. A caller who does not meet that
- * rule is sent to a person rather than to a screen that would refuse them.
+ * rule is sent to a person rather than to a screen that would refuse them. The evaluator rule rests
+ * on which unit is the caller's own, so an evaluator is told nothing at all until that is known:
+ * `undefined` is an answer this client cannot give yet, not an answer to give badly.
  */
 export const evaluateDatasetSubscriptionRecovery = ({
   caller,
@@ -81,26 +83,31 @@ export const evaluateDatasetSubscriptionRecovery = ({
   unit,
 }: {
   caller: { isEvaluator: boolean };
-  isPersonalUnit: boolean;
+  /** Absent until the caller's own personal unit has been established. */
+  isPersonalUnit?: boolean;
   /** Absent when the unit's organisation is not readable by this caller. */
   organisation?: Pick<OrganisationAllDetail, "caller_is_member">;
   unit: Pick<UnitAllDetail, "caller_is_member">;
-}): DatasetSubscriptionRecovery => {
-  const contact = {
-    kind: "contact",
-    reason:
-      "Ask a member of this unit, or of its organisation, to create a dataset subscription for it.",
-  } as const;
-  if (caller.isEvaluator && !isPersonalUnit) {
-    return {
-      kind: "contact",
-      reason:
-        "Evaluation accounts can only subscribe their own personal unit. Ask a member of this unit to create a dataset subscription for it.",
-    };
+}): DatasetSubscriptionRecovery | undefined => {
+  if (caller.isEvaluator) {
+    if (isPersonalUnit === undefined) {
+      return undefined;
+    }
+    if (!isPersonalUnit) {
+      return {
+        kind: "contact",
+        reason:
+          "Evaluation accounts can only subscribe their own personal unit. Ask a member of this unit to create a dataset subscription for it.",
+      };
+    }
   }
   return unit.caller_is_member || organisation?.caller_is_member === true
     ? { href: administrationLinks.subscriptions(), kind: "administration" }
-    : contact;
+    : {
+        kind: "contact",
+        reason:
+          "Ask a member of this unit, or of its organisation, to create a dataset subscription for it.",
+      };
 };
 
 export const DATASET_UPLOAD_BILLING_UNIT_STORAGE_KEY = "data-manager-ui-dataset-upload-unit";

@@ -172,6 +172,14 @@ export const datasetUploadIsRetryable = (record: DatasetUploadRecord): boolean =
   record.kind === "processing-unknown" ||
   record.kind === "request-failed";
 
+/**
+ * Whether this file may be sent at all: one that has never been attempted, or one whose last
+ * attempt can be retried. A file the Data Manager has already accepted or processed is not
+ * sendable, so neither a submission nor a retry can ever ask it to be done a second time.
+ */
+export const datasetUploadIsSendable = (record: DatasetUploadRecord): boolean =>
+  record.kind === "idle" || datasetUploadIsRetryable(record);
+
 export type DatasetUploadRecords = Readonly<Record<string, DatasetUploadRecord>>;
 
 const idle: DatasetUploadRecord = { kind: "idle" };
@@ -195,15 +203,6 @@ export const withDatasetUploadRecord = (
   [fileId]: typeof next === "function" ? next(datasetUploadRecordOf(records, fileId)) : next,
 });
 
-/** Retry returns a failed file to the start; a file that succeeded is never sent a second time. */
-export const retryDatasetUpload = (
-  records: DatasetUploadRecords,
-  fileId: string,
-): DatasetUploadRecords =>
-  withDatasetUploadRecord(records, fileId, (current) =>
-    datasetUploadIsRetryable(current) ? idle : current,
-  );
-
 /**
  * Which files a submission sends: those that have never been accepted and those whose last attempt
  * can be retried. Successful files are excluded, so a retry after a partial failure does not
@@ -214,10 +213,7 @@ export const pendingUploadFileIds = (
   records: DatasetUploadRecords,
 ): string[] =>
   files
-    .filter(({ id }) => {
-      const record = datasetUploadRecordOf(records, id);
-      return record.kind === "idle" || datasetUploadIsRetryable(record);
-    })
+    .filter(({ id }) => datasetUploadIsSendable(datasetUploadRecordOf(records, id)))
     .map(({ id }) => id);
 
 /** Records outlive neither their file nor a reset of the form. */

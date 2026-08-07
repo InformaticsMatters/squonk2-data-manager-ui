@@ -7,6 +7,7 @@ import {
 
 import { expect, test } from "@playwright/test";
 
+import { clearAccountScopedStorageOnLogout } from "../../src/application/logoutCleanup";
 import { evaluateDatasetUploadCapability } from "../../src/datasets/capabilities";
 import {
   DATASET_UPLOAD_BILLING_UNIT_STORAGE_KEY,
@@ -22,16 +23,17 @@ import {
   classifyDatasetUpload,
   datasetUploadBatchIsCommitted,
   datasetUploadIsRetryable,
+  datasetUploadIsSendable,
   datasetUploadPollInterval,
   type DatasetUploadRecord,
   datasetUploadRecordOf,
   datasetUploadRequestFailure,
   pendingUploadFileIds,
   resetDatasetUploads,
-  retryDatasetUpload,
   settleDatasetUpload,
   withDatasetUploadRecord,
 } from "../../src/datasets/uploadLifecycle";
+import { RECENT_PROJECTS_STORAGE_KEY } from "../../src/projects/recentProjects";
 
 const created = "2026-01-02T03:04:05Z";
 const unitId = "unit-55555555-5555-5555-5555-555555555555";
@@ -193,6 +195,20 @@ test.describe("Remembered billing unit storage", () => {
     expect(readRememberedBillingUnitId(storage)).toBeUndefined();
     expect(storage.getItem("data-manager-ui-current-organisation")).toBe("kept");
   });
+
+  test("logging out forgets the remembered unit along with the rest of the session", () => {
+    const storage = createStorage();
+    rememberBillingUnitId(storage, unitId);
+    storage.setItem(RECENT_PROJECTS_STORAGE_KEY, '["project"]');
+    storage.setItem("data-manager-ui-current-project", "project");
+    storage.setItem("data-manager-ui-cookie-consent", "consent");
+
+    clearAccountScopedStorageOnLogout(storage);
+
+    expect(readRememberedBillingUnitId(storage)).toBeUndefined();
+    // Preferences that belong to the browser rather than to the account survive the logout.
+    expect([...storage.values]).toEqual([["data-manager-ui-cookie-consent", "consent"]]);
+  });
 });
 
 test.describe("Dataset subscription recovery", () => {
@@ -228,7 +244,7 @@ test.describe("Dataset subscription recovery", () => {
       organisation: organisation(false),
       unit: unit(unitId, false),
     });
-    expect(recovery.kind).toBe("contact");
+    expect(recovery?.kind).toBe("contact");
   });
 
   test("an evaluator only manages subscriptions in its own personal unit", () => {
@@ -238,14 +254,34 @@ test.describe("Dataset subscription recovery", () => {
         ...evaluator,
         isPersonalUnit: false,
         unit: unit(unitId, true),
-      }).kind,
+      })?.kind,
     ).toBe("contact");
     expect(
       evaluateDatasetSubscriptionRecovery({
         ...evaluator,
         isPersonalUnit: true,
         unit: unit(unitId, true),
-      }).kind,
+      })?.kind,
+    ).toBe("administration");
+  });
+
+  test("an evaluator is told nothing until its own personal unit is established", () => {
+    // Until the personal-unit read answers, an evaluator on its own unit and one on somebody
+    // else's are indistinguishable, so neither is given guidance that may be about to be wrong.
+    expect(
+      evaluateDatasetSubscriptionRecovery({
+        caller: { isEvaluator: true },
+        organisation: organisation(true),
+        unit: unit(unitId, true),
+      }),
+    ).toBeUndefined();
+    // Every other caller is answered without waiting for a fact only the evaluator rule reads.
+    expect(
+      evaluateDatasetSubscriptionRecovery({
+        caller: { isEvaluator: false },
+        organisation: organisation(true),
+        unit: unit(unitId, true),
+      })?.kind,
     ).toBe("administration");
   });
 
@@ -255,8 +291,25 @@ test.describe("Dataset subscription recovery", () => {
         caller: { isEvaluator: false },
         isPersonalUnit: false,
         unit: unit(unitId, false),
-      }).kind,
+      })?.kind,
     ).toBe("contact");
+  });
+
+  test("every unit this form can bill is one its caller could also subscribe", () => {
+    // Eligibility already requires membership, so the recovery a batch can actually reach is
+    // Administration for anyone but an evaluator outside its own personal unit. The membership
+    // test remains the authority rather than an assumption about who was offered the unit.
+    for (const { organisation: parent, unit: eligible } of eligibleBillingUnits(groups())) {
+      expect(eligible.caller_is_member).toBe(true);
+      expect(
+        evaluateDatasetSubscriptionRecovery({
+          caller: { isEvaluator: false },
+          isPersonalUnit: false,
+          organisation: parent,
+          unit: eligible,
+        }),
+      ).toEqual({ href: "/administration/subscriptions", kind: "administration" });
+    }
   });
 });
 
@@ -498,22 +551,26 @@ test.describe("Dataset upload per-file records", () => {
     });
   });
 
-  test("only a retryable file is returned to idle and a processed one is left alone", () => {
+  test("only a file that failed or was never attempted may be sent", () => {
     for (const record of [
       { kind: "request-failed", reason: "x" },
       { kind: "processing-failed", reason: "x", taskId },
       { kind: "processing-unknown", reason: "x", taskId },
     ] as const) {
       expect(datasetUploadIsRetryable(record)).toBe(true);
-      expect(retryDatasetUpload({ only: record }, "only").only).toEqual({ kind: "idle" });
+      expect(datasetUploadIsSendable(record)).toBe(true);
     }
+    expect(datasetUploadIsRetryable({ kind: "idle" })).toBe(false);
+    expect(datasetUploadIsSendable({ kind: "idle" })).toBe(true);
+    // Work the Data Manager already holds is sendable by no route at all, so nothing that names a
+    // file — a retry included — can enter it twice.
     for (const record of [
       { kind: "processed", taskId },
       { kind: "accepted", taskId },
       { kind: "sending", progress: 1 },
     ] as const) {
       expect(datasetUploadIsRetryable(record)).toBe(false);
-      expect(retryDatasetUpload({ only: record }, "only").only).toEqual(record);
+      expect(datasetUploadIsSendable(record)).toBe(false);
     }
   });
 

@@ -36,6 +36,7 @@ import {
   evaluateUnitPrivacyCapability,
   isDefaultOrganisationResource,
   isPersonalUnitResource,
+  protectedOrganisationMembers,
 } from "./capabilities";
 import { administrationMutationFailureMessage, administrationResourceLabel } from "./failures";
 import { assertOrganisationId, assertUnitId } from "./identifiers";
@@ -550,7 +551,7 @@ const OrganisationResource = ({
         <ManageResourceUsers
           add={(userId) => commands.addOrganisationMember(organisation.id, userId)}
           capability={evaluateOrganisationMembershipCapability(facts)}
-          disabledUsers={organisation.owner_id === undefined ? [] : [organisation.owner_id]}
+          disabledUsers={protectedOrganisationMembers(facts)}
           noun="Member"
           remove={(userId) => commands.removeOrganisationMember(organisation.id, userId)}
           resource={administrationResourceLabel.organisation(organisation.id)}

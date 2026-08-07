@@ -119,6 +119,28 @@ export const evaluateOrganisationMembershipCapability = (
   evaluateOrganisationCapability(facts, "The default organisation does not have members.");
 
 /**
+ * Who the organisation's member list displays but never offers to remove.
+ *
+ * This is a deliberate narrowing of the generated contract, and the only one Organisation & access
+ * makes. `DELETE /organisation/{orgId}/user/{userId}` accepts either removal from any caller in the
+ * organisation, so neither is refused by the server and neither is hidden from a caller who reaches
+ * the endpoint another way:
+ *
+ * - The caller itself, because removing it would take away the organisation it is standing on, and
+ *   only a remaining member or an administrator could put it back.
+ * - The organisation's owner, because the resource keeps naming an owner the list no longer holds.
+ *
+ * Leaving is a real thing to want, so it belongs in an action that says what it costs and confirms
+ * it, rather than in a chip that removes a member without asking.
+ */
+export const protectedOrganisationMembers = ({
+  caller,
+  organisation,
+}: Pick<OrganisationCapabilityFacts, "caller" | "organisation">): string[] => [
+  ...new Set([organisation.owner_id, caller.username].filter((user) => user !== undefined)),
+];
+
+/**
  * The generated organisation resource is patched by a member, its owner, or the platform, which is
  * the same authority its membership endpoints require.
  */

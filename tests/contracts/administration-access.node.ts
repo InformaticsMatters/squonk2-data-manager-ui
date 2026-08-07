@@ -19,6 +19,7 @@ import {
   evaluateUnitPrivacyCapability,
   isDefaultOrganisationResource,
   isPersonalUnitResource,
+  protectedOrganisationMembers,
 } from "../../src/administration/capabilities";
 import {
   administrationMutationFailureMessage,
@@ -132,6 +133,29 @@ test.describe("Organisation capabilities", () => {
       reason: "You must be a member or the owner of this organisation.",
       status: "disabled",
     });
+  });
+
+  /**
+   * The generated endpoint accepts both removals, so this list is the one place Organisation &
+   * access narrows the contract rather than presenting it. It must stay that short and that
+   * explicit, because anything else here would refuse a change the server would have accepted.
+   */
+  test("the caller and the owner are the only members the list will not give up", () => {
+    expect(protectedOrganisationMembers(organisationFacts({ username: member }))).toEqual([
+      owner,
+      member,
+    ]);
+    // A caller that owns the organisation is one member, named once.
+    expect(protectedOrganisationMembers(organisationFacts({ username: owner }))).toEqual([owner]);
+    // `organisationFacts` fills in its own owner, so an ownerless organisation is stated directly.
+    const withoutOwner = (username: string | undefined) => ({
+      caller: caller(username),
+      organisation: { caller_is_member: true, id: organisationId, owner_id: undefined },
+    });
+    // An organisation the resource says has no owner still protects the caller standing on it.
+    expect(protectedOrganisationMembers(withoutOwner(member))).toEqual([member]);
+    // An unresolved caller names nobody, so no chip is protected by an absent username.
+    expect(protectedOrganisationMembers(withoutOwner(undefined))).toEqual([]);
   });
 
   test("default organisation membership and privacy are owned by the platform", () => {

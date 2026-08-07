@@ -608,6 +608,35 @@ test("organisation creation is a hidden platform-administrator action", async ({
   await expect(page.getByRole("button", { name: "Create unit" })).toBeEnabled();
 });
 
+/**
+ * The generated endpoint would accept a caller removing itself from an organisation it belongs to.
+ * Organisation & access does not offer it, so a member cannot lose the resource it is standing on
+ * by way of a chip. This profile is the one where the caller is a listed member and somebody else
+ * owns the organisation, so each protection is visible on its own.
+ */
+test("a member is never offered the removal that would take its own organisation away", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=platform-admin`);
+  await login(
+    page,
+    `administration/organisation-access/organisations/${fixtureIds.organisation}`,
+    testInfo,
+  );
+
+  const colleague = `${subject}-observer`;
+  await expect(page.getByRole("combobox", { name: "Organisation members" })).toBeEnabled();
+  await expect(page.getByRole("main").getByText(subject, { exact: true })).toBeVisible();
+  await expect(page.getByLabel(`Remove ${subject}`, { exact: true })).toHaveCount(0);
+
+  // Everyone else in the list stays removable, so the narrowing costs nothing else.
+  await page.getByLabel(`Remove ${colleague}`).click();
+  await expect(page.getByText(`Member ${colleague} removed`)).toBeVisible();
+  await expect(page.getByRole("button", { name: colleague, exact: true })).toHaveCount(0);
+});
+
 test("read-only callers keep every action explained", async ({ page, request }, testInfo) => {
   await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=read-only`);
   await login(page, `administration/organisation-access/units/${fixtureIds.unit}`, testInfo);

@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -39,3 +39,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Conventional commits** are required — `semantic-release` drives versioning. Pushes to `dev` cut prerelease tags (`X.Y.Z-dev.N`), `master` cuts stable releases.
 - Prettier: double quotes, `printWidth: 100`, trailing commas, 2-space indent. Husky + lint-staged format and lint on commit.
+
+## Agent skills
+
+### Issue tracker
+
+Issues are tracked in this repository's GitHub Issues. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Triage uses the five canonical engineering-skill labels. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Domain documentation uses a single-context layout. See `docs/agents/domain.md`.

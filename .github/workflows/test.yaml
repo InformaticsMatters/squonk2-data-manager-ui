@@ -51,6 +51,26 @@ jobs:
     # Setup
     runs-on: ubuntu-latest
     environment: data-manager-ui/test
+    # The build and the test run have to share one environment rather than declare their own. Next
+    # inlines every `NEXT_PUBLIC_*` value at build time, so when only the test step named the API
+    # servers the bundle was built with empty ones and the browser asked the app's own origin for
+    # `/default/organisation` and `/version` instead of the Account Server and Data Manager.
+    env:
+      KEYCLOAK_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
+      KEYCLOAK_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
+      DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
+      BETTER_AUTH_SECRET: "LONG_RANDOM_VALUE"
+      BASE_URL: "http://localhost:3000"
+      BASE_PATH: "/data-manager-ui"
+      DONT_USE_STANDALONE_OUTPUT: true
+      DANGEROUS__DISABLE_SSL_CERT_CHECK_IN_API_PROXY: 1
+      DATA_MANAGER_API_SERVER: "https://data-manager-test.xchem-dev.diamond.ac.uk/data-manager-api"
+      ACCOUNT_SERVER_API_SERVER: "https://account-server-test.xchem-dev.diamond.ac.uk\
+        /account-server-api"
+      KEYCLOAK_URL: "https://keycloak-test.xchem-dev.diamond.ac.uk/auth/realms/squonk"
+      PW_USERNAME: "dmit-user-a"
+      PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
+      TEST_PORT: 3000
     steps:
     - name: Checkout
       uses: actions/checkout@v6
@@ -81,28 +101,10 @@ jobs:
     # Test WITH base path set
     - name: Build with base path
       run: pnpm build
-      env:
-        BASE_PATH: "/data-manager-ui"
     # Ok for tests/dev but we don't do this on prod. This is to prevent some flakely tests from causing problems
     - name: Disable strict SSL
       run: npm config set strict-ssl=false
     - name: Test with base path
-      env:
-        KEYCLOAK_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
-        KEYCLOAK_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
-        DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
-        BETTER_AUTH_SECRET: "LONG_RANDOM_VALUE"
-        BASE_URL: "http://localhost:3000"
-        BASE_PATH: "/data-manager-ui"
-        DONT_USE_STANDALONE_OUTPUT: true
-        DANGEROUS__DISABLE_SSL_CERT_CHECK_IN_API_PROXY: 1
-        DATA_MANAGER_API_SERVER: "https://data-manager-test.xchem-dev.diamond.ac.uk/data-manager-api"
-        ACCOUNT_SERVER_API_SERVER: "https://account-server-test.xchem-dev.diamond.ac.uk\
-          /account-server-api"
-        KEYCLOAK_URL: "https://keycloak-test.xchem-dev.diamond.ac.uk/auth/realms/squonk"
-        PW_USERNAME: "dmit-user-a"
-        PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
-        TEST_PORT: 3000
       run: pnpm test:ci
     - name: Upload test results
       if: always()

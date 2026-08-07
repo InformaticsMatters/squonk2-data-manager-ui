@@ -47,6 +47,8 @@ const created = "2026-01-02T03:04:05Z";
 
 export const fixtureIds = {
   createdOrganisation: "org-0a0a0a0a-0a0a-4a0a-8a0a-0a0a0a0a0a0a",
+  createdProduct: "product-0c0c0c0c-0c0c-4c0c-8c0c-0c0c0c0c0c0c",
+  createdProject: "project-0f0f0f0f-0f0f-4f0f-8f0f-0f0f0f0f0f0f",
   createdUnit: "unit-0b0b0b0b-0b0b-4b0b-8b0b-0b0b0b0b0b0b",
   dataset: "dataset-11111111-1111-1111-1111-111111111111",
   defaultOrganisation: "org-0d0d0d0d-0d0d-4d0d-8d0d-0d0d0d0d0d0d",

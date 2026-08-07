@@ -1,3 +1,6 @@
+import { type ProductDmProjectTier } from "@/api/account-server";
+import { type ProjectDetail } from "@/api/data-manager";
+
 import { createScenarioFixtures, type ScenarioProfile } from "./fixtures";
 
 export type RequestRecord = {
@@ -14,6 +17,9 @@ export type ScenarioState = {
   /** The caller's own Data Manager account read, whose failure leaves project facts unconfirmed. */
   callerAccountFailure?: 503;
   chargeFailure?: 403 | 429 | 503;
+  cleanupFailure?: 403 | 503;
+  createdProduct?: ProductDmProjectTier;
+  createdProject?: ProjectDetail;
   datasetContentFailure?: 403 | 429 | 503;
   datasetFailure?: 429 | 503;
   datasetMutationFailure?: 403 | 503;
@@ -26,6 +32,8 @@ export type ScenarioState = {
   /** The profile this scenario was reset with; the identity provider reads it to issue roles. */
   profile: ScenarioProfile;
   productFailure: boolean;
+  productCreationFailure?: 403 | 429 | 503;
+  projectCreationFailure?: 403 | 429 | 503;
   projectFailure?: number;
   projectMutationFailure?: 403 | 503;
   requests: RequestRecord[];

@@ -1,4 +1,7 @@
-import { type UnitAllDetailDefaultProductPrivacy } from "@/api/account-server";
+import {
+  type ProductDmProjectTier,
+  type UnitAllDetailDefaultProductPrivacy,
+} from "@/api/account-server";
 import {
   AppApiDatasetPostDatasetVersionMetaBody,
   AppApiDatasetPostDatasetVersionMetaResponse,
@@ -356,7 +359,32 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     return json(response, 204, undefined);
   }
   if (url.pathname === "/project") {
-    return json(response, 200, state.fixtures.projects);
+    if (request.method === "POST") {
+      const form = new URLSearchParams((await readBody(request)).toString());
+      if (state.projectCreationFailure) {
+        return json(response, state.projectCreationFailure, state.fixtures.failures.serverError);
+      }
+      if (form.get("tier_product_id") !== state.createdProduct?.product.id) {
+        return json(response, 400, { error: "fixture-subscription-not-found" });
+      }
+      state.createdProject = {
+        ...state.fixtures.projects.projects[0],
+        name: form.get("name") ?? "Created project",
+        private: form.get("private") === "true",
+        product_id: state.createdProduct.product.id,
+        project_id: fixtureIds.createdProject,
+        unit_id: state.createdProduct.unit.id,
+      };
+      state.createdProduct.claim = {
+        id: fixtureIds.createdProject,
+        name: state.createdProject.name,
+      };
+      return json(response, 201, { project_id: fixtureIds.createdProject });
+    }
+    const projects = state.createdProject
+      ? [...state.fixtures.projects.projects, state.createdProject]
+      : state.fixtures.projects.projects;
+    return json(response, 200, { count: projects.length, projects });
   }
   // Results collections. Each answers for exactly the project it was asked about, and a request
   // that named no project is refused, because the Data Manager is never asked for global results.
@@ -509,6 +537,9 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       return json(response, state.projectFailure, body);
     }
     return json(response, 200, state.fixtures.projects.projects[0]);
+  }
+  if (url.pathname === `/project/${fixtureIds.createdProject}` && state.createdProject) {
+    return json(response, 200, state.createdProject);
   }
   // The Run catalogue. Jobs are scoped by project, so a request that names no project is refused;
   // applications and workflow definitions are catalogues the Data Manager does not scope.
@@ -1033,7 +1064,19 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     if (state.productFailure) {
       return json(response, 503, state.fixtures.failures.serverError);
     }
-    return json(response, 200, state.fixtures.products);
+    const products = state.createdProduct
+      ? [...state.fixtures.products.products, state.createdProduct]
+      : state.fixtures.products.products;
+    return json(response, 200, { count: products.length, products });
+  }
+  if (url.pathname === "/product-type") {
+    return json(response, 200, {
+      count: 3,
+      product_types: ["EVALUATION", "BRONZE", "SILVER"].map((flavour) => ({
+        flavour,
+        type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
+      })),
+    });
   }
   // A unit's own subscriptions. A unit the fixture never subscribed answers with an empty
   // collection rather than an error, because having no subscription is not a failure to read one.
@@ -1041,17 +1084,57 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     if (state.productFailure) {
       return json(response, 503, state.fixtures.failures.serverError);
     }
-    return json(
-      response,
-      200,
-      state.fixtures.unitProducts[segments[2]] ?? { count: 0, products: [] },
-    );
+    if (request.method === "POST") {
+      const body = JSON.parse((await readBody(request)).toString()) as {
+        flavour?: "BRONZE" | "EVALUATION" | "GOLD" | "SILVER";
+        name?: string;
+      };
+      if (state.productCreationFailure) {
+        return json(response, state.productCreationFailure, state.fixtures.failures.serverError);
+      }
+      const base = state.fixtures.products.products[0] as ProductDmProjectTier;
+      const unit = state.fixtures.units.units
+        .flatMap(({ units }) => units)
+        .find(({ id }) => id === segments[2]);
+      if (!unit) {
+        return json(response, 404, { error: "fixture-unit-not-found" });
+      }
+      state.createdProduct = {
+        ...base,
+        claim: undefined,
+        product: {
+          ...base.product,
+          flavour: body.flavour ?? "BRONZE",
+          id: fixtureIds.createdProduct,
+          name: body.name,
+          type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
+        },
+        unit,
+      };
+      return json(response, 201, { id: fixtureIds.createdProduct });
+    }
+    const listed = state.fixtures.unitProducts[segments[2]] ?? { count: 0, products: [] };
+    const products =
+      state.createdProduct?.unit.id === segments[2]
+        ? [...listed.products, state.createdProduct]
+        : listed.products;
+    return json(response, 200, { count: products.length, products });
   }
   if (url.pathname === `/product/${fixtureIds.product}`) {
     return json(response, 200, { product: state.fixtures.products.products[0] });
   }
   if (url.pathname === `/product/${fixtureIds.screeningProduct}`) {
     return json(response, 200, { product: state.fixtures.screeningProduct });
+  }
+  if (url.pathname === `/product/${fixtureIds.createdProduct}` && state.createdProduct) {
+    if (request.method === "DELETE") {
+      if (state.cleanupFailure) {
+        return json(response, state.cleanupFailure, state.fixtures.failures.serverError);
+      }
+      state.createdProduct = undefined;
+      return json(response, 204, undefined);
+    }
+    return json(response, 200, { product: state.createdProduct });
   }
   if (url.pathname === "/version") {
     return json(response, 200, state.fixtures.accountServerVersion);
@@ -1089,6 +1172,30 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   if (url.pathname.endsWith("/product-failure") && request.method === "POST") {
     getScenario(subject).productFailure = true;
     return json(response, 200, { productFailure: true, subject });
+  }
+  const creationFailureControls = [
+    { pathSuffix: "/cleanup-failure", stateKey: "cleanupFailure" },
+    { pathSuffix: "/product-creation-failure", stateKey: "productCreationFailure" },
+    { pathSuffix: "/project-creation-failure", stateKey: "projectCreationFailure" },
+  ] as const;
+  const creationFailureControl = creationFailureControls.find(({ pathSuffix }) =>
+    url.pathname.endsWith(pathSuffix),
+  );
+  if (creationFailureControl) {
+    const state = getScenario(subject);
+    if (request.method === "DELETE") {
+      state[creationFailureControl.stateKey] = undefined;
+      return json(response, 200, { subject });
+    }
+    const status = Number(url.searchParams.get("status"));
+    if (
+      ![403, 429, 503].includes(status) ||
+      (creationFailureControl.stateKey === "cleanupFailure" && status === 429)
+    ) {
+      return json(response, 400, { error: "unsupported-creation-failure", status });
+    }
+    state[creationFailureControl.stateKey] = status as 403 | 503;
+    return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/charge-failure") && request.method === "POST") {
     const status = Number(url.searchParams.get("status"));

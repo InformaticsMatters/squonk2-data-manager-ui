@@ -1,6 +1,6 @@
 import { pagePolicies, withPagePolicy } from "../../application/pagePolicy";
-import { WorkspacePlaceholder } from "../../components/workspaces/WorkspacePlaceholder";
+import { ProjectCreate } from "../../projects/ProjectCreate";
 
-const NewProjectPage = () => <WorkspacePlaceholder title="Create project" />;
+const NewProjectPage = () => <ProjectCreate />;
 
 export default withPagePolicy(pagePolicies.projects("create"), NewProjectPage);

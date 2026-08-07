@@ -1,8 +1,10 @@
 import { useGetProductsSuspense } from "@/api/account-server/product";
 
-import { Alert, Stack, Typography } from "@mui/material";
+import { Alert, Button, Stack, Typography } from "@mui/material";
+import Link from "next/link";
 
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
+import { projectLinks } from "../projects/routes";
 import { useAccessIndex } from "./accessFacts";
 import { AdministrationFrame } from "./AdministrationShell";
 import { ChargeLedger } from "./ChargeLedgers";
@@ -205,16 +207,33 @@ const ReadOnlyResourceDetails = ({ route }: { route: ReadOnlyResourceRoute }) =>
 const SubscriptionDetails = ({ route }: { route: SubscriptionDetailRoute }) => {
   const { data } = useGetProductsSuspense();
   const subscription = data.products.find((candidate) => candidate.product.id === route.productId);
+  const canCreateProject =
+    subscription?.product.type === "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION" &&
+    subscription.claimable &&
+    "claim" in subscription &&
+    subscription.claim === undefined;
   return (
-    <ResourceDetailsView
-      ancestry={
-        subscription ? `${subscription.organisation.name} / ${subscription.unit.name}` : undefined
-      }
-      id={route.productId}
-      name={subscription ? (subscription.product.name ?? "Subscription") : undefined}
-      task="Subscriptions"
-      type="Subscription"
-    />
+    <Stack spacing={2}>
+      <ResourceDetailsView
+        ancestry={
+          subscription ? `${subscription.organisation.name} / ${subscription.unit.name}` : undefined
+        }
+        id={route.productId}
+        name={subscription ? (subscription.product.name ?? "Subscription") : undefined}
+        task="Subscriptions"
+        type="Subscription"
+      />
+      {canCreateProject ? (
+        <Button
+          component={Link}
+          href={projectLinks.create({ subscriptionId: route.productId })}
+          sx={{ alignSelf: "flex-start" }}
+          variant="contained"
+        >
+          Create linked project
+        </Button>
+      ) : null}
+    </Stack>
   );
 };
 

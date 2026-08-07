@@ -1,11 +1,6 @@
 import { Fragment, type ReactNode, useState } from "react";
 
-import {
-  type AsError,
-  type OrganisationAllDetail,
-  type UnitAllDetail,
-  UnitAllDetailDefaultProductPrivacy,
-} from "@/api/account-server";
+import { type AsError, type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
 
 import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { Box, Button, Chip, MenuItem, Stack, TextField, Typography } from "@mui/material";
@@ -17,7 +12,7 @@ import { ManageUsers } from "../components/ManageUsers";
 import { ModalWrapper } from "../components/modals/ModalWrapper";
 import { WarningDeleteButton } from "../components/WarningDeleteButton";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
-import { capitalise, shoutSnakeToLowerCase } from "../utils/app/language";
+import { capitalise } from "../utils/app/language";
 import {
   type AddressedResource,
   type UnitWithOrganisation,
@@ -31,17 +26,27 @@ import {
   type AdministrationCapability,
   capabilityReason,
   evaluateOrganisationCreationCapability,
-  evaluateOrganisationEditorCapability,
+  evaluateOrganisationMembershipCapability,
+  evaluateOrganisationPrivacyCapability,
   evaluatePersonalUnitCreationCapability,
   evaluateUnitCreationCapability,
   evaluateUnitDeletionCapability,
   evaluateUnitEditCapability,
   evaluateUnitMembershipCapability,
+  evaluateUnitPrivacyCapability,
   isDefaultOrganisationResource,
   isPersonalUnitResource,
 } from "./capabilities";
 import { administrationMutationFailureMessage, administrationResourceLabel } from "./failures";
 import { assertOrganisationId, assertUnitId } from "./identifiers";
+import {
+  declaredProductPrivacyExplanation,
+  effectiveProductPrivacyExplanation,
+  inheritedProductPrivacyExplanation,
+  type ProductPrivacy,
+  productPrivacyLabel,
+  productPrivacyValues,
+} from "./privacy";
 import {
   EmptyTask,
   PageTitle,
@@ -534,17 +539,23 @@ const OrganisationResource = ({
         </Stack>
       </Section>
 
-      <Section title="Editors">
+      <Section title="Default project privacy">
+        <OrganisationPrivacy
+          capability={evaluateOrganisationPrivacyCapability(facts)}
+          organisation={organisation}
+        />
+      </Section>
+
+      <Section title="Members">
         <ManageResourceUsers
-          add={(userId) => commands.addOrganisationEditor(organisation.id, userId)}
-          capability={evaluateOrganisationEditorCapability(facts)}
-          noun="Editor"
-          remove={(userId) => commands.removeOrganisationEditor(organisation.id, userId)}
+          add={(userId) => commands.addOrganisationMember(organisation.id, userId)}
+          capability={evaluateOrganisationMembershipCapability(facts)}
+          disabledUsers={organisation.owner_id === undefined ? [] : [organisation.owner_id]}
+          noun="Member"
+          remove={(userId) => commands.removeOrganisationMember(organisation.id, userId)}
           resource={administrationResourceLabel.organisation(organisation.id)}
-          title="Organisation editors"
-          users={organisation.users
-            .map((user) => user.id)
-            .filter((user) => user !== caller.username)}
+          title="Organisation members"
+          users={organisation.users.map((user) => user.id)}
         />
       </Section>
     </>
@@ -595,47 +606,116 @@ const UnitName = ({
   );
 };
 
-const UnitPrivacy = ({
+/**
+ * The default privacy a resource declares. While a change is in flight the field states the value
+ * it is applying, and once the command has answered the addressed resource states its own value
+ * again, so a rejected change never reads as one the server accepted.
+ */
+const DefaultPrivacySelect = ({
+  announcement,
   capability,
-  unit,
+  privacy,
+  resource,
+  update,
 }: {
+  /** What a successful change is announced as; the resource itself names its own failures. */
+  announcement: string;
   capability: AdministrationCapability;
-  unit: UnitAllDetail;
+  privacy: ProductPrivacy;
+  resource: string;
+  update: (privacy: ProductPrivacy) => Promise<unknown>;
 }) => {
-  const commands = useAccessCommands();
   const feedback = useAccessCommandFeedback();
-  const [isPending, setIsPending] = useState(false);
+  const [requested, setRequested] = useState<ProductPrivacy | undefined>();
 
-  const update = async (privacy: UnitAllDetailDefaultProductPrivacy) => {
-    setIsPending(true);
+  const change = async (next: ProductPrivacy) => {
+    setRequested(next);
     try {
-      await commands.updateUnit(unit.id, { default_product_privacy: privacy });
-      feedback.announce("Unit default privacy updated");
+      await update(next);
+      feedback.announce(announcement);
     } catch (error) {
-      feedback.report(
-        error,
-        "update the default project privacy of",
-        administrationResourceLabel.unit(unit.id),
-      );
+      feedback.report(error, "update the default project privacy of", resource);
     }
-    setIsPending(false);
+    setRequested(undefined);
   };
 
   return (
     <TextField
       select
-      disabled={isPending || capability.status !== "enabled"}
+      disabled={requested !== undefined || capability.status !== "enabled"}
       helperText={capabilityReason(capability)}
       label="Default project privacy"
-      value={unit.default_product_privacy}
-      onChange={(event) => void update(event.target.value as UnitAllDetailDefaultProductPrivacy)}
+      value={requested ?? privacy}
+      onChange={(event) => void change(event.target.value as ProductPrivacy)}
     >
-      {Object.values(UnitAllDetailDefaultProductPrivacy).map((privacy) => (
-        <MenuItem key={privacy} value={privacy}>
-          {capitalise(shoutSnakeToLowerCase(privacy))}
+      {productPrivacyValues.map((value) => (
+        <MenuItem key={value} value={value}>
+          {productPrivacyLabel(value)}
         </MenuItem>
       ))}
     </TextField>
+  );
+};
+
+const OrganisationPrivacy = ({
+  capability,
+  organisation,
+}: {
+  capability: AdministrationCapability;
+  organisation: OrganisationAllDetail;
+}) => {
+  const commands = useAccessCommands();
+
+  return (
+    <Stack spacing={1}>
+      <DefaultPrivacySelect
+        announcement="Organisation default privacy updated"
+        capability={capability}
+        privacy={organisation.default_product_privacy}
+        resource={administrationResourceLabel.organisation(organisation.id)}
+        update={(privacy) =>
+          commands.updateOrganisation(organisation.id, { default_product_privacy: privacy })
+        }
+      />
+      <Typography color="text.secondary" variant="body2">
+        {declaredProductPrivacyExplanation(organisation.default_product_privacy)}
+      </Typography>
+    </Stack>
+  );
+};
+
+/**
+ * The unit's own default, the organisation value it inherits, and the privacy new projects actually
+ * take. Every one of the three is read from the addressed resource and its current ancestry.
+ */
+const UnitPrivacy = ({
+  capability,
+  organisationPrivacy,
+  unit,
+}: {
+  capability: AdministrationCapability;
+  /** Absent when the addressed unit's organisation is not among the caller's grouped units. */
+  organisationPrivacy?: ProductPrivacy;
+  unit: UnitAllDetail;
+}) => {
+  const commands = useAccessCommands();
+
+  return (
+    <Stack spacing={1}>
+      <Typography color="text.secondary" variant="body2">
+        {inheritedProductPrivacyExplanation(organisationPrivacy)}
+      </Typography>
+      <DefaultPrivacySelect
+        announcement="Unit default privacy updated"
+        capability={capability}
+        privacy={unit.default_product_privacy}
+        resource={administrationResourceLabel.unit(unit.id)}
+        update={(privacy) => commands.updateUnit(unit.id, { default_product_privacy: privacy })}
+      />
+      <Typography color="text.secondary" variant="body2">
+        {effectiveProductPrivacyExplanation(unit.default_product_privacy)}
+      </Typography>
+    </Stack>
   );
 };
 
@@ -710,6 +790,7 @@ const UnitResource = ({
     unit,
   };
   const editCapability = evaluateUnitEditCapability(facts);
+  const organisationPrivacy = organisation?.default_product_privacy;
 
   return (
     <>
@@ -725,7 +806,11 @@ const UnitResource = ({
       </Section>
 
       <Section title="Default project privacy">
-        <UnitPrivacy capability={editCapability} unit={unit} />
+        <UnitPrivacy
+          capability={evaluateUnitPrivacyCapability({ ...facts, organisationPrivacy })}
+          organisationPrivacy={organisationPrivacy}
+          unit={unit}
+        />
       </Section>
 
       <Section title="Members">

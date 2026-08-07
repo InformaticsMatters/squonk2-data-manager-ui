@@ -381,11 +381,129 @@ test("unit members and privacy are managed on the unit resource", async ({ page 
   await expect(page.getByText(`Member ${colleague} added`)).toBeVisible();
   await expect(page.getByRole("button", { name: colleague, exact: true })).toBeVisible();
 
+  // The unit's own default, what it inherits, and what new projects actually take are all stated.
+  await expect(
+    page.getByText(
+      "The organisation's declared default is Default Private. It starts off new units; this unit's own default governs its projects.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "New projects in this unit start private, and their creator may choose otherwise.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+
   await page.getByRole("combobox", { name: "Default project privacy" }).click();
-  await page.getByRole("option", { name: "Always public" }).click();
+  await page.getByRole("option", { name: "Always private" }).click();
   await expect(page.getByText("Unit default privacy updated")).toBeVisible();
   await expect(page.getByRole("combobox", { name: "Default project privacy" })).toHaveText(
-    "Always Public",
+    "Always Private",
+  );
+  await expect(
+    page.getByText(
+      "New projects in this unit are always private, because this unit's default is Always Private.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+});
+
+test("organisation members and default privacy are managed on the organisation resource", async ({
+  page,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const path = `administration/organisation-access/organisations/${fixtureIds.organisation}`;
+  await login(page, path, testInfo);
+
+  const colleague = `${subject}-observer`;
+  await expect(page.getByRole("button", { name: subject, exact: true })).toBeVisible();
+  await page.getByLabel(`Remove ${colleague}`).click();
+  await expect(page.getByText(`Member ${colleague} removed`)).toBeVisible();
+  await expect(page.getByRole("button", { name: colleague, exact: true })).toHaveCount(0);
+
+  await page.getByRole("combobox", { name: "Organisation members" }).click();
+  await page.getByRole("option", { name: colleague, exact: true }).click();
+  await expect(page.getByText(`Member ${colleague} added`)).toBeVisible();
+  await expect(page.getByRole("button", { name: colleague, exact: true })).toBeVisible();
+
+  await expect(
+    page.getByText(
+      "Units created from now on start from Default Private. Existing units keep the default they already declare.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await page.getByRole("combobox", { name: "Default project privacy" }).click();
+  await page.getByRole("option", { name: "Always private" }).click();
+  await expect(page.getByText("Organisation default privacy updated")).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "Default project privacy" })).toHaveText(
+    "Always Private",
+  );
+  await expect(
+    page.getByText(
+      "Units created from now on start from Always Private, which this organisation requires. Existing units keep the default they already declare.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByRole("combobox", { name: "Default project privacy" })).toHaveText(
+    "Always Private",
+  );
+});
+
+/**
+ * The generated organisation patch says an existing unit keeps the default it already declares, so
+ * an organisation requirement constrains what that unit may be changed to and nothing else. The
+ * server decides which values conflict; the unit's own default is what its projects take.
+ */
+test("an organisation requirement constrains its units without restating what they take", async ({
+  page,
+}, testInfo) => {
+  await login(
+    page,
+    `administration/organisation-access/organisations/${fixtureIds.organisation}`,
+    testInfo,
+  );
+
+  await page.getByRole("combobox", { name: "Default project privacy" }).click();
+  await page.getByRole("option", { name: "Always private" }).click();
+  await expect(page.getByText("Organisation default privacy updated")).toBeVisible();
+
+  await page.goto(
+    `${acceptanceUrls.app}administration/organisation-access/units/${fixtureIds.unit}`,
+  );
+  await expect(
+    page.getByText(
+      "The organisation requires Always Private. This unit's own default governs its projects, and a change that conflicts with the organisation is rejected.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  // The unit kept the default it already declared, and that is still what its projects take.
+  const privacy = page.getByRole("combobox", { name: "Default project privacy" });
+  await expect(privacy).toHaveText("Default Private");
+  await expect(
+    page.getByText(
+      "New projects in this unit start private, and their creator may choose otherwise.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "The organisation requires Always Private, so a value that conflicts with it is rejected.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+
+  // The action stays available because only the server decides a conflict, and it explains itself.
+  await privacy.click();
+  await page.getByRole("option", { name: "Always public" }).click();
+  await expect(
+    page.getByText("The unit privacy conflicts with its organisation's value"),
+  ).toBeVisible();
+  await expect(privacy).toHaveText("Default Private");
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/organisation-access/units/${fixtureIds.unit}`,
   );
 });
 
@@ -414,6 +532,19 @@ test("personal units explain what cannot be changed", async ({ page }, testInfo)
   await expect(page.getByText("Members of a personal unit cannot be changed.")).toBeVisible();
   await expect(page.getByLabel("Unit name")).toBeDisabled();
   await expect(page.getByRole("button", { name: "Delete unit" })).toBeEnabled();
+  // The default organisation requires its privacy, and the personal unit declares the same.
+  await expect(
+    page.getByText(
+      "The organisation requires Always Private. This unit's own default governs its projects, and a change that conflicts with the organisation is rejected.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "New projects in this unit are always private, because this unit's default is Always Private.",
+      { exact: true },
+    ),
+  ).toBeVisible();
 
   await page.goto(
     `${acceptanceUrls.app}administration/organisation-access/organisations/${fixtureIds.defaultOrganisation}`,
@@ -489,10 +620,42 @@ test("read-only callers keep every action explained", async ({ page, request }, 
     `${acceptanceUrls.app}administration/organisation-access/organisations/${fixtureIds.organisation}`,
   );
   await expect(page.getByRole("button", { name: "Create unit" })).toBeDisabled();
+  // Unit creation and the organisation's own privacy require the same relationship; membership
+  // requires ownership, so a readable-only caller is told exactly what each action needs.
   await expect(
     page.getByText("You must be a member or the owner of this organisation."),
-  ).toBeVisible();
+  ).toHaveCount(2);
+  await expect(page.getByRole("combobox", { name: "Default project privacy" })).toBeDisabled();
   await expect(page.getByText("You must be the owner of this organisation.")).toBeVisible();
+});
+
+test("read-only reports link to the resource that owns their mutations", async ({
+  page,
+}, testInfo) => {
+  await login(page, `administration/usage-inventory/units/${fixtureIds.unit}`, testInfo);
+
+  await expect(page.getByText("This view is read-only.")).toBeVisible();
+  await page
+    .getByRole("link", { name: "Manage members and privacy in Organisation & access" })
+    .click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/organisation-access/units/${fixtureIds.unit}`,
+  );
+  await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toBeVisible();
+
+  await page.goto(`${acceptanceUrls.app}administration/charges/units/${fixtureIds.unit}`);
+  await page
+    .getByRole("link", { name: "Manage members and privacy in Organisation & access" })
+    .click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/organisation-access/units/${fixtureIds.unit}`,
+  );
+
+  await page.goto(`${acceptanceUrls.app}administration/charges/products/${fixtureIds.product}`);
+  await page.getByRole("link", { name: "Manage this subscription in Subscriptions" }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/subscriptions/${fixtureIds.product}`,
+  );
 });
 
 test("rejected mutations retain the resource, the route, and entered values", async ({
@@ -515,7 +678,58 @@ test("rejected mutations retain the resource, the route, and entered values", as
   await expect(page.getByLabel("Unit name")).toHaveValue("Rejected Unit");
   await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toBeVisible();
 
+  // A rejected privacy change leaves the unit stating the privacy it still has.
+  await page.getByRole("combobox", { name: "Default project privacy" }).click();
+  await page.getByRole("option", { name: "Always public" }).click();
+  await expect(
+    page.getByText(
+      `You no longer have permission to update the default project privacy of unit ${fixtureIds.unit}. The displayed resource has not changed.`,
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "Default project privacy" })).toHaveText(
+    "Default Private",
+  );
+
+  // A rejected membership change leaves the name that was typed where it was typed.
+  const members = page.getByRole("combobox", { name: "Unit members" });
+  await members.click();
+  await members.fill("rejected-member");
+  await members.press("Enter");
+  await expect(
+    page.getByText(
+      `You no longer have permission to manage members of unit ${fixtureIds.unit}. The displayed resource has not changed.`,
+    ),
+  ).toBeVisible();
+  await expect(members).toHaveValue("rejected-member");
+
+  // The organisation resource answers a rejection the same way, naming itself and changing nothing.
+  const organisationPath = `administration/organisation-access/organisations/${fixtureIds.organisation}`;
+  await page.goto(`${acceptanceUrls.app}${organisationPath}`);
+  await page.getByRole("combobox", { name: "Default project privacy" }).click();
+  await page.getByRole("option", { name: "Always public" }).click();
+  await expect(
+    page.getByText(
+      `You no longer have permission to update the default project privacy of organisation ${fixtureIds.organisation}. The displayed resource has not changed.`,
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "Default project privacy" })).toHaveText(
+    "Default Private",
+  );
+  const organisationMembers = page.getByRole("combobox", { name: "Organisation members" });
+  await organisationMembers.click();
+  await organisationMembers.fill("rejected-member");
+  await organisationMembers.press("Enter");
+  await expect(
+    page.getByText(
+      `You no longer have permission to manage members of organisation ${fixtureIds.organisation}. The displayed resource has not changed.`,
+    ),
+  ).toBeVisible();
+  await expect(organisationMembers).toHaveValue("rejected-member");
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${organisationPath}`);
+
   await request.delete(`${acceptanceUrls.control}/scenario/${subject}/access-failure`);
+  await page.goto(`${acceptanceUrls.app}${path}`);
+  await page.getByLabel("Unit name").fill("Rejected Unit");
   await page.getByRole("button", { name: "Update" }).click();
   await expect(page.getByRole("heading", { name: "Rejected Unit" })).toBeVisible();
 });
@@ -570,6 +784,20 @@ test("resources readable outside the caller's index open from a direct link", as
   await expect(page.getByRole("heading", { name: "Unlisted Unit" })).toBeVisible();
   await expect(
     page.getByRole("main").getByText(fixtureIds.unlistedUnit, { exact: true }),
+  ).toBeVisible();
+  // Without readable ancestry nothing is claimed about inheritance, and the unit still answers for
+  // its own projects, because that never depended on its organisation.
+  await expect(
+    page.getByText(
+      "This unit's organisation is not readable, so its declared default is unknown.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "New projects in this unit start private, and their creator may choose otherwise.",
+      { exact: true },
+    ),
   ).toBeVisible();
 
   await page.goto(

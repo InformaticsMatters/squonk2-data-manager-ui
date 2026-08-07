@@ -1,5 +1,7 @@
 import { type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
 
+import { type ProductPrivacy, productPrivacyIsEnforced, productPrivacyLabel } from "./privacy";
+
 export type AdministrationCapability =
   | { status: "disabled"; reason: string }
   | { status: "enabled"; reason?: string }
@@ -26,6 +28,11 @@ export type UnitCapabilityFacts = Omit<OrganisationCapabilityFacts, "organisatio
   unit: Pick<UnitAllDetail, "caller_is_member" | "id" | "owner_id">;
 };
 
+export type UnitPrivacyCapabilityFacts = UnitCapabilityFacts & {
+  /** The organisation's own default, absent when the unit's ancestry is not readable. */
+  organisationPrivacy?: ProductPrivacy;
+};
+
 export type PersonalUnitCapabilityFacts = {
   freshness?: AccessFactsFreshness;
   /** Personal units only exist in the default organisation, so every other one hides the action. */
@@ -36,6 +43,12 @@ export type PersonalUnitCapabilityFacts = {
 const unconfirmed: AdministrationCapability = {
   status: "enabled",
   reason: "Your permission will be confirmed when you use this action.",
+};
+
+/** A personal unit is the caller's own; the Account Server owns everything it declares. */
+const personalUnitIsFixed: AdministrationCapability = {
+  status: "disabled",
+  reason: "Personal units cannot be renamed or reconfigured.",
 };
 
 const factsAreConfirmed = ({
@@ -65,14 +78,15 @@ export const evaluateOrganisationCreationCapability = (
     ? { status: "enabled" }
     : { status: "hidden" };
 
-export const evaluateOrganisationEditorCapability = (
+/** Membership of an organisation is granted by its owner, which the platform may act as. */
+export const evaluateOrganisationMembershipCapability = (
   facts: OrganisationCapabilityFacts,
 ): AdministrationCapability => {
   if (!factsAreConfirmed(facts)) {
     return unconfirmed;
   }
   if (facts.isDefaultOrganisation) {
-    return { status: "disabled", reason: "The default organisation does not have editors." };
+    return { status: "disabled", reason: "The default organisation does not have members." };
   }
   if (
     facts.caller.isPlatformAdministrator ||
@@ -83,23 +97,43 @@ export const evaluateOrganisationEditorCapability = (
   return { status: "disabled", reason: "You must be the owner of this organisation." };
 };
 
+/** What the generated organisation endpoints accept from a member, an owner, or the platform. */
+const evaluateOrganisationAuthority = (
+  facts: OrganisationCapabilityFacts,
+): AdministrationCapability =>
+  facts.caller.isPlatformAdministrator ||
+  facts.organisation.owner_id === facts.caller.username ||
+  facts.organisation.caller_is_member
+    ? { status: "enabled" }
+    : { status: "disabled", reason: "You must be a member or the owner of this organisation." };
+
+/**
+ * The generated organisation resource is patched by a member, its owner, or the platform, so the
+ * organisation's default privacy follows a wider authority than its membership does.
+ */
+export const evaluateOrganisationPrivacyCapability = (
+  facts: OrganisationCapabilityFacts,
+): AdministrationCapability => {
+  if (!factsAreConfirmed(facts)) {
+    return unconfirmed;
+  }
+  return facts.isDefaultOrganisation
+    ? {
+        status: "disabled",
+        reason: "The default organisation's project privacy is managed by the platform.",
+      }
+    : evaluateOrganisationAuthority(facts);
+};
+
 export const evaluateUnitCreationCapability = (
   facts: OrganisationCapabilityFacts,
 ): AdministrationCapability => {
   if (!factsAreConfirmed(facts)) {
     return unconfirmed;
   }
-  if (facts.isDefaultOrganisation) {
-    return { status: "disabled", reason: "The default organisation only contains personal units." };
-  }
-  if (
-    facts.caller.isPlatformAdministrator ||
-    facts.organisation.owner_id === facts.caller.username ||
-    facts.organisation.caller_is_member
-  ) {
-    return { status: "enabled" };
-  }
-  return { status: "disabled", reason: "You must be a member or the owner of this organisation." };
+  return facts.isDefaultOrganisation
+    ? { status: "disabled", reason: "The default organisation only contains personal units." }
+    : evaluateOrganisationAuthority(facts);
 };
 
 export const evaluatePersonalUnitCreationCapability = ({
@@ -137,9 +171,37 @@ export const evaluateUnitEditCapability = (
     return unconfirmed;
   }
   if (facts.isPersonalUnit) {
-    return { status: "disabled", reason: "Personal units cannot be renamed or reconfigured." };
+    return personalUnitIsFixed;
   }
   return evaluateUnitAuthority(facts);
+};
+
+/**
+ * A unit's own default governs its projects and is set by the same authority that edits the unit.
+ * An organisation that requires a privacy constrains what this unit may be changed to, so the
+ * action stays available and says so: which values conflict is the server's to decide, not a client
+ * hint's, and the organisation may stop requiring one at any time.
+ */
+export const evaluateUnitPrivacyCapability = (
+  facts: UnitPrivacyCapabilityFacts,
+): AdministrationCapability => {
+  if (!factsAreConfirmed(facts)) {
+    return unconfirmed;
+  }
+  if (facts.isPersonalUnit) {
+    return personalUnitIsFixed;
+  }
+  const authority = evaluateUnitAuthority(facts);
+  if (authority.status !== "enabled") {
+    return authority;
+  }
+  return facts.organisationPrivacy !== undefined &&
+    productPrivacyIsEnforced(facts.organisationPrivacy)
+    ? {
+        status: "enabled",
+        reason: `The organisation requires ${productPrivacyLabel(facts.organisationPrivacy)}, so a value that conflicts with it is rejected.`,
+      }
+    : { status: "enabled" };
 };
 
 export const evaluateUnitMembershipCapability = (

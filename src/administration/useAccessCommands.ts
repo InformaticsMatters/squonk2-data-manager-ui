@@ -1,8 +1,13 @@
-import { type OrganisationPostBodyBody, type UnitPatchBodyBody } from "@/api/account-server";
+import {
+  type OrganisationPatchBodyBody,
+  type OrganisationPostBodyBody,
+  type UnitPatchBodyBody,
+} from "@/api/account-server";
 import {
   getGetDefaultOrganisationQueryKey,
   getGetOrganisationsQueryKey,
   useCreateOrganisation,
+  usePatchOrganisation,
 } from "@/api/account-server/organisation";
 import {
   getGetPersonalUnitQueryKey,
@@ -47,6 +52,7 @@ export const useAccessCommands = () => {
   const createOrganisation = useCreateOrganisation();
   const createUnit = useCreateOrganisationUnit();
   const createPersonalUnit = useCreatePersonalUnit();
+  const patchOrganisation = usePatchOrganisation();
   const patchUnit = usePatchUnit();
   const deleteUnit = useDeleteOrganisationUnit();
   const deletePersonalUnit = useDeletePersonalUnit();
@@ -62,7 +68,7 @@ export const useAccessCommands = () => {
   };
 
   return {
-    addOrganisationEditor: (orgId: string, userId: string) =>
+    addOrganisationMember: (orgId: string, userId: string) =>
       run(addOrganisationUser.mutateAsync({ orgId, userId })),
     addUnitMember: (unitId: string, userId: string) =>
       run(addUnitUser.mutateAsync({ unitId, userId })),
@@ -75,10 +81,12 @@ export const useAccessCommands = () => {
     /** Personal units are deleted through their own generated resource, never `/unit/{unitId}`. */
     deleteUnit: (unitId: string, isPersonalUnit: boolean) =>
       run(isPersonalUnit ? deletePersonalUnit.mutateAsync() : deleteUnit.mutateAsync({ unitId })),
-    removeOrganisationEditor: (orgId: string, userId: string) =>
+    removeOrganisationMember: (orgId: string, userId: string) =>
       run(removeOrganisationUser.mutateAsync({ orgId, userId })),
     removeUnitMember: (unitId: string, userId: string) =>
       run(removeUnitUser.mutateAsync({ unitId, userId })),
+    updateOrganisation: (orgId: string, data: OrganisationPatchBodyBody) =>
+      run(patchOrganisation.mutateAsync({ orgId, data })),
     updateUnit: (unitId: string, data: UnitPatchBodyBody) =>
       run(patchUnit.mutateAsync({ unitId, data })),
   };

@@ -8,7 +8,13 @@ import { AdministrationFrame } from "./AdministrationShell";
 import { ChargeLedger } from "./ChargeLedgers";
 import { assertOrganisationId, assertProductId, assertUnitId } from "./identifiers";
 import { OrganisationAccessIndex, OrganisationAccessResource } from "./OrganisationAccess";
-import { EmptyTask, PageTitle, ResourceDetailsView, ResourceLink } from "./resources";
+import {
+  EmptyTask,
+  organisationAccessOwner,
+  PageTitle,
+  ResourceDetailsView,
+  ResourceLink,
+} from "./resources";
 import { administrationLinks, type AdministrationRoute } from "./routes";
 
 type AdministrationResourceRoute = Exclude<
@@ -18,13 +24,10 @@ type AdministrationResourceRoute = Exclude<
   | { kind: "subscriptions" }
   | { kind: "usage-inventory" }
 >;
-type ProductResourceRoute = Extract<
-  AdministrationResourceRoute,
-  { collection: "products" } | { kind: "subscription" }
->;
+type SubscriptionRoute = Extract<AdministrationResourceRoute, { kind: "subscription" }>;
 type ReadOnlyResourceRoute = Exclude<
   AdministrationResourceRoute,
-  ProductResourceRoute | { kind: "organisation-access-resource" }
+  SubscriptionRoute | { collection: "products" } | { kind: "organisation-access-resource" }
 >;
 
 const taskTitles = {
@@ -172,9 +175,9 @@ const ReadOnlyResourceDetails = ({ route }: { route: ReadOnlyResourceRoute }) =>
     const organisation = organisations.find((candidate) => candidate.id === route.resourceId);
     return (
       <ResourceDetailsView
-        readOnly
         id={route.resourceId}
         name={organisation?.name}
+        owner={organisationAccessOwner("organisations", route.resourceId)}
         task={task}
         type="Organisation"
       />
@@ -184,29 +187,28 @@ const ReadOnlyResourceDetails = ({ route }: { route: ReadOnlyResourceRoute }) =>
   const match = units.find(({ unit }) => unit.id === route.resourceId);
   return (
     <ResourceDetailsView
-      readOnly
       ancestry={match?.organisation.name}
       id={route.resourceId}
       name={match?.unit.name}
+      owner={organisationAccessOwner("units", route.resourceId)}
       task={task}
       type="Unit"
     />
   );
 };
 
-const ProductResourceDetails = ({ route }: { route: ProductResourceRoute }) => {
+/** A product's charge ledger is answered by Charges, so only Subscriptions reaches this view. */
+const ProductResourceDetails = ({ route }: { route: SubscriptionRoute }) => {
   const { data } = useGetProductsSuspense();
-  const id = route.kind === "subscription" ? route.productId : route.resourceId;
-  const subscription = data.products.find((candidate) => candidate.product.id === id);
+  const subscription = data.products.find((candidate) => candidate.product.id === route.productId);
   return (
     <ResourceDetailsView
       ancestry={
         subscription ? `${subscription.organisation.name} / ${subscription.unit.name}` : undefined
       }
-      id={id}
+      id={route.productId}
       name={subscription ? (subscription.product.name ?? "Subscription") : undefined}
-      readOnly={route.kind === "charge-resource"}
-      task={route.kind === "subscription" ? "Subscriptions" : "Charges"}
+      task="Subscriptions"
       type="Subscription"
     />
   );

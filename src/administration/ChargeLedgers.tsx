@@ -15,7 +15,6 @@ import { useGetProductsSuspense } from "@/api/account-server/product";
 import { useGetUnitsSuspense } from "@/api/account-server/unit";
 
 import {
-  Alert,
   Box,
   FormControl,
   InputLabel,
@@ -39,6 +38,7 @@ import { withBasePath } from "../utils/app/basePath";
 import { formatCoins } from "../utils/app/coins";
 import { toLocalTimeString } from "../utils/app/datetime";
 import { formatOrdinals } from "../utils/app/ordinals";
+import { type MutationOwner, organisationAccessOwner, ReadOnlyNotice } from "./resources";
 import { administrationLinks, type ChargeResourceRoute } from "./routes";
 
 const chargeFor = (summary: ChargeSummary[], type: ChargeSummary["type"]) =>
@@ -83,6 +83,18 @@ const BillingCycleSelect = ({ route }: { route: ChargeResourceRoute }) => {
   );
 };
 
+/**
+ * A ledger reports what a resource was charged; changing that resource belongs to the task that
+ * owns it. Only the destination's route interface is used to say where that is.
+ */
+const chargeMutationOwner = (route: ChargeResourceRoute): MutationOwner =>
+  route.collection === "products"
+    ? {
+        href: administrationLinks.subscription(route.resourceId),
+        label: "Manage this subscription in Subscriptions",
+      }
+    : organisationAccessOwner(route.collection, route.resourceId);
+
 const LedgerHeader = ({
   ancestry,
   id,
@@ -111,7 +123,9 @@ const LedgerHeader = ({
         {id}
       </Typography>
     </Box>
-    <Alert severity="info">This charge ledger is read-only.</Alert>
+    <ReadOnlyNotice owner={chargeMutationOwner(route)}>
+      This charge ledger is read-only.
+    </ReadOnlyNotice>
     <Box>
       <Typography component="h4" sx={{ mb: 1 }} variant="h6">
         Billing period

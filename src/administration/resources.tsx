@@ -6,6 +6,7 @@ import {
   CardContent,
   Chip,
   Divider,
+  Link,
   Stack,
   Typography,
 } from "@mui/material";
@@ -14,6 +15,7 @@ import { type TransportFailure } from "../api/runtime/classifyTransportFailure";
 import { CenterLoader } from "../components/CenterLoader";
 import { withBasePath } from "../utils/app/basePath";
 import { presentAdministrationFailure } from "./failures";
+import { administrationLinks, type OrganisationAccessCollection } from "./routes";
 
 export const EmptyTask = ({ children }: { children: string }) => (
   <Alert severity="info">
@@ -119,18 +121,45 @@ export const ResourceIdentity = ({
   </>
 );
 
+/** Where a read-only report sends a caller who wants to change what it reports. */
+export type MutationOwner = { href: string; label: string };
+
+/**
+ * Organisation and unit membership and privacy have one owner, so every report that names it says
+ * the same thing and reaches it through the destination's route interface alone.
+ */
+export const organisationAccessOwner = <TCollection extends OrganisationAccessCollection>(
+  collection: TCollection,
+  resourceId: Parameters<typeof administrationLinks.organisationAccessResource<TCollection>>[1],
+): MutationOwner => ({
+  href: administrationLinks.organisationAccessResource(collection, resourceId),
+  label: "Manage members and privacy in Organisation & access",
+});
+
+/**
+ * A read-only report states that it cannot be changed and links the resource that can. The link is
+ * built from the destination's route interface alone, so a report never reaches into the screens
+ * that own the mutation.
+ */
+export const ReadOnlyNotice = ({ children, owner }: { children: string; owner: MutationOwner }) => (
+  <Alert severity="info">
+    {children} <Link href={withBasePath(owner.href)}>{owner.label}</Link>
+  </Alert>
+);
+
 export const ResourceDetailsView = ({
   ancestry,
   id,
   name,
-  readOnly,
+  owner,
   task,
   type,
 }: {
   ancestry?: string;
   id: string;
   name?: string;
-  readOnly: boolean;
+  /** Present only on read-only reports, which name the resource that owns their mutations. */
+  owner?: MutationOwner;
   task: string;
   type: string;
 }) => {
@@ -142,12 +171,16 @@ export const ResourceDetailsView = ({
     <>
       <PageTitle>{task}</PageTitle>
       <ResourceIdentity ancestry={ancestry} id={id} name={name} type={type} />
-      {!!readOnly && (
-        <Alert severity="info" sx={{ mt: 2 }}>
-          This view is read-only. Use Organisation & access or Project Manage for membership
-          changes.
-        </Alert>
-      )}
+      {owner ? (
+        <Box sx={{ mt: 2 }}>
+          {/* Project roles have their own owner, which is a project's Manage section rather than
+              any Administration resource, so this report names it without linking a project it
+              does not address. */}
+          <ReadOnlyNotice owner={owner}>
+            This view is read-only. Project roles are changed in that project&apos;s Manage section.
+          </ReadOnlyNotice>
+        </Box>
+      ) : null}
     </>
   );
 };

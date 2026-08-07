@@ -703,6 +703,7 @@ const dataManagerServer = createServer(
 );
 
 type UnitFixture = ScenarioState["fixtures"]["units"]["units"][number]["units"][number];
+type OrganisationFixture = ScenarioState["fixtures"]["organisations"]["organisations"][number];
 
 const findUnitGroup = (state: ScenarioState, unitId: string) =>
   state.fixtures.units.units.find((group) => group.units.some((unit) => unit.id === unitId));
@@ -716,6 +717,8 @@ const personalUnitOf = (state: ScenarioState): UnitFixture | undefined =>
   )?.units[0];
 
 const organisationsOf = (state: ScenarioState) => state.fixtures.organisations.organisations;
+
+const visibilityOf = (privacy: string) => (privacy.endsWith("PRIVATE") ? "private" : "public");
 
 /** A single addressed organisation or unit read fails with the body its status describes. */
 const addressedReadFailure = (state: ScenarioState, response: ServerResponse) =>
@@ -886,6 +889,20 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     if (!unit) {
       return json(response, 404, { error: "fixture-unit-not-found" });
     }
+    // The Account Server accepts a unit privacy only while it does not conflict with its
+    // organisation's, so a requiring organisation rejects the opposite visibility outright.
+    const organisation = findUnitGroup(state, segments[1])?.organisation;
+    if (
+      body.default_product_privacy &&
+      organisation &&
+      organisation.default_product_privacy.startsWith("ALWAYS_") &&
+      visibilityOf(organisation.default_product_privacy) !==
+        visibilityOf(body.default_product_privacy)
+    ) {
+      return json(response, 409, {
+        error: "The unit privacy conflicts with its organisation's value",
+      });
+    }
     unit.name = body.name ?? unit.name;
     unit.default_product_privacy = body.default_product_privacy ?? unit.default_product_privacy;
     return json(response, 200, {});
@@ -911,6 +928,28 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     return unit
       ? json(response, 200, unit)
       : json(response, 404, { error: "fixture-unit-not-found" });
+  }
+  if (segments[0] === "organisation" && segments.length === 2 && request.method === "PATCH") {
+    const body = JSON.parse((await readBody(request)).toString()) as {
+      default_product_privacy?: OrganisationFixture["default_product_privacy"];
+      name?: string;
+    };
+    const organisation = organisationsOf(state).find((candidate) => candidate.id === segments[1]);
+    if (!organisation) {
+      return json(response, 404, { error: "fixture-organisation-not-found" });
+    }
+    organisation.name = body.name ?? organisation.name;
+    organisation.default_product_privacy =
+      body.default_product_privacy ?? organisation.default_product_privacy;
+    // Units answer with the organisation they are grouped under, so the ancestry a unit inherits
+    // stays the same object the organisation resource itself reports.
+    const group = state.fixtures.units.units.find(
+      (candidate) => candidate.organisation.id === organisation.id,
+    );
+    if (group) {
+      group.organisation = organisation;
+    }
+    return json(response, 200, {});
   }
   if (segments[0] === "organisation" && segments.length === 2) {
     if (state.addressedReadFailure) {

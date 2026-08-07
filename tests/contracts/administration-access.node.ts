@@ -1,13 +1,17 @@
 import { expect, test } from "@playwright/test";
+import { readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
 
 import {
   evaluateOrganisationCreationCapability,
-  evaluateOrganisationEditorCapability,
+  evaluateOrganisationMembershipCapability,
+  evaluateOrganisationPrivacyCapability,
   evaluatePersonalUnitCreationCapability,
   evaluateUnitCreationCapability,
   evaluateUnitDeletionCapability,
   evaluateUnitEditCapability,
   evaluateUnitMembershipCapability,
+  evaluateUnitPrivacyCapability,
   isDefaultOrganisationResource,
   isPersonalUnitResource,
 } from "../../src/administration/capabilities";
@@ -15,6 +19,15 @@ import {
   administrationMutationFailureMessage,
   administrationReadIsAuthoritative,
 } from "../../src/administration/failures";
+import {
+  declaredProductPrivacyExplanation,
+  effectiveProductPrivacyExplanation,
+  inheritedProductPrivacyExplanation,
+  productPrivacyIsEnforced,
+  productPrivacyIsPrivate,
+  productPrivacyLabel,
+  productPrivacyValues,
+} from "../../src/administration/privacy";
 
 const organisationId = "org-00000000-0000-4000-8000-000000000001";
 const defaultOrganisationId = "org-00000000-0000-4000-8000-0000000000de";
@@ -87,31 +100,58 @@ test.describe("Organisation capabilities", () => {
     });
   });
 
-  test("organisation editors require ownership or platform authority", () => {
-    expect(evaluateOrganisationEditorCapability(organisationFacts({}))).toEqual({
+  test("organisation members require ownership or platform authority", () => {
+    expect(evaluateOrganisationMembershipCapability(organisationFacts({}))).toEqual({
       status: "enabled",
     });
     expect(
-      evaluateOrganisationEditorCapability(
+      evaluateOrganisationMembershipCapability(
         organisationFacts({ isPlatformAdministrator: true, username: stranger }),
       ),
     ).toEqual({ status: "enabled" });
-    expect(evaluateOrganisationEditorCapability(organisationFacts({ username: member }))).toEqual({
-      reason: "You must be the owner of this organisation.",
+    expect(
+      evaluateOrganisationMembershipCapability(organisationFacts({ username: member })),
+    ).toEqual({ reason: "You must be the owner of this organisation.", status: "disabled" });
+  });
+
+  test("default organisation membership and privacy are owned by the platform", () => {
+    const defaultOrganisation = organisationFacts({
+      isDefaultOrganisation: true,
+      isPlatformAdministrator: true,
+      ownerId: undefined,
+    });
+    expect(evaluateOrganisationMembershipCapability(defaultOrganisation)).toEqual({
+      reason: "The default organisation does not have members.",
+      status: "disabled",
+    });
+    expect(evaluateOrganisationPrivacyCapability(defaultOrganisation)).toEqual({
+      reason: "The default organisation's project privacy is managed by the platform.",
       status: "disabled",
     });
   });
 
-  test("default organisation editors are owned by the platform", () => {
+  test("organisation privacy follows the generated patch authority rather than ownership", () => {
+    expect(evaluateOrganisationPrivacyCapability(organisationFacts({ username: member }))).toEqual({
+      status: "enabled",
+    });
     expect(
-      evaluateOrganisationEditorCapability(
-        organisationFacts({
-          isDefaultOrganisation: true,
-          isPlatformAdministrator: true,
-          ownerId: undefined,
-        }),
+      evaluateOrganisationPrivacyCapability(
+        organisationFacts({ callerIsMember: false, username: owner }),
       ),
-    ).toEqual({ reason: "The default organisation does not have editors.", status: "disabled" });
+    ).toEqual({ status: "enabled" });
+    expect(
+      evaluateOrganisationPrivacyCapability(
+        organisationFacts({ isPlatformAdministrator: true, username: stranger }),
+      ),
+    ).toEqual({ status: "enabled" });
+    expect(
+      evaluateOrganisationPrivacyCapability(
+        organisationFacts({ callerIsMember: false, username: stranger }),
+      ),
+    ).toEqual({
+      reason: "You must be a member or the owner of this organisation.",
+      status: "disabled",
+    });
   });
 
   test("unit creation follows organisation membership", () => {
@@ -263,6 +303,53 @@ test.describe("Unit capabilities", () => {
     });
   });
 
+  test("unit privacy stays available and explains an organisation requirement", () => {
+    expect(evaluateUnitPrivacyCapability(unitFacts({ username: member }))).toEqual({
+      status: "enabled",
+    });
+    expect(
+      evaluateUnitPrivacyCapability({
+        ...unitFacts({ username: member }),
+        organisationPrivacy: "DEFAULT_PUBLIC",
+      }),
+    ).toEqual({ status: "enabled" });
+    expect(
+      evaluateUnitPrivacyCapability({
+        ...unitFacts({ username: member }),
+        organisationPrivacy: "ALWAYS_PRIVATE",
+      }),
+    ).toEqual({
+      reason:
+        "The organisation requires Always Private, so a value that conflicts with it is rejected.",
+      status: "enabled",
+    });
+  });
+
+  test("unit privacy refuses before it explains anything about its organisation", () => {
+    expect(
+      evaluateUnitPrivacyCapability({
+        ...unitFacts({ callerIsMember: false, unitIsMember: false, username: stranger }),
+        organisationPrivacy: "ALWAYS_PRIVATE",
+      }),
+    ).toEqual({
+      reason: "You must be a member of this unit or its organisation.",
+      status: "disabled",
+    });
+    expect(
+      evaluateUnitPrivacyCapability({
+        ...unitFacts({ isDefaultOrganisation: true, isPersonalUnit: true }),
+        organisationPrivacy: "ALWAYS_PRIVATE",
+      }),
+    ).toEqual({ reason: "Personal units cannot be renamed or reconfigured.", status: "disabled" });
+    expect(
+      evaluateUnitPrivacyCapability({
+        ...unitFacts({ username: member }),
+        freshness: "stale",
+        organisationPrivacy: "ALWAYS_PRIVATE",
+      }),
+    ).toEqual(unconfirmed);
+  });
+
   test("unresolved and stale facts remain discoverable for authoritative evaluation", () => {
     const deniedFacts = unitFacts({
       callerIsMember: false,
@@ -276,11 +363,13 @@ test.describe("Unit capabilities", () => {
       { ...deniedFacts, freshness: "stale" as const },
     ];
     for (const facts of incomplete) {
-      expect(evaluateOrganisationEditorCapability(facts)).toEqual(unconfirmed);
+      expect(evaluateOrganisationMembershipCapability(facts)).toEqual(unconfirmed);
       expect(evaluateUnitCreationCapability(facts)).toEqual(unconfirmed);
+      expect(evaluateOrganisationPrivacyCapability(facts)).toEqual(unconfirmed);
       for (const evaluate of [
         evaluateUnitEditCapability,
         evaluateUnitMembershipCapability,
+        evaluateUnitPrivacyCapability,
         evaluateUnitDeletionCapability,
       ]) {
         expect(evaluate(facts)).toEqual(unconfirmed);
@@ -290,6 +379,106 @@ test.describe("Unit capabilities", () => {
 
   test("platform-only actions stay hidden while facts are incomplete", () => {
     expect(evaluateOrganisationCreationCapability(caller(undefined))).toEqual({ status: "hidden" });
+  });
+});
+
+test.describe("Default, inherited, and effective product privacy", () => {
+  test("the generated values are the only list, and state their own requirement and visibility", () => {
+    expect(productPrivacyValues).toEqual([
+      "ALWAYS_PUBLIC",
+      "ALWAYS_PRIVATE",
+      "DEFAULT_PUBLIC",
+      "DEFAULT_PRIVATE",
+    ]);
+    expect(productPrivacyValues.filter(productPrivacyIsEnforced)).toEqual([
+      "ALWAYS_PUBLIC",
+      "ALWAYS_PRIVATE",
+    ]);
+    expect(productPrivacyValues.filter(productPrivacyIsPrivate)).toEqual([
+      "ALWAYS_PRIVATE",
+      "DEFAULT_PRIVATE",
+    ]);
+    expect(productPrivacyValues.map((privacy) => productPrivacyLabel(privacy))).toEqual([
+      "Always Public",
+      "Always Private",
+      "Default Public",
+      "Default Private",
+    ]);
+  });
+
+  /**
+   * The generated organisation patch states that an existing unit's own default is honoured and a
+   * new organisation value applies to new units, so no organisation value ever restates what a
+   * unit's projects take.
+   */
+  test("what new projects take is the unit's own default, whatever its organisation declares", () => {
+    for (const unit of productPrivacyValues) {
+      const expected = productPrivacyIsEnforced(unit)
+        ? `New projects in this unit are always ${productPrivacyIsPrivate(unit) ? "private" : "public"}, because this unit's default is ${productPrivacyLabel(unit)}.`
+        : `New projects in this unit start ${productPrivacyIsPrivate(unit) ? "private" : "public"}, and their creator may choose otherwise.`;
+      expect(effectiveProductPrivacyExplanation(unit)).toBe(expected);
+    }
+    expect(effectiveProductPrivacyExplanation("DEFAULT_PRIVATE")).toBe(
+      "New projects in this unit start private, and their creator may choose otherwise.",
+    );
+    expect(effectiveProductPrivacyExplanation("ALWAYS_PUBLIC")).toBe(
+      "New projects in this unit are always public, because this unit's default is Always Public.",
+    );
+  });
+
+  test("an organisation states what it starts new units from and what it leaves alone", () => {
+    expect(declaredProductPrivacyExplanation("ALWAYS_PRIVATE")).toBe(
+      "Units created from now on start from Always Private, which this organisation requires. Existing units keep the default they already declare.",
+    );
+    expect(declaredProductPrivacyExplanation("DEFAULT_PUBLIC")).toBe(
+      "Units created from now on start from Default Public. Existing units keep the default they already declare.",
+    );
+  });
+
+  test("a unit states what it inherits without predicting which values conflict", () => {
+    expect(inheritedProductPrivacyExplanation("ALWAYS_PRIVATE")).toBe(
+      "The organisation requires Always Private. This unit's own default governs its projects, and a change that conflicts with the organisation is rejected.",
+    );
+    expect(inheritedProductPrivacyExplanation("DEFAULT_PUBLIC")).toBe(
+      "The organisation's declared default is Default Public. It starts off new units; this unit's own default governs its projects.",
+    );
+  });
+
+  test("unreadable ancestry claims nothing about inheritance", () => {
+    expect(inheritedProductPrivacyExplanation(undefined)).toBe(
+      "This unit's organisation is not readable, so its declared default is unknown.",
+    );
+    // The unit still answers for its own projects, because that never depended on its ancestry.
+    expect(effectiveProductPrivacyExplanation("DEFAULT_PRIVATE")).toBe(
+      "New projects in this unit start private, and their creator may choose otherwise.",
+    );
+  });
+});
+
+test.describe("Organisation & access resource semantics have no configured names", () => {
+  const administrationSource = path.resolve(__dirname, "../../src/administration");
+
+  test("no Administration source decides personal or default behavior from a name or the environment", () => {
+    const sources = readdirSync(administrationSource, { recursive: true })
+      .map(String)
+      .filter((file) => file.endsWith(".ts") || file.endsWith(".tsx"))
+      .map((file) => ({ file, text: readFileSync(path.join(administrationSource, file), "utf8") }));
+    expect(sources.length).toBeGreaterThan(0);
+
+    for (const { file, text } of sources) {
+      expect(text, `${file} reads the environment`).not.toMatch(/process\.env/u);
+      // A name is displayed content: it is never compared, matched, or searched to decide meaning.
+      expect(text, `${file} tests a name`).not.toMatch(
+        /\bnames?\s*(?:===|!==)\s*["'`]|\bname\.(?:startsWith|endsWith|includes|match|test)\b/u,
+      );
+    }
+
+    // The modules that decide what a resource is never read a name at all.
+    for (const decider of ["accessFacts.ts", "capabilities.ts", "privacy.ts"]) {
+      const text = sources.find(({ file }) => file === decider)?.text;
+      expect(text, `${decider} is missing`).toBeDefined();
+      expect(text, `${decider} reads a resource name`).not.toMatch(/\.name\b/u);
+    }
   });
 });
 

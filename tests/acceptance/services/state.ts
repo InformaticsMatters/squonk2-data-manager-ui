@@ -21,7 +21,10 @@ export type ScenarioState = {
   deletionTaskVersions: Map<string, number>;
   deletionExitCode?: number;
   fixtures: ReturnType<typeof createScenarioFixtures>;
-  pollingIndex: number;
+  /** How many times each upload task has been polled, so every upload advances on its own. */
+  pollingIndexes: Map<string, number>;
+  /** The profile this scenario was reset with; the identity provider reads it to issue roles. */
+  profile: ScenarioProfile;
   productFailure: boolean;
   projectFailure?: number;
   projectMutationFailure?: 403 | 503;
@@ -43,6 +46,14 @@ export type ScenarioState = {
   taskFailure?: 503;
   unitsReadFailure?: 503;
   upload?: { body: Buffer; contentType: string };
+  /** A terminal exit code the dataset upload task reports instead of success. */
+  uploadExitCode?: number;
+  uploadFailure?: 403 | 503;
+  /**
+   * The task each accepted upload was given. The Data Manager issues a new one per upload, so a
+   * retried file is answered by a task that has not already settled.
+   */
+  uploadTaskIds: string[];
 };
 
 const scenarios = new Map<string, ScenarioState>();
@@ -52,11 +63,13 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     fixtures: createScenarioFixtures(subject, profile),
     deletionPollingIndexes: new Map(),
     deletionTaskVersions: new Map(),
-    pollingIndex: 0,
+    pollingIndexes: new Map(),
     productFailure: false,
+    profile,
     requests: [],
     resultsFailures: [],
     runFailures: [],
+    uploadTaskIds: [],
   };
   scenarios.set(subject, state);
   return state;

@@ -14,7 +14,8 @@ This matrix records the production contracts introduced for issues
 [#1926](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1926), and
 [#1927](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1927), and
 [#1928](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1928), and
-[#1929](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1929). Later vertical
+[#1929](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1929), and
+[#1930](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1930). Later vertical
 workspace tickets extend this file with their screens, capabilities, commands, and lifecycle evidence.
 
 ## Route And Link Contracts
@@ -166,6 +167,22 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 | DATASET-11  | Deletion lifecycle          | Detail and mixed-capability bulk deletion, task failure/retry, and concurrent data | Success requires terminal exit code zero; retries reuse accepted work and refreshed data selects the next route     | Dataset mutation lifecycle matrix; dataset mutation acceptance journey           |
 | DATASET-12  | Mutation invalidation       | Successful labels, editor, and deletion commands                                   | Family command owner invalidates the generated dataset collection prefix and synchronizes list/detail               | Dataset mutation acceptance journey; strict review gate                          |
 
+## Dataset Upload Contracts
+
+| Contract ID | Area                      | Input or fixture                                                                                        | Expected external outcome                                                                                                             | Automated evidence                                                                            |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| UPLOAD-01   | Billing eligibility       | Generated unit index reporting member and non-member units, and a caller with no memberships            | Only member units are offered; Upload stays visible and is disabled with guidance when none exist or membership is still unresolved   | `tests/contracts/dataset-upload.node.ts` eligibility cases; no-member-unit acceptance journey |
+| UPLOAD-02   | Explicit billing choice   | No choice, an explicit choice, a valid remembered choice, and an ineligible remembered choice           | Only an explicit choice or a still-eligible remembered one selects a unit; anything else selects nothing and cannot be submitted      | Billing choice matrix; explicit-choice and remembered-choice acceptance journeys              |
+| UPLOAD-03   | Remembered choice storage | Versioned payload, malformed payload, non-unit identity, and logout                                     | Only a unit identity the Account Server would recognise is remembered; logout forgets it without clearing unrelated preferences       | Remembered-billing-unit matrix; `src/hooks/authHooks.ts` logout cleanup                       |
+| UPLOAD-04   | Batch billing context     | A batch whose first file reached the Data Manager, and a batch whose only request was refused           | The unit locks once a file reached the Data Manager; a batch that only failed may still choose another unit                           | Batch-commitment matrix; explicit-choice and request-failure acceptance journeys              |
+| UPLOAD-05   | Subscription eligibility  | A unit with a `DATA_MANAGER_STORAGE_SUBSCRIPTION` and a member unit with none                           | The subscribed unit uploads; the unsubscribed one refuses without clearing entered files, names, or the batch                         | Subscription matrix; missing-subscription acceptance journey                                  |
+| UPLOAD-06   | Subscription recovery     | Unit member, organisation member, neither, and an evaluation account outside its personal unit          | Administration navigation is offered only to a caller who could create the subscription; everyone else is told who can                | Recovery matrix; missing-subscription and evaluation-account acceptance journeys              |
+| UPLOAD-07   | Per-file identity         | Concurrent request progress, acceptance, and settlement across several files                            | Records are addressed by file identity and replaced functionally, so no file overwrites another's answer or drifts with list position | `tests/contracts/dataset-upload.node.ts` per-file record cases                                |
+| UPLOAD-08   | Task classification       | Idle, sending, refused request, polling, exit-zero, nonzero, recorded `FAILURE`, transient, and unknown | One shared pure classifier distinguishes all nine, and only a done task with exit code zero and no failure state is success           | Task classification matrix; nonzero-processing and transient-status acceptance journeys       |
+| UPLOAD-09   | Polling and backoff       | Every classified state                                                                                  | Only a file awaiting a task is polled; a transient read backs off and keeps polling; an uninterpretable one stops and offers retry    | Poll-interval matrix; transient-status acceptance journey                                     |
+| UPLOAD-10   | Retry and reset           | A refused request, a nonzero task, a successful file, and a closed form                                 | Retry returns only retryable files to the start and never re-sends a processed one; closing keeps everything not yet processed        | Retry/reset matrix; request-failure and nonzero-processing acceptance journeys                |
+| UPLOAD-11   | Invalidation on success   | A file whose task settles with exit code zero                                                           | The generated dataset collection is invalidated only then, and only then does the billing unit become worth remembering               | Explicit-choice acceptance journey; strict review gate                                        |
+
 ## Dataset Version Viewer Contracts
 
 | Contract ID | Area                         | Input or fixture                                                                         | Expected external outcome                                                                                                                                          | Automated evidence                                                                                                                                                          |
@@ -182,6 +199,12 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 
 - `src/projects/routes.ts`, `src/datasets/routes.ts`, and `src/administration/routes.ts` are the only
   family-owned route/link interfaces.
+- `src/datasets/uploadLifecycle.ts` is the only classifier of a new dataset upload's request and
+  task state, and `src/datasets/useDatasetUploadCommands.ts` is its only command owner; no upload
+  screen holds a query client or issues the upload endpoint itself. `src/datasets/uploadBilling.ts`
+  owns billing eligibility, the remembered choice, and subscription recovery, and neither module
+  reads selected unit or organisation state. Adding a version to an existing dataset still runs
+  through `src/components/uploads/ProgressBar.tsx` and has not been migrated.
 - `src/routing/` contains domain-neutral parsing and canonicalisation primitives only.
 - `src/application/pagePolicy.ts` is the closed page-composition discriminant. It does not expose
   arbitrary layout, authentication, provider, or fallback flags.

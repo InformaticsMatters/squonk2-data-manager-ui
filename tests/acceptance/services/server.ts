@@ -22,6 +22,17 @@ const publicJwk = publicKey.export({ format: "jwk" });
 const codes = new Map<string, { challenge?: string; redirectUri: string; subject: string }>();
 
 const encode = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
+
+/**
+ * The realm roles the identity provider issues. An evaluation account holds the Account Server's
+ * evaluator role instead of its user role, which is the only thing that distinguishes it, so the
+ * scenario profile decides it here rather than any screen inferring it.
+ */
+const realmRolesFor = (subject: string) =>
+  getScenario(subject).profile === "evaluator"
+    ? ["data-manager-user", "account-server-evaluator"]
+    : ["data-manager-user", "account-server-user"];
+
 const createToken = (subject: string) => {
   const now = Math.floor(Date.now() / 1000);
   const claims = {
@@ -35,7 +46,7 @@ const createToken = (subject: string) => {
     iss: issuer,
     name: `Acceptance ${subject}`,
     preferred_username: subject,
-    realm_access: { roles: ["data-manager-user", "account-server-user"] },
+    realm_access: { roles: realmRolesFor(subject) },
     sub: subject,
   };
   const header = encode({ alg: "RS256", kid: "acceptance-key", typ: "JWT" });
@@ -268,7 +279,23 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       body: await readBody(request),
       contentType: request.headers["content-type"] ?? "",
     };
-    return json(response, 202, state.fixtures.uploadResponse);
+    if (state.uploadFailure) {
+      return json(
+        response,
+        state.uploadFailure,
+        state.uploadFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    // Every accepted upload gets its own task, exactly as the Data Manager issues one, so a retry
+    // is never answered by the task its previous attempt already settled.
+    const taskId =
+      state.uploadTaskIds.length === 0
+        ? fixtureIds.task
+        : `task-55555555-5555-5555-5555-${String(state.uploadTaskIds.length).padStart(12, "0")}`;
+    state.uploadTaskIds.push(taskId);
+    return json(response, 202, { ...state.fixtures.uploadResponse, task_id: taskId });
   }
   if (
     url.pathname === `/dataset/${fixtureIds.dataset}/meta/1` ||
@@ -615,7 +642,8 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       });
     }
     const deletionVersion = state.deletionTaskVersions.get(taskId);
-    if (taskId !== fixtureIds.task && deletionVersion === undefined) {
+    const isUploadTask = taskId === fixtureIds.task || state.uploadTaskIds.includes(taskId);
+    if (!isUploadTask && deletionVersion === undefined) {
       return json(response, 404, { error: "fixture-task-not-found" });
     }
     if (state.taskFailure) {
@@ -623,19 +651,20 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     }
     const pollingIndex =
       deletionVersion === undefined
-        ? state.pollingIndex
+        ? (state.pollingIndexes.get(taskId) ?? 0)
         : (state.deletionPollingIndexes.get(taskId) ?? 0);
     const index = Math.min(pollingIndex, state.fixtures.taskTransitions.length - 1);
     if (deletionVersion === undefined) {
-      state.pollingIndex += 1;
+      state.pollingIndexes.set(taskId, pollingIndex + 1);
     } else {
       state.deletionPollingIndexes.set(taskId, pollingIndex + 1);
     }
     const task = state.fixtures.taskTransitions[index];
+    // A terminal exit code the scenario dictates. Deletion and upload tasks carry their own, so a
+    // failing upload never has to be told apart from a failing deletion by timing.
+    const exitCode = deletionVersion === undefined ? state.uploadExitCode : state.deletionExitCode;
     const responseTask =
-      task.done && state.deletionExitCode !== undefined
-        ? { ...task, exit_code: state.deletionExitCode }
-        : task;
+      task.done && exitCode !== undefined ? { ...task, exit_code: exitCode } : task;
     if (responseTask.done && responseTask.exit_code === 0 && deletionVersion !== undefined) {
       state.fixtures.dataset.datasets[0].versions =
         state.fixtures.dataset.datasets[0].versions.filter(
@@ -1006,6 +1035,18 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     }
     return json(response, 200, state.fixtures.products);
   }
+  // A unit's own subscriptions. A unit the fixture never subscribed answers with an empty
+  // collection rather than an error, because having no subscription is not a failure to read one.
+  if (segments[0] === "product" && segments[1] === "unit" && segments.length === 3) {
+    if (state.productFailure) {
+      return json(response, 503, state.fixtures.failures.serverError);
+    }
+    return json(
+      response,
+      200,
+      state.fixtures.unitProducts[segments[2]] ?? { count: 0, products: [] },
+    );
+  }
   if (url.pathname === `/product/${fixtureIds.product}`) {
     return json(response, 200, { product: state.fixtures.products.products[0] });
   }
@@ -1038,7 +1079,7 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   if (url.pathname.startsWith("/scenario/") && request.method === "GET") {
     const state = getScenario(subject);
     return json(response, 200, {
-      pollingIndex: state.pollingIndex,
+      pollingIndex: state.pollingIndexes.get(fixtureIds.task) ?? 0,
       requests: state.requests,
       upload: state.upload
         ? { bytes: state.upload.body.length, contentType: state.upload.contentType }
@@ -1150,6 +1191,26 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/deletion-exit-code") && request.method === "DELETE") {
     getScenario(subject).deletionExitCode = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/upload-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-upload-failure", status });
+    }
+    getScenario(subject).uploadFailure = status as 403 | 503;
+    return json(response, 200, { subject, uploadFailure: status });
+  }
+  if (url.pathname.endsWith("/upload-failure") && request.method === "DELETE") {
+    getScenario(subject).uploadFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/upload-exit-code") && request.method === "POST") {
+    getScenario(subject).uploadExitCode = Number(url.searchParams.get("value"));
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/upload-exit-code") && request.method === "DELETE") {
+    getScenario(subject).uploadExitCode = undefined;
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/task-failure") && request.method === "POST") {

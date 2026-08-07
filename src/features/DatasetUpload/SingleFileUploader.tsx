@@ -1,75 +1,103 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { type FileError } from "react-dropzone";
 
-import { getGetDatasetsQueryKey } from "@/api/data-manager/dataset";
 import { useGetTask } from "@/api/data-manager/task";
 
-import { Grid, IconButton, LinearProgress, MenuItem, TextField, Typography } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
+import {
+  Alert,
+  Button,
+  Grid,
+  IconButton,
+  LinearProgress,
+  MenuItem,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 import { TwiddleIcon } from "../../components/uploads/TwiddleIcon";
 import { type UploadableFile } from "../../components/uploads/types";
+import {
+  classifyDatasetUpload,
+  datasetUploadIsRetryable,
+  datasetUploadPollInterval,
+  type DatasetUploadRecord,
+  settleDatasetUpload,
+} from "../../datasets/uploadLifecycle";
 import { useFileExtensions } from "../../hooks/useFileExtensions";
 import { useMimeTypeLookup } from "../../hooks/useMimeTypeLookup";
 import { separateFileExtensionFromFileName } from "../../utils/app/files";
 
 export interface SingleFileUploadWithProgressProps {
-  fileWrapper: UploadableFile;
   errors: FileError[];
-  rename: (newName: string) => void;
+  fileWrapper: UploadableFile;
+  record: DatasetUploadRecord;
   changeMimeType: (newType: string) => void;
-  changeToDone: () => void;
-  onDelete: (file: File) => void;
+  onDelete: (fileId: string) => void;
+  onRetry: (fileId: string) => void;
+  /** Called once, when this file's own task has answered for good. */
+  onSettled: (fileId: string, settled: DatasetUploadRecord) => void;
+  rename: (newName: string) => void;
 }
 
 export const SingleFileUploadWithProgress = ({
+  changeMimeType,
+  errors,
   fileWrapper,
   onDelete,
-  errors,
+  onRetry,
+  onSettled,
+  record,
   rename,
-  changeToDone,
-  changeMimeType,
 }: SingleFileUploadWithProgressProps) => {
-  const queryClient = useQueryClient();
   const fileNameRef = useRef<HTMLInputElement>(null);
   const fileExtRef = useRef<HTMLInputElement>(null);
-
-  const composeNewFilePath = () => {
-    return `${fileNameRef.current?.value}${fileExtRef.current?.value}`;
-  };
-
-  const [stem, extension] = separateFileExtensionFromFileName(fileWrapper.file.name);
-  // const typeLabelParts = fileWrapper.file.name.split('.');
-
-  const [interval, setInterval] = useState<number | false>(2000);
-  const { data: task, isFetching } = useGetTask(fileWrapper.taskId ?? "", undefined, {
-    query: {
-      enabled: fileWrapper.taskId !== null,
-      // When a task id has been set, we poll the task endpoint to wait for the file to finish
-      // processing
-      refetchInterval: interval,
-    },
-  });
-  const taskDone = task?.done;
-
-  useEffect(() => {
-    if (taskDone) {
-      setInterval(false);
-      void queryClient
-        .invalidateQueries({ queryKey: getGetDatasetsQueryKey() })
-        .then(() => changeToDone());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryClient, taskDone]);
-
   const { extensions } = useFileExtensions();
   const mimeLookup = useMimeTypeLookup();
 
-  const disabled =
-    (!!task && !task.done) ||
-    (fileWrapper.progress < 100 && fileWrapper.progress > 0) ||
-    isFetching ||
-    (fileWrapper.progress === 100 && task === undefined);
+  const composeNewFilePath = () => `${fileNameRef.current?.value}${fileExtRef.current?.value}`;
+  const [stem, extension] = separateFileExtensionFromFileName(fileWrapper.file.name);
+
+  const taskId = "taskId" in record ? record.taskId : undefined;
+  const { data: task, error } = useGetTask(taskId ?? "", undefined, {
+    query: {
+      enabled: record.kind === "accepted",
+      // The interval is asked of the same classifier the display uses, so a file that is only
+      // temporarily unreadable keeps being polled while an uninterpretable answer stops.
+      refetchInterval: (query) =>
+        datasetUploadPollInterval(
+          classifyDatasetUpload({ record, task: query.state.data, taskError: query.state.error }),
+        ),
+      retry: false,
+    },
+  });
+
+  const state = classifyDatasetUpload({ record, task, taskError: error });
+
+  useEffect(() => {
+    // A record that already carries its outcome is never settled again, which is what keeps this
+    // effect from answering its own update.
+    if (settleDatasetUpload(record)) {
+      return;
+    }
+    const settled = settleDatasetUpload(state);
+    if (settled) {
+      onSettled(fileWrapper.id, settled);
+    }
+  }, [fileWrapper.id, onSettled, record, state]);
+
+  const busy =
+    state.kind === "sending" ||
+    state.kind === "accepted" ||
+    state.kind === "processing" ||
+    state.kind === "processing-unconfirmed";
+  const done = state.kind === "processed";
+  const retryable = datasetUploadIsRetryable(record);
+  // A determinate bar needs a proportion the request actually reported; everything else the file is
+  // busy with has no measure, so it shows an indeterminate one.
+  const measuredProgress =
+    state.kind === "sending" && state.progress > 0 && state.progress < 100
+      ? state.progress
+      : undefined;
 
   return (
     <>
@@ -79,8 +107,9 @@ export const SingleFileUploadWithProgress = ({
             fullWidth
             required
             defaultValue={stem}
-            disabled={disabled || task?.done}
+            disabled={busy || done}
             inputRef={fileNameRef}
+            label="File name"
             placeholder={stem}
             onChange={() => rename(composeNewFilePath())}
             onClick={(event) => event.stopPropagation()}
@@ -92,13 +121,12 @@ export const SingleFileUploadWithProgress = ({
             fullWidth
             select
             defaultValue={extension}
-            disabled={disabled || task?.done}
+            disabled={busy || done}
             inputRef={fileExtRef}
             label="Ext"
             onChange={(event) => {
               event.stopPropagation();
               rename(composeNewFilePath());
-
               changeMimeType(mimeLookup[event.target.value]);
             }}
             onClick={(event) => event.stopPropagation()}
@@ -113,29 +141,56 @@ export const SingleFileUploadWithProgress = ({
 
         <Grid size={{ md: 1, sm: 1, xs: 4 }} sx={{ textAlign: "center" }}>
           <IconButton
-            disabled={disabled}
+            aria-label={`Remove ${fileWrapper.file.name}`}
+            disabled={busy}
             size="small"
             sx={{ color: "success.main" }}
             onClick={(event) => {
               event.stopPropagation();
-              onDelete(fileWrapper.file);
+              onDelete(fileWrapper.id);
             }}
           >
-            <TwiddleIcon done={!!task?.done} />
+            <TwiddleIcon done={done} />
           </IconButton>
         </Grid>
       </Grid>
-      {fileWrapper.progress < 100 && fileWrapper.progress > 0 && (
-        <LinearProgress value={fileWrapper.progress} variant="determinate" />
+      {measuredProgress === undefined ? null : (
+        <LinearProgress value={measuredProgress} variant="determinate" />
       )}
-      {(fileWrapper.progress === 100 && task === undefined) ||
-      (!!task && !task.done) ||
-      isFetching ? (
-        <LinearProgress />
+      {busy && measuredProgress === undefined ? <LinearProgress /> : null}
+      {state.kind === "processing-unconfirmed" && (
+        <Typography color="text.secondary" variant="body2">
+          {state.reason}
+        </Typography>
+      )}
+      {!!done && (
+        <Typography color="success.main" variant="body2">
+          {fileWrapper.file.name} uploaded and processed.
+        </Typography>
+      )}
+      {retryable && "reason" in record ? (
+        <Alert
+          action={
+            <Button
+              aria-label={`Retry ${fileWrapper.file.name}`}
+              color="inherit"
+              size="small"
+              onClick={(event) => {
+                event.stopPropagation();
+                onRetry(fileWrapper.id);
+              }}
+            >
+              Retry
+            </Button>
+          }
+          severity="error"
+          sx={{ mt: 1 }}
+        >
+          {record.reason}
+        </Alert>
       ) : null}
-      {errors.map((error, index) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <Typography color="error" key={index}>
+      {errors.map((error) => (
+        <Typography color="error" key={`${error.code}-${error.message}`}>
           {error.message}
         </Typography>
       ))}

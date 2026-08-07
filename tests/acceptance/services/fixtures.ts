@@ -57,6 +57,7 @@ export const fixtureIds = {
   organisation: "org-22222222-2222-2222-2222-222222222222",
   otherOrganisation: "org-66666666-6666-6666-6666-666666666666",
   product: "product-77777777-7777-7777-7777-777777777777",
+  storageProduct: "product-7e7e7e7e-7e7e-4e7e-8e7e-7e7e7e7e7e7e",
   project: "project-33333333-3333-3333-3333-333333333333",
   /** A second entered project, used to prove Results cannot cross a project boundary. */
   screeningProject: "project-6b6b6b6b-6b6b-4b6b-8b6b-6b6b6b6b6b6b",
@@ -91,6 +92,7 @@ export const scenarioProfiles = [
   "default",
   "empty-charges",
   "empty-products",
+  "evaluator",
   "no-access",
   "no-personal-unit",
   "platform-admin",
@@ -233,6 +235,45 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     claim: { id: fixtureIds.screeningProject, name: "Screening Project" },
     product: { ...projectTierProduct.product, id: fixtureIds.screeningProduct },
     unit: otherUnit,
+  };
+  // Only the Acceptance Unit is subscribed for datasets. The Screening Unit is a unit the caller is
+  // just as much a member of and cannot upload to, which is what makes the missing-subscription
+  // recovery a fact of the chosen unit rather than of the caller.
+  const datasetStorageProduct = {
+    claimable: false,
+    coins: {
+      allowance: 1000,
+      allowance_multiplier: 1,
+      at_limit: false,
+      billing_day: 1,
+      billing_prediction: 0,
+      billing_prediction_storage_contribution: 0,
+      current_burn_rate: 0,
+      limit: 1000,
+      overspend_multiplier: 1,
+      remaining_days: 30,
+      used: 0,
+    },
+    organisation,
+    product: {
+      created,
+      id: fixtureIds.storageProduct,
+      name: "Dataset Storage",
+      type: "DATA_MANAGER_STORAGE_SUBSCRIPTION",
+    },
+    storage: {
+      coins: { unit_cost: 1, used: 0 },
+      size: { current: "0 B", peak: "0 B", unit_size: "1 GB", units_used: 0 },
+    },
+    unit,
+  };
+  const unitProducts: Record<string, { count: number; products: unknown[] }> = {
+    [fixtureIds.unit]: AppApiProductGetResponse.parse({
+      count: 1,
+      products: [datasetStorageProduct],
+    }),
+    [fixtureIds.otherUnit]: AppApiProductGetResponse.parse({ count: 0, products: [] }),
+    [fixtureIds.personalUnit]: AppApiProductGetResponse.parse({ count: 0, products: [] }),
   };
 
   return {
@@ -447,6 +488,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         ? AppApiProductGetResponse.parse({ count: 0, products: [] })
         : products,
     screeningProduct,
+    unitProducts,
     // Results of work run in each project. Every one names the project it belongs to, so a
     // response that ignored a project argument would be recognisable rather than believable.
     instances: AppApiInstanceGetResponse.parse({

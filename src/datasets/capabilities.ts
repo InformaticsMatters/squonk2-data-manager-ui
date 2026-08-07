@@ -76,6 +76,33 @@ export const evaluateDatasetDeletionCapability = (
   return authority;
 };
 
+/**
+ * Whether a new dataset can be uploaded at all.
+ *
+ * Upload stays visible whatever the caller's memberships are, because its absence would leave no
+ * way to learn what is missing. An unanswered or failed unit index says the membership is still
+ * unconfirmed rather than claiming there are no units, which is a different fact and only knowable
+ * once the index has actually answered.
+ */
+export const evaluateDatasetUploadCapability = ({
+  eligibleUnitCount,
+  freshness = "current",
+}: {
+  eligibleUnitCount: number;
+  freshness?: "current" | "stale";
+}): Exclude<DatasetCapability, { status: "hidden" }> => {
+  if (freshness !== "current") {
+    return { status: "disabled", reason: "Unit membership is still being confirmed." };
+  }
+  return eligibleUnitCount > 0
+    ? { status: "enabled" }
+    : {
+        status: "disabled",
+        reason:
+          "You must be a member of a unit to upload a dataset. Ask a unit member to add you in Administration.",
+      };
+};
+
 export const evaluatePlatformDatasetAction = (
   isPlatformAdministrator: boolean,
 ): DatasetCapability => (isPlatformAdministrator ? { status: "enabled" } : { status: "hidden" });

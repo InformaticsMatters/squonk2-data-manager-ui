@@ -32,8 +32,10 @@ export type ScenarioState = {
   /** The profile this scenario was reset with; the identity provider reads it to issue roles. */
   profile: ScenarioProfile;
   productFailure: boolean;
-  productCreationFailure?: 403 | 429 | 503;
-  projectCreationFailure?: 403 | 429 | 503;
+  productCreationFailure?: 400 | 403 | 429 | 503;
+  productCreationDelay?: number;
+  projectCreationFailure?: 400 | 403 | 429 | 503;
+  projectCreationResponseDelay?: number;
   projectFailure?: number;
   projectMutationFailure?: 403 | 503;
   requests: RequestRecord[];

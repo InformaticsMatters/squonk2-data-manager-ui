@@ -3,9 +3,8 @@ import { useCallback, useMemo, useState } from "react";
 import { useGetProductsForUnit } from "@/api/account-server/product";
 import { useGetUnits } from "@/api/account-server/unit";
 
-import { AS_ROLES } from "../constants/auth";
 import { useGetPersonalUnit } from "../hooks/useGetPersonalUnit";
-import { useASAuthorizationStatus } from "../hooks/useIsAuthorized";
+import { useIsEvaluator } from "../hooks/useIsAuthorized";
 import { evaluateDatasetUploadCapability } from "./capabilities";
 import {
   type BillingUnit,
@@ -86,11 +85,7 @@ export const useDatasetSubscription = (
     query: { enabled: !!unitId },
   });
   const { data: personalUnit, isPending: personalUnitIsPending } = useGetPersonalUnit();
-  // `AS_ROLES` is ordered so each role is a superset of the one before it, which is why the
-  // prevailing role is the answer: an account that also holds the user role is not an evaluator.
-  const [evaluatorRole] = AS_ROLES;
-  const callerRole = useASAuthorizationStatus();
-  const isEvaluator = !!evaluatorRole && callerRole === evaluatorRole;
+  const isEvaluator = useIsEvaluator();
 
   if (!billingUnit || !unitId || isPending || isError) {
     return { kind: "unresolved" };

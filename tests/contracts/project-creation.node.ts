@@ -1,15 +1,25 @@
-import { type ProductDmProjectTier, type UnitAllDetail } from "@/api/account-server";
+import {
+  type OrganisationUnitsGetResponse,
+  type ProductDmProjectTier,
+  type ProductType,
+  type UnitAllDetail,
+} from "@/api/account-server";
 
 import { expect, test } from "@playwright/test";
 
 import {
+  eligibleProjectCreationFlavours,
+  eligibleProjectCreationUnits,
   type EligibleProjectUnit,
   forgetProjectCreation,
   initialProjectCreationState,
+  isUnclaimedProjectSubscription,
   parseProjectCreationRecovery,
   productCreationFailureIsRetryable,
+  projectCreationFailureReason,
   type ProjectCreationInput,
   readProjectCreationRecovery,
+  reconcileProjectCreationRecovery,
   rememberProjectCreation,
   transitionProjectCreation,
   validateProjectSubscriptionHandoff,
@@ -102,6 +112,11 @@ test.describe("Project creation lifecycle", () => {
       retryable: false,
     });
     expect(transitionProjectCreation(failed.state, { kind: "retry" })).toEqual(failed);
+    // Cancelling abandons the attempt without cleanup, so an unconfirmed request cannot wedge the
+    // workflow into a state that offers neither a retry nor a new attempt.
+    expect(transitionProjectCreation(failed.state, { kind: "cancel" })).toEqual({
+      state: { kind: "cancelled" },
+    });
   });
 
   test("retries a product request after a confirmed rejection", () => {
@@ -112,6 +127,9 @@ test.describe("Project creation lifecycle", () => {
     expect(transitionProjectCreation(failed.state, { kind: "retry" })).toEqual({
       effect: { input, kind: "create-product" },
       state: { input, kind: "creating-product" },
+    });
+    expect(transitionProjectCreation(failed.state, { kind: "cancel" })).toEqual({
+      state: { kind: "cancelled" },
     });
   });
 
@@ -146,26 +164,101 @@ test("product retry safety distinguishes confirmed responses from ambiguous tran
   expect(productCreationFailureIsRetryable(axiosFailure(500))).toBe(false);
   expect(productCreationFailureIsRetryable(axiosFailure(undefined, "ETIMEDOUT"))).toBe(false);
   expect(productCreationFailureIsRetryable(axiosFailure())).toBe(false);
+  expect(productCreationFailureIsRetryable(axiosFailure(undefined, "ERR_NETWORK"))).toBe(false);
+  expect(
+    projectCreationFailureReason(axiosFailure(undefined, "ETIMEDOUT"), "subscription"),
+  ).toContain("timed out");
+  expect(projectCreationFailureReason(axiosFailure(403), "subscription")).toContain(
+    "did not allow this subscription",
+  );
+  expect(projectCreationFailureReason(axiosFailure(undefined, "ERR_NETWORK"), "project")).toContain(
+    "could not reach the service",
+  );
+  expect(projectCreationFailureReason(axiosFailure(429), "project")).toContain("service is busy");
+  expect(projectCreationFailureReason(axiosFailure(503), "project")).toContain(
+    "service is unavailable",
+  );
+  expect(
+    projectCreationFailureReason(
+      { isAxiosError: true, response: { data: { error: "fixture-domain-failure" }, status: 400 } },
+      "project",
+    ),
+  ).toBe("fixture-domain-failure");
 });
 
-test("project creation recovery preserves explicit form state and can be cleared", () => {
+test.describe("Project creation eligibility", () => {
+  const personalUnit = {
+    caller_is_member: true,
+    id: "unit-00000000-0000-4000-8000-000000000004",
+  } as UnitAllDetail;
+  const memberUnit = { caller_is_member: true, id: input.unitId } as UnitAllDetail;
+  const groups = [
+    {
+      organisation: { caller_is_member: true, name: "Research" },
+      units: [memberUnit, personalUnit],
+    },
+  ] as OrganisationUnitsGetResponse[];
+  const productTypes = ["EVALUATION", "BRONZE", "SILVER"].map((flavour) => ({
+    flavour,
+    type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
+  })) as ProductType[];
+
+  test("restricts an evaluator to their generated personal unit and evaluation tier", () => {
+    expect(
+      eligibleProjectCreationUnits(groups, {
+        evaluatorPersonalUnitId: personalUnit.id,
+        isEvaluator: true,
+      }).map(({ unit }) => unit.id),
+    ).toEqual([personalUnit.id]);
+    expect(eligibleProjectCreationFlavours(productTypes, true)).toEqual(["EVALUATION"]);
+  });
+
+  test("retains generated member units and project tiers for an ordinary user", () => {
+    expect(
+      eligibleProjectCreationUnits(groups, { isEvaluator: false }).map(({ unit }) => unit.id),
+    ).toEqual([memberUnit.id, personalUnit.id]);
+    expect(eligibleProjectCreationFlavours(productTypes, false)).toEqual([
+      "EVALUATION",
+      "BRONZE",
+      "SILVER",
+    ]);
+  });
+});
+
+test("project creation recovery preserves each recoverable request phase and can be cleared", () => {
   const values = new Map<string, string>();
   const storage = {
     getItem: (key: string) => values.get(key) ?? null,
     removeItem: (key: string) => values.delete(key),
     setItem: (key: string, value: string) => values.set(key, value),
   };
-  const recovery = { input, productId };
+  const recoveries = [
+    { input, kind: "product-requested" },
+    { input, kind: "product-failed", reason: "The subscription service is busy.", retryable: true },
+    { input, kind: "project-requested", origin: "created", productId },
+  ] as const;
 
-  rememberProjectCreation(storage, recovery);
-  expect(readProjectCreationRecovery(storage)).toEqual(recovery);
+  for (const recovery of recoveries) {
+    rememberProjectCreation(storage, recovery);
+    expect(readProjectCreationRecovery(storage)).toEqual(recovery);
+  }
   forgetProjectCreation(storage);
   expect(readProjectCreationRecovery(storage)).toBeUndefined();
   expect(
-    parseProjectCreationRecovery({ input, productId: "not-a-product", version: 1 }),
+    parseProjectCreationRecovery({
+      input,
+      kind: "project-requested",
+      origin: "created",
+      productId: "not-a-product",
+      version: 2,
+    }),
   ).toBeUndefined();
   expect(
-    parseProjectCreationRecovery({ input: { ...input, name: "x" }, productId, version: 1 }),
+    parseProjectCreationRecovery({
+      input: { ...input, name: "x" },
+      kind: "product-requested",
+      version: 2,
+    }),
   ).toBeUndefined();
 });
 
@@ -174,13 +267,41 @@ test.describe("Project subscription handoff", () => {
   const eligibleUnits: EligibleProjectUnit[] = [{ organisationName: "Research", unit }];
   const subscription = {
     claimable: true,
-    product: { id: productId, type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION" },
+    product: {
+      flavour: input.flavour,
+      id: productId,
+      type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
+    },
     unit,
   } as ProductDmProjectTier;
 
   test("accepts an eligible unclaimed project-tier subscription", () => {
+    expect(isUnclaimedProjectSubscription(subscription)).toBe(true);
     expect(validateProjectSubscriptionHandoff(subscription, eligibleUnits)).toEqual({
       kind: "valid",
+      subscription,
+    });
+  });
+
+  test("reconciles a committed project response from the subscription claim", () => {
+    expect(
+      reconcileProjectCreationRecovery(
+        { input, kind: "project-requested", origin: "created", productId },
+        { ...subscription, claim: { id: projectId } },
+      ),
+    ).toEqual({ kind: "completed", projectId });
+  });
+
+  test("resumes a matching unclaimed subscription without creating another product", () => {
+    const recovery = {
+      input,
+      kind: "project-requested" as const,
+      origin: "created" as const,
+      productId,
+    };
+    expect(reconcileProjectCreationRecovery(recovery, subscription)).toEqual({
+      kind: "resume",
+      recovery,
       subscription,
     });
   });

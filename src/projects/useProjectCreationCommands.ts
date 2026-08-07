@@ -11,11 +11,13 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { type ProjectCreationInput } from "./projectCreation";
 
+const requestTimeout = Number(process.env.NEXT_PUBLIC_PROJECT_CREATION_TIMEOUT_MS ?? 30_000);
+
 /** Owns both generated clients and the generated cache identities affected by project creation. */
 export const useProjectCreationCommands = () => {
   const queryClient = useQueryClient();
-  const createProduct = useCreateUnitProduct();
-  const createProject = useCreateProject();
+  const createProduct = useCreateUnitProduct({ request: { timeout: requestTimeout } });
+  const createProject = useCreateProject({ request: { timeout: requestTimeout } });
   const deleteProduct = useDeleteProduct();
 
   return {

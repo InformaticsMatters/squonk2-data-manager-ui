@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
 
 import {
   ProductDetailFlavour,
@@ -25,8 +25,12 @@ import { useRouter } from "next/router";
 
 import { administrationLinks } from "../administration/routes";
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
+import { useGetPersonalUnit } from "../hooks/useGetPersonalUnit";
+import { useIsEvaluator } from "../hooks/useIsAuthorized";
 import Layout from "../layouts/Layout";
+import { isProductId } from "../routing/identifiers";
 import {
+  eligibleProjectCreationFlavours,
   eligibleProjectCreationUnits,
   forgetProjectCreation,
   initialProjectCreationState,
@@ -39,6 +43,7 @@ import {
   type ProjectCreationState,
   type ProjectCreationTransition,
   readProjectCreationRecovery,
+  reconcileProjectCreationRecovery,
   rememberProjectCreation,
   transitionProjectCreation,
   validateProjectSubscriptionHandoff,
@@ -46,7 +51,6 @@ import {
 import { projectLinks } from "./routes";
 import { useProjectCreationCommands } from "./useProjectCreationCommands";
 
-const projectSubscriptionType = "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION";
 const privateByDefault: Record<UnitAllDetailDefaultProductPrivacy, boolean> = {
   ALWAYS_PRIVATE: true,
   ALWAYS_PUBLIC: false,
@@ -64,7 +68,12 @@ export const ProjectCreate = () => {
     throw new Error("Project creation requires the canonical creation route");
   }
   const { data: unitGroups } = useGetUnitsSuspense();
-  const eligibleUnits = eligibleProjectCreationUnits(unitGroups.units);
+  const isEvaluator = useIsEvaluator();
+  const { data: personalUnit } = useGetPersonalUnit();
+  const eligibleUnits = eligibleProjectCreationUnits(unitGroups.units, {
+    evaluatorPersonalUnitId: personalUnit?.id,
+    isEvaluator,
+  });
   const { data: productTypes, error: productTypesError } = useGetProductTypes();
   const handoff = useGetProduct(route.subscriptionId ?? "", {
     query: { enabled: route.subscriptionId !== undefined, retry: false },
@@ -76,7 +85,9 @@ export const ProjectCreate = () => {
   const [flavour, setFlavour] = useState<UnitProductPostBodyBodyFlavour | "">("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [recovery, setRecovery] = useState<ProjectCreationRecovery>();
+  const [reconciling, setReconciling] = useState(false);
   const initializedSubscription = useRef<string | undefined>(undefined);
+  const initializedRecovery = useRef(false);
   const recoveryNavigation = useRef(false);
   const [recoveringRoute, setRecoveringRoute] = useState(false);
 
@@ -85,16 +96,57 @@ export const ProjectCreate = () => {
     : undefined;
   const validHandoff =
     handoffValidation?.kind === "valid" ? handoffValidation.subscription : undefined;
-  const flavours = (productTypes?.product_types ?? [])
-    .filter(({ type }) => type === projectSubscriptionType)
-    .flatMap(({ flavour }) => (flavour ? [flavour as UnitProductPostBodyBodyFlavour] : []));
+  const flavours = eligibleProjectCreationFlavours(productTypes?.product_types ?? [], isEvaluator);
   const selectedUnit = eligibleUnits.find(({ unit }) => unit.id === unitId)?.unit;
   const pending =
     recoveringRoute ||
+    reconciling ||
     lifecycle.kind === "creating-product" ||
     lifecycle.kind === "creating-project" ||
     lifecycle.kind === "cleaning-up";
+  const hydrateRecovery = useEffectEvent((stored: ProjectCreationRecovery) => {
+    setRecovery(stored);
+    setName(stored.input.name);
+    setUnitId(stored.input.unitId);
+    setFlavour(stored.input.flavour);
+    setIsPrivate(stored.input.isPrivate);
+  });
 
+  // The record and the React state are one fact in two places, so every write goes through these.
+  const storeRecovery = (nextRecovery: ProjectCreationRecovery) => {
+    rememberProjectCreation(sessionStorage, nextRecovery);
+    setRecovery(nextRecovery);
+  };
+
+  const clearRecovery = useCallback(() => {
+    forgetProjectCreation(sessionStorage);
+    setRecovery(undefined);
+  }, []);
+
+  /**
+   * Entering Files replaces this attempt, so it must not be left behind for a later visit. Both the
+   * reconciling effect and a deliberate retry settle a committed project this way, so it is stable
+   * enough for an effect to depend on rather than restate.
+   */
+  const completeRecoveredProject = useCallback(
+    (productId: string, projectId: string) => {
+      clearRecovery();
+      setLifecycle({ kind: "completed", productId, projectId });
+      void router.replace(projectLinks.files(projectId) as never);
+    },
+    [clearRecovery, router],
+  );
+
+  /**
+   * What a bare creation route makes of a record left by an interrupted attempt.
+   *
+   * A subscription this workflow already requested a project for is put back in the URL before
+   * anything else happens, so the attempt is addressed by the same route a handoff arrives on and
+   * the Account Server — not this record — settles what became of it. Everything else is rehydrated
+   * in place. A record that only reached `product-requested` describes a request whose outcome the
+   * browser never saw, so it becomes an unretryable failure rather than a resumable one: replaying
+   * it could buy a second subscription for the one the caller already may have.
+   */
   useEffect(() => {
     if (route.subscriptionId !== undefined) {
       recoveryNavigation.current = false;
@@ -102,7 +154,7 @@ export const ProjectCreate = () => {
       return;
     }
     const stored = readProjectCreationRecovery(sessionStorage);
-    if (stored && !recoveryNavigation.current) {
+    if (stored?.kind === "project-requested" && !recoveryNavigation.current) {
       recoveryNavigation.current = true;
       setRecoveringRoute(true);
       const href = projectLinks.create({ subscriptionId: stored.productId });
@@ -112,70 +164,124 @@ export const ProjectCreate = () => {
             globalThis.location.assign(href);
           }
         },
+        // A cancelled or rejected client navigation would strand the attempt on a route that cannot
+        // reconcile it, so a full page load addresses the subscription instead.
         () => globalThis.location.assign(href),
+      );
+      return;
+    }
+    if (stored && !initializedRecovery.current) {
+      initializedRecovery.current = true;
+      hydrateRecovery(stored);
+      setLifecycle(
+        stored.kind === "product-failed"
+          ? {
+              input: stored.input,
+              kind: "product-failed",
+              reason: stored.reason,
+              retryable: stored.retryable,
+            }
+          : {
+              input: stored.input,
+              kind: "product-failed",
+              reason:
+                "The subscription request was interrupted and its outcome could not be confirmed.",
+              retryable: false,
+            },
       );
     }
   }, [route.subscriptionId, router]);
 
+  /**
+   * What the addressed subscription says about the attempt that was left against it.
+   *
+   * The Account Server's own claim is the authority: a claimed subscription means the project
+   * request committed even though its response was lost, so the attempt completes into Files rather
+   * than sending a second one. An unclaimed subscription is offered for retry or cancellation, and a
+   * subscription no record claims prefills a fresh handoff. The ref keeps one answer per addressed
+   * subscription, so a re-render cannot reconcile the same fact twice.
+   */
   useEffect(() => {
-    if (!validHandoff || initializedSubscription.current === validHandoff.product.id) {
+    const addressedProduct = handoff.data?.product;
+    if (!addressedProduct || initializedSubscription.current === addressedProduct.product.id) {
       return;
     }
-    initializedSubscription.current = validHandoff.product.id;
+    initializedSubscription.current = addressedProduct.product.id;
     const stored = readProjectCreationRecovery(sessionStorage);
-    if (
-      stored?.productId === validHandoff.product.id &&
-      stored.input.unitId === validHandoff.unit.id &&
-      stored.input.flavour === validHandoff.product.flavour
-    ) {
-      setRecovery(stored);
-      setName(stored.input.name);
-      setUnitId(stored.input.unitId);
-      setFlavour(stored.input.flavour);
-      setIsPrivate(stored.input.isPrivate);
-      setLifecycle({
-        input: stored.input,
-        kind: "project-failed",
-        origin: "created",
-        productId: stored.productId,
-        reason: "This project was not completed. Retry it or cancel and clean up its subscription.",
-      });
-      return;
+    if (stored?.kind === "project-requested" && stored.productId === addressedProduct.product.id) {
+      const reconciliation = reconcileProjectCreationRecovery(stored, addressedProduct);
+      if (reconciliation.kind === "completed") {
+        completeRecoveredProject(stored.productId, reconciliation.projectId);
+        return;
+      }
+      if (reconciliation.kind === "resume") {
+        hydrateRecovery(stored);
+        setLifecycle({
+          input: stored.input,
+          kind: "project-failed",
+          origin: stored.origin,
+          productId: stored.productId,
+          reason:
+            "This project was not completed. Retry it or cancel and clean up its subscription.",
+        });
+        return;
+      }
     }
-    if (stored?.productId === validHandoff.product.id) {
-      forgetProjectCreation(sessionStorage);
+    if (!validHandoff) {
+      return;
     }
     setName(validHandoff.product.name ?? "");
     setUnitId(validHandoff.unit.id);
     setFlavour(validHandoff.product.flavour ?? "");
     setIsPrivate(privateByDefault[validHandoff.unit.default_product_privacy]);
-  }, [validHandoff]);
+  }, [completeRecoveredProject, handoff.data?.product, router, validHandoff]);
 
+  /**
+   * Sends what the lifecycle decided, and records each request before it is sent.
+   *
+   * Every write to the recovery record happens ahead of the request it describes, because a request
+   * whose response never arrives is exactly the one whose record has to already exist. The lifecycle
+   * decides what may follow; nothing here chooses to send a second request on its own.
+   */
   const runEffect = async (effect: ProjectCreationEffect, state: ProjectCreationState) => {
     if (effect.kind === "create-product") {
+      const requestedRecovery: ProjectCreationRecovery = {
+        input: effect.input,
+        kind: "product-requested",
+      };
+      storeRecovery(requestedRecovery);
       let productId: string;
       try {
         productId = await commands.createProduct(effect.input);
       } catch (error) {
+        const reason = projectCreationFailureReason(error, "subscription");
+        const retryable = productCreationFailureIsRetryable(error);
+        const failedRecovery: ProjectCreationRecovery = {
+          input: effect.input,
+          kind: "product-failed",
+          reason,
+          retryable,
+        };
+        storeRecovery(failedRecovery);
         setLifecycle(
-          transitionProjectCreation(state, {
-            kind: "product-failed",
-            reason: projectCreationFailureReason(error, "subscription"),
-            retryable: productCreationFailureIsRetryable(error),
-          }).state,
+          transitionProjectCreation(state, { kind: "product-failed", reason, retryable }).state,
         );
         return;
       }
       const next = transitionProjectCreation(state, { kind: "product-created", productId });
-      const remembered = rememberProjectCreation(sessionStorage, {
+      const projectRecovery: ProjectCreationRecovery = {
         input: effect.input,
+        kind: "project-requested",
+        origin: "created",
         productId,
-      });
-      if (remembered) {
-        setRecovery({ input: effect.input, productId });
-      }
+      };
+      storeRecovery(projectRecovery);
       setLifecycle(next.state);
+      // This attempt has already reconciled the subscription it just created, so the effect that
+      // watches the addressed subscription must not treat the shallow navigation as a fresh handoff.
       initializedSubscription.current = productId;
+      // The subscription enters the URL before the project request is sent, so a reload that lands
+      // mid-request addresses it and can be settled against the Account Server's own claim.
       try {
         const replaced = await router.replace(
           projectLinks.create({ subscriptionId: productId }) as never,
@@ -201,6 +307,15 @@ export const ProjectCreate = () => {
       return;
     }
     if (effect.kind === "create-project") {
+      if (state.kind === "creating-project") {
+        const projectRecovery: ProjectCreationRecovery = {
+          input: effect.input,
+          kind: "project-requested",
+          origin: state.origin,
+          productId: effect.productId,
+        };
+        storeRecovery(projectRecovery);
+      }
       let projectId: string;
       try {
         projectId = await commands.createProject(effect.input, effect.productId);
@@ -215,8 +330,7 @@ export const ProjectCreate = () => {
       }
       const completed = transitionProjectCreation(state, { kind: "project-created", projectId });
       setLifecycle(completed.state);
-      forgetProjectCreation(sessionStorage);
-      setRecovery(undefined);
+      clearRecovery();
       void router.push(projectLinks.files(projectId) as never);
       return;
     }
@@ -231,8 +345,7 @@ export const ProjectCreate = () => {
       );
       return;
     }
-    forgetProjectCreation(sessionStorage);
-    setRecovery(undefined);
+    clearRecovery();
     setLifecycle(transitionProjectCreation(state, { kind: "cleanup-succeeded" }).state);
     void router.push(projectLinks.index() as never);
   };
@@ -244,6 +357,10 @@ export const ProjectCreate = () => {
     }
   };
 
+  /**
+   * An addressed subscription is reused rather than bought again, and it is a handoff only when this
+   * workflow has no record of creating it — which is what decides whether cancelling may delete it.
+   */
   const submit = async () => {
     if (!flavour || !projectCreationNameIsValid(name) || !unitId) {
       return;
@@ -257,8 +374,9 @@ export const ProjectCreate = () => {
           ? {
               subscription: {
                 origin:
-                  recovery?.productId === route.subscriptionId
-                    ? ("created" as const)
+                  recovery?.kind === "project-requested" &&
+                  recovery.productId === route.subscriptionId
+                    ? recovery.origin
                     : ("handoff" as const),
                 productId: route.subscriptionId,
               },
@@ -276,12 +394,61 @@ export const ProjectCreate = () => {
     }
   };
 
-  const retry = () => void applyTransition(transitionProjectCreation(lifecycle, { kind: "retry" }));
+  /**
+   * A project retry re-reads its subscription before it sends anything, because the request it is
+   * retrying may already have committed: a claimed subscription completes into Files instead, so a
+   * lost response cannot become a second project.
+   */
+  const retry = async () => {
+    if (
+      lifecycle.kind === "project-failed" &&
+      recovery?.kind === "project-requested" &&
+      route.subscriptionId
+    ) {
+      setReconciling(true);
+      try {
+        const refreshed = await handoff.refetch();
+        if (!refreshed.data) {
+          setLifecycle({
+            ...lifecycle,
+            reason: "The subscription could not be verified. Retry after the service recovers.",
+          });
+          return;
+        }
+        const reconciliation = reconcileProjectCreationRecovery(recovery, refreshed.data.product);
+        if (reconciliation.kind === "completed") {
+          completeRecoveredProject(recovery.productId, reconciliation.projectId);
+          return;
+        }
+        if (reconciliation.kind !== "resume") {
+          setLifecycle({
+            ...lifecycle,
+            reason:
+              "The subscription is no longer available for this project. Open it in Administration.",
+          });
+          return;
+        }
+      } finally {
+        setReconciling(false);
+      }
+    }
+    await applyTransition(transitionProjectCreation(lifecycle, { kind: "retry" }));
+  };
   const cancel = () => {
-    if (lifecycle.kind === "project-failed") {
-      void applyTransition(transitionProjectCreation(lifecycle, { kind: "cancel" }));
+    const cancelled = transitionProjectCreation(lifecycle, { kind: "cancel" });
+    // Only a created subscription is this workflow's to remove, so only that cancellation carries an
+    // effect; it owns its own record and navigation because both must survive until the server has
+    // answered the deletion.
+    if (cancelled.effect) {
+      void applyTransition(cancelled);
       return;
     }
+    // A settled cancellation leaves a later visit nothing to recover. An unrecovered subscription
+    // never settles, so it keeps its record and the workflow can still offer it.
+    if (cancelled.state.kind === "cancelled") {
+      clearRecovery();
+    }
+    setLifecycle(cancelled.state);
     void router.push(projectLinks.index() as never);
   };
 
@@ -340,13 +507,21 @@ export const ProjectCreate = () => {
           {lifecycle.kind === "cleanup-failed" ? (
             <Alert severity="error">
               {lifecycle.reason} Subscription ID: {lifecycle.productId}.{" "}
-              <MuiLink
-                component={Link}
-                href={administrationLinks.subscription(lifecycle.productId as never) as never}
-              >
-                Open it in Administration
-              </MuiLink>{" "}
-              or quote this ID to support.
+              {/* The ID is the recovery, so an unaddressable one still reaches support as itself
+                  rather than throwing inside the route builder that would have addressed it. */}
+              {isProductId(lifecycle.productId) ? (
+                <>
+                  <MuiLink
+                    component={Link}
+                    href={administrationLinks.subscription(lifecycle.productId) as never}
+                  >
+                    Open it in Administration
+                  </MuiLink>{" "}
+                  or quote this ID to support.
+                </>
+              ) : (
+                "Quote this ID to support."
+              )}
             </Alert>
           ) : null}
           {lifecycle.kind === "completed" ? (
@@ -406,6 +581,7 @@ export const ProjectCreate = () => {
             {flavours.map((tier) => (
               <MenuItem
                 disabled={
+                  !isEvaluator &&
                   tier === ProductDetailFlavour.EVALUATION &&
                   selectedUnit?.default_product_privacy === "ALWAYS_PRIVATE"
                 }
@@ -434,7 +610,7 @@ export const ProjectCreate = () => {
           <Stack direction="row" spacing={2}>
             {(lifecycle.kind === "product-failed" && lifecycle.retryable) ||
             lifecycle.kind === "project-failed" ? (
-              <Button variant="contained" onClick={retry}>
+              <Button disabled={pending} variant="contained" onClick={() => void retry()}>
                 Retry
               </Button>
             ) : lifecycle.kind === "collecting" ? (

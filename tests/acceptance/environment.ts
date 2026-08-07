@@ -13,6 +13,7 @@ const oidcUrl = `http://127.0.0.1:${oidcPort}`;
 
 export const acceptanceEnvironment = {
   ...process.env,
+  ACCEPTANCE_FIXTURES: "1",
   ACCOUNT_SERVER_API_SERVER: accountServerUrl,
   BASE_PATH: basePath,
   BASE_URL: appUrl,
@@ -32,6 +33,7 @@ export const acceptanceEnvironment = {
   NEXT_PUBLIC_DEPICT_API_SERVER: `${dataManagerUrl}/depict`,
   NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: "data-manager-ui-acceptance",
   NEXT_PUBLIC_KEYCLOAK_ISSUER_URL: oidcUrl,
+  NEXT_PUBLIC_PROJECT_CREATION_TIMEOUT_MS: "750",
   NODE_ENV: "production",
   TEST_PORT: String(appPort),
   VERCEL_BRANCH_URL: appUrl,

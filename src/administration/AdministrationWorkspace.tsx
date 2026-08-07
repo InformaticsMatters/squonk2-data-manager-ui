@@ -4,6 +4,7 @@ import { Alert, Button, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
+import { isUnclaimedProjectSubscription } from "../projects/projectCreation";
 import { projectLinks } from "../projects/routes";
 import { useAccessIndex } from "./accessFacts";
 import { AdministrationFrame } from "./AdministrationShell";
@@ -207,11 +208,7 @@ const ReadOnlyResourceDetails = ({ route }: { route: ReadOnlyResourceRoute }) =>
 const SubscriptionDetails = ({ route }: { route: SubscriptionDetailRoute }) => {
   const { data } = useGetProductsSuspense();
   const subscription = data.products.find((candidate) => candidate.product.id === route.productId);
-  const canCreateProject =
-    subscription?.product.type === "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION" &&
-    subscription.claimable &&
-    "claim" in subscription &&
-    subscription.claim === undefined;
+  const canCreateProject = subscription && isUnclaimedProjectSubscription(subscription);
   return (
     <Stack spacing={2}>
       <ResourceDetailsView

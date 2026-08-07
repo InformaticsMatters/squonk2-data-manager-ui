@@ -9,6 +9,7 @@ import {
 
 import { createHash, createPrivateKey, generateKeyPairSync, randomUUID, sign } from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { setTimeout as delay } from "node:timers/promises";
 import { z } from "zod";
 
 import { acceptanceEnvironment, acceptanceUrls } from "../environment";
@@ -362,7 +363,13 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     if (request.method === "POST") {
       const form = new URLSearchParams((await readBody(request)).toString());
       if (state.projectCreationFailure) {
-        return json(response, state.projectCreationFailure, state.fixtures.failures.serverError);
+        return json(
+          response,
+          state.projectCreationFailure,
+          state.projectCreationFailure === 400
+            ? { error: "fixture-project-domain-failure" }
+            : state.fixtures.failures.serverError,
+        );
       }
       if (form.get("tier_product_id") !== state.createdProduct?.product.id) {
         return json(response, 400, { error: "fixture-subscription-not-found" });
@@ -379,6 +386,9 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
         id: fixtureIds.createdProject,
         name: state.createdProject.name,
       };
+      if (state.projectCreationResponseDelay) {
+        await delay(state.projectCreationResponseDelay);
+      }
       return json(response, 201, { project_id: fixtureIds.createdProject });
     }
     const projects = state.createdProject
@@ -1090,7 +1100,16 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
         name?: string;
       };
       if (state.productCreationFailure) {
-        return json(response, state.productCreationFailure, state.fixtures.failures.serverError);
+        return json(
+          response,
+          state.productCreationFailure,
+          state.productCreationFailure === 400
+            ? { error: "fixture-product-domain-failure" }
+            : state.fixtures.failures.serverError,
+        );
+      }
+      if (state.productCreationDelay) {
+        await delay(state.productCreationDelay);
       }
       const base = state.fixtures.products.products[0] as ProductDmProjectTier;
       const unit = state.fixtures.units.units
@@ -1125,6 +1144,12 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
   }
   if (url.pathname === `/product/${fixtureIds.screeningProduct}`) {
     return json(response, 200, { product: state.fixtures.screeningProduct });
+  }
+  if (url.pathname === `/product/${fixtureIds.unlistedProduct}`) {
+    return json(response, 200, { product: state.fixtures.unlistedProjectProduct });
+  }
+  if (url.pathname === `/product/${fixtureIds.storageProduct}`) {
+    return json(response, 200, { product: state.fixtures.storageProduct });
   }
   if (url.pathname === `/product/${fixtureIds.createdProduct}` && state.createdProduct) {
     if (request.method === "DELETE") {
@@ -1173,6 +1198,21 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
     getScenario(subject).productFailure = true;
     return json(response, 200, { productFailure: true, subject });
   }
+  const creationDelayControls = [
+    { pathSuffix: "/product-creation-delay", stateKey: "productCreationDelay" },
+    { pathSuffix: "/project-creation-response-delay", stateKey: "projectCreationResponseDelay" },
+  ] as const;
+  const creationDelayControl = creationDelayControls.find(({ pathSuffix }) =>
+    url.pathname.endsWith(pathSuffix),
+  );
+  if (creationDelayControl && request.method === "POST") {
+    const milliseconds = Number(url.searchParams.get("milliseconds"));
+    if (!Number.isInteger(milliseconds) || milliseconds < 1 || milliseconds > 5000) {
+      return json(response, 400, { error: "unsupported-creation-delay", milliseconds });
+    }
+    getScenario(subject)[creationDelayControl.stateKey] = milliseconds;
+    return json(response, 200, { milliseconds, subject });
+  }
   const creationFailureControls = [
     { pathSuffix: "/cleanup-failure", stateKey: "cleanupFailure" },
     { pathSuffix: "/product-creation-failure", stateKey: "productCreationFailure" },
@@ -1189,12 +1229,18 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
     }
     const status = Number(url.searchParams.get("status"));
     if (
-      ![403, 429, 503].includes(status) ||
+      ![400, 403, 429, 503].includes(status) ||
       (creationFailureControl.stateKey === "cleanupFailure" && status === 429)
     ) {
       return json(response, 400, { error: "unsupported-creation-failure", status });
     }
-    state[creationFailureControl.stateKey] = status as 403 | 503;
+    if (creationFailureControl.stateKey === "cleanupFailure") {
+      state.cleanupFailure = status as 403 | 503;
+    } else if (creationFailureControl.stateKey === "productCreationFailure") {
+      state.productCreationFailure = status as 400 | 403 | 429 | 503;
+    } else {
+      state.projectCreationFailure = status as 400 | 403 | 429 | 503;
+    }
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/charge-failure") && request.method === "POST") {

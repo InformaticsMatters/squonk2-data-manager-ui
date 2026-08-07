@@ -1,5 +1,6 @@
 import { expect, type Page, test, type TestInfo } from "@playwright/test";
 
+import { PROJECT_CREATION_RECOVERY_KEY } from "../../src/projects/projectCreation";
 import { RECENT_PROJECTS_STORAGE_KEY } from "../../src/projects/recentProjects";
 import { fixtureIds } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
@@ -235,6 +236,80 @@ for (const cleanupFails of [false, true]) {
   });
 }
 
+test("cancelling a handed-off partial failure leaves its subscription to Administration", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/project-creation-failure?status=503`,
+  );
+  await login(page, "projects/new", testInfo);
+  await page.getByLabel("Containing unit").click();
+  await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+  await page.getByLabel("Project name").fill("Handed Off Project");
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+  await expect(page.getByText(/will be reused/u)).toBeVisible();
+
+  // Forgetting this session's record is what makes the next visit a genuine Administration handoff
+  // rather than this workflow resuming a subscription it remembers creating.
+  await page.evaluate((key) => sessionStorage.removeItem(key), PROJECT_CREATION_RECOVERY_KEY);
+  await page.goto(`administration/subscriptions/${fixtureIds.createdProduct}`);
+  await page.getByRole("link", { name: "Create linked project" }).click();
+  await page.getByRole("button", { name: "Create linked project" }).click();
+  await expect(page.getByText(/will be reused/u)).toBeVisible();
+
+  // A subscription this workflow did not create is never cleaned up by it, but cancelling still
+  // releases the attempt: Projects is reachable and a later visit collects a new one.
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects`);
+  await page.goto("projects/new");
+  await expect(page.getByLabel("Project name")).toHaveValue("");
+  await expect(page.getByRole("button", { name: "Create project" })).toBeVisible();
+
+  const diagnostics = await request
+    .get(`${acceptanceUrls.control}/scenario/${subject}`)
+    .then(
+      (response) => response.json() as Promise<{ requests: { method: string; path: string }[] }>,
+    );
+  expect(
+    diagnostics.requests.filter(
+      ({ method, path }) => method === "DELETE" && path === `/product/${fixtureIds.createdProduct}`,
+    ),
+  ).toHaveLength(0);
+});
+
+test("an unavailable subscription service retains the form without a blind retry", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/product-creation-failure?status=503`,
+  );
+  await login(page, "projects/new", testInfo);
+  await page.getByLabel("Containing unit").click();
+  await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+  await page.getByLabel("Project name").fill("Unavailable Subscription");
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+
+  // A `5xx` can be a gateway answering for a service that already committed, so its outcome is no
+  // more confirmed than a timeout's and it is refused the retry a `403` is offered.
+  await expect(page.getByText(/subscription service is unavailable/u)).toBeVisible();
+  await expect(page.getByLabel("Project name")).toHaveValue("Unavailable Subscription");
+  await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Subscriptions" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects`);
+  await page.goto("projects/new");
+  await expect(page.getByLabel("Project name")).toHaveValue("");
+});
+
 test("a rejected subscription request retains the form and retries only after a confirmed response", async ({
   page,
   request,
@@ -294,6 +369,159 @@ test("first-attempt project creation enters Files only after both services succe
   await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
 });
 
+test("an evaluator can create only an evaluation project in their personal unit", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=evaluator`);
+  await login(page, "projects/new", testInfo);
+
+  await page.getByLabel("Containing unit").click();
+  await expect(
+    page.getByRole("option", { name: `Default Organisation / ${subject}` }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }),
+  ).toHaveCount(0);
+  await page.getByRole("option", { name: `Default Organisation / ${subject}` }).click();
+  await page.getByLabel("Tier").click();
+  await expect(page.getByRole("option", { name: "Evaluation" })).toBeEnabled();
+  await expect(page.getByRole("option", { name: "Bronze" })).toHaveCount(0);
+});
+
+test("refresh during subscription creation retains the form and cannot duplicate the request", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/product-creation-delay?milliseconds=1500`,
+  );
+  await login(page, "projects/new", testInfo);
+  await page.getByLabel("Containing unit").click();
+  await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+  await page.getByLabel("Project name").fill("Pending Subscription");
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+  await expect
+    .poll(() => page.evaluate((key) => sessionStorage.getItem(key), PROJECT_CREATION_RECOVERY_KEY))
+    .toContain('"kind":"product-requested"');
+
+  await page.reload();
+  await expect(page.getByLabel("Project name")).toHaveValue("Pending Subscription");
+  await expect(page.getByText(/outcome could not be confirmed/u)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Create project" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
+
+  await expect
+    .poll(async () => {
+      const diagnostics = await request
+        .get(`${acceptanceUrls.control}/scenario/${subject}`)
+        .then(
+          (response) =>
+            response.json() as Promise<{ requests: { method: string; path: string }[] }>,
+        );
+      return diagnostics.requests.filter(
+        ({ method, path }) => method === "POST" && path === `/product/unit/${fixtureIds.unit}`,
+      ).length;
+    })
+    .toBe(1);
+});
+
+test("refresh after a committed project response is lost reconciles its claim into Files", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/project-creation-response-delay?milliseconds=1500`,
+  );
+  await login(page, "projects/new", testInfo);
+  await page.getByLabel("Containing unit").click();
+  await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+  await page.getByLabel("Project name").fill("Committed Project");
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}projects/new?subscription=${fixtureIds.createdProduct}`,
+  );
+  await expect
+    .poll(async () => {
+      const diagnostics = await request
+        .get(`${acceptanceUrls.control}/scenario/${subject}`)
+        .then(
+          (response) =>
+            response.json() as Promise<{ requests: { method: string; path: string }[] }>,
+        );
+      return diagnostics.requests.some(
+        ({ method, path }) => method === "POST" && path === "/project",
+      );
+    })
+    .toBe(true);
+
+  await page.reload();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects/${fixtureIds.createdProject}/files`);
+  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+});
+
+test("retry after a committed project response is lost reconciles before posting again", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/project-creation-response-delay?milliseconds=1500`,
+  );
+  await login(page, "projects/new", testInfo);
+  await page.getByLabel("Containing unit").click();
+  await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+  await page.getByLabel("Project name").fill("Reconciled Retry");
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+  await expect(page.getByText(/project request timed out/u)).toBeVisible();
+
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects/${fixtureIds.createdProject}/files`);
+  const diagnostics = await request
+    .get(`${acceptanceUrls.control}/scenario/${subject}`)
+    .then(
+      (response) => response.json() as Promise<{ requests: { method: string; path: string }[] }>,
+    );
+  expect(
+    diagnostics.requests.filter(({ method, path }) => method === "POST" && path === "/project"),
+  ).toHaveLength(1);
+});
+
+test("Administration offers an omitted-claim subscription to the canonical recovery workflow", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/project-creation-failure?status=503`,
+  );
+  await login(page, "projects/new", testInfo);
+  await page.getByLabel("Containing unit").click();
+  await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+  await page.getByLabel("Project name").fill("Administration Handoff");
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+  await expect(page.getByText(/will be reused/u)).toBeVisible();
+
+  await page.goto(`administration/subscriptions/${fixtureIds.createdProduct}`);
+  await page.getByRole("link", { name: "Create linked project" }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}projects/new?subscription=${fixtureIds.createdProduct}`,
+  );
+  await expect(page.getByLabel("Project name")).toHaveValue("Administration Handoff");
+  await expect(page.getByRole("button", { name: "Retry" })).toBeVisible();
+});
+
 test("an ambiguous subscription transport failure cannot be blindly resubmitted", async ({
   page,
 }, testInfo) => {
@@ -317,7 +545,106 @@ test("an ambiguous subscription transport failure cannot be blindly resubmitted"
   await expect(page.getByRole("button", { name: "Create project" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Subscriptions" })).toBeVisible();
+
+  // An unconfirmed request is refused a blind retry, not held onto for ever: cancelling abandons it
+  // and the canonical route collects a new attempt rather than replaying the ambiguous one.
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects`);
+  await page.goto("projects/new");
+  await expect(page.getByLabel("Project name")).toHaveValue("");
+  await expect(page.getByText(/could not reach the service/u)).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Create project" })).toBeVisible();
 });
+
+test("a timed-out subscription request retains its form without blind retry", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/product-creation-delay?milliseconds=1500`,
+  );
+  await login(page, "projects/new", testInfo);
+  await page.getByLabel("Containing unit").click();
+  await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+  await page.getByLabel("Project name").fill("Timed Out Subscription");
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+
+  await expect(page.getByText(/subscription request timed out/u)).toBeVisible();
+  await expect(page.getByLabel("Project name")).toHaveValue("Timed Out Subscription");
+  await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
+});
+
+test("a forbidden subscription response retains state for a deliberate retry", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/product-creation-failure?status=403`,
+  );
+  await login(page, "projects/new", testInfo);
+  await page.getByLabel("Containing unit").click();
+  await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+  await page.getByLabel("Project name").fill("Forbidden Subscription");
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+
+  await expect(page.getByText(/did not allow this subscription/u)).toBeVisible();
+  await expect(page.getByLabel("Project name")).toHaveValue("Forbidden Subscription");
+  await expect(page.getByRole("button", { name: "Retry" })).toBeVisible();
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects`);
+  await page.goto("projects/new");
+  await expect(page.getByLabel("Project name")).toHaveValue("");
+});
+
+test("a project domain failure keeps its subscription and exact service answer", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/project-creation-failure?status=400`,
+  );
+  await login(page, "projects/new", testInfo);
+  await page.getByLabel("Containing unit").click();
+  await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+  await page.getByLabel("Project name").fill("Domain Failure");
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+
+  await expect(page.getByText("fixture-project-domain-failure")).toBeVisible();
+  await expect(page.getByText(/will be reused/u)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Retry" })).toBeVisible();
+});
+
+for (const [productId, reason] of [
+  [fixtureIds.storageProduct, "This subscription is not a project-tier subscription."],
+  [fixtureIds.unlistedProduct, "You cannot create a project in this subscription's unit."],
+] as const) {
+  test(`an invalid ${productId} handoff remains diagnosable without mutation`, async ({
+    page,
+    request,
+  }, testInfo) => {
+    const subject = subjectFor(testInfo);
+    await login(page, `projects/new?subscription=${productId}`, testInfo);
+    await expect(page.getByText(reason)).toBeVisible();
+    await expect(page.getByRole("link", { name: "Open Subscriptions" })).toBeVisible();
+    const diagnostics = await request
+      .get(`${acceptanceUrls.control}/scenario/${subject}`)
+      .then(
+        (response) => response.json() as Promise<{ requests: { method: string; path: string }[] }>,
+      );
+    expect(
+      diagnostics.requests.filter(({ method, path }) => method === "POST" && path === "/project"),
+    ).toHaveLength(0);
+  });
+}
 
 const managePath = `projects/${fixtureIds.project}/manage`;
 

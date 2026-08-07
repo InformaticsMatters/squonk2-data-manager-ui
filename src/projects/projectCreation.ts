@@ -3,6 +3,7 @@ import {
   ProductDetailType,
   type ProductDmProjectTier,
   type ProductDmStorage,
+  type ProductType,
   type UnitAllDetail,
   type UnitProductPostBodyBodyFlavour,
 } from "@/api/account-server";
@@ -10,7 +11,7 @@ import {
 import { isAxiosError } from "axios";
 
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
-import { isProductId, isUnitId } from "../routing/identifiers";
+import { isProductId, isProjectId, isUnitId } from "../routing/identifiers";
 
 export type ProjectCreationInput = {
   flavour: UnitProductPostBodyBodyFlavour;
@@ -118,6 +119,12 @@ export const transitionProjectCreation = (
       state: { input: state.input, kind: "creating-product" },
     };
   }
+  // Cancelling an ambiguous product request abandons the attempt rather than cleaning anything up:
+  // no product identity was ever returned, which is why the workflow sends the caller to
+  // Administration instead. Abandoning it is what stops the ambiguity outliving the attempt.
+  if (event.kind === "cancel" && state.kind === "product-failed") {
+    return { state: { kind: "cancelled" } };
+  }
   if (event.kind === "retry" && state.kind === "project-failed") {
     return {
       effect: { input: state.input, kind: "create-project", productId: state.productId },
@@ -149,19 +156,49 @@ export const transitionProjectCreation = (
 
 export type EligibleProjectUnit = { organisationName: string; unit: UnitAllDetail };
 
-/** Unit product creation follows the generated endpoint's unit-or-organisation membership rule. */
+type ProjectCreationEligibility = { evaluatorPersonalUnitId?: string; isEvaluator: boolean };
+
+/** Unit product creation follows the generated endpoint's role and membership rules. */
 export const eligibleProjectCreationUnits = (
   groups: readonly OrganisationUnitsGetResponse[],
+  eligibility: ProjectCreationEligibility,
 ): EligibleProjectUnit[] =>
   groups.flatMap(({ organisation, units }) =>
     units
-      .filter((unit) => unit.caller_is_member || organisation.caller_is_member)
+      .filter((unit) =>
+        eligibility.isEvaluator
+          ? unit.id === eligibility.evaluatorPersonalUnitId
+          : unit.caller_is_member || organisation.caller_is_member,
+      )
       .map((unit) => ({ organisationName: organisation.name, unit })),
   );
+
+export const eligibleProjectCreationFlavours = (
+  productTypes: readonly ProductType[],
+  isEvaluator: boolean,
+): UnitProductPostBodyBodyFlavour[] =>
+  productTypes
+    .filter(
+      ({ flavour, type }) =>
+        type === "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION" &&
+        flavour !== undefined &&
+        (!isEvaluator || flavour === "EVALUATION"),
+    )
+    .map(({ flavour }) => flavour as UnitProductPostBodyBodyFlavour);
 
 export type HandoffValidation =
   | { kind: "invalid"; reason: string }
   | { kind: "valid"; subscription: ProductDmProjectTier };
+
+export const isUnclaimedProjectSubscription = (
+  product: ProductDmProjectTier | ProductDmStorage,
+): product is ProductDmProjectTier => {
+  if (product.product.type !== ProductDetailType.DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION) {
+    return false;
+  }
+  const projectProduct = product as ProductDmProjectTier;
+  return projectProduct.claimable && projectProduct.claim === undefined;
+};
 
 /** A handoff is usable only while it is an unclaimed project-tier product in an eligible unit. */
 export const validateProjectSubscriptionHandoff = (
@@ -171,19 +208,21 @@ export const validateProjectSubscriptionHandoff = (
   if (product.product.type !== ProductDetailType.DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION) {
     return { kind: "invalid", reason: "This subscription is not a project-tier subscription." };
   }
-  const projectProduct = product as ProductDmProjectTier;
-  if (!projectProduct.claimable || projectProduct.claim !== undefined) {
+  if (!isUnclaimedProjectSubscription(product)) {
     return { kind: "invalid", reason: "This subscription is already linked to a project." };
   }
   if (!eligibleUnits.some(({ unit }) => unit.id === product.unit.id)) {
     return { kind: "invalid", reason: "You cannot create a project in this subscription's unit." };
   }
-  return { kind: "valid", subscription: projectProduct };
+  return { kind: "valid", subscription: product };
 };
 
 export const PROJECT_CREATION_RECOVERY_KEY = "data-manager-ui-project-creation";
 
-export type ProjectCreationRecovery = { input: ProjectCreationInput; productId: string };
+export type ProjectCreationRecovery =
+  | { input: ProjectCreationInput; kind: "product-failed"; reason: string; retryable: boolean }
+  | { input: ProjectCreationInput; kind: "product-requested" }
+  | (Subscription & { input: ProjectCreationInput; kind: "project-requested" });
 
 const flavours = ["EVALUATION", "BRONZE", "SILVER", "GOLD"] as const;
 
@@ -191,10 +230,17 @@ const flavours = ["EVALUATION", "BRONZE", "SILVER", "GOLD"] as const;
 export const parseProjectCreationRecovery = (
   value: unknown,
 ): ProjectCreationRecovery | undefined => {
-  if (typeof value !== "object" || value === null || !("version" in value) || value.version !== 1) {
+  if (typeof value !== "object" || value === null || !("version" in value) || value.version !== 2) {
     return undefined;
   }
-  const record = value as { input?: Partial<ProjectCreationInput>; productId?: unknown };
+  const record = value as {
+    input?: Partial<ProjectCreationInput>;
+    kind?: unknown;
+    origin?: unknown;
+    productId?: unknown;
+    reason?: unknown;
+    retryable?: unknown;
+  };
   const input = record.input;
   if (
     !input ||
@@ -204,13 +250,40 @@ export const parseProjectCreationRecovery = (
     typeof input.unitId !== "string" ||
     !isUnitId(input.unitId) ||
     typeof input.flavour !== "string" ||
-    !flavours.includes(input.flavour) ||
-    typeof record.productId !== "string" ||
-    !isProductId(record.productId)
+    !flavours.includes(input.flavour)
   ) {
     return undefined;
   }
-  return { input: input as ProjectCreationInput, productId: record.productId };
+  const validInput = input as ProjectCreationInput;
+  if (record.kind === "product-requested") {
+    return { input: validInput, kind: record.kind };
+  }
+  if (
+    record.kind === "product-failed" &&
+    typeof record.reason === "string" &&
+    typeof record.retryable === "boolean"
+  ) {
+    return {
+      input: validInput,
+      kind: record.kind,
+      reason: record.reason,
+      retryable: record.retryable,
+    };
+  }
+  if (
+    record.kind === "project-requested" &&
+    (record.origin === "created" || record.origin === "handoff") &&
+    typeof record.productId === "string" &&
+    isProductId(record.productId)
+  ) {
+    return {
+      input: validInput,
+      kind: record.kind,
+      origin: record.origin,
+      productId: record.productId,
+    };
+  }
+  return undefined;
 };
 
 export const readProjectCreationRecovery = (
@@ -229,11 +302,44 @@ export const rememberProjectCreation = (
   recovery: ProjectCreationRecovery,
 ): boolean => {
   try {
-    storage.setItem(PROJECT_CREATION_RECOVERY_KEY, JSON.stringify({ ...recovery, version: 1 }));
+    storage.setItem(PROJECT_CREATION_RECOVERY_KEY, JSON.stringify({ ...recovery, version: 2 }));
     return true;
   } catch {
     return false;
   }
+};
+
+export type ProjectCreationRecoveryReconciliation =
+  | {
+      kind: "resume";
+      recovery: Extract<ProjectCreationRecovery, { kind: "project-requested" }>;
+      subscription: ProductDmProjectTier;
+    }
+  | { kind: "completed"; projectId: string }
+  | { kind: "invalid" };
+
+/** Reconciles a persisted project request against the Account Server's current linked-product fact. */
+export const reconcileProjectCreationRecovery = (
+  recovery: ProjectCreationRecovery,
+  product: ProductDmProjectTier | ProductDmStorage,
+): ProjectCreationRecoveryReconciliation => {
+  if (
+    recovery.kind !== "project-requested" ||
+    product.product.id !== recovery.productId ||
+    product.unit.id !== recovery.input.unitId ||
+    product.product.flavour !== recovery.input.flavour ||
+    product.product.type !== ProductDetailType.DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION
+  ) {
+    return { kind: "invalid" };
+  }
+  const projectProduct = product as ProductDmProjectTier;
+  if (projectProduct.claim && isProjectId(projectProduct.claim.id)) {
+    return { kind: "completed", projectId: projectProduct.claim.id };
+  }
+  if (isUnclaimedProjectSubscription(projectProduct)) {
+    return { kind: "resume", recovery, subscription: projectProduct };
+  }
+  return { kind: "invalid" };
 };
 
 export const forgetProjectCreation = (storage: Pick<Storage, "removeItem">) => {

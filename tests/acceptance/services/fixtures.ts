@@ -83,6 +83,7 @@ export const fixtureIds = {
   /** Readable through their own resource, but absent from the caller's organisation and unit index. */
   unlistedOrganisation: "org-1c1c1c1c-1c1c-4c1c-8c1c-1c1c1c1c1c1c",
   unlistedUnit: "unit-1f1f1f1f-1f1f-4f1f-8f1f-1f1f1f1f1f1f",
+  unlistedProduct: "product-2f2f2f2f-2f2f-4f2f-8f2f-2f2f2f2f2f2f",
 } as const;
 
 export const datasetContentFixtures = {
@@ -237,6 +238,13 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     claim: { id: fixtureIds.screeningProject, name: "Screening Project" },
     product: { ...projectTierProduct.product, id: fixtureIds.screeningProduct },
     unit: otherUnit,
+  };
+  const unlistedProjectProduct = {
+    ...projectTierProduct,
+    claim: undefined,
+    organisation: unlistedOrganisation,
+    product: { ...projectTierProduct.product, id: fixtureIds.unlistedProduct },
+    unit: unlistedUnit,
   };
   // Only the Acceptance Unit is subscribed for datasets. The Screening Unit is a unit the caller is
   // just as much a member of and cannot upload to, which is what makes the missing-subscription
@@ -490,6 +498,8 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         ? AppApiProductGetResponse.parse({ count: 0, products: [] })
         : products,
     screeningProduct,
+    storageProduct: datasetStorageProduct,
+    unlistedProjectProduct,
     unitProducts,
     // Results of work run in each project. Every one names the project it belongs to, so a
     // response that ignored a project argument would be recognisable rather than believable.

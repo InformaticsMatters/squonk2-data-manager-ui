@@ -93,20 +93,30 @@ const evaluateOrganisationAuthority = (
     : { status: "disabled", reason: "You must be a member or the owner of this organisation." };
 
 /**
+ * Every organisation action the generated endpoints expose answers to that one authority, so each
+ * named capability below states only what the default organisation means for it.
+ */
+const evaluateOrganisationCapability = (
+  facts: OrganisationCapabilityFacts,
+  defaultOrganisationReason: string,
+): AdministrationCapability => {
+  if (!factsAreConfirmed(facts)) {
+    return unconfirmed;
+  }
+  return facts.isDefaultOrganisation
+    ? { status: "disabled", reason: defaultOrganisationReason }
+    : evaluateOrganisationAuthority(facts);
+};
+
+/**
  * The generated organisation user endpoints add and remove a member for a caller who is in the
  * organisation or an administrator, so membership follows the same authority its patch does rather
  * than a stricter ownership rule the server would not have enforced.
  */
 export const evaluateOrganisationMembershipCapability = (
   facts: OrganisationCapabilityFacts,
-): AdministrationCapability => {
-  if (!factsAreConfirmed(facts)) {
-    return unconfirmed;
-  }
-  return facts.isDefaultOrganisation
-    ? { status: "disabled", reason: "The default organisation does not have members." }
-    : evaluateOrganisationAuthority(facts);
-};
+): AdministrationCapability =>
+  evaluateOrganisationCapability(facts, "The default organisation does not have members.");
 
 /**
  * The generated organisation resource is patched by a member, its owner, or the platform, which is
@@ -114,28 +124,16 @@ export const evaluateOrganisationMembershipCapability = (
  */
 export const evaluateOrganisationPrivacyCapability = (
   facts: OrganisationCapabilityFacts,
-): AdministrationCapability => {
-  if (!factsAreConfirmed(facts)) {
-    return unconfirmed;
-  }
-  return facts.isDefaultOrganisation
-    ? {
-        status: "disabled",
-        reason: "The default organisation's project privacy is managed by the platform.",
-      }
-    : evaluateOrganisationAuthority(facts);
-};
+): AdministrationCapability =>
+  evaluateOrganisationCapability(
+    facts,
+    "The default organisation's project privacy is managed by the platform.",
+  );
 
 export const evaluateUnitCreationCapability = (
   facts: OrganisationCapabilityFacts,
-): AdministrationCapability => {
-  if (!factsAreConfirmed(facts)) {
-    return unconfirmed;
-  }
-  return facts.isDefaultOrganisation
-    ? { status: "disabled", reason: "The default organisation only contains personal units." }
-    : evaluateOrganisationAuthority(facts);
-};
+): AdministrationCapability =>
+  evaluateOrganisationCapability(facts, "The default organisation only contains personal units.");
 
 export const evaluatePersonalUnitCreationCapability = ({
   freshness = "current",

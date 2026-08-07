@@ -1,3 +1,4 @@
+import { type UnitAllDetailDefaultProductPrivacy } from "@/api/account-server";
 import {
   AppApiDatasetPostDatasetVersionMetaBody,
   AppApiDatasetPostDatasetVersionMetaResponse,
@@ -7,11 +8,6 @@ import { createHash, createPrivateKey, generateKeyPairSync, randomUUID, sign } f
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { z } from "zod";
 
-import {
-  type ProductPrivacy,
-  productPrivacyIsEnforced,
-  productPrivacyIsPrivate,
-} from "../../../src/administration/privacy";
 import { acceptanceEnvironment, acceptanceUrls } from "../environment";
 import { datasetContentFixtures, fixtureIds, isScenarioProfile } from "./fixtures";
 import { getScenario, type RequestRecord, resetScenario, type ScenarioState } from "./state";
@@ -708,7 +704,6 @@ const dataManagerServer = createServer(
 );
 
 type UnitFixture = ScenarioState["fixtures"]["units"]["units"][number]["units"][number];
-type OrganisationFixture = ScenarioState["fixtures"]["organisations"]["organisations"][number];
 
 const findUnitGroup = (state: ScenarioState, unitId: string) =>
   state.fixtures.units.units.find((group) => group.units.some((unit) => unit.id === unitId));
@@ -723,22 +718,26 @@ const personalUnitOf = (state: ScenarioState): UnitFixture | undefined =>
 
 const organisationsOf = (state: ScenarioState) => state.fixtures.organisations.organisations;
 
-/** Both generated patch resources accept the same two fields and leave anything absent alone. */
-type ResourcePatchBody<TResource extends { default_product_privacy: ProductPrivacy }> = {
-  default_product_privacy?: TResource["default_product_privacy"];
-  name?: string;
-};
+/**
+ * What the Account Server itself declares about a privacy value, restated here from the generated
+ * value names rather than imported from the application. This double answers for the server, so its
+ * rejection rule stays independent of the rule the screens under test apply.
+ */
+type FixturePrivacy = UnitAllDetailDefaultProductPrivacy;
+const requiresItsPrivacy = (privacy: FixturePrivacy) => privacy.startsWith("ALWAYS_");
+const isPrivate = (privacy: FixturePrivacy) => privacy.endsWith("PRIVATE");
 
-const readResourcePatch = async <TResource extends { default_product_privacy: ProductPrivacy }>(
-  request: IncomingMessage,
-): Promise<ResourcePatchBody<TResource>> =>
-  JSON.parse((await readBody(request)).toString()) as ResourcePatchBody<TResource>;
+/** Both generated patch resources accept the same two fields and leave anything absent alone. */
+type ResourcePatchBody = { default_product_privacy?: FixturePrivacy; name?: string };
+
+const readResourcePatch = async (request: IncomingMessage): Promise<ResourcePatchBody> =>
+  JSON.parse((await readBody(request)).toString()) as ResourcePatchBody;
 
 const applyResourcePatch = <
-  TResource extends { default_product_privacy: ProductPrivacy; name: string },
+  TResource extends { default_product_privacy: FixturePrivacy; name: string },
 >(
   resource: TResource,
-  body: ResourcePatchBody<TResource>,
+  body: ResourcePatchBody,
 ) => {
   resource.name = body.name ?? resource.name;
   resource.default_product_privacy =
@@ -906,21 +905,19 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     return json(response, 204, undefined);
   }
   if (segments[0] === "unit" && segments.length === 2 && request.method === "PATCH") {
-    const body = await readResourcePatch<UnitFixture>(request);
+    const body = await readResourcePatch(request);
     const unit = findUnit(state, segments[1]);
     if (!unit) {
       return json(response, 404, { error: "fixture-unit-not-found" });
     }
     // The Account Server accepts a unit privacy only while it does not conflict with its
-    // organisation's, so a requiring organisation rejects the opposite visibility outright. Which
-    // values those are is the application's own rule, read from it rather than restated here.
+    // organisation's, so a requiring organisation rejects the opposite visibility outright.
     const organisation = findUnitGroup(state, segments[1])?.organisation;
     if (
       body.default_product_privacy &&
       organisation &&
-      productPrivacyIsEnforced(organisation.default_product_privacy) &&
-      productPrivacyIsPrivate(organisation.default_product_privacy) !==
-        productPrivacyIsPrivate(body.default_product_privacy)
+      requiresItsPrivacy(organisation.default_product_privacy) &&
+      isPrivate(organisation.default_product_privacy) !== isPrivate(body.default_product_privacy)
     ) {
       return json(response, 409, {
         error: "The unit privacy conflicts with its organisation's value",
@@ -952,7 +949,7 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
       : json(response, 404, { error: "fixture-unit-not-found" });
   }
   if (segments[0] === "organisation" && segments.length === 2 && request.method === "PATCH") {
-    const body = await readResourcePatch<OrganisationFixture>(request);
+    const body = await readResourcePatch(request);
     const organisation = organisationsOf(state).find((candidate) => candidate.id === segments[1]);
     if (!organisation) {
       return json(response, 404, { error: "fixture-organisation-not-found" });

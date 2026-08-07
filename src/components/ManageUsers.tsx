@@ -83,7 +83,7 @@ export const ManageUsers: FC<ManageUsersProps> = ({
       }
       case "removeOption": {
         const removed = users.find((user) => !value.includes(user));
-        // A protected user is displayed but never given up, including through the keyboard shortcut
+        // A disabled user is displayed but never given up, including through the keyboard shortcut
         // that deletes the last chip without touching its delete icon.
         if (removed !== undefined && disabledUsers.includes(removed)) {
           break;
@@ -112,15 +112,15 @@ export const ManageUsers: FC<ManageUsersProps> = ({
       renderValue={(value, getItemProps) =>
         value.map((option: string, index: number) => {
           const { onDelete, ...chipProps } = getItemProps({ index });
-          const isProtected = disabledUsers.includes(option);
+          const isDisabled = disabledUsers.includes(option);
           return (
             <Chip
               deleteIcon={<CancelIcon aria-label={`Remove ${option}`} />}
               label={option}
               variant="outlined"
-              // A protected user offers no way to remove itself, so the list cannot ask for a
+              // A disabled user offers no way to remove itself, so the list cannot ask for a
               // change the resource does not accept.
-              onDelete={isProtected ? undefined : onDelete}
+              onDelete={isDisabled ? undefined : onDelete}
               {...chipProps}
               key={option}
             />

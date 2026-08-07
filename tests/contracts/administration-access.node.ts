@@ -1,3 +1,8 @@
+import {
+  OrganisationAllDetailDefaultProductPrivacy,
+  UnitAllDetailDefaultProductPrivacy,
+} from "@/api/account-server";
+
 import { expect, test } from "@playwright/test";
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
@@ -100,18 +105,33 @@ test.describe("Organisation capabilities", () => {
     });
   });
 
-  test("organisation members require ownership or platform authority", () => {
+  test("organisation members follow the generated membership authority rather than ownership", () => {
     expect(evaluateOrganisationMembershipCapability(organisationFacts({}))).toEqual({
       status: "enabled",
     });
+    // The generated add and remove endpoints accept a caller in the organisation, so a member is
+    // not shown a disabled control with a reason the server would not have given.
+    expect(
+      evaluateOrganisationMembershipCapability(organisationFacts({ username: member })),
+    ).toEqual({ status: "enabled" });
+    expect(
+      evaluateOrganisationMembershipCapability(
+        organisationFacts({ callerIsMember: false, username: owner }),
+      ),
+    ).toEqual({ status: "enabled" });
     expect(
       evaluateOrganisationMembershipCapability(
         organisationFacts({ isPlatformAdministrator: true, username: stranger }),
       ),
     ).toEqual({ status: "enabled" });
     expect(
-      evaluateOrganisationMembershipCapability(organisationFacts({ username: member })),
-    ).toEqual({ reason: "You must be the owner of this organisation.", status: "disabled" });
+      evaluateOrganisationMembershipCapability(
+        organisationFacts({ callerIsMember: false, username: stranger }),
+      ),
+    ).toEqual({
+      reason: "You must be a member or the owner of this organisation.",
+      status: "disabled",
+    });
   });
 
   test("default organisation membership and privacy are owned by the platform", () => {
@@ -404,6 +424,18 @@ test.describe("Default, inherited, and effective product privacy", () => {
       "Default Public",
       "Default Private",
     ]);
+  });
+
+  /**
+   * One type answers for both ends of the ancestry only while both generated resources declare the
+   * same values. An organisation value the unit union lacks would narrow that type silently rather
+   * than fail to compile, so the agreement is asserted here instead.
+   */
+  test("the organisation and unit resources declare the same generated privacy values", () => {
+    expect(Object.values(OrganisationAllDetailDefaultProductPrivacy)).toEqual(
+      Object.values(UnitAllDetailDefaultProductPrivacy),
+    );
+    expect(Object.values(OrganisationAllDetailDefaultProductPrivacy)).toEqual(productPrivacyValues);
   });
 
   /**

@@ -24,10 +24,14 @@ type AdministrationResourceRoute = Exclude<
   | { kind: "subscriptions" }
   | { kind: "usage-inventory" }
 >;
-type SubscriptionRoute = Extract<AdministrationResourceRoute, { kind: "subscription" }>;
+type SubscriptionDetailRoute = Extract<AdministrationResourceRoute, { kind: "subscription" }>;
+/** Charges and Organisation & access own their own views, so only Usage & inventory reaches this. */
 type ReadOnlyResourceRoute = Exclude<
   AdministrationResourceRoute,
-  SubscriptionRoute | { collection: "products" } | { kind: "organisation-access-resource" }
+  | SubscriptionDetailRoute
+  | { collection: "products" }
+  | { kind: "charge-resource" }
+  | { kind: "organisation-access-resource" }
 >;
 
 const taskTitles = {
@@ -169,7 +173,7 @@ const UsageInventoryIndex = () => {
 
 const ReadOnlyResourceDetails = ({ route }: { route: ReadOnlyResourceRoute }) => {
   const { organisations, units } = useAccessIndex();
-  const task = route.kind === "charge-resource" ? "Charges" : "Usage & inventory";
+  const task = taskTitles["usage-inventory"];
 
   if (route.collection === "organisations") {
     const organisation = organisations.find((candidate) => candidate.id === route.resourceId);
@@ -198,7 +202,7 @@ const ReadOnlyResourceDetails = ({ route }: { route: ReadOnlyResourceRoute }) =>
 };
 
 /** A product's charge ledger is answered by Charges, so only Subscriptions reaches this view. */
-const ProductResourceDetails = ({ route }: { route: SubscriptionRoute }) => {
+const SubscriptionDetails = ({ route }: { route: SubscriptionDetailRoute }) => {
   const { data } = useGetProductsSuspense();
   const subscription = data.products.find((candidate) => candidate.product.id === route.productId);
   return (
@@ -222,7 +226,7 @@ const ResourceDetails = ({ route }: { route: AdministrationResourceRoute }) => {
     return <ChargeLedger route={route} />;
   }
   if (route.kind === "subscription") {
-    return <ProductResourceDetails route={route} />;
+    return <SubscriptionDetails route={route} />;
   }
   return <ReadOnlyResourceDetails route={route} />;
 };

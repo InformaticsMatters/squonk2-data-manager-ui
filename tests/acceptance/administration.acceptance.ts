@@ -372,6 +372,7 @@ test("unit members and privacy are managed on the unit resource", async ({ page 
   await login(page, path, testInfo);
 
   const colleague = `${subject}-observer`;
+  await expect(page.getByLabel(`Remove ${subject}`, { exact: true })).toHaveCount(0);
   await page.getByLabel(`Remove ${colleague}`).click();
   await expect(page.getByText(`Member ${colleague} removed`)).toBeVisible();
   await expect(page.getByRole("button", { name: colleague, exact: true })).toHaveCount(0);
@@ -417,7 +418,12 @@ test("organisation members and default privacy are managed on the organisation r
   await login(page, path, testInfo);
 
   const colleague = `${subject}-observer`;
-  await expect(page.getByRole("button", { name: subject, exact: true })).toBeVisible();
+  // The list states the organisation's real membership, the caller included, and the owner it
+  // cannot give up: the generated resource keeps its owner, so that member is displayed without any
+  // control that offers to remove it.
+  await expect(page.getByRole("main").getByText(subject, { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: subject, exact: true })).toHaveCount(0);
+  await expect(page.getByLabel(`Remove ${subject}`, { exact: true })).toHaveCount(0);
   await page.getByLabel(`Remove ${colleague}`).click();
   await expect(page.getByText(`Member ${colleague} removed`)).toBeVisible();
   await expect(page.getByRole("button", { name: colleague, exact: true })).toHaveCount(0);
@@ -620,13 +626,14 @@ test("read-only callers keep every action explained", async ({ page, request }, 
     `${acceptanceUrls.app}administration/organisation-access/organisations/${fixtureIds.organisation}`,
   );
   await expect(page.getByRole("button", { name: "Create unit" })).toBeDisabled();
-  // Unit creation and the organisation's own privacy require the same relationship; membership
-  // requires ownership, so a readable-only caller is told exactly what each action needs.
+  // Unit creation, the organisation's own privacy, and its membership all need the relationship the
+  // generated endpoints need, so a readable-only caller is told the same thing about each of them
+  // rather than a stricter rule for one.
   await expect(
     page.getByText("You must be a member or the owner of this organisation."),
-  ).toHaveCount(2);
+  ).toHaveCount(3);
   await expect(page.getByRole("combobox", { name: "Default project privacy" })).toBeDisabled();
-  await expect(page.getByText("You must be the owner of this organisation.")).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "Organisation members" })).toBeDisabled();
 });
 
 test("read-only reports link to the resource that owns their mutations", async ({

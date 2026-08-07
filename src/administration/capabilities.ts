@@ -1,6 +1,10 @@
 import { type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
 
-import { type ProductPrivacy, productPrivacyIsEnforced, productPrivacyLabel } from "./privacy";
+import {
+  enforcedProductPrivacyConstraint,
+  type ProductPrivacy,
+  productPrivacyIsEnforced,
+} from "./privacy";
 
 export type AdministrationCapability =
   | { status: "disabled"; reason: string }
@@ -78,25 +82,6 @@ export const evaluateOrganisationCreationCapability = (
     ? { status: "enabled" }
     : { status: "hidden" };
 
-/** Membership of an organisation is granted by its owner, which the platform may act as. */
-export const evaluateOrganisationMembershipCapability = (
-  facts: OrganisationCapabilityFacts,
-): AdministrationCapability => {
-  if (!factsAreConfirmed(facts)) {
-    return unconfirmed;
-  }
-  if (facts.isDefaultOrganisation) {
-    return { status: "disabled", reason: "The default organisation does not have members." };
-  }
-  if (
-    facts.caller.isPlatformAdministrator ||
-    facts.organisation.owner_id === facts.caller.username
-  ) {
-    return { status: "enabled" };
-  }
-  return { status: "disabled", reason: "You must be the owner of this organisation." };
-};
-
 /** What the generated organisation endpoints accept from a member, an owner, or the platform. */
 const evaluateOrganisationAuthority = (
   facts: OrganisationCapabilityFacts,
@@ -108,8 +93,24 @@ const evaluateOrganisationAuthority = (
     : { status: "disabled", reason: "You must be a member or the owner of this organisation." };
 
 /**
- * The generated organisation resource is patched by a member, its owner, or the platform, so the
- * organisation's default privacy follows a wider authority than its membership does.
+ * The generated organisation user endpoints add and remove a member for a caller who is in the
+ * organisation or an administrator, so membership follows the same authority its patch does rather
+ * than a stricter ownership rule the server would not have enforced.
+ */
+export const evaluateOrganisationMembershipCapability = (
+  facts: OrganisationCapabilityFacts,
+): AdministrationCapability => {
+  if (!factsAreConfirmed(facts)) {
+    return unconfirmed;
+  }
+  return facts.isDefaultOrganisation
+    ? { status: "disabled", reason: "The default organisation does not have members." }
+    : evaluateOrganisationAuthority(facts);
+};
+
+/**
+ * The generated organisation resource is patched by a member, its owner, or the platform, which is
+ * the same authority its membership endpoints require.
  */
 export const evaluateOrganisationPrivacyCapability = (
   facts: OrganisationCapabilityFacts,
@@ -197,10 +198,7 @@ export const evaluateUnitPrivacyCapability = (
   }
   return facts.organisationPrivacy !== undefined &&
     productPrivacyIsEnforced(facts.organisationPrivacy)
-    ? {
-        status: "enabled",
-        reason: `The organisation requires ${productPrivacyLabel(facts.organisationPrivacy)}, so a value that conflicts with it is rejected.`,
-      }
+    ? { status: "enabled", reason: enforcedProductPrivacyConstraint(facts.organisationPrivacy) }
     : { status: "enabled" };
 };
 

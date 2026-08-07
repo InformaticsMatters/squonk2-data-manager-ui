@@ -7,8 +7,9 @@ import { capitalise, shoutSnakeToLowerCase } from "../utils/app/language";
 
 /**
  * Organisations and units declare the same generated privacy values, so one type answers for both
- * ends of the ancestry. Taking it from both generated unions means a future spec that separates
- * them stops compiling here rather than offering a unit's values on an organisation.
+ * ends of the ancestry. Taking it from both generated unions means a unit value the organisation
+ * does not declare stops compiling below. The opposite divergence narrows the intersection
+ * silently, so the privacy contract asserts that the two generated unions still agree.
  */
 export type ProductPrivacy = OrganisationAllDetailDefaultProductPrivacy &
   UnitAllDetailDefaultProductPrivacy;
@@ -27,6 +28,13 @@ export const productPrivacyIsEnforced = (privacy: ProductPrivacy): boolean =>
 
 export const productPrivacyIsPrivate = (privacy: ProductPrivacy): boolean =>
   privacy === "ALWAYS_PRIVATE" || privacy === "DEFAULT_PRIVATE";
+
+/**
+ * What an organisation that requires a privacy means for a unit being changed under it. Privacy
+ * wording has one owner, so a capability and an explanation never drift apart about the same rule.
+ */
+export const enforcedProductPrivacyConstraint = (organisation: ProductPrivacy): string =>
+  `The organisation requires ${productPrivacyLabel(organisation)}, so a value that conflicts with it is rejected.`;
 
 /**
  * What an organisation's own default does, stated as the generated resource states it: a new value

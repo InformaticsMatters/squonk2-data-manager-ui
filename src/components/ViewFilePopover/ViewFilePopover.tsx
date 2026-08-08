@@ -10,13 +10,18 @@ export interface ViewFilePopoverProps {
    */
   fileName: string;
   /**
-   * Path to file without leading "/"
+   * Absolute path of the directory holding the file, inside the project that owns it.
    */
-  path?: string;
+  path: string;
+  /**
+   * ID of the project that owns the file. Always given by the caller, so a viewer can never open a
+   * file of a project other than the one displaying it.
+   */
+  projectId: string;
 }
 
-export const ViewFilePopover = ({ fileName, path }: ViewFilePopoverProps) => {
-  const popupState = usePopupState({ variant: "popover", popupId: `file-viewers-${fileName}` });
+export const ViewFilePopover = ({ fileName, path, projectId }: ViewFilePopoverProps) => {
+  const popupState = usePopupState({ popupId: `file-viewers-${fileName}`, variant: "popover" });
 
   return (
     <>
@@ -25,10 +30,15 @@ export const ViewFilePopover = ({ fileName, path }: ViewFilePopoverProps) => {
       </Link>
       <Popover
         {...bindPopover(popupState)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        transformOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+        transformOrigin={{ horizontal: "center", vertical: "top" }}
       >
-        <FileViewersList fileName={fileName} path={path} onClick={() => popupState.close()} />
+        <FileViewersList
+          fileName={fileName}
+          path={path}
+          projectId={projectId}
+          onClick={() => popupState.close()}
+        />
       </Popover>
     </>
   );

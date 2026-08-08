@@ -9,6 +9,7 @@ import { NextLink } from "../../../components/NextLink";
 import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkIconButton";
 import { DeleteProductButton } from "../../../components/products/DeleteProductButton";
 import { CreateProjectButton } from "../../../components/projects/CreateProject/CreateProjectButton";
+import { projectLinks } from "../../../projects/routes";
 import { formatTierString } from "../../../utils/app/products";
 import { getSharedColumns } from "../columns";
 
@@ -32,10 +33,7 @@ export const ProjectProductTable = ({ products }: ProjectProductTableProps) => {
           const product = row.original;
           if (product.claim?.id) {
             return (
-              <NextLink
-                component="a"
-                href={{ pathname: "/project", query: { project: product.claim.id } }}
-              >
+              <NextLink component="a" href={projectLinks.files(product.claim.id) as never}>
                 {product.claim.name}
               </NextLink>
             );

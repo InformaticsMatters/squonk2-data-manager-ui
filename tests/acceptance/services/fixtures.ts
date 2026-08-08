@@ -105,6 +105,67 @@ export type ScenarioProfile = (typeof scenarioProfiles)[number];
 export const isScenarioProfile = (value: string): value is ScenarioProfile =>
   scenarioProfiles.includes(value as ScenarioProfile);
 
+/** One file a project holds, in the shape the generated `FilePathFile` resource declares. */
+export type FixtureProjectFile = {
+  file_id?: string;
+  file_name: string;
+  immutable?: boolean;
+  mime_type?: string;
+  owner: string;
+  /** Absolute path of the directory holding it. */
+  path: string;
+  size: number;
+};
+
+/** One project's filesystem, held flat so a listing is derived rather than nested and copied. */
+export type FixtureProjectFileSystem = { directories: string[]; files: FixtureProjectFile[] };
+
+const createProjectFileSystems = (
+  subject: string,
+): Record<string, FixtureProjectFileSystem | undefined> => ({
+  [fixtureIds.project]: {
+    directories: ["/inputs", "/inputs/ligands"],
+    files: [
+      { file_name: "notes.txt", mime_type: "text/plain", owner: subject, path: "/", size: 12 },
+      {
+        file_id: "file-11111111-1111-4111-8111-111111111111",
+        file_name: "acceptance-dataset-v2.sdf",
+        immutable: true,
+        mime_type: "chemical/x-mdl-sdfile",
+        owner: subject,
+        path: "/",
+        size: 2048,
+      },
+      {
+        file_name: "poses.sdf",
+        mime_type: "chemical/x-mdl-sdfile",
+        owner: subject,
+        path: "/inputs",
+        size: 512,
+      },
+      {
+        file_name: "poses.schema.json",
+        mime_type: "application/schema+json",
+        owner: subject,
+        path: "/inputs",
+        size: 64,
+      },
+    ],
+  },
+  [fixtureIds.screeningProject]: {
+    directories: [],
+    files: [
+      {
+        file_name: "screening-library.sdf",
+        mime_type: "chemical/x-mdl-sdfile",
+        owner: subject,
+        path: "/",
+        size: 1024,
+      },
+    ],
+  },
+});
+
 export const createScenarioFixtures = (subject: string, profile: ScenarioProfile = "default") => {
   const colleague = `${subject}-observer`;
   const readOnly = profile === "read-only";
@@ -288,6 +349,12 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
 
   return {
     accountServerVersion: AppApiStateGetVersionResponse.parse({ version: "4.7.0-acceptance" }),
+    /**
+     * The files each project holds, as a mutable tree the fixture services change in place, so a
+     * created directory, an upload, a rename, and a deletion are all observable in the next listing
+     * exactly as the Data Manager makes them.
+     */
+    projectFiles: createProjectFileSystems(subject),
     dataset: AppApiDatasetGetResponse.parse({
       count: 3,
       datasets: [

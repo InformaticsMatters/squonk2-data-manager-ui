@@ -2,6 +2,7 @@ import {
   type ProductDmProjectTier,
   type UnitAllDetailDefaultProductPrivacy,
 } from "@/api/account-server";
+import { type FilesGetResponse } from "@/api/data-manager";
 import {
   AppApiDatasetPostDatasetVersionMetaBody,
   AppApiDatasetPostDatasetVersionMetaResponse,
@@ -13,7 +14,12 @@ import { setTimeout as delay } from "node:timers/promises";
 import { z } from "zod";
 
 import { acceptanceEnvironment, acceptanceUrls } from "../environment";
-import { datasetContentFixtures, fixtureIds, isScenarioProfile } from "./fixtures";
+import {
+  datasetContentFixtures,
+  fixtureIds,
+  type FixtureProjectFileSystem,
+  isScenarioProfile,
+} from "./fixtures";
 import { getScenario, type RequestRecord, resetScenario, type ScenarioState } from "./state";
 
 const issuer = acceptanceEnvironment.KEYCLOAK_URL;
@@ -137,6 +143,54 @@ const projectMutationFailure = (state: ScenarioState, response: ServerResponse) 
       ? state.fixtures.failures.forbidden
       : state.fixtures.failures.serverError,
   );
+
+/** The filesystem one project holds. A project the fixtures gave no files starts out empty. */
+const projectFileSystem = (state: ScenarioState, projectId: string): FixtureProjectFileSystem =>
+  (state.fixtures.projectFiles[projectId] ??= { directories: [], files: [] });
+
+/** The directory holding one absolute path; the root holds itself. */
+const holdingDirectory = (path: string) => {
+  const parts = path.split("/").filter(Boolean);
+  return parts.length <= 1 ? "/" : `/${parts.slice(0, -1).join("/")}`;
+};
+
+const nameOf = (path: string) => path.split("/").findLast((part) => part !== "") ?? "";
+
+/** One directory listing, in the shape the generated `FilesGetResponse` declares. */
+const listProjectFiles = (
+  system: FixtureProjectFileSystem,
+  projectId: string,
+  path: string,
+): FilesGetResponse => {
+  const held = system.files.filter((file) => file.path === path);
+  return {
+    count: held.length,
+    files: held.map(({ path: _path, size, ...file }) => ({
+      ...file,
+      stat: { modified: "2026-01-02T03:04:05Z", size },
+    })),
+    path,
+    paths: system.directories
+      .filter((directory) => holdingDirectory(directory) === path)
+      .map((directory) => nameOf(directory)),
+    project_id: projectId,
+  };
+};
+
+/**
+ * One named field of a multipart body. An upload's destination is carried in the body rather than
+ * the URL, so a test can only prove where a file landed if the fixture reads it from there too.
+ */
+const multipartField = (body: string, name: string) => {
+  const part = body
+    .split(/--[^\r\n]+\r\n/u)
+    .find((candidate) => candidate.includes(`name="${name}"`));
+  return part?.split("\r\n\r\n")[1]?.replace(/\r\n$/u, "");
+};
+
+/** Everything at or beneath one directory, which is what deleting or moving it must carry. */
+const beneath = (path: string, candidate: string) =>
+  candidate === path || candidate.startsWith(`${path}/`);
 
 /** The result tasks a project owns; a project that ran none owns an empty collection. */
 const resultTasksOf = (state: ScenarioState, projectId: string) =>
@@ -270,13 +324,34 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     return response.end();
   }
   const url = new URL(request.url ?? "/", acceptanceEnvironment.DATA_MANAGER_API_SERVER);
-  const { state } = record(request, url);
+  const { state, subject } = record(request, url);
   const segments = url.pathname.split("/").filter(Boolean);
   if (url.pathname === "/dataset" && request.method === "GET") {
     if (state.datasetFailure) {
       return json(response, state.datasetFailure, state.fixtures.failures.serverError);
     }
     return json(response, 200, state.fixtures.dataset);
+  }
+  // A dataset made from a project file. The project, path, file, and billing unit are all sent, so
+  // a request that named the wrong project or no unit is recognisable rather than silently served.
+  if (url.pathname === "/dataset" && request.method === "PUT") {
+    const form = new URLSearchParams((await readBody(request)).toString());
+    if (state.datasetMutationFailure) {
+      return json(response, state.datasetMutationFailure, state.fixtures.failures.forbidden);
+    }
+    const projectId = form.get("project_id") ?? "";
+    const system = projectFileSystem(state, projectId);
+    const held = system.files.find(
+      (file) => file.path === form.get("path") && file.file_name === form.get("file_name"),
+    );
+    if (!held || !form.get("unit_id")) {
+      return json(response, 400, { error: "fixture-dataset-source-not-found" });
+    }
+    return json(response, 201, {
+      dataset_id: fixtureIds.dataset,
+      dataset_version: 1,
+      task_id: fixtureIds.task,
+    });
   }
   if (url.pathname === "/dataset" && request.method === "POST") {
     state.upload = {
@@ -358,6 +433,156 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       state.fixtures.dataset.datasets[0].editors = editors.filter((editor) => editor !== username);
     }
     return json(response, 204, undefined);
+  }
+  // A project's files. Every read and every change names the project and the path it acts on, so a
+  // request that named neither, or named another project, is answered as such rather than served
+  // from whichever project the fixtures list first.
+  if (url.pathname === "/file" && request.method === "GET") {
+    const projectId = url.searchParams.get("project_id");
+    const path = url.searchParams.get("path") ?? "/";
+    if (!projectId) {
+      return json(response, 400, { error: "fixture-files-project-required" });
+    }
+    if (state.filesFailure) {
+      return json(
+        response,
+        state.filesFailure,
+        state.filesFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    const system = projectFileSystem(state, projectId);
+    if (path !== "/" && !system.directories.includes(path)) {
+      return json(response, 404, { error: "fixture-path-not-found" });
+    }
+    return json(response, 200, listProjectFiles(system, projectId, path));
+  }
+  if (url.pathname === "/file" && request.method === "DELETE") {
+    const projectId = url.searchParams.get("project_id") ?? "";
+    const path = url.searchParams.get("path") ?? "/";
+    const fileName = url.searchParams.get("file");
+    if (state.fileMutationFailure) {
+      return json(
+        response,
+        state.fileMutationFailure,
+        state.fileMutationFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    const system = projectFileSystem(state, projectId);
+    system.files = system.files.filter(
+      (file) => !(file.path === path && file.file_name === fileName && !file.file_id),
+    );
+    return json(response, 204, undefined);
+  }
+  if (url.pathname === "/file/move" && request.method === "PUT") {
+    const projectId = url.searchParams.get("project_id") ?? "";
+    if (state.fileMutationFailure) {
+      return json(response, state.fileMutationFailure, state.fixtures.failures.serverError);
+    }
+    const system = projectFileSystem(state, projectId);
+    const moved = system.files.find(
+      (file) =>
+        file.path === url.searchParams.get("src_path") &&
+        file.file_name === url.searchParams.get("file"),
+    );
+    if (!moved) {
+      return json(response, 404, { error: "fixture-file-not-found" });
+    }
+    moved.path = url.searchParams.get("dst_path") ?? "/";
+    moved.file_name = url.searchParams.get("dst_file") ?? moved.file_name;
+    return json(response, 204, undefined);
+  }
+  if (segments[0] === "file" && segments.length === 2 && request.method === "DELETE") {
+    if (state.fileMutationFailure) {
+      return json(response, state.fileMutationFailure, state.fixtures.failures.forbidden);
+    }
+    // A managed file is detached from whichever project holds it, and the dataset it came from is
+    // untouched, exactly as the Data Manager treats it.
+    for (const system of Object.values(state.fixtures.projectFiles)) {
+      if (system) {
+        system.files = system.files.filter((file) => file.file_id !== segments[1]);
+      }
+    }
+    return json(response, 204, undefined);
+  }
+  if (url.pathname === "/path" && (request.method === "PUT" || request.method === "DELETE")) {
+    const projectId = url.searchParams.get("project_id") ?? "";
+    const path = url.searchParams.get("path") ?? "";
+    if (state.fileMutationFailure) {
+      return json(
+        response,
+        state.fileMutationFailure,
+        state.fileMutationFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    const system = projectFileSystem(state, projectId);
+    if (request.method === "PUT") {
+      if (system.directories.includes(path)) {
+        return json(response, 409, { error: "fixture-path-exists" });
+      }
+      system.directories.push(path);
+      return json(response, 201, undefined);
+    }
+    system.directories = system.directories.filter((directory) => !beneath(path, directory));
+    system.files = system.files.filter((file) => !beneath(path, file.path));
+    return json(response, 204, undefined);
+  }
+  if (url.pathname === "/path/move" && request.method === "PUT") {
+    const projectId = url.searchParams.get("project_id") ?? "";
+    const source = url.searchParams.get("src_path") ?? "";
+    const destination = url.searchParams.get("dst_path") ?? "";
+    if (state.fileMutationFailure) {
+      return json(response, state.fileMutationFailure, state.fixtures.failures.serverError);
+    }
+    const system = projectFileSystem(state, projectId);
+    if (!system.directories.includes(source)) {
+      return json(response, 404, { error: "fixture-path-not-found" });
+    }
+    const rewrite = (path: string) =>
+      beneath(source, path) ? destination + path.slice(source.length) : path;
+    system.directories = system.directories.map((directory) => rewrite(directory));
+    for (const file of system.files) {
+      file.path = rewrite(file.path);
+    }
+    return json(response, 204, undefined);
+  }
+  if (segments[0] === "project" && segments.length === 3 && segments[2] === "file") {
+    const projectId = segments[1];
+    const system = projectFileSystem(state, projectId);
+    if (request.method === "PUT") {
+      const body = (await readBody(request)).toString();
+      if (state.fileMutationFailure) {
+        return json(
+          response,
+          state.fileMutationFailure,
+          state.fileMutationFailure === 403
+            ? state.fixtures.failures.forbidden
+            : state.fixtures.failures.serverError,
+        );
+      }
+      // The upload is multipart, so the two fields the destination depends on are read out of it
+      // rather than assumed: a file must land in the project and directory that were sent.
+      const fileName = multipartField(body, "as_filename") ?? "uploaded";
+      const path = multipartField(body, "path") ?? "/";
+      system.files = [
+        ...system.files.filter((file) => !(file.path === path && file.file_name === fileName)),
+        { file_name: fileName, mime_type: "text/plain", owner: subject, path, size: 4 },
+      ];
+      return json(response, 201, undefined);
+    }
+    const fileName = url.searchParams.get("file") ?? "";
+    const path = url.searchParams.get("path") ?? "/";
+    const held = system.files.find((file) => file.path === path && file.file_name === fileName);
+    if (!held) {
+      return json(response, 404, { error: "fixture-file-not-found" });
+    }
+    response.writeHead(200, { "content-type": "application/octet-stream" });
+    return response.end(`acceptance ${fileName}`);
   }
   if (url.pathname === "/project") {
     if (request.method === "POST") {
@@ -1309,6 +1534,26 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   if (datasetFailureControl && request.method === "DELETE") {
     getScenario(subject)[datasetFailureControl.stateKey] = undefined;
     return json(response, 200, { subject });
+  }
+  const fileFailureControls = [
+    { pathSuffix: "/files-failure", stateKey: "filesFailure" },
+    { pathSuffix: "/file-mutation-failure", stateKey: "fileMutationFailure" },
+  ] as const;
+  const fileFailureControl = fileFailureControls.find(({ pathSuffix }) =>
+    url.pathname.endsWith(pathSuffix),
+  );
+  if (fileFailureControl) {
+    const state = getScenario(subject);
+    if (request.method === "DELETE") {
+      state[fileFailureControl.stateKey] = undefined;
+      return json(response, 200, { subject });
+    }
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-file-failure", status });
+    }
+    state[fileFailureControl.stateKey] = status as 403 | 503;
+    return json(response, 200, { subject, [fileFailureControl.stateKey]: status });
   }
   if (url.pathname.endsWith("/dataset-mutation-failure") && request.method === "POST") {
     const status = Number(url.searchParams.get("status"));

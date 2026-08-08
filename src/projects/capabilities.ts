@@ -211,10 +211,39 @@ export const evaluateProjectDeletionCapability = evaluateAdministratorAction(
 );
 
 /** Every linked subscription accounts for storage, so file changes need no instance accounting. */
-export const evaluateProjectFileMutationCapability = evaluateSpendingAction({
+const evaluateFileSpend = evaluateSpendingAction({
   limitReason: "This project's subscription is at its coin limit, so files cannot be changed.",
   requirement: "You must be a project editor or administrator to change project files.",
 });
+
+/**
+ * What a file action reads in addition to the project's own facts: whether the directory listing it
+ * is acting on could last be established. No file action reads a selected or current project, and
+ * none reads a path other than the one Files itself is displaying.
+ */
+export type ProjectFileFacts = ProjectCapabilityFacts & {
+  /** `stale` for a listing a failed refresh left on screen. */
+  content?: "current" | "stale";
+};
+
+const staleDirectoryReason =
+  "This directory could not be refreshed, so changing its contents cannot be established as safe.";
+
+/**
+ * Changing files of the project in the URL. A confirmed lack of authority is the most useful
+ * explanation, so it is reported first; a listing that merely could not be refreshed then disables
+ * the change rather than leaving it offered, because a file the caller cannot see the current state
+ * of is a file they cannot safely delete, rename, or overwrite.
+ */
+export const evaluateProjectFileMutationCapability = (
+  facts: ProjectFileFacts,
+): ProjectCapability => {
+  const capability = evaluateFileSpend(facts);
+  if (capability.status === "disabled" || facts.content !== "stale") {
+    return capability;
+  }
+  return { status: "disabled", reason: staleDirectoryReason };
+};
 
 export const evaluateProjectExecutionCapability = evaluateSpendingAction({
   limitReason: "This project's subscription is at its coin limit, so work cannot be run.",

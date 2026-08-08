@@ -23,6 +23,10 @@ export type ScenarioState = {
   datasetContentFailure?: 403 | 429 | 503;
   datasetFailure?: 429 | 503;
   datasetMutationFailure?: 403 | 503;
+  /** A refused or failing directory listing, so a cleared listing and a stale one are told apart. */
+  filesFailure?: 403 | 503;
+  /** A refused or failing file change, so a rejection and a transport failure are told apart. */
+  fileMutationFailure?: 403 | 503;
   deletionPollingIndexes: Map<string, number>;
   deletionTaskVersions: Map<string, number>;
   deletionExitCode?: number;

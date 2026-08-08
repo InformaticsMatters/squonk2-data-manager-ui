@@ -123,10 +123,10 @@ test.describe("Dataset version viewer cutover", () => {
     expect(handwrittenMatching(dataManagerProxy)).toEqual([
       "components/ViewFilePopover/BrowserViewerListItem.tsx", // project file
       "datasets/routes.ts", // dataset version — the only owner
-      "features/ProjectTable/FileActions.tsx", // project file
       "features/SDFViewer/useGetSDFSchema.ts", // project file
       "pages/api/dm-api/[...dmProxy].ts", // the proxy itself
       "pages/api/viewer-proxy/[...viewerProxy].ts", // the proxy itself
+      "projects/ProjectFileActions.tsx", // project file
       "utils/app/routes.ts", // project file builder
     ]);
   });

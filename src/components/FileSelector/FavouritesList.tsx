@@ -1,7 +1,7 @@
 import { FolderSpecialRounded as FolderSpecialRoundedIcon } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 
-import { useSelectedFiles } from "../../state/fileSelection";
+import { useProjectFileFavourites } from "../../projects/fileFavourites";
 import { FileListItem } from "./FileListItem";
 import { ScrollList } from "./ScrollList";
 import { type SharedProps } from "./types";
@@ -18,14 +18,14 @@ export const FavouritesList = ({
   multiple,
   onSelect,
 }: SharedProps) => {
-  const { selectedFiles } = useSelectedFiles(projectId);
+  const { favourites } = useProjectFileFavourites(projectId);
 
-  const selectedFilesToDisplay = selectedFiles
-    ?.filter((file) => file.type.includes(targetType))
+  const selectedFilesToDisplay = favourites
+    .filter((file) => file.type.includes(targetType))
     .filter((file) => !file.mimeType || mimeTypes?.includes(file.mimeType))
     .toSorted((fileA, fileB) => fileA.path.localeCompare(fileB.path));
 
-  return selectedFilesToDisplay?.length ? (
+  return selectedFilesToDisplay.length > 0 ? (
     <ScrollList dense>
       {selectedFilesToDisplay.map(({ path: fullPath, type, mimeType }) => (
         <FileListItem

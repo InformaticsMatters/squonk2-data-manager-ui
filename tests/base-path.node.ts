@@ -52,11 +52,15 @@ test.describe("base path utilities", () => {
   test("project URLs respect base path and origin", () => {
     const restoreLocation = withMockedLocation("https://example.org");
 
+    const projectId = "project-33333333-3333-3333-3333-333333333333";
+
     process.env.NEXT_PUBLIC_BASE_PATH = "/data-manager-ui";
-    expect(projectURL("1234")).toBe("https://example.org/data-manager-ui/project?project=1234");
+    expect(projectURL(projectId)).toBe(
+      `https://example.org/data-manager-ui/projects/${projectId}/files`,
+    );
 
     process.env.NEXT_PUBLIC_BASE_PATH = "";
-    expect(projectURL("abcd")).toBe("https://example.org/project?project=abcd");
+    expect(projectURL(projectId)).toBe(`https://example.org/projects/${projectId}/files`);
 
     restoreLocation();
   });

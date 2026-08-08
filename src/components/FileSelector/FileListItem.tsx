@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from "@mui/material";
 
-import { FavouriteButton } from "../../features/ProjectTable/buttons/FavouriteButton";
+import { ProjectFileFavouriteButton } from "../../projects/ProjectFileFavouriteButton";
 import { type SharedProps } from "./types";
 
 export interface FileListItemProps extends Pick<SharedProps, "projectId"> {
@@ -85,7 +85,7 @@ export const FileListItem = ({
       <Tooltip title={title}>
         <ListItemText id={labelId} primary={title} slotProps={{ primary: { noWrap: true } }} />
       </Tooltip>
-      <FavouriteButton fullPath={fullPath} mimeType={mimeType} projectId={projectId} type={type} />
+      <ProjectFileFavouriteButton file={{ mimeType, path: fullPath, type }} projectId={projectId} />
     </>
   );
   if (onClick) {

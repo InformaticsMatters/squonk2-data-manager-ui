@@ -44,11 +44,6 @@ export const Footer = () => {
                   Datasets
                 </Link>
               </ListItem>
-              <ListItem sx={itemStyles}>
-                <Link component={A} href={{ pathname: "/project" }}>
-                  Project
-                </Link>
-              </ListItem>
             </List>
           </Grid>
           <Grid size={{ sm: 3, xs: 6 }}>

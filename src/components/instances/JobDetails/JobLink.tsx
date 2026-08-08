@@ -1,8 +1,8 @@
 import { Folder } from "@mui/icons-material";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import A from "next/link";
-import { useRouter } from "next/router";
 
+import { projectLinks } from "../../../projects/routes";
 import { ViewFilePopover } from "../../ViewFilePopover/ViewFilePopover";
 
 export interface JobLinkProps {
@@ -15,15 +15,12 @@ export interface JobLinkProps {
  * Processes provided path. Returns the path in the form of an array of path parts where '.' or
  * double '/' are not present.
  */
-const getPath = (contains: string) => {
-  const path = contains
+const getPath = (contains: string) =>
+  contains
     .split("/")
     .filter((part) => part !== ".")
     // Filter empty parts
     .filter((part) => !!part);
-
-  return path;
-};
 
 /**
  * Returns a resolved path, which points to the last directory before a glob path part was
@@ -40,44 +37,39 @@ const getResolvedPath = (path: string[]) => {
     return !containsGlob;
   });
 
-  return { resolvedPath, containsGlob };
+  return { containsGlob, resolvedPath };
 };
 
-/**
- * Gets the file name and the path to the file from provided path.
- */
-const getFilePathAndName = (path: string[]) => {
-  const filePath = path.slice(0, -1);
-  const fileName = path.at(-1) as string;
-  return { filePath, fileName };
-};
+/** The absolute Files path one resolved directory is addressed by. */
+const directoryPath = (parts: string[]) => (parts.length === 0 ? "/" : `/${parts.join("/")}`);
 
 /**
- * Creates a link to a task's input or output depending on the type and path.
+ * Creates a link to a task's input or output depending on the type and path. The link always
+ * addresses the project that owns the execution, and carries nothing but the path Files owns, so
+ * locating a file cannot change which project is displayed or copy unrelated query state into it.
  */
 export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps) => {
-  const { query } = useRouter();
   const path = getPath(originalPath);
-  const { resolvedPath, containsGlob } = getResolvedPath(path);
+  const { containsGlob, resolvedPath } = getResolvedPath(path);
   const displayPath = path.join("/");
 
   if (isFile && !containsGlob) {
-    const { filePath, fileName } = getFilePathAndName(resolvedPath);
+    const fileName = resolvedPath.at(-1) as string;
+    const filePath = directoryPath(resolvedPath.slice(0, -1));
 
     return (
       <Box sx={{ alignItems: "center", display: "flex", gap: 1, wordBreak: "break-all" }}>
         <Tooltip title="Locate file in project">
-          <A
-            passHref
-            href={{ pathname: "/project", query: { ...query, project: projectId, path: filePath } }}
+          <IconButton
+            component={A}
+            href={projectLinks.files(projectId, { path: filePath }) as never}
+            size="large"
           >
-            <IconButton size="large">
-              <Folder color="primary" fontSize="small" />
-            </IconButton>
-          </A>
+            <Folder color="primary" fontSize="small" />
+          </IconButton>
         </Tooltip>
 
-        <ViewFilePopover fileName={fileName} path={filePath.join("/")} />
+        <ViewFilePopover fileName={fileName} path={filePath} projectId={projectId} />
       </Box>
     );
   }
@@ -85,17 +77,13 @@ export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps)
   return (
     <Box sx={{ alignItems: "center", display: "flex", gap: 1 }}>
       <Tooltip title="Show directory in project">
-        <A
-          passHref
-          href={{
-            pathname: "/datasets",
-            query: { ...query, project: projectId, path: resolvedPath },
-          }}
+        <IconButton
+          component={A}
+          href={projectLinks.files(projectId, { path: directoryPath(resolvedPath) }) as never}
+          size="small"
         >
-          <IconButton size="small">
-            <Folder color="primary" fontSize="small" />
-          </IconButton>
-        </A>
+          <Folder color="primary" fontSize="small" />
+        </IconButton>
       </Tooltip>
 
       <Typography component="span">{displayPath}</Typography>

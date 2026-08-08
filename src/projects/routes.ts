@@ -19,7 +19,6 @@ import {
 import {
   assertRouteValue,
   buildHref,
-  isFileSystemPath,
   isSearch,
   localNotFoundRoute,
   notFoundRoute,
@@ -31,6 +30,7 @@ import {
   type RouteParseResult,
   validRoute,
 } from "../routing/routeContract";
+import { canonicalFilesystemPath, filesystemRoot } from "./fileFacts";
 
 const viewers = ["text", "sdf", "browser"] as const;
 const runFilterTypes = ["workflow", "application", "job"] as const;
@@ -169,6 +169,45 @@ const filterQuery = <TValue extends string>(
   order: readonly TValue[],
 ) => [...searchQuery(state.search), ["type", canonicalEnumValues(state.types, order)]] as const;
 
+const namesFilesystemPath = (value: string) => canonicalFilesystemPath(value) !== null;
+
+/**
+ * The one way a directory reaches a Files link. The root is the section's own default rather than a
+ * value the URL carries, so a link to it and a link that spells it out are the same link, and
+ * anything that cannot name a directory at all is rejected instead of being written into a URL.
+ */
+const directoryQuery = (path: string | undefined) => {
+  if (path === undefined) {
+    return [["path", undefined]] as const;
+  }
+  const canonical = canonicalFilesystemPath(
+    assertRouteValue(path, namesFilesystemPath, "filesystem path"),
+  );
+  return [["path", canonical === filesystemRoot ? undefined : (canonical ?? undefined)]] as const;
+};
+
+/** The same, for the one file a viewer addresses; the root names a directory, never a file. */
+const filePathQuery = (path: string) =>
+  [
+    [
+      "path",
+      canonicalFilesystemPath(
+        assertRouteValue(
+          path,
+          (value) =>
+            namesFilesystemPath(value) && canonicalFilesystemPath(value) !== filesystemRoot,
+          "file path",
+        ),
+      ) ?? undefined,
+    ],
+  ] as const;
+
+const readDirectoryQuery = (searchParams: URLSearchParams) => {
+  const path = readOptionalQuery(searchParams, "path", namesFilesystemPath);
+  const canonical = path === undefined ? undefined : canonicalFilesystemPath(path);
+  return canonical === null || canonical === filesystemRoot ? undefined : canonical;
+};
+
 const subscriptionQuery = (subscriptionId: string | undefined) =>
   [
     [
@@ -190,15 +229,10 @@ export const projectLinks = {
     ),
   entry: (projectId: string) => `/projects/${assertProjectId(projectId)}`,
   files: (projectId: string, { path }: { path?: string } = {}) =>
-    buildHref(`/projects/${assertProjectId(projectId)}/files`, [
-      ["path", path ? assertRouteValue(path, isFileSystemPath, "filesystem path") : undefined],
-    ]),
+    buildHref(`/projects/${assertProjectId(projectId)}/files`, directoryQuery(path)),
   fileView: (projectId: string, { path, viewer }: { path: string; viewer?: FileViewer }) =>
     buildHref(`/projects/${assertProjectId(projectId)}/files/view`, [
-      [
-        "path",
-        assertRouteValue(path, (value) => isFileSystemPath(value) && value !== "/", "file path"),
-      ],
+      ...filePathQuery(path),
       ["viewer", viewer],
     ]),
   run: (projectId: string, state: RunState = {}) =>
@@ -323,18 +357,15 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
   }
 
   if (segments.length === 3 && segments[2] === "files") {
-    const path = readOptionalQuery(searchParams, "path", isFileSystemPath);
+    const path = readDirectoryQuery(searchParams);
     const route: ProjectRoute = { kind: "files", projectId, ...(path ? { path } : {}) };
     return validRoute(location, route, projectLinks.files(projectId, route));
   }
 
   if (segments.length === 4 && segments[2] === "files" && segments[3] === "view") {
-    const path = readRequiredQuery(
-      searchParams,
-      "path",
-      (value) => isFileSystemPath(value) && value !== "/",
-    );
-    if (!path) {
+    const required = readRequiredQuery(searchParams, "path", namesFilesystemPath);
+    const path = required === null ? null : canonicalFilesystemPath(required);
+    if (path === null || path === filesystemRoot) {
       return localNotFoundRoute("projects", "files", projectId);
     }
     const viewer = readOptionalQuery(searchParams, "viewer", (value) =>

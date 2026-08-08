@@ -146,22 +146,6 @@ export const readStringSetQuery = (
 
 export const isSearch = (value: string): boolean => value.length > 0 && value.length <= 200;
 
-export const isFileSystemPath = (value: string): boolean => {
-  const hasControlCharacter = [...value].some((character) => {
-    const codePoint = character.codePointAt(0) ?? 0;
-    return codePoint <= 31 || codePoint === 127;
-  });
-  if (!value.startsWith("/") || value.length > 260 || hasControlCharacter) {
-    return false;
-  }
-  if (value === "/") {
-    return true;
-  }
-
-  const parts = value.slice(1).split("/");
-  return parts.every((part) => part.length > 0 && part !== "." && part !== "..");
-};
-
 export function assertRouteValue<TValue extends string>(
   value: string,
   validate: (candidate: string) => candidate is TValue,

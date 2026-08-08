@@ -5,10 +5,8 @@ import {
   type ProductDmStorage,
   type ProductType,
   type UnitAllDetail,
-  type UnitProductPostBodyBodyFlavour,
+  UnitProductPostBodyBodyFlavour,
 } from "@/api/account-server";
-
-import { isAxiosError } from "axios";
 
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
 import { isProductId, isProjectId, isUnitId } from "../routing/identifiers";
@@ -36,6 +34,7 @@ export type ProjectCreationState =
   | { kind: "collecting" }
   | { kind: "completed"; productId: string; projectId: string }
   | { kind: "creating-product"; input: ProjectCreationInput }
+  | { kind: "released"; productId: string }
   | (Subscription & { input: ProjectCreationInput; kind: "creating-project" })
   | (Subscription & { input: ProjectCreationInput; kind: "project-failed"; reason: string });
 
@@ -142,8 +141,11 @@ export const transitionProjectCreation = (
       state: { input: state.input, kind: "cleaning-up", productId: state.productId },
     };
   }
+  // A handed-off subscription is not this workflow's to delete, so cancelling releases the attempt
+  // and keeps the identity that outlives it. Discarding it silently would be the one partial failure
+  // that leaves an existing subscription with neither a cleanup nor a way to reach it.
   if (event.kind === "cancel" && state.kind === "project-failed") {
-    return { state: { kind: "cancelled" } };
+    return { state: { kind: "released", productId: state.productId } };
   }
   if (event.kind === "cleanup-succeeded" && state.kind === "cleaning-up") {
     return { state: { kind: "cancelled" } };
@@ -224,7 +226,8 @@ export type ProjectCreationRecovery =
   | { input: ProjectCreationInput; kind: "product-requested" }
   | (Subscription & { input: ProjectCreationInput; kind: "project-requested" });
 
-const flavours = ["EVALUATION", "BRONZE", "SILVER", "GOLD"] as const;
+/** The generated request body decides which flavours exist, so a regenerated client changes this. */
+const flavours: readonly string[] = Object.values(UnitProductPostBodyBodyFlavour);
 
 /** Only a workflow record with generated identities and complete form state can authorize cleanup. */
 export const parseProjectCreationRecovery = (
@@ -350,42 +353,29 @@ export const forgetProjectCreation = (storage: Pick<Storage, "removeItem">) => {
   }
 };
 
-/** Recoverable failures keep the workflow facts and describe the service answer without changing scope. */
-export const projectCreationFailureReason = (
-  error: unknown,
-  subject: "project" | "subscription",
-) => {
-  const failure = classifyTransportFailure(error);
-  const label = subject === "project" ? "project" : "subscription";
-  switch (failure.kind) {
-    case "forbidden":
-      return `The server did not allow this ${label} to be created. Review your access and retry.`;
-    case "network":
-      return `The ${label} request could not reach the service. Check your connection and retry.`;
-    case "rate-limited":
-      return `The ${label} service is busy. Wait briefly and retry.`;
-    case "server":
-      return `The ${label} service is unavailable. Retry when it has recovered.`;
-    case "timeout":
-      return `The ${label} request timed out. Its outcome could not be confirmed.`;
-    default: {
-      const data = isAxiosError<{ error?: string; message?: string }>(error)
-        ? error.response?.data
-        : undefined;
-      return (
-        data?.error ?? data?.message ?? `The ${label} could not be created. Correct it and retry.`
-      );
-    }
-  }
-};
+/**
+ * The two answers that carry a status and still leave the outcome in doubt: a request timeout says
+ * the endpoint may have gone on to finish the work, and a conflict says a subscription answering
+ * this request may already exist. Neither can be told apart from a lost response by retrying it.
+ */
+const ambiguousProductStatuses = new Set([408, 409]);
 
-/** A confirmed response means no product identity was hidden by a lost response; transport ambiguity does not. */
+/**
+ * A confirmed rejection means no product identity was hidden by a lost response; transport ambiguity
+ * does not. A `4xx` the endpoint answered with is such a rejection unless it is one of the two that
+ * describe work that may already exist. Every `5xx` is excluded because a gateway can answer it for
+ * a service that had already committed, which is exactly the response a retry would duplicate.
+ */
 export const productCreationFailureIsRetryable = (error: unknown): boolean => {
   const failure = classifyTransportFailure(error);
   return (
     failure.kind === "forbidden" ||
     failure.kind === "not-found" ||
     failure.kind === "rate-limited" ||
-    (failure.kind === "unknown" && failure.status !== undefined)
+    (failure.kind === "unknown" &&
+      failure.status !== undefined &&
+      failure.status >= 400 &&
+      failure.status < 500 &&
+      !ambiguousProductStatuses.has(failure.status))
   );
 };

@@ -7,6 +7,7 @@ import {
 
 import { expect, test } from "@playwright/test";
 
+import { projectCreationFailureReason } from "../../src/projects/failures";
 import {
   eligibleProjectCreationFlavours,
   eligibleProjectCreationUnits,
@@ -16,7 +17,6 @@ import {
   isUnclaimedProjectSubscription,
   parseProjectCreationRecovery,
   productCreationFailureIsRetryable,
-  projectCreationFailureReason,
   type ProjectCreationInput,
   readProjectCreationRecovery,
   reconcileProjectCreationRecovery,
@@ -141,8 +141,10 @@ test.describe("Project creation lifecycle", () => {
       productId,
       reason: "Project failed.",
     };
+    // Releasing rather than cancelling is what keeps the identity of a subscription this workflow
+    // did not create: it survives the attempt, so the attempt must still be able to name it.
     expect(transitionProjectCreation(handedOff, { kind: "cancel" })).toEqual({
-      state: { kind: "cancelled" },
+      state: { kind: "released", productId },
     });
     expect(
       transitionProjectCreation(
@@ -160,8 +162,15 @@ test("product retry safety distinguishes confirmed responses from ambiguous tran
     response: status === undefined ? undefined : { data: {}, status },
   });
   expect(productCreationFailureIsRetryable(axiosFailure(403))).toBe(true);
+  expect(productCreationFailureIsRetryable(axiosFailure(404))).toBe(true);
   expect(productCreationFailureIsRetryable(axiosFailure(429))).toBe(true);
+  expect(productCreationFailureIsRetryable(axiosFailure(400))).toBe(true);
+  // A status the endpoint answered with still leaves the outcome in doubt when the status itself
+  // describes work that may already exist, so neither of these is a confirmed rejection.
+  expect(productCreationFailureIsRetryable(axiosFailure(408))).toBe(false);
+  expect(productCreationFailureIsRetryable(axiosFailure(409))).toBe(false);
   expect(productCreationFailureIsRetryable(axiosFailure(500))).toBe(false);
+  expect(productCreationFailureIsRetryable(axiosFailure(502))).toBe(false);
   expect(productCreationFailureIsRetryable(axiosFailure(undefined, "ETIMEDOUT"))).toBe(false);
   expect(productCreationFailureIsRetryable(axiosFailure())).toBe(false);
   expect(productCreationFailureIsRetryable(axiosFailure(undefined, "ERR_NETWORK"))).toBe(false);

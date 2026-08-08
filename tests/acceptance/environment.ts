@@ -13,11 +13,14 @@ const oidcUrl = `http://127.0.0.1:${oidcPort}`;
 
 export const acceptanceEnvironment = {
   ...process.env,
-  ACCEPTANCE_FIXTURES: "1",
   ACCOUNT_SERVER_API_SERVER: accountServerUrl,
   BASE_PATH: basePath,
   BASE_URL: appUrl,
   BETTER_AUTH_BASE_URL: appUrl,
+  // Every worker signs the same identity in through the OAuth callback dozens of times in as many
+  // seconds, and a callback reached by redirect carries no forwarded address to tell them apart, so
+  // one shared counter would start answering `429` purely because the suite is long.
+  BETTER_AUTH_RATE_LIMIT_ENABLED: "false",
   BETTER_AUTH_SECRET: "acceptance-only-secret-at-least-thirty-two-characters",
   CONTROL_SERVER: controlUrl,
   DATA_MANAGER_API_SERVER: dataManagerUrl,

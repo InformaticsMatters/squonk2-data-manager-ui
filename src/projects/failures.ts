@@ -1,3 +1,5 @@
+import { isAxiosError } from "axios";
+
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
 
 /**
@@ -40,5 +42,41 @@ export const classifyProjectCommandFailure = (
         kind: "unknown",
         message: `Could not ${action} ${resource}. The displayed project has not changed.`,
       };
+  }
+};
+
+/**
+ * How a recoverable project-creation failure reads. Bringing a project into existence spans two
+ * services, so the sentence names the subject the workflow was addressing when it failed; the
+ * workflow facts it was carrying are retained by its own lifecycle rather than by these words. An
+ * unclassifiable answer is the service's own, which is the one case where upstream text is the
+ * sentence.
+ */
+export const projectCreationFailureReason = (
+  error: unknown,
+  subject: "project" | "subscription",
+) => {
+  switch (classifyTransportFailure(error).kind) {
+    case "forbidden":
+      return `The server did not allow this ${subject} to be created. Review your access and retry.`;
+    case "network":
+      return `The ${subject} request could not reach the service. Check your connection and retry.`;
+    case "rate-limited":
+      return `The ${subject} service is busy. Wait briefly and retry.`;
+    case "server":
+      return `The ${subject} service is unavailable. Retry when it has recovered.`;
+    case "timeout":
+      return `The ${subject} request timed out. Its outcome could not be confirmed.`;
+    // Every kind is named rather than defaulted, so a new transport fact has to be answered here
+    // instead of quietly arriving as the service's own words.
+    case "not-found":
+    case "unknown": {
+      const data = isAxiosError<{ error?: string; message?: string }>(error)
+        ? error.response?.data
+        : undefined;
+      return (
+        data?.error ?? data?.message ?? `The ${subject} could not be created. Correct it and retry.`
+      );
+    }
   }
 };

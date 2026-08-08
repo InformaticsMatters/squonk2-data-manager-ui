@@ -218,6 +218,14 @@ for (const cleanupFails of [false, true]) {
         "href",
         `/data-manager-ui/administration/subscriptions/${fixtureIds.createdProduct}`,
       );
+      // A failed cleanup ends the attempt rather than outliving it: the canonical route collects a
+      // new one instead of sending every later visit back to a subscription it cannot finish.
+      await page.getByRole("button", { name: "Back to Projects" }).click();
+      await expect(page).toHaveURL(`${acceptanceUrls.app}projects`);
+      await page.goto("projects/new");
+      await expect(page).toHaveURL(`${acceptanceUrls.app}projects/new`);
+      await expect(page.getByLabel("Project name")).toHaveValue("");
+      await expect(page.getByRole("button", { name: "Create project" })).toBeVisible();
     } else {
       await expect(page).toHaveURL(`${acceptanceUrls.app}projects`);
     }
@@ -261,9 +269,16 @@ test("cancelling a handed-off partial failure leaves its subscription to Adminis
   await page.getByRole("button", { name: "Create linked project" }).click();
   await expect(page.getByText(/will be reused/u)).toBeVisible();
 
-  // A subscription this workflow did not create is never cleaned up by it, but cancelling still
-  // releases the attempt: Projects is reachable and a later visit collects a new one.
+  // A subscription this workflow did not create is never cleaned up by it. Cancelling releases the
+  // attempt and says so: the subscription outlived it, so its identity and the route that owns it
+  // are stated before the caller leaves, and a later visit still collects a new attempt.
   await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(page.getByText(/Subscription ID: product-0c0c0c0c/u)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open it in Administration" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/administration/subscriptions/${fixtureIds.createdProduct}`,
+  );
+  await page.getByRole("button", { name: "Back to Projects" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}projects`);
   await page.goto("projects/new");
   await expect(page.getByLabel("Project name")).toHaveValue("");
@@ -601,6 +616,56 @@ test("a forbidden subscription response retains state for a deliberate retry", a
   await page.goto("projects/new");
   await expect(page.getByLabel("Project name")).toHaveValue("");
 });
+
+// The project leg answers with the same statuses the subscription leg does, and each has to leave
+// the attempt recoverable against the one subscription that already exists.
+for (const [status, reason] of [
+  [403, "The server did not allow this project to be created. Review your access and retry."],
+  [429, "The project service is busy. Wait briefly and retry."],
+] as const) {
+  test(`a ${status} project response retains the attempt against its one subscription`, async ({
+    page,
+    request,
+  }, testInfo) => {
+    const subject = subjectFor(testInfo);
+    await request.post(
+      `${acceptanceUrls.control}/scenario/${subject}/project-creation-failure?status=${status}`,
+    );
+    await login(page, "projects/new", testInfo);
+    await page.getByLabel("Containing unit").click();
+    await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+    await page.getByLabel("Project name").fill(`Project ${status}`);
+    await page.getByLabel("Tier").click();
+    await page.getByRole("option", { name: "Bronze" }).click();
+    await page.getByRole("button", { name: "Create project" }).click();
+
+    await expect(page.getByText(reason)).toBeVisible();
+    await expect(page.getByLabel("Project name")).toHaveValue(`Project ${status}`);
+    await expect(page.getByText(/will be reused/u)).toBeVisible();
+    await expect(page).toHaveURL(
+      `${acceptanceUrls.app}projects/new?subscription=${fixtureIds.createdProduct}`,
+    );
+
+    // The subscription is already bought, so retrying after the service answers differently sends
+    // only the project request again.
+    await request.delete(`${acceptanceUrls.control}/scenario/${subject}/project-creation-failure`);
+    await page.getByRole("button", { name: "Retry" }).click();
+    await expect(page).toHaveURL(
+      `${acceptanceUrls.app}projects/${fixtureIds.createdProject}/files`,
+    );
+
+    const diagnostics = await request
+      .get(`${acceptanceUrls.control}/scenario/${subject}`)
+      .then(
+        (response) => response.json() as Promise<{ requests: { method: string; path: string }[] }>,
+      );
+    expect(
+      diagnostics.requests.filter(
+        ({ method, path }) => method === "POST" && path === `/product/unit/${fixtureIds.unit}`,
+      ),
+    ).toHaveLength(1);
+  });
+}
 
 test("a project domain failure keeps its subscription and exact service answer", async ({
   page,

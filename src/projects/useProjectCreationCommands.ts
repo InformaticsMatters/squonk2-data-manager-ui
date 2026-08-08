@@ -11,7 +11,11 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { type ProjectCreationInput } from "./projectCreation";
 
-const requestTimeout = Number(process.env.NEXT_PUBLIC_PROJECT_CREATION_TIMEOUT_MS ?? 30_000);
+const configuredTimeout = Number(process.env.NEXT_PUBLIC_PROJECT_CREATION_TIMEOUT_MS);
+// Only a positive number is a timeout. Unset, blank, and malformed values all read as `0` or `NaN`,
+// and `0` is how the transport spells "wait for ever" — the one answer this workflow cannot use.
+const requestTimeout =
+  Number.isFinite(configuredTimeout) && configuredTimeout > 0 ? configuredTimeout : 30_000;
 
 /** Owns both generated clients and the generated cache identities affected by project creation. */
 export const useProjectCreationCommands = () => {

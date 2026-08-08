@@ -29,6 +29,7 @@ import { useGetPersonalUnit } from "../hooks/useGetPersonalUnit";
 import { useIsEvaluator } from "../hooks/useIsAuthorized";
 import Layout from "../layouts/Layout";
 import { isProductId } from "../routing/identifiers";
+import { projectCreationFailureReason } from "./failures";
 import {
   eligibleProjectCreationFlavours,
   eligibleProjectCreationUnits,
@@ -36,7 +37,6 @@ import {
   initialProjectCreationState,
   productCreationFailureIsRetryable,
   type ProjectCreationEffect,
-  projectCreationFailureReason,
   type ProjectCreationInput,
   projectCreationNameIsValid,
   type ProjectCreationRecovery,
@@ -59,6 +59,27 @@ const privateByDefault: Record<UnitAllDetailDefaultProductPrivacy, boolean> = {
 };
 
 const tierLabel = (flavour: string) => flavour.charAt(0) + flavour.slice(1).toLocaleLowerCase();
+
+/**
+ * How a subscription this attempt did not remove is left reachable. The ID is the recovery, so an
+ * unaddressable one still reaches support as itself rather than throwing inside the route builder
+ * that would have addressed it.
+ */
+const SubscriptionRecovery = ({ productId }: { productId: string }) => (
+  <>
+    Subscription ID: {productId}.{" "}
+    {isProductId(productId) ? (
+      <>
+        <MuiLink component={Link} href={administrationLinks.subscription(productId) as never}>
+          Open it in Administration
+        </MuiLink>{" "}
+        or quote this ID to support.
+      </>
+    ) : (
+      "Quote this ID to support."
+    )}
+  </>
+);
 
 export const ProjectCreate = () => {
   const router = useRouter();
@@ -136,6 +157,9 @@ export const ProjectCreate = () => {
     },
     [clearRecovery, router],
   );
+
+  /** Where an attempt that is not entering Files leaves the caller, however it ended. */
+  const leaveForProjects = () => void router.push(projectLinks.index() as never);
 
   /**
    * What a bare creation route makes of a record left by an interrupted attempt.
@@ -337,6 +361,10 @@ export const ProjectCreate = () => {
     try {
       await commands.deleteProduct(effect.productId);
     } catch (error) {
+      // The attempt is over either way. A record still naming a project request would send every
+      // later visit back to a subscription this workflow can no longer finish, so it goes and the
+      // identity it carried is stated on screen beside the route that still owns the subscription.
+      clearRecovery();
       setLifecycle(
         transitionProjectCreation(state, {
           kind: "cleanup-failed",
@@ -347,7 +375,7 @@ export const ProjectCreate = () => {
     }
     clearRecovery();
     setLifecycle(transitionProjectCreation(state, { kind: "cleanup-succeeded" }).state);
-    void router.push(projectLinks.index() as never);
+    leaveForProjects();
   };
 
   const applyTransition = async (transition: ProjectCreationTransition) => {
@@ -367,7 +395,7 @@ export const ProjectCreate = () => {
     }
     const input: ProjectCreationInput = { flavour, isPrivate, name, unitId };
     await applyTransition(
-      transitionProjectCreation(initialProjectCreationState, {
+      transitionProjectCreation(lifecycle, {
         input,
         kind: "submit",
         ...(validHandoff && route.subscriptionId
@@ -443,13 +471,17 @@ export const ProjectCreate = () => {
       void applyTransition(cancelled);
       return;
     }
-    // A settled cancellation leaves a later visit nothing to recover. An unrecovered subscription
-    // never settles, so it keeps its record and the workflow can still offer it.
-    if (cancelled.state.kind === "cancelled") {
+    setLifecycle(cancelled.state);
+    // A cancellation leaves a later visit nothing to recover, whether it settled the subscription or
+    // released one it never owned. A released one still exists, so the page stays put and states
+    // where it can be reached; leaving is then the caller's own next step.
+    if (cancelled.state.kind === "cancelled" || cancelled.state.kind === "released") {
       clearRecovery();
     }
-    setLifecycle(cancelled.state);
-    void router.push(projectLinks.index() as never);
+    if (cancelled.state.kind === "released") {
+      return;
+    }
+    leaveForProjects();
   };
 
   const invalidHandoff =
@@ -506,22 +538,13 @@ export const ProjectCreate = () => {
           ) : null}
           {lifecycle.kind === "cleanup-failed" ? (
             <Alert severity="error">
-              {lifecycle.reason} Subscription ID: {lifecycle.productId}.{" "}
-              {/* The ID is the recovery, so an unaddressable one still reaches support as itself
-                  rather than throwing inside the route builder that would have addressed it. */}
-              {isProductId(lifecycle.productId) ? (
-                <>
-                  <MuiLink
-                    component={Link}
-                    href={administrationLinks.subscription(lifecycle.productId) as never}
-                  >
-                    Open it in Administration
-                  </MuiLink>{" "}
-                  or quote this ID to support.
-                </>
-              ) : (
-                "Quote this ID to support."
-              )}
+              {lifecycle.reason} <SubscriptionRecovery productId={lifecycle.productId} />
+            </Alert>
+          ) : null}
+          {lifecycle.kind === "released" ? (
+            <Alert severity="warning">
+              This subscription was not created here, so cancelling has not removed it.{" "}
+              <SubscriptionRecovery productId={lifecycle.productId} />
             </Alert>
           ) : null}
           {lifecycle.kind === "completed" ? (
@@ -632,9 +655,15 @@ export const ProjectCreate = () => {
                     : "Create project"}
               </Button>
             ) : null}
-            <Button disabled={pending} onClick={cancel}>
-              Cancel
-            </Button>
+            {/* An attempt that has ended still names a subscription that outlived it, so leaving is
+                a deliberate step away from that answer rather than another cancellation. */}
+            {lifecycle.kind === "released" || lifecycle.kind === "cleanup-failed" ? (
+              <Button onClick={leaveForProjects}>Back to Projects</Button>
+            ) : (
+              <Button disabled={pending} onClick={cancel}>
+                Cancel
+              </Button>
+            )}
           </Stack>
         </Stack>
       </Container>

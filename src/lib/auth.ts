@@ -26,12 +26,11 @@ export const auth = betterAuth({
     },
   },
 
-  // The acceptance suite signs in about a hundred times in as many seconds from one machine, and the
-  // OAuth callback is reached by redirect, so it carries no forwarded address a fixture could vary.
-  // Every callback therefore shares one rate-limit counter that never falls quiet long enough to
-  // reset, and the suite starts answering `429` once it has simply grown long enough. Only the
-  // fixture build says so: a real deployment keeps the limit it is entitled to.
-  rateLimit: { enabled: process.env.ACCEPTANCE_FIXTURES !== "1" },
+  // Rate limiting is on unless a deployment says otherwise, and nothing here knows why one would.
+  // A deployment that signs the same identity in repeatedly through the OAuth callback shares one
+  // counter for every sign-in, because a callback is reached by redirect and carries no forwarded
+  // address to distinguish them; turning the limit off is that operator's deliberate choice.
+  rateLimit: { enabled: process.env.BETTER_AUTH_RATE_LIMIT_ENABLED !== "false" },
 
   plugins: [
     genericOAuth({

@@ -134,6 +134,16 @@ const membershipLists = {
 const isMembershipRole = (segment: string): segment is keyof typeof membershipLists =>
   segment in membershipLists;
 
+/** One file command rejection, so a refusal and a transport failure are told apart by status. */
+const fileMutationFailure = (state: ScenarioState, response: ServerResponse) =>
+  json(
+    response,
+    state.fileMutationFailure ?? 503,
+    state.fileMutationFailure === 403
+      ? state.fixtures.failures.forbidden
+      : state.fixtures.failures.serverError,
+  );
+
 /** One project command rejection, so a refusal and a transport failure are told apart by status. */
 const projectMutationFailure = (state: ScenarioState, response: ServerResponse) =>
   json(
@@ -463,13 +473,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     const path = url.searchParams.get("path") ?? "/";
     const fileName = url.searchParams.get("file");
     if (state.fileMutationFailure) {
-      return json(
-        response,
-        state.fileMutationFailure,
-        state.fileMutationFailure === 403
-          ? state.fixtures.failures.forbidden
-          : state.fixtures.failures.serverError,
-      );
+      return fileMutationFailure(state, response);
     }
     const system = projectFileSystem(state, projectId);
     system.files = system.files.filter(
@@ -480,7 +484,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   if (url.pathname === "/file/move" && request.method === "PUT") {
     const projectId = url.searchParams.get("project_id") ?? "";
     if (state.fileMutationFailure) {
-      return json(response, state.fileMutationFailure, state.fixtures.failures.serverError);
+      return fileMutationFailure(state, response);
     }
     const system = projectFileSystem(state, projectId);
     const moved = system.files.find(
@@ -497,7 +501,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   }
   if (segments[0] === "file" && segments.length === 2 && request.method === "DELETE") {
     if (state.fileMutationFailure) {
-      return json(response, state.fileMutationFailure, state.fixtures.failures.forbidden);
+      return fileMutationFailure(state, response);
     }
     // A managed file is detached from whichever project holds it, and the dataset it came from is
     // untouched, exactly as the Data Manager treats it.
@@ -512,13 +516,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     const projectId = url.searchParams.get("project_id") ?? "";
     const path = url.searchParams.get("path") ?? "";
     if (state.fileMutationFailure) {
-      return json(
-        response,
-        state.fileMutationFailure,
-        state.fileMutationFailure === 403
-          ? state.fixtures.failures.forbidden
-          : state.fixtures.failures.serverError,
-      );
+      return fileMutationFailure(state, response);
     }
     const system = projectFileSystem(state, projectId);
     if (request.method === "PUT") {
@@ -537,7 +535,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     const source = url.searchParams.get("src_path") ?? "";
     const destination = url.searchParams.get("dst_path") ?? "";
     if (state.fileMutationFailure) {
-      return json(response, state.fileMutationFailure, state.fixtures.failures.serverError);
+      return fileMutationFailure(state, response);
     }
     const system = projectFileSystem(state, projectId);
     if (!system.directories.includes(source)) {
@@ -557,13 +555,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     if (request.method === "PUT") {
       const body = (await readBody(request)).toString();
       if (state.fileMutationFailure) {
-        return json(
-          response,
-          state.fileMutationFailure,
-          state.fileMutationFailure === 403
-            ? state.fixtures.failures.forbidden
-            : state.fixtures.failures.serverError,
-        );
+        return fileMutationFailure(state, response);
       }
       // The upload is multipart, so the two fields the destination depends on are read out of it
       // rather than assumed: a file must land in the project and directory that were sent.

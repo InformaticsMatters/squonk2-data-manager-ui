@@ -294,7 +294,8 @@ workspace tickets extend this file with their screens, capabilities, commands, a
   file-and-path query options as their sole cache identity, with the URL project and the owned path
   as required arguments, and keeps no aggregate of its own.
   `src/projects/fileMutations.ts` is the only place that shapes a Files command's input and names
-  its outcome, and `src/projects/useFileCommands.ts` is the only owner of Files mutations and of the
+  its outcome — including which file a dataset may be made from and under what type — and
+  `src/projects/useFileCommands.ts` is the only owner of Files mutations and of the
   generated invalidation that follows them: no Files component holds a query client or a generated
   mutation of its own, and every listing key the owner invalidates is built from the addressed
   project's own request. The file-mutation evaluator lives beside the other project evaluators in

@@ -171,6 +171,15 @@ const filterQuery = <TValue extends string>(
 
 const namesFilesystemPath = (value: string) => canonicalFilesystemPath(value) !== null;
 
+/** The canonical spelling of a path, or a rejection naming what it was supposed to be. */
+const canonicalPathOrThrow = (path: string, name: string) => {
+  const canonical = canonicalFilesystemPath(path);
+  if (canonical === null) {
+    throw new TypeError(`Invalid ${name}`);
+  }
+  return canonical;
+};
+
 /**
  * The one way a directory reaches a Files link. The root is the section's own default rather than a
  * value the URL carries, so a link to it and a link that spells it out are the same link, and
@@ -180,27 +189,18 @@ const directoryQuery = (path: string | undefined) => {
   if (path === undefined) {
     return [["path", undefined]] as const;
   }
-  const canonical = canonicalFilesystemPath(
-    assertRouteValue(path, namesFilesystemPath, "filesystem path"),
-  );
-  return [["path", canonical === filesystemRoot ? undefined : (canonical ?? undefined)]] as const;
+  const canonical = canonicalPathOrThrow(path, "filesystem path");
+  return [["path", canonical === filesystemRoot ? undefined : canonical]] as const;
 };
 
 /** The same, for the one file a viewer addresses; the root names a directory, never a file. */
-const filePathQuery = (path: string) =>
-  [
-    [
-      "path",
-      canonicalFilesystemPath(
-        assertRouteValue(
-          path,
-          (value) =>
-            namesFilesystemPath(value) && canonicalFilesystemPath(value) !== filesystemRoot,
-          "file path",
-        ),
-      ) ?? undefined,
-    ],
-  ] as const;
+const filePathQuery = (path: string) => {
+  const canonical = canonicalPathOrThrow(path, "file path");
+  if (canonical === filesystemRoot) {
+    throw new TypeError("Invalid file path");
+  }
+  return [["path", canonical]] as const;
+};
 
 const readDirectoryQuery = (searchParams: URLSearchParams) => {
   const path = readOptionalQuery(searchParams, "path", namesFilesystemPath);

@@ -14,7 +14,12 @@ import { getMimeFromFileName } from "../utils/app/files";
 import { API_ROUTES } from "../utils/app/routes";
 import { type ProjectCapability } from "./capabilities";
 import { CapabilityIconButton } from "./CapabilityIconButton";
-import { fileRowMode, isDirectoryRow, managedFileId, type ProjectFileRow } from "./fileFacts";
+import {
+  isDirectoryRow,
+  managedFileId,
+  offersDatasetCreation,
+  type ProjectFileRow,
+} from "./fileFacts";
 import { ProjectFileFavouriteButton } from "./ProjectFileFavouriteButton";
 import { ProjectFileRename } from "./ProjectFileRename";
 import { useFileCommands } from "./useFileCommands";
@@ -73,7 +78,7 @@ export const ProjectFileActions = ({
   projectId: string;
   row: ProjectFileRow;
   /** The project's own containing unit, which is where a dataset made from its files is billed. */
-  unitId: string | undefined;
+  unitId: string;
 }) => {
   const commands = useFileCommands(projectId);
   const { run } = useFileMutation();
@@ -108,19 +113,7 @@ export const ProjectFileActions = ({
     );
   }
 
-  const mode = fileRowMode(row);
   const fileId = managedFileId(row);
-  // A dataset is only made from a file the project holds in its own right: a mutable managed file
-  // is already a dataset version, so making another from it would duplicate rather than create.
-  const offersDatasetCreation = mode !== "editable";
-  const datasetCapability: ProjectCapability =
-    unitId === undefined
-      ? {
-          reason:
-            "This project's containing unit could not be resolved, so a dataset cannot be billed for.",
-          status: "disabled",
-        }
-      : capability;
 
   return (
     <>
@@ -172,9 +165,9 @@ export const ProjectFileActions = ({
         title="Download file"
       />
 
-      {offersDatasetCreation ? (
+      {offersDatasetCreation(row) ? (
         <CapabilityIconButton
-          capability={datasetCapability}
+          capability={capability}
           size="small"
           title="Create a dataset from this file"
           onClick={() =>
@@ -183,9 +176,7 @@ export const ProjectFileActions = ({
                 fileName: row.name,
                 mimeType: row.data.mime_type ?? getMimeFromFileName(row.name, mimeLookup),
                 path,
-                // Only an enabled capability offers the control, and it is disabled without a
-                // resolved unit, so the project's unit is a fact by the time this can be used.
-                unitId: unitId as string,
+                unitId,
               }),
             )
           }

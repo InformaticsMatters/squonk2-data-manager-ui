@@ -217,32 +217,41 @@ const evaluateFileSpend = evaluateSpendingAction({
 });
 
 /**
+ * What the directory listing a file action is acting on could last establish. `current` is a
+ * listing that answered; `stale` is one a failed refresh left on screen; `unavailable` is one a
+ * confirmed refusal or absence cleared. Only the first establishes what the directory holds.
+ */
+export type ProjectFileContent = "current" | "stale" | "unavailable";
+
+/**
  * What a file action reads in addition to the project's own facts: whether the directory listing it
  * is acting on could last be established. No file action reads a selected or current project, and
  * none reads a path other than the one Files itself is displaying.
  */
-export type ProjectFileFacts = ProjectCapabilityFacts & {
-  /** `stale` for a listing a failed refresh left on screen. */
-  content?: "current" | "stale";
-};
+export type ProjectFileFacts = ProjectCapabilityFacts & { content?: ProjectFileContent };
 
-const staleDirectoryReason =
-  "This directory could not be refreshed, so changing its contents cannot be established as safe.";
+const unsafeDirectoryReasons: Record<Exclude<ProjectFileContent, "current">, string> = {
+  stale:
+    "This directory could not be refreshed, so changing its contents cannot be established as safe.",
+  unavailable:
+    "This directory is unavailable, so changing its contents cannot be established as safe.",
+};
 
 /**
  * Changing files of the project in the URL. A confirmed lack of authority is the most useful
- * explanation, so it is reported first; a listing that merely could not be refreshed then disables
- * the change rather than leaving it offered, because a file the caller cannot see the current state
- * of is a file they cannot safely delete, rename, or overwrite.
+ * explanation, so it is reported first; a listing that could not be established then disables the
+ * change rather than leaving it offered, because a directory the caller cannot see the current
+ * state of is one they cannot safely add to, delete from, rename in, or overwrite.
  */
 export const evaluateProjectFileMutationCapability = (
   facts: ProjectFileFacts,
 ): ProjectCapability => {
   const capability = evaluateFileSpend(facts);
-  if (capability.status === "disabled" || facts.content !== "stale") {
+  if (capability.status === "disabled" || facts.content === undefined) {
     return capability;
   }
-  return { status: "disabled", reason: staleDirectoryReason };
+  const unsafe = facts.content === "current" ? undefined : unsafeDirectoryReasons[facts.content];
+  return unsafe === undefined ? capability : { status: "disabled", reason: unsafe };
 };
 
 export const evaluateProjectExecutionCapability = evaluateSpendingAction({

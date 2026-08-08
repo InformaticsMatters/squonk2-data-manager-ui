@@ -1,4 +1,9 @@
-import { canonicalFilesystemPath, childFilesystemPath, filesystemRoot } from "./fileFacts";
+import {
+  canonicalFilesystemPath,
+  childFilesystemPath,
+  filesystemPathOf,
+  filesystemRoot,
+} from "./fileFacts";
 
 /**
  * A path as the caller types it: project-root relative, separated by `/`, with no leading or
@@ -52,12 +57,10 @@ export type FileMove =
   | { kind: "move-file"; destination: string; destinationPath: string; name: string; path: string }
   | { kind: "none"; reason: string };
 
-const absolute = (relativePath: string) => `/${relativePath}`;
+const absolute = (relativePath: string) => filesystemPathOf(relativePath.split("/"));
 
-const stemOf = (absolutePath: string) => {
-  const parts = absolutePath.slice(1).split("/");
-  return parts.length <= 1 ? filesystemRoot : `/${parts.slice(0, -1).join("/")}`;
-};
+const stemOf = (absolutePath: string) =>
+  filesystemPathOf(absolutePath.slice(1).split("/").slice(0, -1));
 
 /**
  * Resolves the one move a rename expresses. Both paths are project-root relative as the caller
@@ -94,6 +97,29 @@ export const resolveFileMove = (
     path: stemOf(absolute(source)),
   };
 };
+
+/** One dataset made from a project file, already shaped into what a command may send. */
+export type DatasetCreation =
+  | { datasetType: string; fileName: string; kind: "create"; path: string }
+  | { kind: "none"; reason: string };
+
+/**
+ * Resolves the one dataset a create request expresses. The Data Manager decides a dataset by its
+ * type, so a file whose type could not be established is reported rather than sent under a guessed
+ * one.
+ */
+export const resolveDatasetCreation = ({
+  fileName,
+  mimeType,
+  path,
+}: {
+  fileName: string;
+  mimeType: string | undefined;
+  path: string;
+}): DatasetCreation =>
+  mimeType === undefined || mimeType === ""
+    ? { kind: "none", reason: "This file's type is not one a dataset can be created from." }
+    : { datasetType: mimeType, fileName, kind: "create", path };
 
 /**
  * What a Files command did. Every command answers with one of these rather than with a message, so

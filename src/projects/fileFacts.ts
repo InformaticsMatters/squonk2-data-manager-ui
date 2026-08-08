@@ -34,15 +34,21 @@ export const canonicalFilesystemPath = (value: string): string | null => {
 /** The project root every Files route starts from. */
 export const filesystemRoot = "/";
 
+/**
+ * The path a walk of directory names addresses. Every caller that has names rather than a path —
+ * a breadcrumb, a rename, a link out of an execution's output — builds it here, so there is one
+ * spelling of a path and not one per caller.
+ */
+export const filesystemPathOf = (names: readonly string[]): string =>
+  names.length === 0 ? filesystemRoot : `/${names.join("/")}`;
+
 /** The directory names one path walks through, root first, so a caller can address each of them. */
 export const filesystemBreadcrumbs = (path: string): string[] =>
   path === filesystemRoot ? [] : path.slice(1).split("/");
 
 /** The path of the directory holding this one; the root holds itself. */
-export const parentFilesystemPath = (path: string): string => {
-  const breadcrumbs = filesystemBreadcrumbs(path);
-  return breadcrumbs.length === 0 ? filesystemRoot : `/${breadcrumbs.slice(0, -1).join("/")}`;
-};
+export const parentFilesystemPath = (path: string): string =>
+  filesystemPathOf(filesystemBreadcrumbs(path).slice(0, -1));
 
 /** The path of a named child of this directory. */
 export const childFilesystemPath = (path: string, name: string): string =>
@@ -103,6 +109,14 @@ export const fileRowMode = (row: ProjectFileEntryRow): ProjectFileMode => {
 
 /** A managed file belongs to a dataset, so it is detached from the project rather than deleted. */
 export const managedFileId = (row: ProjectFileEntryRow): string | undefined => row.data.file_id;
+
+/**
+ * Whether a dataset can be made from this file. A managed file the Data Manager has fixed is
+ * already a dataset version in its own right, so making another from it would duplicate rather than
+ * create; anything the project still holds in its own right, managed or not, can become one.
+ */
+export const offersDatasetCreation = (row: ProjectFileEntryRow): boolean =>
+  row.data.immutable !== true || managedFileId(row) === undefined;
 
 const toFileRow = (path: string, file: FilePathFile): ProjectFileEntryRow => ({
   data: file,

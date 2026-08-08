@@ -29,6 +29,7 @@ import {
   existingDirectoryNames,
   fileRowMode,
   filesystemBreadcrumbs,
+  filesystemPathOf,
   filesystemRoot,
   isDirectoryRow,
   type ProjectFileRow,
@@ -68,11 +69,7 @@ const PathBreadcrumbs = ({ path, projectId }: { path: string; projectId: string 
           <NextLink
             color="inherit"
             component="a"
-            href={
-              projectLinks.files(projectId, {
-                path: target.length === 0 ? filesystemRoot : `/${target.join("/")}`,
-              }) as never
-            }
+            href={projectLinks.files(projectId, { path: filesystemPathOf(target) }) as never}
             key={key}
             sx={{ textTransform: "none" }}
           >
@@ -96,9 +93,10 @@ const FilesTable = ({
   projectId: string;
 }) => {
   const files = useProjectFiles(projectId, path);
-  // A listing that could not be refreshed cannot establish that anything in it is safe to change,
-  // so the same capability governs the toolbar, the drop target, and every row action alike.
-  const capability = evaluateProjectFileMutationCapability({ ...facts, content: files.freshness });
+  // A listing that could not be established — stale or cleared — cannot establish that anything in
+  // it is safe to change, so the same capability governs the toolbar, the drop target, and every
+  // row action alike.
+  const capability = evaluateProjectFileMutationCapability({ ...facts, content: files.content });
   const reason = capabilityReason(capability);
   const directories = existingDirectoryNames(files.rows);
   const unitId = facts.unit.id;

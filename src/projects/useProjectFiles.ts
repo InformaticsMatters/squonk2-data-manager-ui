@@ -4,8 +4,10 @@ import { getGetFilesQueryKey, useGetFiles } from "@/api/data-manager/file-and-pa
 
 import { useQueryClient } from "@tanstack/react-query";
 
+import { type ProjectFileContent } from "./capabilities";
 import { projectFileRequests, type ProjectFileRow, selectProjectFileRows } from "./fileFacts";
 import {
+  readableContent,
   resolveSectionFreshness,
   resolveSectionReadReport,
   resolveSectionReadState,
@@ -15,11 +17,12 @@ import {
 } from "./sectionReads";
 
 export type ProjectFiles = {
-  /** The listing is only as fresh as its own last read. */
-  freshness: "current" | "stale";
+  /**
+   * What the listing could last establish about the directory. A refused or absent listing
+   * establishes as little as a stale one, so both are told apart from a listing that answered.
+   */
+  content: ProjectFileContent;
   isLoading: boolean;
-  /** How the listing's own read answered. */
-  readState: SectionReadState;
   /** Refreshes the displayed directory without changing which directory is displayed. */
   refresh: () => void;
   /** What the section must tell the caller about the read it made. */
@@ -29,6 +32,9 @@ export type ProjectFiles = {
   /** Everything the addressed directory holds, sub-directories first. */
   rows: ProjectFileRow[];
 };
+
+const fileContentOf = (readState: SectionReadState): ProjectFileContent =>
+  readState.kind === "unavailable" ? "unavailable" : resolveSectionFreshness(readState);
 
 /**
  * Composes the Files listing from the generated file-and-path collection. The project in the URL
@@ -43,18 +49,20 @@ export const useProjectFiles = (projectId: string, path: string): ProjectFiles =
   const files = useGetFiles(requests.files, { query: { retry: false } });
 
   const readState = resolveSectionReadState(sectionReadFailure(files));
-  // A refused or absent directory clears its listing, because a path the caller is known to have
-  // lost — or never had — must not keep showing what it last held.
-  const listing = readState.kind === "unavailable" ? undefined : files.data;
 
   return {
-    freshness: resolveSectionFreshness(readState),
+    content: fileContentOf(readState),
     isLoading: files.isLoading,
-    readState,
     refresh: () =>
       void queryClient.invalidateQueries({ queryKey: getGetFilesQueryKey(requests.files) }),
     report: resolveSectionReadReport([readState]),
     retry: () => void files.refetch(),
-    rows: selectProjectFileRows({ files: listing?.files ?? [], path, paths: listing?.paths ?? [] }),
+    // Content the caller is known to have lost access to is not shown, however recently it loaded,
+    // on the same terms every other project section drops it.
+    rows: selectProjectFileRows({
+      files: readableContent(readState, files.data?.files),
+      path,
+      paths: readableContent(readState, files.data?.paths),
+    }),
   };
 };

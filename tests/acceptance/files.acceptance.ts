@@ -154,6 +154,15 @@ test("a path the project does not hold is a Files-local outcome", async ({ page 
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { level: 1, name: "Files" })).toBeVisible();
 
+  // Nothing is known about what this directory holds, so nothing can be changed in it either.
+  await expect(
+    page.getByText(
+      "This directory is unavailable, so changing its contents cannot be established as safe.",
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Upload unmanaged file" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Create directory" })).toBeDisabled();
+
   // A breadcrumb out of the missing directory still works, so the caller is never stranded.
   await page
     .getByRole("navigation", { name: "Path" })
@@ -231,10 +240,13 @@ test("a managed file is detached and a dataset can be made from an unmanaged one
     .click();
   await expect(page.getByText("A dataset was created from notes.txt.")).toBeVisible();
 
-  // A managed file is detached from the project rather than deleted, and it is the one action
-  // offered for it: an immutable dataset file has no rename.
+  // A managed file the Data Manager has fixed is already a dataset version, so no dataset is made
+  // from it and there is nothing to rename; detaching the project's link to it is all it offers.
   const managed = row(page, "acceptance-dataset-v2.sdf");
   await expect(managed.getByRole("button", { name: "Rename or move" })).toHaveCount(0);
+  await expect(
+    managed.getByRole("button", { name: "Create a dataset from this file" }),
+  ).toHaveCount(0);
   await managed.getByRole("button", { name: "Detach file" }).click();
   await page.getByRole("button", { name: "Detach" }).click();
   await expect(

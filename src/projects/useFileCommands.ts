@@ -16,6 +16,7 @@ import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 import { childFilesystemPath } from "./fileFacts";
 import {
   type FileCommandOutcome,
+  resolveDatasetCreation,
   resolveDirectoryCreation,
   resolveFileMove,
 } from "./fileMutations";
@@ -89,38 +90,37 @@ export const useFileCommands = (projectId: string) => {
     /**
      * Creates a dataset from one file of the displayed directory. The billing unit is the project's
      * own containing unit, so a dataset made from a project file is charged where the project is.
+     * The file becomes a managed one, so the directory it is in is refreshed alongside the dataset
+     * collection rather than left showing how the project held it before.
      */
-    createDatasetFromFile: async ({
-      fileName,
-      mimeType,
-      path,
-      unitId,
-    }: {
+    createDatasetFromFile: async (input: {
       fileName: string;
       mimeType: string | undefined;
       path: string;
       unitId: string;
     }): Promise<FileCommandOutcome> => {
-      if (mimeType === undefined) {
-        return {
-          kind: "unchanged",
-          reason: "This file's type is not one a dataset can be created from.",
-        };
+      const creation = resolveDatasetCreation(input);
+      if (creation.kind === "none") {
+        return { kind: "unchanged", reason: creation.reason };
       }
       try {
-        await createDataset.mutateAsync({
-          data: {
-            dataset_type: mimeType,
-            file_name: fileName,
-            path,
-            project_id: projectId,
-            unit_id: unitId,
-          },
-        });
+        await command(
+          () =>
+            createDataset.mutateAsync({
+              data: {
+                dataset_type: creation.datasetType,
+                file_name: creation.fileName,
+                path: creation.path,
+                project_id: projectId,
+                unit_id: input.unitId,
+              },
+            }),
+          [creation.path],
+        );
       } finally {
         await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
       }
-      return { kind: "created-dataset", name: fileName };
+      return { kind: "created-dataset", name: creation.fileName };
     },
 
     /** Deletes one directory of the displayed one, and everything beneath it. */

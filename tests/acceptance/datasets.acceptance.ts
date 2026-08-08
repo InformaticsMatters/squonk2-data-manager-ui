@@ -2,6 +2,7 @@ import { expect, type Page, test, type TestInfo } from "@playwright/test";
 import { gunzipSync } from "node:zlib";
 
 import { fixtureIds } from "./services/fixtures";
+import { type AttachmentRecord } from "./services/state";
 import { acceptanceUrls } from "./environment";
 
 test.describe.configure({ mode: "serial" });
@@ -451,4 +452,178 @@ test("bulk deletion retains mixed permissions and retries accepted work", async 
       ),
     ).toHaveLength(1);
   }
+});
+
+type AttachmentDiagnostics = {
+  attachments: AttachmentRecord[];
+  requests: { method: string; path: string }[];
+};
+
+const attachmentDiagnostics = async (
+  request: { get: (url: string) => Promise<{ json: () => Promise<unknown> }> },
+  subject: string,
+) =>
+  (await request
+    .get(`${acceptanceUrls.control}/scenario/${subject}`)
+    .then((response) => response.json())) as AttachmentDiagnostics;
+
+const versionOnePath = `datasets/${fixtureIds.dataset}/versions/1`;
+const attachDialogName = "Attach acceptance-dataset-v1.sdf v1 to a Project";
+const partnerTarget = "Partner Project — Acceptance Unit, Partner Organisation";
+
+test("a dataset version is attached to an explicit editable project in another organisation", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, versionOnePath, testInfo);
+
+  await page.getByText("Attach Dataset to a Project", { exact: true }).click();
+  const attachDialog = page.getByRole("dialog", { name: attachDialogName });
+  // Nothing is chosen for the caller, whatever project or unit the rest of the session used.
+  await expect(attachDialog.getByLabel("Project")).toHaveText("Select a project");
+
+  await attachDialog.getByLabel("Project").click();
+  // Duplicate project names are told apart by the unit and organisation that hold them, and a
+  // project the caller only observes is not a target at all.
+  await expect(
+    page.getByRole("option", { name: "Shared Project — Acceptance Unit, Acceptance Organisation" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: "Shared Project — Screening Unit, Acceptance Organisation" }),
+  ).toBeVisible();
+  await expect(page.getByRole("option", { name: /^Screening Project/u })).toHaveCount(0);
+  await page.getByRole("option", { name: partnerTarget }).click();
+
+  await attachDialog.getByLabel("Path").fill("/inputs");
+  await attachDialog.getByLabel("Compress").check();
+  await attachDialog.getByLabel("Immutable").uncheck();
+  await attachDialog.getByRole("button", { name: "Attach" }).click();
+
+  await expect(
+    attachDialog.getByText("Attaching to Partner Project", { exact: false }),
+  ).toBeVisible();
+  await expect(attachDialog.getByText(`Attached to ${partnerTarget}.`)).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${versionOnePath}`);
+
+  // Every option entered reached the Data Manager, against the project that was named.
+  const diagnostics = await attachmentDiagnostics(request, subject);
+  expect(diagnostics.attachments).toEqual([
+    {
+      as_type: "chemical/x-mdl-sdfile",
+      compress: true,
+      dataset_id: fixtureIds.dataset,
+      dataset_version: 1,
+      immutable: false,
+      path: "/inputs",
+      project_id: fixtureIds.partnerProject,
+    },
+  ]);
+
+  // Success refreshed the dataset's own attachment state.
+  await expect(
+    attachDialog.getByRole("link", { name: "Open Partner Project files" }),
+  ).toHaveAttribute(
+    "href",
+    `/data-manager-ui/projects/${fixtureIds.partnerProject}/files?path=%2Finputs`,
+  );
+  await attachDialog.getByRole("button", { name: "Close" }).click();
+  await expect(page.getByText("Currently attached to:", { exact: false })).toContainText(
+    "Partner Project",
+  );
+
+  // A second attachment starts from no target again rather than from the one just used.
+  await page.getByText("Attach Dataset to a Project", { exact: true }).click();
+  const reopened = page.getByRole("dialog", { name: attachDialogName });
+  await expect(reopened.getByLabel("Project")).toHaveText("Select a project");
+  await reopened.getByRole("button", { name: "Close" }).click();
+
+  // Navigation goes to the project that was attached to, whose listing now holds the new file.
+  await page.goto(`projects/${fixtureIds.partnerProject}/files?path=%2Finputs`);
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}projects/${fixtureIds.partnerProject}/files?path=%2Finputs`,
+  );
+  await expect(page.getByText("Partner Project", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("button", { exact: true, name: "acceptance-dataset-v1.sdf.gz" }),
+  ).toBeVisible();
+});
+
+test("attachment is offered and disabled when the caller can edit no project", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/no-editable-projects`);
+  await login(page, versionOnePath, testInfo);
+
+  const attachAction = page.getByRole("button", { name: "Attach Dataset to a Project" });
+  await expect(attachAction).toBeVisible();
+  await expect(attachAction).toBeDisabled();
+  await expect(
+    page.getByText(
+      "You must be an editor or administrator of a project to attach a dataset. Ask a project administrator to add you to one.",
+    ),
+  ).toBeVisible();
+});
+
+test("a refused, failed, or unreadable attachment keeps the version, the choices, and the work done", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, versionOnePath, testInfo);
+
+  await page.getByText("Attach Dataset to a Project", { exact: true }).click();
+  const attachDialog = page.getByRole("dialog", { name: attachDialogName });
+  await attachDialog.getByLabel("Project").click();
+  await page.getByRole("option", { name: partnerTarget }).click();
+  await attachDialog.getByLabel("Path").fill("/inputs");
+
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/attach-failure?status=403`);
+  await attachDialog.getByRole("button", { name: "Attach" }).click();
+  await expect(
+    attachDialog.getByText(
+      `You are not allowed to attach dataset ${fixtureIds.dataset} version 1 to Partner Project. Nothing was attached and your choices are unchanged.`,
+    ),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${versionOnePath}`);
+  await expect(attachDialog.getByLabel("Project")).toHaveText(partnerTarget);
+  await expect(attachDialog.getByLabel("Path")).toHaveValue("/inputs");
+
+  // A task that settles with anything but success is a failure of the attachment, not of its request.
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/attach-failure`);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/attach-exit-code?value=5`);
+  await attachDialog.getByRole("button", { name: "Attach" }).click();
+  await expect(
+    attachDialog.getByText("Dataset attachment task failed with exit code 5.", { exact: false }),
+  ).toBeVisible({ timeout: 20_000 });
+  await expect(attachDialog.getByLabel("Path")).toHaveValue("/inputs");
+
+  // A task this client could not read is not an outcome, so the accepted work is retried rather
+  // than sent again.
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/attach-exit-code`);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/task-failure`);
+  await attachDialog.getByRole("button", { name: "Attach" }).click();
+  await expect(
+    attachDialog.getByText(
+      `Could not attach dataset ${fixtureIds.dataset} version 1 to Partner Project. Nothing was attached and your choices are unchanged; retry is available.`,
+    ),
+  ).toBeVisible({ timeout: 20_000 });
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/task-failure`);
+  await attachDialog.getByRole("button", { name: "Attach" }).click();
+  await expect(attachDialog.getByText(`Attached to ${partnerTarget}.`)).toBeVisible({
+    timeout: 20_000,
+  });
+
+  // Three requests reached the Data Manager: the refused one, the one whose task failed, and the
+  // one whose task could not be read — which the successful retry reused rather than repeated.
+  const diagnostics = await attachmentDiagnostics(request, subject);
+  expect(diagnostics.attachments).toHaveLength(3);
+  expect(
+    diagnostics.requests.filter(({ method, path }) => method === "POST" && path === "/file"),
+  ).toHaveLength(3);
 });

@@ -76,3 +76,18 @@ export const classifyTransportFailure = (cause: unknown): TransportFailure => {
 
   return status === undefined ? { kind: "unknown", cause } : { kind: "unknown", status, cause };
 };
+
+const transientKinds = new Set<TransportFailure["kind"]>([
+  "network",
+  "rate-limited",
+  "server",
+  "timeout",
+]);
+
+/**
+ * Whether this transport fact says nothing about the request itself, so the same request is still
+ * worth making. It is a fact about the transport alone and decides no authority: a refusal is not
+ * transient however often it is repeated.
+ */
+export const isTransientTransportFailure = (cause: unknown): boolean =>
+  transientKinds.has(classifyTransportFailure(cause).kind);

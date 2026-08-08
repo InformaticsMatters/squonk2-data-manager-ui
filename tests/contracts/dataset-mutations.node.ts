@@ -8,7 +8,7 @@ import {
   evaluateDatasetLabelCapability,
   evaluatePlatformDatasetAction,
 } from "../../src/datasets/capabilities";
-import { datasetDeletionLifecycle, nextVersionAfterDeletion } from "../../src/datasets/mutations";
+import { datasetTaskLifecycle, nextVersionAfterDeletion } from "../../src/datasets/mutations";
 
 const version = (
   versionNumber: number,
@@ -101,20 +101,17 @@ test.describe("Dataset mutation capabilities", () => {
 
 test.describe("Dataset deletion lifecycle", () => {
   test("does not treat accepted or running tasks as deletion success", () => {
-    expect(datasetDeletionLifecycle(undefined)).toEqual({ status: "pending" });
-    expect(datasetDeletionLifecycle({ done: false })).toEqual({ status: "pending" });
+    expect(datasetTaskLifecycle(undefined)).toEqual({ status: "pending" });
+    expect(datasetTaskLifecycle({ done: false })).toEqual({ status: "pending" });
   });
 
   test("requires a terminal zero exit code", () => {
-    expect(datasetDeletionLifecycle({ done: true, exit_code: 0 })).toEqual({ status: "succeeded" });
-    expect(datasetDeletionLifecycle({ done: true, exit_code: 17 })).toEqual({
+    expect(datasetTaskLifecycle({ done: true, exit_code: 0 })).toEqual({ status: "succeeded" });
+    expect(datasetTaskLifecycle({ done: true, exit_code: 17 })).toEqual({
       exitCode: 17,
       status: "failed",
     });
-    expect(datasetDeletionLifecycle({ done: true })).toEqual({
-      exitCode: undefined,
-      status: "failed",
-    });
+    expect(datasetTaskLifecycle({ done: true })).toEqual({ exitCode: undefined, status: "failed" });
   });
 
   test("selects the highest remaining version or the list without relying on response order", () => {

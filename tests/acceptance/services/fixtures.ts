@@ -64,6 +64,8 @@ export const fixtureIds = {
   /** A second entered project, used to prove Results cannot cross a project boundary. */
   screeningProject: "project-6b6b6b6b-6b6b-4b6b-8b6b-6b6b6b6b6b6b",
   screeningProduct: "product-6c6c6c6c-6c6c-4c6c-8c6c-6c6c6c6c6c6c",
+  /** The subscription of the project another organisation owns, so that project can be entered. */
+  partnerProduct: "product-6d6d6d6d-6d6d-4d6d-8d6d-6d6d6d6d6d6d",
   instance: "instance-1a1a1a1a-1a1a-4a1a-8a1a-1a1a1a1a1a1a",
   screeningInstance: "instance-2b2b2b2b-2b2b-4b2b-8b2b-2b2b2b2b2b2b",
   resultTask: "task-3c3c3c3c-3c3c-4c3c-8c3c-3c3c3c3c3c3c",
@@ -299,6 +301,14 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     claim: { id: fixtureIds.screeningProject, name: "Screening Project" },
     product: { ...projectTierProduct.product, id: fixtureIds.screeningProduct },
     unit: otherUnit,
+  };
+  // The project another organisation owns answers for its own ancestry the same way, so a link
+  // followed into it resolves the organisation and unit the project itself declares.
+  const partnerProduct = {
+    ...projectTierProduct,
+    claim: { id: fixtureIds.partnerProject, name: "Partner Project" },
+    organisation: otherOrganisation,
+    product: { ...projectTierProduct.product, id: fixtureIds.partnerProduct },
   };
   const unlistedProjectProduct = {
     ...projectTierProduct,
@@ -554,6 +564,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
           observers: [],
           organisation_id: fixtureIds.otherOrganisation,
           private: true,
+          product_id: fixtureIds.partnerProduct,
           project_id: fixtureIds.partnerProject,
           size: 0,
           unit_id: fixtureIds.unit,
@@ -564,6 +575,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       profile === "empty-products"
         ? AppApiProductGetResponse.parse({ count: 0, products: [] })
         : products,
+    partnerProduct,
     screeningProduct,
     storageProduct: datasetStorageProduct,
     unlistedProjectProduct,

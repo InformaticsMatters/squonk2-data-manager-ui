@@ -1,6 +1,9 @@
 import { isAxiosError } from "axios";
 
-import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
+import {
+  classifyTransportFailure,
+  isTransientTransportFailure,
+} from "../api/runtime/classifyTransportFailure";
 
 /**
  * What is known about one file's upload without asking its task again.
@@ -87,7 +90,7 @@ export const datasetUploadRequestFailure = (error: unknown): DatasetUploadRecord
   const failure = classifyTransportFailure(error);
   // A transport that failed on the way explains nothing about this upload, so whatever body came
   // back with it is not a reason the caller can act on.
-  if (["network", "rate-limited", "server", "timeout"].includes(failure.kind)) {
+  if (isTransientTransportFailure(error)) {
     return { kind: "request-failed", reason: "This upload could not be sent. Retry this file." };
   }
   const reported =
@@ -107,9 +110,8 @@ export const datasetUploadRequestFailure = (error: unknown): DatasetUploadRecord
 };
 
 /** A read that may succeed next time keeps the file processing; anything else stops the poll. */
-const classifyTaskReadFailure = (taskError: unknown, taskId: string): DatasetUploadState => {
-  const failure = classifyTransportFailure(taskError);
-  return ["network", "rate-limited", "server", "timeout"].includes(failure.kind)
+const classifyTaskReadFailure = (taskError: unknown, taskId: string): DatasetUploadState =>
+  isTransientTransportFailure(taskError)
     ? {
         kind: "processing-unconfirmed",
         reason: "Upload progress could not be read. This file is still being processed.",
@@ -120,7 +122,6 @@ const classifyTaskReadFailure = (taskError: unknown, taskId: string): DatasetUpl
         reason: "Upload progress could not be established. Retry this file to check it again.",
         taskId,
       };
-};
 
 export const classifyDatasetUpload = ({
   record,

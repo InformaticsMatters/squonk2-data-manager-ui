@@ -103,6 +103,32 @@ export const evaluateDatasetUploadCapability = ({
       };
 };
 
+/**
+ * Whether this dataset version can be attached to a project at all.
+ *
+ * Attachment stays visible whatever the caller can edit, because its absence would leave no way to
+ * learn what is missing. Membership that has not answered — or could not — says the eligible
+ * targets are still unconfirmed rather than that there are none, which is a different fact.
+ */
+export const evaluateDatasetAttachmentCapability = ({
+  eligibleTargetCount,
+  freshness = "current",
+}: {
+  eligibleTargetCount: number;
+  freshness?: "current" | "stale";
+}): Exclude<DatasetCapability, { status: "hidden" }> => {
+  if (freshness !== "current") {
+    return { status: "disabled", reason: "Project membership is still being confirmed." };
+  }
+  return eligibleTargetCount > 0
+    ? { status: "enabled" }
+    : {
+        status: "disabled",
+        reason:
+          "You must be an editor or administrator of a project to attach a dataset. Ask a project administrator to add you to one.",
+      };
+};
+
 export const evaluatePlatformDatasetAction = (
   isPlatformAdministrator: boolean,
 ): DatasetCapability => (isPlatformAdministrator ? { status: "enabled" } : { status: "hidden" });

@@ -8,24 +8,11 @@ import {
   useRemoveEditorFromDataset,
 } from "@/api/data-manager/dataset";
 import { useAddMetadataVersion } from "@/api/data-manager/metadata";
-import { getGetTaskQueryOptions } from "@/api/data-manager/task";
 
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 
-import {
-  DatasetDeletionError,
-  datasetDeletionLifecycle,
-  DatasetDeletionPollingError,
-  nextVersionAfterDeletion,
-} from "./mutations";
-
-const deletionPollIntervalMs = 500;
-const deletionPollLimit = 120;
-
-const wait = (milliseconds: number) =>
-  new Promise<void>((resolve) => {
-    setTimeout(resolve, milliseconds);
-  });
+import { type AcceptedDatasetTasks, settleDatasetTask } from "./awaitDatasetTask";
+import { nextVersionAfterDeletion } from "./mutations";
 
 const refreshDatasets = async (queryClient: QueryClient) => {
   await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
@@ -35,33 +22,13 @@ const refreshDatasets = async (queryClient: QueryClient) => {
   });
 };
 
-const waitForDeletion = async (queryClient: QueryClient, taskId: string) => {
-  for (let attempt = 0; attempt < deletionPollLimit; attempt += 1) {
-    const task = await queryClient.fetchQuery({ ...getGetTaskQueryOptions(taskId), staleTime: 0 });
-    const lifecycle = datasetDeletionLifecycle(task);
-    if (lifecycle.status === "succeeded") {
-      return;
-    }
-    if (lifecycle.status === "failed") {
-      throw new DatasetDeletionError(
-        `Dataset deletion task failed${
-          lifecycle.exitCode === undefined ? "" : ` with exit code ${lifecycle.exitCode}`
-        }.`,
-        taskId,
-      );
-    }
-    await wait(deletionPollIntervalMs);
-  }
-  throw new DatasetDeletionPollingError(taskId);
-};
-
 export const useDatasetCommands = () => {
   const queryClient = useQueryClient();
   const addMetadata = useAddMetadataVersion();
   const addEditor = useAddEditorToDataset();
   const removeEditor = useRemoveEditorFromDataset();
   const deleteDataset = useDeleteDataset();
-  const acceptedDeletionTasks = useRef(new Map<string, string>());
+  const acceptedDeletionTasks = useRef<AcceptedDatasetTasks>(new Map());
 
   const updateLabels = async (
     datasetId: string,
@@ -86,28 +53,19 @@ export const useDatasetCommands = () => {
     addLabel: (datasetId: string, datasetVersion: number, label: string, value: string) =>
       updateLabels(datasetId, datasetVersion, [{ active: true, label, value }]),
     deleteVersion: async (datasetId: string, datasetVersion: number) => {
-      const deletionKey = `${datasetId}/${datasetVersion}`;
-      let taskId = acceptedDeletionTasks.current.get(deletionKey);
-      if (!taskId) {
-        const task = await deleteDataset.mutateAsync({ datasetId, datasetVersion });
-        taskId = task.task_id;
-        acceptedDeletionTasks.current.set(deletionKey, taskId);
-      }
-      try {
-        await waitForDeletion(queryClient, taskId);
-        acceptedDeletionTasks.current.delete(deletionKey);
-        const datasets = await refreshDatasets(queryClient);
-        const dataset = datasets.datasets.find(({ dataset_id }) => dataset_id === datasetId);
-        return {
-          nextVersion: nextVersionAfterDeletion(dataset?.versions ?? [], datasetVersion),
-          taskId,
-        };
-      } catch (error) {
-        if (error instanceof DatasetDeletionError) {
-          acceptedDeletionTasks.current.delete(deletionKey);
-        }
-        throw error;
-      }
+      const taskId = await settleDatasetTask({
+        accepted: acceptedDeletionTasks.current,
+        action: "Dataset deletion",
+        identity: `${datasetId}/${datasetVersion}`,
+        queryClient,
+        send: async () => (await deleteDataset.mutateAsync({ datasetId, datasetVersion })).task_id,
+      });
+      const datasets = await refreshDatasets(queryClient);
+      const dataset = datasets.datasets.find(({ dataset_id }) => dataset_id === datasetId);
+      return {
+        nextVersion: nextVersionAfterDeletion(dataset?.versions ?? [], datasetVersion),
+        taskId,
+      };
     },
     isLabelPending: addMetadata.isPending,
     removeEditor: async (datasetId: string, userId: string) => {

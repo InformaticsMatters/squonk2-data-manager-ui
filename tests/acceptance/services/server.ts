@@ -20,7 +20,14 @@ import {
   type FixtureProjectFileSystem,
   isScenarioProfile,
 } from "./fixtures";
-import { getScenario, type RequestRecord, resetScenario, type ScenarioState } from "./state";
+import {
+  type AttachmentRecord,
+  type AttachmentTaskRecord,
+  getScenario,
+  type RequestRecord,
+  resetScenario,
+  type ScenarioState,
+} from "./state";
 
 const issuer = acceptanceEnvironment.KEYCLOAK_URL;
 const clientId = acceptanceEnvironment.KEYCLOAK_CLIENT_ID;
@@ -157,6 +164,41 @@ const projectMutationFailure = (state: ScenarioState, response: ServerResponse) 
 /** The filesystem one project holds. A project the fixtures gave no files starts out empty. */
 const projectFileSystem = (state: ScenarioState, projectId: string): FixtureProjectFileSystem =>
   (state.fixtures.projectFiles[projectId] ??= { directories: [], files: [] });
+
+/** The dataset version one attachment names, or nothing when it named a version nobody holds. */
+const attachedDatasetVersion = (state: ScenarioState, attachment: AttachmentRecord) =>
+  state.fixtures.dataset.datasets
+    .find((dataset) => dataset.dataset_id === attachment.dataset_id)
+    ?.versions.find((version) => version.version === attachment.dataset_version);
+
+/**
+ * What a settled attachment task does: the version becomes a managed file of the project it was
+ * attached to, in the directory it named, and the project joins the version's own attachment state.
+ */
+const completeAttachment = (state: ScenarioState, task: AttachmentTaskRecord, owner: string) => {
+  const system = projectFileSystem(state, task.project_id);
+  if (task.path !== "/" && !system.directories.includes(task.path)) {
+    system.directories.push(task.path);
+  }
+  system.files = [
+    ...system.files.filter(
+      (file) => !(file.path === task.path && file.file_name === task.fileName),
+    ),
+    {
+      file_id: task.fileId,
+      file_name: task.fileName,
+      immutable: task.immutable,
+      mime_type: task.as_type,
+      owner,
+      path: task.path,
+      size: 2048,
+    },
+  ];
+  const attached = attachedDatasetVersion(state, task);
+  if (attached && !attached.projects.includes(task.project_id)) {
+    attached.projects.push(task.project_id);
+  }
+};
 
 /** The directory holding one absolute path; the root holds itself. */
 const holdingDirectory = (path: string) => {
@@ -443,6 +485,51 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       state.fixtures.dataset.datasets[0].editors = editors.filter((editor) => editor !== username);
     }
     return json(response, 204, undefined);
+  }
+  // Attaching a dataset version to a project. The Data Manager accepts the request and issues a
+  // task; the file only exists in the project once that task has settled, so the fixture creates it
+  // there then rather than at acceptance. Every field the caller chose is kept, so a request that
+  // dropped the path, the type, or a flag is recognisable rather than believable.
+  if (url.pathname === "/file" && request.method === "POST") {
+    const form = new URLSearchParams((await readBody(request)).toString());
+    const attachment: AttachmentRecord = {
+      as_type: form.get("as_type") ?? "",
+      compress: form.get("compress") === "true",
+      dataset_id: form.get("dataset_id") ?? "",
+      dataset_version: Number(form.get("dataset_version")),
+      immutable: form.get("immutable") === "true",
+      path: form.get("path") ?? "/",
+      project_id: form.get("project_id") ?? "",
+    };
+    state.attachments.push(attachment);
+    if (state.attachFailure) {
+      return json(
+        response,
+        state.attachFailure,
+        state.attachFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    const target = state.fixtures.projects.projects.find(
+      (candidate) => candidate.project_id === attachment.project_id,
+    );
+    const attached = attachedDatasetVersion(state, attachment);
+    if (!target || !attached) {
+      return json(response, 404, { error: "fixture-attachment-target-not-found" });
+    }
+    const sequence = String(state.attachmentTasks.size + 1).padStart(12, "0");
+    const taskId = `task-66666666-6666-4666-8666-${sequence}`;
+    const fileId = `file-66666666-6666-4666-8666-${sequence}`;
+    const fileName = attachment.compress ? `${attached.file_name}.gz` : attached.file_name;
+    state.attachmentTasks.set(taskId, { ...attachment, fileId, fileName });
+    state.attachmentPollingIndexes.set(taskId, 0);
+    return json(response, 202, {
+      file_id: fileId,
+      file_name: fileName,
+      file_path: attachment.path,
+      task_id: taskId,
+    });
   }
   // A project's files. Every read and every change names the project and the path it acts on, so a
   // request that named neither, or named another project, is answered as such rather than served
@@ -745,14 +832,6 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     }
     return json(response, 200, project);
   }
-  if (url.pathname === `/project/${fixtureIds.screeningProject}`) {
-    const screening = state.fixtures.projects.projects.find(
-      (candidate) => candidate.project_id === fixtureIds.screeningProject,
-    );
-    return screening
-      ? json(response, 200, screening)
-      : json(response, 404, { error: "fixture-project-not-found" });
-  }
   if (url.pathname === `/project/${fixtureIds.project}`) {
     if (state.projectFailure) {
       const body =
@@ -767,6 +846,16 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   }
   if (url.pathname === `/project/${fixtureIds.createdProject}` && state.createdProject) {
     return json(response, 200, state.createdProject);
+  }
+  // Every other project answers for itself, so a project reached by following a link built from an
+  // attachment or a result is served exactly as the collection listed it.
+  if (segments[0] === "project" && segments.length === 2 && request.method === "GET") {
+    const addressed = state.fixtures.projects.projects.find(
+      (candidate) => candidate.project_id === segments[1],
+    );
+    return addressed
+      ? json(response, 200, addressed)
+      : json(response, 404, { error: "fixture-project-not-found" });
   }
   // The Run catalogue. Jobs are scoped by project, so a request that names no project is refused;
   // applications and workflow definitions are catalogues the Data Manager does not scope.
@@ -900,29 +989,37 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       });
     }
     const deletionVersion = state.deletionTaskVersions.get(taskId);
+    const attachmentTask = state.attachmentTasks.get(taskId);
     const isUploadTask = taskId === fixtureIds.task || state.uploadTaskIds.includes(taskId);
-    if (!isUploadTask && deletionVersion === undefined) {
+    if (!isUploadTask && deletionVersion === undefined && !attachmentTask) {
       return json(response, 404, { error: "fixture-task-not-found" });
     }
     if (state.taskFailure) {
       return json(response, state.taskFailure, state.fixtures.failures.serverError);
     }
-    const pollingIndex =
-      deletionVersion === undefined
-        ? (state.pollingIndexes.get(taskId) ?? 0)
-        : (state.deletionPollingIndexes.get(taskId) ?? 0);
+    // Each kind of task advances and settles on its own, so a failing upload, deletion, or
+    // attachment never has to be told apart from another by timing.
+    const pollingIndexes = attachmentTask
+      ? state.attachmentPollingIndexes
+      : deletionVersion === undefined
+        ? state.pollingIndexes
+        : state.deletionPollingIndexes;
+    const pollingIndex = pollingIndexes.get(taskId) ?? 0;
+    pollingIndexes.set(taskId, pollingIndex + 1);
     const index = Math.min(pollingIndex, state.fixtures.taskTransitions.length - 1);
-    if (deletionVersion === undefined) {
-      state.pollingIndexes.set(taskId, pollingIndex + 1);
-    } else {
-      state.deletionPollingIndexes.set(taskId, pollingIndex + 1);
-    }
     const task = state.fixtures.taskTransitions[index];
-    // A terminal exit code the scenario dictates. Deletion and upload tasks carry their own, so a
-    // failing upload never has to be told apart from a failing deletion by timing.
-    const exitCode = deletionVersion === undefined ? state.uploadExitCode : state.deletionExitCode;
+    const exitCode = attachmentTask
+      ? state.attachExitCode
+      : deletionVersion === undefined
+        ? state.uploadExitCode
+        : state.deletionExitCode;
     const responseTask =
       task.done && exitCode !== undefined ? { ...task, exit_code: exitCode } : task;
+    if (responseTask.done && responseTask.exit_code === 0 && attachmentTask) {
+      completeAttachment(state, attachmentTask, subject);
+      state.attachmentTasks.delete(taskId);
+      state.attachmentPollingIndexes.delete(taskId);
+    }
     if (responseTask.done && responseTask.exit_code === 0 && deletionVersion !== undefined) {
       state.fixtures.dataset.datasets[0].versions =
         state.fixtures.dataset.datasets[0].versions.filter(
@@ -1362,6 +1459,9 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
   if (url.pathname === `/product/${fixtureIds.screeningProduct}`) {
     return json(response, 200, { product: state.fixtures.screeningProduct });
   }
+  if (url.pathname === `/product/${fixtureIds.partnerProduct}`) {
+    return json(response, 200, { product: state.fixtures.partnerProduct });
+  }
   if (url.pathname === `/product/${fixtureIds.unlistedProduct}`) {
     return json(response, 200, { product: state.fixtures.unlistedProjectProduct });
   }
@@ -1404,6 +1504,7 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   if (url.pathname.startsWith("/scenario/") && request.method === "GET") {
     const state = getScenario(subject);
     return json(response, 200, {
+      attachments: state.attachments,
       pollingIndex: state.pollingIndexes.get(fixtureIds.task) ?? 0,
       requests: state.requests,
       upload: state.upload
@@ -1581,6 +1682,36 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/deletion-exit-code") && request.method === "DELETE") {
     getScenario(subject).deletionExitCode = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/attach-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-attach-failure", status });
+    }
+    getScenario(subject).attachFailure = status as 403 | 503;
+    return json(response, 200, { attachFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/attach-failure") && request.method === "DELETE") {
+    getScenario(subject).attachFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/attach-exit-code") && request.method === "POST") {
+    getScenario(subject).attachExitCode = Number(url.searchParams.get("value"));
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/attach-exit-code") && request.method === "DELETE") {
+    getScenario(subject).attachExitCode = undefined;
+    return json(response, 200, { subject });
+  }
+  // A caller who can edit no project at all, which is the one fact that leaves an attachment with
+  // nowhere to go while every other dataset action stays exactly as it was.
+  if (url.pathname.endsWith("/no-editable-projects") && request.method === "POST") {
+    const state = getScenario(subject);
+    for (const project of state.fixtures.projects.projects) {
+      project.administrators = project.administrators.filter((member) => member !== subject);
+      project.editors = project.editors.filter((member) => member !== subject);
+    }
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/upload-failure") && request.method === "POST") {

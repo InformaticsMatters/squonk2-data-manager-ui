@@ -1,31 +1,39 @@
 import { useState } from "react";
 
 import { type DatasetVersionSummary, type DmError } from "@/api/data-manager";
-import { getGetDatasetsQueryKey } from "@/api/data-manager/dataset";
-import { getGetFilesQueryKey, useAttachFile } from "@/api/data-manager/file-and-path";
-import { useGetProjects } from "@/api/data-manager/project";
 import { useGetFileTypes } from "@/api/data-manager/type";
 
 import { AttachFileRounded as AttachFileRoundedIcon } from "@mui/icons-material";
 import {
   Alert,
   Checkbox,
+  CircularProgress,
   FormControl,
   FormControlLabel,
   FormGroup,
+  Link as MuiLink,
   ListItemButton,
   ListItemText,
   MenuItem,
   TextField,
 } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
-import { useQueryClient } from "@tanstack/react-query";
+import NextLink from "next/link";
 import { z } from "zod/mini";
 
 import { FormModalWrapper } from "../../../../../components/modals/FormModalWrapper";
+import {
+  attachmentDestinationPath,
+  attachmentDestinationRequirement,
+  type AttachmentTarget,
+  attachmentTargetLabel,
+  datasetAttachmentFailureMessage,
+  resolveDatasetAttachment,
+} from "../../../../../datasets/attachment";
+import { useDatasetAttachmentCommands } from "../../../../../datasets/useDatasetAttachmentCommands";
+import { useDatasetAttachmentTargets } from "../../../../../datasets/useDatasetAttachmentTargets";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
-import { useKeycloakUser } from "../../../../../hooks/useKeycloakUser";
-import { getErrorMessage } from "../../../../../utils/next/orvalError";
+import { projectLinks } from "../../../../../projects/routes";
 import { useGetAttachedProjectsNames } from "./useGetAttachedProjectsNames";
 
 export interface AttachDatasetListItemProps {
@@ -39,14 +47,16 @@ export interface AttachDatasetListItemProps {
   version: DatasetVersionSummary;
 }
 
-// Define schema for validation
 const schema = z.object({
   project: z.string().check(z.minLength(1, "A project is required")),
   type: z.string().check(z.minLength(1, "A file type is required")),
-  path: z.union([
-    z.string().check(z.regex(/^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/gmu, "Invalid Path")),
-    z.literal(""),
-  ]),
+  path: z
+    .string()
+    .check(
+      z.refine((value) => attachmentDestinationPath(value) !== null, {
+        message: attachmentDestinationRequirement,
+      }),
+    ),
   isImmutable: z.boolean(),
   isCompress: z.boolean(),
 });
@@ -54,34 +64,43 @@ const schema = z.object({
 type FormType = z.infer<typeof schema>;
 
 /**
- * MuiListItem with a click action that opens a modal allowing a dataset to be attached to a project
+ * What the attachment this form is running has reached. Only a settled task is a success, so the
+ * caller is told the version is attached exactly once the file exists in the project it named.
+ */
+type AttachmentProgress =
+  | { kind: "attached"; path: string; target: AttachmentTarget }
+  | { kind: "attaching"; target: AttachmentTarget }
+  | { kind: "failed"; reason: string }
+  | { kind: "idle" };
+
+/**
+ * MuiListItem with a click action that opens a modal allowing a dataset to be attached to a project.
+ *
+ * The target project is always chosen explicitly from the projects the caller may edit, whichever
+ * organisation and unit hold them, and it is the only thing that decides where the version lands.
  */
 export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListItemProps) => {
-  const { projects: projectIds } = version;
+  const { projects: attachedProjectIds } = version;
 
   const [open, setOpen] = useState(false);
+  const [progress, setProgress] = useState<AttachmentProgress>({ kind: "idle" });
 
-  const { user, isLoading: isUserLoading } = useKeycloakUser();
+  const { capability, targets } = useDatasetAttachmentTargets();
+  const { attach } = useDatasetAttachmentCommands();
 
-  const queryClient = useQueryClient();
-  const { mutateAsync: attachFile, error } = useAttachFile();
-  const errorMessage = getErrorMessage(error);
-
-  const { data: projectsData, isLoading: isProjectsLoading } = useGetProjects();
-  const projects = projectsData?.projects.filter(
-    ({ editors, administrators }) =>
-      user.username && (editors.includes(user.username) || administrators.includes(user.username)),
-  );
-
-  const { data: typesData, isLoading: isTypesLoading } = useGetFileTypes();
+  // The type this version is attached as defaults to its own, so the catalogue of types offers
+  // alternatives rather than deciding whether the action can be used at all.
+  const { data: typesData } = useGetFileTypes();
   const types = typesData?.types;
 
-  const projectNames = useGetAttachedProjectsNames(projectIds, projectsData?.projects);
+  const projectNames = useGetAttachedProjectsNames(attachedProjectIds);
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
   const defaultValues: FormType = {
-    project: projects?.[0]?.project_id ?? "",
+    // Nothing is chosen for the caller: a dataset version is attached to the project they named or
+    // to no project at all.
+    project: "",
     type: version.type,
     path: "",
     isImmutable: true,
@@ -93,40 +112,48 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
     validators: { onChange: schema },
     onSubmit: async (values) => {
       const { project, type, path, isImmutable, isCompress } = values.value;
-      const resolvedPath = path || "/";
-
-      try {
-        await attachFile({
-          data: {
-            dataset_version: version.version,
-            dataset_id: datasetId,
-            project_id: project,
-            immutable: isImmutable,
-            compress: isCompress,
-            as_type: type,
-            path: resolvedPath,
-          },
-        });
-
-        await Promise.allSettled([
-          // Ensure the views showing project files is updated to include the new addition
-          queryClient.invalidateQueries({
-            queryKey: getGetFilesQueryKey({ project_id: project, path: resolvedPath }),
-          }),
-          // Ensure that the dataset's details display the project's name in the used in projects
-          // field
-          queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() }),
-        ]);
-
-        enqueueSnackbar("The dataset was successfully attached to your project", {
-          variant: "success",
-        });
-        setOpen(false);
-        return {};
-      } catch (error) {
-        enqueueError(error);
+      const resolution = resolveDatasetAttachment(
+        {
+          compress: isCompress,
+          datasetId,
+          datasetVersion: version.version,
+          immutable: isImmutable,
+          path,
+          targetProjectId: project,
+          type,
+        },
+        targets,
+      );
+      if (resolution.kind === "none") {
+        setProgress({ kind: "failed", reason: resolution.reason });
         return {};
       }
+
+      setProgress({ kind: "attaching", target: resolution.target });
+      try {
+        await attach(resolution.request);
+        setProgress({ kind: "attached", path: resolution.path, target: resolution.target });
+        enqueueSnackbar(`The dataset was attached to ${resolution.target.projectName}`, {
+          variant: "success",
+        });
+      } catch (error) {
+        const message = datasetAttachmentFailureMessage(error, {
+          datasetId,
+          datasetVersion: version.version,
+          targetName: resolution.target.projectName,
+        });
+        // Every failure leaves the entered choices exactly as they are, so the same attachment can
+        // be retried in place without being described again. A fact this client cannot classify is
+        // stated as a refusal here and reported in the Data Manager's own words beside it.
+        setProgress({
+          kind: "failed",
+          reason: message ?? "The Data Manager refused this attachment. Nothing was attached.",
+        });
+        if (!message) {
+          enqueueError(error);
+        }
+      }
+      return {};
     },
   });
 
@@ -134,21 +161,33 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
     handleSubmit: () => form.handleSubmit(),
     reset: () => {
       form.reset();
+      setProgress({ kind: "idle" });
     },
-    state: { canSubmit: form.state.canSubmit, isSubmitting: form.state.isSubmitting },
+    state: {
+      // A settled attachment is finished work: sending the same one again would put a second copy
+      // of this version in the project, so another attachment starts from a form that was reopened.
+      canSubmit:
+        form.state.canSubmit && capability.status === "enabled" && progress.kind !== "attached",
+      isSubmitting: form.state.isSubmitting,
+    },
   };
 
   return (
     <>
-      <ListItemButton
-        disabled={isProjectsLoading || isTypesLoading || isUserLoading}
-        onClick={() => setOpen(true)}
-      >
+      {/* The action stays visible whatever the caller can edit, and an unusable one is read beside
+          itself rather than only in a tooltip nothing but a pointer would reveal. */}
+      <ListItemButton disabled={capability.status !== "enabled"} onClick={() => setOpen(true)}>
         <ListItemText
           primary="Attach Dataset to a Project"
           secondary={
             <>
               Creates a file in the project linked to the selected version
+              {capability.status === "disabled" && (
+                <>
+                  <br />
+                  {capability.reason}
+                </>
+              )}
               {projectNames.length > 0 && (
                 <>
                   <br />
@@ -175,15 +214,22 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
               <TextField
                 select
                 error={!!field.state.meta.errors[0]}
-                helperText={field.state.meta.errors[0]?.message}
+                helperText={
+                  field.state.meta.errors[0]?.message ??
+                  "Every project you can edit is listed with the unit and organisation that hold it."
+                }
                 id="select-project"
                 label="Project"
+                slotProps={{ inputLabel: { shrink: true }, select: { displayEmpty: true } }}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
               >
-                {(projects ?? []).map((project) => (
-                  <MenuItem key={project.project_id} value={project.project_id}>
-                    {project.name}
+                <MenuItem disabled value="">
+                  Select a project
+                </MenuItem>
+                {targets.map((target) => (
+                  <MenuItem key={target.projectId} value={target.projectId}>
+                    {attachmentTargetLabel(target)}
                   </MenuItem>
                 ))}
               </TextField>
@@ -264,9 +310,26 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
           </form.Field>
         </FormControl>
 
-        {!!errorMessage && (
+        {progress.kind === "attaching" && (
+          <Alert icon={<CircularProgress size="1rem" />} severity="info">
+            Attaching to {progress.target.projectName}. This dataset version is unchanged until the
+            Data Manager finishes.
+          </Alert>
+        )}
+        {progress.kind === "attached" && (
+          <Alert severity="success">
+            Attached to {attachmentTargetLabel(progress.target)}.{" "}
+            <MuiLink
+              component={NextLink}
+              href={projectLinks.files(progress.target.projectId, { path: progress.path }) as never}
+            >
+              Open {progress.target.projectName} files
+            </MuiLink>
+          </Alert>
+        )}
+        {progress.kind === "failed" && (
           <Alert severity="error">
-            <b>Error:</b> {errorMessage}
+            <b>Error:</b> {progress.reason}
           </Alert>
         )}
       </FormModalWrapper>

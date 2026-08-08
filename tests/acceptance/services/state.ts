@@ -12,8 +12,32 @@ export type RequestRecord = {
   subject: string;
 };
 
+/** One attachment request the Data Manager received, in the fields the generated body carries. */
+export type AttachmentRecord = {
+  as_type: string;
+  compress: boolean;
+  dataset_id: string;
+  dataset_version: number;
+  immutable: boolean;
+  path: string;
+  project_id: string;
+};
+
+/** The work one accepted attachment task will do to a project once it settles. */
+export type AttachmentTaskRecord = AttachmentRecord & { fileId: string; fileName: string };
+
 export type ScenarioState = {
   accessFailure?: 403 | 503;
+  /** A refused or failing attachment request, so a rejection and a transport failure are told apart. */
+  attachFailure?: 403 | 503;
+  /** A terminal exit code an attachment task reports instead of success. */
+  attachExitCode?: number;
+  /** Every attachment request received, so the options one carried can be stated exactly. */
+  attachments: AttachmentRecord[];
+  /** How many times each attachment task has been polled, so every attachment advances on its own. */
+  attachmentPollingIndexes: Map<string, number>;
+  /** The attachments awaiting their task, which only reach the project once that task settles. */
+  attachmentTasks: Map<string, AttachmentTaskRecord>;
   /** The caller's own Data Manager account read, whose failure leaves project facts unconfirmed. */
   callerAccountFailure?: 503;
   chargeFailure?: 403 | 429 | 503;
@@ -74,6 +98,9 @@ const scenarios = new Map<string, ScenarioState>();
 
 export const resetScenario = (subject: string, profile: ScenarioProfile = "default") => {
   const state: ScenarioState = {
+    attachments: [],
+    attachmentPollingIndexes: new Map(),
+    attachmentTasks: new Map(),
     fixtures: createScenarioFixtures(subject, profile),
     deletionPollingIndexes: new Map(),
     deletionTaskVersions: new Map(),

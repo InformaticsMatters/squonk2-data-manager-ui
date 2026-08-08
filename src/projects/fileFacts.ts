@@ -1,6 +1,34 @@
 import { type FilePathFile } from "@/api/data-manager";
 
 import { separateFileExtensionFromFileName } from "../utils/app/files";
+import { type SectionReadState } from "./sectionReads";
+
+/**
+ * What the directory listing a file action is acting on could last establish. `current` is a
+ * listing that answered; `stale` is one a failed refresh left on screen; `unavailable` is one a
+ * confirmed refusal or absence cleared; `unestablished` is one that has not answered at all yet.
+ * Only the first establishes what the directory holds.
+ */
+export type ProjectFileContent = "current" | "stale" | "unavailable" | "unestablished";
+
+/**
+ * What one Files read has established about the directory it addressed. A read still in flight has
+ * answered nothing, which is told apart from a listing that answered: not having been told what a
+ * directory holds is not the same as having been told it holds nothing. A failed refresh is still
+ * reported as stale, because content already on screen is what makes it stale.
+ */
+export const resolveProjectFileContent = (
+  readState: SectionReadState,
+  hasAnswered: boolean,
+): ProjectFileContent => {
+  if (readState.kind === "unavailable") {
+    return "unavailable";
+  }
+  if (readState.kind === "recoverable") {
+    return "stale";
+  }
+  return hasAnswered ? "current" : "unestablished";
+};
 
 /** The longest path the Data Manager's generated file arguments accept. */
 const maxPathLength = 260;

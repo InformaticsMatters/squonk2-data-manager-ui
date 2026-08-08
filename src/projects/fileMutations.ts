@@ -3,6 +3,7 @@ import {
   childFilesystemPath,
   filesystemPathOf,
   filesystemRoot,
+  parentFilesystemPath,
 } from "./fileFacts";
 
 /**
@@ -57,10 +58,22 @@ export type FileMove =
   | { kind: "move-file"; destination: string; destinationPath: string; name: string; path: string }
   | { kind: "none"; reason: string };
 
+/** A move there is something to send for, so a caller past the `none` case need not re-check it. */
+export type ResolvedFileMove = Exclude<FileMove, { kind: "none" }>;
+
 const absolute = (relativePath: string) => filesystemPathOf(relativePath.split("/"));
 
-const stemOf = (absolutePath: string) =>
-  filesystemPathOf(absolutePath.slice(1).split("/").slice(0, -1));
+/**
+ * The directories whose listings displayed the moved item, and so the ones a move changes. A
+ * directory moves as its own path while the listings showing it are its parents, and a file already
+ * carries the directories it moved between, so the two kinds answer this differently and neither
+ * caller has to work it out. Refreshing the moved path itself would leave the old name on screen in
+ * the listing the caller is looking at.
+ */
+export const listingPathsChangedByMove = (move: ResolvedFileMove): readonly string[] =>
+  move.kind === "move-directory"
+    ? [parentFilesystemPath(move.source), parentFilesystemPath(move.destination)]
+    : [move.path, move.destinationPath];
 
 /**
  * Resolves the one move a rename expresses. Both paths are project-root relative as the caller
@@ -91,10 +104,10 @@ export const resolveFileMove = (
   }
   return {
     destination: requested.split("/").at(-1) as string,
-    destinationPath: stemOf(absolute(requested)),
+    destinationPath: parentFilesystemPath(absolute(requested)),
     kind: "move-file",
     name: source.split("/").at(-1) as string,
-    path: stemOf(absolute(source)),
+    path: parentFilesystemPath(absolute(source)),
   };
 };
 

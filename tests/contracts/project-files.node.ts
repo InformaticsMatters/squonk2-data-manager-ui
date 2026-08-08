@@ -22,6 +22,7 @@ import {
   parentFilesystemPath,
   projectFileRequests,
   relativeFilesystemPath,
+  resolveProjectFileContent,
   selectProjectFileRows,
 } from "../../src/projects/fileFacts";
 import {
@@ -31,7 +32,9 @@ import {
 } from "../../src/projects/fileFavourites";
 import {
   fileOutcomeMessage,
+  listingPathsChangedByMove,
   resolveDatasetCreation,
+  type ResolvedFileMove,
   resolveDirectoryCreation,
   resolveFileMove,
 } from "../../src/projects/fileMutations";
@@ -131,6 +134,29 @@ test.describe("Files routes", () => {
       needsReplace: false,
       route: { kind: "files", path: "/inputs/results", projectId },
     });
+  });
+
+  test("a file route the section cannot address is answered beneath the project it names", () => {
+    for (const href of [
+      `/projects/${projectId}/files/view`,
+      `/projects/${projectId}/files/view?path=%2F`,
+      `/projects/${projectId}/files/view?path=inputs%2Fposes.sdf`,
+      `/projects/${projectId}/files/view?path=%2Finputs%2F..%2Fsecrets`,
+    ]) {
+      expect(parseProjectRoute(href), href).toEqual({
+        kind: "not-found",
+        parent: { family: "projects", resourceId: projectId, section: "files" },
+      });
+    }
+  });
+
+  test("the file view route has a page entry, so the section answers instead of the application", () => {
+    // Without one, Next answers the URL before the route contract is ever consulted, and a file
+    // path the section could not address would lose the valid project shell it names. The viewer
+    // itself arrives with its own migration; this entry is what lets Files answer for the route.
+    expect(
+      existsSync(path.join(process.cwd(), "src/pages/projects/[projectId]/files/view.tsx")),
+    ).toBe(true);
   });
 
   test("a builder rejects a path it cannot canonicalise rather than writing a guess", () => {
@@ -294,6 +320,34 @@ test.describe("Files mutations", () => {
     });
   });
 
+  test("a move names the listings that displayed the item rather than the item itself", () => {
+    // A directory moves as its own path, but the listings showing it are the ones it left and the
+    // one it arrived in, so refreshing the moved path itself would leave the old name on screen.
+    expect(
+      listingPathsChangedByMove(
+        resolveFileMove("directory", "inputs/results", "outputs/results") as ResolvedFileMove,
+      ),
+    ).toEqual(["/inputs", "/outputs"]);
+    // A directory renamed in place is displayed by one listing, which is named once.
+    expect(
+      listingPathsChangedByMove(
+        resolveFileMove("directory", "inputs/results", "inputs/final") as ResolvedFileMove,
+      ),
+    ).toEqual(["/inputs", "/inputs"]);
+    // A directory moved into or out of the project root names the root itself.
+    expect(
+      listingPathsChangedByMove(
+        resolveFileMove("directory", "results", "inputs/results") as ResolvedFileMove,
+      ),
+    ).toEqual(["/", "/inputs"]);
+    // A file already carries its containing directories, so it names exactly those.
+    expect(
+      listingPathsChangedByMove(
+        resolveFileMove("file", "inputs/poses.sdf", "outputs/final.sdf") as ResolvedFileMove,
+      ),
+    ).toEqual(["/inputs", "/outputs"]);
+  });
+
   test("a move that changes nothing, or cannot be spelled, is reported rather than sent", () => {
     expect(resolveFileMove("file", "poses.sdf", "poses.sdf")).toEqual({
       kind: "none",
@@ -394,6 +448,32 @@ test.describe("Files capabilities", () => {
       reason: "You must be a project editor or administrator to change project files.",
       status: "disabled",
     });
+  });
+
+  test("a directory that has not answered yet establishes nothing to change", () => {
+    // A listing with no error yet has still told the caller nothing about the directory: the names
+    // it holds are unknown, so a change sent into it could collide with one that is already there.
+    expect(resolveProjectFileContent(resolveSectionReadState(null), false)).toBe("unestablished");
+    expect(resolveProjectFileContent(resolveSectionReadState(null), true)).toBe("current");
+    // Content already on screen is stale rather than unestablished, however its refresh failed.
+    const recoverable = resolveSectionReadState(new Response(null, { status: 503 }));
+    expect(resolveProjectFileContent(recoverable, true)).toBe("stale");
+    expect(resolveProjectFileContent(recoverable, false)).toBe("stale");
+    // A confirmed refusal or absence outranks both, because it is the one settled answer.
+    expect(
+      resolveProjectFileContent(
+        resolveSectionReadState(new Response(null, { status: 404 })),
+        false,
+      ),
+    ).toBe("unavailable");
+
+    expect(evaluateProjectFileMutationCapability({ ...facts(), content: "unestablished" })).toEqual(
+      {
+        reason:
+          "This directory has not loaded yet, so changing its contents cannot be established as safe.",
+        status: "disabled",
+      },
+    );
   });
 
   test("a subscription at its coin limit explains why files cannot be changed", () => {

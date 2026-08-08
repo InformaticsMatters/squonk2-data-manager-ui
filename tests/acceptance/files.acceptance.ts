@@ -172,6 +172,24 @@ test("a path the project does not hold is a Files-local outcome", async ({ page 
   await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toBeVisible();
 });
 
+test("a file path the section cannot address keeps the project shell", async ({
+  page,
+}, testInfo) => {
+  const unusable = `${acceptanceFiles}/view?path=inputs%2Fposes.sdf`;
+  await login(page, unusable, testInfo);
+
+  // The route reaches Files rather than the application's own not-found, so the project it names
+  // stays on screen and Files answers for the file it could not address.
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${unusable}`);
+  await expect(page.getByText("This file was not found in this project.")).toBeVisible();
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Files" })).toBeVisible();
+
+  // The section keeps its own root listing rather than guessing a correction for the file path.
+  await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toBeVisible();
+  await expect(page.getByRole("link", { exact: true, name: "inputs" })).toBeVisible();
+});
+
 test("creating, uploading, renaming, and deleting act on the addressed directory", async ({
   page,
   request,
@@ -204,6 +222,22 @@ test("creating, uploading, renaming, and deleting act on the addressed directory
       ({ method, path }) => path === "/path" && method === "PUT",
     ),
   ).toHaveLength(1);
+
+  // Renaming a directory refreshes the listing that displays it, not the directory itself, so the
+  // new name replaces the old one on screen without the caller refreshing.
+  await row(page, "results").getByRole("button", { name: "Rename or move" }).click();
+  await page.getByLabel("Destination Path").fill("inputs/outcomes");
+  await page.getByRole("button", { name: "Rename / Move" }).last().click();
+  await expect(page.getByText("The directory was renamed or moved.")).toBeVisible();
+  await expect(page.getByRole("link", { exact: true, name: "outcomes" })).toBeVisible();
+  await expect(page.getByRole("link", { exact: true, name: "results" })).toHaveCount(0);
+
+  const directoryMoves = (await fileRequests(request, subject)).filter(
+    ({ method, path }) => path === "/path/move" && method === "PUT",
+  );
+  expect(directoryMoves).toHaveLength(1);
+  expect(directoryMoves[0].query).toContain("src_path=%2Finputs%2Fresults");
+  expect(directoryMoves[0].query).toContain("dst_path=%2Finputs%2Foutcomes");
 
   // An upload lands in the project and directory on screen.
   await page.getByRole("button", { name: "Upload unmanaged file" }).click();

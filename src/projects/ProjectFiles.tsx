@@ -178,7 +178,10 @@ const FilesTable = ({
               This file was not found in this project.
             </Alert>
           ) : null}
-          {reason ? (
+          {/* A listing that is still loading already says so through its own loader, so what its
+          controls require stays on the controls rather than being announced as a banner every
+          navigation would flash. */}
+          {reason && !files.isLoading ? (
             <Alert severity="info" sx={{ mb: 2 }}>
               {reason}
             </Alert>

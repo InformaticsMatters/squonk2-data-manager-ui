@@ -1,5 +1,7 @@
 import { type UserAccountDetail } from "@/api/data-manager";
 
+import { type ProjectFileContent } from "./fileFacts";
+
 export type ProjectCapability =
   | { status: "disabled"; reason: string }
   | { status: "enabled"; reason?: string }
@@ -217,13 +219,6 @@ const evaluateFileSpend = evaluateSpendingAction({
 });
 
 /**
- * What the directory listing a file action is acting on could last establish. `current` is a
- * listing that answered; `stale` is one a failed refresh left on screen; `unavailable` is one a
- * confirmed refusal or absence cleared. Only the first establishes what the directory holds.
- */
-export type ProjectFileContent = "current" | "stale" | "unavailable";
-
-/**
  * What a file action reads in addition to the project's own facts: whether the directory listing it
  * is acting on could last be established. No file action reads a selected or current project, and
  * none reads a path other than the one Files itself is displaying.
@@ -235,6 +230,8 @@ const unsafeDirectoryReasons: Record<Exclude<ProjectFileContent, "current">, str
     "This directory could not be refreshed, so changing its contents cannot be established as safe.",
   unavailable:
     "This directory is unavailable, so changing its contents cannot be established as safe.",
+  unestablished:
+    "This directory has not loaded yet, so changing its contents cannot be established as safe.",
 };
 
 /**

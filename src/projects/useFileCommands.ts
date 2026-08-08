@@ -16,6 +16,7 @@ import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 import { childFilesystemPath } from "./fileFacts";
 import {
   type FileCommandOutcome,
+  listingPathsChangedByMove,
   resolveDatasetCreation,
   resolveDirectoryCreation,
   resolveFileMove,
@@ -167,13 +168,14 @@ export const useFileCommands = (projectId: string) => {
       if (move.kind === "none") {
         return { kind: "unchanged", reason: move.reason };
       }
+      const listings = listingPathsChangedByMove(move);
       if (move.kind === "move-directory") {
         await command(
           () =>
             movePath.mutateAsync({
               params: { dst_path: move.destination, project_id: projectId, src_path: move.source },
             }),
-          [move.source, move.destination],
+          listings,
         );
         return { kind: "moved", type };
       }
@@ -188,7 +190,7 @@ export const useFileCommands = (projectId: string) => {
               src_path: move.path,
             },
           }),
-        [move.path, move.destinationPath],
+        listings,
       );
       return { kind: "moved", type };
     },

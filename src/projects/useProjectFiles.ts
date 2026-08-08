@@ -4,22 +4,25 @@ import { getGetFilesQueryKey, useGetFiles } from "@/api/data-manager/file-and-pa
 
 import { useQueryClient } from "@tanstack/react-query";
 
-import { type ProjectFileContent } from "./capabilities";
-import { projectFileRequests, type ProjectFileRow, selectProjectFileRows } from "./fileFacts";
+import {
+  type ProjectFileContent,
+  projectFileRequests,
+  type ProjectFileRow,
+  resolveProjectFileContent,
+  selectProjectFileRows,
+} from "./fileFacts";
 import {
   readableContent,
-  resolveSectionFreshness,
   resolveSectionReadReport,
   resolveSectionReadState,
   sectionReadFailure,
   type SectionReadReport,
-  type SectionReadState,
 } from "./sectionReads";
 
 export type ProjectFiles = {
   /**
-   * What the listing could last establish about the directory. A refused or absent listing
-   * establishes as little as a stale one, so both are told apart from a listing that answered.
+   * What the listing could last establish about the directory. A refused, absent, or not-yet-read
+   * listing establishes as little as a stale one, so each is told apart from one that answered.
    */
   content: ProjectFileContent;
   isLoading: boolean;
@@ -32,9 +35,6 @@ export type ProjectFiles = {
   /** Everything the addressed directory holds, sub-directories first. */
   rows: ProjectFileRow[];
 };
-
-const fileContentOf = (readState: SectionReadState): ProjectFileContent =>
-  readState.kind === "unavailable" ? "unavailable" : resolveSectionFreshness(readState);
 
 /**
  * Composes the Files listing from the generated file-and-path collection. The project in the URL
@@ -49,9 +49,13 @@ export const useProjectFiles = (projectId: string, path: string): ProjectFiles =
   const files = useGetFiles(requests.files, { query: { retry: false } });
 
   const readState = resolveSectionReadState(sectionReadFailure(files));
+  // A directory the read has not answered for yet establishes nothing about what it holds, so it is
+  // not treated as current merely for having failed at nothing. Content already in hand — cached or
+  // being refreshed behind what is on screen — has answered.
+  const hasAnswered = files.data !== undefined;
 
   return {
-    content: fileContentOf(readState),
+    content: resolveProjectFileContent(readState, hasAnswered),
     isLoading: files.isLoading,
     refresh: () =>
       void queryClient.invalidateQueries({ queryKey: getGetFilesQueryKey(requests.files) }),

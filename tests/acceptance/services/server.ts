@@ -503,12 +503,15 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     };
     state.attachments.push(attachment);
     if (state.attachFailure) {
+      const failures = state.fixtures.failures;
       return json(
         response,
         state.attachFailure,
-        state.attachFailure === 403
-          ? state.fixtures.failures.forbidden
-          : state.fixtures.failures.serverError,
+        state.attachFailure === 400
+          ? failures.badRequest
+          : state.attachFailure === 403
+            ? failures.forbidden
+            : failures.serverError,
       );
     }
     const target = state.fixtures.projects.projects.find(
@@ -694,6 +697,15 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
         await delay(state.projectCreationResponseDelay);
       }
       return json(response, 201, { project_id: fixtureIds.createdProject });
+    }
+    if (state.projectCollectionFailure) {
+      return json(
+        response,
+        state.projectCollectionFailure,
+        state.projectCollectionFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
     }
     const projects = state.createdProject
       ? [...state.fixtures.projects.projects, state.createdProject]
@@ -1686,10 +1698,10 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/attach-failure") && request.method === "POST") {
     const status = Number(url.searchParams.get("status"));
-    if (![403, 503].includes(status)) {
+    if (![400, 403, 503].includes(status)) {
       return json(response, 400, { error: "unsupported-attach-failure", status });
     }
-    getScenario(subject).attachFailure = status as 403 | 503;
+    getScenario(subject).attachFailure = status as 400 | 403 | 503;
     return json(response, 200, { attachFailure: status, subject });
   }
   if (url.pathname.endsWith("/attach-failure") && request.method === "DELETE") {
@@ -1810,6 +1822,20 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/project-failure") && request.method === "DELETE") {
     getScenario(subject).projectFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  // The project collection failing, which leaves the projects a caller could attach to unknown
+  // rather than leaving one project unreadable.
+  if (url.pathname.endsWith("/project-collection-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-project-collection-failure", status });
+    }
+    getScenario(subject).projectCollectionFailure = status as 403 | 503;
+    return json(response, 200, { projectCollectionFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/project-collection-failure") && request.method === "DELETE") {
+    getScenario(subject).projectCollectionFailure = undefined;
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/project-mutation-failure") && request.method === "POST") {

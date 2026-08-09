@@ -28,8 +28,11 @@ export type AttachmentTaskRecord = AttachmentRecord & { fileId: string; fileName
 
 export type ScenarioState = {
   accessFailure?: 403 | 503;
-  /** A refused or failing attachment request, so a rejection and a transport failure are told apart. */
-  attachFailure?: 403 | 503;
+  /**
+   * A refused or failing attachment request, so a rejection, a transport failure, and a refusal
+   * this client has no rule for are each told apart.
+   */
+  attachFailure?: 400 | 403 | 503;
   /** A terminal exit code an attachment task reports instead of success. */
   attachExitCode?: number;
   /** Every attachment request received, so the options one carried can be stated exactly. */
@@ -62,6 +65,11 @@ export type ScenarioState = {
   productFailure: boolean;
   productCreationFailure?: 400 | 403 | 429 | 503;
   productCreationDelay?: number;
+  /**
+   * A failing read of the project collection, which is the index every cross-organisation choice of
+   * a project rests on. Distinct from a single project's own read failing.
+   */
+  projectCollectionFailure?: 403 | 503;
   projectCreationFailure?: 400 | 403 | 429 | 503;
   projectCreationResponseDelay?: number;
   projectFailure?: number;

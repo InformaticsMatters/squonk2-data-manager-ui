@@ -27,6 +27,12 @@ const isAPIError = (error: unknown): error is APIErrorResponse =>
   typeof (error as APIErrorResponse).error === "string";
 
 /**
+ * What is returned when an error carried no account of itself at all. It is a placeholder rather
+ * than a message, so a caller composing its own sentence can tell it apart from real words.
+ */
+export const noErrorInformation = "Error: no information provided";
+
+/**
  * @param error The Axios Error object from which to extract the human error message
  * @returns a string message from the error that hopefully describes what went wrong,
  *          or `null` when no error was supplied
@@ -69,6 +75,6 @@ export const getErrorMessage = (
     (typeof error.response?.data === "string" ? nullEmptyString(error.response.data) : null) ??
     nullEmptyString(error.response?.statusText) ??
     nullEmptyString(error.message) ??
-    "Error: no information provided"
+    noErrorInformation
   );
 };

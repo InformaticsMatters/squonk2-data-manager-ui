@@ -13,9 +13,11 @@ import {
   type DatasetAttachmentInput,
   eligibleAttachmentTargets,
   resolveDatasetAttachment,
+  unclassifiedAttachmentFailureMessage,
 } from "../../src/datasets/attachment";
 import { evaluateDatasetAttachmentCapability } from "../../src/datasets/capabilities";
 import { DatasetTaskError, DatasetTaskPollingError } from "../../src/datasets/mutations";
+import { noErrorInformation } from "../../src/utils/next/orvalError";
 
 const caller = "caller@example.org";
 const colleague = "colleague@example.org";
@@ -216,6 +218,24 @@ test.describe("Dataset attachment capability", () => {
       evaluateDatasetAttachmentCapability({ eligibleTargetCount: 4, freshness: "stale" }),
     ).toEqual({ reason: "Project membership is still being confirmed.", status: "disabled" });
   });
+
+  test("a read that failed is told apart from one that has not answered yet", () => {
+    // A project read that failed is not a read still coming: nothing further will confirm it, so
+    // saying it is "still being confirmed" would promise an answer that is never going to arrive.
+    expect(
+      evaluateDatasetAttachmentCapability({ eligibleTargetCount: 0, freshness: "unavailable" }),
+    ).toEqual({
+      reason:
+        "Your projects could not be read, so the projects you can attach to are unknown. Reload to try again.",
+      status: "disabled",
+    });
+    // Having no eligible target is a fact only a read that answered can state, so a read that
+    // failed never borrows it however many targets it happens to have found.
+    expect(
+      evaluateDatasetAttachmentCapability({ eligibleTargetCount: 0, freshness: "unavailable" })
+        .reason,
+    ).not.toContain("You must be an editor or administrator");
+  });
 });
 
 test.describe("Dataset attachment command input", () => {
@@ -310,19 +330,41 @@ test.describe("Dataset attachment failure reporting", () => {
     ).toBe(
       "Dataset attachment task failed with exit code 5. Task task-1. Nothing was attached to Partner Project; retry is available.",
     );
+  });
+
+  test("a task that has not settled is never reported as work that did not happen", () => {
+    // Polling stopped; the task did not. Claiming nothing was attached would state an outcome the
+    // Data Manager has not reported, and the retry that follows resumes waiting on that same task.
     expect(
       datasetAttachmentFailureMessage(
         new DatasetTaskPollingError("Dataset attachment is still in progress.", "task-1"),
         scope,
       ),
     ).toBe(
-      "Dataset attachment is still in progress. Task task-1. Nothing was attached to Partner Project; retry is available.",
+      "Dataset attachment is still in progress. Task task-1. It may still finish attaching to Partner Project; retry to keep waiting rather than attaching a second copy.",
     );
   });
 
-  test("a fact this client cannot classify is left to the transport's own report", () => {
+  test("a fact this client cannot classify is reported in the Data Manager's own words", () => {
     expect(
       datasetAttachmentFailureMessage(new Error("nothing to classify"), scope),
     ).toBeUndefined();
+    // The transport's own account is the only account of such a failure there is, so it is read
+    // beside the form rather than only in a notification that scrolls away.
+    expect(
+      unclassifiedAttachmentFailureMessage("Dataset type is not supported by this project"),
+    ).toBe(
+      "Dataset type is not supported by this project. Nothing was attached and your choices are unchanged.",
+    );
+    expect(unclassifiedAttachmentFailureMessage("The dataset is already attached.")).toBe(
+      "The dataset is already attached. Nothing was attached and your choices are unchanged.",
+    );
+    // A failure that said nothing at all — including one whose only account is the placeholder
+    // that stands for having none — still says the one thing every attachment failure says.
+    for (const nothing of [null, undefined, "   ", noErrorInformation]) {
+      expect(unclassifiedAttachmentFailureMessage(nothing)).toBe(
+        "The Data Manager refused this attachment. Nothing was attached and your choices are unchanged.",
+      );
+    }
   });
 });

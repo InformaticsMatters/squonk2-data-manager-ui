@@ -104,20 +104,35 @@ export const evaluateDatasetUploadCapability = ({
 };
 
 /**
+ * What the index a capability rests on has told this client: an answer, one still on its way, or
+ * one that failed. A read that failed is not a read still coming — nothing further will confirm it —
+ * so the two cannot share a reason without one of them promising an answer that never arrives.
+ */
+export type DatasetMembershipReadState = "current" | "stale" | "unavailable";
+
+/**
  * Whether this dataset version can be attached to a project at all.
  *
  * Attachment stays visible whatever the caller can edit, because its absence would leave no way to
- * learn what is missing. Membership that has not answered — or could not — says the eligible
- * targets are still unconfirmed rather than that there are none, which is a different fact.
+ * learn what is missing. Having no eligible target is a fact only a read that answered can state,
+ * so a read still arriving and a read that failed each say that the targets are unknown instead —
+ * and they say it differently, because only one of them is going to answer on its own.
  */
 export const evaluateDatasetAttachmentCapability = ({
   eligibleTargetCount,
   freshness = "current",
 }: {
   eligibleTargetCount: number;
-  freshness?: "current" | "stale";
+  freshness?: DatasetMembershipReadState;
 }): Exclude<DatasetCapability, { status: "hidden" }> => {
-  if (freshness !== "current") {
+  if (freshness === "unavailable") {
+    return {
+      status: "disabled",
+      reason:
+        "Your projects could not be read, so the projects you can attach to are unknown. Reload to try again.",
+    };
+  }
+  if (freshness === "stale") {
     return { status: "disabled", reason: "Project membership is still being confirmed." };
   }
   return eligibleTargetCount > 0

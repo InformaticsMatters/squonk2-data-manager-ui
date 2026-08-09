@@ -445,6 +445,11 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       version: "1.0.0",
     }),
     failures: {
+      /**
+       * A refusal this client has no rule for, whose only account of itself is the sentence the
+       * Data Manager wrote. Reading as prose rather than as a slug is the point of it.
+       */
+      badRequest: { error: "fixture-rejected: the file type is not supported by this project" },
       forbidden: { error: "fixture-forbidden" },
       rateLimited: { error: "fixture-rate-limited" },
       serverError: { error: "fixture-server-error" },

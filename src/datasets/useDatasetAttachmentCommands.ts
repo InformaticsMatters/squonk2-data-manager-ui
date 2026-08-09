@@ -38,7 +38,10 @@ export const useDatasetAttachmentCommands = () => {
         queryClient,
         send: async () => (await attachFile.mutateAsync({ data: request })).task_id,
       });
-      await Promise.all([
+      // The task settled, so the attachment happened; refreshing what now shows it is housekeeping
+      // that follows. A refresh that cannot be done leaves a stale listing, which is not a failed
+      // attachment, so it never turns work the Data Manager completed into a reported failure.
+      await Promise.allSettled([
         queryClient.invalidateQueries({
           queryKey: getGetFilesQueryKey({
             project_id: request.project_id,

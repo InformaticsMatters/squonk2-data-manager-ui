@@ -29,11 +29,14 @@ import {
   attachmentTargetLabel,
   datasetAttachmentFailureMessage,
   resolveDatasetAttachment,
+  unclassifiedAttachmentFailureMessage,
 } from "../../../../../datasets/attachment";
+import { DatasetTaskPollingError } from "../../../../../datasets/mutations";
 import { useDatasetAttachmentCommands } from "../../../../../datasets/useDatasetAttachmentCommands";
 import { useDatasetAttachmentTargets } from "../../../../../datasets/useDatasetAttachmentTargets";
 import { useEnqueueError } from "../../../../../hooks/useEnqueueStackError";
 import { projectLinks } from "../../../../../projects/routes";
+import { getErrorMessage } from "../../../../../utils/next/orvalError";
 import { useGetAttachedProjectsNames } from "./useGetAttachedProjectsNames";
 
 export interface AttachDatasetListItemProps {
@@ -71,7 +74,10 @@ type AttachmentProgress =
   | { kind: "attached"; path: string; target: AttachmentTarget }
   | { kind: "attaching"; target: AttachmentTarget }
   | { kind: "failed"; reason: string }
-  | { kind: "idle" };
+  | { kind: "idle" }
+  // A task this client stopped waiting on is not a failure: the work may yet finish, so it is read
+  // as the open question it is rather than as an error the Data Manager never reported.
+  | { kind: "unsettled"; reason: string };
 
 /**
  * MuiListItem with a click action that opens a modal allowing a dataset to be attached to a project.
@@ -95,7 +101,10 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
 
   const projectNames = useGetAttachedProjectsNames(attachedProjectIds);
 
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  // Only success is announced away from the form. Every failure is read beside the choices that
+  // caused it, in the Data Manager's own words where this client has no rule of its own, so nothing
+  // is reported twice in two places at once.
+  const { enqueueSnackbar } = useEnqueueError<DmError>();
 
   const defaultValues: FormType = {
     // Nothing is chosen for the caller: a dataset version is attached to the project they named or
@@ -142,16 +151,18 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
           datasetVersion: version.version,
           targetName: resolution.target.projectName,
         });
-        // Every failure leaves the entered choices exactly as they are, so the same attachment can
-        // be retried in place without being described again. A fact this client cannot classify is
-        // stated as a refusal here and reported in the Data Manager's own words beside it.
+        // Every outcome here leaves the entered choices exactly as they are, so the same attachment
+        // can be retried in place without being described again. A fact this client cannot classify
+        // is read in the Data Manager's own words, which are the only account of it there is, and a
+        // task still running is held apart from the failures because it is not one of them.
         setProgress({
-          kind: "failed",
-          reason: message ?? "The Data Manager refused this attachment. Nothing was attached.",
+          kind: error instanceof DatasetTaskPollingError ? "unsettled" : "failed",
+          reason:
+            message ??
+            unclassifiedAttachmentFailureMessage(
+              getErrorMessage(error as Parameters<typeof getErrorMessage>[0]),
+            ),
         });
-        if (!message) {
-          enqueueError(error);
-        }
       }
       return {};
     },
@@ -332,6 +343,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
             <b>Error:</b> {progress.reason}
           </Alert>
         )}
+        {progress.kind === "unsettled" && <Alert severity="warning">{progress.reason}</Alert>}
       </FormModalWrapper>
     </>
   );

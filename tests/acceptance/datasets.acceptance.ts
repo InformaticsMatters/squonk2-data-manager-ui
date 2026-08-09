@@ -569,6 +569,70 @@ test("attachment is offered and disabled when the caller can edit no project", a
   ).toBeVisible();
 });
 
+test("a refusal this client has no rule for is read in the Data Manager's own words", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, versionOnePath, testInfo);
+
+  await page.getByText("Attach Dataset to a Project", { exact: true }).click();
+  const attachDialog = page.getByRole("dialog", { name: attachDialogName });
+  await attachDialog.getByLabel("Project").click();
+  await page.getByRole("option", { name: partnerTarget }).click();
+  await attachDialog.getByLabel("Path").fill("/inputs");
+
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/attach-failure?status=400`);
+  await attachDialog.getByRole("button", { name: "Attach" }).click();
+
+  // The Data Manager's own account of the refusal is read beside the choices that caused it, not
+  // replaced by a sentence that says only that something went wrong.
+  await expect(
+    attachDialog.getByText(
+      "fixture-rejected: the file type is not supported by this project. Nothing was attached and your choices are unchanged.",
+    ),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${versionOnePath}`);
+  await expect(attachDialog.getByLabel("Project")).toHaveText(partnerTarget);
+  await expect(attachDialog.getByLabel("Path")).toHaveValue("/inputs");
+
+  // The same choices still attach once the refusal is lifted, so nothing about them was at fault.
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/attach-failure`);
+  await attachDialog.getByRole("button", { name: "Attach" }).click();
+  await expect(attachDialog.getByText(`Attached to ${partnerTarget}.`)).toBeVisible({
+    timeout: 20_000,
+  });
+});
+
+test("a project read that failed is told apart from one still arriving", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/project-collection-failure?status=503`,
+  );
+  await login(page, versionOnePath, testInfo);
+
+  const attachAction = page.getByRole("button", { name: "Attach Dataset to a Project" });
+  await expect(attachAction).toBeVisible();
+  await expect(attachAction).toBeDisabled();
+  // A read that failed will not answer on its own, so once it has stopped retrying the caller is
+  // told to reload rather than to wait for a confirmation that is never going to arrive.
+  await expect(
+    page.getByText(
+      "Your projects could not be read, so the projects you can attach to are unknown. Reload to try again.",
+    ),
+  ).toBeVisible({ timeout: 30_000 });
+  await expect(
+    page.getByText("Project membership is still being confirmed.", { exact: false }),
+  ).toHaveCount(0);
+  // The action is never claimed to have no targets, which is a fact only a read that answered has.
+  await expect(page.getByText("You must be an editor or administrator of a project")).toHaveCount(
+    0,
+  );
+});
+
 test("a refused, failed, or unreadable attachment keeps the version, the choices, and the work done", async ({
   page,
   request,

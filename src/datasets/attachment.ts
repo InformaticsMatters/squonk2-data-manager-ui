@@ -9,6 +9,7 @@ import {
   isTransientTransportFailure,
 } from "../api/runtime/classifyTransportFailure";
 import { canonicalFilesystemPath, filesystemRoot } from "../projects/fileFacts";
+import { noErrorInformation } from "../utils/next/orvalError";
 import { DatasetTaskError, DatasetTaskPollingError } from "./mutations";
 
 /**
@@ -177,10 +178,18 @@ export const attachmentTaskKey = ({
   ]);
 
 /**
- * What a failed attachment says. Every one of them states that nothing was attached, because the
- * dataset version on screen and the choices entered beside it are untouched by any of these
- * outcomes; a fact this client cannot classify says nothing here and is left to the transport's own
- * report.
+ * What every attachment failure assures, because none of these outcomes touches the dataset version
+ * on screen or the choices entered beside it. It is written once so no message can drift from it.
+ */
+const nothingAttached = "Nothing was attached and your choices are unchanged";
+
+/**
+ * What a failed attachment says. Each states what became of the work, because the dataset version
+ * on screen and the choices entered beside it are untouched by all of these outcomes: a task the
+ * Data Manager settled against the attachment attached nothing, while a task this client merely
+ * stopped waiting on may yet attach something and is never reported as having failed to. A fact
+ * this client cannot classify says nothing here and is left to
+ * {@link unclassifiedAttachmentFailureMessage} and the transport's own report.
  */
 export const datasetAttachmentFailureMessage = (
   error: unknown,
@@ -190,14 +199,39 @@ export const datasetAttachmentFailureMessage = (
     targetName,
   }: { datasetId: string; datasetVersion: number; targetName: string },
 ): string | undefined => {
-  if (error instanceof DatasetTaskError || error instanceof DatasetTaskPollingError) {
+  // Polling stopped; the task did not. Only a task the Data Manager settled says the work is over,
+  // so a task still running is never reported as work that did not happen — and the retry offered
+  // resumes waiting on that same accepted task rather than asking for the file a second time.
+  if (error instanceof DatasetTaskPollingError) {
+    return `${error.message} Task ${error.taskId}. It may still finish attaching to ${targetName}; retry to keep waiting rather than attaching a second copy.`;
+  }
+  if (error instanceof DatasetTaskError) {
     return `${error.message} Task ${error.taskId}. Nothing was attached to ${targetName}; retry is available.`;
   }
   if (classifyTransportFailure(error).kind === "forbidden") {
-    return `You are not allowed to attach dataset ${datasetId} version ${datasetVersion} to ${targetName}. Nothing was attached and your choices are unchanged.`;
+    return `You are not allowed to attach dataset ${datasetId} version ${datasetVersion} to ${targetName}. ${nothingAttached}.`;
   }
   if (isTransientTransportFailure(error)) {
-    return `Could not attach dataset ${datasetId} version ${datasetVersion} to ${targetName}. Nothing was attached and your choices are unchanged; retry is available.`;
+    return `Could not attach dataset ${datasetId} version ${datasetVersion} to ${targetName}. ${nothingAttached}; retry is available.`;
   }
   return undefined;
+};
+
+/**
+ * What a failure this client could not classify says, given the transport's own account of it.
+ *
+ * That account is the only account of such a failure there is, so it is what the caller reads
+ * beside the form they entered rather than something generic standing in front of it. A failure
+ * that reported nothing at all — or only the placeholder that stands for nothing — still says the
+ * one thing every attachment failure says.
+ */
+export const unclassifiedAttachmentFailureMessage = (
+  reported: string | null | undefined,
+): string => {
+  const account = reported?.trim();
+  if (!account || account === noErrorInformation) {
+    return `The Data Manager refused this attachment. ${nothingAttached}.`;
+  }
+  const sentence = ".!?".includes(account.slice(-1)) ? account : `${account}.`;
+  return `${sentence} ${nothingAttached}.`;
 };

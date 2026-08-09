@@ -6,7 +6,11 @@ import { useGetProjects } from "@/api/data-manager/project";
 
 import { useKeycloakUser } from "../hooks/useKeycloakUser";
 import { type AttachmentTarget, eligibleAttachmentTargets } from "./attachment";
-import { type DatasetCapability, evaluateDatasetAttachmentCapability } from "./capabilities";
+import {
+  type DatasetCapability,
+  type DatasetMembershipReadState,
+  evaluateDatasetAttachmentCapability,
+} from "./capabilities";
 
 /**
  * The projects this caller may attach a dataset version to, and whether attaching is available.
@@ -24,7 +28,7 @@ export const useDatasetAttachmentTargets = (): {
   const { user, isLoading: isUserLoading } = useKeycloakUser();
   const {
     data: projectsData,
-    isError: projectsFailed,
+    isLoadingError: projectsUnread,
     isPending: projectsPending,
   } = useGetProjects();
   const { data: unitsData } = useGetUnits();
@@ -41,11 +45,21 @@ export const useDatasetAttachmentTargets = (): {
     [organisationsData, projectsData, unitsData, user.username],
   );
 
+  // A project read that failed is a different fact from one still arriving: it will not answer on
+  // its own, so the caller is told to reload rather than to wait for a confirmation that is not
+  // coming. Only a read that never answered leaves the targets unknown — a refresh that failed over
+  // targets already read leaves them usable — and whether the caller themselves is known is still
+  // only ever a matter of waiting.
+  const freshness: DatasetMembershipReadState = projectsUnread
+    ? "unavailable"
+    : isUserLoading || !user.username || projectsPending
+      ? "stale"
+      : "current";
+
   return {
     capability: evaluateDatasetAttachmentCapability({
       eligibleTargetCount: targets.length,
-      freshness:
-        isUserLoading || !user.username || projectsPending || projectsFailed ? "stale" : "current",
+      freshness,
     }),
     targets,
   };

@@ -4,7 +4,9 @@ import { useGetOrganisations } from "@/api/account-server/organisation";
 import { DataUsage as DataUsageIcon } from "@mui/icons-material";
 import { Autocomplete, type AutocompleteProps, Box, TextField, Typography } from "@mui/material";
 
+import { administrationLinks } from "../../administration/routes";
 import { useCurrentProjectId } from "../../hooks/projectHooks";
+import { isOrganisationId } from "../../routing/identifiers";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 import { useSelectedUnit } from "../../state/unitSelection";
 import { getErrorMessage } from "../../utils/next/orvalError";
@@ -59,8 +61,15 @@ export const SelectOrganisation = (autoCompleteProps: SelectOrganisationProps) =
                     <ItemIcons item={organisation} />
                     {!!organisation && !!organisation.caller_is_member && (
                       <Adornment
-                        href={`/organisation/${organisation.id}/inventory`}
-                        title="User Usage"
+                        href={
+                          isOrganisationId(organisation.id)
+                            ? administrationLinks.usageInventoryResource(
+                                "organisations",
+                                organisation.id,
+                              )
+                            : administrationLinks.usageInventory()
+                        }
+                        title="Usage & inventory"
                       >
                         <DataUsageIcon />
                       </Adornment>

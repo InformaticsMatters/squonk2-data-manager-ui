@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import { type AsError, type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
 
@@ -14,7 +14,6 @@ import { WarningDeleteButton } from "../components/WarningDeleteButton";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { capitalise } from "../utils/app/language";
 import {
-  type AddressedResource,
   type UnitWithOrganisation,
   useAccessFacts,
   useAccessIndex,
@@ -49,12 +48,11 @@ import {
   productPrivacyValues,
 } from "./privacy";
 import {
+  AddressedResourceView,
   EmptyTask,
   PageTitle,
-  PendingResource,
   ResourceIdentity,
   ResourceLink,
-  UnavailableResource,
 } from "./resources";
 import { administrationLinks, type AdministrationRoute } from "./routes";
 import { useAccessCommands } from "./useAccessCommands";
@@ -838,33 +836,12 @@ const UnitResource = ({
   );
 };
 
-/**
- * Renders whatever the addressed resource answered. Keying the rendered resource by its identity
- * keeps entered values owned by the resource in the address bar, so a route change never carries
- * another unit's name into the rename field.
- */
-const AddressedResourceView = <TResource extends { id: string }>({
-  addressed,
-  children,
-}: {
-  addressed: AddressedResource<TResource>;
-  children: (resource: TResource) => ReactNode;
-}) => {
-  if (addressed.kind === "pending") {
-    return <PendingResource task={task} />;
-  }
-  if (addressed.kind === "unavailable") {
-    return <UnavailableResource failure={addressed.failure} task={task} />;
-  }
-  return <Fragment key={addressed.resource.id}>{children(addressed.resource)}</Fragment>;
-};
-
 const AddressedOrganisation = ({ organisationId }: { organisationId: string }) => {
   const { units } = useAccessIndex();
   const addressed = useAddressedOrganisation(organisationId);
 
   return (
-    <AddressedResourceView addressed={addressed}>
+    <AddressedResourceView addressed={addressed} task={task}>
       {(organisation) => <OrganisationResource organisation={organisation} units={units} />}
     </AddressedResourceView>
   );
@@ -875,7 +852,7 @@ const AddressedUnit = ({ unitId }: { unitId: string }) => {
   const addressed = useAddressedUnit(unitId);
 
   return (
-    <AddressedResourceView addressed={addressed}>
+    <AddressedResourceView addressed={addressed} task={task}>
       {(unit) => <UnitResource organisation={organisation} unit={unit} />}
     </AddressedResourceView>
   );

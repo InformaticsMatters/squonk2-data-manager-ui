@@ -11,14 +11,9 @@ import { AdministrationFrame } from "./AdministrationShell";
 import { ChargeLedger } from "./ChargeLedgers";
 import { assertOrganisationId, assertProductId, assertUnitId } from "./identifiers";
 import { OrganisationAccessIndex, OrganisationAccessResource } from "./OrganisationAccess";
-import {
-  EmptyTask,
-  organisationAccessOwner,
-  PageTitle,
-  ResourceDetailsView,
-  ResourceLink,
-} from "./resources";
+import { EmptyTask, PageTitle, ResourceDetailsView, ResourceLink } from "./resources";
 import { administrationLinks, type AdministrationRoute } from "./routes";
+import { UsageInventoryIndex, UsageInventoryResource } from "./UsageInventory";
 
 type AdministrationResourceRoute = Exclude<
   AdministrationRoute,
@@ -28,14 +23,6 @@ type AdministrationResourceRoute = Exclude<
   | { kind: "usage-inventory" }
 >;
 type SubscriptionDetailRoute = Extract<AdministrationResourceRoute, { kind: "subscription" }>;
-/** Charges and Organisation & access own their own views, so only Usage & inventory reaches this. */
-type ReadOnlyResourceRoute = Exclude<
-  AdministrationResourceRoute,
-  | SubscriptionDetailRoute
-  | { collection: "products" }
-  | { kind: "charge-resource" }
-  | { kind: "organisation-access-resource" }
->;
 
 const taskTitles = {
   charges: "Charges",
@@ -130,80 +117,6 @@ const ChargesIndex = () => {
   );
 };
 
-const UsageInventoryIndex = () => {
-  const { organisations, units } = useAccessIndex();
-  return (
-    <>
-      <PageTitle>Usage & inventory</PageTitle>
-      <Typography color="text.secondary" sx={{ mb: 2 }}>
-        Reports are read-only. Membership changes belong in Organisation & access and project roles
-        belong in Project Manage.
-      </Typography>
-      {organisations.length === 0 && units.length === 0 ? (
-        <EmptyTask>
-          No usage or inventory reports are available. Organisation or unit membership is required
-          to inspect a report.
-        </EmptyTask>
-      ) : (
-        <Stack spacing={2}>
-          {organisations.map((organisation) => (
-            <ResourceLink
-              href={administrationLinks.usageInventoryResource(
-                "organisations",
-                assertOrganisationId(organisation.id),
-              )}
-              id={organisation.id}
-              key={organisation.id}
-              name={organisation.name}
-              type="Organisation report"
-            />
-          ))}
-          {units.map(({ organisation, unit }) => (
-            <ResourceLink
-              ancestry={organisation.name}
-              href={administrationLinks.usageInventoryResource("units", assertUnitId(unit.id))}
-              id={unit.id}
-              key={unit.id}
-              name={unit.name}
-              type="Unit report"
-            />
-          ))}
-        </Stack>
-      )}
-    </>
-  );
-};
-
-const ReadOnlyResourceDetails = ({ route }: { route: ReadOnlyResourceRoute }) => {
-  const { organisations, units } = useAccessIndex();
-  const task = taskTitles["usage-inventory"];
-
-  if (route.collection === "organisations") {
-    const organisation = organisations.find((candidate) => candidate.id === route.resourceId);
-    return (
-      <ResourceDetailsView
-        id={route.resourceId}
-        name={organisation?.name}
-        owner={organisationAccessOwner("organisations", route.resourceId)}
-        task={task}
-        type="Organisation"
-      />
-    );
-  }
-
-  const match = units.find(({ unit }) => unit.id === route.resourceId);
-  return (
-    <ResourceDetailsView
-      ancestry={match?.organisation.name}
-      id={route.resourceId}
-      name={match?.unit.name}
-      owner={organisationAccessOwner("units", route.resourceId)}
-      task={task}
-      type="Unit"
-    />
-  );
-};
-
 /** A product's charge ledger is answered by Charges, so only Subscriptions reaches this view. */
 const SubscriptionDetails = ({ route }: { route: SubscriptionDetailRoute }) => {
   const { data } = useGetProductsSuspense();
@@ -244,7 +157,7 @@ const ResourceDetails = ({ route }: { route: AdministrationResourceRoute }) => {
   if (route.kind === "subscription") {
     return <SubscriptionDetails route={route} />;
   }
-  return <ReadOnlyResourceDetails route={route} />;
+  return <UsageInventoryResource route={route} />;
 };
 
 const AdministrationContent = () => {

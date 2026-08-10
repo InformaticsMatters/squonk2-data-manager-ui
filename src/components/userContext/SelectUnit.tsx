@@ -73,7 +73,14 @@ export const SelectUnit = ({
                         >
                           <ReceiptIcon />
                         </Adornment>
-                        <Adornment href={`/unit/${unit.id}/inventory`} title="User Usage">
+                        <Adornment
+                          href={
+                            isUnitId(unit.id)
+                              ? administrationLinks.usageInventoryResource("units", unit.id)
+                              : administrationLinks.usageInventory()
+                          }
+                          title="Usage & inventory"
+                        >
                           <DataUsageIcon />
                         </Adornment>
                       </>

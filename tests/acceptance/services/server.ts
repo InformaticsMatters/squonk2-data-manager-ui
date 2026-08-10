@@ -971,6 +971,25 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   if (url.pathname === "/type") {
     return json(response, 200, state.fixtures.types);
   }
+  // The inventory answers for the one organisation or unit it was asked about, so a report that
+  // ignored the resource in the address bar would show another resource's users.
+  if (url.pathname === "/inventory/user") {
+    if (state.inventoryFailure) {
+      const bodies = {
+        403: state.fixtures.failures.forbidden,
+        404: { error: "fixture-inventory-not-found" },
+        429: state.fixtures.failures.rateLimited,
+        503: state.fixtures.failures.serverError,
+      };
+      return json(response, state.inventoryFailure, bodies[state.inventoryFailure]);
+    }
+    const scope = url.searchParams.get("org_id") ?? url.searchParams.get("unit_id") ?? "";
+    return json(
+      response,
+      200,
+      state.fixtures.userInventory[scope] ?? { today: "2026-08-09", users: [] },
+    );
+  }
   if (url.pathname === "/user/account") {
     // The caller's own account is what confirms who they are, so a failure here is exactly the
     // state in which project facts cannot establish authority.
@@ -1272,8 +1291,14 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     const group = state.fixtures.units.units.find(
       (candidate) => candidate.organisation.id === segments[1],
     );
-    return group
-      ? json(response, 200, group)
+    if (group) {
+      return json(response, 200, group);
+    }
+    // An organisation that holds no unit answers with none of them, because having no unit is not
+    // a failure to read one. Only an organisation that does not exist is absent.
+    const organisation = organisationsOf(state).find((candidate) => candidate.id === segments[1]);
+    return organisation
+      ? json(response, 200, { count: 0, organisation, units: [] })
       : json(response, 404, { error: "fixture-organisation-not-found" });
   }
   if (segments[0] === "organisation" && segments[2] === "user" && segments.length === 4) {
@@ -1580,6 +1605,18 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
     }
     getScenario(subject).chargeFailure = status as 403 | 429 | 503;
     return json(response, 200, { chargeFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/inventory-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 404, 429, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-inventory-failure", status });
+    }
+    getScenario(subject).inventoryFailure = status as 403 | 404 | 429 | 503;
+    return json(response, 200, { inventoryFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/inventory-failure") && request.method === "DELETE") {
+    getScenario(subject).inventoryFailure = undefined;
+    return json(response, 200, { subject });
   }
   const accessReadControls = [
     { pathSuffix: "/units-read-failure", stateKey: "unitsReadFailure" },

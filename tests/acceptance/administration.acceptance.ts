@@ -670,7 +670,7 @@ test("read-only reports link to the resource that owns their mutations", async (
 }, testInfo) => {
   await login(page, `administration/usage-inventory/units/${fixtureIds.unit}`, testInfo);
 
-  await expect(page.getByText("This view is read-only.")).toBeVisible();
+  await expect(page.getByText("This report is read-only.")).toBeVisible();
   await page
     .getByRole("link", { name: "Manage members and privacy in Organisation & access" })
     .click();
@@ -925,4 +925,191 @@ test("unknown and wrongly typed Organisation & access resources stay local", asy
   await expect(
     page.getByText("The requested Administration resource was not found."),
   ).toBeVisible();
+});
+
+test("a unit report pivots between its users and its projects", async ({ page }, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const colleague = `${subject}-observer`;
+  const path = `administration/usage-inventory/units/${fixtureIds.unit}`;
+  await login(page, path, testInfo);
+
+  // The addressed unit and the organisation holding it are both stated by the report.
+  await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toBeVisible();
+  await expect(
+    page.getByRole("main").getByText("Acceptance Organisation", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("main").getByText(fixtureIds.unit, { exact: true })).toBeVisible();
+  await expect(page.getByText(`Owner: ${subject}`, { exact: true })).toBeVisible();
+  await expect(page.getByText(`Members: ${subject}, ${colleague}`)).toBeVisible();
+
+  // The user pivot accounts for the unit's own members and states each one's usage facts.
+  await expect(page.getByRole("cell", { name: subject, exact: true })).toBeVisible();
+  await expect(page.getByRole("cell", { name: colleague, exact: true })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "10 days", exact: true }).first()).toBeVisible();
+  // A user the inventory named who belongs to neither the unit nor one of its projects is not
+  // reported by it.
+  await expect(page.getByText(`${subject}-outsider`, { exact: true })).toHaveCount(0);
+
+  // Project roles are reported, never changed: each is a link to the project that owns them.
+  await expect(page.getByRole("link", { name: "Acceptance Project" }).first()).toHaveAttribute(
+    "href",
+    new RegExp(`/projects/${fixtureIds.project}/manage$`, "u"),
+  );
+
+  await page.getByRole("button", { name: "By project" }).click();
+  await expect(page.getByRole("heading", { name: "Project Members" })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Acceptance Project" })).toBeVisible();
+  await expect(page.getByRole("cell", { name: subject, exact: true })).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+
+  // Bringing a project into existence belongs to Projects, so the report offers nothing of the kind.
+  await expect(page.getByRole("button", { name: /create project/iu })).toHaveCount(0);
+  await expect(page.getByLabel("Project name")).toHaveCount(0);
+
+  await page.getByRole("link", { name: "Manage project" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects/${fixtureIds.project}/manage`);
+});
+
+test("an organisation report accounts for its units across the caller's work", async ({
+  page,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const colleague = `${subject}-observer`;
+  await login(page, "administration/usage-inventory", testInfo);
+
+  await expect(page.getByText("Reports are read-only.", { exact: false })).toBeVisible();
+  await page.getByRole("link", { name: /Acceptance Organisation Organisation report/u }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/usage-inventory/organisations/${fixtureIds.organisation}`,
+  );
+  await expect(page.getByRole("heading", { name: "Acceptance Organisation" })).toBeVisible();
+  await expect(page.getByText(`Members: ${subject}, ${colleague}`)).toBeVisible();
+
+  // Each user is accounted for against the units of this organisation, with the projects they may
+  // change counted, and a unit they merely belong to counted as none.
+  await expect(page.getByRole("link", { name: "Acceptance Unit (1)" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Screening Unit (1)" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Acceptance Unit (0)" })).toBeVisible();
+  await expect(page.getByText(`${subject}-outsider`, { exact: true })).toHaveCount(0);
+
+  await page.getByRole("link", { name: "Acceptance Unit (1)" }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/usage-inventory/units/${fixtureIds.unit}`,
+  );
+  await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toBeVisible();
+
+  await page.goBack();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/usage-inventory/organisations/${fixtureIds.organisation}`,
+  );
+  await expect(page.getByRole("heading", { name: "Acceptance Organisation" })).toBeVisible();
+  await page.goForward();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/usage-inventory/units/${fixtureIds.unit}`,
+  );
+});
+
+test("a report with nothing to account for explains itself", async ({ page }, testInfo) => {
+  await login(
+    page,
+    `administration/usage-inventory/organisations/${fixtureIds.otherOrganisation}`,
+    testInfo,
+  );
+
+  await expect(page.getByRole("heading", { name: "Partner Organisation" })).toBeVisible();
+  await expect(
+    page.getByText("No users are accounted for in this organisation's units.", { exact: false }),
+  ).toBeVisible();
+});
+
+test("a report stays readable without mutation capability", async ({ page, request }, testInfo) => {
+  await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=read-only`);
+  await login(page, `administration/usage-inventory/units/${fixtureIds.unit}`, testInfo);
+
+  await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toBeVisible();
+  await expect(page.getByRole("cell", { name: subjectFor(testInfo), exact: true })).toBeVisible();
+  // Nothing on a report is a control that changes what it reports, whatever the caller may do.
+  await expect(page.getByRole("textbox", { name: "Unit name" })).toHaveCount(0);
+  await expect(page.getByRole("combobox", { name: "Unit members" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Delete unit" })).toHaveCount(0);
+  // The link to the owning task is still offered, beside what that task would require of them.
+  await expect(
+    page.getByRole("link", { name: "Manage members and privacy in Organisation & access" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("You must be a unit or organisation member to change unit members."),
+  ).toBeVisible();
+});
+
+test("a refused report is told apart from a missing one and from a stale one", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const path = `administration/usage-inventory/units/${fixtureIds.unit}`;
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/inventory-failure?status=403`);
+  await login(page, path, testInfo);
+
+  // A refusal is answered where the report is: the addressed unit and the route are unchanged.
+  await expect(
+    page.getByText("You do not have access to this Administration resource."),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/inventory-failure?status=404`);
+  await page.reload();
+  await expect(
+    page.getByText("This Administration resource is no longer available."),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Acceptance Unit" })).toBeVisible();
+
+  // A report that was read and then could not be refreshed stays readable and says so.
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/inventory-failure`);
+  await page.reload();
+  await expect(page.getByRole("cell", { name: subject, exact: true })).toBeVisible();
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/inventory-failure?status=503`);
+  await page.getByRole("link", { name: "Charges" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}administration/charges`);
+  await page.goBack();
+  await expect(
+    page.getByText("This report could not be refreshed and may be out of date.", { exact: false }),
+  ).toBeVisible();
+  await expect(page.getByRole("cell", { name: subject, exact: true })).toBeVisible();
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/inventory-failure`);
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(
+    page.getByText("This report could not be refreshed and may be out of date.", { exact: false }),
+  ).toHaveCount(0);
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+});
+
+test("a rate-limited report retries in place without changing the resource", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const path = `administration/usage-inventory/organisations/${fixtureIds.organisation}`;
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/inventory-failure?status=429`);
+  await login(page, path, testInfo);
+
+  // Rate limiting says so rather than reading as any other failure to load.
+  await expect(page.getByRole("navigation", { name: "Administration tasks" })).toBeVisible();
+  await expect(
+    page.getByText("Administration requests are temporarily rate-limited. Retry this task."),
+  ).toBeVisible();
+
+  // A server failure is its own answer, reached from the same report without changing the route.
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/inventory-failure?status=503`);
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(
+    page.getByText("The Administration service failed to respond. Retry this task."),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/inventory-failure`);
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+  await expect(page.getByRole("link", { name: "Acceptance Unit (1)" })).toBeVisible();
 });

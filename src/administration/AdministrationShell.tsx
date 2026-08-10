@@ -26,6 +26,9 @@ const tasks = [
   },
 ] as const;
 
+/** The read-only tasks, whose content is one addressed resource's own read. */
+const reportingSections = new Set<string>(["charges", "usage-inventory"]);
+
 export const AdministrationFrame = ({ children }: { children: ReactNode }) => {
   const { policy } = useFamilyRoute();
   if (policy.kind !== "administration") {
@@ -62,20 +65,23 @@ export const AdministrationFrame = ({ children }: { children: ReactNode }) => {
             <ErrorBoundary
               fallback={({ error, resetError }) => {
                 const failure = classifyTransportFailure(error);
-                const presentation =
-                  policy.section === "charges"
-                    ? presentAdministrationFailure(failure)
-                    : {
-                        message:
-                          failure.kind === "forbidden" || failure.kind === "not-found"
-                            ? "Administration data is unavailable or you no longer have access."
-                            : "Administration data could not be loaded. Retry this task.",
-                        retryable: failure.kind !== "forbidden" && failure.kind !== "not-found",
-                        severity:
-                          failure.kind === "forbidden" || failure.kind === "not-found"
-                            ? ("warning" as const)
-                            : ("error" as const),
-                      };
+                // The tasks whose content is a read of one addressed resource say which transport
+                // fact stopped it, so rate limiting, a timeout, a lost connection, and a server
+                // failure stay distinct and separately recoverable. The lifecycle tasks compose
+                // several reads, where naming one of them would not say what is missing.
+                const presentation = reportingSections.has(policy.section)
+                  ? presentAdministrationFailure(failure)
+                  : {
+                      message:
+                        failure.kind === "forbidden" || failure.kind === "not-found"
+                          ? "Administration data is unavailable or you no longer have access."
+                          : "Administration data could not be loaded. Retry this task.",
+                      retryable: failure.kind !== "forbidden" && failure.kind !== "not-found",
+                      severity:
+                        failure.kind === "forbidden" || failure.kind === "not-found"
+                          ? ("warning" as const)
+                          : ("error" as const),
+                    };
                 return (
                   <Alert
                     action={

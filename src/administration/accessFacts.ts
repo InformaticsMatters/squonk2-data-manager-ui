@@ -47,12 +47,18 @@ export type AddressedResource<TResource> =
   | { kind: "unavailable"; failure: TransportFailure };
 
 /**
+ * Only a failure the resource did not answer for itself is worth repeating, which is the one retry
+ * rule every Administration read follows.
+ */
+export const retryAdministrationRead = (failureCount: number, error: unknown) =>
+  !administrationReadIsAuthoritative(error) && failureCount < 3;
+
+/**
  * The addressed resource is read from its own generated resource, never from the caller's index, so
  * a resource the caller may read but does not list is not mistaken for an absent one.
  */
 const addressedResourceQuery = {
-  retry: (failureCount: number, error: unknown) =>
-    !administrationReadIsAuthoritative(error) && failureCount < 3,
+  retry: retryAdministrationRead,
   throwOnError: (error: unknown) => !administrationReadIsAuthoritative(error),
 };
 

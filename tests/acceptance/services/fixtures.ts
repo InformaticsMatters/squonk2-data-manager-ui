@@ -27,6 +27,7 @@ import {
   AppApiDatasetPostResponse,
 } from "@/api/data-manager/dataset/zod";
 import { AppApiInstanceGetResponse } from "@/api/data-manager/instance/zod";
+import { AppApiInventoryGetUserInventoryResponse } from "@/api/data-manager/inventory/zod";
 import { AppApiJobGetJobResponse, AppApiJobGetResponse } from "@/api/data-manager/job/zod";
 import { AppApiProjectGetResponse } from "@/api/data-manager/project/zod";
 import { AppApiTaskGetResponse, AppApiTaskGetTaskResponse } from "@/api/data-manager/task/zod";
@@ -168,8 +169,69 @@ const createProjectFileSystems = (
   },
 });
 
+/** The projects and dataset the user inventory reports work against. */
+type InventoryProject = { id: string; name: string; unit_id: string };
+type InventoryDataset = { filename: string; id: string; unit_id: string; version: number };
+
+const acceptanceProject: InventoryProject = {
+  id: fixtureIds.project,
+  name: "Acceptance Project",
+  unit_id: fixtureIds.unit,
+};
+const screeningProject: InventoryProject = {
+  id: fixtureIds.screeningProject,
+  name: "Screening Project",
+  unit_id: fixtureIds.otherUnit,
+};
+const sharedProject: InventoryProject = {
+  id: fixtureIds.sharedProjectTwo,
+  name: "Shared Project",
+  unit_id: fixtureIds.otherUnit,
+};
+const inventoryDataset: InventoryDataset = {
+  filename: "acceptance-dataset-v2.sdf",
+  id: fixtureIds.dataset,
+  unit_id: fixtureIds.unit,
+  version: 2,
+};
+
+const inventoryUser = (
+  username: string,
+  {
+    administrator = [],
+    datasets = {},
+    editor = [],
+    observer = [],
+  }: {
+    administrator?: InventoryProject[];
+    datasets?: { editor?: InventoryDataset[]; owner?: InventoryDataset[] };
+    editor?: InventoryProject[];
+    observer?: InventoryProject[];
+  },
+) => ({
+  activity: {
+    period_a: { active_days: 3, activity: "42.9", inactive_days: 4, monitoring_period: "7 days" },
+    period_b: { active_days: 9, activity: "30.0", inactive_days: 21, monitoring_period: "30 days" },
+    total_activity: "50.0",
+    total_days_active: 10,
+    total_days_inactive: 10,
+    total_days_since_first_seen: 20,
+  },
+  datasets,
+  f_uid: 1,
+  first_seen: created,
+  last_seen_date: "2026-08-01",
+  projects: { administrator, editor, observer },
+  username,
+});
+
+const inventoryResponse = (users: ReturnType<typeof inventoryUser>[]) =>
+  AppApiInventoryGetUserInventoryResponse.parse({ today: "2026-08-09", users });
+
 export const createScenarioFixtures = (subject: string, profile: ScenarioProfile = "default") => {
   const colleague = `${subject}-observer`;
+  /** Named by the inventory while belonging to no unit of the addressed organisation. */
+  const outsider = `${subject}-outsider`;
   const readOnly = profile === "read-only";
   const emptyCharges = profile === "empty-charges";
   const platformAdmin = profile === "platform-admin";
@@ -585,6 +647,32 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     storageProduct: datasetStorageProduct,
     unlistedProjectProduct,
     unitProducts,
+    // What the Data Manager reports about the users of one organisation or unit. Each scope is
+    // answered separately, so a report that ignored the resource it addresses would be recognisable
+    // rather than believable, and the outsider proves a user connected to no unit of an
+    // organisation is not part of its report.
+    userInventory: {
+      [fixtureIds.organisation]: inventoryResponse([
+        inventoryUser(subject, {
+          administrator: [acceptanceProject],
+          datasets: { owner: [inventoryDataset] },
+          editor: [sharedProject],
+          observer: [screeningProject],
+        }),
+        inventoryUser(colleague, { observer: [acceptanceProject] }),
+        inventoryUser(outsider, {}),
+      ]),
+      [fixtureIds.otherOrganisation]: inventoryResponse([inventoryUser(outsider, {})]),
+      [fixtureIds.unit]: inventoryResponse([
+        inventoryUser(subject, {
+          administrator: [acceptanceProject],
+          datasets: { owner: [inventoryDataset] },
+        }),
+        inventoryUser(colleague, { observer: [acceptanceProject] }),
+        inventoryUser(outsider, {}),
+      ]),
+      [fixtureIds.otherUnit]: inventoryResponse([]),
+    } as Record<string, ReturnType<typeof inventoryResponse> | undefined>,
     // Results of work run in each project. Every one names the project it belongs to, so a
     // response that ignored a project argument would be recognisable rather than believable.
     instances: AppApiInstanceGetResponse.parse({

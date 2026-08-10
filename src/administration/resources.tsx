@@ -1,3 +1,5 @@
+import { Fragment, type ReactNode } from "react";
+
 import {
   Alert,
   Box,
@@ -14,6 +16,7 @@ import {
 import { type TransportFailure } from "../api/runtime/classifyTransportFailure";
 import { CenterLoader } from "../components/CenterLoader";
 import { withBasePath } from "../utils/app/basePath";
+import { type AddressedResource } from "./accessFacts";
 import { presentAdministrationFailure } from "./failures";
 import { administrationLinks, type OrganisationAccessCollection } from "./routes";
 
@@ -139,27 +142,58 @@ export const organisationAccessOwner = <TCollection extends OrganisationAccessCo
 /**
  * A read-only report states that it cannot be changed and links the resource that can. The link is
  * built from the destination's route interface alone, so a report never reaches into the screens
- * that own the mutation.
+ * that own the mutation. Where the caller could not carry the linked action out, the destination's
+ * own reason is stated beside it rather than the link being withheld: the report is readable either
+ * way, and only the owning task decides what may be done there.
  */
-export const ReadOnlyNotice = ({ children, owner }: { children: string; owner: MutationOwner }) => (
+export const ReadOnlyNotice = ({
+  children,
+  owner,
+  reason,
+}: {
+  children: string;
+  owner: MutationOwner;
+  reason?: string;
+}) => (
   <Alert severity="info">
     {children} <Link href={withBasePath(owner.href)}>{owner.label}</Link>
+    {reason ? ` ${reason}` : null}
   </Alert>
 );
+
+/**
+ * Renders whatever the addressed resource itself answered. Keying the rendered resource by its
+ * identity keeps what the screen holds owned by the resource in the address bar, so a route change
+ * never carries one resource's entered values or chosen view into another's.
+ */
+export const AddressedResourceView = <TResource extends { id: string }>({
+  addressed,
+  children,
+  task,
+}: {
+  addressed: AddressedResource<TResource>;
+  children: (resource: TResource) => ReactNode;
+  task: string;
+}) => {
+  if (addressed.kind === "pending") {
+    return <PendingResource task={task} />;
+  }
+  if (addressed.kind === "unavailable") {
+    return <UnavailableResource failure={addressed.failure} task={task} />;
+  }
+  return <Fragment key={addressed.resource.id}>{children(addressed.resource)}</Fragment>;
+};
 
 export const ResourceDetailsView = ({
   ancestry,
   id,
   name,
-  owner,
   task,
   type,
 }: {
   ancestry?: string;
   id: string;
   name?: string;
-  /** Present only on read-only reports, which name the resource that owns their mutations. */
-  owner?: MutationOwner;
   task: string;
   type: string;
 }) => {
@@ -171,16 +205,6 @@ export const ResourceDetailsView = ({
     <>
       <PageTitle>{task}</PageTitle>
       <ResourceIdentity ancestry={ancestry} id={id} name={name} type={type} />
-      {owner ? (
-        <Box sx={{ mt: 2 }}>
-          {/* Project roles have their own owner, which is a project's Manage section rather than
-              any Administration resource, so this report names it without linking a project it
-              does not address. */}
-          <ReadOnlyNotice owner={owner}>
-            This view is read-only. Project roles are changed in that project&apos;s Manage section.
-          </ReadOnlyNotice>
-        </Box>
-      ) : null}
     </>
   );
 };

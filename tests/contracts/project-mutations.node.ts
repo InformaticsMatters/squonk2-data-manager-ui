@@ -197,8 +197,7 @@ test.describe("Project mutation ownership", () => {
   test("the migrated inventory and stats entry points changed no project of their own", () => {
     // Each retains its report while linking to the one route that owns project privacy and roles.
     for (const report of [
-      "components/usage/UserUsageTable.tsx",
-      "components/usage/UserUsageByProjectTable.tsx",
+      "administration/UsageInventory.tsx",
       "features/ProjectStats/ProjectActions/ProjectActions.tsx",
     ]) {
       const source = readFileSync(path.join(root, report), "utf8");

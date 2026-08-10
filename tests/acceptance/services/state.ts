@@ -58,6 +58,11 @@ export type ScenarioState = {
   deletionTaskVersions: Map<string, number>;
   deletionExitCode?: number;
   fixtures: ReturnType<typeof createScenarioFixtures>;
+  /**
+   * A refused, missing, rate-limited, or failing user-inventory read, so a report that is answered
+   * authoritatively and one that merely could not be refreshed are told apart.
+   */
+  inventoryFailure?: 403 | 404 | 429 | 503;
   /** How many times each upload task has been polled, so every upload advances on its own. */
   pollingIndexes: Map<string, number>;
   /** The profile this scenario was reset with; the identity provider reads it to issue roles. */

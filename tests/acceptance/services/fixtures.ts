@@ -844,6 +844,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
             processing_stage: "DONE",
             purpose: "DATASET",
             purpose_id: fixtureIds.dataset,
+            purpose_version: 2,
           },
         ],
       }),
@@ -857,7 +858,9 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
             id: fixtureIds.screeningResultTask,
             processing_stage: "DONE",
             purpose: "FILE",
-            purpose_id: fixtureIds.dataset,
+            // A file task relates to a project file, and the Data Manager only sets
+            // `purpose_version` for a dataset task.
+            purpose_id: "file-5e5e5e5e-5e5e-4e5e-8e5e-5e5e5e5e5e5e",
           },
         ],
       }),

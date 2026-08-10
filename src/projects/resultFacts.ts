@@ -58,6 +58,13 @@ export const runningWorkflowOwner = (workflow: Pick<RunningWorkflowSummary, "pro
   declaredOwner(workflow.project.id);
 
 /**
+ * A task declares no project at all, whether it was listed or addressed directly. It therefore
+ * never contradicts the project-constrained collection that placed it, and reading one can never
+ * discover an owner the collection did not already establish.
+ */
+export const taskOwner = (): undefined => undefined;
+
+/**
  * Whether an execution belongs to the addressed project. An execution that declares an owner is
  * believed over the request that returned it, which is what lets a cross-project row be recognised
  * rather than displayed; one that declares none has no ownership fact but the constrained request

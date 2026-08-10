@@ -25,6 +25,7 @@ import {
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
 import { type SectionFilterOption, SectionToolbar } from "./SectionToolbar";
+import { resolveResultTaskLifecycle, resultTaskSettlement } from "./taskFacts";
 import { type ProjectResults as ProjectResultsData, useProjectResults } from "./useProjectResults";
 
 type ResultsRoute = Extract<ProjectRoute, { kind: "result" | "results" }>;
@@ -61,6 +62,11 @@ const ResultItemCard = ({
     content,
     owningProjectId: item.owningProjectId,
     routeProjectId,
+    // A listed task accounts for its own progress in the summary its collection returned, by the
+    // same rule the addressed task's own read is settled by.
+    ...(item.kind === "task"
+      ? { taskSettlement: resultTaskSettlement(resolveResultTaskLifecycle({ task: item.data })) }
+      : {}),
   });
 
   switch (item.kind) {

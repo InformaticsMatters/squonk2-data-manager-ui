@@ -1,6 +1,7 @@
 import { type UserAccountDetail } from "@/api/data-manager";
 
 import { type ProjectFileContent } from "./fileFacts";
+import { type ResultTaskSettlement } from "./taskFacts";
 
 export type ProjectCapability =
   | { status: "disabled"; reason: string }
@@ -341,11 +342,44 @@ export const evaluateResultArchiveCapability = evaluateResultAction(
   ),
 );
 
-export const evaluateResultTaskDeletionCapability = evaluateResultAction(
+const evaluateTaskDeletionAuthority = evaluateResultAction(
   evaluateEditorAction(
     "You must be a project editor or administrator to delete tasks in this project.",
   ),
 );
+
+/**
+ * What deleting a task reads in addition to the project's own facts: whether the concrete task has
+ * accounted for being done, which `taskFacts.ts` is the only place to decide. The Data Manager will
+ * not delete a task until it is done, so this is a fact of the addressed task rather than of any
+ * project or selection.
+ */
+export type ProjectResultTaskFacts = ProjectResultFacts & { settlement?: ResultTaskSettlement };
+
+const unsettledTaskReasons: Record<Exclude<ResultTaskSettlement, "settled">, string> = {
+  pending: "This task is still running, so it cannot be deleted until it is done.",
+  unestablished:
+    "This task's progress could not be established, so deleting it cannot be established as safe.",
+};
+
+/**
+ * Deleting one task of the project in the URL. Ownership and a confirmed lack of authority remain
+ * the more useful explanations, so they are reported first; a task that has not finished then
+ * disables the delete rather than leaving a request the Data Manager can only refuse.
+ */
+export const evaluateResultTaskDeletionCapability = (
+  facts: ProjectResultTaskFacts,
+): ProjectCapability => {
+  const capability = evaluateTaskDeletionAuthority(facts);
+  if (
+    capability.status === "disabled" ||
+    facts.settlement === undefined ||
+    facts.settlement === "settled"
+  ) {
+    return capability;
+  }
+  return { status: "disabled", reason: unsettledTaskReasons[facts.settlement] };
+};
 
 export const evaluateResultWorkflowLifecycleCapability = evaluateResultAction(
   evaluateEditorAction(

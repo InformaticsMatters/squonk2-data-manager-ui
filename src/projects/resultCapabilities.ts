@@ -8,6 +8,7 @@ import {
   type ProjectResultFacts,
 } from "./capabilities";
 import { type ProjectFacts } from "./projectFacts";
+import { type ResultTaskSettlement } from "./taskFacts";
 
 export type ResultCapabilities = {
   archive: ProjectCapability;
@@ -29,14 +30,24 @@ export const resolveResultCapabilities = (
     content = "current",
     owningProjectId,
     routeProjectId,
-  }: { content?: "current" | "stale"; owningProjectId: string; routeProjectId: string },
+    taskSettlement,
+  }: {
+    content?: "current" | "stale";
+    owningProjectId: string;
+    routeProjectId: string;
+    /** How the concrete task accounted for its own progress, where the result is a task. */
+    taskSettlement?: ResultTaskSettlement;
+  },
 ): ResultCapabilities => {
   const resultFacts: ProjectResultFacts = { ...facts, content, owningProjectId, routeProjectId };
 
   return {
     archive: evaluateResultArchiveCapability(resultFacts),
     rerun: evaluateResultRerunCapability(resultFacts),
-    taskDeletion: evaluateResultTaskDeletionCapability(resultFacts),
+    taskDeletion: evaluateResultTaskDeletionCapability({
+      ...resultFacts,
+      settlement: taskSettlement,
+    }),
     termination: evaluateResultTerminationCapability(resultFacts),
     workflowLifecycle: evaluateResultWorkflowLifecycleCapability(resultFacts),
   };

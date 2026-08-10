@@ -1,10 +1,10 @@
 import { type TaskSummary } from "@/api/data-manager";
 
-import { Grid, Typography } from "@mui/material";
+import { Alert, Button } from "@mui/material";
 
-import { usePolledGetTask } from "../../hooks/usePolledGetTask";
+import { useResultTask } from "../../projects/useResultTask";
 import { CenterLoader } from "../CenterLoader";
-import { TimeLine } from "./TimeLine";
+import { TaskProgress } from "./TaskProgress";
 
 export interface TaskDetailsProps {
   /**
@@ -14,29 +14,33 @@ export interface TaskDetailsProps {
 }
 
 /**
- * Displays details of a task based on a task ID
+ * Displays the progress of one listed task. The task is read and polled by the one owner of the
+ * addressed task read, so a task expanded in a list and the same task on its own route are never
+ * fetched, polled, or refreshed differently.
  */
 export const TaskDetails = ({ taskId }: TaskDetailsProps) => {
-  const { data: task } = usePolledGetTask(taskId);
+  const read = useResultTask(taskId);
+  const handleRetry = () => read.refetch();
 
-  if (task === undefined) {
-    return <CenterLoader />;
+  if (read.readState.kind === "unavailable") {
+    return <Alert severity="warning">This task&apos;s progress is no longer available.</Alert>;
+  }
+  if (read.task === undefined) {
+    return read.readState.kind === "recoverable" ? (
+      <Alert
+        action={
+          <Button color="inherit" size="small" onClick={handleRetry}>
+            Retry
+          </Button>
+        }
+        severity="error"
+      >
+        This task&apos;s progress could not be read.
+      </Alert>
+    ) : (
+      <CenterLoader />
+    );
   }
 
-  return (
-    <Grid container spacing={2}>
-      <Grid size={{ sm: 4, xs: 12 }}>
-        <Typography align="center" component="h3" variant="h6">
-          <b>States</b>
-        </Typography>
-        <TimeLine states={task.states ?? []} />
-      </Grid>
-      <Grid size={{ sm: 8, xs: 12 }}>
-        <Typography align="center" component="h3" variant="h6">
-          <b>Events</b>
-        </Typography>
-        <TimeLine states={task.events ?? []} />
-      </Grid>
-    </Grid>
-  );
+  return <TaskProgress lifecycle={read.lifecycle} task={read.task} />;
 };

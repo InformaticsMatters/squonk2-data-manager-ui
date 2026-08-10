@@ -26,6 +26,7 @@ import {
   getScenario,
   type RequestRecord,
   resetScenario,
+  type ResultTaskStage,
   type ScenarioState,
 } from "./state";
 
@@ -244,12 +245,58 @@ const multipartField = (body: string, name: string) => {
 const beneath = (path: string, candidate: string) =>
   candidate === path || candidate.startsWith(`${path}/`);
 
-/** The result tasks a project owns; a project that ran none owns an empty collection. */
-const resultTasksOf = (state: ScenarioState, projectId: string) =>
-  Object.entries(state.fixtures.resultTasks).find(([owner]) => owner === projectId)?.[1] ?? {
-    count: 0,
-    tasks: [],
-  };
+/**
+ * How a result task presents at each stage. One record answers for both the summary its project's
+ * collection returns and the task's own read, so a listed task and the addressed one can never
+ * disagree about whether it is done.
+ */
+const resultTaskStages = {
+  done: { done: true, exitCode: 0, processingStage: "DONE", states: [{ state: "SUCCESS" }] },
+  failed: {
+    done: true,
+    exitCode: 4,
+    processingStage: "FAILED",
+    states: [{ state: "FAILURE", message: "The dataset could not be loaded." }],
+  },
+  // A zero exit code with a recorded domain failure: the case an exit code alone reads as success.
+  rejected: {
+    done: true,
+    exitCode: 0,
+    processingStage: "FAILED",
+    states: [{ state: "FAILURE", message: "Molecule 4 could not be parsed." }],
+  },
+  running: {
+    done: false,
+    exitCode: undefined,
+    processingStage: "LOADING",
+    states: [{ state: "STARTED" }],
+  },
+} as const satisfies Record<ResultTaskStage, unknown>;
+
+/** Every result task a project still owns, presented at the stage the scenario put them in. */
+const resultTasksOf = (state: ScenarioState, projectId: string) => {
+  const owned = Object.entries(state.fixtures.resultTasks).find(
+    ([owner]) => owner === projectId,
+  )?.[1] ?? { count: 0, tasks: [] };
+  const stage = resultTaskStages[state.resultTaskStage];
+  const tasks = owned.tasks
+    .filter((task) => !state.deletedResultTasks.includes(task.id))
+    .map((task) => ({
+      ...task,
+      done: stage.done,
+      exit_code: stage.exitCode,
+      processing_stage: stage.processingStage,
+    }));
+  return { count: tasks.length, tasks };
+};
+
+/** The result task one addressed read answers with, or `undefined` when no project owns it. */
+const addressedResultTask = (state: ScenarioState, taskId: string) =>
+  state.deletedResultTasks.includes(taskId)
+    ? undefined
+    : Object.values(state.fixtures.resultTasks)
+        .flatMap((collection) => collection.tasks)
+        .find((candidate) => candidate.id === taskId);
 
 const record = (request: IncomingMessage, url: URL) => {
   const authorization = request.headers.authorization;
@@ -1005,19 +1052,49 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   }
   if (url.pathname.startsWith("/task/")) {
     const taskId = url.pathname.slice("/task/".length);
-    // A result task is a settled fact of the project that ran it rather than a polling sequence.
-    const resultTask = Object.values(state.fixtures.resultTasks)
-      .flatMap((collection) => collection.tasks)
-      .find((candidate) => candidate.id === taskId);
+    // A result task belongs to the project that ran it rather than to a polling sequence, so it
+    // answers at whatever stage the scenario put it in and can be deleted once it is done.
+    const resultTask = addressedResultTask(state, taskId);
+    if (resultTask && request.method === "DELETE") {
+      if (state.resultTaskDeletionFailure) {
+        return json(
+          response,
+          state.resultTaskDeletionFailure,
+          state.resultTaskDeletionFailure === 403
+            ? state.fixtures.failures.forbidden
+            : state.fixtures.failures.serverError,
+        );
+      }
+      // The Data Manager will not delete a task until it is done.
+      if (!resultTaskStages[state.resultTaskStage].done) {
+        return json(response, 403, state.fixtures.failures.forbidden);
+      }
+      state.deletedResultTasks.push(taskId);
+      response.writeHead(204).end();
+      return;
+    }
     if (resultTask) {
+      if (state.resultTaskFailure) {
+        const failure = {
+          403: state.fixtures.failures.forbidden,
+          404: { error: "fixture-task-not-found" },
+          503: state.fixtures.failures.serverError,
+        }[state.resultTaskFailure];
+        return json(response, state.resultTaskFailure, failure);
+      }
+      const stage = resultTaskStages[state.resultTaskStage];
       return json(response, 200, {
         created: resultTask.created,
-        done: true,
-        exit_code: 0,
+        done: stage.done,
+        exit_code: stage.exitCode,
         purpose: resultTask.purpose,
         purpose_id: resultTask.purpose_id,
-        states: [{ state: "SUCCESS", time: resultTask.created }],
+        purpose_version: resultTask.purpose_version,
+        states: stage.states.map((taskState) => ({ ...taskState, time: resultTask.created })),
       });
+    }
+    if (request.method === "DELETE") {
+      return json(response, 404, { error: "fixture-task-not-found" });
     }
     const deletionVersion = state.deletionTaskVersions.get(taskId);
     const attachmentTask = state.attachmentTasks.get(taskId);
@@ -1814,6 +1891,41 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/results-failure") && request.method === "DELETE") {
     getScenario(subject).resultsFailures = [];
+    return json(response, 200, { subject });
+  }
+  // The stage the project's own result tasks report, so each lifecycle a task can reach is
+  // observable without waiting for one.
+  if (url.pathname.endsWith("/result-task-stage") && request.method === "POST") {
+    const stage = url.searchParams.get("stage") ?? "";
+    if (!["done", "failed", "rejected", "running"].includes(stage)) {
+      return json(response, 400, { error: "unsupported-result-task-stage", stage });
+    }
+    getScenario(subject).resultTaskStage = stage as ResultTaskStage;
+    return json(response, 200, { resultTaskStage: stage, subject });
+  }
+  // One addressed task's own read failing, which is distinct from its project's collection failing.
+  if (url.pathname.endsWith("/result-task-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 404, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-result-task-failure", status });
+    }
+    getScenario(subject).resultTaskFailure = status as 403 | 404 | 503;
+    return json(response, 200, { resultTaskFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/result-task-failure") && request.method === "DELETE") {
+    getScenario(subject).resultTaskFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/result-task-deletion-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-result-task-deletion-failure", status });
+    }
+    getScenario(subject).resultTaskDeletionFailure = status as 403 | 503;
+    return json(response, 200, { resultTaskDeletionFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/result-task-deletion-failure") && request.method === "DELETE") {
+    getScenario(subject).resultTaskDeletionFailure = undefined;
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/run-failure") && request.method === "POST") {

@@ -26,6 +26,13 @@ export type AttachmentRecord = {
 /** The work one accepted attachment task will do to a project once it settles. */
 export type AttachmentTaskRecord = AttachmentRecord & { fileId: string; fileName: string };
 
+/**
+ * How a result task accounts for itself. `failed` finished with a non-zero exit code; `rejected`
+ * finished with a zero exit code but recorded a domain failure, which is the case an exit code
+ * alone would read as success.
+ */
+export type ResultTaskStage = "done" | "failed" | "rejected" | "running";
+
 export type ScenarioState = {
   accessFailure?: 403 | 503;
   /**
@@ -85,6 +92,17 @@ export type ScenarioState = {
    * `/instance`, so collections can be made to fail differently and at the same time.
    */
   resultsFailures: { collection?: string; status: 403 | 503 }[];
+  /** The result tasks a caller has deleted; the project that owned them no longer lists them. */
+  deletedResultTasks: string[];
+  /**
+   * A refused, missing, or failing read of one addressed result task, so a task the caller may not
+   * see and one whose progress merely could not be read are told apart.
+   */
+  resultTaskFailure?: 403 | 404 | 503;
+  /** A refused or failing result-task deletion, so a rejection preserves the caller's scope. */
+  resultTaskDeletionFailure?: 403 | 503;
+  /** The stage every result task reports, so each representative lifecycle is reachable. */
+  resultTaskStage: ResultTaskStage;
   /**
    * Run catalogue read failures in effect, each optionally narrowed to one catalogue path, e.g.
    * `/application`, so catalogues can be made to fail differently and at the same time.
@@ -114,6 +132,7 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     attachments: [],
     attachmentPollingIndexes: new Map(),
     attachmentTasks: new Map(),
+    deletedResultTasks: [],
     fixtures: createScenarioFixtures(subject, profile),
     deletionPollingIndexes: new Map(),
     deletionTaskVersions: new Map(),
@@ -122,6 +141,7 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     profile,
     requests: [],
     resultsFailures: [],
+    resultTaskStage: "done",
     runFailures: [],
     uploadTaskIds: [],
   };

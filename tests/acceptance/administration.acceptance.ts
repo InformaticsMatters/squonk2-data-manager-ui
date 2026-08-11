@@ -37,7 +37,7 @@ test("Administration entry and task navigation are canonical and stable", async 
 
   await page.getByRole("link", { name: "Subscriptions" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}administration/subscriptions`);
-  await expect(page.getByRole("link", { name: "Subscription Subscription" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Subscription Project tier" })).toBeVisible();
 
   await page.getByRole("link", { name: "Charges" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}administration/charges`);
@@ -102,7 +102,7 @@ test("unnamed products retain canonical subscription and charge links", async ({
 }, testInfo) => {
   await login(page, "administration/subscriptions", testInfo);
 
-  await page.getByRole("link", { name: "Subscription Subscription" }).click();
+  await page.getByRole("link", { name: "Subscription Project tier" }).click();
   await expect(page).toHaveURL(
     `${acceptanceUrls.app}administration/subscriptions/${fixtureIds.product}`,
   );
@@ -249,14 +249,38 @@ test("charge failures retry without losing resource or billing cycle", async ({
   );
 });
 
-test("empty subscriptions explain how to obtain access", async ({ page, request }, testInfo) => {
+test("a caller with no owners at all is told which relationship Subscriptions needs", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=no-access`);
+  await login(page, "administration/subscriptions", testInfo);
+
+  await expect(page.getByText(/No subscriptions are available/u)).toBeVisible();
+  await expect(page.getByText(/Contact an organisation owner/u)).toBeVisible();
+});
+
+test("owners with no subscription stay readable and keep offering one", async ({
+  page,
+  request,
+}, testInfo) => {
   await request.put(
     `${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=empty-products`,
   );
   await login(page, "administration/subscriptions", testInfo);
 
-  await expect(page.getByText(/No subscriptions are available/u)).toBeVisible();
-  await expect(page.getByText(/Contact an organisation owner/u)).toBeVisible();
+  await expect(
+    page.getByText(
+      "No subscriptions are available yet in the organisations and units you can see.",
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 3, name: "Acceptance Organisation" }),
+  ).toBeVisible();
+  await expect(page.getByText("This unit holds no subscriptions.")).toHaveCount(3);
+  await expect(
+    page.getByRole("button", { name: "Create dataset storage subscription" }).first(),
+  ).toBeEnabled();
 });
 
 test("malformed resources retain their Administration task", async ({ page }, testInfo) => {
@@ -279,7 +303,7 @@ test("missing opaque resources do not render as real subscriptions", async ({ pa
 
   await expect(page.getByRole("navigation", { name: "Administration tasks" })).toBeVisible();
   await expect(
-    page.getByText("This resource is unavailable or you no longer have access."),
+    page.getByText("This Administration resource is no longer available."),
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "Subscription", level: 3 })).not.toBeVisible();
 });
@@ -299,7 +323,200 @@ test("recoverable failures retain the task and retry in place", async ({
 
   await request.delete(`${acceptanceUrls.control}/scenario/${subject}/product-failure`);
   await page.getByRole("button", { name: "Retry" }).click();
-  await expect(page.getByRole("link", { name: "Subscription Subscription" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Subscription Project tier" })).toBeVisible();
+});
+
+test("Subscriptions groups every accessible subscription under the owner that pays for it", async ({
+  page,
+}, testInfo) => {
+  await login(page, "administration/subscriptions", testInfo);
+
+  // Every owner the caller can see is a group, in a stable order, whether or not it holds one.
+  await expect(page.getByRole("main").getByRole("heading", { level: 3 })).toHaveText([
+    "Acceptance Organisation",
+    "Default Organisation",
+    "Partner Organisation",
+  ]);
+  // Units are listed beneath the organisation that contains them, in the same stable order.
+  await expect(page.getByRole("main").getByRole("heading", { level: 4 })).toHaveText([
+    "Acceptance Unit",
+    "Screening Unit",
+    subjectFor(testInfo),
+  ]);
+  // Ancestry is the group a subscription is in, and its technical identity travels with it.
+  await expect(
+    page.getByRole("link", {
+      name: `Dataset Storage Dataset storage ${fixtureIds.storageProduct}`,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", {
+      name: `Unclaimed Project Tier Project tier ${fixtureIds.claimableProduct}`,
+    }),
+  ).toBeVisible();
+  // An organisation whose units the caller cannot see is still readable as itself.
+  await expect(page.getByText("No units of this organisation are visible to you.")).toBeVisible();
+
+  await page.getByRole("link", { name: "Subscription Project tier" }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/subscriptions/${fixtureIds.product}`,
+  );
+  // User-facing content says Subscriptions; the technical detail keeps the Product ID and type.
+  await expect(page.getByText("Acceptance Organisation / Acceptance Unit")).toBeVisible();
+  await expect(page.getByText("Product ID", { exact: true })).toBeVisible();
+  await expect(page.getByText(fixtureIds.product, { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Product type: DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION"),
+  ).toBeVisible();
+  await expect(page.getByText("Tier: Bronze")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "View this subscription's charges" }),
+  ).toHaveAttribute(
+    "href",
+    `/data-manager-ui/administration/charges/products/${fixtureIds.product}`,
+  );
+
+  // Claim information names the project using the subscription and links the route that owns it.
+  await expect(
+    page.getByText(`This subscription is claimed by Acceptance Project (${fixtureIds.project}).`),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Manage this project" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/projects/${fixtureIds.project}/manage`,
+  );
+  // A claimed subscription cannot be deleted, and says which deletion has to happen first.
+  await expect(page.getByRole("button", { name: "Delete subscription" })).toBeDisabled();
+  await expect(
+    page.getByText("Delete the project using this subscription before deleting the subscription."),
+  ).toBeVisible();
+  // A project tier takes its allowance from its tier, so only its name is offered.
+  await expect(page.getByLabel("Allowance")).toHaveCount(0);
+  await expect(
+    page.getByText("A project tier subscription takes its allowance and limit from its tier."),
+  ).toBeVisible();
+});
+
+test("an unclaimed project tier hands off to Project creation and can be deleted", async ({
+  page,
+}, testInfo) => {
+  const path = `administration/subscriptions/${fixtureIds.claimableProduct}`;
+  await login(page, path, testInfo);
+
+  await expect(page.getByRole("heading", { name: "Unclaimed Project Tier" })).toBeVisible();
+  await expect(page.getByText("Acceptance Organisation / Screening Unit")).toBeVisible();
+  await expect(page.getByText("No project is using this subscription yet.")).toBeVisible();
+  // The handoff carries the validated product identity to the route that owns project creation.
+  await expect(page.getByRole("link", { name: "Create linked project" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/projects/new?subscription=${fixtureIds.claimableProduct}`,
+  );
+
+  await page.getByRole("button", { name: "Delete subscription" }).click();
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}administration/subscriptions`);
+  await expect(page.getByRole("link", { name: `Unclaimed Project Tier Project tier` })).toHaveCount(
+    0,
+  );
+});
+
+test("a dataset storage subscription is created and adjusted where its unit is", async ({
+  page,
+}, testInfo) => {
+  await login(page, "administration/subscriptions", testInfo);
+
+  await page
+    .getByRole("button", { name: "Create dataset storage subscription in Screening Unit" })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Create dataset storage subscription in Screening Unit" }),
+  ).toBeVisible();
+  await page.getByLabel("Subscription name").fill("Screening Storage");
+  await page.getByLabel("Allowance").fill("250");
+  await page.getByRole("button", { name: "Create", exact: true }).click();
+
+  const created = page.getByRole("link", {
+    name: `Screening Storage Dataset storage ${fixtureIds.createdStorageProduct}`,
+  });
+  await expect(created).toBeVisible();
+  await created.click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}administration/subscriptions/${fixtureIds.createdStorageProduct}`,
+  );
+  await expect(page.getByText("Allowance: 0 of 250 coins used")).toBeVisible();
+
+  await page.getByLabel("Allowance").fill("500");
+  await page.getByRole("button", { name: "Adjust subscription" }).click();
+  await expect(page.getByText("Allowance: 0 of 500 coins used")).toBeVisible();
+  // An allowance can be increased but never reduced, which the form states and refuses itself
+  // rather than sending a request whose only possible answer is a rejection.
+  await expect(page.getByText("An allowance can be increased but never reduced.")).toBeVisible();
+  await expect(page.getByLabel("Allowance")).toHaveAttribute("min", "500");
+  await page.getByLabel("Allowance").fill("400");
+  await expect(page.getByText("An allowance cannot be reduced")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Adjust subscription" })).toBeDisabled();
+});
+
+test("a rejected subscription command changes neither the subscription nor the route", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const path = `administration/subscriptions/${fixtureIds.storageProduct}`;
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/subscription-mutation-failure?status=403`,
+  );
+  await login(page, path, testInfo);
+
+  await page.getByLabel("Subscription name").fill("Rejected Storage");
+  await page.getByRole("button", { name: "Adjust subscription" }).click();
+  await expect(
+    page.getByText(
+      `You no longer have permission to adjust subscription ${fixtureIds.storageProduct}. The displayed resource has not changed.`,
+    ),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+  await expect(page.getByRole("heading", { name: "Dataset Storage" })).toBeVisible();
+  // The entered value survives the rejection, so the same change can simply be retried.
+  await expect(page.getByLabel("Subscription name")).toHaveValue("Rejected Storage");
+
+  await page.getByRole("button", { name: "Delete subscription" }).click();
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
+  await expect(
+    page.getByText(
+      `You no longer have permission to delete subscription ${fixtureIds.storageProduct}. The displayed resource has not changed.`,
+    ),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${path}`);
+  // The confirmation stays open for a deliberate retry rather than closing on a failure.
+  await expect(page.getByRole("button", { name: "Delete", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Cancel" }).click();
+
+  await request.delete(
+    `${acceptanceUrls.control}/scenario/${subject}/subscription-mutation-failure`,
+  );
+  await page.getByRole("button", { name: "Adjust subscription" }).click();
+  await expect(page.getByRole("heading", { name: "Rejected Storage" })).toBeVisible();
+});
+
+test("a caller who cannot change a subscription is told why, and nothing is hidden", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=read-only`);
+  await login(page, `administration/subscriptions/${fixtureIds.storageProduct}`, testInfo);
+
+  await expect(page.getByRole("heading", { name: "Dataset Storage" })).toBeVisible();
+  const refusal = "You must be a member of this unit or its organisation to";
+  await expect(page.getByRole("button", { name: "Adjust subscription" })).toBeDisabled();
+  await expect(page.getByText(`${refusal} adjust this subscription.`)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Delete subscription" })).toBeDisabled();
+  await expect(page.getByText(`${refusal} delete this subscription.`)).toBeVisible();
+
+  await page.goto(`${acceptanceUrls.app}administration/subscriptions`);
+  await expect(
+    page.getByRole("button", { name: "Create dataset storage subscription" }).first(),
+  ).toBeDisabled();
+  await expect(page.getByText(`${refusal} create a subscription.`).first()).toBeVisible();
 });
 
 test("Organisation & access exposes lifecycle resources with generated semantics", async ({

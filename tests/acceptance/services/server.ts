@@ -1,5 +1,6 @@
 import {
   type ProductDmProjectTier,
+  type ProductDmStorage,
   type UnitAllDetailDefaultProductPrivacy,
 } from "@/api/account-server";
 import { type FilesGetResponse } from "@/api/data-manager";
@@ -1359,6 +1360,58 @@ const changeMembers = (users: { id: string }[], userId: string, add: boolean) =>
   return users.filter((user) => user.id !== userId);
 };
 
+/** What the generated product patch accepts, restated here rather than imported. */
+type SubscriptionAdjustment = { allowance?: number; limit?: number; name?: string };
+
+type ProductFixture = ProductDmProjectTier | ProductDmStorage;
+
+/** A subscription reports what it was adjusted to, so a read after a change is not the old one. */
+const adjustedProduct = (state: ScenarioState, product: ProductFixture): ProductFixture => {
+  const adjustment = state.subscriptionAdjustments.get(product.product.id);
+  if (!adjustment) {
+    return product;
+  }
+  return {
+    ...product,
+    coins: {
+      ...product.coins,
+      allowance: adjustment.allowance ?? product.coins.allowance,
+      limit: adjustment.limit ?? product.coins.limit,
+    },
+    product: { ...product.product, name: adjustment.name ?? product.product.name },
+  };
+};
+
+/** Every subscription that exists right now, whichever fixture or command produced it. */
+const existingProducts = (state: ScenarioState): ProductFixture[] =>
+  [
+    ...(state.fixtures.products.products as ProductFixture[]),
+    ...(state.createdProduct ? [state.createdProduct] : []),
+    ...(state.createdStorageProduct ? [state.createdStorageProduct] : []),
+  ]
+    .filter(({ product }) => !state.deletedSubscriptions.includes(product.id))
+    .map((product) => adjustedProduct(state, product));
+
+/**
+ * Every subscription addressable by its own resource, which includes the ones the caller's index
+ * never lists, so a product readable outside that index is not mistaken for a missing one.
+ */
+const addressableProducts = (state: ScenarioState): Map<string, ProductFixture> => {
+  const unlisted = [
+    state.fixtures.screeningProduct,
+    state.fixtures.partnerProduct,
+    state.fixtures.unlistedProjectProduct,
+    state.fixtures.storageProduct,
+  ] as ProductFixture[];
+  const products = [
+    ...unlisted
+      .filter(({ product }) => !state.deletedSubscriptions.includes(product.id))
+      .map((product) => adjustedProduct(state, product)),
+    ...existingProducts(state),
+  ];
+  return new Map(products.map((product) => [product.product.id, product]));
+};
+
 const handleAccountServer = async (request: IncomingMessage, response: ServerResponse) => {
   cors(request, response);
   if (request.method === "OPTIONS") {
@@ -1605,9 +1658,7 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     if (state.productFailure) {
       return json(response, 503, state.fixtures.failures.serverError);
     }
-    const products = state.createdProduct
-      ? [...state.fixtures.products.products, state.createdProduct]
-      : state.fixtures.products.products;
+    const products = existingProducts(state);
     return json(response, 200, { count: products.length, products });
   }
   if (url.pathname === "/product-type") {
@@ -1627,9 +1678,45 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     }
     if (request.method === "POST") {
       const body = JSON.parse((await readBody(request)).toString()) as {
+        allowance?: number;
         flavour?: "BRONZE" | "EVALUATION" | "GOLD" | "SILVER";
+        limit?: number;
         name?: string;
+        type?: string;
       };
+      // A storage subscription is the one Subscriptions itself creates; a project tier is created
+      // by the project-creation workflow, and the two are told apart by the type they ask for.
+      if (body.type === "DATA_MANAGER_STORAGE_SUBSCRIPTION") {
+        if (state.subscriptionMutationFailure) {
+          return json(
+            response,
+            state.subscriptionMutationFailure,
+            state.fixtures.failures.serverError,
+          );
+        }
+        const storageUnit = state.fixtures.units.units
+          .flatMap(({ units }) => units)
+          .find(({ id }) => id === segments[2]);
+        if (!storageUnit) {
+          return json(response, 404, { error: "fixture-unit-not-found" });
+        }
+        const storageBase = state.fixtures.storageProduct as ProductDmStorage;
+        state.createdStorageProduct = {
+          ...storageBase,
+          coins: {
+            ...storageBase.coins,
+            allowance: body.allowance ?? storageBase.coins.allowance,
+            limit: body.limit ?? body.allowance ?? storageBase.coins.limit,
+          },
+          product: {
+            ...storageBase.product,
+            id: fixtureIds.createdStorageProduct,
+            name: body.name,
+          },
+          unit: storageUnit,
+        };
+        return json(response, 201, { id: fixtureIds.createdStorageProduct });
+      }
       if (state.productCreationFailure) {
         return json(
           response,
@@ -1664,27 +1751,17 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
       return json(response, 201, { id: fixtureIds.createdProduct });
     }
     const listed = state.fixtures.unitProducts[segments[2]] ?? { count: 0, products: [] };
-    const products =
-      state.createdProduct?.unit.id === segments[2]
-        ? [...listed.products, state.createdProduct]
-        : listed.products;
+    const products = [
+      ...listed.products,
+      ...(state.createdProduct?.unit.id === segments[2] ? [state.createdProduct] : []),
+      ...(state.createdStorageProduct?.unit.id === segments[2]
+        ? [state.createdStorageProduct]
+        : []),
+    ];
     return json(response, 200, { count: products.length, products });
   }
-  if (url.pathname === `/product/${fixtureIds.product}`) {
-    return json(response, 200, { product: state.fixtures.products.products[0] });
-  }
-  if (url.pathname === `/product/${fixtureIds.screeningProduct}`) {
-    return json(response, 200, { product: state.fixtures.screeningProduct });
-  }
-  if (url.pathname === `/product/${fixtureIds.partnerProduct}`) {
-    return json(response, 200, { product: state.fixtures.partnerProduct });
-  }
-  if (url.pathname === `/product/${fixtureIds.unlistedProduct}`) {
-    return json(response, 200, { product: state.fixtures.unlistedProjectProduct });
-  }
-  if (url.pathname === `/product/${fixtureIds.storageProduct}`) {
-    return json(response, 200, { product: state.fixtures.storageProduct });
-  }
+  // The subscription the project-creation workflow owns keeps its own cleanup behaviour, which is
+  // the one deletion that is not a Subscriptions command.
   if (url.pathname === `/product/${fixtureIds.createdProduct}` && state.createdProduct) {
     if (request.method === "DELETE") {
       if (state.cleanupFailure) {
@@ -1694,6 +1771,32 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
       return json(response, 204, undefined);
     }
     return json(response, 200, { product: state.createdProduct });
+  }
+  // Every other subscription answers for itself, and for the adjustment and deletion it was asked
+  // for, so what one command changed is what every later read of it reports.
+  if (segments[0] === "product" && segments.length === 2) {
+    const productId = segments[1];
+    const product = addressableProducts(state).get(productId);
+    if (!product) {
+      return json(response, 404, { error: "as-product-not-found", productId });
+    }
+    const changes = request.method === "PATCH" || request.method === "DELETE";
+    if (changes && state.subscriptionMutationFailure) {
+      return json(response, state.subscriptionMutationFailure, state.fixtures.failures.serverError);
+    }
+    if (request.method === "DELETE") {
+      state.deletedSubscriptions.push(productId);
+      return json(response, 204, undefined);
+    }
+    if (request.method === "PATCH") {
+      const body = JSON.parse((await readBody(request)).toString()) as SubscriptionAdjustment;
+      state.subscriptionAdjustments.set(productId, {
+        ...state.subscriptionAdjustments.get(productId),
+        ...body,
+      });
+      return json(response, 200, { id: productId });
+    }
+    return json(response, 200, { product });
   }
   if (url.pathname === "/version") {
     return json(response, 200, state.fixtures.accountServerVersion);
@@ -1777,6 +1880,19 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
       state.projectCreationFailure = status as 400 | 403 | 429 | 503;
     }
     return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/subscription-mutation-failure")) {
+    const state = getScenario(subject);
+    if (request.method === "DELETE") {
+      state.subscriptionMutationFailure = undefined;
+      return json(response, 200, { subject });
+    }
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-subscription-mutation-failure", status });
+    }
+    state.subscriptionMutationFailure = status as 403 | 503;
+    return json(response, 200, { subject, subscriptionMutationFailure: status });
   }
   if (url.pathname.endsWith("/charge-failure") && request.method === "POST") {
     const status = Number(url.searchParams.get("status"));

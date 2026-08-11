@@ -1,4 +1,4 @@
-import { type ProductDmProjectTier } from "@/api/account-server";
+import { type ProductDmProjectTier, type ProductDmStorage } from "@/api/account-server";
 import { type ProjectDetail } from "@/api/data-manager";
 
 import { createScenarioFixtures, type ScenarioProfile } from "./fixtures";
@@ -67,6 +67,8 @@ export type ScenarioState = {
   chargeFailure?: 403 | 429 | 503;
   cleanupFailure?: 403 | 503;
   createdProduct?: ProductDmProjectTier;
+  /** The dataset storage subscription a Subscriptions command created. */
+  createdStorageProduct?: ProductDmStorage;
   createdProject?: ProjectDetail;
   datasetContentFailure?: 403 | 429 | 503;
   datasetFailure?: 429 | 503;
@@ -90,6 +92,15 @@ export type ScenarioState = {
   profile: ScenarioProfile;
   productFailure: boolean;
   productCreationFailure?: 400 | 403 | 429 | 503;
+  /**
+   * A refused or failing subscription command, so an authoritative rejection and a transport
+   * failure are told apart, and neither is confused with the project workflow's own cleanup.
+   */
+  subscriptionMutationFailure?: 403 | 503;
+  /** The subscriptions a caller deleted; no later read reports them. */
+  deletedSubscriptions: string[];
+  /** What each adjusted subscription was changed to, which every later read of it reports. */
+  subscriptionAdjustments: Map<string, { allowance?: number; limit?: number; name?: string }>;
   productCreationDelay?: number;
   /**
    * A failing read of the project collection, which is the index every cross-organisation choice of
@@ -161,6 +172,8 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     attachmentTasks: new Map(),
     deletedResultTasks: [],
     deletedRunningWorkflows: [],
+    deletedSubscriptions: [],
+    subscriptionAdjustments: new Map(),
     fixtures: createScenarioFixtures(subject, profile),
     deletionPollingIndexes: new Map(),
     deletionTaskVersions: new Map(),

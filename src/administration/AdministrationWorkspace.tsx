@@ -1,18 +1,16 @@
 import { useGetProductsSuspense } from "@/api/account-server/product";
 
-import { Alert, Button, Stack, Typography } from "@mui/material";
-import Link from "next/link";
+import { Alert, Stack, Typography } from "@mui/material";
 
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
-import { isUnclaimedProjectSubscription } from "../projects/projectCreation";
-import { projectLinks } from "../projects/routes";
 import { useAccessIndex } from "./accessFacts";
 import { AdministrationFrame } from "./AdministrationShell";
 import { ChargeLedger } from "./ChargeLedgers";
 import { assertOrganisationId, assertProductId, assertUnitId } from "./identifiers";
 import { OrganisationAccessIndex, OrganisationAccessResource } from "./OrganisationAccess";
-import { EmptyTask, PageTitle, ResourceDetailsView, ResourceLink } from "./resources";
+import { EmptyTask, PageTitle, ResourceLink } from "./resources";
 import { administrationLinks, type AdministrationRoute } from "./routes";
+import { SubscriptionResource, SubscriptionsIndex } from "./Subscriptions";
 import { UsageInventoryIndex, UsageInventoryResource } from "./UsageInventory";
 
 type AdministrationResourceRoute = Exclude<
@@ -22,42 +20,12 @@ type AdministrationResourceRoute = Exclude<
   | { kind: "subscriptions" }
   | { kind: "usage-inventory" }
 >;
-type SubscriptionDetailRoute = Extract<AdministrationResourceRoute, { kind: "subscription" }>;
-
 const taskTitles = {
   charges: "Charges",
   "organisation-access": "Organisation & access",
   subscriptions: "Subscriptions",
   "usage-inventory": "Usage & inventory",
 } as const;
-
-const SubscriptionsIndex = () => {
-  const { data } = useGetProductsSuspense();
-  return (
-    <>
-      <PageTitle>Subscriptions</PageTitle>
-      {data.products.length === 0 ? (
-        <EmptyTask>
-          No subscriptions are available. Membership and an appropriate subscription capability are
-          required to create or manage one.
-        </EmptyTask>
-      ) : (
-        <Stack spacing={2}>
-          {data.products.map((subscription) => (
-            <ResourceLink
-              ancestry={`${subscription.organisation.name} / ${subscription.unit.name}`}
-              href={administrationLinks.subscription(assertProductId(subscription.product.id))}
-              id={subscription.product.id}
-              key={subscription.product.id}
-              name={subscription.product.name ?? "Subscription"}
-              type="Subscription"
-            />
-          ))}
-        </Stack>
-      )}
-    </>
-  );
-};
 
 const ChargesIndex = () => {
   const { organisations, units } = useAccessIndex();
@@ -117,36 +85,6 @@ const ChargesIndex = () => {
   );
 };
 
-/** A product's charge ledger is answered by Charges, so only Subscriptions reaches this view. */
-const SubscriptionDetails = ({ route }: { route: SubscriptionDetailRoute }) => {
-  const { data } = useGetProductsSuspense();
-  const subscription = data.products.find((candidate) => candidate.product.id === route.productId);
-  const canCreateProject = subscription && isUnclaimedProjectSubscription(subscription);
-  return (
-    <Stack spacing={2}>
-      <ResourceDetailsView
-        ancestry={
-          subscription ? `${subscription.organisation.name} / ${subscription.unit.name}` : undefined
-        }
-        id={route.productId}
-        name={subscription ? (subscription.product.name ?? "Subscription") : undefined}
-        task="Subscriptions"
-        type="Subscription"
-      />
-      {canCreateProject ? (
-        <Button
-          component={Link}
-          href={projectLinks.create({ subscriptionId: route.productId })}
-          sx={{ alignSelf: "flex-start" }}
-          variant="contained"
-        >
-          Create linked project
-        </Button>
-      ) : null}
-    </Stack>
-  );
-};
-
 const ResourceDetails = ({ route }: { route: AdministrationResourceRoute }) => {
   if (route.kind === "organisation-access-resource") {
     return <OrganisationAccessResource route={route} />;
@@ -155,7 +93,7 @@ const ResourceDetails = ({ route }: { route: AdministrationResourceRoute }) => {
     return <ChargeLedger route={route} />;
   }
   if (route.kind === "subscription") {
-    return <SubscriptionDetails route={route} />;
+    return <SubscriptionResource route={route} />;
   }
   return <UsageInventoryResource route={route} />;
 };

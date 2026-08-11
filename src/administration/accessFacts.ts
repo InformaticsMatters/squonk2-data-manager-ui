@@ -8,6 +8,7 @@ import {
   useGetOrganisation,
   useGetOrganisationsSuspense,
 } from "@/api/account-server/organisation";
+import { useGetProduct } from "@/api/account-server/product";
 import { useGetPersonalUnit, useGetUnit, useGetUnitsSuspense } from "@/api/account-server/unit";
 import { useGetUserAccount } from "@/api/account-server/user";
 
@@ -17,6 +18,7 @@ import {
 } from "../api/runtime/classifyTransportFailure";
 import { type AccessCaller, type AccessFactsFreshness } from "./capabilities";
 import { administrationReadIsAuthoritative } from "./failures";
+import { type Subscription } from "./subscriptionFacts";
 
 export type UnitWithOrganisation = { organisation: OrganisationAllDetail; unit: UnitAllDetail };
 
@@ -84,6 +86,17 @@ export const useAddressedOrganisation = (
 
 export const useAddressedUnit = (unitId: string): AddressedResource<UnitAllDetail> =>
   toAddressedResource(useGetUnit(unitId, { query: addressedResourceQuery }));
+
+/**
+ * The addressed subscription. The Account Server answers for a product the caller may read but does
+ * not list, so the product index is never consulted to decide whether one exists.
+ */
+export const useAddressedProduct = (productId: string): AddressedResource<Subscription> =>
+  toAddressedResource(
+    useGetProduct(productId, {
+      query: { ...addressedResourceQuery, select: ({ product }) => product },
+    }),
+  );
 
 /**
  * The organisation a unit belongs to is only ever named by the caller's grouped units, so a unit

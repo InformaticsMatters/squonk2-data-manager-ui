@@ -71,6 +71,7 @@ export const administrationResourceLabel = {
   newOrganisation: "an organisation",
   organisation: (organisationId: string) => `organisation ${organisationId}`,
   personalUnit: "your personal unit",
+  subscription: (productId: string) => `subscription ${productId}`,
   unit: (unitId: string) => `unit ${unitId}`,
 };
 

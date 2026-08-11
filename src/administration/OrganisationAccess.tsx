@@ -1,9 +1,9 @@
-import { type ReactNode, useState } from "react";
+import { useState } from "react";
 
-import { type AsError, type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
+import { type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
 
 import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
-import { Box, Button, Chip, MenuItem, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/router";
 import { z } from "zod/mini";
@@ -11,7 +11,6 @@ import { z } from "zod/mini";
 import { ManageUsers } from "../components/ManageUsers";
 import { ModalWrapper } from "../components/modals/ModalWrapper";
 import { WarningDeleteButton } from "../components/WarningDeleteButton";
-import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { capitalise } from "../utils/app/language";
 import {
   type UnitWithOrganisation,
@@ -37,7 +36,7 @@ import {
   isPersonalUnitResource,
   protectedOrganisationMembers,
 } from "./capabilities";
-import { administrationMutationFailureMessage, administrationResourceLabel } from "./failures";
+import { administrationResourceLabel } from "./failures";
 import { assertOrganisationId, assertUnitId } from "./identifiers";
 import {
   declaredProductPrivacyExplanation,
@@ -49,13 +48,17 @@ import {
 } from "./privacy";
 import {
   AddressedResourceView,
+  CapabilityAction,
   EmptyTask,
   PageTitle,
+  ResourceChip,
   ResourceIdentity,
   ResourceLink,
+  Section,
 } from "./resources";
 import { administrationLinks, type AdministrationRoute } from "./routes";
 import { useAccessCommands } from "./useAccessCommands";
+import { useAdministrationCommandFeedback } from "./useAdministrationFeedback";
 
 export type OrganisationAccessResourceRoute = Extract<
   AdministrationRoute,
@@ -77,60 +80,6 @@ const createResourceSchema = (existingNames: string[], subject: string, collects
       ? z.string().check(z.minLength(1, "The username for the owner is required"))
       : z.string(),
   });
-
-/**
- * Every Organisation & access command reports the same way: success is announced, an authoritative
- * rejection explains that the displayed resource is unchanged, and anything the transport cannot
- * classify falls through to the shared error presentation.
- */
-const useAccessCommandFeedback = () => {
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<AsError>();
-  return {
-    announce: (message: string) => enqueueSnackbar(message, { variant: "success" }),
-    report: (error: unknown, action: string, resource: string) => {
-      const message = administrationMutationFailureMessage(error, action, resource);
-      message ? enqueueSnackbar(message, { variant: "error" }) : enqueueError(error);
-    },
-    warn: (message: string) => enqueueSnackbar(message, { variant: "warning" }),
-  };
-};
-
-const CapabilityAction = ({
-  capability,
-  children,
-}: {
-  capability: AdministrationCapability;
-  children: (state: { disabled: boolean }) => ReactNode;
-}) => {
-  if (capability.status === "hidden") {
-    return null;
-  }
-  return (
-    <Stack spacing={0.5} sx={{ alignItems: "flex-start" }}>
-      {children({ disabled: capability.status === "disabled" })}
-      {capability.reason ? (
-        <Typography color="text.secondary" variant="body2">
-          {capability.reason}
-        </Typography>
-      ) : null}
-    </Stack>
-  );
-};
-
-const Section = ({ children, title }: { children: ReactNode; title: string }) => (
-  <Box sx={{ mt: 3 }}>
-    <Typography gutterBottom component="h4" variant="h6">
-      {title}
-    </Typography>
-    {children}
-  </Box>
-);
-
-const ResourceChip = ({ label }: { label: string }) => (
-  <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 1 }}>
-    <Chip label={label} size="small" variant="outlined" />
-  </Stack>
-);
 
 /**
  * Collects the name of a resource about to be created, and its owner when the resource names one.
@@ -237,7 +186,7 @@ const ManageResourceUsers = ({
   title: string;
   users: string[];
 }) => {
-  const feedback = useAccessCommandFeedback();
+  const feedback = useAdministrationCommandFeedback();
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
 
@@ -288,7 +237,7 @@ const CreateOrganisationAction = ({
   const [open, setOpen] = useState(false);
   const { caller } = useAccessFacts();
   const commands = useAccessCommands();
-  const feedback = useAccessCommandFeedback();
+  const feedback = useAdministrationCommandFeedback();
   const router = useRouter();
   const capability = evaluateOrganisationCreationCapability(caller);
   const owner = caller.username;
@@ -404,7 +353,7 @@ const CreateUnitAction = ({
 }) => {
   const [open, setOpen] = useState(false);
   const commands = useAccessCommands();
-  const feedback = useAccessCommandFeedback();
+  const feedback = useAdministrationCommandFeedback();
   const router = useRouter();
 
   const create = async ({ name }: { name: string }) => {
@@ -448,7 +397,7 @@ const CreateUnitAction = ({
 
 const CreatePersonalUnitAction = ({ capability }: { capability: AdministrationCapability }) => {
   const commands = useAccessCommands();
-  const feedback = useAccessCommandFeedback();
+  const feedback = useAdministrationCommandFeedback();
   const router = useRouter();
 
   const create = async () => {
@@ -569,7 +518,7 @@ const UnitName = ({
   unit: UnitAllDetail;
 }) => {
   const commands = useAccessCommands();
-  const feedback = useAccessCommandFeedback();
+  const feedback = useAdministrationCommandFeedback();
   const [name, setName] = useState(unit.name);
   const [isPending, setIsPending] = useState(false);
   const disabled = capability.status !== "enabled";
@@ -624,7 +573,7 @@ const DefaultPrivacySelect = ({
   resource: string;
   update: (privacy: ProductPrivacy) => Promise<unknown>;
 }) => {
-  const feedback = useAccessCommandFeedback();
+  const feedback = useAdministrationCommandFeedback();
   const [requested, setRequested] = useState<ProductPrivacy | undefined>();
 
   const change = async (next: ProductPrivacy) => {
@@ -728,7 +677,7 @@ const DeleteUnitAction = ({
   unit: UnitAllDetail;
 }) => {
   const commands = useAccessCommands();
-  const feedback = useAccessCommandFeedback();
+  const feedback = useAdministrationCommandFeedback();
   const router = useRouter();
 
   return (
@@ -841,7 +790,7 @@ const AddressedOrganisation = ({ organisationId }: { organisationId: string }) =
   const addressed = useAddressedOrganisation(organisationId);
 
   return (
-    <AddressedResourceView addressed={addressed} task={task}>
+    <AddressedResourceView addressed={addressed} identity={({ id }) => id} task={task}>
       {(organisation) => <OrganisationResource organisation={organisation} units={units} />}
     </AddressedResourceView>
   );
@@ -852,7 +801,7 @@ const AddressedUnit = ({ unitId }: { unitId: string }) => {
   const addressed = useAddressedUnit(unitId);
 
   return (
-    <AddressedResourceView addressed={addressed} task={task}>
+    <AddressedResourceView addressed={addressed} identity={({ id }) => id} task={task}>
       {(unit) => <UnitResource organisation={organisation} unit={unit} />}
     </AddressedResourceView>
   );

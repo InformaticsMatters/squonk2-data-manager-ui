@@ -62,6 +62,10 @@ export const fixtureIds = {
   otherOrganisation: "org-66666666-6666-6666-6666-666666666666",
   product: "product-77777777-7777-7777-7777-777777777777",
   storageProduct: "product-7e7e7e7e-7e7e-4e7e-8e7e-7e7e7e7e7e7e",
+  /** A project-tier subscription no project has claimed, which Project creation can still take. */
+  claimableProduct: "product-3a3a3a3a-3a3a-4a3a-8a3a-3a3a3a3a3a3a",
+  /** The dataset storage subscription Subscriptions itself creates. */
+  createdStorageProduct: "product-4b4b4b4b-4b4b-4b4b-8b4b-4b4b4b4b4b4b",
   project: "project-33333333-3333-3333-3333-333333333333",
   /** A second entered project, used to prove Results cannot cross a project boundary. */
   screeningProject: "project-6b6b6b6b-6b6b-4b6b-8b6b-6b6b6b6b6b6b",
@@ -358,7 +362,6 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
   // against that member and parses back without its instance accounting. The fixture is checked by
   // the generated schema but served exactly as the Account Server sends it.
   AppApiProductGetResponse.parse({ count: 1, products: [projectTierProduct] });
-  const products = { count: 1, products: [projectTierProduct] };
   // The second project's subscription answers for itself without joining the caller's product
   // index, which keeps the Subscriptions task exactly as it was while a second project can still
   // resolve its own ancestry.
@@ -414,6 +417,31 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     },
     unit,
   };
+  // A project-tier subscription in the Screening Unit that no project has claimed, so the handoff
+  // to Project creation and the deletion of a subscription nothing is using are both reachable.
+  const claimableProduct = {
+    ...projectTierProduct,
+    claim: undefined,
+    product: {
+      ...projectTierProduct.product,
+      id: fixtureIds.claimableProduct,
+      name: "Unclaimed Project Tier",
+    },
+    unit: otherUnit,
+  };
+  // The caller's own product index: the claimed project tier, the unit's dataset storage, and the
+  // unclaimed project tier, which is what a grouped Subscriptions task is grouping. As above, the
+  // generated schema checks the fixture and the index is served exactly as the Account Server
+  // sends it, so a project tier keeps the claim and instance accounting parsing would drop.
+  AppApiProductGetResponse.parse({
+    count: 3,
+    products: [projectTierProduct, datasetStorageProduct, claimableProduct],
+  });
+  const products = {
+    count: 3,
+    products: [projectTierProduct, datasetStorageProduct, claimableProduct],
+  };
+
   const unitProducts: Record<string, { count: number; products: unknown[] }> = {
     [fixtureIds.unit]: AppApiProductGetResponse.parse({
       count: 1,
@@ -654,9 +682,10 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       ],
     }),
     products:
-      profile === "empty-products"
+      profile === "empty-products" || noAccess
         ? AppApiProductGetResponse.parse({ count: 0, products: [] })
         : products,
+    claimableProduct,
     partnerProduct,
     screeningProduct,
     storageProduct: datasetStorageProduct,

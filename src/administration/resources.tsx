@@ -17,6 +17,7 @@ import { type TransportFailure } from "../api/runtime/classifyTransportFailure";
 import { CenterLoader } from "../components/CenterLoader";
 import { withBasePath } from "../utils/app/basePath";
 import { type AddressedResource } from "./accessFacts";
+import { type AdministrationCapability } from "./capabilities";
 import { presentAdministrationFailure } from "./failures";
 import { administrationLinks, type OrganisationAccessCollection } from "./routes";
 
@@ -34,12 +35,15 @@ export const PageTitle = ({ children }: { children: string }) => (
 
 export const ResourceLink = ({
   ancestry,
+  headingLevel = "h3",
   href,
   id,
   name,
   type,
 }: {
   ancestry?: string;
+  /** Where this resource sits in the task's outline; deeper groupings pass a deeper level. */
+  headingLevel?: "h3" | "h5";
   href: string;
   id: string;
   name: string;
@@ -49,7 +53,7 @@ export const ResourceLink = ({
     <CardActionArea href={withBasePath(href)}>
       <CardContent>
         <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 0.5 }}>
-          <Typography component="h3" variant="h6">
+          <Typography component={headingLevel} variant="h6">
             {name}
           </Typography>
           <Chip label={type} size="small" variant="outlined" />
@@ -62,6 +66,51 @@ export const ResourceLink = ({
     </CardActionArea>
   </Card>
 );
+
+/**
+ * An action and the capability that decides it. A hidden capability renders nothing at all; every
+ * other one renders the control and, when it has something to explain, the reason beside it.
+ */
+export const CapabilityAction = ({
+  capability,
+  children,
+}: {
+  capability: AdministrationCapability;
+  children: (state: { disabled: boolean }) => ReactNode;
+}) => {
+  if (capability.status === "hidden") {
+    return null;
+  }
+  return (
+    <Stack spacing={0.5} sx={{ alignItems: "flex-start" }}>
+      {children({ disabled: capability.status === "disabled" })}
+      {capability.reason ? (
+        <Typography color="text.secondary" variant="body2">
+          {capability.reason}
+        </Typography>
+      ) : null}
+    </Stack>
+  );
+};
+
+export const Section = ({ children, title }: { children: ReactNode; title: string }) => (
+  <Box sx={{ mt: 3 }}>
+    <Typography gutterBottom component="h4" variant="h6">
+      {title}
+    </Typography>
+    {children}
+  </Box>
+);
+
+export const ResourceChip = ({ label }: { label: string }) => (
+  <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 1 }}>
+    <Chip label={label} size="small" variant="outlined" />
+  </Stack>
+);
+
+/** How every Administration screen names the organisation and unit a resource belongs to. */
+export const resourceAncestry = (organisationName: string, unitName: string) =>
+  `${organisationName} / ${unitName}`;
 
 export const MissingResource = ({ task }: { task: string }) => (
   <>
@@ -166,13 +215,16 @@ export const ReadOnlyNotice = ({
  * identity keeps what the screen holds owned by the resource in the address bar, so a route change
  * never carries one resource's entered values or chosen view into another's.
  */
-export const AddressedResourceView = <TResource extends { id: string }>({
+export const AddressedResourceView = <TResource,>({
   addressed,
   children,
+  identity,
   task,
 }: {
   addressed: AddressedResource<TResource>;
   children: (resource: TResource) => ReactNode;
+  /** The resource's own identity, which is what the rendered content is keyed by. */
+  identity: (resource: TResource) => string;
   task: string;
 }) => {
   if (addressed.kind === "pending") {
@@ -181,7 +233,7 @@ export const AddressedResourceView = <TResource extends { id: string }>({
   if (addressed.kind === "unavailable") {
     return <UnavailableResource failure={addressed.failure} task={task} />;
   }
-  return <Fragment key={addressed.resource.id}>{children(addressed.resource)}</Fragment>;
+  return <Fragment key={identity(addressed.resource)}>{children(addressed.resource)}</Fragment>;
 };
 
 export const ResourceDetailsView = ({

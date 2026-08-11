@@ -503,7 +503,7 @@ const AddressedOrganisationReport = ({ organisationId }: { organisationId: strin
   const addressed = useAddressedOrganisation(organisationId);
 
   return (
-    <AddressedResourceView addressed={addressed} task={task}>
+    <AddressedResourceView addressed={addressed} identity={({ id }) => id} task={task}>
       {(organisation) => <OrganisationReport organisation={organisation} />}
     </AddressedResourceView>
   );
@@ -514,7 +514,7 @@ const AddressedUnitReport = ({ unitId }: { unitId: string }) => {
   const addressed = useAddressedUnit(unitId);
 
   return (
-    <AddressedResourceView addressed={addressed} task={task}>
+    <AddressedResourceView addressed={addressed} identity={({ id }) => id} task={task}>
       {(unit) => <UnitReport organisation={organisation} unit={unit} />}
     </AddressedResourceView>
   );

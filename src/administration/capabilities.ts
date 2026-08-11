@@ -44,7 +44,11 @@ export type PersonalUnitCapabilityFacts = {
   personalUnit: "absent" | "present";
 };
 
-const unconfirmed: AdministrationCapability = {
+/**
+ * Facts that have not been established do not withhold an ordinary action: it stays available and
+ * names the authority the server will confirm. Every Administration capability answers this way.
+ */
+export const unconfirmedCapability: AdministrationCapability = {
   status: "enabled",
   reason: "Your permission will be confirmed when you use this action.",
 };
@@ -55,7 +59,7 @@ const personalUnitIsFixed: AdministrationCapability = {
   reason: "Personal units cannot be renamed or reconfigured.",
 };
 
-const factsAreConfirmed = ({
+export const factsAreConfirmed = ({
   caller,
   freshness = "current",
 }: Pick<OrganisationCapabilityFacts, "caller" | "freshness">) =>
@@ -101,7 +105,7 @@ const evaluateOrganisationCapability = (
   defaultOrganisationReason: string,
 ): AdministrationCapability => {
   if (!factsAreConfirmed(facts)) {
-    return unconfirmed;
+    return unconfirmedCapability;
   }
   return facts.isDefaultOrganisation
     ? { status: "disabled", reason: defaultOrganisationReason }
@@ -166,7 +170,7 @@ export const evaluatePersonalUnitCreationCapability = ({
     return { status: "hidden" };
   }
   if (freshness !== "current") {
-    return unconfirmed;
+    return unconfirmedCapability;
   }
   return personalUnit === "present"
     ? { status: "disabled", reason: "You already have a personal unit." }
@@ -189,7 +193,7 @@ export const evaluateUnitEditCapability = (
   facts: UnitCapabilityFacts,
 ): AdministrationCapability => {
   if (!factsAreConfirmed(facts)) {
-    return unconfirmed;
+    return unconfirmedCapability;
   }
   if (facts.isPersonalUnit) {
     return personalUnitIsFixed;
@@ -207,7 +211,7 @@ export const evaluateUnitPrivacyCapability = (
   facts: UnitPrivacyCapabilityFacts,
 ): AdministrationCapability => {
   if (!factsAreConfirmed(facts)) {
-    return unconfirmed;
+    return unconfirmedCapability;
   }
   if (facts.isPersonalUnit) {
     return personalUnitIsFixed;
@@ -226,7 +230,7 @@ export const evaluateUnitMembershipCapability = (
   facts: UnitCapabilityFacts,
 ): AdministrationCapability => {
   if (!factsAreConfirmed(facts)) {
-    return unconfirmed;
+    return unconfirmedCapability;
   }
   if (facts.isPersonalUnit) {
     return { status: "disabled", reason: "Members of a personal unit cannot be changed." };
@@ -244,7 +248,7 @@ export const evaluateUnitDeletionCapability = (
   facts: UnitCapabilityFacts,
 ): AdministrationCapability => {
   if (!factsAreConfirmed(facts)) {
-    return unconfirmed;
+    return unconfirmedCapability;
   }
   if (facts.caller.isPlatformAdministrator || facts.unit.owner_id === facts.caller.username) {
     return { status: "enabled" };

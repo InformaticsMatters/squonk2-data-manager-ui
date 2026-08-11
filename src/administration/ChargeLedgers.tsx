@@ -38,7 +38,12 @@ import { withBasePath } from "../utils/app/basePath";
 import { formatCoins } from "../utils/app/coins";
 import { toLocalTimeString } from "../utils/app/datetime";
 import { formatOrdinals } from "../utils/app/ordinals";
-import { type MutationOwner, organisationAccessOwner, ReadOnlyNotice } from "./resources";
+import {
+  type MutationOwner,
+  organisationAccessOwner,
+  ReadOnlyNotice,
+  resourceAncestry,
+} from "./resources";
 import { administrationLinks, type ChargeResourceRoute } from "./routes";
 
 const chargeFor = (summary: ChargeSummary[], type: ChargeSummary["type"]) =>
@@ -377,7 +382,9 @@ const ProductLedger = ({ route }: { route: ChargeResourceRoute }) => {
   return (
     <>
       <LedgerHeader
-        ancestry={product ? `${product.organisation.name} / ${product.unit.name}` : undefined}
+        ancestry={
+          product ? resourceAncestry(product.organisation.name, product.unit.name) : undefined
+        }
         id={data.product_id}
         name={product?.product.name ?? "Subscription"}
         period={`${data.from} to ${data.until}${product ? ` (billed on the ${formatOrdinals(product.unit.billing_day)} of the month)` : ""}`}

@@ -73,6 +73,8 @@ export const fixtureIds = {
   /** The subscription of the project another organisation owns, so that project can be entered. */
   partnerProduct: "product-6d6d6d6d-6d6d-4d6d-8d6d-6d6d6d6d6d6d",
   instance: "instance-1a1a1a1a-1a1a-4a1a-8a1a-1a1a1a1a1a1a",
+  /** An application instance of the same project, which exposes a URL a job never does. */
+  applicationInstance: "instance-3e3e3e3e-3e3e-4e3e-8e3e-3e3e3e3e3e3e",
   screeningInstance: "instance-2b2b2b2b-2b2b-4b2b-8b2b-2b2b2b2b2b2b",
   resultTask: "task-3c3c3c3c-3c3c-4c3c-8c3c-3c3c3c3c3c3c",
   screeningResultTask: "task-4d4d4d4d-4d4d-4d4d-8d4d-4d4d4d4d4d4d",
@@ -720,10 +722,13 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     // Results of work run in each project. Every one names the project it belongs to, so a
     // response that ignored a project argument would be recognisable rather than believable.
     instances: AppApiInstanceGetResponse.parse({
-      count: 2,
+      count: 3,
       instances: [
         {
           application_id: "acceptance-application",
+          application_specification: JSON.stringify({
+            variables: { inputFile: "file://library.smi" },
+          }),
           application_type: "JOB",
           application_version: "1.0.0",
           archived: false,
@@ -735,12 +740,38 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
           job_version: "1.0.0",
           launched: created,
           name: "Acceptance Instance",
+          outputs: {
+            results: {
+              creates: "results/docked.sdf",
+              "mime-types": ["chemical/x-mdl-sdfile"],
+              title: "Docked poses",
+              type: "file",
+            },
+          },
           owner: subject,
           phase: "COMPLETED",
           project_id: fixtureIds.project,
           run_time: "0:01:00",
           started: created,
           stopped: "2026-01-02T03:05:05Z",
+        },
+        {
+          application_id: "acceptance-application",
+          application_type: "APPLICATION",
+          application_version: "1.0.0",
+          archived: false,
+          id: fixtureIds.applicationInstance,
+          launched: created,
+          name: "Acceptance Notebook",
+          owner: subject,
+          // Every instance presents at the stage the scenario is in, so this is the stage a
+          // scenario that has not been dialled anywhere else reports.
+          phase: "COMPLETED",
+          project_id: fixtureIds.project,
+          run_time: "0:03:00",
+          started: created,
+          stopped: "2026-01-02T03:05:05Z",
+          url: "https://notebook.example.org/acceptance",
         },
         {
           application_id: "screening-application",

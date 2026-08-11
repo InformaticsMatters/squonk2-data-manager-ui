@@ -1,6 +1,7 @@
 import { type UserAccountDetail } from "@/api/data-manager";
 
 import { type ProjectFileContent } from "./fileFacts";
+import { type ResultInstanceSettlement } from "./instanceFacts";
 import { type ResultTaskSettlement } from "./taskFacts";
 import { type ResultWorkflowSettlement } from "./workflowFacts";
 
@@ -331,11 +332,40 @@ const evaluateResultAction =
     return { status: "disabled", reason: staleResultReason };
   };
 
-export const evaluateResultTerminationCapability = evaluateResultAction(
+const evaluateTerminationAuthority = evaluateResultAction(
   evaluateEditorAction(
     "You must be a project editor or administrator to stop or delete instances in this project.",
   ),
 );
+
+/**
+ * What stopping or deleting an instance reads in addition to the project's own facts: whether the
+ * concrete instance has accounted for its own progress, which `instanceFacts.ts` is the only place
+ * to decide. The Data Manager takes one request for an instance, but stopping work that is still
+ * running and destroying a finished result are different things, so an instance this client cannot
+ * account for is one it cannot say which of them the caller would be asking for.
+ */
+export type ProjectResultInstanceFacts = ProjectResultFacts & {
+  settlement?: ResultInstanceSettlement;
+};
+
+const unestablishedInstanceReason =
+  "This instance's progress could not be established, so stopping or deleting it cannot be established as safe.";
+
+/**
+ * Stopping or deleting one instance of the project in the URL. Ownership and a confirmed lack of
+ * authority remain the more useful explanations, so they are reported first; an instance whose
+ * progress established nothing then withholds the request rather than offering an irreversible one
+ * whose effect this client cannot name.
+ */
+export const evaluateResultTerminationCapability = (
+  facts: ProjectResultInstanceFacts,
+): ProjectCapability => {
+  const capability = evaluateTerminationAuthority(facts);
+  return capability.status === "disabled" || facts.settlement !== "unestablished"
+    ? capability
+    : { status: "disabled", reason: unestablishedInstanceReason };
+};
 
 export const evaluateResultArchiveCapability = evaluateResultAction(
   evaluateEditorAction(

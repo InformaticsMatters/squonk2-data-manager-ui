@@ -70,13 +70,13 @@ test("Results never leave the project in the URL, even across two projects in on
 
   // The caller administers this project, so its results are actionable here.
   await expect(page.getByRole("button", { name: "Run again" })).toBeEnabled();
-  await expect(page.getByRole("button", { name: "Archive" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Archive" }).first()).toBeEnabled();
   await expect(
     page.getByText("You must be a project editor or administrator", { exact: false }),
   ).toHaveCount(0);
 
   // Each generated child link addresses the result's own owning project.
-  await expect(page.getByRole("link", { name: "Job", exact: true })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: "Acceptance Instance" })).toHaveAttribute(
     "href",
     `/data-manager-ui/projects/${fixtureIds.project}/results/instances/${fixtureIds.instance}`,
   );
@@ -154,7 +154,7 @@ test("result details open inside the owning project and link back to its list", 
   await login(page, acceptanceResults, testInfo);
   await expect(page.getByRole("heading", { level: 1, name: "Results" })).toBeVisible();
 
-  await page.getByRole("link", { name: "Job", exact: true }).click();
+  await page.getByRole("link", { name: "Acceptance Instance" }).click();
   const detail = `${acceptanceResults}/instances/${fixtureIds.instance}`;
   await expect(page).toHaveURL(`${acceptanceUrls.app}${detail}`);
   await expect(page.getByText("Acceptance Instance")).toBeVisible();
@@ -238,7 +238,7 @@ test("a project viewer reads results and is told what each unavailable action re
 
   // Every mutation the viewer cannot make is offered as an explained, disabled control.
   await expect(page.getByRole("button", { name: "Run again" })).toBeDisabled();
-  await expect(page.getByRole("button", { name: "Archive" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Archive" }).first()).toBeDisabled();
   for (const remove of await page.getByRole("button", { name: "Delete", exact: true }).all()) {
     await expect(remove).toBeDisabled();
   }
@@ -359,7 +359,7 @@ test("only the collection that could not be refreshed is marked stale and locked
   const subject = subjectFor(testInfo);
   await login(page, acceptanceResults, testInfo);
   await expect(page.getByText("Acceptance Instance")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Archive" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Archive" }).first()).toBeEnabled();
 
   // Refreshing in place keeps what already loaded, so a collection that fails this time is stale
   // rather than absent — which is the only way the per-collection lock is observable at all.
@@ -376,7 +376,7 @@ test("only the collection that could not be refreshed is marked stale and locked
 
   // The instance is still readable, and says why it cannot be changed.
   await expect(page.getByText("Acceptance Instance")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Archive" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Archive" }).first()).toBeDisabled();
   await expect(
     page
       .getByText(

@@ -306,11 +306,9 @@ test("one module owns the addressed workflow read, its polling, and the commands
   // project it declares as its own.
   expect(existsSync(path.join(root, "hooks/usePolledGetWorkflow.ts"))).toBe(false);
 
-  // The list of statuses that used to decide, on its own, whether a workflow had finished is gone
-  // too, so nothing can disagree with the one place a workflow's own progress is read.
-  expect(readFileSync(path.join(root, "constants/results.ts"), "utf8")).not.toContain(
-    "WORKFLOW_DONE_PHASES",
-  );
+  // The shared list of statuses that used to decide, on its own, whether a result had finished is
+  // gone too, so nothing can disagree with the one place a workflow's own progress is read.
+  expect(existsSync(path.join(root, "constants/results.ts"))).toBe(false);
 
   const typescriptSource = /\.tsx?$/u;
   const generated = /(?:^|\/)generated\//u;

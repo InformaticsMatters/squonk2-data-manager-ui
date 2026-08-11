@@ -1,12 +1,9 @@
-import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
+import { type InstanceGetResponse } from "@/api/data-manager";
 import { useGetJob } from "@/api/data-manager/job";
 
 import { WorkOutlineRounded as WorkOutlineRoundedIcon } from "@mui/icons-material";
-import { Alert, Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
-import { usePolledGetInstance } from "../../../hooks/usePolledGetInstance";
-import { getErrorMessage } from "../../../utils/next/orvalError";
-import { CenterLoader } from "../../CenterLoader";
 import { HorizontalList } from "../../HorizontalList";
 import { PageSection } from "../../PageSection";
 import { TaskDetails } from "../../tasks/TaskDetails";
@@ -16,45 +13,45 @@ import { JobInputSection } from "./JobInputSection";
 import { JobOutputSection } from "./JobOutputSection";
 
 export interface JobDetailsProps {
+  /** The addressed instance's own read; nothing here is fetched a second time. */
+  instance: InstanceGetResponse;
   /**
-   * Instance of the job
+   * The job definition the instance ran, where this client can address it. A job instance whose
+   * definition it cannot address still accounts for everything the instance itself carries.
    */
-  instanceId: string;
-  /**
-   * ID of the Job
-   */
-  jobId: NonNullable<InstanceGetResponse["job_id"] | InstanceSummary["job_id"]>;
+  jobId?: number;
 }
 
 /**
- * Displays the details of an job based on the instance of a job
+ * The definition one job instance ran. It is only asked for where the instance named a definition
+ * this client can address, so no read is ever issued for an identity this client invented.
  */
-export const JobDetails = ({ instanceId, jobId }: JobDetailsProps) => {
-  const { data: instance, error: instanceError } = usePolledGetInstance(instanceId);
-  const { data: job, error: jobError } = useGetJob(jobId);
+const JobDefinition = ({ jobId }: { jobId: number }) => {
+  const { data: job } = useGetJob(jobId);
 
-  if (!instance) {
-    return <CenterLoader />;
-  }
+  return job ? (
+    <ListItem>
+      <ListItemIcon sx={{ minWidth: "40px" }}>
+        <WorkOutlineRoundedIcon />
+      </ListItemIcon>
+      <ListItemText primary={job.collection} secondary={job.version} />
+    </ListItem>
+  ) : null;
+};
 
-  if (instanceError) {
-    return <Alert severity="error">{getErrorMessage(instanceError)}</Alert>;
-  }
-  if (jobError) {
-    return <Alert severity="error">{getErrorMessage(jobError)}</Alert>;
-  }
-
+/**
+ * What one job instance ran, was given, and produced. Every path it names is a file of the project
+ * the instance itself declares, so locating an input or an output can never address another
+ * project's files.
+ */
+export const JobDetails = ({ instance, jobId }: JobDetailsProps) => {
   const lastTask = instance.tasks.at(-1);
+
   return (
     <>
       <HorizontalList>
         <CommonDetails instance={instance} />
-        <ListItem>
-          <ListItemIcon sx={{ minWidth: "40px" }}>
-            <WorkOutlineRoundedIcon />
-          </ListItemIcon>
-          <ListItemText primary={job?.collection} secondary={job?.version} />
-        </ListItem>
+        {jobId === undefined ? null : <JobDefinition jobId={jobId} />}
         {!!lastTask && <ExitCodeFromTask taskId={lastTask.id} />}
       </HorizontalList>
 

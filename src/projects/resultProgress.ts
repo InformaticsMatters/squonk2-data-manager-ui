@@ -21,7 +21,7 @@ export type ResultProgressReadFailure =
   | { kind: "unknown"; reason: string };
 
 /** The result kinds that account for their own progress, in the words each of them is described by. */
-export type ResultProgressSubject = "task" | "workflow";
+export type ResultProgressSubject = "instance" | "task" | "workflow";
 
 /**
  * What is said about progress this client cannot establish at all. It is stated here as well as

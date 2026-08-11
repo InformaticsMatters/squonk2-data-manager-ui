@@ -47,6 +47,21 @@ export type RunningWorkflowStage =
   | "stopped"
   | "unrecognised";
 
+/**
+ * How an instance accounts for itself. `rejected` finished with a successful phase but recorded an
+ * error message, which is the case a phase alone would read as completed work; `stalled` is a phase
+ * the Data Manager reports for an instance the cluster could not start, which is neither running nor
+ * finished; and `unrecognised` reports the Data Manager's own `UNKNOWN` phase, which establishes
+ * nothing at all.
+ */
+export type ResultInstanceStage =
+  | "done"
+  | "failed"
+  | "rejected"
+  | "running"
+  | "stalled"
+  | "unrecognised";
+
 export type ScenarioState = {
   accessFailure?: 403 | 503;
   /**
@@ -81,6 +96,17 @@ export type ScenarioState = {
   deletionTaskVersions: Map<string, number>;
   deletionExitCode?: number;
   fixtures: ReturnType<typeof createScenarioFixtures>;
+  /** The instances a caller has deleted; the project that owned them no longer lists them. */
+  deletedInstances: string[];
+  /**
+   * A refused, missing, or failing read of one addressed instance, so an instance the caller may
+   * not see and one whose progress merely could not be read are told apart.
+   */
+  instanceFailure?: 403 | 404 | 503;
+  /** A refused or failing terminate, delete, or archive, so a rejection preserves the caller's scope. */
+  instanceCommandFailure?: 403 | 503;
+  /** The stage every instance reports, so each representative lifecycle is reachable. */
+  instanceStage: ResultInstanceStage;
   /**
    * A refused, missing, rate-limited, or failing user-inventory read, so a report that is answered
    * authoritatively and one that merely could not be refreshed are told apart.
@@ -170,11 +196,13 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     attachments: [],
     attachmentPollingIndexes: new Map(),
     attachmentTasks: new Map(),
+    deletedInstances: [],
     deletedResultTasks: [],
     deletedRunningWorkflows: [],
     deletedSubscriptions: [],
     subscriptionAdjustments: new Map(),
     fixtures: createScenarioFixtures(subject, profile),
+    instanceStage: "done",
     deletionPollingIndexes: new Map(),
     deletionTaskVersions: new Map(),
     pollingIndexes: new Map(),

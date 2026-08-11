@@ -7,6 +7,7 @@ import {
   type ProjectCapability,
   type ProjectResultFacts,
 } from "./capabilities";
+import { type ResultInstanceSettlement } from "./instanceFacts";
 import { type ProjectFacts } from "./projectFacts";
 import { type ResultTaskSettlement } from "./taskFacts";
 import { type ResultWorkflowSettlement } from "./workflowFacts";
@@ -29,12 +30,15 @@ export const resolveResultCapabilities = (
   facts: ProjectFacts,
   {
     content = "current",
+    instanceSettlement,
     owningProjectId,
     routeProjectId,
     taskSettlement,
     workflowSettlement,
   }: {
     content?: "current" | "stale";
+    /** How the concrete instance accounted for its own progress, where the result is one. */
+    instanceSettlement?: ResultInstanceSettlement;
     owningProjectId: string;
     routeProjectId: string;
     /** How the concrete task accounted for its own progress, where the result is a task. */
@@ -52,7 +56,10 @@ export const resolveResultCapabilities = (
       ...resultFacts,
       settlement: taskSettlement,
     }),
-    termination: evaluateResultTerminationCapability(resultFacts),
+    termination: evaluateResultTerminationCapability({
+      ...resultFacts,
+      settlement: instanceSettlement,
+    }),
     workflowLifecycle: evaluateResultWorkflowLifecycleCapability({
       ...resultFacts,
       settlement: workflowSettlement,

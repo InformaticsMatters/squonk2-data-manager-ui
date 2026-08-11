@@ -6,12 +6,14 @@ import { useRouter } from "next/router";
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
 import { CenterLoader } from "../components/CenterLoader";
-import { Instance } from "../components/instances/Instance";
+import { InstanceDetails } from "../components/instances/InstanceDetails";
+import { InstanceResultCard } from "../components/instances/InstanceResultCard";
 import { EventDebugSwitch } from "../components/results/EventDebugSwitch";
 import { ResultTaskCard } from "../components/tasks/ResultTaskCard";
 import { ResultWorkflowSteps } from "../components/workflows/ResultWorkflowSteps";
 import { WorkflowResultCard } from "../components/workflows/WorkflowResultCard";
 import Layout from "../layouts/Layout";
+import { resolveResultInstanceLifecycle, resultInstanceSettlement } from "./instanceFacts";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectResultDetail } from "./ProjectResultDetail";
 import { resolveResultCapabilities } from "./resultCapabilities";
@@ -44,7 +46,7 @@ const filterOptions: readonly SectionFilterOption<ResultFilterType>[] = [
 /** How one listed result accounted for its own progress, where its kind accounts for any. */
 type ResultProgressFacts = Pick<
   Parameters<typeof resolveResultCapabilities>[1],
-  "taskSettlement" | "workflowSettlement"
+  "instanceSettlement" | "taskSettlement" | "workflowSettlement"
 >;
 
 /**
@@ -80,11 +82,17 @@ const ResultItemCard = ({
   switch (item.kind) {
     case "instance":
       return (
-        <Instance
-          capabilities={capabilitiesFor({})}
+        <InstanceResultCard
+          capabilities={capabilitiesFor({
+            instanceSettlement: resultInstanceSettlement(
+              resolveResultInstanceLifecycle({ instance: item.data }),
+            ),
+          })}
+          collapsed={<InstanceDetails instanceId={item.id} projectId={item.owningProjectId} />}
           collapsedByDefault={collapsedByDefault}
+          instance={item.data}
           instanceId={item.id}
-          instanceSummary={item.data}
+          projectId={item.owningProjectId}
           resultsState={resultsState}
         />
       );

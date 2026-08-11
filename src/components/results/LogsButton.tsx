@@ -1,13 +1,9 @@
-import { type InstanceSummary } from "@/api/data-manager";
-
+import { resultInstanceLogsPath } from "../../projects/instanceFacts";
 import { projectLinks } from "../../projects/routes";
 import { NextLink } from "../NextLink";
 
 export interface LogsButtonProps {
-  /**
-   * ID of the instance
-   */
-  instanceId: InstanceSummary["id"];
+  instanceId: string;
   /**
    * The project the instance itself declares it belongs to
    */
@@ -19,7 +15,7 @@ export const LogsButton = ({ instanceId, projectId }: LogsButtonProps) => {
   return (
     <NextLink
       component="button"
-      href={projectLinks.files(projectId, { path: `/.${instanceId}` }) as never}
+      href={projectLinks.files(projectId, { path: resultInstanceLogsPath(instanceId) }) as never}
     >
       Logs
     </NextLink>

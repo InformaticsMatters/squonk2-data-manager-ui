@@ -27,6 +27,7 @@ import {
   getScenario,
   type RequestRecord,
   resetScenario,
+  type ResultInstanceStage,
   type ResultTaskStage,
   type RunningWorkflowStage,
   type ScenarioState,
@@ -130,7 +131,7 @@ const LabelAnnotation = z.object({
 
 const cors = (request: IncomingMessage, response: ServerResponse) => {
   response.setHeader("access-control-allow-headers", "authorization,content-type");
-  response.setHeader("access-control-allow-methods", "DELETE,GET,POST,PUT,OPTIONS");
+  response.setHeader("access-control-allow-methods", "DELETE,GET,PATCH,POST,PUT,OPTIONS");
   response.setHeader("access-control-allow-origin", request.headers.origin ?? "*");
 };
 
@@ -246,6 +247,60 @@ const multipartField = (body: string, name: string) => {
 /** Everything at or beneath one directory, which is what deleting or moving it must carry. */
 const beneath = (path: string, candidate: string) =>
   candidate === path || candidate.startsWith(`${path}/`);
+
+/**
+ * How an instance presents at each stage. One record answers for both the summary its project's
+ * collection returns and the instance's own read, so a listed instance and the addressed one can
+ * never disagree about what the Data Manager would do with it.
+ */
+const instanceStages = {
+  done: { errorMessage: undefined, phase: "COMPLETED", stopped: "2026-01-02T03:05:05Z" },
+  failed: {
+    errorMessage: "The job image exited with code 4.",
+    phase: "FAILED",
+    stopped: "2026-01-02T03:05:05Z",
+  },
+  // A successful phase with a recorded error: the case a phase alone reads as completed work.
+  rejected: {
+    errorMessage: "The job wrote none of its outputs.",
+    phase: "COMPLETED",
+    stopped: "2026-01-02T03:05:05Z",
+  },
+  running: { errorMessage: undefined, phase: "RUNNING", stopped: undefined },
+  // An instance the cluster could not start: neither running nor finished.
+  stalled: { errorMessage: undefined, phase: "IMAGE_PULL_BACKOFF", stopped: undefined },
+  // The Data Manager's own account of an instance it cannot place.
+  unrecognised: { errorMessage: undefined, phase: "UNKNOWN", stopped: undefined },
+} as const satisfies Record<ResultInstanceStage, unknown>;
+
+/** One instance, presented at the stage the scenario put it in. */
+const atInstanceStage = (
+  state: ScenarioState,
+  instance: (typeof state.fixtures.instances.instances)[number],
+) => {
+  const stage = instanceStages[state.instanceStage];
+  return {
+    ...instance,
+    error_message: stage.errorMessage,
+    phase: stage.phase,
+    stopped: stage.stopped,
+  };
+};
+
+/** Every instance a project still owns, at the stage the scenario put them in. */
+const instancesOf = (state: ScenarioState, projectId: string) => {
+  const instances = state.fixtures.instances.instances
+    .filter((instance) => instance.project_id === projectId)
+    .filter((instance) => !state.deletedInstances.includes(instance.id))
+    .map((instance) => atInstanceStage(state, instance));
+  return { count: instances.length, instances };
+};
+
+/** The instance one addressed read answers with, or `undefined` when it is gone. */
+const addressedInstance = (state: ScenarioState, instanceId: string) =>
+  state.deletedInstances.includes(instanceId)
+    ? undefined
+    : state.fixtures.instances.instances.find((candidate) => candidate.id === instanceId);
 
 /**
  * How a result task presents at each stage. One record answers for both the summary its project's
@@ -843,10 +898,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       );
     }
     if (url.pathname === "/instance") {
-      const instances = state.fixtures.instances.instances.filter(
-        (instance) => instance.project_id === projectId,
-      );
-      return json(response, 200, { count: instances.length, instances });
+      return json(response, 200, instancesOf(state, projectId));
     }
     if (url.pathname === "/task") {
       return json(response, 200, resultTasksOf(state, projectId));
@@ -871,22 +923,59 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       );
     }
   }
+  // An instance is terminated while it is running and deleted once it has finished, and archived
+  // either way, so all three requests answer for the same addressed instance.
+  if (
+    segments[0] === "instance" &&
+    segments.length === 2 &&
+    (request.method === "DELETE" || request.method === "PATCH")
+  ) {
+    const instance = addressedInstance(state, segments[1] ?? "");
+    if (!instance) {
+      return json(response, 404, { error: "fixture-instance-not-found" });
+    }
+    if (state.instanceCommandFailure) {
+      return json(
+        response,
+        state.instanceCommandFailure,
+        state.instanceCommandFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    if (request.method === "DELETE") {
+      state.deletedInstances.push(instance.id);
+    } else {
+      // Archiving only changes whether the instance is protected from automatic deletion; it stays
+      // exactly where it is in the project that owns it.
+      instance.archived = url.searchParams.get("archive") === "true";
+    }
+    response.writeHead(204).end();
+    return;
+  }
   if (segments[0] === "instance" && segments.length === 2 && request.method === "GET") {
-    const instance = state.fixtures.instances.instances.find(
-      (candidate) => candidate.id === segments[1],
-    );
+    const instance = addressedInstance(state, segments[1] ?? "");
+    if (!instance) {
+      return json(response, 404, { error: "fixture-instance-not-found" });
+    }
+    if (state.instanceFailure) {
+      const failure = {
+        403: state.fixtures.failures.forbidden,
+        404: { error: "fixture-instance-not-found" },
+        503: state.fixtures.failures.serverError,
+      }[state.instanceFailure];
+      return json(response, state.instanceFailure, failure);
+    }
     const instanceTask =
-      instance?.project_id === fixtureIds.project
+      instance.project_id === fixtureIds.project
         ? fixtureIds.resultTask
         : fixtureIds.screeningResultTask;
-    return instance
-      ? json(response, 200, {
-          ...instance,
-          has_valid_callback_token: false,
-          outputs: {},
-          tasks: [{ id: instanceTask, purpose: "CREATE" }],
-        })
-      : json(response, 404, { error: "fixture-instance-not-found" });
+    return json(response, 200, {
+      ...atInstanceStage(state, instance),
+      has_valid_callback_token: false,
+      outputs: instance.outputs ?? {},
+      tasks: [{ id: instanceTask, purpose: "CREATE" }],
+    });
   }
   if (segments[0] === "running-workflow" && segments[2] === "steps") {
     if (state.runningWorkflowStepsFailure) {
@@ -2110,6 +2199,42 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/results-failure") && request.method === "DELETE") {
     getScenario(subject).resultsFailures = [];
+    return json(response, 200, { subject });
+  }
+  // The stage the project's own instances report, so each lifecycle one can reach is observable
+  // without waiting for it.
+  if (url.pathname.endsWith("/instance-stage") && request.method === "POST") {
+    const stage = url.searchParams.get("stage") ?? "";
+    if (!["done", "failed", "rejected", "running", "stalled", "unrecognised"].includes(stage)) {
+      return json(response, 400, { error: "unsupported-instance-stage", stage });
+    }
+    getScenario(subject).instanceStage = stage as ResultInstanceStage;
+    return json(response, 200, { instanceStage: stage, subject });
+  }
+  // One addressed instance's own read failing, which is distinct from its project's collection
+  // failing.
+  if (url.pathname.endsWith("/instance-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 404, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-instance-failure", status });
+    }
+    getScenario(subject).instanceFailure = status as 403 | 404 | 503;
+    return json(response, 200, { instanceFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/instance-failure") && request.method === "DELETE") {
+    getScenario(subject).instanceFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/instance-command-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-instance-command-failure", status });
+    }
+    getScenario(subject).instanceCommandFailure = status as 403 | 503;
+    return json(response, 200, { instanceCommandFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/instance-command-failure") && request.method === "DELETE") {
+    getScenario(subject).instanceCommandFailure = undefined;
     return json(response, 200, { subject });
   }
   // The stage the project's own result tasks report, so each lifecycle a task can reach is

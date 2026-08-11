@@ -1,21 +1,21 @@
 import { type ReactNode } from "react";
 
-import { useGetInstance } from "@/api/data-manager/instance";
-
 import { Alert, Button } from "@mui/material";
 import { useRouter } from "next/router";
 
 import { CenterLoader } from "../components/CenterLoader";
-import { Instance } from "../components/instances/Instance";
+import { ResultInstanceDetail } from "../components/instances/ResultInstanceDetail";
 import { ResultTaskDetail } from "../components/tasks/ResultTaskDetail";
 import { ResultWorkflowDetail } from "../components/workflows/ResultWorkflowDetail";
+import { resultInstanceSettlement } from "./instanceFacts";
 import { type ProjectFacts } from "./projectFacts";
 import { resolveResultCapabilities } from "./resultCapabilities";
 import { instanceOwner, type ResultItem, runningWorkflowOwner, taskOwner } from "./resultFacts";
 import { projectLinks, type ProjectRoute, resultsListState } from "./routes";
-import { resolveSectionReadState, sectionReadFailure, type SectionReadState } from "./sectionReads";
+import { type SectionReadState } from "./sectionReads";
 import { resultTaskSettlement } from "./taskFacts";
 import { type ProjectResults } from "./useProjectResults";
+import { useResultInstance } from "./useResultInstance";
 import { useResultTask } from "./useResultTask";
 import { useResultWorkflow } from "./useResultWorkflow";
 import { resultWorkflowSettlement } from "./workflowFacts";
@@ -92,6 +92,12 @@ const AddressedResult = <TResource,>({
   return children(resource, "current");
 };
 
+/**
+ * One addressed instance, read for itself. An instance declares the project it belongs to, so that
+ * declaration is what places it: one that names a project other than the addressed one is not found
+ * here, exactly as a refused or missing one is, and its own read is never allowed to discover or
+ * adopt an owner the URL did not already name.
+ */
 const InstanceResult = ({
   facts,
   route,
@@ -99,29 +105,44 @@ const InstanceResult = ({
   facts: ProjectFacts;
   route: ResultRoute & { collection: "instances" };
 }) => {
-  const instance = useGetInstance(route.resultId, { query: { retry: false } });
+  const router = useRouter();
+  const read = useResultInstance(route.resultId, route.projectId);
+  const state = resultsListState(route);
 
   return (
     <AddressedResult
       owner={instanceOwner}
       projectId={route.projectId}
-      readState={resolveSectionReadState(sectionReadFailure(instance))}
-      refetch={() => void instance.refetch()}
-      resource={instance.data}
+      readState={read.readState}
+      refetch={read.refetch}
+      resource={read.instance}
     >
-      {(resource, content) => (
-        <Instance
-          capabilities={resolveResultCapabilities(facts, {
-            content,
-            owningProjectId: instanceOwner(resource) ?? route.projectId,
-            routeProjectId: route.projectId,
-          })}
-          collapsedByDefault={false}
-          instanceId={route.resultId}
-          instanceSummary={resource}
-          resultsState={resultsListState(route)}
-        />
-      )}
+      {(instance, content) => {
+        const owningProjectId = instanceOwner(instance) ?? route.projectId;
+
+        return (
+          <ResultInstanceDetail
+            capabilities={resolveResultCapabilities(facts, {
+              content,
+              instanceSettlement: resultInstanceSettlement(read.lifecycle),
+              owningProjectId,
+              routeProjectId: route.projectId,
+            })}
+            instance={instance}
+            instanceId={route.resultId}
+            lifecycle={read.lifecycle}
+            projectId={owningProjectId}
+            resultsState={state}
+            // The Data Manager removes an instance it terminated as well as one it deleted, so an
+            // accepted request leaves no route of its own behind: the caller is returned to the
+            // list of the project that owned it, with that list's own state. A rejected request
+            // changes nothing about where the caller is.
+            onRemoved={() =>
+              void router.replace(projectLinks.results(owningProjectId, state) as never)
+            }
+          />
+        );
+      }}
     </AddressedResult>
   );
 };

@@ -33,6 +33,20 @@ export type AttachmentTaskRecord = AttachmentRecord & { fileId: string; fileName
  */
 export type ResultTaskStage = "done" | "failed" | "rejected" | "running";
 
+/**
+ * How a running workflow accounts for itself. `rejected` finished with a `SUCCESS` status but
+ * recorded an error, which is the case a status alone would read as a completed run; `stopped` is
+ * the outcome a caller who stopped it produced, which is neither a success nor a failure; and
+ * `unrecognised` reports a status this client has no rule for, which establishes nothing at all.
+ */
+export type RunningWorkflowStage =
+  | "done"
+  | "failed"
+  | "rejected"
+  | "running"
+  | "stopped"
+  | "unrecognised";
+
 export type ScenarioState = {
   accessFailure?: 403 | 503;
   /**
@@ -103,6 +117,19 @@ export type ScenarioState = {
   resultTaskDeletionFailure?: 403 | 503;
   /** The stage every result task reports, so each representative lifecycle is reachable. */
   resultTaskStage: ResultTaskStage;
+  /** The running workflows a caller has deleted; the project that owned them no longer lists them. */
+  deletedRunningWorkflows: string[];
+  /**
+   * A refused, missing, or failing read of one addressed running workflow, so a workflow the
+   * caller may not see and one whose progress merely could not be read are told apart.
+   */
+  runningWorkflowFailure?: 403 | 404 | 503;
+  /** A refused or failing read of one addressed workflow's steps, distinct from the workflow's. */
+  runningWorkflowStepsFailure?: 403 | 503;
+  /** A refused or failing stop or delete, so a rejection preserves the caller's scope. */
+  runningWorkflowCommandFailure?: 403 | 503;
+  /** The stage every running workflow reports, so each representative lifecycle is reachable. */
+  runningWorkflowStage: RunningWorkflowStage;
   /**
    * Run catalogue read failures in effect, each optionally narrowed to one catalogue path, e.g.
    * `/application`, so catalogues can be made to fail differently and at the same time.
@@ -133,6 +160,7 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     attachmentPollingIndexes: new Map(),
     attachmentTasks: new Map(),
     deletedResultTasks: [],
+    deletedRunningWorkflows: [],
     fixtures: createScenarioFixtures(subject, profile),
     deletionPollingIndexes: new Map(),
     deletionTaskVersions: new Map(),
@@ -143,6 +171,7 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     resultsFailures: [],
     resultTaskStage: "done",
     runFailures: [],
+    runningWorkflowStage: "done",
     uploadTaskIds: [],
   };
   scenarios.set(subject, state);

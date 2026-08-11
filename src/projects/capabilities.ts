@@ -2,6 +2,7 @@ import { type UserAccountDetail } from "@/api/data-manager";
 
 import { type ProjectFileContent } from "./fileFacts";
 import { type ResultTaskSettlement } from "./taskFacts";
+import { type ResultWorkflowSettlement } from "./workflowFacts";
 
 export type ProjectCapability =
   | { status: "disabled"; reason: string }
@@ -381,11 +382,39 @@ export const evaluateResultTaskDeletionCapability = (
   return { status: "disabled", reason: unsettledTaskReasons[facts.settlement] };
 };
 
-export const evaluateResultWorkflowLifecycleCapability = evaluateResultAction(
+const evaluateWorkflowLifecycleAuthority = evaluateResultAction(
   evaluateEditorAction(
     "You must be a project editor or administrator to stop or delete workflows in this project.",
   ),
 );
+
+/**
+ * What stopping or deleting a workflow reads in addition to the project's own facts: whether the
+ * concrete workflow has accounted for its own progress, which `workflowFacts.ts` is the only place
+ * to decide. The Data Manager stops a running workflow and deletes a finished one, so a workflow
+ * this client cannot account for is one it cannot tell those two requests apart for.
+ */
+export type ProjectResultWorkflowFacts = ProjectResultFacts & {
+  settlement?: ResultWorkflowSettlement;
+};
+
+const unestablishedWorkflowReason =
+  "This workflow's progress could not be established, so stopping or deleting it cannot be established as safe.";
+
+/**
+ * Stopping or deleting one workflow of the project in the URL. Ownership and a confirmed lack of
+ * authority remain the more useful explanations, so they are reported first; a workflow whose
+ * progress established nothing then withholds both requests rather than sending whichever one this
+ * client guessed at.
+ */
+export const evaluateResultWorkflowLifecycleCapability = (
+  facts: ProjectResultWorkflowFacts,
+): ProjectCapability => {
+  const capability = evaluateWorkflowLifecycleAuthority(facts);
+  return capability.status === "disabled" || facts.settlement !== "unestablished"
+    ? capability
+    : { status: "disabled", reason: unestablishedWorkflowReason };
+};
 
 /** Running work again spends coins in the owning project, so it answers to its subscription too. */
 export const evaluateResultRerunCapability = evaluateResultAction(

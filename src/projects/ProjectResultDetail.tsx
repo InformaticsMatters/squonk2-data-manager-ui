@@ -1,15 +1,14 @@
 import { type ReactNode } from "react";
 
 import { useGetInstance } from "@/api/data-manager/instance";
-import { useGetRunningWorkflow } from "@/api/data-manager/workflow";
 
 import { Alert, Button } from "@mui/material";
 import { useRouter } from "next/router";
 
 import { CenterLoader } from "../components/CenterLoader";
 import { Instance } from "../components/instances/Instance";
-import { RunningWorkflowCard } from "../components/RunningWorkflowCard/RunningWorkflowCard";
 import { ResultTaskDetail } from "../components/tasks/ResultTaskDetail";
+import { ResultWorkflowDetail } from "../components/workflows/ResultWorkflowDetail";
 import { type ProjectFacts } from "./projectFacts";
 import { resolveResultCapabilities } from "./resultCapabilities";
 import { instanceOwner, type ResultItem, runningWorkflowOwner, taskOwner } from "./resultFacts";
@@ -18,6 +17,8 @@ import { resolveSectionReadState, sectionReadFailure, type SectionReadState } fr
 import { resultTaskSettlement } from "./taskFacts";
 import { type ProjectResults } from "./useProjectResults";
 import { useResultTask } from "./useResultTask";
+import { useResultWorkflow } from "./useResultWorkflow";
+import { resultWorkflowSettlement } from "./workflowFacts";
 
 type ResultRoute = Extract<ProjectRoute, { kind: "result" }>;
 
@@ -125,6 +126,12 @@ const InstanceResult = ({
   );
 };
 
+/**
+ * One addressed running workflow, read for itself. A running workflow declares the project it
+ * belongs to, so that declaration is what places it: one that names a project other than the
+ * addressed one is not found here, exactly as a refused or missing one is, and its own read is
+ * never allowed to discover or adopt an owner the URL did not already name.
+ */
 const WorkflowResult = ({
   facts,
   route,
@@ -132,30 +139,44 @@ const WorkflowResult = ({
   facts: ProjectFacts;
   route: ResultRoute & { collection: "workflows" };
 }) => {
-  const workflow = useGetRunningWorkflow(route.resultId, { query: { retry: false } });
+  const router = useRouter();
+  const read = useResultWorkflow(route.resultId, route.projectId);
+  const state = resultsListState(route);
 
   return (
     <AddressedResult
       owner={runningWorkflowOwner}
       projectId={route.projectId}
-      readState={resolveSectionReadState(sectionReadFailure(workflow))}
-      refetch={() => void workflow.refetch()}
-      resource={workflow.data}
+      readState={read.readState}
+      refetch={read.refetch}
+      resource={read.workflow}
     >
-      {(resource, content) => (
-        <RunningWorkflowCard
-          capabilities={resolveResultCapabilities(facts, {
-            content,
-            owningProjectId: runningWorkflowOwner(resource) ?? route.projectId,
-            routeProjectId: route.projectId,
-          })}
-          collapsedByDefault={false}
-          projectId={route.projectId}
-          resultsState={resultsListState(route)}
-          runningWorkflowId={route.resultId}
-          workflowSummary={resource}
-        />
-      )}
+      {(workflow, content) => {
+        const owningProjectId = runningWorkflowOwner(workflow) ?? route.projectId;
+
+        return (
+          <ResultWorkflowDetail
+            capabilities={resolveResultCapabilities(facts, {
+              content,
+              owningProjectId,
+              routeProjectId: route.projectId,
+              workflowSettlement: resultWorkflowSettlement(read.lifecycle),
+            })}
+            lifecycle={read.lifecycle}
+            projectId={owningProjectId}
+            resultsState={state}
+            steps={read.steps}
+            stepsReadState={read.stepsReadState}
+            workflow={workflow}
+            // A deleted workflow has no route of its own left, so the caller is returned to the
+            // list of the project that owned it, with that list's own state. A stop and a rejected
+            // request both change nothing about where the caller is.
+            onDeleted={() =>
+              void router.replace(projectLinks.results(owningProjectId, state) as never)
+            }
+          />
+        );
+      }}
     </AddressedResult>
   );
 };

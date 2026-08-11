@@ -27,6 +27,7 @@ import {
   type RequestRecord,
   resetScenario,
   type ResultTaskStage,
+  type RunningWorkflowStage,
   type ScenarioState,
 } from "./state";
 
@@ -289,6 +290,65 @@ const resultTasksOf = (state: ScenarioState, projectId: string) => {
     }));
   return { count: tasks.length, tasks };
 };
+
+/**
+ * How a running workflow presents at each stage. One record answers for both the summary its
+ * project's collection returns and the workflow's own read, so a listed workflow and the addressed
+ * one can never disagree about what the Data Manager will do with it.
+ */
+const runningWorkflowStages = {
+  done: { errorNum: 0, status: "SUCCESS", stopped: "2026-01-02T04:14:05Z" },
+  failed: {
+    errorMsg: "Step 2 could not be scheduled.",
+    errorNum: 3,
+    status: "FAILURE",
+    stopped: "2026-01-02T04:14:05Z",
+  },
+  // A successful status with a recorded error: the case a status alone reads as a completed run.
+  rejected: {
+    errorMsg: "Step 2 produced no output.",
+    errorNum: 5,
+    status: "SUCCESS",
+    stopped: "2026-01-02T04:14:05Z",
+  },
+  running: { errorNum: 0, status: "RUNNING", stopped: undefined },
+  stopped: { errorNum: 0, status: "USER_STOPPED", stopped: "2026-01-02T04:14:05Z" },
+  // A status outside the ones the Data Manager documents, so a client that cannot interpret what
+  // it was told is observable rather than only arguable.
+  unrecognised: { errorNum: 0, status: "PAUSED", stopped: undefined },
+} as const satisfies Record<RunningWorkflowStage, unknown>;
+
+/** One running workflow, presented at the stage the scenario put it in. */
+const atRunningWorkflowStage = (
+  state: ScenarioState,
+  workflow: (typeof state.fixtures.runningWorkflows.running_workflows)[number],
+) => {
+  const stage = runningWorkflowStages[state.runningWorkflowStage];
+  return {
+    ...workflow,
+    error_msg: "errorMsg" in stage ? stage.errorMsg : undefined,
+    error_num: stage.errorNum,
+    status: stage.status,
+    stopped: stage.stopped,
+  };
+};
+
+/** Every running workflow a project still owns, at the stage the scenario put them in. */
+const runningWorkflowsOf = (state: ScenarioState, projectId: string) => {
+  const workflows = state.fixtures.runningWorkflows.running_workflows
+    .filter((workflow) => workflow.project.id === projectId)
+    .filter((workflow) => !state.deletedRunningWorkflows.includes(workflow.id))
+    .map((workflow) => atRunningWorkflowStage(state, workflow));
+  return { count: workflows.length, running_workflows: workflows };
+};
+
+/** The running workflow one addressed read answers with, or `undefined` when it is gone. */
+const addressedRunningWorkflow = (state: ScenarioState, runningWorkflowId: string) =>
+  state.deletedRunningWorkflows.includes(runningWorkflowId)
+    ? undefined
+    : state.fixtures.runningWorkflows.running_workflows.find(
+        (candidate) => candidate.id === runningWorkflowId,
+      );
 
 /** The result task one addressed read answers with, or `undefined` when no project owns it. */
 const addressedResultTask = (state: ScenarioState, taskId: string) =>
@@ -790,13 +850,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     if (url.pathname === "/task") {
       return json(response, 200, resultTasksOf(state, projectId));
     }
-    const runningWorkflows = state.fixtures.runningWorkflows.running_workflows.filter(
-      (workflow) => workflow.project.id === projectId,
-    );
-    return json(response, 200, {
-      count: runningWorkflows.length,
-      running_workflows: runningWorkflows,
-    });
+    return json(response, 200, runningWorkflowsOf(state, projectId));
   }
   // An addressed result read can be made to fail on its own path, so a stale addressed result is
   // distinguishable from a stale collection.
@@ -834,21 +888,70 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       : json(response, 404, { error: "fixture-instance-not-found" });
   }
   if (segments[0] === "running-workflow" && segments[2] === "steps") {
-    return json(response, 200, { count: 0, running_workflow_steps: [] });
+    if (state.runningWorkflowStepsFailure) {
+      return json(
+        response,
+        state.runningWorkflowStepsFailure,
+        state.runningWorkflowStepsFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    const steps = Object.entries(state.fixtures.runningWorkflowSteps).find(
+      ([runningWorkflowId]) => runningWorkflowId === segments[1],
+    )?.[1] ?? { count: 0, running_workflow_steps: [] };
+    return json(response, 200, steps);
+  }
+  // A running workflow is stopped while it is running and deleted once it has finished, so both
+  // requests answer for the same addressed workflow.
+  if (
+    segments[0] === "running-workflow" &&
+    ((segments.length === 2 && request.method === "DELETE") ||
+      (segments[2] === "stop" && request.method === "PUT"))
+  ) {
+    const workflow = addressedRunningWorkflow(state, segments[1] ?? "");
+    if (!workflow) {
+      return json(response, 404, { error: "fixture-running-workflow-not-found" });
+    }
+    if (state.runningWorkflowCommandFailure) {
+      return json(
+        response,
+        state.runningWorkflowCommandFailure,
+        state.runningWorkflowCommandFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
+    if (request.method === "DELETE") {
+      state.deletedRunningWorkflows.push(workflow.id);
+    } else {
+      // A stopped workflow keeps its place in the project; only its own account of itself changes.
+      state.runningWorkflowStage = "stopped";
+    }
+    response.writeHead(204).end();
+    return;
   }
   if (segments[0] === "running-workflow" && segments.length === 2 && request.method === "GET") {
-    const workflow = state.fixtures.runningWorkflows.running_workflows.find(
-      (candidate) => candidate.id === segments[1],
-    );
-    return workflow
-      ? json(response, 200, {
-          ...workflow,
-          done: true,
-          running_user: state.fixtures.subject,
-          success: true,
-          variables: {},
-        })
-      : json(response, 404, { error: "fixture-running-workflow-not-found" });
+    const workflow = addressedRunningWorkflow(state, segments[1] ?? "");
+    if (!workflow) {
+      return json(response, 404, { error: "fixture-running-workflow-not-found" });
+    }
+    if (state.runningWorkflowFailure) {
+      const failure = {
+        403: state.fixtures.failures.forbidden,
+        404: { error: "fixture-running-workflow-not-found" },
+        503: state.fixtures.failures.serverError,
+      }[state.runningWorkflowFailure];
+      return json(response, state.runningWorkflowFailure, failure);
+    }
+    const staged = atRunningWorkflowStage(state, workflow);
+    return json(response, 200, {
+      ...staged,
+      done: staged.status !== "RUNNING",
+      running_user: state.fixtures.subject,
+      success: staged.status === "SUCCESS",
+      variables: {},
+    });
   }
   // Every project membership list is addressed the same way, so one handler answers for all three
   // and a test cannot accidentally exercise a role the fixture treats specially.
@@ -1926,6 +2029,54 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/result-task-deletion-failure") && request.method === "DELETE") {
     getScenario(subject).resultTaskDeletionFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  // The stage the project's own running workflows report, so each lifecycle one can reach is
+  // observable without waiting for it.
+  if (url.pathname.endsWith("/running-workflow-stage") && request.method === "POST") {
+    const stage = url.searchParams.get("stage") ?? "";
+    if (!["done", "failed", "rejected", "running", "stopped", "unrecognised"].includes(stage)) {
+      return json(response, 400, { error: "unsupported-running-workflow-stage", stage });
+    }
+    getScenario(subject).runningWorkflowStage = stage as RunningWorkflowStage;
+    return json(response, 200, { runningWorkflowStage: stage, subject });
+  }
+  // One addressed workflow's own read failing, which is distinct from its project's collection
+  // failing and from its steps failing.
+  if (url.pathname.endsWith("/running-workflow-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 404, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-running-workflow-failure", status });
+    }
+    getScenario(subject).runningWorkflowFailure = status as 403 | 404 | 503;
+    return json(response, 200, { runningWorkflowFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/running-workflow-failure") && request.method === "DELETE") {
+    getScenario(subject).runningWorkflowFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/running-workflow-steps-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-running-workflow-steps-failure", status });
+    }
+    getScenario(subject).runningWorkflowStepsFailure = status as 403 | 503;
+    return json(response, 200, { runningWorkflowStepsFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/running-workflow-steps-failure") && request.method === "DELETE") {
+    getScenario(subject).runningWorkflowStepsFailure = undefined;
+    return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/running-workflow-command-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-running-workflow-command-failure", status });
+    }
+    getScenario(subject).runningWorkflowCommandFailure = status as 403 | 503;
+    return json(response, 200, { runningWorkflowCommandFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/running-workflow-command-failure") && request.method === "DELETE") {
+    getScenario(subject).runningWorkflowCommandFailure = undefined;
     return json(response, 200, { subject });
   }
   if (url.pathname.endsWith("/run-failure") && request.method === "POST") {

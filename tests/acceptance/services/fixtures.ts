@@ -39,6 +39,7 @@ import {
 import {
   AppApiWorkflowGetResponse,
   AppApiWorkflowGetRunningResponse,
+  AppApiWorkflowGetRunningWorkflowStepsResponse,
   AppApiWorkflowGetWorkflowResponse,
 } from "@/api/data-manager/workflow/zod";
 
@@ -73,6 +74,9 @@ export const fixtureIds = {
   screeningResultTask: "task-4d4d4d4d-4d4d-4d4d-8d4d-4d4d4d4d4d4d",
   runningWorkflow: "r-workflow-5e5e5e5e-5e5e-4e5e-8e5e-5e5e5e5e5e5e",
   screeningRunningWorkflow: "r-workflow-6f6f6f6f-6f6f-4f6f-8f6f-6f6f6f6f6f6f",
+  /** A step that ran as an instance of the owning project, and one that never became one. */
+  runningWorkflowStep: "r-workflow-step-7c7c7c7c-7c7c-4c7c-8c7c-7c7c7c7c7c7c",
+  unaddressableRunningWorkflowStep: "r-workflow-step-8d8d8d8d-8d8d-4d8d-8d8d-8d8d8d8d8d8d",
   workflow: "workflow-7a7a7a7a-7a7a-4a7a-8a7a-7a7a7a7a7a7a",
   /** The executions a launch from the Run catalogue creates. */
   launchedInstance: "instance-8a8a8a8a-8a8a-4a8a-8a8a-8a8a8a8a8a8a",
@@ -417,6 +421,17 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     }),
     [fixtureIds.otherUnit]: AppApiProductGetResponse.parse({ count: 0, products: [] }),
     [fixtureIds.personalUnit]: AppApiProductGetResponse.parse({ count: 0, products: [] }),
+  };
+
+  /** The running workflow each of its own steps names as the workflow that ran it. */
+  const runningWorkflowReference = {
+    error_num: 0,
+    id: fixtureIds.runningWorkflow,
+    name: "Acceptance Workflow",
+    project: { id: fixtureIds.project, name: "Acceptance Project" },
+    started: "2026-01-02T04:04:05Z",
+    status: "SUCCESS",
+    workflow: { id: fixtureIds.workflow, name: "acceptance-workflow", version: "1.0.0" },
   };
 
   return {
@@ -890,6 +905,41 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         },
       ],
     }),
+    // The steps of each running workflow. The acceptance workflow ran one step as an instance of
+    // the project that owns it and one that never became an instance at all, so a step that can be
+    // addressed and a step that cannot are both observable.
+    runningWorkflowSteps: {
+      [fixtureIds.runningWorkflow]: AppApiWorkflowGetRunningWorkflowStepsResponse.parse({
+        count: 2,
+        running_workflow_steps: [
+          {
+            done: true,
+            error_num: 0,
+            id: fixtureIds.runningWorkflowStep,
+            instance_id: fixtureIds.instance,
+            name: "Prepare library",
+            running_workflow: runningWorkflowReference,
+            started: "2026-01-02T04:04:05Z",
+            status: "SUCCESS",
+            stopped: "2026-01-02T04:09:05Z",
+            success: true,
+            variables: {},
+          },
+          {
+            done: true,
+            error_num: 0,
+            id: fixtureIds.unaddressableRunningWorkflowStep,
+            name: "Report results",
+            running_workflow: runningWorkflowReference,
+            started: "2026-01-02T04:09:05Z",
+            status: "SUCCESS",
+            stopped: "2026-01-02T04:14:05Z",
+            success: true,
+            variables: {},
+          },
+        ],
+      }),
+    },
     productCharges: AppApiProductGetChargesResponse.parse({
       billing_day: unit.billing_day,
       claim: { id: fixtureIds.project, name: "Acceptance Project" },

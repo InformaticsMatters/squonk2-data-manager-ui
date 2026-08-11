@@ -8,8 +8,9 @@ import { useFamilyRoute } from "../application/FamilyRouteBoundary";
 import { CenterLoader } from "../components/CenterLoader";
 import { Instance } from "../components/instances/Instance";
 import { EventDebugSwitch } from "../components/results/EventDebugSwitch";
-import { RunningWorkflowCard } from "../components/RunningWorkflowCard/RunningWorkflowCard";
 import { ResultTaskCard } from "../components/tasks/ResultTaskCard";
+import { ResultWorkflowSteps } from "../components/workflows/ResultWorkflowSteps";
+import { WorkflowResultCard } from "../components/workflows/WorkflowResultCard";
 import Layout from "../layouts/Layout";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectResultDetail } from "./ProjectResultDetail";
@@ -27,6 +28,7 @@ import { resolveProjectSectionRoute } from "./sectionRoute";
 import { type SectionFilterOption, SectionToolbar } from "./SectionToolbar";
 import { resolveResultTaskLifecycle, resultTaskSettlement } from "./taskFacts";
 import { type ProjectResults as ProjectResultsData, useProjectResults } from "./useProjectResults";
+import { resolveResultWorkflowLifecycle, resultWorkflowSettlement } from "./workflowFacts";
 
 type ResultsRoute = Extract<ProjectRoute, { kind: "result" | "results" }>;
 
@@ -38,6 +40,12 @@ const filterOptions: readonly SectionFilterOption<ResultFilterType>[] = [
   { label: "Tasks", value: "task" },
   { label: "Instances", value: "instance" },
 ];
+
+/** How one listed result accounted for its own progress, where its kind accounts for any. */
+type ResultProgressFacts = Pick<
+  Parameters<typeof resolveResultCapabilities>[1],
+  "taskSettlement" | "workflowSettlement"
+>;
 
 /**
  * One result, offered with the capabilities its own owning project decides. Nothing about the card
@@ -58,22 +66,22 @@ const ResultItemCard = ({
   resultsState?: ResultsState;
   routeProjectId: string;
 }) => {
-  const capabilities = resolveResultCapabilities(facts, {
-    content,
-    owningProjectId: item.owningProjectId,
-    routeProjectId,
-    // A listed task accounts for its own progress in the summary its collection returned, by the
-    // same rule the addressed task's own read is settled by.
-    ...(item.kind === "task"
-      ? { taskSettlement: resultTaskSettlement(resolveResultTaskLifecycle({ task: item.data })) }
-      : {}),
-  });
+  // A listed result accounts for its own progress in the summary its collection returned, by the
+  // same rule the addressed result's own read is settled by, so a listed card and the addressed
+  // one never disagree about what may be done to it.
+  const capabilitiesFor = (progress: ResultProgressFacts) =>
+    resolveResultCapabilities(facts, {
+      content,
+      owningProjectId: item.owningProjectId,
+      routeProjectId,
+      ...progress,
+    });
 
   switch (item.kind) {
     case "instance":
       return (
         <Instance
-          capabilities={capabilities}
+          capabilities={capabilitiesFor({})}
           collapsedByDefault={collapsedByDefault}
           instanceId={item.id}
           instanceSummary={item.data}
@@ -83,24 +91,37 @@ const ResultItemCard = ({
     case "task":
       return (
         <ResultTaskCard
-          capabilities={capabilities}
+          capabilities={capabilitiesFor({
+            taskSettlement: resultTaskSettlement(resolveResultTaskLifecycle({ task: item.data })),
+          })}
           collapsedByDefault={collapsedByDefault}
           projectId={item.owningProjectId}
           resultsState={resultsState}
           task={item.data}
         />
       );
-    case "workflow":
+    case "workflow": {
+      const lifecycle = resolveResultWorkflowLifecycle({ workflow: item.data });
+
       return (
-        <RunningWorkflowCard
-          capabilities={capabilities}
+        <WorkflowResultCard
+          capabilities={capabilitiesFor({
+            workflowSettlement: resultWorkflowSettlement(lifecycle),
+          })}
+          collapsed={
+            <ResultWorkflowSteps
+              projectId={item.owningProjectId}
+              resultsState={resultsState}
+              runningWorkflowId={item.id}
+            />
+          }
           collapsedByDefault={collapsedByDefault}
           projectId={item.owningProjectId}
           resultsState={resultsState}
-          runningWorkflowId={item.id}
-          workflowSummary={item.data}
+          workflow={item.data}
         />
       );
+    }
   }
 };
 

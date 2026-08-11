@@ -101,7 +101,10 @@ export const BaseCard = ({
         {typeof actions === "function" ? actions({ setExpanded }) : actions}
         {collapsed !== undefined && (
           <IconButton
+            // The control is an icon alone, so it says what it does rather than leaving a caller
+            // who cannot see the arrow with an unnamed button.
             aria-expanded={expanded}
+            aria-label={expanded ? "Show less" : "Show more"}
             sx={(theme) => ({
               marginLeft: "auto",
               transform: `rotate(${expanded ? 180 : 0}deg)`,

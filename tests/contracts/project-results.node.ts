@@ -536,6 +536,8 @@ test.describe("Results cutover", () => {
       "projects/useResultCommands.ts",
       "projects/taskFacts.ts",
       "projects/useResultTask.ts",
+      "projects/useResultWorkflow.ts",
+      "projects/workflowFacts.ts",
       "components/instances/ResultJobCard.tsx",
       "components/instances/ResultApplicationCard.tsx",
       "components/tasks/DeleteTaskButton.tsx",
@@ -544,7 +546,10 @@ test.describe("Results cutover", () => {
       "components/tasks/TaskDetails.tsx",
       "components/tasks/TaskProgress.tsx",
       "components/tasks/TaskResultCard.tsx",
-      "components/RunningWorkflowCard/RunningWorkflowCard.tsx",
+      "components/workflows/ResultWorkflowDetail.tsx",
+      "components/workflows/ResultWorkflowSteps.tsx",
+      "components/workflows/WorkflowResultCard.tsx",
+      "components/workflows/WorkflowSteps.tsx",
     ]) {
       expect(readFileSync(path.join(root, sourceFile), "utf8")).not.toMatch(
         /useCurrentProject|useIsUserAdminOrEditorOfCurrentProject|useProjectFromId/u,
@@ -562,7 +567,7 @@ test("useResultCommands is the only owner of Results mutations and their invalid
   for (const card of [
     "components/instances/ArchiveInstance.tsx",
     "components/instances/TerminateInstance.tsx",
-    "components/DeleteWorkflowButton.tsx",
+    "components/workflows/WorkflowLifecycleButton.tsx",
     "components/tasks/DeleteTaskButton.tsx",
   ]) {
     const source = readFileSync(path.join(root, card), "utf8");

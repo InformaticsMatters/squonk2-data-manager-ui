@@ -1,5 +1,11 @@
-import { isTransientTransportFailure } from "../api/runtime/classifyTransportFailure";
 import { type DatasetId, isDatasetId } from "../routing/identifiers";
+import {
+  classifyProgressReadFailure,
+  pendingPollIntervalMs,
+  type ResultProgressReadFailure,
+  type ResultSettlement,
+  unconfirmedPollIntervalMs,
+} from "./resultProgress";
 
 /**
  * The Data Manager task fields a Results task accounts for itself with. Both the summary a
@@ -16,26 +22,16 @@ export type ResultTaskFacts = {
 };
 
 /**
- * What is known about one task's progress right now.
- *
- * `unconfirmed` is a progress read that failed transiently: the task is still running and still
- * worth asking about, so the poll backs off rather than stopping. `unknown` is a read this client
- * cannot interpret or is not allowed to make, so it stops asking instead of guessing an outcome.
- * Neither is ever a finished task.
+ * What is known about one task's progress right now. A read that did not answer says so through
+ * the failure every Results progress read shares, and neither of its outcomes is ever a finished
+ * task.
  */
 export type ResultTaskLifecycle =
+  | ResultProgressReadFailure
   | { kind: "failed"; reason: string }
   | { kind: "pending" }
   | { kind: "succeeded" }
-  | { kind: "unconfirmed"; reason: string }
-  | { kind: "unestablished" }
-  | { kind: "unknown"; reason: string };
-
-const pendingPollIntervalMs = 5000;
-const unconfirmedPollIntervalMs = 15_000;
-
-const unconfirmedReason = "This task's progress could not be read. It is still being checked.";
-const unknownReason = "This task's progress could not be established. Retry to check it again.";
+  | { kind: "unestablished" };
 
 /**
  * The Data Manager states the rule outright: a task is complete when it is done with an exit code
@@ -61,12 +57,6 @@ const classifySettledTask = (task: ResultTaskFacts): ResultTaskLifecycle => {
   return { kind: "succeeded" };
 };
 
-/** A read that may answer next time keeps the task running; anything else stops the poll. */
-const classifyReadFailure = (taskError: unknown): ResultTaskLifecycle =>
-  isTransientTransportFailure(taskError)
-    ? { kind: "unconfirmed", reason: unconfirmedReason }
-    : { kind: "unknown", reason: unknownReason };
-
 /**
  * What one task's own read says about it. A task that has settled stays settled, so a later failed
  * refresh cannot unsettle it; a task that has not settled and whose read failed is reported by that
@@ -83,7 +73,7 @@ export const resolveResultTaskLifecycle = ({
     return classifySettledTask(task);
   }
   if (taskError !== undefined && taskError !== null) {
-    return classifyReadFailure(taskError);
+    return classifyProgressReadFailure(taskError, "task");
   }
   return task === undefined ? { kind: "unestablished" } : { kind: "pending" };
 };
@@ -101,7 +91,7 @@ export const resultTaskPollInterval = (lifecycle: ResultTaskLifecycle): number |
  * running is pending; and progress that could not be read at all establishes nothing, which is a
  * different thing from a task known to be running.
  */
-export type ResultTaskSettlement = "pending" | "settled" | "unestablished";
+export type ResultTaskSettlement = ResultSettlement;
 
 export const resultTaskSettlement = (lifecycle: ResultTaskLifecycle): ResultTaskSettlement => {
   switch (lifecycle.kind) {

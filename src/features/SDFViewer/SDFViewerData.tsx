@@ -43,12 +43,16 @@ const getPropArrayFromRecords = (molecules: Molecule[] | SDFRecord[]): string[] 
   }, []);
 };
 
-const useSDFRecords = (project: string, path: string, file: string, config: SDFViewerConfig) => {
-  const queryParams = new URLSearchParams({ project, path, file, config: censorConfig(config) });
+const useSDFRecords = (projectId: string, path: string, config: SDFViewerConfig) => {
+  const queryParams = new URLSearchParams({
+    project: projectId,
+    path,
+    config: censorConfig(config),
+  });
   const url = withBasePath(`/api/sdf-parser?${queryParams.toString()}`);
 
   return useQuery<SDFRecord[], Error, SDFRecord[], string[]>({
-    queryKey: ["sdf", project, path, file],
+    queryKey: ["sdf", projectId, path],
     queryFn: async () => {
       const response = await fetch(url);
       if (response.ok) {
@@ -73,14 +77,14 @@ export const recordsToMolecules = (records: SDFRecord[]): Must<Molecule>[] => {
 };
 
 export interface SDFViewerDataProps {
-  project: string;
+  projectId: string;
+  /** Absolute path of the file inside the project that owns it. */
   path: string;
-  file: string;
   config: SDFViewerConfig;
 }
 
-export const SDFViewerData = ({ project, path, file, config }: SDFViewerDataProps) => {
-  const { data, isFetching, error } = useSDFRecords(project, path, file, config);
+export const SDFViewerData = ({ projectId, path, config }: SDFViewerDataProps) => {
+  const { data, isFetching, error } = useSDFRecords(projectId, path, config);
 
   const records = useMemo(() => data ?? [], [data]);
 

@@ -3,8 +3,8 @@ import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import A from "next/link";
 
 import { filesystemPathOf } from "../../../projects/fileFacts";
+import { ProjectFileViewerLinks } from "../../../projects/ProjectFileViewerLinks";
 import { projectLinks } from "../../../projects/routes";
-import { ViewFilePopover } from "../../ViewFilePopover/ViewFilePopover";
 
 export interface JobLinkProps {
   projectId: string;
@@ -67,7 +67,7 @@ export const JobLink = ({ projectId, path: originalPath, isFile }: JobLinkProps)
           </IconButton>
         </Tooltip>
 
-        <ViewFilePopover fileName={fileName} path={filePath} projectId={projectId} />
+        <ProjectFileViewerLinks directory={filePath} fileName={fileName} projectId={projectId} />
       </Box>
     );
   }

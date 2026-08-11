@@ -121,13 +121,10 @@ test.describe("Dataset version viewer cutover", () => {
     // it. A module reaching a proxy from anywhere else fails this list rather than quietly becoming
     // a second owner of a transport href.
     expect(handwrittenMatching(dataManagerProxy)).toEqual([
-      "components/ViewFilePopover/BrowserViewerListItem.tsx", // project file
       "datasets/routes.ts", // dataset version — the only owner
-      "features/SDFViewer/useGetSDFSchema.ts", // project file
       "pages/api/dm-api/[...dmProxy].ts", // the proxy itself
       "pages/api/viewer-proxy/[...viewerProxy].ts", // the proxy itself
-      "projects/ProjectFileActions.tsx", // project file
-      "utils/app/routes.ts", // project file builder
+      "projects/routes.ts", // project file — the only owner
     ]);
   });
 

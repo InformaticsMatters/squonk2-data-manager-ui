@@ -20,7 +20,6 @@ import { useFamilyRoute } from "../application/FamilyRouteBoundary";
 import { CenterLoader } from "../components/CenterLoader";
 import { DataTable } from "../components/DataTable";
 import { NextLink } from "../components/NextLink";
-import { ViewFilePopover } from "../components/ViewFilePopover/ViewFilePopover";
 import Layout from "../layouts/Layout";
 import { toLocalTimeString } from "../utils/app/datetime";
 import { capabilityReason, evaluateProjectFileMutationCapability } from "./capabilities";
@@ -34,10 +33,12 @@ import {
   isDirectoryRow,
   type ProjectFileRow,
 } from "./fileFacts";
+import { FILE_NOT_FOUND_NOTICE } from "./fileViewers";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectFileActions } from "./ProjectFileActions";
 import { CreateDirectoryControl, UploadFileControl } from "./ProjectFileToolbarActions";
 import { ProjectFileUpload } from "./ProjectFileUpload";
+import { ProjectFileViewerLinks } from "./ProjectFileViewerLinks";
 import { projectLinks, type ProjectRoute } from "./routes";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
@@ -83,12 +84,12 @@ const PathBreadcrumbs = ({ path, projectId }: { path: string; projectId: string 
 
 const FilesTable = ({
   facts,
-  localNotFound,
+  notice,
   path,
   projectId,
 }: {
   facts: ProjectFacts;
-  localNotFound: boolean;
+  notice: string | undefined;
   path: string;
   projectId: string;
 }) => {
@@ -119,7 +120,7 @@ const FilesTable = ({
               {getValue()}
             </NextLink>
           ) : (
-            <ViewFilePopover fileName={row.name} path={path} projectId={projectId} />
+            <ProjectFileViewerLinks directory={path} fileName={row.name} projectId={projectId} />
           ),
         header: "File Name",
       }),
@@ -173,9 +174,9 @@ const FilesTable = ({
             unavailableMessage="This directory is unavailable or you no longer have access to it."
             onRetry={() => files.retry()}
           />
-          {localNotFound ? (
+          {notice ? (
             <Alert severity="warning" sx={{ mb: 2 }}>
-              This file was not found in this project.
+              {notice}
             </Alert>
           ) : null}
           {/* A listing that is still loading already says so through its own loader, so what its
@@ -233,13 +234,13 @@ const FilesTable = ({
   );
 };
 
-const FilesSection = ({
-  localNotFound = false,
-  route,
-}: {
-  localNotFound?: boolean;
-  route: FilesRoute;
-}) => {
+/**
+ * The Files section, listing one directory of one project. A caller that reached it through a child
+ * Files could not show — an unusable file path, a file the project does not hold — passes the
+ * notice explaining that, so the project shell, the listing, and a usable breadcrumb are retained
+ * wherever the failure was noticed.
+ */
+export const ProjectFilesSection = ({ notice, route }: { notice?: string; route: FilesRoute }) => {
   const { projectId } = route;
   const path = route.path ?? filesystemRoot;
   const facts = useProjectFacts();
@@ -258,7 +259,7 @@ const FilesSection = ({
           <FilesTable
             facts={facts}
             key={`${projectId}:${path}`}
-            localNotFound={localNotFound}
+            notice={notice}
             path={path}
             projectId={projectId}
           />
@@ -283,8 +284,13 @@ export const ProjectFiles = () => {
     // A file route the section could not address keeps the project and its root listing rather
     // than guessing a correction for it.
     case "local-not-found":
-      return <FilesSection localNotFound route={{ kind: "files", projectId: section.projectId }} />;
+      return (
+        <ProjectFilesSection
+          notice={FILE_NOT_FOUND_NOTICE}
+          route={{ kind: "files", projectId: section.projectId }}
+        />
+      );
     case "route":
-      return <FilesSection route={section.route} />;
+      return <ProjectFilesSection route={section.route} />;
   }
 };

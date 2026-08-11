@@ -92,6 +92,11 @@ export type ScenarioState = {
   filesFailure?: 403 | 503;
   /** A refused or failing file change, so a rejection and a transport failure are told apart. */
   fileMutationFailure?: 403 | 503;
+  /**
+   * A refused or failing read of one file's bytes, so a file a viewer may not read and one whose
+   * content merely could not be delivered are told apart from a file the project does not hold.
+   */
+  fileContentFailure?: 403 | 429 | 503;
   deletionPollingIndexes: Map<string, number>;
   deletionTaskVersions: Map<string, number>;
   deletionExitCode?: number;

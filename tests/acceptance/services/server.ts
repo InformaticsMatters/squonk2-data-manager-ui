@@ -20,6 +20,8 @@ import {
   fixtureIds,
   type FixtureProjectFileSystem,
   isScenarioProfile,
+  projectFileSchemaFixture,
+  projectSdfFixture,
 } from "./fixtures";
 import {
   type AttachmentRecord,
@@ -822,12 +824,28 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     }
     const fileName = url.searchParams.get("file") ?? "";
     const path = url.searchParams.get("path") ?? "/";
+    if (state.fileContentFailure) {
+      return json(
+        response,
+        state.fileContentFailure,
+        state.fileContentFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
     const held = system.files.find((file) => file.path === path && file.file_name === fileName);
     if (!held) {
       return json(response, 404, { error: "fixture-file-not-found" });
     }
-    response.writeHead(200, { "content-type": "application/octet-stream" });
-    return response.end(`acceptance ${fileName}`);
+    // A file's bytes are the bytes of its own kind: a schema describes the SDF beside it, and an
+    // SDF holds records a parser can actually read, so a viewer is exercised against what it
+    // claims to display rather than against a placeholder every file shares. The type is the one
+    // the listing gives the file, so a browser shown the bytes is shown them as that type.
+    if (fileName.endsWith(".schema.json")) {
+      return json(response, 200, projectFileSchemaFixture);
+    }
+    response.writeHead(200, { "content-type": held.mime_type ?? "application/octet-stream" });
+    return response.end(fileName.endsWith(".sdf") ? projectSdfFixture : `acceptance ${fileName}`);
   }
   if (url.pathname === "/project") {
     if (request.method === "POST") {
@@ -2061,6 +2079,19 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   if (datasetFailureControl && request.method === "DELETE") {
     getScenario(subject)[datasetFailureControl.stateKey] = undefined;
     return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/file-content-failure")) {
+    const state = getScenario(subject);
+    if (request.method === "DELETE") {
+      state.fileContentFailure = undefined;
+      return json(response, 200, { subject });
+    }
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 429, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-file-content-failure", status });
+    }
+    state.fileContentFailure = status as 403 | 429 | 503;
+    return json(response, 200, { fileContentFailure: status, subject });
   }
   const fileFailureControls = [
     { pathSuffix: "/files-failure", stateKey: "filesFailure" },

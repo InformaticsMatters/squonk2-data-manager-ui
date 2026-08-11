@@ -9,12 +9,11 @@ import {
 import { DownloadButton } from "../components/downloads/DownloadButton";
 import { WarningDeleteButton } from "../components/WarningDeleteButton";
 import { useMimeTypeLookup } from "../hooks/useMimeTypeLookup";
-import { withBasePath } from "../utils/app/basePath";
 import { getMimeFromFileName } from "../utils/app/files";
-import { API_ROUTES } from "../utils/app/routes";
 import { type ProjectCapability } from "./capabilities";
 import { CapabilityIconButton } from "./CapabilityIconButton";
 import {
+  childFilesystemPath,
   isDirectoryRow,
   managedFileId,
   offersDatasetCreation,
@@ -22,6 +21,7 @@ import {
 } from "./fileFacts";
 import { ProjectFileFavouriteButton } from "./ProjectFileFavouriteButton";
 import { ProjectFileRename } from "./ProjectFileRename";
+import { projectFileTransportLinks } from "./routes";
 import { useFileCommands } from "./useFileCommands";
 import { useFileMutation } from "./useFileMutation";
 
@@ -160,7 +160,7 @@ export const ProjectFileActions = ({
       ) : null}
 
       <DownloadButton
-        href={withBasePath(API_ROUTES.projectFile(projectId, path, row.name, "/api/dm-api"))}
+        href={projectFileTransportLinks.download(projectId, childFilesystemPath(path, row.name))}
         size="small"
         title="Download file"
       />

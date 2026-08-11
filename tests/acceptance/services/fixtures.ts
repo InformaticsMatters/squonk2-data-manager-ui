@@ -104,6 +104,53 @@ export const datasetContentFixtures = {
   2: gzipSync(Buffer.from("acceptance dataset version 2\n")),
 } as const;
 
+/** The records a project's own SDF holds, so the SDF viewer parses a file rather than a stand-in. */
+export const projectSdfFixture = [
+  "docked-pose-1",
+  "     RDKit          2D",
+  "",
+  "  1  0  0  0  0  0  0  0  0  0999 V2000",
+  "    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
+  "M  END",
+  ">  <score>  (1)",
+  "1.5",
+  "",
+  ">  <label>  (1)",
+  "first pose",
+  "",
+  "$$$$",
+  "docked-pose-2",
+  "     RDKit          2D",
+  "",
+  "  1  0  0  0  0  0  0  0  0  0999 V2000",
+  "    0.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0",
+  "M  END",
+  ">  <score>  (2)",
+  "2.5",
+  "",
+  ">  <label>  (2)",
+  "second pose",
+  "",
+  "$$$$",
+  "",
+].join("\n");
+
+/** The schema the Data Manager holds beside that SDF, which the SDF viewer configures itself from. */
+export const projectFileSchemaFixture = {
+  $schema: "",
+  $id: "",
+  title: "Docked poses",
+  description: "Acceptance docking results",
+  version: 1,
+  type: "object",
+  fields: {
+    score: { type: "number", description: "Docking score" },
+    label: { type: "string", description: "Record label" },
+  },
+  required: [],
+  labels: {},
+} as const;
+
 export const scenarioProfiles = [
   "default",
   "empty-charges",

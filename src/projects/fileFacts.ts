@@ -82,6 +82,34 @@ export const parentFilesystemPath = (path: string): string =>
 export const childFilesystemPath = (path: string, name: string): string =>
   path === filesystemRoot ? `/${name}` : `${path}/${name}`;
 
+/** The one file a viewer, a transport, or a link addresses, under its one canonical spelling. */
+export type FilesystemFile = {
+  /** Absolute path of the directory holding it. */
+  directory: string;
+  name: string;
+  /** Canonical absolute path of the file itself. */
+  path: string;
+};
+
+/**
+ * The one file a path addresses, or `null` for a value that names a directory rather than a file.
+ * A file path is canonicalised on the way in exactly as a directory path is, so a viewer, a
+ * transport, and the route that carries the path all address one file under one spelling; the root
+ * holds files but is never one.
+ */
+export const filesystemFile = (value: string): FilesystemFile | null => {
+  const canonical = canonicalFilesystemPath(value);
+  if (canonical === null || canonical === filesystemRoot) {
+    return null;
+  }
+  const names = filesystemBreadcrumbs(canonical);
+  return {
+    directory: filesystemPathOf(names.slice(0, -1)),
+    name: names.at(-1) as string,
+    path: canonical,
+  };
+};
+
 /**
  * The path identity a favourite and a job input carry: project-root relative, with no leading
  * separator. It is not the same spelling as a route path, so the two are built here rather than

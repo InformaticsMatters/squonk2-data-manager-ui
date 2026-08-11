@@ -3,13 +3,20 @@ import { createSDFTransformer } from "@squonk/sdf-parser/web";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { API_ROUTES } from "../../utils/app/routes";
+import { filesystemFile } from "../../projects/fileFacts";
+import { projectFileTransportLinks } from "../../projects/routes";
 import { type Field, type Schema } from "./ConfigEditor";
 
-const getSchemaFileNameFromSDFFileName = (fname: string) => fname.slice(0, -4) + ".schema.json";
+/**
+ * The schema file the Data Manager holds beside one SDF. It is named after the SDF itself, so a
+ * compressed SDF looks for the schema of the file it decompresses to rather than for one named
+ * after its compression.
+ */
+const getSchemaFileNameFromSDFFileName = (fileName: string) =>
+  `${fileName.replace(/\.sdf(?:\.gz|\.gzip)?$/u, "")}.schema.json`;
 
-const getSDFFields = async (project: string, path: string, file: string) => {
-  const response = await fetch(API_ROUTES.projectFile(project, path, file, "/api/dm-api"));
+const getSDFFields = async (projectId: string, path: string) => {
+  const response = await fetch(projectFileTransportLinks.download(projectId, path));
 
   if (!response.ok) {
     throw new Error(`Failed to fetch SDF file: ${response.statusText}`);
@@ -52,15 +59,22 @@ const stubSchema = (fields: Record<string, Field> | undefined): Schema | undefin
   }
 };
 
-const useGetSDFSchema = (project: string, path: string, file: string) => {
-  const schemaFilename = getSchemaFileNameFromSDFFileName(file);
+/**
+ * The schema describing one SDF file, read beside the file it describes. Both the schema read and
+ * the fallback that derives fields from the SDF itself address the file's own project and path, so
+ * neither can describe a file of another project.
+ */
+const useGetSDFSchema = (projectId: string, path: string) => {
+  const file = filesystemFile(path);
+  const directory = file?.directory ?? "/";
+  const schemaFilename = getSchemaFileNameFromSDFFileName(file?.name ?? "");
   const {
     data: schemaFile,
     error,
     isLoading,
   } = useGetProjectFile<any>(
-    project,
-    { path, file: schemaFilename },
+    projectId,
+    { path: directory, file: schemaFilename },
     { query: { retry: 0, enabled: true, refetchOnWindowFocus: false } },
   );
 
@@ -69,8 +83,8 @@ const useGetSDFSchema = (project: string, path: string, file: string) => {
     isLoading: isSdfLoading,
     error: sdfError,
   } = useQuery({
-    queryKey: ["sdf-fields", project, path, file],
-    queryFn: () => getSDFFields(project, path, file),
+    queryKey: ["sdf-fields", projectId, path],
+    queryFn: () => getSDFFields(projectId, path),
     enabled: error?.status === 404,
     refetchOnWindowFocus: false,
   });

@@ -30,9 +30,15 @@ import {
   type RouteParseResult,
   validRoute,
 } from "../routing/routeContract";
-import { canonicalFilesystemPath, filesystemRoot } from "./fileFacts";
+import { withBasePath } from "../utils/app/basePath";
+import {
+  canonicalFilesystemPath,
+  type FilesystemFile,
+  filesystemFile,
+  filesystemRoot,
+} from "./fileFacts";
+import { defaultFileViewer, type FileViewer, isFileViewer } from "./fileViewers";
 
-const viewers = ["text", "sdf", "browser"] as const;
 const runFilterTypes = ["workflow", "application", "job"] as const;
 const resultFilterTypes = ["workflow", "task", "instance"] as const;
 
@@ -51,7 +57,6 @@ const resultIdValidators = {
   workflows: isRunningWorkflowId,
 } as const;
 
-export type FileViewer = (typeof viewers)[number];
 export type RunDefinitionType = keyof typeof definitionIdValidators;
 export type RunFilterType = (typeof runFilterTypes)[number];
 export type ResultCollection = keyof typeof resultIdValidators;
@@ -194,12 +199,34 @@ const directoryQuery = (path: string | undefined) => {
 };
 
 /** The same, for the one file a viewer addresses; the root names a directory, never a file. */
-const filePathQuery = (path: string) => {
-  const canonical = canonicalPathOrThrow(path, "file path");
-  if (canonical === filesystemRoot) {
+const filePathQuery = (path: string) => [["path", assertFilePath(path).path]] as const;
+
+/**
+ * The one way a viewer reaches a link. The viewer every file offers is the section's own default
+ * rather than a value the URL carries, so a link to it and a link that spells it out are the same
+ * link, and a viewer this section has no rule for is never written into a URL.
+ */
+const viewerQuery = (viewer: FileViewer | undefined) =>
+  [
+    [
+      "viewer",
+      viewer === undefined || viewer === defaultFileViewer
+        ? undefined
+        : assertRouteValue(viewer, isFileViewer, "file viewer"),
+    ],
+  ] as const;
+
+/**
+ * The one file a path addresses, or a rejection naming what it was supposed to be. Every transport
+ * and every viewer link splits a path here, so the directory and the file name a Data Manager
+ * request carries are the ones the route itself names.
+ */
+const assertFilePath = (path: string) => {
+  const file = filesystemFile(path);
+  if (file === null) {
     throw new TypeError("Invalid file path");
   }
-  return [["path", canonical]] as const;
+  return file;
 };
 
 const readDirectoryQuery = (searchParams: URLSearchParams) => {
@@ -233,7 +260,7 @@ export const projectLinks = {
   fileView: (projectId: string, { path, viewer }: { path: string; viewer?: FileViewer }) =>
     buildHref(`/projects/${assertProjectId(projectId)}/files/view`, [
       ...filePathQuery(path),
-      ["viewer", viewer],
+      ...viewerQuery(viewer),
     ]),
   run: (projectId: string, state: RunState = {}) =>
     buildHref(`/projects/${assertProjectId(projectId)}/run`, filterQuery(state, runFilterTypes)),
@@ -271,6 +298,47 @@ export const projectLinks = {
       filterQuery(state, resultFilterTypes),
     ),
   manage: (projectId: string) => `/projects/${assertProjectId(projectId)}/manage`,
+};
+
+/**
+ * The project file a server entry was asked for, or `null` for a request that names no file this
+ * client can address. Every server entry reads its arguments here, so a page and an API route agree
+ * on what a project file request even is before either of them sends one.
+ */
+export const readProjectFileAddress = (
+  projectId: unknown,
+  path: unknown,
+): { file: FilesystemFile; projectId: ProjectId } | null => {
+  if (typeof projectId !== "string" || !isProjectId(projectId) || typeof path !== "string") {
+    return null;
+  }
+  const file = filesystemFile(path);
+  return file === null ? null : { file, projectId };
+};
+
+/**
+ * Data Manager resource path of one project file. Server-side transports prefix it with the Data
+ * Manager API server; browser transports prefix it with a proxy and the base path. The project and
+ * the file path are the route's own, so nothing addresses a file of another project or a file the
+ * route could not name.
+ */
+export const projectFileResourcePath = (projectId: string, path: string) => {
+  const file = assertFilePath(path);
+  return buildHref(`/project/${assertProjectId(projectId)}/file`, [
+    ["path", file.directory],
+    ["file", file.name],
+  ]);
+};
+
+/**
+ * Transport hrefs for one project file. These leave the Pages Router for the Data Manager proxies,
+ * so they carry the deployment base path and address the exact file rather than route state.
+ */
+export const projectFileTransportLinks = {
+  browserView: (projectId: string, path: string) =>
+    withBasePath(`/api/viewer-proxy${projectFileResourcePath(projectId, path)}`),
+  download: (projectId: string, path: string) =>
+    withBasePath(`/api/dm-api${projectFileResourcePath(projectId, path)}`),
 };
 
 /**
@@ -368,9 +436,10 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
     if (path === null || path === filesystemRoot) {
       return localNotFoundRoute("projects", "files", projectId);
     }
-    const viewer = readOptionalQuery(searchParams, "viewer", (value) =>
-      viewers.includes(value as FileViewer),
-    ) as FileViewer | undefined;
+    const named = readOptionalQuery(searchParams, "viewer", isFileViewer);
+    // The default viewer is the section's own, so a URL that spells it out carries a value it does
+    // not own and is replaced by the one canonical link for the same view.
+    const viewer = named === defaultFileViewer ? undefined : named;
     const route: ProjectRoute = {
       kind: "file-view",
       projectId,

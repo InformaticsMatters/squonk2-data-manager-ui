@@ -1,6 +1,7 @@
 import { captureException } from "@sentry/nextjs";
 import { fromNodeHeaders } from "better-auth/node";
 import { type IncomingMessage, type ServerResponse } from "node:http";
+import { Readable } from "node:stream";
 import { createGunzip } from "node:zlib";
 import fetch from "node-fetch";
 
@@ -50,11 +51,18 @@ export interface SSRArguments {
 // Copied from GetServerSideProps
 type Request = IncomingMessage & { cookies: Partial<Record<string, string>> };
 
-export const plaintextViewerSSR = async (
+/**
+ * Asks the Data Manager for one resource as the signed-in caller. Every server-rendered viewer and
+ * every probe of one goes through here, so a resource is fetched with the caller's own authority
+ * and a rejection is reported the same way however the answer was going to be used.
+ */
+const fetchAsCaller = async (
   req: Request,
   res: ServerResponse,
-  { url, compressed }: SSRArguments,
-) => {
+  url: string,
+): Promise<
+  { failure: { props: NotSuccessful } } | { response: Awaited<ReturnType<typeof fetch>> }
+> => {
   let accessToken;
   try {
     const result = await auth.api.getAccessToken({
@@ -64,7 +72,7 @@ export const plaintextViewerSSR = async (
     accessToken = result.accessToken;
   } catch (error) {
     captureException(error);
-    return createErrorProps(res, 500, "Unable to authenticate user server side");
+    return { failure: createErrorProps(res, 500, "Unable to authenticate user server side") };
   }
 
   let response;
@@ -72,7 +80,13 @@ export const plaintextViewerSSR = async (
     response = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
   } catch (error) {
     captureException(error);
-    return createErrorProps(res, 500, "Unable to fetch file due to a network error. Try again.");
+    return {
+      failure: createErrorProps(
+        res,
+        500,
+        "Unable to fetch file due to a network error. Try again.",
+      ),
+    };
   }
 
   if (!response.ok) {
@@ -81,8 +95,47 @@ export const plaintextViewerSSR = async (
     // The response status is the only status fact. A message is diagnostic detail, never a status.
     const { diagnostic, statusMessage } = describeTransportFailure(response, data);
     captureException(new Error(`Unable to fetch file (${response.status}): ${diagnostic}`));
-    return createErrorProps(res, response.status, statusMessage);
+    return { failure: createErrorProps(res, response.status, statusMessage) };
   }
+
+  return { response };
+};
+
+/**
+ * Whether the caller may read this resource at all, without delivering it. A viewer that fetches
+ * the bytes itself — in the browser, or through the parser — still has to be told that the file is
+ * there and readable before it is framed, and this answers that on exactly the same terms the
+ * server-rendered viewer is answered on: `null` means readable, anything else is the transport's
+ * own refusal.
+ */
+export const probeViewerResource = async (
+  req: Request,
+  res: ServerResponse,
+  { url }: { url: string },
+): Promise<NotSuccessful | null> => {
+  const result = await fetchAsCaller(req, res, url);
+  if ("failure" in result) {
+    return result.failure.props;
+  }
+  // Nothing is read from a resource that only had to answer, so the connection is released rather
+  // than streamed to its end.
+  const body = result.response.body;
+  if (body instanceof Readable) {
+    body.destroy();
+  }
+  return null;
+};
+
+export const plaintextViewerSSR = async (
+  req: Request,
+  res: ServerResponse,
+  { url, compressed }: SSRArguments,
+) => {
+  const result = await fetchAsCaller(req, res, url);
+  if ("failure" in result) {
+    return result.failure;
+  }
+  const { response } = result;
 
   // We use `node-fetch` which supports streaming unlike NextJS's fetch as of v12.2
   let stream = response.body;

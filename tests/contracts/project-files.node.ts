@@ -152,8 +152,8 @@ test.describe("Files routes", () => {
 
   test("the file view route has a page entry, so the section answers instead of the application", () => {
     // Without one, Next answers the URL before the route contract is ever consulted, and a file
-    // path the section could not address would lose the valid project shell it names. The viewer
-    // itself arrives with its own migration; this entry is what lets Files answer for the route.
+    // path the section could not address would lose the valid project shell it names. That entry
+    // is the viewer itself; see `project-file-viewer.node.ts` for what it shows.
     expect(
       existsSync(path.join(process.cwd(), "src/pages/projects/[projectId]/files/view.tsx")),
     ).toBe(true);
@@ -542,8 +542,9 @@ test.describe("Files cutover", () => {
       "projects/fileMutations.ts",
       "projects/useProjectFiles.ts",
       "projects/useFileCommands.ts",
-      "components/ViewFilePopover/ViewFilePopover.tsx",
-      "components/ViewFilePopover/FileViewersList.tsx",
+      "projects/ProjectFileViewer.tsx",
+      "projects/ProjectFileViewerLinks.tsx",
+      "projects/fileViewers.ts",
       "components/instances/JobDetails/JobLink.tsx",
       "components/FileSelector/FileListItem.tsx",
       "components/FileSelector/FavouritesList.tsx",

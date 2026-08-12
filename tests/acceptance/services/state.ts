@@ -140,6 +140,24 @@ export type ScenarioState = {
   projectCollectionFailure?: 403 | 503;
   projectCreationFailure?: 400 | 403 | 429 | 503;
   projectCreationResponseDelay?: number;
+  /** A refused or failing project deletion request, so no task is ever issued for it. */
+  projectDeletionFailure?: 400 | 403 | 429 | 503;
+  /** A terminal exit code a project-deletion task reports instead of success. */
+  projectDeletionExitCode?: number;
+  /**
+   * How many times each project-deletion task has been polled, so a deletion advances on its own
+   * and is never confused with an upload, an attachment, or a dataset-version deletion.
+   */
+  projectDeletionPollingIndexes: Map<string, number>;
+  /**
+   * A refused, missing, or failing read of a project-deletion task, so a progress read that merely
+   * could not be made is told apart from one this client is not allowed to interpret.
+   */
+  projectDeletionTaskFailure?: 403 | 404 | 503;
+  /** The project each issued deletion task is removing, which it removes once it settles. */
+  projectDeletionTasks: Map<string, string>;
+  /** The projects a settled deletion removed; no later read reports them. */
+  deletedProjects: string[];
   projectFailure?: number;
   projectMutationFailure?: 403 | 503;
   requests: RequestRecord[];
@@ -202,9 +220,12 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     attachmentPollingIndexes: new Map(),
     attachmentTasks: new Map(),
     deletedInstances: [],
+    deletedProjects: [],
     deletedResultTasks: [],
     deletedRunningWorkflows: [],
     deletedSubscriptions: [],
+    projectDeletionPollingIndexes: new Map(),
+    projectDeletionTasks: new Map(),
     subscriptionAdjustments: new Map(),
     fixtures: createScenarioFixtures(subject, profile),
     instanceStage: "done",

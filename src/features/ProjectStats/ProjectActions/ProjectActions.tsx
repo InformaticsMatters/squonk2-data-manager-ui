@@ -8,21 +8,18 @@ import { ChargesLinkIconButton } from "../../../components/products/ChargesLinkI
 import { OpenProjectButton } from "../../../components/projects/OpenProjectButton";
 import { type ProjectId } from "../../../hooks/projectHooks";
 import { projectLinks } from "../../../projects/routes";
-import { DeleteProjectButton } from "./DeleteProjectButton";
 
 export interface ProjectActionsProps {
   projectId: NonNullable<ProjectId>;
-  isCreator: boolean;
   isAdministrator: boolean;
   isEditor: boolean;
 }
 
 /**
- * Table cell with edit and delete actions for provided project product.
+ * Table cell linking to the routes that own the provided project product.
  */
 export const ProjectActions = ({
   projectId,
-  isCreator,
   isAdministrator: isProjectAdministrator,
   isEditor,
 }: ProjectActionsProps) => {
@@ -35,9 +32,10 @@ export const ProjectActions = ({
   return project ? (
     <Box sx={{ display: "flex" }}>
       <OpenProjectButton projectId={projectId} />
-      {/* Project privacy and membership belong to the project's own Manage route, so this report
-          links there rather than owning a second way to change them. Manage is readable by every
-          project viewer and explains what it cannot offer, so the link is not gated on authority. */}
+      {/* Project privacy, membership, and deletion belong to the project's own Manage route, so
+          this report links there rather than owning a second way to reach them. Manage is readable
+          by every project viewer and explains what it cannot offer, so the link is not gated on
+          authority. */}
       <Tooltip title="Manage project">
         <IconButton
           component={Link}
@@ -48,7 +46,6 @@ export const ProjectActions = ({
           <ManageIcon />
         </IconButton>
       </Tooltip>
-      {!!isCreator && <DeleteProjectButton project={project} />}
       {!!(isEditor || isProjectAdministrator) && (
         <ChargesLinkIconButton productId={project.product_id} />
       )}

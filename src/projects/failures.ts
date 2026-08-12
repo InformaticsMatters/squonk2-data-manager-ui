@@ -45,6 +45,14 @@ export const classifyProjectCommandFailure = (
   }
 };
 
+/** The service's own words, which are the sentence only where this client has no rule of its own. */
+const upstreamReason = (error: unknown) => {
+  const data = isAxiosError<{ error?: string; message?: string }>(error)
+    ? error.response?.data
+    : undefined;
+  return data?.error ?? data?.message;
+};
+
 /**
  * How a recoverable project-creation failure reads. Bringing a project into existence spans two
  * services, so the sentence names the subject the workflow was addressing when it failed; the
@@ -70,13 +78,34 @@ export const projectCreationFailureReason = (
     // Every kind is named rather than defaulted, so a new transport fact has to be answered here
     // instead of quietly arriving as the service's own words.
     case "not-found":
-    case "unknown": {
-      const data = isAxiosError<{ error?: string; message?: string }>(error)
-        ? error.response?.data
-        : undefined;
-      return (
-        data?.error ?? data?.message ?? `The ${subject} could not be created. Correct it and retry.`
-      );
-    }
+    case "unknown":
+      return upstreamReason(error) ?? `The ${subject} could not be created. Correct it and retry.`;
+  }
+};
+
+/**
+ * How a recoverable project-deletion failure reads. Removing a project spans the same two services
+ * as creating one, so the sentence names the subject the workflow was addressing when it failed.
+ * A deletion request creates nothing, which is why an ambiguous transport fact still reads as
+ * something to send again rather than as an outcome that has to be reconciled first.
+ */
+export const projectDeletionFailureReason = (
+  error: unknown,
+  subject: "project" | "subscription",
+) => {
+  switch (classifyTransportFailure(error).kind) {
+    case "forbidden":
+      return `The server did not allow this ${subject} to be deleted. Review your access and retry.`;
+    case "network":
+      return `The ${subject} deletion request could not reach the service. Check your connection and retry.`;
+    case "rate-limited":
+      return `The ${subject} service is busy. Wait briefly and retry.`;
+    case "server":
+      return `The ${subject} service is unavailable. Retry when it has recovered.`;
+    case "timeout":
+      return `The ${subject} deletion request timed out. Its outcome could not be confirmed.`;
+    case "not-found":
+    case "unknown":
+      return upstreamReason(error) ?? `The ${subject} could not be deleted. Retry is available.`;
   }
 };

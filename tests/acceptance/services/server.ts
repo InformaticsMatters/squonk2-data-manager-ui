@@ -289,6 +289,16 @@ const atInstanceStage = (
   };
 };
 
+/**
+ * The project one read answers with, or `undefined` once a settled deletion removed it. A deleted
+ * project is absent rather than altered, so every later read of it — its own, and the caller's
+ * index — answers exactly as it would for a project that never existed.
+ */
+const addressableProject = (state: ScenarioState, projectId: string) =>
+  state.deletedProjects.includes(projectId)
+    ? undefined
+    : state.fixtures.projects.projects.find((candidate) => candidate.project_id === projectId);
+
 /** Every instance a project still owns, at the stage the scenario put them in. */
 const instancesOf = (state: ScenarioState, projectId: string) => {
   const instances = state.fixtures.instances.instances
@@ -888,9 +898,11 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
           : state.fixtures.failures.serverError,
       );
     }
-    const projects = state.createdProject
-      ? [...state.fixtures.projects.projects, state.createdProject]
-      : state.fixtures.projects.projects;
+    const projects = (
+      state.createdProject
+        ? [...state.fixtures.projects.projects, state.createdProject]
+        : state.fixtures.projects.projects
+    ).filter((project) => !state.deletedProjects.includes(project.project_id));
     return json(response, 200, { count: projects.length, projects });
   }
   // Results collections. Each answers for exactly the project it was asked about, and a request
@@ -1102,7 +1114,29 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     }
     return json(response, 200, project);
   }
-  if (url.pathname === `/project/${fixtureIds.project}`) {
+  // A project the caller asked the Data Manager to delete. The request answers with the task that
+  // will do the work, so nothing about the project changes until that task settles.
+  if (segments[0] === "project" && segments.length === 2 && request.method === "DELETE") {
+    if (state.projectDeletionFailure) {
+      return json(
+        response,
+        state.projectDeletionFailure,
+        state.projectDeletionFailure === 400
+          ? { error: "fixture-project-deletion-domain-failure" }
+          : state.projectDeletionFailure === 403
+            ? state.fixtures.failures.forbidden
+            : state.fixtures.failures.serverError,
+      );
+    }
+    const deleted = addressableProject(state, segments[1] ?? "");
+    if (!deleted) {
+      return json(response, 404, { error: "fixture-project-not-found" });
+    }
+    state.projectDeletionPollingIndexes.set(fixtureIds.projectDeletionTask, 0);
+    state.projectDeletionTasks.set(fixtureIds.projectDeletionTask, deleted.project_id);
+    return json(response, 200, { task_id: fixtureIds.projectDeletionTask });
+  }
+  if (url.pathname === `/project/${fixtureIds.project}` && request.method === "GET") {
     if (state.projectFailure) {
       const body =
         state.projectFailure === 403
@@ -1112,7 +1146,10 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
             : { error: "fixture-not-found" };
       return json(response, state.projectFailure, body);
     }
-    return json(response, 200, state.fixtures.projects.projects[0]);
+    const acceptanceProject = addressableProject(state, fixtureIds.project);
+    return acceptanceProject
+      ? json(response, 200, acceptanceProject)
+      : json(response, 404, { error: "fixture-project-not-found" });
   }
   if (url.pathname === `/project/${fixtureIds.createdProject}` && state.createdProject) {
     return json(response, 200, state.createdProject);
@@ -1120,9 +1157,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   // Every other project answers for itself, so a project reached by following a link built from an
   // attachment or a result is served exactly as the collection listed it.
   if (segments[0] === "project" && segments.length === 2 && request.method === "GET") {
-    const addressed = state.fixtures.projects.projects.find(
-      (candidate) => candidate.project_id === segments[1],
-    );
+    const addressed = addressableProject(state, segments[1] ?? "");
     return addressed
       ? json(response, 200, addressed)
       : json(response, 404, { error: "fixture-project-not-found" });
@@ -1306,6 +1341,31 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     }
     if (request.method === "DELETE") {
       return json(response, 404, { error: "fixture-task-not-found" });
+    }
+    // A project deletion advances on its own sequence and settles by removing the project it named,
+    // so a client watching it observes the project disappearing exactly when the task says so.
+    const deletedProject = state.projectDeletionTasks.get(taskId);
+    if (deletedProject !== undefined) {
+      if (state.projectDeletionTaskFailure) {
+        const failure = {
+          403: state.fixtures.failures.forbidden,
+          404: { error: "fixture-task-not-found" },
+          503: state.fixtures.failures.serverError,
+        }[state.projectDeletionTaskFailure];
+        return json(response, state.projectDeletionTaskFailure, failure);
+      }
+      const polled = state.projectDeletionPollingIndexes.get(taskId) ?? 0;
+      state.projectDeletionPollingIndexes.set(taskId, polled + 1);
+      const transitions = state.fixtures.projectDeletionTransitions;
+      const settled = transitions[Math.min(polled, transitions.length - 1)];
+      const deletionTask =
+        settled.done && state.projectDeletionExitCode !== undefined
+          ? { ...settled, exit_code: state.projectDeletionExitCode }
+          : settled;
+      if (deletionTask.done && deletionTask.exit_code === 0) {
+        state.deletedProjects.push(deletedProject);
+      }
+      return json(response, 200, deletionTask);
     }
     const deletionVersion = state.deletionTaskVersions.get(taskId);
     const attachmentTask = state.attachmentTasks.get(taskId);
@@ -1987,6 +2047,41 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
       state.projectCreationFailure = status as 400 | 403 | 429 | 503;
     }
     return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/project-deletion-failure")) {
+    const state = getScenario(subject);
+    if (request.method === "DELETE") {
+      state.projectDeletionFailure = undefined;
+      return json(response, 200, { subject });
+    }
+    const status = Number(url.searchParams.get("status"));
+    if (![400, 403, 429, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-project-deletion-failure", status });
+    }
+    state.projectDeletionFailure = status as 400 | 403 | 429 | 503;
+    return json(response, 200, { projectDeletionFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/project-deletion-task-failure")) {
+    const state = getScenario(subject);
+    if (request.method === "DELETE") {
+      state.projectDeletionTaskFailure = undefined;
+      return json(response, 200, { subject });
+    }
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 404, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-project-deletion-task-failure", status });
+    }
+    state.projectDeletionTaskFailure = status as 403 | 404 | 503;
+    return json(response, 200, { projectDeletionTaskFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/project-deletion-exit-code")) {
+    const state = getScenario(subject);
+    if (request.method === "DELETE") {
+      state.projectDeletionExitCode = undefined;
+      return json(response, 200, { subject });
+    }
+    state.projectDeletionExitCode = Number(url.searchParams.get("value"));
+    return json(response, 200, { projectDeletionExitCode: state.projectDeletionExitCode, subject });
   }
   if (url.pathname.endsWith("/subscription-mutation-failure")) {
     const state = getScenario(subject);

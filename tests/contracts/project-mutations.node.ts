@@ -170,7 +170,7 @@ test.describe("Project mutation ownership", () => {
   const root = path.join(process.cwd(), "src");
   /**
    * The generated mutations that change a project's own privacy and membership. Project deletion
-   * is a separate cross-client workflow with its own migration, so it is deliberately not here.
+   * is a separate cross-client workflow, so it has its own owner and its own case below.
    */
   const generatedProjectMutations =
     /usePatchProject|use(?:Add|Remove)(?:Administrator|Editor|Observer)(?:To|From)Project/u;
@@ -192,6 +192,29 @@ test.describe("Project mutation ownership", () => {
       generatedProjectMutations.test(readFileSync(path.join(root, file), "utf8")),
     );
     expect(owners).toEqual(["projects/useProjectCommands.ts"]);
+  });
+
+  const generatedProjectDeletion = /useDeleteProject\b/u;
+  const generatedSubscriptionDeletion = /useDeleteProduct\b/u;
+
+  test("useProjectDeletionCommands is the only holder of the generated project deletion", () => {
+    const owners = handwrittenSources().filter((file) =>
+      generatedProjectDeletion.test(readFileSync(path.join(root, file), "utf8")),
+    );
+    expect(owners).toEqual(["projects/useProjectDeletionCommands.ts"]);
+  });
+
+  test("every subscription deletion belongs to a named workflow owner", () => {
+    // Removing a billing record belongs to Administration, to project creation's cleanup, and to
+    // project deletion; no report, table, or project screen may hold the mutation that does it.
+    const owners = handwrittenSources().filter((file) =>
+      generatedSubscriptionDeletion.test(readFileSync(path.join(root, file), "utf8")),
+    );
+    expect(owners).toEqual([
+      "administration/useSubscriptionCommands.ts",
+      "projects/useProjectCreationCommands.ts",
+      "projects/useProjectDeletionCommands.ts",
+    ]);
   });
 
   test("the migrated inventory and stats entry points changed no project of their own", () => {

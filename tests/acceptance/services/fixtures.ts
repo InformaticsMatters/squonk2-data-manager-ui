@@ -91,6 +91,8 @@ export const fixtureIds = {
   sharedProjectTwo: "project-99999999-9999-4999-8999-999999999999",
   partnerProject: "project-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
   task: "task-44444444-4444-4444-4444-444444444444",
+  /** The task the Data Manager issues for an accepted project deletion. */
+  projectDeletionTask: "task-5a5a5a5a-5a5a-4a5a-8a5a-5a5a5a5a5a5a",
   unit: "unit-55555555-5555-5555-5555-555555555555",
   otherUnit: "unit-bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
   /** Readable through their own resource, but absent from the caller's organisation and unit index. */
@@ -1117,6 +1119,28 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         exit_code: 0,
         purpose: "DATASET",
         purpose_id: fixtureIds.dataset,
+        states: [{ state: "SUCCESS", time: "2026-01-02T03:04:07Z" }],
+      }),
+    ],
+    // A project deletion accounts for itself as its own kind of task: it is a removal of a project
+    // rather than the production of a dataset, so a client that read it as an upload would be
+    // recognisable rather than believable.
+    projectDeletionTransitions: [
+      AppApiTaskGetTaskResponse.parse({
+        created,
+        done: false,
+        purpose: "PROJECT",
+        purpose_id: fixtureIds.project,
+        removal: true,
+        states: [{ state: "PENDING", time: created }],
+      }),
+      AppApiTaskGetTaskResponse.parse({
+        created,
+        done: true,
+        exit_code: 0,
+        purpose: "PROJECT",
+        purpose_id: fixtureIds.project,
+        removal: true,
         states: [{ state: "SUCCESS", time: "2026-01-02T03:04:07Z" }],
       }),
     ],

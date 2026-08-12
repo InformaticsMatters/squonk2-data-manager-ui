@@ -14,6 +14,12 @@ export type ResultTaskRead = {
   readState: SectionReadState;
   refetch: () => void;
   task: TaskGetResponse | undefined;
+  /**
+   * When the task last answered, however it answered. A caller acting on each answer needs this,
+   * because a read that fails the same way twice reports the same lifecycle both times and would
+   * otherwise be indistinguishable from a read that never happened.
+   */
+  updatedAt: number;
 };
 
 /**
@@ -47,5 +53,6 @@ export const useResultTask = (taskId: string): ResultTaskRead => {
     readState: resolveSectionReadState(error),
     refetch: () => void query.refetch(),
     task: query.data,
+    updatedAt: Math.max(query.dataUpdatedAt, query.errorUpdatedAt),
   };
 };

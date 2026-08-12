@@ -24,6 +24,7 @@ import {
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import {
   PlatformAdministrationAction,
+  ProjectDeletionControl,
   ProjectMembersControl,
   ProjectPrivacyControl,
 } from "./ProjectManageActions";
@@ -195,8 +196,18 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
         <Facts>
           <CapabilityFact capability={files} label="Change files" />
           <CapabilityFact capability={execution} label="Run work" />
-          <CapabilityFact capability={deletion} label="Delete this project" />
         </Facts>
+      </Section>
+
+      {/* Deleting the project is Manage's own action, and the only one that outlives the project it
+          is for: the request is made here and monitored on its own route. */}
+      <Section title="Deletion">
+        <ProjectDeletionControl
+          capability={deletion}
+          productId={product.product.id}
+          projectId={project.project_id}
+          projectName={project.name}
+        />
       </Section>
 
       {/* A non-hidden capability already implies a resolved caller; this only narrows the name the

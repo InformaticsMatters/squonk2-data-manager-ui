@@ -1,7 +1,7 @@
 import { type ProductUnitGetResponse, type UnitsGetResponse } from "@/api/account-server";
 import { getGetProductQueryKey } from "@/api/account-server/product";
 import { type ProjectDetail } from "@/api/data-manager";
-import { getGetProjectQueryKey } from "@/api/data-manager/project";
+import { getGetProjectQueryKey, getGetProjectsQueryKey } from "@/api/data-manager/project";
 
 import { expect, test } from "@playwright/test";
 import { QueryClient } from "@tanstack/react-query";
@@ -116,6 +116,8 @@ test("confirmed project loss removes only that project from recents", () => {
 });
 
 test("confirmed project loss removes only generated ancestry cache identities", () => {
+  // The caller's index survives, because it is a list of what they can still reach rather than
+  // content of the project they lost; it is only marked for a fresh read.
   const queryClient = new QueryClient();
   const storageValues = new Map<string, string>();
   const storage = {
@@ -126,9 +128,11 @@ test("confirmed project loss removes only generated ancestry cache identities", 
   const projectKey = getGetProjectQueryKey(linkedProject.project_id);
   const productKey = getGetProductQueryKey(linkedProject.product_id);
   const unrelatedKey = ["unrelated", { projectId: linkedProject.project_id }] as const;
+  const indexKey = getGetProjectsQueryKey();
   queryClient.setQueryData(projectKey, linkedProject);
   queryClient.setQueryData(productKey, { product: {} });
   queryClient.setQueryData(unrelatedKey, "retain me");
+  queryClient.setQueryData(indexKey, [linkedProject]);
   recordRecentProject(storage, linkedProject.project_id);
 
   removeUnavailableProject(queryClient, storage, linkedProject.project_id);
@@ -136,5 +140,7 @@ test("confirmed project loss removes only generated ancestry cache identities", 
   expect(queryClient.getQueryData(projectKey)).toBeUndefined();
   expect(queryClient.getQueryData(productKey)).toBeUndefined();
   expect(queryClient.getQueryData(unrelatedKey)).toBe("retain me");
+  expect(queryClient.getQueryData(indexKey)).toEqual([linkedProject]);
+  expect(queryClient.getQueryState(indexKey)?.isInvalidated).toBe(true);
   expect(readRecentProjectIds(storage)).toEqual([]);
 });

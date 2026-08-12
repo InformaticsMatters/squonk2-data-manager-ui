@@ -1,16 +1,27 @@
 import { useState } from "react";
 
 import { Alert, Box, Button, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 
 import { ManageUsers } from "../components/ManageUsers";
+import { WarningDeleteButton } from "../components/WarningDeleteButton";
+import { isProductId, isProjectId, isTaskId } from "../routing/identifiers";
 import { capabilityIsEnabled, capabilityReason, type ProjectCapability } from "./capabilities";
-import { classifyProjectCommandFailure } from "./failures";
+import { classifyProjectCommandFailure, projectDeletionFailureReason } from "./failures";
+import {
+  initialProjectDeletionState,
+  type ProjectDeletionState,
+  rememberProjectDeletion,
+  transitionProjectDeletion,
+} from "./projectDeletion";
 import {
   type ProjectCommandOutcome,
   projectOutcomeMessage,
   type ProjectRole,
 } from "./projectMutations";
+import { projectLinks } from "./routes";
 import { useProjectCommands } from "./useProjectCommands";
+import { useProjectDeletionCommands } from "./useProjectDeletionCommands";
 
 type Feedback = { message: string; severity: "error" | "info" | "success" | "warning" };
 
@@ -161,6 +172,131 @@ export const ProjectMembersControl = ({
       />
       <MutationFeedback feedback={feedback} />
     </Box>
+  );
+};
+
+/**
+ * Where a project deletion begins, and the only place it does.
+ *
+ * The request is all that happens here: the Data Manager answers with the task doing the work, and
+ * the caller is sent to that task's own canonical route before the project underneath them
+ * disappears. Nothing is cleared and no subscription is touched on the way out — both belong to the
+ * progress route, which can still be reloaded once this project cannot be read at all. A request
+ * that was refused stays here with the reason, because there is no progress to monitor yet.
+ */
+export const ProjectDeletionControl = ({
+  capability,
+  productId,
+  projectId,
+  projectName,
+}: {
+  capability: ProjectCapability;
+  productId: string | undefined;
+  projectId: string;
+  projectName: string;
+}) => {
+  const commands = useProjectDeletionCommands();
+  const router = useRouter();
+  const [lifecycle, setLifecycle] = useState<ProjectDeletionState>(initialProjectDeletionState);
+  const reason = capabilityReason(capability);
+  // Only a subscription this client can address may be carried into the progress route, so an
+  // identity the route family would reject leaves the workflow with its Data Manager phase alone.
+  const subscriptionId = productId && isProductId(productId) ? productId : undefined;
+
+  const requestDeletion = async () => {
+    const input = { projectId, ...(subscriptionId ? { productId: subscriptionId } : {}) };
+    // A refused request is retried through the same control, which is the one thing that is safe to
+    // send again: a deletion request creates nothing, however often it is made.
+    const requesting =
+      lifecycle.kind === "request-failed"
+        ? transitionProjectDeletion(lifecycle, { kind: "retry" })
+        : transitionProjectDeletion(initialProjectDeletionState, { input, kind: "request" });
+    setLifecycle(requesting.state);
+    // The lifecycle decides whether a request may be sent at all, and names the project it is for,
+    // so a state that offers no request sends none rather than being sent one anyway.
+    if (requesting.effect?.kind !== "delete-project") {
+      return;
+    }
+
+    let taskId: string;
+    try {
+      taskId = await commands.deleteProject(requesting.effect.projectId);
+    } catch (error) {
+      setLifecycle(
+        transitionProjectDeletion(requesting.state, {
+          kind: "request-failed",
+          reason: projectDeletionFailureReason(error, "project"),
+        }).state,
+      );
+      // Rethrowing keeps the confirmation open, so the same deliberate step is the retry.
+      throw error;
+    }
+
+    if (!isTaskId(taskId)) {
+      // The deletion is running and this client cannot address the task that is doing it, so the
+      // identity itself is what the caller is left with rather than a route built from it.
+      setLifecycle(
+        transitionProjectDeletion(requesting.state, {
+          kind: "request-failed",
+          reason: `Deletion started, but its progress cannot be followed here. Quote task ${taskId} to support.`,
+        }).state,
+      );
+      throw new Error(`Project deletion task ${taskId} is not addressable`);
+    }
+
+    setLifecycle(transitionProjectDeletion(requesting.state, { kind: "requested", taskId }).state);
+    // The project this deletion is removing, recorded so the progress route can clear its loaded
+    // content once the deletion is confirmed. The route this control mounts on already validated
+    // the identity, so the guard narrows the type rather than deciding anything.
+    if (isProjectId(projectId)) {
+      rememberProjectDeletion(localStorage, { projectId, taskId });
+    }
+    // Replacing rather than pushing is what stops Back returning to a project that is being removed.
+    await router.replace(projectLinks.deletion(taskId, { subscriptionId }) as never);
+  };
+
+  return (
+    <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
+      <WarningDeleteButton
+        retainOnError
+        modalChildren={
+          <>
+            <Typography gutterBottom variant="body1">
+              You are deleting <b>{projectName}</b> and every file and working directory it holds.{" "}
+              <b>This cannot be undone.</b>
+            </Typography>
+            <Typography variant="body1">
+              {subscriptionId
+                ? "Its subscription is removed only after the Data Manager confirms the project was deleted."
+                : "This project holds no subscription this client can address, so only its Data Manager data is removed."}
+            </Typography>
+          </>
+        }
+        modalId={`delete-project-${projectId}`}
+        submitText="Delete project"
+        title="Delete project"
+        onDelete={requestDeletion}
+      >
+        {({ openModal }) => (
+          <Button
+            color="error"
+            disabled={!capabilityIsEnabled(capability) || lifecycle.kind === "requesting"}
+            variant="outlined"
+            onClick={openModal}
+          >
+            Delete project
+          </Button>
+        )}
+      </WarningDeleteButton>
+      {reason ? (
+        <Typography color="text.secondary" variant="body2">
+          {reason}
+        </Typography>
+      ) : null}
+      {lifecycle.kind === "request-failed" ? (
+        <Alert severity="error">{lifecycle.reason}</Alert>
+      ) : null}
+    </Stack>
   );
 };
 

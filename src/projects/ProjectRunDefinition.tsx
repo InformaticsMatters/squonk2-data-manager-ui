@@ -32,7 +32,12 @@ export const ProjectRunDefinition = ({
   projectId: string;
 }) => {
   const capabilities = resolveDefinitionCapabilities(facts, item, content)(definitionId);
-  const modalProps = { capabilities, open: true, projectId, onClose, onLaunched };
+  // Everything a modal holds — what was entered into it, and how far its launch got — belongs to
+  // the one definition of the one project the URL addressed. Keying by that identity is what makes
+  // moving between two definitions of the same type start the second one afresh, rather than
+  // carrying the first one's entries and the answer its launch received into it.
+  const key = `${projectId}-${item.kind}-${definitionId}`;
+  const modalProps = { capabilities, key, open: true, projectId, onClose, onLaunched };
 
   switch (item.kind) {
     case "application":

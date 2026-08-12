@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
-  type DmError,
   type InstanceGetResponse,
   type InstanceSummary,
   type JobSummary,
@@ -10,13 +9,15 @@ import { useGetJob } from "@/api/data-manager/job";
 
 import { Box, TextField, Typography } from "@mui/material";
 
-import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { capabilityIsEnabled } from "../../../projects/capabilities";
+import { launchIsSendable } from "../../../projects/runLaunch";
 import { useRunCommands } from "../../../projects/useRunCommands";
+import { useRunLaunch } from "../../../projects/useRunLaunch";
 import { CenterLoader } from "../../CenterLoader";
 import { ModalWrapper } from "../../modals/ModalWrapper";
 import { CapabilityReasons } from "../../results/CapabilityReasons";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
+import { LaunchFeedback } from "../LaunchFeedback";
 import { TEST_JOB_ID } from "../TestJob/jobId";
 import { type RunModalProps } from "../types";
 import { type InputSchema, validateInputData } from "./JobInputFields";
@@ -68,12 +69,10 @@ export const JobModal = ({
 }: JobModalProps) => {
   // ? Can we guarantee every job has a parsable spec?
 
-  const { enqueueError } = useEnqueueError<DmError>();
-
   const [debug, setDebug] = useState<DebugValue>("0");
-  const [launching, setLaunching] = useState(false);
 
   const { launchInstance } = useRunCommands();
+  const { attempt, launch } = useRunLaunch(onLaunched);
   // Get extra details about the job
   const { data: job } = useGetJob(jobId, undefined, {
     query: { retry: jobId === TEST_JOB_ID ? 1 : 3 },
@@ -125,9 +124,9 @@ export const JobModal = ({
     setInputsData(Object.fromEntries(inputsDefault));
   }, [inputsDefault]);
 
-  // A rejected launch keeps the modal, its route, and everything entered, so a recoverable failure
-  // can be retried rather than reported as a launch that happened.
-  const handleLaunch = async () => {
+  // The launch names the project the URL addresses and nothing else, so a job can only ever be run
+  // in the project the caller is looking at.
+  const handleLaunch = () => {
     if (!job) {
       return;
     }
@@ -137,21 +136,14 @@ export const JobModal = ({
       version: job.version,
       variables: { ...optionsFormData, ...inputsData },
     };
-    setLaunching(true);
-    try {
-      onLaunched(
-        await launchInstance(projectId, {
-          applicationId: job.application.application_id,
-          debug,
-          name: nameState,
-          specification: JSON.stringify(specification),
-        }),
-      );
-    } catch (error) {
-      enqueueError(error);
-    } finally {
-      setLaunching(false);
-    }
+    void launch(() =>
+      launchInstance(projectId, {
+        applicationId: job.application.application_id,
+        debug,
+        name: nameState,
+        specification: JSON.stringify(specification),
+      }),
+    );
   };
 
   const variables = job?.variables;
@@ -161,11 +153,13 @@ export const JobModal = ({
       DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`job-${jobId}`}
       open={open}
-      submitDisabled={!capabilityIsEnabled(capabilities.launch) || !inputsValid || launching}
+      submitDisabled={
+        !capabilityIsEnabled(capabilities.launch) || !inputsValid || !launchIsSendable(attempt)
+      }
       submitText="Run"
       title={job?.name ?? "Run job"}
       onClose={onClose}
-      onSubmit={() => void handleLaunch()}
+      onSubmit={handleLaunch}
     >
       {job === undefined ? (
         <CenterLoader />
@@ -181,6 +175,7 @@ export const JobModal = ({
             {job.collection} • version {job.version}
           </Typography>
           <CapabilityReasons capabilities={[capabilities.launch, capabilities.availability]} />
+          <LaunchFeedback attempt={attempt} />
           <Box sx={{ paddingTop: 1 }}>
             <TextField
               fullWidth

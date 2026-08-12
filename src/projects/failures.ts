@@ -46,7 +46,7 @@ export const classifyProjectCommandFailure = (
 };
 
 /** The service's own words, which are the sentence only where this client has no rule of its own. */
-const upstreamReason = (error: unknown) => {
+export const upstreamFailureReason = (error: unknown) => {
   const data = isAxiosError<{ error?: string; message?: string }>(error)
     ? error.response?.data
     : undefined;
@@ -79,7 +79,9 @@ export const projectCreationFailureReason = (
     // instead of quietly arriving as the service's own words.
     case "not-found":
     case "unknown":
-      return upstreamReason(error) ?? `The ${subject} could not be created. Correct it and retry.`;
+      return (
+        upstreamFailureReason(error) ?? `The ${subject} could not be created. Correct it and retry.`
+      );
   }
 };
 
@@ -106,6 +108,8 @@ export const projectDeletionFailureReason = (
       return `The ${subject} deletion request timed out. Its outcome could not be confirmed.`;
     case "not-found":
     case "unknown":
-      return upstreamReason(error) ?? `The ${subject} could not be deleted. Retry is available.`;
+      return (
+        upstreamFailureReason(error) ?? `The ${subject} could not be deleted. Retry is available.`
+      );
   }
 };

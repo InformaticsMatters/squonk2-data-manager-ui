@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 
-import { type DmError } from "@/api/data-manager";
 import { useGetWorkflow } from "@/api/data-manager/workflow";
 
 import { Box, TextField, Typography } from "@mui/material";
 
-import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { capabilityIsEnabled } from "../../../projects/capabilities";
+import { launchIsSendable } from "../../../projects/runLaunch";
 import { useRunCommands } from "../../../projects/useRunCommands";
+import { useRunLaunch } from "../../../projects/useRunLaunch";
 import { CenterLoader } from "../../CenterLoader";
 import { ModalWrapper } from "../../modals/ModalWrapper";
 import { CapabilityReasons } from "../../results/CapabilityReasons";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
 import { JobInputsAndOptionsForm } from "../JobCard/JobInputsAndOptionsForm";
 import { type InputData } from "../JobCard/JobModal";
+import { LaunchFeedback } from "../LaunchFeedback";
 import { type RunModalProps } from "../types";
 
 export interface WorkflowModalProps extends RunModalProps {
@@ -32,13 +33,10 @@ export const WorkflowModal = ({
   onClose,
   onLaunched,
 }: WorkflowModalProps) => {
-  const { enqueueError } = useEnqueueError<DmError>();
-
   const { data: workflow } = useGetWorkflow(workflowId);
   const specVariables = workflow?.variables;
 
   const [nameState, setNameState] = useState("");
-  const [launching, setLaunching] = useState(false);
 
   useEffect(() => {
     workflow?.workflow_name && setNameState(workflow.workflow_name);
@@ -52,27 +50,21 @@ export const WorkflowModal = ({
   const formRef = useRef<any>(null);
 
   const { launchWorkflow } = useRunCommands();
+  const { attempt, launch } = useRunLaunch(onLaunched);
 
-  // A rejected launch keeps the modal, its route, and everything entered, so a recoverable failure
-  // can be retried rather than reported as a launch that happened.
-  const handleLaunch = async () => {
+  // The launch names the project the URL addresses and nothing else, so a workflow can only ever be
+  // run in the project the caller is looking at.
+  const handleLaunch = () => {
     if (!workflow?.id) {
       return;
     }
-    setLaunching(true);
-    try {
-      onLaunched(
-        await launchWorkflow(projectId, workflow.id, {
-          debug,
-          name: nameState,
-          variables: JSON.stringify({ ...optionsFormData, ...inputsData }),
-        }),
-      );
-    } catch (error) {
-      enqueueError(error);
-    } finally {
-      setLaunching(false);
-    }
+    void launch(() =>
+      launchWorkflow(projectId, workflow.id, {
+        debug,
+        name: nameState,
+        variables: JSON.stringify({ ...optionsFormData, ...inputsData }),
+      }),
+    );
   };
 
   return (
@@ -80,11 +72,11 @@ export const WorkflowModal = ({
       DialogProps={{ maxWidth: "md", fullWidth: true }}
       id={`workflow-${workflowId}`}
       open={open}
-      submitDisabled={!capabilityIsEnabled(capabilities.launch) || launching}
+      submitDisabled={!capabilityIsEnabled(capabilities.launch) || !launchIsSendable(attempt)}
       submitText="Run"
       title={workflow?.workflow_name ?? workflow?.name ?? "Run workflow"}
       onClose={onClose}
-      onSubmit={() => void handleLaunch()}
+      onSubmit={handleLaunch}
     >
       {workflow === undefined ? (
         <CenterLoader />
@@ -100,6 +92,7 @@ export const WorkflowModal = ({
             {workflow.workflow_description ?? <em>No description</em>}
           </Typography>
           <CapabilityReasons capabilities={[capabilities.launch, capabilities.availability]} />
+          <LaunchFeedback attempt={attempt} />
           <Box sx={{ paddingTop: 1 }}>
             <TextField
               fullWidth

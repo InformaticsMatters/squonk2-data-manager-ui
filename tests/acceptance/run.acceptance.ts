@@ -13,17 +13,25 @@ const acceptanceResults = `projects/${fixtureIds.project}/results`;
 
 type Diagnostics = { requests: { method: string; path: string; query: string }[] };
 
-const catalogueReads = async (
-  request: { get: (url: string) => Promise<{ json: () => Promise<unknown> }> },
-  subject: string,
-) => {
+type Requester = { get: (url: string) => Promise<{ json: () => Promise<unknown> }> };
+
+const scenarioRequests = async (request: Requester, subject: string) => {
   const diagnostics = (await request
     .get(`${acceptanceUrls.control}/scenario/${subject}`)
     .then((response) => response.json())) as Diagnostics;
-  return diagnostics.requests.filter(({ path }) =>
+  return diagnostics.requests;
+};
+
+const catalogueReads = async (request: Requester, subject: string) =>
+  (await scenarioRequests(request, subject)).filter(({ path }) =>
     ["/application", "/job", "/workflow", "/instance", "/running-workflow"].includes(path),
   );
-};
+
+/** Every create-instance command the Data Manager received, which is what a launch actually is. */
+const instanceLaunches = async (request: Requester, subject: string) =>
+  (await scenarioRequests(request, subject)).filter(
+    ({ method, path }) => method === "POST" && path === "/instance",
+  );
 
 test.beforeEach(async ({ request }, testInfo) => {
   await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}`);
@@ -261,26 +269,186 @@ test("launching opens the execution it created inside the project that ran it", 
   ).toBeVisible();
 });
 
-test("a rejected launch keeps the definition open rather than reporting work that never ran", async ({
+test("launching an application opens the instance it created, in the same project", async ({
   page,
   request,
 }, testInfo) => {
   const subject = subjectFor(testInfo);
-  await request.post(`${acceptanceUrls.control}/scenario/${subject}/launch-failure?status=503`);
+  await login(page, `${acceptanceRun}/applications/acceptance-application`, testInfo);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  // An application launch is only offered once it has been named, which is the form's own rule
+  // rather than anything the project decides.
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeDisabled();
+  await dialog.getByLabel("Instance Name").fill("Acceptance notebook run");
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.launchedInstance}`,
+  );
+  await expect(
+    page.getByRole("banner").getByText("Acceptance Project", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Results" })).toBeVisible();
+
+  // One accepted launch is one created instance, so nothing was sent twice on the way there.
+  expect(await instanceLaunches(request, subject)).toHaveLength(1);
+});
+
+test("the same definition answers for the project it is addressed in", async ({
+  page,
+}, testInfo) => {
   await login(page, `${acceptanceRun}/jobs/1`, testInfo);
   await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeEnabled();
 
-  await page.getByRole("button", { name: "Run", exact: true }).click();
-  // The route, the definition, and everything entered survive the rejection.
-  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}/jobs/1`);
+  // The same job, addressed in a project the caller only observes, is readable but cannot be run.
+  // Nothing but the project in the URL decides that, so no earlier project can carry authority into
+  // this one.
+  await page.goto(`${screeningRun}/jobs/1`);
   await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.getByText("Screening Project", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeDisabled();
+  await expect(
+    page
+      .getByRole("dialog")
+      .getByText("You must be a project editor or administrator to run work in this project."),
+  ).toBeVisible();
+});
 
-  // Retrying in place succeeds and opens the execution that was finally created.
+test("a launch in flight cannot be sent a second time", async ({ page, request }, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/launch-delay?milliseconds=3000`,
+  );
+  await login(page, `${acceptanceRun}/jobs/1`, testInfo);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  // Sent twice in one gesture, before any answer and before the control could have been redrawn.
+  // The service creates an execution per request it accepts, so a second submission would run the
+  // same work twice.
+  await page.getByRole("button", { name: "Run", exact: true }).dblclick();
+
+  // While the Data Manager has yet to answer, the launch says so and is no longer offered.
+  await expect(
+    dialog.getByText(
+      "This launch has been sent. It cannot be sent again until the Data Manager answers it.",
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeDisabled();
+  // Only one launch reached the Data Manager, though two submissions were made.
+  expect(await instanceLaunches(request, subject)).toHaveLength(1);
+  // The definition, its route, and the project it was sent from are all exactly as they were.
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}/jobs/1`);
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+
+  // The answer opens the one execution the one accepted launch created.
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.launchedInstance}`,
+  );
+  expect(await instanceLaunches(request, subject)).toHaveLength(1);
+});
+
+test("a refused launch is withheld rather than offered for a second attempt", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/launch-failure?status=403`);
+  await login(page, `${acceptanceRun}/jobs/1`, testInfo);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  await dialog.getByLabel("Job name").fill("refused-run");
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+
+  // The server is the authorization authority, so its refusal is reported as feedback about this
+  // one launch and the launch is withheld rather than invited again.
+  await expect(
+    dialog.getByText(
+      "The Data Manager did not allow this to be run in this project. Nothing was launched, and the displayed project and its catalogue have not changed.",
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeDisabled();
+
+  // The modal, its route, everything entered, and the catalogue beneath it all survive the refusal.
+  await expect(dialog.getByLabel("Job name")).toHaveValue("refused-run");
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}/jobs/1`);
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await expect(page.getByText("acceptance-job", { exact: true })).toBeVisible();
+  expect(await instanceLaunches(request, subject)).toHaveLength(1);
+
+  // Closing the refusal returns to the catalogue it was opened over, unchanged.
+  await page.getByRole("button", { name: "Close" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}`);
+  await expect(page.getByText("AcceptanceNotebook")).toBeVisible();
+
+  // The refusal answered one launch, not the definition: opening it again once access is restored
+  // offers the launch afresh, with nothing the refused attempt entered or was told left behind.
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/launch-failure`);
+  await page.getByRole("link", { name: "Run acceptance-job" }).click();
+  await expect(dialog).toBeVisible();
+  await expect(
+    dialog.getByText("The Data Manager did not allow this to be run in this project."),
+  ).toHaveCount(0);
+  await expect(dialog.getByLabel("Job name")).not.toHaveValue("refused-run");
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.launchedInstance}`,
+  );
+});
+
+test("a launch that failed for reasons of its own remains recoverable in place", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const dialog = page.getByRole("dialog");
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/launch-failure?status=503`);
+  await login(page, `${acceptanceRun}/jobs/1`, testInfo);
+  await expect(dialog).toBeVisible();
+  await dialog.getByLabel("Job name").fill("recoverable-run");
+
+  // A transport fact decides no authority, so every one of them keeps the launch available.
+  for (const status of [503, 429]) {
+    await request.post(
+      `${acceptanceUrls.control}/scenario/${subject}/launch-failure?status=${status}`,
+    );
+    await page.getByRole("button", { name: "Run", exact: true }).click();
+    await expect(
+      dialog.getByText(
+        "This launch could not be completed, so nothing was launched. The definition and everything entered have been kept, so it can be sent again.",
+      ),
+    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Run", exact: true })).toBeEnabled();
+    await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}/jobs/1`);
+    await expect(dialog.getByLabel("Job name")).toHaveValue("recoverable-run");
+  }
+
+  // A refusal of what was entered is the caller's to correct, so it reads as the service's own
+  // account of it and the launch stays available.
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/launch-failure?status=400`);
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(
+    dialog.getByText("fixture-rejected: the file type is not supported by this project"),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeEnabled();
+
+  // Sending it again once the service recovers opens the execution that was finally created.
   await request.delete(`${acceptanceUrls.control}/scenario/${subject}/launch-failure`);
   await page.getByRole("button", { name: "Run", exact: true }).click();
   await expect(page).toHaveURL(
     `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.launchedInstance}`,
   );
+  await expect(
+    page.getByRole("banner").getByText("Acceptance Project", { exact: true }),
+  ).toBeVisible();
+
+  // Each attempt was one request and no more: three the service would not complete, and the one it
+  // finally accepted.
+  expect(await instanceLaunches(request, subject)).toHaveLength(4);
 });
 
 test("a project observer browses the catalogue and is told what launching requires", async ({

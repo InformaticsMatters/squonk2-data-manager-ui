@@ -1,19 +1,21 @@
 import { useState } from "react";
 
-import { type ApplicationSummary, type DmError } from "@/api/data-manager";
+import { type ApplicationSummary } from "@/api/data-manager";
 import { useGetApplication } from "@/api/data-manager/application";
 
 import { Grid, TextField, Typography } from "@mui/material";
 import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 
-import { useEnqueueError } from "../../../hooks/useEnqueueStackError";
 import { capabilityIsEnabled } from "../../../projects/capabilities";
+import { launchIsSendable } from "../../../projects/runLaunch";
 import { useRunCommands } from "../../../projects/useRunCommands";
+import { useRunLaunch } from "../../../projects/useRunLaunch";
 import { CenterLoader } from "../../CenterLoader";
 import { ModalWrapper } from "../../modals/ModalWrapper";
 import { CapabilityReasons } from "../../results/CapabilityReasons";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
+import { LaunchFeedback } from "../LaunchFeedback";
 import { type RunModalProps } from "../types";
 
 export interface ApplicationModalProps extends RunModalProps {
@@ -37,31 +39,22 @@ export const ApplicationModal = ({
   const [name, setName] = useState("");
   const [debug, setDebug] = useState<DebugValue>("0");
   const [formData, setFormData] = useState<any>(null);
-  const [launching, setLaunching] = useState(false);
 
   const { launchInstance } = useRunCommands();
-  const { enqueueError } = useEnqueueError<DmError>();
+  const { attempt, launch } = useRunLaunch(onLaunched);
   const { data: application } = useGetApplication(applicationId);
 
-  // A rejected launch keeps the modal, its route, and everything entered, so a recoverable failure
-  // can be retried rather than reported as a launch that happened.
-  const handleLaunch = async () => {
-    setLaunching(true);
-    try {
-      onLaunched(
-        await launchInstance(projectId, {
-          applicationId,
-          debug,
-          name,
-          specification: JSON.stringify({ variables: formData }),
-        }),
-      );
-    } catch (error) {
-      enqueueError(error);
-    } finally {
-      setLaunching(false);
-    }
-  };
+  // The launch names the project the URL addresses and nothing else, so an application can only
+  // ever be run in the project the caller is looking at.
+  const handleLaunch = () =>
+    void launch(() =>
+      launchInstance(projectId, {
+        applicationId,
+        debug,
+        name,
+        specification: JSON.stringify({ variables: formData }),
+      }),
+    );
 
   const schema = application?.template ? JSON.parse(application.template) : undefined;
 
@@ -75,11 +68,13 @@ export const ApplicationModal = ({
       DialogProps={{ maxWidth: "sm", fullWidth: true }}
       id={`app-${applicationId}`}
       open={open}
-      submitDisabled={!capabilityIsEnabled(capabilities.launch) || !name || launching}
+      submitDisabled={
+        !capabilityIsEnabled(capabilities.launch) || !name || !launchIsSendable(attempt)
+      }
       submitText="Run"
       title={application?.kind ?? "Run application"}
       onClose={onClose}
-      onSubmit={() => void handleLaunch()}
+      onSubmit={handleLaunch}
     >
       {application === undefined ? (
         <CenterLoader />
@@ -96,6 +91,7 @@ export const ApplicationModal = ({
           </Grid>
           <Grid size={{ xs: 12 }}>
             <CapabilityReasons capabilities={[capabilities.launch, capabilities.availability]} />
+            <LaunchFeedback attempt={attempt} />
           </Grid>
           <Grid size={{ xs: 12 }}>
             <TextField

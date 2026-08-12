@@ -34,6 +34,14 @@ export type AttachmentTaskRecord = AttachmentRecord & { fileId: string; fileName
 export type ResultTaskStage = "done" | "failed" | "rejected" | "running";
 
 /**
+ * A launch the Data Manager refuses or cannot complete: `403` is its authorization verdict, `400`
+ * is its verdict on what was entered, and the rest say nothing about the launch itself. Naming the
+ * set once is what keeps the control that accepts a status, the state that holds it, and the words
+ * the refusal answers with from ever disagreeing about which statuses exist.
+ */
+export type LaunchFailureStatus = 400 | 403 | 429 | 503;
+
+/**
  * How a running workflow accounts for itself. `rejected` finished with a `SUCCESS` status but
  * recorded an error, which is the case a status alone would read as a completed run; `stopped` is
  * the outcome a caller who stopped it produced, which is neither a success nor a failure; and
@@ -195,8 +203,9 @@ export type ScenarioState = {
    * `/application`, so catalogues can be made to fail differently and at the same time.
    */
   runFailures: { collection?: string; status: 403 | 503 }[];
-  /** A launch the Data Manager refuses or cannot complete. */
-  launchFailure?: 403 | 503;
+  launchFailure?: LaunchFailureStatus;
+  /** How long the Data Manager holds a launch, so a launch in flight can be observed. */
+  launchDelay?: number;
   addressedReadFailure?: 403 | 503;
   semanticsFailure?: 503;
   taskFailure?: 503;

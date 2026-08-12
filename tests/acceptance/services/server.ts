@@ -27,6 +27,7 @@ import {
   type AttachmentRecord,
   type AttachmentTaskRecord,
   getScenario,
+  type LaunchFailureStatus,
   type RequestRecord,
   resetScenario,
   type ResultInstanceStage,
@@ -166,6 +167,38 @@ const projectMutationFailure = (state: ScenarioState, response: ServerResponse) 
       ? state.fixtures.failures.forbidden
       : state.fixtures.failures.serverError,
   );
+
+/**
+ * How the Data Manager answers each launch it will not accept. Every verdict answers in its own
+ * words, so a refusal of the caller's authority, a refusal of what they entered, and a transport
+ * failure that decides neither are told apart by what is shown as well as by status. The one map is
+ * what a control accepts, what the state may hold, and what a rejected launch is answered with.
+ */
+const launchFailures: Record<LaunchFailureStatus, keyof ScenarioState["fixtures"]["failures"]> = {
+  400: "badRequest",
+  403: "forbidden",
+  429: "rateLimited",
+  503: "serverError",
+};
+
+const isLaunchFailureStatus = (status: number): status is LaunchFailureStatus =>
+  status in launchFailures;
+
+/**
+ * What the Data Manager does before it will answer a launch at all: hold it for as long as the
+ * scenario says, then refuse it if the scenario refuses launches. Both launch endpoints ask here,
+ * so neither can be held or refused on terms of its own.
+ */
+const launchGate = async (state: ScenarioState, response: ServerResponse) => {
+  if (state.launchDelay) {
+    await delay(state.launchDelay);
+  }
+  if (!state.launchFailure) {
+    return false;
+  }
+  json(response, state.launchFailure, state.fixtures.failures[launchFailures[state.launchFailure]]);
+  return true;
+};
 
 /** The filesystem one project holds. A project the fixtures gave no files starts out empty. */
 const projectFileSystem = (state: ScenarioState, projectId: string): FixtureProjectFileSystem =>
@@ -1234,14 +1267,8 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   // project's own results, so the execution a successful launch opens is one that exists.
   if (url.pathname === "/instance" && request.method === "POST") {
     const form = new URLSearchParams((await readBody(request)).toString());
-    if (state.launchFailure) {
-      return json(
-        response,
-        state.launchFailure,
-        state.launchFailure === 403
-          ? state.fixtures.failures.forbidden
-          : state.fixtures.failures.serverError,
-      );
+    if (await launchGate(state, response)) {
+      return;
     }
     state.fixtures.instances.instances.unshift({
       application_id: form.get("application_id") ?? "acceptance-application",
@@ -1269,14 +1296,8 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   }
   if (segments[0] === "workflow" && segments[2] === "run" && request.method === "POST") {
     const form = new URLSearchParams((await readBody(request)).toString());
-    if (state.launchFailure) {
-      return json(
-        response,
-        state.launchFailure,
-        state.launchFailure === 403
-          ? state.fixtures.failures.forbidden
-          : state.fixtures.failures.serverError,
-      );
+    if (await launchGate(state, response)) {
+      return;
     }
     state.fixtures.runningWorkflows.running_workflows.unshift({
       error_num: 0,
@@ -2527,15 +2548,25 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/launch-failure") && request.method === "POST") {
     const status = Number(url.searchParams.get("status"));
-    if (![403, 503].includes(status)) {
+    // The same map decides what a control accepts and what the refusal answers with, so a status a
+    // test can ask for is always one the Data Manager has words for.
+    if (!isLaunchFailureStatus(status)) {
       return json(response, 400, { error: "unsupported-launch-failure", status });
     }
-    getScenario(subject).launchFailure = status as 403 | 503;
+    getScenario(subject).launchFailure = status;
     return json(response, 200, { launchFailure: status, subject });
   }
   if (url.pathname.endsWith("/launch-failure") && request.method === "DELETE") {
     getScenario(subject).launchFailure = undefined;
     return json(response, 200, { subject });
+  }
+  if (url.pathname.endsWith("/launch-delay") && request.method === "POST") {
+    const milliseconds = Number(url.searchParams.get("milliseconds"));
+    if (!Number.isInteger(milliseconds) || milliseconds < 1 || milliseconds > 5000) {
+      return json(response, 400, { error: "unsupported-launch-delay", milliseconds });
+    }
+    getScenario(subject).launchDelay = milliseconds;
+    return json(response, 200, { milliseconds, subject });
   }
   if (url.pathname.endsWith("/project-failure") && request.method === "POST") {
     const status = Number(url.searchParams.get("status"));

@@ -1,7 +1,7 @@
 import { Button, type ButtonProps } from "@mui/material";
 import { useRouter } from "next/router";
 
-import { useCleanUpOnLogout } from "../../hooks/authHooks";
+import { clearAccountScopedStorageOnLogout } from "../../application/logoutCleanup";
 import { authClient } from "../../lib/auth-client";
 import { withBasePath } from "../../utils/app/basePath";
 import { capitalise } from "../../utils/app/language";
@@ -13,12 +13,11 @@ export interface AuthButtonPros extends ButtonProps {
 }
 
 export const AuthButton = ({ mode, ...ButtonProps }: AuthButtonPros) => {
-  const cleanupOnLogout = useCleanUpOnLogout();
   const router = useRouter();
 
   const handleClick = async () => {
     if (mode === "logout") {
-      cleanupOnLogout();
+      clearAccountScopedStorageOnLogout({ local: localStorage, session: sessionStorage });
       await authClient.signOut();
       const issuer = process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER_URL;
       const clientId = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID;

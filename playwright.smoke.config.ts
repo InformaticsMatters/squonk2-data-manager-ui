@@ -14,17 +14,15 @@ baseURL.port = port;
 
 export default defineConfig({
   projects: [
+    // A real login and logout against the live Keycloak. The authenticated project journeys that
+    // consumed its storage state drove the removed selected-project and Settings UI; the same
+    // behavior is now proven deterministically in `tests/acceptance`, so this suite is live
+    // credential and navigation evidence alone.
     { name: "setup", testMatch: "**/*.setup.ts" },
     {
       name: "browser-smoke",
       testMatch: "**/navigation.browser.ts",
       use: { baseURL: baseURL.href },
-    },
-    {
-      dependencies: ["setup"],
-      name: "authenticated-smoke",
-      testMatch: "**/*.browser-authenticated.ts",
-      use: { baseURL: baseURL.href, storageState: "storageState.json" },
     },
   ],
   retries: 0,

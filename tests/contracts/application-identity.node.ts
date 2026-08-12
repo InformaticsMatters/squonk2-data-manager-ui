@@ -5,9 +5,14 @@ import {
   clearLegacyScopeStorage,
   parsePersistedOrganisationId,
 } from "../../src/application/applicationIdentity";
+import { clearAccountScopedStorageOnLogout } from "../../src/application/logoutCleanup";
+import { DATASET_UPLOAD_BILLING_UNIT_STORAGE_KEY } from "../../src/datasets/uploadBilling";
+import { PROJECT_CREATION_RECOVERY_KEY } from "../../src/projects/projectCreation";
+import { PROJECT_DELETION_RECOVERY_KEY } from "../../src/projects/projectDeletion";
 import {
   parseRecentProjectIds,
   readRecentProjectIds,
+  RECENT_PROJECTS_STORAGE_KEY,
   recordRecentProject,
 } from "../../src/projects/recentProjects";
 
@@ -44,6 +49,39 @@ test.describe("application identity persistence", () => {
       ["data-manager-ui-event-debug-mode", "debug"],
       ["unrelated", "preference"],
     ]);
+  });
+
+  test("logging out clears what was remembered for the account and nothing else", () => {
+    // Every key here was written because of who was logged in, so the session ending takes all of
+    // them — including the work this account left in flight. What the browser remembers about
+    // itself, rather than about the account, survives: a logout is not a factory reset.
+    const local = new Map<string, string>([
+      [APPLICATION_ORGANISATION_STORAGE_KEY, '{"version":1,"organisationId":"organisation-123"}'],
+      ["data-manager-ui-current-project", "project"],
+      ["data-manager-ui-selected-files", "files"],
+      [RECENT_PROJECTS_STORAGE_KEY, '["project-one"]'],
+      [PROJECT_DELETION_RECOVERY_KEY, '{"version":1}'],
+      [DATASET_UPLOAD_BILLING_UNIT_STORAGE_KEY, '{"version":1,"unitId":"unit-1"}'],
+      ["data-manager-ui-cookie-consent", "consent"],
+      ["data-manager-ui-event-debug-mode", "debug"],
+      ["mui-color-scheme-light", "light"],
+    ]);
+    const session = new Map<string, string>([
+      [PROJECT_CREATION_RECOVERY_KEY, '{"version":2}'],
+      ["unrelated-session-value", "kept"],
+    ]);
+
+    clearAccountScopedStorageOnLogout({
+      local: { removeItem: (key) => void local.delete(key) },
+      session: { removeItem: (key) => void session.delete(key) },
+    });
+
+    expect([...local.keys()]).toEqual([
+      "data-manager-ui-cookie-consent",
+      "data-manager-ui-event-debug-mode",
+      "mui-color-scheme-light",
+    ]);
+    expect([...session.keys()]).toEqual(["unrelated-session-value"]);
   });
 });
 

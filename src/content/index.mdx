@@ -2,7 +2,6 @@ import { Button, Container, Grid } from "@mui/material";
 import Layout from "../layouts/Layout";
 import { RoleWarning } from "../components/auth/RoleWarning";
 import Head from "next/head";
-import { UserBootstrapper } from "../features/UserBootstrapper";
 import { NextLink } from "../components/NextLink";
 import { Motd } from "../components/Motd";
 import { AuthenticatedHomeRecents } from "../components/home/AuthenticatedHomeRecents";
@@ -12,8 +11,6 @@ import { AuthenticatedHomeRecents } from "../components/home/AuthenticatedHomeRe
 </Head>
 
 <RoleWarning />
-
-<UserBootstrapper />
 
 <Motd />
 
@@ -72,10 +69,10 @@ Please email us at info@informaticsmatters.com if you would like to evaluate or 
 ## Quick start
 
 1. Log in
-2. Create a **Project** or select an existing one from the settings menu.
-3. Upload files to your project or attach existing datasets.
-4. Use the **Apps/Jobs** tab to launch a Jupyter notebook or execute jobs that work on those datasets.
-5. View those apps/jobs and their results in the **Results** tab.
+2. Open **Project** and create a project, or open an existing one.
+3. Upload files in the project's **Files** section, or attach existing datasets from **Datasets**.
+4. Use the project's **Run** section to launch a Jupyter notebook or execute jobs that work on those files.
+5. View those apps/jobs and their results in the project's **Results** section.
 
 </Grid>
 </Grid>

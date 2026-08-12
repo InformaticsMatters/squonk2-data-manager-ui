@@ -176,21 +176,9 @@ test("Charges traverses organisation, unit, and product ledgers with ancestry", 
   await expect(page.getByRole("button", { name: /create|edit|delete|manage/u })).toHaveCount(0);
 });
 
-test("legacy charge URLs redirect to canonical Administration ledgers", async ({
-  page,
-}, testInfo) => {
-  await login(page, `unit/${fixtureIds.unit}/charges`, testInfo);
-  await expect(page).toHaveURL(
-    `${acceptanceUrls.app}administration/charges/units/${fixtureIds.unit}`,
-  );
-  await expect(page.getByRole("heading", { name: "Unit ledger" })).toBeVisible();
-
-  await page.goto(`${acceptanceUrls.app}product/${fixtureIds.product}/charges`);
-  await expect(page).toHaveURL(
-    `${acceptanceUrls.app}administration/charges/products/${fixtureIds.product}`,
-  );
-  await expect(page.getByRole("heading", { name: "Product ledger" })).toBeVisible();
-});
+// The legacy `/unit/[unitId]/charges` and `/product/[productId]/charges` URLs are the ordinary
+// not-found now rather than a redirect into these ledgers, which
+// `tests/acceptance/clean-cutover.acceptance.ts` proves alongside every other removed route.
 
 test("billing-cycle history survives refresh, Back, and Forward", async ({ page }, testInfo) => {
   const path = `administration/charges/products/${fixtureIds.product}`;

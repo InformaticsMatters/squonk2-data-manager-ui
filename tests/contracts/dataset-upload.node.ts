@@ -203,7 +203,7 @@ test.describe("Remembered billing unit storage", () => {
     storage.setItem("data-manager-ui-current-project", "project");
     storage.setItem("data-manager-ui-cookie-consent", "consent");
 
-    clearAccountScopedStorageOnLogout(storage);
+    clearAccountScopedStorageOnLogout({ local: storage, session: createStorage() });
 
     expect(readRememberedBillingUnitId(storage)).toBeUndefined();
     // Preferences that belong to the browser rather than to the account survive the logout.

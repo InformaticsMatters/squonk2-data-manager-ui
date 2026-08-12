@@ -4,7 +4,6 @@ import { ErrorBoundary } from "@sentry/nextjs";
 import dynamic from "next/dynamic";
 import NextError from "next/error";
 
-import { TopLevelHooks } from "../components/app/TopLevelHooks";
 import { AuthenticationBoundary } from "../components/auth/AuthenticationBoundary";
 import { CenterLoader } from "../components/CenterLoader";
 import { ProjectOrganisationBoundary } from "../projects/ProjectOrganisationBoundary";
@@ -28,21 +27,20 @@ const familyShells = {
   administration: AdministrationShell,
 } as const;
 
-const ApplicationShell = ({
-  children,
-  legacyScope,
-}: {
-  children: ReactNode;
-  legacyScope: boolean;
-}) => {
-  const content = (
-    <>
-      <EventStream />
-      {children}
-    </>
-  );
-  return legacyScope ? <TopLevelHooks>{content}</TopLevelHooks> : content;
-};
+/**
+ * What every authenticated page is wrapped in, whatever it addresses.
+ *
+ * It holds no scope of its own. The shell used to mount a hook that read a product and wrote the
+ * selected unit and organisation back into global state, which is exactly how the shell's identity
+ * could come to disagree with the resource in the URL. Identity is now the persisted organisation
+ * alone, resolved through its generated query, and every other scope belongs to a route.
+ */
+const ApplicationShell = ({ children }: { children: ReactNode }) => (
+  <>
+    <EventStream />
+    {children}
+  </>
+);
 
 export const createPublicComposition = (children: ReactNode) => (
   <PublicShell>
@@ -54,7 +52,7 @@ export const createPublicComposition = (children: ReactNode) => (
 export const createApplicationComposition = (children: ReactNode) => (
   <AuthenticationBoundary>
     <ApiClientReadyBoundary>
-      <ApplicationShell legacyScope>{children}</ApplicationShell>
+      <ApplicationShell>{children}</ApplicationShell>
     </ApiClientReadyBoundary>
   </AuthenticationBoundary>
 );
@@ -69,7 +67,7 @@ export const createFamilyComposition = (policy: FamilyPagePolicy, children: Reac
           key={`${policy.kind}/${policy.section}`}
         >
           <Suspense fallback={<CenterLoader />}>
-            <ApplicationShell legacyScope={false}>
+            <ApplicationShell>
               <FamilyShell>{children}</FamilyShell>
             </ApplicationShell>
           </Suspense>

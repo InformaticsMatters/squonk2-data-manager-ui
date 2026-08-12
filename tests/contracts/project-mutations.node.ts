@@ -217,18 +217,16 @@ test.describe("Project mutation ownership", () => {
     ]);
   });
 
-  test("the migrated inventory and stats entry points changed no project of their own", () => {
-    // Each retains its report while linking to the one route that owns project privacy and roles.
-    for (const report of [
-      "administration/UsageInventory.tsx",
-      "features/ProjectStats/ProjectActions/ProjectActions.tsx",
-    ]) {
-      const source = readFileSync(path.join(root, report), "utf8");
-      expect(source).not.toMatch(/useQueryClient|invalidateQueries/u);
-      expect(source).toContain("projectLinks.manage");
-    }
-    // The modal that used to own these changes is gone rather than merely unreferenced.
-    expect(handwrittenSources().filter((file) => file.includes("EditProject"))).toEqual([]);
+  test("the migrated inventory report changed no project of its own", () => {
+    // It retains its report while linking to the one route that owns project privacy and roles.
+    const source = readFileSync(path.join(root, "administration/UsageInventory.tsx"), "utf8");
+    expect(source).not.toMatch(/useQueryClient|invalidateQueries/u);
+    expect(source).toContain("projectLinks.manage");
+    // The modal that used to own these changes is gone rather than merely unreferenced, and so is
+    // the project-stats section that offered a second set of project actions beside it.
+    expect(
+      handwrittenSources().filter((file) => file.includes("EditProject") || file.includes("Stats")),
+    ).toEqual([]);
   });
 
   test("every project command invalidates the addressed project and the caller's index", () => {

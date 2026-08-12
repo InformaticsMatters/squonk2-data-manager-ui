@@ -373,10 +373,8 @@ test.describe("report ownership", () => {
   });
 
   test("the inventory cache identity is only ever the generated key factory", () => {
-    // Project creation still refreshes the inventory it changes; it reads none of it, and no
-    // module builds a cache identity of its own for this endpoint.
-    expect(sourcesContaining("getGetUserInventoryQueryKey")).toEqual([
-      "components/projects/CreateProject/CreateProjectForm.tsx",
-    ]);
+    // The report reads the endpoint through its generated query alone, so nothing in the tree
+    // builds a cache identity of its own for it — not even to refresh it after a change.
+    expect(sourcesContaining("getGetUserInventoryQueryKey")).toEqual([]);
   });
 });

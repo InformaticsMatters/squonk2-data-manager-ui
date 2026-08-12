@@ -25,8 +25,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Testing quirks
 
 - `pnpm test:acceptance` (`tests/acceptance/*.acceptance.ts`) is the ordinary gate: deterministic, needs no external services or credentials. See `docs/testing.md`.
-- `playwright.config.ts` covers the rest, split by filename suffix into Playwright projects: `*.setup.ts`, `*.browser.ts`, `*.browser-authenticated.ts` (depends on login/`storageState.json`), `*.node.ts`.
-- Those tests hit **real external APIs** and load `.env.test.local`; CI health-checks the APIs first and skips when they're down.
+- `playwright.config.ts` runs the pure contract matrices (`tests/contracts/*.node.ts` and the other `*.node.ts` files). `pnpm test` runs the acceptance gate and then these.
+- `pnpm test:smoke` (`playwright.smoke.config.ts`) runs the live suite — a real Keycloak login/logout (`*.setup.ts`) and public navigation (`tests/navigation.browser.ts`). Those hit **real external APIs** and load `.env.test.local`; the workflow is non-blocking and CI skips it when the APIs are down.
 
 ## Setup gotchas
 

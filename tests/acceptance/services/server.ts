@@ -546,6 +546,16 @@ const handleOidc = async (request: IncomingMessage, response: ServerResponse) =>
     response.writeHead(302, { location: callback.href });
     return response.end();
   }
+  if (url.pathname === "/protocol/openid-connect/logout") {
+    // RP-initiated logout, which the application relies on to return the caller to public Home.
+    // Only the callback origin this provider already trusts is honoured as a return address.
+    const requested = url.searchParams.get("post_logout_redirect_uri");
+    const allowedOrigin = new URL(allowedRedirect).origin;
+    const destination =
+      requested && new URL(requested).origin === allowedOrigin ? requested : allowedOrigin;
+    response.writeHead(302, { location: destination });
+    return response.end();
+  }
   if (url.pathname === "/token" && request.method === "POST") {
     const form = new URLSearchParams((await readBody(request)).toString());
     const basic = request.headers.authorization?.startsWith("Basic ")

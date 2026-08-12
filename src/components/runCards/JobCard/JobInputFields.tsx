@@ -2,7 +2,6 @@ import { type Dispatch, type ReactNode, type SetStateAction, useState } from "re
 
 import { Grid, Typography } from "@mui/material";
 
-import { type ProjectId } from "../../../hooks/projectHooks";
 import {
   type InputData,
   type InputSchema,
@@ -16,7 +15,7 @@ export interface JobInputFieldsProps {
   /**
    * ID of the project from which files will be given
    */
-  projectId: NonNullable<ProjectId>;
+  projectId: string;
   /**
    * The schema describing what fields are generated
    */

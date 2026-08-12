@@ -15,7 +15,7 @@ import {
 import { pagePolicies } from "../../src/application/pagePolicy";
 import { AuthenticationBoundary } from "../../src/components/auth/AuthenticationBoundary";
 
-type ElementNode = { props: { children?: unknown; legacyScope?: boolean }; type: unknown };
+type ElementNode = { props: { children?: unknown }; type: unknown };
 
 const isElementNode = (value: unknown): value is ElementNode =>
   typeof value === "object" && value !== null && "props" in value && "type" in value;
@@ -34,14 +34,16 @@ const onlyElement = (element: ElementNode) => {
 };
 
 test.describe("production page compositions", () => {
-  test("keeps public pages outside authentication and legacy scope hooks", () => {
+  test("keeps public pages outside authentication and the application shell", () => {
     const shell = createPublicComposition("content") as unknown as ElementNode;
 
     expect((shell.type as { name?: string }).name).toBe("PublicShell");
     expect(elementChildren(shell).map((child) => child.type)).toEqual([ApiClientSetup]);
   });
 
-  test("keeps legacy scope hooks in plain application composition", () => {
+  test("gives a plain application page authentication, API readiness, and the shell alone", () => {
+    // The shell holds no scope of its own in either composition, so an application page and a
+    // family page mount the same one: nothing here can put a selected unit or project back.
     const authentication = createApplicationComposition("content") as unknown as ElementNode;
     expect(authentication.type).toBe(AuthenticationBoundary);
 
@@ -50,7 +52,7 @@ test.describe("production page compositions", () => {
 
     const applicationShell = onlyElement(apiReady);
     expect((applicationShell.type as { name?: string }).name).toBe("ApplicationShell");
-    expect(applicationShell.props.legacyScope).toBe(true);
+    expect(Object.keys(applicationShell.props)).toEqual(["children"]);
   });
 
   for (const policy of [
@@ -73,7 +75,7 @@ test.describe("production page compositions", () => {
 
       const applicationShell = onlyElement(suspense);
       expect((applicationShell.type as { name?: string }).name).toBe("ApplicationShell");
-      expect(applicationShell.props.legacyScope).toBe(false);
+      expect(Object.keys(applicationShell.props)).toEqual(["children"]);
 
       const familyShell = onlyElement(applicationShell);
       expect((familyShell.type as { name?: string }).name).toBe(

@@ -11,16 +11,32 @@ const acceptanceRun = `projects/${fixtureIds.project}/run`;
 const screeningRun = `projects/${fixtureIds.screeningProject}/run`;
 const acceptanceResults = `projects/${fixtureIds.project}/results`;
 
-type Diagnostics = { requests: { method: string; path: string; query: string }[] };
+/** One run-workflow command, in the fields the generated body carries. */
+type WorkflowLaunch = {
+  as_name: string;
+  project_id: string;
+  variables: string;
+  workflow_id: string;
+};
+
+type Diagnostics = {
+  requests: { method: string; path: string; query: string }[];
+  workflowLaunches: WorkflowLaunch[];
+};
 
 type Requester = { get: (url: string) => Promise<{ json: () => Promise<unknown> }> };
 
-const scenarioRequests = async (request: Requester, subject: string) => {
-  const diagnostics = (await request
+const diagnosticsFor = async (request: Requester, subject: string) =>
+  (await request
     .get(`${acceptanceUrls.control}/scenario/${subject}`)
     .then((response) => response.json())) as Diagnostics;
-  return diagnostics.requests;
-};
+
+const scenarioRequests = async (request: Requester, subject: string) =>
+  (await diagnosticsFor(request, subject)).requests;
+
+/** Every run-workflow command the Data Manager received, which is what a workflow launch is. */
+const workflowLaunches = async (request: Requester, subject: string) =>
+  (await diagnosticsFor(request, subject)).workflowLaunches;
 
 const catalogueReads = async (request: Requester, subject: string) =>
   (await scenarioRequests(request, subject)).filter(({ path }) =>
@@ -256,17 +272,6 @@ test("launching opens the execution it created inside the project that ran it", 
     page.getByRole("banner").getByText("Acceptance Project", { exact: true }),
   ).toBeVisible();
   await expect(page.getByRole("heading", { level: 1, name: "Results" })).toBeVisible();
-
-  // A workflow launch opens the running workflow it created, under the same project.
-  await page.goto(`${acceptanceRun}/workflows/${fixtureIds.workflow}`);
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await page.getByRole("button", { name: "Run", exact: true }).click();
-  await expect(page).toHaveURL(
-    `${acceptanceUrls.app}${acceptanceResults}/workflows/${fixtureIds.launchedRunningWorkflow}`,
-  );
-  await expect(
-    page.getByRole("banner").getByText("Acceptance Project", { exact: true }),
-  ).toBeVisible();
 });
 
 test("launching an application opens the instance it created, in the same project", async ({
@@ -294,6 +299,193 @@ test("launching an application opens the instance it created, in the same projec
 
   // One accepted launch is one created instance, so nothing was sent twice on the way there.
   expect(await instanceLaunches(request, subject)).toHaveLength(1);
+});
+
+test("launching a workflow opens the running workflow it created, in the same project", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const workflowDefinition = `${acceptanceRun}/workflows/${fixtureIds.workflow}`;
+  await login(page, workflowDefinition, testInfo);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  // The workflow states what it needs, and until it has been given the launch is not offered. The
+  // Data Manager creates a running workflow for every command it accepts, so a launch it could
+  // only refuse is withheld here rather than sent to earn that refusal.
+  await expect(dialog.getByText("Library *")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeDisabled();
+
+  // The name the running workflow would be created under is held to the Data Manager's own
+  // contract, in the field it is entered in.
+  await dialog.getByLabel("Workflow name").fill("a");
+  await expect(dialog.getByText(/A workflow name is required\./u)).toBeVisible();
+  await dialog.getByLabel("Workflow name").fill("Acceptance workflow run");
+
+  // The file is chosen from the project in the URL, so a workflow is only ever given that
+  // project's own files.
+  await dialog.getByRole("button", { name: "Select file" }).click();
+  await dialog.getByRole("checkbox", { name: "acceptance-dataset-v2.sdf" }).check();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeEnabled();
+
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/workflows/${fixtureIds.launchedRunningWorkflow}`,
+  );
+  await expect(
+    page.getByRole("banner").getByText("Acceptance Project", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Results" })).toBeVisible();
+
+  // One accepted launch is one created running workflow, and the command named the project in the
+  // URL, the workflow the URL addressed, and what was entered — never the definition's own
+  // declared variables, which the Data Manager would take as the values to run with.
+  const launches = await workflowLaunches(request, subject);
+  expect(launches).toHaveLength(1);
+  expect(launches[0]).toMatchObject({
+    as_name: "Acceptance workflow run",
+    project_id: fixtureIds.project,
+    workflow_id: fixtureIds.workflow,
+  });
+  const variables = JSON.parse(launches[0]?.variables ?? "{}") as Record<string, unknown>;
+  expect(variables.library).toBe("acceptance-dataset-v2.sdf");
+  expect(Object.keys(variables)).not.toContain("inputs");
+  expect(Object.keys(variables)).not.toContain("options");
+
+  // The running workflow the launch opened is the project's own, listed under the project that
+  // ran it, so the launch and everything downstream of it agree about whose work this is.
+  await page.goto(acceptanceResults);
+  await expect(page.getByRole("link", { name: /Acceptance workflow run/u }).first()).toBeVisible();
+});
+
+test("a workflow launch is answered where it was made, without costing the project", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const workflowDefinition = `${acceptanceRun}/workflows/${fixtureIds.workflow}`;
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/launch-delay?milliseconds=3000`,
+  );
+  await login(page, workflowDefinition, testInfo);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  await dialog.getByRole("button", { name: "Select file" }).click();
+  await dialog.getByRole("checkbox", { name: "acceptance-dataset-v2.sdf" }).check();
+
+  // Sent twice in one gesture, before any answer and before the control could have been redrawn.
+  await page.getByRole("button", { name: "Run", exact: true }).dblclick();
+  await expect(
+    dialog.getByText(
+      "This launch has been sent. It cannot be sent again until the Data Manager answers it.",
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeDisabled();
+  // Only one command reached the Data Manager, though two submissions were made.
+  expect(await workflowLaunches(request, subject)).toHaveLength(1);
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${workflowDefinition}`);
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+
+  // The answer opens the one running workflow the one accepted launch created.
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/workflows/${fixtureIds.launchedRunningWorkflow}`,
+  );
+  expect(await workflowLaunches(request, subject)).toHaveLength(1);
+});
+
+test("a refused workflow launch is withheld and a failed one stays sendable in place", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const workflowDefinition = `${acceptanceRun}/workflows/${fixtureIds.workflow}`;
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/launch-failure?status=403`);
+  await login(page, workflowDefinition, testInfo);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  await dialog.getByLabel("Workflow name").fill("refused workflow run");
+  await dialog.getByRole("button", { name: "Select file" }).click();
+  await dialog.getByRole("checkbox", { name: "acceptance-dataset-v2.sdf" }).check();
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+
+  // The server is the authorization authority, so its refusal answers this one launch and the
+  // launch is withheld rather than invited again.
+  await expect(
+    dialog.getByText(
+      "The Data Manager did not allow this to be run in this project. Nothing was launched, and the displayed project and its catalogue have not changed.",
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeDisabled();
+
+  // The modal, its route, everything entered, and the catalogue beneath it survive the refusal.
+  await expect(dialog.getByLabel("Workflow name")).toHaveValue("refused workflow run");
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${workflowDefinition}`);
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await expect(page.getByText("AcceptanceNotebook")).toBeVisible();
+  expect(await workflowLaunches(request, subject)).toHaveLength(1);
+
+  // A transport fact decides no authority, so every one of them keeps the launch available, and a
+  // refusal of what was entered reads as the service's own account of it.
+  await page.reload();
+  await dialog.getByRole("button", { name: "Select file" }).click();
+  await dialog.getByRole("checkbox", { name: "acceptance-dataset-v2.sdf" }).check();
+  for (const [status, message] of [
+    [503, "This launch could not be completed, so nothing was launched."],
+    [429, "This launch could not be completed, so nothing was launched."],
+    [400, "fixture-rejected: the file type is not supported by this project"],
+  ] as const) {
+    await request.post(
+      `${acceptanceUrls.control}/scenario/${subject}/launch-failure?status=${status}`,
+    );
+    await page.getByRole("button", { name: "Run", exact: true }).click();
+    await expect(dialog.getByText(message)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Run", exact: true })).toBeEnabled();
+    await expect(page).toHaveURL(`${acceptanceUrls.app}${workflowDefinition}`);
+  }
+
+  // A launch that never left the browser at all establishes even less, and is answered the same
+  // way. Only interception can produce this, the service never being reached to model it.
+  const runWorkflowRequest = `${acceptanceUrls.dataManager}/workflow/*/run`;
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/launch-failure`);
+  await page.route(runWorkflowRequest, (route) => route.abort("connectionrefused"));
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(
+    dialog.getByText("This launch could not be completed, so nothing was launched."),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeEnabled();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${workflowDefinition}`);
+  await expect(dialog.getByLabel("Workflow name")).toHaveValue("Acceptance Workflow Definition");
+
+  // Sending it again once the service can be reached opens the running workflow finally created.
+  await page.unroute(runWorkflowRequest);
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/workflows/${fixtureIds.launchedRunningWorkflow}`,
+  );
+  // Each attempt was one command and no more: the refusal, three the service would not complete,
+  // and the one it finally accepted. The launch that never left the browser reached nothing.
+  expect(await workflowLaunches(request, subject)).toHaveLength(5);
+});
+
+test("an observer reads a workflow definition and is told what launching requires", async ({
+  page,
+}, testInfo) => {
+  await login(page, `${screeningRun}/workflows/${fixtureIds.workflow}`, testInfo);
+  const dialog = page.getByRole("dialog");
+
+  // The same workflow, addressed in a project the caller only observes, is readable in full —
+  // description and declared inputs alike — while only running it is withheld.
+  await expect(dialog).toBeVisible();
+  await expect(page.getByText("Screening Project", { exact: true })).toBeVisible();
+  await expect(dialog.getByText("Screens a library against a target")).toBeVisible();
+  await expect(dialog.getByText("Library *")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeDisabled();
+  await expect(
+    dialog.getByText("You must be a project editor or administrator to run work in this project."),
+  ).toBeVisible();
 });
 
 test("the same definition answers for the project it is addressed in", async ({

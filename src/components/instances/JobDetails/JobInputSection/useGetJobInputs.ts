@@ -1,7 +1,7 @@
 import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
 import { useGetJob } from "@/api/data-manager/job";
 
-import { type InputFieldSchema } from "../../../runCards/JobCard/JobInputFields";
+import { type InputFieldSchema } from "../../../../projects/runLaunchForm";
 import { TEST_JOB_ID } from "../../../runCards/TestJob/jobId";
 
 // Contains only fields we are interested in

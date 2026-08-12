@@ -951,7 +951,18 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
       name: "acceptance-workflow",
       scope: "GLOBAL",
       validated: true,
-      variables: {},
+      // The workflow declares an input it will not run without and an option, so what a launch
+      // form requires, presents, and finally sends is observable rather than assumed.
+      variables: {
+        inputs: {
+          properties: {
+            library: { "mime-types": ["chemical/x-mdl-sdfile"], title: "Library", type: "file" },
+          },
+          required: ["library"],
+        },
+        options: { properties: { count: { title: "Count", type: "integer" } }, type: "object" },
+        order: { options: ["count"] },
+      },
       version: "1.0.0",
       workflow_description: "Screens a library against a target",
       workflow_name: "Acceptance Workflow Definition",

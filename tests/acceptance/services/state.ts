@@ -27,6 +27,19 @@ export type AttachmentRecord = {
 export type AttachmentTaskRecord = AttachmentRecord & { fileId: string; fileName: string };
 
 /**
+ * One run-workflow command the Data Manager received, in the fields the generated body carries.
+ * The project it names and the variables it carries are the whole of what a launch asked for, so
+ * they are held exactly as sent rather than inferred from what the launch went on to create.
+ */
+export type WorkflowLaunchRecord = {
+  as_name: string;
+  debug: string;
+  project_id: string;
+  variables: string;
+  workflow_id: string;
+};
+
+/**
  * How a result task accounts for itself. `failed` finished with a non-zero exit code; `rejected`
  * finished with a zero exit code but recorded a domain failure, which is the case an exit code
  * alone would read as success.
@@ -224,6 +237,8 @@ export type ScenarioState = {
    * once its task has settled successfully, so the fixture adds it then rather than at acceptance.
    */
   versionUploadTasks: Map<string, { datasetId: string; fileName: string; type: string }>;
+  /** Every run-workflow command received, whether or not the Data Manager went on to accept it. */
+  workflowLaunches: WorkflowLaunchRecord[];
 };
 
 const scenarios = new Map<string, ScenarioState>();
@@ -255,6 +270,7 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     runningWorkflowStage: "done",
     uploadTaskIds: [],
     versionUploadTasks: new Map(),
+    workflowLaunches: [],
   };
   scenarios.set(subject, state);
   return state;

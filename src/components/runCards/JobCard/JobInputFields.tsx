@@ -3,36 +3,14 @@ import { type Dispatch, type ReactNode, type SetStateAction, useState } from "re
 import { Grid, Typography } from "@mui/material";
 
 import { type ProjectId } from "../../../hooks/projectHooks";
+import {
+  type InputData,
+  type InputSchema,
+  validateInputData,
+} from "../../../projects/runLaunchForm";
 import { FILE_PROTOCOL, removeFileProtocolFromInputData } from "../../../utils/app/urls";
 import { FileSelector } from "../../FileSelector";
-import { type InputData } from "./JobModal";
 import { MultipleMoleculeInput } from "./MultipleMoleculeInput";
-
-export const validateInputData = (inputValue: string[] | string | undefined) => {
-  if (inputValue === undefined) {
-    return false; // when does this happen?
-  }
-  if (Array.isArray(inputValue)) {
-    return inputValue.every((v) => v !== "");
-  }
-
-  return inputValue.split("\n").every((v) => v !== "");
-};
-
-// Define types for the form schema as the Open API spec doesn't define these (just gives string)
-// These might be defined in the form generator types?
-export interface InputFieldSchema {
-  title: string;
-  type: "directory" | "file" | "molecules-smi";
-  "mime-types"?: string[];
-  multiple?: true;
-  default?: string;
-}
-
-export interface InputSchema {
-  required?: string[];
-  properties: Record<string, InputFieldSchema>;
-}
 
 export interface JobInputFieldsProps {
   /**

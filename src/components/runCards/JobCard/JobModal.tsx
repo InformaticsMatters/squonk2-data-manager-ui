@@ -11,6 +11,13 @@ import { Box, TextField, Typography } from "@mui/material";
 
 import { capabilityIsEnabled } from "../../../projects/capabilities";
 import { launchIsSendable } from "../../../projects/runLaunch";
+import {
+  declaredInputDefaults,
+  type InputData,
+  launchVariables,
+  readRunDefinitionVariables,
+  runInputsAreSupplied,
+} from "../../../projects/runLaunchForm";
 import { useRunCommands } from "../../../projects/useRunCommands";
 import { useRunLaunch } from "../../../projects/useRunLaunch";
 import { CenterLoader } from "../../CenterLoader";
@@ -20,16 +27,13 @@ import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
 import { LaunchFeedback } from "../LaunchFeedback";
 import { TEST_JOB_ID } from "../TestJob/jobId";
 import { type RunModalProps } from "../types";
-import { type InputSchema, validateInputData } from "./JobInputFields";
 import { JobInputsAndOptionsForm } from "./JobInputsAndOptionsForm";
-
-export type InputData = Record<string, string[] | string | undefined>;
 
 interface JobSpecification {
   collection: string;
   job: string;
   version: string;
-  variables: Record<string, string[] | string>;
+  variables: Record<string, unknown>;
 }
 
 export interface JobModalProps extends RunModalProps {
@@ -43,16 +47,6 @@ export interface JobModalProps extends RunModalProps {
    */
   instance?: InstanceGetResponse | InstanceSummary;
 }
-
-const validateJobInputs = (required: string[], inputsData: InputData) => {
-  const inputsDataIsValid = Object.values(inputsData)
-    .map((element) => validateInputData(element))
-    .every(Boolean);
-
-  const inputKeys = new Set(Object.keys(inputsData));
-  const haveRequiredInputs = required.map((key) => inputKeys.has(key)).every(Boolean);
-  return inputsDataIsValid && haveRequiredInputs;
-};
 
 /**
  * Modal with options to create a new instance of a job in the project the URL addresses. An
@@ -96,24 +90,21 @@ export const JobModal = ({
 
   // Control for the inputs fields
 
-  const inputsDefault = useMemo(() => {
-    // Parse the inputs schema which is untyped
-    const inputs = job?.variables?.inputs as InputSchema | undefined; // TODO: should validate this with zod
-    // Access the default values and use them for the "initial" values for state
-    return Object.entries(inputs?.properties ?? {})
-      .filter(([, schema]) => schema.default !== undefined)
-      .map(([key, { default: defaultValue }]) => [key, defaultValue as string] as const);
-  }, [job]);
+  // The declared inputs, options, and option order, read the one way every definition's are.
+  const declared = useMemo(() => readRunDefinitionVariables(job?.variables), [job?.variables]);
+
+  // The values the job's own declared defaults start its fields at
+  const inputsDefault = useMemo(() => declaredInputDefaults(declared.inputs), [declared]);
 
   const [inputsData, setInputsData] = useState<InputData>({});
 
-  const inputKeys = Object.keys(job?.variables?.inputs?.properties ?? {});
+  const inputKeys = Object.keys(declared.inputs?.properties ?? {});
   const specInputs = Object.fromEntries(
     Object.entries(specVariables ?? {}).filter(([key, _]) => inputKeys.includes(key)),
   );
 
-  const inputsValid = validateJobInputs(
-    (job?.variables?.inputs as InputSchema | undefined)?.required ?? [],
+  const inputsValid = runInputsAreSupplied(
+    declared.inputs,
     Object.keys(inputsData).length > 0 ? inputsData : specInputs,
   );
 
@@ -121,7 +112,7 @@ export const JobModal = ({
 
   // Since the default value are obtained async, we have to wait for them to arrive in order to set
   useEffect(() => {
-    setInputsData(Object.fromEntries(inputsDefault));
+    setInputsData(inputsDefault);
   }, [inputsDefault]);
 
   // The launch names the project the URL addresses and nothing else, so a job can only ever be run
@@ -134,7 +125,7 @@ export const JobModal = ({
       collection: job.collection,
       job: job.job,
       version: job.version,
-      variables: { ...optionsFormData, ...inputsData },
+      variables: launchVariables(optionsFormData, inputsData),
     };
     void launch(() =>
       launchInstance(projectId, {
@@ -145,8 +136,6 @@ export const JobModal = ({
       }),
     );
   };
-
-  const variables = job?.variables;
 
   return (
     <ModalWrapper
@@ -188,11 +177,11 @@ export const JobModal = ({
           <DebugCheckbox value={debug} onChange={(debug) => setDebug(debug)} />
           <JobInputsAndOptionsForm
             formRef={formRef}
-            inputs={variables?.inputs}
+            inputs={declared.inputs}
             inputsData={inputsData}
-            options={variables?.options}
+            options={declared.options}
             optionsFormData={optionsFormData}
-            order={variables?.order?.options ?? []}
+            order={declared.optionOrder}
             projectId={projectId}
             setInputsData={setInputsData}
             setOptionsFormData={setOptionsFormData}

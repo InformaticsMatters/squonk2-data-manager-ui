@@ -1296,6 +1296,15 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   }
   if (segments[0] === "workflow" && segments[2] === "run" && request.method === "POST") {
     const form = new URLSearchParams((await readBody(request)).toString());
+    // Held as sent and before any verdict, so what a launch asked for can be stated exactly
+    // whether the Data Manager went on to accept it or refuse it.
+    state.workflowLaunches.push({
+      as_name: form.get("as_name") ?? "",
+      debug: form.get("debug") ?? "",
+      project_id: form.get("project_id") ?? "",
+      variables: form.get("variables") ?? "",
+      workflow_id: segments[1] ?? "",
+    });
     if (await launchGate(state, response)) {
       return;
     }
@@ -2076,6 +2085,7 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
             fields: multipartFields(state.upload.body.toString()),
           }
         : undefined,
+      workflowLaunches: state.workflowLaunches,
     });
   }
   if (url.pathname.endsWith("/product-failure") && request.method === "POST") {

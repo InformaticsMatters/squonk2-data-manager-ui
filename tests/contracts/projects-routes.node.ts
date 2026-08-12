@@ -60,6 +60,15 @@ test.describe("Project route contract", () => {
       () => projectLinks.result(projectId, "instances", instanceId),
     ],
     [
+      `/projects/${projectId}/results/instances/${instanceId}?rerun=1`,
+      () => projectLinks.resultRerun(projectId, instanceId),
+    ],
+    [
+      `/projects/${projectId}/results/instances/${instanceId}?search=docking&type=instance&rerun=1`,
+      () =>
+        projectLinks.resultRerun(projectId, instanceId, { search: "docking", types: ["instance"] }),
+    ],
+    [
       `/projects/${projectId}/results/workflows/${runningWorkflowId}`,
       () => projectLinks.result(projectId, "workflows", runningWorkflowId),
     ],

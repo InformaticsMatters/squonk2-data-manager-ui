@@ -18,6 +18,7 @@ import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectResultDetail } from "./ProjectResultDetail";
 import { resolveResultCapabilities } from "./resultCapabilities";
 import { filterResultItems, type ResultItem } from "./resultFacts";
+import { resolveRerunTarget } from "./resultRerun";
 import {
   projectLinks,
   type ProjectRoute,
@@ -93,6 +94,13 @@ const ResultItemCard = ({
           instance={item.data}
           instanceId={item.id}
           projectId={item.owningProjectId}
+          // A listed instance offers a rerun on the same terms the addressed one does, decided
+          // against the project in the URL rather than the project the card happens to display.
+          rerunTarget={resolveRerunTarget({
+            instance: item.data,
+            instanceId: item.id,
+            routeProjectId,
+          })}
           resultsState={resultsState}
         />
       );

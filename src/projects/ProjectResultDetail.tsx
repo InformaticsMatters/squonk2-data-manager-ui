@@ -9,8 +9,10 @@ import { ResultTaskDetail } from "../components/tasks/ResultTaskDetail";
 import { ResultWorkflowDetail } from "../components/workflows/ResultWorkflowDetail";
 import { resultInstanceSettlement } from "./instanceFacts";
 import { type ProjectFacts } from "./projectFacts";
+import { ProjectResultRerun } from "./ProjectResultRerun";
 import { resolveResultCapabilities } from "./resultCapabilities";
 import { instanceOwner, type ResultItem, runningWorkflowOwner, taskOwner } from "./resultFacts";
+import { resolveRerunTarget } from "./resultRerun";
 import { projectLinks, type ProjectRoute, resultsListState } from "./routes";
 import { type SectionReadState } from "./sectionReads";
 import { resultTaskSettlement } from "./taskFacts";
@@ -103,11 +105,17 @@ const InstanceResult = ({
   route,
 }: {
   facts: ProjectFacts;
-  route: ResultRoute & { collection: "instances" };
+  route: Extract<ResultRoute, { collection: "instances" }>;
 }) => {
   const router = useRouter();
   const read = useResultInstance(route.resultId, route.projectId);
   const state = resultsListState(route);
+  // Leaving the rerun replaces it with the instance it was opened over, carrying only the Results
+  // state that instance's own route owns, so Close never adds an entry Back would walk back through.
+  const closeRerun = () =>
+    void router.replace(
+      projectLinks.result(route.projectId, "instances", route.resultId, state) as never,
+    );
 
   return (
     <AddressedResult
@@ -119,28 +127,59 @@ const InstanceResult = ({
     >
       {(instance, content) => {
         const owningProjectId = instanceOwner(instance) ?? route.projectId;
+        const capabilities = resolveResultCapabilities(facts, {
+          content,
+          instanceSettlement: resultInstanceSettlement(read.lifecycle),
+          owningProjectId,
+          routeProjectId: route.projectId,
+        });
+        // The one place a rerun's authority and destination are decided, from the concrete instance
+        // and the project the URL verified it against. Both the control that offers the rerun and
+        // the modal that sends it read this one target, so neither can name a project the other
+        // would not.
+        const rerunTarget = resolveRerunTarget({
+          instance,
+          instanceId: route.resultId,
+          routeProjectId: route.projectId,
+        });
 
         return (
-          <ResultInstanceDetail
-            capabilities={resolveResultCapabilities(facts, {
-              content,
-              instanceSettlement: resultInstanceSettlement(read.lifecycle),
-              owningProjectId,
-              routeProjectId: route.projectId,
-            })}
-            instance={instance}
-            instanceId={route.resultId}
-            lifecycle={read.lifecycle}
-            projectId={owningProjectId}
-            resultsState={state}
-            // The Data Manager removes an instance it terminated as well as one it deleted, so an
-            // accepted request leaves no route of its own behind: the caller is returned to the
-            // list of the project that owned it, with that list's own state. A rejected request
-            // changes nothing about where the caller is.
-            onRemoved={() =>
-              void router.replace(projectLinks.results(owningProjectId, state) as never)
-            }
-          />
+          <>
+            <ResultInstanceDetail
+              capabilities={capabilities}
+              instance={instance}
+              instanceId={route.resultId}
+              lifecycle={read.lifecycle}
+              projectId={owningProjectId}
+              rerunTarget={rerunTarget}
+              resultsState={state}
+              // The Data Manager removes an instance it terminated as well as one it deleted, so an
+              // accepted request leaves no route of its own behind: the caller is returned to the
+              // list of the project that owned it, with that list's own state. A rejected request
+              // changes nothing about where the caller is.
+              onRemoved={() =>
+                void router.replace(projectLinks.results(owningProjectId, state) as never)
+              }
+            />
+            {/* A rerun the instance itself does not offer is not opened by its route asking for
+            one, so a URL cannot compose a launch the instance beneath it would refuse. */}
+            {route.rerun === true && rerunTarget !== null ? (
+              <ProjectResultRerun
+                capability={capabilities.rerun}
+                instance={instance}
+                target={rerunTarget}
+                onClose={closeRerun}
+                // A launch is only reported once the Data Manager has accepted it, so the instance
+                // this opens is one that exists — at its own canonical Results route, inside the
+                // project that ran it.
+                onLaunched={(instanceId) =>
+                  void router.push(
+                    projectLinks.result(rerunTarget.projectId, "instances", instanceId) as never,
+                  )
+                }
+              />
+            ) : null}
+          </>
         );
       }}
     </AddressedResult>

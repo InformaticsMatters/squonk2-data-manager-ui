@@ -4,12 +4,9 @@ import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manag
 
 import { ListItem, ListItemText } from "@mui/material";
 
-import {
-  resolveResultInstanceLifecycle,
-  resultInstanceJob,
-  resultInstanceKind,
-} from "../../projects/instanceFacts";
+import { resolveResultInstanceLifecycle, resultInstanceKind } from "../../projects/instanceFacts";
 import { type ResultCapabilities } from "../../projects/resultCapabilities";
+import { type RerunTarget } from "../../projects/resultRerun";
 import { projectLinks, type ResultsState } from "../../projects/routes";
 import { HrefButton } from "../HrefButton";
 import { CapabilityReasons } from "../results/CapabilityReasons";
@@ -39,6 +36,12 @@ export interface InstanceResultCardProps {
    * looking at.
    */
   projectId: string;
+  /**
+   * What running this instance's job again would target, decided by whoever knows the project in
+   * the URL, or `null` where nothing may be run again. A card never resolves this for itself: it
+   * displays an instance rather than deciding which project a command may be composed for.
+   */
+  rerunTarget: RerunTarget | null;
   /** Results list state this card's own link preserves. */
   resultsState?: ResultsState;
   /** Rows naming what the instance is, shown beside its identity. */
@@ -70,15 +73,13 @@ export const InstanceResultCard = ({
   instance,
   instanceId,
   projectId,
+  rerunTarget,
   resultsState,
   children,
   onRemoved,
 }: InstanceResultCardProps) => {
   const identity = instanceIdentity(instance);
   const kind = resultInstanceKind(instance);
-  // The job definition this instance ran, where this client can address it. A job instance whose
-  // definition it cannot address is still a job: it wrote its own logs and still says what it is.
-  const job = resultInstanceJob(instance);
 
   return (
     <ResultCard
@@ -110,11 +111,11 @@ export const InstanceResultCard = ({
               Open
             </HrefButton>
           )}
-          {job === undefined ? null : (
+          {rerunTarget === null ? null : (
             <RerunJobButton
-              instance={instance}
-              rerun={capabilities.rerun}
+              capability={capabilities.rerun}
               resultsState={resultsState}
+              target={rerunTarget}
             />
           )}
           {kind === "job" && <LogsButton instanceId={instanceId} projectId={projectId} />}
@@ -126,7 +127,7 @@ export const InstanceResultCard = ({
           />
           <CapabilityReasons
             capabilities={
-              job === undefined
+              rerunTarget === null
                 ? [capabilities.termination, capabilities.archive]
                 : [capabilities.termination, capabilities.rerun, capabilities.archive]
             }

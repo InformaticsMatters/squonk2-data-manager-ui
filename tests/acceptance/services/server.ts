@@ -1267,6 +1267,14 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   // project's own results, so the execution a successful launch opens is one that exists.
   if (url.pathname === "/instance" && request.method === "POST") {
     const form = new URLSearchParams((await readBody(request)).toString());
+    // Held as sent and before any verdict, so the project a launch named can be stated exactly
+    // whether the Data Manager went on to accept it or refuse it.
+    state.instanceLaunches.push({
+      application_id: form.get("application_id") ?? "",
+      as_name: form.get("as_name") ?? "",
+      project_id: form.get("project_id") ?? "",
+      specification: form.get("specification") ?? "",
+    });
     if (await launchGate(state, response)) {
       return;
     }
@@ -2075,6 +2083,7 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
     return json(response, 200, {
       attachments: state.attachments,
       pollingIndex: state.pollingIndexes.get(fixtureIds.task) ?? 0,
+      instanceLaunches: state.instanceLaunches,
       requests: state.requests,
       upload: state.upload
         ? {

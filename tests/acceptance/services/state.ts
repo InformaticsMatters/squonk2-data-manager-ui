@@ -27,6 +27,18 @@ export type AttachmentRecord = {
 export type AttachmentTaskRecord = AttachmentRecord & { fileId: string; fileName: string };
 
 /**
+ * One create-instance command the Data Manager received, in the fields the generated body carries.
+ * The project it names is the whole of where a launch was sent, so it is held exactly as sent
+ * rather than inferred from the instance the launch went on to create.
+ */
+export type InstanceLaunchRecord = {
+  application_id: string;
+  as_name: string;
+  project_id: string;
+  specification: string;
+};
+
+/**
  * One run-workflow command the Data Manager received, in the fields the generated body carries.
  * The project it names and the variables it carries are the whole of what a launch asked for, so
  * they are held exactly as sent rather than inferred from what the launch went on to create.
@@ -237,6 +249,8 @@ export type ScenarioState = {
    * once its task has settled successfully, so the fixture adds it then rather than at acceptance.
    */
   versionUploadTasks: Map<string, { datasetId: string; fileName: string; type: string }>;
+  /** Every create-instance command received, whether or not the Data Manager went on to accept it. */
+  instanceLaunches: InstanceLaunchRecord[];
   /** Every run-workflow command received, whether or not the Data Manager went on to accept it. */
   workflowLaunches: WorkflowLaunchRecord[];
 };
@@ -257,6 +271,7 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     projectDeletionTasks: new Map(),
     subscriptionAdjustments: new Map(),
     fixtures: createScenarioFixtures(subject, profile),
+    instanceLaunches: [],
     instanceStage: "done",
     deletionPollingIndexes: new Map(),
     deletionTaskVersions: new Map(),

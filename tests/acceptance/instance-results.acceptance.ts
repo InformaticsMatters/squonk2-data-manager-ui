@@ -14,7 +14,29 @@ const applicationDetail = `${acceptanceResults}/instances/${fixtureIds.applicati
 /** The acceptance project's own instance, addressed beneath a project that does not own it. */
 const wrongProjectPairing = `${screeningResults}/instances/${fixtureIds.instance}`;
 
+const jobRerun = `${jobDetail}?rerun=1`;
+/** The rerun of the acceptance project's own instance, addressed beneath a project that does not
+ * own it. */
+const wrongProjectRerun = `${wrongProjectPairing}?rerun=1`;
+
 const scenario = (subject: string) => `${acceptanceUrls.control}/scenario/${subject}`;
+
+/** One create-instance command, in the fields the generated body carries. */
+type InstanceLaunch = { as_name: string; project_id: string; specification: string };
+
+type Requester = { get: (url: string) => Promise<{ json: () => Promise<unknown> }> };
+
+/**
+ * Every create-instance command the Data Manager received, which is what a rerun actually is. The
+ * project each one names is read from the body that was sent rather than from what it created, so
+ * a rerun that named the wrong project would be visible here even if nothing on screen was.
+ */
+const instanceLaunches = async (request: Requester, subject: string) =>
+  (
+    (await request.get(scenario(subject)).then((response) => response.json())) as {
+      instanceLaunches: InstanceLaunch[];
+    }
+  ).instanceLaunches;
 
 test.beforeEach(async ({ request }, testInfo) => {
   await request.put(scenario(subjectFor(testInfo)));
@@ -441,6 +463,221 @@ test("a refused or missing instance read answers exactly as an absent one does",
   await page.reload();
   await expect(page.getByText("Succeeded")).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${jobDetail}`);
+});
+
+test("a rerun opens as a route of the instance, prefilled with what that instance ran", async ({
+  page,
+}, testInfo) => {
+  await login(page, jobDetail, testInfo);
+  await expect(page.getByText("Succeeded")).toBeVisible();
+
+  // Opening the rerun pushes history and is directly linkable, and the instance stays beneath it.
+  await page.getByRole("button", { name: "Run again" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${jobRerun}`);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("acceptance • version 1.0.0")).toBeVisible();
+  // The instance carries what it was run with, so the rerun starts from exactly that.
+  await expect(dialog.getByLabel("Batch size")).toHaveValue("250");
+  // The instance and the project that owns it are still beneath the rerun opened over them.
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await expect(page.getByText("Docked poses")).toBeVisible();
+
+  // Back leaves the rerun and restores the instance it was opened over.
+  await page.goBack();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${jobDetail}`);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.getByText("Succeeded")).toBeVisible();
+
+  // Forward reopens it, and it is still the same instance's own rerun.
+  await page.goForward();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${jobRerun}`);
+  await expect(dialog.getByLabel("Batch size")).toHaveValue("250");
+
+  // Close replaces the rerun with the instance, so Back does not reopen it.
+  await page.getByRole("button", { name: "Close" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${jobDetail}`);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.goBack();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("a rerun entered directly runs the instance's job in the project that owns it", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, jobRerun, testInfo);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  await dialog.getByLabel("Job name").fill("rerun-of-acceptance-instance");
+  await dialog.getByLabel("Batch size").fill("500");
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+
+  // A launch is reported only once the Data Manager has accepted it, so what this opens is an
+  // instance that exists — at its own canonical Results route, inside the project that ran it.
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.launchedInstance}`,
+  );
+  await projectShellIsRetained(page);
+
+  // The command named the project the URL verified the instance against, and carried the rerun's
+  // own edit of what that instance was run with.
+  const launches = await instanceLaunches(request, subject);
+  expect(launches).toHaveLength(1);
+  expect(launches[0].project_id).toBe(fixtureIds.project);
+  expect(launches[0].as_name).toBe("rerun-of-acceptance-instance");
+  expect(JSON.parse(launches[0].specification).variables).toMatchObject({ batchSize: 500 });
+
+  // The project's own instance collection was refreshed by the launch, so the list the caller
+  // returns to already holds what the rerun created.
+  await page.getByRole("link", { name: "All results" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}`);
+  await expect(page.getByRole("link", { name: "rerun-of-acceptance-instance" })).toBeVisible();
+});
+
+test("a rerun addressed beneath a project that does not own the instance runs nothing", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, wrongProjectRerun, testInfo);
+
+  // The pairing is the same non-disclosing not-found it is without the rerun, so a URL asking for
+  // a rerun cannot compose one the instance beneath it would not offer.
+  await expect(page.getByText("This result was not found in this project.")).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toHaveCount(0);
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${wrongProjectRerun}`);
+  await expect(page.getByText("Screening Project", { exact: true })).toBeVisible();
+  // Nothing about the instance or the project that really owns it is revealed by the pairing.
+  await expect(page.getByText("Acceptance Project", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Docked poses")).toHaveCount(0);
+  expect(await instanceLaunches(request, subject)).toHaveLength(0);
+});
+
+test("an application instance is offered no rerun, and its route cannot invent one", async ({
+  page,
+}, testInfo) => {
+  await login(page, `${applicationDetail}?rerun=1`, testInfo);
+
+  // An application names no job definition to run again, so the instance is presented exactly as
+  // it is and nothing is opened over it.
+  await expect(page.getByRole("link", { name: "Acceptance Notebook" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run again" })).toHaveCount(0);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("a project viewer is told what running an instance's job again requires", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(`${scenario(subjectFor(testInfo))}?profile=read-only`);
+  await login(page, jobDetail, testInfo);
+
+  // The rerun answers to the project that owns the instance, so a caller who may not run work
+  // there is told so rather than being offered a launch the Data Manager would refuse.
+  await expect(page.getByRole("button", { name: "Run again" })).toBeDisabled();
+  await expect(
+    page.getByText("You must be a project editor or administrator to run work in this project."),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${jobDetail}`);
+});
+
+test("a refused rerun is withheld and a failed one stays sendable in place", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${scenario(subject)}/launch-failure?status=403`);
+  await login(page, jobRerun, testInfo);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await dialog.getByLabel("Batch size").fill("750");
+
+  // The Data Manager is the authorization authority, so its refusal is feedback about this one
+  // rerun: it is withheld rather than invited again, and nothing about the instance or the project
+  // it was refused in changes.
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(
+    dialog.getByText(
+      "The Data Manager did not allow this to be run in this project. Nothing was launched, and the displayed project and its catalogue have not changed.",
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeDisabled();
+  await expect(dialog.getByLabel("Batch size")).toHaveValue("750");
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${jobRerun}`);
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await expect(page.getByText("Docked poses")).toBeVisible();
+
+  // Reopening the rerun answers afresh: the refusal answered one attempt, not the instance.
+  await page.getByRole("button", { name: "Close" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${jobDetail}`);
+  await page.getByRole("button", { name: "Run again" }).click();
+  await expect(
+    dialog.getByText("The Data Manager did not allow this to be run in this project."),
+  ).toHaveCount(0);
+
+  // A transport fact decides no authority, so every one of them keeps the rerun sendable with
+  // everything entered still in it.
+  await dialog.getByLabel("Batch size").fill("900");
+  for (const status of [503, 429]) {
+    await request.post(`${scenario(subject)}/launch-failure?status=${status}`);
+    await page.getByRole("button", { name: "Run", exact: true }).click();
+    await expect(
+      dialog.getByText(
+        "This launch could not be completed, so nothing was launched. The definition and everything entered have been kept, so it can be sent again.",
+      ),
+    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Run", exact: true })).toBeEnabled();
+    await expect(dialog.getByLabel("Batch size")).toHaveValue("900");
+    await expect(page).toHaveURL(`${acceptanceUrls.app}${jobRerun}`);
+  }
+
+  // A refusal of what was entered is the caller's to correct, in the service's own words.
+  await request.post(`${scenario(subject)}/launch-failure?status=400`);
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(
+    dialog.getByText("fixture-rejected: the file type is not supported by this project"),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeEnabled();
+
+  // Sending it again once the service recovers opens the instance that was finally created, and
+  // every attempt was one request and no more.
+  await request.delete(`${scenario(subject)}/launch-failure`);
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.launchedInstance}`,
+  );
+  const launches = await instanceLaunches(request, subject);
+  expect(launches).toHaveLength(5);
+  expect(launches.every(({ project_id }) => project_id === fixtureIds.project)).toBe(true);
+});
+
+test("a rerun in flight cannot be sent a second time", async ({ page, request }, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${scenario(subject)}/launch-delay?milliseconds=3000`);
+  await login(page, jobRerun, testInfo);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  // Sent twice in one gesture, before any answer and before the control could have been redrawn.
+  await page.getByRole("button", { name: "Run", exact: true }).dblclick();
+  await expect(
+    dialog.getByText(
+      "This launch has been sent. It cannot be sent again until the Data Manager answers it.",
+    ),
+  ).toBeVisible();
+  // The Data Manager creates an instance per request it accepts, so two submissions of one rerun
+  // would run the same work twice.
+  expect(await instanceLaunches(request, subject)).toHaveLength(1);
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${jobRerun}`);
+
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.launchedInstance}`,
+  );
+  expect(await instanceLaunches(request, subject)).toHaveLength(1);
 });
 
 test("an instance read that merely failed is retried without leaving the project", async ({

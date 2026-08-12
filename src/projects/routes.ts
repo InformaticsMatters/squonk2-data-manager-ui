@@ -83,13 +83,21 @@ type RunDefinitionRoute = {
   };
 }[RunDefinitionType];
 
+/**
+ * Whether the addressed instance's rerun is open. Only an instance names a job that can be run
+ * again, so only its own route carries this: the collection decides whether the value exists at
+ * all, and a rerun therefore cannot be addressed for a task or a running workflow.
+ */
+type ResultRerunState = { rerun?: true };
+
 type ResultRoute = {
-  [TCollection in ResultCollection]: ResultsState & {
-    kind: "result";
-    projectId: ProjectId;
-    collection: TCollection;
-    resultId: ResultIdByCollection[TCollection];
-  };
+  [TCollection in ResultCollection]: ResultsState &
+    (TCollection extends "instances" ? ResultRerunState : unknown) & {
+      kind: "result";
+      projectId: ProjectId;
+      collection: TCollection;
+      resultId: ResultIdByCollection[TCollection];
+    };
 }[ResultCollection];
 
 export type ProjectRoute =
@@ -174,6 +182,14 @@ const filterQuery = <TValue extends string>(
   order: readonly TValue[],
 ) => [...searchQuery(state.search), ["type", canonicalEnumValues(state.types, order)]] as const;
 
+/**
+ * The one spelling an open rerun has in a URL. A single canonical value is what makes every other
+ * spelling of the flag state the route does not own, so it is dropped rather than carried.
+ */
+const rerunQueryValue = "1";
+
+const isRerunFlag = (value: string) => value === rerunQueryValue;
+
 const namesFilesystemPath = (value: string) => canonicalFilesystemPath(value) !== null;
 
 /** The canonical spelling of a path, or a rejection naming what it was supposed to be. */
@@ -245,6 +261,17 @@ const subscriptionQuery = (subscriptionId: string | undefined) =>
     ],
   ] as const;
 
+/**
+ * Where one result lives. Every link to a result and to any view of it is built from here, so the
+ * collection that placed it and the identity that collection accepts are checked once.
+ */
+const resultPath = (projectId: string, collection: ResultCollection, resultId: string) =>
+  `/projects/${assertProjectId(projectId)}/results/${collection}/${assertRouteValue(
+    resultId,
+    (value) => parseResultId(collection, value) !== null,
+    `${collection} result ID`,
+  )}`;
+
 export const projectLinks = {
   index: (state: SearchState = {}) => buildHref("/projects", searchQuery(state.search)),
   create: ({ subscriptionId }: { subscriptionId?: string } = {}) =>
@@ -289,14 +316,17 @@ export const projectLinks = {
     resultId: string,
     state: ResultsState = {},
   ) =>
-    buildHref(
-      `/projects/${assertProjectId(projectId)}/results/${collection}/${assertRouteValue(
-        resultId,
-        (value) => parseResultId(collection, value) !== null,
-        `${collection} result ID`,
-      )}`,
-      filterQuery(state, resultFilterTypes),
-    ),
+    buildHref(resultPath(projectId, collection, resultId), filterQuery(state, resultFilterTypes)),
+  /**
+   * The addressed instance with its rerun open. It is built from the instance's own collection, so
+   * a rerun is only ever addressed for an instance, and it carries the same Results list state the
+   * instance's own route does — a rerun is a view of one instance rather than a section of its own.
+   */
+  resultRerun: (projectId: string, instanceId: string, state: ResultsState = {}) =>
+    buildHref(resultPath(projectId, "instances", instanceId), [
+      ...filterQuery(state, resultFilterTypes),
+      ["rerun", rerunQueryValue],
+    ]),
   manage: (projectId: string) => `/projects/${assertProjectId(projectId)}/manage`,
 };
 
@@ -502,8 +532,27 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
       return localNotFoundRoute("projects", "results", projectId);
     }
     const state = parseResultsState(searchParams);
-    const route = { kind: "result", projectId, collection, resultId, ...state } as ResultRoute;
-    return validRoute(location, route, projectLinks.result(projectId, collection, resultId, state));
+    // Only an instance has a job to run again, so only its collection can carry an open rerun.
+    // Anywhere else the flag names nothing this route owns, and is dropped with the rest of the
+    // state a Results route does not own.
+    const rerun =
+      collection === "instances" &&
+      readOptionalQuery(searchParams, "rerun", isRerunFlag) !== undefined;
+    const route = {
+      kind: "result",
+      projectId,
+      collection,
+      resultId,
+      ...state,
+      ...(rerun ? { rerun: true } : {}),
+    } as ResultRoute;
+    return validRoute(
+      location,
+      route,
+      rerun
+        ? projectLinks.resultRerun(projectId, resultId, state)
+        : projectLinks.result(projectId, collection, resultId, state),
+    );
   }
 
   if (segments.length === 3 && segments[2] === "manage") {

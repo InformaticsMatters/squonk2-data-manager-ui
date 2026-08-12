@@ -776,7 +776,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
         {
           application_id: "acceptance-application",
           application_specification: JSON.stringify({
-            variables: { inputFile: "file://library.smi" },
+            variables: { batchSize: 250, inputFile: "file://library.smi" },
           }),
           application_type: "JOB",
           application_version: "1.0.0",
@@ -902,14 +902,39 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     }),
     jobDetails: Object.fromEntries(
       [
-        { id: 1, disabled: false, job: "acceptance-job", name: "Acceptance Job", version: "1.0.0" },
-        { id: 2, disabled: false, job: "acceptance-job", name: "Acceptance Job", version: "2.0.0" },
+        {
+          id: 1,
+          disabled: false,
+          job: "acceptance-job",
+          name: "Acceptance Job",
+          version: "1.0.0",
+          // The one job that declares an option of its own, so what an existing instance was run
+          // with is something a rerun can be seen to have started from. It is an option rather than
+          // an input, because a job that declares no required input is one a launch is offered for
+          // with nothing entered.
+          variables: {
+            options: {
+              type: "object",
+              properties: { batchSize: { title: "Batch size", type: "integer" } },
+            },
+            order: { options: ["batchSize"] },
+          },
+        },
+        {
+          id: 2,
+          disabled: false,
+          job: "acceptance-job",
+          name: "Acceptance Job",
+          version: "2.0.0",
+          variables: undefined,
+        },
         {
           id: 3,
           disabled: true,
           job: "unavailable-job",
           name: "Unavailable Job",
           version: "1.0.0",
+          variables: undefined,
         },
       ].map((detail) => [
         detail.id,
@@ -927,6 +952,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
           job: detail.job,
           name: detail.name,
           required_assets: [],
+          variables: detail.variables,
           version: detail.version,
         }),
       ]),

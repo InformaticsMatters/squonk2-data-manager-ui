@@ -4,6 +4,7 @@ import { ListItem, ListItemText } from "@mui/material";
 
 import { type ResultInstanceLifecycle } from "../../projects/instanceFacts";
 import { type ResultCapabilities } from "../../projects/resultCapabilities";
+import { type RerunTarget } from "../../projects/resultRerun";
 import { type ResultsState } from "../../projects/routes";
 import { InstanceProgress } from "./InstanceProgress";
 import { InstanceResultCard } from "./InstanceResultCard";
@@ -20,6 +21,8 @@ export interface ResultInstanceDetailProps {
    * inside that project.
    */
   projectId: string;
+  /** What running this instance's job again would target, or `null` where nothing may be run. */
+  rerunTarget: RerunTarget | null;
   /** Results list state this card's links preserve. */
   resultsState?: ResultsState;
   /** Called once the Data Manager has accepted the instance's termination or deletion. */
@@ -55,6 +58,7 @@ export const ResultInstanceDetail = ({
   instanceId,
   lifecycle,
   projectId,
+  rerunTarget,
   resultsState,
   onRemoved,
 }: ResultInstanceDetailProps) => (
@@ -65,6 +69,7 @@ export const ResultInstanceDetail = ({
     instance={instance}
     instanceId={instanceId}
     projectId={projectId}
+    rerunTarget={rerunTarget}
     resultsState={resultsState}
     onRemoved={onRemoved}
   >

@@ -161,15 +161,30 @@ test.describe("Rerun composition ownership", () => {
   test("nothing offers or opens a rerun without a target that was resolved for it", () => {
     // The control, the card that places it, and the modal all read the one resolved target, so a
     // rerun cannot be offered for an instance that has none or addressed for a project it does not
-    // name.
-    expect(source("components/results/RerunJobButton.tsx")).toContain(
-      "projectLinks.resultRerun(target.projectId, target.instanceId, resultsState)",
+    // name. Each is matched on the decision rather than its punctuation, so reformatting the JSX
+    // around it cannot fail this.
+    const button = source("components/results/RerunJobButton.tsx");
+    // The link is composed from the target alone: no other project or instance reaches it.
+    expect(button).toMatch(
+      /projectLinks\.resultRerun\(\s*target\.projectId,\s*target\.instanceId/u,
     );
-    expect(source("components/instances/InstanceResultCard.tsx")).toContain(
-      "rerunTarget === null ? null : (",
+    expect(button).not.toMatch(/instance\.project_id|routeProjectId|owningProjectId/u);
+    // A card with no target offers no control, rather than offering one that composes nothing.
+    expect(source("components/instances/InstanceResultCard.tsx")).toMatch(
+      /rerunTarget === null\s*\?\s*null/u,
     );
-    expect(source("projects/ProjectResultDetail.tsx")).toContain(
-      "route.rerun === true && rerunTarget !== null",
+    // A route asking for a rerun opens one only where the instance beneath it offers one.
+    expect(source("projects/ProjectResultDetail.tsx")).toMatch(
+      /route\.rerun === true\s*&&\s*rerunTarget !== null/u,
     );
+  });
+
+  test("an answered rerun leaves no route behind that would offer it again", () => {
+    // The rerun's own route is spent once the Data Manager has answered it. Adding the created
+    // instance instead of replacing it would leave a sendable rerun of work that has just been run
+    // one Back away, so success replaces exactly as Close does.
+    const detail = source("projects/ProjectResultDetail.tsx");
+    expect(detail).not.toMatch(/router\.push/u);
+    expect(detail).toMatch(/onLaunched=\{\(instanceId\) =>\s*void router\.replace/u);
   });
 });

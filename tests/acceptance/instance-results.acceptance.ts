@@ -484,12 +484,15 @@ test("a rerun opens as a route of the instance, prefilled with what that instanc
   await expect(page.getByText("Docked poses")).toBeVisible();
 
   // Back leaves the rerun and restores the instance it was opened over.
+  await dialog.getByLabel("Batch size").fill("777");
   await page.goBack();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${jobDetail}`);
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.getByText("Succeeded")).toBeVisible();
 
-  // Forward reopens it, and it is still the same instance's own rerun.
+  // Forward reopens the same instance's own rerun, and it opens afresh: leaving the rerun's route
+  // ends the attempt it held, so what an abandoned attempt had typed is not carried back into the
+  // next one. A reopened rerun therefore always states what the instance itself was run with.
   await page.goForward();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${jobRerun}`);
   await expect(dialog.getByLabel("Batch size")).toHaveValue("250");
@@ -535,6 +538,39 @@ test("a rerun entered directly runs the instance's job in the project that owns 
   await page.getByRole("link", { name: "All results" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}`);
   await expect(page.getByRole("link", { name: "rerun-of-acceptance-instance" })).toBeVisible();
+});
+
+test("an answered rerun leaves no rerun behind for Back to run again", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, `${acceptanceResults}?search=Acceptance+Instance`, testInfo);
+
+  // The rerun is reached from the list, so the list's own state is what it carries.
+  const instanceCard = page
+    .locator(".MuiCard-root")
+    .filter({ has: page.getByRole("link", { name: "Acceptance Instance" }) });
+  await instanceCard.getByRole("button", { name: "Run again" }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${jobDetail}?search=Acceptance+Instance&rerun=1`,
+  );
+  await expect(page.getByRole("dialog")).toBeVisible();
+
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  // The created instance is opened with the list state the rerun was carrying, so returning to the
+  // list lands on the list the caller came from.
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.launchedInstance}?search=Acceptance+Instance`,
+  );
+
+  // An answered rerun has spent its route. Back therefore reaches the instance it was opened over,
+  // never a rerun of work that has just been run, so the same work cannot be run twice by going
+  // back and pressing Run again.
+  await page.goBack();
+  await expect(page).not.toHaveURL(/rerun=1/u);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(await instanceLaunches(request, subject)).toHaveLength(1);
 });
 
 test("a rerun addressed beneath a project that does not own the instance runs nothing", async ({
@@ -583,6 +619,19 @@ test("a project viewer is told what running an instance's job again requires", a
     page.getByText("You must be a project editor or administrator to run work in this project."),
   ).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${jobDetail}`);
+
+  // Entering the rerun route directly is the case the control could not withhold. The form opens
+  // and states what it was run with, because reading an instance is not the thing being withheld —
+  // but the same capability decides the launch, so nothing can be sent from it.
+  await page.goto(jobRerun);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByLabel("Batch size")).toHaveValue("250");
+  await expect(page.getByRole("button", { name: "Run", exact: true })).toBeDisabled();
+  await expect(
+    dialog.getByText("You must be a project editor or administrator to run work in this project."),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${jobRerun}`);
 });
 
 test("a refused rerun is withheld and a failed one stays sendable in place", async ({

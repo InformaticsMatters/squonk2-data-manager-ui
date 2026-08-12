@@ -171,10 +171,20 @@ const InstanceResult = ({
                 onClose={closeRerun}
                 // A launch is only reported once the Data Manager has accepted it, so the instance
                 // this opens is one that exists — at its own canonical Results route, inside the
-                // project that ran it.
+                // project that ran it, carrying the same Results list state the rerun was opened
+                // with.
+                //
+                // An answered rerun has spent its route, so it is replaced rather than added to:
+                // left behind, that route would put a rerun of work that has just been run one Back
+                // away from the instance it created, offering it afresh and sendable.
                 onLaunched={(instanceId) =>
-                  void router.push(
-                    projectLinks.result(rerunTarget.projectId, "instances", instanceId) as never,
+                  void router.replace(
+                    projectLinks.result(
+                      rerunTarget.projectId,
+                      "instances",
+                      instanceId,
+                      state,
+                    ) as never,
                   )
                 }
               />

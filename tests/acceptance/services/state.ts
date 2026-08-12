@@ -210,6 +210,11 @@ export type ScenarioState = {
    * retried file is answered by a task that has not already settled.
    */
   uploadTaskIds: string[];
+  /**
+   * The uploads that named an existing dataset, by the task each was given. A version only exists
+   * once its task has settled successfully, so the fixture adds it then rather than at acceptance.
+   */
+  versionUploadTasks: Map<string, { datasetId: string; fileName: string; type: string }>;
 };
 
 const scenarios = new Map<string, ScenarioState>();
@@ -240,6 +245,7 @@ export const resetScenario = (subject: string, profile: ScenarioProfile = "defau
     runFailures: [],
     runningWorkflowStage: "done",
     uploadTaskIds: [],
+    versionUploadTasks: new Map(),
   };
   scenarios.set(subject, state);
   return state;

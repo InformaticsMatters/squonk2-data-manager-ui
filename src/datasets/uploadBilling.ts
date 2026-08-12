@@ -12,6 +12,14 @@ import { isUnitId } from "../routing/identifiers";
 /** A unit an upload can be billed to, kept with the organisation the generated index grouped it under. */
 export type BillingUnit = { organisation: OrganisationAllDetail; unit: UnitAllDetail };
 
+/** Every unit the generated index names, each kept with the organisation it grouped it under. */
+export const billingUnitsOf = (groups: readonly OrganisationUnitsGetResponse[]): BillingUnit[] =>
+  groups.flatMap(({ organisation, units }) => units.map((unit) => ({ organisation, unit })));
+
+/** How a billing unit is named wherever one is shown, so no two screens name the same unit twice. */
+export const billingUnitLabel = ({ organisation, unit }: BillingUnit) =>
+  `${unit.name} — ${organisation.name}`;
+
 /**
  * Which units a dataset upload may name as its billing context. The Data Manager requires a
  * `unit_id` on every upload, and the generated unit index is the only thing that says whether the
@@ -20,10 +28,7 @@ export type BillingUnit = { organisation: OrganisationAllDetail; unit: UnitAllDe
  */
 export const eligibleBillingUnits = (
   groups: readonly OrganisationUnitsGetResponse[],
-): BillingUnit[] =>
-  groups.flatMap(({ organisation, units }) =>
-    units.filter((unit) => unit.caller_is_member).map((unit) => ({ organisation, unit })),
-  );
+): BillingUnit[] => billingUnitsOf(groups).filter(({ unit }) => unit.caller_is_member);
 
 /**
  * The billing unit an upload will use. `remembered` is the one convenience this form allows: the

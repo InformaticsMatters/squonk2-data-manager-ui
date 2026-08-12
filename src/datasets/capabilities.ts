@@ -1,5 +1,7 @@
 import { type DatasetSummary, type DatasetVersionSummary } from "@/api/data-manager";
 
+import { type InheritedBillingUnit } from "./versionBilling";
+
 export type DatasetCapability =
   | { status: "disabled"; reason: string }
   | { status: "enabled"; reason?: string }
@@ -101,6 +103,32 @@ export const evaluateDatasetUploadCapability = ({
         reason:
           "You must be a member of a unit to upload a dataset. Ask a unit member to add you in Administration.",
       };
+};
+
+/**
+ * Whether a new version of this dataset can be uploaded.
+ *
+ * A version is billed to the unit the dataset already lives in, so the action needs two separate
+ * things: the caller's authority over the dataset, which every other dataset mutation asks for the
+ * same way, and a billing ancestry this client actually established. Authority answers first,
+ * because a caller who could not upload at all should not be told about a unit instead. Ancestry
+ * still being read is stated as itself rather than as an ancestry that is missing.
+ */
+export const evaluateDatasetVersionUploadCapability = ({
+  billing,
+  ...facts
+}: DatasetCapabilityFacts & { billing: InheritedBillingUnit }): DatasetCapability => {
+  const authority = evaluateDatasetEditAuthority(facts);
+  if (authority.status !== "enabled") {
+    return authority;
+  }
+  if (billing.kind === "pending") {
+    return {
+      status: "disabled",
+      reason: "The unit this dataset is billed to is still being established.",
+    };
+  }
+  return billing.kind === "unresolved" ? { status: "disabled", reason: billing.reason } : authority;
 };
 
 /**

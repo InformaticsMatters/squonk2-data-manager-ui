@@ -41,18 +41,12 @@ export const Dropzone: FC<DropzoneProps> = ({
         errors: [],
         // Give files UUIDs to keep track
         id: nanoid(),
-        progress: 0,
-        taskId: null,
-        done: false,
       }));
       const mappedRejected = rejectedFiles.map((rejection) => ({
         ...rejection,
         errors: [...rejection.errors],
         mimeType: getMimeFromFileName(rejection.file.name, mimeLookup),
         id: nanoid(),
-        progress: 0,
-        taskId: null,
-        done: false,
       }));
 
       // TODO: merge the previous files better as this currently overwrites instead of append

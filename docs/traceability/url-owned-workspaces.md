@@ -25,7 +25,8 @@ This matrix records the production contracts introduced for issues
 [#1937](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1937), and
 [#1938](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1938), and
 [#1939](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1939), and
-[#1940](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1940). Later vertical
+[#1940](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1940), and
+[#1941](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1941). Later vertical
 workspace tickets extend this file with their screens, capabilities, commands, and lifecycle evidence.
 
 ## Route And Link Contracts
@@ -282,6 +283,20 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 | UPLOAD-10   | Retry and reset           | A refused request, a nonzero task, an accepted file, a successful file, and a closed form                                         | Sending is decided by the file's own record, so neither a retry nor a submission re-sends work the Data Manager already holds; closing keeps everything not yet processed                                                                                                  | Sendability matrix; request-failure and nonzero-processing acceptance journeys                                                                                                             |
 | UPLOAD-11   | Invalidation on success   | A file whose task settles with exit code zero                                                                                     | The generated dataset collection is invalidated only then, and only then does the billing unit become worth remembering                                                                                                                                                    | Explicit-choice acceptance journey, which observes the dataset collection re-read after the task settled; the settled record remains the sole invalidation site under a strict review gate |
 
+## Dataset Version Upload Contracts
+
+| Contract ID | Area                    | Input or fixture                                                                                             | Expected external outcome                                                                                                                                                                                                                                                         | Automated evidence                                                                                                                                                      |
+| ----------- | ----------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| VERSION-01  | One latest-version rule | Versions listed out of order, a single version, and none at all                                              | The highest version is the latest wherever it is asked for, so canonicalisation, the displayed successor, and the destination a deletion leaves cannot name different versions                                                                                                    | `tests/contracts/dataset-version-upload.node.ts` latest-version cases; dataset convenience-route acceptance journey                                                     |
+| VERSION-02  | Inventory scopes        | An organisation the caller belongs to, a member unit under an organisation it does not, and non-member units | The generated inventory is asked once per scope the caller may ask about and never about a unit it is outside, because that read is the only generated source of which unit holds a dataset                                                                                       | Inventory scope cases                                                                                                                                                   |
+| VERSION-03  | Inherited billing unit  | Owner and editor reports, agreeing versions, disagreeing reports, and a unit the caller's index omits        | The dataset's own unit is resolved from the inventory and named from the generated organisation/unit index; a unit the index omits keeps its identity and a disagreement is a conflict rather than a guess                                                                        | Billing ancestry and inherited-unit cases                                                                                                                               |
+| VERSION-04  | Read-only inheritance   | A version upload opened after entering a project of another unit                                             | The billing unit is the dataset's own, shown disabled and never chosen, whatever unit the shell last selected; the request carries that unit                                                                                                                                      | `tests/acceptance/dataset-version-upload.acceptance.ts` inherited-unit journey and its request diagnostics                                                              |
+| VERSION-05  | Unestablished ancestry  | A read still arriving, one that failed, an answer naming no unit, and a dataset with no version at all       | Upload stays discoverable and is disabled beside a concise reason; a read still coming, one that will not come, and an answer that named nothing are each stated as themselves                                                                                                    | Freshness and inherited-unit cases; unresolved-billing acceptance journey, which forces the refused action and observes nothing sent                                    |
+| VERSION-09  | Parent-scoped authority | A caller who owns the latest version, one who owns only an older one, an editor, and unconfirmed facts       | Authority rests on the version being succeeded rather than on whichever version is displayed, is answered before billing, and unconfirmed facts still defer to the server                                                                                                         | Version upload capability cases                                                                                                                                         |
+| VERSION-06  | Retained identity       | A dropped file whose name and type differ from the latest version's                                          | The new version is uploaded under the latest version's own filename and type against the canonical dataset identity, and only the extra variables that type asked for travel with it                                                                                              | Version upload input cases; inherited-unit journey's `as_filename`, `dataset_type`, and `dataset_id` diagnostics                                                        |
+| VERSION-07  | Proven task semantics   | Request failure, transport failure, exit-zero, nonzero, transient status failure, retry, and reset           | A version answers to the same classifier, poll interval, backoff, sendability, and settlement as a new dataset, so a nonzero task is never a success and a temporarily unreadable one never fails                                                                                 | `tests/contracts/dataset-upload.node.ts` task matrices, which `useDatasetUploadState.ts` is the single consumer of; refused, nonzero, and transient acceptance journeys |
+| VERSION-08  | Success without drift   | A version whose task settles with exit code zero, its form closed while it was still processing              | The task is watched by the action rather than the dialog, so a closed form still settles it; the collection is invalidated only then, the open detail keeps its exact version route, and the dataset's own route then canonicalises to the version the Data Manager actually made | Inherited-unit journey's close-while-processing, post-settlement collection re-read, retained route, reset form, and canonicalisation to version 3                      |
+
 ## Dataset Attachment Contracts
 
 | Contract ID | Area                   | Input or fixture                                                                                                                                  | Expected external outcome                                                                                                                                                                                                                                                                                                     | Automated evidence                                                                                                                                                                                  |
@@ -314,13 +329,26 @@ workspace tickets extend this file with their screens, capabilities, commands, a
 
 - `src/projects/routes.ts`, `src/datasets/routes.ts`, and `src/administration/routes.ts` are the only
   family-owned route/link interfaces.
-- `src/datasets/uploadLifecycle.ts` is the only classifier of a new dataset upload's request and
-  task state, and `src/datasets/useDatasetUploadCommands.ts` is its only command owner; no upload
-  screen holds a query client or issues the upload endpoint itself. `src/datasets/uploadBilling.ts`
-  owns billing eligibility, the remembered choice, and subscription recovery, and neither module
-  reads selected unit or organisation state. Adding a version to an existing dataset still runs
-  through `src/components/uploads/ProgressBar.tsx` and has not been migrated; see the attachment
-  note below for how a dataset version reaches a project.
+- `src/datasets/uploadLifecycle.ts` is the only classifier of a dataset upload's request and task
+  state, and `src/datasets/useDatasetUploadCommands.ts` is its only command owner; no upload screen
+  holds a query client or issues the upload endpoint itself. `src/datasets/useDatasetUploadState.ts`
+  is the only place an upload's task is polled and the only place a settled outcome is written back,
+  so a new dataset and a new version of one classify, back off, and settle identically.
+  `src/features/DatasetUpload/DatasetUploadProgress.tsx` is the only place an upload's request,
+  task, failure, and retry are presented, so a new dataset and a new version say the same things.
+  `src/datasets/uploadBilling.ts` owns billing eligibility, the remembered choice, subscription
+  recovery, and how a billing unit is named, and `src/datasets/versionBilling.ts` owns what a
+  _version_ inherits:
+  which inventory scopes the caller may read, which unit the generated inventory reports a dataset
+  against, and how that unit is named from the generated organisation/unit index.
+  `src/datasets/useDatasetVersionBilling.ts` is the only place those reads are gathered. No module
+  in either path reads selected unit or organisation state, so a version is billed to the dataset's
+  own unit whatever the shell is showing. See the attachment note below for how a dataset version
+  reaches a project.
+- `src/datasets/resolveDatasetVersion.ts` states the family's one latest-version rule. Route
+  canonicalisation, the version a detail offers as a successor, and the destination
+  `src/datasets/mutations.ts` leaves after a deletion all ask it, so no screen recomputes which
+  version of a dataset is its latest.
 - `src/datasets/attachment.ts` is the only place that decides which projects a dataset version may
   be attached to, how one is named, and how an attachment's input is shaped and its failure
   reported. Eligibility reads the generated project collection's own membership lists alone, so it
@@ -338,9 +366,8 @@ workspace tickets extend this file with their screens, capabilities, commands, a
   work they are waiting for and share that single settlement rule and that single ledger, so a done
   task with a non-zero or missing exit code can never read as success in one command and as a failure
   in the other, and neither can send work the Data Manager already accepted a second time. Uploads
-  are not commands of this kind: a file's own record is polled by the screen holding it through
-  `uploadLifecycle.ts`, and adding a version through `src/components/uploads/ProgressBar.tsx` has not
-  been migrated at all.
+  are not commands of this kind: an upload's own record is held by the screen that entered it and
+  polled through `uploadLifecycle.ts`, which is now true of adding a version as well.
 - `src/administration/subscriptionFacts.ts` is the only place a generated product is read as a
   subscription: what kind it is, what it is called, what it costs, what claims it, and which
   organisation and unit own it. It judges no authority and reads no caller state. A product type

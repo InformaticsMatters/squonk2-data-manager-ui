@@ -246,6 +246,25 @@ const multipartField = (body: string, name: string) => {
   return part?.split("\r\n\r\n")[1]?.replace(/\r\n$/u, "");
 };
 
+/** The named text fields of an upload, which is what a test can hold the request to. */
+const uploadFieldNames = [
+  "as_filename",
+  "dataset_id",
+  "dataset_type",
+  "format_extra_variables",
+  "unit_id",
+] as const;
+
+const multipartFields = (
+  body: string,
+): Partial<Record<(typeof uploadFieldNames)[number], string>> =>
+  Object.fromEntries(
+    uploadFieldNames.flatMap((name) => {
+      const value = multipartField(body, name);
+      return value === undefined ? [] : [[name, value]];
+    }),
+  );
+
 /** Everything at or beneath one directory, which is what deleting or moving it must carry. */
 const beneath = (path: string, candidate: string) =>
   candidate === path || candidate.startsWith(`${path}/`);
@@ -581,10 +600,8 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     });
   }
   if (url.pathname === "/dataset" && request.method === "POST") {
-    state.upload = {
-      body: await readBody(request),
-      contentType: request.headers["content-type"] ?? "",
-    };
+    const body = await readBody(request);
+    state.upload = { body, contentType: request.headers["content-type"] ?? "" };
     if (state.uploadFailure) {
       return json(
         response,
@@ -601,6 +618,17 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
         ? fixtureIds.task
         : `task-55555555-5555-5555-5555-${String(state.uploadTaskIds.length).padStart(12, "0")}`;
     state.uploadTaskIds.push(taskId);
+    // An upload that named a dataset is a new version of it, and the fields it carried are what
+    // that version will be, so a request that dropped the name or the type is recognisable rather
+    // than believable once the version appears.
+    const uploadFields = multipartFields(body.toString());
+    if (uploadFields.dataset_id) {
+      state.versionUploadTasks.set(taskId, {
+        datasetId: uploadFields.dataset_id,
+        fileName: uploadFields.as_filename ?? "uploaded",
+        type: uploadFields.dataset_type ?? "",
+      });
+    }
     return json(response, 202, { ...state.fixtures.uploadResponse, task_id: taskId });
   }
   if (
@@ -1399,6 +1427,30 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       state.attachmentTasks.delete(taskId);
       state.attachmentPollingIndexes.delete(taskId);
     }
+    const versionUpload = state.versionUploadTasks.get(taskId);
+    if (responseTask.done && responseTask.exit_code === 0 && versionUpload) {
+      const held = state.fixtures.dataset.datasets.find(
+        (candidate) => candidate.dataset_id === versionUpload.datasetId,
+      );
+      if (held) {
+        const next = Math.max(0, ...held.versions.map(({ version }) => version)) + 1;
+        held.versions = [
+          {
+            file_name: versionUpload.fileName,
+            owner: subject,
+            processing_stage: "DONE",
+            projects: [],
+            published: "2026-08-12T03:04:05Z",
+            size: 32,
+            source_ref: versionUpload.fileName,
+            type: versionUpload.type,
+            version: next,
+          },
+          ...held.versions,
+        ];
+      }
+      state.versionUploadTasks.delete(taskId);
+    }
     if (responseTask.done && responseTask.exit_code === 0 && deletionVersion !== undefined) {
       state.fixtures.dataset.datasets[0].versions =
         state.fixtures.dataset.datasets[0].versions.filter(
@@ -1995,7 +2047,13 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
       pollingIndex: state.pollingIndexes.get(fixtureIds.task) ?? 0,
       requests: state.requests,
       upload: state.upload
-        ? { bytes: state.upload.body.length, contentType: state.upload.contentType }
+        ? {
+            bytes: state.upload.body.length,
+            contentType: state.upload.contentType,
+            // The dataset, filename, type, and billing unit an upload named are carried in its
+            // body, so a test can only hold the request to them by reading them from there.
+            fields: multipartFields(state.upload.body.toString()),
+          }
         : undefined,
     });
   }

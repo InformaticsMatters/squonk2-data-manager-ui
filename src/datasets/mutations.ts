@@ -4,6 +4,7 @@ import {
   classifyTransportFailure,
   isTransientTransportFailure,
 } from "../api/runtime/classifyTransportFailure";
+import { latestDatasetVersion } from "./resolveDatasetVersion";
 
 /** The Data Manager task fields any dataset command that waits on one is settled by. */
 export type DatasetTask = { done: boolean; exit_code?: number };
@@ -50,18 +51,17 @@ export const datasetTaskLifecycle = (
     : { status: "failed", exitCode: task.exit_code };
 };
 
+/**
+ * Where a deletion leaves the caller: the latest of whatever the dataset still has. The family's
+ * one latest-version rule answers this too, so a deletion cannot land on a version the route would
+ * then canonicalise away from.
+ */
 export const nextVersionAfterDeletion = (
   versions: readonly DatasetVersionSummary[],
   deletedVersion: number,
 ): DatasetDeletionDestination => {
-  const nextVersion = versions
-    .filter(({ version }) => version !== deletedVersion)
-    .map(({ version }) => version)
-    .toSorted((left, right) => right - left)
-    .at(0);
-  return nextVersion === undefined
-    ? { status: "list" }
-    : { status: "version", version: nextVersion };
+  const next = latestDatasetVersion(versions.filter(({ version }) => version !== deletedVersion));
+  return next === undefined ? { status: "list" } : { status: "version", version: next.version };
 };
 
 export const datasetMutationFailureMessage = (

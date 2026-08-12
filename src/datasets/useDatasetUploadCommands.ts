@@ -9,6 +9,11 @@ import { type AxiosProgressEvent } from "axios";
 import { type DatasetUploadRecord, datasetUploadRequestFailure } from "./uploadLifecycle";
 
 export type DatasetUploadInput = {
+  /**
+   * The dataset this upload becomes the next version of. Absent for a new dataset, which the Data
+   * Manager gives an identity of its own.
+   */
+  datasetId?: string;
   /** Extra variables the file's own MIME type asked for, already shaped for the endpoint. */
   formatExtraVariables?: string;
   file: File;
@@ -40,6 +45,7 @@ export const useDatasetUploadCommands = () => {
         const data: DatasetPostBodyBody = {
           as_filename: input.name,
           dataset_file: input.file,
+          dataset_id: input.datasetId,
           dataset_type: input.mimeType,
           format_extra_variables: input.formatExtraVariables,
           skip_molecule_load: false,

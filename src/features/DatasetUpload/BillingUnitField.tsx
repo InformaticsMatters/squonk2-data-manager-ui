@@ -1,6 +1,10 @@
 import { MenuItem, TextField, Typography } from "@mui/material";
 
-import { type BillingUnit, type BillingUnitChoice } from "../../datasets/uploadBilling";
+import {
+  type BillingUnit,
+  type BillingUnitChoice,
+  billingUnitLabel,
+} from "../../datasets/uploadBilling";
 
 export interface BillingUnitFieldProps {
   choice: BillingUnitChoice;
@@ -39,9 +43,9 @@ export const BillingUnitField = ({
       value={choice.kind === "none" ? "" : choice.unitId}
       onChange={(event) => onChoose(event.target.value)}
     >
-      {eligible.map(({ organisation, unit }) => (
-        <MenuItem key={unit.id} value={unit.id}>
-          {unit.name} — {organisation.name}
+      {eligible.map((billingUnit) => (
+        <MenuItem key={billingUnit.unit.id} value={billingUnit.unit.id}>
+          {billingUnitLabel(billingUnit)}
         </MenuItem>
       ))}
     </TextField>

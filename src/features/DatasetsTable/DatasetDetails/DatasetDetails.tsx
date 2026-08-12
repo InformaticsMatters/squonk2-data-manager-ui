@@ -2,7 +2,7 @@ import { type FC } from "react";
 
 import { type DatasetSummary, type DatasetVersionSummary } from "@/api/data-manager";
 
-import { Container, List, Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 import { Labels } from "../../../components/labels/Labels";
 import { NewLabelButton } from "../../../components/labels/NewLabelButton";
@@ -15,6 +15,7 @@ import {
   evaluateDatasetLabelCapability,
 } from "../../../datasets/capabilities";
 import { type DatasetDeletionDestination } from "../../../datasets/mutations";
+import { latestDatasetVersion } from "../../../datasets/resolveDatasetVersion";
 import { useKeycloakUser } from "../../../hooks/useKeycloakUser";
 import { ManageDatasetEditorsSection } from "./ManageDatasetEditorsSection";
 import { NewVersionListItem } from "./NewVersionListItem";
@@ -66,7 +67,6 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({
   const labelCapability = evaluateDatasetLabelCapability(capabilityFacts);
   const editorCapability = evaluateDatasetEditorCapability(capabilityFacts);
   const deletionCapability = evaluateDatasetDeletionCapability(capabilityFacts);
-  const editable = labelCapability.status === "enabled";
 
   return (
     <ModalWrapper
@@ -79,11 +79,15 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({
       <Container maxWidth="md">
         <PageSection level={2} title="Dataset Actions">
           <>
-            {!!editable && (
-              <List>
-                <NewVersionListItem dataset={dataset} datasetName={datasetName} edge="end" />
-              </List>
-            )}
+            {/* A new version succeeds the dataset's latest one, which is the same version the
+                dataset's own route canonicalises to, not whichever version is being displayed. */}
+            <NewVersionListItem
+              caller={capabilityFacts.caller}
+              dataset={dataset}
+              datasetName={datasetName}
+              freshness={capabilityFreshness}
+              parent={latestDatasetVersion(dataset.versions)}
+            />
 
             <PageSection title="Editors">
               <ManageDatasetEditorsSection

@@ -1,31 +1,16 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { type FileError } from "react-dropzone";
 
-import { useGetTask } from "@/api/data-manager/task";
-
-import {
-  Alert,
-  Button,
-  Grid,
-  IconButton,
-  LinearProgress,
-  MenuItem,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Grid, IconButton, MenuItem, TextField, Typography } from "@mui/material";
 
 import { TwiddleIcon } from "../../components/uploads/TwiddleIcon";
 import { type UploadableFile } from "../../components/uploads/types";
-import {
-  classifyDatasetUpload,
-  datasetUploadIsRetryable,
-  datasetUploadPollInterval,
-  type DatasetUploadRecord,
-  settleDatasetUpload,
-} from "../../datasets/uploadLifecycle";
+import { type DatasetUploadRecord } from "../../datasets/uploadLifecycle";
+import { useDatasetUploadState } from "../../datasets/useDatasetUploadState";
 import { useFileExtensions } from "../../hooks/useFileExtensions";
 import { useMimeTypeLookup } from "../../hooks/useMimeTypeLookup";
 import { separateFileExtensionFromFileName } from "../../utils/app/files";
+import { DatasetUploadProgress } from "./DatasetUploadProgress";
 
 export interface SingleFileUploadWithProgressProps {
   errors: FileError[];
@@ -57,33 +42,7 @@ export const SingleFileUploadWithProgress = ({
   const composeNewFilePath = () => `${fileNameRef.current?.value}${fileExtRef.current?.value}`;
   const [stem, extension] = separateFileExtensionFromFileName(fileWrapper.file.name);
 
-  const taskId = "taskId" in record ? record.taskId : undefined;
-  const { data: task, error } = useGetTask(taskId ?? "", undefined, {
-    query: {
-      enabled: record.kind === "accepted",
-      // The interval is asked of the same classifier the display uses, so a file that is only
-      // temporarily unreadable keeps being polled while an uninterpretable answer stops.
-      refetchInterval: (query) =>
-        datasetUploadPollInterval(
-          classifyDatasetUpload({ record, task: query.state.data, taskError: query.state.error }),
-        ),
-      retry: false,
-    },
-  });
-
-  const state = classifyDatasetUpload({ record, task, taskError: error });
-
-  useEffect(() => {
-    // A record that already carries its outcome is never settled again, which is what keeps this
-    // effect from answering its own update.
-    if (settleDatasetUpload(record)) {
-      return;
-    }
-    const settled = settleDatasetUpload(state);
-    if (settled) {
-      onSettled(fileWrapper.id, settled);
-    }
-  }, [fileWrapper.id, onSettled, record, state]);
+  const state = useDatasetUploadState({ onSettled, record, uploadId: fileWrapper.id });
 
   const busy =
     state.kind === "sending" ||
@@ -91,13 +50,6 @@ export const SingleFileUploadWithProgress = ({
     state.kind === "processing" ||
     state.kind === "processing-unconfirmed";
   const done = state.kind === "processed";
-  const retryable = datasetUploadIsRetryable(record);
-  // A determinate bar needs a proportion the request actually reported; everything else the file is
-  // busy with has no measure, so it shows an indeterminate one.
-  const measuredProgress =
-    state.kind === "sending" && state.progress > 0 && state.progress < 100
-      ? state.progress
-      : undefined;
 
   return (
     <>
@@ -154,41 +106,12 @@ export const SingleFileUploadWithProgress = ({
           </IconButton>
         </Grid>
       </Grid>
-      {measuredProgress === undefined ? null : (
-        <LinearProgress value={measuredProgress} variant="determinate" />
-      )}
-      {busy && measuredProgress === undefined ? <LinearProgress /> : null}
-      {state.kind === "processing-unconfirmed" && (
-        <Typography color="text.secondary" variant="body2">
-          {state.reason}
-        </Typography>
-      )}
-      {!!done && (
-        <Typography color="success.main" variant="body2">
-          {fileWrapper.file.name} uploaded and processed.
-        </Typography>
-      )}
-      {retryable && "reason" in record ? (
-        <Alert
-          action={
-            <Button
-              aria-label={`Retry ${fileWrapper.file.name}`}
-              color="inherit"
-              size="small"
-              onClick={(event) => {
-                event.stopPropagation();
-                onRetry(fileWrapper.id);
-              }}
-            >
-              Retry
-            </Button>
-          }
-          severity="error"
-          sx={{ mt: 1 }}
-        >
-          {record.reason}
-        </Alert>
-      ) : null}
+      <DatasetUploadProgress
+        name={fileWrapper.file.name}
+        record={record}
+        state={state}
+        onRetry={() => onRetry(fileWrapper.id)}
+      />
       {errors.map((error) => (
         <Typography color="error" key={`${error.code}-${error.message}`}>
           {error.message}

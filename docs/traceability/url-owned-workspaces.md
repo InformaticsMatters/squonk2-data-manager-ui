@@ -1,33 +1,39 @@
 # URL-owned workspace traceability
 
-This matrix records the production contracts introduced for issues
-[#1915](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1915) and
-[#1917](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1917), and
-[#1918](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1918), and
-[#1919](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1919), and
-[#1920](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1920), and
-[#1921](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1921), and
-[#1922](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1922), and
-[#1923](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1923), and
-[#1924](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1924), and
-[#1925](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1925), and
-[#1926](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1926), and
-[#1927](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1927), and
-[#1928](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1928), and
-[#1929](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1929), and
-[#1930](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1930), and
-[#1931](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1931), and
-[#1932](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1932), and
-[#1933](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1933), and
-[#1934](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1934), and
-[#1935](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1935), and
-[#1936](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1936), and
-[#1937](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1937), and
-[#1938](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1938), and
-[#1939](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1939), and
-[#1940](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1940), and
-[#1941](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1941), and
-[#1944](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1944), and
+This matrix records the production contracts introduced for the URL-owned Project, Datasets and
+Administration architecture specified in
+[#1914](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1914), and delivered by
+its build tickets
+[#1915](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1915),
+[#1916](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1916),
+[#1917](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1917),
+[#1918](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1918),
+[#1919](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1919),
+[#1920](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1920),
+[#1921](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1921),
+[#1922](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1922),
+[#1923](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1923),
+[#1924](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1924),
+[#1925](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1925),
+[#1926](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1926),
+[#1927](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1927),
+[#1928](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1928),
+[#1929](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1929),
+[#1930](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1930),
+[#1931](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1931),
+[#1932](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1932),
+[#1933](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1933),
+[#1934](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1934),
+[#1935](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1935),
+[#1936](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1936),
+[#1937](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1937),
+[#1938](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1938),
+[#1939](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1939),
+[#1940](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1940),
+[#1941](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1941),
+[#1942](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1942),
+[#1943](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1943),
+[#1944](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1944),
 [#1945](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1945).
 
 With #1945 the matrix is complete: every retained screen, read, mutation, identifier, capability

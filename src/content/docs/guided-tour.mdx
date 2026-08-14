@@ -27,18 +27,18 @@ When finished use the _Logout_ option in the **Account** menu.
 
 More details can be found in the [Logging in](./how-to/login) How To guide.
 
-## Defining your context
+## Choosing a project
 
-Once you are logged in you need to define the project you want to work in.
-The best way to so this is to use the **Settings** option in the **Account** menu in the top right corner.
-The settings panel opens full screen (close it when finished).
+Once you are logged in, choose **Project** in the main navigation. This opens a searchable index of
+the projects you can reach in your current **Organisation**, each labelled with the **Unit** it
+belongs to. Selecting one opens that project's **Files**.
 
-You can select a **Context** which includes the **Organisation** and **Unit** within that Organisation that you want to
-work in and the **Project** you want to work in.
+The project you are working in is always the one in the address bar, so the page, its data and the
+link you can share always agree, and returning to the index is how you move to another project.
 
-More details can be found in the [Setting your work context](./how-to/context) How To guide.
+More details can be found in the [Choosing where you work](./how-to/context) How To guide.
 
-## The Project Data tab
+## Project Files
 
 This shows the contents (files and directories) in your project.
 The interface is a simple file browser a bit like Windows Explorer and probably doesn't need much explanation.
@@ -48,9 +48,10 @@ operations.
 
 Jobs and applications have full access to these project contents.
 
-## The Apps/Jobs tab
+## Project Run
 
-This is where you launch **Applications** and **Jobs** to do your work.
+This is where you launch **Applications**, **Jobs** and **Workflows** to do your work. Whatever you
+launch runs in the project in the address bar.
 
 Those that are available (defined by the system administrator) are displayed as "cards". You can type into the "Search"
 box to filter these using terms that are defined for each job or app. For instance jobs implemented using RDKit should
@@ -63,18 +64,19 @@ options.
 _Inputs_ are project files that form the input to the job.
 _Options_ are user specified parameters for execution of the job.
 
-Specify these inputs and options and click the _Run_ button at the bottom. The execution will be added to the bottom of
-the card. Click on it to see the execution details in the **Results** tab.
+Specify these inputs and options and click the _Run_ button at the bottom. A successful launch opens
+what it created under **Results**, so you can follow the work that was actually started.
 
 See the [Running jobs](./how-to/jobs) How To guide for more details.
 
 Launching an **Application** is very similar. Currently the only available application is a Jupyter Notebook.
 See the [Running applications](./how-to/applications) How To guide for more details.
 
-## The Results tab
+## Project Results
 
-This shows the execution of your **Applications** and **Jobs**. A high level summary of each running app or job is
-presented along with the ability to drill down into the specific details of each instance.
+This shows the execution of your **Applications**, **Jobs** and **Workflows** in the project you are
+in, and nothing from any other project. A high level summary of each one is presented along with the
+ability to drill down into the specific details of each instance.
 
 Details include the Status of the job and any events it might have generated. You are also able to view the input and output
 files and any log files that are generated.
@@ -83,9 +85,18 @@ When you are finished remember to TERMINATE your job or application to free up t
 
 See the [Inspecting job and application execution](./how-to/results) How To guide for more details.
 
-## The Datasets tab
+## Datasets
 
-TODO
+**Datasets** is one of the three main destinations, alongside **Project** and **Administration**. It
+lists every dataset you can reach, without you having to choose a unit first; a unit is asked for
+only as billing context when you upload.
+
+## Administration
+
+**Administration** is available to every signed-in user and holds **Organisation & access**,
+**Subscriptions**, **Charges**, and **Usage & inventory**. Ordinary actions you cannot use are
+disabled with a reason rather than removed, so it is clear what relationship or role a task
+requires. Actions that only a platform administrator can ever take are hidden instead.
 
 export default ({ children }) => (
   <Layout>

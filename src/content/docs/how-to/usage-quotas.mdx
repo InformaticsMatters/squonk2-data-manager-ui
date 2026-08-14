@@ -4,7 +4,6 @@ import { Container } from "@mui/material";
 
 import { DocsNav } from "../../../components/DocsNav";
 import Layout from "../../../layouts/Layout";
-import projectContext from "../../../pages/docs/assets/project-context.png";
 import ledger from "../../../pages/docs/assets/ledger.png";
 
 <Head>
@@ -17,36 +16,26 @@ import ledger from "../../../pages/docs/assets/ledger.png";
 
 ### Project summary
 
-The best starting point to find out about the usage and costs of your projects is the **Settings** page.
+The best starting point for one project is its **Manage** section: open the project and choose
+**Manage**. For a view across an organisation or unit, use **Usage & inventory** under
+**Administration**, which is read-only.
 
-<Image src={projectContext} alt="Project context" />
+A project's **Manage** section states the following as plain facts:
 
-This lets you look at all the projects in a particular using and see a high level summary of the usage stats.
-You will see information for:
+- Whether the project is public or private, its creator, and its administrators, editors and observers
+- The project tier (evaluation, bronze, silver or gold) and subscription type
+- Coins used, the coin allowance and the coin limit
+- Predicted spend, current burn rate, the billing day and the days remaining
+- Storage size, storage coins used, and instance coins used
+- The actions you can take on the project, with a reason given for any you cannot
 
-- Whether the project is public or private
-- The project creator and administrators
-- The project tier (evaluation, bronze, silver or gold)
-- A bar graph showing usage costs (see below for an explanation)
-- The number of instances used
-- The amount of storage used
-- The allowance (quota) in coins for your project
-- Actions for performing various operation on the project
-
-The usage bar shows your consumption in Squonk coins (or coins for short) and is colour coded as follows:
-
-1. Dark red - coins consumed by executing jobs and applications
-2. Light red - coins consumed storage
-3. Amber - coins predicted to be used by the end of the month based on your current amount of storage
-4. Green - coins predicted not to be consumed till the end of the month, assuming your storage does not change and you
-   run no more applications or jobs.
-
-If you move the mouse over one of these bar graphs then a more detailed listing of that usage is presented.
+Consumption is measured in Squonk coins (or coins for short). If the project's subscription has
+reached its coin limit, **Manage** says so and the actions that would spend more are disabled.
 
 ### Project charges
 
-The last icon in the list of actions in the project display allows you to open a detailed listing on the charges for a
-project. Charges accumulate over a period of a month (the billing period).
+**Charges** under **Administration** holds the detailed, read-only ledgers for an organisation, a
+unit or a product. Charges accumulate over a period of a month (the billing period).
 
 This is broken down into two sections, the first for processing charges (e.g. applications and jobs) the second for
 storage (assessed on a daily basis). Information is presented monthly, allowing you to select the billing month you are
@@ -57,12 +46,11 @@ interested in.
 Note in particular the _Charge_ column in the _Processing Charges_ table. This shows the cost of your jobs and
 applications. You will see that not all have an associated cost.
 
-You can also see a summary of charges for all your projects by clicking on the _Product_ link in the footer.
-Note: the term _product_ relates to the Account Server - a Data Manager _Project_ is created as an _Account Server_
-_product_, though the distinction is not that relevant for normal users.
-
-After clicking that link you see a table showing all your _projects_ and allowing you to drill down into any of them.
-You also see a table showing any _Dataset Subscriptions_ that you might have.
+**Subscriptions** under **Administration** lists the subscriptions behind your projects and datasets,
+grouped by organisation and unit, and lets you drill down into any of them.
+Note: subscriptions are Account Server _products_ - a Data Manager _Project_ is created as an
+_Account Server_ _product_ - and the Product ID is still shown in the technical details, though the
+distinction is not that relevant for normal users.
 
 export default ({ children }) => (
   <Layout>

@@ -4,45 +4,63 @@ import { Container } from "@mui/material";
 
 import { DocsNav } from "../../../components/DocsNav";
 import Layout from "../../../layouts/Layout";
-import projectContext from "../../../pages/docs/assets/project-context.png";
 
 <Head>
-  <title>Setting your work context - a How To guide</title>
+  <title>Choosing where you work - a How To guide</title>
 </Head>
 
 <DocsNav />
 
-## Setting your work context - a How To guide
+## Choosing where you work - a How To guide
 
-Most activity in Squonk Data Manager requires you to have selected a **project** you want to work in.
-We refer to this as the **Project context**, or just **context**.
-The best way to do this is to use the **Settings** menu in the top right corner.
-The settings panel opens full screen (close it when finished).
+Most activity in Squonk Data Manager happens inside a **project**. The project you are working in is
+always the one in the address bar: there is no separate context to set, and no project, unit,
+dataset or filter is remembered between visits. Your current **organisation** is remembered, because
+it is the identity the application is shown under. This means the page you are looking at, the data
+it shows, and the link you can share with a colleague always agree.
 
-You can select a **context** which includes the **organisation** and **unit** within that **organisation** that you want to
-work in. The administrators of that **organisation** and **unit** will need to have added you as member, or given you access to a
-**project** in the unit. See the [concepts document](/docs/concepts) for a description of these concepts.
+### Choosing a project
 
-<Image src={projectContext} alt="Project context" />
+Choose **Project** in the main navigation. This opens a searchable index of the projects you can
+reach in your current **organisation**, with the **unit** each one belongs to shown alongside it so
+that projects sharing a name can be told apart.
 
-Also note the _filter_ option at the top that allows to filter the projects tht are shown based on your role in the project.
-To see the project you want you may need to adjust this filter.
+Selecting a project opens its **Files**, and the project's name, unit and organisation stay visible
+while you work in it. A project workspace has four sections:
 
-If you not a member of a **unit** or **project** in a named **organisation** you can still create a **project** in the **Default**
-organisation. In that organisation you will have a **personal** **unit** that has the same name as your username. You can
-select the **Default** Organisation and your personal unit. These personal units are designed primarily for your own
-private use, though you can still make your projects **public** or add other people to your project so that you can collaborate.
+- **Files** - browse, upload and manage the project's files.
+- **Run** - find and launch applications, jobs and workflows.
+- **Results** - follow what you have launched.
+- **Manage** - project details, privacy, members, usage and deletion.
 
-One you have a **unit** selected then you can select a **project** from that unit, or create a new **project**.
+To work in a different project, return to the **Project** index and choose it. There is no selector
+that swaps the project underneath a page you already have open.
 
-Finally select the project you want to work in by checking the radio button next to the project name.
-When you close the settings dialog then you will be working in that **project**, and the name of the **organisation**,
-**unit** and **project** will be displayed in the top right corner.
+### Organisations and units
 
-Owners of an **organisation** can create a new **unit** within it if you want a different work space (e.g. research
-group, department etc.). The **Default** **organisation** cannot have **units** added to it other than a user's
-**personal** unit. The actions you see for managing **organisations**, **units** and **projects** will depend on your
-role in the selected **organisation**, **unit** and **project**.
+Your current **organisation** is shown as the application's identity. Changing it takes you Home
+first, so that content is never shown under an organisation it does not belong to. Opening a project
+that belongs to another organisation adopts that organisation before the project appears.
+
+A **unit** is billing context rather than something you browse in. It decides who pays for a project
+or a dataset upload, so you choose one while creating a project or uploading a new dataset, and not
+at any other time. See the [concepts document](/docs/concepts) for a description of these concepts.
+
+If you are not a member of a **unit** in a named **organisation** you can still create a project in
+the **Default** organisation, where you have a **personal unit** named after your username. Personal
+units are designed primarily for your own private use, though you can still make your projects
+public or add other people to your project so that you can collaborate.
+
+### Managing organisations and units
+
+Organisation and unit membership, privacy defaults, subscriptions, charges, and usage reports all
+live under **Administration**, which is available to every signed-in user. What you can change there
+depends on your role: ordinary actions you cannot use are disabled with a reason rather than
+removed, while actions only a platform administrator can ever take are hidden.
+
+Owners of an **organisation** can create a new **unit** within it if you want a different work space
+(e.g. research group, department etc.). The **Default** **organisation** cannot have **units** added
+to it other than a user's **personal** unit.
 
 export default ({ children }) => (
   <Layout>

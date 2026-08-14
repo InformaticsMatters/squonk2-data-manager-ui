@@ -1,34 +1,31 @@
 import { type DatasetSummary, type DatasetVersionSummary } from "@/api/data-manager";
 
+import {
+  type Capability,
+  type CapabilityFacts,
+  capabilityFactsAreConfirmed,
+  unconfirmedCapability,
+} from "../application/capability";
 import { type InheritedBillingUnit } from "./versionBilling";
 
-export type DatasetCapability =
-  | { status: "disabled"; reason: string }
-  | { status: "enabled"; reason?: string }
-  | { status: "hidden" };
+/** Datasets answer in the shared capability shape; the rules below are the family's own. */
+export type DatasetCapability = Capability;
 
+/** A dataset read can also be missing outright, which no other family distinguishes. */
 export type DatasetFactsFreshness = "current" | "missing" | "stale";
 
-type DatasetCapabilityFacts = {
-  caller: { username?: string };
+type DatasetCapabilityFacts = CapabilityFacts<DatasetFactsFreshness> & {
   dataset: DatasetSummary;
   version: DatasetVersionSummary;
-  freshness?: DatasetFactsFreshness;
 };
 
-const evaluateDatasetEditAuthority = ({
-  caller,
-  dataset,
-  version,
-  freshness = "current",
-}: DatasetCapabilityFacts): DatasetCapability => {
-  if (freshness !== "current" || !caller.username) {
-    return {
-      status: "enabled",
-      reason: "Your permission will be confirmed when you use this action.",
-    };
+const evaluateDatasetEditAuthority = (facts: DatasetCapabilityFacts): DatasetCapability => {
+  const { dataset, version } = facts;
+  const username = capabilityFactsAreConfirmed(facts) ? facts.caller.username : undefined;
+  if (username === undefined) {
+    return unconfirmedCapability;
   }
-  if (version.owner === caller.username || dataset.editors.includes(caller.username)) {
+  if (version.owner === username || dataset.editors.includes(username)) {
     return { status: "enabled" };
   }
   return { status: "disabled", reason: "You must be an owner or editor of this dataset." };

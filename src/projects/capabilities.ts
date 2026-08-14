@@ -1,14 +1,19 @@
 import { type UserAccountDetail } from "@/api/data-manager";
 
+import {
+  type Capability,
+  capabilityFactsAreConfirmed as factsAreConfirmed,
+  unconfirmedPermissionNotice,
+} from "../application/capability";
 import { type ProjectFileContent } from "./fileFacts";
 import { type ResultInstanceSettlement } from "./instanceFacts";
 import { type ResultTaskSettlement } from "./taskFacts";
 import { type ResultWorkflowSettlement } from "./workflowFacts";
 
-export type ProjectCapability =
-  | { status: "disabled"; reason: string }
-  | { status: "enabled"; reason?: string }
-  | { status: "hidden" };
+/** Projects answer in the shared capability shape; the rules below are the family's own. */
+export type ProjectCapability = Capability;
+
+export { capabilityIsEnabled, capabilityReason } from "../application/capability";
 
 /** `stale` covers both unresolved and refetching generated facts; neither confirms authority. */
 export type ProjectFactsFreshness = "current" | "stale";
@@ -57,16 +62,8 @@ export type ProjectCapabilityFacts = {
  */
 const unconfirmed = (requirement: string): ProjectCapability => ({
   status: "enabled",
-  reason: `${requirement} Your permission will be confirmed when you use this action.`,
+  reason: `${requirement} ${unconfirmedPermissionNotice}`,
 });
-
-/** Hidden capabilities never explain themselves; every other status may carry a reason. */
-export const capabilityReason = (capability: ProjectCapability): string | undefined =>
-  capability.status === "hidden" ? undefined : capability.reason;
-
-/** A control is offered only by an enabled capability, so the two can never disagree. */
-export const capabilityIsEnabled = (capability: ProjectCapability): boolean =>
-  capability.status === "enabled";
 
 export const resolveProjectRoles = (
   project: ProjectMembershipFacts,
@@ -99,9 +96,6 @@ export const resolvePlatformAdministrator = (
     (realmRoles ?? []).includes(administratorRole)
   );
 };
-
-const factsAreConfirmed = ({ caller, freshness = "current" }: ProjectCapabilityFacts) =>
-  freshness === "current" && !!caller.username;
 
 const roles = (facts: ProjectCapabilityFacts) =>
   resolveProjectRoles(facts.project, facts.caller.username);

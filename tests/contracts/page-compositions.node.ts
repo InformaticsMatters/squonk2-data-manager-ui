@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Fragment, Suspense } from "react";
 
 import { expect, test } from "@playwright/test";
 import { ErrorBoundary } from "@sentry/nextjs";
@@ -14,6 +14,7 @@ import {
 } from "../../src/application/PageCompositions";
 import { pagePolicies } from "../../src/application/pagePolicy";
 import { AuthenticationBoundary } from "../../src/components/auth/AuthenticationBoundary";
+import { ProjectOrganisationBoundary } from "../../src/projects/ProjectOrganisationBoundary";
 
 type ElementNode = { props: { children?: unknown }; type: unknown };
 
@@ -35,9 +36,13 @@ const onlyElement = (element: ElementNode) => {
 
 test.describe("production page compositions", () => {
   test("keeps public pages outside authentication and the application shell", () => {
+    // A public page is its content and the API client setup, wrapped in nothing that could
+    // authenticate it or give it application scope.
     const shell = createPublicComposition("content") as unknown as ElementNode;
 
-    expect((shell.type as { name?: string }).name).toBe("PublicShell");
+    // The composition is a bare fragment rather than any component of ours, so there is nothing
+    // here that could authenticate the page or give it application scope.
+    expect(typeof shell.type).not.toBe("function");
     expect(elementChildren(shell).map((child) => child.type)).toEqual([ApiClientSetup]);
   });
 
@@ -55,10 +60,13 @@ test.describe("production page compositions", () => {
     expect(Object.keys(applicationShell.props)).toEqual(["children"]);
   });
 
-  for (const policy of [
-    pagePolicies.projects("files"),
-    pagePolicies.datasets("list"),
-    pagePolicies.administration("charges"),
+  // Only Projects adds anything of its own around family content: its project may not mount until
+  // the owning organisation has been adopted. The other two families wrap their content in nothing,
+  // which is a fact about the composition rather than a component that exists to be named.
+  for (const [policy, expectedShell] of [
+    [pagePolicies.projects("files"), ProjectOrganisationBoundary],
+    [pagePolicies.datasets("list"), Fragment],
+    [pagePolicies.administration("charges"), Fragment],
   ] as const) {
     test(`renders real ${policy.kind} family boundaries and shell`, () => {
       const authentication = createFamilyComposition(policy, "content") as unknown as ElementNode;
@@ -78,9 +86,7 @@ test.describe("production page compositions", () => {
       expect(Object.keys(applicationShell.props)).toEqual(["children"]);
 
       const familyShell = onlyElement(applicationShell);
-      expect((familyShell.type as { name?: string }).name).toBe(
-        `${policy.kind[0].toUpperCase()}${policy.kind.slice(1)}Shell`,
-      );
+      expect(familyShell.type).toBe(expectedShell);
     });
   }
 });

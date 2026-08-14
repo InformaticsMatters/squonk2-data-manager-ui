@@ -25,7 +25,7 @@ import { Chips } from "../components/Chips";
 import { DataTable } from "../components/DataTable";
 import { DATE_FORMAT, TIME_FORMAT } from "../constants/datetimes";
 import { projectLinks } from "../projects/routes";
-import { isProjectId } from "../routing/identifiers";
+import { isProjectId, type OrganisationId, type UnitId } from "../routing/identifiers";
 import { withBasePath } from "../utils/app/basePath";
 import {
   useAccessFacts,
@@ -499,7 +499,7 @@ const UnitReport = ({
   );
 };
 
-const AddressedOrganisationReport = ({ organisationId }: { organisationId: string }) => {
+const AddressedOrganisationReport = ({ organisationId }: { organisationId: OrganisationId }) => {
   const addressed = useAddressedOrganisation(organisationId);
 
   return (
@@ -509,7 +509,7 @@ const AddressedOrganisationReport = ({ organisationId }: { organisationId: strin
   );
 };
 
-const AddressedUnitReport = ({ unitId }: { unitId: string }) => {
+const AddressedUnitReport = ({ unitId }: { unitId: UnitId }) => {
   const organisation = useUnitAncestry(unitId);
   const addressed = useAddressedUnit(unitId);
 

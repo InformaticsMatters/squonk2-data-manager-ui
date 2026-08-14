@@ -77,33 +77,32 @@ const decideParsedRoute = <TRoute extends FamilyRoute>(
   return { kind: "ready", route: parsed.route };
 };
 
+/**
+ * What a family brings to route resolution: its own parser, and the section each of its route kinds
+ * belongs to. Everything a family does with those two facts is the same, so it is written once here
+ * and each family supplies only the pair.
+ */
+const familyRouteContract =
+  <TRoute extends FamilyRoute>(
+    parse: (href: string) => RouteParseResult<TRoute>,
+    /** Exhaustive over the family's own route kinds where it is declared, read by kind here. */
+    sections: Readonly<Record<string, FamilyPagePolicy["section"]>>,
+  ) =>
+  (policy: FamilyPagePolicy, href: string): FamilyRouteDecision =>
+    decideParsedRoute(parse(href), policy, (route) => sections[route.kind] === policy.section);
+
+const familyRouteContracts: Record<
+  FamilyPagePolicy["kind"],
+  (policy: FamilyPagePolicy, href: string) => FamilyRouteDecision
+> = {
+  administration: familyRouteContract(parseAdministrationRoute, administrationSections),
+  datasets: familyRouteContract(parseDatasetRoute, datasetSections),
+  projects: familyRouteContract(parseProjectRoute, projectSections),
+};
+
 export const resolveFamilyRoute = (
   policy: FamilyPagePolicy,
   href: string,
   routerReady: boolean,
-): FamilyRouteDecision => {
-  if (!routerReady) {
-    return { kind: "pending" };
-  }
-
-  switch (policy.kind) {
-    case "projects":
-      return decideParsedRoute(
-        parseProjectRoute(href),
-        policy,
-        (route) => projectSections[route.kind] === policy.section,
-      );
-    case "datasets":
-      return decideParsedRoute(
-        parseDatasetRoute(href),
-        policy,
-        (route) => datasetSections[route.kind] === policy.section,
-      );
-    case "administration":
-      return decideParsedRoute(
-        parseAdministrationRoute(href),
-        policy,
-        (route) => administrationSections[route.kind] === policy.section,
-      );
-  }
-};
+): FamilyRouteDecision =>
+  routerReady ? familyRouteContracts[policy.kind](policy, href) : { kind: "pending" };

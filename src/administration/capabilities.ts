@@ -1,24 +1,38 @@
 import { type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
 
 import {
+  type Capability,
+  type CapabilityFacts,
+  capabilityFactsAreConfirmed as factsAreConfirmed,
+  unconfirmedCapability,
+} from "../application/capability";
+import {
   enforcedProductPrivacyConstraint,
   type ProductPrivacy,
   productPrivacyIsEnforced,
 } from "./privacy";
 
-export type AdministrationCapability =
-  | { status: "disabled"; reason: string }
-  | { status: "enabled"; reason?: string }
-  | { status: "hidden" };
+/** Administration answers in the shared capability shape; the rules below are the family's own. */
+export type AdministrationCapability = Capability;
+
+/**
+ * The shared capability vocabulary, offered under Administration's own names so that its features
+ * have one place to import from. `unconfirmedCapability` is what every Administration capability
+ * answers with when the facts behind it have not been established.
+ */
+export {
+  capabilityReason,
+  capabilityFactsAreConfirmed as factsAreConfirmed,
+  unconfirmedCapability,
+} from "../application/capability";
 
 /** `stale` covers both unresolved and refetching generated facts; neither confirms authority. */
 export type AccessFactsFreshness = "current" | "stale";
 
 export type AccessCaller = { isPlatformAdministrator: boolean; username?: string };
 
-export type OrganisationCapabilityFacts = {
+export type OrganisationCapabilityFacts = CapabilityFacts<AccessFactsFreshness> & {
   caller: AccessCaller;
-  freshness?: AccessFactsFreshness;
   /** Resolved from the generated default organisation resource, never from a name. */
   isDefaultOrganisation: boolean;
   organisation: Pick<OrganisationAllDetail, "caller_is_member" | "id" | "owner_id">;
@@ -44,30 +58,11 @@ export type PersonalUnitCapabilityFacts = {
   personalUnit: "absent" | "present";
 };
 
-/**
- * Facts that have not been established do not withhold an ordinary action: it stays available and
- * names the authority the server will confirm. Every Administration capability answers this way.
- */
-export const unconfirmedCapability: AdministrationCapability = {
-  status: "enabled",
-  reason: "Your permission will be confirmed when you use this action.",
-};
-
 /** A personal unit is the caller's own; the Account Server owns everything it declares. */
 const personalUnitIsFixed: AdministrationCapability = {
   status: "disabled",
   reason: "Personal units cannot be renamed or reconfigured.",
 };
-
-export const factsAreConfirmed = ({
-  caller,
-  freshness = "current",
-}: Pick<OrganisationCapabilityFacts, "caller" | "freshness">) =>
-  freshness === "current" && !!caller.username;
-
-/** Hidden capabilities never explain themselves; every other status may carry a reason. */
-export const capabilityReason = (capability: AdministrationCapability): string | undefined =>
-  capability.status === "hidden" ? undefined : capability.reason;
 
 export const isDefaultOrganisationResource = (
   organisationId: string,

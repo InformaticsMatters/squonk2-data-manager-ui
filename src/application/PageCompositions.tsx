@@ -1,4 +1,4 @@
-import { type ReactNode, Suspense } from "react";
+import { type ComponentType, Fragment, type ReactNode, Suspense } from "react";
 
 import { ErrorBoundary } from "@sentry/nextjs";
 import dynamic from "next/dynamic";
@@ -15,17 +15,17 @@ const EventStream = dynamic(
   { ssr: false },
 );
 
-const PublicShell = ({ children }: { children: ReactNode }) => children;
-const ProjectsShell = ({ children }: { children: ReactNode }) => (
-  <ProjectOrganisationBoundary>{children}</ProjectOrganisationBoundary>
-);
-const DatasetsShell = ({ children }: { children: ReactNode }) => children;
-const AdministrationShell = ({ children }: { children: ReactNode }) => children;
-const familyShells = {
-  projects: ProjectsShell,
-  datasets: DatasetsShell,
-  administration: AdministrationShell,
-} as const;
+/**
+ * What a family puts around its own content, for the families that need anything at all.
+ *
+ * Only Projects does: its content may not mount until the URL project's owning organisation has
+ * been adopted. A family with nothing to add is absent here rather than named by a component that
+ * hands its children straight back, so this map says which families have a boundary rather than
+ * making every family look like it has one.
+ */
+const familyShells: Partial<
+  Record<FamilyPagePolicy["kind"], ComponentType<{ children: ReactNode }>>
+> = { projects: ProjectOrganisationBoundary };
 
 /**
  * What every authenticated page is wrapped in, whatever it addresses.
@@ -43,10 +43,10 @@ const ApplicationShell = ({ children }: { children: ReactNode }) => (
 );
 
 export const createPublicComposition = (children: ReactNode) => (
-  <PublicShell>
+  <>
     <ApiClientSetup />
     {children}
-  </PublicShell>
+  </>
 );
 
 export const createApplicationComposition = (children: ReactNode) => (
@@ -58,7 +58,7 @@ export const createApplicationComposition = (children: ReactNode) => (
 );
 
 export const createFamilyComposition = (policy: FamilyPagePolicy, children: ReactNode) => {
-  const FamilyShell = familyShells[policy.kind];
+  const FamilyShell = familyShells[policy.kind] ?? Fragment;
   return (
     <AuthenticationBoundary>
       <ApiClientReadyBoundary>

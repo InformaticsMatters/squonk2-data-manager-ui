@@ -53,3 +53,7 @@ Triage uses the five canonical engineering-skill labels. See `docs/agents/triage
 ### Domain docs
 
 Domain documentation uses a single-context layout. See `docs/agents/domain.md`.
+
+### Playwright CLI
+
+Use the playwright-cli to use the browser

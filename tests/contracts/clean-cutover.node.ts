@@ -181,6 +181,8 @@ test.describe("persisted domain identity", () => {
     // a device preference, a direct-link history, or a record of work in flight — never a scope a
     // later visit could be resolved against.
     expect(sourcesMatching(/\bsetItem\(/u)).toEqual([
+      // Whether this tab has already signed in again to recover an unusable session.
+      "application/apiClientRecovery.ts",
       // The billing unit of the last successful upload.
       "datasets/uploadBilling.ts",
       // Records of a cross-service workflow this caller left in flight.

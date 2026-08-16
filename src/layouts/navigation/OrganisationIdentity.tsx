@@ -23,6 +23,16 @@ export const OrganisationIdentity = () => {
     }
   }, [organisationId, data, setOrganisation]);
 
+  // The organisation in effect is named from the list the caller can see, because that list names
+  // every organisation it offers. The addressed organisation's own resource is only readable by a
+  // member, its creator, or a platform administrator, so the default organisation — which an
+  // ordinary caller is none of — is refused there while still being a perfectly ordinary choice
+  // here. The detail read only completes a name the list could not supply.
+  const selected = data?.find((candidate) => candidate.id === organisationId) ?? organisation;
+  // Nothing is chosen only when nothing is known: an organisation that is in effect always names
+  // itself, however it came to be selected.
+  const label = selected?.name ?? (organisationId ? "Organisation" : "Choose organisation");
+
   const handleOrganisationChange = (option: OrganisationDetail) => {
     setAnchor(null);
     if (option.id === organisationId) {
@@ -57,7 +67,7 @@ export const OrganisationIdentity = () => {
       >
         <Box sx={{ minWidth: 0, textAlign: "left" }}>
           <Typography noWrap sx={{ fontSize: 13, fontWeight: 850, lineHeight: 1.1 }}>
-            {organisation?.name ?? "Choose organisation"}
+            {label}
           </Typography>
           <Typography noWrap sx={{ fontSize: 9, letterSpacing: 1 }}>
             ORGANISATION

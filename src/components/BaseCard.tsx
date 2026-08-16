@@ -94,7 +94,15 @@ export const BaseCard = ({
       <CardContent>{children}</CardContent>
       <CardActions
         disableSpacing
-        sx={{ justifyContent: "right", display: "flex", alignItems: "flex-start", gap: 1 }}
+        // A card is only as wide as its grid track, so the actions row wraps rather than pushing
+        // its controls — and anything stated beside them — out over the card's own edges.
+        sx={{
+          justifyContent: "right",
+          display: "flex",
+          alignItems: "flex-start",
+          flexWrap: "wrap",
+          gap: 1,
+        }}
       >
         {/* ? should this be a functionCall() or a <ReactElement />
         or should this be separate props with a union and one a never type */}

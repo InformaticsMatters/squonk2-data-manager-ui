@@ -9,6 +9,7 @@ import { ApplicationCard } from "../components/runCards/ApplicationCard";
 import { JobCard } from "../components/runCards/JobCard";
 import { WorkflowCard } from "../components/runCards/WorkflowCard/WorkflowCard";
 import Layout from "../layouts/Layout";
+import { capabilityReason, evaluateProjectExecutionCapability } from "./capabilities";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectRunDefinition } from "./ProjectRunDefinition";
 import {
@@ -18,7 +19,6 @@ import {
   type RunFilterType,
   type RunState,
 } from "./routes";
-import { resolveDefinitionCapabilities } from "./runCapabilities";
 import {
   filterRunItems,
   findRunDefinition,
@@ -57,27 +57,37 @@ const DefinitionNotFound = () => (
 );
 
 /**
- * One definition, offered with the capabilities the project in the URL decides. Nothing about the
- * card is derived from a selected or previously current project.
+ * What running work in the addressed project requires, stated once for the catalogue rather than
+ * repeated on every card in it. The requirement is a fact of the project, its subscription, and the
+ * caller — never of one definition — so the section is the one place that can state it once. What a
+ * particular definition requires beyond it is the modal that addresses that definition's to give.
+ */
+const RunRequirement = ({ facts }: { facts: ProjectFacts }) => {
+  const reason = capabilityReason(evaluateProjectExecutionCapability(facts));
+
+  return reason === undefined ? null : (
+    <Alert severity="info" sx={{ mb: 2 }}>
+      {reason}
+    </Alert>
+  );
+};
+
+/**
+ * One definition of the project in the URL. Nothing about the card is derived from a selected or
+ * previously current project.
  */
 const RunDefinitionCard = ({
-  facts,
   item,
   projectId,
   run,
   runState,
 }: {
-  facts: ProjectFacts;
   item: RunDefinitionItem;
   projectId: string;
   run: ProjectRunCatalogue;
   runState: RunState;
 }) => {
-  // A card offers every version of its definition and states what the project decides about the
-  // one it is showing, so a version the Data Manager itself disabled says so on the card that
-  // offers it as well as in the modal that addresses it.
-  const resolveCapabilities = resolveDefinitionCapabilities(facts, item, run.freshness[item.kind]);
-  const cardProps = { projectId, resolveCapabilities, runState };
+  const cardProps = { projectId, runState };
   // A card waits only on the collection it lists, so a slow running-workflow read never holds up a
   // job's instances, or the other way round.
   const instanceProps = {
@@ -103,12 +113,10 @@ const RunDefinitionCard = ({
 };
 
 const RunCatalogue = ({
-  facts,
   projectId,
   run,
   state,
 }: {
-  facts: ProjectFacts;
   projectId: string;
   run: ProjectRunCatalogue;
   state: RunState;
@@ -143,7 +151,6 @@ const RunCatalogue = ({
     >
       {items.map((item) => (
         <RunDefinitionCard
-          facts={facts}
           item={item}
           key={`${item.definitionType}-${item.id}`}
           projectId={projectId}
@@ -234,7 +241,8 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
           <CenterLoader />
         ) : (
           <>
-            <RunCatalogue facts={facts} projectId={projectId} run={run} state={state} />
+            <RunRequirement facts={facts} />
+            <RunCatalogue projectId={projectId} run={run} state={state} />
             {addressed?.item ? (
               <ProjectRunDefinition
                 content={run.freshness[addressed.item.kind]}

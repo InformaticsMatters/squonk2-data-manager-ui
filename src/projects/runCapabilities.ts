@@ -44,9 +44,9 @@ export const resolveRunCapabilities = (
 
 /**
  * What the caller may do with each version of one definition. A card offers every version of its
- * definition and addresses the one it is showing; a modal addresses the one the URL names. Both ask
- * here, so a version the Data Manager itself disabled is refused with its own reason wherever that
- * version is addressed, rather than only inside the modal.
+ * definition and links to the one it is showing; the modal that link opens addresses the version the
+ * URL names and asks here, so a version the Data Manager itself disabled is refused with its own
+ * reason wherever that version is addressed.
  */
 export const resolveDefinitionCapabilities =
   (facts: ProjectFacts, item: RunDefinitionItem, content: "current" | "stale") =>

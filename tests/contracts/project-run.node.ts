@@ -448,7 +448,7 @@ test("emptying the type filter clears it rather than leaving a state no URL can 
   expect(filterRunItems(items, { types: [] })).toHaveLength(items.length);
 });
 
-test("a card and a modal answer alike about the version each of them addresses", () => {
+test("a definition answers for the exact version the route addresses", () => {
   const items = catalogue({
     jobs: [
       job({ id: 1, disabled: true, disabled_reason: "No assets", version: "1.0.0" }),
@@ -464,8 +464,8 @@ test("a card and a modal answer alike about the version each of them addresses",
       "current",
     );
 
-  // The card shows one version at a time and links to that version's own route, so it must refuse
-  // a disabled version with the same reason the modal that addresses it gives.
+  // A card links to one version at a time, and the modal that link opens refuses a disabled version
+  // with that version's own reason rather than the newest version's.
   expect(resolveFor(editor)?.("1")).toEqual({
     availability: { status: "disabled", reason: "No assets" },
     launch: { status: "disabled", reason: "No assets" },

@@ -654,11 +654,13 @@ test("a project observer browses the catalogue and is told what launching requir
   // Reading the project's catalogue is not withheld along with the launch.
   await expect(page.getByText("Acceptance Workflow Definition")).toBeVisible();
   await expect(page.getByText("acceptance-job", { exact: true })).toBeVisible();
-  await expect(
-    page
-      .getByText("You must be a project editor or administrator to run work in this project.")
-      .first(),
-  ).toBeVisible();
+  // What the project requires of every definition alike is a fact of the project, so the catalogue
+  // states it once for all the cards it offers rather than repeating it on each of them.
+  const requirement = page.getByText(
+    "You must be a project editor or administrator to run work in this project.",
+  );
+  await expect(requirement).toBeVisible();
+  await expect(requirement).toHaveCount(1);
 
   // Opening a definition is reading, so it stays available; only running it is withheld.
   await page.goto(`${acceptanceRun}/jobs/1`);

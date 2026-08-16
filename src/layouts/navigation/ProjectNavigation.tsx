@@ -24,7 +24,16 @@ export const ProjectNavigation = () => {
   return (
     <Stack
       direction={{ xs: "column", md: "row" }}
-      sx={{ alignItems: { md: "center" }, borderBottom: 1, borderColor: "divider", px: 2 }}
+      // The strip sits inside the application bar but is not part of it: it keeps the page's own
+      // surface and text colour rather than inheriting the bar's.
+      sx={{
+        alignItems: { md: "center" },
+        bgcolor: "background.paper",
+        borderBottom: 1,
+        borderColor: "divider",
+        color: "text.primary",
+        px: 2,
+      }}
     >
       <Box sx={{ minWidth: 260, py: 1 }}>
         <Typography sx={{ fontWeight: 850 }}>{project?.name ?? "Project unavailable"}</Typography>

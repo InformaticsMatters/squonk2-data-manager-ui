@@ -4,7 +4,7 @@ import { NavBarContents } from "./navigation/NavBarContents";
 
 const Header = () => {
   return (
-    <AppBar color="inherit" elevation={0} position="static">
+    <AppBar position="static">
       <NavBarContents />
     </AppBar>
   );

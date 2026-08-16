@@ -1,16 +1,18 @@
 import { Button } from "@mui/material";
 import Link from "next/link";
 
+/**
+ * A link in one of the nav strips that sit on an ordinary page background — the project sections
+ * and the Administration tasks. The application bar has its own styling in {@link MainNavLink}.
+ */
 export const NavigationTab = ({
   active,
   href,
   label,
-  primary = false,
 }: {
   active: boolean;
   href: string;
   label: string;
-  primary?: boolean;
 }) => (
   <Button
     color="inherit"
@@ -21,8 +23,6 @@ export const NavigationTab = ({
       borderBottomColor: active ? "primary.main" : "transparent",
       borderRadius: 0,
       flexShrink: 0,
-      minHeight: primary ? 52 : undefined,
-      px: primary ? { xs: 1.5, sm: 2 } : undefined,
       textTransform: "none",
     }}
   >

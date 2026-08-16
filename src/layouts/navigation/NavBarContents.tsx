@@ -1,10 +1,10 @@
-import { Box, Divider, Stack, Toolbar } from "@mui/material";
+import { Box, Stack, Toolbar } from "@mui/material";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 import { HeaderLogo } from "../../components/logo/HeaderLogo";
 import { authClient } from "../../lib/auth-client";
-import { NavigationTab } from "./NavigationTab";
+import { MainNav, MainNavLink } from "./MainNavLink";
 import { OrganisationIdentity } from "./OrganisationIdentity";
 import { ProjectNavigation } from "./ProjectNavigation";
 
@@ -28,20 +28,20 @@ const NavigationLinks = ({ authenticated }: { authenticated: boolean }) => {
   const links = authenticated ? applicationLinks : publicLinks;
 
   return (
-    <Stack aria-label="Main" component="nav" direction="row" sx={{ alignItems: "stretch" }}>
+    <MainNav aria-label="Main">
       {links.map(({ href, label }) => {
         const familyPath = href.split("/").slice(0, 2).join("/") || "/";
         const active =
           familyPath === "/" ? router.pathname === "/" : router.asPath.startsWith(familyPath);
-        return <NavigationTab primary active={active} href={href} key={href} label={label} />;
+        return <MainNavLink active={active} href={href} key={href} label={label} />;
       })}
-    </Stack>
+    </MainNav>
   );
 };
 
 const PublicNavigation = () => (
-  <Toolbar sx={{ borderBottom: 1, borderColor: "divider", gap: 1 }}>
-    <HeaderLogo variant="light" />
+  <Toolbar sx={{ gap: 1 }}>
+    <HeaderLogo />
     <Box sx={{ ml: "auto" }}>
       <NavigationLinks authenticated={false} />
     </Box>
@@ -51,32 +51,15 @@ const PublicNavigation = () => (
 
 const AuthenticatedNavigation = () => (
   <>
-    <Toolbar disableGutters sx={{ borderBottom: 1, borderColor: "divider", minHeight: 64 }}>
-      <Stack
-        direction="row"
-        sx={{
-          alignItems: "center",
-          alignSelf: "stretch",
-          bgcolor: "#20262b",
-          color: "white",
-          minWidth: { sm: 390 },
-          px: { xs: 1.5, sm: 2.5 },
-        }}
-      >
+    <Toolbar>
+      <Stack direction="row" sx={{ alignItems: "center", minWidth: 0 }}>
         <HeaderLogo />
-        <Divider
-          flexItem
-          orientation="vertical"
-          sx={{ borderColor: "rgba(255,255,255,.18)", mx: { xs: 1, sm: 2 } }}
-        />
         <OrganisationIdentity />
       </Stack>
       <Box sx={{ display: { xs: "none", sm: "block" }, ml: "auto" }}>
         <NavigationLinks authenticated />
       </Box>
-      <Box sx={{ color: "text.primary", mr: 2 }}>
-        <UserMenu />
-      </Box>
+      <UserMenu />
     </Toolbar>
     <Box sx={{ display: { sm: "none" }, overflowX: "auto", px: 1 }}>
       <NavigationLinks authenticated />

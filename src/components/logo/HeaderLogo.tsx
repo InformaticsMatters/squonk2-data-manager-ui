@@ -6,10 +6,12 @@ import { LogoImage } from "./LogoImage";
 /**
  * Squonk Logo
  */
-export const HeaderLogo = ({ variant = "dark" }: { variant?: "dark" | "light" }) => {
+export const HeaderLogo = () => {
   return (
     <LogoLink aria-label="Squonk Home" component="a" href="/">
-      <LogoImage variant={variant} />
+      {/* The bar is the primary colour in every shell, so the logo is always the light-on-dark
+      variant. */}
+      <LogoImage variant="dark" />
     </LogoLink>
   );
 };

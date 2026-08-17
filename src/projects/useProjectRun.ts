@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react";
 
-import { type InstanceSummary, type RunningWorkflowSummary } from "@/api/data-manager";
 import { getGetApplicationsQueryKey, useGetApplications } from "@/api/data-manager/application";
 import { getGetInstancesQueryKey, useGetInstances } from "@/api/data-manager/instance";
 import { getGetJobsQueryKey, useGetJobs } from "@/api/data-manager/job";
@@ -38,14 +37,12 @@ export type ProjectRunCatalogue = {
    * The addressed project's own executions, per collection: still being read, unreadable, or read
    * and therefore countable. They are read separately from the definitions they came from, so a
    * card must not answer that it has none until its own collection arrives — and a card waits only
-   * on the collection it actually lists and counts. They are the same executions the composition
-   * already holds, so a card's count costs no read of its own.
+   * on the collection its own badge counts. They are the same executions the composition already
+   * holds, so a card's count costs no read of its own.
    */
   executions: { instances: RunExecutions; runningWorkflows: RunExecutions };
   /** Each catalogue's content is only as fresh as its own last read. */
   freshness: Record<RunFilterType, "current" | "stale">;
-  /** Existing instances of the addressed project, offered beside the definitions that made them. */
-  instances: InstanceSummary[];
   /** The definition catalogues are still being read, so nothing can be said about what they offer. */
   isLoading: boolean;
   /** Every definition the catalogue offers, before the section's route state narrows them. */
@@ -58,8 +55,6 @@ export type ProjectRunCatalogue = {
   refresh: () => void;
   /** Retries the reads that failed, leaving the addressed project and route untouched. */
   retry: () => void;
-  /** Running workflows of the addressed project, offered beside their definitions. */
-  runningWorkflows: RunningWorkflowSummary[];
 };
 
 /**
@@ -135,7 +130,6 @@ export const useProjectRun = (projectId: string): ProjectRunCatalogue => {
       ),
     },
     freshness,
-    instances: ownedInstances,
     isLoading: applications.isLoading || jobs.isLoading || workflows.isLoading,
     items,
     readStates,
@@ -158,6 +152,5 @@ export const useProjectRun = (projectId: string): ProjectRunCatalogue => {
       void instances.refetch();
       void runningWorkflows.refetch();
     },
-    runningWorkflows: ownedRunningWorkflows,
   };
 };

@@ -1,4 +1,4 @@
-import { type RunningWorkflowSummary, type WorkflowSummary } from "@/api/data-manager";
+import { type WorkflowSummary } from "@/api/data-manager";
 
 import { Typography } from "@mui/material";
 
@@ -7,36 +7,27 @@ import { type RunExecutions } from "../../../projects/runFacts";
 import { BaseCard } from "../../BaseCard";
 import { ExecutionCountBadge } from "../ExecutionCountBadge";
 import { RunDefinitionButton } from "../RunDefinitionButton";
-import { RunningWorkflowsList } from "../RunningWorkflowsList";
 
 export interface WorkflowCardProps {
   /** This project's running workflows, as the badge counting this definition's executions sees them. */
   executions: RunExecutions;
-  /** The read listing this project's running workflows has not answered yet. */
-  executionsLoading?: boolean;
   projectId: string;
-  /** This definition's running workflows inside the project that owns them. */
-  runningWorkflows: readonly RunningWorkflowSummary[];
   runState: RunState;
   workflow: WorkflowSummary;
 }
 
 /**
  * MuiCard that displays a summary of a workflow definition, linking to its own canonical
- * definition route and listing the addressed project's running workflows of it.
+ * definition route and counting the addressed project's running workflows of it.
+ *
+ * The card lists none of them itself: its badge links to the one place that lists a definition's
+ * executions properly, so there is one implementation of that list rather than two.
  *
  * What running this definition requires is not stated here: the section states once what the
  * project requires of every definition, and the modal this card opens states what this definition
  * requires of its own accord.
  */
-export const WorkflowCard = ({
-  executions,
-  executionsLoading,
-  projectId,
-  runningWorkflows,
-  runState,
-  workflow,
-}: WorkflowCardProps) => (
+export const WorkflowCard = ({ executions, projectId, runState, workflow }: WorkflowCardProps) => (
   <BaseCard
     accentColor="#f1c40f"
     actions={
@@ -56,9 +47,6 @@ export const WorkflowCard = ({
           runState={runState}
         />
       </>
-    }
-    collapsed={
-      <RunningWorkflowsList isLoading={executionsLoading} runningWorkflows={runningWorkflows} />
     }
     header={{
       subtitle: workflow.name,

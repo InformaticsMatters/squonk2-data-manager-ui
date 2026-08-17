@@ -23,9 +23,7 @@ import {
   filterRunItems,
   findRunDefinition,
   runCatalogueOf,
-  runDefinitionInstances,
   type RunDefinitionItem,
-  runDefinitionRunningWorkflows,
 } from "./runFacts";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
@@ -87,29 +85,26 @@ const RunDefinitionCard = ({
   run: ProjectRunCatalogue;
   runState: RunState;
 }) => {
+  // A card is given only the collection its own badge counts, so a slow or failed
+  // running-workflow read never holds up a job card's badge, or the other way round.
   const cardProps = { projectId, runState };
-  // A card waits only on the collection it lists and counts, so a slow running-workflow read never
-  // holds up a job's instances or its badge, or the other way round.
-  // One collection answers for both what a card lists and what its badge counts, so the two can
-  // never disagree about whether the read it waits on has arrived.
-  const instanceProps = {
-    executions: run.executions.instances,
-    executionsLoading: run.executions.instances.status === "pending",
-    instances: runDefinitionInstances(item, run.instances, projectId),
-  };
 
   switch (item.kind) {
     case "application":
-      return <ApplicationCard {...cardProps} {...instanceProps} application={item.data} />;
+      return (
+        <ApplicationCard
+          {...cardProps}
+          application={item.data}
+          executions={run.executions.instances}
+        />
+      );
     case "job":
-      return <JobCard {...cardProps} {...instanceProps} jobs={item.data} />;
+      return <JobCard {...cardProps} executions={run.executions.instances} jobs={item.data} />;
     case "workflow":
       return (
         <WorkflowCard
           {...cardProps}
           executions={run.executions.runningWorkflows}
-          executionsLoading={run.executions.runningWorkflows.status === "pending"}
-          runningWorkflows={runDefinitionRunningWorkflows(item, run.runningWorkflows, projectId)}
           workflow={item.data}
         />
       );

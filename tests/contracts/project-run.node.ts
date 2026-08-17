@@ -13,9 +13,6 @@ import { expect, test } from "@playwright/test";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import { CenterLoader } from "../../src/components/CenterLoader";
-import { InstancesList } from "../../src/components/runCards/InstancesList";
-import { RunningWorkflowsList } from "../../src/components/runCards/RunningWorkflowsList";
 import {
   evaluateRunLaunchCapability,
   type ProjectCapabilityFacts,
@@ -34,8 +31,6 @@ import {
   runCatalogueOf,
   runCatalogueRequests,
   runDefinitionExecutionFilter,
-  runDefinitionInstances,
-  runDefinitionRunningWorkflows,
   type RunDefinitionSelection,
   runDefinitionUnavailability,
   runExecutionCountStatement,
@@ -206,43 +201,6 @@ test("a definition route addresses the definition its own catalogue entry offers
   // offer is simply absent.
   expect(findRunDefinition(items, "applications", workflowId)).toBeUndefined();
   expect(findRunDefinition(items, "jobs", "404")).toBeUndefined();
-});
-
-test("existing executions on a card belong to the project the catalogue is addressed in", () => {
-  const [workflowItem, applicationItem, jobItem] = catalogue();
-  const instances = [
-    instance(),
-    instance({ id: "instance-newer", launched: "2026-01-03T03:00:00Z" }),
-    instance({ id: "instance-foreign", project_id: otherProjectId }),
-    instance({ id: "instance-other-job", job_job: "another-job" }),
-  ];
-  const runningWorkflows = [
-    runningWorkflow(),
-    runningWorkflow({ id: "r-workflow-foreign", project: { id: otherProjectId, name: "Partner" } }),
-    runningWorkflow({
-      id: "r-workflow-other",
-      workflow: { id: "workflow-other", name: "other", version: "1.0.0" },
-    }),
-  ];
-
-  // A response that ignored the project argument still cannot put another project's work on a card.
-  expect(runDefinitionInstances(jobItem, instances, projectId).map(({ id }) => id)).toEqual([
-    "instance-newer",
-    instance().id,
-  ]);
-  expect(runDefinitionInstances(applicationItem, instances, projectId)).toEqual([]);
-  expect(
-    runDefinitionRunningWorkflows(workflowItem, runningWorkflows, projectId).map(({ id }) => id),
-  ).toEqual([runningWorkflow().id]);
-  // A workflow definition has no instances and an application has no running workflows.
-  expect(runDefinitionRunningWorkflows(jobItem, runningWorkflows, projectId)).toEqual([]);
-  expect(
-    runDefinitionInstances(
-      catalogue({ applications: [application({ application_id: "acceptance-application" })] })[1],
-      instances,
-      projectId,
-    ).map(({ id }) => id),
-  ).toEqual(["instance-newer", instance().id, "instance-other-job"]);
 });
 
 /** A collection whose own read answered, which is the only outcome a badge may count. */
@@ -749,45 +707,42 @@ test("a definition answers for the exact version the route addresses", () => {
   });
 });
 
-/** What one list component returns, so the branch it took can be read without a DOM. */
-const rendered = <TProps>(list: (props: TProps) => unknown, props: TProps) => list(props);
-
-test("a card waits for the collection it lists before saying it has none", () => {
-  const loader = { type: CenterLoader };
-
-  // Each list is given its own collection's read state, so a card that lists instances is never
-  // held up by the running-workflow read, and neither claims emptiness before its read answers.
-  expect(rendered(InstancesList, { instances: [], isLoading: true })).toMatchObject(loader);
-  expect(rendered(RunningWorkflowsList, { isLoading: true, runningWorkflows: [] })).toMatchObject(
-    loader,
-  );
-  expect(rendered(InstancesList, { instances: [], isLoading: false })).not.toMatchObject(loader);
-  expect(
-    rendered(RunningWorkflowsList, { isLoading: false, runningWorkflows: [] }),
-  ).not.toMatchObject(loader);
-});
-
-test("an execution that declares no project belongs to the read that returned it", () => {
-  const [workflowItem, , jobItem] = catalogue();
-  const undeclared = instance({ id: "instance-undeclared", project_id: undefined });
+test("an execution that declares no project is counted by the read that returned it", () => {
+  const workflowSelection: RunDefinitionSelection = { kind: "workflow", workflow: workflow() };
+  const undeclared = instance({
+    id: "instance-undeclared",
+    job_version: "1.0.0",
+    project_id: undefined,
+  });
   const undeclaredWorkflow = runningWorkflow({
     id: "r-workflow-undeclared",
     project: { id: "", name: "" },
   });
 
   // The list request that returned it named the addressed project and nothing about the execution
-  // disagrees, so it belongs there; an execution that names another project never does.
-  expect(runDefinitionInstances(jobItem, [undeclared], projectId).map(({ id }) => id)).toEqual([
-    undeclared.id,
-  ]);
+  // disagrees, so a badge counts it; an execution that names another project is never counted.
   expect(
-    runDefinitionInstances(jobItem, [instance({ project_id: otherProjectId })], projectId),
-  ).toEqual([]);
-  expect(
-    runDefinitionRunningWorkflows(workflowItem, [undeclaredWorkflow], projectId).map(
-      ({ id }) => id,
+    badgeCount(
+      selectedJob({ version: "1.0.0" }),
+      runInstanceExecutions(answered, [undeclared], projectId),
     ),
-  ).toEqual([undeclaredWorkflow.id]);
+  ).toEqual({ status: "counted", count: 1 });
+  expect(
+    badgeCount(
+      selectedJob({ version: "1.0.0" }),
+      runInstanceExecutions(
+        answered,
+        [instance({ job_version: "1.0.0", project_id: otherProjectId })],
+        projectId,
+      ),
+    ),
+  ).toEqual({ status: "counted", count: 0 });
+  expect(
+    badgeCount(
+      workflowSelection,
+      runRunningWorkflowExecutions(answered, [undeclaredWorkflow], projectId),
+    ),
+  ).toEqual({ status: "counted", count: 1 });
 });
 
 test.describe("Run cutover", () => {
@@ -844,13 +799,36 @@ test.describe("Run cutover", () => {
       "components/runCards/JobCard/JobModal.tsx",
       "components/runCards/WorkflowCard/WorkflowCard.tsx",
       "components/runCards/WorkflowCard/WorkflowModal.tsx",
-      "components/runCards/InstancesList.tsx",
-      "components/runCards/RunningWorkflowsList.tsx",
     ]) {
       expect(readFileSync(path.join(root, sourceFile), "utf8")).not.toMatch(
         /useCurrentProject|useIsUserAdminOrEditorOfCurrentProject|useProjectFromId/u,
       );
     }
+  });
+
+  test("one implementation of a definition's executions survives, and nothing names the other", () => {
+    const typescriptSource = /\.tsx?$/u;
+    const generated = /(?:^|\/)generated\//u;
+    const removedList =
+      /InstancesList|RunningWorkflowsList|runDefinitionInstances|runDefinitionRunningWorkflows/u;
+    const root = path.join(process.cwd(), "src");
+
+    // The Run section listed a definition's executions a second time, in a card that could neither
+    // search, refresh, nor act on them. The components that drew those lists and the facts that
+    // selected the executions for them are gone rather than merely unused.
+    for (const removed of ["InstancesList", "RunningWorkflowsList"]) {
+      expect(existsSync(path.join(root, `components/runCards/${removed}.tsx`))).toBe(false);
+    }
+    // No handwritten module names either of them, or the facts that fed them, so a second list
+    // cannot come back unnoticed beside the one badge that now points at the real one.
+    const naming = readdirSync(root, { recursive: true, withFileTypes: true })
+      .filter((entry) => entry.isFile() && typescriptSource.test(entry.name))
+      .map((entry) =>
+        path.relative(root, path.join(entry.parentPath, entry.name)).split(path.sep).join("/"),
+      )
+      .filter((file) => !generated.test(file))
+      .filter((file) => removedList.test(readFileSync(path.join(root, file), "utf8")));
+    expect(naming).toEqual([]);
   });
 });
 

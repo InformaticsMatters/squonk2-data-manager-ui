@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type InstanceSummary, type JobSummary } from "@/api/data-manager";
+import { type JobSummary } from "@/api/data-manager";
 
 import { Launch as LaunchIcon } from "@mui/icons-material";
 import { Box, Chip, IconButton, MenuItem, TextField, Tooltip, Typography } from "@mui/material";
@@ -10,16 +10,11 @@ import { type RunExecutions } from "../../../projects/runFacts";
 import { BaseCard } from "../../BaseCard";
 import { Chips } from "../../Chips";
 import { ExecutionCountBadge } from "../ExecutionCountBadge";
-import { InstancesList } from "../InstancesList";
 import { RunDefinitionButton } from "../RunDefinitionButton";
 
 export interface JobCardProps {
   /** This project's instances, as the badge counting the selected version's executions sees them. */
   executions: RunExecutions;
-  /** The read listing this project's instances has not answered yet. */
-  executionsLoading?: boolean;
-  /** This job's existing instances inside the project that owns them. */
-  instances: readonly InstanceSummary[];
   /**
    * Every version of one job, newest first. Each version has its own canonical definition route.
    */
@@ -30,20 +25,17 @@ export interface JobCardProps {
 
 /**
  * MuiCard that displays a summary of a job, linking to the canonical definition route of the
- * version selected on the card and listing the instances the addressed project already has of it.
+ * version selected on the card and counting the instances the addressed project already has of
+ * that version.
+ *
+ * The card lists none of them itself: its badge links to the one place that lists a definition's
+ * executions properly, so there is one implementation of that list rather than two.
  *
  * What running this version requires is not stated here: the section states once what the project
  * requires of every definition, and the modal the card's Run link opens states what the version it
  * addresses requires of its own accord.
  */
-export const JobCard = ({
-  executions,
-  executionsLoading,
-  instances,
-  jobs,
-  projectId,
-  runState,
-}: JobCardProps) => {
+export const JobCard = ({ executions, jobs, projectId, runState }: JobCardProps) => {
   // Which version the card offers is ephemeral card state: the definition route it links to is
   // what makes a chosen version shareable.
   const [selectedJobId, setSelectedJobId] = useState(String(jobs[0].id));
@@ -85,7 +77,6 @@ export const JobCard = ({
           />
         </>
       }
-      collapsed={<InstancesList instances={instances} isLoading={executionsLoading} />}
       header={{ subtitle: job.name, avatar: job.job[0], title: job.job }}
     >
       <Typography

@@ -11,12 +11,9 @@ import semver from "semver";
 import { search } from "../utils/app/searches";
 import {
   definitionTerms,
-  instanceOwner,
   matchesDefinition,
-  ownedBy,
   type ResultItem,
   type ResultsDefinitionTarget,
-  runningWorkflowOwner,
   selectProjectResults,
 } from "./resultFacts";
 import {
@@ -210,35 +207,6 @@ export const runDefinitionUnavailability = (
   return job.disabled_reason ?? "This job is disabled, so it cannot be run.";
 };
 
-/** Whether one existing instance came from the definition a card is offering. */
-const instantiates = (item: RunDefinitionItem, instance: InstanceSummary): boolean => {
-  switch (item.kind) {
-    case "application":
-      return instance.application_id === item.data.application_id;
-    case "job":
-      return item.data.some(
-        (job) => instance.job_collection === job.collection && instance.job_job === job.job,
-      );
-    case "workflow":
-      return false;
-  }
-};
-
-/**
- * The existing instances of one definition inside the addressed project. Only instances the
- * project owns are matched, on the same terms Results matches them, so a response that declared
- * another project still cannot put that project's work on a card.
- */
-export const runDefinitionInstances = (
-  item: RunDefinitionItem,
-  instances: readonly InstanceSummary[],
-  projectId: string,
-): InstanceSummary[] =>
-  instances
-    .filter((instance) => ownedBy(instanceOwner(instance), projectId))
-    .filter((instance) => instantiates(item, instance))
-    .toSorted((left, right) => right.launched.localeCompare(left.launched));
-
 /**
  * The definition one card is currently offering, as the card itself holds it. A job card offers one
  * version at a time and the caller chooses which, so the version selected on the card is part of
@@ -412,16 +380,3 @@ export const runExecutionCountStatement = (
       return { description: `Executions of ${name} could not be read` };
   }
 };
-
-/** The running workflows of one workflow definition inside the addressed project. */
-export const runDefinitionRunningWorkflows = (
-  item: RunDefinitionItem,
-  runningWorkflows: readonly RunningWorkflowSummary[],
-  projectId: string,
-): RunningWorkflowSummary[] =>
-  item.kind === "workflow"
-    ? runningWorkflows
-        .filter((workflow) => ownedBy(runningWorkflowOwner(workflow), projectId))
-        .filter((workflow) => workflow.workflow.id === item.data.id)
-        .toSorted((left, right) => right.started.localeCompare(left.started))
-    : [];

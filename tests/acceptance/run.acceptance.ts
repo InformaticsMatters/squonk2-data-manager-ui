@@ -129,6 +129,10 @@ test("a card states its definition's executions and links straight to them", asy
   await login(page, acceptanceRun, testInfo);
   await expect(page.getByRole("heading", { level: 1, name: "Run" })).toBeVisible();
 
+  // No card lists executions itself. The badge, and the one view it opens, are all there is of
+  // that list, so there is one implementation of "the executions of a definition" rather than two.
+  await expect(page.getByRole("button", { name: "Show more" })).toHaveCount(0);
+
   // A workflow card represents the whole definition, so it counts every running workflow started
   // from it; an application card counts every instance of its application, on the same rule the
   // filtered list it links to matches them by.

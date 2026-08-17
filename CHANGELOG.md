@@ -1,3 +1,11 @@
+# [7.0.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.3...7.0.0-dev.4) (2026-08-17)
+
+
+### Bug Fixes
+
+* accept the auth0 environment variable names again ([431e666](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/431e6668b57f5f62433df34c9859218672a448ab))
+* read the API server addresses at runtime ([5f85acc](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5f85acc84b9eed503d2f62ff7c61327f040ef953))
+
 # [7.0.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.2...7.0.0-dev.3) (2026-08-17)
 
 

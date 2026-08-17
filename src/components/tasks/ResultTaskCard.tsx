@@ -1,18 +1,11 @@
-import { type DmError, type TaskSummary } from "@/api/data-manager";
-import { getGetTasksQueryKey, useDeleteTask } from "@/api/data-manager/task";
+import { type TaskSummary } from "@/api/data-manager";
 
-import { Button, CardContent } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { CardContent } from "@mui/material";
 
-import {
-  useCurrentProjectId,
-  useIsUserAdminOrEditorOfCurrentProject,
-} from "../../hooks/projectHooks";
-import { useEnqueueError } from "../../hooks/useEnqueueStackError";
-import { ResultCard } from "../results/ResultCard";
-import { WarningDeleteButton } from "../WarningDeleteButton";
+import { type ResultCapabilities } from "../../projects/resultCapabilities";
+import { type ResultsState } from "../../projects/routes";
 import { TaskDetails } from "./TaskDetails";
+import { TaskResultCard } from "./TaskResultCard";
 
 export interface ResultTaskCardProps {
   /**
@@ -20,66 +13,45 @@ export interface ResultTaskCardProps {
    */
   task: TaskSummary;
   /**
+   * The project this task was read under. A task resource declares no project of its own, so its
+   * project-constrained list request is its only ownership fact.
+   */
+  projectId: string;
+  /**
+   * What the caller may do with this task in that project.
+   */
+  capabilities: ResultCapabilities;
+  /**
+   * Results list state this card's links preserve.
+   */
+  resultsState?: ResultsState;
+  /**
    * Whether the card should have its collapsed content visible immediately. Defaults to true.
    */
   collapsedByDefault?: boolean;
 }
 
 /**
- * Expandable card that displays details about a task
+ * One listed task. Its progress is only read once the caller expands it, so listing a project's
+ * results asks the Data Manager for the collection alone and never for every task in it.
  */
-export const ResultTaskCard = ({ task, collapsedByDefault = true }: ResultTaskCardProps) => {
-  const queryClient = useQueryClient();
-  const { mutateAsync: deleteTask } = useDeleteTask();
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
-
-  const { projectId } = useCurrentProjectId();
-
-  const hasPermission = useIsUserAdminOrEditorOfCurrentProject();
-
-  const { query } = useRouter();
-
-  return (
-    <ResultCard
-      actions={({ setSlideIn }) => (
-        <WarningDeleteButton
-          modalId={`delete-task-${task.id}`}
-          title="Delete Task"
-          tooltipText="Delete Task"
-          onDelete={async () => {
-            try {
-              await deleteTask({ taskId: task.id });
-              void queryClient.invalidateQueries({ queryKey: getGetTasksQueryKey() });
-              void queryClient.invalidateQueries({
-                queryKey: getGetTasksQueryKey({ project_id: projectId }),
-              });
-
-              enqueueSnackbar("Task successfully deleted", { variant: "success" });
-            } catch (error) {
-              enqueueError(error);
-            } finally {
-              setSlideIn(false);
-            }
-          }}
-        >
-          {({ openModal }) => (
-            <Button disabled={!hasPermission} onClick={openModal}>
-              Delete
-            </Button>
-          )}
-        </WarningDeleteButton>
-      )}
-      collapsed={
-        <CardContent>
-          <TaskDetails taskId={task.id} />
-        </CardContent>
-      }
-      collapsedByDefault={collapsedByDefault}
-      createdDateTime={task.created}
-      href={{ pathname: "/results/task/[taskId]", query: { ...query, taskId: task.id } }}
-      linkTitle={task.purpose}
-      showDuration={false}
-      state={task.processing_stage}
-    />
-  );
-};
+export const ResultTaskCard = ({
+  task,
+  projectId,
+  capabilities,
+  resultsState,
+  collapsedByDefault = true,
+}: ResultTaskCardProps) => (
+  <TaskResultCard
+    capabilities={capabilities}
+    collapsed={
+      <CardContent>
+        <TaskDetails taskId={task.id} />
+      </CardContent>
+    }
+    collapsedByDefault={collapsedByDefault}
+    projectId={projectId}
+    resultsState={resultsState}
+    task={task}
+  />
+);

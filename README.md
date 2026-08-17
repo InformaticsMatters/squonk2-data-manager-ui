@@ -44,7 +44,9 @@ Notable scripts:
 - `pnpm tsc` will run a one-off type check. This is also called pre-push to ensure no type errors are deployed.
 - `pnpm lint` will run the linter with the `eslint` config
 - `pnpm format` will format specified files with the `eslint` config
-- `pnpm test` will run the playwright tests
+- `pnpm test` runs the local Playwright projects
+- `pnpm test:acceptance` builds and runs the deterministic production acceptance suite
+- `pnpm test:smoke` runs non-blocking tests against configured live services
 - `pnpm test:debug` runs the tests with debug mode (headed)
 - `pnpm test:ci` runs the tests but configured for GitHub actions
 
@@ -93,10 +95,13 @@ pnpm exec playwright install-deps
 pnpm exec playwright install
 ```
 
-Then run:
+Then run the deterministic production acceptance gate:
 
-- `pnpm t` to run the tests in headless mode
-- `pnpm test:debug` to run the tests headed in debug mode
+```bash
+pnpm test:acceptance
+```
+
+The acceptance suite starts local OIDC and API fixtures and requires no live credentials. See [docs/testing.md](docs/testing.md) for scenario isolation, diagnostics, focused execution, and live smoke tests.
 
 ### Code Quality
 

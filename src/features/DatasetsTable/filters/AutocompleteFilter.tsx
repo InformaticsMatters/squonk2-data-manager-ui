@@ -22,6 +22,10 @@ export interface AutocompleteFilterProps<T> {
    */
   getOptionLabel: (value: T) => string;
   /**
+   * Determines whether an option represents the selected value.
+   */
+  isOptionEqualToValue?: (option: T, value: T) => boolean;
+  /**
    * Callback when an option is selected or cleared.
    */
   onChange: (value?: T) => void;
@@ -48,6 +52,7 @@ export const AutocompleteFilter = <T,>({
   value,
   options,
   getOptionLabel,
+  isOptionEqualToValue,
   onChange,
   isLoading,
   isError,
@@ -63,6 +68,7 @@ export const AutocompleteFilter = <T,>({
       disabled={isLoading}
       getOptionLabel={getOptionLabel}
       id={id}
+      isOptionEqualToValue={isOptionEqualToValue}
       options={options}
       renderInput={(params) => (
         <TextField

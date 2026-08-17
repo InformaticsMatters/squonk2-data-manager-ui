@@ -1,5 +1,4 @@
 import { styled } from "@mui/material";
-import { useRouter } from "next/router";
 
 import { NextLink } from "../NextLink";
 import { LogoImage } from "./LogoImage";
@@ -8,13 +7,10 @@ import { LogoImage } from "./LogoImage";
  * Squonk Logo
  */
 export const HeaderLogo = () => {
-  const { query } = useRouter();
-
   return (
-    <LogoLink
-      component="a"
-      href={{ pathname: "/", query: query.project ? { project: query.project } : {} }}
-    >
+    <LogoLink aria-label="Squonk Home" component="a" href="/">
+      {/* The bar is the primary colour in every shell, so the logo is always the light-on-dark
+      variant. */}
       <LogoImage variant="dark" />
     </LogoLink>
   );

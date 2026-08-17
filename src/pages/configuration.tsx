@@ -1,6 +1,8 @@
 import { Container } from "@mui/material";
 import { type GetServerSideProps } from "next";
 
+import { pagePolicies, withPagePolicy } from "@/application/pagePolicy";
+
 // Format a value so undefined and empty string are visible
 const ReprLi = ({ title, children }: { children: string | null | undefined; title: string }) => {
   if (children === "") {
@@ -72,4 +74,4 @@ export const Configuration = ({ dmAPI, asAPI }: ConfigurationProps) => (
   </Container>
 );
 
-export default Configuration;
+export default withPagePolicy(pagePolicies.public, Configuration);

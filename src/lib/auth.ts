@@ -1,7 +1,18 @@
 import { captureException } from "@sentry/nextjs";
 import { betterAuth } from "better-auth";
-import { genericOAuth, keycloak } from "better-auth/plugins";
+import { genericOAuth, type GenericOAuthConfig, keycloak } from "better-auth/plugins";
 import { jwtDecode } from "jwt-decode";
+
+import { withBasePath } from "../utils/app/basePath";
+
+// `new URL` throws on an undefined base, and this module is imported while `next build` collects
+// page data — a build that deliberately carries no runtime configuration, since the image is built
+// once and deployed against whichever base URL the environment sets. Resolving to undefined when
+// the base is absent keeps the module importable at build time; every deployment sets the variable,
+// so the value handed to Keycloak in a running instance is unchanged.
+const keycloakRedirectURI = process.env.BETTER_AUTH_BASE_URL
+  ? new URL(withBasePath("/api/auth/callback/keycloak"), process.env.BETTER_AUTH_BASE_URL).href
+  : undefined;
 
 // No database config → better-auth defaults to memory adapter + cookie cache (stateless sessions)
 export const auth = betterAuth({
@@ -24,6 +35,12 @@ export const auth = betterAuth({
     },
   },
 
+  // Rate limiting is on unless a deployment says otherwise, and nothing here knows why one would.
+  // A deployment that signs the same identity in repeatedly through the OAuth callback shares one
+  // counter for every sign-in, because a callback is reached by redirect and carries no forwarded
+  // address to distinguish them; turning the limit off is that operator's deliberate choice.
+  rateLimit: { enabled: process.env.BETTER_AUTH_RATE_LIMIT_ENABLED !== "false" },
+
   plugins: [
     genericOAuth({
       config: [
@@ -32,7 +49,11 @@ export const auth = betterAuth({
             clientId: process.env.KEYCLOAK_CLIENT_ID as string,
             clientSecret: process.env.KEYCLOAK_CLIENT_SECRET as string,
             issuer: process.env.KEYCLOAK_ISSUER_URL as string,
+            redirectURI: keycloakRedirectURI,
             scopes: ["openid", "profile", "email", "offline_access"],
+            // better-auth always sends code_verifier when exchanging the code, so the
+            // challenge has to be on the authorize request or Keycloak rejects the exchange
+            pkce: true,
             overrideUserInfo: true, // refresh realm_access roles on every re-login
           }),
           // eslint-disable-next-line @typescript-eslint/require-await
@@ -59,6 +80,16 @@ export const auth = betterAuth({
               realm_access: JSON.stringify(realmAccess ?? { roles: [] }),
             };
           },
+          // better-auth only keeps id/email/emailVerified/image/name from getUserInfo and
+          // spreads whatever mapProfileToUser returns, so the additionalFields have to be
+          // carried across here or the session loses realm_access and every role gate 403s.
+          // The cast is needed because mapProfileToUser is typed against the base user only.
+          mapProfileToUser: ((profile: Record<string, unknown>) => ({
+            preferred_username: profile.preferred_username,
+            given_name: profile.given_name,
+            family_name: profile.family_name,
+            realm_access: profile.realm_access,
+          })) as GenericOAuthConfig["mapProfileToUser"],
         },
       ],
     }),

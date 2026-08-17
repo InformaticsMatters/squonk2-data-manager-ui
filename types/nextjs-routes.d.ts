@@ -12,14 +12,26 @@ declare module "nextjs-routes" {
 
   export type Route =
     | StaticRoute<"/">
+    | StaticRoute<"/administration">
+    | StaticRoute<"/administration/charges">
+    | DynamicRoute<"/administration/charges/[collection]/[resourceId]", { "collection": string; "resourceId": string }>
+    | StaticRoute<"/administration/organisation-access">
+    | DynamicRoute<"/administration/organisation-access/[collection]/[resourceId]", { "collection": string; "resourceId": string }>
+    | StaticRoute<"/administration/subscriptions">
+    | DynamicRoute<"/administration/subscriptions/[productId]", { "productId": string }>
+    | StaticRoute<"/administration/usage-inventory">
+    | DynamicRoute<"/administration/usage-inventory/[collection]/[resourceId]", { "collection": string; "resourceId": string }>
     | DynamicRoute<"/api/auth/[...all]", { "all": string[] }>
     | StaticRoute<"/api/configuration/ui-version">
+    | DynamicRoute<"/api/dm-api/[...dmProxy]", { "dmProxy": string[] }>
     | StaticRoute<"/api/motd">
     | StaticRoute<"/api/sdf-parser">
     | DynamicRoute<"/api/viewer-proxy/[...viewerProxy]", { "viewerProxy": string[] }>
     | StaticRoute<"/configuration">
-    | DynamicRoute<"/dataset/[datasetId]/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>
     | StaticRoute<"/datasets">
+    | DynamicRoute<"/datasets/[datasetId]", { "datasetId": string }>
+    | DynamicRoute<"/datasets/[datasetId]/versions/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>
+    | DynamicRoute<"/datasets/[datasetId]/versions/[datasetVersion]/view", { "datasetId": string; "datasetVersion": string }>
     | StaticRoute<"/docs/concepts">
     | StaticRoute<"/docs/developer">
     | StaticRoute<"/docs/guided-tour">
@@ -34,19 +46,16 @@ declare module "nextjs-routes" {
     | StaticRoute<"/docs/how-to/results">
     | StaticRoute<"/docs/how-to/usage-quotas">
     | StaticRoute<"/docs/jobs">
-    | DynamicRoute<"/organisation/[organisationId]/inventory", { "organisationId": string }>
-    | DynamicRoute<"/product/[productId]/charges", { "productId": string }>
-    | StaticRoute<"/products">
-    | StaticRoute<"/project">
-    | StaticRoute<"/project/file">
-    | StaticRoute<"/results">
-    | DynamicRoute<"/results/instance/[instanceId]", { "instanceId": string }>
-    | DynamicRoute<"/results/task/[taskId]", { "taskId": string }>
-    | DynamicRoute<"/results/workflow/[workflowId]", { "workflowId": string }>
-    | StaticRoute<"/run">
-    | DynamicRoute<"/unit/[unitId]/charges", { "unitId": string }>
-    | DynamicRoute<"/unit/[unitId]/inventory", { "unitId": string }>
-    | StaticRoute<"/viewer/sdf">;
+    | StaticRoute<"/projects">
+    | DynamicRoute<"/projects/[projectId]/files", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/files/view", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/manage", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/results", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/results/[collection]/[resultId]", { "projectId": string; "collection": string; "resultId": string }>
+    | DynamicRoute<"/projects/[projectId]/run", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/run/[...definition]", { "projectId": string; "definition": string[] }>
+    | DynamicRoute<"/projects/deletions/[taskId]", { "taskId": string }>
+    | StaticRoute<"/projects/new">;
 
   interface StaticRoute<Pathname> {
     pathname: Pathname;

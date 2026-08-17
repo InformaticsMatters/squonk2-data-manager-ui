@@ -1,18 +1,23 @@
-import { useGetTask } from "@/api/data-manager/task";
-
 import { ExitToApp as ExitToAppIcon } from "@mui/icons-material";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
+
+import { useResultTask } from "../../../projects/useResultTask";
 
 export interface ExitCodeFromTaskProps {
   taskId: string;
 }
 
+/**
+ * The exit code the task that ran an instance reported. The task is read through the one owner of
+ * the addressed task read, so it is the same read the instance's own task progress is shown from.
+ */
 export const ExitCodeFromTask = ({ taskId }: ExitCodeFromTaskProps) => {
-  const { data: code, isLoading } = useGetTask(taskId, undefined, {
-    query: { select: (data) => data.exit_code },
-  });
+  const read = useResultTask(taskId);
+  const code = read.task?.exit_code;
+  // The task read has neither answered nor failed, so its exit code is still arriving.
+  const awaitingRead = read.task === undefined && read.readState.kind === "available";
 
-  if (code === undefined && !isLoading) {
+  if (code === undefined && !awaitingRead) {
     return null;
   }
 
@@ -23,9 +28,9 @@ export const ExitCodeFromTask = ({ taskId }: ExitCodeFromTaskProps) => {
       </ListItemIcon>
       <ListItemText
         primary="Exit Code"
-        secondary={isLoading ? "Loading..." : code}
+        secondary={awaitingRead ? "Loading..." : code}
         slotProps={
-          isLoading
+          awaitingRead
             ? undefined
             : { secondary: { sx: { color: code === 0 ? "green" : "error", fontWeight: "bold" } } }
         }

@@ -1,3 +1,5 @@
+import { NetworkTransportError } from "./classifyTransportFailure";
+
 const getBody = async (response: Response): Promise<unknown> => {
   const contentType = response.headers.get("content-type");
 
@@ -27,7 +29,12 @@ export const createFetchRuntime = () => {
     },
     getBaseURL: () => baseURL,
     request: async <T>(url: string, options?: RequestInit): Promise<T> => {
-      const response = await fetch(`${baseURL}${url}`, options);
+      const response = await fetch(`${baseURL}${url}`, options).catch((error: unknown) => {
+        if (error instanceof TypeError) {
+          throw new NetworkTransportError(error);
+        }
+        throw error;
+      });
       const data = await getBody(response);
 
       return { data, status: response.status, headers: response.headers } as T;

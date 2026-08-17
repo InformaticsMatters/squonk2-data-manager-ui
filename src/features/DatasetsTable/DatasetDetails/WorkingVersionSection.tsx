@@ -3,7 +3,7 @@ import { type DatasetSummary, type DatasetVersionSummary } from "@/api/data-mana
 import { Box, MenuItem, TextField, Typography } from "@mui/material";
 
 import { DownloadButton } from "../../../components/downloads/DownloadButton";
-import { API_ROUTES } from "../../../utils/app/routes";
+import { datasetTransportLinks } from "../../../datasets/routes";
 
 export interface WorkingVersionSectionProps {
   /**
@@ -15,9 +15,9 @@ export interface WorkingVersionSectionProps {
    */
   version: DatasetVersionSummary;
   /**
-   * Setter to set the selected version.
+   * Navigates to the selected version.
    */
-  setVersion: (version: DatasetVersionSummary) => void;
+  onVersionChange: (version: DatasetVersionSummary) => void;
 }
 
 /**
@@ -26,7 +26,7 @@ export interface WorkingVersionSectionProps {
 export const WorkingVersionSection = ({
   dataset,
   version,
-  setVersion,
+  onVersionChange,
 }: WorkingVersionSectionProps) => {
   return (
     <>
@@ -46,7 +46,7 @@ export const WorkingVersionSection = ({
             const version = dataset.versions.find(
               (version) => version.version === Number(event.target.value),
             );
-            version && setVersion(version);
+            version && onVersionChange(version);
           }}
         >
           {dataset.versions.map((version) => (
@@ -61,7 +61,7 @@ export const WorkingVersionSection = ({
         <Box sx={{ ml: 2 }}>
           <DownloadButton
             disabled={!(version.processing_stage === "DONE")}
-            href={API_ROUTES.datasetVersion(dataset.dataset_id, version.version, "/api/dm-api")}
+            href={datasetTransportLinks.download(dataset.dataset_id, version.version)}
             title="Download this version of the dataset"
           />
         </Box>

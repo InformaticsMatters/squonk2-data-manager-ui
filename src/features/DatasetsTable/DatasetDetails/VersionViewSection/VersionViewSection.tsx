@@ -4,8 +4,7 @@ import { Description } from "@mui/icons-material";
 import { List, ListItemText } from "@mui/material";
 import ListItemButton from "@mui/material/ListItemButton";
 
-import { withBasePath } from "../../../../utils/app/basePath";
-import { API_ROUTES } from "../../../../utils/app/routes";
+import { datasetTransportLinks } from "../../../../datasets/routes";
 import { DatasetPlainTextViewerListItem } from "./DatasetPlainTextViewerListItem";
 
 export interface VersionViewSectionProps {
@@ -28,9 +27,7 @@ export const VersionViewSection = ({ dataset, version }: VersionViewSectionProps
       <DatasetPlainTextViewerListItem datasetId={dataset.dataset_id} version={version.version} />
       <ListItemButton
         component="a"
-        href={withBasePath(
-          API_ROUTES.datasetVersion(dataset.dataset_id, version.version, "/api/viewer-proxy"),
-        )}
+        href={datasetTransportLinks.browserView(dataset.dataset_id, version.version)}
         rel="noopener noreferrer"
         target="_blank"
       >

@@ -1,0 +1,89 @@
+import { expect, test } from "@playwright/test";
+import { type ServerResponse } from "node:http";
+
+import {
+  createErrorProps,
+  describeTransportFailure,
+} from "../../src/utils/api/serverSidePropsError";
+
+const recordedResponse = () => ({ statusCode: 200, statusMessage: "" }) as ServerResponse;
+
+// Node writes `statusMessage` straight into the HTTP status line and rejects anything outside this
+// set with `ERR_INVALID_CHAR`, which destroys the response instead of rendering the error page.
+const REASON_PHRASE = /^[\u0020-\u007E\u0080-\u00FF]*$/u;
+
+test.describe("Server-rendered error status line", () => {
+  test("a readable message is carried unchanged", () => {
+    const res = recordedResponse();
+    expect(createErrorProps(res, 404, "Dataset version not found")).toEqual({
+      props: { statusCode: 404, statusMessage: "Dataset version not found" },
+    });
+    expect(res.statusCode).toBe(404);
+    expect(res.statusMessage).toBe("Dataset version not found");
+  });
+
+  test("a message the status line cannot carry never reaches it", () => {
+    const hostile = [
+      "line one\r\nX-Injected: yes",
+      "tab\tseparated",
+      "naïve ☃ message",
+      "\u0000control",
+      // `obs-text` (RFC 7230) is latin1 the status line may carry, so this one survives intact.
+      "next\u0085line",
+    ];
+    for (const message of hostile) {
+      const res = recordedResponse();
+      const { props } = createErrorProps(res, 500, message);
+      expect(res.statusMessage, message).toMatch(REASON_PHRASE);
+      expect(props.statusMessage, message).toBe(res.statusMessage);
+      expect(res.statusCode, message).toBe(500);
+    }
+  });
+
+  test("a message with nothing left to say still leaves a status line", () => {
+    const res = recordedResponse();
+    expect(createErrorProps(res, 502, "\r\n\t").props.statusMessage).toBe(
+      "Request failed with status 502",
+    );
+    expect(res.statusMessage).toBe("Request failed with status 502");
+  });
+
+  test("an unbounded message is bounded", () => {
+    const res = recordedResponse();
+    createErrorProps(res, 500, "x".repeat(5000));
+    expect(res.statusMessage.length).toBeLessThanOrEqual(200);
+  });
+});
+
+test.describe("Rejected viewer transport", () => {
+  test("an upstream message is diagnostic only and never the reported status", () => {
+    const failure = describeTransportFailure(
+      { status: 403, statusText: "Forbidden" },
+      { message: "dataset 0e9c...\nowned by another user" },
+    );
+
+    expect(failure.statusMessage).toBe("Forbidden");
+    expect(failure.diagnostic).toBe("dataset 0e9c...\nowned by another user");
+  });
+
+  test("a transport that reports no phrase leaves the status line its one fallback", () => {
+    const failure = describeTransportFailure({ status: 502, statusText: "" }, null);
+    const res = recordedResponse();
+
+    expect(failure.statusMessage).toBe("");
+    expect(failure.diagnostic).toBe("no message");
+    expect(createErrorProps(res, 502, failure.statusMessage).props.statusMessage).toBe(
+      "Request failed with status 502",
+    );
+  });
+
+  test("a non-string upstream message is not reported as one", () => {
+    const failure = describeTransportFailure(
+      { status: 500, statusText: "Internal Server Error" },
+      { message: { nested: true } },
+    );
+
+    expect(failure.statusMessage).toBe("Internal Server Error");
+    expect(failure.diagnostic).toBe("Internal Server Error");
+  });
+});

@@ -2,6 +2,8 @@ import { type DatasetSummary, type DatasetVersionSummary } from "@/api/data-mana
 
 import { List } from "@mui/material";
 
+import { type DatasetCapability } from "../../../../datasets/capabilities";
+import { type DatasetDeletionDestination } from "../../../../datasets/mutations";
 import { AttachDatasetListItem } from "./AttachDatasetListItem";
 import { DatasetSchemaListItem } from "./DatasetSchemaListItem";
 import { DeleteDatasetListItem } from "./DeleteDatasetListItem";
@@ -16,13 +18,13 @@ export interface VersionActionsSectionProps {
    */
   version: DatasetVersionSummary;
   /**
-   * Setter to set the selected version.
+   * Navigates to another available version.
    */
-  setVersion: (version: DatasetVersionSummary) => void;
+  onVersionDeleted: (next: DatasetDeletionDestination) => void;
   /**
    * Whether the dataset version is editable.
    */
-  editable: boolean;
+  deletionCapability: DatasetCapability;
 }
 
 /**
@@ -31,8 +33,8 @@ export interface VersionActionsSectionProps {
 export const VersionActionsSection = ({
   dataset,
   version,
-  setVersion,
-  editable,
+  onVersionDeleted,
+  deletionCapability,
 }: VersionActionsSectionProps) => {
   return (
     <>
@@ -43,21 +45,12 @@ export const VersionActionsSection = ({
 
         <DatasetSchemaListItem datasetId={dataset.dataset_id} version={version.version} />
 
-        {!!editable && (
-          <DeleteDatasetListItem
-            datasetId={dataset.dataset_id}
-            version={version}
-            onDelete={() => {
-              // Reset selected version as it is being deleted
-              const nextSelectableVersions = dataset.versions.filter(
-                (v) => v.version !== version.version,
-              );
-              if (nextSelectableVersions.length > 0) {
-                setVersion(nextSelectableVersions[0]);
-              }
-            }}
-          />
-        )}
+        <DeleteDatasetListItem
+          capability={deletionCapability}
+          datasetId={dataset.dataset_id}
+          version={version}
+          onDeleted={onVersionDeleted}
+        />
       </List>
     </>
   );

@@ -1,0 +1,64 @@
+import Head from "next/head";
+
+import { Container } from "@mui/material";
+
+import Layout from "../../../layouts/Layout";
+import { DocsNav } from "../../../components/DocsNav";
+
+<Head>
+  <title>Creating projects - a How To guide</title>
+</Head>
+
+<DocsNav />
+
+## Creating projects - a How To guide
+
+You can create a new project from the **Project** index. See the
+[Choosing where you work How To guide](context) for general info about projects, organisations and
+units. This guide deals with the specifics of creating a **new project**.
+
+A **project** is created within a **unit** that you choose while creating it, which is what decides
+who pays for it. You can only do this in your own **personal** **unit**
+within the **Default** **organisation** or within a **unit** of another **organisation** if you are an owner of that
+**unit**. The **organisation** owner needs to make you a member of the **unit**. You _do not_ need to be a member of
+a **unit** in order to use a **project** in that **unit**. The owner of the **project** can add you as an **administrator**,
+**editor** or **observer** of the project to give you write access to the **project** and you will have **observer** access
+to any public projects in the unit.
+
+The _Create project_ action on the **Project** index opens a form for the project's details. If you
+have no unit you could be billed in, it stays visible and explains what is missing.
+
+You need to choose the **unit** that will contain the project, give it a sensible name, choose which tier of project you
+want and whether you want the project to be public or private (Evaluation tier projects cannot be private).
+
+The different tiers are described in the [Concepts guide](../concepts).
+
+Once you have made your choices click on the CREATE button to create your project. You enter the new
+project's **Files** only once both its subscription and the project itself have been created and
+linked, so the project you land in is a complete one. If part of that fails, the form explains what
+happened and lets you retry without creating anything twice.
+
+Remember that the owner of the **unit** is responsible for the costs of your project. In the case of a **personal unit**
+in the **Default organisation** that means you!
+
+You can add additional users to your project. These can either be as _administrator_, _editor_ or _observers_.
+
+The roles are as follows:
+
+- **creator** - the person who created the project and can perform administrative operations on it.
+  Only this person can delete the project.
+- **administrator** - can administer the project in the same way as it's creator, except that they cannot delete the
+  project. A project can have multiple administrators.
+- **editor** - can use the project and modify the data in it. they can run apps and jobs in the project.
+- **observer** - can view the contents of the project, but cannot make any changes to the data or execute apps or jobs.
+
+To add or remove users, open the project and go to its **Manage** section, then add the users you
+want to the _Administrators_, _Editors_ and _Observers_ sections. You can also change the privacy of
+the project there. **Manage** stays available to project observers, so you can always see a
+project's details even when you cannot change them.
+
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

@@ -1,0 +1,47 @@
+name: live-service-smoke
+
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: "17 3 * * 1-5"
+
+jobs:
+  smoke:
+    continue-on-error: true
+    environment: data-manager-ui/test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: pnpm/action-setup@v6
+      with:
+        run_install: false
+    - uses: actions/setup-node@v6
+      with:
+        cache: pnpm
+        node-version: 24.15.0
+    - run: pnpm ci
+    - run: pnpm exec playwright install --with-deps chromium
+    - name: Build against live test services
+      run: pnpm build
+      env: &smoke-env
+        ACCOUNT_SERVER_API_SERVER: "https://account-server-test.xchem-dev.diamond.ac.uk/account-server-api"
+        BASE_PATH: "/data-manager-ui"
+        BASE_URL: "http://localhost:3000"
+        BETTER_AUTH_SECRET: "LONG_RANDOM_VALUE"
+        DATA_MANAGER_API_SERVER: "https://data-manager-test.xchem-dev.diamond.ac.uk/data-manager-api"
+        DONT_USE_STANDALONE_OUTPUT: "true"
+        KEYCLOAK_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
+        KEYCLOAK_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
+        KEYCLOAK_URL: "https://keycloak-test.xchem-dev.diamond.ac.uk/auth/realms/squonk"
+        PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
+        PW_USERNAME: "dmit-user-a"
+        TEST_PORT: "3000"
+        VERCEL_BRANCH_URL: "http://localhost:3000"
+    - name: Run non-blocking live smoke
+      run: pnpm test:smoke
+      env: *smoke-env
+    - if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: Live Smoke Results
+        path: test-results

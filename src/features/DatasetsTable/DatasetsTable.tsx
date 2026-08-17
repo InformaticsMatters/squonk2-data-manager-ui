@@ -2,33 +2,36 @@ import { useCallback, useMemo } from "react";
 
 import { useGetDatasets } from "@/api/data-manager/dataset";
 
-import { CircularProgress } from "@mui/material";
+import { Alert, Button, CircularProgress } from "@mui/material";
 import { createColumnHelper, type Row } from "@tanstack/react-table";
 import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { Chips } from "../../components/Chips";
 import { DataTable } from "../../components/DataTable/DataTable";
 import { LabelChip } from "../../components/labels/LabelChip";
+import { getDatasetListParams } from "../../datasets/datasetQuery";
+import { resolveDatasetVersion } from "../../datasets/resolveDatasetVersion";
+import {
+  datasetLinks,
+  type DatasetListState,
+  datasetListState,
+  type DatasetRoute,
+  datasetRouteHref,
+} from "../../datasets/routes";
 import { combineLabels } from "../../utils/app/labels";
-import { getErrorMessage } from "../../utils/next/orvalError";
 import { EditorFilter } from "./filters/EditorFilter";
 import { FileTypeFilter } from "./filters/FileTypeFilter";
 import { LabelsFilter } from "./filters/LabelsFilter";
 import { OwnerFilter } from "./filters/OwnerFilter";
-import { type DatasetDetailsProps } from "./DatasetDetails";
 import { DatasetsBulkActions } from "./DatasetsBulkActions";
 import { DatasetsFilterToolbar } from "./DatasetsFilterToolbar";
 import { type TableDataset } from "./types";
-import { useDatasetsFilter } from "./useDatasetsFilter";
 import { useSelectedDatasets } from "./useSelectedDatasets";
 
 const DatasetUpload = dynamic<Record<string, never>>(
   () => import("../DatasetUpload").then((mod) => mod.DatasetUpload),
-  { loading: () => <CircularProgress size="1rem" /> },
-);
-
-const DatasetDetails = dynamic<DatasetDetailsProps>(
-  () => import("./DatasetDetails").then((mod) => mod.DatasetDetails),
   { loading: () => <CircularProgress size="1rem" /> },
 );
 
@@ -45,18 +48,35 @@ const columnHelper = createColumnHelper<TableDataset>();
  * MuiTable managed by react-table that displays datasets viewable by the user with option to see
  * further details of a dataset.
  */
-export const DatasetsTable = () => {
+export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
+  const router = useRouter();
+  const state = datasetListState(route);
+  const updateState = (change: Partial<DatasetListState>) => {
+    const nextState = { ...state, ...change };
+    void router.replace(datasetRouteHref(route, nextState) as never, undefined, { shallow: true });
+  };
   const columns = useMemo(
     () => [
       columnHelper.accessor("fileName", {
         header: "File Name",
-        cell: ({ row }) => (
-          <DatasetDetails
-            dataset={row.original.datasetSummary}
-            datasetName={row.original.datasetSummary.versions[0].file_name}
-            version={row.original.datasetVersion}
-          />
-        ),
+        cell: ({ row }) => {
+          const { datasetVersion } = row.original;
+          return datasetVersion ? (
+            <Link
+              href={
+                datasetLinks.version(
+                  row.original.dataset_id,
+                  datasetVersion.version,
+                  state,
+                ) as never
+              }
+            >
+              {row.original.fileName}
+            </Link>
+          ) : (
+            row.original.fileName
+          );
+        },
       }),
       columnHelper.accessor("labels", {
         header: "Labels",
@@ -79,17 +99,19 @@ export const DatasetsTable = () => {
       }),
       columnHelper.accessor("numberOfProjects", { header: "Number of projects" }),
     ],
-    [],
+    [state],
   );
 
-  const { params, filter, setFilterItem } = useDatasetsFilter();
-  const { data, error, isLoading } = useGetDatasets(params);
+  const params = getDatasetListParams(state);
+  const { data, error, isLoading, refetch } = useGetDatasets(params);
 
   // Transform all datasets to match the data-table props
   const datasets: TableDataset[] = useMemo(
     () =>
       data?.datasets.map((dataset) => {
-        const fileName = dataset.versions[0].file_name; // TODO: should either use the newest version or wait for the API to change
+        const resolution = resolveDatasetVersion([dataset], dataset.dataset_id);
+        const currentVersion = resolution.kind === "resolved" ? resolution.version : undefined;
+        const fileName = currentVersion?.file_name ?? "No available versions";
         const numberOfProjects = new Set(
           dataset.versions.flatMap((version) => version.projects.map((project) => project)),
         ).size;
@@ -100,8 +122,8 @@ export const DatasetsTable = () => {
           fileName,
           numberOfProjects,
           datasetSummary: dataset,
-          labels: combineLabels(dataset.versions),
-          datasetVersion: dataset.versions[0],
+          labels: dataset.versions.length > 0 ? combineLabels(dataset.versions) : {},
+          ...(currentVersion ? { datasetVersion: currentVersion } : {}),
           subRows: dataset.versions.map<TableDataset>((version) => ({
             type: "subRow",
             ...dataset,
@@ -121,50 +143,68 @@ export const DatasetsTable = () => {
 
   const { selectedDatasets, onSelection } = useSelectedDatasets(datasets);
 
-  const { owner, editor, fileType, labels } = filter;
   const getRowId = useCallback((row: TableDataset) => `${row.dataset_id}#${row.version}`, []);
 
   return (
-    <DataTable
-      subRowsEnabled
-      columns={columns}
-      data={datasets}
-      error={getErrorMessage(error)}
-      getRowId={getRowId}
-      initialSelection={[]}
-      isLoading={isLoading}
-      ToolbarActionChild={<DatasetsBulkActions selectedDatasets={selectedDatasets} />}
-      toolbarContent={
-        <>
-          <DatasetUpload />
-          <DatasetsFilterToolbar
-            fullWidthFilters={
-              <LabelsFilter
-                labels={labels}
-                setLabels={(labels) => setFilterItem("labels", labels)}
-              />
-            }
-            shrinkableFilters={[
-              <OwnerFilter
-                key="owner"
-                owner={owner}
-                setOwner={(owner) => setFilterItem("owner", owner)}
-              />,
-              <EditorFilter
-                editor={editor}
-                key="editor"
-                setEditor={(editor) => setFilterItem("editor", editor)}
-              />,
-              <FileTypeFilter
-                fileType={fileType}
-                key="fileType"
-                setFileType={(fileType) => setFilterItem("fileType", fileType)}
-              />,
-            ]}
-          />
-        </>
-      }
-      onSelection={onSelection}
-    />
+    <>
+      {error && route.kind === "index" ? (
+        <Alert
+          action={
+            <Button color="inherit" size="small" onClick={() => void refetch()}>
+              Retry
+            </Button>
+          }
+          severity="error"
+          sx={{ mb: 2 }}
+        >
+          Dataset list could not be loaded. Retry without changing the current Datasets view.
+        </Alert>
+      ) : null}
+      <DataTable
+        subRowsEnabled
+        columns={columns}
+        data={datasets}
+        getRowId={getRowId}
+        initialSelection={[]}
+        isLoading={isLoading}
+        searchLabel="Search datasets"
+        searchValue={state.search ?? ""}
+        ToolbarActionChild={<DatasetsBulkActions selectedDatasets={selectedDatasets} />}
+        toolbarContent={
+          <>
+            <DatasetUpload />
+            <DatasetsFilterToolbar
+              fullWidthFilters={
+                <LabelsFilter
+                  labels={state.labels ? [...state.labels] : undefined}
+                  setLabels={(labels) => updateState({ labels })}
+                />
+              }
+              shrinkableFilters={[
+                <OwnerFilter
+                  key="owner"
+                  owner={state.owner ? { username: state.owner } : undefined}
+                  setOwner={(owner) => updateState({ owner: owner?.username })}
+                />,
+                <EditorFilter
+                  editor={state.editor ? { username: state.editor } : undefined}
+                  key="editor"
+                  setEditor={(editor) => updateState({ editor: editor?.username })}
+                />,
+                <FileTypeFilter
+                  fileType={
+                    state.mimeType ? { file_extensions: [], mime: state.mimeType } : undefined
+                  }
+                  key="fileType"
+                  setFileType={(fileType) => updateState({ mimeType: fileType?.mime })}
+                />,
+              ]}
+            />
+          </>
+        }
+        onSearchChange={(search) => updateState({ search: search || undefined })}
+        onSelection={onSelection}
+      />
+    </>
   );
 };

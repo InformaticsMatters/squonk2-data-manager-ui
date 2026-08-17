@@ -30,6 +30,7 @@ export const FileTypeFilter = ({ fileType, setFileType }: FileTypeFilterProps) =
       id="datasets-file-type-filter"
       isError={isError}
       isLoading={isLoading}
+      isOptionEqualToValue={(option, value) => option.mime === value.mime}
       label="Filter by file type"
       options={fileTypes}
       value={fileType}

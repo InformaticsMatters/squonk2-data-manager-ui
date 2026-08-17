@@ -1,39 +1,65 @@
 import { useState } from "react";
 
-import { type InstanceSummary } from "@/api/data-manager";
-import {
-  getGetInstanceQueryKey,
-  getGetInstancesQueryKey,
-  usePatchInstance,
-} from "@/api/data-manager/instance";
+import { type DmError } from "@/api/data-manager";
 
 import { Button, Tooltip } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
+
+import { useEnqueueError } from "../../hooks/useEnqueueStackError";
+import { capabilityIsEnabled, type ProjectCapability } from "../../projects/capabilities";
+import { useResultCommands } from "../../projects/useResultCommands";
 
 export interface ArchiveInstanceProps {
-  instanceId: InstanceSummary["id"];
   archived: boolean;
+  /**
+   * What the caller may do with this instance, decided by the project that owns it. Archiving only
+   * protects an instance from automatic deletion and is reversible, so it answers to that project
+   * alone rather than to what the instance's own progress could establish.
+   */
+  capability: ProjectCapability;
+  instanceId: string;
+  /**
+   * The project the instance itself declares it belongs to, so the command refreshes that
+   * project's own collection rather than every project's.
+   */
+  projectId: string;
 }
 
-export const ArchiveInstance = ({ instanceId, archived }: ArchiveInstanceProps) => {
-  const { mutateAsync: patchInstance } = usePatchInstance();
-  const queryClient = useQueryClient();
+/**
+ * Protects one instance of the project that owns it from automatic deletion, or gives up that
+ * protection. A rejection is reported where the instance is and changes neither the project nor
+ * the route it was rejected in.
+ */
+export const ArchiveInstance = ({
+  archived,
+  capability,
+  instanceId,
+  projectId,
+}: ArchiveInstanceProps) => {
+  const commands = useResultCommands();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
   const [archiving, setArchiving] = useState(false);
 
   const archiveInstance = async () => {
     setArchiving(true);
-    await patchInstance({ instanceId, params: { archive: !archived } });
-    await Promise.allSettled([
-      queryClient.invalidateQueries({ queryKey: getGetInstanceQueryKey(instanceId) }),
-      queryClient.invalidateQueries({ queryKey: getGetInstancesQueryKey() }),
-    ]);
-    setArchiving(false);
+    try {
+      await commands.archiveInstance(projectId, instanceId, !archived);
+      enqueueSnackbar(`Instance has been ${archived ? "unarchived" : "archived"}`, {
+        variant: "success",
+      });
+    } catch (error) {
+      enqueueError(error);
+    } finally {
+      setArchiving(false);
+    }
   };
 
   return (
     <Tooltip title="Toggle whether an instance will be deleted automatically">
       <span>
-        <Button disabled={archiving} onClick={() => void archiveInstance()}>
+        <Button
+          disabled={archiving || !capabilityIsEnabled(capability)}
+          onClick={() => void archiveInstance()}
+        >
           {archived ? "Unarchive" : "Archive"}
         </Button>
       </span>

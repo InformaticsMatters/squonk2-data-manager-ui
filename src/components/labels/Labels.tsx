@@ -1,10 +1,10 @@
 import { type DatasetVersionSummary, type DmError } from "@/api/data-manager";
-import { getGetDatasetsQueryKey } from "@/api/data-manager/dataset";
-import { useAddMetadata } from "@/api/data-manager/metadata";
 
 import { Typography } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
 
+import { type DatasetCapability } from "../../datasets/capabilities";
+import { datasetMutationFailureMessage } from "../../datasets/mutations";
+import { useDatasetCommands } from "../../datasets/useDatasetCommands";
 import { type TableDataset } from "../../features/DatasetsTable";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { LabelChip } from "./LabelChip";
@@ -18,18 +18,17 @@ export interface LabelsProps {
    * version of the dataset
    */
   datasetVersion: DatasetVersionSummary;
+  capability: DatasetCapability;
 }
 
 /**
  *  Display formatted labels for a version of a dataset with options to add and remove labels.
  */
-export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
-  const labels = Object.entries((datasetVersion.labels ?? {}) as Record<string, string>);
+export const Labels = ({ datasetId, datasetVersion, capability }: LabelsProps) => {
+  const labels = Object.entries((datasetVersion.labels ?? {}) as Record<string, string[] | string>);
+  const { removeLabel } = useDatasetCommands();
 
-  const queryClient = useQueryClient();
-  const { mutateAsync: addAnnotations } = useAddMetadata();
-
-  const { enqueueError } = useEnqueueError<DmError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
   if (labels.length === 0) {
     return (
@@ -39,17 +38,17 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
     );
   }
 
-  const deleteHandler = async (label: string, value: string) => {
+  const deleteHandler = async (label: string, value: string[] | string) => {
     try {
-      await addAnnotations({
-        datasetId,
-        data: {
-          labels: JSON.stringify([{ label, value, type: "LabelAnnotation", active: false }]),
-        },
-      });
-      void queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
+      await removeLabel(datasetId, datasetVersion.version, label, value);
     } catch (error) {
-      enqueueError(error);
+      const message = datasetMutationFailureMessage(
+        error,
+        "change labels for",
+        datasetId,
+        datasetVersion.version,
+      );
+      message ? enqueueSnackbar(message, { variant: "error" }) : enqueueError(error);
     }
   };
 
@@ -61,7 +60,9 @@ export const Labels = ({ datasetId, datasetVersion }: LabelsProps) => {
           label={label}
           sx={{ m: 0.5 }}
           values={value}
-          onDelete={() => void deleteHandler(label, value)}
+          onDelete={
+            capability.status === "enabled" ? () => void deleteHandler(label, value) : undefined
+          }
         />
       ))}
     </>

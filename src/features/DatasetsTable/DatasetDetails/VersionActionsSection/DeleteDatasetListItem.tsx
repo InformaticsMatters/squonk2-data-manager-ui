@@ -1,11 +1,15 @@
 import { type DatasetVersionSummary, type DmError } from "@/api/data-manager";
-import { getGetDatasetsQueryKey, useDeleteDataset } from "@/api/data-manager/dataset";
 
 import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemText } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../../components/WarningDeleteButton";
+import { type DatasetCapability } from "../../../../datasets/capabilities";
+import {
+  type DatasetDeletionDestination,
+  datasetMutationFailureMessage,
+} from "../../../../datasets/mutations";
+import { useDatasetCommands } from "../../../../datasets/useDatasetCommands";
 import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
 
 export interface DeleteDatasetProps {
@@ -18,37 +22,52 @@ export interface DeleteDatasetProps {
    */
   version: DatasetVersionSummary;
   /**
-   * Called just before the async delete action is called. Used to reset state in the parent scope.
-   * E.g. resetting the selected version.
+   * Called after deletion with a destination derived from refreshed dataset data.
    */
-  onDelete: () => void;
+  onDeleted: (next: DatasetDeletionDestination) => void;
+  capability: DatasetCapability;
 }
 
 /**
  * MuiListItem with an action that opens a modal with a confirmation to delete a dataset.
  */
-export const DeleteDatasetListItem = ({ datasetId, version, onDelete }: DeleteDatasetProps) => {
-  const queryClient = useQueryClient();
-  const { mutateAsync: deleteDataset } = useDeleteDataset();
+export const DeleteDatasetListItem = ({
+  datasetId,
+  version,
+  onDeleted,
+  capability,
+}: DeleteDatasetProps) => {
+  const { deleteVersion } = useDatasetCommands();
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
   return (
     <WarningDeleteButton
+      retainOnError
       modalId={`delete-${datasetId}`}
       title={`Delete v${version.version}`}
+      tooltipText={capability.status === "disabled" ? capability.reason : undefined}
       onDelete={async () => {
-        onDelete();
         try {
-          await deleteDataset({ datasetId, datasetVersion: version.version });
+          const { nextVersion } = await deleteVersion(datasetId, version.version);
+          enqueueSnackbar("Dataset version deleted", { variant: "success" });
+          onDeleted(nextVersion);
         } catch (error) {
-          enqueueError(error);
+          const message = datasetMutationFailureMessage(
+            error,
+            "delete",
+            datasetId,
+            version.version,
+          );
+          message ? enqueueSnackbar(message, { variant: "error" }) : enqueueError(error);
+          throw error;
         }
-        await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
-        enqueueSnackbar("Dataset deleted", { variant: "success" });
       }}
     >
       {({ isDeleting, openModal }) => (
-        <ListItemButton disabled={isDeleting} onClick={openModal}>
+        <ListItemButton
+          disabled={isDeleting || capability.status !== "enabled"}
+          onClick={openModal}
+        >
           <ListItemText primary="Delete this Version of the Dataset" />
           <DeleteForeverIcon color="action" />
         </ListItemButton>

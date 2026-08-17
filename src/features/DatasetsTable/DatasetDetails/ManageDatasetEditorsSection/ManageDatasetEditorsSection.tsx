@@ -1,16 +1,11 @@
 import { useState } from "react";
 
-import { type DatasetSummary, type DmError } from "@/api/data-manager";
-import {
-  getGetDatasetsQueryKey,
-  useAddEditorToDataset,
-  useRemoveEditorFromDataset,
-} from "@/api/data-manager/dataset";
+import { type DatasetSummary, type DatasetVersionSummary, type DmError } from "@/api/data-manager";
 
-import { useQueryClient } from "@tanstack/react-query";
-
-import { CenterLoader } from "../../../../components/CenterLoader";
 import { ManageUsers } from "../../../../components/ManageUsers";
+import { type DatasetCapability } from "../../../../datasets/capabilities";
+import { datasetMutationFailureMessage } from "../../../../datasets/mutations";
+import { useDatasetCommands } from "../../../../datasets/useDatasetCommands";
 import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
 import { useKeycloakUser } from "../../../../hooks/useKeycloakUser";
 
@@ -19,67 +14,81 @@ export interface ManageDatasetEditorsSectionProps {
    * Dataset from datasets table
    */
   dataset: DatasetSummary;
+  version: DatasetVersionSummary;
+  capability: DatasetCapability;
 }
 
 /**
  * MuiAutocomplete with options to add and remove editors from a dataset
  */
-export const ManageDatasetEditorsSection = ({ dataset }: ManageDatasetEditorsSectionProps) => {
+export const ManageDatasetEditorsSection = ({
+  dataset,
+  version,
+  capability,
+}: ManageDatasetEditorsSectionProps) => {
   const { user } = useKeycloakUser();
-
-  const queryClient = useQueryClient();
-  const { mutateAsync: addEditor } = useAddEditorToDataset();
-  const { mutateAsync: removeEditor } = useRemoveEditorFromDataset();
+  const commands = useDatasetCommands();
 
   // Get all users except for the current user - this is added manually
   const editors = dataset.editors.filter((editor) => editor !== user.username);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [editorInput, setEditorInput] = useState("");
 
   const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
 
-  if (!user.username) {
-    return <CenterLoader />;
-  }
-
   return (
     <ManageUsers
+      disabled={capability.status !== "enabled"}
+      helperText={capability.status === "hidden" ? undefined : capability.reason}
+      inputValue={editorInput}
       isLoading={isLoading}
       title="Editors"
       users={editors}
-      onRemove={async (value) => {
+      onInputChange={setEditorInput}
+      onRemove={async (_, changedUser) => {
         setIsLoading(true);
-        const username = dataset.editors.find((editor) => !value.includes(editor));
+        const username = changedUser;
         if (username === undefined) {
           enqueueSnackbar("Username doesn't exist", { variant: "warning" });
         } else {
           try {
-            await removeEditor({ datasetId: dataset.dataset_id, userId: username });
+            await commands.removeEditor(dataset.dataset_id, username);
+            enqueueSnackbar(`User ${username} removed successfully`, { variant: "success" });
           } catch (error) {
-            enqueueError(error);
+            const message = datasetMutationFailureMessage(
+              error,
+              "manage editors for",
+              dataset.dataset_id,
+              version.version,
+            );
+            message ? enqueueSnackbar(message, { variant: "error" }) : enqueueError(error);
           }
         }
-
-        await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
-        enqueueSnackbar(`User ${username} removed successfully`, { variant: "success" });
 
         setIsLoading(false);
       }}
-      onSelect={async (value) => {
+      onSelect={async (_, changedUser) => {
         setIsLoading(true);
-        const username = value.find((user) => !dataset.editors.includes(user));
+        const username = changedUser;
+        setEditorInput(username ?? "");
         if (username === undefined) {
           enqueueSnackbar("Username doesn't exist", { variant: "warning" });
         } else {
           try {
-            await addEditor({ datasetId: dataset.dataset_id, userId: username });
+            await commands.addEditor(dataset.dataset_id, username);
+            setEditorInput("");
+            enqueueSnackbar(`User ${username} added successfully`, { variant: "success" });
           } catch (error) {
-            enqueueError(error);
+            const message = datasetMutationFailureMessage(
+              error,
+              "manage editors for",
+              dataset.dataset_id,
+              version.version,
+            );
+            message ? enqueueSnackbar(message, { variant: "error" }) : enqueueError(error);
           }
         }
-
-        await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
-        enqueueSnackbar(`User ${username} added successfully`, { variant: "success" });
 
         setIsLoading(false);
       }}

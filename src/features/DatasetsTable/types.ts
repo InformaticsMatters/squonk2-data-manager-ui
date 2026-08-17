@@ -11,13 +11,16 @@ type TableDatasetBase = {
   subRows: TableDataset[];
   // Pointers
   datasetSummary: DatasetSummary;
-  datasetVersion: DatasetVersionSummary;
 };
 
-export type TableDatasetRow = TableDatasetBase & { type: "row" };
+export type TableDatasetRow = TableDatasetBase & {
+  type: "row";
+  datasetVersion?: DatasetVersionSummary;
+};
 
 export type TableDatasetSubRow = TableDatasetBase & {
   type: "subRow";
+  datasetVersion: DatasetVersionSummary;
   version: number;
   owner?: string;
 };

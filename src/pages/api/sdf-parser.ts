@@ -12,9 +12,10 @@ import { createGunzip } from "node:zlib";
 import fetch, { type Response } from "node-fetch";
 
 import { auth } from "../../lib/auth";
+import { isCompressedFileName } from "../../projects/fileViewers";
+import { projectFileResourcePath, readProjectFileAddress } from "../../projects/routes";
 import { type SDFViewerConfig, uncensorConfig } from "../../utils/api/sdfViewer";
 import { type JSON_SCHEMA_TYPE } from "../../utils/app/jsonSchema";
-import { API_ROUTES } from "../../utils/app/routes";
 
 const getTreatAs = (dtype: JSON_SCHEMA_TYPE): FilterRule["treatAs"] => {
   switch (dtype) {
@@ -37,7 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ResponseData>) 
 
   const { method } = req;
   if (method === "GET") {
-    const { project: projectId, path, file: fileName, config: configString } = req.query;
+    const { project: projectId, path, config: configString } = req.query;
 
     if (typeof configString !== "string") {
       res.status(400).json({ error: "config must be a string" });
@@ -53,17 +54,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ResponseData>) 
       return;
     }
 
-    if (
-      !projectId ||
-      !path ||
-      !fileName ||
-      Array.isArray(projectId) ||
-      Array.isArray(path) ||
-      Array.isArray(fileName)
-    ) {
+    // The file is addressed exactly as the route that asked for it is: one project, one canonical
+    // path. Anything else names no file this client can address and is refused rather than guessed
+    // at.
+    const address = readProjectFileAddress(projectId, path);
+    if (address === null) {
       res.status(400).json({ error: "Bad request" });
       return;
     }
+    const { file } = address;
 
     let response: Response;
     try {
@@ -80,7 +79,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ResponseData>) 
       const headers = new Headers({ Authorization: `Bearer ${accessToken}` });
 
       response = await fetch(
-        process.env.DATA_MANAGER_API_SERVER + API_ROUTES.projectFile(projectId, path, fileName),
+        process.env.DATA_MANAGER_API_SERVER + projectFileResourcePath(address.projectId, file.path),
         { headers },
       );
     } catch {
@@ -95,8 +94,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ResponseData>) 
         return;
       }
 
-      const compressed = fileName.endsWith(".gz");
-      if (compressed) {
+      if (isCompressedFileName(file.name)) {
         stream = stream.pipe(createGunzip());
       }
 

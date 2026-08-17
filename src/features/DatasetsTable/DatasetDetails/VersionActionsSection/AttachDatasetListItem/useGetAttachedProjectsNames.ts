@@ -1,11 +1,16 @@
-import { type ProjectDetail } from "@/api/data-manager";
+import { useGetProjects } from "@/api/data-manager/project";
 
 /**
  * Resolves names of the projects a dataset version is attached to. Since a user might not have
  * enough permissions to view information about every project the dataset version is attached to,
  * information about the amount of such projects is listed as the last item in the returning array.
+ *
+ * The generated project collection is read here rather than handed in, so the collection stays
+ * behind its own generated cache identity instead of travelling through another module.
  */
-export const useGetAttachedProjectsNames = (projectIds: string[], projects?: ProjectDetail[]) => {
+export const useGetAttachedProjectsNames = (projectIds: string[]) => {
+  const { data } = useGetProjects();
+  const projects = data?.projects;
   if (projects) {
     const names: string[] = [];
 

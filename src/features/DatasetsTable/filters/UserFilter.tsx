@@ -45,6 +45,7 @@ export const UserFilter = ({ user, setUser, id, label }: UserFilterProps) => {
       id={id}
       isError={isError}
       isLoading={isLoading}
+      isOptionEqualToValue={(option, value) => option.username === value.username}
       label={label}
       options={users}
       value={user}

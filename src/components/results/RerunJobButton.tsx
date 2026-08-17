@@ -1,49 +1,44 @@
-import { useState } from "react";
-
-import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
-
 import { Button } from "@mui/material";
 import { useRouter } from "next/router";
 
-import { JobModal } from "../runCards/JobCard/JobModal";
+import { capabilityIsEnabled, type ProjectCapability } from "../../projects/capabilities";
+import { type RerunTarget } from "../../projects/resultRerun";
+import { projectLinks, type ResultsState } from "../../projects/routes";
 
 export interface RerunJobButtonProps {
   /**
-   * Instance of the job that will be used to provide default options to rerun the job
+   * What running this instance's job again requires, as its owning project decides it. It is the
+   * only thing that decides whether the button is offered, so no caller can disable it separately.
    */
-  instance: InstanceGetResponse | InstanceSummary;
+  capability: ProjectCapability;
   /**
-   * Whether the button is disabled
+   * Results list state the rerun's route preserves, so returning from it lands on the list the
+   * caller came from.
    */
-  disabled: boolean;
+  resultsState?: ResultsState;
+  /** The instance, the job, and the verified project one rerun would be sent for. */
+  target: RerunTarget;
 }
 
 /**
- * Wrapper around the *execution card* job run modal that reloads defaults from an existing instance
+ * Opens the addressed instance's rerun. The rerun is a route of that instance rather than state
+ * this control keeps, so it is directly linkable, survives a refresh, and is left by Back as well
+ * as by Close — and it is addressed inside the one project the target was verified against.
  */
-export const RerunJobButton = ({ instance, disabled = false }: RerunJobButtonProps) => {
-  const [open, setOpen] = useState(false);
-
+export const RerunJobButton = ({ capability, resultsState, target }: RerunJobButtonProps) => {
   const { push } = useRouter();
 
-  // If the job id is undefined, it's probably an application which we don't currently let be rerun.
-  return instance.job_id === undefined ? null : (
-    <>
-      <Button color="primary" disabled={disabled} onClick={() => setOpen(true)}>
-        Run again
-      </Button>
-      {!!open && (
-        <JobModal
-          instance={instance}
-          jobId={instance.job_id}
-          open={open}
-          projectId={instance.project_id}
-          onClose={() => setOpen(false)}
-          onLaunch={(instanceId) =>
-            void push({ pathname: "/results/instance/[instanceId]", query: { instanceId } })
-          }
-        />
-      )}
-    </>
+  return (
+    <Button
+      color="primary"
+      disabled={!capabilityIsEnabled(capability)}
+      onClick={() =>
+        void push(
+          projectLinks.resultRerun(target.projectId, target.instanceId, resultsState) as never,
+        )
+      }
+    >
+      Run again
+    </Button>
   );
 };

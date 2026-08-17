@@ -1,99 +1,82 @@
-import { useState } from "react";
-
-import { Settings as SettingsIcon } from "@mui/icons-material";
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Box, Stack, Toolbar } from "@mui/material";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 
-import { CenterLoader } from "../../components/CenterLoader";
-import { ModalWrapper } from "../../components/modals/ModalWrapper";
-import { useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
-import { useKeycloakUser } from "../../hooks/useKeycloakUser";
-import { MobileNavMenu } from "./MobileNavMenu";
-import { NavLinks } from "./NavLinks";
-import { OUPContext } from "./OUPContext";
+import { HeaderLogo } from "../../components/logo/HeaderLogo";
+import { authClient } from "../../lib/auth-client";
+import { MainNav, MainNavLink } from "./MainNavLink";
+import { OrganisationIdentity } from "./OrganisationIdentity";
+import { ProjectNavigation } from "./ProjectNavigation";
 
-// Auth-dependent controls render only on the client. better-auth's
-// useSession is client-only, so SSR has no session info while the client
-// can resolve it synchronously from the cookie cache — that divergence
-// trips MUI's IconButton `disabled || loading` logic and causes a button-
-// level hydration mismatch. Skipping SSR for these controls sidesteps the
-// issue entirely; users see a brief empty slot before the buttons mount.
-const UserMenu = dynamic(() => import("./UserMenu").then((mod) => mod.UserMenu), { ssr: false });
+const UserMenu = dynamic(() => import("./UserMenu").then((module) => module.UserMenu), {
+  ssr: false,
+});
 
-const UserSettingsContent = dynamic(
-  () =>
-    import("../../features/userSettings/UserSettingsContent/UserSettingsContent").then(
-      (mod) => mod.UserSettingsContent,
-    ),
-  { loading: () => <CenterLoader /> },
-);
+const applicationLinks = [
+  { href: "/projects", label: "Project" },
+  { href: "/datasets", label: "Datasets" },
+  { href: "/administration/organisation-access", label: "Administration" },
+] as const;
 
-const SettingsButtonImpl = ({ disabled, onClick }: { disabled: boolean; onClick: () => void }) => (
-  <Tooltip title="Settings">
-    <span>
-      <IconButton
-        color="inherit"
-        disabled={disabled}
-        loading={false}
-        sx={{ ml: { xs: "auto", md: 0 } }}
-        onClick={onClick}
-      >
-        <SettingsIcon />
-      </IconButton>
-    </span>
-  </Tooltip>
-);
+const publicLinks = [
+  { href: "/", label: "Home" },
+  { href: "/docs/concepts", label: "Documentation" },
+] as const;
 
-const SettingsButton = dynamic(() => Promise.resolve(SettingsButtonImpl), { ssr: false });
-
-export const NavBarContents = () => {
-  const { user } = useKeycloakUser();
-  const isDMAuthorized = useDMAuthorizationStatus();
-  const [settingsOpen, setSettingsOpen] = useState(false);
-
-  const handleCloseSettings = () => setSettingsOpen(false);
-  const handleOpenSettings = () => setSettingsOpen(true);
+const NavigationLinks = ({ authenticated }: { authenticated: boolean }) => {
+  const router = useRouter();
+  const links = authenticated ? applicationLinks : publicLinks;
 
   return (
+    <MainNav aria-label="Main">
+      {links.map(({ href, label }) => {
+        const familyPath = href.split("/").slice(0, 2).join("/") || "/";
+        const active =
+          familyPath === "/" ? router.pathname === "/" : router.asPath.startsWith(familyPath);
+        return <MainNavLink active={active} href={href} key={href} label={label} />;
+      })}
+    </MainNav>
+  );
+};
+
+const PublicNavigation = () => (
+  <Toolbar sx={{ gap: 1 }}>
+    <HeaderLogo />
+    <Box sx={{ ml: "auto" }}>
+      <NavigationLinks authenticated={false} />
+    </Box>
+    <UserMenu />
+  </Toolbar>
+);
+
+const AuthenticatedNavigation = () => (
+  <>
+    <Toolbar>
+      <Stack direction="row" sx={{ alignItems: "center", minWidth: 0 }}>
+        <HeaderLogo />
+        <OrganisationIdentity />
+      </Stack>
+      <Box sx={{ display: { xs: "none", sm: "block" }, ml: "auto" }}>
+        <NavigationLinks authenticated />
+      </Box>
+      <UserMenu />
+    </Toolbar>
+    <Box sx={{ display: { sm: "none" }, overflowX: "auto", px: 1 }}>
+      <NavigationLinks authenticated />
+    </Box>
+  </>
+);
+
+export const NavBarContents = () => {
+  const { data: session } = authClient.useSession();
+  const router = useRouter();
+  const usePublicShell = !session || router.pathname.startsWith("/docs/");
+  return usePublicShell ? (
+    <PublicNavigation />
+  ) : (
     <>
-      <ModalWrapper
-        DialogProps={{ fullScreen: true }}
-        id="user-settings"
-        open={settingsOpen}
-        title="Settings"
-        onClose={handleCloseSettings}
-      >
-        {!!user.username && <UserSettingsContent />}
-      </ModalWrapper>
-
-      {/* Desktop Navigation */}
-      <Box
-        sx={{ display: { xs: "none" }, "@media (min-width:655px)": { display: "block" }, flex: 1 }}
-      >
-        <NavLinks linkWidth={120} />
-      </Box>
-
-      {/* Desktop Controls */}
-      <Box
-        sx={{
-          justifyContent: "flex-end",
-          alignItems: "center",
-          flex: "1 0",
-          minWidth: 0,
-          ml: "auto",
-          display: "flex",
-        }}
-      >
-        {!!isDMAuthorized && <OUPContext sx={{ display: { xs: "none", md: "flex" } }} />}
-        <SettingsButton disabled={!isDMAuthorized} onClick={handleOpenSettings} />
-
-        <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <UserMenu />
-        </Box>
-        <Box sx={{ display: { xs: "block", md: "none" } }}>
-          <MobileNavMenu />
-        </Box>
-      </Box>
+      <AuthenticatedNavigation />
+      <ProjectNavigation />
     </>
   );
 };

@@ -1,11 +1,10 @@
 import { type DmError } from "@/api/data-manager";
-import { getGetDatasetsQueryKey, useDeleteDataset } from "@/api/data-manager/dataset";
 
 import { DeleteForever } from "@mui/icons-material";
 import { IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { WarningDeleteButton } from "../../../../components/WarningDeleteButton";
+import { useDatasetCommands } from "../../../../datasets/useDatasetCommands";
 import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
 import { type TableDataset, type TableDatasetSubRow } from "../..";
 import { useFilterDeletableDatasets } from "./useFilterDeletableDatasets";
@@ -28,8 +27,7 @@ export interface BulkDeleteButtonProps {
  * confirm dialog potentially with the list of datasets a user has no permission to delete.
  */
 export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) => {
-  const queryClient = useQueryClient();
-  const { mutateAsync: deleteDataset } = useDeleteDataset();
+  const { deleteVersion } = useDatasetCommands();
 
   const { deletableDatasets, undeletableDatasets } = useFilterDeletableDatasets(selectedDatasets);
   const sortedUndeletableDatasets = useSortUndeletableDatasets(undeletableDatasets);
@@ -37,21 +35,28 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
   const { enqueueSnackbar } = useEnqueueError<DmError>();
 
   const deleteSelectedDatasets = async () => {
-    const promises = deletableDatasets.map((dataset) =>
-      deleteDataset({ datasetId: dataset.dataset_id, datasetVersion: dataset.version }),
+    const reasons: unknown[] = [];
+    const orderedDatasets = deletableDatasets.toSorted(
+      (left, right) =>
+        left.dataset_id.localeCompare(right.dataset_id) || right.version - left.version,
     );
-
-    const reasons = (await Promise.allSettled(promises))
-      .filter((result): result is PromiseRejectedResult => result.status === "rejected")
-      .map((rejected) => rejected.reason);
+    for (const dataset of orderedDatasets) {
+      try {
+        await deleteVersion(dataset.dataset_id, dataset.version);
+      } catch (error) {
+        reasons.push(error);
+      }
+    }
 
     if (reasons.length > 0) {
       enqueueSnackbar(`${reasons.length} dataset(s) could not be deleted`, { variant: "warning" });
+    } else if (orderedDatasets.length === 0) {
+      enqueueSnackbar("No selected dataset versions are available for deletion", {
+        variant: "warning",
+      });
     } else {
       enqueueSnackbar("Datasets deleted successfully", { variant: "success" });
     }
-
-    await queryClient.invalidateQueries({ queryKey: getGetDatasetsQueryKey() });
   };
 
   return (

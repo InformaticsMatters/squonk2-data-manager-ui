@@ -1,18 +1,17 @@
 import { type Dispatch, type RefObject, type SetStateAction } from "react";
 
-import { type JobOrderDetail } from "@/api/data-manager";
-
 import { Grid, Typography } from "@mui/material";
 import { Form } from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 
+import { type InputData } from "../../../projects/runLaunchForm";
 import { JobInputFields } from "./JobInputFields";
-import { type InputData } from "./JobModal";
 
 interface JobInputsAndOptionsFormProps {
   inputs?: any;
   options?: any;
-  order: JobOrderDetail["options"];
+  /** The order the definition declared for its options, empty when it declared none. */
+  order: string[];
   projectId: string;
   inputsData: InputData;
   setInputsData: Dispatch<SetStateAction<InputData>>;

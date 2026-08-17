@@ -39,6 +39,7 @@ export interface WarningDeleteButtonProps {
    * Called when the primary action is triggered.
    */
   onDelete: () => Promise<void>;
+  retainOnError?: boolean;
 }
 
 const defaultChild = (
@@ -58,6 +59,7 @@ export const WarningDeleteButton = ({
   modalChildren = defaultChild,
   children,
   onDelete,
+  retainOnError = false,
 }: WarningDeleteButtonProps) => {
   const isMounted = useMountedState();
   const [open, setOpen] = useState(false);
@@ -67,10 +69,25 @@ export const WarningDeleteButton = ({
 
   const submitHandler = async () => {
     setIsDeleting(true);
-    await onDelete();
-    if (isMounted()) {
-      setIsDeleting(false);
-      setOpen(false);
+    if (!retainOnError) {
+      await onDelete();
+      if (isMounted()) {
+        setIsDeleting(false);
+        setOpen(false);
+      }
+      return;
+    }
+    try {
+      await onDelete();
+      if (isMounted()) {
+        setOpen(false);
+      }
+    } catch {
+      // The action owner presents scoped feedback; keep the confirmation open for retry.
+    } finally {
+      if (isMounted()) {
+        setIsDeleting(false);
+      }
     }
   };
 

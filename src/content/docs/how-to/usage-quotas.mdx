@@ -1,0 +1,59 @@
+import Head from "next/head";
+
+import { Container } from "@mui/material";
+
+import { DocsNav } from "../../../components/DocsNav";
+import Layout from "../../../layouts/Layout";
+import ledger from "../../../pages/docs/assets/ledger.png";
+
+<Head>
+  <title>Inspecting Usage and Quotas - a How To guide</title>
+</Head>
+
+<DocsNav />
+
+## Inspecting Usage and Quotas - a How To guide
+
+### Project summary
+
+The best starting point for one project is its **Manage** section: open the project and choose
+**Manage**. For a view across an organisation or unit, use **Usage & inventory** under
+**Administration**, which is read-only.
+
+A project's **Manage** section states the following as plain facts:
+
+- Whether the project is public or private, its creator, and its administrators, editors and observers
+- The project tier (evaluation, bronze, silver or gold) and subscription type
+- Coins used, the coin allowance and the coin limit
+- Predicted spend, current burn rate, the billing day and the days remaining
+- Storage size, storage coins used, and instance coins used
+- The actions you can take on the project, with a reason given for any you cannot
+
+Consumption is measured in Squonk coins (or coins for short). If the project's subscription has
+reached its coin limit, **Manage** says so and the actions that would spend more are disabled.
+
+### Project charges
+
+**Charges** under **Administration** holds the detailed, read-only ledgers for an organisation, a
+unit or a product. Charges accumulate over a period of a month (the billing period).
+
+This is broken down into two sections, the first for processing charges (e.g. applications and jobs) the second for
+storage (assessed on a daily basis). Information is presented monthly, allowing you to select the billing month you are
+interested in.
+
+<Image src={ledger} alt="Product ledger" />
+
+Note in particular the _Charge_ column in the _Processing Charges_ table. This shows the cost of your jobs and
+applications. You will see that not all have an associated cost.
+
+**Subscriptions** under **Administration** lists the subscriptions behind your projects and datasets,
+grouped by organisation and unit, and lets you drill down into any of them.
+Note: subscriptions are Account Server _products_ - a Data Manager _Project_ is created as an
+_Account Server_ _product_ - and the Product ID is still shown in the technical details, though the
+distinction is not that relevant for normal users.
+
+export default ({ children }) => (
+  <Layout>
+    <Container>{children}</Container>
+  </Layout>
+);

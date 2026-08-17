@@ -34,11 +34,16 @@ console.log("Transpiling packages:", transpilePackages);
 /** @type {import("next").NextConfig} */
 let nextConfig = {
   outputFileTracingRoot: __dirname,
-  output: /** @type {import("next").NextConfig["output"]} */ (process.env.OUTPUT_TYPE),
+  output:
+    process.env.DONT_USE_STANDALONE_OUTPUT === "true"
+      ? undefined
+      : /** @type {import("next").NextConfig["output"]} */ (process.env.OUTPUT_TYPE),
   generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA ?? null : undefined,
   typescript: { ignoreBuildErrors: true },
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
+  // The redesign is a clean cutover: a removed route is the ordinary not-found, so this
+  // configuration declares no redirect, rewrite, or alias that would answer for one.
   // replace empty string with undefined
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,

@@ -1,18 +1,29 @@
 import { type RunningWorkflowSummary } from "@/api/data-manager";
 
-import { Box, List, ListItemButton, ListItemText, Typography } from "@mui/material";
+import { Box, List, ListItem, ListItemButton, ListItemText, Typography } from "@mui/material";
 import A from "next/link";
 
+import { projectLinks } from "../../projects/routes";
+import { CenterLoader } from "../CenterLoader";
 import { LocalTime } from "../LocalTime";
 
 export interface RunningWorkflowsListProps {
-  runningWorkflows: RunningWorkflowSummary[];
+  /** The read that lists them has not answered yet, so the list cannot say it has none. */
+  isLoading?: boolean;
+  runningWorkflows: readonly RunningWorkflowSummary[];
 }
 
 /**
  * MuiList detailing running workflows.
  */
-export const RunningWorkflowsList = ({ runningWorkflows }: RunningWorkflowsListProps) => {
+export const RunningWorkflowsList = ({
+  isLoading = false,
+  runningWorkflows,
+}: RunningWorkflowsListProps) => {
+  if (isLoading) {
+    return <CenterLoader />;
+  }
+
   if (runningWorkflows.length === 0) {
     return (
       <Box sx={{ p: 2 }}>
@@ -39,19 +50,28 @@ export const RunningWorkflowsList = ({ runningWorkflows }: RunningWorkflowsListP
 
   return (
     <List dense component="ul">
-      {sortedRuns.map((rw) => (
-        <ListItemButton
-          component={A}
-          href={{ pathname: "/results/workflow/[workflowId]", query: { workflowId: rw.id } }}
-          key={rw.id}
-        >
+      {sortedRuns.map((rw) => {
+        const content = (
           <ListItemText
             primary={rw.name}
             secondary={<>{!!rw.started && <LocalTime utcTimestamp={rw.started} />}</>}
             slotProps={{ primary: { variant: "body1" } }}
           />
-        </ListItemButton>
-      ))}
+        );
+        // A running workflow is only linkable through the project it declares it runs in; one that
+        // declares none is still listed, just without a link to somewhere it might not belong.
+        return rw.project.id ? (
+          <ListItemButton
+            component={A}
+            href={projectLinks.result(rw.project.id, "workflows", rw.id) as never}
+            key={rw.id}
+          >
+            {content}
+          </ListItemButton>
+        ) : (
+          <ListItem key={rw.id}>{content}</ListItem>
+        );
+      })}
     </List>
   );
 };

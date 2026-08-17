@@ -1,49 +1,11 @@
 name: test
 
-# Actions for any push (PR) onto (into) to master
-
-# -----------------
-# Control variables (GitHub Secrets)
-# -----------------
-#
-# At the GitHub 'organisation' or 'project' level you must have the following
-# GitHub 'Repository Secrets' defined (i.e. via 'Settings -> Secrets'): -
-#
-# AUTH0_CLIENT_ID
-# AUTH0_CLIENT_SECRET
-# DMIT_USER_A_PASSWORD
-# DMIT_USER_A_PASSWORD
-#
-# -----------
-# Environment (GitHub Environments)
-# -----------
-#
-# Environment         (n/a)
-
 on:
   push:
 
-
 jobs:
-  # check that both APIs are responding normally before running tests
-  check-api:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Get DM Version
-      run: |
-        curl -f -X 'GET' \
-          'https://data-manager-test.xchem-dev.diamond.ac.uk/data-manager-api/version' \
-          -H 'accept: application/json'
-    - name: Get AS Version
-      run: |
-        curl -f -X 'GET' \
-          'https://account-server-test.xchem-dev.diamond.ac.uk/account-server-api/version' \
-          -H 'accept: application/json'
   test:
-    needs: check-api # tests are skipped if APIs are down to avoid false negatives
-    # Setup
     runs-on: ubuntu-latest
-    environment: data-manager-ui/test
     steps:
     - name: Checkout
       uses: actions/checkout@v6
@@ -58,8 +20,8 @@ jobs:
     - name: Install dependencies
       run: pnpm ci
     - run: node -v
-    - name: Setup Playwright
-      run: pnpm exec playwright install --with-deps
+    - name: Setup Playwright Chromium
+      run: pnpm exec playwright install --with-deps chromium
     - name: Load cached build for speed
       uses: actions/cache@v5
       with:
@@ -71,32 +33,12 @@ jobs:
         # If source files changed but packages didn't, rebuild from a prior cache.
         restore-keys: |
           ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
-    # Test WITH base path set
-    - name: Build with base path
-      run: pnpm build
-      env:
-        BASE_PATH: "/data-manager-ui"
-    # Ok for tests/dev but we don't do this on prod. This is to prevent some flakely tests from causing problems
-    - name: Disable strict SSL
-      run: npm config set strict-ssl=false
-    - name: Test with base path
-      env:
-        KEYCLOAK_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
-        KEYCLOAK_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
-        DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
-        BETTER_AUTH_SECRET: "LONG_RANDOM_VALUE"
-        BASE_URL: "http://localhost:3000"
-        BASE_PATH: "/data-manager-ui"
-        DONT_USE_STANDALONE_OUTPUT: true
-        DANGEROUS__DISABLE_SSL_CERT_CHECK_IN_API_PROXY: 1
-        DATA_MANAGER_API_SERVER: "https://data-manager-test.xchem-dev.diamond.ac.uk/data-manager-api"
-        ACCOUNT_SERVER_API_SERVER: "https://account-server-test.xchem-dev.diamond.ac.uk\
-          /account-server-api"
-        KEYCLOAK_URL: "https://keycloak-test.xchem-dev.diamond.ac.uk/auth/realms/squonk"
-        PW_USERNAME: "dmit-user-a"
-        PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
-        TEST_PORT: 3000
-      run: pnpm test:ci
+    - name: Typecheck
+      run: pnpm tsc
+    - name: Lint
+      run: pnpm lint
+    - name: Deterministic production acceptance
+      run: pnpm test:acceptance
     - name: Upload test results
       if: always()
       uses: actions/upload-artifact@v7

@@ -7,8 +7,15 @@ import { useFamilyRoute } from "../application/FamilyRouteBoundary";
 import { CenterLoader } from "../components/CenterLoader";
 import { ApplicationCard } from "../components/runCards/ApplicationCard";
 import { JobCard } from "../components/runCards/JobCard";
+import {
+  RunCatalogueVariantA,
+  RunCatalogueVariantB,
+  RunCatalogueVariantC,
+  RunCatalogueVariantD,
+} from "../components/runCards/prototype/RunCatalogueVariants";
 import { WorkflowCard } from "../components/runCards/WorkflowCard/WorkflowCard";
 import Layout from "../layouts/Layout";
+import { PrototypeVariantBar, usePrototypeVariant } from "../prototype/PrototypeVariantBar";
 import { capabilityReason, evaluateProjectExecutionCapability } from "./capabilities";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectRunDefinition } from "./ProjectRunDefinition";
@@ -111,6 +118,18 @@ const RunDefinitionCard = ({
   }
 };
 
+/**
+ * PROTOTYPE — throwaway. Three redesigns of the definition card's action row, switchable via
+ * `#variant=` on this route. Delete this and the components it names once one has won.
+ */
+const prototypeVariants = [
+  { key: "current", name: "As built today" },
+  { key: "A", name: "Header count · one Run bar" },
+  { key: "B", name: "Split footer toolbar" },
+  { key: "C", name: "Dense rows, no cards" },
+  { key: "D", name: "A's count · B's footer, in full" },
+] as const;
+
 const RunCatalogue = ({
   projectId,
   run,
@@ -121,6 +140,7 @@ const RunCatalogue = ({
   state: RunState;
 }) => {
   const items = filterRunItems(run.items, state);
+  const prototype = usePrototypeVariant(prototypeVariants);
 
   if (run.isLoading) {
     return <CenterLoader />;
@@ -134,30 +154,55 @@ const RunCatalogue = ({
     );
   }
 
+  const handleVariantSelect = prototype.select;
+  const bar = (
+    <PrototypeVariantBar
+      current={prototype.variant}
+      variants={prototypeVariants}
+      onSelect={handleVariantSelect}
+    />
+  );
+  const variantProps = { items, projectId, run, runState: state };
+
+  if (prototype.variant !== "current") {
+    return (
+      <>
+        {prototype.variant === "A" && <RunCatalogueVariantA {...variantProps} />}
+        {prototype.variant === "B" && <RunCatalogueVariantB {...variantProps} />}
+        {prototype.variant === "C" && <RunCatalogueVariantC {...variantProps} />}
+        {prototype.variant === "D" && <RunCatalogueVariantD {...variantProps} />}
+        {bar}
+      </>
+    );
+  }
+
   return (
-    <Box
-      sx={{
-        display: "grid",
-        gap: 2,
-        gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-        "@container run-page (max-width: 1100px)": {
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        },
-        "@container run-page (max-width: 800px)": {
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-        },
-      }}
-    >
-      {items.map((item) => (
-        <RunDefinitionCard
-          item={item}
-          key={`${item.definitionType}-${item.id}`}
-          projectId={projectId}
-          run={run}
-          runState={state}
-        />
-      ))}
-    </Box>
+    <>
+      <Box
+        sx={{
+          display: "grid",
+          gap: 2,
+          gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+          "@container run-page (max-width: 1100px)": {
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          },
+          "@container run-page (max-width: 800px)": {
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+          },
+        }}
+      >
+        {items.map((item) => (
+          <RunDefinitionCard
+            item={item}
+            key={`${item.definitionType}-${item.id}`}
+            projectId={projectId}
+            run={run}
+            runState={state}
+          />
+        ))}
+      </Box>
+      {bar}
+    </>
   );
 };
 

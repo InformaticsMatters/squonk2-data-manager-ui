@@ -22,7 +22,7 @@
     "generate:client:data-manager": "node --experimental-strip-types tools/openapi/generate-client.ts data-manager",
     "generate:clients": "node --experimental-strip-types tools/openapi/generate-client.ts all",
     "start": "next start",
-    "tsc": "tsc --pretty --noEmit",
+    "tsc": "next typegen && tsc --pretty --noEmit",
     "lint": "eslint --cache --max-warnings=0",
     "format": "eslint --fix --cache --max-warnings=0",
     "test": "pnpm test:acceptance && playwright test --config=playwright.config.ts",

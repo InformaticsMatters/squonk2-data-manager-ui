@@ -1,3 +1,19 @@
+# [7.0.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.2...7.0.0-dev.1) (2026-08-05)
+
+
+* feat!: update data-manager-client to v6 ([5cc61c7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5cc61c796975538d1abd05919a23bc68029c7c31))
+
+
+### Bug Fixes
+
+* **ci:** stop pinning pnpm separately from packageManager ([f51fba5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f51fba5ff90fe6844c1659fc2d66bdafc1a45e74))
+* **test:** only load .env.test.local when it exists ([93ae72d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/93ae72d8a11476f62a10c6eaffe77f4fd4bdeff5))
+
+
+### BREAKING CHANGES
+
+* this require a data-manager server of v6 and an account server of v4
+
 ## [6.2.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.1...6.2.2) (2026-07-15)
 
 

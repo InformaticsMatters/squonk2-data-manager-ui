@@ -22,6 +22,7 @@ declare module "nextjs-routes" {
     | StaticRoute<"/administration/usage-inventory">
     | DynamicRoute<"/administration/usage-inventory/[collection]/[resourceId]", { "collection": string; "resourceId": string }>
     | DynamicRoute<"/api/auth/[...all]", { "all": string[] }>
+    | StaticRoute<"/api/configuration/api-servers">
     | StaticRoute<"/api/configuration/ui-version">
     | DynamicRoute<"/api/dm-api/[...dmProxy]", { "dmProxy": string[] }>
     | StaticRoute<"/api/motd">

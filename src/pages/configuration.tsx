@@ -1,6 +1,7 @@
 import { Container } from "@mui/material";
 import { type GetServerSideProps } from "next";
 
+import { readApiServers } from "@/application/apiServers";
 import { pagePolicies, withPagePolicy } from "@/application/pagePolicy";
 
 // Format a value so undefined and empty string are visible
@@ -26,21 +27,20 @@ const ReprLi = ({ title, children }: { children: string | null | undefined; titl
 };
 
 export interface ConfigurationProps {
-  dmAPI: string | null;
-  asAPI: string | null;
+  dmAPI: string;
+  asAPI: string;
+  depictAPI: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps: GetServerSideProps<ConfigurationProps> = async () => {
-  // These may change between build and deployment. NextJS statically builds these so just using
-  // these "public" variables won't show the correct value.
-  // When undefined a null is passed as undefined isn't valid json.
-  const dmAPI = process.env.NEXT_PUBLIC_DATA_MANAGER_API_SERVER ?? null;
-  const asAPI = process.env.NEXT_PUBLIC_ACCOUNT_SERVER_API_SERVER ?? null;
-  return { props: { dmAPI, asAPI } };
+  // These change between build and deployment, so they are read from the environment this server
+  // is running in rather than from the "public" variables `next build` inlined.
+  const { dataManager, accountServer, depict } = readApiServers(process.env);
+  return { props: { dmAPI: dataManager, asAPI: accountServer, depictAPI: depict } };
 };
 
-export const Configuration = ({ dmAPI, asAPI }: ConfigurationProps) => (
+export const Configuration = ({ dmAPI, asAPI, depictAPI }: ConfigurationProps) => (
   <Container>
     <h1>Configuration</h1>
     <p>
@@ -53,6 +53,7 @@ export const Configuration = ({ dmAPI, asAPI }: ConfigurationProps) => (
       <ReprLi title="Base Path">{process.env.NEXT_PUBLIC_BASE_PATH}</ReprLi>
       <ReprLi title="DM API Server">{dmAPI}</ReprLi>
       <ReprLi title="AS API Server">{asAPI}</ReprLi>
+      <ReprLi title="Depict API Server">{depictAPI}</ReprLi>
     </ul>
     <h2>Auth</h2>
     <ul>

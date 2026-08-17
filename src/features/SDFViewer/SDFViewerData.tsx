@@ -9,17 +9,18 @@ import { nanoid } from "nanoid";
 import { MolCard } from "../../components/MolCard";
 import CalculationsTable from "../../components/MolCard/CalculationsTable";
 import { ScatterPlot } from "../../components/ScatterPlot/ScatterPlot";
+import { useApiServers } from "../../hooks/useApiServers";
 import { censorConfig, type SDFViewerConfig } from "../../utils/api/sdfViewer";
 import { withBasePath } from "../../utils/app/basePath";
 
-const getCards = (molecules: Must<Molecule>[], propsToHide: string[] = []) => {
+const getCards = (molecules: Must<Molecule>[], depictURL: string, propsToHide: string[] = []) => {
   return molecules.slice(0, 50).map((molecule) => {
     const properties = Object.entries(molecule.properties)
       .map((property) => ({ name: property[0], value: property[1] }))
       .filter((property) => !propsToHide.includes(property.name));
     return (
       <MolCard
-        depictParams={{ depictURL: process.env.NEXT_PUBLIC_DEPICT_API_SERVER ?? "" }}
+        depictParams={{ depictURL }}
         key={molecule.id}
         molFile={molecule.molFile}
         variant="molFile"
@@ -85,6 +86,7 @@ export interface SDFViewerDataProps {
 
 export const SDFViewerData = ({ projectId, path, config }: SDFViewerDataProps) => {
   const { data, isFetching, error } = useSDFRecords(projectId, path, config);
+  const apiServers = useApiServers();
 
   const records = useMemo(() => data ?? [], [data]);
 
@@ -136,6 +138,7 @@ export const SDFViewerData = ({ projectId, path, config }: SDFViewerDataProps) =
         selection
           .map((id) => molecules.find((molecule) => molecule.id === id))
           .filter((molecule): molecule is Must<Molecule> => !!molecule),
+        apiServers?.depict ?? "",
         propsToHide,
       )}
     </Box>

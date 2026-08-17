@@ -13,6 +13,7 @@ import { enableMapSet } from "immer";
 import { type AppProps } from "next/app";
 import Head from "next/head";
 
+import { type ApiServers, loadApiServers, readApiServers } from "../application/apiServers";
 import { PagePolicyComposer, type PolicyAppComponent } from "../application/PagePolicyComposer";
 import { ConfiguredSnackbarProvider } from "../components/app/ConfiguredSnackbarProvider";
 import { ThemeProviders } from "../components/app/ThemeProviders";
@@ -27,24 +28,40 @@ const openSansFontCss = `
 }
 `;
 
-export const DM_API_URL = process.env.NEXT_PUBLIC_DATA_MANAGER_API_SERVER ?? "";
-export const AS_API_URL = process.env.NEXT_PUBLIC_ACCOUNT_SERVER_API_SERVER ?? "";
+// Where the APIs are is settled by the deployment, not by the build, so the addresses arrive after
+// this module does. On the server they are read straight from the environment; the browser asks the
+// server that served the page, and the gate below holds requests until the answer lands.
+const applyApiServers = ({ dataManager, accountServer }: ApiServers) => {
+  setDMBaseUrl(dataManager);
+  setASBaseUrl(accountServer);
+};
 
-setDMBaseUrl(DM_API_URL);
-setASBaseUrl(AS_API_URL);
+const resolveApiServers = async (): Promise<ApiServers> =>
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  globalThis.window === undefined ? readApiServers(process.env) : loadApiServers();
 
-// Gate all DM/AS Axios requests until the auth token is first set.
-// Runs once at module load (browser only) — already-resolved promises are
+// Shared by every request: the addresses are settled once and awaited thereafter.
+let apiServersReady: Promise<void> | undefined;
+const awaitApiServers = async (): Promise<void> => {
+  apiServersReady ??= resolveApiServers().then(applyApiServers);
+  await apiServersReady;
+};
+
+// Gate all DM/AS Axios requests until the deployment's addresses are known and the auth token is
+// first set. Runs once at module load (browser only) — already-resolved promises are
 // synchronous no-ops, so there is no overhead on subsequent requests.
 
-// After the gate opens, re-read Authorization from the instance's current defaults.
-// We can't rely on what was merged into the config at request-initiation time because
-// setAuthToken() may not have been called yet when the request was first queued.
+// After the gate opens, re-read Authorization and the base URL from the instance's current
+// defaults. We can't rely on what was merged into the config at request-initiation time because
+// neither setAuthToken() nor applyApiServers() may have been called yet when the request was
+// first queued.
 const makeGateInterceptor = (instance: typeof DM_INSTANCE) => {
   const interceptor: NonNullable<Parameters<typeof instance.interceptors.request.use>[0]> = async (
     config,
   ) => {
+    await awaitApiServers();
     await awaitTokenGate();
+    config.baseURL = instance.defaults.baseURL;
     const auth = instance.defaults.headers.common.Authorization as string | undefined;
     if (auth) {
       config.headers.set("Authorization", auth);

@@ -3,11 +3,15 @@ import { type RunningWorkflowSummary, type WorkflowSummary } from "@/api/data-ma
 import { Typography } from "@mui/material";
 
 import { type RunState } from "../../../projects/routes";
+import { type RunExecutions } from "../../../projects/runFacts";
 import { BaseCard } from "../../BaseCard";
+import { ExecutionCountBadge } from "../ExecutionCountBadge";
 import { RunDefinitionButton } from "../RunDefinitionButton";
 import { RunningWorkflowsList } from "../RunningWorkflowsList";
 
 export interface WorkflowCardProps {
+  /** This project's running workflows, as the badge counting this definition's executions sees them. */
+  executions: RunExecutions;
   /** The read listing this project's running workflows has not answered yet. */
   executionsLoading?: boolean;
   projectId: string;
@@ -26,6 +30,7 @@ export interface WorkflowCardProps {
  * requires of its own accord.
  */
 export const WorkflowCard = ({
+  executions,
   executionsLoading,
   projectId,
   runningWorkflows,
@@ -35,13 +40,22 @@ export const WorkflowCard = ({
   <BaseCard
     accentColor="#f1c40f"
     actions={
-      <RunDefinitionButton
-        definitionId={workflow.id}
-        definitionLabel={workflow.workflow_name ?? workflow.name}
-        definitionType="workflows"
-        projectId={projectId}
-        runState={runState}
-      />
+      <>
+        {/* The card represents the whole definition family, so its badge counts and links to every
+        running workflow started from it. */}
+        <ExecutionCountBadge
+          executions={executions}
+          projectId={projectId}
+          selection={{ kind: "workflow", workflow }}
+        />
+        <RunDefinitionButton
+          definitionId={workflow.id}
+          definitionLabel={workflow.workflow_name ?? workflow.name}
+          definitionType="workflows"
+          projectId={projectId}
+          runState={runState}
+        />
+      </>
     }
     collapsed={
       <RunningWorkflowsList isLoading={executionsLoading} runningWorkflows={runningWorkflows} />

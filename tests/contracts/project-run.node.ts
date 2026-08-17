@@ -27,14 +27,21 @@ import {
   resolveRunCapabilities,
 } from "../../src/projects/runCapabilities";
 import {
+  countRunDefinitionExecutions,
   filterRunItems,
   findRunDefinition,
   resolveRunFreshnessByType,
   runCatalogueOf,
   runCatalogueRequests,
+  runDefinitionExecutionFilter,
   runDefinitionInstances,
   runDefinitionRunningWorkflows,
+  type RunDefinitionSelection,
   runDefinitionUnavailability,
+  runExecutionCountStatement,
+  type RunExecutions,
+  runInstanceExecutions,
+  runRunningWorkflowExecutions,
   selectRunCatalogue,
 } from "../../src/projects/runFacts";
 import { resolveSectionReadReport, resolveSectionReadState } from "../../src/projects/sectionReads";
@@ -236,6 +243,263 @@ test("existing executions on a card belong to the project the catalogue is addre
       projectId,
     ).map(({ id }) => id),
   ).toEqual(["instance-newer", instance().id, "instance-other-job"]);
+});
+
+/** A collection whose own read answered, which is the only outcome a badge may count. */
+const answered = { isLoading: false, readState: resolveSectionReadState(null) };
+
+const selectedJob = (overrides: Partial<JobSummary> = {}): RunDefinitionSelection => ({
+  kind: "job",
+  job: job(overrides),
+});
+
+const badgeLink = (selection: RunDefinitionSelection) =>
+  projectLinks.results(projectId, { definition: runDefinitionExecutionFilter(selection).filter });
+
+const badgeCount = (selection: RunDefinitionSelection, executions: RunExecutions) =>
+  countRunDefinitionExecutions(executions, runDefinitionExecutionFilter(selection).target);
+
+test("a card's badge counts its definition's executions by the rule Results matches them", () => {
+  const instances = runInstanceExecutions(
+    answered,
+    [
+      instance({ id: "instance-v1", job_version: "1.0.0" }),
+      instance({ id: "instance-v1-again", job_version: "1.0.0" }),
+      instance({ id: "instance-v2", job_version: "2.0.0" }),
+      instance({ id: "instance-other-job", job_job: "another-job", job_version: "1.0.0" }),
+      instance({ id: "instance-foreign", job_version: "1.0.0", project_id: otherProjectId }),
+      instance({
+        application_id: "jupyter-lab",
+        id: "instance-application",
+        job_collection: undefined,
+        job_job: undefined,
+      }),
+    ],
+    projectId,
+  );
+  const runningWorkflows = runRunningWorkflowExecutions(
+    answered,
+    [
+      runningWorkflow(),
+      runningWorkflow({ id: "r-workflow-again" }),
+      runningWorkflow({
+        id: "r-workflow-foreign",
+        project: { id: otherProjectId, name: "Partner" },
+      }),
+      runningWorkflow({
+        id: "r-workflow-other",
+        workflow: { id: "workflow-other", name: "other", version: "1.0.0" },
+      }),
+    ],
+    projectId,
+  );
+  const applicationSelection: RunDefinitionSelection = {
+    kind: "application",
+    application: application(),
+  };
+  const workflowSelection: RunDefinitionSelection = { kind: "workflow", workflow: workflow() };
+
+  // A job card counts the version selected on it; an application card every instance of its
+  // application, and a workflow card every running workflow of its definition. None of them counts
+  // another project's work, whatever the response declared.
+  expect(badgeCount(selectedJob({ version: "1.0.0" }), instances)).toEqual({
+    status: "counted",
+    count: 2,
+  });
+  expect(badgeCount(selectedJob({ id: 43, version: "2.0.0" }), instances)).toEqual({
+    status: "counted",
+    count: 1,
+  });
+  expect(badgeCount(applicationSelection, instances)).toEqual({ status: "counted", count: 1 });
+  expect(badgeCount(workflowSelection, runningWorkflows)).toEqual({ status: "counted", count: 2 });
+
+  // Exactly one kind of execution can be an execution of each definition type, so the kinds that
+  // carry no identity to compare are counted by nobody rather than by everybody.
+  expect(badgeCount(workflowSelection, instances)).toEqual({ status: "counted", count: 0 });
+  expect(badgeCount(selectedJob({ version: "1.0.0" }), runningWorkflows)).toEqual({
+    status: "counted",
+    count: 0,
+  });
+  expect(badgeCount(applicationSelection, runningWorkflows)).toEqual({
+    status: "counted",
+    count: 0,
+  });
+});
+
+test("a badge links to the Results list of what it counted, per definition type", () => {
+  // A job card's link carries the version it counted, so following the badge cannot land on a list
+  // that disagrees with the number on it. The other two cards represent a whole definition, so
+  // neither writes a version at all.
+  expect(badgeLink(selectedJob({ id: 42, version: "1.0.0" }))).toBe(
+    `/projects/${projectId}/results?definitionType=jobs&definitionId=42&version=1.0.0`,
+  );
+  expect(badgeLink({ kind: "application", application: application() })).toBe(
+    `/projects/${projectId}/results?definitionType=applications&definitionId=jupyter-lab`,
+  );
+  expect(badgeLink({ kind: "workflow", workflow: workflow() })).toBe(
+    `/projects/${projectId}/results?definitionType=workflows&definitionId=${workflowId}`,
+  );
+});
+
+test("changing a job card's version changes its count and its link together", () => {
+  const instances = runInstanceExecutions(
+    answered,
+    [
+      instance({ id: "instance-v1", job_version: "1.0.0" }),
+      instance({ id: "instance-v2", job_version: "2.0.0" }),
+      instance({ id: "instance-v2-again", job_version: "2.0.0" }),
+    ],
+    projectId,
+  );
+
+  for (const [selection, count, href] of [
+    [selectedJob({ id: 1, version: "1.0.0" }), 1, "definitionId=1&version=1.0.0"],
+    [selectedJob({ id: 2, version: "2.0.0" }), 2, "definitionId=2&version=2.0.0"],
+  ] as const) {
+    expect(badgeCount(selection, instances)).toEqual({ status: "counted", count });
+    expect(badgeLink(selection)).toBe(`/projects/${projectId}/results?definitionType=jobs&${href}`);
+  }
+});
+
+test("a job version no URL could carry costs the card its narrowing, never the catalogue", () => {
+  const instances = runInstanceExecutions(
+    answered,
+    [
+      instance({ id: "instance-v1", job_version: "1.0.0" }),
+      instance({ id: "instance-unpublished", job_version: "" }),
+    ],
+    projectId,
+  );
+  const unversioned = selectedJob({ id: 7, version: "" });
+
+  // A card whose version a URL cannot carry still counts and still links — version-agnostically,
+  // both together — rather than throwing the whole catalogue away over one definition.
+  expect(badgeLink(unversioned)).toBe(
+    `/projects/${projectId}/results?definitionType=jobs&definitionId=7`,
+  );
+  expect(badgeCount(unversioned, instances)).toEqual({ status: "counted", count: 2 });
+});
+
+test("a badge waits on the collection it counts and never presents a failed read as none", () => {
+  const jobSelection = selectedJob({ version: "1.0.0" });
+  const read = (readState: ReturnType<typeof resolveSectionReadState>, isLoading = false) =>
+    runInstanceExecutions(
+      { isLoading, readState },
+      [instance({ job_version: "1.0.0" })],
+      projectId,
+    );
+
+  expect(badgeCount(jobSelection, read(resolveSectionReadState(null), true))).toEqual({
+    status: "pending",
+  });
+  expect(
+    badgeCount(jobSelection, read(resolveSectionReadState(new Response(null, { status: 403 })))),
+  ).toEqual({ status: "unreadable" });
+  // Content an earlier read left behind is not counted either: a bare number has nowhere to say it
+  // could not be refreshed, so it is withheld rather than offered as this project's answer.
+  expect(
+    badgeCount(jobSelection, read(resolveSectionReadState(new Response(null, { status: 503 })))),
+  ).toEqual({ status: "unreadable" });
+  // A read that answered with nothing is the one outcome that establishes zero.
+  expect(badgeCount(jobSelection, runInstanceExecutions(answered, [], projectId))).toEqual({
+    status: "counted",
+    count: 0,
+  });
+
+  // A card waits only on the collection it actually counts, so a slow running-workflow read never
+  // holds up a job card's badge, or the other way round.
+  const workflowSelection: RunDefinitionSelection = { kind: "workflow", workflow: workflow() };
+  const outstandingWorkflows = runRunningWorkflowExecutions(
+    { isLoading: true, readState: resolveSectionReadState(null) },
+    [],
+    projectId,
+  );
+  const countedWorkflows = runRunningWorkflowExecutions(answered, [runningWorkflow()], projectId);
+  expect(badgeCount(jobSelection, read(resolveSectionReadState(null)))).toEqual({
+    status: "counted",
+    count: 1,
+  });
+  expect(badgeCount(workflowSelection, outstandingWorkflows)).toEqual({ status: "pending" });
+  expect(badgeCount(workflowSelection, countedWorkflows)).toEqual({ status: "counted", count: 1 });
+  expect(badgeCount(jobSelection, read(resolveSectionReadState(null), true))).toEqual({
+    status: "pending",
+  });
+});
+
+/** What the badge of a job card offering version 1.0.0 states about the executions it was given. */
+const statementFor = (executions: RunExecutions) => {
+  const { name, target } = runDefinitionExecutionFilter(selectedJob({ version: "1.0.0" }));
+  return runExecutionCountStatement(countRunDefinitionExecutions(executions, target), name);
+};
+
+test("a badge states each outcome distinctly and never spells one as another", () => {
+  const instances = (...ids: string[]) =>
+    runInstanceExecutions(
+      answered,
+      ids.map((id) => instance({ id, job_version: "1.0.0" })),
+      projectId,
+    );
+
+  // The number shown and the statement it is announced by come from one rule, so a caller who
+  // reads the badge and one who hears it are told the same thing.
+  expect(statementFor(instances("instance-one"))).toEqual({
+    description: "1 execution of acceptance-job",
+    text: "1 execution",
+  });
+  expect(statementFor(instances("instance-one", "instance-two"))).toEqual({
+    description: "2 executions of acceptance-job",
+    text: "2 executions",
+  });
+  // Known zero is a number like any other; an outstanding read and a failed one are not numbers at
+  // all, so neither is spelled as one.
+  expect(statementFor(instances())).toEqual({
+    description: "0 executions of acceptance-job",
+    text: "0 executions",
+  });
+  expect(
+    statementFor(
+      runInstanceExecutions({ isLoading: true, readState: answered.readState }, [], projectId),
+    ),
+  ).toEqual({ description: "Counting executions of acceptance-job" });
+  expect(
+    statementFor(
+      runInstanceExecutions(
+        {
+          isLoading: false,
+          readState: resolveSectionReadState(new Response(null, { status: 503 })),
+        },
+        [],
+        projectId,
+      ),
+    ),
+  ).toEqual({ description: "Executions of acceptance-job could not be read" });
+});
+
+test("the badges' counts add no read of their own to the Run section", () => {
+  const root = path.join(process.cwd(), "src");
+
+  // A count is a pure fact of executions the composition already holds, so the section's reads are
+  // exactly the five it made before any card had a badge.
+  expect(
+    readFileSync(path.join(root, "projects/useProjectRun.ts"), "utf8").match(/useGet\w+\(/gu),
+  ).toEqual([
+    "useGetApplications(",
+    "useGetJobs(",
+    "useGetWorkflows(",
+    "useGetInstances(",
+    "useGetRunningWorkflows(",
+  ]);
+  // The badge and the cards that carry it are given what they count, so none of them reads at all.
+  for (const component of [
+    "components/runCards/ExecutionCountBadge.tsx",
+    "components/runCards/ApplicationCard/ApplicationCard.tsx",
+    "components/runCards/JobCard/JobCard.tsx",
+    "components/runCards/WorkflowCard/WorkflowCard.tsx",
+  ]) {
+    expect(readFileSync(path.join(root, component), "utf8")).not.toMatch(
+      /useGet\w+\(|useQuery|useSuspense/u,
+    );
+  }
 });
 
 const runFacts = ({
@@ -573,6 +837,7 @@ test.describe("Run cutover", () => {
       "projects/runCapabilities.ts",
       "projects/useProjectRun.ts",
       "projects/useRunCommands.ts",
+      "components/runCards/ExecutionCountBadge.tsx",
       "components/runCards/ApplicationCard/ApplicationCard.tsx",
       "components/runCards/ApplicationCard/ApplicationModal.tsx",
       "components/runCards/JobCard/JobCard.tsx",

@@ -3,7 +3,9 @@ import { type ApplicationSummary, type InstanceSummary } from "@/api/data-manage
 import { Typography } from "@mui/material";
 
 import { type RunState } from "../../../projects/routes";
+import { type RunExecutions } from "../../../projects/runFacts";
 import { BaseCard } from "../../BaseCard";
+import { ExecutionCountBadge } from "../ExecutionCountBadge";
 import { InstancesList } from "../InstancesList";
 import { RunDefinitionButton } from "../RunDefinitionButton";
 
@@ -12,6 +14,8 @@ export interface ApplicationCardProps {
    * The application definition to display
    */
   application: ApplicationSummary;
+  /** This project's instances, as the badge counting this application's executions sees them. */
+  executions: RunExecutions;
   /** The read listing this project's instances has not answered yet. */
   executionsLoading?: boolean;
   /** This application's existing instances inside the project that owns them. */
@@ -30,6 +34,7 @@ export interface ApplicationCardProps {
  */
 export const ApplicationCard = ({
   application,
+  executions,
   executionsLoading,
   instances,
   projectId,
@@ -38,13 +43,22 @@ export const ApplicationCard = ({
   <BaseCard
     accentColor="secondary.dark"
     actions={
-      <RunDefinitionButton
-        definitionId={application.application_id}
-        definitionLabel={application.kind}
-        definitionType="applications"
-        projectId={projectId}
-        runState={runState}
-      />
+      <>
+        {/* The card represents the whole application, so its badge counts and links to every
+        instance of it. */}
+        <ExecutionCountBadge
+          executions={executions}
+          projectId={projectId}
+          selection={{ kind: "application", application }}
+        />
+        <RunDefinitionButton
+          definitionId={application.application_id}
+          definitionLabel={application.kind}
+          definitionType="applications"
+          projectId={projectId}
+          runState={runState}
+        />
+      </>
     }
     collapsed={<InstancesList instances={instances} isLoading={executionsLoading} />}
     header={{ title: application.kind, subtitle: application.group, avatar: application.kind[0] }}

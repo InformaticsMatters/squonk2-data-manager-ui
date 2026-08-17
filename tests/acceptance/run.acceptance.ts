@@ -123,6 +123,117 @@ test("the Run catalogue belongs to the project in the URL", async ({ page, reque
   expect(jobReads.filter(({ query }) => !query.includes("project_id="))).toEqual([]);
 });
 
+test("a card states its definition's executions and links straight to them", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceRun, testInfo);
+  await expect(page.getByRole("heading", { level: 1, name: "Run" })).toBeVisible();
+
+  // A workflow card represents the whole definition, so it counts every running workflow started
+  // from it; an application card counts every instance of its application, on the same rule the
+  // filtered list it links to matches them by.
+  await expect(
+    page.getByRole("link", { name: "1 execution of Acceptance Workflow Definition" }),
+  ).toHaveAttribute(
+    "href",
+    `/data-manager-ui/${acceptanceResults}?definitionType=workflows&definitionId=${fixtureIds.workflow}`,
+  );
+  await expect(
+    page.getByRole("link", { name: "2 executions of AcceptanceNotebook" }),
+  ).toHaveAttribute(
+    "href",
+    `/data-manager-ui/${acceptanceResults}?definitionType=applications&definitionId=acceptance-application`,
+  );
+
+  // A job card counts the version selected on it. This project has only ever run version 1.0.0, so
+  // the card's newest version is a known zero rather than an unanswered question.
+  const jobCard = page
+    .locator(".MuiCard-root")
+    .filter({ has: page.getByRole("link", { name: "Run acceptance-job" }) });
+  const zero = jobCard.getByRole("link", { name: "0 executions of acceptance-job" });
+  await expect(zero).toHaveAttribute(
+    "href",
+    `/data-manager-ui/${acceptanceResults}?definitionType=jobs&definitionId=2&version=2.0.0`,
+  );
+
+  // Choosing another version moves the count and the destination together, so the number on the
+  // badge and the list it opens can never disagree about which version they mean.
+  await jobCard.getByRole("combobox", { name: "Version" }).click();
+  await page.getByRole("option", { name: "1.0.0" }).click();
+  const ran = jobCard.getByRole("link", { name: "1 execution of acceptance-job" });
+  await expect(ran).toHaveAttribute(
+    "href",
+    `/data-manager-ui/${acceptanceResults}?definitionType=jobs&definitionId=1&version=1.0.0`,
+  );
+
+  // Following it lands on Results carrying the filter, listing exactly what was counted.
+  await ran.click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}?definitionType=jobs&definitionId=1&version=1.0.0`,
+  );
+  await expect(page.getByText("Job: acceptance-job (1.0.0)")).toBeVisible();
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page.getByText("Acceptance Notebook")).toHaveCount(0);
+});
+
+test("a definition nothing has run states zero and still links to its own results", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceRun, testInfo);
+
+  // Zero is stated because a read that answered established it, and the badge stays a link: the
+  // filtered page it opens gives the answer in its own empty state.
+  const badge = page.getByRole("link", { name: "0 executions of unavailable-job" });
+  await expect(badge).toBeVisible();
+  await badge.click();
+
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}?definitionType=jobs&definitionId=3&version=1.0.0`,
+  );
+  await expect(
+    page.getByText("There are no results for Job: unavailable-job (1.0.0) in this project."),
+  ).toBeVisible();
+});
+
+test("a badge answers for the collection it counts and never reports a failed read as none", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, acceptanceRun, testInfo);
+  await expect(
+    page.getByRole("link", { name: "2 executions of AcceptanceNotebook" }),
+  ).toBeVisible();
+
+  // Only the instance collection fails. The cards that count it say so rather than claiming their
+  // definitions have never run here.
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/results-failure?status=503&collection=/instance`,
+  );
+  await page.reload();
+
+  await expect(
+    page.getByRole("link", { name: "Executions of acceptance-job could not be read" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Executions of AcceptanceNotebook could not be read" }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: /^0 executions/u })).toHaveCount(0);
+  // A card waits only on the collection it counts, so the running-workflow read still answers for
+  // the workflow card's badge.
+  await expect(
+    page.getByRole("link", { name: "1 execution of Acceptance Workflow Definition" }),
+  ).toBeVisible();
+
+  // Retrying recovers the counts in place, without any change of project or route.
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/results-failure`);
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(
+    page.getByRole("link", { name: "2 executions of AcceptanceNotebook" }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceRun}`);
+});
+
 test("a definition opens as a route-driven modal that Close and Back both resolve", async ({
   page,
 }, testInfo) => {

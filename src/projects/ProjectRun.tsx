@@ -88,10 +88,13 @@ const RunDefinitionCard = ({
   runState: RunState;
 }) => {
   const cardProps = { projectId, runState };
-  // A card waits only on the collection it lists, so a slow running-workflow read never holds up a
-  // job's instances, or the other way round.
+  // A card waits only on the collection it lists and counts, so a slow running-workflow read never
+  // holds up a job's instances or its badge, or the other way round.
+  // One collection answers for both what a card lists and what its badge counts, so the two can
+  // never disagree about whether the read it waits on has arrived.
   const instanceProps = {
-    executionsLoading: run.executionsLoading.instances,
+    executions: run.executions.instances,
+    executionsLoading: run.executions.instances.status === "pending",
     instances: runDefinitionInstances(item, run.instances, projectId),
   };
 
@@ -104,7 +107,8 @@ const RunDefinitionCard = ({
       return (
         <WorkflowCard
           {...cardProps}
-          executionsLoading={run.executionsLoading.runningWorkflows}
+          executions={run.executions.runningWorkflows}
+          executionsLoading={run.executions.runningWorkflows.status === "pending"}
           runningWorkflows={runDefinitionRunningWorkflows(item, run.runningWorkflows, projectId)}
           workflow={item.data}
         />

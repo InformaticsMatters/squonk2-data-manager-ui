@@ -9,8 +9,23 @@ import {
 import semver from "semver";
 
 import { search } from "../utils/app/searches";
-import { definitionTerms, instanceOwner, ownedBy, runningWorkflowOwner } from "./resultFacts";
-import { type RunDefinitionType, type RunFilterType, showsType } from "./routes";
+import {
+  definitionTerms,
+  instanceOwner,
+  matchesDefinition,
+  ownedBy,
+  type ResultItem,
+  type ResultsDefinitionTarget,
+  runningWorkflowOwner,
+  selectProjectResults,
+} from "./resultFacts";
+import {
+  isDefinitionVersion,
+  type RunDefinitionType,
+  type RunFilterType,
+  showsType,
+  type UncheckedDefinitionFilter,
+} from "./routes";
 import { resolveSectionFreshnessByKey, type SectionReadState } from "./sectionReads";
 
 /**
@@ -223,6 +238,180 @@ export const runDefinitionInstances = (
     .filter((instance) => ownedBy(instanceOwner(instance), projectId))
     .filter((instance) => instantiates(item, instance))
     .toSorted((left, right) => right.launched.localeCompare(left.launched));
+
+/**
+ * The definition one card is currently offering, as the card itself holds it. A job card offers one
+ * version at a time and the caller chooses which, so the version selected on the card is part of
+ * what the card is offering; an application card and a workflow card each offer the whole
+ * definition, which is why neither carries one.
+ */
+export type RunDefinitionSelection =
+  | { kind: "application"; application: ApplicationSummary }
+  | { kind: "job"; job: JobSummary }
+  | { kind: "workflow"; workflow: WorkflowSummary };
+
+/**
+ * What a card's execution badge counts and where following it lands. Both come from one value, so a
+ * badge and the list it links to are decided by the same selection and cannot name two different
+ * definitions.
+ */
+export type RunDefinitionExecutionFilter = {
+  /** The Results filter a badge links to, as a URL carries it. */
+  filter: UncheckedDefinitionFilter;
+  /** What the definition is called, by the rule the Results chip names the same filter by. */
+  name: string;
+  /** The identity a count is decided on, as the Results matching rule compares it. */
+  target: ResultsDefinitionTarget;
+};
+
+/**
+ * The filter one card's badge counts and links to.
+ *
+ * A job card counts and links to the version selected on it, so the count and the destination can
+ * never disagree about which version they mean. A workflow card counts and links to every running
+ * workflow of its definition, and an application card to every instance of its application, because
+ * each of those cards represents the whole definition rather than one version of it.
+ *
+ * The URL's identifier is per-version for a job, so it is not the identity a count can be decided
+ * on: that is the version-agnostic one the Results rule compares, taken from the same catalogue
+ * entry the link is built from.
+ */
+export const runDefinitionExecutionFilter = (
+  selection: RunDefinitionSelection,
+): RunDefinitionExecutionFilter => {
+  switch (selection.kind) {
+    case "application": {
+      const { application } = selection;
+      return {
+        filter: { definitionType: "applications", definitionId: application.application_id },
+        name: definitionTerms.applications.name(application),
+        target: { definitionType: "applications", applicationId: application.application_id },
+      };
+    }
+    case "job": {
+      const { job } = selection;
+      // A version the Data Manager published that no URL could carry names no version at all, so
+      // the card counts and links to every version of the job rather than throwing the catalogue
+      // away over one — the same treatment a version that cannot be ordered already gets. The
+      // count and the link drop it together, so the two still mean the same thing.
+      const narrowed = isDefinitionVersion(job.version) ? { version: job.version } : {};
+      return {
+        filter: { definitionType: "jobs", definitionId: String(job.id), ...narrowed },
+        name: definitionTerms.jobs.name(job),
+        target: { definitionType: "jobs", collection: job.collection, job: job.job, ...narrowed },
+      };
+    }
+    case "workflow": {
+      const { workflow } = selection;
+      return {
+        filter: { definitionType: "workflows", definitionId: workflow.id },
+        name: definitionTerms.workflows.name(workflow),
+        target: { definitionType: "workflows", name: workflow.name },
+      };
+    }
+  }
+};
+
+/**
+ * One collection of the addressed project's executions, as a badge that counts it sees it. A read
+ * still outstanding and a read that failed are distinct outcomes and neither is a count: a badge
+ * that showed nothing for either would report a project's work as never having run.
+ *
+ * A collection that failed to be read is not counted even where content from an earlier read
+ * survives. A badge is a bare number with nowhere to say that it may be out of date, and the
+ * section states that failure and offers the retry for it, so the number is withheld rather than
+ * presented as this project's answer.
+ */
+export type RunExecutions =
+  | { status: "pending" }
+  | { status: "read"; results: readonly ResultItem[] }
+  | { status: "unreadable" };
+
+/** What a card's badge may state about the definition it counts. */
+export type RunExecutionCount =
+  | { status: "counted"; count: number }
+  | { status: "pending" }
+  | { status: "unreadable" };
+
+type RunExecutionRead = { isLoading: boolean; readState: SectionReadState };
+
+const resolveRunExecutions = (
+  { isLoading, readState }: RunExecutionRead,
+  results: readonly ResultItem[],
+): RunExecutions => {
+  if (isLoading) {
+    return { status: "pending" };
+  }
+  return readState.kind === "available" ? { status: "read", results } : { status: "unreadable" };
+};
+
+/**
+ * The addressed project's instances as the badges that count them see them. They are the results
+ * the Results section itself would list, so ownership is decided exactly once and a badge can never
+ * count work the project in the URL does not own.
+ */
+export const runInstanceExecutions = (
+  read: RunExecutionRead,
+  instances: readonly InstanceSummary[],
+  projectId: string,
+): RunExecutions =>
+  resolveRunExecutions(
+    read,
+    selectProjectResults({ instances, projectId, tasks: [], workflows: [] }),
+  );
+
+/** The same, for the addressed project's running workflows. */
+export const runRunningWorkflowExecutions = (
+  read: RunExecutionRead,
+  runningWorkflows: readonly RunningWorkflowSummary[],
+  projectId: string,
+): RunExecutions =>
+  resolveRunExecutions(
+    read,
+    selectProjectResults({ instances: [], projectId, tasks: [], workflows: runningWorkflows }),
+  );
+
+/**
+ * How many executions of one definition the addressed project has. It is decided by the Results
+ * matching rule itself rather than by a second rule of Run's own, so a badge and the filtered list
+ * it links to cannot drift apart, and it needs no read of its own: the composition already holds
+ * every execution it counts.
+ */
+export const countRunDefinitionExecutions = (
+  executions: RunExecutions,
+  target: ResultsDefinitionTarget,
+): RunExecutionCount =>
+  executions.status === "read"
+    ? {
+        status: "counted",
+        count: executions.results.filter((item) => matchesDefinition(item, target)).length,
+      }
+    : executions;
+
+/**
+ * What a badge states about the definition it counts: the words it shows, and the words it is
+ * announced by. They are built from one rule, so the number a caller reads and the statement a
+ * screen reader hears can never say different things, and each outcome is worded distinctly — a
+ * count, a count still being made, and a count that could not be made are never spelled alike.
+ *
+ * Only a known count has anything to show, so the other two outcomes state themselves in the
+ * announcement alone and leave what stands in for the number to the badge that draws it.
+ */
+export const runExecutionCountStatement = (
+  count: RunExecutionCount,
+  name: string,
+): { description: string; text?: string } => {
+  switch (count.status) {
+    case "counted": {
+      const executions = `${count.count} ${count.count === 1 ? "execution" : "executions"}`;
+      return { description: `${executions} of ${name}`, text: executions };
+    }
+    case "pending":
+      return { description: `Counting executions of ${name}` };
+    case "unreadable":
+      return { description: `Executions of ${name} could not be read` };
+  }
+};
 
 /** The running workflows of one workflow definition inside the addressed project. */
 export const runDefinitionRunningWorkflows = (

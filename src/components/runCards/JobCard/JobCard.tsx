@@ -6,12 +6,16 @@ import { Launch as LaunchIcon } from "@mui/icons-material";
 import { Box, Chip, IconButton, MenuItem, TextField, Tooltip, Typography } from "@mui/material";
 
 import { type RunState } from "../../../projects/routes";
+import { type RunExecutions } from "../../../projects/runFacts";
 import { BaseCard } from "../../BaseCard";
 import { Chips } from "../../Chips";
+import { ExecutionCountBadge } from "../ExecutionCountBadge";
 import { InstancesList } from "../InstancesList";
 import { RunDefinitionButton } from "../RunDefinitionButton";
 
 export interface JobCardProps {
+  /** This project's instances, as the badge counting the selected version's executions sees them. */
+  executions: RunExecutions;
   /** The read listing this project's instances has not answered yet. */
   executionsLoading?: boolean;
   /** This job's existing instances inside the project that owns them. */
@@ -33,6 +37,7 @@ export interface JobCardProps {
  * addresses requires of its own accord.
  */
 export const JobCard = ({
+  executions,
   executionsLoading,
   instances,
   jobs,
@@ -49,6 +54,13 @@ export const JobCard = ({
       accentColor="primary.main"
       actions={
         <>
+          {/* The badge counts and links to the version selected below it, so changing that select
+          moves both together and the count can never disagree with the list it opens. */}
+          <ExecutionCountBadge
+            executions={executions}
+            projectId={projectId}
+            selection={{ kind: "job", job }}
+          />
           <TextField
             select
             disabled={jobs.length === 1}

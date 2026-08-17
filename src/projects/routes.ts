@@ -233,7 +233,7 @@ const assertDefinitionId = (definitionType: RunDefinitionType, definitionId: str
  * so a version is bounded by the same rule as every other free-form value this family carries:
  * never empty, and never unbounded.
  */
-const isDefinitionVersion = isSearch;
+export const isDefinitionVersion = isSearch;
 
 /**
  * The definition a Results URL narrows to, or nothing at all. Half a pair names no definition, and

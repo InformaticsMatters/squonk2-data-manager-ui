@@ -1,3 +1,10 @@
+# [7.0.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.2...7.0.0-dev.3) (2026-08-17)
+
+
+### Bug Fixes
+
+* fix motd when using base path ([9831b7b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9831b7be1b33542678e06f50af7a50167e05db19))
+
 # [7.0.0-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.1...7.0.0-dev.2) (2026-08-17)
 
 

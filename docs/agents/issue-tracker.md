@@ -2,6 +2,16 @@
 
 Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
 
+## Which repository
+
+Issues belong to `InformaticsMatters/squonk2-data-manager-ui`, this app's own repository. When the
+app is a submodule of the `squonk-frontend` monorepo, that parent is a **different** repository with
+a different remote, and `gh` targets whichever repository the working directory sits in.
+
+Run every `gh` command from this app's own directory — the checkout root when standalone,
+`apps/data-manager-ui` when a submodule. Before creating an issue, confirm with `git remote -v`
+that the remote ends in `squonk2-data-manager-ui.git`.
+
 ## Conventions
 
 - **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
@@ -10,8 +20,6 @@ Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all o
 - **Comment on an issue**: `gh issue comment <number> --body "..."`
 - **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
 - **Close**: `gh issue close <number> --comment "..."`
-
-Infer the repo from `git remote -v`; `gh` does this automatically when run inside a clone.
 
 ## Pull requests as a triage surface
 

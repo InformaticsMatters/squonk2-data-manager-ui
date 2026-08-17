@@ -2,7 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-`data-manager-ui` is a Next.js app inside the `squonk-frontend` pnpm-workspace monorepo. Shared code lives in `../../libs/` (`@squonk/*` packages, e.g. `mui-theme`, `sdf-parser`, `eslint-config`).
+`data-manager-ui` is a Next.js app.
+
+## Monorepo vs Polyrepo
+
+The app has its own git repository (InformaticsMatters/squonk2-data-manager-ui), usually a submodule inside the `squonk-frontend` pnpm-workspace monorepo — a **separate** repository with a different remote. This may not always be the case. The app can be developed as a standalone repo `squonk2-data-manager-ui` or as a `data-manager-ui` submodule. When it is a submodule, shared code lives in `../../libs/` (`@squonk/*` packages, e.g. `mui-theme`, `sdf-parser`, `eslint-config`).
 
 ## Stack
 
@@ -44,7 +48,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Issue tracker
 
-Issues are tracked in this repository's GitHub Issues. See `docs/agents/issue-tracker.md`.
+Issues for the data-manager-ui live in this app's own repository, `InformaticsMatters/squonk2-data-manager-ui`. `gh` resolves the repository from the working directory, so run every `gh` command from this app directory. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

@@ -542,6 +542,16 @@ export const resultsListState = (
   route: Extract<ProjectRoute, { kind: "result" | "results" }>,
 ): ResultsState => resultsFilterState(route.search, route.definition, route.types);
 
+/**
+ * The same Results list state with its definition filter cleared. All three of the filter's keys go
+ * together, because none of them narrows anything without the others, and nothing is left in their
+ * place: the two narrowings are mutually exclusive in the route, so there is no stranded type
+ * filter to clean up and the caller is never handed a narrowing they did not choose. The search
+ * they typed is theirs and stays.
+ */
+export const resultsWithoutDefinition = (state: ResultsLinkState): ResultsState =>
+  resultsFilterState(state.search, undefined, undefined);
+
 export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> => {
   const location = parseRouteLocation(href);
   if (location?.segments[0] !== "projects") {

@@ -27,13 +27,17 @@ import {
 import { resolveResultCapabilities } from "../../src/projects/resultCapabilities";
 import {
   filterResultItems,
+  type ResolvedResultsDefinition,
   resolveResultsDefinition,
   resolveResultsFreshnessByCollection,
   resolveResultsReadReport,
   resultListRequests,
   type ResultsDefinitionCatalogue,
+  resultsDefinitionLabel,
   type ResultsDefinitionTarget,
+  resultsFilterStatement,
   selectProjectResults,
+  unrunResultsDefinition,
 } from "../../src/projects/resultFacts";
 import {
   parseProjectRoute,
@@ -41,6 +45,7 @@ import {
   type ResultsLinkState,
   resultsListState,
   type ResultsState,
+  resultsWithoutDefinition,
   type UncheckedDefinitionFilter,
 } from "../../src/projects/routes";
 import {
@@ -699,17 +704,23 @@ const resolutionOf = (
     readState: { kind: "available" },
   });
 
-/** The version-agnostic definition one filter resolves to, proven resolved rather than assumed. */
-const targetOf = (
+/** The definition one filter resolves to, proven resolved rather than assumed. */
+const resolvedOf = (
   definition: UncheckedDefinitionFilter,
   catalogue: Partial<ResultsDefinitionCatalogue> = {},
-): ResultsDefinitionTarget => {
+): ResolvedResultsDefinition => {
   const resolution = resolutionOf(definition, catalogue);
   if (resolution.status !== "resolved") {
     throw new Error(`${definition.definitionType} ${definition.definitionId} must resolve`);
   }
-  return resolution.target;
+  return resolution;
 };
+
+/** The version-agnostic identity that definition is matched by. */
+const targetOf = (
+  definition: UncheckedDefinitionFilter,
+  catalogue: Partial<ResultsDefinitionCatalogue> = {},
+): ResultsDefinitionTarget => resolvedOf(definition, catalogue).target;
 
 /** One job's instance, carrying the identity every version of that job shares. */
 const jobInstance = (id: string, version: string) =>
@@ -915,6 +926,7 @@ test("the definition catalogue is read only while a filter is set and answers fo
   expect(read()).toEqual({
     status: "resolved",
     content: "current",
+    name: "acceptance-job",
     target: { definitionType: "jobs", collection: "acceptance", job: "acceptance-job" },
   });
   // Content that could not be refreshed is still worth resolving against, and says it is stale on
@@ -948,6 +960,126 @@ test("a definition the catalogue does not contain leaves a usable, unfiltered Re
       resultsListState(resultsRouteFor(projectLinks.results(projectId, { definition: jobFilter }))),
     ),
   ).toHaveLength(owned.length);
+});
+
+test("a filter is stated by the name its own catalogue publishes, never by what the URL carries", () => {
+  // The name is the catalogue entry's, so a definition renamed since a link was written is stated
+  // by the name it has now rather than by anything the URL froze into it.
+  expect(
+    resultsDefinitionLabel(
+      resolvedOf(jobFilter, { jobs: [jobDefinition({ job: "renamed-job", name: "Renamed Job" })] }),
+    ),
+  ).toBe("Job: renamed-job");
+  expect(
+    resultsDefinitionLabel(resolvedOf(applicationFilter, definitionCatalogues.applications)),
+  ).toBe("Application: JupyterLab");
+  expect(resultsDefinitionLabel(resolvedOf(workflowFilter, definitionCatalogues.workflows))).toBe(
+    "Workflow: acceptance-workflow",
+  );
+
+  // A version the URL narrowed to is stated beside the name; its absence states the definition
+  // alone, because the filter then means every version of it.
+  expect(
+    resultsDefinitionLabel(
+      resolvedOf({ ...jobFilter, version: "2.0.0" }, definitionCatalogues.jobs),
+    ),
+  ).toBe("Job: acceptance-job (2.0.0)");
+  expect(resultsDefinitionLabel(resolvedOf(jobFilter, definitionCatalogues.jobs))).toBe(
+    "Job: acceptance-job",
+  );
+
+  // Nothing that failed to resolve is ever stated: a name the caller could read exists only where
+  // an answering catalogue produced one.
+  for (const resolution of [
+    resolutionOf(jobFilter),
+    resolveResultsDefinition({
+      catalogue: catalogues(definitionCatalogues.jobs),
+      definition: jobFilter,
+      isLoading: true,
+      readState: { kind: "available" },
+    }),
+  ]) {
+    expect(resolution).not.toMatchObject({ status: "resolved" });
+  }
+});
+
+test("the name a filter is stated by is available in exactly the case nothing matched", () => {
+  const owned = results({ instances: [jobInstance("instance-v1", "1.0.0")] });
+  const unrun = resolvedOf({ ...jobFilter, version: "3.0.0" }, definitionCatalogues.jobs);
+
+  // A name taken from a matched result would be unavailable here, which is the one case a caller
+  // most needs it: an empty list has to say which definition has never run rather than only that
+  // something is missing.
+  expect(filterResultItems(owned, {}, unrun.target)).toEqual([]);
+  expect(resultsDefinitionLabel(unrun)).toBe("Job: acceptance-job (3.0.0)");
+  expect(unrunResultsDefinition(owned, unrun)).toBe(unrun);
+});
+
+test("an empty list names the definition only where the definition itself emptied it", () => {
+  const owned = results({ instances: [jobInstance("instance-v1", "1.0.0")] });
+  const ran = resolvedOf({ ...jobFilter, version: "1.0.0" }, definitionCatalogues.jobs);
+
+  // A search the caller typed can empty a list the definition has plenty in. Stating their own
+  // narrowing as "this definition has never run here" would be false, so it is not stated.
+  expect(filterResultItems(owned, { search: "nothing matches this" }, ran.target)).toEqual([]);
+  expect(unrunResultsDefinition(owned, ran)).toBeUndefined();
+
+  // Nothing to name at all where no definition resolved, whatever emptied the list.
+  for (const resolution of [
+    resolutionOf(jobFilter),
+    { status: "unfiltered" },
+    { status: "unreadable" },
+  ] as const) {
+    expect(unrunResultsDefinition([], resolution)).toBeUndefined();
+  }
+});
+
+test("an active filter is stated and clearable even where the catalogue could not name it", () => {
+  // A filter that resolved is stated by the definition it named.
+  expect(resultsFilterStatement(jobFilter, resolvedOf(jobFilter, definitionCatalogues.jobs))).toBe(
+    "Job: acceptance-job",
+  );
+
+  // One that did not is still stated, by the kind of filter the URL does name — never by a
+  // definition name, which only an answering catalogue can supply. The definition filter displaces
+  // the type filter, so a caller left without both controls could only reach the whole list by
+  // editing the URL.
+  for (const resolution of [resolutionOf(jobFilter), { status: "unreadable" }] as const) {
+    expect(resultsFilterStatement(jobFilter, resolution)).toBe("Job filter");
+  }
+  expect(resultsFilterStatement(workflowFilter, { status: "unreadable" })).toBe("Workflow filter");
+
+  // Nothing is stated where there is nothing to state: no filter, or a read still outstanding.
+  expect(resultsFilterStatement(undefined, { status: "unfiltered" })).toBeUndefined();
+  expect(resultsFilterStatement(jobFilter, { status: "pending" })).toBeUndefined();
+});
+
+test("clearing a definition filter removes all three of its keys and leaves no other filter", () => {
+  const filtered: ResultsLinkState = {
+    search: "acceptance",
+    definition: { definitionType: "jobs", definitionId: "42", version: "1.0.0" },
+  };
+  const cleared = resultsWithoutDefinition(filtered);
+
+  // All three keys go together: none of them narrows anything without the others.
+  expect(cleared).toEqual({ search: "acceptance" });
+  expect(projectLinks.results(projectId, cleared)).toBe(
+    projectLinks.results(projectId, { search: "acceptance" }),
+  );
+  for (const key of ["definitionType", "definitionId", "version"]) {
+    expect(projectLinks.results(projectId, cleared)).not.toContain(key);
+  }
+
+  // Nothing is left in their place. The two narrowings are mutually exclusive in the route, so a
+  // cleared filter cannot strand a type narrowing the caller never chose.
+  expect(resultsWithoutDefinition({ definition: { ...jobFilter } })).toEqual({});
+  expect(
+    projectLinks.results(projectId, resultsWithoutDefinition({ definition: { ...jobFilter } })),
+  ).toBe(projectLinks.results(projectId));
+  // And the cleared state is one the parser reads back as the unfiltered list.
+  const route = resultsRouteFor(projectLinks.results(projectId, cleared));
+  expect(resultsListState(route)).toEqual({ search: "acceptance" });
+  expect(route.definition).toBeUndefined();
 });
 
 test("the definition catalogue read is reported beside the collections without deciding for them", () => {

@@ -9,7 +9,7 @@ import {
 import semver from "semver";
 
 import { search } from "../utils/app/searches";
-import { instanceOwner, ownedBy, runningWorkflowOwner } from "./resultFacts";
+import { definitionTerms, instanceOwner, ownedBy, runningWorkflowOwner } from "./resultFacts";
 import { type RunDefinitionType, type RunFilterType, showsType } from "./routes";
 import { resolveSectionFreshnessByKey, type SectionReadState } from "./sectionReads";
 
@@ -85,7 +85,7 @@ export const selectRunCatalogue = ({
     id: application.application_id,
     kind: "application",
     data: application,
-    title: application.kind,
+    title: definitionTerms.applications.name(application),
     subtitle: application.group ?? "",
   }));
 
@@ -103,7 +103,7 @@ export const selectRunCatalogue = ({
       id: String(versions[0].id),
       kind: "job",
       data: versions,
-      title: versions[0].job,
+      title: definitionTerms.jobs.name(versions[0]),
       subtitle: versions[0].name,
     }));
 
@@ -118,7 +118,7 @@ export const selectRunCatalogue = ({
     id: workflow.id,
     kind: "workflow",
     data: workflow,
-    title: workflow.workflow_name ?? workflow.name,
+    title: definitionTerms.workflows.name(workflow),
     subtitle: workflow.name,
   }));
 

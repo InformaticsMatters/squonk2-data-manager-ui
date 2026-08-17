@@ -476,10 +476,15 @@ test("a version narrows to one version of a definition and its absence keeps the
   await login(page, unrunJob, testInfo);
 
   // This project ran version 1.0.0 of the job and never 2.0.0, so the version narrows to nothing.
+  // The empty state names what it was narrowed to, so "this version has never run here" is
+  // distinguishable from a broken page — and it names it in the one case no matched result could.
   await expect(
-    page.getByText("There are no tasks, instances, or workflows to display."),
+    page.getByText("There are no results for Job: acceptance-job (2.0.0) in this project."),
   ).toBeVisible();
   await expect(page.getByText("Acceptance Instance")).toHaveCount(0);
+  // The chip names the definition here too: a name taken from a matched result would be missing in
+  // exactly this case, which is where a caller most needs to be told what they are looking at.
+  await expect(page.getByText("Job: acceptance-job (2.0.0)", { exact: true })).toBeVisible();
 
   // The identifier in the URL is one version's, but identity is the job itself, so dropping the
   // version lists every version's executions — including one launched from a different version.
@@ -494,9 +499,55 @@ test("a version narrows to one version of a definition and its absence keeps the
   );
   await expect(page.getByText("Acceptance Instance")).toBeVisible();
   await page.getByLabel(/Search/u).fill("nothing matches this");
+  // The caller's own search emptied a list this definition has plenty in, so the empty state does
+  // not report their narrowing as the definition's silence.
   await expect(
     page.getByText("There are no tasks, instances, or workflows to display."),
   ).toBeVisible();
+  await expect(
+    page.getByText("There are no results for Job: acceptance-job in this project."),
+  ).toHaveCount(0);
+});
+
+test("a chip states the active filter, replaces the type filter, and clears back to the whole list", async ({
+  page,
+}, testInfo) => {
+  await login(page, ranJob, testInfo);
+
+  // The chip names the definition the catalogue resolved and the version the URL carries.
+  await expect(page.getByText("Job: acceptance-job (1.0.0)")).toBeVisible();
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  // Exactly one kind of result can match a definition, so the type filter is not offered at all:
+  // every entry in it would be a no-op or self-defeating.
+  await expect(page.getByLabel("Filter Results")).toHaveCount(0);
+
+  // The clear affordance is a control with a name, so a screen reader can reach and announce it.
+  const clear = page.getByRole("button", { name: "Clear definition filter" });
+  await expect(clear).toBeVisible();
+
+  // Both stay legible and tappable on a phone: the chip wraps inside the viewport rather than
+  // pushing the page sideways, and the clear control keeps a tap target above the 24px minimum.
+  const narrow = { height: 720, width: 360 };
+  await page.setViewportSize(narrow);
+  await expect(page.getByText("Job: acceptance-job (1.0.0)")).toBeVisible();
+  const tapTarget = await clear.boundingBox();
+  expect(tapTarget?.height ?? 0).toBeGreaterThanOrEqual(24);
+  expect(tapTarget?.width ?? 0).toBeGreaterThanOrEqual(24);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+    narrow.width,
+  );
+
+  await clear.click();
+
+  // Clearing removes the whole filter — all three keys — and leaves nothing else behind: the type
+  // filter returns and the unfiltered list is back, with no narrowing the caller never chose.
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}`);
+  await expect(page.getByText("Job: acceptance-job")).toHaveCount(0);
+  await expect(page.getByLabel("Filter Results")).toBeVisible();
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page.getByText("Acceptance Notebook")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "DATASET", exact: true })).toBeVisible();
 });
 
 test("a workflow filter lists the running workflows started from that definition", async ({
@@ -509,6 +560,9 @@ test("a workflow filter lists the running workflows started from that definition
   );
 
   await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
+  // The chip names the workflow definition, which is not what any running workflow started from it
+  // is called, so the name can only have come from the catalogue that publishes the definition.
+  await expect(page.getByText("Workflow: Acceptance Workflow Definition")).toBeVisible();
   // Instances name no workflow definition and tasks name nothing at all, so neither can match.
   await expect(page.getByText("Acceptance Instance")).toHaveCount(0);
   await expect(page.getByText("Acceptance Notebook")).toHaveCount(0);
@@ -534,6 +588,16 @@ test("a filter naming a definition the catalogue does not contain leaves a usabl
   await expect(page.getByText("Acceptance Instance")).toBeVisible();
   await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
   await expect(page.getByRole("link", { name: "DATASET", exact: true })).toBeVisible();
+
+  // Nothing resolved, so nothing names a definition — but the filter still displaced the type
+  // filter, so it is still stated and still clearable rather than leaving the caller with neither
+  // control and only the URL to edit.
+  await expect(page.getByLabel("Filter Results")).toHaveCount(0);
+  await expect(page.getByText("Job filter")).toBeVisible();
+  await page.getByRole("button", { name: "Clear definition filter" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}`);
+  await expect(page.getByLabel("Filter Results")).toBeVisible();
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
 });
 
 test("the definition catalogue read is reported and retried like any other Results read", async ({
@@ -558,11 +622,17 @@ test("the definition catalogue read is reported and retried like any other Resul
   await expect(
     page.getByText("was not found, so every result in this project is shown"),
   ).toHaveCount(0);
+  // The catalogue could not name it, so the chip states the kind of filter that is active instead
+  // — and stays clearable, because the type filter it displaced cannot come back until it is.
+  await expect(page.getByLabel("Filter Results")).toHaveCount(0);
+  await expect(page.getByText("Job filter")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Clear definition filter" })).toBeVisible();
 
   await request.delete(`${acceptanceUrls.control}/scenario/${subject}/run-failure`);
   await page.getByRole("button", { name: "Retry" }).click();
 
   // Retrying resolves the definition in place, without any change of project or route.
+  await expect(page.getByText("Job: acceptance-job (1.0.0)")).toBeVisible();
   await expect(page.getByText("Acceptance Notebook")).toHaveCount(0);
   await expect(page.getByText("Acceptance Instance")).toBeVisible();
   await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);

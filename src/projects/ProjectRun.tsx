@@ -218,9 +218,7 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
           Run
         </Typography>
         <SectionToolbar
-          filterLabel="Filter"
-          filterOptions={filterOptions}
-          filterSize={{ md: 4, sm: 6, xs: 12 }}
+          filter={{ label: "Filter", options: filterOptions, size: { md: 4, sm: 6, xs: 12 } }}
           refreshLabel="Refresh catalogue"
           state={state}
           onRefresh={() => run.refresh()}

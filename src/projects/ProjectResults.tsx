@@ -17,14 +17,22 @@ import { resolveResultInstanceLifecycle, resultInstanceSettlement } from "./inst
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectResultDetail } from "./ProjectResultDetail";
 import { resolveResultCapabilities } from "./resultCapabilities";
-import { filterResultItems, type ResultItem } from "./resultFacts";
+import {
+  filterResultItems,
+  type ResultItem,
+  resultsDefinitionLabel,
+  resultsFilterStatement,
+  unrunResultsDefinition,
+} from "./resultFacts";
 import { resolveRerunTarget } from "./resultRerun";
+import { ResultsDefinitionChip } from "./ResultsDefinitionChip";
 import {
   projectLinks,
   type ProjectRoute,
   type ResultFilterType,
   resultsListState,
   type ResultsState,
+  resultsWithoutDefinition,
 } from "./routes";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
@@ -167,9 +175,15 @@ const ResultsList = ({
   }
 
   if (items.length === 0) {
+    // An empty filtered list names what it was narrowed to, so "this definition has never run here"
+    // is distinguishable from a page that is simply broken.
+    const unrun = unrunResultsDefinition(results.items, results.definition);
+
     return (
       <Typography align="center" variant="body2">
-        There are no tasks, instances, or workflows to display.
+        {unrun
+          ? `There are no results for ${resultsDefinitionLabel(unrun)} in this project.`
+          : "There are no tasks, instances, or workflows to display."}
       </Typography>
     );
   }
@@ -213,6 +227,8 @@ const ResultsSection = ({
   };
   const handleRefresh = () => results.refresh();
   const handleRetry = () => results.retry();
+  const handleClearDefinition = () => handleStateChange(resultsWithoutDefinition(state));
+  const statement = resultsFilterStatement(state.definition, results.definition);
 
   return (
     <Layout>
@@ -221,9 +237,15 @@ const ResultsSection = ({
           Results
         </Typography>
         <SectionToolbar
-          filterLabel="Filter Results"
-          filterOptions={filterOptions}
-          filterSize={{ md: 4, sm: 4, xs: 12 }}
+          // No type filter while a definition is filtered to, for the reason SectionToolbar gives;
+          // it returns the moment the filter is cleared. The route settles this rather than the
+          // resolution, because the two narrowings are mutually exclusive in it: there is no state
+          // a type choice made here could even be written to.
+          filter={
+            state.definition
+              ? undefined
+              : { label: "Filter Results", options: filterOptions, size: { md: 4, sm: 4, xs: 12 } }
+          }
           refreshLabel="Refresh results"
           state={state}
           onRefresh={handleRefresh}
@@ -233,6 +255,13 @@ const ResultsSection = ({
             <EventDebugSwitch />
           </Grid>
         </SectionToolbar>
+
+        {/* Every active filter is stated and clearable, including one the catalogue could not name:
+            it displaced the type filter, so without a chip the caller would be left with neither
+            control and no way back to the whole list but the URL. */}
+        {statement === undefined ? null : (
+          <ResultsDefinitionChip label={statement} onClear={handleClearDefinition} />
+        )}
 
         <SectionReadAlerts
           report={results.report}

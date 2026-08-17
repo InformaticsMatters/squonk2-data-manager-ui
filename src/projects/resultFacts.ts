@@ -193,30 +193,80 @@ export type ResultsDefinitionCatalogue = {
 };
 
 /**
- * The version-agnostic identity of the definition a URL names, or `undefined` when the catalogue
- * does not contain it. The URL's identifier is per-version for jobs and workflows, so the catalogue
- * is the only place the identity every version shares can come from.
+ * How each definition type is spoken about on screen: what the kind itself is called, and what one
+ * entry of its catalogue is called. Both come from one place, keyed by the type a route already
+ * spells, so the chip that states a filter names a definition exactly as the Run card that links to
+ * the filter does and neither can be renamed without the other following.
  */
-const findDefinitionIdentity = (
+export const definitionTerms = {
+  applications: {
+    label: "Application",
+    name: (application: Pick<ApplicationSummary, "kind">) => application.kind,
+  },
+  jobs: { label: "Job", name: (job: Pick<JobSummary, "job">) => job.job },
+  workflows: {
+    label: "Workflow",
+    name: (workflow: Pick<WorkflowSummary, "name" | "workflow_name">) =>
+      workflow.workflow_name ?? workflow.name,
+  },
+} as const;
+
+/**
+ * The catalogue entry a URL names, or `undefined` when the catalogue does not contain it. The URL's
+ * identifier is per-version for jobs and workflows, so the catalogue is the only place both the
+ * identity every version shares and the definition's current name can come from.
+ */
+const findDefinitionEntry = (
   { definitionId, definitionType }: UncheckedDefinitionFilter,
   catalogue: ResultsDefinitionCatalogue,
-): ResultsDefinitionIdentity | undefined => {
+): { identity: ResultsDefinitionIdentity; name: string } | undefined => {
   switch (definitionType) {
     case "applications": {
       const application = catalogue.applications.find(
         (candidate) => candidate.application_id === definitionId,
       );
-      return application && { definitionType, applicationId: application.application_id };
+      return (
+        application && {
+          identity: { definitionType, applicationId: application.application_id },
+          name: definitionTerms.applications.name(application),
+        }
+      );
     }
     case "jobs": {
       const job = catalogue.jobs.find((candidate) => String(candidate.id) === definitionId);
-      return job && { definitionType, collection: job.collection, job: job.job };
+      return (
+        job && {
+          identity: { definitionType, collection: job.collection, job: job.job },
+          name: definitionTerms.jobs.name(job),
+        }
+      );
     }
     case "workflows": {
       const workflow = catalogue.workflows.find((candidate) => candidate.id === definitionId);
-      return workflow && { definitionType, name: workflow.name };
+      return (
+        workflow && {
+          identity: { definitionType, name: workflow.name },
+          name: definitionTerms.workflows.name(workflow),
+        }
+      );
     }
   }
+};
+
+/**
+ * The definition a list narrows to, and how fresh the catalogue that named it is. It is the one
+ * resolution a caller can be told about, because it is the only one that named anything.
+ */
+export type ResolvedResultsDefinition = {
+  status: "resolved";
+  content: "current" | "stale";
+  /**
+   * What the catalogue calls the definition now. It is never the URL's identifier, which names one
+   * version and says nothing a caller could read, and never a matched result's own name, which is
+   * unavailable in exactly the zero-match case where the caller needs it most.
+   */
+  name: string;
+  target: ResultsDefinitionTarget;
 };
 
 /**
@@ -225,16 +275,48 @@ const findDefinitionIdentity = (
  * or unreadable link is better served by a usable page than by an empty one they cannot explain.
  */
 export type ResultsDefinitionResolution =
+  | ResolvedResultsDefinition
   /** The catalogue answered and does not contain the identifier the URL names. */
   | { status: "not-found" }
   /** The catalogue read is outstanding, so the list cannot yet be narrowed or shown unnarrowed. */
   | { status: "pending" }
-  /** The definition the list narrows to, and how fresh the catalogue that named it is. */
-  | { status: "resolved"; content: "current" | "stale"; target: ResultsDefinitionTarget }
   /** The URL names no definition, so nothing was read and nothing is narrowed. */
   | { status: "unfiltered" }
   /** The catalogue's content is gone, so what it would have said about the definition is unknown. */
   | { status: "unreadable" };
+
+/**
+ * How a resolved filter is stated on screen: the kind of definition, what the catalogue calls it,
+ * and the version when the URL narrowed to one. The chip and the empty state both say it, so they
+ * are built from one rule and cannot name the same filter two different ways.
+ */
+export const resultsDefinitionLabel = ({ name, target }: ResolvedResultsDefinition) =>
+  `${definitionTerms[target.definitionType].label}: ${name}${
+    target.version === undefined ? "" : ` (${target.version})`
+  }`;
+
+/**
+ * What the chip states about the filter a URL carries, or `undefined` when there is nothing to
+ * state: no filter at all, or a catalogue read still outstanding.
+ *
+ * A filter the catalogue could not name is still stated and still clearable. The definition filter
+ * displaces the type filter, and the type filter cannot come back while the URL still carries a
+ * definition, so a caller whose definition failed to resolve would otherwise be left with neither
+ * control and no way back to the whole list but the URL. What such a chip states is the kind of
+ * filter that is active, which the URL does name — never a definition name, which only an
+ * answering catalogue can supply.
+ */
+export const resultsFilterStatement = (
+  definition: UncheckedDefinitionFilter | undefined,
+  resolution: ResultsDefinitionResolution,
+): string | undefined => {
+  if (definition === undefined || resolution.status === "pending") {
+    return undefined;
+  }
+  return resolution.status === "resolved"
+    ? resultsDefinitionLabel(resolution)
+    : `${definitionTerms[definition.definitionType].label} filter`;
+};
 
 /**
  * How the definition catalogue's own read answers for the definition a URL names. The read joins
@@ -259,14 +341,15 @@ export const resolveResultsDefinition = ({
   if (isLoading) {
     return { status: "pending" };
   }
-  const identity = findDefinitionIdentity(definition, catalogue);
-  if (identity !== undefined) {
+  const entry = findDefinitionEntry(definition, catalogue);
+  if (entry !== undefined) {
     // Content that could not be refreshed still names the definition, and says it is stale on the
     // same terms as the results collections beside it.
     return {
       status: "resolved",
       content: resolveSectionFreshness(readState),
-      target: { ...identity, ...(definition.version ? { version: definition.version } : {}) },
+      name: entry.name,
+      target: { ...entry.identity, ...(definition.version ? { version: definition.version } : {}) },
     };
   }
   // Only a read that answered can establish that a definition is absent. A refusal clears the
@@ -307,6 +390,20 @@ export const filterResultItems = (
     .filter((item) => showsType(types, item.kind))
     .filter((item) => definition === undefined || matchesDefinition(item, definition))
     .filter((item) => matchesSearch(item, searchValue));
+
+/**
+ * The definition an empty Results list may name: one the catalogue resolved that this project has
+ * no results for at all. An empty list is only that definition's silence when the definition alone
+ * emptied it — the caller's own search can empty a list the definition has plenty in, and stating
+ * their narrowing as "this has never run here" would be false.
+ */
+export const unrunResultsDefinition = (
+  items: readonly ResultItem[],
+  resolution: ResultsDefinitionResolution,
+): ResolvedResultsDefinition | undefined =>
+  resolution.status === "resolved" && filterResultItems(items, {}, resolution.target).length === 0
+    ? resolution
+    : undefined;
 
 /** How each Results collection's own last read answered, keyed by the results it carries. */
 export type ResultsReadStates = Record<ResultFilterType, SectionReadState>;

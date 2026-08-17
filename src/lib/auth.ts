@@ -5,6 +5,15 @@ import { jwtDecode } from "jwt-decode";
 
 import { withBasePath } from "../utils/app/basePath";
 
+// `new URL` throws on an undefined base, and this module is imported while `next build` collects
+// page data — a build that deliberately carries no runtime configuration, since the image is built
+// once and deployed against whichever base URL the environment sets. Resolving to undefined when
+// the base is absent keeps the module importable at build time; every deployment sets the variable,
+// so the value handed to Keycloak in a running instance is unchanged.
+const keycloakRedirectURI = process.env.BETTER_AUTH_BASE_URL
+  ? new URL(withBasePath("/api/auth/callback/keycloak"), process.env.BETTER_AUTH_BASE_URL).href
+  : undefined;
+
 // No database config → better-auth defaults to memory adapter + cookie cache (stateless sessions)
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
@@ -40,10 +49,7 @@ export const auth = betterAuth({
             clientId: process.env.KEYCLOAK_CLIENT_ID as string,
             clientSecret: process.env.KEYCLOAK_CLIENT_SECRET as string,
             issuer: process.env.KEYCLOAK_ISSUER_URL as string,
-            redirectURI: new URL(
-              withBasePath("/api/auth/callback/keycloak"),
-              process.env.BETTER_AUTH_BASE_URL,
-            ).href,
+            redirectURI: keycloakRedirectURI,
             scopes: ["openid", "profile", "email", "offline_access"],
             // better-auth always sends code_verifier when exchanging the code, so the
             // challenge has to be on the authorize request or Keycloak rejects the exchange

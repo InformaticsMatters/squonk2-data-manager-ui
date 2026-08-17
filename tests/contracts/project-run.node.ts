@@ -746,6 +746,21 @@ test("an execution that declares no project is counted by the read that returned
 });
 
 test.describe("Run cutover", () => {
+  const typescriptSource = /\.tsx?$/u;
+  const generated = /(?:^|\/)generated\//u;
+  const sourceRoot = path.join(process.cwd(), "src");
+
+  /** Every handwritten module whose source matches, so a second owner cannot appear unnoticed. */
+  const handwrittenMatching = (matches: RegExp, root = sourceRoot) =>
+    readdirSync(root, { recursive: true, withFileTypes: true })
+      .filter((entry) => entry.isFile() && typescriptSource.test(entry.name))
+      .map((entry) =>
+        path.relative(root, path.join(entry.parentPath, entry.name)).split(path.sep).join("/"),
+      )
+      .filter((file) => !generated.test(file))
+      .filter((file) => matches.test(readFileSync(path.join(root, file), "utf8")))
+      .toSorted();
+
   test("the legacy global Run route no longer exists", () => {
     expect(existsSync(path.join(process.cwd(), "src/pages/run.tsx"))).toBe(false);
     // The parser answers for the removed route rather than guessing a correction for it.
@@ -768,19 +783,6 @@ test.describe("Run cutover", () => {
   });
 
   test("no handwritten module composes a Run route or reads a selected project", () => {
-    const typescriptSource = /\.tsx?$/u;
-    const generated = /(?:^|\/)generated\//u;
-    const root = path.join(process.cwd(), "src");
-    const handwrittenMatching = (matches: RegExp) =>
-      readdirSync(root, { recursive: true, withFileTypes: true })
-        .filter((entry) => entry.isFile() && typescriptSource.test(entry.name))
-        .map((entry) =>
-          path.relative(root, path.join(entry.parentPath, entry.name)).split(path.sep).join("/"),
-        )
-        .filter((file) => !generated.test(file))
-        .filter((file) => matches.test(readFileSync(path.join(root, file), "utf8")))
-        .toSorted();
-
     // Composing the legacy Run path, rather than calling the family builder, would be a second
     // owner of the route.
     expect(handwrittenMatching(/["'`]\/run["'`]/u)).toEqual([]);
@@ -800,35 +802,32 @@ test.describe("Run cutover", () => {
       "components/runCards/WorkflowCard/WorkflowCard.tsx",
       "components/runCards/WorkflowCard/WorkflowModal.tsx",
     ]) {
-      expect(readFileSync(path.join(root, sourceFile), "utf8")).not.toMatch(
+      expect(readFileSync(path.join(sourceRoot, sourceFile), "utf8")).not.toMatch(
         /useCurrentProject|useIsUserAdminOrEditorOfCurrentProject|useProjectFromId/u,
       );
     }
   });
 
   test("one implementation of a definition's executions survives, and nothing names the other", () => {
-    const typescriptSource = /\.tsx?$/u;
-    const generated = /(?:^|\/)generated\//u;
-    const removedList =
-      /InstancesList|RunningWorkflowsList|runDefinitionInstances|runDefinitionRunningWorkflows/u;
-    const root = path.join(process.cwd(), "src");
-
     // The Run section listed a definition's executions a second time, in a card that could neither
     // search, refresh, nor act on them. The components that drew those lists and the facts that
     // selected the executions for them are gone rather than merely unused.
     for (const removed of ["InstancesList", "RunningWorkflowsList"]) {
-      expect(existsSync(path.join(root, `components/runCards/${removed}.tsx`))).toBe(false);
+      expect(existsSync(path.join(sourceRoot, `components/runCards/${removed}.tsx`))).toBe(false);
     }
     // No handwritten module names either of them, or the facts that fed them, so a second list
-    // cannot come back unnoticed beside the one badge that now points at the real one.
-    const naming = readdirSync(root, { recursive: true, withFileTypes: true })
-      .filter((entry) => entry.isFile() && typescriptSource.test(entry.name))
-      .map((entry) =>
-        path.relative(root, path.join(entry.parentPath, entry.name)).split(path.sep).join("/"),
-      )
-      .filter((file) => !generated.test(file))
-      .filter((file) => removedList.test(readFileSync(path.join(root, file), "utf8")));
-    expect(naming).toEqual([]);
+    // cannot come back unnoticed beside the one badge that now points at the real one. The test
+    // modules are searched too, file lists like the one above included, because a stale entry
+    // naming a deleted component is exactly what this is guarding against. Only this module is
+    // exempt, and only because it must spell the names to look for them.
+    const removedList =
+      /InstancesList|RunningWorkflowsList|runDefinitionInstances|runDefinitionRunningWorkflows/u;
+    expect(handwrittenMatching(removedList)).toEqual([]);
+    expect(
+      handwrittenMatching(removedList, path.join(process.cwd(), "tests")).filter(
+        (file) => file !== "contracts/project-run.node.ts",
+      ),
+    ).toEqual([]);
   });
 });
 

@@ -86,8 +86,12 @@ export type ResultsDefinitionFilter = {
   };
 }[RunDefinitionType];
 
-/** The same pair as a caller names it, before the route has checked the identifier against it. */
-type UncheckedDefinitionFilter = {
+/**
+ * The same pair as a caller names it, before the route has checked the identifier against it. What
+ * a definition filter *is* rather than what a route proved about it, so a facts module that only
+ * reads the pair need not carry the route's own proof of it.
+ */
+export type UncheckedDefinitionFilter = {
   definitionType: RunDefinitionType;
   definitionId: string;
   version?: string;

@@ -10,19 +10,37 @@ const subjectFor = (testInfo: TestInfo) => `acceptance-worker-${testInfo.paralle
 const acceptanceResults = `projects/${fixtureIds.project}/results`;
 const screeningResults = `projects/${fixtureIds.screeningProject}/results`;
 
-type Diagnostics = { requests: { method: string; path: string; query: string }[] };
+type DiagnosticRequest = { method: string; path: string; query: string };
+type Diagnostics = { requests: DiagnosticRequest[] };
 
-const resultReads = async (
+const diagnosticReads = async (
   request: { get: (url: string) => Promise<{ json: () => Promise<unknown> }> },
   subject: string,
+  paths: readonly string[],
 ) => {
   const diagnostics = (await request
     .get(`${acceptanceUrls.control}/scenario/${subject}`)
     .then((response) => response.json())) as Diagnostics;
-  return diagnostics.requests.filter(({ path }) =>
-    ["/instance", "/task", "/running-workflow"].includes(path),
-  );
+  return diagnostics.requests.filter(({ path }) => paths.includes(path));
 };
+
+const resultReads = async (
+  request: { get: (url: string) => Promise<{ json: () => Promise<unknown> }> },
+  subject: string,
+) => diagnosticReads(request, subject, ["/instance", "/task", "/running-workflow"]);
+
+/**
+ * The definition catalogues, which only a filtered Results page reads. The running-workflow
+ * collection is `/running-workflow`, so `/workflow` here is the workflow *definitions* alone.
+ */
+const catalogueReads = async (
+  request: { get: (url: string) => Promise<{ json: () => Promise<unknown> }> },
+  subject: string,
+) => diagnosticReads(request, subject, ["/application", "/job", "/workflow"]);
+
+/** What one read was, without how many times it happened, so two page loads can be compared. */
+const readSignatures = (reads: readonly DiagnosticRequest[]) =>
+  [...new Set(reads.map(({ method, path, query }) => `${method} ${path}${query}`))].toSorted();
 
 test.beforeEach(async ({ request }, testInfo) => {
   await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}`);
@@ -397,4 +415,157 @@ test("only the collection that could not be refreshed is marked stale and locked
   await expect(page).toHaveURL(
     `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.instance}`,
   );
+});
+
+/** The version of the acceptance job this project has actually run, and one it never has. */
+const ranJob = `${acceptanceResults}?definitionType=jobs&definitionId=1&version=1.0.0`;
+const unrunJob = `${acceptanceResults}?definitionType=jobs&definitionId=2&version=2.0.0`;
+/** The same job across every version, named by an identifier belonging to another version of it. */
+const everyJobVersion = `${acceptanceResults}?definitionType=jobs&definitionId=2`;
+
+test("a deep link lists one definition's executions and changes nothing about what is fetched", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, acceptanceResults, testInfo);
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page.getByText("Acceptance Notebook")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "DATASET", exact: true })).toBeVisible();
+
+  const unfiltered = await resultReads(request, subject);
+  // The unfiltered page pays nothing for a filter it is not carrying.
+  expect(await catalogueReads(request, subject)).toEqual([]);
+
+  await page.goto(ranJob);
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${ranJob}`);
+
+  // Only that job's instances are listed. The other application's instance, the running workflow
+  // and the task carry no job identity at all, so none of them can be an execution of this job.
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page.getByText("Acceptance Notebook")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "DATASET", exact: true })).toHaveCount(0);
+
+  // The narrowing is entirely client-side: the requests the Data Manager received for the results
+  // collections are exactly the ones the unfiltered page made, arguments and all.
+  const filtered = (await resultReads(request, subject)).slice(unfiltered.length);
+  expect(readSignatures(filtered)).toEqual(readSignatures(unfiltered));
+
+  // The one read the filter does add is the catalogue that names the definition, and only the
+  // catalogue the filter's own type is published by.
+  const catalogue = await catalogueReads(request, subject);
+  expect(catalogue.length).toBeGreaterThanOrEqual(1);
+  expect([...new Set(catalogue.map(({ path }) => path))]).toEqual(["/job"]);
+
+  // Capabilities on a filtered result are the unfiltered ones: what may be done to a result never
+  // depends on how the caller navigated to it.
+  await expect(page.getByRole("button", { name: "Run again" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Archive" }).first()).toBeEnabled();
+  // Refreshing a filtered list keeps the filter and the project it was addressed under.
+  await page.getByRole("button", { name: "Refresh results" }).click();
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${ranJob}`);
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+});
+
+test("a version narrows to one version of a definition and its absence keeps them all", async ({
+  page,
+}, testInfo) => {
+  await login(page, unrunJob, testInfo);
+
+  // This project ran version 1.0.0 of the job and never 2.0.0, so the version narrows to nothing.
+  await expect(
+    page.getByText("There are no tasks, instances, or workflows to display."),
+  ).toBeVisible();
+  await expect(page.getByText("Acceptance Instance")).toHaveCount(0);
+
+  // The identifier in the URL is one version's, but identity is the job itself, so dropping the
+  // version lists every version's executions — including one launched from a different version.
+  await page.goto(everyJobVersion);
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page.getByText("Acceptance Notebook")).toHaveCount(0);
+
+  // The search box still narrows within the filtered list.
+  await page.getByLabel(/Search/u).fill("acceptance instance");
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}?search=acceptance+instance&definitionType=jobs&definitionId=2`,
+  );
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await page.getByLabel(/Search/u).fill("nothing matches this");
+  await expect(
+    page.getByText("There are no tasks, instances, or workflows to display."),
+  ).toBeVisible();
+});
+
+test("a workflow filter lists the running workflows started from that definition", async ({
+  page,
+}, testInfo) => {
+  await login(
+    page,
+    `${acceptanceResults}?definitionType=workflows&definitionId=${fixtureIds.workflow}`,
+    testInfo,
+  );
+
+  await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
+  // Instances name no workflow definition and tasks name nothing at all, so neither can match.
+  await expect(page.getByText("Acceptance Instance")).toHaveCount(0);
+  await expect(page.getByText("Acceptance Notebook")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "DATASET", exact: true })).toHaveCount(0);
+  // A filtered list still cannot reach another project's work.
+  await expect(page.getByRole("link", { name: "Screening Workflow" })).toHaveCount(0);
+});
+
+test("a filter naming a definition the catalogue does not contain leaves a usable page", async ({
+  page,
+}, testInfo) => {
+  const missing = `${acceptanceResults}?definitionType=jobs&definitionId=99`;
+  await login(page, missing, testInfo);
+
+  await expect(
+    page.getByText(
+      "The definition these results were filtered to was not found, so every result in this project is shown.",
+    ),
+  ).toBeVisible();
+  // A stale link is a dead link rather than a dead end: the whole list is shown, and the URL is
+  // left exactly as it was addressed.
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${missing}`);
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "DATASET", exact: true })).toBeVisible();
+});
+
+test("the definition catalogue read is reported and retried like any other Results read", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/run-failure?status=503`);
+  await login(page, ranJob, testInfo);
+
+  await expect(
+    page.getByText(
+      "Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again.",
+    ),
+  ).toBeVisible();
+  // The catalogue's failure decides nothing for the collections beside it: their content is
+  // neither cleared nor narrowed by a definition nothing could resolve.
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page.getByRole("link", { name: "DATASET", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Delete" }).first()).toBeEnabled();
+  // The definition was never established as absent, so it is not reported as one.
+  await expect(
+    page.getByText("was not found, so every result in this project is shown"),
+  ).toHaveCount(0);
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/run-failure`);
+  await page.getByRole("button", { name: "Retry" }).click();
+
+  // Retrying resolves the definition in place, without any change of project or route.
+  await expect(page.getByText("Acceptance Notebook")).toHaveCount(0);
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${ranJob}`);
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
 });

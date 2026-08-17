@@ -1,12 +1,16 @@
 import {
+  type ApplicationSummary,
   type InstanceSummary,
+  type JobSummary,
   type RunningWorkflowSummary,
   type TaskSummary,
+  type WorkflowSummary,
 } from "@/api/data-manager";
 
 import { search } from "../utils/app/searches";
-import { type ResultFilterType, showsType } from "./routes";
+import { type ResultFilterType, showsType, type UncheckedDefinitionFilter } from "./routes";
 import {
+  resolveSectionFreshness,
   resolveSectionFreshnessByKey,
   resolveSectionReadReport,
   type SectionReadReport,
@@ -127,6 +131,150 @@ export const selectProjectResults = ({
   );
 };
 
+/**
+ * The definition a Results list is narrowed to, as the definition's own catalogue accounts for it
+ * rather than as a URL names it. A URL carries a per-version identifier, and the version-agnostic
+ * case has to stay expressible, so identity is the version-agnostic one every version of a
+ * definition shares: a job's collection and name rather than its numeric identifier, and a workflow
+ * definition's name — the same identity the Run catalogue groups one card per.
+ */
+export type ResultsDefinitionIdentity =
+  | { definitionType: "applications"; applicationId: string }
+  | { definitionType: "jobs"; collection: string; job: string }
+  | { definitionType: "workflows"; name: string };
+
+/**
+ * That identity with the version a URL narrowed to, if any. An absent version is every version of
+ * the definition; a present one is that version alone.
+ */
+export type ResultsDefinitionTarget = ResultsDefinitionIdentity & { version?: string };
+
+/**
+ * Whether one result is an execution of the definition a filter names. This is the whole matching
+ * rule and it is a pure fact of the two, so anything else that has to agree about what a definition
+ * has executed — a Run card's count of the same definition, once it has one — decides it here
+ * rather than growing a second rule that could drift from this one.
+ *
+ * Exactly one kind of result can match each definition type, because the others carry no identity
+ * that could match: a task is a dataset or file purpose and names no job, application or workflow
+ * at all; a running workflow names no job or application; and an instance names no workflow
+ * definition. None of those is a near miss to be resolved — there is simply nothing to compare.
+ */
+export const matchesDefinition = (item: ResultItem, target: ResultsDefinitionTarget): boolean => {
+  switch (target.definitionType) {
+    // An application version is not part of an application's identity here: a card offers the
+    // application, and the filter it links to means every instance of it.
+    case "applications":
+      return item.kind === "instance" && item.data.application_id === target.applicationId;
+    case "jobs":
+      return (
+        item.kind === "instance" &&
+        item.data.job_collection === target.collection &&
+        item.data.job_job === target.job &&
+        (target.version === undefined || item.data.job_version === target.version)
+      );
+    case "workflows":
+      return (
+        item.kind === "workflow" &&
+        item.data.workflow.name === target.name &&
+        (target.version === undefined || item.data.workflow.version === target.version)
+      );
+  }
+};
+
+/**
+ * The catalogue that publishes one definition type. Only the catalogue the filter names is ever
+ * read, so the other two are empty rather than fetched.
+ */
+export type ResultsDefinitionCatalogue = {
+  applications: readonly ApplicationSummary[];
+  jobs: readonly JobSummary[];
+  workflows: readonly WorkflowSummary[];
+};
+
+/**
+ * The version-agnostic identity of the definition a URL names, or `undefined` when the catalogue
+ * does not contain it. The URL's identifier is per-version for jobs and workflows, so the catalogue
+ * is the only place the identity every version shares can come from.
+ */
+const findDefinitionIdentity = (
+  { definitionId, definitionType }: UncheckedDefinitionFilter,
+  catalogue: ResultsDefinitionCatalogue,
+): ResultsDefinitionIdentity | undefined => {
+  switch (definitionType) {
+    case "applications": {
+      const application = catalogue.applications.find(
+        (candidate) => candidate.application_id === definitionId,
+      );
+      return application && { definitionType, applicationId: application.application_id };
+    }
+    case "jobs": {
+      const job = catalogue.jobs.find((candidate) => String(candidate.id) === definitionId);
+      return job && { definitionType, collection: job.collection, job: job.job };
+    }
+    case "workflows": {
+      const workflow = catalogue.workflows.find((candidate) => candidate.id === definitionId);
+      return workflow && { definitionType, name: workflow.name };
+    }
+  }
+};
+
+/**
+ * What the section knows about the definition its URL names. Only a resolved definition narrows the
+ * list; every other outcome leaves the whole list on screen, because a caller who followed a stale
+ * or unreadable link is better served by a usable page than by an empty one they cannot explain.
+ */
+export type ResultsDefinitionResolution =
+  /** The catalogue answered and does not contain the identifier the URL names. */
+  | { status: "not-found" }
+  /** The catalogue read is outstanding, so the list cannot yet be narrowed or shown unnarrowed. */
+  | { status: "pending" }
+  /** The definition the list narrows to, and how fresh the catalogue that named it is. */
+  | { status: "resolved"; content: "current" | "stale"; target: ResultsDefinitionTarget }
+  /** The URL names no definition, so nothing was read and nothing is narrowed. */
+  | { status: "unfiltered" }
+  /** The catalogue's content is gone, so what it would have said about the definition is unknown. */
+  | { status: "unreadable" };
+
+/**
+ * How the definition catalogue's own read answers for the definition a URL names. The read joins
+ * the section's read machinery on the same terms as the results collections: it answers for itself,
+ * its content is only as fresh as its own last read, and content it could not refresh is still
+ * worth resolving against rather than thrown away.
+ */
+export const resolveResultsDefinition = ({
+  catalogue,
+  definition,
+  isLoading,
+  readState,
+}: {
+  catalogue: ResultsDefinitionCatalogue;
+  definition: UncheckedDefinitionFilter | undefined;
+  isLoading: boolean;
+  readState: SectionReadState;
+}): ResultsDefinitionResolution => {
+  if (definition === undefined) {
+    return { status: "unfiltered" };
+  }
+  if (isLoading) {
+    return { status: "pending" };
+  }
+  const identity = findDefinitionIdentity(definition, catalogue);
+  if (identity !== undefined) {
+    // Content that could not be refreshed still names the definition, and says it is stale on the
+    // same terms as the results collections beside it.
+    return {
+      status: "resolved",
+      content: resolveSectionFreshness(readState),
+      target: { ...identity, ...(definition.version ? { version: definition.version } : {}) },
+    };
+  }
+  // Only a read that answered can establish that a definition is absent. A refusal clears the
+  // catalogue and a failure never filled it, so neither one's silence is evidence the definition
+  // never existed, and neither may be reported as one.
+  return readState.kind === "available" ? { status: "not-found" } : { status: "unreadable" };
+};
+
 const matchesSearch = (item: ResultItem, searchValue: string) => {
   switch (item.kind) {
     case "instance":
@@ -141,7 +289,11 @@ const matchesSearch = (item: ResultItem, searchValue: string) => {
 /**
  * Applies the Results section's own route state to the results the project owns. The state comes
  * from the section's query allowlist alone, so nothing outside Results can change what is fetched
- * or shown.
+ * or shown. Narrowing to a definition is entirely client-side and happens here beside the type and
+ * search narrowing, so no request argument ever varies with it.
+ *
+ * The definition is the one the catalogue resolved rather than the one the URL named: a filter the
+ * catalogue could not resolve narrows nothing, which is what leaves a stale link on a usable page.
  */
 export const filterResultItems = (
   items: readonly ResultItem[],
@@ -149,17 +301,26 @@ export const filterResultItems = (
     search: searchValue = "",
     types,
   }: { search?: string; types?: readonly ResultFilterType[] } = {},
+  definition?: ResultsDefinitionTarget,
 ): ResultItem[] =>
   items
     .filter((item) => showsType(types, item.kind))
+    .filter((item) => definition === undefined || matchesDefinition(item, definition))
     .filter((item) => matchesSearch(item, searchValue));
 
 /** How each Results collection's own last read answered, keyed by the results it carries. */
 export type ResultsReadStates = Record<ResultFilterType, SectionReadState>;
 
-/** What the section must say about the reads it made, each collection reported on its own. */
-export const resolveResultsReadReport = (states: ResultsReadStates): SectionReadReport =>
-  resolveSectionReadReport(Object.values(states));
+/**
+ * What the section must say about the reads it made, each read reported on its own. The definition
+ * catalogue is read only while a filter is set, and when it is read it is reported on exactly the
+ * same terms as the collections beside it.
+ */
+export const resolveResultsReadReport = (
+  states: ResultsReadStates,
+  definition?: SectionReadState,
+): SectionReadReport =>
+  resolveSectionReadReport([...Object.values(states), ...(definition ? [definition] : [])]);
 
 /**
  * Each collection's content is only as fresh as its own last read, so a collection that answered

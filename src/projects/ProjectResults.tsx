@@ -152,9 +152,17 @@ const ResultsList = ({
   routeProjectId: string;
   state: ResultsState;
 }) => {
-  const items = filterResultItems(results.items, state);
+  // The list narrows to the definition the catalogue resolved, never to the identifier the URL
+  // carries: that identifier names one version, and the version-agnostic case must stay expressible.
+  const items = filterResultItems(
+    results.items,
+    state,
+    results.definition.status === "resolved" ? results.definition.target : undefined,
+  );
 
-  if (results.isLoading) {
+  // A filtered list cannot be shown before the definition it narrows to is known, so the catalogue
+  // read is waited on rather than the whole list being flashed and then narrowed.
+  if (results.isLoading || results.definition.status === "pending") {
     return <CenterLoader />;
   }
 
@@ -193,7 +201,7 @@ const ResultsSection = ({
   const router = useRouter();
   const { projectId } = route;
   const state = resultsListState(route);
-  const results = useProjectResults(projectId);
+  const results = useProjectResults(projectId, state.definition);
   const facts = useProjectFacts();
 
   const handleStateChange = (change: ResultsState) => {
@@ -236,6 +244,15 @@ const ResultsSection = ({
         {localNotFound ? (
           <Alert severity="warning" sx={{ mb: 2 }}>
             This result was not found in this project.
+          </Alert>
+        ) : null}
+
+        {/* A link to a definition the catalogue does not contain is a dead link, not a dead end:
+            the failure is stated and the whole list is shown rather than an empty one. */}
+        {results.definition.status === "not-found" ? (
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            The definition these results were filtered to was not found, so every result in this
+            project is shown.
           </Alert>
         ) : null}
 

@@ -29,7 +29,13 @@ import {
   resultListRequests,
   selectProjectResults,
 } from "../../src/projects/resultFacts";
-import { parseProjectRoute, projectLinks, resultsListState } from "../../src/projects/routes";
+import {
+  parseProjectRoute,
+  projectLinks,
+  type ResultsLinkState,
+  resultsListState,
+  type ResultsState,
+} from "../../src/projects/routes";
 import {
   resolveSectionFreshness,
   resolveSectionReadState,
@@ -486,6 +492,178 @@ test("Results state resets to the route it is on, so no project inherits another
   expect(resultListRequests(filtered.projectId)).toEqual(resultListRequests(projectId));
   expect(resultListRequests(entered.projectId)).toEqual(resultListRequests(otherProjectId));
   expect(filterResultItems(results(), resultsListState(entered))).toHaveLength(results().length);
+});
+
+const workflowDefinitionId = "workflow-55555555-5555-4555-8555-555555555555";
+
+/** The definition filter one Results href carries, proven present rather than assumed. */
+const definitionFilterFor = (href: string) => {
+  const { definition } = resultsListState(resultsRouteFor(href));
+  if (definition === undefined) {
+    throw new Error(`${href} must carry a definition filter`);
+  }
+  return definition;
+};
+
+/** A Results href with the given query state, written by hand rather than by a builder. */
+const resultsHref = (query: string) => `/projects/${projectId}/results?${query}`;
+
+/** That a hand-written href names no filter at all, and is corrected to the whole list. */
+const expectsNoFilter = (query: string) => {
+  const href = resultsHref(query);
+  expect(parseProjectRoute(href), href).toEqual({
+    kind: "valid",
+    route: { kind: "results", projectId },
+    canonicalHref: projectLinks.results(projectId),
+    needsReplace: true,
+  });
+};
+
+test("every definition filter shape survives link building and parsing", () => {
+  const shapes = [
+    { definitionType: "jobs", definitionId: "42" },
+    { definitionType: "jobs", definitionId: "42", version: "1.0.0" },
+    { definitionType: "applications", definitionId: "jupyter-lab" },
+    { definitionType: "workflows", definitionId: workflowDefinitionId },
+    { definitionType: "workflows", definitionId: workflowDefinitionId, version: "2" },
+  ] as const;
+
+  for (const definition of shapes) {
+    const href = projectLinks.results(projectId, { definition });
+    expect(parseProjectRoute(href), href).toMatchObject({
+      kind: "valid",
+      canonicalHref: href,
+      needsReplace: false,
+    });
+    expect(resultsListState(resultsRouteFor(href)), href).toEqual({ definition });
+  }
+
+  // The version is what a link spells out, so the absent one is a different link from any present
+  // one: all versions of a definition and one of them are not the same list.
+  expect(projectLinks.results(projectId, { definition: shapes[0] })).not.toBe(
+    projectLinks.results(projectId, { definition: shapes[1] }),
+  );
+  // The pair absent is the ordinary unfiltered list, which carries no filter keys at all.
+  expect(projectLinks.results(projectId)).toBe(`/projects/${projectId}/results`);
+  expect(resultsListState(resultsRouteFor(projectLinks.results(projectId)))).toEqual({});
+});
+
+test("a definition identifier of the wrong shape for its type carries no filter", () => {
+  for (const [definitionType, definitionId] of [
+    ["jobs", "not-a-number"],
+    ["jobs", "0"],
+    ["jobs", workflowDefinitionId],
+    ["applications", "Invalid"],
+    ["workflows", "not-a-workflow"],
+    ["workflows", "42"],
+  ] as const) {
+    expectsNoFilter(`definitionType=${definitionType}&definitionId=${definitionId}`);
+    // The builder refuses the same identifier rather than writing a link that parses back to
+    // nothing, so a mistaken caller is told instead of silently getting the unfiltered list.
+    expect(() =>
+      projectLinks.results(projectId, { definition: { definitionType, definitionId } }),
+    ).toThrow();
+  }
+});
+
+test("a definition type outside the Run definition types carries no filter", () => {
+  for (const definitionType of ["instances", "datasets", "JOBS", "job", ""]) {
+    expectsNoFilter(`definitionType=${definitionType}&definitionId=42`);
+  }
+});
+
+test("half a definition filter narrows nothing, whichever half it is", () => {
+  for (const query of [
+    "definitionType=jobs",
+    "definitionId=42",
+    "version=1.0.0",
+    "definitionId=42&version=1.0.0",
+    "definitionType=jobs&version=1.0.0",
+    // Neither half may be repeated: two definitions are not a definition.
+    "definitionType=jobs&definitionType=workflows&definitionId=42",
+    "definitionType=jobs&definitionId=42&definitionId=43",
+  ]) {
+    expectsNoFilter(query);
+  }
+});
+
+test("a version that names nothing reverts to every version of the definition", () => {
+  const definition = { definitionType: "jobs", definitionId: "42" } as const;
+
+  for (const query of [
+    "definitionType=jobs&definitionId=42&version=",
+    "definitionType=jobs&definitionId=42&version=1.0.0&version=2.0.0",
+  ]) {
+    const href = resultsHref(query);
+    expect(parseProjectRoute(href), href).toEqual({
+      kind: "valid",
+      route: { kind: "results", projectId, definition },
+      canonicalHref: projectLinks.results(projectId, { definition }),
+      needsReplace: true,
+    });
+  }
+  // An unusable version never costs the pair beside it: the definition still narrows the list.
+  expect(definitionFilterFor(resultsHref("definitionType=jobs&definitionId=42&version="))).toEqual(
+    definition,
+  );
+});
+
+test("a URL carrying both a definition filter and a type filter keeps the definition alone", () => {
+  const definition = { definitionType: "jobs", definitionId: "42" } as const;
+  const href = resultsHref("type=instance&definitionType=jobs&definitionId=42&search=docking");
+
+  expect(parseProjectRoute(href)).toEqual({
+    kind: "valid",
+    route: { kind: "results", projectId, search: "docking", definition },
+    canonicalHref: projectLinks.results(projectId, { definition, search: "docking" }),
+    needsReplace: true,
+  });
+  // The definition filter wins, so no type narrowing the caller never chose is left behind.
+  expect(resultsListState(resultsRouteFor(href)).types).toBeUndefined();
+});
+
+test("the definition filter follows a result and its rerun and comes back with All results", () => {
+  const definition = { definitionType: "jobs", definitionId: "42", version: "1.0.0" } as const;
+  const state = { definition, search: "docking" };
+  const detail = projectLinks.result(projectId, "instances", instance().id, state);
+  const rerun = projectLinks.resultRerun(projectId, instance().id, state);
+
+  expect(rerun).toBe(`${detail}&rerun=1`);
+  for (const href of [detail, rerun]) {
+    expect(resultsListState(resultsRouteFor(href)), href).toEqual(state);
+    // "All results" rebuilds the list from what the result route carried, so a filtered list is
+    // returned to rather than replaced by the unfiltered one.
+    expect(projectLinks.results(projectId, resultsListState(resultsRouteFor(href))), href).toBe(
+      projectLinks.results(projectId, state),
+    );
+  }
+});
+
+test("a definition filter is carried by the route without yet narrowing the list", () => {
+  const state = resultsListState(
+    resultsRouteFor(
+      projectLinks.results(projectId, {
+        definition: { definitionType: "jobs", definitionId: "42" },
+      }),
+    ),
+  );
+
+  expect(filterResultItems(results(), state)).toHaveLength(results().length);
+});
+
+test("a definition filter beside a type filter is unrepresentable, not merely unreachable", () => {
+  const definition = definitionFilterFor(
+    projectLinks.results(projectId, { definition: { definitionType: "jobs", definitionId: "42" } }),
+  );
+
+  // The assertions here are the directives themselves: `pnpm tsc` fails if either stops erroring,
+  // so the exclusion cannot quietly become a runtime rule the route type would still admit.
+  // @ts-expect-error a route carrying a definition filter carries no type filter at all.
+  const contradiction: ResultsState = { definition, types: ["instance"] };
+  // @ts-expect-error nor can a link be built from the same contradiction.
+  const unbuildable: ResultsLinkState = { definition: { ...definition }, types: ["instance"] };
+
+  expect([contradiction, unbuildable]).toHaveLength(2);
 });
 
 test.describe("Results cutover", () => {

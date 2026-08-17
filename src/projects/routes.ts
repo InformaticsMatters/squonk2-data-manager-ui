@@ -64,13 +64,51 @@ export type ResultFilterType = (typeof resultFilterTypes)[number];
 
 type SearchState = { search?: string };
 export type RunState = SearchState & { types?: readonly RunFilterType[] };
-export type ResultsState = SearchState & { types?: readonly ResultFilterType[] };
 
 type DefinitionIdByType = {
   applications: ApplicationId;
   jobs: PositiveIntegerString;
   workflows: WorkflowId;
 };
+
+/**
+ * The definition whose executions a Results list is narrowed to. The type and the identifier are a
+ * pair — an identifier means nothing without the type whose validator accepted it, and a type
+ * means nothing without an identifier — so they are modelled as one value rather than as two
+ * independent optional ones. The version is optional and meaningless without the pair: absent
+ * means every version of the definition, present narrows to that one.
+ */
+export type ResultsDefinitionFilter = {
+  [TType in RunDefinitionType]: {
+    definitionType: TType;
+    definitionId: DefinitionIdByType[TType];
+    version?: string;
+  };
+}[RunDefinitionType];
+
+/** The same pair as a caller names it, before the route has checked the identifier against it. */
+type UncheckedDefinitionFilter = {
+  definitionType: RunDefinitionType;
+  definitionId: string;
+  version?: string;
+};
+
+/**
+ * How a Results list is narrowed. A definition filter and a type filter are mutually exclusive: a
+ * route carrying a definition filter carries no types at all, so the contradiction is
+ * unrepresentable rather than merely unreachable.
+ */
+type ResultsNarrowing<TDefinition> =
+  | { definition: TDefinition; types?: never }
+  | { definition?: never; types?: readonly ResultFilterType[] };
+
+export type ResultsState = ResultsNarrowing<ResultsDefinitionFilter> & SearchState;
+
+/**
+ * The Results list state a link is built from. A route's own state is always one of these, and a
+ * caller who has not been through the parser may name a definition the builder then checks.
+ */
+export type ResultsLinkState = ResultsNarrowing<UncheckedDefinitionFilter> & SearchState;
 
 type ResultIdByCollection = { instances: InstanceId; tasks: TaskId; workflows: RunningWorkflowId };
 
@@ -138,8 +176,25 @@ const parseFilterState = <TValue extends string>(
 const parseRunState = (searchParams: URLSearchParams): RunState =>
   parseFilterState(searchParams, runFilterTypes);
 
+/**
+ * The Results list state a route carries, built the same way whether it was read from a URL or
+ * taken from an already-parsed route. The two narrowings are mutually exclusive, so a definition
+ * filter is written on its own and any type filter beside it is dropped rather than carried into a
+ * route that cannot express both.
+ */
+const resultsFilterState = (
+  search: string | undefined,
+  definition: ResultsDefinitionFilter | undefined,
+  types: readonly ResultFilterType[] | undefined,
+): ResultsState =>
+  definition ? { ...(search ? { search } : {}), definition } : filterState(search, types);
+
 const parseResultsState = (searchParams: URLSearchParams): ResultsState =>
-  parseFilterState(searchParams, resultFilterTypes);
+  resultsFilterState(
+    optionalSearch(searchParams),
+    parseDefinitionFilter(searchParams),
+    readEnumQuery(searchParams, "type", resultFilterTypes),
+  );
 
 const canonicalEnumValues = <TValue extends string>(
   values: readonly TValue[] | undefined,
@@ -157,6 +212,56 @@ const parseDefinitionId = <TType extends RunDefinitionType>(
   value: string,
 ): DefinitionIdByType[TType] | null =>
   definitionIdValidators[type](value) ? (value as DefinitionIdByType[TType]) : null;
+
+/**
+ * The one way a definition identifier reaches a link, so an identifier of the wrong shape for the
+ * type it is named beside is refused rather than written into a URL.
+ */
+const assertDefinitionId = (definitionType: RunDefinitionType, definitionId: string) =>
+  assertRouteValue(
+    definitionId,
+    (value) => parseDefinitionId(definitionType, value) !== null,
+    `${definitionType} definition ID`,
+  );
+
+/**
+ * A definition version as a URL carries it. Versions are free-form strings the catalogue decides,
+ * so a version is bounded by the same rule as every other free-form value this family carries:
+ * never empty, and never unbounded.
+ */
+const isDefinitionVersion = isSearch;
+
+/**
+ * The definition a Results URL narrows to, or nothing at all. Half a pair names no definition, and
+ * neither does an identifier of the wrong shape for its type, so either reverts to the omitted
+ * default — the whole list — rather than to a guess. The version is read only beside a complete
+ * pair, and an unusable one reverts to every version rather than costing the pair it sits beside.
+ */
+const parseDefinitionFilter = (
+  searchParams: URLSearchParams,
+): ResultsDefinitionFilter | undefined => {
+  const definitionType = readOptionalQuery(searchParams, "definitionType", isDefinitionType);
+  if (definitionType === undefined) {
+    return undefined;
+  }
+  const named = readOptionalQuery(
+    searchParams,
+    "definitionId",
+    (value) => parseDefinitionId(definitionType, value) !== null,
+  );
+  const definitionId = named === undefined ? null : parseDefinitionId(definitionType, named);
+  if (definitionId === null) {
+    return undefined;
+  }
+  const version = readOptionalQuery(searchParams, "version", isDefinitionVersion);
+  // The identifier is the one its own type's validator accepted; only the correlation between the
+  // two — which no signature can express — is asserted here, as the definition route already does.
+  return {
+    definitionType,
+    definitionId,
+    ...(version ? { version } : {}),
+  } as ResultsDefinitionFilter;
+};
 
 const isResultCollection = (value: string): value is ResultCollection =>
   Object.hasOwn(resultIdValidators, value);
@@ -181,6 +286,36 @@ const filterQuery = <TValue extends string>(
   state: SearchState & { types?: readonly TValue[] },
   order: readonly TValue[],
 ) => [...searchQuery(state.search), ["type", canonicalEnumValues(state.types, order)]] as const;
+
+/**
+ * The definition filter as a link writes it. The pair is checked here, so a link naming a
+ * definition an identifier cannot belong to is refused rather than written and then silently
+ * dropped by the parser that reads it back.
+ */
+const definitionFilterQuery = ({
+  definitionId,
+  definitionType,
+  version,
+}: UncheckedDefinitionFilter) =>
+  [
+    ["definitionType", assertRouteValue(definitionType, isDefinitionType, "definition type")],
+    ["definitionId", assertDefinitionId(definitionType, definitionId)],
+    [
+      "version",
+      version === undefined
+        ? undefined
+        : assertRouteValue(version, isDefinitionVersion, "definition version"),
+    ],
+  ] as const;
+
+/**
+ * The query state a Results list owns. The two narrowings are mutually exclusive, so exactly one
+ * of them ever reaches a link and no URL this client writes carries the contradiction.
+ */
+const resultsQuery = (state: ResultsLinkState) =>
+  state.definition
+    ? ([...searchQuery(state.search), ...definitionFilterQuery(state.definition)] as const)
+    : filterQuery(state, resultFilterTypes);
 
 /**
  * The one spelling an open rerun has in a URL. A single canonical value is what makes every other
@@ -298,33 +433,28 @@ export const projectLinks = {
     state: RunState = {},
   ) =>
     buildHref(
-      `/projects/${assertProjectId(projectId)}/run/${definitionType}/${assertRouteValue(
+      `/projects/${assertProjectId(projectId)}/run/${definitionType}/${assertDefinitionId(
+        definitionType,
         definitionId,
-        (value) => parseDefinitionId(definitionType, value) !== null,
-        `${definitionType} definition ID`,
       )}`,
       filterQuery(state, runFilterTypes),
     ),
-  results: (projectId: string, state: ResultsState = {}) =>
-    buildHref(
-      `/projects/${assertProjectId(projectId)}/results`,
-      filterQuery(state, resultFilterTypes),
-    ),
+  results: (projectId: string, state: ResultsLinkState = {}) =>
+    buildHref(`/projects/${assertProjectId(projectId)}/results`, resultsQuery(state)),
   result: (
     projectId: string,
     collection: ResultCollection,
     resultId: string,
-    state: ResultsState = {},
-  ) =>
-    buildHref(resultPath(projectId, collection, resultId), filterQuery(state, resultFilterTypes)),
+    state: ResultsLinkState = {},
+  ) => buildHref(resultPath(projectId, collection, resultId), resultsQuery(state)),
   /**
    * The addressed instance with its rerun open. It is built from the instance's own collection, so
    * a rerun is only ever addressed for an instance, and it carries the same Results list state the
    * instance's own route does — a rerun is a view of one instance rather than a section of its own.
    */
-  resultRerun: (projectId: string, instanceId: string, state: ResultsState = {}) =>
+  resultRerun: (projectId: string, instanceId: string, state: ResultsLinkState = {}) =>
     buildHref(resultPath(projectId, "instances", instanceId), [
-      ...filterQuery(state, resultFilterTypes),
+      ...resultsQuery(state),
       ["rerun", rerunQueryValue],
     ]),
   manage: (projectId: string) => `/projects/${assertProjectId(projectId)}/manage`,
@@ -406,7 +536,7 @@ export const runCatalogueState = (
  */
 export const resultsListState = (
   route: Extract<ProjectRoute, { kind: "result" | "results" }>,
-): ResultsState => filterState(route.search, route.types);
+): ResultsState => resultsFilterState(route.search, route.definition, route.types);
 
 export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> => {
   const location = parseRouteLocation(href);

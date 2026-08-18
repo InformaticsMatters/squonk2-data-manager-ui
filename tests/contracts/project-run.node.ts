@@ -398,27 +398,28 @@ test("a badge states each outcome distinctly and never spells one as another", (
       projectId,
     );
 
-  // The number shown and the statement it is announced by come from one rule, so a caller who
-  // reads the badge and one who hears it are told the same thing.
+  // The mark shown and the statement it is announced by come from one rule, so a caller who reads
+  // the badge and one who hears it are told the same thing, and no component picks a mark of its
+  // own for any outcome.
   expect(statementFor(instances("instance-one"))).toEqual({
     description: "1 execution of acceptance-job",
-    text: "1 execution",
+    text: "1",
   });
   expect(statementFor(instances("instance-one", "instance-two"))).toEqual({
     description: "2 executions of acceptance-job",
-    text: "2 executions",
+    text: "2",
   });
   // Known zero is a number like any other; an outstanding read and a failed one are not numbers at
-  // all, so neither is spelled as one.
+  // all, so neither is marked as one.
   expect(statementFor(instances())).toEqual({
     description: "0 executions of acceptance-job",
-    text: "0 executions",
+    text: "0",
   });
   expect(
     statementFor(
       runInstanceExecutions({ isLoading: true, readState: answered.readState }, [], projectId),
     ),
-  ).toEqual({ description: "Counting executions of acceptance-job" });
+  ).toEqual({ description: "Counting executions of acceptance-job", text: "…" });
   expect(
     statementFor(
       runInstanceExecutions(
@@ -430,7 +431,7 @@ test("a badge states each outcome distinctly and never spells one as another", (
         projectId,
       ),
     ),
-  ).toEqual({ description: "Executions of acceptance-job could not be read" });
+  ).toEqual({ description: "Executions of acceptance-job could not be read", text: "!" });
 });
 
 test("the badges' counts add no read of their own to the Run section", () => {
@@ -447,17 +448,10 @@ test("the badges' counts add no read of their own to the Run section", () => {
     "useGetInstances(",
     "useGetRunningWorkflows(",
   ]);
-  // The badge and the cards that carry it are given what they count, so none of them reads at all.
-  for (const component of [
-    "components/runCards/ExecutionCountBadge.tsx",
-    "components/runCards/ApplicationCard/ApplicationCard.tsx",
-    "components/runCards/JobCard/JobCard.tsx",
-    "components/runCards/WorkflowCard/WorkflowCard.tsx",
-  ]) {
-    expect(readFileSync(path.join(root, component), "utf8")).not.toMatch(
-      /useGet\w+\(|useQuery|useSuspense/u,
-    );
-  }
+  // The card that states a count is given what it counts, so it reads nothing at all.
+  expect(
+    readFileSync(path.join(root, "components/runCards/DefinitionCard.tsx"), "utf8"),
+  ).not.toMatch(/useGet\w+\(|useQuery|useSuspense/u);
 });
 
 const runFacts = ({
@@ -794,12 +788,9 @@ test.describe("Run cutover", () => {
       "projects/runCapabilities.ts",
       "projects/useProjectRun.ts",
       "projects/useRunCommands.ts",
-      "components/runCards/ExecutionCountBadge.tsx",
-      "components/runCards/ApplicationCard/ApplicationCard.tsx",
       "components/runCards/ApplicationCard/ApplicationModal.tsx",
-      "components/runCards/JobCard/JobCard.tsx",
+      "components/runCards/DefinitionCard.tsx",
       "components/runCards/JobCard/JobModal.tsx",
-      "components/runCards/WorkflowCard/WorkflowCard.tsx",
       "components/runCards/WorkflowCard/WorkflowModal.tsx",
     ]) {
       expect(readFileSync(path.join(sourceRoot, sourceFile), "utf8")).not.toMatch(
@@ -825,6 +816,67 @@ test.describe("Run cutover", () => {
     expect(handwrittenMatching(removedList)).toEqual([]);
     expect(
       handwrittenMatching(removedList, path.join(process.cwd(), "tests")).filter(
+        (file) => file !== "contracts/project-run.node.ts",
+      ),
+    ).toEqual([]);
+  });
+
+  test("each definition kind is coloured once, in a module Run and Results both read", () => {
+    // A kind's colour is this application's domain vocabulary rather than a component's choice, so
+    // it is named in one module and nothing else spells one. A fourth kind is therefore added
+    // where the other three live.
+    expect(handwrittenMatching(/#1976d2|#8e44ad|#f1c40f/iu)).toEqual([
+      "constants/definitionKinds.ts",
+    ]);
+
+    // Both sections draw a kind's colour from that module, so a job cannot be one colour on Run and
+    // another on Results.
+    for (const consumer of [
+      "components/instances/InstanceResultCard.tsx",
+      "components/runCards/DefinitionCard.tsx",
+      "components/workflows/WorkflowResultCard.tsx",
+    ]) {
+      expect(readFileSync(path.join(sourceRoot, consumer), "utf8")).toContain("definitionKinds");
+    }
+
+    // A kind's ink answers both colour schemes, and the scheme stays a CSS variable swap: the pair
+    // is applied through the theme rather than branched on in JavaScript, so nothing has to
+    // re-render to follow the scheme selector the application offers.
+    const kinds = readFileSync(path.join(sourceRoot, "constants/definitionKinds.ts"), "utf8");
+    expect(kinds).toContain('applyStyles("dark"');
+    for (const drawing of [
+      "constants/definitionKinds.ts",
+      "components/runCards/DefinitionCard.tsx",
+    ]) {
+      expect(readFileSync(path.join(sourceRoot, drawing), "utf8")).not.toMatch(
+        /palette\.mode|useColorScheme/u,
+      );
+    }
+  });
+
+  test("the definition card is its own component and the cards it replaced are gone", () => {
+    // A definition card and a result card want different anatomy. One component serving both is
+    // what forced the definition card's controls into a footer that could not hold them, so the
+    // definition card no longer shares an implementation with the result card.
+    expect(
+      readFileSync(path.join(sourceRoot, "components/runCards/DefinitionCard.tsx"), "utf8"),
+    ).not.toContain("BaseCard");
+
+    // The components the definition card absorbed are removed rather than merely unused, and no
+    // handwritten module — test modules included — names one.
+    for (const removed of [
+      "components/runCards/ApplicationCard/ApplicationCard.tsx",
+      "components/runCards/ExecutionCountBadge.tsx",
+      "components/runCards/JobCard/JobCard.tsx",
+      "components/runCards/RunDefinitionButton.tsx",
+      "components/runCards/WorkflowCard/WorkflowCard.tsx",
+    ]) {
+      expect(existsSync(path.join(sourceRoot, removed))).toBe(false);
+    }
+    const absorbed = /ExecutionCountBadge|RunDefinitionButton/u;
+    expect(handwrittenMatching(absorbed)).toEqual([]);
+    expect(
+      handwrittenMatching(absorbed, path.join(process.cwd(), "tests")).filter(
         (file) => file !== "contracts/project-run.node.ts",
       ),
     ).toEqual([]);

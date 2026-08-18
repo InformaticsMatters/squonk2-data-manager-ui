@@ -163,8 +163,8 @@ test("a card states its definition's executions and links straight to them", asy
 
   // Choosing another version moves the count and the destination together, so the number on the
   // badge and the list it opens can never disagree about which version they mean.
-  await jobCard.getByRole("combobox", { name: "Version" }).click();
-  await page.getByRole("option", { name: "1.0.0" }).click();
+  await jobCard.getByRole("button", { name: "Version" }).click();
+  await page.getByRole("menuitem", { name: "1.0.0" }).click();
   const ran = jobCard.getByRole("link", { name: "1 execution of acceptance-job" });
   await expect(ran).toHaveAttribute(
     "href",

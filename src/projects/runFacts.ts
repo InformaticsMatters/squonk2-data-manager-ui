@@ -357,26 +357,26 @@ export const countRunDefinitionExecutions = (
     : executions;
 
 /**
- * What a badge states about the definition it counts: the words it shows, and the words it is
- * announced by. They are built from one rule, so the number a caller reads and the statement a
- * screen reader hears can never say different things, and each outcome is worded distinctly — a
- * count, a count still being made, and a count that could not be made are never spelled alike.
+ * What a badge states about the definition it counts: the mark it displays, and the words it is
+ * announced by. Both outcomes of every state are built here, so a component picks no mark of its
+ * own and what a caller reads and what a screen reader hears cannot drift apart.
  *
- * Only a known count has anything to show, so the other two outcomes state themselves in the
- * announcement alone and leave what stands in for the number to the badge that draws it.
+ * Every outcome has a mark, because every outcome has something to say: the number where a read
+ * answered — zero included, which is a fact a read established — and a mark of its own for a read
+ * still outstanding and a read that failed, so neither is ever displayed as a count.
  */
 export const runExecutionCountStatement = (
   count: RunExecutionCount,
   name: string,
-): { description: string; text?: string } => {
+): { description: string; text: string } => {
   switch (count.status) {
     case "counted": {
       const executions = `${count.count} ${count.count === 1 ? "execution" : "executions"}`;
-      return { description: `${executions} of ${name}`, text: executions };
+      return { description: `${executions} of ${name}`, text: String(count.count) };
     }
     case "pending":
-      return { description: `Counting executions of ${name}` };
+      return { description: `Counting executions of ${name}`, text: "…" };
     case "unreadable":
-      return { description: `Executions of ${name} could not be read` };
+      return { description: `Executions of ${name} could not be read`, text: "!" };
   }
 };

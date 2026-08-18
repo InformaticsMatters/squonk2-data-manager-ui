@@ -4,6 +4,7 @@ import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manag
 
 import { ListItem, ListItemText } from "@mui/material";
 
+import { definitionKinds } from "../../constants/definitionKinds";
 import { resolveResultInstanceLifecycle, resultInstanceKind } from "../../projects/instanceFacts";
 import { type ResultCapabilities } from "../../projects/resultCapabilities";
 import { type RerunTarget } from "../../projects/resultRerun";
@@ -83,7 +84,7 @@ export const InstanceResultCard = ({
 
   return (
     <ResultCard
-      accentColor={kind === "job" ? "primary.main" : undefined}
+      accentColor={kind === "job" ? definitionKinds.job.accent : undefined}
       actions={({ setSlideIn }) => (
         <>
           <TerminateInstance

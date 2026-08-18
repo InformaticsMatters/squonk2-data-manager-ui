@@ -40,7 +40,7 @@ import {
 import { defaultFileViewer, type FileViewer, isFileViewer } from "./fileViewers";
 
 const runFilterTypes = ["workflow", "application", "job"] as const;
-const resultFilterTypes = ["workflow", "task", "instance"] as const;
+export const resultFilterTypes = ["workflow", "task", "instance"] as const;
 
 const isJobId = (value: string): value is PositiveIntegerString =>
   isPositiveInteger(value) && Number.isSafeInteger(Number(value));
@@ -514,6 +514,18 @@ export const showsType = <TValue extends string>(
   types: readonly TValue[] | undefined,
   value: TValue,
 ) => types === undefined || types.length === 0 || types.includes(value);
+
+/**
+ * The types a route carries, given what a section's type filter has selected. The counterpart of
+ * `showsType` on the writing side: a filter that has selected every type it offers narrows exactly
+ * as much as one that has selected none — nothing — and a route can express neither, so both are
+ * written as the one absent value rather than as a selection the URL cannot carry.
+ */
+export const narrowedTypes = <TValue extends string>(
+  selected: readonly TValue[],
+  offered: readonly TValue[],
+): readonly TValue[] | undefined =>
+  selected.length === 0 || selected.length === offered.length ? undefined : selected;
 
 /**
  * The project a Projects-family local not-found was addressed beneath. A child the section could

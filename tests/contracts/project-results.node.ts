@@ -36,6 +36,9 @@ import {
   resultsDefinitionLabel,
   type ResultsDefinitionTarget,
   resultsFilterStatement,
+  resultsShownStatement,
+  resultsTypeNarrowing,
+  resultTypeLabels,
   selectProjectResults,
   unrunResultsDefinition,
 } from "../../src/projects/resultFacts";
@@ -1052,6 +1055,43 @@ test("an active filter is stated and clearable even where the catalogue could no
   // Nothing is stated where there is nothing to state: no filter, or a read still outstanding.
   expect(resultsFilterStatement(undefined, { status: "unfiltered" })).toBeUndefined();
   expect(resultsFilterStatement(jobFilter, { status: "pending" })).toBeUndefined();
+});
+
+test("the type filter states every type and no type as the one narrowing they both are", () => {
+  const everyType = ["workflow", "task", "instance"] as const;
+
+  // A route carries the types it narrows to, so "all of them" and "none of them" are the same
+  // absent value. The control therefore states both the same way rather than reading back a
+  // selection of every label it offers as though the caller had chosen it.
+  expect(resultsTypeNarrowing([])).toBeUndefined();
+  expect(resultsTypeNarrowing(everyType)).toBeUndefined();
+  expect(resultsTypeNarrowing(["workflow"])).toEqual(["workflow"]);
+  expect(resultsTypeNarrowing(["task", "instance"])).toEqual(["task", "instance"]);
+
+  // What narrows nothing shows every result, so the two agree about the list as well as the label.
+  const owned = results({
+    instances: [jobInstance("instance-v1", "1.0.0")],
+    tasks: [task()],
+    workflows: [workflow()],
+  });
+  expect(filterResultItems(owned, { types: resultsTypeNarrowing(everyType) })).toEqual(owned);
+  expect(filterResultItems(owned, { types: resultsTypeNarrowing([]) })).toEqual(owned);
+
+  // Every type the section narrows by is named in one place, whether the filter offers it or a
+  // chip states it.
+  expect(resultTypeLabels).toEqual({ instance: "Instances", task: "Tasks", workflow: "Workflows" });
+});
+
+test("the heading counts what the narrowing left against what the project has", () => {
+  // Nothing is narrowed, so the count is the whole list stated once rather than as a fraction of
+  // itself.
+  expect(resultsShownStatement(12, 12)).toBe("12 results");
+  expect(resultsShownStatement(1, 1)).toBe("1 result");
+  expect(resultsShownStatement(0, 0)).toBe("0 results");
+
+  // Something is narrowed, so both halves are stated: how much is left, and of how much.
+  expect(resultsShownStatement(3, 12)).toBe("3 of 12");
+  expect(resultsShownStatement(0, 12)).toBe("0 of 12");
 });
 
 test("clearing a definition filter removes all three of its keys and leaves no other filter", () => {

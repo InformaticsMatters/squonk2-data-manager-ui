@@ -2,6 +2,7 @@ import { type ReactNode } from "react";
 
 import { type RunningWorkflowSummary } from "@/api/data-manager";
 
+import { definitionKinds } from "../../constants/definitionKinds";
 import { type ResultCapabilities } from "../../projects/resultCapabilities";
 import { projectLinks, type ResultsState } from "../../projects/routes";
 import { resolveResultWorkflowLifecycle } from "../../projects/workflowFacts";
@@ -50,7 +51,7 @@ export const WorkflowResultCard = ({
   onDeleted,
 }: WorkflowResultCardProps) => (
   <ResultCard
-    accentColor="#f1c40f"
+    accentColor={definitionKinds.workflow.accent}
     actions={({ setSlideIn }) => (
       <>
         <WorkflowLifecycleButton

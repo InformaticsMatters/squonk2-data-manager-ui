@@ -5,9 +5,7 @@ import { useRouter } from "next/router";
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
 import { CenterLoader } from "../components/CenterLoader";
-import { ApplicationCard } from "../components/runCards/ApplicationCard";
-import { JobCard } from "../components/runCards/JobCard";
-import { WorkflowCard } from "../components/runCards/WorkflowCard/WorkflowCard";
+import { DefinitionCard } from "../components/runCards/DefinitionCard";
 import Layout from "../layouts/Layout";
 import { capabilityReason, evaluateProjectExecutionCapability } from "./capabilities";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
@@ -71,45 +69,12 @@ const RunRequirement = ({ facts }: { facts: ProjectFacts }) => {
 };
 
 /**
- * One definition of the project in the URL. Nothing about the card is derived from a selected or
- * previously current project.
+ * The collection one card's execution count is decided from. A card is given only the collection it
+ * counts, so a slow or failed running-workflow read never holds up a job card's count, or the other
+ * way round.
  */
-const RunDefinitionCard = ({
-  item,
-  projectId,
-  run,
-  runState,
-}: {
-  item: RunDefinitionItem;
-  projectId: string;
-  run: ProjectRunCatalogue;
-  runState: RunState;
-}) => {
-  // A card is given only the collection its own badge counts, so a slow or failed
-  // running-workflow read never holds up a job card's badge, or the other way round.
-  const cardProps = { projectId, runState };
-
-  switch (item.kind) {
-    case "application":
-      return (
-        <ApplicationCard
-          {...cardProps}
-          application={item.data}
-          executions={run.executions.instances}
-        />
-      );
-    case "job":
-      return <JobCard {...cardProps} executions={run.executions.instances} jobs={item.data} />;
-    case "workflow":
-      return (
-        <WorkflowCard
-          {...cardProps}
-          executions={run.executions.runningWorkflows}
-          workflow={item.data}
-        />
-      );
-  }
-};
+const executionsFor = (item: RunDefinitionItem, run: ProjectRunCatalogue) =>
+  item.kind === "workflow" ? run.executions.runningWorkflows : run.executions.instances;
 
 const RunCatalogue = ({
   projectId,
@@ -141,19 +106,20 @@ const RunCatalogue = ({
         gap: 2,
         gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
         "@container run-page (max-width: 1100px)": {
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
         },
         "@container run-page (max-width: 800px)": {
           gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
         },
       }}
     >
+      {/* Nothing about a card is derived from a selected or previously current project. */}
       {items.map((item) => (
-        <RunDefinitionCard
+        <DefinitionCard
+          executions={executionsFor(item, run)}
           item={item}
           key={`${item.definitionType}-${item.id}`}
           projectId={projectId}
-          run={run}
           runState={state}
         />
       ))}

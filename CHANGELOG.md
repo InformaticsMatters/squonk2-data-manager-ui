@@ -1,3 +1,21 @@
+# [7.0.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.4...7.0.0-dev.5) (2026-08-18)
+
+
+### Bug Fixes
+
+* offer a definition's documentation link without a description ([2b3a48f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2b3a48f40f4f771f2ccf0a0ac3cafb167cbf0791))
+
+
+### Features
+
+* badge each Run definition with its execution count ([edbe14f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/edbe14faa38bdd875a58d4a2ddd760080cb93b0a)), closes [#1961](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1961)
+* carry a Results definition filter in the query allowlist ([c2fb20c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c2fb20c820f27d1095a76c466d27a7fb865262ab)), closes [#1958](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1958)
+* move the Results controls into a rail beside the list ([14a6794](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/14a6794be98a9b0ab4e9dd55522f3f080391e090)), closes [#1965](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1965)
+* narrow Results to one job, application or workflow definition ([f37f072](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f37f072bd9d16f647b5863e5e820108698106e78)), closes [#1959](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1959)
+* rebuild the Run definition card around a divided footer ([373f4f4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/373f4f48bcc8d9074558b3059e806bec752dbb17)), closes [#1964](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1964)
+* remove the Run cards' execution lists and the facts behind them ([16c9941](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/16c9941be8b89e2bff658dea0adb24ecf4b75fb9)), closes [#1962](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1962)
+* state a Results definition filter with a clearable chip ([2a6d392](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2a6d3921864c339c3af98697ff3011efb9e5ca3a)), closes [#1960](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1960)
+
 # [7.0.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.3...7.0.0-dev.4) (2026-08-17)
 
 

@@ -13,6 +13,8 @@ import { ResultTaskCard } from "../components/tasks/ResultTaskCard";
 import { ResultWorkflowSteps } from "../components/workflows/ResultWorkflowSteps";
 import { WorkflowResultCard } from "../components/workflows/WorkflowResultCard";
 import Layout from "../layouts/Layout";
+import { PrototypeSwitcher, usePrototypeVariant } from "./prototype/PrototypeSwitcher";
+import { VariantA, VariantB, VariantC, VariantD } from "./prototype/ResultsChromeVariants";
 import { resolveResultInstanceLifecycle, resultInstanceSettlement } from "./instanceFacts";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectResultDetail } from "./ProjectResultDetail";
@@ -40,6 +42,10 @@ import { type SectionFilterOption, SectionToolbar } from "./SectionToolbar";
 import { resolveResultTaskLifecycle, resultTaskSettlement } from "./taskFacts";
 import { type ProjectResults as ProjectResultsData, useProjectResults } from "./useProjectResults";
 import { resolveResultWorkflowLifecycle, resultWorkflowSettlement } from "./workflowFacts";
+
+// PROTOTYPE — this module renders a throwaway `?variant=` switcher for the Results chrome. Delete
+// the `prototype/` import pair, the `variant` block in ResultsSection, and src/projects/prototype
+// once a design has won.
 
 type ResultsRoute = Extract<ProjectRoute, { kind: "result" | "results" }>;
 
@@ -217,6 +223,8 @@ const ResultsSection = ({
   const state = resultsListState(route);
   const results = useProjectResults(projectId, state.definition);
   const facts = useProjectFacts();
+  // PROTOTYPE — which chrome to render, seeded from `?variant=` and then held locally.
+  const [variant, setVariant] = usePrototypeVariant();
 
   const handleStateChange = (change: ResultsState) => {
     const href =
@@ -229,6 +237,79 @@ const ResultsSection = ({
   const handleRetry = () => results.retry();
   const handleClearDefinition = () => handleStateChange(resultsWithoutDefinition(state));
   const statement = resultsFilterStatement(state.definition, results.definition);
+
+  const alerts = (
+    <>
+      <SectionReadAlerts
+        report={results.report}
+        retryableMessage="Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again."
+        unavailableMessage="These results are unavailable or you no longer have access to them."
+        onRetry={handleRetry}
+      />
+
+      {localNotFound ? (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          This result was not found in this project.
+        </Alert>
+      ) : null}
+
+      {/* A link to a definition the catalogue does not contain is a dead link, not a dead end:
+          the failure is stated and the whole list is shown rather than an empty one. */}
+      {results.definition.status === "not-found" ? (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          The definition these results were filtered to was not found, so every result in this
+          project is shown.
+        </Alert>
+      ) : null}
+    </>
+  );
+
+  const body =
+    facts === undefined ? (
+      <CenterLoader />
+    ) : route.kind === "result" ? (
+      <>
+        <Button component={Link} href={projectLinks.results(projectId, state)} sx={{ mb: 1 }}>
+          All results
+        </Button>
+        <ProjectResultDetail facts={facts} results={results} route={route} />
+      </>
+    ) : (
+      <ResultsList facts={facts} results={results} routeProjectId={projectId} state={state} />
+    );
+
+  // PROTOTYPE — every variant is handed the same facts and the same list; only the chrome differs.
+  if (variant !== "0") {
+    const chromes = { A: VariantA, B: VariantB, C: VariantC, D: VariantD };
+    const Chrome = chromes[variant];
+    const shown = filterResultItems(
+      results.items,
+      state,
+      results.definition.status === "resolved" ? results.definition.target : undefined,
+    );
+
+    return (
+      <Layout>
+        {/* PROTOTYPE — D widens the container by about what its rail takes, per #1965. */}
+        <Container maxWidth={variant === "D" ? "lg" : "md"} sx={{ py: 3 }}>
+          <Chrome
+            alerts={alerts}
+            count={shown.length}
+            filterOptions={filterOptions}
+            state={state}
+            statement={statement}
+            total={results.items.length}
+            onClearDefinition={handleClearDefinition}
+            onRefresh={handleRefresh}
+            onStateChange={handleStateChange}
+          >
+            {body}
+          </Chrome>
+        </Container>
+        <PrototypeSwitcher variant={variant} onChange={(next) => setVariant(next)} />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -263,41 +344,11 @@ const ResultsSection = ({
           <ResultsDefinitionChip label={statement} onClear={handleClearDefinition} />
         )}
 
-        <SectionReadAlerts
-          report={results.report}
-          retryableMessage="Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again."
-          unavailableMessage="These results are unavailable or you no longer have access to them."
-          onRetry={handleRetry}
-        />
+        {alerts}
 
-        {localNotFound ? (
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            This result was not found in this project.
-          </Alert>
-        ) : null}
-
-        {/* A link to a definition the catalogue does not contain is a dead link, not a dead end:
-            the failure is stated and the whole list is shown rather than an empty one. */}
-        {results.definition.status === "not-found" ? (
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            The definition these results were filtered to was not found, so every result in this
-            project is shown.
-          </Alert>
-        ) : null}
-
-        {facts === undefined ? (
-          <CenterLoader />
-        ) : route.kind === "result" ? (
-          <>
-            <Button component={Link} href={projectLinks.results(projectId, state)} sx={{ mb: 1 }}>
-              All results
-            </Button>
-            <ProjectResultDetail facts={facts} results={results} route={route} />
-          </>
-        ) : (
-          <ResultsList facts={facts} results={results} routeProjectId={projectId} state={state} />
-        )}
+        {body}
       </Container>
+      <PrototypeSwitcher variant={variant} onChange={(next) => setVariant(next)} />
     </Layout>
   );
 };

@@ -891,6 +891,9 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
           collection: "acceptance",
           disabled: true,
           disabled_reason: "This job's container image is missing.",
+          // Documented but undescribed, which is the definition whose documentation link a card
+          // hung off a description it does not have.
+          doc_url: "https://example.invalid/unavailable-job",
           id: 3,
           image_type: "SIMPLE",
           job: "unavailable-job",

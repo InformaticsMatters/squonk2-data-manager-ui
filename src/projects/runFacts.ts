@@ -9,8 +9,20 @@ import {
 import semver from "semver";
 
 import { search } from "../utils/app/searches";
-import { instanceOwner, ownedBy, runningWorkflowOwner } from "./resultFacts";
-import { type RunDefinitionType, type RunFilterType, showsType } from "./routes";
+import {
+  definitionTerms,
+  matchesDefinition,
+  type ResultItem,
+  type ResultsDefinitionTarget,
+  selectProjectResults,
+} from "./resultFacts";
+import {
+  isDefinitionVersion,
+  type RunDefinitionType,
+  type RunFilterType,
+  showsType,
+  type UncheckedDefinitionFilter,
+} from "./routes";
 import { resolveSectionFreshnessByKey, type SectionReadState } from "./sectionReads";
 
 /**
@@ -85,7 +97,7 @@ export const selectRunCatalogue = ({
     id: application.application_id,
     kind: "application",
     data: application,
-    title: application.kind,
+    title: definitionTerms.applications.name(application),
     subtitle: application.group ?? "",
   }));
 
@@ -103,7 +115,7 @@ export const selectRunCatalogue = ({
       id: String(versions[0].id),
       kind: "job",
       data: versions,
-      title: versions[0].job,
+      title: definitionTerms.jobs.name(versions[0]),
       subtitle: versions[0].name,
     }));
 
@@ -118,7 +130,7 @@ export const selectRunCatalogue = ({
     id: workflow.id,
     kind: "workflow",
     data: workflow,
-    title: workflow.workflow_name ?? workflow.name,
+    title: definitionTerms.workflows.name(workflow),
     subtitle: workflow.name,
   }));
 
@@ -195,44 +207,176 @@ export const runDefinitionUnavailability = (
   return job.disabled_reason ?? "This job is disabled, so it cannot be run.";
 };
 
-/** Whether one existing instance came from the definition a card is offering. */
-const instantiates = (item: RunDefinitionItem, instance: InstanceSummary): boolean => {
-  switch (item.kind) {
-    case "application":
-      return instance.application_id === item.data.application_id;
-    case "job":
-      return item.data.some(
-        (job) => instance.job_collection === job.collection && instance.job_job === job.job,
-      );
-    case "workflow":
-      return false;
+/**
+ * The definition one card is currently offering, as the card itself holds it. A job card offers one
+ * version at a time and the caller chooses which, so the version selected on the card is part of
+ * what the card is offering; an application card and a workflow card each offer the whole
+ * definition, which is why neither carries one.
+ */
+export type RunDefinitionSelection =
+  | { kind: "application"; application: ApplicationSummary }
+  | { kind: "job"; job: JobSummary }
+  | { kind: "workflow"; workflow: WorkflowSummary };
+
+/**
+ * What a card's execution badge counts and where following it lands. Both come from one value, so a
+ * badge and the list it links to are decided by the same selection and cannot name two different
+ * definitions.
+ */
+export type RunDefinitionExecutionFilter = {
+  /** The Results filter a badge links to, as a URL carries it. */
+  filter: UncheckedDefinitionFilter;
+  /** What the definition is called, by the rule the Results chip names the same filter by. */
+  name: string;
+  /** The identity a count is decided on, as the Results matching rule compares it. */
+  target: ResultsDefinitionTarget;
+};
+
+/**
+ * The filter one card's badge counts and links to.
+ *
+ * A job card counts and links to the version selected on it, so the count and the destination can
+ * never disagree about which version they mean. A workflow card counts and links to every running
+ * workflow of its definition, and an application card to every instance of its application, because
+ * each of those cards represents the whole definition rather than one version of it.
+ *
+ * The URL's identifier is per-version for a job, so it is not the identity a count can be decided
+ * on: that is the version-agnostic one the Results rule compares, taken from the same catalogue
+ * entry the link is built from.
+ */
+export const runDefinitionExecutionFilter = (
+  selection: RunDefinitionSelection,
+): RunDefinitionExecutionFilter => {
+  switch (selection.kind) {
+    case "application": {
+      const { application } = selection;
+      return {
+        filter: { definitionType: "applications", definitionId: application.application_id },
+        name: definitionTerms.applications.name(application),
+        target: { definitionType: "applications", applicationId: application.application_id },
+      };
+    }
+    case "job": {
+      const { job } = selection;
+      // A version the Data Manager published that no URL could carry names no version at all, so
+      // the card counts and links to every version of the job rather than throwing the catalogue
+      // away over one — the same treatment a version that cannot be ordered already gets. The
+      // count and the link drop it together, so the two still mean the same thing.
+      const narrowed = isDefinitionVersion(job.version) ? { version: job.version } : {};
+      return {
+        filter: { definitionType: "jobs", definitionId: String(job.id), ...narrowed },
+        name: definitionTerms.jobs.name(job),
+        target: { definitionType: "jobs", collection: job.collection, job: job.job, ...narrowed },
+      };
+    }
+    case "workflow": {
+      const { workflow } = selection;
+      return {
+        filter: { definitionType: "workflows", definitionId: workflow.id },
+        name: definitionTerms.workflows.name(workflow),
+        target: { definitionType: "workflows", name: workflow.name },
+      };
+    }
   }
 };
 
 /**
- * The existing instances of one definition inside the addressed project. Only instances the
- * project owns are matched, on the same terms Results matches them, so a response that declared
- * another project still cannot put that project's work on a card.
+ * One collection of the addressed project's executions, as a badge that counts it sees it. A read
+ * still outstanding and a read that failed are distinct outcomes and neither is a count: a badge
+ * that showed nothing for either would report a project's work as never having run.
+ *
+ * A collection that failed to be read is not counted even where content from an earlier read
+ * survives. A badge is a bare number with nowhere to say that it may be out of date, and the
+ * section states that failure and offers the retry for it, so the number is withheld rather than
+ * presented as this project's answer.
  */
-export const runDefinitionInstances = (
-  item: RunDefinitionItem,
+export type RunExecutions =
+  | { status: "pending" }
+  | { status: "read"; results: readonly ResultItem[] }
+  | { status: "unreadable" };
+
+/** What a card's badge may state about the definition it counts. */
+export type RunExecutionCount =
+  | { status: "counted"; count: number }
+  | { status: "pending" }
+  | { status: "unreadable" };
+
+type RunExecutionRead = { isLoading: boolean; readState: SectionReadState };
+
+const resolveRunExecutions = (
+  { isLoading, readState }: RunExecutionRead,
+  results: readonly ResultItem[],
+): RunExecutions => {
+  if (isLoading) {
+    return { status: "pending" };
+  }
+  return readState.kind === "available" ? { status: "read", results } : { status: "unreadable" };
+};
+
+/**
+ * The addressed project's instances as the badges that count them see them. They are the results
+ * the Results section itself would list, so ownership is decided exactly once and a badge can never
+ * count work the project in the URL does not own.
+ */
+export const runInstanceExecutions = (
+  read: RunExecutionRead,
   instances: readonly InstanceSummary[],
   projectId: string,
-): InstanceSummary[] =>
-  instances
-    .filter((instance) => ownedBy(instanceOwner(instance), projectId))
-    .filter((instance) => instantiates(item, instance))
-    .toSorted((left, right) => right.launched.localeCompare(left.launched));
+): RunExecutions =>
+  resolveRunExecutions(
+    read,
+    selectProjectResults({ instances, projectId, tasks: [], workflows: [] }),
+  );
 
-/** The running workflows of one workflow definition inside the addressed project. */
-export const runDefinitionRunningWorkflows = (
-  item: RunDefinitionItem,
+/** The same, for the addressed project's running workflows. */
+export const runRunningWorkflowExecutions = (
+  read: RunExecutionRead,
   runningWorkflows: readonly RunningWorkflowSummary[],
   projectId: string,
-): RunningWorkflowSummary[] =>
-  item.kind === "workflow"
-    ? runningWorkflows
-        .filter((workflow) => ownedBy(runningWorkflowOwner(workflow), projectId))
-        .filter((workflow) => workflow.workflow.id === item.data.id)
-        .toSorted((left, right) => right.started.localeCompare(left.started))
-    : [];
+): RunExecutions =>
+  resolveRunExecutions(
+    read,
+    selectProjectResults({ instances: [], projectId, tasks: [], workflows: runningWorkflows }),
+  );
+
+/**
+ * How many executions of one definition the addressed project has. It is decided by the Results
+ * matching rule itself rather than by a second rule of Run's own, so a badge and the filtered list
+ * it links to cannot drift apart, and it needs no read of its own: the composition already holds
+ * every execution it counts.
+ */
+export const countRunDefinitionExecutions = (
+  executions: RunExecutions,
+  target: ResultsDefinitionTarget,
+): RunExecutionCount =>
+  executions.status === "read"
+    ? {
+        status: "counted",
+        count: executions.results.filter((item) => matchesDefinition(item, target)).length,
+      }
+    : executions;
+
+/**
+ * What a badge states about the definition it counts: the mark it displays, and the words it is
+ * announced by. Both outcomes of every state are built here, so a component picks no mark of its
+ * own and what a caller reads and what a screen reader hears cannot drift apart.
+ *
+ * Every outcome has a mark, because every outcome has something to say: the number where a read
+ * answered — zero included, which is a fact a read established — and a mark of its own for a read
+ * still outstanding and a read that failed, so neither is ever displayed as a count.
+ */
+export const runExecutionCountStatement = (
+  count: RunExecutionCount,
+  name: string,
+): { description: string; text: string } => {
+  switch (count.status) {
+    case "counted": {
+      const executions = `${count.count} ${count.count === 1 ? "execution" : "executions"}`;
+      return { description: `${executions} of ${name}`, text: String(count.count) };
+    }
+    case "pending":
+      return { description: `Counting executions of ${name}`, text: "…" };
+    case "unreadable":
+      return { description: `Executions of ${name} could not be read`, text: "!" };
+  }
+};

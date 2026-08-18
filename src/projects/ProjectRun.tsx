@@ -5,9 +5,7 @@ import { useRouter } from "next/router";
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteBoundary";
 import { CenterLoader } from "../components/CenterLoader";
-import { ApplicationCard } from "../components/runCards/ApplicationCard";
-import { JobCard } from "../components/runCards/JobCard";
-import { WorkflowCard } from "../components/runCards/WorkflowCard/WorkflowCard";
+import { DefinitionCard } from "../components/runCards/DefinitionCard";
 import Layout from "../layouts/Layout";
 import { capabilityReason, evaluateProjectExecutionCapability } from "./capabilities";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
@@ -23,9 +21,7 @@ import {
   filterRunItems,
   findRunDefinition,
   runCatalogueOf,
-  runDefinitionInstances,
   type RunDefinitionItem,
-  runDefinitionRunningWorkflows,
 } from "./runFacts";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
@@ -73,44 +69,12 @@ const RunRequirement = ({ facts }: { facts: ProjectFacts }) => {
 };
 
 /**
- * One definition of the project in the URL. Nothing about the card is derived from a selected or
- * previously current project.
+ * The collection one card's execution count is decided from. A card is given only the collection it
+ * counts, so a slow or failed running-workflow read never holds up a job card's count, or the other
+ * way round.
  */
-const RunDefinitionCard = ({
-  item,
-  projectId,
-  run,
-  runState,
-}: {
-  item: RunDefinitionItem;
-  projectId: string;
-  run: ProjectRunCatalogue;
-  runState: RunState;
-}) => {
-  const cardProps = { projectId, runState };
-  // A card waits only on the collection it lists, so a slow running-workflow read never holds up a
-  // job's instances, or the other way round.
-  const instanceProps = {
-    executionsLoading: run.executionsLoading.instances,
-    instances: runDefinitionInstances(item, run.instances, projectId),
-  };
-
-  switch (item.kind) {
-    case "application":
-      return <ApplicationCard {...cardProps} {...instanceProps} application={item.data} />;
-    case "job":
-      return <JobCard {...cardProps} {...instanceProps} jobs={item.data} />;
-    case "workflow":
-      return (
-        <WorkflowCard
-          {...cardProps}
-          executionsLoading={run.executionsLoading.runningWorkflows}
-          runningWorkflows={runDefinitionRunningWorkflows(item, run.runningWorkflows, projectId)}
-          workflow={item.data}
-        />
-      );
-  }
-};
+const executionsFor = (item: RunDefinitionItem, run: ProjectRunCatalogue) =>
+  item.kind === "workflow" ? run.executions.runningWorkflows : run.executions.instances;
 
 const RunCatalogue = ({
   projectId,
@@ -142,19 +106,20 @@ const RunCatalogue = ({
         gap: 2,
         gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
         "@container run-page (max-width: 1100px)": {
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
         },
         "@container run-page (max-width: 800px)": {
           gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
         },
       }}
     >
+      {/* Nothing about a card is derived from a selected or previously current project. */}
       {items.map((item) => (
-        <RunDefinitionCard
+        <DefinitionCard
+          executions={executionsFor(item, run)}
           item={item}
           key={`${item.definitionType}-${item.id}`}
           projectId={projectId}
-          run={run}
           runState={state}
         />
       ))}
@@ -218,9 +183,7 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
           Run
         </Typography>
         <SectionToolbar
-          filterLabel="Filter"
-          filterOptions={filterOptions}
-          filterSize={{ md: 4, sm: 6, xs: 12 }}
+          filter={{ label: "Filter", options: filterOptions, size: { md: 4, sm: 6, xs: 12 } }}
           refreshLabel="Refresh catalogue"
           state={state}
           onRefresh={() => run.refresh()}

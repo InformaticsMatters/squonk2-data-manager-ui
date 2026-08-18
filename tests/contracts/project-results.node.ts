@@ -1,8 +1,11 @@
 import {
+  type ApplicationSummary,
   type InstanceSummary,
+  type JobSummary,
   type ProjectDetail,
   type RunningWorkflowSummary,
   type TaskSummary,
+  type WorkflowSummary,
 } from "@/api/data-manager";
 import { getGetInstancesQueryKey } from "@/api/data-manager/instance";
 import { getGetTasksQueryKey } from "@/api/data-manager/task";
@@ -24,12 +27,30 @@ import {
 import { resolveResultCapabilities } from "../../src/projects/resultCapabilities";
 import {
   filterResultItems,
+  type ResolvedResultsDefinition,
+  resolveResultsDefinition,
   resolveResultsFreshnessByCollection,
   resolveResultsReadReport,
   resultListRequests,
+  type ResultsDefinitionCatalogue,
+  resultsDefinitionLabel,
+  type ResultsDefinitionTarget,
+  resultsFilterStatement,
+  resultsShownStatement,
+  resultsTypeNarrowing,
+  resultTypeLabels,
   selectProjectResults,
+  unrunResultsDefinition,
 } from "../../src/projects/resultFacts";
-import { parseProjectRoute, projectLinks, resultsListState } from "../../src/projects/routes";
+import {
+  parseProjectRoute,
+  projectLinks,
+  type ResultsLinkState,
+  resultsListState,
+  type ResultsState,
+  resultsWithoutDefinition,
+  type UncheckedDefinitionFilter,
+} from "../../src/projects/routes";
 import {
   resolveSectionFreshness,
   resolveSectionReadState,
@@ -64,16 +85,19 @@ const task = (overrides: Partial<TaskSummary> = {}) =>
     ...overrides,
   }) as TaskSummary;
 
-const workflow = (overrides: Partial<RunningWorkflowSummary> = {}) =>
-  ({
-    id: "r-workflow-22222222-2222-4222-8222-222222222222",
-    name: "Acceptance Workflow",
-    project: { id: projectId, name: "Acceptance Project" },
-    started: "2026-01-02T04:00:00Z",
-    status: "RUNNING",
-    workflow: { id: "workflow-55555555-5555-4555-8555-555555555555" },
-    ...overrides,
-  }) as RunningWorkflowSummary;
+const workflow = (overrides: Partial<RunningWorkflowSummary> = {}): RunningWorkflowSummary => ({
+  id: "r-workflow-22222222-2222-4222-8222-222222222222",
+  name: "Acceptance Workflow",
+  project: { id: projectId, name: "Acceptance Project" },
+  started: "2026-01-02T04:00:00Z",
+  status: "RUNNING",
+  workflow: {
+    id: "workflow-55555555-5555-4555-8555-555555555555",
+    name: "acceptance-workflow",
+    version: "1.0.0",
+  },
+  ...overrides,
+});
 
 const results = (input: Partial<Parameters<typeof selectProjectResults>[0]> = {}) =>
   selectProjectResults({
@@ -486,6 +510,673 @@ test("Results state resets to the route it is on, so no project inherits another
   expect(resultListRequests(filtered.projectId)).toEqual(resultListRequests(projectId));
   expect(resultListRequests(entered.projectId)).toEqual(resultListRequests(otherProjectId));
   expect(filterResultItems(results(), resultsListState(entered))).toHaveLength(results().length);
+});
+
+const workflowDefinitionId = "workflow-55555555-5555-4555-8555-555555555555";
+
+/** The definition filter one Results href carries, proven present rather than assumed. */
+const definitionFilterFor = (href: string) => {
+  const { definition } = resultsListState(resultsRouteFor(href));
+  if (definition === undefined) {
+    throw new Error(`${href} must carry a definition filter`);
+  }
+  return definition;
+};
+
+/** A Results href with the given query state, written by hand rather than by a builder. */
+const resultsHref = (query: string) => `/projects/${projectId}/results?${query}`;
+
+/** That a hand-written href names no filter at all, and is corrected to the whole list. */
+const expectsNoFilter = (query: string) => {
+  const href = resultsHref(query);
+  expect(parseProjectRoute(href), href).toEqual({
+    kind: "valid",
+    route: { kind: "results", projectId },
+    canonicalHref: projectLinks.results(projectId),
+    needsReplace: true,
+  });
+};
+
+test("every definition filter shape survives link building and parsing", () => {
+  const shapes = [
+    { definitionType: "jobs", definitionId: "42" },
+    { definitionType: "jobs", definitionId: "42", version: "1.0.0" },
+    { definitionType: "applications", definitionId: "jupyter-lab" },
+    { definitionType: "workflows", definitionId: workflowDefinitionId },
+    { definitionType: "workflows", definitionId: workflowDefinitionId, version: "2" },
+  ] as const;
+
+  for (const definition of shapes) {
+    const href = projectLinks.results(projectId, { definition });
+    expect(parseProjectRoute(href), href).toMatchObject({
+      kind: "valid",
+      canonicalHref: href,
+      needsReplace: false,
+    });
+    expect(resultsListState(resultsRouteFor(href)), href).toEqual({ definition });
+  }
+
+  // The version is what a link spells out, so the absent one is a different link from any present
+  // one: all versions of a definition and one of them are not the same list.
+  expect(projectLinks.results(projectId, { definition: shapes[0] })).not.toBe(
+    projectLinks.results(projectId, { definition: shapes[1] }),
+  );
+  // The pair absent is the ordinary unfiltered list, which carries no filter keys at all.
+  expect(projectLinks.results(projectId)).toBe(`/projects/${projectId}/results`);
+  expect(resultsListState(resultsRouteFor(projectLinks.results(projectId)))).toEqual({});
+});
+
+test("a definition identifier of the wrong shape for its type carries no filter", () => {
+  for (const [definitionType, definitionId] of [
+    ["jobs", "not-a-number"],
+    ["jobs", "0"],
+    ["jobs", workflowDefinitionId],
+    ["applications", "Invalid"],
+    ["workflows", "not-a-workflow"],
+    ["workflows", "42"],
+  ] as const) {
+    expectsNoFilter(`definitionType=${definitionType}&definitionId=${definitionId}`);
+    // The builder refuses the same identifier rather than writing a link that parses back to
+    // nothing, so a mistaken caller is told instead of silently getting the unfiltered list.
+    expect(() =>
+      projectLinks.results(projectId, { definition: { definitionType, definitionId } }),
+    ).toThrow();
+  }
+});
+
+test("a definition type outside the Run definition types carries no filter", () => {
+  for (const definitionType of ["instances", "datasets", "JOBS", "job", ""]) {
+    expectsNoFilter(`definitionType=${definitionType}&definitionId=42`);
+  }
+});
+
+test("half a definition filter narrows nothing, whichever half it is", () => {
+  for (const query of [
+    "definitionType=jobs",
+    "definitionId=42",
+    "version=1.0.0",
+    "definitionId=42&version=1.0.0",
+    "definitionType=jobs&version=1.0.0",
+    // Neither half may be repeated: two definitions are not a definition.
+    "definitionType=jobs&definitionType=workflows&definitionId=42",
+    "definitionType=jobs&definitionId=42&definitionId=43",
+  ]) {
+    expectsNoFilter(query);
+  }
+});
+
+test("a version that names nothing reverts to every version of the definition", () => {
+  const definition = { definitionType: "jobs", definitionId: "42" } as const;
+
+  for (const query of [
+    "definitionType=jobs&definitionId=42&version=",
+    "definitionType=jobs&definitionId=42&version=1.0.0&version=2.0.0",
+  ]) {
+    const href = resultsHref(query);
+    expect(parseProjectRoute(href), href).toEqual({
+      kind: "valid",
+      route: { kind: "results", projectId, definition },
+      canonicalHref: projectLinks.results(projectId, { definition }),
+      needsReplace: true,
+    });
+  }
+  // An unusable version never costs the pair beside it: the definition still narrows the list.
+  expect(definitionFilterFor(resultsHref("definitionType=jobs&definitionId=42&version="))).toEqual(
+    definition,
+  );
+});
+
+test("a URL carrying both a definition filter and a type filter keeps the definition alone", () => {
+  const definition = { definitionType: "jobs", definitionId: "42" } as const;
+  const href = resultsHref("type=instance&definitionType=jobs&definitionId=42&search=docking");
+
+  expect(parseProjectRoute(href)).toEqual({
+    kind: "valid",
+    route: { kind: "results", projectId, search: "docking", definition },
+    canonicalHref: projectLinks.results(projectId, { definition, search: "docking" }),
+    needsReplace: true,
+  });
+  // The definition filter wins, so no type narrowing the caller never chose is left behind.
+  expect(resultsListState(resultsRouteFor(href)).types).toBeUndefined();
+});
+
+test("the definition filter follows a result and its rerun and comes back with All results", () => {
+  const definition = { definitionType: "jobs", definitionId: "42", version: "1.0.0" } as const;
+  const state = { definition, search: "docking" };
+  const detail = projectLinks.result(projectId, "instances", instance().id, state);
+  const rerun = projectLinks.resultRerun(projectId, instance().id, state);
+
+  expect(rerun).toBe(`${detail}&rerun=1`);
+  for (const href of [detail, rerun]) {
+    expect(resultsListState(resultsRouteFor(href)), href).toEqual(state);
+    // "All results" rebuilds the list from what the result route carried, so a filtered list is
+    // returned to rather than replaced by the unfiltered one.
+    expect(projectLinks.results(projectId, resultsListState(resultsRouteFor(href))), href).toBe(
+      projectLinks.results(projectId, state),
+    );
+  }
+});
+
+const jobDefinition = (overrides: Partial<JobSummary> = {}): JobSummary => ({
+  collection: "acceptance",
+  disabled: false,
+  id: 42,
+  image_type: "SIMPLE",
+  job: "acceptance-job",
+  name: "Acceptance Job",
+  required_assets: [],
+  version: "1.0.0",
+  ...overrides,
+});
+
+const workflowDefinition = (overrides: Partial<WorkflowSummary> = {}) =>
+  ({
+    id: workflowDefinitionId,
+    name: "acceptance-workflow",
+    scope: "GLOBAL",
+    validated: true,
+    version: "1.0.0",
+    ...overrides,
+  }) as WorkflowSummary;
+
+const applicationDefinition = (overrides: Partial<ApplicationSummary> = {}) =>
+  ({
+    application_id: "jupyter-lab",
+    group: "notebooks",
+    kind: "JupyterLab",
+    ...overrides,
+  }) as ApplicationSummary;
+
+/** The catalogues a filter is resolved against; only the one its type names is ever populated. */
+const catalogues = (overrides: Partial<ResultsDefinitionCatalogue> = {}) => ({
+  applications: [],
+  jobs: [],
+  workflows: [],
+  ...overrides,
+});
+
+/** One filter's resolution against the catalogue that publishes its type, read and answered. */
+const resolutionOf = (
+  definition: UncheckedDefinitionFilter,
+  catalogue: Partial<ResultsDefinitionCatalogue> = {},
+) =>
+  resolveResultsDefinition({
+    catalogue: catalogues(catalogue),
+    definition,
+    isLoading: false,
+    readState: { kind: "available" },
+  });
+
+/** The definition one filter resolves to, proven resolved rather than assumed. */
+const resolvedOf = (
+  definition: UncheckedDefinitionFilter,
+  catalogue: Partial<ResultsDefinitionCatalogue> = {},
+): ResolvedResultsDefinition => {
+  const resolution = resolutionOf(definition, catalogue);
+  if (resolution.status !== "resolved") {
+    throw new Error(`${definition.definitionType} ${definition.definitionId} must resolve`);
+  }
+  return resolution;
+};
+
+/** The version-agnostic identity that definition is matched by. */
+const targetOf = (
+  definition: UncheckedDefinitionFilter,
+  catalogue: Partial<ResultsDefinitionCatalogue> = {},
+): ResultsDefinitionTarget => resolvedOf(definition, catalogue).target;
+
+/** One job's instance, carrying the identity every version of that job shares. */
+const jobInstance = (id: string, version: string) =>
+  instance({
+    id,
+    job_collection: "acceptance",
+    job_job: "acceptance-job",
+    job_version: version,
+    launched: `2026-01-02T03:0${version.startsWith("1") ? 0 : 1}:00Z`,
+  });
+
+const applicationInstance = instance({
+  id: "instance-55555555-5555-4555-8555-555555555555",
+  application_id: "jupyter-lab",
+});
+
+const jobFilter = { definitionType: "jobs", definitionId: "42" } as const;
+const applicationFilter = { definitionType: "applications", definitionId: "jupyter-lab" } as const;
+const workflowFilter = { definitionType: "workflows", definitionId: workflowDefinitionId } as const;
+
+const definitionCatalogues: Record<string, Partial<ResultsDefinitionCatalogue>> = {
+  applications: { applications: [applicationDefinition()] },
+  jobs: { jobs: [jobDefinition()] },
+  workflows: { workflows: [workflowDefinition()] },
+};
+
+test("each definition type matches the one kind of result that carries its identity", () => {
+  const owned = results({ instances: [jobInstance("instance-job", "1.0.0"), applicationInstance] });
+  const filtered = (
+    definition: UncheckedDefinitionFilter,
+    catalogue: Partial<ResultsDefinitionCatalogue>,
+  ) => filterResultItems(owned, {}, targetOf(definition, catalogue)).map(({ id }) => id);
+
+  expect(filtered(jobFilter, definitionCatalogues.jobs)).toEqual(["instance-job"]);
+  expect(filtered(applicationFilter, definitionCatalogues.applications)).toEqual([
+    applicationInstance.id,
+  ]);
+  expect(filtered(workflowFilter, definitionCatalogues.workflows)).toEqual([workflow().id]);
+});
+
+test("a result carrying none of a definition's identity can never match its filter", () => {
+  const owned = results({ instances: [jobInstance("instance-job", "1.0.0"), applicationInstance] });
+  const matched = (
+    definition: UncheckedDefinitionFilter,
+    catalogue: Partial<ResultsDefinitionCatalogue>,
+  ) => filterResultItems(owned, {}, targetOf(definition, catalogue));
+
+  // A task is a dataset or file purpose. It names no job, application or workflow at all, so no
+  // definition filter can ever list one.
+  for (const [definition, catalogue] of [
+    [jobFilter, definitionCatalogues.jobs],
+    [applicationFilter, definitionCatalogues.applications],
+    [workflowFilter, definitionCatalogues.workflows],
+  ] as const) {
+    expect(matched(definition, catalogue).map(({ kind }) => kind)).not.toContain("task");
+  }
+
+  // A running workflow names no job and no application, and an instance names no workflow
+  // definition, so neither is a near miss to be resolved: there is nothing to compare.
+  expect(matched(jobFilter, definitionCatalogues.jobs).map(({ kind }) => kind)).toEqual([
+    "instance",
+  ]);
+  expect(
+    matched(applicationFilter, definitionCatalogues.applications).map(({ kind }) => kind),
+  ).toEqual(["instance"]);
+  expect(matched(workflowFilter, definitionCatalogues.workflows).map(({ kind }) => kind)).toEqual([
+    "workflow",
+  ]);
+});
+
+test("an absent version keeps every version of a definition and a present one narrows to it", () => {
+  const owned = results({
+    instances: [jobInstance("instance-v1", "1.0.0"), jobInstance("instance-v2", "2.0.0")],
+    workflows: [
+      workflow(),
+      workflow({
+        id: "r-workflow-v2",
+        started: "2026-01-02T05:00:00Z",
+        workflow: { ...workflow().workflow, version: "2.0.0" },
+      }),
+    ],
+  });
+  const filtered = (
+    definition: UncheckedDefinitionFilter,
+    catalogue: Partial<ResultsDefinitionCatalogue>,
+  ) => filterResultItems(owned, {}, targetOf(definition, catalogue)).map(({ id }) => id);
+
+  // The identifier a URL carries is one version's, so a job's identity is compared on its
+  // collection and name: the version-agnostic case stays expressible whichever version was named.
+  expect(filtered(jobFilter, definitionCatalogues.jobs)).toEqual(["instance-v2", "instance-v1"]);
+  expect(
+    filtered(
+      { ...jobFilter, definitionId: "43" },
+      { jobs: [jobDefinition({ id: 43, version: "2.0.0" })] },
+    ),
+  ).toEqual(["instance-v2", "instance-v1"]);
+  expect(filtered({ ...jobFilter, version: "1.0.0" }, definitionCatalogues.jobs)).toEqual([
+    "instance-v1",
+  ]);
+  expect(filtered({ ...jobFilter, version: "2.0.0" }, definitionCatalogues.jobs)).toEqual([
+    "instance-v2",
+  ]);
+  // A version no execution ran is an empty list rather than a widened one.
+  expect(filtered({ ...jobFilter, version: "3.0.0" }, definitionCatalogues.jobs)).toEqual([]);
+
+  expect(filtered(workflowFilter, definitionCatalogues.workflows)).toEqual([
+    "r-workflow-v2",
+    workflow().id,
+  ]);
+  expect(filtered({ ...workflowFilter, version: "1.0.0" }, definitionCatalogues.workflows)).toEqual(
+    [workflow().id],
+  );
+});
+
+test("a filtered list shows only the results the project in the URL owns", () => {
+  const owned = results({
+    instances: [
+      jobInstance("instance-job", "1.0.0"),
+      { ...jobInstance("instance-foreign", "1.0.0"), project_id: otherProjectId },
+    ],
+    workflows: [
+      workflow(),
+      workflow({ id: "r-workflow-foreign", project: { id: otherProjectId, name: "Partner" } }),
+    ],
+  });
+
+  // Ownership decides before the filter does, so a filter can only ever narrow the project's own
+  // results and never reach another project's.
+  expect(filterResultItems(owned, {}, targetOf(jobFilter, definitionCatalogues.jobs))).toEqual([
+    expect.objectContaining({ id: "instance-job", owningProjectId: projectId }),
+  ]);
+  expect(
+    filterResultItems(owned, {}, targetOf(workflowFilter, definitionCatalogues.workflows)).map(
+      ({ id }) => id,
+    ),
+  ).toEqual([workflow().id]);
+});
+
+test("the search box still narrows within a filtered list", () => {
+  const owned = results({
+    instances: [
+      jobInstance("instance-completed", "1.0.0"),
+      {
+        ...jobInstance("instance-failed", "1.0.0"),
+        launched: "2026-01-02T03:30:00Z",
+        name: "Retry",
+        phase: "FAILED",
+      },
+    ],
+  });
+  const target = targetOf(jobFilter, definitionCatalogues.jobs);
+
+  expect(filterResultItems(owned, {}, target).map(({ id }) => id)).toEqual([
+    "instance-failed",
+    "instance-completed",
+  ]);
+  expect(filterResultItems(owned, { search: "failed" }, target).map(({ id }) => id)).toEqual([
+    "instance-failed",
+  ]);
+  // The two narrowings compose rather than replace one another: a search still cannot reach a
+  // result the filter excluded.
+  expect(filterResultItems(owned, { search: "acceptance workflow" }, target)).toEqual([]);
+});
+
+test("the results list requests are unchanged by the presence of a definition filter", () => {
+  const filtered = resultsRouteFor(
+    projectLinks.results(projectId, { definition: { ...jobFilter, version: "1.0.0" } }),
+  );
+  const unfiltered = resultsRouteFor(projectLinks.results(projectId));
+
+  // The narrowing is entirely client-side. The Data Manager's running-workflow collection does
+  // accept a workflow argument and it is deliberately not used: an argument that varied with view
+  // state would split one project's Results into several cache identities with independent
+  // freshness, retry and refresh behaviour.
+  expect(resultListRequests(filtered.projectId)).toEqual(resultListRequests(unfiltered.projectId));
+  expect(getGetInstancesQueryKey(resultListRequests(filtered.projectId).instances)).toEqual(
+    getGetInstancesQueryKey(resultListRequests(unfiltered.projectId).instances),
+  );
+  expect(getGetTasksQueryKey(resultListRequests(filtered.projectId).tasks)).toEqual(
+    getGetTasksQueryKey(resultListRequests(unfiltered.projectId).tasks),
+  );
+  expect(getGetRunningWorkflowsQueryKey(resultListRequests(filtered.projectId).workflows)).toEqual(
+    getGetRunningWorkflowsQueryKey(resultListRequests(unfiltered.projectId).workflows),
+  );
+});
+
+test("the definition catalogue is read only while a filter is set and answers for itself", () => {
+  const read = (
+    overrides: Partial<Parameters<typeof resolveResultsDefinition>[0]> = {},
+  ): ReturnType<typeof resolveResultsDefinition> =>
+    resolveResultsDefinition({
+      catalogue: catalogues(definitionCatalogues.jobs),
+      definition: jobFilter,
+      isLoading: false,
+      readState: { kind: "available" },
+      ...overrides,
+    });
+
+  // No filter, no read: the unfiltered page pays nothing for a feature it is not using.
+  expect(read({ definition: undefined })).toEqual({ status: "unfiltered" });
+  // A filtered list cannot be shown before the definition it narrows to is known.
+  expect(read({ isLoading: true })).toEqual({ status: "pending" });
+  expect(read()).toEqual({
+    status: "resolved",
+    content: "current",
+    name: "acceptance-job",
+    target: { definitionType: "jobs", collection: "acceptance", job: "acceptance-job" },
+  });
+  // Content that could not be refreshed is still worth resolving against, and says it is stale on
+  // exactly the same terms as the results collections beside it.
+  expect(read({ readState: { kind: "recoverable", retryable: true } })).toMatchObject({
+    status: "resolved",
+    content: "stale",
+  });
+  // A refusal clears the catalogue and a failure never fills it, so neither one's silence is ever
+  // reported as proof that the definition never existed.
+  for (const readState of [
+    { kind: "unavailable" },
+    { kind: "recoverable", retryable: true },
+  ] as const) {
+    expect(read({ catalogue: catalogues(), readState })).toEqual({ status: "unreadable" });
+  }
+  // A catalogue that answered and does not contain the identifier is the one case that is.
+  expect(read({ catalogue: catalogues() })).toEqual({ status: "not-found" });
+});
+
+test("a definition the catalogue does not contain leaves a usable, unfiltered Results page", () => {
+  const owned = results({ instances: [jobInstance("instance-job", "1.0.0")] });
+  const resolution = resolutionOf(jobFilter);
+
+  expect(resolution).toEqual({ status: "not-found" });
+  // Nothing resolved, so nothing narrows: the caller who followed a stale link keeps the whole
+  // list rather than an empty one they cannot explain.
+  expect(
+    filterResultItems(
+      owned,
+      resultsListState(resultsRouteFor(projectLinks.results(projectId, { definition: jobFilter }))),
+    ),
+  ).toHaveLength(owned.length);
+});
+
+test("a filter is stated by the name its own catalogue publishes, never by what the URL carries", () => {
+  // The name is the catalogue entry's, so a definition renamed since a link was written is stated
+  // by the name it has now rather than by anything the URL froze into it.
+  expect(
+    resultsDefinitionLabel(
+      resolvedOf(jobFilter, { jobs: [jobDefinition({ job: "renamed-job", name: "Renamed Job" })] }),
+    ),
+  ).toBe("Job: renamed-job");
+  expect(
+    resultsDefinitionLabel(resolvedOf(applicationFilter, definitionCatalogues.applications)),
+  ).toBe("Application: JupyterLab");
+  expect(resultsDefinitionLabel(resolvedOf(workflowFilter, definitionCatalogues.workflows))).toBe(
+    "Workflow: acceptance-workflow",
+  );
+
+  // A version the URL narrowed to is stated beside the name; its absence states the definition
+  // alone, because the filter then means every version of it.
+  expect(
+    resultsDefinitionLabel(
+      resolvedOf({ ...jobFilter, version: "2.0.0" }, definitionCatalogues.jobs),
+    ),
+  ).toBe("Job: acceptance-job (2.0.0)");
+  expect(resultsDefinitionLabel(resolvedOf(jobFilter, definitionCatalogues.jobs))).toBe(
+    "Job: acceptance-job",
+  );
+
+  // Nothing that failed to resolve is ever stated: a name the caller could read exists only where
+  // an answering catalogue produced one.
+  for (const resolution of [
+    resolutionOf(jobFilter),
+    resolveResultsDefinition({
+      catalogue: catalogues(definitionCatalogues.jobs),
+      definition: jobFilter,
+      isLoading: true,
+      readState: { kind: "available" },
+    }),
+  ]) {
+    expect(resolution).not.toMatchObject({ status: "resolved" });
+  }
+});
+
+test("the name a filter is stated by is available in exactly the case nothing matched", () => {
+  const owned = results({ instances: [jobInstance("instance-v1", "1.0.0")] });
+  const unrun = resolvedOf({ ...jobFilter, version: "3.0.0" }, definitionCatalogues.jobs);
+
+  // A name taken from a matched result would be unavailable here, which is the one case a caller
+  // most needs it: an empty list has to say which definition has never run rather than only that
+  // something is missing.
+  expect(filterResultItems(owned, {}, unrun.target)).toEqual([]);
+  expect(resultsDefinitionLabel(unrun)).toBe("Job: acceptance-job (3.0.0)");
+  expect(unrunResultsDefinition(owned, unrun)).toBe(unrun);
+});
+
+test("an empty list names the definition only where the definition itself emptied it", () => {
+  const owned = results({ instances: [jobInstance("instance-v1", "1.0.0")] });
+  const ran = resolvedOf({ ...jobFilter, version: "1.0.0" }, definitionCatalogues.jobs);
+
+  // A search the caller typed can empty a list the definition has plenty in. Stating their own
+  // narrowing as "this definition has never run here" would be false, so it is not stated.
+  expect(filterResultItems(owned, { search: "nothing matches this" }, ran.target)).toEqual([]);
+  expect(unrunResultsDefinition(owned, ran)).toBeUndefined();
+
+  // Nothing to name at all where no definition resolved, whatever emptied the list.
+  for (const resolution of [
+    resolutionOf(jobFilter),
+    { status: "unfiltered" },
+    { status: "unreadable" },
+  ] as const) {
+    expect(unrunResultsDefinition([], resolution)).toBeUndefined();
+  }
+});
+
+test("an active filter is stated and clearable even where the catalogue could not name it", () => {
+  // A filter that resolved is stated by the definition it named.
+  expect(resultsFilterStatement(jobFilter, resolvedOf(jobFilter, definitionCatalogues.jobs))).toBe(
+    "Job: acceptance-job",
+  );
+
+  // One that did not is still stated, by the kind of filter the URL does name — never by a
+  // definition name, which only an answering catalogue can supply. The definition filter displaces
+  // the type filter, so a caller left without both controls could only reach the whole list by
+  // editing the URL.
+  for (const resolution of [resolutionOf(jobFilter), { status: "unreadable" }] as const) {
+    expect(resultsFilterStatement(jobFilter, resolution)).toBe("Job filter");
+  }
+  expect(resultsFilterStatement(workflowFilter, { status: "unreadable" })).toBe("Workflow filter");
+
+  // Nothing is stated where there is nothing to state: no filter, or a read still outstanding.
+  expect(resultsFilterStatement(undefined, { status: "unfiltered" })).toBeUndefined();
+  expect(resultsFilterStatement(jobFilter, { status: "pending" })).toBeUndefined();
+});
+
+test("the type filter states every type and no type as the one narrowing they both are", () => {
+  const everyType = ["workflow", "task", "instance"] as const;
+
+  // A route carries the types it narrows to, so "all of them" and "none of them" are the same
+  // absent value. The control therefore states both the same way rather than reading back a
+  // selection of every label it offers as though the caller had chosen it.
+  expect(resultsTypeNarrowing([])).toBeUndefined();
+  expect(resultsTypeNarrowing(everyType)).toBeUndefined();
+  expect(resultsTypeNarrowing(["workflow"])).toEqual(["workflow"]);
+  expect(resultsTypeNarrowing(["task", "instance"])).toEqual(["task", "instance"]);
+
+  // What narrows nothing shows every result, so the two agree about the list as well as the label.
+  const owned = results({
+    instances: [jobInstance("instance-v1", "1.0.0")],
+    tasks: [task()],
+    workflows: [workflow()],
+  });
+  expect(filterResultItems(owned, { types: resultsTypeNarrowing(everyType) })).toEqual(owned);
+  expect(filterResultItems(owned, { types: resultsTypeNarrowing([]) })).toEqual(owned);
+
+  // Every type the section narrows by is named in one place, whether the filter offers it or a
+  // chip states it.
+  expect(resultTypeLabels).toEqual({ instance: "Instances", task: "Tasks", workflow: "Workflows" });
+});
+
+test("the heading counts what the narrowing left against what the project has", () => {
+  // Nothing is narrowed, so the count is the whole list stated once rather than as a fraction of
+  // itself.
+  expect(resultsShownStatement(12, 12)).toBe("12 results");
+  expect(resultsShownStatement(1, 1)).toBe("1 result");
+  expect(resultsShownStatement(0, 0)).toBe("0 results");
+
+  // Something is narrowed, so both halves are stated: how much is left, and of how much.
+  expect(resultsShownStatement(3, 12)).toBe("3 of 12");
+  expect(resultsShownStatement(0, 12)).toBe("0 of 12");
+});
+
+test("clearing a definition filter removes all three of its keys and leaves no other filter", () => {
+  const filtered: ResultsLinkState = {
+    search: "acceptance",
+    definition: { definitionType: "jobs", definitionId: "42", version: "1.0.0" },
+  };
+  const cleared = resultsWithoutDefinition(filtered);
+
+  // All three keys go together: none of them narrows anything without the others.
+  expect(cleared).toEqual({ search: "acceptance" });
+  expect(projectLinks.results(projectId, cleared)).toBe(
+    projectLinks.results(projectId, { search: "acceptance" }),
+  );
+  for (const key of ["definitionType", "definitionId", "version"]) {
+    expect(projectLinks.results(projectId, cleared)).not.toContain(key);
+  }
+
+  // Nothing is left in their place. The two narrowings are mutually exclusive in the route, so a
+  // cleared filter cannot strand a type narrowing the caller never chose.
+  expect(resultsWithoutDefinition({ definition: { ...jobFilter } })).toEqual({});
+  expect(
+    projectLinks.results(projectId, resultsWithoutDefinition({ definition: { ...jobFilter } })),
+  ).toBe(projectLinks.results(projectId));
+  // And the cleared state is one the parser reads back as the unfiltered list.
+  const route = resultsRouteFor(projectLinks.results(projectId, cleared));
+  expect(resultsListState(route)).toEqual({ search: "acceptance" });
+  expect(route.definition).toBeUndefined();
+});
+
+test("the definition catalogue read is reported beside the collections without deciding for them", () => {
+  const readStates = {
+    instance: resolveSectionReadState(null),
+    task: resolveSectionReadState(null),
+    workflow: resolveSectionReadState(null),
+  };
+
+  // A read that was never issued reports nothing at all.
+  expect(resolveResultsReadReport(readStates)).toEqual({ retryable: false, unavailable: false });
+  // One that failed is reported and retried on the same terms as any collection.
+  expect(
+    resolveResultsReadReport(
+      readStates,
+      resolveSectionReadState(new Response(null, { status: 503 })),
+    ),
+  ).toEqual({ retryable: true, unavailable: false });
+  expect(
+    resolveResultsReadReport(
+      readStates,
+      resolveSectionReadState(new Response(null, { status: 403 })),
+    ),
+  ).toEqual({ retryable: false, unavailable: true });
+
+  // Its failure decides nothing about the collections: their content is neither cleared nor locked,
+  // and the results that answered stay on screen rather than being narrowed by a definition nothing
+  // could resolve.
+  expect(resolveResultsFreshnessByCollection(readStates)).toEqual({
+    instance: "current",
+    task: "current",
+    workflow: "current",
+  });
+  expect(
+    resolveResultsDefinition({
+      catalogue: catalogues(),
+      definition: jobFilter,
+      isLoading: false,
+      readState: resolveSectionReadState(new Response(null, { status: 403 })),
+    }),
+  ).toEqual({ status: "unreadable" });
+  expect(filterResultItems(results(), {}, undefined)).toHaveLength(results().length);
+});
+
+test("a definition filter beside a type filter is unrepresentable, not merely unreachable", () => {
+  const definition = definitionFilterFor(
+    projectLinks.results(projectId, { definition: { definitionType: "jobs", definitionId: "42" } }),
+  );
+
+  // The assertions here are the directives themselves: `pnpm tsc` fails if either stops erroring,
+  // so the exclusion cannot quietly become a runtime rule the route type would still admit.
+  // @ts-expect-error a route carrying a definition filter carries no type filter at all.
+  const contradiction: ResultsState = { definition, types: ["instance"] };
+  // @ts-expect-error nor can a link be built from the same contradiction.
+  const unbuildable: ResultsLinkState = { definition: { ...definition }, types: ["instance"] };
+
+  expect([contradiction, unbuildable]).toHaveLength(2);
 });
 
 test.describe("Results cutover", () => {

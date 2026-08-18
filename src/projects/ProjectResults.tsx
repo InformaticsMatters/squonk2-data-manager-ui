@@ -1,4 +1,4 @@
-import { Alert, Button, Container, Grid, Typography } from "@mui/material";
+import { Alert, Box, Button, Container, Grid, Typography } from "@mui/material";
 import NextError from "next/error";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -8,7 +8,6 @@ import { useFamilyRoute } from "../application/FamilyRouteBoundary";
 import { CenterLoader } from "../components/CenterLoader";
 import { InstanceDetails } from "../components/instances/InstanceDetails";
 import { InstanceResultCard } from "../components/instances/InstanceResultCard";
-import { EventDebugSwitch } from "../components/results/EventDebugSwitch";
 import { ResultTaskCard } from "../components/tasks/ResultTaskCard";
 import { ResultWorkflowSteps } from "../components/workflows/ResultWorkflowSteps";
 import { WorkflowResultCard } from "../components/workflows/WorkflowResultCard";
@@ -17,18 +16,27 @@ import { resolveResultInstanceLifecycle, resultInstanceSettlement } from "./inst
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectResultDetail } from "./ProjectResultDetail";
 import { resolveResultCapabilities } from "./resultCapabilities";
-import { filterResultItems, type ResultItem } from "./resultFacts";
+import {
+  filterResultItems,
+  type ResultItem,
+  resultsDefinitionLabel,
+  resultsFilterStatement,
+  resultsShownStatement,
+  unrunResultsDefinition,
+} from "./resultFacts";
 import { resolveRerunTarget } from "./resultRerun";
+import { ResultsRail } from "./ResultsRail";
 import {
   projectLinks,
   type ProjectRoute,
   type ResultFilterType,
   resultsListState,
   type ResultsState,
+  resultsWithoutDefinition,
 } from "./routes";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
-import { type SectionFilterOption, SectionToolbar } from "./SectionToolbar";
+import { SectionSearchField } from "./SectionSearchField";
 import { resolveResultTaskLifecycle, resultTaskSettlement } from "./taskFacts";
 import { type ProjectResults as ProjectResultsData, useProjectResults } from "./useProjectResults";
 import { resolveResultWorkflowLifecycle, resultWorkflowSettlement } from "./workflowFacts";
@@ -37,12 +45,6 @@ type ResultsRoute = Extract<ProjectRoute, { kind: "result" | "results" }>;
 
 const isResultsRoute = (route: FamilyRoute): route is ResultsRoute =>
   route.kind === "results" || route.kind === "result";
-
-const filterOptions: readonly SectionFilterOption<ResultFilterType>[] = [
-  { label: "Workflows", value: "workflow" },
-  { label: "Tasks", value: "task" },
-  { label: "Instances", value: "instance" },
-];
 
 /** How one listed result accounted for its own progress, where its kind accounts for any. */
 type ResultProgressFacts = Pick<
@@ -143,25 +145,34 @@ const ResultItemCard = ({
 
 const ResultsList = ({
   facts,
+  items,
   results,
   routeProjectId,
   state,
 }: {
   facts: ProjectFacts;
+  /** The results the current narrowing left, which the heading above the list has already counted. */
+  items: readonly ResultItem[];
   results: ProjectResultsData;
   routeProjectId: string;
   state: ResultsState;
 }) => {
-  const items = filterResultItems(results.items, state);
-
-  if (results.isLoading) {
+  // A filtered list cannot be shown before the definition it narrows to is known, so the catalogue
+  // read is waited on rather than the whole list being flashed and then narrowed.
+  if (results.isLoading || results.definition.status === "pending") {
     return <CenterLoader />;
   }
 
   if (items.length === 0) {
+    // An empty filtered list names what it was narrowed to, so "this definition has never run here"
+    // is distinguishable from a page that is simply broken.
+    const unrun = unrunResultsDefinition(results.items, results.definition);
+
     return (
       <Typography align="center" variant="body2">
-        There are no tasks, instances, or workflows to display.
+        {unrun
+          ? `There are no results for ${resultsDefinitionLabel(unrun)} in this project.`
+          : "There are no tasks, instances, or workflows to display."}
       </Typography>
     );
   }
@@ -193,7 +204,7 @@ const ResultsSection = ({
   const router = useRouter();
   const { projectId } = route;
   const state = resultsListState(route);
-  const results = useProjectResults(projectId);
+  const results = useProjectResults(projectId, state.definition);
   const facts = useProjectFacts();
 
   const handleStateChange = (change: ResultsState) => {
@@ -205,52 +216,109 @@ const ResultsSection = ({
   };
   const handleRefresh = () => results.refresh();
   const handleRetry = () => results.retry();
+  const handleClearDefinition = () => handleStateChange(resultsWithoutDefinition(state));
+  // A type filter is only ever offered where the route carries no definition filter, so the two
+  // narrowings stay mutually exclusive in the state this writes as well as in the route.
+  const handleTypesChange = (types?: readonly ResultFilterType[]) =>
+    handleStateChange({ search: state.search, types });
+  const statement = resultsFilterStatement(state.definition, results.definition);
+
+  // The list narrows to the definition the catalogue resolved, never to the identifier the URL
+  // carries: that identifier names one version, and the version-agnostic case must stay expressible.
+  const shown = filterResultItems(
+    results.items,
+    state,
+    results.definition.status === "resolved" ? results.definition.target : undefined,
+  );
+  // What the narrowing left, counted only where a list is what the caller is looking at and only
+  // once every read it counts has answered. An addressed result is one result whatever the list
+  // beside it holds, so counting the list there would state something the page is not showing.
+  const counted =
+    route.kind === "results" && !results.isLoading && results.definition.status !== "pending";
 
   return (
     <Layout>
-      <Container maxWidth="md" sx={{ py: 3 }}>
-        <Typography gutterBottom component="h1" variant="h4">
-          Results
-        </Typography>
-        <SectionToolbar
-          filterLabel="Filter Results"
-          filterOptions={filterOptions}
-          filterSize={{ md: 4, sm: 4, xs: 12 }}
-          refreshLabel="Refresh results"
-          state={state}
-          onRefresh={handleRefresh}
-          onStateChange={handleStateChange}
-        >
-          <Grid size={{ md: 1, sm: 2 }}>
-            <EventDebugSwitch />
-          </Grid>
-        </SectionToolbar>
+      {/* The container widens by about what the rail takes, so putting the controls beside the list
+          does not cost the list the width it had when they were stacked above it. */}
+      <Container maxWidth="lg" sx={{ py: 3 }}>
+        <Box sx={{ alignItems: "baseline", display: "flex", gap: 1.5, mb: 2 }}>
+          <Typography component="h1" variant="h4">
+            Results
+          </Typography>
+          {counted ? (
+            <Typography color="text.secondary" variant="body2">
+              {resultsShownStatement(shown.length, results.items.length)}
+            </Typography>
+          ) : null}
+        </Box>
 
-        <SectionReadAlerts
-          report={results.report}
-          retryableMessage="Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again."
-          unavailableMessage="These results are unavailable or you no longer have access to them."
-          onRetry={handleRetry}
-        />
+        <Box sx={{ display: "flex", flexDirection: { md: "row", xs: "column" }, gap: 3 }}>
+          {/* Below md the rail stacks above the list: a 200px rail beside a list on a phone would
+              leave neither usable. */}
+          <ResultsRail
+            state={state}
+            statement={statement}
+            onClearDefinition={handleClearDefinition}
+            onRefresh={handleRefresh}
+            onTypesChange={handleTypesChange}
+          />
 
-        {localNotFound ? (
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            This result was not found in this project.
-          </Alert>
-        ) : null}
+          {/* The list column may shrink to nothing, so a wide result card cannot push the rail off
+              the layout. */}
+          <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+            <Box sx={{ mb: 2 }}>
+              <SectionSearchField
+                search={state.search}
+                onSearch={(search) => handleStateChange({ ...state, search })}
+              />
+            </Box>
 
-        {facts === undefined ? (
-          <CenterLoader />
-        ) : route.kind === "result" ? (
-          <>
-            <Button component={Link} href={projectLinks.results(projectId, state)} sx={{ mb: 1 }}>
-              All results
-            </Button>
-            <ProjectResultDetail facts={facts} results={results} route={route} />
-          </>
-        ) : (
-          <ResultsList facts={facts} results={results} routeProjectId={projectId} state={state} />
-        )}
+            <SectionReadAlerts
+              report={results.report}
+              retryableMessage="Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again."
+              unavailableMessage="These results are unavailable or you no longer have access to them."
+              onRetry={handleRetry}
+            />
+
+            {localNotFound ? (
+              <Alert severity="warning" sx={{ mb: 2 }}>
+                This result was not found in this project.
+              </Alert>
+            ) : null}
+
+            {/* A link to a definition the catalogue does not contain is a dead link, not a dead end:
+                the failure is stated and the whole list is shown rather than an empty one. */}
+            {results.definition.status === "not-found" ? (
+              <Alert severity="warning" sx={{ mb: 2 }}>
+                The definition these results were filtered to was not found, so every result in this
+                project is shown.
+              </Alert>
+            ) : null}
+
+            {facts === undefined ? (
+              <CenterLoader />
+            ) : route.kind === "result" ? (
+              <>
+                <Button
+                  component={Link}
+                  href={projectLinks.results(projectId, state)}
+                  sx={{ mb: 1 }}
+                >
+                  All results
+                </Button>
+                <ProjectResultDetail facts={facts} results={results} route={route} />
+              </>
+            ) : (
+              <ResultsList
+                facts={facts}
+                items={shown}
+                results={results}
+                routeProjectId={projectId}
+                state={state}
+              />
+            )}
+          </Box>
+        </Box>
       </Container>
     </Layout>
   );

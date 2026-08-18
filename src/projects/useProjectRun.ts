@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react";
 
-import { type InstanceSummary, type RunningWorkflowSummary } from "@/api/data-manager";
 import { getGetApplicationsQueryKey, useGetApplications } from "@/api/data-manager/application";
 import { getGetInstancesQueryKey, useGetInstances } from "@/api/data-manager/instance";
 import { getGetJobsQueryKey, useGetJobs } from "@/api/data-manager/job";
@@ -19,7 +18,10 @@ import {
   resolveRunFreshnessByType,
   runCatalogueRequests,
   type RunDefinitionItem,
+  type RunExecutions,
+  runInstanceExecutions,
   type RunReadStates,
+  runRunningWorkflowExecutions,
   selectRunCatalogue,
 } from "./runFacts";
 import {
@@ -32,15 +34,15 @@ import {
 
 export type ProjectRunCatalogue = {
   /**
-   * The addressed project's own executions are still being read, per collection. They are read
-   * separately from the definitions they came from, so a card must not answer that it has none
-   * until they arrive — and a card waits only on the collection it actually lists.
+   * The addressed project's own executions, per collection: still being read, unreadable, or read
+   * and therefore countable. They are read separately from the definitions they came from, so a
+   * card must not answer that it has none until its own collection arrives — and a card waits only
+   * on the collection its own badge counts. They are the same executions the composition already
+   * holds, so a card's count costs no read of its own.
    */
-  executionsLoading: { instances: boolean; runningWorkflows: boolean };
+  executions: { instances: RunExecutions; runningWorkflows: RunExecutions };
   /** Each catalogue's content is only as fresh as its own last read. */
   freshness: Record<RunFilterType, "current" | "stale">;
-  /** Existing instances of the addressed project, offered beside the definitions that made them. */
-  instances: InstanceSummary[];
   /** The definition catalogues are still being read, so nothing can be said about what they offer. */
   isLoading: boolean;
   /** Every definition the catalogue offers, before the section's route state narrows them. */
@@ -53,8 +55,6 @@ export type ProjectRunCatalogue = {
   refresh: () => void;
   /** Retries the reads that failed, leaving the addressed project and route untouched. */
   retry: () => void;
-  /** Running workflows of the addressed project, offered beside their definitions. */
-  runningWorkflows: RunningWorkflowSummary[];
 };
 
 /**
@@ -108,13 +108,28 @@ export const useProjectRun = (projectId: string): ProjectRunCatalogue => {
     workflows: readableContent(readStates.workflow, workflows.data),
   });
 
+  const ownedInstances = readableContent(executionReadStates.instance, instances.data);
+  const ownedRunningWorkflows = readableContent(
+    executionReadStates.runningWorkflow,
+    runningWorkflows.data,
+  );
+
   return {
-    executionsLoading: {
-      instances: instances.isLoading,
-      runningWorkflows: runningWorkflows.isLoading,
+    // The counts the cards state are a pure fact of the executions already read here, so the
+    // section issues no read on their account.
+    executions: {
+      instances: runInstanceExecutions(
+        { isLoading: instances.isLoading, readState: executionReadStates.instance },
+        ownedInstances,
+        projectId,
+      ),
+      runningWorkflows: runRunningWorkflowExecutions(
+        { isLoading: runningWorkflows.isLoading, readState: executionReadStates.runningWorkflow },
+        ownedRunningWorkflows,
+        projectId,
+      ),
     },
     freshness,
-    instances: readableContent(executionReadStates.instance, instances.data),
     isLoading: applications.isLoading || jobs.isLoading || workflows.isLoading,
     items,
     readStates,
@@ -137,6 +152,5 @@ export const useProjectRun = (projectId: string): ProjectRunCatalogue => {
       void instances.refetch();
       void runningWorkflows.refetch();
     },
-    runningWorkflows: readableContent(executionReadStates.runningWorkflow, runningWorkflows.data),
   };
 };

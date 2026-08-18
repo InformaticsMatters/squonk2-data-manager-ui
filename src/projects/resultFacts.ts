@@ -8,7 +8,13 @@ import {
 } from "@/api/data-manager";
 
 import { search } from "../utils/app/searches";
-import { type ResultFilterType, showsType, type UncheckedDefinitionFilter } from "./routes";
+import {
+  narrowedTypes,
+  type ResultFilterType,
+  resultFilterTypes,
+  showsType,
+  type UncheckedDefinitionFilter,
+} from "./routes";
 import {
   resolveSectionFreshness,
   resolveSectionFreshnessByKey,
@@ -130,6 +136,31 @@ export const selectProjectResults = ({
     right.time.localeCompare(left.time),
   );
 };
+
+/**
+ * How each type of result is named wherever the section speaks about one: in the filter that
+ * narrows by it, and in the chip that states what has been narrowed to.
+ */
+export const resultTypeLabels: Record<ResultFilterType, string> = {
+  workflow: "Workflows",
+  task: "Tasks",
+  instance: "Instances",
+};
+
+/**
+ * The types a Results route narrows to, given what its type filter has selected. Every section
+ * decides this the same way; all Results supplies is the types it offers.
+ */
+export const resultsTypeNarrowing = (selected: readonly ResultFilterType[]) =>
+  narrowedTypes(selected, resultFilterTypes);
+
+/**
+ * What the heading states about the list beneath it: how many results the current narrowing leaves,
+ * and — where it left out anything at all — how many the project has to narrow. A list nothing was
+ * withheld from is stated once rather than as a fraction of itself.
+ */
+export const resultsShownStatement = (shown: number, total: number) =>
+  shown === total ? `${total} result${total === 1 ? "" : "s"}` : `${shown} of ${total}`;
 
 /**
  * The definition a Results list is narrowed to, as the definition's own catalogue accounts for it

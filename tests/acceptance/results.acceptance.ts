@@ -227,6 +227,76 @@ test("Results filters are owned by Results and do not follow the caller elsewher
   await expect(page.getByText("Acceptance Instance")).toHaveCount(0);
 });
 
+test("the narrowing controls sit in a rail beside the list and the heading counts what they leave", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceResults, testInfo);
+  await expect(page.getByRole("heading", { level: 1, name: "Results" })).toBeVisible();
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+
+  // Nothing is narrowed, so the heading states the whole list once rather than as a fraction of
+  // itself, and the type filter says it has narrowed nothing rather than reading back every label
+  // it offers as though the caller had chosen all of them.
+  const count = page.getByText(/^\d+ results$/u);
+  const total = Number(((await count.textContent()) ?? "").split(" ")[0]);
+  expect(total).toBeGreaterThan(1);
+  // The control is addressed by the role it plays rather than by the label alone, because an open
+  // menu is labelled by the same name as the control that opened it.
+  const filter = page.getByRole("combobox", { name: "Filter Results" });
+  await expect(filter).toHaveText("All types");
+
+  // Both controls that act on the page rather than narrow it are named in words, so what they do
+  // is readable without hovering an icon.
+  await expect(page.getByRole("button", { name: "Refresh results" })).toHaveText("Refresh results");
+  await expect(page.getByText("Event debug")).toBeVisible();
+
+  // The rail is beside the list: everything the list column holds starts to the right of it.
+  const railBox = await filter.boundingBox();
+  const searchBox = await page.getByLabel(/Search/u).boundingBox();
+  expect(searchBox?.x ?? 0).toBeGreaterThan((railBox?.x ?? 0) + (railBox?.width ?? 0));
+
+  // The filter states what it narrowed to as one chip per type, and the heading states how much of
+  // the project's results that left.
+  await filter.click();
+  await page.getByRole("option", { name: "Tasks" }).click();
+  await page.getByRole("option", { name: "Instances" }).click();
+  await page.keyboard.press("Escape");
+
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}?type=workflow`);
+  await expect(filter).toHaveText("Workflows");
+  await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
+  await expect(page.getByText("Acceptance Instance")).toHaveCount(0);
+  await expect(page.getByText(`1 of ${total}`)).toBeVisible();
+
+  // Emptying the filter is clearing it: the route carries no narrowing either way, so the control
+  // states that rather than a selection of everything it offers.
+  await filter.click();
+  await page.getByRole("option", { name: "Workflows" }).click();
+  await page.keyboard.press("Escape");
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}`);
+  await expect(filter).toHaveText("All types");
+  await expect(page.getByText(`${total} results`)).toBeVisible();
+
+  // The rail stays reachable however far a long list is scrolled.
+  await page.setViewportSize({ height: 400, width: 1280 });
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  await expect(filter).toBeInViewport();
+
+  // On a phone the rail stacks above the list rather than squeezing beside it, so every control is
+  // reachable without scrolling sideways.
+  const narrow = { height: 720, width: 360 };
+  await page.setViewportSize(narrow);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  const stackedRail = await filter.boundingBox();
+  const stackedSearch = await page.getByLabel(/Search/u).boundingBox();
+  expect(stackedRail?.x).toBeCloseTo(stackedSearch?.x ?? 0, 0);
+  expect(stackedRail?.y ?? 0).toBeLessThan(stackedSearch?.y ?? 0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+    narrow.width,
+  );
+});
+
 test("a project viewer reads results and is told what each unavailable action requires", async ({
   page,
   request,
@@ -548,6 +618,67 @@ test("a chip states the active filter, replaces the type filter, and clears back
   await expect(page.getByText("Acceptance Notebook")).toBeVisible();
   await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
   await expect(page.getByRole("link", { name: "DATASET", exact: true })).toBeVisible();
+});
+
+test("a definition filter states itself where the type filter was, moving neither search nor list", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceResults, testInfo);
+  const filterBox = await page.getByLabel("Filter Results").boundingBox();
+  const searchBox = await page.getByLabel(/Search/u).boundingBox();
+  const listBox = await page.getByText("Acceptance Instance").first().boundingBox();
+
+  await page.goto(ranJob);
+  await expect(page.getByText("Job: acceptance-job (1.0.0)")).toBeVisible();
+  await expect(page.getByLabel("Filter Results")).toHaveCount(0);
+
+  // Whatever is narrowing the list is always in the same place: the chip states the filter inside
+  // the rail the type filter was in, not in a row of its own below the chrome.
+  const chipBox = await page.getByText("Job: acceptance-job (1.0.0)").boundingBox();
+  expect(chipBox?.x ?? 0).toBeGreaterThanOrEqual(filterBox?.x ?? 0);
+  expect((chipBox?.x ?? 0) + (chipBox?.width ?? 0)).toBeLessThanOrEqual(searchBox?.x ?? 0);
+
+  // Applying the filter rearranges nothing beneath it. The search field is exactly where it was,
+  // so nothing above the list reflowed, and the list column starts where it started, so a chip
+  // wide enough to need more lines grows the rail downwards rather than moving the list.
+  expect(await page.getByLabel(/Search/u).boundingBox()).toEqual(searchBox);
+  expect((await page.getByText("Acceptance Instance").first().boundingBox())?.x).toEqual(
+    listBox?.x,
+  );
+});
+
+test("a definition filter withdraws the type filter before the catalogue has named it", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceResults, testInfo);
+  await expect(page.getByLabel("Filter Results")).toBeVisible();
+
+  // The definition catalogue is held open, so the page can be examined while the read that would
+  // name the filter is still outstanding.
+  const { promise: held, resolve: answer } = Promise.withResolvers<"answered">();
+  const { promise: outstanding, resolve: reached } = Promise.withResolvers<"reached">();
+  await page.route(/\/job(\?|$)/u, async (route) => {
+    reached("reached");
+    await held;
+    await route.continue();
+  });
+
+  await page.goto(ranJob);
+  await outstanding;
+  // The rail is on screen and the read that would name the definition has not answered.
+  await expect(page.getByRole("button", { name: "Refresh results" })).toBeVisible();
+
+  // What the route carries withdraws the type filter, not what the catalogue eventually says about
+  // it: a choice made in a filter offered during this wait could only be written by dropping the
+  // definition the caller has just followed. Both counts are snapshots rather than waited-on
+  // assertions, so a control shown only for the length of the read still fails them.
+  expect(await page.getByLabel("Filter Results").count()).toBe(0);
+  expect(await page.getByRole("button", { name: "Clear definition filter" }).count()).toBe(0);
+
+  answer("answered");
+  await expect(page.getByText("Job: acceptance-job (1.0.0)")).toBeVisible();
+  await expect(page.getByLabel("Filter Results")).toHaveCount(0);
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
 });
 
 test("a workflow filter lists the running workflows started from that definition", async ({

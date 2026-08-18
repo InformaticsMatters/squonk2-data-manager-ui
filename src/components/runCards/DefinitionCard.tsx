@@ -6,6 +6,7 @@ import {
   Launch as LaunchIcon,
 } from "@mui/icons-material";
 import {
+  alpha,
   Box,
   Button,
   Card,
@@ -119,22 +120,26 @@ const describeDefinition = (
  */
 const VersionMenuButton = ({
   onSelect,
-  selectedId,
+  selectedVersionId,
   versions,
 }: {
   onSelect: (id: string) => void;
-  selectedId: string;
+  selectedVersionId: string;
   versions: readonly VersionOption[];
 }) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const current = versions.find((version) => version.id === selectedId) ?? versions[0];
+  const current = versions.find((version) => version.id === selectedVersionId) ?? versions[0];
   const onlyVersion = versions.length === 1;
 
   return (
     <>
       <Button
-        // The control is labelled with the version it is offering, so it says what it chooses
-        // between rather than what it is.
+        // The control is named for what it chooses rather than for the version it happens to be
+        // offering, which is what the twenty other cards' version controls would otherwise all be
+        // called. Which version that is, is the menu's to state: its options carry it, and the one
+        // in force is marked as selected.
+        aria-expanded={anchor !== null}
+        aria-haspopup="menu"
         aria-label="Version"
         color="inherit"
         disabled={onlyVersion}
@@ -143,13 +148,13 @@ const VersionMenuButton = ({
         sx={{ minWidth: 0, textTransform: "none" }}
         onClick={(event) => setAnchor(event.currentTarget)}
       >
-        v{current.label}
+        {current.label}
       </Button>
       <Menu anchorEl={anchor} open={anchor !== null} onClose={() => setAnchor(null)}>
         {versions.map((version) => (
           <MenuItem
             key={version.id}
-            selected={version.id === selectedId}
+            selected={version.id === selectedVersionId}
             onClick={() => {
               onSelect(version.id);
               setAnchor(null);
@@ -218,7 +223,7 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
             label={kind.label}
             size="small"
             sx={[
-              { backgroundColor: `${kind.accent}22`, fontWeight: 700, letterSpacing: 0.3 },
+              { backgroundColor: alpha(kind.accent, 0.14), fontWeight: 700, letterSpacing: 0.3 },
               definitionKindInk(item.kind),
             ]}
           />
@@ -242,7 +247,10 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
         <Typography sx={{ color: "text.secondary", display: "block" }} variant="caption">
           {item.subtitle}
         </Typography>
-        {description !== undefined && (
+        {/* The documentation link is the definition's own, so a definition that publishes
+        documentation but no description still offers it rather than losing it with the paragraph it
+        used to hang off. */}
+        {(description !== undefined || docUrl !== undefined) && (
           <Typography sx={{ mt: 1, textWrap: "pretty" }} variant="body2">
             {description}
             {!!docUrl && (
@@ -296,9 +304,12 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
           px: 2,
         }}
       >
+        {/* Only a job offers a choice of versions, and the version it is offering is the identity
+        its own definition route carries, so the two are one value rather than two that could
+        disagree. */}
         {versions.length > 0 && (
           <VersionMenuButton
-            selectedId={definitionId}
+            selectedVersionId={definitionId}
             versions={versions}
             onSelect={setSelectedVersionId}
           />

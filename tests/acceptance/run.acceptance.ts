@@ -181,6 +181,41 @@ test("a card states its definition's executions and links straight to them", asy
   await expect(page.getByText("Acceptance Notebook")).toHaveCount(0);
 });
 
+test("a card states its kind, keeps its material, and names its documentation link", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceRun, testInfo);
+
+  const jobCard = page
+    .locator(".MuiCard-root")
+    .filter({ has: page.getByRole("link", { name: "Run acceptance-job" }) });
+
+  // A card says in words what kind of definition it is, so a job is told from an application
+  // without learning a colour code, and it keeps every fact a caller chooses a definition by.
+  await expect(jobCard.getByText("Job", { exact: true })).toBeVisible();
+  await expect(jobCard.getByText("Docks a library against a protein")).toBeVisible();
+  await expect(jobCard.getByText("Category: No category")).toBeVisible();
+  await expect(jobCard.getByText("Collection: acceptance")).toBeVisible();
+  await expect(jobCard.getByText("docking")).toBeVisible();
+  await expect(
+    page
+      .locator(".MuiCard-root")
+      .filter({ has: page.getByRole("link", { name: "Run Acceptance Workflow Definition" }) })
+      .getByText("Workflow", { exact: true }),
+  ).toBeVisible();
+
+  // The documentation link is the definition's own, not the description's: a job that publishes
+  // documentation and no description still offers it, as a named link a caller can land on.
+  const documented = page
+    .locator(".MuiCard-root")
+    .filter({ has: page.getByRole("link", { name: "Run unavailable-job" }) });
+  await expect(documented.getByText("Docks a library against a protein")).toHaveCount(0);
+  await expect(documented.getByRole("link", { name: "View documentation" })).toHaveAttribute(
+    "href",
+    "https://example.invalid/unavailable-job",
+  );
+});
+
 test("a definition nothing has run states zero and still links to its own results", async ({
   page,
 }, testInfo) => {

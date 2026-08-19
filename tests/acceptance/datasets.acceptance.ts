@@ -4,6 +4,7 @@ import { gunzipSync } from "node:zlib";
 import { fixtureIds } from "./services/fixtures";
 import { type AttachmentRecord } from "./services/state";
 import { acceptanceUrls } from "./environment";
+import { linkColour } from "./theme";
 
 test.describe.configure({ mode: "serial" });
 
@@ -697,10 +698,9 @@ test("the dataset file name is drawn in the application's own link colour", asyn
 }, testInfo) => {
   await login(page, "datasets", testInfo);
 
-  // `primary.main` from `@squonk/mui-theme`, which is what a Material UI link takes — not the blue
-  // a browser paints an anchor the application never styled.
+  // The brand's link colour, not the blue a browser paints an anchor the application never styled.
   await expect(page.getByRole("link", { name: "acceptance-dataset-v2.sdf" })).toHaveCSS(
     "color",
-    "rgb(229, 74, 59)",
+    await linkColour(page),
   );
 });

@@ -2,6 +2,7 @@ import { expect, type Page, test, type TestInfo } from "@playwright/test";
 
 import { fixtureIds } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
+import { linkColour } from "./theme";
 
 test.describe.configure({ mode: "serial" });
 
@@ -418,4 +419,19 @@ test("a refused file change is reported in place and never reported as done", as
   await page.getByRole("button", { name: "Delete", exact: true }).click();
   await expect(page.getByText("notes.txt was deleted.")).toBeVisible();
   await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toHaveCount(0);
+});
+
+test("a listing draws its directories and its files as the same kind of link", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceFiles, testInfo);
+
+  // Both rows address something the caller can open, so a directory is no less a link than the
+  // file beside it and is drawn in the same colour.
+  const colour = await linkColour(page);
+  await expect(page.getByRole("link", { exact: true, name: "inputs" })).toHaveCSS("color", colour);
+  await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toHaveCSS(
+    "color",
+    colour,
+  );
 });

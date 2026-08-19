@@ -107,7 +107,6 @@ const FilesTable = ({
         cell: ({ getValue, row: { original: row } }) =>
           isDirectoryRow(row) ? (
             <NextLink
-              color="inherit"
               component="a"
               href={
                 projectLinks.files(projectId, {

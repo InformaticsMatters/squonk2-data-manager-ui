@@ -691,3 +691,16 @@ test("a refused, failed, or unreadable attachment keeps the version, the choices
     diagnostics.requests.filter(({ method, path }) => method === "POST" && path === "/file"),
   ).toHaveLength(3);
 });
+
+test("the dataset file name is drawn in the application's own link colour", async ({
+  page,
+}, testInfo) => {
+  await login(page, "datasets", testInfo);
+
+  // `primary.main` from `@squonk/mui-theme`, which is what a Material UI link takes — not the blue
+  // a browser paints an anchor the application never styled.
+  await expect(page.getByRole("link", { name: "acceptance-dataset-v2.sdf" })).toHaveCSS(
+    "color",
+    "rgb(229, 74, 59)",
+  );
+});

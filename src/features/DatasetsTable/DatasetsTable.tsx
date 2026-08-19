@@ -5,12 +5,12 @@ import { useGetDatasets } from "@/api/data-manager/dataset";
 import { Alert, Button, CircularProgress } from "@mui/material";
 import { createColumnHelper, type Row } from "@tanstack/react-table";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { Chips } from "../../components/Chips";
 import { DataTable } from "../../components/DataTable/DataTable";
 import { LabelChip } from "../../components/labels/LabelChip";
+import { NextLink } from "../../components/NextLink";
 import { getDatasetListParams } from "../../datasets/datasetQuery";
 import { resolveDatasetVersion } from "../../datasets/resolveDatasetVersion";
 import {
@@ -62,7 +62,8 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
         cell: ({ row }) => {
           const { datasetVersion } = row.original;
           return datasetVersion ? (
-            <Link
+            <NextLink
+              component="a"
               href={
                 datasetLinks.version(
                   row.original.dataset_id,
@@ -72,7 +73,7 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
               }
             >
               {row.original.fileName}
-            </Link>
+            </NextLink>
           ) : (
             row.original.fileName
           );

@@ -302,7 +302,10 @@ test("favourites are keyed by the project whose files they are", async ({ page }
   // Another project's listing does not inherit it, and returning restores the project's own. The
   // project is changed the only way the application offers — back out to the index and enter the
   // other one — so nothing here depends on a reload clearing what was remembered.
-  await page.getByRole("link", { exact: true, name: "Project" }).click();
+  await page
+    .getByRole("navigation", { name: "Main" })
+    .getByRole("link", { exact: true, name: "Projects" })
+    .click();
   await page.getByRole("link", { name: /Screening Project/u }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${screeningFiles}`);
   await expect(
@@ -311,7 +314,10 @@ test("favourites are keyed by the project whose files they are", async ({ page }
     }),
   ).toBeVisible();
 
-  await page.getByRole("link", { exact: true, name: "Project" }).click();
+  await page
+    .getByRole("navigation", { name: "Main" })
+    .getByRole("link", { exact: true, name: "Projects" })
+    .click();
   await page.getByRole("link", { name: /Acceptance Project/u }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceFiles}`);
   await expect(

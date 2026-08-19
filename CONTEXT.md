@@ -24,7 +24,9 @@ messages, use the term defined here rather than a synonym.
 ## Workspaces and sections
 
 - **Workspace** — one of the three primary destinations: **Project**, **Datasets**,
-  **Administration**. Not "tab", not "area".
+  **Administration**. Not "tab", not "area". The Project workspace holds one project's sections, so
+  it keeps the singular; its main-navigation entry is labelled **Projects** because it opens the
+  index of many.
 - **Section** — the second tier inside a workspace. A project has **Files**, **Run**, **Results**
   and **Manage**; Administration has **Organisation & access**, **Subscriptions**, **Charges** and
   **Usage & inventory**. These are sections, not tabs, even where they are presented as tabs.

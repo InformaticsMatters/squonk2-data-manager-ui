@@ -84,7 +84,7 @@ test("primary navigation reaches the three landing routes and copies no state be
 
   await page
     .getByRole("navigation", { name: "Main" })
-    .getByRole("link", { name: "Project" })
+    .getByRole("link", { name: "Projects" })
     .click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}projects`);
   await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();

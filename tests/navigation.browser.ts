@@ -32,7 +32,7 @@ test("do login via project index", async ({ page, baseURL }) => {
   await page.goto(baseURL as string);
   await page
     .getByRole("navigation", { name: "Main" })
-    .getByRole("link", { name: "Project" })
+    .getByRole("link", { name: "Projects" })
     .click();
 
   await login(page);

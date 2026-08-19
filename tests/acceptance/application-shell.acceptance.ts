@@ -246,7 +246,7 @@ test("the chrome is never removed by a workspace change", async ({ page }, testI
   await workspaces.getByRole("link", { name: "Administration" }).click();
   await expect(page.getByRole("heading", { name: "Administration" })).toBeVisible();
 
-  await workspaces.getByRole("link", { name: "Project" }).click();
+  await workspaces.getByRole("link", { name: "Projects" }).click();
   await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
 
   expect(await chromeRemovals(page, "workspace-change-chrome")).toBe("[]");
@@ -267,7 +267,7 @@ test("the chrome survives crossing between a public page and a workspace", async
   // Home is a public page and Project is a family one. They are different compositions, and the
   // caller is entitled to notice nothing at all when crossing between them.
   const workspaces = page.getByRole("navigation", { name: "Main" });
-  await workspaces.getByRole("link", { name: "Project" }).click();
+  await workspaces.getByRole("link", { name: "Projects" }).click();
   await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
 
   await page.getByRole("link", { name: "Squonk Home" }).click();

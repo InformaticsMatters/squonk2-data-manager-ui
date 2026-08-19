@@ -1,3 +1,11 @@
+# [7.0.0-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.5...7.0.0-dev.6) (2026-08-19)
+
+
+### Bug Fixes
+
+* keep the chrome mounted when a caller crosses between page policies ([f08e987](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f08e9879776da189c1c667098ab44770f258326a)), closes [#1982](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1982)
+* mount the chrome and event stream once, above the boundaries that discard them ([1b1c141](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/1b1c1416325da1cad915e183506efcc96db00554))
+
 # [7.0.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.4...7.0.0-dev.5) (2026-08-18)
 
 

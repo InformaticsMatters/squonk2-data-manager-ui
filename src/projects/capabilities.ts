@@ -108,10 +108,22 @@ const roles = (facts: ProjectCapabilityFacts) =>
  */
 const administers = (facts: ProjectCapabilityFacts) => roles(facts).isAdministrator;
 
-const edits = (facts: ProjectCapabilityFacts) => {
-  const held = roles(facts);
+/**
+ * Whether a caller may change a project at all: its administrator or its editor, never its creator
+ * alone and never a platform administrator who holds no role in it. This is the one definition of
+ * "a project I can write to", so the projects index, the onboarding decision, dataset attachment
+ * and every editor capability below cannot disagree about which projects a caller can work in.
+ */
+export const callerEditsProject = (
+  project: ProjectMembershipFacts,
+  username: string | undefined,
+): boolean => {
+  const held = resolveProjectRoles(project, username);
   return held.isAdministrator || held.isEditor;
 };
+
+const edits = (facts: ProjectCapabilityFacts) =>
+  callerEditsProject(facts.project, facts.caller.username);
 
 /**
  * True only when the caller holds no mutation authority over the project at all. A caller whose

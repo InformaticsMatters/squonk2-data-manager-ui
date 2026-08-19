@@ -188,6 +188,8 @@ test.describe("persisted domain identity", () => {
       // Records of a cross-service workflow this caller left in flight.
       "projects/projectCreation.ts",
       "projects/projectDeletion.ts",
+      // That this caller has put the onboarding offer away, which addresses no resource at all.
+      "projects/projectIndex.ts",
       // Direct-link history for Home, which never becomes application scope.
       "projects/recentProjects.ts",
       // The one persisted domain identity.

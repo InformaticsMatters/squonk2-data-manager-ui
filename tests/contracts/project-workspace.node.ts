@@ -8,7 +8,13 @@ import { QueryClient } from "@tanstack/react-query";
 
 import { requireLinkedProject, resolveProjectAncestry } from "../../src/projects/projectAncestry";
 import { removeUnavailableProject } from "../../src/projects/projectCache";
-import { buildProjectIndexItems } from "../../src/projects/projectIndex";
+import {
+  buildProjectIndexItems,
+  decideProjectOnboarding,
+  dismissProjectOnboarding,
+  PROJECT_ONBOARDING_DISMISSAL_KEY,
+  projectOnboardingIsDismissed,
+} from "../../src/projects/projectIndex";
 import {
   readRecentProjectIds,
   recordRecentProject,
@@ -143,4 +149,126 @@ test("confirmed project loss removes only generated ancestry cache identities", 
   expect(queryClient.getQueryData(indexKey)).toEqual([linkedProject]);
   expect(queryClient.getQueryState(indexKey)?.isInvalidated).toBe(true);
   expect(readRecentProjectIds(storage)).toEqual([]);
+});
+
+test.describe("project onboarding offer", () => {
+  const personalUnitId = "unit-personal";
+  const caller = "user-one";
+  /** A project in someone else's unit that the caller neither created nor holds a role in. */
+  const other = (overrides: Partial<ProjectDetail> = {}) =>
+    project({ creator: "someone-else", unit_id: "unit-one", ...overrides });
+
+  const cases: {
+    dismissible: boolean;
+    name: string;
+    offered: boolean;
+    personalUnit?: string;
+    projects: ProjectDetail[];
+    step: boolean;
+    username?: string;
+  }[] = [
+    {
+      dismissible: false,
+      name: "no personal unit and no projects offers onboarding from its first step",
+      offered: true,
+      projects: [],
+      step: true,
+    },
+    {
+      dismissible: false,
+      name: "a personal unit with no projects skips the step it already satisfies",
+      offered: true,
+      personalUnit: personalUnitId,
+      projects: [],
+      step: false,
+    },
+    {
+      dismissible: false,
+      name: "a project of the caller's own in their personal unit ends the offer",
+      offered: false,
+      personalUnit: personalUnitId,
+      projects: [other({ administrators: [caller], unit_id: personalUnitId })],
+      step: false,
+    },
+    {
+      dismissible: true,
+      name: "an editor in someone else's unit is still offered a unit of their own",
+      offered: true,
+      projects: [other({ editors: [caller] })],
+      step: true,
+    },
+    {
+      dismissible: true,
+      name: "an administrator in someone else's unit is offered the same",
+      offered: true,
+      projects: [other({ administrators: [caller] })],
+      step: true,
+    },
+    {
+      dismissible: false,
+      name: "an observer cannot dismiss the only route to a project they can work in",
+      offered: true,
+      projects: [other({ observers: [caller] })],
+      step: true,
+    },
+    {
+      dismissible: true,
+      name: "a personal unit holding no project keeps the offer without its first step",
+      offered: true,
+      personalUnit: personalUnitId,
+      projects: [other({ editors: [caller] })],
+      step: false,
+    },
+    {
+      dismissible: false,
+      name: "creating a project is not the same as being able to write to it",
+      offered: true,
+      projects: [other({ creator: caller })],
+      step: true,
+    },
+    {
+      dismissible: false,
+      name: "an unresolved caller can write to no project at all",
+      offered: true,
+      projects: [other({ administrators: [caller], editors: [caller] })],
+      step: true,
+      username: undefined,
+    },
+    {
+      // The decision reads memberships alone, so platform privilege is not an input to it: an
+      // administrator of the application who holds no role in a project answers exactly as anyone
+      // else holding no role in it does.
+      dismissible: false,
+      name: "a platform administrator with no project role answers as any other caller",
+      offered: true,
+      personalUnit: personalUnitId,
+      projects: [other({ unit_id: personalUnitId })],
+      step: false,
+    },
+  ];
+
+  for (const testCase of cases) {
+    test(testCase.name, () => {
+      const username = "username" in testCase ? testCase.username : caller;
+      expect(decideProjectOnboarding(testCase.projects, username, testCase.personalUnit)).toEqual({
+        dismissible: testCase.dismissible,
+        offered: testCase.offered,
+        personalUnitStepApplies: testCase.step,
+      });
+    });
+  }
+});
+
+test("the onboarding dismissal is remembered under its own account-scoped key", () => {
+  const values = new Map<string, string>();
+  const storage = {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => values.set(key, value),
+  };
+
+  expect(projectOnboardingIsDismissed(storage)).toBe(false);
+  dismissProjectOnboarding(storage);
+
+  expect(projectOnboardingIsDismissed(storage)).toBe(true);
+  expect([...values.keys()]).toEqual([PROJECT_ONBOARDING_DISMISSAL_KEY]);
 });

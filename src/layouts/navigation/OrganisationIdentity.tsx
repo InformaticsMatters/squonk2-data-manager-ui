@@ -1,39 +1,41 @@
 import { useEffect, useState } from "react";
 
-import { type OrganisationDetail } from "@/api/account-server";
-import { useGetOrganisations } from "@/api/account-server/organisation";
-
 import { BusinessRounded, KeyboardArrowDownRounded } from "@mui/icons-material";
 import { Box, Button, ListItemIcon, ListItemText, Menu, MenuItem, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
-import { useSelectedOrganisation } from "../../state/organisationSelection";
+import { type VisibleOrganisation } from "../../application/applicationIdentity";
+import {
+  useSelectedOrganisation,
+  useVisibleOrganisations,
+} from "../../state/organisationSelection";
 
 export const OrganisationIdentity = () => {
   const router = useRouter();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [organisation, setOrganisation, organisationId] = useSelectedOrganisation();
-  const { data } = useGetOrganisations(undefined, {
-    query: { select: (response) => response.organisations },
-  });
+  const organisations = useVisibleOrganisations();
 
   useEffect(() => {
-    if (!organisationId && data?.[0]) {
-      setOrganisation(data[0]);
+    // Member organisations come first, so a caller who later joins a real organisation is not left
+    // working as the default one they were given while their only unit was personal.
+    if (!organisationId && organisations[0]) {
+      setOrganisation(organisations[0]);
     }
-  }, [organisationId, data, setOrganisation]);
+  }, [organisationId, organisations, setOrganisation]);
 
   // The organisation in effect is named from the list the caller can see, because that list names
-  // every organisation it offers. The addressed organisation's own resource is only readable by a
-  // member, its creator, or a platform administrator, so the default organisation — which an
-  // ordinary caller is none of — is refused there while still being a perfectly ordinary choice
-  // here. The detail read only completes a name the list could not supply.
-  const selected = data?.find((candidate) => candidate.id === organisationId) ?? organisation;
+  // every organisation it offers — including the default organisation, whose own addressed resource
+  // is only readable by a member, its creator, or a platform administrator, and which an ordinary
+  // caller is none of even while working as it. The detail read only completes a name the list
+  // could not supply, which is now only an organisation chosen before this list could answer.
+  const selected =
+    organisations.find((candidate) => candidate.id === organisationId) ?? organisation;
   // Nothing is chosen only when nothing is known: an organisation that is in effect always names
   // itself, however it came to be selected.
   const label = selected?.name ?? (organisationId ? "Organisation" : "Choose organisation");
 
-  const handleOrganisationChange = (option: OrganisationDetail) => {
+  const handleOrganisationChange = (option: VisibleOrganisation) => {
     setAnchor(null);
     if (option.id === organisationId) {
       return;
@@ -75,7 +77,7 @@ export const OrganisationIdentity = () => {
         </Box>
       </Button>
       <Menu anchorEl={anchor} open={!!anchor} onClose={() => setAnchor(null)}>
-        {(data ?? []).map((option) => (
+        {organisations.map((option) => (
           <MenuItem
             key={option.id}
             selected={option.id === organisationId}

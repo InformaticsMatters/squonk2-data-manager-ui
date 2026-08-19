@@ -25,7 +25,6 @@ import { useRouter } from "next/router";
 
 import { administrationLinks } from "../administration/routes";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
-import { useGetPersonalUnit } from "../hooks/useGetPersonalUnit";
 import { useIsEvaluator } from "../hooks/useIsAuthorized";
 import { isProductId } from "../routing/identifiers";
 import { projectCreationFailureReason } from "./failures";
@@ -48,6 +47,7 @@ import {
   validateProjectSubscriptionHandoff,
 } from "./projectCreation";
 import { projectLinks } from "./routes";
+import { usePersonalUnitCreation } from "./usePersonalUnitCreation";
 import { useProjectCreationCommands } from "./useProjectCreationCommands";
 
 const privateByDefault: Record<UnitAllDetailDefaultProductPrivacy, boolean> = {
@@ -89,7 +89,9 @@ export const ProjectCreate = () => {
   }
   const { data: unitGroups } = useGetUnitsSuspense();
   const isEvaluator = useIsEvaluator();
-  const { data: personalUnit } = useGetPersonalUnit();
+  // The safety net for a caller who arrived here by URL rather than through onboarding: the same
+  // command the onboarding panel sends, so there is one implementation of creating a personal unit.
+  const { createPersonalUnit, personalUnit, state: personalUnitState } = usePersonalUnitCreation();
   const eligibleUnits = eligibleProjectCreationUnits(unitGroups.units, {
     evaluatorPersonalUnitId: personalUnit?.id,
     isEvaluator,
@@ -108,6 +110,7 @@ export const ProjectCreate = () => {
   const [reconciling, setReconciling] = useState(false);
   const initializedSubscription = useRef<string | undefined>(undefined);
   const initializedRecovery = useRef(false);
+  const preselectedUnit = useRef(false);
   const recoveryNavigation = useRef(false);
   const [recoveringRoute, setRecoveringRoute] = useState(false);
 
@@ -118,6 +121,19 @@ export const ProjectCreate = () => {
     handoffValidation?.kind === "valid" ? handoffValidation.subscription : undefined;
   const flavours = eligibleProjectCreationFlavours(productTypes?.product_types ?? [], isEvaluator);
   const selectedUnit = eligibleUnits.find(({ unit }) => unit.id === unitId)?.unit;
+  /**
+   * The unit this arrival already means, before the caller has touched the field. A link that named
+   * one carries the intent it was built with; a caller with exactly one eligible unit is choosing
+   * from a list of one, which is not a choice. A named unit that is no longer eligible falls back
+   * to the single-unit rule and then to nothing at all, silently: a stale link is an ordinary
+   * arrival rather than a broken workflow, unlike an unusable subscription handoff.
+   */
+  const intendedUnitId =
+    route.unitId && eligibleUnits.some(({ unit }) => unit.id === route.unitId)
+      ? route.unitId
+      : eligibleUnits.length === 1
+        ? eligibleUnits[0].unit.id
+        : undefined;
   const pending =
     recoveringRoute ||
     reconciling ||
@@ -421,6 +437,32 @@ export const ProjectCreate = () => {
     }
   };
 
+  /** Applied from an effect, so the privacy default the chosen unit declares comes with it. */
+  const applyIntendedUnit = useEffectEvent((nextUnitId: string) => selectUnit(nextUnitId));
+
+  /**
+   * The containing unit an arrival already meant, chosen once and then never again.
+   *
+   * A handoff route owns the unit itself — it is the subscription's — so nothing is preselected
+   * beneath one. A record left by an interrupted attempt owns it too, and is rehydrated by the
+   * effect above, so this defers to a record it can see rather than overwriting what that attempt
+   * entered. Everything after the first choice is the caller's, including clearing it.
+   */
+  useEffect(() => {
+    if (
+      preselectedUnit.current ||
+      intendedUnitId === undefined ||
+      route.subscriptionId !== undefined
+    ) {
+      return;
+    }
+    preselectedUnit.current = true;
+    if (readProjectCreationRecovery(sessionStorage)) {
+      return;
+    }
+    applyIntendedUnit(intendedUnitId);
+  }, [intendedUnitId, route.subscriptionId]);
+
   /**
    * A project retry re-reads its subscription before it sends anything, because the request it is
    * retrying may already have committed: a claimed subscription completes into Files instead, so a
@@ -572,6 +614,28 @@ export const ProjectCreate = () => {
             </MenuItem>
           ))}
         </TextField>
+        {/* The requirement the field states is one the caller can satisfy here, for an arrival that
+            came straight to this URL rather than through the onboarding panel. A caller who already
+            has a personal unit is never offered a second one; they belong to no unit at all. */}
+        {eligibleUnits.length === 0 && !personalUnit ? (
+          <Alert
+            action={
+              <Button
+                disabled={personalUnitState.kind === "creating"}
+                onClick={() => void createPersonalUnit()}
+              >
+                {personalUnitState.kind === "creating" ? "Creating..." : "Create personal unit"}
+              </Button>
+            }
+            severity="info"
+          >
+            A personal unit is your own billing container in the default organisation, and it can
+            own this project.
+          </Alert>
+        ) : null}
+        {personalUnitState.kind === "failed" ? (
+          <Alert severity="error">{personalUnitState.reason}</Alert>
+        ) : null}
         <TextField
           disabled={pending}
           error={name.length > 0 && !projectCreationNameIsValid(name)}

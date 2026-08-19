@@ -703,12 +703,21 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       if (form.get("tier_product_id") !== state.createdProduct?.product.id) {
         return json(response, 400, { error: "fixture-subscription-not-found" });
       }
+      // The creator holds the project outright, and its ancestry is the subscription's own, so a
+      // project created in a personal unit belongs to the default organisation that houses it.
       state.createdProject = {
-        ...state.fixtures.projects.projects[0],
+        administrators: [state.fixtures.subject],
+        created: "2026-01-02T03:04:05Z",
+        creator: state.fixtures.subject,
+        editors: [state.fixtures.subject],
+        files: [],
         name: form.get("name") ?? "Created project",
+        observers: [],
+        organisation_id: state.createdProduct.organisation.id,
         private: form.get("private") === "true",
         product_id: state.createdProduct.product.id,
         project_id: fixtureIds.createdProject,
+        size: 0,
         unit_id: state.createdProduct.unit.id,
       };
       state.createdProduct.claim = {

@@ -4,11 +4,13 @@ import {
   APPLICATION_ORGANISATION_STORAGE_KEY,
   clearLegacyScopeStorage,
   parsePersistedOrganisationId,
+  resolveVisibleOrganisations,
 } from "../../src/application/applicationIdentity";
 import { clearAccountScopedStorageOnLogout } from "../../src/application/logoutCleanup";
 import { DATASET_UPLOAD_BILLING_UNIT_STORAGE_KEY } from "../../src/datasets/uploadBilling";
 import { PROJECT_CREATION_RECOVERY_KEY } from "../../src/projects/projectCreation";
 import { PROJECT_DELETION_RECOVERY_KEY } from "../../src/projects/projectDeletion";
+import { PROJECT_ONBOARDING_DISMISSAL_KEY } from "../../src/projects/projectIndex";
 import {
   parseRecentProjectIds,
   readRecentProjectIds,
@@ -61,6 +63,7 @@ test.describe("application identity persistence", () => {
       ["data-manager-ui-selected-files", "files"],
       [RECENT_PROJECTS_STORAGE_KEY, '["project-one"]'],
       [PROJECT_DELETION_RECOVERY_KEY, '{"version":1}'],
+      [PROJECT_ONBOARDING_DISMISSAL_KEY, "1"],
       [DATASET_UPLOAD_BILLING_UNIT_STORAGE_KEY, '{"version":1,"unitId":"unit-1"}'],
       ["data-manager-ui-cookie-consent", "consent"],
       ["data-manager-ui-event-debug-mode", "debug"],
@@ -82,6 +85,41 @@ test.describe("application identity persistence", () => {
       "mui-color-scheme-light",
     ]);
     expect([...session.keys()]).toEqual(["unrelated-session-value"]);
+  });
+});
+
+test.describe("visible organisations", () => {
+  const member = { id: "organisation-one", name: "Acceptance Organisation" };
+  const defaultOrganisation = { id: "organisation-default", name: "Default Organisation" };
+
+  test("leaves the caller's own index alone when no default organisation answered", () => {
+    expect(resolveVisibleOrganisations([member], undefined)).toEqual([member]);
+  });
+
+  test("gives a caller whose only unit is personal an organisation to work as", () => {
+    expect(resolveVisibleOrganisations([], defaultOrganisation)).toEqual([defaultOrganisation]);
+  });
+
+  test("orders the default organisation last so a real one is preferred by default", () => {
+    // The switcher auto-selects the first entry when nothing is chosen, so this ordering is what
+    // stops a caller who later joins a real organisation from being stranded in their personal one.
+    expect(resolveVisibleOrganisations([member], defaultOrganisation)).toEqual([
+      member,
+      defaultOrganisation,
+    ]);
+  });
+
+  test("does not list the default organisation twice for a member of it", () => {
+    expect(resolveVisibleOrganisations([member, defaultOrganisation], defaultOrganisation)).toEqual(
+      [member, defaultOrganisation],
+    );
+  });
+
+  test("drops a default organisation the server did not fully name rather than coercing it", () => {
+    expect(resolveVisibleOrganisations([member], { name: "Default Organisation" })).toEqual([
+      member,
+    ]);
+    expect(resolveVisibleOrganisations([member], { id: "organisation-default" })).toEqual([member]);
   });
 });
 

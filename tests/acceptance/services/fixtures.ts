@@ -160,6 +160,7 @@ export const scenarioProfiles = [
   "evaluator",
   "no-access",
   "no-personal-unit",
+  "onboarding",
   "platform-admin",
   "read-only",
 ] as const;
@@ -378,7 +379,11 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     observers: [subject],
   };
   const noAccess = profile === "no-access";
-  const hasPersonalUnit = profile !== "no-personal-unit" && !noAccess;
+  // The subject a brand new account is: an authorised caller with no personal unit, no project, and
+  // no membership of any organisation or unit — so the only organisation they can work as is the
+  // default one, which their own organisation index never lists.
+  const onboarding = profile === "onboarding";
+  const hasPersonalUnit = profile !== "no-personal-unit" && !noAccess && !onboarding;
   const projectTierProduct = {
     claimable: true,
     claim: { id: fixtureIds.project, name: "Acceptance Project" },
@@ -628,8 +633,9 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     subject,
     organisation: AppApiOrganisationGetOrgResponse.parse(organisation),
     organisations: AppApiOrganisationGetResponse.parse({
-      count: noAccess ? 0 : 3,
-      organisations: noAccess ? [] : [organisation, otherOrganisation, defaultOrganisation],
+      count: noAccess || onboarding ? 0 : 3,
+      organisations:
+        noAccess || onboarding ? [] : [organisation, otherOrganisation, defaultOrganisation],
     }),
     unlistedOrganisation: AppApiOrganisationGetOrgResponse.parse(unlistedOrganisation),
     unlistedUnit: AppApiUnitGetUnitResponse.parse(unlistedUnit),
@@ -661,82 +667,86 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
           ],
     }),
     projects: AppApiProjectGetResponse.parse({
-      count: 5,
-      projects: [
-        {
-          ...projectRoles,
-          created,
-          files: [],
-          name: "Acceptance Project",
-          organisation_id: fixtureIds.organisation,
-          private: true,
-          product_id: fixtureIds.product,
-          project_id: fixtureIds.project,
-          size: 0,
-          unit_id: fixtureIds.unit,
-        },
-        {
-          ...screeningRoles,
-          created,
-          files: [],
-          name: "Screening Project",
-          organisation_id: fixtureIds.organisation,
-          private: true,
-          product_id: fixtureIds.screeningProduct,
-          project_id: fixtureIds.screeningProject,
-          size: 0,
-          unit_id: fixtureIds.otherUnit,
-        },
-        {
-          administrators: [subject],
-          created,
-          creator: subject,
-          editors: [subject],
-          files: [],
-          name: "Shared Project",
-          observers: [],
-          organisation_id: fixtureIds.organisation,
-          private: true,
-          project_id: fixtureIds.sharedProjectOne,
-          size: 0,
-          unit_id: fixtureIds.unit,
-        },
-        {
-          administrators: [subject],
-          created,
-          creator: subject,
-          editors: [subject],
-          files: [],
-          name: "Shared Project",
-          observers: [],
-          organisation_id: fixtureIds.organisation,
-          private: true,
-          project_id: fixtureIds.sharedProjectTwo,
-          size: 0,
-          unit_id: fixtureIds.otherUnit,
-        },
-        {
-          administrators: [subject],
-          created,
-          creator: subject,
-          editors: [subject],
-          files: [],
-          name: "Partner Project",
-          observers: [],
-          organisation_id: fixtureIds.otherOrganisation,
-          private: true,
-          product_id: fixtureIds.partnerProduct,
-          project_id: fixtureIds.partnerProject,
-          size: 0,
-          unit_id: fixtureIds.unit,
-        },
-      ],
+      count: onboarding ? 0 : 5,
+      projects: onboarding
+        ? []
+        : [
+            {
+              ...projectRoles,
+              created,
+              files: [],
+              name: "Acceptance Project",
+              organisation_id: fixtureIds.organisation,
+              private: true,
+              product_id: fixtureIds.product,
+              project_id: fixtureIds.project,
+              size: 0,
+              unit_id: fixtureIds.unit,
+            },
+            {
+              ...screeningRoles,
+              created,
+              files: [],
+              name: "Screening Project",
+              organisation_id: fixtureIds.organisation,
+              private: true,
+              product_id: fixtureIds.screeningProduct,
+              project_id: fixtureIds.screeningProject,
+              size: 0,
+              unit_id: fixtureIds.otherUnit,
+            },
+            {
+              administrators: [subject],
+              created,
+              creator: subject,
+              editors: [subject],
+              files: [],
+              name: "Shared Project",
+              observers: [],
+              organisation_id: fixtureIds.organisation,
+              private: true,
+              project_id: fixtureIds.sharedProjectOne,
+              size: 0,
+              unit_id: fixtureIds.unit,
+            },
+            {
+              administrators: [subject],
+              created,
+              creator: subject,
+              editors: [subject],
+              files: [],
+              name: "Shared Project",
+              observers: [],
+              organisation_id: fixtureIds.organisation,
+              private: true,
+              project_id: fixtureIds.sharedProjectTwo,
+              size: 0,
+              unit_id: fixtureIds.otherUnit,
+            },
+            {
+              administrators: [subject],
+              created,
+              creator: subject,
+              editors: [subject],
+              files: [],
+              name: "Partner Project",
+              observers: [],
+              organisation_id: fixtureIds.otherOrganisation,
+              private: true,
+              product_id: fixtureIds.partnerProduct,
+              project_id: fixtureIds.partnerProject,
+              size: 0,
+              unit_id: fixtureIds.unit,
+            },
+          ],
     }),
     products:
       profile === "empty-products" || noAccess
         ? AppApiProductGetResponse.parse({ count: 0, products: [] })
         : products,
     claimableProduct,
+    /** The template every created project-tier subscription is built from. */
+    projectTierProduct,
     partnerProduct,
     screeningProduct,
     storageProduct: datasetStorageProduct,
@@ -1190,7 +1200,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     }),
     units: AppApiUnitGetResponse.parse({
       units: [
-        ...(noAccess ? [] : [{ count: 2, organisation, units: [unit, otherUnit] }]),
+        ...(noAccess || onboarding ? [] : [{ count: 2, organisation, units: [unit, otherUnit] }]),
         ...(hasPersonalUnit
           ? [{ count: 1, organisation: defaultOrganisation, units: [personalUnit] }]
           : []),

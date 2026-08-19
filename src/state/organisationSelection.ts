@@ -1,7 +1,10 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
-import { type OrganisationDetail } from "@/api/account-server";
-import { useGetOrganisation } from "@/api/account-server/organisation";
+import {
+  useGetDefaultOrganisation,
+  useGetOrganisation,
+  useGetOrganisations,
+} from "@/api/account-server/organisation";
 
 import { atom, useAtom } from "jotai";
 
@@ -10,6 +13,8 @@ import {
   clearLegacyScopeStorage,
   parsePersistedOrganisationId,
   type PersistedOrganisationIdentity,
+  resolveVisibleOrganisations,
+  type VisibleOrganisation,
 } from "../application/applicationIdentity";
 
 export const organisationIdAtom = atom<string | undefined>(undefined);
@@ -21,6 +26,26 @@ const readPersistedOrganisationId = () => {
   } catch {
     return undefined;
   }
+};
+
+/**
+ * Every organisation this caller may work as. The two reads are joined by the pure resolver rather
+ * than by any screen, so the switcher, Home and dataset attachment cannot disagree about which
+ * organisations exist — in particular about the default organisation, which houses every personal
+ * unit and which `GET /organisation` never lists.
+ */
+export const useVisibleOrganisations = ({ enabled = true }: { enabled?: boolean } = {}) => {
+  const { data: organisations } = useGetOrganisations(undefined, { query: { enabled } });
+  // The default organisation is absent rather than exceptional for a deployment that has none, so
+  // its read is never retried into a failure the caller has to see.
+  const { data: defaultOrganisation } = useGetDefaultOrganisation({
+    query: { enabled, retry: false },
+  });
+
+  return useMemo(
+    () => resolveVisibleOrganisations(organisations?.organisations, defaultOrganisation),
+    [defaultOrganisation, organisations],
+  );
 };
 
 export const useSelectedOrganisation = () => {
@@ -35,7 +60,7 @@ export const useSelectedOrganisation = () => {
   }, [setOrganisationId]);
 
   const setOrganisation = useCallback(
-    (next: OrganisationDetail | undefined) => {
+    (next: Pick<VisibleOrganisation, "id"> | undefined) => {
       const nextId = next?.id;
       setOrganisationId(nextId);
       if (nextId) {

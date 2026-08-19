@@ -1075,3 +1075,68 @@ test("unconfirmed project facts leave changes available and defer to the server"
   await expect(privacyControl(page).getByText("This project is now public.")).toBeVisible();
   await expect(factRow(page, "Privacy")).toContainText("Public");
 });
+
+const onboardingPanel = (page: Page) =>
+  page.getByRole("heading", { name: "Start working in a project of your own" });
+
+test("a caller with nothing is onboarded into a project of their own and finds it listed", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=onboarding`);
+  await login(page, "projects", testInfo);
+
+  // With no project anywhere the offer is the index itself, rather than sitting above an empty list
+  // that would tell the caller the same thing a second time.
+  await expect(onboardingPanel(page)).toBeVisible();
+  await expect(
+    page.getByText("No projects are available in the current organisation."),
+  ).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Create personal unit" }).click();
+  await expect(page.getByText(`You have a personal unit: ${subject}`)).toBeVisible();
+
+  await page.getByRole("link", { name: "Create project" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects/new?unit=${fixtureIds.personalUnit}`);
+  // The handoff names the unit the panel meant, so nothing has to be chosen again here.
+  await expect(page.getByRole("combobox", { name: "Containing unit" })).toHaveText(
+    `Default Organisation / ${subject}`,
+  );
+
+  await page.getByLabel("Project name").fill("My First Project");
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects/${fixtureIds.createdProject}/files`);
+  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+
+  // The point of this journey. A caller whose only unit is personal has the default organisation in
+  // effect, so the screen they onboarded through lists the project they just made instead of
+  // claiming they have none.
+  await page.goto("projects");
+  await expect(page.getByLabel("Change organisation")).toContainText("Default Organisation");
+  await expect(page.getByText("My First Project", { exact: true })).toBeVisible();
+  await expect(onboardingPanel(page)).toHaveCount(0);
+});
+
+test("an editor in someone else's unit is offered a unit of their own and may put it away", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=no-personal-unit`);
+  await login(page, "projects", testInfo);
+
+  // The list is what this caller came for, so the offer sits above it rather than replacing it.
+  await expect(onboardingPanel(page)).toBeVisible();
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Not now" }).click();
+  await expect(onboardingPanel(page)).toHaveCount(0);
+
+  await page.reload();
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await expect(onboardingPanel(page)).toHaveCount(0);
+});

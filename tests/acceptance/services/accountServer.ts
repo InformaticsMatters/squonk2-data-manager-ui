@@ -448,16 +448,18 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
       if (state.productCreationDelay) {
         await delay(state.productCreationDelay);
       }
-      const base = state.fixtures.products.products[0] as ProductDmProjectTier;
-      const unit = state.fixtures.units.units
-        .flatMap(({ units }) => units)
-        .find(({ id }) => id === segments[2]);
-      if (!unit) {
+      const base = state.fixtures.projectTierProduct;
+      const group = findUnitGroup(state, segments[2]);
+      const unit = group?.units.find(({ id }) => id === segments[2]);
+      if (!group || !unit) {
         return json(response, 404, { error: "fixture-unit-not-found" });
       }
       state.createdProduct = {
         ...base,
         claim: undefined,
+        // A subscription is owned by the unit it was bought in, and that unit's own organisation is
+        // its ancestry — including for a personal unit, whose organisation is the default one.
+        organisation: group.organisation,
         product: {
           ...base.product,
           flavour: body.flavour ?? "BRONZE",

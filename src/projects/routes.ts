@@ -8,12 +8,14 @@ import {
   isProjectId,
   isRunningWorkflowId,
   isTaskId,
+  isUnitId,
   isWorkflowId,
   type PositiveIntegerString,
   type ProductId,
   type ProjectId,
   type RunningWorkflowId,
   type TaskId,
+  type UnitId,
   type WorkflowId,
 } from "../routing/identifiers";
 import {
@@ -145,7 +147,7 @@ type ResultRoute = {
 export type ProjectRoute =
   | ResultRoute
   | RunDefinitionRoute
-  | { kind: "create"; subscriptionId?: ProductId }
+  | { kind: "create"; subscriptionId?: ProductId; unitId?: UnitId }
   | { kind: "deletion"; taskId: TaskId; subscriptionId?: ProductId }
   | { kind: "file-view"; projectId: ProjectId; path: string; viewer?: FileViewer }
   | { kind: "files"; projectId: ProjectId; path?: string }
@@ -207,6 +209,16 @@ const canonicalEnumValues = <TValue extends string>(
 
 const parseSubscription = (searchParams: URLSearchParams) =>
   readOptionalQuery(searchParams, "subscription", isProductId);
+
+/**
+ * The containing unit a caller arrived at creation already meaning to use. It carries onboarding's
+ * intent — a project in your personal unit — across the navigation, which is what a caller with
+ * several eligible units needs to see the one that was meant. A unit that parses but is not
+ * eligible falls back to no selection on the screen itself, silently: an aged-out link is an
+ * ordinary arrival, not a broken workflow.
+ */
+const parseCreationUnit = (searchParams: URLSearchParams) =>
+  readOptionalQuery(searchParams, "unit", isUnitId);
 
 const isDefinitionType = (value: string): value is RunDefinitionType =>
   Object.hasOwn(definitionIdValidators, value);
@@ -390,6 +402,9 @@ const readDirectoryQuery = (searchParams: URLSearchParams) => {
   return canonical === null || canonical === filesystemRoot ? undefined : canonical;
 };
 
+const creationUnitQuery = (unitId: string | undefined) =>
+  [["unit", unitId ? assertRouteValue(unitId, isUnitId, "unit ID") : undefined]] as const;
+
 const subscriptionQuery = (subscriptionId: string | undefined) =>
   [
     [
@@ -413,8 +428,11 @@ const resultPath = (projectId: string, collection: ResultCollection, resultId: s
 
 export const projectLinks = {
   index: (state: SearchState = {}) => buildHref("/projects", searchQuery(state.search)),
-  create: ({ subscriptionId }: { subscriptionId?: string } = {}) =>
-    buildHref("/projects/new", subscriptionQuery(subscriptionId)),
+  create: ({ subscriptionId, unitId }: { subscriptionId?: string; unitId?: string } = {}) =>
+    buildHref("/projects/new", [
+      ...subscriptionQuery(subscriptionId),
+      ...creationUnitQuery(unitId),
+    ]),
   deletion: (taskId: string, { subscriptionId }: { subscriptionId?: string } = {}) =>
     buildHref(
       `/projects/deletions/${assertRouteValue(taskId, isTaskId, "deletion task ID")}`,
@@ -579,9 +597,11 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
 
   if (segments.length === 2 && segments[1] === "new") {
     const subscriptionId = parseSubscription(searchParams);
+    const unitId = parseCreationUnit(searchParams);
     const route: Extract<ProjectRoute, { kind: "create" }> = {
       kind: "create",
       ...(subscriptionId ? { subscriptionId } : {}),
+      ...(unitId ? { unitId } : {}),
     };
     return validRoute(location, route, projectLinks.create(route));
   }

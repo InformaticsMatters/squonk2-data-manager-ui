@@ -1,13 +1,12 @@
-import {
-  type OrganisationAllDetail,
-  type OrganisationUnitsGetResponse,
-} from "@/api/account-server";
+import { type OrganisationUnitsGetResponse } from "@/api/account-server";
 import { type FilePostBodyBody, type ProjectDetail } from "@/api/data-manager";
 
 import {
   classifyTransportFailure,
   isTransientTransportFailure,
 } from "../api/runtime/classifyTransportFailure";
+import { type VisibleOrganisation } from "../application/applicationIdentity";
+import { callerEditsProject } from "../projects/capabilities";
 import { canonicalFilesystemPath, filesystemRoot } from "../projects/fileFacts";
 import { noErrorInformation } from "../utils/next/orvalError";
 import { DatasetTaskError, DatasetTaskPollingError } from "./mutations";
@@ -34,7 +33,9 @@ export const attachmentTargetLabel = ({
  * Which projects this dataset version may be attached to.
  *
  * The Data Manager requires an editor of the project, so the project's own membership lists are the
- * whole test and every organisation and unit the caller can edit in is offered. A billing unit is
+ * whole test — through the same `callerEditsProject` rule the Projects family applies, so an index
+ * and a capability evaluator cannot disagree about which projects a caller can write to — and every
+ * organisation and unit the caller can edit in is offered. A billing unit is
  * not consulted at all: attaching bills the project that already exists rather than choosing where
  * to spend, so the unit a dataset was uploaded to restricts nothing here. Ancestry names come from
  * the generated unit index where it has them and degrade to the project's own declared identity
@@ -47,7 +48,7 @@ export const eligibleAttachmentTargets = ({
   unitGroups,
 }: {
   caller: { username?: string };
-  organisations: readonly OrganisationAllDetail[];
+  organisations: readonly VisibleOrganisation[];
   projects: readonly ProjectDetail[];
   unitGroups: readonly OrganisationUnitsGetResponse[];
 }): AttachmentTarget[] => {
@@ -66,9 +67,7 @@ export const eligibleAttachmentTargets = ({
     id === undefined ? undeclared : (names.get(id) ?? id);
 
   return projects
-    .filter(
-      (project) => project.editors.includes(username) || project.administrators.includes(username),
-    )
+    .filter((project) => callerEditsProject(project, username))
     .map((project) => ({
       organisationName: nameOf(organisationNames, project.organisation_id, "Unknown organisation"),
       projectId: project.project_id,

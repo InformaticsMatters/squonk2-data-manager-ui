@@ -8,6 +8,7 @@ const taskId = "task-00000000-0000-4000-8000-000000000003";
 const instanceId = "instance-00000000-0000-4000-8000-000000000004";
 const workflowId = "workflow-00000000-0000-4000-8000-000000000005";
 const runningWorkflowId = "r-workflow-00000000-0000-4000-8000-000000000006";
+const unitId = "unit-00000000-0000-4000-8000-000000000007";
 
 test.describe("Project route contract", () => {
   const canonicalHrefs = [
@@ -17,6 +18,11 @@ test.describe("Project route contract", () => {
     [
       `/projects/new?subscription=${productId}`,
       () => projectLinks.create({ subscriptionId: productId }),
+    ],
+    [`/projects/new?unit=${unitId}`, () => projectLinks.create({ unitId })],
+    [
+      `/projects/new?subscription=${productId}&unit=${unitId}`,
+      () => projectLinks.create({ subscriptionId: productId, unitId }),
     ],
     [
       `/projects/deletions/${taskId}?subscription=${productId}`,
@@ -192,6 +198,14 @@ test.describe("Project route contract", () => {
       canonicalHref: projectLinks.create(),
       needsReplace: true,
     });
+    // A link naming a unit this client cannot even read as one addresses creation with nothing
+    // chosen, exactly as a bare creation link does.
+    expect(parseProjectRoute("/projects/new?unit=not-a-unit")).toEqual({
+      kind: "valid",
+      route: { kind: "create" },
+      canonicalHref: projectLinks.create(),
+      needsReplace: true,
+    });
     expect(parseProjectRoute(`/projects/${projectId}/run?type=job&type=unknown`)).toEqual({
       kind: "valid",
       route: { kind: "run", projectId },
@@ -203,6 +217,7 @@ test.describe("Project route contract", () => {
   test("builders reject malformed identity rather than producing a guessed link", () => {
     expect(() => projectLinks.files("not-a-project")).toThrow();
     expect(() => projectLinks.deletion("not-a-task")).toThrow();
+    expect(() => projectLinks.create({ unitId: "not-a-unit" })).toThrow();
     expect(() => projectLinks.result(projectId, "instances", "not-an-instance")).toThrow();
   });
 });

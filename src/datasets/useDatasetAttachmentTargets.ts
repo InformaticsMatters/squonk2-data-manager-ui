@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 
-import { useGetOrganisations } from "@/api/account-server/organisation";
 import { useGetUnits } from "@/api/account-server/unit";
 import { useGetProjects } from "@/api/data-manager/project";
 
 import { useKeycloakUser } from "../hooks/useKeycloakUser";
+import { useVisibleOrganisations } from "../state/organisationSelection";
 import { type AttachmentTarget, eligibleAttachmentTargets } from "./attachment";
 import {
   type DatasetCapability,
@@ -19,7 +19,9 @@ import {
  * and unit the caller can edit in and no selected project, unit, or organisation narrows it. The
  * generated organisation and unit indexes are read only to name a target's ancestry: an index that
  * has not answered leaves labels degraded, never the list of targets shortened, so a caller is
- * never told they have nowhere to attach because a second service was slow.
+ * never told they have nowhere to attach because a second service was slow. The organisations come
+ * from the visible list rather than the caller's own index, so a project in a personal unit is
+ * named by its default organisation instead of being offered as "Unknown organisation".
  */
 export const useDatasetAttachmentTargets = (): {
   capability: Exclude<DatasetCapability, { status: "hidden" }>;
@@ -32,17 +34,17 @@ export const useDatasetAttachmentTargets = (): {
     isPending: projectsPending,
   } = useGetProjects();
   const { data: unitsData } = useGetUnits();
-  const { data: organisationsData } = useGetOrganisations();
+  const organisations = useVisibleOrganisations();
 
   const targets = useMemo(
     () =>
       eligibleAttachmentTargets({
         caller: { username: user.username },
-        organisations: organisationsData?.organisations ?? [],
+        organisations,
         projects: projectsData?.projects ?? [],
         unitGroups: unitsData?.units ?? [],
       }),
-    [organisationsData, projectsData, unitsData, user.username],
+    [organisations, projectsData, unitsData, user.username],
   );
 
   // A project read that failed is a different fact from one still arriving: it will not answer on

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { useGetOrganisations } from "@/api/account-server/organisation";
 import { useGetUnits } from "@/api/account-server/unit";
 import { useGetProjects } from "@/api/data-manager/project";
 
@@ -11,11 +10,12 @@ import { authClient } from "../../lib/auth-client";
 import { ProjectIdentity } from "../../projects/ProjectIdentity";
 import { readRecentProjectIds } from "../../projects/recentProjects";
 import { projectLinks } from "../../projects/routes";
+import { useVisibleOrganisations } from "../../state/organisationSelection";
 
 export const AuthenticatedHomeRecents = () => {
   const { data: session } = authClient.useSession();
   const { data } = useGetProjects(undefined, { query: { enabled: !!session } });
-  const { data: organisations } = useGetOrganisations(undefined, { query: { enabled: !!session } });
+  const organisations = useVisibleOrganisations({ enabled: !!session });
   const { data: units } = useGetUnits(undefined, { query: { enabled: !!session } });
   const [recentIds, setRecentIds] = useState<string[]>([]);
 
@@ -24,8 +24,10 @@ export const AuthenticatedHomeRecents = () => {
   const projects = recentIds
     .map((id) => data?.projects.find((project) => project.project_id === id))
     .filter((project) => project !== undefined);
+  // The default organisation is in this list too, so a project in the caller's personal unit is
+  // named rather than falling back to the raw identifier it declares.
   const organisationNames = new Map(
-    organisations?.organisations.map((organisation) => [organisation.id, organisation.name]),
+    organisations.map((organisation) => [organisation.id, organisation.name]),
   );
   const unitNames = new Map(
     units?.units.flatMap((group) => group.units.map((unit) => [unit.id, unit.name] as const)),

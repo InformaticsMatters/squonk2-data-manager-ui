@@ -1,6 +1,8 @@
 import { type UnitsGetResponse } from "@/api/account-server";
 import { type ProjectDetail } from "@/api/data-manager";
 
+import { callerEditsProject } from "./capabilities";
+
 export type ProjectIndexItem = {
   organisationName: string;
   project: ProjectDetail;
@@ -38,4 +40,71 @@ export const buildProjectIndexItems = (
         left.project.name.localeCompare(right.project.name) ||
         left.unitName.localeCompare(right.unitName),
     );
+};
+
+/**
+ * Whether the caller is offered a way into a project of their own, and what that offer may do.
+ *
+ * `personalUnitStepApplies` is false for a caller who already has a personal unit, so nothing
+ * offers them a second one. `dismissible` is false for a caller with no project they can write to,
+ * because the offer is then the only route into work of their own and dismissing it would leave
+ * them exactly where onboarding exists to rescue them from.
+ */
+export type ProjectOnboardingDecision = {
+  dismissible: boolean;
+  offered: boolean;
+  personalUnitStepApplies: boolean;
+};
+
+/**
+ * Whether opening Projects offers onboarding, from the project collection, the caller's username
+ * and the caller's personal unit identity — all of which the index already reads.
+ *
+ * The two arms are a deliberate disjunction. The first reaches everyone without a sandbox of their
+ * own, including a collaborator already productive in someone else's unit; the second reaches
+ * anyone with no writable project anywhere, which is what makes their offer permanent rather than
+ * dismissible. A project the caller merely created, or one a platform administrator holds no role
+ * in, is not one they can write to: `callerEditsProject` is the single definition of that.
+ */
+export const decideProjectOnboarding = (
+  projects: readonly ProjectDetail[],
+  username: string | undefined,
+  personalUnitId: string | undefined,
+): ProjectOnboardingDecision => {
+  // No personal unit means no project in one, so the absent unit needs no separate arm.
+  const ownsPersonalProject =
+    personalUnitId !== undefined && projects.some(({ unit_id }) => unit_id === personalUnitId);
+  const editsSomeProject = projects.some((project) => callerEditsProject(project, username));
+  const offered = !ownsPersonalProject || !editsSomeProject;
+  return {
+    dismissible: offered && editsSomeProject,
+    offered,
+    personalUnitStepApplies: personalUnitId === undefined,
+  };
+};
+
+/**
+ * That the caller has put the onboarding offer away. Account-scoped and durable, so it lives in
+ * `localStorage` and is taken by the logout cleanup — unlike the project-creation recovery record,
+ * which describes one in-flight attempt and lives in `sessionStorage`.
+ */
+export const PROJECT_ONBOARDING_DISMISSAL_KEY = "data-manager-ui-project-onboarding-dismissed";
+
+const dismissedValue = "1";
+
+export const projectOnboardingIsDismissed = (storage: Pick<Storage, "getItem">) => {
+  try {
+    return storage.getItem(PROJECT_ONBOARDING_DISMISSAL_KEY) === dismissedValue;
+  } catch {
+    return false;
+  }
+};
+
+export const dismissProjectOnboarding = (storage: Pick<Storage, "setItem">) => {
+  try {
+    storage.setItem(PROJECT_ONBOARDING_DISMISSAL_KEY, dismissedValue);
+  } catch {
+    // A browser that refuses to remember the dismissal still lets the caller put the panel away for
+    // this visit; nothing else depends on the write having happened.
+  }
 };

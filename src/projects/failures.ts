@@ -113,3 +113,30 @@ export const projectDeletionFailureReason = (
       );
   }
 };
+
+/**
+ * How a failed personal-unit creation reads. There is exactly one personal unit and it is the
+ * caller's own, so a duplicate attempt is never presented here: the caller of this command settles
+ * that by reading `GET /personal-unit` back, and only a unit that still does not exist reaches
+ * these words.
+ */
+export const personalUnitCreationFailureReason = (error: unknown) => {
+  switch (classifyTransportFailure(error).kind) {
+    case "forbidden":
+      return "The server did not allow a personal unit to be created for you. Review your access and retry.";
+    case "network":
+      return "The personal-unit request could not reach the Account Server. Check your connection and retry.";
+    case "rate-limited":
+      return "The Account Server is busy. Wait briefly and retry.";
+    case "server":
+      return "The Account Server is unavailable. Retry when it has recovered.";
+    case "timeout":
+      return "The personal-unit request timed out. Retry is safe: only one personal unit can exist.";
+    case "not-found":
+    case "unknown":
+      return (
+        upstreamFailureReason(error) ??
+        "Your personal unit could not be created. Retry is available."
+      );
+  }
+};

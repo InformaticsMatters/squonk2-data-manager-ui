@@ -13,7 +13,6 @@ import {
   getGetPersonalUnitQueryKey,
   getGetUnitsQueryKey,
   useCreateOrganisationUnit,
-  useCreatePersonalUnit,
   useDeleteOrganisationUnit,
   useDeletePersonalUnit,
   usePatchUnit,
@@ -28,6 +27,7 @@ import { getGetProjectsQueryKey } from "@/api/data-manager/project";
 
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 
+import { useCreatePersonalUnitCommand } from "../hooks/usePersonalUnitCommands";
 import { getBillingDay } from "../utils/app/products";
 
 /**
@@ -51,7 +51,10 @@ export const useAccessCommands = () => {
   const queryClient = useQueryClient();
   const createOrganisation = useCreateOrganisation();
   const createUnit = useCreateOrganisationUnit();
-  const createPersonalUnit = useCreatePersonalUnit();
+  // The personal unit is the caller's own resource rather than Administration's, and Projects
+  // onboarding sends the same command, so it is owned above the families. Its own refresh covers the
+  // unit and project indexes; `run` then refreshes the rest of the access index this screen shows.
+  const createPersonalUnit = useCreatePersonalUnitCommand();
   const patchOrganisation = usePatchOrganisation();
   const patchUnit = usePatchUnit();
   const deleteUnit = useDeleteOrganisationUnit();
@@ -74,8 +77,7 @@ export const useAccessCommands = () => {
       run(addUnitUser.mutateAsync({ unitId, userId })),
     createOrganisation: (data: OrganisationPostBodyBody) =>
       run(createOrganisation.mutateAsync({ data })),
-    createPersonalUnit: () =>
-      run(createPersonalUnit.mutateAsync({ data: { billing_day: getBillingDay() } })),
+    createPersonalUnit: () => run(createPersonalUnit()),
     createUnit: (orgId: string, name: string) =>
       run(createUnit.mutateAsync({ orgId, data: { name, billing_day: getBillingDay() } })),
     /** Personal units are deleted through their own generated resource, never `/unit/{unitId}`. */

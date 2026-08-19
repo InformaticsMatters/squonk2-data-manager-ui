@@ -1087,8 +1087,6 @@ test("a caller with nothing is onboarded into a project of their own and finds i
   await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=onboarding`);
   await login(page, "projects", testInfo);
 
-  // With no project anywhere the offer is the index itself, rather than sitting above an empty list
-  // that would tell the caller the same thing a second time.
   await expect(onboardingPanel(page)).toBeVisible();
   await expect(
     page.getByText("No projects are available in the current organisation."),
@@ -1121,6 +1119,19 @@ test("a caller with nothing is onboarded into a project of their own and finds i
   await expect(onboardingPanel(page)).toHaveCount(0);
 });
 
+test("a caller who already has a personal unit is never offered a second one", async ({
+  page,
+}, testInfo) => {
+  await login(page, "projects", testInfo);
+
+  // The offer stands — this caller has no project of their own yet — but its first step does not.
+  // The panel is only shown once the personal-unit read has settled, so a caller who has one never
+  // sees the step offered against a read that had not answered.
+  await expect(onboardingPanel(page)).toBeVisible();
+  await expect(page.getByText("Create your personal unit")).toHaveCount(0);
+  await expect(page.getByText("Create your first project")).toBeVisible();
+});
+
 test("an editor in someone else's unit is offered a unit of their own and may put it away", async ({
   page,
   request,
@@ -1132,6 +1143,17 @@ test("an editor in someone else's unit is offered a unit of their own and may pu
   // The list is what this caller came for, so the offer sits above it rather than replacing it.
   await expect(onboardingPanel(page)).toBeVisible();
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+
+  // The panel reads the personal unit through the index rather than subscribing to it again. A
+  // second subscription refetches on mount, which unsettles the very read the panel's visibility
+  // depends on, and the offer then fetches the caller's personal unit for as long as it is on
+  // screen. Counting the reads is the only thing that notices.
+  await page.waitForTimeout(1000);
+  const personalUnitReads = await request
+    .get(`${acceptanceUrls.control}/scenario/${subject}`)
+    .then((response) => response.json() as Promise<{ requests: { path: string }[] }>)
+    .then(({ requests }) => requests.filter(({ path }) => path === "/personal-unit").length);
+  expect(personalUnitReads).toBeLessThan(5);
 
   await page.getByRole("button", { name: "Not now" }).click();
   await expect(onboardingPanel(page)).toHaveCount(0);

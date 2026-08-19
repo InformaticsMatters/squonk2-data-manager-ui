@@ -8,9 +8,9 @@ import {
 } from "../../src/application/applicationIdentity";
 import { clearAccountScopedStorageOnLogout } from "../../src/application/logoutCleanup";
 import { DATASET_UPLOAD_BILLING_UNIT_STORAGE_KEY } from "../../src/datasets/uploadBilling";
+import { PROJECT_ONBOARDING_DISMISSAL_KEY } from "../../src/projects/onboardingDismissal";
 import { PROJECT_CREATION_RECOVERY_KEY } from "../../src/projects/projectCreation";
 import { PROJECT_DELETION_RECOVERY_KEY } from "../../src/projects/projectDeletion";
-import { PROJECT_ONBOARDING_DISMISSAL_KEY } from "../../src/projects/projectIndex";
 import {
   parseRecentProjectIds,
   readRecentProjectIds,

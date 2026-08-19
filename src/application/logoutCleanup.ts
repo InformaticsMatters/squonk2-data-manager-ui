@@ -1,7 +1,7 @@
 import { forgetRememberedBillingUnit } from "../datasets/uploadBilling";
+import { PROJECT_ONBOARDING_DISMISSAL_KEY } from "../projects/onboardingDismissal";
 import { PROJECT_CREATION_RECOVERY_KEY } from "../projects/projectCreation";
 import { PROJECT_DELETION_RECOVERY_KEY } from "../projects/projectDeletion";
-import { PROJECT_ONBOARDING_DISMISSAL_KEY } from "../projects/projectIndex";
 import { RECENT_PROJECTS_STORAGE_KEY } from "../projects/recentProjects";
 import {
   APPLICATION_ORGANISATION_STORAGE_KEY,

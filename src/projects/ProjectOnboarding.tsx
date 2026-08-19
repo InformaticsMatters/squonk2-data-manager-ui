@@ -1,5 +1,7 @@
 import { useRef } from "react";
 
+import { type UnitAllDetail } from "@/api/account-server";
+
 import {
   ArrowForwardRounded,
   BusinessRounded,
@@ -21,9 +23,9 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 
+import { PersonalUnitCreation } from "./PersonalUnitCreation";
 import { type ProjectOnboardingDecision } from "./projectIndex";
 import { projectLinks } from "./routes";
-import { usePersonalUnitCreation } from "./usePersonalUnitCreation";
 
 /**
  * Where the thing about to be created sits. The hierarchy is the one fact a caller needs before
@@ -79,12 +81,19 @@ const ConceptsLink = ({ children }: { children: string }) => (
 export const ProjectOnboarding = ({
   decision,
   onDismiss,
+  personalUnit,
 }: {
   decision: ProjectOnboardingDecision;
   /** Absent when the caller has no project they can write to, because the offer is then the only way in. */
   onDismiss?: () => void;
+  /**
+   * The caller's personal unit, read once by the index that decides whether to show this panel.
+   * It is passed rather than read again here on purpose: the index only shows the panel once that
+   * read has settled, so a second subscription would refetch on mount, unsettle the read, and take
+   * the panel away from under itself.
+   */
+  personalUnit: UnitAllDetail | undefined;
 }) => {
-  const { createPersonalUnit, personalUnit, state } = usePersonalUnitCreation();
   /**
    * Whether this caller was offered the first step when they arrived. It is taken once and then
    * kept, so a step that has just succeeded reports that success rather than vanishing from under
@@ -94,7 +103,6 @@ export const ProjectOnboarding = ({
   const unitStepApplies = useRef(decision.personalUnitStepApplies).current;
   // Whether the step is done is settled by the unit itself, never by what this attempt did.
   const unitStepIsDone = !unitStepApplies || personalUnit !== undefined;
-  const creating = state.kind === "creating";
 
   return (
     <Paper sx={{ p: 3 }} variant="outlined">
@@ -120,25 +128,13 @@ export const ProjectOnboarding = ({
                 A unit is the billing container that owns projects and pays for what they use. Yours
                 is your own, sits in the default organisation, and nobody else works in it.
               </Typography>
-              {state.kind === "failed" ? (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                  {state.reason}
-                </Alert>
-              ) : null}
-              {personalUnit ? (
-                <Alert severity="success" sx={{ mt: 2 }}>
-                  You have a personal unit: {personalUnit.name}.
-                </Alert>
-              ) : (
-                <Button
-                  disabled={creating}
-                  sx={{ mt: 2 }}
-                  variant="contained"
-                  onClick={() => void createPersonalUnit()}
-                >
-                  {creating ? "Creating..." : "Create personal unit"}
-                </Button>
-              )}
+              <Box sx={{ mt: 2 }}>
+                {personalUnit ? (
+                  <Alert severity="success">You have a personal unit: {personalUnit.name}.</Alert>
+                ) : (
+                  <PersonalUnitCreation />
+                )}
+              </Box>
             </StepContent>
           </Step>
         ) : null}

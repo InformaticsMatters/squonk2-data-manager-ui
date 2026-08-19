@@ -6,15 +6,14 @@ import { getGetProjectQueryKey, getGetProjectsQueryKey } from "@/api/data-manage
 import { expect, test } from "@playwright/test";
 import { QueryClient } from "@tanstack/react-query";
 
-import { requireLinkedProject, resolveProjectAncestry } from "../../src/projects/projectAncestry";
-import { removeUnavailableProject } from "../../src/projects/projectCache";
 import {
-  buildProjectIndexItems,
-  decideProjectOnboarding,
   dismissProjectOnboarding,
   PROJECT_ONBOARDING_DISMISSAL_KEY,
   projectOnboardingIsDismissed,
-} from "../../src/projects/projectIndex";
+} from "../../src/projects/onboardingDismissal";
+import { requireLinkedProject, resolveProjectAncestry } from "../../src/projects/projectAncestry";
+import { removeUnavailableProject } from "../../src/projects/projectCache";
+import { buildProjectIndexItems, decideProjectOnboarding } from "../../src/projects/projectIndex";
 import {
   readRecentProjectIds,
   recordRecentProject,
@@ -234,17 +233,6 @@ test.describe("project onboarding offer", () => {
       step: true,
       username: undefined,
     },
-    {
-      // The decision reads memberships alone, so platform privilege is not an input to it: an
-      // administrator of the application who holds no role in a project answers exactly as anyone
-      // else holding no role in it does.
-      dismissible: false,
-      name: "a platform administrator with no project role answers as any other caller",
-      offered: true,
-      personalUnit: personalUnitId,
-      projects: [other({ unit_id: personalUnitId })],
-      step: false,
-    },
   ];
 
   for (const testCase of cases) {
@@ -257,6 +245,26 @@ test.describe("project onboarding offer", () => {
       });
     });
   }
+
+  test("a platform administrator is answered by their project roles like any other caller", () => {
+    // The decision takes no platform-privilege input at all, which is the guarantee: an
+    // administrator of the application holds authority over it, never a role in a project. So the
+    // answer for a privileged caller who is not a member is the same answer any other non-member
+    // gets over the very same projects, rather than a shorter route into one they do not belong to.
+    const projects = [
+      other({ administrators: ["someone-else"], editors: ["someone-else"] }),
+      other({ unit_id: personalUnitId }),
+    ];
+
+    expect(decideProjectOnboarding(projects, "platform-administrator", personalUnitId)).toEqual(
+      decideProjectOnboarding(projects, "ordinary-outsider", personalUnitId),
+    );
+    expect(decideProjectOnboarding(projects, "platform-administrator", personalUnitId)).toEqual({
+      dismissible: false,
+      offered: true,
+      personalUnitStepApplies: false,
+    });
+  });
 });
 
 test("the onboarding dismissal is remembered under its own account-scoped key", () => {

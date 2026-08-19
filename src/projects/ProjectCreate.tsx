@@ -25,9 +25,11 @@ import { useRouter } from "next/router";
 
 import { administrationLinks } from "../administration/routes";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
+import { useGetPersonalUnit } from "../hooks/useGetPersonalUnit";
 import { useIsEvaluator } from "../hooks/useIsAuthorized";
 import { isProductId } from "../routing/identifiers";
 import { projectCreationFailureReason } from "./failures";
+import { PersonalUnitCreation } from "./PersonalUnitCreation";
 import {
   eligibleProjectCreationFlavours,
   eligibleProjectCreationUnits,
@@ -47,7 +49,6 @@ import {
   validateProjectSubscriptionHandoff,
 } from "./projectCreation";
 import { projectLinks } from "./routes";
-import { usePersonalUnitCreation } from "./usePersonalUnitCreation";
 import { useProjectCreationCommands } from "./useProjectCreationCommands";
 
 const privateByDefault: Record<UnitAllDetailDefaultProductPrivacy, boolean> = {
@@ -89,9 +90,7 @@ export const ProjectCreate = () => {
   }
   const { data: unitGroups } = useGetUnitsSuspense();
   const isEvaluator = useIsEvaluator();
-  // The safety net for a caller who arrived here by URL rather than through onboarding: the same
-  // command the onboarding panel sends, so there is one implementation of creating a personal unit.
-  const { createPersonalUnit, personalUnit, state: personalUnitState } = usePersonalUnitCreation();
+  const { data: personalUnit } = useGetPersonalUnit();
   const eligibleUnits = eligibleProjectCreationUnits(unitGroups.units, {
     evaluatorPersonalUnitId: personalUnit?.id,
     isEvaluator,
@@ -618,23 +617,13 @@ export const ProjectCreate = () => {
             came straight to this URL rather than through the onboarding panel. A caller who already
             has a personal unit is never offered a second one; they belong to no unit at all. */}
         {eligibleUnits.length === 0 && !personalUnit ? (
-          <Alert
-            action={
-              <Button
-                disabled={personalUnitState.kind === "creating"}
-                onClick={() => void createPersonalUnit()}
-              >
-                {personalUnitState.kind === "creating" ? "Creating..." : "Create personal unit"}
-              </Button>
-            }
-            severity="info"
-          >
-            A personal unit is your own billing container in the default organisation, and it can
-            own this project.
-          </Alert>
-        ) : null}
-        {personalUnitState.kind === "failed" ? (
-          <Alert severity="error">{personalUnitState.reason}</Alert>
+          <>
+            <Alert severity="info">
+              A personal unit is your own billing container in the default organisation, and it can
+              own this project.
+            </Alert>
+            <PersonalUnitCreation />
+          </>
         ) : null}
         <TextField
           disabled={pending}

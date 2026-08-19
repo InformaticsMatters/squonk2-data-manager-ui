@@ -18,6 +18,11 @@ messages, use the term defined here rather than a synonym.
   retained in technical details and route contracts; everywhere else, say subscription.
 - **Dataset** and **version** — a dataset is caller-accessible globally; a version is the thing
   actually displayed, and a dataset-only URL canonicalises to its resolved current version.
+- **Onboarding** — the offer the Projects index makes to a caller with no project of their own and
+  nowhere else they can work: it explains the hierarchy, creates their **personal unit**, and hands
+  off to project creation. It is an offer on the index, never a destination of its own. A caller who
+  has a project they can write to may **dismiss** it; a caller who has none may not, because it is
+  their only way in.
 - **Instance**, **task**, **running workflow** — the three kinds of result a project owns. Together
   they are **Results**; individually, never call one of them a "job run".
 

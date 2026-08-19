@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect } from "react";
+import { type ReactNode, useEffect, useMemo } from "react";
 
 import { useGetProductSuspense } from "@/api/account-server/product";
 import { useGetProjectSuspense } from "@/api/data-manager/project";
@@ -33,7 +33,12 @@ const LinkedProductBoundary = ({
   if (productQuery.error) {
     throw productQuery.error;
   }
-  const workspace = { project, ...resolveProjectAncestry(project, productQuery.data) };
+  // One object per answer rather than per render: it is the value of the route project context and
+  // of what the chrome reads, and rebuilding it every render would churn both for no new facts.
+  const workspace = useMemo(
+    () => ({ project, ...resolveProjectAncestry(project, productQuery.data) }),
+    [project, productQuery.data],
+  );
   const [, setOrganisation, organisationId] = useSelectedOrganisation();
 
   useEffect(() => {

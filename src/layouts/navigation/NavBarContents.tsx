@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { Box, Stack, Toolbar } from "@mui/material";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -67,10 +69,32 @@ const AuthenticatedNavigation = () => (
   </>
 );
 
+/**
+ * Whether the caller is signed in, holding its answer while the session is being re-read.
+ *
+ * The session store reports no session while it is checking, and it checks again whenever a new
+ * reader subscribes — which a change of page policy does. The masthead is mounted once above all of
+ * that, so without this it would flip to the signed-out shell and back mid-navigation: the flicker
+ * this application no longer has anywhere else. Nothing is claimed before the first answer arrives,
+ * so a caller who is not signed in still sees the public shell from the start.
+ */
+const useIsAuthenticated = () => {
+  const { data: session, isPending } = authClient.useSession();
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (!isPending) {
+      setAuthenticated(!!session);
+    }
+  }, [isPending, session]);
+
+  return authenticated;
+};
+
 export const NavBarContents = () => {
-  const { data: session } = authClient.useSession();
+  const authenticated = useIsAuthenticated();
   const router = useRouter();
-  const usePublicShell = !session || router.pathname.startsWith("/docs/");
+  const usePublicShell = !authenticated || router.pathname.startsWith("/docs/");
   return usePublicShell ? (
     <PublicNavigation />
   ) : (

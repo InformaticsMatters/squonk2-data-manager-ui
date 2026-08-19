@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useContext, useEffect } from "react";
+import { createContext, type ReactNode, useContext, useMemo } from "react";
 
 import {
   type OrganisationAllDetail,
@@ -8,10 +8,8 @@ import {
 } from "@/api/account-server";
 import { type ProjectDetail } from "@/api/data-manager";
 
-import { useSetAtom } from "jotai";
-
 import { useOptionalFamilyRoute } from "../application/FamilyRouteResolution";
-import { clearRouteProjectResolution, routeProjectResolutionAtom } from "./routeProjectResolution";
+import { usePublishRouteProjectResolution } from "./routeProjectResolution";
 import { localNotFoundProjectId } from "./routes";
 
 export type ProjectWorkspace = {
@@ -30,14 +28,13 @@ export const RouteProjectProvider = ({
   children: ReactNode;
   workspace: ProjectWorkspace;
 }) => {
-  const projectId = workspace.project.project_id;
-  const setResolution = useSetAtom(routeProjectResolutionAtom);
-
   // The same workspace, published for the chrome above this provider. See routeProjectResolution.
-  useEffect(() => {
-    setResolution({ projectId, status: "resolved", workspace });
-    return () => setResolution(clearRouteProjectResolution(projectId));
-  }, [projectId, setResolution, workspace]);
+  usePublishRouteProjectResolution(
+    useMemo(
+      () => ({ projectId: workspace.project.project_id, status: "resolved" as const, workspace }),
+      [workspace],
+    ),
+  );
 
   return <RouteProjectContext value={workspace}>{children}</RouteProjectContext>;
 };

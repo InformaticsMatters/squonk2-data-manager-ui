@@ -45,7 +45,9 @@ error boundary, family Suspense, family shell, content.
   the family branch, and renders not-found, canonicalisation failure and pending. One provider owns
   the canonicalisation replace-navigation, so exactly one component ever tries to canonicalise a
   URL. The gate stays above authentication: a malformed URL is refused as malformed whether or not
-  the caller is signed in.
+  the caller is signed in. The resolver is universal _unconditionally_ — a public page mounts the
+  same component, resolving to no family — because the chrome hangs beneath it and any change of
+  element type there rebuilds the chrome when a caller crosses between policy branches.
 - **A chrome error boundary is the outermost layer.** Once the layout is above every other boundary,
   a throw from the masthead, footer or sidebar escapes them all, and the family failure fallback now
   renders inside the chrome. Its fallback renders a plain error page and no chrome: the outermost
@@ -57,6 +59,10 @@ error boundary, family Suspense, family shell, content.
 
 - Not-found and server-failure states appear inside the chrome rather than in place of it. A caller
   who mistyped an address has somewhere to go from it.
+- The masthead holds its answer about who the caller is while the session is being re-read. The
+  session store reports no session while it is checking and checks again whenever a new reader
+  subscribes, which a change of page policy does; a chrome that is never rebuilt would otherwise
+  make that visible as a flip to the signed-out masthead and back.
 - The project read no longer refetches on every section change. This is the point of keying on the
   family, but it is a real change in request volume and timing.
 - The chrome renders above the boundary that resolves the URL project, so it cannot receive that

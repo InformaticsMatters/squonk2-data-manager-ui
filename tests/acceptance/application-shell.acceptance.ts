@@ -59,6 +59,18 @@ const observeProjectIdentityMismatch = async (page: Page, storageKey: string) =>
  * takes its place.
  */
 const watchChrome = async (page: Page, storageKey: string, includeProjectNavigation = false) => {
+  // Watch a settled chrome, or the first sample records a node that had not arrived yet rather than
+  // one that left. Everything here is authenticated, so the authenticated masthead is the settled
+  // one; the sidebar is rendered hidden and arrives at its own priority.
+  const workspaces = page.getByRole("navigation", { name: "Main" }).first();
+  await expect(workspaces).toContainText("Administration");
+  await expect(page.locator("header")).toBeAttached();
+  await expect(page.locator("footer")).toBeAttached();
+  await expect(page.locator("aside")).toBeAttached();
+  if (includeProjectNavigation) {
+    await expect(page.getByRole("navigation", { name: "Project" })).toBeAttached();
+  }
+
   await page.evaluate(
     ([key, withProject]) => {
       const nodes: Record<string, Element | null> = {
@@ -70,6 +82,12 @@ const watchChrome = async (page: Page, storageKey: string, includeProjectNavigat
           ? { sectionNavigation: document.querySelector('nav[aria-label="Project"]') }
           : {}),
       };
+      const absent = Object.entries(nodes)
+        .filter(([, node]) => !node)
+        .map(([name]) => name);
+      if (absent.length > 0) {
+        throw new Error(`Chrome not present to watch: ${absent.join(", ")}`);
+      }
       const record = () => {
         const detached = Object.entries(nodes)
           .filter(([, node]) => !node?.isConnected)
@@ -159,15 +177,22 @@ test("internal configuration remains undiscoverable for authenticated users", as
 test("organisation change reaches Home before persisting the new identity", async ({
   page,
 }, testInfo) => {
+  // The masthead is not rebuilt by the navigation any more, so the organisation menu closes by its
+  // own transition. Identity is read from the masthead control rather than from the page at large,
+  // which is what the assertion was always about.
+  const mastheadIdentity = page.getByRole("button", { name: "Change organisation" });
   await login(page, `projects/${fixtureIds.project}/files`, testInfo);
-  await expect(page.getByText("Acceptance Organisation", { exact: true })).toBeVisible();
+  await expect(mastheadIdentity).toContainText("Acceptance Organisation");
+  // The masthead now renders before the project does, so the project has to be waited for: leaving
+  // before it resolves leaves before it is recorded as recently visited.
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: "Change organisation" }).click();
   await observeProjectIdentityMismatch(page, "organisation-project-mismatch");
   await page.getByRole("menuitem", { name: /Partner Organisation/u }).click();
 
   await expect(page).toHaveURL(homeUrl);
-  await expect(page.getByText("Partner Organisation", { exact: true })).toBeVisible();
+  await expect(mastheadIdentity).toContainText("Partner Organisation");
   await expect(page.getByRole("heading", { name: "Files" })).not.toBeVisible();
   await expect
     .poll(() => page.evaluate(() => sessionStorage.getItem("organisation-project-mismatch")))
@@ -179,12 +204,12 @@ test("organisation change reaches Home before persisting the new identity", asyn
     .toContain(fixtureIds.otherOrganisation);
 
   await page.reload();
-  await expect(page.getByText("Partner Organisation", { exact: true })).toBeVisible();
+  await expect(mastheadIdentity).toContainText("Partner Organisation");
 
   await observeProjectIdentityMismatch(page, "organisation-project-adoption-mismatch");
   await page.getByRole("link", { name: "Open files" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}projects/${fixtureIds.project}/files`);
-  await expect(page.getByText("Acceptance Organisation", { exact: true })).toBeVisible();
+  await expect(mastheadIdentity).toContainText("Acceptance Organisation");
   await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
   await expect
     .poll(() =>
@@ -227,6 +252,29 @@ test("the chrome is never removed by a workspace change", async ({ page }, testI
   expect(await chromeRemovals(page, "workspace-change-chrome")).toBe("[]");
   // The sidebar the caller opened is still open, with what it was showing, three workspaces later.
   await expect(page.getByRole("heading", { name: "Event Stream" })).toBeVisible();
+  await expect(page.getByText("Event stream (not available)")).toBeVisible();
+});
+
+test("the chrome survives crossing between a public page and a workspace", async ({
+  page,
+}, testInfo) => {
+  await login(page, "projects", testInfo);
+  await page.getByRole("link", { name: "Squonk Home" }).click();
+  await expect(page).toHaveURL(homeUrl);
+
+  await watchChrome(page, "policy-change-chrome");
+
+  // Home is a public page and Project is a family one. They are different compositions, and the
+  // caller is entitled to notice nothing at all when crossing between them.
+  const workspaces = page.getByRole("navigation", { name: "Main" });
+  await workspaces.getByRole("link", { name: "Project" }).click();
+  await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
+
+  await page.getByRole("link", { name: "Squonk Home" }).click();
+  await expect(page).toHaveURL(homeUrl);
+  await expect(workspaces).toBeVisible();
+
+  expect(await chromeRemovals(page, "policy-change-chrome")).toBe("[]");
 });
 
 test("a section change changes only the content region", async ({ page }, testInfo) => {

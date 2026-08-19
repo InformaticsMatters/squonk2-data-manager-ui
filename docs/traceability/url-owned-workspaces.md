@@ -664,9 +664,11 @@ removal is prevented from returning unnoticed.
   page content.
 - `src/api/runtime/classifyTransportFailure.ts` classifies transport facts only. Route families retain
   ownership of non-disclosing parent failures, local child failures, stale-data behavior, and rendering.
-- `FamilyRouteBoundary` withholds named-family descendants until the router is ready and the family
-  parser accepts a canonical relative href. Unknown query keys never appear in parsed route models and
-  therefore cannot become generated query arguments. A parse failure that names a parent the rendering
-  section itself owns is that section's own child failure: the boundary keeps the section mounted and
-  passes the named parent through, so a missing child never removes the parent along with it. The
-  Projects family re-validates that parent through `localNotFoundProjectId` rather than trusting it.
+- `FamilyRouteResolver` resolves the URL against the page's own family, above the chrome, and
+  `FamilyRouteGate` withholds named-family descendants beneath the chrome until the router is ready
+  and the family parser accepts a canonical relative href. Unknown query keys never appear in parsed
+  route models and therefore cannot become generated query arguments. A parse failure that names a
+  parent the rendering section itself owns is that section's own child failure: the gate keeps the
+  section mounted and the resolver passes the named parent through, so a missing child never removes
+  the parent along with it. The Projects family re-validates that parent through
+  `localNotFoundProjectId` rather than trusting it.

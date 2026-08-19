@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import { type ProductUnitGetResponse } from "@/api/account-server";
 import { getGetProductQueryKey } from "@/api/account-server/product";
@@ -7,12 +7,11 @@ import { getGetProjectQueryKey } from "@/api/data-manager/project";
 
 import { Alert, Button, Container } from "@mui/material";
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
-import { useSetAtom } from "jotai";
 
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
 import { requireLinkedProject, resolveProjectAncestry } from "./projectAncestry";
 import { removeUnavailableProject } from "./projectCache";
-import { clearRouteProjectResolution, routeProjectResolutionAtom } from "./routeProjectResolution";
+import { usePublishRouteProjectResolution } from "./routeProjectResolution";
 import { type ProjectWorkspace, RouteProjectProvider } from "./useRouteProject";
 
 const readCachedWorkspace = (
@@ -66,14 +65,12 @@ export const ProjectFailure = ({
   // placeholder that means the project is still on its way. A cached workspace is a resolution of
   // its own and is published by the provider below, so only a failure with nothing to show is
   // reported here.
-  const setResolution = useSetAtom(routeProjectResolutionAtom);
-  useEffect(() => {
-    if (workspace) {
-      return;
-    }
-    setResolution({ projectId, status: "failed" });
-    return () => setResolution(clearRouteProjectResolution(projectId));
-  }, [projectId, setResolution, workspace]);
+  usePublishRouteProjectResolution(
+    useMemo(
+      () => (workspace ? null : { projectId, status: "failed" as const }),
+      [projectId, workspace],
+    ),
+  );
 
   const content = (
     <Container maxWidth="lg" sx={{ py: 3 }}>

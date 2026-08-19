@@ -3,7 +3,6 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 
 import { DocsNav } from "../../../components/DocsNav";
-import Layout from "../../../layouts/Layout";
 import login from "../../../pages/docs/assets/login.png";
 import keycloak from "../../../pages/docs/assets/keycloak.png";
 
@@ -35,8 +34,4 @@ from this example):
 
 To log out use the same **Account** drop down in the top right corner and choosing the **Logout** option.
 
-export default ({ children }) => (
-  <Layout>
-    <Container>{children}</Container>
-  </Layout>
-);
+export default ({ children }) => <Container>{children}</Container>;

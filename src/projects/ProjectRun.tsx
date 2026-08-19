@@ -3,10 +3,9 @@ import NextError from "next/error";
 import { useRouter } from "next/router";
 
 import { type FamilyRoute } from "../application/familyRoute";
-import { useFamilyRoute } from "../application/FamilyRouteBoundary";
+import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { CenterLoader } from "../components/CenterLoader";
 import { DefinitionCard } from "../components/runCards/DefinitionCard";
-import Layout from "../layouts/Layout";
 import { capabilityReason, evaluateProjectExecutionCapability } from "./capabilities";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectRunDefinition } from "./ProjectRunDefinition";
@@ -174,53 +173,51 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
     );
 
   return (
-    <Layout>
-      <Container
-        maxWidth="xl"
-        sx={{ containerType: "inline-size", containerName: "run-page", py: 3 }}
-      >
-        <Typography gutterBottom component="h1" variant="h4">
-          Run
-        </Typography>
-        <SectionToolbar
-          filter={{ label: "Filter", options: filterOptions, size: { md: 4, sm: 6, xs: 12 } }}
-          refreshLabel="Refresh catalogue"
-          state={state}
-          onRefresh={() => run.refresh()}
-          onStateChange={handleStateChange}
-        />
+    <Container
+      maxWidth="xl"
+      sx={{ containerType: "inline-size", containerName: "run-page", py: 3 }}
+    >
+      <Typography gutterBottom component="h1" variant="h4">
+        Run
+      </Typography>
+      <SectionToolbar
+        filter={{ label: "Filter", options: filterOptions, size: { md: 4, sm: 6, xs: 12 } }}
+        refreshLabel="Refresh catalogue"
+        state={state}
+        onRefresh={() => run.refresh()}
+        onStateChange={handleStateChange}
+      />
 
-        <SectionReadAlerts
-          report={run.report}
-          retryableMessage="Some Run content could not be refreshed. It may be out of date, and definitions that could not be refreshed cannot be run until they load again."
-          unavailableMessage="Some Run content is unavailable or you no longer have access to it."
-          onRetry={() => run.retry()}
-        />
-        {/* However a definition failed to be addressed, it is reported in the one place, so a
-        malformed identity and one the project does not offer are indistinguishable. */}
-        {localNotFound === true || definitionAbsent ? <DefinitionNotFound /> : null}
+      <SectionReadAlerts
+        report={run.report}
+        retryableMessage="Some Run content could not be refreshed. It may be out of date, and definitions that could not be refreshed cannot be run until they load again."
+        unavailableMessage="Some Run content is unavailable or you no longer have access to it."
+        onRetry={() => run.retry()}
+      />
+      {/* However a definition failed to be addressed, it is reported in the one place, so a
+      malformed identity and one the project does not offer are indistinguishable. */}
+      {localNotFound === true || definitionAbsent ? <DefinitionNotFound /> : null}
 
-        {facts === undefined ? (
-          <CenterLoader />
-        ) : (
-          <>
-            <RunRequirement facts={facts} />
-            <RunCatalogue projectId={projectId} run={run} state={state} />
-            {addressed?.item ? (
-              <ProjectRunDefinition
-                content={run.freshness[addressed.item.kind]}
-                definitionId={addressed.definitionId}
-                facts={facts}
-                item={addressed.item}
-                projectId={projectId}
-                onClose={handleClose}
-                onLaunched={handleLaunched}
-              />
-            ) : null}
-          </>
-        )}
-      </Container>
-    </Layout>
+      {facts === undefined ? (
+        <CenterLoader />
+      ) : (
+        <>
+          <RunRequirement facts={facts} />
+          <RunCatalogue projectId={projectId} run={run} state={state} />
+          {addressed?.item ? (
+            <ProjectRunDefinition
+              content={run.freshness[addressed.item.kind]}
+              definitionId={addressed.definitionId}
+              facts={facts}
+              item={addressed.item}
+              projectId={projectId}
+              onClose={handleClose}
+              onLaunched={handleLaunched}
+            />
+          ) : null}
+        </>
+      )}
+    </Container>
   );
 };
 

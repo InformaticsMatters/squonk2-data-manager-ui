@@ -24,10 +24,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { administrationLinks } from "../administration/routes";
-import { useFamilyRoute } from "../application/FamilyRouteBoundary";
+import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { useGetPersonalUnit } from "../hooks/useGetPersonalUnit";
 import { useIsEvaluator } from "../hooks/useIsAuthorized";
-import Layout from "../layouts/Layout";
 import { isProductId } from "../routing/identifiers";
 import { projectCreationFailureReason } from "./failures";
 import {
@@ -498,175 +497,169 @@ export const ProjectCreate = () => {
       : undefined;
 
   return (
-    <Layout>
-      <Container maxWidth="sm" sx={{ py: 4 }}>
-        <Stack spacing={3}>
-          <div>
-            <Typography component="h1" variant="h3">
-              Create project
-            </Typography>
-            <Typography color="text.secondary">
-              Choose who owns the subscription before creating its linked project.
-            </Typography>
-          </div>
+    <Container maxWidth="sm" sx={{ py: 4 }}>
+      <Stack spacing={3}>
+        <div>
+          <Typography component="h1" variant="h3">
+            Create project
+          </Typography>
+          <Typography color="text.secondary">
+            Choose who owns the subscription before creating its linked project.
+          </Typography>
+        </div>
 
-          {invalidHandoff ? (
-            <Alert severity="error">
-              {invalidHandoff}{" "}
-              <MuiLink component={Link} href={administrationLinks.subscriptions() as never}>
-                Open Subscriptions
-              </MuiLink>
-            </Alert>
-          ) : null}
-          {pending ? <Alert severity="info">Project creation is in progress.</Alert> : null}
-          {failure ? <Alert severity="error">{failure}</Alert> : null}
-          {lifecycle.kind === "product-failed" && !lifecycle.retryable ? (
-            <Alert severity="warning">
-              The request may have reached the Account Server, so it will not be sent again
-              automatically. Check{" "}
-              <MuiLink component={Link} href={administrationLinks.subscriptions() as never}>
-                Subscriptions
-              </MuiLink>{" "}
-              before starting again.
-            </Alert>
-          ) : null}
-          {lifecycle.kind === "project-failed" ? (
-            <Alert severity="warning">
-              Subscription {lifecycle.productId} is ready and will be reused. Retrying cannot create
-              another subscription.
-            </Alert>
-          ) : null}
-          {lifecycle.kind === "cleanup-failed" ? (
-            <Alert severity="error">
-              {lifecycle.reason} <SubscriptionRecovery productId={lifecycle.productId} />
-            </Alert>
-          ) : null}
-          {lifecycle.kind === "released" ? (
-            <Alert severity="warning">
-              This subscription was not created here, so cancelling has not removed it.{" "}
-              <SubscriptionRecovery productId={lifecycle.productId} />
-            </Alert>
-          ) : null}
-          {lifecycle.kind === "completed" ? (
-            <Alert severity="success">
-              Project creation completed.{" "}
-              <MuiLink component={Link} href={projectLinks.files(lifecycle.projectId) as never}>
-                Open Files
-              </MuiLink>
-            </Alert>
-          ) : null}
+        {invalidHandoff ? (
+          <Alert severity="error">
+            {invalidHandoff}{" "}
+            <MuiLink component={Link} href={administrationLinks.subscriptions() as never}>
+              Open Subscriptions
+            </MuiLink>
+          </Alert>
+        ) : null}
+        {pending ? <Alert severity="info">Project creation is in progress.</Alert> : null}
+        {failure ? <Alert severity="error">{failure}</Alert> : null}
+        {lifecycle.kind === "product-failed" && !lifecycle.retryable ? (
+          <Alert severity="warning">
+            The request may have reached the Account Server, so it will not be sent again
+            automatically. Check{" "}
+            <MuiLink component={Link} href={administrationLinks.subscriptions() as never}>
+              Subscriptions
+            </MuiLink>{" "}
+            before starting again.
+          </Alert>
+        ) : null}
+        {lifecycle.kind === "project-failed" ? (
+          <Alert severity="warning">
+            Subscription {lifecycle.productId} is ready and will be reused. Retrying cannot create
+            another subscription.
+          </Alert>
+        ) : null}
+        {lifecycle.kind === "cleanup-failed" ? (
+          <Alert severity="error">
+            {lifecycle.reason} <SubscriptionRecovery productId={lifecycle.productId} />
+          </Alert>
+        ) : null}
+        {lifecycle.kind === "released" ? (
+          <Alert severity="warning">
+            This subscription was not created here, so cancelling has not removed it.{" "}
+            <SubscriptionRecovery productId={lifecycle.productId} />
+          </Alert>
+        ) : null}
+        {lifecycle.kind === "completed" ? (
+          <Alert severity="success">
+            Project creation completed.{" "}
+            <MuiLink component={Link} href={projectLinks.files(lifecycle.projectId) as never}>
+              Open Files
+            </MuiLink>
+          </Alert>
+        ) : null}
 
-          <TextField
-            select
-            disabled={pending || !!validHandoff}
-            helperText={
-              eligibleUnits.length === 0
-                ? "You must belong to a unit or its organisation before creating a project."
-                : "The selected unit owns the project subscription."
+        <TextField
+          select
+          disabled={pending || !!validHandoff}
+          helperText={
+            eligibleUnits.length === 0
+              ? "You must belong to a unit or its organisation before creating a project."
+              : "The selected unit owns the project subscription."
+          }
+          label="Containing unit"
+          value={unitId}
+          onChange={(event) => selectUnit(event.target.value)}
+        >
+          {eligibleUnits.map(({ organisationName, unit }) => (
+            <MenuItem key={unit.id} value={unit.id}>
+              {organisationName} / {unit.name}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          disabled={pending}
+          error={name.length > 0 && !projectCreationNameIsValid(name)}
+          helperText="2-80 letters, numbers, spaces, periods, underscores, or hyphens."
+          label="Project name"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+        />
+        <TextField
+          select
+          disabled={pending || !!validHandoff}
+          error={!!productTypesError}
+          helperText={
+            productTypesError ? "Project tiers could not be loaded. Reload to retry." : undefined
+          }
+          label="Tier"
+          value={flavour}
+          onChange={(event) => {
+            const next = event.target.value as UnitProductPostBodyBodyFlavour;
+            setFlavour(next);
+            if (next === ProductDetailFlavour.EVALUATION) {
+              setIsPrivate(false);
+            } else if (selectedUnit) {
+              setIsPrivate(privateByDefault[selectedUnit.default_product_privacy]);
             }
-            label="Containing unit"
-            value={unitId}
-            onChange={(event) => selectUnit(event.target.value)}
-          >
-            {eligibleUnits.map(({ organisationName, unit }) => (
-              <MenuItem key={unit.id} value={unit.id}>
-                {organisationName} / {unit.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            disabled={pending}
-            error={name.length > 0 && !projectCreationNameIsValid(name)}
-            helperText="2-80 letters, numbers, spaces, periods, underscores, or hyphens."
-            label="Project name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
-          <TextField
-            select
-            disabled={pending || !!validHandoff}
-            error={!!productTypesError}
-            helperText={
-              productTypesError ? "Project tiers could not be loaded. Reload to retry." : undefined
-            }
-            label="Tier"
-            value={flavour}
-            onChange={(event) => {
-              const next = event.target.value as UnitProductPostBodyBodyFlavour;
-              setFlavour(next);
-              if (next === ProductDetailFlavour.EVALUATION) {
-                setIsPrivate(false);
-              } else if (selectedUnit) {
-                setIsPrivate(privateByDefault[selectedUnit.default_product_privacy]);
+          }}
+        >
+          {flavours.map((tier) => (
+            <MenuItem
+              disabled={
+                !isEvaluator &&
+                tier === ProductDetailFlavour.EVALUATION &&
+                selectedUnit?.default_product_privacy === "ALWAYS_PRIVATE"
               }
-            }}
-          >
-            {flavours.map((tier) => (
-              <MenuItem
-                disabled={
-                  !isEvaluator &&
-                  tier === ProductDetailFlavour.EVALUATION &&
-                  selectedUnit?.default_product_privacy === "ALWAYS_PRIVATE"
-                }
-                key={tier}
-                value={tier}
-              >
-                {tierLabel(tier)}
-              </MenuItem>
-            ))}
-          </TextField>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isPrivate}
-                disabled={
-                  pending ||
-                  flavour === ProductDetailFlavour.EVALUATION ||
-                  selectedUnit?.default_product_privacy === "ALWAYS_PRIVATE" ||
-                  selectedUnit?.default_product_privacy === "ALWAYS_PUBLIC"
-                }
-                onChange={(_, checked) => setIsPrivate(checked)}
-              />
-            }
-            label="Private project"
-          />
-          <Stack direction="row" spacing={2}>
-            {(lifecycle.kind === "product-failed" && lifecycle.retryable) ||
-            lifecycle.kind === "project-failed" ? (
-              <Button disabled={pending} variant="contained" onClick={() => void retry()}>
-                Retry
-              </Button>
-            ) : lifecycle.kind === "collecting" ? (
-              <Button
-                disabled={
-                  pending ||
-                  !!invalidHandoff ||
-                  !flavour ||
-                  !projectCreationNameIsValid(name) ||
-                  !unitId
-                }
-                variant="contained"
-                onClick={() => void submit()}
-              >
-                {pending
-                  ? "Creating..."
-                  : validHandoff
-                    ? "Create linked project"
-                    : "Create project"}
-              </Button>
-            ) : null}
-            {/* An attempt that has ended still names a subscription that outlived it, so leaving is
-                a deliberate step away from that answer rather than another cancellation. */}
-            {lifecycle.kind === "released" || lifecycle.kind === "cleanup-failed" ? (
-              <Button onClick={leaveForProjects}>Back to Projects</Button>
-            ) : (
-              <Button disabled={pending} onClick={cancel}>
-                Cancel
-              </Button>
-            )}
-          </Stack>
+              key={tier}
+              value={tier}
+            >
+              {tierLabel(tier)}
+            </MenuItem>
+          ))}
+        </TextField>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={isPrivate}
+              disabled={
+                pending ||
+                flavour === ProductDetailFlavour.EVALUATION ||
+                selectedUnit?.default_product_privacy === "ALWAYS_PRIVATE" ||
+                selectedUnit?.default_product_privacy === "ALWAYS_PUBLIC"
+              }
+              onChange={(_, checked) => setIsPrivate(checked)}
+            />
+          }
+          label="Private project"
+        />
+        <Stack direction="row" spacing={2}>
+          {(lifecycle.kind === "product-failed" && lifecycle.retryable) ||
+          lifecycle.kind === "project-failed" ? (
+            <Button disabled={pending} variant="contained" onClick={() => void retry()}>
+              Retry
+            </Button>
+          ) : lifecycle.kind === "collecting" ? (
+            <Button
+              disabled={
+                pending ||
+                !!invalidHandoff ||
+                !flavour ||
+                !projectCreationNameIsValid(name) ||
+                !unitId
+              }
+              variant="contained"
+              onClick={() => void submit()}
+            >
+              {pending ? "Creating..." : validHandoff ? "Create linked project" : "Create project"}
+            </Button>
+          ) : null}
+          {/* An attempt that has ended still names a subscription that outlived it, so leaving is
+              a deliberate step away from that answer rather than another cancellation. */}
+          {lifecycle.kind === "released" || lifecycle.kind === "cleanup-failed" ? (
+            <Button onClick={leaveForProjects}>Back to Projects</Button>
+          ) : (
+            <Button disabled={pending} onClick={cancel}>
+              Cancel
+            </Button>
+          )}
         </Stack>
-      </Container>
-    </Layout>
+      </Stack>
+    </Container>
   );
 };

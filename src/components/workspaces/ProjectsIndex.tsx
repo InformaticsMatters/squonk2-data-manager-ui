@@ -17,8 +17,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { useFamilyRoute } from "../../application/FamilyRouteBoundary";
-import Layout from "../../layouts/Layout";
+import { useFamilyRoute } from "../../application/FamilyRouteResolution";
 import { ProjectIdentity } from "../../projects/ProjectIdentity";
 import { buildProjectIndexItems } from "../../projects/projectIndex";
 import { projectLinks } from "../../projects/routes";
@@ -50,56 +49,54 @@ export const ProjectsIndex = () => {
   };
 
   return (
-    <Layout>
-      <Container maxWidth="md" sx={{ py: 3 }}>
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          sx={{ alignItems: { sm: "flex-end" }, gap: 2, justifyContent: "space-between", mb: 3 }}
-        >
-          <div>
-            <Typography component="h1" variant="h3">
-              Projects
-            </Typography>
-            <Typography color="text.secondary">
-              Choose a project before project resources are displayed.
-            </Typography>
-          </div>
-          <Button component={Link} href={projectLinks.create()} variant="contained">
-            Create project
-          </Button>
-        </Stack>
-        <TextField
-          fullWidth
-          label="Search projects"
-          placeholder="Project or containing unit"
-          value={search}
-          onChange={(event) => updateSearch(event.target.value)}
-        />
-        {items.length > 0 ? (
-          <List sx={{ mt: 2 }}>
-            {items.map(({ organisationName, project, unitName }) => (
-              <ListItemButton
-                component={Link}
-                href={projectLinks.files(project.project_id) as never}
-                key={project.project_id}
-              >
-                <ListItemText
-                  primary={project.name}
-                  secondary={
-                    <ProjectIdentity organisationLabel={organisationName} unitLabel={unitName} />
-                  }
-                />
-              </ListItemButton>
-            ))}
-          </List>
-        ) : (
-          <Alert severity="info" sx={{ mt: 2 }}>
-            {search
-              ? "No projects match this search in the current organisation."
-              : "No projects are available in the current organisation."}
-          </Alert>
-        )}
-      </Container>
-    </Layout>
+    <Container maxWidth="md" sx={{ py: 3 }}>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        sx={{ alignItems: { sm: "flex-end" }, gap: 2, justifyContent: "space-between", mb: 3 }}
+      >
+        <div>
+          <Typography component="h1" variant="h3">
+            Projects
+          </Typography>
+          <Typography color="text.secondary">
+            Choose a project before project resources are displayed.
+          </Typography>
+        </div>
+        <Button component={Link} href={projectLinks.create()} variant="contained">
+          Create project
+        </Button>
+      </Stack>
+      <TextField
+        fullWidth
+        label="Search projects"
+        placeholder="Project or containing unit"
+        value={search}
+        onChange={(event) => updateSearch(event.target.value)}
+      />
+      {items.length > 0 ? (
+        <List sx={{ mt: 2 }}>
+          {items.map(({ organisationName, project, unitName }) => (
+            <ListItemButton
+              component={Link}
+              href={projectLinks.files(project.project_id) as never}
+              key={project.project_id}
+            >
+              <ListItemText
+                primary={project.name}
+                secondary={
+                  <ProjectIdentity organisationLabel={organisationName} unitLabel={unitName} />
+                }
+              />
+            </ListItemButton>
+          ))}
+        </List>
+      ) : (
+        <Alert severity="info" sx={{ mt: 2 }}>
+          {search
+            ? "No projects match this search in the current organisation."
+            : "No projects are available in the current organisation."}
+        </Alert>
+      )}
+    </Container>
   );
 };

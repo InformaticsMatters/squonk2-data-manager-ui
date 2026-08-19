@@ -6,10 +6,9 @@ import NextError from "next/error";
 import A from "next/link";
 
 import { type FamilyRoute } from "../application/familyRoute";
-import { useFamilyRoute } from "../application/FamilyRouteBoundary";
+import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { PlaintextViewer } from "../features/PlaintextViewer";
 import { SDFViewer } from "../features/SDFViewer";
-import Layout from "../layouts/Layout";
 import { type ProjectId } from "../routing/identifiers";
 import { type FilesystemFile, filesystemFile } from "./fileFacts";
 import {
@@ -121,33 +120,31 @@ const FileViewerFrame = ({
   projectId: ProjectId;
   viewer: FileViewer;
 }) => (
-  <Layout>
-    <Container maxWidth="xl" sx={{ py: 3 }}>
-      <Box sx={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+  <Container maxWidth="xl" sx={{ py: 3 }}>
+    <Box sx={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+      <Button
+        replace
+        component={A}
+        href={projectLinks.files(projectId, { path: file.directory })}
+        startIcon={<ArrowBack />}
+      >
+        Back to files
+      </Button>
+      {fileViewersFor(file.name).map((offered) => (
         <Button
           replace
           component={A}
-          href={projectLinks.files(projectId, { path: file.directory })}
-          startIcon={<ArrowBack />}
+          href={projectLinks.fileView(projectId, { path: file.path, viewer: offered }) as never}
+          key={offered}
+          size="small"
+          variant={offered === viewer ? "contained" : "outlined"}
         >
-          Back to files
+          {fileViewerLabels[offered].name}
         </Button>
-        {fileViewersFor(file.name).map((offered) => (
-          <Button
-            replace
-            component={A}
-            href={projectLinks.fileView(projectId, { path: file.path, viewer: offered }) as never}
-            key={offered}
-            size="small"
-            variant={offered === viewer ? "contained" : "outlined"}
-          >
-            {fileViewerLabels[offered].name}
-          </Button>
-        ))}
-      </Box>
-      {children}
-    </Container>
-  </Layout>
+      ))}
+    </Box>
+    {children}
+  </Container>
 );
 
 const FileViewerBody = ({

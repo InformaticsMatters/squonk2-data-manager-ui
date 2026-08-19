@@ -3,7 +3,6 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 
 import { DocsNav } from "../../../components/DocsNav";
-import Layout from "../../../layouts/Layout";
 import ledger from "../../../pages/docs/assets/ledger.png";
 
 <Head>
@@ -52,8 +51,4 @@ Note: subscriptions are Account Server _products_ - a Data Manager _Project_ is 
 _Account Server_ _product_ - and the Product ID is still shown in the technical details, though the
 distinction is not that relevant for normal users.
 
-export default ({ children }) => (
-  <Layout>
-    <Container>{children}</Container>
-  </Layout>
-);
+export default ({ children }) => <Container>{children}</Container>;

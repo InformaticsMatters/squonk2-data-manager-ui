@@ -49,6 +49,50 @@ const observeProjectIdentityMismatch = async (page: Page, storageKey: string) =>
   }, storageKey);
 };
 
+/**
+ * Watches the chrome for the whole of a navigation rather than only after it.
+ *
+ * The defect this guards against was a chrome that was thrown away and rebuilt, which an assertion
+ * about the destination cannot see: by the time the destination has rendered, a rebuilt chrome and
+ * a retained one look identical. Every mutation to the document is inspected instead, so a node
+ * that leaves the document at any point during the navigation is recorded even if an identical one
+ * takes its place.
+ */
+const watchChrome = async (page: Page, storageKey: string, includeProjectNavigation = false) => {
+  await page.evaluate(
+    ([key, withProject]) => {
+      const nodes: Record<string, Element | null> = {
+        banner: document.querySelector("header"),
+        eventStreamSidebar: document.querySelector("aside"),
+        footer: document.querySelector("footer"),
+        workspaceNavigation: document.querySelector('nav[aria-label="Main"]'),
+        ...(withProject
+          ? { sectionNavigation: document.querySelector('nav[aria-label="Project"]') }
+          : {}),
+      };
+      const record = () => {
+        const detached = Object.entries(nodes)
+          .filter(([, node]) => !node?.isConnected)
+          .map(([name]) => name);
+        const seen = new Set<string>([
+          ...(JSON.parse(sessionStorage.getItem(key) ?? "[]") as string[]),
+          ...detached,
+        ]);
+        sessionStorage.setItem(key, JSON.stringify([...seen]));
+      };
+      record();
+      new MutationObserver(record).observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+      });
+    },
+    [storageKey, includeProjectNavigation] as const,
+  );
+};
+
+const chromeRemovals = (page: Page, storageKey: string) =>
+  page.evaluate((key) => sessionStorage.getItem(key), storageKey);
+
 test("public Home and Documentation retain public navigation", async ({ page }) => {
   await page.goto(".");
   await expect(page.getByRole("navigation", { name: "Main" })).toContainText("Documentation");
@@ -82,7 +126,10 @@ test("Home exits project scope and browser history restores the canonical projec
   const projectPath = `projects/${fixtureIds.project}/files?path=%2Finputs`;
   await login(page, projectPath, testInfo);
 
+  // The section navigation is present from the moment the URL is read, so the project itself has to
+  // be waited for: leaving before it resolves leaves before it is recorded as recently visited.
   await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
   await page.getByRole("link", { name: "Squonk Home" }).click();
   await expect(page).toHaveURL(homeUrl);
   await expect(page.getByRole("heading", { name: "Files" })).not.toBeVisible();
@@ -103,8 +150,10 @@ test("internal configuration remains undiscoverable for authenticated users", as
   await page.goto(`${acceptanceUrls.app}configuration`);
 
   await expect(page.getByRole("heading", { name: "Configuration" })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Main" })).not.toBeVisible();
-  await expect(page.getByRole("link", { name: "Squonk Home" })).not.toBeVisible();
+  // The chrome is mounted for every page, so this page has it too. Undiscoverable means the
+  // navigation never offers it, not that the page is missing a way back out of it.
+  await expect(page.getByRole("navigation", { name: "Main" })).not.toContainText("Configuration");
+  await expect(page.getByRole("link", { name: "Squonk Home" })).toBeVisible();
 });
 
 test("organisation change reaches Home before persisting the new identity", async ({
@@ -153,4 +202,120 @@ test("narrow project layout retains organisation and project navigation cues", a
   await expect(page.getByRole("button", { name: "Change organisation" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Main" })).toContainText("Administration");
   await expect(page.getByRole("navigation", { name: "Project" })).toContainText("Manage");
+});
+
+test("the chrome is never removed by a workspace change", async ({ page }, testInfo) => {
+  await login(page, `projects/${fixtureIds.project}/files`, testInfo);
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await page.getByLabel("Account").getByRole("button").click();
+  await page.getByRole("button", { name: /Show event stream/u }).click();
+  await expect(page.getByRole("heading", { name: "Event Stream" })).toBeVisible();
+
+  await watchChrome(page, "workspace-change-chrome");
+
+  const workspaces = page.getByRole("navigation", { name: "Main" });
+  await workspaces.getByRole("link", { name: "Datasets" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}datasets`);
+  await expect(page.getByRole("heading", { name: "Datasets" })).toBeVisible();
+
+  await workspaces.getByRole("link", { name: "Administration" }).click();
+  await expect(page.getByRole("heading", { name: "Administration" })).toBeVisible();
+
+  await workspaces.getByRole("link", { name: "Project" }).click();
+  await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
+
+  expect(await chromeRemovals(page, "workspace-change-chrome")).toBe("[]");
+  // The sidebar the caller opened is still open, with what it was showing, three workspaces later.
+  await expect(page.getByRole("heading", { name: "Event Stream" })).toBeVisible();
+});
+
+test("a section change changes only the content region", async ({ page }, testInfo) => {
+  await login(page, `projects/${fixtureIds.project}/files`, testInfo);
+  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+
+  await watchChrome(page, "section-change-chrome", true);
+
+  for (const [section, heading] of [
+    ["Run", "Run"],
+    ["Results", "Results"],
+    ["Manage", "Manage"],
+    ["Files", "Files"],
+  ] as const) {
+    // The section navigation is under the caller's cursor throughout, so a wrong section is one
+    // click to correct rather than a wait for the application to come back.
+    await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
+    await page
+      .getByRole("navigation", { name: "Project" })
+      .getByRole("link", { name: section, exact: true })
+      .click();
+    await expect(page.getByRole("heading", { exact: true, name: heading })).toBeVisible();
+  }
+
+  expect(await chromeRemovals(page, "section-change-chrome")).toBe("[]");
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+});
+
+test("the identity strip shows a placeholder while the project resolves", async ({
+  page,
+}, testInfo) => {
+  await login(page, "projects", testInfo);
+  await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
+
+  // Hold the project read open so the window between the route arriving and the project arriving is
+  // long enough to observe. It is a real window, not one this test invents.
+  await page.route(`${acceptanceUrls.dataManager}/project/${fixtureIds.project}`, async (route) => {
+    await new Promise((resolve) => {
+      setTimeout(resolve, 3000);
+    });
+    await route.continue();
+  });
+
+  await page.goto(`${acceptanceUrls.app}projects/${fixtureIds.project}/files`);
+
+  await expect(page.getByRole("status", { name: "Loading project" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
+  await expect(page.getByText("Project unavailable")).toHaveCount(0);
+
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await expect(page.getByRole("status", { name: "Loading project" })).toHaveCount(0);
+});
+
+test("the identity strip states an unavailable project only when it failed", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, `projects/${fixtureIds.project}/files`, testInfo);
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/project-failure?status=403`);
+  await page.reload();
+
+  await expect(page.getByText("Project unavailable")).toBeVisible();
+  await expect(page.getByRole("status", { name: "Loading project" })).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
+});
+
+test("a route the application cannot address keeps the chrome", async ({ page }, testInfo) => {
+  await login(page, "projects", testInfo);
+  await page.goto(`${acceptanceUrls.app}projects/not-a-project/files`);
+
+  await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
+  // A not-found page with nowhere to go is worse than one inside the navigation the caller used.
+  await expect(page.getByRole("navigation", { name: "Main" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Squonk Home" })).toBeVisible();
+
+  await page
+    .getByRole("navigation", { name: "Main" })
+    .getByRole("link", { name: "Datasets" })
+    .click();
+  await expect(page.getByRole("heading", { name: "Datasets" })).toBeVisible();
+});
+
+test("a malformed protected route is refused without a sign-in round trip", async ({ page }) => {
+  await page.goto(`${acceptanceUrls.app}projects/not-a-project/files`);
+
+  await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects/not-a-project/files`);
 });

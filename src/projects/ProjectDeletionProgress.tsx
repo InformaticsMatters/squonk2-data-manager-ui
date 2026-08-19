@@ -15,8 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { administrationLinks } from "../administration/routes";
-import { useFamilyRoute } from "../application/FamilyRouteBoundary";
-import Layout from "../layouts/Layout";
+import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { isProductId } from "../routing/identifiers";
 import { projectDeletionFailureReason } from "./failures";
 import { removeUnavailableProject } from "./projectCache";
@@ -196,84 +195,82 @@ export const ProjectDeletionProgress = () => {
   const subscriptionId = route.subscriptionId;
 
   return (
-    <Layout>
-      <Container maxWidth="sm" sx={{ py: 4 }}>
-        <Stack spacing={3}>
-          <div>
-            <Typography component="h1" variant="h3">
-              Deleting project
-            </Typography>
-            <Typography color="text.secondary">
-              This page follows the deletion itself, so it stays available once the project cannot
-              be opened.
-            </Typography>
-          </div>
+    <Container maxWidth="sm" sx={{ py: 4 }}>
+      <Stack spacing={3}>
+        <div>
+          <Typography component="h1" variant="h3">
+            Deleting project
+          </Typography>
+          <Typography color="text.secondary">
+            This page follows the deletion itself, so it stays available once the project cannot be
+            opened.
+          </Typography>
+        </div>
 
-          <Alert severity={presentation.severity}>{presentation.message}</Alert>
-          {pending ? <LinearProgress /> : null}
+        <Alert severity={presentation.severity}>{presentation.message}</Alert>
+        {pending ? <LinearProgress /> : null}
 
-          <Box component="section">
-            <Typography gutterBottom component="h2" variant="h6">
-              Support
-            </Typography>
-            <Typography color="text.secondary" sx={{ mb: 1 }}>
-              Quote these identifiers when you contact your Squonk administrator.
-            </Typography>
-            <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0 }}>
-              <Diagnostic label="Deletion task ID" value={route.taskId} />
-              {/* A route that names no subscription says so, rather than leaving the caller to
-                  wonder whether one is still to be removed. */}
-              <Diagnostic
-                label="Subscription ID"
-                value={subscriptionId ?? "None — no subscription is being removed."}
-              />
-            </Box>
-            {/* Every phase reaches Administration, because a caller left with a failure needs
-                somewhere to take it whether or not this deletion names a subscription. */}
-            {subscriptionId && isProductId(subscriptionId) ? (
-              <MuiLink
-                component={Link}
-                href={administrationLinks.subscription(subscriptionId) as never}
-                sx={{ display: "inline-block", mt: 1 }}
-              >
-                Open this subscription in Administration
-              </MuiLink>
-            ) : (
-              <MuiLink
-                component={Link}
-                href={administrationLinks.subscriptions() as never}
-                sx={{ display: "inline-block", mt: 1 }}
-              >
-                Open Subscriptions in Administration
-              </MuiLink>
-            )}
+        <Box component="section">
+          <Typography gutterBottom component="h2" variant="h6">
+            Support
+          </Typography>
+          <Typography color="text.secondary" sx={{ mb: 1 }}>
+            Quote these identifiers when you contact your Squonk administrator.
+          </Typography>
+          <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0 }}>
+            <Diagnostic label="Deletion task ID" value={route.taskId} />
+            {/* A route that names no subscription says so, rather than leaving the caller to
+                wonder whether one is still to be removed. */}
+            <Diagnostic
+              label="Subscription ID"
+              value={subscriptionId ?? "None — no subscription is being removed."}
+            />
           </Box>
+          {/* Every phase reaches Administration, because a caller left with a failure needs
+              somewhere to take it whether or not this deletion names a subscription. */}
+          {subscriptionId && isProductId(subscriptionId) ? (
+            <MuiLink
+              component={Link}
+              href={administrationLinks.subscription(subscriptionId) as never}
+              sx={{ display: "inline-block", mt: 1 }}
+            >
+              Open this subscription in Administration
+            </MuiLink>
+          ) : (
+            <MuiLink
+              component={Link}
+              href={administrationLinks.subscriptions() as never}
+              sx={{ display: "inline-block", mt: 1 }}
+            >
+              Open Subscriptions in Administration
+            </MuiLink>
+          )}
+        </Box>
 
-          {lifecycle.kind === "delete-failed" ? (
-            <Alert severity="warning">
-              The subscription was left exactly as it was, because a project whose data was not
-              deleted must keep the record that describes it.
-            </Alert>
-          ) : null}
+        {lifecycle.kind === "delete-failed" ? (
+          <Alert severity="warning">
+            The subscription was left exactly as it was, because a project whose data was not
+            deleted must keep the record that describes it.
+          </Alert>
+        ) : null}
 
-          <Stack direction="row" spacing={2}>
-            {presentation.retry ? (
-              <Button
-                disabled={pending}
-                variant="contained"
-                onClick={() =>
-                  void applyTransition(transitionProjectDeletion(lifecycle, { kind: "retry" }))
-                }
-              >
-                {presentation.retry}
-              </Button>
-            ) : null}
-            <Button component={Link} href={projectLinks.index()}>
-              Back to Projects
+        <Stack direction="row" spacing={2}>
+          {presentation.retry ? (
+            <Button
+              disabled={pending}
+              variant="contained"
+              onClick={() =>
+                void applyTransition(transitionProjectDeletion(lifecycle, { kind: "retry" }))
+              }
+            >
+              {presentation.retry}
             </Button>
-          </Stack>
+          ) : null}
+          <Button component={Link} href={projectLinks.index()}>
+            Back to Projects
+          </Button>
         </Stack>
-      </Container>
-    </Layout>
+      </Stack>
+    </Container>
   );
 };

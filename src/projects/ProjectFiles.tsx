@@ -16,11 +16,10 @@ import { filesize } from "filesize";
 import NextError from "next/error";
 
 import { type FamilyRoute } from "../application/familyRoute";
-import { useFamilyRoute } from "../application/FamilyRouteBoundary";
+import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { CenterLoader } from "../components/CenterLoader";
 import { DataTable } from "../components/DataTable";
 import { NextLink } from "../components/NextLink";
-import Layout from "../layouts/Layout";
 import { toLocalTimeString } from "../utils/app/datetime";
 import { capabilityReason, evaluateProjectFileMutationCapability } from "./capabilities";
 import {
@@ -246,26 +245,24 @@ export const ProjectFilesSection = ({ notice, route }: { notice?: string; route:
   const facts = useProjectFacts();
 
   return (
-    <Layout>
-      <Container maxWidth="xl" sx={{ py: 3 }}>
-        <Typography gutterBottom component="h1" variant="h4">
-          Files
-        </Typography>
-        {facts === undefined ? (
-          <CenterLoader />
-        ) : (
-          /* A new project or a new directory is a new listing, so nothing the previous one was
-          showing — rows, dialogs, or an in-flight command's control state — survives into it. */
-          <FilesTable
-            facts={facts}
-            key={`${projectId}:${path}`}
-            notice={notice}
-            path={path}
-            projectId={projectId}
-          />
-        )}
-      </Container>
-    </Layout>
+    <Container maxWidth="xl" sx={{ py: 3 }}>
+      <Typography gutterBottom component="h1" variant="h4">
+        Files
+      </Typography>
+      {facts === undefined ? (
+        <CenterLoader />
+      ) : (
+        /* A new project or a new directory is a new listing, so nothing the previous one was
+        showing — rows, dialogs, or an in-flight command's control state — survives into it. */
+        <FilesTable
+          facts={facts}
+          key={`${projectId}:${path}`}
+          notice={notice}
+          path={path}
+          projectId={projectId}
+        />
+      )}
+    </Container>
   );
 };
 

@@ -2,7 +2,6 @@ import Head from "next/head";
 
 import { Container } from "@mui/material";
 
-import Layout from "../../../layouts/Layout";
 import { DocsNav } from "../../../components/DocsNav";
 import jupyter_app from "../../../pages/docs/assets/jupyter-app.png";
 import jupyter_launch from "../../../pages/docs/assets/jupyter-launch.png";
@@ -81,8 +80,4 @@ done once in the lifetime of the notebook instance.
 When you are finished with the notebook instance click the _TERMINATE_ button in it's instance details panel.
 This frees up all the resources used by the notebook.
 
-export default ({ children }) => (
-  <Layout>
-    <Container>{children}</Container>
-  </Layout>
-);
+export default ({ children }) => <Container>{children}</Container>;

@@ -2,7 +2,6 @@ import Head from "next/head";
 
 import { Container } from "@mui/material";
 
-import Layout from "../../layouts/Layout";
 import { DocsNav } from "../../components/DocsNav";
 
 <Head>
@@ -98,8 +97,4 @@ only as billing context when you upload.
 disabled with a reason rather than removed, so it is clear what relationship or role a task
 requires. Actions that only a platform administrator can ever take are hidden instead.
 
-export default ({ children }) => (
-  <Layout>
-    <Container>{children}</Container>
-  </Layout>
-);
+export default ({ children }) => <Container>{children}</Container>;

@@ -2,7 +2,7 @@ import { Description } from "@mui/icons-material";
 import { ListItemButton, ListItemText } from "@mui/material";
 import A from "next/link";
 
-import { useFamilyRoute } from "../../../../application/FamilyRouteBoundary";
+import { useFamilyRoute } from "../../../../application/FamilyRouteResolution";
 import { datasetLinks, datasetListState, type DatasetRoute } from "../../../../datasets/routes";
 
 export interface DatasetPlainTextViewerListItemProps {

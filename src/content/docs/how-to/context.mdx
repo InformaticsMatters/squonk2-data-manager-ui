@@ -3,7 +3,6 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 
 import { DocsNav } from "../../../components/DocsNav";
-import Layout from "../../../layouts/Layout";
 
 <Head>
   <title>Choosing where you work - a How To guide</title>
@@ -62,8 +61,4 @@ Owners of an **organisation** can create a new **unit** within it if you want a 
 (e.g. research group, department etc.). The **Default** **organisation** cannot have **units** added
 to it other than a user's **personal** unit.
 
-export default ({ children }) => (
-  <Layout>
-    <Container>{children}</Container>
-  </Layout>
-);
+export default ({ children }) => <Container>{children}</Container>;

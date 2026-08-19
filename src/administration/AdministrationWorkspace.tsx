@@ -2,7 +2,7 @@ import { useGetProductsSuspense } from "@/api/account-server/product";
 
 import { Alert, Stack, Typography } from "@mui/material";
 
-import { useFamilyRoute } from "../application/FamilyRouteBoundary";
+import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { useAccessIndex } from "./accessFacts";
 import { AdministrationFrame } from "./AdministrationShell";
 import { ChargeLedger } from "./ChargeLedgers";

@@ -4,14 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { type FamilyRoute } from "../application/familyRoute";
-import { useFamilyRoute } from "../application/FamilyRouteBoundary";
+import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { CenterLoader } from "../components/CenterLoader";
 import { InstanceDetails } from "../components/instances/InstanceDetails";
 import { InstanceResultCard } from "../components/instances/InstanceResultCard";
 import { ResultTaskCard } from "../components/tasks/ResultTaskCard";
 import { ResultWorkflowSteps } from "../components/workflows/ResultWorkflowSteps";
 import { WorkflowResultCard } from "../components/workflows/WorkflowResultCard";
-import Layout from "../layouts/Layout";
 import { resolveResultInstanceLifecycle, resultInstanceSettlement } from "./instanceFacts";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectResultDetail } from "./ProjectResultDetail";
@@ -236,91 +235,85 @@ const ResultsSection = ({
   const counted =
     route.kind === "results" && !results.isLoading && results.definition.status !== "pending";
 
+  // The container widens by about what the rail takes, so putting the controls beside the list does
+  // not cost the list the width it had when they were stacked above it.
   return (
-    <Layout>
-      {/* The container widens by about what the rail takes, so putting the controls beside the list
-          does not cost the list the width it had when they were stacked above it. */}
-      <Container maxWidth="lg" sx={{ py: 3 }}>
-        <Box sx={{ alignItems: "baseline", display: "flex", gap: 1.5, mb: 2 }}>
-          <Typography component="h1" variant="h4">
-            Results
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      <Box sx={{ alignItems: "baseline", display: "flex", gap: 1.5, mb: 2 }}>
+        <Typography component="h1" variant="h4">
+          Results
+        </Typography>
+        {counted ? (
+          <Typography color="text.secondary" variant="body2">
+            {resultsShownStatement(shown.length, results.items.length)}
           </Typography>
-          {counted ? (
-            <Typography color="text.secondary" variant="body2">
-              {resultsShownStatement(shown.length, results.items.length)}
-            </Typography>
-          ) : null}
-        </Box>
+        ) : null}
+      </Box>
 
-        <Box sx={{ display: "flex", flexDirection: { md: "row", xs: "column" }, gap: 3 }}>
-          {/* Below md the rail stacks above the list: a 200px rail beside a list on a phone would
-              leave neither usable. */}
-          <ResultsRail
-            state={state}
-            statement={statement}
-            onClearDefinition={handleClearDefinition}
-            onRefresh={handleRefresh}
-            onTypesChange={handleTypesChange}
+      <Box sx={{ display: "flex", flexDirection: { md: "row", xs: "column" }, gap: 3 }}>
+        {/* Below md the rail stacks above the list: a 200px rail beside a list on a phone would
+            leave neither usable. */}
+        <ResultsRail
+          state={state}
+          statement={statement}
+          onClearDefinition={handleClearDefinition}
+          onRefresh={handleRefresh}
+          onTypesChange={handleTypesChange}
+        />
+
+        {/* The list column may shrink to nothing, so a wide result card cannot push the rail off
+            the layout. */}
+        <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+          <Box sx={{ mb: 2 }}>
+            <SectionSearchField
+              search={state.search}
+              onSearch={(search) => handleStateChange({ ...state, search })}
+            />
+          </Box>
+
+          <SectionReadAlerts
+            report={results.report}
+            retryableMessage="Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again."
+            unavailableMessage="These results are unavailable or you no longer have access to them."
+            onRetry={handleRetry}
           />
 
-          {/* The list column may shrink to nothing, so a wide result card cannot push the rail off
-              the layout. */}
-          <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-            <Box sx={{ mb: 2 }}>
-              <SectionSearchField
-                search={state.search}
-                onSearch={(search) => handleStateChange({ ...state, search })}
-              />
-            </Box>
+          {localNotFound ? (
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              This result was not found in this project.
+            </Alert>
+          ) : null}
 
-            <SectionReadAlerts
-              report={results.report}
-              retryableMessage="Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again."
-              unavailableMessage="These results are unavailable or you no longer have access to them."
-              onRetry={handleRetry}
+          {/* A link to a definition the catalogue does not contain is a dead link, not a dead end:
+              the failure is stated and the whole list is shown rather than an empty one. */}
+          {results.definition.status === "not-found" ? (
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              The definition these results were filtered to was not found, so every result in this
+              project is shown.
+            </Alert>
+          ) : null}
+
+          {facts === undefined ? (
+            <CenterLoader />
+          ) : route.kind === "result" ? (
+            <>
+              <Button component={Link} href={projectLinks.results(projectId, state)} sx={{ mb: 1 }}>
+                All results
+              </Button>
+              <ProjectResultDetail facts={facts} results={results} route={route} />
+            </>
+          ) : (
+            <ResultsList
+              facts={facts}
+              items={shown}
+              results={results}
+              routeProjectId={projectId}
+              state={state}
             />
-
-            {localNotFound ? (
-              <Alert severity="warning" sx={{ mb: 2 }}>
-                This result was not found in this project.
-              </Alert>
-            ) : null}
-
-            {/* A link to a definition the catalogue does not contain is a dead link, not a dead end:
-                the failure is stated and the whole list is shown rather than an empty one. */}
-            {results.definition.status === "not-found" ? (
-              <Alert severity="warning" sx={{ mb: 2 }}>
-                The definition these results were filtered to was not found, so every result in this
-                project is shown.
-              </Alert>
-            ) : null}
-
-            {facts === undefined ? (
-              <CenterLoader />
-            ) : route.kind === "result" ? (
-              <>
-                <Button
-                  component={Link}
-                  href={projectLinks.results(projectId, state)}
-                  sx={{ mb: 1 }}
-                >
-                  All results
-                </Button>
-                <ProjectResultDetail facts={facts} results={results} route={route} />
-              </>
-            ) : (
-              <ResultsList
-                facts={facts}
-                items={shown}
-                results={results}
-                routeProjectId={projectId}
-                state={state}
-              />
-            )}
-          </Box>
+          )}
         </Box>
-      </Container>
-    </Layout>
+      </Box>
+    </Container>
   );
 };
 

@@ -1,5 +1,4 @@
 import { Button, Container, Grid } from "@mui/material";
-import Layout from "../layouts/Layout";
 import { RoleWarning } from "../components/auth/RoleWarning";
 import Head from "next/head";
 import { NextLink } from "../components/NextLink";
@@ -77,8 +76,4 @@ Please email us at info@informaticsmatters.com if you would like to evaluate or 
 </Grid>
 </Grid>
 
-export default ({ children }) => (
-  <Layout>
-    <Container>{children}</Container>
-  </Layout>
-);
+export default ({ children }) => <Container>{children}</Container>;

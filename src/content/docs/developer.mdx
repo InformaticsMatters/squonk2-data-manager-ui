@@ -1,5 +1,4 @@
 import { Container } from "@mui/material";
-import Layout from "../../layouts/Layout";
 import { DocsNav } from "../../components/DocsNav";
 import Head from "next/head";
 
@@ -85,8 +84,4 @@ The Data Manager UI uses a private TypeScript client generated from the OpenAPI 
 Node package. Other integrations should use the Data Manager API directly or the supported Python
 client above.
 
-export default ({ children }) => (
-  <Layout>
-    <Container>{children}</Container>
-  </Layout>
-);
+export default ({ children }) => <Container>{children}</Container>;

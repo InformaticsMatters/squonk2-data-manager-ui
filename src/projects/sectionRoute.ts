@@ -1,5 +1,5 @@
 import { type FamilyRoute } from "../application/familyRoute";
-import { type FamilyRouteContextValue } from "../application/FamilyRouteBoundary";
+import { type FamilyRouteContextValue } from "../application/FamilyRouteResolution";
 import { type ProjectId } from "../routing/identifiers";
 import { localNotFoundProjectId } from "./routes";
 

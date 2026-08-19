@@ -1,7 +1,6 @@
 import { Container } from "@mui/material";
 import Head from "next/head";
 
-import Layout from "../../layouts/Layout";
 import { DocsNav } from "../../components/DocsNav";
 
 <Head>
@@ -24,8 +23,4 @@ This page lists guides for doing certain things in the Squonk Data Manager.
 - Working with datasets
 - [Inspecting usage and quotas](./how-to/usage-quotas) - finding about your costs
 
-export default ({ children }) => (
-  <Layout>
-    <Container>{children}</Container>
-  </Layout>
-);
+export default ({ children }) => <Container>{children}</Container>;

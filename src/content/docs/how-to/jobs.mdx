@@ -3,7 +3,6 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 
 import { DocsNav } from "../../../components/DocsNav";
-import Layout from "../../../layouts/Layout";
 import job_launch from "../../../pages/docs/assets/job-launch.png";
 
 <Head>
@@ -47,8 +46,4 @@ Specify these inputs and options and click the _Run_ button at the bottom. The e
 the card. Click on it to see the execution details under **Results**. See the
 [Inspecting job and application execution](./execution) How To guide for details.
 
-export default ({ children }) => (
-  <Layout>
-    <Container>{children}</Container>
-  </Layout>
-);
+export default ({ children }) => <Container>{children}</Container>;

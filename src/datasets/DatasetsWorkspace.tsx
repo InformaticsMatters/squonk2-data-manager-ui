@@ -4,10 +4,9 @@ import { Container, Typography } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
-import { useFamilyRoute } from "../application/FamilyRouteBoundary";
+import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { DatasetsTable } from "../features/DatasetsTable";
 import { DatasetDetails } from "../features/DatasetsTable/DatasetDetails";
-import Layout from "../layouts/Layout";
 import { DatasetResolutionBoundary } from "./DatasetResolutionBoundary";
 import { type DatasetDeletionDestination } from "./mutations";
 import { datasetLinks, datasetListState, type DatasetRoute } from "./routes";
@@ -76,7 +75,7 @@ export const DatasetsWorkspace = () => {
   const datasetRoute = route as DatasetRoute;
 
   return (
-    <Layout>
+    <>
       <Container maxWidth="xl" sx={{ py: 3 }}>
         <Typography gutterBottom component="h1" variant="h3">
           Datasets
@@ -84,6 +83,6 @@ export const DatasetsWorkspace = () => {
         <DatasetsTable route={datasetRoute} />
       </Container>
       {datasetRoute.kind === "index" ? null : <DatasetDetail route={datasetRoute} />}
-    </Layout>
+    </>
   );
 };

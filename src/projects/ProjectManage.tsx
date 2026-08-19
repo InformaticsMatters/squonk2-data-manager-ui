@@ -5,7 +5,6 @@ import Link from "next/link";
 
 import { administrationLinks } from "../administration/routes";
 import { CenterLoader } from "../components/CenterLoader";
-import Layout from "../layouts/Layout";
 import { isProductId } from "../routing/identifiers";
 import { toLocalTimeString } from "../utils/app/datetime";
 import {
@@ -265,10 +264,8 @@ export const ProjectManage = () => {
   const facts = useProjectFacts();
 
   return (
-    <Layout>
-      <Container maxWidth="lg" sx={{ py: 3 }}>
-        {facts ? <ProjectManageContent facts={facts} /> : <CenterLoader />}
-      </Container>
-    </Layout>
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      {facts ? <ProjectManageContent facts={facts} /> : <CenterLoader />}
+    </Container>
   );
 };

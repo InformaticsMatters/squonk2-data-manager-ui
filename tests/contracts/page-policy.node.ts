@@ -25,14 +25,22 @@ test.describe("page composition policy", () => {
   test("selects public composition", () => {
     expect(resolvePageComposition(pagePolicies.public)).toEqual({
       kind: "public",
-      layers: ["public-shell", "content"],
+      layers: ["chrome-error-boundary", "route-resolver", "layout", "public-shell", "content"],
     });
   });
 
   test("selects plain authenticated application composition", () => {
     expect(resolvePageComposition(pagePolicies.application)).toEqual({
       kind: "application",
-      layers: ["authentication", "api-client-ready", "application-shell", "content"],
+      layers: [
+        "chrome-error-boundary",
+        "route-resolver",
+        "layout",
+        "authentication",
+        "api-client-ready",
+        "application-shell",
+        "content",
+      ],
     });
   });
 
@@ -59,11 +67,15 @@ test.describe("page composition policy", () => {
         kind: policy.kind,
         section: policy.section,
         layers: [
+          "chrome-error-boundary",
+          "route-resolver",
+          "layout",
+          `${policy.kind}-route-gate`,
           "authentication",
           "api-client-ready",
+          "application-shell",
           `${policy.kind}-error-boundary`,
           `${policy.kind}-suspense`,
-          "application-shell",
           `${policy.kind}-shell`,
           "content",
         ],

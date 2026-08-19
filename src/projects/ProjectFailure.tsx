@@ -7,11 +7,12 @@ import { getGetProjectQueryKey } from "@/api/data-manager/project";
 
 import { Alert, Button, Container } from "@mui/material";
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
 
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
-import Layout from "../layouts/Layout";
 import { requireLinkedProject, resolveProjectAncestry } from "./projectAncestry";
 import { removeUnavailableProject } from "./projectCache";
+import { clearRouteProjectResolution, routeProjectResolutionAtom } from "./routeProjectResolution";
 import { type ProjectWorkspace, RouteProjectProvider } from "./useRouteProject";
 
 const readCachedWorkspace = (
@@ -61,25 +62,36 @@ export const ProjectFailure = ({
     removeUnavailableProject(queryClient, localStorage, projectId);
   }, [projectId, queryClient, unavailable]);
 
+  // Tell the identity strip in the chrome that this project failed, so it stops showing the
+  // placeholder that means the project is still on its way. A cached workspace is a resolution of
+  // its own and is published by the provider below, so only a failure with nothing to show is
+  // reported here.
+  const setResolution = useSetAtom(routeProjectResolutionAtom);
+  useEffect(() => {
+    if (workspace) {
+      return;
+    }
+    setResolution({ projectId, status: "failed" });
+    return () => setResolution(clearRouteProjectResolution(projectId));
+  }, [projectId, setResolution, workspace]);
+
   const content = (
-    <Layout>
-      <Container maxWidth="lg" sx={{ py: 3 }}>
-        <Alert
-          action={
-            unavailable ? undefined : (
-              <Button color="inherit" size="small" onClick={handleRetry}>
-                Retry
-              </Button>
-            )
-          }
-          severity={unavailable ? "warning" : "error"}
-        >
-          {unavailable
-            ? "This project is unavailable or you no longer have access."
-            : "Project data could not be loaded. Retry this project."}
-        </Alert>
-      </Container>
-    </Layout>
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      <Alert
+        action={
+          unavailable ? undefined : (
+            <Button color="inherit" size="small" onClick={handleRetry}>
+              Retry
+            </Button>
+          )
+        }
+        severity={unavailable ? "warning" : "error"}
+      >
+        {unavailable
+          ? "This project is unavailable or you no longer have access."
+          : "Project data could not be loaded. Retry this project."}
+      </Alert>
+    </Container>
   );
 
   return workspace ? (

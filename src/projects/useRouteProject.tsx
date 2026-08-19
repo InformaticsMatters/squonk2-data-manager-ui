@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useContext } from "react";
+import { createContext, type ReactNode, useContext, useEffect } from "react";
 
 import {
   type OrganisationAllDetail,
@@ -8,7 +8,10 @@ import {
 } from "@/api/account-server";
 import { type ProjectDetail } from "@/api/data-manager";
 
-import { useOptionalFamilyRoute } from "../application/FamilyRouteBoundary";
+import { useSetAtom } from "jotai";
+
+import { useOptionalFamilyRoute } from "../application/FamilyRouteResolution";
+import { clearRouteProjectResolution, routeProjectResolutionAtom } from "./routeProjectResolution";
 import { localNotFoundProjectId } from "./routes";
 
 export type ProjectWorkspace = {
@@ -26,7 +29,18 @@ export const RouteProjectProvider = ({
 }: {
   children: ReactNode;
   workspace: ProjectWorkspace;
-}) => <RouteProjectContext value={workspace}>{children}</RouteProjectContext>;
+}) => {
+  const projectId = workspace.project.project_id;
+  const setResolution = useSetAtom(routeProjectResolutionAtom);
+
+  // The same workspace, published for the chrome above this provider. See routeProjectResolution.
+  useEffect(() => {
+    setResolution({ projectId, status: "resolved", workspace });
+    return () => setResolution(clearRouteProjectResolution(projectId));
+  }, [projectId, setResolution, workspace]);
+
+  return <RouteProjectContext value={workspace}>{children}</RouteProjectContext>;
+};
 
 /**
  * The project the URL addresses. A child route the section could not address still names the

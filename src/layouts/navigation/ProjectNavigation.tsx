@@ -1,9 +1,11 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Skeleton, Stack, Typography } from "@mui/material";
+import { useAtomValue } from "jotai";
 import { useRouter } from "next/router";
 
 import { ProjectIdentity } from "../../projects/ProjectIdentity";
+import { routeProjectResolutionAtom } from "../../projects/routeProjectResolution";
 import { projectLinks } from "../../projects/routes";
-import { useRouteProject } from "../../projects/useRouteProject";
+import { useRouteProjectId } from "../../projects/useRouteProject";
 import { NavigationTab } from "./NavigationTab";
 
 const projectSections = [
@@ -13,9 +15,45 @@ const projectSections = [
   { key: "manage", label: "Manage" },
 ] as const;
 
+/**
+ * The name and identity of the project in the URL, or an honest account of why neither is there.
+ *
+ * The strip is mounted in the chrome, above the boundary that resolves the project, so it renders
+ * before the project does. A placeholder says the project is on its way; the unavailable wording is
+ * kept for a project that failed to arrive, so loading and failure stay distinguishable.
+ */
+const ProjectHeading = ({ projectId }: { projectId: string }) => {
+  const published = useAtomValue(routeProjectResolutionAtom);
+  const resolution = published?.projectId === projectId ? published : undefined;
+
+  if (resolution?.status === "resolved") {
+    const { organisation, project, unit } = resolution.workspace;
+    return (
+      <>
+        <Typography sx={{ fontWeight: 850 }}>{project.name}</Typography>
+        <ProjectIdentity organisationLabel={organisation.name} unitLabel={unit.name} />
+      </>
+    );
+  }
+  if (resolution?.status === "failed") {
+    return (
+      <>
+        <Typography sx={{ fontWeight: 850 }}>Project unavailable</Typography>
+        <ProjectIdentity />
+      </>
+    );
+  }
+  return (
+    <Box aria-label="Loading project" role="status">
+      <Skeleton sx={{ fontWeight: 850 }} variant="text" width={180} />
+      <Skeleton sx={{ fontSize: 12 }} variant="text" width={120} />
+    </Box>
+  );
+};
+
 export const ProjectNavigation = () => {
   const router = useRouter();
-  const { organisation, project, projectId, unit } = useRouteProject();
+  const projectId = useRouteProjectId();
 
   if (!projectId) {
     return null;
@@ -36,8 +74,7 @@ export const ProjectNavigation = () => {
       }}
     >
       <Box sx={{ minWidth: 260, py: 1 }}>
-        <Typography sx={{ fontWeight: 850 }}>{project?.name ?? "Project unavailable"}</Typography>
-        <ProjectIdentity organisationLabel={organisation?.name} unitLabel={unit?.name} />
+        <ProjectHeading projectId={projectId} />
       </Box>
       <Stack
         aria-label="Project"

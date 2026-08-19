@@ -41,6 +41,11 @@ messages, use the term defined here rather than a synonym.
 - **Page policy** — the closed declarative description of how a page is composed: `public`,
   `application`, or a named family and section. Pages declare one; they do not configure layout,
   authentication or providers themselves.
+- **Chrome** — the parts of the application that persist across every navigation: the masthead,
+  workspace navigation, project identity strip, footer and event stream sidebar. The chrome is
+  mounted once by the page composition, above every boundary a navigation discards, so a workspace
+  or section change replaces only the content region. See
+  `docs/adr/0004-persistent-chrome-belongs-to-composition.md`.
 - **Local not-found** — a missing child beneath a parent the caller may see. The parent's shell is
   retained and the failure is stated inside it, which is what distinguishes it from a missing
   parent.

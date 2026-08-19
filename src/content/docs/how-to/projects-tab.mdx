@@ -1,5 +1,4 @@
 import { Container } from "@mui/material";
-import Layout from "../../../layouts/Layout";
 import Head from "next/head";
 import { DocsNav } from "../../../components/DocsNav";
 //import login from "../assets/login.png"
@@ -35,8 +34,4 @@ to manage your files either with the Jupyter Lab file manager or by opening up a
 See the [Running applications](./applications) How To guide for more details on launching
 Jupyter Lab.
 
-export default ({ children }) => (
-  <Layout>
-    <Container>{children}</Container>
-  </Layout>
-);
+export default ({ children }) => <Container>{children}</Container>;

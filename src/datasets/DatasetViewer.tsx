@@ -3,9 +3,8 @@ import { Button, Container } from "@mui/material";
 import NextError from "next/error";
 import A from "next/link";
 
-import { useFamilyRoute } from "../application/FamilyRouteBoundary";
+import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { PlaintextViewer } from "../features/PlaintextViewer";
-import Layout from "../layouts/Layout";
 import { DatasetLoadError, DatasetResolutionBoundary } from "./DatasetResolutionBoundary";
 import { datasetLinks, datasetListState, type DatasetRoute } from "./routes";
 import { useDatasetVersionResolution } from "./useDatasetVersionResolution";
@@ -21,11 +20,9 @@ export const DatasetViewer = (props: DatasetViewerProps) => {
     return <NextError statusCode={404} />;
   }
   return (
-    <Layout>
-      <Container maxWidth="xl">
-        <ResolvedDatasetViewer content={props} route={route} />
-      </Container>
-    </Layout>
+    <Container maxWidth="xl">
+      <ResolvedDatasetViewer content={props} route={route} />
+    </Container>
   );
 };
 

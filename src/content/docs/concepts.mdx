@@ -3,7 +3,6 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 
 import { DocsNav } from "../../components/DocsNav";
-import Layout from "../../layouts/Layout";
 
 <Head>
   <title>Data Manager User Documentation - Key Concepts</title>
@@ -171,8 +170,4 @@ Once you hit your hard quota limit then operations in the _Data Manager_ that co
 jobs etc.) are disabled. You can still see your data, and remove unnecessary files. And you can upgrade to a tier with
 a bigger quota.
 
-export default ({ children }) => (
-  <Layout>
-    <Container>{children}</Container>
-  </Layout>
-);
+export default ({ children }) => <Container>{children}</Container>;

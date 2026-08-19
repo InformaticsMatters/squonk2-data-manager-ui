@@ -50,10 +50,26 @@ export const pagePolicies = {
   ): Extract<PagePolicy, { kind: "administration" }> => ({ kind: "administration", section }),
 };
 
-type PublicComposition = { kind: "public"; layers: readonly ["public-shell", "content"] };
+/**
+ * The layers every page is composed of, whatever it addresses: the outermost fallback for a broken
+ * chrome, the route resolution the chrome reads, and the chrome itself. Everything a policy selects
+ * is mounted beneath them, which is why a workspace or section change discards only content.
+ */
+const chromeLayers = ["chrome-error-boundary", "route-resolver", "layout"] as const;
+
+type PublicComposition = {
+  kind: "public";
+  layers: readonly [...typeof chromeLayers, "public-shell", "content"];
+};
 type ApplicationComposition = {
   kind: "application";
-  layers: readonly ["authentication", "api-client-ready", "application-shell", "content"];
+  layers: readonly [
+    ...typeof chromeLayers,
+    "authentication",
+    "api-client-ready",
+    "application-shell",
+    "content",
+  ];
 };
 type FamilyComposition = {
   kind: "administration" | "datasets" | "projects";
@@ -66,11 +82,17 @@ export type PageComposition = ApplicationComposition | FamilyComposition | Publi
 export const resolvePageComposition = (policy: PagePolicy): PageComposition => {
   switch (policy.kind) {
     case "public":
-      return { kind: "public", layers: ["public-shell", "content"] };
+      return { kind: "public", layers: [...chromeLayers, "public-shell", "content"] };
     case "application":
       return {
         kind: "application",
-        layers: ["authentication", "api-client-ready", "application-shell", "content"],
+        layers: [
+          ...chromeLayers,
+          "authentication",
+          "api-client-ready",
+          "application-shell",
+          "content",
+        ],
       };
     case "projects":
     case "datasets":
@@ -79,11 +101,13 @@ export const resolvePageComposition = (policy: PagePolicy): PageComposition => {
         kind: policy.kind,
         section: policy.section,
         layers: [
+          ...chromeLayers,
+          `${policy.kind}-route-gate`,
           "authentication",
           "api-client-ready",
+          "application-shell",
           `${policy.kind}-error-boundary`,
           `${policy.kind}-suspense`,
-          "application-shell",
           `${policy.kind}-shell`,
           "content",
         ],

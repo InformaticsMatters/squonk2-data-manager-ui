@@ -17,14 +17,18 @@ import { type ApiServers, loadApiServers, readApiServers } from "../application/
 import { PagePolicyComposer, type PolicyAppComponent } from "../application/PagePolicyComposer";
 import { ConfiguredSnackbarProvider } from "../components/app/ConfiguredSnackbarProvider";
 import { ThemeProviders } from "../components/app/ThemeProviders";
-import { openSansFont } from "../constants/fonts";
+import { openSansFont, ralewayFont } from "../constants/fonts";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
 import { awaitTokenGate } from "../utils/api/tokenGate";
 
-const openSansFontCss = `
+// next/font must be called from a module the Next build transforms, so the fonts are declared here
+// once and published as custom properties. Components that need a face other than the body font ask
+// for it by variable rather than importing the font module themselves.
+const rootFontCss = `
 :root {
   font-family: ${openSansFont.style.fontFamily};
   font-size: 14px;
+  --raleway-font: ${ralewayFont.style.fontFamily};
 }
 `;
 
@@ -99,7 +103,7 @@ const App = (props: CustomAppProps) => {
       <AppCacheProvider {...props}>
         <Head>
           <meta content="minimum-scale=1, initial-scale=1, width=device-width" name="viewport" />
-          <style>{openSansFontCss}</style>
+          <style>{rootFontCss}</style>
         </Head>
         <ThemeProviders>
           <QueryClientProvider client={queryClient}>

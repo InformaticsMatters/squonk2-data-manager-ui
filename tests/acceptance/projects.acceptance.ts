@@ -1093,7 +1093,9 @@ test("a caller with nothing is onboarded into a project of their own and finds i
   ).toHaveCount(0);
 
   await page.getByRole("button", { name: "Create personal unit" }).click();
-  await expect(page.getByText(`You have a personal unit: ${subject}`)).toBeVisible();
+  await expect(
+    page.getByText(`You already have a personal unit, ${subject}, and your project can go in it.`),
+  ).toBeVisible();
 
   await page.getByRole("link", { name: "Create project" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}projects/new?unit=${fixtureIds.personalUnit}`);
@@ -1119,16 +1121,20 @@ test("a caller with nothing is onboarded into a project of their own and finds i
   await expect(onboardingPanel(page)).toHaveCount(0);
 });
 
-test("a caller who already has a personal unit is never offered a second one", async ({
+test("a caller who already has a personal unit is told so rather than offered another", async ({
   page,
 }, testInfo) => {
+  const subject = subjectFor(testInfo);
   await login(page, "projects", testInfo);
 
-  // The offer stands — this caller has no project of their own yet — but its first step does not.
-  // The panel is only shown once the personal-unit read has settled, so a caller who has one never
-  // sees the step offered against a read that had not answered.
+  // The offer stands — this caller has no project in their own unit — and its first step reports the
+  // unit they already have by name rather than silently not being there. That is the state a caller
+  // who deleted the project in their personal unit comes back to.
   await expect(onboardingPanel(page)).toBeVisible();
-  await expect(page.getByText("Create your personal unit")).toHaveCount(0);
+  await expect(
+    page.getByText(`You already have a personal unit, ${subject}, and your project can go in it.`),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Create personal unit" })).toHaveCount(0);
   await expect(page.getByText("Create your first project")).toBeVisible();
 });
 

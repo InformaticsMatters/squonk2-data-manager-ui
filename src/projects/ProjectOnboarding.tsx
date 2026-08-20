@@ -1,5 +1,3 @@
-import { useRef } from "react";
-
 import { type UnitAllDetail } from "@/api/account-server";
 
 import {
@@ -95,14 +93,14 @@ export const ProjectOnboarding = ({
   personalUnit: UnitAllDetail | undefined;
 }) => {
   /**
-   * Whether this caller was offered the first step when they arrived. It is taken once and then
-   * kept, so a step that has just succeeded reports that success rather than vanishing from under
-   * the caller who took it — which is also what a duplicate attempt from a second tab reads as. A
-   * caller who already had a personal unit is never shown the step at all.
+   * The unit step is always on the panel; what changes is whether it asks for something or reports
+   * something. A caller who has a personal unit is told so by name rather than being shown a step
+   * that silently isn't there — which is the state a returning caller who deleted the project in
+   * their unit arrives in, and the state a caller who just created one, or created one in a second
+   * tab, ends up in. Only the unit's own existence decides which, so no attempt's outcome is
+   * remembered here.
    */
-  const unitStepApplies = useRef(decision.personalUnitStepApplies).current;
-  // Whether the step is done is settled by the unit itself, never by what this attempt did.
-  const unitStepIsDone = !unitStepApplies || personalUnit !== undefined;
+  const unitStepIsDone = !decision.personalUnitStepApplies;
 
   return (
     <Paper sx={{ p: 3 }} variant="outlined">
@@ -120,24 +118,25 @@ export const ProjectOnboarding = ({
       </Typography>
 
       <Stepper activeStep={unitStepIsDone ? 1 : 0} orientation="vertical" sx={{ mt: 3 }}>
-        {unitStepApplies ? (
-          <Step expanded completed={personalUnit !== undefined}>
-            <StepLabel>Create your personal unit</StepLabel>
-            <StepContent>
-              <Typography color="text.secondary">
-                A unit is the billing container that owns projects and pays for what they use. Yours
-                is your own, sits in the default organisation, and nobody else works in it.
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                {personalUnit ? (
-                  <Alert severity="success">You have a personal unit: {personalUnit.name}.</Alert>
-                ) : (
-                  <PersonalUnitCreation />
-                )}
-              </Box>
-            </StepContent>
-          </Step>
-        ) : null}
+        <Step expanded completed={unitStepIsDone}>
+          <StepLabel>{personalUnit ? "Your personal unit" : "Create your personal unit"}</StepLabel>
+          <StepContent>
+            <Typography color="text.secondary">
+              A unit is the billing container that owns projects and pays for what they use. Yours
+              is your own, sits in the default organisation, and nobody else works in it.
+            </Typography>
+            <Box sx={{ mt: 2 }}>
+              {personalUnit ? (
+                <Alert severity="success">
+                  You already have a personal unit, {personalUnit.name}, and your project can go in
+                  it.
+                </Alert>
+              ) : (
+                <PersonalUnitCreation />
+              )}
+            </Box>
+          </StepContent>
+        </Step>
         <Step expanded>
           <StepLabel>Create your first project</StepLabel>
           <StepContent>

@@ -1,3 +1,21 @@
+# [7.0.0-dev.7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.6...7.0.0-dev.7) (2026-08-20)
+
+
+### Bug Fixes
+
+* draw a directory row as the same kind of link as the file beside it ([b467cd1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b467cd1870b723df2b81ac364d6051f2746de4b9))
+* draw dataset file names in the application's link colour ([40fb783](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/40fb7835194ecfc5245ae28d36b4214a7c1b5d84)), closes [#1969](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1969)
+* label the main navigation entry Projects, not Project ([3c2bb4a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/3c2bb4ab0089c73e5bb5265f2e6e4648deaa5c1d)), closes [#1977](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1977)
+* make the onboarding offer only in the organisation it creates in ([8a481bf](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8a481bf53bb427b5197d604d3ee0c9b4e472fccc))
+* put the onboarding offer above the workspace heading ([fec3c3f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fec3c3f2cc8259013b8febac9ed464e6b0067ade))
+* settle the personal-unit read before onboarding decides anything ([b2d94f9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b2d94f9760a1f409822a9f9c7a9668434957f4c8))
+* tell a caller who already has a personal unit that it exists ([127b3d2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/127b3d2af0bfc0e6ed4125c096539acd5139d85b))
+
+
+### Features
+
+* offer onboarding into a project of the caller's own ([84dec8b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/84dec8bab022bfe99983b61ecbea891e611043e8))
+
 # [7.0.0-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.5...7.0.0-dev.6) (2026-08-19)
 
 

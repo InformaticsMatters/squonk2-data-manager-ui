@@ -1079,6 +1079,17 @@ test("unconfirmed project facts leave changes available and defer to the server"
 const onboardingPanel = (page: Page) =>
   page.getByRole("heading", { name: "Start working in a project of your own" });
 
+/**
+ * Work as the default organisation, the way a caller does: through the switcher. Changing
+ * organisation leaves the current resource for Home, so Projects is opened again afterwards.
+ */
+const workAsDefaultOrganisation = async (page: Page) => {
+  await page.getByLabel("Change organisation").click();
+  await page.getByRole("menuitem", { name: /Default Organisation/u }).click();
+  await expect(page.getByLabel("Change organisation")).toContainText("Default Organisation");
+  await page.goto("projects");
+};
+
 test("a caller with nothing is onboarded into a project of their own and finds it listed", async ({
   page,
   request,
@@ -1144,6 +1155,10 @@ test("a caller who already has a personal unit is told so rather than offered an
 }, testInfo) => {
   const subject = subjectFor(testInfo);
   await login(page, "projects", testInfo);
+  // The offer is made in the organisation it would create in, so it is not on the index of the
+  // organisation this caller works in by default.
+  await expect(onboardingPanel(page)).toHaveCount(0);
+  await workAsDefaultOrganisation(page);
 
   // The offer stands — this caller has no project in their own unit — and its first step reports the
   // unit they already have by name rather than silently not being there. That is the state a caller
@@ -1163,10 +1178,12 @@ test("an editor in someone else's unit is offered a unit of their own and may pu
   const subject = subjectFor(testInfo);
   await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=no-personal-unit`);
   await login(page, "projects", testInfo);
-
-  // The list is what this caller came for, so the offer sits above it rather than replacing it.
-  await expect(onboardingPanel(page)).toBeVisible();
+  // Their collaborator's organisation is the one they work as, and the offer is not made there.
+  await expect(onboardingPanel(page)).toHaveCount(0);
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+
+  await workAsDefaultOrganisation(page);
+  await expect(onboardingPanel(page)).toBeVisible();
 
   // The panel reads the personal unit through the index rather than subscribing to it again. A
   // second subscription refetches on mount, which unsettles the very read the panel's visibility
@@ -1183,6 +1200,11 @@ test("an editor in someone else's unit is offered a unit of their own and may pu
   await expect(onboardingPanel(page)).toHaveCount(0);
 
   await page.reload();
-  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
   await expect(onboardingPanel(page)).toHaveCount(0);
+  // The dismissal took the offer, not the workspace: the projects they collaborate in are still
+  // exactly where they left them.
+  await page.getByLabel("Change organisation").click();
+  await page.getByRole("menuitem", { name: /Acceptance Organisation/u }).click();
+  await page.goto("projects");
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
 });

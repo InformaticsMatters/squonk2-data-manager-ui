@@ -1,5 +1,6 @@
 import { useDeferredValue, useEffect, useState } from "react";
 
+import { useGetDefaultOrganisation } from "@/api/account-server/organisation";
 import { useGetUnitsSuspense } from "@/api/account-server/unit";
 import { useGetProjectsSuspense } from "@/api/data-manager/project";
 
@@ -44,6 +45,7 @@ export const ProjectsIndex = () => {
   const { data: units } = useGetUnitsSuspense();
   const { user } = useKeycloakUser();
   const { data: personalUnit, isPending: personalUnitIsPending } = useGetPersonalUnit();
+  const { data: defaultOrganisation } = useGetDefaultOrganisation({ query: { retry: false } });
   const [dismissed, setDismissed] = useState(false);
   const [personalUnitHasAnswered, setPersonalUnitHasAnswered] = useState(false);
 
@@ -69,21 +71,35 @@ export const ProjectsIndex = () => {
     personalUnit?.id ?? undefined,
   );
   /**
+   * The offer belongs to the organisation it would create in. A personal unit lives in the default
+   * organisation and the project the second step makes lives inside that unit, so this index — which
+   * lists one organisation at a time — would otherwise offer a caller working as some other
+   * organisation a project that could not appear in the list they are looking at.
+   */
+  const worksAsDefaultOrganisation =
+    defaultOrganisation?.id !== undefined && organisationId === defaultOrganisation.id;
+  /**
    * Offering onboarding before the personal unit has answered would flash the panel at every caller
    * who already has one, and the panel treats the step it is shown at mount as the one that
    * applies. A caller with no personal unit is an authoritative `404` rather than a pending read,
    * so nothing here waits longer than the one read it depends on.
    */
   const offersOnboarding =
-    personalUnitHasAnswered && onboarding.offered && !(onboarding.dismissible && dismissed);
+    worksAsDefaultOrganisation &&
+    personalUnitHasAnswered &&
+    onboarding.offered &&
+    !(onboarding.dismissible && dismissed);
   const dismiss = () => {
     dismissProjectOnboarding(localStorage);
     setDismissed(true);
   };
-  // Whether the caller has any project at all, which is a different question from whether they have
-  // one they can work in: with no project to sit above, an empty index beside an offer would be two
-  // empty-state messages competing for the same attention.
-  const onboardingIsTheIndex = offersOnboarding && projects.projects.length === 0;
+  // Whether this organisation holds a project at all — not whether the caller has one somewhere, and
+  // not whether their search matched: with no list for the offer to sit above, an empty index beside
+  // it would be two empty-state messages competing for the same attention, while a search that
+  // matched nothing is still a search of a list that is there.
+  const onboardingIsTheIndex =
+    offersOnboarding &&
+    !projects.projects.some((project) => project.organisation_id === organisationId);
 
   const updateSearch = (value: string) => {
     setSearch(value);

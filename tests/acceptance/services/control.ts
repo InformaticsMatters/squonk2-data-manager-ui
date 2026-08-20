@@ -70,6 +70,7 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
     return json(response, 200, { productFailure: true, subject });
   }
   const creationDelayControls = [
+    { pathSuffix: "/organisations-delay", stateKey: "organisationsDelay" },
     { pathSuffix: "/product-creation-delay", stateKey: "productCreationDelay" },
     { pathSuffix: "/project-creation-response-delay", stateKey: "projectCreationResponseDelay" },
   ] as const;

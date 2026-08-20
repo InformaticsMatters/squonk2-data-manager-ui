@@ -35,7 +35,10 @@ const readPersistedOrganisationId = () => {
  * unit and which `GET /organisation` never lists.
  */
 export const useVisibleOrganisations = ({ enabled = true }: { enabled?: boolean } = {}) => {
-  const { data: organisations } = useGetOrganisations(undefined, { query: { enabled } });
+  const { data: organisations, isPending: organisationsArePending } = useGetOrganisations(
+    undefined,
+    { query: { enabled } },
+  );
   // The default organisation is absent rather than exceptional for a deployment that has none, so
   // its read is never retried into a failure the caller has to see.
   const { data: defaultOrganisation } = useGetDefaultOrganisation({
@@ -43,8 +46,17 @@ export const useVisibleOrganisations = ({ enabled = true }: { enabled?: boolean 
   });
 
   return useMemo(
-    () => resolveVisibleOrganisations(organisations?.organisations, defaultOrganisation),
-    [defaultOrganisation, organisations],
+    () =>
+      // The two reads race, and the order between them is the whole point: the switcher adopts the
+      // first entry when nothing is chosen, so a list published while the caller's own index is
+      // still in flight would offer the default organisation first and strand a member of a real
+      // one in their personal organisation. Nothing is visible until the index this list is
+      // ordered by has answered — including when it answers by failing, which is an empty index
+      // rather than an unknown one.
+      organisationsArePending
+        ? []
+        : resolveVisibleOrganisations(organisations?.organisations, defaultOrganisation),
+    [defaultOrganisation, organisations, organisationsArePending],
   );
 };
 

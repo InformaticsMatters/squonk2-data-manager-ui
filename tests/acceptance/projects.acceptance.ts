@@ -1121,6 +1121,24 @@ test("a caller with nothing is onboarded into a project of their own and finds i
   await expect(onboardingPanel(page)).toHaveCount(0);
 });
 
+test("a slow organisation index still decides which organisation the caller works as", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  // The default organisation answers from its own endpoint, so it can arrive first. Nothing may be
+  // offered until the caller's own index has answered: the switcher adopts the first organisation
+  // it is given, and a member of a real organisation who was handed the default one first would be
+  // left working in their personal organisation, with their own projects filtered out of the index.
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/organisations-delay?milliseconds=1500`,
+  );
+  await login(page, "projects", testInfo);
+
+  await expect(page.getByLabel("Change organisation")).toContainText("Acceptance Organisation");
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+});
+
 test("a caller who already has a personal unit is told so rather than offered another", async ({
   page,
 }, testInfo) => {

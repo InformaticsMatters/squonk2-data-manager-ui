@@ -5,6 +5,7 @@ import { useGetProjectsSuspense } from "@/api/data-manager/project";
 
 import {
   Alert,
+  Box,
   Button,
   Container,
   List,
@@ -91,8 +92,21 @@ export const ProjectsIndex = () => {
     });
   };
 
+  const panel = offersOnboarding ? (
+    <ProjectOnboarding
+      decision={onboarding}
+      personalUnit={personalUnit}
+      {...(onboarding.dismissible ? { onDismiss: dismiss } : {})}
+    />
+  ) : null;
+
   return (
     <Container maxWidth="md" sx={{ py: 3 }}>
+      {/* An offer made alongside a list goes above the workspace heading, so the heading, the
+          search field and the list it describes are not split apart by it. Where the offer is the
+          whole index there is no list to separate, and the heading stays above the content it
+          titles. */}
+      {panel && !onboardingIsTheIndex ? <Box sx={{ mb: 3 }}>{panel}</Box> : null}
       <Stack
         direction={{ xs: "column", sm: "row" }}
         sx={{ alignItems: { sm: "flex-end" }, gap: 2, justifyContent: "space-between", mb: 3 }}
@@ -115,20 +129,13 @@ export const ProjectsIndex = () => {
           </Button>
         )}
       </Stack>
-      {offersOnboarding ? (
-        <ProjectOnboarding
-          decision={onboarding}
-          personalUnit={personalUnit}
-          {...(onboarding.dismissible ? { onDismiss: dismiss } : {})}
-        />
-      ) : null}
+      {onboardingIsTheIndex ? panel : null}
       {onboardingIsTheIndex ? null : (
         <>
           <TextField
             fullWidth
             label="Search projects"
             placeholder="Project or containing unit"
-            sx={{ mt: offersOnboarding ? 3 : 0 }}
             value={search}
             onChange={(event) => updateSearch(event.target.value)}
           />

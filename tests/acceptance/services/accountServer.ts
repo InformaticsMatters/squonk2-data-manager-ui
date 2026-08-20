@@ -212,6 +212,9 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     return json(response, 201, { id: fixtureIds.createdOrganisation });
   }
   if (url.pathname === "/organisation") {
+    if (state.organisationsDelay) {
+      await delay(state.organisationsDelay);
+    }
     return json(response, 200, state.fixtures.organisations);
   }
   if (segments[0] === "organisation" && segments[2] === "unit" && request.method === "POST") {

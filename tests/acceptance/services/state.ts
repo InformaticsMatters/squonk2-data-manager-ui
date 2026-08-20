@@ -165,6 +165,12 @@ export type ScenarioState = {
   deletedSubscriptions: string[];
   /** What each adjusted subscription was changed to, which every later read of it reports. */
   subscriptionAdjustments: Map<string, { allowance?: number; limit?: number; name?: string }>;
+  /**
+   * How long the caller's own organisation index takes to answer. The default organisation answers
+   * from a different endpoint, so delaying this one is the only way to put the two reads in the
+   * order that would strand a member of a real organisation in their personal one.
+   */
+  organisationsDelay?: number;
   productCreationDelay?: number;
   /**
    * A failing read of the project collection, which is the index every cross-organisation choice of

@@ -6,12 +6,11 @@ import { useGetProjectsSuspense } from "@/api/data-manager/project";
 
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
   Container,
   List,
-  ListItemButton,
-  ListItemText,
   Stack,
   TextField,
   Typography,
@@ -26,14 +25,15 @@ import {
   dismissProjectOnboarding,
   projectOnboardingIsDismissed,
 } from "../../projects/onboardingDismissal";
-import { ProjectIdentity } from "../../projects/ProjectIdentity";
 import {
-  buildProjectIndexItems,
+  buildProjectIndexList,
   decideProjectOnboarding,
+  type ProjectIndexUnitOption,
   unitNamesInOrganisation,
 } from "../../projects/projectIndex";
+import { ProjectIndexRow } from "../../projects/ProjectIndexRow";
 import { ProjectOnboarding } from "../../projects/ProjectOnboarding";
-import { projectLinks } from "../../projects/routes";
+import { type ProjectIndexLinkState, projectLinks } from "../../projects/routes";
 import { UnitOffer } from "../../projects/UnitOffer";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 
@@ -42,6 +42,14 @@ export const ProjectsIndex = () => {
   const familyRoute = useFamilyRoute();
   const route = familyRoute.localNotFound ? null : familyRoute.route;
   const routeSearch = route?.kind === "index" ? route.search : undefined;
+  /**
+   * The unit filter is not typed into, so it needs no draft of its own: the URL is the state, read
+   * directly and rewritten on every change.
+   *
+   * Only the Projects index carries a unit, and this screen is only ever mounted beneath it, so the
+   * property the route declares is what tells the two families' indexes apart here.
+   */
+  const routeUnitId = route?.kind === "index" && "unitId" in route ? route.unitId : undefined;
   const [search, setSearch] = useState(routeSearch ?? "");
   const deferredSearch = useDeferredValue(search);
   const selectedOrganisation = useSelectedOrganisation();
@@ -67,9 +75,13 @@ export const ProjectsIndex = () => {
     }
   }, [personalUnitIsPending]);
 
-  const items = organisationId
-    ? buildProjectIndexItems(projects.projects, units, organisationId, deferredSearch)
-    : [];
+  const { items, selectedUnit, unitOptions } = organisationId
+    ? buildProjectIndexList(projects.projects, units, organisationId, {
+        search: deferredSearch,
+        unitId: routeUnitId,
+        username: user.username,
+      })
+    : { items: [], selectedUnit: undefined, unitOptions: [] };
   const onboarding = decideProjectOnboarding(
     projects.projects,
     user.username,
@@ -106,11 +118,23 @@ export const ProjectsIndex = () => {
     offersOnboarding &&
     !projects.projects.some((project) => project.organisation_id === organisationId);
 
+  /**
+   * Both controls write the whole narrowing, so neither can drop what the other put in the URL.
+   * Replace rather than push, which is what every other filtered list in the application does: a
+   * narrowing is a view of the screen the caller is already on rather than somewhere they went, so
+   * leaving the index does not mean stepping back out through each narrowing on the way.
+   */
+  const narrowTo = (state: ProjectIndexLinkState) => {
+    void router.replace(projectLinks.index(state) as never, undefined, { shallow: true });
+  };
   const updateSearch = (value: string) => {
     setSearch(value);
-    void router.replace(projectLinks.index({ search: value || undefined }) as never, undefined, {
-      shallow: true,
-    });
+    // The unit written back is the one in effect rather than the one the URL named, so a filter
+    // that named a unit with no visible project is dropped as soon as the caller uses the screen.
+    narrowTo({ search: value || undefined, unitId: selectedUnit?.unitId });
+  };
+  const updateUnit = (option: ProjectIndexUnitOption | null) => {
+    narrowTo({ search: search || undefined, unitId: option?.unitId });
   };
 
   const panel = offersOnboarding ? (
@@ -169,35 +193,63 @@ export const ProjectsIndex = () => {
       {onboardingIsTheIndex ? panel : null}
       {onboardingIsTheIndex ? null : (
         <>
-          <TextField
-            fullWidth
-            label="Search projects"
-            placeholder="Project or containing unit"
-            value={search}
-            onChange={(event) => updateSearch(event.target.value)}
-          />
+          <Stack direction={{ xs: "column", sm: "row" }} sx={{ gap: 2 }}>
+            <TextField
+              fullWidth
+              label="Search projects"
+              placeholder="Project or containing unit"
+              value={search}
+              onChange={(event) => updateSearch(event.target.value)}
+            />
+            {/* The options are exactly the units holding a project on this screen, each counted, so
+                the caller can see what a filter will do before applying it and no choice they are
+                offered can empty the list. */}
+            <Autocomplete
+              // Typing finds a unit by its name: the count is what an option would do rather than
+              // part of what it is called, so it is rendered beside the name and not matched on.
+              getOptionLabel={({ unitName }) => unitName}
+              isOptionEqualToValue={(option, value) => option.unitId === value.unitId}
+              options={unitOptions}
+              renderInput={(params) => <TextField {...params} label="Unit" />}
+              renderOption={({ key, ...optionProps }, { count, unitName }) => (
+                <Box component="li" key={key} {...optionProps} sx={{ gap: 1 }}>
+                  {unitName}
+                  <Typography color="text.secondary" component="span" variant="body2">
+                    ({count})
+                  </Typography>
+                </Box>
+              )}
+              sx={{ minWidth: { sm: 260 } }}
+              value={selectedUnit ?? null}
+              onChange={(_event, option) => updateUnit(option)}
+            />
+          </Stack>
           {items.length > 0 ? (
             <List sx={{ mt: 2 }}>
-              {items.map(({ organisationName, project, unitName }) => (
-                <ListItemButton
-                  component={Link}
-                  href={projectLinks.files(project.project_id) as never}
-                  key={project.project_id}
-                >
-                  <ListItemText
-                    primary={project.name}
-                    secondary={
-                      <ProjectIdentity organisationLabel={organisationName} unitLabel={unitName} />
-                    }
-                  />
-                </ListItemButton>
+              {items.map((item) => (
+                <ProjectIndexRow key={item.project.project_id} {...item} />
               ))}
             </List>
           ) : (
-            <Alert severity="info" sx={{ mt: 2 }}>
-              {search
-                ? "No projects match this search in the current organisation."
-                : "No projects are available in the current organisation."}
+            /* A unit filter alone can never empty the list, so an empty filtered list is always a
+               search that matched nothing inside the unit — which the message names, and offers a
+               way out of where the emptiness is reported. */
+            <Alert
+              action={
+                selectedUnit ? (
+                  <Button color="inherit" size="small" onClick={() => updateUnit(null)}>
+                    Show all units
+                  </Button>
+                ) : undefined
+              }
+              severity="info"
+              sx={{ mt: 2 }}
+            >
+              {selectedUnit
+                ? `No projects match this search in ${selectedUnit.unitName}.`
+                : search
+                  ? "No projects match this search in the current organisation."
+                  : "No projects are available in the current organisation."}
             </Alert>
           )}
         </>

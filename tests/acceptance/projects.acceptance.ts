@@ -57,6 +57,53 @@ test("Project index searches the current organisation and explicitly enters File
   );
 });
 
+test("Project index rows state role and privacy, and the unit filter narrows them", async ({
+  page,
+}, testInfo) => {
+  await login(page, "projects", testInfo);
+  await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
+
+  // The strongest role held, and nothing at all where none is held.
+  const administered = page.getByRole("link", { name: /Acceptance Project/u });
+  await expect(administered).toContainText("Administrator");
+  await expect(administered.getByRole("img", { name: "Private" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Screening Project/u })).toContainText("Observer");
+  const unheld = page.getByRole("link", { name: /Unlisted Unit Project/u });
+  await expect(unheld).not.toContainText(/Administrator|Editor|Observer/u);
+  await expect(unheld.getByRole("img", { name: "Public" })).toBeVisible();
+
+  // Exactly the units holding a project, counted — including the one the caller's own unit index
+  // cannot name, which is offered under the same label its rows carry.
+  await page.getByLabel("Unit").click();
+  await expect(page.getByRole("option", { name: "Acceptance Unit (2)" })).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: `Unit ${fixtureIds.unlistedUnit} (1)` }),
+  ).toBeVisible();
+  await page.getByRole("option", { name: "Screening Unit (2)" }).click();
+
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects?unit=${fixtureIds.otherUnit}`);
+  await expect(page.getByRole("link", { name: /Screening Project/u })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Acceptance Project/u })).toHaveCount(0);
+
+  // The narrowed view is the URL's, so it survives a reload as a shared link would.
+  await page.reload();
+  await expect(page.getByRole("link", { name: /Screening Project/u })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Acceptance Project/u })).toHaveCount(0);
+
+  // A search matching nothing inside the unit names the unit, and offers the way out where the
+  // emptiness is reported.
+  await page.getByLabel("Search projects").fill("Acceptance Project");
+  await expect(page.getByText("No projects match this search in Screening Unit.")).toBeVisible();
+  await page.getByRole("button", { name: "Show all units" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects?search=Acceptance+Project`);
+  await expect(page.getByRole("link", { name: /Acceptance Project/u })).toBeVisible();
+
+  // A link naming a unit holding no project the caller can see is the whole list, not an empty one.
+  await page.goto(`projects?unit=${fixtureIds.personalUnit}`);
+  await expect(page.getByRole("link", { name: /Acceptance Project/u })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Screening Project/u })).toBeVisible();
+});
+
 test("Project 403 and 404 share a non-disclosing result and clear recent content", async ({
   page,
   request,

@@ -90,6 +90,8 @@ export const fixtureIds = {
   sharedProjectOne: "project-88888888-8888-4888-8888-888888888888",
   sharedProjectTwo: "project-99999999-9999-4999-8999-999999999999",
   partnerProject: "project-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  /** A project of the caller's own organisation whose containing unit their unit index never lists. */
+  unlistedUnitProject: "project-bcbcbcbc-bcbc-4cbc-8cbc-bcbcbcbcbcbc",
   task: "task-44444444-4444-4444-4444-444444444444",
   /** The task the Data Manager issues for an accepted project deletion. */
   projectDeletionTask: "task-5a5a5a5a-5a5a-4a5a-8a5a-5a5a5a5a5a5a",
@@ -667,7 +669,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
           ],
     }),
     projects: AppApiProjectGetResponse.parse({
-      count: onboarding ? 0 : 5,
+      count: onboarding ? 0 : 6,
       projects: onboarding
         ? []
         : [
@@ -722,6 +724,23 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
               project_id: fixtureIds.sharedProjectTwo,
               size: 0,
               unit_id: fixtureIds.otherUnit,
+            },
+            // A project the caller can see whose containing unit is absent from their own unit
+            // index, so every control that names a unit has to answer for one it cannot name. It is
+            // also the only public project, which is what makes privacy visibly two-valued.
+            {
+              administrators: [],
+              created,
+              creator: colleague,
+              editors: [],
+              files: [],
+              name: "Unlisted Unit Project",
+              observers: [],
+              organisation_id: fixtureIds.organisation,
+              private: false,
+              project_id: fixtureIds.unlistedUnitProject,
+              size: 0,
+              unit_id: fixtureIds.unlistedUnit,
             },
             {
               administrators: [subject],

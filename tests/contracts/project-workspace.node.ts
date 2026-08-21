@@ -14,7 +14,7 @@ import {
 import { requireLinkedProject, resolveProjectAncestry } from "../../src/projects/projectAncestry";
 import { removeUnavailableProject } from "../../src/projects/projectCache";
 import {
-  buildProjectIndexItems,
+  buildProjectIndexList,
   buildProjectSelectorList,
   decideProjectOnboarding,
   type ProjectSelectorScope,
@@ -55,7 +55,7 @@ const units = {
 } as UnitsGetResponse;
 
 test("project index is organisation-scoped, searchable, and labels duplicate names by unit", () => {
-  const items = buildProjectIndexItems(
+  const { items } = buildProjectIndexList(
     [
       project(),
       project({ project_id: "project-two", unit_id: "unit-two" }),
@@ -63,26 +63,140 @@ test("project index is organisation-scoped, searchable, and labels duplicate nam
     ],
     units,
     "organisation-one",
-    "screen",
+    { search: "screen" },
   );
 
   expect(items).toEqual([
     {
-      organisationName: "Current Organisation",
+      isPrivate: true,
       project: expect.objectContaining({ project_id: "project-two" }),
+      roleLabel: undefined,
       unitName: "Screening",
     },
   ]);
 });
 
 test("project index retains containing-unit identity when its name is unavailable", () => {
-  const items = buildProjectIndexItems(
+  const { items } = buildProjectIndexList(
     [project({ unit_id: "unit-not-listed" })],
     units,
     "organisation-one",
   );
 
   expect(items[0]?.unitName).toBe("Unit unit-not-listed");
+});
+
+test("project index narrows to one unit, alongside the search it already had", () => {
+  const projects = [
+    project({ name: "Docking", project_id: "project-one", unit_id: "unit-one" }),
+    project({ name: "Docking", project_id: "project-two", unit_id: "unit-two" }),
+    project({ name: "Screening", project_id: "project-three", unit_id: "unit-two" }),
+  ];
+
+  const narrowed = buildProjectIndexList(projects, units, "organisation-one", {
+    unitId: "unit-two",
+  });
+  expect(narrowed.items.map(({ project }) => project.project_id)).toEqual([
+    "project-two",
+    "project-three",
+  ]);
+  expect(narrowed.selectedUnit).toEqual({ count: 2, unitId: "unit-two", unitName: "Screening" });
+
+  const searched = buildProjectIndexList(projects, units, "organisation-one", {
+    search: "docking",
+    unitId: "unit-two",
+  });
+  expect(searched.items.map(({ project }) => project.project_id)).toEqual(["project-two"]);
+});
+
+test("project index offers exactly the units holding a visible project, counted and named", () => {
+  const { unitOptions } = buildProjectIndexList(
+    [
+      project({ project_id: "project-one", unit_id: "unit-two" }),
+      project({ project_id: "project-two", unit_id: "unit-two" }),
+      project({ project_id: "project-three", unit_id: "unit-one" }),
+      project({ project_id: "project-four", unit_id: "unit-not-listed" }),
+      project({
+        organisation_id: "organisation-two",
+        project_id: "project-five",
+        unit_id: "unit-elsewhere",
+      }),
+    ],
+    units,
+    "organisation-one",
+  );
+
+  // Sorted by name, so the unit whose name is unavailable sorts under the label the row shows it
+  // by, and no option can narrow the list to nothing.
+  expect(unitOptions).toEqual([
+    { count: 1, unitId: "unit-one", unitName: "Discovery" },
+    { count: 2, unitId: "unit-two", unitName: "Screening" },
+    { count: 1, unitId: "unit-not-listed", unitName: "Unit unit-not-listed" },
+  ]);
+});
+
+test("project index option list ignores the search, and a unit it cannot offer narrows nothing", () => {
+  const projects = [
+    project({ name: "Docking", project_id: "project-one", unit_id: "unit-one" }),
+    project({ name: "Screening", project_id: "project-two", unit_id: "unit-two" }),
+  ];
+
+  const searched = buildProjectIndexList(projects, units, "organisation-one", {
+    search: "docking",
+  });
+  expect(searched.unitOptions.map(({ unitId }) => unitId)).toEqual(["unit-one", "unit-two"]);
+
+  // A link naming a unit with no visible project shows the whole list rather than an empty one.
+  const stale = buildProjectIndexList(projects, units, "organisation-one", { unitId: "unit-gone" });
+  expect(stale.items).toHaveLength(2);
+  expect(stale.selectedUnit).toBeUndefined();
+});
+
+test("every unit the project index offers narrows the list to at least one project", () => {
+  const projects = [
+    project({ project_id: "project-one", unit_id: "unit-one" }),
+    project({ project_id: "project-two", unit_id: "unit-two" }),
+    project({ project_id: "project-three", unit_id: "unit-not-listed" }),
+  ];
+  const { unitOptions } = buildProjectIndexList(projects, units, "organisation-one");
+
+  // The rule the option list is built by, rather than a message an empty filtered list would need.
+  for (const { count, unitId } of unitOptions) {
+    const narrowed = buildProjectIndexList(projects, units, "organisation-one", { unitId });
+    expect(narrowed.items.length, unitId).toBe(count);
+    expect(narrowed.items.length, unitId).toBeGreaterThan(0);
+  }
+});
+
+test("project index reports the highest role held, and never reports creation as one", () => {
+  const { items } = buildProjectIndexList(
+    [
+      project({
+        administrators: ["caller"],
+        editors: ["caller"],
+        name: "Administered",
+        observers: ["caller"],
+        project_id: "project-one",
+      }),
+      project({ editors: ["caller"], name: "Edited", observers: ["caller"], project_id: "two" }),
+      project({ name: "Observed", observers: ["caller"], project_id: "project-three" }),
+      project({ creator: "caller", name: "Created", project_id: "project-four" }),
+      project({ name: "Unheld", private: false, project_id: "project-five" }),
+    ],
+    units,
+    "organisation-one",
+    { username: "caller" },
+  );
+
+  expect(
+    items.map(({ isPrivate, project: { name }, roleLabel }) => ({ isPrivate, name, roleLabel })),
+  ).toEqual([
+    { isPrivate: true, name: "Administered", roleLabel: "Administrator" },
+    { isPrivate: true, name: "Created", roleLabel: undefined },
+    { isPrivate: true, name: "Edited", roleLabel: "Editor" },
+    { isPrivate: true, name: "Observed", roleLabel: "Observer" },
+    { isPrivate: false, name: "Unheld", roleLabel: undefined },
+  ]);
 });
 
 test("project ancestry comes from the linked generated Product response", () => {

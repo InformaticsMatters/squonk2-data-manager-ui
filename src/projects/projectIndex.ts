@@ -7,12 +7,65 @@ import {
   isDefaultOrganisationResource,
   type UnitCreationFacts,
 } from "../application/organisationUnits";
-import { callerEditsProject, type ProjectCapability } from "./capabilities";
+import { callerEditsProject, type ProjectCapability, resolveProjectRoles } from "./capabilities";
 
+/**
+ * The roles the index reports, strongest first, each paired with the membership fact that
+ * establishes it. Ranked here rather than compared at a call site, so one project cannot be
+ * described by two markings and the order is stated once.
+ */
+const rankedRoles = [
+  ["Administrator", "isAdministrator"],
+  ["Editor", "isEditor"],
+  ["Observer", "isObserver"],
+] as const;
+
+export type ProjectIndexRoleLabel = (typeof rankedRoles)[number][0];
+
+/**
+ * One row of the projects index: what the screen says about a project, and the whole of what it
+ * decides nothing about for itself.
+ *
+ * The containing organisation is deliberately absent. The index lists one organisation at a time,
+ * so naming it on every row would repeat a constant instead of spending the row's width on what
+ * tells one project from another.
+ */
 export type ProjectIndexItem = {
-  organisationName: string;
+  isPrivate: boolean;
   project: ProjectDetail;
+  roleLabel: ProjectIndexRoleLabel | undefined;
   unitName: string;
+};
+
+/** One unit the filter offers, named as the rows name it, and counted as it would narrow. */
+export type ProjectIndexUnitOption = { count: number; unitId: string; unitName: string };
+
+/** What narrows the index, beside the collection and the organisation it is scoped to. */
+export type ProjectIndexNarrowing = { search?: string; unitId?: string; username?: string };
+
+export type ProjectIndexList = {
+  items: ProjectIndexItem[];
+  /**
+   * The option the narrowing settled on, or nothing where the URL named a unit holding no project
+   * the caller can see. A link that has aged out is answered with the whole list rather than an
+   * empty one, so a stale link is an inconvenience rather than a dead end.
+   */
+  selectedUnit: ProjectIndexUnitOption | undefined;
+  unitOptions: ProjectIndexUnitOption[];
+};
+
+/**
+ * The strongest role the caller holds in a project, or nothing where they hold none.
+ *
+ * Creating a project is not one: the application already treats creation as separate from
+ * authority, so a row claiming otherwise would mislead exactly the caller the marking exists for.
+ */
+const highestRoleLabel = (
+  project: ProjectDetail,
+  username: string | undefined,
+): ProjectIndexRoleLabel | undefined => {
+  const roles = resolveProjectRoles(project, username);
+  return rankedRoles.find(([, isHeld]) => roles[isHeld])?.[0];
 };
 
 /**
@@ -36,24 +89,60 @@ const containerName = (
 const unitGroupOf = (unitsResponse: UnitsGetResponse, organisationId: string) =>
   unitsResponse.units.find(({ organisation }) => organisation.id === organisationId);
 
-export const buildProjectIndexItems = (
+/**
+ * The projects index: the rows the screen lists, and the units its filter offers.
+ *
+ * Both come out of one derivation because they are two views of the same narrowing. The options are
+ * exactly the units owning at least one project visible to the caller in the organisation in
+ * effect, which is what makes every option worth choosing: none can narrow the list to nothing, so
+ * nothing needs disabling. They are counted and offered against the whole organisation rather than
+ * against the current search, because they describe where the caller's work lives rather than what
+ * they have just typed — a list that rearranged itself under the search would be answering a
+ * different question.
+ *
+ * A unit the caller's own unit index does not name is still offered, under the same identifier-based
+ * label its rows carry, so no project on screen is unreachable through the control.
+ */
+export const buildProjectIndexList = (
   projects: readonly ProjectDetail[],
   unitsResponse: UnitsGetResponse,
   organisationId: string,
-  search = "",
-): ProjectIndexItem[] => {
+  { search = "", unitId, username }: ProjectIndexNarrowing = {},
+): ProjectIndexList => {
   const group = unitGroupOf(unitsResponse, organisationId);
   const unitNames = new Map(group?.units.map((unit) => [unit.id, unit.name]));
   const organisationProjects = projects.filter(
     (project) => project.organisation_id === organisationId,
   );
+  const rows = organisationProjects.map<ProjectIndexItem>((project) => ({
+    isPrivate: project.private,
+    project,
+    roleLabel: highestRoleLabel(project, username),
+    unitName: containerName(unitNames, project.unit_id, "Unit"),
+  }));
+
+  const counts = new Map<string, ProjectIndexUnitOption>();
+  for (const { project, unitName } of rows) {
+    // A project declaring no containing unit has no identity to filter by, so it is listed without
+    // becoming an option nothing could select.
+    if (project.unit_id === undefined) {
+      continue;
+    }
+    const option = counts.get(project.unit_id);
+    counts.set(project.unit_id, {
+      count: (option?.count ?? 0) + 1,
+      unitId: project.unit_id,
+      unitName,
+    });
+  }
+  const unitOptions = [...counts.values()].toSorted((left, right) =>
+    left.unitName.localeCompare(right.unitName),
+  );
+  const selectedUnit = unitOptions.find((option) => option.unitId === unitId);
+
   const term = search.trim().toLocaleLowerCase();
-  return organisationProjects
-    .map((project) => ({
-      organisationName: group?.organisation.name ?? organisationId,
-      project,
-      unitName: containerName(unitNames, project.unit_id, "Unit"),
-    }))
+  const items = rows
+    .filter(({ project }) => !selectedUnit || project.unit_id === selectedUnit.unitId)
     .filter(
       ({ project, unitName }) =>
         !term ||
@@ -65,6 +154,7 @@ export const buildProjectIndexItems = (
         left.project.name.localeCompare(right.project.name) ||
         left.unitName.localeCompare(right.unitName),
     );
+  return { items, selectedUnit, unitOptions };
 };
 
 /**

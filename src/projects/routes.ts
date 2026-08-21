@@ -67,6 +67,16 @@ export type ResultFilterType = (typeof resultFilterTypes)[number];
 type SearchState = { search?: string };
 export type RunState = SearchState & { types?: readonly RunFilterType[] };
 
+/**
+ * How the Projects index is narrowed. The unit filter joins the search term in the URL because the
+ * URL is the single description of what the index displays: a narrowed list can then be shared and
+ * bookmarked exactly as a searched one already is.
+ */
+export type ProjectIndexState = SearchState & { unitId?: UnitId };
+
+/** The same narrowing as a caller names it, before the route has checked the unit identifier. */
+export type ProjectIndexLinkState = SearchState & { unitId?: string };
+
 type DefinitionIdByType = {
   applications: ApplicationId;
   jobs: PositiveIntegerString;
@@ -152,9 +162,9 @@ export type ProjectRoute =
   | { kind: "file-view"; projectId: ProjectId; path: string; viewer?: FileViewer }
   | { kind: "files"; projectId: ProjectId; path?: string }
   | { kind: "manage"; projectId: ProjectId }
+  | (ProjectIndexState & { kind: "index" })
   | (ResultsState & { kind: "results"; projectId: ProjectId })
-  | (RunState & { kind: "run"; projectId: ProjectId })
-  | (SearchState & { kind: "index" });
+  | (RunState & { kind: "run"; projectId: ProjectId });
 
 const optionalSearch = (searchParams: URLSearchParams) =>
   readOptionalQuery(searchParams, "search", isSearch);
@@ -211,13 +221,12 @@ const parseSubscription = (searchParams: URLSearchParams) =>
   readOptionalQuery(searchParams, "subscription", isProductId);
 
 /**
- * The containing unit a caller arrived at creation already meaning to use. It carries onboarding's
- * intent — a project in your personal unit — across the navigation, which is what a caller with
- * several eligible units needs to see the one that was meant. A unit that parses but is not
- * eligible falls back to no selection on the screen itself, silently: an aged-out link is an
- * ordinary arrival, not a broken workflow.
+ * The unit a `unit` value names, wherever the family carries one: the container a caller arrived at
+ * creation already meaning to use, and the unit the index is narrowed to. Both carry an intent
+ * across a navigation, and both treat a unit that parses but is no longer available as no selection
+ * on the screen itself, silently — an aged-out link is an ordinary arrival, not a broken workflow.
  */
-const parseCreationUnit = (searchParams: URLSearchParams) =>
+const parseUnit = (searchParams: URLSearchParams) =>
   readOptionalQuery(searchParams, "unit", isUnitId);
 
 const isDefinitionType = (value: string): value is RunDefinitionType =>
@@ -402,7 +411,7 @@ const readDirectoryQuery = (searchParams: URLSearchParams) => {
   return canonical === null || canonical === filesystemRoot ? undefined : canonical;
 };
 
-const creationUnitQuery = (unitId: string | undefined) =>
+const unitQuery = (unitId: string | undefined) =>
   [["unit", unitId ? assertRouteValue(unitId, isUnitId, "unit ID") : undefined]] as const;
 
 const subscriptionQuery = (subscriptionId: string | undefined) =>
@@ -427,12 +436,10 @@ const resultPath = (projectId: string, collection: ResultCollection, resultId: s
   )}`;
 
 export const projectLinks = {
-  index: (state: SearchState = {}) => buildHref("/projects", searchQuery(state.search)),
+  index: (state: ProjectIndexLinkState = {}) =>
+    buildHref("/projects", [...searchQuery(state.search), ...unitQuery(state.unitId)]),
   create: ({ subscriptionId, unitId }: { subscriptionId?: string; unitId?: string } = {}) =>
-    buildHref("/projects/new", [
-      ...subscriptionQuery(subscriptionId),
-      ...creationUnitQuery(unitId),
-    ]),
+    buildHref("/projects/new", [...subscriptionQuery(subscriptionId), ...unitQuery(unitId)]),
   deletion: (taskId: string, { subscriptionId }: { subscriptionId?: string } = {}) =>
     buildHref(
       `/projects/deletions/${assertRouteValue(taskId, isTaskId, "deletion task ID")}`,
@@ -628,13 +635,18 @@ export const parseProjectRoute = (href: string): RouteParseResult<ProjectRoute> 
   const { searchParams, segments } = location;
   if (segments.length === 1) {
     const search = optionalSearch(searchParams);
-    const route: ProjectRoute = { kind: "index", ...(search ? { search } : {}) };
+    const unitId = parseUnit(searchParams);
+    const route: ProjectRoute = {
+      kind: "index",
+      ...(search ? { search } : {}),
+      ...(unitId ? { unitId } : {}),
+    };
     return validRoute(location, route, projectLinks.index(route));
   }
 
   if (segments.length === 2 && segments[1] === "new") {
     const subscriptionId = parseSubscription(searchParams);
-    const unitId = parseCreationUnit(searchParams);
+    const unitId = parseUnit(searchParams);
     const route: Extract<ProjectRoute, { kind: "create" }> = {
       kind: "create",
       ...(subscriptionId ? { subscriptionId } : {}),

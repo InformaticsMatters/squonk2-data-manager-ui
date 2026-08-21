@@ -10,8 +10,10 @@ messages, use the term defined here rather than a synonym.
   leaves the current resource and navigates Home before the new identity is shown.
 - **Unit** — an organisation's billing container. A unit is _billing context_, not a browsing scope:
   it is chosen while creating a project or uploading a dataset, and never appears in a URL as a
-  scope. A **personal unit** is the caller's own unit in the **default organisation**; both are
-  resolved from the generated resources that declare them, never from a name.
+  scope. It may appear in one as a **narrowing** — `/projects?unit=` narrows a list the way `search`
+  does, without changing which resources the screen addresses. A **personal unit** is the caller's
+  own unit in the **default organisation**; both are resolved from the generated resources that
+  declare them, never from a name.
 - **Project** — a Data Manager project: files, executions, membership, and a linked subscription.
   Every project a screen displays is the one in the URL.
 - **Subscription** — the user-facing name for an Account Server **product**. "Product ID" is
@@ -35,6 +37,14 @@ messages, use the term defined here rather than a synonym.
 - **Section** — the second tier inside a workspace. A project has **Files**, **Run**, **Results**
   and **Manage**; Administration has **Organisation & access**, **Subscriptions**, **Charges** and
   **Usage & inventory**. These are sections, not tabs, even where they are presented as tabs.
+- **Projects index** — the workspace entry that lists the organisation's projects and gets a caller
+  into one. It is a chooser rather than a report: each row states what decides a choice — the
+  project, its containing unit, the **highest role** the caller holds in it, and whether it is
+  private — and the list is **narrowed** by a search and a **unit filter**, both held in the URL.
+- **Narrowing** — what a list's own URL state does to it: it removes rows from a list without
+  changing which resources the screen addresses, which is what distinguishes it from a scope.
+- **Highest role** — the strongest of **Administrator**, **Editor** and **Observer** a caller holds
+  in a project, and nothing at all where they hold none. Creating a project is never one of them.
 - **Project selector** — the project identity in the identity strip, opened as a menu of the
   organisation's projects, narrowed by searching project, unit and organisation names. Choosing one
   is a **navigation** to that project's canonical route in the section the caller is already

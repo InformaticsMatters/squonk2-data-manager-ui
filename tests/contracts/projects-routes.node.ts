@@ -19,6 +19,11 @@ test.describe("Project route contract", () => {
   const canonicalHrefs = [
     ["/projects", () => projectLinks.index()],
     ["/projects?search=screening", () => projectLinks.index({ search: "screening" })],
+    [`/projects?unit=${unitId}`, () => projectLinks.index({ unitId })],
+    [
+      `/projects?search=screening&unit=${unitId}`,
+      () => projectLinks.index({ search: "screening", unitId }),
+    ],
     ["/projects/new", () => projectLinks.create()],
     [
       `/projects/new?subscription=${productId}`,
@@ -158,6 +163,15 @@ test.describe("Project route contract", () => {
       kind: "valid",
       route: { kind: "file-view", projectId, path: "/file.sdf" },
       canonicalHref: projectLinks.fileView(projectId, { path: "/file.sdf" }),
+      needsReplace: true,
+    });
+  });
+
+  test("drops a malformed index unit filter rather than narrowing to nothing", () => {
+    expect(parseProjectRoute("/projects?unit=not-a-unit&search=screening")).toEqual({
+      kind: "valid",
+      route: { kind: "index", search: "screening" },
+      canonicalHref: projectLinks.index({ search: "screening" }),
       needsReplace: true,
     });
   });

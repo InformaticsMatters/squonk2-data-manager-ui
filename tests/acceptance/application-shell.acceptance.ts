@@ -392,10 +392,10 @@ test("the project selector is driven from the keyboard and keeps the section it 
   // it first. Nothing about which section will open is left to be discovered.
   await expect(search).toBeFocused();
   await expect(page.getByText("Opens Results")).toBeVisible();
-  await expect(page.getByText("All projects (4)")).toBeVisible();
+  await expect(page.getByText("All projects (5)")).toBeVisible();
 
   const options = page.getByRole("option");
-  await expect(options).toHaveCount(4);
+  await expect(options).toHaveCount(5);
   // The list holds the organisation in effect, so a project of the caller's own in another one is
   // not offered here even though they can reach it.
   await expect(page.getByRole("option", { name: /Partner Project/u })).toHaveCount(0);
@@ -452,13 +452,13 @@ test("the project selector searches by project, containing unit and organisation
 
   // The containing unit narrows the list although no project is named for it.
   await search.fill("screening unit");
-  await expect(page.getByText("2 of 4 projects")).toBeVisible();
+  await expect(page.getByText("2 of 5 projects")).toBeVisible();
   await expect(page.getByRole("option")).toHaveCount(2);
 
   // The count is of the list the caller is being offered rather than of every project they can
   // reach: one in another organisation is outside the scope, and outside the total with it.
   await search.fill("project");
-  await expect(page.getByText("4 of 4 projects")).toBeVisible();
+  await expect(page.getByText("5 of 5 projects")).toBeVisible();
   await expect(page.getByRole("option", { name: /Partner Project/u })).toHaveCount(0);
 
   await search.fill("no such project");
@@ -483,5 +483,5 @@ test("the project selector searches by project, containing unit and organisation
   // The search text described no page and could be sent to nobody, so it is gone.
   await identity.click();
   await expect(page.getByRole("combobox", { name: "Search projects" })).toHaveValue("");
-  await expect(page.getByText("All projects (4)")).toBeVisible();
+  await expect(page.getByText("All projects (5)")).toBeVisible();
 });

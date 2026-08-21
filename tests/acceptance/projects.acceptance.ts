@@ -1208,3 +1208,80 @@ test("an editor in someone else's unit is offered a unit of their own and may pu
   await page.goto("projects");
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
 });
+
+test("the index offers a unit beside Create project, and project creation can then use it", async ({
+  page,
+}, testInfo) => {
+  await login(page, "projects", testInfo);
+  await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
+  await expect(page.getByLabel("Change organisation")).toContainText("Acceptance Organisation");
+
+  await page.getByRole("button", { name: "Create unit" }).click();
+  const dialog = page.getByRole("dialog");
+  // A name this organisation already holds is refused here rather than by the Account Server.
+  await dialog.getByLabel("Unit name").fill("Acceptance Unit");
+  await expect(dialog.getByText("The name is already used for a unit")).toBeVisible();
+  await expect(dialog.getByRole("button", { exact: true, name: "Create" })).toBeDisabled();
+
+  await dialog.getByLabel("Unit name").fill("Bench Unit");
+  await dialog.getByRole("button", { exact: true, name: "Create" }).click();
+
+  // The unit is announced by name, and the caller is left exactly where they were reading.
+  await expect(page.getByText("Unit Bench Unit created")).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects`);
+  await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+
+  // The point of the journey: the two steps join up without a reload.
+  await page.getByRole("link", { name: "Create project" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects/new`);
+  await page.getByRole("combobox", { name: "Containing unit" }).click();
+  await expect(
+    page.getByRole("option", { name: "Acceptance Organisation / Bench Unit" }),
+  ).toBeVisible();
+});
+
+test("the default organisation offers the personal unit, once, and then says it is taken", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=no-personal-unit`);
+  await login(page, "projects", testInfo);
+  // The offer speaks for the organisation in the header, so it is the named organisation's here.
+  await expect(page.getByRole("button", { name: "Create unit" })).toBeVisible();
+
+  await workAsDefaultOrganisation(page);
+  await expect(onboardingPanel(page)).toBeVisible();
+  // While the panel is up it owns the step: one screen does not ask the same thing twice.
+  await expect(page.getByRole("button", { name: "Create personal unit" })).toHaveCount(1);
+
+  // Dismissing the panel takes away the explanation, not the action.
+  await page.getByRole("button", { name: "Not now" }).click();
+  await expect(onboardingPanel(page)).toHaveCount(0);
+  const offer = page.getByRole("button", { name: "Create personal unit" });
+  await expect(offer).toBeEnabled();
+  await offer.click();
+
+  await expect(page.getByText(`Personal unit ${subject} created`)).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects`);
+  // The screen agrees with what the caller just did rather than offering a second one.
+  await expect(page.getByRole("button", { name: "Create personal unit" })).toBeDisabled();
+  await expect(page.getByText("You already have a personal unit.")).toBeVisible();
+});
+
+test("a caller who belongs to none of the organisation is refused the unit with its reason", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=read-only`);
+  await login(page, "projects", testInfo);
+
+  await expect(page.getByRole("button", { name: "Create unit" })).toBeDisabled();
+  await expect(
+    page.getByText("You must be a member or the owner of this organisation."),
+  ).toBeVisible();
+  // The refusal sits beside the index's main job rather than replacing it.
+  await expect(page.getByRole("link", { name: "Create project" })).toBeVisible();
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+});

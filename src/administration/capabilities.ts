@@ -1,4 +1,4 @@
-import { type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
+import { type UnitAllDetail } from "@/api/account-server";
 
 import {
   type Capability,
@@ -6,6 +6,12 @@ import {
   capabilityFactsAreConfirmed as factsAreConfirmed,
   unconfirmedCapability,
 } from "../application/capability";
+import {
+  evaluateOrganisationAuthority,
+  type OrganisationAuthorityFacts,
+  type UnitCreationCaller,
+  type UnitCreationFreshness,
+} from "../application/organisationUnits";
 import {
   enforcedProductPrivacyConstraint,
   type ProductPrivacy,
@@ -26,16 +32,27 @@ export {
   unconfirmedCapability,
 } from "../application/capability";
 
-/** `stale` covers both unresolved and refetching generated facts; neither confirms authority. */
-export type AccessFactsFreshness = "current" | "stale";
+/**
+ * The unit-creation rules Administration and Projects both offer, defined above the families so
+ * that Organisation & access and the projects index cannot drift apart about who may create a unit.
+ * Administration keeps its call sites and these names; only the definition lives elsewhere.
+ */
+export {
+  evaluatePersonalUnitCreationCapability,
+  evaluateUnitCreationCapability,
+  isDefaultOrganisationResource,
+} from "../application/organisationUnits";
 
-export type AccessCaller = { isPlatformAdministrator: boolean; username?: string };
+/** `stale` covers both unresolved and refetching generated facts; neither confirms authority. */
+export type AccessFactsFreshness = UnitCreationFreshness;
+
+export type AccessCaller = UnitCreationCaller;
 
 export type OrganisationCapabilityFacts = CapabilityFacts<AccessFactsFreshness> & {
   caller: AccessCaller;
   /** Resolved from the generated default organisation resource, never from a name. */
   isDefaultOrganisation: boolean;
-  organisation: Pick<OrganisationAllDetail, "caller_is_member" | "id" | "owner_id">;
+  organisation: OrganisationAuthorityFacts;
 };
 
 export type UnitCapabilityFacts = Omit<OrganisationCapabilityFacts, "organisation"> & {
@@ -51,23 +68,11 @@ export type UnitPrivacyCapabilityFacts = UnitCapabilityFacts & {
   organisationPrivacy?: ProductPrivacy;
 };
 
-export type PersonalUnitCapabilityFacts = {
-  freshness?: AccessFactsFreshness;
-  /** Personal units only exist in the default organisation, so every other one hides the action. */
-  isDefaultOrganisation: boolean;
-  personalUnit: "absent" | "present";
-};
-
 /** A personal unit is the caller's own; the Account Server owns everything it declares. */
 const personalUnitIsFixed: AdministrationCapability = {
   status: "disabled",
   reason: "Personal units cannot be renamed or reconfigured.",
 };
-
-export const isDefaultOrganisationResource = (
-  organisationId: string,
-  defaultOrganisationId: string | undefined,
-): boolean => defaultOrganisationId !== undefined && defaultOrganisationId === organisationId;
 
 export const isPersonalUnitResource = (
   unitId: string,
@@ -80,16 +85,6 @@ export const evaluateOrganisationCreationCapability = (
   caller.isPlatformAdministrator && !!caller.username
     ? { status: "enabled" }
     : { status: "hidden" };
-
-/** What the generated organisation endpoints accept from a member, an owner, or the platform. */
-const evaluateOrganisationAuthority = (
-  facts: OrganisationCapabilityFacts,
-): AdministrationCapability =>
-  facts.caller.isPlatformAdministrator ||
-  facts.organisation.owner_id === facts.caller.username ||
-  facts.organisation.caller_is_member
-    ? { status: "enabled" }
-    : { status: "disabled", reason: "You must be a member or the owner of this organisation." };
 
 /**
  * Every organisation action the generated endpoints expose answers to that one authority, so each
@@ -150,27 +145,6 @@ export const evaluateOrganisationPrivacyCapability = (
     facts,
     "The default organisation's project privacy is managed by the platform.",
   );
-
-export const evaluateUnitCreationCapability = (
-  facts: OrganisationCapabilityFacts,
-): AdministrationCapability =>
-  evaluateOrganisationCapability(facts, "The default organisation only contains personal units.");
-
-export const evaluatePersonalUnitCreationCapability = ({
-  freshness = "current",
-  isDefaultOrganisation,
-  personalUnit,
-}: PersonalUnitCapabilityFacts): AdministrationCapability => {
-  if (!isDefaultOrganisation) {
-    return { status: "hidden" };
-  }
-  if (freshness !== "current") {
-    return unconfirmedCapability;
-  }
-  return personalUnit === "present"
-    ? { status: "disabled", reason: "You already have a personal unit." }
-    : { status: "enabled" };
-};
 
 const evaluateUnitAuthority = (facts: UnitCapabilityFacts): AdministrationCapability => {
   if (

@@ -27,9 +27,14 @@ import {
   projectOnboardingIsDismissed,
 } from "../../projects/onboardingDismissal";
 import { ProjectIdentity } from "../../projects/ProjectIdentity";
-import { buildProjectIndexItems, decideProjectOnboarding } from "../../projects/projectIndex";
+import {
+  buildProjectIndexItems,
+  decideProjectOnboarding,
+  unitNamesInOrganisation,
+} from "../../projects/projectIndex";
 import { ProjectOnboarding } from "../../projects/ProjectOnboarding";
 import { projectLinks } from "../../projects/routes";
+import { UnitOffer } from "../../projects/UnitOffer";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 
 export const ProjectsIndex = () => {
@@ -140,9 +145,25 @@ export const ProjectsIndex = () => {
           )}
         </div>
         {onboardingIsTheIndex ? null : (
-          <Button component={Link} href={projectLinks.create()} variant="contained">
-            Create project
-          </Button>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            sx={{ alignItems: { sm: "flex-start" }, gap: 2 }}
+          >
+            {/* The panel already offers the caller their unit, and one screen states a thing once,
+                so the header stands aside for exactly as long as the panel is up. Dismissing the
+                panel takes away the explanation, not the action. */}
+            {offersOnboarding ? null : (
+              <UnitOffer
+                existingUnitNames={
+                  organisationId ? unitNamesInOrganisation(units, organisationId) : []
+                }
+                organisationId={organisationId}
+              />
+            )}
+            <Button component={Link} href={projectLinks.create()} variant="contained">
+              Create project
+            </Button>
+          </Stack>
         )}
       </Stack>
       {onboardingIsTheIndex ? panel : null}

@@ -1,7 +1,13 @@
 import { type UnitsGetResponse } from "@/api/account-server";
 import { type ProjectDetail } from "@/api/data-manager";
 
-import { callerEditsProject } from "./capabilities";
+import {
+  evaluatePersonalUnitCreationCapability,
+  evaluateUnitCreationCapability,
+  isDefaultOrganisationResource,
+  type UnitCreationFacts,
+} from "../application/organisationUnits";
+import { callerEditsProject, type ProjectCapability } from "./capabilities";
 
 export type ProjectIndexItem = {
   organisationName: string;
@@ -22,13 +28,21 @@ const containerName = (
   names.get(containerId ?? "") ??
   (containerId ? `${kind} ${containerId}` : `Unknown containing ${kind.toLocaleLowerCase()}`);
 
+/**
+ * The caller's units in one organisation, as their own grouped index reports them. One lookup,
+ * because a screen that found them twice could name an organisation's units differently from the
+ * names it refuses a new one for clashing with.
+ */
+const unitGroupOf = (unitsResponse: UnitsGetResponse, organisationId: string) =>
+  unitsResponse.units.find(({ organisation }) => organisation.id === organisationId);
+
 export const buildProjectIndexItems = (
   projects: readonly ProjectDetail[],
   unitsResponse: UnitsGetResponse,
   organisationId: string,
   search = "",
 ): ProjectIndexItem[] => {
-  const group = unitsResponse.units.find(({ organisation }) => organisation.id === organisationId);
+  const group = unitGroupOf(unitsResponse, organisationId);
   const unitNames = new Map(group?.units.map((unit) => [unit.id, unit.name]));
   const organisationProjects = projects.filter(
     (project) => project.organisation_id === organisationId,
@@ -93,6 +107,80 @@ export const decideProjectOnboarding = (
     personalUnitStepApplies: personalUnitId === undefined,
   };
 };
+
+/**
+ * The unit the projects index offers to create for the organisation in effect, and what that offer
+ * may do. `kind` is which unit the organisation can hold, never a different rule about authority:
+ * the two evaluators it delegates to are already complementary, because unit creation disables
+ * itself in the default organisation and personal-unit creation hides itself outside it.
+ */
+export type IndexUnitOffer = { capability: ProjectCapability; kind: "named" | "personal" };
+
+/**
+ * Which unit offer the projects index makes, from the facts the shared unit-creation rules read.
+ *
+ * No offer is named while the organisation in effect is unknown, and none is named while the default
+ * organisation has not been read either: which unit an organisation holds for a caller is settled by
+ * whether it is that one, so an unread default organisation would otherwise fall through to the
+ * named arm and offer a caller standing in the default organisation a unit it cannot hold. Both are
+ * identity questions rather than authority ones, so neither falls under the rule that keeps an
+ * unconfirmed action available — there is nothing yet to make an offer about. Once the organisation
+ * is known, unresolved authority behaves as the shared vocabulary already says.
+ *
+ * A settled read that names no default organisation is an answer rather than a gap: a deployment
+ * without one still creates units in the organisations it does have.
+ *
+ * The personal-unit arm deliberately reads no organisation resource. The Account Server refuses an
+ * ordinary caller's addressed read of the default organisation, and it needs no membership of it to
+ * give them their own unit, so a refused read never withholds the offer that organisation exists to
+ * make.
+ */
+export const decideIndexUnitOffer = ({
+  caller,
+  defaultOrganisationId,
+  freshness,
+  organisation,
+  organisationId,
+  personalUnitId,
+}: UnitCreationFacts): IndexUnitOffer | undefined => {
+  if (
+    organisationId === undefined ||
+    (defaultOrganisationId === undefined && freshness !== "current")
+  ) {
+    return undefined;
+  }
+  if (isDefaultOrganisationResource(organisationId, defaultOrganisationId)) {
+    return {
+      capability: evaluatePersonalUnitCreationCapability({
+        freshness,
+        isDefaultOrganisation: true,
+        personalUnit: personalUnitId === undefined ? "absent" : "present",
+      }),
+      kind: "personal",
+    };
+  }
+  return {
+    capability: evaluateUnitCreationCapability({
+      caller,
+      // An organisation no read of the caller's names establishes nothing about their authority
+      // over it, which is exactly what stale facts mean to every capability.
+      freshness: organisation === undefined ? "stale" : freshness,
+      isDefaultOrganisation: false,
+      organisation: organisation ?? { caller_is_member: false, id: organisationId },
+    }),
+    kind: "named",
+  };
+};
+
+/**
+ * The names the units of one organisation already hold, which is what a name about to be created
+ * is refused for clashing with. A name is display content here and nowhere else: nothing about a
+ * unit's meaning is decided by comparing it.
+ */
+export const unitNamesInOrganisation = (
+  unitsResponse: UnitsGetResponse,
+  organisationId: string,
+): string[] => unitGroupOf(unitsResponse, organisationId)?.units.map(({ name }) => name) ?? [];
 
 /**
  * The names the caller's own reads give to the containers a project declares. Organisations come

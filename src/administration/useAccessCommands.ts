@@ -12,7 +12,6 @@ import {
 import {
   getGetPersonalUnitQueryKey,
   getGetUnitsQueryKey,
-  useCreateOrganisationUnit,
   useDeleteOrganisationUnit,
   useDeletePersonalUnit,
   usePatchUnit,
@@ -28,7 +27,7 @@ import { getGetProjectsQueryKey } from "@/api/data-manager/project";
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 
 import { useCreatePersonalUnitCommand } from "../hooks/usePersonalUnitCommands";
-import { getBillingDay } from "../utils/app/products";
+import { useCreateUnitCommand } from "../hooks/useUnitCommands";
 
 /**
  * The generated key factories are the sole cache identity for Organisation & access data. Every
@@ -50,10 +49,11 @@ const refreshAccess = async (queryClient: QueryClient) => {
 export const useAccessCommands = () => {
   const queryClient = useQueryClient();
   const createOrganisation = useCreateOrganisation();
-  const createUnit = useCreateOrganisationUnit();
-  // The personal unit is the caller's own resource rather than Administration's, and Projects
-  // onboarding sends the same command, so it is owned above the families. Its own refresh covers the
-  // unit and project indexes; `run` then refreshes the rest of the access index this screen shows.
+  // Neither unit command is Administration's own: the projects index offers both of them too, so
+  // each is owned above the families and this screen sends the one definition of it. Their own
+  // refreshes cover the unit and project indexes; `run` then refreshes the rest of the access index
+  // this screen shows.
+  const createUnit = useCreateUnitCommand();
   const createPersonalUnit = useCreatePersonalUnitCommand();
   const patchOrganisation = usePatchOrganisation();
   const patchUnit = usePatchUnit();
@@ -78,8 +78,7 @@ export const useAccessCommands = () => {
     createOrganisation: (data: OrganisationPostBodyBody) =>
       run(createOrganisation.mutateAsync({ data })),
     createPersonalUnit: () => run(createPersonalUnit()),
-    createUnit: (orgId: string, name: string) =>
-      run(createUnit.mutateAsync({ orgId, data: { name, billing_day: getBillingDay() } })),
+    createUnit: (orgId: string, name: string) => run(createUnit(orgId, name)),
     /** Personal units are deleted through their own generated resource, never `/unit/{unitId}`. */
     deleteUnit: (unitId: string, isPersonalUnit: boolean) =>
       run(isPersonalUnit ? deletePersonalUnit.mutateAsync() : deleteUnit.mutateAsync({ unitId })),

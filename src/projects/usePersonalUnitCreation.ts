@@ -1,6 +1,10 @@
 import { useState } from "react";
 
-import { getGetPersonalUnitQueryOptions } from "@/api/account-server/unit";
+import { type UnitAllDetail } from "@/api/account-server";
+import {
+  getGetPersonalUnitQueryKey,
+  getGetPersonalUnitQueryOptions,
+} from "@/api/account-server/unit";
 
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -12,6 +16,17 @@ export type PersonalUnitCreationState =
   | { kind: "creating" }
   | { kind: "failed"; reason: string }
   | { kind: "idle" };
+
+/**
+ * How one attempt ended, for a caller that reports it somewhere the control itself is not. `settled`
+ * covers both a request that succeeded and one whose failure the personal unit's own existence
+ * settled afterwards, because the caller is in the same place either way: they have their unit. It
+ * carries the unit so that whoever announces the step can name what now exists, and leaves it
+ * undefined rather than inventing a name where the read has not answered.
+ */
+export type PersonalUnitCreationOutcome =
+  | { kind: "failed"; reason: string }
+  | { kind: "settled"; unit: UnitAllDetail | undefined };
 
 /**
  * Creating the caller's own personal unit, through the one command that sends `PUT /personal-unit`.
@@ -35,20 +50,28 @@ export const usePersonalUnitCreation = () => {
   const create = useCreatePersonalUnitCommand();
   const [state, setState] = useState<PersonalUnitCreationState>({ kind: "idle" });
 
-  const createPersonalUnit = async () => {
+  const createPersonalUnit = async (): Promise<PersonalUnitCreationOutcome> => {
     setState({ kind: "creating" });
     try {
       await create();
       setState({ kind: "idle" });
+      // The command refreshes the personal unit before it resolves, so the unit read back here is
+      // the one that now exists rather than the absence this control was put on screen by.
+      return {
+        kind: "settled",
+        unit: queryClient.getQueryData<UnitAllDetail>(getGetPersonalUnitQueryKey()),
+      };
     } catch (error) {
       const observed = await queryClient
         .fetchQuery(getGetPersonalUnitQueryOptions({ query: { retry: false } }))
         .catch(() => undefined);
-      setState(
-        observed
-          ? { kind: "idle" }
-          : { kind: "failed", reason: personalUnitCreationFailureReason(error) },
-      );
+      if (observed) {
+        setState({ kind: "idle" });
+        return { kind: "settled", unit: observed };
+      }
+      const reason = personalUnitCreationFailureReason(error);
+      setState({ kind: "failed", reason });
+      return { kind: "failed", reason };
     }
   };
 

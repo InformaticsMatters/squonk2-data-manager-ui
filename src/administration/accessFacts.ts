@@ -3,31 +3,21 @@ import {
   type OrganisationUnitsGetResponse,
   type UnitAllDetail,
 } from "@/api/account-server";
-import {
-  useGetDefaultOrganisation,
-  useGetOrganisation,
-  useGetOrganisationsSuspense,
-} from "@/api/account-server/organisation";
+import { useGetOrganisation, useGetOrganisationsSuspense } from "@/api/account-server/organisation";
 import { useGetProduct } from "@/api/account-server/product";
-import { useGetPersonalUnit, useGetUnit, useGetUnitsSuspense } from "@/api/account-server/unit";
-import { useGetUserAccount } from "@/api/account-server/user";
+import { useGetUnit, useGetUnitsSuspense } from "@/api/account-server/unit";
 
 import {
   classifyTransportFailure,
   type TransportFailure,
 } from "../api/runtime/classifyTransportFailure";
-import { type AccessCaller, type AccessFactsFreshness } from "./capabilities";
+import { type AccountFacts, useAccountFacts } from "../hooks/useAccountFacts";
 import { administrationReadIsAuthoritative } from "./failures";
 import { type Subscription } from "./subscriptionFacts";
 
 export type UnitWithOrganisation = { organisation: OrganisationAllDetail; unit: UnitAllDetail };
 
-export type AccessFacts = {
-  caller: AccessCaller;
-  defaultOrganisationId?: string;
-  freshness: AccessFactsFreshness;
-  personalUnitId?: string;
-};
+export type AccessFacts = AccountFacts;
 
 const flattenUnits = (groups: OrganisationUnitsGetResponse[]): UnitWithOrganisation[] =>
   groups.flatMap(({ organisation, units }) => units.map((unit) => ({ organisation, unit })));
@@ -107,27 +97,10 @@ export const useUnitAncestry = (unitId: string): OrganisationAllDetail | undefin
 
 /**
  * Resolves caller authority, personal-unit identity, and default-organisation identity from their
- * own generated resources. Facts stay `stale` until every resource answers, so capabilities defer
- * to server authority rather than guessing from organisation or unit names.
+ * own generated resources.
+ *
+ * Projects reads the same facts to decide the unit offer it makes beside **Create project**, so the
+ * assembly itself sits above the families and this is the name Administration knows it by. Nothing
+ * about what Administration's screens read changes here.
  */
-export const useAccessFacts = (): AccessFacts => {
-  const account = useGetUserAccount({ query: { retry: false } });
-  const defaultOrganisation = useGetDefaultOrganisation({ query: { retry: false } });
-  const personalUnit = useGetPersonalUnit({ query: { retry: false } });
-  const personalUnitIsAbsent =
-    personalUnit.isError && classifyTransportFailure(personalUnit.error).kind === "not-found";
-  const resolved =
-    account.isSuccess &&
-    defaultOrganisation.isSuccess &&
-    (personalUnit.isSuccess || personalUnitIsAbsent);
-
-  return {
-    caller: {
-      isPlatformAdministrator: account.data?.caller_has_admin_privilege ?? false,
-      username: account.data?.user.id,
-    },
-    defaultOrganisationId: defaultOrganisation.data?.id,
-    freshness: resolved ? "current" : "stale",
-    personalUnitId: personalUnit.data?.id,
-  };
-};
+export const useAccessFacts = (): AccessFacts => useAccountFacts();

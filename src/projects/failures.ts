@@ -115,6 +115,33 @@ export const projectDeletionFailureReason = (
 };
 
 /**
+ * How a failed unit creation in a named organisation reads.
+ *
+ * A unit creates nothing but itself — no subscription, no project — so there is nothing to recover
+ * and nothing partially made to describe: every sentence says what stopped it and what to do next.
+ * An answer the transport cannot classify is deliberately left unnamed, so the shared error
+ * presentation states the service's own words rather than this client inventing a reason for them.
+ */
+export const unitCreationFailureReason = (error: unknown): string | undefined => {
+  switch (classifyTransportFailure(error).kind) {
+    case "forbidden":
+      return "The server did not allow a unit to be created in this organisation. Review your access and retry.";
+    case "not-found":
+      return "This organisation is no longer available, so nothing was created.";
+    case "network":
+      return "The unit request could not reach the Account Server. Check your connection and retry.";
+    case "rate-limited":
+      return "The Account Server is busy. Wait briefly and retry.";
+    case "server":
+      return "The Account Server is unavailable. Retry when it has recovered.";
+    case "timeout":
+      return "The unit request timed out. Its outcome could not be confirmed; check your units before retrying.";
+    case "unknown":
+      return undefined;
+  }
+};
+
+/**
  * How a failed personal-unit creation reads. There is exactly one personal unit and it is the
  * caller's own, so a duplicate attempt is never presented here: the caller of this command settles
  * that by reading `GET /personal-unit` back, and only a unit that still does not exist reaches

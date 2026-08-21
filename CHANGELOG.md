@@ -1,3 +1,10 @@
+# [7.0.0-dev.8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.7...7.0.0-dev.8) (2026-08-21)
+
+
+### Features
+
+* make the project identity a way into any other project ([ab86f09](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/ab86f0934c52bf4c0e0252ddd23b057a9d7324ba)), closes [#1914](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1914) [#1988](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1988)
+
 # [7.0.0-dev.7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.6...7.0.0-dev.7) (2026-08-20)
 
 

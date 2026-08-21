@@ -1,3 +1,10 @@
+# [7.0.0-dev.10](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.9...7.0.0-dev.10) (2026-08-21)
+
+
+### Features
+
+* state role and privacy on project rows and filter the index by unit ([0deb0df](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0deb0df3eb51b00c08c3267b7aa17436cc33acc1)), closes [#1991](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1991)
+
 # [7.0.0-dev.9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.8...7.0.0-dev.9) (2026-08-21)
 
 

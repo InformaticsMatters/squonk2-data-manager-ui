@@ -17,6 +17,7 @@ import {
   buildProjectIndexItems,
   buildProjectSelectorList,
   decideProjectOnboarding,
+  type ProjectSelectorScope,
 } from "../../src/projects/projectIndex";
 import {
   readRecentProjectIds,
@@ -313,12 +314,19 @@ test.describe("project selector list", () => {
     }),
   ];
 
+  const everyOrganisation: ProjectSelectorScope = { kind: "every-organisation" };
+  const currentOrganisation: ProjectSelectorScope = {
+    kind: "organisation",
+    organisationId: "organisation-one",
+  };
+
   const cases: {
     headings: string[];
     name: string;
     projects?: ProjectDetail[];
     recent?: string[];
     rows: string[][];
+    scope?: ProjectSelectorScope;
     search?: string;
     urlProject?: string;
   }[] = [
@@ -383,17 +391,36 @@ test.describe("project selector list", () => {
       projects: [],
       rows: [],
     },
+    {
+      headings: ["All projects (2)"],
+      name: "the scope holds the list to the organisation in effect",
+      rows: [["Alpha", "Beta"]],
+      scope: currentOrganisation,
+    },
+    {
+      headings: ["Recent (1)", "All projects (1)"],
+      name: "a recent outside the scope is not offered inside it",
+      recent: ["project-gamma", "project-alpha"],
+      rows: [["Alpha"], ["Beta"]],
+      scope: currentOrganisation,
+    },
+    {
+      headings: ["1 of 2 projects"],
+      name: "a scoped search counts the projects the scope holds, not every one reachable",
+      rows: [["Beta"]],
+      scope: currentOrganisation,
+      search: "beta",
+    },
   ];
 
   for (const testCase of cases) {
     test(testCase.name, () => {
-      const list = buildProjectSelectorList(
-        testCase.projects ?? reachable,
-        ancestry,
-        testCase.recent ?? [],
-        testCase.urlProject,
-        testCase.search,
-      );
+      const list = buildProjectSelectorList(testCase.projects ?? reachable, ancestry, {
+        recentProjectIds: testCase.recent ?? [],
+        scope: testCase.scope ?? everyOrganisation,
+        search: testCase.search,
+        urlProjectId: testCase.urlProject,
+      });
 
       expect(list.sections.map(({ heading }) => heading)).toEqual(testCase.headings);
       expect(list.sections.map(({ rows }) => rows.map(({ projectName }) => projectName))).toEqual(
@@ -409,7 +436,11 @@ test.describe("project selector list", () => {
   }
 
   test("only the project the address bar names is marked as the one being displayed", () => {
-    const list = buildProjectSelectorList(reachable, ancestry, [], "project-beta");
+    const list = buildProjectSelectorList(reachable, ancestry, {
+      recentProjectIds: [],
+      scope: everyOrganisation,
+      urlProjectId: "project-beta",
+    });
 
     expect(list.rows.map(({ isUrlProject, projectId }) => [projectId, isUrlProject])).toEqual([
       ["project-alpha", false],
@@ -429,8 +460,7 @@ test.describe("project selector list", () => {
         }),
       ],
       ancestry,
-      [],
-      undefined,
+      { recentProjectIds: [], scope: everyOrganisation },
     );
 
     expect(list.rows[0]).toEqual({

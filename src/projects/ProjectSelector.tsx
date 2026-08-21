@@ -21,10 +21,15 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { useVisibleOrganisations } from "../state/organisationSelection";
+import { useSelectedOrganisation, useVisibleOrganisations } from "../state/organisationSelection";
 import { ProjectHeading } from "./ProjectHeading";
 import { ProjectIdentity } from "./ProjectIdentity";
-import { buildProjectSelectorList, type ProjectSelectorRow } from "./projectIndex";
+import {
+  buildProjectSelectorList,
+  projectSelectorReach,
+  type ProjectSelectorRow,
+  type ProjectSelectorScope,
+} from "./projectIndex";
 import { readRecentProjectIds } from "./recentProjects";
 import { projectSectionHref, projectSectionLabel, routeProjectSection } from "./routes";
 
@@ -49,10 +54,12 @@ const optionId = (index: number) => `project-selector-option-${index}`;
  * 2. Story 16 forbids scope swapped underneath an open page, which is a selected-project value
  *    rather than a control. See above: there is no such value here.
  *
- * The list spans every organisation the caller can reach, with no scope control. Filtering it to
- * the organisation in effect would hide projects with no control left to reveal them; search
- * matching on organisation name does the same job without a mode. Entering a project already
- * adopts its owning organisation, so crossing between them is ordinary.
+ * The list holds the organisation in effect, as the Projects index does, so the two cannot
+ * disagree about which projects exist. `projectSelectorReach` is the whole of the other answer —
+ * every organisation the caller can reach, narrowed by search rather than by a scope control — and
+ * nothing offers to change it. That answer is kept because entering a project already adopts its
+ * owning organisation, so crossing between them costs this control nothing; what scoping costs is
+ * a project the caller can reach and can no longer see.
  */
 export const ProjectSelector = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
@@ -72,6 +79,7 @@ export const ProjectSelector = ({ projectId }: { projectId: string }) => {
     query: { enabled: open },
   });
   const organisations = useVisibleOrganisations({ enabled: open });
+  const organisationId = useSelectedOrganisation()[2];
   // The ancestry has to have answered as well as the projects: a row read before it arrives names
   // the identifier its container declares rather than that container's name, and search would then
   // be matching identifiers the caller has never seen.
@@ -79,16 +87,24 @@ export const ProjectSelector = ({ projectId }: { projectId: string }) => {
   const section = routeProjectSection(router.asPath, projectId);
   const sectionLabel = projectSectionLabel(section);
 
+  // Nothing to scope to is not the same as a scope of nothing: until an organisation is in effect
+  // the list spans them all, because a strip whose only job is offering a way out must not be
+  // empty while the identity settles.
+  const scope = useMemo<ProjectSelectorScope>(
+    () =>
+      projectSelectorReach === "organisation" && organisationId
+        ? { kind: "organisation", organisationId }
+        : { kind: "every-organisation" },
+    [organisationId],
+  );
   const list = useMemo(
     () =>
       buildProjectSelectorList(
         projects?.projects ?? [],
         { organisations, units: units ?? { units: [] } },
-        recentProjectIds,
-        projectId,
-        search,
+        { recentProjectIds, scope, search, urlProjectId: projectId },
       ),
-    [organisations, projectId, projects, recentProjectIds, search, units],
+    [organisations, projectId, projects, recentProjectIds, scope, search, units],
   );
 
   // Read when the menu opens rather than live, so the order does not move under the caller while

@@ -133,11 +133,15 @@ test.describe("removed scope ownership", () => {
   test("organisation identity is the only selection state the application holds", () => {
     // A selection hook that resolves its resource through a generated query is identity; one that
     // holds the resource itself is the mutable global scope this cutover removed. This list is
-    // closed: identity is read where it is displayed, adopted, cleared, and stored, nowhere else.
+    // closed: identity is read where it is displayed, adopted, cleared and stored, and where a
+    // list of projects to go to is narrowed to one organisation, nowhere else. The last of those
+    // is the Projects index and the project selector, neither of which decides what is displayed
+    // — the URL still does that — only which projects are offered as somewhere to go.
     expect(sourcesMatching(/useSelectedOrganisation/u)).toEqual([
       "components/workspaces/ProjectsIndex.tsx",
       "layouts/navigation/OrganisationIdentity.tsx",
       "projects/ProjectOrganisationBoundary.tsx",
+      "projects/ProjectSelector.tsx",
       "state/organisationSelection.ts",
     ]);
   });

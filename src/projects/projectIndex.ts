@@ -218,6 +218,37 @@ export type ProjectSelectorList = {
   sections: ProjectSelectorSection[];
 };
 
+/**
+ * Which organisations the project selector may offer. The two arms are named rather than modelled
+ * as an optional identifier, so neither can be reached by forgetting to pass something.
+ */
+export type ProjectSelectorScope =
+  | { kind: "every-organisation" }
+  | { kind: "organisation"; organisationId: string };
+
+/**
+ * How far the project selector reaches, and the only place that answer is given. There is no
+ * control offering to change it.
+ *
+ * It reaches one organisation — the one in effect — which is what the Projects index does, so the
+ * two cannot disagree about which projects exist.
+ *
+ * `every-organisation` is kept whole and kept covered, because the argument for it is a real one
+ * and may yet win: scoping hides a project the caller can reach with no control left to reveal it,
+ * and searching organisation names does the same job without a mode. Changing this one word is the
+ * whole of that change — the derivation, its matrix and the control all already answer for it. It
+ * is declared as the union rather than inferred so that either value reads as ordinary code.
+ */
+export const projectSelectorReach: ProjectSelectorScope["kind"] = "organisation";
+
+/** What narrows the list, beside the collection and ancestry it is drawn from. */
+export type ProjectSelectorNarrowing = {
+  recentProjectIds: readonly string[];
+  scope: ProjectSelectorScope;
+  search?: string;
+  urlProjectId?: string;
+};
+
 const matchesProjectSearch = (row: ProjectSelectorRow, term: string) =>
   !term ||
   row.projectName.toLocaleLowerCase().includes(term) ||
@@ -225,7 +256,7 @@ const matchesProjectSearch = (row: ProjectSelectorRow, term: string) =>
   row.organisationName.toLocaleLowerCase().includes(term);
 
 /**
- * Every project the caller can reach, ordered as the project selector offers them.
+ * The projects the selector offers, ordered as it offers them.
  *
  * Recents answer "take me back" and search answers "find me", so a non-empty search *replaces* the
  * recents rather than narrowing them, and the whole list becomes one counted set of matches. Where
@@ -234,15 +265,20 @@ const matchesProjectSearch = (row: ProjectSelectorRow, term: string) =>
  * while still being listed and marked, so the caller can see where they are among the alternatives.
  *
  * Every heading counts the rows beneath it rather than the collection it was drawn from, so the
- * counts still add up to the list once a recent has been lifted out of the section below.
+ * counts still add up to the list once a recent has been lifted out of the section below, and to
+ * the scope rather than to every project the caller can reach.
  */
 export const buildProjectSelectorList = (
   projects: readonly ProjectDetail[],
   ancestry: ProjectSelectorAncestry,
-  recentProjectIds: readonly string[],
-  urlProjectId: string | undefined,
-  search = "",
+  { recentProjectIds, scope, search = "", urlProjectId }: ProjectSelectorNarrowing,
 ): ProjectSelectorList => {
+  // Scoping happens first, so every count beneath it counts the list the caller is being offered
+  // rather than the collection it was drawn from.
+  const offered =
+    scope.kind === "organisation"
+      ? projects.filter(({ organisation_id }) => organisation_id === scope.organisationId)
+      : projects;
   const unitNames = new Map(
     ancestry.units.units.flatMap(({ units }) => units.map((unit) => [unit.id, unit.name] as const)),
   );
@@ -253,7 +289,7 @@ export const buildProjectSelectorList = (
     ...ancestry.organisations.map(({ id, name }) => [id, name] as const),
   ]);
   const term = search.trim().toLocaleLowerCase();
-  const matched = projects
+  const matched = offered
     .map<ProjectSelectorRow>((project) => ({
       isUrlProject: project.project_id === urlProjectId,
       organisationName: containerName(organisationNames, project.organisation_id, "Organisation"),
@@ -286,7 +322,7 @@ export const buildProjectSelectorList = (
   if (rest.length > 0) {
     sections.push({
       heading: term
-        ? `${matched.length} of ${projects.length} projects`
+        ? `${matched.length} of ${offered.length} projects`
         : `All projects (${rest.length})`,
       rows: rest,
       startIndex: recent.length,

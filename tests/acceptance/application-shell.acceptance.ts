@@ -392,10 +392,13 @@ test("the project selector is driven from the keyboard and keeps the section it 
   // it first. Nothing about which section will open is left to be discovered.
   await expect(search).toBeFocused();
   await expect(page.getByText("Opens Results")).toBeVisible();
-  await expect(page.getByText("All projects (5)")).toBeVisible();
+  await expect(page.getByText("All projects (4)")).toBeVisible();
 
   const options = page.getByRole("option");
-  await expect(options).toHaveCount(5);
+  await expect(options).toHaveCount(4);
+  // The list holds the organisation in effect, so a project of the caller's own in another one is
+  // not offered here even though they can reach it.
+  await expect(page.getByRole("option", { name: /Partner Project/u })).toHaveCount(0);
   // The check says where the caller is; the highlight says where the keyboard is. Both start on
   // the same row here only because the list is ordered by name.
   await expect(options.first()).toHaveAttribute("aria-current", "true");
@@ -424,15 +427,10 @@ test("the project selector is driven from the keyboard and keeps the section it 
 
   // Results, in the project chosen, at that project's own canonical route.
   await expect(page).toHaveURL(
-    `${acceptanceUrls.app}projects/${fixtureIds.partnerProject}/results`,
+    `${acceptanceUrls.app}projects/${fixtureIds.screeningProject}/results`,
   );
   await expect(page.getByRole("heading", { name: "Results" })).toBeVisible();
-  await expect(identity).toContainText("Partner Project");
-  // Entering a project adopts the organisation that owns it, so the masthead and the content on
-  // screen cannot disagree about which organisation is in effect.
-  await expect(page.getByRole("button", { name: "Change organisation" })).toContainText(
-    "Partner Organisation",
-  );
+  await expect(identity).toContainText("Screening Project");
 
   await page.goBack();
   await expect(page).toHaveURL(`${acceptanceUrls.app}projects/${fixtureIds.project}/results`);
@@ -454,14 +452,14 @@ test("the project selector searches by project, containing unit and organisation
 
   // The containing unit narrows the list although no project is named for it.
   await search.fill("screening unit");
-  await expect(page.getByText("2 of 5 projects")).toBeVisible();
+  await expect(page.getByText("2 of 4 projects")).toBeVisible();
   await expect(page.getByRole("option")).toHaveCount(2);
 
-  // So does the organisation, which is the only way to narrow to one — the list deliberately spans
-  // every organisation the caller can reach and offers no scope control.
-  await search.fill("partner organisation");
-  await expect(page.getByText("1 of 5 projects")).toBeVisible();
-  await expect(page.getByRole("option", { name: /Partner Project/u })).toBeVisible();
+  // The count is of the list the caller is being offered rather than of every project they can
+  // reach: one in another organisation is outside the scope, and outside the total with it.
+  await search.fill("project");
+  await expect(page.getByText("4 of 4 projects")).toBeVisible();
+  await expect(page.getByRole("option", { name: /Partner Project/u })).toHaveCount(0);
 
   await search.fill("no such project");
   await expect(page.getByText("No project matches “no such project”.")).toBeVisible();
@@ -485,5 +483,5 @@ test("the project selector searches by project, containing unit and organisation
   // The search text described no page and could be sent to nobody, so it is gone.
   await identity.click();
   await expect(page.getByRole("combobox", { name: "Search projects" })).toHaveValue("");
-  await expect(page.getByText("All projects (5)")).toBeVisible();
+  await expect(page.getByText("All projects (4)")).toBeVisible();
 });

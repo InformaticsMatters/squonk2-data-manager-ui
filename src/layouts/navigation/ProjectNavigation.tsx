@@ -31,7 +31,7 @@ const projectSections = [
 
 const variants: PrototypeVariant[] = [
   { key: "current", name: "Today — static identity" },
-  { key: "A", name: "Anchored dropdown" },
+  { key: "A", name: "Anchored dropdown — recents + keys" },
   { key: "B", name: "Command palette" },
   { key: "C", name: "Breadcrumb cascade" },
   { key: "D", name: "Expanding panel" },

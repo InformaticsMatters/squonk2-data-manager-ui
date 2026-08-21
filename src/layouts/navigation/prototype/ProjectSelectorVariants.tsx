@@ -27,7 +27,6 @@ import {
   Collapse,
   Dialog,
   Divider,
-  FormControlLabel,
   InputAdornment,
   List,
   ListItemButton,
@@ -37,7 +36,6 @@ import {
   Popover,
   Skeleton,
   Stack,
-  Switch,
   TextField,
   Typography,
 } from "@mui/material";
@@ -147,28 +145,43 @@ const ProjectRowText = ({ project }: { project: SelectorProject }) => (
 /* ------------------------------------------------------------------ *
  * Variant A — Anchored dropdown
  *
- * The identity block itself becomes the button. Answers: preserve the section silently (and say
- * so in the footer); current organisation only, with an opt-in to the rest; search at the top of
- * the menu; an unavailable project still opens the menu, which is the way out of it.
+ * The identity block itself becomes the button. Answers: preserve the section silently (and say so
+ * in the footer); every project the caller can reach, narrowed by search rather than by a scope
+ * control; an unavailable project still opens the menu, which is the way out of it.
+ *
+ * Two claims this variant exists to test:
+ *
+ * 1. It holds up at a hundred projects. Recents stay pinned at the top under sticky headings, the
+ *    size of the list is stated rather than implied, and search narrows on unit and organisation
+ *    as well as name. A hundred rows sit comfortably in one scroller; past a few hundred the
+ *    scroller is the thing to virtualise, and nothing here would change shape to do it. Append
+ *    `&pad=100` to the prototype hash to see it at that size.
+ * 2. The keyboard works from the moment the button is pressed. Focus lands in the search box as
+ *    the menu opens, so ↑ ↓ move and ↵ opens without clicking anything first. Focus then *stays*
+ *    in the input while the highlight moves — the rows are deliberately not tab stops — which is
+ *    what lets typing and arrowing interleave; `aria-activedescendant` is what tells a screen
+ *    reader where the highlight is, since DOM focus never leaves the box.
  * ------------------------------------------------------------------ */
+const LISTBOX_ID = "project-selector-listbox";
+const optionId = (index: number) => `project-selector-option-${index}`;
+
 export const ProjectDropdownVariant = ({ projectId }: VariantProps) => {
   const router = useRouter();
   const label = useProjectLabel(projectId);
   const { items } = useSelectorProjects();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [search, setSearch] = useState("");
-  const [allOrganisations, setAllOrganisations] = useState(false);
-  const recentIds = useRecentProjects(Boolean(anchorEl));
+  const [active, setActive] = useState(0);
+  const searchRef = useRef<HTMLInputElement | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const open = Boolean(anchorEl);
+  const recentIds = useRecentProjects(open);
   const section = currentSection(router.asPath, projectId);
   const sectionLabel = projectSections.find(({ key }) => key === section)?.label ?? "Files";
 
-  const inScope = items.filter(
-    (project) =>
-      allOrganisations ||
-      label.organisationId === undefined ||
-      project.organisationId === label.organisationId,
-  );
-  const matched = inScope.filter((project) => matchesSearch(project, search));
+  const matched = items.filter((project) => matchesSearch(project, search));
+  // Recents answer "take me back", searching answers "find me" — so a search replaces them rather
+  // than filtering them, and the list becomes one flat set of results.
   const recent: SelectorProject[] = search
     ? []
     : recentIds
@@ -177,19 +190,48 @@ export const ProjectDropdownVariant = ({ projectId }: VariantProps) => {
   const rest = matched.filter(
     (project) => !recent.some((entry) => entry.projectId === project.projectId),
   );
+  // The keyboard walks a single list, so the highlight crosses the Recent/All divide without the
+  // caller having to know the divide is there.
+  const ordered = [...recent, ...rest];
+
+  useEffect(() => setActive(0), [search]);
+  useEffect(() => {
+    listRef.current
+      ?.querySelector(`[data-index="${active}"]`)
+      ?.scrollIntoView({ block: "nearest" });
+  }, [active]);
 
   const close = () => {
     setAnchorEl(null);
     setSearch("");
   };
 
-  const row = (project: SelectorProject) => (
+  const go = (project: SelectorProject | undefined) => {
+    if (!project) {
+      return;
+    }
+    close();
+    void router.push(sectionHref(section, project.projectId) as never);
+  };
+
+  const row = (project: SelectorProject, index: number) => (
     <ListItemButton
+      disableRipple
+      aria-selected={index === active}
       component={Link}
+      data-index={index}
       href={sectionHref(section, project.projectId) as never}
+      id={optionId(index)}
       key={project.projectId}
-      selected={project.projectId === projectId}
+      role="option"
+      // `selected` is the keyboard highlight here, not the current project — the current project
+      // is the one wearing the check, and the two meanings must not share one appearance.
+      selected={index === active}
+      // Not a tab stop: Tab must not have to walk a hundred rows to leave the menu, and focus
+      // staying in the search box is what keeps the arrow keys live.
+      tabIndex={-1}
       onClick={close}
+      onMouseMove={() => index === active || setActive(index)}
     >
       <ProjectRowText project={project} />
       {project.projectId === projectId ? <CheckIcon color="primary" fontSize="small" /> : null}
@@ -200,6 +242,8 @@ export const ProjectDropdownVariant = ({ projectId }: VariantProps) => {
     <Strip>
       <Box sx={{ minWidth: 260, py: 0.5 }}>
         <ButtonBase
+          aria-expanded={open}
+          aria-haspopup="dialog"
           sx={{
             borderRadius: 1,
             px: 1,
@@ -233,67 +277,146 @@ export const ProjectDropdownVariant = ({ projectId }: VariantProps) => {
       <Popover
         anchorEl={anchorEl}
         anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
-        open={Boolean(anchorEl)}
-        slotProps={{ paper: { sx: { mt: 0.5, width: 380 } } }}
+        open={open}
+        slotProps={{
+          paper: { sx: { mt: 0.5, width: 400 } },
+          // The focus that matters. `autoFocus` on the field alone races the modal's own focus
+          // handling; focusing once the entry transition has finished is the point at which the
+          // input certainly exists and nothing else is about to claim focus. Closing restores
+          // focus to the button, which is MUI's default and worth not disabling.
+          transition: {
+            onEntered: () => {
+              setActive(0);
+              searchRef.current?.focus();
+            },
+          },
+        }}
         onClose={close}
       >
-        <Box sx={{ p: 1.5, pb: 1 }}>
-          <TextField
-            autoFocus
-            fullWidth
-            placeholder="Search projects"
-            size="small"
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                ),
-              },
-            }}
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </Box>
-        <Box sx={{ maxHeight: 360, overflowY: "auto" }}>
-          {matched.length === 0 ? (
-            <Typography color="text.secondary" sx={{ p: 2 }}>
-              No projects match this search.
-            </Typography>
-          ) : (
-            <List dense disablePadding>
-              {recent.length > 0 ? (
-                <>
-                  <ListSubheader>Recent</ListSubheader>
-                  {recent.map((project) => row(project))}
-                  <Divider />
-                </>
-              ) : null}
-              {recent.length > 0 ? <ListSubheader>All projects</ListSubheader> : null}
-              {rest.map((project) => row(project))}
-            </List>
-          )}
-        </Box>
-        <Divider />
-        <Stack
-          direction="row"
-          sx={{ alignItems: "center", gap: 1, justifyContent: "space-between", px: 1.5, py: 0.5 }}
-        >
-          <FormControlLabel
-            control={
-              <Switch
-                checked={allOrganisations}
-                size="small"
-                onChange={(event) => setAllOrganisations(event.target.checked)}
-              />
+        {/* Keys are caught here rather than on the field so the menu keeps answering to the
+            keyboard wherever focus has ended up inside it. */}
+        <Box
+          onKeyDown={(event) => {
+            switch (event.key) {
+              case "ArrowDown": {
+                event.preventDefault();
+                setActive((index) => Math.min(index + 1, ordered.length - 1));
+
+                break;
+              }
+              case "ArrowUp": {
+                event.preventDefault();
+                setActive((index) => Math.max(index - 1, 0));
+
+                break;
+              }
+              case "Home": {
+                event.preventDefault();
+                setActive(0);
+
+                break;
+              }
+              case "End": {
+                event.preventDefault();
+                setActive(Math.max(ordered.length - 1, 0));
+
+                break;
+              }
+              case "Enter": {
+                event.preventDefault();
+                go(ordered[active]);
+
+                break;
+              }
+              // No default
             }
-            label={<Typography variant="caption">All organisations</Typography>}
-          />
-          <Typography color="text.secondary" variant="caption">
-            Opens {sectionLabel}
-          </Typography>
-        </Stack>
+          }}
+        >
+          <Box sx={{ p: 1.5, pb: 1 }}>
+            <TextField
+              autoFocus
+              fullWidth
+              inputRef={searchRef}
+              placeholder="Search projects, units, organisations"
+              size="small"
+              slotProps={{
+                htmlInput: {
+                  "aria-activedescendant": ordered.length > 0 ? optionId(active) : undefined,
+                  "aria-autocomplete": "list",
+                  "aria-controls": LISTBOX_ID,
+                  "aria-expanded": true,
+                  role: "combobox",
+                },
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+          </Box>
+          <Box
+            aria-label="Projects"
+            id={LISTBOX_ID}
+            ref={listRef}
+            role="listbox"
+            // Relative to the viewport rather than a fixed height: a long list should use the
+            // screen it has, and a short one should not leave a hole.
+            sx={{ maxHeight: "min(60vh, 420px)", overflowY: "auto" }}
+          >
+            {ordered.length === 0 ? (
+              <Typography color="text.secondary" sx={{ p: 2 }}>
+                No project matches “{search}”.
+              </Typography>
+            ) : (
+              <List dense disablePadding role="presentation">
+                {recent.length > 0 ? (
+                  <>
+                    <ListSubheader role="presentation">Recent</ListSubheader>
+                    {recent.map((project, index) => row(project, index))}
+                    <Divider />
+                  </>
+                ) : null}
+                <ListSubheader role="presentation">
+                  {/* The count counts the rows underneath it: a recent is lifted out of this
+                      section, not repeated in it. Searching clears the recents, so there the
+                      count can speak for the whole list. */}
+                  {search
+                    ? `${matched.length} of ${items.length} projects`
+                    : `All projects (${rest.length})`}
+                </ListSubheader>
+                {rest.map((project, index) => row(project, recent.length + index))}
+              </List>
+            )}
+          </Box>
+          <Divider />
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: "center",
+              gap: 2,
+              justifyContent: "space-between",
+              px: 1.5,
+              py: 0.75,
+            }}
+          >
+            <Stack direction="row" sx={{ gap: 1.5 }}>
+              <Typography color="text.secondary" variant="caption">
+                ↑↓ move
+              </Typography>
+              <Typography color="text.secondary" variant="caption">
+                ↵ open
+              </Typography>
+            </Stack>
+            <Typography color="text.secondary" variant="caption">
+              Opens {sectionLabel}
+            </Typography>
+          </Stack>
+        </Box>
       </Popover>
     </Strip>
   );

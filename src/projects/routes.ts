@@ -483,6 +483,43 @@ export const projectLinks = {
 };
 
 /**
+ * What the caller calls each section a project has. The label is here beside the links rather than
+ * in the chrome that renders them, so the strip's navigation and the project selector's promise
+ * about where a chosen project opens are named from one place.
+ */
+const projectSectionLabels = {
+  files: "Files",
+  manage: "Manage",
+  results: "Results",
+  run: "Run",
+} as const;
+
+export type ProjectSectionKey = keyof typeof projectSectionLabels;
+
+/** The sections a project has, in the order the identity strip offers them. */
+export const projectSections = (["files", "run", "results", "manage"] as const).map((key) => ({
+  key,
+  label: projectSectionLabels[key],
+}));
+
+/** Where one section of one project starts, with none of the view state a caller may add to it. */
+export const projectSectionHref = (section: ProjectSectionKey, projectId: string) =>
+  projectLinks[section](projectId);
+
+export const projectSectionLabel = (section: ProjectSectionKey) => projectSectionLabels[section];
+
+/**
+ * The section a path is standing in, read from the path rather than remembered.
+ *
+ * A deeper child — one result, one file view — answers as its own section, because a child of the
+ * project being switched to may not exist. That is what makes "open the section I am already in" a
+ * promise the selector can keep: it resolves to a section every project has, or to Files.
+ */
+export const routeProjectSection = (path: string, projectId: string): ProjectSectionKey =>
+  projectSections.find(({ key }) => path.startsWith(projectSectionHref(key, projectId)))?.key ??
+  "files";
+
+/**
  * The project file a server entry was asked for, or `null` for a request that names no file this
  * client can address. Every server entry reads its arguments here, so a page and an API route agree
  * on what a project file request even is before either of them sends one.

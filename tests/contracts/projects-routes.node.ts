@@ -1,6 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-import { parseProjectRoute, projectLinks } from "../../src/projects/routes";
+import {
+  parseProjectRoute,
+  projectLinks,
+  type ProjectSectionKey,
+  routeProjectSection,
+} from "../../src/projects/routes";
 
 const projectId = "project-00000000-0000-4000-8000-000000000001";
 const productId = "product-00000000-0000-4000-8000-000000000002";
@@ -220,4 +225,31 @@ test.describe("Project route contract", () => {
     expect(() => projectLinks.create({ unitId: "not-a-unit" })).toThrow();
     expect(() => projectLinks.result(projectId, "instances", "not-an-instance")).toThrow();
   });
+});
+
+test.describe("Project section of a route", () => {
+  const otherProjectId = "project-00000000-0000-4000-8000-00000000000f";
+
+  const cases: [string, ProjectSectionKey][] = [
+    [`/projects/${projectId}/files`, "files"],
+    [`/projects/${projectId}/files?path=%2Finputs`, "files"],
+    // A deeper child answers as its own section, never as itself: the child of another project may
+    // not exist, so "stay where I am" can only ever resolve to the section.
+    [`/projects/${projectId}/files/view?path=%2Finputs%2Flibrary.sdf`, "files"],
+    [`/projects/${projectId}/run`, "run"],
+    [`/projects/${projectId}/run/jobs/42`, "run"],
+    [`/projects/${projectId}/results?search=docking`, "results"],
+    [`/projects/${projectId}/results/instances/${instanceId}`, "results"],
+    [`/projects/${projectId}/manage`, "manage"],
+    // The project entry route names no section at all, and neither does another project's.
+    [`/projects/${projectId}`, "files"],
+    [`/projects/${otherProjectId}/results`, "files"],
+    ["/projects", "files"],
+  ];
+
+  for (const [path, section] of cases) {
+    test(`the section standing in ${path} is ${section}`, () => {
+      expect(routeProjectSection(path, projectId)).toBe(section);
+    });
+  }
 });

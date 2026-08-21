@@ -9,6 +9,19 @@ export type ProjectIndexItem = {
   unitName: string;
 };
 
+/**
+ * A project's container, named where the caller's ancestry names it and identified where it does
+ * not. A project always has containers, so an unnamed one still says which container it is: an
+ * identifier the caller can quote is worth more than a blank.
+ */
+const containerName = (
+  names: Map<string, string>,
+  containerId: string | undefined,
+  kind: "Organisation" | "Unit",
+) =>
+  names.get(containerId ?? "") ??
+  (containerId ? `${kind} ${containerId}` : `Unknown containing ${kind.toLocaleLowerCase()}`);
+
 export const buildProjectIndexItems = (
   projects: readonly ProjectDetail[],
   unitsResponse: UnitsGetResponse,
@@ -25,9 +38,7 @@ export const buildProjectIndexItems = (
     .map((project) => ({
       organisationName: group?.organisation.name ?? organisationId,
       project,
-      unitName:
-        unitNames.get(project.unit_id ?? "") ??
-        (project.unit_id ? `Unit ${project.unit_id}` : "Unknown containing unit"),
+      unitName: containerName(unitNames, project.unit_id, "Unit"),
     }))
     .filter(
       ({ project, unitName }) =>
@@ -81,4 +92,117 @@ export const decideProjectOnboarding = (
     offered,
     personalUnitStepApplies: personalUnitId === undefined,
   };
+};
+
+/**
+ * The names the caller's own reads give to the containers a project declares. Organisations come
+ * from the caller's organisation index rather than from their units, because a project may live in
+ * an organisation holding no unit of theirs — the selector lists every project they can reach, and
+ * a project whose organisation could not be named would be the one hardest to tell apart.
+ */
+export type ProjectSelectorAncestry = {
+  organisations: readonly { id: string; name: string }[];
+  units: UnitsGetResponse;
+};
+
+/** One project as the selector offers it: what to say about it, and whether it is the one on screen. */
+export type ProjectSelectorRow = {
+  isUrlProject: boolean;
+  organisationName: string;
+  projectId: string;
+  projectName: string;
+  unitName: string;
+};
+
+/**
+ * One headed run of rows. `startIndex` is where the section begins in the single flat list the
+ * keyboard walks, so a highlight crosses from one section into the next without the caller having
+ * to know the boundary is there.
+ */
+export type ProjectSelectorSection = {
+  heading: string;
+  rows: ProjectSelectorRow[];
+  startIndex: number;
+};
+
+export type ProjectSelectorList = {
+  rows: ProjectSelectorRow[];
+  sections: ProjectSelectorSection[];
+};
+
+const matchesProjectSearch = (row: ProjectSelectorRow, term: string) =>
+  !term ||
+  row.projectName.toLocaleLowerCase().includes(term) ||
+  row.unitName.toLocaleLowerCase().includes(term) ||
+  row.organisationName.toLocaleLowerCase().includes(term);
+
+/**
+ * Every project the caller can reach, ordered as the project selector offers them.
+ *
+ * Recents answer "take me back" and search answers "find me", so a non-empty search *replaces* the
+ * recents rather than narrowing them, and the whole list becomes one counted set of matches. Where
+ * both are present a recent is lifted out of the section below rather than repeated in it, and the
+ * project the address bar names is left out of the recents — it is not somewhere to go back to —
+ * while still being listed and marked, so the caller can see where they are among the alternatives.
+ *
+ * Every heading counts the rows beneath it rather than the collection it was drawn from, so the
+ * counts still add up to the list once a recent has been lifted out of the section below.
+ */
+export const buildProjectSelectorList = (
+  projects: readonly ProjectDetail[],
+  ancestry: ProjectSelectorAncestry,
+  recentProjectIds: readonly string[],
+  urlProjectId: string | undefined,
+  search = "",
+): ProjectSelectorList => {
+  const unitNames = new Map(
+    ancestry.units.units.flatMap(({ units }) => units.map((unit) => [unit.id, unit.name] as const)),
+  );
+  const organisationNames = new Map([
+    ...ancestry.units.units.map(
+      ({ organisation }) => [organisation.id, organisation.name] as const,
+    ),
+    ...ancestry.organisations.map(({ id, name }) => [id, name] as const),
+  ]);
+  const term = search.trim().toLocaleLowerCase();
+  const matched = projects
+    .map<ProjectSelectorRow>((project) => ({
+      isUrlProject: project.project_id === urlProjectId,
+      organisationName: containerName(organisationNames, project.organisation_id, "Organisation"),
+      projectId: project.project_id,
+      projectName: project.name,
+      unitName: containerName(unitNames, project.unit_id, "Unit"),
+    }))
+    .filter((row) => matchesProjectSearch(row, term));
+
+  const byProjectId = new Map(matched.map((row) => [row.projectId, row]));
+  const recent = term
+    ? []
+    : recentProjectIds
+        // A recent may name a project the caller can no longer reach, which is simply not offered.
+        .map((projectId) => (projectId === urlProjectId ? undefined : byProjectId.get(projectId)))
+        .filter((row) => row !== undefined);
+  const pinned = new Set(recent.map(({ projectId }) => projectId));
+  const rest = matched
+    .filter(({ projectId }) => !pinned.has(projectId))
+    .toSorted(
+      (left, right) =>
+        left.projectName.localeCompare(right.projectName) ||
+        left.unitName.localeCompare(right.unitName),
+    );
+
+  const sections: ProjectSelectorSection[] = [];
+  if (recent.length > 0) {
+    sections.push({ heading: `Recent (${recent.length})`, rows: recent, startIndex: 0 });
+  }
+  if (rest.length > 0) {
+    sections.push({
+      heading: term
+        ? `${matched.length} of ${projects.length} projects`
+        : `All projects (${rest.length})`,
+      rows: rest,
+      startIndex: recent.length,
+    });
+  }
+  return { rows: [...recent, ...rest], sections };
 };

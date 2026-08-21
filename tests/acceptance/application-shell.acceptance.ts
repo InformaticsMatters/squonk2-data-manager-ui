@@ -325,6 +325,11 @@ test("the identity strip shows a placeholder while the project resolves", async 
   await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
   await expect(page.getByText("Project unavailable")).toHaveCount(0);
 
+  // A slow read does not lock the caller into the page: the selector opens over the placeholder.
+  await page.getByRole("button", { name: "Change project" }).click();
+  await expect(page.getByRole("combobox", { name: "Search projects" })).toBeFocused();
+  await page.getByRole("combobox", { name: "Search projects" }).press("Escape");
+
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
   await expect(page.getByRole("status", { name: "Loading project" })).toHaveCount(0);
 });
@@ -343,6 +348,11 @@ test("the identity strip states an unavailable project only when it failed", asy
   await expect(page.getByText("Project unavailable")).toBeVisible();
   await expect(page.getByRole("status", { name: "Loading project" })).toHaveCount(0);
   await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
+
+  // The selector still opens, because it is the way out of a project that cannot be shown.
+  await page.getByRole("button", { name: "Change project" }).click();
+  await expect(page.getByRole("combobox", { name: "Search projects" })).toBeFocused();
+  await expect(page.getByRole("option", { name: /Screening Project/u })).toBeVisible();
 });
 
 test("a route the application cannot address keeps the chrome", async ({ page }, testInfo) => {
@@ -366,4 +376,114 @@ test("a malformed protected route is refused without a sign-in round trip", asyn
 
   await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}projects/not-a-project/files`);
+});
+
+test("the project selector is driven from the keyboard and keeps the section it opened from", async ({
+  page,
+}, testInfo) => {
+  await login(page, `projects/${fixtureIds.project}/results`, testInfo);
+  await expect(page.getByRole("heading", { name: "Results" })).toBeVisible();
+  const identity = page.getByRole("button", { name: "Change project" });
+  await expect(identity).toContainText("Acceptance Project");
+
+  await identity.click();
+  const search = page.getByRole("combobox", { name: "Search projects" });
+  // Focus lands in the search box as the menu opens, so the keyboard is live without a click into
+  // it first. Nothing about which section will open is left to be discovered.
+  await expect(search).toBeFocused();
+  await expect(page.getByText("Opens Results")).toBeVisible();
+  await expect(page.getByText("All projects (5)")).toBeVisible();
+
+  const options = page.getByRole("option");
+  await expect(options).toHaveCount(5);
+  // The check says where the caller is; the highlight says where the keyboard is. Both start on
+  // the same row here only because the list is ordered by name.
+  await expect(options.first()).toHaveAttribute("aria-current", "true");
+  await expect(options.first()).toHaveAttribute("aria-selected", "true");
+
+  await search.press("ArrowUp");
+  await expect(options.first()).toHaveAttribute("aria-selected", "true");
+  await search.press("End");
+  await expect(options.last()).toHaveAttribute("aria-selected", "true");
+  await search.press("ArrowDown");
+  await expect(options.last()).toHaveAttribute("aria-selected", "true");
+  await search.press("Home");
+  await expect(options.first()).toHaveAttribute("aria-selected", "true");
+
+  await search.press("ArrowDown");
+  await expect(options.nth(1)).toHaveAttribute("aria-selected", "true");
+  // Focus never leaves the search box — which is what lets typing and arrowing interleave — so the
+  // highlight is carried to assistive technology by active-descendant instead.
+  await expect(search).toBeFocused();
+  await expect(search).toHaveAttribute(
+    "aria-activedescendant",
+    (await options.nth(1).getAttribute("id")) ?? "",
+  );
+
+  await search.press("Enter");
+
+  // Results, in the project chosen, at that project's own canonical route.
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}projects/${fixtureIds.partnerProject}/results`,
+  );
+  await expect(page.getByRole("heading", { name: "Results" })).toBeVisible();
+  await expect(identity).toContainText("Partner Project");
+  // Entering a project adopts the organisation that owns it, so the masthead and the content on
+  // screen cannot disagree about which organisation is in effect.
+  await expect(page.getByRole("button", { name: "Change organisation" })).toContainText(
+    "Partner Organisation",
+  );
+
+  await page.goBack();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects/${fixtureIds.project}/results`);
+  await expect(identity).toContainText("Acceptance Project");
+});
+
+test("the project selector searches by project, containing unit and organisation", async ({
+  page,
+}, testInfo) => {
+  await login(page, `projects/${fixtureIds.project}/files`, testInfo);
+  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+  const identity = page.getByRole("button", { name: "Change project" });
+  await expect(identity).toContainText("Acceptance Project");
+
+  await identity.click();
+  const search = page.getByRole("combobox", { name: "Search projects" });
+  await expect(search).toBeFocused();
+  await expect(page.getByText("Opens Files")).toBeVisible();
+
+  // The containing unit narrows the list although no project is named for it.
+  await search.fill("screening unit");
+  await expect(page.getByText("2 of 5 projects")).toBeVisible();
+  await expect(page.getByRole("option")).toHaveCount(2);
+
+  // So does the organisation, which is the only way to narrow to one — the list deliberately spans
+  // every organisation the caller can reach and offers no scope control.
+  await search.fill("partner organisation");
+  await expect(page.getByText("1 of 5 projects")).toBeVisible();
+  await expect(page.getByRole("option", { name: /Partner Project/u })).toBeVisible();
+
+  await search.fill("no such project");
+  await expect(page.getByText("No project matches “no such project”.")).toBeVisible();
+  await expect(page.getByRole("option")).toHaveCount(0);
+
+  // Escape backs out without choosing and hands the keyboard back to the identity it opened from.
+  await search.press("Escape");
+  await expect(search).toHaveCount(0);
+  await expect(identity).toBeFocused();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects/${fixtureIds.project}/files`);
+
+  // Tab leaves too, rather than turning every project into a tab stop on the way out.
+  await identity.click();
+  await expect(page.getByRole("combobox", { name: "Search projects" })).toBeFocused();
+  await page.getByRole("combobox", { name: "Search projects" }).press("Tab");
+  await expect(page.getByRole("combobox", { name: "Search projects" })).toHaveCount(0);
+  await expect(identity).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(identity).not.toBeFocused();
+
+  // The search text described no page and could be sent to nobody, so it is gone.
+  await identity.click();
+  await expect(page.getByRole("combobox", { name: "Search projects" })).toHaveValue("");
+  await expect(page.getByText("All projects (5)")).toBeVisible();
 });

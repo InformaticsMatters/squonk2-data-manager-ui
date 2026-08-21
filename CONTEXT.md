@@ -35,6 +35,10 @@ messages, use the term defined here rather than a synonym.
 - **Section** — the second tier inside a workspace. A project has **Files**, **Run**, **Results**
   and **Manage**; Administration has **Organisation & access**, **Subscriptions**, **Charges** and
   **Usage & inventory**. These are sections, not tabs, even where they are presented as tabs.
+- **Project selector** — the project identity in the identity strip, opened as a menu of every
+  project the caller can reach, narrowed by searching project, unit and organisation names.
+  Choosing one is a **navigation** to that project's canonical route in the section the caller is
+  already standing in, never a selection: nothing holds a chosen project.
 
 ## Routing and scope
 

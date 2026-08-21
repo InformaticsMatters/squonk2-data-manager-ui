@@ -13,7 +13,11 @@ import {
 } from "../../src/projects/onboardingDismissal";
 import { requireLinkedProject, resolveProjectAncestry } from "../../src/projects/projectAncestry";
 import { removeUnavailableProject } from "../../src/projects/projectCache";
-import { buildProjectIndexItems, decideProjectOnboarding } from "../../src/projects/projectIndex";
+import {
+  buildProjectIndexItems,
+  buildProjectSelectorList,
+  decideProjectOnboarding,
+} from "../../src/projects/projectIndex";
 import {
   readRecentProjectIds,
   recordRecentProject,
@@ -279,4 +283,162 @@ test("the onboarding dismissal is remembered under its own account-scoped key", 
 
   expect(projectOnboardingIsDismissed(storage)).toBe(true);
   expect([...values.keys()]).toEqual([PROJECT_ONBOARDING_DISMISSAL_KEY]);
+});
+
+test.describe("project selector list", () => {
+  const ancestry = {
+    organisations: [
+      { id: "organisation-one", name: "Current Organisation" },
+      { id: "organisation-two", name: "Partner Organisation" },
+    ],
+    units: {
+      units: [
+        ...units.units,
+        {
+          count: 1,
+          organisation: { id: "organisation-two", name: "Partner Organisation" },
+          units: [{ id: "unit-three", name: "Partnership" }],
+        },
+      ],
+    } as UnitsGetResponse,
+  };
+  const reachable = [
+    project({ name: "Alpha", project_id: "project-alpha", unit_id: "unit-one" }),
+    project({ name: "Beta", project_id: "project-beta", unit_id: "unit-two" }),
+    project({
+      name: "Gamma",
+      organisation_id: "organisation-two",
+      project_id: "project-gamma",
+      unit_id: "unit-three",
+    }),
+  ];
+
+  const cases: {
+    headings: string[];
+    name: string;
+    projects?: ProjectDetail[];
+    recent?: string[];
+    rows: string[][];
+    search?: string;
+    urlProject?: string;
+  }[] = [
+    {
+      headings: ["All projects (3)"],
+      name: "with nothing recent the whole list is one section ordered by project name",
+      rows: [["Alpha", "Beta", "Gamma"]],
+    },
+    {
+      headings: ["Recent (2)", "All projects (1)"],
+      name: "recents are pinned in stored order and lifted out of the section below",
+      recent: ["project-gamma", "project-alpha"],
+      rows: [["Gamma", "Alpha"], ["Beta"]],
+    },
+    {
+      headings: ["Recent (1)", "All projects (2)"],
+      name: "the project the address bar names is left out of the recents but kept in the list",
+      recent: ["project-beta", "project-alpha"],
+      rows: [["Alpha"], ["Beta", "Gamma"]],
+      urlProject: "project-beta",
+    },
+    {
+      headings: ["Recent (1)", "All projects (2)"],
+      name: "a recent naming a project the caller can no longer reach is dropped",
+      recent: ["project-departed", "project-alpha"],
+      rows: [["Alpha"], ["Beta", "Gamma"]],
+    },
+    {
+      headings: ["1 of 3 projects"],
+      name: "a search replaces the recents with one counted set of matches",
+      recent: ["project-gamma"],
+      rows: [["Beta"]],
+      search: "beta",
+    },
+    {
+      headings: ["1 of 3 projects"],
+      name: "a search matches the containing unit",
+      rows: [["Beta"]],
+      search: "screening",
+    },
+    {
+      headings: ["1 of 3 projects"],
+      name: "a search matches the containing organisation",
+      rows: [["Gamma"]],
+      search: "partner",
+    },
+    {
+      headings: ["2 of 3 projects"],
+      name: "matching ignores case and surrounding space",
+      rows: [["Alpha", "Beta"]],
+      search: "  CURRENT ORGANISATION  ",
+    },
+    {
+      headings: [],
+      name: "a search matching nothing offers no section to scroll",
+      rows: [],
+      search: "no such project",
+    },
+    {
+      headings: [],
+      name: "a caller who can reach no project is offered no section either",
+      projects: [],
+      rows: [],
+    },
+  ];
+
+  for (const testCase of cases) {
+    test(testCase.name, () => {
+      const list = buildProjectSelectorList(
+        testCase.projects ?? reachable,
+        ancestry,
+        testCase.recent ?? [],
+        testCase.urlProject,
+        testCase.search,
+      );
+
+      expect(list.sections.map(({ heading }) => heading)).toEqual(testCase.headings);
+      expect(list.sections.map(({ rows }) => rows.map(({ projectName }) => projectName))).toEqual(
+        testCase.rows,
+      );
+      // One continuous list is what the keyboard walks, so the flat order is the sections' own and
+      // each section knows where in it that section starts.
+      expect(list.rows.map(({ projectName }) => projectName)).toEqual(testCase.rows.flat());
+      expect(list.sections.map(({ startIndex }) => startIndex)).toEqual(
+        testCase.rows.map((_, index) => testCase.rows.slice(0, index).flat().length),
+      );
+    });
+  }
+
+  test("only the project the address bar names is marked as the one being displayed", () => {
+    const list = buildProjectSelectorList(reachable, ancestry, [], "project-beta");
+
+    expect(list.rows.map(({ isUrlProject, projectId }) => [projectId, isUrlProject])).toEqual([
+      ["project-alpha", false],
+      ["project-beta", true],
+      ["project-gamma", false],
+    ]);
+  });
+
+  test("a row keeps its containing identity when the ancestry cannot name it", () => {
+    const list = buildProjectSelectorList(
+      [
+        project({
+          name: "Unlisted",
+          organisation_id: "organisation-unlisted",
+          project_id: "project-unlisted",
+          unit_id: "unit-unlisted",
+        }),
+      ],
+      ancestry,
+      [],
+      undefined,
+    );
+
+    expect(list.rows[0]).toEqual({
+      isUrlProject: false,
+      organisationName: "Organisation organisation-unlisted",
+      projectId: "project-unlisted",
+      projectName: "Unlisted",
+      unitName: "Unit unit-unlisted",
+    });
+  });
 });

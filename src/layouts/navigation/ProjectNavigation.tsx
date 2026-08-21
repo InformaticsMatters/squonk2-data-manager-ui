@@ -1,17 +1,10 @@
 import { Box, Stack } from "@mui/material";
 import { useRouter } from "next/router";
 
-import { ProjectHeading } from "../../projects/ProjectHeading";
-import { projectLinks } from "../../projects/routes";
+import { ProjectSelector } from "../../projects/ProjectSelector";
+import { projectSectionHref, projectSections } from "../../projects/routes";
 import { useRouteProjectId } from "../../projects/useRouteProject";
 import { NavigationTab } from "./NavigationTab";
-
-const projectSections = [
-  { key: "files", label: "Files" },
-  { key: "run", label: "Run" },
-  { key: "results", label: "Results" },
-  { key: "manage", label: "Manage" },
-] as const;
 
 export const ProjectNavigation = () => {
   const router = useRouter();
@@ -35,8 +28,8 @@ export const ProjectNavigation = () => {
         px: 2,
       }}
     >
-      <Box sx={{ minWidth: 260, py: 1 }}>
-        <ProjectHeading projectId={projectId} />
+      <Box sx={{ minWidth: 260, py: 0.5 }}>
+        <ProjectSelector projectId={projectId} />
       </Box>
       <Stack
         aria-label="Project"
@@ -45,7 +38,7 @@ export const ProjectNavigation = () => {
         sx={{ ml: { md: "auto" }, overflowX: "auto" }}
       >
         {projectSections.map(({ key, label }) => {
-          const href = projectLinks[key](projectId);
+          const href = projectSectionHref(key, projectId);
           return (
             <NavigationTab
               active={router.asPath.startsWith(href)}

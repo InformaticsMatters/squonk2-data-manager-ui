@@ -1,3 +1,15 @@
+# [7.0.0-dev.9](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.8...7.0.0-dev.9) (2026-08-21)
+
+
+### Bug Fixes
+
+* hold the project selector to the organisation in effect ([f5db975](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/f5db9752357c4a30574ffb051092d30508be16d2))
+
+
+### Features
+
+* offer unit creation beside Create project on the projects index ([e0d2708](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e0d2708d411d5e2ab2477fbf1dd99c315b9a6475)), closes [#1990](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1990)
+
 # [7.0.0-dev.8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.7...7.0.0-dev.8) (2026-08-21)
 
 

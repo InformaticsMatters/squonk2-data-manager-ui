@@ -160,6 +160,9 @@ export const scenarioProfiles = [
   "empty-charges",
   "empty-products",
   "evaluator",
+  "manage-at-limit",
+  "manage-populated",
+  "manage-read-only",
   "no-access",
   "no-personal-unit",
   "onboarding",
@@ -294,9 +297,14 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
   const colleague = `${subject}-observer`;
   /** Named by the inventory while belonging to no unit of the addressed organisation. */
   const outsider = `${subject}-outsider`;
-  const readOnly = profile === "read-only";
+  const readOnly = profile === "read-only" || profile === "manage-read-only";
   const emptyCharges = profile === "empty-charges";
   const platformAdmin = profile === "platform-admin";
+  const populatedManage =
+    profile === "manage-populated" ||
+    profile === "manage-at-limit" ||
+    profile === "manage-read-only";
+  const manageAtLimit = profile === "manage-at-limit";
   const owner = readOnly || platformAdmin ? `${subject}-owner` : subject;
   const callerIsMember = !readOnly && !platformAdmin;
   const organisation = {
@@ -304,7 +312,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     created,
     default_product_privacy: "DEFAULT_PRIVATE" as const,
     id: fixtureIds.organisation,
-    name: "Acceptance Organisation",
+    name: populatedManage ? "Northstar Therapeutics" : "Acceptance Organisation",
     owner_id: owner,
     private: true,
     users: [{ id: subject }, { id: colleague }],
@@ -329,7 +337,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     created,
     default_product_privacy: "DEFAULT_PRIVATE" as const,
     id: fixtureIds.unit,
-    name: "Acceptance Unit",
+    name: populatedManage ? "Medicinal Chemistry & Design" : "Acceptance Unit",
     owner_id: owner,
     private: true,
     users: [{ id: subject }, { id: colleague }],
@@ -362,15 +370,37 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     users: [{ id: subject }],
   };
   // Project membership follows the same profiles: `read-only` observes the project it can read and
-  // `platform-admin` holds no project role at all, so platform privilege is the only thing on offer.
+  // `platform-admin` holds no project role at all, so platform privilege grants no project action.
   const projectOwner = readOnly || platformAdmin ? colleague : subject;
   const projectObservers = readOnly ? [subject] : platformAdmin ? [] : [colleague];
-  const projectRoles = {
-    administrators: [projectOwner],
-    creator: projectOwner,
-    editors: [projectOwner],
-    observers: projectObservers,
-  };
+  const projectRoles = populatedManage
+    ? {
+        administrators: [
+          projectOwner,
+          "maya.chen@northstar.example",
+          "research-operations@northstar.example",
+        ],
+        creator: projectOwner,
+        editors: [
+          projectOwner,
+          "daniel.okafor@northstar.example",
+          "elena.rossi@northstar.example",
+          "liam.patel@northstar.example",
+          "sophia.kim@northstar.example",
+        ],
+        observers: [
+          subject,
+          "portfolio-review@northstar.example",
+          "safety-team@northstar.example",
+          "external-collaborator@helios.example",
+        ],
+      }
+    : {
+        administrators: [projectOwner],
+        creator: projectOwner,
+        editors: [projectOwner],
+        observers: projectObservers,
+      };
   // The second project deliberately grants the caller less than the first one does. Two projects
   // the same caller holds different authority in are what makes capability presentation provably
   // a fact of the project a result belongs to rather than of the caller alone.
@@ -388,31 +418,39 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
   const hasPersonalUnit = profile !== "no-personal-unit" && !noAccess && !onboarding;
   const projectTierProduct = {
     claimable: true,
-    claim: { id: fixtureIds.project, name: "Acceptance Project" },
-    coins: {
-      allowance: 100,
-      allowance_multiplier: 1,
-      at_limit: false,
-      billing_day: 1,
-      billing_prediction: 0,
-      billing_prediction_storage_contribution: 0,
-      current_burn_rate: 0,
-      limit: 100,
-      overspend_multiplier: 1,
-      remaining_days: 30,
-      used: 0,
+    claim: {
+      id: fixtureIds.project,
+      name: populatedManage ? "KRAS G12D Lead Optimisation" : "Acceptance Project",
     },
-    instance: { coins: { used: 0 } },
+    coins: {
+      allowance: populatedManage ? 50_000 : 100,
+      allowance_multiplier: 1,
+      at_limit: manageAtLimit,
+      billing_day: 1,
+      billing_prediction: populatedManage ? 63_900 : 0,
+      billing_prediction_storage_contribution: populatedManage ? 12_450 : 0,
+      current_burn_rate: populatedManage ? 1275 : 0,
+      limit: populatedManage ? 75_000 : 100,
+      overspend_multiplier: 1,
+      remaining_days: populatedManage ? 11 : 30,
+      used: manageAtLimit ? 75_000 : populatedManage ? 41_680 : 0,
+    },
+    instance: { coins: { used: populatedManage ? 32_260 : 0 } },
     organisation,
     product: {
       created,
-      flavour: "BRONZE",
+      flavour: populatedManage ? ("GOLD" as const) : ("BRONZE" as const),
       id: fixtureIds.product,
       type: "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
     },
     storage: {
-      coins: { unit_cost: 1, used: 0 },
-      size: { current: "0 B", peak: "0 B", unit_size: "1 GB", units_used: 0 },
+      coins: { unit_cost: 1, used: populatedManage ? 9420 : 0 },
+      size: {
+        current: populatedManage ? "1.84 TB" : "0 B",
+        peak: populatedManage ? "1.92 TB" : "0 B",
+        unit_size: "1 GB",
+        units_used: populatedManage ? 1884 : 0,
+      },
     },
     unit,
   };
@@ -686,12 +724,12 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
               ...projectRoles,
               created,
               files: [],
-              name: "Acceptance Project",
+              name: populatedManage ? "KRAS G12D Lead Optimisation" : "Acceptance Project",
               organisation_id: fixtureIds.organisation,
               private: true,
               product_id: fixtureIds.product,
               project_id: fixtureIds.project,
-              size: 0,
+              size: populatedManage ? 1_975_308_642_304 : 0,
               unit_id: fixtureIds.unit,
             },
             {

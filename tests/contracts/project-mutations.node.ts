@@ -119,12 +119,6 @@ test.describe("Project command outcomes", () => {
     );
   });
 
-  test("taking administration reports the membership it granted", () => {
-    expect(projectOutcomeMessage({ kind: "administration" })).toBe(
-      "You now administer this project.",
-    );
-  });
-
   test("an outcome that changed nothing carries its own reason", () => {
     expect(
       projectOutcomeMessage({ kind: "unchanged", reason: "This project is already private." }),
@@ -235,11 +229,7 @@ test.describe("Project mutation ownership", () => {
     expect(owner).toContain("getGetProjectQueryKey(projectId)");
     expect(owner).toContain("getGetProjectsQueryKey()");
     // Every command names the project it changes rather than reading one from anywhere else.
-    for (const command of [
-      "changeProjectMembers",
-      "setProjectPrivacy",
-      "takeProjectAdministration",
-    ]) {
+    for (const command of ["changeProjectMembers", "setProjectPrivacy"]) {
       expect(owner).toMatch(new RegExp(String.raw`${command}: async \(\s*projectId: string`, "u"));
     }
     expect(owner).not.toMatch(/useCurrentProject|useRouteProject|useSelectedOrganisation/u);

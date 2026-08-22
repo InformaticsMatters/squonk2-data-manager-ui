@@ -191,7 +191,7 @@ const workflowFacts = (
 ): ProjectResultWorkflowFacts => {
   const { username = editor, ...rest } = overrides;
   return {
-    caller: { isPlatformAdministrator: false, username },
+    caller: { username },
     owningProjectId: projectId,
     project: project(),
     routeProjectId: projectId,
@@ -246,7 +246,7 @@ test("stopping or deleting a workflow answers to the concrete workflow and its p
 
 test("the workflow a caller is looking at is what decides its own lifecycle control", () => {
   const facts = {
-    caller: { isPlatformAdministrator: false, username: editor },
+    caller: { username: editor },
     freshness: "current",
     project: project(),
     subscription: { accountsForInstances: true, atLimit: false },

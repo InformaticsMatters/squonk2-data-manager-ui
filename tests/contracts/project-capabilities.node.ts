@@ -11,12 +11,10 @@ import {
   evaluateProjectExecutionCapability,
   evaluateProjectFileMutationCapability,
   evaluateProjectObserversCapability,
-  evaluateProjectPlatformAdministrationCapability,
   evaluateProjectPrivacyCapability,
   type ProjectCapability,
   type ProjectCapabilityFacts,
   projectIsReadOnly,
-  resolvePlatformAdministrator,
   resolveProjectRoles,
 } from "../../src/projects/capabilities";
 import { describeProjectSubscription } from "../../src/projects/projectSubscription";
@@ -41,7 +39,6 @@ type FactOptions = Partial<ProjectDetail> & {
   accountsForInstances?: boolean;
   atLimit?: boolean;
   freshness?: "current" | "stale";
-  isPlatformAdministrator?: boolean;
   /** Passing this explicitly as `undefined` is the point of several cases, so it never defaults. */
   username?: string;
 };
@@ -51,14 +48,10 @@ const facts = (options: FactOptions = {}): ProjectCapabilityFacts => {
     accountsForInstances = true,
     atLimit = false,
     freshness,
-    isPlatformAdministrator = false,
     username,
     ...projectOverrides
   } = options;
-  const caller = {
-    isPlatformAdministrator,
-    username: "username" in options ? username : administrator,
-  };
+  const caller = { username: "username" in options ? username : administrator };
 
   return {
     caller,
@@ -171,42 +164,6 @@ test.describe("Project membership semantics", () => {
   });
 });
 
-test.describe("Platform administrator realm facts", () => {
-  const administratorRole = "data-manager-admin";
-
-  test("privilege is resolved from the generated account or the caller's realm roles", () => {
-    expect(resolvePlatformAdministrator(undefined, undefined, administratorRole)).toBe(false);
-    expect(
-      resolvePlatformAdministrator({ caller_has_admin_privilege: true }, [], administratorRole),
-    ).toBe(true);
-    expect(
-      resolvePlatformAdministrator(
-        { caller_has_admin_privilege: false, data_manager_roles: [administratorRole] },
-        [],
-        administratorRole,
-      ),
-    ).toBe(true);
-    expect(
-      resolvePlatformAdministrator(
-        { caller_has_admin_privilege: false },
-        [administratorRole],
-        administratorRole,
-      ),
-    ).toBe(true);
-    expect(
-      resolvePlatformAdministrator(
-        { caller_has_admin_privilege: false, data_manager_roles: ["data-manager-user"] },
-        ["data-manager-user"],
-        administratorRole,
-      ),
-    ).toBe(false);
-    // An unconfigured role name never turns an ordinary role list into platform privilege.
-    expect(
-      resolvePlatformAdministrator({ data_manager_roles: ["data-manager-admin"] }, [], undefined),
-    ).toBe(false);
-  });
-});
-
 test.describe("Ordinary project capabilities", () => {
   test("administrator actions are enabled only for project administrators", () => {
     for (const { evaluate, requirement: reason } of administratorActions) {
@@ -215,13 +172,6 @@ test.describe("Ordinary project capabilities", () => {
       expect(evaluate(facts({ username: editor }))).toEqual(disabled(reason));
       expect(evaluate(facts({ username: observer }))).toEqual(disabled(reason));
       expect(evaluate(facts({ username: stranger }))).toEqual(disabled(reason));
-      // Platform privilege is not ordinary project authority; it only offers its own action.
-      expect(evaluate(facts({ isPlatformAdministrator: true, username: stranger }))).toEqual(
-        disabled(reason),
-      );
-      expect(evaluate(facts({ isPlatformAdministrator: true, username: administrator }))).toEqual(
-        enabled,
-      );
     }
   });
 
@@ -232,10 +182,6 @@ test.describe("Ordinary project capabilities", () => {
       expect(evaluate(facts({ username: observer }))).toEqual(disabled(requirement));
       expect(evaluate(facts({ username: creator }))).toEqual(disabled(requirement));
       expect(evaluate(facts({ username: stranger }))).toEqual(disabled(requirement));
-      expect(evaluate(facts({ isPlatformAdministrator: true, username: stranger }))).toEqual(
-        disabled(requirement),
-      );
-      expect(evaluate(facts({ isPlatformAdministrator: true, username: editor }))).toEqual(enabled);
     }
   });
 
@@ -273,13 +219,6 @@ test.describe("Read-only project access", () => {
     expect(projectIsReadOnly(facts({ username: creator }))).toBe(true);
     expect(projectIsReadOnly(facts({ username: administrator }))).toBe(false);
     expect(projectIsReadOnly(facts({ username: editor }))).toBe(false);
-    // A platform administrator reads the project like any other viewer until they take it on.
-    expect(projectIsReadOnly(facts({ isPlatformAdministrator: true, username: stranger }))).toBe(
-      true,
-    );
-    expect(projectIsReadOnly(facts({ isPlatformAdministrator: true, username: editor }))).toBe(
-      false,
-    );
     // An editor stopped only by the coin limit still has authority over the project.
     expect(projectIsReadOnly(facts({ atLimit: true, username: editor }))).toBe(false);
     expect(
@@ -341,45 +280,7 @@ test.describe("Incomplete and stale project facts", () => {
   });
 });
 
-test.describe("Exclusively platform-administrator project capability", () => {
-  test("project administration is hidden from callers without the platform role", () => {
-    for (const username of [administrator, creator, editor, observer, stranger, undefined]) {
-      expect(evaluateProjectPlatformAdministrationCapability(facts({ username }))).toEqual({
-        status: "hidden",
-      });
-    }
-    // Stale facts cannot establish the role, so the action stays hidden rather than appearing.
-    expect(
-      evaluateProjectPlatformAdministrationCapability(
-        facts({ freshness: "stale", username: stranger }),
-      ),
-    ).toEqual({ status: "hidden" });
-  });
-
-  test("a platform administrator sees it enabled unless they already administer the project", () => {
-    expect(
-      evaluateProjectPlatformAdministrationCapability(
-        facts({ isPlatformAdministrator: true, username: stranger }),
-      ),
-    ).toEqual(enabled);
-    expect(
-      evaluateProjectPlatformAdministrationCapability(
-        facts({ isPlatformAdministrator: true, username: administrator }),
-      ),
-    ).toEqual(disabled("You already administer this project."));
-    // A privileged action is never advertised on facts that cannot yet establish the role.
-    expect(
-      evaluateProjectPlatformAdministrationCapability(
-        facts({ freshness: "stale", isPlatformAdministrator: true, username: stranger }),
-      ),
-    ).toEqual({ status: "hidden" });
-    expect(
-      evaluateProjectPlatformAdministrationCapability(
-        facts({ isPlatformAdministrator: true, username: undefined }),
-      ),
-    ).toEqual({ status: "hidden" });
-  });
-
+test.describe("Capability presentation", () => {
   test("only hidden capabilities withhold their reason", () => {
     const hidden: ProjectCapability = { status: "hidden" };
     expect(capabilityReason(hidden)).toBeUndefined();

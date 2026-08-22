@@ -399,7 +399,7 @@ test.describe("Files mutations", () => {
 });
 
 const facts = (overrides: Partial<ProjectCapabilityFacts> = {}): ProjectCapabilityFacts => ({
-  caller: { isPlatformAdministrator: false, username: "editor" },
+  caller: { username: "editor" },
   project: { administrators: [], creator: "creator", editors: ["editor"], observers: [] },
   subscription: { accountsForInstances: true, atLimit: false },
   ...overrides,

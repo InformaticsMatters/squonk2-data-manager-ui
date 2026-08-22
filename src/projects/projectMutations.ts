@@ -31,7 +31,6 @@ export type ProjectPrivacyChange =
  */
 export type ProjectCommandOutcome =
   | { change: "added" | "removed"; kind: "membership"; role: ProjectRole; username: string }
-  | { kind: "administration" }
   | { kind: "privacy"; isPrivate: boolean }
   | { kind: "unchanged"; reason: string };
 
@@ -91,8 +90,6 @@ export const resolveProjectPrivacyChange = (
 
 export const projectOutcomeMessage = (outcome: ProjectCommandOutcome): string => {
   switch (outcome.kind) {
-    case "administration":
-      return "You now administer this project.";
     case "membership":
       return outcome.change === "added"
         ? `${outcome.username} is now ${withArticle(outcome.role)} of this project.`

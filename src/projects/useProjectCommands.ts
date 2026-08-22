@@ -103,19 +103,5 @@ export const useProjectCommands = () => {
       await refreshProject(queryClient, projectId);
       return { isPrivate: change.isPrivate, kind: "privacy" };
     },
-
-    /**
-     * Adds the caller to the project's administrators. Only a platform administrator is offered
-     * this, and the Data Manager remains the authority: a rejection leaves the displayed project
-     * exactly as it was.
-     */
-    takeProjectAdministration: async (
-      projectId: string,
-      userId: string,
-    ): Promise<ProjectCommandOutcome> => {
-      await addAdministrator.mutateAsync({ projectId, userId });
-      await refreshProject(queryClient, projectId);
-      return { kind: "administration" };
-    },
   };
 };

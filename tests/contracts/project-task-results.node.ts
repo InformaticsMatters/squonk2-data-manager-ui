@@ -165,7 +165,7 @@ const taskFacts = (
 ): ProjectResultTaskFacts => {
   const { username = editor, ...rest } = overrides;
   return {
-    caller: { isPlatformAdministrator: false, username },
+    caller: { username },
     owningProjectId: projectId,
     project: project(),
     routeProjectId: projectId,
@@ -210,7 +210,7 @@ test("deleting a task is withheld until the task itself accounts for being done"
 
 test("the task a caller is looking at is what decides its own delete action", () => {
   const facts = {
-    caller: { isPlatformAdministrator: false, username: editor },
+    caller: { username: editor },
     freshness: "current",
     project: project(),
     subscription: { accountsForInstances: true, atLimit: false },

@@ -461,7 +461,7 @@ const runFacts = ({
   subscription = { accountsForInstances: true, atLimit: false },
   username = editor,
 }: Partial<ProjectRunFacts> & { username?: string } = {}): ProjectRunFacts => ({
-  caller: { isPlatformAdministrator: false, username },
+  caller: { username },
   content,
   definitionUnavailability,
   freshness,

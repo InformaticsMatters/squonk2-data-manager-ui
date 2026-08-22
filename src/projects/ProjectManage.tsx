@@ -1,6 +1,30 @@
 import { type ReactNode } from "react";
 
-import { Alert, Box, Button, Chip, Container, Stack, Typography } from "@mui/material";
+import {
+  ContentCopy,
+  FolderOutlined,
+  LockOutlined,
+  PublicOutlined,
+  Storage,
+  TrendingUp,
+} from "@mui/icons-material";
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Container,
+  Divider,
+  Grid,
+  IconButton,
+  LinearProgress,
+  Paper,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
 
 import { administrationLinks } from "../administration/routes";
@@ -8,13 +32,13 @@ import { CenterLoader } from "../components/CenterLoader";
 import { isProductId, isUnitId } from "../routing/identifiers";
 import { toLocalTimeString } from "../utils/app/datetime";
 import {
+  capabilityReason,
   evaluateProjectAdministratorsCapability,
   evaluateProjectDeletionCapability,
   evaluateProjectEditorsCapability,
   evaluateProjectExecutionCapability,
   evaluateProjectFileMutationCapability,
   evaluateProjectObserversCapability,
-  evaluateProjectPlatformAdministrationCapability,
   evaluateProjectPrivacyCapability,
   type ProjectCapability,
   projectIsReadOnly,
@@ -22,23 +46,27 @@ import {
 } from "./capabilities";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import {
-  PlatformAdministrationAction,
   ProjectDeletionControl,
   ProjectMembersControl,
   ProjectPrivacyControl,
 } from "./ProjectManageActions";
-import { type ProjectSubscriptionFacts } from "./projectSubscription";
 
 const atLimitMessage = "This project's subscription is at its coin limit.";
+const coinFormatter = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 20 });
 
-const Section = ({ children, title }: { children: ReactNode; title: string }) => (
-  <Box sx={{ mt: 4 }}>
-    <Typography gutterBottom component="h2" variant="h6">
-      {title}
-    </Typography>
-    {children}
-  </Box>
-);
+const formatCoins = (value: number) => coinFormatter.format(value);
+
+/** Meter positions are presentation only; the exact values remain visible as text. */
+const percentOf = (value: number, limit: number) =>
+  limit > 0 ? Math.max(0, Math.min(100, (value / limit) * 100)) : 0;
+
+const heldRoles = (roles: ProjectRoles) =>
+  [
+    roles.isAdministrator ? "Administrator" : undefined,
+    roles.isCreator ? "Creator" : undefined,
+    roles.isEditor ? "Editor" : undefined,
+    roles.isObserver ? "Observer" : undefined,
+  ].filter((role): role is string => role !== undefined);
 
 const Fact = ({ label, value }: { label: string; value: ReactNode }) => (
   <Stack
@@ -47,10 +75,10 @@ const Fact = ({ label, value }: { label: string; value: ReactNode }) => (
     spacing={{ sm: 1 }}
     sx={{ py: 0.25 }}
   >
-    <Typography color="text.secondary" sx={{ minWidth: 200 }}>
+    <Typography color="text.secondary" sx={{ minWidth: { sm: 120 } }} variant="body2">
       {label}
     </Typography>
-    <Typography component="span" sx={{ overflowWrap: "anywhere" }}>
+    <Typography component="span" sx={{ overflowWrap: "anywhere" }} variant="body2">
       {value}
     </Typography>
   </Stack>
@@ -62,12 +90,36 @@ const Facts = ({ children }: { children: ReactNode }) => (
   </Box>
 );
 
-/**
- * States what the caller may do with one project action. A hidden capability renders nothing at
- * all, an ordinary unavailable one explains itself, and an available one says so, so a viewer can
- * always tell an action they lack from an action that does not exist for them.
- */
-const CapabilityFact = ({
+const UsageTile = ({
+  caption,
+  icon,
+  label,
+  value,
+}: {
+  caption?: string;
+  icon?: ReactNode;
+  label: string;
+  value: ReactNode;
+}) => (
+  <Paper sx={{ height: "100%", p: 2 }} variant="outlined">
+    <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: "text.secondary" }}>
+      {icon}
+      <Typography component="h3" variant="overline">
+        {label}
+      </Typography>
+    </Stack>
+    <Typography component="p" sx={{ fontWeight: 600, lineHeight: 1.2 }} variant="h5">
+      {value}
+    </Typography>
+    {caption ? (
+      <Typography color="text.secondary" variant="caption">
+        {caption}
+      </Typography>
+    ) : null}
+  </Paper>
+);
+
+const CapabilitySummary = ({
   capability,
   label,
 }: {
@@ -77,184 +129,373 @@ const CapabilityFact = ({
   if (capability.status === "hidden") {
     return null;
   }
-  return <Fact label={label} value={capability.reason ?? "Available to you."} />;
+  const available = capability.status === "enabled";
+  return (
+    <Stack component="li" direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
+      <Chip
+        color={available ? "success" : "default"}
+        label={available ? "Available" : "Unavailable"}
+        size="small"
+      />
+      <Box>
+        <Typography variant="body2">{label}</Typography>
+        {capabilityReason(capability) ? (
+          <Typography color="text.secondary" variant="caption">
+            {capabilityReason(capability)}
+          </Typography>
+        ) : null}
+      </Box>
+    </Stack>
+  );
 };
 
-const accessLabel = (roles: ProjectRoles) => {
-  const held = [
-    roles.isAdministrator ? "Administrator" : undefined,
-    roles.isCreator ? "Creator" : undefined,
-    roles.isEditor ? "Editor" : undefined,
-    roles.isObserver ? "Observer" : undefined,
-  ].filter(Boolean);
-  return held.length > 0 ? held.join(", ") : "No project role";
-};
-
-const SubscriptionFacts = ({ subscription }: { subscription: ProjectSubscriptionFacts }) => (
-  <>
-    {!!subscription.atLimit && (
-      <Alert severity="warning" sx={{ mb: 2 }}>
-        {atLimitMessage}
-      </Alert>
-    )}
-    <Facts>
-      <Fact label="Tier" value={subscription.tier ?? "No tier"} />
-      <Fact label="Subscription type" value={subscription.type} />
-      <Fact label="Coins used" value={subscription.used} />
-      <Fact label="Coin allowance" value={subscription.allowance} />
-      <Fact label="Coin limit" value={subscription.limit} />
-      <Fact label="Predicted spend" value={subscription.prediction} />
-      <Fact label="Current burn rate" value={subscription.burnRate} />
-      <Fact label="Billing day" value={subscription.billingDay} />
-      <Fact label="Days remaining" value={subscription.remainingDays} />
-      <Fact label="Storage size" value={subscription.storageSize} />
-      <Fact label="Storage coins used" value={subscription.storageCoinsUsed} />
-      {subscription.instanceCoinsUsed === undefined ? null : (
-        <Fact label="Instance coins used" value={subscription.instanceCoinsUsed} />
-      )}
-    </Facts>
-  </>
+const Identifier = ({ label, value }: { label: string; value: string }) => (
+  <Stack
+    component="li"
+    direction="row"
+    spacing={1}
+    sx={{ alignItems: "center", minWidth: 0, py: 0.25 }}
+  >
+    <Typography color="text.secondary" sx={{ minWidth: { sm: 92 } }} variant="body2">
+      {label}
+    </Typography>
+    <Typography
+      component="code"
+      sx={{ flex: 1, fontFamily: "monospace", minWidth: 0, overflowWrap: "anywhere" }}
+      variant="body2"
+    >
+      {value}
+    </Typography>
+    <Tooltip title={`Copy ${label.toLowerCase()} identifier`}>
+      <IconButton
+        aria-label={`Copy ${label.toLowerCase()} identifier`}
+        size="small"
+        onClick={() => void navigator.clipboard.writeText(value).catch(() => undefined)}
+      >
+        <ContentCopy fontSize="inherit" />
+      </IconButton>
+    </Tooltip>
+  </Stack>
 );
 
 const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
   const { organisation, product, project, subscription, unit } = facts;
-  const privacy = evaluateProjectPrivacyCapability(facts);
-  const administrators = evaluateProjectAdministratorsCapability(facts);
-  const editors = evaluateProjectEditorsCapability(facts);
-  const observers = evaluateProjectObserversCapability(facts);
-  const deletion = evaluateProjectDeletionCapability(facts);
-  const files = evaluateProjectFileMutationCapability(facts);
-  const execution = evaluateProjectExecutionCapability(facts);
-  const platformAdministration = evaluateProjectPlatformAdministrationCapability(facts);
+  const capabilities = {
+    administrators: evaluateProjectAdministratorsCapability(facts),
+    deletion: evaluateProjectDeletionCapability(facts),
+    editors: evaluateProjectEditorsCapability(facts),
+    execution: evaluateProjectExecutionCapability(facts),
+    files: evaluateProjectFileMutationCapability(facts),
+    observers: evaluateProjectObserversCapability(facts),
+    privacy: evaluateProjectPrivacyCapability(facts),
+  };
+  const roles = heldRoles(facts.roles);
   // Manage already holds the containing unit, so both links address the subscription where it
   // actually lives rather than at a bare record with no surrounding context.
   const subscriptionId =
     isProductId(product.product.id) && isUnitId(unit.id) ? product.product.id : undefined;
+  const usedPercent = percentOf(subscription.used, subscription.limit);
+  const allowancePercent = percentOf(subscription.allowance, subscription.limit);
 
   return (
-    <>
-      <Typography component="h1" variant="h4">
-        Manage
+    <Box>
+      <Typography color="text.secondary" variant="body2">
+        {organisation.name} › {unit.name}
       </Typography>
-      <Stack direction="row" spacing={1} sx={{ alignItems: "center", mt: 1 }}>
-        <Typography component="h2" variant="h5">
-          {project.name}
-        </Typography>
-        <Chip label={project.private ? "Private" : "Public"} size="small" variant="outlined" />
-      </Stack>
-      {!!projectIsReadOnly(facts) && (
-        <Alert severity="info" sx={{ mt: 2 }}>
-          You have read-only access to this project. Every project change below explains what it
-          requires.
-        </Alert>
-      )}
-
-      <Section title="Project">
-        <Facts>
-          <Fact label="Your access" value={accessLabel(facts.roles)} />
-          <Fact label="Created" value={toLocalTimeString(project.created, true, true)} />
-          <Fact label="Creator" value={project.creator} />
-          <Fact label="Containing unit" value={unit.name} />
-          <Fact label="Owning organisation" value={organisation.name} />
-          <Fact label="Privacy" value={project.private ? "Private" : "Public"} />
-        </Facts>
-        <ProjectPrivacyControl
-          capability={privacy}
-          isPrivate={project.private}
-          projectId={project.project_id}
-        />
-      </Section>
-
-      {/* Manage is the only owner of these lists. Each control reads the project in the URL and
-          answers to its own capability, so no other screen has to decide who may change them. */}
-      <Section title="People">
-        <Stack spacing={3}>
-          <ProjectMembersControl
-            capability={administrators}
-            members={project.administrators}
-            projectId={project.project_id}
-            role="administrator"
-          />
-          <ProjectMembersControl
-            capability={editors}
-            members={project.editors}
-            projectId={project.project_id}
-            role="editor"
-          />
-          <ProjectMembersControl
-            capability={observers}
-            members={project.observers}
-            projectId={project.project_id}
-            role="observer"
-          />
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        sx={{ alignItems: { sm: "center" }, mb: 3, mt: 0.5 }}
+      >
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flex: 1, minWidth: 0 }}>
+          <FolderOutlined color="action" />
+          <Typography
+            component="h1"
+            sx={{ fontWeight: 600, minWidth: 0, overflowWrap: "anywhere" }}
+            variant="h4"
+          >
+            {project.name}
+          </Typography>
         </Stack>
-      </Section>
-
-      <Section title="Subscription and usage">
-        <SubscriptionFacts subscription={subscription} />
-      </Section>
-
-      <Section title="Working in this project">
-        <Facts>
-          <CapabilityFact capability={files} label="Change files" />
-          <CapabilityFact capability={execution} label="Run work" />
-        </Facts>
-      </Section>
-
-      {/* Deleting the project is Manage's own action, and the only one that outlives the project it
-          is for: the request is made here and monitored on its own route. */}
-      <Section title="Deletion">
-        <ProjectDeletionControl
-          capability={deletion}
-          productId={product.product.id}
-          projectId={project.project_id}
-          projectName={project.name}
-        />
-      </Section>
-
-      {/* A non-hidden capability already implies a resolved caller; this only narrows the name the
-          command sends, and decides nothing about authority. */}
-      {platformAdministration.status === "hidden" || !facts.caller.username ? null : (
-        <Section title="Platform administration">
-          <PlatformAdministrationAction
-            capability={platformAdministration}
-            projectId={project.project_id}
-            username={facts.caller.username}
+        <Stack
+          aria-label="Your project roles"
+          direction="row"
+          spacing={1}
+          sx={{ flexWrap: "wrap", gap: 1 }}
+        >
+          <Chip
+            color={project.private ? "default" : "info"}
+            icon={project.private ? <LockOutlined /> : <PublicOutlined />}
+            label={project.private ? "Private" : "Public"}
+            size="small"
           />
-        </Section>
-      )}
+          {roles.length > 0 ? (
+            roles.map((role) => <Chip color="primary" key={role} label={role} size="small" />)
+          ) : (
+            <Chip label="No project role" size="small" variant="outlined" />
+          )}
+        </Stack>
+      </Stack>
 
-      <Section title="Support">
-        <Typography color="text.secondary" sx={{ mb: 2 }}>
-          Quote these identifiers when you contact a project administrator, an organisation owner,
-          or your Squonk administrator.
-        </Typography>
-        <Facts>
-          <Fact label="Project ID" value={project.project_id} />
-          <Fact label="Subscription ID" value={product.product.id} />
-          <Fact label="Unit ID" value={unit.id} />
-          <Fact label="Organisation ID" value={organisation.id} />
-        </Facts>
-        {subscriptionId ? (
-          <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-            <Button
-              component={Link}
-              href={administrationLinks.subscription(unit.id, subscriptionId)}
-              variant="outlined"
-            >
-              View subscription
-            </Button>
-            <Button
-              component={Link}
-              href={administrationLinks.subscriptionCharges(unit.id, subscriptionId)}
-              variant="outlined"
-            >
-              View charges
-            </Button>
-          </Stack>
-        ) : null}
-      </Section>
-    </>
+      {projectIsReadOnly(facts) ? (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          You have read-only access to this project. Every unavailable project change below explains
+          what it requires.
+        </Alert>
+      ) : null}
+
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Card aria-labelledby="coin-usage-heading" component="section" variant="outlined">
+            <CardContent>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+                sx={{ alignItems: { sm: "baseline" }, mb: 1 }}
+              >
+                <Typography component="h2" id="coin-usage-heading" variant="h6">
+                  Coin usage
+                </Typography>
+                <Box sx={{ flex: 1 }} />
+                <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
+                  <Chip
+                    label={subscription.tier ?? "No tier"}
+                    size="small"
+                    sx={{ textTransform: "capitalize" }}
+                  />
+                  <Chip label={subscription.type} size="small" variant="outlined" />
+                </Stack>
+              </Stack>
+
+              {subscription.atLimit ? (
+                <Alert severity="warning" sx={{ mb: 2 }}>
+                  {atLimitMessage}
+                </Alert>
+              ) : null}
+
+              <Typography component="p" sx={{ fontWeight: 700 }} variant="h3">
+                {formatCoins(subscription.used)}
+                <Typography color="text.secondary" component="span" variant="h6">
+                  {` / ${formatCoins(subscription.limit)} coins`}
+                </Typography>
+              </Typography>
+              <Box sx={{ mt: 1, position: "relative" }}>
+                <LinearProgress
+                  aria-label="Coin usage"
+                  aria-valuetext={`${formatCoins(subscription.used)} of ${formatCoins(subscription.limit)} coins used`}
+                  color={subscription.atLimit ? "error" : usedPercent > 80 ? "warning" : "primary"}
+                  sx={{ borderRadius: 1, height: 12 }}
+                  value={usedPercent}
+                  variant="determinate"
+                />
+                <Tooltip title={`Included allowance: ${formatCoins(subscription.allowance)} coins`}>
+                  <Box
+                    aria-hidden="true"
+                    sx={{
+                      bgcolor: "text.primary",
+                      bottom: -4,
+                      left: `${allowancePercent}%`,
+                      position: "absolute",
+                      top: -4,
+                      transform: "translateX(-1px)",
+                      width: 2,
+                    }}
+                  />
+                </Tooltip>
+              </Box>
+              <Typography color="text.secondary" sx={{ mt: 0.5 }} variant="caption">
+                Included allowance: {formatCoins(subscription.allowance)} coins. Billing day{" "}
+                {subscription.billingDay}; {subscription.remainingDays} days remaining.
+              </Typography>
+
+              <Grid container spacing={2} sx={{ mt: 1 }}>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                  <UsageTile
+                    caption="coins per day"
+                    icon={<TrendingUp fontSize="small" />}
+                    label="Burn rate"
+                    value={formatCoins(subscription.burnRate)}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                  <UsageTile
+                    caption="coins this billing period"
+                    label="Predicted spend"
+                    value={formatCoins(subscription.prediction)}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                  <UsageTile
+                    caption={`${formatCoins(subscription.storageCoinsUsed)} coins`}
+                    icon={<Storage fontSize="small" />}
+                    label="Storage"
+                    value={subscription.storageSize}
+                  />
+                </Grid>
+                {subscription.instanceCoinsUsed === undefined ? null : (
+                  <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                    <UsageTile
+                      caption="coins"
+                      label="Instance spend"
+                      value={formatCoins(subscription.instanceCoinsUsed)}
+                    />
+                  </Grid>
+                )}
+              </Grid>
+
+              {subscriptionId ? (
+                <Stack direction="row" spacing={2} sx={{ flexWrap: "wrap", gap: 1, mt: 2 }}>
+                  <Button
+                    component={Link}
+                    href={administrationLinks.subscription(unit.id, subscriptionId)}
+                    size="small"
+                    variant="outlined"
+                  >
+                    View subscription
+                  </Button>
+                  <Button
+                    component={Link}
+                    href={administrationLinks.subscriptionCharges(unit.id, subscriptionId)}
+                    size="small"
+                    variant="outlined"
+                  >
+                    View charges
+                  </Button>
+                </Stack>
+              ) : null}
+            </CardContent>
+          </Card>
+
+          <Card
+            aria-labelledby="project-people-heading"
+            component="section"
+            sx={{ mt: 3 }}
+            variant="outlined"
+          >
+            <CardContent>
+              <Typography gutterBottom component="h2" id="project-people-heading" variant="h6">
+                People
+              </Typography>
+              <Stack divider={<Divider flexItem />} spacing={3}>
+                <ProjectMembersControl
+                  capability={capabilities.administrators}
+                  members={project.administrators}
+                  projectId={project.project_id}
+                  role="administrator"
+                />
+                <ProjectMembersControl
+                  capability={capabilities.editors}
+                  members={project.editors}
+                  projectId={project.project_id}
+                  role="editor"
+                />
+                <ProjectMembersControl
+                  capability={capabilities.observers}
+                  members={project.observers}
+                  projectId={project.project_id}
+                  role="observer"
+                />
+              </Stack>
+            </CardContent>
+          </Card>
+
+          <Card
+            aria-labelledby="project-danger-heading"
+            component="section"
+            sx={{ borderColor: "error.main", mt: 3 }}
+            variant="outlined"
+          >
+            <CardContent>
+              <Typography
+                gutterBottom
+                color="error"
+                component="h2"
+                id="project-danger-heading"
+                variant="h6"
+              >
+                Danger zone
+              </Typography>
+              <Typography color="text.secondary" sx={{ mb: 2 }} variant="body2">
+                Deleting this project permanently removes its files and working directories.
+              </Typography>
+              <ProjectDeletionControl
+                capability={capabilities.deletion}
+                productId={product.product.id}
+                projectId={project.project_id}
+                projectName={project.name}
+              />
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card aria-labelledby="project-about-heading" component="section" variant="outlined">
+            <CardContent>
+              <Typography gutterBottom component="h2" id="project-about-heading" variant="h6">
+                About
+              </Typography>
+              <Facts>
+                <Fact label="Created" value={toLocalTimeString(project.created, true, true)} />
+                <Fact label="Creator" value={project.creator} />
+                <Fact label="Containing unit" value={unit.name} />
+                <Fact label="Owning organisation" value={organisation.name} />
+                <Fact label="Privacy" value={project.private ? "Private" : "Public"} />
+              </Facts>
+              <Divider sx={{ my: 2 }} />
+              <ProjectPrivacyControl
+                capability={capabilities.privacy}
+                isPrivate={project.private}
+                projectId={project.project_id}
+              />
+            </CardContent>
+          </Card>
+
+          <Card
+            aria-labelledby="project-capabilities-heading"
+            component="section"
+            sx={{ mt: 3 }}
+            variant="outlined"
+          >
+            <CardContent>
+              <Typography
+                gutterBottom
+                component="h2"
+                id="project-capabilities-heading"
+                variant="h6"
+              >
+                What you can do here
+              </Typography>
+              <Stack component="ul" spacing={1.5} sx={{ listStyle: "none", m: 0, p: 0 }}>
+                <CapabilitySummary capability={capabilities.files} label="Change files" />
+                <CapabilitySummary capability={capabilities.execution} label="Run work" />
+              </Stack>
+            </CardContent>
+          </Card>
+
+          <Card
+            aria-labelledby="project-identifiers-heading"
+            component="section"
+            sx={{ mt: 3 }}
+            variant="outlined"
+          >
+            <CardContent>
+              <Typography gutterBottom component="h2" id="project-identifiers-heading" variant="h6">
+                Identifiers
+              </Typography>
+              <Typography color="text.secondary" sx={{ mb: 1 }} variant="body2">
+                Quote these identifiers when you contact support.
+              </Typography>
+              <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0 }}>
+                <Identifier label="Project ID" value={project.project_id} />
+                <Identifier label="Subscription ID" value={product.product.id} />
+                <Identifier label="Unit ID" value={unit.id} />
+                <Identifier label="Organisation ID" value={organisation.id} />
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

@@ -1,16 +1,12 @@
 import { useGetUserAccount } from "@/api/data-manager/user";
 
-import { useKeycloakUser } from "../hooks/useKeycloakUser";
 import {
   type ProjectCapabilityFacts,
   type ProjectRoles,
-  resolvePlatformAdministrator,
   resolveProjectRoles,
 } from "./capabilities";
 import { describeProjectSubscription, type ProjectSubscriptionFacts } from "./projectSubscription";
 import { type ProjectWorkspace, useRouteProject } from "./useRouteProject";
-
-const dataManagerAdministratorRole = process.env.NEXT_PUBLIC_KEYCLOAK_DM_ADMIN_ROLE;
 
 /**
  * Everything Manage reads: the resolved workspace of the project in the URL, the caller's roles in
@@ -28,7 +24,6 @@ export type ProjectFacts = ProjectCapabilityFacts &
 export const useProjectFacts = (): ProjectFacts | undefined => {
   const workspace = useRouteProject();
   const account = useGetUserAccount(undefined, { query: { retry: false } });
-  const { user } = useKeycloakUser();
   const { organisation, product, project, unit } = workspace;
 
   if (!organisation || !product || !project || !unit) {
@@ -38,14 +33,7 @@ export const useProjectFacts = (): ProjectFacts | undefined => {
   const username = account.data?.user.username;
 
   return {
-    caller: {
-      isPlatformAdministrator: resolvePlatformAdministrator(
-        account.data,
-        user.roles,
-        dataManagerAdministratorRole,
-      ),
-      username,
-    },
+    caller: { username },
     freshness: account.isSuccess ? "current" : "stale",
     organisation,
     product,

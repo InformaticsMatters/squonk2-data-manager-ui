@@ -224,7 +224,7 @@ const resultFacts = (
 ): ProjectResultFacts => {
   const { username = editor, ...rest } = overrides;
   return {
-    caller: { isPlatformAdministrator: false, username },
+    caller: { username },
     owningProjectId: projectId,
     project: project(),
     routeProjectId: projectId,
@@ -426,7 +426,7 @@ test("one addressed result answers by the same rule as the collection it belongs
 
 test("every displayed result is offered the capabilities its own owning project decides", () => {
   const facts = {
-    caller: { isPlatformAdministrator: false, username: editor },
+    caller: { username: editor },
     freshness: "current",
     project: project(),
     subscription: { accountsForInstances: true, atLimit: false },

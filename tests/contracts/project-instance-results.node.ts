@@ -234,7 +234,7 @@ const instanceFacts = (
 ): ProjectResultInstanceFacts => {
   const { username = editor, ...rest } = overrides;
   return {
-    caller: { isPlatformAdministrator: false, username },
+    caller: { username },
     owningProjectId: projectId,
     project: project(),
     routeProjectId: projectId,
@@ -295,7 +295,7 @@ test("stopping or deleting an instance answers to the concrete instance and its 
 
 test("the instance a caller is looking at is what decides its own retained controls", () => {
   const facts = {
-    caller: { isPlatformAdministrator: false, username: editor },
+    caller: { username: editor },
     freshness: "current",
     project: project(),
     subscription: { accountsForInstances: true, atLimit: false },

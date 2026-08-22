@@ -810,41 +810,73 @@ const holdPrivacyChange = async (page: Page) => {
 
 test("Manage presents project facts and available actions to a project administrator", async ({
   page,
+  request,
 }, testInfo) => {
   const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=manage-populated`);
   await login(page, managePath, testInfo);
 
   await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
-  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
-  await expect(page.getByRole("heading", { level: 2, name: "Acceptance Project" })).toBeVisible();
-  await expect(page.getByText("Private", { exact: true }).first()).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "KRAS G12D Lead Optimisation" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Northstar Therapeutics › Medicinal Chemistry & Design"),
+  ).toBeVisible();
   await expect(factRow(page, "Privacy")).toContainText("Private");
-  await expect(page.getByText("You have read-only access to this project.")).toHaveCount(0);
+  await expect(page.getByText(/You have read-only access to this project\./u)).toHaveCount(0);
 
-  await expect(factRow(page, "Your access")).toContainText("Administrator, Creator, Editor");
-  await expect(factRow(page, "Containing unit")).toContainText("Acceptance Unit");
-  await expect(factRow(page, "Owning organisation")).toContainText("Acceptance Organisation");
+  const identity = page.getByLabel("Your project roles");
+  for (const role of ["Administrator", "Creator", "Editor", "Observer"]) {
+    await expect(identity.getByText(role, { exact: true })).toBeVisible();
+  }
+  await expect(identity.getByText("Private", { exact: true })).toBeVisible();
+  await expect(factRow(page, "Containing unit")).toContainText("Medicinal Chemistry & Design");
+  await expect(factRow(page, "Owning organisation")).toContainText("Northstar Therapeutics");
   await expect(memberChip(page, "Administrators", subject)).toBeVisible();
-  await expect(memberChip(page, "Observers", `${subject}-observer`)).toBeVisible();
+  await expect(
+    memberChip(page, "Administrators", "research-operations@northstar.example"),
+  ).toBeVisible();
+  await expect(memberChip(page, "Editors", "sophia.kim@northstar.example")).toBeVisible();
+  await expect(memberChip(page, "Observers", "external-collaborator@helios.example")).toBeVisible();
 
   // Manage owns these changes, so an administrator is offered the controls themselves.
   await expect(privacySwitch(page)).toBeEnabled();
   for (const role of ["Administrators", "Editors", "Observers"]) {
     await expect(members(page, role).getByRole("combobox")).toBeEnabled();
   }
+  const capabilitySummary = page.getByRole("region", { name: "What you can do here" });
   for (const label of ["Change files", "Run work"]) {
-    await expect(factRow(page, label)).toContainText("Available to you.");
+    await expect(capabilitySummary.getByRole("listitem").filter({ hasText: label })).toContainText(
+      "Available",
+    );
   }
 
-  await expect(factRow(page, "Tier")).toContainText("Bronze");
-  await expect(factRow(page, "Coin allowance")).toContainText("100");
-  // Only a subscription that accounts for instances can be run against, so it says that it does.
-  await expect(factRow(page, "Instance coins used")).toContainText("0");
-  // Support owns every diagnostic identifier, so each is stated exactly once.
+  const usage = page.getByRole("region", { name: "Coin usage" });
+  await expect(usage).toContainText("41,680 / 75,000 coins");
+  await expect(usage.getByRole("progressbar", { name: "Coin usage" })).toHaveAttribute(
+    "aria-valuetext",
+    "41,680 of 75,000 coins used",
+  );
+  await expect(usage).toContainText("Included allowance: 50,000 coins");
+  await expect(usage).toContainText("Billing day 1; 11 days remaining");
+  await expect(usage.getByText("Gold", { exact: true })).toBeVisible();
+  await expect(usage.getByText("DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION")).toBeVisible();
+  for (const heading of ["Burn rate", "Predicted spend", "Storage", "Instance spend"]) {
+    await expect(usage.getByRole("heading", { level: 3, name: heading })).toBeVisible();
+  }
+  for (const value of ["1,275", "63,900", "1.84 TB", "9,420 coins", "32,260"]) {
+    await expect(usage.getByText(value, { exact: true })).toBeVisible();
+  }
+
+  // Support owns every diagnostic identifier and gives each one a copy affordance.
   await expect(factRow(page, "Project ID")).toContainText(fixtureIds.project);
   await expect(factRow(page, "Subscription ID")).toContainText(fixtureIds.product);
   await expect(factRow(page, "Unit ID")).toContainText(fixtureIds.unit);
   await expect(factRow(page, "Organisation ID")).toContainText(fixtureIds.organisation);
+  for (const label of ["project", "subscription", "unit", "organisation"]) {
+    await expect(page.getByRole("button", { name: `Copy ${label} id identifier` })).toBeVisible();
+  }
   // Manage holds the containing unit, so it links the subscription where it lives rather than at a
   // bare record with no surrounding context.
   await expect(page.getByRole("link", { name: "View subscription" })).toHaveAttribute(
@@ -856,7 +888,74 @@ test("Manage presents project facts and available actions to a project administr
     `/data-manager-ui/administration/units/${fixtureIds.unit}/subscriptions/${fixtureIds.product}/charges`,
   );
 
-  // The one exclusively platform-administrator action is absent, not merely unavailable.
+  await expect(page.getByRole("button", { name: "Delete project" })).toBeEnabled();
+  const peopleHeading = page.getByRole("heading", { level: 2, name: "People" });
+  const dangerHeading = page.getByRole("heading", { level: 2, name: "Danger zone" });
+  await expect(dangerHeading).toBeVisible();
+  expect(
+    await peopleHeading.evaluate((people) => {
+      const danger = document.querySelector("#project-danger-heading");
+      return (
+        danger !== null &&
+        Boolean(people.compareDocumentPosition(danger) & Node.DOCUMENT_POSITION_FOLLOWING)
+      );
+    }),
+  ).toBe(true);
+
+  // Platform privilege has no project self-escalation action.
+  await expect(page.getByRole("button", { name: "Take project administration" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Platform administration" })).toHaveCount(0);
+});
+
+test("Manage explains an at-limit subscription without withholding administration", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=manage-at-limit`);
+  await login(page, managePath, testInfo);
+
+  const usage = page.getByRole("region", { name: "Coin usage" });
+  await expect(usage.getByText("This project's subscription is at its coin limit.")).toBeVisible();
+  await expect(usage).toContainText("75,000 / 75,000 coins");
+  await expect(usage.getByRole("progressbar", { name: "Coin usage" })).toHaveAttribute(
+    "aria-valuenow",
+    "100",
+  );
+
+  const capabilitySummary = page.getByRole("region", { name: "What you can do here" });
+  await expect(capabilitySummary).toContainText(
+    "This project's subscription is at its coin limit, so files cannot be changed.",
+  );
+  await expect(capabilitySummary).toContainText(
+    "This project's subscription is at its coin limit, so work cannot be run.",
+  );
+
+  // The limit governs spending, while ordinary project administration still comes from membership.
+  await expect(privacySwitch(page)).toBeEnabled();
+  for (const role of ["Administrators", "Editors", "Observers"]) {
+    await expect(members(page, role).getByRole("combobox")).toBeEnabled();
+  }
+  await expect(page.getByRole("button", { name: "Delete project" })).toBeEnabled();
+});
+
+test("a platform administrator without a project role remains an ordinary read-only viewer", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=platform-admin`);
+  await login(page, managePath, testInfo);
+
+  await expect(page.getByRole("heading", { level: 1, name: "Acceptance Project" })).toBeVisible();
+  await expect(page.getByLabel("Your project roles")).toContainText("No project role");
+  await expect(page.getByText(/You have read-only access to this project\./u)).toBeVisible();
+  await expect(memberChip(page, "Administrators", `${subject}-observer`)).toBeVisible();
+  await expect(privacySwitch(page)).toBeDisabled();
+  await expect(privacyControl(page)).toContainText(
+    "You must be a project administrator to change project privacy.",
+  );
+  await expect(page.getByRole("button", { name: "Delete project" })).toBeDisabled();
   await expect(page.getByRole("button", { name: "Take project administration" })).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Platform administration" })).toHaveCount(0);
 });
@@ -865,15 +964,18 @@ test("Manage stays available to a project viewer and explains every unavailable 
   page,
   request,
 }, testInfo) => {
-  await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=read-only`);
+  await request.put(
+    `${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=manage-read-only`,
+  );
   await login(page, managePath, testInfo);
 
   await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
-  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "KRAS G12D Lead Optimisation" }),
+  ).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
-  await expect(page.getByText("Acceptance Unit · Acceptance Organisation")).toBeVisible();
-  await expect(factRow(page, "Your access")).toContainText("Observer");
-  await expect(page.getByText("You have read-only access to this project.")).toBeVisible();
+  await expect(page.getByLabel("Your project roles").getByText("Observer")).toBeVisible();
+  await expect(page.getByText(/You have read-only access to this project\./u)).toBeVisible();
 
   // An ordinary unavailable control stays visible and disabled, with the reason beside it.
   await expect(privacySwitch(page)).toBeDisabled();
@@ -897,6 +999,10 @@ test("Manage stays available to a project viewer and explains every unavailable 
   // A viewer still reads the memberships they cannot change.
   await expect(memberChip(page, "Observers", subjectFor(testInfo))).toBeVisible();
   await expect(
+    memberChip(page, "Administrators", "research-operations@northstar.example"),
+  ).toBeVisible();
+  await expect(memberChip(page, "Editors", "sophia.kim@northstar.example")).toBeVisible();
+  await expect(
     page.getByText("You must be a project administrator to delete this project."),
   ).toBeVisible();
   await expect(
@@ -906,59 +1012,18 @@ test("Manage stays available to a project viewer and explains every unavailable 
     page.getByText("You must be a project editor or administrator to run work in this project."),
   ).toBeVisible();
   // Readable facts remain useful even though nothing here can be changed.
-  await expect(factRow(page, "Tier")).toContainText("Bronze");
+  await expect(page.getByRole("region", { name: "Coin usage" })).toContainText(
+    "41,680 / 75,000 coins",
+  );
   await expect(page.getByRole("button", { name: "Take project administration" })).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Platform administration" })).toHaveCount(0);
-});
-
-test("the platform-administrator action is offered alone and its rejection changes nothing", async ({
-  page,
-  request,
-}, testInfo) => {
-  const subject = subjectFor(testInfo);
-  await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=platform-admin`);
-  await request.post(
-    `${acceptanceUrls.control}/scenario/${subject}/project-mutation-failure?status=403`,
-  );
-  await login(page, managePath, testInfo);
-
-  const takeAdministration = page.getByRole("button", { name: "Take project administration" });
-  await expect(takeAdministration).toBeEnabled();
-  await expect(factRow(page, "Your access")).toContainText("No project role");
-  // The realm role offers its own action alone; it is not ordinary authority over the project.
-  await expect(page.getByText("You have read-only access to this project.")).toBeVisible();
-  await expect(privacySwitch(page)).toBeDisabled();
-  await expect(privacyControl(page)).toContainText(
-    "You must be a project administrator to change project privacy.",
-  );
-
-  await takeAdministration.click();
-  await expect(
-    page.getByText(
-      `You cannot take administration of project ${fixtureIds.project}. It is unavailable or you do not have access. The displayed project has not changed.`,
-    ),
-  ).toBeVisible();
-  // An authoritative rejection is feedback, never navigation or a change of scope.
-  await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
-  await expect(page.getByRole("heading", { level: 2, name: "Acceptance Project" })).toBeVisible();
-  await expect(page.getByText("Acceptance Unit · Acceptance Organisation")).toBeVisible();
-  await expect(factRow(page, "Your access")).toContainText("No project role");
-
-  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/project-mutation-failure`);
-  await takeAdministration.click();
-  await expect(page.getByText("You now administer this project.")).toBeVisible();
-  await expect(factRow(page, "Your access")).toContainText("Administrator");
-  await expect(page.getByText("You already administer this project.")).toBeVisible();
-  // Ordinary authority arrives with the membership the server granted, not with the realm role.
-  await expect(page.getByText("You have read-only access to this project.")).toHaveCount(0);
-  await expect(privacySwitch(page)).toBeEnabled();
 });
 
 test("Manage owns project privacy and every project role change", async ({ page }, testInfo) => {
   const subject = subjectFor(testInfo);
   const colleague = `${subject}-observer`;
   await login(page, managePath, testInfo);
-  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Acceptance Project" })).toBeVisible();
 
   // Privacy. The project's own state answers, and the change is stated where it was made.
   await expect(privacySwitch(page)).toBeChecked();
@@ -1008,7 +1073,7 @@ test("a typed member name is a command, and one that names nobody says so", asyn
   // Someone the directory does not list, so the name can only have arrived by being typed.
   const newcomer = `${subject}-newcomer`;
   await login(page, managePath, testInfo);
-  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Acceptance Project" })).toBeVisible();
 
   await typeMember(page, "Editors", newcomer);
   await expect(
@@ -1096,11 +1161,11 @@ test("unconfirmed project facts leave changes available and defer to the server"
   const subject = subjectFor(testInfo);
   await request.post(`${acceptanceUrls.control}/scenario/${subject}/caller-account-failure`);
   await login(page, managePath, testInfo);
-  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Acceptance Project" })).toBeVisible();
 
   // Facts that cannot establish the caller never claim authority, and never claim its absence.
-  await expect(factRow(page, "Your access")).toContainText("No project role");
-  await expect(page.getByText("You have read-only access to this project.")).toHaveCount(0);
+  await expect(page.getByLabel("Your project roles")).toContainText("No project role");
+  await expect(page.getByText(/You have read-only access to this project\./u)).toHaveCount(0);
   await expect(privacySwitch(page)).toBeEnabled();
   await expect(privacyControl(page)).toContainText(
     "You must be a project administrator to change project privacy. Your permission will be confirmed when you use this action.",
@@ -1123,7 +1188,11 @@ test("unconfirmed project facts leave changes available and defer to the server"
   await request.delete(`${acceptanceUrls.control}/scenario/${subject}/project-mutation-failure`);
   await request.delete(`${acceptanceUrls.control}/scenario/${subject}/caller-account-failure`);
   await page.reload();
-  await expect(factRow(page, "Your access")).toContainText("Administrator, Creator, Editor");
+  for (const role of ["Administrator", "Creator", "Editor"]) {
+    await expect(
+      page.getByLabel("Your project roles").getByText(role, { exact: true }),
+    ).toBeVisible();
+  }
   await privacySwitch(page).click();
   await expect(privacyControl(page).getByText("This project is now public.")).toBeVisible();
   await expect(factRow(page, "Privacy")).toContainText("Public");

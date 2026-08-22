@@ -1,5 +1,3 @@
-import { type UserAccountDetail } from "@/api/data-manager";
-
 import {
   type Capability,
   capabilityFactsAreConfirmed as factsAreConfirmed,
@@ -18,7 +16,7 @@ export { capabilityIsEnabled, capabilityReason } from "../application/capability
 /** `stale` covers both unresolved and refetching generated facts; neither confirms authority. */
 export type ProjectFactsFreshness = "current" | "stale";
 
-export type ProjectCaller = { isPlatformAdministrator: boolean; username?: string };
+export type ProjectCaller = { username?: string };
 
 export type ProjectRoles = {
   isAdministrator: boolean;
@@ -75,36 +73,13 @@ export const resolveProjectRoles = (
   isObserver: username !== undefined && project.observers.includes(username),
 });
 
-/**
- * Platform privilege is a fact of the caller, not of the project. It is taken from the generated
- * Data Manager account resource, the Data Manager roles it reports, or the realm roles the caller
- * presented, so an unconfigured administrator role name can never turn ordinary roles into it.
- */
-export const resolvePlatformAdministrator = (
-  account: Pick<UserAccountDetail, "caller_has_admin_privilege" | "data_manager_roles"> | undefined,
-  realmRoles: readonly string[] | undefined,
-  administratorRole: string | undefined,
-): boolean => {
-  if (account?.caller_has_admin_privilege === true) {
-    return true;
-  }
-  if (administratorRole === undefined || administratorRole === "") {
-    return false;
-  }
-  return (
-    (account?.data_manager_roles ?? []).includes(administratorRole) ||
-    (realmRoles ?? []).includes(administratorRole)
-  );
-};
-
 const roles = (facts: ProjectCapabilityFacts) =>
   resolveProjectRoles(facts.project, facts.caller.username);
 
 /**
  * Ordinary authority is a fact of the project's own membership lists alone. Platform privilege is
  * deliberately not folded in: a platform administrator who is not a member of a project holds no
- * ordinary authority over it until they take administration of it, which is the one action their
- * realm role does offer.
+ * ordinary authority over it until a project administrator adds them to it.
  */
 const administers = (facts: ProjectCapabilityFacts) => roles(facts).isAdministrator;
 
@@ -129,7 +104,7 @@ const edits = (facts: ProjectCapabilityFacts) =>
  * True only when the caller holds no mutation authority over the project at all. A caller whose
  * actions are merely blocked — by a coin limit, say — is not a read-only caller, and unconfirmed
  * facts never claim read-only access before the server has answered. A platform administrator who
- * holds no project role reads the project like any other viewer until they take administration.
+ * holds no project role reads the project like any other viewer.
  */
 export const projectIsReadOnly = (facts: ProjectCapabilityFacts): boolean =>
   factsAreConfirmed(facts) && !edits(facts);
@@ -461,21 +436,3 @@ export const evaluateResultRerunCapability = evaluateResultAction(
       "This project's subscription does not account for instances, so running work cannot be established as safe.",
   }),
 );
-
-/**
- * Taking administration of a project the caller has no membership in is exclusively a platform
- * administrator's action, so it is the one project capability that hides itself. Facts that cannot
- * establish both the caller and the role leave it hidden rather than advertising a privileged
- * operation; the command names the caller, so an unresolved caller is as disqualifying as a
- * missing role.
- */
-export const evaluateProjectPlatformAdministrationCapability = (
-  facts: ProjectCapabilityFacts,
-): ProjectCapability => {
-  if (!facts.caller.isPlatformAdministrator || !factsAreConfirmed(facts)) {
-    return { status: "hidden" };
-  }
-  return administers(facts)
-    ? { status: "disabled", reason: "You already administer this project." }
-    : { status: "enabled" };
-};

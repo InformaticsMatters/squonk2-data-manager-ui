@@ -1,10 +1,14 @@
 import { spawn } from "node:child_process";
 
-import { acceptanceEnvironment, acceptanceUrls } from "../../tests/acceptance/environment";
+import {
+  acceptanceBuildEnvironment,
+  acceptanceEnvironment,
+  acceptanceUrls,
+} from "../../tests/acceptance/environment";
 
-const run = (command: string, args: string[]) =>
+const run = (command: string, args: string[], env: NodeJS.ProcessEnv = acceptanceEnvironment) =>
   new Promise<void>((resolve, reject) => {
-    const child = spawn(command, args, { env: acceptanceEnvironment, stdio: "inherit" });
+    const child = spawn(command, args, { env, stdio: "inherit" });
     child.once("error", reject);
     child.once("exit", (code, signal) => {
       if (code === 0) {
@@ -21,7 +25,7 @@ const main = async () => {
     forwardedArguments.shift();
   }
   console.log("Deterministic acceptance endpoints", acceptanceUrls);
-  await run("pnpm", ["build"]);
+  await run("pnpm", ["build"], acceptanceBuildEnvironment);
   await run("pnpm", [
     "exec",
     "playwright",

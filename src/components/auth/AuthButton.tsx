@@ -19,10 +19,7 @@ export const AuthButton = ({ mode, ...ButtonProps }: AuthButtonPros) => {
     if (mode === "logout") {
       clearAccountScopedStorageOnLogout({ local: localStorage, session: sessionStorage });
       await authClient.signOut();
-      const issuer = process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER_URL;
-      const clientId = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID;
-      const postLogout = encodeURIComponent(globalThis.location.origin + withBasePath("/"));
-      globalThis.location.href = `${issuer}/protocol/openid-connect/logout?post_logout_redirect_uri=${postLogout}&client_id=${clientId}`;
+      globalThis.location.href = withBasePath("/api/auth/keycloak-logout");
     } else {
       await authClient.signIn.oauth2({
         providerId: "keycloak",

@@ -24,6 +24,7 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/administration/units/[unitId]/usage", { "unitId": string }>
     | StaticRoute<"/administration/usage">
     | DynamicRoute<"/api/auth/[...all]", { "all": string[] }>
+    | StaticRoute<"/api/auth/keycloak-logout">
     | StaticRoute<"/api/configuration/api-servers">
     | StaticRoute<"/api/configuration/ui-version">
     | DynamicRoute<"/api/dm-api/[...dmProxy]", { "dmProxy": string[] }>

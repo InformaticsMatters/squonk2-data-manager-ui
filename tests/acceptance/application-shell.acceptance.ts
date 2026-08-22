@@ -189,7 +189,7 @@ test("organisation change reaches Home before persisting the new identity", asyn
 
   await page.getByRole("button", { name: "Change organisation" }).click();
   await observeProjectIdentityMismatch(page, "organisation-project-mismatch");
-  await page.getByRole("menuitem", { name: /Partner Organisation/u }).click();
+  await page.getByRole("option", { name: /Partner Organisation/u }).click();
 
   await expect(page).toHaveURL(homeUrl);
   await expect(mastheadIdentity).toContainText("Partner Organisation");
@@ -216,6 +216,65 @@ test("organisation change reaches Home before persisting the new identity", asyn
       page.evaluate(() => sessionStorage.getItem("organisation-project-adoption-mismatch")),
     )
     .toBeNull();
+});
+
+test("the organisation switcher answers the same keys as the project selector", async ({
+  page,
+}, testInfo) => {
+  const mastheadIdentity = page.getByRole("button", { name: "Change organisation" });
+  await login(page, `projects/${fixtureIds.project}/files`, testInfo);
+  await expect(mastheadIdentity).toContainText("Acceptance Organisation");
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+
+  await mastheadIdentity.click();
+  const search = page.getByRole("combobox", { name: "Search organisations" });
+  // The same control as the project selector directly beneath: focus lands in the search box as
+  // the menu opens, and what choosing a row will do is stated rather than discovered.
+  await expect(search).toBeFocused();
+  await expect(page.getByText("Opens Home")).toBeVisible();
+
+  const options = page.getByRole("option");
+  await expect(options).toHaveCount(3);
+  // The identifier beneath the name, so two similarly-named organisations can be told apart.
+  await expect(options.filter({ hasText: "Acceptance Organisation" })).toContainText(
+    fixtureIds.organisation,
+  );
+  // Where the caller already is; the highlight is where the keyboard is, and starts at the top.
+  await expect(page.getByRole("option", { name: /Acceptance Organisation/u })).toHaveAttribute(
+    "aria-current",
+    "true",
+  );
+  await expect(options.first()).toHaveAttribute("aria-selected", "true");
+
+  // Typing narrows by name, and the highlight returns to the top of what the list has become.
+  await search.fill("partner");
+  await expect(options).toHaveCount(1);
+  await expect(options.first()).toHaveAttribute("aria-selected", "true");
+  await search.press("Enter");
+
+  // Home is reached before the new identity is shown, exactly as the pointer journey requires.
+  await expect(page).toHaveURL(homeUrl);
+  await expect(mastheadIdentity).toContainText("Partner Organisation");
+  await expect
+    .poll(() =>
+      page.evaluate((key) => localStorage.getItem(key), APPLICATION_ORGANISATION_STORAGE_KEY),
+    )
+    .toContain(fixtureIds.otherOrganisation);
+
+  // Reopening starts clean, and choosing the organisation already in effect does nothing at all.
+  await mastheadIdentity.click();
+  await expect(search).toHaveValue("");
+  await page.getByRole("option", { name: /Partner Organisation/u }).click();
+  await expect(page).toHaveURL(homeUrl);
+  await expect(mastheadIdentity).toContainText("Partner Organisation");
+
+  // A search matching nothing names what did not match, and Escape hands the keyboard back.
+  await mastheadIdentity.click();
+  await search.fill("no such organisation");
+  await expect(page.getByText("No organisation matches “no such organisation”.")).toBeVisible();
+  await search.press("Escape");
+  await expect(search).toHaveCount(0);
+  await expect(mastheadIdentity).toBeFocused();
 });
 
 test("narrow project layout retains organisation and project navigation cues", async ({

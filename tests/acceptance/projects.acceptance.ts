@@ -1137,9 +1137,11 @@ const onboardingPanel = (page: Page) =>
  * organisation leaves the current resource for Home, so Projects is opened again afterwards.
  */
 const workAsDefaultOrganisation = async (page: Page) => {
-  await page.getByLabel("Change organisation").click();
-  await page.getByRole("menuitem", { name: /Default Organisation/u }).click();
-  await expect(page.getByLabel("Change organisation")).toContainText("Default Organisation");
+  await page.getByRole("button", { name: "Change organisation" }).click();
+  await page.getByRole("option", { name: /Default Organisation/u }).click();
+  await expect(page.getByRole("button", { name: "Change organisation" })).toContainText(
+    "Default Organisation",
+  );
   await page.goto("projects");
 };
 
@@ -1180,7 +1182,9 @@ test("a caller with nothing is onboarded into a project of their own and finds i
   // effect, so the screen they onboarded through lists the project they just made instead of
   // claiming they have none.
   await page.goto("projects");
-  await expect(page.getByLabel("Change organisation")).toContainText("Default Organisation");
+  await expect(page.getByRole("button", { name: "Change organisation" })).toContainText(
+    "Default Organisation",
+  );
   await expect(page.getByText("My First Project", { exact: true })).toBeVisible();
   await expect(onboardingPanel(page)).toHaveCount(0);
 });
@@ -1199,7 +1203,9 @@ test("a slow organisation index still decides which organisation the caller work
   );
   await login(page, "projects", testInfo);
 
-  await expect(page.getByLabel("Change organisation")).toContainText("Acceptance Organisation");
+  await expect(page.getByRole("button", { name: "Change organisation" })).toContainText(
+    "Acceptance Organisation",
+  );
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
 });
 
@@ -1256,8 +1262,8 @@ test("an editor in someone else's unit is offered a unit of their own and may pu
   await expect(onboardingPanel(page)).toHaveCount(0);
   // The dismissal took the offer, not the workspace: the projects they collaborate in are still
   // exactly where they left them.
-  await page.getByLabel("Change organisation").click();
-  await page.getByRole("menuitem", { name: /Acceptance Organisation/u }).click();
+  await page.getByRole("button", { name: "Change organisation" }).click();
+  await page.getByRole("option", { name: /Acceptance Organisation/u }).click();
   await page.goto("projects");
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
 });
@@ -1267,7 +1273,9 @@ test("the index offers a unit beside Create project, and project creation can th
 }, testInfo) => {
   await login(page, "projects", testInfo);
   await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
-  await expect(page.getByLabel("Change organisation")).toContainText("Acceptance Organisation");
+  await expect(page.getByRole("button", { name: "Change organisation" })).toContainText(
+    "Acceptance Organisation",
+  );
 
   await page.getByRole("button", { name: "Create unit" }).click();
   const dialog = page.getByRole("dialog");

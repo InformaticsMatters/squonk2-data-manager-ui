@@ -40,7 +40,7 @@ const railUnits = (page: Page) => rail(page).getByRole("list", { name: "Units" }
 
 const workAs = async (page: Page, organisation: string) => {
   await page.getByRole("button", { name: "Change organisation" }).click();
-  await page.getByRole("menuitem", { name: organisation }).click();
+  await page.getByRole("option", { name: organisation }).click();
   // Changing identity leaves for Home first, which is the existing behaviour for every family.
   await expect(page.getByRole("button", { name: "Change organisation" })).toContainText(
     organisation,

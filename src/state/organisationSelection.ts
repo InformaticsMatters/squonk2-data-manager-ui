@@ -60,6 +60,14 @@ export const useVisibleOrganisations = ({ enabled = true }: { enabled?: boolean 
   );
 };
 
+/**
+ * Whether the visible-organisation list is still being read. It is the caller's own index that
+ * decides, because that is the read `useVisibleOrganisations` publishes nothing before — a list
+ * that has not answered is not the same as a caller who belongs to no organisation, and a control
+ * offering the second while the first is true would be stating something untrue.
+ */
+export const useVisibleOrganisationsArePending = () => useGetOrganisations(undefined).isPending;
+
 export const useSelectedOrganisation = () => {
   const [organisationId, setOrganisationId] = useAtom(organisationIdAtom);
   const { data: organisation } = useGetOrganisation(organisationId ?? "", {

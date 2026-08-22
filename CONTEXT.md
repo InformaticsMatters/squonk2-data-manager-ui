@@ -49,9 +49,14 @@ messages, use the term defined here rather than a synonym.
   the organisation's projects, narrowed by searching project, unit and organisation names. Choosing
   one is a **navigation** to that project's canonical route in the section the caller is already
   standing in, never a selection: nothing holds a chosen project.
-- **Search menu** — the shared control the project selector is built on: a trigger that opens a
+- **Organisation switcher** — the organisation control in the masthead, opened as a **search menu**
+  of the organisations the caller may work as, narrowed by searching their names. Choosing one is a
+  **selection** — of the one domain scope persisted between visits — and leaves the current resource
+  for Home before the new identity is shown.
+- **Search menu** — the shared control both of those are built on: a trigger that opens a
   searchable, keyboard-navigable, optionally sectioned list. It is agnostic about what choosing a
-  row means; it owns no data and reads nothing.
+  row means, which is the whole of what separates its two consumers; it owns no data and reads
+  nothing.
 
 ## Routing and scope
 

@@ -18,7 +18,7 @@ import {
   evaluateUnitPrivacyCapability,
   isPersonalUnitResource,
 } from "./capabilities";
-import { administrationResourceLabel } from "./failures";
+import { administrationResourceLabel, unitDeletionFailureMessage } from "./failures";
 import {
   effectiveProductPrivacyExplanation,
   inheritedProductPrivacyExplanation,
@@ -134,7 +134,14 @@ const DeleteUnitAction = ({
             try {
               await commands.deleteUnit(unit.id, isPersonalUnit);
             } catch (error) {
-              feedback.report(error, "delete", administrationResourceLabel.unit(unit.id));
+              feedback.fail(
+                unitDeletionFailureMessage(
+                  error,
+                  isPersonalUnit
+                    ? administrationResourceLabel.personalUnit
+                    : administrationResourceLabel.unit(unit.id),
+                ),
+              );
               throw error;
             }
             feedback.announce("Unit deleted");

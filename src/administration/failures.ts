@@ -131,3 +131,25 @@ export const administrationMutationFailureMessage = (
       return undefined;
   }
 };
+
+/**
+ * Presents a refused unit deletion. Delete is offered only to a caller the client has already
+ * confirmed may take it, and the Account Server refuses to delete a unit that still holds products,
+ * so a rejection is a precondition the unit carries rather than a permission the caller lost. The
+ * message names that precondition instead of the generic "permission" wording, which sent the owner
+ * of a still-populated personal unit looking for an access problem that was not there.
+ */
+export const unitDeletionFailureMessage = (error: unknown, resource: string): string => {
+  switch (classifyTransportFailure(error).kind) {
+    case "not-found":
+      return `${resource} is no longer available. The displayed resource has not changed.`;
+    case "network":
+    case "rate-limited":
+    case "server":
+    case "timeout":
+      return `Could not delete ${resource}. The displayed resource has not changed; retry is available.`;
+    case "forbidden":
+    case "unknown":
+      return `Could not delete ${resource}. It may still contain projects, datasets or subscriptions that must be removed first.`;
+  }
+};

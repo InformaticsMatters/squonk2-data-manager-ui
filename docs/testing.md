@@ -36,7 +36,7 @@ Playwright retains traces, screenshots, and video for failures under `test-resul
 
 - A **story** is a small wrapper component that puts the component under test in one scenario: hard-coded props, mock data, providers, recorded callbacks. Stories live next to the component in `src/**/*.story.tsx`, one named export per scenario.
 - The **gallery** is `playwright/gallery/` (an `index.html` and a `main.tsx`). It discovers stories with `import.meta.glob`, and exposes `window.mount({ story, props })` / `window.unmount()`, rendering into `#root`. It reuses the React root so `component.update(props)` re-renders without remounting and component state survives.
-- The gallery is served by Vite (`playwright/vite.config.mts`, port `3100`), because the app itself is built by Next with webpack and does not serve arbitrary HTML entry points. That config mirrors the two things component source depends on: the `@/*` alias and the Emotion JSX runtime.
+- The gallery is served by Vite (`playwright/vite.config.mts`, port `3100`), because the app itself is built by Next with webpack and does not serve arbitrary HTML entry points. That config mirrors the three things component source depends on: the `@/*` alias, the Emotion JSX runtime, and the `process.env` that Next's own client modules read as they are evaluated — `next/link` is reached by any component rendering an internal link, and without that define it throws `process is not defined` before a story renders.
 
 A story id is the path under `src/` without the `.story.*` extension, plus the export name — `src/components/WarningDeleteButton.story.tsx` export `Confirming` is `components/WarningDeleteButton/Confirming`. Any unique trailing suffix also resolves.
 

@@ -45,10 +45,13 @@ messages, use the term defined here rather than a synonym.
   changing which resources the screen addresses, which is what distinguishes it from a scope.
 - **Highest role** — the strongest of **Administrator**, **Editor** and **Observer** a caller holds
   in a project, and nothing at all where they hold none. Creating a project is never one of them.
-- **Project selector** — the project identity in the identity strip, opened as a menu of the
-  organisation's projects, narrowed by searching project, unit and organisation names. Choosing one
-  is a **navigation** to that project's canonical route in the section the caller is already
+- **Project selector** — the project identity in the identity strip, opened as a **search menu** of
+  the organisation's projects, narrowed by searching project, unit and organisation names. Choosing
+  one is a **navigation** to that project's canonical route in the section the caller is already
   standing in, never a selection: nothing holds a chosen project.
+- **Search menu** — the shared control the project selector is built on: a trigger that opens a
+  searchable, keyboard-navigable, optionally sectioned list. It is agnostic about what choosing a
+  row means; it owns no data and reads nothing.
 
 ## Routing and scope
 

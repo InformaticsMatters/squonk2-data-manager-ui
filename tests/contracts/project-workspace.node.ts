@@ -540,28 +540,10 @@ test.describe("project selector list", () => {
       expect(list.sections.map(({ rows }) => rows.map(({ projectName }) => projectName))).toEqual(
         testCase.rows,
       );
-      // One continuous list is what the keyboard walks, so the flat order is the sections' own and
-      // each section knows where in it that section starts.
-      expect(list.rows.map(({ projectName }) => projectName)).toEqual(testCase.rows.flat());
-      expect(list.sections.map(({ startIndex }) => startIndex)).toEqual(
-        testCase.rows.map((_, index) => testCase.rows.slice(0, index).flat().length),
-      );
+      // The flat list the keyboard walks is the search menu's own, computed from these sections, so
+      // there is no second ordering here that could disagree with the one on screen.
     });
   }
-
-  test("only the project the address bar names is marked as the one being displayed", () => {
-    const list = buildProjectSelectorList(reachable, ancestry, {
-      recentProjectIds: [],
-      scope: everyOrganisation,
-      urlProjectId: "project-beta",
-    });
-
-    expect(list.rows.map(({ isUrlProject, projectId }) => [projectId, isUrlProject])).toEqual([
-      ["project-alpha", false],
-      ["project-beta", true],
-      ["project-gamma", false],
-    ]);
-  });
 
   test("a row keeps its containing identity when the ancestry cannot name it", () => {
     const list = buildProjectSelectorList(
@@ -577,8 +559,7 @@ test.describe("project selector list", () => {
       { recentProjectIds: [], scope: everyOrganisation },
     );
 
-    expect(list.rows[0]).toEqual({
-      isUrlProject: false,
+    expect(list.sections[0]?.rows[0]).toEqual({
       organisationName: "Organisation organisation-unlisted",
       projectId: "project-unlisted",
       projectName: "Unlisted",

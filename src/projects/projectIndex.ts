@@ -283,30 +283,22 @@ export type ProjectSelectorAncestry = {
   units: UnitsGetResponse;
 };
 
-/** One project as the selector offers it: what to say about it, and whether it is the one on screen. */
+/**
+ * One project as the selector offers it. Whether it is the one on screen is not among these: the
+ * search menu marks where the caller already is from the identifier it is given, so that answer is
+ * given once rather than by both the derivation and the control.
+ */
 export type ProjectSelectorRow = {
-  isUrlProject: boolean;
   organisationName: string;
   projectId: string;
   projectName: string;
   unitName: string;
 };
 
-/**
- * One headed run of rows. `startIndex` is where the section begins in the single flat list the
- * keyboard walks, so a highlight crosses from one section into the next without the caller having
- * to know the boundary is there.
- */
-export type ProjectSelectorSection = {
-  heading: string;
-  rows: ProjectSelectorRow[];
-  startIndex: number;
-};
+/** One headed run of rows, in the order the section offers them. */
+export type ProjectSelectorSection = { heading: string; rows: ProjectSelectorRow[] };
 
-export type ProjectSelectorList = {
-  rows: ProjectSelectorRow[];
-  sections: ProjectSelectorSection[];
-};
+export type ProjectSelectorList = { sections: ProjectSelectorSection[] };
 
 /**
  * Which organisations the project selector may offer. The two arms are named rather than modelled
@@ -381,7 +373,6 @@ export const buildProjectSelectorList = (
   const term = search.trim().toLocaleLowerCase();
   const matched = offered
     .map<ProjectSelectorRow>((project) => ({
-      isUrlProject: project.project_id === urlProjectId,
       organisationName: containerName(organisationNames, project.organisation_id, "Organisation"),
       projectId: project.project_id,
       projectName: project.name,
@@ -407,7 +398,7 @@ export const buildProjectSelectorList = (
 
   const sections: ProjectSelectorSection[] = [];
   if (recent.length > 0) {
-    sections.push({ heading: `Recent (${recent.length})`, rows: recent, startIndex: 0 });
+    sections.push({ heading: `Recent (${recent.length})`, rows: recent });
   }
   if (rest.length > 0) {
     sections.push({
@@ -415,8 +406,7 @@ export const buildProjectSelectorList = (
         ? `${matched.length} of ${offered.length} projects`
         : `All projects (${rest.length})`,
       rows: rest,
-      startIndex: recent.length,
     });
   }
-  return { rows: [...recent, ...rest], sections };
+  return { sections };
 };

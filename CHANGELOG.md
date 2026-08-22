@@ -1,3 +1,10 @@
+# [7.0.0-dev.14](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.13...7.0.0-dev.14) (2026-08-22)
+
+
+### Bug Fixes
+
+* explain a refused unit deletion as a precondition, not lost permission ([7f8409a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7f8409a3ad11eba8fb691943ff2a6ff394dc13a3)), closes [#2001](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2001)
+
 # [7.0.0-dev.13](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.12...7.0.0-dev.13) (2026-08-22)
 
 

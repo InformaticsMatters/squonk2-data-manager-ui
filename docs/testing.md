@@ -29,3 +29,24 @@ Playwright retains traces, screenshots, and video for failures under `test-resul
 ## Live smoke evidence
 
 `pnpm test:smoke` retains the tests that use mutable Keycloak, Data Manager, and Account Server deployments. It requires `.env.test.local`, a production build made with those endpoints, and live credentials. The scheduled/manual `live-service-smoke` workflow is non-blocking and is not an ordinary merge gate.
+
+## Component tests
+
+`pnpm test:components` runs the `components` project of `playwright.config.ts` (`tests/components/*.spec.ts`). It uses Playwright's built-in `mount` fixture, which needs no component-testing runtime, no bundler integration and no extra test packages — only a **story gallery** page to render into.
+
+- A **story** is a small wrapper component that puts the component under test in one scenario: hard-coded props, mock data, providers, recorded callbacks. Stories live next to the component in `src/**/*.story.tsx`, one named export per scenario.
+- The **gallery** is `playwright/gallery/` (an `index.html` and a `main.tsx`). It discovers stories with `import.meta.glob`, and exposes `window.mount({ story, props })` / `window.unmount()`, rendering into `#root`. It reuses the React root so `component.update(props)` re-renders without remounting and component state survives.
+- The gallery is served by Vite (`playwright/vite.config.mts`, port `3100`), because the app itself is built by Next with webpack and does not serve arbitrary HTML entry points. That config mirrors the two things component source depends on: the `@/*` alias and the Emotion JSX runtime.
+
+A story id is the path under `src/` without the `.story.*` extension, plus the export name — `src/components/WarningDeleteButton.story.tsx` export `Confirming` is `components/WarningDeleteButton/Confirming`. Any unique trailing suffix also resolves.
+
+```ts
+const component = await mount("components/WarningDeleteButton/Confirming");
+await component.getByRole("button", { name: "Delete" }).click();
+```
+
+`mount` returns a locator for `#root`, so queries are scoped from it. MUI renders dialogs, menus and tooltips into a portal on `document.body`, **outside** that root — reach those through `page` instead.
+
+Everything the component needs is set up inside the story, and everything a test asserts has to be observable through the page. Where a component takes callbacks, the story owns the state, provides the callbacks and records the result into a hidden form the test reads with `toHaveValue()`. Providers come from `AppScaffold` in `src/stories/decorators.tsx`, wrapped in the story rather than imposed by the gallery, so a story can opt out.
+
+Run `pnpm test:gallery` and open <http://localhost:3100/playwright/gallery/index.html> to browse every story by hand; the page lists them, and `?story=<id>` mounts one. In the devtools console, `await window.mount({ story: "..." })` is exactly what the fixture does.

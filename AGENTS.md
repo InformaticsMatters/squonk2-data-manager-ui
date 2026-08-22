@@ -30,6 +30,7 @@ The app has its own git repository (InformaticsMatters/squonk2-data-manager-ui),
 
 - `pnpm test:acceptance` (`tests/acceptance/*.acceptance.ts`) is the ordinary gate: deterministic, needs no external services or credentials. See `docs/testing.md`.
 - `playwright.config.ts` runs the pure contract matrices (`tests/contracts/*.node.ts` and the other `*.node.ts` files). `pnpm test` runs the acceptance gate and then these.
+- `playwright.config.ts` also runs the component suite (`tests/components/*.spec.ts`) against a story gallery served by a small Vite server, separate from the Next build. Stories are `src/**/*.story.tsx`; see `docs/testing.md`.
 - `pnpm test:smoke` (`playwright.smoke.config.ts`) runs the live suite — a real Keycloak login/logout (`*.setup.ts`) and public navigation (`tests/navigation.browser.ts`). Those hit **real external APIs** and load `.env.test.local`; the workflow is non-blocking and CI skips it when the APIs are down.
 
 ## Setup gotchas

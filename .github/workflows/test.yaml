@@ -37,6 +37,8 @@ jobs:
       run: pnpm tsc
     - name: Lint
       run: pnpm lint
+    - name: Component tests
+      run: pnpm test:components
     - name: Deterministic production acceptance
       run: pnpm test:acceptance
     - name: Upload test results

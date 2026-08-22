@@ -268,6 +268,15 @@ test("the organisation switcher answers the same keys as the project selector", 
   await expect(page).toHaveURL(homeUrl);
   await expect(mastheadIdentity).toContainText("Partner Organisation");
 
+  // A control with nowhere to link to offers nothing a modifier could do differently, so a
+  // modifier click is answered as an ordinary one rather than appearing to promise a new tab.
+  await mastheadIdentity.click();
+  await page
+    .getByRole("option", { name: /Acceptance Organisation/u })
+    .click({ modifiers: ["ControlOrMeta"] });
+  await expect(page).toHaveURL(homeUrl);
+  await expect(mastheadIdentity).toContainText("Acceptance Organisation");
+
   // A search matching nothing names what did not match, and Escape hands the keyboard back.
   await mastheadIdentity.click();
   await search.fill("no such organisation");
@@ -543,4 +552,14 @@ test("the project selector searches by project, containing unit and organisation
   await identity.click();
   await expect(page.getByRole("combobox", { name: "Search projects" })).toHaveValue("");
   await expect(page.getByText("All projects (5)")).toBeVisible();
+
+  // Every row is a real link, so a modifier click opens the project elsewhere and leaves this one
+  // where it was — with the menu still open, because the caller may well want another.
+  const opened = page.context().waitForEvent("page");
+  await page
+    .getByRole("option", { name: /Screening Project/u })
+    .click({ modifiers: ["ControlOrMeta"] });
+  await (await opened).close();
+  await expect(page.getByRole("combobox", { name: "Search projects" })).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}projects/${fixtureIds.project}/files`);
 });

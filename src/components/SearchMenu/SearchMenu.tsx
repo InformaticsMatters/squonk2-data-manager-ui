@@ -33,8 +33,8 @@ import Link from "next/link";
  *
  * `href` is a plain string rather than the generated route union: that union models a route as a
  * pathname and a query object, which no built path string satisfies, so every link in this
- * application casts (see `src/projects/routes.ts`). The cast is made once here rather than by each
- * consumer.
+ * application casts to reach it (see `src/projects/routes.ts`). This component casts the same way
+ * they all do rather than making its consumers hand it a value the union cannot describe.
  */
 export type SearchMenuRow = {
   href?: string;
@@ -121,7 +121,7 @@ export const SearchMenu = ({
   sections,
 }: SearchMenuProps) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [highlight, setHighlight] = useState(0);
   const searchRef = useRef<HTMLInputElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const prefix = useId();
@@ -134,6 +134,11 @@ export const SearchMenu = ({
   // The flat list the keyboard walks is computed here from the sections themselves, so no consumer
   // can hand this component an index that disagrees with the list it is showing.
   const rows = useMemo(() => sections.flatMap(({ rows: sectionRows }) => sectionRows), [sections]);
+  // The highlight is clamped against the list it is highlighting rather than trusted to be inside
+  // it. A list can shrink for reasons that are not the search — a refetch answering, the recents
+  // arriving as the menu opens — and a highlight left past the end would point
+  // `aria-activedescendant` at a row that is not there and leave Enter doing nothing at all.
+  const activeIndex = Math.min(highlight, Math.max(rows.length - 1, 0));
   const sectionStarts = useMemo(() => {
     let start = 0;
     return sections.map(({ rows: sectionRows }) => {
@@ -145,7 +150,7 @@ export const SearchMenu = ({
 
   // The highlight starts at the top of whatever the list has just become, so Enter always opens the
   // row the caller can see is highlighted.
-  useEffect(() => setActiveIndex(0), [search]);
+  useEffect(() => setHighlight(0), [search]);
   useEffect(() => {
     listRef.current
       ?.querySelector(`[data-index="${activeIndex}"]`)
@@ -175,17 +180,17 @@ export const SearchMenu = ({
         event.preventDefault();
         // The highlight stops at the ends rather than wrapping, so a caller who is not watching the
         // screen always knows where they are.
-        setActiveIndex((index) => Math.min(index + 1, last));
+        setHighlight(Math.min(activeIndex + 1, last));
         break;
       }
       case "ArrowUp": {
         event.preventDefault();
-        setActiveIndex((index) => Math.max(index - 1, 0));
+        setHighlight(Math.max(activeIndex - 1, 0));
         break;
       }
       case "End": {
         event.preventDefault();
-        setActiveIndex(last);
+        setHighlight(last);
         break;
       }
       case "Enter": {
@@ -202,7 +207,7 @@ export const SearchMenu = ({
       }
       case "Home": {
         event.preventDefault();
-        setActiveIndex(0);
+        setHighlight(0);
         break;
       }
       case "Tab": {
@@ -244,7 +249,7 @@ export const SearchMenu = ({
       tabIndex: -1,
       ...(isCurrent ? { "aria-current": true } : {}),
       onClick: handleRowClick(row),
-      onMouseMove: () => setActiveIndex(index),
+      onMouseMove: () => setHighlight(index),
     } as const;
     const content = (
       <>
@@ -293,7 +298,7 @@ export const SearchMenu = ({
           // to claim focus, so the keyboard is live from the moment the menu has opened.
           transition: {
             onEntered: () => {
-              setActiveIndex(0);
+              setHighlight(0);
               searchRef.current?.focus();
             },
           },
@@ -339,8 +344,9 @@ export const SearchMenu = ({
             />
           </Box>
           {/* Typing narrows a list the caller may never arrow into, so how many rows it matched is
-              said rather than only shown. The region is rendered with the menu and only its changes
-              are announced, which is what makes this the search's own answer. */}
+              said rather than only shown. The region is rendered with the menu rather than created
+              by the search, because a live region has to already exist to have a change announced
+              from it. */}
           <Box
             aria-label="Matches"
             aria-live="polite"
@@ -380,7 +386,7 @@ export const SearchMenu = ({
             ) : null}
             {sections.map((section, sectionIndex) =>
               section.heading === undefined ? (
-                <List dense disablePadding key={section.rows[0]?.id} role="presentation">
+                <List dense disablePadding key={sectionStarts[sectionIndex]} role="presentation">
                   {section.rows.map((row, index) =>
                     renderRow(row, sectionStarts[sectionIndex] + index),
                   )}

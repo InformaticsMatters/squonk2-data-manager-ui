@@ -146,7 +146,13 @@ export const ProjectSelector = ({ projectId }: { projectId: string }) => {
       sections={sections}
       onOpenChange={setOpen}
       onSearchChange={setSearch}
-      onSelect={(row) => void router.push(projectSectionHref(section, row.id) as never)}
+      onSelect={({ href }) => {
+        // The row's own link, rather than the same route built a second time: what the pointer
+        // would have followed and what the keyboard opens cannot then be two different answers.
+        if (href) {
+          void router.push(href as never);
+        }
+      }}
     />
   );
 };

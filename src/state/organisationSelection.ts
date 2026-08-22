@@ -65,8 +65,12 @@ export const useVisibleOrganisations = ({ enabled = true }: { enabled?: boolean 
  * decides, because that is the read `useVisibleOrganisations` publishes nothing before — a list
  * that has not answered is not the same as a caller who belongs to no organisation, and a control
  * offering the second while the first is true would be stating something untrue.
+ *
+ * It is gated exactly as its sibling is, so a consumer cannot ask whether a list is pending while
+ * having told the list itself not to be read.
  */
-export const useVisibleOrganisationsArePending = () => useGetOrganisations(undefined).isPending;
+export const useVisibleOrganisationsArePending = ({ enabled = true }: { enabled?: boolean } = {}) =>
+  useGetOrganisations(undefined, { query: { enabled } }).isPending;
 
 export const useSelectedOrganisation = () => {
   const [organisationId, setOrganisationId] = useAtom(organisationIdAtom);

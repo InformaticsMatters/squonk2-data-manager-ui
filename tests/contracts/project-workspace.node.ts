@@ -536,12 +536,13 @@ test.describe("project selector list", () => {
         urlProjectId: testCase.urlProject,
       });
 
+      // The sections are the whole of what this derivation answers: the flat list the keyboard
+      // walks is the search menu's own, computed from these, so there is no second ordering here
+      // that could disagree with the one on screen.
       expect(list.sections.map(({ heading }) => heading)).toEqual(testCase.headings);
       expect(list.sections.map(({ rows }) => rows.map(({ projectName }) => projectName))).toEqual(
         testCase.rows,
       );
-      // The flat list the keyboard walks is the search menu's own, computed from these sections, so
-      // there is no second ordering here that could disagree with the one on screen.
     });
   }
 

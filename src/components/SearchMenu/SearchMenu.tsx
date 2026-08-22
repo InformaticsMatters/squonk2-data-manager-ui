@@ -65,7 +65,7 @@ export type SearchMenuProps = {
   /** Where the caller already is. Never the keyboard highlight — see the note on `activeIndex`. */
   currentId?: string;
   emptyLabel: (search: string) => string;
-  /** What choosing a row will do, stated before it is done. */
+  /** What choosing a row will do, stated before it is done. Announced as the dialog's description. */
   footerNote?: ReactNode;
   isPending: boolean;
   listLabel: string;
@@ -92,10 +92,10 @@ export type SearchMenuProps = {
  * the organisation-selection state module; which organisations or projects exist stays the concern
  * of the screens that display them.
  *
- * The pattern is a combobox in a dialog: the trigger opens a dialog, and inside it the search field
- * is the combobox and the list is its listbox. Focus stays in the search field for the life of the
- * menu, which is what lets typing and arrowing interleave, so the highlight is carried to assistive
- * technology through `aria-activedescendant` rather than by moving focus.
+ * The pattern is a combobox in a dialog: the trigger opens a modal dialog, and inside it the search
+ * field is the combobox and the list is its listbox. Focus stays in the search field for the life of
+ * the menu, which is what lets typing and arrowing interleave, so the highlight is carried to
+ * assistive technology through `aria-activedescendant` rather than by moving focus.
  *
  * `activeIndex` and `currentId` are separate concerns and must never share one appearance. The
  * active index is where the keyboard is, drawn with the list's selected-row styling and the ARIA
@@ -126,7 +126,9 @@ export const SearchMenu = ({
   const listRef = useRef<HTMLDivElement | null>(null);
   const prefix = useId();
   const listboxId = `${prefix}listbox`;
+  const footerId = `${prefix}footer`;
   const optionId = (index: number) => `${prefix}option-${index}`;
+  const headingId = (index: number) => `${prefix}heading-${index}`;
   const open = !!anchor;
 
   // The flat list the keyboard walks is computed here from the sections themselves, so no consumer
@@ -189,6 +191,13 @@ export const SearchMenu = ({
       case "Enter": {
         event.preventDefault();
         selectRow(rows[activeIndex]);
+        break;
+      }
+      case "Escape": {
+        // Answered here rather than left to the popover's own handling, so the ordinary dismissal
+        // key is a guarantee of this component rather than a default it inherits.
+        event.preventDefault();
+        close();
         break;
       }
       case "Home": {
@@ -277,7 +286,8 @@ export const SearchMenu = ({
         anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
         open={open}
         slotProps={{
-          paper: { sx: { maxWidth: "100vw", mt: 0.5, width: 420 } },
+          // Room at the edge rather than the whole viewport, so the menu is usable on a phone.
+          paper: { sx: { maxWidth: "calc(100vw - 32px)", mt: 0.5, width: 420 } },
           // The field's own autofocus races the modal's focus handling. The end of the entry
           // transition is the point at which the input certainly exists and nothing else is about
           // to claim focus, so the keyboard is live from the moment the menu has opened.
@@ -291,8 +301,16 @@ export const SearchMenu = ({
         onClose={close}
       >
         {/* Keys are answered here rather than on the field alone, so the menu keeps answering the
-            keyboard wherever focus has ended up inside it. */}
-        <Box aria-label={ariaLabel} role="dialog" onKeyDown={handleKeyDown}>
+            keyboard wherever focus has ended up inside it. The dialog declares itself modal because
+            the popover really does trap focus, and points its description at the footer note, so
+            what choosing a row will do is announced on open rather than being visible only. */}
+        <Box
+          aria-describedby={footerNote === undefined ? undefined : footerId}
+          aria-label={ariaLabel}
+          aria-modal="true"
+          role="dialog"
+          onKeyDown={handleKeyDown}
+        >
           <Box sx={{ p: 1.5, pb: 1 }}>
             <TextField
               fullWidth
@@ -304,7 +322,7 @@ export const SearchMenu = ({
                   "aria-activedescendant": rows.length > 0 ? optionId(activeIndex) : undefined,
                   "aria-autocomplete": "list",
                   "aria-controls": listboxId,
-                  "aria-expanded": true,
+                  "aria-expanded": open,
                   "aria-label": searchLabel,
                   role: "combobox",
                 },
@@ -319,6 +337,27 @@ export const SearchMenu = ({
               value={search}
               onChange={(event) => onSearchChange(event.target.value)}
             />
+          </Box>
+          {/* Typing narrows a list the caller may never arrow into, so how many rows it matched is
+              said rather than only shown. The region is rendered with the menu and only its changes
+              are announced, which is what makes this the search's own answer. */}
+          <Box
+            aria-label="Matches"
+            aria-live="polite"
+            role="status"
+            sx={{
+              border: 0,
+              clip: "rect(0 0 0 0)",
+              height: "1px",
+              margin: "-1px",
+              overflow: "hidden",
+              padding: 0,
+              position: "absolute",
+              whiteSpace: "nowrap",
+              width: "1px",
+            }}
+          >
+            {isPending ? "" : `${rows.length} ${rows.length === 1 ? "match" : "matches"}`}
           </Box>
           <Box
             aria-label={listLabel}
@@ -347,8 +386,18 @@ export const SearchMenu = ({
                   )}
                 </List>
               ) : (
-                <List dense disablePadding key={section.heading} role="presentation">
-                  <ListSubheader role="presentation">{section.heading}</ListSubheader>
+                // A group labelled by its own heading, rather than a presentational role that
+                // discards it, so a Recent run is announced as one.
+                <List
+                  dense
+                  disablePadding
+                  aria-labelledby={headingId(sectionIndex)}
+                  key={section.heading}
+                  role="group"
+                >
+                  <ListSubheader id={headingId(sectionIndex)} role="presentation">
+                    {section.heading}
+                  </ListSubheader>
                   {section.rows.map((row, index) =>
                     renderRow(row, sectionStarts[sectionIndex] + index),
                   )}
@@ -376,7 +425,7 @@ export const SearchMenu = ({
               </Typography>
             </Stack>
             {footerNote === undefined ? null : (
-              <Typography color="text.secondary" variant="caption">
+              <Typography color="text.secondary" id={footerId} variant="caption">
                 {footerNote}
               </Typography>
             )}

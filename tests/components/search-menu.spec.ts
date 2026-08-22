@@ -91,6 +91,42 @@ test("a narrowed list puts the highlight back at the top, so Enter opens what is
   await expect(component.getByTestId("chosen")).toHaveValue("Crystal Review");
 });
 
+test("the match count is announced through a polite live region", async ({ mount, page }) => {
+  const component = await mount("SearchMenu/Sectioned");
+  await component.getByRole("button", { name: "Change project" }).click();
+
+  const matches = page.getByRole("status", { name: "Matches" });
+  await expect(matches).toHaveAttribute("aria-live", "polite");
+  await expect(matches).toHaveText("8 matches");
+
+  await page.getByRole("combobox", { name: "Search projects" }).fill("crystal");
+  await expect(matches).toHaveText("1 match");
+});
+
+test("each headed section is a group named by its heading", async ({ mount, page }) => {
+  const component = await mount("SearchMenu/Sectioned");
+  await component.getByRole("button", { name: "Change project" }).click();
+
+  await expect(page.getByRole("group", { name: "Recent (2)" }).getByRole("option")).toHaveCount(2);
+  await expect(
+    page.getByRole("group", { name: "All projects (6)" }).getByRole("option"),
+  ).toHaveCount(6);
+});
+
+test("the dialog declares itself modal and is described by its footer note", async ({
+  mount,
+  page,
+}) => {
+  const component = await mount("SearchMenu/Sectioned");
+  await component.getByRole("button", { name: "Change project" }).click();
+
+  const dialog = page.getByRole("dialog", { name: "Change project" });
+  await expect(dialog).toHaveAttribute("aria-modal", "true");
+
+  const described = await dialog.getAttribute("aria-describedby");
+  await expect(page.locator(`#${described ?? ""}`)).toHaveText("Opens Results");
+});
+
 test("the row the caller is already on is marked apart from the keyboard highlight", async ({
   mount,
   page,

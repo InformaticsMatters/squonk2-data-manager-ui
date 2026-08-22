@@ -1,3 +1,10 @@
+# [7.0.0-dev.11](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.10...7.0.0-dev.11) (2026-08-22)
+
+
+### Features
+
+* scope Administration to the masthead organisation and restructure it around units ([278b27b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/278b27b57fcba898fb74a77ef8d40a086c61f1ec)), closes [#1976](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1976) [#1973](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1973) [#1995](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1995)
+
 # [7.0.0-dev.10](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.9...7.0.0-dev.10) (2026-08-21)
 
 

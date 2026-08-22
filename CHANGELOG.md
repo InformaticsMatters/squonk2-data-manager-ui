@@ -1,3 +1,16 @@
+# [7.0.0-dev.12](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.11...7.0.0-dev.12) (2026-08-22)
+
+
+### Bug Fixes
+
+* clamp the search menu's highlight to the list it is highlighting ([ff550f3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/ff550f3612f2a9d9a739ac56ef2152834e3fe3d0)), closes [#1997](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1997)
+* complete the search menu's accessibility semantics ([661384a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/661384a7f4003080da3ba5fe4388948b688e7ad9)), closes [#1997](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1997)
+
+
+### Features
+
+* rebuild the organisation switcher on the shared search menu ([303872a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/303872a4fc15380e646ec9debb087764113c7d99)), closes [#1997](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1997)
+
 # [7.0.0-dev.11](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.10...7.0.0-dev.11) (2026-08-22)
 
 

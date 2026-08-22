@@ -1,3 +1,10 @@
+# [7.0.0-dev.15](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.14...7.0.0-dev.15) (2026-08-22)
+
+
+### Features
+
+* **projects:** redesign manage dashboard ([725ada6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/725ada6ede1a449534c46c4241fce0020ad72150))
+
 # [7.0.0-dev.14](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.13...7.0.0-dev.14) (2026-08-22)
 
 

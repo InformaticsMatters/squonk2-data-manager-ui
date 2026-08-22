@@ -1,11 +1,19 @@
 import {
   type OrganisationAllDetail,
-  type OrganisationUnitsGetResponse,
+  type OrganisationChargesGetResponse,
+  type ProductChargesGetResponse,
+  type ProductsGetResponse,
   type UnitAllDetail,
+  type UnitChargesGetResponse,
 } from "@/api/account-server";
-import { useGetOrganisation, useGetOrganisationsSuspense } from "@/api/account-server/organisation";
-import { useGetProduct } from "@/api/account-server/product";
-import { useGetUnit, useGetUnitsSuspense } from "@/api/account-server/unit";
+import {
+  useGetOrganisationCharges,
+  useGetProductCharges,
+  useGetUnitCharges,
+} from "@/api/account-server/charges";
+import { useGetOrganisation } from "@/api/account-server/organisation";
+import { useGetProduct, useGetProductsForUnit } from "@/api/account-server/product";
+import { useGetUnit } from "@/api/account-server/unit";
 
 import {
   classifyTransportFailure,
@@ -15,18 +23,7 @@ import { type AccountFacts, useAccountFacts } from "../hooks/useAccountFacts";
 import { administrationReadIsAuthoritative } from "./failures";
 import { type Subscription } from "./subscriptionFacts";
 
-export type UnitWithOrganisation = { organisation: OrganisationAllDetail; unit: UnitAllDetail };
-
 export type AccessFacts = AccountFacts;
-
-const flattenUnits = (groups: OrganisationUnitsGetResponse[]): UnitWithOrganisation[] =>
-  groups.flatMap(({ organisation, units }) => units.map((unit) => ({ organisation, unit })));
-
-export const useAccessIndex = () => {
-  const { data: organisations } = useGetOrganisationsSuspense();
-  const { data: unitGroups } = useGetUnitsSuspense();
-  return { organisations: organisations.organisations, units: flattenUnits(unitGroups.units) };
-};
 
 /**
  * What the addressed resource itself answered. `unavailable` carries the authoritative transport
@@ -89,11 +86,59 @@ export const useAddressedProduct = (productId: string): AddressedResource<Subscr
   );
 
 /**
- * The organisation a unit belongs to is only ever named by the caller's grouped units, so a unit
- * readable outside that index keeps its identity and loses nothing but its ancestry.
+ * A unit's own subscriptions, read from the unit-scoped product endpoint and through the same
+ * contract as every other addressed read — so a refusal is stated inside the unit rather than
+ * throwing past its identity and tab strip to the workspace boundary.
  */
-export const useUnitAncestry = (unitId: string): OrganisationAllDetail | undefined =>
-  useAccessIndex().units.find(({ unit }) => unit.id === unitId)?.organisation;
+export const useAddressedUnitProducts = (unitId: string): AddressedResource<ProductsGetResponse> =>
+  toAddressedResource(useGetProductsForUnit(unitId, { query: addressedResourceQuery }));
+
+/** A ledger is a large report of one billing period, so it is given longer than an ordinary read. */
+const chargeRequest = { timeout: 30_000 };
+
+/**
+ * The charge ledgers, read through the same contract as every other addressed resource rather than
+ * through raw suspense reads of their own.
+ *
+ * That is what makes a refused ledger say so where the ledger is, instead of taking the section
+ * frame down with it, while a transport fact the ledger did not answer for still reaches the
+ * frame's retry boundary — one read and failure contract across the whole workspace.
+ */
+export const useAddressedOrganisationCharges = (
+  organisationId: string,
+  billingCycle: number,
+): AddressedResource<OrganisationChargesGetResponse> =>
+  toAddressedResource(
+    useGetOrganisationCharges(
+      organisationId,
+      { pbp: billingCycle },
+      { query: addressedResourceQuery, request: chargeRequest },
+    ),
+  );
+
+export const useAddressedUnitCharges = (
+  unitId: string,
+  billingCycle: number,
+): AddressedResource<UnitChargesGetResponse> =>
+  toAddressedResource(
+    useGetUnitCharges(
+      unitId,
+      { pbp: billingCycle },
+      { query: addressedResourceQuery, request: chargeRequest },
+    ),
+  );
+
+export const useAddressedProductCharges = (
+  productId: string,
+  billingCycle: number,
+): AddressedResource<ProductChargesGetResponse> =>
+  toAddressedResource(
+    useGetProductCharges(
+      productId,
+      { pbp: billingCycle },
+      { query: addressedResourceQuery, request: chargeRequest },
+    ),
+  );
 
 /**
  * Resolves caller authority, personal-unit identity, and default-organisation identity from their

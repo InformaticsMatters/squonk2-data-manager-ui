@@ -1,5 +1,7 @@
 import { type ComponentType } from "react";
 
+import { type AdministrationRouteKind } from "../administration/routes";
+
 export type ProjectSection =
   | "create"
   | "deletion"
@@ -9,11 +11,12 @@ export type ProjectSection =
   | "results"
   | "run";
 export type DatasetSection = "detail" | "list" | "viewer";
-export type AdministrationSection =
-  | "charges"
-  | "organisation-access"
-  | "subscriptions"
-  | "usage-inventory";
+/**
+ * Administration composes one page per route kind, so its sections are exactly those kinds. The
+ * unit workspace's four tabs and the subscription's two are sections in their own right rather than
+ * views of one, which is what lets a malformed identifier fail locally inside the page addressed.
+ */
+export type AdministrationSection = AdministrationRouteKind;
 
 export type PagePolicy =
   | { kind: "administration"; section: AdministrationSection }
@@ -26,10 +29,25 @@ export type PolicyPage<Props = Record<string, never>> = ComponentType<Props> & {
   pagePolicy: PagePolicy;
 };
 
+/**
+ * Declares which policy a page is composed under.
+ *
+ * The policy is written onto the component itself, so each page entry must hand in a component of
+ * its own. Handing the same component to two entries would leave both pages carrying whichever
+ * policy was evaluated last — and once a link has prefetched a sibling page, that is not the page
+ * on screen, which resolves the URL against the wrong section and answers a valid route with a
+ * not-found. That failure is silent, so it is refused here instead.
+ */
 export const withPagePolicy = <Props extends object>(
   pagePolicy: PagePolicy,
   Component: ComponentType<Props>,
-): PolicyPage<Props> => Object.assign(Component, { pagePolicy });
+): PolicyPage<Props> => {
+  const declared = (Component as Partial<PolicyPage<Props>>).pagePolicy;
+  if (declared && JSON.stringify(declared) !== JSON.stringify(pagePolicy)) {
+    throw new Error("A page component cannot declare two page policies");
+  }
+  return Object.assign(Component, { pagePolicy });
+};
 
 export const withPublicPagePolicy = <Props extends object>(Component: ComponentType<Props>) =>
   withPagePolicy(pagePolicies.public, Component);

@@ -9,8 +9,6 @@ import {
   Box,
   Button,
   Chip,
-  Link as MuiLink,
-  Stack,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
@@ -25,24 +23,8 @@ import { Chips } from "../components/Chips";
 import { DataTable } from "../components/DataTable";
 import { DATE_FORMAT, TIME_FORMAT } from "../constants/datetimes";
 import { projectLinks } from "../projects/routes";
-import { isProjectId, type OrganisationId, type UnitId } from "../routing/identifiers";
-import { withBasePath } from "../utils/app/basePath";
-import {
-  useAccessFacts,
-  useAccessIndex,
-  useAddressedOrganisation,
-  useAddressedUnit,
-  useUnitAncestry,
-} from "./accessFacts";
-import {
-  capabilityReason,
-  evaluateOrganisationMembershipCapability,
-  evaluateUnitMembershipCapability,
-  isDefaultOrganisationResource,
-  isPersonalUnitResource,
-} from "./capabilities";
+import { isProjectId } from "../routing/identifiers";
 import { presentAdministrationFailure } from "./failures";
-import { assertOrganisationId, assertUnitId } from "./identifiers";
 import {
   type InventoryProjectRow,
   type InventoryRead,
@@ -50,27 +32,11 @@ import {
   type OrganisationInventoryRow,
   type UnitInventoryRow,
 } from "./inventoryFacts";
-import {
-  AddressedResourceView,
-  EmptyTask,
-  type MutationOwner,
-  organisationAccessOwner,
-  PageTitle,
-  ReadOnlyNotice,
-  ResourceIdentity,
-  ResourceLink,
-} from "./resources";
-import { administrationLinks, type AdministrationRoute } from "./routes";
+import { AdministrationLink, PageTitle } from "./resources";
+import { administrationLinks } from "./routes";
 import { useOrganisationInventory, useUnitInventory } from "./useUsageInventory";
 
 dayjs.extend(utc);
-
-export type UsageInventoryResourceRoute = Extract<
-  AdministrationRoute,
-  { kind: "usage-inventory-resource" }
->;
-
-const task = "Usage & inventory";
 
 /**
  * Where a project role reported here is actually changed. An identifier the route family would
@@ -172,13 +138,9 @@ const organisationColumns = [
       <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0 }}>
         {getValue().map((unit) => (
           <li key={unit.id}>
-            <MuiLink
-              href={withBasePath(
-                administrationLinks.usageInventoryResource("units", assertUnitId(unit.id)),
-              )}
-            >
-              {unit.name ?? unit.id} ({unit.projectCount})
-            </MuiLink>
+            <AdministrationLink href={administrationLinks.unitUsage(unit.id)}>
+              {`${unit.name ?? unit.id} (${unit.projectCount})`}
+            </AdministrationLink>
           </li>
         ))}
       </Box>
@@ -261,16 +223,12 @@ const projectColumns = [
         enableSorting: false,
         cell: ({ getValue }) => <UserChips users={getValue()} />,
       }),
-      // This report is read-only: a project's roles are changed on that project's Manage route.
+      // A project's roles are changed on that project's own Manage route.
       projectRowHelper.display({
         id: "manage",
         cell: ({ row }) => {
           const href = projectManageHref(row.original.projectId);
-          return href ? (
-            <MuiLink component={Link} href={href as never}>
-              Manage project
-            </MuiLink>
-          ) : null;
+          return href ? <AdministrationLink href={href}>Manage project</AdministrationLink> : null;
         },
       }),
     ],
@@ -325,79 +283,27 @@ const ReportBody = <TReport,>({
   );
 };
 
-/**
- * Every report states the same things about the resource it is about: what the resource is, that it
- * cannot be changed here and where it can be, who owns it, and who belongs to it.
- */
-const ReportFrame = ({
-  ancestry,
-  children,
-  id,
-  members,
-  membershipReason,
-  name,
-  owner,
-  ownerId,
-  type,
-}: {
-  ancestry?: string;
-  children: ReactNode;
-  id: string;
-  members: string[];
-  /** Why the caller could not carry out the linked membership change, when it could not. */
-  membershipReason?: string;
-  name: string;
-  owner: MutationOwner;
-  ownerId?: string;
-  type: string;
-}) => (
-  <>
-    <PageTitle>{task}</PageTitle>
-    <ResourceIdentity ancestry={ancestry} id={id} name={name} type={type} />
-    <Box sx={{ mt: 2 }}>
-      <ReadOnlyNotice owner={owner} reason={membershipReason}>
-        This report is read-only. Project roles are changed in that project&apos;s Manage section.
-      </ReadOnlyNotice>
-    </Box>
-    <Box sx={{ mt: 2 }}>
-      <Typography>Owner: {ownerId ?? "None"}</Typography>
-      <Typography>Members: {members.length === 0 ? "No members" : members.join(", ")}</Typography>
-    </Box>
-    <Box sx={{ mt: 3 }}>{children}</Box>
-    <Typography sx={{ mt: 1 }} variant="caption">
-      A user is considered active in a given day if they have used the Data Manager API.
-    </Typography>
-  </>
-);
-
-const SectionTitle = ({ children }: { children: string }) => (
-  <Typography gutterBottom component="h4" variant="h6">
-    {children}
+const ActivityNote = () => (
+  <Typography sx={{ mt: 1 }} variant="caption">
+    A user is considered active in a given day if they have used the Data Manager API.
   </Typography>
 );
 
-const OrganisationReport = ({ organisation }: { organisation: OrganisationAllDetail }) => {
-  const organisationId = assertOrganisationId(organisation.id);
-  const { caller, defaultOrganisationId, freshness } = useAccessFacts();
+/**
+ * The usage report of the organisation in effect.
+ *
+ * It reads the organisation-scoped units endpoint and the inventory by organisation identifier, and
+ * never the organisation's own detail, so it survives the refusal that removes the overview's
+ * members and privacy. It states no owner or member list of its own either: those belong to a
+ * resource one click away, and a read-only copy beside the editable one is what this restructure
+ * removed.
+ */
+export const OrganisationReport = ({ organisationId }: { organisationId: string }) => {
   const { read, refresh } = useOrganisationInventory(organisationId);
-  const membership = evaluateOrganisationMembershipCapability({
-    caller,
-    freshness,
-    isDefaultOrganisation: isDefaultOrganisationResource(organisation.id, defaultOrganisationId),
-    organisation,
-  });
 
   return (
-    <ReportFrame
-      id={organisationId}
-      members={organisation.users.map((user) => user.id)}
-      membershipReason={membership.status === "enabled" ? undefined : capabilityReason(membership)}
-      name={organisation.name}
-      owner={organisationAccessOwner("organisations", organisationId)}
-      ownerId={organisation.owner_id}
-      type="Organisation"
-    >
-      <SectionTitle>User Usage</SectionTitle>
+    <>
+      <PageTitle>Usage &amp; Inventory</PageTitle>
       <ReportBody read={read} refresh={refresh}>
         {(rows) =>
           rows.length === 0 ? (
@@ -410,7 +316,8 @@ const OrganisationReport = ({ organisation }: { organisation: OrganisationAllDet
           )
         }
       </ReportBody>
-    </ReportFrame>
+      <ActivityNote />
+    </>
   );
 };
 
@@ -438,7 +345,8 @@ const UnitProjectPivot = ({ projects }: { projects: InventoryProjectRow[] }) => 
   return <DataTable columns={projectColumns} data={projects} searchLabel="Search projects" />;
 };
 
-const UnitReport = ({
+/** One unit's usage and inventory, as a section of that unit rather than a report of its own. */
+export const UnitReport = ({
   organisation,
   unit,
 }: {
@@ -446,33 +354,11 @@ const UnitReport = ({
   organisation?: OrganisationAllDetail;
   unit: UnitAllDetail;
 }) => {
-  const unitId = assertUnitId(unit.id);
-  const { caller, defaultOrganisationId, freshness, personalUnitId } = useAccessFacts();
   const { read, refresh } = useUnitInventory(unit);
   const [pivot, setPivot] = useState<"projects" | "users">("users");
-  const membership = evaluateUnitMembershipCapability({
-    caller,
-    freshness,
-    isDefaultOrganisation:
-      organisation !== undefined &&
-      isDefaultOrganisationResource(organisation.id, defaultOrganisationId),
-    isPersonalUnit: isPersonalUnitResource(unit.id, personalUnitId),
-    organisation,
-    unit,
-  });
 
   return (
-    <ReportFrame
-      ancestry={organisation?.name}
-      id={unitId}
-      members={unit.users.map((user) => user.id)}
-      membershipReason={membership.status === "enabled" ? undefined : capabilityReason(membership)}
-      name={unit.name}
-      owner={organisationAccessOwner("units", unitId)}
-      ownerId={unit.owner_id}
-      type="Unit"
-    >
-      <SectionTitle>{pivot === "users" ? "User Usage" : "Project Members"}</SectionTitle>
+    <>
       {/* The pivot stays outside the table it chooses, so a report with nothing to account for can
           still be looked at the other way round. */}
       <ToggleButtonGroup
@@ -486,6 +372,11 @@ const UnitReport = ({
         <ToggleButton value="users">By user</ToggleButton>
         <ToggleButton value="projects">By project</ToggleButton>
       </ToggleButtonGroup>
+      {organisation ? null : (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          This unit&apos;s organisation could not be determined, so it is reported on its own.
+        </Alert>
+      )}
       <ReportBody read={read} refresh={refresh}>
         {({ projects, users }) =>
           pivot === "users" ? (
@@ -495,84 +386,7 @@ const UnitReport = ({
           )
         }
       </ReportBody>
-    </ReportFrame>
-  );
-};
-
-const AddressedOrganisationReport = ({ organisationId }: { organisationId: OrganisationId }) => {
-  const addressed = useAddressedOrganisation(organisationId);
-
-  return (
-    <AddressedResourceView addressed={addressed} identity={({ id }) => id} task={task}>
-      {(organisation) => <OrganisationReport organisation={organisation} />}
-    </AddressedResourceView>
-  );
-};
-
-const AddressedUnitReport = ({ unitId }: { unitId: UnitId }) => {
-  const organisation = useUnitAncestry(unitId);
-  const addressed = useAddressedUnit(unitId);
-
-  return (
-    <AddressedResourceView addressed={addressed} identity={({ id }) => id} task={task}>
-      {(unit) => <UnitReport organisation={organisation} unit={unit} />}
-    </AddressedResourceView>
-  );
-};
-
-export const UsageInventoryIndex = () => {
-  const { organisations, units } = useAccessIndex();
-
-  return (
-    <>
-      <PageTitle>{task}</PageTitle>
-      <Typography color="text.secondary" sx={{ mb: 2 }}>
-        Reports are read-only. Membership changes belong in Organisation &amp; access and project
-        roles belong in Project Manage.
-      </Typography>
-      {organisations.length === 0 && units.length === 0 ? (
-        <EmptyTask>
-          No usage or inventory reports are available. Organisation or unit membership is required
-          to inspect a report.
-        </EmptyTask>
-      ) : (
-        <Stack spacing={2}>
-          {organisations.map((organisation) => (
-            <ResourceLink
-              href={administrationLinks.usageInventoryResource(
-                "organisations",
-                assertOrganisationId(organisation.id),
-              )}
-              id={organisation.id}
-              key={organisation.id}
-              name={organisation.name}
-              type="Organisation report"
-            />
-          ))}
-          {units.map(({ organisation, unit }) => (
-            <ResourceLink
-              ancestry={organisation.name}
-              href={administrationLinks.usageInventoryResource("units", assertUnitId(unit.id))}
-              id={unit.id}
-              key={unit.id}
-              name={unit.name}
-              type="Unit report"
-            />
-          ))}
-        </Stack>
-      )}
+      <ActivityNote />
     </>
   );
 };
-
-/**
- * The resource in the address bar answers for itself, so a readable resource keeps its identity and
- * only its ancestry degrades. The report it carries is a second read of its own, which is why a
- * report that could not be refreshed never removes the resource it reports on.
- */
-export const UsageInventoryResource = ({ route }: { route: UsageInventoryResourceRoute }) =>
-  route.collection === "organisations" ? (
-    <AddressedOrganisationReport organisationId={route.resourceId} />
-  ) : (
-    <AddressedUnitReport unitId={route.resourceId} />
-  );

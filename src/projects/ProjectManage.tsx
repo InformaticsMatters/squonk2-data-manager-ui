@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { administrationLinks } from "../administration/routes";
 import { CenterLoader } from "../components/CenterLoader";
-import { isProductId } from "../routing/identifiers";
+import { isProductId, isUnitId } from "../routing/identifiers";
 import { toLocalTimeString } from "../utils/app/datetime";
 import {
   evaluateProjectAdministratorsCapability,
@@ -126,7 +126,10 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
   const files = evaluateProjectFileMutationCapability(facts);
   const execution = evaluateProjectExecutionCapability(facts);
   const platformAdministration = evaluateProjectPlatformAdministrationCapability(facts);
-  const subscriptionId = isProductId(product.product.id) ? product.product.id : undefined;
+  // Manage already holds the containing unit, so both links address the subscription where it
+  // actually lives rather than at a bare record with no surrounding context.
+  const subscriptionId =
+    isProductId(product.product.id) && isUnitId(unit.id) ? product.product.id : undefined;
 
   return (
     <>
@@ -236,14 +239,14 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
           <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
             <Button
               component={Link}
-              href={administrationLinks.subscription(subscriptionId)}
+              href={administrationLinks.subscription(unit.id, subscriptionId)}
               variant="outlined"
             >
               View subscription
             </Button>
             <Button
               component={Link}
-              href={administrationLinks.chargeResource("products", subscriptionId)}
+              href={administrationLinks.subscriptionCharges(unit.id, subscriptionId)}
               variant="outlined"
             >
               View charges

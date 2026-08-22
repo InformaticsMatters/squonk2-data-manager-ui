@@ -34,7 +34,7 @@ export {
 
 /**
  * The unit-creation rules Administration and Projects both offer, defined above the families so
- * that Organisation & access and the projects index cannot drift apart about who may create a unit.
+ * that the Administration overview and the projects index cannot drift apart about who may create a unit.
  * Administration keeps its call sites and these names; only the definition lives elsewhere.
  */
 export {
@@ -115,8 +115,8 @@ export const evaluateOrganisationMembershipCapability = (
 /**
  * Who the organisation's member list displays but never offers to remove.
  *
- * This is a deliberate narrowing of the generated contract, and the only one Organisation & access
- * makes. `DELETE /organisation/{orgId}/user/{userId}` accepts either removal from any caller in the
+ * This is a deliberate narrowing of the generated contract, and the only one the organisation
+ * overview makes. `DELETE /organisation/{orgId}/user/{userId}` accepts either removal from any caller in the
  * organisation, so neither is refused by the server and neither is hidden from a caller who reaches
  * the endpoint another way:
  *

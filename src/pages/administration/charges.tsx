@@ -1,6 +1,9 @@
 import { AdministrationWorkspace } from "../../administration/AdministrationWorkspace";
 import { pagePolicies, withPagePolicy } from "../../application/pagePolicy";
 
-const ChargesPage = () => <AdministrationWorkspace />;
+const OrganisationChargesPage = () => <AdministrationWorkspace />;
 
-export default withPagePolicy(pagePolicies.administration("charges"), ChargesPage);
+export default withPagePolicy(
+  pagePolicies.administration("organisation-charges"),
+  OrganisationChargesPage,
+);

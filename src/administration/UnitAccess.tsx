@@ -7,9 +7,8 @@ import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
 import { WarningDeleteButton } from "../components/WarningDeleteButton";
-import { type UnitId } from "../routing/identifiers";
-import { DefaultPrivacySelect, ManageResourceUsers, task, unitTypeLabel } from "./accessControls";
-import { useAccessFacts, useAddressedUnit, useUnitAncestry } from "./accessFacts";
+import { DefaultPrivacySelect, ManageResourceUsers } from "./accessControls";
+import { useAccessFacts } from "./accessFacts";
 import {
   type AdministrationCapability,
   capabilityReason,
@@ -17,7 +16,6 @@ import {
   evaluateUnitEditCapability,
   evaluateUnitMembershipCapability,
   evaluateUnitPrivacyCapability,
-  isDefaultOrganisationResource,
   isPersonalUnitResource,
 } from "./capabilities";
 import { administrationResourceLabel } from "./failures";
@@ -26,15 +24,9 @@ import {
   inheritedProductPrivacyExplanation,
   type ProductPrivacy,
 } from "./privacy";
-import {
-  AddressedResourceView,
-  CapabilityAction,
-  PageTitle,
-  ResourceChip,
-  ResourceIdentity,
-  Section,
-} from "./resources";
+import { CapabilityAction, Section } from "./resources";
 import { administrationLinks } from "./routes";
+import { organisationInEffectIsDefault } from "./scope";
 import { useAccessCommands } from "./useAccessCommands";
 import { useAdministrationCommandFeedback } from "./useAdministrationFeedback";
 
@@ -68,7 +60,7 @@ const UnitName = ({
         disabled={disabled}
         helperText={capabilityReason(capability)}
         label="Unit name"
-        sx={{ flexGrow: 1 }}
+        sx={{ flexGrow: 1, maxWidth: 420 }}
         value={name}
         onChange={(event) => setName(event.target.value)}
       />
@@ -146,7 +138,8 @@ const DeleteUnitAction = ({
               throw error;
             }
             feedback.announce("Unit deleted");
-            await router.replace(administrationLinks.organisationAccess() as never);
+            // The unit is gone, so the workspace returns to the organisation that held it.
+            await router.replace(administrationLinks.overview() as never);
           }}
         >
           {({ openModal }) => (
@@ -166,7 +159,13 @@ const DeleteUnitAction = ({
   );
 };
 
-const UnitResource = ({
+/**
+ * A unit's whole lifecycle in one section: what it is called, what its projects inherit, who
+ * belongs to it, and its removal. Membership is a flat list — `PUT`/`DELETE` on the unit-user
+ * endpoints carry no role and the resource has no notion of one, so nothing here may imply the
+ * Administrator, Editor and Observer roles that belong to a project.
+ */
+export const UnitAccess = ({
   organisation,
   unit,
 }: {
@@ -182,25 +181,19 @@ const UnitResource = ({
     freshness,
     isDefaultOrganisation:
       organisation !== undefined &&
-      isDefaultOrganisationResource(organisation.id, defaultOrganisationId),
+      organisationInEffectIsDefault(organisation.id, defaultOrganisationId),
     isPersonalUnit,
     organisation,
     unit,
   };
-  const editCapability = evaluateUnitEditCapability(facts);
   const organisationPrivacy = organisation?.default_product_privacy;
 
   return (
     <>
-      <PageTitle>{task}</PageTitle>
-      <ResourceChip label={unitTypeLabel(unit.id, personalUnitId)} />
-      <ResourceIdentity ancestry={organisation?.name} id={unit.id} name={unit.name} type="Unit" />
-      <Typography color="text.secondary" sx={{ mt: 1 }}>
-        Owner: {unit.owner_id}
-      </Typography>
+      <Typography color="text.secondary">Owner: {unit.owner_id}</Typography>
 
       <Section title="Name">
-        <UnitName capability={editCapability} unit={unit} />
+        <UnitName capability={evaluateUnitEditCapability(facts)} unit={unit} />
       </Section>
 
       <Section title="Default project privacy">
@@ -232,16 +225,5 @@ const UnitResource = ({
         />
       </Section>
     </>
-  );
-};
-
-export const AddressedUnit = ({ unitId }: { unitId: UnitId }) => {
-  const organisation = useUnitAncestry(unitId);
-  const addressed = useAddressedUnit(unitId);
-
-  return (
-    <AddressedResourceView addressed={addressed} identity={({ id }) => id} task={task}>
-      {(unit) => <UnitResource organisation={organisation} unit={unit} />}
-    </AddressedResourceView>
   );
 };

@@ -1,9 +1,9 @@
 import { AdministrationWorkspace } from "../../administration/AdministrationWorkspace";
 import { pagePolicies, withPagePolicy } from "../../application/pagePolicy";
 
-const OrganisationAccessPage = () => <AdministrationWorkspace />;
+const OrganisationUsagePage = () => <AdministrationWorkspace />;
 
 export default withPagePolicy(
-  pagePolicies.administration("organisation-access"),
-  OrganisationAccessPage,
+  pagePolicies.administration("organisation-usage"),
+  OrganisationUsagePage,
 );

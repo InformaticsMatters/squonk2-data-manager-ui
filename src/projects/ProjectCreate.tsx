@@ -27,7 +27,7 @@ import { administrationLinks } from "../administration/routes";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { useGetPersonalUnit } from "../hooks/useGetPersonalUnit";
 import { useIsEvaluator } from "../hooks/useIsAuthorized";
-import { isProductId } from "../routing/identifiers";
+import { isProductId, isUnitId } from "../routing/identifiers";
 import { projectCreationFailureReason } from "./failures";
 import { PersonalUnitCreation } from "./PersonalUnitCreation";
 import {
@@ -70,7 +70,7 @@ const SubscriptionRecovery = ({ productId }: { productId: string }) => (
     Subscription ID: {productId}.{" "}
     {isProductId(productId) ? (
       <>
-        <MuiLink component={Link} href={administrationLinks.subscription(productId) as never}>
+        <MuiLink component={Link} href={administrationLinks.subscriptionEntry(productId) as never}>
           Open it in Administration
         </MuiLink>{" "}
         or quote this ID to support.
@@ -120,6 +120,15 @@ export const ProjectCreate = () => {
     handoffValidation?.kind === "valid" ? handoffValidation.subscription : undefined;
   const flavours = eligibleProjectCreationFlavours(productTypes?.product_types ?? [], isEvaluator);
   const selectedUnit = eligibleUnits.find(({ unit }) => unit.id === unitId)?.unit;
+  /**
+   * Where a caller is sent to look at subscriptions. Once a unit is chosen the advice matches that
+   * choice — the unit's own subscriptions, which is where the one this workflow needs would be
+   * created — and before one is chosen there is no unit to name, so it is the workspace itself.
+   */
+  const subscriptionsHref =
+    selectedUnit && isUnitId(selectedUnit.id)
+      ? administrationLinks.unitSubscriptions(selectedUnit.id)
+      : administrationLinks.overview();
   /**
    * The unit this arrival already means, before the caller has touched the field. A link that named
    * one carries the intent it was built with; a caller with exactly one eligible unit is choosing
@@ -552,7 +561,7 @@ export const ProjectCreate = () => {
         {invalidHandoff ? (
           <Alert severity="error">
             {invalidHandoff}{" "}
-            <MuiLink component={Link} href={administrationLinks.subscriptions() as never}>
+            <MuiLink component={Link} href={subscriptionsHref as never}>
               Open Subscriptions
             </MuiLink>
           </Alert>
@@ -563,7 +572,7 @@ export const ProjectCreate = () => {
           <Alert severity="warning">
             The request may have reached the Account Server, so it will not be sent again
             automatically. Check{" "}
-            <MuiLink component={Link} href={administrationLinks.subscriptions() as never}>
+            <MuiLink component={Link} href={subscriptionsHref as never}>
               Subscriptions
             </MuiLink>{" "}
             before starting again.

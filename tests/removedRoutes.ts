@@ -44,4 +44,18 @@ export const removedRoutePaths = ({
   `unit/${unit}/inventory`,
   `organisation/${organisation}/inventory`,
   "viewer/sdf",
+  // The Administration restructure removed every one of its own URLs too, including the task
+  // landings whose segments were merely renamed. The cutover stays clean: no redirect, no query
+  // translation, no compatibility alias — an old bookmark is an ordinary not-found.
+  "administration/organisation-access",
+  `administration/organisation-access/organisations/${organisation}`,
+  `administration/organisation-access/units/${unit}`,
+  "administration/subscriptions",
+  "administration/usage-inventory",
+  `administration/usage-inventory/organisations/${organisation}`,
+  `administration/usage-inventory/units/${unit}`,
+  "administration/charges/organisations",
+  `administration/charges/organisations/${organisation}`,
+  `administration/charges/units/${unit}`,
+  `administration/charges/products/${product}`,
 ];

@@ -34,6 +34,11 @@ import {
   productPrivacyLabel,
   productPrivacyValues,
 } from "../../src/administration/privacy";
+import {
+  organisationChargesAreOffered,
+  organisationInEffectIsDefault,
+  resolveUnitOrganisationScope,
+} from "../../src/administration/scope";
 
 const organisationId = "org-00000000-0000-4000-8000-000000000001";
 const defaultOrganisationId = "org-00000000-0000-4000-8000-0000000000de";
@@ -511,7 +516,7 @@ test.describe("Default, inherited, and effective product privacy", () => {
   });
 });
 
-test.describe("Organisation & access resource semantics have no configured names", () => {
+test.describe("Administration resource semantics have no configured names", () => {
   const administrationSource = path.resolve(__dirname, "../../src/administration");
 
   test("no Administration source decides personal or default behavior from a name or the environment", () => {
@@ -588,5 +593,91 @@ test.describe("Administration read failures", () => {
       false,
     );
     expect(administrationReadIsAuthoritative(new Error("boom"))).toBe(false);
+  });
+});
+
+test.describe("the organisation in effect", () => {
+  test("the default organisation is recognised by generated identity alone", () => {
+    expect(organisationInEffectIsDefault(defaultOrganisationId, defaultOrganisationId)).toBe(true);
+    expect(organisationInEffectIsDefault(organisationId, defaultOrganisationId)).toBe(false);
+    // Neither an unknown organisation in effect nor an unread default one claims the special case.
+    expect(organisationInEffectIsDefault(undefined, defaultOrganisationId)).toBe(false);
+    expect(organisationInEffectIsDefault(defaultOrganisationId, undefined)).toBe(false);
+  });
+
+  test("only the default organisation withholds its charge ledger", () => {
+    expect(organisationChargesAreOffered(organisationId, defaultOrganisationId)).toBe(true);
+    expect(organisationChargesAreOffered(defaultOrganisationId, defaultOrganisationId)).toBe(false);
+    expect(organisationChargesAreOffered(undefined, defaultOrganisationId)).toBe(true);
+  });
+});
+
+test.describe("organisation adoption for a unit URL", () => {
+  const otherOrganisationId = "org-00000000-0000-4000-8000-000000000009";
+  const organisation = {
+    caller_is_member: true,
+    created: "2026-01-02T03:04:05Z",
+    default_product_privacy: "DEFAULT_PRIVATE" as const,
+    id: organisationId,
+    name: "Acceptance Organisation",
+    private: true,
+    users: [],
+  };
+  const other = { ...organisation, id: otherOrganisationId, name: "Partner Organisation" };
+  const unitGroups = [
+    { organisation, units: [{ id: unitId }] },
+    { organisation: other, units: [{ id: personalUnitId }] },
+  ];
+
+  test("a unit of the organisation in effect changes nothing", () => {
+    expect(
+      resolveUnitOrganisationScope({ organisationIdInEffect: organisationId, unitGroups, unitId }),
+    ).toEqual({ kind: "in-effect", organisation });
+  });
+
+  test("a unit whose parent the caller's own index names is adopted", () => {
+    expect(
+      resolveUnitOrganisationScope({
+        organisationIdInEffect: organisationId,
+        unitGroups,
+        unitId: personalUnitId,
+      }),
+    ).toEqual({ kind: "adopt", organisation: other });
+  });
+
+  test("a unit whose parent nothing names opens without ancestry and adopts nothing", () => {
+    const unlisted = "unit-00000000-0000-4000-8000-00000000000f";
+
+    expect(
+      resolveUnitOrganisationScope({
+        organisationIdInEffect: organisationId,
+        unitGroups,
+        unitId: unlisted,
+      }),
+    ).toEqual({ kind: "unknown" });
+    // An index that has not answered establishes no parent either, and never a guessed one.
+    expect(
+      resolveUnitOrganisationScope({
+        organisationIdInEffect: organisationId,
+        unitGroups: undefined,
+        unitId,
+      }),
+    ).toEqual({ kind: "unknown" });
+  });
+
+  test("no organisation in effect still resolves the parent the caller's index names", () => {
+    expect(
+      resolveUnitOrganisationScope({ organisationIdInEffect: undefined, unitGroups, unitId }),
+    ).toEqual({ kind: "adopt", organisation });
+  });
+
+  test("the parent is only ever read from the caller's own grouped index", () => {
+    const source = readFileSync(
+      path.resolve(__dirname, "../../src/administration/scope.ts"),
+      "utf8",
+    );
+
+    // Probing the organisation-scoped units endpoint across organisations would be owner discovery.
+    expect(source).not.toMatch(/getOrganisationUnits|useGetOrganisationUnits/u);
   });
 });

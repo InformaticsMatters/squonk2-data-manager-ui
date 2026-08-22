@@ -1,106 +1,87 @@
 import { type ReactNode } from "react";
 
-import { Alert, Button, Container, Stack, Typography } from "@mui/material";
+import { Alert, Box, Button, Container, Typography } from "@mui/material";
 import { ErrorBoundary } from "@sentry/nextjs";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
-import { NavigationTab } from "../layouts/navigation/NavigationTab";
+import { AdministrationRail } from "./AdministrationRail";
 import { presentAdministrationFailure } from "./failures";
-import { administrationLinks } from "./routes";
+import { useOrganisationInEffect } from "./organisationInEffect";
+import { type AdministrationRoute } from "./routes";
 
-const tasks = [
-  {
-    href: administrationLinks.organisationAccess(),
-    label: "Organisation & access",
-    section: "organisation-access",
-  },
-  { href: administrationLinks.subscriptions(), label: "Subscriptions", section: "subscriptions" },
-  { href: administrationLinks.charges(), label: "Charges", section: "charges" },
-  {
-    href: administrationLinks.usageInventory(),
-    label: "Usage & inventory",
-    section: "usage-inventory",
-  },
-] as const;
-
-/** The read-only tasks, whose content is one addressed resource's own read. */
-const reportingSections = new Set<string>(["charges", "usage-inventory"]);
-
+/**
+ * The Administration workspace: the organisation in the masthead, its rail, and one section of it.
+ *
+ * The organisation is ambient here rather than addressed. `/administration` is that organisation's
+ * own page, and every unit reachable from the rail belongs to it. This reverses the earlier rule
+ * that Administration listed resources across organisations: the concern behind that rule was
+ * *silent* filtering, and an organisation the caller chose, that is named permanently in the
+ * masthead, and that is adopted when a link is followed into another one, is not silent.
+ */
 export const AdministrationFrame = ({ children }: { children: ReactNode }) => {
-  const { policy } = useFamilyRoute();
-  if (policy.kind !== "administration") {
+  const context = useFamilyRoute();
+  if (context.policy.kind !== "administration") {
     throw new Error("Administration shell requires an Administration route");
   }
+  const organisation = useOrganisationInEffect();
+  const route = context.localNotFound ? null : (context.route as AdministrationRoute);
 
   return (
-    <Container maxWidth="lg">
-      <Typography component="h1" sx={{ mb: 1 }} variant="h3">
+    <Container maxWidth="xl" sx={{ py: 3 }}>
+      <Typography component="h1" sx={{ mb: 2 }} variant="h3">
         Administration
       </Typography>
-      <Typography color="text.secondary" sx={{ mb: 2 }}>
-        Inspect resources available to you across organisations. The organisation in the masthead
-        remains your application identity and does not filter this workspace.
-      </Typography>
-      <Stack
-        aria-label="Administration tasks"
-        component="nav"
-        direction="row"
-        sx={{ borderBottom: 1, borderColor: "divider", mb: 3, overflowX: "auto" }}
-      >
-        {tasks.map((task) => (
-          <NavigationTab
-            active={policy.section === task.section}
-            href={task.href}
-            key={task.section}
-            label={task.label}
+      <Box sx={{ alignItems: "flex-start", display: "flex", gap: 3 }}>
+        {/* The rail lists the organisation in effect, so it is absent until there is one. The
+            section beside it is not: a unit or subscription URL identifies itself and renders
+            whatever organisation the recipient is working as — which is the whole of the
+            index-relative versus resource-absolute asymmetry. */}
+        {organisation.kind === "organisation" ? (
+          <AdministrationRail
+            organisationId={organisation.organisationId}
+            organisationName={organisation.name}
+            route={route}
           />
-        ))}
-      </Stack>
-      <QueryErrorResetBoundary>
-        {({ reset }) => (
-          <ErrorBoundary
-            fallback={({ error, resetError }) => {
-              const failure = classifyTransportFailure(error);
-              // The tasks whose content is a read of one addressed resource say which transport
-              // fact stopped it, so rate limiting, a timeout, a lost connection, and a server
-              // failure stay distinct and separately recoverable. The lifecycle tasks compose
-              // several reads, where naming one of them would not say what is missing.
-              const presentation = reportingSections.has(policy.section)
-                ? presentAdministrationFailure(failure)
-                : {
-                    message:
-                      failure.kind === "forbidden" || failure.kind === "not-found"
-                        ? "Administration data is unavailable or you no longer have access."
-                        : "Administration data could not be loaded. Retry this task.",
-                    retryable: failure.kind !== "forbidden" && failure.kind !== "not-found",
-                    severity:
-                      failure.kind === "forbidden" || failure.kind === "not-found"
-                        ? ("warning" as const)
-                        : ("error" as const),
-                  };
-              return (
-                <Alert
-                  action={
-                    presentation.retryable ? (
-                      <Button color="inherit" size="small" onClick={resetError}>
-                        Retry
-                      </Button>
-                    ) : undefined
-                  }
-                  severity={presentation.severity}
-                >
-                  {presentation.message}
-                </Alert>
-              );
-            }}
-            onReset={reset}
-          >
-            {children}
-          </ErrorBoundary>
-        )}
-      </QueryErrorResetBoundary>
+        ) : null}
+        {/* The content pane's floor is deeper than the rail's cap, so the row holding both is
+            always taller than the rail and there is travel for it to use even where a section's
+            own content is short. */}
+        <Box sx={{ flexGrow: 1, minHeight: "calc(100vh - 120px)", minWidth: 0, pb: 6 }}>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary
+                fallback={({ error, resetError }) => {
+                  // One failure contract across every section: a rate limit, a timeout, a lost
+                  // connection and a refusal stay distinct and separately recoverable wherever
+                  // they happen, and recovering never changes the scope on screen.
+                  const presentation = presentAdministrationFailure(
+                    classifyTransportFailure(error),
+                  );
+                  return (
+                    <Alert
+                      action={
+                        presentation.retryable ? (
+                          <Button color="inherit" size="small" onClick={resetError}>
+                            Retry
+                          </Button>
+                        ) : undefined
+                      }
+                      severity={presentation.severity}
+                    >
+                      {presentation.message}
+                    </Alert>
+                  );
+                }}
+                onReset={reset}
+              >
+                {children}
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
+        </Box>
+      </Box>
     </Container>
   );
 };

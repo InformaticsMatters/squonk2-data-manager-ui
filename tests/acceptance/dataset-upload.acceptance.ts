@@ -189,9 +189,11 @@ test("a unit without a dataset subscription keeps the batch and offers Administr
   await expect(page.getByRole("button", { name: "Upload", exact: true })).toBeDisabled();
   // Nothing entered is lost by the refusal.
   await expect(page.getByLabel("File name")).toHaveValue("renamed-batch");
+  // The recovery opens the subscriptions of the unit the upload chose, which is where the missing
+  // one would be created, rather than an unfiltered list.
   await expect(page.getByRole("link", { name: "Go to Subscriptions" })).toHaveAttribute(
     "href",
-    "/data-manager-ui/administration/subscriptions",
+    `/data-manager-ui/administration/units/${fixtureIds.otherUnit}/subscriptions`,
   );
 
   await chooseBillingUnit(page, "Acceptance Unit");

@@ -1,5 +1,16 @@
 type LocalFailureSections = {
-  administration: "charges" | "organisation-access" | "subscriptions" | "usage-inventory";
+  /** Exactly the Administration route kinds, which are the sections its pages are composed under. */
+  administration:
+    | "organisation-charges"
+    | "organisation-usage"
+    | "overview"
+    | "subscription-charges"
+    | "subscription-entry"
+    | "subscription"
+    | "unit-access"
+    | "unit-charges"
+    | "unit-subscriptions"
+    | "unit-usage";
   datasets: "detail";
   projects: "files" | "results" | "run";
 };

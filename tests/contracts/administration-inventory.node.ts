@@ -351,14 +351,17 @@ test.describe("report ownership", () => {
     expect(removed).toEqual([]);
   });
 
-  test("the report changes nothing it reports", () => {
+  test("the report changes nothing it reports, and copies nothing it does not own", () => {
     const source = readFileSync(path.join(root, "administration/UsageInventory.tsx"), "utf8");
     expect(source).not.toMatch(/useQueryClient|invalidateQueries|useMutation/u);
-    // Membership belongs to Organisation & access and project roles to that project's own Manage
-    // route, so the report reaches both through their route interfaces alone.
-    expect(source).toContain("organisationAccessOwner");
+    // Project roles are reported here and changed on that project's own Manage route, which the
+    // report reaches through that destination's route interface alone.
     expect(source).toContain("projectLinks.manage");
     expect(source).not.toContain("CreateProjectForm");
+    // A unit's owner, members and privacy are one tab away in its own Access section, so the
+    // report shows no read-only copy of them beside a link to the copy that can be changed. The
+    // cross-task pointer machinery that used to carry those copies is gone with them.
+    expect(source).not.toMatch(/ReadOnlyNotice|organisationAccessOwner|MutationOwner/u);
   });
 
   const sourcesContaining = (needle: string) =>

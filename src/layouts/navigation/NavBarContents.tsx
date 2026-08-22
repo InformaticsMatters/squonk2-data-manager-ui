@@ -17,7 +17,7 @@ const UserMenu = dynamic(() => import("./UserMenu").then((module) => module.User
 const applicationLinks = [
   { href: "/projects", label: "Projects" },
   { href: "/datasets", label: "Datasets" },
-  { href: "/administration/organisation-access", label: "Administration" },
+  { href: "/administration", label: "Administration" },
 ] as const;
 
 const publicLinks = [

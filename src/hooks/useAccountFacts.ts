@@ -12,7 +12,7 @@ import { useGetPersonalUnit } from "./useGetPersonalUnit";
  * Who the caller is, and which resources the Account Server has named as their own.
  *
  * This sits above the route families because more than one of them asks it: Administration's
- * Organisation & access screens know it as `useAccessFacts`, and Projects reads it to decide the
+ * organisation and unit screens know it as `useAccessFacts`, and Projects reads it to decide the
  * unit offer it makes beside **Create project**. A second assembly of the same reads is how two
  * screens come to disagree about who the caller is.
  *

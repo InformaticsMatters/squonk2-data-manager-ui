@@ -16,16 +16,13 @@ import { type ProductPrivacy, productPrivacyLabel, productPrivacyValues } from "
 import { useAdministrationCommandFeedback } from "./useAdministrationFeedback";
 
 /**
- * What the Organisation & access views share: the section's own name, how a unit is labelled, and
+ * What the organisation overview and the unit's Access section share: how a unit is labelled, and
  * the controls an organisation and a unit present identically.
  *
  * Each control is a form over a command the caller supplies, so nothing here knows which resource it
  * is editing. That keeps the difference between the two resources in the views that own them rather
  * than in the fields they have in common.
  */
-
-/** The section this task is presented under, which every one of its views titles itself with. */
-export const task = "Organisation & access";
 
 /** Resolved from the generated personal unit resource, never from the unit's name. */
 export const unitTypeLabel = (unitIdentity: string, personalUnitId: string | undefined) =>

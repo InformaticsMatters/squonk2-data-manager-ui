@@ -500,12 +500,21 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
     products: [projectTierProduct, datasetStorageProduct, claimableProduct],
   };
 
+  // A unit's own subscriptions, which is what the unit workspace reads rather than filtering the
+  // caller's global product index. Each unit answers for exactly the subscriptions that index
+  // groups under it, so a response that ignored the unit argument would be recognisable rather
+  // than believable.
+  // As with the caller's own index above, the generated schema checks each unit's collection and
+  // the fixture is then served exactly as the Account Server sends it — parsing back would drop
+  // the claim and the instance accounting a project tier carries.
+  AppApiProductGetResponse.parse({
+    count: 2,
+    products: [projectTierProduct, datasetStorageProduct],
+  });
+  AppApiProductGetResponse.parse({ count: 1, products: [claimableProduct] });
   const unitProducts: Record<string, { count: number; products: unknown[] }> = {
-    [fixtureIds.unit]: AppApiProductGetResponse.parse({
-      count: 1,
-      products: [datasetStorageProduct],
-    }),
-    [fixtureIds.otherUnit]: AppApiProductGetResponse.parse({ count: 0, products: [] }),
+    [fixtureIds.unit]: { count: 2, products: [projectTierProduct, datasetStorageProduct] },
+    [fixtureIds.otherUnit]: { count: 1, products: [claimableProduct] },
     [fixtureIds.personalUnit]: AppApiProductGetResponse.parse({ count: 0, products: [] }),
   };
 

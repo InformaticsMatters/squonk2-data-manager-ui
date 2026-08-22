@@ -40,15 +40,18 @@ const datasetSections = {
   viewer: "viewer",
 } as const satisfies Record<DatasetRoute["kind"], DatasetSection>;
 
+/** One page per route kind, so the map is the identity and nothing can drift out of step. */
 const administrationSections = {
-  "charge-resource": "charges",
-  charges: "charges",
-  "organisation-access": "organisation-access",
-  "organisation-access-resource": "organisation-access",
-  subscription: "subscriptions",
-  subscriptions: "subscriptions",
-  "usage-inventory": "usage-inventory",
-  "usage-inventory-resource": "usage-inventory",
+  "organisation-charges": "organisation-charges",
+  "organisation-usage": "organisation-usage",
+  overview: "overview",
+  subscription: "subscription",
+  "subscription-charges": "subscription-charges",
+  "subscription-entry": "subscription-entry",
+  "unit-access": "unit-access",
+  "unit-charges": "unit-charges",
+  "unit-subscriptions": "unit-subscriptions",
+  "unit-usage": "unit-usage",
 } as const satisfies Record<AdministrationRoute["kind"], AdministrationSection>;
 
 /**

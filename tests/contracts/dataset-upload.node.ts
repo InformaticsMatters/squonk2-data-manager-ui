@@ -222,7 +222,7 @@ test.describe("Dataset subscription recovery", () => {
     expect(datasetSubscriptionOf({ products: [] })).toBeUndefined();
   });
 
-  test("unit or organisation membership offers the Administration owner of subscriptions", () => {
+  test("unit or organisation membership opens the subscriptions of the unit that needs one", () => {
     for (const facts of [
       { organisation: organisation(false), unit: unit(unitId, true) },
       { organisation: organisation(true), unit: unit(unitId, false) },
@@ -233,7 +233,9 @@ test.describe("Dataset subscription recovery", () => {
           isPersonalUnit: false,
           ...facts,
         }),
-      ).toEqual({ href: "/administration/subscriptions", kind: "administration" });
+        // The advice lands on the unit the upload chose, which is where the missing subscription
+        // would be created, rather than on a list the caller would have to search again.
+      ).toEqual({ href: `/administration/units/${unitId}/subscriptions`, kind: "administration" });
     }
   });
 
@@ -308,7 +310,10 @@ test.describe("Dataset subscription recovery", () => {
           organisation: parent,
           unit: eligible,
         }),
-      ).toEqual({ href: "/administration/subscriptions", kind: "administration" });
+      ).toEqual({
+        href: `/administration/units/${eligible.id}/subscriptions`,
+        kind: "administration",
+      });
     }
   });
 });

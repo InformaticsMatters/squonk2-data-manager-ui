@@ -345,6 +345,15 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
     if (state.addressedReadFailure) {
       return addressedReadFailure(state, response);
     }
+    // The Account Server refuses an addressed read of the default organisation to every caller who
+    // is not a member, its creator, or the platform — which is every ordinary account, including
+    // the ones whose only unit lives inside it. Administration has to stay usable through that.
+    if (
+      segments[1] === fixtureIds.defaultOrganisation &&
+      !state.fixtures.callerAccount.caller_has_admin_privilege
+    ) {
+      return json(response, 403, state.fixtures.failures.forbidden);
+    }
     const organisation =
       segments[1] === fixtureIds.unlistedOrganisation
         ? state.fixtures.unlistedOrganisation

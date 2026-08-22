@@ -1,6 +1,9 @@
 import { AdministrationWorkspace } from "../../../administration/AdministrationWorkspace";
 import { pagePolicies, withPagePolicy } from "../../../application/pagePolicy";
 
-const SubscriptionPage = () => <AdministrationWorkspace />;
+const SubscriptionEntryPage = () => <AdministrationWorkspace />;
 
-export default withPagePolicy(pagePolicies.administration("subscriptions"), SubscriptionPage);
+export default withPagePolicy(
+  pagePolicies.administration("subscription-entry"),
+  SubscriptionEntryPage,
+);

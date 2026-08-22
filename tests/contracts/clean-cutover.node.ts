@@ -137,7 +137,12 @@ test.describe("removed scope ownership", () => {
     // list of projects to go to is narrowed to one organisation, nowhere else. The last of those
     // is the Projects index and the project selector, neither of which decides what is displayed
     // — the URL still does that — only which projects are offered as somewhere to go.
+    //
+    // Administration reads it too, because the organisation in the masthead is that workspace's
+    // ambient scope, and it reaches it through the one module named here rather than from each of
+    // its screens.
     expect(sourcesMatching(/useSelectedOrganisation/u)).toEqual([
+      "administration/organisationInEffect.ts",
       "components/workspaces/ProjectsIndex.tsx",
       "layouts/navigation/OrganisationIdentity.tsx",
       "projects/ProjectOrganisationBoundary.tsx",

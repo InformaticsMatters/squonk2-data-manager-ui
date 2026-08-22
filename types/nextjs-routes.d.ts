@@ -14,13 +14,15 @@ declare module "nextjs-routes" {
     | StaticRoute<"/">
     | StaticRoute<"/administration">
     | StaticRoute<"/administration/charges">
-    | DynamicRoute<"/administration/charges/[collection]/[resourceId]", { "collection": string; "resourceId": string }>
-    | StaticRoute<"/administration/organisation-access">
-    | DynamicRoute<"/administration/organisation-access/[collection]/[resourceId]", { "collection": string; "resourceId": string }>
-    | StaticRoute<"/administration/subscriptions">
     | DynamicRoute<"/administration/subscriptions/[productId]", { "productId": string }>
-    | StaticRoute<"/administration/usage-inventory">
-    | DynamicRoute<"/administration/usage-inventory/[collection]/[resourceId]", { "collection": string; "resourceId": string }>
+    | DynamicRoute<"/administration/units/[unitId]", { "unitId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/access", { "unitId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/charges", { "unitId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/subscriptions", { "unitId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/subscriptions/[productId]", { "unitId": string; "productId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/subscriptions/[productId]/charges", { "unitId": string; "productId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/usage", { "unitId": string }>
+    | StaticRoute<"/administration/usage">
     | DynamicRoute<"/api/auth/[...all]", { "all": string[] }>
     | StaticRoute<"/api/configuration/api-servers">
     | StaticRoute<"/api/configuration/ui-version">

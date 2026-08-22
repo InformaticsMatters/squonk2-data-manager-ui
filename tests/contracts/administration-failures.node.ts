@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-import { presentAdministrationFailure } from "../../src/administration/failures";
+import {
+  type AdministrationReadSubject,
+  decideAdministrationReadFailure,
+  presentAdministrationFailure,
+} from "../../src/administration/failures";
 import { type TransportFailure } from "../../src/api/runtime/classifyTransportFailure";
 
 const failures: { failure: TransportFailure; message: RegExp; retryable: boolean }[] = [
@@ -35,4 +39,39 @@ test.describe("Administration failure presentation", () => {
       expect(presentAdministrationFailure(failure)).toMatchObject({ message, retryable });
     });
   }
+});
+
+test.describe("degrade versus replace", () => {
+  const subjects: AdministrationReadSubject[] = ["organisation", "subscription", "unit"];
+
+  for (const { failure, retryable } of failures) {
+    if (retryable) {
+      test(`a ${failure.kind} read keeps the frame for every subject`, () => {
+        for (const subject of subjects) {
+          expect(decideAdministrationReadFailure(subject, failure), subject).toBe("retry");
+        }
+      });
+    }
+  }
+
+  test("a refused organisation read removes sections rather than the page", () => {
+    for (const { failure, retryable } of failures) {
+      if (!retryable) {
+        expect(decideAdministrationReadFailure("organisation", failure), failure.kind).toBe(
+          "degrade",
+        );
+      }
+    }
+  });
+
+  test("a refused unit or subscription read replaces the page", () => {
+    for (const { failure, retryable } of failures) {
+      if (!retryable) {
+        expect(decideAdministrationReadFailure("unit", failure), failure.kind).toBe("replace");
+        expect(decideAdministrationReadFailure("subscription", failure), failure.kind).toBe(
+          "replace",
+        );
+      }
+    }
+  });
 });

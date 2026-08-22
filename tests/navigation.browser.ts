@@ -51,7 +51,7 @@ test("do login via administration", async ({ page, baseURL }) => {
 
   await login(page);
 
-  // Administration always lands on Organisation & access rather than a remembered task.
-  await page.waitForURL("**/administration/organisation-access");
-  await page.getByRole("heading", { name: "Organisation & access" }).waitFor();
+  // Administration always lands on the organisation overview rather than a remembered section.
+  await page.waitForURL("**/administration");
+  await page.getByRole("heading", { level: 1, name: "Administration" }).waitFor();
 });

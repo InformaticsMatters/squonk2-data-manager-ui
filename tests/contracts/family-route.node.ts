@@ -39,13 +39,13 @@ test.describe("family route enforcement", () => {
   test("retains the Administration task for a malformed child route", () => {
     expect(
       resolveFamilyRoute(
-        pagePolicies.administration("charges"),
-        "/administration/charges/units/not-a-unit",
+        pagePolicies.administration("unit-charges"),
+        "/administration/units/not-a-unit/charges",
         true,
       ),
     ).toEqual({
       kind: "local-not-found",
-      parent: { family: "administration", section: "charges" },
+      parent: { family: "administration", section: "unit-charges" },
     });
   });
 
@@ -94,7 +94,7 @@ test.describe("family route enforcement", () => {
     ).toEqual({ kind: "replace", canonicalHref: `/projects/${projectId}/results` });
     expect(
       resolveFamilyRoute(
-        pagePolicies.administration("charges"),
+        pagePolicies.administration("organisation-charges"),
         "/administration/charges?project=secret",
         true,
       ),

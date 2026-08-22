@@ -78,9 +78,9 @@ test("primary navigation reaches the three landing routes and copies no state be
     .getByRole("navigation", { name: "Main" })
     .getByRole("link", { name: "Administration" })
     .click();
-  // Administration always lands on its first task rather than the one last visited.
-  await expect(page).toHaveURL(`${acceptanceUrls.app}administration/organisation-access`);
-  await expect(page.getByRole("heading", { name: "Organisation & access" })).toBeVisible();
+  // Administration always lands on the organisation overview rather than the section last visited.
+  await expect(page).toHaveURL(`${acceptanceUrls.app}administration`);
+  await expect(page.getByRole("heading", { level: 1, name: "Administration" })).toBeVisible();
 
   await page
     .getByRole("navigation", { name: "Main" })

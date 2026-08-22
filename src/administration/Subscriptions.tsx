@@ -1,38 +1,42 @@
 import { useState } from "react";
 
-import { useGetProductsSuspense } from "@/api/account-server/product";
+import { type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
 
 import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
-import { Alert, Box, Button, Link as MuiLink, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
+import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { z } from "zod/mini";
 
+import { DataTable } from "../components/DataTable";
 import { ModalWrapper } from "../components/modals/ModalWrapper";
 import { WarningDeleteButton } from "../components/WarningDeleteButton";
 import { useGetStorageCost } from "../hooks/useGetStorageCost";
 import { useIsEvaluator } from "../hooks/useIsAuthorized";
+import { NavigationTab } from "../layouts/navigation/NavigationTab";
 import { projectLinks } from "../projects/routes";
-import { withBasePath } from "../utils/app/basePath";
 import { formatCoins } from "../utils/app/coins";
 import { toLocalTimeString } from "../utils/app/datetime";
-import { useAccessFacts, useAccessIndex, useAddressedProduct } from "./accessFacts";
+import { useAccessFacts, useAddressedProduct, useAddressedUnitProducts } from "./accessFacts";
 import { type AdministrationCapability } from "./capabilities";
+import { SubscriptionChargeLedger } from "./ChargeLedgers";
 import { administrationResourceLabel } from "./failures";
-import { assertProductId } from "./identifiers";
 import {
   AddressedResourceView,
+  AdministrationLink,
   CapabilityAction,
-  EmptyTask,
-  PageTitle,
-  resourceAncestry,
   ResourceChip,
   ResourceIdentity,
-  ResourceLink,
   Section,
 } from "./resources";
-import { administrationLinks, type AdministrationRoute } from "./routes";
+import {
+  administrationLinks,
+  type AdministrationRoute,
+  subscriptionSectionHref,
+  subscriptionSections,
+} from "./routes";
 import {
   evaluateDatasetSubscriptionCreationCapability,
   evaluateProjectHandoffCapability,
@@ -42,7 +46,6 @@ import {
 } from "./subscriptionCapabilities";
 import {
   describeSubscription,
-  groupSubscriptionsByOwner,
   type Subscription,
   type SubscriptionFacts,
   subscriptionKindLabel,
@@ -52,9 +55,13 @@ import {
 import { useAdministrationCommandFeedback } from "./useAdministrationFeedback";
 import { useSubscriptionCommands } from "./useSubscriptionCommands";
 
-export type SubscriptionResourceRoute = Extract<AdministrationRoute, { kind: "subscription" }>;
+export type SubscriptionRoute = Extract<
+  AdministrationRoute,
+  { kind: "subscription-charges" | "subscription" }
+>;
 
-const task = "Subscriptions";
+/** What this section is called while the subscription it is about has not answered yet. */
+const section = "Subscription";
 
 /**
  * What the caller is to the unit a subscription belongs to. Personal-unit identity is only claimed
@@ -95,16 +102,18 @@ const CoinCost = ({ allowance }: { allowance: number }) => {
 };
 
 /**
- * Creates the one subscription this task owns. A project-tier subscription is created by Project
- * creation, which claims it in the same workflow, so Administration never offers to create one.
+ * Creates the one subscription this section owns, inside the unit it will belong to. A project-tier
+ * subscription is created by Project creation, which claims it in the same workflow, so
+ * Administration never offers to create one.
  */
 const CreateDatasetStorageSubscriptionAction = ({
   capability,
-  organisationId,
+  organisation,
   unit,
 }: {
   capability: AdministrationCapability;
-  organisationId: string;
+  /** Absent when the unit's organisation is not among the caller's grouped units. */
+  organisation?: SubscriptionOrganisationOwner;
   unit: SubscriptionUnitOwner;
 }) => {
   const [open, setOpen] = useState(false);
@@ -114,8 +123,14 @@ const CreateDatasetStorageSubscriptionAction = ({
     defaultValues: { allowance: 1000, name: "Dataset Storage" },
     validators: { onChange: storageSubscriptionSchema },
     onSubmit: async ({ value }) => {
+      if (!organisation) {
+        return;
+      }
       try {
-        await commands.createDatasetStorageSubscription({ organisationId, unitId: unit.id }, value);
+        await commands.createDatasetStorageSubscription(
+          { organisationId: organisation.id, unitId: unit.id },
+          value,
+        );
         feedback.announce("Subscription created");
         setOpen(false);
         form.reset();
@@ -130,9 +145,20 @@ const CreateDatasetStorageSubscriptionAction = ({
     },
   });
 
+  // A unit whose organisation the caller's own index does not name has no owner to bill, and this
+  // client will not discover one: the action states that rather than sending a request with no
+  // organisation behind it.
+  const owned: AdministrationCapability = organisation
+    ? capability
+    : {
+        status: "disabled",
+        reason:
+          "This unit's organisation is not readable, so a subscription cannot be billed here.",
+      };
+
   return (
     <>
-      <CapabilityAction capability={capability}>
+      <CapabilityAction capability={owned}>
         {({ disabled }) => (
           <Button
             aria-label={`Create dataset storage subscription in ${unit.name}`}
@@ -190,113 +216,87 @@ const CreateDatasetStorageSubscriptionAction = ({
   );
 };
 
-const SubscriptionSummary = ({ subscription }: { subscription: SubscriptionFacts }) => (
-  <ResourceLink
-    headingLevel="h5"
-    href={administrationLinks.subscription(assertProductId(subscription.productId))}
-    id={subscription.productId}
-    name={subscription.name}
-    type={subscriptionKindLabel[subscription.kind]}
-  />
-);
+/** One row of a unit's subscription list, as the unit's own product read reports it. */
+type SubscriptionRow = SubscriptionFacts & { href: string };
 
-const UnitSubscriptions = ({
-  group,
+const rowHelper = createColumnHelper<SubscriptionRow>();
+const subscriptionColumns = [
+  rowHelper.accessor("name", {
+    header: "Subscription",
+    cell: ({ row }) => (
+      <AdministrationLink href={row.original.href}>{row.original.name}</AdministrationLink>
+    ),
+  }),
+  rowHelper.accessor((row) => subscriptionKindLabel[row.kind], { header: "Kind", id: "kind" }),
+  rowHelper.accessor((row) => row.claim?.name ?? row.claim?.serviceId ?? "—", {
+    header: "Claim",
+    id: "claim",
+  }),
+  rowHelper.accessor((row) => `${row.used} of ${row.allowance}`, {
+    header: "Coins used",
+    id: "coins",
+  }),
+  rowHelper.accessor((row) => toLocalTimeString(row.created, true, true), {
+    header: "Created",
+    id: "created",
+  }),
+] as ColumnDef<SubscriptionRow>[];
+
+/**
+ * A unit's own subscriptions, read from the unit-scoped product endpoint rather than by filtering a
+ * global collection, and created here because this is the unit they will belong to — so nobody
+ * chooses an owner twice.
+ */
+export const UnitSubscriptions = ({
   organisation,
+  unit,
 }: {
-  group: { subscriptions: SubscriptionFacts[]; unit: SubscriptionUnitOwner };
-  organisation: SubscriptionOrganisationOwner;
+  /** Absent when the addressed unit is readable but is not among the caller's grouped units. */
+  organisation?: OrganisationAllDetail;
+  unit: UnitAllDetail;
 }) => {
+  const addressed = useAddressedUnitProducts(unit.id);
   const callerFacts = useSubscriptionCallerFacts();
-  const facts = callerFacts({ organisation, unit: group.unit });
+  const facts = callerFacts({ organisation, unit });
 
   return (
-    <Box sx={{ mt: 2 }}>
-      <Typography component="h4" variant="subtitle1">
-        {group.unit.name}
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 1, overflowWrap: "anywhere" }} variant="caption">
-        {group.unit.id}
-      </Typography>
-      {group.subscriptions.length === 0 ? (
-        <Typography color="text.secondary">This unit holds no subscriptions.</Typography>
-      ) : (
-        <Stack spacing={2}>
-          {group.subscriptions.map((subscription) => (
-            <SubscriptionSummary key={subscription.productId} subscription={subscription} />
-          ))}
-        </Stack>
-      )}
-      <Box sx={{ mt: 2 }}>
+    <Stack spacing={2}>
+      <Box>
         <CreateDatasetStorageSubscriptionAction
           capability={evaluateDatasetSubscriptionCreationCapability(facts)}
-          organisationId={organisation.id}
-          unit={group.unit}
+          // A subscription is bought in the unit's own organisation, which the Account Server needs
+          // to bill it. An organisation the caller's grouped index does not name is absent here
+          // rather than stood in for, so nothing offers to create a subscription with no owner.
+          organisation={organisation}
+          unit={unit}
         />
       </Box>
-    </Box>
-  );
-};
-
-export const SubscriptionsIndex = () => {
-  const { organisations, units } = useAccessIndex();
-  const { data } = useGetProductsSuspense();
-  const groups = groupSubscriptionsByOwner({ organisations, products: data.products, units });
-  const held = groups.some(({ units: unitGroups }) =>
-    unitGroups.some(({ subscriptions }) => subscriptions.length > 0),
-  );
-
-  return (
-    <>
-      <PageTitle>{task}</PageTitle>
-      <Typography color="text.secondary" sx={{ mb: 2 }}>
-        Every subscription is grouped under the organisation and unit that pays for it. Project tier
-        subscriptions are claimed by a project; dataset storage subscriptions pay for uploads.
-      </Typography>
-      {groups.length === 0 ? (
-        <EmptyTask>
-          No subscriptions are available. Organisation or unit membership is required to hold or
-          create one.
-        </EmptyTask>
-      ) : (
-        <>
-          {held ? null : (
-            <Alert severity="info" sx={{ mb: 2 }}>
-              No subscriptions are available yet in the organisations and units you can see.
-            </Alert>
-          )}
-          <Stack divider={<Box sx={{ borderBottom: 1, borderColor: "divider" }} />} spacing={3}>
-            {groups.map(({ organisation, units: unitGroups }) => (
-              <Box key={organisation.id}>
-                <Typography component="h3" variant="h6">
-                  {organisation.name}
-                </Typography>
-                <Typography
-                  color="text.secondary"
-                  sx={{ overflowWrap: "anywhere" }}
-                  variant="caption"
-                >
-                  {organisation.id}
-                </Typography>
-                {unitGroups.length === 0 ? (
-                  <Typography color="text.secondary" sx={{ mt: 1 }}>
-                    No units of this organisation are visible to you.
-                  </Typography>
-                ) : (
-                  unitGroups.map((group) => (
-                    <UnitSubscriptions
-                      group={group}
-                      key={group.unit.id}
-                      organisation={organisation}
-                    />
-                  ))
-                )}
-              </Box>
-            ))}
-          </Stack>
-        </>
-      )}
-    </>
+      <AddressedResourceView
+        addressed={addressed}
+        identity={() => unit.id}
+        section="Subscriptions"
+        subject="unit"
+      >
+        {(products) => {
+          const rows = (products.products as Subscription[]).map<SubscriptionRow>((product) => {
+            const subscription = describeSubscription(product);
+            return {
+              ...subscription,
+              href: administrationLinks.subscription(unit.id, subscription.productId),
+            };
+          });
+          return rows.length === 0 ? (
+            <Alert severity="info">This unit holds no subscriptions.</Alert>
+          ) : (
+            <DataTable
+              columns={subscriptionColumns}
+              data={rows}
+              searchLabel="Search subscriptions"
+            />
+          );
+        }}
+      </AddressedResourceView>
+    </Stack>
   );
 };
 
@@ -327,9 +327,9 @@ const ClaimInformation = ({
           This subscription is claimed by {name ?? "a project"} ({serviceId}).
         </Typography>
         {projectId ? (
-          <MuiLink component={Link} href={projectLinks.manage(projectId) as never}>
+          <AdministrationLink href={projectLinks.manage(projectId)}>
             Manage this project
-          </MuiLink>
+          </AdministrationLink>
         ) : (
           <Typography color="text.secondary" variant="body2">
             The claim names a resource this application cannot open.
@@ -479,9 +479,12 @@ const AdjustSubscription = ({
 const DeleteSubscriptionAction = ({
   capability,
   subscription,
+  unitId,
 }: {
   capability: AdministrationCapability;
   subscription: SubscriptionFacts;
+  /** The unit in the address bar, which is where a removed subscription's list lives. */
+  unitId: string;
 }) => {
   const commands = useSubscriptionCommands();
   const feedback = useAdministrationCommandFeedback();
@@ -511,7 +514,7 @@ const DeleteSubscriptionAction = ({
               throw error;
             }
             feedback.announce("Subscription deleted");
-            await router.replace(administrationLinks.subscriptions() as never);
+            await router.replace(administrationLinks.unitSubscriptions(unitId) as never);
           }}
         >
           {({ openModal }) => (
@@ -536,22 +539,20 @@ const DeleteSubscriptionAction = ({
  * to, so every capability here is decided by the membership facts that subscription itself declares
  * rather than by whether the caller's index happens to list its owners.
  */
-const SubscriptionResourceView = ({ product }: { product: Subscription }) => {
-  const subscription = describeSubscription(product);
+const SubscriptionDetail = ({
+  product,
+  subscription,
+  unitId,
+}: {
+  product: Subscription;
+  subscription: SubscriptionFacts;
+  unitId: string;
+}) => {
   const callerFacts = useSubscriptionCallerFacts();
   const facts = callerFacts({ organisation: product.organisation, unit: product.unit });
 
   return (
     <>
-      <PageTitle>{task}</PageTitle>
-      <ResourceChip label={subscriptionKindLabel[subscription.kind]} />
-      <ResourceIdentity
-        ancestry={resourceAncestry(subscription.organisation.name, subscription.unit.name)}
-        id={subscription.productId}
-        name={subscription.name}
-        type="Product"
-      />
-
       <Section title="Subscription">
         <Fact label="Product type">{subscription.type}</Fact>
         {subscription.tier ? <Fact label="Tier">{subscription.tier}</Fact> : null}
@@ -565,18 +566,6 @@ const SubscriptionResourceView = ({ product }: { product: Subscription }) => {
             This subscription is at its coin limit.
           </Alert>
         ) : null}
-        <Box sx={{ mt: 1 }}>
-          <MuiLink
-            href={withBasePath(
-              administrationLinks.chargeResource(
-                "products",
-                assertProductId(subscription.productId),
-              ),
-            )}
-          >
-            View this subscription&apos;s charges
-          </MuiLink>
-        </Box>
       </Section>
 
       {subscription.claimable || subscription.claim ? (
@@ -605,6 +594,7 @@ const SubscriptionResourceView = ({ product }: { product: Subscription }) => {
             claimed: subscription.claim !== undefined,
           })}
           subscription={subscription}
+          unitId={unitId}
         />
       </Section>
     </>
@@ -612,20 +602,53 @@ const SubscriptionResourceView = ({ product }: { product: Subscription }) => {
 };
 
 /**
- * The subscription in the address bar answers for itself through its own generated product, so one
- * the caller may read but does not list keeps its identity, and a denial and an absence are told
- * apart by the Administration failure contract rather than by index membership.
+ * One subscription inside the unit that pays for it: its own identity, its two sections, and the
+ * ledger one of them addresses. It renders directly rather than canonicalising, because the URL
+ * already names both the unit and the product.
  */
-export const SubscriptionResource = ({ route }: { route: SubscriptionResourceRoute }) => {
+export const SubscriptionSection = ({ route }: { route: SubscriptionRoute }) => {
   const addressed = useAddressedProduct(route.productId);
 
   return (
     <AddressedResourceView
       addressed={addressed}
       identity={(subscription) => subscription.product.id}
-      task={task}
+      section={section}
+      subject="subscription"
     >
-      {(product) => <SubscriptionResourceView product={product} />}
+      {(product) => {
+        const subscription = describeSubscription(product);
+        return (
+          <>
+            <ResourceChip label={subscriptionKindLabel[subscription.kind]} />
+            <ResourceIdentity id={subscription.productId} name={subscription.name} type="Product" />
+            <Stack
+              aria-label="Subscription sections"
+              component="nav"
+              direction="row"
+              sx={{ borderBottom: 1, borderColor: "divider", mb: 3, mt: 2, overflowX: "auto" }}
+            >
+              {subscriptionSections.map((section) => (
+                <NavigationTab
+                  active={route.kind === section.key}
+                  href={subscriptionSectionHref(section.key, route.unitId, route.productId)}
+                  key={section.key}
+                  label={section.label}
+                />
+              ))}
+            </Stack>
+            {route.kind === "subscription" ? (
+              <SubscriptionDetail
+                product={product}
+                subscription={subscription}
+                unitId={route.unitId}
+              />
+            ) : (
+              <SubscriptionChargeLedger route={route} subscription={subscription} />
+            )}
+          </>
+        );
+      }}
     </AddressedResourceView>
   );
 };

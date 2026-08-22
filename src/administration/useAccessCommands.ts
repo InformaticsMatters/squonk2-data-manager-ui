@@ -30,7 +30,7 @@ import { useCreatePersonalUnitCommand } from "../hooks/usePersonalUnitCommands";
 import { useCreateUnitCommand } from "../hooks/useUnitCommands";
 
 /**
- * The generated key factories are the sole cache identity for Organisation & access data. Every
+ * The generated key factories are the sole cache identity for organisation and unit access data. Every
  * command refreshes the same generated prefixes, so no screen keeps a private aggregate of
  * organisations, units, members, or editors.
  */

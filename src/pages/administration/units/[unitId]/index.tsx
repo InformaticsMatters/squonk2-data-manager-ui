@@ -1,6 +1,6 @@
 import { AdministrationWorkspace } from "../../../../administration/AdministrationWorkspace";
 import { pagePolicies, withPagePolicy } from "../../../../application/pagePolicy";
 
-const ChargeResourcePage = () => <AdministrationWorkspace />;
+const UnitEntryPage = () => <AdministrationWorkspace />;
 
-export default withPagePolicy(pagePolicies.administration("charges"), ChargeResourcePage);
+export default withPagePolicy(pagePolicies.administration("unit-access"), UnitEntryPage);

@@ -66,6 +66,38 @@ export const presentAdministrationFailure = (
 export const administrationReadIsAuthoritative = (error: unknown): boolean =>
   !presentAdministrationFailure(classifyTransportFailure(error)).retryable;
 
+/**
+ * Which resource a refused Administration read was about. The answer differs by subject, so the
+ * subject is named rather than inferred from the failure.
+ */
+export type AdministrationReadSubject = "organisation" | "subscription" | "unit";
+
+/**
+ * What a failed Administration read costs the screen.
+ *
+ * `retry` is every transport fact the resource did not answer for itself; it keeps the section
+ * frame and its Retry, so recovering never costs the caller their place.
+ *
+ * The two authoritative answers differ by subject, and deliberately. A refused **organisation**
+ * read `degrade`s: the overview is that organisation's page, but its unit list, its create actions
+ * and the workspace around it do not depend on reading the organisation itself, so a permission the
+ * caller does not have takes away the members and privacy sections and nothing else. This is what
+ * keeps the default organisation — which refuses its own detail read to every ordinary caller —
+ * from replacing the one page a new user has to reach to create their first unit.
+ *
+ * A refused **unit** or **subscription** read `replace`s, because a resource the caller cannot read
+ * genuinely has no content to put around a degraded section.
+ */
+export const decideAdministrationReadFailure = (
+  subject: AdministrationReadSubject,
+  failure: TransportFailure,
+): "degrade" | "replace" | "retry" => {
+  if (presentAdministrationFailure(failure).retryable) {
+    return "retry";
+  }
+  return subject === "organisation" ? "degrade" : "replace";
+};
+
 /** Names an Administration resource in command feedback without disclosing anything beyond its ID. */
 export const administrationResourceLabel = {
   newOrganisation: "an organisation",

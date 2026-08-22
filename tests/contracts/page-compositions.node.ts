@@ -53,7 +53,7 @@ const everyPolicy = [
   pagePolicies.application,
   pagePolicies.projects("files"),
   pagePolicies.datasets("list"),
-  pagePolicies.administration("charges"),
+  pagePolicies.administration("organisation-charges"),
 ] as const;
 
 test.describe("persistent chrome", () => {
@@ -116,7 +116,7 @@ test.describe("production page compositions", () => {
   for (const [policy, expectedShell] of [
     [pagePolicies.projects("files"), ProjectOrganisationBoundary],
     [pagePolicies.datasets("list"), Fragment],
-    [pagePolicies.administration("charges"), Fragment],
+    [pagePolicies.administration("organisation-charges"), Fragment],
   ] as const) {
     test(`renders real ${policy.kind} family boundaries and shell`, () => {
       const gate = createFamilyComposition(policy, "content");

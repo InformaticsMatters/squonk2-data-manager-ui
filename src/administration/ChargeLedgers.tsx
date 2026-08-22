@@ -2,23 +2,18 @@ import { type ChangeEvent } from "react";
 
 import {
   type ChargeSummary,
+  type OrganisationAllDetail,
   type ProcessingCharges,
   type StorageChargeItem,
+  type UnitAllDetail,
   type UnitProductChargeSummary,
 } from "@/api/account-server";
-import {
-  useGetOrganisationChargesSuspense,
-  useGetProductChargesSuspense,
-  useGetUnitChargesSuspense,
-} from "@/api/account-server/charges";
-import { useGetProductsSuspense } from "@/api/account-server/product";
-import { useGetUnitsSuspense } from "@/api/account-server/unit";
 
 import {
+  Alert,
   Box,
   FormControl,
   InputLabel,
-  Link,
   MenuItem,
   Paper,
   Select,
@@ -33,38 +28,41 @@ import {
 import { filesize } from "filesize";
 import { useRouter } from "next/router";
 
-import { isProductId, isUnitId } from "../routing/identifiers";
-import { withBasePath } from "../utils/app/basePath";
+import { isProductId } from "../routing/identifiers";
 import { formatCoins } from "../utils/app/coins";
 import { toLocalTimeString } from "../utils/app/datetime";
 import { formatOrdinals } from "../utils/app/ordinals";
 import {
-  type MutationOwner,
-  organisationAccessOwner,
-  ReadOnlyNotice,
-  resourceAncestry,
-} from "./resources";
-import { administrationLinks, type ChargeResourceRoute } from "./routes";
+  useAddressedOrganisationCharges,
+  useAddressedProductCharges,
+  useAddressedUnitCharges,
+} from "./accessFacts";
+import { AddressedResourceView, AdministrationLink, PageTitle, Section } from "./resources";
+import { administrationLinks, type AdministrationRoute, type ChargeRouteState } from "./routes";
+import { type SubscriptionFacts } from "./subscriptionFacts";
 
 const chargeFor = (summary: ChargeSummary[], type: ChargeSummary["type"]) =>
   summary.find((charge) => charge.type === type)?.coins ?? "0";
-
-const chargeRequest = { timeout: 30_000 };
 
 const productTypes: Record<UnitProductChargeSummary["product_type"], string> = {
   DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION: "Project Subscription",
   DATA_MANAGER_STORAGE_SUBSCRIPTION: "Dataset Subscription",
 };
 
-const BillingCycleSelect = ({ route }: { route: ChargeResourceRoute }) => {
+/**
+ * The billing period a ledger reports. The choice is in the URL, so a colleague opening the link
+ * sees the same period, and each ledger supplies its own address for it rather than a shared one.
+ */
+const BillingCycleSelect = ({
+  hrefFor,
+  state,
+}: {
+  hrefFor: (billingCycle: number) => string;
+  state: ChargeRouteState;
+}) => {
   const router = useRouter();
   const changeCycle = (event: ChangeEvent<HTMLInputElement> | { target: { value: unknown } }) => {
-    const billingCycle = Number(event.target.value);
-    void router.push(
-      administrationLinks.chargeResource(route.collection, route.resourceId, {
-        billingCycle,
-      }) as never,
-    );
+    void router.push(hrefFor(Number(event.target.value)) as never);
   };
 
   return (
@@ -73,7 +71,7 @@ const BillingCycleSelect = ({ route }: { route: ChargeResourceRoute }) => {
       <Select
         label="Billing cycle"
         labelId="billing-cycle-label"
-        value={route.state.billingCycle}
+        value={state.billingCycle}
         onChange={changeCycle}
       >
         {Array.from({ length: 24 }, (_, index) => -index).map((billingCycle) => (
@@ -88,61 +86,23 @@ const BillingCycleSelect = ({ route }: { route: ChargeResourceRoute }) => {
   );
 };
 
-/**
- * A ledger reports what a resource was charged; changing that resource belongs to the task that
- * owns it. Only the destination's route interface is used to say where that is.
- */
-const chargeMutationOwner = (route: ChargeResourceRoute): MutationOwner =>
-  route.collection === "products"
-    ? {
-        href: administrationLinks.subscription(route.resourceId),
-        label: "Manage this subscription in Subscriptions",
-      }
-    : organisationAccessOwner(route.collection, route.resourceId);
-
-const LedgerHeader = ({
-  ancestry,
-  id,
-  name,
+const BillingPeriod = ({
+  hrefFor,
   period,
-  route,
-  type,
+  state,
 }: {
-  ancestry?: string;
-  id: string;
-  name: string;
+  hrefFor: (billingCycle: number) => string;
   period?: string;
-  route: ChargeResourceRoute;
-  type: string;
+  state: ChargeRouteState;
 }) => (
-  <Stack spacing={1.5} sx={{ mb: 3 }}>
-    <Typography component="h2" variant="h4">
-      {type} ledger
-    </Typography>
-    <Box>
-      <Typography component="h3" variant="h5">
-        {name}
+  <Box sx={{ mb: 3 }}>
+    <BillingCycleSelect hrefFor={hrefFor} state={state} />
+    {period ? (
+      <Typography color="text.secondary" sx={{ mt: 1 }}>
+        {period}
       </Typography>
-      {ancestry ? <Typography color="text.secondary">{ancestry}</Typography> : null}
-      <Typography color="text.secondary" sx={{ overflowWrap: "anywhere" }} variant="caption">
-        {id}
-      </Typography>
-    </Box>
-    <ReadOnlyNotice owner={chargeMutationOwner(route)}>
-      This charge ledger is read-only.
-    </ReadOnlyNotice>
-    <Box>
-      <Typography component="h4" sx={{ mb: 1 }} variant="h6">
-        Billing period
-      </Typography>
-      <BillingCycleSelect route={route} />
-      {period ? (
-        <Typography color="text.secondary" sx={{ mt: 1 }}>
-          {period}
-        </Typography>
-      ) : null}
-    </Box>
-  </Stack>
+    ) : null}
+  </Box>
 );
 
 const ChargesTable = ({
@@ -172,7 +132,11 @@ const ChargesTable = ({
           rows.map((row) => (
             <TableRow key={row.id}>
               <TableCell>
-                {row.href ? <Link href={withBasePath(row.href)}>{row.name}</Link> : row.name}
+                {row.href ? (
+                  <AdministrationLink href={row.href}>{row.name}</AdministrationLink>
+                ) : (
+                  row.name
+                )}
                 <Typography color="text.secondary" sx={{ display: "block" }} variant="caption">
                   {row.id}
                 </Typography>
@@ -292,129 +256,184 @@ const ProductChargesTables = ({
   </Stack>
 );
 
-const OrganisationLedger = ({ route }: { route: ChargeResourceRoute }) => {
-  const { data } = useGetOrganisationChargesSuspense(
-    route.resourceId,
-    { pbp: route.state.billingCycle },
-    { request: chargeRequest },
-  );
+/**
+ * The organisation in effect's own ledger, with each of its units linking that unit's ledger. The
+ * unit links carry the same billing cycle, so following one keeps the period being compared.
+ */
+export const OrganisationChargeLedger = ({
+  organisationId,
+  route,
+}: {
+  organisationId: string;
+  route: Extract<AdministrationRoute, { kind: "organisation-charges" }>;
+}) => {
+  const addressed = useAddressedOrganisationCharges(organisationId, route.state.billingCycle);
 
   return (
-    <>
-      <LedgerHeader id={data.organisation_id} name={data.name} route={route} type="Organisation" />
-      <ChargesTable
-        empty="No unit charges were recorded for this billing cycle."
-        rows={data.unit_charges.map((unit) => ({
-          href: isUnitId(unit.unit_id)
-            ? administrationLinks.chargeResource("units", unit.unit_id, route.state)
-            : undefined,
-          id: unit.unit_id,
-          name: unit.name,
-          processing: chargeFor(unit.summary, "PROCESSING"),
-          storage: chargeFor(unit.summary, "STORAGE"),
-        }))}
-      />
-      <Total coins={data.coins} />
-    </>
+    <AddressedResourceView
+      addressed={addressed}
+      identity={({ organisation_id }) => organisation_id}
+      section="Charges"
+      subject="organisation"
+    >
+      {(data) => (
+        <>
+          <PageTitle>Charges</PageTitle>
+          <Typography
+            color="text.secondary"
+            sx={{ mb: 2, overflowWrap: "anywhere" }}
+            variant="body2"
+          >
+            {data.name} · {data.organisation_id}
+          </Typography>
+          <BillingPeriod
+            hrefFor={(billingCycle) => administrationLinks.organisationCharges({ billingCycle })}
+            state={route.state}
+          />
+          <ChargesTable
+            empty="No unit charges were recorded for this billing cycle."
+            rows={data.unit_charges.map((unit) => ({
+              href: administrationLinks.unitCharges(unit.unit_id, route.state),
+              id: unit.unit_id,
+              name: unit.name,
+              processing: chargeFor(unit.summary, "PROCESSING"),
+              storage: chargeFor(unit.summary, "STORAGE"),
+            }))}
+          />
+          <Total coins={data.coins} />
+        </>
+      )}
+    </AddressedResourceView>
   );
 };
 
-const UnitLedger = ({ route }: { route: ChargeResourceRoute }) => {
-  const { data: groups } = useGetUnitsSuspense();
-  const match = groups.units
-    .flatMap(({ organisation, units }) => units.map((unit) => ({ organisation, unit })))
-    .find(({ unit }) => unit.id === route.resourceId);
-  const { data } = useGetUnitChargesSuspense(
-    route.resourceId,
-    { pbp: route.state.billingCycle },
-    { request: chargeRequest },
-  );
+/**
+ * Why the default organisation has no ledger, for a caller who typed or bookmarked the address.
+ * The Account Server refuses organisation charges for it outright, so nothing here is worth
+ * retrying — the spend it holds is a unit's, and that is where the caller is sent.
+ */
+export const DefaultOrganisationCharges = () => (
+  <>
+    <PageTitle>Charges</PageTitle>
+    <Alert severity="info">
+      The default organisation has no charge ledger of its own. Its spend belongs to the units
+      inside it, so open a unit and read its Charges section.{" "}
+      <AdministrationLink href={administrationLinks.overview()}>
+        Back to the organisation overview
+      </AdministrationLink>
+    </Alert>
+  </>
+);
+
+/** One unit's ledger, and every subscription it paid for, inside the unit workspace. */
+export const UnitChargeLedger = ({
+  organisation,
+  route,
+  unit,
+}: {
+  organisation?: OrganisationAllDetail;
+  route: Extract<AdministrationRoute, { kind: "unit-charges" }>;
+  unit: UnitAllDetail;
+}) => {
+  const addressed = useAddressedUnitCharges(route.unitId, route.state.billingCycle);
 
   return (
-    <>
-      <LedgerHeader
-        ancestry={match?.organisation.name}
-        id={data.unit_id}
-        name={data.name ?? match?.unit.name ?? "Unit"}
-        period={`${data.from} to ${data.until}`}
-        route={route}
-        type="Unit"
-      />
-      <Typography sx={{ mb: 2 }}>
-        <strong>Billed to:</strong> unit <em>{data.name ?? match?.unit.name ?? "Unit"}</em>
-        {data.owner_id ? ` (owner: ${data.owner_id})` : null}
-      </Typography>
-      <ChargesTable
-        empty="No product charges were recorded for this billing cycle."
-        rows={data.products.map((product) => ({
-          href: isProductId(product.product_id)
-            ? administrationLinks.chargeResource("products", product.product_id, route.state)
-            : undefined,
-          id: product.product_id,
-          name: productTypes[product.product_type],
-          processing: chargeFor(product.charges, "PROCESSING"),
-          storage: chargeFor(product.charges, "STORAGE"),
-        }))}
-      />
-      <Box sx={{ mt: 2, textAlign: "right" }}>
-        <Typography>
-          Processing subtotal: {formatCoins(chargeFor(data.summary.charges, "PROCESSING"))}
-        </Typography>
-        <Typography>
-          Storage subtotal: {formatCoins(chargeFor(data.summary.charges, "STORAGE"))}
-        </Typography>
-        <Typography color="text.secondary">To be paid by the unit owner</Typography>
-      </Box>
-      <Total coins={data.coins} />
-    </>
+    <AddressedResourceView
+      addressed={addressed}
+      identity={({ unit_id }) => unit_id}
+      section="Charges"
+      subject="unit"
+    >
+      {(data) => (
+        <>
+          <BillingPeriod
+            hrefFor={(billingCycle) =>
+              administrationLinks.unitCharges(route.unitId, { billingCycle })
+            }
+            period={`${data.from} to ${data.until}`}
+            state={route.state}
+          />
+          <Typography sx={{ mb: 2 }}>
+            <strong>Billed to:</strong> unit <em>{data.name ?? unit.name}</em>
+            {organisation ? ` of ${organisation.name}` : null}
+            {data.owner_id ? ` (owner: ${data.owner_id})` : null}
+          </Typography>
+          <ChargesTable
+            empty="No product charges were recorded for this billing cycle."
+            rows={data.products.map((product) => ({
+              href: isProductId(product.product_id)
+                ? administrationLinks.subscriptionCharges(
+                    route.unitId,
+                    product.product_id,
+                    route.state,
+                  )
+                : undefined,
+              id: product.product_id,
+              name: productTypes[product.product_type],
+              processing: chargeFor(product.charges, "PROCESSING"),
+              storage: chargeFor(product.charges, "STORAGE"),
+            }))}
+          />
+          <Box sx={{ mt: 2, textAlign: "right" }}>
+            <Typography>
+              Processing subtotal: {formatCoins(chargeFor(data.summary.charges, "PROCESSING"))}
+            </Typography>
+            <Typography>
+              Storage subtotal: {formatCoins(chargeFor(data.summary.charges, "STORAGE"))}
+            </Typography>
+            <Typography color="text.secondary">To be paid by the unit owner</Typography>
+          </Box>
+          <Total coins={data.coins} />
+        </>
+      )}
+    </AddressedResourceView>
   );
 };
 
-const ProductLedger = ({ route }: { route: ChargeResourceRoute }) => {
-  const { data: products } = useGetProductsSuspense();
-  const product = products.products.find((candidate) => candidate.product.id === route.resourceId);
-  const { data } = useGetProductChargesSuspense(
-    route.resourceId,
-    { pbp: route.state.billingCycle },
-    { request: chargeRequest },
-  );
+/** One subscription's own ledger, on its own route, so it can be linked to directly. */
+export const SubscriptionChargeLedger = ({
+  route,
+  subscription,
+}: {
+  route: Extract<AdministrationRoute, { kind: "subscription-charges" }>;
+  subscription: SubscriptionFacts;
+}) => {
+  const addressed = useAddressedProductCharges(route.productId, route.state.billingCycle);
 
   return (
-    <>
-      <LedgerHeader
-        ancestry={
-          product ? resourceAncestry(product.organisation.name, product.unit.name) : undefined
-        }
-        id={data.product_id}
-        name={product?.product.name ?? "Subscription"}
-        period={`${data.from} to ${data.until}${product ? ` (billed on the ${formatOrdinals(product.unit.billing_day)} of the month)` : ""}`}
-        route={route}
-        type="Product"
-      />
-      {product ? (
-        <Typography sx={{ mb: 2 }}>
-          <strong>Billed to:</strong> unit <em>{product.unit.name}</em> belonging to the{" "}
-          <em>{product.organisation.name}</em> organisation
-        </Typography>
-      ) : null}
-      <ProductChargesTables
-        processing={data.processing_charges}
-        storage={data.storage_charges.items}
-      />
-      <Typography color="text.secondary" sx={{ mt: 2, textAlign: "right" }}>
-        To be paid by the unit owner
-      </Typography>
-      <Total coins={data.coins} />
-    </>
+    <AddressedResourceView
+      addressed={addressed}
+      identity={({ product_id }) => product_id}
+      section="Charges"
+      subject="subscription"
+    >
+      {(data) => (
+        <Section title="Charges">
+          <BillingPeriod
+            hrefFor={(billingCycle) =>
+              administrationLinks.subscriptionCharges(route.unitId, route.productId, {
+                billingCycle,
+              })
+            }
+            period={`${data.from} to ${data.until} (billed on the ${formatOrdinals(
+              subscription.billingDay,
+            )} of the month)`}
+            state={route.state}
+          />
+          <Typography sx={{ mb: 2 }}>
+            <strong>Billed to:</strong> unit <em>{subscription.unit.name}</em> belonging to the{" "}
+            <em>{subscription.organisation.name}</em> organisation
+          </Typography>
+          <ProductChargesTables
+            processing={data.processing_charges}
+            storage={data.storage_charges.items}
+          />
+          <Typography color="text.secondary" sx={{ mt: 2, textAlign: "right" }}>
+            To be paid by the unit owner
+          </Typography>
+          <Total coins={data.coins} />
+        </Section>
+      )}
+    </AddressedResourceView>
   );
-};
-
-export const ChargeLedger = ({ route }: { route: ChargeResourceRoute }) => {
-  if (route.collection === "organisations") {
-    return <OrganisationLedger route={route} />;
-  }
-  if (route.collection === "units") {
-    return <UnitLedger route={route} />;
-  }
-  return <ProductLedger route={route} />;
 };

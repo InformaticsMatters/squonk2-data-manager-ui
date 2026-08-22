@@ -92,7 +92,8 @@ export const evaluateDatasetSubscriptionRecovery = ({
   isPersonalUnit?: boolean;
   /** Absent when the unit's organisation is not readable by this caller. */
   organisation?: Pick<OrganisationAllDetail, "caller_is_member">;
-  unit: Pick<UnitAllDetail, "caller_is_member">;
+  /** The unsubscribed unit itself, whose identity is where the missing subscription would live. */
+  unit: Pick<UnitAllDetail, "caller_is_member" | "id">;
 }): DatasetSubscriptionRecovery | undefined => {
   if (caller.isEvaluator) {
     if (isPersonalUnit === undefined) {
@@ -106,8 +107,10 @@ export const evaluateDatasetSubscriptionRecovery = ({
       };
     }
   }
-  return unit.caller_is_member || organisation?.caller_is_member === true
-    ? { href: administrationLinks.subscriptions(), kind: "administration" }
+  // The recovery opens the unit that needs the subscription, which is where one would be created,
+  // rather than an unfiltered list the caller would have to find it in again.
+  return (unit.caller_is_member || organisation?.caller_is_member === true) && isUnitId(unit.id)
+    ? { href: administrationLinks.unitSubscriptions(unit.id), kind: "administration" }
     : {
         kind: "contact",
         reason:

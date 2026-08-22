@@ -231,7 +231,7 @@ export const ProjectDeletionProgress = () => {
           {subscriptionId && isProductId(subscriptionId) ? (
             <MuiLink
               component={Link}
-              href={administrationLinks.subscription(subscriptionId) as never}
+              href={administrationLinks.subscriptionEntry(subscriptionId) as never}
               sx={{ display: "inline-block", mt: 1 }}
             >
               Open this subscription in Administration
@@ -239,10 +239,10 @@ export const ProjectDeletionProgress = () => {
           ) : (
             <MuiLink
               component={Link}
-              href={administrationLinks.subscriptions() as never}
+              href={administrationLinks.overview() as never}
               sx={{ display: "inline-block", mt: 1 }}
             >
-              Open Subscriptions in Administration
+              Open Administration
             </MuiLink>
           )}
         </Box>

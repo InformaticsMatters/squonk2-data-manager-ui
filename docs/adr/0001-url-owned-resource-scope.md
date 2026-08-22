@@ -31,8 +31,9 @@ Every displayed resource and shareable view state is explicit in a canonical URL
   its generated query. No organisation, unit, project, dataset or result object is held in mutable
   global selection state.
 - Convenience entry routes canonicalise with replace-navigation: a project without a section enters
-  Files, a dataset without a version resolves to its current version, Administration without a task
-  enters Organisation & access.
+  Files, a dataset without a version resolves to its current version, a unit without a section
+  enters its Access section, and a subscription addressed by product alone resolves to its
+  canonical unit-scoped address.
 - The cutover is clean. Removed routes produce an ordinary not-found; there are no redirects, query
   translations or compatibility aliases, and known legacy scope keys are cleared at bootstrap.
 
@@ -41,7 +42,11 @@ Every displayed resource and shareable view state is explicit in a canonical URL
 - A shared link reproduces what the sender saw, subject to authorization, and Back/Forward restore
   exactly the prior canonical state.
 - Entering a project in another organisation must adopt that organisation before project content
-  mounts, so identity and content cannot diverge.
+  mounts, so identity and content cannot diverge. A unit URL adopts the same way where the caller's
+  own grouped unit index names its parent; where nothing names it, the unit still opens without
+  ancestry, because the unit resource carries no organisation and discovering one would mean
+  probing across organisations. That is the one place identity and content may diverge, and it is
+  accepted so that no unit URL has to carry an organisation.
 - Pairing a valid child ID with the wrong parent is a section-local not-found. It never triggers
   owner discovery, redirect or scope adoption, which keeps parent scope authoritative and keeps
   resource existence private.

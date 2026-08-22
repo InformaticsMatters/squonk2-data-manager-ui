@@ -845,9 +845,15 @@ test("Manage presents project facts and available actions to a project administr
   await expect(factRow(page, "Subscription ID")).toContainText(fixtureIds.product);
   await expect(factRow(page, "Unit ID")).toContainText(fixtureIds.unit);
   await expect(factRow(page, "Organisation ID")).toContainText(fixtureIds.organisation);
+  // Manage holds the containing unit, so it links the subscription where it lives rather than at a
+  // bare record with no surrounding context.
   await expect(page.getByRole("link", { name: "View subscription" })).toHaveAttribute(
     "href",
-    `/data-manager-ui/administration/subscriptions/${fixtureIds.product}`,
+    `/data-manager-ui/administration/units/${fixtureIds.unit}/subscriptions/${fixtureIds.product}`,
+  );
+  await expect(page.getByRole("link", { name: "View charges" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/administration/units/${fixtureIds.unit}/subscriptions/${fixtureIds.product}/charges`,
   );
 
   // The one exclusively platform-administrator action is absent, not merely unavailable.

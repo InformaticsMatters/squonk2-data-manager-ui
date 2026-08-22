@@ -51,6 +51,18 @@ The app has its own git repository (InformaticsMatters/squonk2-data-manager-ui),
 - That playbook delivers runtime configuration as a ConfigMap mounted over `/app/.env.production`, rather than as container environment variables. It writes deployment-facing names (`BASE_URL`, `BASE_PATH`, `KEYCLOAK_URL`, the API servers, the Keycloak client credentials); the image's committed `.env` derives the names the app actually reads from those, so renaming a variable the app reads means changing the playbook too.
 - `NEXT_PUBLIC_*` values are inlined by `next build`, so a running container cannot change them — the image build receives only `GIT_SHA` and `BASE_PATH`.
 
+## Checking external facts
+
+Never state a package's version, stability, API, or existence from memory. Model knowledge of the
+JavaScript ecosystem goes stale quickly, and a confident wrong claim — "that package is
+experimental", "that API does not exist yet" — steers a design down the wrong branch before anyone
+checks. **Web-search the primary source first** (the project's own documentation, changelog, or
+release notes), then say what you found. This applies to anything a decision rests on: whether a
+feature is experimental, which package supersedes another, what a config option is called, what a
+version supports.
+
+The same rule holds for this repository's own facts: read the file rather than recalling it.
+
 ## Agent skills
 
 ### Issue tracker

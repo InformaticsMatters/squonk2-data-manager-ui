@@ -1,8 +1,8 @@
-const appPort = 4310;
-const oidcPort = 4311;
-const dataManagerPort = 4312;
-const accountServerPort = 4313;
-const controlPort = 4314;
+const appPort = Number(process.env.ACCEPTANCE_PORT ?? 4310);
+const oidcPort = appPort + 1;
+const dataManagerPort = appPort + 2;
+const accountServerPort = appPort + 3;
+const controlPort = appPort + 4;
 
 const accountServerUrl = `http://127.0.0.1:${accountServerPort}`;
 const appUrl = `http://127.0.0.1:${appPort}`;
@@ -34,13 +34,21 @@ export const acceptanceEnvironment = {
   NEXT_PUBLIC_BASE_PATH: basePath,
   NEXT_PUBLIC_DATA_MANAGER_API_SERVER: dataManagerUrl,
   NEXT_PUBLIC_DEPICT_API_SERVER: `${dataManagerUrl}/depict`,
-  NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: "data-manager-ui-acceptance",
-  NEXT_PUBLIC_KEYCLOAK_ISSUER_URL: oidcUrl,
   NEXT_PUBLIC_PROJECT_CREATION_TIMEOUT_MS: "750",
   NODE_ENV: "production",
   TEST_PORT: String(appPort),
   VERCEL_BRANCH_URL: appUrl,
 } satisfies NodeJS.ProcessEnv;
+
+const {
+  KEYCLOAK_CLIENT_ID: _keycloakClientId,
+  KEYCLOAK_CLIENT_SECRET: _keycloakClientSecret,
+  KEYCLOAK_ISSUER_URL: _keycloakIssuerUrl,
+  KEYCLOAK_URL: _keycloakUrl,
+  ...acceptanceBuildEnvironment
+} = acceptanceEnvironment;
+
+export { acceptanceBuildEnvironment };
 
 export const acceptanceUrls = {
   accountServer: acceptanceEnvironment.ACCOUNT_SERVER_API_SERVER,

@@ -1,3 +1,10 @@
+# [7.0.0-dev.13](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.12...7.0.0-dev.13) (2026-08-22)
+
+
+### Bug Fixes
+
+* resolve logout from runtime configuration ([b766f70](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b766f702ba21381bebc2983cf71e19f63b10aece))
+
 # [7.0.0-dev.12](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.11...7.0.0-dev.12) (2026-08-22)
 
 

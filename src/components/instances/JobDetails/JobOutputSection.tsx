@@ -2,9 +2,9 @@ import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manag
 
 import { List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
 
+import { resultInstanceOutputs } from "../../../projects/instanceFacts";
 import { InputOutputItemIcon } from "./InputOutputItemIcon";
 import { JobLink } from "./JobLink";
-import { type OutputValue } from "./types";
 
 export interface JobOutputSectionProps {
   /**
@@ -14,42 +14,38 @@ export interface JobOutputSectionProps {
 }
 
 /**
- * Displays generated outputs for a task.
+ * Displays generated outputs for a task. A job accounts for its outputs through the definition it
+ * rendered at launch, so the outputs shown are whichever of the instance's own two declarations
+ * accounts for it.
  */
 export const JobOutputSection = ({ instance }: JobOutputSectionProps) => {
-  const outputs = (instance.outputs ?? {}) as Record<string, OutputValue>;
-  const outputsEntries = Object.entries(outputs);
+  const outputs = resultInstanceOutputs(instance);
 
-  if (outputsEntries.length === 0) {
+  if (outputs.length === 0) {
     return <Typography>This job has no outputs</Typography>;
   }
 
   return (
     <List aria-label="list of job outputs">
-      {/* We currently have to assume that the outputs have a consistent type */}
-      {outputsEntries.map(([name, output]) => {
-        const isFile = output.type === "file" || output.type === "files";
-
-        return (
-          <ListItem key={name} sx={{ alignItems: "flex-start" }}>
-            <ListItemAvatar>
-              <InputOutputItemIcon type={isFile ? "file" : "directory"} />
-            </ListItemAvatar>
-            <ListItemText
-              disableTypography
-              primary={<Typography variant="body1">{output.title}</Typography>}
-              secondary={
-                <JobLink
-                  isFile={output.type === "file" || output.type === "files"}
-                  path={output.creates}
-                  projectId={instance.project_id}
-                />
-              }
-              sx={{ m: 0 }}
-            />
-          </ListItem>
-        );
-      })}
+      {outputs.map((output) => (
+        <ListItem key={output.name} sx={{ alignItems: "flex-start" }}>
+          <ListItemAvatar>
+            <InputOutputItemIcon type={output.kind} />
+          </ListItemAvatar>
+          <ListItemText
+            disableTypography
+            primary={<Typography variant="body1">{output.title}</Typography>}
+            secondary={
+              <JobLink
+                isFile={output.kind === "file"}
+                path={output.creates}
+                projectId={instance.project_id}
+              />
+            }
+            sx={{ m: 0 }}
+          />
+        </ListItem>
+      ))}
     </List>
   );
 };

@@ -16,6 +16,7 @@ import {
   resultInstanceJob,
   resultInstanceKind,
   resultInstanceLogsPath,
+  resultInstanceOutputs,
   resultInstancePollInterval,
   resultInstanceSettlement,
   resultInstanceTerminationAction,
@@ -371,4 +372,106 @@ test("one module owns the addressed instance read and the polling that follows i
       /useQueryClient|invalidateQueries|usePatchInstance|useTerminateInstance/u,
     );
   }
+});
+
+// The rendered outputs of a real job instance: the Data Manager hands them over as a JSON string,
+// keyed by the name the job definition declared the output under.
+const renderedOutputs = JSON.stringify({
+  outputFile: {
+    "annotation-properties": { "derived-from": "inputFile" },
+    creates: "sa-score/scored.sdf",
+    "mime-types": ["chemical/x-mdl-sdfile"],
+    title: "Output file",
+    type: "file",
+  },
+});
+
+test("a job accounts for its outputs through the definition it rendered", () => {
+  // A job populates `rendered_outputs` alone, which is the case that used to report no outputs at
+  // all: the outputs fixed at launch are empty for every job.
+  expect(
+    resultInstanceOutputs(instance({ outputs: {}, rendered_outputs: renderedOutputs })),
+  ).toEqual([
+    { creates: "sa-score/scored.sdf", kind: "file", name: "outputFile", title: "Output file" },
+  ]);
+
+  // Where an instance declares both, what it actually rendered is what it produced.
+  expect(
+    resultInstanceOutputs(
+      instance({
+        outputs: { results: { creates: "results/", title: "Launch-time results" } },
+        rendered_outputs: renderedOutputs,
+      }),
+    ).map((output) => output.title),
+  ).toEqual(["Output file"]);
+
+  // A step instance fixes its outputs at launch and renders none, so those are what it is
+  // accounted for by.
+  expect(
+    resultInstanceOutputs(
+      instance({ outputs: { results: { creates: "results/docked.sdf", title: "Docked poses" } } }),
+    ),
+  ).toEqual([
+    { creates: "results/docked.sdf", kind: "directory", name: "results", title: "Docked poses" },
+  ]);
+
+  // Both fields are optional, so an instance that declared no outputs at all stays a real case.
+  expect(resultInstanceOutputs(instance())).toEqual([]);
+  expect(resultInstanceOutputs(instance({ outputs: {}, rendered_outputs: "{}" }))).toEqual([]);
+});
+
+test("a rendered declaration this client cannot read accounts for nothing on its own", () => {
+  const launched = { results: { creates: "results/docked.sdf", title: "Docked poses" } };
+
+  // The rendered field is a JSON string the Data Manager owns. Anything this client cannot read as
+  // a map of outputs leaves the instance accounted for by the field it can read, rather than
+  // failing the screen the outputs are shown on.
+  for (const rendered of ["", "not json", '"a string"', "[]", "null", "3"]) {
+    expect(
+      resultInstanceOutputs(instance({ outputs: launched, rendered_outputs: rendered })).map(
+        (output) => output.title,
+      ),
+    ).toEqual(["Docked poses"]);
+  }
+
+  // An output that names no path cannot be located, so it is not presented as a link to nowhere.
+  for (const rendered of [
+    JSON.stringify({ outputFile: { title: "Output file" } }),
+    JSON.stringify({ outputFile: { creates: "  ", title: "Output file" } }),
+    JSON.stringify({ outputFile: { creates: 3, title: "Output file" } }),
+    JSON.stringify({ outputFile: "sa-score/scored.sdf" }),
+  ]) {
+    expect(
+      resultInstanceOutputs(instance({ outputs: launched, rendered_outputs: rendered })).map(
+        (output) => output.title,
+      ),
+    ).toEqual(["Docked poses"]);
+  }
+});
+
+/** One instance carrying exactly one rendered output, which is what the Data Manager renders. */
+const renderedOutput = (output: Record<string, unknown>) =>
+  resultInstanceOutputs(instance({ rendered_outputs: JSON.stringify({ outputFile: output }) })).at(
+    0,
+  );
+
+test("an output is located as a file only where the instance said it wrote one", () => {
+  // A single file and a glob of files are both located as files.
+  for (const type of ["file", "files"]) {
+    expect(
+      renderedOutput({ creates: "sa-score/scored.sdf", title: "Output file", type })?.kind,
+    ).toBe("file");
+  }
+
+  // A directory, and a path whose type this client has no rule for, are located as the directory
+  // that contains them: a path it cannot place as a file is not one it can open.
+  for (const type of ["directory", "molecules-smi", undefined, 4]) {
+    expect(renderedOutput({ creates: "sa-score/", title: "Output file", type })?.kind).toBe(
+      "directory",
+    );
+  }
+
+  // An untitled output is shown under the name the instance keys it by.
+  expect(renderedOutput({ creates: "sa-score/scored.sdf" })?.title).toBe("outputFile");
+  expect(renderedOutput({ creates: "sa-score/scored.sdf", title: "  " })?.title).toBe("outputFile");
 });

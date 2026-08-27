@@ -13,7 +13,8 @@ A project's **Run** section is the catalogue of everything you can launch in tha
 **workflows**, **applications** and **jobs**. Whatever you launch runs in the project in the address
 bar, with access to that project's files.
 
-What is available is decided by the system administrator of this deployment.
+What is available is decided by the system administrator of this deployment. Running any of it
+requires that you be a project editor or administrator.
 
 ## The catalogue
 
@@ -30,7 +31,8 @@ Reading that card from the top:
 - The chip on the right counts **how many times the version the card is offering has already run in
   this project**. Selecting it opens the project's **[Results](/docs/how-to/projects/results)**
   narrowed to that same version. A card never lists its own executions; this count is the way to
-  them.
+  them. A chip reading `…` is still counting; one reading `!` could not read the executions at all —
+  that is the count failing, not the job. Hovering a chip says which it is.
 - The heading is the definition's **identifier** — `sa-score` above — and the line beneath it the
   fuller name it is published under, here _Synthetic accessibility score_. The launch dialog leads
   with that fuller name, so the two screens name the same definition differently on purpose.
@@ -51,7 +53,8 @@ Reading that card from the top:
 field matches the terms each definition declares: for a job, its keywords, category, name and
 description. For instance, jobs implemented using RDKit should be labelled as "rdkit", so typing
 "rdkit" into the search box shows only cards carrying that keyword; the keywords for each definition
-are displayed as chips towards the bottom of the card.
+are displayed as chips towards the bottom of the card. The field's label states its shortcut —
+**Ctrl+F**, or **⌘F** on a Mac — which focuses it in place of the browser's own find.
 
 Both controls are held in the URL, so a narrowed catalogue can be shared and survives a refresh.
 
@@ -60,12 +63,30 @@ says so, and definitions that could not be refreshed cannot be run until they lo
 
 ### Job versions
 
-A job may be published in several versions. The version control in the card's footer states which
-version the card is currently offering and lets you choose another. Choosing one moves the card's
-whole footer, its execution count and its **Run** destination together, so what you read and what
-you would launch can never disagree.
+A job may be published in several versions. A card opens on the **newest** of them, and the menu
+lists them newest first. A version the Data Manager has marked as replaced is not offered at all, so
+a version you ran before may no longer be there.
 
-## Launching
+The version control in the card's footer states which version the card is currently offering and
+lets you choose another. Choosing one moves more than the footer: the description, its documentation
+link, the category, the collection and the keywords are all the selected version's, as are the
+execution count and the **Run** destination. What you read and what you would launch can never
+disagree.
+
+## What you need to run anything
+
+You must be a **project editor or administrator**; an observer cannot run work. Two further things
+stop a launch:
+
+- the project's subscription is at its **coin limit**, so nothing more can be run;
+- the project's subscription **does not account for instances**, so running work cannot be
+  established as safe.
+
+All three are stated in one place, above the catalogue, rather than repeated on every card — and
+nothing is stated at all when nothing prevents you from running. What a particular version requires
+beyond that is stated by the dialog that launches it.
+
+## Running a job
 
 Clicking **Run** opens that definition at its own URL — so a launch form can be linked to and
 survives a refresh — and presents a dialog for the inputs and options.
@@ -74,29 +95,62 @@ survives a refresh — and presents a dialog for the inputs and options.
 
 The dialog is headed by the definition's own name, and beneath it the kind, the collection it comes
 from and the version being launched — above, a **Job** from the **rdkit** collection at version
-2.0.0. **Job name** names this execution so that you can recognise it later under **Results**, and
-**Debug** lets an administrator inspect the instance once it has finished.
+2.0.0. **Job name** names this execution so that you can recognise it later under **Results**; it
+arrives filled in with the job's own identifier, so it is worth changing to something that will
+distinguish this run from the next. **Debug** lets an administrator inspect the instance once it has
+finished.
 
 _Inputs_ are the project files the job works on. **Select file** opens the project's files to choose
-from, and what you choose is then listed beside it. Some jobs also accept molecules entered
-directly: those offer a **Method** choice between **SMILES** and **Files**, and ask for the
-molecules themselves when you choose SMILES.
+from, and what you choose is then listed beside it.
+
+Some jobs also accept molecules entered directly. Those offer a **Method** choice between **SMILES**
+and **Files**. Choosing **SMILES** gives a row per molecule — a SMILES field, a control that deletes
+it, and one that opens a **sketcher** to draw the structure instead — and **Add Molecule** below to
+add another. Only one sketcher may be open at a time, and **Save** writes what you drew back into
+the field as SMILES.
+
+Switching **Method** clears what you have entered, since files and molecules are not
+interchangeable.
 
 _Options_ are user-specified parameters for the execution — above, whether the input and output
 carry header lines, the separator to use for text formats, and which field identifies a record. An
-important option is often the name of the output file. We recommend putting the outputs of a job in
-a new subdirectory so that the output of one job does not overwrite that of another. Most jobs are
+important option is often the name of the output file. Putting a job's outputs in a subdirectory of
+their own is worth the trouble: one job's output then cannot overwrite another's. Most jobs are
 implemented so that you can specify a full path to the file you want, including subdirectories: the
 example above writes `sa-score/scored.sdf`, and the directory `sa-score/` is created for you (from
 the project root).
 
-Specify these inputs and options and click **Run** at the bottom. A successful launch opens what it
-created under **[Results](/docs/how-to/projects/results)**, so you follow the work that was actually
-started. Closing the dialog instead returns you to the catalogue exactly as you left it.
+Specify these inputs and options and click **Run** at the bottom, which stays unavailable until
+every required input — each marked with an asterisk — has been supplied. A successful launch opens
+what it created under **[Results](/docs/how-to/projects/results)**, so you follow the work that was
+actually started. Closing the dialog instead returns you to the catalogue exactly as you left it.
 
-What running anything in this project requires is stated once, above the catalogue, rather than
-repeated on every card. What a particular version requires beyond that is stated by the dialog that
-launches it.
+A launch that is not accepted keeps the dialog, its route and everything you entered. The dialog
+states which of two things happened:
+
+- The Data Manager **refused** it. Nothing was launched, and neither the project nor the catalogue
+  beneath the dialog has changed.
+- It **could not be completed**. Nothing was launched either, but the attempt can be sent again —
+  correct whatever it named and use **Run** once more.
+
+While a launch is in flight it cannot be sent twice; **Run** is unavailable until the Data Manager
+answers.
+
+A job that launched and then failed is a different matter: it exists, so it has left something to
+read. Its **Logs** action under **[Results](/docs/how-to/projects/results)** opens that instance's
+own log directory in the project's **[Files](/docs/how-to/projects/files)**, which is the first
+place to look when a run did not do what you expected.
+
+### When a job cannot be run
+
+Beyond what the project requires, the Data Manager can disable a job, and no authority overrides
+that — a project administrator cannot run a disabled job any more than an editor can. Disabling is
+per version, so one version of a job may be disabled while another is offered.
+
+The catalogue does not mark a disabled version; you meet it when you open the launch dialog, which
+states the Data Manager's own reason and does not offer **Run**. Where you also lack the authority
+to run work in the project, both are stated, so a version you could not have run anyway is not
+hidden behind the authority you lack.
 
 ## Running an application
 
@@ -129,8 +183,9 @@ Clicking **Run** opens the launch dialog:
 
 Most importantly, give the _Instance Name_ a sensible value so that you can recognise this instance
 later under **Results**. Then specify the _Container image_, which defines the type of notebook
-image to run. These are images from the standard Jupyter project. If you need one that is not
-offered then let us know and we'll see if we can add it to the list.
+image to run. These are images from the standard Jupyter project, and the choice offered is the one
+the Data Manager publishes with the application — an image you need that is not on the list is one
+for this deployment's administrator to pursue.
 
 You might also want to specify additional memory or CPU requests, but only do this if you actually
 need those extra amounts.
@@ -141,35 +196,22 @@ there, **Open** opens the Jupyter Lab interface in a new browser tab.
 
 <Image src={jupyter_lab} alt="Jupyter Lab interface" />
 
-Here we assume that you are familiar with using Jupyter so won't go over this in detail, but in
-brief you can use:
+Using Jupyter Lab itself is the Jupyter project's own subject, and the
+[JupyterLab documentation](https://jupyterlab.readthedocs.io/en/stable/) covers it. What matters
+here is that the notebook, the Python console and the terminal it offers all have full access to
+your project's data — the file explorer on the left is your project's volume.
 
-- the file explorer on the left hand side to manage the files in your project
-- launch a notebook by clicking the icon in the _Notebook_ section of the main panel
-- launch a Python console by clicking the icon in the _Console_ section of the main panel
-- a terminal (bash shell) by clicking the icon in the _Other_ section of the main panel
+What the interface offers varies with the container image you chose at launch: choose the
+_r notebook_ image and you will find R where Python would otherwise be.
 
-All of these have full access to your project's data.
-
-The exact details of what will be present in the Jupyter Lab interface will vary a bit depending on
-the type of container image you chose when you launched. For instance, if you chose the _r notebook_
-option then you'll see options for R rather than Python.
-
-These notebook images use the Conda package manager so you can use conda to install extra packages.
-For instance, to install RDKit you can execute this in a bash shell:
+The images use the Conda package manager, and do not all carry the chemistry packages you may want.
+To install RDKit, run this in a terminal, or as a notebook cell prefixed with `!`:
 
 ```
 conda install -y -c conda-forge rdkit
 ```
 
-or enter this as a cell in a notebook:
-
-```
-! conda install -y -c conda-forge rdkit
-```
-
-For large packages with lots of dependencies (like RDKit) this will take a bit of time to complete,
-but only has to be done once in the lifetime of the notebook instance.
+A large package takes a while, but only once in the lifetime of the instance.
 
 When you are finished with the notebook instance, terminate it from its card under **Results**. This
 frees up all the resources it is using.

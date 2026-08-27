@@ -1,3 +1,10 @@
+# [7.0.0-dev.16](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.15...7.0.0-dev.16) (2026-08-27)
+
+
+### Bug Fixes
+
+* **projects:** title the Manage section in its own heading again ([24d0957](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/24d09577b25c5963286727071d764545018aa72c)), closes [#2009](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2009)
+
 # [7.0.0-dev.15](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.14...7.0.0-dev.15) (2026-08-22)
 
 

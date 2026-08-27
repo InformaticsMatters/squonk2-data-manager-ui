@@ -13,7 +13,12 @@ declare global {
 }
 
 // Story discovery has to stay inline: Vite analyses this glob statically, relative to this file.
-const stories = import.meta.glob<Record<string, unknown>>("../../src/**/*.story.{tsx,jsx}");
+// Next's own `ImportMeta.glob` (Turbopack) overloads merge with Vite's and drop the type parameter,
+// so the module shape is asserted here instead of passed as a generic argument.
+const stories = import.meta.glob("../../src/**/*.story.{tsx,jsx}") as Record<
+  string,
+  () => Promise<Record<string, unknown>>
+>;
 
 const idOf = (file: string) => file.replace(/^(?:\.\.\/)+src\//u, "").replace(/\.story\.\w+$/u, "");
 

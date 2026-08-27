@@ -83,7 +83,7 @@
     "better-auth": "1.6.11",
     "dayjs": "1.11.23",
     "filesize": "11.0.17",
-    "immer": "11.1.8",
+    "immer": "11.1.18",
     "jotai": "2.20.0",
     "just-compare": "2.3.0",
     "just-group-by": "2.2.0",

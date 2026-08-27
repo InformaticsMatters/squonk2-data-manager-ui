@@ -1,0 +1,81 @@
+# Manage
+
+A project's **Manage** section states the facts of that project and holds the changes you can make
+to it. It is available to everyone who can see the project, so you can always read a project's
+details even where you cannot change anything — if your access is read-only, the section says so,
+and every unavailable change explains what it requires.
+
+## The heading
+
+The heading names the owning organisation and containing unit, then the project itself, and beside
+it a row of chips: whether the project is **Private** or **Public**, and every role you hold in it —
+**Creator**, **Administrator**, **Editor**, **Observer** — or **No project role** where you hold
+none.
+
+## Coin usage
+
+**Coin usage** states what the project's subscription has spent and what it is allowed. Beside the
+heading are the subscription's tier and type.
+
+The headline figure is the coins used out of the coin limit, with a bar beneath it. The mark on the
+bar is the **included allowance** — the point beyond which coins cost more than the tier's own rate.
+Beneath the bar is the allowance in figures, the billing day, and the days remaining in the current
+billing period.
+
+Four tiles break that down:
+
+- **Burn rate** - coins per day.
+- **Predicted spend** - coins projected for this billing period.
+- **Storage** - the storage size, captioned with the coins it has used.
+- **Instance spend** - the coins execution has used, where that figure is available.
+
+If the subscription has reached its coin limit, the card says so and the actions that would spend
+more are disabled.
+
+**View subscription** and **View charges** lead to that subscription in
+**[Administration](/docs/how-to/administration)**, which holds the detailed ledgers.
+
+## People
+
+**People** holds the project's **administrators**, **editors** and **observers**, and is where you
+add and remove them. What each role can do is described on the [Concepts](/docs/concepts) page.
+
+Where you may not change a list, it is still shown — you can always see who can reach the project.
+
+## About
+
+**About** states when the project was created and by whom, its containing unit, its owning
+organisation, and whether it is private. Beneath those facts is the control that changes the
+project's privacy.
+
+Evaluation tier projects cannot be made private.
+
+## What you can do here
+
+**What you can do here** answers the question directly, for the two things that matter most:
+
+- **Change files** - whether you can add to and modify the project's files.
+- **Run work** - whether you can launch workflows, applications and jobs in it.
+
+Where either is unavailable, the reason is stated beside it — a role you do not hold, or a
+subscription that has reached its limit.
+
+## Identifiers
+
+**Identifiers** lists the project ID, subscription ID, unit ID and organisation ID. Quote these when
+you contact support.
+
+## Danger zone
+
+Deleting a project permanently removes its files and working directories. You must be a project
+administrator to delete it.
+
+The deletion runs across two services — the Data Manager project and the Account Server subscription
+behind it — so it reports its progress, and if part of it fails it says what happened and what is
+left to do rather than leaving you to guess.
+
+## A view across many projects
+
+**Manage** is the best starting point for one project. For a view across an organisation or a unit,
+use **Usage & Inventory** under
+**[Administration](/docs/how-to/administration)**, which is read-only.

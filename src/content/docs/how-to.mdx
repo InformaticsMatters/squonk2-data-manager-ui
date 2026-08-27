@@ -1,26 +1,9 @@
-import { Container } from "@mui/material";
-import Head from "next/head";
+import { DocsIndexList } from "../../components/DocsIndexList";
 
-import { DocsNav } from "../../components/DocsNav";
+# How-to guides
 
-<Head>
-  <title>Data Manager User Documentation - How To Guides</title>
-</Head>
+These guides are arranged the way the application is. **Projects**, **Datasets** and
+**Administration** are the three workspaces in the main navigation, and a project's own guides
+match its four sections: **Files**, **Run**, **Results** and **Manage**.
 
-<DocsNav />
-
-# How To Guides
-
-This page lists guides for doing certain things in the Squonk Data Manager.
-
-- [Logging in](./how-to/login) - logging in and authenticating
-- [Choosing where you work](./how-to/context) - projects, organisations and units
-- [Creating projects](./how-to/create-project) - and the different types of project
-- [Working with project data](./how-to/projects-tab) - using a project's Files
-- [Running applications](./how-to/applications) - launching and using Jupyter notebooks
-- [Running jobs](./how-to/jobs) - launching jobs
-- [Inspecting job and application execution](./how-to/execution) - using a project's Results
-- Working with datasets
-- [Inspecting usage and quotas](./how-to/usage-quotas) - finding about your costs
-
-export default ({ children }) => <Container>{children}</Container>;
+<DocsIndexList href="/docs/how-to" />

@@ -1,37 +1,38 @@
-import Head from "next/head";
+import keycloak from "../assets/keycloak.png";
 
-import { Container } from "@mui/material";
-
-import { DocsNav } from "../../../components/DocsNav";
-import login from "../../../pages/docs/assets/login.png";
-import keycloak from "../../../pages/docs/assets/keycloak.png";
-
-<Head>
-  <title>Logging in - a How To guide</title>
-</Head>
-
-<DocsNav />
-
-## Logging in - a How To guide
+# Logging in
 
 To do anything useful in the Squonk Data Manager you must be authenticated. Squonk uses
-[Keycloak](https://www.keycloak.org/) as a Single Sign On (SSO) solution. To be able to use Squonk you must first
-have an account in the appropriate Keycloak instance and then log in using your username and password (or whatever other
-mechanisms that Keycloak instance might offer such as "log in with Google").
+[Keycloak](https://www.keycloak.org/) as a Single Sign On (SSO) solution. To be able to use Squonk
+you must first have an account in the appropriate Keycloak instance and then log in using your
+username and password (or whatever other mechanisms that Keycloak instance might offer, such as
+"log in with Google").
 
-The Keycloak instance might allow you to register yourself with an account or might require you to contact an
-administrator to set up the account for your before you can use it.
+The Keycloak instance might allow you to register yourself with an account, or might require you to
+contact an administrator to set up the account for you before you can use it.
 
-Once you have an account you can log in to the Squonk Data Manager using the **Account** drop down in the top right
-corner and choosing the **Login** option.
-
-<Image src={login} alt="User menu" />
-
-That will take you to Keycloak where you can authenticate (the exact details of the authentication options may differ
-from this example):
+Once you have an account you can log in to the Squonk Data Manager using the **Account** menu in the
+top right corner and choosing **Login**. That will take you to Keycloak where you can authenticate (the exact details of the authentication
+options may differ from this example):
 
 <Image src={keycloak} alt="Keycloak login" />
 
-To log out use the same **Account** drop down in the top right corner and choosing the **Logout** option.
+## Where you land
 
-export default ({ children }) => <Container>{children}</Container>;
+You are returned to the page you were on when you signed in, including the exact resource and view
+it named, so a link someone sent you survives being logged in to reach it.
+
+## What the Account menu shows
+
+Once signed in, the **Account** menu shows your username, the Data Manager and Account Server roles
+your account holds, the colour scheme selection, and a control that shows or hides the event stream.
+
+## Logging out
+
+To log out use the same **Account** menu and choose **Logout**. Signing out clears the
+account-scoped state this browser was holding, including the organisation you were working as.
+
+## After your first login
+
+Signing in is not by itself enough to start work: you also need a project. If you have none, see
+[Getting started](/docs/how-to/getting-started).

@@ -1,100 +1,111 @@
-import Head from "next/head";
+# Guided tour
 
-import { Container } from "@mui/material";
-
-import { DocsNav } from "../../components/DocsNav";
-
-<Head>
-  <title>Data Manager User Documentation - Guided tour</title>
-</Head>
-
-<DocsNav />
-
-# Guided Tour
-
-This page provides a high level overview of how to use the Squonk Data Manager.
-More detailed descriptions can be found in the individual [How to guides](./how-to)
-that are referred to in this document.
+This page walks through the Squonk Data Manager from logging in to reading a result. More detailed
+descriptions can be found in the individual [how-to guides](/docs/how-to) referred to along the way.
 
 ## Logging in
 
-To do anything useful in the Squonk Data Manager you must login and be authenticated. Do this using the **Account**
-menu in the top right corner and click _login_. You are taken to Keycloak where you authenticate, and, assuming you are
-successful, you are taken back to the Data Manager where you can perform your work.
+To do anything useful in the Squonk Data Manager you must log in and be authenticated. Do this using
+the **Account** menu in the top right corner and clicking **Login**. You are taken to Keycloak where
+you authenticate, and, assuming you are successful, you are taken back to the Data Manager where you
+can perform your work.
 
-When finished use the _Logout_ option in the **Account** menu.
+When finished use the **Logout** option in the same **Account** menu.
 
-More details can be found in the [Logging in](./how-to/login) How To guide.
+More details can be found in the [Logging in](/docs/how-to/login) guide.
+
+## The shell you land in
+
+Once signed in, the masthead shows the **organisation** you are working as, and the main navigation
+offers the three workspaces: **Projects**, **Datasets** and **Administration**.
+
+The organisation is the one thing about where you are that is remembered between visits. Changing it
+takes you Home first, so nothing is ever shown under an organisation it does not belong to.
+
+If you have no project of your own yet, the **Projects** index offers to get you one: it explains
+the hierarchy, creates your **personal unit**, and hands you to project creation. See
+[Getting started](/docs/how-to/getting-started).
 
 ## Choosing a project
 
-Once you are logged in, choose **Projects** in the main navigation. This opens a searchable index of
-the projects you can reach in your current **Organisation**, each labelled with the **Unit** it
-belongs to. Selecting one opens that project's **Files**.
+Choose **Projects** in the main navigation. This opens a searchable index of the projects you can
+reach in your current organisation. Each row states the project, the **unit** that contains it, the
+highest role you hold in it, and whether it is private. Selecting one opens that project's **Files**.
 
 The project you are working in is always the one in the address bar, so the page, its data and the
 link you can share always agree, and returning to the index is how you move to another project.
+Once you are in a project, the strip below the masthead names it and offers its four sections.
 
-More details can be found in the [Choosing where you work](./how-to/context) How To guide.
+More details can be found in the [Projects](/docs/how-to/projects) guide.
 
-## Project Files
+## Files
 
-This shows the contents (files and directories) in your project.
-The interface is a simple file browser a bit like Windows Explorer and probably doesn't need much explanation.
-Note that the operations you can perform here are quite limited. If you want full control we suggest you run a Jupyter
-notebook in your project and use the file manager of the Jupyter lab interface, or a command line console to perform your
-operations.
+This shows the contents (files and directories) in your project. The interface is a simple file
+browser a bit like Windows Explorer and probably doesn't need much explanation. Note that the
+operations you can perform here are quite limited. If you want full control we suggest you run a
+Jupyter notebook in your project and use the file manager of the Jupyter Lab interface, or a command
+line console, to perform your operations.
 
-Jobs and applications have full access to these project contents.
+Everything you run has full access to these project contents. See the
+[Files](/docs/how-to/projects/files) guide.
 
-## Project Run
+## Run
 
-This is where you launch **Applications**, **Jobs** and **Workflows** to do your work. Whatever you
+This is where you launch **workflows**, **applications** and **jobs** to do your work. Whatever you
 launch runs in the project in the address bar.
 
-Those that are available (defined by the system administrator) are displayed as "cards". You can type into the "Search"
-box to filter these using terms that are defined for each job or app. For instance jobs implemented using RDKit should
-be labelled as "rdkit" so typing "rdkit" into the search box will show only cards that have this label. The labels for
-each job are displayed towards the bottom of the card in red.
+What is available (defined by the system administrator) is displayed as cards. Each card states the
+kind of definition it is, how many times it has run in this project, and — for a job — which version
+it is offering. Use **Filter** to show only **Workflows**, **Applications** or **Jobs**, and the
+search field to narrow by name or keyword.
 
-To run a job or application click on the _Run_ button. A dialog will appear allowing you to define the job inputs and
-options.
+To run something, click its **Run** button. A dialog appears letting you define the inputs and
+options: _inputs_ are project files that form the input, and _options_ are the parameters for the
+execution. Specify these and click **Run**. A successful launch opens what it created under
+**Results**, so you can follow the work that was actually started.
 
-_Inputs_ are project files that form the input to the job.
-_Options_ are user specified parameters for execution of the job.
+See the [Run](/docs/how-to/projects/run) guide for more details.
 
-Specify these inputs and options and click the _Run_ button at the bottom. A successful launch opens
-what it created under **Results**, so you can follow the work that was actually started.
+## Results
 
-See the [Running jobs](./how-to/jobs) How To guide for more details.
+This shows what you have launched in the project you are in, and nothing from any other project. A
+high level summary of each result is presented along with the ability to drill down into the
+specific details.
 
-Launching an **Application** is very similar. Currently the only available application is a Jupyter Notebook.
-See the [Running applications](./how-to/applications) How To guide for more details.
+Details include the status and any events that were generated. You are also able to view the input
+and output files and any log files that were created.
 
-## Project Results
+When you are finished, remember to terminate a running application or job to free up the resources
+it is using.
 
-This shows the execution of your **Applications**, **Jobs** and **Workflows** in the project you are
-in, and nothing from any other project. A high level summary of each one is presented along with the
-ability to drill down into the specific details of each instance.
+See the [Results](/docs/how-to/projects/results) guide for more details.
 
-Details include the Status of the job and any events it might have generated. You are also able to view the input and output
-files and any log files that are generated.
+## Manage
 
-When you are finished remember to TERMINATE your job or application to free up the resources it is using.
+A project's **Manage** section states the project's facts and holds the changes you can make to it:
+the roles you hold, its coin usage, the people who can reach it, its privacy, what you can do in it,
+its identifiers, and — for its creator — its deletion.
 
-See the [Inspecting job and application execution](./how-to/results) How To guide for more details.
+**Manage** is available to everyone who can see the project, so you can always read a project's
+details even where you cannot change anything. See the [Manage](/docs/how-to/projects/manage) guide.
 
 ## Datasets
 
-**Datasets** is one of the three main destinations, alongside **Projects** and **Administration**. It
-lists every dataset you can reach, without you having to choose a unit first; a unit is asked for
-only as billing context when you upload.
+**Datasets** is one of the three workspaces, alongside **Projects** and **Administration**. It lists
+every dataset you can reach, without you having to choose a unit first; a unit is asked for only as
+billing context when you upload. From a dataset version you can attach it to a project, add a new
+version, or view its contents. See the [Datasets](/docs/how-to/datasets) guide.
 
 ## Administration
 
-**Administration** is available to every signed-in user and holds **Organisation & access**,
-**Subscriptions**, **Charges**, and **Usage & inventory**. Ordinary actions you cannot use are
-disabled with a reason rather than removed, so it is clear what relationship or role a task
-requires. Actions that only a platform administrator can ever take are hidden instead.
+**Administration** is available to every signed-in user. Its rail lists the organisation in effect —
+with **Overview**, **Charges** and **Usage & Inventory** — and beneath that every unit of that
+organisation, searchable. Choosing a unit opens its **Access**, **Subscriptions**, **Charges** and
+**Usage & Inventory**.
 
-export default ({ children }) => <Container>{children}</Container>;
+What you can change there depends on your role. Ordinary actions you cannot use are disabled with a
+reason rather than removed, so it is clear what relationship or role a task requires; actions that
+only a platform administrator can ever take are hidden instead. Where a read is refused outright,
+the page keeps what it can show and says which part is missing.
+
+See the [Administration](/docs/how-to/administration) guide.

@@ -36,19 +36,20 @@ declare module "nextjs-routes" {
     | DynamicRoute<"/datasets/[datasetId]", { "datasetId": string }>
     | DynamicRoute<"/datasets/[datasetId]/versions/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>
     | DynamicRoute<"/datasets/[datasetId]/versions/[datasetVersion]/view", { "datasetId": string; "datasetVersion": string }>
+    | StaticRoute<"/docs">
     | StaticRoute<"/docs/concepts">
     | StaticRoute<"/docs/developer">
     | StaticRoute<"/docs/guided-tour">
     | StaticRoute<"/docs/how-to">
-    | StaticRoute<"/docs/how-to/applications">
-    | StaticRoute<"/docs/how-to/context">
-    | StaticRoute<"/docs/how-to/create-project">
-    | StaticRoute<"/docs/how-to/execution">
-    | StaticRoute<"/docs/how-to/jobs">
+    | StaticRoute<"/docs/how-to/administration">
+    | StaticRoute<"/docs/how-to/datasets">
+    | StaticRoute<"/docs/how-to/getting-started">
     | StaticRoute<"/docs/how-to/login">
-    | StaticRoute<"/docs/how-to/projects-tab">
-    | StaticRoute<"/docs/how-to/results">
-    | StaticRoute<"/docs/how-to/usage-quotas">
+    | StaticRoute<"/docs/how-to/projects">
+    | StaticRoute<"/docs/how-to/projects/files">
+    | StaticRoute<"/docs/how-to/projects/manage">
+    | StaticRoute<"/docs/how-to/projects/results">
+    | StaticRoute<"/docs/how-to/projects/run">
     | StaticRoute<"/docs/jobs">
     | StaticRoute<"/projects">
     | DynamicRoute<"/projects/[projectId]/files", { "projectId": string }>

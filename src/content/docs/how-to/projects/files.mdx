@@ -1,0 +1,55 @@
+# Files
+
+Your project has its own data volume (a directory containing your project's files). That volume is
+accessible to everything you run in the project, providing a simple way to work with your data.
+
+A project's **Files** section shows that data and lets you perform simple operations on it. It's a
+bit like a simple file manager such as Windows Explorer: it lists the files and directories that are
+present and lets you navigate them. The current directory is held in the URL, so a directory deep in
+the tree can be linked to and survives a refresh.
+
+Each row states the file name, its owner, its mode, its size and when it was last updated, and
+offers the actions available for it.
+
+You can also:
+
+- upload new files to your project
+- download files from your project
+- delete existing files
+- rename or move a file or directory
+- create and delete directories
+- create a dataset from a file (see the [Datasets](/docs/how-to/datasets) guide)
+- detach an attached dataset version from the project
+- mark a file or directory as a favourite, so it is quicker to reach when choosing job inputs
+- view the contents of a file
+
+Where the listing could not be established — because it is out of date or could not be read at all —
+nothing in it can be changed, and the section says so rather than offering actions that would fail.
+
+## Viewing a file
+
+A file name offers the viewers that file supports. Each viewer is its own URL, so a view of a file
+can be linked to:
+
+- **Plaintext Viewer** - displays the file as plaintext. This is the default, and every file offers
+  it.
+- **Browser Viewer** - displays the file in your browser if it supports the file type.
+- **SDF Viewer (alpha)** - displays SDF records as molecule cards containing the structure and
+  properties, filterable with a scatter plot selector. Offered for SDF files only. This feature is
+  under active development and may not work as expected — please give us feedback.
+
+Files the Data Manager holds compressed are decompressed for the viewer, and the viewer says that it
+did so.
+
+## When Files is not enough
+
+Not everything you might want to do is possible from **Files**. If you want to do more then your
+best bet is to launch the Jupyter Lab application in your project. That will let you manage your
+files either with the Jupyter Lab file manager or by opening up a console (bash shell). See the
+[Run](/docs/how-to/projects/run) guide for more details on launching Jupyter Lab.
+
+## Log files
+
+The **Logs** action on a job result opens that instance's own log directory here in **Files**, so
+reading a job's logs is reading the files it wrote. See the
+[Results](/docs/how-to/projects/results) guide.

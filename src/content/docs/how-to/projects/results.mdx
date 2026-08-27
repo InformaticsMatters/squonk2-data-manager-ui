@@ -1,0 +1,87 @@
+import results_2 from "../../assets/results-2.png";
+
+# Results
+
+A project's **Results** section shows what has been run in that project, and nothing from any other
+project. A high level summary of each result is presented along with the ability to drill down into
+its specific details.
+
+There are three kinds of result, and the section can be narrowed to any of them:
+
+- **Workflows** - executions of a workflow definition.
+- **Tasks** - work the Data Manager carried out on your behalf, such as attaching a dataset version
+  to the project.
+- **Instances** - runs of an application or a job.
+
+The heading states how many results the current narrowing left, out of how many the project has.
+
+## The controls
+
+The controls sit in a rail beside the list rather than above it, so the first thing you read on the
+page is the results themselves. The rail sticks as the list scrolls, so a long list can be narrowed
+without scrolling back to the top.
+
+**Filter Results** narrows the list by type — **Workflows**, **Tasks** and **Instances**. Selecting
+none of them, or all of them, is the same thing: the list shows **All types**.
+
+**Refresh results** reads the section's collections again. Beneath it, **Event debug** turns on the
+extra event detail the cards can show.
+
+The search field sits above the list and matches the results by name.
+
+### The definition filter
+
+Following a definition's execution count from the **[Run](/docs/how-to/projects/run)** catalogue
+opens **Results** narrowed to that definition. The rail then states which definition the list is
+narrowed to as a chip, in place of the type filter — the two narrowings are mutually exclusive —
+and the chip clears the narrowing.
+
+The list is narrowed to the definition, not to the exact version the link named, so results from
+every version of that definition are shown.
+
+If the list is empty, it says which definition it was narrowed to, so "this definition has never run
+here" is distinguishable from a page that is simply broken. If the definition itself is no longer in
+the catalogue, the section says so and shows every result in the project rather than an empty list.
+
+## One result
+
+Each card carries the result's name, its state, and when it started and finished. Expanding a card
+reveals its details in place; selecting it opens the result at its own URL, with **All results**
+leading back to the list you came from — narrowed exactly as you left it.
+
+<Image src={results_2} alt="An expanded job result" />
+
+The actions offered depend on what the result is and on what you may do in the project. Where an
+action is unavailable, the card states the reason rather than hiding the action.
+
+- **Terminate** (or **Delete**, once it has finished) - releases the resources the instance might
+  still be consuming. Remember to do this once your job is complete and you are happy with it. The
+  job's result files are **not** deleted, but intermediate and log files will be, as well as any
+  remaining Kubernetes resources.
+- **Open** - for an application such as a Jupyter notebook, opens its interface in a new browser
+  tab. Don't forget to terminate it when you have finished.
+- **Run again** - opens the job's launch form again, prefilled, so you can run it with the same or
+  different settings.
+- **Logs** - opens that instance's own log directory in the project's **Files**. This can be useful
+  if something has gone wrong.
+- The archive control decides whether the instance will be deleted automatically.
+
+A running workflow lists its steps inside the card, so you can see which step it has reached.
+
+## Inputs, outputs, states and events
+
+Information about what was executed is displayed at the top of an expanded result. Below that are
+its inputs and outputs — following those links shows the contents of those files.
+
+Then at the bottom are sections for **States** and **Events**. The work goes through a series of
+states: if things have gone to plan you should see that it was initially in PENDING state, then
+STARTED and finally SUCCESS. If it fails for some reason you will see a different sequence of
+states.
+
+The **Events** section shows the series of _events_ that are reported. This is useful to see what
+stage the work is at if it is still running, or what has happened if it is complete. Each job
+reports a different series of events, and deciding which events to report is an important
+responsibility of the job developer.
+
+Events are reported in near real time, but you may want to use **Refresh results** in the rail to
+update immediately.

@@ -1,0 +1,145 @@
+import job_launch from "../../assets/job-launch.png";
+import jupyter_launch from "../../assets/jupyter-launch.png";
+import jupyter_lab from "../../assets/jupyter-lab.png";
+
+# Run
+
+A project's **Run** section is the catalogue of everything you can launch in that project:
+**workflows**, **applications** and **jobs**. Whatever you launch runs in the project in the address
+bar, with access to that project's files.
+
+What is available is decided by the system administrator of this deployment.
+
+## The catalogue
+
+Each definition is presented as a card. A card states, in this order:
+
+- **the kind of definition it is** — **Workflow**, **Application** or **Job** — as a coloured chip,
+- **how many times it has run in this project**, as a chip that opens the project's **Results**
+  already narrowed to that definition,
+- its name and, beneath it, its group (for an application), its name (for a job) or the workflow's
+  own name,
+- its description, with a link to its published documentation where it has any,
+- for a job, its **Category** (the type of job it is, e.g. _molecular properties_) and its
+  **Collection** (where it comes from, e.g. _rdkit_), and for a workflow its **Version**,
+- its keywords, as chips.
+
+The card's footer holds the version it is offering, where there is a choice, and the **Run** control.
+Cards do not list their own executions: the execution count is the link to the place that lists them
+properly.
+
+### Narrowing the catalogue
+
+**Filter** narrows the catalogue by kind — **Workflows**, **Applications** and **Jobs**. The search
+field matches the terms each definition declares: for a job, its keywords, category, name and
+description. For instance, jobs implemented using RDKit should be labelled as "rdkit", so typing
+"rdkit" into the search box shows only cards carrying that keyword; the keywords for each definition
+are displayed as chips towards the bottom of the card.
+
+Both controls are held in the URL, so a narrowed catalogue can be shared and survives a refresh.
+
+The refresh control reads the catalogue again. If part of it could not be refreshed, the section
+says so, and definitions that could not be refreshed cannot be run until they load again.
+
+### Job versions
+
+A job may be published in several versions. The version control in the card's footer states which
+version the card is currently offering and lets you choose another. Choosing one moves the card's
+whole footer, its execution count and its **Run** destination together, so what you read and what
+you would launch can never disagree.
+
+## Launching
+
+Clicking **Run** opens that definition at its own URL — so a launch form can be linked to and
+survives a refresh — and presents a dialog for the inputs and options.
+
+<Image src={job_launch} alt="Launch job dialog" />
+
+_Inputs_ are project files that form the input.
+
+_Options_ are user-specified parameters for the execution, e.g. which properties to calculate in the
+example above. An important option is often the name of the output file. We recommend putting the
+outputs of a job in a new subdirectory so that the output of one job does not overwrite that of
+another. Most jobs are implemented so that you can specify a full path to the file you want,
+including subdirectories: e.g. you can specify `some/where/results.sdf` as the output file name and
+the directories `some/where/` will be created for you (from the project root).
+
+Specify these inputs and options and click **Run** at the bottom. A successful launch opens what it
+created under **[Results](/docs/how-to/projects/results)**, so you follow the work that was actually
+started. Closing the dialog instead returns you to the catalogue exactly as you left it.
+
+What running anything in this project requires is stated once, above the catalogue, rather than
+repeated on every card. What a particular version requires beyond that is stated by the dialog that
+launches it.
+
+## Running an application
+
+An application is a relatively long-running process that lets you perform some work. The only
+application currently supported is Jupyter Notebooks, accessed through the Jupyter Lab interface.
+
+To launch it, find it in the catalogue and click **Run**. This opens the launch dialog:
+
+<Image src={jupyter_launch} alt="Jupyter launch" />
+
+In that dialog you can specify a few options. Most importantly provide a sensible value for the
+_Instance Name_ so that you can recognise this instance in the future. Also specify the _Container
+image_, which defines the type of notebook image to run. These are images from the standard Jupyter
+project. If you need to use a different one then let us know and we'll see if we can add it to the
+list.
+
+You might also want to specify additional memory or CPU requests, but only do this if you actually
+need those extra amounts.
+
+When ready, click **Run**. A new container running that type of notebook is launched in the cluster
+and given access to the project's volume, and you are taken to it under **Results**. From its card
+there, **Open** opens the Jupyter Lab interface in a new browser tab.
+
+<Image src={jupyter_lab} alt="Jupyter Lab interface" />
+
+Here we assume that you are familiar with using Jupyter so won't go over this in detail, but in
+brief you can use:
+
+- the file explorer on the left hand side to manage the files in your project
+- launch a notebook by clicking the icon in the _Notebook_ section of the main panel
+- launch a Python console by clicking the icon in the _Console_ section of the main panel
+- a terminal (bash shell) by clicking the icon in the _Other_ section of the main panel
+
+All of these have full access to your project's data.
+
+The exact details of what will be present in the Jupyter Lab interface will vary a bit depending on
+the type of container image you chose when you launched. For instance, if you chose the _r notebook_
+option then you'll see options for R rather than Python.
+
+These notebook images use the Conda package manager so you can use conda to install extra packages.
+For instance, to install RDKit you can execute this in a bash shell:
+
+```
+conda install -y -c conda-forge rdkit
+```
+
+or enter this as a cell in a notebook:
+
+```
+! conda install -y -c conda-forge rdkit
+```
+
+For large packages with lots of dependencies (like RDKit) this will take a bit of time to complete,
+but only has to be done once in the lifetime of the notebook instance.
+
+When you are finished with the notebook instance, terminate it from its card under **Results**. This
+frees up all the resources it is using.
+
+## Running a workflow
+
+A workflow is a defined sequence of steps run as one thing. It is launched exactly as a job is —
+find it in the catalogue, click **Run**, supply its inputs and options — and its progress is
+followed step by step under **Results**, where the steps of a running workflow are listed inside it.
+
+A workflow definition has one version, so its card states the version as a fact rather than offering
+a choice.
+
+## Where the definitions come from
+
+The definitions available here are deployed by this installation's administrator; see
+[Deployed jobs](/docs/jobs). A guide to creating new jobs is linked from the
+[Concepts](/docs/concepts) page.

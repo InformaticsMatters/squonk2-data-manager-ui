@@ -17,8 +17,9 @@ What is available is decided by the system administrator of this deployment.
 
 ## The catalogue
 
-Everything you can launch is presented as a card. Every card has the same anatomy, whichever kind of
-definition it is, so you meet the same arrangement on all of them:
+Everything you can launch is presented as a card, and every card is laid out the same way, so you
+meet the same arrangement whichever kind you are looking at. Not every kind fills every part of it —
+a job card, below, is the fullest:
 
 <Image src={job_card} alt="A job card in the Run catalogue" />
 
@@ -26,22 +27,23 @@ Reading that card from the top:
 
 - The **coloured bar** and the chip below it say what kind of definition this is — a **Job** here,
   or an **Application** or a **Workflow**. Each kind keeps its own colour wherever it appears.
-- The chip on the right counts **how many times this definition has already run in this project**.
-  Selecting it opens the project's **[Results](/docs/how-to/projects/results)** narrowed to this
-  definition. A card never lists its own executions; this count is the way to them.
+- The chip on the right counts **how many times the version the card is offering has already run in
+  this project**. Selecting it opens the project's **[Results](/docs/how-to/projects/results)**
+  narrowed to that same version. A card never lists its own executions; this count is the way to
+  them.
 - The heading is the definition's **identifier** — `sa-score` above — and the line beneath it the
   fuller name it is published under, here _Synthetic accessibility score_. The launch dialog leads
   with that fuller name, so the two screens name the same definition differently on purpose.
 - Then its **description**, followed by a link to its published documentation where it has any — the
-  small icon at the end of the text above.
+  small icon at the end of the text above. An application publishes neither.
 - A job states its **Category** (the kind of job it is, here _molecular properties_) and its
   **Collection** (where it comes from, here _rdkit_). A workflow states its **Version** here
   instead. An application states neither, because the line under its name is already its group.
 - Its **keywords**, as chips — `rdkit`, `synthetic accessibility` and `sa_score` above. These are
-  among the terms the search field matches.
-- The footer holds the **version** the card is offering on the left, where there is a choice to be
-  made, and the **Run** control on the right. `sa-score` is published in a single version, so its
-  version is stated but cannot be changed.
+  among the terms the search field matches. Only a job publishes keywords.
+- The footer holds the **Run** control on the right, and for a job the **version** it is offering on
+  the left. `sa-score` is published in a single version, so its version is stated but cannot be
+  chosen. An application or a workflow puts nothing there, leaving the footer to **Run** alone.
 
 ### Narrowing the catalogue
 
@@ -102,15 +104,14 @@ An application is a relatively long-running process that lets you perform some w
 which runs once and finishes, an application keeps running until you stop it — so remember to
 terminate one when you have finished with it.
 
-Two applications are available:
+Which applications a deployment offers varies. They can include:
 
 - **JupyterNotebook** — a notebook, console and shell over your project's files, through the Jupyter
   Lab interface.
 - **DataVisualisation** — an interactive workspace for plotting your data.
 
-Both are launched the same way, and both are listed under
-**[Results](/docs/how-to/projects/results)** while they run, which is where you open and terminate
-them.
+Each is launched the same way, and each is listed under **[Results](/docs/how-to/projects/results)**
+while it runs, which is where you open and terminate it.
 
 ### JupyterNotebook
 

@@ -865,17 +865,19 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
           job_version: "1.0.0",
           launched: created,
           name: "Acceptance Instance",
-          outputs: {
+          owner: subject,
+          phase: "COMPLETED",
+          project_id: fixtureIds.project,
+          // A job declares its outputs by rendering its definition, so `outputs` — the outputs
+          // fixed at launch, which only step instances use — stays empty for it.
+          rendered_outputs: JSON.stringify({
             results: {
               creates: "results/docked.sdf",
               "mime-types": ["chemical/x-mdl-sdfile"],
               title: "Docked poses",
               type: "file",
             },
-          },
-          owner: subject,
-          phase: "COMPLETED",
-          project_id: fixtureIds.project,
+          }),
           run_time: "0:01:00",
           started: created,
           stopped: "2026-01-02T03:05:05Z",

@@ -199,3 +199,95 @@ export const resultInstanceJob = (
  * instance, so the logs of one instance are always addressed through that project's Files.
  */
 export const resultInstanceLogsPath = (instanceId: string) => `/.${instanceId}`;
+
+/**
+ * One output an instance declared, in the form the screen presents it: the name the instance keys
+ * it by, a title to show it under, and the instance-relative path it writes, addressed either as a
+ * file or as a directory.
+ */
+export type ResultInstanceOutput = {
+  creates: string;
+  kind: "directory" | "file";
+  name: string;
+  title: string;
+};
+
+/**
+ * The two fields an instance can declare its outputs in. `outputs` holds the outputs fixed when the
+ * instance was launched, which is what step instances use; `rendered_outputs` is the JSON string a
+ * job's own definition renders, and is the only one a job instance populates.
+ */
+export type ResultInstanceOutputFacts = {
+  outputs?: Record<string, unknown>;
+  rendered_outputs?: string;
+};
+
+/**
+ * The rendered outputs an instance carries. The Data Manager hands them over as a JSON string, so a
+ * string it did not render as JSON declares nothing rather than throwing on the screen that shows
+ * the outputs.
+ */
+const parseRenderedOutputs = (rendered?: string): unknown => {
+  if (rendered === undefined) {
+    return undefined;
+  }
+  try {
+    return JSON.parse(rendered);
+  } catch {
+    return undefined;
+  }
+};
+
+/**
+ * Whether an output is addressed as a file or as a directory. The Data Manager names a single file
+ * and a glob of files distinctly, and both are located as files; anything else — including an
+ * output that declared no type at all — is located as the directory that contains it, because a
+ * path this client cannot place as a file is not one it can open.
+ */
+const outputKind = (type: unknown): ResultInstanceOutput["kind"] =>
+  type === "file" || type === "files" ? "file" : "directory";
+
+/**
+ * The outputs one declaration accounts for. Only an output naming a path can be located, so one
+ * that names none is not presented at all rather than presented as a link to nowhere, and an
+ * untitled output is shown under the name the instance keys it by.
+ */
+const declaredOutputs = (declared: unknown): ResultInstanceOutput[] => {
+  if (typeof declared !== "object" || declared === null || Array.isArray(declared)) {
+    return [];
+  }
+
+  return Object.entries(declared).flatMap(([name, output]) => {
+    if (typeof output !== "object" || output === null || Array.isArray(output)) {
+      return [];
+    }
+
+    const { creates, title, type } = output as Record<string, unknown>;
+    if (typeof creates !== "string" || creates.trim() === "") {
+      return [];
+    }
+
+    return [
+      {
+        creates,
+        kind: outputKind(type),
+        name,
+        title: typeof title === "string" && title.trim() !== "" ? title : name,
+      },
+    ];
+  });
+};
+
+/**
+ * What one instance produced. A job renders its outputs into `rendered_outputs`, so that is what it
+ * is accounted for by; `outputs` answers for the step instances that fix their outputs at launch,
+ * and for anything a job left unrendered. The rendered field is a JSON string the Data Manager
+ * owns, so a string this client cannot parse leaves the instance accounted for by the field it can
+ * read rather than failing the screen the outputs are shown on.
+ */
+export const resultInstanceOutputs = (
+  instance: ResultInstanceOutputFacts,
+): ResultInstanceOutput[] => {
+  const rendered = declaredOutputs(parseRenderedOutputs(instance.rendered_outputs));
+  return rendered.length > 0 ? rendered : declaredOutputs(instance.outputs);
+};

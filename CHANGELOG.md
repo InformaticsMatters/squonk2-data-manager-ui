@@ -1,3 +1,10 @@
+# [7.0.0-dev.18](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.17...7.0.0-dev.18) (2026-08-27)
+
+
+### Bug Fixes
+
+* patch paper so bundlers stop resolving its undeclared jsdom require ([97c3d95](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/97c3d9540782a86908fed7ecabed726cadc8e56f)), closes [#2015](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2015) [#2020](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2020)
+
 # [7.0.0-dev.17](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.16...7.0.0-dev.17) (2026-08-27)
 
 

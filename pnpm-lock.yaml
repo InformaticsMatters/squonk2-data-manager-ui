@@ -87,8 +87,8 @@ importers:
         specifier: 24.12.4
         version: 24.12.4
       '@types/plotly.js':
-        specifier: 3.0.10
-        version: 3.0.10
+        specifier: 3.0.13
+        version: 3.0.13
       '@types/prismjs':
         specifier: 1.26.6
         version: 1.26.6
@@ -2595,11 +2595,8 @@ packages:
   '@types/pg@8.15.6':
     resolution: {integrity: sha512-NoaMtzhxOrubeL/7UZuNTrejB4MPAJ0RpxZqXQf2qXuVlTPuG6Y8p4u9dKRaue4yjmC7ZhzVO2/Yyyn25znrPQ==}
 
-  '@types/plotly.js@2.35.1':
-    resolution: {integrity: sha512-9fTHC8qeJNEDpGJK1qIJAEcRxrI9uPrap32I8cbCLPKsqwFmafOYHecaBzvIJXEPhLIUiQocN9Bc/tIV9CjsxQ==}
-
-  '@types/plotly.js@3.0.10':
-    resolution: {integrity: sha512-q+MgO4aajC2HrO7FllTYWzrpdfbTjboSMfjkz/aXKjg1v7HNo1zMEFfAW7quKfk6SL+bH74A5ThBEps/7hZxOA==}
+  '@types/plotly.js@3.0.13':
+    resolution: {integrity: sha512-mWI1NZRDHDoiFiPEvUjR0P12fv21kmT8XSLrEjfNwIDahELaXXkSz38n6o+5SYsq0YEGxkK3ANqqM0cRl8uZdg==}
 
   '@types/prismjs@1.26.6':
     resolution: {integrity: sha512-vqlvI7qlMvcCBbVe0AKAb4f97//Hy0EBTaiW8AalRnG/xAN5zOiWWyrNqNXeq8+KAuvRewjCVY1+IPxk4RdNYw==}
@@ -10232,9 +10229,7 @@ snapshots:
       pg-protocol: 1.7.0
       pg-types: 2.2.0
 
-  '@types/plotly.js@2.35.1': {}
-
-  '@types/plotly.js@3.0.10': {}
+  '@types/plotly.js@3.0.13': {}
 
   '@types/prismjs@1.26.6': {}
 
@@ -10246,7 +10241,7 @@ snapshots:
 
   '@types/react-plotly.js@2.6.4':
     dependencies:
-      '@types/plotly.js': 2.35.1
+      '@types/plotly.js': 3.0.13
       '@types/react': 19.2.15
 
   '@types/react-transition-group@4.4.12(@types/react@19.2.15)':

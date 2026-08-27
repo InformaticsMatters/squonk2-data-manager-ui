@@ -1,3 +1,10 @@
+# [7.0.0-dev.17](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.16...7.0.0-dev.17) (2026-08-27)
+
+
+### Bug Fixes
+
+* **instances:** read a job's outputs from the definition it rendered ([68eaa58](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/68eaa58f90a3fe770b24de0e9d04e8167f8d495b)), closes [#2013](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2013)
+
 # [7.0.0-dev.16](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.15...7.0.0-dev.16) (2026-08-27)
 
 

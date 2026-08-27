@@ -11,11 +11,11 @@ jobs:
     environment: data-manager-ui/test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
-    - uses: pnpm/action-setup@v6
+    - uses: actions/checkout@v6.1.0
+    - uses: pnpm/action-setup@v6.0.10
       with:
         run_install: false
-    - uses: actions/setup-node@v6
+    - uses: actions/setup-node@v6.5.0
       with:
         cache: pnpm
         node-version: 24.15.0
@@ -41,7 +41,7 @@ jobs:
       run: pnpm test:smoke
       env: *smoke-env
     - if: always()
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: Live Smoke Results
         path: test-results

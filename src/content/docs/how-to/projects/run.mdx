@@ -1,3 +1,8 @@
+import application_card from "../../assets/application-card.png";
+import dataviz_app from "../../assets/dataviz-app.png";
+import dataviz_card from "../../assets/dataviz-card.png";
+import dataviz_launch from "../../assets/dataviz-launch.png";
+import job_card from "../../assets/job-card.png";
 import job_launch from "../../assets/job-launch.png";
 import jupyter_launch from "../../assets/jupyter-launch.png";
 import jupyter_lab from "../../assets/jupyter-lab.png";
@@ -12,21 +17,31 @@ What is available is decided by the system administrator of this deployment.
 
 ## The catalogue
 
-Each definition is presented as a card. A card states, in this order:
+Everything you can launch is presented as a card. Every card has the same anatomy, whichever kind of
+definition it is, so you meet the same arrangement on all of them:
 
-- **the kind of definition it is** — **Workflow**, **Application** or **Job** — as a coloured chip,
-- **how many times it has run in this project**, as a chip that opens the project's **Results**
-  already narrowed to that definition,
-- its name and, beneath it, its group (for an application), its name (for a job) or the workflow's
-  own name,
-- its description, with a link to its published documentation where it has any,
-- for a job, its **Category** (the type of job it is, e.g. _molecular properties_) and its
-  **Collection** (where it comes from, e.g. _rdkit_), and for a workflow its **Version**,
-- its keywords, as chips.
+<Image src={job_card} alt="A job card in the Run catalogue" />
 
-The card's footer holds the version it is offering, where there is a choice, and the **Run** control.
-Cards do not list their own executions: the execution count is the link to the place that lists them
-properly.
+Reading that card from the top:
+
+- The **coloured bar** and the chip below it say what kind of definition this is — a **Job** here,
+  or an **Application** or a **Workflow**. Each kind keeps its own colour wherever it appears.
+- The chip on the right counts **how many times this definition has already run in this project**.
+  Selecting it opens the project's **[Results](/docs/how-to/projects/results)** narrowed to this
+  definition. A card never lists its own executions; this count is the way to them.
+- The heading is the definition's **identifier** — `sa-score` above — and the line beneath it the
+  fuller name it is published under, here _Synthetic accessibility score_. The launch dialog leads
+  with that fuller name, so the two screens name the same definition differently on purpose.
+- Then its **description**, followed by a link to its published documentation where it has any — the
+  small icon at the end of the text above.
+- A job states its **Category** (the kind of job it is, here _molecular properties_) and its
+  **Collection** (where it comes from, here _rdkit_). A workflow states its **Version** here
+  instead. An application states neither, because the line under its name is already its group.
+- Its **keywords**, as chips — `rdkit`, `synthetic accessibility` and `sa_score` above. These are
+  among the terms the search field matches.
+- The footer holds the **version** the card is offering on the left, where there is a choice to be
+  made, and the **Run** control on the right. `sa-score` is published in a single version, so its
+  version is stated but cannot be changed.
 
 ### Narrowing the catalogue
 
@@ -53,16 +68,25 @@ you would launch can never disagree.
 Clicking **Run** opens that definition at its own URL — so a launch form can be linked to and
 survives a refresh — and presents a dialog for the inputs and options.
 
-<Image src={job_launch} alt="Launch job dialog" />
+<Image src={job_launch} alt="The launch dialog for the sa-score job" />
 
-_Inputs_ are project files that form the input.
+The dialog is headed by the definition's own name, and beneath it the kind, the collection it comes
+from and the version being launched — above, a **Job** from the **rdkit** collection at version
+1.0.0. **Job name** names this execution so that you can recognise it later under **Results**, and
+**Debug** lets an administrator inspect the instance once it has finished.
 
-_Options_ are user-specified parameters for the execution, e.g. which properties to calculate in the
-example above. An important option is often the name of the output file. We recommend putting the
-outputs of a job in a new subdirectory so that the output of one job does not overwrite that of
-another. Most jobs are implemented so that you can specify a full path to the file you want,
-including subdirectories: e.g. you can specify `some/where/results.sdf` as the output file name and
-the directories `some/where/` will be created for you (from the project root).
+_Inputs_ are the project files the job works on. **Select file** opens the project's files to choose
+from, and what you choose is then listed beside it. Some jobs also accept molecules entered
+directly: those offer a **Method** choice between **SMILES** and **Files**, and ask for the
+molecules themselves when you choose SMILES.
+
+_Options_ are user-specified parameters for the execution — above, whether the input and output
+carry header lines, the separator to use for text formats, and which field identifies a record. An
+important option is often the name of the output file. We recommend putting the outputs of a job in
+a new subdirectory so that the output of one job does not overwrite that of another. Most jobs are
+implemented so that you can specify a full path to the file you want, including subdirectories: the
+example above writes `sa-score/scored.sdf`, and the directory `sa-score/` is created for you (from
+the project root).
 
 Specify these inputs and options and click **Run** at the bottom. A successful launch opens what it
 created under **[Results](/docs/how-to/projects/results)**, so you follow the work that was actually
@@ -74,18 +98,38 @@ launches it.
 
 ## Running an application
 
-An application is a relatively long-running process that lets you perform some work. The only
-application currently supported is Jupyter Notebooks, accessed through the Jupyter Lab interface.
+An application is a relatively long-running process that lets you perform some work. Unlike a job,
+which runs once and finishes, an application keeps running until you stop it — so remember to
+terminate one when you have finished with it.
 
-To launch it, find it in the catalogue and click **Run**. This opens the launch dialog:
+Two applications are available:
 
-<Image src={jupyter_launch} alt="Jupyter launch" />
+- **JupyterNotebook** — a notebook, console and shell over your project's files, through the Jupyter
+  Lab interface.
+- **DataVisualisation** — an interactive workspace for plotting your data.
 
-In that dialog you can specify a few options. Most importantly provide a sensible value for the
-_Instance Name_ so that you can recognise this instance in the future. Also specify the _Container
-image_, which defines the type of notebook image to run. These are images from the standard Jupyter
-project. If you need to use a different one then let us know and we'll see if we can add it to the
-list.
+Both are launched the same way, and both are listed under
+**[Results](/docs/how-to/projects/results)** while they run, which is where you open and terminate
+them.
+
+### JupyterNotebook
+
+Its card in the catalogue is a plainer thing than a job's:
+
+<Image src={application_card} alt="The JupyterNotebook application card" />
+
+An application publishes no description, category, collection or keywords, and it has a single
+version, so the card carries its kind, its execution count, its name, the group it belongs to —
+`squonk.it` above — and the **Run** control, and nothing else.
+
+Clicking **Run** opens the launch dialog:
+
+<Image src={jupyter_launch} alt="The launch dialog for the JupyterNotebook application" />
+
+Most importantly, give the _Instance Name_ a sensible value so that you can recognise this instance
+later under **Results**. Then specify the _Container image_, which defines the type of notebook
+image to run. These are images from the standard Jupyter project. If you need one that is not
+offered then let us know and we'll see if we can add it to the list.
 
 You might also want to specify additional memory or CPU requests, but only do this if you actually
 need those extra amounts.
@@ -128,6 +172,31 @@ but only has to be done once in the lifetime of the notebook instance.
 
 When you are finished with the notebook instance, terminate it from its card under **Results**. This
 frees up all the resources it is using.
+
+### DataVisualisation
+
+**DataVisualisation** builds interactive plots of your data. Its card carries the same fields as any
+other application:
+
+<Image src={dataviz_card} alt="The DataVisualisation application card" />
+
+Its launch dialog asks for one thing the notebook's does not — the **Viz application version** to
+run, which is required:
+
+<Image src={dataviz_launch} alt="The launch dialog for the DataVisualisation application" />
+
+Opening the running instance gives you a canvas to build a visualisation on. Add nodes to it from
+**+ Data**, **+ Visual** and **+ Molecular**, connect them together, and assign them to one or more
+views:
+
+<Image src={dataviz_app} alt="The DataVisualisation application with a ScatterPlot node" />
+
+The node above is a **ScatterPlot**, and its inputs — **X axis**, **Y axis**, **Colour**, **Size**
+and **Shape** — are filled from the data flowing into it. The coloured dots on a node's edges are
+its connectors, and the **Connectors** key on the right says what each colour and shape carries.
+**ASSIGN NODES TO VIEWS** on the left decides which of your views each node appears in.
+
+As with a notebook, terminate the instance from its card under **Results** when you have finished.
 
 ## Running a workflow
 

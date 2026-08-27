@@ -155,8 +155,7 @@ hidden behind the authority you lack.
 ## Running an application
 
 An application is a relatively long-running process that lets you perform some work. Unlike a job,
-which runs once and finishes, an application keeps running until you stop it — so remember to
-terminate one when you have finished with it.
+which runs once and finishes, an application keeps running until it is stopped.
 
 Which applications a deployment offers varies. They can include:
 
@@ -166,6 +165,21 @@ Which applications a deployment offers varies. They can include:
 
 Each is launched the same way, and each is listed under **[Results](/docs/how-to/projects/results)**
 while it runs, which is where you open and terminate it.
+
+### Finishing with an application
+
+An application runs until it is stopped, so terminate one from its card under
+**[Results](/docs/how-to/projects/results)** when you have finished with it. That frees the
+resources it was holding.
+
+An application may also be terminated for you. Where a deployment gives one an inactivity timeout,
+an instance left idle for longer than that period is stopped automatically. The period is the
+application's own where it declares one and the deployment's default otherwise, and not every
+application supports this at all.
+
+Nothing is lost either way. What an application produced is in the project's own directory, which
+outlives every instance — so if you need to carry on, launch a new instance and your files are where
+you left them.
 
 ### JupyterNotebook
 
@@ -213,9 +227,6 @@ conda install -y -c conda-forge rdkit
 
 A large package takes a while, but only once in the lifetime of the instance.
 
-When you are finished with the notebook instance, terminate it from its card under **Results**. This
-frees up all the resources it is using.
-
 ### DataVisualisation
 
 **DataVisualisation** builds interactive plots of your data. Its card carries the same fields as any
@@ -238,8 +249,6 @@ The node above is a **ScatterPlot**, and its inputs — **X axis**, **Y axis**, 
 and **Shape** — are filled from the data flowing into it. The coloured dots on a node's edges are
 its connectors, and the **Connectors** key on the right says what each colour and shape carries.
 **ASSIGN NODES TO VIEWS** on the left decides which of your views each node appears in.
-
-As with a notebook, terminate the instance from its card under **Results** when you have finished.
 
 ## Running a workflow
 

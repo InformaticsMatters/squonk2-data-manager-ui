@@ -1,0 +1,18 @@
+diff --git a/dist/node/canvas.js b/dist/node/canvas.js
+index ee325d7d030b7c2388d5906579daad25f76c00eb..01e26bd464abbbe881a7a3b4d388c44ed0b3b399 100644
+--- a/dist/node/canvas.js
++++ b/dist/node/canvas.js
+@@ -35,7 +35,12 @@ module.exports = function(self, requireName) {
+     }
+ 
+     var HTMLCanvasElement = self.HTMLCanvasElement,
+-        idlUtils = require('jsdom/lib/jsdom/living/generated/utils');
++        // paper does not declare jsdom as a dependency, so this specifier is unresolvable for
++        // consumers under pnpm's isolated node_modules. The magic comment stops bundlers from
++        // resolving it at build time while preserving the require for Node. The line is only
++        // reached when the optional `canvas` package is installed, which is what brings jsdom
++        // into the tree in the first place; otherwise the function has already returned above.
++        idlUtils = require(/* webpackIgnore: true */ 'jsdom/lib/jsdom/living/generated/utils');
+ 
+     // Add fake HTMLCanvasElement#type property:
+     Object.defineProperty(HTMLCanvasElement.prototype, 'type', {

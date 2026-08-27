@@ -81,7 +81,7 @@
     "@types/semver": "7.7.1",
     "axios": "1.18.1",
     "better-auth": "1.6.11",
-    "dayjs": "1.11.20",
+    "dayjs": "1.11.23",
     "filesize": "11.0.17",
     "immer": "11.1.8",
     "jotai": "2.20.0",

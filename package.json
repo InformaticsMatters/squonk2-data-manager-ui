@@ -82,7 +82,7 @@
     "axios": "1.18.1",
     "better-auth": "1.6.11",
     "dayjs": "1.11.23",
-    "filesize": "11.0.17",
+    "filesize": "11.0.22",
     "immer": "11.1.18",
     "jotai": "2.20.0",
     "just-compare": "2.3.0",

@@ -120,8 +120,8 @@ importers:
         specifier: 11.1.18
         version: 11.1.18
       jotai:
-        specifier: 2.20.0
-        version: 2.20.0(@babel/core@7.26.0(supports-color@9.4.0))(@babel/template@7.25.9)(@types/react@19.2.15)(react@19.2.6)
+        specifier: 2.20.3
+        version: 2.20.3(@babel/core@7.26.0(supports-color@9.4.0))(@babel/template@7.25.9)(@types/react@19.2.15)(react@19.2.6)
       just-compare:
         specifier: 2.3.0
         version: 2.3.0
@@ -5148,8 +5148,8 @@ packages:
   jose@6.2.3:
     resolution: {integrity: sha512-YYVDInQKFJfR/xa3ojUTl8c2KoTwiL1R5Wg9YCydwH0x0B9grbzlg5HC7mMjCtUJjbQ/YnGEZIhI5tCgfTb4Hw==}
 
-  jotai@2.20.0:
-    resolution: {integrity: sha512-b5GAqgmXmXzB4WPaTH26ppk9Sl7AA9WSQX7yfdM+gJ1rFROiWcVbi97gFuN/yVCojOcbcvop2sfLL+fjxW0JVg==}
+  jotai@2.20.3:
+    resolution: {integrity: sha512-N8L9FUbeGDP+0qNJw1FebOxt+5hk+jTOwUA2LlRE4C081jUcY6F1T/FSETp4DT2/INMtiSRZyNm2D+yZdzrSgA==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@babel/core': '>=7.0.0'
@@ -6861,11 +6861,6 @@ packages:
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
-    hasBin: true
-
-  semver@7.8.0:
-    resolution: {integrity: sha512-AcM7dV/5ul4EekoQ29Agm5vri8JNqRyj39o0qpX6vDF2GZrtutZl5RwgD1XnZjiTAfncsJhMI48QQH3sN87YNA==}
-    engines: {node: '>=10'}
     hasBin: true
 
   semver@7.8.5:
@@ -10370,7 +10365,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.59.1
       debug: 4.4.3(supports-color@9.4.0)
       minimatch: 10.2.5
-      semver: 7.8.0
+      semver: 7.8.5
       tinyglobby: 0.2.17
       ts-api-utils: 2.5.0(typescript@6.0.3)
       typescript: 6.0.3
@@ -11208,7 +11203,7 @@ snapshots:
       postcss-modules-scope: 3.2.1(postcss@8.5.26)
       postcss-modules-values: 4.0.0(postcss@8.5.26)
       postcss-value-parser: 4.2.0
-      semver: 7.8.0
+      semver: 7.8.5
     optionalDependencies:
       webpack: 5.97.1(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3)
 
@@ -13129,7 +13124,7 @@ snapshots:
 
   jose@6.2.3: {}
 
-  jotai@2.20.0(@babel/core@7.26.0(supports-color@9.4.0))(@babel/template@7.25.9)(@types/react@19.2.15)(react@19.2.6):
+  jotai@2.20.3(@babel/core@7.26.0(supports-color@9.4.0))(@babel/template@7.25.9)(@types/react@19.2.15)(react@19.2.6):
     optionalDependencies:
       '@babel/core': 7.26.0(supports-color@9.4.0)
       '@babel/template': 7.25.9
@@ -15285,8 +15280,6 @@ snapshots:
   semver-regex@4.0.5: {}
 
   semver@6.3.1: {}
-
-  semver@7.8.0: {}
 
   semver@7.8.5: {}
 

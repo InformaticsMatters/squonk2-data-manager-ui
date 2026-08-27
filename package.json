@@ -84,7 +84,7 @@
     "dayjs": "1.11.23",
     "filesize": "11.0.17",
     "immer": "11.1.18",
-    "jotai": "2.20.0",
+    "jotai": "2.20.3",
     "just-compare": "2.3.0",
     "just-group-by": "2.2.0",
     "jwt-decode": "4.0.0",

@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  paper@0.12.18: 7f01c4a79ad653ca5106d6402bff2c6547877064f1ef72ec2fc18c47aa598e5f
+
 importers:
 
   .:
@@ -13479,7 +13482,7 @@ snapshots:
       d3: 7.9.0
       file-saver: 2.0.5
       lodash: 4.18.1
-      paper: 0.12.18
+      paper: 0.12.18(patch_hash=7f01c4a79ad653ca5106d6402bff2c6547877064f1ef72ec2fc18c47aa598e5f)
       raphael: 2.3.0
       react-device-detect: 2.2.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       svgpath: 2.6.0
@@ -14683,7 +14686,7 @@ snapshots:
 
   package-json-from-dist@1.0.1: {}
 
-  paper@0.12.18: {}
+  paper@0.12.18(patch_hash=7f01c4a79ad653ca5106d6402bff2c6547877064f1ef72ec2fc18c47aa598e5f): {}
 
   parent-module@1.0.1:
     dependencies:

@@ -8,3 +8,14 @@ allowBuilds:
   unrs-resolver: false
 minimumReleaseAgeExclude:
   - '@squonk/*'
+# paper (a transitive dependency of ketcher-core) statically requires a jsdom internal from
+# its Node canvas integration, without declaring jsdom as a dependency. The code never runs —
+# it is guarded on the optional `canvas` package, which is not installed — but the specifier
+# is still resolved at build time, and nothing in this tree provides that path. It is latent
+# under webpack, which never pulls the sketcher into the server compilation, and fatal under
+# Turbopack, which keeps it in the SSR graph. The patch marks the require with a
+# `webpackIgnore` magic comment, which both bundlers honour, so the specifier is left for Node
+# to resolve at runtime instead of being bundled; behaviour under Node with `canvas` installed
+# is unchanged. See #2020.
+patchedDependencies:
+  paper@0.12.18: patches/paper@0.12.18.patch

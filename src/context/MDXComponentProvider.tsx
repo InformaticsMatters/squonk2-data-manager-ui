@@ -13,7 +13,20 @@ import { NextLink } from "../components/NextLink";
  * it hold for images added later without anyone having to remember.
  */
 const DocsImage = (props: any) => (
-  <Image {...props} style={{ display: "block", marginBottom: 24, marginTop: 24, ...props.style }} />
+  <Image
+    {...props}
+    style={{
+      display: "block",
+      // A screenshot carries its own intrinsic width, which is wider than the prose column on a
+      // narrow viewport. Left unconstrained it widens the document rather than itself, and the
+      // paragraphs either side then run off the edge with it.
+      height: "auto",
+      marginBottom: 24,
+      marginTop: 24,
+      maxWidth: "100%",
+      ...props.style,
+    }}
+  />
 );
 
 export interface MDXComponentProviderProps {

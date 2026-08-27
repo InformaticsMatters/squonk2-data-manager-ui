@@ -818,7 +818,7 @@ test("Manage presents project facts and available actions to a project administr
 
   await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
   await expect(
-    page.getByRole("heading", { level: 1, name: "KRAS G12D Lead Optimisation" }),
+    page.getByRole("heading", { level: 2, name: "KRAS G12D Lead Optimisation" }),
   ).toBeVisible();
   await expect(
     page.getByText("Northstar Therapeutics › Medicinal Chemistry & Design"),
@@ -947,7 +947,7 @@ test("a platform administrator without a project role remains an ordinary read-o
   await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=platform-admin`);
   await login(page, managePath, testInfo);
 
-  await expect(page.getByRole("heading", { level: 1, name: "Acceptance Project" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Acceptance Project" })).toBeVisible();
   await expect(page.getByLabel("Your project roles")).toContainText("No project role");
   await expect(page.getByText(/You have read-only access to this project\./u)).toBeVisible();
   await expect(memberChip(page, "Administrators", `${subject}-observer`)).toBeVisible();
@@ -971,7 +971,7 @@ test("Manage stays available to a project viewer and explains every unavailable 
 
   await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
   await expect(
-    page.getByRole("heading", { level: 1, name: "KRAS G12D Lead Optimisation" }),
+    page.getByRole("heading", { level: 2, name: "KRAS G12D Lead Optimisation" }),
   ).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
   await expect(page.getByLabel("Your project roles").getByText("Observer")).toBeVisible();
@@ -1023,7 +1023,7 @@ test("Manage owns project privacy and every project role change", async ({ page 
   const subject = subjectFor(testInfo);
   const colleague = `${subject}-observer`;
   await login(page, managePath, testInfo);
-  await expect(page.getByRole("heading", { level: 1, name: "Acceptance Project" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Acceptance Project" })).toBeVisible();
 
   // Privacy. The project's own state answers, and the change is stated where it was made.
   await expect(privacySwitch(page)).toBeChecked();
@@ -1073,7 +1073,7 @@ test("a typed member name is a command, and one that names nobody says so", asyn
   // Someone the directory does not list, so the name can only have arrived by being typed.
   const newcomer = `${subject}-newcomer`;
   await login(page, managePath, testInfo);
-  await expect(page.getByRole("heading", { level: 1, name: "Acceptance Project" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Acceptance Project" })).toBeVisible();
 
   await typeMember(page, "Editors", newcomer);
   await expect(
@@ -1161,7 +1161,7 @@ test("unconfirmed project facts leave changes available and defer to the server"
   const subject = subjectFor(testInfo);
   await request.post(`${acceptanceUrls.control}/scenario/${subject}/caller-account-failure`);
   await login(page, managePath, testInfo);
-  await expect(page.getByRole("heading", { level: 1, name: "Acceptance Project" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Acceptance Project" })).toBeVisible();
 
   // Facts that cannot establish the caller never claim authority, and never claim its absence.
   await expect(page.getByLabel("Your project roles")).toContainText("No project role");

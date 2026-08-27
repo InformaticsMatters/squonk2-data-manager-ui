@@ -199,6 +199,11 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
 
   return (
     <Box>
+      {/* Manage titles itself exactly as Files, Run and Results do, so a caller who arrives here
+          is told which section they are in rather than having to infer it from the project. */}
+      <Typography gutterBottom component="h1" variant="h4">
+        Manage
+      </Typography>
       <Typography color="text.secondary" variant="body2">
         {organisation.name} › {unit.name}
       </Typography>
@@ -210,9 +215,9 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
         <Stack direction="row" spacing={1} sx={{ alignItems: "center", flex: 1, minWidth: 0 }}>
           <FolderOutlined color="action" />
           <Typography
-            component="h1"
+            component="h2"
             sx={{ fontWeight: 600, minWidth: 0, overflowWrap: "anywhere" }}
-            variant="h4"
+            variant="h5"
           >
             {project.name}
           </Typography>

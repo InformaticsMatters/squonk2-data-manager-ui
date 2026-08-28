@@ -28,6 +28,7 @@ import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { useGetPersonalUnit } from "../hooks/useGetPersonalUnit";
 import { useIsEvaluator } from "../hooks/useIsAuthorized";
 import { isProductId, isUnitId } from "../routing/identifiers";
+import { settle } from "../utils/app/settle";
 import { projectCreationFailureReason } from "./failures";
 import { PersonalUnitCreation } from "./PersonalUnitCreation";
 import {
@@ -197,6 +198,7 @@ export const ProjectCreate = () => {
   useEffect(() => {
     if (route.subscriptionId !== undefined) {
       recoveryNavigation.current = false;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reports what session storage and the route together say about an interrupted attempt; there is no render-time answer to derive this from
       setRecoveringRoute(false);
       return;
     }
@@ -258,6 +260,7 @@ export const ProjectCreate = () => {
     if (stored?.kind === "project-requested" && stored.productId === addressedProduct.product.id) {
       const reconciliation = reconcileProjectCreationRecovery(stored, addressedProduct);
       if (reconciliation.kind === "completed") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- settles a stored attempt against the Account Server's own claim, which is an external system's answer rather than derived state
         completeRecoveredProject(stored.productId, reconciliation.projectId);
         return;
       }
@@ -329,16 +332,14 @@ export const ProjectCreate = () => {
       initializedSubscription.current = productId;
       // The subscription enters the URL before the project request is sent, so a reload that lands
       // mid-request addresses it and can be settled against the Account Server's own claim.
-      try {
-        const replaced = await router.replace(
-          projectLinks.create({ subscriptionId: productId }) as never,
-          undefined,
-          { shallow: true },
-        );
-        if (!replaced) {
-          throw new Error("Project creation recovery navigation was cancelled");
-        }
-      } catch {
+      const replaced = await settle(() =>
+        router.replace(projectLinks.create({ subscriptionId: productId }) as never, undefined, {
+          shallow: true,
+        }),
+      );
+      // A cancelled navigation and a rejected one are the same answer here: the address the reload
+      // would have to arrive on was not recorded.
+      if (!replaced.ok || !replaced.value) {
         setLifecycle(
           transitionProjectCreation(next.state, {
             kind: "project-failed",
@@ -468,6 +469,7 @@ export const ProjectCreate = () => {
     if (readProjectCreationRecovery(sessionStorage)) {
       return;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- a one-time preselection that defers to a record only session storage can report, and which the caller then owns
     applyIntendedUnit(intendedUnitId);
   }, [intendedUnitId, route.subscriptionId]);
 
@@ -483,30 +485,30 @@ export const ProjectCreate = () => {
       route.subscriptionId
     ) {
       setReconciling(true);
-      try {
-        const refreshed = await handoff.refetch();
-        if (!refreshed.data) {
-          setLifecycle({
-            ...lifecycle,
-            reason: "The subscription could not be verified. Retry after the service recovers.",
-          });
-          return;
-        }
-        const reconciliation = reconcileProjectCreationRecovery(recovery, refreshed.data.product);
-        if (reconciliation.kind === "completed") {
-          completeRecoveredProject(recovery.productId, reconciliation.projectId);
-          return;
-        }
-        if (reconciliation.kind !== "resume") {
-          setLifecycle({
-            ...lifecycle,
-            reason:
-              "The subscription is no longer available for this project. Open it in Administration.",
-          });
-          return;
-        }
-      } finally {
-        setReconciling(false);
+      const refreshed = await settle(() => handoff.refetch());
+      setReconciling(false);
+      if (!refreshed.ok || !refreshed.value.data) {
+        setLifecycle({
+          ...lifecycle,
+          reason: "The subscription could not be verified. Retry after the service recovers.",
+        });
+        return;
+      }
+      const reconciliation = reconcileProjectCreationRecovery(
+        recovery,
+        refreshed.value.data.product,
+      );
+      if (reconciliation.kind === "completed") {
+        completeRecoveredProject(recovery.productId, reconciliation.projectId);
+        return;
+      }
+      if (reconciliation.kind !== "resume") {
+        setLifecycle({
+          ...lifecycle,
+          reason:
+            "The subscription is no longer available for this project. Open it in Administration.",
+        });
+        return;
       }
     }
     await applyTransition(transitionProjectCreation(lifecycle, { kind: "retry" }));

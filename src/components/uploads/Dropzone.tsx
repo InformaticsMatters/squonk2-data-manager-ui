@@ -1,4 +1,4 @@
-import { type FC, type ReactNode, useCallback } from "react";
+import { type FC, type ReactNode, useCallback, useMemo } from "react";
 import { type DropzoneOptions, type FileRejection, useDropzone } from "react-dropzone";
 
 import { Divider, styled } from "@mui/material";
@@ -62,12 +62,11 @@ export const Dropzone: FC<DropzoneProps> = ({
   //
   // 2. This currently requires the body parser in the proxy to be disabled
   // https://github.com/stegano/next-http-proxy-middleware/issues/33
-  mapping.gzip = [".gz"];
-  const { getRootProps, getInputProps } = useDropzone({
-    ...dropzoneOptions,
-    onDrop,
-    accept: mapping,
-  });
+  //
+  // The extra entry goes onto a copy: `mapping` belongs to the hook and is shared with every other
+  // caller of `useFileExtensions`.
+  const accept = useMemo(() => ({ ...mapping, gzip: [".gz"] }), [mapping]);
+  const { getRootProps, getInputProps } = useDropzone({ ...dropzoneOptions, onDrop, accept });
 
   return (
     <Zone {...getRootProps()}>

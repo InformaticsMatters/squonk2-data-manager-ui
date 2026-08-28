@@ -228,6 +228,10 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     return workingColumns;
   }, [columns, initialSelection, onSelection, subRowsEnabled]);
 
+  // TanStack Table hands back functions the React Compiler cannot prove safe to memoize, so it
+  // declines to compile this component at all. There is nothing to fix here: the diagnostic is
+  // about the library's interface, not this call, and the component simply goes uncompiled.
+  // eslint-disable-next-line react-hooks/incompatible-library -- useReactTable is not compilable; the component runs uncompiled
   const table = useReactTable({
     enableColumnFilters,
     getRowId,

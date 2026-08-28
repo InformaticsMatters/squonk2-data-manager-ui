@@ -122,7 +122,9 @@ const buildWebSocketUrl = (location: string): string => {
  */
 export const EventStream = () => {
   const isEventStreamInstalled = useIsEventStreamInstalled();
-  const [location, setLocation] = useState<string | null>(null);
+  // The address of a stream this component has just created, held only until the read below reports
+  // the same stream for itself.
+  const [createdLocation, setCreatedLocation] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
   const isSidebarOpen = useAtomValue(eventStreamSidebarOpenAtom);
   const { incrementCount } = useUnreadEventCount();
@@ -134,7 +136,9 @@ export const EventStream = () => {
   });
 
   const { mutate: createEventStream } = useCreateEventStream({
-    mutation: { onSuccess: (eventStreamResponse) => setLocation(eventStreamResponse.location) },
+    mutation: {
+      onSuccess: (eventStreamResponse) => setCreatedLocation(eventStreamResponse.location),
+    },
   });
 
   const [eventStreamEnabled] = useAtom(eventStreamEnabledAtom);
@@ -200,6 +204,10 @@ export const EventStream = () => {
     [enqueueSnackbar],
   );
 
+  // Where the stream is: what the read reports, or — until it reports one — what creating a stream
+  // here just answered with.
+  const location = (asRole ? data : undefined) ?? createdLocation;
+
   // Build WebSocket URL
   const wsUrl = eventStreamEnabled && asRole && location ? buildWebSocketUrl(location) : null;
 
@@ -217,12 +225,6 @@ export const EventStream = () => {
   useEffect(() => {
     setWebSocketStatus(readyState);
   }, [readyState, setWebSocketStatus]);
-
-  useEffect(() => {
-    if (asRole && data) {
-      setLocation(data);
-    }
-  }, [asRole, data]);
 
   useEffect(() => {
     if (asRole && streamError?.response?.status === 404) {

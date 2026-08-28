@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
-
 import { useGetVersion as useGetASAPIVersion } from "@/api/account-server/state";
 import { useGetVersion as useGetDMAPIVersion } from "@/api/data-manager/accounting";
 
 import { ListItem as MuiListItem, ListItemText, styled, Typography } from "@mui/material";
 
+import { useIsClient } from "../hooks/useIsClient";
 import { HorizontalList } from "./HorizontalList";
 
 export const getGetDMVersionQueryKey = () => ["data-manager", "/version"];
@@ -31,9 +30,7 @@ const ApiVersions = () => {
 };
 
 export const AppVersions = () => {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => setIsClient(true), []);
+  const isClient = useIsClient();
 
   return (
     <>

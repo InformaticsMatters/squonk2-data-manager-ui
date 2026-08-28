@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useMemo } from "react";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -18,9 +18,11 @@ export interface InProgressProps {
 export const InProgress = ({ startTimestamp, showDuration }: InProgressProps) => {
   const start = dayjs.utc(startTimestamp).local();
 
-  const mountTime = useRef(new Date());
+  // Latched at mount so the ticking elapsed time is measured from a fixed origin rather than from
+  // a clock read that moves under it every render.
+  const mountTime = useMemo(() => new Date(), []);
 
-  const duration = (+mountTime.current - +start + useElapsedTime({}) * 1000) / 1000;
+  const duration = (+mountTime - +start + useElapsedTime({}) * 1000) / 1000;
 
   const primaryText = `${start.format(DATE_FORMAT)} ${start.format(TIME_FORMAT)} `;
   const secondaryText = durationText(duration);

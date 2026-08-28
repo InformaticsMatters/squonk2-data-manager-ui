@@ -3,6 +3,7 @@ import { type ReactNode, useState } from "react";
 import { Tooltip, Typography } from "@mui/material";
 
 import { useMountedState } from "../hooks/useMountedState";
+import { settle } from "../utils/app/settle";
 import { ModalWrapper } from "./modals/ModalWrapper";
 
 export interface DeleteButtonProps {
@@ -77,17 +78,14 @@ export const WarningDeleteButton = ({
       }
       return;
     }
-    try {
-      await onDelete();
-      if (isMounted()) {
+    const outcome = await settle(onDelete);
+    if (isMounted()) {
+      // On a rejection the action owner presents scoped feedback; keep the confirmation open for
+      // retry.
+      if (outcome.ok) {
         setOpen(false);
       }
-    } catch {
-      // The action owner presents scoped feedback; keep the confirmation open for retry.
-    } finally {
-      if (isMounted()) {
-        setIsDeleting(false);
-      }
+      setIsDeleting(false);
     }
   };
 

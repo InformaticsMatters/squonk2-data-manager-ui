@@ -174,6 +174,10 @@ export const ProjectDeletionProgress = () => {
    * service has not recovered, and would leave the retry that asked for it waiting for ever.
    */
   useEffect(() => {
+    // The effect React documents rather than the one it warns about: the deletion task is an
+    // external system being polled, and this hands each answer it gives to the lifecycle. The rule
+    // cannot see that through `useEffectEvent`.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- drives the lifecycle from a polled external task, not from React state
     applyProgress(deletionTask.lifecycle);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the answer, not the object holding it
   }, [deletionTask.updatedAt]);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Box, Stack, Toolbar } from "@mui/material";
 import dynamic from "next/dynamic";
@@ -80,13 +80,13 @@ const AuthenticatedNavigation = () => (
  */
 const useIsAuthenticated = () => {
   const { data: session, isPending } = authClient.useSession();
+  // Held rather than derived: while the store is checking it reports no session, and the answer must
+  // not fall back to "signed out" for those renders.
   const [authenticated, setAuthenticated] = useState(false);
 
-  useEffect(() => {
-    if (!isPending) {
-      setAuthenticated(!!session);
-    }
-  }, [isPending, session]);
+  if (!isPending && authenticated !== !!session) {
+    setAuthenticated(!!session);
+  }
 
   return authenticated;
 };

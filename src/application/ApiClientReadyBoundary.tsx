@@ -37,6 +37,7 @@ export const ApiClientReadyBoundary = ({ children }: { children: ReactNode }) =>
     }
     decided.current = true;
     if (!claimApiClientReauthentication(sessionStorage)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reports what spending the tab-wide claim in session storage just answered; nothing about it can be derived during render
       setReauthenticationSpent(true);
       return;
     }

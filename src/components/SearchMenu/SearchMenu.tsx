@@ -25,6 +25,8 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 
+import { useStateResetOn } from "../../hooks/useStateResetOn";
+
 /**
  * One row the menu offers. `href` is what separates the two things choosing can mean: a row that
  * names one is a real link, so the pointer affordances a link carries — the status bar, the context
@@ -121,7 +123,9 @@ export const SearchMenu = ({
   sections,
 }: SearchMenuProps) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const [highlight, setHighlight] = useState(0);
+  // The highlight starts at the top of whatever the list has just become, so Enter always opens the
+  // row the caller can see is highlighted.
+  const [highlight, setHighlight] = useStateResetOn(search, () => 0);
   const searchRef = useRef<HTMLInputElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const prefix = useId();
@@ -140,17 +144,15 @@ export const SearchMenu = ({
   // `aria-activedescendant` at a row that is not there and leave Enter doing nothing at all.
   const activeIndex = Math.min(highlight, Math.max(rows.length - 1, 0));
   const sectionStarts = useMemo(() => {
+    const starts: number[] = [];
     let start = 0;
-    return sections.map(({ rows: sectionRows }) => {
-      const sectionStart = start;
+    for (const { rows: sectionRows } of sections) {
+      starts.push(start);
       start += sectionRows.length;
-      return sectionStart;
-    });
+    }
+    return starts;
   }, [sections]);
 
-  // The highlight starts at the top of whatever the list has just become, so Enter always opens the
-  // row the caller can see is highlighted.
-  useEffect(() => setHighlight(0), [search]);
   useEffect(() => {
     listRef.current
       ?.querySelector(`[data-index="${activeIndex}"]`)

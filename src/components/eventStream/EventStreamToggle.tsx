@@ -2,11 +2,10 @@
  * EventStreamToggle renders a switch to enable or disable the event stream (alpha feature).
  */
 
-import { useEffect, useState } from "react";
-
 import { FormControlLabel, Switch } from "@mui/material";
 import { useAtom } from "jotai";
 
+import { useIsClient } from "../../hooks/useIsClient";
 import { eventStreamEnabledAtom } from "../../state/eventStream";
 import { useIsEventStreamInstalled } from "./useIsEventStreamInstalled";
 
@@ -35,9 +34,7 @@ const EventStreamToggleInner = () => {
 };
 
 export const EventStreamToggle = () => {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => setIsClient(true), []);
+  const isClient = useIsClient();
 
   if (!isClient) {
     return (

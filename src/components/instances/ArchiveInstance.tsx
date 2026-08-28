@@ -7,6 +7,7 @@ import { Button, Tooltip } from "@mui/material";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { capabilityIsEnabled, type ProjectCapability } from "../../projects/capabilities";
 import { useResultCommands } from "../../projects/useResultCommands";
+import { settle } from "../../utils/app/settle";
 
 export interface ArchiveInstanceProps {
   archived: boolean;
@@ -41,15 +42,14 @@ export const ArchiveInstance = ({
 
   const archiveInstance = async () => {
     setArchiving(true);
-    try {
-      await commands.archiveInstance(projectId, instanceId, !archived);
+    const outcome = await settle(() => commands.archiveInstance(projectId, instanceId, !archived));
+    setArchiving(false);
+    if (outcome.ok) {
       enqueueSnackbar(`Instance has been ${archived ? "unarchived" : "archived"}`, {
         variant: "success",
       });
-    } catch (error) {
-      enqueueError(error);
-    } finally {
-      setArchiving(false);
+    } else {
+      enqueueError(outcome.error);
     }
   };
 

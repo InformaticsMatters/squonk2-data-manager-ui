@@ -5,5 +5,4 @@ export {
   setAuthToken,
   setBaseUrl,
 } from "../runtime/account-server/axios";
-export { customFetch, getBaseURL, setBaseURL } from "../runtime/account-server/fetch";
 export * from "./generated/api-schemas";

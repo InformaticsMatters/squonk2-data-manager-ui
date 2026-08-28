@@ -1,87 +1,110 @@
-import { Container } from "@mui/material";
-import { DocsNav } from "../../components/DocsNav";
-import Head from "next/head";
+# Developer documentation
 
-<Head>
-  <title>Data Manager Developer Documentation</title>
-</Head>
+## Quick links
 
-<DocsNav />
-
-## Quick Links
-
-- [Data Manager docs](https://informaticsmatters.gitlab.io/squonk2-data-manager/) - design docs for the Data Manager and
-  a guide to creating new jobs
-- [Account Server docs](https://informaticsmatters.gitlab.io/squonk2-account-server/) - design docs for the Account server
+- [Data Manager docs](https://informaticsmatters.gitlab.io/squonk2-data-manager/) - design docs for
+  the Data Manager and a guide to creating new jobs
+- [Account Server docs](https://informaticsmatters.gitlab.io/squonk2-account-server/) - design docs
+  for the Account Server
 - [Python client](https://squonk2-python-client.readthedocs.io/en/stable) |
-  [Javascript client](https://informaticsmatters.github.io/data-manager-npm-client/) -
-  clients for programmatic use of the Data Manager API
+  [JavaScript client](https://informaticsmatters.github.io/data-manager-npm-client/) - clients for
+  programmatic use of the Data Manager API
 
-## A Squonk2 Deployment
+## A Squonk 2 deployment
 
-What you see as the **Squonk Data Manager** when you use it from the web interface is actually a number of components that
-have been deployed to a [Kubernetes](https://kubernetes.io/) cluster.
-We already have multiple deployments, but examples here refer to our
-[reference site](https://squonk.it/data-manager-ui) that is running on [Amazon Web Services](https://aws.amazon.com/).
+What you see as the **Squonk Data Manager** when you use it from the web interface is actually a
+number of components that have been deployed to a [Kubernetes](https://kubernetes.io/) cluster. We
+already have multiple deployments, but examples here refer to our
+[reference site](https://squonk.it/data-manager-ui) that is running on
+[Amazon Web Services](https://aws.amazon.com/).
 
 Other deployments would have basically the same components but at different URLs.
 
-## Systems Overview
+## Systems overview
 
 ### Keycloak Single Sign On (SSO)
 
-Authentication for all the Squonk products is handled through a [Keycloak server](https://www.keycloak.org/) which
-provides SSO capabilities using the OpenID Connect Identity provider. To do almost anything you must first be authenticated.
-Once you have signed in you get access to all the systems in that deployment that you are allowed access to without
-needing to log in again.
+Authentication for all the Squonk products is handled through a
+[Keycloak server](https://www.keycloak.org/) which provides SSO capabilities using the OpenID
+Connect identity provider. To do almost anything you must first be authenticated. Once you have
+signed in you get access to all the systems in that deployment that you are allowed access to
+without needing to log in again.
 
 ### Data Manager API
 
-This is an [OpenAPI](https://www.openapis.org/) compliant REST API implemented in [Python](https://www.python.org/),
-and available also through a [Swagger UI](https://swagger.io/tools/swagger-ui/). It provides the majority of the functions
-that you see in the UI such as managing datasets and the contents of a project, executing jobs and applications and
-viewing the results.
+This is an [OpenAPI](https://www.openapis.org/) compliant REST API implemented in
+[Python](https://www.python.org/), and available also through a
+[Swagger UI](https://swagger.io/tools/swagger-ui/). It provides the majority of the functions that
+you see in the UI, such as managing datasets and the contents of a project, executing workflows,
+applications and jobs, and viewing the results.
 
 The Swagger UI for the reference site can be found [here](https://squonk.it/data-manager-api/api/).
 
 ### Account Server API
 
-This is a separate service that handles the concepts of users, organisations, units, accounting and billing.
-The idea is that multiple applications (e.g Data Manager API) would use the same Account Server to that the usage of
-a user, organisation and unit is consolidated in one place. A single subscription gets you access to multiple services.
+This is a separate service that handles the concepts of users, organisations, units, accounting and
+billing. The idea is that multiple applications (e.g. the Data Manager API) would use the same
+Account Server, so that the usage of a user, organisation and unit is consolidated in one place. A
+single subscription gets you access to multiple services.
 
-Typically you don't notice the Account Server as a separate application as it would be seemlessly integrated into the
-client application, which is exactly how it works in the Data Manager web interface - you work with organisations and
-units but don't notice that this is actually being done through interactions with a separate service.
+Typically you don't notice the Account Server as a separate application, as it is seamlessly
+integrated into the client application — which is exactly how it works in the Data Manager web
+interface: you work with organisations and units but don't notice that this is actually being done
+through interactions with a separate service.
 
-Account Server is also an OpenAPI compliant REST API implemented in Python, available through a Swagger UI.
+The Account Server is also an OpenAPI compliant REST API implemented in Python, available through a
+Swagger UI.
 
-The Swagger UI for the reference site can be found [here](https://squonk.it/account-server-api/api/).
+The Swagger UI for the reference site can be found
+[here](https://squonk.it/account-server-api/api/).
 
-### Data Manager Web interface
+### Data Manager web interface
 
-If you are reading this document you are probably already using the web interface. This is a web application implemented
-using [React](https://reactjs.org/) and [NextJS](https://nextjs.org/) that uses the Data Manager and Account Server APIs.
-It too is deployed to the Kubernetes cluster. If you're not already there here is the location of the
+If you are reading this document you are probably already using the web interface. This is a web
+application implemented using [React](https://react.dev/) and [Next.js](https://nextjs.org/) that
+uses the Data Manager and Account Server APIs. It too is deployed to the Kubernetes cluster. If
+you're not already there, here is the location of the
 [reference site](https://squonk.it/data-manager-ui).
 
-### Clients for programmatic access
+## How the web interface is put together
 
-We have created clients for working with the Data Manager API. If you are wanting to work with the API programmatically
-using this might be much easier than using the API directly, but not all functions of the API are available through the clients.
+The web interface is a Next.js application using the Pages Router. Four decisions shape it, and each
+is recorded as an architecture decision record in the repository:
 
-#### Python
+1. **Resource scope belongs to the URL.** There is no selected project, unit or dataset held
+   anywhere. Every screen addresses the resource its own URL names, which is why a link always shows
+   the reader what it showed the sender. The one exception is the organisation, which is the
+   identity the application is shown under and the only domain scope persisted between visits.
+2. **The application is organised as vertical route-family modules.** `projects`, `datasets` and
+   `administration` each own their own route parsing, canonicalisation, links, queries,
+   capabilities, commands and failures.
+3. **Client capabilities are presentation, not enforcement.** What the interface offers, disables
+   with a reason, or hides is decided from the facts it has read. It is never the security boundary:
+   the Data Manager and the Account Server decide what is permitted.
+4. **Persistent chrome belongs to composition.** The masthead, workspace navigation, project
+   identity strip, footer and event stream are mounted once above every boundary a navigation
+   discards, so a workspace or section change replaces only the content region.
+
+The repository also carries a `CONTEXT.md` defining the vocabulary this application uses — the words
+these pages are written in — and a traceability document mapping the URL-owned workspace design to
+the code that implements it.
+
+## Clients for programmatic access
+
+We have created clients for working with the Data Manager API. If you want to work with the API
+programmatically, using one of these might be much easier than using the API directly, but not all
+functions of the API are available through the clients.
+
+### Python
 
 A Python client has been created.
 
 - The docs are available [here](https://squonk2-python-client.readthedocs.io/en/stable)
-- An installable PyPi package can be found [here](https://pypi.org/project/im-squonk2-client/)
+- An installable PyPI package can be found [here](https://pypi.org/project/im-squonk2-client/)
 
-#### JavaScript / TypeScript
+### JavaScript / TypeScript
 
 The Data Manager UI uses a private TypeScript client generated from the OpenAPI schema with
 [Orval](https://orval.dev/). It is maintained as part of the UI rather than published as a separate
 Node package. Other integrations should use the Data Manager API directly or the supported Python
 client above.
-
-export default ({ children }) => <Container>{children}</Container>;

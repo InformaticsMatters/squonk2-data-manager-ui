@@ -113,14 +113,17 @@ const chromeRemovals = (page: Page, storageKey: string) =>
 
 test("public Home and Documentation retain public navigation", async ({ page }) => {
   await page.goto(".");
-  await expect(page.getByRole("navigation", { name: "Main" })).toContainText("Documentation");
+  const mainNavigation = page.getByRole("navigation", { name: "Main" });
+  await expect(mainNavigation).toContainText("Documentation");
   await expect(page.getByRole("link", { name: "Squonk Home" })).toHaveAttribute(
     "href",
     "/data-manager-ui",
   );
-  await page.getByRole("link", { name: "Documentation" }).click();
-  await expect(page).toHaveURL(`${acceptanceUrls.app}docs/concepts`);
-  await expect(page.getByRole("navigation", { name: "Main" })).not.toContainText("Configuration");
+  // Scoped to the masthead: Home also lists the documentation tree, so an unscoped name would
+  // match the developer guide's own entry in that list as well.
+  await mainNavigation.getByRole("link", { name: "Documentation" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}docs`);
+  await expect(mainNavigation).not.toContainText("Configuration");
 });
 
 test("protected login returns to the exact canonical route and allowed query", async ({
@@ -133,9 +136,15 @@ test("protected login returns to the exact canonical route and allowed query", a
   await expect(page).toHaveURL(`${acceptanceUrls.app}${canonical}`);
   await expect(page.getByRole("heading", { name: "Results" })).toBeVisible();
 
-  await page.goto(`${acceptanceUrls.app}docs/concepts`);
-  await expect(page.getByRole("navigation", { name: "Main" })).toContainText("Documentation");
-  await expect(page.getByRole("navigation", { name: "Main" })).not.toContainText("Administration");
+  // Both the documentation index and a page beneath it, because the shell recognises the family by
+  // a check that a `/docs/`-with-slash test would fail at the index exactly.
+  for (const documentation of ["docs", "docs/concepts"]) {
+    await page.goto(`${acceptanceUrls.app}${documentation}`);
+    await expect(page.getByRole("navigation", { name: "Main" })).toContainText("Documentation");
+    await expect(page.getByRole("navigation", { name: "Main" })).not.toContainText(
+      "Administration",
+    );
+  }
 });
 
 test("Home exits project scope and browser history restores the canonical project", async ({

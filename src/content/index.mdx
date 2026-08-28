@@ -1,7 +1,7 @@
-import { Button, Container, Grid } from "@mui/material";
+import { Container, Grid } from "@mui/material";
 import { RoleWarning } from "../components/auth/RoleWarning";
 import Head from "next/head";
-import { NextLink } from "../components/NextLink";
+import { DocsIndexList } from "../components/DocsIndexList";
 import { Motd } from "../components/Motd";
 import { AuthenticatedHomeRecents } from "../components/home/AuthenticatedHomeRecents";
 
@@ -47,17 +47,12 @@ These are some of the things you can do:
 
 ## Documentation
 
-- [Concepts](/docs/concepts) - Concepts that you should understand
-- [Guided Tour](/docs/guided-tour) - High level walk through
-- [How To Guides](/docs/how-to) - Guides for doing various tasks
-- [Deployed jobs](/docs/jobs) - Jobs that have been deployed here
+<DocsIndexList href="/docs" />
 
-Other Resources:
+Other resources:
 
 - [About Squonk](https://discourse.squonk.it/c/about-squonk/9) - Squonk's history and future direction
 - [Knowledge base](https://discourse.squonk.it/c/squonk-data-manager-knowledge-base/14) - User support and ideas
-- [Developer docs](/docs/developer) - Design docs and how to use as a developer
-- Administrator docs (TODO)
 
 ## How to access
 
@@ -67,11 +62,15 @@ Please email us at info@informaticsmatters.com if you would like to evaluate or 
 
 ## Quick start
 
-1. Log in
-2. Open **Project** and create a project, or open an existing one.
-3. Upload files in the project's **Files** section, or attach existing datasets from **Datasets**.
-4. Use the project's **Run** section to launch a Jupyter notebook or execute jobs that work on those files.
-5. View those apps/jobs and their results in the project's **Results** section.
+1. Log in.
+2. Open **Projects** and create a project, or open an existing one. If you have none, the index
+   offers to create your personal unit and your first project — see
+   [Getting started](/docs/how-to/getting-started).
+3. Upload files in the project's **Files** section, or attach existing dataset versions from
+   **Datasets**.
+4. Use the project's **Run** section to launch a workflow, an application such as a Jupyter
+   notebook, or a job that works on those files.
+5. Follow what you launched in the project's **Results** section.
 
 </Grid>
 </Grid>

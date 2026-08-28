@@ -58,7 +58,7 @@ export const Footer = () => {
                 </Link>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <Link component={A} href={{ pathname: "/docs/guided-tour" }}>
+                <Link component={A} href={{ pathname: "/docs" }}>
                   Docs
                 </Link>
               </ListItem>

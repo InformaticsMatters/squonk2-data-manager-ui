@@ -1,100 +1,125 @@
-import Head from "next/head";
+import guided_tour_1 from "./assets/guided-tour-1.png";
+import guided_tour_2 from "./assets/guided-tour-2.png";
+import guided_tour_3 from "./assets/guided-tour-3.png";
+import guided_tour_4 from "./assets/guided-tour-4.png";
 
-import { Container } from "@mui/material";
+# Guided tour
 
-import { DocsNav } from "../../components/DocsNav";
+This page follows one piece of work from beginning to end: a job run over a file of molecules, and
+the result it produces. It is one journey rather than a description of every screen — the
+[how-to guides](/docs/how-to) describe each one in full, and are linked along the way.
 
-<Head>
-  <title>Data Manager User Documentation - Guided tour</title>
-</Head>
+The job is **sa-score**, which calculates a synthetic accessibility score for each molecule it is
+given. It is quick, and it is a good shape for a first run: one input file, one output file.
 
-<DocsNav />
+What you need before starting is an account you can sign in with, and a project to work in. The
+[Logging in](/docs/how-to/login) and [Getting started](/docs/how-to/getting-started) guides cover
+both, and [Concepts](/docs/concepts) explains the words used below.
 
-# Guided Tour
+## 1. Open the project
 
-This page provides a high level overview of how to use the Squonk Data Manager.
-More detailed descriptions can be found in the individual [How to guides](./how-to)
-that are referred to in this document.
+Sign in from the **Account** menu, then choose **Projects** in the main navigation and select the
+project you want to work in. That opens the project's **Files**, and a strip appears below the
+masthead naming the project and offering its four sections — **Files**, **Run**, **Results** and
+**Manage**.
 
-## Logging in
+The project you are working in is always the one in the address bar, so the page, the data it shows
+and the link you can share always agree. See the [Projects](/docs/how-to/projects) guide.
 
-To do anything useful in the Squonk Data Manager you must login and be authenticated. Do this using the **Account**
-menu in the top right corner and click _login_. You are taken to Keycloak where you authenticate, and, assuming you are
-successful, you are taken back to the Data Manager where you can perform your work.
+## 2. Put the data in the project
 
-When finished use the _Logout_ option in the **Account** menu.
+Everything that runs in a project has access to that project's files, so the input has to be there
+before it can be used. Upload it in **Files**, or attach an existing dataset version from
+**Datasets**.
 
-More details can be found in the [Logging in](./how-to/login) How To guide.
+This tour uses a file called `clustered_props.sdf`, an SD-file of 1000 molecules that is already in
+the project. See the [Files](/docs/how-to/projects/files) guide for uploading, and the
+[Datasets](/docs/how-to/datasets) guide for attaching.
 
-## Choosing a project
+## 3. Find the job
 
-Once you are logged in, choose **Projects** in the main navigation. This opens a searchable index of
-the projects you can reach in your current **Organisation**, each labelled with the **Unit** it
-belongs to. Selecting one opens that project's **Files**.
+Open the project's **Run** section. It is the catalogue of everything this deployment lets you
+launch — **workflows**, **applications** and **jobs** — presented as cards, and the search field
+narrows it. Typing `sa-score` leaves one card.
 
-The project you are working in is always the one in the address bar, so the page, its data and the
-link you can share always agree, and returning to the index is how you move to another project.
+<Image src={guided_tour_1} alt="The Run catalogue narrowed to the sa-score job" />
 
-More details can be found in the [Choosing where you work](./how-to/context) How To guide.
+The card states what the definition is and what it does: the blue chip marks it as a **Job**, the
+heading is its identifier and the line beneath the fuller name it is published under, and its
+category, collection and keywords sit below the description. The chip on the right counts how many
+times this version has already run in this project. The footer holds the version being offered and
+the **Run** control.
 
-## Project Files
+The [Run](/docs/how-to/projects/run) guide reads the card part by part.
 
-This shows the contents (files and directories) in your project.
-The interface is a simple file browser a bit like Windows Explorer and probably doesn't need much explanation.
-Note that the operations you can perform here are quite limited. If you want full control we suggest you run a Jupyter
-notebook in your project and use the file manager of the Jupyter lab interface, or a command line console to perform your
-operations.
+## 4. Launch it
 
-Jobs and applications have full access to these project contents.
+Choosing **Run** opens the launch dialog. It leads with the definition's fuller name — _Synthetic
+accessibility score_ — and asks for two kinds of thing:
 
-## Project Run
+- **Inputs** are project files. **Molecules** is required here, marked with an asterisk, and
+  **Select file** picks `clustered_props.sdf` from the project.
+- **Options** are the parameters of the run. **Output file name** is required; the rest have
+  defaults that suit an SD-file, and are left alone.
 
-This is where you launch **Applications**, **Jobs** and **Workflows** to do your work. Whatever you
-launch runs in the project in the address bar.
+<Image src={guided_tour_2} alt="The sa-score launch dialog, filled in" />
 
-Those that are available (defined by the system administrator) are displayed as "cards". You can type into the "Search"
-box to filter these using terms that are defined for each job or app. For instance jobs implemented using RDKit should
-be labelled as "rdkit" so typing "rdkit" into the search box will show only cards that have this label. The labels for
-each job are displayed towards the bottom of the card in red.
+**Run** stays disabled until everything required has been given, so a launch cannot be sent
+incomplete. Naming the output `scored.sdf` and choosing **Run** starts the work.
 
-To run a job or application click on the _Run_ button. A dialog will appear allowing you to define the job inputs and
-options.
+## 5. Follow it
 
-_Inputs_ are project files that form the input to the job.
-_Options_ are user specified parameters for execution of the job.
+A successful launch opens what it created under **Results**, so you land on the thing that was
+actually started rather than on a list you have to search.
 
-Specify these inputs and options and click the _Run_ button at the bottom. A successful launch opens
-what it created under **Results**, so you can follow the work that was actually started.
+<Image src={guided_tour_3} alt="The running instance under Results" />
 
-See the [Running jobs](./how-to/jobs) How To guide for more details.
+The result names the job, its status — **RUNNING** — its owner and how long it has been going. Under
+that are the controls for it: **Terminate** stops it, **Run again** reopens the dialog with these
+same choices, **Logs** opens that instance's own log directory in the project's **Files**, and **Archive** decides
+whether it is deleted automatically. **Inputs** and **Outputs** name the files it was given and the
+file it will produce, and **States** and **Events** report its progress as it goes.
 
-Launching an **Application** is very similar. Currently the only available application is a Jupyter Notebook.
-See the [Running applications](./how-to/applications) How To guide for more details.
+The list does not refresh itself; **Refresh results** in the rail reads the section again.
 
-## Project Results
+## 6. Read the result
 
-This shows the execution of your **Applications**, **Jobs** and **Workflows** in the project you are
-in, and nothing from any other project. A high level summary of each one is presented along with the
-ability to drill down into the specific details of each instance.
+sa-score finished in 19 seconds.
 
-Details include the Status of the job and any events it might have generated. You are also able to view the input and output
-files and any log files that are generated.
+<Image src={guided_tour_4} alt="The completed instance, with its states and events" />
 
-When you are finished remember to TERMINATE your job or application to free up the resources it is using.
+What changed when it completed:
 
-See the [Inspecting job and application execution](./how-to/results) How To guide for more details.
+- The status is **COMPLETED** and **Succeeded**, with an **Exit Code** of `0`.
+- **Coins** and **Cost** are what the run reported spending — `C0.00` and `1000` here. They are
+  reported separately by the Data Manager as the work runs, and an instance that reported
+  neither says nothing rather than naming a figure it never gave.
+- **States** ran `PENDING` → `STARTED` → `SUCCESS`, and the **Events** record what the job actually
+  did: the arguments it was called with, then `Processed 1000 records in 15 seconds. 0 errors.`
+- **Terminate** has become **Delete**, because there is no longer anything to stop.
 
-## Datasets
+The output file is a link, and it now sits in the project's **Files** alongside the input, ready to
+be the input to something else. A run that fails says so in the same place, with its events and logs
+to read; the [Results](/docs/how-to/projects/results) guide covers reading one.
 
-**Datasets** is one of the three main destinations, alongside **Projects** and **Administration**. It
-lists every dataset you can reach, without you having to choose a unit first; a unit is asked for
-only as billing context when you upload.
+Remember to terminate a long-running application or job when you have finished with it, so it stops
+consuming resources.
 
-## Administration
+## Where this fits
 
-**Administration** is available to every signed-in user and holds **Organisation & access**,
-**Subscriptions**, **Charges**, and **Usage & inventory**. Ordinary actions you cannot use are
-disabled with a reason rather than removed, so it is clear what relationship or role a task
-requires. Actions that only a platform administrator can ever take are hidden instead.
+That is one job over one file. The same three steps — put the data in the project, launch something
+from **Run**, read it under **Results** — are how everything else works too, including applications
+such as a Jupyter notebook, which stays running for as long as you need it, and workflows, which run
+a sequence of steps as one thing.
 
-export default ({ children }) => <Container>{children}</Container>;
+Two parts of the application sit outside a project:
+
+- **[Datasets](/docs/how-to/datasets)** lists every dataset you can reach. A dataset is versioned and
+  shareable, and a version can be attached to a project as an input.
+- **[Administration](/docs/how-to/administration)** holds the organisations, units and subscriptions
+  behind your projects, with their charges and usage reports.
+
+And within a project, **[Manage](/docs/how-to/projects/manage)** states its facts and holds the
+changes you can make: its coin usage, the people who can reach it, its privacy, and its deletion.
+It stays readable to everyone who can see the project, so you can always check a project's details
+even where you cannot change them.

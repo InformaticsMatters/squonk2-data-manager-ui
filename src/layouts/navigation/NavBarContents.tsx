@@ -22,7 +22,7 @@ const applicationLinks = [
 
 const publicLinks = [
   { href: "/", label: "Home" },
-  { href: "/docs/concepts", label: "Documentation" },
+  { href: "/docs", label: "Documentation" },
 ] as const;
 
 const NavigationLinks = ({ authenticated }: { authenticated: boolean }) => {
@@ -94,7 +94,10 @@ const useIsAuthenticated = () => {
 export const NavBarContents = () => {
   const authenticated = useIsAuthenticated();
   const router = useRouter();
-  const usePublicShell = !authenticated || router.pathname.startsWith("/docs/");
+  // The documentation index is itself a documentation page, so the family is matched without the
+  // trailing slash a `/docs/…` test would require.
+  const usePublicShell =
+    !authenticated || router.pathname === "/docs" || router.pathname.startsWith("/docs/");
   return usePublicShell ? (
     <PublicNavigation />
   ) : (

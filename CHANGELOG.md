@@ -1,3 +1,10 @@
+# [7.0.0-dev.19](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.18...7.0.0-dev.19) (2026-08-28)
+
+
+### Bug Fixes
+
+* build and serve the app with Turbopack ([ae2539d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/ae2539dea5456aeece358ce27dfccab6bba8e0b2)), closes [#2024](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2024) [vercel/next.js#82607](https://github.com/vercel/next.js/issues/82607) [vercel/next.js#91411](https://github.com/vercel/next.js/issues/91411) [#2020](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2020)
+
 # [7.0.0-dev.18](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.17...7.0.0-dev.18) (2026-08-27)
 
 

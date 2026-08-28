@@ -20,6 +20,33 @@ export const readRecentProjectIds = (storage: Pick<Storage, "getItem">) => {
   }
 };
 
+/** The answer a render that has no browser storage to read is given. */
+export const noRecentProjectIds: readonly string[] = [];
+
+let lastReadRecentProjects: string | null | undefined;
+let lastRecentProjectIds: readonly string[] = noRecentProjectIds;
+
+/**
+ * The recent projects as a value that stays identical for as long as browser storage does.
+ *
+ * `readRecentProjectIds` answers with a fresh array every call, which a render may not depend on.
+ * This caches that answer against the text it was parsed from, so the list can be read during
+ * render — by `useSyncExternalStore`, or by anything else that must not copy it into state.
+ */
+export const recentProjectIdsSnapshot = (storage: Pick<Storage, "getItem">) => {
+  let raw: string | null;
+  try {
+    raw = storage.getItem(RECENT_PROJECTS_STORAGE_KEY);
+  } catch {
+    raw = null;
+  }
+  if (raw !== lastReadRecentProjects) {
+    lastReadRecentProjects = raw;
+    lastRecentProjectIds = readRecentProjectIds(storage);
+  }
+  return lastRecentProjectIds;
+};
+
 export const recordRecentProject = (
   storage: Pick<Storage, "getItem" | "setItem">,
   projectId: string,

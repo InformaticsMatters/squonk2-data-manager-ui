@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 
 import { Alert, Box, Button, Checkbox, MenuItem, TextField, Typography } from "@mui/material";
 import { type Updater, useForm } from "@tanstack/react-form";
@@ -52,14 +52,20 @@ const getIsNumeric = (type: JSON_SCHEMA_TYPE) => type === "number" || type === "
 export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) => {
   const { fields } = schema;
 
-  const fieldsInConfig = Object.keys(config);
-  Object.keys(fields).forEach(
-    (field) =>
-      !fieldsInConfig.includes(field) && (config[field] = getDefault(field, fields[field].type)),
-  );
+  // Fields the schema names but the stored config has never held are defaulted onto a copy: `config`
+  // is a prop, and filling it in place would edit the caller's object behind its back.
+  const completedConfig = useMemo(() => {
+    const completed = { ...config };
+    for (const field of Object.keys(fields)) {
+      if (!(field in completed)) {
+        completed[field] = getDefault(field, fields[field].type);
+      }
+    }
+    return completed;
+  }, [config, fields]);
 
   const form = useForm({
-    defaultValues: config,
+    defaultValues: completedConfig,
     onSubmit: ({ value }) => {
       onChange(value);
     },
@@ -103,7 +109,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
           // eslint-disable-next-line react/no-array-index-key
           <Fragment key={`${key}${index}`}>
             <Typography>{key}</Typography>
-            <form.Field defaultValue={config[key].dtype} name={`${key}.dtype`}>
+            <form.Field defaultValue={completedConfig[key].dtype} name={`${key}.dtype`}>
               {(field) => (
                 <TextField
                   select
@@ -118,7 +124,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 </TextField>
               )}
             </form.Field>
-            <form.Field defaultValue={config[key].include} name={`${key}.include`}>
+            <form.Field defaultValue={completedConfig[key].include} name={`${key}.include`}>
               {(field) => (
                 <Checkbox
                   checked={Boolean(field.state.value)}
@@ -126,7 +132,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 />
               )}
             </form.Field>
-            <form.Field defaultValue={config[key].cardView} name={`${key}.cardView`}>
+            <form.Field defaultValue={completedConfig[key].cardView} name={`${key}.cardView`}>
               {(field) => (
                 <Checkbox
                   checked={Boolean(field.state.value)}
@@ -134,7 +140,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 />
               )}
             </form.Field>
-            <form.Field defaultValue={config[key].min} name={`${key}.min`}>
+            <form.Field defaultValue={completedConfig[key].min} name={`${key}.min`}>
               {(field) => (
                 <form.Subscribe selector={(state) => state.values[key].dtype}>
                   {(currentType) => (
@@ -154,7 +160,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 </form.Subscribe>
               )}
             </form.Field>
-            <form.Field defaultValue={config[key].max} name={`${key}.max`}>
+            <form.Field defaultValue={completedConfig[key].max} name={`${key}.max`}>
               {(field) => (
                 <form.Subscribe selector={(state) => state.values[key].dtype}>
                   {(currentType) => (
@@ -174,7 +180,7 @@ export const ConfigEditor = ({ schema, config, onChange }: ConfigEditorProps) =>
                 </form.Subscribe>
               )}
             </form.Field>
-            <form.Field defaultValue={config[key].sort} name={`${key}.sort`}>
+            <form.Field defaultValue={completedConfig[key].sort} name={`${key}.sort`}>
               {(field) => (
                 <TextField
                   disabled

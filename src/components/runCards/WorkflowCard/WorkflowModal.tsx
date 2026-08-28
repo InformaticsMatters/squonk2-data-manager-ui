@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { useGetWorkflow } from "@/api/data-manager/workflow";
 
 import { Box, TextField, Typography } from "@mui/material";
 
+import { useDraftValue } from "../../../hooks/useDraftValue";
+import { useStateResetOn } from "../../../hooks/useStateResetOn";
 import { capabilityIsEnabled } from "../../../projects/capabilities";
 import { launchIsSendable } from "../../../projects/runLaunch";
 import {
@@ -48,25 +50,21 @@ export const WorkflowModal = ({
     [workflow?.variables],
   );
 
-  const [nameState, setNameState] = useState("");
-
-  useEffect(() => {
-    workflow?.workflow_name && setNameState(workflow.workflow_name);
-  }, [workflow?.workflow_name]);
+  // The workflow's own name once the definition answers, and nothing at all until then.
+  const [nameState, setNameState] = useStateResetOn(
+    workflow?.workflow_name,
+    (workflowName) => workflowName ?? "",
+  );
 
   const [debug, setDebug] = useState<DebugValue>("0");
-
-  const [inputsData, setInputsData] = useState<InputData>({});
-  const [optionsFormData, setOptionsFormData] = useState<Record<string, unknown>>();
 
   // The definition arrives after the form is first drawn, so its own declared defaults are entered
   // once it does. A workflow that declares a default for an input it requires is therefore ready to
   // run as opened, exactly as the same workflow expressed as a job would be.
   const inputsDefault = useMemo(() => declaredInputDefaults(declared.inputs), [declared]);
 
-  useEffect(() => {
-    setInputsData(inputsDefault);
-  }, [inputsDefault]);
+  const [inputsData, setInputsData] = useDraftValue<InputData>(inputsDefault);
+  const [optionsFormData, setOptionsFormData] = useState<Record<string, unknown>>();
 
   const formRef = useRef<any>(null);
 

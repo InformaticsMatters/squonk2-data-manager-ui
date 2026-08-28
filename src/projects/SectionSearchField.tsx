@@ -37,12 +37,11 @@ export const SectionSearchField = ({
 
   // The draft is given up only once the route carries it, so a route that has not caught up yet —
   // the one this field was replacing when the next keystroke arrived — can never overwrite what is
-  // being typed.
-  useEffect(() => {
-    if (draft !== null && draft === (search ?? "")) {
-      setDraft(null);
-    }
-  }, [draft, search]);
+  // being typed. Given up during render rather than in an effect: the field would otherwise be drawn
+  // once more from a draft the route has already caught up with.
+  if (draft !== null && draft === (search ?? "")) {
+    setDraft(null);
+  }
 
   useEffect(() => {
     if (draft === null) {

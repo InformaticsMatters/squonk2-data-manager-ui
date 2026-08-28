@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import {
   type InstanceGetResponse,
@@ -9,6 +9,8 @@ import { useGetJob } from "@/api/data-manager/job";
 
 import { Box, TextField, Typography } from "@mui/material";
 
+import { useDraftValue } from "../../../hooks/useDraftValue";
+import { useStateResetOn } from "../../../hooks/useStateResetOn";
 import { capabilityIsEnabled } from "../../../projects/capabilities";
 import { launchIsSendable } from "../../../projects/runLaunch";
 import {
@@ -71,10 +73,12 @@ export const JobModal = ({
   const { data: job } = useGetJob(jobId, undefined, {
     query: { retry: jobId === TEST_JOB_ID ? 1 : 3 },
   });
-  const [nameState, setNameState] = useState(instance?.job_name ?? "");
-  useEffect(() => {
-    job?.job && setNameState(job.job);
-  }, [job?.job]);
+  // The job's own name once the definition answers; until then whatever the inherited instance was
+  // named, or nothing at all.
+  const [nameState, setNameState] = useStateResetOn(
+    job?.job,
+    (jobName) => jobName ?? instance?.job_name ?? "",
+  );
 
   const spec = instance?.application_specification;
   const specVariables = useMemo(
@@ -96,7 +100,8 @@ export const JobModal = ({
   // The values the job's own declared defaults start its fields at
   const inputsDefault = useMemo(() => declaredInputDefaults(declared.inputs), [declared]);
 
-  const [inputsData, setInputsData] = useState<InputData>({});
+  // The defaults arrive with the definition, so the fields start at whatever it last declared.
+  const [inputsData, setInputsData] = useDraftValue<InputData>(inputsDefault);
 
   const inputKeys = Object.keys(declared.inputs?.properties ?? {});
   const specInputs = Object.fromEntries(
@@ -109,11 +114,6 @@ export const JobModal = ({
   );
 
   const formRef = useRef<any>(null);
-
-  // Since the default value are obtained async, we have to wait for them to arrive in order to set
-  useEffect(() => {
-    setInputsData(inputsDefault);
-  }, [inputsDefault]);
 
   // The launch names the project the URL addresses and nothing else, so a job can only ever be run
   // in the project the caller is looking at.

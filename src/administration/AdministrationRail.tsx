@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import { useGetOrganisationUnits } from "@/api/account-server/unit";
 
 import {
@@ -30,6 +28,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { useDraftValue } from "../hooks/useDraftValue";
 import { retryAdministrationRead, useAccessFacts } from "./accessFacts";
 import { administrationLinks, type AdministrationRoute } from "./routes";
 import { organisationChargesAreOffered } from "./scope";
@@ -141,10 +140,8 @@ export const AdministrationRail = ({
   const router = useRouter();
   const { defaultOrganisationId } = useAccessFacts();
   const routeSearch = route?.kind === "overview" ? route.search : undefined;
-  const [search, setSearch] = useState(routeSearch ?? "");
+  const [search, setSearch] = useDraftValue(routeSearch ?? "");
   const { emptiness, isError, isPending, rows, total } = useUnitIndex(organisationId, search);
-
-  useEffect(() => setSearch(routeSearch ?? ""), [routeSearch]);
 
   const selected = selectedRailEntry(route);
   const organisationEntries = [

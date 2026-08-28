@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
-
 import { useGetUnits } from "@/api/account-server/unit";
 import { useGetProjects } from "@/api/data-manager/project";
 
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 
+import { useClientSnapshot } from "../../hooks/useClientSnapshot";
 import { authClient } from "../../lib/auth-client";
 import { ProjectIdentity } from "../../projects/ProjectIdentity";
-import { readRecentProjectIds } from "../../projects/recentProjects";
+import { noRecentProjectIds, recentProjectIdsSnapshot } from "../../projects/recentProjects";
 import { projectLinks } from "../../projects/routes";
 import { useVisibleOrganisations } from "../../state/organisationSelection";
 
@@ -17,9 +16,10 @@ export const AuthenticatedHomeRecents = () => {
   const { data } = useGetProjects(undefined, { query: { enabled: !!session } });
   const organisations = useVisibleOrganisations({ enabled: !!session });
   const { data: units } = useGetUnits(undefined, { query: { enabled: !!session } });
-  const [recentIds, setRecentIds] = useState<string[]>([]);
-
-  useEffect(() => setRecentIds(readRecentProjectIds(localStorage)), [data, session?.user.id]);
+  const recentIds = useClientSnapshot(
+    () => recentProjectIdsSnapshot(localStorage),
+    noRecentProjectIds,
+  );
 
   const projects = recentIds
     .map((id) => data?.projects.find((project) => project.project_id === id))

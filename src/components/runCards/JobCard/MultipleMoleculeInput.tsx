@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useId, useState } from "react";
 
 import {
   Box,
@@ -9,7 +9,6 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
-import { nanoid } from "nanoid";
 
 import { useIsASketcherOpen } from "../../../state/sketcherState";
 import { addFileProtocol, FILE_PROTOCOL, removeFileProtocol } from "../../../utils/app/urls";
@@ -28,6 +27,17 @@ export interface MultipleMoleculeInputProps extends Omit<
 }
 
 export type InputMethod = "files" | "smiles";
+
+/**
+ * Which input method a starting value implies. Only consulted for the value the component mounts
+ * with — afterwards the radio group owns the choice.
+ */
+const methodForValue = (value: FileSelection): InputMethod => {
+  if (typeof value === "string") {
+    return value.startsWith(FILE_PROTOCOL) ? "files" : "smiles";
+  }
+  return value?.map((val) => val.startsWith(FILE_PROTOCOL)).every(Boolean) ? "files" : "smiles";
+};
 
 const addProtocolToFiles = (value: FileSelection) => {
   if (value === undefined) {
@@ -60,18 +70,8 @@ export const MultipleMoleculeInput = ({
   onFileSelect,
   reset,
 }: MultipleMoleculeInputProps) => {
-  const uuid = useRef(nanoid()).current;
-  const initialValue = useRef(value).current;
-  const method = useMemo(() => {
-    if (typeof initialValue === "string") {
-      return initialValue.startsWith(FILE_PROTOCOL) ? "files" : "smiles";
-    }
-    return initialValue?.map((val) => val.startsWith(FILE_PROTOCOL)).every(Boolean)
-      ? "files"
-      : "smiles";
-  }, [initialValue]);
-
-  const [inputMethod, setInputMethod] = useState<InputMethod>(method);
+  const uuid = useId();
+  const [inputMethod, setInputMethod] = useState<InputMethod>(() => methodForValue(value));
 
   return (
     <>

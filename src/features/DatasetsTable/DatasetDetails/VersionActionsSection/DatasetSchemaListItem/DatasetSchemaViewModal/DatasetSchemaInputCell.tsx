@@ -1,7 +1,7 @@
-import { useLayoutEffect, useState } from "react";
-
 import { Restore } from "@mui/icons-material";
 import { Box, IconButton, TextField, Tooltip } from "@mui/material";
+
+import { useDraftValue } from "../../../../../../hooks/useDraftValue";
 
 export interface DatasetSchemaInputCellProps {
   /**
@@ -37,11 +37,7 @@ export const DatasetSchemaInputCell = ({
   setFieldValue,
   originalFieldValue,
 }: DatasetSchemaInputCellProps) => {
-  const [displayValue, setDisplayValue] = useState(fieldValue);
-
-  useLayoutEffect(() => {
-    setDisplayValue(fieldValue);
-  }, [fieldValue]);
+  const [displayValue, setDisplayValue] = useDraftValue(fieldValue);
 
   const hasChanged = displayValue !== originalFieldValue;
 

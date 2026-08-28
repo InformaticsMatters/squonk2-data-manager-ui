@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useGetUnits } from "@/api/account-server/unit";
 import { useGetProjects } from "@/api/data-manager/project";
@@ -101,14 +101,6 @@ export const ProjectSelector = ({ projectId }: { projectId: string }) => {
     [organisations, projectId, projects, recentProjectIds, scope, search, section, units],
   );
 
-  // Read when the menu opens rather than live, so the order does not move under the caller while
-  // they are looking at it.
-  useEffect(() => {
-    if (open) {
-      setRecentProjectIds(readRecentProjectIds(localStorage));
-    }
-  }, [open]);
-
   return (
     <SearchMenu
       ariaLabel="Change project"
@@ -144,7 +136,14 @@ export const ProjectSelector = ({ projectId }: { projectId: string }) => {
       searchLabel="Search projects"
       searchPlaceholder="Project, unit or organisation"
       sections={sections}
-      onOpenChange={setOpen}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        // Read when the menu opens rather than live, so the order does not move under the caller
+        // while they are looking at it.
+        if (nextOpen) {
+          setRecentProjectIds(readRecentProjectIds(localStorage));
+        }
+      }}
       onSearchChange={setSearch}
       onSelect={({ href }) => {
         // The row's own link, rather than the same route built a second time: what the pointer

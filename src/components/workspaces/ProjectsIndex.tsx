@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useState } from "react";
+import { useDeferredValue, useState } from "react";
 
 import { useGetDefaultOrganisation } from "@/api/account-server/organisation";
 import { useGetUnitsSuspense } from "@/api/account-server/unit";
@@ -19,6 +19,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useFamilyRoute } from "../../application/FamilyRouteResolution";
+import { useClientSnapshot } from "../../hooks/useClientSnapshot";
+import { useDraftValue } from "../../hooks/useDraftValue";
 import { useGetPersonalUnit } from "../../hooks/useGetPersonalUnit";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import {
@@ -50,7 +52,7 @@ export const ProjectsIndex = () => {
    * property the route declares is what tells the two families' indexes apart here.
    */
   const routeUnitId = route?.kind === "index" && "unitId" in route ? route.unitId : undefined;
-  const [search, setSearch] = useState(routeSearch ?? "");
+  const [search, setSearch] = useDraftValue(routeSearch ?? "");
   const deferredSearch = useDeferredValue(search);
   const selectedOrganisation = useSelectedOrganisation();
   const organisationId = selectedOrganisation[2];
@@ -59,21 +61,23 @@ export const ProjectsIndex = () => {
   const { user } = useKeycloakUser();
   const { data: personalUnit, isPending: personalUnitIsPending } = useGetPersonalUnit();
   const { data: defaultOrganisation } = useGetDefaultOrganisation({ query: { retry: false } });
-  const [dismissed, setDismissed] = useState(false);
-  const [personalUnitHasAnswered, setPersonalUnitHasAnswered] = useState(false);
-
-  useEffect(() => setSearch(routeSearch ?? ""), [routeSearch]);
-  // The dismissal is read after mount, because the server render has no browser storage to read and
-  // a panel that appeared and then vanished would be worse than one that arrives a frame late.
-  useEffect(() => setDismissed(projectOnboardingIsDismissed(localStorage)), []);
+  // The dismissal is read in the browser only, because the server render has no browser storage to
+  // read and a panel that appeared and then vanished would be worse than one that arrives late.
+  const storedDismissal = useClientSnapshot(
+    () => projectOnboardingIsDismissed(localStorage),
+    false,
+  );
+  // Dismissing writes to storage, which nothing re-reads on its own, so this render also remembers
+  // that it was this caller who just did it.
+  const [dismissedHere, setDismissedHere] = useState(false);
+  const dismissed = storedDismissal || dismissedHere;
   // Latched, not read live. A personal unit that has not answered *yet* is not an absent one, and
   // the two are opposite answers here — but once it has answered, a later refresh of the same read
   // must not take the offer back off the screen the caller is working through.
-  useEffect(() => {
-    if (!personalUnitIsPending) {
-      setPersonalUnitHasAnswered(true);
-    }
-  }, [personalUnitIsPending]);
+  const [personalUnitHasAnswered, setPersonalUnitHasAnswered] = useState(false);
+  if (!personalUnitIsPending && !personalUnitHasAnswered) {
+    setPersonalUnitHasAnswered(true);
+  }
 
   const { items, selectedUnit, unitOptions } = organisationId
     ? buildProjectIndexList(projects.projects, units, organisationId, {
@@ -108,7 +112,7 @@ export const ProjectsIndex = () => {
     !(onboarding.dismissible && dismissed);
   const dismiss = () => {
     dismissProjectOnboarding(localStorage);
-    setDismissed(true);
+    setDismissedHere(true);
   };
   // Whether this organisation holds a project at all — not whether the caller has one somewhere, and
   // not whether their search matched: with no list for the offer to sit above, an empty index beside

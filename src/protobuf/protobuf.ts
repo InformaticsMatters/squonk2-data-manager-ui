@@ -113,17 +113,6 @@ interface EventStreamMessage {
 }
 
 /**
- * Converts a Blob containing JSON text into an EventStreamMessage object.
- * @param blob The Blob containing the JSON text.
- * @returns A Promise resolving to the parsed EventStreamMessage object.
- */
-export const protoBlobToText = async (blob: Blob) => {
-  const text = await blob.text();
-  const json = JSON.parse(text);
-  return json as EventStreamMessage;
-};
-
-/**
  * Parses an EventStreamMessage and returns a typed ChargeMessage payload
  * based on the message_type, or null if the type is unhandled.
  * @param event The raw EventStreamMessage containing the message type and body.

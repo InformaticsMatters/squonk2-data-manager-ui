@@ -1,3 +1,28 @@
+# [7.0.0-dev.20](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.19...7.0.0-dev.20) (2026-08-28)
+
+
+* feat!: remove the SDF viewer ([5bbde12](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5bbde12a28111f82e76088ff9cddd52f40ee2093))
+
+
+### Bug Fixes
+
+* **docs:** give documentation screenshots room around them ([96ed1a8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/96ed1a8154a48b9d2c9b24f69d507d3860d9ba17))
+* **docs:** stop screenshots widening the page on a narrow viewport ([41d2a9b](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/41d2a9b3a9531c1984dd48fc447124adf77fa60e)), closes [#2019](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2019)
+
+
+### Features
+
+* **docs:** rework the user documentation for the v7 architecture ([2b710aa](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2b710aaf77a62a736b6b1431a138356850310652)), closes [#1974](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1974)
+
+
+### BREAKING CHANGES
+
+* The SDF viewer is no longer offered for project files.
+Molecule cards and the scatter plot selector are removed; use the
+visualisation application instead.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+
 # [7.0.0-dev.19](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.18...7.0.0-dev.19) (2026-08-28)
 
 

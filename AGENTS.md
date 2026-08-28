@@ -18,7 +18,7 @@ The app has its own git repository (InformaticsMatters/squonk2-data-manager-ui),
 
 ## Commands
 
-- `pnpm dev` — dev server (Turbopack).
+- `pnpm dev` — dev server (Turbopack, which the React Compiler's Rust port requires).
 - `pnpm build` — production build. Run the separate strict TypeScript and ESLint commands too.
 - `pnpm generate:client:data-manager` / `pnpm generate:client:account-server` — regenerate one local OpenAPI client from its ignored input in `openapi/`.
 - `pnpm generate:clients` — transactionally regenerate both local OpenAPI clients.

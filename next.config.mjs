@@ -40,6 +40,16 @@ let nextConfig = {
       : /** @type {import("next").NextConfig["output"]} */ (process.env.OUTPUT_TYPE),
   generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA ?? null : undefined,
   typescript: { ignoreBuildErrors: true },
+  // Every rule the compiler's own diagnostics ship as is enabled in `eslint.config.mjs`, so the
+  // tree is kept in the shape the compiler can actually compile rather than silently skipping
+  // components it cannot.
+  reactCompiler: true,
+  experimental: {
+    // The native Rust port of the React Compiler, which runs inside Turbopack rather than as a
+    // Babel pass through Node. This is why the build is Turbopack rather than webpack: the option
+    // errors outright under webpack.
+    turbopackRustReactCompiler: true,
+  },
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
   // The redesign is a clean cutover: a removed route is the ordinary not-found, so this

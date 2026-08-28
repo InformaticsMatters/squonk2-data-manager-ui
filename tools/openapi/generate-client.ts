@@ -57,7 +57,9 @@ const writeFacades = async (clientName: ClientName, clientRoot: string) => {
       "  setAuthToken,",
       "  setBaseUrl,",
       `} from "../runtime/${clientName}/axios";`,
-      `export { customFetch, getBaseURL, setBaseURL } from "../runtime/${clientName}/fetch";`,
+      // The fetch transport is not generated (see the commented-out fetch block in
+      // orval.config.ts), so the client root does not re-export its runtime adapter.
+      // `export { customFetch, getBaseURL, setBaseURL } from "../runtime/${clientName}/fetch";`,
       'export * from "./generated/api-schemas";',
       "",
     ].join("\n"),
@@ -70,10 +72,10 @@ const writeFacades = async (clientName: ClientName, clientRoot: string) => {
       path.resolve(facadeRoot, "index.ts"),
       `export * from "../generated/${tag}/${tag}";\n`,
     );
-    await writeFile(
-      path.resolve(facadeRoot, "fetch.ts"),
-      `export * from "../generated/${tag}/${tag}.fetch";\n`,
-    );
+    // await writeFile(
+    //   path.resolve(facadeRoot, "fetch.ts"),
+    //   `export * from "../generated/${tag}/${tag}.fetch";\n`,
+    // );
     await writeFile(
       path.resolve(facadeRoot, "zod.ts"),
       `export * from "../generated/${tag}/${tag}.zod";\n`,

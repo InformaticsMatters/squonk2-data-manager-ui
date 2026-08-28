@@ -57,12 +57,8 @@ test.describe("Viewed file identity", () => {
 
   test("offers the viewers the file itself supports, in one order", () => {
     expect(fileViewersFor("notes.txt")).toEqual(["text", "browser"]);
-    expect(fileViewersFor("poses.sdf")).toEqual(["text", "browser", "sdf"]);
-    expect(fileViewersFor("poses.sdf.gz")).toEqual(["text", "browser", "sdf"]);
-    // A name that merely mentions the extension is not a file of that type.
-    expect(fileViewersFor("sdf-notes.txt")).toEqual(["text", "browser"]);
-    expect(offersFileViewer("poses.sdf", "sdf")).toBe(true);
-    expect(offersFileViewer("notes.txt", "sdf")).toBe(false);
+    expect(fileViewersFor("poses.sdf")).toEqual(["text", "browser"]);
+    expect(fileViewersFor("poses.sdf.gz")).toEqual(["text", "browser"]);
     expect(offersFileViewer("notes.txt", "text")).toBe(true);
     expect(offersFileViewer("notes.txt", "browser")).toBe(true);
   });
@@ -91,8 +87,8 @@ test.describe("Viewed file delivery contract", () => {
   });
 
   test("a file that answered for a viewer fetching its own bytes is readable", () => {
-    // The browser viewer and the SDF viewer are told the file is there before they are framed,
-    // without the page delivering bytes neither of them would use.
+    // A viewer that fetches its own bytes is told the file is there before it is framed,
+    // without the page delivering bytes it would not use.
     expect(resolveFileViewerDelivery(recordedResponse(), null)).toEqual({ kind: "readable" });
   });
 
@@ -158,9 +154,6 @@ test.describe("File viewer routes", () => {
     expect(projectLinks.fileView(projectId, { path: "/inputs/poses.sdf", viewer: "text" })).toBe(
       canonical,
     );
-    expect(projectLinks.fileView(projectId, { path: "/inputs/poses.sdf", viewer: "sdf" })).toBe(
-      `${canonical}&viewer=sdf`,
-    );
     expect(projectLinks.fileView(projectId, { path: "/inputs/poses.sdf", viewer: "browser" })).toBe(
       `${canonical}&viewer=browser`,
     );
@@ -178,7 +171,7 @@ test.describe("File viewer routes", () => {
   });
 
   test("a named viewer round trips without replacement", () => {
-    for (const viewer of ["browser", "sdf"] as const) {
+    for (const viewer of ["browser"] as const) {
       expect(
         parseProjectRoute(projectLinks.fileView(projectId, { path: "/inputs/poses.sdf", viewer })),
         viewer,

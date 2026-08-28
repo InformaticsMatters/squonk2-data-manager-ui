@@ -16,23 +16,26 @@ export default defineConfig({
     input: { target: input, unsafeDisableValidation: true },
     output: { client: "zod", mode: "tags-split", target: generatedRoot, fileExtension: ".zod.ts" },
   },
-  fetch: {
-    input: { target: input, unsafeDisableValidation: true },
-    output: {
-      mode: "tags-split",
-      target: generatedRoot,
-      schemas: path.resolve(generatedRoot, "api-schemas"),
-      fileExtension: ".fetch.ts",
-      client: "react-query",
-      httpClient: "fetch",
-      override: {
-        operationName: (operation) => operation["x-semantic-name"],
-        mutator: { path: path.resolve(runtimeRoot, "fetch.ts"), name: "customFetch" },
-        aliasCombinedTypes: false,
-        query: { useSuspenseQuery: true, useInvalidate: true, shouldSplitQueryKey: true },
-      },
-    },
-  },
+  // The fetch client is generated but unused: every call site goes through the axios client.
+  // Kept commented out rather than deleted so the fetch transport can be brought back cheaply.
+  // Re-enabling it also means restoring the fetch facades in tools/openapi/generate-client.ts.
+  // fetch: {
+  //   input: { target: input, unsafeDisableValidation: true },
+  //   output: {
+  //     mode: "tags-split",
+  //     target: generatedRoot,
+  //     schemas: path.resolve(generatedRoot, "api-schemas"),
+  //     fileExtension: ".fetch.ts",
+  //     client: "react-query",
+  //     httpClient: "fetch",
+  //     override: {
+  //       operationName: (operation) => operation["x-semantic-name"],
+  //       mutator: { path: path.resolve(runtimeRoot, "fetch.ts"), name: "customFetch" },
+  //       aliasCombinedTypes: false,
+  //       query: { useSuspenseQuery: true, useInvalidate: true, shouldSplitQueryKey: true },
+  //     },
+  //   },
+  // },
   axios: {
     input: { target: input, unsafeDisableValidation: true },
     output: {

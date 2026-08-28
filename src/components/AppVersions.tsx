@@ -6,9 +6,6 @@ import { ListItem as MuiListItem, ListItemText, styled, Typography } from "@mui/
 import { useIsClient } from "../hooks/useIsClient";
 import { HorizontalList } from "./HorizontalList";
 
-export const getGetDMVersionQueryKey = () => ["data-manager", "/version"];
-export const getGetASVersionQueryKey = () => ["account-server", "/version"];
-
 const ApiVersions = () => {
   const { data: dmData } = useGetDMAPIVersion();
   const { data: asData } = useGetASAPIVersion();

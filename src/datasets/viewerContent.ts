@@ -1,19 +1,13 @@
 import { type ServerResponse } from "node:http";
 
 import { createErrorProps } from "../utils/api/serverSidePropsError";
-import {
-  classifyViewerContent,
-  type ViewerContent,
-  type ViewerContentOutcome,
-} from "../utils/api/viewerContent";
+import { classifyViewerContent, type ViewerContent } from "../utils/api/viewerContent";
 
 /**
  * Server-rendered content facts for one dataset version, exactly as the viewer transport returned
  * them.
  */
 export type DatasetVersionContent = ViewerContent;
-
-export type DatasetVersionContentOutcome = ViewerContentOutcome;
 
 export const DATASET_VERSION_NOT_FOUND = "Dataset version not found";
 

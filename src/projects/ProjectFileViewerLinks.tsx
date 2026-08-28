@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 
-import { Biotech as BiotechIcon, Description as DescriptionIcon } from "@mui/icons-material";
+import { Description as DescriptionIcon } from "@mui/icons-material";
 import { Link, List, ListItemButton, ListItemIcon, ListItemText, Popover } from "@mui/material";
 import { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { usePopupState } from "material-ui-popup-state/hooks";
@@ -13,7 +13,6 @@ import { projectLinks } from "./routes";
 /** The icon each viewer is recognised by; what it is called is a viewer fact Files owns. */
 const fileViewerIcons: Record<FileViewer, ReactNode> = {
   browser: <DescriptionIcon color="action" />,
-  sdf: <BiotechIcon color="action" />,
   text: <DescriptionIcon color="action" />,
 };
 

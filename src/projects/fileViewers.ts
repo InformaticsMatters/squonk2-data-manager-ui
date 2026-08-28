@@ -9,7 +9,7 @@ import { classifyViewerContent, type ViewerContent } from "../utils/api/viewerCo
  * so which viewers exist, which of them a file offers, and which one a URL that names none means
  * are all decided here rather than at each link.
  */
-export const fileViewers = ["text", "browser", "sdf"] as const;
+export const fileViewers = ["text", "browser"] as const;
 
 export type FileViewer = (typeof fileViewers)[number];
 
@@ -28,9 +28,6 @@ export const FILE_NOT_FOUND_NOTICE = "This file was not found in this project.";
 
 const compressedExtensions = [".gz", ".gzip"];
 
-/** Files the SDF viewer can read, however the Data Manager compressed them. */
-const sdfExtensions = [".sdf", ...compressedExtensions.map((extension) => `.sdf${extension}`)];
-
 const hasExtension = (fileName: string, extensions: readonly string[]) =>
   extensions.some((extension) => fileName.endsWith(extension));
 
@@ -41,7 +38,6 @@ const hasExtension = (fileName: string, extensions: readonly string[]) =>
  */
 const viewerRequirements: Record<FileViewer, (fileName: string) => boolean> = {
   browser: () => true,
-  sdf: (fileName) => hasExtension(fileName, sdfExtensions),
   text: () => true,
 };
 
@@ -50,11 +46,6 @@ export const fileViewerLabels: Record<FileViewer, { name: string; summary: strin
   browser: {
     name: "Browser Viewer",
     summary: "Displays the file in your browser if it supports the file type",
-  },
-  sdf: {
-    name: "SDF Viewer (alpha)",
-    summary:
-      "Displays SDF records as molecule cards containing the structure and properties, filterable with a scatter plot selector. This feature is under active development and may not work as expected. Please provide us feedback.",
   },
   text: { name: "Plaintext Viewer", summary: "Displays the file as plaintext" },
 };

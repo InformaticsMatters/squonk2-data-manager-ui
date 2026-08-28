@@ -8,7 +8,6 @@ import A from "next/link";
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { PlaintextViewer } from "../features/PlaintextViewer";
-import { SDFViewer } from "../features/SDFViewer";
 import { type ProjectId } from "../routing/identifiers";
 import { type FilesystemFile, filesystemFile } from "./fileFacts";
 import {
@@ -182,8 +181,6 @@ const FileViewerBody = ({
       );
     case "browser":
       return <BrowserFile file={file} projectId={projectId} />;
-    case "sdf":
-      return <SDFViewer path={file.path} projectId={projectId} />;
   }
 };
 

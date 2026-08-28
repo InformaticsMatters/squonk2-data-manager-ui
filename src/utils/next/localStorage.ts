@@ -13,21 +13,6 @@ interface Values {
   [COOKIE_CONSENT_STORAGE_KEY]: Consent;
 }
 
-export const getFromLocalStorage = <Key extends Keys>(
-  key: Key,
-  defaultValue: Values[Key],
-): Values[Key] => {
-  try {
-    const value = localStorage.getItem(key);
-    if (value !== null) {
-      return JSON.parse(value) as Values[Key];
-    }
-    return defaultValue;
-  } catch {
-    return defaultValue;
-  }
-};
-
 export const writeToLocalStorage = <Key extends Keys>(key: Key, value: Values[Key]) => {
   localStorage.setItem(key, JSON.stringify(value));
 };

@@ -32,8 +32,8 @@ Everything that runs in a project has access to that project's files, so the inp
 before it can be used. Upload it in **Files**, or attach an existing dataset version from
 **Datasets**.
 
-This tour uses a file called `sascore.sdf`, an SD-file of 1000 molecules that is already in the
-project. See the [Files](/docs/how-to/projects/files) guide for uploading, and the
+This tour uses a file called `clustered_props.sdf`, an SD-file of 1000 molecules that is already in
+the project. See the [Files](/docs/how-to/projects/files) guide for uploading, and the
 [Datasets](/docs/how-to/datasets) guide for attaching.
 
 ## 3. Find the job
@@ -58,14 +58,14 @@ Choosing **Run** opens the launch dialog. It leads with the definition's fuller 
 accessibility score_ — and asks for two kinds of thing:
 
 - **Inputs** are project files. **Molecules** is required here, marked with an asterisk, and
-  **Select file** picks `sascore.sdf` from the project.
+  **Select file** picks `clustered_props.sdf` from the project.
 - **Options** are the parameters of the run. **Output file name** is required; the rest have
   defaults that suit an SD-file, and are left alone.
 
 <Image src={guided_tour_2} alt="The sa-score launch dialog, filled in" />
 
 **Run** stays disabled until everything required has been given, so a launch cannot be sent
-incomplete. Naming the output `sa-score-tour.sdf` and choosing **Run** starts the work.
+incomplete. Naming the output `scored.sdf` and choosing **Run** starts the work.
 
 ## 5. Follow it
 
@@ -84,7 +84,7 @@ The list does not refresh itself; **Refresh results** in the rail reads the sect
 
 ## 6. Read the result
 
-sa-score finished in about a minute.
+sa-score finished in 19 seconds.
 
 <Image src={guided_tour_4} alt="The completed instance, with its states and events" />
 
@@ -95,7 +95,7 @@ What changed when it completed:
   reported separately by the Data Manager as the work runs, and an instance that reported
   neither says nothing rather than naming a figure it never gave.
 - **States** ran `PENDING` → `STARTED` → `SUCCESS`, and the **Events** record what the job actually
-  did: the arguments it was called with, then `Processed 1000 records in 16 seconds. 0 errors.`
+  did: the arguments it was called with, then `Processed 1000 records in 15 seconds. 0 errors.`
 - **Terminate** has become **Delete**, because there is no longer anything to stop.
 
 The output file is a link, and it now sits in the project's **Files** alongside the input, ready to

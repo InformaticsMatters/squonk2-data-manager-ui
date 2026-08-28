@@ -48,6 +48,13 @@ let nextConfig = {
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages,
+  // The Pages Router leaves server-side node_modules unbundled, so Turbopack splits
+  // @emotion/react in two: the copy Node loads at runtime for an externalised package, and the
+  // copy bundled into the SSR graph. MUI components then read a different emotion context than
+  // AppCacheProvider writes, fall back to emotion's default "css" cache instead of the "mui"
+  // one, and every server-rendered class name mismatches on hydration. Bundling removes the
+  // boundary, which is what webpack did all along and what the App Router does by default.
+  bundlePagesRouterDependencies: true,
 };
 
 nextConfig = withMDX(nextConfig);

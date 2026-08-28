@@ -15,9 +15,9 @@
   },
   "scripts": {
     "prepare": "husky",
-    "dev": "next dev --webpack",
-    "dev:debug": "NODE_OPTIONS='--inspect' next dev --webpack",
-    "build": "next build --webpack",
+    "dev": "next dev",
+    "dev:debug": "NODE_OPTIONS='--inspect' next dev",
+    "build": "next build",
     "generate:client:account-server": "node --experimental-strip-types tools/openapi/generate-client.ts account-server",
     "generate:client:data-manager": "node --experimental-strip-types tools/openapi/generate-client.ts data-manager",
     "generate:clients": "node --experimental-strip-types tools/openapi/generate-client.ts all",

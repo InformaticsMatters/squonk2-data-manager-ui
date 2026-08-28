@@ -127,9 +127,6 @@ can be linked to:
 - **Plaintext Viewer** - displays the file as plaintext. This is the default, and every file offers
   it.
 - **Browser Viewer** - displays the file in your browser if it supports the file type.
-- **SDF Viewer (alpha)** - displays SDF records as molecule cards containing the structure and
-  properties, filterable with a scatter plot selector. Offered for SDF files only. This feature is
-  under active development and may not work as expected — please give us feedback.
 
 A viewer replaces the listing with the file itself. **Back to files** returns to the directory the
 file is in, and the other viewers that file offers stand beside it, so you can move between them
@@ -139,12 +136,6 @@ not offer, lands in **Files** with a notice saying so rather than on an error pa
 Files the Data Manager holds compressed are decompressed for the viewer, and the viewer says that it
 did so. The **Plaintext Viewer** shows the first 100 kB of a file, cut at the end of a line, and
 says when it has truncated one — worth remembering when reading a long log.
-
-The **SDF Viewer** opens on the fields it found rather than on the molecules. Choose which of them
-to include, which to show on each card, and how to bound and order them, and the cards follow;
-**Edit** returns to that choice. The fields come from the schema the Data Manager holds beside the
-file where there is one, and are read from the file itself where there is not. A compressed SDF is
-offered the viewer exactly as an uncompressed one is.
 
 ## When Files is not enough
 

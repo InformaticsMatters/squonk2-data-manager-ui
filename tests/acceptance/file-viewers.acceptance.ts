@@ -42,7 +42,7 @@ test("a file's viewers are addressed beneath the project that holds it", async (
   await page.getByRole("button", { exact: true, name: "notes.txt" }).click();
 
   // Every viewer the file offers is its own canonical Files route, carrying the file's path and
-  // the viewer and nothing else. A file that is not an SDF offers no SDF viewer at all.
+  // the viewer and nothing else.
   await expect(page.getByRole("link", { name: "Plaintext Viewer" })).toHaveAttribute(
     "href",
     `/data-manager-ui/${notesView}`,
@@ -51,8 +51,6 @@ test("a file's viewers are addressed beneath the project that holds it", async (
     "href",
     `/data-manager-ui/${notesView}&viewer=browser`,
   );
-  await expect(page.getByRole("link", { name: /SDF Viewer/u })).toHaveCount(0);
-
   await page.getByRole("link", { name: "Plaintext Viewer" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${notesView}`);
   await expect(page.getByText("acceptance notes.txt", { exact: true })).toBeVisible();
@@ -126,36 +124,6 @@ test("a viewer entered directly authenticates into its own project and transport
   }
 });
 
-test("the SDF viewer reads the file's own schema and records", async ({ page }, testInfo) => {
-  await login(page, `${files}?path=%2Finputs`, testInfo);
-  await page.getByRole("button", { exact: true, name: "poses.sdf" }).click();
-  await page.getByRole("link", { name: /SDF Viewer/u }).click();
-
-  await expect(page).toHaveURL(`${acceptanceUrls.app}${posesView}&viewer=sdf`);
-  await expect(page.getByRole("heading", { name: "poses.sdf" })).toBeVisible();
-  // The schema beside the file is what the viewer configures itself from.
-  await expect(page.getByText("score", { exact: true })).toBeVisible();
-  await expect(page.getByText("label", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Apply" })).toBeEnabled();
-
-  // The parser addresses the same file through its own server-side transport.
-  const parsed = await page.request.get(
-    transportUrl(
-      `/data-manager-ui/api/sdf-parser?project=${fixtureIds.project}&path=%2Finputs%2Fposes.sdf&config=%7B%7D`,
-    ),
-  );
-  expect(parsed.status()).toBe(200);
-  const records = (await parsed.json()) as { properties: Record<string, string> }[];
-  expect(records).toHaveLength(2);
-  expect(records.map((record) => record.properties.label)).toEqual(["first pose", "second pose"]);
-
-  // A viewer the file does not offer is answered in Files beneath the same project.
-  await page.goto(`${notesView}&viewer=sdf`);
-  await expect(page.getByText("This file cannot be shown in that viewer.")).toBeVisible();
-  await expect(page.getByRole("heading", { level: 1, name: "Files" })).toBeVisible();
-  await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toBeVisible();
-});
-
 test("a file the project does not hold, or will not disclose, is a Files-local outcome", async ({
   page,
   request,
@@ -213,17 +181,18 @@ test("content that could not be delivered stays retryable at the same file", asy
   }
 
   // A viewer that fetches its own bytes is retried on the same terms rather than framing an error.
-  await page.goto(`${posesView}&viewer=sdf`);
+  await page.goto(`${posesView}&viewer=browser`);
   await expect(
     page.getByText("This file's content could not be loaded. Retry this exact file."),
   ).toBeVisible();
   await expect(page.getByText("This file was not found in this project.")).toHaveCount(0);
-  await expect(page).toHaveURL(`${acceptanceUrls.app}${posesView}&viewer=sdf`);
+  await expect(page.locator("iframe")).toHaveCount(0);
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${posesView}&viewer=browser`);
 
   await request.delete(`${acceptanceUrls.control}/scenario/${subject}/file-content-failure`);
   await page.getByRole("button", { name: "Retry" }).click();
-  await expect(page.getByRole("heading", { name: "poses.sdf" })).toBeVisible();
-  await expect(page).toHaveURL(`${acceptanceUrls.app}${posesView}&viewer=sdf`);
+  await expect(page.locator('iframe[title="poses.sdf in the browser viewer"]')).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${posesView}&viewer=browser`);
 
   await page.goto(notesView);
   await expect(page.getByText("acceptance notes.txt", { exact: true })).toBeVisible();

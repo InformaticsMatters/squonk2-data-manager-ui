@@ -44,8 +44,8 @@ test.describe("Project route contract", () => {
       () => projectLinks.files(projectId, { path: "/inputs" }),
     ],
     [
-      `/projects/${projectId}/files/view?path=%2Finputs%2Flibrary.sdf&viewer=sdf`,
-      () => projectLinks.fileView(projectId, { path: "/inputs/library.sdf", viewer: "sdf" }),
+      `/projects/${projectId}/files/view?path=%2Finputs%2Flibrary.sdf&viewer=browser`,
+      () => projectLinks.fileView(projectId, { path: "/inputs/library.sdf", viewer: "browser" }),
     ],
     [
       `/projects/${projectId}/run?search=docking&type=workflow&type=job`,

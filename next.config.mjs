@@ -25,9 +25,7 @@ const isPackageLocal = (packageName) => {
   }
 };
 
-const transpilePackages = ["@squonk/mui-theme", "@squonk/sdf-parser"].filter((pkg) =>
-  isPackageLocal(pkg),
-);
+const transpilePackages = ["@squonk/mui-theme"].filter((pkg) => isPackageLocal(pkg));
 
 console.log("Transpiling packages:", transpilePackages);
 

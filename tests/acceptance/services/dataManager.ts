@@ -9,13 +9,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { z } from "zod";
 
 import { acceptanceEnvironment } from "../environment";
-import {
-  datasetContentFixtures,
-  fixtureIds,
-  type FixtureProjectFileSystem,
-  projectFileSchemaFixture,
-  projectSdfFixture,
-} from "./fixtures";
+import { datasetContentFixtures, fixtureIds, type FixtureProjectFileSystem } from "./fixtures";
 import { cors, json, multipartField, readBody, record } from "./http";
 import {
   type AttachmentRecord,
@@ -678,15 +672,10 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     if (!held) {
       return json(response, 404, { error: "fixture-file-not-found" });
     }
-    // A file's bytes are the bytes of its own kind: a schema describes the SDF beside it, and an
-    // SDF holds records a parser can actually read, so a viewer is exercised against what it
-    // claims to display rather than against a placeholder every file shares. The type is the one
-    // the listing gives the file, so a browser shown the bytes is shown them as that type.
-    if (fileName.endsWith(".schema.json")) {
-      return json(response, 200, projectFileSchemaFixture);
-    }
+    // The type is the one the listing gives the file, so a browser shown the bytes is shown them
+    // as that type.
     response.writeHead(200, { "content-type": held.mime_type ?? "application/octet-stream" });
-    return response.end(fileName.endsWith(".sdf") ? projectSdfFixture : `acceptance ${fileName}`);
+    return response.end(`acceptance ${fileName}`);
   }
   if (url.pathname === "/project") {
     if (request.method === "POST") {

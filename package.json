@@ -33,9 +33,9 @@
     "test:smoke": "playwright test --config=playwright.smoke.config.ts",
     "test:debug": "pnpm test:acceptance:headed",
     "test:ci": "pnpm test",
-    "analyze": "ANALYZE=true next build --webpack",
-    "analyze:server": "BUNDLE_ANALYZE=server next build --webpack",
-    "analyze:browser": "BUNDLE_ANALYZE=browser next build --webpack"
+    "analyze": "ANALYZE=true next build",
+    "analyze:server": "BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "BUNDLE_ANALYZE=browser next build"
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [

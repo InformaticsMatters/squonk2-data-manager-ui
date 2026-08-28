@@ -3,12 +3,28 @@
 This page describes the concepts that are useful to know when using the Squonk Data Manager, and
 the words this application uses for them.
 
-## Users
+## Users and roles
 
-A _user_ is a logged in user of the Data Manager. They are defined in our Keycloak Single Sign On
-(SSO) system. You will need an account setting up there in order to become a user. Once done you
-are potentially able to use any of the Squonk applications. See the
+A _user_ is someone signed in to the Data Manager. Users are defined in the Keycloak Single Sign On
+(SSO) system this deployment uses, and you need an account there before you can become one. Once
+you have one you are potentially able to use any of the Squonk applications. See the
 [Logging in](/docs/how-to/login) guide.
+
+An account carries roles granted in Keycloak, in two sets: one for the **Data Manager** and one for
+the **Account Server**. Each set is a ladder, and each role can do everything the one below it can:
+
+- **evaluator** - may take out subscriptions only in its own personal unit, and may create projects
+  there only at the Evaluation tier.
+- **user** - the ordinary role, and the one most accounts hold.
+- **administrator** - the administrator of that service.
+
+The exact role names are chosen by whoever deployed this instance. Your own two are shown in the
+**Account** menu. An account that holds neither service's roles can sign in but cannot use the
+application: Home says the roles are missing, and only an administrator can grant them.
+
+A **platform administrator** is an account the Account Server reports as carrying administrative
+privilege across the platform. Actions that only a platform administrator can ever take are hidden
+from everyone else rather than shown disabled, so an ordinary account never meets them.
 
 ## Organisations, units and projects
 
@@ -30,40 +46,52 @@ are looking at, the data it shows, and the link you can share always agree.
 There is a **Default** organisation which all users can belong to. In it you can create your own
 **personal unit** — one unit, yours alone — and create projects inside it. You are not given a
 personal unit automatically; you create it, and the
-[Getting started](/docs/how-to/getting-started) guide walks through doing so. Alternatively, we can
-set up an organisation for you and your coworkers, or a complete Squonk 2 environment.
+[Getting started](/docs/how-to/getting-started) guide walks through doing so. Alternatively, an
+organisation can be set up for you and your coworkers, or a complete Squonk 2 environment.
 
-## Subscriptions and project tiers
+### Owners and members
 
-Creating a project takes out a **subscription** in the unit that owns it, and the subscription is
-allocated a _tier_:
+An organisation and a unit each have an **owner** — the one account recorded as owning it — and a
+list of **members**. Neither is a role you hold in a project; they decide what you may create and
+change in the ownership tree above one:
 
-- Evaluation - limited quota and all data is public
-- Bronze - limited quota and data can be made private
-- Silver - like bronze but with more quota
-- Gold - like silver but with more quota
+- Creating a **unit** in an organisation needs membership or ownership of that organisation.
+- Creating a **project** in a unit needs membership of the unit or of its organisation.
+- Deleting a unit is the unit owner's to do.
 
-_Evaluation_ projects are always public and visible to all users, but are free to use. Projects in
-other tiers can be made private and restricted to specific users. See below for more information.
+Two special cases follow from the Default organisation. It does not have members, and the members
+of a personal unit cannot be changed — it is yours alone by definition.
 
-A subscription is the Account Server's _product_. "Product ID" is still shown in technical details
-and in API contracts, but everywhere in this application it is called a subscription.
+You _do not_ need to be a member of a unit in order to use a project inside it. Access to a project
+is granted in the project itself, described next.
 
-## Datasets
+## Access control
 
-Datasets are files that you can work with. You don't need to use datasets to do some work in the
-Data Manager, but using them has the following benefits:
+Only you and the people you have added to your project can access the files in it. Projects can be
+shared with users outside your organisation. In a public project all users are effectively
+observers.
 
-- Datasets can be shared with other users.
-- Datasets can be versioned.
-- Metadata is indexed e.g. descriptions and data types of the fields in a SD-file.
-- Datasets with molecules (e.g. SD-files) are indexed with the RDKit cartridge, which in future will
-  allow structure searches to be performed to identify the use of molecules, or similar molecules in
-  other datasets.
-- Other useful operations on datasets will follow.
+The roles a person can hold in a project are:
 
-A **dataset** is reachable globally rather than from inside one unit, and a **version** is the thing
-actually displayed. See the [Datasets](/docs/how-to/datasets) guide.
+- **Creator** - the person who created the project. The creator is recorded as a fact of the
+  project and is shown in its **Manage** section, and carries no authority of its own.
+- **Administrator** - can administer the project, including changing its privacy, its membership,
+  and deleting it. A project can have multiple administrators.
+- **Editor** - can use the project and modify the data in it, and can run work in it.
+- **Observer** - can view the contents of the project, but cannot change the data or run anything.
+
+Where you hold more than one of these, lists and headings state the **highest role** you hold.
+
+Throughout the application, an ordinary action your roles and memberships do not allow is shown
+disabled with its reason, rather than removed, so it is clear what a task requires. These markings
+decide what is offered; the Data Manager and the Account Server decide what is actually permitted.
+
+File access is controlled by standard POSIX permissions, with files typically being read and
+writable by the user and the group. Each user has a unique user id and each project has a unique
+group id, with all users added to the project being members of that group. This means that, with
+the file permissions described above, users added to your project have read-write access to your
+files. Other users will be able to see the files if the project is a public project but not if it
+is private.
 
 ## Workspaces and sections
 
@@ -86,29 +114,20 @@ Files can be added to a project so that you can work on them. Dataset versions c
 _attached_ to a project, and project files can be added as new datasets. Files will also typically
 be created in your project by the work you run there.
 
-## Access control
+## Datasets
 
-Only you and people you have added to your project can access the files in your project. Projects
-can be shared with users outside your organisation. For public projects all users are effectively
-observers.
+Datasets are files that you can work with. You don't need to use datasets to do some work in the
+Data Manager, but using them has the following benefits:
 
-The roles a person can hold in a project are:
+- Datasets can be shared with other users.
+- Datasets can be versioned.
+- Metadata is indexed e.g. descriptions and data types of the fields in a SD-file.
+- Datasets with molecules (e.g. SD-files) are indexed with the RDKit cartridge, which in future will
+  allow structure searches to be performed to identify the use of molecules, or similar molecules in
+  other datasets.
 
-- **Creator** - the person who created the project. The creator is recorded as a fact of the
-  project and is shown in its **Manage** section.
-- **Administrator** - can administer the project, including changing its privacy, its membership,
-  and deleting it. A project can have multiple administrators.
-- **Editor** - can use the project and modify the data in it, and can run work in it.
-- **Observer** - can view the contents of the project, but cannot change the data or run anything.
-
-Where you hold more than one of these, lists and headings state the **highest role** you hold.
-
-File access is controlled by standard POSIX permissions, with files typically being read and
-writable by the user and the group. Each user has a unique user id and each project has a unique
-group id, with all users added to the project being members of that group. This means that, with
-the file permissions described above, users added to your project have read-write access to your
-files. Other users will be able to see the files if the project is a public project but not if it
-is private.
+A **dataset** is reachable globally rather than from inside one unit, and a **version** is the thing
+actually displayed. See the [Datasets](/docs/how-to/datasets) guide.
 
 ## Workflows, applications and jobs
 
@@ -122,18 +141,17 @@ your files — the `.ipynb` file is stored in your project too, providing a reco
 **DataVisualisation**, for building interactive plots of your data.
 
 A **job** is a bit like a very specialised application. Jobs are designed to process data in a very
-specific way, but allow you to specify the parameters of how the processing is performed. We have a
+specific way, but allow you to specify the parameters of how the processing is performed. There is a
 wide range of jobs, and a job is published in one or more **versions**.
 
-To help illustrate this we'll use the
+The
 [max-min-picker](https://github.com/InformaticsMatters/virtual-screening/blob/main/data-manager/docs/rdkit/max-min-picker.md)
-job as an example. This allows a diverse subset of molecules to be selected from a set of input
-molecules. When you run the job you are prompted for various parameters such as the inputs and the
-number of molecules to pick.
+job illustrates this. It selects a diverse subset of molecules from a set of input molecules, and
+running it prompts for parameters such as the inputs and the number of molecules to pick.
 
-That particular job is implemented as a Python module, using RDKit, but there are lots of ways of
-creating jobs. A guide to creating jobs can be found
-[here](https://informaticsmatters.gitlab.io/squonk2-data-manager/1-0/creating-new-jobs.html).
+That particular job is implemented as a Python module using RDKit, but there are lots of ways of
+creating jobs; a guide to creating them is
+[here](https://informaticsmatters.gitlab.io/squonk2-data-manager/root/creating-new-jobs.html).
 Creating jobs is a role for a developer, but using them once they have been deployed is very easy.
 
 A **workflow** is a defined sequence of steps run as one thing. Like a job it is launched from a
@@ -143,9 +161,8 @@ step by step under **Results**.
 Like applications, jobs and workflows run as Kubernetes pods. Some jobs are very simple and complete
 in seconds, whilst others can run complex parallelised workflows and take hours to complete.
 
-We encourage 3rd parties to contribute jobs, and would like to point out that there is a mechanism
-to monetise your jobs should you need to, so you get paid when other users run your jobs. See the
-next section for more details.
+Third parties are encouraged to contribute jobs, and there is a mechanism to monetise a job, so that
+its author is paid when other users run it. See **Resource usage** below.
 
 ## Instances, tasks and running workflows
 
@@ -158,64 +175,79 @@ Together these three are a project's **Results**. Individually they are never ca
 because the three behave differently and a project's Results list can be narrowed to any of them.
 See the [Results](/docs/how-to/projects/results) guide.
 
+## Subscriptions and project tiers
+
+Creating a project takes out a **subscription** in the unit that owns it, and the subscription is
+allocated a _tier_:
+
+- Evaluation - limited quota and all data is public
+- Bronze - limited quota and data can be made private
+- Silver - like bronze but with more quota
+- Gold - like silver but with more quota
+
+_Evaluation_ projects are always public and visible to all users, but are free to use. Projects in
+other tiers can be made private and restricted to specific users.
+
+A subscription is the Account Server's _product_. "Product ID" is still shown in technical details
+and in API contracts, but everywhere in this application it is called a subscription.
+
+A subscription states two figures that bound what can be spent against it:
+
+- Its **allowance** - the coins included each billing period. Spending beyond the allowance is
+  permitted, but those coins cost more.
+- Its **limit** - the ceiling, which cannot be exceeded at all.
+
+A dataset store is subscribed in the same way, and its allowance is chosen when the subscription is
+created. An allowance can be increased but never reduced. See the
+[Administration](/docs/how-to/administration) guide.
+
 ## Resource usage
 
-How is this all paid for?
+An organisation deploying a Squonk 2 environment to its own Kubernetes cluster — or having
+Informatics Matters do so — is already paying for the CPU and memory resources being used. On the
+public evaluation site, _Evaluation_ tier projects are free, but all data in them is public and so
+visible to any user, and they have limited resource quotas. Keeping data private, or needing more
+resources, means subscribing the project to the Bronze, Silver or Gold tiers, which differ mostly in
+the usage quotas, with Gold having the highest.
 
-Well, if you are an organisation deploying a Squonk 2 environment to your own Kubernetes cluster (or
-if Informatics Matters is doing this for you) then you are already paying for the CPU and memory
-resources being used. If you are using our public evaluation site then we make _Evaluation_ tier
-projects available for free, but all data in them is public so visible to any user, and these have
-limited resource quotas. If you want to keep your data private or need more resources then you can
-subscribe your project to the Bronze, Silver or Gold tiers, which differ mostly in the usage quotas,
-with Gold having the highest quota.
+Billing is not yet implemented. Once it is, Bronze, Silver and Gold tier projects will carry monthly
+fees. The responsibility for payment is at the unit or organisation level: for your own personal
+unit in the Default organisation, that means you.
 
-Billing is not yet implemented, but once it is you will pay monthly fees for Bronze, Silver and Gold
-tier projects. The responsibility for payment is at the unit or organisation level. If you are using
-your own personal unit in the Default organisation, that means you.
-
-Usage is measured in **Squonk coins** (or coins for short). A coin has a monetary value, and your
-projects get a monthly allowance of coins (Gold tier projects get the biggest allowance). Coins are
-"consumed" by one of these activities:
+Usage is measured in **Squonk coins** (or coins for short). A coin has a monetary value, and a
+project's subscription carries an allowance of them each billing period, the biggest allowance going
+to Gold. Coins are consumed by three activities:
 
 - Storage used by your project (e.g. the size of all the files in GBs)
 - Execution of workflows, applications and jobs
 - Dataset storage
 
-Storage usage is fairly straightforward. At regular periods each day the storage is calculated and
-recorded. The maximum daily usage is then used to deduct the appropriate number of coins from your
-project's account. We also do a linear projection of what your current usage will cost by the end of
-your billing month, but of course this is only an estimate. A project's **Manage** section states
-both, as **Storage** and **Predicted spend**.
+**Storage** is calculated and recorded at regular periods each day, and the maximum daily usage is
+what deducts coins from the project's account. A linear projection of what the current usage will
+cost by the end of the billing month is also made, though it is only an estimate. A project's
+**Manage** section states both, as **Storage** and **Predicted spend**.
 
-Execution usage is handled differently. Each time something is run it can consume coins that
-reflect:
+**Execution** is handled differently. Each time something is run it can consume coins that reflect:
 
 - The CPU, GPU and memory resource needed for execution
 - Any IP or licensing costs
 
-Don't worry, most jobs are free or have such a trivial cost that it has no impact. But some jobs
-(e.g. virtual screening using docking) consume lots of CPU so have a real cost of execution. Also,
-some jobs might have significant IP value or use commercial software that has to be paid for, so
-those can have costs of execution.
+Most jobs are free, or cost so little that it has no impact. Some — virtual screening using docking,
+say — consume a great deal of CPU and so have a real cost of execution. Others carry significant IP
+value, or use commercial software that has to be paid for, and can cost accordingly. This is what
+makes the "marketplace" possible: one user provides access to a job or application that is valuable
+to others, and can be rewarded for it if they wish. The mechanism for defining job usage is
+currently quite basic, and no payment systems are in place, so no bill can be run up today.
 
-As of the time of writing, the mechanism for defining job usage is quite basic and no payment
-systems are in place, so there is no need to be concerned about clocking up big bills. And even once
-in place you can be reassured that the costs will be very reasonable. And we believe this
-"marketplace" concept — where one user can provide access to a job or application that has high
-value to other users, and the supplier of that IP can get rewarded for it if they wish — is a unique
-concept of Squonk that makes total sense.
+**Dataset storage** is consumed outside any project. Datasets are optional, but they sit in storage
+of their own, so a unit's costs include the datasets it holds. This is usually not much of an issue,
+though datasets of many GBs can affect what a unit spends.
 
-Also needing some description is dataset usage. You may recall that you only need to use datasets if
-you want to (but probably you should). Those datasets consume their own storage outside of any
-project, so we also have consumption of coins for datasets used by any unit. Typically this is not
-much of an issue, but if you are wanting to use datasets of large size (e.g. many GBs) then this
-might impact your unit's costs.
+Reaching the allowance does not stop work: coins consumed above it are added to the monthly bill at
+a higher rate than the tier's own. A subscription that should not run up an unexpected bill can be
+set not to exceed its allowance, or to exceed it only by a stated number of coins.
 
-Finally, what happens when you hit your quota limit? Typically you can keep working, but the coins
-consumed above your allowance are added to your monthly bill at a higher rate than you get when you
-buy the Bronze, Silver or Gold tier project. If you don't want the unexpected "end of month" bill
-then you can specify to not exceed your quota (or only exceed it by a certain number of coins).
-Once you hit your hard coin limit, operations in the Data Manager that consume coins (adding new
-files, running jobs etc.) are disabled and the project's **Manage** section says so. You can still
-see your data, and remove unnecessary files. And you can upgrade to a tier with a bigger quota.
+Reaching the **limit** does stop work. Operations that consume coins — adding files, running jobs —
+are disabled, and the project's **Manage** section says so, with each blocked control giving that
+as its reason. You can still read your data and delete files you no longer need, and you can move to
+a tier with a bigger quota.

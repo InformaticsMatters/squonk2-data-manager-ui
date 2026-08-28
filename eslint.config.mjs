@@ -18,40 +18,6 @@ const importGroups = [
   [String.raw`^.+\.s?css$`],
 ];
 
-// Every rule shipped by eslint-plugin-react-hooks v7, including the React Compiler
-// diagnostics the shared config leaves off. Kept as warnings so the compatibility work
-// can be done incrementally; `pnpm lint` still fails on them via --max-warnings=0.
-const reactCompilerRules = Object.fromEntries(
-  [
-    "capitalized-calls",
-    "config",
-    "error-boundaries",
-    "exhaustive-effect-dependencies",
-    "fbt",
-    "gating",
-    "globals",
-    "hooks",
-    "immutability",
-    "incompatible-library",
-    "invariant",
-    "memo-dependencies",
-    "memoized-effect-dependencies",
-    "no-deriving-state-in-effects",
-    "preserve-manual-memoization",
-    "purity",
-    "refs",
-    "rule-suppression",
-    "set-state-in-effect",
-    "set-state-in-render",
-    "static-components",
-    "syntax",
-    "todo",
-    "unsupported-syntax",
-    "use-memo",
-    "void-use-memo",
-  ].map((rule) => [`react-hooks/${rule}`, "warn"]),
-);
-
 const appConfig = config.map((entry) => {
   if (entry.name === "base-rules") {
     return {
@@ -64,7 +30,16 @@ const appConfig = config.map((entry) => {
   }
 
   if (entry.name === "react-rules") {
-    return { ...entry, rules: { ...entry.rules, ...reactCompilerRules } };
+    // The shared config enables only rules-of-hooks and exhaustive-deps, leaving every React
+    // Compiler diagnostic off. Turn on whatever else the plugin ships, read from the plugin
+    // itself so a version bump neither strands us on a stale list nor resurrects a rule the
+    // plugin has since removed — removed rules stay in `rules` but are marked deprecated.
+    const { rules } = entry.plugins["react-hooks"];
+    const allReactHooksRules = Object.entries(rules)
+      .filter(([, rule]) => !rule.meta?.deprecated)
+      .map(([name]) => [`react-hooks/${name}`, "warn"]);
+
+    return { ...entry, rules: { ...entry.rules, ...Object.fromEntries(allReactHooksRules) } };
   }
 
   return entry;

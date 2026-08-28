@@ -1,21 +1,65 @@
+import getting_started_1 from "../assets/getting-started-1.png";
+import getting_started_2 from "../assets/getting-started-2.png";
+import getting_started_3 from "../assets/getting-started-3.png";
+
 # Getting started
 
-This guide covers what happens after your first login: getting a project of your own, and finding
-your way around the application shell.
+This guide covers the path from a fresh account to working in a project: what you need before you
+begin, how to read the application shell, and how to get a project of your own.
+
+## Before you start
+
+You need an account in the Keycloak instance this deployment uses, and you need to be signed in. The
+[Logging in](/docs/how-to/login) guide covers both, including how accounts are obtained.
+
+You can sign in from the **Account** menu at any time, but you do not have to start there: opening a
+workspace address such as `/projects` while signed out sends you to Keycloak and returns you to that
+same address afterwards. A link a colleague sent you therefore survives the sign-in it triggers.
+
+### If the application says you are missing roles
+
+An account can exist in Keycloak and still not be entitled to use this deployment. Where that is so,
+Home shows a warning that you are missing required roles, lists whatever roles you do hold, and asks
+you to contact an administrator. Only an administrator can resolve it — there is nothing to do in
+the application itself.
+
+The **Account** menu states the same thing more quietly at any time: it shows your Data Manager and
+Account Server roles beside your username, or **No DM Role** and **No AS Role** where you hold none.
 
 ## The shell
 
-The masthead holds the Squonk logo, the **organisation** you are working as, the main navigation,
-and the **Account** menu.
+The masthead holds the Squonk logo, the main navigation, and the **Account** menu. Signed in, it
+also names the **organisation** you are working as.
 
-The main navigation offers the three workspaces:
+<Image src={getting_started_1} alt="The masthead of the signed-in application" />
 
-- **Projects** - the index of the projects you can reach, and the way into one.
-- **Datasets** - every dataset you can reach.
-- **Administration** - organisations, units, subscriptions, charges and usage.
+Which links the main navigation offers depends on where you are:
 
-Once you are inside a project, a strip appears below the masthead naming that project and offering
-its four sections: **Files**, **Run**, **Results** and **Manage**.
+- Signed out, and on every documentation page — including this one — it offers **Home** and
+  **Documentation**. The documentation deliberately keeps this simpler shell, so the three
+  workspaces below are not on screen while you are reading about them.
+- Signed in, and anywhere outside the documentation, it offers the three workspaces:
+  - **Projects** - the index of the projects you can reach, and the way into one.
+  - **Datasets** - every dataset you can reach.
+  - **Administration** - organisations, units, subscriptions, charges and usage.
+
+Once you are inside a project, a strip appears below the masthead. It names that project — and is
+itself a searchable list of the organisation's projects, so it is also how you move to another one —
+and offers the project's four sections: **Files**, **Run**, **Results** and **Manage**.
+
+<Image src={getting_started_2} alt="The project strip below the masthead" />
+
+## Home
+
+Home is the application's front page and the one place with no project and no workspace in view. It
+carries any notices this deployment is showing, the introduction to Squonk, and the documentation
+index.
+
+Signed in, it also lists **Recent projects**: the three projects you opened most recently, each with
+its unit and organisation, and a way straight into its **Files**. They are a convenience kept in
+your browser rather than a project scope — Home itself is not "in" any project.
+
+<Image src={getting_started_3} alt="Recent projects on Home" />
 
 ## The organisation switcher
 
@@ -24,46 +68,74 @@ part of where you are that the application remembers between visits. Choosing an
 _selection_ rather than a navigation to a resource, so it takes you Home first — nothing is ever
 shown under an organisation it does not belong to.
 
-The switcher opens a searchable list of the organisations you may work as. It states this, so you
-are not surprised: choosing one opens Home.
+The switcher opens a searchable list of the organisations you may work as, naming each one and its
+identifier. It states what choosing one does before you choose: it opens Home.
+
+If you have never chosen one, the application adopts the first organisation you can see rather than
+leaving the choice empty, so there is always an organisation in effect.
 
 ## Getting your first project
 
 Work happens inside a project, and a project lives inside a **unit** that pays for it. If you have
-no project of your own and nowhere else you can work, the **Projects** index offers the way in
-rather than showing you an empty list. The offer:
+no project of your own and nowhere else you can write, the **Projects** index leads with an offer
+rather than an empty list. The offer:
 
-1. Explains the hierarchy — an organisation contains units, and a unit owns and pays for the
-   projects inside it.
+1. Draws the hierarchy — an organisation contains units, and a unit owns and pays for the projects
+   inside it.
 2. Creates your **personal unit**. This is your own unit in the **Default** organisation; nobody
    else works in it. You are not given one automatically — this is where you create it. Once you
-   have one, the step reports it by name instead of asking again.
+   have one, the step names it and is marked done instead of asking again.
 3. Hands you to project creation with that unit already chosen.
 
-If you already have a project you can write to, the offer can be dismissed with **Not now**. If you
-have none, it cannot be dismissed, because it is your only way in.
+The offer belongs to the **Default** organisation, because the unit it creates and the project that
+would go in it both live there. Switch to another organisation and it is not shown.
+
+**Not now** dismisses it, and is offered only where you can already write to some project. Where the
+offer is your only way in it stays put.
 
 The offer is part of the **Projects** index rather than a page of its own, so it is never something
-you have to navigate back to.
+you have to navigate back to. The [Projects](/docs/how-to/projects) guide describes it, and the
+creation form it hands you to, in full.
 
 ### If you are already a member of a unit
 
 You do not need a personal unit if an organisation owner has made you a member of one of their
 units — you can create your project there instead. Use **Create project** on the **Projects** index
-and choose the unit. See the [Projects](/docs/how-to/projects) guide.
+and choose the unit.
 
 ### Creating a unit yourself
 
 Beside **Create project**, the index offers the unit the organisation you are working as can hold
 for you: **Create personal unit** in the **Default** organisation, and **Create unit** in a named
-one. Where you are not allowed one, the control states why rather than disappearing.
+one. Where you are not allowed one, the control states why rather than disappearing. Creating a unit
+here leaves you on the index rather than navigating anywhere.
 
 The same actions, and everything else a unit has, live in
 [Administration](/docs/how-to/administration).
 
+## Your first few minutes in a project
+
+Creating a project, or choosing one from the **Projects** index, opens its **Files**. From there a
+first piece of work is three steps:
+
+1. **[Files](/docs/how-to/projects/files)** - upload the data you want to work on, or attach an
+   existing dataset version from **Datasets**.
+2. **[Run](/docs/how-to/projects/run)** - pick a workflow, an application such as a Jupyter
+   notebook, or a job, give it those files as its inputs, and launch it.
+3. **[Results](/docs/how-to/projects/results)** - follow what you launched, read its outputs and
+   logs, and terminate anything still running that you no longer need.
+
+Remember that whoever owns the unit pays for what a project uses. For a personal unit in the
+**Default** organisation, that is you.
+
 ## Where to go next
 
+- [Guided tour](/docs/guided-tour) - the same journey end to end, in one page
+- [Concepts](/docs/concepts) - organisations, units, projects, datasets, tiers and what they cost
 - [Projects](/docs/how-to/projects) - finding a project, creating one, and the roles in it
 - [Files](/docs/how-to/projects/files) - putting data into a project
 - [Run](/docs/how-to/projects/run) - launching workflows, applications and jobs
 - [Results](/docs/how-to/projects/results) - following what you launched
+- [Manage](/docs/how-to/projects/manage) - privacy, people, coin usage and deletion
+- [Datasets](/docs/how-to/datasets) - uploading datasets and attaching them to a project
+- [Administration](/docs/how-to/administration) - organisations, units, subscriptions and charges

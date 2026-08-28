@@ -509,6 +509,15 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
   // for, so what one command changed is what every later read of it reports.
   if (segments[0] === "product" && segments.length === 2) {
     const productId = segments[1];
+    if (state.addressedProductFailure && request.method === "GET") {
+      return json(
+        response,
+        state.addressedProductFailure,
+        state.addressedProductFailure === 403
+          ? state.fixtures.failures.forbidden
+          : state.fixtures.failures.serverError,
+      );
+    }
     const product = addressableProducts(state).get(productId);
     if (!product) {
       return json(response, 404, { error: "as-product-not-found", productId });

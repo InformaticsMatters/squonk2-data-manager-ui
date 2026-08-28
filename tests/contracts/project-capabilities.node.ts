@@ -6,12 +6,14 @@ import { expect, test } from "@playwright/test";
 import {
   capabilityReason,
   evaluateProjectAdministratorsCapability,
+  evaluateProjectDatasetCreationCapability,
   evaluateProjectDeletionCapability,
   evaluateProjectEditorsCapability,
   evaluateProjectExecutionCapability,
   evaluateProjectFileMutationCapability,
   evaluateProjectObserversCapability,
   evaluateProjectPrivacyCapability,
+  evaluateResultRerunCapability,
   type ProjectCapability,
   type ProjectCapabilityFacts,
   projectIsReadOnly,
@@ -39,6 +41,8 @@ type FactOptions = Partial<ProjectDetail> & {
   accountsForInstances?: boolean;
   atLimit?: boolean;
   freshness?: "current" | "stale";
+  /** Passing this as `false` is a project whose linked subscription could not be read at all. */
+  hasSubscription?: boolean;
   /** Passing this explicitly as `undefined` is the point of several cases, so it never defaults. */
   username?: string;
 };
@@ -48,6 +52,7 @@ const facts = (options: FactOptions = {}): ProjectCapabilityFacts => {
     accountsForInstances = true,
     atLimit = false,
     freshness,
+    hasSubscription = true,
     username,
     ...projectOverrides
   } = options;
@@ -56,7 +61,7 @@ const facts = (options: FactOptions = {}): ProjectCapabilityFacts => {
   return {
     caller,
     project: project(projectOverrides),
-    subscription: { accountsForInstances, atLimit },
+    ...(hasSubscription ? { subscription: { accountsForInstances, atLimit } } : {}),
     ...(freshness ? { freshness } : {}),
   };
 };
@@ -66,6 +71,16 @@ const unconfirmed = (requirement: string) => ({
   reason: `${requirement} Your permission will be confirmed when you use this action.`,
   status: "enabled",
 });
+
+const unreadableSubscriptionReasons = {
+  execution:
+    "This project's subscription is unavailable, so running work cannot be established as safe.",
+  files:
+    "This project's subscription is unavailable, so changing files cannot be established as safe.",
+};
+
+const unknownUnitReason =
+  "This project's containing unit could not be established, so a dataset cannot be created from this file.";
 
 const unaccountableExecutionReason =
   "This project's subscription does not account for instances, so running work cannot be established as safe.";
@@ -103,11 +118,13 @@ const editorActions = [
     evaluate: evaluateProjectFileMutationCapability,
     limitReason: "This project's subscription is at its coin limit, so files cannot be changed.",
     requirement: "You must be a project editor or administrator to change project files.",
+    unreadableReason: unreadableSubscriptionReasons.files,
   },
   {
     evaluate: evaluateProjectExecutionCapability,
     limitReason: "This project's subscription is at its coin limit, so work cannot be run.",
     requirement: "You must be a project editor or administrator to run work in this project.",
+    unreadableReason: unreadableSubscriptionReasons.execution,
   },
 ] as const;
 
@@ -277,6 +294,85 @@ test.describe("Incomplete and stale project facts", () => {
         enabled,
       );
     }
+  });
+});
+
+/** One result of the project in the URL, so a result action reads nothing about another project. */
+const ownResultFacts = (options: FactOptions) => ({
+  ...facts(options),
+  owningProjectId: "project-one",
+  routeProjectId: "project-one",
+});
+
+/** One file action of the project, told which unit a dataset made from that file would go to. */
+const datasetFacts = ({ unitId, ...options }: FactOptions & { unitId?: string }) => ({
+  ...facts(options),
+  ...(unitId === undefined ? {} : { unitId }),
+});
+
+test.describe("A project whose linked subscription could not be read", () => {
+  test("withholds every spend with the same reason, whatever authority the caller holds", () => {
+    for (const { evaluate, unreadableReason } of editorActions) {
+      expect(evaluate(facts({ hasSubscription: false, username: administrator }))).toEqual(
+        disabled(unreadableReason),
+      );
+      expect(evaluate(facts({ hasSubscription: false, username: editor }))).toEqual(
+        disabled(unreadableReason),
+      );
+      // A missing subscription is a fact of its own, so it outranks the optimistic stale fallback.
+      expect(
+        evaluate(facts({ freshness: "stale", hasSubscription: false, username: administrator })),
+      ).toEqual(disabled(unreadableReason));
+      expect(evaluate(facts({ hasSubscription: false, username: undefined }))).toEqual(
+        disabled(unreadableReason),
+      );
+      // A confirmed lack of authority stays the more useful explanation, as at the coin limit.
+      expect(
+        capabilityReason(evaluate(facts({ hasSubscription: false, username: observer }))),
+      ).toBe(capabilityReason(evaluate(facts({ username: observer }))));
+    }
+  });
+
+  test("leaves every ordinary administration of the project itself available", () => {
+    for (const { evaluate } of administratorActions) {
+      expect(evaluate(facts({ hasSubscription: false, username: administrator }))).toEqual(enabled);
+    }
+    expect(projectIsReadOnly(facts({ hasSubscription: false, username: administrator }))).toBe(
+      false,
+    );
+    expect(projectIsReadOnly(facts({ hasSubscription: false, username: observer }))).toBe(true);
+  });
+
+  test("keeps rerunning one of its results withheld for the same reason", () => {
+    expect(evaluateResultRerunCapability(ownResultFacts({ hasSubscription: false }))).toEqual(
+      disabled(unreadableSubscriptionReasons.execution),
+    );
+  });
+});
+
+test.describe("Creating a dataset from a project file", () => {
+  test("is offered exactly as a file change is, for a project that names its unit", () => {
+    expect(
+      evaluateProjectDatasetCreationCapability(
+        datasetFacts({ unitId: "unit-one", username: administrator }),
+      ),
+    ).toEqual(enabled);
+    expect(
+      evaluateProjectDatasetCreationCapability(
+        datasetFacts({ unitId: "unit-one", username: observer }),
+      ),
+    ).toEqual(disabled("You must be a project editor or administrator to change project files."));
+    expect(
+      evaluateProjectDatasetCreationCapability(
+        datasetFacts({ hasSubscription: false, unitId: "unit-one", username: administrator }),
+      ),
+    ).toEqual(disabled(unreadableSubscriptionReasons.files));
+  });
+
+  test("is withheld where no unit could be named for the project", () => {
+    expect(
+      evaluateProjectDatasetCreationCapability(datasetFacts({ username: administrator })),
+    ).toEqual(disabled(unknownUnitReason));
   });
 });
 

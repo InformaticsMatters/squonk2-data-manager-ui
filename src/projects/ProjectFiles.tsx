@@ -21,7 +21,11 @@ import { CenterLoader } from "../components/CenterLoader";
 import { DataTable } from "../components/DataTable";
 import { NextLink } from "../components/NextLink";
 import { toLocalTimeString } from "../utils/app/datetime";
-import { capabilityReason, evaluateProjectFileMutationCapability } from "./capabilities";
+import {
+  capabilityReason,
+  evaluateProjectDatasetCreationCapability,
+  evaluateProjectFileMutationCapability,
+} from "./capabilities";
 import {
   childFilesystemPath,
   existingDirectoryNames,
@@ -33,6 +37,7 @@ import {
   type ProjectFileRow,
 } from "./fileFacts";
 import { FILE_NOT_FOUND_NOTICE } from "./fileViewers";
+import { resolvedAncestry } from "./projectAncestry";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectFileActions } from "./ProjectFileActions";
 import { CreateDirectoryControl, UploadFileControl } from "./ProjectFileToolbarActions";
@@ -99,7 +104,15 @@ const FilesTable = ({
   const capability = evaluateProjectFileMutationCapability({ ...facts, content: files.content });
   const reason = capabilityReason(capability);
   const directories = existingDirectoryNames(files.rows);
-  const unitId = facts.unit.id;
+  // The unit a dataset made from these files is billed to. The project's ancestry names it where
+  // it could be read, and the project itself names it where it could not, so a project whose
+  // subscription is refused still knows where its own files live.
+  const unitId = resolvedAncestry(facts.ancestry)?.unit.id ?? facts.project.unit_id;
+  const datasetCapability = evaluateProjectDatasetCreationCapability({
+    ...facts,
+    content: files.content,
+    unitId,
+  });
 
   const columns = useMemo(
     () => [
@@ -148,6 +161,7 @@ const FilesTable = ({
         cell: ({ row }) => (
           <ProjectFileActions
             capability={capability}
+            datasetCapability={datasetCapability}
             path={path}
             projectId={projectId}
             row={row.original}
@@ -159,7 +173,7 @@ const FilesTable = ({
         id: "actions",
       }),
     ],
-    [capability, path, projectId, unitId],
+    [capability, datasetCapability, path, projectId, unitId],
   );
 
   return (

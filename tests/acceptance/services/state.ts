@@ -155,6 +155,12 @@ export type ScenarioState = {
   /** The profile this scenario was reset with; the identity provider reads it to issue roles. */
   profile: ScenarioProfile;
   productFailure: boolean;
+  /**
+   * A refused or failing read of one addressed subscription. `403` is what the Account Server
+   * answers every caller outside the owning unit, which is what a public project opened by a
+   * non-member is; `503` is the same read merely failing, which is worth retrying.
+   */
+  addressedProductFailure?: 403 | 503;
   productCreationFailure?: 400 | 403 | 429 | 503;
   /**
    * A refused or failing subscription command, so an authoritative rejection and a transport

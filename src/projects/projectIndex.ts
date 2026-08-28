@@ -8,6 +8,7 @@ import {
   type UnitCreationFacts,
 } from "../application/organisationUnits";
 import { callerEditsProject, type ProjectCapability, resolveProjectRoles } from "./capabilities";
+import { projectContainerLabel } from "./projectAncestry";
 
 /**
  * The roles the index reports, strongest first, each paired with the membership fact that
@@ -68,18 +69,12 @@ const highestRoleLabel = (
   return rankedRoles.find(([, isHeld]) => roles[isHeld])?.[0];
 };
 
-/**
- * A project's container, named where the caller's ancestry names it and identified where it does
- * not. A project always has containers, so an unnamed one still says which container it is: an
- * identifier the caller can quote is worth more than a blank.
- */
+/** One container of an indexed project, named from the caller's own ancestry index. */
 const containerName = (
   names: Map<string, string>,
   containerId: string | undefined,
   kind: "Organisation" | "Unit",
-) =>
-  names.get(containerId ?? "") ??
-  (containerId ? `${kind} ${containerId}` : `Unknown containing ${kind.toLocaleLowerCase()}`);
+) => projectContainerLabel(names.get(containerId ?? ""), containerId, kind);
 
 /**
  * The caller's units in one organisation, as their own grouped index reports them. One lookup,

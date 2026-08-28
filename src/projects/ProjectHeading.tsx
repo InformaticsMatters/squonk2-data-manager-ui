@@ -1,5 +1,6 @@
 import { Box, Skeleton, Typography } from "@mui/material";
 
+import { resolvedAncestry } from "./projectAncestry";
 import { ProjectIdentity } from "./ProjectIdentity";
 import { useRouteProjectResolution } from "./routeProjectResolution";
 
@@ -19,13 +20,20 @@ export const ProjectHeading = ({ projectId }: { projectId: string }) => {
   const resolution = useRouteProjectResolution(projectId);
 
   if (resolution?.status === "resolved") {
-    const { organisation, project, unit } = resolution.workspace;
+    const { ancestry, project } = resolution.workspace;
+    const resolved = resolvedAncestry(ancestry);
     return (
       <>
         <Typography component="span" sx={{ display: "block", fontWeight: 850 }}>
           {project.name}
         </Typography>
-        <ProjectIdentity organisationLabel={organisation.name} unitLabel={unit.name} />
+        {/* A project whose ancestry could not be read is named without one, rather than being
+            called unavailable: the project itself arrived, and only its unit and organisation are
+            missing from what the strip can say about it. */}
+        <ProjectIdentity
+          organisationLabel={resolved?.organisation.name}
+          unitLabel={resolved?.unit.name}
+        />
       </>
     );
   }

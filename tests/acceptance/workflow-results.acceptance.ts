@@ -250,7 +250,7 @@ test("a project viewer reads a workflow and is told what changing it requires", 
   await expect(page.getByRole("button", { name: "Delete", exact: true })).toBeDisabled();
   await expect(
     page.getByText(
-      "You must be a project editor or administrator to stop or delete workflows in this project.",
+      "You have read-only access to this project, so you cannot run, stop, delete, or archive work in it.",
     ),
   ).toBeVisible();
 });

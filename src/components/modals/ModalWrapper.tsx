@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 
+import { ReasonsRestatedHere } from "../results/CapabilityReasons";
 import { SlideUpTransition } from "../SlideUpTransition";
 import { type BaseModalWrapperProps } from "./types";
 
@@ -76,7 +77,11 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
           <CloseRoundedIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent>{children}</DialogContent>
+      {/* A dialog covers the page it opened over, so whatever that page stated once above its
+          controls is restated by the controls in here. */}
+      <DialogContent>
+        <ReasonsRestatedHere>{children}</ReasonsRestatedHere>
+      </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>{closeText}</Button>
         {!!onSubmit && (

@@ -8,9 +8,15 @@ import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { CenterLoader } from "../components/CenterLoader";
 import { InstanceDetails } from "../components/instances/InstanceDetails";
 import { InstanceResultCard } from "../components/instances/InstanceResultCard";
+import { ReasonsStatedAbove } from "../components/results/CapabilityReasons";
 import { ResultTaskCard } from "../components/tasks/ResultTaskCard";
 import { ResultWorkflowSteps } from "../components/workflows/ResultWorkflowSteps";
 import { WorkflowResultCard } from "../components/workflows/WorkflowResultCard";
+import {
+  projectEditorRequirementStatements,
+  projectIsReadOnly,
+  projectReadOnlyStatement,
+} from "./capabilities";
 import { resolveResultInstanceLifecycle, resultInstanceSettlement } from "./instanceFacts";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectResultDetail } from "./ProjectResultDetail";
@@ -44,6 +50,9 @@ type ResultsRoute = Extract<ProjectRoute, { kind: "result" | "results" }>;
 
 const isResultsRoute = (route: FamilyRoute): route is ResultsRoute =>
   route.kind === "results" || route.kind === "result";
+
+/** A stable empty list, so a page that states nothing above the cards never re-renders them. */
+const noReasons: readonly string[] = [];
 
 /** How one listed result accounted for its own progress, where its kind accounts for any. */
 type ResultProgressFacts = Pick<
@@ -221,6 +230,10 @@ const ResultsSection = ({
   const handleTypesChange = (types?: readonly ResultFilterType[]) =>
     handleStateChange({ search: state.search, types });
   const statement = resultsFilterStatement(state.definition, results.definition);
+  // Read-only access withholds the same actions on every result the project owns, so the section
+  // states that once above whatever it is showing and the cards below it stay silent about it. A
+  // dialog opened from here covers that sentence, so its own controls go on explaining themselves.
+  const readOnly = facts !== undefined && projectIsReadOnly(facts);
 
   // The list narrows to the definition the catalogue resolved, never to the identifier the URL
   // carries: that identifier names one version, and the version-agnostic case must stay expressible.
@@ -293,23 +306,37 @@ const ResultsSection = ({
             </Alert>
           ) : null}
 
+          {readOnly ? (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              {projectReadOnlyStatement}
+            </Alert>
+          ) : null}
+
           {facts === undefined ? (
             <CenterLoader />
-          ) : route.kind === "result" ? (
-            <>
-              <Button component={Link} href={projectLinks.results(projectId, state)} sx={{ mb: 1 }}>
-                All results
-              </Button>
-              <ProjectResultDetail facts={facts} results={results} route={route} />
-            </>
           ) : (
-            <ResultsList
-              facts={facts}
-              items={shown}
-              results={results}
-              routeProjectId={projectId}
-              state={state}
-            />
+            <ReasonsStatedAbove reasons={readOnly ? projectEditorRequirementStatements : noReasons}>
+              {route.kind === "result" ? (
+                <>
+                  <Button
+                    component={Link}
+                    href={projectLinks.results(projectId, state)}
+                    sx={{ mb: 1 }}
+                  >
+                    All results
+                  </Button>
+                  <ProjectResultDetail facts={facts} results={results} route={route} />
+                </>
+              ) : (
+                <ResultsList
+                  facts={facts}
+                  items={shown}
+                  results={results}
+                  routeProjectId={projectId}
+                  state={state}
+                />
+              )}
+            </ReasonsStatedAbove>
           )}
         </Box>
       </Box>

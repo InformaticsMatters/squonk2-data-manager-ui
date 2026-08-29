@@ -199,6 +199,35 @@ const evaluateSpendingAction =
       : { status: "enabled" };
   };
 
+/**
+ * The sentences an editor-only action states when the caller holds no ordinary authority over the
+ * project. Each one says the same thing about the project rather than something about the action
+ * it withholds, so a page that offers many of them can state that fact once, above them all,
+ * instead of repeating it on every control.
+ */
+export const projectEditorRequirements = {
+  archiveInstances:
+    "You must be a project editor or administrator to archive instances in this project.",
+  changeFiles: "You must be a project editor or administrator to change project files.",
+  deleteTasks: "You must be a project editor or administrator to delete tasks in this project.",
+  runWork: "You must be a project editor or administrator to run work in this project.",
+  stopInstances:
+    "You must be a project editor or administrator to stop or delete instances in this project.",
+  stopWorkflows:
+    "You must be a project editor or administrator to stop or delete workflows in this project.",
+} as const;
+
+/** Every such sentence, for a page stating them once in place of the controls that carry them. */
+export const projectEditorRequirementStatements: readonly string[] =
+  Object.values(projectEditorRequirements);
+
+/**
+ * What a page says in their place. It states the one fact they all rest on, so a caller who cannot
+ * act still learns why before reading a single disabled control.
+ */
+export const projectReadOnlyStatement =
+  "You have read-only access to this project, so you cannot run, stop, delete, or archive work in it.";
+
 export const evaluateProjectPrivacyCapability = evaluateAdministratorAction(
   "You must be a project administrator to change project privacy.",
 );
@@ -222,7 +251,7 @@ export const evaluateProjectDeletionCapability = evaluateAdministratorAction(
 /** Every linked subscription accounts for storage, so file changes need no instance accounting. */
 const evaluateFileSpend = evaluateSpendingAction({
   limitReason: "This project's subscription is at its coin limit, so files cannot be changed.",
-  requirement: "You must be a project editor or administrator to change project files.",
+  requirement: projectEditorRequirements.changeFiles,
   unreadableReason: unreadableSubscriptionReasons.files,
 });
 
@@ -287,7 +316,7 @@ export const evaluateProjectDatasetCreationCapability = (
 
 export const evaluateProjectExecutionCapability = evaluateSpendingAction({
   limitReason: "This project's subscription is at its coin limit, so work cannot be run.",
-  requirement: "You must be a project editor or administrator to run work in this project.",
+  requirement: projectEditorRequirements.runWork,
   unaccountableReason:
     "This project's subscription does not account for instances, so running work cannot be established as safe.",
   unreadableReason: unreadableSubscriptionReasons.execution,
@@ -365,9 +394,7 @@ const evaluateResultAction =
   };
 
 const evaluateTerminationAuthority = evaluateResultAction(
-  evaluateEditorAction(
-    "You must be a project editor or administrator to stop or delete instances in this project.",
-  ),
+  evaluateEditorAction(projectEditorRequirements.stopInstances),
 );
 
 /**
@@ -400,15 +427,11 @@ export const evaluateResultTerminationCapability = (
 };
 
 export const evaluateResultArchiveCapability = evaluateResultAction(
-  evaluateEditorAction(
-    "You must be a project editor or administrator to archive instances in this project.",
-  ),
+  evaluateEditorAction(projectEditorRequirements.archiveInstances),
 );
 
 const evaluateTaskDeletionAuthority = evaluateResultAction(
-  evaluateEditorAction(
-    "You must be a project editor or administrator to delete tasks in this project.",
-  ),
+  evaluateEditorAction(projectEditorRequirements.deleteTasks),
 );
 
 /**
@@ -445,9 +468,7 @@ export const evaluateResultTaskDeletionCapability = (
 };
 
 const evaluateWorkflowLifecycleAuthority = evaluateResultAction(
-  evaluateEditorAction(
-    "You must be a project editor or administrator to stop or delete workflows in this project.",
-  ),
+  evaluateEditorAction(projectEditorRequirements.stopWorkflows),
 );
 
 /**
@@ -482,7 +503,7 @@ export const evaluateResultWorkflowLifecycleCapability = (
 export const evaluateResultRerunCapability = evaluateResultAction(
   evaluateSpendingAction({
     limitReason: "This project's subscription is at its coin limit, so work cannot be run.",
-    requirement: "You must be a project editor or administrator to run work in this project.",
+    requirement: projectEditorRequirements.runWork,
     unaccountableReason:
       "This project's subscription does not account for instances, so running work cannot be established as safe.",
     unreadableReason: unreadableSubscriptionReasons.execution,

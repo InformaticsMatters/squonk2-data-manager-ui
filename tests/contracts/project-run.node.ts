@@ -564,9 +564,42 @@ test("a disabled job explains itself through the definition the route addresses"
   });
   const jobItem = items.find((item) => item.kind === "job");
 
-  expect(jobItem && runDefinitionUnavailability(jobItem, "1")).toBe("No assets");
+  expect(jobItem && runDefinitionUnavailability(jobItem, "1")).toBe("No assets.");
   expect(jobItem && runDefinitionUnavailability(jobItem, "2")).toBeUndefined();
   expect(runDefinitionUnavailability(items[0], workflowId)).toBeUndefined();
+});
+
+const disabledJobUnavailability = (overrides: Partial<JobSummary>) => {
+  const item = catalogue({ jobs: [job({ id: 1, disabled: true, ...overrides })] }).find(
+    (candidate) => candidate.kind === "job",
+  );
+
+  return item && runDefinitionUnavailability(item, "1");
+};
+
+test("a disabled job states the remedy the Data Manager offered with the reason", () => {
+  // The remedy is the fix offered alongside the problem, so it is stated with it rather than
+  // discarded, and each sentence the Data Manager wrote is ended so the two can be read together.
+  expect(
+    disabledJobUnavailability({
+      disabled_reason: "The job requires a licence that cannot be found",
+      disabled_remedy: "Buy a licence for this job",
+    }),
+  ).toBe("The job requires a licence that cannot be found. Buy a licence for this job.");
+  // A sentence the Data Manager already ended is not stopped twice.
+  expect(
+    disabledJobUnavailability({
+      disabled_reason: "No assets found.",
+      disabled_remedy: "Ask an administrator.",
+    }),
+  ).toBe("No assets found. Ask an administrator.");
+  // A remedy offered without a reason is still the only advice the caller has, so it survives the
+  // fallback that stands in for the missing reason.
+  expect(disabledJobUnavailability({ disabled_remedy: "Buy a licence" })).toBe(
+    "This job is disabled, so it cannot be run. Buy a licence.",
+  );
+  // A job disabled with neither is refused as it always was.
+  expect(disabledJobUnavailability({})).toBe("This job is disabled, so it cannot be run.");
 });
 
 test("a definition is placed by the catalogue that publishes its own type", () => {
@@ -667,7 +700,7 @@ test("emptying the type filter clears it rather than leaving a state no URL can 
 test("a definition answers for the exact version the route addresses", () => {
   const items = catalogue({
     jobs: [
-      job({ id: 1, disabled: true, disabled_reason: "No assets", version: "1.0.0" }),
+      job({ id: 1, disabled: true, disabled_reason: "No assets.", version: "1.0.0" }),
       job({ id: 2, version: "2.0.0" }),
     ],
   });
@@ -683,8 +716,8 @@ test("a definition answers for the exact version the route addresses", () => {
   // A card links to one version at a time, and the modal that link opens refuses a disabled version
   // with that version's own reason rather than the newest version's.
   expect(resolveFor(editor)?.("1")).toEqual({
-    availability: { status: "disabled", reason: "No assets" },
-    launch: { status: "disabled", reason: "No assets" },
+    availability: { status: "disabled", reason: "No assets." },
+    launch: { status: "disabled", reason: "No assets." },
   });
   expect(resolveFor(editor)?.("2")).toEqual({
     availability: { status: "enabled" },
@@ -693,7 +726,7 @@ test("a definition answers for the exact version the route addresses", () => {
   // A caller who also lacks authority is told what they lack first, but the version's own reason
   // is never replaced by it: both are stated, so nobody is left thinking the version is runnable.
   expect(resolveFor(observer)?.("1")).toEqual({
-    availability: { status: "disabled", reason: "No assets" },
+    availability: { status: "disabled", reason: "No assets." },
     launch: {
       status: "disabled",
       reason: "You must be a project editor or administrator to run work in this project.",

@@ -190,8 +190,23 @@ export const findRunDefinition = (
   );
 
 /**
+ * Ends a sentence the Data Manager wrote, so what it says can be read beside sentences of our own.
+ * The reason and the remedy arrive as free text and neither is promised to be punctuated, so a
+ * sentence that already ends is left as it stands rather than stopped twice.
+ */
+const asSentence = (text: string): string => {
+  const trimmed = text.trim();
+
+  return [".", "!", "?"].some((stop) => trimmed.endsWith(stop)) ? trimmed : `${trimmed}.`;
+};
+
+/**
  * Why a definition cannot be run whatever authority the caller holds. The Data Manager disables
  * individual jobs, and says why, so that reason is the definition's own rather than the project's.
+ *
+ * Where it also offers a remedy — which it does for the reasons a caller can actually do something
+ * about, a missing licence being the documented case — the remedy is stated with the reason, so the
+ * caller is told the fix that was offered alongside the problem rather than the problem alone.
  */
 export const runDefinitionUnavailability = (
   item: RunDefinitionItem,
@@ -204,7 +219,11 @@ export const runDefinitionUnavailability = (
   if (!job.disabled) {
     return undefined;
   }
-  return job.disabled_reason ?? "This job is disabled, so it cannot be run.";
+  const reason = job.disabled_reason?.trim()
+    ? asSentence(job.disabled_reason)
+    : "This job is disabled, so it cannot be run.";
+
+  return job.disabled_remedy?.trim() ? `${reason} ${asSentence(job.disabled_remedy)}` : reason;
 };
 
 /**

@@ -1,3 +1,10 @@
+# [7.0.0-dev.21](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.20...7.0.0-dev.21) (2026-08-29)
+
+
+### Bug Fixes
+
+* **projects:** keep a project usable when its subscription is refused ([0b8c318](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0b8c31867c0605e5b849e6fa7be44c41079aa13d))
+
 # [7.0.0-dev.20](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.19...7.0.0-dev.20) (2026-08-28)
 
 

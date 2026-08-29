@@ -294,16 +294,16 @@ test("a project viewer reads an instance and is told what changing it requires",
   await expect(page.getByRole("button", { name: "Delete", exact: true })).toBeDisabled();
   await expect(page.getByRole("button", { name: "Archive" })).toBeDisabled();
   await expect(page.getByRole("button", { name: "Run again" })).toBeDisabled();
+  // What read-only access withholds is a fact of the project, so the section states it once above
+  // the result rather than once per withheld control.
   await expect(
     page.getByText(
-      "You must be a project editor or administrator to stop or delete instances in this project.",
+      "You have read-only access to this project, so you cannot run, stop, delete, or archive work in it.",
     ),
   ).toBeVisible();
   await expect(
-    page.getByText(
-      "You must be a project editor or administrator to archive instances in this project.",
-    ),
-  ).toBeVisible();
+    page.getByText("You must be a project editor or administrator", { exact: false }),
+  ).toHaveCount(0);
 });
 
 test("a rejected instance command preserves the project and route it was rejected in", async ({
@@ -616,7 +616,9 @@ test("a project viewer is told what running an instance's job again requires", a
   // there is told so rather than being offered a launch the Data Manager would refuse.
   await expect(page.getByRole("button", { name: "Run again" })).toBeDisabled();
   await expect(
-    page.getByText("You must be a project editor or administrator to run work in this project."),
+    page.getByText(
+      "You have read-only access to this project, so you cannot run, stop, delete, or archive work in it.",
+    ),
   ).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${jobDetail}`);
 
@@ -628,6 +630,7 @@ test("a project viewer is told what running an instance's job again requires", a
   await expect(dialog).toBeVisible();
   await expect(dialog.getByLabel("Batch size")).toHaveValue("250");
   await expect(page.getByRole("button", { name: "Run", exact: true })).toBeDisabled();
+  // The dialog covers the page's own read-only alert, so it states what the launch requires itself.
   await expect(
     dialog.getByText("You must be a project editor or administrator to run work in this project."),
   ).toBeVisible();

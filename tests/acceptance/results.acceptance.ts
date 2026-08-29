@@ -123,19 +123,16 @@ test("Results never leave the project in the URL, even across two projects in on
 
   // The same caller only observes this project, so the same actions are withheld and explained.
   // Capability presentation therefore follows the project a result belongs to, not the caller.
+  // The explanation is the list's own, stated once above it rather than on every card in it.
   await expect(page.getByRole("button", { name: "Archive" })).toBeDisabled();
   await expect(
-    page
-      .getByText(
-        "You must be a project editor or administrator to archive instances in this project.",
-      )
-      .first(),
+    page.getByText(
+      "You have read-only access to this project, so you cannot run, stop, delete, or archive work in it.",
+    ),
   ).toBeVisible();
   await expect(
-    page
-      .getByText("You must be a project editor or administrator to delete tasks in this project.")
-      .first(),
-  ).toBeVisible();
+    page.getByText("You must be a project editor or administrator", { exact: false }),
+  ).toHaveCount(0);
 
   // Every Results read the Data Manager received named a project, and only ever a project the URL
   // had addressed at the time.
@@ -306,23 +303,17 @@ test("a project viewer reads results and is told what each unavailable action re
 
   await expect(page.getByRole("heading", { level: 1, name: "Results" })).toBeVisible();
   await expect(page.getByText("Acceptance Instance")).toBeVisible();
+
+  // What read-only access withholds is a fact of the project, so the list states it once above
+  // every card rather than repeating a requirement on each of them.
   await expect(
-    page
-      .getByText(
-        "You must be a project editor or administrator to stop or delete instances in this project.",
-      )
-      .first(),
-  ).toBeVisible();
+    page.getByText(
+      "You have read-only access to this project, so you cannot run, stop, delete, or archive work in it.",
+    ),
+  ).toHaveCount(1);
   await expect(
-    page
-      .getByText("You must be a project editor or administrator to delete tasks in this project.")
-      .first(),
-  ).toBeVisible();
-  await expect(
-    page
-      .getByText("You must be a project editor or administrator to run work in this project.")
-      .first(),
-  ).toBeVisible();
+    page.getByText("You must be a project editor or administrator", { exact: false }),
+  ).toHaveCount(0);
 
   // Every mutation the viewer cannot make is offered as an explained, disabled control.
   await expect(page.getByRole("button", { name: "Run again" })).toBeDisabled();

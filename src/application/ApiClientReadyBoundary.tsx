@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
 import { Alert } from "@mui/material";
+import { captureMessage } from "@sentry/nextjs";
 
 import { AuthButton } from "../components/auth/AuthButton";
 import { CenterLoader } from "../components/CenterLoader";
@@ -53,6 +54,16 @@ export const ApiClientReadyBoundary = ({ children }: { children: ReactNode }) =>
       () => setReauthenticationSpent(true),
     );
   }, [status]);
+
+  useEffect(() => {
+    if (reauthenticationSpent) {
+      // Signing in again is the recovery for a session that cannot authorise the clients, so the
+      // individual refusals are ordinary and are only logged. One that survives the recovery is
+      // not: the deployment is handing out sessions no amount of signing in makes usable, which is
+      // the state worth being told about.
+      captureMessage("A session could not authorise the API clients after signing in again");
+    }
+  }, [reauthenticationSpent]);
 
   if (status === "error" && reauthenticationSpent) {
     return (

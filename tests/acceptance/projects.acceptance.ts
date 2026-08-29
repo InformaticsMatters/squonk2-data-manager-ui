@@ -1415,3 +1415,59 @@ test("a caller who belongs to none of the organisation is refused the unit with 
   await expect(page.getByRole("link", { name: "Create project" })).toBeVisible();
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
 });
+
+test("a project whose subscription is refused stays open, with the spends it cannot establish disabled", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}`);
+  // What the Account Server answers every caller outside the owning unit — a public project opened
+  // by a non-member. The project itself is readable throughout.
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/addressed-product-failure`, {
+    params: { status: 403 },
+  });
+  await login(page, `projects/${fixtureIds.project}/files`, testInfo);
+
+  // The project is open, named, and listing its files: a refused subscription is not a lost project.
+  await expect(page.getByRole("heading", { level: 1, name: "Files" })).toBeVisible();
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await expect(page.getByText("Project unavailable")).toHaveCount(0);
+  await expect(
+    page.getByText("This project is unavailable or you no longer have access."),
+  ).toHaveCount(0);
+  await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toBeVisible();
+
+  // Nothing that would spend the subscription's coins is offered, and each says the same why.
+  const filesReason =
+    "This project's subscription is unavailable, so changing files cannot be established as safe.";
+  await expect(page.getByRole("button", { name: "Upload unmanaged file" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Create directory" })).toBeDisabled();
+  await expect(page.getByText(filesReason).first()).toBeVisible();
+
+  await page.goto(`${acceptanceUrls.app}projects/${fixtureIds.project}/manage`);
+  await expect(page.getByRole("heading", { level: 2, name: "Acceptance Project" })).toBeVisible();
+  await expect(
+    page.getByText(
+      "This project's subscription is not available to you, so its coin usage is not shown.",
+    ),
+  ).toBeVisible();
+  const capabilitySummary = page.getByRole("region", { name: "What you can do here" });
+  for (const label of ["Change files", "Run work"]) {
+    await expect(capabilitySummary.getByRole("listitem").filter({ hasText: label })).toContainText(
+      "Unavailable",
+    );
+  }
+  await expect(capabilitySummary).toContainText(filesReason);
+  await expect(capabilitySummary).toContainText(
+    "This project's subscription is unavailable, so running work cannot be established as safe.",
+  );
+
+  // Everything the project itself answers for stays exactly as available as it was.
+  await expect(privacySwitch(page)).toBeEnabled();
+  await expect(members(page, "Administrators").getByRole("combobox")).toBeEnabled();
+  await expect(factRow(page, "Containing unit")).toContainText(fixtureIds.unit);
+  await expect(factRow(page, "Owning organisation")).toContainText(fixtureIds.organisation);
+  await expect(factRow(page, "Subscription ID")).toContainText(fixtureIds.product);
+  await expect(factRow(page, "Unit ID")).toContainText(fixtureIds.unit);
+});

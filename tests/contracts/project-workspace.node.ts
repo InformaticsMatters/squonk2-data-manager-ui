@@ -11,7 +11,13 @@ import {
   PROJECT_ONBOARDING_DISMISSAL_KEY,
   projectOnboardingIsDismissed,
 } from "../../src/projects/onboardingDismissal";
-import { requireLinkedProject, resolveProjectAncestry } from "../../src/projects/projectAncestry";
+import {
+  projectContainerLabel,
+  readProjectAncestry,
+  requireLinkedProject,
+  resolvedAncestry,
+  resolveProjectAncestry,
+} from "../../src/projects/projectAncestry";
 import { removeUnavailableProject } from "../../src/projects/projectCache";
 import {
   buildProjectIndexList,
@@ -223,6 +229,70 @@ test("project ancestry comes from the linked generated Product response", () => 
   expect(() => requireLinkedProject(project({ product_id: undefined }))).toThrow(
     "does not identify a linked product",
   );
+});
+
+/** How the generated fetch client reports one refused or failing read. */
+const readFailure = (status: number) => ({ data: {}, headers: new Headers(), status });
+
+test.describe("what one product read establishes about a project", () => {
+  const response = {
+    product: {
+      claim: { id: "project-one", name: "Shared Project" },
+      organisation: { id: "organisation-one", name: "Current Organisation" },
+      product: { id: "product-one" },
+      unit: { id: "unit-one", name: "Discovery" },
+    },
+  } as ProductUnitGetResponse;
+  test("a product that answered resolves the whole ancestry", () => {
+    const read = readProjectAncestry(project(), { data: response, error: null });
+    expect(read.kind).toBe("resolved");
+    expect(resolvedAncestry(read)).toEqual(
+      expect.objectContaining({
+        organisation: response.product.organisation,
+        product: response.product,
+        unit: response.product.unit,
+      }),
+    );
+  });
+
+  test("a refused or absent product leaves the project without an ancestry, not unavailable", () => {
+    // The Account Server refuses a product to every caller outside its unit, which is exactly what
+    // a public project opened by a non-member is. The project is still perfectly readable.
+    for (const status of [403, 404]) {
+      const read = readProjectAncestry(project(), { data: undefined, error: readFailure(status) });
+      expect(read).toEqual({ kind: "unavailable" });
+      expect(resolvedAncestry(read)).toBeUndefined();
+    }
+    // A project that names no subscription has none to read, rather than a broken ancestry.
+    expect(
+      readProjectAncestry(project({ product_id: undefined }), { data: undefined, error: null }),
+    ).toEqual({ kind: "unavailable" });
+  });
+
+  test("a product read that merely failed stays worth retrying", () => {
+    for (const status of [429, 503]) {
+      expect(
+        readProjectAncestry(project(), { data: undefined, error: readFailure(status) }),
+      ).toEqual({ kind: "unreadable" });
+    }
+  });
+
+  test("a mismatched product is a broken ancestry rather than an absent one", () => {
+    expect(() =>
+      readProjectAncestry(project({ organisation_id: "organisation-two" }), {
+        data: response,
+        error: null,
+      }),
+    ).toThrow("does not match its linked product ancestry");
+  });
+
+  test("a container with no readable name is still identified", () => {
+    expect(projectContainerLabel("Discovery", "unit-one", "Unit")).toBe("Discovery");
+    expect(projectContainerLabel(undefined, "unit-one", "Unit")).toBe("Unit unit-one");
+    expect(projectContainerLabel(undefined, undefined, "Organisation")).toBe(
+      "Unknown containing organisation",
+    );
+  });
 });
 
 test("confirmed project loss removes only that project from recents", () => {

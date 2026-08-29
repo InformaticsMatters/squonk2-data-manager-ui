@@ -29,7 +29,13 @@ const readCachedWorkspace = (
     return undefined;
   }
   try {
-    return { project, ...resolveProjectAncestry(requireLinkedProject(project), product) };
+    return {
+      ancestry: {
+        kind: "resolved",
+        ...resolveProjectAncestry(requireLinkedProject(project), product),
+      },
+      project,
+    };
   } catch {
     return undefined;
   }

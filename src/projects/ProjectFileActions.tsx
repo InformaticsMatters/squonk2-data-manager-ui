@@ -68,17 +68,23 @@ const DestructiveFileAction = ({
  */
 export const ProjectFileActions = ({
   capability,
+  datasetCapability,
   path,
   projectId,
   row,
   unitId,
 }: {
   capability: ProjectCapability;
+  /** Creating a dataset answers to the containing unit as well, so it carries its own capability. */
+  datasetCapability: ProjectCapability;
   path: string;
   projectId: string;
   row: ProjectFileRow;
-  /** The project's own containing unit, which is where a dataset made from its files is billed. */
-  unitId: string;
+  /**
+   * The project's own containing unit, which is where a dataset made from its files is billed.
+   * Absent for a project neither its ancestry nor its own record could name a unit for.
+   */
+  unitId?: string;
 }) => {
   const commands = useFileCommands(projectId);
   const { run } = useFileMutation();
@@ -167,10 +173,15 @@ export const ProjectFileActions = ({
 
       {offersDatasetCreation(row) ? (
         <CapabilityIconButton
-          capability={capability}
+          capability={datasetCapability}
           size="small"
           title="Create a dataset from this file"
-          onClick={() =>
+          onClick={() => {
+            // The capability already withholds the action for a project with no nameable unit;
+            // the request is never assembled without one either.
+            if (unitId === undefined) {
+              return;
+            }
             void run("create a dataset from", `the file ${row.name}`, () =>
               commands.createDatasetFromFile({
                 fileName: row.name,
@@ -178,8 +189,8 @@ export const ProjectFileActions = ({
                 path,
                 unitId,
               }),
-            )
-          }
+            );
+          }}
         >
           <AddCircleRoundedIcon />
         </CapabilityIconButton>

@@ -48,10 +48,12 @@ export type ProjectCapabilityFacts = {
   freshness?: ProjectFactsFreshness;
   project: ProjectMembershipFacts;
   /**
-   * The project's linked subscription is resolved before the project mounts, so its state is always
-   * a concrete fact here rather than something a spending action has to guess at.
+   * Absent for a project whose linked subscription could not be read — the Account Server refuses
+   * a product to every caller outside its unit, so a public project opened by a non-member has
+   * none here. Nothing that spends coins is offered against a subscription this client cannot
+   * account for, so its absence is a fact in its own right rather than an unknown to guess at.
    */
-  subscription: ProjectSubscriptionState;
+  subscription?: ProjectSubscriptionState;
 };
 
 /**
@@ -137,6 +139,18 @@ const evaluateAdministratorAction =
   };
 
 /**
+ * What each kind of spend says when the project's linked subscription could not be read. The
+ * project itself is still readable, so the wording names the subscription rather than the project,
+ * and says the same thing wherever that spend is offered.
+ */
+const unreadableSubscriptionReasons = {
+  execution:
+    "This project's subscription is unavailable, so running work cannot be established as safe.",
+  files:
+    "This project's subscription is unavailable, so changing files cannot be established as safe.",
+};
+
+/**
  * A spending action is only offered once the linked subscription can account for it. A subscription
  * that cannot outranks the optimistic stale fallback, because an action that cannot be established
  * as safe is explained rather than left available; a confirmed lack of authority is still the more
@@ -147,6 +161,7 @@ const evaluateSpendingAction =
     limitReason,
     requirement,
     unaccountableReason,
+    unreadableReason,
   }: {
     limitReason: string;
     requirement: string;
@@ -155,12 +170,20 @@ const evaluateSpendingAction =
      * instance accounting, which only a project-tier subscription declares.
      */
     unaccountableReason?: string;
+    /** What is withheld when the project's linked subscription could not be read at all. */
+    unreadableReason: string;
   }) =>
   (facts: ProjectCapabilityFacts): ProjectCapability => {
+    const { subscription } = facts;
+    // A subscription that could not be read and one that cannot account for the action are the
+    // same kind of answer: the spend could not be established as safe, whatever authority the
+    // caller holds, so neither waits on the caller's own facts to be confirmed.
     const unaccountable: ProjectCapability | undefined =
-      unaccountableReason !== undefined && !facts.subscription.accountsForInstances
-        ? { status: "disabled", reason: unaccountableReason }
-        : undefined;
+      subscription === undefined
+        ? { status: "disabled", reason: unreadableReason }
+        : unaccountableReason !== undefined && !subscription.accountsForInstances
+          ? { status: "disabled", reason: unaccountableReason }
+          : undefined;
 
     if (!factsAreConfirmed(facts)) {
       return unaccountable ?? unconfirmed(requirement);
@@ -171,7 +194,7 @@ const evaluateSpendingAction =
     if (unaccountable) {
       return unaccountable;
     }
-    return facts.subscription.atLimit
+    return subscription?.atLimit
       ? { status: "disabled", reason: limitReason }
       : { status: "enabled" };
   };
@@ -200,6 +223,7 @@ export const evaluateProjectDeletionCapability = evaluateAdministratorAction(
 const evaluateFileSpend = evaluateSpendingAction({
   limitReason: "This project's subscription is at its coin limit, so files cannot be changed.",
   requirement: "You must be a project editor or administrator to change project files.",
+  unreadableReason: unreadableSubscriptionReasons.files,
 });
 
 /**
@@ -235,11 +259,38 @@ export const evaluateProjectFileMutationCapability = (
   return unsafe === undefined ? capability : { status: "disabled", reason: unsafe };
 };
 
+/**
+ * What creating a dataset from a project file reads in addition to the file change itself: the
+ * unit the new dataset would belong to. The unit is named by the project or by its ancestry, so a
+ * project neither could name is one this client cannot say where the dataset would be created.
+ */
+export type ProjectDatasetCreationFacts = ProjectFileFacts & { unitId?: string };
+
+const unknownUnitReason =
+  "This project's containing unit could not be established, so a dataset cannot be created from this file.";
+
+/**
+ * Creating a dataset from one file of the project in the URL. It is a change to the project's
+ * files first, so every reason that withholds a file change withholds this too and is reported
+ * first; a project with no nameable unit then withholds it rather than asking the Data Manager to
+ * create a dataset somewhere this client could not name.
+ */
+export const evaluateProjectDatasetCreationCapability = (
+  facts: ProjectDatasetCreationFacts,
+): ProjectCapability => {
+  const capability = evaluateProjectFileMutationCapability(facts);
+  if (capability.status === "disabled" || facts.unitId !== undefined) {
+    return capability;
+  }
+  return { status: "disabled", reason: unknownUnitReason };
+};
+
 export const evaluateProjectExecutionCapability = evaluateSpendingAction({
   limitReason: "This project's subscription is at its coin limit, so work cannot be run.",
   requirement: "You must be a project editor or administrator to run work in this project.",
   unaccountableReason:
     "This project's subscription does not account for instances, so running work cannot be established as safe.",
+  unreadableReason: unreadableSubscriptionReasons.execution,
 });
 
 /**
@@ -434,5 +485,6 @@ export const evaluateResultRerunCapability = evaluateResultAction(
     requirement: "You must be a project editor or administrator to run work in this project.",
     unaccountableReason:
       "This project's subscription does not account for instances, so running work cannot be established as safe.",
+    unreadableReason: unreadableSubscriptionReasons.execution,
   }),
 );

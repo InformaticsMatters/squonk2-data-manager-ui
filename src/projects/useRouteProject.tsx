@@ -1,23 +1,19 @@
 import { createContext, type ReactNode, useContext, useMemo } from "react";
 
-import {
-  type OrganisationAllDetail,
-  type ProductDmProjectTier,
-  type ProductDmStorage,
-  type UnitAllDetail,
-} from "@/api/account-server";
 import { type ProjectDetail } from "@/api/data-manager";
 
 import { useOptionalFamilyRoute } from "../application/FamilyRouteResolution";
+import { type ProjectAncestryRead } from "./projectAncestry";
 import { usePublishRouteProjectResolution } from "./routeProjectResolution";
 import { localNotFoundProjectId } from "./routes";
 
-export type ProjectWorkspace = {
-  organisation: OrganisationAllDetail;
-  product: ProductDmProjectTier | ProductDmStorage;
-  project: ProjectDetail;
-  unit: UnitAllDetail;
-};
+/**
+ * The project the URL addresses, and where it sits in the Account Server. The project is the whole
+ * of what a section needs to read, list, and change; its ancestry is a second read that a caller
+ * outside the project's unit is refused, so it is carried as its own outcome rather than as a
+ * precondition of having a project at all.
+ */
+export type ProjectWorkspace = { ancestry: ProjectAncestryRead; project: ProjectDetail };
 
 const RouteProjectContext = createContext<ProjectWorkspace | null>(null);
 
@@ -59,11 +55,5 @@ export const useRouteProject = () => {
   const projectId = useRouteProjectId();
   const workspace = useContext(RouteProjectContext);
 
-  return {
-    organisation: workspace?.organisation,
-    product: workspace?.product,
-    project: workspace?.project,
-    projectId,
-    unit: workspace?.unit,
-  };
+  return { ancestry: workspace?.ancestry, project: workspace?.project, projectId };
 };

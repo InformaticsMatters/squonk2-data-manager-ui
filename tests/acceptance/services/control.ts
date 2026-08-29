@@ -194,6 +194,18 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
     getScenario(subject)[accessReadControl.stateKey] = request.method === "POST" ? 503 : undefined;
     return json(response, 200, { subject });
   }
+  if (url.pathname.endsWith("/addressed-product-failure") && request.method === "POST") {
+    const status = Number(url.searchParams.get("status"));
+    if (![403, 503].includes(status)) {
+      return json(response, 400, { error: "unsupported-addressed-product-failure", status });
+    }
+    getScenario(subject).addressedProductFailure = status as 403 | 503;
+    return json(response, 200, { addressedProductFailure: status, subject });
+  }
+  if (url.pathname.endsWith("/addressed-product-failure") && request.method === "DELETE") {
+    getScenario(subject).addressedProductFailure = undefined;
+    return json(response, 200, { subject });
+  }
   if (url.pathname.endsWith("/addressed-read-failure") && request.method === "POST") {
     const status = Number(url.searchParams.get("status"));
     if (![403, 503].includes(status)) {

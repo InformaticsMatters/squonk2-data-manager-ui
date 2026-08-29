@@ -1,3 +1,10 @@
+# [7.0.0-dev.23](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.22...7.0.0-dev.23) (2026-08-29)
+
+
+### Bug Fixes
+
+* **run:** keep an instance's own name when it is run again ([dec41a4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/dec41a479b28f8a3ee2841740c0ec64754542e52)), closes [#2017](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2017)
+
 # [7.0.0-dev.22](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.21...7.0.0-dev.22) (2026-08-29)
 
 

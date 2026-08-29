@@ -1,3 +1,10 @@
+# [7.0.0-dev.22](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.21...7.0.0-dev.22) (2026-08-29)
+
+
+### Bug Fixes
+
+* **results:** state read-only access once above the results section ([446d05a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/446d05ab7afe896639e5b9612ca2442948ce2eb5))
+
 # [7.0.0-dev.21](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.20...7.0.0-dev.21) (2026-08-29)
 
 

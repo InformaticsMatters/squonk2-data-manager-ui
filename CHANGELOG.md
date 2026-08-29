@@ -1,3 +1,10 @@
+# [7.0.0-dev.24](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.23...7.0.0-dev.24) (2026-08-29)
+
+
+### Bug Fixes
+
+* **run:** state a disabled job's remedy with its reason ([e1fcfc0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e1fcfc0c47d6803ff4f5ec683fc66fe6af398f74)), closes [#2016](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2016)
+
 # [7.0.0-dev.23](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.22...7.0.0-dev.23) (2026-08-29)
 
 

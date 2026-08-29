@@ -4,6 +4,7 @@ import path from "node:path";
 
 import {
   declaredInputDefaults,
+  launchNameDefault,
   launchVariables,
   readRunDefinitionVariables,
   runInputsAreSupplied,
@@ -200,6 +201,35 @@ test.describe("The name a running workflow is created under", () => {
   });
 });
 
+test.describe("The name a launch form opens under", () => {
+  test("a fresh launch is named after the definition it will run", () => {
+    // Nothing was inherited, so the definition's own identifier is the only name there is to offer.
+    expect(launchNameDefault(undefined, "sa-score")).toBe("sa-score");
+  });
+
+  test("a rerun keeps the name its instance was run under", () => {
+    // The definition answers after the form is drawn, so a name taken from the definition would
+    // arrive last and always win: the name that distinguished this run would be the one thing a
+    // rerun did not restore.
+    expect(launchNameDefault("Second pass, tighter cutoff", "sa-score")).toBe(
+      "Second pass, tighter cutoff",
+    );
+    expect(launchNameDefault("Second pass, tighter cutoff", undefined)).toBe(
+      "Second pass, tighter cutoff",
+    );
+  });
+
+  test("an instance named nothing is named after the definition, as a fresh launch is", () => {
+    // A name of nothing distinguishes no run, so there is nothing there to keep.
+    expect(launchNameDefault("", "sa-score")).toBe("sa-score");
+  });
+
+  test("a form with neither a definition nor an inherited name opens empty", () => {
+    // The field is a text field the user may type into, so it holds a string either way.
+    expect(launchNameDefault(undefined, undefined)).toBe("");
+  });
+});
+
 const source = (file: string) => readFileSync(path.join(process.cwd(), "src", file), "utf8");
 
 test.describe("Launch form ownership", () => {
@@ -216,6 +246,17 @@ test.describe("Launch form ownership", () => {
       // did not enter them would withhold a launch over an input already answered.
       expect(source(modal)).toContain("declaredInputDefaults");
     }
+  });
+
+  test("a rerun's inherited name is not overwritten by the definition it reruns", () => {
+    const job = source("components/runCards/JobCard/JobModal.tsx");
+    // The one rule decides the field's opening name, so the definition's identifier cannot be
+    // preferred over the name the inherited instance carried.
+    expect(job).toContain("launchNameDefault(instance?.name");
+    // `job_name` is the name the job definition carries, one every run of it shares, so a field
+    // seeded from it would restore the definition's name rather than this run's own.
+    expect(job).not.toContain("instance?.job_name");
+    expect(job).not.toMatch(/jobName \?\? instance/u);
   });
 
   test("no definition form reads its declared variables as the values to run with", () => {

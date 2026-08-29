@@ -136,3 +136,22 @@ const workflowName = AppApiWorkflowRunBody.shape.as_name;
  */
 export const workflowLaunchNameProblem = (name: string): string | undefined =>
   workflowName.safeParse(name).success ? undefined : nameRequirement;
+
+/**
+ * The name a launch form opens under. An instance carries what it was run with, and the name it
+ * was run under is part of that, so a rerun keeps the name that distinguished it from every other
+ * run of the same definition. The definition's own identifier is the default for a fresh launch
+ * only — it arrives after the form is drawn, so preferring it would let it overwrite the inherited
+ * name every time, which is the one thing a rerun could not survive.
+ */
+export const launchNameDefault = (
+  instanceName: string | undefined,
+  definitionName: string | undefined,
+): string => {
+  // A name of nothing distinguishes no run, so it is no more a name than an absent one.
+  if (instanceName !== undefined && instanceName !== "") {
+    return instanceName;
+  }
+
+  return definitionName ?? "";
+};

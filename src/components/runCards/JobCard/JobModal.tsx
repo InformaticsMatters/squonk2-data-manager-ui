@@ -16,6 +16,7 @@ import { launchIsSendable } from "../../../projects/runLaunch";
 import {
   declaredInputDefaults,
   type InputData,
+  launchNameDefault,
   launchVariables,
   readRunDefinitionVariables,
   runInputsAreSupplied,
@@ -73,11 +74,10 @@ export const JobModal = ({
   const { data: job } = useGetJob(jobId, undefined, {
     query: { retry: jobId === TEST_JOB_ID ? 1 : 3 },
   });
-  // The job's own name once the definition answers; until then whatever the inherited instance was
-  // named, or nothing at all.
-  const [nameState, setNameState] = useStateResetOn(
-    job?.job,
-    (jobName) => jobName ?? instance?.job_name ?? "",
+  // The name the inherited instance was run under — its own `name`, not the `job_name` the job
+  // definition gave it — and only where there is none the job's own identifier once it answers.
+  const [nameState, setNameState] = useStateResetOn(job?.job, (jobName) =>
+    launchNameDefault(instance?.name, jobName),
   );
 
   const spec = instance?.application_specification;

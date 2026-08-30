@@ -79,8 +79,18 @@ export const useSetupApiClients = () => {
         if (!isCurrent) {
           return;
         }
-        captureException(error);
-        console.error("Could not obtain an access token for this session", error);
+        if (error instanceof AccessTokenUnavailableError) {
+          // An answer the auth server gave on purpose, about a session that has simply ended. The
+          // boundary above recovers from it by signing in again and says so if that does not work,
+          // and reporting every one of them as an exception would bury the failures that are this
+          // application's fault among the far more numerous ones that are not.
+          console.warn(
+            `This session has no access token (${error.code ?? "no code"}); the API clients are unauthenticated`,
+          );
+        } else {
+          captureException(error);
+          console.error("Could not obtain an access token for this session", error);
+        }
         setDMAuthToken("");
         setASAuthToken("");
         completeSetup("error");

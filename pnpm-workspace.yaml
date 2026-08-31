@@ -3,11 +3,11 @@ allowBuilds:
   '@sentry/cli': false
   core-js: false
   es5-ext: false
-  esbuild: true
+  esbuild: false
   sharp: true
   unrs-resolver: false
 minimumReleaseAgeExclude:
-  - '@squonk/*'
+- '@squonk/*'
 # paper (a transitive dependency of ketcher-core) statically requires a jsdom internal from
 # its Node canvas integration, without declaring jsdom as a dependency. The code never runs —
 # it is guarded on the optional `canvas` package, which is not installed — but the specifier

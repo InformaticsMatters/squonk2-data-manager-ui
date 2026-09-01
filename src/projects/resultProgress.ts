@@ -17,8 +17,7 @@ export const unconfirmedPollIntervalMs = 15_000;
  * that finished.
  */
 export type ResultProgressReadFailure =
-  | { kind: "unconfirmed"; reason: string }
-  | { kind: "unknown"; reason: string };
+  { kind: "unconfirmed"; reason: string } | { kind: "unknown"; reason: string };
 
 /** The result kinds that account for their own progress, in the words each of them is described by. */
 export type ResultProgressSubject = "instance" | "task" | "workflow";

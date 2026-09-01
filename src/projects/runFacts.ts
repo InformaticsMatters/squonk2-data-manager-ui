@@ -316,9 +316,7 @@ export type RunExecutions =
 
 /** What a card's badge may state about the definition it counts. */
 export type RunExecutionCount =
-  | { status: "counted"; count: number }
-  | { status: "pending" }
-  | { status: "unreadable" };
+  { status: "counted"; count: number } | { status: "pending" } | { status: "unreadable" };
 
 type RunExecutionRead = { isLoading: boolean; readState: SectionReadState };
 

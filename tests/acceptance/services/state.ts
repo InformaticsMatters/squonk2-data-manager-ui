@@ -73,12 +73,7 @@ export type LaunchFailureStatus = 400 | 403 | 429 | 503;
  * `unrecognised` reports a status this client has no rule for, which establishes nothing at all.
  */
 export type RunningWorkflowStage =
-  | "done"
-  | "failed"
-  | "rejected"
-  | "running"
-  | "stopped"
-  | "unrecognised";
+  "done" | "failed" | "rejected" | "running" | "stopped" | "unrecognised";
 
 /**
  * How an instance accounts for itself. `rejected` finished with a successful phase but recorded an
@@ -88,12 +83,7 @@ export type RunningWorkflowStage =
  * nothing at all.
  */
 export type ResultInstanceStage =
-  | "done"
-  | "failed"
-  | "rejected"
-  | "running"
-  | "stalled"
-  | "unrecognised";
+  "done" | "failed" | "rejected" | "running" | "stalled" | "unrecognised";
 
 export type ScenarioState = {
   accessFailure?: 403 | 503;

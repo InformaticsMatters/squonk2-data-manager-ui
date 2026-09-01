@@ -3,13 +3,7 @@ import { type ComponentType } from "react";
 import { type AdministrationRouteKind } from "../administration/routes";
 
 export type ProjectSection =
-  | "create"
-  | "deletion"
-  | "files"
-  | "index"
-  | "manage"
-  | "results"
-  | "run";
+  "create" | "deletion" | "files" | "index" | "manage" | "results" | "run";
 export type DatasetSection = "detail" | "list" | "viewer";
 /**
  * Administration composes one page per route kind, so its sections are exactly those kinds. The

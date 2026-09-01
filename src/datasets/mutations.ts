@@ -9,8 +9,7 @@ import { latestDatasetVersion } from "./resolveDatasetVersion";
 /** The Data Manager task fields any dataset command that waits on one is settled by. */
 export type DatasetTask = { done: boolean; exit_code?: number };
 export type DatasetDeletionDestination =
-  | { status: "list" }
-  | { status: "version"; version: number };
+  { status: "list" } | { status: "version"; version: number };
 
 /** A dataset task the Data Manager settled with something other than success. */
 export class DatasetTaskError extends Error {

@@ -36,9 +36,7 @@ export const eligibleBillingUnits = (
  * Everything else selects nothing, so a batch is never billed to a unit nobody chose.
  */
 export type BillingUnitChoice =
-  | { kind: "chosen"; unitId: string }
-  | { kind: "none" }
-  | { kind: "remembered"; unitId: string };
+  { kind: "chosen"; unitId: string } | { kind: "none" } | { kind: "remembered"; unitId: string };
 
 export const resolveBillingUnitChoice = ({
   chosenUnitId,
@@ -69,8 +67,7 @@ export const datasetSubscriptionOf = (
   );
 
 export type DatasetSubscriptionRecovery =
-  | { href: string; kind: "administration" }
-  | { kind: "contact"; reason: string };
+  { href: string; kind: "administration" } | { kind: "contact"; reason: string };
 
 /**
  * What a caller can actually do about a unit with no dataset subscription.

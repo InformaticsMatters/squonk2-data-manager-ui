@@ -9,6 +9,8 @@ import {
   useState,
 } from "react";
 
+import { focusRing } from "@squonk/mui-theme";
+
 import { CheckRounded, SearchRounded } from "@mui/icons-material";
 import {
   Box,
@@ -246,6 +248,12 @@ export const SearchMenu = ({
       id: optionId(index),
       role: "option",
       selected: index === activeIndex,
+      // The row the keyboard is on wears the ring every other focused control in the application
+      // wears. The selected-row tint alone is a few percent of alpha over the menu's own surface,
+      // which is too little to find at a glance and far too little to see at all in a bright room —
+      // and this row is the only thing telling the caller what Enter will open. The tint stays
+      // underneath it: the ring says where the keyboard is, the tint keeps the row legible as a band.
+      sx: index === activeIndex ? focusRing : undefined,
       // Not a tab stop: focus stays in the search box for the life of the menu, which is what lets
       // typing and arrowing interleave and stops Tab from walking a hundred rows to leave.
       tabIndex: -1,

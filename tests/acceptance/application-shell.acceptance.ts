@@ -1,4 +1,4 @@
-import { expect, type Page, test, type TestInfo } from "@playwright/test";
+import { expect, type Locator, type Page, test, type TestInfo } from "@playwright/test";
 
 import { APPLICATION_ORGANISATION_STORAGE_KEY } from "../../src/application/applicationIdentity";
 import { fixtureIds } from "./services/fixtures";
@@ -571,4 +571,54 @@ test("the project selector searches by project, containing unit and organisation
   await (await opened).close();
   await expect(page.getByRole("combobox", { name: "Search projects" })).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}projects/${fixtureIds.project}/files`);
+});
+
+/**
+ * What a control looks like while the keyboard is standing on it.
+ *
+ * Read from the element rather than from the theme, because the defect this guards against was a
+ * rule that existed and did not reach the control: `@squonk/mui-theme` turns the ripple off for
+ * every button, and MUI draws no `:focus-visible` styling of its own once the ripple is gone.
+ */
+const focusRingOf = (control: Locator) =>
+  control.evaluate((element) => {
+    const { outlineStyle, outlineWidth } = getComputedStyle(element);
+    return `${outlineStyle} ${outlineWidth}`;
+  });
+
+test("the chrome draws a ring around whatever the keyboard is standing on", async ({
+  page,
+}, testInfo) => {
+  await login(page, `projects/${fixtureIds.project}/files`, testInfo);
+  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+
+  const identity = page.getByRole("button", { name: "Change project" });
+  const controls = [
+    page.getByRole("button", { name: "Change organisation" }),
+    page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Datasets" }),
+    identity,
+    page.getByRole("navigation", { name: "Project" }).getByRole("link", { name: "Run" }),
+    page.getByRole("navigation", { name: "Project" }).getByRole("link", { name: "Manage" }),
+  ];
+
+  // Tab first, so what follows is a keyboard caller: `:focus-visible` is about how focus was
+  // reached, and a control focused straight from the harness would be exempt from the very rule
+  // under test.
+  await page.keyboard.press("Tab");
+  for (const control of controls) {
+    await control.focus();
+    await expect(control).toBeFocused();
+    expect(await focusRingOf(control)).toBe("solid 2px");
+  }
+
+  // The menu keeps focus in its search box and moves an active-descendant highlight instead, so
+  // the row the keyboard is on wears the ring the focused controls above do.
+  await identity.click();
+  const search = page.getByRole("combobox", { name: "Search projects" });
+  await expect(search).toBeFocused();
+  await search.press("ArrowDown");
+  const highlighted = page.getByRole("option").nth(1);
+  await expect(highlighted).toHaveAttribute("aria-selected", "true");
+  expect(await focusRingOf(highlighted)).toBe("solid 2px");
+  expect(await focusRingOf(page.getByRole("option").first())).toBe("none 0px");
 });

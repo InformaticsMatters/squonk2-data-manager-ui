@@ -7,9 +7,7 @@ import { classifyTransportFailure } from "../api/runtime/classifyTransportFailur
  * outage marks its content stale and offers retry rather than claiming access was lost.
  */
 export type SectionReadState =
-  | { kind: "available" }
-  | { kind: "recoverable"; retryable: true }
-  | { kind: "unavailable" };
+  { kind: "available" } | { kind: "recoverable"; retryable: true } | { kind: "unavailable" };
 
 /**
  * One read answers for itself, whether it returned a collection or one addressed resource: a

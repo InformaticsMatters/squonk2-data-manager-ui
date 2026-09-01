@@ -22,8 +22,7 @@ export type ProjectMemberChange =
   | { kind: "remove"; role: ProjectRole; username: string };
 
 export type ProjectPrivacyChange =
-  | { kind: "none"; reason: string }
-  | { kind: "set"; isPrivate: boolean };
+  { kind: "none"; reason: string } | { kind: "set"; isPrivate: boolean };
 
 /**
  * What a project command did. Every command answers with one of these rather than with a message,

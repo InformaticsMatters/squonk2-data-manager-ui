@@ -300,8 +300,7 @@ export type ProjectSelectorList = { sections: ProjectSelectorSection[] };
  * as an optional identifier, so neither can be reached by forgetting to pass something.
  */
 export type ProjectSelectorScope =
-  | { kind: "every-organisation" }
-  | { kind: "organisation"; organisationId: string };
+  { kind: "every-organisation" } | { kind: "organisation"; organisationId: string };
 
 /**
  * How far the project selector reaches, and the only place that answer is given. There is no

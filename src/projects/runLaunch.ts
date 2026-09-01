@@ -17,9 +17,7 @@ export type LaunchAttempt =
 
 /** What can happen to one launch: it is sent, and the Data Manager answers it one way or another. */
 export type LaunchEvent =
-  | { kind: "accepted" }
-  | { kind: "failed"; error: unknown }
-  | { kind: "send" };
+  { kind: "accepted" } | { kind: "failed"; error: unknown } | { kind: "send" };
 
 /** A definition nobody has launched yet, which is where every attempt starts. */
 export const idleLaunch: LaunchAttempt = { kind: "idle" };

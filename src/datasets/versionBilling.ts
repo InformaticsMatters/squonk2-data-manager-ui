@@ -17,8 +17,7 @@ import { type DatasetUploadInput } from "./useDatasetUploadCommands";
  * unit is only addressed on its own where its organisation would refuse the question.
  */
 export type DatasetInventoryScope =
-  | { kind: "organisation"; organisationId: string }
-  | { kind: "unit"; unitId: string };
+  { kind: "organisation"; organisationId: string } | { kind: "unit"; unitId: string };
 
 export const datasetInventoryScopes = (
   groups: readonly OrganisationUnitsGetResponse[],
@@ -39,9 +38,7 @@ export const datasetInventoryScopes = (
  * billing ancestry for, which is a conflict to state rather than a unit to pick between.
  */
 export type DatasetBillingAncestry =
-  | { kind: "conflicting" }
-  | { kind: "named"; unitId: string }
-  | { kind: "unnamed" };
+  { kind: "conflicting" } | { kind: "named"; unitId: string } | { kind: "unnamed" };
 
 const heldDatasets = (report: InventoryUserGetResponse): InventoryDatasetDetail[] =>
   report.users.flatMap(({ datasets }) => [...(datasets.owner ?? []), ...(datasets.editor ?? [])]);

@@ -30,8 +30,7 @@ export type ProjectAncestry = {
  * from a product read that merely failed, which is worth retrying.
  */
 export type ProjectAncestryRead =
-  | { kind: "unavailable" | "unreadable" }
-  | (ProjectAncestry & { kind: "resolved" });
+  { kind: "unavailable" | "unreadable" } | (ProjectAncestry & { kind: "resolved" });
 
 /** The ancestry a read established, or nothing where it established none. */
 export const resolvedAncestry = (read: ProjectAncestryRead): ProjectAncestry | undefined =>

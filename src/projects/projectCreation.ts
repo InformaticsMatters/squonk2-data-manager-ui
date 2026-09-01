@@ -189,8 +189,7 @@ export const eligibleProjectCreationFlavours = (
     .map(({ flavour }) => flavour as UnitProductPostBodyBodyFlavour);
 
 export type HandoffValidation =
-  | { kind: "invalid"; reason: string }
-  | { kind: "valid"; subscription: ProductDmProjectTier };
+  { kind: "invalid"; reason: string } | { kind: "valid"; subscription: ProductDmProjectTier };
 
 export const isUnclaimedProjectSubscription = (
   product: ProductDmProjectTier | ProductDmStorage,

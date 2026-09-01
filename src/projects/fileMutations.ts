@@ -15,8 +15,7 @@ export const relativePathPattern = /^[A-Za-z0-9-_.]+(\/[A-Za-z0-9-_.]+)*$/u;
 
 /** One directory creation, already shaped into what a command may send. */
 export type DirectoryCreation =
-  | { kind: "create"; name: string; path: string }
-  | { kind: "none"; reason: string };
+  { kind: "create"; name: string; path: string } | { kind: "none"; reason: string };
 
 /**
  * Resolves the one directory a create request expresses. A name is a name and not a path, so a

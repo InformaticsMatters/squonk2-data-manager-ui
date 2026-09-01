@@ -13,9 +13,7 @@ import { personalUnitCreationFailureReason } from "./failures";
 
 /** What a personal-unit attempt is doing right now. Its outcome is the unit itself, never a state. */
 export type PersonalUnitCreationState =
-  | { kind: "creating" }
-  | { kind: "failed"; reason: string }
-  | { kind: "idle" };
+  { kind: "creating" } | { kind: "failed"; reason: string } | { kind: "idle" };
 
 /**
  * How one attempt ended, for a caller that reports it somewhere the control itself is not. `settled`
@@ -25,8 +23,7 @@ export type PersonalUnitCreationState =
  * undefined rather than inventing a name where the read has not answered.
  */
 export type PersonalUnitCreationOutcome =
-  | { kind: "failed"; reason: string }
-  | { kind: "settled"; unit: UnitAllDetail | undefined };
+  { kind: "failed"; reason: string } | { kind: "settled"; unit: UnitAllDetail | undefined };
 
 /**
  * Creating the caller's own personal unit, through the one command that sends `PUT /personal-unit`.

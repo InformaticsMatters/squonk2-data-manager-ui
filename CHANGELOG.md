@@ -1,3 +1,10 @@
+# [7.0.0-dev.25](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.24...7.0.0-dev.25) (2026-09-01)
+
+
+### Bug Fixes
+
+* **chrome:** draw a focus ring on every control the keyboard reaches ([7cfefd6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7cfefd66c1d99328f6ba6a7337ae37b491ece94e)), closes [#1989](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1989)
+
 # [7.0.0-dev.24](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.23...7.0.0-dev.24) (2026-08-29)
 
 

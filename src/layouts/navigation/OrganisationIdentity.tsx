@@ -84,17 +84,22 @@ export const OrganisationIdentity = () => {
       renderTrigger={(bind) => (
         /* Identity variant (iv): the old outlined box holding the redesign's two-line label, so the
         bar says what the name is as well as naming it. No avatar. The trigger keeps the appearance
-        it has today: borderless on this coloured masthead would read as a label, not a button. */
+        it has today: borderless on this coloured masthead would read as a label, not a button.
+
+        Drawn as a border rather than the outline it used to be, because the outline is the one
+        thing that says where the keyboard is. A permanent outline here would have left this
+        control's focus recolouring a box it already had, which is the weakest kind of change to
+        notice; a border leaves the focus ring free to be an addition, as it is everywhere else. */
         <Button
           {...bind}
           color="inherit"
           endIcon={<KeyboardArrowDownRounded />}
           sx={{
+            border: "2px solid",
+            borderColor: "primary.light",
             borderRadius: 2,
             minWidth: 0,
             ml: 2,
-            outline: "2px solid",
-            outlineColor: "primary.light",
             px: 1,
             py: 0.75,
             textTransform: "none",

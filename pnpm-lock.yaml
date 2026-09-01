@@ -63,8 +63,8 @@ importers:
         specifier: 10.72.0
         version: 10.72.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.10.0(@opentelemetry/api@1.9.1))(next@16.3.3(@babel/core@7.26.0(supports-color@9.4.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.12.4)(babel-plugin-macros@3.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(supports-color@9.4.0)(webpack@5.97.1(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.26)(uglify-js@3.19.3))
       '@squonk/mui-theme':
-        specifier: 6.0.1
-        version: 6.0.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@mui/material@9.0.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
+        specifier: 6.1.0
+        version: 6.1.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@mui/material@9.0.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@tanstack/match-sorter-utils':
         specifier: 8.19.4
         version: 8.19.4
@@ -2035,8 +2035,9 @@ packages:
   '@squonk/eslint-config@3.1.0':
     resolution: {integrity: sha512-ANa1XkrGQSNPMdfGXVb1cvWFjcJV/yXwiwU024GE6mCuvIGlr7d80hiXIgj2PWDj3N2oMnCCawIPgEyaD/bm2g==}
 
-  '@squonk/mui-theme@6.0.1':
-    resolution: {integrity: sha512-rMn75ZJ/iqsL56ahWtLHMTheoD8fcw/wlFsqEy//8XgKjL7Wq2hAio6BuN7Vx55hcO0InLs63I1fQL8sucazzw==}
+  '@squonk/mui-theme@6.1.0':
+    resolution: {integrity: sha512-mNGa1hvmdAwaZRWjEBE3/Den+fa2136VUs4R2ib9sPcgn1OimQHLaYnS54hKzEhU1S8BdaOfFhPoThVKD/x2jQ==}
+    engines: {node: '>=22.22.2'}
     peerDependencies:
       '@emotion/react': '>=11'
       '@emotion/styled': '>=11'
@@ -8428,7 +8429,7 @@ snapshots:
       - remark-lint-file-extension
       - supports-color
 
-  '@squonk/mui-theme@6.0.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@mui/material@9.0.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))':
+  '@squonk/mui-theme@6.1.0(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@mui/material@9.0.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0))(@types/react@19.2.18)(react@19.2.8)(supports-color@9.4.0)

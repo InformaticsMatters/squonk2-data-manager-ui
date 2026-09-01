@@ -10,9 +10,16 @@ import { MainNav, MainNavLink } from "./MainNavLink";
 import { OrganisationIdentity } from "./OrganisationIdentity";
 import { ProjectNavigation } from "./ProjectNavigation";
 
-const UserMenu = dynamic(() => import("./UserMenu").then((module) => module.UserMenu), {
-  ssr: false,
-});
+// PROTOTYPE — throwaway wiring for the user-menu redesign (`?userMenu=`). Remove with
+// ./prototype when a variant wins.
+const UserMenu = dynamic(
+  () => import("./prototype/UserMenuPrototype").then((module) => module.UserMenuPrototype),
+  { ssr: false },
+);
+const PrototypeSwitcher = dynamic(
+  () => import("./prototype/PrototypeSwitcher").then((module) => module.PrototypeSwitcher),
+  { ssr: false },
+);
 
 const applicationLinks = [
   { href: "/projects", label: "Projects" },
@@ -42,13 +49,16 @@ const NavigationLinks = ({ authenticated }: { authenticated: boolean }) => {
 };
 
 const PublicNavigation = () => (
-  <Toolbar sx={{ gap: 1 }}>
-    <HeaderLogo />
-    <Box sx={{ ml: "auto" }}>
-      <NavigationLinks authenticated={false} />
-    </Box>
-    <UserMenu />
-  </Toolbar>
+  <>
+    <Toolbar sx={{ gap: 1 }}>
+      <HeaderLogo />
+      <Box sx={{ ml: "auto" }}>
+        <NavigationLinks authenticated={false} />
+      </Box>
+      <UserMenu />
+    </Toolbar>
+    <PrototypeSwitcher />
+  </>
 );
 
 const AuthenticatedNavigation = () => (
@@ -66,6 +76,7 @@ const AuthenticatedNavigation = () => (
     <Box sx={{ display: { sm: "none" }, overflowX: "auto", px: 1 }}>
       <NavigationLinks authenticated />
     </Box>
+    <PrototypeSwitcher />
   </>
 );
 

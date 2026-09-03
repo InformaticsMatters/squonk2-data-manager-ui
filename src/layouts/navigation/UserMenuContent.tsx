@@ -1,115 +1,192 @@
-import { Activity } from "react";
+import { type ReactNode } from "react";
 
 import {
-  Launch as LaunchIcon,
-  Person as PersonIcon,
-  ViewSidebar as ViewSidebarIcon,
+  DarkMode as DarkModeIcon,
+  LightMode as LightModeIcon,
+  SettingsBrightness as SystemModeIcon,
 } from "@mui/icons-material";
-import { Alert, Box, Button, Chip, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { useAtom } from "jotai";
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { useColorScheme } from "@mui/material/styles";
 
 import { AuthButton } from "../../components/auth/AuthButton";
 import { CenterLoader } from "../../components/CenterLoader";
-import { Chips } from "../../components/Chips";
-import { ColourSchemeSelection } from "../../components/ColourSchemeSelection";
-import { EventStreamMessages } from "../../components/eventStream/EventStreamMessages";
-import { useASAuthorizationStatus, useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
-import { useKeycloakUser } from "../../hooks/useKeycloakUser";
-import { eventStreamSidebarOpenAtom } from "../../state/eventStream";
-import { useUnreadEventCount } from "../../state/notifications";
 
-interface UserMenuContentInnerProps {
-  onEventStreamToggle?: () => void;
+const MODES = [
+  { key: "light", label: "Light", icon: <LightModeIcon fontSize="small" /> },
+  { key: "system", label: "Auto", icon: <SystemModeIcon fontSize="small" /> },
+  { key: "dark", label: "Dark", icon: <DarkModeIcon fontSize="small" /> },
+] as const;
+
+/**
+ * The colour scheme as three exclusive icons rather than a labelled radio group: it is a
+ * secondary control in a small panel, and its current value is legible from which icon is lit.
+ */
+const ThemeRow = () => {
+  const { mode, setMode } = useColorScheme();
+
+  if (!mode) {
+    return null;
+  }
+
+  return (
+    <Stack
+      direction="row"
+      sx={{ px: 2, py: 1, alignItems: "center", justifyContent: "space-between" }}
+    >
+      <Typography color="text.secondary" variant="body2">
+        Theme
+      </Typography>
+      <Stack aria-label="Theme" direction="row" role="group" spacing={0.5}>
+        {MODES.map(({ key, label, icon }) => (
+          <Tooltip key={key} title={label}>
+            <IconButton
+              aria-label={label}
+              aria-pressed={mode === key}
+              color={mode === key ? "primary" : "default"}
+              size="small"
+              onClick={() => setMode(key)}
+            >
+              {icon}
+            </IconButton>
+          </Tooltip>
+        ))}
+      </Stack>
+    </Stack>
+  );
+};
+
+export interface UserMenuContentProps {
+  /** The signed-in caller, or `undefined` while signed out. */
+  username?: string;
+  dmRole?: string;
+  asRole?: string;
+  /** Unread events as they stood when the menu was opened. */
+  unreadCount: number;
+  isSidebarOpen: boolean;
+  /**
+   * Whether the event stream sidebar exists at this width. Below `md` it does not render at all,
+   * so the menu carries the stream itself rather than offering a toggle that would do nothing.
+   */
+  isSidebarAvailable: boolean;
+  onEventStreamToggle: () => void;
+  /** The stream itself, shown in place of the toggle when there is no sidebar to open. */
+  inlineEventStream?: ReactNode;
+  isLoading?: boolean;
+  error?: Error | null;
 }
 
-interface UserMenuContentProps {
-  onEventStreamToggle?: () => void;
-}
-
-const UserMenuContentInner = ({ onEventStreamToggle }: UserMenuContentInnerProps) => {
-  const asRole = useASAuthorizationStatus();
-  const dmRole = useDMAuthorizationStatus();
-  const { user, isLoading, error } = useKeycloakUser();
-  const [isSidebarOpen, setSidebarOpen] = useAtom(eventStreamSidebarOpenAtom);
-
-  const theme = useTheme();
-  const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
-  const { count } = useUnreadEventCount();
-
+/**
+ * Contents of the account menu.
+ *
+ * The unread count leads and identity sinks to a footer strip: the badge is what brings a caller
+ * here, and who they are signed in as is the thing they are least often checking.
+ */
+export const UserMenuContent = ({
+  username,
+  dmRole,
+  asRole,
+  unreadCount,
+  isSidebarOpen,
+  isSidebarAvailable,
+  onEventStreamToggle,
+  inlineEventStream,
+  isLoading = false,
+  error = null,
+}: UserMenuContentProps) => {
   if (error) {
     return (
-      <Alert severity="error">
-        <Typography>
-          {error.message || "We couldn't log you in. Please try clearing cookies and refresh."}
-        </Typography>
+      <Alert severity="error" sx={{ borderRadius: 0 }}>
+        {error.message || "We couldn't log you in. Please try clearing cookies and refresh."}
       </Alert>
     );
   }
 
   if (isLoading) {
-    return <CenterLoader />;
+    return (
+      <Box sx={{ p: 3 }}>
+        <CenterLoader />
+      </Box>
+    );
   }
 
-  if (user.username) {
+  if (!username) {
+    // The colour scheme is not an account setting, so it stays available to a caller who has not
+    // signed in — as it was when this menu carried a radio group above the sign-in button.
     return (
       <>
-        <Activity mode={biggerThanMd ? "visible" : "hidden"}>
-          <Box sx={{ fontSize: 80 }}>
-            <PersonIcon color="disabled" fontSize="inherit" />
-          </Box>
-        </Activity>
-        <Typography sx={{ fontWeight: "bold" }}>{user.username}</Typography>
-        <Box>
-          Roles:
-          <Chips sx={{ justifyContent: "center" }}>
-            <Chip label={dmRole ?? "No DM Role"} size="small" />
-            <Chip label={asRole ?? "No AS Role"} size="small" />
-          </Chips>
-        </Box>
-        <AuthButton mode="logout" sx={{ marginY: 1 }} />
-        <Activity mode={biggerThanMd ? "visible" : "hidden"}>
-          <Button
-            fullWidth
-            size="small"
-            startIcon={isSidebarOpen ? <ViewSidebarIcon /> : <LaunchIcon />}
-            sx={{ marginY: 1 }}
-            variant="outlined"
-            onClick={() =>
-              setSidebarOpen((prev) => {
-                const next = !prev;
-                if (next) {
-                  onEventStreamToggle?.();
-                }
-                return next;
-              })
-            }
-          >
-            {isSidebarOpen ? "Hide event stream" : `Show event stream - ${count} new message(s)`}
-          </Button>
-        </Activity>
+        <AuthButton fullWidth mode="login" sx={{ m: 2, width: "auto" }} variant="contained" />
+        <Divider />
+        <ThemeRow />
       </>
     );
   }
 
-  return <AuthButton mode="login" />;
-};
-
-/**
- * Content of the user menu
- */
-export const UserMenuContent = ({ onEventStreamToggle }: UserMenuContentProps) => {
-  const theme = useTheme();
-  const biggerThanMd = useMediaQuery(theme.breakpoints.up("md"));
-  // Removed eventStreamEnabledAtom usage, now handled in EventStreamToggle
-
   return (
-    <Box sx={{ textAlign: biggerThanMd ? "center" : undefined }}>
-      <Typography gutterBottom variant="h3">
-        Account
-      </Typography>
-      <UserMenuContentInner onEventStreamToggle={onEventStreamToggle} />
-      <ColourSchemeSelection />
-      {!biggerThanMd && <EventStreamMessages />}
-    </Box>
+    <>
+      <Box sx={{ p: 2, bgcolor: "action.hover" }}>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: "baseline", mb: 1 }}>
+          <Typography color={unreadCount > 0 ? "success.main" : "text.disabled"} variant="h2">
+            {unreadCount}
+          </Typography>
+          <Typography color="text.secondary" variant="body2">
+            new event{unreadCount === 1 ? "" : "s"} since you last looked
+          </Typography>
+        </Stack>
+        {isSidebarAvailable ? (
+          <Button
+            fullWidth
+            size="small"
+            variant={isSidebarOpen ? "outlined" : "contained"}
+            onClick={onEventStreamToggle}
+          >
+            {isSidebarOpen ? "Hide event stream" : "Show event stream"}
+          </Button>
+        ) : (
+          inlineEventStream
+        )}
+      </Box>
+
+      <Divider />
+
+      <ThemeRow />
+
+      <Divider />
+
+      <Stack direction="row" spacing={1.5} sx={{ p: 2, alignItems: "center" }}>
+        <Avatar sx={{ width: 32, height: 32, bgcolor: "primary.main", fontSize: 14 }}>
+          {username.slice(0, 1).toUpperCase()}
+        </Avatar>
+        <Box sx={{ minWidth: 0, flexGrow: 1 }}>
+          <Typography noWrap sx={{ fontWeight: 600, lineHeight: 1.2 }}>
+            {username}
+          </Typography>
+          {/* Role names are deployment-configured, so no length can be assumed: one per line, each
+              clipped. `noWrap` alone would not clip these — a caption renders an inline span, and
+              an inline box ignores overflow, which is how they slid under the sign-out button. */}
+          {[dmRole ?? "No DM role", asRole ?? "No AS role"].map((role) => (
+            <Typography
+              noWrap
+              color="text.secondary"
+              key={role}
+              sx={{ display: "block", lineHeight: 1.3 }}
+              variant="caption"
+            >
+              {role}
+            </Typography>
+          ))}
+        </Box>
+        <AuthButton color="inherit" mode="logout" size="small" sx={{ flexShrink: 0 }} />
+      </Stack>
+    </>
   );
 };

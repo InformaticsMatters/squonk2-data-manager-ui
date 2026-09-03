@@ -1,5 +1,5 @@
 import { Button, type ButtonProps } from "@mui/material";
-import { useRouter } from "next/router";
+import Router from "next/router";
 
 import { clearAccountScopedStorageOnLogout } from "../../application/logoutCleanup";
 import { authClient } from "../../lib/auth-client";
@@ -13,8 +13,10 @@ export interface AuthButtonPros extends ButtonProps {
 }
 
 export const AuthButton = ({ mode, ...ButtonProps }: AuthButtonPros) => {
-  const router = useRouter();
-
+  // The singleton router rather than `useRouter`, which throws unless a router is mounted above
+  // it. Where the caller currently is matters only once login has been clicked, so it is read
+  // then — which keeps this button renderable outside the application, in a story for instance.
+  // `asPath` is the same value either way.
   const handleClick = async () => {
     if (mode === "logout") {
       clearAccountScopedStorageOnLogout({ local: localStorage, session: sessionStorage });
@@ -23,7 +25,7 @@ export const AuthButton = ({ mode, ...ButtonProps }: AuthButtonPros) => {
     } else {
       await authClient.signIn.oauth2({
         providerId: "keycloak",
-        callbackURL: withBasePath(router.asPath),
+        callbackURL: withBasePath(Router.asPath),
       });
     }
   };

@@ -122,7 +122,7 @@ jobs:
           template-host: https://awx.xchem-dev.diamond.ac.uk
           template-user: ${{ secrets.AWX_USER }}
           template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
-          template-var: maui_image_tag
+          template-var: ui_image_tag
           template-var-value: ${{ needs.release.outputs.new_release_version }}
 
   trigger-awx-production:
@@ -138,5 +138,5 @@ jobs:
           template-host: https://awx-scw.informaticsmatters.com
           template-user: ${{ secrets.AWX_USER }}
           template-user-password: ${{ secrets.AWX_USER_PASSWORD }}
-          template-var: maui_image_tag
+          template-var: ui_image_tag
           template-var-value: ${{ needs.release.outputs.new_release_version }}

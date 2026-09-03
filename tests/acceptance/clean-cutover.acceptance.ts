@@ -109,8 +109,8 @@ test("no Settings entry point survives anywhere in the authenticated shell", asy
   await expect(page.getByRole("navigation", { name: "Main" })).not.toContainText("Settings");
 
   // The account menu was the Settings modal's own entry point; it now offers account controls only.
-  await page.locator('[aria-label="Account"] button').click();
-  await expect(page.getByRole("heading", { name: "Account" })).toBeVisible();
+  await page.getByRole("button", { name: "Account" }).click();
+  await expect(page.getByRole("region", { name: "Account menu" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Logout" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Settings" })).toHaveCount(0);
   await expect(page.getByRole("menuitem", { name: /Settings/u })).toHaveCount(0);
@@ -210,7 +210,7 @@ test("logging out forgets what was remembered for the account and nothing else",
     [DATASET_UPLOAD_BILLING_UNIT_STORAGE_KEY],
   );
 
-  await page.locator('[aria-label="Account"] button').click();
+  await page.getByRole("button", { name: "Account" }).click();
   await page.getByRole("button", { name: "Logout" }).click();
 
   // The logout leaves through the identity provider and returns to public Home, so the assertions

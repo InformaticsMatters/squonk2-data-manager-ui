@@ -19,3 +19,10 @@ minimumReleaseAgeExclude:
 # is unchanged. See #2020.
 patchedDependencies:
   paper@0.12.18: patches/paper@0.12.18.patch
+
+# ketcher-react and ketcher-standalone declare `ketcher-core: "*"`, so pnpm is free to keep an
+# older resolution from the lockfile when the direct dependency is bumped. That duplicates
+# ketcher-core in the tree and the newer ketcher-react then imports exports the stale copy does
+# not have. Pin the transitive copy to the version the app depends on directly.
+overrides:
+  ketcher-core: 3.17.2

@@ -1,3 +1,10 @@
+# [7.0.0-dev.26](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.25...7.0.0-dev.26) (2026-09-03)
+
+
+### Features
+
+* **navigation:** redesign the account menu as an anchored dropdown ([66f5c51](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/66f5c51141d6a138059f2119f1b1e23466ec652d))
+
 # [7.0.0-dev.25](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.24...7.0.0-dev.25) (2026-09-01)
 
 

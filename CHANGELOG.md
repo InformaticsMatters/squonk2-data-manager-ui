@@ -1,3 +1,10 @@
+# [7.0.0-dev.27](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.26...7.0.0-dev.27) (2026-09-04)
+
+
+### Bug Fixes
+
+* **auth:** end the Keycloak session without a confirmation page ([0ffa917](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0ffa917f57f741f4668b231fa23194d31a16e163))
+
 # [7.0.0-dev.26](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.25...7.0.0-dev.26) (2026-09-03)
 
 

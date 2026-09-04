@@ -13,7 +13,7 @@
     ":disableRateLimiting"
   ],
   "labels": ["dependencies"],
-  "constraints": { "node": "24.19.0", "pnpm": "11.2.2" },
+  "constraints": { "node": "24.20.0", "pnpm": "11.2.2" },
   "baseBranchPatterns": ["dev"],
   "minimumReleaseAge": "1 days",
   "packageRules": [

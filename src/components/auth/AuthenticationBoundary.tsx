@@ -12,8 +12,8 @@ export const AuthenticationBoundary = ({ children }: { children: ReactNode }) =>
 
   useEffect(() => {
     if (!isPending && !session) {
-      void authClient.signIn.oauth2({
-        providerId: "keycloak",
+      void authClient.signIn.social({
+        provider: "keycloak",
         callbackURL: withBasePath(router.asPath),
       });
     }

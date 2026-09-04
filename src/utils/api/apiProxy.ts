@@ -12,7 +12,9 @@ type Headers = NonNullable<Parameters<typeof httpProxyMiddleware>[2]>["headers"]
 const getAccessTokenErrorWrapped = async (req: NextApiRequest) => {
   try {
     const result = await auth.api.getAccessToken({
-      body: { providerId: "keycloak" },
+      // This deployment configures no database, so better-auth keeps the provider's tokens in a
+      // signed cookie, and it only reads them from there when the caller asks for that source.
+      body: { useAccountCookie: true },
       headers: fromNodeHeaders(req.headers),
     });
     return result.accessToken;

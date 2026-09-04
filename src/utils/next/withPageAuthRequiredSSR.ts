@@ -36,10 +36,10 @@ export function withPageAuthRequiredSSR<T>(options: {
 
       try {
         const signInRes = await auth.handler(
-          new Request(`${baseUrl}/api/auth/sign-in/oauth2`, {
+          new Request(`${baseUrl}/api/auth/sign-in/social`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ providerId: "keycloak", callbackURL: returnTo }),
+            body: JSON.stringify({ provider: "keycloak", callbackURL: returnTo }),
           }),
         );
         // getSetCookie keeps each cookie separate; headers.get would join them into one

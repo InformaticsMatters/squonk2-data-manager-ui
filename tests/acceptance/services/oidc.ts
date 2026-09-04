@@ -1,4 +1,11 @@
-import { createHash, createPrivateKey, generateKeyPairSync, randomUUID, sign } from "node:crypto";
+import {
+  createHash,
+  createPrivateKey,
+  generateKeyPairSync,
+  randomUUID,
+  sign,
+  verify,
+} from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 
 import { acceptanceEnvironment } from "../environment";
@@ -18,7 +25,10 @@ const allowedRedirect = `${acceptanceEnvironment.BASE_URL}${acceptanceEnvironmen
 const { privateKey, publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
 const privateKeyObject = createPrivateKey(privateKey.export({ format: "pem", type: "pkcs8" }));
 const publicJwk = publicKey.export({ format: "jwk" });
-const codes = new Map<string, { challenge?: string; redirectUri: string; subject: string }>();
+const codes = new Map<
+  string,
+  { challenge?: string; nonce?: string; redirectUri: string; subject: string }
+>();
 /**
  * The realm roles the identity provider issues. An evaluation account holds the Account Server's
  * evaluator role instead of its user role, which is the only thing that distinguishes it, so the
@@ -29,9 +39,10 @@ const realmRolesFor = (subject: string) =>
     ? ["data-manager-user", "account-server-evaluator"]
     : ["data-manager-user", "account-server-user"];
 
-const createToken = (subject: string) => {
+const createToken = (subject: string, extraClaims: Record<string, string> = {}) => {
   const now = Math.floor(Date.now() / 1000);
   const claims = {
+    ...extraClaims,
     aud: clientId,
     email: `${subject}@example.test`,
     email_verified: true,
@@ -54,6 +65,34 @@ const createToken = (subject: string) => {
   ).toString("base64url");
   return `${header}.${payload}.${signature}`;
 };
+/**
+ * Whether an `id_token_hint` is one of this provider's own ID tokens: signed by its key, issued to
+ * this client. A logout is only spared the confirmation page when it is.
+ */
+const isIssuedIdToken = (hint: string | null) => {
+  if (!hint) {
+    return false;
+  }
+  const [header, payload, signature] = hint.split(".");
+  if (!header || !payload || !signature) {
+    return false;
+  }
+  const verified = verify(
+    "RSA-SHA256",
+    Buffer.from(`${header}.${payload}`),
+    publicKey,
+    Buffer.from(signature, "base64url"),
+  );
+  if (!verified) {
+    return false;
+  }
+  const claims = JSON.parse(Buffer.from(payload, "base64url").toString()) as {
+    aud?: string;
+    iss?: string;
+  };
+  return claims.iss === issuer && claims.aud === clientId;
+};
+
 const handleOidc = async (request: IncomingMessage, response: ServerResponse) => {
   const url = new URL(request.url ?? "/", issuer);
   if (url.pathname === "/.well-known/openid-configuration") {
@@ -61,6 +100,7 @@ const handleOidc = async (request: IncomingMessage, response: ServerResponse) =>
       authorization_endpoint: `${issuer}/authorize`,
       claims_supported: ["sub", "preferred_username", "realm_access"],
       code_challenge_methods_supported: ["S256"],
+      end_session_endpoint: `${issuer}/protocol/openid-connect/logout`,
       grant_types_supported: ["authorization_code", "refresh_token"],
       id_token_signing_alg_values_supported: ["RS256"],
       issuer,
@@ -97,6 +137,7 @@ const handleOidc = async (request: IncomingMessage, response: ServerResponse) =>
     const code = randomUUID();
     codes.set(code, {
       challenge: url.searchParams.get("code_challenge") ?? undefined,
+      nonce: url.searchParams.get("nonce") ?? undefined,
       redirectUri,
       subject,
     });
@@ -112,6 +153,16 @@ const handleOidc = async (request: IncomingMessage, response: ServerResponse) =>
     const allowedDestination = `${acceptanceEnvironment.BASE_URL}${acceptanceEnvironment.BASE_PATH}/`;
     if (url.searchParams.get("client_id") !== clientId || requested !== allowedDestination) {
       return json(response, 400, { error: "invalid_logout_request" });
+    }
+    // Keycloak only ends the session without asking when the request carries the ID token it
+    // issued; otherwise it stops at a page it themes itself, which is where a caller gets stuck on
+    // a realm whose theme hides the confirm button. The stub answers the same way, so a logout
+    // that loses the hint fails here rather than in front of a user.
+    if (!isIssuedIdToken(url.searchParams.get("id_token_hint"))) {
+      response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+      return response.end(
+        `<!doctype html><html><body><main><h1>Logging out</h1><form method="post" action="${issuer}/protocol/openid-connect/logout-confirm"><button type="submit">Logout</button></form></main></body></html>`,
+      );
     }
     response.writeHead(302, { location: requested });
     return response.end();
@@ -150,10 +201,16 @@ const handleOidc = async (request: IncomingMessage, response: ServerResponse) =>
     }
     codes.delete(code);
     const accessToken = createToken(pending.subject);
+    // The ID token echoes the nonce the authorization request carried. Better Auth binds the two
+    // and rejects a callback that does not, so a token issued without it would fail the sign-in.
+    const idToken = createToken(
+      pending.subject,
+      pending.nonce === undefined ? {} : { nonce: pending.nonce },
+    );
     return json(response, 200, {
       access_token: accessToken,
       expires_in: 3600,
-      id_token: accessToken,
+      id_token: idToken,
       refresh_token: `refresh-${pending.subject}`,
       scope: "openid profile email offline_access",
       token_type: "Bearer",

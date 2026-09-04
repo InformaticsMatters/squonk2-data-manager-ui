@@ -66,7 +66,7 @@ const fetchAsCaller = async (
   let accessToken;
   try {
     const result = await auth.api.getAccessToken({
-      body: { providerId: "keycloak" },
+      body: { useAccountCookie: true },
       headers: fromNodeHeaders(req.headers),
     });
     accessToken = result.accessToken;

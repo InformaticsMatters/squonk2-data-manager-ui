@@ -47,7 +47,7 @@
     ]
   },
   "dependencies": {
-    "@bufbuild/protobuf": "2.10.2",
+    "@bufbuild/protobuf": "2.14.1",
     "@emotion/cache": "11.14.0",
     "@emotion/react": "11.14.0",
     "@emotion/server": "11.11.0",
@@ -107,8 +107,8 @@
     "zod": "4.5.4"
   },
   "devDependencies": {
-    "@bufbuild/buf": "1.61.0",
-    "@bufbuild/protoc-gen-es": "2.10.2",
+    "@bufbuild/buf": "1.72.0",
+    "@bufbuild/protoc-gen-es": "2.14.1",
     "@playwright/test": "1.62.1",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/commit-analyzer": "13.0.1",

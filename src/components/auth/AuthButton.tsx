@@ -20,11 +20,12 @@ export const AuthButton = ({ mode, ...ButtonProps }: AuthButtonPros) => {
   const handleClick = async () => {
     if (mode === "logout") {
       clearAccountScopedStorageOnLogout({ local: localStorage, session: sessionStorage });
-      await authClient.signOut();
+      // Signing out is left to the route, which needs the session the client would have discarded:
+      // the ID token it reads from it is what spares the caller Keycloak's confirmation page.
       globalThis.location.href = withBasePath("/api/auth/keycloak-logout");
     } else {
-      await authClient.signIn.oauth2({
-        providerId: "keycloak",
+      await authClient.signIn.social({
+        provider: "keycloak",
         callbackURL: withBasePath(Router.asPath),
       });
     }

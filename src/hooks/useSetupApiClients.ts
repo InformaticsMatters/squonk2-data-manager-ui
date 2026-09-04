@@ -60,7 +60,7 @@ export const useSetupApiClients = () => {
     }
 
     void authClient
-      .getAccessToken({ providerId: "keycloak" })
+      .getAccessToken({ useAccountCookie: true })
       .then(({ data, error }) => {
         if (!isCurrent) {
           return;

@@ -44,7 +44,9 @@ export const ApiClientReadyBoundary = ({ children }: { children: ReactNode }) =>
     // Discarding the session is the whole recovery. AuthenticationBoundary already owns what a
     // page without a session does, and signs in again at the address the caller asked for, so
     // there is no second redirect here that could disagree with it about where the caller was.
-    void authClient.signOut().then(
+    // Only the session here is discarded: signing out of Keycloak as well would send the browser
+    // away, and the recovery this makes is a silent sign-in at the address the caller is already on.
+    void authClient.signOut({ disableRedirect: true }).then(
       ({ error }) => {
         if (error) {
           setReauthenticationSpent(true);

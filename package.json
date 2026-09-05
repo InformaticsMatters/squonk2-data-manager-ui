@@ -4,14 +4,14 @@
   "license": "Apache-2.0",
   "version": "7.0.0-dev.27",
   "private": true,
-  "packageManager": "pnpm@11.15.1",
+  "packageManager": "pnpm@12.3.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/InformaticsMatters/squonk2-data-manager-ui"
   },
   "engines": {
     "node": "24",
-    "pnpm": "11"
+    "pnpm": "12"
   },
   "scripts": {
     "prepare": "husky",

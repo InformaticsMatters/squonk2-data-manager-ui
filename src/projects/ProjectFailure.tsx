@@ -52,7 +52,13 @@ export const ProjectFailure = ({
 }) => {
   const queryClient = useQueryClient();
   const failure = classifyTransportFailure(error);
-  const unavailable = failure.kind === "forbidden" || failure.kind === "not-found";
+  // A refused token evicts the project exactly as a refusal does today. That is the behaviour the
+  // audit calls out as reading a lapsed session as a permanent loss of access, and it is answered
+  // by the ticket that acts on the distinction rather than by the one that draws it.
+  const unavailable =
+    failure.kind === "forbidden" ||
+    failure.kind === "not-found" ||
+    failure.kind === "token-refused";
   const workspace = unavailable ? undefined : readCachedWorkspace(queryClient, projectId);
   const handleRetry = () => {
     void queryClient

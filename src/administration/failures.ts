@@ -13,7 +13,10 @@ export const presentAdministrationFailure = (
   failure: TransportFailure,
 ): AdministrationFailurePresentation => {
   switch (failure.kind) {
+    // A refused token says nothing about this resource, but until an expired session is answered
+    // for what it is, it is presented as the refusal it was presented as before.
     case "forbidden":
+    case "token-refused":
       return {
         message: "You do not have access to this Administration resource.",
         retryable: false,
@@ -49,7 +52,14 @@ export const presentAdministrationFailure = (
         retryable: true,
         severity: "error",
       };
+    // A rejection status the classifier has only just named still reads as a failure this client
+    // could not account for, so what the screen shows and what it offers are unmoved.
+    case "bad-request":
+    case "conflict":
+    case "method-not-allowed":
     case "unknown":
+    case "unprocessable":
+    case "unsupported-media-type":
       return {
         message: "Administration data could not be loaded. Retry this task.",
         retryable: true,
@@ -119,6 +129,7 @@ export const administrationMutationFailureMessage = (
 ): string | undefined => {
   switch (classifyTransportFailure(error).kind) {
     case "forbidden":
+    case "token-refused":
       return `You no longer have permission to ${action} ${resource}. The displayed resource has not changed.`;
     case "not-found":
       return `${resource} is no longer available. The displayed resource has not changed.`;
@@ -127,7 +138,12 @@ export const administrationMutationFailureMessage = (
     case "server":
     case "timeout":
       return `Could not ${action} ${resource}. The displayed resource has not changed; retry is available.`;
+    case "bad-request":
+    case "conflict":
+    case "method-not-allowed":
     case "unknown":
+    case "unprocessable":
+    case "unsupported-media-type":
       return undefined;
   }
 };
@@ -148,8 +164,14 @@ export const unitDeletionFailureMessage = (error: unknown, resource: string): st
     case "server":
     case "timeout":
       return `Could not delete ${resource}. The displayed resource has not changed; retry is available.`;
+    case "bad-request":
+    case "conflict":
     case "forbidden":
+    case "method-not-allowed":
+    case "token-refused":
     case "unknown":
+    case "unprocessable":
+    case "unsupported-media-type":
       return `Could not delete ${resource}. It may still contain projects, datasets or subscriptions that must be removed first.`;
   }
 };

@@ -161,10 +161,24 @@ test("product retry safety distinguishes confirmed responses from ambiguous tran
     isAxiosError: true,
     response: status === undefined ? undefined : { data: {}, status },
   });
+  /** The `403` Connexion answers an expired or under-scoped token with. */
+  const tokenRefusal = {
+    isAxiosError: true,
+    response: {
+      data: { detail: "Provided token does not have the required scopes. Provided: []" },
+      status: 403,
+    },
+  };
   expect(productCreationFailureIsRetryable(axiosFailure(403))).toBe(true);
   expect(productCreationFailureIsRetryable(axiosFailure(404))).toBe(true);
   expect(productCreationFailureIsRetryable(axiosFailure(429))).toBe(true);
   expect(productCreationFailureIsRetryable(axiosFailure(400))).toBe(true);
+  // Each of these has a kind of its own now, and each is still a rejection the endpoint answered
+  // with: no subscription identity was hidden by a lost response, so retrying duplicates nothing.
+  expect(productCreationFailureIsRetryable(axiosFailure(405))).toBe(true);
+  expect(productCreationFailureIsRetryable(axiosFailure(415))).toBe(true);
+  expect(productCreationFailureIsRetryable(axiosFailure(422))).toBe(true);
+  expect(productCreationFailureIsRetryable(tokenRefusal)).toBe(true);
   // A status the endpoint answered with still leaves the outcome in doubt when the status itself
   // describes work that may already exist, so neither of these is a confirmed rejection.
   expect(productCreationFailureIsRetryable(axiosFailure(408))).toBe(false);
@@ -178,6 +192,9 @@ test("product retry safety distinguishes confirmed responses from ambiguous tran
     projectCreationFailureReason(axiosFailure(undefined, "ETIMEDOUT"), "subscription"),
   ).toContain("timed out");
   expect(projectCreationFailureReason(axiosFailure(403), "subscription")).toContain(
+    "did not allow this subscription",
+  );
+  expect(projectCreationFailureReason(tokenRefusal, "subscription")).toContain(
     "did not allow this subscription",
   );
   expect(projectCreationFailureReason(axiosFailure(undefined, "ERR_NETWORK"), "project")).toContain(

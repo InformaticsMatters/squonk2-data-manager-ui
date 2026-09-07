@@ -51,8 +51,11 @@ export const classifyLaunchFailure = (
   error: unknown,
 ): Extract<LaunchAttempt, { kind: "recoverable" | "rejected" }> => {
   switch (classifyTransportFailure(error).kind) {
+    // A token the service will not accept is the caller's session rather than this launch; it
+    // reads as the refusal it always read as until that is answered as its own thing.
     case "forbidden":
     case "not-found":
+    case "token-refused":
       return { kind: "rejected", reason: rejectedReason };
     case "network":
     case "rate-limited":
@@ -60,8 +63,15 @@ export const classifyLaunchFailure = (
     case "timeout":
       return { kind: "recoverable", reason: recoverableReason };
     // Every kind is named rather than defaulted, so a new transport fact has to be answered here
-    // instead of quietly arriving as the service's own words.
+    // instead of quietly arriving as the service's own words. The rejection statuses named for the
+    // first time are domain refusals of what was entered — `Not an editor`, an application that
+    // already exists — and the service's own account of them is already the sentence.
+    case "bad-request":
+    case "conflict":
+    case "method-not-allowed":
     case "unknown":
+    case "unprocessable":
+    case "unsupported-media-type":
       return { kind: "recoverable", reason: apiFailureReason(error) ?? unaccountedReason };
   }
 };

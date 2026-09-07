@@ -206,7 +206,8 @@ export const datasetAttachmentFailureMessage = (
   if (error instanceof DatasetTaskError) {
     return `${error.message} Task ${error.taskId}. Nothing was attached to ${targetName}; retry is available.`;
   }
-  if (classifyTransportFailure(error).kind === "forbidden") {
+  const kind = classifyTransportFailure(error).kind;
+  if (kind === "forbidden" || kind === "token-refused") {
     return `You are not allowed to attach dataset ${datasetId} version ${datasetVersion} to ${targetName}. ${nothingAttached}.`;
   }
   if (isTransientTransportFailure(error)) {

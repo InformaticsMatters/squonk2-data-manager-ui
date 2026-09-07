@@ -31,6 +31,39 @@ const failures: { failure: TransportFailure; message: RegExp; retryable: boolean
     retryable: true,
   },
   { failure: { cause: null, kind: "unknown" }, message: /could not be loaded/u, retryable: true },
+  // A token the service will not accept is presented as the refusal it was presented as before it
+  // had a kind of its own, and each rejection status the classifier now names still reads as a
+  // failure this client could not account for.
+  {
+    failure: { cause: null, kind: "token-refused", status: 403 },
+    message: /do not have access/u,
+    retryable: false,
+  },
+  {
+    failure: { cause: null, kind: "bad-request", status: 400 },
+    message: /could not be loaded/u,
+    retryable: true,
+  },
+  {
+    failure: { cause: null, kind: "method-not-allowed", status: 405 },
+    message: /could not be loaded/u,
+    retryable: true,
+  },
+  {
+    failure: { cause: null, kind: "conflict", status: 409 },
+    message: /could not be loaded/u,
+    retryable: true,
+  },
+  {
+    failure: { cause: null, kind: "unsupported-media-type", status: 415 },
+    message: /could not be loaded/u,
+    retryable: true,
+  },
+  {
+    failure: { cause: null, kind: "unprocessable", status: 422 },
+    message: /could not be loaded/u,
+    retryable: true,
+  },
 ];
 
 test.describe("Administration failure presentation", () => {

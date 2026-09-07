@@ -22,8 +22,11 @@ export const classifyProjectCommandFailure = (
   resource: string,
 ): ProjectCommandFailure => {
   switch (classifyTransportFailure(error).kind) {
+    // A refused token is the caller's session rather than this command, and until that is answered
+    // as its own thing it reads as the refusal it always read as.
     case "forbidden":
     case "not-found":
+    case "token-refused":
       return {
         kind: "rejected",
         message: `You cannot ${action} ${resource}. It is unavailable or you do not have access. The displayed project has not changed.`,
@@ -36,7 +39,15 @@ export const classifyProjectCommandFailure = (
         kind: "retryable",
         message: `Could not ${action} ${resource}. The displayed project has not changed; retry is available.`,
       };
+    // Each rejection status the classifier now names — a managed file that cannot be deleted, a
+    // conversion that failed, a project that must keep an administrator — still says what an
+    // unclassifiable failure said, so naming them changes nothing here yet.
+    case "bad-request":
+    case "conflict":
+    case "method-not-allowed":
     case "unknown":
+    case "unprocessable":
+    case "unsupported-media-type":
       return {
         kind: "unknown",
         message: `Could not ${action} ${resource}. The displayed project has not changed.`,
@@ -57,6 +68,7 @@ export const projectCreationFailureReason = (
 ) => {
   switch (classifyTransportFailure(error).kind) {
     case "forbidden":
+    case "token-refused":
       return `The server did not allow this ${subject} to be created. Review your access and retry.`;
     case "network":
       return `The ${subject} request could not reach the service. Check your connection and retry.`;
@@ -67,9 +79,16 @@ export const projectCreationFailureReason = (
     case "timeout":
       return `The ${subject} request timed out. Its outcome could not be confirmed.`;
     // Every kind is named rather than defaulted, so a new transport fact has to be answered here
-    // instead of quietly arriving as the service's own words.
+    // instead of quietly arriving as the service's own words. The rejection statuses named for the
+    // first time are answered as they were while they were unclassifiable: by the service's own
+    // words, which is already the best sentence any of them has.
+    case "bad-request":
+    case "conflict":
+    case "method-not-allowed":
     case "not-found":
     case "unknown":
+    case "unprocessable":
+    case "unsupported-media-type":
       return (
         apiFailureReason(error) ?? `The ${subject} could not be created. Correct it and retry.`
       );
@@ -88,6 +107,7 @@ export const projectDeletionFailureReason = (
 ) => {
   switch (classifyTransportFailure(error).kind) {
     case "forbidden":
+    case "token-refused":
       return `The server did not allow this ${subject} to be deleted. Review your access and retry.`;
     case "network":
       return `The ${subject} deletion request could not reach the service. Check your connection and retry.`;
@@ -97,8 +117,13 @@ export const projectDeletionFailureReason = (
       return `The ${subject} service is unavailable. Retry when it has recovered.`;
     case "timeout":
       return `The ${subject} deletion request timed out. Its outcome could not be confirmed.`;
+    case "bad-request":
+    case "conflict":
+    case "method-not-allowed":
     case "not-found":
     case "unknown":
+    case "unprocessable":
+    case "unsupported-media-type":
       return apiFailureReason(error) ?? `The ${subject} could not be deleted. Retry is available.`;
   }
 };
@@ -114,6 +139,7 @@ export const projectDeletionFailureReason = (
 export const unitCreationFailureReason = (error: unknown): string | undefined => {
   switch (classifyTransportFailure(error).kind) {
     case "forbidden":
+    case "token-refused":
       return "The server did not allow a unit to be created in this organisation. Review your access and retry.";
     case "not-found":
       return "This organisation is no longer available, so nothing was created.";
@@ -125,7 +151,12 @@ export const unitCreationFailureReason = (error: unknown): string | undefined =>
       return "The Account Server is unavailable. Retry when it has recovered.";
     case "timeout":
       return "The unit request timed out. Its outcome could not be confirmed; check your units before retrying.";
+    case "bad-request":
+    case "conflict":
+    case "method-not-allowed":
     case "unknown":
+    case "unprocessable":
+    case "unsupported-media-type":
       return undefined;
   }
 };
@@ -139,6 +170,7 @@ export const unitCreationFailureReason = (error: unknown): string | undefined =>
 export const personalUnitCreationFailureReason = (error: unknown) => {
   switch (classifyTransportFailure(error).kind) {
     case "forbidden":
+    case "token-refused":
       return "The server did not allow a personal unit to be created for you. Review your access and retry.";
     case "network":
       return "The personal-unit request could not reach the Account Server. Check your connection and retry.";
@@ -148,8 +180,13 @@ export const personalUnitCreationFailureReason = (error: unknown) => {
       return "The Account Server is unavailable. Retry when it has recovered.";
     case "timeout":
       return "The personal-unit request timed out. Retry is safe: only one personal unit can exist.";
+    case "bad-request":
+    case "conflict":
+    case "method-not-allowed":
     case "not-found":
     case "unknown":
+    case "unprocessable":
+    case "unsupported-media-type":
       return (
         apiFailureReason(error) ?? "Your personal unit could not be created. Retry is available."
       );

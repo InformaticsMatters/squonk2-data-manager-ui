@@ -148,6 +148,25 @@ test.describe("Project command failure classification", () => {
     }
   });
 
+  test("a token the service will not accept reads as the refusal it always read as", () => {
+    expect(
+      classifyProjectCommandFailure(
+        {
+          isAxiosError: true,
+          response: {
+            status: 403,
+            data: { detail: "Provided token does not have the required scopes. Provided: []" },
+          },
+        },
+        action,
+        resource,
+      ),
+    ).toEqual({
+      kind: "rejected",
+      message: `You cannot ${action} ${resource}. It is unavailable or you do not have access. The displayed project has not changed.`,
+    });
+  });
+
   test("an unrecognised failure still says the displayed project is unchanged", () => {
     // Its kind hands the detail to the shared error presentation; its message is the only sentence
     // any screen shows, so no screen writes a rejection of its own.
@@ -157,6 +176,14 @@ test.describe("Project command failure classification", () => {
     };
     expect(classifyProjectCommandFailure(new Error("boom"), action, resource)).toEqual(expected);
     expect(classifyProjectCommandFailure(rejection(418), action, resource)).toEqual(expected);
+    // A managed file that cannot be deleted, a conversion that failed, a project that must keep an
+    // administrator: each has a kind of its own now and each still says exactly this.
+    for (const status of [400, 405, 409, 415, 422]) {
+      expect(
+        classifyProjectCommandFailure(rejection(status), action, resource),
+        String(status),
+      ).toEqual(expected);
+    }
   });
 });
 

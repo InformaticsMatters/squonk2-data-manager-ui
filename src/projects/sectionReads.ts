@@ -20,7 +20,10 @@ export const resolveSectionReadState = (error: unknown): SectionReadState => {
     return { kind: "available" };
   }
   const kind = classifyTransportFailure(error).kind;
-  return kind === "forbidden" || kind === "not-found"
+  // A refused token clears content for now because that is what a `403` has always done here.
+  // Whether a lapsed session should cost the caller their content is a question for the ticket
+  // that answers it; naming the two apart is what makes asking it possible.
+  return kind === "forbidden" || kind === "not-found" || kind === "token-refused"
     ? { kind: "unavailable" }
     : { kind: "recoverable", retryable: true };
 };

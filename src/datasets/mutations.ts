@@ -72,7 +72,8 @@ export const datasetMutationFailureMessage = (
   if (error instanceof DatasetTaskError || error instanceof DatasetTaskPollingError) {
     return `${error.message} Task ${error.taskId}. The displayed dataset version has not changed; retry is available.`;
   }
-  if (classifyTransportFailure(error).kind === "forbidden") {
+  const kind = classifyTransportFailure(error).kind;
+  if (kind === "forbidden" || kind === "token-refused") {
     return `You no longer have permission to ${action} dataset ${datasetId} version ${datasetVersion}. The displayed dataset version has not changed.`;
   }
   if (isTransientTransportFailure(error)) {

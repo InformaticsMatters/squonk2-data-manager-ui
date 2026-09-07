@@ -9,13 +9,21 @@ import { nullEmptyString } from "../text";
  */
 type ErrorBody = { detail?: unknown; error?: unknown; title?: unknown };
 
+/** What a failure carries around the body: the transport's own account, which is not the service's. */
+type FailureEnvelope = { message?: unknown; response?: { statusText?: unknown } };
+
 /**
  * What is returned when an error carried no account of itself at all. It is a placeholder rather
  * than a message, so a caller composing its own sentence can tell it apart from real words.
  */
 export const noErrorInformation = "Error: no information provided";
 
-/** The body an answer carried, whether it arrived through Axios, generated Fetch, or on its own. */
+/**
+ * The body an answer carried, whether it arrived through Axios, generated Fetch, or on its own. The
+ * Fetch envelope is understood for the same reason `classifyTransportFailure` understands it: the
+ * transport is generated but disabled, and both readings of a failure have to survive it coming
+ * back.
+ */
 const bodyOf = (error: unknown): unknown => {
   if (typeof error !== "object" || error === null) {
     return undefined;
@@ -27,20 +35,34 @@ const bodyOf = (error: unknown): unknown => {
   return "data" in error ? error.data : error;
 };
 
+/** The named fields of a body, or none of them where the answer had no object to read. */
+const fieldsOf = (body: unknown): ErrorBody =>
+  typeof body === "object" && body !== null ? body : {};
+
 /** One field as words a person can be shown, or `null` when it held nothing but whitespace. */
 const readString = (value: unknown): string | null =>
   typeof value === "string" ? (nullEmptyString(value.trim()) ?? null) : null;
 
 /**
  * The first useful sentence of a `detail`. Its quality runs from excellent (`'z' is too short -
- * 'name'`) to a JSON Schema dump of a few hundred characters, and the dump is the same sentence
- * followed by the schema it was validated against: jsonschema separates the two with a blank line,
- * so that is where the words a caller can act on end. What survives is stated on one line, because
- * that is how a snackbar renders it anyway.
+ * 'name'`) to a JSON Schema dump of a few hundred characters, and the dump is that same sentence
+ * followed by the schema it was validated against: jsonschema formats a validation error as
+ * `f"{self.message}\n\nFailed validating ..."`, so the blank line is where the words a caller can
+ * act on end. What survives is stated on one line, because that is how a snackbar renders it anyway.
  */
 const firstSentenceOf = (detail: string) => {
   const [sentence = ""] = detail.split(/\n[^\S\n]*\n/u);
   return readString(sentence.replace(/\s+/gu, " "));
+};
+
+/** The service's own account of a body, or `null` where the body held none. */
+const reasonIn = (body: unknown): string | null => {
+  if (typeof body === "string") {
+    return readString(body);
+  }
+  const { detail, error } = fieldsOf(body);
+
+  return readString(error) ?? (typeof detail === "string" ? firstSentenceOf(detail) : null);
 };
 
 /**
@@ -52,25 +74,15 @@ const firstSentenceOf = (detail: string) => {
  * request rather than an account of it, so they are not reported as the service's words: a caller
  * with a sentence of its own keeps that sentence instead of stating "Bad Request" to a person.
  */
-export const apiFailureReason = (error: unknown): string | null => {
-  const body = bodyOf(error);
-
-  if (typeof body === "string") {
-    return readString(body);
-  }
-  if (typeof body !== "object" || body === null) {
-    return null;
-  }
-
-  const { detail, error: documented } = body as ErrorBody;
-
-  return readString(documented) ?? (typeof detail === "string" ? firstSentenceOf(detail) : null);
-};
+export const apiFailureReason = (error: unknown): string | null => reasonIn(bodyOf(error));
 
 /**
- * @param error the failure from which to extract a message that can be shown to a person
- * @returns the service's own account of the failure, falling back through the reason phrase and the
- *          transport's own words to a placeholder, or `null` when no error was supplied
+ * The whole sentence to show a person about a failure, for a caller that has no words of its own.
+ *
+ * The service's account comes first. After it there is nothing left but the reason phrase — `title`
+ * and `statusText` are the same HTTP words, whichever end of the answer they arrived on — then the
+ * transport's own message, and finally a placeholder, so this always says something. `null` means
+ * no error was supplied at all, which is not a failure to describe.
  */
 export const getErrorMessage = (error: unknown): string | null => {
   if (!error) {
@@ -78,13 +90,11 @@ export const getErrorMessage = (error: unknown): string | null => {
   }
 
   const body = bodyOf(error);
-  const title =
-    typeof body === "object" && body !== null ? readString((body as ErrorBody).title) : null;
-  const envelope = error as { message?: unknown; response?: { statusText?: unknown } };
+  const envelope = error as FailureEnvelope;
 
   return (
-    apiFailureReason(error) ??
-    title ??
+    reasonIn(body) ??
+    readString(fieldsOf(body).title) ??
     readString(envelope.response?.statusText) ??
     readString(envelope.message) ??
     noErrorInformation

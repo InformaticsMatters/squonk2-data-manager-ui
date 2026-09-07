@@ -16,9 +16,9 @@ export class NetworkTransportError extends Error {
   }
 }
 
-const isGeneratedFetchResponse = (
-  cause: unknown,
-): cause is { data: unknown; headers: Headers; status: number } =>
+type GeneratedFetchResponse = { data: unknown; headers: Headers; status: number };
+
+const isGeneratedFetchResponse = (cause: unknown): cause is GeneratedFetchResponse =>
   typeof cause === "object" &&
   cause !== null &&
   "data" in cause &&
@@ -27,6 +27,15 @@ const isGeneratedFetchResponse = (
   "status" in cause &&
   typeof cause.status === "number" &&
   Number.isInteger(cause.status);
+
+/**
+ * Whether this is an answer the generated Fetch runtime returned rather than threw. It resolves a
+ * non-2xx exactly as it resolves a 2xx — the body, the status and the headers — so a refusal only
+ * looks like a failure once its status is read, and a caller that treats every thrown value as an
+ * error has to be told which of these are refusals.
+ */
+export const isFetchRuntimeFailure = (cause: unknown): cause is GeneratedFetchResponse =>
+  isGeneratedFetchResponse(cause) && (cause.status < 200 || cause.status > 299);
 
 const statusFrom = (cause: unknown): number | undefined => {
   if (cause instanceof Response) {

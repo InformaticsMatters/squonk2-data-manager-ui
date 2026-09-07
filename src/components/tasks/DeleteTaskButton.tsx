@@ -1,5 +1,3 @@
-import { type DmError } from "@/api/data-manager";
-
 import { Button } from "@mui/material";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
@@ -32,7 +30,7 @@ export const DeleteTaskButton = ({
   onDeleted,
 }: DeleteTaskButtonProps) => {
   const commands = useResultCommands();
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError();
 
   return (
     <WarningDeleteButton

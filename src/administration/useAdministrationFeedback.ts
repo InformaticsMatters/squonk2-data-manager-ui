@@ -1,5 +1,3 @@
-import { type AsError } from "@/api/account-server";
-
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { administrationMutationFailureMessage } from "./failures";
 
@@ -9,7 +7,7 @@ import { administrationMutationFailureMessage } from "./failures";
  * classify falls through to the shared error presentation.
  */
 export const useAdministrationCommandFeedback = () => {
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<AsError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError();
   return {
     announce: (message: string) => enqueueSnackbar(message, { variant: "success" }),
     /** States an already-composed failure, for a command whose rejection it explains for itself. */

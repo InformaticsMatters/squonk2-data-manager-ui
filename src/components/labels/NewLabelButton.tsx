@@ -1,5 +1,3 @@
-import { type DmError } from "@/api/data-manager";
-
 import { AddCircleOutlineRounded as AddCircleOutlineRoundedIcon } from "@mui/icons-material";
 import { Box, Button, IconButton, Popover, TextField, Tooltip } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
@@ -23,7 +21,7 @@ export interface NewLabelButtonProps {
 
 export const NewLabelButton = ({ datasetId, datasetVersion, capability }: NewLabelButtonProps) => {
   const { addLabel, isLabelPending } = useDatasetCommands();
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError();
 
   const popupState = usePopupState({ variant: "popover", popupId: `add-label-${datasetId}` });
 

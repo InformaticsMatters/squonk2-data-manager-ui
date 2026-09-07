@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type DatasetSummary, type DatasetVersionSummary, type DmError } from "@/api/data-manager";
+import { type DatasetSummary, type DatasetVersionSummary } from "@/api/data-manager";
 
 import { ManageUsers } from "../../../../components/ManageUsers";
 import { type DatasetCapability } from "../../../../datasets/capabilities";
@@ -35,7 +35,7 @@ export const ManageDatasetEditorsSection = ({
   const [isLoading, setIsLoading] = useState(false);
   const [editorInput, setEditorInput] = useState("");
 
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError();
 
   return (
     <ManageUsers

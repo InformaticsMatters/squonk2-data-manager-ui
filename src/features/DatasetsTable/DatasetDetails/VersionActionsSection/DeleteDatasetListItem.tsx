@@ -1,4 +1,4 @@
-import { type DatasetVersionSummary, type DmError } from "@/api/data-manager";
+import { type DatasetVersionSummary } from "@/api/data-manager";
 
 import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemText } from "@mui/material";
@@ -38,7 +38,7 @@ export const DeleteDatasetListItem = ({
   capability,
 }: DeleteDatasetProps) => {
   const { deleteVersion } = useDatasetCommands();
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError();
 
   return (
     <WarningDeleteButton

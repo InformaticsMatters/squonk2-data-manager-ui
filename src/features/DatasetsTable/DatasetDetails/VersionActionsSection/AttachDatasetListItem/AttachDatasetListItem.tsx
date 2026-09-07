@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { type DatasetVersionSummary, type DmError } from "@/api/data-manager";
+import { type DatasetVersionSummary } from "@/api/data-manager";
 import { useGetFileTypes } from "@/api/data-manager/type";
 
 import { AttachFileRounded as AttachFileRoundedIcon } from "@mui/icons-material";
@@ -104,7 +104,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
   // Only success is announced away from the form. Every failure is read beside the choices that
   // caused it, in the Data Manager's own words where this client has no rule of its own, so nothing
   // is reported twice in two places at once.
-  const { enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueSnackbar } = useEnqueueError();
 
   const defaultValues: FormType = {
     // Nothing is chosen for the caller: a dataset version is attached to the project they named or

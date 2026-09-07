@@ -1,6 +1,5 @@
-import { isAxiosError } from "axios";
-
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
+import { apiFailureReason } from "../utils/next/orvalError";
 
 /**
  * What an authoritative answer to a project command was. `rejected` is the server's authorization
@@ -45,14 +44,6 @@ export const classifyProjectCommandFailure = (
   }
 };
 
-/** The service's own words, which are the sentence only where this client has no rule of its own. */
-export const upstreamFailureReason = (error: unknown) => {
-  const data = isAxiosError<{ error?: string; message?: string }>(error)
-    ? error.response?.data
-    : undefined;
-  return data?.error ?? data?.message;
-};
-
 /**
  * How a recoverable project-creation failure reads. Bringing a project into existence spans two
  * services, so the sentence names the subject the workflow was addressing when it failed; the
@@ -80,7 +71,7 @@ export const projectCreationFailureReason = (
     case "not-found":
     case "unknown":
       return (
-        upstreamFailureReason(error) ?? `The ${subject} could not be created. Correct it and retry.`
+        apiFailureReason(error) ?? `The ${subject} could not be created. Correct it and retry.`
       );
   }
 };
@@ -108,9 +99,7 @@ export const projectDeletionFailureReason = (
       return `The ${subject} deletion request timed out. Its outcome could not be confirmed.`;
     case "not-found":
     case "unknown":
-      return (
-        upstreamFailureReason(error) ?? `The ${subject} could not be deleted. Retry is available.`
-      );
+      return apiFailureReason(error) ?? `The ${subject} could not be deleted. Retry is available.`;
   }
 };
 
@@ -162,8 +151,7 @@ export const personalUnitCreationFailureReason = (error: unknown) => {
     case "not-found":
     case "unknown":
       return (
-        upstreamFailureReason(error) ??
-        "Your personal unit could not be created. Retry is available."
+        apiFailureReason(error) ?? "Your personal unit could not be created. Retry is available."
       );
   }
 };

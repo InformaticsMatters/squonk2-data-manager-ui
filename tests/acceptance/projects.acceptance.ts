@@ -2,7 +2,7 @@ import { expect, type Page, test, type TestInfo } from "@playwright/test";
 
 import { PROJECT_CREATION_RECOVERY_KEY } from "../../src/projects/projectCreation";
 import { RECENT_PROJECTS_STORAGE_KEY } from "../../src/projects/recentProjects";
-import { fixtureIds } from "./services/fixtures";
+import { fixtureIds, rejectedProjectName } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
 
 test.describe.configure({ mode: "serial" });
@@ -713,6 +713,27 @@ for (const [status, reason] of [
     ).toHaveLength(1);
   });
 }
+
+test("a name the service rejects is answered in the service's own words", async ({
+  page,
+}, testInfo) => {
+  await login(page, "projects/new", testInfo);
+  await page.getByLabel("Containing unit").click();
+  await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+  await page.getByLabel("Project name").fill(rejectedProjectName);
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+
+  // The rejection arrives as `application/problem+json`, whose `detail` carries the sentence and
+  // then the schema it was validated against. The caller is shown the sentence and not the schema.
+  await expect(
+    page.getByText(`'${rejectedProjectName}' is not a permitted project name - 'name'`),
+  ).toBeVisible();
+  await expect(page.getByText(/Failed validating/u)).toHaveCount(0);
+  await expect(page.getByLabel("Project name")).toHaveValue(rejectedProjectName);
+  await expect(page.getByRole("button", { name: "Retry" })).toBeVisible();
+});
 
 test("a project domain failure keeps its subscription and exact service answer", async ({
   page,

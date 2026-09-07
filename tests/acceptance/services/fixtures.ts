@@ -103,6 +103,12 @@ export const fixtureIds = {
   unlistedProduct: "product-2f2f2f2f-2f2f-4f2f-8f2f-2f2f2f2f2f2f",
 } as const;
 
+/**
+ * A project name the fixture Data Manager will not take. The form's own rules cannot pre-empt it,
+ * so the request reaches the service and is refused by its request validation.
+ */
+export const rejectedProjectName = "Reserved";
+
 export const datasetContentFixtures = {
   1: gzipSync(Buffer.from("acceptance dataset version 1\n")),
   2: gzipSync(Buffer.from("acceptance dataset version 2\n")),

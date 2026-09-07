@@ -1,30 +1,13 @@
-import { type AsError } from "@/api/account-server";
-import { type DmError } from "@/api/data-manager";
-
 import { nullEmptyString } from "../text";
 
-type AxiosLikeError<TError = unknown> = {
-  response?: { data?: TError | string; statusText?: string };
-  message?: string;
-  toJSON?: () => unknown;
-};
-
-const getMessageFromResponse = <TError>(error: AxiosLikeError<TError>, field: keyof TError) => {
-  const apiErrorData = error.response?.data;
-
-  if (!apiErrorData || typeof apiErrorData === "string") {
-    return undefined;
-  }
-
-  return apiErrorData[field];
-};
-
-type APIErrorResponse = AsError | DmError;
-type AError = AxiosLikeError<APIErrorResponse>;
-type OldAError = AxiosLikeError<{ detail: string }>;
-
-const isAPIError = (error: unknown): error is APIErrorResponse =>
-  typeof (error as APIErrorResponse).error === "string";
+/**
+ * How a rejected request accounts for itself. Both specs document exactly one error schema, whose
+ * `error` is "brief error text that can be presented to the user", but Connexion request-validation
+ * and framework failures bypass the handler and answer `application/problem+json` — `type`,
+ * `title`, `detail`, `status` — a shape neither spec documents and which never carries `error`.
+ * Both arrive routinely, so both are read here and nowhere else.
+ */
+type ErrorBody = { detail?: unknown; error?: unknown; title?: unknown };
 
 /**
  * What is returned when an error carried no account of itself at all. It is a placeholder rather
@@ -32,49 +15,78 @@ const isAPIError = (error: unknown): error is APIErrorResponse =>
  */
 export const noErrorInformation = "Error: no information provided";
 
+/** The body an answer carried, whether it arrived through Axios, generated Fetch, or on its own. */
+const bodyOf = (error: unknown): unknown => {
+  if (typeof error !== "object" || error === null) {
+    return undefined;
+  }
+  const response: unknown = "response" in error ? error.response : undefined;
+  if (typeof response === "object" && response !== null && "data" in response) {
+    return response.data;
+  }
+  return "data" in error ? error.data : error;
+};
+
+/** One field as words a person can be shown, or `null` when it held nothing but whitespace. */
+const readString = (value: unknown): string | null =>
+  typeof value === "string" ? (nullEmptyString(value.trim()) ?? null) : null;
+
 /**
- * @param error The Axios Error object from which to extract the human error message
- * @returns a string message from the error that hopefully describes what went wrong,
- *          or `null` when no error was supplied
+ * The first useful sentence of a `detail`. Its quality runs from excellent (`'z' is too short -
+ * 'name'`) to a JSON Schema dump of a few hundred characters, and the dump is the same sentence
+ * followed by the schema it was validated against: jsonschema separates the two with a blank line,
+ * so that is where the words a caller can act on end. What survives is stated on one line, because
+ * that is how a snackbar renders it anyway.
  */
-export const getErrorMessage = (
-  error: APIErrorResponse | AxiosLikeError | null | undefined,
-): string | null => {
+const firstSentenceOf = (detail: string) => {
+  const [sentence = ""] = detail.split(/\n[^\S\n]*\n/u);
+  return readString(sentence.replace(/\s+/gu, " "));
+};
+
+/**
+ * The service's own account of why it rejected a request, or `null` when the answer carried none.
+ *
+ * `error` is what both services document and is therefore read first; `detail` is what the
+ * framework sends in its place, and a body that is a plain string is the whole of what was said.
+ * The reason phrase, the transport's own message, and the rest of the envelope are facts about the
+ * request rather than an account of it, so they are not reported as the service's words: a caller
+ * with a sentence of its own keeps that sentence instead of stating "Bad Request" to a person.
+ */
+export const apiFailureReason = (error: unknown): string | null => {
+  const body = bodyOf(error);
+
+  if (typeof body === "string") {
+    return readString(body);
+  }
+  if (typeof body !== "object" || body === null) {
+    return null;
+  }
+
+  const { detail, error: documented } = body as ErrorBody;
+
+  return readString(documented) ?? (typeof detail === "string" ? firstSentenceOf(detail) : null);
+};
+
+/**
+ * @param error the failure from which to extract a message that can be shown to a person
+ * @returns the service's own account of the failure, falling back through the reason phrase and the
+ *          transport's own words to a placeholder, or `null` when no error was supplied
+ */
+export const getErrorMessage = (error: unknown): string | null => {
   if (!error) {
     return null;
   }
 
-  if (isAPIError(error)) {
-    return error.error;
-  }
+  const body = bodyOf(error);
+  const title =
+    typeof body === "object" && body !== null ? readString((body as ErrorBody).title) : null;
+  const envelope = error as { message?: unknown; response?: { statusText?: unknown } };
 
-  try {
-    // first try get the information assuming it's a well formed API error object
-    const infoFromErrorField = getMessageFromResponse(error as AError, "error");
-    if (infoFromErrorField) {
-      return infoFromErrorField;
-    }
-
-    // next check if it has a detail field instead of an error field
-    // some errors in the past had this
-    // TODO: confirm whether or not the API can still send this type of error response
-    const infoFromDetailField = getMessageFromResponse(error as OldAError, "detail");
-    if (infoFromDetailField) {
-      return infoFromDetailField;
-    }
-  } catch {
-    if (error.message && error.message.length > 0) {
-      return error.message;
-    }
-
-    return JSON.stringify(error.toJSON?.());
-  }
-
-  // try get an error message from the error objects, skipping "", then fallback to a generic message
   return (
-    (typeof error.response?.data === "string" ? nullEmptyString(error.response.data) : null) ??
-    nullEmptyString(error.response?.statusText) ??
-    nullEmptyString(error.message) ??
+    apiFailureReason(error) ??
+    title ??
+    readString(envelope.response?.statusText) ??
+    readString(envelope.message) ??
     noErrorInformation
   );
 };

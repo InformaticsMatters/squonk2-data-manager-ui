@@ -1,5 +1,5 @@
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
-import { upstreamFailureReason } from "./failures";
+import { apiFailureReason } from "../utils/next/orvalError";
 
 /**
  * What one launch of one definition has done so far. Launching is the one Run command whose success
@@ -62,7 +62,7 @@ export const classifyLaunchFailure = (
     // Every kind is named rather than defaulted, so a new transport fact has to be answered here
     // instead of quietly arriving as the service's own words.
     case "unknown":
-      return { kind: "recoverable", reason: upstreamFailureReason(error) ?? unaccountedReason };
+      return { kind: "recoverable", reason: apiFailureReason(error) ?? unaccountedReason };
   }
 };
 

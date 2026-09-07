@@ -9,8 +9,13 @@ import { setTimeout as delay } from "node:timers/promises";
 import { z } from "zod";
 
 import { acceptanceEnvironment } from "../environment";
-import { datasetContentFixtures, fixtureIds, type FixtureProjectFileSystem } from "./fixtures";
-import { cors, json, multipartField, readBody, record } from "./http";
+import {
+  datasetContentFixtures,
+  fixtureIds,
+  type FixtureProjectFileSystem,
+  rejectedProjectName,
+} from "./fixtures";
+import { cors, json, multipartField, problem, readBody, record } from "./http";
 import {
   type AttachmentRecord,
   type AttachmentTaskRecord,
@@ -687,6 +692,21 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
           state.projectCreationFailure === 400
             ? { error: "fixture-project-domain-failure" }
             : state.fixtures.failures.serverError,
+        );
+      }
+      // A name the service will not take is refused by request validation before the handler runs,
+      // so it answers `application/problem+json` whose `detail` is the caller's sentence followed
+      // by the schema it was validated against.
+      if (form.get("name") === rejectedProjectName) {
+        return problem(
+          response,
+          400,
+          "Bad Request",
+          [
+            `'${rejectedProjectName}' is not a permitted project name - 'name'`,
+            "Failed validating 'pattern' in schema:\n    {'type': 'string',\n     'maxLength': 80,\n     'minLength': 2}",
+            `On instance:\n    '${rejectedProjectName}'`,
+          ].join("\n\n"),
         );
       }
       if (form.get("tier_product_id") !== state.createdProduct?.product.id) {

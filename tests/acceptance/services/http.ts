@@ -35,6 +35,21 @@ export const json = (response: ServerResponse, status: number, body: unknown) =>
   response.writeHead(status, { "content-type": "application/json" });
   response.end(JSON.stringify(body));
 };
+
+/**
+ * How the services answer a request their framework rejected before the handler saw it: Connexion
+ * validation and framework failures reply `application/problem+json`, a shape neither spec
+ * documents, which carries `detail` and never carries `error`.
+ */
+export const problem = (
+  response: ServerResponse,
+  status: number,
+  title: string,
+  detail: string,
+) => {
+  response.writeHead(status, { "content-type": "application/problem+json" });
+  response.end(JSON.stringify({ detail, status, title, type: "about:blank" }));
+};
 export const cors = (request: IncomingMessage, response: ServerResponse) => {
   response.setHeader("access-control-allow-headers", "authorization,content-type");
   response.setHeader("access-control-allow-methods", "DELETE,GET,PATCH,POST,PUT,OPTIONS");

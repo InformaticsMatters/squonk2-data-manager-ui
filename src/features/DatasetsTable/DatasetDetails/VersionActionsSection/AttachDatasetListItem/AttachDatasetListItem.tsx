@@ -157,11 +157,7 @@ export const AttachDatasetListItem = ({ datasetId, version }: AttachDatasetListI
         // task still running is held apart from the failures because it is not one of them.
         setProgress({
           kind: error instanceof DatasetTaskPollingError ? "unsettled" : "failed",
-          reason:
-            message ??
-            unclassifiedAttachmentFailureMessage(
-              getErrorMessage(error as Parameters<typeof getErrorMessage>[0]),
-            ),
+          reason: message ?? unclassifiedAttachmentFailureMessage(getErrorMessage(error)),
         });
       }
       return {};

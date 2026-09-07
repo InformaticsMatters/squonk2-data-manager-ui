@@ -18,51 +18,10 @@ import {
 } from "../../state/eventStream";
 import { useUnreadEventCount } from "../../state/notifications";
 import { EventMessage } from "../eventMessages/EventMessage";
+import { describeCloseCode, eventStreamCloseMessage } from "./closeReasons";
 import { useIsEventStreamInstalled } from "./useIsEventStreamInstalled";
 
 dayjs.extend(utc);
-
-const WebSocketCloseCode = {
-  NORMAL: 1000,
-  GOING_AWAY: 1001,
-  PROTOCOL_ERROR: 1002,
-  UNSUPPORTED_DATA: 1003,
-  NO_STATUS: 1005,
-  ABNORMAL: 1006,
-  INVALID_PAYLOAD: 1007,
-  POLICY_VIOLATION: 1008,
-  MESSAGE_TOO_BIG: 1009,
-  CLIENT_TERMINATED: 1010,
-  SERVER_ERROR: 1011,
-  SERVICE_RESTART: 1012,
-  TRY_AGAIN_LATER: 1013,
-  BAD_GATEWAY: 1014,
-  TLS_HANDSHAKE_FAIL: 1015,
-  POLICY_UNAUTHORIZED: 4401,
-  POLICY_FORBIDDEN: 4403,
-} as const;
-
-type WebSocketCloseCodeValue = (typeof WebSocketCloseCode)[keyof typeof WebSocketCloseCode];
-
-const closeCodeDescriptions: Record<WebSocketCloseCodeValue, string> = {
-  [WebSocketCloseCode.NORMAL]: "Normal closure - connection completed successfully",
-  [WebSocketCloseCode.GOING_AWAY]: "Going away - server is shutting down or client navigating away",
-  [WebSocketCloseCode.PROTOCOL_ERROR]: "Protocol error - invalid data received",
-  [WebSocketCloseCode.UNSUPPORTED_DATA]: "Unsupported data - received data type not supported",
-  [WebSocketCloseCode.NO_STATUS]: "No status received - no close code provided",
-  [WebSocketCloseCode.ABNORMAL]: "Abnormal closure - connection lost without close frame",
-  [WebSocketCloseCode.INVALID_PAYLOAD]: "Invalid frame payload data - received inconsistent data",
-  [WebSocketCloseCode.POLICY_VIOLATION]: "Policy violation - message violates server policy",
-  [WebSocketCloseCode.MESSAGE_TOO_BIG]: "Message too big - message exceeds size limit",
-  [WebSocketCloseCode.CLIENT_TERMINATED]: "Client error - client terminated connection",
-  [WebSocketCloseCode.SERVER_ERROR]: "Server error - server encountered error",
-  [WebSocketCloseCode.SERVICE_RESTART]: "Service restart - server restarting",
-  [WebSocketCloseCode.TRY_AGAIN_LATER]: "Try again later - temporary server condition",
-  [WebSocketCloseCode.BAD_GATEWAY]: "Bad gateway - invalid response from upstream",
-  [WebSocketCloseCode.TLS_HANDSHAKE_FAIL]: "TLS handshake - TLS handshake failed",
-  [WebSocketCloseCode.POLICY_UNAUTHORIZED]: "Policy violation - unauthorized",
-  [WebSocketCloseCode.POLICY_FORBIDDEN]: "Policy violation - forbidden",
-};
 
 /**
  * Logs WebSocket connection open event
@@ -84,7 +43,7 @@ const logWebSocketClose = (event: CloseEvent) => {
 
   console.log("[EventStream] WebSocket connection closed:", closeInfo);
 
-  const description = closeCodeDescriptions[event.code as WebSocketCloseCodeValue];
+  const description = describeCloseCode(event.code);
   if (description) {
     console.log(`[EventStream] ${description}`);
   } else {
@@ -93,7 +52,9 @@ const logWebSocketClose = (event: CloseEvent) => {
 };
 
 /**
- * Logs WebSocket error event details
+ * Logs WebSocket error event details. An error is always followed by a close, and the close is
+ * what carries the code saying why, so this is where an error is recorded and nowhere else: the
+ * caller is told once, about the close, rather than twice about the same dropped connection.
  */
 const logWebSocketError = (error: Event) => {
   console.error("[EventStream] WebSocket connection error:", error);
@@ -180,11 +141,7 @@ export const EventStream = () => {
     (event: CloseEvent) => {
       logWebSocketClose(event);
 
-      const message = event.wasClean
-        ? "Disconnected from event stream"
-        : "Event stream disconnected unexpectedly. Attempting to reconnect...";
-
-      enqueueSnackbar(message, {
+      enqueueSnackbar(eventStreamCloseMessage(event), {
         variant: event.wasClean ? "info" : "warning",
         anchorOrigin: { horizontal: "right", vertical: "bottom" },
       });
@@ -192,17 +149,9 @@ export const EventStream = () => {
     [enqueueSnackbar],
   );
 
-  const handleWebSocketError = useCallback(
-    (error: Event) => {
-      logWebSocketError(error);
-
-      enqueueSnackbar("Event stream connection error. Reconnection attempts may follow.", {
-        variant: "error",
-        anchorOrigin: { horizontal: "right", vertical: "bottom" },
-      });
-    },
-    [enqueueSnackbar],
-  );
+  const handleWebSocketError = useCallback((error: Event) => {
+    logWebSocketError(error);
+  }, []);
 
   // Where the stream is: what the read reports, or — until it reports one — what creating a stream
   // here just answered with.

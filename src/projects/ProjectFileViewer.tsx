@@ -159,7 +159,7 @@ const FileViewerBody = ({
   if (delivery.kind === "recoverable") {
     return (
       <SectionReadAlerts
-        report={{ retryable: true, unavailable: false }}
+        report={{ retryable: true, sessionLapsed: false, unavailable: false }}
         retryableMessage={UNDELIVERED_CONTENT}
         unavailableMessage={FILE_NOT_FOUND_NOTICE}
         onRetry={() => globalThis.location.reload()}

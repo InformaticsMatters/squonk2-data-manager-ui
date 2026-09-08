@@ -6,6 +6,7 @@ import { getGetProjectQueryKey, getGetProjectsQueryKey } from "@/api/data-manage
 import { expect, test } from "@playwright/test";
 import { QueryClient } from "@tanstack/react-query";
 
+import { resolveProjectWorkspaceFailure } from "../../src/projects/failures";
 import {
   dismissProjectOnboarding,
   PROJECT_ONBOARDING_DISMISSAL_KEY,
@@ -18,7 +19,10 @@ import {
   resolvedAncestry,
   resolveProjectAncestry,
 } from "../../src/projects/projectAncestry";
-import { removeUnavailableProject } from "../../src/projects/projectCache";
+import {
+  removeUnavailableProject,
+  settleProjectWorkspaceFailure,
+} from "../../src/projects/projectCache";
 import {
   buildProjectIndexList,
   buildProjectSelectorList,
@@ -636,5 +640,132 @@ test.describe("project selector list", () => {
       projectName: "Unlisted",
       unitName: "Unit unit-unlisted",
     });
+  });
+});
+
+/**
+ * What is left of one project after a failed read of it has been settled: everything a workspace
+ * is assembled from, and the place it holds in the caller's recents.
+ */
+const heldAfterFailure = (error: unknown, addressed: string) => {
+  const queryClient = new QueryClient();
+  const storageValues = new Map<string, string>();
+  const storage = {
+    getItem: (key: string) => storageValues.get(key) ?? null,
+    setItem: (key: string, value: string) => storageValues.set(key, value),
+  };
+  const linkedProject = requireLinkedProject(project({ project_id: addressed }));
+  queryClient.setQueryData(getGetProjectQueryKey(addressed), linkedProject);
+  queryClient.setQueryData(getGetProductQueryKey(linkedProject.product_id), { product: {} });
+  recordRecentProject(storage, addressed);
+
+  settleProjectWorkspaceFailure(
+    resolveProjectWorkspaceFailure(error, addressed),
+    queryClient,
+    storage,
+    addressed,
+  );
+
+  return {
+    product: queryClient.getQueryData(getGetProductQueryKey(linkedProject.product_id)),
+    project: queryClient.getQueryData(getGetProjectQueryKey(addressed)),
+    recents: readRecentProjectIds(storage),
+  };
+};
+
+test.describe("what one failed project read establishes", () => {
+  /** The project the address named, in the form the Data Manager accepts. */
+  const addressed = "project-two";
+  /** How the services answer a token that has expired or lost the scopes they require. */
+  const tokenRefusal = {
+    data: {
+      detail:
+        "Provided token does not have the required scopes. Provided: []; Required: ['data-manager-user']",
+    },
+    headers: new Headers(),
+    status: 403,
+  };
+  /** A refusal about the resource: the caller's token was accepted and the project was not given. */
+  const resourceRefusal = {
+    data: { error: "Not an Observer (odudgeon)" },
+    headers: new Headers(),
+    status: 403,
+  };
+  /** What Connexion answers for a path parameter that is not a project identifier at all. */
+  const malformedAddress = {
+    data: {
+      detail:
+        "'nonsense' does not match '^project-[a-z0-9-]+$'\n\nFailed validating 'pattern' in schema:\n    {'pattern': '^project-[a-z0-9-]+$', 'type': 'string'}",
+    },
+    headers: new Headers(),
+    status: 400,
+  };
+
+  test("a refusal about the project reads as access that is gone, with nothing to retry", () => {
+    for (const error of [resourceRefusal, readFailure(404)]) {
+      expect(resolveProjectWorkspaceFailure(error, addressed)).toEqual({
+        discardsProject: true,
+        kind: "unavailable",
+        message: "This project is unavailable or you no longer have access.",
+        remedy: "none",
+        severity: "warning",
+      });
+    }
+  });
+
+  test("a refused token reads as a session that lapsed, and offers the way back", () => {
+    const failure = resolveProjectWorkspaceFailure(tokenRefusal, addressed);
+
+    expect(failure.kind).toBe("session-lapsed");
+    expect(failure.remedy).toBe("reauthenticate");
+    // The project said nothing about itself, so nothing is claimed about access to it.
+    expect(failure.message).not.toContain("no longer have access");
+    expect(failure.message).toContain("session");
+    expect(failure.discardsProject).toBe(false);
+  });
+
+  test("an address that is not a project identifier says so, and offers no retry", () => {
+    const failure = resolveProjectWorkspaceFailure(malformedAddress, "nonsense");
+
+    expect(failure.kind).toBe("malformed-address");
+    // Naming what is wrong is the whole point: the identifier is in the address, not in the data.
+    expect(failure.message).toContain("“nonsense”");
+    expect(failure.remedy).toBe("none");
+    expect(failure.discardsProject).toBe(false);
+  });
+
+  test("a read that merely failed is still worth retrying", () => {
+    for (const status of [429, 500, 503]) {
+      expect(resolveProjectWorkspaceFailure(readFailure(status), addressed)).toEqual({
+        discardsProject: false,
+        kind: "unreadable",
+        message: "Project data could not be loaded. Retry this project.",
+        remedy: "retry",
+        severity: "error",
+      });
+    }
+    // An answer with no transport fact at all is retried rather than believed.
+    expect(resolveProjectWorkspaceFailure(new Error("no status"), addressed).kind).toBe(
+      "unreadable",
+    );
+  });
+
+  test("only a refusal about the project discards what is held for it", () => {
+    // A refusal about the project, and an absence, are answers about the project itself.
+    for (const error of [resourceRefusal, readFailure(404)]) {
+      const left = heldAfterFailure(error, addressed);
+      expect(left.project).toBeUndefined();
+      expect(left.product).toBeUndefined();
+      expect(left.recents).toEqual([]);
+    }
+
+    // A refused token, a malformed address and a failed read said nothing about the project, so
+    // what is held for it survives and is there again once the caller signs back in.
+    for (const error of [tokenRefusal, malformedAddress, readFailure(503)]) {
+      const left = heldAfterFailure(error, addressed);
+      expect(left.project).toBeDefined();
+      expect(left.product).toBeDefined();
+      expect(left.recents).toEqual([addressed]);
+    }
   });
 });

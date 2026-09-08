@@ -2,6 +2,93 @@ import { classifyTransportFailure } from "../api/runtime/classifyTransportFailur
 import { apiFailureReason } from "../utils/next/orvalError";
 
 /**
+ * What a failed read of the addressed project was, and what follows from it.
+ *
+ * The kinds differ in what they are a fact *about*, which is what decides everything else. Only
+ * `unavailable` is an answer about the project, so only it discards what is held for the project;
+ * a lapsed session and a malformed address say nothing about the project at all, and a project the
+ * caller still has must be there when they come back to it.
+ */
+export type ProjectWorkspaceFailure = {
+  /** Whether what is held for this project — its cache entries and its place in recents — goes. */
+  discardsProject: boolean;
+  kind: "malformed-address" | "session-lapsed" | "unavailable" | "unreadable";
+  message: string;
+  /** The route back offered beside the message, or none where nothing the caller does can help. */
+  remedy: "none" | "reauthenticate" | "retry";
+  severity: "error" | "warning";
+};
+
+/**
+ * How one failed project read reads, and what it costs.
+ *
+ * A refused token is the credential the caller presented, not the project they addressed: the
+ * project has said nothing, so nothing about it is claimed, nothing held for it is discarded, and
+ * the route offered is the one that can actually recover — signing in again. Reading that refusal
+ * as the project's own answer is what told a caller whose session merely lapsed that their projects
+ * were gone, and evicted them so that they still were after signing back in.
+ *
+ * A `400` on a read addressed by one identifier can only be about that identifier, because the
+ * identifier is the whole of what the request carried. The service's own words for it are a JSON
+ * Schema dump, so the sentence is this client's: it names the address that cannot be a project, and
+ * offers no retry, because retrying the same address can never do anything else.
+ */
+export const resolveProjectWorkspaceFailure = (
+  error: unknown,
+  projectId: string,
+): ProjectWorkspaceFailure => {
+  switch (classifyTransportFailure(error).kind) {
+    // A refusal and an absence read identically, so comparing the two can never reveal whether a
+    // project the caller may not read exists.
+    case "forbidden":
+    case "not-found":
+      return {
+        discardsProject: true,
+        kind: "unavailable",
+        message: "This project is unavailable or you no longer have access.",
+        remedy: "none",
+        severity: "warning",
+      };
+    case "token-refused":
+      return {
+        discardsProject: false,
+        kind: "session-lapsed",
+        message:
+          "Your session has expired, so this project could not be read. Sign in again to open it; nothing about the project has changed.",
+        remedy: "reauthenticate",
+        severity: "warning",
+      };
+    case "bad-request":
+      return {
+        discardsProject: false,
+        kind: "malformed-address",
+        message: `“${projectId}” is not a project identifier, so no project could be opened. Check the link you followed, or open the project from the projects list.`,
+        remedy: "none",
+        severity: "warning",
+      };
+    // Every other transport fact says nothing about the project, so the read is worth making again
+    // rather than being believed. They are named rather than defaulted, so a new kind has to be
+    // answered here instead of quietly arriving as something the caller is told to retry.
+    case "conflict":
+    case "method-not-allowed":
+    case "network":
+    case "rate-limited":
+    case "server":
+    case "timeout":
+    case "unknown":
+    case "unprocessable":
+    case "unsupported-media-type":
+      return {
+        discardsProject: false,
+        kind: "unreadable",
+        message: "Project data could not be loaded. Retry this project.",
+        remedy: "retry",
+        severity: "error",
+      };
+  }
+};
+
+/**
  * What an authoritative answer to a project command was. `rejected` is the server's authorization
  * verdict, `retryable` is a transport fact that says nothing about authority, and `unknown`
  * establishes neither. Every kind carries the whole sentence its caller shows, so no screen writes

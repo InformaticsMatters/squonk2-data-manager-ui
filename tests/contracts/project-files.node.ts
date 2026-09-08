@@ -248,6 +248,24 @@ test.describe("Files reads", () => {
     expect(resolveSectionFreshness(recoverable)).toBe("stale");
     expect(resolveSectionFreshness(resolveSectionReadState(null))).toBe("current");
   });
+
+  test("a lapsed session leaves the listing on screen, and nothing in it changeable", () => {
+    const lapsed = resolveSectionReadState({
+      data: {
+        detail:
+          "Provided token does not have the required scopes. Provided: []; Required: ['data-manager-user']",
+      },
+      headers: new Headers(),
+      status: 403,
+    });
+
+    expect(lapsed).toEqual({ kind: "session-lapsed" });
+    // The listing was not refused, so it stays exactly as it was — but it could not be refreshed
+    // either, so it is stale, which is what holds every change to it until it loads again.
+    expect(resolveProjectFileContent(lapsed, true)).toBe("stale");
+    expect(resolveProjectFileContent(lapsed, false)).toBe("stale");
+    expect(resolveSectionFreshness(lapsed)).toBe("stale");
+  });
 });
 
 test.describe("Files favourites", () => {

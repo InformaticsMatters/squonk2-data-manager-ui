@@ -194,13 +194,15 @@ export type ScenarioState = {
   /** The projects a settled deletion removed; no later read reports them. */
   deletedProjects: string[];
   projectFailure?: number;
+  /** Which of the two answers a `403` project read is sending, where they differ. */
+  projectFailureReason?: "token-refused";
   projectMutationFailure?: 403 | 503;
   requests: RequestRecord[];
   /**
    * Results read failures in effect. Each is optionally narrowed to one collection path, e.g.
    * `/instance`, so collections can be made to fail differently and at the same time.
    */
-  resultsFailures: { collection?: string; status: 403 | 503 }[];
+  resultsFailures: { collection?: string; reason?: "token-refused"; status: 403 | 503 }[];
   /** The result tasks a caller has deleted; the project that owned them no longer lists them. */
   deletedResultTasks: string[];
   /**

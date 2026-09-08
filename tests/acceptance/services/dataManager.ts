@@ -32,6 +32,45 @@ import {
  * scenario can put a resource in is decided here, so no test has to drive time itself.
  */
 
+/**
+ * The body one refused or failed Results read answers with, which is the same choice a project
+ * read makes: a `403` is either the collection refusing the caller or the service refusing the
+ * token the request carried, and only the second says nothing about the collection.
+ */
+const resultsFailureBody = (
+  state: ScenarioState,
+  failure: { reason?: "token-refused"; status: 403 | 503 },
+) => {
+  if (failure.reason === "token-refused") {
+    return state.fixtures.failures.tokenRefused;
+  }
+  return failure.status === 403
+    ? state.fixtures.failures.forbidden
+    : state.fixtures.failures.serverError;
+};
+
+/**
+ * The body one refused or failed project read answers with. A `403` is the one status the two
+ * differ on: a resource refusing the caller says so in the shape the spec documents, and a service
+ * refusing the token they carried answers in the framework's own, saying nothing about the project.
+ * A `400` is Connexion rejecting the identifier in the address before any project is looked for.
+ */
+const projectFailureBody = (state: ScenarioState) => {
+  if (state.projectFailureReason === "token-refused") {
+    return state.fixtures.failures.tokenRefused;
+  }
+  switch (state.projectFailure) {
+    case 400:
+      return state.fixtures.failures.malformedIdentifier;
+    case 403:
+      return state.fixtures.failures.forbidden;
+    case 503:
+      return state.fixtures.failures.serverError;
+    default:
+      return { error: "fixture-not-found" };
+  }
+};
+
 const LabelAnnotation = z.object({
   active: z.boolean(),
   label: z.string(),
@@ -774,13 +813,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       ({ collection }) => !collection || collection === url.pathname,
     );
     if (failure) {
-      return json(
-        response,
-        failure.status,
-        failure.status === 403
-          ? state.fixtures.failures.forbidden
-          : state.fixtures.failures.serverError,
-      );
+      return json(response, failure.status, resultsFailureBody(state, failure));
     }
     if (url.pathname === "/instance") {
       return json(response, 200, instancesOf(state, projectId));
@@ -799,13 +832,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   ) {
     const failure = state.resultsFailures.find(({ collection }) => collection === url.pathname);
     if (failure) {
-      return json(
-        response,
-        failure.status,
-        failure.status === 403
-          ? state.fixtures.failures.forbidden
-          : state.fixtures.failures.serverError,
-      );
+      return json(response, failure.status, resultsFailureBody(state, failure));
     }
   }
   // An instance is terminated while it is running and deleted once it has finished, and archived
@@ -993,13 +1020,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   }
   if (url.pathname === `/project/${fixtureIds.project}` && request.method === "GET") {
     if (state.projectFailure) {
-      const body =
-        state.projectFailure === 403
-          ? state.fixtures.failures.forbidden
-          : state.projectFailure === 503
-            ? state.fixtures.failures.serverError
-            : { error: "fixture-not-found" };
-      return json(response, state.projectFailure, body);
+      return json(response, state.projectFailure, projectFailureBody(state));
     }
     const acceptanceProject = addressableProject(state, fixtureIds.project);
     return acceptanceProject

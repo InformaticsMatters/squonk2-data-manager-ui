@@ -3,6 +3,7 @@ import { type ReactNode } from "react";
 import { Alert, Button } from "@mui/material";
 import { useRouter } from "next/router";
 
+import { AuthButton } from "../components/auth/AuthButton";
 import { CenterLoader } from "../components/CenterLoader";
 import { ResultInstanceDetail } from "../components/instances/ResultInstanceDetail";
 import { ResultTaskDetail } from "../components/tasks/ResultTaskDetail";
@@ -33,6 +34,16 @@ const ResultNotFound = () => (
   <Alert severity="warning">This result was not found in this project.</Alert>
 );
 
+/**
+ * A result whose read was refused the token it carried. Nothing about the result is claimed, and
+ * the control offered is the one that can recover it: the session lapsed, not the access.
+ */
+const LapsedSessionResult = () => (
+  <Alert action={<AuthButton color="inherit" mode="login" size="small" />} severity="warning">
+    Your session has expired, so this result could not be refreshed. Sign in again to work with it.
+  </Alert>
+);
+
 const RecoverableResult = ({ onRetry }: { onRetry: () => void }) => (
   <Alert
     action={
@@ -45,6 +56,14 @@ const RecoverableResult = ({ onRetry }: { onRetry: () => void }) => (
     This result could not be loaded. Retry it without leaving this project.
   </Alert>
 );
+
+/** What one addressed result's own read has to say for itself, where it has anything to say. */
+const readNotice = (readState: SectionReadState, refetch: () => void) => {
+  if (readState.kind === "recoverable") {
+    return <RecoverableResult onRetry={refetch} />;
+  }
+  return readState.kind === "session-lapsed" ? <LapsedSessionResult /> : null;
+};
 
 /**
  * Presents one addressed result once it has answered for itself. A result that names a project
@@ -72,21 +91,20 @@ const AddressedResult = <TResource,>({
   if (readState.kind === "unavailable") {
     return <ResultNotFound />;
   }
+  // A read that did not answer says how it failed, so a lapsed session is never left waiting on a
+  // loader for a read that will be refused the same way until the caller signs in again.
+  const notice = readNotice(readState, refetch);
   if (!resource) {
-    return readState.kind === "recoverable" ? (
-      <RecoverableResult onRetry={refetch} />
-    ) : (
-      <CenterLoader />
-    );
+    return notice ?? <CenterLoader />;
   }
   const declared = owner(resource);
   if (declared !== undefined && declared !== projectId) {
     return <ResultNotFound />;
   }
-  if (readState.kind === "recoverable") {
+  if (notice) {
     return (
       <>
-        <RecoverableResult onRetry={refetch} />
+        {notice}
         {children(resource, "stale")}
       </>
     );

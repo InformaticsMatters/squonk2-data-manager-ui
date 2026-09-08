@@ -87,10 +87,12 @@ const AddressedFile = ({ delivery, route }: ProjectFileViewerProps & { route: Fi
       />
     );
   }
-  if (delivery.kind === "missing") {
+  // A file that will not be delivered is stated in the Data Manager's own words, which are what
+  // separate a path that is not there from a project this caller may no longer read.
+  if (delivery.kind === "unavailable") {
     return (
       <ProjectFilesSection
-        notice={FILE_NOT_FOUND_NOTICE}
+        notice={delivery.statusMessage}
         route={{ kind: "files", path: file.directory, projectId }}
       />
     );
@@ -165,7 +167,9 @@ const FileViewerBody = ({
     );
   }
   if (delivery.kind === "failed") {
-    return <NextError statusCode={delivery.statusCode} statusMessage={delivery.statusMessage} />;
+    return (
+      <NextError statusCode={delivery.statusCode} title={delivery.statusMessage || undefined} />
+    );
   }
 
   switch (viewer) {

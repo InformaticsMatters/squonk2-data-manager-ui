@@ -366,6 +366,10 @@ const addressedResultTask = (state: ScenarioState, taskId: string) =>
     : Object.values(state.fixtures.resultTasks)
         .flatMap((collection) => collection.tasks)
         .find((candidate) => candidate.id === taskId);
+
+/** One dataset version addressed directly, which is how every viewer transport reads one. */
+const datasetVersionRead = /^\/dataset\/[^/]+\/(?<version>\d+)$/u;
+
 const handleDataManager = async (request: IncomingMessage, response: ServerResponse) => {
   cors(request, response);
   if (request.method === "OPTIONS") {
@@ -675,7 +679,9 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     }
     const held = system.files.find((file) => file.path === path && file.file_name === fileName);
     if (!held) {
-      return json(response, 404, { error: "fixture-file-not-found" });
+      // The Data Manager names the file it does not hold, which is what tells a mistyped path apart
+      // from a project this caller may not read.
+      return json(response, 404, { error: `File does not exist (${path}, ${fileName})` });
     }
     // The type is the one the listing gives the file, so a browser shown the bytes is shown them
     // as that type.
@@ -1327,6 +1333,14 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       "content-type": "application/octet-stream",
     });
     return response.end(content);
+  }
+  // A version this dataset does not hold is named by the Data Manager in its own words, exactly as
+  // an absent file is, rather than falling through to the route-level rejection.
+  const absentVersion = datasetVersionRead.exec(url.pathname);
+  if (request.method === "GET" && absentVersion) {
+    return json(response, 404, {
+      error: `Dataset version does not exist (${absentVersion.groups?.version})`,
+    });
   }
   if (url.pathname.startsWith("/__failure/")) {
     const status = Number(url.pathname.slice("/__failure/".length));

@@ -78,15 +78,26 @@ export const offersFileViewer = (fileName: string, viewer: FileViewer): boolean 
 export type FileViewerDelivery =
   | { kind: "content"; content: Successful }
   | { kind: "failed"; statusCode: number; statusMessage: string }
-  | { kind: "missing" }
   | { kind: "readable" }
-  | { kind: "recoverable" };
+  | { kind: "recoverable" }
+  | { kind: "unavailable"; statusCode: number; statusMessage: string };
 
 /**
- * Turns one transport answer into what the viewer shows. A file the Data Manager refuses answers
- * exactly as one it does not hold, in the response as well as the page, so the viewer transport
- * cannot be used to discover which files a project holds; anything that merely failed to arrive
- * stays retryable against the same file rather than being reported as a file that is not there.
+ * Turns one transport answer into what the viewer shows. A file the Data Manager will not deliver
+ * is answered in the status the Data Manager gave and in its own words, in the response as well as
+ * the page, so a file that is not there and a file this caller may not read are told apart;
+ * anything that merely failed to arrive stays retryable against the same file rather than being
+ * reported as a file that is not there.
+ *
+ * A refusal used to be answered exactly as an absence, so the viewer transport could not be used to
+ * discover which files a project holds. That is dropped, per the audit this work comes from: the
+ * Data Manager already distinguishes the two to anyone calling it directly, so the concealment cost
+ * every caller the one sentence naming what was actually wrong — a mistyped path, a file another
+ * caller owns, a project no longer readable — and concealed nothing from anyone who could ask the
+ * service instead.
+ *
+ * The reason arrived from outside this application, so it reaches the status line only through
+ * `createErrorProps`; the section's own notice stands in where the service accounted for nothing.
  *
  * `null` is a file that answered and had nothing to deliver here, which is what a viewer fetching
  * its own bytes asks for.
@@ -99,8 +110,17 @@ export const resolveFileViewerDelivery = (
     return { kind: "readable" };
   }
   const outcome = classifyViewerContent(content);
-  if (outcome.kind === "missing") {
-    createErrorProps(res, 404, FILE_NOT_FOUND_NOTICE);
+  if (outcome.kind === "unavailable") {
+    const { props } = createErrorProps(
+      res,
+      outcome.statusCode,
+      outcome.statusMessage || FILE_NOT_FOUND_NOTICE,
+    );
+    return {
+      kind: "unavailable",
+      statusCode: props.statusCode,
+      statusMessage: props.statusMessage,
+    };
   }
   return outcome;
 };

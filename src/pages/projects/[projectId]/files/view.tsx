@@ -23,8 +23,10 @@ import { withPageAuthRequiredSSR } from "../../../../utils/next/withPageAuthRequ
  *
  * Every viewer is answered on the same terms: the server-rendered one is given the file's bytes,
  * and the viewers that fetch their own — in the browser, or through the parser — are told whether
- * the file is there and readable before they are framed. A file this caller may not read therefore
- * answers exactly as one the project does not hold, whichever viewer asked for it.
+ * the file is there and readable before they are framed. A file this caller may not read is
+ * answered in the Data Manager's own status and words, exactly as a file it does not hold is,
+ * whichever viewer asked for it; the two say different things because the Data Manager says
+ * different things about them.
  */
 export const getServerSideProps: GetServerSideProps<ProjectFileViewerProps> = async (ctx) => {
   const returnTo = getFullReturnTo(ctx);

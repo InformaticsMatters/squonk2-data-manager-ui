@@ -262,17 +262,23 @@ test("viewer absence, denial, and the removed legacy route never adopt another v
 
   const missing = await page.goto(`datasets/${fixtureIds.dataset}/versions/99/view`);
   expect(missing?.status()).toBe(404);
+  // The Data Manager's own sentence reaches the status line, as a reason phrase. The page states
+  // the viewer's own notice instead, because the version resolution answers a version the dataset
+  // does not list before the viewer frames anything.
+  expect(missing?.statusText()).toBe("Dataset version does not exist (99)");
   await expect(page.getByText("Dataset version not found")).toBeVisible();
   await expect(page).toHaveURL(
     `${acceptanceUrls.app}datasets/${fixtureIds.dataset}/versions/99/view`,
   );
 
+  // A refused version keeps its own status and its own reason rather than being answered as an
+  // absent one, which the Data Manager distinguishes for anyone calling it directly.
   await request.post(
     `${acceptanceUrls.control}/scenario/${subject}/dataset-content-failure?status=403`,
   );
   const denied = await page.goto(`${versionOne}/view`);
-  expect(denied?.status()).toBe(missing?.status());
-  await expect(page.getByText("Dataset version not found")).toBeVisible();
+  expect(denied?.status()).toBe(403);
+  await expect(page.getByText("fixture-forbidden")).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${versionOne}/view`);
   await expect(page.getByText("acceptance dataset version 1", { exact: true })).not.toBeVisible();
 

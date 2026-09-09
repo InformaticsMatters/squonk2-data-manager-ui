@@ -391,16 +391,22 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
       return json(response, 400, { error: "unsupported-results-failure", status });
     }
     const collection = url.searchParams.get("collection") ?? undefined;
+    // A `403` read is refused by the resource or by the token it carried, and the two are answered
+    // with different bodies, so the scenario names which one it is sending.
+    const reason = url.searchParams.get("reason") ?? undefined;
+    if (reason !== undefined && reason !== "token-refused") {
+      return json(response, 400, { error: "unsupported-results-failure-reason", reason });
+    }
     const scenario = getScenario(subject);
     // A collection-scoped failure joins any others already in effect, so two collections can be
     // made to fail differently at once; an unscoped one replaces them all.
     scenario.resultsFailures = collection
       ? [
           ...scenario.resultsFailures.filter((failure) => failure.collection !== collection),
-          { collection, status: status as 403 | 503 },
+          { collection, reason, status: status as 403 | 503 },
         ]
-      : [{ status: status as 403 | 503 }];
-    return json(response, 200, { collection, resultsFailure: status, subject });
+      : [{ reason, status: status as 403 | 503 }];
+    return json(response, 200, { collection, reason, resultsFailure: status, subject });
   }
   if (url.pathname.endsWith("/results-failure") && request.method === "DELETE") {
     getScenario(subject).resultsFailures = [];
@@ -570,14 +576,22 @@ const handleControl = async (request: IncomingMessage, response: ServerResponse)
   }
   if (url.pathname.endsWith("/project-failure") && request.method === "POST") {
     const status = Number(url.searchParams.get("status"));
-    if (![403, 404, 503].includes(status)) {
+    if (![400, 403, 404, 503].includes(status)) {
       return json(response, 400, { error: "unsupported-project-failure", status });
     }
+    // A `403` is two different answers live — the resource refusing the caller, and the service
+    // refusing the token they carried — so the scenario names which one it is sending.
+    const reason = url.searchParams.get("reason") ?? undefined;
+    if (reason !== undefined && reason !== "token-refused") {
+      return json(response, 400, { error: "unsupported-project-failure-reason", reason });
+    }
     getScenario(subject).projectFailure = status;
-    return json(response, 200, { projectFailure: status, subject });
+    getScenario(subject).projectFailureReason = reason;
+    return json(response, 200, { projectFailure: status, projectFailureReason: reason, subject });
   }
   if (url.pathname.endsWith("/project-failure") && request.method === "DELETE") {
     getScenario(subject).projectFailure = undefined;
+    getScenario(subject).projectFailureReason = undefined;
     return json(response, 200, { subject });
   }
   // The project collection failing, which leaves the projects a caller could attach to unknown

@@ -623,6 +623,7 @@ test("a catalogue that fails does not decide what the other catalogues may show"
   // Both outcomes are the caller's to act on, so neither silences the other.
   expect(resolveSectionReadReport(Object.values(readStates))).toEqual({
     retryable: true,
+    sessionLapsed: false,
     unavailable: true,
   });
   // Only the catalogue that could not be refreshed is stale, so the others stay launchable.

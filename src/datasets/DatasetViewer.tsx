@@ -78,8 +78,11 @@ const DatasetVersionContentView = ({
   switch (outcome.kind) {
     case "content":
       return <PlaintextViewer {...outcome.content} compressed title={title} />;
-    case "missing":
-      return <NextError statusCode={404} title="Dataset version not found" />;
+    // A version that will not be delivered is stated in the Data Manager's own words, which are
+    // what separate a version that is not there from one this caller may not read. The page's own
+    // answer already stands in where the Data Manager accounted for nothing.
+    case "unavailable":
+      return <NextError statusCode={outcome.statusCode} title={outcome.statusMessage} />;
     case "recoverable":
       return (
         <DatasetLoadError
@@ -89,6 +92,8 @@ const DatasetVersionContentView = ({
         />
       );
     case "failed":
-      return <NextError statusCode={outcome.statusCode} statusMessage={outcome.statusMessage} />;
+      return (
+        <NextError statusCode={outcome.statusCode} title={outcome.statusMessage || undefined} />
+      );
   }
 };

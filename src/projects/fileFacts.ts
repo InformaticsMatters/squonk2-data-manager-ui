@@ -24,7 +24,9 @@ export const resolveProjectFileContent = (
   if (readState.kind === "unavailable") {
     return "unavailable";
   }
-  if (readState.kind === "recoverable") {
+  // A listing a lapsed session could not refresh is as out of date as one a failed refresh left,
+  // and is held to the same rule: still worth reading, and not something to change against.
+  if (readState.kind === "recoverable" || readState.kind === "session-lapsed") {
     return "stale";
   }
   return hasAnswered ? "current" : "unestablished";

@@ -92,17 +92,52 @@ test.describe("Viewed file delivery contract", () => {
     expect(resolveFileViewerDelivery(recordedResponse(), null)).toEqual({ kind: "readable" });
   });
 
-  test("a refused file answers exactly as a missing one, in the response as well as the page", () => {
+  test("a refusal and an absence each keep their own status and the service's own reason", () => {
     const denied = recordedResponse();
     const missing = recordedResponse();
     expect(
-      resolveFileViewerDelivery(denied, { statusCode: 403, statusMessage: "fixture-forbidden" }),
-    ).toEqual(
-      resolveFileViewerDelivery(missing, { statusCode: 404, statusMessage: "dm-file-not-found" }),
-    );
-    expect(denied.statusCode).toBe(404);
-    expect(denied.statusCode).toBe(missing.statusCode);
-    expect(denied.statusMessage).toBe(FILE_NOT_FOUND_NOTICE);
+      resolveFileViewerDelivery(denied, {
+        statusCode: 403,
+        statusMessage: "Not an editor (odudgeon)",
+      }),
+    ).toEqual({ kind: "unavailable", statusCode: 403, statusMessage: "Not an editor (odudgeon)" });
+    expect(
+      resolveFileViewerDelivery(missing, {
+        statusCode: 404,
+        statusMessage: "File does not exist (/, nope.txt)",
+      }),
+    ).toEqual({
+      kind: "unavailable",
+      statusCode: 404,
+      statusMessage: "File does not exist (/, nope.txt)",
+    });
+    // The response says what the page says, so neither is reported as the other.
+    expect(denied.statusCode).toBe(403);
+    expect(denied.statusMessage).toBe("Not an editor (odudgeon)");
+    expect(missing.statusCode).toBe(404);
+    expect(missing.statusMessage).toBe("File does not exist (/, nope.txt)");
+  });
+
+  test("a rejection that accounted for nothing is answered in the section's own words", () => {
+    const res = recordedResponse();
+    expect(resolveFileViewerDelivery(res, { statusCode: 404, statusMessage: "" })).toEqual({
+      kind: "unavailable",
+      statusCode: 404,
+      statusMessage: FILE_NOT_FOUND_NOTICE,
+    });
+    expect(res.statusMessage).toBe(FILE_NOT_FOUND_NOTICE);
+  });
+
+  test("upstream words reach the status line only as a reason phrase", () => {
+    const res = recordedResponse();
+
+    expect(
+      resolveFileViewerDelivery(res, {
+        statusCode: 403,
+        statusMessage: "refused\r\nX-Injected: yes",
+      }),
+    ).toEqual({ kind: "unavailable", statusCode: 403, statusMessage: "refused X-Injected: yes" });
+    expect(res.statusMessage).toBe("refused X-Injected: yes");
   });
 
   test("transport failures remain retryable rather than claiming the file is gone", () => {

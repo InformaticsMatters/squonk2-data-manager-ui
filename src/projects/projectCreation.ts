@@ -353,28 +353,44 @@ export const forgetProjectCreation = (storage: Pick<Storage, "removeItem">) => {
 };
 
 /**
- * The two answers that carry a status and still leave the outcome in doubt: a request timeout says
- * the endpoint may have gone on to finish the work, and a conflict says a subscription answering
- * this request may already exist. Neither can be told apart from a lost response by retrying it.
+ * The one unnamed answer that carries a status and still leaves the outcome in doubt: a request
+ * timeout says the endpoint may have gone on to finish the work, which cannot be told apart from a
+ * lost response by retrying it. The other such answer is a conflict, which has a kind of its own
+ * and is excluded as that kind rather than as a status.
  */
-const ambiguousProductStatuses = new Set([408, 409]);
+const ambiguousProductStatus = 408;
 
 /**
  * A confirmed rejection means no product identity was hidden by a lost response; transport ambiguity
- * does not. A `4xx` the endpoint answered with is such a rejection unless it is one of the two that
- * describe work that may already exist. Every `5xx` is excluded because a gateway can answer it for
- * a service that had already committed, which is exactly the response a retry would duplicate.
+ * does not. A `4xx` the endpoint answered with is such a rejection unless it describes work that may
+ * already exist. Every `5xx` is excluded because a gateway can answer it for a service that had
+ * already committed, which is exactly the response a retry would duplicate.
  */
 export const productCreationFailureIsRetryable = (error: unknown): boolean => {
   const failure = classifyTransportFailure(error);
-  return (
-    failure.kind === "forbidden" ||
-    failure.kind === "not-found" ||
-    failure.kind === "rate-limited" ||
-    (failure.kind === "unknown" &&
-      failure.status !== undefined &&
-      failure.status >= 400 &&
-      failure.status < 500 &&
-      !ambiguousProductStatuses.has(failure.status))
-  );
+  switch (failure.kind) {
+    case "bad-request":
+    case "forbidden":
+    case "method-not-allowed":
+    case "not-found":
+    case "rate-limited":
+    case "token-refused":
+    case "unprocessable":
+    case "unsupported-media-type":
+      return true;
+    // A conflict is the one rejection that says a subscription answering this request may already
+    // exist, so it is no safer to send again than a response that never arrived.
+    case "conflict":
+    case "network":
+    case "server":
+    case "timeout":
+      return false;
+    case "unknown":
+      return (
+        failure.status !== undefined &&
+        failure.status >= 400 &&
+        failure.status < 500 &&
+        failure.status !== ambiguousProductStatus
+      );
+  }
 };

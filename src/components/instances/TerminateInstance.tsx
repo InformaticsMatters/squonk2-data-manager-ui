@@ -1,5 +1,3 @@
-import { type DmError } from "@/api/data-manager";
-
 import { Button } from "@mui/material";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
@@ -43,7 +41,7 @@ export const TerminateInstance = ({
   onRemoved,
 }: TerminateInstanceProps) => {
   const commands = useResultCommands();
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError();
 
   const action = resultInstanceTerminationAction(lifecycle);
   // Only an instance that accounted for having finished is named as a result to delete. Anything

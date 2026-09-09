@@ -1,5 +1,3 @@
-import { type DmError } from "@/api/data-manager";
-
 import { DeleteForever } from "@mui/icons-material";
 import { IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
 
@@ -32,7 +30,7 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
   const { deletableDatasets, undeletableDatasets } = useFilterDeletableDatasets(selectedDatasets);
   const sortedUndeletableDatasets = useSortUndeletableDatasets(undeletableDatasets);
 
-  const { enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueSnackbar } = useEnqueueError();
 
   const deleteSelectedDatasets = async () => {
     const reasons: unknown[] = [];

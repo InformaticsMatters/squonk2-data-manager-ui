@@ -8,6 +8,7 @@ import {
 import { type VisibleOrganisation } from "../application/applicationIdentity";
 import { canonicalFilesystemPath, filesystemRoot } from "../projects/fileFacts";
 import { noErrorInformation } from "../utils/next/orvalError";
+import { asSentence } from "../utils/text";
 import { DatasetTaskError, DatasetTaskPollingError } from "./mutations";
 
 /**
@@ -206,7 +207,8 @@ export const datasetAttachmentFailureMessage = (
   if (error instanceof DatasetTaskError) {
     return `${error.message} Task ${error.taskId}. Nothing was attached to ${targetName}; retry is available.`;
   }
-  if (classifyTransportFailure(error).kind === "forbidden") {
+  const kind = classifyTransportFailure(error).kind;
+  if (kind === "forbidden" || kind === "token-refused") {
     return `You are not allowed to attach dataset ${datasetId} version ${datasetVersion} to ${targetName}. ${nothingAttached}.`;
   }
   if (isTransientTransportFailure(error)) {
@@ -230,6 +232,5 @@ export const unclassifiedAttachmentFailureMessage = (
   if (!account || account === noErrorInformation) {
     return `The Data Manager refused this attachment. ${nothingAttached}.`;
   }
-  const sentence = ".!?".includes(account.slice(-1)) ? account : `${account}.`;
-  return `${sentence} ${nothingAttached}.`;
+  return `${asSentence(account)} ${nothingAttached}.`;
 };

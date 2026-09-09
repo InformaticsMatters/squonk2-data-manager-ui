@@ -2,7 +2,7 @@ import { expect, type Page, test, type TestInfo } from "@playwright/test";
 
 import { PROJECT_CREATION_RECOVERY_KEY } from "../../src/projects/projectCreation";
 import { RECENT_PROJECTS_STORAGE_KEY } from "../../src/projects/recentProjects";
-import { fixtureIds } from "./services/fixtures";
+import { fixtureIds, rejectedProjectName } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
 
 test.describe.configure({ mode: "serial" });
@@ -144,6 +144,72 @@ test("Project 403 and 404 share a non-disclosing result and clear recent content
     .poll(() => page.evaluate((key) => localStorage.getItem(key), RECENT_PROJECTS_STORAGE_KEY))
     .not.toContain(fixtureIds.project);
   await expect(page).toHaveURL(`${acceptanceUrls.app}${projectPath}`);
+});
+
+test("a lapsed session keeps the project it could not read and offers the way back", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const projectPath = `projects/${fixtureIds.project}/files`;
+  await login(page, projectPath, testInfo);
+  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+  await expect
+    .poll(() => page.evaluate((key) => localStorage.getItem(key), RECENT_PROJECTS_STORAGE_KEY))
+    .toContain(fixtureIds.project);
+
+  // Left and returned to, rather than reloaded, so what the client already holds for the project is
+  // still there to be discarded — which is the whole of what this journey is about.
+  await page.getByRole("link", { name: "Squonk Home" }).click();
+  await expect(page).toHaveURL(acceptanceUrls.app.slice(0, -1));
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/project-failure?status=403&reason=token-refused`,
+  );
+  await page.goBack();
+
+  const lapsed = page.getByRole("alert").filter({ hasText: "Your session has expired" });
+  await expect(lapsed).toBeVisible();
+  // The project said nothing about itself, so nothing is claimed about access to it, and the
+  // control offered is the one that can actually recover it.
+  await expect(
+    page.getByText("This project is unavailable or you no longer have access."),
+  ).toBeHidden();
+  await expect(lapsed.getByRole("button", { name: "Login" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Retry" })).toBeHidden();
+  // Nothing held for the project went: it is still recent, and still displayed as where the
+  // caller is, so signing in again returns them to it rather than to a project they have lost.
+  await expect
+    .poll(() => page.evaluate((key) => localStorage.getItem(key), RECENT_PROJECTS_STORAGE_KEY))
+    .toContain(fixtureIds.project);
+  await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Project" })).toBeVisible();
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/project-failure`);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${projectPath}`);
+});
+
+test("a project identifier the service rejects says so, and offers nothing to retry", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  const projectPath = `projects/${fixtureIds.project}/files`;
+  await login(page, projectPath, testInfo);
+  await expect(page.getByRole("heading", { name: "Files" })).toBeVisible();
+
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/project-failure?status=400`);
+  await page.reload();
+
+  // The address is what is wrong, so the address is what the sentence names — and no control is
+  // offered for a request that would be rejected identically however often it is sent.
+  await expect(page.getByText(`“${fixtureIds.project}” is not a project identifier`)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Retry" })).toBeHidden();
+  // A rejected address is no evidence about the project, so nothing held for it is discarded.
+  await expect
+    .poll(() => page.evaluate((key) => localStorage.getItem(key), RECENT_PROJECTS_STORAGE_KEY))
+    .toContain(fixtureIds.project);
 });
 
 test("transient Project failure retains chrome and retries without changing scope", async ({
@@ -714,6 +780,27 @@ for (const [status, reason] of [
   });
 }
 
+test("a name the service rejects is answered in the service's own words", async ({
+  page,
+}, testInfo) => {
+  await login(page, "projects/new", testInfo);
+  await page.getByLabel("Containing unit").click();
+  await page.getByRole("option", { name: "Acceptance Organisation / Acceptance Unit" }).click();
+  await page.getByLabel("Project name").fill(rejectedProjectName);
+  await page.getByLabel("Tier").click();
+  await page.getByRole("option", { name: "Bronze" }).click();
+  await page.getByRole("button", { name: "Create project" }).click();
+
+  // The rejection arrives as `application/problem+json`, whose `detail` carries the sentence and
+  // then the schema it was validated against. The caller is shown the sentence and not the schema.
+  await expect(
+    page.getByText(`'${rejectedProjectName}' is not a permitted project name - 'name'`),
+  ).toBeVisible();
+  await expect(page.getByText(/Failed validating/u)).toHaveCount(0);
+  await expect(page.getByLabel("Project name")).toHaveValue(rejectedProjectName);
+  await expect(page.getByRole("button", { name: "Retry" })).toBeVisible();
+});
+
 test("a project domain failure keeps its subscription and exact service answer", async ({
   page,
   request,
@@ -1126,12 +1213,11 @@ test("a rejected project change is feedback alone, and restored access succeeds"
   await expect(privacySwitch(page)).toBeEnabled();
 
   await privacySwitch(page).click();
+  // The Data Manager's own account of the refusal is what is stated, with this client's guarantee
+  // after it. A refusal changes neither the displayed project, nor its organisation, nor the route.
   await expect(
-    privacyControl(page).getByText(
-      `You cannot change the privacy of project ${fixtureIds.project}. It is unavailable or you do not have access. The displayed project has not changed.`,
-    ),
+    privacyControl(page).getByText("fixture-forbidden. The displayed project has not changed."),
   ).toBeVisible();
-  // A refusal changes neither the displayed project, nor its organisation, nor the route.
   await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
   await expect(page.getByText("Acceptance Unit · Acceptance Organisation")).toBeVisible();
   await expect(factRow(page, "Privacy")).toContainText("Private");
@@ -1139,9 +1225,7 @@ test("a rejected project change is feedback alone, and restored access succeeds"
 
   await addMember(page, "Editors", colleague);
   await expect(
-    members(page, "Editors").getByText(
-      `You cannot change the editors of project ${fixtureIds.project}. It is unavailable or you do not have access. The displayed project has not changed.`,
-    ),
+    members(page, "Editors").getByText("fixture-forbidden. The displayed project has not changed."),
   ).toBeVisible();
   await expect(memberChip(page, "Editors", colleague)).toHaveCount(0);
 

@@ -5,6 +5,7 @@ import { Alert, AlertTitle, Box, styled, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 
 import { capabilityIsEnabled, type ProjectCapability } from "./capabilities";
+import { fileRejectionMessages } from "./fileRejections";
 import { useFileCommands } from "./useFileCommands";
 import { useFileMutation } from "./useFileMutation";
 
@@ -71,8 +72,8 @@ export const ProjectFileUpload = ({
     for (const file of accepted) {
       void run("upload", `${file.name} to this project`, () => commands.uploadFile(path, file));
     }
-    for (const rejection of rejections) {
-      enqueueSnackbar(`${rejection.file.name} was rejected.`, { variant: "error" });
+    for (const message of fileRejectionMessages(rejections)) {
+      enqueueSnackbar(message, { variant: "error" });
     }
   };
 

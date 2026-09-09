@@ -59,14 +59,24 @@ const applyResourcePatch = <
     body.default_product_privacy ?? resource.default_product_privacy;
 };
 
+/**
+ * The body a forced failure answers with, which is the one its status describes. A refusal that
+ * accounts for itself is what the services actually send, and what the screen is now expected to
+ * relay, so a forced refusal answers as a refusal rather than as a server error.
+ */
+const failureBody = (state: ScenarioState, status: number) => {
+  if (status === 403) {
+    return state.fixtures.failures.forbidden;
+  }
+  return status === 429 ? state.fixtures.failures.rateLimited : state.fixtures.failures.serverError;
+};
+
 /** A single addressed organisation or unit read fails with the body its status describes. */
 const addressedReadFailure = (state: ScenarioState, response: ServerResponse) =>
   json(
     response,
     state.addressedReadFailure ?? 503,
-    state.addressedReadFailure === 403
-      ? state.fixtures.failures.forbidden
-      : state.fixtures.failures.serverError,
+    failureBody(state, state.addressedReadFailure ?? 503),
   );
 
 const changeMembers = (users: { id: string }[], userId: string, add: boolean) => {
@@ -364,19 +374,19 @@ const handleAccountServer = async (request: IncomingMessage, response: ServerRes
   }
   if (url.pathname === `/charges/organisation/${fixtureIds.organisation}`) {
     if (state.chargeFailure) {
-      return json(response, state.chargeFailure, state.fixtures.failures.serverError);
+      return json(response, state.chargeFailure, failureBody(state, state.chargeFailure));
     }
     return json(response, 200, state.fixtures.organisationCharges);
   }
   if (url.pathname === `/charges/unit/${fixtureIds.unit}`) {
     if (state.chargeFailure) {
-      return json(response, state.chargeFailure, state.fixtures.failures.serverError);
+      return json(response, state.chargeFailure, failureBody(state, state.chargeFailure));
     }
     return json(response, 200, state.fixtures.unitCharges);
   }
   if (url.pathname === `/charges/product/${fixtureIds.product}`) {
     if (state.chargeFailure) {
-      return json(response, state.chargeFailure, state.fixtures.failures.serverError);
+      return json(response, state.chargeFailure, failureBody(state, state.chargeFailure));
     }
     return json(response, 200, state.fixtures.productCharges);
   }

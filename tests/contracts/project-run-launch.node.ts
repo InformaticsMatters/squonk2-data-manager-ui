@@ -65,6 +65,22 @@ test.describe("Launch failure classification", () => {
     });
   });
 
+  test("every rejection status the Data Manager sends keeps the service's own words", () => {
+    // `409 Application exists`, `415`, `422` and `405` each have a kind of their own now; none of
+    // them decides authority, so each still reads as what the service said about this one launch.
+    for (const status of [405, 409, 415, 422]) {
+      expect(
+        classifyLaunchFailure(domainRejection(status, "Application exists")),
+        String(status),
+      ).toEqual({ kind: "recoverable", reason: "Application exists" });
+    }
+  });
+
+  test("a token the Data Manager will not accept still withholds the launch", () => {
+    const refusal = domainRejection(403, "Provided token does not have the required scopes.");
+    expect(classifyLaunchFailure(refusal)).toEqual({ kind: "rejected", reason: rejectedReason });
+  });
+
   test("a failure nothing accounts for is still recoverable and never a rejection", () => {
     expect(classifyLaunchFailure(new Error("boom"))).toEqual({
       kind: "recoverable",

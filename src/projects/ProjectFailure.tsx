@@ -8,9 +8,10 @@ import { getGetProjectQueryKey } from "@/api/data-manager/project";
 import { Alert, Button, Container } from "@mui/material";
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 
-import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
+import { AuthButton } from "../components/auth/AuthButton";
+import { resolveProjectWorkspaceFailure } from "./failures";
 import { requireLinkedProject, resolveProjectAncestry } from "./projectAncestry";
-import { removeUnavailableProject } from "./projectCache";
+import { settleProjectWorkspaceFailure } from "./projectCache";
 import { usePublishRouteProjectResolution } from "./routeProjectResolution";
 import { type ProjectWorkspace, RouteProjectProvider } from "./useRouteProject";
 
@@ -51,21 +52,25 @@ export const ProjectFailure = ({
   retry: () => void;
 }) => {
   const queryClient = useQueryClient();
-  const failure = classifyTransportFailure(error);
-  const unavailable = failure.kind === "forbidden" || failure.kind === "not-found";
-  const workspace = unavailable ? undefined : readCachedWorkspace(queryClient, projectId);
+  const failure = resolveProjectWorkspaceFailure(error, projectId);
+  // A project this read said nothing about is still the project the caller had, so whatever was
+  // loaded for it stays displayed underneath the failure.
+  const workspace = failure.discardsProject
+    ? undefined
+    : readCachedWorkspace(queryClient, projectId);
   const handleRetry = () => {
     void queryClient
       .refetchQueries({ exact: true, queryKey: getGetProjectQueryKey(projectId), type: "all" })
       .then(retry);
   };
 
+  // What the failure decided, rather than the failure itself: a resolution is a fresh object every
+  // render, and settling discards cache entries and invalidates the project index, which is not
+  // something to do again on each one.
+  const { discardsProject } = failure;
   useEffect(() => {
-    if (!unavailable) {
-      return;
-    }
-    removeUnavailableProject(queryClient, localStorage, projectId);
-  }, [projectId, queryClient, unavailable]);
+    settleProjectWorkspaceFailure({ discardsProject }, queryClient, localStorage, projectId);
+  }, [discardsProject, projectId, queryClient]);
 
   // Tell the identity strip in the chrome that this project failed, so it stops showing the
   // placeholder that means the project is still on its way. A cached workspace is a resolution of
@@ -78,21 +83,23 @@ export const ProjectFailure = ({
     ),
   );
 
+  // The route back is the failure's own: a read worth making again offers the retry, a session
+  // that lapsed offers the sign-in that is the only thing able to recover it, and an answer
+  // nothing the caller does can change offers neither rather than a control that cannot work.
+  const remedy = {
+    none: undefined,
+    reauthenticate: <AuthButton color="inherit" mode="login" size="small" />,
+    retry: (
+      <Button color="inherit" size="small" onClick={handleRetry}>
+        Retry
+      </Button>
+    ),
+  }[failure.remedy];
+
   const content = (
     <Container maxWidth="lg" sx={{ py: 3 }}>
-      <Alert
-        action={
-          unavailable ? undefined : (
-            <Button color="inherit" size="small" onClick={handleRetry}>
-              Retry
-            </Button>
-          )
-        }
-        severity={unavailable ? "warning" : "error"}
-      >
-        {unavailable
-          ? "This project is unavailable or you no longer have access."
-          : "Project data could not be loaded. Retry this project."}
+      <Alert action={remedy} severity={failure.severity}>
+        {failure.message}
       </Alert>
     </Container>
   );

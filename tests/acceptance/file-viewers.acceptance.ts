@@ -124,7 +124,7 @@ test("a viewer entered directly authenticates into its own project and transport
   }
 });
 
-test("a file the project does not hold, or will not disclose, is a Files-local outcome", async ({
+test("a file the project does not hold, and one it refuses, each state the service's reason", async ({
   page,
   request,
 }, testInfo) => {
@@ -135,29 +135,39 @@ test("a file the project does not hold, or will not disclose, is a Files-local o
   const missing = await page.goto(`${files}/view?path=%2Finputs%2Fabsent.txt`);
   expect(missing?.status()).toBe(404);
   await expect(page).toHaveURL(`${acceptanceUrls.app}${files}/view?path=%2Finputs%2Fabsent.txt`);
-  await expect(page.getByText("This file was not found in this project.")).toBeVisible();
+  // The Data Manager's own sentence names the file it does not hold, rather than the client
+  // stating an absence of its own, and it reaches the status line as a reason phrase.
+  await expect(page.getByText("File does not exist (/inputs, absent.txt)")).toBeVisible();
+  expect(missing?.statusText()).toBe("File does not exist (/inputs, absent.txt)");
   // The valid project shell, the file's own directory, and a usable listing are all retained.
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { exact: true, name: "poses.sdf" })).toBeVisible();
 
-  // A file the Data Manager refuses answers exactly as one it does not hold, in the response as
-  // well as the page, so the viewer cannot be used to discover which files a project holds.
+  // A file the Data Manager refuses keeps its own status and its own reason: a refusal and an
+  // absence are no longer answered identically, because the Data Manager distinguishes them to
+  // anyone calling it directly.
   await request.post(
     `${acceptanceUrls.control}/scenario/${subject}/file-content-failure?status=403`,
   );
   const denied = await page.goto(notesView);
-  expect(denied?.status()).toBe(missing?.status());
-  await expect(page.getByText("This file was not found in this project.")).toBeVisible();
+  expect(denied?.status()).toBe(403);
+  await expect(page.getByText("fixture-forbidden")).toBeVisible();
   await expect(page.getByText("acceptance notes.txt", { exact: true })).toHaveCount(0);
   await expect(page).toHaveURL(`${acceptanceUrls.app}${notesView}`);
 
   // A viewer that would have fetched the file itself is told the same thing before it is framed,
   // so a refusal never reaches the caller as a proxy error inside a frame.
   const deniedInBrowser = await page.goto(`${notesView}&viewer=browser`);
-  expect(deniedInBrowser?.status()).toBe(missing?.status());
-  await expect(page.getByText("This file was not found in this project.")).toBeVisible();
+  expect(deniedInBrowser?.status()).toBe(403);
+  await expect(page.getByText("fixture-forbidden")).toBeVisible();
   await expect(page.locator("iframe")).toHaveCount(0);
   await expect(page).toHaveURL(`${acceptanceUrls.app}${notesView}&viewer=browser`);
+
+  // Files itself still answers for a path it cannot address at all, where no service was asked.
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/file-content-failure`);
+  const unaddressable = await page.goto(`${files}/view?path=%2F`);
+  expect(unaddressable?.status()).toBe(404);
+  await expect(page.getByText("This file was not found in this project.")).toBeVisible();
 });
 
 test("content that could not be delivered stays retryable at the same file", async ({

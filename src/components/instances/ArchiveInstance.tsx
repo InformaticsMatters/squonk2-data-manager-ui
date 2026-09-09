@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-import { type DmError } from "@/api/data-manager";
-
 import { Button, Tooltip } from "@mui/material";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
@@ -37,7 +35,7 @@ export const ArchiveInstance = ({
   projectId,
 }: ArchiveInstanceProps) => {
   const commands = useResultCommands();
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError();
   const [archiving, setArchiving] = useState(false);
 
   const archiveInstance = async () => {

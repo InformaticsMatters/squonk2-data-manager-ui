@@ -1,5 +1,3 @@
-import { type DmError } from "@/api/data-manager";
-
 import { Button } from "@mui/material";
 
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
@@ -41,7 +39,7 @@ export const WorkflowLifecycleButton = ({
   onDeleted,
 }: WorkflowLifecycleButtonProps) => {
   const commands = useResultCommands();
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError();
 
   const action = resultWorkflowLifecycleAction(lifecycle);
   // Only a workflow that accounted for having finished offers to be deleted. Anything else names

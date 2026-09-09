@@ -52,6 +52,7 @@ import {
   type UncheckedDefinitionFilter,
 } from "../../src/projects/routes";
 import {
+  readableContent,
   resolveSectionFreshness,
   resolveSectionReadState,
   sectionReadFailure,
@@ -210,6 +211,53 @@ test("confirmed absence or refusal clears content while everything else retries"
   expect(resolveSectionFreshness({ kind: "unavailable" })).toBe("current");
 });
 
+test("a token the service refused is a fact about the session, not about the content", () => {
+  /** How the services answer a token that has expired or lost the scopes they require. */
+  const lapsed = {
+    data: {
+      detail:
+        "Provided token does not have the required scopes. Provided: []; Required: ['data-manager-user']",
+    },
+    headers: new Headers(),
+    status: 403,
+  };
+  const state = resolveSectionReadState(lapsed);
+
+  expect(state).toEqual({ kind: "session-lapsed" });
+  // Nothing loaded is cleared: the session lapsed, and signing in again finds it where it was.
+  expect(readableContent(state, [instance()])).toHaveLength(1);
+  // It could not be refreshed either, so nothing it describes is established as safe to change.
+  expect(resolveSectionFreshness(state)).toBe("stale");
+  // The route back is re-authentication rather than a retry that would be refused the same way.
+  expect(resolveResultsReadReport({ instance: state, task: state, workflow: state })).toEqual({
+    retryable: false,
+    sessionLapsed: true,
+    unavailable: false,
+  });
+
+  // A refusal about the resource keeps the answer it has always had.
+  expect(
+    resolveSectionReadState({
+      data: { error: "Not an Observer (odudgeon)" },
+      headers: new Headers(),
+      status: 403,
+    }),
+  ).toEqual({ kind: "unavailable" });
+  // A malformed identifier is answered by the project workspace, which is the only read addressed
+  // by one: a section is read inside a project whose identifier already parsed, and its own
+  // rejected requests are not an address the caller can correct, so they retry as they always did.
+  expect(
+    resolveSectionReadState({
+      data: {
+        detail:
+          "'nonsense' does not match '^project-[a-z0-9-]+$'\n\nFailed validating 'pattern' in schema",
+      },
+      headers: new Headers(),
+      status: 400,
+    }),
+  ).toEqual({ kind: "recoverable", retryable: true });
+});
+
 const project = (overrides: Partial<ProjectDetail> = {}) =>
   ({
     administrators: [],
@@ -365,7 +413,11 @@ test("a collection that fails does not decide what the other collections may sho
 
   // A refusal on one collection never silences the retry the transient one needs: both outcomes
   // are reported, so the caller is told what was lost *and* offered the retry that can recover.
-  expect(resolveResultsReadReport(readStates)).toEqual({ retryable: true, unavailable: true });
+  expect(resolveResultsReadReport(readStates)).toEqual({
+    retryable: true,
+    sessionLapsed: false,
+    unavailable: true,
+  });
 
   // Only the collection that could not be refreshed is locked. The refused one cleared its content
   // and the readable one stays actionable, so no result is disabled for another collection's read.
@@ -402,7 +454,11 @@ test("the section reports nothing when every collection answered", () => {
     workflow: resolveSectionReadState(null),
   };
 
-  expect(resolveResultsReadReport(readStates)).toEqual({ retryable: false, unavailable: false });
+  expect(resolveResultsReadReport(readStates)).toEqual({
+    retryable: false,
+    sessionLapsed: false,
+    unavailable: false,
+  });
   expect(resolveResultsFreshnessByCollection(readStates)).toEqual({
     instance: "current",
     task: "current",
@@ -1130,20 +1186,24 @@ test("the definition catalogue read is reported beside the collections without d
   };
 
   // A read that was never issued reports nothing at all.
-  expect(resolveResultsReadReport(readStates)).toEqual({ retryable: false, unavailable: false });
+  expect(resolveResultsReadReport(readStates)).toEqual({
+    retryable: false,
+    sessionLapsed: false,
+    unavailable: false,
+  });
   // One that failed is reported and retried on the same terms as any collection.
   expect(
     resolveResultsReadReport(
       readStates,
       resolveSectionReadState(new Response(null, { status: 503 })),
     ),
-  ).toEqual({ retryable: true, unavailable: false });
+  ).toEqual({ retryable: true, sessionLapsed: false, unavailable: false });
   expect(
     resolveResultsReadReport(
       readStates,
       resolveSectionReadState(new Response(null, { status: 403 })),
     ),
-  ).toEqual({ retryable: false, unavailable: true });
+  ).toEqual({ retryable: false, sessionLapsed: false, unavailable: true });
 
   // Its failure decides nothing about the collections: their content is neither cleared nor locked,
   // and the results that answered stay on screen rather than being narrowed by a definition nothing

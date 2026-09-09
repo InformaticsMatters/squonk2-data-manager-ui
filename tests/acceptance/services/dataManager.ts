@@ -9,8 +9,13 @@ import { setTimeout as delay } from "node:timers/promises";
 import { z } from "zod";
 
 import { acceptanceEnvironment } from "../environment";
-import { datasetContentFixtures, fixtureIds, type FixtureProjectFileSystem } from "./fixtures";
-import { cors, json, multipartField, readBody, record } from "./http";
+import {
+  datasetContentFixtures,
+  fixtureIds,
+  type FixtureProjectFileSystem,
+  rejectedProjectName,
+} from "./fixtures";
+import { cors, json, multipartField, problem, readBody, record } from "./http";
 import {
   type AttachmentRecord,
   type AttachmentTaskRecord,
@@ -26,6 +31,45 @@ import {
  * catalogue, and the instance, task, and running-workflow lifecycles Results reads. Every stage a
  * scenario can put a resource in is decided here, so no test has to drive time itself.
  */
+
+/**
+ * The body one refused or failed Results read answers with, which is the same choice a project
+ * read makes: a `403` is either the collection refusing the caller or the service refusing the
+ * token the request carried, and only the second says nothing about the collection.
+ */
+const resultsFailureBody = (
+  state: ScenarioState,
+  failure: { reason?: "token-refused"; status: 403 | 503 },
+) => {
+  if (failure.reason === "token-refused") {
+    return state.fixtures.failures.tokenRefused;
+  }
+  return failure.status === 403
+    ? state.fixtures.failures.forbidden
+    : state.fixtures.failures.serverError;
+};
+
+/**
+ * The body one refused or failed project read answers with. A `403` is the one status the two
+ * differ on: a resource refusing the caller says so in the shape the spec documents, and a service
+ * refusing the token they carried answers in the framework's own, saying nothing about the project.
+ * A `400` is Connexion rejecting the identifier in the address before any project is looked for.
+ */
+const projectFailureBody = (state: ScenarioState) => {
+  if (state.projectFailureReason === "token-refused") {
+    return state.fixtures.failures.tokenRefused;
+  }
+  switch (state.projectFailure) {
+    case 400:
+      return state.fixtures.failures.malformedIdentifier;
+    case 403:
+      return state.fixtures.failures.forbidden;
+    case 503:
+      return state.fixtures.failures.serverError;
+    default:
+      return { error: "fixture-not-found" };
+  }
+};
 
 const LabelAnnotation = z.object({
   active: z.boolean(),
@@ -361,6 +405,10 @@ const addressedResultTask = (state: ScenarioState, taskId: string) =>
     : Object.values(state.fixtures.resultTasks)
         .flatMap((collection) => collection.tasks)
         .find((candidate) => candidate.id === taskId);
+
+/** One dataset version addressed directly, which is how every viewer transport reads one. */
+const datasetVersionRead = /^\/dataset\/[^/]+\/(?<version>\d+)$/u;
+
 const handleDataManager = async (request: IncomingMessage, response: ServerResponse) => {
   cors(request, response);
   if (request.method === "OPTIONS") {
@@ -670,7 +718,9 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     }
     const held = system.files.find((file) => file.path === path && file.file_name === fileName);
     if (!held) {
-      return json(response, 404, { error: "fixture-file-not-found" });
+      // The Data Manager names the file it does not hold, which is what tells a mistyped path apart
+      // from a project this caller may not read.
+      return json(response, 404, { error: `File does not exist (${path}, ${fileName})` });
     }
     // The type is the one the listing gives the file, so a browser shown the bytes is shown them
     // as that type.
@@ -687,6 +737,21 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
           state.projectCreationFailure === 400
             ? { error: "fixture-project-domain-failure" }
             : state.fixtures.failures.serverError,
+        );
+      }
+      // A name the service will not take is refused by request validation before the handler runs,
+      // so it answers `application/problem+json` whose `detail` is the caller's sentence followed
+      // by the schema it was validated against.
+      if (form.get("name") === rejectedProjectName) {
+        return problem(
+          response,
+          400,
+          "Bad Request",
+          [
+            `'${rejectedProjectName}' is not a permitted project name - 'name'`,
+            "Failed validating 'pattern' in schema:\n    {'type': 'string',\n     'maxLength': 80,\n     'minLength': 2}",
+            `On instance:\n    '${rejectedProjectName}'`,
+          ].join("\n\n"),
         );
       }
       if (form.get("tier_product_id") !== state.createdProduct?.product.id) {
@@ -748,13 +813,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       ({ collection }) => !collection || collection === url.pathname,
     );
     if (failure) {
-      return json(
-        response,
-        failure.status,
-        failure.status === 403
-          ? state.fixtures.failures.forbidden
-          : state.fixtures.failures.serverError,
-      );
+      return json(response, failure.status, resultsFailureBody(state, failure));
     }
     if (url.pathname === "/instance") {
       return json(response, 200, instancesOf(state, projectId));
@@ -773,13 +832,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   ) {
     const failure = state.resultsFailures.find(({ collection }) => collection === url.pathname);
     if (failure) {
-      return json(
-        response,
-        failure.status,
-        failure.status === 403
-          ? state.fixtures.failures.forbidden
-          : state.fixtures.failures.serverError,
-      );
+      return json(response, failure.status, resultsFailureBody(state, failure));
     }
   }
   // An instance is terminated while it is running and deleted once it has finished, and archived
@@ -967,13 +1020,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
   }
   if (url.pathname === `/project/${fixtureIds.project}` && request.method === "GET") {
     if (state.projectFailure) {
-      const body =
-        state.projectFailure === 403
-          ? state.fixtures.failures.forbidden
-          : state.projectFailure === 503
-            ? state.fixtures.failures.serverError
-            : { error: "fixture-not-found" };
-      return json(response, state.projectFailure, body);
+      return json(response, state.projectFailure, projectFailureBody(state));
     }
     const acceptanceProject = addressableProject(state, fixtureIds.project);
     return acceptanceProject
@@ -1307,6 +1354,14 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       "content-type": "application/octet-stream",
     });
     return response.end(content);
+  }
+  // A version this dataset does not hold is named by the Data Manager in its own words, exactly as
+  // an absent file is, rather than falling through to the route-level rejection.
+  const absentVersion = datasetVersionRead.exec(url.pathname);
+  if (request.method === "GET" && absentVersion) {
+    return json(response, 404, {
+      error: `Dataset version does not exist (${absentVersion.groups?.version})`,
+    });
   }
   if (url.pathname.startsWith("/__failure/")) {
     const status = Number(url.pathname.slice("/__failure/".length));

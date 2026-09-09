@@ -103,6 +103,12 @@ export const fixtureIds = {
   unlistedProduct: "product-2f2f2f2f-2f2f-4f2f-8f2f-2f2f2f2f2f2f",
 } as const;
 
+/**
+ * A project name the fixture Data Manager will not take. The form's own rules cannot pre-empt it,
+ * so the request reaches the service and is refused by its request validation.
+ */
+export const rejectedProjectName = "Reserved";
+
 export const datasetContentFixtures = {
   1: gzipSync(Buffer.from("acceptance dataset version 1\n")),
   2: gzipSync(Buffer.from("acceptance dataset version 2\n")),
@@ -607,8 +613,32 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
        */
       badRequest: { error: "fixture-rejected: the file type is not supported by this project" },
       forbidden: { error: "fixture-forbidden" },
+      /**
+       * What Connexion answers when a path parameter is not the identifier the route requires: the
+       * words a caller can act on, then the schema they were validated against, in the
+       * `problem+json` shape neither spec documents.
+       */
+      malformedIdentifier: {
+        detail:
+          "'fixture-nonsense' does not match '^project-[a-z0-9-]+$'\n\nFailed validating 'pattern' in schema:\n    {'pattern': '^project-[a-z0-9-]+$', 'type': 'string'}",
+        status: 400,
+        title: "Bad Request",
+        type: "about:blank",
+      },
       rateLimited: { error: "fixture-rate-limited" },
       serverError: { error: "fixture-server-error" },
+      /**
+       * A refusal of the token the request carried rather than of the resource it addressed, which
+       * is what an expired or under-scoped session is answered with. It arrives on every request
+       * alike, and says nothing whatever about the project addressed.
+       */
+      tokenRefused: {
+        detail:
+          "Provided token does not have the required scopes. Provided: []; Required: ['data-manager-user']",
+        status: 403,
+        title: "Forbidden",
+        type: "about:blank",
+      },
     },
     callerAccount: AppApiUserGetAccountResponse.parse({
       account_server_roles: platformAdmin ? ["admin", "user"] : ["user"],

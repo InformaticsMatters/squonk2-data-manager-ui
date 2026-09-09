@@ -331,11 +331,10 @@ test("a refused report is presented where the report is", async ({ page, request
   await request.post(`${acceptanceUrls.control}/scenario/${subject}/charge-failure?status=403`);
   await login(page, "administration/charges", testInfo);
 
-  // An authoritative refusal is the ledger's own answer, so it is stated in place and offers no
-  // retry — while the workspace around it, and the scope in the URL, are untouched.
-  await expect(
-    page.getByText("You do not have access to this Administration resource."),
-  ).toBeVisible();
+  // An authoritative refusal is the ledger's own answer, so the Account Server's own account of it
+  // is what is stated in place, and it offers no retry — while the workspace around it, and the
+  // scope in the URL, are untouched.
+  await expect(page.getByText("fixture-forbidden")).toBeVisible();
   await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
   await expect(railUnits(page).filter({ hasText: "Acceptance Unit" })).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}administration/charges`);

@@ -4,8 +4,8 @@ import { pagePolicies, withPagePolicy } from "../../../../../application/pagePol
 import { DatasetViewer, type DatasetViewerProps } from "../../../../../datasets/DatasetViewer";
 import { datasetVersionResourcePath } from "../../../../../datasets/routes";
 import {
-  concealDatasetVersionAbsence,
   DATASET_VERSION_NOT_FOUND,
+  reportDatasetVersionFailure,
 } from "../../../../../datasets/viewerContent";
 import { isDatasetId, isDatasetVersion } from "../../../../../routing/identifiers";
 import { plaintextViewerSSR } from "../../../../../utils/api/plaintextViewerSSR";
@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps<DatasetViewerProps> = async 
       const url =
         process.env.DATA_MANAGER_API_SERVER + datasetVersionResourcePath(datasetId, version);
       const content = await plaintextViewerSSR(req, res, { url, compressed: true });
-      return concealDatasetVersionAbsence(res, content);
+      return reportDatasetVersionFailure(res, content);
     },
   })(ctx);
 };

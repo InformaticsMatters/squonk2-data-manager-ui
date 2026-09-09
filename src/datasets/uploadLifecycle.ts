@@ -103,7 +103,7 @@ export const datasetUploadRequestFailure = (error: unknown): DatasetUploadRecord
   return {
     kind: "request-failed",
     reason:
-      failure.kind === "forbidden"
+      failure.kind === "forbidden" || failure.kind === "token-refused"
         ? "You are not allowed to upload a dataset to this unit."
         : "The Data Manager refused this upload.",
   };

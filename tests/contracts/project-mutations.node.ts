@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
+import { NetworkTransportError } from "../../src/api/runtime/classifyTransportFailure";
 import { classifyProjectCommandFailure } from "../../src/projects/failures";
 import {
   projectOutcomeMessage,
@@ -14,6 +15,18 @@ const colleague = "colleague@example.org";
 const administrator = "administrator@example.org";
 const projectId = "project-33333333-3333-4333-8333-333333333333";
 const rejection = (status: number) => new Response(null, { status });
+
+/** A rejection in the shape both specs document for every 4xx they carry a body on. */
+const documented = (status: number, error: string) => ({
+  isAxiosError: true,
+  response: { status, data: { error } },
+});
+
+/** The same rejection in the framework's own shape, which neither spec documents. */
+const framework = (status: number, detail: string) => ({
+  isAxiosError: true,
+  response: { status, data: { detail, status, title: "Bad Request", type: "about:blank" } },
+});
 
 test.describe("Project membership input shaping", () => {
   test("every managed role is shaped by the same resolver", () => {
@@ -129,34 +142,131 @@ test.describe("Project command outcomes", () => {
 test.describe("Project command failure classification", () => {
   const action = "change the editors of";
   const resource = `project ${projectId}`;
+  const unchanged = "The displayed project has not changed";
+  const unavailable = `You cannot ${action} ${resource}. It is unavailable or you do not have access. ${unchanged}.`;
 
-  test("a refusal and a missing resource are the same authoritative rejection", () => {
-    const expected = {
+  /**
+   * What each rejection status these services answer a project command with actually says, and
+   * therefore what the caller is now told. Every one of them was flattened into a sentence of this
+   * client's, and the membership rules in particular were unlearnable from it.
+   */
+  const rejections = [
+    { reason: "Too few administrators", status: 400 },
+    { reason: "Too few editors", status: 400 },
+    { reason: "Too few observers", status: 400 },
+    { reason: "Not an Administrator (odudgeon)", status: 403 },
+    { reason: "Editor not in Project (nosuchuser)", status: 404 },
+    { reason: "Application exists", status: 409 },
+    { reason: "Unsupported Media Type", status: 415 },
+    { reason: "It was not possible to convert the Dataset to the format desired", status: 422 },
+  ];
+
+  for (const { reason, status } of rejections) {
+    test(`a ${status} answering “${reason}” states that reason, in either body shape`, () => {
+      const expected = { kind: "rejected", message: `${reason}. ${unchanged}.` };
+      expect(classifyProjectCommandFailure(documented(status, reason), action, resource)).toEqual(
+        expected,
+      );
+      expect(classifyProjectCommandFailure(framework(status, reason), action, resource)).toEqual(
+        expected,
+      );
+    });
+  }
+
+  test("a refusal that said nothing is the one place the canned sentence is reached", () => {
+    // With no words at all a refusal and an absence really are indistinguishable to this client,
+    // which is the only reason one sentence still covers both.
+    expect(classifyProjectCommandFailure(rejection(403), action, resource)).toEqual({
       kind: "rejected",
-      message: `You cannot ${action} ${resource}. It is unavailable or you do not have access. The displayed project has not changed.`,
-    };
-    expect(classifyProjectCommandFailure(rejection(403), action, resource)).toEqual(expected);
-    expect(classifyProjectCommandFailure(rejection(404), action, resource)).toEqual(expected);
+      message: unavailable,
+    });
+    expect(classifyProjectCommandFailure(rejection(404), action, resource)).toEqual({
+      kind: "rejected",
+      message: unavailable,
+    });
+    // Every other refusal that accounted for itself with nothing is still a refusal, so none of
+    // them offers a retry that cannot work.
+    for (const status of [400, 409, 415, 422]) {
+      expect(
+        classifyProjectCommandFailure(rejection(status), action, resource),
+        String(status),
+      ).toEqual({ kind: "rejected", message: `Could not ${action} ${resource}. ${unchanged}.` });
+    }
   });
 
-  test("a transport failure keeps the displayed project and offers retry", () => {
-    for (const status of [429, 500, 503]) {
-      expect(classifyProjectCommandFailure(rejection(status), action, resource)).toEqual({
-        kind: "retryable",
-        message: `Could not ${action} ${resource}. The displayed project has not changed; retry is available.`,
+  test("a command the service will not allow at all says retrying cannot change it", () => {
+    // `405` is the Data Manager refusing the command on the target itself — a managed file cannot
+    // be deleted — so the caller is told the attempt can never succeed rather than left to repeat it.
+    const reason = "Forbidden from deleting the file";
+    for (const answer of [documented(405, reason), framework(405, reason)]) {
+      expect(classifyProjectCommandFailure(answer, action, resource)).toEqual({
+        kind: "rejected",
+        message: `${reason}. Retrying cannot change that. ${unchanged}.`,
+      });
+    }
+    expect(classifyProjectCommandFailure(rejection(405), action, resource)).toEqual({
+      kind: "rejected",
+      message: `You cannot ${action} ${resource}. Retrying cannot change that. ${unchanged}.`,
+    });
+  });
+
+  test("a transport fact says nothing about the command, whatever body it arrived with", () => {
+    // Each of the four is exercised in both body shapes and with no body at all: a transport fact
+    // carries no account of *this command*, so nothing a body happened to hold stands in front of
+    // the one sentence that says the request is still worth sending.
+    const expected = {
+      kind: "retryable",
+      message: `Could not ${action} ${resource}. ${unchanged}; retry is available.`,
+    };
+    const transportFailures = [
+      { cause: new NetworkTransportError(new Error("offline")), kind: "network" },
+      { cause: { isAxiosError: true, data: { error: "connection reset" } }, kind: "network" },
+      { cause: { isAxiosError: true, data: { detail: "Connection aborted" } }, kind: "network" },
+      { cause: { isAxiosError: true, code: "ECONNABORTED" }, kind: "timeout" },
+      {
+        cause: { isAxiosError: true, code: "ETIMEDOUT", data: { error: "read timed out" } },
+        kind: "timeout",
+      },
+      {
+        cause: { isAxiosError: true, code: "ETIMEDOUT", data: { detail: "Gateway Timeout" } },
+        kind: "timeout",
+      },
+      { cause: rejection(429), kind: "rate-limited" },
+      { cause: documented(429, "fixture-rate-limited"), kind: "rate-limited" },
+      { cause: framework(429, "Too Many Requests"), kind: "rate-limited" },
+      { cause: rejection(500), kind: "server" },
+      { cause: documented(503, "fixture-server-error"), kind: "server" },
+      { cause: framework(503, "Service Unavailable"), kind: "server" },
+    ];
+    for (const { cause, kind } of transportFailures) {
+      expect(classifyProjectCommandFailure(cause, action, resource), kind).toEqual(expected);
+    }
+  });
+
+  test("a token the service will not accept reads as the refusal it always read as", () => {
+    // Its own words are the scopes whoever holds the client registration would need, which is
+    // nothing the caller of this command can act on, in whichever shape they arrive.
+    const scopes = "Provided token does not have the required scopes. Provided: []";
+    for (const answer of [documented(403, scopes), framework(403, scopes)]) {
+      expect(classifyProjectCommandFailure(answer, action, resource)).toEqual({
+        kind: "rejected",
+        message: unavailable,
       });
     }
   });
 
   test("an unrecognised failure still says the displayed project is unchanged", () => {
-    // Its kind hands the detail to the shared error presentation; its message is the only sentence
-    // any screen shows, so no screen writes a rejection of its own.
-    const expected = {
-      kind: "unknown",
-      message: `Could not ${action} ${resource}. The displayed project has not changed.`,
-    };
+    const expected = { kind: "unknown", message: `Could not ${action} ${resource}. ${unchanged}.` };
     expect(classifyProjectCommandFailure(new Error("boom"), action, resource)).toEqual(expected);
     expect(classifyProjectCommandFailure(rejection(418), action, resource)).toEqual(expected);
+    // A status this client cannot classify is not known to be a refusal, but whatever the answer
+    // did say is still better than a sentence written here.
+    for (const answer of [documented(418, "Teapot"), framework(418, "Teapot")]) {
+      expect(classifyProjectCommandFailure(answer, action, resource)).toEqual({
+        kind: "unknown",
+        message: `Teapot. ${unchanged}.`,
+      });
+    }
   });
 });
 

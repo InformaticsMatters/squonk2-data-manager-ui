@@ -32,7 +32,9 @@ export interface NotSuccessful {
    */
   statusCode: number;
   /**
-   * Reason for the error
+   * What was actually said about the failure — the service's own reason where it gave one — and
+   * empty where nothing was. The status line always carries a phrase; this carries only words a
+   * page can show, so a page with a notice of its own knows when to state it.
    */
   statusMessage: string;
 }
@@ -90,10 +92,12 @@ const fetchAsCaller = async (
   }
 
   if (!response.ok) {
-    const isJson = isResponseJson(response);
-    const data = isJson ? ((await response.json()) as { message?: unknown } | null) : null;
-    // The response status is the only status fact. A message is diagnostic detail, never a status.
-    const { diagnostic, statusMessage } = describeTransportFailure(response, data);
+    // A body that is not JSON is not the service accounting for itself — it is a proxy's own error
+    // page — so nothing is read from it and the rejection states only its status.
+    const body: unknown = isResponseJson(response) ? await response.json() : null;
+    // The service's own reason is what the page states and what Sentry is told alike; the status is
+    // the only thing the transport adds to it.
+    const { diagnostic, statusMessage } = describeTransportFailure(response, body);
     captureException(new Error(`Unable to fetch file (${response.status}): ${diagnostic}`));
     return { failure: createErrorProps(res, response.status, statusMessage) };
   }

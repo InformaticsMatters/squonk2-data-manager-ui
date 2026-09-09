@@ -1,4 +1,4 @@
-import { type DatasetVersionSummary, type DmError } from "@/api/data-manager";
+import { type DatasetVersionSummary } from "@/api/data-manager";
 
 import { Typography } from "@mui/material";
 
@@ -28,7 +28,7 @@ export const Labels = ({ datasetId, datasetVersion, capability }: LabelsProps) =
   const labels = Object.entries((datasetVersion.labels ?? {}) as Record<string, string[] | string>);
   const { removeLabel } = useDatasetCommands();
 
-  const { enqueueError, enqueueSnackbar } = useEnqueueError<DmError>();
+  const { enqueueError, enqueueSnackbar } = useEnqueueError();
 
   if (labels.length === 0) {
     return (

@@ -18,13 +18,22 @@ export const DATASET_VERSION_NOT_FOUND = "Dataset version not found";
 export const classifyDatasetVersionContent = classifyViewerContent;
 
 /**
- * Answers a denied version exactly as a missing one, in the response as well as the page, so the
- * viewer transport cannot be used to discover which dataset versions exist.
+ * Answers a version that will not be delivered as the Data Manager answered it: its own status and
+ * its own reason, in the response as well as the page, so a version that is not there and one this
+ * caller may not read are told apart.
+ *
+ * A denied version used to be answered exactly as a missing one, so the viewer transport could not
+ * be used to discover which versions exist. That reversal, and why, is recorded where the rule
+ * itself lives, in `classifyViewerContent`. The viewer's own notice stands in where the Data
+ * Manager accounted for nothing, and upstream words reach the status line only through
+ * `createErrorProps`.
  */
-export const concealDatasetVersionAbsence = (
+export const reportDatasetVersionFailure = (
   res: ServerResponse,
   result: { props: DatasetVersionContent },
-): { props: DatasetVersionContent } =>
-  classifyDatasetVersionContent(result.props).kind === "missing"
-    ? createErrorProps(res, 404, DATASET_VERSION_NOT_FOUND)
+): { props: DatasetVersionContent } => {
+  const outcome = classifyDatasetVersionContent(result.props);
+  return outcome.kind === "unavailable"
+    ? createErrorProps(res, outcome.statusCode, outcome.statusMessage || DATASET_VERSION_NOT_FOUND)
     : result;
+};

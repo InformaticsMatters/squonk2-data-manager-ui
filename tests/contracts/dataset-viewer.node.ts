@@ -5,7 +5,8 @@ import path from "node:path";
 
 import {
   classifyDatasetVersionContent,
-  concealDatasetVersionAbsence,
+  DATASET_VERSION_NOT_FOUND,
+  reportDatasetVersionFailure,
 } from "../../src/datasets/viewerContent";
 
 const successful = {
@@ -27,13 +28,20 @@ test.describe("Dataset version content contract", () => {
     expect(classifyDatasetVersionContent(empty)).toEqual({ kind: "content", content: empty });
   });
 
-  test("missing and forbidden versions read identically", () => {
-    for (const statusCode of [403, 404]) {
-      expect(
-        classifyDatasetVersionContent({ statusCode, statusMessage: "Not permitted" }),
-        String(statusCode),
-      ).toEqual({ kind: "missing" });
-    }
+  test("a refused version and an absent one each keep their own status and reason", () => {
+    expect(
+      classifyDatasetVersionContent({
+        statusCode: 403,
+        statusMessage: "Dataset is not owned by you",
+      }),
+    ).toEqual({
+      kind: "unavailable",
+      statusCode: 403,
+      statusMessage: "Dataset is not owned by you",
+    });
+    expect(
+      classifyDatasetVersionContent({ statusCode: 404, statusMessage: "Version does not exist" }),
+    ).toEqual({ kind: "unavailable", statusCode: 404, statusMessage: "Version does not exist" });
   });
 
   test("transport failures remain retryable", () => {
@@ -63,29 +71,51 @@ test.describe("Dataset version content contract", () => {
 
 const recordedResponse = () => ({ statusCode: 200, statusMessage: "" }) as ServerResponse;
 
-test.describe("Dataset version absence concealment", () => {
-  test("a denied version answers exactly as a missing one", () => {
+test.describe("Dataset version failure reporting", () => {
+  test("a refused version and an absent one are each answered as the service answered them", () => {
     const denied = recordedResponse();
     const missing = recordedResponse();
-    const deniedResult = concealDatasetVersionAbsence(denied, {
-      props: { statusCode: 403, statusMessage: "fixture-forbidden" },
-    });
-    const missingResult = concealDatasetVersionAbsence(missing, {
-      props: { statusCode: 404, statusMessage: "dm-route-not-found" },
-    });
 
-    expect(deniedResult).toEqual(missingResult);
-    expect(deniedResult).toEqual({
-      props: { statusCode: 404, statusMessage: "Dataset version not found" },
-    });
-    expect(denied.statusCode).toBe(404);
-    expect(denied.statusCode).toBe(missing.statusCode);
+    expect(
+      reportDatasetVersionFailure(denied, {
+        props: { statusCode: 403, statusMessage: "Dataset is not owned by you" },
+      }),
+    ).toEqual({ props: { statusCode: 403, statusMessage: "Dataset is not owned by you" } });
+    expect(
+      reportDatasetVersionFailure(missing, {
+        props: { statusCode: 404, statusMessage: "Version does not exist" },
+      }),
+    ).toEqual({ props: { statusCode: 404, statusMessage: "Version does not exist" } });
+    expect(denied.statusCode).toBe(403);
+    expect(denied.statusMessage).toBe("Dataset is not owned by you");
+    expect(missing.statusCode).toBe(404);
+    expect(missing.statusMessage).toBe("Version does not exist");
+  });
+
+  test("a rejection that accounted for nothing is answered in the viewer's own words", () => {
+    const res = recordedResponse();
+
+    expect(
+      reportDatasetVersionFailure(res, { props: { statusCode: 404, statusMessage: "" } }),
+    ).toEqual({ props: { statusCode: 404, statusMessage: DATASET_VERSION_NOT_FOUND } });
+    expect(res.statusMessage).toBe(DATASET_VERSION_NOT_FOUND);
+  });
+
+  test("upstream words reach the status line only as a reason phrase", () => {
+    const res = recordedResponse();
+
+    expect(
+      reportDatasetVersionFailure(res, {
+        props: { statusCode: 403, statusMessage: "refused\r\nX-Injected: yes" },
+      }),
+    ).toEqual({ props: { statusCode: 403, statusMessage: "refused X-Injected: yes" } });
+    expect(res.statusMessage).toBe("refused X-Injected: yes");
   });
 
   test("content and recoverable answers are passed through untouched", () => {
     for (const props of [successful, { statusCode: 503, statusMessage: "Try again" }]) {
       const res = recordedResponse();
-      expect(concealDatasetVersionAbsence(res, { props })).toEqual({ props });
+      expect(reportDatasetVersionFailure(res, { props })).toEqual({ props });
       expect(res.statusCode).toBe(200);
     }
   });

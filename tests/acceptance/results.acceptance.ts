@@ -431,6 +431,39 @@ test("a refused collection never withholds the retry a transient one needs", asy
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
 });
 
+test("a lapsed session keeps every result on screen and offers the sign-in back", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await login(page, acceptanceResults, testInfo);
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+
+  // Refreshing in place rather than reloading, so the results already on screen are there to be
+  // cleared — which is what a refused token used to do to them.
+  await request.post(
+    `${acceptanceUrls.control}/scenario/${subject}/results-failure?status=403&reason=token-refused`,
+  );
+  await page.getByRole("button", { name: "Refresh results" }).click();
+
+  const lapsed = page.getByRole("alert").filter({ hasText: "Your session has expired" });
+  await expect(lapsed).toBeVisible();
+  await expect(lapsed.getByRole("button", { name: "Login" })).toBeVisible();
+  // Nothing was refused and nothing is claimed to be lost: the results stay exactly as they were.
+  await expect(page.getByText("Acceptance Instance")).toBeVisible();
+  await expect(
+    page.getByText("These results are unavailable or you no longer have access to them."),
+  ).toBeHidden();
+  // They could not be refreshed either, so they are stale, and nothing they describe is changeable.
+  await expect(page.getByRole("button", { name: "Archive" }).first()).toBeDisabled();
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/results-failure`);
+  await page.getByRole("button", { name: "Refresh results" }).click();
+  await expect(lapsed).toBeHidden();
+  await expect(page.getByRole("button", { name: "Archive" }).first()).toBeEnabled();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceResults}`);
+});
+
 test("only the collection that could not be refreshed is marked stale and locked", async ({
   page,
   request,

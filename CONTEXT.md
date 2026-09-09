@@ -88,6 +88,11 @@ messages, use the term defined here rather than a synonym.
   never security. See `docs/adr/0003-capabilities-are-presentation.md`.
 - **Unconfirmed** — facts insufficient to establish authority. An ordinary action stays available
   and names what the server will confirm; only exclusively platform-administrator actions hide.
+- **Refusal** — a resource's own answer that the caller may not have it. Access is gone, so what
+  was loaded of it is discarded. A **lapsed session** is not one: it is a service refusing the
+  token a request carried rather than the resource it addressed, and it establishes nothing about
+  any resource. Nothing is discarded, what is loaded stays on screen as stale, and the route
+  offered is signing in again. Never describe one as the other.
 
 ## Terms to avoid
 

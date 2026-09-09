@@ -1,3 +1,21 @@
+# [7.0.0-dev.28](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.27...7.0.0-dev.28) (2026-09-09)
+
+
+### Bug Fixes
+
+* **errors:** keep the reason a drop or a close already stated ([5301833](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5301833942098fe78d09e8dec4ba268313479cbe)), closes [#2056](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2056)
+* **errors:** let a Files or membership command state the service's reason ([7d8ab05](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7d8ab05ad3ff9f643519e6dcf823b1df94c82085)), closes [#2062](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2062)
+* **errors:** let a viewer relay the reason the service actually gave ([0b1e189](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0b1e189535d873c34e3c23bc930419d54d541d1d)), closes [#2059](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2059)
+* **errors:** read a Fetch-runtime refusal for its reason, not as unknown ([0bc2124](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0bc2124dc0f9ae69b9dc97e410622c6b3e5eba63)), closes [#2057](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2057)
+* **errors:** read both API error body shapes through one extractor ([fa7e9d6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fa7e9d6ac84e4599fa2a219821fbb3de4bd12c14)), closes [#2055](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2055)
+* **errors:** state the service's own reason for an Administration refusal ([a8555e1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a8555e1447cc8089c3acf955adc997fed89b3a4e)), closes [#2061](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2061)
+* **projects:** read a lapsed session as the session, not as lost access ([384467c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/384467c578ecc3d7b726c5cfd1f066ec64810367))
+
+
+### Features
+
+* **errors:** name every rejection status the transport classifier dropped ([875cdc1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/875cdc1cae4d7f5304e37d33fdaf60ed00278856)), closes [#2058](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2058)
+
 # [7.0.0-dev.27](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.26...7.0.0-dev.27) (2026-09-04)
 
 

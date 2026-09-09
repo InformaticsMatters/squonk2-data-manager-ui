@@ -1,5 +1,5 @@
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
-import { apiFailureReason } from "../utils/next/orvalError";
+import { apiFailureReason, apiFailureSentence } from "../utils/next/orvalError";
 
 /**
  * What a failed read of the addressed project was, and what follows from it.
@@ -89,34 +89,57 @@ export const resolveProjectWorkspaceFailure = (
 };
 
 /**
- * What an authoritative answer to a project command was. `rejected` is the server's authorization
- * verdict, `retryable` is a transport fact that says nothing about authority, and `unknown`
- * establishes neither. Every kind carries the whole sentence its caller shows, so no screen writes
- * a rejection of its own and no failure is answered a second time somewhere else.
+ * What an authoritative answer to a project command was. `rejected` is the service refusing the
+ * request it was sent — a permission, a rule about the resource, or an absence — `retryable` is a
+ * transport fact that says nothing about the request, and `unknown` establishes neither. Every kind
+ * carries the whole sentence its caller shows, so no screen writes a rejection of its own and no
+ * failure is answered a second time somewhere else.
  */
 export type ProjectCommandFailure = { kind: "rejected" | "retryable" | "unknown"; message: string };
 
+/** What every answer to a project command guarantees about the screen the command was used on. */
+const projectUnchanged = "The displayed project has not changed";
+
 /**
- * Classifies a rejected project command. The server is the authorization authority, so a `403` is
- * reported as feedback about the attempted action alone: the displayed project, its organisation
- * identity, and the canonical route are all left exactly as they were. A refusal and a missing
- * resource read identically, so comparing the two can never reveal whether a resource the caller
- * has not read exists.
+ * Classifies a rejected project command. The server is the authorization authority, so a rejection
+ * is reported as feedback about the attempted action alone: the displayed project, its organisation
+ * identity, and the canonical route are all left exactly as they were.
+ *
+ * The service's own account of the rejection is what is shown, and this client's guarantee follows
+ * it; the canned wording stands in only where the answer carried nothing. A refusal and an absence
+ * used to be flattened into one sentence so that comparing them could not reveal whether a resource
+ * the caller may not read exists. That non-disclosure was dropped: it held inside this client only,
+ * while the services distinguish the two plainly to anyone calling them directly — `File does not
+ * exist (/nope.txt)` against `Not an Administrator (odudgeon)` — so it bought no secrecy and cost
+ * every caller the one sentence that said what was actually wrong.
  */
 export const classifyProjectCommandFailure = (
   error: unknown,
   action: string,
   resource: string,
 ): ProjectCommandFailure => {
+  // The service's own sentence — `The file does not exist (/, zzz.txt)`, `Too few
+  // administrators`, `Not an Administrator (odudgeon)` — is the better one, and what it cannot know
+  // is what became of what is on screen, which is what this client adds to it.
+  const said = apiFailureSentence(error);
+  const stated = said === undefined ? undefined : `${said} ${projectUnchanged}.`;
   switch (classifyTransportFailure(error).kind) {
-    // A refused token is the caller's session rather than this command, and until that is answered
-    // as its own thing it reads as the refusal it always read as.
+    // The canned sentence is reached only by an answer that said nothing at all, where a refusal
+    // and an absence really are indistinguishable to this client, so it still covers both.
     case "forbidden":
     case "not-found":
+      return {
+        kind: "rejected",
+        message:
+          stated ??
+          `You cannot ${action} ${resource}. It is unavailable or you do not have access. ${projectUnchanged}.`,
+      };
+    // A refused token answers with the scopes whoever holds the client registration would need,
+    // which is nothing about this command, so it is stated as the refusal it always read as.
     case "token-refused":
       return {
         kind: "rejected",
-        message: `You cannot ${action} ${resource}. It is unavailable or you do not have access. The displayed project has not changed.`,
+        message: `You cannot ${action} ${resource}. It is unavailable or you do not have access. ${projectUnchanged}.`,
       };
     case "network":
     case "rate-limited":
@@ -124,20 +147,35 @@ export const classifyProjectCommandFailure = (
     case "timeout":
       return {
         kind: "retryable",
-        message: `Could not ${action} ${resource}. The displayed project has not changed; retry is available.`,
+        message: `Could not ${action} ${resource}. ${projectUnchanged}; retry is available.`,
       };
-    // Each rejection status the classifier now names — a managed file that cannot be deleted, a
-    // conversion that failed, a project that must keep an administrator — still says what an
-    // unclassifiable failure said, so naming them changes nothing here yet.
+    // A `405` is the Data Manager refusing the command on this target itself — the one it documents
+    // is deleting a managed file — so sending the same command again can never do anything else,
+    // and it must not be presented as though it could. It is alone in saying so: the other refusals
+    // are about the request as it stands, and a project that must keep an administrator or a
+    // conversion that failed can each be satisfied by a caller who changes something first.
+    case "method-not-allowed":
+      return {
+        kind: "rejected",
+        message: `${said ?? `You cannot ${action} ${resource}.`} Retrying cannot change that. ${projectUnchanged}.`,
+      };
+    // The service refused the request it was sent — a conversion it could not make, a project that
+    // must keep an administrator, a media type it does not accept — so each is reported as a
+    // refusal, in the service's words where it gave any.
     case "bad-request":
     case "conflict":
-    case "method-not-allowed":
-    case "unknown":
     case "unprocessable":
     case "unsupported-media-type":
       return {
+        kind: "rejected",
+        message: stated ?? `Could not ${action} ${resource}. ${projectUnchanged}.`,
+      };
+    // A fact this client cannot classify is not known to be a refusal, so nothing is claimed about
+    // it beyond what the answer itself said.
+    case "unknown":
+      return {
         kind: "unknown",
-        message: `Could not ${action} ${resource}. The displayed project has not changed.`,
+        message: stated ?? `Could not ${action} ${resource}. ${projectUnchanged}.`,
       };
   }
 };

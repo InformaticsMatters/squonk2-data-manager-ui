@@ -1213,12 +1213,11 @@ test("a rejected project change is feedback alone, and restored access succeeds"
   await expect(privacySwitch(page)).toBeEnabled();
 
   await privacySwitch(page).click();
+  // The Data Manager's own account of the refusal is what is stated, with this client's guarantee
+  // after it. A refusal changes neither the displayed project, nor its organisation, nor the route.
   await expect(
-    privacyControl(page).getByText(
-      `You cannot change the privacy of project ${fixtureIds.project}. It is unavailable or you do not have access. The displayed project has not changed.`,
-    ),
+    privacyControl(page).getByText("fixture-forbidden. The displayed project has not changed."),
   ).toBeVisible();
-  // A refusal changes neither the displayed project, nor its organisation, nor the route.
   await expect(page).toHaveURL(`${acceptanceUrls.app}${managePath}`);
   await expect(page.getByText("Acceptance Unit · Acceptance Organisation")).toBeVisible();
   await expect(factRow(page, "Privacy")).toContainText("Private");
@@ -1226,9 +1225,7 @@ test("a rejected project change is feedback alone, and restored access succeeds"
 
   await addMember(page, "Editors", colleague);
   await expect(
-    members(page, "Editors").getByText(
-      `You cannot change the editors of project ${fixtureIds.project}. It is unavailable or you do not have access. The displayed project has not changed.`,
-    ),
+    members(page, "Editors").getByText("fixture-forbidden. The displayed project has not changed."),
   ).toBeVisible();
   await expect(memberChip(page, "Editors", colleague)).toHaveCount(0);
 

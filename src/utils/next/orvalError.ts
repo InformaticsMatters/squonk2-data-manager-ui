@@ -1,4 +1,4 @@
-import { nullEmptyString } from "../text";
+import { asSentence, nullEmptyString } from "../text";
 
 /**
  * How a rejected request accounts for itself. Both specs document exactly one error schema, whose
@@ -111,6 +111,16 @@ const reasonIn = (body: unknown): string | null => {
  * with a sentence of its own keeps that sentence instead of stating "Bad Request" to a person.
  */
 export const apiFailureReason = (error: unknown): string | null => reasonIn(bodyOf(error));
+
+/**
+ * The same account ended as a sentence, or `undefined` where the answer carried no words of its own,
+ * for a caller composing the service's words into a longer sentence of its own. `undefined` rather
+ * than `null` so that it falls through `??` beside that caller's canned wording.
+ */
+export const apiFailureSentence = (error: unknown): string | undefined => {
+  const said = apiFailureReason(error);
+  return said === null ? undefined : asSentence(said);
+};
 
 /**
  * The whole sentence to show a person about a failure, for a caller that has no words of its own.

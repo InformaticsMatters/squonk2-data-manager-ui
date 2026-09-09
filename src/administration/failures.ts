@@ -2,8 +2,7 @@ import {
   classifyTransportFailure,
   type TransportFailure,
 } from "../api/runtime/classifyTransportFailure";
-import { apiFailureReason } from "../utils/next/orvalError";
-import { asSentence } from "../utils/text";
+import { apiFailureSentence } from "../utils/next/orvalError";
 
 export type AdministrationFailurePresentation = {
   message: string;
@@ -11,21 +10,10 @@ export type AdministrationFailurePresentation = {
   severity: "error" | "warning";
 };
 
-/**
- * What the service itself said about a refusal, ended as a sentence, or `undefined` where its answer
- * carried no words of its own. It is a better sentence than any this client can write: live, `GET
- * /organisation/{default}` answers `Cannot get the Default Organisation`, and a fixed sentence of
- * this client's stood in front of it.
- */
-const serviceSentence = (error: unknown): string | undefined => {
-  const said = apiFailureReason(error);
-  return said === null ? undefined : asSentence(said);
-};
-
 export const presentAdministrationFailure = (
   failure: TransportFailure,
 ): AdministrationFailurePresentation => {
-  const said = serviceSentence(failure.cause);
+  const said = apiFailureSentence(failure.cause);
   switch (failure.kind) {
     case "forbidden":
       return {
@@ -154,7 +142,7 @@ const resourceUnchanged = "The displayed resource has not changed";
  * stands in.
  */
 const statedRejection = (error: unknown): string | undefined => {
-  const said = serviceSentence(error);
+  const said = apiFailureSentence(error);
   return said === undefined ? undefined : `${said} ${resourceUnchanged}.`;
 };
 

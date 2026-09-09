@@ -408,8 +408,11 @@ test("a refused file change is reported in place and never reported as done", as
   await row(page, "notes.txt").getByRole("button", { name: "Delete unmanaged file" }).click();
   await page.getByRole("button", { name: "Delete", exact: true }).click();
 
-  // The rejection is feedback where the control is: the file, the project, and the route survive.
-  await expect(page.getByText(/You cannot delete the file notes\.txt/u)).toBeVisible();
+  // The rejection is feedback where the control is, in the Data Manager's own account of it: the
+  // file, the project, and the route survive.
+  await expect(
+    page.getByText("fixture-forbidden. The displayed project has not changed."),
+  ).toBeVisible();
   await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceFiles}`);
 

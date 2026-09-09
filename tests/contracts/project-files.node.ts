@@ -9,6 +9,7 @@ import {
   evaluateProjectFileMutationCapability,
   type ProjectCapabilityFacts,
 } from "../../src/projects/capabilities";
+import { classifyProjectCommandFailure } from "../../src/projects/failures";
 import {
   canonicalFilesystemPath,
   childFilesystemPath,
@@ -571,6 +572,97 @@ test.describe("Files cutover", () => {
       expect(readFileSync(path.join(root, sourceFile), "utf8"), sourceFile).not.toMatch(
         /useCurrentProject|useCurrentProjectId|useIsUserAdminOrEditorOfCurrentProject|useSelectedUnit/u,
       );
+    }
+  });
+});
+
+/** A rejection in the shape both specs document for every 4xx they carry a body on. */
+const documented = (status: number, error: string) => ({
+  isAxiosError: true,
+  response: { status, data: { error } },
+});
+
+/** The same rejection in the framework's own shape, which neither spec documents. */
+const framework = (status: number, detail: string) => ({
+  isAxiosError: true,
+  response: { status, data: { detail, status, title: "Bad Request", type: "about:blank" } },
+});
+
+/** No body at all, which is where this client has nothing but its own wording to fall back on. */
+const wordless = (status: number) => new Response(null, { status });
+
+test.describe("Files command failure classification", () => {
+  const unchanged = "The displayed project has not changed";
+  /** The command that reaches this classifier most often, named as the Files controls name it. */
+  const deleting = { action: "delete", resource: "the file notes.txt" } as const;
+
+  test("a missing file is named as the file the Data Manager could not find", () => {
+    // It answered `The file does not exist (/, zzz.txt)` and the caller was told the file was
+    // "unavailable or you do not have access", which sent them looking for a permission problem.
+    const reason = "The file does not exist (/, zzz.txt)";
+    for (const answer of [documented(404, reason), framework(404, reason)]) {
+      expect(classifyProjectCommandFailure(answer, deleting.action, deleting.resource)).toEqual({
+        kind: "rejected",
+        message: `${reason}. ${unchanged}.`,
+      });
+    }
+    expect(
+      classifyProjectCommandFailure(wordless(404), deleting.action, deleting.resource),
+    ).toEqual({
+      kind: "rejected",
+      message: `You cannot delete the file notes.txt. It is unavailable or you do not have access. ${unchanged}.`,
+    });
+  });
+
+  test("a managed file offers no retry, because deleting it can never succeed", () => {
+    const reason = "Forbidden from deleting the file";
+    for (const answer of [documented(405, reason), framework(405, reason)]) {
+      expect(classifyProjectCommandFailure(answer, deleting.action, deleting.resource)).toEqual({
+        kind: "rejected",
+        message: `${reason}. Retrying cannot change that. ${unchanged}.`,
+      });
+    }
+    expect(
+      classifyProjectCommandFailure(wordless(405), deleting.action, deleting.resource),
+    ).toEqual({
+      kind: "rejected",
+      message: `You cannot delete the file notes.txt. Retrying cannot change that. ${unchanged}.`,
+    });
+  });
+
+  test("a conversion the Data Manager could not make reaches the caller as its own reason", () => {
+    const reason = "It was not possible to convert the Dataset to the format desired";
+    const upload = ["upload", "poses.sdf to this project"] as const;
+    for (const answer of [documented(422, reason), framework(422, reason)]) {
+      expect(classifyProjectCommandFailure(answer, ...upload)).toEqual({
+        kind: "rejected",
+        message: `${reason}. ${unchanged}.`,
+      });
+    }
+    expect(classifyProjectCommandFailure(wordless(422), ...upload)).toEqual({
+      kind: "rejected",
+      message: `Could not upload poses.sdf to this project. ${unchanged}.`,
+    });
+  });
+
+  test("a file command that failed in transport is the one kind still offered a retry", () => {
+    const expected = {
+      kind: "retryable",
+      message: `Could not delete the file notes.txt. ${unchanged}; retry is available.`,
+    };
+    // A transport fact is about the request reaching the Data Manager rather than about the file,
+    // so it says the same thing in either body shape as it says with no body at all.
+    for (const status of [429, 503]) {
+      for (const answer of [
+        wordless(status),
+        documented(status, "fixture-server-error"),
+        framework(status, "Service Unavailable"),
+      ]) {
+        expect(
+          classifyProjectCommandFailure(answer, deleting.action, deleting.resource),
+          String(status),
+        ).toEqual(expected);
+      }
     }
   });
 });

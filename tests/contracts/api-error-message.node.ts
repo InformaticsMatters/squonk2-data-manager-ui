@@ -52,6 +52,24 @@ const bodies: [description: string, body: unknown, reason: string | null][] = [
     "Missing query parameter 'file'",
   ],
   ["a body that is a string", "Service Unavailable", "Service Unavailable"],
+  [
+    "a sentence the call chain behind it was appended to",
+    {
+      error:
+        "The Product or its Unit does not support public Projects (Action denied (-2). Failed to get a response from the Account Server (Got status 404, expected 201))",
+    },
+    "The Product or its Unit does not support public Projects",
+  ],
+  [
+    "a sentence ending in the subject it is about",
+    { error: "The file does not exist (/, zzz.txt)" },
+    "The file does not exist (/, zzz.txt)",
+  ],
+  [
+    "an answer that is nothing but a call chain",
+    { error: "(Action denied (-2). Failed to get a response from the Account Server)" },
+    "(Action denied (-2). Failed to get a response from the Account Server)",
+  ],
   ["a body carrying neither field", { status: 400, title: "Bad Request" }, null],
   ["an empty body", {}, null],
   ["a body whose fields are blank", { detail: "   ", error: "" }, null],

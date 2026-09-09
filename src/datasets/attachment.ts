@@ -8,6 +8,7 @@ import {
 import { type VisibleOrganisation } from "../application/applicationIdentity";
 import { canonicalFilesystemPath, filesystemRoot } from "../projects/fileFacts";
 import { noErrorInformation } from "../utils/next/orvalError";
+import { asSentence } from "../utils/text";
 import { DatasetTaskError, DatasetTaskPollingError } from "./mutations";
 
 /**
@@ -231,6 +232,5 @@ export const unclassifiedAttachmentFailureMessage = (
   if (!account || account === noErrorInformation) {
     return `The Data Manager refused this attachment. ${nothingAttached}.`;
   }
-  const sentence = ".!?".includes(account.slice(-1)) ? account : `${account}.`;
-  return `${sentence} ${nothingAttached}.`;
+  return `${asSentence(account)} ${nothingAttached}.`;
 };

@@ -240,10 +240,9 @@ test("a refused unit read replaces the page rather than degrading it", async ({
   await login(page, `${unitPath}/access`, testInfo);
 
   // A unit the caller cannot read genuinely has no content, so nothing of it survives — while the
-  // workspace it sits in does, and the rail is still there to leave through.
-  await expect(
-    page.getByText("You do not have access to this Administration resource."),
-  ).toBeVisible();
+  // workspace it sits in does, and the rail is still there to leave through. What replaces it is
+  // the Account Server's own account of the refusal, not a sentence standing in front of it.
+  await expect(page.getByText("fixture-forbidden")).toBeVisible();
   await expect(page.getByLabel("Unit name")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Administration", level: 1 })).toBeVisible();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${unitPath}/access`);

@@ -55,14 +55,50 @@ const firstSentenceOf = (detail: string) => {
   return readString(sentence.replace(/\s+/gu, " "));
 };
 
-/** The service's own account of a body, or `null` where the body held none. */
-const reasonIn = (body: unknown): string | null => {
+const trailingParenthetical = /\s*\((?:[^()]|\([^()]*\))*\)$/u;
+const sentenceBreak = /[.!?]\s+[A-Z]/u;
+
+/**
+ * What the body said, before the part of it that was never meant for a caller is dropped.
+ */
+const accountIn = (body: unknown): string | null => {
   if (typeof body === "string") {
     return readString(body);
   }
   const { detail, error } = fieldsOf(body);
 
   return readString(error) ?? (typeof detail === "string" ? firstSentenceOf(detail) : null);
+};
+
+/**
+ * A sentence without the trailing parenthetical the services append when the failure came from
+ * somewhere else. Live, `POST /project` answers `The Product or its Unit does not support public
+ * Projects (Action denied (-2). Failed to get a response from the Account Server (Got status 404,
+ * expected 201))`: a complete sentence for the caller, then the call chain behind it, which names a
+ * service the caller never addressed and a status they cannot act on.
+ *
+ * Only a parenthetical that starts a second sentence is read as that call chain, because the services
+ * also end a perfectly good sentence with the subject it is about — `Not an editor (odudgeon)`, `The
+ * file does not exist (/, zzz.txt)` — and those are the useful half of what they said. A new
+ * sentence is a full stop followed by a capital, so an abbreviation inside one sentence does not read
+ * as two. One level of nesting is understood, which is what the observed diagnostics carry; anything
+ * deeper is left alone rather than cut at the wrong place.
+ *
+ * An answer that is nothing *but* such a parenthetical keeps it, because dropping it would leave the
+ * caller with no account of the failure at all when the service did give one — and because
+ * `classifyTransportFailure` reads this same text to tell a refused token from a refused resource.
+ */
+const withoutDiagnostics = (reason: string): string => {
+  const clause = reason.replace(trailingParenthetical, (parenthetical) =>
+    sentenceBreak.test(parenthetical) ? "" : parenthetical,
+  );
+  return clause.trim() === "" ? reason : clause;
+};
+
+/** The service's own account of a body, or `null` where the body held none. */
+const reasonIn = (body: unknown): string | null => {
+  const said = accountIn(body);
+  return said === null ? null : readString(withoutDiagnostics(said));
 };
 
 /**

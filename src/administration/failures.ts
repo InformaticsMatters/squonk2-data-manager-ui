@@ -2,6 +2,8 @@ import {
   classifyTransportFailure,
   type TransportFailure,
 } from "../api/runtime/classifyTransportFailure";
+import { apiFailureReason } from "../utils/next/orvalError";
+import { asSentence } from "../utils/text";
 
 export type AdministrationFailurePresentation = {
   message: string;
@@ -9,13 +11,31 @@ export type AdministrationFailurePresentation = {
   severity: "error" | "warning";
 };
 
+/**
+ * What the service itself said about a refusal, ended as a sentence, or `undefined` where its answer
+ * carried no words of its own. It is a better sentence than any this client can write: live, `GET
+ * /organisation/{default}` answers `Cannot get the Default Organisation`, and a fixed sentence of
+ * this client's stood in front of it.
+ */
+const serviceSentence = (error: unknown): string | undefined => {
+  const said = apiFailureReason(error);
+  return said === null ? undefined : asSentence(said);
+};
+
 export const presentAdministrationFailure = (
   failure: TransportFailure,
 ): AdministrationFailurePresentation => {
+  const said = serviceSentence(failure.cause);
   switch (failure.kind) {
-    // A refused token says nothing about this resource, but until an expired session is answered
-    // for what it is, it is presented as the refusal it was presented as before.
     case "forbidden":
+      return {
+        message: said ?? "You do not have access to this Administration resource.",
+        retryable: false,
+        severity: "warning",
+      };
+    // A refused token is a fact about the credential presented rather than about the resource
+    // addressed, and its own words are a list of scopes written for whoever holds the client
+    // registration. They are not relayed; the refusal is stated as it always was.
     case "token-refused":
       return {
         message: "You do not have access to this Administration resource.",
@@ -24,7 +44,7 @@ export const presentAdministrationFailure = (
       };
     case "not-found":
       return {
-        message: "This Administration resource is no longer available.",
+        message: said ?? "This Administration resource is no longer available.",
         retryable: false,
         severity: "warning",
       };
@@ -52,14 +72,22 @@ export const presentAdministrationFailure = (
         retryable: true,
         severity: "error",
       };
-    // A rejection status the classifier has only just named still reads as a failure this client
-    // could not account for, so what the screen shows and what it offers are unmoved.
+    // Every one of these is the service refusing the request it was sent, so the same request can
+    // never succeed and no Retry is offered for it. They were shown as data that could not be
+    // loaded, with a Retry, while the transport had no kind for them.
     case "bad-request":
     case "conflict":
     case "method-not-allowed":
-    case "unknown":
     case "unprocessable":
     case "unsupported-media-type":
+      return {
+        message: said ?? "This Administration request was refused.",
+        retryable: false,
+        severity: "warning",
+      };
+    // A fact this client cannot classify is not known to be a refusal, so the read is still worth
+    // making again rather than being believed.
+    case "unknown":
       return {
         message: "Administration data could not be loaded. Retry this task.",
         retryable: true,
@@ -117,33 +145,69 @@ export const administrationResourceLabel = {
   unit: (unitId: string) => `unit ${unitId}`,
 };
 
+/** What every Administration command failure guarantees about the screen behind it. */
+const resourceUnchanged = "The displayed resource has not changed";
+
 /**
- * Presents an authoritative rejection of an Administration command. The displayed resource and its
- * canonical route are never changed by a rejection, so every message says so explicitly. Unknown
- * transport facts return `undefined` so the shared error presentation stays in charge.
+ * A rejected command as the service accounted for it, followed by the guarantee only this client can
+ * give. `undefined` where the service gave no account, which is where each caller's own wording
+ * stands in.
+ */
+const statedRejection = (error: unknown): string | undefined => {
+  const said = serviceSentence(error);
+  return said === undefined ? undefined : `${said} ${resourceUnchanged}.`;
+};
+
+/**
+ * Presents an authoritative rejection of an Administration command.
+ *
+ * The service's own account of the refusal comes first, because a `403` from these services is
+ * routinely a rule about the resource rather than a permission the caller lost — removing a member
+ * the Account Server does not know answers `Unknown User`, and removing one from the default
+ * organisation answers `Users cannot be removed from this Organisation`. Reporting either as lost
+ * permission sends the caller looking for an access problem that is not there. This client's own
+ * guarantee follows it, because that is the one thing the service cannot say: the displayed
+ * resource and its canonical route are never changed by a rejection.
+ *
+ * A rejection that accounted for itself with nothing keeps the canned wording, and an unclassified
+ * failure still returns `undefined` so the shared error presentation stays in charge.
  */
 export const administrationMutationFailureMessage = (
   error: unknown,
   action: string,
   resource: string,
 ): string | undefined => {
+  const stated = statedRejection(error);
   switch (classifyTransportFailure(error).kind) {
     case "forbidden":
+      return (
+        stated ?? `You no longer have permission to ${action} ${resource}. ${resourceUnchanged}.`
+      );
+    // A token refusal answers with a list of scopes rather than with anything about this command,
+    // so it is stated as the refusal it was stated as before it had a kind of its own.
     case "token-refused":
-      return `You no longer have permission to ${action} ${resource}. The displayed resource has not changed.`;
+      return `You no longer have permission to ${action} ${resource}. ${resourceUnchanged}.`;
     case "not-found":
-      return `${resource} is no longer available. The displayed resource has not changed.`;
+      return stated ?? `${resource} is no longer available. ${resourceUnchanged}.`;
+    // A transport fact says nothing about the command, so the service has no account of it to
+    // relay and the sentence is this client's alone.
     case "network":
     case "rate-limited":
     case "server":
     case "timeout":
-      return `Could not ${action} ${resource}. The displayed resource has not changed; retry is available.`;
+      return `Could not ${action} ${resource}. ${resourceUnchanged}; retry is available.`;
+    // The service refused the request it was sent, so it is reported as a refusal even where it
+    // accounted for itself with nothing: the shared error presentation would state the reason phrase
+    // — "Bad Request" — to a person, and would not say what became of what is on screen.
     case "bad-request":
     case "conflict":
     case "method-not-allowed":
-    case "unknown":
     case "unprocessable":
     case "unsupported-media-type":
+      return stated ?? `Could not ${action} ${resource}. ${resourceUnchanged}.`;
+    // A fact this client cannot classify is not known to be a refusal, and nothing is claimed about
+    // it here; the shared error presentation stays in charge of it.
+    case "unknown":
       return undefined;
   }
 };
@@ -151,19 +215,22 @@ export const administrationMutationFailureMessage = (
 /**
  * Presents a refused unit deletion. Delete is offered only to a caller the client has already
  * confirmed may take it, and the Account Server refuses to delete a unit that still holds products,
- * so a rejection is a precondition the unit carries rather than a permission the caller lost. The
- * message names that precondition instead of the generic "permission" wording, which sent the owner
- * of a still-populated personal unit looking for an access problem that was not there.
+ * so a rejection is a precondition the unit carries rather than a permission the caller lost. Where
+ * the Account Server named that precondition itself its words are relayed; where it named nothing,
+ * the client says what the precondition usually is, rather than the generic "permission" wording
+ * that sent the owner of a still-populated personal unit looking for an access problem that was not
+ * there.
  */
 export const unitDeletionFailureMessage = (error: unknown, resource: string): string => {
+  const stated = statedRejection(error);
   switch (classifyTransportFailure(error).kind) {
     case "not-found":
-      return `${resource} is no longer available. The displayed resource has not changed.`;
+      return stated ?? `${resource} is no longer available. ${resourceUnchanged}.`;
     case "network":
     case "rate-limited":
     case "server":
     case "timeout":
-      return `Could not delete ${resource}. The displayed resource has not changed; retry is available.`;
+      return `Could not delete ${resource}. ${resourceUnchanged}; retry is available.`;
     case "bad-request":
     case "conflict":
     case "forbidden":
@@ -172,6 +239,9 @@ export const unitDeletionFailureMessage = (error: unknown, resource: string): st
     case "unknown":
     case "unprocessable":
     case "unsupported-media-type":
-      return `Could not delete ${resource}. It may still contain projects, datasets or subscriptions that must be removed first.`;
+      return (
+        stated ??
+        `Could not delete ${resource}. It may still contain projects, datasets or subscriptions that must be removed first.`
+      );
   }
 };

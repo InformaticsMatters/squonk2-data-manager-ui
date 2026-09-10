@@ -5,8 +5,20 @@ export const createAxiosRuntime = () => {
 
   return {
     instance,
+    /**
+     * Present the caller's credentials on every request, or present none at all.
+     *
+     * An empty token is not a credential. Writing one anyway sends `Bearer ` — a header the API can
+     * only reject, and one that reads in a network log as a token that went missing somewhere in
+     * this application rather than as a caller who has none. The header is removed instead, so a
+     * request made without a token is plainly unauthenticated.
+     */
     setAuthToken: (token: string) => {
-      instance.defaults.headers.common.Authorization = `Bearer ${token}`;
+      if (token) {
+        instance.defaults.headers.common.Authorization = `Bearer ${token}`;
+        return;
+      }
+      delete instance.defaults.headers.common.Authorization;
     },
     setBaseUrl: (baseUrl: string) => {
       instance.defaults.baseURL = baseUrl;

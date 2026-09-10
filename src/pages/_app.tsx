@@ -69,6 +69,11 @@ const makeGateInterceptor = (instance: typeof DM_INSTANCE) => {
     const auth = instance.defaults.headers.common.Authorization as string | undefined;
     if (auth) {
       config.headers.set("Authorization", auth);
+    } else {
+      // Axios merged the defaults into this config when the request was first made, so a request
+      // that queued while a token was still expected would otherwise go out carrying one that has
+      // since been withdrawn.
+      config.headers.delete("Authorization");
     }
     return config;
   };

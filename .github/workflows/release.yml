@@ -105,6 +105,7 @@ jobs:
             GIT_SHA=${{ needs.release.outputs.release_sha }}
             SKIP_CHECKS=1
             BASE_PATH=/data-manager-ui
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 

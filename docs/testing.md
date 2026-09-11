@@ -28,7 +28,18 @@ Playwright retains traces, screenshots, and video for failures under `test-resul
 
 ## Live smoke evidence
 
-`pnpm test:smoke` retains the tests that use mutable Keycloak, Data Manager, and Account Server deployments. It requires `.env.test.local`, a production build made with those endpoints, and live credentials. The scheduled/manual `live-service-smoke` workflow is non-blocking and is not an ordinary merge gate.
+`pnpm test:smoke` retains the tests that use mutable Keycloak, Data Manager, and Account Server deployments. It requires `.env.test.local`, a production build made with those endpoints, and the password of the identity pinned in `tests/liveEnvironment.ts` (`DMIT_USER_A_PASSWORD`). The scheduled/manual `live-service-smoke` workflow is non-blocking and is not an ordinary merge gate.
+
+## Live user journey
+
+`pnpm test:journey` runs one mutating journey — a whole new user's working life — against the DLS test deployment: sign-in, personal unit, project and subscription, an upload, a job, a workflow, an application, membership, the charges ledger, and deleting it all again. It is manual and scheduled only (`live-user-journey`, weekly, non-blocking) and is **never a merge gate**; what each screen does is specified deterministically in `tests/acceptance`, and a regression this journey catches should be reproduced there.
+
+- One serial test of eleven steps sharing one sign-in, with `retries: 0`: a second attempt would start from the first attempt's leftovers.
+- `tests/journey/preparation.setup.ts` runs first as its own Playwright project. It clears the journey user's projects, subscriptions and personal unit **before** the run, so a failed run's residue survives as evidence until the next run removes it, and it warms every identity up with one authenticated read per service, because the Data Manager offers a project's membership only the users it has already met.
+- Preparation talks to the services directly with a Keycloak direct-access-grant token per identity. The token must request `openid` alongside `profile` and `email`: without it the Account Server answers `403` on `/personal-unit` while `/organisation` still succeeds. It must **not** request `offline_access` — nothing in preparation refreshes, and Keycloak refuses the whole grant for an identity without that realm role.
+- The deployment facts it depends on — job, workflow, application, tier and the collaborator it shares with — are pinned in `tests/journey/deployment.ts`, and the user whose workspace it clears is the one both live suites sign in as, in `tests/liveEnvironment.ts` rather than discovered, so "this deployment no longer offers an application" cannot look like "the Run catalogue is broken".
+- Every step starts by loading the page again, and the long waits poll by reloading. A run outlives the deployment's five-minute access token, and the application asks for one as it starts up, so re-reading the page is what keeps the journey signed in.
+- It needs the same `.env.test.local` as the smoke suite plus `DMIT_USER_B_PASSWORD` for the collaborator, and a production build made with those endpoints.
 
 ## Component tests
 

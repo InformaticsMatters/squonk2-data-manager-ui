@@ -958,10 +958,10 @@ test("Manage presents project facts and available actions to a project administr
 
   // Support owns every diagnostic identifier and gives each one a copy affordance.
   await expect(factRow(page, "Project ID")).toContainText(fixtureIds.project);
-  await expect(factRow(page, "Subscription ID")).toContainText(fixtureIds.product);
+  await expect(factRow(page, "Product ID")).toContainText(fixtureIds.product);
   await expect(factRow(page, "Unit ID")).toContainText(fixtureIds.unit);
   await expect(factRow(page, "Organisation ID")).toContainText(fixtureIds.organisation);
-  for (const label of ["project", "subscription", "unit", "organisation"]) {
+  for (const label of ["project", "product", "unit", "organisation"]) {
     await expect(page.getByRole("button", { name: `Copy ${label} id identifier` })).toBeVisible();
   }
   // Manage holds the containing unit, so it links the subscription where it lives rather than at a
@@ -1552,6 +1552,6 @@ test("a project whose subscription is refused stays open, with the spends it can
   await expect(members(page, "Administrators").getByRole("combobox")).toBeEnabled();
   await expect(factRow(page, "Containing unit")).toContainText(fixtureIds.unit);
   await expect(factRow(page, "Owning organisation")).toContainText(fixtureIds.organisation);
-  await expect(factRow(page, "Subscription ID")).toContainText(fixtureIds.product);
+  await expect(factRow(page, "Product ID")).toContainText(fixtureIds.product);
   await expect(factRow(page, "Unit ID")).toContainText(fixtureIds.unit);
 });

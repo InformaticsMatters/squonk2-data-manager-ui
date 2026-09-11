@@ -578,7 +578,7 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
                 <Identifier label="Project ID" value={project.project_id} />
                 {/* Identifiers are quoted to support, so each is offered wherever it is known —
                     the project carries its own containers, whether or not they could be read. */}
-                {productId ? <Identifier label="Subscription ID" value={productId} /> : null}
+                {productId ? <Identifier label="Product ID" value={productId} /> : null}
                 {project.unit_id ? <Identifier label="Unit ID" value={project.unit_id} /> : null}
                 {project.organisation_id ? (
                   <Identifier label="Organisation ID" value={project.organisation_id} />

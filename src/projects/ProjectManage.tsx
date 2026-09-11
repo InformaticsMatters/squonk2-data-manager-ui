@@ -59,6 +59,12 @@ import { type ProjectSubscriptionFacts } from "./projectSubscription";
 
 const atLimitMessage = "This project's subscription is at its coin limit.";
 const coinFormatter = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 20 });
+const projectTierChipStyles: Record<string, { backgroundColor: string; color: string }> = {
+  Bronze: { backgroundColor: "#cd7f32", color: "#1a1a1a" },
+  Evaluation: { backgroundColor: "#1976d2", color: "#ffffff" },
+  Gold: { backgroundColor: "#ffd700", color: "#1a1a1a" },
+  Silver: { backgroundColor: "#c0c0c0", color: "#1a1a1a" },
+};
 
 const formatCoins = (value: number) => coinFormatter.format(value);
 
@@ -215,14 +221,14 @@ const SubscriptionCard = ({
             Coin usage
           </Typography>
           <Box sx={{ flex: 1 }} />
-          <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
-            <Chip
-              label={subscription.tier ?? "No tier"}
-              size="small"
-              sx={{ textTransform: "capitalize" }}
-            />
-            <Chip label={subscription.type} size="small" variant="outlined" />
-          </Stack>
+          <Chip
+            label={`Project tier: ${subscription.tier ?? "Not specified"}`}
+            size="small"
+            sx={{
+              fontWeight: 600,
+              ...(subscription.tier ? projectTierChipStyles[subscription.tier] : undefined),
+            }}
+          />
         </Stack>
 
         {subscription.atLimit ? (

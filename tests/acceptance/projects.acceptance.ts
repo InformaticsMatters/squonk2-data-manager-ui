@@ -948,7 +948,7 @@ test("Manage presents project facts and available actions to a project administr
   await expect(usage).toContainText("Included allowance: 50,000 coins");
   await expect(usage).toContainText("Billing day 1; 11 days remaining");
   await expect(usage.getByText("Gold", { exact: true })).toBeVisible();
-  await expect(usage.getByText("DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION")).toBeVisible();
+  await expect(usage.getByText("DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION")).toHaveCount(0);
   for (const heading of ["Burn rate", "Predicted spend", "Storage", "Instance spend"]) {
     await expect(usage.getByRole("heading", { level: 3, name: heading })).toBeVisible();
   }

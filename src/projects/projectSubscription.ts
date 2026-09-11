@@ -18,7 +18,6 @@ export type ProjectSubscriptionFacts = ProjectSubscriptionState & {
   storageSize: string;
   /** Absent when the generated product declares no flavour, rather than guessed from its type. */
   tier: string | undefined;
-  type: string;
   used: number;
 };
 
@@ -46,7 +45,6 @@ export const describeProjectSubscription = (
     storageCoinsUsed: product.storage.coins.used,
     storageSize: product.storage.size.current,
     tier: product.product.flavour ? formatTierString(product.product.flavour) : undefined,
-    type: product.product.type,
     used: product.coins.used,
   };
 };

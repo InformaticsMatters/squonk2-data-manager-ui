@@ -215,14 +215,11 @@ const SubscriptionCard = ({
             Coin usage
           </Typography>
           <Box sx={{ flex: 1 }} />
-          <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
-            <Chip
-              label={subscription.tier ?? "No tier"}
-              size="small"
-              sx={{ textTransform: "capitalize" }}
-            />
-            <Chip label={subscription.type} size="small" variant="outlined" />
-          </Stack>
+          <Chip
+            label={subscription.tier ?? "No tier"}
+            size="small"
+            sx={{ textTransform: "capitalize" }}
+          />
         </Stack>
 
         {subscription.atLimit ? (

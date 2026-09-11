@@ -1,3 +1,16 @@
+# [7.0.0-dev.29](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.28...7.0.0-dev.29) (2026-09-11)
+
+
+### Bug Fixes
+
+* **projects:** hide redundant subscription type ([d72e035](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d72e035d317ce667006c2ca9846ffa4b57f38474))
+* **projects:** label product ID correctly ([a162809](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a1628092ea3dc9f79a99a6d3a2b28af60c0630fc))
+
+
+### Features
+
+* **projects:** distinguish project tiers ([73090d2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/73090d2cc0d3e38fbb9fb73e85145be787136efb))
+
 # [7.0.0-dev.28](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.27...7.0.0-dev.28) (2026-09-09)
 
 

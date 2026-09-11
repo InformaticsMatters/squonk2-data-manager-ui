@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nextjs";
 import { fromNodeHeaders } from "better-auth/node";
 import { type GetServerSidePropsContext, type GetServerSidePropsResult } from "next";
 
@@ -52,7 +53,10 @@ export function withPageAuthRequiredSSR<T>(options: {
           }
           return { redirect: { destination, permanent: false } };
         }
-      } catch {
+      } catch (error) {
+        // Sign-in could not be started at all. The caller still gets somewhere — the client-side
+        // HOC tries again from Home — but a redirect loop is all anyone would otherwise see of it.
+        captureException(error);
         // fallback: home page redirect, CSR HOC will re-initiate login
       }
 

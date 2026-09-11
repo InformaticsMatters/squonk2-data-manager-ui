@@ -32,6 +32,13 @@ ENV GIT_SHA=${GIT_SHA:-""}
 ARG BASE_PATH
 ENV BASE_PATH=${BASE_PATH}
 
+# Sentry uploads source maps and creates the release during `next build`, so the token has to be
+# here rather than in the runtime configuration the playbook mounts — by then the maps are gone.
+# It is set in this builder stage only, which is not the stage that gets published, so it does not
+# reach the pushed image. A build without it still succeeds; it just warns and uploads nothing.
+ARG SENTRY_AUTH_TOKEN
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+
 # RUN npm i -g pnpm@11.2.2
 RUN echo "GIT_SHA=${GIT_SHA}" && npm run build
 

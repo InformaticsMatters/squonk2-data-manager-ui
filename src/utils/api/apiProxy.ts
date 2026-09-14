@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nextjs";
 import { fromNodeHeaders } from "better-auth/node";
 import { type NextApiHandler, type NextApiRequest } from "next";
 import httpProxyMiddleware, {
@@ -51,6 +52,10 @@ export const createProxyMiddleware = (
         secure: !process.env.DANGEROUS__DISABLE_SSL_CERT_CHECK_IN_API_PROXY, // only used in testing
       });
     } catch (error) {
+      // Every Data Manager request the browser makes arrives here, so a rejection this far out is
+      // the proxy itself failing rather than a service refusing a caller: nobody else is left to
+      // account for it, and without this it is a 500 nothing ever hears about.
+      captureException(error);
       console.error(error);
       res.status(500).json(error);
     }

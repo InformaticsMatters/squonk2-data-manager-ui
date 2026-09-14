@@ -1,5 +1,5 @@
 import nextMDX from "@next/mdx";
-import { withSentryConfig } from "@sentry/nextjs";
+import { withSentryConfig } from "@sentry/nextjs/config";
 import nextRoutes from "nextjs-routes/config";
 import { fileURLToPath } from "node:url";
 
@@ -58,10 +58,18 @@ let nextConfig = {
 nextConfig = withMDX(nextConfig);
 nextConfig = withRoutes(nextConfig);
 nextConfig = withSentryConfig(nextConfig, {
-  // Suppresses source map uploading logs during build
-  silent: true,
+  // The build speaks up. Silencing it is what hid "No auth token provided. Will not upload source
+  // maps." for three years, through every release of a bundle nothing could unminify.
+  silent: false,
   org: "informatics-matters",
   project: "data-manager-ui",
+
+  // The Docker build carries no .git directory, so Sentry has nothing to infer a release from
+  // unless it is named here. The package version is what names it: semantic-release has already
+  // written it by the commit the image is built from, and it is the image tag, the git tag and the
+  // version the About dialog shows alike — so an issue in Sentry names the artefact someone can
+  // actually go and look at. It also says which cluster: only a prerelease reaches the test AWX.
+  release: process.env.npm_package_version ? { name: process.env.npm_package_version } : undefined,
 
   // Automatically delete source maps after uploading them to Sentry
   sourcemaps: { deleteSourcemapsAfterUpload: true },

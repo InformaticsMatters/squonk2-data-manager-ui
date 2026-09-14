@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nextjs";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { type NextApiRequest, type NextApiResponse } from "next";
@@ -84,7 +85,10 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     res.setHeader("Cache-Control", "no-store");
     // Return all fields for the active entry
     res.status(200).json(motd);
-  } catch {
+  } catch (error) {
+    // Reading the file and parsing it already answer for themselves, so anything reaching here is
+    // unaccounted for.
+    captureException(error);
     res.status(500).json({ error: "Failed to load MOTD" });
   }
 }

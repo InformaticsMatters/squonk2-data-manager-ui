@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 # Install dependencies only when needed
 FROM node:24.15.0-alpine3.23 AS base
 
@@ -33,7 +35,15 @@ ARG BASE_PATH
 ENV BASE_PATH=${BASE_PATH}
 
 # RUN npm i -g pnpm@11.2.2
-RUN echo "GIT_SHA=${GIT_SHA}" && npm run build
+# Sentry uploads source maps and creates the release during `next build`, so its token has to be
+# here rather than in the runtime configuration the playbook mounts — by then the maps are gone.
+# It is mounted for this one command instead of being an ARG or an ENV, neither of which a secret
+# belongs in: both are recoverable from the build cache, and an ENV is baked into this stage's
+# metadata. The mount exists only while the command runs and is in no layer afterwards.
+# The secret is optional, so a build without it still succeeds — it warns and uploads nothing.
+RUN --mount=type=secret,id=sentry_auth_token \
+  echo "GIT_SHA=${GIT_SHA}" \
+  && SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth_token 2>/dev/null || true)" npm run build
 
 # If using npm comment out above and use below instead
 # RUN npm run build

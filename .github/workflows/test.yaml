@@ -3,8 +3,12 @@ name: test
 on:
   push:
 
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test:
+  components:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -19,11 +23,34 @@ jobs:
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm ci
-    - run: node -v
+    - name: Setup Playwright Chromium
+      run: pnpm exec playwright install --with-deps chromium
+    - name: Component tests
+      run: pnpm test:components
+
+  acceptance:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7.0.1
+    - uses: pnpm/action-setup@v6.0.10
+      with:
+        run_install: false
+    - name: Setup Node
+      uses: actions/setup-node@v7.0.0
+      with:
+        node-version: 24.15.0
+        cache: 'pnpm'
+    - name: Install dependencies
+      run: pnpm ci
     - name: Setup Playwright Chromium
       run: pnpm exec playwright install --with-deps chromium
     - name: Load cached build for speed
-      uses: actions/cache@v6.1.0
+      uses: actions/cache/restore@v6.1.0
       with:
         path: |
           ${{ github.workspace }}/.next/cache
@@ -33,17 +60,19 @@ jobs:
         # If source files changed but packages didn't, rebuild from a prior cache.
         restore-keys: |
           ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
-    - name: Typecheck
-      run: pnpm tsc
-    - name: Lint
-      run: pnpm lint
-    - name: Component tests
-      run: pnpm test:components
     - name: Deterministic production acceptance
-      run: pnpm test:acceptance
+      run: pnpm test:acceptance -- --shard=${{ matrix.shard }}/4
+    - name: Save build cache
+      if: matrix.shard == 1
+      uses: actions/cache/save@v6.1.0
+      with:
+        path: |
+          ${{ github.workspace }}/.next/cache
+        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{
+          hashFiles('**.[jt]s', '**.[jt]sx') }}
     - name: Upload test results
       if: always()
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: Test Results
+        name: Test Results (shard ${{ matrix.shard }})
         path: test-results

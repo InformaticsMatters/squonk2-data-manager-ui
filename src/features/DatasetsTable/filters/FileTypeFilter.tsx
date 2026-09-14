@@ -1,5 +1,5 @@
-import { type TypeSummary } from "@squonk/data-manager-client";
-import { useGetFileTypes } from "@squonk/data-manager-client/type";
+import { type TypeSummary } from "@/api/data-manager";
+import { useGetFileTypes } from "@/api/data-manager/type";
 
 import { getErrorMessage } from "../../../utils/next/orvalError";
 import { AutocompleteFilter } from "./AutocompleteFilter";
@@ -30,6 +30,7 @@ export const FileTypeFilter = ({ fileType, setFileType }: FileTypeFilterProps) =
       id="datasets-file-type-filter"
       isError={isError}
       isLoading={isLoading}
+      isOptionEqualToValue={(option, value) => option.mime === value.mime}
       label="Filter by file type"
       options={fileTypes}
       value={fileType}

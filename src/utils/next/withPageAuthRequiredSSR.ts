@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nextjs";
 import { fromNodeHeaders } from "better-auth/node";
 import { type GetServerSidePropsContext, type GetServerSidePropsResult } from "next";
 
@@ -5,6 +6,22 @@ import { auth } from "../../lib/auth";
 import { withBasePath } from "../app/basePath";
 
 type InnerGSSP<T> = (ctx: GetServerSidePropsContext) => Promise<GetServerSidePropsResult<T>>;
+
+/**
+ * Reads where the provider wants the browser sent. Better Auth answers this endpoint with a JSON
+ * authorization URL rather than a redirect, so the header is only a fallback.
+ */
+const readAuthorizationUrl = async (response: Response) => {
+  const location = response.headers.get("location");
+  if (location) {
+    return location;
+  }
+  if (!response.headers.get("content-type")?.includes("application/json")) {
+    return null;
+  }
+  const body = (await response.json()) as { url?: unknown };
+  return typeof body.url === "string" ? body.url : null;
+};
 
 export function withPageAuthRequiredSSR<T>(options: {
   returnTo?: string;
@@ -20,25 +37,31 @@ export function withPageAuthRequiredSSR<T>(options: {
 
       try {
         const signInRes = await auth.handler(
-          new Request(`${baseUrl}/api/auth/sign-in/oauth2`, {
+          new Request(`${baseUrl}/api/auth/sign-in/social`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ providerId: "keycloak", callbackURL: returnTo }),
+            body: JSON.stringify({ provider: "keycloak", callbackURL: returnTo }),
           }),
         );
-        const location = signInRes.headers.get("location");
-        if (location) {
-          const setCookie = signInRes.headers.get("set-cookie");
-          if (setCookie) {
-            ctx.res.setHeader("Set-Cookie", setCookie);
+        // getSetCookie keeps each cookie separate; headers.get would join them into one
+        // malformed header and lose the OAuth state that carries the PKCE code verifier
+        const setCookies = signInRes.headers.getSetCookie();
+        const destination = await readAuthorizationUrl(signInRes);
+        if (destination) {
+          if (setCookies.length > 0) {
+            ctx.res.setHeader("Set-Cookie", setCookies);
           }
-          return { redirect: { destination: location, permanent: false } };
+          return { redirect: { destination, permanent: false } };
         }
-      } catch {
+      } catch (error) {
+        // Sign-in could not be started at all. The caller still gets somewhere — the client-side
+        // HOC tries again from Home — but a redirect loop is all anyone would otherwise see of it.
+        captureException(error);
         // fallback: home page redirect, CSR HOC will re-initiate login
       }
 
-      return { redirect: { destination: withBasePath("/"), permanent: false } };
+      // Next prefixes internal redirect destinations with the base path itself.
+      return { redirect: { destination: "/", permanent: false } };
     }
 
     return options.getServerSideProps(ctx);

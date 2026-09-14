@@ -1,7 +1,7 @@
 import { Button, type ButtonProps } from "@mui/material";
-import { useRouter } from "next/router";
+import Router from "next/router";
 
-import { useCleanUpOnLogout } from "../../hooks/authHooks";
+import { clearAccountScopedStorageOnLogout } from "../../application/logoutCleanup";
 import { authClient } from "../../lib/auth-client";
 import { withBasePath } from "../../utils/app/basePath";
 import { capitalise } from "../../utils/app/language";
@@ -13,21 +13,20 @@ export interface AuthButtonPros extends ButtonProps {
 }
 
 export const AuthButton = ({ mode, ...ButtonProps }: AuthButtonPros) => {
-  const cleanupOnLogout = useCleanUpOnLogout();
-  const router = useRouter();
-
+  // The singleton router rather than `useRouter`, which throws unless a router is mounted above
+  // it. Where the caller currently is matters only once login has been clicked, so it is read
+  // then — which keeps this button renderable outside the application, in a story for instance.
+  // `asPath` is the same value either way.
   const handleClick = async () => {
     if (mode === "logout") {
-      cleanupOnLogout();
-      await authClient.signOut();
-      const issuer = process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER_URL;
-      const clientId = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID;
-      const postLogout = encodeURIComponent(globalThis.location.origin + withBasePath("/"));
-      globalThis.location.href = `${issuer}/protocol/openid-connect/logout?post_logout_redirect_uri=${postLogout}&client_id=${clientId}`;
+      clearAccountScopedStorageOnLogout({ local: localStorage, session: sessionStorage });
+      // Signing out is left to the route, which needs the session the client would have discarded:
+      // the ID token it reads from it is what spares the caller Keycloak's confirmation page.
+      globalThis.location.href = withBasePath("/api/auth/keycloak-logout");
     } else {
-      await authClient.signIn.oauth2({
-        providerId: "keycloak",
-        callbackURL: withBasePath(router.asPath),
+      await authClient.signIn.social({
+        provider: "keycloak",
+        callbackURL: withBasePath(Router.asPath),
       });
     }
   };

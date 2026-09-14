@@ -3,6 +3,7 @@ import { type ReactNode, useState } from "react";
 import { Tooltip, Typography } from "@mui/material";
 
 import { useMountedState } from "../hooks/useMountedState";
+import { settle } from "../utils/app/settle";
 import { ModalWrapper } from "./modals/ModalWrapper";
 
 export interface DeleteButtonProps {
@@ -39,6 +40,7 @@ export interface WarningDeleteButtonProps {
    * Called when the primary action is triggered.
    */
   onDelete: () => Promise<void>;
+  retainOnError?: boolean;
 }
 
 const defaultChild = (
@@ -58,6 +60,7 @@ export const WarningDeleteButton = ({
   modalChildren = defaultChild,
   children,
   onDelete,
+  retainOnError = false,
 }: WarningDeleteButtonProps) => {
   const isMounted = useMountedState();
   const [open, setOpen] = useState(false);
@@ -67,10 +70,22 @@ export const WarningDeleteButton = ({
 
   const submitHandler = async () => {
     setIsDeleting(true);
-    await onDelete();
+    if (!retainOnError) {
+      await onDelete();
+      if (isMounted()) {
+        setIsDeleting(false);
+        setOpen(false);
+      }
+      return;
+    }
+    const outcome = await settle(onDelete);
     if (isMounted()) {
+      // On a rejection the action owner presents scoped feedback; keep the confirmation open for
+      // retry.
+      if (outcome.ok) {
+        setOpen(false);
+      }
       setIsDeleting(false);
-      setOpen(false);
     }
   };
 

@@ -1,79 +1,55 @@
-import { type Dispatch, type SetStateAction } from "react";
-
 import { Grid } from "@mui/material";
 
 import { Dropzone } from "../../components/uploads/Dropzone";
 import { type UploadableFile } from "../../components/uploads/types";
-import { mutateAtPosition } from "../../utils/app/files";
+import {
+  type DatasetUploadRecord,
+  datasetUploadRecordOf,
+  type DatasetUploadRecords,
+} from "../../datasets/uploadLifecycle";
 import { SingleFileUploadWithProgress } from "./SingleFileUploader";
 
 export interface BulkUploadDropzoneProps {
-  /**
-   * Array of files their metadata
-   */
   files: UploadableFile[];
-  /**
-   * Called on file delete, mime-type change, file upload finished, and rename actions
-   */
-  setFiles: Dispatch<SetStateAction<UploadableFile[]>>;
+  records: DatasetUploadRecords;
+  /** Called with newly dropped files, which are appended to the batch. */
+  onNewFiles: (newFiles: UploadableFile[]) => void;
+  onDelete: (fileId: string) => void;
+  onFileChange: (fileId: string, change: Partial<UploadableFile>) => void;
+  onRetry: (fileId: string) => void;
+  onSettled: (fileId: string, settled: DatasetUploadRecord) => void;
 }
 
 /**
- * Drag-and-drop file upload with options to rename and choose a mime-type. It also displays upload
- * and processing progress.
+ * Drag-and-drop file upload with options to rename and choose a mime-type. Every row is addressed
+ * by the file's own identity rather than its position, so a row never edits the file that happens
+ * to have moved into its place.
  */
-export const BulkUploadDropzone = ({ files, setFiles }: BulkUploadDropzoneProps) => {
-  return (
-    <Dropzone files={files} onNewFiles={setFiles}>
-      <Grid container spacing={1} sx={{ flexDirection: "column" }}>
-        {files.map((fileWrapper, index) => (
-          <Grid key={fileWrapper.id}>
-            <SingleFile file={fileWrapper} files={files} index={index} setFiles={setFiles} />
-          </Grid>
-        ))}
-      </Grid>
-    </Dropzone>
-  );
-};
-
-interface SingleFileProps {
-  index: number;
-  file: UploadableFile;
-  /**
-   * Called on file delete, mime-type change, file upload finished, and rename actions
-   */
-  setFiles: Dispatch<SetStateAction<UploadableFile[]>>;
-  files: UploadableFile[];
-}
-
-const SingleFile = ({ index, file, setFiles, files }: SingleFileProps) => {
-  const onDelete = (file: File) => {
-    setFiles((curr) => curr.filter((fw) => fw.file !== file));
-  };
-
-  const changeToDone = () => {
-    file.done = true;
-    setFiles(mutateAtPosition(files, index, files[index]));
-  };
-
-  const changeMimeType = (newType: string): void => {
-    file.mimeType = newType;
-    setFiles(mutateAtPosition(files, index, file));
-  };
-
-  const rename = (newName: string): void => {
-    file.rename = newName;
-    setFiles(mutateAtPosition(files, index, file));
-  };
-
-  return (
-    <SingleFileUploadWithProgress
-      changeMimeType={changeMimeType}
-      changeToDone={changeToDone}
-      errors={file.errors}
-      fileWrapper={file}
-      rename={rename}
-      onDelete={onDelete}
-    />
-  );
-};
+export const BulkUploadDropzone = ({
+  files,
+  onDelete,
+  onFileChange,
+  onNewFiles,
+  onRetry,
+  onSettled,
+  records,
+}: BulkUploadDropzoneProps) => (
+  <Dropzone files={files} onNewFiles={onNewFiles}>
+    <Grid container spacing={1} sx={{ flexDirection: "column" }}>
+      {files.map((fileWrapper) => (
+        <Grid key={fileWrapper.id}>
+          <SingleFileUploadWithProgress
+            changeMimeType={(mimeType) => onFileChange(fileWrapper.id, { mimeType })}
+            errors={fileWrapper.errors}
+            fileWrapper={fileWrapper}
+            record={datasetUploadRecordOf(records, fileWrapper.id)}
+            rename={(rename) => onFileChange(fileWrapper.id, { rename })}
+            onDelete={onDelete}
+            onRetry={onRetry}
+            onSettled={onSettled}
+          />
+        </Grid>
+      ))}
+    </Grid>
+  </Dropzone>
+);

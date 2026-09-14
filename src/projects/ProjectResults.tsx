@@ -1,0 +1,367 @@
+import { Alert, Box, Button, Container, Grid, Typography } from "@mui/material";
+import NextError from "next/error";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+import { type FamilyRoute } from "../application/familyRoute";
+import { useFamilyRoute } from "../application/FamilyRouteResolution";
+import { CenterLoader } from "../components/CenterLoader";
+import { InstanceDetails } from "../components/instances/InstanceDetails";
+import { InstanceResultCard } from "../components/instances/InstanceResultCard";
+import { ReasonsStatedAbove } from "../components/results/CapabilityReasons";
+import { ResultTaskCard } from "../components/tasks/ResultTaskCard";
+import { ResultWorkflowSteps } from "../components/workflows/ResultWorkflowSteps";
+import { WorkflowResultCard } from "../components/workflows/WorkflowResultCard";
+import {
+  projectEditorRequirementStatements,
+  projectIsReadOnly,
+  projectReadOnlyStatement,
+} from "./capabilities";
+import { resolveResultInstanceLifecycle, resultInstanceSettlement } from "./instanceFacts";
+import { type ProjectFacts, useProjectFacts } from "./projectFacts";
+import { ProjectResultDetail } from "./ProjectResultDetail";
+import { resolveResultCapabilities } from "./resultCapabilities";
+import {
+  filterResultItems,
+  type ResultItem,
+  resultsDefinitionLabel,
+  resultsFilterStatement,
+  resultsShownStatement,
+  unrunResultsDefinition,
+} from "./resultFacts";
+import { resolveRerunTarget } from "./resultRerun";
+import { ResultsRail } from "./ResultsRail";
+import {
+  projectLinks,
+  type ProjectRoute,
+  type ResultFilterType,
+  resultsListState,
+  type ResultsState,
+  resultsWithoutDefinition,
+} from "./routes";
+import { SectionReadAlerts } from "./SectionReadAlerts";
+import { resolveProjectSectionRoute } from "./sectionRoute";
+import { SectionSearchField } from "./SectionSearchField";
+import { resolveResultTaskLifecycle, resultTaskSettlement } from "./taskFacts";
+import { type ProjectResults as ProjectResultsData, useProjectResults } from "./useProjectResults";
+import { resolveResultWorkflowLifecycle, resultWorkflowSettlement } from "./workflowFacts";
+
+type ResultsRoute = Extract<ProjectRoute, { kind: "result" | "results" }>;
+
+const isResultsRoute = (route: FamilyRoute): route is ResultsRoute =>
+  route.kind === "results" || route.kind === "result";
+
+/** A stable empty list, so a page that states nothing above the cards never re-renders them. */
+const noReasons: readonly string[] = [];
+
+/** How one listed result accounted for its own progress, where its kind accounts for any. */
+type ResultProgressFacts = Pick<
+  Parameters<typeof resolveResultCapabilities>[1],
+  "instanceSettlement" | "taskSettlement" | "workflowSettlement"
+>;
+
+/**
+ * One result, offered with the capabilities its own owning project decides. Nothing about the card
+ * is derived from the project the caller happens to be looking at.
+ */
+const ResultItemCard = ({
+  content,
+  facts,
+  item,
+  resultsState,
+  routeProjectId,
+  collapsedByDefault = true,
+}: {
+  collapsedByDefault?: boolean;
+  content: "current" | "stale";
+  facts: ProjectFacts;
+  item: ResultItem;
+  resultsState?: ResultsState;
+  routeProjectId: string;
+}) => {
+  // A listed result accounts for its own progress in the summary its collection returned, by the
+  // same rule the addressed result's own read is settled by, so a listed card and the addressed
+  // one never disagree about what may be done to it.
+  const capabilitiesFor = (progress: ResultProgressFacts) =>
+    resolveResultCapabilities(facts, {
+      content,
+      owningProjectId: item.owningProjectId,
+      routeProjectId,
+      ...progress,
+    });
+
+  switch (item.kind) {
+    case "instance":
+      return (
+        <InstanceResultCard
+          capabilities={capabilitiesFor({
+            instanceSettlement: resultInstanceSettlement(
+              resolveResultInstanceLifecycle({ instance: item.data }),
+            ),
+          })}
+          collapsed={<InstanceDetails instanceId={item.id} projectId={item.owningProjectId} />}
+          collapsedByDefault={collapsedByDefault}
+          instance={item.data}
+          instanceId={item.id}
+          projectId={item.owningProjectId}
+          // A listed instance offers a rerun on the same terms the addressed one does, decided
+          // against the project in the URL rather than the project the card happens to display.
+          rerunTarget={resolveRerunTarget({
+            instance: item.data,
+            instanceId: item.id,
+            routeProjectId,
+          })}
+          resultsState={resultsState}
+        />
+      );
+    case "task":
+      return (
+        <ResultTaskCard
+          capabilities={capabilitiesFor({
+            taskSettlement: resultTaskSettlement(resolveResultTaskLifecycle({ task: item.data })),
+          })}
+          collapsedByDefault={collapsedByDefault}
+          projectId={item.owningProjectId}
+          resultsState={resultsState}
+          task={item.data}
+        />
+      );
+    case "workflow": {
+      const lifecycle = resolveResultWorkflowLifecycle({ workflow: item.data });
+
+      return (
+        <WorkflowResultCard
+          capabilities={capabilitiesFor({
+            workflowSettlement: resultWorkflowSettlement(lifecycle),
+          })}
+          collapsed={
+            <ResultWorkflowSteps
+              projectId={item.owningProjectId}
+              resultsState={resultsState}
+              runningWorkflowId={item.id}
+            />
+          }
+          collapsedByDefault={collapsedByDefault}
+          projectId={item.owningProjectId}
+          resultsState={resultsState}
+          workflow={item.data}
+        />
+      );
+    }
+  }
+};
+
+const ResultsList = ({
+  facts,
+  items,
+  results,
+  routeProjectId,
+  state,
+}: {
+  facts: ProjectFacts;
+  /** The results the current narrowing left, which the heading above the list has already counted. */
+  items: readonly ResultItem[];
+  results: ProjectResultsData;
+  routeProjectId: string;
+  state: ResultsState;
+}) => {
+  // A filtered list cannot be shown before the definition it narrows to is known, so the catalogue
+  // read is waited on rather than the whole list being flashed and then narrowed.
+  if (results.isLoading || results.definition.status === "pending") {
+    return <CenterLoader />;
+  }
+
+  if (items.length === 0) {
+    // An empty filtered list names what it was narrowed to, so "this definition has never run here"
+    // is distinguishable from a page that is simply broken.
+    const unrun = unrunResultsDefinition(results.items, results.definition);
+
+    return (
+      <Typography align="center" variant="body2">
+        {unrun
+          ? `There are no results for ${resultsDefinitionLabel(unrun)} in this project.`
+          : "There are no tasks, instances, or workflows to display."}
+      </Typography>
+    );
+  }
+
+  return (
+    <Grid container spacing={2}>
+      {items.map((item) => (
+        <Grid key={`${item.kind}-${item.id}`} size={{ xs: 12 }}>
+          <ResultItemCard
+            content={results.freshness[item.kind]}
+            facts={facts}
+            item={item}
+            resultsState={state}
+            routeProjectId={routeProjectId}
+          />
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
+
+const ResultsSection = ({
+  localNotFound,
+  route,
+}: {
+  localNotFound?: boolean;
+  route: ResultsRoute;
+}) => {
+  const router = useRouter();
+  const { projectId } = route;
+  const state = resultsListState(route);
+  const results = useProjectResults(projectId, state.definition);
+  const facts = useProjectFacts();
+
+  const handleStateChange = (change: ResultsState) => {
+    const href =
+      route.kind === "results"
+        ? projectLinks.results(projectId, change)
+        : projectLinks.result(projectId, route.collection, route.resultId, change);
+    void router.replace(href as never, undefined, { shallow: true });
+  };
+  const handleRefresh = () => results.refresh();
+  const handleRetry = () => results.retry();
+  const handleClearDefinition = () => handleStateChange(resultsWithoutDefinition(state));
+  // A type filter is only ever offered where the route carries no definition filter, so the two
+  // narrowings stay mutually exclusive in the state this writes as well as in the route.
+  const handleTypesChange = (types?: readonly ResultFilterType[]) =>
+    handleStateChange({ search: state.search, types });
+  const statement = resultsFilterStatement(state.definition, results.definition);
+  // Read-only access withholds the same actions on every result the project owns, so the section
+  // states that once above whatever it is showing and the cards below it stay silent about it. A
+  // dialog opened from here covers that sentence, so its own controls go on explaining themselves.
+  const readOnly = facts !== undefined && projectIsReadOnly(facts);
+
+  // The list narrows to the definition the catalogue resolved, never to the identifier the URL
+  // carries: that identifier names one version, and the version-agnostic case must stay expressible.
+  const shown = filterResultItems(
+    results.items,
+    state,
+    results.definition.status === "resolved" ? results.definition.target : undefined,
+  );
+  // What the narrowing left, counted only where a list is what the caller is looking at and only
+  // once every read it counts has answered. An addressed result is one result whatever the list
+  // beside it holds, so counting the list there would state something the page is not showing.
+  const counted =
+    route.kind === "results" && !results.isLoading && results.definition.status !== "pending";
+
+  // The container widens by about what the rail takes, so putting the controls beside the list does
+  // not cost the list the width it had when they were stacked above it.
+  return (
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      <Box sx={{ alignItems: "baseline", display: "flex", gap: 1.5, mb: 2 }}>
+        <Typography component="h1" variant="h4">
+          Results
+        </Typography>
+        {counted ? (
+          <Typography color="text.secondary" variant="body2">
+            {resultsShownStatement(shown.length, results.items.length)}
+          </Typography>
+        ) : null}
+      </Box>
+
+      <Box sx={{ display: "flex", flexDirection: { md: "row", xs: "column" }, gap: 3 }}>
+        {/* Below md the rail stacks above the list: a 200px rail beside a list on a phone would
+            leave neither usable. */}
+        <ResultsRail
+          state={state}
+          statement={statement}
+          onClearDefinition={handleClearDefinition}
+          onRefresh={handleRefresh}
+          onTypesChange={handleTypesChange}
+        />
+
+        {/* The list column may shrink to nothing, so a wide result card cannot push the rail off
+            the layout. */}
+        <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+          <Box sx={{ mb: 2 }}>
+            <SectionSearchField
+              search={state.search}
+              onSearch={(search) => handleStateChange({ ...state, search })}
+            />
+          </Box>
+
+          <SectionReadAlerts
+            report={results.report}
+            retryableMessage="Some results could not be refreshed. Those results may be out of date, so they cannot be changed until they load again."
+            unavailableMessage="These results are unavailable or you no longer have access to them."
+            onRetry={handleRetry}
+          />
+
+          {localNotFound ? (
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              This result was not found in this project.
+            </Alert>
+          ) : null}
+
+          {/* A link to a definition the catalogue does not contain is a dead link, not a dead end:
+              the failure is stated and the whole list is shown rather than an empty one. */}
+          {results.definition.status === "not-found" ? (
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              The definition these results were filtered to was not found, so every result in this
+              project is shown.
+            </Alert>
+          ) : null}
+
+          {readOnly ? (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              {projectReadOnlyStatement}
+            </Alert>
+          ) : null}
+
+          {facts === undefined ? (
+            <CenterLoader />
+          ) : (
+            <ReasonsStatedAbove reasons={readOnly ? projectEditorRequirementStatements : noReasons}>
+              {route.kind === "result" ? (
+                <>
+                  <Button
+                    component={Link}
+                    href={projectLinks.results(projectId, state)}
+                    sx={{ mb: 1 }}
+                  >
+                    All results
+                  </Button>
+                  <ProjectResultDetail facts={facts} results={results} route={route} />
+                </>
+              ) : (
+                <ResultsList
+                  facts={facts}
+                  items={shown}
+                  results={results}
+                  routeProjectId={projectId}
+                  state={state}
+                />
+              )}
+            </ReasonsStatedAbove>
+          )}
+        </Box>
+      </Box>
+    </Container>
+  );
+};
+
+/**
+ * The Results section of the project in the URL. Every result it fetches, displays, links to, and
+ * offers actions on belongs to that project: no read, link, or capability here consults a selected
+ * or previously current project.
+ */
+export const ProjectResults = () => {
+  const section = resolveProjectSectionRoute(useFamilyRoute(), isResultsRoute);
+
+  switch (section.kind) {
+    case "not-found":
+      return <NextError statusCode={404} />;
+    // A result route the section could not address keeps the project and its list rather than
+    // guessing a correction for it.
+    case "local-not-found":
+      return (
+        <ResultsSection localNotFound route={{ kind: "results", projectId: section.projectId }} />
+      );
+    case "route":
+      return <ResultsSection route={section.route} />;
+  }
+};

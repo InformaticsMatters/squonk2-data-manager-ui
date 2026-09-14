@@ -1,3 +1,4 @@
+import { evaluateDatasetDeletionCapability } from "../../../../datasets/capabilities";
 import { useKeycloakUser } from "../../../../hooks/useKeycloakUser";
 import { type TableDatasetSubRow } from "../..";
 
@@ -11,10 +12,12 @@ export const useFilterDeletableDatasets = (datasets: TableDatasetSubRow[]) => {
   const undeletableDatasets: TableDatasetSubRow[] = [];
 
   datasets.forEach((dataset) => {
-    const isEditor = !!user.username && dataset.editors.includes(user.username);
-    const isOwner = dataset.owner === user.username;
-
-    if (isEditor || isOwner) {
+    const capability = evaluateDatasetDeletionCapability({
+      caller: { username: user.username },
+      dataset: dataset.datasetSummary,
+      version: dataset.datasetVersion,
+    });
+    if (capability.status === "enabled") {
       deletableDatasets.push(dataset);
     } else {
       undeletableDatasets.push(dataset);

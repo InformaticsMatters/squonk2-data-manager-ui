@@ -1,7 +1,7 @@
-import { useLayoutEffect, useState } from "react";
-
 import { Restore } from "@mui/icons-material";
 import { Box, IconButton, TextField, Tooltip } from "@mui/material";
+
+import { useDraftValue } from "../../../../../../hooks/useDraftValue";
 
 export interface DatasetSchemaDescriptionInputProps {
   /**
@@ -28,12 +28,7 @@ export const DatasetSchemaDescriptionInput = ({
   originalValue,
 }: DatasetSchemaDescriptionInputProps) => {
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-  const [displayValue, setDisplayValue] = useState(value || "");
-
-  useLayoutEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-    setDisplayValue(value || "");
-  }, [value]);
+  const [displayValue, setDisplayValue] = useDraftValue(value || "");
 
   const hasChanged = displayValue !== originalValue;
 

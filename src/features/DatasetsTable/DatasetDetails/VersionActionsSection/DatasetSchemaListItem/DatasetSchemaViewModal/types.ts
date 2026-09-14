@@ -1,4 +1,4 @@
-import { type DatasetSchemaGetResponse } from "@squonk/data-manager-client";
+import { type DatasetSchemaGetResponse } from "@/api/data-manager";
 
 import { type JSON_SCHEMA_TYPE } from "../../../../../../utils/app/jsonSchema";
 

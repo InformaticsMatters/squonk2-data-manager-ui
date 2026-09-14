@@ -1,3 +1,11 @@
+# [7.0.0-dev.30](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.29...7.0.0-dev.30) (2026-09-14)
+
+
+### Bug Fixes
+
+* **sentry:** mount the auth token as a secret rather than an ARG ([01902a8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/01902a8a966ce0d2531125b035a602c3ca120b9a))
+* **sentry:** upload source maps and report the errors that were swallowed ([42e072f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/42e072faff44d3a2b2f94291ee1c4162c5e6729c))
+
 # [7.0.0-dev.29](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.28...7.0.0-dev.29) (2026-09-11)
 
 

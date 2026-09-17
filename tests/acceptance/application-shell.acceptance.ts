@@ -641,8 +641,19 @@ test("an administrator is told the role widens every list they see", async ({ pa
   await expect(mark).toBeVisible();
 });
 
-test("an ordinary caller carries no administrator mark", async ({ page }, testInfo) => {
+test("an evaluator is told the role narrows where they can create", async ({ page }, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await page.request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=evaluator`);
+  await login(page, "projects", testInfo);
+
+  // The two marks are exclusive, and an evaluator wears the one that describes what they may do.
+  await expect(page.getByText("Evaluation access")).toBeVisible();
+  await expect(page.getByText("Administrator access")).toBeHidden();
+});
+
+test("an ordinary caller carries no role mark", async ({ page }, testInfo) => {
   await login(page, "projects", testInfo);
   await expect(page.getByRole("navigation", { name: "Main" })).toBeVisible();
   await expect(page.getByText("Administrator access")).toBeHidden();
+  await expect(page.getByText("Evaluation access")).toBeHidden();
 });

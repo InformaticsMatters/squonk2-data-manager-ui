@@ -8,8 +8,10 @@ import {
   WIDE_DESKTOP_SIDEBAR_WIDTH,
 } from "../components/eventStream/EventStreamSidebar";
 import { CookiesBanner } from "../components/legal/CookiesBanner";
+import { PrototypeSwitcher } from "../components/PrototypeSwitcher";
 import { useIsTransitioning } from "../hooks/useIsTransitioning";
 import { eventStreamSidebarOpenAtom } from "../state/eventStream";
+import { AdminBannerPrototype, adminBannerVariants } from "./AdminBanner.prototype";
 import { Footer } from "./Footer";
 import Header from "./Header";
 
@@ -30,6 +32,10 @@ const Layout = ({ children }: LayoutProps) => {
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Box sx={{ zIndex: 1, displayPrint: "none" }}>
         <Header />
+      </Box>
+      {/* Its own flex item above the header's and the footer's stacking contexts, both zIndex 1. */}
+      <Box sx={{ zIndex: 2, displayPrint: "none" }}>
+        <AdminBannerPrototype />
       </Box>
       {/* Reserve space for the LinearProgress to avoid layout shift */}
       <Box sx={{ minHeight: 4 }}>
@@ -75,6 +81,9 @@ const Layout = ({ children }: LayoutProps) => {
       </Box>
       <NoSsr>
         <CookiesBanner />
+      </NoSsr>
+      <NoSsr>
+        <PrototypeSwitcher variants={adminBannerVariants} />
       </NoSsr>
     </Box>
   );

@@ -9,13 +9,13 @@ import { useIsEvaluator, useIsPlatformAdmin } from "../hooks/useIsAuthorized";
  */
 const marks = {
   admin: {
-    colour: "warning",
+    palette: "warning",
     label: "Administrator access",
     summary:
       "You hold the platform administrator role, so organisation and unit lists show every one in this deployment — not only the ones you belong to. Some of those you can see but not act in.",
   },
   evaluator: {
-    colour: "info",
+    palette: "info",
     label: "Evaluation access",
     summary:
       "You hold the evaluation role, so projects and subscriptions can only be created in your personal unit, and only at the evaluation tier.",
@@ -40,7 +40,8 @@ const useSessionMark = () => {
 
 /**
  * A standing mark that the caller's role changes what the application will do, shown on every page
- * of the authenticated shell.
+ * the chrome serves. A caller who is signed out, or who holds neither role, holds no mark, so the
+ * public pages this layout also carries are unmarked without deciding anything about them here.
  *
  * An administrator sees every organisation and unit the deployment has, because the account server
  * widens what it returns for the role rather than because a list has lost its filter — the
@@ -64,30 +65,32 @@ export const RoleBanner = () => {
       sx={{
         position: "fixed",
         inset: 0,
-        zIndex: "appBar",
         pointerEvents: "none",
         border: 3,
-        borderColor: `${mark.colour}.main`,
-        displayPrint: "none",
+        borderColor: `${mark.palette}.main`,
       }}
     >
       {/* Described rather than labelled: the mark's own text names it, and a tooltip taken as the
-          accessible name would rename the element after what the role happens to restrict. */}
+          accessible name would rename the element after what the role happens to restrict. The
+          text itself carries the focus, so the explanation is reachable from the keyboard rather
+          than on hover alone. */}
       <Tooltip describeChild title={mark.summary}>
-        <Box
+        <Typography
           sx={{
             position: "absolute",
             bottom: 0,
             left: 16,
             px: 1.5,
             borderRadius: "4px 4px 0 0",
-            bgcolor: `${mark.colour}.main`,
-            color: `${mark.colour}.contrastText`,
+            bgcolor: `${mark.palette}.main`,
+            color: `${mark.palette}.contrastText`,
             pointerEvents: "auto",
           }}
+          tabIndex={0}
+          variant="caption"
         >
-          <Typography variant="caption">{mark.label}</Typography>
-        </Box>
+          {mark.label}
+        </Typography>
       </Tooltip>
     </Box>
   );

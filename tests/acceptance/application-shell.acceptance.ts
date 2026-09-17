@@ -631,6 +631,16 @@ test("an administrator is told the role widens every list they see", async ({ pa
   const mark = page.getByText("Administrator access");
   await expect(mark).toBeVisible();
 
+  // The mark is a frame drawn around the chrome, and the explanation behind it is reachable from
+  // the keyboard rather than on hover alone.
+  await expect(mark.locator("xpath=ancestor::div[1]")).toHaveCSS("border-top-width", "3px");
+  // Tab first, so what follows is a keyboard caller: the tooltip answers `:focus-visible`, and a
+  // control focused straight from the harness would not qualify.
+  await page.keyboard.press("Tab");
+  await mark.focus();
+  await expect(mark).toBeFocused();
+  await expect(page.getByRole("tooltip")).toContainText("not only the ones you belong to");
+
   // It stands on every page of the shell rather than on the screen that first surprises someone,
   // and it does not swallow the clicks of whatever it covers.
   await page

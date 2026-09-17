@@ -31,13 +31,23 @@ const codes = new Map<
 >();
 /**
  * The realm roles the identity provider issues. An evaluation account holds the Account Server's
- * evaluator role instead of its user role, which is the only thing that distinguishes it, so the
- * scenario profile decides it here rather than any screen inferring it.
+ * evaluator role instead of its user role, and an administrator its admin role as well, which is
+ * the only thing that distinguishes either, so the scenario profile decides it here rather than
+ * any screen inferring it.
  */
-const realmRolesFor = (subject: string) =>
-  getScenario(subject).profile === "evaluator"
-    ? ["data-manager-user", "account-server-evaluator"]
-    : ["data-manager-user", "account-server-user"];
+const realmRolesFor = (subject: string) => {
+  switch (getScenario(subject).profile) {
+    case "evaluator": {
+      return ["data-manager-user", "account-server-evaluator"];
+    }
+    case "platform-admin": {
+      return ["data-manager-user", "account-server-user", "account-server-admin"];
+    }
+    default: {
+      return ["data-manager-user", "account-server-user"];
+    }
+  }
+};
 
 const createToken = (subject: string, extraClaims: Record<string, string> = {}) => {
   const now = Math.floor(Date.now() / 1000);

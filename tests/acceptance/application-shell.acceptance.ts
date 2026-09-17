@@ -622,3 +622,27 @@ test("the chrome draws a ring around whatever the keyboard is standing on", asyn
   expect(await focusRingOf(highlighted)).toBe("solid 2px");
   expect(await focusRingOf(page.getByRole("option").first())).toBe("none 0px");
 });
+
+test("an administrator is told the role widens every list they see", async ({ page }, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await page.request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=platform-admin`);
+  await login(page, "projects", testInfo);
+
+  const mark = page.getByText("Administrator access");
+  await expect(mark).toBeVisible();
+
+  // It stands on every page of the shell rather than on the screen that first surprises someone,
+  // and it does not swallow the clicks of whatever it covers.
+  await page
+    .getByRole("navigation", { name: "Main" })
+    .getByRole("link", { name: "Datasets" })
+    .click();
+  await expect(page).toHaveURL(/\/datasets/u);
+  await expect(mark).toBeVisible();
+});
+
+test("an ordinary caller carries no administrator mark", async ({ page }, testInfo) => {
+  await login(page, "projects", testInfo);
+  await expect(page.getByRole("navigation", { name: "Main" })).toBeVisible();
+  await expect(page.getByText("Administrator access")).toBeHidden();
+});

@@ -10,6 +10,7 @@ import {
 import { CookiesBanner } from "../components/legal/CookiesBanner";
 import { useIsTransitioning } from "../hooks/useIsTransitioning";
 import { eventStreamSidebarOpenAtom } from "../state/eventStream";
+import { AdminBanner } from "./AdminBanner";
 import { Footer } from "./Footer";
 import Header from "./Header";
 
@@ -30,6 +31,11 @@ const Layout = ({ children }: LayoutProps) => {
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Box sx={{ zIndex: 1, displayPrint: "none" }}>
         <Header />
+      </Box>
+      {/* Its own flex item: the header's and the footer's contexts are both zIndex 1, so a banner
+          inside either is clamped to it and the later sibling paints over it. */}
+      <Box sx={{ zIndex: 2, displayPrint: "none" }}>
+        <AdminBanner />
       </Box>
       {/* Reserve space for the LinearProgress to avoid layout shift */}
       <Box sx={{ minHeight: 4 }}>

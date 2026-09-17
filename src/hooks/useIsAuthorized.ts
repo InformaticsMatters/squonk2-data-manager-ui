@@ -1,17 +1,15 @@
-import { AS_EVALUATOR_ROLE, AS_ROLES, DM_ROLES } from "../constants/auth";
+import { AS_ADMIN_ROLE, AS_EVALUATOR_ROLE, AS_ROLES, DM_ROLES } from "../constants/auth";
 import { useKeycloakUser, type User } from "./useKeycloakUser";
 
-const getPrevailingRole = (user: Partial<User>, roles: string[]) => {
-  const reversedRoles = roles.toReversed();
-  if (user.username !== undefined && user.roles) {
-    for (const role of reversedRoles) {
-      if (user.roles.includes(role)) {
-        return role;
-      }
-    }
-  }
-  return undefined;
-};
+/**
+ * The strongest of `roles` that `held` contains, where `roles` is ordered so each entry is a
+ * superset of the one before it. An account holding both the user and the admin role is an admin.
+ */
+export const prevailingRole = (held: readonly string[] | undefined, roles: readonly string[]) =>
+  held && roles.toReversed().find((role) => held.includes(role));
+
+const getPrevailingRole = (user: Partial<User>, roles: string[]) =>
+  user.username === undefined ? undefined : prevailingRole(user.roles, roles);
 
 export const useDMAuthorizationStatus = () => {
   const { user } = useKeycloakUser();
@@ -30,6 +28,18 @@ export const useASAuthorizationStatus = () => {
 export const useIsEvaluator = () => {
   const callerRole = useASAuthorizationStatus();
   return !!AS_EVALUATOR_ROLE && callerRole === AS_EVALUATOR_ROLE;
+};
+
+/**
+ * Whether the caller holds the account server's administrator role.
+ *
+ * The role widens what the account server returns: every organisation and unit in the deployment,
+ * each reported with `caller_is_member` set, whether or not the caller belongs to it. Lists that
+ * look unfiltered to an admin are that role, not a missing filter — see issue #2079.
+ */
+export const useIsPlatformAdmin = () => {
+  const callerRole = useASAuthorizationStatus();
+  return !!AS_ADMIN_ROLE && callerRole === AS_ADMIN_ROLE;
 };
 
 /**

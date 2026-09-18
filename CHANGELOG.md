@@ -1,3 +1,10 @@
+# [7.0.0-dev.33](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.32...7.0.0-dev.33) (2026-09-18)
+
+
+### Bug Fixes
+
+* **projects:** stop a deleted project being read back ([ecf8187](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/ecf818736928e1ffc50f78fdaf68076de4141662))
+
 # [7.0.0-dev.32](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.31...7.0.0-dev.32) (2026-09-18)
 
 

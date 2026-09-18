@@ -1,3 +1,10 @@
+# [7.0.0-dev.32](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.31...7.0.0-dev.32) (2026-09-18)
+
+
+### Bug Fixes
+
+* **projects:** scope project creation to the organisation in effect ([9487bb8](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9487bb846fb564b0bc1c2bbf584f398cb98f6c89)), closes [#2083](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2083)
+
 # [7.0.0-dev.31](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.30...7.0.0-dev.31) (2026-09-18)
 
 

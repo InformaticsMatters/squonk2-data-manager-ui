@@ -1,3 +1,5 @@
+import { getGetProjectQueryKey, getGetProjectsQueryKey } from "@/api/data-manager/project";
+
 import { expect, test } from "@playwright/test";
 
 import { projectDeletionFailureReason } from "../../src/projects/failures";
@@ -13,6 +15,7 @@ import {
   rememberProjectDeletion,
   transitionProjectDeletion,
 } from "../../src/projects/projectDeletion";
+import { isProjectListQuery } from "../../src/projects/useProjectDeletionCommands";
 
 const productId = "product-77777777-7777-7777-7777-777777777777";
 const projectId = "project-33333333-3333-3333-3333-333333333333";
@@ -244,4 +247,15 @@ test("deletion failure reasons name the service the workflow was addressing", ()
       "project",
     ),
   ).toBe("fixture-domain-failure");
+});
+
+test("refreshing project lists after a deletion never refetches the deleted project", () => {
+  // The list key is a prefix of every single-project key, so the predicate is the only thing
+  // keeping the deletion from asking the Data Manager for a project it has just removed.
+  expect(getGetProjectsQueryKey()).toEqual(getGetProjectQueryKey(projectId).slice(0, -1));
+  expect(isProjectListQuery({ queryKey: getGetProjectsQueryKey() })).toBe(true);
+  expect(
+    isProjectListQuery({ queryKey: getGetProjectsQueryKey({ project_name: "a project" }) }),
+  ).toBe(true);
+  expect(isProjectListQuery({ queryKey: getGetProjectQueryKey(projectId) })).toBe(false);
 });

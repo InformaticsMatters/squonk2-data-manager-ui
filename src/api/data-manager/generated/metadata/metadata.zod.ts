@@ -11,82 +11,32 @@
 import * as zod from "zod";
 
 /**
- * Update parameters or add new annotations of the specified type(s) and to the Metadata for a **Dataset Version**.
- *
- * The parameters are provided in a list in keyword/arguments
- *
- * The annotations are provided in a list in JSON format. For details of the annotations that can be created, see the data-manager-metadata library.
- * @summary Update Metadata for the Dataset version
+ * Returns the Metadata for a Dataset in JSON format.
+ * @summary Gets the Metadata for a specific Dataset
  */
-export const appApiDatasetPostDatasetVersionMetaPathDatasetIdRegExp = new RegExp(
+export const appApiDatasetGetDatasetMetaPathDatasetIdRegExp = new RegExp(
   "^dataset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
 );
 
-export const AppApiDatasetPostDatasetVersionMetaParams = zod.object({
+export const AppApiDatasetGetDatasetMetaParams = zod.object({
   dataset_id: zod
     .string()
-    .regex(appApiDatasetPostDatasetVersionMetaPathDatasetIdRegExp)
+    .regex(appApiDatasetGetDatasetMetaPathDatasetIdRegExp)
     .describe("The dataset identity"),
-  dataset_version: zod.number().min(1).describe("The dataset version"),
 });
 
-export const AppApiDatasetPostDatasetVersionMetaBody = zod.object({
-  meta_properties: zod
-    .string()
-    .optional()
-    .describe(
-      "JSON string containing a list of parameter changes to the metadata. Only the description is currently allowed.\n",
-    ),
-  annotations: zod
-    .string()
-    .optional()
-    .describe(
-      "JSON string containing a list of annotations. The format of the labels should match either the Fields Descriptor or Service Execution annotation formats described in the data-manager-metadata library.\n",
-    ),
-});
-
-export const AppApiDatasetPostDatasetVersionMetaResponse = zod.object({
-  dataset_name: zod.string().describe("The Metadata title\n"),
-  dataset_id: zod.string().describe("The Metadata description\n"),
-  description: zod.string().describe("The Metadata type (an object)\n"),
+export const AppApiDatasetGetDatasetMetaResponse = zod.object({
+  annotations: zod.array(zod.unknown()).describe("The Metadata's annotations\n"),
   created: zod.iso.datetime({ offset: true }).describe("The date and time of creation\n"),
+  created_by: zod.string().describe("The user who created the Metadata\n"),
+  dataset_id: zod.string().describe("The Metadata description\n"),
+  dataset_name: zod.string().describe("The Metadata title\n"),
+  description: zod.string().describe("The Metadata type (an object)\n"),
+  labels: zod.array(zod.unknown()).describe("The Metadata's labels\n"),
   last_updated: zod.iso
     .datetime({ offset: true })
     .describe("The date and time it was last updated\n"),
-  created_by: zod.string().describe("The user who created the Metadata\n"),
   metadata_version: zod.string().describe("The Metadata version\n"),
-  annotations: zod.array(zod.unknown()).describe("The Metadata's annotations\n"),
-  labels: zod.array(zod.unknown()).describe("The Metadata's labels\n"),
-});
-
-/**
- * Returns the Metadata for a **Dataset Version** in JSON format.
- * @summary Gets the Metadata for a specific Dataset Version
- */
-export const appApiDatasetGetDatasetVersionMetaPathDatasetIdRegExp = new RegExp(
-  "^dataset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiDatasetGetDatasetVersionMetaParams = zod.object({
-  dataset_id: zod
-    .string()
-    .regex(appApiDatasetGetDatasetVersionMetaPathDatasetIdRegExp)
-    .describe("The dataset identity"),
-  dataset_version: zod.number().min(1).describe("The dataset version"),
-});
-
-export const AppApiDatasetGetDatasetVersionMetaResponse = zod.object({
-  dataset_name: zod.string().describe("The Metadata title\n"),
-  dataset_id: zod.string().describe("The Metadata description\n"),
-  description: zod.string().describe("The Metadata type (an object)\n"),
-  created: zod.iso.datetime({ offset: true }).describe("The date and time of creation\n"),
-  last_updated: zod.iso
-    .datetime({ offset: true })
-    .describe("The date and time it was last updated\n"),
-  created_by: zod.string().describe("The user who created the Metadata\n"),
-  metadata_version: zod.string().describe("The Metadata version\n"),
-  annotations: zod.array(zod.unknown()).describe("The Metadata's annotations\n"),
-  labels: zod.array(zod.unknown()).describe("The Metadata's labels\n"),
 });
 
 /**
@@ -109,59 +59,109 @@ export const AppApiDatasetPostDatasetMetaParams = zod.object({
 });
 
 export const AppApiDatasetPostDatasetMetaBody = zod.object({
-  meta_properties: zod
-    .string()
-    .optional()
-    .describe(
-      "JSON string containing a list of parameter changes to the metadata. Only the description is currently allowed.\n",
-    ),
   labels: zod
     .string()
     .optional()
     .describe(
       "JSON string containing a list of labels. The format of the labels should match the label annotation format described in the data-manager-metadata library.\n",
     ),
+  meta_properties: zod
+    .string()
+    .optional()
+    .describe(
+      "JSON string containing a list of parameter changes to the metadata. Only the description is currently allowed.\n",
+    ),
 });
 
 export const AppApiDatasetPostDatasetMetaResponse = zod.object({
-  dataset_name: zod.string().describe("The Metadata title\n"),
-  dataset_id: zod.string().describe("The Metadata description\n"),
-  description: zod.string().describe("The Metadata type (an object)\n"),
+  annotations: zod.array(zod.unknown()).describe("The Metadata's annotations\n"),
   created: zod.iso.datetime({ offset: true }).describe("The date and time of creation\n"),
+  created_by: zod.string().describe("The user who created the Metadata\n"),
+  dataset_id: zod.string().describe("The Metadata description\n"),
+  dataset_name: zod.string().describe("The Metadata title\n"),
+  description: zod.string().describe("The Metadata type (an object)\n"),
+  labels: zod.array(zod.unknown()).describe("The Metadata's labels\n"),
   last_updated: zod.iso
     .datetime({ offset: true })
     .describe("The date and time it was last updated\n"),
-  created_by: zod.string().describe("The user who created the Metadata\n"),
   metadata_version: zod.string().describe("The Metadata version\n"),
-  annotations: zod.array(zod.unknown()).describe("The Metadata's annotations\n"),
-  labels: zod.array(zod.unknown()).describe("The Metadata's labels\n"),
 });
 
 /**
- * Returns the Metadata for a Dataset in JSON format.
- * @summary Gets the Metadata for a specific Dataset
+ * Returns the Metadata for a **Dataset Version** in JSON format.
+ * @summary Gets the Metadata for a specific Dataset Version
  */
-export const appApiDatasetGetDatasetMetaPathDatasetIdRegExp = new RegExp(
+export const appApiDatasetGetDatasetVersionMetaPathDatasetIdRegExp = new RegExp(
   "^dataset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
 );
 
-export const AppApiDatasetGetDatasetMetaParams = zod.object({
+export const AppApiDatasetGetDatasetVersionMetaParams = zod.object({
   dataset_id: zod
     .string()
-    .regex(appApiDatasetGetDatasetMetaPathDatasetIdRegExp)
+    .regex(appApiDatasetGetDatasetVersionMetaPathDatasetIdRegExp)
     .describe("The dataset identity"),
+  dataset_version: zod.number().min(1).describe("The dataset version"),
 });
 
-export const AppApiDatasetGetDatasetMetaResponse = zod.object({
-  dataset_name: zod.string().describe("The Metadata title\n"),
-  dataset_id: zod.string().describe("The Metadata description\n"),
-  description: zod.string().describe("The Metadata type (an object)\n"),
+export const AppApiDatasetGetDatasetVersionMetaResponse = zod.object({
+  annotations: zod.array(zod.unknown()).describe("The Metadata's annotations\n"),
   created: zod.iso.datetime({ offset: true }).describe("The date and time of creation\n"),
+  created_by: zod.string().describe("The user who created the Metadata\n"),
+  dataset_id: zod.string().describe("The Metadata description\n"),
+  dataset_name: zod.string().describe("The Metadata title\n"),
+  description: zod.string().describe("The Metadata type (an object)\n"),
+  labels: zod.array(zod.unknown()).describe("The Metadata's labels\n"),
   last_updated: zod.iso
     .datetime({ offset: true })
     .describe("The date and time it was last updated\n"),
-  created_by: zod.string().describe("The user who created the Metadata\n"),
   metadata_version: zod.string().describe("The Metadata version\n"),
+});
+
+/**
+ * Update parameters or add new annotations of the specified type(s) and to the Metadata for a **Dataset Version**.
+ *
+ * The parameters are provided in a list in keyword/arguments
+ *
+ * The annotations are provided in a list in JSON format. For details of the annotations that can be created, see the data-manager-metadata library.
+ * @summary Update Metadata for the Dataset version
+ */
+export const appApiDatasetPostDatasetVersionMetaPathDatasetIdRegExp = new RegExp(
+  "^dataset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiDatasetPostDatasetVersionMetaParams = zod.object({
+  dataset_id: zod
+    .string()
+    .regex(appApiDatasetPostDatasetVersionMetaPathDatasetIdRegExp)
+    .describe("The dataset identity"),
+  dataset_version: zod.number().min(1).describe("The dataset version"),
+});
+
+export const AppApiDatasetPostDatasetVersionMetaBody = zod.object({
+  annotations: zod
+    .string()
+    .optional()
+    .describe(
+      "JSON string containing a list of annotations. The format of the labels should match either the Fields Descriptor or Service Execution annotation formats described in the data-manager-metadata library.\n",
+    ),
+  meta_properties: zod
+    .string()
+    .optional()
+    .describe(
+      "JSON string containing a list of parameter changes to the metadata. Only the description is currently allowed.\n",
+    ),
+});
+
+export const AppApiDatasetPostDatasetVersionMetaResponse = zod.object({
   annotations: zod.array(zod.unknown()).describe("The Metadata's annotations\n"),
+  created: zod.iso.datetime({ offset: true }).describe("The date and time of creation\n"),
+  created_by: zod.string().describe("The user who created the Metadata\n"),
+  dataset_id: zod.string().describe("The Metadata description\n"),
+  dataset_name: zod.string().describe("The Metadata title\n"),
+  description: zod.string().describe("The Metadata type (an object)\n"),
   labels: zod.array(zod.unknown()).describe("The Metadata's labels\n"),
+  last_updated: zod.iso
+    .datetime({ offset: true })
+    .describe("The date and time it was last updated\n"),
+  metadata_version: zod.string().describe("The Metadata version\n"),
 });

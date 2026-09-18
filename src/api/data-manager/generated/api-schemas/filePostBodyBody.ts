@@ -10,6 +10,10 @@
  */
 
 export type FilePostBodyBody = {
+  /** The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset */
+  as_type: string;
+  /** Whether to compress the Dataset File as it's attached. Compression is achieved using gzip, resulting in a File ending `.gz`. By default the file will be compressed */
+  compress?: boolean;
   /**
    * The Dataset UUID for the File that you intend to attach
    * @pattern ^dataset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
@@ -20,21 +24,17 @@ export type FilePostBodyBody = {
    * @minimum 1
    */
   dataset_version: number;
-  /**
-   * The Project UUID you're attaching to
-   * @pattern ^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
-   */
-  project_id: string;
-  /** The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset */
-  as_type: string;
+  /** Whether the Dataset File can be modified while in the Project. By default the File cannot be modified */
+  immutable?: boolean;
   /**
    * A path within the Project to add the File, default is the project root ('/'), the mount-point within the application container. Paths must begin '/'
    * @maxLength 260
    * @pattern ^/.+$|^/$
    */
   path?: string;
-  /** Whether to compress the Dataset File as it's attached. Compression is achieved using gzip, resulting in a File ending `.gz`. By default the file will be compressed */
-  compress?: boolean;
-  /** Whether the Dataset File can be modified while in the Project. By default the File cannot be modified */
-  immutable?: boolean;
+  /**
+   * The Project UUID you're attaching to
+   * @pattern ^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
+   */
+  project_id: string;
 };

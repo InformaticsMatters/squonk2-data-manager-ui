@@ -59,6 +59,233 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
+ * Gets the Default Organisation, a built-in Organisation used exclusively for **Personal Units**.
+ *
+ * Any authorised user can see the Default Organisation.
+ * @summary Gets the Default Organisation
+ */
+export const getDefaultOrganisation = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<OrganisationGetDefaultResponse>(
+    { url: `/default/organisation`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetDefaultOrganisationQueryKey = () => {
+  return ["account-server", "default", "organisation"] as const;
+};
+
+export const getGetDefaultOrganisationQueryOptions = <
+  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
+  TError = ErrorType<void | AsError>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetDefaultOrganisationQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getDefaultOrganisation>>> = ({ signal }) =>
+    getDefaultOrganisation(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getDefaultOrganisation>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDefaultOrganisationQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getDefaultOrganisation>>
+>;
+export type GetDefaultOrganisationQueryError = ErrorType<void | AsError>;
+
+export function useGetDefaultOrganisation<
+  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDefaultOrganisation>>,
+          TError,
+          Awaited<ReturnType<typeof getDefaultOrganisation>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDefaultOrganisation<
+  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getDefaultOrganisation>>,
+          TError,
+          Awaited<ReturnType<typeof getDefaultOrganisation>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDefaultOrganisation<
+  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Default Organisation
+ */
+
+export function useGetDefaultOrganisation<
+  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetDefaultOrganisationQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets the Default Organisation
+ */
+export const invalidateGetDefaultOrganisation = async (
+  queryClient: QueryClient,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetDefaultOrganisationQueryKey() }, options);
+
+  return queryClient;
+};
+
+export const getGetDefaultOrganisationSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
+  TError = ErrorType<void | AsError>,
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetDefaultOrganisationQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getDefaultOrganisation>>> = ({ signal }) =>
+    getDefaultOrganisation(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getDefaultOrganisation>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDefaultOrganisationSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getDefaultOrganisation>>
+>;
+export type GetDefaultOrganisationSuspenseQueryError = ErrorType<void | AsError>;
+
+export function useGetDefaultOrganisationSuspense<
+  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDefaultOrganisationSuspense<
+  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDefaultOrganisationSuspense<
+  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Default Organisation
+ */
+
+export function useGetDefaultOrganisationSuspense<
+  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetDefaultOrganisationSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
  * Gets all the Organisations that you are a member of, or a specific Organisation by name.
  *
  * You can see an Organisation if you are a member of it, the owner (creator) of it, or if you are an admin user.
@@ -377,6 +604,84 @@ export const useCreateOrganisation = <TError = ErrorType<AsError | void>, TConte
   TContext
 > => {
   return useMutation(getCreateOrganisationMutationOptions(options), queryClient);
+};
+/**
+ * Before an Organisation can be deleted all its underlying **Units** must also be deleted, remembering that **Units** that have undeleted **Products** cannot be deleted.
+ *
+ * You need admin rights to use this method
+ * @summary Deletes an Organisation
+ */
+export const deleteOrganisation = (
+  orgId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>({ url: `/organisation/${orgId}`, method: "DELETE", signal }, options);
+};
+
+export const getDeleteOrganisationMutationOptions = <
+  TError = ErrorType<AsError | void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteOrganisation>>,
+    TError,
+    { orgId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteOrganisation>>,
+  TError,
+  { orgId: string },
+  TContext
+> => {
+  const mutationKey = ["deleteOrganisation"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteOrganisation>>,
+    { orgId: string }
+  > = (props) => {
+    const { orgId } = props ?? {};
+
+    return deleteOrganisation(orgId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteOrganisationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteOrganisation>>
+>;
+
+export type DeleteOrganisationMutationError = ErrorType<AsError | void>;
+
+/**
+ * @summary Deletes an Organisation
+ */
+export const useDeleteOrganisation = <TError = ErrorType<AsError | void>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteOrganisation>>,
+      TError,
+      { orgId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteOrganisation>>,
+  TError,
+  { orgId: string },
+  TContext
+> => {
+  return useMutation(getDeleteOrganisationMutationOptions(options), queryClient);
 };
 /**
  * Gets an Organisation. To see the Organisation you need admin rights or need to be a member of the Organisation or are its *creator*.
@@ -702,307 +1007,3 @@ export const usePatchOrganisation = <TError = ErrorType<void | AsError>, TContex
 > => {
   return useMutation(getPatchOrganisationMutationOptions(options), queryClient);
 };
-/**
- * Before an Organisation can be deleted all its underlying **Units** must also be deleted, remembering that **Units** that have undeleted **Products** cannot be deleted.
- *
- * You need admin rights to use this method
- * @summary Deletes an Organisation
- */
-export const deleteOrganisation = (
-  orgId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>({ url: `/organisation/${orgId}`, method: "DELETE", signal }, options);
-};
-
-export const getDeleteOrganisationMutationOptions = <
-  TError = ErrorType<AsError | void>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteOrganisation>>,
-    TError,
-    { orgId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteOrganisation>>,
-  TError,
-  { orgId: string },
-  TContext
-> => {
-  const mutationKey = ["deleteOrganisation"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteOrganisation>>,
-    { orgId: string }
-  > = (props) => {
-    const { orgId } = props ?? {};
-
-    return deleteOrganisation(orgId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DeleteOrganisationMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteOrganisation>>
->;
-
-export type DeleteOrganisationMutationError = ErrorType<AsError | void>;
-
-/**
- * @summary Deletes an Organisation
- */
-export const useDeleteOrganisation = <TError = ErrorType<AsError | void>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteOrganisation>>,
-      TError,
-      { orgId: string },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof deleteOrganisation>>,
-  TError,
-  { orgId: string },
-  TContext
-> => {
-  return useMutation(getDeleteOrganisationMutationOptions(options), queryClient);
-};
-/**
- * Gets the Default Organisation, a built-in Organisation used exclusively for **Personal Units**.
- *
- * Any authorised user can see the Default Organisation.
- * @summary Gets the Default Organisation
- */
-export const getDefaultOrganisation = (
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<OrganisationGetDefaultResponse>(
-    { url: `/default/organisation`, method: "GET", signal },
-    options,
-  );
-};
-
-export const getGetDefaultOrganisationQueryKey = () => {
-  return ["account-server", "default", "organisation"] as const;
-};
-
-export const getGetDefaultOrganisationQueryOptions = <
-  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
-  TError = ErrorType<void | AsError>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetDefaultOrganisationQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getDefaultOrganisation>>> = ({ signal }) =>
-    getDefaultOrganisation(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getDefaultOrganisation>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetDefaultOrganisationQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getDefaultOrganisation>>
->;
-export type GetDefaultOrganisationQueryError = ErrorType<void | AsError>;
-
-export function useGetDefaultOrganisation<
-  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
-  TError = ErrorType<void | AsError>,
->(
-  options: {
-    query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getDefaultOrganisation>>,
-          TError,
-          Awaited<ReturnType<typeof getDefaultOrganisation>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetDefaultOrganisation<
-  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getDefaultOrganisation>>,
-          TError,
-          Awaited<ReturnType<typeof getDefaultOrganisation>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetDefaultOrganisation<
-  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Default Organisation
- */
-
-export function useGetDefaultOrganisation<
-  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetDefaultOrganisationQueryOptions(options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Gets the Default Organisation
- */
-export const invalidateGetDefaultOrganisation = async (
-  queryClient: QueryClient,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetDefaultOrganisationQueryKey() }, options);
-
-  return queryClient;
-};
-
-export const getGetDefaultOrganisationSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
-  TError = ErrorType<void | AsError>,
->(options?: {
-  query?: Partial<
-    UseSuspenseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetDefaultOrganisationQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getDefaultOrganisation>>> = ({ signal }) =>
-    getDefaultOrganisation(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getDefaultOrganisation>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetDefaultOrganisationSuspenseQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getDefaultOrganisation>>
->;
-export type GetDefaultOrganisationSuspenseQueryError = ErrorType<void | AsError>;
-
-export function useGetDefaultOrganisationSuspense<
-  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
-  TError = ErrorType<void | AsError>,
->(
-  options: {
-    query: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetDefaultOrganisationSuspense<
-  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetDefaultOrganisationSuspense<
-  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Default Organisation
- */
-
-export function useGetDefaultOrganisationSuspense<
-  TData = Awaited<ReturnType<typeof getDefaultOrganisation>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getDefaultOrganisation>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetDefaultOrganisationSuspenseQueryOptions(options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}

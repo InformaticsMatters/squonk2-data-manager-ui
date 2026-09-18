@@ -8,12 +8,11 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QProjectIdParameter } from "./qProjectIdParameter";
 
 export type GetJobsParams = {
   /**
    * A Project identity
    * @pattern ^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  project_id?: QProjectIdParameter;
+  project_id?: string;
 };

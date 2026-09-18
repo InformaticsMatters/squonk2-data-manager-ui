@@ -8,7 +8,7 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { DatasetVersionSummary } from "./datasetVersionSummary";
+import type { DatasetSummaryVersionsItem } from "./datasetSummaryVersionsItem";
 
 export interface DatasetSummary {
   /** The Dataset ID */
@@ -16,5 +16,5 @@ export interface DatasetSummary {
   /** The list of editors */
   editors: string[];
   /** The set of separate versions of the Dataset */
-  versions: DatasetVersionSummary[];
+  versions: DatasetSummaryVersionsItem[];
 }

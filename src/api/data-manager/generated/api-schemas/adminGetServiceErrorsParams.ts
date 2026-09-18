@@ -8,11 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QIncludeAcknowledgedParameter } from "./qIncludeAcknowledgedParameter";
 
 export type AdminGetServiceErrorsParams = {
   /**
    * Set to include acknowledged items
    */
-  include_acknowledged?: QIncludeAcknowledgedParameter;
+  include_acknowledged?: boolean;
 };

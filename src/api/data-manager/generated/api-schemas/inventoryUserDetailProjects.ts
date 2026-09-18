@@ -8,10 +8,12 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { InventoryProjectDetail } from "./inventoryProjectDetail";
+import type { InventoryUserDetailProjectsAdministratorItem } from "./inventoryUserDetailProjectsAdministratorItem";
+import type { InventoryUserDetailProjectsEditorItem } from "./inventoryUserDetailProjectsEditorItem";
+import type { InventoryUserDetailProjectsObserverItem } from "./inventoryUserDetailProjectsObserverItem";
 
 export type InventoryUserDetailProjects = {
-  administrator: InventoryProjectDetail[];
-  editor: InventoryProjectDetail[];
-  observer: InventoryProjectDetail[];
+  administrator: InventoryUserDetailProjectsAdministratorItem[];
+  editor: InventoryUserDetailProjectsEditorItem[];
+  observer: InventoryUserDetailProjectsObserverItem[];
 };

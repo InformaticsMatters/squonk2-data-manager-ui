@@ -13,6 +13,18 @@ import type { UnitProductPostBodyBodyType } from "./unitProductPostBodyBodyType"
 
 export type UnitProductPostBodyBody = {
   /**
+   * The Product's coin allowance. You must provide this for Storage products but you must not provide a value for Project Tier Products
+   * @minimum 1
+   */
+  allowance?: number;
+  /** The Flavour of the Product. Used only for Project Tier Products. Do not set this for Storage products */
+  flavour?: UnitProductPostBodyBodyFlavour;
+  /**
+   * The Product's built-in coin limit. If set it must not be less than the allowance. If not set the allowance is used. You can provide this for Storage products but you must not provide a value for Project Tier Products
+   * @minimum 1
+   */
+  limit?: number;
+  /**
    * The name you want to give the Product
    * @maxLength 80
    */
@@ -23,16 +35,4 @@ export type UnitProductPostBodyBody = {
    * Project Tier subscriptions have built-in allowances and Limits so you must not provide values for these for these products
    */
   type: UnitProductPostBodyBodyType;
-  /** The Flavour of the Product. Used only for Project Tier Products. Do not set this for Storage products */
-  flavour?: UnitProductPostBodyBodyFlavour;
-  /**
-   * The Product's coin allowance. You must provide this for Storage products but you must not provide a value for Project Tier Products
-   * @minimum 1
-   */
-  allowance?: number;
-  /**
-   * The Product's built-in coin limit. If set it must not be less than the allowance. If not set the allowance is used. You can provide this for Storage products but you must not provide a value for Project Tier Products
-   * @minimum 1
-   */
-  limit?: number;
 };

@@ -19,11 +19,6 @@ export type InstancePostBodyBody = {
    */
   application_id: string;
   /**
-   * The project to attach
-   * @pattern ^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
-   */
-  project_id: string;
-  /**
    * The name to use for the instance
    * @minLength 2
    * @maxLength 80
@@ -31,25 +26,11 @@ export type InstancePostBodyBody = {
    */
   as_name: string;
   /**
-   * A URL the DM will use to PUT job progress messages as the requested instance runs. Used, at the moment, for Job execution.
-   *
-   * The URL must use the `http` or `https` scheme and must not resolve to a loopback, link-local, unspecified or cloud-metadata address. The operator may further restrict permitted callback hosts via an allow-list; a URL that is not permitted is rejected with a `400` when the instance is launched.
-   */
-  callback_url?: string;
-  /**
    * Used in conjunction with the `callback_url` any value provided here will be passed back in the message payload that's delivered to the callback URL. It can be used by the recipient to provide a context that's meaningful
    * @minLength 1
    * @maxLength 256
    */
   callback_context?: string;
-  /**
-   * If set a callback token will be provided in the response. The token allows files to be downloaded from the instance project and expires after a pre-configured amount of time after the instance is complete or if the user revokes the token.
-   *
-   * Caution should be taken using this feature. A 3rd party can access the Project's files without authentication, they just need the token and the project identity.
-   *
-   * Tokens should therefore be revoked when they're no longer required
-   */
-  generate_callback_token?: boolean;
   /**
    * An optional 22-character **Short UUID** callback token that is supplied by the remote service. If not provided the user can use `generate_callback_token` to have one generated and returned in the response.
    *
@@ -60,6 +41,12 @@ export type InstancePostBodyBody = {
    */
   callback_token?: string;
   /**
+   * A URL the DM will use to PUT job progress messages as the requested instance runs. Used, at the moment, for Job execution.
+   *
+   * The URL must use the `http` or `https` scheme and must not resolve to a loopback, link-local, unspecified or cloud-metadata address. The operator may further restrict permitted callback hosts via an allow-list; a URL that is not permitted is rejected with a `400` when the instance is launched.
+   */
+  callback_url?: string;
+  /**
    * A debug value that may be used by the instance.
    *
    * For Data Manager **Job** applications setting this to anything other zero ('0') prevents the Job's Pod from being deleted automatically, allowing a developer to inspect the Pod's log for example.
@@ -67,6 +54,19 @@ export type InstancePostBodyBody = {
    * The behaviour of **Application** instances using this property is undefined. It will depend on whether the application **CRD** handles the Data Manager debug field.
    */
   debug?: string;
+  /**
+   * If set a callback token will be provided in the response. The token allows files to be downloaded from the instance project and expires after a pre-configured amount of time after the instance is complete or if the user revokes the token.
+   *
+   * Caution should be taken using this feature. A 3rd party can access the Project's files without authentication, they just need the token and the project identity.
+   *
+   * Tokens should therefore be revoked when they're no longer required
+   */
+  generate_callback_token?: boolean;
+  /**
+   * The project to attach
+   * @pattern ^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
+   */
+  project_id: string;
   /**
    * The instance specification. A JSON string that's application-specific and controls the application's behaviour.
    *

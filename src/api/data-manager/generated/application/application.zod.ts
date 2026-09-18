@@ -17,26 +17,26 @@ import * as zod from "zod";
  * @summary Get all Applications available to you
  */
 export const AppApiApplicationGetResponse = zod.object({
-  count: zod.number().describe("The number of known Applications\n"),
   applications: zod
     .array(
       zod.object({
-        kind: zod
-          .string()
-          .describe(
-            "The application name, the value of the Kubernetes \*\*Custom Resource Definition\*\* `spec.names.kind` property\n",
-          ),
-        group: zod.string().optional().describe("The application group\n"),
         application_id: zod
           .string()
           .describe(
             "The application unique reference, the value of the Kubernetes \*\*Custom Resource Definition\*\* `metadata.name` property\n",
+          ),
+        group: zod.string().optional().describe("The application group\n"),
+        kind: zod
+          .string()
+          .describe(
+            "The application name, the value of the Kubernetes \*\*Custom Resource Definition\*\* `spec.names.kind` property\n",
           ),
       }),
     )
     .describe(
       'A list of installed applications, which are application-compliant Kubernetes \"operators\"\n',
     ),
+  count: zod.number().describe("The number of known Applications\n"),
 });
 
 /**
@@ -59,29 +59,10 @@ export const AppApiApplicationGetApplicationParams = zod.object({
 });
 
 export const AppApiApplicationGetApplicationResponse = zod.object({
-  id: zod.string().describe("The Application's unique ID\n"),
-  template: zod
-    .string()
-    .describe("The application specification template. Used when creating application instances\n"),
-  instances: zod.array(zod.string()).describe("A list of instances of the application\n"),
-  group: zod.string().describe("The application group\n"),
-  kind: zod.string().describe("The name (kind) of the application\n"),
-  versions: zod.array(zod.string()).describe("The list of available versions\n"),
-  image_variants: zod
-    .object({
-      public: zod.array(zod.object({ name: zod.string(), image: zod.string() })).optional(),
-    })
-    .optional(),
   cost: zod
     .string()
     .describe(
       "A string representation of the deciaml cost (in coins) of the application. Charged per cost-unit and period.",
-    ),
-  cost_unit: zod
-    .enum(["PxGi"])
-    .optional()
-    .describe(
-      "The unit being charged. PxGi is application processor count x Memory (GiB).\n Only required if the cost if non-zero.",
     ),
   cost_period: zod
     .string()
@@ -93,17 +74,19 @@ export const AppApiApplicationGetApplicationResponse = zod.object({
     .boolean()
     .optional()
     .describe("True if costs are charged 'pro rata' Only required if the cost if non-zero."),
+  cost_unit: zod
+    .enum(["PxGi"])
+    .optional()
+    .describe(
+      "The unit being charged. PxGi is application processor count x Memory (GiB).\n Only required if the cost if non-zero.",
+    ),
+  group: zod.string().describe("The application group\n"),
+  id: zod.string().describe("The Application's unique ID\n"),
   idle_path: zod
     .string()
     .optional()
     .describe(
       "The path, on the application instance's idle Service, that reports how long the instance has been idle. Its presence indicates that the application supports automatic idle termination - applications that do not support it expose none of the `idle_` properties.",
-    ),
-  idle_service_name: zod
-    .string()
-    .optional()
-    .describe(
-      "A jinja2 pattern for the name of the Service that provides the idle path, e.g. `{{ instance_id }}-idle`. Only present when the application uses a Service other than the instance itself, the default being a Service named after the instance ID.",
     ),
   idle_port: zod
     .number()
@@ -111,10 +94,27 @@ export const AppApiApplicationGetApplicationResponse = zod.object({
     .describe(
       "The port, on the idle Service, that provides the idle path. Only present when the application supports idle termination.",
     ),
+  idle_service_name: zod
+    .string()
+    .optional()
+    .describe(
+      "A jinja2 pattern for the name of the Service that provides the idle path, e.g. `-idle`. Only present when the application uses a Service other than the instance itself, the default being a Service named after the instance ID.",
+    ),
   idle_terminate_after: zod
     .string()
     .optional()
     .describe(
       'Humanised expression of the period an instance of this application may be idle before it is terminated, e.g. \"4 hours\". Only present when the application declares its own period - otherwise the Data Manager\'s default period applies.',
     ),
+  image_variants: zod
+    .object({
+      public: zod.array(zod.object({ image: zod.string(), name: zod.string() })).optional(),
+    })
+    .optional(),
+  instances: zod.array(zod.string()).describe("A list of instances of the application\n"),
+  kind: zod.string().describe("The name (kind) of the application\n"),
+  template: zod
+    .string()
+    .describe("The application specification template. Used when creating application instances\n"),
+  versions: zod.array(zod.string()).describe("The list of available versions\n"),
 });

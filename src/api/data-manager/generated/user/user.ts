@@ -28,14 +28,16 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
-  DmError,
+  GetUserAccount200,
+  GetUserAccount403,
   GetUserAccountParams,
+  GetUserApiLog200,
   GetUserApiLogParams,
-  UserAccountDetail,
-  UserAccountPatchBodyBody,
-  UserApiLogGetResponse,
-  UserApiTokenGetResponse,
-  UsersGetResponse,
+  GetUserApiToken200,
+  GetUsers200,
+  GetUsers403,
+  PatchUserAccount403,
+  PatchUserAccountBody,
 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
@@ -66,7 +68,7 @@ export const getUsers = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<UsersGetResponse>({ url: `/user`, method: "GET", signal }, options);
+  return customInstance<GetUsers200>({ url: `/user`, method: "GET", signal }, options);
 };
 
 export const getGetUsersQueryKey = () => {
@@ -75,7 +77,7 @@ export const getGetUsersQueryKey = () => {
 
 export const getGetUsersQueryOptions = <
   TData = Awaited<ReturnType<typeof getUsers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUsers403>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>;
   request?: SecondParameter<typeof customInstance>;
@@ -95,11 +97,11 @@ export const getGetUsersQueryOptions = <
 };
 
 export type GetUsersQueryResult = NonNullable<Awaited<ReturnType<typeof getUsers>>>;
-export type GetUsersQueryError = ErrorType<void | DmError>;
+export type GetUsersQueryError = ErrorType<void | GetUsers403>;
 
 export function useGetUsers<
   TData = Awaited<ReturnType<typeof getUsers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUsers403>,
 >(
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>> &
@@ -117,7 +119,7 @@ export function useGetUsers<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUsers<
   TData = Awaited<ReturnType<typeof getUsers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUsers403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>> &
@@ -135,7 +137,7 @@ export function useGetUsers<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUsers<
   TData = Awaited<ReturnType<typeof getUsers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUsers403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>;
@@ -149,7 +151,7 @@ export function useGetUsers<
 
 export function useGetUsers<
   TData = Awaited<ReturnType<typeof getUsers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUsers403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>;
@@ -180,7 +182,7 @@ export const invalidateGetUsers = async (
 
 export const getGetUsersSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getUsers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUsers403>,
 >(options?: {
   query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>;
   request?: SecondParameter<typeof customInstance>;
@@ -200,11 +202,11 @@ export const getGetUsersSuspenseQueryOptions = <
 };
 
 export type GetUsersSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getUsers>>>;
-export type GetUsersSuspenseQueryError = ErrorType<void | DmError>;
+export type GetUsersSuspenseQueryError = ErrorType<void | GetUsers403>;
 
 export function useGetUsersSuspense<
   TData = Awaited<ReturnType<typeof getUsers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUsers403>,
 >(
   options: {
     query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>;
@@ -214,7 +216,7 @@ export function useGetUsersSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUsersSuspense<
   TData = Awaited<ReturnType<typeof getUsers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUsers403>,
 >(
   options?: {
     query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>;
@@ -224,7 +226,7 @@ export function useGetUsersSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUsersSuspense<
   TData = Awaited<ReturnType<typeof getUsers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUsers403>,
 >(
   options?: {
     query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>;
@@ -238,7 +240,7 @@ export function useGetUsersSuspense<
 
 export function useGetUsersSuspense<
   TData = Awaited<ReturnType<typeof getUsers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUsers403>,
 >(
   options?: {
     query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>;
@@ -264,7 +266,7 @@ export const getUserAccount = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<UserAccountDetail>(
+  return customInstance<GetUserAccount200>(
     { url: `/user/account`, method: "GET", params, signal },
     options,
   );
@@ -276,7 +278,7 @@ export const getGetUserAccountQueryKey = (params?: GetUserAccountParams) => {
 
 export const getGetUserAccountQueryOptions = <
   TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserAccount403>,
 >(
   params?: GetUserAccountParams,
   options?: {
@@ -299,11 +301,11 @@ export const getGetUserAccountQueryOptions = <
 };
 
 export type GetUserAccountQueryResult = NonNullable<Awaited<ReturnType<typeof getUserAccount>>>;
-export type GetUserAccountQueryError = ErrorType<void | DmError>;
+export type GetUserAccountQueryError = ErrorType<void | GetUserAccount403>;
 
 export function useGetUserAccount<
   TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserAccount403>,
 >(
   params: undefined | GetUserAccountParams,
   options: {
@@ -322,7 +324,7 @@ export function useGetUserAccount<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUserAccount<
   TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserAccount403>,
 >(
   params?: GetUserAccountParams,
   options?: {
@@ -341,7 +343,7 @@ export function useGetUserAccount<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUserAccount<
   TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserAccount403>,
 >(
   params?: GetUserAccountParams,
   options?: {
@@ -356,7 +358,7 @@ export function useGetUserAccount<
 
 export function useGetUserAccount<
   TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserAccount403>,
 >(
   params?: GetUserAccountParams,
   options?: {
@@ -389,7 +391,7 @@ export const invalidateGetUserAccount = async (
 
 export const getGetUserAccountSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserAccount403>,
 >(
   params?: GetUserAccountParams,
   options?: {
@@ -416,11 +418,11 @@ export const getGetUserAccountSuspenseQueryOptions = <
 export type GetUserAccountSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getUserAccount>>
 >;
-export type GetUserAccountSuspenseQueryError = ErrorType<void | DmError>;
+export type GetUserAccountSuspenseQueryError = ErrorType<void | GetUserAccount403>;
 
 export function useGetUserAccountSuspense<
   TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserAccount403>,
 >(
   params: undefined | GetUserAccountParams,
   options: {
@@ -433,7 +435,7 @@ export function useGetUserAccountSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUserAccountSuspense<
   TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserAccount403>,
 >(
   params?: GetUserAccountParams,
   options?: {
@@ -446,7 +448,7 @@ export function useGetUserAccountSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUserAccountSuspense<
   TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserAccount403>,
 >(
   params?: GetUserAccountParams,
   options?: {
@@ -463,7 +465,7 @@ export function useGetUserAccountSuspense<
 
 export function useGetUserAccountSuspense<
   TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserAccount403>,
 >(
   params?: GetUserAccountParams,
   options?: {
@@ -488,25 +490,22 @@ export function useGetUserAccountSuspense<
  * @summary Patch your account
  */
 export const patchUserAccount = (
-  userAccountPatchBodyBody?: UserAccountPatchBodyBody,
+  patchUserAccountBody?: PatchUserAccountBody,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   const formUrlEncoded = new URLSearchParams();
-  if (userAccountPatchBodyBody?.private !== undefined) {
-    formUrlEncoded.append(`private`, userAccountPatchBodyBody.private.toString());
+  if (patchUserAccountBody?.become_admin !== undefined) {
+    formUrlEncoded.append(`become_admin`, patchUserAccountBody.become_admin.toString());
   }
-  if (userAccountPatchBodyBody?.become_admin !== undefined) {
-    formUrlEncoded.append(`become_admin`, userAccountPatchBodyBody.become_admin.toString());
+  if (patchUserAccountBody?.impersonate !== undefined) {
+    formUrlEncoded.append(`impersonate`, patchUserAccountBody.impersonate);
   }
-  if (userAccountPatchBodyBody?.impersonate !== undefined) {
-    formUrlEncoded.append(`impersonate`, userAccountPatchBodyBody.impersonate);
+  if (patchUserAccountBody?.private !== undefined) {
+    formUrlEncoded.append(`private`, patchUserAccountBody.private.toString());
   }
-  if (userAccountPatchBodyBody?.use_impersonation !== undefined) {
-    formUrlEncoded.append(
-      `use_impersonation`,
-      userAccountPatchBodyBody.use_impersonation.toString(),
-    );
+  if (patchUserAccountBody?.use_impersonation !== undefined) {
+    formUrlEncoded.append(`use_impersonation`, patchUserAccountBody.use_impersonation.toString());
   }
 
   return customInstance<void>(
@@ -522,20 +521,20 @@ export const patchUserAccount = (
 };
 
 export const getPatchUserAccountMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | PatchUserAccount403>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof patchUserAccount>>,
     TError,
-    { data?: UserAccountPatchBodyBody },
+    { data?: PatchUserAccountBody },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof patchUserAccount>>,
   TError,
-  { data?: UserAccountPatchBodyBody },
+  { data?: PatchUserAccountBody },
   TContext
 > => {
   const mutationKey = ["patchUserAccount"];
@@ -547,7 +546,7 @@ export const getPatchUserAccountMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof patchUserAccount>>,
-    { data?: UserAccountPatchBodyBody }
+    { data?: PatchUserAccountBody }
   > = (props) => {
     const { data } = props ?? {};
 
@@ -560,18 +559,21 @@ export const getPatchUserAccountMutationOptions = <
 export type PatchUserAccountMutationResult = NonNullable<
   Awaited<ReturnType<typeof patchUserAccount>>
 >;
-export type PatchUserAccountMutationBody = UserAccountPatchBodyBody | undefined;
-export type PatchUserAccountMutationError = ErrorType<void | DmError>;
+export type PatchUserAccountMutationBody = PatchUserAccountBody | undefined;
+export type PatchUserAccountMutationError = ErrorType<void | PatchUserAccount403>;
 
 /**
  * @summary Patch your account
  */
-export const usePatchUserAccount = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const usePatchUserAccount = <
+  TError = ErrorType<void | PatchUserAccount403>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof patchUserAccount>>,
       TError,
-      { data?: UserAccountPatchBodyBody },
+      { data?: PatchUserAccountBody },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -580,7 +582,7 @@ export const usePatchUserAccount = <TError = ErrorType<void | DmError>, TContext
 ): UseMutationResult<
   Awaited<ReturnType<typeof patchUserAccount>>,
   TError,
-  { data?: UserAccountPatchBodyBody },
+  { data?: PatchUserAccountBody },
   TContext
 > => {
   return useMutation(getPatchUserAccountMutationOptions(options), queryClient);
@@ -594,7 +596,7 @@ export const getUserApiLog = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<UserApiLogGetResponse>(
+  return customInstance<GetUserApiLog200>(
     { url: `/user/api-log`, method: "GET", params, signal },
     options,
   );
@@ -822,10 +824,7 @@ export const getUserApiToken = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<UserApiTokenGetResponse>(
-    { url: `/user/token`, method: "GET", signal },
-    options,
-  );
+  return customInstance<GetUserApiToken200>({ url: `/user/token`, method: "GET", signal }, options);
 };
 
 export const getGetUserApiTokenQueryKey = () => {

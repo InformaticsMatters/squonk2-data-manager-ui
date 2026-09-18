@@ -28,15 +28,27 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
-  DmError,
+  CreateInstance201,
+  CreateInstance403,
+  CreateInstance409,
+  CreateInstanceBody,
+  DeleteInstanceToken404,
+  DryRunInstance201,
+  DryRunInstance403,
+  DryRunInstance409,
+  DryRunInstanceBody,
+  GetInstance200,
+  GetInstance403,
+  GetInstance404,
+  GetInstances200,
+  GetInstances403,
   GetInstancesParams,
-  InstanceDryRunPostResponse,
-  InstanceGetResponse,
-  InstancePostBodyBody,
-  InstancePostResponse,
-  InstancesGetResponse,
+  PatchInstance403,
+  PatchInstance404,
   PatchInstanceParams,
-  TaskIdentity,
+  TerminateInstance200,
+  TerminateInstance403,
+  TerminateInstance404,
 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
@@ -60,121 +72,6 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
- * Launches a new Application or Job instance, returning an Instance and Task ID. The Task ID should be used against the `/task` endpoint to determine the availability of the the running instance.
- *
- * Instance behaviour is controlled using the `specification`. You will need to consult individual applications to determine what can be placed in the specification. Applications typically provide a `template` describing its **options**.
- *
- * An Application instance is not Ready for use until the corresponding **TaskState** is _STARTED_.
- *
- * A Job instance typically runs to completion, reaching the **TaskState** _SUCCESS_ when successful and _FAILURE_ is unsuccessful.
- * @summary Creates a new Job or Application instance
- */
-export const createInstance = (
-  instancePostBodyBody: InstancePostBodyBody,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  const formUrlEncoded = new URLSearchParams();
-  formUrlEncoded.append(`application_id`, instancePostBodyBody.application_id);
-  formUrlEncoded.append(`project_id`, instancePostBodyBody.project_id);
-  formUrlEncoded.append(`as_name`, instancePostBodyBody.as_name);
-  if (instancePostBodyBody.callback_url !== undefined) {
-    formUrlEncoded.append(`callback_url`, instancePostBodyBody.callback_url);
-  }
-  if (instancePostBodyBody.callback_context !== undefined) {
-    formUrlEncoded.append(`callback_context`, instancePostBodyBody.callback_context);
-  }
-  if (instancePostBodyBody.generate_callback_token !== undefined) {
-    formUrlEncoded.append(
-      `generate_callback_token`,
-      instancePostBodyBody.generate_callback_token.toString(),
-    );
-  }
-  if (instancePostBodyBody.callback_token !== undefined) {
-    formUrlEncoded.append(`callback_token`, instancePostBodyBody.callback_token);
-  }
-  if (instancePostBodyBody.debug !== undefined) {
-    formUrlEncoded.append(`debug`, instancePostBodyBody.debug);
-  }
-  if (instancePostBodyBody.specification !== undefined) {
-    formUrlEncoded.append(`specification`, instancePostBodyBody.specification);
-  }
-
-  return customInstance<InstancePostResponse>(
-    {
-      url: `/instance`,
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      data: formUrlEncoded,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getCreateInstanceMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createInstance>>,
-    TError,
-    { data: InstancePostBodyBody },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof createInstance>>,
-  TError,
-  { data: InstancePostBodyBody },
-  TContext
-> => {
-  const mutationKey = ["createInstance"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createInstance>>,
-    { data: InstancePostBodyBody }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return createInstance(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type CreateInstanceMutationResult = NonNullable<Awaited<ReturnType<typeof createInstance>>>;
-export type CreateInstanceMutationBody = InstancePostBodyBody;
-export type CreateInstanceMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Creates a new Job or Application instance
- */
-export const useCreateInstance = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof createInstance>>,
-      TError,
-      { data: InstancePostBodyBody },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof createInstance>>,
-  TError,
-  { data: InstancePostBodyBody },
-  TContext
-> => {
-  return useMutation(getCreateInstanceMutationOptions(options), queryClient);
-};
-/**
  * Returns a summary of all running instances. Instances can be running as an Application or as a Job. The response will contain an `application_type` field that is either `job` or `application`
  *
  * Results can be filtered by **Project**, **Unit** or **Organisation**.
@@ -185,7 +82,7 @@ export const getInstances = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<InstancesGetResponse>(
+  return customInstance<GetInstances200>(
     { url: `/instance`, method: "GET", params, signal },
     options,
   );
@@ -197,7 +94,7 @@ export const getGetInstancesQueryKey = (params?: GetInstancesParams) => {
 
 export const getGetInstancesQueryOptions = <
   TData = Awaited<ReturnType<typeof getInstances>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInstances403>,
 >(
   params?: GetInstancesParams,
   options?: {
@@ -220,11 +117,11 @@ export const getGetInstancesQueryOptions = <
 };
 
 export type GetInstancesQueryResult = NonNullable<Awaited<ReturnType<typeof getInstances>>>;
-export type GetInstancesQueryError = ErrorType<void | DmError>;
+export type GetInstancesQueryError = ErrorType<void | GetInstances403>;
 
 export function useGetInstances<
   TData = Awaited<ReturnType<typeof getInstances>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInstances403>,
 >(
   params: undefined | GetInstancesParams,
   options: {
@@ -243,7 +140,7 @@ export function useGetInstances<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetInstances<
   TData = Awaited<ReturnType<typeof getInstances>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInstances403>,
 >(
   params?: GetInstancesParams,
   options?: {
@@ -262,7 +159,7 @@ export function useGetInstances<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetInstances<
   TData = Awaited<ReturnType<typeof getInstances>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInstances403>,
 >(
   params?: GetInstancesParams,
   options?: {
@@ -277,7 +174,7 @@ export function useGetInstances<
 
 export function useGetInstances<
   TData = Awaited<ReturnType<typeof getInstances>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInstances403>,
 >(
   params?: GetInstancesParams,
   options?: {
@@ -310,7 +207,7 @@ export const invalidateGetInstances = async (
 
 export const getGetInstancesSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getInstances>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInstances403>,
 >(
   params?: GetInstancesParams,
   options?: {
@@ -335,11 +232,11 @@ export const getGetInstancesSuspenseQueryOptions = <
 };
 
 export type GetInstancesSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getInstances>>>;
-export type GetInstancesSuspenseQueryError = ErrorType<void | DmError>;
+export type GetInstancesSuspenseQueryError = ErrorType<void | GetInstances403>;
 
 export function useGetInstancesSuspense<
   TData = Awaited<ReturnType<typeof getInstances>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInstances403>,
 >(
   params: undefined | GetInstancesParams,
   options: {
@@ -352,7 +249,7 @@ export function useGetInstancesSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetInstancesSuspense<
   TData = Awaited<ReturnType<typeof getInstances>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInstances403>,
 >(
   params?: GetInstancesParams,
   options?: {
@@ -365,7 +262,7 @@ export function useGetInstancesSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetInstancesSuspense<
   TData = Awaited<ReturnType<typeof getInstances>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInstances403>,
 >(
   params?: GetInstancesParams,
   options?: {
@@ -382,7 +279,7 @@ export function useGetInstancesSuspense<
 
 export function useGetInstancesSuspense<
   TData = Awaited<ReturnType<typeof getInstances>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInstances403>,
 >(
   params?: GetInstancesParams,
   options?: {
@@ -404,43 +301,161 @@ export function useGetInstancesSuspense<
 }
 
 /**
+ * Launches a new Application or Job instance, returning an Instance and Task ID. The Task ID should be used against the `/task` endpoint to determine the availability of the the running instance.
+ *
+ * Instance behaviour is controlled using the `specification`. You will need to consult individual applications to determine what can be placed in the specification. Applications typically provide a `template` describing its **options**.
+ *
+ * An Application instance is not Ready for use until the corresponding **TaskState** is _STARTED_.
+ *
+ * A Job instance typically runs to completion, reaching the **TaskState** _SUCCESS_ when successful and _FAILURE_ is unsuccessful.
+ * @summary Creates a new Job or Application instance
+ */
+export const createInstance = (
+  createInstanceBody: CreateInstanceBody,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  const formUrlEncoded = new URLSearchParams();
+  formUrlEncoded.append(`application_id`, createInstanceBody.application_id);
+  formUrlEncoded.append(`as_name`, createInstanceBody.as_name);
+  if (createInstanceBody.callback_context !== undefined) {
+    formUrlEncoded.append(`callback_context`, createInstanceBody.callback_context);
+  }
+  if (createInstanceBody.callback_token !== undefined) {
+    formUrlEncoded.append(`callback_token`, createInstanceBody.callback_token);
+  }
+  if (createInstanceBody.callback_url !== undefined) {
+    formUrlEncoded.append(`callback_url`, createInstanceBody.callback_url);
+  }
+  if (createInstanceBody.debug !== undefined) {
+    formUrlEncoded.append(`debug`, createInstanceBody.debug);
+  }
+  if (createInstanceBody.generate_callback_token !== undefined) {
+    formUrlEncoded.append(
+      `generate_callback_token`,
+      createInstanceBody.generate_callback_token.toString(),
+    );
+  }
+  formUrlEncoded.append(`project_id`, createInstanceBody.project_id);
+  if (createInstanceBody.specification !== undefined) {
+    formUrlEncoded.append(`specification`, createInstanceBody.specification);
+  }
+
+  return customInstance<CreateInstance201>(
+    {
+      url: `/instance`,
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: formUrlEncoded,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getCreateInstanceMutationOptions = <
+  TError = ErrorType<void | CreateInstance403 | CreateInstance409>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createInstance>>,
+    TError,
+    { data: CreateInstanceBody },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createInstance>>,
+  TError,
+  { data: CreateInstanceBody },
+  TContext
+> => {
+  const mutationKey = ["createInstance"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createInstance>>,
+    { data: CreateInstanceBody }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createInstance(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateInstanceMutationResult = NonNullable<Awaited<ReturnType<typeof createInstance>>>;
+export type CreateInstanceMutationBody = CreateInstanceBody;
+export type CreateInstanceMutationError = ErrorType<void | CreateInstance403 | CreateInstance409>;
+
+/**
+ * @summary Creates a new Job or Application instance
+ */
+export const useCreateInstance = <
+  TError = ErrorType<void | CreateInstance403 | CreateInstance409>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createInstance>>,
+      TError,
+      { data: CreateInstanceBody },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createInstance>>,
+  TError,
+  { data: CreateInstanceBody },
+  TContext
+> => {
+  return useMutation(getCreateInstanceMutationOptions(options), queryClient);
+};
+/**
  * Similar to the `/instance [POST]` endpoint this one is used to check whether a new **Application** or **Job** instance can be launched. Rather than returning an **Instance** (or **Task**) ID this endpoint is simply used to ensure that the Job/Application is runnable while also returning the compiled `command` (if the Instance is a Job).
  *
  * The test result is only valid at the time of the call, whether an actual instance would start or not will require an identical call to `/instance POST`.
  * @summary Used to check the execution of new Job or Application instance
  */
 export const dryRunInstance = (
-  instancePostBodyBody: InstancePostBodyBody,
+  dryRunInstanceBody: DryRunInstanceBody,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   const formUrlEncoded = new URLSearchParams();
-  formUrlEncoded.append(`application_id`, instancePostBodyBody.application_id);
-  formUrlEncoded.append(`project_id`, instancePostBodyBody.project_id);
-  formUrlEncoded.append(`as_name`, instancePostBodyBody.as_name);
-  if (instancePostBodyBody.callback_url !== undefined) {
-    formUrlEncoded.append(`callback_url`, instancePostBodyBody.callback_url);
+  formUrlEncoded.append(`application_id`, dryRunInstanceBody.application_id);
+  formUrlEncoded.append(`as_name`, dryRunInstanceBody.as_name);
+  if (dryRunInstanceBody.callback_context !== undefined) {
+    formUrlEncoded.append(`callback_context`, dryRunInstanceBody.callback_context);
   }
-  if (instancePostBodyBody.callback_context !== undefined) {
-    formUrlEncoded.append(`callback_context`, instancePostBodyBody.callback_context);
+  if (dryRunInstanceBody.callback_token !== undefined) {
+    formUrlEncoded.append(`callback_token`, dryRunInstanceBody.callback_token);
   }
-  if (instancePostBodyBody.generate_callback_token !== undefined) {
+  if (dryRunInstanceBody.callback_url !== undefined) {
+    formUrlEncoded.append(`callback_url`, dryRunInstanceBody.callback_url);
+  }
+  if (dryRunInstanceBody.debug !== undefined) {
+    formUrlEncoded.append(`debug`, dryRunInstanceBody.debug);
+  }
+  if (dryRunInstanceBody.generate_callback_token !== undefined) {
     formUrlEncoded.append(
       `generate_callback_token`,
-      instancePostBodyBody.generate_callback_token.toString(),
+      dryRunInstanceBody.generate_callback_token.toString(),
     );
   }
-  if (instancePostBodyBody.callback_token !== undefined) {
-    formUrlEncoded.append(`callback_token`, instancePostBodyBody.callback_token);
-  }
-  if (instancePostBodyBody.debug !== undefined) {
-    formUrlEncoded.append(`debug`, instancePostBodyBody.debug);
-  }
-  if (instancePostBodyBody.specification !== undefined) {
-    formUrlEncoded.append(`specification`, instancePostBodyBody.specification);
+  formUrlEncoded.append(`project_id`, dryRunInstanceBody.project_id);
+  if (dryRunInstanceBody.specification !== undefined) {
+    formUrlEncoded.append(`specification`, dryRunInstanceBody.specification);
   }
 
-  return customInstance<InstanceDryRunPostResponse>(
+  return customInstance<DryRunInstance201>(
     {
       url: `/instance/dry-run`,
       method: "POST",
@@ -453,20 +468,20 @@ export const dryRunInstance = (
 };
 
 export const getDryRunInstanceMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DryRunInstance403 | DryRunInstance409>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof dryRunInstance>>,
     TError,
-    { data: InstancePostBodyBody },
+    { data: DryRunInstanceBody },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof dryRunInstance>>,
   TError,
-  { data: InstancePostBodyBody },
+  { data: DryRunInstanceBody },
   TContext
 > => {
   const mutationKey = ["dryRunInstance"];
@@ -478,7 +493,7 @@ export const getDryRunInstanceMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof dryRunInstance>>,
-    { data: InstancePostBodyBody }
+    { data: DryRunInstanceBody }
   > = (props) => {
     const { data } = props ?? {};
 
@@ -489,18 +504,21 @@ export const getDryRunInstanceMutationOptions = <
 };
 
 export type DryRunInstanceMutationResult = NonNullable<Awaited<ReturnType<typeof dryRunInstance>>>;
-export type DryRunInstanceMutationBody = InstancePostBodyBody;
-export type DryRunInstanceMutationError = ErrorType<void | DmError>;
+export type DryRunInstanceMutationBody = DryRunInstanceBody;
+export type DryRunInstanceMutationError = ErrorType<void | DryRunInstance403 | DryRunInstance409>;
 
 /**
  * @summary Used to check the execution of new Job or Application instance
  */
-export const useDryRunInstance = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useDryRunInstance = <
+  TError = ErrorType<void | DryRunInstance403 | DryRunInstance409>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof dryRunInstance>>,
       TError,
-      { data: InstancePostBodyBody },
+      { data: DryRunInstanceBody },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -509,238 +527,11 @@ export const useDryRunInstance = <TError = ErrorType<void | DmError>, TContext =
 ): UseMutationResult<
   Awaited<ReturnType<typeof dryRunInstance>>,
   TError,
-  { data: InstancePostBodyBody },
+  { data: DryRunInstanceBody },
   TContext
 > => {
   return useMutation(getDryRunInstanceMutationOptions(options), queryClient);
 };
-/**
- * @summary Get detailed information about an Instance
- */
-export const getInstance = (
-  instanceId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<InstanceGetResponse>(
-    { url: `/instance/${instanceId}`, method: "GET", signal },
-    options,
-  );
-};
-
-export const getGetInstanceQueryKey = (instanceId: string) => {
-  return ["data-manager", "instance", instanceId] as const;
-};
-
-export const getGetInstanceQueryOptions = <
-  TData = Awaited<ReturnType<typeof getInstance>>,
-  TError = ErrorType<void | DmError>,
->(
-  instanceId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetInstanceQueryKey(instanceId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getInstance>>> = ({ signal }) =>
-    getInstance(instanceId, requestOptions, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: instanceId !== null && instanceId !== undefined,
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
-
-export type GetInstanceQueryResult = NonNullable<Awaited<ReturnType<typeof getInstance>>>;
-export type GetInstanceQueryError = ErrorType<void | DmError>;
-
-export function useGetInstance<
-  TData = Awaited<ReturnType<typeof getInstance>>,
-  TError = ErrorType<void | DmError>,
->(
-  instanceId: string,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getInstance>>,
-          TError,
-          Awaited<ReturnType<typeof getInstance>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetInstance<
-  TData = Awaited<ReturnType<typeof getInstance>>,
-  TError = ErrorType<void | DmError>,
->(
-  instanceId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getInstance>>,
-          TError,
-          Awaited<ReturnType<typeof getInstance>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetInstance<
-  TData = Awaited<ReturnType<typeof getInstance>>,
-  TError = ErrorType<void | DmError>,
->(
-  instanceId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get detailed information about an Instance
- */
-
-export function useGetInstance<
-  TData = Awaited<ReturnType<typeof getInstance>>,
-  TError = ErrorType<void | DmError>,
->(
-  instanceId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetInstanceQueryOptions(instanceId, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Get detailed information about an Instance
- */
-export const invalidateGetInstance = async (
-  queryClient: QueryClient,
-  instanceId: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetInstanceQueryKey(instanceId) }, options);
-
-  return queryClient;
-};
-
-export const getGetInstanceSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getInstance>>,
-  TError = ErrorType<void | DmError>,
->(
-  instanceId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetInstanceQueryKey(instanceId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getInstance>>> = ({ signal }) =>
-    getInstance(instanceId, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getInstance>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetInstanceSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getInstance>>>;
-export type GetInstanceSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useGetInstanceSuspense<
-  TData = Awaited<ReturnType<typeof getInstance>>,
-  TError = ErrorType<void | DmError>,
->(
-  instanceId: string,
-  options: {
-    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetInstanceSuspense<
-  TData = Awaited<ReturnType<typeof getInstance>>,
-  TError = ErrorType<void | DmError>,
->(
-  instanceId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetInstanceSuspense<
-  TData = Awaited<ReturnType<typeof getInstance>>,
-  TError = ErrorType<void | DmError>,
->(
-  instanceId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get detailed information about an Instance
- */
-
-export function useGetInstanceSuspense<
-  TData = Awaited<ReturnType<typeof getInstance>>,
-  TError = ErrorType<void | DmError>,
->(
-  instanceId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetInstanceSuspenseQueryOptions(instanceId, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
 /**
  * The Application or Job Instance is terminated.
  *
@@ -752,14 +543,14 @@ export const terminateInstance = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<TaskIdentity>(
+  return customInstance<TerminateInstance200>(
     { url: `/instance/${instanceId}`, method: "DELETE", signal },
     options,
   );
 };
 
 export const getTerminateInstanceMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | TerminateInstance403 | TerminateInstance404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -798,12 +589,17 @@ export type TerminateInstanceMutationResult = NonNullable<
   Awaited<ReturnType<typeof terminateInstance>>
 >;
 
-export type TerminateInstanceMutationError = ErrorType<void | DmError>;
+export type TerminateInstanceMutationError = ErrorType<
+  void | TerminateInstance403 | TerminateInstance404
+>;
 
 /**
  * @summary Delete a Job or Application Instance
  */
-export const useTerminateInstance = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useTerminateInstance = <
+  TError = ErrorType<void | TerminateInstance403 | TerminateInstance404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof terminateInstance>>,
@@ -823,6 +619,233 @@ export const useTerminateInstance = <TError = ErrorType<void | DmError>, TContex
   return useMutation(getTerminateInstanceMutationOptions(options), queryClient);
 };
 /**
+ * @summary Get detailed information about an Instance
+ */
+export const getInstance = (
+  instanceId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<GetInstance200>(
+    { url: `/instance/${instanceId}`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetInstanceQueryKey = (instanceId: string) => {
+  return ["data-manager", "instance", instanceId] as const;
+};
+
+export const getGetInstanceQueryOptions = <
+  TData = Awaited<ReturnType<typeof getInstance>>,
+  TError = ErrorType<void | GetInstance403 | GetInstance404>,
+>(
+  instanceId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetInstanceQueryKey(instanceId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getInstance>>> = ({ signal }) =>
+    getInstance(instanceId, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: instanceId !== null && instanceId !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
+
+export type GetInstanceQueryResult = NonNullable<Awaited<ReturnType<typeof getInstance>>>;
+export type GetInstanceQueryError = ErrorType<void | GetInstance403 | GetInstance404>;
+
+export function useGetInstance<
+  TData = Awaited<ReturnType<typeof getInstance>>,
+  TError = ErrorType<void | GetInstance403 | GetInstance404>,
+>(
+  instanceId: string,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getInstance>>,
+          TError,
+          Awaited<ReturnType<typeof getInstance>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetInstance<
+  TData = Awaited<ReturnType<typeof getInstance>>,
+  TError = ErrorType<void | GetInstance403 | GetInstance404>,
+>(
+  instanceId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getInstance>>,
+          TError,
+          Awaited<ReturnType<typeof getInstance>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetInstance<
+  TData = Awaited<ReturnType<typeof getInstance>>,
+  TError = ErrorType<void | GetInstance403 | GetInstance404>,
+>(
+  instanceId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get detailed information about an Instance
+ */
+
+export function useGetInstance<
+  TData = Awaited<ReturnType<typeof getInstance>>,
+  TError = ErrorType<void | GetInstance403 | GetInstance404>,
+>(
+  instanceId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetInstanceQueryOptions(instanceId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Get detailed information about an Instance
+ */
+export const invalidateGetInstance = async (
+  queryClient: QueryClient,
+  instanceId: string,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetInstanceQueryKey(instanceId) }, options);
+
+  return queryClient;
+};
+
+export const getGetInstanceSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getInstance>>,
+  TError = ErrorType<void | GetInstance403 | GetInstance404>,
+>(
+  instanceId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetInstanceQueryKey(instanceId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getInstance>>> = ({ signal }) =>
+    getInstance(instanceId, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getInstance>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetInstanceSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getInstance>>>;
+export type GetInstanceSuspenseQueryError = ErrorType<void | GetInstance403 | GetInstance404>;
+
+export function useGetInstanceSuspense<
+  TData = Awaited<ReturnType<typeof getInstance>>,
+  TError = ErrorType<void | GetInstance403 | GetInstance404>,
+>(
+  instanceId: string,
+  options: {
+    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetInstanceSuspense<
+  TData = Awaited<ReturnType<typeof getInstance>>,
+  TError = ErrorType<void | GetInstance403 | GetInstance404>,
+>(
+  instanceId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetInstanceSuspense<
+  TData = Awaited<ReturnType<typeof getInstance>>,
+  TError = ErrorType<void | GetInstance403 | GetInstance404>,
+>(
+  instanceId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get detailed information about an Instance
+ */
+
+export function useGetInstanceSuspense<
+  TData = Awaited<ReturnType<typeof getInstance>>,
+  TError = ErrorType<void | GetInstance403 | GetInstance404>,
+>(
+  instanceId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getInstance>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetInstanceSuspenseQueryOptions(instanceId, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
  * The Application or Job Instance is updated according to the patch parameters.
  *
  * You must be the `owner` or an `editor` of the Instance to patch it
@@ -841,7 +864,7 @@ export const patchInstance = (
 };
 
 export const getPatchInstanceMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | PatchInstance403 | PatchInstance404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -878,12 +901,15 @@ export const getPatchInstanceMutationOptions = <
 
 export type PatchInstanceMutationResult = NonNullable<Awaited<ReturnType<typeof patchInstance>>>;
 
-export type PatchInstanceMutationError = ErrorType<void | DmError>;
+export type PatchInstanceMutationError = ErrorType<void | PatchInstance403 | PatchInstance404>;
 
 /**
  * @summary Update a Job or Application Instance
  */
-export const usePatchInstance = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const usePatchInstance = <
+  TError = ErrorType<void | PatchInstance403 | PatchInstance404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof patchInstance>>,
@@ -923,7 +949,7 @@ export const deleteInstanceToken = (
 };
 
 export const getDeleteInstanceTokenMutationOptions = <
-  TError = ErrorType<DmError>,
+  TError = ErrorType<DeleteInstanceToken404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -962,12 +988,15 @@ export type DeleteInstanceTokenMutationResult = NonNullable<
   Awaited<ReturnType<typeof deleteInstanceToken>>
 >;
 
-export type DeleteInstanceTokenMutationError = ErrorType<DmError>;
+export type DeleteInstanceTokenMutationError = ErrorType<DeleteInstanceToken404>;
 
 /**
  * @summary Delete (revoke) the Instance Token
  */
-export const useDeleteInstanceToken = <TError = ErrorType<DmError>, TContext = unknown>(
+export const useDeleteInstanceToken = <
+  TError = ErrorType<DeleteInstanceToken404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deleteInstanceToken>>,

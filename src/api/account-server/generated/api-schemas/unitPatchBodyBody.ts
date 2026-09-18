@@ -11,12 +11,12 @@
 import type { UnitPatchBodyBodyDefaultProductPrivacy } from "./unitPatchBodyBodyDefaultProductPrivacy";
 
 export type UnitPatchBodyBody = {
-  /** The new name for the Unit */
-  name?: string;
   /**
    * The new default **Product** privacy applied to all products that belong to this Unit. Privacy is also controlled at the **Organisation** level. As an example, the Unit can declare its Products to be `DEFAULT_PRIVATE`, but the Organisation can declare its value to be `DEFAULT_PUBLIC`.
    *
    * Whether the privacy can be honoured will depend on the organisation's value
    */
   default_product_privacy?: UnitPatchBodyBodyDefaultProductPrivacy;
+  /** The new name for the Unit */
+  name?: string;
 };

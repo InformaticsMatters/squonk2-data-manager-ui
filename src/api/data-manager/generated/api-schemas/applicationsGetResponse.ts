@@ -8,11 +8,11 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { ApplicationSummary } from "./applicationSummary";
+import type { ApplicationsGetResponseApplicationsItem } from "./applicationsGetResponseApplicationsItem";
 
 export interface ApplicationsGetResponse {
+  /** A list of installed applications, which are application-compliant Kubernetes "operators" */
+  applications: ApplicationsGetResponseApplicationsItem[];
   /** The number of known Applications */
   count: number;
-  /** A list of installed applications, which are application-compliant Kubernetes "operators" */
-  applications: ApplicationSummary[];
 }

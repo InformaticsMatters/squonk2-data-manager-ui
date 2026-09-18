@@ -10,10 +10,10 @@
  */
 
 export type ProductDmStorageDetailSize = {
-  /** The humanised size of the peak storage used for the current day. The value is reset at the start of each day */
-  peak: string;
   /** The humanised size of the current storage used for the current day and used to calculate the 'burn rate' */
   current: string;
+  /** The humanised size of the peak storage used for the current day. The value is reset at the start of each day */
+  peak: string;
   /** The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used */
   unit_size: string;
   /** The peak number of storage units used today */

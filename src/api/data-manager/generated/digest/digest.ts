@@ -24,7 +24,7 @@ import type {
   UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 
-import type { DatasetDigestGetResponse, DmError } from "../api-schemas";
+import type { GetDatasetDigest200, GetDatasetDigest403, GetDatasetDigest404 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
 import type { ErrorType } from "../../../runtime/data-manager/axios";
@@ -55,7 +55,7 @@ export const getDatasetDigest = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<DatasetDigestGetResponse>(
+  return customInstance<GetDatasetDigest200>(
     { url: `/digest/dataset/${datasetDigest}`, method: "GET", signal },
     options,
   );
@@ -67,7 +67,7 @@ export const getGetDatasetDigestQueryKey = (datasetDigest: string) => {
 
 export const getGetDatasetDigestQueryOptions = <
   TData = Awaited<ReturnType<typeof getDatasetDigest>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasetDigest403 | GetDatasetDigest404>,
 >(
   datasetDigest: string,
   options?: {
@@ -93,11 +93,13 @@ export const getGetDatasetDigestQueryOptions = <
 };
 
 export type GetDatasetDigestQueryResult = NonNullable<Awaited<ReturnType<typeof getDatasetDigest>>>;
-export type GetDatasetDigestQueryError = ErrorType<void | DmError>;
+export type GetDatasetDigestQueryError = ErrorType<
+  void | GetDatasetDigest403 | GetDatasetDigest404
+>;
 
 export function useGetDatasetDigest<
   TData = Awaited<ReturnType<typeof getDatasetDigest>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasetDigest403 | GetDatasetDigest404>,
 >(
   datasetDigest: string,
   options: {
@@ -116,7 +118,7 @@ export function useGetDatasetDigest<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetDatasetDigest<
   TData = Awaited<ReturnType<typeof getDatasetDigest>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasetDigest403 | GetDatasetDigest404>,
 >(
   datasetDigest: string,
   options?: {
@@ -135,7 +137,7 @@ export function useGetDatasetDigest<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetDatasetDigest<
   TData = Awaited<ReturnType<typeof getDatasetDigest>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasetDigest403 | GetDatasetDigest404>,
 >(
   datasetDigest: string,
   options?: {
@@ -150,7 +152,7 @@ export function useGetDatasetDigest<
 
 export function useGetDatasetDigest<
   TData = Awaited<ReturnType<typeof getDatasetDigest>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasetDigest403 | GetDatasetDigest404>,
 >(
   datasetDigest: string,
   options?: {
@@ -186,7 +188,7 @@ export const invalidateGetDatasetDigest = async (
 
 export const getGetDatasetDigestSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getDatasetDigest>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasetDigest403 | GetDatasetDigest404>,
 >(
   datasetDigest: string,
   options?: {
@@ -213,11 +215,13 @@ export const getGetDatasetDigestSuspenseQueryOptions = <
 export type GetDatasetDigestSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getDatasetDigest>>
 >;
-export type GetDatasetDigestSuspenseQueryError = ErrorType<void | DmError>;
+export type GetDatasetDigestSuspenseQueryError = ErrorType<
+  void | GetDatasetDigest403 | GetDatasetDigest404
+>;
 
 export function useGetDatasetDigestSuspense<
   TData = Awaited<ReturnType<typeof getDatasetDigest>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasetDigest403 | GetDatasetDigest404>,
 >(
   datasetDigest: string,
   options: {
@@ -230,7 +234,7 @@ export function useGetDatasetDigestSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetDatasetDigestSuspense<
   TData = Awaited<ReturnType<typeof getDatasetDigest>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasetDigest403 | GetDatasetDigest404>,
 >(
   datasetDigest: string,
   options?: {
@@ -243,7 +247,7 @@ export function useGetDatasetDigestSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetDatasetDigestSuspense<
   TData = Awaited<ReturnType<typeof getDatasetDigest>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasetDigest403 | GetDatasetDigest404>,
 >(
   datasetDigest: string,
   options?: {
@@ -260,7 +264,7 @@ export function useGetDatasetDigestSuspense<
 
 export function useGetDatasetDigestSuspense<
   TData = Awaited<ReturnType<typeof getDatasetDigest>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasetDigest403 | GetDatasetDigest404>,
 >(
   datasetDigest: string,
   options?: {

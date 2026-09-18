@@ -11,13 +11,13 @@
 import type { DatasetSchemaGetResponseType } from "./datasetSchemaGetResponseType";
 
 export interface DatasetSchemaGetResponse {
-  /** The Metadata title */
-  title: string;
   /** The Metadata description */
   description: string;
-  /** The Metadata type (an object) */
-  type: DatasetSchemaGetResponseType;
   /** Required properties */
   required: string[];
+  /** The Metadata title */
+  title: string;
+  /** The Metadata type (an object) */
+  type: DatasetSchemaGetResponseType;
   [key: string]: unknown;
 }

@@ -8,11 +8,11 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { UserDetail } from "./userDetail";
+import type { AdminUsersGetResponseUsersItem } from "./adminUsersGetResponseUsersItem";
 
 export interface AdminUsersGetResponse {
   /** The number of Users that have used the Data Manager */
   count: number;
   /** A list of Users that have used the Data Manager */
-  users: UserDetail[];
+  users: AdminUsersGetResponseUsersItem[];
 }

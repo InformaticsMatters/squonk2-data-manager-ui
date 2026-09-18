@@ -8,11 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QInstanceArchiveParameter } from "./qInstanceArchiveParameter";
 
 export type PatchInstanceParams = {
   /**
    * True to archive the instance
    */
-  archive?: QInstanceArchiveParameter;
+  archive?: boolean;
 };

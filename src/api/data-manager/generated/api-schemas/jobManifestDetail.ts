@@ -10,23 +10,23 @@
  */
 
 export interface JobManifestDetail {
-  /** The Job Manifest record ID */
-  id: number;
-  url: string;
-  header?: string;
-  params?: string;
   /** The Date (and time) the manifest was created */
   created: string;
   /** The (admin) user who created the manifest */
   creator?: string;
+  header?: string;
+  /** The Job Manifest record ID */
+  id: number;
   /** The number of job definition files loaded during the most recent successful load */
   job_definition_files_loaded?: number;
   /** The number of job definitions loaded during the most recent successful load */
   job_definitions_loaded?: number;
-  /** The Date (and time) the manifest was last loaded successfully */
-  last_successful_load_time?: string;
-  /** The Date (and time) the manifest was last loaded, successfully or otherwise. If the manifest (or any of the Job definition files it refers to) fails to load the `load_status` should provide some diagnostic feedback */
-  last_load_time?: string;
   /** The status of the time the manifest was last loaded. If the load was successful this will be `SUCCESS` and `last_successful_load` will be the same as `last_load` */
   last_load_status: string;
+  /** The Date (and time) the manifest was last loaded, successfully or otherwise. If the manifest (or any of the Job definition files it refers to) fails to load the `load_status` should provide some diagnostic feedback */
+  last_load_time?: string;
+  /** The Date (and time) the manifest was last loaded successfully */
+  last_successful_load_time?: string;
+  params?: string;
+  url: string;
 }

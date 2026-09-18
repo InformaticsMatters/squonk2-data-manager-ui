@@ -15,11 +15,11 @@ import type { ProductDmStorageDetail } from "./productDmStorageDetail";
 import type { UnitAllDetail } from "./unitAllDetail";
 
 export interface ProductDmStorage {
-  product: ProductDetail;
-  organisation: OrganisationAllDetail;
-  unit: UnitAllDetail;
-  storage: ProductDmStorageDetail;
-  coins: ProductCoinsDetail;
   /** True if the product can be (needs to be) claimed. */
   claimable: boolean;
+  coins: ProductCoinsDetail;
+  organisation: OrganisationAllDetail;
+  product: ProductDetail;
+  storage: ProductDmStorageDetail;
+  unit: UnitAllDetail;
 }

@@ -8,9 +8,9 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { JobReplacement } from "./jobReplacement";
+import type { JobReplacementsItem } from "./jobReplacementsItem";
 
 /**
  * A list of Jobs, collection and job that are either replacing or being replaced
  */
-export type JobReplacements = JobReplacement[];
+export type JobReplacements = JobReplacementsItem[];

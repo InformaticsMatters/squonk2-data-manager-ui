@@ -8,23 +8,23 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { RunningWorkflowProject } from "./runningWorkflowProject";
+import type { RunningWorkflowSummaryProject } from "./runningWorkflowSummaryProject";
 import type { RunningWorkflowSummaryStatus } from "./runningWorkflowSummaryStatus";
-import type { RunningWorkflowWorkflow } from "./runningWorkflowWorkflow";
+import type { RunningWorkflowSummaryWorkflow } from "./runningWorkflowSummaryWorkflow";
 
 export interface RunningWorkflowSummary {
+  error_msg?: string;
+  error_num?: number;
   /** The Running Workflows's unique ID */
   id: string;
   /** The name attached to this running workflow */
   name: string;
-  error_num?: number;
-  error_msg?: string;
-  /** The status of the running workflow */
-  status: RunningWorkflowSummaryStatus;
+  project: RunningWorkflowSummaryProject;
   /** The date and time the running workflow was started */
   started: string;
+  /** The status of the running workflow */
+  status: RunningWorkflowSummaryStatus;
   /** The date and time the running workflow was stopped */
   stopped?: string;
-  workflow: RunningWorkflowWorkflow;
-  project: RunningWorkflowProject;
+  workflow: RunningWorkflowSummaryWorkflow;
 }

@@ -8,17 +8,17 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { JobOrderDetail } from "./jobOrderDetail";
 import type { JobVariablesInputs } from "./jobVariablesInputs";
 import type { JobVariablesOptions } from "./jobVariablesOptions";
+import type { JobVariablesOrder } from "./jobVariablesOrder";
 import type { JobVariablesOutputs } from "./jobVariablesOutputs";
 
 export interface JobVariables {
-  order?: JobOrderDetail;
   /** The Job command's inputs. The JSONSchema for the command's inputs, essentially the **variables/inputs** block of the Job's JobDefinition. */
   inputs?: JobVariablesInputs;
-  /** The Job command's outputs. The JSONSchema for the command's inputs, essentially the **variables/outputs** block of the Job's JobDefinition. */
-  outputs?: JobVariablesOutputs;
   /** The Job command's options. The JSONSchema for the command's options, essentially the **variables/options** block of the Job's JobDefinition. */
   options?: JobVariablesOptions;
+  order?: JobVariablesOrder;
+  /** The Job command's outputs. The JSONSchema for the command's inputs, essentially the **variables/outputs** block of the Job's JobDefinition. */
+  outputs?: JobVariablesOutputs;
 }

@@ -8,8 +8,6 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QFileParameter } from "./qFileParameter";
-import type { QFilePathParameter } from "./qFilePathParameter";
 
 export type GetProjectFileParams = {
   /**
@@ -18,11 +16,11 @@ export type GetProjectFileParams = {
    * @maxLength 260
    * @pattern ^(/(\.([^/.][^/]*)?|\.\.[^/]+|[^/.][^/]*)?)+$
    */
-  path?: QFilePathParameter;
+  path?: string;
   /**
    * A project file.
    * @minLength 1
    * @maxLength 260
    */
-  file: QFileParameter;
+  file: string;
 };

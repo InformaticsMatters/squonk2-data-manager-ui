@@ -8,10 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { WorkflowSummary } from "./workflowSummary";
+import type { WorkflowGetAllResponseWorkflowsItem } from "./workflowGetAllResponseWorkflowsItem";
 
 export interface WorkflowGetAllResponse {
   /** The number of workflows in the returned list */
   count: number;
-  workflows: WorkflowSummary[];
+  workflows: WorkflowGetAllResponseWorkflowsItem[];
 }

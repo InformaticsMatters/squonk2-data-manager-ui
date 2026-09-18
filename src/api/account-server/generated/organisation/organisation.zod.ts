@@ -11,6 +11,34 @@
 import * as zod from "zod";
 
 /**
+ * Gets the Default Organisation, a built-in Organisation used exclusively for **Personal Units**.
+ *
+ * Any authorised user can see the Default Organisation.
+ * @summary Gets the Default Organisation
+ */
+export const AppApiOrganisationGetDefaultResponse = zod.object({
+  caller_is_member: zod
+    .boolean()
+    .optional()
+    .describe(
+      "Whether the user making the API call is a member of the Default Organisation. Only admin users are members of the Default organisation",
+    ),
+  created: zod.iso.datetime({ offset: true }).optional(),
+  default_product_privacy: zod
+    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+    .optional()
+    .describe("The Organisation's default product privacy setting"),
+  id: zod.string().optional().describe("The Default Organisation ID\n"),
+  name: zod.string().optional().describe("The Default Organisation Name\n"),
+  private: zod
+    .boolean()
+    .optional()
+    .describe(
+      "True if the Organisation is private. The Default organisation is always public, although it does not contain a membership (unless you're admin) and only houses Personal Units\n",
+    ),
+});
+
+/**
  * Gets all the Organisations that you are a member of, or a specific Organisation by name.
  *
  * You can see an Organisation if you are a member of it, the owner (creator) of it, or if you are an admin user.
@@ -28,6 +56,10 @@ export const AppApiOrganisationGetResponse = zod.object({
         caller_is_member: zod
           .boolean()
           .describe("Whether the user making the API call is a member of the Unit"),
+        created: zod.iso.datetime({ offset: true }),
+        default_product_privacy: zod
+          .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+          .describe("The Organisation's default product privacy setting"),
         id: zod.string().describe("The Organisation's unique ID"),
         name: zod.string().describe("The Organisation's name"),
         owner_id: zod
@@ -37,10 +69,6 @@ export const AppApiOrganisationGetResponse = zod.object({
             "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
           ),
         private: zod.boolean().describe("True if the Unit is private"),
-        created: zod.iso.datetime({ offset: true }),
-        default_product_privacy: zod
-          .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-          .describe("The Organisation's default product privacy setting"),
         users: zod
           .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
           .describe("A list of users that are members of the Organisation"),
@@ -60,20 +88,39 @@ export const AppApiOrganisationGetResponse = zod.object({
 export const appApiOrganisationPostBodyNameMax = 80;
 
 export const AppApiOrganisationPostBody = zod.object({
+  default_product_privacy: zod
+    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+    .optional()
+    .describe("The default product privacy setting for the Organisation"),
   name: zod
     .string()
     .max(appApiOrganisationPostBodyNameMax)
     .describe("The name of the organisation"),
   owner: zod.string().describe("The name of the organisation owner. A user ID"),
-  default_product_privacy: zod
-    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-    .optional()
-    .describe("The default product privacy setting for the Organisation"),
 });
 
 export const AppApiOrganisationPostResponse = zod.object({
   id: zod.string().describe("The Organisation's unique ID"),
 });
+
+/**
+ * Before an Organisation can be deleted all its underlying **Units** must also be deleted, remembering that **Units** that have undeleted **Products** cannot be deleted.
+ *
+ * You need admin rights to use this method
+ * @summary Deletes an Organisation
+ */
+export const appApiOrganisationDeletePathOrgIdRegExp = new RegExp(
+  "^org-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiOrganisationDeleteParams = zod.object({
+  org_id: zod
+    .string()
+    .regex(appApiOrganisationDeletePathOrgIdRegExp)
+    .describe("An Organisation Identity"),
+});
+
+export const AppApiOrganisationDeleteResponse = zod.void();
 
 /**
  * Gets an Organisation. To see the Organisation you need admin rights or need to be a member of the Organisation or are its *creator*.
@@ -96,6 +143,10 @@ export const AppApiOrganisationGetOrgResponse = zod.object({
   caller_is_member: zod
     .boolean()
     .describe("Whether the user making the API call is a member of the Unit"),
+  created: zod.iso.datetime({ offset: true }),
+  default_product_privacy: zod
+    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+    .describe("The Organisation's default product privacy setting"),
   id: zod.string().describe("The Organisation's unique ID"),
   name: zod.string().describe("The Organisation's name"),
   owner_id: zod
@@ -105,10 +156,6 @@ export const AppApiOrganisationGetOrgResponse = zod.object({
       "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
     ),
   private: zod.boolean().describe("True if the Unit is private"),
-  created: zod.iso.datetime({ offset: true }),
-  default_product_privacy: zod
-    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-    .describe("The Organisation's default product privacy setting"),
   users: zod
     .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
     .describe("A list of users that are members of the Organisation"),
@@ -134,60 +181,13 @@ export const AppApiOrganisationPatchParams = zod.object({
 });
 
 export const AppApiOrganisationPatchBody = zod.object({
-  name: zod.string().optional().describe("The new name for the Organisational"),
   default_product_privacy: zod
     .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
     .optional()
     .describe(
       "The new default \*\*Product\*\* privacy applied to all products that belong to this Organisation. Privacy is also controlled at the \*\*Unit\*\* level. As an example the Organisation level privacy can be `DEFAULT_PRIVATE`, but the unit can declare its Products to be `ALWAYS_PRIVATE`.\n\nWhether the privacy can be honoured will depend on the value in any of the organisation's existing units",
     ),
+  name: zod.string().optional().describe("The new name for the Organisational"),
 });
 
 export const AppApiOrganisationPatchResponse = zod.unknown();
-
-/**
- * Before an Organisation can be deleted all its underlying **Units** must also be deleted, remembering that **Units** that have undeleted **Products** cannot be deleted.
- *
- * You need admin rights to use this method
- * @summary Deletes an Organisation
- */
-export const appApiOrganisationDeletePathOrgIdRegExp = new RegExp(
-  "^org-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiOrganisationDeleteParams = zod.object({
-  org_id: zod
-    .string()
-    .regex(appApiOrganisationDeletePathOrgIdRegExp)
-    .describe("An Organisation Identity"),
-});
-
-export const AppApiOrganisationDeleteResponse = zod.void();
-
-/**
- * Gets the Default Organisation, a built-in Organisation used exclusively for **Personal Units**.
- *
- * Any authorised user can see the Default Organisation.
- * @summary Gets the Default Organisation
- */
-export const AppApiOrganisationGetDefaultResponse = zod.object({
-  caller_is_member: zod
-    .boolean()
-    .optional()
-    .describe(
-      "Whether the user making the API call is a member of the Default Organisation. Only admin users are members of the Default organisation",
-    ),
-  id: zod.string().optional().describe("The Default Organisation ID\n"),
-  name: zod.string().optional().describe("The Default Organisation Name\n"),
-  private: zod
-    .boolean()
-    .optional()
-    .describe(
-      "True if the Organisation is private. The Default organisation is always public, although it does not contain a membership (unless you're admin) and only houses Personal Units\n",
-    ),
-  created: zod.iso.datetime({ offset: true }).optional(),
-  default_product_privacy: zod
-    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-    .optional()
-    .describe("The Organisation's default product privacy setting"),
-});

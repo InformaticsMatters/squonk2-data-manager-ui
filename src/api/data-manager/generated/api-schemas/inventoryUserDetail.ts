@@ -8,16 +8,16 @@
  *
  * OpenAPI spec version: 6.7
  */
+import type { InventoryUserDetailActivity } from "./inventoryUserDetailActivity";
 import type { InventoryUserDetailDatasets } from "./inventoryUserDetailDatasets";
 import type { InventoryUserDetailProjects } from "./inventoryUserDetailProjects";
-import type { UserActivityDetail } from "./userActivityDetail";
 
 export interface InventoryUserDetail {
+  activity: InventoryUserDetailActivity;
+  datasets: InventoryUserDetailDatasets;
   f_uid: number;
   first_seen: string;
   last_seen_date: string;
-  username: string;
   projects: InventoryUserDetailProjects;
-  datasets: InventoryUserDetailDatasets;
-  activity: UserActivityDetail;
+  username: string;
 }

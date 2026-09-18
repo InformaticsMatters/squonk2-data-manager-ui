@@ -8,11 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QProjectNameParameter } from "./qProjectNameParameter";
 
 export type GetProjectsParams = {
   /**
    * A Project name
    */
-  project_name?: QProjectNameParameter;
+  project_name?: string;
 };

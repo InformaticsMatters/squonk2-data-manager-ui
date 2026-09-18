@@ -34,6 +34,17 @@ export const AppApiAccountServerGetRegistrationResponse = zod.object({
 });
 
 /**
+ * @summary Gets the Data Manager Job Definition Schema version that's running behind the API
+ */
+export const AppApiVersionGetJobDefinitionSchemaResponse = zod.object({
+  version: zod
+    .string()
+    .describe(
+      "A Data Manager version. This is guaranteed to be a valid semantic version for official (tagged) images. The version value format for unofficial images is a string but otherwise undefined\n",
+    ),
+});
+
+/**
  * @summary Gets the Data Manager version that's running behind the API
  */
 export const AppApiVersionGetResponse = zod.object({
@@ -48,17 +59,6 @@ export const AppApiVersionGetResponse = zod.object({
  * @summary Gets the Data Manager Workflow Engine version that's running behind the API
  */
 export const AppApiVersionGetWorkflowResponse = zod.object({
-  version: zod
-    .string()
-    .describe(
-      "A Data Manager version. This is guaranteed to be a valid semantic version for official (tagged) images. The version value format for unofficial images is a string but otherwise undefined\n",
-    ),
-});
-
-/**
- * @summary Gets the Data Manager Job Definition Schema version that's running behind the API
- */
-export const AppApiVersionGetJobDefinitionSchemaResponse = zod.object({
   version: zod
     .string()
     .describe(

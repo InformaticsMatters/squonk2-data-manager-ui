@@ -8,9 +8,9 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { InputHandlerDetail } from "./inputHandlerDetail";
+import type { InputHandlerGetResponseInputHandlersItem } from "./inputHandlerGetResponseInputHandlersItem";
 
 export interface InputHandlerGetResponse {
   count: number;
-  input_handlers: InputHandlerDetail[];
+  input_handlers: InputHandlerGetResponseInputHandlersItem[];
 }

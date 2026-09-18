@@ -23,14 +23,14 @@ export interface ProjectFileDetail {
   file_name: string;
   /** The ProjectFile's path within the Project volume */
   file_path: string;
-  /** The processing stage. */
-  processing_stage?: ProjectFileDetailProcessingStage;
   /** True if the ProjectFile cannot be modified while in the Project */
   immutable: boolean;
-  /** The owner of the ProjectFile. This is the user that added the Dataset (as this file) to the Project */
-  owner: string;
-  /** The Project the ProjectFile belongs to */
-  project_id?: string;
   /** The ProjectFile MIME type */
   mime_type: string;
+  /** The owner of the ProjectFile. This is the user that added the Dataset (as this file) to the Project */
+  owner: string;
+  /** The processing stage. */
+  processing_stage?: ProjectFileDetailProcessingStage;
+  /** The Project the ProjectFile belongs to */
+  project_id?: string;
 }

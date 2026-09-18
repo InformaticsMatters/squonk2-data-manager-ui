@@ -13,6 +13,9 @@ import type { OrganisationDetailDefaultProductPrivacy } from "./organisationDeta
 export interface OrganisationDetail {
   /** Whether the user making the API call is a member of the Unit */
   caller_is_member: boolean;
+  created: string;
+  /** The Organisation's default product privacy setting */
+  default_product_privacy: OrganisationDetailDefaultProductPrivacy;
   /** The Organisation's unique ID */
   id: string;
   /** The Organisation's name */
@@ -21,7 +24,4 @@ export interface OrganisationDetail {
   owner_id?: string;
   /** True if the Unit is private */
   private: boolean;
-  created: string;
-  /** The Organisation's default product privacy setting */
-  default_product_privacy: OrganisationDetailDefaultProductPrivacy;
 }

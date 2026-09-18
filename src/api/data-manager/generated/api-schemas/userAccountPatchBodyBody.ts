@@ -10,8 +10,6 @@
  */
 
 export type UserAccountPatchBodyBody = {
-  /** If set the user account becomes private, if provided but false the user account becomes public. Public Users show up in user searches */
-  private?: boolean;
   /** For `admin` accounts, if set the user account is able to read anything, i.e. `GET` API calls (i.e. endpoints that do not change the Data Manager state) behave as though the caller is acting as *everyone*. An `admin` user would set ths parameter in order to browse the system, and then switch to `impersonate` mode in order to change things as the chosen user */
   become_admin?: boolean;
   /**
@@ -20,6 +18,8 @@ export type UserAccountPatchBodyBody = {
    * @pattern ^(\w(?:\w*(?:[@.-]\w+)?)*|)$
    */
   impersonate?: string;
+  /** If set the user account becomes private, if provided but false the user account becomes public. Public Users show up in user searches */
+  private?: boolean;
   /** For `admin` accounts, if this is set the account for the user being impersonated is patched, rather then the user's own account. To use this you must have a value for `impersonate` */
   use_impersonation?: boolean;
 };

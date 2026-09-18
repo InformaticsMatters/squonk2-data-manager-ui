@@ -10,8 +10,8 @@
  */
 
 export interface PersonalUnitPutResponse {
-  /** The unit's Organisation. Used to identify the Default organisation */
-  organisation_id: string;
   /** The unit's unique ID */
   id: string;
+  /** The unit's Organisation. Used to identify the Default organisation */
+  organisation_id: string;
 }

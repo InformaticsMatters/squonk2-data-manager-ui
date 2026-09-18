@@ -8,11 +8,11 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { JobManifestDetail } from "./jobManifestDetail";
+import type { AdminJobManifestGetResponseJobManifestsItem } from "./adminJobManifestGetResponseJobManifestsItem";
 
 export interface AdminJobManifestGetResponse {
   /** The number of known Job Manifests */
   count: number;
   /** The list of known Job manifests */
-  job_manifests: JobManifestDetail[];
+  job_manifests: AdminJobManifestGetResponseJobManifestsItem[];
 }

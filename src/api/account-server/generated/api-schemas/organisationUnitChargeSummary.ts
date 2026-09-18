@@ -11,8 +11,6 @@
 import type { ChargeSummary } from "./chargeSummary";
 
 export interface OrganisationUnitChargeSummary {
-  unit_id: string;
-  name: string;
   /**
    * @minimum 1
    * @maximum 28
@@ -20,7 +18,9 @@ export interface OrganisationUnitChargeSummary {
   billing_day: number;
   /** The start of the charge period */
   from: string;
+  name: string;
+  summary: ChargeSummary[];
+  unit_id: string;
   /** The date where of first day after the charge period */
   until: string;
-  summary: ChargeSummary[];
 }

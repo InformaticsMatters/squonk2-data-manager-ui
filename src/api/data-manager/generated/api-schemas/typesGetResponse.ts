@@ -8,10 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { TypeSummary } from "./typeSummary";
+import type { TypesGetResponseTypesItem } from "./typesGetResponseTypesItem";
 
 export interface TypesGetResponse {
   count: number;
   /** A list of available MIME types */
-  types: TypeSummary[];
+  types: TypesGetResponseTypesItem[];
 }

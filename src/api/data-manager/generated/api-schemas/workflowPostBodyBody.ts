@@ -12,12 +12,6 @@ import type { WorkflowPostBodyBodyScope } from "./workflowPostBodyBodyScope";
 
 export type WorkflowPostBodyBody = {
   /**
-   * The name to attach to the workflow
-   * @minLength 2
-   * @maxLength 80
-   */
-  name: string;
-  /**
    * The workflow definition, a YAML string. The definition is converted to a YAML object using PyYAML's `SafeLoader`. This limits what is supported but minimises the risk of a User being able to execute arbitrary code from the supplied YAML.
    *
    * You can provide an inline definition as a YAML string or load a `definition_file`. You must provide one or the other.
@@ -29,6 +23,12 @@ export type WorkflowPostBodyBody = {
    * You can provide a file or an inline `definition` as a YAML string. You must provide one or the other.
    */
   definition_file?: Blob;
+  /**
+   * The name to attach to the workflow
+   * @minLength 2
+   * @maxLength 80
+   */
+  name: string;
   /** The scope of the workflow. The default is `GLOBAL` */
   scope: WorkflowPostBodyBodyScope;
   /** If the scope of the Workflow is not `GLOBAL` you need to provide an identity of the chosen scope. This might be the UUID of an Account Server Organisation or Unit ror example. */

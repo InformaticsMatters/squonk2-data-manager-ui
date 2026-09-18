@@ -8,8 +8,8 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { ApplicationImageVariant } from "./applicationImageVariant";
+import type { ApplicationImageVariantsPublicItem } from "./applicationImageVariantsPublicItem";
 
 export interface ApplicationImageVariants {
-  public?: ApplicationImageVariant[];
+  public?: ApplicationImageVariantsPublicItem[];
 }

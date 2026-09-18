@@ -10,11 +10,11 @@
  */
 
 export type ExchangeRatePutBodyBody = {
-  /** A decimal value used as the new Exchange Rate. Application _raw_ **costs** are multiplied by this value to covert costs to **coins**. A string is used to avoid rounding errors. Internally the value is treated as a Python Decimal. */
-  rate: string;
   /**
    * A brief comment relating to the new rate
    * @maxLength 80
    */
   comment?: string;
+  /** A decimal value used as the new Exchange Rate. Application _raw_ **costs** are multiplied by this value to covert costs to **coins**. A string is used to avoid rounding errors. Internally the value is treated as a Python Decimal. */
+  rate: string;
 };

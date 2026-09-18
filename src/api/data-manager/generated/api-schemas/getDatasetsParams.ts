@@ -8,39 +8,33 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QDatasetMimeTypeParameter } from "./qDatasetMimeTypeParameter";
-import type { QEditorsParameter } from "./qEditorsParameter";
-import type { QIncludeDeletedParameter } from "./qIncludeDeletedParameter";
-import type { QLabelsParameter } from "./qLabelsParameter";
-import type { QOwnersParameter } from "./qOwnersParameter";
-import type { QUsernameParameter } from "./qUsernameParameter";
 
 export type GetDatasetsParams = {
   /**
    * Whether to include records that are deleted
    */
-  include_deleted?: QIncludeDeletedParameter;
+  include_deleted?: boolean;
   /**
    * Filter the datasets by username
    * @minLength 3
    * @maxLength 80
    * @pattern ^\w(?:\w*(?:[@.-]\w+)?)*$
    */
-  username?: QUsernameParameter;
+  username?: string;
   /**
    * Filter the datasets by the supplied mime_type.
    */
-  dataset_mime_type?: QDatasetMimeTypeParameter;
+  dataset_mime_type?: string;
   /**
    * A comma-separated list of owners
    */
-  owners?: QOwnersParameter;
+  owners?: string;
   /**
    * A comma-separated list of editors
    */
-  editors?: QEditorsParameter;
+  editors?: string;
   /**
    * JSON string containing a list of label/value pairs for the datasets to be filtered by. If the value is set to null, then only the label is matched. If both the label and value are set, then both are matched. e.g. '{"label1": null, "label2": "value2"}'
    */
-  labels?: QLabelsParameter;
+  labels?: string;
 };

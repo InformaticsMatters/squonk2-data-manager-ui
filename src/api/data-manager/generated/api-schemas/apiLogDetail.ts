@@ -11,20 +11,20 @@
 import type { ApiLogDetailMethod } from "./apiLogDetailMethod";
 
 export interface ApiLogDetail {
-  /** The REST method used. GET methods are not logged */
-  method: ApiLogDetailMethod;
-  /** The API path used, e.g. `/dataset` */
-  path: string;
   /** The date/time the API call began */
   began: string;
-  /** The REST method approximate execution time (nS) in a humanised form, where 7969400 is presented as 7,969,400 */
-  duration_ns?: string;
-  /** The HTTP response status code */
-  status_code?: number;
-  /** A JSON string representing the in-query properties used in the call */
-  params?: string;
   /** A JSON string representing the in-body properties used in the call */
   body?: string;
+  /** The REST method approximate execution time (nS) in a humanised form, where 7969400 is presented as 7,969,400 */
+  duration_ns?: string;
   /** Not all API calls using your user ID may have been executed by you, In cases where an administrator has executed a REST API call on your behalf, their user ID will be revealed using this property */
   impersonator?: string;
+  /** The REST method used. GET methods are not logged */
+  method: ApiLogDetailMethod;
+  /** A JSON string representing the in-query properties used in the call */
+  params?: string;
+  /** The API path used, e.g. `/dataset` */
+  path: string;
+  /** The HTTP response status code */
+  status_code?: number;
 }

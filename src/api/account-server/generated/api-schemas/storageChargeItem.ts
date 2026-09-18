@@ -11,14 +11,14 @@
 import type { ChargeAdditionalData } from "./chargeAdditionalData";
 
 export interface StorageChargeItem {
-  item_number: number;
-  /** The date and time of the processing charge */
-  date: string;
+  additional_data?: ChargeAdditionalData;
+  /** The date when the charges concluded */
+  closed?: string;
   /** The coin-cost of the storage */
   coins: string;
   /** The current burn rate, the approximate amount of coins you are currently consuming each day */
   current_burn_rate?: string;
-  /** The date when the charges concluded */
-  closed?: string;
-  additional_data?: ChargeAdditionalData;
+  /** The date and time of the processing charge */
+  date: string;
+  item_number: number;
 }

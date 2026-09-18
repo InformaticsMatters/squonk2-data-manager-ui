@@ -8,11 +8,11 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { ServiceErrorSummary } from "./serviceErrorSummary";
+import type { ServiceErrorsGetResponseServiceErrorsItem } from "./serviceErrorsGetResponseServiceErrorsItem";
 
 export interface ServiceErrorsGetResponse {
   /** The number of service errors */
   count: number;
   /** A list of service errors */
-  service_errors: ServiceErrorSummary[];
+  service_errors: ServiceErrorsGetResponseServiceErrorsItem[];
 }

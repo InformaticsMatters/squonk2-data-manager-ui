@@ -11,6 +11,8 @@
 import type { OrganisationPostBodyBodyDefaultProductPrivacy } from "./organisationPostBodyBodyDefaultProductPrivacy";
 
 export type OrganisationPostBodyBody = {
+  /** The default product privacy setting for the Organisation */
+  default_product_privacy?: OrganisationPostBodyBodyDefaultProductPrivacy;
   /**
    * The name of the organisation
    * @maxLength 80
@@ -18,6 +20,4 @@ export type OrganisationPostBodyBody = {
   name: string;
   /** The name of the organisation owner. A user ID */
   owner: string;
-  /** The default product privacy setting for the Organisation */
-  default_product_privacy?: OrganisationPostBodyBodyDefaultProductPrivacy;
 };

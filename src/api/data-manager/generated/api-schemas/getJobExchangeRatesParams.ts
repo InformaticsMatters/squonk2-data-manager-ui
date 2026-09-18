@@ -8,11 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QCurrentParameter } from "./qCurrentParameter";
 
 export type GetJobExchangeRatesParams = {
   /**
    * Set to get current
    */
-  current?: QCurrentParameter;
+  current?: boolean;
 };

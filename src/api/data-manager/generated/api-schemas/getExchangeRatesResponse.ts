@@ -8,10 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { ExchangeRateDetail } from "./exchangeRateDetail";
+import type { GetExchangeRatesResponseExchangeRatesItem } from "./getExchangeRatesResponseExchangeRatesItem";
 
 export interface GetExchangeRatesResponse {
-  id: number | string;
   count: number;
-  exchange_rates: ExchangeRateDetail[];
+  exchange_rates: GetExchangeRatesResponseExchangeRatesItem[];
+  id: number | string;
 }

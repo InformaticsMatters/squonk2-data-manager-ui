@@ -10,7 +10,7 @@
  */
 
 export interface DatasetVersionProjectFile {
-  project_name: string;
-  project: string;
   files: string[];
+  project: string;
+  project_name: string;
 }

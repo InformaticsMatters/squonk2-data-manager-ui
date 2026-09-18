@@ -11,6 +11,19 @@
 import * as zod from "zod";
 
 /**
+ * @summary Get information about all Input Handlers that are available.
+ */
+export const AppApiConfigurationGetInputHandlersResponse = zod.object({
+  count: zod.number(),
+  input_handlers: zod.array(
+    zod.object({
+      documentation: zod.string().describe("A markdown string describing the handler"),
+      input_type: zod.string().describe("The input type this handler handles"),
+    }),
+  ),
+});
+
+/**
  * @summary Gets the Data Manager API mode
  */
 export const AppApiConfigurationGetModeResponse = zod.object({
@@ -19,17 +32,4 @@ export const AppApiConfigurationGetModeResponse = zod.object({
     .describe(
       "The Data Manager mode. The mode determines what features are available through the API. There are two modes, DEVELOPMENT, and PRODUCTION. In DEVELOPMENT mode some destructive operation are permitted (for example the removal of Job Definitions)\n",
     ),
-});
-
-/**
- * @summary Get information about all Input Handlers that are available.
- */
-export const AppApiConfigurationGetInputHandlersResponse = zod.object({
-  count: zod.number(),
-  input_handlers: zod.array(
-    zod.object({
-      input_type: zod.string().describe("The input type this handler handles"),
-      documentation: zod.string().describe("A markdown string describing the handler"),
-    }),
-  ),
 });

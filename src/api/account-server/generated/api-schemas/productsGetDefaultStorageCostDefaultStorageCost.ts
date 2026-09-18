@@ -11,6 +11,6 @@
 
 export type ProductsGetDefaultStorageCostDefaultStorageCost = {
   cost: string;
-  units: string;
   description: string;
+  units: string;
 };

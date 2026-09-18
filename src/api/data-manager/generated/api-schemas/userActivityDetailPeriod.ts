@@ -10,14 +10,14 @@
  */
 
 export interface UserActivityDetailPeriod {
-  /** The period over which the activity is monitored */
-  monitoring_period: string;
-  /** The number of days the API has been used */
-  active_days: number;
-  /** The number of days the API has not been used */
-  inactive_days: number;
-  /** Active days, as a percentage, over the monitoring period. */
-  activity: string;
   /** A list of dates where the API has been used during the monitoring period. Dates are returned if when the activity is not 100% and active dates are present. Dates are listed in reverse chronological order (i.e. the most recent first) */
   active_dates?: string[];
+  /** The number of days the API has been used */
+  active_days: number;
+  /** Active days, as a percentage, over the monitoring period. */
+  activity: string;
+  /** The number of days the API has not been used */
+  inactive_days: number;
+  /** The period over which the activity is monitored */
+  monitoring_period: string;
 }

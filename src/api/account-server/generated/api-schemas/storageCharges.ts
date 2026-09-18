@@ -11,6 +11,6 @@
 import type { StorageChargeItem } from "./storageChargeItem";
 
 export interface StorageCharges {
-  num_items: number;
   items: StorageChargeItem[];
+  num_items: number;
 }

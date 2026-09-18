@@ -11,10 +11,10 @@
 import type { TaskStateState } from "./taskStateState";
 
 export interface TaskState {
-  /** The task state. The typical state sequence is `PENDING`, then `STARTED` and finally `SUCCESS` */
-  state: TaskStateState;
   /** A short message accompanying the state, generally only found when the state is `FAILURE` */
   message?: string;
+  /** The task state. The typical state sequence is `PENDING`, then `STARTED` and finally `SUCCESS` */
+  state: TaskStateState;
   /** The date and time of the state change */
   time: string;
 }

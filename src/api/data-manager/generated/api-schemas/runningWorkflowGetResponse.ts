@@ -8,36 +8,36 @@
  *
  * OpenAPI spec version: 6.7
  */
+import type { RunningWorkflowGetResponseProject } from "./runningWorkflowGetResponseProject";
 import type { RunningWorkflowGetResponseStatus } from "./runningWorkflowGetResponseStatus";
 import type { RunningWorkflowGetResponseVariables } from "./runningWorkflowGetResponseVariables";
-import type { RunningWorkflowProject } from "./runningWorkflowProject";
-import type { RunningWorkflowWorkflow } from "./runningWorkflowWorkflow";
+import type { RunningWorkflowGetResponseWorkflow } from "./runningWorkflowGetResponseWorkflow";
 
 export interface RunningWorkflowGetResponse {
-  /** The Running Workflows's unique ID */
-  id: string;
-  /** The user that started the running workflow */
-  running_user: string;
-  /** The name attached to this running workflow */
-  name: string;
-  error_num: number;
-  error_msg?: string;
-  /** True if the running workflow has finished */
-  done: boolean;
-  /** True if the running workflow has finished successfully */
-  success?: boolean;
   /** An optional string passed to running instances */
   debug?: string;
-  /** The status of the running workflow */
-  status: RunningWorkflowGetResponseStatus;
+  /** True if the running workflow has finished */
+  done: boolean;
+  error_msg?: string;
+  error_num: number;
+  /** The Running Workflows's unique ID */
+  id: string;
+  /** The name attached to this running workflow */
+  name: string;
+  project: RunningWorkflowGetResponseProject;
+  /** The user that started the running workflow */
+  running_user: string;
   /** The date and time the running workflow was started */
   started: string;
+  /** The status of the running workflow */
+  status: RunningWorkflowGetResponseStatus;
   /** The date and time the running workflow was stopped */
   stopped?: string;
-  /** The variables provided when the running workflow was created */
-  variables: RunningWorkflowGetResponseVariables;
   /** The user that stopped the running workflow */
   stopping_user?: string;
-  workflow: RunningWorkflowWorkflow;
-  project: RunningWorkflowProject;
+  /** True if the running workflow has finished successfully */
+  success?: boolean;
+  /** The variables provided when the running workflow was created */
+  variables: RunningWorkflowGetResponseVariables;
+  workflow: RunningWorkflowGetResponseWorkflow;
 }

@@ -11,13 +11,13 @@
 import type { MerchantDetailKind } from "./merchantDetailKind";
 
 export interface MerchantDetail {
+  /** The hostname used by the Service */
+  api_hostname: string;
+  created: string;
   /** The unique ID of the Service */
   id: number;
-  created: string;
   /** The kind of Service */
   kind: MerchantDetailKind;
   /** The name assigned to the Service */
   name: string;
-  /** The hostname used by the Service */
-  api_hostname: string;
 }

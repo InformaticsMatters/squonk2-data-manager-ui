@@ -11,11 +11,6 @@
 
 export type ProductPatchBodyBody = {
   /**
-   * The name you want to give the Product
-   * @maxLength 80
-   */
-  name?: string;
-  /**
    * The Product's built-in coin allowance. Product allowances cannot be reduced
    * @minimum 1
    */
@@ -25,4 +20,9 @@ export type ProductPatchBodyBody = {
    * @minimum 1
    */
   limit?: number;
+  /**
+   * The name you want to give the Product
+   * @maxLength 80
+   */
+  name?: string;
 };

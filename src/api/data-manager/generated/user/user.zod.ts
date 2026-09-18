@@ -34,8 +34,21 @@ export const AppApiUserGetAccountQueryParams = zod.object({
 });
 
 export const AppApiUserGetAccountResponse = zod.object({
+  caller_has_admin_privilege: zod
+    .boolean()
+    .optional()
+    .describe("Whether the caller has admin privilege"),
+  data_manager_roles: zod
+    .array(zod.string())
+    .optional()
+    .describe("The Data Manager roles the user has"),
   user: zod.object({
-    username: zod.string().describe("The user's preferred username\n"),
+    become_admin: zod
+      .boolean()
+      .optional()
+      .describe(
+        "For admin accounts, whether the user is acting in an administrative capacity, i.e. acting as everyone\n",
+      ),
     f_uid: zod.number().optional().describe("The user's filesystem user uid\n"),
     first_seen: zod.iso
       .datetime({ offset: true })
@@ -43,6 +56,10 @@ export const AppApiUserGetAccountResponse = zod.object({
       .describe(
         "The date and time the user was first seen (an ISO-8601 formatted string in UTC)\n",
       ),
+    impersonate: zod
+      .string()
+      .optional()
+      .describe("For admin accounts, whether the user is impersonating another user\n"),
     last_seen_date: zod.iso.date().optional().describe("The date the user was last seen\n"),
     private: zod
       .boolean()
@@ -54,25 +71,8 @@ export const AppApiUserGetAccountResponse = zod.object({
       .string()
       .optional()
       .describe("If the account is suspended this typically displays a reason for suspension\n"),
-    become_admin: zod
-      .boolean()
-      .optional()
-      .describe(
-        "For admin accounts, whether the user is acting in an administrative capacity, i.e. acting as everyone\n",
-      ),
-    impersonate: zod
-      .string()
-      .optional()
-      .describe("For admin accounts, whether the user is impersonating another user\n"),
+    username: zod.string().describe("The user's preferred username\n"),
   }),
-  caller_has_admin_privilege: zod
-    .boolean()
-    .optional()
-    .describe("Whether the caller has admin privilege"),
-  data_manager_roles: zod
-    .array(zod.string())
-    .optional()
-    .describe("The Data Manager roles the user has"),
 });
 
 /**
@@ -85,12 +85,6 @@ export const appApiUserPatchAccountBodyImpersonateRegExp = new RegExp(
 );
 
 export const AppApiUserPatchAccountBody = zod.object({
-  private: zod
-    .boolean()
-    .optional()
-    .describe(
-      "If set the user account becomes private, if provided but false the user account becomes public. Public Users show up in user searches\n",
-    ),
   become_admin: zod
     .boolean()
     .optional()
@@ -104,6 +98,12 @@ export const AppApiUserPatchAccountBody = zod.object({
     .optional()
     .describe(
       "For `admin` accounts, if set API calls behave as though the caller is the user being impersonated. To stop impersonating set this to an empty string. To set impersonation to anything other than an empty string you must also set `become_admin`\n",
+    ),
+  private: zod
+    .boolean()
+    .optional()
+    .describe(
+      "If set the user account becomes private, if provided but false the user account becomes public. Public Users show up in user searches\n",
     ),
   use_impersonation: zod
     .boolean()
@@ -135,39 +135,39 @@ export const AppApiUserGetApiLogQueryParams = zod.object({
 });
 
 export const AppApiUserGetApiLogResponse = zod.object({
-  count: zod.number(),
   api_log: zod
     .array(
       zod.object({
-        method: zod
-          .enum(["DELETE", "PATCH", "POST", "PUT"])
-          .describe("The REST method used. GET methods are not logged\n"),
-        path: zod.string().describe("The API path used, e.g. `\/dataset`\n"),
         began: zod.iso.datetime({ offset: true }).describe("The date\/time the API call began\n"),
+        body: zod
+          .string()
+          .optional()
+          .describe("A JSON string representing the in-body properties used in the call\n"),
         duration_ns: zod
           .string()
           .optional()
           .describe(
             "The REST method approximate execution time (nS) in a humanised form, where 7969400 is presented as 7,969,400\n",
           ),
-        status_code: zod.number().optional().describe("The HTTP response status code\n"),
-        params: zod
-          .string()
-          .optional()
-          .describe("A JSON string representing the in-query properties used in the call\n"),
-        body: zod
-          .string()
-          .optional()
-          .describe("A JSON string representing the in-body properties used in the call\n"),
         impersonator: zod
           .string()
           .optional()
           .describe(
             "Not all API calls using your user ID may have been executed by you, In cases where an administrator has executed a REST API call on your behalf, their user ID will be revealed using this property\n",
           ),
+        method: zod
+          .enum(["DELETE", "PATCH", "POST", "PUT"])
+          .describe("The REST method used. GET methods are not logged\n"),
+        params: zod
+          .string()
+          .optional()
+          .describe("A JSON string representing the in-query properties used in the call\n"),
+        path: zod.string().describe("The API path used, e.g. `\/dataset`\n"),
+        status_code: zod.number().optional().describe("The HTTP response status code\n"),
       }),
     )
     .describe("A list of API loc call records, with the oldest record first in the list\n"),
+  count: zod.number(),
 });
 
 /**

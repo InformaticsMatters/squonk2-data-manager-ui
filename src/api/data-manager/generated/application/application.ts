@@ -24,7 +24,14 @@ import type {
   UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 
-import type { ApplicationGetResponse, ApplicationsGetResponse, DmError } from "../api-schemas";
+import type {
+  GetApplication200,
+  GetApplication403,
+  GetApplication404,
+  GetApplications200,
+  GetApplications401,
+  GetApplications403,
+} from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
 import type { ErrorType } from "../../../runtime/data-manager/axios";
@@ -56,7 +63,7 @@ export const getApplications = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<ApplicationsGetResponse>(
+  return customInstance<GetApplications200>(
     { url: `/application`, method: "GET", signal },
     options,
   );
@@ -68,7 +75,7 @@ export const getGetApplicationsQueryKey = () => {
 
 export const getGetApplicationsQueryOptions = <
   TData = Awaited<ReturnType<typeof getApplications>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetApplications401 | GetApplications403>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>;
   request?: SecondParameter<typeof customInstance>;
@@ -88,11 +95,11 @@ export const getGetApplicationsQueryOptions = <
 };
 
 export type GetApplicationsQueryResult = NonNullable<Awaited<ReturnType<typeof getApplications>>>;
-export type GetApplicationsQueryError = ErrorType<DmError>;
+export type GetApplicationsQueryError = ErrorType<GetApplications401 | GetApplications403>;
 
 export function useGetApplications<
   TData = Awaited<ReturnType<typeof getApplications>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetApplications401 | GetApplications403>,
 >(
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>> &
@@ -110,7 +117,7 @@ export function useGetApplications<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetApplications<
   TData = Awaited<ReturnType<typeof getApplications>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetApplications401 | GetApplications403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>> &
@@ -128,7 +135,7 @@ export function useGetApplications<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetApplications<
   TData = Awaited<ReturnType<typeof getApplications>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetApplications401 | GetApplications403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>;
@@ -142,7 +149,7 @@ export function useGetApplications<
 
 export function useGetApplications<
   TData = Awaited<ReturnType<typeof getApplications>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetApplications401 | GetApplications403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>;
@@ -173,7 +180,7 @@ export const invalidateGetApplications = async (
 
 export const getGetApplicationsSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getApplications>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetApplications401 | GetApplications403>,
 >(options?: {
   query?: Partial<
     UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>
@@ -197,11 +204,11 @@ export const getGetApplicationsSuspenseQueryOptions = <
 export type GetApplicationsSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getApplications>>
 >;
-export type GetApplicationsSuspenseQueryError = ErrorType<DmError>;
+export type GetApplicationsSuspenseQueryError = ErrorType<GetApplications401 | GetApplications403>;
 
 export function useGetApplicationsSuspense<
   TData = Awaited<ReturnType<typeof getApplications>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetApplications401 | GetApplications403>,
 >(
   options: {
     query: Partial<
@@ -213,7 +220,7 @@ export function useGetApplicationsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetApplicationsSuspense<
   TData = Awaited<ReturnType<typeof getApplications>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetApplications401 | GetApplications403>,
 >(
   options?: {
     query?: Partial<
@@ -225,7 +232,7 @@ export function useGetApplicationsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetApplicationsSuspense<
   TData = Awaited<ReturnType<typeof getApplications>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetApplications401 | GetApplications403>,
 >(
   options?: {
     query?: Partial<
@@ -241,7 +248,7 @@ export function useGetApplicationsSuspense<
 
 export function useGetApplicationsSuspense<
   TData = Awaited<ReturnType<typeof getApplications>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetApplications401 | GetApplications403>,
 >(
   options?: {
     query?: Partial<
@@ -270,7 +277,7 @@ export const getApplication = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<ApplicationGetResponse>(
+  return customInstance<GetApplication200>(
     { url: `/application/${applicationId}`, method: "GET", signal },
     options,
   );
@@ -282,7 +289,7 @@ export const getGetApplicationQueryKey = (applicationId: string) => {
 
 export const getGetApplicationQueryOptions = <
   TData = Awaited<ReturnType<typeof getApplication>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetApplication403 | GetApplication404>,
 >(
   applicationId: string,
   options?: {
@@ -308,11 +315,11 @@ export const getGetApplicationQueryOptions = <
 };
 
 export type GetApplicationQueryResult = NonNullable<Awaited<ReturnType<typeof getApplication>>>;
-export type GetApplicationQueryError = ErrorType<void | DmError>;
+export type GetApplicationQueryError = ErrorType<void | GetApplication403 | GetApplication404>;
 
 export function useGetApplication<
   TData = Awaited<ReturnType<typeof getApplication>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetApplication403 | GetApplication404>,
 >(
   applicationId: string,
   options: {
@@ -331,7 +338,7 @@ export function useGetApplication<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetApplication<
   TData = Awaited<ReturnType<typeof getApplication>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetApplication403 | GetApplication404>,
 >(
   applicationId: string,
   options?: {
@@ -350,7 +357,7 @@ export function useGetApplication<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetApplication<
   TData = Awaited<ReturnType<typeof getApplication>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetApplication403 | GetApplication404>,
 >(
   applicationId: string,
   options?: {
@@ -365,7 +372,7 @@ export function useGetApplication<
 
 export function useGetApplication<
   TData = Awaited<ReturnType<typeof getApplication>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetApplication403 | GetApplication404>,
 >(
   applicationId: string,
   options?: {
@@ -401,7 +408,7 @@ export const invalidateGetApplication = async (
 
 export const getGetApplicationSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getApplication>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetApplication403 | GetApplication404>,
 >(
   applicationId: string,
   options?: {
@@ -428,11 +435,13 @@ export const getGetApplicationSuspenseQueryOptions = <
 export type GetApplicationSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getApplication>>
 >;
-export type GetApplicationSuspenseQueryError = ErrorType<void | DmError>;
+export type GetApplicationSuspenseQueryError = ErrorType<
+  void | GetApplication403 | GetApplication404
+>;
 
 export function useGetApplicationSuspense<
   TData = Awaited<ReturnType<typeof getApplication>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetApplication403 | GetApplication404>,
 >(
   applicationId: string,
   options: {
@@ -445,7 +454,7 @@ export function useGetApplicationSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetApplicationSuspense<
   TData = Awaited<ReturnType<typeof getApplication>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetApplication403 | GetApplication404>,
 >(
   applicationId: string,
   options?: {
@@ -458,7 +467,7 @@ export function useGetApplicationSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetApplicationSuspense<
   TData = Awaited<ReturnType<typeof getApplication>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetApplication403 | GetApplication404>,
 >(
   applicationId: string,
   options?: {
@@ -475,7 +484,7 @@ export function useGetApplicationSuspense<
 
 export function useGetApplicationSuspense<
   TData = Awaited<ReturnType<typeof getApplication>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetApplication403 | GetApplication404>,
 >(
   applicationId: string,
   options?: {

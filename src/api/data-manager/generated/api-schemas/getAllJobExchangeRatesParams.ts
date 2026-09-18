@@ -8,11 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QOnlyUndefinedParameter } from "./qOnlyUndefinedParameter";
 
 export type GetAllJobExchangeRatesParams = {
   /**
    * Only return records where the exchange rate is undefined
    */
-  only_undefined?: QOnlyUndefinedParameter;
+  only_undefined?: boolean;
 };

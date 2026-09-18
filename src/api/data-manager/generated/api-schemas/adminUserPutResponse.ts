@@ -8,6 +8,12 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { UserAccountDetail } from "./userAccountDetail";
+import type { AdminUserPutResponseUser } from "./adminUserPutResponseUser";
 
-export type AdminUserPutResponse = UserAccountDetail;
+export interface AdminUserPutResponse {
+  /** Whether the caller has admin privilege */
+  caller_has_admin_privilege?: boolean;
+  /** The Data Manager roles the user has */
+  data_manager_roles?: string[];
+  user: AdminUserPutResponseUser;
+}

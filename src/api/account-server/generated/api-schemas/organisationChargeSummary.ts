@@ -11,7 +11,7 @@
 import type { ChargeSummary } from "./chargeSummary";
 
 export interface OrganisationChargeSummary {
-  organisation_id: string;
   name: string;
+  organisation_id: string;
   summary: ChargeSummary[];
 }

@@ -50,219 +50,6 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
- * Returns a summary of your account
- * @summary Get information about your account
- */
-export const getUserAccount = (
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<UserAccountDetail>(
-    { url: `/user/account`, method: "GET", signal },
-    options,
-  );
-};
-
-export const getGetUserAccountQueryKey = () => {
-  return ["account-server", "user", "account"] as const;
-};
-
-export const getGetUserAccountQueryOptions = <
-  TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | AsError>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>>;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetUserAccountQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserAccount>>> = ({ signal }) =>
-    getUserAccount(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getUserAccount>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetUserAccountQueryResult = NonNullable<Awaited<ReturnType<typeof getUserAccount>>>;
-export type GetUserAccountQueryError = ErrorType<void | AsError>;
-
-export function useGetUserAccount<
-  TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | AsError>,
->(
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getUserAccount>>,
-          TError,
-          Awaited<ReturnType<typeof getUserAccount>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetUserAccount<
-  TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getUserAccount>>,
-          TError,
-          Awaited<ReturnType<typeof getUserAccount>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetUserAccount<
-  TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get information about your account
- */
-
-export function useGetUserAccount<
-  TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetUserAccountQueryOptions(options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Get information about your account
- */
-export const invalidateGetUserAccount = async (
-  queryClient: QueryClient,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetUserAccountQueryKey() }, options);
-
-  return queryClient;
-};
-
-export const getGetUserAccountSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | AsError>,
->(options?: {
-  query?: Partial<
-    UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetUserAccountQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserAccount>>> = ({ signal }) =>
-    getUserAccount(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getUserAccount>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetUserAccountSuspenseQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getUserAccount>>
->;
-export type GetUserAccountSuspenseQueryError = ErrorType<void | AsError>;
-
-export function useGetUserAccountSuspense<
-  TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | AsError>,
->(
-  options: {
-    query: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetUserAccountSuspense<
-  TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetUserAccountSuspense<
-  TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get information about your account
- */
-
-export function useGetUserAccountSuspense<
-  TData = Awaited<ReturnType<typeof getUserAccount>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetUserAccountSuspenseQueryOptions(options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
  * Gets Users in an Organisation.
  *
  * You have to be a member of the Organisation or an admin user to use this endpoint
@@ -514,88 +301,6 @@ export function useGetOrganisationUsersSuspense<
 }
 
 /**
- * Adds a User to an **Organisation**.
- *
- * You have to be in the Organisation or an admin user to use this endpoint
- * @summary Adds a User to an Organisation
- */
-export const addOrganisationUser = (
-  orgId: string,
-  userId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>(
-    { url: `/organisation/${orgId}/user/${userId}`, method: "PUT", signal },
-    options,
-  );
-};
-
-export const getAddOrganisationUserMutationOptions = <
-  TError = ErrorType<AsError | void>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof addOrganisationUser>>,
-    TError,
-    { orgId: string; userId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof addOrganisationUser>>,
-  TError,
-  { orgId: string; userId: string },
-  TContext
-> => {
-  const mutationKey = ["addOrganisationUser"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof addOrganisationUser>>,
-    { orgId: string; userId: string }
-  > = (props) => {
-    const { orgId, userId } = props ?? {};
-
-    return addOrganisationUser(orgId, userId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type AddOrganisationUserMutationResult = NonNullable<
-  Awaited<ReturnType<typeof addOrganisationUser>>
->;
-
-export type AddOrganisationUserMutationError = ErrorType<AsError | void>;
-
-/**
- * @summary Adds a User to an Organisation
- */
-export const useAddOrganisationUser = <TError = ErrorType<AsError | void>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof addOrganisationUser>>,
-      TError,
-      { orgId: string; userId: string },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof addOrganisationUser>>,
-  TError,
-  { orgId: string; userId: string },
-  TContext
-> => {
-  return useMutation(getAddOrganisationUserMutationOptions(options), queryClient);
-};
-/**
  * Removes a User from an **Organisation**.
  *
  * You have to be in the Organisation or an admin user to use this endpoint
@@ -676,6 +381,88 @@ export const useDeleteOrganisationUser = <TError = ErrorType<AsError | void>, TC
   TContext
 > => {
   return useMutation(getDeleteOrganisationUserMutationOptions(options), queryClient);
+};
+/**
+ * Adds a User to an **Organisation**.
+ *
+ * You have to be in the Organisation or an admin user to use this endpoint
+ * @summary Adds a User to an Organisation
+ */
+export const addOrganisationUser = (
+  orgId: string,
+  userId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/organisation/${orgId}/user/${userId}`, method: "PUT", signal },
+    options,
+  );
+};
+
+export const getAddOrganisationUserMutationOptions = <
+  TError = ErrorType<AsError | void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addOrganisationUser>>,
+    TError,
+    { orgId: string; userId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof addOrganisationUser>>,
+  TError,
+  { orgId: string; userId: string },
+  TContext
+> => {
+  const mutationKey = ["addOrganisationUser"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof addOrganisationUser>>,
+    { orgId: string; userId: string }
+  > = (props) => {
+    const { orgId, userId } = props ?? {};
+
+    return addOrganisationUser(orgId, userId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AddOrganisationUserMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addOrganisationUser>>
+>;
+
+export type AddOrganisationUserMutationError = ErrorType<AsError | void>;
+
+/**
+ * @summary Adds a User to an Organisation
+ */
+export const useAddOrganisationUser = <TError = ErrorType<AsError | void>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof addOrganisationUser>>,
+      TError,
+      { orgId: string; userId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof addOrganisationUser>>,
+  TError,
+  { orgId: string; userId: string },
+  TContext
+> => {
+  return useMutation(getAddOrganisationUserMutationOptions(options), queryClient);
 };
 /**
  * Gets users in an Organisational Unit.
@@ -931,90 +718,6 @@ export function useGetOrganisationUnitUsersSuspense<
 }
 
 /**
- * Adds a user to an Organisational Unit.
- *
- * Users cannot be added to **Personal Units** (Units that are part of the ***Default** Organisation).
- *
- * You have to be in the Organisation or Unit or an Admin user to use this endpoint
- * @summary Adds a user to an Organisational Unit
- */
-export const addOrganisationUnitUser = (
-  unitId: string,
-  userId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>(
-    { url: `/unit/${unitId}/user/${userId}`, method: "PUT", signal },
-    options,
-  );
-};
-
-export const getAddOrganisationUnitUserMutationOptions = <
-  TError = ErrorType<AsError | void>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof addOrganisationUnitUser>>,
-    TError,
-    { unitId: string; userId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof addOrganisationUnitUser>>,
-  TError,
-  { unitId: string; userId: string },
-  TContext
-> => {
-  const mutationKey = ["addOrganisationUnitUser"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof addOrganisationUnitUser>>,
-    { unitId: string; userId: string }
-  > = (props) => {
-    const { unitId, userId } = props ?? {};
-
-    return addOrganisationUnitUser(unitId, userId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type AddOrganisationUnitUserMutationResult = NonNullable<
-  Awaited<ReturnType<typeof addOrganisationUnitUser>>
->;
-
-export type AddOrganisationUnitUserMutationError = ErrorType<AsError | void>;
-
-/**
- * @summary Adds a user to an Organisational Unit
- */
-export const useAddOrganisationUnitUser = <TError = ErrorType<AsError | void>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof addOrganisationUnitUser>>,
-      TError,
-      { unitId: string; userId: string },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof addOrganisationUnitUser>>,
-  TError,
-  { unitId: string; userId: string },
-  TContext
-> => {
-  return useMutation(getAddOrganisationUnitUserMutationOptions(options), queryClient);
-};
-/**
  * Removes a User from an Organisational Unit.
  *
  * Users cannot be removed from **Personal Units** (Units that are part of the ***Default** Organisation).
@@ -1101,3 +804,299 @@ export const useDeleteOrganisationUnitUser = <
 > => {
   return useMutation(getDeleteOrganisationUnitUserMutationOptions(options), queryClient);
 };
+/**
+ * Adds a user to an Organisational Unit.
+ *
+ * Users cannot be added to **Personal Units** (Units that are part of the ***Default** Organisation).
+ *
+ * You have to be in the Organisation or Unit or an Admin user to use this endpoint
+ * @summary Adds a user to an Organisational Unit
+ */
+export const addOrganisationUnitUser = (
+  unitId: string,
+  userId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/unit/${unitId}/user/${userId}`, method: "PUT", signal },
+    options,
+  );
+};
+
+export const getAddOrganisationUnitUserMutationOptions = <
+  TError = ErrorType<AsError | void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addOrganisationUnitUser>>,
+    TError,
+    { unitId: string; userId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof addOrganisationUnitUser>>,
+  TError,
+  { unitId: string; userId: string },
+  TContext
+> => {
+  const mutationKey = ["addOrganisationUnitUser"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof addOrganisationUnitUser>>,
+    { unitId: string; userId: string }
+  > = (props) => {
+    const { unitId, userId } = props ?? {};
+
+    return addOrganisationUnitUser(unitId, userId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AddOrganisationUnitUserMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addOrganisationUnitUser>>
+>;
+
+export type AddOrganisationUnitUserMutationError = ErrorType<AsError | void>;
+
+/**
+ * @summary Adds a user to an Organisational Unit
+ */
+export const useAddOrganisationUnitUser = <TError = ErrorType<AsError | void>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof addOrganisationUnitUser>>,
+      TError,
+      { unitId: string; userId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof addOrganisationUnitUser>>,
+  TError,
+  { unitId: string; userId: string },
+  TContext
+> => {
+  return useMutation(getAddOrganisationUnitUserMutationOptions(options), queryClient);
+};
+/**
+ * Returns a summary of your account
+ * @summary Get information about your account
+ */
+export const getUserAccount = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<UserAccountDetail>(
+    { url: `/user/account`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetUserAccountQueryKey = () => {
+  return ["account-server", "user", "account"] as const;
+};
+
+export const getGetUserAccountQueryOptions = <
+  TData = Awaited<ReturnType<typeof getUserAccount>>,
+  TError = ErrorType<void | AsError>,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>>;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetUserAccountQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserAccount>>> = ({ signal }) =>
+    getUserAccount(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getUserAccount>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetUserAccountQueryResult = NonNullable<Awaited<ReturnType<typeof getUserAccount>>>;
+export type GetUserAccountQueryError = ErrorType<void | AsError>;
+
+export function useGetUserAccount<
+  TData = Awaited<ReturnType<typeof getUserAccount>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserAccount>>,
+          TError,
+          Awaited<ReturnType<typeof getUserAccount>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetUserAccount<
+  TData = Awaited<ReturnType<typeof getUserAccount>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserAccount>>,
+          TError,
+          Awaited<ReturnType<typeof getUserAccount>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetUserAccount<
+  TData = Awaited<ReturnType<typeof getUserAccount>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get information about your account
+ */
+
+export function useGetUserAccount<
+  TData = Awaited<ReturnType<typeof getUserAccount>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetUserAccountQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Get information about your account
+ */
+export const invalidateGetUserAccount = async (
+  queryClient: QueryClient,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetUserAccountQueryKey() }, options);
+
+  return queryClient;
+};
+
+export const getGetUserAccountSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getUserAccount>>,
+  TError = ErrorType<void | AsError>,
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetUserAccountQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserAccount>>> = ({ signal }) =>
+    getUserAccount(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getUserAccount>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetUserAccountSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getUserAccount>>
+>;
+export type GetUserAccountSuspenseQueryError = ErrorType<void | AsError>;
+
+export function useGetUserAccountSuspense<
+  TData = Awaited<ReturnType<typeof getUserAccount>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetUserAccountSuspense<
+  TData = Awaited<ReturnType<typeof getUserAccount>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetUserAccountSuspense<
+  TData = Awaited<ReturnType<typeof getUserAccount>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get information about your account
+ */
+
+export function useGetUserAccountSuspense<
+  TData = Awaited<ReturnType<typeof getUserAccount>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAccount>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetUserAccountSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}

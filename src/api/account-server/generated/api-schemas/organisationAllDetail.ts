@@ -14,6 +14,9 @@ import type { UserDetail } from "./userDetail";
 export interface OrganisationAllDetail {
   /** Whether the user making the API call is a member of the Unit */
   caller_is_member: boolean;
+  created: string;
+  /** The Organisation's default product privacy setting */
+  default_product_privacy: OrganisationAllDetailDefaultProductPrivacy;
   /** The Organisation's unique ID */
   id: string;
   /** The Organisation's name */
@@ -22,9 +25,6 @@ export interface OrganisationAllDetail {
   owner_id?: string;
   /** True if the Unit is private */
   private: boolean;
-  created: string;
-  /** The Organisation's default product privacy setting */
-  default_product_privacy: OrganisationAllDetailDefaultProductPrivacy;
   /** A list of users that are members of the Organisation */
   users: UserDetail[];
 }

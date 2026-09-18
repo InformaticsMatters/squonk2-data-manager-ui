@@ -11,8 +11,8 @@
 import type { ChargeSummaryType } from "./chargeSummaryType";
 
 export interface ChargeSummary {
-  /** The type of charge */
-  type: ChargeSummaryType;
   /** The cost, in coins of the charge */
   coins: string;
+  /** The type of charge */
+  type: ChargeSummaryType;
 }

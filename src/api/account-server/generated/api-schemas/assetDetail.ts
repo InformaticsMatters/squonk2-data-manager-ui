@@ -12,16 +12,16 @@ import type { AssetDetailScope } from "./assetDetailScope";
 import type { MerchantDetail } from "./merchantDetail";
 
 export interface AssetDetail {
+  content: string;
+  content_modified?: string;
+  created: string;
   creator: string;
+  description?: string;
+  disabled: boolean;
   id: string;
+  merchants: MerchantDetail[];
   name: string;
   scope: AssetDetailScope;
   scope_id: string;
   secret: boolean;
-  disabled: boolean;
-  content: string;
-  created: string;
-  content_modified?: string;
-  description?: string;
-  merchants: MerchantDetail[];
 }

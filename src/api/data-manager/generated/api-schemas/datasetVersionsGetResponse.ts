@@ -8,6 +8,17 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { DatasetDetail } from "./datasetDetail";
+import type { DatasetVersionsGetResponseVersionsItem } from "./datasetVersionsGetResponseVersionsItem";
 
-export type DatasetVersionsGetResponse = DatasetDetail;
+export interface DatasetVersionsGetResponse {
+  /** The number of datasets */
+  count: number;
+  /** The Dataset ID */
+  dataset_id: string;
+  /** The list of editors */
+  editors: string[];
+  /** The owner of the Dataset */
+  owner: string;
+  /** The set of separate versions of the Dataset */
+  versions: DatasetVersionsGetResponseVersionsItem[];
+}

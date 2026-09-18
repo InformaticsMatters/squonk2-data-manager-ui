@@ -31,6 +31,10 @@ export const AppApiUnitGetOrgUnitsResponse = zod.object({
     caller_is_member: zod
       .boolean()
       .describe("Whether the user making the API call is a member of the Unit"),
+    created: zod.iso.datetime({ offset: true }),
+    default_product_privacy: zod
+      .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+      .describe("The Organisation's default product privacy setting"),
     id: zod.string().describe("The Organisation's unique ID"),
     name: zod.string().describe("The Organisation's name"),
     owner_id: zod
@@ -40,10 +44,6 @@ export const AppApiUnitGetOrgUnitsResponse = zod.object({
         "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
       ),
     private: zod.boolean().describe("True if the Unit is private"),
-    created: zod.iso.datetime({ offset: true }),
-    default_product_privacy: zod
-      .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-      .describe("The Organisation's default product privacy setting"),
     users: zod
       .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
       .describe("A list of users that are members of the Organisation"),
@@ -51,18 +51,18 @@ export const AppApiUnitGetOrgUnitsResponse = zod.object({
   units: zod
     .array(
       zod.object({
+        billing_day: zod.number().describe("The Unit's billing day"),
         caller_is_member: zod
           .boolean()
           .describe("Whether the user making the API call is a member of the Unit"),
+        created: zod.iso.datetime({ offset: true }),
+        default_product_privacy: zod
+          .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+          .describe("The Unit's default product privacy setting"),
         id: zod.string().describe("The Unit's unique identity"),
         name: zod.string().describe("The Unit's name"),
         owner_id: zod.string().describe("The Unit's owner (a username)"),
         private: zod.boolean().describe("True if the Unit is private"),
-        created: zod.iso.datetime({ offset: true }),
-        billing_day: zod.number().describe("The Unit's billing day"),
-        default_product_privacy: zod
-          .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-          .describe("The Unit's default product privacy setting"),
         users: zod
           .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
           .describe("A list of users that are members of the Unit"),
@@ -87,12 +87,11 @@ export const AppApiUnitPostParams = zod.object({
   org_id: zod.string().regex(appApiUnitPostPathOrgIdRegExp).describe("An Organisation Identity"),
 });
 
-export const appApiUnitPostBodyNameMax = 80;
-
 export const appApiUnitPostBodyBillingDayMax = 28;
 
+export const appApiUnitPostBodyNameMax = 80;
+
 export const AppApiUnitPostBody = zod.object({
-  name: zod.string().max(appApiUnitPostBodyNameMax).describe("The name of the unit"),
   billing_day: zod
     .number()
     .min(1)
@@ -106,6 +105,7 @@ export const AppApiUnitPostBody = zod.object({
     .describe(
       "The default product privacy setting for products in the unit. Whether the privacy can be honoured will depend on the organisation's value",
     ),
+  name: zod.string().max(appApiUnitPostBodyNameMax).describe("The name of the unit"),
 });
 
 export const AppApiUnitPostResponse = zod.object({
@@ -113,95 +113,27 @@ export const AppApiUnitPostResponse = zod.object({
 });
 
 /**
- * Gets a Unit. You can get a Unit if you are a member of it or are its creator. You can also get a Unit if you are a member of its **Organisation**, or its creator or an admin user.
- * @summary Gets an Organisational Unit
+ * Deletes a Personal Unit. The Unit is *your* Unit, and belongs to the **Default Organisation**
+ * @summary Deletes a Personal Unit
  */
-export const appApiUnitGetUnitPathUnitIdRegExp = new RegExp(
-  "^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiUnitGetUnitParams = zod.object({
-  unit_id: zod.string().regex(appApiUnitGetUnitPathUnitIdRegExp).describe("A Unit Identity"),
-});
-
-export const AppApiUnitGetUnitResponse = zod.object({
-  caller_is_member: zod
-    .boolean()
-    .describe("Whether the user making the API call is a member of the Unit"),
-  id: zod.string().describe("The Unit's unique identity"),
-  name: zod.string().describe("The Unit's name"),
-  owner_id: zod.string().describe("The Unit's owner (a username)"),
-  private: zod.boolean().describe("True if the Unit is private"),
-  created: zod.iso.datetime({ offset: true }),
-  billing_day: zod.number().describe("The Unit's billing day"),
-  default_product_privacy: zod
-    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-    .describe("The Unit's default product privacy setting"),
-  users: zod
-    .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-    .describe("A list of users that are members of the Unit"),
-});
-
-/**
- * Used to update existing Unit. You can change a Unit's **name** or its **default_product_privacy** (as long as the new privacy does not conflict with the Organisation's value).
- *
- * You have to be a member of the **Unit**, a member of its **Organisation**, or an administrator to patch a Unit.
- * @summary Adjust an existing Unit
- */
-export const appApiUnitPatchPathUnitIdRegExp = new RegExp(
-  "^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiUnitPatchParams = zod.object({
-  unit_id: zod.string().regex(appApiUnitPatchPathUnitIdRegExp).describe("A Unit Identity"),
-});
-
-export const AppApiUnitPatchBody = zod.object({
-  name: zod.string().optional().describe("The new name for the Unit"),
-  default_product_privacy: zod
-    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-    .optional()
-    .describe(
-      "The new default \*\*Product\*\* privacy applied to all products that belong to this Unit. Privacy is also controlled at the \*\*Organisation\*\* level. As an example, the Unit can declare its Products to be `DEFAULT_PRIVATE`, but the Organisation can declare its value to be `DEFAULT_PUBLIC`.\n\nWhether the privacy can be honoured will depend on the organisation's value",
-    ),
-});
-
-export const AppApiUnitPatchResponse = zod.unknown();
-
-/**
- * Deletes an Organisational Unit you have access to. Units can only be deleted by members of the Unit, its Organisation users or admin users.
- *
- * You cannot delete Units in the **Default Organisation**. These Units are **Personal Units** and need to be deleted using the `DELETE /unit` endpoint.
- *
- * You cannot delete a Unit that contains undeleted **Products**
- * @summary Deletes an Organisational Unit
- */
-export const appApiUnitDeletePathUnitIdRegExp = new RegExp(
-  "^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiUnitDeleteParams = zod.object({
-  unit_id: zod.string().regex(appApiUnitDeletePathUnitIdRegExp).describe("A Unit Identity"),
-});
-
-export const AppApiUnitDeleteResponse = zod.void();
+export const AppApiUnitPersonalDeleteResponse = zod.void();
 
 /**
  * @summary Gets your Personal Unit (if you have one)
  */
 export const AppApiUnitPersonalGetResponse = zod.object({
+  billing_day: zod.number().describe("The Unit's billing day"),
   caller_is_member: zod
     .boolean()
     .describe("Whether the user making the API call is a member of the Unit"),
+  created: zod.iso.datetime({ offset: true }),
+  default_product_privacy: zod
+    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+    .describe("The Unit's default product privacy setting"),
   id: zod.string().describe("The Unit's unique identity"),
   name: zod.string().describe("The Unit's name"),
   owner_id: zod.string().describe("The Unit's owner (a username)"),
   private: zod.boolean().describe("True if the Unit is private"),
-  created: zod.iso.datetime({ offset: true }),
-  billing_day: zod.number().describe("The Unit's billing day"),
-  default_product_privacy: zod
-    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-    .describe("The Unit's default product privacy setting"),
   users: zod
     .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
     .describe("A list of users that are members of the Unit"),
@@ -226,17 +158,19 @@ export const AppApiUnitPersonalPutBody = zod.object({
 });
 
 export const AppApiUnitPersonalPutResponse = zod.object({
+  id: zod.string().describe("The unit's unique ID"),
   organisation_id: zod
     .string()
     .describe("The unit's Organisation. Used to identify the Default organisation"),
-  id: zod.string().describe("The unit's unique ID"),
 });
 
 /**
  * Deletes a Personal Unit. The Unit is *your* Unit, and belongs to the **Default Organisation**
+ *
+ * This endpoint is DECREMENTED and will be removed in a future release. Please use **DELETE** at `/personal-unit`.
  * @summary Deletes a Personal Unit
  */
-export const AppApiUnitPersonalDeleteResponse = zod.void();
+export const AppApiUnitDeprecatedPersonalDeleteResponse = zod.void();
 
 /**
  * Gets all the Units that you are a member of, or a specific Unit by name.
@@ -257,6 +191,10 @@ export const AppApiUnitGetResponse = zod.object({
           caller_is_member: zod
             .boolean()
             .describe("Whether the user making the API call is a member of the Unit"),
+          created: zod.iso.datetime({ offset: true }),
+          default_product_privacy: zod
+            .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+            .describe("The Organisation's default product privacy setting"),
           id: zod.string().describe("The Organisation's unique ID"),
           name: zod.string().describe("The Organisation's name"),
           owner_id: zod
@@ -266,10 +204,6 @@ export const AppApiUnitGetResponse = zod.object({
               "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
             ),
           private: zod.boolean().describe("True if the Unit is private"),
-          created: zod.iso.datetime({ offset: true }),
-          default_product_privacy: zod
-            .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-            .describe("The Organisation's default product privacy setting"),
           users: zod
             .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
             .describe("A list of users that are members of the Organisation"),
@@ -277,18 +211,18 @@ export const AppApiUnitGetResponse = zod.object({
         units: zod
           .array(
             zod.object({
+              billing_day: zod.number().describe("The Unit's billing day"),
               caller_is_member: zod
                 .boolean()
                 .describe("Whether the user making the API call is a member of the Unit"),
+              created: zod.iso.datetime({ offset: true }),
+              default_product_privacy: zod
+                .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+                .describe("The Unit's default product privacy setting"),
               id: zod.string().describe("The Unit's unique identity"),
               name: zod.string().describe("The Unit's name"),
               owner_id: zod.string().describe("The Unit's owner (a username)"),
               private: zod.boolean().describe("True if the Unit is private"),
-              created: zod.iso.datetime({ offset: true }),
-              billing_day: zod.number().describe("The Unit's billing day"),
-              default_product_privacy: zod
-                .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-                .describe("The Unit's default product privacy setting"),
               users: zod
                 .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
                 .describe("A list of users that are members of the Unit"),
@@ -321,16 +255,82 @@ export const AppApiUnitDeprecatedPersonalPutBody = zod.object({
 });
 
 export const AppApiUnitDeprecatedPersonalPutResponse = zod.object({
+  id: zod.string().describe("The unit's unique ID"),
   organisation_id: zod
     .string()
     .describe("The unit's Organisation. Used to identify the Default organisation"),
-  id: zod.string().describe("The unit's unique ID"),
 });
 
 /**
- * Deletes a Personal Unit. The Unit is *your* Unit, and belongs to the **Default Organisation**
+ * Deletes an Organisational Unit you have access to. Units can only be deleted by members of the Unit, its Organisation users or admin users.
  *
- * This endpoint is DECREMENTED and will be removed in a future release. Please use **DELETE** at `/personal-unit`.
- * @summary Deletes a Personal Unit
+ * You cannot delete Units in the **Default Organisation**. These Units are **Personal Units** and need to be deleted using the `DELETE /unit` endpoint.
+ *
+ * You cannot delete a Unit that contains undeleted **Products**
+ * @summary Deletes an Organisational Unit
  */
-export const AppApiUnitDeprecatedPersonalDeleteResponse = zod.void();
+export const appApiUnitDeletePathUnitIdRegExp = new RegExp(
+  "^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiUnitDeleteParams = zod.object({
+  unit_id: zod.string().regex(appApiUnitDeletePathUnitIdRegExp).describe("A Unit Identity"),
+});
+
+export const AppApiUnitDeleteResponse = zod.void();
+
+/**
+ * Gets a Unit. You can get a Unit if you are a member of it or are its creator. You can also get a Unit if you are a member of its **Organisation**, or its creator or an admin user.
+ * @summary Gets an Organisational Unit
+ */
+export const appApiUnitGetUnitPathUnitIdRegExp = new RegExp(
+  "^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiUnitGetUnitParams = zod.object({
+  unit_id: zod.string().regex(appApiUnitGetUnitPathUnitIdRegExp).describe("A Unit Identity"),
+});
+
+export const AppApiUnitGetUnitResponse = zod.object({
+  billing_day: zod.number().describe("The Unit's billing day"),
+  caller_is_member: zod
+    .boolean()
+    .describe("Whether the user making the API call is a member of the Unit"),
+  created: zod.iso.datetime({ offset: true }),
+  default_product_privacy: zod
+    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+    .describe("The Unit's default product privacy setting"),
+  id: zod.string().describe("The Unit's unique identity"),
+  name: zod.string().describe("The Unit's name"),
+  owner_id: zod.string().describe("The Unit's owner (a username)"),
+  private: zod.boolean().describe("True if the Unit is private"),
+  users: zod
+    .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+    .describe("A list of users that are members of the Unit"),
+});
+
+/**
+ * Used to update existing Unit. You can change a Unit's **name** or its **default_product_privacy** (as long as the new privacy does not conflict with the Organisation's value).
+ *
+ * You have to be a member of the **Unit**, a member of its **Organisation**, or an administrator to patch a Unit.
+ * @summary Adjust an existing Unit
+ */
+export const appApiUnitPatchPathUnitIdRegExp = new RegExp(
+  "^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiUnitPatchParams = zod.object({
+  unit_id: zod.string().regex(appApiUnitPatchPathUnitIdRegExp).describe("A Unit Identity"),
+});
+
+export const AppApiUnitPatchBody = zod.object({
+  default_product_privacy: zod
+    .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+    .optional()
+    .describe(
+      "The new default \*\*Product\*\* privacy applied to all products that belong to this Unit. Privacy is also controlled at the \*\*Organisation\*\* level. As an example, the Unit can declare its Products to be `DEFAULT_PRIVATE`, but the Organisation can declare its value to be `DEFAULT_PUBLIC`.\n\nWhether the privacy can be honoured will depend on the organisation's value",
+    ),
+  name: zod.string().optional().describe("The new name for the Unit"),
+});
+
+export const AppApiUnitPatchResponse = zod.unknown();

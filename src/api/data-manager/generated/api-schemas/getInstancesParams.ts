@@ -8,24 +8,21 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QOrgIdParameter } from "./qOrgIdParameter";
-import type { QProjectIdParameter } from "./qProjectIdParameter";
-import type { QUnitIdParameter } from "./qUnitIdParameter";
 
 export type GetInstancesParams = {
   /**
    * An Organisation identity
    * @pattern ^org-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  org_id?: QOrgIdParameter;
+  org_id?: string;
   /**
    * A Project identity
    * @pattern ^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  project_id?: QProjectIdParameter;
+  project_id?: string;
   /**
    * A Unit identity
    * @pattern ^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  unit_id?: QUnitIdParameter;
+  unit_id?: string;
 };

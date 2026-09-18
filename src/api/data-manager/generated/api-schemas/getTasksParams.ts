@@ -8,50 +8,43 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QExcludeDoneParameter } from "./qExcludeDoneParameter";
-import type { QExcludePurposeParameter } from "./qExcludePurposeParameter";
-import type { QExcludeRemovalParameter } from "./qExcludeRemovalParameter";
-import type { QInstanceCallbackContextParameter } from "./qInstanceCallbackContextParameter";
-import type { QOrgIdParameter } from "./qOrgIdParameter";
-import type { QProjectIdParameter } from "./qProjectIdParameter";
-import type { QPurposeParameter } from "./qPurposeParameter";
-import type { QUnitIdParameter } from "./qUnitIdParameter";
+import type { GetTasksPurpose } from "./getTasksPurpose";
 
 export type GetTasksParams = {
   /**
    * Set to limit the response to objects relating to the named purpose.
    */
-  purpose?: QPurposeParameter;
+  purpose?: GetTasksPurpose;
   /**
    * Set true if you want to exclude 'done' tasks, i.e. just see those that are still running.
    */
-  exclude_done?: QExcludeDoneParameter;
+  exclude_done?: boolean;
   /**
    * Set true if you want to exclude Tasks related to object removal.
    */
-  exclude_removal?: QExcludeRemovalParameter;
+  exclude_removal?: boolean;
   /**
    * Set to a dot-separated string of purpose enumerations, i.e. `DATASET`, `FILE`, `INSTANCE`, or `PROJECT`. To exclude file and dataset tasks set this field to `FILE.DATASET`
    */
-  exclude_purpose?: QExcludePurposeParameter;
+  exclude_purpose?: string;
   /**
    * An Organisation identity
    * @pattern ^org-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  org_id?: QOrgIdParameter;
+  org_id?: string;
   /**
    * A Project identity
    * @pattern ^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  project_id?: QProjectIdParameter;
+  project_id?: string;
   /**
    * A Unit identity
    * @pattern ^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  unit_id?: QUnitIdParameter;
+  unit_id?: string;
   /**
    * An instance callback context string
    * @maxLength 256
    */
-  instance_callback_context?: QInstanceCallbackContextParameter;
+  instance_callback_context?: string;
 };

@@ -11,7 +11,7 @@
 import type { ChargeSummary } from "./chargeSummary";
 
 export interface UnitProductChargeSummary {
+  charges: ChargeSummary[];
   product_id: string;
   product_type: string;
-  charges: ChargeSummary[];
 }

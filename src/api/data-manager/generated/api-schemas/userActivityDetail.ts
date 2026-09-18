@@ -8,17 +8,18 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { UserActivityDetailPeriod } from "./userActivityDetailPeriod";
+import type { UserActivityDetailPeriodA } from "./userActivityDetailPeriodA";
+import type { UserActivityDetailPeriodB } from "./userActivityDetailPeriodB";
 
 export interface UserActivityDetail {
-  /** The total number of days since the user was first seen, including the day the user was first seen */
-  total_days_since_first_seen: number;
+  period_a: UserActivityDetailPeriodA;
+  period_b?: UserActivityDetailPeriodB;
+  /** The total percentage activity since first seen */
+  total_activity: string;
   /** The total number of days active since first seen */
   total_days_active: number;
   /** The total number of days inactive since first seen */
   total_days_inactive: number;
-  /** The total percentage activity since first seen */
-  total_activity: string;
-  period_a: UserActivityDetailPeriod;
-  period_b?: UserActivityDetailPeriod;
+  /** The total number of days since the user was first seen, including the day the user was first seen */
+  total_days_since_first_seen: number;
 }

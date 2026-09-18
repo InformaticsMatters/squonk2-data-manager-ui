@@ -8,9 +8,9 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { RunningWorkflowStep } from "./runningWorkflowStep";
+import type { RunningWorkflowStepsGetResponseRunningWorkflowStepsItem } from "./runningWorkflowStepsGetResponseRunningWorkflowStepsItem";
 
 export interface RunningWorkflowStepsGetResponse {
   count: number;
-  running_workflow_steps: RunningWorkflowStep[];
+  running_workflow_steps: RunningWorkflowStepsGetResponseRunningWorkflowStepsItem[];
 }

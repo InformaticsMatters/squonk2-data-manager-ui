@@ -13,13 +13,13 @@ import type { OrganisationGetDefaultResponseDefaultProductPrivacy } from "./orga
 export interface OrganisationGetDefaultResponse {
   /** Whether the user making the API call is a member of the Default Organisation. Only admin users are members of the Default organisation */
   caller_is_member?: boolean;
+  created?: string;
+  /** The Organisation's default product privacy setting */
+  default_product_privacy?: OrganisationGetDefaultResponseDefaultProductPrivacy;
   /** The Default Organisation ID */
   id?: string;
   /** The Default Organisation Name */
   name?: string;
   /** True if the Organisation is private. The Default organisation is always public, although it does not contain a membership (unless you're admin) and only houses Personal Units */
   private?: boolean;
-  created?: string;
-  /** The Organisation's default product privacy setting */
-  default_product_privacy?: OrganisationGetDefaultResponseDefaultProductPrivacy;
 }

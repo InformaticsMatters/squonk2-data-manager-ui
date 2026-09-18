@@ -8,6 +8,34 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { ProjectDetail } from "./projectDetail";
+import type { ProjectGetResponseFilesItem } from "./projectGetResponseFilesItem";
 
-export type ProjectGetResponse = ProjectDetail;
+export interface ProjectGetResponse {
+  /** An administrator (user_id) of the project */
+  administrators: string[];
+  created: string;
+  /** The user who created the project */
+  creator: string;
+  /** An editor (user_id) of the project */
+  editors: string[];
+  /** A list of managed files in the Project */
+  files?: ProjectGetResponseFilesItem[];
+  /** The project name */
+  name: string;
+  /** An observer (user_id) of the project */
+  observers: string[];
+  /** The Account Server Organisation the Project Product Unit belongs to */
+  organisation_id?: string;
+  /** True if the project is private. Private projects are only visible to editors. */
+  private: boolean;
+  /** If it's applicable, the Account Server Product flavour. Typically one of `GOLD`, `SILVER`, `BRONZE`, `EVALUATION` */
+  product_flavour?: string;
+  /** The Account Server Product the Project belongs to */
+  product_id?: string;
+  /** The project unique reference */
+  project_id: string;
+  /** The approximate size of all the files in the Project volume. This is updated regularly throughout the day and its current size may differ from what is reported here. The smallest billable unit is 1GiB (1,073,741,824 bytes). Therefore a project that contains 32KiB of files is recorded as 1GiB in size */
+  size: number;
+  /** The Account Server Unit the Project Product belongs to */
+  unit_id?: string;
+}

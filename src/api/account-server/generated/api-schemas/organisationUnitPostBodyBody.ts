@@ -12,11 +12,6 @@ import type { OrganisationUnitPostBodyBodyDefaultProductPrivacy } from "./organi
 
 export type OrganisationUnitPostBodyBody = {
   /**
-   * The name of the unit
-   * @maxLength 80
-   */
-  name: string;
-  /**
    * The day you would like to be billed for the Unit's Products (a value from 1 and 28)
    * @minimum 1
    * @maximum 28
@@ -24,4 +19,9 @@ export type OrganisationUnitPostBodyBody = {
   billing_day: number;
   /** The default product privacy setting for products in the unit. Whether the privacy can be honoured will depend on the organisation's value */
   default_product_privacy?: OrganisationUnitPostBodyBodyDefaultProductPrivacy;
+  /**
+   * The name of the unit
+   * @maxLength 80
+   */
+  name: string;
 };

@@ -14,6 +14,6 @@ import type { OrganisationChargeSummary } from "./organisationChargeSummary";
 export interface ChargesGetResponse {
   coins: string;
   count: number;
-  summary: ChargeSummary[];
   organisation_charges: OrganisationChargeSummary[];
+  summary: ChargeSummary[];
 }

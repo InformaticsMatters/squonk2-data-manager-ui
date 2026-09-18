@@ -11,6 +11,226 @@
 import * as zod from "zod";
 
 /**
+ * Get a list of all Running Workflows available to you. The Running Workflows are listed in chronological order of the start time, where the first that was executed is the first in the list.
+ *
+ * By providing a workflow ID you will only see Running Workflows for that Workflow.
+ * @summary Get all Running Workflows available to you
+ */
+export const appApiWorkflowGetRunningQueryWorkflowIdRegExp = new RegExp(
+  "^workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+export const appApiWorkflowGetRunningQueryProjectIdRegExp = new RegExp(
+  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiWorkflowGetRunningQueryParams = zod.object({
+  workflow_id: zod
+    .string()
+    .regex(appApiWorkflowGetRunningQueryWorkflowIdRegExp)
+    .optional()
+    .describe("A workflow ID\n"),
+  project_id: zod
+    .string()
+    .regex(appApiWorkflowGetRunningQueryProjectIdRegExp)
+    .optional()
+    .describe("A Project identity"),
+});
+
+export const AppApiWorkflowGetRunningResponse = zod.object({
+  count: zod.number().describe("The number of running workflows in the returned list\n"),
+  running_workflows: zod.array(
+    zod.object({
+      error_msg: zod.string().optional(),
+      error_num: zod.number().optional(),
+      id: zod.string().describe("The Running Workflows's unique ID\n"),
+      name: zod.string().describe("The name attached to this running workflow\n"),
+      project: zod.object({
+        id: zod.string().optional().describe("The Project ID\n"),
+        name: zod.string().optional().describe("The Project name\n"),
+      }),
+      started: zod.iso
+        .datetime({ offset: true })
+        .describe("The date and time the running workflow was started"),
+      status: zod
+        .enum(["RUNNING", "SUCCESS", "FAILURE", "USER_STOPPED"])
+        .describe("The status of the running workflow"),
+      stopped: zod.iso
+        .datetime({ offset: true })
+        .optional()
+        .describe("The date and time the running workflow was stopped\n"),
+      workflow: zod.object({
+        id: zod.string().describe("The Workflow ID\n"),
+        name: zod.string().describe("The Workflow name\n"),
+        version: zod
+          .string()
+          .describe(
+            "The version of the workflow. If there is no version (if the server is in DEVELOPER mode for example) the value will be `Unversioned`.",
+          ),
+      }),
+    }),
+  ),
+});
+
+/**
+ * Deletes a Running Workflow.
+ *
+ * It is an error to delete a Running Workflow that is Running.
+ * @summary Delete a Running Workflow
+ */
+export const appApiWorkflowDeleteRunningWorkflowPathRunningWorkflowIdRegExp = new RegExp(
+  "^r-workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiWorkflowDeleteRunningWorkflowParams = zod.object({
+  running_workflow_id: zod
+    .string()
+    .regex(appApiWorkflowDeleteRunningWorkflowPathRunningWorkflowIdRegExp)
+    .describe("A Running Workflow instance identity"),
+});
+
+export const AppApiWorkflowDeleteRunningWorkflowResponse = zod.void();
+
+/**
+ * Get details of a specific Running Workflow available to you.
+ * @summary Get details of a specific Running Workflow
+ */
+export const appApiWorkflowGetRunningWorkflowPathRunningWorkflowIdRegExp = new RegExp(
+  "^r-workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiWorkflowGetRunningWorkflowParams = zod.object({
+  running_workflow_id: zod
+    .string()
+    .regex(appApiWorkflowGetRunningWorkflowPathRunningWorkflowIdRegExp)
+    .describe("A Running Workflow instance identity"),
+});
+
+export const AppApiWorkflowGetRunningWorkflowResponse = zod.object({
+  debug: zod.string().optional().describe("An optional string passed to running instances"),
+  done: zod.boolean().describe("True if the running workflow has finished"),
+  error_msg: zod.string().optional(),
+  error_num: zod.number(),
+  id: zod.string().describe("The Running Workflows's unique ID"),
+  name: zod.string().describe("The name attached to this running workflow"),
+  project: zod.object({
+    id: zod.string().optional().describe("The Project ID\n"),
+    name: zod.string().optional().describe("The Project name\n"),
+  }),
+  running_user: zod.string().describe("The user that started the running workflow"),
+  started: zod.iso
+    .datetime({ offset: true })
+    .describe("The date and time the running workflow was started"),
+  status: zod
+    .enum(["RUNNING", "SUCCESS", "FAILURE", "USER_STOPPED"])
+    .describe("The status of the running workflow"),
+  stopped: zod.iso
+    .datetime({ offset: true })
+    .optional()
+    .describe("The date and time the running workflow was stopped\n"),
+  stopping_user: zod.string().optional().describe("The user that stopped the running workflow"),
+  success: zod
+    .boolean()
+    .optional()
+    .describe("True if the running workflow has finished successfully"),
+  variables: zod
+    .looseObject({})
+    .describe("The variables provided when the running workflow was created\n"),
+  workflow: zod.object({
+    id: zod.string().describe("The Workflow ID\n"),
+    name: zod.string().describe("The Workflow name\n"),
+    version: zod
+      .string()
+      .describe(
+        "The version of the workflow. If there is no version (if the server is in DEVELOPER mode for example) the value will be `Unversioned`.",
+      ),
+  }),
+});
+
+/**
+ * Gets the Running Workflow step results for WWorkflow steps that are running (or have run). The steps are listed in chronological order of start time, where the first executed step is the first in the list.
+ * @summary Get all the Running Workflow Steps
+ */
+export const appApiWorkflowGetRunningWorkflowStepsPathRunningWorkflowIdRegExp = new RegExp(
+  "^r-workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiWorkflowGetRunningWorkflowStepsParams = zod.object({
+  running_workflow_id: zod
+    .string()
+    .regex(appApiWorkflowGetRunningWorkflowStepsPathRunningWorkflowIdRegExp)
+    .describe("A Running Workflow instance identity"),
+});
+
+export const AppApiWorkflowGetRunningWorkflowStepsResponse = zod.object({
+  count: zod.number(),
+  running_workflow_steps: zod.array(
+    zod.object({
+      done: zod.boolean().describe("True if the running workflow step has finished"),
+      error_msg: zod.string().optional(),
+      error_num: zod.number(),
+      id: zod.string().describe("The Running Workflow Step's unique ID"),
+      instance_id: zod.string().optional(),
+      name: zod.string().describe("The step name"),
+      running_workflow: zod.object({
+        error_msg: zod.string().optional(),
+        error_num: zod.number().optional(),
+        id: zod.string().describe("The Running Workflows's unique ID\n"),
+        name: zod.string().describe("The name attached to this running workflow\n"),
+        project: zod.object({
+          id: zod.string().optional().describe("The Project ID\n"),
+          name: zod.string().optional().describe("The Project name\n"),
+        }),
+        started: zod.iso
+          .datetime({ offset: true })
+          .describe("The date and time the running workflow was started"),
+        status: zod
+          .enum(["RUNNING", "SUCCESS", "FAILURE", "USER_STOPPED"])
+          .describe("The status of the running workflow"),
+        stopped: zod.iso
+          .datetime({ offset: true })
+          .optional()
+          .describe("The date and time the running workflow was stopped\n"),
+        workflow: zod.object({
+          id: zod.string().describe("The Workflow ID\n"),
+          name: zod.string().describe("The Workflow name\n"),
+          version: zod
+            .string()
+            .describe(
+              "The version of the workflow. If there is no version (if the server is in DEVELOPER mode for example) the value will be `Unversioned`.",
+            ),
+        }),
+      }),
+      started: zod.iso.datetime({ offset: true }),
+      status: zod.enum(["RUNNING", "SUCCESS", "FAILURE"]),
+      stopped: zod.iso.datetime({ offset: true }).optional(),
+      success: zod
+        .boolean()
+        .optional()
+        .describe("True if the running workflow step has finished successfully"),
+      task_id: zod.string().optional(),
+      variables: zod.looseObject({}),
+    }),
+  ),
+});
+
+/**
+ * Stops a Running Workflow.
+ * @summary Stop a Running Workflow
+ */
+export const appApiWorkflowStopRunningWorkflowPathRunningWorkflowIdRegExp = new RegExp(
+  "^r-workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiWorkflowStopRunningWorkflowParams = zod.object({
+  running_workflow_id: zod
+    .string()
+    .regex(appApiWorkflowStopRunningWorkflowPathRunningWorkflowIdRegExp)
+    .describe("A Running Workflow instance identity"),
+});
+
+export const AppApiWorkflowStopRunningWorkflowResponse = zod.void();
+
+/**
  * Get a list of all Workflows available to you. The Workflows are listed in reverse chronological order of creation, where the most recent that was created is first in the list.
  * @summary Get all Workflows available to you
  */
@@ -20,29 +240,6 @@ export const AppApiWorkflowGetResponse = zod.object({
     zod.object({
       id: zod.string().describe("The Workflows's unique ID\n"),
       name: zod.string().describe("The name attached to this workflow definitions\n"),
-      workflow_name: zod
-        .string()
-        .optional()
-        .describe(
-          "The name of the Workflow. Set if the workflow definition contains a description\n",
-        ),
-      workflow_description: zod
-        .string()
-        .optional()
-        .describe(
-          "The description of the workflow. Set if the workflow definition contains a description\n",
-        ),
-      version: zod
-        .string()
-        .optional()
-        .describe(
-          "The version of the workflow. Set if the workflow definition contains a description\n",
-        ),
-      validated: zod.boolean().describe("True if the workflow has been validated"),
-      source_id: zod
-        .string()
-        .optional()
-        .describe("The source Workflow ID. Set if this workflow has been versioned.\n"),
       scope: zod
         .enum(["GLOBAL", "AS_ORGANISATION", "AS_UNIT"])
         .describe("The scope of the workflow.\n"),
@@ -50,6 +247,29 @@ export const AppApiWorkflowGetResponse = zod.object({
         .string()
         .optional()
         .describe("The scope ID of the workflow. Set if the \*\*Scope\*\* is not \*\*GLOBAL\*\*\n"),
+      source_id: zod
+        .string()
+        .optional()
+        .describe("The source Workflow ID. Set if this workflow has been versioned.\n"),
+      validated: zod.boolean().describe("True if the workflow has been validated"),
+      version: zod
+        .string()
+        .optional()
+        .describe(
+          "The version of the workflow. Set if the workflow definition contains a description\n",
+        ),
+      workflow_description: zod
+        .string()
+        .optional()
+        .describe(
+          "The description of the workflow. Set if the workflow definition contains a description\n",
+        ),
+      workflow_name: zod
+        .string()
+        .optional()
+        .describe(
+          "The name of the Workflow. Set if the workflow definition contains a description\n",
+        ),
     }),
   ),
 });
@@ -64,11 +284,6 @@ export const appApiWorkflowPostBodyNameMax = 80;
 export const appApiWorkflowPostBodyScopeDefault = `GLOBAL`;
 
 export const AppApiWorkflowPostBody = zod.object({
-  name: zod
-    .string()
-    .min(appApiWorkflowPostBodyNameMin)
-    .max(appApiWorkflowPostBodyNameMax)
-    .describe("The name to attach to the workflow\n"),
   definition: zod
     .string()
     .optional()
@@ -76,6 +291,11 @@ export const AppApiWorkflowPostBody = zod.object({
       "The workflow definition, a YAML string. The definition is converted to a YAML object using PyYAML's `SafeLoader`. This limits what is supported but minimises the risk of a User being able to execute arbitrary code from the supplied YAML.\n\nYou can provide an inline definition as a YAML string or load a `definition_file`. You must provide one or the other.\n",
     ),
   definition_file: zod.instanceof(File).optional(),
+  name: zod
+    .string()
+    .min(appApiWorkflowPostBodyNameMin)
+    .max(appApiWorkflowPostBodyNameMax)
+    .describe("The name to attach to the workflow\n"),
   scope: zod
     .enum(["GLOBAL", "AS_ORGANISATION", "AS_PROJECT"])
     .default(appApiWorkflowPostBodyScopeDefault)
@@ -91,79 +311,6 @@ export const AppApiWorkflowPostBody = zod.object({
 export const AppApiWorkflowPostResponse = zod.object({
   id: zod.string(),
   validated: zod.boolean(),
-});
-
-/**
- * Get details of a specific Workflow available to you.
- * @summary Get details of a specific Workflow
- */
-export const appApiWorkflowGetWorkflowPathWorkflowIdRegExp = new RegExp(
-  "^workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiWorkflowGetWorkflowParams = zod.object({
-  workflow_id: zod
-    .string()
-    .regex(appApiWorkflowGetWorkflowPathWorkflowIdRegExp)
-    .describe("A Workflow instance identity"),
-});
-
-export const AppApiWorkflowGetWorkflowResponse = zod.object({
-  id: zod.string().describe("The Workflows's unique ID"),
-  creating_user: zod.string().optional().describe("The creator of Workflows"),
-  name: zod.string().describe("The name attached to this workflow definition"),
-  workflow_name: zod
-    .string()
-    .optional()
-    .describe("The name of the Workflow. Set if the workflow definition contains a name\n"),
-  workflow_description: zod
-    .string()
-    .optional()
-    .describe(
-      "The description of the Workflow. Set if the workflow definition contains a description\n",
-    ),
-  created: zod.iso
-    .datetime({ offset: true })
-    .describe("The date and time the workflow was created"),
-  scope: zod.enum(["GLOBAL", "AS_ORGANISATION", "AS_UNIT"]).describe("The scope of the workflow."),
-  scope_id: zod
-    .string()
-    .optional()
-    .describe("The scope ID of the workflow. Set if the \*\*Scope\*\* is not \*\*GLOBAL\*\*\n"),
-  version: zod
-    .string()
-    .optional()
-    .describe(
-      "The version of the workflow. Set if the workflow definition version has been set.\n",
-    ),
-  source_id: zod
-    .string()
-    .optional()
-    .describe("The parent Workflow ID. Set if this workflow has been versioned.\n"),
-  validated: zod.boolean().describe("True if the workflow has been validated"),
-  validation_error_num: zod
-    .number()
-    .optional()
-    .describe("A non-zero value if there's been a validation error"),
-  validation_error_msg: zod
-    .array(zod.string())
-    .optional()
-    .describe(
-      "A list of validation errors. Only present if the workflow has been validated and errors were found.\n",
-    ),
-  variables: zod
-    .record(zod.string(), zod.unknown())
-    .optional()
-    .describe("The workflow control variables"),
-  steps: zod
-    .array(
-      zod.object({
-        name: zod.string().describe("The name of the step\n"),
-        specification: zod.record(zod.string(), zod.unknown()).describe("The step specification\n"),
-      }),
-    )
-    .optional()
-    .describe("The steps, if the Workflow has been validated and has no errors.\n"),
 });
 
 /**
@@ -186,6 +333,79 @@ export const AppApiWorkflowDeleteParams = zod.object({
 export const AppApiWorkflowDeleteResponse = zod.void();
 
 /**
+ * Get details of a specific Workflow available to you.
+ * @summary Get details of a specific Workflow
+ */
+export const appApiWorkflowGetWorkflowPathWorkflowIdRegExp = new RegExp(
+  "^workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiWorkflowGetWorkflowParams = zod.object({
+  workflow_id: zod
+    .string()
+    .regex(appApiWorkflowGetWorkflowPathWorkflowIdRegExp)
+    .describe("A Workflow instance identity"),
+});
+
+export const AppApiWorkflowGetWorkflowResponse = zod.object({
+  created: zod.iso
+    .datetime({ offset: true })
+    .describe("The date and time the workflow was created"),
+  creating_user: zod.string().optional().describe("The creator of Workflows"),
+  id: zod.string().describe("The Workflows's unique ID"),
+  name: zod.string().describe("The name attached to this workflow definition"),
+  scope: zod.enum(["GLOBAL", "AS_ORGANISATION", "AS_UNIT"]).describe("The scope of the workflow."),
+  scope_id: zod
+    .string()
+    .optional()
+    .describe("The scope ID of the workflow. Set if the \*\*Scope\*\* is not \*\*GLOBAL\*\*\n"),
+  source_id: zod
+    .string()
+    .optional()
+    .describe("The parent Workflow ID. Set if this workflow has been versioned.\n"),
+  steps: zod
+    .array(
+      zod.object({
+        name: zod.string().describe("The name of the step\n"),
+        specification: zod.record(zod.string(), zod.unknown()).describe("The step specification\n"),
+      }),
+    )
+    .optional()
+    .describe("The steps, if the Workflow has been validated and has no errors.\n"),
+  validated: zod.boolean().describe("True if the workflow has been validated"),
+  validation_error_msg: zod
+    .array(zod.string())
+    .optional()
+    .describe(
+      "A list of validation errors. Only present if the workflow has been validated and errors were found.\n",
+    ),
+  validation_error_num: zod
+    .number()
+    .optional()
+    .describe("A non-zero value if there's been a validation error"),
+  variables: zod
+    .record(zod.string(), zod.unknown())
+    .optional()
+    .describe("The workflow control variables"),
+  version: zod
+    .string()
+    .optional()
+    .describe(
+      "The version of the workflow. Set if the workflow definition version has been set.\n",
+    ),
+  workflow_description: zod
+    .string()
+    .optional()
+    .describe(
+      "The description of the Workflow. Set if the workflow definition contains a description\n",
+    ),
+  workflow_name: zod
+    .string()
+    .optional()
+    .describe("The name of the Workflow. Set if the workflow definition contains a name\n"),
+});
+
+/**
  * The Workflow is updated according to the patch parameters.
  *
  * In **PRODUCTION** mode you cannot alter a Workflow that has been versioned. In **DEVELOPMENT** mode you cannot alter a Workflow that is the source of Running Workflow that is running.
@@ -206,12 +426,6 @@ export const appApiWorkflowPatchBodyNameMin = 2;
 export const appApiWorkflowPatchBodyNameMax = 80;
 
 export const AppApiWorkflowPatchBody = zod.object({
-  name: zod
-    .string()
-    .min(appApiWorkflowPatchBodyNameMin)
-    .max(appApiWorkflowPatchBodyNameMax)
-    .optional()
-    .describe("A new name for the Workflow\n"),
   definition: zod
     .string()
     .optional()
@@ -219,6 +433,12 @@ export const AppApiWorkflowPatchBody = zod.object({
       "A replacement workflow definition, a YAML string.\n\nYou can provide an inline definition as a YAML string or load a `definition_file`. You must provide one or the other.\n",
     ),
   definition_file: zod.instanceof(File).optional(),
+  name: zod
+    .string()
+    .min(appApiWorkflowPatchBodyNameMin)
+    .max(appApiWorkflowPatchBodyNameMax)
+    .optional()
+    .describe("A new name for the Workflow\n"),
 });
 
 export const AppApiWorkflowPatchResponse = zod.object({ validated: zod.boolean() });
@@ -257,32 +477,32 @@ export const AppApiWorkflowRunParams = zod.object({
     .describe("A Workflow instance identity"),
 });
 
-export const appApiWorkflowRunBodyProjectIdRegExp = new RegExp(
-  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
 export const appApiWorkflowRunBodyAsNameMin = 2;
 export const appApiWorkflowRunBodyAsNameMax = 80;
 
 export const appApiWorkflowRunBodyAsNameRegExp = new RegExp(
   "^[A-Za-z0-9]+[A-Za-z0-9-_. ]*[A-Za-z0-9]+$",
 );
+export const appApiWorkflowRunBodyProjectIdRegExp = new RegExp(
+  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
 
 export const AppApiWorkflowRunBody = zod.object({
-  project_id: zod
-    .string()
-    .regex(appApiWorkflowRunBodyProjectIdRegExp)
-    .describe("The Project to run the Workflow in\n"),
   as_name: zod
     .string()
     .min(appApiWorkflowRunBodyAsNameMin)
     .max(appApiWorkflowRunBodyAsNameMax)
     .regex(appApiWorkflowRunBodyAsNameRegExp)
     .describe("The name to use for the instance\n"),
+  debug: zod.string().optional().describe("A debug value that may be used by the instance.\n"),
+  project_id: zod
+    .string()
+    .regex(appApiWorkflowRunBodyProjectIdRegExp)
+    .describe("The Project to run the Workflow in\n"),
   variables: zod
     .string()
     .optional()
     .describe("A JSON string representation of the variables provided to the workflow\n"),
-  debug: zod.string().optional().describe("A debug value that may be used by the instance.\n"),
 });
 
 export const AppApiWorkflowRunResponse = zod.object({
@@ -316,224 +536,4 @@ export const AppApiWorkflowVersionBody = zod.object({
 
 export const AppApiWorkflowVersionResponse = zod.object({
   id: zod.string().describe("A new workflow ID"),
-});
-
-/**
- * Get a list of all Running Workflows available to you. The Running Workflows are listed in chronological order of the start time, where the first that was executed is the first in the list.
- *
- * By providing a workflow ID you will only see Running Workflows for that Workflow.
- * @summary Get all Running Workflows available to you
- */
-export const appApiWorkflowGetRunningQueryWorkflowIdRegExp = new RegExp(
-  "^workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-export const appApiWorkflowGetRunningQueryProjectIdRegExp = new RegExp(
-  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiWorkflowGetRunningQueryParams = zod.object({
-  workflow_id: zod
-    .string()
-    .regex(appApiWorkflowGetRunningQueryWorkflowIdRegExp)
-    .optional()
-    .describe("A workflow ID\n"),
-  project_id: zod
-    .string()
-    .regex(appApiWorkflowGetRunningQueryProjectIdRegExp)
-    .optional()
-    .describe("A Project identity"),
-});
-
-export const AppApiWorkflowGetRunningResponse = zod.object({
-  count: zod.number().describe("The number of running workflows in the returned list\n"),
-  running_workflows: zod.array(
-    zod.object({
-      id: zod.string().describe("The Running Workflows's unique ID\n"),
-      name: zod.string().describe("The name attached to this running workflow\n"),
-      error_num: zod.number().optional(),
-      error_msg: zod.string().optional(),
-      status: zod
-        .enum(["RUNNING", "SUCCESS", "FAILURE", "USER_STOPPED"])
-        .describe("The status of the running workflow"),
-      started: zod.iso
-        .datetime({ offset: true })
-        .describe("The date and time the running workflow was started"),
-      stopped: zod.iso
-        .datetime({ offset: true })
-        .optional()
-        .describe("The date and time the running workflow was stopped\n"),
-      workflow: zod.object({
-        id: zod.string().describe("The Workflow ID\n"),
-        name: zod.string().describe("The Workflow name\n"),
-        version: zod
-          .string()
-          .describe(
-            "The version of the workflow. If there is no version (if the server is in DEVELOPER mode for example) the value will be `Unversioned`.",
-          ),
-      }),
-      project: zod.object({
-        id: zod.string().optional().describe("The Project ID\n"),
-        name: zod.string().optional().describe("The Project name\n"),
-      }),
-    }),
-  ),
-});
-
-/**
- * Get details of a specific Running Workflow available to you.
- * @summary Get details of a specific Running Workflow
- */
-export const appApiWorkflowGetRunningWorkflowPathRunningWorkflowIdRegExp = new RegExp(
-  "^r-workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiWorkflowGetRunningWorkflowParams = zod.object({
-  running_workflow_id: zod
-    .string()
-    .regex(appApiWorkflowGetRunningWorkflowPathRunningWorkflowIdRegExp)
-    .describe("A Running Workflow instance identity"),
-});
-
-export const AppApiWorkflowGetRunningWorkflowResponse = zod.object({
-  id: zod.string().describe("The Running Workflows's unique ID"),
-  running_user: zod.string().describe("The user that started the running workflow"),
-  name: zod.string().describe("The name attached to this running workflow"),
-  error_num: zod.number(),
-  error_msg: zod.string().optional(),
-  done: zod.boolean().describe("True if the running workflow has finished"),
-  success: zod
-    .boolean()
-    .optional()
-    .describe("True if the running workflow has finished successfully"),
-  debug: zod.string().optional().describe("An optional string passed to running instances"),
-  status: zod
-    .enum(["RUNNING", "SUCCESS", "FAILURE", "USER_STOPPED"])
-    .describe("The status of the running workflow"),
-  started: zod.iso
-    .datetime({ offset: true })
-    .describe("The date and time the running workflow was started"),
-  stopped: zod.iso
-    .datetime({ offset: true })
-    .optional()
-    .describe("The date and time the running workflow was stopped\n"),
-  variables: zod
-    .looseObject({})
-    .describe("The variables provided when the running workflow was created\n"),
-  stopping_user: zod.string().optional().describe("The user that stopped the running workflow"),
-  workflow: zod.object({
-    id: zod.string().describe("The Workflow ID\n"),
-    name: zod.string().describe("The Workflow name\n"),
-    version: zod
-      .string()
-      .describe(
-        "The version of the workflow. If there is no version (if the server is in DEVELOPER mode for example) the value will be `Unversioned`.",
-      ),
-  }),
-  project: zod.object({
-    id: zod.string().optional().describe("The Project ID\n"),
-    name: zod.string().optional().describe("The Project name\n"),
-  }),
-});
-
-/**
- * Deletes a Running Workflow.
- *
- * It is an error to delete a Running Workflow that is Running.
- * @summary Delete a Running Workflow
- */
-export const appApiWorkflowDeleteRunningWorkflowPathRunningWorkflowIdRegExp = new RegExp(
-  "^r-workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiWorkflowDeleteRunningWorkflowParams = zod.object({
-  running_workflow_id: zod
-    .string()
-    .regex(appApiWorkflowDeleteRunningWorkflowPathRunningWorkflowIdRegExp)
-    .describe("A Running Workflow instance identity"),
-});
-
-export const AppApiWorkflowDeleteRunningWorkflowResponse = zod.void();
-
-/**
- * Stops a Running Workflow.
- * @summary Stop a Running Workflow
- */
-export const appApiWorkflowStopRunningWorkflowPathRunningWorkflowIdRegExp = new RegExp(
-  "^r-workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiWorkflowStopRunningWorkflowParams = zod.object({
-  running_workflow_id: zod
-    .string()
-    .regex(appApiWorkflowStopRunningWorkflowPathRunningWorkflowIdRegExp)
-    .describe("A Running Workflow instance identity"),
-});
-
-export const AppApiWorkflowStopRunningWorkflowResponse = zod.void();
-
-/**
- * Gets the Running Workflow step results for WWorkflow steps that are running (or have run). The steps are listed in chronological order of start time, where the first executed step is the first in the list.
- * @summary Get all the Running Workflow Steps
- */
-export const appApiWorkflowGetRunningWorkflowStepsPathRunningWorkflowIdRegExp = new RegExp(
-  "^r-workflow-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiWorkflowGetRunningWorkflowStepsParams = zod.object({
-  running_workflow_id: zod
-    .string()
-    .regex(appApiWorkflowGetRunningWorkflowStepsPathRunningWorkflowIdRegExp)
-    .describe("A Running Workflow instance identity"),
-});
-
-export const AppApiWorkflowGetRunningWorkflowStepsResponse = zod.object({
-  count: zod.number(),
-  running_workflow_steps: zod.array(
-    zod.object({
-      id: zod.string().describe("The Running Workflow Step's unique ID"),
-      variables: zod.looseObject({}),
-      instance_id: zod.string().optional(),
-      task_id: zod.string().optional(),
-      started: zod.iso.datetime({ offset: true }),
-      stopped: zod.iso.datetime({ offset: true }).optional(),
-      status: zod.enum(["RUNNING", "SUCCESS", "FAILURE"]),
-      name: zod.string().describe("The step name"),
-      done: zod.boolean().describe("True if the running workflow step has finished"),
-      error_num: zod.number(),
-      error_msg: zod.string().optional(),
-      success: zod
-        .boolean()
-        .optional()
-        .describe("True if the running workflow step has finished successfully"),
-      running_workflow: zod.object({
-        id: zod.string().describe("The Running Workflows's unique ID\n"),
-        name: zod.string().describe("The name attached to this running workflow\n"),
-        error_num: zod.number().optional(),
-        error_msg: zod.string().optional(),
-        status: zod
-          .enum(["RUNNING", "SUCCESS", "FAILURE", "USER_STOPPED"])
-          .describe("The status of the running workflow"),
-        started: zod.iso
-          .datetime({ offset: true })
-          .describe("The date and time the running workflow was started"),
-        stopped: zod.iso
-          .datetime({ offset: true })
-          .optional()
-          .describe("The date and time the running workflow was stopped\n"),
-        workflow: zod.object({
-          id: zod.string().describe("The Workflow ID\n"),
-          name: zod.string().describe("The Workflow name\n"),
-          version: zod
-            .string()
-            .describe(
-              "The version of the workflow. If there is no version (if the server is in DEVELOPER mode for example) the value will be `Unversioned`.",
-            ),
-        }),
-        project: zod.object({
-          id: zod.string().optional().describe("The Project ID\n"),
-          name: zod.string().optional().describe("The Project name\n"),
-        }),
-      }),
-    }),
-  ),
 });

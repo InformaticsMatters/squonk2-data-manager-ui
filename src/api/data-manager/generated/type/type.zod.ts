@@ -19,7 +19,6 @@ export const AppApiTypeGetResponse = zod.object({
   types: zod
     .array(
       zod.object({
-        mime: zod.string().describe("The File Type MIME\n"),
         file_extensions: zod
           .array(zod.string())
           .describe(
@@ -31,22 +30,23 @@ export const AppApiTypeGetResponse = zod.object({
           .describe(
             "The file's type's format-support container image (if set). Types without a format support image cannot be uploaded, but they might be available for use as destination type when a Dataset is added to a Project.\n",
           ),
+        formatter_options: zod
+          .object({
+            required: zod.array(zod.string()).describe("Required properties\n"),
+            title: zod.string().describe("The title of the Formatter object\n"),
+            type: zod.enum(["object"]).describe("The Schema type (an object)\n"),
+          })
+          .optional()
+          .describe(
+            "If present, contains the formatter_options that can be entered in the format_extra_variables field in the POST \/dataset api.\n",
+          ),
         formatter_supports_db_load: zod
           .boolean()
           .optional()
           .describe(
             "True if Datasets uploaded using this type's support loading of data into the Data Manager data-base.\n",
           ),
-        formatter_options: zod
-          .object({
-            title: zod.string().describe("The title of the Formatter object\n"),
-            type: zod.enum(["object"]).describe("The Schema type (an object)\n"),
-            required: zod.array(zod.string()).describe("Required properties\n"),
-          })
-          .optional()
-          .describe(
-            "If present, contains the formatter_options that can be entered in the format_extra_variables field in the POST \/dataset api.\n",
-          ),
+        mime: zod.string().describe("The File Type MIME\n"),
       }),
     )
     .describe("A list of available MIME types\n"),

@@ -11,14 +11,14 @@
 import type { ServiceErrorSummarySeverity } from "./serviceErrorSummarySeverity";
 
 export interface ServiceErrorSummary {
-  id: number;
-  created: string;
-  summary: string;
-  severity: ServiceErrorSummarySeverity;
-  hostname: string;
-  error_code?: number;
-  stack_trace: string;
   acknowledged: boolean;
   acknowledged_at?: string;
   acknowledging_user?: string;
+  created: string;
+  error_code?: number;
+  hostname: string;
+  id: number;
+  severity: ServiceErrorSummarySeverity;
+  stack_trace: string;
+  summary: string;
 }

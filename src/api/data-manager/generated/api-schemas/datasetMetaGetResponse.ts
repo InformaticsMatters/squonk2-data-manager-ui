@@ -10,23 +10,23 @@
  */
 
 export interface DatasetMetaGetResponse {
-  /** The Metadata title */
-  dataset_name: string;
-  /** The Metadata description */
-  dataset_id: string;
-  /** The Metadata type (an object) */
-  description: string;
-  /** The date and time of creation */
-  created: string;
-  /** The date and time it was last updated */
-  last_updated: string;
-  /** The user who created the Metadata */
-  created_by: string;
-  /** The Metadata version */
-  metadata_version: string;
   /** The Metadata's annotations */
   annotations: unknown[];
+  /** The date and time of creation */
+  created: string;
+  /** The user who created the Metadata */
+  created_by: string;
+  /** The Metadata description */
+  dataset_id: string;
+  /** The Metadata title */
+  dataset_name: string;
+  /** The Metadata type (an object) */
+  description: string;
   /** The Metadata's labels */
   labels: unknown[];
+  /** The date and time it was last updated */
+  last_updated: string;
+  /** The Metadata version */
+  metadata_version: string;
   [key: string]: unknown;
 }

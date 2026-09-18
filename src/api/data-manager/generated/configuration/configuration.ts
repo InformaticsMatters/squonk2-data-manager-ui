@@ -24,7 +24,12 @@ import type {
   UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 
-import type { DmError, InputHandlerGetResponse, ModeGetResponse } from "../api-schemas";
+import type {
+  GetInputHandlers200,
+  GetInputHandlers403,
+  GetMode200,
+  GetMode403,
+} from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
 import type { ErrorType } from "../../../runtime/data-manager/axios";
@@ -47,207 +52,13 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
- * @summary Gets the Data Manager API mode
- */
-export const getMode = (options?: SecondParameter<typeof customInstance>, signal?: AbortSignal) => {
-  return customInstance<ModeGetResponse>({ url: `/mode`, method: "GET", signal }, options);
-};
-
-export const getGetModeQueryKey = () => {
-  return ["data-manager", "mode"] as const;
-};
-
-export const getGetModeQueryOptions = <
-  TData = Awaited<ReturnType<typeof getMode>>,
-  TError = ErrorType<void | DmError>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetModeQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMode>>> = ({ signal }) =>
-    getMode(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getMode>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetModeQueryResult = NonNullable<Awaited<ReturnType<typeof getMode>>>;
-export type GetModeQueryError = ErrorType<void | DmError>;
-
-export function useGetMode<
-  TData = Awaited<ReturnType<typeof getMode>>,
-  TError = ErrorType<void | DmError>,
->(
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getMode>>,
-          TError,
-          Awaited<ReturnType<typeof getMode>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetMode<
-  TData = Awaited<ReturnType<typeof getMode>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getMode>>,
-          TError,
-          Awaited<ReturnType<typeof getMode>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetMode<
-  TData = Awaited<ReturnType<typeof getMode>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Data Manager API mode
- */
-
-export function useGetMode<
-  TData = Awaited<ReturnType<typeof getMode>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetModeQueryOptions(options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Gets the Data Manager API mode
- */
-export const invalidateGetMode = async (
-  queryClient: QueryClient,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetModeQueryKey() }, options);
-
-  return queryClient;
-};
-
-export const getGetModeSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getMode>>,
-  TError = ErrorType<void | DmError>,
->(options?: {
-  query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetModeQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMode>>> = ({ signal }) =>
-    getMode(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getMode>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetModeSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getMode>>>;
-export type GetModeSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useGetModeSuspense<
-  TData = Awaited<ReturnType<typeof getMode>>,
-  TError = ErrorType<void | DmError>,
->(
-  options: {
-    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetModeSuspense<
-  TData = Awaited<ReturnType<typeof getMode>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetModeSuspense<
-  TData = Awaited<ReturnType<typeof getMode>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Data Manager API mode
- */
-
-export function useGetModeSuspense<
-  TData = Awaited<ReturnType<typeof getMode>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetModeSuspenseQueryOptions(options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
  * @summary Get information about all Input Handlers that are available.
  */
 export const getInputHandlers = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<InputHandlerGetResponse>(
+  return customInstance<GetInputHandlers200>(
     { url: `/input-handler`, method: "GET", signal },
     options,
   );
@@ -259,7 +70,7 @@ export const getGetInputHandlersQueryKey = () => {
 
 export const getGetInputHandlersQueryOptions = <
   TData = Awaited<ReturnType<typeof getInputHandlers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInputHandlers403>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInputHandlers>>, TError, TData>>;
   request?: SecondParameter<typeof customInstance>;
@@ -279,11 +90,11 @@ export const getGetInputHandlersQueryOptions = <
 };
 
 export type GetInputHandlersQueryResult = NonNullable<Awaited<ReturnType<typeof getInputHandlers>>>;
-export type GetInputHandlersQueryError = ErrorType<void | DmError>;
+export type GetInputHandlersQueryError = ErrorType<void | GetInputHandlers403>;
 
 export function useGetInputHandlers<
   TData = Awaited<ReturnType<typeof getInputHandlers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInputHandlers403>,
 >(
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInputHandlers>>, TError, TData>> &
@@ -301,7 +112,7 @@ export function useGetInputHandlers<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetInputHandlers<
   TData = Awaited<ReturnType<typeof getInputHandlers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInputHandlers403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInputHandlers>>, TError, TData>> &
@@ -319,7 +130,7 @@ export function useGetInputHandlers<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetInputHandlers<
   TData = Awaited<ReturnType<typeof getInputHandlers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInputHandlers403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInputHandlers>>, TError, TData>>;
@@ -333,7 +144,7 @@ export function useGetInputHandlers<
 
 export function useGetInputHandlers<
   TData = Awaited<ReturnType<typeof getInputHandlers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInputHandlers403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getInputHandlers>>, TError, TData>>;
@@ -364,7 +175,7 @@ export const invalidateGetInputHandlers = async (
 
 export const getGetInputHandlersSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getInputHandlers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInputHandlers403>,
 >(options?: {
   query?: Partial<
     UseSuspenseQueryOptions<Awaited<ReturnType<typeof getInputHandlers>>, TError, TData>
@@ -388,11 +199,11 @@ export const getGetInputHandlersSuspenseQueryOptions = <
 export type GetInputHandlersSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getInputHandlers>>
 >;
-export type GetInputHandlersSuspenseQueryError = ErrorType<void | DmError>;
+export type GetInputHandlersSuspenseQueryError = ErrorType<void | GetInputHandlers403>;
 
 export function useGetInputHandlersSuspense<
   TData = Awaited<ReturnType<typeof getInputHandlers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInputHandlers403>,
 >(
   options: {
     query: Partial<
@@ -404,7 +215,7 @@ export function useGetInputHandlersSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetInputHandlersSuspense<
   TData = Awaited<ReturnType<typeof getInputHandlers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInputHandlers403>,
 >(
   options?: {
     query?: Partial<
@@ -416,7 +227,7 @@ export function useGetInputHandlersSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetInputHandlersSuspense<
   TData = Awaited<ReturnType<typeof getInputHandlers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInputHandlers403>,
 >(
   options?: {
     query?: Partial<
@@ -432,7 +243,7 @@ export function useGetInputHandlersSuspense<
 
 export function useGetInputHandlersSuspense<
   TData = Awaited<ReturnType<typeof getInputHandlers>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetInputHandlers403>,
 >(
   options?: {
     query?: Partial<
@@ -443,6 +254,200 @@ export function useGetInputHandlersSuspense<
   queryClient?: QueryClient,
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetInputHandlersSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets the Data Manager API mode
+ */
+export const getMode = (options?: SecondParameter<typeof customInstance>, signal?: AbortSignal) => {
+  return customInstance<GetMode200>({ url: `/mode`, method: "GET", signal }, options);
+};
+
+export const getGetModeQueryKey = () => {
+  return ["data-manager", "mode"] as const;
+};
+
+export const getGetModeQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMode>>,
+  TError = ErrorType<void | GetMode403>,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetModeQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMode>>> = ({ signal }) =>
+    getMode(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMode>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetModeQueryResult = NonNullable<Awaited<ReturnType<typeof getMode>>>;
+export type GetModeQueryError = ErrorType<void | GetMode403>;
+
+export function useGetMode<
+  TData = Awaited<ReturnType<typeof getMode>>,
+  TError = ErrorType<void | GetMode403>,
+>(
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMode>>,
+          TError,
+          Awaited<ReturnType<typeof getMode>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetMode<
+  TData = Awaited<ReturnType<typeof getMode>>,
+  TError = ErrorType<void | GetMode403>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMode>>,
+          TError,
+          Awaited<ReturnType<typeof getMode>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetMode<
+  TData = Awaited<ReturnType<typeof getMode>>,
+  TError = ErrorType<void | GetMode403>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Data Manager API mode
+ */
+
+export function useGetMode<
+  TData = Awaited<ReturnType<typeof getMode>>,
+  TError = ErrorType<void | GetMode403>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetModeQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets the Data Manager API mode
+ */
+export const invalidateGetMode = async (
+  queryClient: QueryClient,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetModeQueryKey() }, options);
+
+  return queryClient;
+};
+
+export const getGetModeSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMode>>,
+  TError = ErrorType<void | GetMode403>,
+>(options?: {
+  query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetModeQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMode>>> = ({ signal }) =>
+    getMode(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getMode>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetModeSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getMode>>>;
+export type GetModeSuspenseQueryError = ErrorType<void | GetMode403>;
+
+export function useGetModeSuspense<
+  TData = Awaited<ReturnType<typeof getMode>>,
+  TError = ErrorType<void | GetMode403>,
+>(
+  options: {
+    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetModeSuspense<
+  TData = Awaited<ReturnType<typeof getMode>>,
+  TError = ErrorType<void | GetMode403>,
+>(
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetModeSuspense<
+  TData = Awaited<ReturnType<typeof getMode>>,
+  TError = ErrorType<void | GetMode403>,
+>(
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Data Manager API mode
+ */
+
+export function useGetModeSuspense<
+  TData = Awaited<ReturnType<typeof getMode>>,
+  TError = ErrorType<void | GetMode403>,
+>(
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMode>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetModeSuspenseQueryOptions(options);
 
   const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
     TData,

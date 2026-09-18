@@ -8,6 +8,7 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { TaskIdentity } from "./taskIdentity";
 
-export type ProjectDeleteResponse = TaskIdentity;
+export interface ProjectDeleteResponse {
+  task_id: string;
+}

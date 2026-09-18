@@ -8,20 +8,18 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QFilePathParameter } from "./qFilePathParameter";
-import type { QFileProjectIdParameter } from "./qFileProjectIdParameter";
 
 export type CreatePathParams = {
   /**
    * The Project identity
    * @pattern ^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  project_id: QFileProjectIdParameter;
+  project_id: string;
   /**
    * A project path. If provided it must begin `/` and refers to a path where `/` represents the project's root directory
    * @minLength 1
    * @maxLength 260
    * @pattern ^(/(\.([^/.][^/]*)?|\.\.[^/]+|[^/.][^/]*)?)+$
    */
-  path?: QFilePathParameter;
+  path?: string;
 };

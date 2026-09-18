@@ -8,9 +8,9 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { DatasetSummary } from "./datasetSummary";
+import type { DatasetsGetResponseDatasetsItem } from "./datasetsGetResponseDatasetsItem";
 
 export interface DatasetsGetResponse {
   count: number;
-  datasets: DatasetSummary[];
+  datasets: DatasetsGetResponseDatasetsItem[];
 }

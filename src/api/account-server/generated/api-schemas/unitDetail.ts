@@ -11,8 +11,13 @@
 import type { UnitDetailDefaultProductPrivacy } from "./unitDetailDefaultProductPrivacy";
 
 export interface UnitDetail {
+  /** The Unit's billing day */
+  billing_day: number;
   /** Whether the user making the API call is a member of the Unit */
   caller_is_member: boolean;
+  created: string;
+  /** The Unit's default product privacy setting */
+  default_product_privacy: UnitDetailDefaultProductPrivacy;
   /** The Unit's unique identity */
   id: string;
   /** The Unit's name */
@@ -21,9 +26,4 @@ export interface UnitDetail {
   owner_id: string;
   /** True if the Unit is private */
   private: boolean;
-  created: string;
-  /** The Unit's billing day */
-  billing_day: number;
-  /** The Unit's default product privacy setting */
-  default_product_privacy: UnitDetailDefaultProductPrivacy;
 }

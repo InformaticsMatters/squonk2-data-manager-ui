@@ -8,18 +8,16 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QActiveDaysParameter } from "./qActiveDaysParameter";
-import type { QIdleDaysParameter } from "./qIdleDaysParameter";
 
 export type AdminGetUsersParams = {
   /**
    * Maximum days a user has been idle (has not used the API). If you specify `2` and it's Monday then users who have not used the API since Saturday will be returned.
    * @minimum 1
    */
-  idle_days?: QIdleDaysParameter;
+  idle_days?: number;
   /**
    * Minimum days a user has been active (has used the API). If you specify `2` and it's Monday then users who have used the API on Saturday or later will be returned.
    * @minimum 1
    */
-  active_days?: QActiveDaysParameter;
+  active_days?: number;
 };

@@ -11,9 +11,9 @@
 import type { UserDetail } from "./userDetail";
 
 export interface UserAccountDetail {
-  user: UserDetail;
-  /** Whether the caller has admin privilege */
-  caller_has_admin_privilege: boolean;
   /** The roles assigned to the user recognised by the Account Server */
   account_server_roles: string[];
+  /** Whether the caller has admin privilege */
+  caller_has_admin_privilege: boolean;
+  user: UserDetail;
 }

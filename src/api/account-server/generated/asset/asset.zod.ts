@@ -57,26 +57,26 @@ export const AppApiAssetGetResponse = zod.object({
   assets: zod
     .array(
       zod.object({
+        content: zod.string(),
+        content_modified: zod.iso.datetime({ offset: true }).optional(),
+        created: zod.iso.datetime({ offset: true }),
         creator: zod.string(),
+        description: zod.string().optional(),
+        disabled: zod.boolean(),
         id: zod.string(),
+        merchants: zod.array(
+          zod.object({
+            api_hostname: zod.string().describe("The hostname used by the Service"),
+            created: zod.iso.datetime({ offset: true }),
+            id: zod.number().describe("The unique ID of the Service"),
+            kind: zod.enum(["DATA_MANAGER"]).describe("The kind of Service"),
+            name: zod.string().describe("The name assigned to the Service"),
+          }),
+        ),
         name: zod.string(),
         scope: zod.enum(["USER", "PRODUCT", "UNIT", "ORGANISATION", "GLOBAL"]),
         scope_id: zod.string(),
         secret: zod.boolean(),
-        disabled: zod.boolean(),
-        content: zod.string(),
-        created: zod.iso.datetime({ offset: true }),
-        content_modified: zod.iso.datetime({ offset: true }).optional(),
-        description: zod.string().optional(),
-        merchants: zod.array(
-          zod.object({
-            id: zod.number().describe("The unique ID of the Service"),
-            created: zod.iso.datetime({ offset: true }),
-            kind: zod.enum(["DATA_MANAGER"]).describe("The kind of Service"),
-            name: zod.string().describe("The name assigned to the Service"),
-            api_hostname: zod.string().describe("The hostname used by the Service"),
-          }),
-        ),
       }),
     )
     .describe("A list of Assets\n"),
@@ -98,19 +98,20 @@ export const appApiAssetCreateBodyNameMax = 80;
 export const appApiAssetCreateBodyNameRegExp = new RegExp("^[a-z0-9-]{1,63}$");
 
 export const AppApiAssetCreateBody = zod.object({
-  name: zod
-    .string()
-    .max(appApiAssetCreateBodyNameMax)
-    .regex(appApiAssetCreateBodyNameRegExp)
-    .describe(
-      'The name of the asset. This must be unique within its scope. For example, only one asset can be called \"asset-1\" within a given `UNIT`. Asset names must be valid RFC 1123 Label Names',
-    ),
   content_file: zod.instanceof(File).optional(),
   content_string: zod
     .string()
     .optional()
     .describe(
       "The textual content of the asset. You must provide a value here or in \*\*content_file\*\* but not both",
+    ),
+  description: zod.string().optional().describe("An optional description for the Asset"),
+  name: zod
+    .string()
+    .max(appApiAssetCreateBodyNameMax)
+    .regex(appApiAssetCreateBodyNameRegExp)
+    .describe(
+      'The name of the asset. This must be unique within its scope. For example, only one asset can be called \"asset-1\" within a given `UNIT`. Asset names must be valid RFC 1123 Label Names',
     ),
   scope: zod
     .enum(["USER", "PRODUCT", "UNIT", "ORGANISATION", "GLOBAL"])
@@ -128,12 +129,27 @@ export const AppApiAssetCreateBody = zod.object({
     .describe(
       "Is this a secret asset? Secret assets are not revealed in a subsequent \*\*GET\*\* but are revealed to merchants they are connected to.",
     ),
-  description: zod.string().optional().describe("An optional description for the Asset"),
 });
 
 export const AppApiAssetCreateResponse = zod.object({
   id: zod.string().describe("The Asset ID\n"),
 });
+
+/**
+ * Deletes a known Asset. Assets that are attached to **Merchants** cannot be deleted
+ *
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * @summary Deletes an Asset
+ */
+export const appApiAssetDeletePathAssetIdRegExp = new RegExp(
+  "^asset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiAssetDeleteParams = zod.object({
+  asset_id: zod.string().regex(appApiAssetDeletePathAssetIdRegExp).describe("An Asset Identity"),
+});
+
+export const AppApiAssetDeleteResponse = zod.void();
 
 /**
  * Gets a known Asset
@@ -148,26 +164,26 @@ export const AppApiAssetGetByIdParams = zod.object({
 });
 
 export const AppApiAssetGetByIdResponse = zod.object({
+  content: zod.string(),
+  content_modified: zod.iso.datetime({ offset: true }).optional(),
+  created: zod.iso.datetime({ offset: true }),
   creator: zod.string(),
+  description: zod.string().optional(),
+  disabled: zod.boolean(),
   id: zod.string(),
+  merchants: zod.array(
+    zod.object({
+      api_hostname: zod.string().describe("The hostname used by the Service"),
+      created: zod.iso.datetime({ offset: true }),
+      id: zod.number().describe("The unique ID of the Service"),
+      kind: zod.enum(["DATA_MANAGER"]).describe("The kind of Service"),
+      name: zod.string().describe("The name assigned to the Service"),
+    }),
+  ),
   name: zod.string(),
   scope: zod.enum(["USER", "PRODUCT", "UNIT", "ORGANISATION", "GLOBAL"]),
   scope_id: zod.string(),
   secret: zod.boolean(),
-  disabled: zod.boolean(),
-  content: zod.string(),
-  created: zod.iso.datetime({ offset: true }),
-  content_modified: zod.iso.datetime({ offset: true }).optional(),
-  description: zod.string().optional(),
-  merchants: zod.array(
-    zod.object({
-      id: zod.number().describe("The unique ID of the Service"),
-      created: zod.iso.datetime({ offset: true }),
-      kind: zod.enum(["DATA_MANAGER"]).describe("The kind of Service"),
-      name: zod.string().describe("The name assigned to the Service"),
-      api_hostname: zod.string().describe("The hostname used by the Service"),
-    }),
-  ),
 });
 
 /**
@@ -196,54 +212,6 @@ export const AppApiAssetPatchBody = zod.object({
 });
 
 export const AppApiAssetPatchResponse = zod.unknown();
-
-/**
- * Deletes a known Asset. Assets that are attached to **Merchants** cannot be deleted
- *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
- * @summary Deletes an Asset
- */
-export const appApiAssetDeletePathAssetIdRegExp = new RegExp(
-  "^asset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiAssetDeleteParams = zod.object({
-  asset_id: zod.string().regex(appApiAssetDeletePathAssetIdRegExp).describe("An Asset Identity"),
-});
-
-export const AppApiAssetDeleteResponse = zod.void();
-
-/**
- * Disables a known Asset
- *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
- * @summary Disables an Asset
- */
-export const appApiAssetDisablePathAssetIdRegExp = new RegExp(
-  "^asset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiAssetDisableParams = zod.object({
-  asset_id: zod.string().regex(appApiAssetDisablePathAssetIdRegExp).describe("An Asset Identity"),
-});
-
-export const AppApiAssetDisableResponse = zod.void();
-
-/**
- * Enables a known Asset
- *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
- * @summary Enables an Asset
- */
-export const appApiAssetEnablePathAssetIdRegExp = new RegExp(
-  "^asset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiAssetEnableParams = zod.object({
-  asset_id: zod.string().regex(appApiAssetEnablePathAssetIdRegExp).describe("An Asset Identity"),
-});
-
-export const AppApiAssetEnableResponse = zod.void();
 
 /**
  * Attaches an Asset to a **Merchant**. This allows the **Merchant** to query the Asset. **Merchants** cannot obtain Assets that are not attached to them.
@@ -284,3 +252,35 @@ export const AppApiAssetDetachQueryParams = zod.object({
 });
 
 export const AppApiAssetDetachResponse = zod.void();
+
+/**
+ * Disables a known Asset
+ *
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * @summary Disables an Asset
+ */
+export const appApiAssetDisablePathAssetIdRegExp = new RegExp(
+  "^asset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiAssetDisableParams = zod.object({
+  asset_id: zod.string().regex(appApiAssetDisablePathAssetIdRegExp).describe("An Asset Identity"),
+});
+
+export const AppApiAssetDisableResponse = zod.void();
+
+/**
+ * Enables a known Asset
+ *
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * @summary Enables an Asset
+ */
+export const appApiAssetEnablePathAssetIdRegExp = new RegExp(
+  "^asset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiAssetEnableParams = zod.object({
+  asset_id: zod.string().regex(appApiAssetEnablePathAssetIdRegExp).describe("An Asset Identity"),
+});
+
+export const AppApiAssetEnableResponse = zod.void();

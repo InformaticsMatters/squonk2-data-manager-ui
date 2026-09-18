@@ -12,14 +12,14 @@ import type { ProcessingChargeItem } from "./processingChargeItem";
 import type { ProcessingChargesMerchantKind } from "./processingChargesMerchantKind";
 
 export interface ProcessingCharges {
-  merchant_name: string;
-  merchant_kind: ProcessingChargesMerchantKind;
-  merchant_api_hostname: string;
+  charge: ProcessingChargeItem;
   /** The date when the process stopped */
   closed?: string;
   /** True if no further change to the charges can occur. Typically True after the charge has been closed for a pre-configured period of time. */
   final: boolean;
+  merchant_api_hostname: string;
+  merchant_kind: ProcessingChargesMerchantKind;
+  merchant_name: string;
   /** True if charges were received after the charge record was finalised */
   post_final_charges?: boolean;
-  charge: ProcessingChargeItem;
 }

@@ -8,10 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { TaskSummary } from "./taskSummary";
+import type { TasksGetResponseTasksItem } from "./tasksGetResponseTasksItem";
 
 export interface TasksGetResponse {
   count: number;
   /** A list of Tasks */
-  tasks: TaskSummary[];
+  tasks: TasksGetResponseTasksItem[];
 }

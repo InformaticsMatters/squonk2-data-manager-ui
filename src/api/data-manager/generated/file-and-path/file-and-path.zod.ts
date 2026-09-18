@@ -11,38 +11,297 @@
 import * as zod from "zod";
 
 /**
- * Creates a new Path within a Project. Every directory in the Path will be created. The path will belong to the User and Project.
+ * Removes an unmanaged file from a Project. You cannot use this endpoint to delete managed project files.
  *
- * Only Project editors can create Paths.
- * @summary Create a new Project Path
+ * You must be an `editor` of the Project to delete a file from a Project.
+ * @summary Delete an unmanaged Project File
  */
-export const appApiPathCreateQueryProjectIdRegExp = new RegExp(
-  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-export const appApiPathCreateQueryPathDefault = `/`;
-export const appApiPathCreateQueryPathMax = 260;
+export const appApiFileDeleteUnmanagedQueryFileMax = 260;
 
-export const appApiPathCreateQueryPathRegExp = new RegExp(
+export const appApiFileDeleteUnmanagedQueryPathDefault = `/`;
+export const appApiFileDeleteUnmanagedQueryPathMax = 260;
+
+export const appApiFileDeleteUnmanagedQueryPathRegExp = new RegExp(
   "^(/(\\.([^/.][^/]*)?|\\.\\.[^/]+|[^/.][^/]*)?)+$",
 );
+export const appApiFileDeleteUnmanagedQueryProjectIdRegExp = new RegExp(
+  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
 
-export const AppApiPathCreateQueryParams = zod.object({
+export const AppApiFileDeleteUnmanagedQueryParams = zod.object({
+  file: zod
+    .string()
+    .min(1)
+    .max(appApiFileDeleteUnmanagedQueryFileMax)
+    .describe("A project file.\n"),
+  path: zod
+    .string()
+    .min(1)
+    .max(appApiFileDeleteUnmanagedQueryPathMax)
+    .regex(appApiFileDeleteUnmanagedQueryPathRegExp)
+    .default(appApiFileDeleteUnmanagedQueryPathDefault)
+    .describe(
+      "A project path. If provided it must begin `\/` and refers to a path where `\/` represents the project's root directory\n",
+    ),
   project_id: zod
     .string()
-    .regex(appApiPathCreateQueryProjectIdRegExp)
+    .regex(appApiFileDeleteUnmanagedQueryProjectIdRegExp)
+    .describe("The Project identity"),
+});
+
+export const AppApiFileDeleteUnmanagedResponse = zod.void();
+
+/**
+ * Given a Project and Path the files available to you on that path will be returned along with any additional paths (sub-directories).
+ * @summary Gets the Files on a Project Path
+ */
+export const appApiFileGetQueryProjectIdRegExp = new RegExp(
+  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+export const appApiFileGetQueryPathDefault = `/`;
+export const appApiFileGetQueryPathMax = 260;
+
+export const appApiFileGetQueryPathRegExp = new RegExp(
+  "^(/(\\.([^/.][^/]*)?|\\.\\.[^/]+|[^/.][^/]*)?)+$",
+);
+export const appApiFileGetQueryIncludeHiddenDefault = false;
+
+export const AppApiFileGetQueryParams = zod.object({
+  project_id: zod
+    .string()
+    .regex(appApiFileGetQueryProjectIdRegExp)
     .describe("The Project identity"),
   path: zod
     .string()
     .min(1)
-    .max(appApiPathCreateQueryPathMax)
-    .regex(appApiPathCreateQueryPathRegExp)
-    .default(appApiPathCreateQueryPathDefault)
+    .max(appApiFileGetQueryPathMax)
+    .regex(appApiFileGetQueryPathRegExp)
+    .default(appApiFileGetQueryPathDefault)
     .describe(
       "A project path. If provided it must begin `\/` and refers to a path where `\/` represents the project's root directory\n",
     ),
+  include_hidden: zod
+    .boolean()
+    .default(appApiFileGetQueryIncludeHiddenDefault)
+    .describe("Whether to include hidden files and directories"),
 });
 
-export const AppApiPathCreateResponse = zod.void();
+export const AppApiFileGetResponse = zod.object({
+  count: zod.number().describe("The number of files in the Project path\n"),
+  files: zod
+    .array(
+      zod.object({
+        authorisation_code: zod
+          .number()
+          .optional()
+          .describe("The code obtained from the Account Server\n"),
+        dataset_id: zod
+          .string()
+          .optional()
+          .describe("The file's Dataset ID (if the file belongs to a Dataset)\n"),
+        dataset_version: zod
+          .number()
+          .optional()
+          .describe("The file's Dataset version (if the file belongs to a Dataset)\n"),
+        file_id: zod
+          .string()
+          .optional()
+          .describe("The ID of the file (if the file belongs to a Dataset)\n"),
+        file_name: zod.string().describe("The file name\n"),
+        immutable: zod.boolean().optional().describe("Whether the file is immutable (read-only)\n"),
+        mime_type: zod.string().optional().describe("The file's MIME type\n"),
+        owner: zod.string().describe("The file's owner\n"),
+        stat: zod.object({
+          modified: zod.iso
+            .datetime({ offset: true })
+            .describe("The date and time (UTC) of the last modification\n"),
+          size: zod.number().describe("The size of the file in bytes\n"),
+        }),
+      }),
+    )
+    .describe(
+      "The dataset identity (not its name). A unique reference assigned automatically when uploaded\n",
+    ),
+  path: zod.string().describe("The project path\n"),
+  paths: zod.array(zod.string()).describe("Sub-directories in the current path\n"),
+  project_id: zod.string().describe("The project\n"),
+});
+
+/**
+ * Given a Project and a Dataset the Dataset will be attached (added) to the project as a File using the format provided. When attached the Dataset is referred to as a Project **File**. As format conversion may take some time the file may not be immediately available. You should use the `task_id` you're presented with on the `/task` endpoint to determine when the file is available to the project.
+ *
+ * Only Datasets attached to projects are available through the Project API. A Dataset that you upload is only available to others (who are not already `editors` of the data) when the Dataset is attached to a project.
+ *
+ * An `editor` of a **dataset** is not automatically and `editor` of the **project** it's attached to.
+ *
+ * You must be an `editor` of the Project to attach a Dataset to a project. Being an `editor` of the Dataset you are attaching does not give you the ability to detach it from the Project.
+ *
+ * You cannot add a Dataset to a Project until its upload is complete.
+ * @summary Attach a Dataset, as a File, to a Project
+ */
+export const appApiFilePostBodyCompressDefault = true;
+export const appApiFilePostBodyDatasetIdRegExp = new RegExp(
+  "^dataset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const appApiFilePostBodyImmutableDefault = true;
+export const appApiFilePostBodyPathDefault = `/`;
+export const appApiFilePostBodyPathMax = 260;
+
+export const appApiFilePostBodyPathRegExp = new RegExp("^/.+$|^/$");
+export const appApiFilePostBodyProjectIdRegExp = new RegExp(
+  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiFilePostBody = zod.object({
+  as_type: zod
+    .string()
+    .describe(
+      "The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset\n",
+    ),
+  compress: zod
+    .boolean()
+    .default(appApiFilePostBodyCompressDefault)
+    .describe(
+      "Whether to compress the Dataset File as it's attached. Compression is achieved using gzip, resulting in a File ending `.gz`. By default the file will be compressed\n",
+    ),
+  dataset_id: zod
+    .string()
+    .regex(appApiFilePostBodyDatasetIdRegExp)
+    .describe("The Dataset UUID for the File that you intend to attach\n"),
+  dataset_version: zod.number().min(1).describe("The Dataset version to attach\n"),
+  immutable: zod
+    .boolean()
+    .default(appApiFilePostBodyImmutableDefault)
+    .describe(
+      "Whether the Dataset File can be modified while in the Project. By default the File cannot be modified\n",
+    ),
+  path: zod
+    .string()
+    .max(appApiFilePostBodyPathMax)
+    .regex(appApiFilePostBodyPathRegExp)
+    .default(appApiFilePostBodyPathDefault)
+    .describe(
+      "A path within the Project to add the File, default is the project root ('\/'), the mount-point within the application container. Paths must begin '\/'\n",
+    ),
+  project_id: zod
+    .string()
+    .regex(appApiFilePostBodyProjectIdRegExp)
+    .describe("The Project UUID you're attaching to\n"),
+});
+
+export const AppApiFilePostResponse = zod.object({
+  file_id: zod
+    .string()
+    .describe(
+      "The Project File identity, assigned automatically when a Dataset is added to a Project\n",
+    ),
+  file_name: zod.string().describe("The name of the File that will appear in the Project\n"),
+  file_path: zod
+    .string()
+    .describe(
+      "The path to the file in the Project, relative to the volume root (mount point). Files in the root of the project will have a path value of '\/'\n",
+    ),
+  task_id: zod
+    .string()
+    .describe(
+      "The File task identity. The task assigned to convert and attach the Dataset File to the Project\n",
+    ),
+});
+
+/**
+ * Move an **Unmanaged** file, optionally renaming it, to a new path.
+ *
+ * You must be an `editor` of the project
+ * @summary Move an unmanaged file in a Project
+ */
+export const appApiFileMoveProjectFileQueryFileMax = 260;
+
+export const appApiFileMoveProjectFileQueryDstFileMax = 260;
+
+export const appApiFileMoveProjectFileQuerySrcPathDefault = `/`;
+export const appApiFileMoveProjectFileQuerySrcPathMax = 260;
+
+export const appApiFileMoveProjectFileQuerySrcPathRegExp = new RegExp("^/.+$|^/$");
+export const appApiFileMoveProjectFileQueryDstPathDefault = `/`;
+export const appApiFileMoveProjectFileQueryDstPathMax = 260;
+
+export const appApiFileMoveProjectFileQueryDstPathRegExp = new RegExp("^/.+$|^/$");
+export const appApiFileMoveProjectFileQueryProjectIdRegExp = new RegExp(
+  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiFileMoveProjectFileQueryParams = zod.object({
+  file: zod
+    .string()
+    .min(1)
+    .max(appApiFileMoveProjectFileQueryFileMax)
+    .describe("A project file.\n"),
+  dst_file: zod
+    .string()
+    .min(1)
+    .max(appApiFileMoveProjectFileQueryDstFileMax)
+    .optional()
+    .describe("A project file.\n"),
+  src_path: zod
+    .string()
+    .min(1)
+    .max(appApiFileMoveProjectFileQuerySrcPathMax)
+    .regex(appApiFileMoveProjectFileQuerySrcPathRegExp)
+    .default(appApiFileMoveProjectFileQuerySrcPathDefault)
+    .describe(
+      "A project path. If provided it must begin `\/` and refers to a path where `\/` represents the project's root directory\n",
+    ),
+  dst_path: zod
+    .string()
+    .min(1)
+    .max(appApiFileMoveProjectFileQueryDstPathMax)
+    .regex(appApiFileMoveProjectFileQueryDstPathRegExp)
+    .default(appApiFileMoveProjectFileQueryDstPathDefault)
+    .describe(
+      "A project path. If provided it must begin `\/` and refers to a path where `\/` represents the project's root directory\n",
+    ),
+  project_id: zod
+    .string()
+    .regex(appApiFileMoveProjectFileQueryProjectIdRegExp)
+    .describe("The Project identity"),
+});
+
+export const AppApiFileMoveProjectFileResponse = zod.unknown();
+
+/**
+ * Given a `file_id` the file will be removed from the Project it's attached to.
+ *
+ * You must be an `editor` of the project to delete a file from a Project. Being an `editor` of the original Dataset does not give you the ability to detach it from the Project.
+ *
+ * You cannot delete a Project File until the attach is complete.
+ * @summary Delete/detach a File (from a Project)
+ */
+export const appApiFileDeletePathFileIdRegExp = new RegExp(
+  "^file-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiFileDeleteParams = zod.object({
+  file_id: zod.string().regex(appApiFileDeletePathFileIdRegExp).describe("The file identity"),
+});
+
+export const AppApiFileDeleteResponse = zod.void();
+
+/**
+ * Given a `file_id` the file will be returned if available.
+ *
+ * You cannot get a Project File until the attach is complete.
+ * @summary Download a File (from a project)
+ */
+export const appApiFileGetFilePathFileIdRegExp = new RegExp(
+  "^file-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiFileGetFileParams = zod.object({
+  file_id: zod.string().regex(appApiFileGetFilePathFileIdRegExp).describe("The file identity"),
+});
+
+export const AppApiFileGetFileResponse = zod.unknown();
 
 /**
  * Deletes a Path within the Project. Be aware that the deletion of a Path will result in the contents of the Path also being deleted. If there are files in Path or sub-directories, they will all be deleted.
@@ -77,6 +336,40 @@ export const AppApiPathDeleteQueryParams = zod.object({
 });
 
 export const AppApiPathDeleteResponse = zod.void();
+
+/**
+ * Creates a new Path within a Project. Every directory in the Path will be created. The path will belong to the User and Project.
+ *
+ * Only Project editors can create Paths.
+ * @summary Create a new Project Path
+ */
+export const appApiPathCreateQueryProjectIdRegExp = new RegExp(
+  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+export const appApiPathCreateQueryPathDefault = `/`;
+export const appApiPathCreateQueryPathMax = 260;
+
+export const appApiPathCreateQueryPathRegExp = new RegExp(
+  "^(/(\\.([^/.][^/]*)?|\\.\\.[^/]+|[^/.][^/]*)?)+$",
+);
+
+export const AppApiPathCreateQueryParams = zod.object({
+  project_id: zod
+    .string()
+    .regex(appApiPathCreateQueryProjectIdRegExp)
+    .describe("The Project identity"),
+  path: zod
+    .string()
+    .min(1)
+    .max(appApiPathCreateQueryPathMax)
+    .regex(appApiPathCreateQueryPathRegExp)
+    .default(appApiPathCreateQueryPathDefault)
+    .describe(
+      "A project path. If provided it must begin `\/` and refers to a path where `\/` represents the project's root directory\n",
+    ),
+});
+
+export const AppApiPathCreateResponse = zod.void();
 
 /**
  * Moves and existing Path within a Project. The path will belong to the User and Project. Any ProjectFile instances on the path will be moved to the new path.
@@ -199,7 +492,6 @@ export const appApiProjectPutProjectFileBodyPathRegExp = new RegExp(
 );
 
 export const AppApiProjectPutProjectFileBody = zod.object({
-  file: zod.instanceof(File),
   as_filename: zod
     .string()
     .min(1)
@@ -207,6 +499,7 @@ export const AppApiProjectPutProjectFileBody = zod.object({
     .regex(appApiProjectPutProjectFileBodyAsFilenameRegExp)
     .optional()
     .describe("An alternative filename to use for the uploaded File\n"),
+  file: zod.instanceof(File),
   path: zod
     .string()
     .min(1)
@@ -268,296 +561,3 @@ export const AppApiProjectGetProjectFileWithTokenQueryParams = zod.object({
 });
 
 export const AppApiProjectGetProjectFileWithTokenResponse = zod.unknown();
-
-/**
- * Given a Project and Path the files available to you on that path will be returned along with any additional paths (sub-directories).
- * @summary Gets the Files on a Project Path
- */
-export const appApiFileGetQueryProjectIdRegExp = new RegExp(
-  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-export const appApiFileGetQueryPathDefault = `/`;
-export const appApiFileGetQueryPathMax = 260;
-
-export const appApiFileGetQueryPathRegExp = new RegExp(
-  "^(/(\\.([^/.][^/]*)?|\\.\\.[^/]+|[^/.][^/]*)?)+$",
-);
-export const appApiFileGetQueryIncludeHiddenDefault = false;
-
-export const AppApiFileGetQueryParams = zod.object({
-  project_id: zod
-    .string()
-    .regex(appApiFileGetQueryProjectIdRegExp)
-    .describe("The Project identity"),
-  path: zod
-    .string()
-    .min(1)
-    .max(appApiFileGetQueryPathMax)
-    .regex(appApiFileGetQueryPathRegExp)
-    .default(appApiFileGetQueryPathDefault)
-    .describe(
-      "A project path. If provided it must begin `\/` and refers to a path where `\/` represents the project's root directory\n",
-    ),
-  include_hidden: zod
-    .boolean()
-    .default(appApiFileGetQueryIncludeHiddenDefault)
-    .describe("Whether to include hidden files and directories"),
-});
-
-export const AppApiFileGetResponse = zod.object({
-  count: zod.number().describe("The number of files in the Project path\n"),
-  project_id: zod.string().describe("The project\n"),
-  path: zod.string().describe("The project path\n"),
-  files: zod
-    .array(
-      zod.object({
-        dataset_id: zod
-          .string()
-          .optional()
-          .describe("The file's Dataset ID (if the file belongs to a Dataset)\n"),
-        dataset_version: zod
-          .number()
-          .optional()
-          .describe("The file's Dataset version (if the file belongs to a Dataset)\n"),
-        file_name: zod.string().describe("The file name\n"),
-        file_id: zod
-          .string()
-          .optional()
-          .describe("The ID of the file (if the file belongs to a Dataset)\n"),
-        immutable: zod.boolean().optional().describe("Whether the file is immutable (read-only)\n"),
-        mime_type: zod.string().optional().describe("The file's MIME type\n"),
-        owner: zod.string().describe("The file's owner\n"),
-        authorisation_code: zod
-          .number()
-          .optional()
-          .describe("The code obtained from the Account Server\n"),
-        stat: zod.object({
-          size: zod.number().describe("The size of the file in bytes\n"),
-          modified: zod.iso
-            .datetime({ offset: true })
-            .describe("The date and time (UTC) of the last modification\n"),
-        }),
-      }),
-    )
-    .describe(
-      "The dataset identity (not its name). A unique reference assigned automatically when uploaded\n",
-    ),
-  paths: zod.array(zod.string()).describe("Sub-directories in the current path\n"),
-});
-
-/**
- * Given a Project and a Dataset the Dataset will be attached (added) to the project as a File using the format provided. When attached the Dataset is referred to as a Project **File**. As format conversion may take some time the file may not be immediately available. You should use the `task_id` you're presented with on the `/task` endpoint to determine when the file is available to the project.
- *
- * Only Datasets attached to projects are available through the Project API. A Dataset that you upload is only available to others (who are not already `editors` of the data) when the Dataset is attached to a project.
- *
- * An `editor` of a **dataset** is not automatically and `editor` of the **project** it's attached to.
- *
- * You must be an `editor` of the Project to attach a Dataset to a project. Being an `editor` of the Dataset you are attaching does not give you the ability to detach it from the Project.
- *
- * You cannot add a Dataset to a Project until its upload is complete.
- * @summary Attach a Dataset, as a File, to a Project
- */
-export const appApiFilePostBodyDatasetIdRegExp = new RegExp(
-  "^dataset-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const appApiFilePostBodyProjectIdRegExp = new RegExp(
-  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-export const appApiFilePostBodyPathDefault = `/`;
-export const appApiFilePostBodyPathMax = 260;
-
-export const appApiFilePostBodyPathRegExp = new RegExp("^/.+$|^/$");
-export const appApiFilePostBodyCompressDefault = true;
-export const appApiFilePostBodyImmutableDefault = true;
-
-export const AppApiFilePostBody = zod.object({
-  dataset_id: zod
-    .string()
-    .regex(appApiFilePostBodyDatasetIdRegExp)
-    .describe("The Dataset UUID for the File that you intend to attach\n"),
-  dataset_version: zod.number().min(1).describe("The Dataset version to attach\n"),
-  project_id: zod
-    .string()
-    .regex(appApiFilePostBodyProjectIdRegExp)
-    .describe("The Project UUID you're attaching to\n"),
-  as_type: zod
-    .string()
-    .describe(
-      "The desired Dataset file type (a MIME type). Whether or not the chosen fileType is supported will depend on the Dataset\n",
-    ),
-  path: zod
-    .string()
-    .max(appApiFilePostBodyPathMax)
-    .regex(appApiFilePostBodyPathRegExp)
-    .default(appApiFilePostBodyPathDefault)
-    .describe(
-      "A path within the Project to add the File, default is the project root ('\/'), the mount-point within the application container. Paths must begin '\/'\n",
-    ),
-  compress: zod
-    .boolean()
-    .default(appApiFilePostBodyCompressDefault)
-    .describe(
-      "Whether to compress the Dataset File as it's attached. Compression is achieved using gzip, resulting in a File ending `.gz`. By default the file will be compressed\n",
-    ),
-  immutable: zod
-    .boolean()
-    .default(appApiFilePostBodyImmutableDefault)
-    .describe(
-      "Whether the Dataset File can be modified while in the Project. By default the File cannot be modified\n",
-    ),
-});
-
-export const AppApiFilePostResponse = zod.object({
-  file_id: zod
-    .string()
-    .describe(
-      "The Project File identity, assigned automatically when a Dataset is added to a Project\n",
-    ),
-  file_name: zod.string().describe("The name of the File that will appear in the Project\n"),
-  file_path: zod
-    .string()
-    .describe(
-      "The path to the file in the Project, relative to the volume root (mount point). Files in the root of the project will have a path value of '\/'\n",
-    ),
-  task_id: zod
-    .string()
-    .describe(
-      "The File task identity. The task assigned to convert and attach the Dataset File to the Project\n",
-    ),
-});
-
-/**
- * Removes an unmanaged file from a Project. You cannot use this endpoint to delete managed project files.
- *
- * You must be an `editor` of the Project to delete a file from a Project.
- * @summary Delete an unmanaged Project File
- */
-export const appApiFileDeleteUnmanagedQueryFileMax = 260;
-
-export const appApiFileDeleteUnmanagedQueryPathDefault = `/`;
-export const appApiFileDeleteUnmanagedQueryPathMax = 260;
-
-export const appApiFileDeleteUnmanagedQueryPathRegExp = new RegExp(
-  "^(/(\\.([^/.][^/]*)?|\\.\\.[^/]+|[^/.][^/]*)?)+$",
-);
-export const appApiFileDeleteUnmanagedQueryProjectIdRegExp = new RegExp(
-  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiFileDeleteUnmanagedQueryParams = zod.object({
-  file: zod
-    .string()
-    .min(1)
-    .max(appApiFileDeleteUnmanagedQueryFileMax)
-    .describe("A project file.\n"),
-  path: zod
-    .string()
-    .min(1)
-    .max(appApiFileDeleteUnmanagedQueryPathMax)
-    .regex(appApiFileDeleteUnmanagedQueryPathRegExp)
-    .default(appApiFileDeleteUnmanagedQueryPathDefault)
-    .describe(
-      "A project path. If provided it must begin `\/` and refers to a path where `\/` represents the project's root directory\n",
-    ),
-  project_id: zod
-    .string()
-    .regex(appApiFileDeleteUnmanagedQueryProjectIdRegExp)
-    .describe("The Project identity"),
-});
-
-export const AppApiFileDeleteUnmanagedResponse = zod.void();
-
-/**
- * Move an **Unmanaged** file, optionally renaming it, to a new path.
- *
- * You must be an `editor` of the project
- * @summary Move an unmanaged file in a Project
- */
-export const appApiFileMoveProjectFileQueryFileMax = 260;
-
-export const appApiFileMoveProjectFileQueryDstFileMax = 260;
-
-export const appApiFileMoveProjectFileQuerySrcPathDefault = `/`;
-export const appApiFileMoveProjectFileQuerySrcPathMax = 260;
-
-export const appApiFileMoveProjectFileQuerySrcPathRegExp = new RegExp("^/.+$|^/$");
-export const appApiFileMoveProjectFileQueryDstPathDefault = `/`;
-export const appApiFileMoveProjectFileQueryDstPathMax = 260;
-
-export const appApiFileMoveProjectFileQueryDstPathRegExp = new RegExp("^/.+$|^/$");
-export const appApiFileMoveProjectFileQueryProjectIdRegExp = new RegExp(
-  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiFileMoveProjectFileQueryParams = zod.object({
-  file: zod
-    .string()
-    .min(1)
-    .max(appApiFileMoveProjectFileQueryFileMax)
-    .describe("A project file.\n"),
-  dst_file: zod
-    .string()
-    .min(1)
-    .max(appApiFileMoveProjectFileQueryDstFileMax)
-    .optional()
-    .describe("A project file.\n"),
-  src_path: zod
-    .string()
-    .min(1)
-    .max(appApiFileMoveProjectFileQuerySrcPathMax)
-    .regex(appApiFileMoveProjectFileQuerySrcPathRegExp)
-    .default(appApiFileMoveProjectFileQuerySrcPathDefault)
-    .describe(
-      "A project path. If provided it must begin `\/` and refers to a path where `\/` represents the project's root directory\n",
-    ),
-  dst_path: zod
-    .string()
-    .min(1)
-    .max(appApiFileMoveProjectFileQueryDstPathMax)
-    .regex(appApiFileMoveProjectFileQueryDstPathRegExp)
-    .default(appApiFileMoveProjectFileQueryDstPathDefault)
-    .describe(
-      "A project path. If provided it must begin `\/` and refers to a path where `\/` represents the project's root directory\n",
-    ),
-  project_id: zod
-    .string()
-    .regex(appApiFileMoveProjectFileQueryProjectIdRegExp)
-    .describe("The Project identity"),
-});
-
-export const AppApiFileMoveProjectFileResponse = zod.unknown();
-
-/**
- * Given a `file_id` the file will be removed from the Project it's attached to.
- *
- * You must be an `editor` of the project to delete a file from a Project. Being an `editor` of the original Dataset does not give you the ability to detach it from the Project.
- *
- * You cannot delete a Project File until the attach is complete.
- * @summary Delete/detach a File (from a Project)
- */
-export const appApiFileDeletePathFileIdRegExp = new RegExp(
-  "^file-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiFileDeleteParams = zod.object({
-  file_id: zod.string().regex(appApiFileDeletePathFileIdRegExp).describe("The file identity"),
-});
-
-export const AppApiFileDeleteResponse = zod.void();
-
-/**
- * Given a `file_id` the file will be returned if available.
- *
- * You cannot get a Project File until the attach is complete.
- * @summary Download a File (from a project)
- */
-export const appApiFileGetFilePathFileIdRegExp = new RegExp(
-  "^file-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiFileGetFileParams = zod.object({
-  file_id: zod.string().regex(appApiFileGetFilePathFileIdRegExp).describe("The file identity"),
-});
-
-export const AppApiFileGetFileResponse = zod.unknown();

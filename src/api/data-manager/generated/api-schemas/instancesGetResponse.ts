@@ -8,9 +8,9 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { InstanceSummary } from "./instanceSummary";
+import type { InstancesGetResponseInstancesItem } from "./instancesGetResponseInstancesItem";
 
 export interface InstancesGetResponse {
   count: number;
-  instances: InstanceSummary[];
+  instances: InstancesGetResponseInstancesItem[];
 }

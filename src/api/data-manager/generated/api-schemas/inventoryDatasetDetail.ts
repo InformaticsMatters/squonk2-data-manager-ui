@@ -10,8 +10,8 @@
  */
 
 export interface InventoryDatasetDetail {
-  id: string;
-  version: number;
   filename: string;
+  id: string;
   unit_id: string;
+  version: number;
 }

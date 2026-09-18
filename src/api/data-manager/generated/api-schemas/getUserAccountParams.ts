@@ -8,11 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QDoNotImpersonateParameter } from "./qDoNotImpersonateParameter";
 
 export type GetUserAccountParams = {
   /**
    * Set, if you're an admin, to call the endpoint without impersonation
    */
-  do_not_impersonate?: QDoNotImpersonateParameter;
+  do_not_impersonate?: boolean;
 };

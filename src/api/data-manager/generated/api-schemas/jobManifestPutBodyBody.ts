@@ -10,8 +10,6 @@
  */
 
 export type JobManifestPutBodyBody = {
-  /** The URL of the Job Manifest */
-  url: string;
   /**
    * Optional URL header values (a JSON string)
    * @pattern ^|{.*}$
@@ -22,4 +20,6 @@ export type JobManifestPutBodyBody = {
    * @pattern ^|{.*}$
    */
   params?: string;
+  /** The URL of the Job Manifest */
+  url: string;
 };

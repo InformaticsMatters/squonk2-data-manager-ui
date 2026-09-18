@@ -10,9 +10,9 @@
  */
 
 export interface JobExchangeRateSummary {
-  id: number;
-  rate?: string;
   collection: string;
+  id: number;
   job: string;
+  rate?: string;
   version: string;
 }

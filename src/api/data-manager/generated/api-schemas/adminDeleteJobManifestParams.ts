@@ -8,11 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QPurgeParameter } from "./qPurgeParameter";
 
 export type AdminDeleteJobManifestParams = {
   /**
    * Purge unreferenced Jobs
    */
-  purge?: QPurgeParameter;
+  purge?: boolean;
 };

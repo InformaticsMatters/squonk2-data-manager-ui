@@ -10,7 +10,6 @@
  */
 
 export type ProjectFilePutBodyBody = {
-  file: Blob;
   /**
    * An alternative filename to use for the uploaded File
    * @minLength 1
@@ -18,6 +17,7 @@ export type ProjectFilePutBodyBody = {
    * @pattern ^([^/.][^/]*|\.[^/.][^/]*|\.\.[^/]+)$
    */
   as_filename?: string;
+  file: Blob;
   /**
    * The Project path of the file.
    * @minLength 1

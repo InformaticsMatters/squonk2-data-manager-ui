@@ -28,19 +28,44 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  AddFileToProject403,
+  AddFileToProject404,
+  AddFileToProjectBody,
+  AttachFile201,
+  AttachFile403,
+  AttachFile404,
+  AttachFile422,
+  AttachFileBody,
+  CreatePath403,
+  CreatePath404,
   CreatePathParams,
+  DeleteFile403,
+  DeleteFile404,
+  DeletePath403,
+  DeletePath404,
   DeletePathParams,
+  DeleteUnmanagedFile403,
+  DeleteUnmanagedFile404,
+  DeleteUnmanagedFile405,
   DeleteUnmanagedFileParams,
-  DmError,
-  FilePostBodyBody,
-  FilePostResponse,
-  FilesGetResponse,
+  DownloadFile403,
+  DownloadFile404,
+  GetFiles200,
+  GetFiles403,
+  GetFiles404,
   GetFilesParams,
+  GetProjectFile403,
+  GetProjectFile404,
   GetProjectFileParams,
+  GetProjectFileWithToken403,
+  GetProjectFileWithToken404,
   GetProjectFileWithTokenParams,
+  MoveFileInProject403,
+  MoveFileInProject404,
   MoveFileInProjectParams,
+  MovePath403,
+  MovePath404,
   MovePathParams,
-  ProjectFilePutBodyBody,
 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
@@ -64,37 +89,39 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
- * Creates a new Path within a Project. Every directory in the Path will be created. The path will belong to the User and Project.
+ * Removes an unmanaged file from a Project. You cannot use this endpoint to delete managed project files.
  *
- * Only Project editors can create Paths.
- * @summary Create a new Project Path
+ * You must be an `editor` of the Project to delete a file from a Project.
+ * @summary Delete an unmanaged Project File
  */
-export const createPath = (
-  params: CreatePathParams,
+export const deleteUnmanagedFile = (
+  params: DeleteUnmanagedFileParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>({ url: `/path`, method: "PUT", params, signal }, options);
+  return customInstance<void>({ url: `/file`, method: "DELETE", params, signal }, options);
 };
 
-export const getCreatePathMutationOptions = <
-  TError = ErrorType<void | DmError>,
+export const getDeleteUnmanagedFileMutationOptions = <
+  TError = ErrorType<
+    void | DeleteUnmanagedFile403 | DeleteUnmanagedFile404 | DeleteUnmanagedFile405
+  >,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createPath>>,
+    Awaited<ReturnType<typeof deleteUnmanagedFile>>,
     TError,
-    { params: CreatePathParams },
+    { params: DeleteUnmanagedFileParams },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof createPath>>,
+  Awaited<ReturnType<typeof deleteUnmanagedFile>>,
   TError,
-  { params: CreatePathParams },
+  { params: DeleteUnmanagedFileParams },
   TContext
 > => {
-  const mutationKey = ["createPath"];
+  const mutationKey = ["deleteUnmanagedFile"];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
@@ -102,43 +129,769 @@ export const getCreatePathMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createPath>>,
-    { params: CreatePathParams }
+    Awaited<ReturnType<typeof deleteUnmanagedFile>>,
+    { params: DeleteUnmanagedFileParams }
   > = (props) => {
     const { params } = props ?? {};
 
-    return createPath(params, requestOptions);
+    return deleteUnmanagedFile(params, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type CreatePathMutationResult = NonNullable<Awaited<ReturnType<typeof createPath>>>;
+export type DeleteUnmanagedFileMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteUnmanagedFile>>
+>;
 
-export type CreatePathMutationError = ErrorType<void | DmError>;
+export type DeleteUnmanagedFileMutationError = ErrorType<
+  void | DeleteUnmanagedFile403 | DeleteUnmanagedFile404 | DeleteUnmanagedFile405
+>;
 
 /**
- * @summary Create a new Project Path
+ * @summary Delete an unmanaged Project File
  */
-export const useCreatePath = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useDeleteUnmanagedFile = <
+  TError = ErrorType<
+    void | DeleteUnmanagedFile403 | DeleteUnmanagedFile404 | DeleteUnmanagedFile405
+  >,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof createPath>>,
+      Awaited<ReturnType<typeof deleteUnmanagedFile>>,
       TError,
-      { params: CreatePathParams },
+      { params: DeleteUnmanagedFileParams },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof createPath>>,
+  Awaited<ReturnType<typeof deleteUnmanagedFile>>,
   TError,
-  { params: CreatePathParams },
+  { params: DeleteUnmanagedFileParams },
   TContext
 > => {
-  return useMutation(getCreatePathMutationOptions(options), queryClient);
+  return useMutation(getDeleteUnmanagedFileMutationOptions(options), queryClient);
 };
+/**
+ * Given a Project and Path the files available to you on that path will be returned along with any additional paths (sub-directories).
+ * @summary Gets the Files on a Project Path
+ */
+export const getFiles = (
+  params: GetFilesParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<GetFiles200>({ url: `/file`, method: "GET", params, signal }, options);
+};
+
+export const getGetFilesQueryKey = (params?: GetFilesParams) => {
+  return ["data-manager", "file", ...(params ? [params] : [])] as const;
+};
+
+export const getGetFilesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getFiles>>,
+  TError = ErrorType<void | GetFiles403 | GetFiles404>,
+>(
+  params: GetFilesParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetFilesQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getFiles>>> = ({ signal }) =>
+    getFiles(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getFiles>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetFilesQueryResult = NonNullable<Awaited<ReturnType<typeof getFiles>>>;
+export type GetFilesQueryError = ErrorType<void | GetFiles403 | GetFiles404>;
+
+export function useGetFiles<
+  TData = Awaited<ReturnType<typeof getFiles>>,
+  TError = ErrorType<void | GetFiles403 | GetFiles404>,
+>(
+  params: GetFilesParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFiles>>,
+          TError,
+          Awaited<ReturnType<typeof getFiles>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetFiles<
+  TData = Awaited<ReturnType<typeof getFiles>>,
+  TError = ErrorType<void | GetFiles403 | GetFiles404>,
+>(
+  params: GetFilesParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFiles>>,
+          TError,
+          Awaited<ReturnType<typeof getFiles>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetFiles<
+  TData = Awaited<ReturnType<typeof getFiles>>,
+  TError = ErrorType<void | GetFiles403 | GetFiles404>,
+>(
+  params: GetFilesParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Files on a Project Path
+ */
+
+export function useGetFiles<
+  TData = Awaited<ReturnType<typeof getFiles>>,
+  TError = ErrorType<void | GetFiles403 | GetFiles404>,
+>(
+  params: GetFilesParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetFilesQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets the Files on a Project Path
+ */
+export const invalidateGetFiles = async (
+  queryClient: QueryClient,
+  params: GetFilesParams,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetFilesQueryKey(params) }, options);
+
+  return queryClient;
+};
+
+export const getGetFilesSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getFiles>>,
+  TError = ErrorType<void | GetFiles403 | GetFiles404>,
+>(
+  params: GetFilesParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetFilesQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getFiles>>> = ({ signal }) =>
+    getFiles(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getFiles>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetFilesSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getFiles>>>;
+export type GetFilesSuspenseQueryError = ErrorType<void | GetFiles403 | GetFiles404>;
+
+export function useGetFilesSuspense<
+  TData = Awaited<ReturnType<typeof getFiles>>,
+  TError = ErrorType<void | GetFiles403 | GetFiles404>,
+>(
+  params: GetFilesParams,
+  options: {
+    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetFilesSuspense<
+  TData = Awaited<ReturnType<typeof getFiles>>,
+  TError = ErrorType<void | GetFiles403 | GetFiles404>,
+>(
+  params: GetFilesParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetFilesSuspense<
+  TData = Awaited<ReturnType<typeof getFiles>>,
+  TError = ErrorType<void | GetFiles403 | GetFiles404>,
+>(
+  params: GetFilesParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Files on a Project Path
+ */
+
+export function useGetFilesSuspense<
+  TData = Awaited<ReturnType<typeof getFiles>>,
+  TError = ErrorType<void | GetFiles403 | GetFiles404>,
+>(
+  params: GetFilesParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetFilesSuspenseQueryOptions(params, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * Given a Project and a Dataset the Dataset will be attached (added) to the project as a File using the format provided. When attached the Dataset is referred to as a Project **File**. As format conversion may take some time the file may not be immediately available. You should use the `task_id` you're presented with on the `/task` endpoint to determine when the file is available to the project.
+ *
+ * Only Datasets attached to projects are available through the Project API. A Dataset that you upload is only available to others (who are not already `editors` of the data) when the Dataset is attached to a project.
+ *
+ * An `editor` of a **dataset** is not automatically and `editor` of the **project** it's attached to.
+ *
+ * You must be an `editor` of the Project to attach a Dataset to a project. Being an `editor` of the Dataset you are attaching does not give you the ability to detach it from the Project.
+ *
+ * You cannot add a Dataset to a Project until its upload is complete.
+ * @summary Attach a Dataset, as a File, to a Project
+ */
+export const attachFile = (
+  attachFileBody: AttachFileBody,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  const formUrlEncoded = new URLSearchParams();
+  formUrlEncoded.append(`as_type`, attachFileBody.as_type);
+  if (attachFileBody.compress !== undefined) {
+    formUrlEncoded.append(`compress`, attachFileBody.compress.toString());
+  }
+  formUrlEncoded.append(`dataset_id`, attachFileBody.dataset_id);
+  formUrlEncoded.append(`dataset_version`, attachFileBody.dataset_version.toString());
+  if (attachFileBody.immutable !== undefined) {
+    formUrlEncoded.append(`immutable`, attachFileBody.immutable.toString());
+  }
+  if (attachFileBody.path !== undefined) {
+    formUrlEncoded.append(`path`, attachFileBody.path);
+  }
+  formUrlEncoded.append(`project_id`, attachFileBody.project_id);
+
+  return customInstance<AttachFile201>(
+    {
+      url: `/file`,
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: formUrlEncoded,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getAttachFileMutationOptions = <
+  TError = ErrorType<void | AttachFile403 | AttachFile404 | AttachFile422>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof attachFile>>,
+    TError,
+    { data: AttachFileBody },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof attachFile>>,
+  TError,
+  { data: AttachFileBody },
+  TContext
+> => {
+  const mutationKey = ["attachFile"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof attachFile>>,
+    { data: AttachFileBody }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return attachFile(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AttachFileMutationResult = NonNullable<Awaited<ReturnType<typeof attachFile>>>;
+export type AttachFileMutationBody = AttachFileBody;
+export type AttachFileMutationError = ErrorType<
+  void | AttachFile403 | AttachFile404 | AttachFile422
+>;
+
+/**
+ * @summary Attach a Dataset, as a File, to a Project
+ */
+export const useAttachFile = <
+  TError = ErrorType<void | AttachFile403 | AttachFile404 | AttachFile422>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof attachFile>>,
+      TError,
+      { data: AttachFileBody },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof attachFile>>,
+  TError,
+  { data: AttachFileBody },
+  TContext
+> => {
+  return useMutation(getAttachFileMutationOptions(options), queryClient);
+};
+/**
+ * Move an **Unmanaged** file, optionally renaming it, to a new path.
+ *
+ * You must be an `editor` of the project
+ * @summary Move an unmanaged file in a Project
+ */
+export const moveFileInProject = (
+  params: MoveFileInProjectParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>({ url: `/file/move`, method: "PUT", params, signal }, options);
+};
+
+export const getMoveFileInProjectMutationOptions = <
+  TError = ErrorType<void | MoveFileInProject403 | MoveFileInProject404>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof moveFileInProject>>,
+    TError,
+    { params: MoveFileInProjectParams },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof moveFileInProject>>,
+  TError,
+  { params: MoveFileInProjectParams },
+  TContext
+> => {
+  const mutationKey = ["moveFileInProject"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof moveFileInProject>>,
+    { params: MoveFileInProjectParams }
+  > = (props) => {
+    const { params } = props ?? {};
+
+    return moveFileInProject(params, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MoveFileInProjectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof moveFileInProject>>
+>;
+
+export type MoveFileInProjectMutationError = ErrorType<
+  void | MoveFileInProject403 | MoveFileInProject404
+>;
+
+/**
+ * @summary Move an unmanaged file in a Project
+ */
+export const useMoveFileInProject = <
+  TError = ErrorType<void | MoveFileInProject403 | MoveFileInProject404>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof moveFileInProject>>,
+      TError,
+      { params: MoveFileInProjectParams },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof moveFileInProject>>,
+  TError,
+  { params: MoveFileInProjectParams },
+  TContext
+> => {
+  return useMutation(getMoveFileInProjectMutationOptions(options), queryClient);
+};
+/**
+ * Given a `file_id` the file will be removed from the Project it's attached to.
+ *
+ * You must be an `editor` of the project to delete a file from a Project. Being an `editor` of the original Dataset does not give you the ability to detach it from the Project.
+ *
+ * You cannot delete a Project File until the attach is complete.
+ * @summary Delete/detach a File (from a Project)
+ */
+export const deleteFile = (
+  fileId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>({ url: `/file/${fileId}`, method: "DELETE", signal }, options);
+};
+
+export const getDeleteFileMutationOptions = <
+  TError = ErrorType<void | DeleteFile403 | DeleteFile404>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteFile>>,
+    TError,
+    { fileId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteFile>>,
+  TError,
+  { fileId: string },
+  TContext
+> => {
+  const mutationKey = ["deleteFile"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteFile>>, { fileId: string }> = (
+    props,
+  ) => {
+    const { fileId } = props ?? {};
+
+    return deleteFile(fileId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteFileMutationResult = NonNullable<Awaited<ReturnType<typeof deleteFile>>>;
+
+export type DeleteFileMutationError = ErrorType<void | DeleteFile403 | DeleteFile404>;
+
+/**
+ * @summary Delete/detach a File (from a Project)
+ */
+export const useDeleteFile = <
+  TError = ErrorType<void | DeleteFile403 | DeleteFile404>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteFile>>,
+      TError,
+      { fileId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteFile>>,
+  TError,
+  { fileId: string },
+  TContext
+> => {
+  return useMutation(getDeleteFileMutationOptions(options), queryClient);
+};
+/**
+ * Given a `file_id` the file will be returned if available.
+ *
+ * You cannot get a Project File until the attach is complete.
+ * @summary Download a File (from a project)
+ */
+export const downloadFile = (
+  fileId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>({ url: `/file/${fileId}`, method: "GET", signal }, options);
+};
+
+export const getDownloadFileQueryKey = (fileId: string) => {
+  return ["data-manager", "file", fileId] as const;
+};
+
+export const getDownloadFileQueryOptions = <
+  TData = Awaited<ReturnType<typeof downloadFile>>,
+  TError = ErrorType<void | DownloadFile403 | DownloadFile404>,
+>(
+  fileId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getDownloadFileQueryKey(fileId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof downloadFile>>> = ({ signal }) =>
+    downloadFile(fileId, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: fileId !== null && fileId !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
+
+export type DownloadFileQueryResult = NonNullable<Awaited<ReturnType<typeof downloadFile>>>;
+export type DownloadFileQueryError = ErrorType<void | DownloadFile403 | DownloadFile404>;
+
+export function useDownloadFile<
+  TData = Awaited<ReturnType<typeof downloadFile>>,
+  TError = ErrorType<void | DownloadFile403 | DownloadFile404>,
+>(
+  fileId: string,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof downloadFile>>,
+          TError,
+          Awaited<ReturnType<typeof downloadFile>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useDownloadFile<
+  TData = Awaited<ReturnType<typeof downloadFile>>,
+  TError = ErrorType<void | DownloadFile403 | DownloadFile404>,
+>(
+  fileId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof downloadFile>>,
+          TError,
+          Awaited<ReturnType<typeof downloadFile>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useDownloadFile<
+  TData = Awaited<ReturnType<typeof downloadFile>>,
+  TError = ErrorType<void | DownloadFile403 | DownloadFile404>,
+>(
+  fileId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Download a File (from a project)
+ */
+
+export function useDownloadFile<
+  TData = Awaited<ReturnType<typeof downloadFile>>,
+  TError = ErrorType<void | DownloadFile403 | DownloadFile404>,
+>(
+  fileId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getDownloadFileQueryOptions(fileId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Download a File (from a project)
+ */
+export const invalidateDownloadFile = async (
+  queryClient: QueryClient,
+  fileId: string,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getDownloadFileQueryKey(fileId) }, options);
+
+  return queryClient;
+};
+
+export const getDownloadFileSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof downloadFile>>,
+  TError = ErrorType<void | DownloadFile403 | DownloadFile404>,
+>(
+  fileId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getDownloadFileQueryKey(fileId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof downloadFile>>> = ({ signal }) =>
+    downloadFile(fileId, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof downloadFile>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type DownloadFileSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof downloadFile>>>;
+export type DownloadFileSuspenseQueryError = ErrorType<void | DownloadFile403 | DownloadFile404>;
+
+export function useDownloadFileSuspense<
+  TData = Awaited<ReturnType<typeof downloadFile>>,
+  TError = ErrorType<void | DownloadFile403 | DownloadFile404>,
+>(
+  fileId: string,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useDownloadFileSuspense<
+  TData = Awaited<ReturnType<typeof downloadFile>>,
+  TError = ErrorType<void | DownloadFile403 | DownloadFile404>,
+>(
+  fileId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useDownloadFileSuspense<
+  TData = Awaited<ReturnType<typeof downloadFile>>,
+  TError = ErrorType<void | DownloadFile403 | DownloadFile404>,
+>(
+  fileId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Download a File (from a project)
+ */
+
+export function useDownloadFileSuspense<
+  TData = Awaited<ReturnType<typeof downloadFile>>,
+  TError = ErrorType<void | DownloadFile403 | DownloadFile404>,
+>(
+  fileId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getDownloadFileSuspenseQueryOptions(fileId, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
 /**
  * Deletes a Path within the Project. Be aware that the deletion of a Path will result in the contents of the Path also being deleted. If there are files in Path or sub-directories, they will all be deleted.
  *
@@ -154,7 +907,7 @@ export const deletePath = (
 };
 
 export const getDeletePathMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DeletePath403 | DeletePath404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -191,12 +944,15 @@ export const getDeletePathMutationOptions = <
 
 export type DeletePathMutationResult = NonNullable<Awaited<ReturnType<typeof deletePath>>>;
 
-export type DeletePathMutationError = ErrorType<void | DmError>;
+export type DeletePathMutationError = ErrorType<void | DeletePath403 | DeletePath404>;
 
 /**
  * @summary Delete a Project Path
  */
-export const useDeletePath = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useDeletePath = <
+  TError = ErrorType<void | DeletePath403 | DeletePath404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deletePath>>,
@@ -216,6 +972,85 @@ export const useDeletePath = <TError = ErrorType<void | DmError>, TContext = unk
   return useMutation(getDeletePathMutationOptions(options), queryClient);
 };
 /**
+ * Creates a new Path within a Project. Every directory in the Path will be created. The path will belong to the User and Project.
+ *
+ * Only Project editors can create Paths.
+ * @summary Create a new Project Path
+ */
+export const createPath = (
+  params: CreatePathParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>({ url: `/path`, method: "PUT", params, signal }, options);
+};
+
+export const getCreatePathMutationOptions = <
+  TError = ErrorType<void | CreatePath403 | CreatePath404>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createPath>>,
+    TError,
+    { params: CreatePathParams },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createPath>>,
+  TError,
+  { params: CreatePathParams },
+  TContext
+> => {
+  const mutationKey = ["createPath"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createPath>>,
+    { params: CreatePathParams }
+  > = (props) => {
+    const { params } = props ?? {};
+
+    return createPath(params, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreatePathMutationResult = NonNullable<Awaited<ReturnType<typeof createPath>>>;
+
+export type CreatePathMutationError = ErrorType<void | CreatePath403 | CreatePath404>;
+
+/**
+ * @summary Create a new Project Path
+ */
+export const useCreatePath = <
+  TError = ErrorType<void | CreatePath403 | CreatePath404>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createPath>>,
+      TError,
+      { params: CreatePathParams },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createPath>>,
+  TError,
+  { params: CreatePathParams },
+  TContext
+> => {
+  return useMutation(getCreatePathMutationOptions(options), queryClient);
+};
+/**
  * Moves and existing Path within a Project. The path will belong to the User and Project. Any ProjectFile instances on the path will be moved to the new path.
  *
  * Only Project editors can move Paths.
@@ -230,7 +1065,7 @@ export const movePath = (
 };
 
 export const getMovePathMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | MovePath403 | MovePath404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -267,12 +1102,15 @@ export const getMovePathMutationOptions = <
 
 export type MovePathMutationResult = NonNullable<Awaited<ReturnType<typeof movePath>>>;
 
-export type MovePathMutationError = ErrorType<void | DmError>;
+export type MovePathMutationError = ErrorType<void | MovePath403 | MovePath404>;
 
 /**
  * @summary Move a Project Path
  */
-export const useMovePath = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useMovePath = <
+  TError = ErrorType<void | MovePath403 | MovePath404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof movePath>>,
@@ -317,7 +1155,7 @@ export const getGetProjectFileQueryKey = (projectId: string, params?: GetProject
 
 export const getGetProjectFileQueryOptions = <
   TData = Awaited<ReturnType<typeof getProjectFile>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjectFile403 | GetProjectFile404>,
 >(
   projectId: string,
   params: GetProjectFileParams,
@@ -344,11 +1182,11 @@ export const getGetProjectFileQueryOptions = <
 };
 
 export type GetProjectFileQueryResult = NonNullable<Awaited<ReturnType<typeof getProjectFile>>>;
-export type GetProjectFileQueryError = ErrorType<void | DmError>;
+export type GetProjectFileQueryError = ErrorType<void | GetProjectFile403 | GetProjectFile404>;
 
 export function useGetProjectFile<
   TData = Awaited<ReturnType<typeof getProjectFile>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjectFile403 | GetProjectFile404>,
 >(
   projectId: string,
   params: GetProjectFileParams,
@@ -368,7 +1206,7 @@ export function useGetProjectFile<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjectFile<
   TData = Awaited<ReturnType<typeof getProjectFile>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjectFile403 | GetProjectFile404>,
 >(
   projectId: string,
   params: GetProjectFileParams,
@@ -388,7 +1226,7 @@ export function useGetProjectFile<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjectFile<
   TData = Awaited<ReturnType<typeof getProjectFile>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjectFile403 | GetProjectFile404>,
 >(
   projectId: string,
   params: GetProjectFileParams,
@@ -404,7 +1242,7 @@ export function useGetProjectFile<
 
 export function useGetProjectFile<
   TData = Awaited<ReturnType<typeof getProjectFile>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjectFile403 | GetProjectFile404>,
 >(
   projectId: string,
   params: GetProjectFileParams,
@@ -442,7 +1280,7 @@ export const invalidateGetProjectFile = async (
 
 export const getGetProjectFileSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getProjectFile>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjectFile403 | GetProjectFile404>,
 >(
   projectId: string,
   params: GetProjectFileParams,
@@ -470,11 +1308,13 @@ export const getGetProjectFileSuspenseQueryOptions = <
 export type GetProjectFileSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getProjectFile>>
 >;
-export type GetProjectFileSuspenseQueryError = ErrorType<void | DmError>;
+export type GetProjectFileSuspenseQueryError = ErrorType<
+  void | GetProjectFile403 | GetProjectFile404
+>;
 
 export function useGetProjectFileSuspense<
   TData = Awaited<ReturnType<typeof getProjectFile>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjectFile403 | GetProjectFile404>,
 >(
   projectId: string,
   params: GetProjectFileParams,
@@ -488,7 +1328,7 @@ export function useGetProjectFileSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjectFileSuspense<
   TData = Awaited<ReturnType<typeof getProjectFile>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjectFile403 | GetProjectFile404>,
 >(
   projectId: string,
   params: GetProjectFileParams,
@@ -502,7 +1342,7 @@ export function useGetProjectFileSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjectFileSuspense<
   TData = Awaited<ReturnType<typeof getProjectFile>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjectFile403 | GetProjectFile404>,
 >(
   projectId: string,
   params: GetProjectFileParams,
@@ -520,7 +1360,7 @@ export function useGetProjectFileSuspense<
 
 export function useGetProjectFileSuspense<
   TData = Awaited<ReturnType<typeof getProjectFile>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjectFile403 | GetProjectFile404>,
 >(
   projectId: string,
   params: GetProjectFileParams,
@@ -550,17 +1390,17 @@ export function useGetProjectFileSuspense<
  */
 export const addFileToProject = (
   projectId: string,
-  projectFilePutBodyBody: ProjectFilePutBodyBody,
+  addFileToProjectBody: AddFileToProjectBody,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   const formData = new FormData();
-  formData.append(`file`, projectFilePutBodyBody.file);
-  if (projectFilePutBodyBody.as_filename !== undefined) {
-    formData.append(`as_filename`, projectFilePutBodyBody.as_filename);
+  if (addFileToProjectBody.as_filename !== undefined) {
+    formData.append(`as_filename`, addFileToProjectBody.as_filename);
   }
-  if (projectFilePutBodyBody.path !== undefined) {
-    formData.append(`path`, projectFilePutBodyBody.path);
+  formData.append(`file`, addFileToProjectBody.file);
+  if (addFileToProjectBody.path !== undefined) {
+    formData.append(`path`, addFileToProjectBody.path);
   }
 
   return customInstance<void>(
@@ -576,20 +1416,20 @@ export const addFileToProject = (
 };
 
 export const getAddFileToProjectMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AddFileToProject403 | AddFileToProject404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof addFileToProject>>,
     TError,
-    { projectId: string; data: ProjectFilePutBodyBody },
+    { projectId: string; data: AddFileToProjectBody },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof addFileToProject>>,
   TError,
-  { projectId: string; data: ProjectFilePutBodyBody },
+  { projectId: string; data: AddFileToProjectBody },
   TContext
 > => {
   const mutationKey = ["addFileToProject"];
@@ -601,7 +1441,7 @@ export const getAddFileToProjectMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof addFileToProject>>,
-    { projectId: string; data: ProjectFilePutBodyBody }
+    { projectId: string; data: AddFileToProjectBody }
   > = (props) => {
     const { projectId, data } = props ?? {};
 
@@ -614,18 +1454,23 @@ export const getAddFileToProjectMutationOptions = <
 export type AddFileToProjectMutationResult = NonNullable<
   Awaited<ReturnType<typeof addFileToProject>>
 >;
-export type AddFileToProjectMutationBody = ProjectFilePutBodyBody;
-export type AddFileToProjectMutationError = ErrorType<void | DmError>;
+export type AddFileToProjectMutationBody = AddFileToProjectBody;
+export type AddFileToProjectMutationError = ErrorType<
+  void | AddFileToProject403 | AddFileToProject404
+>;
 
 /**
  * @summary Upload a file into a Project
  */
-export const useAddFileToProject = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useAddFileToProject = <
+  TError = ErrorType<void | AddFileToProject403 | AddFileToProject404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof addFileToProject>>,
       TError,
-      { projectId: string; data: ProjectFilePutBodyBody },
+      { projectId: string; data: AddFileToProjectBody },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -634,7 +1479,7 @@ export const useAddFileToProject = <TError = ErrorType<void | DmError>, TContext
 ): UseMutationResult<
   Awaited<ReturnType<typeof addFileToProject>>,
   TError,
-  { projectId: string; data: ProjectFilePutBodyBody },
+  { projectId: string; data: AddFileToProjectBody },
   TContext
 > => {
   return useMutation(getAddFileToProjectMutationOptions(options), queryClient);
@@ -674,7 +1519,7 @@ export const getGetProjectFileWithTokenQueryKey = (
 
 export const getGetProjectFileWithTokenQueryOptions = <
   TData = Awaited<ReturnType<typeof getProjectFileWithToken>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetProjectFileWithToken403 | GetProjectFileWithToken404>,
 >(
   projectId: string,
   params: GetProjectFileWithTokenParams,
@@ -706,11 +1551,13 @@ export const getGetProjectFileWithTokenQueryOptions = <
 export type GetProjectFileWithTokenQueryResult = NonNullable<
   Awaited<ReturnType<typeof getProjectFileWithToken>>
 >;
-export type GetProjectFileWithTokenQueryError = ErrorType<DmError>;
+export type GetProjectFileWithTokenQueryError = ErrorType<
+  GetProjectFileWithToken403 | GetProjectFileWithToken404
+>;
 
 export function useGetProjectFileWithToken<
   TData = Awaited<ReturnType<typeof getProjectFileWithToken>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetProjectFileWithToken403 | GetProjectFileWithToken404>,
 >(
   projectId: string,
   params: GetProjectFileWithTokenParams,
@@ -732,7 +1579,7 @@ export function useGetProjectFileWithToken<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjectFileWithToken<
   TData = Awaited<ReturnType<typeof getProjectFileWithToken>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetProjectFileWithToken403 | GetProjectFileWithToken404>,
 >(
   projectId: string,
   params: GetProjectFileWithTokenParams,
@@ -754,7 +1601,7 @@ export function useGetProjectFileWithToken<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjectFileWithToken<
   TData = Awaited<ReturnType<typeof getProjectFileWithToken>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetProjectFileWithToken403 | GetProjectFileWithToken404>,
 >(
   projectId: string,
   params: GetProjectFileWithTokenParams,
@@ -772,7 +1619,7 @@ export function useGetProjectFileWithToken<
 
 export function useGetProjectFileWithToken<
   TData = Awaited<ReturnType<typeof getProjectFileWithToken>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetProjectFileWithToken403 | GetProjectFileWithToken404>,
 >(
   projectId: string,
   params: GetProjectFileWithTokenParams,
@@ -812,7 +1659,7 @@ export const invalidateGetProjectFileWithToken = async (
 
 export const getGetProjectFileWithTokenSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getProjectFileWithToken>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetProjectFileWithToken403 | GetProjectFileWithToken404>,
 >(
   projectId: string,
   params: GetProjectFileWithTokenParams,
@@ -841,11 +1688,13 @@ export const getGetProjectFileWithTokenSuspenseQueryOptions = <
 export type GetProjectFileWithTokenSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getProjectFileWithToken>>
 >;
-export type GetProjectFileWithTokenSuspenseQueryError = ErrorType<DmError>;
+export type GetProjectFileWithTokenSuspenseQueryError = ErrorType<
+  GetProjectFileWithToken403 | GetProjectFileWithToken404
+>;
 
 export function useGetProjectFileWithTokenSuspense<
   TData = Awaited<ReturnType<typeof getProjectFileWithToken>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetProjectFileWithToken403 | GetProjectFileWithToken404>,
 >(
   projectId: string,
   params: GetProjectFileWithTokenParams,
@@ -859,7 +1708,7 @@ export function useGetProjectFileWithTokenSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjectFileWithTokenSuspense<
   TData = Awaited<ReturnType<typeof getProjectFileWithToken>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetProjectFileWithToken403 | GetProjectFileWithToken404>,
 >(
   projectId: string,
   params: GetProjectFileWithTokenParams,
@@ -873,7 +1722,7 @@ export function useGetProjectFileWithTokenSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjectFileWithTokenSuspense<
   TData = Awaited<ReturnType<typeof getProjectFileWithToken>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetProjectFileWithToken403 | GetProjectFileWithToken404>,
 >(
   projectId: string,
   params: GetProjectFileWithTokenParams,
@@ -891,7 +1740,7 @@ export function useGetProjectFileWithTokenSuspense<
 
 export function useGetProjectFileWithTokenSuspense<
   TData = Awaited<ReturnType<typeof getProjectFileWithToken>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetProjectFileWithToken403 | GetProjectFileWithToken404>,
 >(
   projectId: string,
   params: GetProjectFileWithTokenParams,
@@ -904,788 +1753,6 @@ export function useGetProjectFileWithTokenSuspense<
   queryClient?: QueryClient,
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetProjectFileWithTokenSuspenseQueryOptions(projectId, params, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * Given a Project and Path the files available to you on that path will be returned along with any additional paths (sub-directories).
- * @summary Gets the Files on a Project Path
- */
-export const getFiles = (
-  params: GetFilesParams,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<FilesGetResponse>({ url: `/file`, method: "GET", params, signal }, options);
-};
-
-export const getGetFilesQueryKey = (params?: GetFilesParams) => {
-  return ["data-manager", "file", ...(params ? [params] : [])] as const;
-};
-
-export const getGetFilesQueryOptions = <
-  TData = Awaited<ReturnType<typeof getFiles>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: GetFilesParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetFilesQueryKey(params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getFiles>>> = ({ signal }) =>
-    getFiles(params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getFiles>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetFilesQueryResult = NonNullable<Awaited<ReturnType<typeof getFiles>>>;
-export type GetFilesQueryError = ErrorType<void | DmError>;
-
-export function useGetFiles<
-  TData = Awaited<ReturnType<typeof getFiles>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: GetFilesParams,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getFiles>>,
-          TError,
-          Awaited<ReturnType<typeof getFiles>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetFiles<
-  TData = Awaited<ReturnType<typeof getFiles>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: GetFilesParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getFiles>>,
-          TError,
-          Awaited<ReturnType<typeof getFiles>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetFiles<
-  TData = Awaited<ReturnType<typeof getFiles>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: GetFilesParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Files on a Project Path
- */
-
-export function useGetFiles<
-  TData = Awaited<ReturnType<typeof getFiles>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: GetFilesParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetFilesQueryOptions(params, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Gets the Files on a Project Path
- */
-export const invalidateGetFiles = async (
-  queryClient: QueryClient,
-  params: GetFilesParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetFilesQueryKey(params) }, options);
-
-  return queryClient;
-};
-
-export const getGetFilesSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getFiles>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: GetFilesParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetFilesQueryKey(params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getFiles>>> = ({ signal }) =>
-    getFiles(params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getFiles>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetFilesSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getFiles>>>;
-export type GetFilesSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useGetFilesSuspense<
-  TData = Awaited<ReturnType<typeof getFiles>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: GetFilesParams,
-  options: {
-    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetFilesSuspense<
-  TData = Awaited<ReturnType<typeof getFiles>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: GetFilesParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetFilesSuspense<
-  TData = Awaited<ReturnType<typeof getFiles>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: GetFilesParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Files on a Project Path
- */
-
-export function useGetFilesSuspense<
-  TData = Awaited<ReturnType<typeof getFiles>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: GetFilesParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getFiles>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetFilesSuspenseQueryOptions(params, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * Given a Project and a Dataset the Dataset will be attached (added) to the project as a File using the format provided. When attached the Dataset is referred to as a Project **File**. As format conversion may take some time the file may not be immediately available. You should use the `task_id` you're presented with on the `/task` endpoint to determine when the file is available to the project.
- *
- * Only Datasets attached to projects are available through the Project API. A Dataset that you upload is only available to others (who are not already `editors` of the data) when the Dataset is attached to a project.
- *
- * An `editor` of a **dataset** is not automatically and `editor` of the **project** it's attached to.
- *
- * You must be an `editor` of the Project to attach a Dataset to a project. Being an `editor` of the Dataset you are attaching does not give you the ability to detach it from the Project.
- *
- * You cannot add a Dataset to a Project until its upload is complete.
- * @summary Attach a Dataset, as a File, to a Project
- */
-export const attachFile = (
-  filePostBodyBody: FilePostBodyBody,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  const formUrlEncoded = new URLSearchParams();
-  formUrlEncoded.append(`dataset_id`, filePostBodyBody.dataset_id);
-  formUrlEncoded.append(`dataset_version`, filePostBodyBody.dataset_version.toString());
-  formUrlEncoded.append(`project_id`, filePostBodyBody.project_id);
-  formUrlEncoded.append(`as_type`, filePostBodyBody.as_type);
-  if (filePostBodyBody.path !== undefined) {
-    formUrlEncoded.append(`path`, filePostBodyBody.path);
-  }
-  if (filePostBodyBody.compress !== undefined) {
-    formUrlEncoded.append(`compress`, filePostBodyBody.compress.toString());
-  }
-  if (filePostBodyBody.immutable !== undefined) {
-    formUrlEncoded.append(`immutable`, filePostBodyBody.immutable.toString());
-  }
-
-  return customInstance<FilePostResponse>(
-    {
-      url: `/file`,
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      data: formUrlEncoded,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getAttachFileMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof attachFile>>,
-    TError,
-    { data: FilePostBodyBody },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof attachFile>>,
-  TError,
-  { data: FilePostBodyBody },
-  TContext
-> => {
-  const mutationKey = ["attachFile"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof attachFile>>,
-    { data: FilePostBodyBody }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return attachFile(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type AttachFileMutationResult = NonNullable<Awaited<ReturnType<typeof attachFile>>>;
-export type AttachFileMutationBody = FilePostBodyBody;
-export type AttachFileMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Attach a Dataset, as a File, to a Project
- */
-export const useAttachFile = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof attachFile>>,
-      TError,
-      { data: FilePostBodyBody },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof attachFile>>,
-  TError,
-  { data: FilePostBodyBody },
-  TContext
-> => {
-  return useMutation(getAttachFileMutationOptions(options), queryClient);
-};
-/**
- * Removes an unmanaged file from a Project. You cannot use this endpoint to delete managed project files.
- *
- * You must be an `editor` of the Project to delete a file from a Project.
- * @summary Delete an unmanaged Project File
- */
-export const deleteUnmanagedFile = (
-  params: DeleteUnmanagedFileParams,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>({ url: `/file`, method: "DELETE", params, signal }, options);
-};
-
-export const getDeleteUnmanagedFileMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteUnmanagedFile>>,
-    TError,
-    { params: DeleteUnmanagedFileParams },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteUnmanagedFile>>,
-  TError,
-  { params: DeleteUnmanagedFileParams },
-  TContext
-> => {
-  const mutationKey = ["deleteUnmanagedFile"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteUnmanagedFile>>,
-    { params: DeleteUnmanagedFileParams }
-  > = (props) => {
-    const { params } = props ?? {};
-
-    return deleteUnmanagedFile(params, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DeleteUnmanagedFileMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteUnmanagedFile>>
->;
-
-export type DeleteUnmanagedFileMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Delete an unmanaged Project File
- */
-export const useDeleteUnmanagedFile = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteUnmanagedFile>>,
-      TError,
-      { params: DeleteUnmanagedFileParams },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof deleteUnmanagedFile>>,
-  TError,
-  { params: DeleteUnmanagedFileParams },
-  TContext
-> => {
-  return useMutation(getDeleteUnmanagedFileMutationOptions(options), queryClient);
-};
-/**
- * Move an **Unmanaged** file, optionally renaming it, to a new path.
- *
- * You must be an `editor` of the project
- * @summary Move an unmanaged file in a Project
- */
-export const moveFileInProject = (
-  params: MoveFileInProjectParams,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>({ url: `/file/move`, method: "PUT", params, signal }, options);
-};
-
-export const getMoveFileInProjectMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof moveFileInProject>>,
-    TError,
-    { params: MoveFileInProjectParams },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof moveFileInProject>>,
-  TError,
-  { params: MoveFileInProjectParams },
-  TContext
-> => {
-  const mutationKey = ["moveFileInProject"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof moveFileInProject>>,
-    { params: MoveFileInProjectParams }
-  > = (props) => {
-    const { params } = props ?? {};
-
-    return moveFileInProject(params, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type MoveFileInProjectMutationResult = NonNullable<
-  Awaited<ReturnType<typeof moveFileInProject>>
->;
-
-export type MoveFileInProjectMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Move an unmanaged file in a Project
- */
-export const useMoveFileInProject = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof moveFileInProject>>,
-      TError,
-      { params: MoveFileInProjectParams },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof moveFileInProject>>,
-  TError,
-  { params: MoveFileInProjectParams },
-  TContext
-> => {
-  return useMutation(getMoveFileInProjectMutationOptions(options), queryClient);
-};
-/**
- * Given a `file_id` the file will be removed from the Project it's attached to.
- *
- * You must be an `editor` of the project to delete a file from a Project. Being an `editor` of the original Dataset does not give you the ability to detach it from the Project.
- *
- * You cannot delete a Project File until the attach is complete.
- * @summary Delete/detach a File (from a Project)
- */
-export const deleteFile = (
-  fileId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>({ url: `/file/${fileId}`, method: "DELETE", signal }, options);
-};
-
-export const getDeleteFileMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteFile>>,
-    TError,
-    { fileId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteFile>>,
-  TError,
-  { fileId: string },
-  TContext
-> => {
-  const mutationKey = ["deleteFile"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteFile>>, { fileId: string }> = (
-    props,
-  ) => {
-    const { fileId } = props ?? {};
-
-    return deleteFile(fileId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DeleteFileMutationResult = NonNullable<Awaited<ReturnType<typeof deleteFile>>>;
-
-export type DeleteFileMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Delete/detach a File (from a Project)
- */
-export const useDeleteFile = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteFile>>,
-      TError,
-      { fileId: string },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof deleteFile>>,
-  TError,
-  { fileId: string },
-  TContext
-> => {
-  return useMutation(getDeleteFileMutationOptions(options), queryClient);
-};
-/**
- * Given a `file_id` the file will be returned if available.
- *
- * You cannot get a Project File until the attach is complete.
- * @summary Download a File (from a project)
- */
-export const downloadFile = (
-  fileId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>({ url: `/file/${fileId}`, method: "GET", signal }, options);
-};
-
-export const getDownloadFileQueryKey = (fileId: string) => {
-  return ["data-manager", "file", fileId] as const;
-};
-
-export const getDownloadFileQueryOptions = <
-  TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = ErrorType<void | DmError>,
->(
-  fileId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getDownloadFileQueryKey(fileId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof downloadFile>>> = ({ signal }) =>
-    downloadFile(fileId, requestOptions, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: fileId !== null && fileId !== undefined,
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
-
-export type DownloadFileQueryResult = NonNullable<Awaited<ReturnType<typeof downloadFile>>>;
-export type DownloadFileQueryError = ErrorType<void | DmError>;
-
-export function useDownloadFile<
-  TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = ErrorType<void | DmError>,
->(
-  fileId: string,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof downloadFile>>,
-          TError,
-          Awaited<ReturnType<typeof downloadFile>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDownloadFile<
-  TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = ErrorType<void | DmError>,
->(
-  fileId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof downloadFile>>,
-          TError,
-          Awaited<ReturnType<typeof downloadFile>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDownloadFile<
-  TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = ErrorType<void | DmError>,
->(
-  fileId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Download a File (from a project)
- */
-
-export function useDownloadFile<
-  TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = ErrorType<void | DmError>,
->(
-  fileId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getDownloadFileQueryOptions(fileId, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Download a File (from a project)
- */
-export const invalidateDownloadFile = async (
-  queryClient: QueryClient,
-  fileId: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getDownloadFileQueryKey(fileId) }, options);
-
-  return queryClient;
-};
-
-export const getDownloadFileSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = ErrorType<void | DmError>,
->(
-  fileId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getDownloadFileQueryKey(fileId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof downloadFile>>> = ({ signal }) =>
-    downloadFile(fileId, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof downloadFile>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type DownloadFileSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof downloadFile>>>;
-export type DownloadFileSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useDownloadFileSuspense<
-  TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = ErrorType<void | DmError>,
->(
-  fileId: string,
-  options: {
-    query: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDownloadFileSuspense<
-  TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = ErrorType<void | DmError>,
->(
-  fileId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDownloadFileSuspense<
-  TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = ErrorType<void | DmError>,
->(
-  fileId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Download a File (from a project)
- */
-
-export function useDownloadFileSuspense<
-  TData = Awaited<ReturnType<typeof downloadFile>>,
-  TError = ErrorType<void | DmError>,
->(
-  fileId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof downloadFile>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getDownloadFileSuspenseQueryOptions(fileId, options);
 
   const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
     TData,

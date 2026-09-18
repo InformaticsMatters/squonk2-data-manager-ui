@@ -24,7 +24,11 @@ import type {
   UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 
-import type { DmError, GetUserInventoryParams, InventoryUserGetResponse } from "../api-schemas";
+import type {
+  GetUserInventory200,
+  GetUserInventory403,
+  GetUserInventoryParams,
+} from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
 import type { ErrorType } from "../../../runtime/data-manager/axios";
@@ -57,7 +61,7 @@ export const getUserInventory = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<InventoryUserGetResponse>(
+  return customInstance<GetUserInventory200>(
     { url: `/inventory/user`, method: "GET", params, signal },
     options,
   );
@@ -69,7 +73,7 @@ export const getGetUserInventoryQueryKey = (params?: GetUserInventoryParams) => 
 
 export const getGetUserInventoryQueryOptions = <
   TData = Awaited<ReturnType<typeof getUserInventory>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserInventory403>,
 >(
   params?: GetUserInventoryParams,
   options?: {
@@ -92,11 +96,11 @@ export const getGetUserInventoryQueryOptions = <
 };
 
 export type GetUserInventoryQueryResult = NonNullable<Awaited<ReturnType<typeof getUserInventory>>>;
-export type GetUserInventoryQueryError = ErrorType<void | DmError>;
+export type GetUserInventoryQueryError = ErrorType<void | GetUserInventory403>;
 
 export function useGetUserInventory<
   TData = Awaited<ReturnType<typeof getUserInventory>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserInventory403>,
 >(
   params: undefined | GetUserInventoryParams,
   options: {
@@ -115,7 +119,7 @@ export function useGetUserInventory<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUserInventory<
   TData = Awaited<ReturnType<typeof getUserInventory>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserInventory403>,
 >(
   params?: GetUserInventoryParams,
   options?: {
@@ -134,7 +138,7 @@ export function useGetUserInventory<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUserInventory<
   TData = Awaited<ReturnType<typeof getUserInventory>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserInventory403>,
 >(
   params?: GetUserInventoryParams,
   options?: {
@@ -149,7 +153,7 @@ export function useGetUserInventory<
 
 export function useGetUserInventory<
   TData = Awaited<ReturnType<typeof getUserInventory>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserInventory403>,
 >(
   params?: GetUserInventoryParams,
   options?: {
@@ -182,7 +186,7 @@ export const invalidateGetUserInventory = async (
 
 export const getGetUserInventorySuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getUserInventory>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserInventory403>,
 >(
   params?: GetUserInventoryParams,
   options?: {
@@ -209,11 +213,11 @@ export const getGetUserInventorySuspenseQueryOptions = <
 export type GetUserInventorySuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getUserInventory>>
 >;
-export type GetUserInventorySuspenseQueryError = ErrorType<void | DmError>;
+export type GetUserInventorySuspenseQueryError = ErrorType<void | GetUserInventory403>;
 
 export function useGetUserInventorySuspense<
   TData = Awaited<ReturnType<typeof getUserInventory>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserInventory403>,
 >(
   params: undefined | GetUserInventoryParams,
   options: {
@@ -226,7 +230,7 @@ export function useGetUserInventorySuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUserInventorySuspense<
   TData = Awaited<ReturnType<typeof getUserInventory>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserInventory403>,
 >(
   params?: GetUserInventoryParams,
   options?: {
@@ -239,7 +243,7 @@ export function useGetUserInventorySuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetUserInventorySuspense<
   TData = Awaited<ReturnType<typeof getUserInventory>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserInventory403>,
 >(
   params?: GetUserInventoryParams,
   options?: {
@@ -256,7 +260,7 @@ export function useGetUserInventorySuspense<
 
 export function useGetUserInventorySuspense<
   TData = Awaited<ReturnType<typeof getUserInventory>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetUserInventory403>,
 >(
   params?: GetUserInventoryParams,
   options?: {

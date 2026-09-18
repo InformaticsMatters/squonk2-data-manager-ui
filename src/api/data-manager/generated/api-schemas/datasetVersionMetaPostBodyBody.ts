@@ -10,8 +10,8 @@
  */
 
 export type DatasetVersionMetaPostBodyBody = {
-  /** JSON string containing a list of parameter changes to the metadata. Only the description is currently allowed. */
-  meta_properties?: string;
   /** JSON string containing a list of annotations. The format of the labels should match either the Fields Descriptor or Service Execution annotation formats described in the data-manager-metadata library. */
   annotations?: string;
+  /** JSON string containing a list of parameter changes to the metadata. Only the description is currently allowed. */
+  meta_properties?: string;
 };

@@ -45,22 +45,22 @@ export const AppApiAdminGetChargesQueryParams = zod.object({
 export const AppApiAdminGetChargesResponse = zod.object({
   coins: zod.string(),
   count: zod.number(),
-  summary: zod.array(
-    zod.object({
-      type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
-      coins: zod.string().describe("The cost, in coins of the charge"),
-    }),
-  ),
   organisation_charges: zod.array(
     zod.object({
-      organisation_id: zod.string(),
       name: zod.string(),
+      organisation_id: zod.string(),
       summary: zod.array(
         zod.object({
-          type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
           coins: zod.string().describe("The cost, in coins of the charge"),
+          type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
         }),
       ),
+    }),
+  ),
+  summary: zod.array(
+    zod.object({
+      coins: zod.string().describe("The cost, in coins of the charge"),
+      type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
     }),
   ),
 });
@@ -111,31 +111,31 @@ export const AppApiOrganisationGetChargesQueryParams = zod.object({
 export const appApiOrganisationGetChargesResponseUnitChargesItemBillingDayMax = 28;
 
 export const AppApiOrganisationGetChargesResponse = zod.object({
-  organisation_id: zod.string(),
-  name: zod.string(),
   coins: zod.string(),
+  name: zod.string(),
+  organisation_id: zod.string(),
   summary: zod.array(
     zod.object({
-      type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
       coins: zod.string().describe("The cost, in coins of the charge"),
+      type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
     }),
   ),
   unit_charges: zod.array(
     zod.object({
-      unit_id: zod.string(),
-      name: zod.string(),
       billing_day: zod
         .number()
         .min(1)
         .max(appApiOrganisationGetChargesResponseUnitChargesItemBillingDayMax),
       from: zod.iso.date().describe("The start of the charge period"),
-      until: zod.iso.date().describe("The date where of first day after the charge period"),
+      name: zod.string(),
       summary: zod.array(
         zod.object({
-          type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
           coins: zod.string().describe("The cost, in coins of the charge"),
+          type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
         }),
       ),
+      unit_id: zod.string(),
+      until: zod.iso.date().describe("The date where of first day after the charge period"),
     }),
   ),
 });
@@ -190,30 +190,32 @@ export const AppApiProductGetChargesQueryParams = zod.object({
 export const appApiProductGetChargesResponseBillingDayMax = 28;
 
 export const AppApiProductGetChargesResponse = zod.object({
-  product_id: zod.string(),
-  product_type: zod.enum([
-    "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
-    "DATA_MANAGER_STORAGE_SUBSCRIPTION",
-  ]),
   billing_day: zod.number().min(1).max(appApiProductGetChargesResponseBillingDayMax),
-  claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
   claim: zod
     .object({
       id: zod.string().describe("The service-specific ID that is using this Subscription\n"),
       name: zod.string().optional().describe("A name for the service-specific ID\n"),
     })
     .optional(),
-  count: zod.number(),
-  from: zod.iso.date().describe("The start of the charge period"),
-  until: zod.iso.date().describe("The date where of first day after the charge period"),
+  claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
   coins: zod
     .string()
     .describe("The total number of coins consumed by this product for the invoice period"),
+  count: zod.number(),
+  from: zod.iso.date().describe("The start of the charge period"),
   processing_charges: zod.array(
     zod.object({
-      merchant_name: zod.string(),
-      merchant_kind: zod.enum(["DATA_MANAGER"]),
-      merchant_api_hostname: zod.string(),
+      charge: zod.object({
+        additional_data: zod.record(zod.string(), zod.unknown()).optional(),
+        coins: zod.string().describe("The coin-cost of the storage"),
+        id: zod.number().describe("The charge record number"),
+        name: zod.string().optional(),
+        sqn: zod.number().describe("The most recent sequence number for this charge"),
+        timestamp: zod.iso
+          .datetime({ offset: true })
+          .describe("The date and time of the processing charge"),
+        username: zod.string(),
+      }),
       closed: zod.iso
         .datetime({ offset: true })
         .optional()
@@ -223,29 +225,28 @@ export const AppApiProductGetChargesResponse = zod.object({
         .describe(
           "True if no further change to the charges can occur. Typically True after the charge has been closed for a pre-configured period of time.",
         ),
+      merchant_api_hostname: zod.string(),
+      merchant_kind: zod.enum(["DATA_MANAGER"]),
+      merchant_name: zod.string(),
       post_final_charges: zod
         .boolean()
         .optional()
         .describe("True if charges were received after the charge record was finalised"),
-      charge: zod.object({
-        id: zod.number().describe("The charge record number"),
-        sqn: zod.number().describe("The most recent sequence number for this charge"),
-        name: zod.string().optional(),
-        username: zod.string(),
-        timestamp: zod.iso
-          .datetime({ offset: true })
-          .describe("The date and time of the processing charge"),
-        coins: zod.string().describe("The coin-cost of the storage"),
-        additional_data: zod.record(zod.string(), zod.unknown()).optional(),
-      }),
     }),
   ),
+  product_id: zod.string(),
+  product_type: zod.enum([
+    "DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION",
+    "DATA_MANAGER_STORAGE_SUBSCRIPTION",
+  ]),
   storage_charges: zod.object({
-    num_items: zod.number(),
     items: zod.array(
       zod.object({
-        item_number: zod.number(),
-        date: zod.iso.date().describe("The date and time of the processing charge"),
+        additional_data: zod.record(zod.string(), zod.unknown()).optional(),
+        closed: zod.iso
+          .datetime({ offset: true })
+          .optional()
+          .describe("The date when the charges concluded"),
         coins: zod.string().describe("The coin-cost of the storage"),
         current_burn_rate: zod
           .string()
@@ -253,14 +254,13 @@ export const AppApiProductGetChargesResponse = zod.object({
           .describe(
             "The current burn rate, the approximate amount of coins you are currently consuming each day",
           ),
-        closed: zod.iso
-          .datetime({ offset: true })
-          .optional()
-          .describe("The date when the charges concluded"),
-        additional_data: zod.record(zod.string(), zod.unknown()).optional(),
+        date: zod.iso.date().describe("The date and time of the processing charge"),
+        item_number: zod.number(),
       }),
     ),
+    num_items: zod.number(),
   }),
+  until: zod.iso.date().describe("The date where of first day after the charge period"),
 });
 
 /**
@@ -309,37 +309,37 @@ export const AppApiUnitGetChargesQueryParams = zod.object({
 export const appApiUnitGetChargesResponseBillingDayMax = 28;
 
 export const AppApiUnitGetChargesResponse = zod.object({
+  billing_day: zod.number().min(1).max(appApiUnitGetChargesResponseBillingDayMax),
   caller_is_member: zod
     .boolean()
     .describe("Whether the user making the API call is a member of the Unit"),
-  unit_id: zod.string(),
+  coins: zod.string(),
+  count: zod.number(),
+  created: zod.iso.datetime({ offset: true }),
+  from: zod.iso.date().describe("The start of the charge period"),
   name: zod.string().optional(),
   owner_id: zod.string().describe("The Unit's owner (a username)"),
   private: zod.boolean().describe("True if the Unit is private"),
-  created: zod.iso.datetime({ offset: true }),
-  coins: zod.string(),
-  count: zod.number(),
-  billing_day: zod.number().min(1).max(appApiUnitGetChargesResponseBillingDayMax),
-  from: zod.iso.date().describe("The start of the charge period"),
-  until: zod.iso.date().describe("The date where of first day after the charge period"),
+  products: zod.array(
+    zod.object({
+      charges: zod.array(
+        zod.object({
+          coins: zod.string().describe("The cost, in coins of the charge"),
+          type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
+        }),
+      ),
+      product_id: zod.string(),
+      product_type: zod.string(),
+    }),
+  ),
   summary: zod.object({
     charges: zod.array(
       zod.object({
-        type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
         coins: zod.string().describe("The cost, in coins of the charge"),
+        type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
       }),
     ),
   }),
-  products: zod.array(
-    zod.object({
-      product_id: zod.string(),
-      product_type: zod.string(),
-      charges: zod.array(
-        zod.object({
-          type: zod.enum(["PROCESSING", "STORAGE"]).describe("The type of charge"),
-          coins: zod.string().describe("The cost, in coins of the charge"),
-        }),
-      ),
-    }),
-  ),
+  unit_id: zod.string(),
+  until: zod.iso.date().describe("The date where of first day after the charge period"),
 });

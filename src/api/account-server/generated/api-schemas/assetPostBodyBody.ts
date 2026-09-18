@@ -11,22 +11,22 @@
 import type { AssetPostBodyBodyScope } from "./assetPostBodyBodyScope";
 
 export type AssetPostBodyBody = {
+  /** A file containing the content for the asset. You must provide a value here or in **content_string** but not both */
+  content_file?: Blob;
+  /** The textual content of the asset. You must provide a value here or in **content_file** but not both */
+  content_string?: string;
+  /** An optional description for the Asset */
+  description?: string;
   /**
    * The name of the asset. This must be unique within its scope. For example, only one asset can be called "asset-1" within a given `UNIT`. Asset names must be valid RFC 1123 Label Names
    * @maxLength 80
    * @pattern ^[a-z0-9-]{1,63}$
    */
   name: string;
-  /** A file containing the content for the asset. You must provide a value here or in **content_string** but not both */
-  content_file?: Blob;
-  /** The textual content of the asset. You must provide a value here or in **content_file** but not both */
-  content_string?: string;
   /** An enumeration of the scope of the asset. This can be one of `USER`, `PRODUCT`, `UNIT`, `ORGANISATION`, or `GLOBAL`. Assets that are not `GLOBAL` need a scope ID. */
   scope: AssetPostBodyBodyScope;
   /** The unique identity based on the Scope of the asset. For example, this will be the Unit ID if it's a UNIT. A scope_id is required if the scope is USER as it will be automatically set to your username. Global assets do not have a scope. */
   scope_id?: string;
   /** Is this a secret asset? Secret assets are not revealed in a subsequent **GET** but are revealed to merchants they are connected to. */
   secret: boolean;
-  /** An optional description for the Asset */
-  description?: string;
 };

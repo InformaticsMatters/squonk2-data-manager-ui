@@ -8,26 +8,26 @@
  *
  * OpenAPI spec version: 6.7
  */
+import type { RunningWorkflowStepRunningWorkflow } from "./runningWorkflowStepRunningWorkflow";
 import type { RunningWorkflowStepStatus } from "./runningWorkflowStepStatus";
 import type { RunningWorkflowStepVariables } from "./runningWorkflowStepVariables";
-import type { RunningWorkflowSummary } from "./runningWorkflowSummary";
 
 export interface RunningWorkflowStep {
-  /** The Running Workflow Step's unique ID */
-  id: string;
-  variables: RunningWorkflowStepVariables;
-  instance_id?: string;
-  task_id?: string;
-  started: string;
-  stopped?: string;
-  status: RunningWorkflowStepStatus;
-  /** The step name */
-  name: string;
   /** True if the running workflow step has finished */
   done: boolean;
-  error_num: number;
   error_msg?: string;
+  error_num: number;
+  /** The Running Workflow Step's unique ID */
+  id: string;
+  instance_id?: string;
+  /** The step name */
+  name: string;
+  running_workflow: RunningWorkflowStepRunningWorkflow;
+  started: string;
+  status: RunningWorkflowStepStatus;
+  stopped?: string;
   /** True if the running workflow step has finished successfully */
   success?: boolean;
-  running_workflow: RunningWorkflowSummary;
+  task_id?: string;
+  variables: RunningWorkflowStepVariables;
 }

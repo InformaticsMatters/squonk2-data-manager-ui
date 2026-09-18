@@ -15,18 +15,18 @@ export interface WorkflowSummary {
   id: string;
   /** The name attached to this workflow definitions */
   name: string;
-  /** The name of the Workflow. Set if the workflow definition contains a description */
-  workflow_name?: string;
-  /** The description of the workflow. Set if the workflow definition contains a description */
-  workflow_description?: string;
-  /** The version of the workflow. Set if the workflow definition contains a description */
-  version?: string;
-  /** True if the workflow has been validated */
-  validated: boolean;
-  /** The source Workflow ID. Set if this workflow has been versioned. */
-  source_id?: string;
   /** The scope of the workflow. */
   scope: WorkflowSummaryScope;
   /** The scope ID of the workflow. Set if the **Scope** is not **GLOBAL** */
   scope_id?: string;
+  /** The source Workflow ID. Set if this workflow has been versioned. */
+  source_id?: string;
+  /** True if the workflow has been validated */
+  validated: boolean;
+  /** The version of the workflow. Set if the workflow definition contains a description */
+  version?: string;
+  /** The description of the workflow. Set if the workflow definition contains a description */
+  workflow_description?: string;
+  /** The name of the Workflow. Set if the workflow definition contains a description */
+  workflow_name?: string;
 }

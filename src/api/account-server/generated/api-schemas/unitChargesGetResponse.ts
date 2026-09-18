@@ -12,26 +12,26 @@ import type { UnitChargeSummary } from "./unitChargeSummary";
 import type { UnitProductChargeSummary } from "./unitProductChargeSummary";
 
 export interface UnitChargesGetResponse {
-  /** Whether the user making the API call is a member of the Unit */
-  caller_is_member: boolean;
-  unit_id: string;
-  name?: string;
-  /** The Unit's owner (a username) */
-  owner_id: string;
-  /** True if the Unit is private */
-  private: boolean;
-  created: string;
-  coins: string;
-  count: number;
   /**
    * @minimum 1
    * @maximum 28
    */
   billing_day: number;
+  /** Whether the user making the API call is a member of the Unit */
+  caller_is_member: boolean;
+  coins: string;
+  count: number;
+  created: string;
   /** The start of the charge period */
   from: string;
+  name?: string;
+  /** The Unit's owner (a username) */
+  owner_id: string;
+  /** True if the Unit is private */
+  private: boolean;
+  products: UnitProductChargeSummary[];
+  summary: UnitChargeSummary;
+  unit_id: string;
   /** The date where of first day after the charge period */
   until: string;
-  summary: UnitChargeSummary;
-  products: UnitProductChargeSummary[];
 }

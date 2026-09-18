@@ -11,12 +11,12 @@
 import type { MerchantSummary } from "./merchantSummary";
 
 export interface ActionDetail {
-  id: number;
   action: string;
   content: string;
-  timestamp: string;
+  id: number;
   merchant?: MerchantSummary;
-  product_id?: string;
-  unit_id?: string;
   org_id?: string;
+  product_id?: string;
+  timestamp: string;
+  unit_id?: string;
 }

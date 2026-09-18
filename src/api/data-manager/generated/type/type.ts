@@ -24,7 +24,7 @@ import type {
   UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 
-import type { DmError, TypesGetResponse } from "../api-schemas";
+import type { GetFileTypes200, GetFileTypes403 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
 import type { ErrorType } from "../../../runtime/data-manager/axios";
@@ -54,7 +54,7 @@ export const getFileTypes = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<TypesGetResponse>({ url: `/type`, method: "GET", signal }, options);
+  return customInstance<GetFileTypes200>({ url: `/type`, method: "GET", signal }, options);
 };
 
 export const getGetFileTypesQueryKey = () => {
@@ -63,7 +63,7 @@ export const getGetFileTypesQueryKey = () => {
 
 export const getGetFileTypesQueryOptions = <
   TData = Awaited<ReturnType<typeof getFileTypes>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetFileTypes403>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFileTypes>>, TError, TData>>;
   request?: SecondParameter<typeof customInstance>;
@@ -83,11 +83,11 @@ export const getGetFileTypesQueryOptions = <
 };
 
 export type GetFileTypesQueryResult = NonNullable<Awaited<ReturnType<typeof getFileTypes>>>;
-export type GetFileTypesQueryError = ErrorType<void | DmError>;
+export type GetFileTypesQueryError = ErrorType<void | GetFileTypes403>;
 
 export function useGetFileTypes<
   TData = Awaited<ReturnType<typeof getFileTypes>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetFileTypes403>,
 >(
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFileTypes>>, TError, TData>> &
@@ -105,7 +105,7 @@ export function useGetFileTypes<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetFileTypes<
   TData = Awaited<ReturnType<typeof getFileTypes>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetFileTypes403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFileTypes>>, TError, TData>> &
@@ -123,7 +123,7 @@ export function useGetFileTypes<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetFileTypes<
   TData = Awaited<ReturnType<typeof getFileTypes>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetFileTypes403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFileTypes>>, TError, TData>>;
@@ -137,7 +137,7 @@ export function useGetFileTypes<
 
 export function useGetFileTypes<
   TData = Awaited<ReturnType<typeof getFileTypes>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetFileTypes403>,
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFileTypes>>, TError, TData>>;
@@ -168,7 +168,7 @@ export const invalidateGetFileTypes = async (
 
 export const getGetFileTypesSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getFileTypes>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetFileTypes403>,
 >(options?: {
   query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getFileTypes>>, TError, TData>>;
   request?: SecondParameter<typeof customInstance>;
@@ -188,11 +188,11 @@ export const getGetFileTypesSuspenseQueryOptions = <
 };
 
 export type GetFileTypesSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getFileTypes>>>;
-export type GetFileTypesSuspenseQueryError = ErrorType<void | DmError>;
+export type GetFileTypesSuspenseQueryError = ErrorType<void | GetFileTypes403>;
 
 export function useGetFileTypesSuspense<
   TData = Awaited<ReturnType<typeof getFileTypes>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetFileTypes403>,
 >(
   options: {
     query: Partial<
@@ -204,7 +204,7 @@ export function useGetFileTypesSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetFileTypesSuspense<
   TData = Awaited<ReturnType<typeof getFileTypes>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetFileTypes403>,
 >(
   options?: {
     query?: Partial<
@@ -216,7 +216,7 @@ export function useGetFileTypesSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetFileTypesSuspense<
   TData = Awaited<ReturnType<typeof getFileTypes>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetFileTypes403>,
 >(
   options?: {
     query?: Partial<
@@ -232,7 +232,7 @@ export function useGetFileTypesSuspense<
 
 export function useGetFileTypesSuspense<
   TData = Awaited<ReturnType<typeof getFileTypes>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetFileTypes403>,
 >(
   options?: {
     query?: Partial<

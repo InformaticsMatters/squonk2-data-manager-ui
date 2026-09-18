@@ -21,11 +21,11 @@ export const AppApiMerchantGetResponse = zod.object({
   merchants: zod
     .array(
       zod.object({
-        id: zod.number().describe("The unique ID of the Service"),
+        api_hostname: zod.string().describe("The hostname used by the Service"),
         created: zod.iso.datetime({ offset: true }),
+        id: zod.number().describe("The unique ID of the Service"),
         kind: zod.enum(["DATA_MANAGER"]).describe("The kind of Service"),
         name: zod.string().describe("The name assigned to the Service"),
-        api_hostname: zod.string().describe("The hostname used by the Service"),
       }),
     )
     .describe("The list of known Merchants\n"),
@@ -41,9 +41,9 @@ export const AppApiMerchantGetIdParams = zod.object({
 });
 
 export const AppApiMerchantGetIdResponse = zod.object({
-  id: zod.number().describe("The unique ID of the Service"),
+  api_hostname: zod.string().describe("The hostname used by the Service"),
   created: zod.iso.datetime({ offset: true }),
+  id: zod.number().describe("The unique ID of the Service"),
   kind: zod.enum(["DATA_MANAGER"]).describe("The kind of Service"),
   name: zod.string().describe("The name assigned to the Service"),
-  api_hostname: zod.string().describe("The hostname used by the Service"),
 });

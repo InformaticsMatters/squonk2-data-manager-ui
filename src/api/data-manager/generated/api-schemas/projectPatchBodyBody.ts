@@ -10,7 +10,7 @@
  */
 
 export type ProjectPatchBodyBody = {
-  private?: boolean;
   /** The new name of the Project */
   name?: string;
+  private?: boolean;
 };

@@ -10,8 +10,8 @@
  */
 
 export type ProductDmStorageDetailCoins = {
-  /** The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day */
-  used: number;
   /** The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response */
   unit_cost: number;
+  /** The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day */
+  used: number;
 };

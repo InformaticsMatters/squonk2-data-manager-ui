@@ -52,10 +52,81 @@ export const AppApiInventoryGetUserInventoryResponse = zod.object({
   users: zod
     .array(
       zod.object({
+        activity: zod.object({
+          period_a: zod.object({
+            active_dates: zod
+              .array(zod.string())
+              .optional()
+              .describe(
+                "A list of dates where the API has been used during the monitoring period. Dates are returned if when the activity is not 100% and active dates are present. Dates are listed in reverse chronological order (i.e. the most recent first)\n",
+              ),
+            active_days: zod.number().describe("The number of days the API has been used\n"),
+            activity: zod
+              .string()
+              .describe("Active days, as a percentage, over the monitoring period.\n"),
+            inactive_days: zod.number().describe("The number of days the API has not been used\n"),
+            monitoring_period: zod
+              .string()
+              .describe("The period over which the activity is monitored\n"),
+          }),
+          period_b: zod
+            .object({
+              active_dates: zod
+                .array(zod.string())
+                .optional()
+                .describe(
+                  "A list of dates where the API has been used during the monitoring period. Dates are returned if when the activity is not 100% and active dates are present. Dates are listed in reverse chronological order (i.e. the most recent first)\n",
+                ),
+              active_days: zod.number().describe("The number of days the API has been used\n"),
+              activity: zod
+                .string()
+                .describe("Active days, as a percentage, over the monitoring period.\n"),
+              inactive_days: zod
+                .number()
+                .describe("The number of days the API has not been used\n"),
+              monitoring_period: zod
+                .string()
+                .describe("The period over which the activity is monitored\n"),
+            })
+            .optional(),
+          total_activity: zod.string().describe("The total percentage activity since first seen\n"),
+          total_days_active: zod
+            .number()
+            .describe("The total number of days active since first seen\n"),
+          total_days_inactive: zod
+            .number()
+            .describe("The total number of days inactive since first seen\n"),
+          total_days_since_first_seen: zod
+            .number()
+            .describe(
+              "The total number of days since the user was first seen, including the day the user was first seen\n",
+            ),
+        }),
+        datasets: zod.object({
+          editor: zod
+            .array(
+              zod.object({
+                filename: zod.string(),
+                id: zod.string(),
+                unit_id: zod.string(),
+                version: zod.number(),
+              }),
+            )
+            .optional(),
+          owner: zod
+            .array(
+              zod.object({
+                filename: zod.string(),
+                id: zod.string(),
+                unit_id: zod.string(),
+                version: zod.number(),
+              }),
+            )
+            .optional(),
+        }),
         f_uid: zod.number(),
         first_seen: zod.iso.datetime({ offset: true }),
         last_seen_date: zod.iso.date(),
-        username: zod.string(),
         projects: zod.object({
           administrator: zod.array(
             zod.object({ id: zod.string(), name: zod.string(), unit_id: zod.string() }),
@@ -67,78 +138,7 @@ export const AppApiInventoryGetUserInventoryResponse = zod.object({
             zod.object({ id: zod.string(), name: zod.string(), unit_id: zod.string() }),
           ),
         }),
-        datasets: zod.object({
-          owner: zod
-            .array(
-              zod.object({
-                id: zod.string(),
-                version: zod.number(),
-                filename: zod.string(),
-                unit_id: zod.string(),
-              }),
-            )
-            .optional(),
-          editor: zod
-            .array(
-              zod.object({
-                id: zod.string(),
-                version: zod.number(),
-                filename: zod.string(),
-                unit_id: zod.string(),
-              }),
-            )
-            .optional(),
-        }),
-        activity: zod.object({
-          total_days_since_first_seen: zod
-            .number()
-            .describe(
-              "The total number of days since the user was first seen, including the day the user was first seen\n",
-            ),
-          total_days_active: zod
-            .number()
-            .describe("The total number of days active since first seen\n"),
-          total_days_inactive: zod
-            .number()
-            .describe("The total number of days inactive since first seen\n"),
-          total_activity: zod.string().describe("The total percentage activity since first seen\n"),
-          period_a: zod.object({
-            monitoring_period: zod
-              .string()
-              .describe("The period over which the activity is monitored\n"),
-            active_days: zod.number().describe("The number of days the API has been used\n"),
-            inactive_days: zod.number().describe("The number of days the API has not been used\n"),
-            activity: zod
-              .string()
-              .describe("Active days, as a percentage, over the monitoring period.\n"),
-            active_dates: zod
-              .array(zod.string())
-              .optional()
-              .describe(
-                "A list of dates where the API has been used during the monitoring period. Dates are returned if when the activity is not 100% and active dates are present. Dates are listed in reverse chronological order (i.e. the most recent first)\n",
-              ),
-          }),
-          period_b: zod
-            .object({
-              monitoring_period: zod
-                .string()
-                .describe("The period over which the activity is monitored\n"),
-              active_days: zod.number().describe("The number of days the API has been used\n"),
-              inactive_days: zod
-                .number()
-                .describe("The number of days the API has not been used\n"),
-              activity: zod
-                .string()
-                .describe("Active days, as a percentage, over the monitoring period.\n"),
-              active_dates: zod
-                .array(zod.string())
-                .optional()
-                .describe(
-                  "A list of dates where the API has been used during the monitoring period. Dates are returned if when the activity is not 100% and active dates are present. Dates are listed in reverse chronological order (i.e. the most recent first)\n",
-                ),
-            })
-            .optional(),
-        }),
+        username: zod.string(),
       }),
     )
     .describe("The list of known Users\n"),

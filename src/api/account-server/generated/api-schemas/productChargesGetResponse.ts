@@ -14,23 +14,23 @@ import type { ProductClaimDetail } from "./productClaimDetail";
 import type { StorageCharges } from "./storageCharges";
 
 export interface ProductChargesGetResponse {
-  product_id: string;
-  product_type: ProductChargesGetResponseProductType;
   /**
    * @minimum 1
    * @maximum 28
    */
   billing_day: number;
+  claim?: ProductClaimDetail;
   /** True if the product can be (needs to be) claimed. */
   claimable: boolean;
-  claim?: ProductClaimDetail;
+  /** The total number of coins consumed by this product for the invoice period */
+  coins: string;
   count: number;
   /** The start of the charge period */
   from: string;
+  processing_charges: ProcessingCharges[];
+  product_id: string;
+  product_type: ProductChargesGetResponseProductType;
+  storage_charges: StorageCharges;
   /** The date where of first day after the charge period */
   until: string;
-  /** The total number of coins consumed by this product for the invoice period */
-  coins: string;
-  processing_charges: ProcessingCharges[];
-  storage_charges: StorageCharges;
 }

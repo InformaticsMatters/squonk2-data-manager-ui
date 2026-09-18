@@ -10,8 +10,8 @@
  */
 
 export interface FileStat {
-  /** The size of the file in bytes */
-  size: number;
   /** The date and time (UTC) of the last modification */
   modified: string;
+  /** The size of the file in bytes */
+  size: number;
 }

@@ -11,12 +11,12 @@
 import type { TaskEventLevel } from "./taskEventLevel";
 
 export interface TaskEvent {
-  /** The event sequence number. The first event is always '1'. */
-  ordinal: number;
-  /** A short message. */
-  message: string;
   /** The level of the message, a typical logging framework value */
   level: TaskEventLevel;
+  /** A short message. */
+  message: string;
+  /** The event sequence number. The first event is always '1'. */
+  ordinal: number;
   /** The date and time the event was generated */
   time: string;
 }

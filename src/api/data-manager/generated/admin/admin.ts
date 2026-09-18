@@ -28,17 +28,31 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  AdminDeleteJobManifest403,
   AdminDeleteJobManifestParams,
+  AdminDeleteServiceError403,
+  AdminDeleteServiceError404,
+  AdminDeleteUser403,
+  AdminGetJobManifests200,
+  AdminGetJobManifests403,
+  AdminGetServiceErrors200,
+  AdminGetServiceErrors403,
   AdminGetServiceErrorsParams,
+  AdminGetUsers200,
+  AdminGetUsers403,
   AdminGetUsersParams,
-  AdminJobManifestGetResponse,
-  AdminJobManifestLoadPutResponse,
-  AdminUsersGetResponse,
-  DmError,
-  JobManifestPutBodyBody,
-  ServiceErrorsGetResponse,
-  UserAccountDetail,
-  UserPatchBodyBody,
+  AdminJobManifestLoad200,
+  AdminJobManifestLoad403,
+  AdminJobManifestLoad404,
+  AdminJobManifestPut200,
+  AdminJobManifestPut403,
+  AdminJobManifestPutBody,
+  AdminPatchServiceError403,
+  AdminPatchServiceError404,
+  AdminPatchUser403,
+  AdminPatchUserBody,
+  AdminPutUser201,
+  AdminPutUser403,
 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
@@ -62,891 +76,6 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
- * Displays the existing Service Errors, which can also include acknowledged errors, normally excluded from the list.
- *
- * You will need `admin` rights to use this endpoint
- * @summary Gets Service Errors
- */
-export const adminGetServiceErrors = (
-  params?: AdminGetServiceErrorsParams,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<ServiceErrorsGetResponse>(
-    { url: `/admin/service-error`, method: "GET", params, signal },
-    options,
-  );
-};
-
-export const getAdminGetServiceErrorsQueryKey = (params?: AdminGetServiceErrorsParams) => {
-  return ["data-manager", "admin", "service-error", ...(params ? [params] : [])] as const;
-};
-
-export const getAdminGetServiceErrorsQueryOptions = <
-  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetServiceErrorsParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getAdminGetServiceErrorsQueryKey(params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetServiceErrors>>> = ({ signal }) =>
-    adminGetServiceErrors(params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof adminGetServiceErrors>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type AdminGetServiceErrorsQueryResult = NonNullable<
-  Awaited<ReturnType<typeof adminGetServiceErrors>>
->;
-export type AdminGetServiceErrorsQueryError = ErrorType<void | DmError>;
-
-export function useAdminGetServiceErrors<
-  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: undefined | AdminGetServiceErrorsParams,
-  options: {
-    query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof adminGetServiceErrors>>,
-          TError,
-          Awaited<ReturnType<typeof adminGetServiceErrors>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useAdminGetServiceErrors<
-  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetServiceErrorsParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof adminGetServiceErrors>>,
-          TError,
-          Awaited<ReturnType<typeof adminGetServiceErrors>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useAdminGetServiceErrors<
-  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetServiceErrorsParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets Service Errors
- */
-
-export function useAdminGetServiceErrors<
-  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetServiceErrorsParams,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getAdminGetServiceErrorsQueryOptions(params, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Gets Service Errors
- */
-export const invalidateAdminGetServiceErrors = async (
-  queryClient: QueryClient,
-  params?: AdminGetServiceErrorsParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getAdminGetServiceErrorsQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
-
-export const getAdminGetServiceErrorsSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetServiceErrorsParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getAdminGetServiceErrorsQueryKey(params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetServiceErrors>>> = ({ signal }) =>
-    adminGetServiceErrors(params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof adminGetServiceErrors>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type AdminGetServiceErrorsSuspenseQueryResult = NonNullable<
-  Awaited<ReturnType<typeof adminGetServiceErrors>>
->;
-export type AdminGetServiceErrorsSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useAdminGetServiceErrorsSuspense<
-  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: undefined | AdminGetServiceErrorsParams,
-  options: {
-    query: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useAdminGetServiceErrorsSuspense<
-  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetServiceErrorsParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useAdminGetServiceErrorsSuspense<
-  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetServiceErrorsParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets Service Errors
- */
-
-export function useAdminGetServiceErrorsSuspense<
-  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetServiceErrorsParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getAdminGetServiceErrorsSuspenseQueryOptions(params, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * Used primarily to 'Acknowledge' but not delete a Service Error.
- *
- * You will need `admin` rights to use this endpoint
- * @summary Patches a Service Error
- */
-export const adminPatchServiceError = (
-  errorId: number,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>(
-    { url: `/admin/service-error/${errorId}`, method: "PATCH", signal },
-    options,
-  );
-};
-
-export const getAdminPatchServiceErrorMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof adminPatchServiceError>>,
-    TError,
-    { errorId: number },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof adminPatchServiceError>>,
-  TError,
-  { errorId: number },
-  TContext
-> => {
-  const mutationKey = ["adminPatchServiceError"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof adminPatchServiceError>>,
-    { errorId: number }
-  > = (props) => {
-    const { errorId } = props ?? {};
-
-    return adminPatchServiceError(errorId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type AdminPatchServiceErrorMutationResult = NonNullable<
-  Awaited<ReturnType<typeof adminPatchServiceError>>
->;
-
-export type AdminPatchServiceErrorMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Patches a Service Error
- */
-export const useAdminPatchServiceError = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof adminPatchServiceError>>,
-      TError,
-      { errorId: number },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof adminPatchServiceError>>,
-  TError,
-  { errorId: number },
-  TContext
-> => {
-  return useMutation(getAdminPatchServiceErrorMutationOptions(options), queryClient);
-};
-/**
- * Deletes an existing Service Error.
- *
- * You will need `admin` rights to use this endpoint
- * @summary Deletes a Service Error
- */
-export const adminDeleteServiceError = (
-  errorId: number,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>(
-    { url: `/admin/service-error/${errorId}`, method: "DELETE", signal },
-    options,
-  );
-};
-
-export const getAdminDeleteServiceErrorMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof adminDeleteServiceError>>,
-    TError,
-    { errorId: number },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof adminDeleteServiceError>>,
-  TError,
-  { errorId: number },
-  TContext
-> => {
-  const mutationKey = ["adminDeleteServiceError"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof adminDeleteServiceError>>,
-    { errorId: number }
-  > = (props) => {
-    const { errorId } = props ?? {};
-
-    return adminDeleteServiceError(errorId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type AdminDeleteServiceErrorMutationResult = NonNullable<
-  Awaited<ReturnType<typeof adminDeleteServiceError>>
->;
-
-export type AdminDeleteServiceErrorMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Deletes a Service Error
- */
-export const useAdminDeleteServiceError = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof adminDeleteServiceError>>,
-      TError,
-      { errorId: number },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof adminDeleteServiceError>>,
-  TError,
-  { errorId: number },
-  TContext
-> => {
-  return useMutation(getAdminDeleteServiceErrorMutationOptions(options), queryClient);
-};
-/**
- * You need admin privileges to use this endpoint and you are excluded from the returned list of users
- * @summary Get detailed information about all known Users
- */
-export const adminGetUsers = (
-  params?: AdminGetUsersParams,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<AdminUsersGetResponse>(
-    { url: `/admin/user`, method: "GET", params, signal },
-    options,
-  );
-};
-
-export const getAdminGetUsersQueryKey = (params?: AdminGetUsersParams) => {
-  return ["data-manager", "admin", "user", ...(params ? [params] : [])] as const;
-};
-
-export const getAdminGetUsersQueryOptions = <
-  TData = Awaited<ReturnType<typeof adminGetUsers>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetUsersParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getAdminGetUsersQueryKey(params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetUsers>>> = ({ signal }) =>
-    adminGetUsers(params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof adminGetUsers>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type AdminGetUsersQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetUsers>>>;
-export type AdminGetUsersQueryError = ErrorType<void | DmError>;
-
-export function useAdminGetUsers<
-  TData = Awaited<ReturnType<typeof adminGetUsers>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: undefined | AdminGetUsersParams,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof adminGetUsers>>,
-          TError,
-          Awaited<ReturnType<typeof adminGetUsers>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useAdminGetUsers<
-  TData = Awaited<ReturnType<typeof adminGetUsers>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetUsersParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof adminGetUsers>>,
-          TError,
-          Awaited<ReturnType<typeof adminGetUsers>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useAdminGetUsers<
-  TData = Awaited<ReturnType<typeof adminGetUsers>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetUsersParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get detailed information about all known Users
- */
-
-export function useAdminGetUsers<
-  TData = Awaited<ReturnType<typeof adminGetUsers>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetUsersParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getAdminGetUsersQueryOptions(params, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Get detailed information about all known Users
- */
-export const invalidateAdminGetUsers = async (
-  queryClient: QueryClient,
-  params?: AdminGetUsersParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getAdminGetUsersQueryKey(params) }, options);
-
-  return queryClient;
-};
-
-export const getAdminGetUsersSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof adminGetUsers>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetUsersParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getAdminGetUsersQueryKey(params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetUsers>>> = ({ signal }) =>
-    adminGetUsers(params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof adminGetUsers>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type AdminGetUsersSuspenseQueryResult = NonNullable<
-  Awaited<ReturnType<typeof adminGetUsers>>
->;
-export type AdminGetUsersSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useAdminGetUsersSuspense<
-  TData = Awaited<ReturnType<typeof adminGetUsers>>,
-  TError = ErrorType<void | DmError>,
->(
-  params: undefined | AdminGetUsersParams,
-  options: {
-    query: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useAdminGetUsersSuspense<
-  TData = Awaited<ReturnType<typeof adminGetUsers>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetUsersParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useAdminGetUsersSuspense<
-  TData = Awaited<ReturnType<typeof adminGetUsers>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetUsersParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get detailed information about all known Users
- */
-
-export function useAdminGetUsersSuspense<
-  TData = Awaited<ReturnType<typeof adminGetUsers>>,
-  TError = ErrorType<void | DmError>,
->(
-  params?: AdminGetUsersParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getAdminGetUsersSuspenseQueryOptions(params, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * This method adds a user to the Data Manager service. The user is authenticated via a keycloak server but will need an initialised account before they can create Datasets or Projects.
- *
- * You will need `admin` rights to use this endpoint
- * @summary Prepares a user account in the Data Manager service
- */
-export const adminPutUser = (
-  userId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<UserAccountDetail>(
-    { url: `/admin/user/${userId}`, method: "PUT", signal },
-    options,
-  );
-};
-
-export const getAdminPutUserMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof adminPutUser>>,
-    TError,
-    { userId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof adminPutUser>>,
-  TError,
-  { userId: string },
-  TContext
-> => {
-  const mutationKey = ["adminPutUser"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof adminPutUser>>,
-    { userId: string }
-  > = (props) => {
-    const { userId } = props ?? {};
-
-    return adminPutUser(userId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type AdminPutUserMutationResult = NonNullable<Awaited<ReturnType<typeof adminPutUser>>>;
-
-export type AdminPutUserMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Prepares a user account in the Data Manager service
- */
-export const useAdminPutUser = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof adminPutUser>>,
-      TError,
-      { userId: string },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof adminPutUser>>,
-  TError,
-  { userId: string },
-  TContext
-> => {
-  return useMutation(getAdminPutUserMutationOptions(options), queryClient);
-};
-/**
- * Deletes a user account, along with all the user's Datasets
- *
- * You will need `admin` rights to use this endpoint
- * @summary Deletes a user account
- */
-export const adminDeleteUser = (
-  userId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>({ url: `/admin/user/${userId}`, method: "DELETE", signal }, options);
-};
-
-export const getAdminDeleteUserMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof adminDeleteUser>>,
-    TError,
-    { userId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof adminDeleteUser>>,
-  TError,
-  { userId: string },
-  TContext
-> => {
-  const mutationKey = ["adminDeleteUser"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof adminDeleteUser>>,
-    { userId: string }
-  > = (props) => {
-    const { userId } = props ?? {};
-
-    return adminDeleteUser(userId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type AdminDeleteUserMutationResult = NonNullable<
-  Awaited<ReturnType<typeof adminDeleteUser>>
->;
-
-export type AdminDeleteUserMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Deletes a user account
- */
-export const useAdminDeleteUser = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof adminDeleteUser>>,
-      TError,
-      { userId: string },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof adminDeleteUser>>,
-  TError,
-  { userId: string },
-  TContext
-> => {
-  return useMutation(getAdminDeleteUserMutationOptions(options), queryClient);
-};
-/**
- * Patches a user record, typically to suspend or re-enable a user account
- *
- * You will need `admin` rights to use this endpoint
- * @summary Patch a given user
- */
-export const adminPatchUser = (
-  userId: string,
-  userPatchBodyBody: UserPatchBodyBody,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  const formUrlEncoded = new URLSearchParams();
-  if (userPatchBodyBody.suspend_message !== undefined) {
-    formUrlEncoded.append(`suspend_message`, userPatchBodyBody.suspend_message);
-  }
-
-  return customInstance<void>(
-    {
-      url: `/admin/user/${userId}`,
-      method: "PATCH",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      data: formUrlEncoded,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getAdminPatchUserMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof adminPatchUser>>,
-    TError,
-    { userId: string; data: UserPatchBodyBody },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof adminPatchUser>>,
-  TError,
-  { userId: string; data: UserPatchBodyBody },
-  TContext
-> => {
-  const mutationKey = ["adminPatchUser"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof adminPatchUser>>,
-    { userId: string; data: UserPatchBodyBody }
-  > = (props) => {
-    const { userId, data } = props ?? {};
-
-    return adminPatchUser(userId, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type AdminPatchUserMutationResult = NonNullable<Awaited<ReturnType<typeof adminPatchUser>>>;
-export type AdminPatchUserMutationBody = UserPatchBodyBody;
-export type AdminPatchUserMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Patch a given user
- */
-export const useAdminPatchUser = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof adminPatchUser>>,
-      TError,
-      { userId: string; data: UserPatchBodyBody },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof adminPatchUser>>,
-  TError,
-  { userId: string; data: UserPatchBodyBody },
-  TContext
-> => {
-  return useMutation(getAdminPatchUserMutationOptions(options), queryClient);
-};
-/**
  * Returns the list of known **Job Manifests** including the time the manifest was last loaded and its load status, a message indicating success or failure.
  *
  * You will need `admin` rights to use this endpoint
@@ -956,7 +85,7 @@ export const adminGetJobManifests = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<AdminJobManifestGetResponse>(
+  return customInstance<AdminGetJobManifests200>(
     { url: `/admin/job-manifest`, method: "GET", signal },
     options,
   );
@@ -968,7 +97,7 @@ export const getAdminGetJobManifestsQueryKey = () => {
 
 export const getAdminGetJobManifestsQueryOptions = <
   TData = Awaited<ReturnType<typeof adminGetJobManifests>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminGetJobManifests403>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetJobManifests>>, TError, TData>>;
   request?: SecondParameter<typeof customInstance>;
@@ -990,11 +119,11 @@ export const getAdminGetJobManifestsQueryOptions = <
 export type AdminGetJobManifestsQueryResult = NonNullable<
   Awaited<ReturnType<typeof adminGetJobManifests>>
 >;
-export type AdminGetJobManifestsQueryError = ErrorType<void | DmError>;
+export type AdminGetJobManifestsQueryError = ErrorType<void | AdminGetJobManifests403>;
 
 export function useAdminGetJobManifests<
   TData = Awaited<ReturnType<typeof adminGetJobManifests>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminGetJobManifests403>,
 >(
   options: {
     query: Partial<
@@ -1014,7 +143,7 @@ export function useAdminGetJobManifests<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useAdminGetJobManifests<
   TData = Awaited<ReturnType<typeof adminGetJobManifests>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminGetJobManifests403>,
 >(
   options?: {
     query?: Partial<
@@ -1034,7 +163,7 @@ export function useAdminGetJobManifests<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useAdminGetJobManifests<
   TData = Awaited<ReturnType<typeof adminGetJobManifests>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminGetJobManifests403>,
 >(
   options?: {
     query?: Partial<
@@ -1050,7 +179,7 @@ export function useAdminGetJobManifests<
 
 export function useAdminGetJobManifests<
   TData = Awaited<ReturnType<typeof adminGetJobManifests>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminGetJobManifests403>,
 >(
   options?: {
     query?: Partial<
@@ -1083,7 +212,7 @@ export const invalidateAdminGetJobManifests = async (
 
 export const getAdminGetJobManifestsSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof adminGetJobManifests>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminGetJobManifests403>,
 >(options?: {
   query?: Partial<
     UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetJobManifests>>, TError, TData>
@@ -1107,11 +236,11 @@ export const getAdminGetJobManifestsSuspenseQueryOptions = <
 export type AdminGetJobManifestsSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof adminGetJobManifests>>
 >;
-export type AdminGetJobManifestsSuspenseQueryError = ErrorType<void | DmError>;
+export type AdminGetJobManifestsSuspenseQueryError = ErrorType<void | AdminGetJobManifests403>;
 
 export function useAdminGetJobManifestsSuspense<
   TData = Awaited<ReturnType<typeof adminGetJobManifests>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminGetJobManifests403>,
 >(
   options: {
     query: Partial<
@@ -1123,7 +252,7 @@ export function useAdminGetJobManifestsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useAdminGetJobManifestsSuspense<
   TData = Awaited<ReturnType<typeof adminGetJobManifests>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminGetJobManifests403>,
 >(
   options?: {
     query?: Partial<
@@ -1135,7 +264,7 @@ export function useAdminGetJobManifestsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useAdminGetJobManifestsSuspense<
   TData = Awaited<ReturnType<typeof adminGetJobManifests>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminGetJobManifests403>,
 >(
   options?: {
     query?: Partial<
@@ -1151,7 +280,7 @@ export function useAdminGetJobManifestsSuspense<
 
 export function useAdminGetJobManifestsSuspense<
   TData = Awaited<ReturnType<typeof adminGetJobManifests>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminGetJobManifests403>,
 >(
   options?: {
     query?: Partial<
@@ -1182,20 +311,20 @@ export function useAdminGetJobManifestsSuspense<
  * @summary Adds a Job Manifest and triggers the download of its Job Definitions
  */
 export const adminJobManifestPut = (
-  jobManifestPutBodyBody: JobManifestPutBodyBody,
+  adminJobManifestPutBody: AdminJobManifestPutBody,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   const formUrlEncoded = new URLSearchParams();
-  formUrlEncoded.append(`url`, jobManifestPutBodyBody.url);
-  if (jobManifestPutBodyBody.header !== undefined) {
-    formUrlEncoded.append(`header`, jobManifestPutBodyBody.header);
+  if (adminJobManifestPutBody.header !== undefined) {
+    formUrlEncoded.append(`header`, adminJobManifestPutBody.header);
   }
-  if (jobManifestPutBodyBody.params !== undefined) {
-    formUrlEncoded.append(`params`, jobManifestPutBodyBody.params);
+  if (adminJobManifestPutBody.params !== undefined) {
+    formUrlEncoded.append(`params`, adminJobManifestPutBody.params);
   }
+  formUrlEncoded.append(`url`, adminJobManifestPutBody.url);
 
-  return customInstance<AdminJobManifestLoadPutResponse>(
+  return customInstance<AdminJobManifestPut200>(
     {
       url: `/admin/job-manifest`,
       method: "PUT",
@@ -1208,20 +337,20 @@ export const adminJobManifestPut = (
 };
 
 export const getAdminJobManifestPutMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminJobManifestPut403>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof adminJobManifestPut>>,
     TError,
-    { data: JobManifestPutBodyBody },
+    { data: AdminJobManifestPutBody },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof adminJobManifestPut>>,
   TError,
-  { data: JobManifestPutBodyBody },
+  { data: AdminJobManifestPutBody },
   TContext
 > => {
   const mutationKey = ["adminJobManifestPut"];
@@ -1233,7 +362,7 @@ export const getAdminJobManifestPutMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof adminJobManifestPut>>,
-    { data: JobManifestPutBodyBody }
+    { data: AdminJobManifestPutBody }
   > = (props) => {
     const { data } = props ?? {};
 
@@ -1246,18 +375,21 @@ export const getAdminJobManifestPutMutationOptions = <
 export type AdminJobManifestPutMutationResult = NonNullable<
   Awaited<ReturnType<typeof adminJobManifestPut>>
 >;
-export type AdminJobManifestPutMutationBody = JobManifestPutBodyBody;
-export type AdminJobManifestPutMutationError = ErrorType<void | DmError>;
+export type AdminJobManifestPutMutationBody = AdminJobManifestPutBody;
+export type AdminJobManifestPutMutationError = ErrorType<void | AdminJobManifestPut403>;
 
 /**
  * @summary Adds a Job Manifest and triggers the download of its Job Definitions
  */
-export const useAdminJobManifestPut = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useAdminJobManifestPut = <
+  TError = ErrorType<void | AdminJobManifestPut403>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof adminJobManifestPut>>,
       TError,
-      { data: JobManifestPutBodyBody },
+      { data: AdminJobManifestPutBody },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -1266,10 +398,90 @@ export const useAdminJobManifestPut = <TError = ErrorType<void | DmError>, TCont
 ): UseMutationResult<
   Awaited<ReturnType<typeof adminJobManifestPut>>,
   TError,
-  { data: JobManifestPutBodyBody },
+  { data: AdminJobManifestPutBody },
   TContext
 > => {
   return useMutation(getAdminJobManifestPutMutationOptions(options), queryClient);
+};
+/**
+ * This endpoint is used to trigger the Data Manager to re-inspect the internal **Job Manifest** table and download the manifests and reprocess the related job definitions. This is normally done by an administrator when the Manifest table has been modified or if external job definitions are known to have changed in the referenced repositories.
+ *
+ * You need to exercise caution using this endpoint. You can disrupt the Data Manager **Instance** execution if you re-load Jobs while instances of any affected job may be running.
+ *
+ * You will need `admin` rights to use this endpoint and the Data Manager needs to be running in `DEVELOPMENT` **Mode**
+ * @summary Trigger a download of Job Definitions using existing Job Manifests
+ */
+export const adminJobManifestLoad = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<AdminJobManifestLoad200>(
+    { url: `/admin/job-manifest/load`, method: "PUT", signal },
+    options,
+  );
+};
+
+export const getAdminJobManifestLoadMutationOptions = <
+  TError = ErrorType<void | AdminJobManifestLoad403 | AdminJobManifestLoad404>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminJobManifestLoad>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminJobManifestLoad>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["adminJobManifestLoad"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminJobManifestLoad>>,
+    void
+  > = () => {
+    return adminJobManifestLoad(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminJobManifestLoadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminJobManifestLoad>>
+>;
+
+export type AdminJobManifestLoadMutationError = ErrorType<
+  void | AdminJobManifestLoad403 | AdminJobManifestLoad404
+>;
+
+/**
+ * @summary Trigger a download of Job Definitions using existing Job Manifests
+ */
+export const useAdminJobManifestLoad = <
+  TError = ErrorType<void | AdminJobManifestLoad403 | AdminJobManifestLoad404>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof adminJobManifestLoad>>,
+      TError,
+      void,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<Awaited<ReturnType<typeof adminJobManifestLoad>>, TError, void, TContext> => {
+  return useMutation(getAdminJobManifestLoadMutationOptions(options), queryClient);
 };
 /**
  * Deletes a Job Manifest record
@@ -1292,7 +504,7 @@ export const adminDeleteJobManifest = (
 };
 
 export const getAdminDeleteJobManifestMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | AdminDeleteJobManifest403>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -1331,12 +543,15 @@ export type AdminDeleteJobManifestMutationResult = NonNullable<
   Awaited<ReturnType<typeof adminDeleteJobManifest>>
 >;
 
-export type AdminDeleteJobManifestMutationError = ErrorType<void | DmError>;
+export type AdminDeleteJobManifestMutationError = ErrorType<void | AdminDeleteJobManifest403>;
 
 /**
  * @summary Deletes a Job Manifest
  */
-export const useAdminDeleteJobManifest = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useAdminDeleteJobManifest = <
+  TError = ErrorType<void | AdminDeleteJobManifest403>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof adminDeleteJobManifest>>,
@@ -1356,41 +571,286 @@ export const useAdminDeleteJobManifest = <TError = ErrorType<void | DmError>, TC
   return useMutation(getAdminDeleteJobManifestMutationOptions(options), queryClient);
 };
 /**
- * This endpoint is used to trigger the Data Manager to re-inspect the internal **Job Manifest** table and download the manifests and reprocess the related job definitions. This is normally done by an administrator when the Manifest table has been modified or if external job definitions are known to have changed in the referenced repositories.
+ * Displays the existing Service Errors, which can also include acknowledged errors, normally excluded from the list.
  *
- * You need to exercise caution using this endpoint. You can disrupt the Data Manager **Instance** execution if you re-load Jobs while instances of any affected job may be running.
- *
- * You will need `admin` rights to use this endpoint and the Data Manager needs to be running in `DEVELOPMENT` **Mode**
- * @summary Trigger a download of Job Definitions using existing Job Manifests
+ * You will need `admin` rights to use this endpoint
+ * @summary Gets Service Errors
  */
-export const adminJobManifestLoad = (
+export const adminGetServiceErrors = (
+  params?: AdminGetServiceErrorsParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<AdminJobManifestLoadPutResponse>(
-    { url: `/admin/job-manifest/load`, method: "PUT", signal },
+  return customInstance<AdminGetServiceErrors200>(
+    { url: `/admin/service-error`, method: "GET", params, signal },
     options,
   );
 };
 
-export const getAdminJobManifestLoadMutationOptions = <
-  TError = ErrorType<void | DmError>,
+export const getAdminGetServiceErrorsQueryKey = (params?: AdminGetServiceErrorsParams) => {
+  return ["data-manager", "admin", "service-error", ...(params ? [params] : [])] as const;
+};
+
+export const getAdminGetServiceErrorsQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
+  TError = ErrorType<void | AdminGetServiceErrors403>,
+>(
+  params?: AdminGetServiceErrorsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminGetServiceErrorsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetServiceErrors>>> = ({ signal }) =>
+    adminGetServiceErrors(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminGetServiceErrors>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type AdminGetServiceErrorsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminGetServiceErrors>>
+>;
+export type AdminGetServiceErrorsQueryError = ErrorType<void | AdminGetServiceErrors403>;
+
+export function useAdminGetServiceErrors<
+  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
+  TError = ErrorType<void | AdminGetServiceErrors403>,
+>(
+  params: undefined | AdminGetServiceErrorsParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminGetServiceErrors>>,
+          TError,
+          Awaited<ReturnType<typeof adminGetServiceErrors>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useAdminGetServiceErrors<
+  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
+  TError = ErrorType<void | AdminGetServiceErrors403>,
+>(
+  params?: AdminGetServiceErrorsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminGetServiceErrors>>,
+          TError,
+          Awaited<ReturnType<typeof adminGetServiceErrors>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useAdminGetServiceErrors<
+  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
+  TError = ErrorType<void | AdminGetServiceErrors403>,
+>(
+  params?: AdminGetServiceErrorsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets Service Errors
+ */
+
+export function useAdminGetServiceErrors<
+  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
+  TError = ErrorType<void | AdminGetServiceErrors403>,
+>(
+  params?: AdminGetServiceErrorsParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getAdminGetServiceErrorsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets Service Errors
+ */
+export const invalidateAdminGetServiceErrors = async (
+  queryClient: QueryClient,
+  params?: AdminGetServiceErrorsParams,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries(
+    { queryKey: getAdminGetServiceErrorsQueryKey(params) },
+    options,
+  );
+
+  return queryClient;
+};
+
+export const getAdminGetServiceErrorsSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
+  TError = ErrorType<void | AdminGetServiceErrors403>,
+>(
+  params?: AdminGetServiceErrorsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminGetServiceErrorsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetServiceErrors>>> = ({ signal }) =>
+    adminGetServiceErrors(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof adminGetServiceErrors>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type AdminGetServiceErrorsSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminGetServiceErrors>>
+>;
+export type AdminGetServiceErrorsSuspenseQueryError = ErrorType<void | AdminGetServiceErrors403>;
+
+export function useAdminGetServiceErrorsSuspense<
+  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
+  TError = ErrorType<void | AdminGetServiceErrors403>,
+>(
+  params: undefined | AdminGetServiceErrorsParams,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useAdminGetServiceErrorsSuspense<
+  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
+  TError = ErrorType<void | AdminGetServiceErrors403>,
+>(
+  params?: AdminGetServiceErrorsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useAdminGetServiceErrorsSuspense<
+  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
+  TError = ErrorType<void | AdminGetServiceErrors403>,
+>(
+  params?: AdminGetServiceErrorsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets Service Errors
+ */
+
+export function useAdminGetServiceErrorsSuspense<
+  TData = Awaited<ReturnType<typeof adminGetServiceErrors>>,
+  TError = ErrorType<void | AdminGetServiceErrors403>,
+>(
+  params?: AdminGetServiceErrorsParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetServiceErrors>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getAdminGetServiceErrorsSuspenseQueryOptions(params, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * Deletes an existing Service Error.
+ *
+ * You will need `admin` rights to use this endpoint
+ * @summary Deletes a Service Error
+ */
+export const adminDeleteServiceError = (
+  errorId: number,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/admin/service-error/${errorId}`, method: "DELETE", signal },
+    options,
+  );
+};
+
+export const getAdminDeleteServiceErrorMutationOptions = <
+  TError = ErrorType<void | AdminDeleteServiceError403 | AdminDeleteServiceError404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof adminJobManifestLoad>>,
+    Awaited<ReturnType<typeof adminDeleteServiceError>>,
     TError,
-    void,
+    { errorId: number },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof adminJobManifestLoad>>,
+  Awaited<ReturnType<typeof adminDeleteServiceError>>,
   TError,
-  void,
+  { errorId: number },
   TContext
 > => {
-  const mutationKey = ["adminJobManifestLoad"];
+  const mutationKey = ["adminDeleteServiceError"];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
@@ -1398,35 +858,613 @@ export const getAdminJobManifestLoadMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof adminJobManifestLoad>>,
-    void
-  > = () => {
-    return adminJobManifestLoad(requestOptions);
+    Awaited<ReturnType<typeof adminDeleteServiceError>>,
+    { errorId: number }
+  > = (props) => {
+    const { errorId } = props ?? {};
+
+    return adminDeleteServiceError(errorId, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type AdminJobManifestLoadMutationResult = NonNullable<
-  Awaited<ReturnType<typeof adminJobManifestLoad>>
+export type AdminDeleteServiceErrorMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminDeleteServiceError>>
 >;
 
-export type AdminJobManifestLoadMutationError = ErrorType<void | DmError>;
+export type AdminDeleteServiceErrorMutationError = ErrorType<
+  void | AdminDeleteServiceError403 | AdminDeleteServiceError404
+>;
 
 /**
- * @summary Trigger a download of Job Definitions using existing Job Manifests
+ * @summary Deletes a Service Error
  */
-export const useAdminJobManifestLoad = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useAdminDeleteServiceError = <
+  TError = ErrorType<void | AdminDeleteServiceError403 | AdminDeleteServiceError404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof adminJobManifestLoad>>,
+      Awaited<ReturnType<typeof adminDeleteServiceError>>,
       TError,
-      void,
+      { errorId: number },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof adminJobManifestLoad>>, TError, void, TContext> => {
-  return useMutation(getAdminJobManifestLoadMutationOptions(options), queryClient);
+): UseMutationResult<
+  Awaited<ReturnType<typeof adminDeleteServiceError>>,
+  TError,
+  { errorId: number },
+  TContext
+> => {
+  return useMutation(getAdminDeleteServiceErrorMutationOptions(options), queryClient);
+};
+/**
+ * Used primarily to 'Acknowledge' but not delete a Service Error.
+ *
+ * You will need `admin` rights to use this endpoint
+ * @summary Patches a Service Error
+ */
+export const adminPatchServiceError = (
+  errorId: number,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/admin/service-error/${errorId}`, method: "PATCH", signal },
+    options,
+  );
+};
+
+export const getAdminPatchServiceErrorMutationOptions = <
+  TError = ErrorType<void | AdminPatchServiceError403 | AdminPatchServiceError404>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminPatchServiceError>>,
+    TError,
+    { errorId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminPatchServiceError>>,
+  TError,
+  { errorId: number },
+  TContext
+> => {
+  const mutationKey = ["adminPatchServiceError"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminPatchServiceError>>,
+    { errorId: number }
+  > = (props) => {
+    const { errorId } = props ?? {};
+
+    return adminPatchServiceError(errorId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminPatchServiceErrorMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminPatchServiceError>>
+>;
+
+export type AdminPatchServiceErrorMutationError = ErrorType<
+  void | AdminPatchServiceError403 | AdminPatchServiceError404
+>;
+
+/**
+ * @summary Patches a Service Error
+ */
+export const useAdminPatchServiceError = <
+  TError = ErrorType<void | AdminPatchServiceError403 | AdminPatchServiceError404>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof adminPatchServiceError>>,
+      TError,
+      { errorId: number },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof adminPatchServiceError>>,
+  TError,
+  { errorId: number },
+  TContext
+> => {
+  return useMutation(getAdminPatchServiceErrorMutationOptions(options), queryClient);
+};
+/**
+ * You need admin privileges to use this endpoint and you are excluded from the returned list of users
+ * @summary Get detailed information about all known Users
+ */
+export const adminGetUsers = (
+  params?: AdminGetUsersParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<AdminGetUsers200>(
+    { url: `/admin/user`, method: "GET", params, signal },
+    options,
+  );
+};
+
+export const getAdminGetUsersQueryKey = (params?: AdminGetUsersParams) => {
+  return ["data-manager", "admin", "user", ...(params ? [params] : [])] as const;
+};
+
+export const getAdminGetUsersQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminGetUsers>>,
+  TError = ErrorType<void | AdminGetUsers403>,
+>(
+  params?: AdminGetUsersParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminGetUsersQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetUsers>>> = ({ signal }) =>
+    adminGetUsers(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminGetUsers>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type AdminGetUsersQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetUsers>>>;
+export type AdminGetUsersQueryError = ErrorType<void | AdminGetUsers403>;
+
+export function useAdminGetUsers<
+  TData = Awaited<ReturnType<typeof adminGetUsers>>,
+  TError = ErrorType<void | AdminGetUsers403>,
+>(
+  params: undefined | AdminGetUsersParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminGetUsers>>,
+          TError,
+          Awaited<ReturnType<typeof adminGetUsers>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useAdminGetUsers<
+  TData = Awaited<ReturnType<typeof adminGetUsers>>,
+  TError = ErrorType<void | AdminGetUsers403>,
+>(
+  params?: AdminGetUsersParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminGetUsers>>,
+          TError,
+          Awaited<ReturnType<typeof adminGetUsers>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useAdminGetUsers<
+  TData = Awaited<ReturnType<typeof adminGetUsers>>,
+  TError = ErrorType<void | AdminGetUsers403>,
+>(
+  params?: AdminGetUsersParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get detailed information about all known Users
+ */
+
+export function useAdminGetUsers<
+  TData = Awaited<ReturnType<typeof adminGetUsers>>,
+  TError = ErrorType<void | AdminGetUsers403>,
+>(
+  params?: AdminGetUsersParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getAdminGetUsersQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Get detailed information about all known Users
+ */
+export const invalidateAdminGetUsers = async (
+  queryClient: QueryClient,
+  params?: AdminGetUsersParams,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getAdminGetUsersQueryKey(params) }, options);
+
+  return queryClient;
+};
+
+export const getAdminGetUsersSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminGetUsers>>,
+  TError = ErrorType<void | AdminGetUsers403>,
+>(
+  params?: AdminGetUsersParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminGetUsersQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetUsers>>> = ({ signal }) =>
+    adminGetUsers(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof adminGetUsers>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type AdminGetUsersSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminGetUsers>>
+>;
+export type AdminGetUsersSuspenseQueryError = ErrorType<void | AdminGetUsers403>;
+
+export function useAdminGetUsersSuspense<
+  TData = Awaited<ReturnType<typeof adminGetUsers>>,
+  TError = ErrorType<void | AdminGetUsers403>,
+>(
+  params: undefined | AdminGetUsersParams,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useAdminGetUsersSuspense<
+  TData = Awaited<ReturnType<typeof adminGetUsers>>,
+  TError = ErrorType<void | AdminGetUsers403>,
+>(
+  params?: AdminGetUsersParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useAdminGetUsersSuspense<
+  TData = Awaited<ReturnType<typeof adminGetUsers>>,
+  TError = ErrorType<void | AdminGetUsers403>,
+>(
+  params?: AdminGetUsersParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get detailed information about all known Users
+ */
+
+export function useAdminGetUsersSuspense<
+  TData = Awaited<ReturnType<typeof adminGetUsers>>,
+  TError = ErrorType<void | AdminGetUsers403>,
+>(
+  params?: AdminGetUsersParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof adminGetUsers>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getAdminGetUsersSuspenseQueryOptions(params, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * Deletes a user account, along with all the user's Datasets
+ *
+ * You will need `admin` rights to use this endpoint
+ * @summary Deletes a user account
+ */
+export const adminDeleteUser = (
+  userId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>({ url: `/admin/user/${userId}`, method: "DELETE", signal }, options);
+};
+
+export const getAdminDeleteUserMutationOptions = <
+  TError = ErrorType<void | AdminDeleteUser403>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminDeleteUser>>,
+    TError,
+    { userId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminDeleteUser>>,
+  TError,
+  { userId: string },
+  TContext
+> => {
+  const mutationKey = ["adminDeleteUser"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminDeleteUser>>,
+    { userId: string }
+  > = (props) => {
+    const { userId } = props ?? {};
+
+    return adminDeleteUser(userId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminDeleteUserMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminDeleteUser>>
+>;
+
+export type AdminDeleteUserMutationError = ErrorType<void | AdminDeleteUser403>;
+
+/**
+ * @summary Deletes a user account
+ */
+export const useAdminDeleteUser = <
+  TError = ErrorType<void | AdminDeleteUser403>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof adminDeleteUser>>,
+      TError,
+      { userId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof adminDeleteUser>>,
+  TError,
+  { userId: string },
+  TContext
+> => {
+  return useMutation(getAdminDeleteUserMutationOptions(options), queryClient);
+};
+/**
+ * Patches a user record, typically to suspend or re-enable a user account
+ *
+ * You will need `admin` rights to use this endpoint
+ * @summary Patch a given user
+ */
+export const adminPatchUser = (
+  userId: string,
+  adminPatchUserBody: AdminPatchUserBody,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  const formUrlEncoded = new URLSearchParams();
+  if (adminPatchUserBody.suspend_message !== undefined) {
+    formUrlEncoded.append(`suspend_message`, adminPatchUserBody.suspend_message);
+  }
+
+  return customInstance<void>(
+    {
+      url: `/admin/user/${userId}`,
+      method: "PATCH",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: formUrlEncoded,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getAdminPatchUserMutationOptions = <
+  TError = ErrorType<void | AdminPatchUser403>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminPatchUser>>,
+    TError,
+    { userId: string; data: AdminPatchUserBody },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminPatchUser>>,
+  TError,
+  { userId: string; data: AdminPatchUserBody },
+  TContext
+> => {
+  const mutationKey = ["adminPatchUser"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminPatchUser>>,
+    { userId: string; data: AdminPatchUserBody }
+  > = (props) => {
+    const { userId, data } = props ?? {};
+
+    return adminPatchUser(userId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminPatchUserMutationResult = NonNullable<Awaited<ReturnType<typeof adminPatchUser>>>;
+export type AdminPatchUserMutationBody = AdminPatchUserBody;
+export type AdminPatchUserMutationError = ErrorType<void | AdminPatchUser403>;
+
+/**
+ * @summary Patch a given user
+ */
+export const useAdminPatchUser = <TError = ErrorType<void | AdminPatchUser403>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof adminPatchUser>>,
+      TError,
+      { userId: string; data: AdminPatchUserBody },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof adminPatchUser>>,
+  TError,
+  { userId: string; data: AdminPatchUserBody },
+  TContext
+> => {
+  return useMutation(getAdminPatchUserMutationOptions(options), queryClient);
+};
+/**
+ * This method adds a user to the Data Manager service. The user is authenticated via a keycloak server but will need an initialised account before they can create Datasets or Projects.
+ *
+ * You will need `admin` rights to use this endpoint
+ * @summary Prepares a user account in the Data Manager service
+ */
+export const adminPutUser = (
+  userId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<AdminPutUser201>(
+    { url: `/admin/user/${userId}`, method: "PUT", signal },
+    options,
+  );
+};
+
+export const getAdminPutUserMutationOptions = <
+  TError = ErrorType<void | AdminPutUser403>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminPutUser>>,
+    TError,
+    { userId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminPutUser>>,
+  TError,
+  { userId: string },
+  TContext
+> => {
+  const mutationKey = ["adminPutUser"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminPutUser>>,
+    { userId: string }
+  > = (props) => {
+    const { userId } = props ?? {};
+
+    return adminPutUser(userId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminPutUserMutationResult = NonNullable<Awaited<ReturnType<typeof adminPutUser>>>;
+
+export type AdminPutUserMutationError = ErrorType<void | AdminPutUser403>;
+
+/**
+ * @summary Prepares a user account in the Data Manager service
+ */
+export const useAdminPutUser = <TError = ErrorType<void | AdminPutUser403>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof adminPutUser>>,
+      TError,
+      { userId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof adminPutUser>>,
+  TError,
+  { userId: string },
+  TContext
+> => {
+  return useMutation(getAdminPutUserMutationOptions(options), queryClient);
 };

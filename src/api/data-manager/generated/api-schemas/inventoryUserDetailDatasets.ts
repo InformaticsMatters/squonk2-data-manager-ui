@@ -8,9 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { InventoryDatasetDetail } from "./inventoryDatasetDetail";
+import type { InventoryUserDetailDatasetsEditorItem } from "./inventoryUserDetailDatasetsEditorItem";
+import type { InventoryUserDetailDatasetsOwnerItem } from "./inventoryUserDetailDatasetsOwnerItem";
 
 export type InventoryUserDetailDatasets = {
-  owner?: InventoryDatasetDetail[];
-  editor?: InventoryDatasetDetail[];
+  editor?: InventoryUserDetailDatasetsEditorItem[];
+  owner?: InventoryUserDetailDatasetsOwnerItem[];
 };

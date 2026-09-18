@@ -75,13 +75,6 @@ export const AppApiTaskGetResponse = zod.object({
   tasks: zod
     .array(
       zod.object({
-        id: zod.string().describe("The Task UUID\n"),
-        image: zod
-          .string()
-          .optional()
-          .describe(
-            "If a container image is launched by the task the image name is available here\n",
-          ),
         created: zod.iso
           .datetime({ offset: true })
           .describe("The date and time the task was created\n"),
@@ -90,14 +83,23 @@ export const AppApiTaskGetResponse = zod.object({
           .describe(
             "True if the task has run to completion. If the task finished successfully the `exit_code` will be zero.\n",
           ),
-        removal: zod
-          .boolean()
-          .optional()
-          .describe("True if the Task relates to an object removal, i.e. a DELETE\n"),
         exit_code: zod
           .number()
           .optional()
           .describe("Present when `done` and zero if the task finished successfully.\n"),
+        id: zod.string().describe("The Task UUID\n"),
+        image: zod
+          .string()
+          .optional()
+          .describe(
+            "If a container image is launched by the task the image name is available here\n",
+          ),
+        processing_stage: zod
+          .enum(["COPYING", "FAILED", "FORMATTING", "LOADING", "DELETING", "DONE"])
+          .optional()
+          .describe(
+            "The processing stage. When loading a Dataset it typically passes through `COPYING`, `FORMATTING` and `LOADING` stages before reaching `DONE` (or `FAILED`). A Dataset can be used (and deleted) as long as it's passed the `FORMATTING` stage\n",
+          ),
         purpose: zod
           .string()
           .describe(
@@ -114,16 +116,32 @@ export const AppApiTaskGetResponse = zod.object({
           .describe(
             "The related object version for the Task purpose. This field will only be set if the \*\*purpose\*\* is `DATASET`.\n",
           ),
-        processing_stage: zod
-          .enum(["COPYING", "FAILED", "FORMATTING", "LOADING", "DELETING", "DONE"])
+        removal: zod
+          .boolean()
           .optional()
-          .describe(
-            "The processing stage. When loading a Dataset it typically passes through `COPYING`, `FORMATTING` and `LOADING` stages before reaching `DONE` (or `FAILED`). A Dataset can be used (and deleted) as long as it's passed the `FORMATTING` stage\n",
-          ),
+          .describe("True if the Task relates to an object removal, i.e. a DELETE\n"),
       }),
     )
     .describe("A list of Tasks\n"),
 });
+
+/**
+ * Given a `task_id` the Task will be removed.
+ *
+ * You cannot delete a Task until it is `done`.
+ *
+ * You must be an `owner` of the Task to delete it. For example you must be the `owner` of the Dataset to delete **DATASET** Tasks and an `owner` of the ProjectFile to delete **FILE** Tasks.
+ * @summary Delete a Task entry
+ */
+export const appApiTaskDeletePathTaskIdRegExp = new RegExp(
+  "^task-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiTaskDeleteParams = zod.object({
+  task_id: zod.string().regex(appApiTaskDeletePathTaskIdRegExp).describe("The task identity"),
+});
+
+export const AppApiTaskDeleteResponse = zod.void();
 
 /**
  * Returns Task information including its states and events.
@@ -174,6 +192,45 @@ export const AppApiTaskGetTaskQueryParams = zod.object({
 });
 
 export const AppApiTaskGetTaskResponse = zod.object({
+  created: zod.iso.datetime({ offset: true }).describe("The date and time the task was created\n"),
+  done: zod
+    .boolean()
+    .describe(
+      "True if the task has run to completion. If the task finished successfully the `exit_code` will be zero.\n",
+    ),
+  events: zod
+    .array(
+      zod.object({
+        level: zod
+          .enum(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
+          .describe("The level of the message, a typical logging framework value\n"),
+        message: zod.string().describe("A short message.\n"),
+        ordinal: zod
+          .number()
+          .describe("The event sequence number. The first event is always '1'.\n"),
+        time: zod.iso
+          .datetime({ offset: true })
+          .describe("The date and time the event was generated\n"),
+      }),
+    )
+    .optional()
+    .describe(
+      "A (possibly empty) list of application events. The oldest event occupies the first position in the list.\n",
+    ),
+  exit_code: zod
+    .number()
+    .optional()
+    .describe("Present when `done` and zero if the task finished successfully.\n"),
+  image: zod
+    .string()
+    .optional()
+    .describe("If a container image is launched by the task the image name is available here\n"),
+  instance_specification: zod
+    .string()
+    .optional()
+    .describe(
+      "Is the Task Purpose is `INSTANCE`, and the instance was given a `specification` the specification can be found here. For \*\*Applications\*\* the specification is returned verbatim.\n",
+    ),
   purpose: zod
     .enum(["DATASET", "FILE", "INSTANCE", "PROJECT"])
     .describe(
@@ -190,43 +247,23 @@ export const AppApiTaskGetTaskResponse = zod.object({
     .describe(
       "The version number, relating to the object under control. For Datasets this will be the Dataset version.\n",
     ),
-  instance_specification: zod
-    .string()
-    .optional()
-    .describe(
-      "Is the Task Purpose is `INSTANCE`, and the instance was given a `specification` the specification can be found here. For \*\*Applications\*\* the specification is returned verbatim.\n",
-    ),
-  image: zod
-    .string()
-    .optional()
-    .describe("If a container image is launched by the task the image name is available here\n"),
-  created: zod.iso.datetime({ offset: true }).describe("The date and time the task was created\n"),
-  done: zod
-    .boolean()
-    .describe(
-      "True if the task has run to completion. If the task finished successfully the `exit_code` will be zero.\n",
-    ),
   removal: zod
     .boolean()
     .optional()
     .describe("True if the Task relates to an object removal, i.e. a DELETE\n"),
-  exit_code: zod
-    .number()
-    .optional()
-    .describe("Present when `done` and zero if the task finished successfully.\n"),
   states: zod
     .array(
       zod.object({
-        state: zod
-          .enum(["PENDING", "STARTED", "RETRY", "SUCCESS", "FAILURE"])
-          .describe(
-            "The task state. The typical state sequence is `PENDING`, then `STARTED` and finally `SUCCESS`\n",
-          ),
         message: zod
           .string()
           .optional()
           .describe(
             "A short message accompanying the state, generally only found when the state is `FAILURE`\n",
+          ),
+        state: zod
+          .enum(["PENDING", "STARTED", "RETRY", "SUCCESS", "FAILURE"])
+          .describe(
+            "The task state. The typical state sequence is `PENDING`, then `STARTED` and finally `SUCCESS`\n",
           ),
         time: zod.iso
           .datetime({ offset: true })
@@ -237,41 +274,4 @@ export const AppApiTaskGetTaskResponse = zod.object({
     .describe(
       "A (possibly empty) list of application states, the oldest state occupies the first position in the list.\n",
     ),
-  events: zod
-    .array(
-      zod.object({
-        ordinal: zod
-          .number()
-          .describe("The event sequence number. The first event is always '1'.\n"),
-        message: zod.string().describe("A short message.\n"),
-        level: zod
-          .enum(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
-          .describe("The level of the message, a typical logging framework value\n"),
-        time: zod.iso
-          .datetime({ offset: true })
-          .describe("The date and time the event was generated\n"),
-      }),
-    )
-    .optional()
-    .describe(
-      "A (possibly empty) list of application events. The oldest event occupies the first position in the list.\n",
-    ),
 });
-
-/**
- * Given a `task_id` the Task will be removed.
- *
- * You cannot delete a Task until it is `done`.
- *
- * You must be an `owner` of the Task to delete it. For example you must be the `owner` of the Dataset to delete **DATASET** Tasks and an `owner` of the ProjectFile to delete **FILE** Tasks.
- * @summary Delete a Task entry
- */
-export const appApiTaskDeletePathTaskIdRegExp = new RegExp(
-  "^task-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiTaskDeleteParams = zod.object({
-  task_id: zod.string().regex(appApiTaskDeletePathTaskIdRegExp).describe("The task identity"),
-});
-
-export const AppApiTaskDeleteResponse = zod.void();

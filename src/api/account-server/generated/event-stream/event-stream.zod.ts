@@ -11,36 +11,18 @@
 import * as zod from "zod";
 
 /**
- * Gets the details of the installed event stream, which includes its **protocol**, and **name**.
- * @summary Gets the details of the installed event stream
- */
-export const AppApiEventStreamGetEventStreamVersionResponse = zod.object({
-  version: zod.string().describe("The EventStream implementation version"),
-  protocol: zod
-    .enum(["ERROR_INTERNAL", "SERVICE_NOT_PRESENT", "WEBSOCKET"])
-    .describe(
-      "The Event Stream protocol, used to inform the client how to connect to given locations and handle events. At the moment the AS only supports web-sockets.",
-    ),
-  name: zod
-    .string()
-    .describe(
-      "The name of the Event Stream implementation, often used to identify the service origin and implementation.",
-    ),
-});
-
-/**
  * Gets the details of your event stream, if you have created one. The response includes the event stream **id** and the **location** where events can be accessed.
  * @summary Gets the details of your event stream
  */
 export const AppApiEventStreamGetEventStreamResponse = zod.object({
+  format: zod.string().describe("The Event Stream format."),
   id: zod.number().describe("The EventStream ID"),
-  name: zod.string().describe("A symbolic name, used internally to identify the stream"),
   location: zod
     .string()
     .describe(
       "The Event Stream location. This will be a URL where events can be fetched. The protocol is typically a WebSocket, but the protocol is defined by the specific Event Stream Service that has been deployed.",
     ),
-  format: zod.string().describe("The Event Stream format."),
+  name: zod.string().describe("A symbolic name, used internally to identify the stream"),
 });
 
 /**
@@ -60,14 +42,32 @@ export const AppApiEventStreamPostBody = zod.object({
 });
 
 export const AppApiEventStreamPostResponse = zod.object({
+  format: zod.string().describe("The Event Stream format."),
   id: zod.number().describe("The EventStream ID"),
-  name: zod.string().describe("A symbolic name, used internally to identify the stream"),
   location: zod
     .string()
     .describe(
       "The Event Stream location. This will be a URL where events can be fetched. The protocol is typically a WebSocket, but the protocol is defined by the specific Event Stream Service that has been deployed.",
     ),
-  format: zod.string().describe("The Event Stream format."),
+  name: zod.string().describe("A symbolic name, used internally to identify the stream"),
+});
+
+/**
+ * Gets the details of the installed event stream, which includes its **protocol**, and **name**.
+ * @summary Gets the details of the installed event stream
+ */
+export const AppApiEventStreamGetEventStreamVersionResponse = zod.object({
+  name: zod
+    .string()
+    .describe(
+      "The name of the Event Stream implementation, often used to identify the service origin and implementation.",
+    ),
+  protocol: zod
+    .enum(["ERROR_INTERNAL", "SERVICE_NOT_PRESENT", "WEBSOCKET"])
+    .describe(
+      "The Event Stream protocol, used to inform the client how to connect to given locations and handle events. At the moment the AS only supports web-sockets.",
+    ),
+  version: zod.string().describe("The EventStream implementation version"),
 });
 
 /**

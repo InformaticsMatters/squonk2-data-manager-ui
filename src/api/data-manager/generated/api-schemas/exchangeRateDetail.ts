@@ -10,9 +10,9 @@
  */
 
 export interface ExchangeRateDetail {
+  comment?: string;
+  created: string;
   id: number;
   rate: string;
-  created: string;
   user_id: string;
-  comment?: string;
 }

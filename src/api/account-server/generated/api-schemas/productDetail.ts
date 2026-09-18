@@ -12,13 +12,13 @@ import type { ProductDetailFlavour } from "./productDetailFlavour";
 import type { ProductDetailType } from "./productDetailType";
 
 export interface ProductDetail {
-  /** The Product ID */
-  id: string;
   created: string;
-  /** The Product Type */
-  type: ProductDetailType;
   /** The Product Type flavour. Not all products have flavours */
   flavour?: ProductDetailFlavour;
+  /** The Product ID */
+  id: string;
   /** The name of the Product */
   name?: string;
+  /** The Product Type */
+  type: ProductDetailType;
 }

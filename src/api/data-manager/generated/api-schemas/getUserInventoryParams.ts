@@ -8,25 +8,22 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QOrgIdParameter } from "./qOrgIdParameter";
-import type { QUnitIdParameter } from "./qUnitIdParameter";
-import type { QUsernamesParameter } from "./qUsernamesParameter";
 
 export type GetUserInventoryParams = {
   /**
    * An Organisation identity
    * @pattern ^org-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  org_id?: QOrgIdParameter;
+  org_id?: string;
   /**
    * A Unit identity
    * @pattern ^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  unit_id?: QUnitIdParameter;
+  unit_id?: string;
   /**
    * A comma-separated list of usernames
    * @minLength 3
    * @pattern ^(\w(?:\w*(?:[@.-]\w+)?)*(,){0,1}){1,}$
    */
-  usernames?: QUsernamesParameter;
+  usernames?: string;
 };

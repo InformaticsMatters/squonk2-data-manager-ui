@@ -8,10 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { ApiLogDetail } from "./apiLogDetail";
+import type { UserApiLogGetResponseApiLogItem } from "./userApiLogGetResponseApiLogItem";
 
 export interface UserApiLogGetResponse {
-  count: number;
   /** A list of API loc call records, with the oldest record first in the list */
-  api_log: ApiLogDetail[];
+  api_log: UserApiLogGetResponseApiLogItem[];
+  count: number;
 }

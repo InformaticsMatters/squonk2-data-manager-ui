@@ -292,21 +292,21 @@ export const createAsset = (
   signal?: AbortSignal,
 ) => {
   const formData = new FormData();
-  formData.append(`name`, assetPostBodyBody.name);
   if (assetPostBodyBody.content_file !== undefined) {
     formData.append(`content_file`, assetPostBodyBody.content_file);
   }
   if (assetPostBodyBody.content_string !== undefined) {
     formData.append(`content_string`, assetPostBodyBody.content_string);
   }
+  if (assetPostBodyBody.description !== undefined) {
+    formData.append(`description`, assetPostBodyBody.description);
+  }
+  formData.append(`name`, assetPostBodyBody.name);
   formData.append(`scope`, assetPostBodyBody.scope);
   if (assetPostBodyBody.scope_id !== undefined) {
     formData.append(`scope_id`, assetPostBodyBody.scope_id);
   }
   formData.append(`secret`, assetPostBodyBody.secret.toString());
-  if (assetPostBodyBody.description !== undefined) {
-    formData.append(`description`, assetPostBodyBody.description);
-  }
 
   return customInstance<AssetPostResponse>(
     {
@@ -381,6 +381,82 @@ export const useCreateAsset = <TError = ErrorType<AsError | void>, TContext = un
   TContext
 > => {
   return useMutation(getCreateAssetMutationOptions(options), queryClient);
+};
+/**
+ * Deletes a known Asset. Assets that are attached to **Merchants** cannot be deleted
+ *
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * @summary Deletes an Asset
+ */
+export const deleteAsset = (
+  assetId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>({ url: `/asset/${assetId}`, method: "DELETE", signal }, options);
+};
+
+export const getDeleteAssetMutationOptions = <
+  TError = ErrorType<AsError | void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteAsset>>,
+    TError,
+    { assetId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteAsset>>,
+  TError,
+  { assetId: string },
+  TContext
+> => {
+  const mutationKey = ["deleteAsset"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteAsset>>,
+    { assetId: string }
+  > = (props) => {
+    const { assetId } = props ?? {};
+
+    return deleteAsset(assetId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteAssetMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAsset>>>;
+
+export type DeleteAssetMutationError = ErrorType<AsError | void>;
+
+/**
+ * @summary Deletes an Asset
+ */
+export const useDeleteAsset = <TError = ErrorType<AsError | void>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteAsset>>,
+      TError,
+      { assetId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteAsset>>,
+  TError,
+  { assetId: string },
+  TContext
+> => {
+  return useMutation(getDeleteAssetMutationOptions(options), queryClient);
 };
 /**
  * Gets a known Asset
@@ -711,240 +787,6 @@ export const usePatchAsset = <TError = ErrorType<void | AsError>, TContext = unk
   return useMutation(getPatchAssetMutationOptions(options), queryClient);
 };
 /**
- * Deletes a known Asset. Assets that are attached to **Merchants** cannot be deleted
- *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
- * @summary Deletes an Asset
- */
-export const deleteAsset = (
-  assetId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>({ url: `/asset/${assetId}`, method: "DELETE", signal }, options);
-};
-
-export const getDeleteAssetMutationOptions = <
-  TError = ErrorType<AsError | void>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteAsset>>,
-    TError,
-    { assetId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteAsset>>,
-  TError,
-  { assetId: string },
-  TContext
-> => {
-  const mutationKey = ["deleteAsset"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteAsset>>,
-    { assetId: string }
-  > = (props) => {
-    const { assetId } = props ?? {};
-
-    return deleteAsset(assetId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DeleteAssetMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAsset>>>;
-
-export type DeleteAssetMutationError = ErrorType<AsError | void>;
-
-/**
- * @summary Deletes an Asset
- */
-export const useDeleteAsset = <TError = ErrorType<AsError | void>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteAsset>>,
-      TError,
-      { assetId: string },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof deleteAsset>>,
-  TError,
-  { assetId: string },
-  TContext
-> => {
-  return useMutation(getDeleteAssetMutationOptions(options), queryClient);
-};
-/**
- * Disables a known Asset
- *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
- * @summary Disables an Asset
- */
-export const disableAsset = (
-  assetId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>(
-    { url: `/asset/${assetId}/disable`, method: "PATCH", signal },
-    options,
-  );
-};
-
-export const getDisableAssetMutationOptions = <
-  TError = ErrorType<AsError | void>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof disableAsset>>,
-    TError,
-    { assetId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof disableAsset>>,
-  TError,
-  { assetId: string },
-  TContext
-> => {
-  const mutationKey = ["disableAsset"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof disableAsset>>,
-    { assetId: string }
-  > = (props) => {
-    const { assetId } = props ?? {};
-
-    return disableAsset(assetId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DisableAssetMutationResult = NonNullable<Awaited<ReturnType<typeof disableAsset>>>;
-
-export type DisableAssetMutationError = ErrorType<AsError | void>;
-
-/**
- * @summary Disables an Asset
- */
-export const useDisableAsset = <TError = ErrorType<AsError | void>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof disableAsset>>,
-      TError,
-      { assetId: string },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof disableAsset>>,
-  TError,
-  { assetId: string },
-  TContext
-> => {
-  return useMutation(getDisableAssetMutationOptions(options), queryClient);
-};
-/**
- * Enables a known Asset
- *
- * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
- * @summary Enables an Asset
- */
-export const enableAsset = (
-  assetId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>(
-    { url: `/asset/${assetId}/enable`, method: "PATCH", signal },
-    options,
-  );
-};
-
-export const getEnableAssetMutationOptions = <
-  TError = ErrorType<AsError | void>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof enableAsset>>,
-    TError,
-    { assetId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof enableAsset>>,
-  TError,
-  { assetId: string },
-  TContext
-> => {
-  const mutationKey = ["enableAsset"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof enableAsset>>,
-    { assetId: string }
-  > = (props) => {
-    const { assetId } = props ?? {};
-
-    return enableAsset(assetId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type EnableAssetMutationResult = NonNullable<Awaited<ReturnType<typeof enableAsset>>>;
-
-export type EnableAssetMutationError = ErrorType<AsError | void>;
-
-/**
- * @summary Enables an Asset
- */
-export const useEnableAsset = <TError = ErrorType<AsError | void>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof enableAsset>>,
-      TError,
-      { assetId: string },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof enableAsset>>,
-  TError,
-  { assetId: string },
-  TContext
-> => {
-  return useMutation(getEnableAssetMutationOptions(options), queryClient);
-};
-/**
  * Attaches an Asset to a **Merchant**. This allows the **Merchant** to query the Asset. **Merchants** cannot obtain Assets that are not attached to them.
  *
  * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
@@ -1103,4 +945,162 @@ export const useDetachAsset = <TError = ErrorType<AsError | void>, TContext = un
   TContext
 > => {
   return useMutation(getDetachAssetMutationOptions(options), queryClient);
+};
+/**
+ * Disables a known Asset
+ *
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * @summary Disables an Asset
+ */
+export const disableAsset = (
+  assetId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/asset/${assetId}/disable`, method: "PATCH", signal },
+    options,
+  );
+};
+
+export const getDisableAssetMutationOptions = <
+  TError = ErrorType<AsError | void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof disableAsset>>,
+    TError,
+    { assetId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof disableAsset>>,
+  TError,
+  { assetId: string },
+  TContext
+> => {
+  const mutationKey = ["disableAsset"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof disableAsset>>,
+    { assetId: string }
+  > = (props) => {
+    const { assetId } = props ?? {};
+
+    return disableAsset(assetId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DisableAssetMutationResult = NonNullable<Awaited<ReturnType<typeof disableAsset>>>;
+
+export type DisableAssetMutationError = ErrorType<AsError | void>;
+
+/**
+ * @summary Disables an Asset
+ */
+export const useDisableAsset = <TError = ErrorType<AsError | void>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof disableAsset>>,
+      TError,
+      { assetId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof disableAsset>>,
+  TError,
+  { assetId: string },
+  TContext
+> => {
+  return useMutation(getDisableAssetMutationOptions(options), queryClient);
+};
+/**
+ * Enables a known Asset
+ *
+ * Anyone can alter a `GLOBAL` asset. For other *scopes* you will need to be the user for `USER` scoped assets, a member of the **Unit** for `UNIT` and `PRODUCT` scoped assets, or a member of the **Organisation** for `ORGANISATION` scoped assets. Administrators can patch any asset.
+ * @summary Enables an Asset
+ */
+export const enableAsset = (
+  assetId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/asset/${assetId}/enable`, method: "PATCH", signal },
+    options,
+  );
+};
+
+export const getEnableAssetMutationOptions = <
+  TError = ErrorType<AsError | void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof enableAsset>>,
+    TError,
+    { assetId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof enableAsset>>,
+  TError,
+  { assetId: string },
+  TContext
+> => {
+  const mutationKey = ["enableAsset"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof enableAsset>>,
+    { assetId: string }
+  > = (props) => {
+    const { assetId } = props ?? {};
+
+    return enableAsset(assetId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type EnableAssetMutationResult = NonNullable<Awaited<ReturnType<typeof enableAsset>>>;
+
+export type EnableAssetMutationError = ErrorType<AsError | void>;
+
+/**
+ * @summary Enables an Asset
+ */
+export const useEnableAsset = <TError = ErrorType<AsError | void>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof enableAsset>>,
+      TError,
+      { assetId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof enableAsset>>,
+  TError,
+  { assetId: string },
+  TContext
+> => {
+  return useMutation(getEnableAssetMutationOptions(options), queryClient);
 };

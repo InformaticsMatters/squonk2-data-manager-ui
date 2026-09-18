@@ -11,10 +11,10 @@
 import type { EventStreamVersionGetResponseProtocol } from "./eventStreamVersionGetResponseProtocol";
 
 export interface EventStreamVersionGetResponse {
-  /** The EventStream implementation version */
-  version: string;
-  /** The Event Stream protocol, used to inform the client how to connect to given locations and handle events. At the moment the AS only supports web-sockets. */
-  protocol: EventStreamVersionGetResponseProtocol;
   /** The name of the Event Stream implementation, often used to identify the service origin and implementation. */
   name: string;
+  /** The Event Stream protocol, used to inform the client how to connect to given locations and handle events. At the moment the AS only supports web-sockets. */
+  protocol: EventStreamVersionGetResponseProtocol;
+  /** The EventStream implementation version */
+  version: string;
 }

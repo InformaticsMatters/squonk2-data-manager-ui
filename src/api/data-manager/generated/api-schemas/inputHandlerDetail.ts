@@ -10,8 +10,8 @@
  */
 
 export interface InputHandlerDetail {
-  /** The input type this handler handles */
-  input_type: string;
   /** A markdown string describing the handler */
   documentation: string;
+  /** The input type this handler handles */
+  input_type: string;
 }

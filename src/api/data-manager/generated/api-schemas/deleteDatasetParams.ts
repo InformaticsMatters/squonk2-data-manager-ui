@@ -8,11 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QKeepProjectFilesParameter } from "./qKeepProjectFilesParameter";
 
 export type DeleteDatasetParams = {
   /**
    * Whether to convert Project managed file instances to unmanaged files
    */
-  keep_project_files?: QKeepProjectFilesParameter;
+  keep_project_files?: boolean;
 };

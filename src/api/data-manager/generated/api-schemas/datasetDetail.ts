@@ -8,7 +8,7 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { DatasetVersionDetail } from "./datasetVersionDetail";
+import type { DatasetDetailVersionsItem } from "./datasetDetailVersionsItem";
 
 export interface DatasetDetail {
   /** The number of datasets */
@@ -20,5 +20,5 @@ export interface DatasetDetail {
   /** The owner of the Dataset */
   owner: string;
   /** The set of separate versions of the Dataset */
-  versions: DatasetVersionDetail[];
+  versions: DatasetDetailVersionsItem[];
 }

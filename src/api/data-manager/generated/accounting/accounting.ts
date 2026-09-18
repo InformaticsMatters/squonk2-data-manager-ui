@@ -25,10 +25,16 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
-  AccountServerGetNamespaceResponse,
-  AccountServerGetRegistrationResponse,
-  DmError,
-  VersionGetResponse,
+  GetAccountServerNamespace200,
+  GetAccountServerNamespace403,
+  GetAccountServerRegistration200,
+  GetAccountServerRegistration403,
+  GetJobDefinitionSchemaVersion200,
+  GetJobDefinitionSchemaVersion403,
+  GetVersion200,
+  GetVersion403,
+  GetWorkflowEngineVersion200,
+  GetWorkflowEngineVersion403,
 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
@@ -59,7 +65,7 @@ export const getAccountServerNamespace = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<AccountServerGetNamespaceResponse>(
+  return customInstance<GetAccountServerNamespace200>(
     { url: `/account-server/namespace`, method: "GET", signal },
     options,
   );
@@ -71,7 +77,7 @@ export const getGetAccountServerNamespaceQueryKey = () => {
 
 export const getGetAccountServerNamespaceQueryOptions = <
   TData = Awaited<ReturnType<typeof getAccountServerNamespace>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerNamespace403>,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof getAccountServerNamespace>>, TError, TData>
@@ -96,11 +102,11 @@ export const getGetAccountServerNamespaceQueryOptions = <
 export type GetAccountServerNamespaceQueryResult = NonNullable<
   Awaited<ReturnType<typeof getAccountServerNamespace>>
 >;
-export type GetAccountServerNamespaceQueryError = ErrorType<void | DmError>;
+export type GetAccountServerNamespaceQueryError = ErrorType<void | GetAccountServerNamespace403>;
 
 export function useGetAccountServerNamespace<
   TData = Awaited<ReturnType<typeof getAccountServerNamespace>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerNamespace403>,
 >(
   options: {
     query: Partial<
@@ -120,7 +126,7 @@ export function useGetAccountServerNamespace<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAccountServerNamespace<
   TData = Awaited<ReturnType<typeof getAccountServerNamespace>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerNamespace403>,
 >(
   options?: {
     query?: Partial<
@@ -140,7 +146,7 @@ export function useGetAccountServerNamespace<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAccountServerNamespace<
   TData = Awaited<ReturnType<typeof getAccountServerNamespace>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerNamespace403>,
 >(
   options?: {
     query?: Partial<
@@ -156,7 +162,7 @@ export function useGetAccountServerNamespace<
 
 export function useGetAccountServerNamespace<
   TData = Awaited<ReturnType<typeof getAccountServerNamespace>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerNamespace403>,
 >(
   options?: {
     query?: Partial<
@@ -192,7 +198,7 @@ export const invalidateGetAccountServerNamespace = async (
 
 export const getGetAccountServerNamespaceSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getAccountServerNamespace>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerNamespace403>,
 >(options?: {
   query?: Partial<
     UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAccountServerNamespace>>, TError, TData>
@@ -217,11 +223,12 @@ export const getGetAccountServerNamespaceSuspenseQueryOptions = <
 export type GetAccountServerNamespaceSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getAccountServerNamespace>>
 >;
-export type GetAccountServerNamespaceSuspenseQueryError = ErrorType<void | DmError>;
+export type GetAccountServerNamespaceSuspenseQueryError =
+  ErrorType<void | GetAccountServerNamespace403>;
 
 export function useGetAccountServerNamespaceSuspense<
   TData = Awaited<ReturnType<typeof getAccountServerNamespace>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerNamespace403>,
 >(
   options: {
     query: Partial<
@@ -233,7 +240,7 @@ export function useGetAccountServerNamespaceSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAccountServerNamespaceSuspense<
   TData = Awaited<ReturnType<typeof getAccountServerNamespace>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerNamespace403>,
 >(
   options?: {
     query?: Partial<
@@ -245,7 +252,7 @@ export function useGetAccountServerNamespaceSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAccountServerNamespaceSuspense<
   TData = Awaited<ReturnType<typeof getAccountServerNamespace>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerNamespace403>,
 >(
   options?: {
     query?: Partial<
@@ -261,7 +268,7 @@ export function useGetAccountServerNamespaceSuspense<
 
 export function useGetAccountServerNamespaceSuspense<
   TData = Awaited<ReturnType<typeof getAccountServerNamespace>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerNamespace403>,
 >(
   options?: {
     query?: Partial<
@@ -289,7 +296,7 @@ export const getAccountServerRegistration = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<AccountServerGetRegistrationResponse>(
+  return customInstance<GetAccountServerRegistration200>(
     { url: `/account-server/registration`, method: "GET", signal },
     options,
   );
@@ -301,7 +308,7 @@ export const getGetAccountServerRegistrationQueryKey = () => {
 
 export const getGetAccountServerRegistrationQueryOptions = <
   TData = Awaited<ReturnType<typeof getAccountServerRegistration>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerRegistration403>,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof getAccountServerRegistration>>, TError, TData>
@@ -326,11 +333,12 @@ export const getGetAccountServerRegistrationQueryOptions = <
 export type GetAccountServerRegistrationQueryResult = NonNullable<
   Awaited<ReturnType<typeof getAccountServerRegistration>>
 >;
-export type GetAccountServerRegistrationQueryError = ErrorType<void | DmError>;
+export type GetAccountServerRegistrationQueryError =
+  ErrorType<void | GetAccountServerRegistration403>;
 
 export function useGetAccountServerRegistration<
   TData = Awaited<ReturnType<typeof getAccountServerRegistration>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerRegistration403>,
 >(
   options: {
     query: Partial<
@@ -350,7 +358,7 @@ export function useGetAccountServerRegistration<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAccountServerRegistration<
   TData = Awaited<ReturnType<typeof getAccountServerRegistration>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerRegistration403>,
 >(
   options?: {
     query?: Partial<
@@ -370,7 +378,7 @@ export function useGetAccountServerRegistration<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAccountServerRegistration<
   TData = Awaited<ReturnType<typeof getAccountServerRegistration>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerRegistration403>,
 >(
   options?: {
     query?: Partial<
@@ -386,7 +394,7 @@ export function useGetAccountServerRegistration<
 
 export function useGetAccountServerRegistration<
   TData = Awaited<ReturnType<typeof getAccountServerRegistration>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerRegistration403>,
 >(
   options?: {
     query?: Partial<
@@ -422,7 +430,7 @@ export const invalidateGetAccountServerRegistration = async (
 
 export const getGetAccountServerRegistrationSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getAccountServerRegistration>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerRegistration403>,
 >(options?: {
   query?: Partial<
     UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAccountServerRegistration>>, TError, TData>
@@ -447,11 +455,12 @@ export const getGetAccountServerRegistrationSuspenseQueryOptions = <
 export type GetAccountServerRegistrationSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getAccountServerRegistration>>
 >;
-export type GetAccountServerRegistrationSuspenseQueryError = ErrorType<void | DmError>;
+export type GetAccountServerRegistrationSuspenseQueryError =
+  ErrorType<void | GetAccountServerRegistration403>;
 
 export function useGetAccountServerRegistrationSuspense<
   TData = Awaited<ReturnType<typeof getAccountServerRegistration>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerRegistration403>,
 >(
   options: {
     query: Partial<
@@ -467,7 +476,7 @@ export function useGetAccountServerRegistrationSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAccountServerRegistrationSuspense<
   TData = Awaited<ReturnType<typeof getAccountServerRegistration>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerRegistration403>,
 >(
   options?: {
     query?: Partial<
@@ -483,7 +492,7 @@ export function useGetAccountServerRegistrationSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAccountServerRegistrationSuspense<
   TData = Awaited<ReturnType<typeof getAccountServerRegistration>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerRegistration403>,
 >(
   options?: {
     query?: Partial<
@@ -503,7 +512,7 @@ export function useGetAccountServerRegistrationSuspense<
 
 export function useGetAccountServerRegistrationSuspense<
   TData = Awaited<ReturnType<typeof getAccountServerRegistration>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAccountServerRegistration403>,
 >(
   options?: {
     query?: Partial<
@@ -528,436 +537,13 @@ export function useGetAccountServerRegistrationSuspense<
 }
 
 /**
- * @summary Gets the Data Manager version that's running behind the API
- */
-export const getVersion = (
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<VersionGetResponse>({ url: `/version`, method: "GET", signal }, options);
-};
-
-export const getGetVersionQueryKey = () => {
-  return ["data-manager", "version"] as const;
-};
-
-export const getGetVersionQueryOptions = <
-  TData = Awaited<ReturnType<typeof getVersion>>,
-  TError = ErrorType<void | DmError>,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetVersionQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getVersion>>> = ({ signal }) =>
-    getVersion(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getVersion>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetVersionQueryResult = NonNullable<Awaited<ReturnType<typeof getVersion>>>;
-export type GetVersionQueryError = ErrorType<void | DmError>;
-
-export function useGetVersion<
-  TData = Awaited<ReturnType<typeof getVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getVersion>>,
-          TError,
-          Awaited<ReturnType<typeof getVersion>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetVersion<
-  TData = Awaited<ReturnType<typeof getVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getVersion>>,
-          TError,
-          Awaited<ReturnType<typeof getVersion>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetVersion<
-  TData = Awaited<ReturnType<typeof getVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Data Manager version that's running behind the API
- */
-
-export function useGetVersion<
-  TData = Awaited<ReturnType<typeof getVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetVersionQueryOptions(options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Gets the Data Manager version that's running behind the API
- */
-export const invalidateGetVersion = async (
-  queryClient: QueryClient,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetVersionQueryKey() }, options);
-
-  return queryClient;
-};
-
-export const getGetVersionSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getVersion>>,
-  TError = ErrorType<void | DmError>,
->(options?: {
-  query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetVersionQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getVersion>>> = ({ signal }) =>
-    getVersion(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getVersion>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetVersionSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getVersion>>>;
-export type GetVersionSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useGetVersionSuspense<
-  TData = Awaited<ReturnType<typeof getVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options: {
-    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetVersionSuspense<
-  TData = Awaited<ReturnType<typeof getVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetVersionSuspense<
-  TData = Awaited<ReturnType<typeof getVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Data Manager version that's running behind the API
- */
-
-export function useGetVersionSuspense<
-  TData = Awaited<ReturnType<typeof getVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetVersionSuspenseQueryOptions(options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Gets the Data Manager Workflow Engine version that's running behind the API
- */
-export const getWorkflowEngineVersion = (
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<VersionGetResponse>(
-    { url: `/workflow-engine/version`, method: "GET", signal },
-    options,
-  );
-};
-
-export const getGetWorkflowEngineVersionQueryKey = () => {
-  return ["data-manager", "workflow-engine", "version"] as const;
-};
-
-export const getGetWorkflowEngineVersionQueryOptions = <
-  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-  TError = ErrorType<void | DmError>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetWorkflowEngineVersionQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWorkflowEngineVersion>>> = ({
-    signal,
-  }) => getWorkflowEngineVersion(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetWorkflowEngineVersionQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getWorkflowEngineVersion>>
->;
-export type GetWorkflowEngineVersionQueryError = ErrorType<void | DmError>;
-
-export function useGetWorkflowEngineVersion<
-  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options: {
-    query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-          TError,
-          Awaited<ReturnType<typeof getWorkflowEngineVersion>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetWorkflowEngineVersion<
-  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-          TError,
-          Awaited<ReturnType<typeof getWorkflowEngineVersion>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetWorkflowEngineVersion<
-  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Data Manager Workflow Engine version that's running behind the API
- */
-
-export function useGetWorkflowEngineVersion<
-  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetWorkflowEngineVersionQueryOptions(options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Gets the Data Manager Workflow Engine version that's running behind the API
- */
-export const invalidateGetWorkflowEngineVersion = async (
-  queryClient: QueryClient,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetWorkflowEngineVersionQueryKey() }, options);
-
-  return queryClient;
-};
-
-export const getGetWorkflowEngineVersionSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-  TError = ErrorType<void | DmError>,
->(options?: {
-  query?: Partial<
-    UseSuspenseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetWorkflowEngineVersionQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWorkflowEngineVersion>>> = ({
-    signal,
-  }) => getWorkflowEngineVersion(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetWorkflowEngineVersionSuspenseQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getWorkflowEngineVersion>>
->;
-export type GetWorkflowEngineVersionSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useGetWorkflowEngineVersionSuspense<
-  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options: {
-    query: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetWorkflowEngineVersionSuspense<
-  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetWorkflowEngineVersionSuspense<
-  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Data Manager Workflow Engine version that's running behind the API
- */
-
-export function useGetWorkflowEngineVersionSuspense<
-  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
-  TError = ErrorType<void | DmError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetWorkflowEngineVersionSuspenseQueryOptions(options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
  * @summary Gets the Data Manager Job Definition Schema version that's running behind the API
  */
 export const getJobDefinitionSchemaVersion = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<VersionGetResponse>(
+  return customInstance<GetJobDefinitionSchemaVersion200>(
     { url: `/job-definition-schema/version`, method: "GET", signal },
     options,
   );
@@ -969,7 +555,7 @@ export const getGetJobDefinitionSchemaVersionQueryKey = () => {
 
 export const getGetJobDefinitionSchemaVersionQueryOptions = <
   TData = Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobDefinitionSchemaVersion403>,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>, TError, TData>
@@ -994,11 +580,12 @@ export const getGetJobDefinitionSchemaVersionQueryOptions = <
 export type GetJobDefinitionSchemaVersionQueryResult = NonNullable<
   Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>
 >;
-export type GetJobDefinitionSchemaVersionQueryError = ErrorType<void | DmError>;
+export type GetJobDefinitionSchemaVersionQueryError =
+  ErrorType<void | GetJobDefinitionSchemaVersion403>;
 
 export function useGetJobDefinitionSchemaVersion<
   TData = Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobDefinitionSchemaVersion403>,
 >(
   options: {
     query: Partial<
@@ -1018,7 +605,7 @@ export function useGetJobDefinitionSchemaVersion<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobDefinitionSchemaVersion<
   TData = Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobDefinitionSchemaVersion403>,
 >(
   options?: {
     query?: Partial<
@@ -1038,7 +625,7 @@ export function useGetJobDefinitionSchemaVersion<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobDefinitionSchemaVersion<
   TData = Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobDefinitionSchemaVersion403>,
 >(
   options?: {
     query?: Partial<
@@ -1054,7 +641,7 @@ export function useGetJobDefinitionSchemaVersion<
 
 export function useGetJobDefinitionSchemaVersion<
   TData = Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobDefinitionSchemaVersion403>,
 >(
   options?: {
     query?: Partial<
@@ -1090,7 +677,7 @@ export const invalidateGetJobDefinitionSchemaVersion = async (
 
 export const getGetJobDefinitionSchemaVersionSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobDefinitionSchemaVersion403>,
 >(options?: {
   query?: Partial<
     UseSuspenseQueryOptions<
@@ -1119,11 +706,12 @@ export const getGetJobDefinitionSchemaVersionSuspenseQueryOptions = <
 export type GetJobDefinitionSchemaVersionSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>
 >;
-export type GetJobDefinitionSchemaVersionSuspenseQueryError = ErrorType<void | DmError>;
+export type GetJobDefinitionSchemaVersionSuspenseQueryError =
+  ErrorType<void | GetJobDefinitionSchemaVersion403>;
 
 export function useGetJobDefinitionSchemaVersionSuspense<
   TData = Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobDefinitionSchemaVersion403>,
 >(
   options: {
     query: Partial<
@@ -1139,7 +727,7 @@ export function useGetJobDefinitionSchemaVersionSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobDefinitionSchemaVersionSuspense<
   TData = Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobDefinitionSchemaVersion403>,
 >(
   options?: {
     query?: Partial<
@@ -1155,7 +743,7 @@ export function useGetJobDefinitionSchemaVersionSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobDefinitionSchemaVersionSuspense<
   TData = Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobDefinitionSchemaVersion403>,
 >(
   options?: {
     query?: Partial<
@@ -1175,7 +763,7 @@ export function useGetJobDefinitionSchemaVersionSuspense<
 
 export function useGetJobDefinitionSchemaVersionSuspense<
   TData = Awaited<ReturnType<typeof getJobDefinitionSchemaVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobDefinitionSchemaVersion403>,
 >(
   options?: {
     query?: Partial<
@@ -1190,6 +778,430 @@ export function useGetJobDefinitionSchemaVersionSuspense<
   queryClient?: QueryClient,
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetJobDefinitionSchemaVersionSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets the Data Manager version that's running behind the API
+ */
+export const getVersion = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<GetVersion200>({ url: `/version`, method: "GET", signal }, options);
+};
+
+export const getGetVersionQueryKey = () => {
+  return ["data-manager", "version"] as const;
+};
+
+export const getGetVersionQueryOptions = <
+  TData = Awaited<ReturnType<typeof getVersion>>,
+  TError = ErrorType<void | GetVersion403>,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetVersionQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getVersion>>> = ({ signal }) =>
+    getVersion(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getVersion>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVersionQueryResult = NonNullable<Awaited<ReturnType<typeof getVersion>>>;
+export type GetVersionQueryError = ErrorType<void | GetVersion403>;
+
+export function useGetVersion<
+  TData = Awaited<ReturnType<typeof getVersion>>,
+  TError = ErrorType<void | GetVersion403>,
+>(
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVersion>>,
+          TError,
+          Awaited<ReturnType<typeof getVersion>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetVersion<
+  TData = Awaited<ReturnType<typeof getVersion>>,
+  TError = ErrorType<void | GetVersion403>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getVersion>>,
+          TError,
+          Awaited<ReturnType<typeof getVersion>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetVersion<
+  TData = Awaited<ReturnType<typeof getVersion>>,
+  TError = ErrorType<void | GetVersion403>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Data Manager version that's running behind the API
+ */
+
+export function useGetVersion<
+  TData = Awaited<ReturnType<typeof getVersion>>,
+  TError = ErrorType<void | GetVersion403>,
+>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetVersionQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets the Data Manager version that's running behind the API
+ */
+export const invalidateGetVersion = async (
+  queryClient: QueryClient,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetVersionQueryKey() }, options);
+
+  return queryClient;
+};
+
+export const getGetVersionSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getVersion>>,
+  TError = ErrorType<void | GetVersion403>,
+>(options?: {
+  query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetVersionQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getVersion>>> = ({ signal }) =>
+    getVersion(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getVersion>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVersionSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getVersion>>>;
+export type GetVersionSuspenseQueryError = ErrorType<void | GetVersion403>;
+
+export function useGetVersionSuspense<
+  TData = Awaited<ReturnType<typeof getVersion>>,
+  TError = ErrorType<void | GetVersion403>,
+>(
+  options: {
+    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetVersionSuspense<
+  TData = Awaited<ReturnType<typeof getVersion>>,
+  TError = ErrorType<void | GetVersion403>,
+>(
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetVersionSuspense<
+  TData = Awaited<ReturnType<typeof getVersion>>,
+  TError = ErrorType<void | GetVersion403>,
+>(
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Data Manager version that's running behind the API
+ */
+
+export function useGetVersionSuspense<
+  TData = Awaited<ReturnType<typeof getVersion>>,
+  TError = ErrorType<void | GetVersion403>,
+>(
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getVersion>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetVersionSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets the Data Manager Workflow Engine version that's running behind the API
+ */
+export const getWorkflowEngineVersion = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<GetWorkflowEngineVersion200>(
+    { url: `/workflow-engine/version`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetWorkflowEngineVersionQueryKey = () => {
+  return ["data-manager", "workflow-engine", "version"] as const;
+};
+
+export const getGetWorkflowEngineVersionQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+  TError = ErrorType<void | GetWorkflowEngineVersion403>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetWorkflowEngineVersionQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWorkflowEngineVersion>>> = ({
+    signal,
+  }) => getWorkflowEngineVersion(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetWorkflowEngineVersionQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWorkflowEngineVersion>>
+>;
+export type GetWorkflowEngineVersionQueryError = ErrorType<void | GetWorkflowEngineVersion403>;
+
+export function useGetWorkflowEngineVersion<
+  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+  TError = ErrorType<void | GetWorkflowEngineVersion403>,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkflowEngineVersion>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetWorkflowEngineVersion<
+  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+  TError = ErrorType<void | GetWorkflowEngineVersion403>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+          TError,
+          Awaited<ReturnType<typeof getWorkflowEngineVersion>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetWorkflowEngineVersion<
+  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+  TError = ErrorType<void | GetWorkflowEngineVersion403>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Data Manager Workflow Engine version that's running behind the API
+ */
+
+export function useGetWorkflowEngineVersion<
+  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+  TError = ErrorType<void | GetWorkflowEngineVersion403>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetWorkflowEngineVersionQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets the Data Manager Workflow Engine version that's running behind the API
+ */
+export const invalidateGetWorkflowEngineVersion = async (
+  queryClient: QueryClient,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetWorkflowEngineVersionQueryKey() }, options);
+
+  return queryClient;
+};
+
+export const getGetWorkflowEngineVersionSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+  TError = ErrorType<void | GetWorkflowEngineVersion403>,
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetWorkflowEngineVersionQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWorkflowEngineVersion>>> = ({
+    signal,
+  }) => getWorkflowEngineVersion(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetWorkflowEngineVersionSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getWorkflowEngineVersion>>
+>;
+export type GetWorkflowEngineVersionSuspenseQueryError =
+  ErrorType<void | GetWorkflowEngineVersion403>;
+
+export function useGetWorkflowEngineVersionSuspense<
+  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+  TError = ErrorType<void | GetWorkflowEngineVersion403>,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetWorkflowEngineVersionSuspense<
+  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+  TError = ErrorType<void | GetWorkflowEngineVersion403>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetWorkflowEngineVersionSuspense<
+  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+  TError = ErrorType<void | GetWorkflowEngineVersion403>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Data Manager Workflow Engine version that's running behind the API
+ */
+
+export function useGetWorkflowEngineVersionSuspense<
+  TData = Awaited<ReturnType<typeof getWorkflowEngineVersion>>,
+  TError = ErrorType<void | GetWorkflowEngineVersion403>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getWorkflowEngineVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetWorkflowEngineVersionSuspenseQueryOptions(options);
 
   const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
     TData,

@@ -10,18 +10,18 @@
  */
 
 export interface AsAdditionalDataProcessingCharge {
+  collateral_cpu_hours?: string;
+  collateral_pod_count?: number;
   cost: string;
-  cost_to_coins_er: string;
   cost_scale_factor: string;
+  cost_to_coins_er: string;
+  error_message?: string;
   instance_id: string;
   instance_name: string;
-  started: string;
-  stopped?: string;
-  run_time?: string;
-  error_message?: string;
   job_collection?: string;
   job_job?: string;
   job_version?: string;
-  collateral_pod_count?: number;
-  collateral_cpu_hours?: string;
+  run_time?: string;
+  started: string;
+  stopped?: string;
 }

@@ -8,27 +8,24 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QFileParameter } from "./qFileParameter";
-import type { QFilePathParameter } from "./qFilePathParameter";
-import type { QTokenParameter } from "./qTokenParameter";
 
 export type GetProjectFileWithTokenParams = {
   /**
    * A token
    * @pattern ^[A-Za-z0-9]{22}$
    */
-  token: QTokenParameter;
+  token: string;
   /**
    * A project path. If provided it must begin `/` and refers to a path where `/` represents the project's root directory
    * @minLength 1
    * @maxLength 260
    * @pattern ^(/(\.([^/.][^/]*)?|\.\.[^/]+|[^/.][^/]*)?)+$
    */
-  path?: QFilePathParameter;
+  path?: string;
   /**
    * A project file.
    * @minLength 1
    * @maxLength 260
    */
-  file: QFileParameter;
+  file: string;
 };

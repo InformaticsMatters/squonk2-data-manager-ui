@@ -11,6 +11,315 @@
 import * as zod from "zod";
 
 /**
+ * Gets Products you have access to, across all **Units** and **Organisations**
+ * @summary Gets all Products
+ */
+export const AppApiProductGetResponse = zod.object({
+  count: zod.number(),
+  products: zod
+    .array(
+      zod.union([
+        zod.object({
+          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
+          coins: zod.object({
+            allowance: zod
+              .number()
+              .describe(
+                "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
+              ),
+            allowance_multiplier: zod
+              .number()
+              .describe("A multiplier applied to your coin usage within your allowance"),
+            at_limit: zod
+              .boolean()
+              .describe(
+                "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
+              ),
+            billing_day: zod
+              .number()
+              .describe(
+                "The day of the month when the bill is due, and the end of the current billing period",
+              ),
+            billing_prediction: zod
+              .number()
+              .describe(
+                "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+              ),
+            billing_prediction_storage_contribution: zod
+              .number()
+              .describe(
+                "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+              ),
+            current_burn_rate: zod
+              .number()
+              .describe(
+                "The current burn rate, the approximate amount of coins you are currently consuming each day",
+              ),
+            limit: zod
+              .number()
+              .describe(
+                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
+              ),
+            overspend_multiplier: zod
+              .number()
+              .describe("A multiplier that will be applied to coin used beyond your allowance"),
+            remaining_days: zod
+              .number()
+              .describe("The number of days remaining, in the current billing period"),
+            used: zod
+              .number()
+              .describe(
+                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
+              ),
+          }),
+          organisation: zod.object({
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Organisation's default product privacy setting"),
+            id: zod.string().describe("The Organisation's unique ID"),
+            name: zod.string().describe("The Organisation's name"),
+            owner_id: zod
+              .string()
+              .optional()
+              .describe(
+                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
+              ),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Organisation"),
+          }),
+          product: zod.object({
+            created: zod.iso.datetime({ offset: true }),
+            flavour: zod
+              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
+              .optional()
+              .describe("The Product Type flavour. Not all products have flavours\n"),
+            id: zod.string().describe("The Product ID\n"),
+            name: zod.string().optional().describe("The name of the Product\n"),
+            type: zod
+              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
+              .describe("The Product Type\n"),
+          }),
+          storage: zod.object({
+            coins: zod.object({
+              unit_cost: zod
+                .number()
+                .describe(
+                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
+                ),
+              used: zod
+                .number()
+                .describe(
+                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
+                ),
+            }),
+            size: zod.object({
+              current: zod
+                .string()
+                .describe(
+                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
+                ),
+              peak: zod
+                .string()
+                .describe(
+                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
+                ),
+              unit_size: zod
+                .string()
+                .describe(
+                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
+                ),
+              units_used: zod.number().describe("The peak number of storage units used today"),
+            }),
+          }),
+          unit: zod.object({
+            billing_day: zod.number().describe("The Unit's billing day"),
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Unit's default product privacy setting"),
+            id: zod.string().describe("The Unit's unique identity"),
+            name: zod.string().describe("The Unit's name"),
+            owner_id: zod.string().describe("The Unit's owner (a username)"),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Unit"),
+          }),
+        }),
+        zod.object({
+          claim: zod
+            .object({
+              id: zod
+                .string()
+                .describe("The service-specific ID that is using this Subscription\n"),
+              name: zod.string().optional().describe("A name for the service-specific ID\n"),
+            })
+            .optional(),
+          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
+          coins: zod.object({
+            allowance: zod
+              .number()
+              .describe(
+                "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
+              ),
+            allowance_multiplier: zod
+              .number()
+              .describe("A multiplier applied to your coin usage within your allowance"),
+            at_limit: zod
+              .boolean()
+              .describe(
+                "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
+              ),
+            billing_day: zod
+              .number()
+              .describe(
+                "The day of the month when the bill is due, and the end of the current billing period",
+              ),
+            billing_prediction: zod
+              .number()
+              .describe(
+                "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+              ),
+            billing_prediction_storage_contribution: zod
+              .number()
+              .describe(
+                "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+              ),
+            current_burn_rate: zod
+              .number()
+              .describe(
+                "The current burn rate, the approximate amount of coins you are currently consuming each day",
+              ),
+            limit: zod
+              .number()
+              .describe(
+                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
+              ),
+            overspend_multiplier: zod
+              .number()
+              .describe("A multiplier that will be applied to coin used beyond your allowance"),
+            remaining_days: zod
+              .number()
+              .describe("The number of days remaining, in the current billing period"),
+            used: zod
+              .number()
+              .describe(
+                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
+              ),
+          }),
+          instance: zod.object({
+            coins: zod.object({ used: zod.number().describe("The number of coins used\n") }),
+          }),
+          organisation: zod.object({
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Organisation's default product privacy setting"),
+            id: zod.string().describe("The Organisation's unique ID"),
+            name: zod.string().describe("The Organisation's name"),
+            owner_id: zod
+              .string()
+              .optional()
+              .describe(
+                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
+              ),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Organisation"),
+          }),
+          product: zod.object({
+            created: zod.iso.datetime({ offset: true }),
+            flavour: zod
+              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
+              .optional()
+              .describe("The Product Type flavour. Not all products have flavours\n"),
+            id: zod.string().describe("The Product ID\n"),
+            name: zod.string().optional().describe("The name of the Product\n"),
+            type: zod
+              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
+              .describe("The Product Type\n"),
+          }),
+          storage: zod.object({
+            coins: zod.object({
+              unit_cost: zod
+                .number()
+                .describe(
+                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
+                ),
+              used: zod
+                .number()
+                .describe(
+                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
+                ),
+            }),
+            size: zod.object({
+              current: zod
+                .string()
+                .describe(
+                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
+                ),
+              peak: zod
+                .string()
+                .describe(
+                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
+                ),
+              unit_size: zod
+                .string()
+                .describe(
+                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
+                ),
+              units_used: zod.number().describe("The peak number of storage units used today"),
+            }),
+          }),
+          unit: zod.object({
+            billing_day: zod.number().describe("The Unit's billing day"),
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Unit's default product privacy setting"),
+            id: zod.string().describe("The Unit's unique identity"),
+            name: zod.string().describe("The Unit's name"),
+            owner_id: zod.string().describe("The Unit's owner (a username)"),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Unit"),
+          }),
+        }),
+      ]),
+    )
+    .describe("All the Products you have access to"),
+});
+
+/**
+ * The storage cost is returned along with its measurement units, typically a Coin value based on the the peak storage that was measured on each billable day.
+ * @summary Gets the default cross-product storage cost
+ */
+export const AppApiProductGetDefaultStorageCostResponse = zod.object({
+  default_storage_cost: zod.object({
+    cost: zod.string(),
+    description: zod.string(),
+    units: zod.string(),
+  }),
+});
+
+/**
  * Gets Product Types you can purchase (subscribe to)
  * @summary Gets all Product Types
  */
@@ -19,11 +328,6 @@ export const AppApiProductGetTypesResponse = zod.object({
   product_types: zod
     .array(
       zod.object({
-        type: zod
-          .string()
-          .describe(
-            "A product type, this is a unique string amongst all types known to the Account Server",
-          ),
         flavour: zod
           .string()
           .optional()
@@ -34,318 +338,14 @@ export const AppApiProductGetTypesResponse = zod.object({
           .enum(["DATA_MANAGER"])
           .optional()
           .describe("The kind of service that can use the Product"),
+        type: zod
+          .string()
+          .describe(
+            "A product type, this is a unique string amongst all types known to the Account Server",
+          ),
       }),
     )
     .describe("All the Product Types you have access to"),
-});
-
-/**
- * The storage cost is returned along with its measurement units, typically a Coin value based on the the peak storage that was measured on each billable day.
- * @summary Gets the default cross-product storage cost
- */
-export const AppApiProductGetDefaultStorageCostResponse = zod.object({
-  default_storage_cost: zod.object({
-    cost: zod.string(),
-    units: zod.string(),
-    description: zod.string(),
-  }),
-});
-
-/**
- * Gets Products you have access to, across all **Units** and **Organisations**
- * @summary Gets all Products
- */
-export const AppApiProductGetResponse = zod.object({
-  count: zod.number(),
-  products: zod
-    .array(
-      zod.union([
-        zod.object({
-          product: zod.object({
-            id: zod.string().describe("The Product ID\n"),
-            created: zod.iso.datetime({ offset: true }),
-            type: zod
-              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
-              .describe("The Product Type\n"),
-            flavour: zod
-              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
-              .optional()
-              .describe("The Product Type flavour. Not all products have flavours\n"),
-            name: zod.string().optional().describe("The name of the Product\n"),
-          }),
-          organisation: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Organisation's unique ID"),
-            name: zod.string().describe("The Organisation's name"),
-            owner_id: zod
-              .string()
-              .optional()
-              .describe(
-                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
-              ),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Organisation's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Organisation"),
-          }),
-          unit: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Unit's unique identity"),
-            name: zod.string().describe("The Unit's name"),
-            owner_id: zod.string().describe("The Unit's owner (a username)"),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            billing_day: zod.number().describe("The Unit's billing day"),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Unit's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Unit"),
-          }),
-          storage: zod.object({
-            size: zod.object({
-              peak: zod
-                .string()
-                .describe(
-                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
-                ),
-              current: zod
-                .string()
-                .describe(
-                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
-                ),
-              unit_size: zod
-                .string()
-                .describe(
-                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
-                ),
-              units_used: zod.number().describe("The peak number of storage units used today"),
-            }),
-            coins: zod.object({
-              used: zod
-                .number()
-                .describe(
-                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
-                ),
-              unit_cost: zod
-                .number()
-                .describe(
-                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
-                ),
-            }),
-          }),
-          coins: zod.object({
-            allowance: zod
-              .number()
-              .describe(
-                "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
-              ),
-            limit: zod
-              .number()
-              .describe(
-                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
-              ),
-            used: zod
-              .number()
-              .describe(
-                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
-              ),
-            at_limit: zod
-              .boolean()
-              .describe(
-                "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
-              ),
-            current_burn_rate: zod
-              .number()
-              .describe(
-                "The current burn rate, the approximate amount of coins you are currently consuming each day",
-              ),
-            billing_prediction: zod
-              .number()
-              .describe(
-                "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-              ),
-            billing_prediction_storage_contribution: zod
-              .number()
-              .describe(
-                "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-              ),
-            billing_day: zod
-              .number()
-              .describe(
-                "The day of the month when the bill is due, and the end of the current billing period",
-              ),
-            allowance_multiplier: zod
-              .number()
-              .describe("A multiplier applied to your coin usage within your allowance"),
-            overspend_multiplier: zod
-              .number()
-              .describe("A multiplier that will be applied to coin used beyond your allowance"),
-            remaining_days: zod
-              .number()
-              .describe("The number of days remaining, in the current billing period"),
-          }),
-          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
-        }),
-        zod.object({
-          product: zod.object({
-            id: zod.string().describe("The Product ID\n"),
-            created: zod.iso.datetime({ offset: true }),
-            type: zod
-              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
-              .describe("The Product Type\n"),
-            flavour: zod
-              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
-              .optional()
-              .describe("The Product Type flavour. Not all products have flavours\n"),
-            name: zod.string().optional().describe("The name of the Product\n"),
-          }),
-          organisation: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Organisation's unique ID"),
-            name: zod.string().describe("The Organisation's name"),
-            owner_id: zod
-              .string()
-              .optional()
-              .describe(
-                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
-              ),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Organisation's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Organisation"),
-          }),
-          unit: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Unit's unique identity"),
-            name: zod.string().describe("The Unit's name"),
-            owner_id: zod.string().describe("The Unit's owner (a username)"),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            billing_day: zod.number().describe("The Unit's billing day"),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Unit's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Unit"),
-          }),
-          storage: zod.object({
-            size: zod.object({
-              peak: zod
-                .string()
-                .describe(
-                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
-                ),
-              current: zod
-                .string()
-                .describe(
-                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
-                ),
-              unit_size: zod
-                .string()
-                .describe(
-                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
-                ),
-              units_used: zod.number().describe("The peak number of storage units used today"),
-            }),
-            coins: zod.object({
-              used: zod
-                .number()
-                .describe(
-                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
-                ),
-              unit_cost: zod
-                .number()
-                .describe(
-                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
-                ),
-            }),
-          }),
-          coins: zod.object({
-            allowance: zod
-              .number()
-              .describe(
-                "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
-              ),
-            limit: zod
-              .number()
-              .describe(
-                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
-              ),
-            used: zod
-              .number()
-              .describe(
-                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
-              ),
-            at_limit: zod
-              .boolean()
-              .describe(
-                "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
-              ),
-            current_burn_rate: zod
-              .number()
-              .describe(
-                "The current burn rate, the approximate amount of coins you are currently consuming each day",
-              ),
-            billing_prediction: zod
-              .number()
-              .describe(
-                "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-              ),
-            billing_prediction_storage_contribution: zod
-              .number()
-              .describe(
-                "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-              ),
-            billing_day: zod
-              .number()
-              .describe(
-                "The day of the month when the bill is due, and the end of the current billing period",
-              ),
-            allowance_multiplier: zod
-              .number()
-              .describe("A multiplier applied to your coin usage within your allowance"),
-            overspend_multiplier: zod
-              .number()
-              .describe("A multiplier that will be applied to coin used beyond your allowance"),
-            remaining_days: zod
-              .number()
-              .describe("The number of days remaining, in the current billing period"),
-          }),
-          instance: zod.object({
-            coins: zod.object({ used: zod.number().describe("The number of coins used\n") }),
-          }),
-          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
-          claim: zod
-            .object({
-              id: zod
-                .string()
-                .describe("The service-specific ID that is using this Subscription\n"),
-              name: zod.string().optional().describe("A name for the service-specific ID\n"),
-            })
-            .optional(),
-        }),
-      ]),
-    )
-    .describe("All the Products you have access to"),
 });
 
 /**
@@ -369,113 +369,25 @@ export const AppApiProductGetForOrganisationResponse = zod.object({
     .array(
       zod.union([
         zod.object({
-          product: zod.object({
-            id: zod.string().describe("The Product ID\n"),
-            created: zod.iso.datetime({ offset: true }),
-            type: zod
-              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
-              .describe("The Product Type\n"),
-            flavour: zod
-              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
-              .optional()
-              .describe("The Product Type flavour. Not all products have flavours\n"),
-            name: zod.string().optional().describe("The name of the Product\n"),
-          }),
-          organisation: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Organisation's unique ID"),
-            name: zod.string().describe("The Organisation's name"),
-            owner_id: zod
-              .string()
-              .optional()
-              .describe(
-                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
-              ),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Organisation's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Organisation"),
-          }),
-          unit: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Unit's unique identity"),
-            name: zod.string().describe("The Unit's name"),
-            owner_id: zod.string().describe("The Unit's owner (a username)"),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            billing_day: zod.number().describe("The Unit's billing day"),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Unit's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Unit"),
-          }),
-          storage: zod.object({
-            size: zod.object({
-              peak: zod
-                .string()
-                .describe(
-                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
-                ),
-              current: zod
-                .string()
-                .describe(
-                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
-                ),
-              unit_size: zod
-                .string()
-                .describe(
-                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
-                ),
-              units_used: zod.number().describe("The peak number of storage units used today"),
-            }),
-            coins: zod.object({
-              used: zod
-                .number()
-                .describe(
-                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
-                ),
-              unit_cost: zod
-                .number()
-                .describe(
-                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
-                ),
-            }),
-          }),
+          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
           coins: zod.object({
             allowance: zod
               .number()
               .describe(
                 "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
               ),
-            limit: zod
+            allowance_multiplier: zod
               .number()
-              .describe(
-                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
-              ),
-            used: zod
-              .number()
-              .describe(
-                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
-              ),
+              .describe("A multiplier applied to your coin usage within your allowance"),
             at_limit: zod
               .boolean()
               .describe(
                 "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
               ),
-            current_burn_rate: zod
+            billing_day: zod
               .number()
               .describe(
-                "The current burn rate, the approximate amount of coins you are currently consuming each day",
+                "The day of the month when the bill is due, and the end of the current billing period",
               ),
             billing_prediction: zod
               .number()
@@ -487,161 +399,112 @@ export const AppApiProductGetForOrganisationResponse = zod.object({
               .describe(
                 "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
               ),
-            billing_day: zod
+            current_burn_rate: zod
               .number()
               .describe(
-                "The day of the month when the bill is due, and the end of the current billing period",
+                "The current burn rate, the approximate amount of coins you are currently consuming each day",
               ),
-            allowance_multiplier: zod
+            limit: zod
               .number()
-              .describe("A multiplier applied to your coin usage within your allowance"),
+              .describe(
+                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
+              ),
             overspend_multiplier: zod
               .number()
               .describe("A multiplier that will be applied to coin used beyond your allowance"),
             remaining_days: zod
               .number()
               .describe("The number of days remaining, in the current billing period"),
+            used: zod
+              .number()
+              .describe(
+                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
+              ),
           }),
-          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
+          organisation: zod.object({
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Organisation's default product privacy setting"),
+            id: zod.string().describe("The Organisation's unique ID"),
+            name: zod.string().describe("The Organisation's name"),
+            owner_id: zod
+              .string()
+              .optional()
+              .describe(
+                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
+              ),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Organisation"),
+          }),
+          product: zod.object({
+            created: zod.iso.datetime({ offset: true }),
+            flavour: zod
+              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
+              .optional()
+              .describe("The Product Type flavour. Not all products have flavours\n"),
+            id: zod.string().describe("The Product ID\n"),
+            name: zod.string().optional().describe("The name of the Product\n"),
+            type: zod
+              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
+              .describe("The Product Type\n"),
+          }),
+          storage: zod.object({
+            coins: zod.object({
+              unit_cost: zod
+                .number()
+                .describe(
+                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
+                ),
+              used: zod
+                .number()
+                .describe(
+                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
+                ),
+            }),
+            size: zod.object({
+              current: zod
+                .string()
+                .describe(
+                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
+                ),
+              peak: zod
+                .string()
+                .describe(
+                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
+                ),
+              unit_size: zod
+                .string()
+                .describe(
+                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
+                ),
+              units_used: zod.number().describe("The peak number of storage units used today"),
+            }),
+          }),
+          unit: zod.object({
+            billing_day: zod.number().describe("The Unit's billing day"),
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Unit's default product privacy setting"),
+            id: zod.string().describe("The Unit's unique identity"),
+            name: zod.string().describe("The Unit's name"),
+            owner_id: zod.string().describe("The Unit's owner (a username)"),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Unit"),
+          }),
         }),
         zod.object({
-          product: zod.object({
-            id: zod.string().describe("The Product ID\n"),
-            created: zod.iso.datetime({ offset: true }),
-            type: zod
-              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
-              .describe("The Product Type\n"),
-            flavour: zod
-              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
-              .optional()
-              .describe("The Product Type flavour. Not all products have flavours\n"),
-            name: zod.string().optional().describe("The name of the Product\n"),
-          }),
-          organisation: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Organisation's unique ID"),
-            name: zod.string().describe("The Organisation's name"),
-            owner_id: zod
-              .string()
-              .optional()
-              .describe(
-                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
-              ),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Organisation's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Organisation"),
-          }),
-          unit: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Unit's unique identity"),
-            name: zod.string().describe("The Unit's name"),
-            owner_id: zod.string().describe("The Unit's owner (a username)"),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            billing_day: zod.number().describe("The Unit's billing day"),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Unit's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Unit"),
-          }),
-          storage: zod.object({
-            size: zod.object({
-              peak: zod
-                .string()
-                .describe(
-                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
-                ),
-              current: zod
-                .string()
-                .describe(
-                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
-                ),
-              unit_size: zod
-                .string()
-                .describe(
-                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
-                ),
-              units_used: zod.number().describe("The peak number of storage units used today"),
-            }),
-            coins: zod.object({
-              used: zod
-                .number()
-                .describe(
-                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
-                ),
-              unit_cost: zod
-                .number()
-                .describe(
-                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
-                ),
-            }),
-          }),
-          coins: zod.object({
-            allowance: zod
-              .number()
-              .describe(
-                "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
-              ),
-            limit: zod
-              .number()
-              .describe(
-                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
-              ),
-            used: zod
-              .number()
-              .describe(
-                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
-              ),
-            at_limit: zod
-              .boolean()
-              .describe(
-                "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
-              ),
-            current_burn_rate: zod
-              .number()
-              .describe(
-                "The current burn rate, the approximate amount of coins you are currently consuming each day",
-              ),
-            billing_prediction: zod
-              .number()
-              .describe(
-                "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-              ),
-            billing_prediction_storage_contribution: zod
-              .number()
-              .describe(
-                "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-              ),
-            billing_day: zod
-              .number()
-              .describe(
-                "The day of the month when the bill is due, and the end of the current billing period",
-              ),
-            allowance_multiplier: zod
-              .number()
-              .describe("A multiplier applied to your coin usage within your allowance"),
-            overspend_multiplier: zod
-              .number()
-              .describe("A multiplier that will be applied to coin used beyond your allowance"),
-            remaining_days: zod
-              .number()
-              .describe("The number of days remaining, in the current billing period"),
-          }),
-          instance: zod.object({
-            coins: zod.object({ used: zod.number().describe("The number of coins used\n") }),
-          }),
-          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
           claim: zod
             .object({
               id: zod
@@ -650,6 +513,448 @@ export const AppApiProductGetForOrganisationResponse = zod.object({
               name: zod.string().optional().describe("A name for the service-specific ID\n"),
             })
             .optional(),
+          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
+          coins: zod.object({
+            allowance: zod
+              .number()
+              .describe(
+                "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
+              ),
+            allowance_multiplier: zod
+              .number()
+              .describe("A multiplier applied to your coin usage within your allowance"),
+            at_limit: zod
+              .boolean()
+              .describe(
+                "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
+              ),
+            billing_day: zod
+              .number()
+              .describe(
+                "The day of the month when the bill is due, and the end of the current billing period",
+              ),
+            billing_prediction: zod
+              .number()
+              .describe(
+                "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+              ),
+            billing_prediction_storage_contribution: zod
+              .number()
+              .describe(
+                "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+              ),
+            current_burn_rate: zod
+              .number()
+              .describe(
+                "The current burn rate, the approximate amount of coins you are currently consuming each day",
+              ),
+            limit: zod
+              .number()
+              .describe(
+                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
+              ),
+            overspend_multiplier: zod
+              .number()
+              .describe("A multiplier that will be applied to coin used beyond your allowance"),
+            remaining_days: zod
+              .number()
+              .describe("The number of days remaining, in the current billing period"),
+            used: zod
+              .number()
+              .describe(
+                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
+              ),
+          }),
+          instance: zod.object({
+            coins: zod.object({ used: zod.number().describe("The number of coins used\n") }),
+          }),
+          organisation: zod.object({
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Organisation's default product privacy setting"),
+            id: zod.string().describe("The Organisation's unique ID"),
+            name: zod.string().describe("The Organisation's name"),
+            owner_id: zod
+              .string()
+              .optional()
+              .describe(
+                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
+              ),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Organisation"),
+          }),
+          product: zod.object({
+            created: zod.iso.datetime({ offset: true }),
+            flavour: zod
+              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
+              .optional()
+              .describe("The Product Type flavour. Not all products have flavours\n"),
+            id: zod.string().describe("The Product ID\n"),
+            name: zod.string().optional().describe("The name of the Product\n"),
+            type: zod
+              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
+              .describe("The Product Type\n"),
+          }),
+          storage: zod.object({
+            coins: zod.object({
+              unit_cost: zod
+                .number()
+                .describe(
+                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
+                ),
+              used: zod
+                .number()
+                .describe(
+                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
+                ),
+            }),
+            size: zod.object({
+              current: zod
+                .string()
+                .describe(
+                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
+                ),
+              peak: zod
+                .string()
+                .describe(
+                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
+                ),
+              unit_size: zod
+                .string()
+                .describe(
+                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
+                ),
+              units_used: zod.number().describe("The peak number of storage units used today"),
+            }),
+          }),
+          unit: zod.object({
+            billing_day: zod.number().describe("The Unit's billing day"),
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Unit's default product privacy setting"),
+            id: zod.string().describe("The Unit's unique identity"),
+            name: zod.string().describe("The Unit's name"),
+            owner_id: zod.string().describe("The Unit's owner (a username)"),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Unit"),
+          }),
+        }),
+      ]),
+    )
+    .describe("All the Products you have access to"),
+});
+
+/**
+ * Gets products you have access to based on an Organisational **Unit**
+ * @summary Gets Products for an Organisational Unit
+ */
+export const appApiProductGetForUnitPathUnitIdRegExp = new RegExp(
+  "^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiProductGetForUnitParams = zod.object({
+  unit_id: zod.string().regex(appApiProductGetForUnitPathUnitIdRegExp).describe("A Unit Identity"),
+});
+
+export const AppApiProductGetForUnitResponse = zod.object({
+  count: zod.number(),
+  products: zod
+    .array(
+      zod.union([
+        zod.object({
+          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
+          coins: zod.object({
+            allowance: zod
+              .number()
+              .describe(
+                "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
+              ),
+            allowance_multiplier: zod
+              .number()
+              .describe("A multiplier applied to your coin usage within your allowance"),
+            at_limit: zod
+              .boolean()
+              .describe(
+                "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
+              ),
+            billing_day: zod
+              .number()
+              .describe(
+                "The day of the month when the bill is due, and the end of the current billing period",
+              ),
+            billing_prediction: zod
+              .number()
+              .describe(
+                "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+              ),
+            billing_prediction_storage_contribution: zod
+              .number()
+              .describe(
+                "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+              ),
+            current_burn_rate: zod
+              .number()
+              .describe(
+                "The current burn rate, the approximate amount of coins you are currently consuming each day",
+              ),
+            limit: zod
+              .number()
+              .describe(
+                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
+              ),
+            overspend_multiplier: zod
+              .number()
+              .describe("A multiplier that will be applied to coin used beyond your allowance"),
+            remaining_days: zod
+              .number()
+              .describe("The number of days remaining, in the current billing period"),
+            used: zod
+              .number()
+              .describe(
+                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
+              ),
+          }),
+          organisation: zod.object({
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Organisation's default product privacy setting"),
+            id: zod.string().describe("The Organisation's unique ID"),
+            name: zod.string().describe("The Organisation's name"),
+            owner_id: zod
+              .string()
+              .optional()
+              .describe(
+                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
+              ),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Organisation"),
+          }),
+          product: zod.object({
+            created: zod.iso.datetime({ offset: true }),
+            flavour: zod
+              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
+              .optional()
+              .describe("The Product Type flavour. Not all products have flavours\n"),
+            id: zod.string().describe("The Product ID\n"),
+            name: zod.string().optional().describe("The name of the Product\n"),
+            type: zod
+              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
+              .describe("The Product Type\n"),
+          }),
+          storage: zod.object({
+            coins: zod.object({
+              unit_cost: zod
+                .number()
+                .describe(
+                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
+                ),
+              used: zod
+                .number()
+                .describe(
+                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
+                ),
+            }),
+            size: zod.object({
+              current: zod
+                .string()
+                .describe(
+                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
+                ),
+              peak: zod
+                .string()
+                .describe(
+                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
+                ),
+              unit_size: zod
+                .string()
+                .describe(
+                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
+                ),
+              units_used: zod.number().describe("The peak number of storage units used today"),
+            }),
+          }),
+          unit: zod.object({
+            billing_day: zod.number().describe("The Unit's billing day"),
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Unit's default product privacy setting"),
+            id: zod.string().describe("The Unit's unique identity"),
+            name: zod.string().describe("The Unit's name"),
+            owner_id: zod.string().describe("The Unit's owner (a username)"),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Unit"),
+          }),
+        }),
+        zod.object({
+          claim: zod
+            .object({
+              id: zod
+                .string()
+                .describe("The service-specific ID that is using this Subscription\n"),
+              name: zod.string().optional().describe("A name for the service-specific ID\n"),
+            })
+            .optional(),
+          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
+          coins: zod.object({
+            allowance: zod
+              .number()
+              .describe(
+                "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
+              ),
+            allowance_multiplier: zod
+              .number()
+              .describe("A multiplier applied to your coin usage within your allowance"),
+            at_limit: zod
+              .boolean()
+              .describe(
+                "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
+              ),
+            billing_day: zod
+              .number()
+              .describe(
+                "The day of the month when the bill is due, and the end of the current billing period",
+              ),
+            billing_prediction: zod
+              .number()
+              .describe(
+                "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+              ),
+            billing_prediction_storage_contribution: zod
+              .number()
+              .describe(
+                "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+              ),
+            current_burn_rate: zod
+              .number()
+              .describe(
+                "The current burn rate, the approximate amount of coins you are currently consuming each day",
+              ),
+            limit: zod
+              .number()
+              .describe(
+                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
+              ),
+            overspend_multiplier: zod
+              .number()
+              .describe("A multiplier that will be applied to coin used beyond your allowance"),
+            remaining_days: zod
+              .number()
+              .describe("The number of days remaining, in the current billing period"),
+            used: zod
+              .number()
+              .describe(
+                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
+              ),
+          }),
+          instance: zod.object({
+            coins: zod.object({ used: zod.number().describe("The number of coins used\n") }),
+          }),
+          organisation: zod.object({
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Organisation's default product privacy setting"),
+            id: zod.string().describe("The Organisation's unique ID"),
+            name: zod.string().describe("The Organisation's name"),
+            owner_id: zod
+              .string()
+              .optional()
+              .describe(
+                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
+              ),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Organisation"),
+          }),
+          product: zod.object({
+            created: zod.iso.datetime({ offset: true }),
+            flavour: zod
+              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
+              .optional()
+              .describe("The Product Type flavour. Not all products have flavours\n"),
+            id: zod.string().describe("The Product ID\n"),
+            name: zod.string().optional().describe("The name of the Product\n"),
+            type: zod
+              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
+              .describe("The Product Type\n"),
+          }),
+          storage: zod.object({
+            coins: zod.object({
+              unit_cost: zod
+                .number()
+                .describe(
+                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
+                ),
+              used: zod
+                .number()
+                .describe(
+                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
+                ),
+            }),
+            size: zod.object({
+              current: zod
+                .string()
+                .describe(
+                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
+                ),
+              peak: zod
+                .string()
+                .describe(
+                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
+                ),
+              unit_size: zod
+                .string()
+                .describe(
+                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
+                ),
+              units_used: zod.number().describe("The peak number of storage units used today"),
+            }),
+          }),
+          unit: zod.object({
+            billing_day: zod.number().describe("The Unit's billing day"),
+            caller_is_member: zod
+              .boolean()
+              .describe("Whether the user making the API call is a member of the Unit"),
+            created: zod.iso.datetime({ offset: true }),
+            default_product_privacy: zod
+              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+              .describe("The Unit's default product privacy setting"),
+            id: zod.string().describe("The Unit's unique identity"),
+            name: zod.string().describe("The Unit's name"),
+            owner_id: zod.string().describe("The Unit's owner (a username)"),
+            private: zod.boolean().describe("True if the Unit is private"),
+            users: zod
+              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+              .describe("A list of users that are members of the Unit"),
+          }),
         }),
       ]),
     )
@@ -679,6 +984,26 @@ export const AppApiProductPostParams = zod.object({
 export const appApiProductPostBodyNameMax = 80;
 
 export const AppApiProductPostBody = zod.object({
+  allowance: zod
+    .number()
+    .min(1)
+    .optional()
+    .describe(
+      "The Product's coin allowance. You must provide this for Storage products but you must not provide a value for Project Tier Products",
+    ),
+  flavour: zod
+    .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
+    .optional()
+    .describe(
+      "The Flavour of the Product. Used only for Project Tier Products. Do not set this for Storage products",
+    ),
+  limit: zod
+    .number()
+    .min(1)
+    .optional()
+    .describe(
+      "The Product's built-in coin limit. If set it must not be less than the allowance. If not set the allowance is used. You can provide this for Storage products but you must not provide a value for Project Tier Products",
+    ),
   name: zod
     .string()
     .max(appApiProductPostBodyNameMax)
@@ -688,26 +1013,6 @@ export const AppApiProductPostBody = zod.object({
     .describe(
       "The Type of Product. Storage subscriptions require an \*\*Allowance\*\* to be defined and the \*\*Flavour\*\* must not be provided.\n\nProject Tier subscriptions have built-in allowances and Limits so you must not provide values for these for these products",
     ),
-  flavour: zod
-    .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
-    .optional()
-    .describe(
-      "The Flavour of the Product. Used only for Project Tier Products. Do not set this for Storage products",
-    ),
-  allowance: zod
-    .number()
-    .min(1)
-    .optional()
-    .describe(
-      "The Product's coin allowance. You must provide this for Storage products but you must not provide a value for Project Tier Products",
-    ),
-  limit: zod
-    .number()
-    .min(1)
-    .optional()
-    .describe(
-      "The Product's built-in coin limit. If set it must not be less than the allowance. If not set the allowance is used. You can provide this for Storage products but you must not provide a value for Project Tier Products",
-    ),
 });
 
 export const AppApiProductPostResponse = zod.object({
@@ -715,309 +1020,21 @@ export const AppApiProductPostResponse = zod.object({
 });
 
 /**
- * Gets products you have access to based on an Organisational **Unit**
- * @summary Gets Products for an Organisational Unit
+ * You need access to the Product and, if the Product is *claimable* the claim must be removed before the Product can be removed. An example claimable Product is a `DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION` where the *claimable* commodity is a Data Manager **Project**. In this case you will need to delete the Data Manager **Project** before you can delete the Account Server **Product**.
+ * @summary Deletes an existing Product
  */
-export const appApiProductGetForUnitPathUnitIdRegExp = new RegExp(
-  "^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+export const appApiProductDeletePathProductIdRegExp = new RegExp(
+  "^product-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
 );
 
-export const AppApiProductGetForUnitParams = zod.object({
-  unit_id: zod.string().regex(appApiProductGetForUnitPathUnitIdRegExp).describe("A Unit Identity"),
+export const AppApiProductDeleteParams = zod.object({
+  product_id: zod
+    .string()
+    .regex(appApiProductDeletePathProductIdRegExp)
+    .describe("A Product Identity"),
 });
 
-export const AppApiProductGetForUnitResponse = zod.object({
-  count: zod.number(),
-  products: zod
-    .array(
-      zod.union([
-        zod.object({
-          product: zod.object({
-            id: zod.string().describe("The Product ID\n"),
-            created: zod.iso.datetime({ offset: true }),
-            type: zod
-              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
-              .describe("The Product Type\n"),
-            flavour: zod
-              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
-              .optional()
-              .describe("The Product Type flavour. Not all products have flavours\n"),
-            name: zod.string().optional().describe("The name of the Product\n"),
-          }),
-          organisation: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Organisation's unique ID"),
-            name: zod.string().describe("The Organisation's name"),
-            owner_id: zod
-              .string()
-              .optional()
-              .describe(
-                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
-              ),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Organisation's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Organisation"),
-          }),
-          unit: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Unit's unique identity"),
-            name: zod.string().describe("The Unit's name"),
-            owner_id: zod.string().describe("The Unit's owner (a username)"),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            billing_day: zod.number().describe("The Unit's billing day"),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Unit's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Unit"),
-          }),
-          storage: zod.object({
-            size: zod.object({
-              peak: zod
-                .string()
-                .describe(
-                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
-                ),
-              current: zod
-                .string()
-                .describe(
-                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
-                ),
-              unit_size: zod
-                .string()
-                .describe(
-                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
-                ),
-              units_used: zod.number().describe("The peak number of storage units used today"),
-            }),
-            coins: zod.object({
-              used: zod
-                .number()
-                .describe(
-                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
-                ),
-              unit_cost: zod
-                .number()
-                .describe(
-                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
-                ),
-            }),
-          }),
-          coins: zod.object({
-            allowance: zod
-              .number()
-              .describe(
-                "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
-              ),
-            limit: zod
-              .number()
-              .describe(
-                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
-              ),
-            used: zod
-              .number()
-              .describe(
-                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
-              ),
-            at_limit: zod
-              .boolean()
-              .describe(
-                "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
-              ),
-            current_burn_rate: zod
-              .number()
-              .describe(
-                "The current burn rate, the approximate amount of coins you are currently consuming each day",
-              ),
-            billing_prediction: zod
-              .number()
-              .describe(
-                "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-              ),
-            billing_prediction_storage_contribution: zod
-              .number()
-              .describe(
-                "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-              ),
-            billing_day: zod
-              .number()
-              .describe(
-                "The day of the month when the bill is due, and the end of the current billing period",
-              ),
-            allowance_multiplier: zod
-              .number()
-              .describe("A multiplier applied to your coin usage within your allowance"),
-            overspend_multiplier: zod
-              .number()
-              .describe("A multiplier that will be applied to coin used beyond your allowance"),
-            remaining_days: zod
-              .number()
-              .describe("The number of days remaining, in the current billing period"),
-          }),
-          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
-        }),
-        zod.object({
-          product: zod.object({
-            id: zod.string().describe("The Product ID\n"),
-            created: zod.iso.datetime({ offset: true }),
-            type: zod
-              .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
-              .describe("The Product Type\n"),
-            flavour: zod
-              .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
-              .optional()
-              .describe("The Product Type flavour. Not all products have flavours\n"),
-            name: zod.string().optional().describe("The name of the Product\n"),
-          }),
-          organisation: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Organisation's unique ID"),
-            name: zod.string().describe("The Organisation's name"),
-            owner_id: zod
-              .string()
-              .optional()
-              .describe(
-                "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
-              ),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Organisation's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Organisation"),
-          }),
-          unit: zod.object({
-            caller_is_member: zod
-              .boolean()
-              .describe("Whether the user making the API call is a member of the Unit"),
-            id: zod.string().describe("The Unit's unique identity"),
-            name: zod.string().describe("The Unit's name"),
-            owner_id: zod.string().describe("The Unit's owner (a username)"),
-            private: zod.boolean().describe("True if the Unit is private"),
-            created: zod.iso.datetime({ offset: true }),
-            billing_day: zod.number().describe("The Unit's billing day"),
-            default_product_privacy: zod
-              .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-              .describe("The Unit's default product privacy setting"),
-            users: zod
-              .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-              .describe("A list of users that are members of the Unit"),
-          }),
-          storage: zod.object({
-            size: zod.object({
-              peak: zod
-                .string()
-                .describe(
-                  "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
-                ),
-              current: zod
-                .string()
-                .describe(
-                  "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
-                ),
-              unit_size: zod
-                .string()
-                .describe(
-                  "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
-                ),
-              units_used: zod.number().describe("The peak number of storage units used today"),
-            }),
-            coins: zod.object({
-              used: zod
-                .number()
-                .describe(
-                  "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
-                ),
-              unit_cost: zod
-                .number()
-                .describe(
-                  "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
-                ),
-            }),
-          }),
-          coins: zod.object({
-            allowance: zod
-              .number()
-              .describe(
-                "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
-              ),
-            limit: zod
-              .number()
-              .describe(
-                "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
-              ),
-            used: zod
-              .number()
-              .describe(
-                "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
-              ),
-            at_limit: zod
-              .boolean()
-              .describe(
-                "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
-              ),
-            current_burn_rate: zod
-              .number()
-              .describe(
-                "The current burn rate, the approximate amount of coins you are currently consuming each day",
-              ),
-            billing_prediction: zod
-              .number()
-              .describe(
-                "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-              ),
-            billing_prediction_storage_contribution: zod
-              .number()
-              .describe(
-                "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-              ),
-            billing_day: zod
-              .number()
-              .describe(
-                "The day of the month when the bill is due, and the end of the current billing period",
-              ),
-            allowance_multiplier: zod
-              .number()
-              .describe("A multiplier applied to your coin usage within your allowance"),
-            overspend_multiplier: zod
-              .number()
-              .describe("A multiplier that will be applied to coin used beyond your allowance"),
-            remaining_days: zod
-              .number()
-              .describe("The number of days remaining, in the current billing period"),
-          }),
-          instance: zod.object({
-            coins: zod.object({ used: zod.number().describe("The number of coins used\n") }),
-          }),
-          claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
-          claim: zod
-            .object({
-              id: zod
-                .string()
-                .describe("The service-specific ID that is using this Subscription\n"),
-              name: zod.string().optional().describe("A name for the service-specific ID\n"),
-            })
-            .optional(),
-        }),
-      ]),
-    )
-    .describe("All the Products you have access to"),
-});
+export const AppApiProductDeleteResponse = zod.void();
 
 /**
  * Gets details of a specific Product that you have access to.
@@ -1038,113 +1055,25 @@ export const AppApiProductGetProductResponse = zod.object({
   product: zod
     .union([
       zod.object({
-        product: zod.object({
-          id: zod.string().describe("The Product ID\n"),
-          created: zod.iso.datetime({ offset: true }),
-          type: zod
-            .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
-            .describe("The Product Type\n"),
-          flavour: zod
-            .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
-            .optional()
-            .describe("The Product Type flavour. Not all products have flavours\n"),
-          name: zod.string().optional().describe("The name of the Product\n"),
-        }),
-        organisation: zod.object({
-          caller_is_member: zod
-            .boolean()
-            .describe("Whether the user making the API call is a member of the Unit"),
-          id: zod.string().describe("The Organisation's unique ID"),
-          name: zod.string().describe("The Organisation's name"),
-          owner_id: zod
-            .string()
-            .optional()
-            .describe(
-              "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
-            ),
-          private: zod.boolean().describe("True if the Unit is private"),
-          created: zod.iso.datetime({ offset: true }),
-          default_product_privacy: zod
-            .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-            .describe("The Organisation's default product privacy setting"),
-          users: zod
-            .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-            .describe("A list of users that are members of the Organisation"),
-        }),
-        unit: zod.object({
-          caller_is_member: zod
-            .boolean()
-            .describe("Whether the user making the API call is a member of the Unit"),
-          id: zod.string().describe("The Unit's unique identity"),
-          name: zod.string().describe("The Unit's name"),
-          owner_id: zod.string().describe("The Unit's owner (a username)"),
-          private: zod.boolean().describe("True if the Unit is private"),
-          created: zod.iso.datetime({ offset: true }),
-          billing_day: zod.number().describe("The Unit's billing day"),
-          default_product_privacy: zod
-            .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-            .describe("The Unit's default product privacy setting"),
-          users: zod
-            .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-            .describe("A list of users that are members of the Unit"),
-        }),
-        storage: zod.object({
-          size: zod.object({
-            peak: zod
-              .string()
-              .describe(
-                "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
-              ),
-            current: zod
-              .string()
-              .describe(
-                "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
-              ),
-            unit_size: zod
-              .string()
-              .describe(
-                "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
-              ),
-            units_used: zod.number().describe("The peak number of storage units used today"),
-          }),
-          coins: zod.object({
-            used: zod
-              .number()
-              .describe(
-                "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
-              ),
-            unit_cost: zod
-              .number()
-              .describe(
-                "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
-              ),
-          }),
-        }),
+        claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
         coins: zod.object({
           allowance: zod
             .number()
             .describe(
               "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
             ),
-          limit: zod
+          allowance_multiplier: zod
             .number()
-            .describe(
-              "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
-            ),
-          used: zod
-            .number()
-            .describe(
-              "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
-            ),
+            .describe("A multiplier applied to your coin usage within your allowance"),
           at_limit: zod
             .boolean()
             .describe(
               "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
             ),
-          current_burn_rate: zod
+          billing_day: zod
             .number()
             .describe(
-              "The current burn rate, the approximate amount of coins you are currently consuming each day",
+              "The day of the month when the bill is due, and the end of the current billing period",
             ),
           billing_prediction: zod
             .number()
@@ -1156,188 +1085,259 @@ export const AppApiProductGetProductResponse = zod.object({
             .describe(
               "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
             ),
-          billing_day: zod
+          current_burn_rate: zod
             .number()
             .describe(
-              "The day of the month when the bill is due, and the end of the current billing period",
+              "The current burn rate, the approximate amount of coins you are currently consuming each day",
             ),
-          allowance_multiplier: zod
+          limit: zod
             .number()
-            .describe("A multiplier applied to your coin usage within your allowance"),
+            .describe(
+              "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
+            ),
           overspend_multiplier: zod
             .number()
             .describe("A multiplier that will be applied to coin used beyond your allowance"),
           remaining_days: zod
             .number()
             .describe("The number of days remaining, in the current billing period"),
+          used: zod
+            .number()
+            .describe(
+              "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
+            ),
         }),
-        claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
+        organisation: zod.object({
+          caller_is_member: zod
+            .boolean()
+            .describe("Whether the user making the API call is a member of the Unit"),
+          created: zod.iso.datetime({ offset: true }),
+          default_product_privacy: zod
+            .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+            .describe("The Organisation's default product privacy setting"),
+          id: zod.string().describe("The Organisation's unique ID"),
+          name: zod.string().describe("The Organisation's name"),
+          owner_id: zod
+            .string()
+            .optional()
+            .describe(
+              "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
+            ),
+          private: zod.boolean().describe("True if the Unit is private"),
+          users: zod
+            .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+            .describe("A list of users that are members of the Organisation"),
+        }),
+        product: zod.object({
+          created: zod.iso.datetime({ offset: true }),
+          flavour: zod
+            .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
+            .optional()
+            .describe("The Product Type flavour. Not all products have flavours\n"),
+          id: zod.string().describe("The Product ID\n"),
+          name: zod.string().optional().describe("The name of the Product\n"),
+          type: zod
+            .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
+            .describe("The Product Type\n"),
+        }),
+        storage: zod.object({
+          coins: zod.object({
+            unit_cost: zod
+              .number()
+              .describe(
+                "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
+              ),
+            used: zod
+              .number()
+              .describe(
+                "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
+              ),
+          }),
+          size: zod.object({
+            current: zod
+              .string()
+              .describe(
+                "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
+              ),
+            peak: zod
+              .string()
+              .describe(
+                "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
+              ),
+            unit_size: zod
+              .string()
+              .describe(
+                "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
+              ),
+            units_used: zod.number().describe("The peak number of storage units used today"),
+          }),
+        }),
+        unit: zod.object({
+          billing_day: zod.number().describe("The Unit's billing day"),
+          caller_is_member: zod
+            .boolean()
+            .describe("Whether the user making the API call is a member of the Unit"),
+          created: zod.iso.datetime({ offset: true }),
+          default_product_privacy: zod
+            .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+            .describe("The Unit's default product privacy setting"),
+          id: zod.string().describe("The Unit's unique identity"),
+          name: zod.string().describe("The Unit's name"),
+          owner_id: zod.string().describe("The Unit's owner (a username)"),
+          private: zod.boolean().describe("True if the Unit is private"),
+          users: zod
+            .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+            .describe("A list of users that are members of the Unit"),
+        }),
       }),
       zod.object({
-        product: zod.object({
-          id: zod.string().describe("The Product ID\n"),
-          created: zod.iso.datetime({ offset: true }),
-          type: zod
-            .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
-            .describe("The Product Type\n"),
-          flavour: zod
-            .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
-            .optional()
-            .describe("The Product Type flavour. Not all products have flavours\n"),
-          name: zod.string().optional().describe("The name of the Product\n"),
-        }),
-        organisation: zod.object({
-          caller_is_member: zod
-            .boolean()
-            .describe("Whether the user making the API call is a member of the Unit"),
-          id: zod.string().describe("The Organisation's unique ID"),
-          name: zod.string().describe("The Organisation's name"),
-          owner_id: zod
-            .string()
-            .optional()
-            .describe(
-              "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
-            ),
-          private: zod.boolean().describe("True if the Unit is private"),
-          created: zod.iso.datetime({ offset: true }),
-          default_product_privacy: zod
-            .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-            .describe("The Organisation's default product privacy setting"),
-          users: zod
-            .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-            .describe("A list of users that are members of the Organisation"),
-        }),
-        unit: zod.object({
-          caller_is_member: zod
-            .boolean()
-            .describe("Whether the user making the API call is a member of the Unit"),
-          id: zod.string().describe("The Unit's unique identity"),
-          name: zod.string().describe("The Unit's name"),
-          owner_id: zod.string().describe("The Unit's owner (a username)"),
-          private: zod.boolean().describe("True if the Unit is private"),
-          created: zod.iso.datetime({ offset: true }),
-          billing_day: zod.number().describe("The Unit's billing day"),
-          default_product_privacy: zod
-            .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-            .describe("The Unit's default product privacy setting"),
-          users: zod
-            .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
-            .describe("A list of users that are members of the Unit"),
-        }),
-        storage: zod.object({
-          size: zod.object({
-            peak: zod
-              .string()
-              .describe(
-                "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
-              ),
-            current: zod
-              .string()
-              .describe(
-                "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
-              ),
-            unit_size: zod
-              .string()
-              .describe(
-                "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
-              ),
-            units_used: zod.number().describe("The peak number of storage units used today"),
-          }),
-          coins: zod.object({
-            used: zod
-              .number()
-              .describe(
-                "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
-              ),
-            unit_cost: zod
-              .number()
-              .describe(
-                "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
-              ),
-          }),
-        }),
-        coins: zod.object({
-          allowance: zod
-            .number()
-            .describe(
-              "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
-            ),
-          limit: zod
-            .number()
-            .describe(
-              "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
-            ),
-          used: zod
-            .number()
-            .describe(
-              "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
-            ),
-          at_limit: zod
-            .boolean()
-            .describe(
-              "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
-            ),
-          current_burn_rate: zod
-            .number()
-            .describe(
-              "The current burn rate, the approximate amount of coins you are currently consuming each day",
-            ),
-          billing_prediction: zod
-            .number()
-            .describe(
-              "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-            ),
-          billing_prediction_storage_contribution: zod
-            .number()
-            .describe(
-              "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
-            ),
-          billing_day: zod
-            .number()
-            .describe(
-              "The day of the month when the bill is due, and the end of the current billing period",
-            ),
-          allowance_multiplier: zod
-            .number()
-            .describe("A multiplier applied to your coin usage within your allowance"),
-          overspend_multiplier: zod
-            .number()
-            .describe("A multiplier that will be applied to coin used beyond your allowance"),
-          remaining_days: zod
-            .number()
-            .describe("The number of days remaining, in the current billing period"),
-        }),
-        instance: zod.object({
-          coins: zod.object({ used: zod.number().describe("The number of coins used\n") }),
-        }),
-        claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
         claim: zod
           .object({
             id: zod.string().describe("The service-specific ID that is using this Subscription\n"),
             name: zod.string().optional().describe("A name for the service-specific ID\n"),
           })
           .optional(),
+        claimable: zod.boolean().describe("True if the product can be (needs to be) claimed."),
+        coins: zod.object({
+          allowance: zod
+            .number()
+            .describe(
+              "The billing allowance. When you exceed this during the current billing period the \*cost multiplier\* will increase",
+            ),
+          allowance_multiplier: zod
+            .number()
+            .describe("A multiplier applied to your coin usage within your allowance"),
+          at_limit: zod
+            .boolean()
+            .describe(
+              "True if the product is operating at or beyond its coin limit. When it is authority to perform actions using the product are severely limited.",
+            ),
+          billing_day: zod
+            .number()
+            .describe(
+              "The day of the month when the bill is due, and the end of the current billing period",
+            ),
+          billing_prediction: zod
+            .number()
+            .describe(
+              "The predicted total billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+            ),
+          billing_prediction_storage_contribution: zod
+            .number()
+            .describe(
+              "The predicted storage contribution to the billing period amount, if costs continue at the current burn rate until the end of the billing period. This is an estimate",
+            ),
+          current_burn_rate: zod
+            .number()
+            .describe(
+              "The current burn rate, the approximate amount of coins you are currently consuming each day",
+            ),
+          limit: zod
+            .number()
+            .describe(
+              "The limit on your billing period spend. You can exceed the allowance but you cannot exceed the spend limit. Once reached the dependent may be restricted",
+            ),
+          overspend_multiplier: zod
+            .number()
+            .describe("A multiplier that will be applied to coin used beyond your allowance"),
+          remaining_days: zod
+            .number()
+            .describe("The number of days remaining, in the current billing period"),
+          used: zod
+            .number()
+            .describe(
+              "The total number of coins consumed (in this billing period), excluding the coins that have been consumed for the current day",
+            ),
+        }),
+        instance: zod.object({
+          coins: zod.object({ used: zod.number().describe("The number of coins used\n") }),
+        }),
+        organisation: zod.object({
+          caller_is_member: zod
+            .boolean()
+            .describe("Whether the user making the API call is a member of the Unit"),
+          created: zod.iso.datetime({ offset: true }),
+          default_product_privacy: zod
+            .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+            .describe("The Organisation's default product privacy setting"),
+          id: zod.string().describe("The Organisation's unique ID"),
+          name: zod.string().describe("The Organisation's name"),
+          owner_id: zod
+            .string()
+            .optional()
+            .describe(
+              "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
+            ),
+          private: zod.boolean().describe("True if the Unit is private"),
+          users: zod
+            .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+            .describe("A list of users that are members of the Organisation"),
+        }),
+        product: zod.object({
+          created: zod.iso.datetime({ offset: true }),
+          flavour: zod
+            .enum(["EVALUATION", "BRONZE", "SILVER", "GOLD"])
+            .optional()
+            .describe("The Product Type flavour. Not all products have flavours\n"),
+          id: zod.string().describe("The Product ID\n"),
+          name: zod.string().optional().describe("The name of the Product\n"),
+          type: zod
+            .enum(["DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION", "DATA_MANAGER_STORAGE_SUBSCRIPTION"])
+            .describe("The Product Type\n"),
+        }),
+        storage: zod.object({
+          coins: zod.object({
+            unit_cost: zod
+              .number()
+              .describe(
+                "The coin cost of a 'unit' of storage or part thereof. The unit size is defined in the storage section of the response",
+              ),
+            used: zod
+              .number()
+              .describe(
+                "The number of coins currently committed for the current day. This is added to the accumulated coins at the start of each day",
+              ),
+          }),
+          size: zod.object({
+            current: zod
+              .string()
+              .describe(
+                "The humanised size of the current storage used for the current day and used to calculate the 'burn rate'",
+              ),
+            peak: zod
+              .string()
+              .describe(
+                "The humanised size of the peak storage used for the current day. The value is reset at the start of each day",
+              ),
+            unit_size: zod
+              .string()
+              .describe(
+                "The humanised storage unit. The cost of storage is based on the daily peak of the number of units (or part thereof) used",
+              ),
+            units_used: zod.number().describe("The peak number of storage units used today"),
+          }),
+        }),
+        unit: zod.object({
+          billing_day: zod.number().describe("The Unit's billing day"),
+          caller_is_member: zod
+            .boolean()
+            .describe("Whether the user making the API call is a member of the Unit"),
+          created: zod.iso.datetime({ offset: true }),
+          default_product_privacy: zod
+            .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+            .describe("The Unit's default product privacy setting"),
+          id: zod.string().describe("The Unit's unique identity"),
+          name: zod.string().describe("The Unit's name"),
+          owner_id: zod.string().describe("The Unit's owner (a username)"),
+          private: zod.boolean().describe("True if the Unit is private"),
+          users: zod
+            .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
+            .describe("A list of users that are members of the Unit"),
+        }),
       }),
     ])
     .describe("The Unit's Product"),
 });
-
-/**
- * You need access to the Product and, if the Product is *claimable* the claim must be removed before the Product can be removed. An example claimable Product is a `DATA_MANAGER_PROJECT_TIER_SUBSCRIPTION` where the *claimable* commodity is a Data Manager **Project**. In this case you will need to delete the Data Manager **Project** before you can delete the Account Server **Product**.
- * @summary Deletes an existing Product
- */
-export const appApiProductDeletePathProductIdRegExp = new RegExp(
-  "^product-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiProductDeleteParams = zod.object({
-  product_id: zod
-    .string()
-    .regex(appApiProductDeletePathProductIdRegExp)
-    .describe("A Product Identity"),
-});
-
-export const AppApiProductDeleteResponse = zod.void();
 
 /**
  * Used to update some adjustable parameters of a Product, i.e. to extend its **Allowance** or **Limit**.
@@ -1361,11 +1361,6 @@ export const AppApiProductPatchParams = zod.object({
 export const appApiProductPatchBodyNameMax = 80;
 
 export const AppApiProductPatchBody = zod.object({
-  name: zod
-    .string()
-    .max(appApiProductPatchBodyNameMax)
-    .optional()
-    .describe("The name you want to give the Product"),
   allowance: zod
     .number()
     .min(1)
@@ -1378,6 +1373,11 @@ export const AppApiProductPatchBody = zod.object({
     .describe(
       "The Product's built-in coin limit. If set it must not be less than the allowance. If not set the allowance is used. The existing product limit cannot be reduced",
     ),
+  name: zod
+    .string()
+    .max(appApiProductPatchBodyNameMax)
+    .optional()
+    .describe("The name you want to give the Product"),
 });
 
 export const AppApiProductPatchResponse = zod.unknown();

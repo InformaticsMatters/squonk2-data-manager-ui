@@ -8,9 +8,9 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { ProjectDetail } from "./projectDetail";
+import type { ProjectsGetResponseProjectsItem } from "./projectsGetResponseProjectsItem";
 
 export interface ProjectsGetResponse {
   count: number;
-  projects: ProjectDetail[];
+  projects: ProjectsGetResponseProjectsItem[];
 }

@@ -8,17 +8,17 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { FilePathFile } from "./filePathFile";
+import type { FilesGetResponseFilesItem } from "./filesGetResponseFilesItem";
 
 export interface FilesGetResponse {
   /** The number of files in the Project path */
   count: number;
-  /** The project */
-  project_id: string;
+  /** The dataset identity (not its name). A unique reference assigned automatically when uploaded */
+  files: FilesGetResponseFilesItem[];
   /** The project path */
   path: string;
-  /** The dataset identity (not its name). A unique reference assigned automatically when uploaded */
-  files: FilePathFile[];
   /** Sub-directories in the current path */
   paths: string[];
+  /** The project */
+  project_id: string;
 }

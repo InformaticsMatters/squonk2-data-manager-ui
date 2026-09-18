@@ -28,11 +28,16 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
-  DmError,
+  DeleteTask403,
+  DeleteTask404,
+  GetTask200,
+  GetTask403,
+  GetTask404,
   GetTaskParams,
+  GetTasks200,
+  GetTasks403,
+  GetTasks404,
   GetTasksParams,
-  TaskGetResponse,
-  TasksGetResponse,
 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
@@ -64,7 +69,7 @@ export const getTasks = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<TasksGetResponse>({ url: `/task`, method: "GET", params, signal }, options);
+  return customInstance<GetTasks200>({ url: `/task`, method: "GET", params, signal }, options);
 };
 
 export const getGetTasksQueryKey = (params?: GetTasksParams) => {
@@ -73,7 +78,7 @@ export const getGetTasksQueryKey = (params?: GetTasksParams) => {
 
 export const getGetTasksQueryOptions = <
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetTasks403 | GetTasks404>,
 >(
   params?: GetTasksParams,
   options?: {
@@ -96,11 +101,11 @@ export const getGetTasksQueryOptions = <
 };
 
 export type GetTasksQueryResult = NonNullable<Awaited<ReturnType<typeof getTasks>>>;
-export type GetTasksQueryError = ErrorType<void | DmError>;
+export type GetTasksQueryError = ErrorType<void | GetTasks403 | GetTasks404>;
 
 export function useGetTasks<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetTasks403 | GetTasks404>,
 >(
   params: undefined | GetTasksParams,
   options: {
@@ -119,7 +124,7 @@ export function useGetTasks<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetTasks<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetTasks403 | GetTasks404>,
 >(
   params?: GetTasksParams,
   options?: {
@@ -138,7 +143,7 @@ export function useGetTasks<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetTasks<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetTasks403 | GetTasks404>,
 >(
   params?: GetTasksParams,
   options?: {
@@ -153,7 +158,7 @@ export function useGetTasks<
 
 export function useGetTasks<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetTasks403 | GetTasks404>,
 >(
   params?: GetTasksParams,
   options?: {
@@ -186,7 +191,7 @@ export const invalidateGetTasks = async (
 
 export const getGetTasksSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetTasks403 | GetTasks404>,
 >(
   params?: GetTasksParams,
   options?: {
@@ -209,11 +214,11 @@ export const getGetTasksSuspenseQueryOptions = <
 };
 
 export type GetTasksSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getTasks>>>;
-export type GetTasksSuspenseQueryError = ErrorType<void | DmError>;
+export type GetTasksSuspenseQueryError = ErrorType<void | GetTasks403 | GetTasks404>;
 
 export function useGetTasksSuspense<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetTasks403 | GetTasks404>,
 >(
   params: undefined | GetTasksParams,
   options: {
@@ -224,7 +229,7 @@ export function useGetTasksSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetTasksSuspense<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetTasks403 | GetTasks404>,
 >(
   params?: GetTasksParams,
   options?: {
@@ -235,7 +240,7 @@ export function useGetTasksSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetTasksSuspense<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetTasks403 | GetTasks404>,
 >(
   params?: GetTasksParams,
   options?: {
@@ -250,7 +255,7 @@ export function useGetTasksSuspense<
 
 export function useGetTasksSuspense<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetTasks403 | GetTasks404>,
 >(
   params?: GetTasksParams,
   options?: {
@@ -260,254 +265,6 @@ export function useGetTasksSuspense<
   queryClient?: QueryClient,
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetTasksSuspenseQueryOptions(params, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * Returns Task information including its states and events.
- *
- * You can only retrieve a Task if you have access to it. For example, you can get a Task relating to an Application **Instance** if you created the **Instance**.
- *
- * Tasks are created in response to creating Datasets and launching **Applications** and **Jobs**.
- *
- * Tasks contain of a list of `states` and `events`. A Task will always have `states` but may not have `events`.
- *
- * States and events are listed with the oldest occupying the first entry in the list. As the number of events a task accumulates is uncontrolled, by default, only the first 500 events are returned.
- *
- * You can control the number of events returned by using the `event_limit` query parameter. You can also retrieve the next set of events by combining it with the `event_prior_ordinal`, setting it to the ordinal of the oldest event you've already received.
- *
- * **Dataset** tasks must be allowed to complete successfully before you can expect it to be available through the dataset API endpoints. Application **Instances** are not available until their task state is _STARTED_.
- *
- * For **Dataset** Tasks, where the task `purpose` is `DATASET`, you must wait until `done` is **true**. The Dataset is available when the Task object's `done` field is **true** and the `exit_code` field is zero (**0**). If you discover the Task is `done` but you have a non-zero `exit_code`, the Dataset upload will have failed, and you may need need to inspect the final `state` and any related `events` to understand why.
- *
- * For Application **Instance** Tasks, where the Task `purpose` is `INSTANCE`, you must wait until you find the _STARTED_ state in the `states` list. An Application Instance is only `done` when the Application Instance has been deleted.
- * @summary Returns Task information
- */
-export const getTask = (
-  taskId: string,
-  params?: GetTaskParams,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<TaskGetResponse>(
-    { url: `/task/${taskId}`, method: "GET", params, signal },
-    options,
-  );
-};
-
-export const getGetTaskQueryKey = (taskId: string, params?: GetTaskParams) => {
-  return ["data-manager", "task", taskId, ...(params ? [params] : [])] as const;
-};
-
-export const getGetTaskQueryOptions = <
-  TData = Awaited<ReturnType<typeof getTask>>,
-  TError = ErrorType<void | DmError>,
->(
-  taskId: string,
-  params?: GetTaskParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetTaskQueryKey(taskId, params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getTask>>> = ({ signal }) =>
-    getTask(taskId, params, requestOptions, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: taskId !== null && taskId !== undefined,
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
-
-export type GetTaskQueryResult = NonNullable<Awaited<ReturnType<typeof getTask>>>;
-export type GetTaskQueryError = ErrorType<void | DmError>;
-
-export function useGetTask<
-  TData = Awaited<ReturnType<typeof getTask>>,
-  TError = ErrorType<void | DmError>,
->(
-  taskId: string,
-  params: undefined | GetTaskParams,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getTask>>,
-          TError,
-          Awaited<ReturnType<typeof getTask>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetTask<
-  TData = Awaited<ReturnType<typeof getTask>>,
-  TError = ErrorType<void | DmError>,
->(
-  taskId: string,
-  params?: GetTaskParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getTask>>,
-          TError,
-          Awaited<ReturnType<typeof getTask>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetTask<
-  TData = Awaited<ReturnType<typeof getTask>>,
-  TError = ErrorType<void | DmError>,
->(
-  taskId: string,
-  params?: GetTaskParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Returns Task information
- */
-
-export function useGetTask<
-  TData = Awaited<ReturnType<typeof getTask>>,
-  TError = ErrorType<void | DmError>,
->(
-  taskId: string,
-  params?: GetTaskParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetTaskQueryOptions(taskId, params, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Returns Task information
- */
-export const invalidateGetTask = async (
-  queryClient: QueryClient,
-  taskId: string,
-  params?: GetTaskParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetTaskQueryKey(taskId, params) }, options);
-
-  return queryClient;
-};
-
-export const getGetTaskSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getTask>>,
-  TError = ErrorType<void | DmError>,
->(
-  taskId: string,
-  params?: GetTaskParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetTaskQueryKey(taskId, params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getTask>>> = ({ signal }) =>
-    getTask(taskId, params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getTask>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetTaskSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getTask>>>;
-export type GetTaskSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useGetTaskSuspense<
-  TData = Awaited<ReturnType<typeof getTask>>,
-  TError = ErrorType<void | DmError>,
->(
-  taskId: string,
-  params: undefined | GetTaskParams,
-  options: {
-    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetTaskSuspense<
-  TData = Awaited<ReturnType<typeof getTask>>,
-  TError = ErrorType<void | DmError>,
->(
-  taskId: string,
-  params?: GetTaskParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetTaskSuspense<
-  TData = Awaited<ReturnType<typeof getTask>>,
-  TError = ErrorType<void | DmError>,
->(
-  taskId: string,
-  params?: GetTaskParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Returns Task information
- */
-
-export function useGetTaskSuspense<
-  TData = Awaited<ReturnType<typeof getTask>>,
-  TError = ErrorType<void | DmError>,
->(
-  taskId: string,
-  params?: GetTaskParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetTaskSuspenseQueryOptions(taskId, params, options);
 
   const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
     TData,
@@ -534,7 +291,7 @@ export const deleteTask = (
 };
 
 export const getDeleteTaskMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DeleteTask403 | DeleteTask404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -570,12 +327,15 @@ export const getDeleteTaskMutationOptions = <
 
 export type DeleteTaskMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTask>>>;
 
-export type DeleteTaskMutationError = ErrorType<void | DmError>;
+export type DeleteTaskMutationError = ErrorType<void | DeleteTask403 | DeleteTask404>;
 
 /**
  * @summary Delete a Task entry
  */
-export const useDeleteTask = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useDeleteTask = <
+  TError = ErrorType<void | DeleteTask403 | DeleteTask404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deleteTask>>,
@@ -594,3 +354,250 @@ export const useDeleteTask = <TError = ErrorType<void | DmError>, TContext = unk
 > => {
   return useMutation(getDeleteTaskMutationOptions(options), queryClient);
 };
+/**
+ * Returns Task information including its states and events.
+ *
+ * You can only retrieve a Task if you have access to it. For example, you can get a Task relating to an Application **Instance** if you created the **Instance**.
+ *
+ * Tasks are created in response to creating Datasets and launching **Applications** and **Jobs**.
+ *
+ * Tasks contain of a list of `states` and `events`. A Task will always have `states` but may not have `events`.
+ *
+ * States and events are listed with the oldest occupying the first entry in the list. As the number of events a task accumulates is uncontrolled, by default, only the first 500 events are returned.
+ *
+ * You can control the number of events returned by using the `event_limit` query parameter. You can also retrieve the next set of events by combining it with the `event_prior_ordinal`, setting it to the ordinal of the oldest event you've already received.
+ *
+ * **Dataset** tasks must be allowed to complete successfully before you can expect it to be available through the dataset API endpoints. Application **Instances** are not available until their task state is _STARTED_.
+ *
+ * For **Dataset** Tasks, where the task `purpose` is `DATASET`, you must wait until `done` is **true**. The Dataset is available when the Task object's `done` field is **true** and the `exit_code` field is zero (**0**). If you discover the Task is `done` but you have a non-zero `exit_code`, the Dataset upload will have failed, and you may need need to inspect the final `state` and any related `events` to understand why.
+ *
+ * For Application **Instance** Tasks, where the Task `purpose` is `INSTANCE`, you must wait until you find the _STARTED_ state in the `states` list. An Application Instance is only `done` when the Application Instance has been deleted.
+ * @summary Returns Task information
+ */
+export const getTask = (
+  taskId: string,
+  params?: GetTaskParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<GetTask200>(
+    { url: `/task/${taskId}`, method: "GET", params, signal },
+    options,
+  );
+};
+
+export const getGetTaskQueryKey = (taskId: string, params?: GetTaskParams) => {
+  return ["data-manager", "task", taskId, ...(params ? [params] : [])] as const;
+};
+
+export const getGetTaskQueryOptions = <
+  TData = Awaited<ReturnType<typeof getTask>>,
+  TError = ErrorType<void | GetTask403 | GetTask404>,
+>(
+  taskId: string,
+  params?: GetTaskParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetTaskQueryKey(taskId, params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getTask>>> = ({ signal }) =>
+    getTask(taskId, params, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: taskId !== null && taskId !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
+
+export type GetTaskQueryResult = NonNullable<Awaited<ReturnType<typeof getTask>>>;
+export type GetTaskQueryError = ErrorType<void | GetTask403 | GetTask404>;
+
+export function useGetTask<
+  TData = Awaited<ReturnType<typeof getTask>>,
+  TError = ErrorType<void | GetTask403 | GetTask404>,
+>(
+  taskId: string,
+  params: undefined | GetTaskParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTask>>,
+          TError,
+          Awaited<ReturnType<typeof getTask>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTask<
+  TData = Awaited<ReturnType<typeof getTask>>,
+  TError = ErrorType<void | GetTask403 | GetTask404>,
+>(
+  taskId: string,
+  params?: GetTaskParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTask>>,
+          TError,
+          Awaited<ReturnType<typeof getTask>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTask<
+  TData = Awaited<ReturnType<typeof getTask>>,
+  TError = ErrorType<void | GetTask403 | GetTask404>,
+>(
+  taskId: string,
+  params?: GetTaskParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Returns Task information
+ */
+
+export function useGetTask<
+  TData = Awaited<ReturnType<typeof getTask>>,
+  TError = ErrorType<void | GetTask403 | GetTask404>,
+>(
+  taskId: string,
+  params?: GetTaskParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetTaskQueryOptions(taskId, params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Returns Task information
+ */
+export const invalidateGetTask = async (
+  queryClient: QueryClient,
+  taskId: string,
+  params?: GetTaskParams,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetTaskQueryKey(taskId, params) }, options);
+
+  return queryClient;
+};
+
+export const getGetTaskSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getTask>>,
+  TError = ErrorType<void | GetTask403 | GetTask404>,
+>(
+  taskId: string,
+  params?: GetTaskParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetTaskQueryKey(taskId, params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getTask>>> = ({ signal }) =>
+    getTask(taskId, params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getTask>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetTaskSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getTask>>>;
+export type GetTaskSuspenseQueryError = ErrorType<void | GetTask403 | GetTask404>;
+
+export function useGetTaskSuspense<
+  TData = Awaited<ReturnType<typeof getTask>>,
+  TError = ErrorType<void | GetTask403 | GetTask404>,
+>(
+  taskId: string,
+  params: undefined | GetTaskParams,
+  options: {
+    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTaskSuspense<
+  TData = Awaited<ReturnType<typeof getTask>>,
+  TError = ErrorType<void | GetTask403 | GetTask404>,
+>(
+  taskId: string,
+  params?: GetTaskParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTaskSuspense<
+  TData = Awaited<ReturnType<typeof getTask>>,
+  TError = ErrorType<void | GetTask403 | GetTask404>,
+>(
+  taskId: string,
+  params?: GetTaskParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Returns Task information
+ */
+
+export function useGetTaskSuspense<
+  TData = Awaited<ReturnType<typeof getTask>>,
+  TError = ErrorType<void | GetTask403 | GetTask404>,
+>(
+  taskId: string,
+  params?: GetTaskParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTask>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetTaskSuspenseQueryOptions(taskId, params, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}

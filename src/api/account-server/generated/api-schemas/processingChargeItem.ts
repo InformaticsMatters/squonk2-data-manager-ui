@@ -11,15 +11,15 @@
 import type { ChargeAdditionalData } from "./chargeAdditionalData";
 
 export interface ProcessingChargeItem {
-  /** The charge record number */
-  id: number;
-  /** The most recent sequence number for this charge */
-  sqn: number;
-  name?: string;
-  username: string;
-  /** The date and time of the processing charge */
-  timestamp: string;
+  additional_data?: ChargeAdditionalData;
   /** The coin-cost of the storage */
   coins: string;
-  additional_data?: ChargeAdditionalData;
+  /** The charge record number */
+  id: number;
+  name?: string;
+  /** The most recent sequence number for this charge */
+  sqn: number;
+  /** The date and time of the processing charge */
+  timestamp: string;
+  username: string;
 }

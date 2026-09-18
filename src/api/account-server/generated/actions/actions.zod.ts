@@ -70,10 +70,9 @@ export const AppApiActionGetResponse = zod.object({
   actions: zod
     .array(
       zod.object({
-        id: zod.number(),
         action: zod.string(),
         content: zod.string(),
-        timestamp: zod.iso.datetime({ offset: true }),
+        id: zod.number(),
         merchant: zod
           .object({
             id: zod.number().describe("The unique ID of the Merchant"),
@@ -81,9 +80,10 @@ export const AppApiActionGetResponse = zod.object({
             name: zod.string().describe("The name assigned to the Service"),
           })
           .optional(),
-        product_id: zod.string().optional(),
-        unit_id: zod.string().optional(),
         org_id: zod.string().optional(),
+        product_id: zod.string().optional(),
+        timestamp: zod.iso.datetime({ offset: true }),
+        unit_id: zod.string().optional(),
       }),
     )
     .describe("A list of Actions\n"),

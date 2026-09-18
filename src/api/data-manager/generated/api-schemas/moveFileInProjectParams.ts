@@ -8,11 +8,6 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QDstFileParameter } from "./qDstFileParameter";
-import type { QFileDstPathParameter } from "./qFileDstPathParameter";
-import type { QFileParameter } from "./qFileParameter";
-import type { QFileProjectIdParameter } from "./qFileProjectIdParameter";
-import type { QFileSrcPathParameter } from "./qFileSrcPathParameter";
 
 export type MoveFileInProjectParams = {
   /**
@@ -20,30 +15,30 @@ export type MoveFileInProjectParams = {
    * @minLength 1
    * @maxLength 260
    */
-  file: QFileParameter;
+  file: string;
   /**
    * A project file.
    * @minLength 1
    * @maxLength 260
    */
-  dst_file?: QDstFileParameter;
+  dst_file?: string;
   /**
    * A project path. If provided it must begin `/` and refers to a path where `/` represents the project's root directory
    * @minLength 1
    * @maxLength 260
    * @pattern ^/.+$|^/$
    */
-  src_path?: QFileSrcPathParameter;
+  src_path?: string;
   /**
    * A project path. If provided it must begin `/` and refers to a path where `/` represents the project's root directory
    * @minLength 1
    * @maxLength 260
    * @pattern ^/.+$|^/$
    */
-  dst_path?: QFileDstPathParameter;
+  dst_path?: string;
   /**
    * The Project identity
    * @pattern ^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  project_id: QFileProjectIdParameter;
+  project_id: string;
 };

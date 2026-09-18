@@ -11,18 +11,6 @@
 import * as zod from "zod";
 
 /**
- * Returns a summary of your account
- * @summary Get information about your account
- */
-export const AppApiUserGetAccountResponse = zod.object({
-  user: zod.object({ id: zod.string().describe("The user identity (username)") }),
-  caller_has_admin_privilege: zod.boolean().describe("Whether the caller has admin privilege"),
-  account_server_roles: zod
-    .array(zod.string())
-    .describe("The roles assigned to the user recognised by the Account Server"),
-});
-
-/**
  * Gets Users in an Organisation.
  *
  * You have to be a member of the Organisation or an admin user to use this endpoint
@@ -48,6 +36,10 @@ export const AppApiUserOrgGetUsersResponse = zod.object({
       caller_is_member: zod
         .boolean()
         .describe("Whether the user making the API call is a member of the Unit"),
+      created: zod.iso.datetime({ offset: true }),
+      default_product_privacy: zod
+        .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+        .describe("The Organisation's default product privacy setting"),
       id: zod.string().describe("The Organisation's unique ID"),
       name: zod.string().describe("The Organisation's name"),
       owner_id: zod
@@ -57,61 +49,28 @@ export const AppApiUserOrgGetUsersResponse = zod.object({
           "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
         ),
       private: zod.boolean().describe("True if the Unit is private"),
-      created: zod.iso.datetime({ offset: true }),
-      default_product_privacy: zod
-        .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-        .describe("The Organisation's default product privacy setting"),
     })
     .optional(),
   unit: zod
     .object({
+      billing_day: zod.number().describe("The Unit's billing day"),
       caller_is_member: zod
         .boolean()
         .describe("Whether the user making the API call is a member of the Unit"),
+      created: zod.iso.datetime({ offset: true }),
+      default_product_privacy: zod
+        .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+        .describe("The Unit's default product privacy setting"),
       id: zod.string().describe("The Unit's unique identity"),
       name: zod.string().describe("The Unit's name"),
       owner_id: zod.string().describe("The Unit's owner (a username)"),
       private: zod.boolean().describe("True if the Unit is private"),
-      created: zod.iso.datetime({ offset: true }),
-      billing_day: zod.number().describe("The Unit's billing day"),
-      default_product_privacy: zod
-        .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-        .describe("The Unit's default product privacy setting"),
     })
     .optional(),
   users: zod
     .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
     .describe("The list of Organisation Users\n"),
 });
-
-/**
- * Adds a User to an **Organisation**.
- *
- * You have to be in the Organisation or an admin user to use this endpoint
- * @summary Adds a User to an Organisation
- */
-export const appApiUserOrgUserPutPathOrgIdRegExp = new RegExp(
-  "^org-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-export const appApiUserOrgUserPutPathUserIdMin = 3;
-export const appApiUserOrgUserPutPathUserIdMax = 80;
-
-export const appApiUserOrgUserPutPathUserIdRegExp = new RegExp("^\\w(?:\\w*(?:[@.-]\\w+)?)*$");
-
-export const AppApiUserOrgUserPutParams = zod.object({
-  org_id: zod
-    .string()
-    .regex(appApiUserOrgUserPutPathOrgIdRegExp)
-    .describe("An Organisation Identity"),
-  user_id: zod
-    .string()
-    .min(appApiUserOrgUserPutPathUserIdMin)
-    .max(appApiUserOrgUserPutPathUserIdMax)
-    .regex(appApiUserOrgUserPutPathUserIdRegExp)
-    .describe("A User Identity"),
-});
-
-export const AppApiUserOrgUserPutResponse = zod.void();
 
 /**
  * Removes a User from an **Organisation**.
@@ -143,6 +102,35 @@ export const AppApiUserOrgUserDeleteParams = zod.object({
 export const AppApiUserOrgUserDeleteResponse = zod.void();
 
 /**
+ * Adds a User to an **Organisation**.
+ *
+ * You have to be in the Organisation or an admin user to use this endpoint
+ * @summary Adds a User to an Organisation
+ */
+export const appApiUserOrgUserPutPathOrgIdRegExp = new RegExp(
+  "^org-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+export const appApiUserOrgUserPutPathUserIdMin = 3;
+export const appApiUserOrgUserPutPathUserIdMax = 80;
+
+export const appApiUserOrgUserPutPathUserIdRegExp = new RegExp("^\\w(?:\\w*(?:[@.-]\\w+)?)*$");
+
+export const AppApiUserOrgUserPutParams = zod.object({
+  org_id: zod
+    .string()
+    .regex(appApiUserOrgUserPutPathOrgIdRegExp)
+    .describe("An Organisation Identity"),
+  user_id: zod
+    .string()
+    .min(appApiUserOrgUserPutPathUserIdMin)
+    .max(appApiUserOrgUserPutPathUserIdMax)
+    .regex(appApiUserOrgUserPutPathUserIdRegExp)
+    .describe("A User Identity"),
+});
+
+export const AppApiUserOrgUserPutResponse = zod.void();
+
+/**
  * Gets users in an Organisational Unit.
  *
  * You have to be in the Organisation or Unit or an Admin user to use this endpoint
@@ -165,6 +153,10 @@ export const AppApiUserGetUnitUsersResponse = zod.object({
       caller_is_member: zod
         .boolean()
         .describe("Whether the user making the API call is a member of the Unit"),
+      created: zod.iso.datetime({ offset: true }),
+      default_product_privacy: zod
+        .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+        .describe("The Organisation's default product privacy setting"),
       id: zod.string().describe("The Organisation's unique ID"),
       name: zod.string().describe("The Organisation's name"),
       owner_id: zod
@@ -174,32 +166,56 @@ export const AppApiUserGetUnitUsersResponse = zod.object({
           "The username of the Organisation's owner. Not all Organisations have an owner. The Default Organisation has no owner.",
         ),
       private: zod.boolean().describe("True if the Unit is private"),
-      created: zod.iso.datetime({ offset: true }),
-      default_product_privacy: zod
-        .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-        .describe("The Organisation's default product privacy setting"),
     })
     .optional(),
   unit: zod
     .object({
+      billing_day: zod.number().describe("The Unit's billing day"),
       caller_is_member: zod
         .boolean()
         .describe("Whether the user making the API call is a member of the Unit"),
+      created: zod.iso.datetime({ offset: true }),
+      default_product_privacy: zod
+        .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
+        .describe("The Unit's default product privacy setting"),
       id: zod.string().describe("The Unit's unique identity"),
       name: zod.string().describe("The Unit's name"),
       owner_id: zod.string().describe("The Unit's owner (a username)"),
       private: zod.boolean().describe("True if the Unit is private"),
-      created: zod.iso.datetime({ offset: true }),
-      billing_day: zod.number().describe("The Unit's billing day"),
-      default_product_privacy: zod
-        .enum(["ALWAYS_PUBLIC", "ALWAYS_PRIVATE", "DEFAULT_PUBLIC", "DEFAULT_PRIVATE"])
-        .describe("The Unit's default product privacy setting"),
     })
     .optional(),
   users: zod
     .array(zod.object({ id: zod.string().describe("The user identity (username)") }))
     .describe("The list of Organisation Users\n"),
 });
+
+/**
+ * Removes a User from an Organisational Unit.
+ *
+ * Users cannot be removed from **Personal Units** (Units that are part of the ***Default** Organisation).
+ *
+ * You have to be in the Organisation or Unit or an Admin user to use this endpoint
+ * @summary Deletes a User from an Organisational Unit
+ */
+export const appApiUserUnitUserDeletePathUnitIdRegExp = new RegExp(
+  "^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+export const appApiUserUnitUserDeletePathUserIdMin = 3;
+export const appApiUserUnitUserDeletePathUserIdMax = 80;
+
+export const appApiUserUnitUserDeletePathUserIdRegExp = new RegExp("^\\w(?:\\w*(?:[@.-]\\w+)?)*$");
+
+export const AppApiUserUnitUserDeleteParams = zod.object({
+  unit_id: zod.string().regex(appApiUserUnitUserDeletePathUnitIdRegExp).describe("A Unit Identity"),
+  user_id: zod
+    .string()
+    .min(appApiUserUnitUserDeletePathUserIdMin)
+    .max(appApiUserUnitUserDeletePathUserIdMax)
+    .regex(appApiUserUnitUserDeletePathUserIdRegExp)
+    .describe("A User Identity"),
+});
+
+export const AppApiUserUnitUserDeleteResponse = zod.void();
 
 /**
  * Adds a user to an Organisational Unit.
@@ -230,29 +246,13 @@ export const AppApiUserUnitUserPutParams = zod.object({
 export const AppApiUserUnitUserPutResponse = zod.void();
 
 /**
- * Removes a User from an Organisational Unit.
- *
- * Users cannot be removed from **Personal Units** (Units that are part of the ***Default** Organisation).
- *
- * You have to be in the Organisation or Unit or an Admin user to use this endpoint
- * @summary Deletes a User from an Organisational Unit
+ * Returns a summary of your account
+ * @summary Get information about your account
  */
-export const appApiUserUnitUserDeletePathUnitIdRegExp = new RegExp(
-  "^unit-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-export const appApiUserUnitUserDeletePathUserIdMin = 3;
-export const appApiUserUnitUserDeletePathUserIdMax = 80;
-
-export const appApiUserUnitUserDeletePathUserIdRegExp = new RegExp("^\\w(?:\\w*(?:[@.-]\\w+)?)*$");
-
-export const AppApiUserUnitUserDeleteParams = zod.object({
-  unit_id: zod.string().regex(appApiUserUnitUserDeletePathUnitIdRegExp).describe("A Unit Identity"),
-  user_id: zod
-    .string()
-    .min(appApiUserUnitUserDeletePathUserIdMin)
-    .max(appApiUserUnitUserDeletePathUserIdMax)
-    .regex(appApiUserUnitUserDeletePathUserIdRegExp)
-    .describe("A User Identity"),
+export const AppApiUserGetAccountResponse = zod.object({
+  account_server_roles: zod
+    .array(zod.string())
+    .describe("The roles assigned to the user recognised by the Account Server"),
+  caller_has_admin_privilege: zod.boolean().describe("Whether the caller has admin privilege"),
+  user: zod.object({ id: zod.string().describe("The user identity (username)") }),
 });
-
-export const AppApiUserUnitUserDeleteResponse = zod.void();

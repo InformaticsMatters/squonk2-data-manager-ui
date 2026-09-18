@@ -12,6 +12,6 @@ import type { ProductDmStorageDetailCoins } from "./productDmStorageDetailCoins"
 import type { ProductDmStorageDetailSize } from "./productDmStorageDetailSize";
 
 export interface ProductDmStorageDetail {
-  size: ProductDmStorageDetailSize;
   coins: ProductDmStorageDetailCoins;
+  size: ProductDmStorageDetailSize;
 }

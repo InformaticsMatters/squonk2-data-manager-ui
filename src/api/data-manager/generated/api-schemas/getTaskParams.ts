@@ -8,18 +8,16 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QEventLimitParameter } from "./qEventLimitParameter";
-import type { QEventPriorOrdinalParameter } from "./qEventPriorOrdinalParameter";
 
 export type GetTaskParams = {
   /**
    * Maximum number of events to return. If provided, can be 1 or more.
    * @minimum 1
    */
-  event_limit?: QEventLimitParameter;
+  event_limit?: number;
   /**
    * The ordinal of a previously received event. If set, only events subsequent to the ordinal provided will be returned. Providing a value of 0 will result in retrieving the first and subsequent events.
    * @minimum 0
    */
-  event_prior_ordinal?: QEventPriorOrdinalParameter;
+  event_prior_ordinal?: number;
 };

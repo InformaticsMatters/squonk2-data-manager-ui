@@ -10,6 +10,6 @@
  */
 
 export interface ApplicationImageVariant {
-  name: string;
   image: string;
+  name: string;
 }

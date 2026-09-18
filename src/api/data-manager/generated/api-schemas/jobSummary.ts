@@ -8,34 +8,17 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { JobReplacements } from "./jobReplacements";
 import type { JobSummaryImageType } from "./jobSummaryImageType";
+import type { JobSummaryReplacedByItem } from "./jobSummaryReplacedByItem";
+import type { JobSummaryReplacesItem } from "./jobSummaryReplacesItem";
 
 export interface JobSummary {
-  /** The Job's unique ID */
-  id: number;
-  /** The Job namespace */
-  collection: string;
-  /** The Job name, unique within a given namespace */
-  job: string;
-  /** The Job version */
-  version: string;
-  /** The optional container image type. Typically a single-container `SIMPLE` (where only one container runs) or a workflow where multiple container images can be spawned (like `NEXTFLOW`) */
-  image_type: JobSummaryImageType;
   /** The Job's category */
   category?: string;
-  /** The list of keywords assigned to the Job */
-  keywords?: string[];
-  /** The name of the job in English */
-  name: string;
+  /** The Job namespace */
+  collection: string;
   /** The description of the job in English */
   description?: string;
-  /** A URL linking to the Job documentation */
-  doc_url?: string;
-  /** A list of Account Server assets names required to run the Job. You need access to these assets in order to run the Job */
-  required_assets: string[];
-  /** A list of Account Server "required_assets" that cannot be found. If assets cannot be found the user will receive a "disabled_reason" that should explain the problem. */
-  missing_assets?: string[];
   /** True if disabled. Disabled Jobs cannot be executed. If disabled a reason will be found in `disabled_reason` */
   disabled: boolean;
   /** A reason why the Job has been disabled. */
@@ -46,6 +29,26 @@ export interface JobSummary {
    * Where there is no remedy for a given reason the remedy will be "There is no remedy".
    */
   disabled_remedy?: string;
-  replaces?: JobReplacements;
-  replaced_by?: JobReplacements;
+  /** A URL linking to the Job documentation */
+  doc_url?: string;
+  /** The Job's unique ID */
+  id: number;
+  /** The optional container image type. Typically a single-container `SIMPLE` (where only one container runs) or a workflow where multiple container images can be spawned (like `NEXTFLOW`) */
+  image_type: JobSummaryImageType;
+  /** The Job name, unique within a given namespace */
+  job: string;
+  /** The list of keywords assigned to the Job */
+  keywords?: string[];
+  /** A list of Account Server "required_assets" that cannot be found. If assets cannot be found the user will receive a "disabled_reason" that should explain the problem. */
+  missing_assets?: string[];
+  /** The name of the job in English */
+  name: string;
+  /** A list of Jobs, collection and job that are either replacing or being replaced */
+  replaced_by?: JobSummaryReplacedByItem[];
+  /** A list of Jobs, collection and job that are either replacing or being replaced */
+  replaces?: JobSummaryReplacesItem[];
+  /** A list of Account Server assets names required to run the Job. You need access to these assets in order to run the Job */
+  required_assets: string[];
+  /** The Job version */
+  version: string;
 }

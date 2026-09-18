@@ -398,387 +398,64 @@ export const useCreateOrganisationUnit = <TError = ErrorType<AsError | void>, TC
   return useMutation(getCreateOrganisationUnitMutationOptions(options), queryClient);
 };
 /**
- * Gets a Unit. You can get a Unit if you are a member of it or are its creator. You can also get a Unit if you are a member of its **Organisation**, or its creator or an admin user.
- * @summary Gets an Organisational Unit
+ * Deletes a Personal Unit. The Unit is *your* Unit, and belongs to the **Default Organisation**
+ * @summary Deletes a Personal Unit
  */
-export const getUnit = (
-  unitId: string,
+export const deletePersonalUnit = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<UnitAllDetail>({ url: `/unit/${unitId}`, method: "GET", signal }, options);
+  return customInstance<void>({ url: `/personal-unit`, method: "DELETE", signal }, options);
 };
 
-export const getGetUnitQueryKey = (unitId: string) => {
-  return ["account-server", "unit", unitId] as const;
-};
-
-export const getGetUnitQueryOptions = <
-  TData = Awaited<ReturnType<typeof getUnit>>,
-  TError = ErrorType<void | AsError>,
->(
-  unitId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetUnitQueryKey(unitId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUnit>>> = ({ signal }) =>
-    getUnit(unitId, requestOptions, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: unitId !== null && unitId !== undefined,
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
-
-export type GetUnitQueryResult = NonNullable<Awaited<ReturnType<typeof getUnit>>>;
-export type GetUnitQueryError = ErrorType<void | AsError>;
-
-export function useGetUnit<
-  TData = Awaited<ReturnType<typeof getUnit>>,
-  TError = ErrorType<void | AsError>,
->(
-  unitId: string,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getUnit>>,
-          TError,
-          Awaited<ReturnType<typeof getUnit>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetUnit<
-  TData = Awaited<ReturnType<typeof getUnit>>,
-  TError = ErrorType<void | AsError>,
->(
-  unitId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getUnit>>,
-          TError,
-          Awaited<ReturnType<typeof getUnit>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetUnit<
-  TData = Awaited<ReturnType<typeof getUnit>>,
-  TError = ErrorType<void | AsError>,
->(
-  unitId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets an Organisational Unit
- */
-
-export function useGetUnit<
-  TData = Awaited<ReturnType<typeof getUnit>>,
-  TError = ErrorType<void | AsError>,
->(
-  unitId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetUnitQueryOptions(unitId, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Gets an Organisational Unit
- */
-export const invalidateGetUnit = async (
-  queryClient: QueryClient,
-  unitId: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetUnitQueryKey(unitId) }, options);
-
-  return queryClient;
-};
-
-export const getGetUnitSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getUnit>>,
-  TError = ErrorType<void | AsError>,
->(
-  unitId: string,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetUnitQueryKey(unitId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUnit>>> = ({ signal }) =>
-    getUnit(unitId, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getUnit>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetUnitSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getUnit>>>;
-export type GetUnitSuspenseQueryError = ErrorType<void | AsError>;
-
-export function useGetUnitSuspense<
-  TData = Awaited<ReturnType<typeof getUnit>>,
-  TError = ErrorType<void | AsError>,
->(
-  unitId: string,
-  options: {
-    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetUnitSuspense<
-  TData = Awaited<ReturnType<typeof getUnit>>,
-  TError = ErrorType<void | AsError>,
->(
-  unitId: string,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetUnitSuspense<
-  TData = Awaited<ReturnType<typeof getUnit>>,
-  TError = ErrorType<void | AsError>,
->(
-  unitId: string,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets an Organisational Unit
- */
-
-export function useGetUnitSuspense<
-  TData = Awaited<ReturnType<typeof getUnit>>,
-  TError = ErrorType<void | AsError>,
->(
-  unitId: string,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetUnitSuspenseQueryOptions(unitId, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * Used to update existing Unit. You can change a Unit's **name** or its **default_product_privacy** (as long as the new privacy does not conflict with the Organisation's value).
- *
- * You have to be a member of the **Unit**, a member of its **Organisation**, or an administrator to patch a Unit.
- * @summary Adjust an existing Unit
- */
-export const patchUnit = (
-  unitId: string,
-  unitPatchBodyBody: UnitPatchBodyBody,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>(
-    {
-      url: `/unit/${unitId}`,
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      data: unitPatchBodyBody,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getPatchUnitMutationOptions = <
+export const getDeletePersonalUnitMutationOptions = <
   TError = ErrorType<void | AsError>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof patchUnit>>,
+    Awaited<ReturnType<typeof deletePersonalUnit>>,
     TError,
-    { unitId: string; data: UnitPatchBodyBody },
+    void,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof patchUnit>>,
-  TError,
-  { unitId: string; data: UnitPatchBodyBody },
-  TContext
-> => {
-  const mutationKey = ["patchUnit"];
+}): UseMutationOptions<Awaited<ReturnType<typeof deletePersonalUnit>>, TError, void, TContext> => {
+  const mutationKey = ["deletePersonalUnit"];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
     : { mutation: { mutationKey }, request: undefined };
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof patchUnit>>,
-    { unitId: string; data: UnitPatchBodyBody }
-  > = (props) => {
-    const { unitId, data } = props ?? {};
-
-    return patchUnit(unitId, data, requestOptions);
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePersonalUnit>>, void> = () => {
+    return deletePersonalUnit(requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type PatchUnitMutationResult = NonNullable<Awaited<ReturnType<typeof patchUnit>>>;
-export type PatchUnitMutationBody = UnitPatchBodyBody;
-export type PatchUnitMutationError = ErrorType<void | AsError>;
-
-/**
- * @summary Adjust an existing Unit
- */
-export const usePatchUnit = <TError = ErrorType<void | AsError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof patchUnit>>,
-      TError,
-      { unitId: string; data: UnitPatchBodyBody },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof patchUnit>>,
-  TError,
-  { unitId: string; data: UnitPatchBodyBody },
-  TContext
-> => {
-  return useMutation(getPatchUnitMutationOptions(options), queryClient);
-};
-/**
- * Deletes an Organisational Unit you have access to. Units can only be deleted by members of the Unit, its Organisation users or admin users.
- *
- * You cannot delete Units in the **Default Organisation**. These Units are **Personal Units** and need to be deleted using the `DELETE /unit` endpoint.
- *
- * You cannot delete a Unit that contains undeleted **Products**
- * @summary Deletes an Organisational Unit
- */
-export const deleteOrganisationUnit = (
-  unitId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>({ url: `/unit/${unitId}`, method: "DELETE", signal }, options);
-};
-
-export const getDeleteOrganisationUnitMutationOptions = <
-  TError = ErrorType<void | AsError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteOrganisationUnit>>,
-    TError,
-    { unitId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteOrganisationUnit>>,
-  TError,
-  { unitId: string },
-  TContext
-> => {
-  const mutationKey = ["deleteOrganisationUnit"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteOrganisationUnit>>,
-    { unitId: string }
-  > = (props) => {
-    const { unitId } = props ?? {};
-
-    return deleteOrganisationUnit(unitId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DeleteOrganisationUnitMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteOrganisationUnit>>
+export type DeletePersonalUnitMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deletePersonalUnit>>
 >;
 
-export type DeleteOrganisationUnitMutationError = ErrorType<void | AsError>;
+export type DeletePersonalUnitMutationError = ErrorType<void | AsError>;
 
 /**
- * @summary Deletes an Organisational Unit
+ * @summary Deletes a Personal Unit
  */
-export const useDeleteOrganisationUnit = <TError = ErrorType<void | AsError>, TContext = unknown>(
+export const useDeletePersonalUnit = <TError = ErrorType<void | AsError>, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteOrganisationUnit>>,
+      Awaited<ReturnType<typeof deletePersonalUnit>>,
       TError,
-      { unitId: string },
+      void,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof deleteOrganisationUnit>>,
-  TError,
-  { unitId: string },
-  TContext
-> => {
-  return useMutation(getDeleteOrganisationUnitMutationOptions(options), queryClient);
+): UseMutationResult<Awaited<ReturnType<typeof deletePersonalUnit>>, TError, void, TContext> => {
+  return useMutation(getDeletePersonalUnitMutationOptions(options), queryClient);
 };
 /**
  * @summary Gets your Personal Unit (if you have one)
@@ -1078,54 +755,56 @@ export const useCreatePersonalUnit = <TError = ErrorType<AsError | void>, TConte
 };
 /**
  * Deletes a Personal Unit. The Unit is *your* Unit, and belongs to the **Default Organisation**
+ *
+ * This endpoint is DECREMENTED and will be removed in a future release. Please use **DELETE** at `/personal-unit`.
  * @summary Deletes a Personal Unit
  */
-export const deletePersonalUnit = (
+export const deleteDefaultUnit = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>({ url: `/personal-unit`, method: "DELETE", signal }, options);
+  return customInstance<void>({ url: `/unit`, method: "DELETE", signal }, options);
 };
 
-export const getDeletePersonalUnitMutationOptions = <
+export const getDeleteDefaultUnitMutationOptions = <
   TError = ErrorType<void | AsError>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deletePersonalUnit>>,
+    Awaited<ReturnType<typeof deleteDefaultUnit>>,
     TError,
     void,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<Awaited<ReturnType<typeof deletePersonalUnit>>, TError, void, TContext> => {
-  const mutationKey = ["deletePersonalUnit"];
+}): UseMutationOptions<Awaited<ReturnType<typeof deleteDefaultUnit>>, TError, void, TContext> => {
+  const mutationKey = ["deleteDefaultUnit"];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
     : { mutation: { mutationKey }, request: undefined };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePersonalUnit>>, void> = () => {
-    return deletePersonalUnit(requestOptions);
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteDefaultUnit>>, void> = () => {
+    return deleteDefaultUnit(requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type DeletePersonalUnitMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deletePersonalUnit>>
+export type DeleteDefaultUnitMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteDefaultUnit>>
 >;
 
-export type DeletePersonalUnitMutationError = ErrorType<void | AsError>;
+export type DeleteDefaultUnitMutationError = ErrorType<void | AsError>;
 
 /**
  * @summary Deletes a Personal Unit
  */
-export const useDeletePersonalUnit = <TError = ErrorType<void | AsError>, TContext = unknown>(
+export const useDeleteDefaultUnit = <TError = ErrorType<void | AsError>, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deletePersonalUnit>>,
+      Awaited<ReturnType<typeof deleteDefaultUnit>>,
       TError,
       void,
       TContext
@@ -1133,8 +812,8 @@ export const useDeletePersonalUnit = <TError = ErrorType<void | AsError>, TConte
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof deletePersonalUnit>>, TError, void, TContext> => {
-  return useMutation(getDeletePersonalUnitMutationOptions(options), queryClient);
+): UseMutationResult<Awaited<ReturnType<typeof deleteDefaultUnit>>, TError, void, TContext> => {
+  return useMutation(getDeleteDefaultUnitMutationOptions(options), queryClient);
 };
 /**
  * Gets all the Units that you are a member of, or a specific Unit by name.
@@ -1442,64 +1121,385 @@ export const useCreateDefaultUnit = <TError = ErrorType<AsError | void>, TContex
   return useMutation(getCreateDefaultUnitMutationOptions(options), queryClient);
 };
 /**
- * Deletes a Personal Unit. The Unit is *your* Unit, and belongs to the **Default Organisation**
+ * Deletes an Organisational Unit you have access to. Units can only be deleted by members of the Unit, its Organisation users or admin users.
  *
- * This endpoint is DECREMENTED and will be removed in a future release. Please use **DELETE** at `/personal-unit`.
- * @summary Deletes a Personal Unit
+ * You cannot delete Units in the **Default Organisation**. These Units are **Personal Units** and need to be deleted using the `DELETE /unit` endpoint.
+ *
+ * You cannot delete a Unit that contains undeleted **Products**
+ * @summary Deletes an Organisational Unit
  */
-export const deleteDefaultUnit = (
+export const deleteOrganisationUnit = (
+  unitId: string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>({ url: `/unit`, method: "DELETE", signal }, options);
+  return customInstance<void>({ url: `/unit/${unitId}`, method: "DELETE", signal }, options);
 };
 
-export const getDeleteDefaultUnitMutationOptions = <
+export const getDeleteOrganisationUnitMutationOptions = <
   TError = ErrorType<void | AsError>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteDefaultUnit>>,
+    Awaited<ReturnType<typeof deleteOrganisationUnit>>,
     TError,
-    void,
+    { unitId: string },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<Awaited<ReturnType<typeof deleteDefaultUnit>>, TError, void, TContext> => {
-  const mutationKey = ["deleteDefaultUnit"];
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteOrganisationUnit>>,
+  TError,
+  { unitId: string },
+  TContext
+> => {
+  const mutationKey = ["deleteOrganisationUnit"];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
     : { mutation: { mutationKey }, request: undefined };
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteDefaultUnit>>, void> = () => {
-    return deleteDefaultUnit(requestOptions);
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteOrganisationUnit>>,
+    { unitId: string }
+  > = (props) => {
+    const { unitId } = props ?? {};
+
+    return deleteOrganisationUnit(unitId, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type DeleteDefaultUnitMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteDefaultUnit>>
+export type DeleteOrganisationUnitMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteOrganisationUnit>>
 >;
 
-export type DeleteDefaultUnitMutationError = ErrorType<void | AsError>;
+export type DeleteOrganisationUnitMutationError = ErrorType<void | AsError>;
 
 /**
- * @summary Deletes a Personal Unit
+ * @summary Deletes an Organisational Unit
  */
-export const useDeleteDefaultUnit = <TError = ErrorType<void | AsError>, TContext = unknown>(
+export const useDeleteOrganisationUnit = <TError = ErrorType<void | AsError>, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteDefaultUnit>>,
+      Awaited<ReturnType<typeof deleteOrganisationUnit>>,
       TError,
-      void,
+      { unitId: string },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof deleteDefaultUnit>>, TError, void, TContext> => {
-  return useMutation(getDeleteDefaultUnitMutationOptions(options), queryClient);
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteOrganisationUnit>>,
+  TError,
+  { unitId: string },
+  TContext
+> => {
+  return useMutation(getDeleteOrganisationUnitMutationOptions(options), queryClient);
+};
+/**
+ * Gets a Unit. You can get a Unit if you are a member of it or are its creator. You can also get a Unit if you are a member of its **Organisation**, or its creator or an admin user.
+ * @summary Gets an Organisational Unit
+ */
+export const getUnit = (
+  unitId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<UnitAllDetail>({ url: `/unit/${unitId}`, method: "GET", signal }, options);
+};
+
+export const getGetUnitQueryKey = (unitId: string) => {
+  return ["account-server", "unit", unitId] as const;
+};
+
+export const getGetUnitQueryOptions = <
+  TData = Awaited<ReturnType<typeof getUnit>>,
+  TError = ErrorType<void | AsError>,
+>(
+  unitId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetUnitQueryKey(unitId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUnit>>> = ({ signal }) =>
+    getUnit(unitId, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: unitId !== null && unitId !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
+
+export type GetUnitQueryResult = NonNullable<Awaited<ReturnType<typeof getUnit>>>;
+export type GetUnitQueryError = ErrorType<void | AsError>;
+
+export function useGetUnit<
+  TData = Awaited<ReturnType<typeof getUnit>>,
+  TError = ErrorType<void | AsError>,
+>(
+  unitId: string,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUnit>>,
+          TError,
+          Awaited<ReturnType<typeof getUnit>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetUnit<
+  TData = Awaited<ReturnType<typeof getUnit>>,
+  TError = ErrorType<void | AsError>,
+>(
+  unitId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUnit>>,
+          TError,
+          Awaited<ReturnType<typeof getUnit>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetUnit<
+  TData = Awaited<ReturnType<typeof getUnit>>,
+  TError = ErrorType<void | AsError>,
+>(
+  unitId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets an Organisational Unit
+ */
+
+export function useGetUnit<
+  TData = Awaited<ReturnType<typeof getUnit>>,
+  TError = ErrorType<void | AsError>,
+>(
+  unitId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetUnitQueryOptions(unitId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets an Organisational Unit
+ */
+export const invalidateGetUnit = async (
+  queryClient: QueryClient,
+  unitId: string,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetUnitQueryKey(unitId) }, options);
+
+  return queryClient;
+};
+
+export const getGetUnitSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getUnit>>,
+  TError = ErrorType<void | AsError>,
+>(
+  unitId: string,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetUnitQueryKey(unitId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUnit>>> = ({ signal }) =>
+    getUnit(unitId, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getUnit>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetUnitSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getUnit>>>;
+export type GetUnitSuspenseQueryError = ErrorType<void | AsError>;
+
+export function useGetUnitSuspense<
+  TData = Awaited<ReturnType<typeof getUnit>>,
+  TError = ErrorType<void | AsError>,
+>(
+  unitId: string,
+  options: {
+    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetUnitSuspense<
+  TData = Awaited<ReturnType<typeof getUnit>>,
+  TError = ErrorType<void | AsError>,
+>(
+  unitId: string,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetUnitSuspense<
+  TData = Awaited<ReturnType<typeof getUnit>>,
+  TError = ErrorType<void | AsError>,
+>(
+  unitId: string,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets an Organisational Unit
+ */
+
+export function useGetUnitSuspense<
+  TData = Awaited<ReturnType<typeof getUnit>>,
+  TError = ErrorType<void | AsError>,
+>(
+  unitId: string,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUnit>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetUnitSuspenseQueryOptions(unitId, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * Used to update existing Unit. You can change a Unit's **name** or its **default_product_privacy** (as long as the new privacy does not conflict with the Organisation's value).
+ *
+ * You have to be a member of the **Unit**, a member of its **Organisation**, or an administrator to patch a Unit.
+ * @summary Adjust an existing Unit
+ */
+export const patchUnit = (
+  unitId: string,
+  unitPatchBodyBody: UnitPatchBodyBody,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    {
+      url: `/unit/${unitId}`,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      data: unitPatchBodyBody,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getPatchUnitMutationOptions = <
+  TError = ErrorType<void | AsError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof patchUnit>>,
+    TError,
+    { unitId: string; data: UnitPatchBodyBody },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof patchUnit>>,
+  TError,
+  { unitId: string; data: UnitPatchBodyBody },
+  TContext
+> => {
+  const mutationKey = ["patchUnit"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof patchUnit>>,
+    { unitId: string; data: UnitPatchBodyBody }
+  > = (props) => {
+    const { unitId, data } = props ?? {};
+
+    return patchUnit(unitId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PatchUnitMutationResult = NonNullable<Awaited<ReturnType<typeof patchUnit>>>;
+export type PatchUnitMutationBody = UnitPatchBodyBody;
+export type PatchUnitMutationError = ErrorType<void | AsError>;
+
+/**
+ * @summary Adjust an existing Unit
+ */
+export const usePatchUnit = <TError = ErrorType<void | AsError>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof patchUnit>>,
+      TError,
+      { unitId: string; data: UnitPatchBodyBody },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof patchUnit>>,
+  TError,
+  { unitId: string; data: UnitPatchBodyBody },
+  TContext
+> => {
+  return useMutation(getPatchUnitMutationOptions(options), queryClient);
 };

@@ -55,231 +55,6 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
- * Gets the details of the installed event stream, which includes its **protocol**, and **name**.
- * @summary Gets the details of the installed event stream
- */
-export const getEventStreamVersion = (
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<EventStreamVersionGetResponse>(
-    { url: `/event-stream/version`, method: "GET", signal },
-    options,
-  );
-};
-
-export const getGetEventStreamVersionQueryKey = () => {
-  return ["account-server", "event-stream", "version"] as const;
-};
-
-export const getGetEventStreamVersionQueryOptions = <
-  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
-  TError = ErrorType<void | AsError>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetEventStreamVersionQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getEventStreamVersion>>> = ({ signal }) =>
-    getEventStreamVersion(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getEventStreamVersion>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetEventStreamVersionQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getEventStreamVersion>>
->;
-export type GetEventStreamVersionQueryError = ErrorType<void | AsError>;
-
-export function useGetEventStreamVersion<
-  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
-  TError = ErrorType<void | AsError>,
->(
-  options: {
-    query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getEventStreamVersion>>,
-          TError,
-          Awaited<ReturnType<typeof getEventStreamVersion>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetEventStreamVersion<
-  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getEventStreamVersion>>,
-          TError,
-          Awaited<ReturnType<typeof getEventStreamVersion>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetEventStreamVersion<
-  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the details of the installed event stream
- */
-
-export function useGetEventStreamVersion<
-  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetEventStreamVersionQueryOptions(options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Gets the details of the installed event stream
- */
-export const invalidateGetEventStreamVersion = async (
-  queryClient: QueryClient,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetEventStreamVersionQueryKey() }, options);
-
-  return queryClient;
-};
-
-export const getGetEventStreamVersionSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
-  TError = ErrorType<void | AsError>,
->(options?: {
-  query?: Partial<
-    UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetEventStreamVersionQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getEventStreamVersion>>> = ({ signal }) =>
-    getEventStreamVersion(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getEventStreamVersion>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetEventStreamVersionSuspenseQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getEventStreamVersion>>
->;
-export type GetEventStreamVersionSuspenseQueryError = ErrorType<void | AsError>;
-
-export function useGetEventStreamVersionSuspense<
-  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
-  TError = ErrorType<void | AsError>,
->(
-  options: {
-    query: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetEventStreamVersionSuspense<
-  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetEventStreamVersionSuspense<
-  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the details of the installed event stream
- */
-
-export function useGetEventStreamVersionSuspense<
-  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
-  TError = ErrorType<void | AsError>,
->(
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetEventStreamVersionSuspenseQueryOptions(options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
  * Gets the details of your event stream, if you have created one. The response includes the event stream **id** and the **location** where events can be accessed.
  * @summary Gets the details of your event stream
  */
@@ -585,6 +360,231 @@ export const useCreateEventStream = <TError = ErrorType<AsError | void>, TContex
 > => {
   return useMutation(getCreateEventStreamMutationOptions(options), queryClient);
 };
+/**
+ * Gets the details of the installed event stream, which includes its **protocol**, and **name**.
+ * @summary Gets the details of the installed event stream
+ */
+export const getEventStreamVersion = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<EventStreamVersionGetResponse>(
+    { url: `/event-stream/version`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetEventStreamVersionQueryKey = () => {
+  return ["account-server", "event-stream", "version"] as const;
+};
+
+export const getGetEventStreamVersionQueryOptions = <
+  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
+  TError = ErrorType<void | AsError>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetEventStreamVersionQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getEventStreamVersion>>> = ({ signal }) =>
+    getEventStreamVersion(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getEventStreamVersion>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetEventStreamVersionQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getEventStreamVersion>>
+>;
+export type GetEventStreamVersionQueryError = ErrorType<void | AsError>;
+
+export function useGetEventStreamVersion<
+  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEventStreamVersion>>,
+          TError,
+          Awaited<ReturnType<typeof getEventStreamVersion>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetEventStreamVersion<
+  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEventStreamVersion>>,
+          TError,
+          Awaited<ReturnType<typeof getEventStreamVersion>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetEventStreamVersion<
+  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the details of the installed event stream
+ */
+
+export function useGetEventStreamVersion<
+  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetEventStreamVersionQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets the details of the installed event stream
+ */
+export const invalidateGetEventStreamVersion = async (
+  queryClient: QueryClient,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetEventStreamVersionQueryKey() }, options);
+
+  return queryClient;
+};
+
+export const getGetEventStreamVersionSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
+  TError = ErrorType<void | AsError>,
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetEventStreamVersionQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getEventStreamVersion>>> = ({ signal }) =>
+    getEventStreamVersion(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getEventStreamVersion>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetEventStreamVersionSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getEventStreamVersion>>
+>;
+export type GetEventStreamVersionSuspenseQueryError = ErrorType<void | AsError>;
+
+export function useGetEventStreamVersionSuspense<
+  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetEventStreamVersionSuspense<
+  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetEventStreamVersionSuspense<
+  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the details of the installed event stream
+ */
+
+export function useGetEventStreamVersionSuspense<
+  TData = Awaited<ReturnType<typeof getEventStreamVersion>>,
+  TError = ErrorType<void | AsError>,
+>(
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getEventStreamVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetEventStreamVersionSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
 /**
  * You must be the user who created the event stream.
  * @summary Deletes an existing event stream (that you created)

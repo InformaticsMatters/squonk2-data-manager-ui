@@ -8,11 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QIncludeDeletedParameter } from "./qIncludeDeletedParameter";
 
 export type GetVersionsParams = {
   /**
    * Whether to include records that are deleted
    */
-  include_deleted?: QIncludeDeletedParameter;
+  include_deleted?: boolean;
 };

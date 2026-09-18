@@ -28,17 +28,26 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
-  DmError,
-  ExchangeRatePutBodyBody,
-  GetAllExchangeRatesResponse,
+  GetAllJobExchangeRates200,
+  GetAllJobExchangeRates403,
   GetAllJobExchangeRatesParams,
-  GetExchangeRatesResponse,
+  GetJob200,
+  GetJob403,
+  GetJob404,
+  GetJobByVersion200,
+  GetJobByVersion401,
+  GetJobByVersion403,
   GetJobByVersionParams,
+  GetJobExchangeRates200,
+  GetJobExchangeRates403,
   GetJobExchangeRatesParams,
   GetJobParams,
+  GetJobs200,
+  GetJobs401,
+  GetJobs403,
   GetJobsParams,
-  JobGetResponse,
-  JobsGetResponse,
+  SetJobPricing403,
+  SetJobPricingBody,
 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
@@ -72,7 +81,7 @@ export const getJobs = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<JobsGetResponse>({ url: `/job`, method: "GET", params, signal }, options);
+  return customInstance<GetJobs200>({ url: `/job`, method: "GET", params, signal }, options);
 };
 
 export const getGetJobsQueryKey = (params?: GetJobsParams) => {
@@ -81,7 +90,7 @@ export const getGetJobsQueryKey = (params?: GetJobsParams) => {
 
 export const getGetJobsQueryOptions = <
   TData = Awaited<ReturnType<typeof getJobs>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetJobs401 | GetJobs403>,
 >(
   params?: GetJobsParams,
   options?: {
@@ -104,11 +113,11 @@ export const getGetJobsQueryOptions = <
 };
 
 export type GetJobsQueryResult = NonNullable<Awaited<ReturnType<typeof getJobs>>>;
-export type GetJobsQueryError = ErrorType<DmError>;
+export type GetJobsQueryError = ErrorType<GetJobs401 | GetJobs403>;
 
 export function useGetJobs<
   TData = Awaited<ReturnType<typeof getJobs>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetJobs401 | GetJobs403>,
 >(
   params: undefined | GetJobsParams,
   options: {
@@ -127,7 +136,7 @@ export function useGetJobs<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobs<
   TData = Awaited<ReturnType<typeof getJobs>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetJobs401 | GetJobs403>,
 >(
   params?: GetJobsParams,
   options?: {
@@ -146,7 +155,7 @@ export function useGetJobs<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobs<
   TData = Awaited<ReturnType<typeof getJobs>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetJobs401 | GetJobs403>,
 >(
   params?: GetJobsParams,
   options?: {
@@ -161,7 +170,7 @@ export function useGetJobs<
 
 export function useGetJobs<
   TData = Awaited<ReturnType<typeof getJobs>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetJobs401 | GetJobs403>,
 >(
   params?: GetJobsParams,
   options?: {
@@ -194,7 +203,7 @@ export const invalidateGetJobs = async (
 
 export const getGetJobsSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getJobs>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetJobs401 | GetJobs403>,
 >(
   params?: GetJobsParams,
   options?: {
@@ -217,11 +226,11 @@ export const getGetJobsSuspenseQueryOptions = <
 };
 
 export type GetJobsSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getJobs>>>;
-export type GetJobsSuspenseQueryError = ErrorType<DmError>;
+export type GetJobsSuspenseQueryError = ErrorType<GetJobs401 | GetJobs403>;
 
 export function useGetJobsSuspense<
   TData = Awaited<ReturnType<typeof getJobs>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetJobs401 | GetJobs403>,
 >(
   params: undefined | GetJobsParams,
   options: {
@@ -232,7 +241,7 @@ export function useGetJobsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobsSuspense<
   TData = Awaited<ReturnType<typeof getJobs>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetJobs401 | GetJobs403>,
 >(
   params?: GetJobsParams,
   options?: {
@@ -243,7 +252,7 @@ export function useGetJobsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobsSuspense<
   TData = Awaited<ReturnType<typeof getJobs>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetJobs401 | GetJobs403>,
 >(
   params?: GetJobsParams,
   options?: {
@@ -258,7 +267,7 @@ export function useGetJobsSuspense<
 
 export function useGetJobsSuspense<
   TData = Awaited<ReturnType<typeof getJobs>>,
-  TError = ErrorType<DmError>,
+  TError = ErrorType<GetJobs401 | GetJobs403>,
 >(
   params?: GetJobsParams,
   options?: {
@@ -278,471 +287,6 @@ export function useGetJobsSuspense<
 }
 
 /**
- * Gets a Job based on its **collection**, **job** and **version**.
- *
- * Job availability will vary as Jobs are added to the service. Jobs that have been added are unlikely to be removed.
- * @summary Get a Job by its version
- */
-export const getJobByVersion = (
-  params: GetJobByVersionParams,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<JobGetResponse>(
-    { url: `/job/get-by-version`, method: "GET", params, signal },
-    options,
-  );
-};
-
-export const getGetJobByVersionQueryKey = (params?: GetJobByVersionParams) => {
-  return ["data-manager", "job", "get-by-version", ...(params ? [params] : [])] as const;
-};
-
-export const getGetJobByVersionQueryOptions = <
-  TData = Awaited<ReturnType<typeof getJobByVersion>>,
-  TError = ErrorType<DmError>,
->(
-  params: GetJobByVersionParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetJobByVersionQueryKey(params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getJobByVersion>>> = ({ signal }) =>
-    getJobByVersion(params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getJobByVersion>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetJobByVersionQueryResult = NonNullable<Awaited<ReturnType<typeof getJobByVersion>>>;
-export type GetJobByVersionQueryError = ErrorType<DmError>;
-
-export function useGetJobByVersion<
-  TData = Awaited<ReturnType<typeof getJobByVersion>>,
-  TError = ErrorType<DmError>,
->(
-  params: GetJobByVersionParams,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getJobByVersion>>,
-          TError,
-          Awaited<ReturnType<typeof getJobByVersion>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetJobByVersion<
-  TData = Awaited<ReturnType<typeof getJobByVersion>>,
-  TError = ErrorType<DmError>,
->(
-  params: GetJobByVersionParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getJobByVersion>>,
-          TError,
-          Awaited<ReturnType<typeof getJobByVersion>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetJobByVersion<
-  TData = Awaited<ReturnType<typeof getJobByVersion>>,
-  TError = ErrorType<DmError>,
->(
-  params: GetJobByVersionParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get a Job by its version
- */
-
-export function useGetJobByVersion<
-  TData = Awaited<ReturnType<typeof getJobByVersion>>,
-  TError = ErrorType<DmError>,
->(
-  params: GetJobByVersionParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetJobByVersionQueryOptions(params, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Get a Job by its version
- */
-export const invalidateGetJobByVersion = async (
-  queryClient: QueryClient,
-  params: GetJobByVersionParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetJobByVersionQueryKey(params) }, options);
-
-  return queryClient;
-};
-
-export const getGetJobByVersionSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getJobByVersion>>,
-  TError = ErrorType<DmError>,
->(
-  params: GetJobByVersionParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetJobByVersionQueryKey(params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getJobByVersion>>> = ({ signal }) =>
-    getJobByVersion(params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getJobByVersion>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetJobByVersionSuspenseQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getJobByVersion>>
->;
-export type GetJobByVersionSuspenseQueryError = ErrorType<DmError>;
-
-export function useGetJobByVersionSuspense<
-  TData = Awaited<ReturnType<typeof getJobByVersion>>,
-  TError = ErrorType<DmError>,
->(
-  params: GetJobByVersionParams,
-  options: {
-    query: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetJobByVersionSuspense<
-  TData = Awaited<ReturnType<typeof getJobByVersion>>,
-  TError = ErrorType<DmError>,
->(
-  params: GetJobByVersionParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetJobByVersionSuspense<
-  TData = Awaited<ReturnType<typeof getJobByVersion>>,
-  TError = ErrorType<DmError>,
->(
-  params: GetJobByVersionParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get a Job by its version
- */
-
-export function useGetJobByVersionSuspense<
-  TData = Awaited<ReturnType<typeof getJobByVersion>>,
-  TError = ErrorType<DmError>,
->(
-  params: GetJobByVersionParams,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetJobByVersionSuspenseQueryOptions(params, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * Get details of a specific Job available to you that can be instantiated.
- *
- * To run a job you need to use the `/instance` endpoint. The Job is controlled through the `specification` field, a JSON string. You will need to identify the Job using its `collection`, `job` and `version` as well as providing any variables in the specification required by the Job's command.
- * @summary Get details of a specific Job
- */
-export const getJob = (
-  jobId: number,
-  params?: GetJobParams,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<JobGetResponse>(
-    { url: `/job/${jobId}`, method: "GET", params, signal },
-    options,
-  );
-};
-
-export const getGetJobQueryKey = (jobId: number, params?: GetJobParams) => {
-  return ["data-manager", "job", jobId, ...(params ? [params] : [])] as const;
-};
-
-export const getGetJobQueryOptions = <
-  TData = Awaited<ReturnType<typeof getJob>>,
-  TError = ErrorType<void | DmError>,
->(
-  jobId: number,
-  params?: GetJobParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetJobQueryKey(jobId, params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getJob>>> = ({ signal }) =>
-    getJob(jobId, params, requestOptions, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: jobId !== null && jobId !== undefined,
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
-
-export type GetJobQueryResult = NonNullable<Awaited<ReturnType<typeof getJob>>>;
-export type GetJobQueryError = ErrorType<void | DmError>;
-
-export function useGetJob<
-  TData = Awaited<ReturnType<typeof getJob>>,
-  TError = ErrorType<void | DmError>,
->(
-  jobId: number,
-  params: undefined | GetJobParams,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getJob>>,
-          TError,
-          Awaited<ReturnType<typeof getJob>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetJob<
-  TData = Awaited<ReturnType<typeof getJob>>,
-  TError = ErrorType<void | DmError>,
->(
-  jobId: number,
-  params?: GetJobParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getJob>>,
-          TError,
-          Awaited<ReturnType<typeof getJob>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetJob<
-  TData = Awaited<ReturnType<typeof getJob>>,
-  TError = ErrorType<void | DmError>,
->(
-  jobId: number,
-  params?: GetJobParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get details of a specific Job
- */
-
-export function useGetJob<
-  TData = Awaited<ReturnType<typeof getJob>>,
-  TError = ErrorType<void | DmError>,
->(
-  jobId: number,
-  params?: GetJobParams,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetJobQueryOptions(jobId, params, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Get details of a specific Job
- */
-export const invalidateGetJob = async (
-  queryClient: QueryClient,
-  jobId: number,
-  params?: GetJobParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetJobQueryKey(jobId, params) }, options);
-
-  return queryClient;
-};
-
-export const getGetJobSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getJob>>,
-  TError = ErrorType<void | DmError>,
->(
-  jobId: number,
-  params?: GetJobParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetJobQueryKey(jobId, params);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getJob>>> = ({ signal }) =>
-    getJob(jobId, params, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getJob>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetJobSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getJob>>>;
-export type GetJobSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useGetJobSuspense<
-  TData = Awaited<ReturnType<typeof getJob>>,
-  TError = ErrorType<void | DmError>,
->(
-  jobId: number,
-  params: undefined | GetJobParams,
-  options: {
-    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetJobSuspense<
-  TData = Awaited<ReturnType<typeof getJob>>,
-  TError = ErrorType<void | DmError>,
->(
-  jobId: number,
-  params?: GetJobParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetJobSuspense<
-  TData = Awaited<ReturnType<typeof getJob>>,
-  TError = ErrorType<void | DmError>,
->(
-  jobId: number,
-  params?: GetJobParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get details of a specific Job
- */
-
-export function useGetJobSuspense<
-  TData = Awaited<ReturnType<typeof getJob>>,
-  TError = ErrorType<void | DmError>,
->(
-  jobId: number,
-  params?: GetJobParams,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetJobSuspenseQueryOptions(jobId, params, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
  * For every Job that has an exchange rate the current rate is returned. If you want a list of all Jobs that have no exchange rate, set the `only_undefined` query option.
  * @summary Gets Exchange Rates for all Jobs
  */
@@ -751,7 +295,7 @@ export const getAllJobExchangeRates = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<GetAllExchangeRatesResponse>(
+  return customInstance<GetAllJobExchangeRates200>(
     { url: `/job-exchange-rates`, method: "GET", params, signal },
     options,
   );
@@ -763,7 +307,7 @@ export const getGetAllJobExchangeRatesQueryKey = (params?: GetAllJobExchangeRate
 
 export const getGetAllJobExchangeRatesQueryOptions = <
   TData = Awaited<ReturnType<typeof getAllJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAllJobExchangeRates403>,
 >(
   params?: GetAllJobExchangeRatesParams,
   options?: {
@@ -790,11 +334,11 @@ export const getGetAllJobExchangeRatesQueryOptions = <
 export type GetAllJobExchangeRatesQueryResult = NonNullable<
   Awaited<ReturnType<typeof getAllJobExchangeRates>>
 >;
-export type GetAllJobExchangeRatesQueryError = ErrorType<void | DmError>;
+export type GetAllJobExchangeRatesQueryError = ErrorType<void | GetAllJobExchangeRates403>;
 
 export function useGetAllJobExchangeRates<
   TData = Awaited<ReturnType<typeof getAllJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAllJobExchangeRates403>,
 >(
   params: undefined | GetAllJobExchangeRatesParams,
   options: {
@@ -815,7 +359,7 @@ export function useGetAllJobExchangeRates<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAllJobExchangeRates<
   TData = Awaited<ReturnType<typeof getAllJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAllJobExchangeRates403>,
 >(
   params?: GetAllJobExchangeRatesParams,
   options?: {
@@ -836,7 +380,7 @@ export function useGetAllJobExchangeRates<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAllJobExchangeRates<
   TData = Awaited<ReturnType<typeof getAllJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAllJobExchangeRates403>,
 >(
   params?: GetAllJobExchangeRatesParams,
   options?: {
@@ -853,7 +397,7 @@ export function useGetAllJobExchangeRates<
 
 export function useGetAllJobExchangeRates<
   TData = Awaited<ReturnType<typeof getAllJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAllJobExchangeRates403>,
 >(
   params?: GetAllJobExchangeRatesParams,
   options?: {
@@ -891,7 +435,7 @@ export const invalidateGetAllJobExchangeRates = async (
 
 export const getGetAllJobExchangeRatesSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getAllJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAllJobExchangeRates403>,
 >(
   params?: GetAllJobExchangeRatesParams,
   options?: {
@@ -918,11 +462,11 @@ export const getGetAllJobExchangeRatesSuspenseQueryOptions = <
 export type GetAllJobExchangeRatesSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getAllJobExchangeRates>>
 >;
-export type GetAllJobExchangeRatesSuspenseQueryError = ErrorType<void | DmError>;
+export type GetAllJobExchangeRatesSuspenseQueryError = ErrorType<void | GetAllJobExchangeRates403>;
 
 export function useGetAllJobExchangeRatesSuspense<
   TData = Awaited<ReturnType<typeof getAllJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAllJobExchangeRates403>,
 >(
   params: undefined | GetAllJobExchangeRatesParams,
   options: {
@@ -935,7 +479,7 @@ export function useGetAllJobExchangeRatesSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAllJobExchangeRatesSuspense<
   TData = Awaited<ReturnType<typeof getAllJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAllJobExchangeRates403>,
 >(
   params?: GetAllJobExchangeRatesParams,
   options?: {
@@ -948,7 +492,7 @@ export function useGetAllJobExchangeRatesSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetAllJobExchangeRatesSuspense<
   TData = Awaited<ReturnType<typeof getAllJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAllJobExchangeRates403>,
 >(
   params?: GetAllJobExchangeRatesParams,
   options?: {
@@ -965,7 +509,7 @@ export function useGetAllJobExchangeRatesSuspense<
 
 export function useGetAllJobExchangeRatesSuspense<
   TData = Awaited<ReturnType<typeof getAllJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetAllJobExchangeRates403>,
 >(
   params?: GetAllJobExchangeRatesParams,
   options?: {
@@ -987,101 +531,470 @@ export function useGetAllJobExchangeRatesSuspense<
 }
 
 /**
- * Sets the Exchange Rate for a specific job. The rate replaces any existing rate for the Job and applies immediately and future job executions for this Job will inherit this rate.
+ * Gets a Job based on its **collection**, **job** and **version**.
  *
- * Exchange rates are divided by an internal **scale factor** prior to being applied. The scale factor has a value of 1,000. The scale factor is used to make the exchange rates a little easier to digest, because without this on some jobs we would need to support values ike '0.00001'. With a scale factor of `1,000` the exchange rate is a much more humanly-digestible, e.g.  '0.00001' becomes '0.01'.
- *
- * If a Job has no specific rate it adopts the current value of the default Job Exchange Rate.
- *
- * You need `admin` privilege to use this method.
- * @summary Sets the Exchange Rate for a specific Job
+ * Job availability will vary as Jobs are added to the service. Jobs that have been added are unlikely to be removed.
+ * @summary Get a Job by its version
  */
-export const setJobPricing = (
-  jobId: number,
-  exchangeRatePutBodyBody: ExchangeRatePutBodyBody,
+export const getJobByVersion = (
+  params: GetJobByVersionParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  const formUrlEncoded = new URLSearchParams();
-  formUrlEncoded.append(`rate`, exchangeRatePutBodyBody.rate);
-  if (exchangeRatePutBodyBody.comment !== undefined) {
-    formUrlEncoded.append(`comment`, exchangeRatePutBodyBody.comment);
-  }
-
-  return customInstance<void>(
-    {
-      url: `/job/${jobId}/exchange-rate`,
-      method: "PUT",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      data: formUrlEncoded,
-      signal,
-    },
+  return customInstance<GetJobByVersion200>(
+    { url: `/job/get-by-version`, method: "GET", params, signal },
     options,
   );
 };
 
-export const getSetJobPricingMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof setJobPricing>>,
-    TError,
-    { jobId: number; data: ExchangeRatePutBodyBody },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof setJobPricing>>,
-  TError,
-  { jobId: number; data: ExchangeRatePutBodyBody },
-  TContext
-> => {
-  const mutationKey = ["setJobPricing"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof setJobPricing>>,
-    { jobId: number; data: ExchangeRatePutBodyBody }
-  > = (props) => {
-    const { jobId, data } = props ?? {};
-
-    return setJobPricing(jobId, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
+export const getGetJobByVersionQueryKey = (params?: GetJobByVersionParams) => {
+  return ["data-manager", "job", "get-by-version", ...(params ? [params] : [])] as const;
 };
 
-export type SetJobPricingMutationResult = NonNullable<Awaited<ReturnType<typeof setJobPricing>>>;
-export type SetJobPricingMutationBody = ExchangeRatePutBodyBody;
-export type SetJobPricingMutationError = ErrorType<void | DmError>;
+export const getGetJobByVersionQueryOptions = <
+  TData = Awaited<ReturnType<typeof getJobByVersion>>,
+  TError = ErrorType<GetJobByVersion401 | GetJobByVersion403>,
+>(
+  params: GetJobByVersionParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetJobByVersionQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getJobByVersion>>> = ({ signal }) =>
+    getJobByVersion(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getJobByVersion>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetJobByVersionQueryResult = NonNullable<Awaited<ReturnType<typeof getJobByVersion>>>;
+export type GetJobByVersionQueryError = ErrorType<GetJobByVersion401 | GetJobByVersion403>;
+
+export function useGetJobByVersion<
+  TData = Awaited<ReturnType<typeof getJobByVersion>>,
+  TError = ErrorType<GetJobByVersion401 | GetJobByVersion403>,
+>(
+  params: GetJobByVersionParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getJobByVersion>>,
+          TError,
+          Awaited<ReturnType<typeof getJobByVersion>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetJobByVersion<
+  TData = Awaited<ReturnType<typeof getJobByVersion>>,
+  TError = ErrorType<GetJobByVersion401 | GetJobByVersion403>,
+>(
+  params: GetJobByVersionParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getJobByVersion>>,
+          TError,
+          Awaited<ReturnType<typeof getJobByVersion>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetJobByVersion<
+  TData = Awaited<ReturnType<typeof getJobByVersion>>,
+  TError = ErrorType<GetJobByVersion401 | GetJobByVersion403>,
+>(
+  params: GetJobByVersionParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get a Job by its version
+ */
+
+export function useGetJobByVersion<
+  TData = Awaited<ReturnType<typeof getJobByVersion>>,
+  TError = ErrorType<GetJobByVersion401 | GetJobByVersion403>,
+>(
+  params: GetJobByVersionParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetJobByVersionQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
 
 /**
- * @summary Sets the Exchange Rate for a specific Job
+ * @summary Get a Job by its version
  */
-export const useSetJobPricing = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const invalidateGetJobByVersion = async (
+  queryClient: QueryClient,
+  params: GetJobByVersionParams,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetJobByVersionQueryKey(params) }, options);
+
+  return queryClient;
+};
+
+export const getGetJobByVersionSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getJobByVersion>>,
+  TError = ErrorType<GetJobByVersion401 | GetJobByVersion403>,
+>(
+  params: GetJobByVersionParams,
   options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof setJobPricing>>,
-      TError,
-      { jobId: number; data: ExchangeRatePutBodyBody },
-      TContext
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetJobByVersionQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getJobByVersion>>> = ({ signal }) =>
+    getJobByVersion(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getJobByVersion>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetJobByVersionSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getJobByVersion>>
+>;
+export type GetJobByVersionSuspenseQueryError = ErrorType<GetJobByVersion401 | GetJobByVersion403>;
+
+export function useGetJobByVersionSuspense<
+  TData = Awaited<ReturnType<typeof getJobByVersion>>,
+  TError = ErrorType<GetJobByVersion401 | GetJobByVersion403>,
+>(
+  params: GetJobByVersionParams,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof setJobPricing>>,
-  TError,
-  { jobId: number; data: ExchangeRatePutBodyBody },
-  TContext
-> => {
-  return useMutation(getSetJobPricingMutationOptions(options), queryClient);
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetJobByVersionSuspense<
+  TData = Awaited<ReturnType<typeof getJobByVersion>>,
+  TError = ErrorType<GetJobByVersion401 | GetJobByVersion403>,
+>(
+  params: GetJobByVersionParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetJobByVersionSuspense<
+  TData = Awaited<ReturnType<typeof getJobByVersion>>,
+  TError = ErrorType<GetJobByVersion401 | GetJobByVersion403>,
+>(
+  params: GetJobByVersionParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get a Job by its version
+ */
+
+export function useGetJobByVersionSuspense<
+  TData = Awaited<ReturnType<typeof getJobByVersion>>,
+  TError = ErrorType<GetJobByVersion401 | GetJobByVersion403>,
+>(
+  params: GetJobByVersionParams,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJobByVersion>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetJobByVersionSuspenseQueryOptions(params, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * Get details of a specific Job available to you that can be instantiated.
+ *
+ * To run a job you need to use the `/instance` endpoint. The Job is controlled through the `specification` field, a JSON string. You will need to identify the Job using its `collection`, `job` and `version` as well as providing any variables in the specification required by the Job's command.
+ * @summary Get details of a specific Job
+ */
+export const getJob = (
+  jobId: number,
+  params?: GetJobParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<GetJob200>(
+    { url: `/job/${jobId}`, method: "GET", params, signal },
+    options,
+  );
 };
+
+export const getGetJobQueryKey = (jobId: number, params?: GetJobParams) => {
+  return ["data-manager", "job", jobId, ...(params ? [params] : [])] as const;
+};
+
+export const getGetJobQueryOptions = <
+  TData = Awaited<ReturnType<typeof getJob>>,
+  TError = ErrorType<void | GetJob403 | GetJob404>,
+>(
+  jobId: number,
+  params?: GetJobParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetJobQueryKey(jobId, params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getJob>>> = ({ signal }) =>
+    getJob(jobId, params, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: jobId !== null && jobId !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
+
+export type GetJobQueryResult = NonNullable<Awaited<ReturnType<typeof getJob>>>;
+export type GetJobQueryError = ErrorType<void | GetJob403 | GetJob404>;
+
+export function useGetJob<
+  TData = Awaited<ReturnType<typeof getJob>>,
+  TError = ErrorType<void | GetJob403 | GetJob404>,
+>(
+  jobId: number,
+  params: undefined | GetJobParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getJob>>,
+          TError,
+          Awaited<ReturnType<typeof getJob>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetJob<
+  TData = Awaited<ReturnType<typeof getJob>>,
+  TError = ErrorType<void | GetJob403 | GetJob404>,
+>(
+  jobId: number,
+  params?: GetJobParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getJob>>,
+          TError,
+          Awaited<ReturnType<typeof getJob>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetJob<
+  TData = Awaited<ReturnType<typeof getJob>>,
+  TError = ErrorType<void | GetJob403 | GetJob404>,
+>(
+  jobId: number,
+  params?: GetJobParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get details of a specific Job
+ */
+
+export function useGetJob<
+  TData = Awaited<ReturnType<typeof getJob>>,
+  TError = ErrorType<void | GetJob403 | GetJob404>,
+>(
+  jobId: number,
+  params?: GetJobParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetJobQueryOptions(jobId, params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Get details of a specific Job
+ */
+export const invalidateGetJob = async (
+  queryClient: QueryClient,
+  jobId: number,
+  params?: GetJobParams,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetJobQueryKey(jobId, params) }, options);
+
+  return queryClient;
+};
+
+export const getGetJobSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getJob>>,
+  TError = ErrorType<void | GetJob403 | GetJob404>,
+>(
+  jobId: number,
+  params?: GetJobParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetJobQueryKey(jobId, params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getJob>>> = ({ signal }) =>
+    getJob(jobId, params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getJob>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetJobSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getJob>>>;
+export type GetJobSuspenseQueryError = ErrorType<void | GetJob403 | GetJob404>;
+
+export function useGetJobSuspense<
+  TData = Awaited<ReturnType<typeof getJob>>,
+  TError = ErrorType<void | GetJob403 | GetJob404>,
+>(
+  jobId: number,
+  params: undefined | GetJobParams,
+  options: {
+    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetJobSuspense<
+  TData = Awaited<ReturnType<typeof getJob>>,
+  TError = ErrorType<void | GetJob403 | GetJob404>,
+>(
+  jobId: number,
+  params?: GetJobParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetJobSuspense<
+  TData = Awaited<ReturnType<typeof getJob>>,
+  TError = ErrorType<void | GetJob403 | GetJob404>,
+>(
+  jobId: number,
+  params?: GetJobParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get details of a specific Job
+ */
+
+export function useGetJobSuspense<
+  TData = Awaited<ReturnType<typeof getJob>>,
+  TError = ErrorType<void | GetJob403 | GetJob404>,
+>(
+  jobId: number,
+  params?: GetJobParams,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getJob>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetJobSuspenseQueryOptions(jobId, params, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
 /**
  * Gets all the exchange rate history for a specific Job. Rates are returned in reverse chronological order, with the most recent rate, the current rate, as the first entry in the list.
  * @summary Gets Job Exchange Rates
@@ -1092,7 +1005,7 @@ export const getJobExchangeRates = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<GetExchangeRatesResponse>(
+  return customInstance<GetJobExchangeRates200>(
     { url: `/job/${jobId}/exchange-rate`, method: "GET", params, signal },
     options,
   );
@@ -1107,7 +1020,7 @@ export const getGetJobExchangeRatesQueryKey = (
 
 export const getGetJobExchangeRatesQueryOptions = <
   TData = Awaited<ReturnType<typeof getJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobExchangeRates403>,
 >(
   jobId: number,
   params?: GetJobExchangeRatesParams,
@@ -1138,11 +1051,11 @@ export const getGetJobExchangeRatesQueryOptions = <
 export type GetJobExchangeRatesQueryResult = NonNullable<
   Awaited<ReturnType<typeof getJobExchangeRates>>
 >;
-export type GetJobExchangeRatesQueryError = ErrorType<void | DmError>;
+export type GetJobExchangeRatesQueryError = ErrorType<void | GetJobExchangeRates403>;
 
 export function useGetJobExchangeRates<
   TData = Awaited<ReturnType<typeof getJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobExchangeRates403>,
 >(
   jobId: number,
   params: undefined | GetJobExchangeRatesParams,
@@ -1164,7 +1077,7 @@ export function useGetJobExchangeRates<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobExchangeRates<
   TData = Awaited<ReturnType<typeof getJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobExchangeRates403>,
 >(
   jobId: number,
   params?: GetJobExchangeRatesParams,
@@ -1186,7 +1099,7 @@ export function useGetJobExchangeRates<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobExchangeRates<
   TData = Awaited<ReturnType<typeof getJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobExchangeRates403>,
 >(
   jobId: number,
   params?: GetJobExchangeRatesParams,
@@ -1204,7 +1117,7 @@ export function useGetJobExchangeRates<
 
 export function useGetJobExchangeRates<
   TData = Awaited<ReturnType<typeof getJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobExchangeRates403>,
 >(
   jobId: number,
   params?: GetJobExchangeRatesParams,
@@ -1244,7 +1157,7 @@ export const invalidateGetJobExchangeRates = async (
 
 export const getGetJobExchangeRatesSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobExchangeRates403>,
 >(
   jobId: number,
   params?: GetJobExchangeRatesParams,
@@ -1272,11 +1185,11 @@ export const getGetJobExchangeRatesSuspenseQueryOptions = <
 export type GetJobExchangeRatesSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getJobExchangeRates>>
 >;
-export type GetJobExchangeRatesSuspenseQueryError = ErrorType<void | DmError>;
+export type GetJobExchangeRatesSuspenseQueryError = ErrorType<void | GetJobExchangeRates403>;
 
 export function useGetJobExchangeRatesSuspense<
   TData = Awaited<ReturnType<typeof getJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobExchangeRates403>,
 >(
   jobId: number,
   params: undefined | GetJobExchangeRatesParams,
@@ -1290,7 +1203,7 @@ export function useGetJobExchangeRatesSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobExchangeRatesSuspense<
   TData = Awaited<ReturnType<typeof getJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobExchangeRates403>,
 >(
   jobId: number,
   params?: GetJobExchangeRatesParams,
@@ -1304,7 +1217,7 @@ export function useGetJobExchangeRatesSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetJobExchangeRatesSuspense<
   TData = Awaited<ReturnType<typeof getJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobExchangeRates403>,
 >(
   jobId: number,
   params?: GetJobExchangeRatesParams,
@@ -1322,7 +1235,7 @@ export function useGetJobExchangeRatesSuspense<
 
 export function useGetJobExchangeRatesSuspense<
   TData = Awaited<ReturnType<typeof getJobExchangeRates>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetJobExchangeRates403>,
 >(
   jobId: number,
   params?: GetJobExchangeRatesParams,
@@ -1343,3 +1256,100 @@ export function useGetJobExchangeRatesSuspense<
 
   return withQueryKey(query, queryOptions.queryKey);
 }
+
+/**
+ * Sets the Exchange Rate for a specific job. The rate replaces any existing rate for the Job and applies immediately and future job executions for this Job will inherit this rate.
+ *
+ * Exchange rates are divided by an internal **scale factor** prior to being applied. The scale factor has a value of 1,000. The scale factor is used to make the exchange rates a little easier to digest, because without this on some jobs we would need to support values ike '0.00001'. With a scale factor of `1,000` the exchange rate is a much more humanly-digestible, e.g.  '0.00001' becomes '0.01'.
+ *
+ * If a Job has no specific rate it adopts the current value of the default Job Exchange Rate.
+ *
+ * You need `admin` privilege to use this method.
+ * @summary Sets the Exchange Rate for a specific Job
+ */
+export const setJobPricing = (
+  jobId: number,
+  setJobPricingBody: SetJobPricingBody,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  const formUrlEncoded = new URLSearchParams();
+  if (setJobPricingBody.comment !== undefined) {
+    formUrlEncoded.append(`comment`, setJobPricingBody.comment);
+  }
+  formUrlEncoded.append(`rate`, setJobPricingBody.rate);
+
+  return customInstance<void>(
+    {
+      url: `/job/${jobId}/exchange-rate`,
+      method: "PUT",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: formUrlEncoded,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getSetJobPricingMutationOptions = <
+  TError = ErrorType<void | SetJobPricing403>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof setJobPricing>>,
+    TError,
+    { jobId: number; data: SetJobPricingBody },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof setJobPricing>>,
+  TError,
+  { jobId: number; data: SetJobPricingBody },
+  TContext
+> => {
+  const mutationKey = ["setJobPricing"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof setJobPricing>>,
+    { jobId: number; data: SetJobPricingBody }
+  > = (props) => {
+    const { jobId, data } = props ?? {};
+
+    return setJobPricing(jobId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SetJobPricingMutationResult = NonNullable<Awaited<ReturnType<typeof setJobPricing>>>;
+export type SetJobPricingMutationBody = SetJobPricingBody;
+export type SetJobPricingMutationError = ErrorType<void | SetJobPricing403>;
+
+/**
+ * @summary Sets the Exchange Rate for a specific Job
+ */
+export const useSetJobPricing = <TError = ErrorType<void | SetJobPricing403>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof setJobPricing>>,
+      TError,
+      { jobId: number; data: SetJobPricingBody },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof setJobPricing>>,
+  TError,
+  { jobId: number; data: SetJobPricingBody },
+  TContext
+> => {
+  return useMutation(getSetJobPricingMutationOptions(options), queryClient);
+};

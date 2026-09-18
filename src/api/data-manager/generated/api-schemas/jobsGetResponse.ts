@@ -8,9 +8,9 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { JobSummary } from "./jobSummary";
+import type { JobsGetResponseJobsItem } from "./jobsGetResponseJobsItem";
 
 export interface JobsGetResponse {
   count: number;
-  jobs: JobSummary[];
+  jobs: JobsGetResponseJobsItem[];
 }

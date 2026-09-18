@@ -28,14 +28,38 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
-  DmError,
+  AddAdministratorToProject403,
+  AddAdministratorToProject404,
+  AddEditorToProject403,
+  AddEditorToProject404,
+  AddObserverToProject403,
+  AddObserverToProject404,
+  CreateProject201,
+  CreateProject400,
+  CreateProject403,
+  CreateProject415,
+  CreateProjectBody,
+  DeleteProject200,
+  DeleteProject403,
+  DeleteProject404,
+  GetProject200,
+  GetProject403,
+  GetProject404,
+  GetProjects200,
+  GetProjects403,
   GetProjectsParams,
-  ProjectDetail,
-  ProjectPatchBodyBody,
-  ProjectPostBodyBody,
-  ProjectPostResponse,
-  ProjectsGetResponse,
-  TaskIdentity,
+  PatchProject403,
+  PatchProject404,
+  PatchProjectBody,
+  RemoveAdministratorFromProject400,
+  RemoveAdministratorFromProject403,
+  RemoveAdministratorFromProject404,
+  RemoveEditorFromProject400,
+  RemoveEditorFromProject403,
+  RemoveEditorFromProject404,
+  RemoveObserverFromProject400,
+  RemoveObserverFromProject403,
+  RemoveObserverFromProject404,
 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
@@ -66,7 +90,7 @@ export const getProjects = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<ProjectsGetResponse>(
+  return customInstance<GetProjects200>(
     { url: `/project`, method: "GET", params, signal },
     options,
   );
@@ -78,7 +102,7 @@ export const getGetProjectsQueryKey = (params?: GetProjectsParams) => {
 
 export const getGetProjectsQueryOptions = <
   TData = Awaited<ReturnType<typeof getProjects>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjects403>,
 >(
   params?: GetProjectsParams,
   options?: {
@@ -101,11 +125,11 @@ export const getGetProjectsQueryOptions = <
 };
 
 export type GetProjectsQueryResult = NonNullable<Awaited<ReturnType<typeof getProjects>>>;
-export type GetProjectsQueryError = ErrorType<void | DmError>;
+export type GetProjectsQueryError = ErrorType<void | GetProjects403>;
 
 export function useGetProjects<
   TData = Awaited<ReturnType<typeof getProjects>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjects403>,
 >(
   params: undefined | GetProjectsParams,
   options: {
@@ -124,7 +148,7 @@ export function useGetProjects<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjects<
   TData = Awaited<ReturnType<typeof getProjects>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjects403>,
 >(
   params?: GetProjectsParams,
   options?: {
@@ -143,7 +167,7 @@ export function useGetProjects<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjects<
   TData = Awaited<ReturnType<typeof getProjects>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjects403>,
 >(
   params?: GetProjectsParams,
   options?: {
@@ -158,7 +182,7 @@ export function useGetProjects<
 
 export function useGetProjects<
   TData = Awaited<ReturnType<typeof getProjects>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjects403>,
 >(
   params?: GetProjectsParams,
   options?: {
@@ -191,7 +215,7 @@ export const invalidateGetProjects = async (
 
 export const getGetProjectsSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getProjects>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjects403>,
 >(
   params?: GetProjectsParams,
   options?: {
@@ -216,11 +240,11 @@ export const getGetProjectsSuspenseQueryOptions = <
 };
 
 export type GetProjectsSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getProjects>>>;
-export type GetProjectsSuspenseQueryError = ErrorType<void | DmError>;
+export type GetProjectsSuspenseQueryError = ErrorType<void | GetProjects403>;
 
 export function useGetProjectsSuspense<
   TData = Awaited<ReturnType<typeof getProjects>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjects403>,
 >(
   params: undefined | GetProjectsParams,
   options: {
@@ -231,7 +255,7 @@ export function useGetProjectsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjectsSuspense<
   TData = Awaited<ReturnType<typeof getProjects>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjects403>,
 >(
   params?: GetProjectsParams,
   options?: {
@@ -244,7 +268,7 @@ export function useGetProjectsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProjectsSuspense<
   TData = Awaited<ReturnType<typeof getProjects>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjects403>,
 >(
   params?: GetProjectsParams,
   options?: {
@@ -261,7 +285,7 @@ export function useGetProjectsSuspense<
 
 export function useGetProjectsSuspense<
   TData = Awaited<ReturnType<typeof getProjects>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetProjects403>,
 >(
   params?: GetProjectsParams,
   options?: {
@@ -293,22 +317,22 @@ export function useGetProjectsSuspense<
  * @summary Create a new Project
  */
 export const createProject = (
-  projectPostBodyBody?: ProjectPostBodyBody,
+  createProjectBody?: CreateProjectBody,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   const formUrlEncoded = new URLSearchParams();
-  if (projectPostBodyBody?.name !== undefined) {
-    formUrlEncoded.append(`name`, projectPostBodyBody.name);
+  if (createProjectBody?.name !== undefined) {
+    formUrlEncoded.append(`name`, createProjectBody.name);
   }
-  if (projectPostBodyBody?.private !== undefined) {
-    formUrlEncoded.append(`private`, projectPostBodyBody.private.toString());
+  if (createProjectBody?.private !== undefined) {
+    formUrlEncoded.append(`private`, createProjectBody.private.toString());
   }
-  if (projectPostBodyBody?.tier_product_id !== undefined) {
-    formUrlEncoded.append(`tier_product_id`, projectPostBodyBody.tier_product_id);
+  if (createProjectBody?.tier_product_id !== undefined) {
+    formUrlEncoded.append(`tier_product_id`, createProjectBody.tier_product_id);
   }
 
-  return customInstance<ProjectPostResponse>(
+  return customInstance<CreateProject201>(
     {
       url: `/project`,
       method: "POST",
@@ -321,20 +345,20 @@ export const createProject = (
 };
 
 export const getCreateProjectMutationOptions = <
-  TError = ErrorType<DmError | void>,
+  TError = ErrorType<CreateProject400 | void | CreateProject403 | CreateProject415>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof createProject>>,
     TError,
-    { data?: ProjectPostBodyBody },
+    { data?: CreateProjectBody },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof createProject>>,
   TError,
-  { data?: ProjectPostBodyBody },
+  { data?: CreateProjectBody },
   TContext
 > => {
   const mutationKey = ["createProject"];
@@ -346,7 +370,7 @@ export const getCreateProjectMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof createProject>>,
-    { data?: ProjectPostBodyBody }
+    { data?: CreateProjectBody }
   > = (props) => {
     const { data } = props ?? {};
 
@@ -357,18 +381,23 @@ export const getCreateProjectMutationOptions = <
 };
 
 export type CreateProjectMutationResult = NonNullable<Awaited<ReturnType<typeof createProject>>>;
-export type CreateProjectMutationBody = ProjectPostBodyBody | undefined;
-export type CreateProjectMutationError = ErrorType<DmError | void>;
+export type CreateProjectMutationBody = CreateProjectBody | undefined;
+export type CreateProjectMutationError = ErrorType<
+  CreateProject400 | void | CreateProject403 | CreateProject415
+>;
 
 /**
  * @summary Create a new Project
  */
-export const useCreateProject = <TError = ErrorType<DmError | void>, TContext = unknown>(
+export const useCreateProject = <
+  TError = ErrorType<CreateProject400 | void | CreateProject403 | CreateProject415>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof createProject>>,
       TError,
-      { data?: ProjectPostBodyBody },
+      { data?: CreateProjectBody },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -377,322 +406,10 @@ export const useCreateProject = <TError = ErrorType<DmError | void>, TContext = 
 ): UseMutationResult<
   Awaited<ReturnType<typeof createProject>>,
   TError,
-  { data?: ProjectPostBodyBody },
+  { data?: CreateProjectBody },
   TContext
 > => {
   return useMutation(getCreateProjectMutationOptions(options), queryClient);
-};
-/**
- * Gets the details of a Project that is available to you.
- * @summary Get a Project by UUID
- */
-export const getProject = (
-  projectId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<ProjectDetail>(
-    { url: `/project/${projectId}`, method: "GET", signal },
-    options,
-  );
-};
-
-export const getGetProjectQueryKey = (projectId: string) => {
-  return ["data-manager", "project", projectId] as const;
-};
-
-export const getGetProjectQueryOptions = <
-  TData = Awaited<ReturnType<typeof getProject>>,
-  TError = ErrorType<void | DmError>,
->(
-  projectId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetProjectQueryKey(projectId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getProject>>> = ({ signal }) =>
-    getProject(projectId, requestOptions, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: projectId !== null && projectId !== undefined,
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
-
-export type GetProjectQueryResult = NonNullable<Awaited<ReturnType<typeof getProject>>>;
-export type GetProjectQueryError = ErrorType<void | DmError>;
-
-export function useGetProject<
-  TData = Awaited<ReturnType<typeof getProject>>,
-  TError = ErrorType<void | DmError>,
->(
-  projectId: string,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getProject>>,
-          TError,
-          Awaited<ReturnType<typeof getProject>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetProject<
-  TData = Awaited<ReturnType<typeof getProject>>,
-  TError = ErrorType<void | DmError>,
->(
-  projectId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getProject>>,
-          TError,
-          Awaited<ReturnType<typeof getProject>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetProject<
-  TData = Awaited<ReturnType<typeof getProject>>,
-  TError = ErrorType<void | DmError>,
->(
-  projectId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get a Project by UUID
- */
-
-export function useGetProject<
-  TData = Awaited<ReturnType<typeof getProject>>,
-  TError = ErrorType<void | DmError>,
->(
-  projectId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetProjectQueryOptions(projectId, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Get a Project by UUID
- */
-export const invalidateGetProject = async (
-  queryClient: QueryClient,
-  projectId: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) }, options);
-
-  return queryClient;
-};
-
-export const getGetProjectSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getProject>>,
-  TError = ErrorType<void | DmError>,
->(
-  projectId: string,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetProjectQueryKey(projectId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getProject>>> = ({ signal }) =>
-    getProject(projectId, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getProject>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetProjectSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getProject>>>;
-export type GetProjectSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useGetProjectSuspense<
-  TData = Awaited<ReturnType<typeof getProject>>,
-  TError = ErrorType<void | DmError>,
->(
-  projectId: string,
-  options: {
-    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetProjectSuspense<
-  TData = Awaited<ReturnType<typeof getProject>>,
-  TError = ErrorType<void | DmError>,
->(
-  projectId: string,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetProjectSuspense<
-  TData = Awaited<ReturnType<typeof getProject>>,
-  TError = ErrorType<void | DmError>,
->(
-  projectId: string,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Get a Project by UUID
- */
-
-export function useGetProjectSuspense<
-  TData = Awaited<ReturnType<typeof getProject>>,
-  TError = ErrorType<void | DmError>,
->(
-  projectId: string,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetProjectSuspenseQueryOptions(projectId, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * Used to update some adjustable parameters of a Project, i.e. to make it `private` or make it `public``. What can be adjusted will depend on the purchased **Product**
- * @summary Adjust an existing Project
- */
-export const patchProject = (
-  projectId: string,
-  projectPatchBodyBody?: ProjectPatchBodyBody,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  const formUrlEncoded = new URLSearchParams();
-  if (projectPatchBodyBody?.private !== undefined) {
-    formUrlEncoded.append(`private`, projectPatchBodyBody.private.toString());
-  }
-  if (projectPatchBodyBody?.name !== undefined) {
-    formUrlEncoded.append(`name`, projectPatchBodyBody.name);
-  }
-
-  return customInstance<void>(
-    {
-      url: `/project/${projectId}`,
-      method: "PATCH",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      data: formUrlEncoded,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getPatchProjectMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof patchProject>>,
-    TError,
-    { projectId: string; data?: ProjectPatchBodyBody },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof patchProject>>,
-  TError,
-  { projectId: string; data?: ProjectPatchBodyBody },
-  TContext
-> => {
-  const mutationKey = ["patchProject"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof patchProject>>,
-    { projectId: string; data?: ProjectPatchBodyBody }
-  > = (props) => {
-    const { projectId, data } = props ?? {};
-
-    return patchProject(projectId, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type PatchProjectMutationResult = NonNullable<Awaited<ReturnType<typeof patchProject>>>;
-export type PatchProjectMutationBody = ProjectPatchBodyBody | undefined;
-export type PatchProjectMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Adjust an existing Project
- */
-export const usePatchProject = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof patchProject>>,
-      TError,
-      { projectId: string; data?: ProjectPatchBodyBody },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof patchProject>>,
-  TError,
-  { projectId: string; data?: ProjectPatchBodyBody },
-  TContext
-> => {
-  return useMutation(getPatchProjectMutationOptions(options), queryClient);
 };
 /**
  * Deletes an existing Project.
@@ -707,14 +424,14 @@ export const deleteProject = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<TaskIdentity>(
+  return customInstance<DeleteProject200>(
     { url: `/project/${projectId}`, method: "DELETE", signal },
     options,
   );
 };
 
 export const getDeleteProjectMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DeleteProject403 | DeleteProject404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -751,12 +468,15 @@ export const getDeleteProjectMutationOptions = <
 
 export type DeleteProjectMutationResult = NonNullable<Awaited<ReturnType<typeof deleteProject>>>;
 
-export type DeleteProjectMutationError = ErrorType<void | DmError>;
+export type DeleteProjectMutationError = ErrorType<void | DeleteProject403 | DeleteProject404>;
 
 /**
  * @summary Delete a Project
  */
-export const useDeleteProject = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useDeleteProject = <
+  TError = ErrorType<void | DeleteProject403 | DeleteProject404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deleteProject>>,
@@ -776,41 +496,273 @@ export const useDeleteProject = <TError = ErrorType<void | DmError>, TContext = 
   return useMutation(getDeleteProjectMutationOptions(options), queryClient);
 };
 /**
- * Adds a user to a Project as an `administrator`. As well as the ability to edit the project administrators can add and remove other users.
- *
- * You must be an `administrator` of the project
- * @summary Add a Project Administrator
+ * Gets the details of a Project that is available to you.
+ * @summary Get a Project by UUID
  */
-export const addAdministratorToProject = (
+export const getProject = (
   projectId: string,
-  userId: string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<void>(
-    { url: `/project/${projectId}/administrator/${userId}`, method: "PUT", signal },
+  return customInstance<GetProject200>(
+    { url: `/project/${projectId}`, method: "GET", signal },
     options,
   );
 };
 
-export const getAddAdministratorToProjectMutationOptions = <
-  TError = ErrorType<void | DmError>,
+export const getGetProjectQueryKey = (projectId: string) => {
+  return ["data-manager", "project", projectId] as const;
+};
+
+export const getGetProjectQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProject>>,
+  TError = ErrorType<void | GetProject403 | GetProject404>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetProjectQueryKey(projectId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getProject>>> = ({ signal }) =>
+    getProject(projectId, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: projectId !== null && projectId !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
+
+export type GetProjectQueryResult = NonNullable<Awaited<ReturnType<typeof getProject>>>;
+export type GetProjectQueryError = ErrorType<void | GetProject403 | GetProject404>;
+
+export function useGetProject<
+  TData = Awaited<ReturnType<typeof getProject>>,
+  TError = ErrorType<void | GetProject403 | GetProject404>,
+>(
+  projectId: string,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProject>>,
+          TError,
+          Awaited<ReturnType<typeof getProject>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetProject<
+  TData = Awaited<ReturnType<typeof getProject>>,
+  TError = ErrorType<void | GetProject403 | GetProject404>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getProject>>,
+          TError,
+          Awaited<ReturnType<typeof getProject>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetProject<
+  TData = Awaited<ReturnType<typeof getProject>>,
+  TError = ErrorType<void | GetProject403 | GetProject404>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get a Project by UUID
+ */
+
+export function useGetProject<
+  TData = Awaited<ReturnType<typeof getProject>>,
+  TError = ErrorType<void | GetProject403 | GetProject404>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetProjectQueryOptions(projectId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Get a Project by UUID
+ */
+export const invalidateGetProject = async (
+  queryClient: QueryClient,
+  projectId: string,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) }, options);
+
+  return queryClient;
+};
+
+export const getGetProjectSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getProject>>,
+  TError = ErrorType<void | GetProject403 | GetProject404>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetProjectQueryKey(projectId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getProject>>> = ({ signal }) =>
+    getProject(projectId, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getProject>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetProjectSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getProject>>>;
+export type GetProjectSuspenseQueryError = ErrorType<void | GetProject403 | GetProject404>;
+
+export function useGetProjectSuspense<
+  TData = Awaited<ReturnType<typeof getProject>>,
+  TError = ErrorType<void | GetProject403 | GetProject404>,
+>(
+  projectId: string,
+  options: {
+    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetProjectSuspense<
+  TData = Awaited<ReturnType<typeof getProject>>,
+  TError = ErrorType<void | GetProject403 | GetProject404>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetProjectSuspense<
+  TData = Awaited<ReturnType<typeof getProject>>,
+  TError = ErrorType<void | GetProject403 | GetProject404>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get a Project by UUID
+ */
+
+export function useGetProjectSuspense<
+  TData = Awaited<ReturnType<typeof getProject>>,
+  TError = ErrorType<void | GetProject403 | GetProject404>,
+>(
+  projectId: string,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetProjectSuspenseQueryOptions(projectId, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * Used to update some adjustable parameters of a Project, i.e. to make it `private` or make it `public``. What can be adjusted will depend on the purchased **Product**
+ * @summary Adjust an existing Project
+ */
+export const patchProject = (
+  projectId: string,
+  patchProjectBody?: PatchProjectBody,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  const formUrlEncoded = new URLSearchParams();
+  if (patchProjectBody?.name !== undefined) {
+    formUrlEncoded.append(`name`, patchProjectBody.name);
+  }
+  if (patchProjectBody?.private !== undefined) {
+    formUrlEncoded.append(`private`, patchProjectBody.private.toString());
+  }
+
+  return customInstance<void>(
+    {
+      url: `/project/${projectId}`,
+      method: "PATCH",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: formUrlEncoded,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getPatchProjectMutationOptions = <
+  TError = ErrorType<void | PatchProject403 | PatchProject404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof addAdministratorToProject>>,
+    Awaited<ReturnType<typeof patchProject>>,
     TError,
-    { projectId: string; userId: string },
+    { projectId: string; data?: PatchProjectBody },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof addAdministratorToProject>>,
+  Awaited<ReturnType<typeof patchProject>>,
   TError,
-  { projectId: string; userId: string },
+  { projectId: string; data?: PatchProjectBody },
   TContext
 > => {
-  const mutationKey = ["addAdministratorToProject"];
+  const mutationKey = ["patchProject"];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
@@ -818,47 +770,45 @@ export const getAddAdministratorToProjectMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof addAdministratorToProject>>,
-    { projectId: string; userId: string }
+    Awaited<ReturnType<typeof patchProject>>,
+    { projectId: string; data?: PatchProjectBody }
   > = (props) => {
-    const { projectId, userId } = props ?? {};
+    const { projectId, data } = props ?? {};
 
-    return addAdministratorToProject(projectId, userId, requestOptions);
+    return patchProject(projectId, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type AddAdministratorToProjectMutationResult = NonNullable<
-  Awaited<ReturnType<typeof addAdministratorToProject>>
->;
-
-export type AddAdministratorToProjectMutationError = ErrorType<void | DmError>;
+export type PatchProjectMutationResult = NonNullable<Awaited<ReturnType<typeof patchProject>>>;
+export type PatchProjectMutationBody = PatchProjectBody | undefined;
+export type PatchProjectMutationError = ErrorType<void | PatchProject403 | PatchProject404>;
 
 /**
- * @summary Add a Project Administrator
+ * @summary Adjust an existing Project
  */
-export const useAddAdministratorToProject = <
-  TError = ErrorType<void | DmError>,
+export const usePatchProject = <
+  TError = ErrorType<void | PatchProject403 | PatchProject404>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof addAdministratorToProject>>,
+      Awaited<ReturnType<typeof patchProject>>,
       TError,
-      { projectId: string; userId: string },
+      { projectId: string; data?: PatchProjectBody },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof addAdministratorToProject>>,
+  Awaited<ReturnType<typeof patchProject>>,
   TError,
-  { projectId: string; userId: string },
+  { projectId: string; data?: PatchProjectBody },
   TContext
 > => {
-  return useMutation(getAddAdministratorToProjectMutationOptions(options), queryClient);
+  return useMutation(getPatchProjectMutationOptions(options), queryClient);
 };
 /**
  * Deletes a project `administrator`. The administrator can be you.
@@ -881,7 +831,12 @@ export const removeAdministratorFromProject = (
 };
 
 export const getRemoveAdministratorFromProjectMutationOptions = <
-  TError = ErrorType<DmError | void>,
+  TError = ErrorType<
+    | RemoveAdministratorFromProject400
+    | void
+    | RemoveAdministratorFromProject403
+    | RemoveAdministratorFromProject404
+  >,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -920,13 +875,23 @@ export type RemoveAdministratorFromProjectMutationResult = NonNullable<
   Awaited<ReturnType<typeof removeAdministratorFromProject>>
 >;
 
-export type RemoveAdministratorFromProjectMutationError = ErrorType<DmError | void>;
+export type RemoveAdministratorFromProjectMutationError = ErrorType<
+  | RemoveAdministratorFromProject400
+  | void
+  | RemoveAdministratorFromProject403
+  | RemoveAdministratorFromProject404
+>;
 
 /**
  * @summary Delete a Project Administrator
  */
 export const useRemoveAdministratorFromProject = <
-  TError = ErrorType<DmError | void>,
+  TError = ErrorType<
+    | RemoveAdministratorFromProject400
+    | void
+    | RemoveAdministratorFromProject403
+    | RemoveAdministratorFromProject404
+  >,
   TContext = unknown,
 >(
   options?: {
@@ -948,43 +913,41 @@ export const useRemoveAdministratorFromProject = <
   return useMutation(getRemoveAdministratorFromProjectMutationOptions(options), queryClient);
 };
 /**
- * Adds a user to a Project as an `editor`. Editors can add and remove datasets in a project and delete the project.
- *
- * An `editor` of a project is not automatically an `editor` of any datasets the project contains.
+ * Adds a user to a Project as an `administrator`. As well as the ability to edit the project administrators can add and remove other users.
  *
  * You must be an `administrator` of the project
- * @summary Add a Project Editor
+ * @summary Add a Project Administrator
  */
-export const addEditorToProject = (
+export const addAdministratorToProject = (
   projectId: string,
   userId: string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<void>(
-    { url: `/project/${projectId}/editor/${userId}`, method: "PUT", signal },
+    { url: `/project/${projectId}/administrator/${userId}`, method: "PUT", signal },
     options,
   );
 };
 
-export const getAddEditorToProjectMutationOptions = <
-  TError = ErrorType<void | DmError>,
+export const getAddAdministratorToProjectMutationOptions = <
+  TError = ErrorType<void | AddAdministratorToProject403 | AddAdministratorToProject404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof addEditorToProject>>,
+    Awaited<ReturnType<typeof addAdministratorToProject>>,
     TError,
     { projectId: string; userId: string },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof addEditorToProject>>,
+  Awaited<ReturnType<typeof addAdministratorToProject>>,
   TError,
   { projectId: string; userId: string },
   TContext
 > => {
-  const mutationKey = ["addEditorToProject"];
+  const mutationKey = ["addAdministratorToProject"];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
@@ -992,30 +955,35 @@ export const getAddEditorToProjectMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof addEditorToProject>>,
+    Awaited<ReturnType<typeof addAdministratorToProject>>,
     { projectId: string; userId: string }
   > = (props) => {
     const { projectId, userId } = props ?? {};
 
-    return addEditorToProject(projectId, userId, requestOptions);
+    return addAdministratorToProject(projectId, userId, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type AddEditorToProjectMutationResult = NonNullable<
-  Awaited<ReturnType<typeof addEditorToProject>>
+export type AddAdministratorToProjectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addAdministratorToProject>>
 >;
 
-export type AddEditorToProjectMutationError = ErrorType<void | DmError>;
+export type AddAdministratorToProjectMutationError = ErrorType<
+  void | AddAdministratorToProject403 | AddAdministratorToProject404
+>;
 
 /**
- * @summary Add a Project Editor
+ * @summary Add a Project Administrator
  */
-export const useAddEditorToProject = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useAddAdministratorToProject = <
+  TError = ErrorType<void | AddAdministratorToProject403 | AddAdministratorToProject404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof addEditorToProject>>,
+      Awaited<ReturnType<typeof addAdministratorToProject>>,
       TError,
       { projectId: string; userId: string },
       TContext
@@ -1024,12 +992,12 @@ export const useAddEditorToProject = <TError = ErrorType<void | DmError>, TConte
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof addEditorToProject>>,
+  Awaited<ReturnType<typeof addAdministratorToProject>>,
   TError,
   { projectId: string; userId: string },
   TContext
 > => {
-  return useMutation(getAddEditorToProjectMutationOptions(options), queryClient);
+  return useMutation(getAddAdministratorToProjectMutationOptions(options), queryClient);
 };
 /**
  * Deletes a project `editor`. The editor can be you.
@@ -1052,7 +1020,9 @@ export const removeEditorFromProject = (
 };
 
 export const getRemoveEditorFromProjectMutationOptions = <
-  TError = ErrorType<DmError | void>,
+  TError = ErrorType<
+    RemoveEditorFromProject400 | void | RemoveEditorFromProject403 | RemoveEditorFromProject404
+  >,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -1091,12 +1061,19 @@ export type RemoveEditorFromProjectMutationResult = NonNullable<
   Awaited<ReturnType<typeof removeEditorFromProject>>
 >;
 
-export type RemoveEditorFromProjectMutationError = ErrorType<DmError | void>;
+export type RemoveEditorFromProjectMutationError = ErrorType<
+  RemoveEditorFromProject400 | void | RemoveEditorFromProject403 | RemoveEditorFromProject404
+>;
 
 /**
  * @summary Delete a Project Editor
  */
-export const useRemoveEditorFromProject = <TError = ErrorType<DmError | void>, TContext = unknown>(
+export const useRemoveEditorFromProject = <
+  TError = ErrorType<
+    RemoveEditorFromProject400 | void | RemoveEditorFromProject403 | RemoveEditorFromProject404
+  >,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof removeEditorFromProject>>,
@@ -1116,41 +1093,43 @@ export const useRemoveEditorFromProject = <TError = ErrorType<DmError | void>, T
   return useMutation(getRemoveEditorFromProjectMutationOptions(options), queryClient);
 };
 /**
- * Adds a user to a project as an `observer`. Observers can view Projects and download files but they cannot modify Project data or run **Applications** or **Jobs**.
+ * Adds a user to a Project as an `editor`. Editors can add and remove datasets in a project and delete the project.
  *
- * You must be an `administrator` of the Project to add Observers
- * @summary Add a Project Observer
+ * An `editor` of a project is not automatically an `editor` of any datasets the project contains.
+ *
+ * You must be an `administrator` of the project
+ * @summary Add a Project Editor
  */
-export const addObserverToProject = (
+export const addEditorToProject = (
   projectId: string,
   userId: string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<void>(
-    { url: `/project/${projectId}/observer/${userId}`, method: "PUT", signal },
+    { url: `/project/${projectId}/editor/${userId}`, method: "PUT", signal },
     options,
   );
 };
 
-export const getAddObserverToProjectMutationOptions = <
-  TError = ErrorType<void | DmError>,
+export const getAddEditorToProjectMutationOptions = <
+  TError = ErrorType<void | AddEditorToProject403 | AddEditorToProject404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof addObserverToProject>>,
+    Awaited<ReturnType<typeof addEditorToProject>>,
     TError,
     { projectId: string; userId: string },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof addObserverToProject>>,
+  Awaited<ReturnType<typeof addEditorToProject>>,
   TError,
   { projectId: string; userId: string },
   TContext
 > => {
-  const mutationKey = ["addObserverToProject"];
+  const mutationKey = ["addEditorToProject"];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
@@ -1158,30 +1137,35 @@ export const getAddObserverToProjectMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof addObserverToProject>>,
+    Awaited<ReturnType<typeof addEditorToProject>>,
     { projectId: string; userId: string }
   > = (props) => {
     const { projectId, userId } = props ?? {};
 
-    return addObserverToProject(projectId, userId, requestOptions);
+    return addEditorToProject(projectId, userId, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type AddObserverToProjectMutationResult = NonNullable<
-  Awaited<ReturnType<typeof addObserverToProject>>
+export type AddEditorToProjectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addEditorToProject>>
 >;
 
-export type AddObserverToProjectMutationError = ErrorType<void | DmError>;
+export type AddEditorToProjectMutationError = ErrorType<
+  void | AddEditorToProject403 | AddEditorToProject404
+>;
 
 /**
- * @summary Add a Project Observer
+ * @summary Add a Project Editor
  */
-export const useAddObserverToProject = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useAddEditorToProject = <
+  TError = ErrorType<void | AddEditorToProject403 | AddEditorToProject404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof addObserverToProject>>,
+      Awaited<ReturnType<typeof addEditorToProject>>,
       TError,
       { projectId: string; userId: string },
       TContext
@@ -1190,12 +1174,12 @@ export const useAddObserverToProject = <TError = ErrorType<void | DmError>, TCon
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof addObserverToProject>>,
+  Awaited<ReturnType<typeof addEditorToProject>>,
   TError,
   { projectId: string; userId: string },
   TContext
 > => {
-  return useMutation(getAddObserverToProjectMutationOptions(options), queryClient);
+  return useMutation(getAddEditorToProjectMutationOptions(options), queryClient);
 };
 /**
  * Deletes a project `observer`.
@@ -1216,7 +1200,12 @@ export const removeObserverFromProject = (
 };
 
 export const getRemoveObserverFromProjectMutationOptions = <
-  TError = ErrorType<DmError | void>,
+  TError = ErrorType<
+    | RemoveObserverFromProject400
+    | void
+    | RemoveObserverFromProject403
+    | RemoveObserverFromProject404
+  >,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -1255,13 +1244,20 @@ export type RemoveObserverFromProjectMutationResult = NonNullable<
   Awaited<ReturnType<typeof removeObserverFromProject>>
 >;
 
-export type RemoveObserverFromProjectMutationError = ErrorType<DmError | void>;
+export type RemoveObserverFromProjectMutationError = ErrorType<
+  RemoveObserverFromProject400 | void | RemoveObserverFromProject403 | RemoveObserverFromProject404
+>;
 
 /**
  * @summary Delete a Project Observer
  */
 export const useRemoveObserverFromProject = <
-  TError = ErrorType<DmError | void>,
+  TError = ErrorType<
+    | RemoveObserverFromProject400
+    | void
+    | RemoveObserverFromProject403
+    | RemoveObserverFromProject404
+  >,
   TContext = unknown,
 >(
   options?: {
@@ -1281,4 +1277,91 @@ export const useRemoveObserverFromProject = <
   TContext
 > => {
   return useMutation(getRemoveObserverFromProjectMutationOptions(options), queryClient);
+};
+/**
+ * Adds a user to a project as an `observer`. Observers can view Projects and download files but they cannot modify Project data or run **Applications** or **Jobs**.
+ *
+ * You must be an `administrator` of the Project to add Observers
+ * @summary Add a Project Observer
+ */
+export const addObserverToProject = (
+  projectId: string,
+  userId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/project/${projectId}/observer/${userId}`, method: "PUT", signal },
+    options,
+  );
+};
+
+export const getAddObserverToProjectMutationOptions = <
+  TError = ErrorType<void | AddObserverToProject403 | AddObserverToProject404>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addObserverToProject>>,
+    TError,
+    { projectId: string; userId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof addObserverToProject>>,
+  TError,
+  { projectId: string; userId: string },
+  TContext
+> => {
+  const mutationKey = ["addObserverToProject"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof addObserverToProject>>,
+    { projectId: string; userId: string }
+  > = (props) => {
+    const { projectId, userId } = props ?? {};
+
+    return addObserverToProject(projectId, userId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AddObserverToProjectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addObserverToProject>>
+>;
+
+export type AddObserverToProjectMutationError = ErrorType<
+  void | AddObserverToProject403 | AddObserverToProject404
+>;
+
+/**
+ * @summary Add a Project Observer
+ */
+export const useAddObserverToProject = <
+  TError = ErrorType<void | AddObserverToProject403 | AddObserverToProject404>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof addObserverToProject>>,
+      TError,
+      { projectId: string; userId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof addObserverToProject>>,
+  TError,
+  { projectId: string; userId: string },
+  TContext
+> => {
+  return useMutation(getAddObserverToProjectMutationOptions(options), queryClient);
 };

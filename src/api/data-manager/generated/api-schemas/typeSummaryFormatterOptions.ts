@@ -14,11 +14,11 @@ import type { TypeSummaryFormatterOptionsType } from "./typeSummaryFormatterOpti
  * If present, contains the formatter_options that can be entered in the format_extra_variables field in the POST /dataset api.
  */
 export type TypeSummaryFormatterOptions = {
+  /** Required properties */
+  required: string[];
   /** The title of the Formatter object */
   title: string;
   /** The Schema type (an object) */
   type: TypeSummaryFormatterOptionsType;
-  /** Required properties */
-  required: string[];
   [key: string]: unknown;
 };

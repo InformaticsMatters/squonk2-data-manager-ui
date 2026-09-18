@@ -8,30 +8,26 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QJobCollectionParameter } from "./qJobCollectionParameter";
-import type { QJobJobParameter } from "./qJobJobParameter";
-import type { QJobVersionParameter } from "./qJobVersionParameter";
-import type { QProjectIdParameter } from "./qProjectIdParameter";
 
 export type GetJobByVersionParams = {
   /**
    * The Collection for a Job, i.e. "im-test"
    * @minLength 1
    */
-  collection: QJobCollectionParameter;
+  collection: string;
   /**
    * The Job, i.e. "coin-test"
    * @minLength 1
    */
-  job: QJobJobParameter;
+  job: string;
   /**
    * The version of a Job, i.e. "1.0.0"
    * @minLength 1
    */
-  version: QJobVersionParameter;
+  version: string;
   /**
    * A Project identity
    * @pattern ^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$
    */
-  project_id?: QProjectIdParameter;
+  project_id?: string;
 };

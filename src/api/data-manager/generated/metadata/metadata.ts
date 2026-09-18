@@ -28,10 +28,22 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
-  DatasetMetaGetResponse,
-  DatasetMetaPostBodyBody,
-  DatasetVersionMetaPostBodyBody,
-  DmError,
+  AddMetadata201,
+  AddMetadata400,
+  AddMetadata403,
+  AddMetadata404,
+  AddMetadataBody,
+  AddMetadataVersion201,
+  AddMetadataVersion400,
+  AddMetadataVersion403,
+  AddMetadataVersion404,
+  AddMetadataVersionBody,
+  GetMetadata200,
+  GetMetadata403,
+  GetMetadata404,
+  GetMetadataVersion200,
+  GetMetadataVersion403,
+  GetMetadataVersion404,
 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
@@ -55,31 +67,258 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
- * Update parameters or add new annotations of the specified type(s) and to the Metadata for a **Dataset Version**.
+ * Returns the Metadata for a Dataset in JSON format.
+ * @summary Gets the Metadata for a specific Dataset
+ */
+export const getMetadata = (
+  datasetId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<GetMetadata200>(
+    { url: `/dataset/${datasetId}/meta`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetMetadataQueryKey = (datasetId: string) => {
+  return ["data-manager", "dataset", datasetId, "meta"] as const;
+};
+
+export const getGetMetadataQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMetadata>>,
+  TError = ErrorType<void | GetMetadata403 | GetMetadata404>,
+>(
+  datasetId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetMetadataQueryKey(datasetId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMetadata>>> = ({ signal }) =>
+    getMetadata(datasetId, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: datasetId !== null && datasetId !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
+
+export type GetMetadataQueryResult = NonNullable<Awaited<ReturnType<typeof getMetadata>>>;
+export type GetMetadataQueryError = ErrorType<void | GetMetadata403 | GetMetadata404>;
+
+export function useGetMetadata<
+  TData = Awaited<ReturnType<typeof getMetadata>>,
+  TError = ErrorType<void | GetMetadata403 | GetMetadata404>,
+>(
+  datasetId: string,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMetadata>>,
+          TError,
+          Awaited<ReturnType<typeof getMetadata>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetMetadata<
+  TData = Awaited<ReturnType<typeof getMetadata>>,
+  TError = ErrorType<void | GetMetadata403 | GetMetadata404>,
+>(
+  datasetId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMetadata>>,
+          TError,
+          Awaited<ReturnType<typeof getMetadata>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetMetadata<
+  TData = Awaited<ReturnType<typeof getMetadata>>,
+  TError = ErrorType<void | GetMetadata403 | GetMetadata404>,
+>(
+  datasetId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Metadata for a specific Dataset
+ */
+
+export function useGetMetadata<
+  TData = Awaited<ReturnType<typeof getMetadata>>,
+  TError = ErrorType<void | GetMetadata403 | GetMetadata404>,
+>(
+  datasetId: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetMetadataQueryOptions(datasetId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets the Metadata for a specific Dataset
+ */
+export const invalidateGetMetadata = async (
+  queryClient: QueryClient,
+  datasetId: string,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries({ queryKey: getGetMetadataQueryKey(datasetId) }, options);
+
+  return queryClient;
+};
+
+export const getGetMetadataSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMetadata>>,
+  TError = ErrorType<void | GetMetadata403 | GetMetadata404>,
+>(
+  datasetId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetMetadataQueryKey(datasetId);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMetadata>>> = ({ signal }) =>
+    getMetadata(datasetId, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getMetadata>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMetadataSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getMetadata>>>;
+export type GetMetadataSuspenseQueryError = ErrorType<void | GetMetadata403 | GetMetadata404>;
+
+export function useGetMetadataSuspense<
+  TData = Awaited<ReturnType<typeof getMetadata>>,
+  TError = ErrorType<void | GetMetadata403 | GetMetadata404>,
+>(
+  datasetId: string,
+  options: {
+    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetMetadataSuspense<
+  TData = Awaited<ReturnType<typeof getMetadata>>,
+  TError = ErrorType<void | GetMetadata403 | GetMetadata404>,
+>(
+  datasetId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetMetadataSuspense<
+  TData = Awaited<ReturnType<typeof getMetadata>>,
+  TError = ErrorType<void | GetMetadata403 | GetMetadata404>,
+>(
+  datasetId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the Metadata for a specific Dataset
+ */
+
+export function useGetMetadataSuspense<
+  TData = Awaited<ReturnType<typeof getMetadata>>,
+  TError = ErrorType<void | GetMetadata403 | GetMetadata404>,
+>(
+  datasetId: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetMetadataSuspenseQueryOptions(datasetId, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * Update default parameters or add new labels to the Metadata for the Dataset.
  *
  * The parameters are provided in a list in keyword/arguments
  *
- * The annotations are provided in a list in JSON format. For details of the annotations that can be created, see the data-manager-metadata library.
- * @summary Update Metadata for the Dataset version
+ * The labels are provided in a list in JSON format. For details of the label format, see the data-manager-metadata library,
+ * @summary Update Metadata for the Dataset
  */
-export const addMetadataVersion = (
+export const addMetadata = (
   datasetId: string,
-  datasetVersion: number,
-  datasetVersionMetaPostBodyBody: DatasetVersionMetaPostBodyBody,
+  addMetadataBody: AddMetadataBody,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   const formUrlEncoded = new URLSearchParams();
-  if (datasetVersionMetaPostBodyBody.meta_properties !== undefined) {
-    formUrlEncoded.append(`meta_properties`, datasetVersionMetaPostBodyBody.meta_properties);
+  if (addMetadataBody.labels !== undefined) {
+    formUrlEncoded.append(`labels`, addMetadataBody.labels);
   }
-  if (datasetVersionMetaPostBodyBody.annotations !== undefined) {
-    formUrlEncoded.append(`annotations`, datasetVersionMetaPostBodyBody.annotations);
+  if (addMetadataBody.meta_properties !== undefined) {
+    formUrlEncoded.append(`meta_properties`, addMetadataBody.meta_properties);
   }
 
-  return customInstance<DatasetMetaGetResponse>(
+  return customInstance<AddMetadata201>(
     {
-      url: `/dataset/${datasetId}/meta/${datasetVersion}`,
+      url: `/dataset/${datasetId}/meta`,
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       data: formUrlEncoded,
@@ -89,24 +328,24 @@ export const addMetadataVersion = (
   );
 };
 
-export const getAddMetadataVersionMutationOptions = <
-  TError = ErrorType<DmError | void>,
+export const getAddMetadataMutationOptions = <
+  TError = ErrorType<AddMetadata400 | void | AddMetadata403 | AddMetadata404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof addMetadataVersion>>,
+    Awaited<ReturnType<typeof addMetadata>>,
     TError,
-    { datasetId: string; datasetVersion: number; data: DatasetVersionMetaPostBodyBody },
+    { datasetId: string; data: AddMetadataBody },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof addMetadataVersion>>,
+  Awaited<ReturnType<typeof addMetadata>>,
   TError,
-  { datasetId: string; datasetVersion: number; data: DatasetVersionMetaPostBodyBody },
+  { datasetId: string; data: AddMetadataBody },
   TContext
 > => {
-  const mutationKey = ["addMetadataVersion"];
+  const mutationKey = ["addMetadata"];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
@@ -114,44 +353,47 @@ export const getAddMetadataVersionMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof addMetadataVersion>>,
-    { datasetId: string; datasetVersion: number; data: DatasetVersionMetaPostBodyBody }
+    Awaited<ReturnType<typeof addMetadata>>,
+    { datasetId: string; data: AddMetadataBody }
   > = (props) => {
-    const { datasetId, datasetVersion, data } = props ?? {};
+    const { datasetId, data } = props ?? {};
 
-    return addMetadataVersion(datasetId, datasetVersion, data, requestOptions);
+    return addMetadata(datasetId, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type AddMetadataVersionMutationResult = NonNullable<
-  Awaited<ReturnType<typeof addMetadataVersion>>
+export type AddMetadataMutationResult = NonNullable<Awaited<ReturnType<typeof addMetadata>>>;
+export type AddMetadataMutationBody = AddMetadataBody;
+export type AddMetadataMutationError = ErrorType<
+  AddMetadata400 | void | AddMetadata403 | AddMetadata404
 >;
-export type AddMetadataVersionMutationBody = DatasetVersionMetaPostBodyBody;
-export type AddMetadataVersionMutationError = ErrorType<DmError | void>;
 
 /**
- * @summary Update Metadata for the Dataset version
+ * @summary Update Metadata for the Dataset
  */
-export const useAddMetadataVersion = <TError = ErrorType<DmError | void>, TContext = unknown>(
+export const useAddMetadata = <
+  TError = ErrorType<AddMetadata400 | void | AddMetadata403 | AddMetadata404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof addMetadataVersion>>,
+      Awaited<ReturnType<typeof addMetadata>>,
       TError,
-      { datasetId: string; datasetVersion: number; data: DatasetVersionMetaPostBodyBody },
+      { datasetId: string; data: AddMetadataBody },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof addMetadataVersion>>,
+  Awaited<ReturnType<typeof addMetadata>>,
   TError,
-  { datasetId: string; datasetVersion: number; data: DatasetVersionMetaPostBodyBody },
+  { datasetId: string; data: AddMetadataBody },
   TContext
 > => {
-  return useMutation(getAddMetadataVersionMutationOptions(options), queryClient);
+  return useMutation(getAddMetadataMutationOptions(options), queryClient);
 };
 /**
  * Returns the Metadata for a **Dataset Version** in JSON format.
@@ -163,7 +405,7 @@ export const getMetadataVersion = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<DatasetMetaGetResponse>(
+  return customInstance<GetMetadataVersion200>(
     { url: `/dataset/${datasetId}/meta/${datasetVersion}`, method: "GET", signal },
     options,
   );
@@ -175,7 +417,7 @@ export const getGetMetadataVersionQueryKey = (datasetId: string, datasetVersion:
 
 export const getGetMetadataVersionQueryOptions = <
   TData = Awaited<ReturnType<typeof getMetadataVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetMetadataVersion403 | GetMetadataVersion404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -209,11 +451,13 @@ export const getGetMetadataVersionQueryOptions = <
 export type GetMetadataVersionQueryResult = NonNullable<
   Awaited<ReturnType<typeof getMetadataVersion>>
 >;
-export type GetMetadataVersionQueryError = ErrorType<void | DmError>;
+export type GetMetadataVersionQueryError = ErrorType<
+  void | GetMetadataVersion403 | GetMetadataVersion404
+>;
 
 export function useGetMetadataVersion<
   TData = Awaited<ReturnType<typeof getMetadataVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetMetadataVersion403 | GetMetadataVersion404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -233,7 +477,7 @@ export function useGetMetadataVersion<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetMetadataVersion<
   TData = Awaited<ReturnType<typeof getMetadataVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetMetadataVersion403 | GetMetadataVersion404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -255,7 +499,7 @@ export function useGetMetadataVersion<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetMetadataVersion<
   TData = Awaited<ReturnType<typeof getMetadataVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetMetadataVersion403 | GetMetadataVersion404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -271,7 +515,7 @@ export function useGetMetadataVersion<
 
 export function useGetMetadataVersion<
   TData = Awaited<ReturnType<typeof getMetadataVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetMetadataVersion403 | GetMetadataVersion404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -309,7 +553,7 @@ export const invalidateGetMetadataVersion = async (
 
 export const getGetMetadataVersionSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getMetadataVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetMetadataVersion403 | GetMetadataVersion404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -338,11 +582,13 @@ export const getGetMetadataVersionSuspenseQueryOptions = <
 export type GetMetadataVersionSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof getMetadataVersion>>
 >;
-export type GetMetadataVersionSuspenseQueryError = ErrorType<void | DmError>;
+export type GetMetadataVersionSuspenseQueryError = ErrorType<
+  void | GetMetadataVersion403 | GetMetadataVersion404
+>;
 
 export function useGetMetadataVersionSuspense<
   TData = Awaited<ReturnType<typeof getMetadataVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetMetadataVersion403 | GetMetadataVersion404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -356,7 +602,7 @@ export function useGetMetadataVersionSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetMetadataVersionSuspense<
   TData = Awaited<ReturnType<typeof getMetadataVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetMetadataVersion403 | GetMetadataVersion404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -370,7 +616,7 @@ export function useGetMetadataVersionSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetMetadataVersionSuspense<
   TData = Awaited<ReturnType<typeof getMetadataVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetMetadataVersion403 | GetMetadataVersion404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -388,7 +634,7 @@ export function useGetMetadataVersionSuspense<
 
 export function useGetMetadataVersionSuspense<
   TData = Awaited<ReturnType<typeof getMetadataVersion>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetMetadataVersion403 | GetMetadataVersion404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -415,30 +661,31 @@ export function useGetMetadataVersionSuspense<
 }
 
 /**
- * Update default parameters or add new labels to the Metadata for the Dataset.
+ * Update parameters or add new annotations of the specified type(s) and to the Metadata for a **Dataset Version**.
  *
  * The parameters are provided in a list in keyword/arguments
  *
- * The labels are provided in a list in JSON format. For details of the label format, see the data-manager-metadata library,
- * @summary Update Metadata for the Dataset
+ * The annotations are provided in a list in JSON format. For details of the annotations that can be created, see the data-manager-metadata library.
+ * @summary Update Metadata for the Dataset version
  */
-export const addMetadata = (
+export const addMetadataVersion = (
   datasetId: string,
-  datasetMetaPostBodyBody: DatasetMetaPostBodyBody,
+  datasetVersion: number,
+  addMetadataVersionBody: AddMetadataVersionBody,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   const formUrlEncoded = new URLSearchParams();
-  if (datasetMetaPostBodyBody.meta_properties !== undefined) {
-    formUrlEncoded.append(`meta_properties`, datasetMetaPostBodyBody.meta_properties);
+  if (addMetadataVersionBody.annotations !== undefined) {
+    formUrlEncoded.append(`annotations`, addMetadataVersionBody.annotations);
   }
-  if (datasetMetaPostBodyBody.labels !== undefined) {
-    formUrlEncoded.append(`labels`, datasetMetaPostBodyBody.labels);
+  if (addMetadataVersionBody.meta_properties !== undefined) {
+    formUrlEncoded.append(`meta_properties`, addMetadataVersionBody.meta_properties);
   }
 
-  return customInstance<DatasetMetaGetResponse>(
+  return customInstance<AddMetadataVersion201>(
     {
-      url: `/dataset/${datasetId}/meta`,
+      url: `/dataset/${datasetId}/meta/${datasetVersion}`,
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       data: formUrlEncoded,
@@ -448,24 +695,24 @@ export const addMetadata = (
   );
 };
 
-export const getAddMetadataMutationOptions = <
-  TError = ErrorType<DmError | void>,
+export const getAddMetadataVersionMutationOptions = <
+  TError = ErrorType<AddMetadataVersion400 | void | AddMetadataVersion403 | AddMetadataVersion404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof addMetadata>>,
+    Awaited<ReturnType<typeof addMetadataVersion>>,
     TError,
-    { datasetId: string; data: DatasetMetaPostBodyBody },
+    { datasetId: string; datasetVersion: number; data: AddMetadataVersionBody },
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof addMetadata>>,
+  Awaited<ReturnType<typeof addMetadataVersion>>,
   TError,
-  { datasetId: string; data: DatasetMetaPostBodyBody },
+  { datasetId: string; datasetVersion: number; data: AddMetadataVersionBody },
   TContext
 > => {
-  const mutationKey = ["addMetadata"];
+  const mutationKey = ["addMetadataVersion"];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
@@ -473,267 +720,47 @@ export const getAddMetadataMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof addMetadata>>,
-    { datasetId: string; data: DatasetMetaPostBodyBody }
+    Awaited<ReturnType<typeof addMetadataVersion>>,
+    { datasetId: string; datasetVersion: number; data: AddMetadataVersionBody }
   > = (props) => {
-    const { datasetId, data } = props ?? {};
+    const { datasetId, datasetVersion, data } = props ?? {};
 
-    return addMetadata(datasetId, data, requestOptions);
+    return addMetadataVersion(datasetId, datasetVersion, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type AddMetadataMutationResult = NonNullable<Awaited<ReturnType<typeof addMetadata>>>;
-export type AddMetadataMutationBody = DatasetMetaPostBodyBody;
-export type AddMetadataMutationError = ErrorType<DmError | void>;
+export type AddMetadataVersionMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addMetadataVersion>>
+>;
+export type AddMetadataVersionMutationBody = AddMetadataVersionBody;
+export type AddMetadataVersionMutationError = ErrorType<
+  AddMetadataVersion400 | void | AddMetadataVersion403 | AddMetadataVersion404
+>;
 
 /**
- * @summary Update Metadata for the Dataset
+ * @summary Update Metadata for the Dataset version
  */
-export const useAddMetadata = <TError = ErrorType<DmError | void>, TContext = unknown>(
+export const useAddMetadataVersion = <
+  TError = ErrorType<AddMetadataVersion400 | void | AddMetadataVersion403 | AddMetadataVersion404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof addMetadata>>,
+      Awaited<ReturnType<typeof addMetadataVersion>>,
       TError,
-      { datasetId: string; data: DatasetMetaPostBodyBody },
+      { datasetId: string; datasetVersion: number; data: AddMetadataVersionBody },
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof addMetadata>>,
+  Awaited<ReturnType<typeof addMetadataVersion>>,
   TError,
-  { datasetId: string; data: DatasetMetaPostBodyBody },
+  { datasetId: string; datasetVersion: number; data: AddMetadataVersionBody },
   TContext
 > => {
-  return useMutation(getAddMetadataMutationOptions(options), queryClient);
+  return useMutation(getAddMetadataVersionMutationOptions(options), queryClient);
 };
-/**
- * Returns the Metadata for a Dataset in JSON format.
- * @summary Gets the Metadata for a specific Dataset
- */
-export const getMetadata = (
-  datasetId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<DatasetMetaGetResponse>(
-    { url: `/dataset/${datasetId}/meta`, method: "GET", signal },
-    options,
-  );
-};
-
-export const getGetMetadataQueryKey = (datasetId: string) => {
-  return ["data-manager", "dataset", datasetId, "meta"] as const;
-};
-
-export const getGetMetadataQueryOptions = <
-  TData = Awaited<ReturnType<typeof getMetadata>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetMetadataQueryKey(datasetId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMetadata>>> = ({ signal }) =>
-    getMetadata(datasetId, requestOptions, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: datasetId !== null && datasetId !== undefined,
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
-
-export type GetMetadataQueryResult = NonNullable<Awaited<ReturnType<typeof getMetadata>>>;
-export type GetMetadataQueryError = ErrorType<void | DmError>;
-
-export function useGetMetadata<
-  TData = Awaited<ReturnType<typeof getMetadata>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getMetadata>>,
-          TError,
-          Awaited<ReturnType<typeof getMetadata>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetMetadata<
-  TData = Awaited<ReturnType<typeof getMetadata>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getMetadata>>,
-          TError,
-          Awaited<ReturnType<typeof getMetadata>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetMetadata<
-  TData = Awaited<ReturnType<typeof getMetadata>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Metadata for a specific Dataset
- */
-
-export function useGetMetadata<
-  TData = Awaited<ReturnType<typeof getMetadata>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetMetadataQueryOptions(datasetId, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Gets the Metadata for a specific Dataset
- */
-export const invalidateGetMetadata = async (
-  queryClient: QueryClient,
-  datasetId: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries({ queryKey: getGetMetadataQueryKey(datasetId) }, options);
-
-  return queryClient;
-};
-
-export const getGetMetadataSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getMetadata>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetMetadataQueryKey(datasetId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMetadata>>> = ({ signal }) =>
-    getMetadata(datasetId, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getMetadata>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetMetadataSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getMetadata>>>;
-export type GetMetadataSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useGetMetadataSuspense<
-  TData = Awaited<ReturnType<typeof getMetadata>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  options: {
-    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetMetadataSuspense<
-  TData = Awaited<ReturnType<typeof getMetadata>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetMetadataSuspense<
-  TData = Awaited<ReturnType<typeof getMetadata>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the Metadata for a specific Dataset
- */
-
-export function useGetMetadataSuspense<
-  TData = Awaited<ReturnType<typeof getMetadata>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  options?: {
-    query?: Partial<
-      UseSuspenseQueryOptions<Awaited<ReturnType<typeof getMetadata>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetMetadataSuspenseQueryOptions(datasetId, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}

@@ -10,12 +10,12 @@
  */
 
 export interface EventStreamGetPostResponse {
-  /** The EventStream ID */
-  id: number;
-  /** A symbolic name, used internally to identify the stream */
-  name: string;
-  /** The Event Stream location. This will be a URL where events can be fetched. The protocol is typically a WebSocket, but the protocol is defined by the specific Event Stream Service that has been deployed. */
-  location: string;
   /** The Event Stream format. */
   format: string;
+  /** The EventStream ID */
+  id: number;
+  /** The Event Stream location. This will be a URL where events can be fetched. The protocol is typically a WebSocket, but the protocol is defined by the specific Event Stream Service that has been deployed. */
+  location: string;
+  /** A symbolic name, used internally to identify the stream */
+  name: string;
 }

@@ -8,6 +8,7 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { TaskIdentity } from "./taskIdentity";
 
-export type DatasetVersionDeleteResponse = TaskIdentity;
+export interface DatasetVersionDeleteResponse {
+  task_id: string;
+}

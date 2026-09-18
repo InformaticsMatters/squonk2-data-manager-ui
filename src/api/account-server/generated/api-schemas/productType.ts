@@ -11,10 +11,10 @@
 import type { ProductTypeServiceKind } from "./productTypeServiceKind";
 
 export interface ProductType {
-  /** A product type, this is a unique string amongst all types known to the Account Server */
-  type: string;
   /** A product flavour. Not all types have a flavour, those that do have a type-specific flavour string */
   flavour?: string;
   /** The kind of service that can use the Product */
   service_kind?: ProductTypeServiceKind;
+  /** A product type, this is a unique string amongst all types known to the Account Server */
+  type: string;
 }

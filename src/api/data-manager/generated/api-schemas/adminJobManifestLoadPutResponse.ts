@@ -10,10 +10,12 @@
  */
 
 export interface AdminJobManifestLoadPutResponse {
-  /** True if there are no errors, false otherwise */
-  status: boolean;
-  /** The number of Job Manifests inspected */
-  num_manifest_files_inspected: number;
+  /** Errors raised during the processing of individual Job Definitions */
+  job_definition_failures?: string[];
+  /** Errors raised during Job Definition file processing */
+  job_definition_file_failures?: string[];
+  /** Errors raised during Manifests file processing */
+  manifest_file_failures?: string[];
   /** The number of Job Definitions inspected */
   num_job_definition_files_inspected: number;
   /** The number of Jobs inspected */
@@ -22,10 +24,8 @@ export interface AdminJobManifestLoadPutResponse {
   num_jobs_loaded: number;
   /** The number of Jobs removed */
   num_jobs_purged?: number;
-  /** Errors raised during Manifests file processing */
-  manifest_file_failures?: string[];
-  /** Errors raised during Job Definition file processing */
-  job_definition_file_failures?: string[];
-  /** Errors raised during the processing of individual Job Definitions */
-  job_definition_failures?: string[];
+  /** The number of Job Manifests inspected */
+  num_manifest_files_inspected: number;
+  /** True if there are no errors, false otherwise */
+  status: boolean;
 }

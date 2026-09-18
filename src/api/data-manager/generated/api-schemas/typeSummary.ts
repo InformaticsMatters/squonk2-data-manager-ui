@@ -11,14 +11,14 @@
 import type { TypeSummaryFormatterOptions } from "./typeSummaryFormatterOptions";
 
 export interface TypeSummary {
-  /** The File Type MIME */
-  mime: string;
   /** The file's supported file extensions. Each type is limited to a limited number of extensions. For example, SDF files must have the extension `.sdf` (or `.sdf.gz`). */
   file_extensions: string[];
   /** The file's type's format-support container image (if set). Types without a format support image cannot be uploaded, but they might be available for use as destination type when a Dataset is added to a Project. */
   formatter_image?: string;
-  /** True if Datasets uploaded using this type's support loading of data into the Data Manager data-base. */
-  formatter_supports_db_load?: boolean;
   /** If present, contains the formatter_options that can be entered in the format_extra_variables field in the POST /dataset api. */
   formatter_options?: TypeSummaryFormatterOptions;
+  /** True if Datasets uploaded using this type's support loading of data into the Data Manager data-base. */
+  formatter_supports_db_load?: boolean;
+  /** The File Type MIME */
+  mime: string;
 }

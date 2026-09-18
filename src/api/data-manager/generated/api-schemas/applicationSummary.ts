@@ -10,10 +10,10 @@
  */
 
 export interface ApplicationSummary {
-  /** The application name, the value of the Kubernetes **Custom Resource Definition** `spec.names.kind` property */
-  kind: string;
-  /** The application group */
-  group?: string;
   /** The application unique reference, the value of the Kubernetes **Custom Resource Definition** `metadata.name` property */
   application_id: string;
+  /** The application group */
+  group?: string;
+  /** The application name, the value of the Kubernetes **Custom Resource Definition** `spec.names.kind` property */
+  kind: string;
 }

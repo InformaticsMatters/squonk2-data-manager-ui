@@ -8,10 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { JobExchangeRateSummary } from "./jobExchangeRateSummary";
+import type { GetAllExchangeRatesResponseExchangeRatesItem } from "./getAllExchangeRatesResponseExchangeRatesItem";
 
 export interface GetAllExchangeRatesResponse {
   count: number;
+  exchange_rates: GetAllExchangeRatesResponseExchangeRatesItem[];
   only_undefined: boolean;
-  exchange_rates: JobExchangeRateSummary[];
 }

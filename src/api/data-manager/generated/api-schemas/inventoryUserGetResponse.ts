@@ -8,10 +8,10 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { InventoryUserDetail } from "./inventoryUserDetail";
+import type { InventoryUserGetResponseUsersItem } from "./inventoryUserGetResponseUsersItem";
 
 export interface InventoryUserGetResponse {
   today: string;
   /** The list of known Users */
-  users: InventoryUserDetail[];
+  users: InventoryUserGetResponseUsersItem[];
 }

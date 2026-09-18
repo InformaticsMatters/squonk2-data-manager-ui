@@ -28,17 +28,36 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
-  DatasetDetail,
-  DatasetPostBodyBody,
-  DatasetPutBodyBody,
-  DatasetPutPostResponse,
-  DatasetSchemaGetResponse,
-  DatasetsGetResponse,
+  AddEditorToDataset403,
+  AddEditorToDataset404,
+  CreateDatasetFromFile201,
+  CreateDatasetFromFile403,
+  CreateDatasetFromFile415,
+  CreateDatasetFromFileBody,
+  DeleteDataset200,
+  DeleteDataset403,
+  DeleteDataset404,
   DeleteDatasetParams,
-  DmError,
+  DownloadDataset403,
+  DownloadDataset404,
+  GetDatasets200,
+  GetDatasets403,
+  GetDatasets404,
   GetDatasetsParams,
+  GetSchema200,
+  GetSchema403,
+  GetSchema404,
+  GetVersions200,
+  GetVersions403,
+  GetVersions404,
   GetVersionsParams,
-  TaskIdentity,
+  RemoveEditorFromDataset400,
+  RemoveEditorFromDataset403,
+  RemoveEditorFromDataset404,
+  UploadDataset201,
+  UploadDataset403,
+  UploadDataset415,
+  UploadDatasetBody,
 } from "../api-schemas";
 
 import { customInstance } from "../../../runtime/data-manager/axios";
@@ -62,221 +81,6 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
- * Using an unmanaged file in a Project as a source a Dataset (or new Dataset Version) is created.
- *
- * The Dataset is assigned a unique identity if it has no **Parent**. If a Parent Dataset is named during the upload the uploaded file inherits the Parent's identity and is issued with a new unique Version number within the Dataset.
- *
- * Behaves like the corresponding **POST** method except the file is expected to exist on a Project path.
- * @summary Create a Dataset from a file in a Project
- */
-export const createDatasetFromFile = (
-  datasetPutBodyBody: DatasetPutBodyBody,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  const formUrlEncoded = new URLSearchParams();
-  formUrlEncoded.append(`dataset_type`, datasetPutBodyBody.dataset_type);
-  if (datasetPutBodyBody.format_extra_variables !== undefined) {
-    formUrlEncoded.append(`format_extra_variables`, datasetPutBodyBody.format_extra_variables);
-  }
-  if (datasetPutBodyBody.skip_molecule_load !== undefined) {
-    formUrlEncoded.append(`skip_molecule_load`, datasetPutBodyBody.skip_molecule_load.toString());
-  }
-  formUrlEncoded.append(`project_id`, datasetPutBodyBody.project_id);
-  formUrlEncoded.append(`path`, datasetPutBodyBody.path);
-  formUrlEncoded.append(`file_name`, datasetPutBodyBody.file_name);
-  if (datasetPutBodyBody.dataset_id !== undefined) {
-    formUrlEncoded.append(`dataset_id`, datasetPutBodyBody.dataset_id);
-  }
-  if (datasetPutBodyBody.unit_id !== undefined) {
-    formUrlEncoded.append(`unit_id`, datasetPutBodyBody.unit_id);
-  }
-
-  return customInstance<DatasetPutPostResponse>(
-    {
-      url: `/dataset`,
-      method: "PUT",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      data: formUrlEncoded,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getCreateDatasetFromFileMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createDatasetFromFile>>,
-    TError,
-    { data: DatasetPutBodyBody },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof createDatasetFromFile>>,
-  TError,
-  { data: DatasetPutBodyBody },
-  TContext
-> => {
-  const mutationKey = ["createDatasetFromFile"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createDatasetFromFile>>,
-    { data: DatasetPutBodyBody }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return createDatasetFromFile(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type CreateDatasetFromFileMutationResult = NonNullable<
-  Awaited<ReturnType<typeof createDatasetFromFile>>
->;
-export type CreateDatasetFromFileMutationBody = DatasetPutBodyBody;
-export type CreateDatasetFromFileMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Create a Dataset from a file in a Project
- */
-export const useCreateDatasetFromFile = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof createDatasetFromFile>>,
-      TError,
-      { data: DatasetPutBodyBody },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof createDatasetFromFile>>,
-  TError,
-  { data: DatasetPutBodyBody },
-  TContext
-> => {
-  return useMutation(getCreateDatasetFromFileMutationOptions(options), queryClient);
-};
-/**
- * Uploads a dataset.
- *
- * Dataset file-naming is strictly limited to a fixed set of extensions based on the Dataset **Type**. You can obtain the supported types (and their extensions) via the `/type` endpoint. Filenames that do not comply with the supported filename extensions will be rejected.
- *
- * Datasets can be uploaded in an uncompressed form, or uploaded pre-compressed using the `.gz` extension.
- *
- * The Dataset is assigned a unique identity if it has no **Parent**. If a Parent dataset is named during the upload the uploaded file inherits the Parent's identity and is issued with a new unique version number within the Dataset.
- *
- * Datasets undergo some processing in an asynchronous **Task** after control returns to you. The unique identity of the assigned task (the `task id`) is presented to you in this endpoint's response. Before you can use an uploaded dataset, and before the dataset can be added to any pre-assigned projects, you must wait until the task is complete by making regular calls to the `/task/{task-id}` endpoint. A Dataset upload is complete when the corresponding `task.done` is **true** along with a `task.exit_code` of **0**. If the Dataset upload fails `task.done` will be **true** but the `task.exit_code` will be non-zero.
- * @summary Upload an external file as a Dataset
- */
-export const uploadDataset = (
-  datasetPostBodyBody: DatasetPostBodyBody,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  const formData = new FormData();
-  formData.append(`dataset_file`, datasetPostBodyBody.dataset_file);
-  formData.append(`dataset_type`, datasetPostBodyBody.dataset_type);
-  if (datasetPostBodyBody.format_extra_variables !== undefined) {
-    formData.append(`format_extra_variables`, datasetPostBodyBody.format_extra_variables);
-  }
-  if (datasetPostBodyBody.skip_molecule_load !== undefined) {
-    formData.append(`skip_molecule_load`, datasetPostBodyBody.skip_molecule_load.toString());
-  }
-  if (datasetPostBodyBody.as_filename !== undefined) {
-    formData.append(`as_filename`, datasetPostBodyBody.as_filename);
-  }
-  if (datasetPostBodyBody.dataset_id !== undefined) {
-    formData.append(`dataset_id`, datasetPostBodyBody.dataset_id);
-  }
-  formData.append(`unit_id`, datasetPostBodyBody.unit_id);
-
-  return customInstance<DatasetPutPostResponse>(
-    {
-      url: `/dataset`,
-      method: "POST",
-      headers: { "Content-Type": "multipart/form-data" },
-      data: formData,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getUploadDatasetMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof uploadDataset>>,
-    TError,
-    { data: DatasetPostBodyBody },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof uploadDataset>>,
-  TError,
-  { data: DatasetPostBodyBody },
-  TContext
-> => {
-  const mutationKey = ["uploadDataset"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof uploadDataset>>,
-    { data: DatasetPostBodyBody }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return uploadDataset(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type UploadDatasetMutationResult = NonNullable<Awaited<ReturnType<typeof uploadDataset>>>;
-export type UploadDatasetMutationBody = DatasetPostBodyBody;
-export type UploadDatasetMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Upload an external file as a Dataset
- */
-export const useUploadDataset = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof uploadDataset>>,
-      TError,
-      { data: DatasetPostBodyBody },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof uploadDataset>>,
-  TError,
-  { data: DatasetPostBodyBody },
-  TContext
-> => {
-  return useMutation(getUploadDatasetMutationOptions(options), queryClient);
-};
-/**
  * Returns datasets that you have access to, whether attached to a project or not.
  *
  * You will not see Datasets while their upload is still in progress.
@@ -291,7 +95,7 @@ export const getDatasets = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<DatasetsGetResponse>(
+  return customInstance<GetDatasets200>(
     { url: `/dataset`, method: "GET", params, signal },
     options,
   );
@@ -303,7 +107,7 @@ export const getGetDatasetsQueryKey = (params?: GetDatasetsParams) => {
 
 export const getGetDatasetsQueryOptions = <
   TData = Awaited<ReturnType<typeof getDatasets>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasets403 | GetDatasets404>,
 >(
   params?: GetDatasetsParams,
   options?: {
@@ -326,11 +130,11 @@ export const getGetDatasetsQueryOptions = <
 };
 
 export type GetDatasetsQueryResult = NonNullable<Awaited<ReturnType<typeof getDatasets>>>;
-export type GetDatasetsQueryError = ErrorType<void | DmError>;
+export type GetDatasetsQueryError = ErrorType<void | GetDatasets403 | GetDatasets404>;
 
 export function useGetDatasets<
   TData = Awaited<ReturnType<typeof getDatasets>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasets403 | GetDatasets404>,
 >(
   params: undefined | GetDatasetsParams,
   options: {
@@ -349,7 +153,7 @@ export function useGetDatasets<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetDatasets<
   TData = Awaited<ReturnType<typeof getDatasets>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasets403 | GetDatasets404>,
 >(
   params?: GetDatasetsParams,
   options?: {
@@ -368,7 +172,7 @@ export function useGetDatasets<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetDatasets<
   TData = Awaited<ReturnType<typeof getDatasets>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasets403 | GetDatasets404>,
 >(
   params?: GetDatasetsParams,
   options?: {
@@ -383,7 +187,7 @@ export function useGetDatasets<
 
 export function useGetDatasets<
   TData = Awaited<ReturnType<typeof getDatasets>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasets403 | GetDatasets404>,
 >(
   params?: GetDatasetsParams,
   options?: {
@@ -416,7 +220,7 @@ export const invalidateGetDatasets = async (
 
 export const getGetDatasetsSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getDatasets>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasets403 | GetDatasets404>,
 >(
   params?: GetDatasetsParams,
   options?: {
@@ -441,11 +245,11 @@ export const getGetDatasetsSuspenseQueryOptions = <
 };
 
 export type GetDatasetsSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getDatasets>>>;
-export type GetDatasetsSuspenseQueryError = ErrorType<void | DmError>;
+export type GetDatasetsSuspenseQueryError = ErrorType<void | GetDatasets403 | GetDatasets404>;
 
 export function useGetDatasetsSuspense<
   TData = Awaited<ReturnType<typeof getDatasets>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasets403 | GetDatasets404>,
 >(
   params: undefined | GetDatasetsParams,
   options: {
@@ -456,7 +260,7 @@ export function useGetDatasetsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetDatasetsSuspense<
   TData = Awaited<ReturnType<typeof getDatasets>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasets403 | GetDatasets404>,
 >(
   params?: GetDatasetsParams,
   options?: {
@@ -469,7 +273,7 @@ export function useGetDatasetsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetDatasetsSuspense<
   TData = Awaited<ReturnType<typeof getDatasets>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasets403 | GetDatasets404>,
 >(
   params?: GetDatasetsParams,
   options?: {
@@ -486,7 +290,7 @@ export function useGetDatasetsSuspense<
 
 export function useGetDatasetsSuspense<
   TData = Awaited<ReturnType<typeof getDatasets>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetDatasets403 | GetDatasets404>,
 >(
   params?: GetDatasetsParams,
   options?: {
@@ -508,6 +312,656 @@ export function useGetDatasetsSuspense<
 }
 
 /**
+ * Uploads a dataset.
+ *
+ * Dataset file-naming is strictly limited to a fixed set of extensions based on the Dataset **Type**. You can obtain the supported types (and their extensions) via the `/type` endpoint. Filenames that do not comply with the supported filename extensions will be rejected.
+ *
+ * Datasets can be uploaded in an uncompressed form, or uploaded pre-compressed using the `.gz` extension.
+ *
+ * The Dataset is assigned a unique identity if it has no **Parent**. If a Parent dataset is named during the upload the uploaded file inherits the Parent's identity and is issued with a new unique version number within the Dataset.
+ *
+ * Datasets undergo some processing in an asynchronous **Task** after control returns to you. The unique identity of the assigned task (the `task id`) is presented to you in this endpoint's response. Before you can use an uploaded dataset, and before the dataset can be added to any pre-assigned projects, you must wait until the task is complete by making regular calls to the `/task/{task-id}` endpoint. A Dataset upload is complete when the corresponding `task.done` is **true** along with a `task.exit_code` of **0**. If the Dataset upload fails `task.done` will be **true** but the `task.exit_code` will be non-zero.
+ * @summary Upload an external file as a Dataset
+ */
+export const uploadDataset = (
+  uploadDatasetBody: UploadDatasetBody,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  const formData = new FormData();
+  if (uploadDatasetBody.as_filename !== undefined) {
+    formData.append(`as_filename`, uploadDatasetBody.as_filename);
+  }
+  formData.append(`dataset_file`, uploadDatasetBody.dataset_file);
+  if (uploadDatasetBody.dataset_id !== undefined) {
+    formData.append(`dataset_id`, uploadDatasetBody.dataset_id);
+  }
+  formData.append(`dataset_type`, uploadDatasetBody.dataset_type);
+  if (uploadDatasetBody.format_extra_variables !== undefined) {
+    formData.append(`format_extra_variables`, uploadDatasetBody.format_extra_variables);
+  }
+  if (uploadDatasetBody.skip_molecule_load !== undefined) {
+    formData.append(`skip_molecule_load`, uploadDatasetBody.skip_molecule_load.toString());
+  }
+  formData.append(`unit_id`, uploadDatasetBody.unit_id);
+
+  return customInstance<UploadDataset201>(
+    {
+      url: `/dataset`,
+      method: "POST",
+      headers: { "Content-Type": "multipart/form-data" },
+      data: formData,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getUploadDatasetMutationOptions = <
+  TError = ErrorType<void | UploadDataset403 | UploadDataset415>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof uploadDataset>>,
+    TError,
+    { data: UploadDatasetBody },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof uploadDataset>>,
+  TError,
+  { data: UploadDatasetBody },
+  TContext
+> => {
+  const mutationKey = ["uploadDataset"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof uploadDataset>>,
+    { data: UploadDatasetBody }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return uploadDataset(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UploadDatasetMutationResult = NonNullable<Awaited<ReturnType<typeof uploadDataset>>>;
+export type UploadDatasetMutationBody = UploadDatasetBody;
+export type UploadDatasetMutationError = ErrorType<void | UploadDataset403 | UploadDataset415>;
+
+/**
+ * @summary Upload an external file as a Dataset
+ */
+export const useUploadDataset = <
+  TError = ErrorType<void | UploadDataset403 | UploadDataset415>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof uploadDataset>>,
+      TError,
+      { data: UploadDatasetBody },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof uploadDataset>>,
+  TError,
+  { data: UploadDatasetBody },
+  TContext
+> => {
+  return useMutation(getUploadDatasetMutationOptions(options), queryClient);
+};
+/**
+ * Using an unmanaged file in a Project as a source a Dataset (or new Dataset Version) is created.
+ *
+ * The Dataset is assigned a unique identity if it has no **Parent**. If a Parent Dataset is named during the upload the uploaded file inherits the Parent's identity and is issued with a new unique Version number within the Dataset.
+ *
+ * Behaves like the corresponding **POST** method except the file is expected to exist on a Project path.
+ * @summary Create a Dataset from a file in a Project
+ */
+export const createDatasetFromFile = (
+  createDatasetFromFileBody: CreateDatasetFromFileBody,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  const formUrlEncoded = new URLSearchParams();
+  if (createDatasetFromFileBody.dataset_id !== undefined) {
+    formUrlEncoded.append(`dataset_id`, createDatasetFromFileBody.dataset_id);
+  }
+  formUrlEncoded.append(`dataset_type`, createDatasetFromFileBody.dataset_type);
+  formUrlEncoded.append(`file_name`, createDatasetFromFileBody.file_name);
+  if (createDatasetFromFileBody.format_extra_variables !== undefined) {
+    formUrlEncoded.append(
+      `format_extra_variables`,
+      createDatasetFromFileBody.format_extra_variables,
+    );
+  }
+  formUrlEncoded.append(`path`, createDatasetFromFileBody.path);
+  formUrlEncoded.append(`project_id`, createDatasetFromFileBody.project_id);
+  if (createDatasetFromFileBody.skip_molecule_load !== undefined) {
+    formUrlEncoded.append(
+      `skip_molecule_load`,
+      createDatasetFromFileBody.skip_molecule_load.toString(),
+    );
+  }
+  if (createDatasetFromFileBody.unit_id !== undefined) {
+    formUrlEncoded.append(`unit_id`, createDatasetFromFileBody.unit_id);
+  }
+
+  return customInstance<CreateDatasetFromFile201>(
+    {
+      url: `/dataset`,
+      method: "PUT",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: formUrlEncoded,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getCreateDatasetFromFileMutationOptions = <
+  TError = ErrorType<void | CreateDatasetFromFile403 | CreateDatasetFromFile415>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createDatasetFromFile>>,
+    TError,
+    { data: CreateDatasetFromFileBody },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createDatasetFromFile>>,
+  TError,
+  { data: CreateDatasetFromFileBody },
+  TContext
+> => {
+  const mutationKey = ["createDatasetFromFile"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createDatasetFromFile>>,
+    { data: CreateDatasetFromFileBody }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createDatasetFromFile(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateDatasetFromFileMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createDatasetFromFile>>
+>;
+export type CreateDatasetFromFileMutationBody = CreateDatasetFromFileBody;
+export type CreateDatasetFromFileMutationError = ErrorType<
+  void | CreateDatasetFromFile403 | CreateDatasetFromFile415
+>;
+
+/**
+ * @summary Create a Dataset from a file in a Project
+ */
+export const useCreateDatasetFromFile = <
+  TError = ErrorType<void | CreateDatasetFromFile403 | CreateDatasetFromFile415>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createDatasetFromFile>>,
+      TError,
+      { data: CreateDatasetFromFileBody },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof createDatasetFromFile>>,
+  TError,
+  { data: CreateDatasetFromFileBody },
+  TContext
+> => {
+  return useMutation(getCreateDatasetFromFileMutationOptions(options), queryClient);
+};
+/**
+ * The user is removed from the Dataset's `editor` list. The user is removed from all versions of a dataset. You can remove yourself but an `owner` (creator) will always have access to the dataset.
+ *
+ * You must be an `editor` or `owner` of the dataset.
+ *
+ * You cannot modify Dataset editors until its upload is complete.
+ * @summary Remove a user's edit permission for a Dataset
+ */
+export const removeEditorFromDataset = (
+  datasetId: string,
+  userId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/dataset/${datasetId}/editor/${userId}`, method: "DELETE", signal },
+    options,
+  );
+};
+
+export const getRemoveEditorFromDatasetMutationOptions = <
+  TError = ErrorType<
+    RemoveEditorFromDataset400 | void | RemoveEditorFromDataset403 | RemoveEditorFromDataset404
+  >,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof removeEditorFromDataset>>,
+    TError,
+    { datasetId: string; userId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof removeEditorFromDataset>>,
+  TError,
+  { datasetId: string; userId: string },
+  TContext
+> => {
+  const mutationKey = ["removeEditorFromDataset"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof removeEditorFromDataset>>,
+    { datasetId: string; userId: string }
+  > = (props) => {
+    const { datasetId, userId } = props ?? {};
+
+    return removeEditorFromDataset(datasetId, userId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RemoveEditorFromDatasetMutationResult = NonNullable<
+  Awaited<ReturnType<typeof removeEditorFromDataset>>
+>;
+
+export type RemoveEditorFromDatasetMutationError = ErrorType<
+  RemoveEditorFromDataset400 | void | RemoveEditorFromDataset403 | RemoveEditorFromDataset404
+>;
+
+/**
+ * @summary Remove a user's edit permission for a Dataset
+ */
+export const useRemoveEditorFromDataset = <
+  TError = ErrorType<
+    RemoveEditorFromDataset400 | void | RemoveEditorFromDataset403 | RemoveEditorFromDataset404
+  >,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof removeEditorFromDataset>>,
+      TError,
+      { datasetId: string; userId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof removeEditorFromDataset>>,
+  TError,
+  { datasetId: string; userId: string },
+  TContext
+> => {
+  return useMutation(getRemoveEditorFromDatasetMutationOptions(options), queryClient);
+};
+/**
+ * The user is added to the dataset's `editor`` list. The dataset `owner` is automatically an editor and so does not need to be added as an `editor`.
+ *
+ * You must be an `editor` or `owner` of the dataset.
+ *
+ * You cannot modify Dataset editors until its upload is complete.
+ * @summary Give a user edit permission for a Dataset
+ */
+export const addEditorToDataset = (
+  datasetId: string,
+  userId: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/dataset/${datasetId}/editor/${userId}`, method: "PUT", signal },
+    options,
+  );
+};
+
+export const getAddEditorToDatasetMutationOptions = <
+  TError = ErrorType<void | AddEditorToDataset403 | AddEditorToDataset404>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addEditorToDataset>>,
+    TError,
+    { datasetId: string; userId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof addEditorToDataset>>,
+  TError,
+  { datasetId: string; userId: string },
+  TContext
+> => {
+  const mutationKey = ["addEditorToDataset"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof addEditorToDataset>>,
+    { datasetId: string; userId: string }
+  > = (props) => {
+    const { datasetId, userId } = props ?? {};
+
+    return addEditorToDataset(datasetId, userId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AddEditorToDatasetMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addEditorToDataset>>
+>;
+
+export type AddEditorToDatasetMutationError = ErrorType<
+  void | AddEditorToDataset403 | AddEditorToDataset404
+>;
+
+/**
+ * @summary Give a user edit permission for a Dataset
+ */
+export const useAddEditorToDataset = <
+  TError = ErrorType<void | AddEditorToDataset403 | AddEditorToDataset404>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof addEditorToDataset>>,
+      TError,
+      { datasetId: string; userId: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof addEditorToDataset>>,
+  TError,
+  { datasetId: string; userId: string },
+  TContext
+> => {
+  return useMutation(getAddEditorToDatasetMutationOptions(options), queryClient);
+};
+/**
+ * Returns the property schema for a Dataset versions in JSON format (if available).
+ * @summary Gets the property schema for a specific Dataset
+ */
+export const getSchema = (
+  datasetId: string,
+  datasetVersion: number,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<GetSchema200>(
+    { url: `/dataset/${datasetId}/schema/${datasetVersion}`, method: "GET", signal },
+    options,
+  );
+};
+
+export const getGetSchemaQueryKey = (datasetId: string, datasetVersion: number) => {
+  return ["data-manager", "dataset", datasetId, "schema", datasetVersion] as const;
+};
+
+export const getGetSchemaQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSchema>>,
+  TError = ErrorType<void | GetSchema403 | GetSchema404>,
+>(
+  datasetId: string,
+  datasetVersion: number,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSchemaQueryKey(datasetId, datasetVersion);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSchema>>> = ({ signal }) =>
+    getSchema(datasetId, datasetVersion, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled:
+      datasetId !== null &&
+      datasetId !== undefined &&
+      datasetVersion !== null &&
+      datasetVersion !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
+
+export type GetSchemaQueryResult = NonNullable<Awaited<ReturnType<typeof getSchema>>>;
+export type GetSchemaQueryError = ErrorType<void | GetSchema403 | GetSchema404>;
+
+export function useGetSchema<
+  TData = Awaited<ReturnType<typeof getSchema>>,
+  TError = ErrorType<void | GetSchema403 | GetSchema404>,
+>(
+  datasetId: string,
+  datasetVersion: number,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSchema>>,
+          TError,
+          Awaited<ReturnType<typeof getSchema>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetSchema<
+  TData = Awaited<ReturnType<typeof getSchema>>,
+  TError = ErrorType<void | GetSchema403 | GetSchema404>,
+>(
+  datasetId: string,
+  datasetVersion: number,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSchema>>,
+          TError,
+          Awaited<ReturnType<typeof getSchema>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetSchema<
+  TData = Awaited<ReturnType<typeof getSchema>>,
+  TError = ErrorType<void | GetSchema403 | GetSchema404>,
+>(
+  datasetId: string,
+  datasetVersion: number,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the property schema for a specific Dataset
+ */
+
+export function useGetSchema<
+  TData = Awaited<ReturnType<typeof getSchema>>,
+  TError = ErrorType<void | GetSchema403 | GetSchema404>,
+>(
+  datasetId: string,
+  datasetVersion: number,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetSchemaQueryOptions(datasetId, datasetVersion, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
+ * @summary Gets the property schema for a specific Dataset
+ */
+export const invalidateGetSchema = async (
+  queryClient: QueryClient,
+  datasetId: string,
+  datasetVersion: number,
+  options?: InvalidateOptions,
+): Promise<QueryClient> => {
+  await queryClient.invalidateQueries(
+    { queryKey: getGetSchemaQueryKey(datasetId, datasetVersion) },
+    options,
+  );
+
+  return queryClient;
+};
+
+export const getGetSchemaSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSchema>>,
+  TError = ErrorType<void | GetSchema403 | GetSchema404>,
+>(
+  datasetId: string,
+  datasetVersion: number,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSchemaQueryKey(datasetId, datasetVersion);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSchema>>> = ({ signal }) =>
+    getSchema(datasetId, datasetVersion, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getSchema>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetSchemaSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getSchema>>>;
+export type GetSchemaSuspenseQueryError = ErrorType<void | GetSchema403 | GetSchema404>;
+
+export function useGetSchemaSuspense<
+  TData = Awaited<ReturnType<typeof getSchema>>,
+  TError = ErrorType<void | GetSchema403 | GetSchema404>,
+>(
+  datasetId: string,
+  datasetVersion: number,
+  options: {
+    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetSchemaSuspense<
+  TData = Awaited<ReturnType<typeof getSchema>>,
+  TError = ErrorType<void | GetSchema403 | GetSchema404>,
+>(
+  datasetId: string,
+  datasetVersion: number,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetSchemaSuspense<
+  TData = Awaited<ReturnType<typeof getSchema>>,
+  TError = ErrorType<void | GetSchema403 | GetSchema404>,
+>(
+  datasetId: string,
+  datasetVersion: number,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Gets the property schema for a specific Dataset
+ */
+
+export function useGetSchemaSuspense<
+  TData = Awaited<ReturnType<typeof getSchema>>,
+  TError = ErrorType<void | GetSchema403 | GetSchema404>,
+>(
+  datasetId: string,
+  datasetVersion: number,
+  options?: {
+    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetSchemaSuspenseQueryOptions(datasetId, datasetVersion, options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+/**
  * Returns a list of Dataset Versions.
  *
  * You will not see Datasets while their upload is still in progress.
@@ -519,7 +973,7 @@ export const getVersions = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<DatasetDetail>(
+  return customInstance<GetVersions200>(
     { url: `/dataset/${datasetId}/versions`, method: "GET", params, signal },
     options,
   );
@@ -531,7 +985,7 @@ export const getGetVersionsQueryKey = (datasetId: string, params?: GetVersionsPa
 
 export const getGetVersionsQueryOptions = <
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetVersions403 | GetVersions404>,
 >(
   datasetId: string,
   params?: GetVersionsParams,
@@ -558,11 +1012,11 @@ export const getGetVersionsQueryOptions = <
 };
 
 export type GetVersionsQueryResult = NonNullable<Awaited<ReturnType<typeof getVersions>>>;
-export type GetVersionsQueryError = ErrorType<void | DmError>;
+export type GetVersionsQueryError = ErrorType<void | GetVersions403 | GetVersions404>;
 
 export function useGetVersions<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetVersions403 | GetVersions404>,
 >(
   datasetId: string,
   params: undefined | GetVersionsParams,
@@ -582,7 +1036,7 @@ export function useGetVersions<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetVersions<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetVersions403 | GetVersions404>,
 >(
   datasetId: string,
   params?: GetVersionsParams,
@@ -602,7 +1056,7 @@ export function useGetVersions<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetVersions<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetVersions403 | GetVersions404>,
 >(
   datasetId: string,
   params?: GetVersionsParams,
@@ -618,7 +1072,7 @@ export function useGetVersions<
 
 export function useGetVersions<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetVersions403 | GetVersions404>,
 >(
   datasetId: string,
   params?: GetVersionsParams,
@@ -656,7 +1110,7 @@ export const invalidateGetVersions = async (
 
 export const getGetVersionsSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetVersions403 | GetVersions404>,
 >(
   datasetId: string,
   params?: GetVersionsParams,
@@ -682,11 +1136,11 @@ export const getGetVersionsSuspenseQueryOptions = <
 };
 
 export type GetVersionsSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getVersions>>>;
-export type GetVersionsSuspenseQueryError = ErrorType<void | DmError>;
+export type GetVersionsSuspenseQueryError = ErrorType<void | GetVersions403 | GetVersions404>;
 
 export function useGetVersionsSuspense<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetVersions403 | GetVersions404>,
 >(
   datasetId: string,
   params: undefined | GetVersionsParams,
@@ -698,7 +1152,7 @@ export function useGetVersionsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetVersionsSuspense<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetVersions403 | GetVersions404>,
 >(
   datasetId: string,
   params?: GetVersionsParams,
@@ -712,7 +1166,7 @@ export function useGetVersionsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetVersionsSuspense<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetVersions403 | GetVersions404>,
 >(
   datasetId: string,
   params?: GetVersionsParams,
@@ -730,7 +1184,7 @@ export function useGetVersionsSuspense<
 
 export function useGetVersionsSuspense<
   TData = Awaited<ReturnType<typeof getVersions>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | GetVersions403 | GetVersions404>,
 >(
   datasetId: string,
   params?: GetVersionsParams,
@@ -767,14 +1221,14 @@ export const deleteDataset = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<TaskIdentity>(
+  return customInstance<DeleteDataset200>(
     { url: `/dataset/${datasetId}/${datasetVersion}`, method: "DELETE", params, signal },
     options,
   );
 };
 
 export const getDeleteDatasetMutationOptions = <
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DeleteDataset403 | DeleteDataset404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -811,12 +1265,15 @@ export const getDeleteDatasetMutationOptions = <
 
 export type DeleteDatasetMutationResult = NonNullable<Awaited<ReturnType<typeof deleteDataset>>>;
 
-export type DeleteDatasetMutationError = ErrorType<void | DmError>;
+export type DeleteDatasetMutationError = ErrorType<void | DeleteDataset403 | DeleteDataset404>;
 
 /**
  * @summary Delete a Dataset
  */
-export const useDeleteDataset = <TError = ErrorType<void | DmError>, TContext = unknown>(
+export const useDeleteDataset = <
+  TError = ErrorType<void | DeleteDataset403 | DeleteDataset404>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deleteDataset>>,
@@ -859,7 +1316,7 @@ export const getDownloadDatasetQueryKey = (datasetId: string, datasetVersion: nu
 
 export const getDownloadDatasetQueryOptions = <
   TData = Awaited<ReturnType<typeof downloadDataset>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DownloadDataset403 | DownloadDataset404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -890,11 +1347,11 @@ export const getDownloadDatasetQueryOptions = <
 };
 
 export type DownloadDatasetQueryResult = NonNullable<Awaited<ReturnType<typeof downloadDataset>>>;
-export type DownloadDatasetQueryError = ErrorType<void | DmError>;
+export type DownloadDatasetQueryError = ErrorType<void | DownloadDataset403 | DownloadDataset404>;
 
 export function useDownloadDataset<
   TData = Awaited<ReturnType<typeof downloadDataset>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DownloadDataset403 | DownloadDataset404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -914,7 +1371,7 @@ export function useDownloadDataset<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useDownloadDataset<
   TData = Awaited<ReturnType<typeof downloadDataset>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DownloadDataset403 | DownloadDataset404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -934,7 +1391,7 @@ export function useDownloadDataset<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useDownloadDataset<
   TData = Awaited<ReturnType<typeof downloadDataset>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DownloadDataset403 | DownloadDataset404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -950,7 +1407,7 @@ export function useDownloadDataset<
 
 export function useDownloadDataset<
   TData = Awaited<ReturnType<typeof downloadDataset>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DownloadDataset403 | DownloadDataset404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -988,7 +1445,7 @@ export const invalidateDownloadDataset = async (
 
 export const getDownloadDatasetSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof downloadDataset>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DownloadDataset403 | DownloadDataset404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -1016,11 +1473,13 @@ export const getDownloadDatasetSuspenseQueryOptions = <
 export type DownloadDatasetSuspenseQueryResult = NonNullable<
   Awaited<ReturnType<typeof downloadDataset>>
 >;
-export type DownloadDatasetSuspenseQueryError = ErrorType<void | DmError>;
+export type DownloadDatasetSuspenseQueryError = ErrorType<
+  void | DownloadDataset403 | DownloadDataset404
+>;
 
 export function useDownloadDatasetSuspense<
   TData = Awaited<ReturnType<typeof downloadDataset>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DownloadDataset403 | DownloadDataset404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -1034,7 +1493,7 @@ export function useDownloadDatasetSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useDownloadDatasetSuspense<
   TData = Awaited<ReturnType<typeof downloadDataset>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DownloadDataset403 | DownloadDataset404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -1048,7 +1507,7 @@ export function useDownloadDatasetSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useDownloadDatasetSuspense<
   TData = Awaited<ReturnType<typeof downloadDataset>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DownloadDataset403 | DownloadDataset404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -1066,7 +1525,7 @@ export function useDownloadDatasetSuspense<
 
 export function useDownloadDatasetSuspense<
   TData = Awaited<ReturnType<typeof downloadDataset>>,
-  TError = ErrorType<void | DmError>,
+  TError = ErrorType<void | DownloadDataset403 | DownloadDataset404>,
 >(
   datasetId: string,
   datasetVersion: number,
@@ -1079,413 +1538,6 @@ export function useDownloadDatasetSuspense<
   queryClient?: QueryClient,
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getDownloadDatasetSuspenseQueryOptions(datasetId, datasetVersion, options);
-
-  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * The user is removed from the Dataset's `editor` list. The user is removed from all versions of a dataset. You can remove yourself but an `owner` (creator) will always have access to the dataset.
- *
- * You must be an `editor` or `owner` of the dataset.
- *
- * You cannot modify Dataset editors until its upload is complete.
- * @summary Remove a user's edit permission for a Dataset
- */
-export const removeEditorFromDataset = (
-  datasetId: string,
-  userId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>(
-    { url: `/dataset/${datasetId}/editor/${userId}`, method: "DELETE", signal },
-    options,
-  );
-};
-
-export const getRemoveEditorFromDatasetMutationOptions = <
-  TError = ErrorType<DmError | void>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof removeEditorFromDataset>>,
-    TError,
-    { datasetId: string; userId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof removeEditorFromDataset>>,
-  TError,
-  { datasetId: string; userId: string },
-  TContext
-> => {
-  const mutationKey = ["removeEditorFromDataset"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof removeEditorFromDataset>>,
-    { datasetId: string; userId: string }
-  > = (props) => {
-    const { datasetId, userId } = props ?? {};
-
-    return removeEditorFromDataset(datasetId, userId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type RemoveEditorFromDatasetMutationResult = NonNullable<
-  Awaited<ReturnType<typeof removeEditorFromDataset>>
->;
-
-export type RemoveEditorFromDatasetMutationError = ErrorType<DmError | void>;
-
-/**
- * @summary Remove a user's edit permission for a Dataset
- */
-export const useRemoveEditorFromDataset = <TError = ErrorType<DmError | void>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof removeEditorFromDataset>>,
-      TError,
-      { datasetId: string; userId: string },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof removeEditorFromDataset>>,
-  TError,
-  { datasetId: string; userId: string },
-  TContext
-> => {
-  return useMutation(getRemoveEditorFromDatasetMutationOptions(options), queryClient);
-};
-/**
- * The user is added to the dataset's `editor`` list. The dataset `owner` is automatically an editor and so does not need to be added as an `editor`.
- *
- * You must be an `editor` or `owner` of the dataset.
- *
- * You cannot modify Dataset editors until its upload is complete.
- * @summary Give a user edit permission for a Dataset
- */
-export const addEditorToDataset = (
-  datasetId: string,
-  userId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<void>(
-    { url: `/dataset/${datasetId}/editor/${userId}`, method: "PUT", signal },
-    options,
-  );
-};
-
-export const getAddEditorToDatasetMutationOptions = <
-  TError = ErrorType<void | DmError>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof addEditorToDataset>>,
-    TError,
-    { datasetId: string; userId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof addEditorToDataset>>,
-  TError,
-  { datasetId: string; userId: string },
-  TContext
-> => {
-  const mutationKey = ["addEditorToDataset"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof addEditorToDataset>>,
-    { datasetId: string; userId: string }
-  > = (props) => {
-    const { datasetId, userId } = props ?? {};
-
-    return addEditorToDataset(datasetId, userId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type AddEditorToDatasetMutationResult = NonNullable<
-  Awaited<ReturnType<typeof addEditorToDataset>>
->;
-
-export type AddEditorToDatasetMutationError = ErrorType<void | DmError>;
-
-/**
- * @summary Give a user edit permission for a Dataset
- */
-export const useAddEditorToDataset = <TError = ErrorType<void | DmError>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof addEditorToDataset>>,
-      TError,
-      { datasetId: string; userId: string },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof addEditorToDataset>>,
-  TError,
-  { datasetId: string; userId: string },
-  TContext
-> => {
-  return useMutation(getAddEditorToDatasetMutationOptions(options), queryClient);
-};
-/**
- * Returns the property schema for a Dataset versions in JSON format (if available).
- * @summary Gets the property schema for a specific Dataset
- */
-export const getSchema = (
-  datasetId: string,
-  datasetVersion: number,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<DatasetSchemaGetResponse>(
-    { url: `/dataset/${datasetId}/schema/${datasetVersion}`, method: "GET", signal },
-    options,
-  );
-};
-
-export const getGetSchemaQueryKey = (datasetId: string, datasetVersion: number) => {
-  return ["data-manager", "dataset", datasetId, "schema", datasetVersion] as const;
-};
-
-export const getGetSchemaQueryOptions = <
-  TData = Awaited<ReturnType<typeof getSchema>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  datasetVersion: number,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetSchemaQueryKey(datasetId, datasetVersion);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSchema>>> = ({ signal }) =>
-    getSchema(datasetId, datasetVersion, requestOptions, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled:
-      datasetId !== null &&
-      datasetId !== undefined &&
-      datasetVersion !== null &&
-      datasetVersion !== undefined,
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-};
-
-export type GetSchemaQueryResult = NonNullable<Awaited<ReturnType<typeof getSchema>>>;
-export type GetSchemaQueryError = ErrorType<void | DmError>;
-
-export function useGetSchema<
-  TData = Awaited<ReturnType<typeof getSchema>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  datasetVersion: number,
-  options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>> &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getSchema>>,
-          TError,
-          Awaited<ReturnType<typeof getSchema>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetSchema<
-  TData = Awaited<ReturnType<typeof getSchema>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  datasetVersion: number,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>> &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getSchema>>,
-          TError,
-          Awaited<ReturnType<typeof getSchema>>
-        >,
-        "initialData"
-      >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetSchema<
-  TData = Awaited<ReturnType<typeof getSchema>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  datasetVersion: number,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the property schema for a specific Dataset
- */
-
-export function useGetSchema<
-  TData = Awaited<ReturnType<typeof getSchema>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  datasetVersion: number,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetSchemaQueryOptions(datasetId, datasetVersion, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-/**
- * @summary Gets the property schema for a specific Dataset
- */
-export const invalidateGetSchema = async (
-  queryClient: QueryClient,
-  datasetId: string,
-  datasetVersion: number,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetSchemaQueryKey(datasetId, datasetVersion) },
-    options,
-  );
-
-  return queryClient;
-};
-
-export const getGetSchemaSuspenseQueryOptions = <
-  TData = Awaited<ReturnType<typeof getSchema>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  datasetVersion: number,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = queryOptions?.queryKey ?? getGetSchemaQueryKey(datasetId, datasetVersion);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSchema>>> = ({ signal }) =>
-    getSchema(datasetId, datasetVersion, requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-    Awaited<ReturnType<typeof getSchema>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type GetSchemaSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getSchema>>>;
-export type GetSchemaSuspenseQueryError = ErrorType<void | DmError>;
-
-export function useGetSchemaSuspense<
-  TData = Awaited<ReturnType<typeof getSchema>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  datasetVersion: number,
-  options: {
-    query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetSchemaSuspense<
-  TData = Awaited<ReturnType<typeof getSchema>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  datasetVersion: number,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetSchemaSuspense<
-  TData = Awaited<ReturnType<typeof getSchema>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  datasetVersion: number,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Gets the property schema for a specific Dataset
- */
-
-export function useGetSchemaSuspense<
-  TData = Awaited<ReturnType<typeof getSchema>>,
-  TError = ErrorType<void | DmError>,
->(
-  datasetId: string,
-  datasetVersion: number,
-  options?: {
-    query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getSchema>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetSchemaSuspenseQueryOptions(datasetId, datasetVersion, options);
 
   const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
     TData,

@@ -10,12 +10,14 @@
  */
 
 export interface UserDetail {
-  /** The user's preferred username */
-  username: string;
+  /** For admin accounts, whether the user is acting in an administrative capacity, i.e. acting as everyone */
+  become_admin?: boolean;
   /** The user's filesystem user uid */
   f_uid?: number;
   /** The date and time the user was first seen (an ISO-8601 formatted string in UTC) */
   first_seen?: string;
+  /** For admin accounts, whether the user is impersonating another user */
+  impersonate?: string;
   /** The date the user was last seen */
   last_seen_date?: string;
   /** Set if the user's account is marked as private. Private accounts do not show up against general queries. */
@@ -24,8 +26,6 @@ export interface UserDetail {
   suspended?: boolean;
   /** If the account is suspended this typically displays a reason for suspension */
   suspension_message?: string;
-  /** For admin accounts, whether the user is acting in an administrative capacity, i.e. acting as everyone */
-  become_admin?: boolean;
-  /** For admin accounts, whether the user is impersonating another user */
-  impersonate?: string;
+  /** The user's preferred username */
+  username: string;
 }

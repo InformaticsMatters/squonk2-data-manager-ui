@@ -17,13 +17,13 @@ import type { ProductInstanceDetail } from "./productInstanceDetail";
 import type { UnitAllDetail } from "./unitAllDetail";
 
 export interface ProductDmProjectTier {
-  product: ProductDetail;
-  organisation: OrganisationAllDetail;
-  unit: UnitAllDetail;
-  storage: ProductDmStorageDetail;
-  coins: ProductCoinsDetail;
-  instance: ProductInstanceDetail;
+  claim?: ProductClaimDetail;
   /** True if the product can be (needs to be) claimed. */
   claimable: boolean;
-  claim?: ProductClaimDetail;
+  coins: ProductCoinsDetail;
+  instance: ProductInstanceDetail;
+  organisation: OrganisationAllDetail;
+  product: ProductDetail;
+  storage: ProductDmStorageDetail;
+  unit: UnitAllDetail;
 }

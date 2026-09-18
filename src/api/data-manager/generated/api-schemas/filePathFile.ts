@@ -8,24 +8,24 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { FileStat } from "./fileStat";
+import type { FilePathFileStat } from "./filePathFileStat";
 
 export interface FilePathFile {
+  /** The code obtained from the Account Server */
+  authorisation_code?: number;
   /** The file's Dataset ID (if the file belongs to a Dataset) */
   dataset_id?: string;
   /** The file's Dataset version (if the file belongs to a Dataset) */
   dataset_version?: number;
-  /** The file name */
-  file_name: string;
   /** The ID of the file (if the file belongs to a Dataset) */
   file_id?: string;
+  /** The file name */
+  file_name: string;
   /** Whether the file is immutable (read-only) */
   immutable?: boolean;
   /** The file's MIME type */
   mime_type?: string;
   /** The file's owner */
   owner: string;
-  /** The code obtained from the Account Server */
-  authorisation_code?: number;
-  stat: FileStat;
+  stat: FilePathFileStat;
 }

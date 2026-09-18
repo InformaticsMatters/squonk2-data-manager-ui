@@ -21,41 +21,10 @@ export const AppApiProjectGetResponse = zod.object({
   count: zod.number(),
   projects: zod.array(
     zod.object({
-      name: zod.string().describe("The project name\n"),
-      project_id: zod.string().describe("The project unique reference\n"),
-      creator: zod.string().describe("The user who created the project\n"),
-      created: zod.iso.datetime({ offset: true }),
-      product_id: zod
-        .string()
-        .optional()
-        .describe("The Account Server Product the Project belongs to\n"),
-      product_flavour: zod
-        .string()
-        .optional()
-        .describe(
-          "If it's applicable, the Account Server Product flavour. Typically one of `GOLD`, `SILVER`, `BRONZE`, `EVALUATION`\n",
-        ),
-      organisation_id: zod
-        .string()
-        .optional()
-        .describe("The Account Server Organisation the Project Product Unit belongs to\n"),
-      unit_id: zod
-        .string()
-        .optional()
-        .describe("The Account Server Unit the Project Product belongs to\n"),
-      private: zod
-        .boolean()
-        .describe(
-          "True if the project is private. Private projects are only visible to editors.\n",
-        ),
       administrators: zod.array(zod.string()).describe("An administrator (user_id) of the project"),
+      created: zod.iso.datetime({ offset: true }),
+      creator: zod.string().describe("The user who created the project\n"),
       editors: zod.array(zod.string()).describe("An editor (user_id) of the project"),
-      observers: zod.array(zod.string()).describe("An observer (user_id) of the project"),
-      size: zod
-        .number()
-        .describe(
-          "The approximate size of all the files in the Project volume. This is updated regularly throughout the day and its current size may differ from what is reported here. The smallest billable unit is 1GiB (1,073,741,824 bytes). Therefore a project that contains 32KiB of files is recorded as 1GiB in size",
-        ),
       files: zod
         .array(
           zod.object({
@@ -71,27 +40,58 @@ export const AppApiProjectGetResponse = zod.object({
             file_id: zod.string().describe("The ProjectFile's unique ID\n"),
             file_name: zod.string().describe("The ProjectFile's filename within the Project\n"),
             file_path: zod.string().describe("The ProjectFile's path within the Project volume\n"),
-            processing_stage: zod
-              .enum(["COPYING", "FAILED", "FORMATTING", "LOADING", "DELETING", "DONE"])
-              .optional()
-              .describe("The processing stage.\n"),
             immutable: zod
               .boolean()
               .describe("True if the ProjectFile cannot be modified while in the Project\n"),
+            mime_type: zod.string().describe("The ProjectFile MIME type\n"),
             owner: zod
               .string()
               .describe(
                 "The owner of the ProjectFile. This is the user that added the Dataset (as this file) to the Project\n",
               ),
+            processing_stage: zod
+              .enum(["COPYING", "FAILED", "FORMATTING", "LOADING", "DELETING", "DONE"])
+              .optional()
+              .describe("The processing stage.\n"),
             project_id: zod
               .string()
               .optional()
               .describe("The Project the ProjectFile belongs to\n"),
-            mime_type: zod.string().describe("The ProjectFile MIME type\n"),
           }),
         )
         .optional()
         .describe("A list of managed files in the Project\n"),
+      name: zod.string().describe("The project name\n"),
+      observers: zod.array(zod.string()).describe("An observer (user_id) of the project"),
+      organisation_id: zod
+        .string()
+        .optional()
+        .describe("The Account Server Organisation the Project Product Unit belongs to\n"),
+      private: zod
+        .boolean()
+        .describe(
+          "True if the project is private. Private projects are only visible to editors.\n",
+        ),
+      product_flavour: zod
+        .string()
+        .optional()
+        .describe(
+          "If it's applicable, the Account Server Product flavour. Typically one of `GOLD`, `SILVER`, `BRONZE`, `EVALUATION`\n",
+        ),
+      product_id: zod
+        .string()
+        .optional()
+        .describe("The Account Server Product the Project belongs to\n"),
+      project_id: zod.string().describe("The project unique reference\n"),
+      size: zod
+        .number()
+        .describe(
+          "The approximate size of all the files in the Project volume. This is updated regularly throughout the day and its current size may differ from what is reported here. The smallest billable unit is 1GiB (1,073,741,824 bytes). Therefore a project that contains 32KiB of files is recorded as 1GiB in size",
+        ),
+      unit_id: zod
+        .string()
+        .optional()
+        .describe("The Account Server Unit the Project Product belongs to\n"),
     }),
   ),
 });
@@ -132,112 +132,6 @@ export const AppApiProjectPostResponse = zod.object({
 });
 
 /**
- * Gets the details of a Project that is available to you.
- * @summary Get a Project by UUID
- */
-export const appApiProjectGetProjectPathProjectIdRegExp = new RegExp(
-  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiProjectGetProjectParams = zod.object({
-  project_id: zod
-    .string()
-    .regex(appApiProjectGetProjectPathProjectIdRegExp)
-    .describe("The project identity"),
-});
-
-export const AppApiProjectGetProjectResponse = zod.object({
-  name: zod.string().describe("The project name\n"),
-  project_id: zod.string().describe("The project unique reference\n"),
-  creator: zod.string().describe("The user who created the project\n"),
-  created: zod.iso.datetime({ offset: true }),
-  product_id: zod
-    .string()
-    .optional()
-    .describe("The Account Server Product the Project belongs to\n"),
-  product_flavour: zod
-    .string()
-    .optional()
-    .describe(
-      "If it's applicable, the Account Server Product flavour. Typically one of `GOLD`, `SILVER`, `BRONZE`, `EVALUATION`\n",
-    ),
-  organisation_id: zod
-    .string()
-    .optional()
-    .describe("The Account Server Organisation the Project Product Unit belongs to\n"),
-  unit_id: zod
-    .string()
-    .optional()
-    .describe("The Account Server Unit the Project Product belongs to\n"),
-  private: zod
-    .boolean()
-    .describe("True if the project is private. Private projects are only visible to editors.\n"),
-  administrators: zod.array(zod.string()).describe("An administrator (user_id) of the project"),
-  editors: zod.array(zod.string()).describe("An editor (user_id) of the project"),
-  observers: zod.array(zod.string()).describe("An observer (user_id) of the project"),
-  size: zod
-    .number()
-    .describe(
-      "The approximate size of all the files in the Project volume. This is updated regularly throughout the day and its current size may differ from what is reported here. The smallest billable unit is 1GiB (1,073,741,824 bytes). Therefore a project that contains 32KiB of files is recorded as 1GiB in size",
-    ),
-  files: zod
-    .array(
-      zod.object({
-        authorisation_code: zod
-          .number()
-          .optional()
-          .describe("The code obtained from the Account Server\n"),
-        dataset_id: zod.string().optional().describe("The ProjectFile's Dataset origin\n"),
-        dataset_version: zod
-          .number()
-          .optional()
-          .describe("The ProjectFile's Dataset origin version\n"),
-        file_id: zod.string().describe("The ProjectFile's unique ID\n"),
-        file_name: zod.string().describe("The ProjectFile's filename within the Project\n"),
-        file_path: zod.string().describe("The ProjectFile's path within the Project volume\n"),
-        processing_stage: zod
-          .enum(["COPYING", "FAILED", "FORMATTING", "LOADING", "DELETING", "DONE"])
-          .optional()
-          .describe("The processing stage.\n"),
-        immutable: zod
-          .boolean()
-          .describe("True if the ProjectFile cannot be modified while in the Project\n"),
-        owner: zod
-          .string()
-          .describe(
-            "The owner of the ProjectFile. This is the user that added the Dataset (as this file) to the Project\n",
-          ),
-        project_id: zod.string().optional().describe("The Project the ProjectFile belongs to\n"),
-        mime_type: zod.string().describe("The ProjectFile MIME type\n"),
-      }),
-    )
-    .optional()
-    .describe("A list of managed files in the Project\n"),
-});
-
-/**
- * Used to update some adjustable parameters of a Project, i.e. to make it `private` or make it `public``. What can be adjusted will depend on the purchased **Product**
- * @summary Adjust an existing Project
- */
-export const appApiProjectPatchPathProjectIdRegExp = new RegExp(
-  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
-);
-
-export const AppApiProjectPatchParams = zod.object({
-  project_id: zod
-    .string()
-    .regex(appApiProjectPatchPathProjectIdRegExp)
-    .describe("The project identity"),
-});
-
-export const AppApiProjectPatchBody = zod.object({
-  private: zod.boolean().optional(),
-  name: zod.string().optional().describe("The new name of the Project\n"),
-});
-
-export const AppApiProjectPatchResponse = zod.unknown();
-
-/**
  * Deletes an existing Project.
  *
  * You must be an `administrator` of the project.
@@ -259,35 +153,110 @@ export const AppApiProjectDeleteParams = zod.object({
 export const AppApiProjectDeleteResponse = zod.object({ task_id: zod.string() });
 
 /**
- * Adds a user to a Project as an `administrator`. As well as the ability to edit the project administrators can add and remove other users.
- *
- * You must be an `administrator` of the project
- * @summary Add a Project Administrator
+ * Gets the details of a Project that is available to you.
+ * @summary Get a Project by UUID
  */
-export const appApiProjectPutAdministratorPathProjectIdRegExp = new RegExp(
+export const appApiProjectGetProjectPathProjectIdRegExp = new RegExp(
   "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
 );
-export const appApiProjectPutAdministratorPathUserIdMin = 3;
-export const appApiProjectPutAdministratorPathUserIdMax = 80;
 
-export const appApiProjectPutAdministratorPathUserIdRegExp = new RegExp(
-  "^\\w(?:\\w*(?:[@.-]\\w+)?)*$",
-);
-
-export const AppApiProjectPutAdministratorParams = zod.object({
+export const AppApiProjectGetProjectParams = zod.object({
   project_id: zod
     .string()
-    .regex(appApiProjectPutAdministratorPathProjectIdRegExp)
+    .regex(appApiProjectGetProjectPathProjectIdRegExp)
     .describe("The project identity"),
-  user_id: zod
-    .string()
-    .min(appApiProjectPutAdministratorPathUserIdMin)
-    .max(appApiProjectPutAdministratorPathUserIdMax)
-    .regex(appApiProjectPutAdministratorPathUserIdRegExp)
-    .describe("The user identity"),
 });
 
-export const AppApiProjectPutAdministratorResponse = zod.void();
+export const AppApiProjectGetProjectResponse = zod.object({
+  administrators: zod.array(zod.string()).describe("An administrator (user_id) of the project"),
+  created: zod.iso.datetime({ offset: true }),
+  creator: zod.string().describe("The user who created the project\n"),
+  editors: zod.array(zod.string()).describe("An editor (user_id) of the project"),
+  files: zod
+    .array(
+      zod.object({
+        authorisation_code: zod
+          .number()
+          .optional()
+          .describe("The code obtained from the Account Server\n"),
+        dataset_id: zod.string().optional().describe("The ProjectFile's Dataset origin\n"),
+        dataset_version: zod
+          .number()
+          .optional()
+          .describe("The ProjectFile's Dataset origin version\n"),
+        file_id: zod.string().describe("The ProjectFile's unique ID\n"),
+        file_name: zod.string().describe("The ProjectFile's filename within the Project\n"),
+        file_path: zod.string().describe("The ProjectFile's path within the Project volume\n"),
+        immutable: zod
+          .boolean()
+          .describe("True if the ProjectFile cannot be modified while in the Project\n"),
+        mime_type: zod.string().describe("The ProjectFile MIME type\n"),
+        owner: zod
+          .string()
+          .describe(
+            "The owner of the ProjectFile. This is the user that added the Dataset (as this file) to the Project\n",
+          ),
+        processing_stage: zod
+          .enum(["COPYING", "FAILED", "FORMATTING", "LOADING", "DELETING", "DONE"])
+          .optional()
+          .describe("The processing stage.\n"),
+        project_id: zod.string().optional().describe("The Project the ProjectFile belongs to\n"),
+      }),
+    )
+    .optional()
+    .describe("A list of managed files in the Project\n"),
+  name: zod.string().describe("The project name\n"),
+  observers: zod.array(zod.string()).describe("An observer (user_id) of the project"),
+  organisation_id: zod
+    .string()
+    .optional()
+    .describe("The Account Server Organisation the Project Product Unit belongs to\n"),
+  private: zod
+    .boolean()
+    .describe("True if the project is private. Private projects are only visible to editors.\n"),
+  product_flavour: zod
+    .string()
+    .optional()
+    .describe(
+      "If it's applicable, the Account Server Product flavour. Typically one of `GOLD`, `SILVER`, `BRONZE`, `EVALUATION`\n",
+    ),
+  product_id: zod
+    .string()
+    .optional()
+    .describe("The Account Server Product the Project belongs to\n"),
+  project_id: zod.string().describe("The project unique reference\n"),
+  size: zod
+    .number()
+    .describe(
+      "The approximate size of all the files in the Project volume. This is updated regularly throughout the day and its current size may differ from what is reported here. The smallest billable unit is 1GiB (1,073,741,824 bytes). Therefore a project that contains 32KiB of files is recorded as 1GiB in size",
+    ),
+  unit_id: zod
+    .string()
+    .optional()
+    .describe("The Account Server Unit the Project Product belongs to\n"),
+});
+
+/**
+ * Used to update some adjustable parameters of a Project, i.e. to make it `private` or make it `public``. What can be adjusted will depend on the purchased **Product**
+ * @summary Adjust an existing Project
+ */
+export const appApiProjectPatchPathProjectIdRegExp = new RegExp(
+  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+
+export const AppApiProjectPatchParams = zod.object({
+  project_id: zod
+    .string()
+    .regex(appApiProjectPatchPathProjectIdRegExp)
+    .describe("The project identity"),
+});
+
+export const AppApiProjectPatchBody = zod.object({
+  name: zod.string().optional().describe("The new name of the Project\n"),
+  private: zod.boolean().optional(),
+});
+
+export const AppApiProjectPatchResponse = zod.unknown();
 
 /**
  * Deletes a project `administrator`. The administrator can be you.
@@ -323,35 +292,35 @@ export const AppApiProjectDeleteAdministratorParams = zod.object({
 export const AppApiProjectDeleteAdministratorResponse = zod.void();
 
 /**
- * Adds a user to a Project as an `editor`. Editors can add and remove datasets in a project and delete the project.
- *
- * An `editor` of a project is not automatically an `editor` of any datasets the project contains.
+ * Adds a user to a Project as an `administrator`. As well as the ability to edit the project administrators can add and remove other users.
  *
  * You must be an `administrator` of the project
- * @summary Add a Project Editor
+ * @summary Add a Project Administrator
  */
-export const appApiProjectPutEditorPathProjectIdRegExp = new RegExp(
+export const appApiProjectPutAdministratorPathProjectIdRegExp = new RegExp(
   "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
 );
-export const appApiProjectPutEditorPathUserIdMin = 3;
-export const appApiProjectPutEditorPathUserIdMax = 80;
+export const appApiProjectPutAdministratorPathUserIdMin = 3;
+export const appApiProjectPutAdministratorPathUserIdMax = 80;
 
-export const appApiProjectPutEditorPathUserIdRegExp = new RegExp("^\\w(?:\\w*(?:[@.-]\\w+)?)*$");
+export const appApiProjectPutAdministratorPathUserIdRegExp = new RegExp(
+  "^\\w(?:\\w*(?:[@.-]\\w+)?)*$",
+);
 
-export const AppApiProjectPutEditorParams = zod.object({
+export const AppApiProjectPutAdministratorParams = zod.object({
   project_id: zod
     .string()
-    .regex(appApiProjectPutEditorPathProjectIdRegExp)
+    .regex(appApiProjectPutAdministratorPathProjectIdRegExp)
     .describe("The project identity"),
   user_id: zod
     .string()
-    .min(appApiProjectPutEditorPathUserIdMin)
-    .max(appApiProjectPutEditorPathUserIdMax)
-    .regex(appApiProjectPutEditorPathUserIdRegExp)
+    .min(appApiProjectPutAdministratorPathUserIdMin)
+    .max(appApiProjectPutAdministratorPathUserIdMax)
+    .regex(appApiProjectPutAdministratorPathUserIdRegExp)
     .describe("The user identity"),
 });
 
-export const AppApiProjectPutEditorResponse = zod.void();
+export const AppApiProjectPutAdministratorResponse = zod.void();
 
 /**
  * Deletes a project `editor`. The editor can be you.
@@ -385,33 +354,35 @@ export const AppApiProjectDeleteEditorParams = zod.object({
 export const AppApiProjectDeleteEditorResponse = zod.void();
 
 /**
- * Adds a user to a project as an `observer`. Observers can view Projects and download files but they cannot modify Project data or run **Applications** or **Jobs**.
+ * Adds a user to a Project as an `editor`. Editors can add and remove datasets in a project and delete the project.
  *
- * You must be an `administrator` of the Project to add Observers
- * @summary Add a Project Observer
+ * An `editor` of a project is not automatically an `editor` of any datasets the project contains.
+ *
+ * You must be an `administrator` of the project
+ * @summary Add a Project Editor
  */
-export const appApiProjectPutObserverPathProjectIdRegExp = new RegExp(
+export const appApiProjectPutEditorPathProjectIdRegExp = new RegExp(
   "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
 );
-export const appApiProjectPutObserverPathUserIdMin = 3;
-export const appApiProjectPutObserverPathUserIdMax = 80;
+export const appApiProjectPutEditorPathUserIdMin = 3;
+export const appApiProjectPutEditorPathUserIdMax = 80;
 
-export const appApiProjectPutObserverPathUserIdRegExp = new RegExp("^\\w(?:\\w*(?:[@.-]\\w+)?)*$");
+export const appApiProjectPutEditorPathUserIdRegExp = new RegExp("^\\w(?:\\w*(?:[@.-]\\w+)?)*$");
 
-export const AppApiProjectPutObserverParams = zod.object({
+export const AppApiProjectPutEditorParams = zod.object({
   project_id: zod
     .string()
-    .regex(appApiProjectPutObserverPathProjectIdRegExp)
+    .regex(appApiProjectPutEditorPathProjectIdRegExp)
     .describe("The project identity"),
   user_id: zod
     .string()
-    .min(appApiProjectPutObserverPathUserIdMin)
-    .max(appApiProjectPutObserverPathUserIdMax)
-    .regex(appApiProjectPutObserverPathUserIdRegExp)
+    .min(appApiProjectPutEditorPathUserIdMin)
+    .max(appApiProjectPutEditorPathUserIdMax)
+    .regex(appApiProjectPutEditorPathUserIdRegExp)
     .describe("The user identity"),
 });
 
-export const AppApiProjectPutObserverResponse = zod.void();
+export const AppApiProjectPutEditorResponse = zod.void();
 
 /**
  * Deletes a project `observer`.
@@ -443,3 +414,32 @@ export const AppApiProjectDeleteObserverParams = zod.object({
 });
 
 export const AppApiProjectDeleteObserverResponse = zod.void();
+
+/**
+ * Adds a user to a project as an `observer`. Observers can view Projects and download files but they cannot modify Project data or run **Applications** or **Jobs**.
+ *
+ * You must be an `administrator` of the Project to add Observers
+ * @summary Add a Project Observer
+ */
+export const appApiProjectPutObserverPathProjectIdRegExp = new RegExp(
+  "^project-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+);
+export const appApiProjectPutObserverPathUserIdMin = 3;
+export const appApiProjectPutObserverPathUserIdMax = 80;
+
+export const appApiProjectPutObserverPathUserIdRegExp = new RegExp("^\\w(?:\\w*(?:[@.-]\\w+)?)*$");
+
+export const AppApiProjectPutObserverParams = zod.object({
+  project_id: zod
+    .string()
+    .regex(appApiProjectPutObserverPathProjectIdRegExp)
+    .describe("The project identity"),
+  user_id: zod
+    .string()
+    .min(appApiProjectPutObserverPathUserIdMin)
+    .max(appApiProjectPutObserverPathUserIdMax)
+    .regex(appApiProjectPutObserverPathUserIdRegExp)
+    .describe("The user identity"),
+});
+
+export const AppApiProjectPutObserverResponse = zod.void();

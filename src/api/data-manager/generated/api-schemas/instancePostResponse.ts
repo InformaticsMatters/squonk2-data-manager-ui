@@ -10,12 +10,12 @@
  */
 
 export interface InstancePostResponse {
-  /** The application instance identity (not its name). Assigned automatically when created */
-  instance_id: string;
   /** A token that can be used to access data in the project without further authentication. The token expires automatically or if the user revokes it. The token is only provided if asked for when the instance is launched. */
   callback_token?: string;
-  /** The instance task identity. The task assigned to process the instance */
-  task_id: string;
   /** The instance expanded command. Applies only to Job instances. */
   command?: string;
+  /** The application instance identity (not its name). Assigned automatically when created */
+  instance_id: string;
+  /** The instance task identity. The task assigned to process the instance */
+  task_id: string;
 }

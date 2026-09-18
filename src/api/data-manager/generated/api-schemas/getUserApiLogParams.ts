@@ -8,16 +8,14 @@
  *
  * OpenAPI spec version: 6.7
  */
-import type { QFromParameter } from "./qFromParameter";
-import type { QUntilParameter } from "./qUntilParameter";
 
 export type GetUserApiLogParams = {
   /**
    * A from (inclusive) date-time. If provided no API calls prior to this will be returned. UTC is assumed if no timezone is provided
    */
-  from?: QFromParameter;
+  from?: string;
   /**
    * An until (exclusive) date-time. If provided only API calls made before this will be returned. UTC is assumed if no timezone is provided
    */
-  until?: QUntilParameter;
+  until?: string;
 };

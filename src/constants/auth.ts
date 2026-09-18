@@ -13,8 +13,9 @@ export const DM_ROLES = [
  * first and so on
  */
 export const AS_EVALUATOR_ROLE = process.env.NEXT_PUBLIC_KEYCLOAK_AS_EVALUATOR_ROLE as string;
+export const AS_ADMIN_ROLE = process.env.NEXT_PUBLIC_KEYCLOAK_AS_ADMIN_ROLE as string;
 export const AS_ROLES = [
   AS_EVALUATOR_ROLE,
   process.env.NEXT_PUBLIC_KEYCLOAK_AS_USER_ROLE as string,
-  process.env.NEXT_PUBLIC_KEYCLOAK_AS_ADMIN_ROLE as string,
+  AS_ADMIN_ROLE,
 ];

@@ -622,3 +622,48 @@ test("the chrome draws a ring around whatever the keyboard is standing on", asyn
   expect(await focusRingOf(highlighted)).toBe("solid 2px");
   expect(await focusRingOf(page.getByRole("option").first())).toBe("none 0px");
 });
+
+test("an administrator is told the role widens every list they see", async ({ page }, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await page.request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=platform-admin`);
+  await login(page, "projects", testInfo);
+
+  const mark = page.getByText("Administrator access");
+  await expect(mark).toBeVisible();
+
+  // The mark is a frame drawn around the chrome, and the explanation behind it is reachable from
+  // the keyboard rather than on hover alone.
+  await expect(mark.locator("xpath=ancestor::div[1]")).toHaveCSS("border-top-width", "3px");
+  // Tab first, so what follows is a keyboard caller: the tooltip answers `:focus-visible`, and a
+  // control focused straight from the harness would not qualify.
+  await page.keyboard.press("Tab");
+  await mark.focus();
+  await expect(mark).toBeFocused();
+  await expect(page.getByRole("tooltip")).toContainText("not only the ones you belong to");
+
+  // It stands on every page of the shell rather than on the screen that first surprises someone,
+  // and it does not swallow the clicks of whatever it covers.
+  await page
+    .getByRole("navigation", { name: "Main" })
+    .getByRole("link", { name: "Datasets" })
+    .click();
+  await expect(page).toHaveURL(/\/datasets/u);
+  await expect(mark).toBeVisible();
+});
+
+test("an evaluator is told the role narrows where they can create", async ({ page }, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await page.request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=evaluator`);
+  await login(page, "projects", testInfo);
+
+  // The two marks are exclusive, and an evaluator wears the one that describes what they may do.
+  await expect(page.getByText("Evaluation access")).toBeVisible();
+  await expect(page.getByText("Administrator access")).toBeHidden();
+});
+
+test("an ordinary caller carries no role mark", async ({ page }, testInfo) => {
+  await login(page, "projects", testInfo);
+  await expect(page.getByRole("navigation", { name: "Main" })).toBeVisible();
+  await expect(page.getByText("Administrator access")).toBeHidden();
+  await expect(page.getByText("Evaluation access")).toBeHidden();
+});

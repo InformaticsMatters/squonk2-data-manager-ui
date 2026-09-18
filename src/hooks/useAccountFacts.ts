@@ -7,6 +7,7 @@ import {
   type UnitCreationFreshness,
 } from "../application/organisationUnits";
 import { useGetPersonalUnit } from "./useGetPersonalUnit";
+import { useIsEvaluator } from "./useIsAuthorized";
 
 /**
  * Who the caller is, and which resources the Account Server has named as their own.
@@ -30,6 +31,7 @@ export const useAccountFacts = (): AccountFacts => {
   const account = useGetUserAccount({ query: { retry: false } });
   const defaultOrganisation = useGetDefaultOrganisation({ query: { retry: false } });
   const personalUnit = useGetPersonalUnit();
+  const isEvaluator = useIsEvaluator();
   const personalUnitIsAbsent =
     personalUnit.isError && classifyTransportFailure(personalUnit.error).kind === "not-found";
   const resolved =
@@ -39,6 +41,7 @@ export const useAccountFacts = (): AccountFacts => {
 
   return {
     caller: {
+      isEvaluator,
       isPlatformAdministrator: account.data?.caller_has_admin_privilege ?? false,
       username: account.data?.user.id,
     },

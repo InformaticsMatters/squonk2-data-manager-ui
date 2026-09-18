@@ -503,8 +503,25 @@ test("an evaluator can create only an evaluation project in their personal unit"
 }, testInfo) => {
   const subject = subjectFor(testInfo);
   await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=evaluator`);
-  await login(page, "projects/new", testInfo);
+  await login(page, "projects", testInfo);
 
+  // An evaluator's only unit is the personal one, which lives in the default organisation. Project
+  // creation is scoped to the organisation in effect like every other Projects screen, so the
+  // organisation they are a member of holds nothing for them and says so rather than offering a
+  // unit the account server would refuse them.
+  await expect(page.getByRole("button", { name: "Create project" })).toBeDisabled();
+  await expect(
+    page.getByText("You have no unit in this organisation, and a project must go in one."),
+  ).toBeVisible();
+  // Refused with its reason rather than hidden: an evaluation account is told which unit it works
+  // in, instead of being left with a control that silently is not there.
+  await expect(page.getByRole("button", { name: "Create unit" })).toBeDisabled();
+  await expect(
+    page.getByText("An evaluation account works only in the personal unit it was given."),
+  ).toBeVisible();
+
+  await workAsDefaultOrganisation(page);
+  await page.goto("projects/new");
   await page.getByLabel("Containing unit").click();
   await expect(
     page.getByRole("option", { name: `Default Organisation / ${subject}` }),
@@ -1457,6 +1474,24 @@ test("the index offers a unit beside Create project, and project creation can th
   ).toBeVisible();
 });
 
+test("project creation offers the unit the organisation in effect holds, and no other", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}?profile=no-personal-unit`);
+  await login(page, "projects/new", testInfo);
+
+  // A personal unit lives in the default organisation, and the header names another one. Offering
+  // it here asked the caller to read the alert against an organisation they are not working as.
+  await expect(page.getByRole("button", { name: "Create personal unit" })).toHaveCount(0);
+
+  await workAsDefaultOrganisation(page);
+  await page.goto("projects/new");
+  await expect(page.getByRole("button", { name: "Create personal unit" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Create unit" })).toHaveCount(0);
+});
+
 test("the default organisation offers the personal unit, once, and then says it is taken", async ({
   page,
   request,
@@ -1497,8 +1532,13 @@ test("a caller who belongs to none of the organisation is refused the unit with 
   await expect(
     page.getByText("You must be a member or the owner of this organisation."),
   ).toBeVisible();
-  // The refusal sits beside the index's main job rather than replacing it.
-  await expect(page.getByRole("link", { name: "Create project" })).toBeVisible();
+  // The refusal sits beside the index's main job rather than replacing it. A project goes in a
+  // unit of this organisation, and they hold none here, so the action states that instead of
+  // sending them to a screen with nothing to choose.
+  await expect(page.getByRole("button", { name: "Create project" })).toBeDisabled();
+  await expect(
+    page.getByText("You have no unit in this organisation, and a project must go in one."),
+  ).toBeVisible();
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
 });
 

@@ -24,16 +24,14 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { administrationLinks } from "../administration/routes";
+import { capabilityReason } from "../application/capability";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
-import { useGetPersonalUnit } from "../hooks/useGetPersonalUnit";
 import { useIsEvaluator } from "../hooks/useIsAuthorized";
 import { isProductId, isUnitId } from "../routing/identifiers";
 import { settle } from "../utils/app/settle";
 import { projectCreationFailureReason } from "./failures";
-import { PersonalUnitCreation } from "./PersonalUnitCreation";
 import {
   eligibleProjectCreationFlavours,
-  eligibleProjectCreationUnits,
   forgetProjectCreation,
   initialProjectCreationState,
   productCreationFailureIsRetryable,
@@ -49,8 +47,11 @@ import {
   transitionProjectCreation,
   validateProjectSubscriptionHandoff,
 } from "./projectCreation";
+import { unitNamesInOrganisation } from "./projectIndex";
 import { projectLinks } from "./routes";
+import { UnitOffer } from "./UnitOffer";
 import { useProjectCreationCommands } from "./useProjectCreationCommands";
+import { useProjectCreationOffer } from "./useProjectCreationOffer";
 
 const privateByDefault: Record<UnitAllDetailDefaultProductPrivacy, boolean> = {
   ALWAYS_PRIVATE: true,
@@ -91,11 +92,13 @@ export const ProjectCreate = () => {
   }
   const { data: unitGroups } = useGetUnitsSuspense();
   const isEvaluator = useIsEvaluator();
-  const { data: personalUnit } = useGetPersonalUnit();
-  const eligibleUnits = eligibleProjectCreationUnits(unitGroups.units, {
-    evaluatorPersonalUnitId: personalUnit?.id,
-    isEvaluator,
-  });
+  /**
+   * The units this organisation holds for the caller, and whether it holds any. The index offers
+   * **Create project** from the same answer, so the screen the caller arrives from and the screen
+   * they arrive at cannot describe the same organisation differently.
+   */
+  const { capability, eligibleUnits, organisationId } = useProjectCreationOffer();
+  const unitlessReason = capabilityReason(capability);
   const { data: productTypes, error: productTypesError } = useGetProductTypes();
   const handoff = useGetProduct(route.subscriptionId ?? "", {
     query: { enabled: route.subscriptionId !== undefined, retry: false },
@@ -608,12 +611,10 @@ export const ProjectCreate = () => {
 
         <TextField
           select
-          disabled={pending || !!validHandoff}
-          helperText={
-            eligibleUnits.length === 0
-              ? "You must belong to a unit or its organisation before creating a project."
-              : "The selected unit owns the project subscription."
-          }
+          // An empty list with nothing to say about it is the one state this field must not show,
+          // so until the organisation in effect is known the field is pending rather than empty.
+          disabled={pending || !!validHandoff || organisationId === undefined}
+          helperText={unitlessReason ?? "The selected unit owns the project subscription."}
           label="Containing unit"
           value={unitId}
           onChange={(event) => selectUnit(event.target.value)}
@@ -624,17 +625,18 @@ export const ProjectCreate = () => {
             </MenuItem>
           ))}
         </TextField>
-        {/* The requirement the field states is one the caller can satisfy here, for an arrival that
-            came straight to this URL rather than through the onboarding panel. A caller who already
-            has a personal unit is never offered a second one; they belong to no unit at all. */}
-        {eligibleUnits.length === 0 && !personalUnit ? (
-          <>
-            <Alert severity="info">
-              A personal unit is your own billing container in the default organisation, and it can
-              own this project.
-            </Alert>
-            <PersonalUnitCreation />
-          </>
+        {/* The unit the field is missing, offered where the field says it is missing — for an
+            arrival that came straight to this URL rather than through the onboarding panel. It is
+            the index's own offer, so which unit this organisation holds, and whether the caller may
+            take it, is decided once for both screens rather than restated here against the default
+            organisation the caller may not even be working as. */}
+        {eligibleUnits.length === 0 ? (
+          <UnitOffer
+            existingUnitNames={
+              organisationId ? unitNamesInOrganisation(unitGroups, organisationId) : []
+            }
+            organisationId={organisationId}
+          />
         ) : null}
         <TextField
           disabled={pending}

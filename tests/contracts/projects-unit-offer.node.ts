@@ -33,8 +33,10 @@ const organisation = (overrides: { caller_is_member?: boolean; owner_id?: string
 });
 
 /** A member of a named organisation, working as it, with no personal unit. Every case varies this. */
+const callerIdentity = { isPlatformAdministrator: false, username: owner };
+
 const facts = (overrides: Partial<UnitCreationFacts> = {}): UnitCreationFacts => ({
-  caller: { isPlatformAdministrator: false, username: owner },
+  caller: callerIdentity,
   defaultOrganisationId,
   freshness: "current" satisfies UnitCreationFreshness,
   organisation: organisation(),
@@ -148,6 +150,20 @@ test.describe("The unit offer the projects index makes", () => {
     expect(
       decideIndexUnitOffer(facts({ organisation: undefined, organisationId: undefined })),
     ).toBeUndefined();
+  });
+
+  test("an evaluation account is refused a named unit with the reason, never shown nothing", () => {
+    // ADR 0003: an ordinary action known to be unavailable is disabled with a reason. Only
+    // exclusively platform-administrator actions are hidden.
+    expect(
+      decideIndexUnitOffer(facts({ caller: { isEvaluator: true, ...callerIdentity } })),
+    ).toEqual({
+      capability: {
+        reason: "An evaluation account works only in the personal unit it was given.",
+        status: "disabled",
+      },
+      kind: "named",
+    });
   });
 
   test("the offer follows the organisation in effect rather than the caller alone", () => {

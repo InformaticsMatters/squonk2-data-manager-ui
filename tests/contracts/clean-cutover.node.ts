@@ -138,6 +138,11 @@ test.describe("removed scope ownership", () => {
     // is the Projects index and the project selector, neither of which decides what is displayed
     // — the URL still does that — only which projects are offered as somewhere to go.
     //
+    // Project creation reads it for the same reason, through the one hook both of its screens
+    // share: a project goes in a unit of the organisation in effect, so that is which units it
+    // offers. It narrows an offer rather than addressing a resource, which is what keeps a unit
+    // billing context rather than a scope.
+    //
     // Administration reads it too, because the organisation in the masthead is that workspace's
     // ambient scope, and it reaches it through the one module named here rather than from each of
     // its screens.
@@ -147,6 +152,7 @@ test.describe("removed scope ownership", () => {
       "layouts/navigation/OrganisationIdentity.tsx",
       "projects/ProjectOrganisationBoundary.tsx",
       "projects/ProjectSelector.tsx",
+      "projects/useProjectCreationOffer.ts",
       "state/organisationSelection.ts",
     ]);
   });

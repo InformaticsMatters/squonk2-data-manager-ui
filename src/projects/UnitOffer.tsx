@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button, Stack, TextField, Typography } from "@mui/material";
+import { Stack, TextField } from "@mui/material";
 import { useForm, useStore } from "@tanstack/react-form";
 import { useSnackbar } from "notistack";
 import { z } from "zod/mini";
@@ -9,7 +9,8 @@ import { ModalWrapper } from "../components/modals/ModalWrapper";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useCreateUnitCommand } from "../hooks/useUnitCommands";
 import { useUnitCreationFacts } from "../hooks/useUnitCreationFacts";
-import { capabilityIsEnabled, capabilityReason, type ProjectCapability } from "./capabilities";
+import { type ProjectCapability } from "./capabilities";
+import { CapabilityButton } from "./CapabilityButton";
 import { unitCreationFailureReason } from "./failures";
 import { decideIndexUnitOffer } from "./projectIndex";
 import { usePersonalUnitCreation } from "./usePersonalUnitCreation";
@@ -27,52 +28,6 @@ import { usePersonalUnitCreation } from "./usePersonalUnitCreation";
  * name, and the generated caches the commands refresh are what make it immediately usable by
  * project creation and by the onboarding offer.
  */
-
-/**
- * One capability-governed action in the index header. A hidden capability renders nothing; every
- * other status renders the control with its reason beneath it, disabled unless enabled — the same
- * presentation Administration gives a capability, written here because presentation is the family's
- * own and the rule behind it is what the two share.
- *
- * The reason is associated with the control rather than merely placed near it, so a caller who
- * cannot use the action hears why along with its name.
- */
-const CapabilityButton = ({
-  capability,
-  children,
-  id,
-  isPending,
-  onClick,
-}: {
-  capability: ProjectCapability;
-  children: string;
-  id: string;
-  isPending: boolean;
-  onClick: () => void;
-}) => {
-  if (capability.status === "hidden") {
-    return null;
-  }
-  const reason = capabilityReason(capability);
-
-  return (
-    <Stack spacing={0.5} sx={{ alignItems: { sm: "flex-start" } }}>
-      <Button
-        aria-describedby={reason ? `${id}-reason` : undefined}
-        disabled={!capabilityIsEnabled(capability) || isPending}
-        variant="outlined"
-        onClick={onClick}
-      >
-        {children}
-      </Button>
-      {reason ? (
-        <Typography color="text.secondary" id={`${id}-reason`} variant="body2">
-          {reason}
-        </Typography>
-      ) : null}
-    </Stack>
-  );
-};
 
 /** A unit's name is the caller's to choose, so a clash is refused before it is sent, not after. */
 const unitNameSchema = (existingNames: string[]) =>

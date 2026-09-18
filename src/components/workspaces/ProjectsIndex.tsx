@@ -15,7 +15,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useFamilyRoute } from "../../application/FamilyRouteResolution";
@@ -23,6 +22,7 @@ import { useClientSnapshot } from "../../hooks/useClientSnapshot";
 import { useDraftValue } from "../../hooks/useDraftValue";
 import { useGetPersonalUnit } from "../../hooks/useGetPersonalUnit";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
+import { CapabilityButton } from "../../projects/CapabilityButton";
 import {
   dismissProjectOnboarding,
   projectOnboardingIsDismissed,
@@ -37,6 +37,7 @@ import { ProjectIndexRow } from "../../projects/ProjectIndexRow";
 import { ProjectOnboarding } from "../../projects/ProjectOnboarding";
 import { type ProjectIndexLinkState, projectLinks } from "../../projects/routes";
 import { UnitOffer } from "../../projects/UnitOffer";
+import { useProjectCreationOffer } from "../../projects/useProjectCreationOffer";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
 
 export const ProjectsIndex = () => {
@@ -110,6 +111,12 @@ export const ProjectsIndex = () => {
     personalUnitHasAnswered &&
     onboarding.offered &&
     !(onboarding.dismissible && dismissed);
+  /**
+   * Whether this organisation can hold the project the action would create. The offer beside it is
+   * what a caller with no unit here takes first, and project creation reads the same answer, so the
+   * action is never offered into a screen that would refuse it.
+   */
+  const { capability: projectCreation } = useProjectCreationOffer();
   const dismiss = () => {
     dismissProjectOnboarding(localStorage);
     setDismissedHere(true);
@@ -188,9 +195,14 @@ export const ProjectsIndex = () => {
                 organisationId={organisationId}
               />
             )}
-            <Button component={Link} href={projectLinks.create()} variant="contained">
+            <CapabilityButton
+              capability={projectCreation}
+              href={projectLinks.create()}
+              id="projects-create"
+              variant="contained"
+            >
               Create project
-            </Button>
+            </CapabilityButton>
           </Stack>
         )}
       </Stack>

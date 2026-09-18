@@ -3,11 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { type z } from "zod/mini";
 
 import { type MotdEntrySchema } from "../pages/api/motd";
+import { withBasePath } from "../utils/app/basePath";
 
 type MotdResponse = z.infer<typeof MotdEntrySchema>[];
 
 const fetchMotd = async (): Promise<MotdResponse | null> => {
-  const response = await fetch("/api/motd", { cache: "no-store" });
+  const response = await fetch(withBasePath("/api/motd"), { cache: "no-store" });
 
   if (response.status === 204) {
     return null;

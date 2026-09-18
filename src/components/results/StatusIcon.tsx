@@ -2,7 +2,7 @@ import {
   type InstanceGetResponsePhase,
   type RunningWorkflowGetResponseStatus,
   type TaskSummaryProcessingStage,
-} from "@squonk/data-manager-client";
+} from "@/api/data-manager";
 
 import {
   CheckCircleRounded as CheckCircleRoundedIcon,

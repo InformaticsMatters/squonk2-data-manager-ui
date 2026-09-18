@@ -8,7 +8,7 @@ import { WebSocketStatusIndicator } from "./WebSocketStatusIndicator";
  * Main event stream interface in the user menu popover
  */
 export const EventStreamMessages = () => (
-  <Box sx={{ minWidth: 300 }}>
+  <Box>
     <Typography sx={{ mb: 2 }} variant="h6">
       Event Stream
     </Typography>

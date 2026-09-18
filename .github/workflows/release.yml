@@ -25,26 +25,25 @@ jobs:
       new_release_version: ${{ steps.semantic.outputs.new_release_version }}
       release_sha: ${{ steps.release-sha.outputs.sha }}
     steps:
-      - uses: actions/create-github-app-token@v3
+      - uses: actions/create-github-app-token@v3.2.0
         id: app-token
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@v6.0.10
         with:
-          version: 11.2.2
           run_install: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: 24.15.0
           cache: pnpm
@@ -74,21 +73,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
           fetch-tags: true
           ref: ${{ needs.release.outputs.release_sha }}
 
       - name: Login to DockerHub
-        uses: docker/login-action@v4
+        uses: docker/login-action@v4.6.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Docker Metadata
         id: meta
-        uses: docker/metadata-action@v6
+        uses: docker/metadata-action@v6.2.0
         with:
           images: informaticsmatters/squonk2-data-manager-ui
           tags: |
@@ -97,7 +96,7 @@ jobs:
             type=raw,value=latest,enable=${{ !contains(needs.release.outputs.new_release_version, '-dev.') }}
 
       - name: Build and push image
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@v7.3.0
         with:
           context: .
           file: ./Dockerfile
@@ -106,6 +105,10 @@ jobs:
             GIT_SHA=${{ needs.release.outputs.release_sha }}
             SKIP_CHECKS=1
             BASE_PATH=/data-manager-ui
+          # Mounted for the build command alone rather than passed as a build argument, which
+          # would persist in the build cache.
+          secrets: |
+            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 

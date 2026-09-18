@@ -1,0 +1,90 @@
+# Administration
+
+**Administration** is available to every signed-in user. It holds the organisations, units and
+subscriptions behind your projects and datasets, together with their charges and usage reports.
+
+What you can change there depends on your role. Ordinary actions you cannot use are disabled with a
+reason rather than removed, so it is clear what relationship or role a task requires; actions that
+only a platform administrator can ever take are hidden instead. Where a read is refused, the page
+keeps everything it can still show and says which part is missing — being unable to read an
+organisation's members costs you its members, not the page.
+
+## Finding your way around
+
+Administration is scoped to the organisation you are working as, which is chosen in the masthead
+rather than here.
+
+A rail down the left holds, for that organisation:
+
+- **Overview** - what the organisation is, what it holds, and the actions that create things in it.
+- **Charges** - the organisation's charge ledger. This entry is not offered for the **Default**
+  organisation, because charges are refused for it outright.
+- **Usage & Inventory** - the read-only usage report across the organisation's units.
+
+Beneath those is the organisation's list of **Units**, with a search field above it. Your own
+**personal unit** is marked as such, and each other unit shows its member count and whether it is
+private. Choosing a unit opens that unit.
+
+The rail never leaves the screen, so moving between a unit's access, its spend and its usage costs
+three clicks rather than three searches. On narrow viewports the rail collapses and the unit list
+becomes part of the **Overview** page.
+
+## Overview
+
+The organisation's identity and its identifier, then the actions that create things inside it:
+
+- **Create unit** - a new unit in this organisation, if you are allowed one there. The **Default**
+  organisation cannot have units added to it other than each user's own personal unit.
+- **Create personal unit** - your own unit in the **Default** organisation. This is how you get one;
+  you are not given one automatically.
+- **Create organisation** - a new organisation.
+
+Below those, for an organisation you are a member of, are its **Default project privacy** and its
+**Members**. If you are not a member, the page says so and shows the rest.
+
+## A unit
+
+A unit has four sections, presented as tabs beneath its name:
+
+- **Access** - the unit's **Name**, its **Default project privacy**, its **Members**, and its
+  **Deletion**.
+- **Subscriptions** - the subscriptions held in this unit, searchable, with the option to create
+  one. A subscription can be renamed, have its **Allowance** increased — an allowance can be
+  increased but never reduced — and be deleted.
+- **Charges** - the unit's charge ledger.
+- **Usage & Inventory** - the read-only usage report for this unit.
+
+## Subscriptions
+
+A subscription is what a project or a dataset store is billed under; it is the Account Server's
+_product_, and the Product ID is still shown in the technical details.
+
+A subscription states its **Product type**, **Tier**, when it was **Created**, its **Billing day**,
+its **Allowance** and its **Limit**. It has two sections of its own: **Subscription** and
+**Charges**.
+
+A project's own subscription is reachable directly from that project — **View subscription** and
+**View charges** in its **[Manage](/docs/how-to/projects/manage)** section.
+
+## Charges
+
+**Charges** holds the detailed, read-only ledgers. Charges accumulate over a billing cycle of a
+month, and you choose which cycle you are looking at.
+
+Each ledger is broken into two parts: **PROCESSING** charges (the work that was run) and
+**STORAGE** charges (assessed on a daily basis).
+
+Note in particular the _Charge_ column in the processing table. This shows the cost of the work you
+ran. You will see that not everything has an associated cost.
+
+## Usage & Inventory
+
+**Usage & Inventory** is a read-only report. For an organisation it accounts for the users across
+its units. For a unit it can be read two ways — **By user** or **By project** — and states, for each
+user, their unit membership, the datasets they own or edit, and the projects they observe, edit or
+administer, along with when they were first and last seen and whether they have used the API.
+
+A user appears in a report once they belong to a unit or hold a role in one of its projects.
+
+For one project's own usage and spend, use that project's
+**[Manage](/docs/how-to/projects/manage)** section instead.

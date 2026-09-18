@@ -1,5 +1,5 @@
 import nextMDX from "@next/mdx";
-import { withSentryConfig } from "@sentry/nextjs";
+import { withSentryConfig } from "@sentry/nextjs/config";
 import nextRoutes from "nextjs-routes/config";
 import { fileURLToPath } from "node:url";
 
@@ -25,33 +25,51 @@ const isPackageLocal = (packageName) => {
   }
 };
 
-const transpilePackages = ["@squonk/mui-theme", "@squonk/sdf-parser"].filter((pkg) =>
-  isPackageLocal(pkg),
-);
+const transpilePackages = ["@squonk/mui-theme"].filter((pkg) => isPackageLocal(pkg));
 
 console.log("Transpiling packages:", transpilePackages);
 
 /** @type {import("next").NextConfig} */
 let nextConfig = {
   outputFileTracingRoot: __dirname,
-  output: /** @type {import("next").NextConfig["output"]} */ (process.env.OUTPUT_TYPE),
+  output:
+    process.env.DONT_USE_STANDALONE_OUTPUT === "true"
+      ? undefined
+      : /** @type {import("next").NextConfig["output"]} */ (process.env.OUTPUT_TYPE),
   generateBuildId: process.env.GIT_SHA ? () => process.env.GIT_SHA ?? null : undefined,
   typescript: { ignoreBuildErrors: true },
   // reactStrictMode: true, // TODO: Blocked by @rjsf Form using UNSAFE_componentWillReceiveProps
   pageExtensions: ["js", "ts", "jsx", "tsx", "mdx"],
+  // The redesign is a clean cutover: a removed route is the ordinary not-found, so this
+  // configuration declares no redirect, rewrite, or alias that would answer for one.
   // replace empty string with undefined
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
   transpilePackages,
+  // The Pages Router leaves server-side node_modules unbundled, so Turbopack splits
+  // @emotion/react in two: the copy Node loads at runtime for an externalised package, and the
+  // copy bundled into the SSR graph. MUI components then read a different emotion context than
+  // AppCacheProvider writes, fall back to emotion's default "css" cache instead of the "mui"
+  // one, and every server-rendered class name mismatches on hydration. Bundling removes the
+  // boundary, which is what webpack did all along and what the App Router does by default.
+  bundlePagesRouterDependencies: true,
 };
 
 nextConfig = withMDX(nextConfig);
 nextConfig = withRoutes(nextConfig);
 nextConfig = withSentryConfig(nextConfig, {
-  // Suppresses source map uploading logs during build
-  silent: true,
+  // The build speaks up. Silencing it is what hid "No auth token provided. Will not upload source
+  // maps." for three years, through every release of a bundle nothing could unminify.
+  silent: false,
   org: "informatics-matters",
   project: "data-manager-ui",
+
+  // The Docker build carries no .git directory, so Sentry has nothing to infer a release from
+  // unless it is named here. The package version is what names it: semantic-release has already
+  // written it by the commit the image is built from, and it is the image tag, the git tag and the
+  // version the About dialog shows alike — so an issue in Sentry names the artefact someone can
+  // actually go and look at. It also says which cluster: only a prerelease reaches the test AWX.
+  release: process.env.npm_package_version ? { name: process.env.npm_package_version } : undefined,
 
   // Automatically delete source maps after uploading them to Sentry
   sourcemaps: { deleteSourcemapsAfterUpload: true },

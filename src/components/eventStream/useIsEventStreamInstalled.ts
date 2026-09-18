@@ -1,5 +1,5 @@
-import { EventStreamVersionGetResponseProtocol } from "@squonk/account-server-client";
-import { useGetEventStreamVersion } from "@squonk/account-server-client/event-stream";
+import { EventStreamVersionGetResponseProtocol } from "@/api/account-server";
+import { useGetEventStreamVersion } from "@/api/account-server/event-stream";
 
 export const useIsEventStreamInstalled = () => {
   const { data: protocol } = useGetEventStreamVersion({

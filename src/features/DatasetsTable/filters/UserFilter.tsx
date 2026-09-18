@@ -1,5 +1,5 @@
-import { type UserSummary } from "@squonk/data-manager-client";
-import { useGetUsers } from "@squonk/data-manager-client/user";
+import { type UserSummary } from "@/api/data-manager";
+import { useGetUsers } from "@/api/data-manager/user";
 
 import { Typography } from "@mui/material";
 
@@ -45,6 +45,7 @@ export const UserFilter = ({ user, setUser, id, label }: UserFilterProps) => {
       id={id}
       isError={isError}
       isLoading={isLoading}
+      isOptionEqualToValue={(option, value) => option.username === value.username}
       label={label}
       options={users}
       value={user}

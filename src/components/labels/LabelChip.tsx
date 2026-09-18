@@ -1,3 +1,4 @@
+import { Cancel as CancelIcon } from "@mui/icons-material";
 import { Chip, type ChipProps } from "@mui/material";
 
 import { labelFormatter } from "../../utils/app/labels";
@@ -19,7 +20,14 @@ export interface LabelChipProps extends ChipProps {
  * format
  */
 export const LabelChip = ({ label, values, ...ChipProps }: LabelChipProps) => {
+  const formattedLabel = labelFormatter(label, values);
   return (
-    <Chip {...ChipProps} label={labelFormatter(label, values)} size="small" variant="outlined" />
+    <Chip
+      {...ChipProps}
+      deleteIcon={<CancelIcon aria-label={`Remove ${formattedLabel}`} />}
+      label={formattedLabel}
+      size="small"
+      variant="outlined"
+    />
   );
 };

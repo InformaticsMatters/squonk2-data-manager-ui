@@ -1,47 +1,31 @@
-import { defineConfig } from "@playwright/test";
-import path from "node:path";
+import { defineConfig, devices } from "@playwright/test";
 
-process.loadEnvFile(path.resolve(__dirname, ".env.test.local"));
+import { registerStaticImageRequire } from "./tests/stubs/staticImage";
 
-const baseURL = new URL(process.env.BASE_URL as string);
-baseURL.pathname = process.env.BASE_PATH ?? "/";
-const PORT = process.env.TEST_PORT ?? "3000";
-baseURL.port = PORT;
+registerStaticImageRequire();
+
+const galleryURL = "http://localhost:3100/playwright/gallery/index.html";
 
 export default defineConfig({
   projects: [
-    { name: "setup", testMatch: "**/*.setup.ts" },
-    {
-      name: "browser",
-      use: { baseURL: baseURL.href, trace: "on" },
-      retries: 0,
-      timeout: 60_000,
-      testMatch: "**/*.browser.ts",
-    },
-    {
-      name: "browser-authenticated",
-      dependencies: ["setup"],
-      use: { storageState: "storageState.json", baseURL: baseURL.href, trace: "on" },
-      retries: 3,
-      timeout: 60_000,
-      testMatch: "**/*.browser-authenticated.ts",
-    },
     { name: "node", testMatch: "**/*.node.ts" },
+    {
+      name: "components",
+      testDir: "./tests/components",
+      use: {
+        ...devices["Desktop Chrome"],
+        // `mount` navigates to the gallery, so the base URL is the gallery page itself.
+        baseURL: galleryURL,
+        reuseContext: true,
+        serviceWorkers: "block",
+      },
+    },
   ],
-  use: {
-    baseURL: baseURL.href,
-    trace: "on", // record traces on first retry of each test
-  },
-  webServer: {
-    // needs to use the package manager here to avoid an error when not running playwright from the
-    // terminal
-    command: `pnpm start -p ${PORT}`,
-    url: baseURL.href,
-    timeout: 200 * 1000,
-    reuseExistingServer: true,
-    stdout: "pipe",
-    stderr: "pipe",
-    env: { NODE_ENV: "test" },
-  },
   testDir: "tests",
+  webServer: {
+    // The gallery has its own Vite server; the Next dev server does not serve it.
+    command: "pnpm exec vite --config playwright/vite.config.mts",
+    reuseExistingServer: !process.env.CI,
+    url: galleryURL,
+  },
 });

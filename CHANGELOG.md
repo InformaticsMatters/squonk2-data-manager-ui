@@ -1,3 +1,16 @@
+# [7.0.0-dev.31](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.30...7.0.0-dev.31) (2026-09-18)
+
+
+### Bug Fixes
+
+* **shell:** make the role mark reachable and say what it is ([eea41fa](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/eea41fab67e4b1fa8a5317638bdecc7605d684ee)), closes [#2079](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2079)
+
+
+### Features
+
+* **shell:** mark an administrator's session in the application chrome ([ca59e84](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/ca59e84c1af28d007a14de3b6e3947d59859f58d)), closes [#2079](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2079)
+* **shell:** mark an evaluator's session alongside an administrator's ([28fee9f](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/28fee9f19c96108bfb646ea576745aeb1a4665cf)), closes [#2079](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2079)
+
 # [7.0.0-dev.30](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.29...7.0.0-dev.30) (2026-09-14)
 
 

@@ -31,7 +31,16 @@ import {
 /** `stale` covers both unresolved and refetching generated facts; neither confirms authority. */
 export type UnitCreationFreshness = "current" | "stale";
 
-export type UnitCreationCaller = { isPlatformAdministrator: boolean; username?: string };
+export type UnitCreationCaller = {
+  /**
+   * The account server's evaluation role. An evaluator works in the one personal unit that role was
+   * given, and the server refuses them any other, so it is caller identity here rather than an
+   * organisation fact. Absent is an ordinary caller.
+   */
+  isEvaluator?: boolean;
+  isPlatformAdministrator: boolean;
+  username?: string;
+};
 
 /**
  * What an organisation itself says about the caller. Only the generated membership and ownership
@@ -91,9 +100,19 @@ export const evaluateUnitCreationCapability = (
   if (!factsAreConfirmed(facts)) {
     return unconfirmedCapability;
   }
-  return facts.isDefaultOrganisation
-    ? { status: "disabled", reason: "The default organisation only contains personal units." }
-    : evaluateOrganisationAuthority(facts);
+  if (facts.isDefaultOrganisation) {
+    return { status: "disabled", reason: "The default organisation only contains personal units." };
+  }
+  // Disabled rather than hidden, as ADR 0003 requires of every ordinary action known to be
+  // unavailable: an evaluator is told which unit their account works in, not left with a control
+  // that silently is not there.
+  if (facts.caller.isEvaluator) {
+    return {
+      status: "disabled",
+      reason: "An evaluation account works only in the personal unit it was given.",
+    };
+  }
+  return evaluateOrganisationAuthority(facts);
 };
 
 /**

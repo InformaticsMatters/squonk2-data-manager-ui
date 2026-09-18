@@ -12,6 +12,7 @@ import {
   eligibleProjectCreationFlavours,
   eligibleProjectCreationUnits,
   type EligibleProjectUnit,
+  evaluateProjectCreationCapability,
   forgetProjectCreation,
   initialProjectCreationState,
   isUnclaimedProjectSubscription,
@@ -218,10 +219,16 @@ test.describe("Project creation eligibility", () => {
     id: "unit-00000000-0000-4000-8000-000000000004",
   } as UnitAllDetail;
   const memberUnit = { caller_is_member: true, id: input.unitId } as UnitAllDetail;
+  const organisationId = "org-00000000-0000-4000-8000-000000000001";
+  const otherOrganisationId = "org-00000000-0000-4000-8000-000000000002";
   const groups = [
     {
-      organisation: { caller_is_member: true, name: "Research" },
+      organisation: { caller_is_member: true, id: organisationId, name: "Research" },
       units: [memberUnit, personalUnit],
+    },
+    {
+      organisation: { caller_is_member: true, id: otherOrganisationId, name: "Elsewhere" },
+      units: [{ caller_is_member: true, id: "unit-elsewhere" } as UnitAllDetail],
     },
   ] as OrganisationUnitsGetResponse[];
   const productTypes = ["EVALUATION", "BRONZE", "SILVER"].map((flavour) => ({
@@ -234,6 +241,7 @@ test.describe("Project creation eligibility", () => {
       eligibleProjectCreationUnits(groups, {
         evaluatorPersonalUnitId: personalUnit.id,
         isEvaluator: true,
+        organisationId,
       }).map(({ unit }) => unit.id),
     ).toEqual([personalUnit.id]);
     expect(eligibleProjectCreationFlavours(productTypes, true)).toEqual(["EVALUATION"]);
@@ -241,13 +249,29 @@ test.describe("Project creation eligibility", () => {
 
   test("retains generated member units and project tiers for an ordinary user", () => {
     expect(
-      eligibleProjectCreationUnits(groups, { isEvaluator: false }).map(({ unit }) => unit.id),
+      eligibleProjectCreationUnits(groups, { isEvaluator: false, organisationId }).map(
+        ({ unit }) => unit.id,
+      ),
     ).toEqual([memberUnit.id, personalUnit.id]);
     expect(eligibleProjectCreationFlavours(productTypes, false)).toEqual([
       "EVALUATION",
       "BRONZE",
       "SILVER",
     ]);
+  });
+
+  test("offers only units of the organisation in effect, and none while it is unknown", () => {
+    // Project creation is scoped like every other Projects screen: a unit of another organisation
+    // would own a project the index the caller returns to does not list.
+    expect(
+      eligibleProjectCreationUnits(groups, {
+        isEvaluator: false,
+        organisationId: otherOrganisationId,
+      }).map(({ unit }) => unit.id),
+    ).toEqual(["unit-elsewhere"]);
+    expect(
+      eligibleProjectCreationUnits(groups, { isEvaluator: false, organisationId: undefined }),
+    ).toEqual([]);
   });
 });
 
@@ -359,5 +383,44 @@ test.describe("Project subscription handoff", () => {
       kind: "invalid",
       reason: "You cannot create a project in this subscription's unit.",
     });
+  });
+});
+
+/**
+ * Whether **Create project** is offered at all. The unit offer above says how a caller with no unit
+ * gets one; this says what the action beside it may do until they have.
+ */
+test.describe("Project creation in the organisation in effect", () => {
+  const organisationId = "org-00000000-0000-4000-8000-000000000001";
+
+  test("a unit in the organisation offers the action", () => {
+    expect(evaluateProjectCreationCapability({ eligibleUnitCount: 1, organisationId })).toEqual({
+      status: "enabled",
+    });
+  });
+
+  test("no unit in the organisation withholds it and names what is missing", () => {
+    expect(evaluateProjectCreationCapability({ eligibleUnitCount: 0, organisationId })).toEqual({
+      reason: "You have no unit in this organisation, and a project must go in one.",
+      status: "disabled",
+    });
+  });
+
+  test("an unknown organisation offers the action rather than taking it away and back", () => {
+    expect(
+      evaluateProjectCreationCapability({ eligibleUnitCount: 0, organisationId: undefined }),
+    ).toEqual({ status: "enabled" });
+  });
+
+  test("facts that have not settled offer the action rather than taking it away and back", () => {
+    // The caller's own personal unit is among the units counted, so a read that has not answered
+    // is not a caller without one.
+    expect(
+      evaluateProjectCreationCapability({
+        eligibleUnitCount: 0,
+        freshness: "stale",
+        organisationId,
+      }),
+    ).toEqual({ status: "enabled" });
   });
 });

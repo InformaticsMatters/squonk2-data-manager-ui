@@ -9,7 +9,9 @@ import {
 } from "@/api/account-server";
 
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
+import { type UnitCreationFreshness } from "../application/organisationUnits";
 import { isProductId, isProjectId, isUnitId } from "../routing/identifiers";
+import { type ProjectCapability } from "./capabilities";
 
 export type ProjectCreationInput = {
   flavour: UnitProductPostBodyBodyFlavour;
@@ -158,22 +160,33 @@ export const transitionProjectCreation = (
 
 export type EligibleProjectUnit = { organisationName: string; unit: UnitAllDetail };
 
-type ProjectCreationEligibility = { evaluatorPersonalUnitId?: string; isEvaluator: boolean };
+type ProjectCreationEligibility = {
+  evaluatorPersonalUnitId?: string;
+  isEvaluator: boolean;
+  /**
+   * The organisation in effect. Project creation is scoped to it like every other Projects screen,
+   * so a unit of some other organisation is not offered: the project it would own could not appear
+   * on the index the caller returns to. Nothing is eligible while it is unknown.
+   */
+  organisationId: string | undefined;
+};
 
 /** Unit product creation follows the generated endpoint's role and membership rules. */
 export const eligibleProjectCreationUnits = (
   groups: readonly OrganisationUnitsGetResponse[],
   eligibility: ProjectCreationEligibility,
 ): EligibleProjectUnit[] =>
-  groups.flatMap(({ organisation, units }) =>
-    units
-      .filter((unit) =>
-        eligibility.isEvaluator
-          ? unit.id === eligibility.evaluatorPersonalUnitId
-          : unit.caller_is_member || organisation.caller_is_member,
-      )
-      .map((unit) => ({ organisationName: organisation.name, unit })),
-  );
+  groups
+    .filter(({ organisation }) => organisation.id === eligibility.organisationId)
+    .flatMap(({ organisation, units }) =>
+      units
+        .filter((unit) =>
+          eligibility.isEvaluator
+            ? unit.id === eligibility.evaluatorPersonalUnitId
+            : unit.caller_is_member || organisation.caller_is_member,
+        )
+        .map((unit) => ({ organisationName: organisation.name, unit })),
+    );
 
 export const eligibleProjectCreationFlavours = (
   productTypes: readonly ProductType[],
@@ -394,3 +407,32 @@ export const productCreationFailureIsRetryable = (error: unknown): boolean => {
       );
   }
 };
+
+/**
+ * Whether **Create project** is offered in the organisation in effect, and what it says when it is
+ * not.
+ *
+ * A project goes in a unit of that organisation, so a caller holding none there has nothing to
+ * create in. The reason names the missing unit rather than an authority the caller may well hold,
+ * because the unit offer standing beside this action is how they get one.
+ *
+ * An organisation that is not yet known offers the action, and so do facts that have not settled:
+ * a caller's own personal unit is among the units counted here, so withholding the control before
+ * that read answers would take it away and give it back on every load. The derivation it guards
+ * already refuses a submission with no unit named.
+ */
+export const evaluateProjectCreationCapability = ({
+  eligibleUnitCount,
+  freshness = "current",
+  organisationId,
+}: {
+  eligibleUnitCount: number;
+  freshness?: UnitCreationFreshness;
+  organisationId: string | undefined;
+}): ProjectCapability =>
+  organisationId === undefined || freshness !== "current" || eligibleUnitCount > 0
+    ? { status: "enabled" }
+    : {
+        reason: "You have no unit in this organisation, and a project must go in one.",
+        status: "disabled",
+      };

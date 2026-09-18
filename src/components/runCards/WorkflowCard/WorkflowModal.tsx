@@ -11,10 +11,10 @@ import { launchIsSendable } from "../../../projects/runLaunch";
 import {
   declaredInputDefaults,
   type InputData,
+  launchNameProblem,
   launchVariables,
   readRunDefinitionVariables,
   runInputsAreSupplied,
-  workflowLaunchNameProblem,
 } from "../../../projects/runLaunchForm";
 import { useRunCommands } from "../../../projects/useRunCommands";
 import { useRunLaunch } from "../../../projects/useRunLaunch";
@@ -74,7 +74,7 @@ export const WorkflowModal = ({
   // A launch missing an input the workflow requires, or carrying a name the Data Manager's own run
   // contract will not accept, can only be answered with a refusal, so it is explained here instead
   // of being sent to earn one.
-  const nameProblem = workflowLaunchNameProblem(nameState);
+  const nameProblem = launchNameProblem(nameState);
   const launchIsComplete =
     nameProblem === undefined && runInputsAreSupplied(declared.inputs, inputsData);
 

@@ -1,8 +1,8 @@
 import {
-  AppApiWorkflowRunBody,
-  appApiWorkflowRunBodyAsNameMax,
-  appApiWorkflowRunBodyAsNameMin,
-} from "@/api/data-manager/workflow/zod";
+  AppApiInstancePostBody,
+  appApiInstancePostBodyAsNameMax,
+  appApiInstancePostBodyAsNameMin,
+} from "@/api/data-manager/instance/zod";
 
 /**
  * What a Run definition declares its launch needs, and what one launch of it carries. A job and a
@@ -125,17 +125,23 @@ export const launchVariables = (
   inputsData: InputData,
 ): Record<string, unknown> => ({ ...(isRecord(options) ? options : {}), ...inputsData });
 
-const nameRequirement = `A workflow name is required. It must be ${appApiWorkflowRunBodyAsNameMin} to ${appApiWorkflowRunBodyAsNameMax} characters of letters, digits, spaces, dots, dashes, or underscores, and must begin and end with a letter or digit.`;
+const nameRequirement = `A name is required. It must be ${appApiInstancePostBodyAsNameMin} to ${appApiInstancePostBodyAsNameMax} characters of letters, digits, spaces, dots, dashes, or underscores, and must begin and end with a letter or digit.`;
 
-const workflowName = AppApiWorkflowRunBody.shape.as_name;
+const launchName = AppApiInstancePostBody.shape.as_name;
 
 /**
- * Why the Data Manager would not create a running workflow under this name, if it would not. The
- * generated run body is the authority on the name it accepts, so a launch whose only possible
- * answer is a refusal is explained where it can be corrected rather than sent to earn one.
+ * Why the Data Manager would not create a running instance under this name, if it would not. The
+ * generated body is the authority on the name it accepts, so a launch whose only possible answer is
+ * a refusal is explained where it can be corrected rather than sent to earn one.
+ *
+ * Every launch kind is named under this one rule. A job, an application, and a workflow are posted
+ * through different bodies, but those bodies declare the same name, and a rule written per kind
+ * would be three — letting one kind refuse a name another had accepted for the same instance. The
+ * contract test holds the two generated declarations to that agreement, so a regeneration that
+ * parted them fails there rather than quietly validating a workflow against the instance contract.
  */
-export const workflowLaunchNameProblem = (name: string): string | undefined =>
-  workflowName.safeParse(name).success ? undefined : nameRequirement;
+export const launchNameProblem = (name: string): string | undefined =>
+  launchName.safeParse(name).success ? undefined : nameRequirement;
 
 /**
  * The name a launch form opens under. An instance carries what it was run with, and the name it

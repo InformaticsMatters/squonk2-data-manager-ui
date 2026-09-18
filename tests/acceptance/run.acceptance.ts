@@ -471,7 +471,7 @@ test("launching a workflow opens the running workflow it created, in the same pr
   // The name the running workflow would be created under is held to the Data Manager's own
   // contract, in the field it is entered in.
   await dialog.getByLabel("Workflow name").fill("a");
-  await expect(dialog.getByText(/A workflow name is required\./u)).toBeVisible();
+  await expect(dialog.getByText(/A name is required\./u)).toBeVisible();
   await dialog.getByLabel("Workflow name").fill("Acceptance workflow run");
 
   // The file is chosen from the project in the URL, so a workflow is only ever given that

@@ -3,13 +3,23 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import {
+  appApiInstancePostBodyAsNameMax,
+  appApiInstancePostBodyAsNameMin,
+  appApiInstancePostBodyAsNameRegExp,
+} from "../../src/api/data-manager/instance/zod";
+import {
+  appApiWorkflowRunBodyAsNameMax,
+  appApiWorkflowRunBodyAsNameMin,
+  appApiWorkflowRunBodyAsNameRegExp,
+} from "../../src/api/data-manager/workflow/zod";
+import {
   declaredInputDefaults,
   launchNameDefault,
+  launchNameProblem,
   launchVariables,
   readRunDefinitionVariables,
   runInputsAreSupplied,
   validateInputData,
-  workflowLaunchNameProblem,
 } from "../../src/projects/runLaunchForm";
 
 /** A definition's declared inputs, as the Data Manager publishes them. */
@@ -27,7 +37,7 @@ const optionsSchema = {
 };
 
 const nameRequirement =
-  "A workflow name is required. It must be 2 to 80 characters of letters, digits, spaces, dots, dashes, or underscores, and must begin and end with a letter or digit.";
+  "A name is required. It must be 2 to 80 characters of letters, digits, spaces, dots, dashes, or underscores, and must begin and end with a letter or digit.";
 
 test.describe("Declared launch variables", () => {
   test("a definition's inputs, options, and option order are read as it declared them", () => {
@@ -185,10 +195,10 @@ test.describe("What a launch carries", () => {
   });
 });
 
-test.describe("The name a running workflow is created under", () => {
+test.describe("The name a running instance is created under", () => {
   test("a name the generated contract accepts is not questioned", () => {
     for (const name of ["Ab", "Acceptance Workflow Definition", "run-1.2_3"]) {
-      expect(workflowLaunchNameProblem(name)).toBeUndefined();
+      expect(launchNameProblem(name)).toBeUndefined();
     }
   });
 
@@ -196,8 +206,19 @@ test.describe("The name a running workflow is created under", () => {
     // The generated body is the authority on this, so a launch that could only be answered with a
     // refusal is explained where it can be corrected instead of being sent to earn one.
     for (const name of ["", "a", "a".repeat(81), "-run", "run/1", "run "]) {
-      expect(workflowLaunchNameProblem(name)).toBe(nameRequirement);
+      expect(launchNameProblem(name)).toBe(nameRequirement);
     }
+  });
+
+  test("a workflow is held to the same name as the instance every other launch creates", () => {
+    // One rule names every launch kind, which is only true while the two generated bodies agree on
+    // it. A regeneration that parted them would have this rule validate a workflow against a
+    // contract it is not posted through, so the divergence is caught here instead.
+    expect(appApiWorkflowRunBodyAsNameMin).toBe(appApiInstancePostBodyAsNameMin);
+    expect(appApiWorkflowRunBodyAsNameMax).toBe(appApiInstancePostBodyAsNameMax);
+    expect(appApiWorkflowRunBodyAsNameRegExp.source).toBe(
+      appApiInstancePostBodyAsNameRegExp.source,
+    );
   });
 });
 

@@ -1,12 +1,14 @@
-name: live-service-smoke
+name: live-user-journey
 
+# The journey mutates a shared test deployment as a real user, so it is never a merge gate and
+# never runs on a push. Weekly is often enough to catch a contract that drifted underneath us.
 on:
   workflow_dispatch:
   schedule:
-  - cron: "17 3 * * 1-5"
+  - cron: "41 3 * * 6"
 
 jobs:
-  smoke:
+  journey:
     continue-on-error: true
     environment: data-manager-ui/test
     runs-on: ubuntu-latest
@@ -23,7 +25,7 @@ jobs:
     - run: pnpm exec playwright install --with-deps chromium
     - name: Build against live test services
       run: pnpm build
-      env: &smoke-env
+      env: &journey-env
         ACCOUNT_SERVER_API_SERVER: "https://account-server-test.xchem-dev.diamond.ac.uk/account-server-api"
         BASE_PATH: "/data-manager-ui"
         BASE_URL: "http://localhost:3000"
@@ -33,16 +35,18 @@ jobs:
         KEYCLOAK_CLIENT_ID: "${{ secrets.AUTH0_CLIENT_ID }}"
         KEYCLOAK_CLIENT_SECRET: "${{ secrets.AUTH0_CLIENT_SECRET }}"
         KEYCLOAK_URL: "https://keycloak-test.xchem-dev.diamond.ac.uk/auth/realms/squonk"
-        # The identity the live suites sign in as is pinned in `tests/liveEnvironment.ts`; only its
-        # password comes from here.
+        # Every identity the journey names — the user whose workspace preparation clears, and the
+        # collaborator it shares with — is pinned in `tests/journey/deployment.ts`; only their
+        # passwords come from here.
         DMIT_USER_A_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
+        DMIT_USER_B_PASSWORD: "${{ secrets.DMIT_USER_B_PASSWORD }}"
         TEST_PORT: "3000"
         VERCEL_BRANCH_URL: "http://localhost:3000"
-    - name: Run non-blocking live smoke
-      run: pnpm test:smoke
-      env: *smoke-env
+    - name: Run the live user journey
+      run: pnpm test:journey
+      env: *journey-env
     - if: always()
       uses: actions/upload-artifact@v7.0.1
       with:
-        name: Live Smoke Results
+        name: Live Journey Results
         path: test-results

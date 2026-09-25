@@ -81,7 +81,7 @@
     "dayjs": "1.11.23",
     "filesize": "11.0.23",
     "immer": "11.1.18",
-    "jotai": "2.20.3",
+    "jotai": "3.0.0",
     "jwt-decode": "4.0.0",
     "ketcher-core": "3.12.0",
     "ketcher-react": "3.12.0",

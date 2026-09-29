@@ -31,6 +31,7 @@
     "test:acceptance:headed": "tsx tools/testing/run-acceptance.ts --headed",
     "test:gallery": "vite --config playwright/vite.config.mts",
     "test:smoke": "playwright test --config=playwright.smoke.config.ts",
+    "test:journey": "playwright test --config=playwright.journey.config.ts",
     "test:debug": "pnpm test:acceptance:headed",
     "test:ci": "pnpm test",
     "analyze": "ANALYZE=true next build --webpack",

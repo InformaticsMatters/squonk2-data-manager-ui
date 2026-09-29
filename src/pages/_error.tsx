@@ -2,6 +2,8 @@ import * as Sentry from "@sentry/nextjs";
 import { type NextPage } from "next";
 import NextErrorComponent, { type ErrorProps } from "next/error";
 
+import { pagePolicies, withPagePolicy } from "../application/pagePolicy";
+
 const CustomErrorComponent: NextPage<ErrorProps> = ({ statusCode }) => {
   return <NextErrorComponent statusCode={statusCode} />;
 };
@@ -15,4 +17,4 @@ CustomErrorComponent.getInitialProps = async (contextData) => {
   return NextErrorComponent.getInitialProps(contextData);
 };
 
-export default CustomErrorComponent;
+export default withPagePolicy(pagePolicies.public, CustomErrorComponent);

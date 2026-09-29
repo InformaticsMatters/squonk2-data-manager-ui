@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nextjs";
 import { fromNodeHeaders } from "better-auth/node";
 import { type NextApiHandler, type NextApiRequest } from "next";
 import httpProxyMiddleware, {
@@ -12,7 +13,9 @@ type Headers = NonNullable<Parameters<typeof httpProxyMiddleware>[2]>["headers"]
 const getAccessTokenErrorWrapped = async (req: NextApiRequest) => {
   try {
     const result = await auth.api.getAccessToken({
-      body: { providerId: "keycloak" },
+      // This deployment configures no database, so better-auth keeps the provider's tokens in a
+      // signed cookie, and it only reads them from there when the caller asks for that source.
+      body: { useAccountCookie: true },
       headers: fromNodeHeaders(req.headers),
     });
     return result.accessToken;
@@ -49,6 +52,10 @@ export const createProxyMiddleware = (
         secure: !process.env.DANGEROUS__DISABLE_SSL_CERT_CHECK_IN_API_PROXY, // only used in testing
       });
     } catch (error) {
+      // Every Data Manager request the browser makes arrives here, so a rejection this far out is
+      // the proxy itself failing rather than a service refusing a caller: nobody else is left to
+      // account for it, and without this it is a 500 nothing ever hears about.
+      captureException(error);
       console.error(error);
       res.status(500).json(error);
     }

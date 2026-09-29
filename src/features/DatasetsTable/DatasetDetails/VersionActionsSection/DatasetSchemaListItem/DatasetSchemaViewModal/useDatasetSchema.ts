@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import { getGetSchemaQueryKey, useGetSchema } from "@squonk/data-manager-client/dataset";
-import { useAddMetadata, useAddMetadataVersion } from "@squonk/data-manager-client/metadata";
+import { getGetSchemaQueryKey, useGetSchema } from "@/api/data-manager/dataset";
+import { useAddMetadata, useAddMetadataVersion } from "@/api/data-manager/metadata";
 
 import { useQueryClient } from "@tanstack/react-query";
 

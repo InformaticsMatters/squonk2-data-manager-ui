@@ -1,0 +1,66 @@
+# Datasets
+
+**Datasets** is one of the three workspaces, alongside **Projects** and **Administration**. It lists
+every dataset you can reach, without you having to choose a unit or a project first.
+
+A dataset is a file you can work with, held outside any one project. The [Concepts](/docs/concepts)
+page explains why you might use one; in short, datasets can be shared, versioned, and have their
+metadata indexed.
+
+## Datasets and versions
+
+A **dataset** is the thing that is named and shared. A **version** is the thing actually displayed:
+every dataset has one or more versions, and a URL naming a dataset alone resolves to its current
+version, so what you are looking at is always a specific version.
+
+The index lists each dataset with its file name, its labels, its editors, its versions and the
+number of projects it is attached to, and each dataset's versions can be expanded beneath it. The
+list is narrowed by **Search datasets**, and by filters for owner, editor, label and file type.
+
+## Uploading a dataset
+
+**Upload dataset** above the list opens **Upload New Datasets**, where you drop the files you want
+and send them together.
+
+The dialog asks for a **Billing unit** — the unit that will pay for the datasets' storage. This is
+the one place a unit is asked for outside project creation, and it is asked for as billing context
+rather than as a scope: it does not decide what you can see. Every file in one batch is billed to
+the unit that batch started with, and the unit you last uploaded successfully in is offered again
+next time.
+
+Where you may not upload, the control states why rather than disappearing.
+
+## Working with a dataset version
+
+Selecting a version opens its details, which hold:
+
+- **Dataset Actions** - creating a new version of the dataset, which succeeds its latest version
+  rather than the version you happen to be looking at.
+- **Editors** - who may change the dataset.
+- **Labels** - the dataset's own labels, which the index can be filtered by.
+- **Working Version** - which version you are looking at, and downloading it.
+- **Information** - the version's own metadata.
+- **View** - opening the version in the **Plaintext Viewer** or the **Browser Viewer**.
+- **Actions** - attaching this version to a project, viewing and editing the dataset schema, and
+  deleting this version.
+
+## Attaching a version to a project
+
+**Attach Dataset to a Project** puts a dataset version into a project's files, so everything you run
+in that project can read it. The dialog asks for:
+
+- **Project** - the project to attach it to. This lists the projects you can write to.
+- **File Type** - how the file should be understood.
+- **Path** - where in the project the file should appear.
+- **Immutable** - whether the attached file may be changed in the project.
+- **Compress** - whether the file should be compressed.
+
+A project's **Files** section can detach an attached version again, and can create a new dataset
+from a project file. Attaching is carried out by the Data Manager on your behalf, so it appears as a
+**task** in the project's **[Results](/docs/how-to/projects/results)**.
+
+## Deleting
+
+**Delete this Version of the Dataset** removes one version. Deleting the version you are looking at
+takes you to the version that remains, or back to the index when none does. Versions can also be
+selected in the index and deleted together.

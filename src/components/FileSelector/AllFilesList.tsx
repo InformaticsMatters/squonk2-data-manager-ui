@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useGetFiles } from "@squonk/data-manager-client/file-and-path";
+import { useGetFiles } from "@/api/data-manager/file-and-path";
 
 import { Typography } from "@mui/material";
 

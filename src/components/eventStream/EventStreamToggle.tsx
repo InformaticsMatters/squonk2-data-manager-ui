@@ -5,10 +5,11 @@
 import { FormControlLabel, Switch } from "@mui/material";
 import { useAtom } from "jotai";
 
+import { useIsClient } from "../../hooks/useIsClient";
 import { eventStreamEnabledAtom } from "../../state/eventStream";
 import { useIsEventStreamInstalled } from "./useIsEventStreamInstalled";
 
-export const EventStreamToggle = () => {
+const EventStreamToggleInner = () => {
   const isEventStreamInstalled = useIsEventStreamInstalled();
 
   const [eventStreamEnabled, setEventStreamEnabled] = useAtom(eventStreamEnabledAtom);
@@ -30,4 +31,24 @@ export const EventStreamToggle = () => {
       }}
     />
   );
+};
+
+export const EventStreamToggle = () => {
+  const isClient = useIsClient();
+
+  if (!isClient) {
+    return (
+      <FormControlLabel
+        control={<Switch disabled checked={false} color="primary" />}
+        label="Event stream (not available)"
+        sx={{
+          margin: 0,
+          alignItems: "center",
+          "& .MuiFormControlLabel-label": { fontSize: "0.875rem", lineHeight: 1.2 },
+        }}
+      />
+    );
+  }
+
+  return <EventStreamToggleInner />;
 };

@@ -1,9 +1,3 @@
-export const mutateAtPosition = <T>(arr: T[], idx: number, val: T) => {
-  const newArr = [...arr];
-  newArr[idx] = val;
-  return newArr;
-};
-
 const divideFileName = (fileName: string) => {
   const typeLabelParts = fileName.split(".");
   if (typeLabelParts.length === 0) {

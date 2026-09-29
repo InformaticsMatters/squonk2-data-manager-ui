@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { DeleteForever as DeleteForeverIcon, Edit as EditIcon } from "@mui/icons-material";
 import { Box, Button, ButtonGroup, IconButton, TextField, Tooltip } from "@mui/material";
 import { captureException } from "@sentry/nextjs";
 import dynamic from "next/dynamic";
 
+import { useDraftValue } from "../hooks/useDraftValue";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useIsASketcherOpen } from "../state/sketcherState";
 import { CenterLoader } from "./CenterLoader";
@@ -75,15 +76,11 @@ export const SMILESInput = ({
 }: SMILESInputProps) => {
   const { enqueueError } = useEnqueueError();
 
-  const [smiles, setSmiles] = useState(value);
+  // Synchronise the controlled prop to the uncontrolled state
+  const [smiles, setSmiles] = useDraftValue(value);
   const [mode, setMode] = useState(initialMode);
 
   const [, setIsASketcherOpen] = useIsASketcherOpen();
-
-  // Synchronise the controlled prop to the uncontrolled state
-  useEffect(() => {
-    setSmiles(value);
-  }, [value]);
 
   if (mode === "smiles") {
     return (

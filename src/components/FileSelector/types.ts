@@ -1,6 +1,3 @@
-import { type ProjectId } from "../../hooks/projectHooks";
-
-export type NoUndefProjectId = NonNullable<ProjectId>;
 export type FileOrDirectory = "directory" | "file";
 export type FileSelection = string[] | string | undefined;
 
@@ -20,7 +17,7 @@ export interface SharedProps {
   /**
    * ID of the project from which files are supplied.
    */
-  projectId: NoUndefProjectId;
+  projectId: string;
   /**
    * Selected file path or paths
    */

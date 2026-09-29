@@ -11,9 +11,16 @@
 # next.js
 /.next/
 /out/
+next-env.d.ts
 
 # production
 /build
+
+# local OpenAPI inputs and generation staging
+/openapi/*.json
+/openapi/*.yaml
+/openapi/*.yml
+/.openapi-staging/
 
 # misc
 .DS_Store
@@ -40,6 +47,7 @@ motd.yaml
 .vercel
 
 # Playwright
+# No suite writes this any more, but a stale one from before the cutover holds live tokens.
 storageState.json
 /test-results
 

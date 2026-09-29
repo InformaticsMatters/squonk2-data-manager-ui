@@ -1,16 +1,33 @@
-import { useGetVersion as useGetASAPIVersion } from "@squonk/account-server-client/state";
-import { useGetVersion as useGetDMAPIVersion } from "@squonk/data-manager-client/accounting";
+import { useGetVersion as useGetASAPIVersion } from "@/api/account-server/state";
+import { useGetVersion as useGetDMAPIVersion } from "@/api/data-manager/accounting";
 
 import { ListItem as MuiListItem, ListItemText, styled, Typography } from "@mui/material";
 
+import { useIsClient } from "../hooks/useIsClient";
 import { HorizontalList } from "./HorizontalList";
 
-export const getGetDMVersionQueryKey = () => ["data-manager", "/version"];
-export const getGetASVersionQueryKey = () => ["account-server", "/version"];
-
-export const AppVersions = () => {
+const ApiVersions = () => {
   const { data: dmData } = useGetDMAPIVersion();
   const { data: asData } = useGetASAPIVersion();
+
+  return (
+    <>
+      {!!dmData?.version && (
+        <ListItem>
+          <ListItemText primary={`Data Manager: ${dmData.version}`} />
+        </ListItem>
+      )}
+      {!!asData?.version && (
+        <ListItem>
+          <ListItemText primary={`Account Server: ${asData.version}`} />
+        </ListItem>
+      )}
+    </>
+  );
+};
+
+export const AppVersions = () => {
+  const isClient = useIsClient();
 
   return (
     <>
@@ -19,16 +36,7 @@ export const AppVersions = () => {
         <ListItem>
           <ListItemText primary={`UI: ${process.env.NEXT_PUBLIC_APP_VERSION}`} />
         </ListItem>
-        {!!dmData?.version && (
-          <ListItem>
-            <ListItemText primary={`Data Manager: ${dmData.version}`} />
-          </ListItem>
-        )}
-        {!!asData?.version && (
-          <ListItem>
-            <ListItemText primary={`Account Server: ${asData.version}`} />
-          </ListItem>
-        )}
+        {!!isClient && <ApiVersions />}
       </HorizontalList>
     </>
   );

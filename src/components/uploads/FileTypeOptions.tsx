@@ -1,4 +1,4 @@
-import { useGetFileTypes } from "@squonk/data-manager-client/type";
+import { useGetFileTypes } from "@/api/data-manager/type";
 
 import { Box, Grid, Typography } from "@mui/material";
 

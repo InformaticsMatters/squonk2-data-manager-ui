@@ -120,6 +120,12 @@ export interface DataTableProps<Data extends Record<string, any>> {
    * If truthy, displays the provided `error`.
    */
   error?: string | null;
+  /** Controlled value for the global search field. */
+  searchValue?: string;
+  /** Called when the global search field changes. */
+  onSearchChange?: (value: string) => void;
+  /** Accessible label for the global search field. */
+  searchLabel?: string;
 }
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
@@ -153,6 +159,9 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     customCellProps,
     customRowProps,
     error,
+    searchLabel = "search",
+    searchValue,
+    onSearchChange,
   } = props;
   const tableData = useMemo(() => data ?? [], [data]);
 
@@ -219,13 +228,23 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     return workingColumns;
   }, [columns, initialSelection, onSelection, subRowsEnabled]);
 
+  // TanStack Table hands back functions the React Compiler cannot prove safe to memoize, so it
+  // declines to compile this component at all. There is nothing to fix here: the diagnostic is
+  // about the library's interface, not this call, and the component simply goes uncompiled.
+  // eslint-disable-next-line react-hooks/incompatible-library -- useReactTable is not compilable; the component runs uncompiled
   const table = useReactTable({
     enableColumnFilters,
     getRowId,
     data: tableData,
     columns: paddedColumns,
     filterFns: { fuzzy: fuzzyFilter },
-    state: { sorting, globalFilter, columnFilters, expanded, rowSelection },
+    state: {
+      sorting,
+      globalFilter: searchValue ?? globalFilter,
+      columnFilters,
+      expanded,
+      rowSelection,
+    },
     initialState: {
       rowSelection: initialSelection
         ? Object.fromEntries(initialSelection.map((id) => [id, true]))
@@ -270,11 +289,14 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                   ),
                 },
 
-                htmlInput: { "aria-label": "search" },
+                htmlInput: { "aria-label": searchLabel },
               }}
               sx={{ ml: "auto" }}
-              value={globalFilter || ""}
-              onChange={(event) => setGlobalFilter(event.target.value)}
+              value={searchValue ?? globalFilter}
+              onChange={(event) => {
+                setGlobalFilter(event.target.value);
+                onSearchChange?.(event.target.value);
+              }}
             />
           )}
         </Toolbar>

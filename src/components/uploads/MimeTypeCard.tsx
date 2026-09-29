@@ -1,4 +1,4 @@
-import { type TypeSummary } from "@squonk/data-manager-client";
+import { type TypeSummary } from "@/api/data-manager";
 
 import { Card, CardContent } from "@mui/material";
 import Form from "@rjsf/mui";

@@ -12,41 +12,55 @@ declare module "nextjs-routes" {
 
   export type Route =
     | StaticRoute<"/">
+    | StaticRoute<"/administration">
+    | StaticRoute<"/administration/charges">
+    | DynamicRoute<"/administration/subscriptions/[productId]", { "productId": string }>
+    | DynamicRoute<"/administration/units/[unitId]", { "unitId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/access", { "unitId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/charges", { "unitId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/subscriptions", { "unitId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/subscriptions/[productId]", { "unitId": string; "productId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/subscriptions/[productId]/charges", { "unitId": string; "productId": string }>
+    | DynamicRoute<"/administration/units/[unitId]/usage", { "unitId": string }>
+    | StaticRoute<"/administration/usage">
     | DynamicRoute<"/api/auth/[...all]", { "all": string[] }>
+    | StaticRoute<"/api/auth/keycloak-logout">
+    | StaticRoute<"/api/configuration/api-servers">
     | StaticRoute<"/api/configuration/ui-version">
+    | DynamicRoute<"/api/dm-api/[...dmProxy]", { "dmProxy": string[] }>
     | StaticRoute<"/api/motd">
     | StaticRoute<"/api/sdf-parser">
     | DynamicRoute<"/api/viewer-proxy/[...viewerProxy]", { "viewerProxy": string[] }>
     | StaticRoute<"/configuration">
-    | DynamicRoute<"/dataset/[datasetId]/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>
     | StaticRoute<"/datasets">
+    | DynamicRoute<"/datasets/[datasetId]", { "datasetId": string }>
+    | DynamicRoute<"/datasets/[datasetId]/versions/[datasetVersion]", { "datasetId": string; "datasetVersion": string }>
+    | DynamicRoute<"/datasets/[datasetId]/versions/[datasetVersion]/view", { "datasetId": string; "datasetVersion": string }>
+    | StaticRoute<"/docs">
     | StaticRoute<"/docs/concepts">
     | StaticRoute<"/docs/developer">
     | StaticRoute<"/docs/guided-tour">
     | StaticRoute<"/docs/how-to">
-    | StaticRoute<"/docs/how-to/applications">
-    | StaticRoute<"/docs/how-to/context">
-    | StaticRoute<"/docs/how-to/create-project">
-    | StaticRoute<"/docs/how-to/execution">
-    | StaticRoute<"/docs/how-to/jobs">
+    | StaticRoute<"/docs/how-to/administration">
+    | StaticRoute<"/docs/how-to/datasets">
+    | StaticRoute<"/docs/how-to/getting-started">
     | StaticRoute<"/docs/how-to/login">
-    | StaticRoute<"/docs/how-to/projects-tab">
-    | StaticRoute<"/docs/how-to/results">
-    | StaticRoute<"/docs/how-to/usage-quotas">
+    | StaticRoute<"/docs/how-to/projects">
+    | StaticRoute<"/docs/how-to/projects/files">
+    | StaticRoute<"/docs/how-to/projects/manage">
+    | StaticRoute<"/docs/how-to/projects/results">
+    | StaticRoute<"/docs/how-to/projects/run">
     | StaticRoute<"/docs/jobs">
-    | DynamicRoute<"/organisation/[organisationId]/inventory", { "organisationId": string }>
-    | DynamicRoute<"/product/[productId]/charges", { "productId": string }>
-    | StaticRoute<"/products">
-    | StaticRoute<"/project">
-    | StaticRoute<"/project/file">
-    | StaticRoute<"/results">
-    | DynamicRoute<"/results/instance/[instanceId]", { "instanceId": string }>
-    | DynamicRoute<"/results/task/[taskId]", { "taskId": string }>
-    | DynamicRoute<"/results/workflow/[workflowId]", { "workflowId": string }>
-    | StaticRoute<"/run">
-    | DynamicRoute<"/unit/[unitId]/charges", { "unitId": string }>
-    | DynamicRoute<"/unit/[unitId]/inventory", { "unitId": string }>
-    | StaticRoute<"/viewer/sdf">;
+    | StaticRoute<"/projects">
+    | DynamicRoute<"/projects/[projectId]/files", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/files/view", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/manage", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/results", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/results/[collection]/[resultId]", { "projectId": string; "collection": string; "resultId": string }>
+    | DynamicRoute<"/projects/[projectId]/run", { "projectId": string }>
+    | DynamicRoute<"/projects/[projectId]/run/[...definition]", { "projectId": string; "definition": string[] }>
+    | DynamicRoute<"/projects/deletions/[taskId]", { "taskId": string }>
+    | StaticRoute<"/projects/new">;
 
   interface StaticRoute<Pathname> {
     pathname: Pathname;

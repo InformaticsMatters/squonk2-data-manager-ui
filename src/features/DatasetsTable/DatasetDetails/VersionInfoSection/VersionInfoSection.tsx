@@ -1,4 +1,4 @@
-import { type DatasetVersionSummary } from "@squonk/data-manager-client";
+import { type DatasetVersionSummary } from "@/api/data-manager";
 
 import { List } from "@mui/material";
 import { filesize } from "filesize";

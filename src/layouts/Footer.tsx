@@ -2,7 +2,6 @@ import { Container, Grid, Link, List, ListItem, Paper, Typography } from "@mui/m
 import A from "next/link";
 
 import { AppVersions } from "../components/AppVersions";
-import { ralewayFont } from "../constants/fonts";
 
 export const Footer = () => {
   const itemStyles = { justifyContent: { xs: "left", sm: "right" } };
@@ -13,7 +12,7 @@ export const Footer = () => {
         <Grid container sx={{ p: 2 }}>
           <Grid size={{ sm: 6, xs: 12 }}>
             <Typography variant="h4">
-              <strong style={{ fontFamily: ralewayFont.style.fontFamily }}>
+              <strong style={{ fontFamily: "var(--raleway-font)" }}>
                 <Link href="https://squonk.it/" rel="noopener noreferrer" target="_blank">
                   Squonk
                 </Link>
@@ -44,32 +43,22 @@ export const Footer = () => {
                   Datasets
                 </Link>
               </ListItem>
-              <ListItem sx={itemStyles}>
-                <Link component={A} href={{ pathname: "/project" }}>
-                  Project
-                </Link>
-              </ListItem>
-              <ListItem sx={itemStyles}>
-                <Link component={A} href={{ pathname: "/run" }}>
-                  Apps/Jobs
-                </Link>
-              </ListItem>
             </List>
           </Grid>
           <Grid size={{ sm: 3, xs: 6 }}>
             <List dense sx={{ p: 0 }}>
               <ListItem sx={itemStyles}>
-                <Link component={A} href={{ pathname: "/results" }}>
-                  Results
+                <Link component={A} href={{ pathname: "/projects" }}>
+                  Projects
                 </Link>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <Link component={A} href={{ pathname: "/products" }}>
-                  Products
+                <Link component={A} href={{ pathname: "/administration" }}>
+                  Administration
                 </Link>
               </ListItem>
               <ListItem sx={itemStyles}>
-                <Link component={A} href={{ pathname: "/docs/guided-tour" }}>
+                <Link component={A} href={{ pathname: "/docs" }}>
                   Docs
                 </Link>
               </ListItem>

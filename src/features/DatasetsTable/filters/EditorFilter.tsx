@@ -1,4 +1,4 @@
-import { type UserSummary } from "@squonk/data-manager-client";
+import { type UserSummary } from "@/api/data-manager";
 
 import { UserFilter } from "./UserFilter";
 

@@ -68,6 +68,12 @@ test("Project index rows state role and privacy, and the unit filter narrows the
   await expect(administered).toContainText("Administrator");
   await expect(administered.getByRole("img", { name: "Private" })).toBeVisible();
   await expect(page.getByRole("link", { name: /Screening Project/u })).toContainText("Observer");
+
+  // The row carries what tells one project from another beyond its name, and the organisation the
+  // whole list is scoped to is named once, above it.
+  // The date is the runner's local rendering of the fixture timestamp, so it is matched by shape.
+  await expect(administered).toContainText(/Acceptance Unit · Bronze · Created \d\d\/\d\d\/\d\d/u);
+  await expect(page.getByText("Choose a project in Acceptance Organisation")).toBeVisible();
   const unheld = page.getByRole("link", { name: /Unlisted Unit Project/u });
   await expect(unheld).not.toContainText(/Administrator|Editor|Observer/u);
   await expect(unheld.getByRole("img", { name: "Public" })).toBeVisible();

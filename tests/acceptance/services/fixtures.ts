@@ -703,6 +703,7 @@ export const createScenarioFixtures = (subject: string, profile: ScenarioProfile
               name: populatedManage ? "KRAS G12D Lead Optimisation" : "Acceptance Project",
               organisation_id: fixtureIds.organisation,
               private: true,
+              product_flavour: "BRONZE",
               product_id: fixtureIds.product,
               project_id: fixtureIds.project,
               size: populatedManage ? 1_975_308_642_304 : 0,

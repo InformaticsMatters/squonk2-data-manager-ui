@@ -78,12 +78,26 @@ test("project index is organisation-scoped, searchable, and labels duplicate nam
 
   expect(items).toEqual([
     {
+      flavour: undefined,
       isPrivate: true,
       project: expect.objectContaining({ project_id: "project-two" }),
       roleLabel: undefined,
       unitName: "Screening",
     },
   ]);
+});
+
+test("project index names the flavour the project listing reports, and nothing where it reports none", () => {
+  const { items } = buildProjectIndexList(
+    [
+      project({ product_flavour: "BRONZE", project_id: "project-one" }),
+      project({ project_id: "project-two" }),
+    ],
+    units,
+    "organisation-one",
+  );
+
+  expect(items.map(({ flavour }) => flavour)).toEqual(["BRONZE", undefined]);
 });
 
 test("project index retains containing-unit identity when its name is unavailable", () => {

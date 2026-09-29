@@ -32,6 +32,13 @@ export type ProjectIndexRoleLabel = (typeof rankedRoles)[number][0];
  * tells one project from another.
  */
 export type ProjectIndexItem = {
+  /**
+   * The subscription flavour the project runs on, as the project listing itself reports it. The
+   * Account Server's product would be the other source, but it is refused to everyone outside the
+   * owning unit — so joining it in would name a flavour on the caller's own projects and leave it
+   * blank on exactly the projects they know least about.
+   */
+  flavour: string | undefined;
   isPrivate: boolean;
   project: ProjectDetail;
   roleLabel: ProjectIndexRoleLabel | undefined;
@@ -110,6 +117,7 @@ export const buildProjectIndexList = (
     (project) => project.organisation_id === organisationId,
   );
   const rows = organisationProjects.map<ProjectIndexItem>((project) => ({
+    flavour: project.product_flavour,
     isPrivate: project.private,
     project,
     roleLabel: highestRoleLabel(project, username),

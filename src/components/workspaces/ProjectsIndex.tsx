@@ -175,7 +175,11 @@ export const ProjectsIndex = () => {
               there is no list, and the offer says what to do instead. */}
           {onboardingIsTheIndex ? null : (
             <Typography color="text.secondary">
-              Choose a project before project resources are displayed.
+              {/* The index lists one organisation at a time, so the organisation is named here
+                  rather than repeated down every row. */}
+              Choose a project
+              {selectedOrganisation[0]?.name ? ` in ${selectedOrganisation[0].name}` : ""} before
+              project resources are displayed.
             </Typography>
           )}
         </div>

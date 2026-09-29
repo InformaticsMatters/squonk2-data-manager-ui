@@ -1,3 +1,10 @@
+# [7.0.0-dev.34](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.33...7.0.0-dev.34) (2026-09-29)
+
+
+### Features
+
+* **projects:** state creation date, flavour and organisation on the index ([0b339d1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/0b339d19ff02387df5b80f94df1a746f840e2825)), closes [#2080](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2080)
+
 # [7.0.0-dev.33](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0-dev.32...7.0.0-dev.33) (2026-09-18)
 
 

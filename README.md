@@ -23,6 +23,7 @@ The Data Manager UI will usually only work with specific API versions. A major v
 | 4   | 3      | 3      |
 | 5   | 4      | 4      |
 | 6   | 5      | 4      |
+| 7   | 6      | 4      |
 
 ---
 

@@ -205,11 +205,11 @@ importers:
         specifier: 10.0.1
         version: 10.0.1(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))(supports-color@9.4.0)
       '@semantic-release/github':
-        specifier: 12.0.9
-        version: 12.0.9(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))(supports-color@9.4.0)
+        specifier: 12.0.10
+        version: 12.0.10(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))(supports-color@9.4.0)
       '@semantic-release/npm':
-        specifier: 13.1.5
-        version: 13.1.5(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))
+        specifier: 13.2.0
+        version: 13.2.0(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))
       '@semantic-release/release-notes-generator':
         specifier: 14.1.1
         version: 14.1.1(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))(supports-color@9.4.0)
@@ -264,10 +264,6 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
-
-  '@babel/code-frame@7.26.2':
-    resolution: {integrity: sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/code-frame@7.29.0':
     resolution: {integrity: sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw==}
@@ -1355,8 +1351,11 @@ packages:
   '@octokit/openapi-types@27.0.0':
     resolution: {integrity: sha512-whrdktVs1h6gtR+09+QsNk2+FO+49j6ga1c55YZudfEG+oKJVvJLQi3zkOm5JjiUXAagWK2tI2kTGKJ2Ys7MGA==}
 
-  '@octokit/plugin-paginate-rest@14.0.0':
-    resolution: {integrity: sha512-fNVRE7ufJiAA3XUrha2omTA39M6IXIc6GIZLvlbsm8QOQCYvpq/LkMNGyFlB1d8hTDzsAXa3OKtybdMAYsV/fw==}
+  '@octokit/openapi-types@28.0.0':
+    resolution: {integrity: sha512-0rFyLuyHvIj6uuZWuDslxkowFYdPXoNIkeAv4b27dzm2Tf4vGWXnPsMcxs7d65kLdMERgP3wc1AEPlqMz8e1cQ==}
+
+  '@octokit/plugin-paginate-rest@15.0.0':
+    resolution: {integrity: sha512-lw9A9YL5s4VPj+VEx8uMxaxQm2YTgrPDkrLEuZuu18R8TK3oPcXF4K6t52nx6xn1RcogZC9i188sAr/4XYJaQQ==}
     engines: {node: '>= 20'}
     peerDependencies:
       '@octokit/core': '>=6'
@@ -1383,6 +1382,9 @@ packages:
 
   '@octokit/types@16.0.0':
     resolution: {integrity: sha512-sKq+9r1Mm4efXW1FCk7hFSeJo4QKreL/tTbR0rz/qx/r1Oa2VV83LTA/H/MuCOX7uCIJmQVRKBcbmWoySjAnSg==}
+
+  '@octokit/types@17.0.0':
+    resolution: {integrity: sha512-ByP1v7YL5SMveFPP7+sj0/ZuWCOOg/Chs4NafOMpq6WNIM/hdGY0S7C0TCGDBWu1aGmOxmUIhMx3cO+IdwYZ1Q==}
 
   '@opentelemetry/api-logs@0.220.0':
     resolution: {integrity: sha512-CmVa4ImJ+ynfrPMNaAXHET6Bhb44SwzmfyVJFq9ni2jgXJR/l7C6gfVFddNmHP+ZOkP9cf4f9DBe68qVLTHc9w==}
@@ -1845,20 +1847,14 @@ packages:
     peerDependencies:
       semantic-release: '>=18.0.0'
 
-  '@semantic-release/github@12.0.8':
-    resolution: {integrity: sha512-tej5AAgK5X9wHRoDmYhecMXEHEkFeGOY1XsEblKxu8pIQwahzf1STYyr7iPU6Lpbg6C5I3N2w/ocXrBo+L7jhw==}
+  '@semantic-release/github@12.0.10':
+    resolution: {integrity: sha512-QskygvpX8hFx9UEbqJ+C46OIhaJjsysNQ8PYJPuRDc/ek5+dh8WYGD1ofUahCcGLAOmnnwZTcmCJCEXM8XxhRw==}
     engines: {node: ^22.14.0 || >= 24.10.0}
     peerDependencies:
       semantic-release: '>=24.1.0'
 
-  '@semantic-release/github@12.0.9':
-    resolution: {integrity: sha512-ODIqb0V3QqndipryEEiaBxUQCFjvv7Oese5Dt4omMGa60YRNEW0Sx3K+zri0uac2Y6S9nOlMehciWIzvvRCTGQ==}
-    engines: {node: ^22.14.0 || >= 24.10.0}
-    peerDependencies:
-      semantic-release: '>=24.1.0'
-
-  '@semantic-release/npm@13.1.5':
-    resolution: {integrity: sha512-Hq5UxzoatN3LHiq2rTsWS54nCdqJHlsssGERCo8WlvdfFA9LoN0vO+OuKVSjtNapIc/S8C2LBj206wKLHg62mg==}
+  '@semantic-release/npm@13.2.0':
+    resolution: {integrity: sha512-Uz4JGafLoEGiheLKEs1orockCWP6liY9D2YnvKHYbqo9hCHAw9fuAHcU53q29SXVCtkvDhs/QVUg7Vvuyfp4Jg==}
     engines: {node: ^22.14.0 || >= 24.10.0}
     peerDependencies:
       semantic-release: '>=20.1.0'
@@ -6646,12 +6642,6 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
-  '@babel/code-frame@7.26.2':
-    dependencies:
-      '@babel/helper-validator-identifier': 7.28.5
-      js-tokens: 4.0.0
-      picocolors: 1.1.1
-
   '@babel/code-frame@7.29.0':
     dependencies:
       '@babel/helper-validator-identifier': 7.28.5
@@ -7656,10 +7646,12 @@ snapshots:
 
   '@octokit/openapi-types@27.0.0': {}
 
-  '@octokit/plugin-paginate-rest@14.0.0(@octokit/core@7.0.6)':
+  '@octokit/openapi-types@28.0.0': {}
+
+  '@octokit/plugin-paginate-rest@15.0.0(@octokit/core@7.0.6)':
     dependencies:
       '@octokit/core': 7.0.6
-      '@octokit/types': 16.0.0
+      '@octokit/types': 17.0.0
 
   '@octokit/plugin-retry@8.0.3(@octokit/core@7.0.6)':
     dependencies:
@@ -7689,6 +7681,10 @@ snapshots:
   '@octokit/types@16.0.0':
     dependencies:
       '@octokit/openapi-types': 27.0.0
+
+  '@octokit/types@17.0.0':
+    dependencies:
+      '@octokit/openapi-types': 28.0.0
 
   '@opentelemetry/api-logs@0.220.0':
     dependencies:
@@ -8133,10 +8129,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@semantic-release/github@12.0.8(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))(supports-color@9.4.0)':
+  '@semantic-release/github@12.0.10(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))(supports-color@9.4.0)':
     dependencies:
       '@octokit/core': 7.0.6
-      '@octokit/plugin-paginate-rest': 14.0.0(@octokit/core@7.0.6)
+      '@octokit/plugin-paginate-rest': 15.0.0(@octokit/core@7.0.6)
       '@octokit/plugin-retry': 8.0.3(@octokit/core@7.0.6)
       '@octokit/plugin-throttling': 11.0.3(@octokit/core@7.0.6)
       '@semantic-release/error': 4.0.0
@@ -8156,30 +8152,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@semantic-release/github@12.0.9(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))(supports-color@9.4.0)':
-    dependencies:
-      '@octokit/core': 7.0.6
-      '@octokit/plugin-paginate-rest': 14.0.0(@octokit/core@7.0.6)
-      '@octokit/plugin-retry': 8.0.3(@octokit/core@7.0.6)
-      '@octokit/plugin-throttling': 11.0.3(@octokit/core@7.0.6)
-      '@semantic-release/error': 4.0.0
-      aggregate-error: 5.0.0
-      debug: 4.4.3(supports-color@9.4.0)
-      dir-glob: 3.0.1
-      http-proxy-agent: 9.0.0(supports-color@9.4.0)
-      https-proxy-agent: 9.0.0(supports-color@9.4.0)
-      issue-parser: 7.0.1
-      lodash-es: 4.18.1
-      mime: 4.1.0
-      p-filter: 4.1.0
-      semantic-release: 25.0.9(supports-color@9.4.0)(typescript@6.0.3)
-      tinyglobby: 0.2.17
-      undici: 7.18.2
-      url-join: 5.0.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@semantic-release/npm@13.1.5(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))':
+  '@semantic-release/npm@13.2.0(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))':
     dependencies:
       '@actions/core': 3.0.1
       '@semantic-release/error': 4.0.0
@@ -12117,7 +12090,7 @@ snapshots:
 
   parse-json@8.3.0:
     dependencies:
-      '@babel/code-frame': 7.26.2
+      '@babel/code-frame': 7.29.0
       index-to-position: 1.1.0
       type-fest: 4.41.0
 
@@ -12691,8 +12664,8 @@ snapshots:
     dependencies:
       '@semantic-release/commit-analyzer': 13.0.1(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))(supports-color@9.4.0)
       '@semantic-release/error': 4.0.0
-      '@semantic-release/github': 12.0.8(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))(supports-color@9.4.0)
-      '@semantic-release/npm': 13.1.5(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))
+      '@semantic-release/github': 12.0.10(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))(supports-color@9.4.0)
+      '@semantic-release/npm': 13.2.0(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))
       '@semantic-release/release-notes-generator': 14.1.1(semantic-release@25.0.9(supports-color@9.4.0)(typescript@6.0.3))(supports-color@9.4.0)
       aggregate-error: 5.0.0
       cosmiconfig: 9.0.0(typescript@6.0.3)

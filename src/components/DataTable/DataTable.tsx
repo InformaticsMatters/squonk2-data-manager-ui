@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   ExpandLess,
@@ -259,10 +259,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     },
     getSubRows,
     onExpandedChange: setExpanded,
-    onSortingChange: (updater) => {
-      setSorting(updater);
-      resetView();
-    },
+    onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
@@ -283,13 +280,24 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     debugColumns: DEBUG,
   });
 
-  // A new search or sort starts again from the first page and drops the selection, so nothing the
-  // search has hidden stays selected
-  const resetView = () => {
-    setPagination((previous) => ({ ...previous, pageIndex: 0 }));
+  // A new search, sort or filter starts again from the first page and drops the selection, since
+  // each can hide or move selected rows off the page. The search may also arrive through the URL.
+  const filter = searchValue ?? globalFilter;
+  const view = useRef({ columnFilters, filter, sorting });
+  useEffect(() => {
+    const previous = view.current;
+    if (
+      previous.filter === filter &&
+      previous.sorting === sorting &&
+      previous.columnFilters === columnFilters
+    ) {
+      return;
+    }
+    view.current = { columnFilters, filter, sorting };
+    setPagination((current) => ({ ...current, pageIndex: 0 }));
     table.getSelectedRowModel().flatRows.forEach((row) => onSelection?.(row.original, false));
     setRowSelection({});
-  };
+  }, [columnFilters, filter, onSelection, sorting, table]);
 
   // A refresh keeps the page, but one the listing has shrunk away from moves back to its last page
   const lastPageIndex = Math.max(table.getPageCount() - 1, 0);
@@ -324,7 +332,6 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
               onChange={(event) => {
                 setGlobalFilter(event.target.value);
                 onSearchChange?.(event.target.value);
-                resetView();
               }}
             />
           )}
@@ -397,7 +404,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
       <TablePagination
         component="div"
         count={table.getRowCount()}
-        page={Math.min(pagination.pageIndex, lastPageIndex)}
+        page={pagination.pageIndex}
         rowsPerPage={pageSize}
         rowsPerPageOptions={[]}
         sx={{ backgroundColor: "background.paper", bottom: 0, position: "sticky" }}

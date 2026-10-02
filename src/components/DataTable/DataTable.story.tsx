@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { createColumnHelper } from "@tanstack/react-table";
 
@@ -28,13 +28,14 @@ export interface ListingProps {
  */
 export const Listing = ({ count = 150 }: ListingProps) => {
   const [selected, setSelected] = useState<string[]>([]);
+  const data = useMemo(() => entries(count), [count]);
 
   return (
     <AppScaffold>
       <DataTable
         subRowsEnabled
         columns={columns}
-        data={entries(count)}
+        data={data}
         getRowId={(row) => row.name}
         initialSelection={[]}
         onSelection={(row, checked) =>

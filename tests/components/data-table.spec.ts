@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
 
+import { type Listing } from "../../src/components/DataTable/DataTable.story";
+
 test("a listing longer than a page states its size and reaches the rest", async ({ mount }) => {
-  const component = await mount("DataTable/Listing");
+  const component = await mount("components/DataTable/DataTable/Listing");
 
   await expect(component.getByText("1–100 of 150")).toBeVisible();
   await expect(component.getByRole("cell", { name: "entry-101", exact: true })).toBeHidden();
@@ -13,7 +15,7 @@ test("a listing longer than a page states its size and reaches the rest", async 
 });
 
 test("an expanded row keeps its sub rows on its own page", async ({ mount }) => {
-  const component = await mount("DataTable/Listing");
+  const component = await mount("components/DataTable/DataTable/Listing");
 
   await component.getByRole("row", { name: "entry-100" }).getByRole("button").click();
 
@@ -22,7 +24,7 @@ test("an expanded row keeps its sub rows on its own page", async ({ mount }) => 
 });
 
 test("selecting from the heading selects exactly the rows on this page", async ({ mount }) => {
-  const component = await mount("DataTable/Listing");
+  const component = await mount("components/DataTable/DataTable/Listing");
 
   await component.getByRole("columnheader").getByRole("checkbox").check();
 
@@ -37,7 +39,7 @@ test("selecting from the heading selects exactly the rows on this page", async (
 });
 
 test("a new search starts from the first page with nothing selected", async ({ mount }) => {
-  const component = await mount("DataTable/Listing");
+  const component = await mount("components/DataTable/DataTable/Listing");
 
   await component.getByRole("button", { name: "Go to next page" }).click();
   await component.getByRole("columnheader").getByRole("checkbox").check();
@@ -47,4 +49,14 @@ test("a new search starts from the first page with nothing selected", async ({ m
 
   await expect(component.getByTestId("selected")).toHaveValue("0");
   await expect(component.getByText(/^1–/u)).toBeVisible();
+});
+
+test("a listing that shrinks below the page moves back to its last page", async ({ mount }) => {
+  const component = await mount<typeof Listing>("components/DataTable/DataTable/Listing");
+
+  await component.getByRole("button", { name: "Go to next page" }).click();
+  await component.update({ count: 50 });
+
+  await expect(component.getByText("1–50 of 50")).toBeVisible();
+  await expect(component.getByRole("cell", { name: "entry-050", exact: true })).toBeVisible();
 });

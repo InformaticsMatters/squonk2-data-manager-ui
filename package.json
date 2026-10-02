@@ -33,6 +33,7 @@
     "test:smoke": "playwright test --config=playwright.smoke.config.ts",
     "test:debug": "pnpm test:acceptance:headed",
     "test:ci": "pnpm test",
+    "docs:iconography": "tsx tools/iconography/generate.ts",
     "analyze": "ANALYZE=true next build --webpack",
     "analyze:server": "BUNDLE_ANALYZE=server next build --webpack",
     "analyze:browser": "BUNDLE_ANALYZE=browser next build --webpack"
@@ -121,6 +122,7 @@
     "eslint": "10.4.0",
     "husky": "9.1.7",
     "lint-staged": "17.4.1",
+    "lucide-static": "1.49.0",
     "orval": "8.22.0",
     "prettier": "3.9.6",
     "semantic-release": "25.0.9",

@@ -228,6 +228,9 @@ importers:
       lint-staged:
         specifier: 17.4.1
         version: 17.4.1
+      lucide-static:
+        specifier: 1.49.0
+        version: 1.49.0
       orval:
         specifier: 8.22.0
         version: 8.22.0(prettier@3.9.6)(supports-color@9.4.0)(typescript@6.0.3)
@@ -4560,6 +4563,9 @@ packages:
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
+
+  lucide-static@1.49.0:
+    resolution: {integrity: sha512-gSjtl7bR2v26oDInh2Wua1PrF2BRRXl9inhnLWcFfnRqRShmgZvlFRisPHqTfU7kxsuZU8ThNjAFotbInrzKow==}
 
   lunr@2.3.9:
     resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
@@ -11214,6 +11220,8 @@ snapshots:
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
+
+  lucide-static@1.49.0: {}
 
   lunr@2.3.9: {}
 

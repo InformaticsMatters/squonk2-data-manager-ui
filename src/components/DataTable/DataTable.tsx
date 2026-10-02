@@ -17,6 +17,7 @@ import {
   type TableCellProps as MuiCellProps,
   TableContainer,
   TableHead,
+  TablePagination,
   type TableProps as MuiTableProps,
   TableRow,
   type TableRowProps as MuiRowProps,
@@ -38,11 +39,12 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
+  type PaginationState,
   type Row,
   type RowSelectionState,
   type SortingState,
-  type Table as RTable,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -139,7 +141,10 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
-const truncate = <Data,>(table: RTable<Data>) => table.getRowModel().rows.slice(0, 100);
+/**
+ * Rows per page. A page counts only top-level rows, so a row and its sub rows share a page.
+ */
+const pageSize = 100;
 
 export const DataTable = <Data extends Record<string, any>>(props: DataTableProps<Data>) => {
   const {
@@ -171,6 +176,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize });
 
   const paddedColumns = useMemo(() => {
     const workingColumns = [...columns];
@@ -199,15 +205,15 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
           enableSorting: false,
           header: ({ table }) => (
             <IndeterminateCheckbox
-              checked={table.getIsAllRowsSelected()}
-              indeterminate={table.getIsSomeRowsSelected()}
+              checked={table.getIsAllPageRowsSelected()}
+              indeterminate={table.getIsSomePageRowsSelected()}
               onChange={(event, checked) => {
-                table.getToggleAllRowsSelectedHandler()(event);
-                const rows = truncate(table);
-                onSelection &&
-                  rows
-                    .filter((row) => row.getIsSelected())
-                    .forEach((row) => onSelection(row.original, checked));
+                // Only the rows on this page are toggled, so everything selected was on screen
+                table.getToggleAllPageRowsSelectedHandler()(event);
+                table
+                  .getRowModel()
+                  .rows.filter((row) => row.depth === 0)
+                  .forEach((row) => onSelection?.(row.original, checked));
               }}
             />
           ),
@@ -244,6 +250,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
       columnFilters,
       expanded,
       rowSelection,
+      pagination,
     },
     initialState: {
       rowSelection: initialSelection
@@ -252,10 +259,16 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     },
     getSubRows,
     onExpandedChange: setExpanded,
-    onSortingChange: setSorting,
+    onSortingChange: (updater) => {
+      setSorting(updater);
+      resetView();
+    },
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
+    autoResetPageIndex: false,
+    paginateExpandedRows: false,
     globalFilterFn: fuzzyFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -264,12 +277,27 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
     getExpandedRowModel: getExpandedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     debugTable: DEBUG,
     debugHeaders: DEBUG,
     debugColumns: DEBUG,
   });
 
-  const rows = truncate(table);
+  // A new search or sort starts again from the first page and drops the selection, so nothing the
+  // search has hidden stays selected
+  const resetView = () => {
+    setPagination((previous) => ({ ...previous, pageIndex: 0 }));
+    table.getSelectedRowModel().flatRows.forEach((row) => onSelection?.(row.original, false));
+    setRowSelection({});
+  };
+
+  // A refresh keeps the page, but one the listing has shrunk away from moves back to its last page
+  const lastPageIndex = Math.max(table.getPageCount() - 1, 0);
+  if (pagination.pageIndex > lastPageIndex) {
+    setPagination({ ...pagination, pageIndex: lastPageIndex });
+  }
+
+  const rows = table.getRowModel().rows;
 
   const tableContents = (
     <>
@@ -296,6 +324,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
               onChange={(event) => {
                 setGlobalFilter(event.target.value);
                 onSearchChange?.(event.target.value);
+                resetView();
               }}
             />
           )}
@@ -364,6 +393,16 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
           })}
         </TableBody>
       </Table>
+      {/* Sticky, so it stays in view at the foot of a container that scrolls, such as Files */}
+      <TablePagination
+        component="div"
+        count={table.getRowCount()}
+        page={Math.min(pagination.pageIndex, lastPageIndex)}
+        rowsPerPage={pageSize}
+        rowsPerPageOptions={[]}
+        sx={{ backgroundColor: "background.paper", bottom: 0, position: "sticky" }}
+        onPageChange={(_, page) => table.setPageIndex(page)}
+      />
     </>
   );
 

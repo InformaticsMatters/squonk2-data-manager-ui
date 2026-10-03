@@ -1,3 +1,10 @@
+# [7.1.0-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.1...7.1.0-dev.2) (2026-10-03)
+
+
+### Bug Fixes
+
+* refuse to start a server missing its required environment ([e92fba2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e92fba2decd08d315f62b264a69fe095afd68fed)), closes [#62](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/62)
+
 # [7.1.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0...7.1.0-dev.1) (2026-10-03)
 
 

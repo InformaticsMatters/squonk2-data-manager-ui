@@ -1,3 +1,10 @@
+# [7.1.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.4...7.1.0-dev.5) (2026-10-03)
+
+
+### Features
+
+* keep the browsed directory across a job's file inputs ([97c635c](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/97c635c486793b808cb1c5ff0559803f0f0f4aa9)), closes [#1278](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1278)
+
 # [7.1.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.3...7.1.0-dev.4) (2026-10-03)
 
 

@@ -9,6 +9,7 @@ import {
   fileViewersFor,
   isCompressedFileName,
   offersFileViewer,
+  opensInBrowserTab,
   resolveFileViewerDelivery,
 } from "../../src/projects/fileViewers";
 import {
@@ -69,6 +70,15 @@ test.describe("Viewed file identity", () => {
     expect(isCompressedFileName("poses.sdf.gzip")).toBe(true);
     expect(isCompressedFileName("poses.sdf")).toBe(false);
     expect(isCompressedFileName("notes.gz.txt")).toBe(false);
+  });
+
+  test("opens the files the browser renders natively in their own tab", () => {
+    expect(opensInBrowserTab("config.json")).toBe(true);
+    expect(opensInBrowserTab("/reports/index.html")).toBe(true);
+    expect(opensInBrowserTab("REPORT.HTM")).toBe(true);
+    expect(opensInBrowserTab("config.meta.json")).toBe(true);
+    expect(opensInBrowserTab("notes.txt")).toBe(false);
+    expect(opensInBrowserTab("config.json.gz")).toBe(false);
   });
 });
 

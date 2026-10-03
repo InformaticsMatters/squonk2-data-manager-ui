@@ -58,6 +58,16 @@ export const fileViewerLabels: Record<FileViewer, { name: string; summary: strin
 export const isCompressedFileName = (fileName: string): boolean =>
   hasExtension(fileName, compressedExtensions);
 
+const browserNativeExtensions = [".htm", ".html", ".json"];
+
+/**
+ * Whether the browser shows this file better on its own than inside the viewer's sandboxed frame:
+ * the frame grants nothing, so a page's scripts and a browser's own JSON viewer only work when the
+ * file is opened directly. Its Browser Viewer therefore opens the file in a new tab.
+ */
+export const opensInBrowserTab = (fileName: string): boolean =>
+  hasExtension(fileName.toLowerCase(), browserNativeExtensions);
+
 /** The viewers this file offers, in the one order every list of them is shown in. */
 export const fileViewersFor = (fileName: string): FileViewer[] =>
   fileViewers.filter((viewer) => viewerRequirements[viewer](fileName));

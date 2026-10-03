@@ -22,7 +22,7 @@ import {
   offersFileViewer,
 } from "./fileViewers";
 import { ProjectFilesSection } from "./ProjectFiles";
-import { FileViewerIcon } from "./ProjectFileViewerLinks";
+import { FileViewerIcon, fileViewerLink } from "./ProjectFileViewerLinks";
 import { projectFileTransportLinks, projectLinks, type ProjectRoute } from "./routes";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
@@ -139,9 +139,7 @@ const FileViewerFrame = ({
         </Button>
         {fileViewersFor(file.name).map((offered) => (
           <Button
-            replace
-            component={A}
-            href={projectLinks.fileView(projectId, { path: file.path, viewer: offered }) as never}
+            {...fileViewerLink(projectId, file.path, offered, { replace: true })}
             key={offered}
             size="small"
             startIcon={<FileViewerIcon viewer={offered} />}

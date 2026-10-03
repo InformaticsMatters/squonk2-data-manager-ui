@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 
+import { Box } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
 
 import { AppScaffold } from "../../stories/decorators";
@@ -21,31 +22,35 @@ const entries = (count: number) =>
 
 export interface ListingProps {
   count?: number;
+  /** Fixes the height of the table's container, as the Files listing does. */
+  height?: number;
 }
 
 /**
  * A listing of `count` entries, each with one sub-row, whose selections are recorded by name.
  */
-export const Listing = ({ count = 150 }: ListingProps) => {
+export const Listing = ({ count = 150, height }: ListingProps) => {
   const [selected, setSelected] = useState<string[]>([]);
   const data = useMemo(() => entries(count), [count]);
 
   return (
     <AppScaffold>
-      <DataTable
-        subRowsEnabled
-        columns={columns}
-        data={data}
-        getRowId={(row) => row.name}
-        initialSelection={[]}
-        onSelection={(row, checked) =>
-          setSelected((names) =>
-            checked
-              ? [...new Set([...names, row.name])]
-              : names.filter((name) => name !== row.name),
-          )
-        }
-      />
+      <Box sx={{ "& .MuiPaper-root": { height } }}>
+        <DataTable
+          subRowsEnabled
+          columns={columns}
+          data={data}
+          getRowId={(row) => row.name}
+          initialSelection={[]}
+          onSelection={(row, checked) =>
+            setSelected((names) =>
+              checked
+                ? [...new Set([...names, row.name])]
+                : names.filter((name) => name !== row.name),
+            )
+          }
+        />
+      </Box>
       <form hidden>
         <input readOnly data-testid="selected" value={String(selected.length)} />
       </form>

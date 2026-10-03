@@ -400,21 +400,30 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
           })}
         </TableBody>
       </Table>
-      {/* Sticky, so it stays in view at the foot of a container that scrolls, such as Files */}
+      {/* Held at the foot of a container taller than the listing, such as Files, and sticky so it
+      stays in view there when the listing overflows */}
       <TablePagination
         component="div"
         count={table.getRowCount()}
         page={pagination.pageIndex}
         rowsPerPage={pageSize}
         rowsPerPageOptions={[]}
-        sx={{ backgroundColor: "background.paper", bottom: 0, position: "sticky" }}
+        sx={{
+          backgroundColor: "background.paper",
+          bottom: 0,
+          flexShrink: 0,
+          mt: "auto",
+          position: "sticky",
+        }}
         onPageChange={(_, page) => table.setPageIndex(page)}
       />
     </>
   );
 
   return tableContainer ? (
-    <TableContainer component={Paper}>{tableContents}</TableContainer>
+    <TableContainer component={Paper} sx={{ display: "flex", flexDirection: "column" }}>
+      {tableContents}
+    </TableContainer>
   ) : (
     tableContents
   );

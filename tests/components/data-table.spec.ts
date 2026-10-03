@@ -60,3 +60,24 @@ test("a listing that shrinks below the page moves back to its last page", async 
   await expect(component.getByText("1–50 of 50")).toBeVisible();
   await expect(component.getByRole("cell", { name: "entry-050", exact: true })).toBeVisible();
 });
+
+for (const [count, range] of [
+  [3, "1–3 of 3"],
+  [150, "1–100 of 150"],
+] as const) {
+  test(`the page controls sit at the foot of a fixed-height container holding ${count} rows`, async ({
+    mount,
+  }) => {
+    const component = await mount<typeof Listing>("components/DataTable/DataTable/Listing", {
+      count,
+      height: 600,
+    });
+
+    const container = await component.locator(".MuiPaper-root").first().boundingBox();
+    const controls = await component.getByText(range).locator("..").boundingBox();
+
+    expect(Math.round((controls?.y ?? 0) + (controls?.height ?? 0))).toBe(
+      Math.round((container?.y ?? 0) + (container?.height ?? 0)),
+    );
+  });
+}

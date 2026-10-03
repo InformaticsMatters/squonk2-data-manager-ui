@@ -7,6 +7,7 @@ import A from "next/link";
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { BackIcon, ExternalLinkIcon } from "../components/icons";
+import { PageHead } from "../components/PageHead";
 import { PlaintextViewer } from "../features/PlaintextViewer";
 import { type ProjectId } from "../routing/identifiers";
 import { type FilesystemFile, filesystemFile } from "./fileFacts";
@@ -123,6 +124,7 @@ const FileViewerFrame = ({
   viewer: FileViewer;
 }) => (
   <Container maxWidth="xl" sx={{ py: 3 }}>
+    <PageHead parts={[file.name, "Files", "Projects"]} />
     <Box sx={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
       <Button
         replace

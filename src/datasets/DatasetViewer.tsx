@@ -4,6 +4,7 @@ import A from "next/link";
 
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { BackIcon } from "../components/icons";
+import { PageHead } from "../components/PageHead";
 import { PlaintextViewer } from "../features/PlaintextViewer";
 import { DatasetLoadError, DatasetResolutionBoundary } from "./DatasetResolutionBoundary";
 import { datasetLinks, datasetListState, type DatasetRoute } from "./routes";
@@ -49,6 +50,7 @@ const ResolvedDatasetViewer = ({
     >
       {({ version }) => (
         <>
+          <PageHead parts={[version.file_name, "Datasets"]} />
           {/* An explicit return leaves the viewer rather than stacking it in history, exactly as
               closing the route-driven dataset detail does. */}
           <Button

@@ -1,7 +1,6 @@
 import { type ComponentType } from "react";
 
 import { Box, Breadcrumbs, Button, Container, Divider, Stack, Typography } from "@mui/material";
-import Head from "next/head";
 import Link from "next/link";
 
 import {
@@ -12,6 +11,7 @@ import {
 } from "../content/docs/manifest";
 import { DocsNav } from "./DocsNav";
 import { NextIcon, PreviousIcon } from "./icons";
+import { PageHead } from "./PageHead";
 
 /** Where this page sits, as the trail of ancestors that leads to it. */
 const DocsBreadcrumb = ({
@@ -86,16 +86,11 @@ const DocsSequence = ({ href }: { href: DocsHref }) => {
  */
 export const withDocsPage = (href: DocsHref, Content: ComponentType) => {
   const { ancestors, node } = docsEntryOf(href);
-  const title =
-    ancestors.length === 0
-      ? "Squonk Data Manager documentation"
-      : `${node.title} - Squonk Data Manager documentation`;
+  const title = ancestors.length === 0 ? ["Docs"] : [node.title, "Docs"];
 
   const DocsPage = () => (
     <>
-      <Head>
-        <title>{title}</title>
-      </Head>
+      <PageHead description={node.blurb} parts={title} />
       <Container maxWidth="lg" sx={{ py: 3 }}>
         <Box sx={{ display: "flex", flexDirection: { md: "row", xs: "column" }, gap: 4 }}>
           <DocsNav current={href} />

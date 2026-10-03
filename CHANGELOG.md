@@ -1,3 +1,19 @@
+# [7.1.0-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0...7.1.0-dev.1) (2026-10-03)
+
+
+### Bug Fixes
+
+* **DataTable:** anchor the page controls to the foot of the container ([e0cf86a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/e0cf86a0860d8736debde8ecef8cd56a3f57ae42))
+* **DataTable:** paginate instead of silently truncating at 100 rows ([9106ef7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/9106ef7bc5031fce484840945c3507a9d0c9eb3d)), closes [#2021](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2021)
+* **DataTable:** reset the page and selection however the search changes ([8ca190d](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/8ca190deb2b62ef5954ea63ed637de94d5bf1723))
+
+
+### Features
+
+* give every page a title, public pages a description, and the app its own favicon ([d913889](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/d9138892f9da4f373054ee590a7f0ade664ca92e)), closes [#16](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/16)
+* name the project in the titles of its pages ([42e3df5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/42e3df5eb2537998b235c7ed966279fcea1f7a05)), closes [#16](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/16)
+* replace Material icons with Lucide ([5c8f0c5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5c8f0c57273f18198882241cd2c49331c3557ffe))
+
 # [7.0.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/6.2.2...7.0.0) (2026-09-29)
 
 

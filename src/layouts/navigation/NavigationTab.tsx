@@ -1,3 +1,5 @@
+import { type ReactNode } from "react";
+
 import { Button } from "@mui/material";
 import Link from "next/link";
 
@@ -8,16 +10,19 @@ import Link from "next/link";
 export const NavigationTab = ({
   active,
   href,
+  icon,
   label,
 }: {
   active: boolean;
   href: string;
+  icon?: ReactNode;
   label: string;
 }) => (
   <Button
     color="inherit"
     component={Link}
     href={href}
+    startIcon={icon}
     sx={{
       borderBottom: 3,
       borderBottomColor: active ? "primary.main" : "transparent",

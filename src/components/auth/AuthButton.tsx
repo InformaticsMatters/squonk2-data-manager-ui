@@ -5,6 +5,7 @@ import { clearAccountScopedStorageOnLogout } from "../../application/logoutClean
 import { authClient } from "../../lib/auth-client";
 import { withBasePath } from "../../utils/app/basePath";
 import { capitalise } from "../../utils/app/language";
+import { SignInIcon, SignOutIcon } from "../icons";
 
 type ClickableHandler = "login" | "logout";
 
@@ -32,7 +33,11 @@ export const AuthButton = ({ mode, ...ButtonProps }: AuthButtonPros) => {
   };
 
   return (
-    <Button {...ButtonProps} onClick={() => void handleClick()}>
+    <Button
+      startIcon={mode === "logout" ? <SignOutIcon /> : <SignInIcon />}
+      {...ButtonProps}
+      onClick={() => void handleClick()}
+    >
       {capitalise(mode)}
     </Button>
   );

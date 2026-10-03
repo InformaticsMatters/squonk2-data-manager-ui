@@ -39,6 +39,7 @@ import { type ProjectIndexLinkState, projectLinks } from "../../projects/routes"
 import { UnitOffer } from "../../projects/UnitOffer";
 import { useProjectCreationOffer } from "../../projects/useProjectCreationOffer";
 import { useSelectedOrganisation } from "../../state/organisationSelection";
+import { AddIcon } from "../icons";
 
 export const ProjectsIndex = () => {
   const router = useRouter();
@@ -203,6 +204,7 @@ export const ProjectsIndex = () => {
               capability={projectCreation}
               href={projectLinks.create()}
               id="projects-create"
+              startIcon={<AddIcon />}
               variant="contained"
             >
               Create project

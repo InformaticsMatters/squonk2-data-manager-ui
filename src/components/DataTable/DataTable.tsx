@@ -1,11 +1,6 @@
 import { type ReactNode, useMemo, useState } from "react";
 
 import {
-  ExpandLess,
-  ExpandMore as ExpandMoreIcon,
-  SearchRounded as SearchRoundedIcon,
-} from "@mui/icons-material";
-import {
   Alert,
   Box,
   IconButton,
@@ -46,6 +41,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+import { CollapseIcon, ExpandIcon, SearchIcon } from "../icons";
 import { IndeterminateCheckbox } from "./IndeterminateCheckbox";
 
 const DEBUG = process.env.NODE_ENV === "development";
@@ -181,14 +177,14 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
         header: ({ table }) => (
           <Box sx={{ display: "flex" }}>
             <IconButton onClick={table.getToggleAllRowsExpandedHandler()}>
-              {table.getIsAllRowsExpanded() ? <ExpandLess /> : <ExpandMoreIcon />}
+              {table.getIsAllRowsExpanded() ? <CollapseIcon /> : <ExpandIcon />}
             </IconButton>
           </Box>
         ),
         cell: ({ row }) =>
           row.getCanExpand() ? (
             <IconButton sx={{ display: "flex" }} onClick={row.getToggleExpandedHandler()}>
-              {row.getIsExpanded() ? <ExpandLess /> : <ExpandMoreIcon />}
+              {row.getIsExpanded() ? <CollapseIcon /> : <ExpandIcon />}
             </IconButton>
           ) : null,
       });
@@ -284,7 +280,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchRoundedIcon />
+                      <SearchIcon />
                     </InputAdornment>
                   ),
                 },

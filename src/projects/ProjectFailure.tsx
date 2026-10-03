@@ -9,6 +9,7 @@ import { Alert, Button, Container } from "@mui/material";
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 
 import { AuthButton } from "../components/auth/AuthButton";
+import { RetryIcon } from "../components/icons";
 import { resolveProjectWorkspaceFailure } from "./failures";
 import { requireLinkedProject, resolveProjectAncestry } from "./projectAncestry";
 import { settleProjectWorkspaceFailure } from "./projectCache";
@@ -90,7 +91,7 @@ export const ProjectFailure = ({
     none: undefined,
     reauthenticate: <AuthButton color="inherit" mode="login" size="small" />,
     retry: (
-      <Button color="inherit" size="small" onClick={handleRetry}>
+      <Button color="inherit" size="small" startIcon={<RetryIcon />} onClick={handleRetry}>
         Retry
       </Button>
     ),

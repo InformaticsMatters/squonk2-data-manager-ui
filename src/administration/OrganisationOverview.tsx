@@ -7,6 +7,7 @@ import { useGetOrganisationUnits } from "@/api/account-server/unit";
 import { Alert, Box, Button, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
+import { OrganisationIcon, PersonalUnitIcon, UnitIcon } from "../components/icons";
 import { useUnitCreationFacts } from "../hooks/useUnitCreationFacts";
 import { CreateResourceModal, DefaultPrivacySelect, ManageResourceUsers } from "./accessControls";
 import { retryAdministrationRead, useAccessFacts, useAddressedOrganisation } from "./accessFacts";
@@ -68,7 +69,13 @@ const CreateUnitAction = ({
     <>
       <CapabilityAction capability={capability}>
         {({ disabled }) => (
-          <Button disabled={disabled} variant="outlined" onClick={() => setOpen(true)}>
+          <Button
+            disabled={disabled}
+            startIcon={<UnitIcon />}
+            sx={{ whiteSpace: "nowrap" }}
+            variant="outlined"
+            onClick={() => setOpen(true)}
+          >
             Create unit
           </Button>
         )}
@@ -109,7 +116,13 @@ const CreatePersonalUnitAction = ({ capability }: { capability: AdministrationCa
   return (
     <CapabilityAction capability={capability}>
       {({ disabled }) => (
-        <Button disabled={disabled} variant="outlined" onClick={() => void create()}>
+        <Button
+          disabled={disabled}
+          startIcon={<PersonalUnitIcon />}
+          sx={{ whiteSpace: "nowrap" }}
+          variant="outlined"
+          onClick={() => void create()}
+        >
           Create personal unit
         </Button>
       )}
@@ -152,7 +165,13 @@ const CreateOrganisationAction = () => {
     <>
       <CapabilityAction capability={capability}>
         {({ disabled }) => (
-          <Button disabled={disabled} variant="outlined" onClick={() => setOpen(true)}>
+          <Button
+            disabled={disabled}
+            startIcon={<OrganisationIcon />}
+            sx={{ whiteSpace: "nowrap" }}
+            variant="outlined"
+            onClick={() => setOpen(true)}
+          >
             Create organisation
           </Button>
         )}

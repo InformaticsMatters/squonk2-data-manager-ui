@@ -1,6 +1,5 @@
 import { type ReactNode } from "react";
 
-import { FolderRounded as FolderRoundedIcon } from "@mui/icons-material";
 import {
   Checkbox,
   ListItem,
@@ -11,6 +10,8 @@ import {
 } from "@mui/material";
 
 import { ProjectFileFavouriteButton } from "../../projects/ProjectFileFavouriteButton";
+import { DirectoryIcon } from "../icons";
+import { FileKindIcon } from "../kindIcons";
 import { type SharedProps } from "./types";
 
 export interface FileListItemProps extends Pick<SharedProps, "projectId"> {
@@ -81,7 +82,13 @@ export const FileListItem = ({
           />
         </ListItemIcon>
       )}
-      {type.startsWith("dir") && <ListItemIcon>{folderIcon ?? <FolderRoundedIcon />}</ListItemIcon>}
+      <ListItemIcon>
+        {type.startsWith("dir") ? (
+          (folderIcon ?? <DirectoryIcon />)
+        ) : (
+          <FileKindIcon fileName={title} />
+        )}
+      </ListItemIcon>
       <Tooltip title={title}>
         <ListItemText id={labelId} primary={title} slotProps={{ primary: { noWrap: true } }} />
       </Tooltip>

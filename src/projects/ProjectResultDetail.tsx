@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 import { AuthButton } from "../components/auth/AuthButton";
 import { CenterLoader } from "../components/CenterLoader";
+import { RetryIcon } from "../components/icons";
 import { ResultInstanceDetail } from "../components/instances/ResultInstanceDetail";
 import { ResultTaskDetail } from "../components/tasks/ResultTaskDetail";
 import { ResultWorkflowDetail } from "../components/workflows/ResultWorkflowDetail";
@@ -47,7 +48,7 @@ const LapsedSessionResult = () => (
 const RecoverableResult = ({ onRetry }: { onRetry: () => void }) => (
   <Alert
     action={
-      <Button color="inherit" size="small" onClick={onRetry}>
+      <Button color="inherit" size="small" startIcon={<RetryIcon />} onClick={onRetry}>
         Retry
       </Button>
     }

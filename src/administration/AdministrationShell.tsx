@@ -6,6 +6,7 @@ import { QueryErrorResetBoundary } from "@tanstack/react-query";
 
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
+import { RetryIcon } from "../components/icons";
 import { AdministrationRail } from "./AdministrationRail";
 import { presentAdministrationFailure } from "./failures";
 import { useOrganisationInEffect } from "./organisationInEffect";
@@ -63,7 +64,12 @@ export const AdministrationFrame = ({ children }: { children: ReactNode }) => {
                     <Alert
                       action={
                         presentation.retryable ? (
-                          <Button color="inherit" size="small" onClick={resetError}>
+                          <Button
+                            color="inherit"
+                            size="small"
+                            startIcon={<RetryIcon />}
+                            onClick={resetError}
+                          >
                             Retry
                           </Button>
                         ) : undefined

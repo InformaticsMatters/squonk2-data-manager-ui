@@ -1,8 +1,8 @@
 import { type ReactNode } from "react";
 
-import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import { Grid, IconButton, MenuItem, TextField, Tooltip } from "@mui/material";
 
+import { RefreshIcon } from "../components/icons";
 import { narrowedTypes } from "./routes";
 import { SectionSearchField } from "./SectionSearchField";
 
@@ -12,7 +12,11 @@ export type SectionListState<TFilter extends string> = {
   types?: readonly TFilter[];
 };
 
-export type SectionFilterOption<TFilter extends string> = { label: string; value: TFilter };
+export type SectionFilterOption<TFilter extends string> = {
+  icon: ReactNode;
+  label: string;
+  value: TFilter;
+};
 
 /** The type filter one section offers, where offering one is a choice the section makes. */
 export type SectionFilterControl<TFilter extends string> = {
@@ -47,12 +51,20 @@ const SectionTypeFilter = <TFilter extends string>({
                 ...state,
                 types: narrowedTypes(event.target.value as TFilter[], allTypes),
               }),
+            // The labels alone: the menu draws each option with its icon, which a joined line of
+            // selections has no room for.
+            renderValue: (selected) =>
+              filter.options
+                .filter(({ value }) => (selected as TFilter[]).includes(value))
+                .map(({ label }) => label)
+                .join(", "),
           },
         }}
         value={state.types ?? allTypes}
       >
-        {filter.options.map(({ label, value }) => (
-          <MenuItem key={value} value={value}>
+        {filter.options.map(({ icon, label, value }) => (
+          <MenuItem key={value} sx={{ gap: 1 }} value={value}>
+            {icon}
             {label}
           </MenuItem>
         ))}
@@ -104,7 +116,7 @@ export const SectionToolbar = <TFilter extends string>({
     <Grid size={{ xs: 12, sm: "auto" }} sx={{ textAlign: "center" }}>
       <Tooltip title={refreshLabel}>
         <IconButton size="large" sx={{ ml: "auto" }} onClick={onRefresh}>
-          <RefreshRoundedIcon />
+          <RefreshIcon />
         </IconButton>
       </Tooltip>
     </Grid>

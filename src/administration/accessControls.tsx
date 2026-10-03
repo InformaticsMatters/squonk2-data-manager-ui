@@ -4,6 +4,7 @@ import { MenuItem, Stack, TextField } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod/mini";
 
+import { AddIcon } from "../components/icons";
 import { ManageUsers } from "../components/ManageUsers";
 import { ModalWrapper } from "../components/modals/ModalWrapper";
 import { capitalise } from "../utils/app/language";
@@ -82,6 +83,7 @@ export const CreateResourceModal = ({
       id={id}
       open={open}
       submitDisabled={!form.state.canSubmit}
+      submitIcon={<AddIcon />}
       submitText="Create"
       title={title}
       onClose={onClose}

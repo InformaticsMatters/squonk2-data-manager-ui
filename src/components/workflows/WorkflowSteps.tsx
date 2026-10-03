@@ -15,6 +15,7 @@ import NextJsLink from "next/link";
 import { projectLinks, type ResultsState } from "../../projects/routes";
 import { resultWorkflowStepInstance } from "../../projects/workflowFacts";
 import { LocalTime } from "../LocalTime";
+import { StatusIcon, timelineDotIcon } from "../results/StatusIcon";
 
 export interface WorkflowStepsProps {
   /**
@@ -69,7 +70,9 @@ export const WorkflowSteps = ({ projectId, resultsState, steps }: WorkflowStepsP
               </Typography>
             </TimelineOppositeContent>
             <TimelineSeparator>
-              <TimelineDot color={stepColor(step.status)} />
+              <TimelineDot color={stepColor(step.status)} sx={timelineDotIcon}>
+                <StatusIcon state={step.status} />
+              </TimelineDot>
               {index < steps.length - 1 && <TimelineConnector />}
             </TimelineSeparator>
             <TimelineContent>

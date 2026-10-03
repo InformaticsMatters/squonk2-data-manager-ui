@@ -1,48 +1,56 @@
-import {
-  type InstanceGetResponsePhase,
-  type RunningWorkflowGetResponseStatus,
-  type TaskSummaryProcessingStage,
-} from "@/api/data-manager";
+import { type ReactElement } from "react";
+
+import { green, yellow } from "@mui/material/colors";
+import { keyframes } from "@mui/material/styles";
 
 import {
-  CheckCircleRounded as CheckCircleRoundedIcon,
-  ErrorRounded as ErrorRoundedIcon,
-  FiberManualRecordRounded as FiberManualRecordRoundedIcon,
-} from "@mui/icons-material";
-import { green, yellow } from "@mui/material/colors";
+  DeletingIcon,
+  FailedIcon,
+  QueuedIcon,
+  RunningIcon,
+  StoppedIcon,
+  SucceededIcon,
+  UnknownIcon,
+} from "../icons";
+import { type ResultState, type StatusConcept, statusConcept } from "./statusConcept";
 
 export interface StatusIconProps {
   /**
    * Task or Instance status
    */
-  state?: InstanceGetResponsePhase | RunningWorkflowGetResponseStatus | TaskSummaryProcessingStage;
+  state?: ResultState;
 }
 
-/**
- * SVG Icons for each instance / task status
- */
-export const StatusIcon = ({ state }: StatusIconProps) => {
-  switch (state) {
-    case "COPYING":
-    case "FORMATTING":
-    case "LOADING":
-    case "DELETING":
-    case "RUNNING":
-    case "PENDING":
-      return <FiberManualRecordRoundedIcon htmlColor={yellow[800]} />;
-    case "DONE":
-    case "SUCCESS":
-    case "COMPLETED":
-    case "SUCCEEDED":
-      return <CheckCircleRoundedIcon htmlColor={green[800]} />;
-    case "FAILED":
-    case "FAILURE":
-    case "CRASH_LOOP_BACKOFF":
-    case "IMAGE_PULL_BACKOFF":
-      return <ErrorRoundedIcon color="error" />;
-    case "USER_STOPPED":
-      return <ErrorRoundedIcon color="warning" />;
-    default:
-      return <FiberManualRecordRoundedIcon />;
-  }
+const spin = keyframes`to { transform: rotate(360deg); }`;
+
+const icons: Record<StatusConcept, ReactElement> = {
+  deleting: <DeletingIcon htmlColor={yellow[800]} />,
+  failed: <FailedIcon color="error" />,
+  queued: <QueuedIcon htmlColor={yellow[800]} />,
+  running: (
+    <RunningIcon
+      htmlColor={yellow[800]}
+      sx={{
+        animation: `${spin} 2s linear infinite`,
+        "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+      }}
+    />
+  ),
+  stopped: <StoppedIcon color="warning" />,
+  succeeded: <SucceededIcon htmlColor={green[800]} />,
+  unknown: <UnknownIcon />,
 };
+
+/**
+ * The icon for an instance, task or workflow status.
+ */
+export const StatusIcon = ({ state }: StatusIconProps) => icons[statusConcept(state)];
+
+/** The icon for a status concept, for progress the API does not report as a result state. */
+export const StatusConceptIcon = ({ concept }: { concept: StatusConcept }) => icons[concept];
+
+/** Styles a timeline dot to carry an icon: drawn small and white on the dot's colour. */
+export const timelineDotIcon = {
+  p: 0.25,
+  "& svg": { color: "common.white", fontSize: 14 },
+} as const;

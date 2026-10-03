@@ -4,6 +4,13 @@ import { Box, Stack, Toolbar } from "@mui/material";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
+import {
+  AdministrationIcon,
+  DatasetIcon,
+  DocumentationIcon,
+  HomeIcon,
+  ProjectIcon,
+} from "../../components/icons";
 import { HeaderLogo } from "../../components/logo/HeaderLogo";
 import { authClient } from "../../lib/auth-client";
 import { MainNav, MainNavLink } from "./MainNavLink";
@@ -15,14 +22,14 @@ const UserMenu = dynamic(() => import("./UserMenu").then((module) => module.User
 });
 
 const applicationLinks = [
-  { href: "/projects", label: "Projects" },
-  { href: "/datasets", label: "Datasets" },
-  { href: "/administration", label: "Administration" },
+  { href: "/projects", icon: <ProjectIcon />, label: "Projects" },
+  { href: "/datasets", icon: <DatasetIcon />, label: "Datasets" },
+  { href: "/administration", icon: <AdministrationIcon />, label: "Administration" },
 ] as const;
 
 const publicLinks = [
-  { href: "/", label: "Home" },
-  { href: "/docs", label: "Documentation" },
+  { href: "/", icon: <HomeIcon />, label: "Home" },
+  { href: "/docs", icon: <DocumentationIcon />, label: "Documentation" },
 ] as const;
 
 const NavigationLinks = ({ authenticated }: { authenticated: boolean }) => {
@@ -31,11 +38,11 @@ const NavigationLinks = ({ authenticated }: { authenticated: boolean }) => {
 
   return (
     <MainNav aria-label="Main">
-      {links.map(({ href, label }) => {
+      {links.map(({ href, icon, label }) => {
         const familyPath = href.split("/").slice(0, 2).join("/") || "/";
         const active =
           familyPath === "/" ? router.pathname === "/" : router.asPath.startsWith(familyPath);
-        return <MainNavLink active={active} href={href} key={href} label={label} />;
+        return <MainNavLink active={active} href={href} icon={icon} key={href} label={label} />;
       })}
     </MainNav>
   );

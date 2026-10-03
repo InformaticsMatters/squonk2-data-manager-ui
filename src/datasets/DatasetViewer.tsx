@@ -1,9 +1,9 @@
-import { ArrowBack } from "@mui/icons-material";
 import { Button, Container } from "@mui/material";
 import NextError from "next/error";
 import A from "next/link";
 
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
+import { BackIcon } from "../components/icons";
 import { PlaintextViewer } from "../features/PlaintextViewer";
 import { DatasetLoadError, DatasetResolutionBoundary } from "./DatasetResolutionBoundary";
 import { datasetLinks, datasetListState, type DatasetRoute } from "./routes";
@@ -55,7 +55,7 @@ const ResolvedDatasetViewer = ({
             replace
             component={A}
             href={datasetLinks.version(datasetId, datasetVersion, datasetListState(route))}
-            startIcon={<ArrowBack />}
+            startIcon={<BackIcon />}
             sx={{ marginTop: 2 }}
           >
             Back to dataset version

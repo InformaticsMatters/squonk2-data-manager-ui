@@ -1,6 +1,5 @@
 import { type ReactNode } from "react";
 
-import { CloseRounded as CloseRoundedIcon } from "@mui/icons-material";
 import {
   Button,
   Dialog,
@@ -11,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 
+import { CloseIcon } from "../icons";
 import { ReasonsRestatedHere } from "../results/CapabilityReasons";
 import { SlideUpTransition } from "../SlideUpTransition";
 import { type BaseModalWrapperProps } from "./types";
@@ -26,6 +26,14 @@ export interface ModalWrapperProps extends BaseModalWrapperProps {
    * Text of the primary action button
    */
   submitText?: string;
+  /**
+   * Icon of the primary action, placed before its text. Every primary action has one.
+   */
+  submitIcon?: ReactNode;
+  /**
+   * Icon placed before the title.
+   */
+  titleIcon?: ReactNode;
   /**
    * Whether the primary action should be in a disabled state.
    */
@@ -43,6 +51,8 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   id,
   title,
   submitText,
+  submitIcon,
+  titleIcon,
   submitDisabled,
   closeText = "Close",
   children,
@@ -60,7 +70,12 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       onClose={onClose}
     >
       <DialogTitle id={`${id}-title`}>
-        <Typography component="span" variant="h3">
+        <Typography
+          component="span"
+          sx={{ alignItems: "center", display: "inline-flex", gap: 1 }}
+          variant="h3"
+        >
+          {titleIcon}
           {title}
         </Typography>
         <IconButton
@@ -74,7 +89,7 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
           })}
           onClick={onClose}
         >
-          <CloseRoundedIcon />
+          <CloseIcon />
         </IconButton>
       </DialogTitle>
       {/* A dialog covers the page it opened over, so whatever that page stated once above its
@@ -85,7 +100,12 @@ export const ModalWrapper: React.FC<ModalWrapperProps> = ({
       <DialogActions>
         <Button onClick={onClose}>{closeText}</Button>
         {!!onSubmit && (
-          <Button color="primary" disabled={submitDisabled} onClick={onSubmit}>
+          <Button
+            color="primary"
+            disabled={submitDisabled}
+            startIcon={submitIcon}
+            onClick={onSubmit}
+          >
             {submitText}
           </Button>
         )}

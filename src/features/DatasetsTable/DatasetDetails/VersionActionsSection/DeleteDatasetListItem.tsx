@@ -1,8 +1,8 @@
 import { type DatasetVersionSummary } from "@/api/data-manager";
 
-import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { ListItemButton, ListItemText } from "@mui/material";
 
+import { DeleteIcon } from "../../../../components/icons";
 import { WarningDeleteButton } from "../../../../components/WarningDeleteButton";
 import { type DatasetCapability } from "../../../../datasets/capabilities";
 import {
@@ -69,7 +69,7 @@ export const DeleteDatasetListItem = ({
           onClick={openModal}
         >
           <ListItemText primary="Delete this Version of the Dataset" />
-          <DeleteForeverIcon color="action" />
+          <DeleteIcon color="action" />
         </ListItemButton>
       )}
     </WarningDeleteButton>

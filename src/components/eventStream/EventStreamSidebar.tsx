@@ -1,6 +1,5 @@
 import { Activity } from "react";
 
-import { Close as CloseIcon } from "@mui/icons-material";
 import {
   Box,
   Divider,
@@ -13,6 +12,7 @@ import {
 import { useAtom } from "jotai";
 
 import { eventStreamSidebarOpenAtom } from "../../state/eventStream";
+import { CloseIcon } from "../icons";
 import { EventList } from "./EventList";
 import { EventStreamToggle } from "./EventStreamToggle";
 import { WebSocketStatusIndicator } from "./WebSocketStatusIndicator";

@@ -1,19 +1,30 @@
-import { type ReactNode } from "react";
-
-import { Description as DescriptionIcon } from "@mui/icons-material";
-import { Link, List, ListItemButton, ListItemIcon, ListItemText, Popover } from "@mui/material";
+import {
+  Link,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Popover,
+  type SvgIconProps,
+} from "@mui/material";
 import { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { usePopupState } from "material-ui-popup-state/hooks";
 import A from "next/link";
 
+import { BrowserViewerIcon, TextViewerIcon } from "../components/icons";
 import { childFilesystemPath } from "./fileFacts";
 import { type FileViewer, fileViewerLabels, fileViewersFor } from "./fileViewers";
 import { projectLinks } from "./routes";
 
 /** The icon each viewer is recognised by; what it is called is a viewer fact Files owns. */
-const fileViewerIcons: Record<FileViewer, ReactNode> = {
-  browser: <DescriptionIcon color="action" />,
-  text: <DescriptionIcon color="action" />,
+const fileViewerIcons = { browser: BrowserViewerIcon, text: TextViewerIcon } satisfies Record<
+  FileViewer,
+  unknown
+>;
+
+export const FileViewerIcon = ({ viewer, ...props }: SvgIconProps & { viewer: FileViewer }) => {
+  const Icon = fileViewerIcons[viewer];
+  return <Icon {...props} />;
 };
 
 export interface ProjectFileViewerLinksProps {
@@ -62,7 +73,9 @@ export const ProjectFileViewerLinks = ({
                 onClick={() => popupState.close()}
               >
                 <ListItemText primary={name} secondary={summary} />
-                <ListItemIcon sx={{ ml: 2 }}>{fileViewerIcons[viewer]}</ListItemIcon>
+                <ListItemIcon sx={{ ml: 2 }}>
+                  <FileViewerIcon color="action" viewer={viewer} />
+                </ListItemIcon>
               </ListItemButton>
             );
           })}

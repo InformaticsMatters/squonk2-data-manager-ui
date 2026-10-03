@@ -5,6 +5,7 @@ import { Button, Typography } from "@mui/material";
 
 import { formatCoins } from "../../utils/app/coins";
 import { projectURL } from "../../utils/app/routes";
+import { ProcessingIcon } from "../icons";
 
 type Product = Awaited<ReturnType<typeof getProduct>>["product"];
 
@@ -32,7 +33,12 @@ export const ProcessingChargeMessage = ({ coins, product }: ProcessingChargeMess
   if (productData && isProductDmProjectTier(productData) && productData.claim) {
     return (
       <div>
-        <Typography component="h5" variant="h5">
+        <Typography
+          component="h5"
+          sx={{ alignItems: "center", display: "flex", gap: 1 }}
+          variant="h5"
+        >
+          <ProcessingIcon />
           Processing Charge
         </Typography>
 

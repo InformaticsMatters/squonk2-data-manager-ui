@@ -28,6 +28,7 @@ import {
 import { filesize } from "filesize";
 import { useRouter } from "next/router";
 
+import { ProcessingIcon, StorageIcon } from "../components/icons";
 import { isProductId } from "../routing/identifiers";
 import { formatCoins } from "../utils/app/coins";
 import { toLocalTimeString } from "../utils/app/datetime";
@@ -167,7 +168,12 @@ const ProductChargesTables = ({
   <Stack spacing={2}>
     <Paper variant="outlined">
       <Box sx={{ p: 2 }}>
-        <Typography component="h3" variant="h5">
+        <Typography
+          component="h3"
+          sx={{ alignItems: "center", display: "flex", gap: 1 }}
+          variant="h5"
+        >
+          <ProcessingIcon />
           Processing charges
         </Typography>
         <Typography color="text.secondary">
@@ -215,7 +221,12 @@ const ProductChargesTables = ({
     </Paper>
     <Paper variant="outlined">
       <Box sx={{ p: 2 }}>
-        <Typography component="h3" variant="h5">
+        <Typography
+          component="h3"
+          sx={{ alignItems: "center", display: "flex", gap: 1 }}
+          variant="h5"
+        >
+          <StorageIcon />
           Storage charges
         </Typography>
         <Typography color="text.secondary">

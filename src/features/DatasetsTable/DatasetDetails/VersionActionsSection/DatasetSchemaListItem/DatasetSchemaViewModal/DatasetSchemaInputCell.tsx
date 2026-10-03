@@ -1,6 +1,6 @@
-import { Restore } from "@mui/icons-material";
 import { Box, IconButton, TextField, Tooltip } from "@mui/material";
 
+import { RestoreIcon } from "../../../../../../components/icons";
 import { useDraftValue } from "../../../../../../hooks/useDraftValue";
 
 export interface DatasetSchemaInputCellProps {
@@ -50,7 +50,7 @@ export const DatasetSchemaInputCell = ({
             <Box sx={{ ml: 1, mr: 1, visibility: hasChanged ? undefined : "hidden" }}>
               <Tooltip title="Revert changes">
                 <IconButton size="small" onClick={() => setFieldValue(originalFieldValue)}>
-                  <Restore fontSize="small" />
+                  <RestoreIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
             </Box>

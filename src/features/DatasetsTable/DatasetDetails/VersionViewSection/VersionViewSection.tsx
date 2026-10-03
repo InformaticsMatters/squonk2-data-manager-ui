@@ -1,9 +1,9 @@
 import { type DatasetSummary, type DatasetVersionSummary } from "@/api/data-manager";
 
-import { Description } from "@mui/icons-material";
 import { List, ListItemText } from "@mui/material";
 import ListItemButton from "@mui/material/ListItemButton";
 
+import { BrowserViewerIcon } from "../../../../components/icons";
 import { datasetTransportLinks } from "../../../../datasets/routes";
 import { DatasetPlainTextViewerListItem } from "./DatasetPlainTextViewerListItem";
 
@@ -35,7 +35,7 @@ export const VersionViewSection = ({ dataset, version }: VersionViewSectionProps
           primary="Browser Viewer"
           secondary="Displays the file in your browser if it supports the file type, otherwise downloads the file"
         />
-        <Description color="action" />
+        <BrowserViewerIcon color="action" />
       </ListItemButton>
     </List>
   );

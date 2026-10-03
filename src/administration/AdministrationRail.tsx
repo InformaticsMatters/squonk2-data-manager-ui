@@ -1,16 +1,6 @@
 import { useGetOrganisationUnits } from "@/api/account-server/unit";
 
 import {
-  BusinessRounded,
-  FolderSharedRounded,
-  LockOutlined,
-  PaymentsOutlined,
-  PersonRounded,
-  PublicOutlined,
-  QueryStatsOutlined,
-  SearchRounded,
-} from "@mui/icons-material";
-import {
   Alert,
   Box,
   Divider,
@@ -28,6 +18,16 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import {
+  ChargesIcon,
+  OrganisationIcon,
+  PersonalUnitIcon,
+  PrivateIcon,
+  PublicIcon,
+  SearchIcon,
+  UnitIcon,
+  UsageIcon,
+} from "../components/icons";
 import { useDraftValue } from "../hooks/useDraftValue";
 import { retryAdministrationRead, useAccessFacts } from "./accessFacts";
 import { administrationLinks, type AdministrationRoute } from "./routes";
@@ -96,11 +96,7 @@ const UNITS_UNREADABLE = "The units of this organisation could not be listed.";
 const UnitRow = ({ row, selected }: { row: UnitIndexRow; selected: boolean }) => (
   <ListItemButton component={Link} href={row.href as never} selected={selected}>
     <ListItemIcon sx={{ minWidth: 34 }}>
-      {row.isPersonal ? (
-        <PersonRounded fontSize="small" />
-      ) : (
-        <FolderSharedRounded fontSize="small" />
-      )}
+      {row.isPersonal ? <PersonalUnitIcon fontSize="small" /> : <UnitIcon fontSize="small" />}
     </ListItemIcon>
     <ListItemText
       primary={row.unitName}
@@ -108,9 +104,9 @@ const UnitRow = ({ row, selected }: { row: UnitIndexRow; selected: boolean }) =>
       slotProps={{ primary: { noWrap: true }, secondary: { noWrap: true } }}
     />
     {row.isPrivate ? (
-      <LockOutlined sx={{ color: "text.secondary", fontSize: 16 }} titleAccess="Private" />
+      <PrivateIcon sx={{ color: "text.secondary", fontSize: 16 }} titleAccess="Private" />
     ) : (
-      <PublicOutlined sx={{ color: "text.secondary", fontSize: 16 }} titleAccess="Public" />
+      <PublicIcon sx={{ color: "text.secondary", fontSize: 16 }} titleAccess="Public" />
     )}
   </ListItemButton>
 );
@@ -147,7 +143,7 @@ export const AdministrationRail = ({
   const organisationEntries = [
     {
       href: administrationLinks.overview(),
-      icon: <BusinessRounded fontSize="small" />,
+      icon: <OrganisationIcon fontSize="small" />,
       key: "organisation:overview",
       label: "Overview",
     },
@@ -157,7 +153,7 @@ export const AdministrationRail = ({
       ? [
           {
             href: administrationLinks.organisationCharges(),
-            icon: <PaymentsOutlined fontSize="small" />,
+            icon: <ChargesIcon fontSize="small" />,
             key: "organisation:charges",
             label: "Charges",
           },
@@ -165,7 +161,7 @@ export const AdministrationRail = ({
       : []),
     {
       href: administrationLinks.organisationUsage(),
-      icon: <QueryStatsOutlined fontSize="small" />,
+      icon: <UsageIcon fontSize="small" />,
       key: "organisation:usage",
       label: "Usage & Inventory",
     },
@@ -241,7 +237,7 @@ export const AdministrationRail = ({
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchRounded fontSize="small" />
+                  <SearchIcon fontSize="small" />
                 </InputAdornment>
               ),
             },

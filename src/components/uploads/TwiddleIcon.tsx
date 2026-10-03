@@ -1,10 +1,8 @@
 import { type FC } from "react";
 
-import {
-  DeleteRounded as DeleteRoundedIcon,
-  DoneRounded as DoneRoundedIcon,
-} from "@mui/icons-material";
 import { keyframes } from "@mui/material/styles";
+
+import { CheckIcon, DeleteIcon } from "../icons";
 
 export interface TwiddleIconProps {
   done: boolean;
@@ -23,8 +21,8 @@ const spin = keyframes`
 
 export const TwiddleIcon: FC<TwiddleIconProps> = ({ done }) => {
   return done ? (
-    <DoneRoundedIcon sx={{ animation: `${spin} 0.5s ease` }} />
+    <CheckIcon sx={{ animation: `${spin} 0.5s ease` }} />
   ) : (
-    <DeleteRoundedIcon color="primary" />
+    <DeleteIcon color="primary" />
   );
 };

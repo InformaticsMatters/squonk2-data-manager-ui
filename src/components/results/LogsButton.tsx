@@ -1,5 +1,6 @@
 import { resultInstanceLogsPath } from "../../projects/instanceFacts";
 import { projectLinks } from "../../projects/routes";
+import { LogsIcon } from "../icons";
 import { NextLink } from "../NextLink";
 
 export interface LogsButtonProps {
@@ -16,6 +17,7 @@ export const LogsButton = ({ instanceId, projectId }: LogsButtonProps) => {
     <NextLink
       component="button"
       href={projectLinks.files(projectId, { path: resultInstanceLogsPath(instanceId) }) as never}
+      startIcon={<LogsIcon />}
     >
       Logs
     </NextLink>

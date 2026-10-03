@@ -1,12 +1,12 @@
 import { type ReactNode } from "react";
 
-import { ArrowBack, OpenInNew } from "@mui/icons-material";
 import { Box, Button, Container, Link, Typography } from "@mui/material";
 import NextError from "next/error";
 import A from "next/link";
 
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
+import { BackIcon, ExternalLinkIcon } from "../components/icons";
 import { PlaintextViewer } from "../features/PlaintextViewer";
 import { type ProjectId } from "../routing/identifiers";
 import { type FilesystemFile, filesystemFile } from "./fileFacts";
@@ -21,6 +21,7 @@ import {
   offersFileViewer,
 } from "./fileViewers";
 import { ProjectFilesSection } from "./ProjectFiles";
+import { FileViewerIcon } from "./ProjectFileViewerLinks";
 import { projectFileTransportLinks, projectLinks, type ProjectRoute } from "./routes";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
@@ -127,7 +128,7 @@ const FileViewerFrame = ({
         replace
         component={A}
         href={projectLinks.files(projectId, { path: file.directory })}
-        startIcon={<ArrowBack />}
+        startIcon={<BackIcon />}
       >
         Back to files
       </Button>
@@ -138,6 +139,7 @@ const FileViewerFrame = ({
           href={projectLinks.fileView(projectId, { path: file.path, viewer: offered }) as never}
           key={offered}
           size="small"
+          startIcon={<FileViewerIcon viewer={offered} />}
           variant={offered === viewer ? "contained" : "outlined"}
         >
           {fileViewerLabels[offered].name}
@@ -209,7 +211,7 @@ const BrowserFile = ({ file, projectId }: { file: FilesystemFile; projectId: Pro
           target="_blank"
         >
           Open in a new tab
-          <OpenInNew fontSize="inherit" />
+          <ExternalLinkIcon fontSize="inherit" />
         </Link>
       </Box>
       {/* A project's files are content this application does not control, and the proxy serves them

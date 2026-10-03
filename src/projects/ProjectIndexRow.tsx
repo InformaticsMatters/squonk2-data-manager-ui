@@ -1,7 +1,8 @@
-import { ChevronRight, LockOutlined, PublicOutlined } from "@mui/icons-material";
 import { Box, Chip, ListItemButton, ListItemText, Stack } from "@mui/material";
 import Link from "next/link";
 
+import { NextIcon, PrivateIcon, ProjectIcon, PublicIcon } from "../components/icons";
+import { RoleIcon } from "../components/kindIcons";
 import { toLocalTimeString } from "../utils/app/datetime";
 import { formatTierString } from "../utils/app/products";
 import { ProjectIdentity } from "./ProjectIdentity";
@@ -16,7 +17,7 @@ import { projectLinks } from "./routes";
  */
 const PrivacyIcon = ({ isPrivate }: { isPrivate: boolean }) => {
   const label = isPrivate ? "Private" : "Public";
-  const Icon = isPrivate ? LockOutlined : PublicOutlined;
+  const Icon = isPrivate ? PrivateIcon : PublicIcon;
   return <Icon sx={{ color: "text.secondary", fontSize: 18 }} titleAccess={label} />;
 };
 
@@ -51,6 +52,7 @@ export const ProjectIndexRow = ({
     href={projectLinks.files(project.project_id) as never}
     sx={{ borderRadius: 1, gap: 1 }}
   >
+    <ProjectIcon sx={{ color: "text.secondary" }} />
     <ListItemText
       primary={project.name}
       secondary={
@@ -63,10 +65,17 @@ export const ProjectIndexRow = ({
     />
     <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
       <Box sx={{ display: "flex", justifyContent: "flex-end", width: 116 }}>
-        {roleLabel ? <Chip label={roleLabel} size="small" variant="outlined" /> : null}
+        {roleLabel ? (
+          <Chip
+            icon={<RoleIcon role={roleLabel} />}
+            label={roleLabel}
+            size="small"
+            variant="outlined"
+          />
+        ) : null}
       </Box>
       <PrivacyIcon isPrivate={isPrivate} />
     </Stack>
-    <ChevronRight sx={{ color: "text.secondary" }} />
+    <NextIcon sx={{ color: "text.secondary" }} />
   </ListItemButton>
 );

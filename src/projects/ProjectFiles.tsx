@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 
-import { RefreshRounded as RefreshRoundedIcon } from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -19,6 +18,8 @@ import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { CenterLoader } from "../components/CenterLoader";
 import { DataTable } from "../components/DataTable";
+import { DirectoryIcon, ManagedFileIcon, PrivateIcon, RefreshIcon } from "../components/icons";
+import { FileKindIcon } from "../components/kindIcons";
 import { NextLink } from "../components/NextLink";
 import { toLocalTimeString } from "../utils/app/datetime";
 import {
@@ -34,6 +35,7 @@ import {
   filesystemPathOf,
   filesystemRoot,
   isDirectoryRow,
+  managedFileId,
   type ProjectFileRow,
 } from "./fileFacts";
 import { FILE_NOT_FOUND_NOTICE } from "./fileViewers";
@@ -117,22 +119,42 @@ const FilesTable = ({
   const columns = useMemo(
     () => [
       columnHelper.accessor("name", {
-        cell: ({ getValue, row: { original: row } }) =>
-          isDirectoryRow(row) ? (
-            <NextLink
-              component="a"
-              href={
-                projectLinks.files(projectId, {
-                  path: childFilesystemPath(path, row.name),
-                }) as never
-              }
-              sx={{ textTransform: "none" }}
-            >
-              {getValue()}
-            </NextLink>
-          ) : (
-            <ProjectFileViewerLinks directory={path} fileName={row.name} projectId={projectId} />
-          ),
+        cell: ({ getValue, row: { original: row } }) => (
+          <Box sx={{ alignItems: "center", display: "flex", gap: 1 }}>
+            {isDirectoryRow(row) ? (
+              <>
+                <DirectoryIcon color="action" fontSize="small" />
+                <NextLink
+                  component="a"
+                  href={
+                    projectLinks.files(projectId, {
+                      path: childFilesystemPath(path, row.name),
+                    }) as never
+                  }
+                  sx={{ textTransform: "none" }}
+                >
+                  {getValue()}
+                </NextLink>
+              </>
+            ) : (
+              <>
+                <FileKindIcon color="action" fileName={row.name} fontSize="small" />
+                <ProjectFileViewerLinks
+                  directory={path}
+                  fileName={row.name}
+                  projectId={projectId}
+                />
+                {managedFileId(row) === undefined ? null : (
+                  <ManagedFileIcon
+                    color="action"
+                    fontSize="small"
+                    titleAccess="Managed file, attached from a dataset"
+                  />
+                )}
+              </>
+            )}
+          </Box>
+        ),
         header: "File Name",
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : row.data.owner), {
@@ -140,6 +162,15 @@ const FilesTable = ({
         id: "owner",
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : fileRowMode(row)), {
+        cell: ({ getValue }) =>
+          getValue() === "immutable" ? (
+            <Box component="span" sx={{ alignItems: "center", display: "inline-flex", gap: 0.5 }}>
+              <PrivateIcon color="action" fontSize="small" />
+              immutable
+            </Box>
+          ) : (
+            getValue()
+          ),
         header: "Mode",
         id: "mode",
       }),
@@ -232,7 +263,7 @@ const FilesTable = ({
                     />
                     <Tooltip title="Refresh this directory">
                       <IconButton size="large" onClick={() => files.refresh()}>
-                        <RefreshRoundedIcon />
+                        <RefreshIcon />
                       </IconButton>
                     </Tooltip>
                   </Grid>

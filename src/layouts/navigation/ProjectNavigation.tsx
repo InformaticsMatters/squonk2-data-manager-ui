@@ -1,10 +1,18 @@
 import { Box, Stack } from "@mui/material";
 import { useRouter } from "next/router";
 
+import { FilesIcon, ManageIcon, ResultsIcon, RunIcon } from "../../components/icons";
 import { ProjectSelector } from "../../projects/ProjectSelector";
 import { projectSectionHref, projectSections } from "../../projects/routes";
 import { useRouteProjectId } from "../../projects/useRouteProject";
 import { NavigationTab } from "./NavigationTab";
+
+const sectionIcons = {
+  files: <FilesIcon />,
+  manage: <ManageIcon />,
+  results: <ResultsIcon />,
+  run: <RunIcon />,
+} as const;
 
 export const ProjectNavigation = () => {
   const router = useRouter();
@@ -43,6 +51,7 @@ export const ProjectNavigation = () => {
             <NavigationTab
               active={router.asPath.startsWith(href)}
               href={href}
+              icon={sectionIcons[key]}
               key={key}
               label={label}
             />

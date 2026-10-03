@@ -1,10 +1,10 @@
 import { type InstanceGetResponse } from "@/api/data-manager";
 import { useGetJob } from "@/api/data-manager/job";
 
-import { WorkOutlineRounded as WorkOutlineRoundedIcon } from "@mui/icons-material";
 import { Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
 import { HorizontalList } from "../../HorizontalList";
+import { JobIcon } from "../../icons";
 import { PageSection } from "../../PageSection";
 import { TaskDetails } from "../../tasks/TaskDetails";
 import { CommonDetails } from "./CommonDetails";
@@ -32,7 +32,7 @@ const JobDefinition = ({ jobId }: { jobId: number }) => {
   return job ? (
     <ListItem>
       <ListItemIcon sx={{ minWidth: "40px" }}>
-        <WorkOutlineRoundedIcon />
+        <JobIcon />
       </ListItemIcon>
       <ListItemText primary={job.collection} secondary={job.version} />
     </ListItem>

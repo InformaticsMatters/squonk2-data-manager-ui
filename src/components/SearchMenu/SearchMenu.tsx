@@ -11,7 +11,6 @@ import {
 
 import { focusRing } from "@squonk/mui-theme";
 
-import { CheckRounded, SearchRounded } from "@mui/icons-material";
 import {
   Box,
   Divider,
@@ -28,6 +27,7 @@ import {
 import Link from "next/link";
 
 import { useStateResetOn } from "../../hooks/useStateResetOn";
+import { CheckIcon, SearchIcon } from "../icons";
 
 /**
  * One row the menu offers. `href` is what separates the two things choosing can mean: a row that
@@ -269,7 +269,7 @@ export const SearchMenu = ({
           slotProps={{ primary: { sx: { fontWeight: 700 } } }}
         />
         {isCurrent ? (
-          <CheckRounded color="primary" fontSize="small" titleAccess={currentHint} />
+          <CheckIcon color="primary" fontSize="small" titleAccess={currentHint} />
         ) : null}
       </>
     );
@@ -344,7 +344,7 @@ export const SearchMenu = ({
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchRounded fontSize="small" />
+                      <SearchIcon fontSize="small" />
                     </InputAdornment>
                   ),
                 },

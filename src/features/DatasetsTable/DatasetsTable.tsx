@@ -2,13 +2,15 @@ import { useCallback, useMemo } from "react";
 
 import { useGetDatasets } from "@/api/data-manager/dataset";
 
-import { Alert, Button, CircularProgress } from "@mui/material";
+import { Alert, Box, Button, CircularProgress } from "@mui/material";
 import { createColumnHelper, type Row } from "@tanstack/react-table";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 import { Chips } from "../../components/Chips";
 import { DataTable } from "../../components/DataTable/DataTable";
+import { DatasetIcon, RetryIcon } from "../../components/icons";
+import { FileKindIcon } from "../../components/kindIcons";
 import { LabelChip } from "../../components/labels/LabelChip";
 import { NextLink } from "../../components/NextLink";
 import { getDatasetListParams } from "../../datasets/datasetQuery";
@@ -61,7 +63,7 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
         header: "File Name",
         cell: ({ row }) => {
           const { datasetVersion } = row.original;
-          return datasetVersion ? (
+          const name = datasetVersion ? (
             <NextLink
               component="a"
               href={
@@ -76,6 +78,16 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
             </NextLink>
           ) : (
             row.original.fileName
+          );
+          return (
+            <Box sx={{ alignItems: "center", display: "flex", gap: 1 }}>
+              {row.original.type === "row" ? (
+                <DatasetIcon color="action" fontSize="small" />
+              ) : (
+                <FileKindIcon color="action" fileName={row.original.fileName} fontSize="small" />
+              )}
+              {name}
+            </Box>
           );
         },
       }),
@@ -151,7 +163,12 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
       {error && route.kind === "index" ? (
         <Alert
           action={
-            <Button color="inherit" size="small" onClick={() => void refetch()}>
+            <Button
+              color="inherit"
+              size="small"
+              startIcon={<RetryIcon />}
+              onClick={() => void refetch()}
+            >
               Retry
             </Button>
           }

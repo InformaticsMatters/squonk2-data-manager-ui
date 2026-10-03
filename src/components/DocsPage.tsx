@@ -1,6 +1,5 @@
 import { type ComponentType } from "react";
 
-import { NavigateBeforeRounded, NavigateNextRounded } from "@mui/icons-material";
 import { Box, Breadcrumbs, Button, Container, Divider, Stack, Typography } from "@mui/material";
 import Head from "next/head";
 import Link from "next/link";
@@ -12,6 +11,7 @@ import {
   docsSiblings,
 } from "../content/docs/manifest";
 import { DocsNav } from "./DocsNav";
+import { NextIcon, PreviousIcon } from "./icons";
 
 /** Where this page sits, as the trail of ancestors that leads to it. */
 const DocsBreadcrumb = ({
@@ -55,14 +55,14 @@ const DocsSequence = ({ href }: { href: DocsHref }) => {
         sx={{ justifyContent: "space-between" }}
       >
         {previous ? (
-          <Button component={Link} href={previous.href} startIcon={<NavigateBeforeRounded />}>
+          <Button component={Link} href={previous.href} startIcon={<PreviousIcon />}>
             {previous.title}
           </Button>
         ) : (
           <Box />
         )}
         {next ? (
-          <Button component={Link} endIcon={<NavigateNextRounded />} href={next.href}>
+          <Button component={Link} endIcon={<NextIcon />} href={next.href}>
             {next.title}
           </Button>
         ) : (

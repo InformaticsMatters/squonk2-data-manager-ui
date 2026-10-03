@@ -3,7 +3,6 @@ import { type ReactNode, useState } from "react";
 import { type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
 import { type InventoryProjectDetail } from "@/api/data-manager";
 
-import { Close as CloseIcon, Done as DoneIcon } from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -21,6 +20,7 @@ import Link from "next/link";
 import { CenterLoader } from "../components/CenterLoader";
 import { Chips } from "../components/Chips";
 import { DataTable } from "../components/DataTable";
+import { CheckIcon, CloseIcon, PersonIcon, ProjectIcon, RetryIcon } from "../components/icons";
 import { DATE_FORMAT, TIME_FORMAT } from "../constants/datetimes";
 import { projectLinks } from "../projects/routes";
 import { isProjectId } from "../routing/identifiers";
@@ -156,7 +156,7 @@ const unitUserColumns = [
   unitRowHelper.accessor("isMember", {
     header: "Unit Member",
     cell: ({ getValue }) =>
-      getValue() ? <DoneIcon titleAccess="Member" /> : <CloseIcon titleAccess="Not a member" />,
+      getValue() ? <CheckIcon titleAccess="Member" /> : <CloseIcon titleAccess="Not a member" />,
   }),
   ...activityColumns(unitRowHelper),
   unitRowHelper.group({
@@ -257,7 +257,7 @@ const ReportBody = <TReport,>({
     return <CenterLoader />;
   }
   const retry = (
-    <Button color="inherit" size="small" onClick={refresh}>
+    <Button color="inherit" size="small" startIcon={<RetryIcon />} onClick={refresh}>
       Retry
     </Button>
   );
@@ -369,8 +369,14 @@ export const UnitReport = ({
         value={pivot}
         onChange={(_, next: "projects" | "users" | null) => next && setPivot(next)}
       >
-        <ToggleButton value="users">By user</ToggleButton>
-        <ToggleButton value="projects">By project</ToggleButton>
+        <ToggleButton sx={{ gap: 1 }} value="users">
+          <PersonIcon fontSize="small" />
+          By user
+        </ToggleButton>
+        <ToggleButton sx={{ gap: 1 }} value="projects">
+          <ProjectIcon fontSize="small" />
+          By project
+        </ToggleButton>
       </ToggleButtonGroup>
       {organisation ? null : (
         <Alert severity="info" sx={{ mb: 2 }}>

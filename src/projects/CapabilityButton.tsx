@@ -1,3 +1,5 @@
+import { type ReactNode } from "react";
+
 import { Button, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 
@@ -22,6 +24,7 @@ export const CapabilityButton = ({
   id,
   isPending = false,
   onClick,
+  startIcon,
   variant = "outlined",
 }: {
   capability: ProjectCapability;
@@ -30,6 +33,7 @@ export const CapabilityButton = ({
   id: string;
   isPending?: boolean;
   onClick?: () => void;
+  startIcon?: ReactNode;
   variant?: "contained" | "outlined";
 }) => {
   if (capability.status === "hidden") {
@@ -45,6 +49,8 @@ export const CapabilityButton = ({
           aria-describedby={reason ? `${id}-reason` : undefined}
           component={Link}
           href={href}
+          startIcon={startIcon}
+          sx={{ whiteSpace: "nowrap" }}
           variant={variant}
         >
           {children}
@@ -53,6 +59,8 @@ export const CapabilityButton = ({
         <Button
           aria-describedby={reason ? `${id}-reason` : undefined}
           disabled={disabled}
+          startIcon={startIcon}
+          sx={{ whiteSpace: "nowrap" }}
           variant={variant}
           onClick={onClick}
         >

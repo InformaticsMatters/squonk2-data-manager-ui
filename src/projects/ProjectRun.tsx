@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { CenterLoader } from "../components/CenterLoader";
+import { DefinitionKindIcon } from "../components/kindIcons";
 import { DefinitionCard } from "../components/runCards/DefinitionCard";
 import { capabilityReason, evaluateProjectExecutionCapability } from "./capabilities";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
@@ -34,9 +35,17 @@ const isRunRoute = (route: FamilyRoute): route is RunRoute =>
   route.kind === "run" || route.kind === "run-definition";
 
 const filterOptions: readonly SectionFilterOption<RunFilterType>[] = [
-  { label: "Workflows", value: "workflow" },
-  { label: "Applications", value: "application" },
-  { label: "Jobs", value: "job" },
+  {
+    icon: <DefinitionKindIcon fontSize="small" kind="workflow" />,
+    label: "Workflows",
+    value: "workflow",
+  },
+  {
+    icon: <DefinitionKindIcon fontSize="small" kind="application" />,
+    label: "Applications",
+    value: "application",
+  },
+  { icon: <DefinitionKindIcon fontSize="small" kind="job" />, label: "Jobs", value: "job" },
 ];
 
 /**

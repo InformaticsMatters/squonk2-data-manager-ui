@@ -6,6 +6,7 @@ import { definitionKinds } from "../../constants/definitionKinds";
 import { type ResultCapabilities } from "../../projects/resultCapabilities";
 import { projectLinks, type ResultsState } from "../../projects/routes";
 import { resolveResultWorkflowLifecycle } from "../../projects/workflowFacts";
+import { WorkflowIcon } from "../icons";
 import { CapabilityReasons } from "../results/CapabilityReasons";
 import { ResultCard } from "../results/ResultCard";
 import { WorkflowLifecycleButton } from "./WorkflowLifecycleButton";
@@ -77,6 +78,7 @@ export const WorkflowResultCard = ({
     createdDateTime={workflow.started}
     finishedDateTime={workflow.stopped}
     href={projectLinks.result(projectId, "workflows", workflow.id, resultsState)}
+    kindIcon={<WorkflowIcon fontSize="small" />}
     linkTitle={workflow.name}
     state={workflow.status}
   >

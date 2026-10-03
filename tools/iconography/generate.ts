@@ -12,15 +12,18 @@ import path from "node:path";
 import {
   type AppFunction,
   areas,
+  designRules,
+  openQuestions,
+} from "../../docs/iconography/iconography";
+import {
   type Concept,
   type ConceptKey,
   concepts,
-  customGlyphs,
-  designRules,
   type Glyph,
-  openQuestions,
+  moleculeNode,
   type Status,
-} from "../../docs/iconography/iconography";
+  strokeWidth,
+} from "../../src/components/iconConcepts";
 
 const require = createRequire(import.meta.url);
 const lucideIcons = path.join(path.dirname(require.resolve("lucide-static")), "../../icons");
@@ -44,13 +47,25 @@ const slug = (text: string) =>
     .replaceAll(/[^a-z0-9]+/gu, "-")
     .replaceAll(/^-|-$/gu, "");
 
+/** The custom molecule glyph, as markup: the same shapes the application draws. */
+const moleculeSvg = moleculeNode
+  .map(
+    ([tag, attributes]) =>
+      `<${tag} ${Object.entries(attributes)
+        .filter(([key]) => key !== "key")
+        // The molecule's attributes are all path data and coordinates, written as strings.
+        .map(([key, value]) => `${key}="${value as string}"`)
+        .join(" ")}/>`,
+  )
+  .join("");
+
 const lucideSvg = (name: string, size = 24) => {
   const inner =
-    customGlyphs[name] ??
+    (name === "molecule" ? moleculeSvg : undefined) ??
     readFileSync(path.join(lucideIcons, `${name}.svg`), "utf8")
       .replace(/^[\s\S]*?<svg[^>]*>/u, "")
       .replace(/<\/svg>\s*$/u, "");
-  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${(2 * 24) / size}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${(strokeWidth * 24) / size}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
 };
 
 /** A Material icon's paths, read from the icon module's source. */
@@ -264,7 +279,7 @@ const html = `<!doctype html>
   </div>
 
   <h2 id="maintaining">Maintaining this document</h2>
-  <p class="lede">This page is generated. Edit <code>docs/iconography/iconography.ts</code> and run <code>pnpm docs:iconography</code>; never edit the HTML.</p>
+  <p class="lede">This page is generated. Edit <code>src/components/iconConcepts.ts</code> (the concepts) or <code>docs/iconography/iconography.ts</code> (where they appear) and run <code>pnpm docs:iconography</code>; never edit the HTML.</p>
   <ol class="how">
     <li><b>A new function</b>: add it to its area with the pages it appears on, and give every element that carries an icon a concept from the vocabulary.</li>
     <li><b>A new idea</b> with no concept that means the same thing: add a concept with status <i>Proposed</i>, and list alternatives if the choice is debatable.</li>

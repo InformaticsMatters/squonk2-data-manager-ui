@@ -4,6 +4,8 @@ import { Card, CardContent } from "@mui/material";
 import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 
+import { formTemplates } from "../formTemplates";
+
 export interface MimeTypeCardProps {
   /**
    * The type summary containing the form schema
@@ -32,6 +34,7 @@ export const MimeTypeCard = ({ type, formDatas, onFormChange }: MimeTypeCardProp
             noHtml5Validate
             formData={formDatas[type.mime]}
             schema={type.formatter_options}
+            templates={formTemplates}
             validator={validator}
             onChange={(event) => onFormChange({ ...formDatas, [type.mime]: event.formData })}
           >

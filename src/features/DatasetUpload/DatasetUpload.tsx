@@ -2,9 +2,9 @@ import { useCallback, useState } from "react";
 
 import { useGetFileTypes } from "@/api/data-manager/type";
 
-import { CloudUploadRounded as CloudUploadRoundedIcon } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 
+import { UploadDatasetIcon } from "../../components/icons";
 import { ModalWrapper } from "../../components/modals/ModalWrapper";
 import { FileTypeOptions } from "../../components/uploads/FileTypeOptions";
 import { type FileTypeOptionsState, type UploadableFile } from "../../components/uploads/types";
@@ -175,7 +175,7 @@ export const DatasetUpload = () => {
             size="large"
             onClick={() => setOpen(true)}
           >
-            <CloudUploadRoundedIcon />
+            <UploadDatasetIcon />
           </IconButton>
         </span>
       </Tooltip>
@@ -184,6 +184,7 @@ export const DatasetUpload = () => {
         id="upload-file"
         open={open}
         submitDisabled={uploadIsBlocked}
+        submitIcon={<UploadDatasetIcon />}
         submitText="Upload"
         title="Upload New Datasets"
         onClose={onClose}

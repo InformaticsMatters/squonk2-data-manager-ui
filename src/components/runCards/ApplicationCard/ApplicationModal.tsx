@@ -12,6 +12,9 @@ import { launchIsSendable } from "../../../projects/runLaunch";
 import { useRunCommands } from "../../../projects/useRunCommands";
 import { useRunLaunch } from "../../../projects/useRunLaunch";
 import { CenterLoader } from "../../CenterLoader";
+import { formTemplates } from "../../formTemplates";
+import { RunIcon } from "../../icons";
+import { DefinitionKindIcon } from "../../kindIcons";
 import { ModalWrapper } from "../../modals/ModalWrapper";
 import { CapabilityReasons } from "../../results/CapabilityReasons";
 import { DebugCheckbox, type DebugValue } from "../DebugCheckbox";
@@ -71,8 +74,10 @@ export const ApplicationModal = ({
       submitDisabled={
         !capabilityIsEnabled(capabilities.launch) || !name || !launchIsSendable(attempt)
       }
+      submitIcon={<RunIcon />}
       submitText="Run"
       title={application?.kind ?? "Run application"}
+      titleIcon={<DefinitionKindIcon kind="application" />}
       onClose={onClose}
       onSubmit={handleLaunch}
     >
@@ -111,6 +116,7 @@ export const ApplicationModal = ({
               formData={formData}
               schema={schema}
               showErrorList={false}
+              templates={formTemplates}
               validator={validator}
               onChange={(event) => setFormData(event.formData)}
             >

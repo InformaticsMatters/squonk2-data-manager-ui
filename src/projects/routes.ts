@@ -557,12 +557,23 @@ export const projectFileResourcePath = (projectId: string, path: string) => {
 };
 
 /**
+ * The same file spelled as a path rather than a query, so a document the browser renders resolves
+ * its relative references (a stylesheet, a script, an image) against the directory that holds it.
+ * The viewer proxy translates it back into the resource path before it reaches the Data Manager.
+ */
+export const projectFileBrowserPath = (projectId: string, path: string) =>
+  `/project/${assertProjectId(projectId)}/files${assertFilePath(path)
+    .path.split("/")
+    .map((name) => encodeURIComponent(name))
+    .join("/")}`;
+
+/**
  * Transport hrefs for one project file. These leave the Pages Router for the Data Manager proxies,
  * so they carry the deployment base path and address the exact file rather than route state.
  */
 export const projectFileTransportLinks = {
   browserView: (projectId: string, path: string) =>
-    withBasePath(`/api/viewer-proxy${projectFileResourcePath(projectId, path)}`),
+    withBasePath(`/api/viewer-proxy${projectFileBrowserPath(projectId, path)}`),
   download: (projectId: string, path: string) =>
     withBasePath(`/api/dm-api${projectFileResourcePath(projectId, path)}`),
 };

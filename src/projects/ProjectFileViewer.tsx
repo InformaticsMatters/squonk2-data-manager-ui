@@ -8,7 +8,6 @@ import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { BackIcon, ExternalLinkIcon } from "../components/icons";
 import { PageHead } from "../components/PageHead";
-import { MarkdownViewer } from "../features/MarkdownViewer";
 import { PlaintextViewer } from "../features/PlaintextViewer";
 import { type ProjectId } from "../routing/identifiers";
 import { type FilesystemFile, filesystemFile } from "./fileFacts";
@@ -22,6 +21,7 @@ import {
   isCompressedFileName,
   offersFileViewer,
 } from "./fileViewers";
+import { MarkdownViewer } from "./MarkdownViewer";
 import { ProjectFilesSection } from "./ProjectFiles";
 import { FileViewerIcon, fileViewerLink } from "./ProjectFileViewerLinks";
 import { projectFileTransportLinks, projectLinks, type ProjectRoute } from "./routes";
@@ -192,7 +192,7 @@ const FileViewerBody = ({
       );
     case "markdown":
       return delivery.kind === "content" ? (
-        <MarkdownViewer {...delivery.content} />
+        <MarkdownViewer {...delivery.content} directory={file.directory} projectId={projectId} />
       ) : (
         <NextError statusCode={500} />
       );

@@ -14,11 +14,18 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import A from "next/link";
 import remarkGfm from "remark-gfm";
+
+import { resolveMarkdownHref, resolveMarkdownImageSrc } from "./markdownLinks";
 
 export interface MarkdownViewerProps {
   /** The Markdown source, as read from the project file. */
   content: string;
+  /** Absolute path of the directory holding the file, which its relative links resolve against. */
+  directory: string;
+  /** ID of the project holding the file, which every project link it makes stays inside. */
+  projectId: string;
   /** Whether `content` is only the start of the file. */
   truncated: boolean;
 }
@@ -49,7 +56,6 @@ const components: Components = {
   ),
   p: ({ node: _, ...props }) => <Typography {...props} gutterBottom component="p" />,
   li: ({ node: _, ...props }) => <Typography {...props} component="li" />,
-  a: ({ node: _, ...props }) => <Link {...props} />,
   hr: () => <Divider sx={{ my: 2 }} />,
   blockquote: ({ node: _, ...props }) => (
     <Box
@@ -58,7 +64,6 @@ const components: Components = {
       sx={{ borderColor: "divider", borderLeft: 4, color: "text.secondary", mx: 0, pl: 2 }}
     />
   ),
-  img: ({ node: _, ...props }) => <Box {...props} component="img" sx={{ maxWidth: "100%" }} />,
   pre: ({ node: _, ...props }) => (
     <Box
       {...props}
@@ -82,19 +87,58 @@ const components: Components = {
 };
 
 /**
+ * Links and images, resolved against the project and directory holding the file. A link that names
+ * nothing the project can open is shown as its text, and an image that cannot load as its alt text.
+ */
+const linkComponents = (projectId: string, directory: string): Components => ({
+  a: ({ node: _, href = "", children, ...props }) => {
+    const link = resolveMarkdownHref(projectId, directory, href);
+    if (link === null) {
+      return <>{children}</>;
+    }
+    return link.external ? (
+      <Link {...props} href={link.href} rel="noopener noreferrer" target="_blank">
+        {children}
+      </Link>
+    ) : (
+      <Link {...props} component={A} href={link.href as never}>
+        {children}
+      </Link>
+    );
+  },
+  img: ({ node: _, src, ...props }) => {
+    const source =
+      typeof src === "string" ? resolveMarkdownImageSrc(projectId, directory, src) : null;
+    return source === null ? (
+      <>{props.alt}</>
+    ) : (
+      <Box {...props} component="img" src={source} sx={{ maxWidth: "100%" }} />
+    );
+  },
+});
+
+/**
  * A project file shown as formatted Markdown, with GitHub's extensions (tables, task lists,
  * strikethrough, autolinks). The file is user content read at runtime, so it is never trusted:
  * react-markdown escapes raw HTML and drops `javascript:` URLs, and neither default may be relaxed
  * (no `rehype-raw`, no permissive `urlTransform`).
  */
-export const MarkdownViewer = ({ content, truncated }: MarkdownViewerProps) => (
+export const MarkdownViewer = ({
+  content,
+  directory,
+  projectId,
+  truncated,
+}: MarkdownViewerProps) => (
   <Paper sx={{ my: 2, px: 3, py: 2 }}>
     {!!truncated && (
       <Alert severity="info" sx={{ mb: 2 }}>
         This file is too large to show in full, so only its start is formatted here.
       </Alert>
     )}
-    <ReactMarkdown components={components} remarkPlugins={[remarkGfm]}>
+    <ReactMarkdown
+      components={{ ...components, ...linkComponents(projectId, directory) }}
+      remarkPlugins={[remarkGfm]}
+    >
       {content}
     </ReactMarkdown>
   </Paper>

@@ -1,3 +1,12 @@
+# [7.1.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.2...7.1.0-dev.3) (2026-10-03)
+
+
+### Features
+
+* address browser-viewed project files by path so relative references resolve ([c7f2ff6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/c7f2ff689c3e9d8fffc968f7ee3c02c30d15b4cd))
+* give json and html files no in-app browser viewer address ([aa968ef](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/aa968efe375d385cd0ec3dc1fc7ecea756dd89e2)), closes [#374](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/374)
+* open the browser viewer of json and html files in a new tab ([2f8c0ec](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2f8c0ec0f9204d09bcf4dc0b65a2a3e4bf186b72))
+
 # [7.1.0-dev.2](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.1...7.1.0-dev.2) (2026-10-03)
 
 

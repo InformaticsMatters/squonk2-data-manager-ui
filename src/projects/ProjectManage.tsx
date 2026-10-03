@@ -72,7 +72,7 @@ const atLimitMessage = "This project's subscription is at its coin limit.";
 const coinFormatter = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 20 });
 const projectTierChipStyles: Record<string, { backgroundColor: string; color: string }> = {
   Bronze: { backgroundColor: "#cd7f32", color: "#1a1a1a" },
-  Evaluation: { backgroundColor: "#1976d2", color: "#ffffff" },
+  Evaluation: { backgroundColor: "#00796b", color: "#ffffff" },
   Gold: { backgroundColor: "#ffd700", color: "#1a1a1a" },
   Silver: { backgroundColor: "#c0c0c0", color: "#1a1a1a" },
 };

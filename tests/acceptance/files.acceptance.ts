@@ -88,6 +88,20 @@ test("the listing belongs to the project and the path in the URL", async ({
   expect(afterSecond.filter(({ query }) => !query.includes("project_id="))).toEqual([]);
 });
 
+test("the tab names the page within the project, not within Projects", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceFiles, testInfo);
+  await expect(page).toHaveTitle("Files | Acceptance Project | Squonk Data Manager");
+
+  await page.goto(`projects/${fixtureIds.project}/run`);
+  await expect(page).toHaveTitle("Run | Acceptance Project | Squonk Data Manager");
+
+  // A file names itself before the project that holds it.
+  await page.goto(`${acceptanceFiles}/view?path=%2Fnotes.txt`);
+  await expect(page).toHaveTitle("notes.txt | Acceptance Project | Squonk Data Manager");
+});
+
 test("the path is owned by Files, canonical in the URL, and restored by history", async ({
   page,
 }, testInfo) => {

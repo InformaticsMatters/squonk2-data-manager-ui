@@ -15,8 +15,10 @@ import Head from "next/head";
 
 import { type ApiServers, loadApiServers, readApiServers } from "../application/apiServers";
 import { PagePolicyComposer, type PolicyAppComponent } from "../application/PagePolicyComposer";
+import { policyTitle } from "../application/pageTitle";
 import { ConfiguredSnackbarProvider } from "../components/app/ConfiguredSnackbarProvider";
 import { ThemeProviders } from "../components/app/ThemeProviders";
+import { PageHead } from "../components/PageHead";
 import { openSansFont, ralewayFont } from "../constants/fonts";
 import { MDXComponentProvider } from "../context/MDXComponentProvider";
 import { awaitTokenGate } from "../utils/api/tokenGate";
@@ -105,6 +107,7 @@ const App = (props: CustomAppProps) => {
           <meta content="minimum-scale=1, initial-scale=1, width=device-width" name="viewport" />
           <style>{rootFontCss}</style>
         </Head>
+        <PageHead parts={policyTitle(pagePolicy)} />
         <ThemeProviders>
           <QueryClientProvider client={queryClient}>
             <HydrationBoundary state={pageProps.dehydratedState}>

@@ -7,11 +7,14 @@ import { useGetProjectSuspense } from "@/api/data-manager/project";
 import { ErrorBoundary } from "@sentry/nextjs";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 
 import { CenterLoader } from "../components/CenterLoader";
+import { PageHead } from "../components/PageHead";
 import { useSelectedOrganisation } from "../state/organisationSelection";
 import { readProjectAncestry, resolvedAncestry } from "./projectAncestry";
 import { recordRecentProject } from "./recentProjects";
+import { projectSectionLabel, routeProjectSection } from "./routes";
 import { RouteProjectProvider, useRouteProjectId } from "./useRouteProject";
 
 const ProjectFailure = dynamic(
@@ -59,6 +62,7 @@ const ProjectAncestryBoundary = ({
         : undefined,
     [productQuery.data, productQuery.error, project, settled],
   );
+  const { asPath } = useRouter();
   const [, setOrganisation, organisationId] = useSelectedOrganisation();
   const organisation = workspace && resolvedAncestry(workspace.ancestry)?.organisation;
   const adopted = organisation === undefined || organisation.id === organisationId;
@@ -82,7 +86,15 @@ const ProjectAncestryBoundary = ({
     return <CenterLoader />;
   }
 
-  return <RouteProjectProvider workspace={workspace}>{children}</RouteProjectProvider>;
+  return (
+    <RouteProjectProvider workspace={workspace}>
+      {/* The project names the tab in place of "Projects", so two projects' tabs differ. */}
+      <PageHead
+        parts={[projectSectionLabel(routeProjectSection(asPath, project.project_id)), project.name]}
+      />
+      {children}
+    </RouteProjectProvider>
+  );
 };
 
 const ProjectBoundary = ({ children, projectId }: { children: ReactNode; projectId: string }) => {

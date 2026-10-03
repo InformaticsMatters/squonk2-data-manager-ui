@@ -7,6 +7,7 @@ import A from "next/link";
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { BackIcon, ExternalLinkIcon } from "../components/icons";
+import { PageHead } from "../components/PageHead";
 import { PlaintextViewer } from "../features/PlaintextViewer";
 import { type ProjectId } from "../routing/identifiers";
 import { type FilesystemFile, filesystemFile } from "./fileFacts";
@@ -25,6 +26,7 @@ import { FileViewerIcon } from "./ProjectFileViewerLinks";
 import { projectFileTransportLinks, projectLinks, type ProjectRoute } from "./routes";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
+import { useRouteProject } from "./useRouteProject";
 
 type FileViewRoute = Extract<ProjectRoute, { kind: "file-view" }>;
 
@@ -121,34 +123,38 @@ const FileViewerFrame = ({
   file: FilesystemFile;
   projectId: ProjectId;
   viewer: FileViewer;
-}) => (
-  <Container maxWidth="xl" sx={{ py: 3 }}>
-    <Box sx={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-      <Button
-        replace
-        component={A}
-        href={projectLinks.files(projectId, { path: file.directory })}
-        startIcon={<BackIcon />}
-      >
-        Back to files
-      </Button>
-      {fileViewersFor(file.name).map((offered) => (
+}) => {
+  const { project } = useRouteProject();
+  return (
+    <Container maxWidth="xl" sx={{ py: 3 }}>
+      <PageHead parts={[file.name, project?.name ?? "Projects"]} />
+      <Box sx={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
         <Button
           replace
           component={A}
-          href={projectLinks.fileView(projectId, { path: file.path, viewer: offered }) as never}
-          key={offered}
-          size="small"
-          startIcon={<FileViewerIcon viewer={offered} />}
-          variant={offered === viewer ? "contained" : "outlined"}
+          href={projectLinks.files(projectId, { path: file.directory })}
+          startIcon={<BackIcon />}
         >
-          {fileViewerLabels[offered].name}
+          Back to files
         </Button>
-      ))}
-    </Box>
-    {children}
-  </Container>
-);
+        {fileViewersFor(file.name).map((offered) => (
+          <Button
+            replace
+            component={A}
+            href={projectLinks.fileView(projectId, { path: file.path, viewer: offered }) as never}
+            key={offered}
+            size="small"
+            startIcon={<FileViewerIcon viewer={offered} />}
+            variant={offered === viewer ? "contained" : "outlined"}
+          >
+            {fileViewerLabels[offered].name}
+          </Button>
+        ))}
+      </Box>
+      {children}
+    </Container>
+  );
+};
 
 const FileViewerBody = ({
   delivery,

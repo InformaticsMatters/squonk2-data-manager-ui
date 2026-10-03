@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Alert,
@@ -12,6 +12,7 @@ import {
   type TableCellProps as MuiCellProps,
   TableContainer,
   TableHead,
+  TablePagination,
   type TableProps as MuiTableProps,
   TableRow,
   type TableRowProps as MuiRowProps,
@@ -33,11 +34,12 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
+  type PaginationState,
   type Row,
   type RowSelectionState,
   type SortingState,
-  type Table as RTable,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -135,7 +137,10 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
-const truncate = <Data,>(table: RTable<Data>) => table.getRowModel().rows.slice(0, 100);
+/**
+ * Rows per page. A page counts only top-level rows, so a row and its sub rows share a page.
+ */
+const pageSize = 100;
 
 export const DataTable = <Data extends Record<string, any>>(props: DataTableProps<Data>) => {
   const {
@@ -167,6 +172,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize });
 
   const paddedColumns = useMemo(() => {
     const workingColumns = [...columns];
@@ -195,15 +201,15 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
           enableSorting: false,
           header: ({ table }) => (
             <IndeterminateCheckbox
-              checked={table.getIsAllRowsSelected()}
-              indeterminate={table.getIsSomeRowsSelected()}
+              checked={table.getIsAllPageRowsSelected()}
+              indeterminate={table.getIsSomePageRowsSelected()}
               onChange={(event, checked) => {
-                table.getToggleAllRowsSelectedHandler()(event);
-                const rows = truncate(table);
-                onSelection &&
-                  rows
-                    .filter((row) => row.getIsSelected())
-                    .forEach((row) => onSelection(row.original, checked));
+                // Only the rows on this page are toggled, so everything selected was on screen
+                table.getToggleAllPageRowsSelectedHandler()(event);
+                table
+                  .getRowModel()
+                  .rows.filter((row) => row.depth === 0)
+                  .forEach((row) => onSelection?.(row.original, checked));
               }}
             />
           ),
@@ -240,6 +246,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
       columnFilters,
       expanded,
       rowSelection,
+      pagination,
     },
     initialState: {
       rowSelection: initialSelection
@@ -252,6 +259,9 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
+    autoResetPageIndex: false,
+    paginateExpandedRows: false,
     globalFilterFn: fuzzyFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -260,12 +270,38 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
     getExpandedRowModel: getExpandedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     debugTable: DEBUG,
     debugHeaders: DEBUG,
     debugColumns: DEBUG,
   });
 
-  const rows = truncate(table);
+  // A new search, sort or filter starts again from the first page and drops the selection, since
+  // each can hide or move selected rows off the page. The search may also arrive through the URL.
+  const filter = searchValue ?? globalFilter;
+  const view = useRef({ columnFilters, filter, sorting });
+  useEffect(() => {
+    const previous = view.current;
+    if (
+      previous.filter === filter &&
+      previous.sorting === sorting &&
+      previous.columnFilters === columnFilters
+    ) {
+      return;
+    }
+    view.current = { columnFilters, filter, sorting };
+    setPagination((current) => ({ ...current, pageIndex: 0 }));
+    table.getSelectedRowModel().flatRows.forEach((row) => onSelection?.(row.original, false));
+    setRowSelection({});
+  }, [columnFilters, filter, onSelection, sorting, table]);
+
+  // A refresh keeps the page, but one the listing has shrunk away from moves back to its last page
+  const lastPageIndex = Math.max(table.getPageCount() - 1, 0);
+  if (pagination.pageIndex > lastPageIndex) {
+    setPagination({ ...pagination, pageIndex: lastPageIndex });
+  }
+
+  const rows = table.getRowModel().rows;
 
   const tableContents = (
     <>
@@ -360,11 +396,30 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
           })}
         </TableBody>
       </Table>
+      {/* Held at the foot of a container taller than the listing, such as Files, and sticky so it
+      stays in view there when the listing overflows */}
+      <TablePagination
+        component="div"
+        count={table.getRowCount()}
+        page={pagination.pageIndex}
+        rowsPerPage={pageSize}
+        rowsPerPageOptions={[]}
+        sx={{
+          backgroundColor: "background.paper",
+          bottom: 0,
+          flexShrink: 0,
+          mt: "auto",
+          position: "sticky",
+        }}
+        onPageChange={(_, page) => table.setPageIndex(page)}
+      />
     </>
   );
 
   return tableContainer ? (
-    <TableContainer component={Paper}>{tableContents}</TableContainer>
+    <TableContainer component={Paper} sx={{ display: "flex", flexDirection: "column" }}>
+      {tableContents}
+    </TableContainer>
   ) : (
     tableContents
   );

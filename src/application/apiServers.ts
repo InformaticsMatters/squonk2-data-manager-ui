@@ -23,17 +23,10 @@ export const API_SERVERS_PATH = "/api/configuration/api-servers";
 
 const UNCONFIGURED: ApiServers = { dataManager: "", accountServer: "", depict: "" };
 
-// The deployment-facing name is the one an installation sets. Its `NEXT_PUBLIC_` twin answers for
-// a build that was handed the addresses — a Vercel deployment — where the two agree anyway.
-// An empty value counts as unset: `.env` derives one name from the other, and a variable the
-// environment never supplied expands to an empty string rather than going missing.
-const read = (env: Environment, name: string): string =>
-  [env[name], env[`NEXT_PUBLIC_${name}`]].find((value) => !!value) ?? "";
-
 export const readApiServers = (env: Environment): ApiServers => ({
-  dataManager: read(env, "DATA_MANAGER_API_SERVER"),
-  accountServer: read(env, "ACCOUNT_SERVER_API_SERVER"),
-  depict: read(env, "DEPICT_API_SERVER"),
+  dataManager: env.DATA_MANAGER_API_SERVER ?? "",
+  accountServer: env.ACCOUNT_SERVER_API_SERVER ?? "",
+  depict: env.DEPICT_API_SERVER ?? "",
 });
 
 let loaded: ApiServers | undefined;

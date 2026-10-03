@@ -1,3 +1,12 @@
+# [7.1.0-dev.4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.3...7.1.0-dev.4) (2026-10-03)
+
+
+### Features
+
+* resolve links and images inside markdown project files ([2810625](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/2810625e7d220b2c2686334e29c3acce9da039fe)), closes [#683](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/683)
+* show a directory's README below its file listing ([7a50190](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/7a5019035ea10644e2d2419fcdf8a68436ee8b9d)), closes [#683](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/683)
+* show markdown project files in a formatted markdown viewer ([a4bf8dd](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a4bf8ddc5432983beb08bb55ec18c102384d5600)), closes [#683](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/683)
+
 # [7.1.0-dev.3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.2...7.1.0-dev.3) (2026-10-03)
 
 

@@ -73,11 +73,13 @@ export const fileViewersFor = (fileName: string): FileViewer[] =>
   fileViewers.filter((viewer) => viewerRequirements[viewer](fileName));
 
 /**
- * Whether this file can be shown in this viewer. A viewer a file does not offer is an address the
- * section cannot serve, so it is answered locally rather than by rendering an empty viewer.
+ * Whether this file can be shown in this viewer inside the application. A viewer a file does not
+ * offer is an address the section cannot serve, so it is answered locally rather than by rendering
+ * an empty viewer. A file that opens in its own tab is never framed, so its Browser Viewer has no
+ * in-application address either.
  */
 export const offersFileViewer = (fileName: string, viewer: FileViewer): boolean =>
-  viewerRequirements[viewer](fileName);
+  viewerRequirements[viewer](fileName) && !(viewer === "browser" && opensInBrowserTab(fileName));
 
 /**
  * What the page established about the file before the viewer was framed. `readable` is a file that

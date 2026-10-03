@@ -79,6 +79,8 @@ test.describe("Viewed file identity", () => {
     expect(opensInBrowserTab("config.meta.json")).toBe(true);
     expect(opensInBrowserTab("notes.txt")).toBe(false);
     expect(opensInBrowserTab("config.json.gz")).toBe(false);
+    expect(offersFileViewer("index.html", "browser")).toBe(false);
+    expect(offersFileViewer("index.html", "text")).toBe(true);
   });
 });
 

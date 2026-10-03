@@ -5,6 +5,7 @@ import {
   defaultFileViewer,
   isCompressedFileName,
   isFileViewer,
+  offersFileViewer,
   resolveFileViewerDelivery,
 } from "../../../../projects/fileViewers";
 import {
@@ -52,15 +53,20 @@ export const getServerSideProps: GetServerSideProps<ProjectFileViewerProps> = as
       const url =
         process.env.DATA_MANAGER_API_SERVER + projectFileResourcePath(projectId, file.path);
 
+      // A viewer this file does not offer is answered in Files without reading the file at all.
+      if (!offersFileViewer(file.name, viewer)) {
+        return { props: { delivery: resolveFileViewerDelivery(res, null) } };
+      }
+      // Only the Browser Viewer fetches its own bytes; every other viewer is given them here.
       const content =
-        viewer === "text"
-          ? (
+        viewer === "browser"
+          ? await probeViewerResource(req, res, { url })
+          : (
               await plaintextViewerSSR(req, res, {
                 compressed: isCompressedFileName(file.name),
                 url,
               })
-            ).props
-          : await probeViewerResource(req, res, { url });
+            ).props;
 
       return { props: { delivery: resolveFileViewerDelivery(res, content) } };
     },

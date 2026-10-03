@@ -9,7 +9,7 @@ import { classifyViewerContent, type ViewerContent } from "../utils/api/viewerCo
  * so which viewers exist, which of them a file offers, and which one a URL that names none means
  * are all decided here rather than at each link.
  */
-export const fileViewers = ["text", "browser"] as const;
+export const fileViewers = ["markdown", "text", "browser"] as const;
 
 export type FileViewer = (typeof fileViewers)[number];
 
@@ -26,7 +26,15 @@ export const isFileViewer = (value: string): value is FileViewer =>
 /** What Files answers with for a file it was addressed beneath but could not show. */
 export const FILE_NOT_FOUND_NOTICE = "This file was not found in this project.";
 
+/**
+ * The most of a file a viewer formats in the page. The server-rendered viewers stop reading there,
+ * and a README past it is linked to its viewer rather than fetched into the listing.
+ */
+export const VIEWER_CONTENT_MAX_BYTES = 100_000;
+
 const compressedExtensions = [".gz", ".gzip"];
+
+const markdownExtensions = [".md", ".markdown"];
 
 const hasExtension = (fileName: string, extensions: readonly string[]) =>
   extensions.some((extension) => fileName.endsWith(extension));
@@ -38,6 +46,7 @@ const hasExtension = (fileName: string, extensions: readonly string[]) =>
  */
 const viewerRequirements: Record<FileViewer, (fileName: string) => boolean> = {
   browser: () => true,
+  markdown: (fileName) => hasExtension(fileName.toLowerCase(), markdownExtensions),
   text: () => true,
 };
 
@@ -47,6 +56,7 @@ export const fileViewerLabels: Record<FileViewer, { name: string; summary: strin
     name: "Browser Viewer",
     summary: "Displays the file in your browser if it supports the file type",
   },
+  markdown: { name: "Markdown Viewer", summary: "Displays the file as formatted Markdown" },
   text: { name: "Plaintext Viewer", summary: "Displays the file as plaintext" },
 };
 

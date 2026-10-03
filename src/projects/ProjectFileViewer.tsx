@@ -21,6 +21,7 @@ import {
   isCompressedFileName,
   offersFileViewer,
 } from "./fileViewers";
+import { MarkdownViewer } from "./MarkdownViewer";
 import { ProjectFilesSection } from "./ProjectFiles";
 import { FileViewerIcon, fileViewerLink } from "./ProjectFileViewerLinks";
 import { projectFileTransportLinks, projectLinks, type ProjectRoute } from "./routes";
@@ -186,6 +187,12 @@ const FileViewerBody = ({
           compressed={isCompressedFileName(file.name)}
           title={file.path}
         />
+      ) : (
+        <NextError statusCode={500} />
+      );
+    case "markdown":
+      return delivery.kind === "content" ? (
+        <MarkdownViewer {...delivery.content} directory={file.directory} projectId={projectId} />
       ) : (
         <NextError statusCode={500} />
       );

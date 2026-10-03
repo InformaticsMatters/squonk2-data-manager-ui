@@ -134,6 +134,8 @@ export const isScenarioProfile = (value: string): value is ScenarioProfile =>
 
 /** One file a project holds, in the shape the generated `FilePathFile` resource declares. */
 export type FixtureProjectFile = {
+  /** The bytes the file is read as; a file without its own reads as `acceptance <file name>`. */
+  content?: string;
   file_id?: string;
   file_name: string;
   immutable?: boolean;
@@ -169,6 +171,22 @@ const createProjectFileSystems = (
         owner: subject,
         path: "/inputs",
         size: 512,
+      },
+      {
+        content: "# Acceptance guide\n\nDocking **inputs** for the acceptance project.\n",
+        file_name: "guide.md",
+        mime_type: "text/markdown",
+        owner: subject,
+        path: "/inputs",
+        size: 67,
+      },
+      {
+        content: "# Ligand notes\n\nSee the [guide](../guide.md).\n",
+        file_name: "README.md",
+        mime_type: "text/markdown",
+        owner: subject,
+        path: "/inputs/ligands",
+        size: 46,
       },
     ],
   },

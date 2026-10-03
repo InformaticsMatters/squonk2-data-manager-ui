@@ -327,6 +327,7 @@ export const areas: Area[] = [
         name: "Open a file in a viewer",
         pages: [page.files, page.resultDetail],
         usages: [
+          { element: "Markdown viewer", concepts: "markdownViewer" },
           { element: "Text viewer", concepts: "textViewer", was: "Description" },
           { element: "Browser viewer", concepts: "browserViewer", was: "Description" },
         ],
@@ -337,6 +338,7 @@ export const areas: Area[] = [
         usages: [
           { element: "Back to files", concepts: "back", was: "ArrowBack" },
           { element: "Open in a new tab", concepts: "externalLink", was: "OpenInNew" },
+          { element: "Viewer switch: Markdown", concepts: "markdownViewer", priority: "medium" },
           { element: "Viewer switch: Text", concepts: "textViewer", priority: "medium" },
           { element: "Viewer switch: Browser", concepts: "browserViewer", priority: "medium" },
         ],

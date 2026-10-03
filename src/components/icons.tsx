@@ -56,6 +56,7 @@ import {
   FolderPlus,
   Globe,
   HardDrive,
+  Heading,
   Hourglass,
   House,
   Info,
@@ -197,6 +198,7 @@ export const conceptGlyphs = {
   notebookFile: Notebook,
   molecule: Molecule,
   value: TextCursorInput,
+  markdownViewer: Heading,
   textViewer: LetterText,
   browserViewer: Monitor,
   schema: TableProperties,
@@ -358,6 +360,7 @@ export const ImageFileIcon = conceptIcon("imageFile");
 export const NotebookFileIcon = conceptIcon("notebookFile");
 export const MoleculeIcon = conceptIcon("molecule");
 export const ValueIcon = conceptIcon("value");
+export const MarkdownViewerIcon = conceptIcon("markdownViewer");
 export const TextViewerIcon = conceptIcon("textViewer");
 export const BrowserViewerIcon = conceptIcon("browserViewer");
 export const SchemaIcon = conceptIcon("schema");

@@ -455,6 +455,14 @@ export const concepts = {
     status: "decided",
     alternatives: ["variable"],
   },
+  markdownViewer: {
+    group: FILES,
+    label: "Markdown viewer",
+    glyph: "heading",
+    status: "proposed",
+    alternatives: ["pilcrow", "book-open-text"],
+    note: "A heading is the most recognisable thing Markdown formats, and unlike the text viewer's glyph it reads as rendered rather than raw.",
+  },
   textViewer: {
     group: FILES,
     label: "Text viewer",

@@ -11,7 +11,7 @@ import { bindPopover, bindTrigger } from "material-ui-popup-state";
 import { usePopupState } from "material-ui-popup-state/hooks";
 import A from "next/link";
 
-import { BrowserViewerIcon, TextViewerIcon } from "../components/icons";
+import { BrowserViewerIcon, MarkdownViewerIcon, TextViewerIcon } from "../components/icons";
 import { childFilesystemPath } from "./fileFacts";
 import {
   type FileViewer,
@@ -22,10 +22,11 @@ import {
 import { projectFileTransportLinks, projectLinks } from "./routes";
 
 /** The icon each viewer is recognised by; what it is called is a viewer fact Files owns. */
-const fileViewerIcons = { browser: BrowserViewerIcon, text: TextViewerIcon } satisfies Record<
-  FileViewer,
-  unknown
->;
+const fileViewerIcons = {
+  browser: BrowserViewerIcon,
+  markdown: MarkdownViewerIcon,
+  text: TextViewerIcon,
+} satisfies Record<FileViewer, unknown>;
 
 export const FileViewerIcon = ({ viewer, ...props }: SvgIconProps & { viewer: FileViewer }) => {
   const Icon = fileViewerIcons[viewer];

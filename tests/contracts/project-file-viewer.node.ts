@@ -65,6 +65,17 @@ test.describe("Viewed file identity", () => {
     expect(offersFileViewer("notes.txt", "browser")).toBe(true);
   });
 
+  test("offers the Markdown Viewer first, and only for Markdown files", () => {
+    for (const name of ["README.md", "notes.markdown", "GUIDE.MD", "Notes.Markdown"]) {
+      expect(fileViewersFor(name), name).toEqual(["markdown", "text", "browser"]);
+      expect(offersFileViewer(name, "markdown"), name).toBe(true);
+    }
+    for (const name of ["notes.txt", "notes.md.gz", "readme", "notes.mdx", "md"]) {
+      expect(fileViewersFor(name), name).not.toContain("markdown");
+      expect(offersFileViewer(name, "markdown"), name).toBe(false);
+    }
+  });
+
   test("reads compression off the name the Data Manager holds the file under", () => {
     expect(isCompressedFileName("poses.sdf.gz")).toBe(true);
     expect(isCompressedFileName("poses.sdf.gzip")).toBe(true);
@@ -219,7 +230,7 @@ test.describe("File viewer routes", () => {
   });
 
   test("a named viewer round trips without replacement", () => {
-    for (const viewer of ["browser"] as const) {
+    for (const viewer of ["browser", "markdown"] as const) {
       expect(
         parseProjectRoute(projectLinks.fileView(projectId, { path: "/inputs/poses.sdf", viewer })),
         viewer,

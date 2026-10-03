@@ -725,7 +725,7 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
     // The type is the one the listing gives the file, so a browser shown the bytes is shown them
     // as that type.
     response.writeHead(200, { "content-type": held.mime_type ?? "application/octet-stream" });
-    return response.end(`acceptance ${fileName}`);
+    return response.end(held.content ?? `acceptance ${fileName}`);
   }
   if (url.pathname === "/project") {
     if (request.method === "POST") {

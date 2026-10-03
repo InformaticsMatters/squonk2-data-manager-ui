@@ -10,6 +10,7 @@ const subjectFor = (testInfo: TestInfo) => `acceptance-worker-${testInfo.paralle
 const files = `projects/${fixtureIds.project}/files`;
 const notesView = `${files}/view?path=%2Fnotes.txt`;
 const posesView = `${files}/view?path=%2Finputs%2Fposes.sdf`;
+const guideView = `${files}/view?path=%2Finputs%2Fguide.md`;
 const notesTransport = `/data-manager-ui/api/viewer-proxy/project/${fixtureIds.project}/files/notes.txt`;
 const posesTransport = `/data-manager-ui/api/viewer-proxy/project/${fixtureIds.project}/files/inputs/poses.sdf`;
 const notesDownload = `/data-manager-ui/api/dm-api/project/${fixtureIds.project}/file?path=%2F&file=notes.txt`;
@@ -87,6 +88,32 @@ test("a file's viewers are addressed beneath the project that holds it", async (
   await page.getByRole("link", { name: "Back to files" }).click();
   await expect(page).toHaveURL(`${acceptanceUrls.app}${files}?path=%2Finputs`);
   await expect(page.getByRole("button", { exact: true, name: "poses.sdf" })).toBeVisible();
+});
+
+test("a Markdown file is offered, and shown in, its own formatted viewer", async ({
+  page,
+}, testInfo) => {
+  await login(page, `${files}?path=%2Finputs`, testInfo);
+  await page.getByRole("button", { exact: true, name: "guide.md" }).click();
+
+  // The Markdown Viewer is offered first, while the Plaintext Viewer stays the file's default.
+  await expect(page.getByRole("link", { name: /Viewer/u }).first()).toHaveText(/Markdown Viewer/u);
+  await expect(page.getByRole("link", { name: "Plaintext Viewer" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/${guideView}`,
+  );
+  await page.getByRole("link", { name: "Markdown Viewer" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${guideView}&viewer=markdown`);
+  await expect(page.getByRole("heading", { name: "Acceptance guide" })).toBeVisible();
+  await expect(page.locator("strong", { hasText: "inputs" })).toBeVisible();
+
+  // The server renders the file's bytes, so a refresh shows the same formatted file.
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Acceptance guide" })).toBeVisible();
+
+  // A file that is not Markdown cannot be shown in the Markdown Viewer.
+  await page.goto(`${notesView}&viewer=markdown`);
+  await expect(page.getByText("This file cannot be shown in that viewer.")).toBeVisible();
 });
 
 test("a viewer entered directly authenticates into its own project and transport", async ({

@@ -1,3 +1,10 @@
+# [7.1.0-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.5...7.1.0-dev.6) (2026-10-03)
+
+
+### Bug Fixes
+
+* restore node contract tests broken by project tier changes ([5848b8a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5848b8af659af409c59d8bafc08157bbb47bae77))
+
 # [7.1.0-dev.5](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.4...7.1.0-dev.5) (2026-10-03)
 
 

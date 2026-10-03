@@ -13,6 +13,7 @@ import {
 } from "../../src/projects/fileViewers";
 import {
   parseProjectRoute,
+  projectFileBrowserPath,
   projectFileResourcePath,
   projectFileTransportLinks,
   projectLinks,
@@ -253,9 +254,7 @@ test.describe("Project file transport contract", () => {
       withEnvBasePath("/data-manager-ui", () =>
         projectFileTransportLinks.browserView(projectId, "/inputs/poses.sdf"),
       ),
-    ).toBe(
-      `/data-manager-ui/api/viewer-proxy/project/${projectId}/file?path=%2Finputs&file=poses.sdf`,
-    );
+    ).toBe(`/data-manager-ui/api/viewer-proxy/project/${projectId}/files/inputs/poses.sdf`);
     expect(
       withEnvBasePath("/data-manager-ui", () =>
         projectFileTransportLinks.download(projectId, "/inputs/poses.sdf"),
@@ -266,11 +265,20 @@ test.describe("Project file transport contract", () => {
     ).toBe(`/api/dm-api/project/${projectId}/file?path=%2F&file=notes.txt`);
   });
 
+  test("the browser transport encodes each name of the path, never its separators", () => {
+    expect(projectFileBrowserPath(projectId, "/my inputs/a#b?.html")).toBe(
+      `/project/${projectId}/files/my%20inputs/a%23b%3F.html`,
+    );
+  });
+
   test("transport builders reject identity they cannot address", () => {
     expect(() => projectFileResourcePath("not-a-project", "/notes.txt")).toThrow();
     expect(() => projectFileResourcePath(projectId, "/")).toThrow();
     expect(() => projectFileResourcePath(projectId, "notes.txt")).toThrow();
     expect(() => projectFileTransportLinks.browserView(projectId, "/")).toThrow();
+    expect(() =>
+      projectFileTransportLinks.browserView(projectId, "/inputs/../notes.txt"),
+    ).toThrow();
     expect(() => projectFileTransportLinks.download(projectId, "/inputs/../notes.txt")).toThrow();
   });
 });

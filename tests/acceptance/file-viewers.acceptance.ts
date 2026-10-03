@@ -10,7 +10,8 @@ const subjectFor = (testInfo: TestInfo) => `acceptance-worker-${testInfo.paralle
 const files = `projects/${fixtureIds.project}/files`;
 const notesView = `${files}/view?path=%2Fnotes.txt`;
 const posesView = `${files}/view?path=%2Finputs%2Fposes.sdf`;
-const notesTransport = `/data-manager-ui/api/viewer-proxy/project/${fixtureIds.project}/file?path=%2F&file=notes.txt`;
+const notesTransport = `/data-manager-ui/api/viewer-proxy/project/${fixtureIds.project}/files/notes.txt`;
+const posesTransport = `/data-manager-ui/api/viewer-proxy/project/${fixtureIds.project}/files/inputs/poses.sdf`;
 const notesDownload = `/data-manager-ui/api/dm-api/project/${fixtureIds.project}/file?path=%2F&file=notes.txt`;
 
 test.beforeEach(async ({ request }, testInfo) => {
@@ -109,6 +110,18 @@ test("a viewer entered directly authenticates into its own project and transport
   expect(browserView.status()).toBe(200);
   expect(browserView.headers()["content-disposition"]).toBe("inline");
   expect(await browserView.text()).toBe("acceptance notes.txt");
+
+  // The browser viewer spells the file as a path, so a document's relative references resolve
+  // against the directory holding it, and a path that names no file never reaches the service.
+  const sibling = await page.request.get(
+    new URL("../notes.txt", transportUrl(posesTransport)).toString(),
+  );
+  expect(sibling.status()).toBe(200);
+  expect(await sibling.text()).toBe("acceptance notes.txt");
+  const directory = await page.request.get(
+    transportUrl(`/data-manager-ui/api/viewer-proxy/project/${fixtureIds.project}/files/`),
+  );
+  expect(directory.status()).toBe(404);
 
   const diagnostics = await request
     .get(`${acceptanceUrls.control}/scenario/${subject}`)

@@ -16,7 +16,6 @@ import NextError from "next/error";
 
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
-import { CenterLoader } from "../components/CenterLoader";
 import { DataTable } from "../components/DataTable";
 import { DirectoryIcon, ManagedFileIcon, PrivateIcon, RefreshIcon } from "../components/icons";
 import { FileKindIcon } from "../components/kindIcons";
@@ -298,19 +297,15 @@ export const ProjectFilesSection = ({ notice, route }: { notice?: string; route:
       <Typography gutterBottom component="h1" variant="h4">
         Files
       </Typography>
-      {facts === undefined ? (
-        <CenterLoader />
-      ) : (
-        /* A new project or a new directory is a new listing, so nothing the previous one was
-        showing — rows, dialogs, or an in-flight command's control state — survives into it. */
-        <FilesTable
-          facts={facts}
-          key={`${projectId}:${path}`}
-          notice={notice}
-          path={path}
-          projectId={projectId}
-        />
-      )}
+      {/* A new project or a new directory is a new listing, so nothing the previous one was
+      showing — rows, dialogs, or an in-flight command's control state — survives into it. */}
+      <FilesTable
+        facts={facts}
+        key={`${projectId}:${path}`}
+        notice={notice}
+        path={path}
+        projectId={projectId}
+      />
     </Container>
   );
 };

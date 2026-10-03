@@ -196,25 +196,19 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
       malformed identity and one the project does not offer are indistinguishable. */}
       {localNotFound === true || definitionAbsent ? <DefinitionNotFound /> : null}
 
-      {facts === undefined ? (
-        <CenterLoader />
-      ) : (
-        <>
-          <RunRequirement facts={facts} />
-          <RunCatalogue projectId={projectId} run={run} state={state} />
-          {addressed?.item ? (
-            <ProjectRunDefinition
-              content={run.freshness[addressed.item.kind]}
-              definitionId={addressed.definitionId}
-              facts={facts}
-              item={addressed.item}
-              projectId={projectId}
-              onClose={handleClose}
-              onLaunched={handleLaunched}
-            />
-          ) : null}
-        </>
-      )}
+      <RunRequirement facts={facts} />
+      <RunCatalogue projectId={projectId} run={run} state={state} />
+      {addressed?.item ? (
+        <ProjectRunDefinition
+          content={run.freshness[addressed.item.kind]}
+          definitionId={addressed.definitionId}
+          facts={facts}
+          item={addressed.item}
+          projectId={projectId}
+          onClose={handleClose}
+          onLaunched={handleLaunched}
+        />
+      ) : null}
     </Container>
   );
 };

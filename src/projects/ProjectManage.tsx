@@ -24,7 +24,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 
 import { administrationLinks } from "../administration/routes";
-import { CenterLoader } from "../components/CenterLoader";
 import {
   AvailableIcon,
   BurnRateIcon,
@@ -655,7 +654,7 @@ export const ProjectManage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 3 }}>
-      {facts ? <ProjectManageContent facts={facts} /> : <CenterLoader />}
+      <ProjectManageContent facts={facts} />
     </Container>
   );
 };

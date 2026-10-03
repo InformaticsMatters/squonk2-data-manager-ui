@@ -1603,3 +1603,27 @@ test("a project whose subscription is refused stays open, with the spends it can
   await expect(factRow(page, "Product ID")).toContainText(fixtureIds.product);
   await expect(factRow(page, "Unit ID")).toContainText(fixtureIds.unit);
 });
+
+test("a subscription read that merely failed is retried in place and the project gains its ancestry", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.put(`${acceptanceUrls.control}/scenario/${subject}`);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/addressed-product-failure`, {
+    params: { status: 503 },
+  });
+  await login(page, `projects/${fixtureIds.project}/manage`, testInfo);
+
+  await expect(
+    page.getByText(
+      "This project's subscription could not be read, so its coin usage is not shown.",
+    ),
+  ).toBeVisible();
+
+  await request.delete(`${acceptanceUrls.control}/scenario/${subject}/addressed-product-failure`);
+  await page.getByRole("button", { name: "Retry" }).click();
+
+  await expect(page.getByRole("heading", { name: "Coin usage" })).toBeVisible();
+  await expect(page.getByText("This project's subscription could not be read")).toHaveCount(0);
+});

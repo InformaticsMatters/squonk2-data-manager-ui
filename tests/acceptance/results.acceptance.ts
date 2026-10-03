@@ -1,4 +1,5 @@
 import { expect, type Page, test, type TestInfo } from "@playwright/test";
+import { setTimeout as delay } from "node:timers/promises";
 
 import { fixtureIds } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
@@ -324,6 +325,36 @@ test("a project viewer reads results and is told what each unavailable action re
   // Reading the project's results is not withheld along with the actions.
   await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
   await expect(page.getByRole("link", { name: "DATASET", exact: true })).toBeVisible();
+});
+
+test("a project viewer's section mounts with its read-only statement rather than gaining it later", async ({
+  page,
+  request,
+}, testInfo) => {
+  const statement =
+    "You have read-only access to this project, so you cannot run, stop, delete, or archive work in it.";
+  await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=read-only`);
+  await login(page, acceptanceResults, testInfo);
+  await expect(page.getByText(statement)).toBeVisible();
+
+  // The caller's account answers last, so a section that mounted before it would first render
+  // without the statement and insert it above its content once the account arrived.
+  await page.route("**/user/account**", async (route) => {
+    await delay(1500);
+    await route.fallback();
+  });
+  await page.addInitScript((text) => {
+    new MutationObserver(() => {
+      const content = document.body.textContent;
+      if (content.includes("Acceptance Instance") && !content.includes(text)) {
+        sessionStorage.setItem("results-without-statement", "true");
+      }
+    }).observe(document, { childList: true, subtree: true });
+  }, statement);
+  await page.goto(acceptanceResults);
+
+  await expect(page.getByText(statement)).toBeVisible();
+  expect(await page.evaluate(() => sessionStorage.getItem("results-without-statement"))).toBeNull();
 });
 
 test("results that cannot be refreshed are marked stale, locked, and retryable", async ({

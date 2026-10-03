@@ -233,7 +233,7 @@ const ResultsSection = ({
   // Read-only access withholds the same actions on every result the project owns, so the section
   // states that once above whatever it is showing and the cards below it stay silent about it. A
   // dialog opened from here covers that sentence, so its own controls go on explaining themselves.
-  const readOnly = facts !== undefined && projectIsReadOnly(facts);
+  const readOnly = projectIsReadOnly(facts);
 
   // The list narrows to the definition the catalogue resolved, never to the identifier the URL
   // carries: that identifier names one version, and the version-agnostic case must stay expressible.
@@ -312,32 +312,28 @@ const ResultsSection = ({
             </Alert>
           ) : null}
 
-          {facts === undefined ? (
-            <CenterLoader />
-          ) : (
-            <ReasonsStatedAbove reasons={readOnly ? projectEditorRequirementStatements : noReasons}>
-              {route.kind === "result" ? (
-                <>
-                  <Button
-                    component={Link}
-                    href={projectLinks.results(projectId, state)}
-                    sx={{ mb: 1 }}
-                  >
-                    All results
-                  </Button>
-                  <ProjectResultDetail facts={facts} results={results} route={route} />
-                </>
-              ) : (
-                <ResultsList
-                  facts={facts}
-                  items={shown}
-                  results={results}
-                  routeProjectId={projectId}
-                  state={state}
-                />
-              )}
-            </ReasonsStatedAbove>
-          )}
+          <ReasonsStatedAbove reasons={readOnly ? projectEditorRequirementStatements : noReasons}>
+            {route.kind === "result" ? (
+              <>
+                <Button
+                  component={Link}
+                  href={projectLinks.results(projectId, state)}
+                  sx={{ mb: 1 }}
+                >
+                  All results
+                </Button>
+                <ProjectResultDetail facts={facts} results={results} route={route} />
+              </>
+            ) : (
+              <ResultsList
+                facts={facts}
+                items={shown}
+                results={results}
+                routeProjectId={projectId}
+                state={state}
+              />
+            )}
+          </ReasonsStatedAbove>
         </Box>
       </Box>
     </Container>

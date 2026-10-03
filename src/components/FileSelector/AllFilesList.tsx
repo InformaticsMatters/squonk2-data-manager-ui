@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { createContext, type Dispatch, type SetStateAction, use, useState } from "react";
 
 import { useGetFiles } from "@/api/data-manager/file-and-path";
 
@@ -12,6 +12,14 @@ import { type FileOrDirectory, type SharedProps } from "./types";
 import { getChecked, getFullPath, getNewValue } from "./utils";
 
 /**
+ * Shares the browsed directory between every file list beneath it, so selecting several inputs from
+ * one sub-directory doesn't mean navigating to it once per input.
+ */
+export const BrowsedPathContext = createContext<
+  [string[], Dispatch<SetStateAction<string[]>>] | null
+>(null);
+
+/**
  * Navigable list of files in the project volume in a list format with options to select files or
  * directories
  */
@@ -23,7 +31,11 @@ export const AllFilesList = ({
   multiple,
   mimeTypes,
 }: SharedProps) => {
-  const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
+  const [localBreadcrumbs, setLocalBreadcrumbs] = useState<string[]>([]);
+  const [breadcrumbs, setBreadcrumbs] = use(BrowsedPathContext) ?? [
+    localBreadcrumbs,
+    setLocalBreadcrumbs,
+  ];
   const subPath = "/" + breadcrumbs.join("/");
 
   const { data, isLoading } = useGetFiles({ project_id: projectId, path: subPath });

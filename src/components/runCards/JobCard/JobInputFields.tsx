@@ -8,7 +8,7 @@ import {
   validateInputData,
 } from "../../../projects/runLaunchForm";
 import { FILE_PROTOCOL, removeFileProtocolFromInputData } from "../../../utils/app/urls";
-import { FileSelector } from "../../FileSelector";
+import { BrowsedPathContext, FileSelector } from "../../FileSelector";
 import { DirectoryIcon, FileIcon, MoleculeIcon } from "../../icons";
 import { MultipleMoleculeInput } from "./MultipleMoleculeInput";
 
@@ -44,8 +44,9 @@ export const JobInputFields = ({
 }: JobInputFieldsProps) => {
   // capture initialValue in state as we need to mutate it
   const [initialValues, setInitialValues] = useState(initialInitialValues);
+  const [browsedPath, setBrowsedPath] = useState<string[]>([]);
   return (
-    <>
+    <BrowsedPathContext value={[browsedPath, setBrowsedPath]}>
       {Object.entries(inputs.properties).map(
         ([key, { title, type, multiple, "mime-types": mimeTypes }]) => {
           if (type === "file" || type === "directory") {
@@ -129,7 +130,7 @@ export const JobInputFields = ({
           );
         },
       )}
-    </>
+    </BrowsedPathContext>
   );
 };
 

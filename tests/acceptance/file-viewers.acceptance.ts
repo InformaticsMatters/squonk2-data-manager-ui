@@ -116,6 +116,29 @@ test("a Markdown file is offered, and shown in, its own formatted viewer", async
   await expect(page.getByText("This file cannot be shown in that viewer.")).toBeVisible();
 });
 
+test("a directory holding a README shows it, formatted, below its listing", async ({
+  page,
+}, testInfo) => {
+  await login(page, `${files}?path=%2Finputs%2Fligands`, testInfo);
+
+  const readme = page.getByRole("region", { name: "README.md" });
+  await expect(readme.getByRole("heading", { name: "Ligand notes" })).toBeVisible();
+  await expect(readme.getByRole("link", { name: "Open in Markdown Viewer" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/${files}/view?path=%2Finputs%2Fligands%2FREADME.md&viewer=markdown`,
+  );
+  // Its links resolve against the directory listed, not the project root.
+  await expect(readme.getByRole("link", { name: "guide" })).toHaveAttribute(
+    "href",
+    `/data-manager-ui/${guideView}&viewer=markdown`,
+  );
+
+  // A directory without one shows no panel.
+  await page.goto(`${files}?path=%2Finputs`);
+  await expect(page.getByRole("button", { exact: true, name: "poses.sdf" })).toBeVisible();
+  await expect(page.getByRole("region", { name: /README/iu })).toHaveCount(0);
+});
+
 test("a viewer entered directly authenticates into its own project and transport", async ({
   page,
   request,

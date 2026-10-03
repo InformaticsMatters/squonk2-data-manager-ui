@@ -45,6 +45,7 @@ import { ProjectFileActions } from "./ProjectFileActions";
 import { CreateDirectoryControl, UploadFileControl } from "./ProjectFileToolbarActions";
 import { ProjectFileUpload } from "./ProjectFileUpload";
 import { ProjectFileViewerLinks } from "./ProjectFileViewerLinks";
+import { findReadmeRow, ProjectReadme } from "./ProjectReadme";
 import { projectLinks, type ProjectRoute } from "./routes";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
@@ -106,6 +107,7 @@ const FilesTable = ({
   const capability = evaluateProjectFileMutationCapability({ ...facts, content: files.content });
   const reason = capabilityReason(capability);
   const directories = existingDirectoryNames(files.rows);
+  const readme = findReadmeRow(files.rows);
   // The unit a dataset made from these files is billed to. The project's ancestry names it where
   // it could be read, and the project itself names it where it could not, so a project whose
   // subscription is refused still knows where its own files live.
@@ -271,6 +273,9 @@ const FilesTable = ({
               }
             />
           </Box>
+          {readme === undefined ? null : (
+            <ProjectReadme key={readme.fullPath} path={path} projectId={projectId} row={readme} />
+          )}
         </>
       )}
     </ProjectFileUpload>

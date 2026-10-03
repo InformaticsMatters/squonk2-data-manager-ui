@@ -180,6 +180,14 @@ const createProjectFileSystems = (
         path: "/inputs",
         size: 67,
       },
+      {
+        content: "# Ligand notes\n\nSee the [guide](../guide.md).\n",
+        file_name: "README.md",
+        mime_type: "text/markdown",
+        owner: subject,
+        path: "/inputs/ligands",
+        size: 46,
+      },
     ],
   },
   [fixtureIds.screeningProject]: {

@@ -26,6 +26,12 @@ export const isFileViewer = (value: string): value is FileViewer =>
 /** What Files answers with for a file it was addressed beneath but could not show. */
 export const FILE_NOT_FOUND_NOTICE = "This file was not found in this project.";
 
+/**
+ * The most of a file a viewer formats in the page. The server-rendered viewers stop reading there,
+ * and a README past it is linked to its viewer rather than fetched into the listing.
+ */
+export const VIEWER_CONTENT_MAX_BYTES = 100_000;
+
 const compressedExtensions = [".gz", ".gzip"];
 
 const markdownExtensions = [".md", ".markdown"];

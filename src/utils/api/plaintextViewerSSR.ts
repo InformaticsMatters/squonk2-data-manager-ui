@@ -6,10 +6,9 @@ import { createGunzip } from "node:zlib";
 import fetch from "node-fetch";
 
 import { auth } from "../../lib/auth";
+import { VIEWER_CONTENT_MAX_BYTES } from "../../projects/fileViewers";
 import { isResponseJson } from "./fetchHelpers";
 import { createErrorProps, describeTransportFailure } from "./serverSidePropsError";
-
-const MAX_BYTES = 100_000;
 
 export interface Successful {
   /**
@@ -172,7 +171,7 @@ export const plaintextViewerSSR = async (
 
       // Stop streaming chunks when we have enough
       // This is based on the decompressed size as that's what will be sent to the client
-      if (uncompressedBytes >= MAX_BYTES) {
+      if (uncompressedBytes >= VIEWER_CONTENT_MAX_BYTES) {
         break;
       }
     }

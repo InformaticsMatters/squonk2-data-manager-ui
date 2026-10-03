@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode } from "react";
+import { Fragment, type ReactElement, type ReactNode } from "react";
 
 import { Alert, Box, Chip, Divider, Link as MuiLink, Stack, Typography } from "@mui/material";
 import Link from "next/link";
@@ -65,9 +65,9 @@ export const Section = ({ children, title }: { children: ReactNode; title: strin
   </Box>
 );
 
-export const ResourceChip = ({ label }: { label: string }) => (
+export const ResourceChip = ({ icon, label }: { icon?: ReactElement; label: string }) => (
   <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 1 }}>
-    <Chip label={label} size="small" variant="outlined" />
+    <Chip icon={icon} label={label} size="small" variant="outlined" />
   </Stack>
 );
 

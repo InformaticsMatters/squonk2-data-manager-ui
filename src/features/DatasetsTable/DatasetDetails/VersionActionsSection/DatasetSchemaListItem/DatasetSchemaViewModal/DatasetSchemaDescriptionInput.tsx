@@ -1,6 +1,6 @@
-import { Restore } from "@mui/icons-material";
 import { Box, IconButton, TextField, Tooltip } from "@mui/material";
 
+import { RestoreIcon } from "../../../../../../components/icons";
 import { useDraftValue } from "../../../../../../hooks/useDraftValue";
 
 export interface DatasetSchemaDescriptionInputProps {
@@ -43,7 +43,7 @@ export const DatasetSchemaDescriptionInput = ({
               <Tooltip title="Revert changes">
                 {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
                 <IconButton size="small" onClick={() => setDescription(originalValue || "")}>
-                  <Restore />
+                  <RestoreIcon />
                 </IconButton>
               </Tooltip>
             </Box>

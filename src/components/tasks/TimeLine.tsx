@@ -1,4 +1,4 @@
-import { type ComponentProps } from "react";
+import { type ComponentProps, type ReactNode } from "react";
 
 import {
   type TaskEvent,
@@ -21,11 +21,20 @@ import { Box, Tooltip, Typography } from "@mui/material";
 
 import { firaMonoFont } from "../../constants/fonts";
 import { useEventDebugMode } from "../../state/eventDebugMode";
+import { ErrorIcon, InfoIcon, WarningIcon } from "../icons";
 import { LocalTime } from "../LocalTime";
+import { timelineDotIcon } from "../results/StatusIcon";
 
 /* When message is undefined we can guarantee that it's a TaskState */
 const isEvent = (stateOrEvent: TaskEvent | TaskState): stateOrEvent is TaskEvent => {
   return !(stateOrEvent as TaskState).state;
+};
+
+const levelIcons: Partial<Record<TaskEventLevel, ReactNode>> = {
+  CRITICAL: <ErrorIcon />,
+  ERROR: <ErrorIcon />,
+  INFO: <InfoIcon />,
+  WARNING: <WarningIcon />,
 };
 
 const getColorFromEventLevel = (level: TaskEventLevel): TimelineDotProps["color"] => {
@@ -66,6 +75,7 @@ export const TimeLine = ({ states }: TimeLineProps) => {
       {items.map((item, itemIndex) => (
         <TimelineSection
           color={isEvent(item) ? getColorFromEventLevel(item.level) : undefined}
+          icon={isEvent(item) ? levelIcons[item.level] : undefined}
           // eslint-disable-next-line react/no-array-index-key
           key={itemIndex}
           label={
@@ -87,6 +97,8 @@ export interface TimelineSectionProps {
   label: string;
   time: string;
   color?: TimelineDotProps["color"];
+  /** Drawn inside the dot. */
+  icon?: ReactNode;
   separatorLabel?: string;
 }
 
@@ -95,8 +107,14 @@ const TimelineSection = ({
   label,
   time,
   color = "grey",
+  icon,
   separatorLabel,
 }: TimelineSectionProps) => {
+  const dot = (
+    <TimelineDot color={color} sx={icon ? timelineDotIcon : undefined}>
+      {icon}
+    </TimelineDot>
+  );
   return (
     <TimelineItem sx={{ minHeight: "40px" }}>
       <TimelineOppositeContent sx={{ flex: "unset" }}>
@@ -105,13 +123,7 @@ const TimelineSection = ({
         </TimeLineLabel>
       </TimelineOppositeContent>
       <TimelineSeparator>
-        {separatorLabel === undefined ? (
-          <TimelineDot color={color} />
-        ) : (
-          <Tooltip title={separatorLabel}>
-            <TimelineDot color={color} />
-          </Tooltip>
-        )}
+        {separatorLabel === undefined ? dot : <Tooltip title={separatorLabel}>{dot}</Tooltip>}
 
         {!!showConnector && <TimelineConnector />}
       </TimelineSeparator>

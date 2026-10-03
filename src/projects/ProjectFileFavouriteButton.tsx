@@ -1,9 +1,6 @@
-import {
-  StarBorderRounded as StarBorderRoundedIcon,
-  StarRounded as StarRoundedIcon,
-} from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 
+import { FavouriteIcon } from "../components/icons";
 import { type FavouriteFile, useProjectFileFavourites } from "./fileFavourites";
 
 /**
@@ -32,7 +29,7 @@ export const ProjectFileFavouriteButton = ({
           toggleFavourite(file);
         }}
       >
-        {favourited ? <StarRoundedIcon /> : <StarBorderRoundedIcon />}
+        <FavouriteIcon sx={{ fill: favourited ? "currentColor" : "none" }} />
       </IconButton>
     </Tooltip>
   );

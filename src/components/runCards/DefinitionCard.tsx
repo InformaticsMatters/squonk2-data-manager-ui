@@ -1,11 +1,6 @@
 import { type ReactNode, useState } from "react";
 
 import {
-  History as HistoryIcon,
-  KeyboardArrowDown as KeyboardArrowDownIcon,
-  Launch as LaunchIcon,
-} from "@mui/icons-material";
-import {
   alpha,
   Box,
   Button,
@@ -32,6 +27,8 @@ import {
   runExecutionCountStatement,
   type RunExecutions,
 } from "../../projects/runFacts";
+import { DropdownIcon, ExternalLinkIcon, LabelIcon, ResultsIcon, RunIcon } from "../icons";
+import { DefinitionKindIcon } from "../kindIcons";
 
 /** One version of a job, as the footer's version control offers it. */
 interface VersionOption {
@@ -52,7 +49,7 @@ interface DefinitionPresentation {
   docUrl?: string;
   keywords: readonly string[];
   /** The card's `Label: value` lines, in the order they are stated. */
-  meta: readonly { label: string; value: string }[];
+  meta: readonly { icon?: ReactNode; label: string; value: string }[];
   /** What the card is currently offering, which is what its execution count counts. */
   selection: RunDefinitionSelection;
   /** Empty unless the definition is one the card offers a choice of versions of. */
@@ -90,8 +87,12 @@ const describeDefinition = (
         docUrl: job.doc_url ?? undefined,
         keywords: job.keywords ?? [],
         meta: [
-          { label: "Category", value: job.category ?? "No category" },
-          { label: "Collection", value: job.collection },
+          {
+            icon: <LabelIcon fontSize="inherit" />,
+            label: "Category",
+            value: job.category ?? "No category",
+          },
+          { icon: <LabelIcon fontSize="inherit" />, label: "Collection", value: job.collection },
         ],
         selection: { kind: "job", job },
         versions: item.data.map((version) => ({ id: String(version.id), label: version.version })),
@@ -143,7 +144,7 @@ const VersionMenuButton = ({
         aria-label="Version"
         color="inherit"
         disabled={onlyVersion}
-        endIcon={onlyVersion ? undefined : <KeyboardArrowDownIcon />}
+        endIcon={onlyVersion ? undefined : <DropdownIcon />}
         size="small"
         sx={{ minWidth: 0, textTransform: "none" }}
         onClick={(event) => setAnchor(event.currentTarget)}
@@ -220,6 +221,7 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
       <CardContent sx={{ flexGrow: 1 }}>
         <Box sx={{ alignItems: "center", display: "flex", gap: 1, mb: 1 }}>
           <Chip
+            icon={<DefinitionKindIcon kind={item.kind} sx={{ "&&": { color: "inherit" } }} />}
             label={kind.label}
             size="small"
             sx={[
@@ -233,7 +235,7 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
               aria-label={count.description}
               component={A}
               href={projectLinks.results(projectId, { definition: filter }) as never}
-              icon={<HistoryIcon sx={{ fontSize: 15 }} />}
+              icon={<ResultsIcon />}
               label={count.text}
               size="small"
               sx={{ ml: "auto" }}
@@ -265,7 +267,7 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
                   sx={{ height: 24, ml: 0.5, p: 0, verticalAlign: "middle", width: 24 }}
                   target="_blank"
                 >
-                  <LaunchIcon sx={{ fontSize: "0.875rem" }} />
+                  <ExternalLinkIcon sx={{ fontSize: "0.875rem" }} />
                 </IconButton>
               </Tooltip>
             )}
@@ -276,9 +278,10 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
             {meta.map((entry) => (
               <Typography
                 key={entry.label}
-                sx={{ color: "text.secondary", display: "block" }}
+                sx={{ alignItems: "center", color: "text.secondary", display: "flex", gap: 0.5 }}
                 variant="caption"
               >
+                {entry.icon}
                 {entry.label}: <strong>{entry.value}</strong>
               </Typography>
             ))}
@@ -327,6 +330,7 @@ export const DefinitionCard = ({ executions, item, projectId, runState }: Defini
               runState,
             )}
             size="small"
+            startIcon={<RunIcon />}
             variant="contained"
           >
             Run

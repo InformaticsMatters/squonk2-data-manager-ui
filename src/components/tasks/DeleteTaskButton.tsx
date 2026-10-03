@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
 import { capabilityIsEnabled, type ProjectCapability } from "../../projects/capabilities";
 import { useResultCommands } from "../../projects/useResultCommands";
+import { DeleteIcon } from "../icons";
 import { WarningDeleteButton } from "../WarningDeleteButton";
 
 export interface DeleteTaskButtonProps {
@@ -48,7 +49,11 @@ export const DeleteTaskButton = ({
       }}
     >
       {({ openModal }) => (
-        <Button disabled={!capabilityIsEnabled(capability)} onClick={openModal}>
+        <Button
+          disabled={!capabilityIsEnabled(capability)}
+          startIcon={<DeleteIcon />}
+          onClick={openModal}
+        >
           Delete
         </Button>
       )}

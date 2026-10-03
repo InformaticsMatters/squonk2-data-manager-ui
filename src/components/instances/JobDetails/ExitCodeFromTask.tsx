@@ -1,7 +1,7 @@
-import { ExitToApp as ExitToAppIcon } from "@mui/icons-material";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
 import { useResultTask } from "../../../projects/useResultTask";
+import { ExitCodeIcon } from "../../icons";
 
 export interface ExitCodeFromTaskProps {
   taskId: string;
@@ -24,7 +24,7 @@ export const ExitCodeFromTask = ({ taskId }: ExitCodeFromTaskProps) => {
   return (
     <ListItem>
       <ListItemIcon sx={{ minWidth: "40px" }}>
-        <ExitToAppIcon />
+        <ExitCodeIcon />
       </ListItemIcon>
       <ListItemText
         primary="Exit Code"

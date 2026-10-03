@@ -1,5 +1,6 @@
-import { GetAppRounded } from "@mui/icons-material";
 import { IconButton, type IconButtonProps, Tooltip, type TooltipProps } from "@mui/material";
+
+import { DownloadIcon } from "../icons";
 
 type AnchorIconButton = IconButtonProps<"a">;
 
@@ -20,7 +21,7 @@ export const DownloadButton = ({
 }: DownloadButtonProps) => {
   const button = (
     <IconButton {...props} download disabled={disabled} href={href}>
-      <GetAppRounded />
+      <DownloadIcon />
     </IconButton>
   );
 

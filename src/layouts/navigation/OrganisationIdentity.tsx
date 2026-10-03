@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { KeyboardArrowDownRounded } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
+import { DropdownIcon, OrganisationIcon } from "../../components/icons";
 import { SearchMenu } from "../../components/SearchMenu";
 import {
   useSelectedOrganisation,
@@ -93,7 +93,8 @@ export const OrganisationIdentity = () => {
         <Button
           {...bind}
           color="inherit"
-          endIcon={<KeyboardArrowDownRounded />}
+          endIcon={<DropdownIcon />}
+          startIcon={<OrganisationIcon />}
           sx={{
             border: "2px solid",
             borderColor: "primary.light",

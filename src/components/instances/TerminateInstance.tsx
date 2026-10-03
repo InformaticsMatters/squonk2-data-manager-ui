@@ -7,6 +7,7 @@ import {
   resultInstanceTerminationAction,
 } from "../../projects/instanceFacts";
 import { useResultCommands } from "../../projects/useResultCommands";
+import { DeleteIcon, StopIcon } from "../icons";
 import { WarningDeleteButton } from "../WarningDeleteButton";
 
 export interface TerminateInstanceProps {
@@ -53,6 +54,7 @@ export const TerminateInstance = ({
   return (
     <WarningDeleteButton
       modalId={`delete-instance-${instanceId}`}
+      submitIcon={done ? <DeleteIcon /> : <StopIcon />}
       submitText={verb}
       title={`${verb} Instance`}
       tooltipText={`${verb} this instance`}
@@ -71,6 +73,7 @@ export const TerminateInstance = ({
       {({ openModal }) => (
         <Button
           disabled={action === undefined || !capabilityIsEnabled(capability)}
+          startIcon={done ? <DeleteIcon /> : <StopIcon />}
           onClick={openModal}
         >
           {verb}

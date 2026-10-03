@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-import { AccountCircle as AccountCircleIcon } from "@mui/icons-material";
 import { Badge, Box, IconButton, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { useAtom } from "jotai";
 
 import { EventStreamMessages } from "../../components/eventStream/EventStreamMessages";
+import { AccountIcon } from "../../components/icons";
 import { useASAuthorizationStatus, useDMAuthorizationStatus } from "../../hooks/useIsAuthorized";
 import { useKeycloakUser } from "../../hooks/useKeycloakUser";
 import { eventStreamSidebarOpenAtom } from "../../state/eventStream";
@@ -63,7 +63,7 @@ export const UserMenu = () => {
               size="large"
               onClick={handleToggle}
             >
-              <AccountCircleIcon />
+              <AccountIcon />
             </IconButton>
           </Badge>
         </span>

@@ -1,5 +1,6 @@
-import { CloseRounded as CloseRoundedIcon } from "@mui/icons-material";
 import { Box, Chip, IconButton } from "@mui/material";
+
+import { CloseIcon } from "../components/icons";
 
 /** What the control that clears the filter is called, wherever it is announced or addressed. */
 export const clearDefinitionFilterLabel = "Clear definition filter";
@@ -34,7 +35,7 @@ export const ResultsDefinitionChip = ({
           sx={{ flexShrink: 0, height: 32, width: 32 }}
           onClick={onClear}
         >
-          <CloseRoundedIcon fontSize="small" />
+          <CloseIcon fontSize="small" />
         </IconButton>
       </Box>
     }

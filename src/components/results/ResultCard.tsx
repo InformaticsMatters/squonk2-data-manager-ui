@@ -16,6 +16,10 @@ export interface ResultCardProps extends Omit<BaseCardProps, "actions"> {
   /** Canonical route of this result inside the project that owns it. */
   href: string;
   linkTitle: string;
+  /**
+   * Icon of what kind of result this is, shown before its title.
+   */
+  kindIcon?: ReactNode;
   createdDateTime: DateTimeListItemProps["startTimestamp"];
   finishedDateTime?: DateTimeListItemProps["endTimestamp"];
   /**
@@ -35,6 +39,7 @@ export const ResultCard: FC<ResultCardProps> = ({
   state,
   href,
   linkTitle,
+  kindIcon,
   actions,
   createdDateTime,
   finishedDateTime,
@@ -63,7 +68,12 @@ export const ResultCard: FC<ResultCardProps> = ({
               </ListItemIcon>
               <ListItemText
                 primary={
-                  <Link component={NextJsLink} href={href as never}>
+                  <Link
+                    component={NextJsLink}
+                    href={href as never}
+                    sx={{ alignItems: "center", display: "inline-flex", gap: 0.5 }}
+                  >
+                    {kindIcon}
                     {linkTitle}
                   </Link>
                 }

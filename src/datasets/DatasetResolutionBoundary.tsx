@@ -4,6 +4,7 @@ import { Alert, Button, type SxProps, type Theme } from "@mui/material";
 import NextError from "next/error";
 
 import { CenterLoader } from "../components/CenterLoader";
+import { RetryIcon } from "../components/icons";
 import { type DatasetVersionResolution } from "./resolveDatasetVersion";
 
 type ResolvedDatasetVersion = Extract<DatasetVersionResolution, { kind: "resolved" }>;
@@ -17,7 +18,7 @@ export interface DatasetLoadErrorProps {
 export const DatasetLoadError = ({ message, onRetry, sx }: DatasetLoadErrorProps) => (
   <Alert
     action={
-      <Button color="inherit" size="small" onClick={onRetry}>
+      <Button color="inherit" size="small" startIcon={<RetryIcon />} onClick={onRetry}>
         Retry
       </Button>
     }

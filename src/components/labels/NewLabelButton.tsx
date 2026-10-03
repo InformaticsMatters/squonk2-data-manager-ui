@@ -1,4 +1,3 @@
-import { AddCircleOutlineRounded as AddCircleOutlineRoundedIcon } from "@mui/icons-material";
 import { Box, Button, IconButton, Popover, TextField, Tooltip } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { bindPopover, bindTrigger, usePopupState } from "material-ui-popup-state/hooks";
@@ -9,6 +8,7 @@ import { datasetMutationFailureMessage } from "../../datasets/mutations";
 import { useDatasetCommands } from "../../datasets/useDatasetCommands";
 import { type TableDataset } from "../../features/DatasetsTable";
 import { useEnqueueError } from "../../hooks/useEnqueueStackError";
+import { AddIcon } from "../icons";
 
 export interface NewLabelButtonProps {
   /**
@@ -66,7 +66,7 @@ export const NewLabelButton = ({ datasetId, datasetVersion, capability }: NewLab
             size="small"
             {...bindTrigger(popupState)}
           >
-            <AddCircleOutlineRoundedIcon />
+            <AddIcon />
           </IconButton>
         </span>
       </Tooltip>
@@ -109,7 +109,11 @@ export const NewLabelButton = ({ datasetId, datasetVersion, capability }: NewLab
                 />
               )}
             </form.Field>
-            <Button disabled={!form.state.canSubmit || isLabelPending} type="submit">
+            <Button
+              disabled={!form.state.canSubmit || isLabelPending}
+              startIcon={<AddIcon />}
+              type="submit"
+            >
               Add
             </Button>
           </Box>

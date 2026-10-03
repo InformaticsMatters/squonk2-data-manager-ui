@@ -1,3 +1,5 @@
+import { type ReactNode } from "react";
+
 import { Button, styled } from "@mui/material";
 import Link from "next/link";
 
@@ -12,16 +14,19 @@ import Link from "next/link";
 export const MainNavLink = ({
   active,
   href,
+  icon,
   label,
 }: {
   active: boolean;
   href: string;
+  icon: ReactNode;
   label: string;
 }) => (
   <div>
     <Button
       component={Link}
       href={href}
+      startIcon={icon}
       sx={{
         color: "white",
         fontWeight: active ? "bold" : "normal",
@@ -40,7 +45,7 @@ export const MainNavLink = ({
  */
 export const MainNav = styled("nav", { shouldForwardProp: (prop) => prop !== "linkWidth" })<{
   linkWidth?: number;
-}>(({ linkWidth = 120, theme }) => ({
+}>(({ linkWidth = 160, theme }) => ({
   display: "flex",
   alignItems: "center",
 

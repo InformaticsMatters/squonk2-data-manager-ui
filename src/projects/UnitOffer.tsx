@@ -5,6 +5,7 @@ import { useForm, useStore } from "@tanstack/react-form";
 import { useSnackbar } from "notistack";
 import { z } from "zod/mini";
 
+import { AddIcon, PersonalUnitIcon, UnitIcon } from "../components/icons";
 import { ModalWrapper } from "../components/modals/ModalWrapper";
 import { useEnqueueError } from "../hooks/useEnqueueStackError";
 import { useCreateUnitCommand } from "../hooks/useUnitCommands";
@@ -70,6 +71,7 @@ const CreateUnitModal = ({
       id="projects-create-unit"
       open={open}
       submitDisabled={!canSubmit || isPending}
+      submitIcon={<AddIcon />}
       submitText={isPending ? "Creating..." : "Create"}
       title="Create unit"
       onClose={onClose}
@@ -128,6 +130,7 @@ const NamedUnitOffer = ({
         capability={capability}
         id="projects-unit-offer"
         isPending={isPending}
+        startIcon={<UnitIcon />}
         onClick={() => setOpen(true)}
       >
         Create unit
@@ -164,6 +167,7 @@ const PersonalUnitOffer = ({ capability }: { capability: ProjectCapability }) =>
       capability={capability}
       id="projects-unit-offer"
       isPending={state.kind === "creating"}
+      startIcon={<PersonalUnitIcon />}
       onClick={() => void create()}
     >
       {state.kind === "creating" ? "Creating..." : "Create personal unit"}

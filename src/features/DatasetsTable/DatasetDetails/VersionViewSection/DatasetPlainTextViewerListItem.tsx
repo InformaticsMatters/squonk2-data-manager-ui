@@ -1,8 +1,8 @@
-import { Description } from "@mui/icons-material";
 import { ListItemButton, ListItemText } from "@mui/material";
 import A from "next/link";
 
 import { useFamilyRoute } from "../../../../application/FamilyRouteResolution";
+import { TextViewerIcon } from "../../../../components/icons";
 import { datasetLinks, datasetListState, type DatasetRoute } from "../../../../datasets/routes";
 
 export interface DatasetPlainTextViewerListItemProps {
@@ -23,7 +23,7 @@ export const DatasetPlainTextViewerListItem = ({
         primary="Plaintext Viewer"
         secondary="Displays the dataset version as plaintext"
       />
-      <Description color="action" />
+      <TextViewerIcon color="action" />
     </ListItemButton>
   );
 };

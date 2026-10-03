@@ -3,10 +3,10 @@ import { useMemo, useState } from "react";
 import { useGetUnits } from "@/api/account-server/unit";
 import { useGetProjects } from "@/api/data-manager/project";
 
-import { KeyboardArrowDownRounded } from "@mui/icons-material";
 import { Box, ButtonBase } from "@mui/material";
 import { useRouter } from "next/router";
 
+import { DropdownIcon, ProjectIcon } from "../components/icons";
 import { SearchMenu, type SearchMenuSection } from "../components/SearchMenu";
 import { useSelectedOrganisation, useVisibleOrganisations } from "../state/organisationSelection";
 import { ProjectHeading } from "./ProjectHeading";
@@ -116,9 +116,12 @@ export const ProjectSelector = ({ projectId }: { projectId: string }) => {
       renderTrigger={(bind) => (
         <ButtonBase
           {...bind}
+          // Tall enough for the name and its unit line, so the strip keeps its height while that line
+          // loads or when there is none; what it holds is centred within it.
           sx={{
             borderRadius: 1,
             gap: 1,
+            minHeight: 50,
             px: 1,
             py: 0.5,
             textAlign: "left",
@@ -126,10 +129,11 @@ export const ProjectSelector = ({ projectId }: { projectId: string }) => {
             "&:hover": { bgcolor: "action.hover" },
           }}
         >
+          <ProjectIcon fontSize="small" sx={{ color: "text.secondary" }} />
           <Box component="span" sx={{ display: "block", flexGrow: 1, minWidth: 0 }}>
             <ProjectHeading projectId={projectId} />
           </Box>
-          <KeyboardArrowDownRounded fontSize="small" sx={{ color: "text.secondary" }} />
+          <DropdownIcon fontSize="small" sx={{ color: "text.secondary" }} />
         </ButtonBase>
       )}
       search={search}

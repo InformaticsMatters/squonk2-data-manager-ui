@@ -1,12 +1,7 @@
 import { type ReactNode } from "react";
 
-import {
-  AddCircleRounded as AddCircleRoundedIcon,
-  DeleteForeverRounded as DeleteForeverRoundedIcon,
-  DeleteOutlineRounded as DeleteOutlineRoundedIcon,
-} from "@mui/icons-material";
-
 import { DownloadButton } from "../components/downloads/DownloadButton";
+import { CreateDatasetIcon, DeleteIcon, DetachIcon } from "../components/icons";
 import { WarningDeleteButton } from "../components/WarningDeleteButton";
 import { useMimeTypeLookup } from "../hooks/useMimeTypeLookup";
 import { getMimeFromFileName } from "../utils/app/files";
@@ -45,7 +40,13 @@ const DestructiveFileAction = ({
   submitText: string;
   title: string;
 }) => (
-  <WarningDeleteButton modalId={modalId} submitText={submitText} title={title} onDelete={onDelete}>
+  <WarningDeleteButton
+    modalId={modalId}
+    submitIcon={icon}
+    submitText={submitText}
+    title={title}
+    onDelete={onDelete}
+  >
     {({ openModal, isDeleting }) => (
       <CapabilityIconButton
         capability={capability}
@@ -99,7 +100,7 @@ export const ProjectFileActions = ({
         />
         <DestructiveFileAction
           capability={capability}
-          icon={<DeleteForeverRoundedIcon />}
+          icon={<DeleteIcon />}
           modalId={`delete-directory-${row.fullPath}`}
           submitText="Delete"
           title="Delete directory"
@@ -131,7 +132,7 @@ export const ProjectFileActions = ({
       {fileId === undefined ? (
         <DestructiveFileAction
           capability={capability}
-          icon={<DeleteForeverRoundedIcon />}
+          icon={<DeleteIcon />}
           modalId={`delete-file-${row.fullPath}`}
           submitText="Delete"
           title="Delete unmanaged file"
@@ -146,7 +147,7 @@ export const ProjectFileActions = ({
         // the file itself. The non-permanent icon says so.
         <DestructiveFileAction
           capability={capability}
-          icon={<DeleteOutlineRoundedIcon />}
+          icon={<DetachIcon />}
           modalId={`detach-file-${row.fullPath}`}
           submitText="Detach"
           title="Detach file"
@@ -192,7 +193,7 @@ export const ProjectFileActions = ({
             );
           }}
         >
-          <AddCircleRoundedIcon />
+          <CreateDatasetIcon />
         </CapabilityIconButton>
       ) : null}
     </>

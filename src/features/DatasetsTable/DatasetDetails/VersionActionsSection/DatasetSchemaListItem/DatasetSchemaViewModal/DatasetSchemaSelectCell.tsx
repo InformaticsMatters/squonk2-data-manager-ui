@@ -1,6 +1,6 @@
-import { Restore } from "@mui/icons-material";
 import { FormControl, IconButton, MenuItem, Select, Tooltip } from "@mui/material";
 
+import { RestoreIcon } from "../../../../../../components/icons";
 import { useDraftValue } from "../../../../../../hooks/useDraftValue";
 
 export interface DatasetSchemaSelectCellProps<V extends readonly string[]> {
@@ -62,7 +62,7 @@ export const DatasetSchemaSelectCell = <V extends readonly string[]>({
               }}
               onClick={() => setValue(originalValue)}
             >
-              <Restore fontSize="small" />
+              <RestoreIcon fontSize="small" />
             </IconButton>
           </Tooltip>
         }

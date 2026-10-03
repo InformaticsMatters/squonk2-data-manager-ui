@@ -2,10 +2,10 @@ import { useState } from "react";
 
 import { type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
 
-import { DeleteForever as DeleteForeverIcon } from "@mui/icons-material";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
+import { DeleteIcon } from "../components/icons";
 import { WarningDeleteButton } from "../components/WarningDeleteButton";
 import { DefaultPrivacySelect, ManageResourceUsers } from "./accessControls";
 import { useAccessFacts } from "./accessFacts";
@@ -153,7 +153,7 @@ const DeleteUnitAction = ({
             <Button
               color="error"
               disabled={disabled}
-              startIcon={<DeleteForeverIcon />}
+              startIcon={<DeleteIcon />}
               variant="outlined"
               onClick={() => openModal()}
             >

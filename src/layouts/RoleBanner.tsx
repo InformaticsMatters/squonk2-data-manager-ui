@@ -1,5 +1,6 @@
 import { Box, Tooltip, Typography } from "@mui/material";
 
+import { AdministratorIcon, EvaluationIcon } from "../components/icons";
 import { useIsEvaluator, useIsPlatformAdmin } from "../hooks/useIsAuthorized";
 
 /**
@@ -9,12 +10,14 @@ import { useIsEvaluator, useIsPlatformAdmin } from "../hooks/useIsAuthorized";
  */
 const marks = {
   admin: {
+    Icon: AdministratorIcon,
     palette: "warning",
     label: "Administrator access",
     summary:
       "You hold the platform administrator role, so organisation and unit lists show every one in this deployment — not only the ones you belong to. Some of those you can see but not act in.",
   },
   evaluator: {
+    Icon: EvaluationIcon,
     palette: "info",
     label: "Evaluation access",
     summary:
@@ -78,6 +81,9 @@ export const RoleBanner = () => {
         <Typography
           sx={{
             position: "absolute",
+            alignItems: "center",
+            display: "inline-flex",
+            gap: 0.5,
             bottom: 0,
             left: 16,
             px: 1.5,
@@ -89,6 +95,7 @@ export const RoleBanner = () => {
           tabIndex={0}
           variant="caption"
         >
+          <mark.Icon fontSize="inherit" />
           {mark.label}
         </Typography>
       </Tooltip>

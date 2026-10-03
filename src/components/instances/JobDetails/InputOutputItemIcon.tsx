@@ -1,12 +1,7 @@
-import {
-  FilterNoneRounded,
-  FolderRounded,
-  InsertDriveFileRounded,
-  ScienceRounded,
-} from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 
 import { type InputFieldSchema } from "../../../projects/runLaunchForm";
+import { DirectoryIcon, FileIcon, MoleculeIcon, ValueIcon } from "../../icons";
 
 export interface InputOutputItemIconProps {
   type: InputFieldSchema["type"];
@@ -17,25 +12,25 @@ export const InputOutputItemIcon = ({ type }: InputOutputItemIconProps) => {
     case "directory":
       return (
         <Avatar>
-          <FolderRounded />
+          <DirectoryIcon />
         </Avatar>
       );
     case "file":
       return (
         <Avatar>
-          <InsertDriveFileRounded />
+          <FileIcon />
         </Avatar>
       );
     case "molecules-smi":
       return (
         <Avatar>
-          <ScienceRounded />
+          <MoleculeIcon />
         </Avatar>
       );
     default:
       return (
         <Avatar>
-          <FilterNoneRounded />
+          <ValueIcon />
         </Avatar>
       );
   }

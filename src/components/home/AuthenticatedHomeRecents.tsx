@@ -10,6 +10,7 @@ import { ProjectIdentity } from "../../projects/ProjectIdentity";
 import { noRecentProjectIds, recentProjectIdsSnapshot } from "../../projects/recentProjects";
 import { projectLinks } from "../../projects/routes";
 import { useVisibleOrganisations } from "../../state/organisationSelection";
+import { FilesIcon, ProjectIcon } from "../icons";
 
 export const AuthenticatedHomeRecents = () => {
   const { data: session } = authClient.useSession();
@@ -48,14 +49,22 @@ export const AuthenticatedHomeRecents = () => {
       <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ mt: 2 }}>
         {projects.map((project) => (
           <Paper key={project.project_id} sx={{ flex: 1, p: 2 }} variant="outlined">
-            <Typography sx={{ fontWeight: 800 }}>{project.name}</Typography>
+            <Typography sx={{ alignItems: "center", display: "flex", fontWeight: 800, gap: 1 }}>
+              <ProjectIcon color="action" fontSize="small" />
+              {project.name}
+            </Typography>
             <ProjectIdentity
               organisationLabel={
                 organisationNames.get(project.organisation_id ?? "") ?? project.organisation_id
               }
               unitLabel={unitNames.get(project.unit_id ?? "") ?? project.unit_id}
             />
-            <Button component={Link} href={projectLinks.files(project.project_id)} sx={{ mt: 1 }}>
+            <Button
+              component={Link}
+              href={projectLinks.files(project.project_id)}
+              startIcon={<FilesIcon />}
+              sx={{ mt: 1 }}
+            >
               Open files
             </Button>
           </Paper>

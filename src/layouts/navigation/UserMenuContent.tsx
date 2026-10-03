@@ -1,11 +1,6 @@
 import { type ReactNode } from "react";
 
 import {
-  DarkMode as DarkModeIcon,
-  LightMode as LightModeIcon,
-  SettingsBrightness as SystemModeIcon,
-} from "@mui/icons-material";
-import {
   Alert,
   Avatar,
   Box,
@@ -20,6 +15,12 @@ import { useColorScheme } from "@mui/material/styles";
 
 import { AuthButton } from "../../components/auth/AuthButton";
 import { CenterLoader } from "../../components/CenterLoader";
+import {
+  DarkModeIcon,
+  EventStreamIcon,
+  LightModeIcon,
+  SystemModeIcon,
+} from "../../components/icons";
 
 const MODES = [
   { key: "light", label: "Light", icon: <LightModeIcon fontSize="small" /> },
@@ -146,6 +147,7 @@ export const UserMenuContent = ({
           <Button
             fullWidth
             size="small"
+            startIcon={<EventStreamIcon />}
             variant={isSidebarOpen ? "outlined" : "contained"}
             onClick={onEventStreamToggle}
           >

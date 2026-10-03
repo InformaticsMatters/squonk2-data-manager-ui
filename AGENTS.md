@@ -44,6 +44,7 @@ The app has its own git repository (InformaticsMatters/squonk2-data-manager-ui),
 
 - **Conventional commits** are required — `semantic-release` drives versioning. Pushes to `dev` cut prerelease tags (`X.Y.Z-dev.N`), `master` cuts stable releases.
 - Prettier: double quotes, `printWidth: 100`, trailing commas, 2-space indent. Husky + lint-staged format and lint on commit.
+- **Icons** are designed in `src/components/iconConcepts.ts` (one Lucide glyph per concept) and `docs/iconography/iconography.ts` (every function's icons by page). When you add or change something that shows an icon, record it there (each header says how) and run `pnpm docs:iconography`.
 
 ## Deployment
 

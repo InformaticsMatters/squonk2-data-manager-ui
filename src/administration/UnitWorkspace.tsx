@@ -5,6 +5,7 @@ import { useGetUnits } from "@/api/account-server/unit";
 
 import { Stack, Typography } from "@mui/material";
 
+import { AccessIcon, ChargesIcon, SubscriptionIcon, UsageIcon } from "../components/icons";
 import { NavigationTab } from "../layouts/navigation/NavigationTab";
 import { unitTypeLabel } from "./accessControls";
 import { useAccessFacts, useAddressedUnit } from "./accessFacts";
@@ -78,6 +79,13 @@ const UnitSectionContent = ({
   }
 };
 
+const unitSectionIcons = {
+  "unit-access": <AccessIcon />,
+  "unit-charges": <ChargesIcon />,
+  "unit-subscriptions": <SubscriptionIcon />,
+  "unit-usage": <UsageIcon />,
+} as const satisfies Record<(typeof unitSections)[number]["key"], ReactNode>;
+
 const UnitIdentity = ({
   children,
   organisation,
@@ -110,6 +118,7 @@ const UnitIdentity = ({
           <NavigationTab
             active={unitSection === section.key}
             href={unitSectionHref(section.key, unit.id)}
+            icon={unitSectionIcons[section.key]}
             key={section.key}
             label={section.label}
           />

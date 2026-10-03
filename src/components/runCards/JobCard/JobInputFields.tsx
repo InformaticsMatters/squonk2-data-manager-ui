@@ -9,6 +9,7 @@ import {
 } from "../../../projects/runLaunchForm";
 import { FILE_PROTOCOL, removeFileProtocolFromInputData } from "../../../utils/app/urls";
 import { FileSelector } from "../../FileSelector";
+import { DirectoryIcon, FileIcon, MoleculeIcon } from "../../icons";
 import { MultipleMoleculeInput } from "./MultipleMoleculeInput";
 
 export interface JobInputFieldsProps {
@@ -56,6 +57,13 @@ export const JobInputFields = ({
                 error={
                   required && !validateInputData(value) ? "must have required input" : undefined
                 }
+                icon={
+                  type === "file" ? (
+                    <FileIcon fontSize="small" />
+                  ) : (
+                    <DirectoryIcon fontSize="small" />
+                  )
+                }
                 key={key}
                 required={required}
                 title={title}
@@ -86,6 +94,7 @@ export const JobInputFields = ({
                 error={
                   required && !validateInputData(value) ? "must have required input" : undefined
                 }
+                icon={<MoleculeIcon fontSize="small" />}
                 key={key}
                 required={required}
                 title={title}
@@ -126,20 +135,28 @@ export const JobInputFields = ({
 
 interface InputSectionProps {
   children: ReactNode;
+  /** The kind of input, shown before its title. */
+  icon?: ReactNode;
   title: string;
   required?: boolean;
   error?: string;
 }
 
-export const InputSection = ({ children, title, required, error }: InputSectionProps) => {
+export const InputSection = ({ children, icon, title, required, error }: InputSectionProps) => {
   return (
     // Expect a grid container in the parent component
     <Grid size={{ xs: 12 }}>
       <Typography
         component="h4"
-        sx={{ color: error ? "error.main" : undefined }}
+        sx={{
+          alignItems: "center",
+          color: error ? "error.main" : undefined,
+          display: "flex",
+          gap: 1,
+        }}
         variant="subtitle1"
       >
+        {icon}
         <em>
           {title}
           {!!required && " *"}

@@ -1,4 +1,3 @@
-import { FiberManualRecord } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";
 import { useAtom } from "jotai";
 
@@ -62,10 +61,12 @@ export const WebSocketStatusIndicator = () => {
           justifyContent: "center",
         }}
       >
-        <FiberManualRecord
+        <Box
           sx={{
-            fontSize: 10,
-            color: config.color,
+            borderRadius: "50%",
+            height: 10,
+            width: 10,
+            bgcolor: config.color,
             animation:
               status.isConnecting || status.isReconnecting
                 ? "pulse 1.5s ease-in-out infinite"

@@ -1,6 +1,7 @@
 import { Box, Button, Container, Grid, Link } from "@mui/material";
 
 import { useCookieConsent } from "../../state/cookieConsent";
+import { CheckIcon } from "../icons";
 
 export const CookiesBanner = () => {
   const [consent, setConsent] = useCookieConsent();
@@ -36,7 +37,7 @@ export const CookiesBanner = () => {
             functions.
           </Grid>
           <Grid>
-            <Button variant="contained" onClick={handleConsent}>
+            <Button startIcon={<CheckIcon />} variant="contained" onClick={handleConsent}>
               I understand
             </Button>
           </Grid>

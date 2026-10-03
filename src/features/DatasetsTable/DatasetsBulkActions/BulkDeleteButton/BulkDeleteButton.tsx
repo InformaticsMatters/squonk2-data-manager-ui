@@ -1,6 +1,6 @@
-import { DeleteForever } from "@mui/icons-material";
 import { IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
 
+import { DeleteIcon } from "../../../../components/icons";
 import { WarningDeleteButton } from "../../../../components/WarningDeleteButton";
 import { useDatasetCommands } from "../../../../datasets/useDatasetCommands";
 import { useEnqueueError } from "../../../../hooks/useEnqueueStackError";
@@ -98,7 +98,7 @@ export const BulkDeleteButton = ({ selectedDatasets }: BulkDeleteButtonProps) =>
           size="large"
           onClick={openModal}
         >
-          <DeleteForever />
+          <DeleteIcon />
         </IconButton>
       )}
     </WarningDeleteButton>

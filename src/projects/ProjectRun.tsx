@@ -6,6 +6,7 @@ import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { CenterLoader } from "../components/CenterLoader";
 import { DefinitionKindIcon } from "../components/kindIcons";
+import { cardGridSx } from "../components/runCards/cardGrid";
 import { DefinitionCard } from "../components/runCards/DefinitionCard";
 import { capabilityReason, evaluateProjectExecutionCapability } from "./capabilities";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
@@ -108,19 +109,7 @@ const RunCatalogue = ({
   }
 
   return (
-    <Box
-      sx={{
-        display: "grid",
-        gap: 2,
-        gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-        "@container run-page (max-width: 1100px)": {
-          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-        },
-        "@container run-page (max-width: 800px)": {
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-        },
-      }}
-    >
+    <Box sx={cardGridSx}>
       {/* Nothing about a card is derived from a selected or previously current project. */}
       {items.map((item) => (
         <DefinitionCard

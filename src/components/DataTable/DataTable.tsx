@@ -6,6 +6,7 @@ import {
   IconButton,
   InputAdornment,
   Paper,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -111,7 +112,7 @@ export interface DataTableProps<Data extends Record<string, any>> {
    */
   customRowProps?: MuiRowProps | ((row: Row<Data>) => MuiRowProps);
   /**
-   * If true, displays the loading icon.
+   * If true, the body holds placeholder rows under the real headings until the data arrives.
    */
   isLoading?: boolean;
   /**
@@ -142,6 +143,9 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
  */
 const pageSize = 100;
 
+/** Placeholder rows a loading listing previews, enough to fill a table without a scrollbar. */
+const loadingRowCount = 5;
+
 export const DataTable = <Data extends Record<string, any>>(props: DataTableProps<Data>) => {
   const {
     tableContainer = true,
@@ -160,6 +164,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     customCellProps,
     customRowProps,
     error,
+    isLoading,
     searchLabel = "search",
     searchValue,
     onSearchChange,
@@ -372,28 +377,40 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
             </TableRow>
           ))}
         </TableHead>
-        <TableBody>
-          {rows.map((row) => {
-            const rowProps =
-              typeof customRowProps === "function" ? customRowProps(row) : customRowProps;
-            return (
-              <TableRow {...rowProps} key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <TableCell
-                      {...customCellProps}
-                      key={cell.id}
-                      sx={(theme) => ({
-                        pl: cell.column.getCanSort() ? theme.spacing(2 + 2 * row.depth) : undefined,
-                      })}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        <TableBody aria-busy={isLoading} aria-label={isLoading ? "Loading" : undefined}>
+          {isLoading
+            ? Array.from({ length: loadingRowCount }, (_, index) => (
+                <TableRow key={index}>
+                  {table.getVisibleLeafColumns().map((column) => (
+                    <TableCell {...customCellProps} key={column.id}>
+                      <Skeleton />
                     </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
-          })}
+                  ))}
+                </TableRow>
+              ))
+            : rows.map((row) => {
+                const rowProps =
+                  typeof customRowProps === "function" ? customRowProps(row) : customRowProps;
+                return (
+                  <TableRow {...rowProps} key={row.id}>
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <TableCell
+                          {...customCellProps}
+                          key={cell.id}
+                          sx={(theme) => ({
+                            pl: cell.column.getCanSort()
+                              ? theme.spacing(2 + 2 * row.depth)
+                              : undefined,
+                          })}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
         </TableBody>
       </Table>
       {/* Held at the foot of a container taller than the listing, such as Files, and sticky so it

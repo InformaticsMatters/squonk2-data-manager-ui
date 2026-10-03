@@ -81,3 +81,17 @@ for (const [count, range] of [
     );
   });
 }
+
+test("a loading listing keeps its headings and previews rows in place of an empty body", async ({
+  mount,
+}) => {
+  const component = await mount<typeof Listing>("components/DataTable/DataTable/Listing", {
+    isLoading: true,
+  });
+
+  await expect(component.getByRole("columnheader", { name: "Name" })).toBeVisible();
+  await expect(component.getByRole("cell", { name: "entry-001", exact: true })).toBeHidden();
+  await expect(component.getByRole("rowgroup", { name: "Loading" })).toBeVisible();
+  // The heading row and five placeholder rows
+  await expect(component.getByRole("row")).toHaveCount(6);
+});

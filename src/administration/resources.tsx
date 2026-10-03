@@ -4,7 +4,7 @@ import { Alert, Box, Chip, Divider, Link as MuiLink, Stack, Typography } from "@
 import Link from "next/link";
 
 import { type TransportFailure } from "../api/runtime/classifyTransportFailure";
-import { CenterLoader } from "../components/CenterLoader";
+import { IdentitySkeleton } from "../components/skeletons";
 import { type AddressedResource } from "./accessFacts";
 import { type AdministrationCapability } from "./capabilities";
 import {
@@ -75,7 +75,7 @@ export const ResourceChip = ({ icon, label }: { icon?: ReactElement; label: stri
 export const PendingResource = ({ section }: { section: string }) => (
   <>
     <PageTitle>{section}</PageTitle>
-    <CenterLoader />
+    <IdentitySkeleton />
   </>
 );
 

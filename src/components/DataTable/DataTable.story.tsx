@@ -24,12 +24,14 @@ export interface ListingProps {
   count?: number;
   /** Fixes the height of the table's container, as the Files listing does. */
   height?: number;
+  /** Holds the listing as not yet answered. */
+  isLoading?: boolean;
 }
 
 /**
  * A listing of `count` entries, each with one sub-row, whose selections are recorded by name.
  */
-export const Listing = ({ count = 150, height }: ListingProps) => {
+export const Listing = ({ count = 150, height, isLoading }: ListingProps) => {
   const [selected, setSelected] = useState<string[]>([]);
   const data = useMemo(() => entries(count), [count]);
 
@@ -42,6 +44,7 @@ export const Listing = ({ count = 150, height }: ListingProps) => {
           data={data}
           getRowId={(row) => row.name}
           initialSelection={[]}
+          isLoading={isLoading}
           onSelection={(row, checked) =>
             setSelected((names) =>
               checked

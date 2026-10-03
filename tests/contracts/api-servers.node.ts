@@ -3,14 +3,11 @@ import { expect, test } from "@playwright/test";
 import { API_SERVERS_PATH, loadApiServers, readApiServers } from "../../src/application/apiServers";
 
 const publishedImage = {
-  // What a published image carries: `next build` ran without the addresses, so the inlined public
-  // values are empty, and the installation supplies the real ones to the running container.
+  // What a published image carries: `next build` ran without the addresses, and the installation
+  // supplies them to the running container.
   DATA_MANAGER_API_SERVER: "https://an-installation.example/data-manager-api",
   ACCOUNT_SERVER_API_SERVER: "https://an-installation.example/account-server-api",
   DEPICT_API_SERVER: "https://an-installation.example/depict",
-  NEXT_PUBLIC_DATA_MANAGER_API_SERVER: "",
-  NEXT_PUBLIC_ACCOUNT_SERVER_API_SERVER: "",
-  NEXT_PUBLIC_DEPICT_API_SERVER: "",
 };
 
 test.describe("API server addresses", () => {
@@ -19,20 +16,6 @@ test.describe("API server addresses", () => {
       dataManager: "https://an-installation.example/data-manager-api",
       accountServer: "https://an-installation.example/account-server-api",
       depict: "https://an-installation.example/depict",
-    });
-  });
-
-  test("falls back to the values a build was given, so a Vercel deployment is unaffected", () => {
-    expect(
-      readApiServers({
-        NEXT_PUBLIC_DATA_MANAGER_API_SERVER: "https://vercel.example/data-manager-api",
-        NEXT_PUBLIC_ACCOUNT_SERVER_API_SERVER: "https://vercel.example/account-server-api",
-        NEXT_PUBLIC_DEPICT_API_SERVER: "https://vercel.example/depict",
-      }),
-    ).toEqual({
-      dataManager: "https://vercel.example/data-manager-api",
-      accountServer: "https://vercel.example/account-server-api",
-      depict: "https://vercel.example/depict",
     });
   });
 

@@ -48,7 +48,6 @@ The app has its own git repository (InformaticsMatters/squonk2-data-manager-ui),
 
 ## Deployment
 
-- Vercel builds preview and production deployments straight from the repo, with its environment variables held in the Vercel project.
 - Live Kubernetes deployments run the published Docker image through a **separate** Ansible repository, `InformaticsMatters/squonk2-data-manager-ui-ansible` (role `ui`). `release.yml` pushes the image and then triggers an AWX job template — prereleases to the test AWX, stable releases to production — passing the new version as the image tag.
 - That playbook delivers runtime configuration as a ConfigMap mounted over `/app/.env.production`, rather than as container environment variables. It writes deployment-facing names (`BASE_URL`, `BASE_PATH`, `KEYCLOAK_URL`, the API servers, the Keycloak client credentials); the image's committed `.env` derives the names the app actually reads from those, so renaming a variable the app reads means changing the playbook too.
 - `NEXT_PUBLIC_*` values are inlined by `next build`, so a running container cannot change them — the image build receives only `GIT_SHA` and `BASE_PATH`.

@@ -30,14 +30,10 @@ export const acceptanceEnvironment = {
   KEYCLOAK_CLIENT_SECRET: "acceptance-client-secret",
   KEYCLOAK_ISSUER_URL: oidcUrl,
   KEYCLOAK_URL: oidcUrl,
-  NEXT_PUBLIC_ACCOUNT_SERVER_API_SERVER: accountServerUrl,
   NEXT_PUBLIC_BASE_PATH: basePath,
-  NEXT_PUBLIC_DATA_MANAGER_API_SERVER: dataManagerUrl,
-  NEXT_PUBLIC_DEPICT_API_SERVER: `${dataManagerUrl}/depict`,
   NEXT_PUBLIC_PROJECT_CREATION_TIMEOUT_MS: "750",
   NODE_ENV: "production",
   TEST_PORT: String(appPort),
-  VERCEL_BRANCH_URL: appUrl,
 } satisfies NodeJS.ProcessEnv;
 
 const {

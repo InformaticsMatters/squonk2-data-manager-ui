@@ -36,7 +36,6 @@ jobs:
         PW_PASSWORD: "${{ secrets.DMIT_USER_A_PASSWORD }}"
         PW_USERNAME: "dmit-user-a"
         TEST_PORT: "3000"
-        VERCEL_BRANCH_URL: "http://localhost:3000"
     - name: Run non-blocking live smoke
       run: pnpm test:smoke
       env: *smoke-env

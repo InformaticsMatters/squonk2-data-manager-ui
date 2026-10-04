@@ -1,10 +1,11 @@
 import { useState } from "react";
 
-import { Box, Stack, Toolbar } from "@mui/material";
+import { Box, IconButton, Stack, Toolbar } from "@mui/material";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 import {
+  AccountIcon,
   AdministrationIcon,
   DatasetIcon,
   DocumentationIcon,
@@ -18,6 +19,12 @@ import { OrganisationIdentity } from "./OrganisationIdentity";
 import { ProjectNavigation } from "./ProjectNavigation";
 
 const UserMenu = dynamic(() => import("./UserMenu").then((module) => module.UserMenu), {
+  // Its own button, disabled as it is while the user loads, so the links do not move when it arrives.
+  loading: () => (
+    <IconButton disabled aria-label="Account" color="inherit" edge="end" size="large">
+      <AccountIcon />
+    </IconButton>
+  ),
   ssr: false,
 });
 
@@ -48,14 +55,23 @@ const NavigationLinks = ({ authenticated }: { authenticated: boolean }) => {
   );
 };
 
+// Shaped like the authenticated shell, narrow second row included, so the page below does not move
+// when a session answers and one shell replaces the other.
 const PublicNavigation = () => (
-  <Toolbar sx={{ gap: 1 }}>
-    <HeaderLogo />
-    <Box sx={{ ml: "auto" }}>
+  <>
+    <Toolbar sx={{ gap: 1 }}>
+      <HeaderLogo />
+      <Box sx={{ display: { xs: "none", sm: "block" }, ml: "auto" }}>
+        <NavigationLinks authenticated={false} />
+      </Box>
+      <Box sx={{ ml: { xs: "auto", sm: 0 } }}>
+        <UserMenu />
+      </Box>
+    </Toolbar>
+    <Box sx={{ display: { sm: "none" }, overflowX: "auto", px: 1 }}>
       <NavigationLinks authenticated={false} />
     </Box>
-    <UserMenu />
-  </Toolbar>
+  </>
 );
 
 const AuthenticatedNavigation = () => (

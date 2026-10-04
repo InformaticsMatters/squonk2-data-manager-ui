@@ -1,5 +1,5 @@
 import { Alert, AlertTitle, Box, Button, Typography } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { type z } from "zod/mini";
 
 import { type MotdEntrySchema } from "../pages/api/motd";
@@ -33,9 +33,16 @@ function formatDate(dateStr?: string) {
   return date.toLocaleString();
 }
 
+export const motdQueryKey = ["motd"];
+
+/**
+ * The messages of the day. Home's server render answers them (`getServerSideProps`), so they are
+ * on the first paint rather than inserted above the page once a read lands; this read only keeps
+ * them current.
+ */
 export const Motd = () => {
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ["motd"],
+  const { data } = useSuspenseQuery({
+    queryKey: motdQueryKey,
     queryFn: fetchMotd,
     staleTime: 0,
     refetchOnWindowFocus: true,
@@ -43,11 +50,7 @@ export const Motd = () => {
     retry: 1,
   });
 
-  if (isLoading || isError || !data) {
-    return null;
-  }
-
-  return data.map(({ title, message, url, begin, end }) => (
+  return data?.map(({ title, message, url, begin, end }) => (
     <Alert
       action={
         url ? (

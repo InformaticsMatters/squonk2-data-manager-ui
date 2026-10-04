@@ -1,4 +1,4 @@
-import { expect, type Locator, type Page, test, type TestInfo } from "@playwright/test";
+import { expect, type Locator, type Page, type Route, test, type TestInfo } from "@playwright/test";
 
 import { APPLICATION_ORGANISATION_STORAGE_KEY } from "../../src/application/applicationIdentity";
 import { fixtureIds } from "./services/fixtures";
@@ -667,3 +667,62 @@ test("an ordinary caller carries no role mark", async ({ page }, testInfo) => {
   await expect(page.getByText("Administrator access")).toBeHidden();
   await expect(page.getByText("Evaluation access")).toBeHidden();
 });
+
+const late = async (route: Route) => {
+  await new Promise((resolve) => {
+    setTimeout(resolve, 1000);
+  });
+  await route.fallback();
+};
+
+for (const [layout, viewport] of [
+  ["wide", { height: 900, width: 1280 }],
+  ["narrow", { height: 800, width: 390 }],
+] as const) {
+  test(`signed-in Home moves nothing once it has painted (${layout})`, async ({
+    page,
+  }, testInfo) => {
+    await page.setViewportSize(viewport);
+    await login(page, `projects/${fixtureIds.project}/files`, testInfo);
+    // Visiting the project records it as recent, which is what Home has a section for.
+    await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+
+    // Every element the browser itself reports moving down, from the first paint on. Sideways is
+    // allowed: the organisation's name is only as wide as it turns out to be.
+    await page.addInitScript(() => {
+      const shifts: string[] = [];
+      Object.assign(globalThis, { layoutShifts: shifts });
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries() as (PerformanceEntry & {
+          sources?: { currentRect: DOMRect; node?: Node | null; previousRect: DOMRect }[];
+        })[]) {
+          for (const { currentRect, node, previousRect } of entry.sources ?? []) {
+            if (currentRect.y > previousRect.y) {
+              const name =
+                node instanceof Element ? node.textContent.slice(0, 40) : String(node?.nodeName);
+              shifts.push(`"${name}" ${previousRect.y} -> ${currentRect.y}`);
+            }
+          }
+        }
+      }).observe({ buffered: true, type: "layout-shift" });
+    });
+    // Each read answers well after the page has painted, so anything waiting on one is seen
+    // arriving rather than racing the first frame.
+    await page.route("**/api/auth/get-session**", late);
+    await page.route("**/api/motd", late);
+    await page.route(`${acceptanceUrls.dataManager}/**`, late);
+    await page.route(`${acceptanceUrls.accountServer}/**`, late);
+
+    await page.goto(".");
+    await expect(page.locator("main").getByText("Acceptance Project")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Change organisation" })).toContainText(
+      "Acceptance Organisation",
+    );
+    await expect(page.locator("footer")).toContainText("Account Server:");
+    await expect(page.locator("footer")).toContainText("Data Manager:");
+
+    expect(
+      await page.evaluate(() => (globalThis as unknown as { layoutShifts: string[] }).layoutShifts),
+    ).toEqual([]);
+  });
+}

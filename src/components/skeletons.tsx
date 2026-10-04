@@ -6,7 +6,7 @@ import { cardGridSx } from "./runCards/cardGrid";
 import { DataTable } from "./DataTable";
 
 /** Announces a placeholder as loading, so assistive technology hears a wait, not empty shapes. */
-const Loading = ({ children }: { children: ReactNode }) => (
+export const Loading = ({ children }: { children: ReactNode }) => (
   <Box aria-busy aria-label="Loading" role="status">
     {children}
   </Box>

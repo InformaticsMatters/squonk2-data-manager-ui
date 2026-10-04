@@ -3,6 +3,7 @@ import { setTimeout as delay } from "node:timers/promises";
 
 import { fixtureIds } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
+import { holdReads } from "./holdReads";
 
 test.describe.configure({ mode: "serial" });
 
@@ -720,8 +721,8 @@ test("a definition filter withdraws the type filter before the catalogue has nam
 
   await page.goto(ranJob);
   await outstanding;
-  // The rail is on screen and the read that would name the definition has not answered.
-  await expect(page.getByRole("button", { name: "Refresh results" })).toBeVisible();
+  // The section waits behind its skeleton for the read that would name the definition.
+  await expect(page.getByRole("status", { exact: true, name: "Loading" })).toBeVisible();
 
   // What the route carries withdraws the type filter, not what the catalogue eventually says about
   // it: a choice made in a filter offered during this wait could only be written by dropping the
@@ -824,4 +825,37 @@ test("the definition catalogue read is reported and retried like any other Resul
   await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
   await expect(page).toHaveURL(`${acceptanceUrls.app}${ranJob}`);
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+});
+
+test("the list and its count arrive together behind one skeleton", async ({ page }, testInfo) => {
+  const releaseTasks = await holdReads(page, /\/task\?/u);
+  await login(page, acceptanceResults, testInfo);
+
+  await expect(page.getByRole("status", { exact: true, name: "Loading" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Results" })).toHaveCount(0);
+  await releaseTasks();
+  await expect(page.getByRole("heading", { level: 1, name: "Results" })).toBeVisible();
+  await expect(page.getByText(/^\d+ results?$/u)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Acceptance Instance" })).toBeVisible();
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
+});
+
+test("a result opens whole, with the job it ran and what it was given", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceResults, testInfo);
+  await expect(page.getByRole("link", { name: "Acceptance Instance" })).toBeVisible();
+
+  // The list stays as it is until the instance can be shown with the job it ran.
+  const releaseJob = await holdReads(page, /\/job\/\d+$/u);
+  await page.getByRole("link", { name: "Acceptance Instance" }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.instance}`,
+  );
+  await expect(page.getByRole("link", { name: "All results" })).toHaveCount(0);
+  await releaseJob();
+
+  await expect(page.getByRole("link", { name: "All results" })).toBeVisible();
+  await expect(page.getByText("This job has no inputs")).toBeVisible();
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
 });

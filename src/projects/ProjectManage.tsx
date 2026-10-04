@@ -2,6 +2,7 @@ import { type ReactNode } from "react";
 
 import { type UnitAllDetail } from "@/api/account-server";
 import { getGetProductQueryKey } from "@/api/account-server/product";
+import { getGetUsersSuspenseQueryOptions } from "@/api/data-manager/user";
 
 import {
   Alert,
@@ -43,9 +44,11 @@ import {
   UnitIcon,
 } from "../components/icons";
 import { RoleIcon, type RoleLabel } from "../components/kindIcons";
+import { useSettledQueries } from "../hooks/useSettledQuery";
 import { isProductId, isUnitId } from "../routing/identifiers";
 import { toLocalTimeString } from "../utils/app/datetime";
 import {
+  capabilityIsEnabled,
   capabilityReason,
   evaluateProjectAdministratorsCapability,
   evaluateProjectDeletionCapability,
@@ -421,6 +424,14 @@ const ProjectManageContent = ({ facts }: { facts: ProjectFacts }) => {
     privacy: evaluateProjectPrivacyCapability(facts),
   };
   const roles = heldRoles(facts.roles);
+  // A membership list the caller may change offers the user directory, so Manage arrives with it
+  // rather than with lists that only become usable once it lands.
+  const membersEditable = [
+    capabilities.administrators,
+    capabilities.editors,
+    capabilities.observers,
+  ].some((capability) => capabilityIsEnabled(capability));
+  useSettledQueries(membersEditable ? [getGetUsersSuspenseQueryOptions()] : []);
 
   return (
     <Box>

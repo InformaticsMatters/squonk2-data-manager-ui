@@ -5,7 +5,7 @@ import { getGetProductSuspenseQueryOptions } from "@/api/account-server/product"
 import { type ProjectDetail } from "@/api/data-manager";
 import { useGetProjectSuspense } from "@/api/data-manager/project";
 
-import { Container, Skeleton, Typography } from "@mui/material";
+import { Box, Container, Skeleton, Typography } from "@mui/material";
 import { ErrorBoundary } from "@sentry/nextjs";
 import {
   QueryErrorResetBoundary,
@@ -16,13 +16,18 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 import { PageHead } from "../components/PageHead";
-import { CardGridSkeleton, IdentitySkeleton } from "../components/skeletons";
+import {
+  CardGridSkeleton,
+  IdentitySkeleton,
+  ListingSkeleton,
+  Loading,
+} from "../components/skeletons";
 import { useSettledQuery } from "../hooks/useSettledQuery";
 import { useSelectedOrganisation } from "../state/organisationSelection";
 import { readProjectAncestry, resolvedAncestry } from "./projectAncestry";
 import { callerAccountRead } from "./projectFacts";
 import { recordRecentProject } from "./recentProjects";
-import { projectSectionLabel, routeProjectSection } from "./routes";
+import { type ProjectSectionKey, projectSectionLabel, routeProjectSection } from "./routes";
 import { RouteProjectProvider, useRouteProjectId } from "./useRouteProject";
 
 const ProjectFailure = dynamic(
@@ -50,9 +55,37 @@ const SettledRead = <TData, TError>({
   return children({ data, error });
 };
 
+/** The Results rail beside a stack of collapsed result cards, not yet answered. */
+const ResultsSkeleton = () => (
+  <Loading>
+    <Box sx={{ display: "flex", flexDirection: { md: "row", xs: "column" }, gap: 3 }}>
+      <Skeleton height={240} sx={{ flex: { md: "0 0 200px" } }} variant="rounded" />
+      <Box sx={{ display: "grid", flexGrow: 1, gap: 2, minWidth: 0 }}>
+        <Skeleton height={56} variant="rounded" />
+        {Array.from({ length: 4 }, (_, index) => (
+          <Skeleton height={88} key={index} variant="rounded" />
+        ))}
+      </Box>
+    </Box>
+  </Loading>
+);
+
+const sectionSkeletons: Record<ProjectSectionKey, ReactNode> = {
+  files: (
+    <ListingSkeleton
+      columns={["File Name", "Owner", "Mode", "File size", "Last updated", "Actions"]}
+    />
+  ),
+  manage: <IdentitySkeleton />,
+  results: <ResultsSkeleton />,
+  run: <CardGridSkeleton />,
+};
+
 /**
  * A placeholder for the section the URL addresses, shaped like its heading and content. The heading
- * is a placeholder too: a section's real heading says its content has arrived.
+ * is a placeholder too: a section's real heading says its content has arrived. Sections suspend on
+ * their own reads into this same boundary, so the project and the section resolve behind one
+ * skeleton rather than one after the other.
  */
 const ProjectSkeleton = () => {
   const { asPath } = useRouter();
@@ -63,8 +96,7 @@ const ProjectSkeleton = () => {
       <Typography gutterBottom component="div" variant="h4">
         <Skeleton width={160} />
       </Typography>
-      {/* ponytail: one shape for every section but Run, until each section has its own (#2114). */}
-      {section === "run" ? <CardGridSkeleton /> : <IdentitySkeleton />}
+      {sectionSkeletons[section]}
     </Container>
   );
 };

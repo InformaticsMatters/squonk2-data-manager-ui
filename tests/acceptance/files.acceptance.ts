@@ -2,6 +2,7 @@ import { expect, type Page, test, type TestInfo } from "@playwright/test";
 
 import { fixtureIds } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
+import { holdReads } from "./holdReads";
 import { linkColour } from "./theme";
 
 test.describe.configure({ mode: "serial" });
@@ -451,4 +452,28 @@ test("a listing draws its directories and its files as the same kind of link", a
     "color",
     colour,
   );
+});
+
+test("the listing arrives once behind its skeleton, and a new path keeps the rows until it answers", async ({
+  page,
+}, testInfo) => {
+  const releaseRoot = await holdReads(page, /\/file\?/u);
+  await login(page, acceptanceFiles, testInfo);
+
+  // The section's own heading says its content has arrived, so nothing of it is shown before.
+  await expect(page.getByRole("rowgroup", { name: "Loading" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Files" })).toHaveCount(0);
+  await releaseRoot();
+  await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toBeVisible();
+
+  const releaseInputs = await holdReads(page, /\/file\?/u);
+  await page.getByRole("link", { exact: true, name: "inputs" }).click();
+  await expect(page).toHaveURL(`${acceptanceUrls.app}${acceptanceFiles}?path=%2Finputs`);
+
+  // The previous directory stays on screen until the new one arrives.
+  await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toBeVisible();
+  await expect(page.getByRole("rowgroup", { name: "Loading" })).toHaveCount(0);
+  await releaseInputs();
+  await expect(page.getByRole("button", { exact: true, name: "poses.sdf" })).toBeVisible();
+  await expect(page.getByRole("button", { exact: true, name: "notes.txt" })).toHaveCount(0);
 });

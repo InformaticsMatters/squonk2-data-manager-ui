@@ -1,4 +1,13 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useState } from "react";
+
+import { type InstanceGetResponse, type InstanceSummary } from "@/api/data-manager";
+import { getGetInstanceSuspenseQueryOptions } from "@/api/data-manager/instance";
+import { getGetJobSuspenseQueryOptions } from "@/api/data-manager/job";
+import { getGetTaskSuspenseQueryOptions } from "@/api/data-manager/task";
+import {
+  getGetRunningWorkflowStepsSuspenseQueryOptions,
+  getGetRunningWorkflowSuspenseQueryOptions,
+} from "@/api/data-manager/workflow";
 
 import { Alert, Button } from "@mui/material";
 import { useRouter } from "next/router";
@@ -9,11 +18,18 @@ import { RetryIcon } from "../components/icons";
 import { ResultInstanceDetail } from "../components/instances/ResultInstanceDetail";
 import { ResultTaskDetail } from "../components/tasks/ResultTaskDetail";
 import { ResultWorkflowDetail } from "../components/workflows/ResultWorkflowDetail";
-import { resultInstanceSettlement } from "./instanceFacts";
+import { useSettledQueries } from "../hooks/useSettledQuery";
+import { resultInstanceJob, resultInstanceSettlement } from "./instanceFacts";
 import { type ProjectFacts } from "./projectFacts";
 import { ProjectResultRerun } from "./ProjectResultRerun";
 import { resolveResultCapabilities } from "./resultCapabilities";
-import { instanceOwner, type ResultItem, runningWorkflowOwner, taskOwner } from "./resultFacts";
+import {
+  instanceOwner,
+  ownedBy,
+  type ResultItem,
+  runningWorkflowOwner,
+  taskOwner,
+} from "./resultFacts";
 import { resolveRerunTarget } from "./resultRerun";
 import { projectLinks, type ProjectRoute, resultsListState } from "./routes";
 import { type SectionReadState } from "./sectionReads";
@@ -114,20 +130,89 @@ const AddressedResult = <TResource,>({
 };
 
 /**
+ * The detail's reads are settled on their first answer: a failure is answered where it is shown —
+ * the job's own hooks retry it there — not by holding the whole detail back through retries.
+ */
+const noRetry = { query: { retry: false } };
+
+/**
+ * The answer a result's detail first mounted with. A component that suspends before it mounts
+ * starts afresh on every attempt, so until then this is always the latest answer; once mounted it
+ * stays as it was. Reads that follow a result are settled from this, so a read learned of later — a
+ * poll naming a new task, a retry that succeeded — never suspends the section, which is not a route
+ * change and would give way to its skeleton; the component that shows it shows it arriving instead.
+ */
+const useMountedAnswer = <TResource,>(resource: TResource) => {
+  // eslint-disable-next-line react/hook-use-state -- the first answer is kept, never set again.
+  const [mounted] = useState(resource);
+  return mounted;
+};
+
+/** The listed result the addressed one is, where the project's own collection lists it. */
+const listedResult = <TKind extends ResultItem["kind"]>(
+  results: ProjectResults,
+  kind: TKind,
+  id: string,
+) =>
+  results.items.find(
+    (item): item is Extract<ResultItem, { kind: TKind }> => item.kind === kind && item.id === id,
+  );
+
+/**
+ * What a job instance's detail reads beyond the instance: the job it ran, and its last task. A
+ * listed summary names the job but not the tasks, so the job can be started alongside the instance
+ * and the task only once the instance has answered.
+ */
+const instanceDetailReads = (
+  instance:
+    | (Pick<InstanceSummary, "application_type" | "job_id"> & {
+        tasks?: InstanceGetResponse["tasks"];
+      })
+    | undefined,
+) => {
+  const jobId = instance && resultInstanceJob(instance);
+  const lastTask = jobId === undefined ? undefined : instance?.tasks?.at(-1);
+  return [
+    ...(jobId === undefined ? [] : [getGetJobSuspenseQueryOptions(jobId, undefined, noRetry)]),
+    ...(lastTask === undefined
+      ? []
+      : [getGetTaskSuspenseQueryOptions(lastTask.id, undefined, noRetry)]),
+  ];
+};
+
+/**
  * One addressed instance, read for itself. An instance declares the project it belongs to, so that
  * declaration is what places it: one that names a project other than the addressed one is not found
  * here, exactly as a refused or missing one is, and its own read is never allowed to discover or
  * adopt an owner the URL did not already name.
+ *
+ * It is shown once, with the job it ran and that job's progress, rather than in steps: the job a
+ * listed instance names is read alongside the instance, and nothing is read past an instance that
+ * disowns the addressed project.
  */
 const InstanceResult = ({
   facts,
+  results,
   route,
 }: {
   facts: ProjectFacts;
+  results: ProjectResults;
   route: Extract<ResultRoute, { collection: "instances" }>;
 }) => {
   const router = useRouter();
+  useSettledQueries([
+    getGetInstanceSuspenseQueryOptions(route.resultId, noRetry),
+    ...instanceDetailReads(listedResult(results, "instance", route.resultId)?.data),
+  ]);
   const read = useResultInstance(route.resultId, route.projectId);
+  const mountedInstance = useMountedAnswer(read.instance);
+  useSettledQueries(
+    instanceDetailReads(
+      mountedInstance && ownedBy(instanceOwner(mountedInstance), route.projectId)
+        ? mountedInstance
+        : undefined,
+    ),
+  );
   const state = resultsListState(route);
   // Leaving the rerun replaces it with the instance it was opened over, carrying only the Results
   // state that instance's own route owns, so Close never adds an entry Back would walk back through.
@@ -220,16 +305,32 @@ const InstanceResult = ({
  * belongs to, so that declaration is what places it: one that names a project other than the
  * addressed one is not found here, exactly as a refused or missing one is, and its own read is
  * never allowed to discover or adopt an owner the URL did not already name.
+ *
+ * Its steps are shown with it. A workflow the project's own collection lists is the project's, so
+ * its steps are read alongside it; any other's only once it has answered as the project's.
  */
 const WorkflowResult = ({
   facts,
+  results,
   route,
 }: {
   facts: ProjectFacts;
+  results: ProjectResults;
   route: ResultRoute & { collection: "workflows" };
 }) => {
   const router = useRouter();
+  const stepsRead = getGetRunningWorkflowStepsSuspenseQueryOptions(route.resultId, noRetry);
+  useSettledQueries([
+    getGetRunningWorkflowSuspenseQueryOptions(route.resultId, noRetry),
+    ...(listedResult(results, "workflow", route.resultId) ? [stepsRead] : []),
+  ]);
   const read = useResultWorkflow(route.resultId, route.projectId);
+  const mountedWorkflow = useMountedAnswer(read.workflow);
+  useSettledQueries(
+    mountedWorkflow && ownedBy(runningWorkflowOwner(mountedWorkflow), route.projectId)
+      ? [stepsRead]
+      : [],
+  );
   const state = resultsListState(route);
 
   return (
@@ -286,6 +387,7 @@ const OwnedTaskResult = ({
   route: ResultRoute & { collection: "tasks" };
 }) => {
   const router = useRouter();
+  useSettledQueries([getGetTaskSuspenseQueryOptions(item.id, undefined, noRetry)]);
   const read = useResultTask(item.id);
   const state = resultsListState(route);
 
@@ -337,15 +439,10 @@ const TaskResult = ({
   results: ProjectResults;
   route: ResultRoute & { collection: "tasks" };
 }) => {
-  const item = results.items.find(
-    (candidate) => candidate.kind === "task" && candidate.id === route.resultId,
-  );
+  const item = listedResult(results, "task", route.resultId);
 
-  if (item?.kind === "task") {
+  if (item) {
     return <OwnedTaskResult facts={facts} item={item} route={route} />;
-  }
-  if (results.isLoading) {
-    return <CenterLoader />;
   }
   // Only the task collection can place a task, so only its own read decides this: a task is absent
   // here when that collection answered and did not contain it. A task collection that could not be
@@ -364,10 +461,10 @@ export const ProjectResultDetail = ({
 }) => {
   switch (route.collection) {
     case "instances":
-      return <InstanceResult facts={facts} route={route} />;
+      return <InstanceResult facts={facts} results={results} route={route} />;
     case "tasks":
       return <TaskResult facts={facts} results={results} route={route} />;
     case "workflows":
-      return <WorkflowResult facts={facts} route={route} />;
+      return <WorkflowResult facts={facts} results={results} route={route} />;
   }
 };

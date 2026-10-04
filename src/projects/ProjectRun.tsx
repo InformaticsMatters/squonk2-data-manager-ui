@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
-import { CenterLoader } from "../components/CenterLoader";
 import { DefinitionKindIcon } from "../components/kindIcons";
 import { cardGridSx } from "../components/runCards/cardGrid";
 import { DefinitionCard } from "../components/runCards/DefinitionCard";
@@ -96,10 +95,6 @@ const RunCatalogue = ({
 }) => {
   const items = filterRunItems(run.items, state);
 
-  if (run.isLoading) {
-    return <CenterLoader />;
-  }
-
   if (items.length === 0) {
     return (
       <Typography align="center" variant="body2">
@@ -146,7 +141,6 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
   const definitionAbsent =
     addressed !== undefined &&
     addressed.item === undefined &&
-    !run.isLoading &&
     run.readStates[addressed.catalogue].kind === "available";
 
   const handleStateChange = (change: RunState) => {

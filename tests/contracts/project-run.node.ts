@@ -440,13 +440,15 @@ test("the badges' counts add no read of their own to the Run section", () => {
   // A count is a pure fact of executions the composition already holds, so the section's reads are
   // exactly the five it made before any card had a badge.
   expect(
-    readFileSync(path.join(root, "projects/useProjectRun.ts"), "utf8").match(/useGet\w+\(/gu),
+    readFileSync(path.join(root, "projects/useProjectRun.ts"), "utf8").match(
+      /getGet\w+SuspenseQueryOptions\(/gu,
+    ),
   ).toEqual([
-    "useGetApplications(",
-    "useGetJobs(",
-    "useGetWorkflows(",
-    "useGetInstances(",
-    "useGetRunningWorkflows(",
+    "getGetApplicationsSuspenseQueryOptions(",
+    "getGetInstancesSuspenseQueryOptions(",
+    "getGetJobsSuspenseQueryOptions(",
+    "getGetRunningWorkflowsSuspenseQueryOptions(",
+    "getGetWorkflowsSuspenseQueryOptions(",
   ]);
   // The card that states a count is given what it counts, so it reads nothing at all.
   expect(

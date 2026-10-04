@@ -4,6 +4,7 @@ import { gunzipSync } from "node:zlib";
 import { fixtureIds } from "./services/fixtures";
 import { type AttachmentRecord } from "./services/state";
 import { acceptanceUrls } from "./environment";
+import { holdReads } from "./holdReads";
 import { linkColour } from "./theme";
 
 test.describe.configure({ mode: "serial" });
@@ -710,22 +711,6 @@ test("the dataset file name is drawn in the application's own link colour", asyn
     await linkColour(page),
   );
 });
-
-/**
- * Holds every request to `url` until the returned release is called, so a read that has been sent
- * and not yet answered is an observable state rather than a race.
- */
-const holdReads = async (page: Page, url: RegExp | string) => {
-  const held = Promise.withResolvers<undefined>();
-  await page.route(url, async (route) => {
-    await held.promise;
-    await route.continue();
-  });
-  return async () => {
-    held.resolve(undefined);
-    await page.unroute(url);
-  };
-};
 
 /**
  * Records, from the first paint of every document from here on, whether a page-sized spinner ever

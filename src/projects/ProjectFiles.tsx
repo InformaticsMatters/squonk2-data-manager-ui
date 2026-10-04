@@ -223,10 +223,7 @@ const FilesTable = ({
               {notice}
             </Alert>
           ) : null}
-          {/* A listing that is still loading already says so through its own loader, so what its
-          controls require stays on the controls rather than being announced as a banner every
-          navigation would flash. */}
-          {reason && !files.isLoading ? (
+          {reason ? (
             <Alert severity="info" sx={{ mb: 2 }}>
               {reason}
             </Alert>
@@ -243,9 +240,8 @@ const FilesTable = ({
             <DataTable
               subRowsEnabled
               columns={columns}
-              data={files.isLoading ? undefined : files.rows}
+              data={files.rows}
               getRowId={(row) => row.fullPath}
-              isLoading={files.isLoading}
               toolbarContent={
                 <Grid container sx={{ width: "100%" }}>
                   <Grid sx={{ alignItems: "center", display: "flex" }}>

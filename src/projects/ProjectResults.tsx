@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
-import { CenterLoader } from "../components/CenterLoader";
 import { InstanceDetails } from "../components/instances/InstanceDetails";
 import { InstanceResultCard } from "../components/instances/InstanceResultCard";
 import { ReasonsStatedAbove } from "../components/results/CapabilityReasons";
@@ -165,12 +164,6 @@ const ResultsList = ({
   routeProjectId: string;
   state: ResultsState;
 }) => {
-  // A filtered list cannot be shown before the definition it narrows to is known, so the catalogue
-  // read is waited on rather than the whole list being flashed and then narrowed.
-  if (results.isLoading || results.definition.status === "pending") {
-    return <CenterLoader />;
-  }
-
   if (items.length === 0) {
     // An empty filtered list names what it was narrowed to, so "this definition has never run here"
     // is distinguishable from a page that is simply broken.
@@ -242,11 +235,10 @@ const ResultsSection = ({
     state,
     results.definition.status === "resolved" ? results.definition.target : undefined,
   );
-  // What the narrowing left, counted only where a list is what the caller is looking at and only
-  // once every read it counts has answered. An addressed result is one result whatever the list
-  // beside it holds, so counting the list there would state something the page is not showing.
-  const counted =
-    route.kind === "results" && !results.isLoading && results.definition.status !== "pending";
+  // What the narrowing left, counted only where a list is what the caller is looking at. An
+  // addressed result is one result whatever the list beside it holds, so counting the list there
+  // would state something the page is not showing.
+  const counted = route.kind === "results";
 
   // The container widens by about what the rail takes, so putting the controls beside the list does
   // not cost the list the width it had when they were stacked above it.

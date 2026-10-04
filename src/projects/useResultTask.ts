@@ -33,6 +33,9 @@ export const useResultTask = (taskId: string): ResultTaskRead => {
   const query = useGetTask(taskId, undefined, {
     query: {
       retry: false,
+      // A failure the detail settled on before mounting is this read's answer, so mounting does
+      // not ask again; it is still polled and retried.
+      retryOnMount: false,
       refetchInterval: ({ state }) =>
         resultTaskPollInterval(
           resolveResultTaskLifecycle({

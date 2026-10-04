@@ -4,6 +4,7 @@ import { PROJECT_CREATION_RECOVERY_KEY } from "../../src/projects/projectCreatio
 import { RECENT_PROJECTS_STORAGE_KEY } from "../../src/projects/recentProjects";
 import { fixtureIds, rejectedProjectName } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
+import { holdReads } from "./holdReads";
 
 test.describe.configure({ mode: "serial" });
 
@@ -1635,4 +1636,24 @@ test("a subscription read that merely failed is retried in place and the project
 
   await expect(page.getByRole("heading", { name: "Coin usage" })).toBeVisible();
   await expect(page.getByText("This project's subscription could not be read")).toHaveCount(0);
+});
+
+test("Manage arrives with the directory its membership lists offer", async ({
+  page,
+  request,
+}, testInfo) => {
+  await request.put(
+    `${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=manage-populated`,
+  );
+  const releaseUsers = await holdReads(page, `${acceptanceUrls.dataManager}/user`);
+  await login(page, managePath, testInfo);
+
+  await expect(page.getByRole("status", { exact: true, name: "Loading" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toHaveCount(0);
+  await releaseUsers();
+
+  await expect(page.getByRole("heading", { level: 1, name: "Manage" })).toBeVisible();
+  for (const role of ["Administrators", "Editors", "Observers"]) {
+    await expect(members(page, role).getByRole("combobox")).toBeEnabled();
+  }
 });

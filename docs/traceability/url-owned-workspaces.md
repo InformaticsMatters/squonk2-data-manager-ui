@@ -555,6 +555,15 @@ change rather than discovering a contradiction on their own.
   reported, and what a section may show for each. Results and Run share it because the generated
   collections they read fail in exactly the same ways; neither section shares how it presents the
   outcome, and it decides no authority.
+- Files, Run, Results and Manage suspend on their own reads into the project boundary, so the
+  project and the section resolve behind one skeleton shaped like that section. Each section starts
+  its reads together through `useSettledQueries` and reads them through `useSettledQuery`, which
+  settles on a failure rather than throwing it, so `sectionReads.ts` still classifies each
+  collection on its own. Results settles the one catalogue a definition filter names alongside its
+  collections; an addressed result settles its job (from the listed summary), last task, or steps
+  with it; a Run definition is read before its modal opens. A path, filter or definition change is
+  a route change, which the Pages Router renders in a transition, so the previous content stays on
+  screen until the new reads answer.
 - `src/projects/runFacts.ts` is the only place that decides what the Run catalogue offers, which
   definition a canonical route addresses, and which of the addressed project's executions belong
   beside it. `src/projects/useProjectRun.ts` is the only Run composition hook; it uses the generated

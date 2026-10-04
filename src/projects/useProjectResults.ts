@@ -1,23 +1,37 @@
 import { useMemo } from "react";
 
-import { getGetApplicationsQueryKey, useGetApplications } from "@/api/data-manager/application";
+import {
+  getGetApplicationsQueryKey,
+  getGetApplicationsSuspenseQueryOptions,
+  useGetApplications,
+} from "@/api/data-manager/application";
 import {
   getGetInstanceQueryKey,
   getGetInstancesQueryKey,
-  useGetInstances,
+  getGetInstancesSuspenseQueryOptions,
 } from "@/api/data-manager/instance";
-import { getGetJobsQueryKey, useGetJobs } from "@/api/data-manager/job";
-import { getGetTaskQueryKey, getGetTasksQueryKey, useGetTasks } from "@/api/data-manager/task";
+import {
+  getGetJobsQueryKey,
+  getGetJobsSuspenseQueryOptions,
+  useGetJobs,
+} from "@/api/data-manager/job";
+import {
+  getGetTaskQueryKey,
+  getGetTasksQueryKey,
+  getGetTasksSuspenseQueryOptions,
+} from "@/api/data-manager/task";
 import {
   getGetRunningWorkflowQueryKey,
   getGetRunningWorkflowsQueryKey,
+  getGetRunningWorkflowsSuspenseQueryOptions,
   getGetWorkflowsQueryKey,
-  useGetRunningWorkflows,
+  getGetWorkflowsSuspenseQueryOptions,
   useGetWorkflows,
 } from "@/api/data-manager/workflow";
 
 import { useQueryClient } from "@tanstack/react-query";
 
+import { useSettledQueries, useSettledQuery } from "../hooks/useSettledQuery";
 import { developmentJobs } from "./developmentDefinitions";
 import {
   resolveResultsDefinition,
@@ -50,12 +64,30 @@ const resultKey = (item: ResultItem) => {
   }
 };
 
+/** The generated read of the catalogue that publishes one definition type. */
+const definitionCatalogueRead = (
+  projectId: string,
+  definitionType: UncheckedDefinitionFilter["definitionType"],
+) => {
+  switch (definitionType) {
+    case "applications":
+      return getGetApplicationsSuspenseQueryOptions({ query: { retry: false } });
+    case "jobs":
+      return getGetJobsSuspenseQueryOptions({ project_id: projectId }, { query: { retry: false } });
+    case "workflows":
+      return getGetWorkflowsSuspenseQueryOptions({ query: { retry: false } });
+  }
+};
+
 /**
  * The catalogue that publishes one definition type, read only while a filter names that type. The
  * unfiltered page issues none of these, and a filtered one issues exactly the one it needs.
  *
  * Jobs are read with the same project-constrained arguments the Run catalogue uses, so the two
  * sections share one cache identity for them rather than each keeping a copy of the same list.
+ *
+ * The section has already settled the named catalogue's read alongside its collections, so these
+ * find it answered; a failure it settled on is that answer, and is not read again for mounting.
  */
 const useDefinitionCatalogue = (
   projectId: string,
@@ -66,6 +98,7 @@ const useDefinitionCatalogue = (
     query: {
       enabled: definition?.definitionType === "applications",
       retry: false,
+      retryOnMount: false,
       select: (data) => data.applications,
     },
   });
@@ -73,6 +106,7 @@ const useDefinitionCatalogue = (
     query: {
       enabled: definition?.definitionType === "jobs",
       retry: false,
+      retryOnMount: false,
       select: (data) => data.jobs,
     },
   });
@@ -80,6 +114,7 @@ const useDefinitionCatalogue = (
     query: {
       enabled: definition?.definitionType === "workflows",
       retry: false,
+      retryOnMount: false,
       select: (data) => data.workflows,
     },
   });
@@ -122,7 +157,6 @@ export type ProjectResults = {
   definition: ResultsDefinitionResolution;
   /** Each collection's content is only as fresh as its own last read. */
   freshness: Record<ResultFilterType, "current" | "stale">;
-  isLoading: boolean;
   /** Every result the addressed project owns, before the section's route state narrows them. */
   items: ResultItem[];
   /** How each collection's own read answered, so one never speaks for another. */
@@ -154,15 +188,27 @@ export const useProjectResults = (
   const queryClient = useQueryClient();
   const requests = useMemo(() => resultListRequests(projectId), [projectId]);
 
-  const instances = useGetInstances(requests.instances, {
-    query: { retry: false, select: (data) => data.instances },
-  });
-  const tasks = useGetTasks(requests.tasks, {
-    query: { retry: false, select: (data) => data.tasks },
-  });
-  const workflows = useGetRunningWorkflows(requests.workflows, {
-    query: { retry: false, select: (data) => data.running_workflows },
-  });
+  const reads = {
+    instances: getGetInstancesSuspenseQueryOptions(requests.instances, {
+      query: { retry: false, select: (data) => data.instances },
+    }),
+    tasks: getGetTasksSuspenseQueryOptions(requests.tasks, {
+      query: { retry: false, select: (data) => data.tasks },
+    }),
+    workflows: getGetRunningWorkflowsSuspenseQueryOptions(requests.workflows, {
+      query: { retry: false, select: (data) => data.running_workflows },
+    }),
+  };
+  // The collections, and the one catalogue a filter names, are started together and answered
+  // before anything is shown, so the list arrives once with its count and already narrowed. A
+  // failed read is an answer like any other, classified below without taking down the rest.
+  useSettledQueries([
+    ...Object.values(reads),
+    ...(definition ? [definitionCatalogueRead(projectId, definition.definitionType)] : []),
+  ]);
+  const instances = useSettledQuery(reads.instances);
+  const tasks = useSettledQuery(reads.tasks);
+  const workflows = useSettledQuery(reads.workflows);
 
   // Each collection answers for itself, so one refused or failing read never decides what the
   // other two may show, how fresh they are, or whether they are worth retrying.
@@ -207,10 +253,6 @@ export const useProjectResults = (
       readState: definitionCatalogue.readState,
     }),
     freshness,
-    // The collections alone. An addressed result has no use for a definition catalogue, so the
-    // filter leaves the result detail route exactly as it was; the list waits for the definition
-    // through its own pending resolution instead.
-    isLoading: instances.isLoading || tasks.isLoading || workflows.isLoading,
     items,
     readStates,
     report,

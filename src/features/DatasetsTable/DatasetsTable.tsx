@@ -1,6 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useDeferredValue, useMemo } from "react";
 
-import { useGetDatasets } from "@/api/data-manager/dataset";
+import { type GetDatasetsParams } from "@/api/data-manager";
+import { getGetDatasetsSuspenseQueryOptions } from "@/api/data-manager/dataset";
+import { getGetFileTypesSuspenseQueryOptions } from "@/api/data-manager/type";
+import { getGetUsersSuspenseQueryOptions } from "@/api/data-manager/user";
 
 import { Alert, Box, Button, CircularProgress } from "@mui/material";
 import { createColumnHelper, type Row } from "@tanstack/react-table";
@@ -22,6 +25,7 @@ import {
   type DatasetRoute,
   datasetRouteHref,
 } from "../../datasets/routes";
+import { useSettledQueries, useSettledQuery } from "../../hooks/useSettledQuery";
 import { combineLabels } from "../../utils/app/labels";
 import { EditorFilter } from "./filters/EditorFilter";
 import { FileTypeFilter } from "./filters/FileTypeFilter";
@@ -115,8 +119,21 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
     [state],
   );
 
-  const params = getDatasetListParams(state);
-  const { data, error, isLoading, refetch } = useGetDatasets(params);
+  // A filter change is a new read, so the read is deferred: the rows already listed stay on screen
+  // until the filtered ones arrive, rather than giving way to the skeleton. The parameters are
+  // deferred as text, because a fresh object every render would never settle.
+  const params = JSON.parse(
+    useDeferredValue(JSON.stringify(getDatasetListParams(state) ?? null)),
+  ) as GetDatasetsParams | null;
+  const datasetsRead = getGetDatasetsSuspenseQueryOptions(params ?? undefined);
+  // The filters' option lists are read with the rows, so every filter is usable once the listing
+  // is there; the filters read them with their own hooks and find them answered.
+  useSettledQueries([
+    datasetsRead,
+    getGetFileTypesSuspenseQueryOptions(),
+    getGetUsersSuspenseQueryOptions(),
+  ]);
+  const { data, error, refetch } = useSettledQuery(datasetsRead);
 
   // Transform all datasets to match the data-table props
   const datasets: TableDataset[] = useMemo(
@@ -184,7 +201,6 @@ export const DatasetsTable = ({ route }: { route: DatasetRoute }) => {
         data={datasets}
         getRowId={getRowId}
         initialSelection={[]}
-        isLoading={isLoading}
         searchLabel="Search datasets"
         searchValue={state.search ?? ""}
         ToolbarActionChild={<DatasetsBulkActions selectedDatasets={selectedDatasets} />}

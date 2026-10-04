@@ -71,7 +71,9 @@ export const DatasetDetails: FC<DatasetDetailsProps> = ({
   return (
     <ModalWrapper
       open
-      DialogProps={{ fullScreen: true }}
+      // The details take the place of their skeleton, which has already slid in, so they do not
+      // slide in a second time.
+      DialogProps={{ fullScreen: true, slotProps: { transition: { appear: false } } }}
       id={`${dataset.dataset_id}-details`}
       title={`Dataset ${datasetName}`}
       onClose={onClose}

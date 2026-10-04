@@ -1,4 +1,5 @@
 import { type FilesGetResponse } from "@/api/data-manager";
+import { AppApiDatasetGetVersionsResponse } from "@/api/data-manager/dataset/zod";
 import {
   AppApiDatasetPostDatasetVersionMetaBody,
   AppApiDatasetPostDatasetVersionMetaResponse,
@@ -409,6 +410,9 @@ const addressedResultTask = (state: ScenarioState, taskId: string) =>
 /** One dataset version addressed directly, which is how every viewer transport reads one. */
 const datasetVersionRead = /^\/dataset\/[^/]+\/(?<version>\d+)$/u;
 
+/** One dataset addressed by its own read. */
+const datasetVersionsRead = /^\/dataset\/[^/]+\/versions$/u;
+
 const handleDataManager = async (request: IncomingMessage, response: ServerResponse) => {
   cors(request, response);
   if (request.method === "OPTIONS") {
@@ -422,6 +426,28 @@ const handleDataManager = async (request: IncomingMessage, response: ServerRespo
       return json(response, state.datasetFailure, state.fixtures.failures.serverError);
     }
     return json(response, 200, state.fixtures.dataset);
+  }
+  // One dataset addressed by its own read, which answers for that dataset alone.
+  if (datasetVersionsRead.test(url.pathname) && request.method === "GET") {
+    if (state.datasetFailure) {
+      return json(response, state.datasetFailure, state.fixtures.failures.serverError);
+    }
+    const dataset = state.fixtures.dataset.datasets.find(
+      (candidate) => candidate.dataset_id === segments[1],
+    );
+    if (!dataset) {
+      return json(response, 404, { error: "fixture-dataset-not-found" });
+    }
+    return json(
+      response,
+      200,
+      AppApiDatasetGetVersionsResponse.parse({
+        count: dataset.versions.length,
+        ...dataset,
+        owner: dataset.versions[0]?.owner ?? "",
+        versions: dataset.versions.map((version) => ({ project_files: [], ...version })),
+      }),
+    );
   }
   // A dataset made from a project file. The project, path, file, and billing unit are all sent, so
   // a request that named the wrong project or no unit is recognisable rather than silently served.

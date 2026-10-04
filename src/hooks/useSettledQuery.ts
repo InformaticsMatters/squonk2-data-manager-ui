@@ -62,3 +62,24 @@ export const useSettledQuery = <TQueryFnData, TError, TData, TQueryKey extends Q
   }
   return query;
 };
+
+/**
+ * Suspends until every one of these reads has settled, with data or with a failure, starting
+ * together any that are not already in flight. Nothing is observed or returned: this is how a
+ * section's reads are made to answer together, so the components beneath that read them with their
+ * own hooks find them answered rather than each filling in on its own.
+ */
+export const useSettledQueries = (
+  reads: readonly UseSuspenseQueryOptions<any, any, any, any>[],
+) => {
+  const queryClient = useQueryClient();
+  const unsettled = reads.filter((read) => {
+    const state = queryClient.getQueryState(read.queryKey);
+    return state?.data === undefined && (state?.error ?? null) === null;
+  });
+
+  if (unsettled.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- this is how a read suspends.
+    throw Promise.allSettled(unsettled.map((read) => queryClient.fetchQuery(read)));
+  }
+};

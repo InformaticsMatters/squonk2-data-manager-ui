@@ -3,7 +3,6 @@ import { type ReactNode } from "react";
 import { Alert, Button, type SxProps, type Theme } from "@mui/material";
 import NextError from "next/error";
 
-import { CenterLoader } from "../components/CenterLoader";
 import { RetryIcon } from "../components/icons";
 import { type DatasetVersionResolution } from "./resolveDatasetVersion";
 
@@ -34,10 +33,8 @@ export interface DatasetResolutionBoundaryProps {
   error: unknown;
   errorMessage: string;
   errorSx?: SxProps<Theme>;
-  isLoading: boolean;
-  isPending?: boolean;
   onRetry: () => void;
-  resolution?: DatasetVersionResolution;
+  resolution: DatasetVersionResolution;
 }
 
 export const DatasetResolutionBoundary = ({
@@ -45,18 +42,13 @@ export const DatasetResolutionBoundary = ({
   error,
   errorMessage,
   errorSx,
-  isLoading,
-  isPending = false,
   onRetry,
   resolution,
 }: DatasetResolutionBoundaryProps) => {
   if (error) {
     return <DatasetLoadError message={errorMessage} sx={errorSx} onRetry={onRetry} />;
   }
-  if (isLoading || isPending) {
-    return <CenterLoader />;
-  }
-  if (!resolution || resolution.kind === "dataset-not-found") {
+  if (resolution.kind === "dataset-not-found") {
     return <NextError statusCode={404} title="Dataset not found" />;
   }
   if (resolution.kind === "version-not-found") {

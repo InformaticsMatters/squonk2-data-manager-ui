@@ -1559,6 +1559,14 @@ test("a project whose subscription is refused stays open, with the spends it can
   await request.post(`${acceptanceUrls.control}/scenario/${subject}/addressed-product-failure`, {
     params: { status: 403 },
   });
+  // The refusal is an answer, so the application logs nothing as an error; the browser's own line
+  // for the refused request is not the application's.
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && !message.text().startsWith("Failed to load resource")) {
+      errors.push(message.text());
+    }
+  });
   await login(page, `projects/${fixtureIds.project}/files`, testInfo);
 
   // The project is open, named, and listing its files: a refused subscription is not a lost project.
@@ -1602,6 +1610,7 @@ test("a project whose subscription is refused stays open, with the spends it can
   await expect(factRow(page, "Owning organisation")).toContainText(fixtureIds.organisation);
   await expect(factRow(page, "Product ID")).toContainText(fixtureIds.product);
   await expect(factRow(page, "Unit ID")).toContainText(fixtureIds.unit);
+  expect(errors).toEqual([]);
 });
 
 test("a subscription read that merely failed is retried in place and the project gains its ancestry", async ({

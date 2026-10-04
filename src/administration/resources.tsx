@@ -10,20 +10,15 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import {
-  hashKey,
-  useQueryClient,
-  useSuspenseQuery,
-  type UseSuspenseQueryOptions,
-} from "@tanstack/react-query";
+import { hashKey, type UseSuspenseQueryOptions } from "@tanstack/react-query";
 import Link from "next/link";
 
 import {
   classifyTransportFailure,
   type TransportFailure,
 } from "../api/runtime/classifyTransportFailure";
-import { ReadFailureBoundary } from "../components/ReadFailureBoundary";
 import { IdentitySkeleton } from "../components/skeletons";
+import { useSettledQuery } from "../hooks/useSettledQuery";
 import { type AdministrationCapability } from "./capabilities";
 import {
   administrationReadIsAuthoritative,
@@ -160,13 +155,37 @@ export const ResourceIdentity = ({
 /** The generated suspense read of one addressed resource. */
 type AddressedRead<TResource> = UseSuspenseQueryOptions<any, any, TResource>;
 
-const ReadResource = <TResource,>({
+/**
+ * The addressed resource once it has answered. A refusal is the resource's own answer, so it is
+ * rendered rather than thrown; every other failure is thrown to the frame's retry boundary.
+ */
+const AddressedResourceAnswer = <TResource,>({
   children,
+  degraded,
+  identity,
   read,
+  section,
+  subject,
 }: {
   children: (resource: TResource) => ReactNode;
+  degraded?: (failure: TransportFailure) => ReactNode;
+  identity: (resource: TResource) => string;
   read: AddressedRead<TResource>;
-}) => children(useSuspenseQuery(read).data);
+  section: string;
+  subject: AdministrationReadSubject;
+}) => {
+  const answer = useSettledQuery(read, (error) => !administrationReadIsAuthoritative(error));
+
+  if (answer.isError) {
+    const failure = classifyTransportFailure(answer.error);
+    return degraded && decideAdministrationReadFailure(subject, failure) === "degrade" ? (
+      degraded(failure)
+    ) : (
+      <UnavailableResource failure={failure} section={section} />
+    );
+  }
+  return <Fragment key={identity(answer.data)}>{children(answer.data)}</Fragment>;
+};
 
 /**
  * Renders whatever the addressed resource itself answered, behind a skeleton until it has.
@@ -177,22 +196,17 @@ const ReadResource = <TResource,>({
  * the screen still shows, which is how the default organisation's refused detail read stops taking
  * away the page a caller has to reach to create their first unit.
  *
- * The read is a suspense read, so a refusal arrives thrown. It is caught here, unreported, only
- * when it is this read's own authoritative answer; anything else — a transport fact worth
- * retrying, or a failure from beneath — goes on to the frame's retry boundary. The boundary is
- * keyed by the read, so one resource's refusal never outlives a navigation to another.
+ * The read suspends like a suspense read, but settles on a refusal rather than throwing it, so an
+ * ordinary answer is never reported as a crash; a transport fact worth retrying still goes on to
+ * the frame's retry boundary. The skeleton is keyed by the read, so moving to another resource
+ * waits for that resource rather than showing the previous one.
  *
  * Keying the rendered resource by its identity keeps what the screen holds owned by the resource in
  * the address bar, so a route change never carries one resource's entered values into another's.
  */
 export const AddressedResourceView = <TResource,>({
-  children,
-  degraded,
-  identity,
-  read,
-  section,
   skeleton,
-  subject,
+  ...answer
 }: {
   children: (resource: TResource) => ReactNode;
   /** What survives a refusal this subject degrades rather than replaces. */
@@ -205,30 +219,11 @@ export const AddressedResourceView = <TResource,>({
   /** Stands in for the content until the read answers; the section's identity block by default. */
   skeleton?: ReactNode;
   subject: AdministrationReadSubject;
-}) => {
-  const queryClient = useQueryClient();
-
-  return (
-    <ReadFailureBoundary
-      fallback={(error) => {
-        const failure = classifyTransportFailure(error);
-        return degraded && decideAdministrationReadFailure(subject, failure) === "degrade" ? (
-          degraded(failure)
-        ) : (
-          <UnavailableResource failure={failure} section={section} />
-        );
-      }}
-      isReadFailure={(error) =>
-        administrationReadIsAuthoritative(error) &&
-        error === queryClient.getQueryState(read.queryKey)?.error
-      }
-      key={hashKey(read.queryKey)}
-    >
-      <Suspense fallback={skeleton ?? <PendingResource section={section} />}>
-        <ReadResource read={read}>
-          {(resource) => <Fragment key={identity(resource)}>{children(resource)}</Fragment>}
-        </ReadResource>
-      </Suspense>
-    </ReadFailureBoundary>
-  );
-};
+}) => (
+  <Suspense
+    fallback={skeleton ?? <PendingResource section={answer.section} />}
+    key={hashKey(answer.read.queryKey)}
+  >
+    <AddressedResourceAnswer {...answer} />
+  </Suspense>
+);

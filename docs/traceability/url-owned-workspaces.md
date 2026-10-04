@@ -487,9 +487,10 @@ change rather than discovering a contradiction on their own.
   that established nothing still says which transport fact stopped it, and `AddressedResourceView`
   in `src/administration/resources.tsx` is the one place an addressed Administration resource's
   pending, unavailable, available and degraded states are rendered, shared by the overview, the unit
-  workspace, the subscriptions and the ledgers. Each addressed read is a suspense read behind a
-  skeleton shaped like its section; an authoritative refusal is caught there, unreported, and every
-  other failure reaches the frame's retry boundary. The inventory report is the one read that is not an
+  workspace, the subscriptions and the ledgers. Each addressed read suspends behind a skeleton shaped
+  like its section through `src/hooks/useSettledQuery.ts`, which settles on an authoritative refusal
+  rather than throwing it, so an ordinary answer is never logged as a crash; every other failure
+  reaches the frame's retry boundary. The inventory report is the one read that is not an
   addressed resource — it is a second read _about_ one — so it keeps its own `InventoryRead`
   classification, which is what lets a report that merely failed to refresh stay on screen beside
   the resource it reports on.

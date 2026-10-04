@@ -10,17 +10,14 @@ import { ErrorBoundary } from "@sentry/nextjs";
 import {
   QueryErrorResetBoundary,
   usePrefetchQuery,
-  useQuery,
-  useQueryClient,
-  useSuspenseQuery,
   type UseSuspenseQueryOptions,
 } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 import { PageHead } from "../components/PageHead";
-import { ReadFailureBoundary } from "../components/ReadFailureBoundary";
 import { CardGridSkeleton, IdentitySkeleton } from "../components/skeletons";
+import { useSettledQuery } from "../hooks/useSettledQuery";
 import { useSelectedOrganisation } from "../state/organisationSelection";
 import { readProjectAncestry, resolvedAncestry } from "./projectAncestry";
 import { callerAccountRead } from "./projectFacts";
@@ -36,32 +33,11 @@ const ProjectFailure = dynamic(
 /** What one settled read established: its data, or the error it failed with. */
 type SettledReadResult<TData> = { data: TData | undefined; error: unknown };
 
-const SuspendedRead = <TData, TError>({
-  children,
-  options,
-}: {
-  children: (read: SettledReadResult<TData>) => ReactNode;
-  options: UseSuspenseQueryOptions<TData, TError>;
-}) => children({ data: useSuspenseQuery(options).data, error: null });
-
-/**
- * A failed read stays observed, so a later refetch of it (Manage's subscription retry) is still
- * seen. It is not read again merely for having mounted: the failure it starts from is the answer.
- */
-const FailedRead = <TData, TError>({
-  children,
-  error,
-  options,
-}: {
-  children: (read: SettledReadResult<TData>) => ReactNode;
-  error: unknown;
-  options: UseSuspenseQueryOptions<TData, TError>;
-}) => children({ data: useQuery({ ...options, retryOnMount: false }).data, error });
-
 /**
  * Suspends until one read settles, and hands children whatever it settled on. A read that fails is
  * an outcome rather than a crash, so the workspace still mounts and says what is missing where it
- * is needed.
+ * is needed. The read stays observed, so a later refetch of it (Manage's subscription retry) lands
+ * in place.
  */
 const SettledRead = <TData, TError>({
   children,
@@ -70,20 +46,8 @@ const SettledRead = <TData, TError>({
   children: (read: SettledReadResult<TData>) => ReactNode;
   options: UseSuspenseQueryOptions<TData, TError>;
 }) => {
-  const queryClient = useQueryClient();
-
-  return (
-    <ReadFailureBoundary
-      fallback={(error) => (
-        <FailedRead error={error} options={options}>
-          {children}
-        </FailedRead>
-      )}
-      isReadFailure={(error) => error === queryClient.getQueryState(options.queryKey)?.error}
-    >
-      <SuspendedRead options={options}>{children}</SuspendedRead>
-    </ReadFailureBoundary>
-  );
+  const { data, error } = useSettledQuery(options);
+  return children({ data, error });
 };
 
 /**

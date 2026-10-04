@@ -215,6 +215,15 @@ test("the default organisation loads without the reads it refuses", async ({ pag
   const subject = subjectFor(testInfo);
   await login(page, "administration", testInfo);
   await workAs(page, "Default Organisation");
+  // A refusal is an answer, not a crash: the application logs nothing as an error, which is what
+  // the Next.js development overlay reports as an unhandled runtime error. The browser's own line
+  // for each refused request is not the application's.
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && !message.text().startsWith("Failed to load resource")) {
+      errors.push(message.text());
+    }
+  });
   await page.goto("administration");
 
   // The organisation resource itself is refused to an ordinary caller, and the page survives it.
@@ -240,6 +249,7 @@ test("the default organisation loads without the reads it refuses", async ({ pag
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Create personal unit" })).toBeDisabled();
   await expect(page.getByText("You already have a personal unit.")).toBeVisible();
+  expect(errors).toEqual([]);
 });
 
 test("a caller with no personal unit creates one where they actually land", async ({

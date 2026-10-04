@@ -4,6 +4,7 @@ import { ErrorBoundary } from "@sentry/nextjs";
 import dynamic from "next/dynamic";
 import NextError from "next/error";
 
+import { AdministrationWorkspace } from "../administration/AdministrationWorkspace";
 import { AuthenticationBoundary } from "../components/auth/AuthenticationBoundary";
 import { CenterLoader } from "../components/CenterLoader";
 import Layout from "../layouts/Layout";
@@ -21,14 +22,15 @@ const EventStream = dynamic(
 /**
  * What a family puts around its own content, for the families that need anything at all.
  *
- * Only Projects does: its content may not mount until the URL project's owning organisation has
- * been adopted. A family with nothing to add is absent here rather than named by a component that
- * hands its children straight back, so this map says which families have a boundary rather than
- * making every family look like it has one.
+ * Projects' content may not mount until the URL project's owning organisation has been adopted.
+ * Administration's shell is its whole workspace, so its rail and a unit's section strip outlive the
+ * page component that changes on every section change. A family with nothing to add is absent here
+ * rather than named by a component that hands its children straight back, so this map says which
+ * families have a boundary rather than making every family look like it has one.
  */
 const familyShells: Partial<
   Record<FamilyPagePolicy["kind"], ComponentType<{ children: ReactNode }>>
-> = { projects: ProjectOrganisationBoundary };
+> = { administration: AdministrationWorkspace, projects: ProjectOrganisationBoundary };
 
 /**
  * What every authenticated page is wrapped in, whatever it addresses.

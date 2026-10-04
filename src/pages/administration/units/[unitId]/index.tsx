@@ -1,6 +1,6 @@
-import { AdministrationWorkspace } from "../../../../administration/AdministrationWorkspace";
 import { pagePolicies, withPagePolicy } from "../../../../application/pagePolicy";
 
-const UnitEntryPage = () => <AdministrationWorkspace />;
+// The family shell renders the workspace this address names; the page itself is only the address.
+const UnitEntryPage = () => null;
 
 export default withPagePolicy(pagePolicies.administration("unit-access"), UnitEntryPage);

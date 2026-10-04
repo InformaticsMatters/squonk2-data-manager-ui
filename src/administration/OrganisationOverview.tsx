@@ -4,13 +4,14 @@ import { type OrganisationAllDetail } from "@/api/account-server";
 import { useGetOrganisations } from "@/api/account-server/organisation";
 import { useGetOrganisationUnits } from "@/api/account-server/unit";
 
-import { Alert, Box, Button, Stack, Typography } from "@mui/material";
+import { Alert, Box, Button, Skeleton, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
 import { OrganisationIcon, PersonalUnitIcon, UnitIcon } from "../components/icons";
+import { Loading } from "../components/skeletons";
 import { useUnitCreationFacts } from "../hooks/useUnitCreationFacts";
 import { CreateResourceModal, DefaultPrivacySelect, ManageResourceUsers } from "./accessControls";
-import { retryAdministrationRead, useAccessFacts, useAddressedOrganisation } from "./accessFacts";
+import { addressedOrganisationRead, retryAdministrationRead, useAccessFacts } from "./accessFacts";
 import { UnitListPanel } from "./AdministrationRail";
 import {
   type AdministrationCapability,
@@ -236,6 +237,21 @@ const OrganisationDetail = ({ organisation }: { organisation: OrganisationAllDet
   );
 };
 
+/** The organisation's membership and privacy sections, before its own resource has answered. */
+const OrganisationDetailSkeleton = () => (
+  <Loading>
+    <Section title="Default project privacy">
+      <Skeleton height={40} variant="rounded" width={240} />
+      <Typography variant="body2">
+        <Skeleton width="60%" />
+      </Typography>
+    </Section>
+    <Section title="Members">
+      <Skeleton height={160} variant="rounded" />
+    </Section>
+  </Loading>
+);
+
 /**
  * The organisation in effect: what it is, what it holds, and the actions that create things inside
  * it. It is the workspace's entry, so nothing on it may depend on a read the Account Server refuses
@@ -248,7 +264,6 @@ export const OrganisationOverview = ({
   organisationId: string;
   organisationName: string | undefined;
 }) => {
-  const addressed = useAddressedOrganisation(organisationId);
   const { defaultOrganisationId, freshness, personalUnitId } = useAccessFacts();
   const creationFacts = useUnitCreationFacts(organisationId);
   const { data: group } = useGetOrganisationUnits(organisationId, {
@@ -294,7 +309,6 @@ export const OrganisationOverview = ({
       </Stack>
 
       <AddressedResourceView
-        addressed={addressed}
         // A refused organisation read costs this page its members and privacy and nothing else, so
         // a permission the caller does not have never takes away the page itself.
         degraded={() => (
@@ -304,7 +318,9 @@ export const OrganisationOverview = ({
           </Alert>
         )}
         identity={({ id }) => id}
+        read={addressedOrganisationRead(organisationId)}
         section="Organisation"
+        skeleton={<OrganisationDetailSkeleton />}
         subject="organisation"
       >
         {(organisation) => <OrganisationDetail organisation={organisation} />}

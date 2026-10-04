@@ -326,6 +326,24 @@ test("a recoverable failure keeps the workspace and recovers in place", async ({
   await expect(page).toHaveURL(`${acceptanceUrls.app}administration/charges?billing-cycle=-2`);
 });
 
+test("a section's failure does not follow the caller to another section", async ({
+  page,
+  request,
+}, testInfo) => {
+  const subject = subjectFor(testInfo);
+  await request.post(`${acceptanceUrls.control}/scenario/${subject}/charge-failure?status=503`);
+  await login(page, "administration/charges", testInfo);
+  await expect(page.getByText("The Administration service failed to respond.")).toBeVisible();
+
+  // The frame outlives the section change, so the failure has to be cleared rather than unmounted.
+  await page
+    .getByRole("navigation", { name: "Administration" })
+    .getByRole("link", { name: "Usage & Inventory" })
+    .click();
+  await expect(page.getByRole("heading", { name: "Usage & Inventory" })).toBeVisible();
+  await expect(page.getByText("The Administration service failed to respond.")).toHaveCount(0);
+});
+
 test("a refused report is presented where the report is", async ({ page, request }, testInfo) => {
   const subject = subjectFor(testInfo);
   await request.post(`${acceptanceUrls.control}/scenario/${subject}/charge-failure?status=403`);

@@ -1,6 +1,11 @@
 import { type UnitAllDetail } from "@/api/account-server";
 import { useGetOrganisationUnitsSuspense } from "@/api/account-server/unit";
-import { useGetUserInventory } from "@/api/data-manager/inventory";
+import {
+  getGetUserInventorySuspenseQueryOptions,
+  useGetUserInventory,
+} from "@/api/data-manager/inventory";
+
+import { usePrefetchQuery } from "@tanstack/react-query";
 
 import { retryAdministrationRead } from "./accessFacts";
 import { administrationReadIsAuthoritative } from "./failures";
@@ -29,6 +34,18 @@ const reportQuery = {
 
 /** A report and the way to ask for it again, which never changes the resource being reported on. */
 export type UsageInventoryReport<TReport> = { read: InventoryRead<TReport>; refresh: () => void };
+
+/**
+ * Asks for the organisation's inventory before its units are read, so the report does not wait for
+ * one before asking for the other.
+ */
+export const usePrefetchOrganisationInventory = (organisationId: string) =>
+  usePrefetchQuery(
+    getGetUserInventorySuspenseQueryOptions(
+      { org_id: organisationId },
+      { query: { retry: retryAdministrationRead } },
+    ),
+  );
 
 export const useOrganisationInventory = (
   organisationId: string,

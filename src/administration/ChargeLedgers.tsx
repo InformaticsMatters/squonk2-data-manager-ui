@@ -1,4 +1,4 @@
-import { type ChangeEvent } from "react";
+import { type ChangeEvent, useDeferredValue } from "react";
 
 import {
   type ChargeSummary,
@@ -17,6 +17,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  Skeleton,
   Stack,
   Table,
   TableBody,
@@ -29,14 +30,15 @@ import { filesize } from "filesize";
 import { useRouter } from "next/router";
 
 import { ProcessingIcon, StorageIcon } from "../components/icons";
+import { Loading } from "../components/skeletons";
 import { isProductId } from "../routing/identifiers";
 import { formatCoins } from "../utils/app/coins";
 import { toLocalTimeString } from "../utils/app/datetime";
 import { formatOrdinals } from "../utils/app/ordinals";
 import {
-  useAddressedOrganisationCharges,
-  useAddressedProductCharges,
-  useAddressedUnitCharges,
+  addressedOrganisationChargesRead,
+  addressedProductChargesRead,
+  addressedUnitChargesRead,
 } from "./accessFacts";
 import { AddressedResourceView, AdministrationLink, PageTitle, Section } from "./resources";
 import { administrationLinks, type AdministrationRoute, type ChargeRouteState } from "./routes";
@@ -150,6 +152,22 @@ const ChargesTable = ({
       </TableBody>
     </Table>
   </Paper>
+);
+
+/**
+ * A ledger that has not answered: its billing-cycle choice and its period, then its table. A large
+ * ledger can take many seconds, so the wait is shaped like what it is waiting for.
+ */
+const LedgerSkeleton = () => (
+  <Loading>
+    <Box sx={{ mb: 3 }}>
+      <Skeleton height={40} variant="rounded" width={240} />
+      <Typography sx={{ mt: 1 }}>
+        <Skeleton width={280} />
+      </Typography>
+    </Box>
+    <Skeleton height={240} variant="rounded" />
+  </Loading>
 );
 
 const Total = ({ coins }: { coins: string }) => (
@@ -278,13 +296,21 @@ export const OrganisationChargeLedger = ({
   organisationId: string;
   route: Extract<AdministrationRoute, { kind: "organisation-charges" }>;
 }) => {
-  const addressed = useAddressedOrganisationCharges(organisationId, route.state.billingCycle);
+  // A new billing cycle is a new read, which would suspend the ledger and its own cycle choice back
+  // to a skeleton. Deferring the cycle keeps the period being read on screen until the next answers.
+  const billingCycle = useDeferredValue(route.state.billingCycle);
 
   return (
     <AddressedResourceView
-      addressed={addressed}
       identity={({ organisation_id }) => organisation_id}
+      read={addressedOrganisationChargesRead(organisationId, billingCycle)}
       section="Charges"
+      skeleton={
+        <>
+          <PageTitle>Charges</PageTitle>
+          <LedgerSkeleton />
+        </>
+      }
       subject="organisation"
     >
       {(data) => (
@@ -346,13 +372,14 @@ export const UnitChargeLedger = ({
   route: Extract<AdministrationRoute, { kind: "unit-charges" }>;
   unit: UnitAllDetail;
 }) => {
-  const addressed = useAddressedUnitCharges(route.unitId, route.state.billingCycle);
+  const billingCycle = useDeferredValue(route.state.billingCycle);
 
   return (
     <AddressedResourceView
-      addressed={addressed}
       identity={({ unit_id }) => unit_id}
+      read={addressedUnitChargesRead(route.unitId, billingCycle)}
       section="Charges"
+      skeleton={<LedgerSkeleton />}
       subject="unit"
     >
       {(data) => (
@@ -409,13 +436,18 @@ export const SubscriptionChargeLedger = ({
   route: Extract<AdministrationRoute, { kind: "subscription-charges" }>;
   subscription: SubscriptionFacts;
 }) => {
-  const addressed = useAddressedProductCharges(route.productId, route.state.billingCycle);
+  const billingCycle = useDeferredValue(route.state.billingCycle);
 
   return (
     <AddressedResourceView
-      addressed={addressed}
       identity={({ product_id }) => product_id}
+      read={addressedProductChargesRead(route.productId, billingCycle)}
       section="Charges"
+      skeleton={
+        <Section title="Charges">
+          <LedgerSkeleton />
+        </Section>
+      }
       subject="subscription"
     >
       {(data) => (

@@ -1,16 +1,52 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 
 import { Alert, Box, Button, Container, Typography } from "@mui/material";
-import { ErrorBoundary } from "@sentry/nextjs";
-import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
 import { RetryIcon } from "../components/icons";
+import { SectionBoundary } from "../components/SectionBoundary";
 import { AdministrationRail } from "./AdministrationRail";
 import { presentAdministrationFailure } from "./failures";
 import { useOrganisationInEffect } from "./organisationInEffect";
+import { SectionSkeleton } from "./resources";
 import { type AdministrationRoute } from "./routes";
+
+/**
+ * One section's failure, under the one contract every section shares: a rate limit, a timeout, a
+ * lost connection and a refusal stay distinct and separately recoverable wherever they happen, and
+ * recovering never changes the scope on screen.
+ *
+ * The frame outlives a section change, and so would the failure, so leaving the section that
+ * failed clears it: the section navigated to reads for itself rather than inheriting the alert.
+ */
+const SectionFailure = ({ error, retry }: { error: unknown; retry: () => void }) => {
+  const { asPath } = useRouter();
+  const failedAt = useRef(asPath);
+
+  useEffect(() => {
+    if (asPath !== failedAt.current) {
+      retry();
+    }
+  }, [asPath, retry]);
+
+  const presentation = presentAdministrationFailure(classifyTransportFailure(error));
+  return (
+    <Alert
+      action={
+        presentation.retryable ? (
+          <Button color="inherit" size="small" startIcon={<RetryIcon />} onClick={retry}>
+            Retry
+          </Button>
+        ) : undefined
+      }
+      severity={presentation.severity}
+    >
+      {presentation.message}
+    </Alert>
+  );
+};
 
 /**
  * The Administration workspace: the organisation in the masthead, its rail, and one section of it.
@@ -50,42 +86,14 @@ export const AdministrationFrame = ({ children }: { children: ReactNode }) => {
             always taller than the rail and there is travel for it to use even where a section's
             own content is short. */}
         <Box sx={{ flexGrow: 1, minHeight: "calc(100vh - 120px)", minWidth: 0, pb: 6 }}>
-          <QueryErrorResetBoundary>
-            {({ reset }) => (
-              <ErrorBoundary
-                fallback={({ error, resetError }) => {
-                  // One failure contract across every section: a rate limit, a timeout, a lost
-                  // connection and a refusal stay distinct and separately recoverable wherever
-                  // they happen, and recovering never changes the scope on screen.
-                  const presentation = presentAdministrationFailure(
-                    classifyTransportFailure(error),
-                  );
-                  return (
-                    <Alert
-                      action={
-                        presentation.retryable ? (
-                          <Button
-                            color="inherit"
-                            size="small"
-                            startIcon={<RetryIcon />}
-                            onClick={resetError}
-                          >
-                            Retry
-                          </Button>
-                        ) : undefined
-                      }
-                      severity={presentation.severity}
-                    >
-                      {presentation.message}
-                    </Alert>
-                  );
-                }}
-                onReset={reset}
-              >
-                {children}
-              </ErrorBoundary>
-            )}
-          </QueryErrorResetBoundary>
+          {/* A section suspends and fails inside the content pane, so the rail beside it and the
+              tabs inside a unit are never taken down while a section loads. */}
+          <SectionBoundary
+            failure={(failure) => <SectionFailure {...failure} />}
+            skeleton={<SectionSkeleton />}
+          >
+            {children}
+          </SectionBoundary>
         </Box>
       </Box>
     </Container>

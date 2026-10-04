@@ -1,7 +1,20 @@
-import { type ReactNode, Suspense } from "react";
+import { createContext, type ReactNode, Suspense, use } from "react";
 
 import { ErrorBoundary } from "@sentry/nextjs";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
+
+type SectionFailure = (props: { error: unknown; retry: () => void }) => ReactNode;
+
+const SectionFailureContext = createContext<SectionFailure>(() => null);
+
+/**
+ * Sentry renders a function fallback as a component, so an inline one is a new component type on
+ * every render and the failure UI would remount, losing its state, whenever the section re-rendered.
+ * This one is stable, and reads the section's own failure UI from context.
+ */
+const SectionFallback = ({ error, resetError }: { error: unknown; resetError: () => void }) => (
+  <>{use(SectionFailureContext)({ error, retry: resetError })}</>
+);
 
 /**
  * One section's suspense queries, resolved together behind a placeholder shaped like the section.
@@ -21,17 +34,16 @@ export const SectionBoundary = ({
   skeleton,
 }: {
   children: ReactNode;
-  failure: (props: { error: unknown; retry: () => void }) => ReactNode;
+  failure: SectionFailure;
   skeleton: ReactNode;
 }) => (
-  <QueryErrorResetBoundary>
-    {({ reset }) => (
-      <ErrorBoundary
-        fallback={({ error, resetError }) => <>{failure({ error, retry: resetError })}</>}
-        onReset={reset}
-      >
-        <Suspense fallback={skeleton}>{children}</Suspense>
-      </ErrorBoundary>
-    )}
-  </QueryErrorResetBoundary>
+  <SectionFailureContext value={failure}>
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary fallback={SectionFallback} onReset={reset}>
+          <Suspense fallback={skeleton}>{children}</Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  </SectionFailureContext>
 );

@@ -1,13 +1,32 @@
-import { Fragment, type ReactElement, type ReactNode } from "react";
+import { Fragment, type ReactElement, type ReactNode, Suspense } from "react";
 
-import { Alert, Box, Chip, Divider, Link as MuiLink, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Chip,
+  Divider,
+  Link as MuiLink,
+  Skeleton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import {
+  hashKey,
+  useQueryClient,
+  useSuspenseQuery,
+  type UseSuspenseQueryOptions,
+} from "@tanstack/react-query";
 import Link from "next/link";
 
-import { type TransportFailure } from "../api/runtime/classifyTransportFailure";
+import {
+  classifyTransportFailure,
+  type TransportFailure,
+} from "../api/runtime/classifyTransportFailure";
+import { ReadFailureBoundary } from "../components/ReadFailureBoundary";
 import { IdentitySkeleton } from "../components/skeletons";
-import { type AddressedResource } from "./accessFacts";
 import { type AdministrationCapability } from "./capabilities";
 import {
+  administrationReadIsAuthoritative,
   type AdministrationReadSubject,
   decideAdministrationReadFailure,
   presentAdministrationFailure,
@@ -80,6 +99,19 @@ export const PendingResource = ({ section }: { section: string }) => (
 );
 
 /**
+ * A section that has not answered, heading and all: the frame's stand-in for whatever suspends
+ * without a skeleton of its own, and the organisation sections' while the masthead has none yet.
+ */
+export const SectionSkeleton = () => (
+  <>
+    <Typography component="div" sx={{ mb: 2 }} variant="h4">
+      <Skeleton width={240} />
+    </Typography>
+    <IdentitySkeleton />
+  </>
+);
+
+/**
  * The addressed resource answered authoritatively that it cannot be shown. The shared Administration
  * failure contract owns the wording, so a denial and an absence read the same way everywhere.
  */
@@ -125,8 +157,19 @@ export const ResourceIdentity = ({
   </>
 );
 
+/** The generated suspense read of one addressed resource. */
+type AddressedRead<TResource> = UseSuspenseQueryOptions<any, any, TResource>;
+
+const ReadResource = <TResource,>({
+  children,
+  read,
+}: {
+  children: (resource: TResource) => ReactNode;
+  read: AddressedRead<TResource>;
+}) => children(useSuspenseQuery(read).data);
+
 /**
- * Renders whatever the addressed resource itself answered.
+ * Renders whatever the addressed resource itself answered, behind a skeleton until it has.
  *
  * An authoritative refusal costs the screen what the refused subject was carrying, and no more. A
  * refused unit or subscription replaces the page, because a resource the caller cannot read has no
@@ -134,36 +177,58 @@ export const ResourceIdentity = ({
  * the screen still shows, which is how the default organisation's refused detail read stops taking
  * away the page a caller has to reach to create their first unit.
  *
+ * The read is a suspense read, so a refusal arrives thrown. It is caught here, unreported, only
+ * when it is this read's own authoritative answer; anything else — a transport fact worth
+ * retrying, or a failure from beneath — goes on to the frame's retry boundary. The boundary is
+ * keyed by the read, so one resource's refusal never outlives a navigation to another.
+ *
  * Keying the rendered resource by its identity keeps what the screen holds owned by the resource in
  * the address bar, so a route change never carries one resource's entered values into another's.
  */
 export const AddressedResourceView = <TResource,>({
-  addressed,
   children,
   degraded,
   identity,
+  read,
   section,
+  skeleton,
   subject,
 }: {
-  addressed: AddressedResource<TResource>;
   children: (resource: TResource) => ReactNode;
   /** What survives a refusal this subject degrades rather than replaces. */
   degraded?: (failure: TransportFailure) => ReactNode;
   /** The resource's own identity, which is what the rendered content is keyed by. */
   identity: (resource: TResource) => string;
-  subject: AdministrationReadSubject;
+  read: AddressedRead<TResource>;
   /** What the section is called, so a state that has no resource yet still has a heading. */
   section: string;
+  /** Stands in for the content until the read answers; the section's identity block by default. */
+  skeleton?: ReactNode;
+  subject: AdministrationReadSubject;
 }) => {
-  if (addressed.kind === "pending") {
-    return <PendingResource section={section} />;
-  }
-  if (addressed.kind === "unavailable") {
-    return degraded && decideAdministrationReadFailure(subject, addressed.failure) === "degrade" ? (
-      degraded(addressed.failure)
-    ) : (
-      <UnavailableResource failure={addressed.failure} section={section} />
-    );
-  }
-  return <Fragment key={identity(addressed.resource)}>{children(addressed.resource)}</Fragment>;
+  const queryClient = useQueryClient();
+
+  return (
+    <ReadFailureBoundary
+      fallback={(error) => {
+        const failure = classifyTransportFailure(error);
+        return degraded && decideAdministrationReadFailure(subject, failure) === "degrade" ? (
+          degraded(failure)
+        ) : (
+          <UnavailableResource failure={failure} section={section} />
+        );
+      }}
+      isReadFailure={(error) =>
+        administrationReadIsAuthoritative(error) &&
+        error === queryClient.getQueryState(read.queryKey)?.error
+      }
+      key={hashKey(read.queryKey)}
+    >
+      <Suspense fallback={skeleton ?? <PendingResource section={section} />}>
+        <ReadResource read={read}>
+          {(resource) => <Fragment key={identity(resource)}>{children(resource)}</Fragment>}
+        </ReadResource>
+      </Suspense>
+    </ReadFailureBoundary>
+  );
 };

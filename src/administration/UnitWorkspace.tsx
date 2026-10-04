@@ -1,14 +1,23 @@
 import { type ReactNode, useEffect } from "react";
 
 import { type OrganisationAllDetail, type UnitAllDetail } from "@/api/account-server";
+import { getGetProductDefaultStorageCostSuspenseQueryOptions } from "@/api/account-server/product";
 import { useGetUnits } from "@/api/account-server/unit";
 
 import { Stack, Typography } from "@mui/material";
+import { usePrefetchQuery, useQueryClient } from "@tanstack/react-query";
 
 import { AccessIcon, ChargesIcon, SubscriptionIcon, UsageIcon } from "../components/icons";
 import { NavigationTab } from "../layouts/navigation/NavigationTab";
 import { unitTypeLabel } from "./accessControls";
-import { useAccessFacts, useAddressedUnit } from "./accessFacts";
+import {
+  addressedProductChargesRead,
+  addressedProductRead,
+  addressedUnitChargesRead,
+  addressedUnitProductsRead,
+  addressedUnitRead,
+  useAccessFacts,
+} from "./accessFacts";
 import { UnitChargeLedger } from "./ChargeLedgers";
 import { useAdoptOrganisation, useOrganisationInEffect } from "./organisationInEffect";
 import { AddressedResourceView, PageTitle, ResourceChip } from "./resources";
@@ -54,6 +63,34 @@ const useUnitOrganisation = (unitId: string): UnitOrganisationScope => {
   }, [adopted, adoptOrganisation]);
 
   return scope;
+};
+
+/**
+ * Asks for whatever the addressed section reads beneath the unit at the same time as the unit,
+ * rather than once the unit has answered, as `usePrefetchQuery` would for one read.
+ */
+const usePrefetchUnitSection = (route: UnitRoute) => {
+  const queryClient = useQueryClient();
+  const prefetch = (read: { queryKey: readonly unknown[] }) => {
+    if (!queryClient.getQueryState(read.queryKey)) {
+      void queryClient.prefetchQuery(read);
+    }
+  };
+
+  switch (route.kind) {
+    case "unit-charges":
+      prefetch(addressedUnitChargesRead(route.unitId, route.state.billingCycle));
+      break;
+    case "subscription":
+      prefetch(addressedProductRead(route.productId));
+      break;
+    case "subscription-charges":
+      prefetch(addressedProductRead(route.productId));
+      prefetch(addressedProductChargesRead(route.productId, route.state.billingCycle));
+      break;
+    default:
+      break;
+  }
 };
 
 const UnitSectionContent = ({
@@ -133,11 +170,17 @@ const UnitIdentity = ({
  * One unit, and whichever of its four sections the URL names.
  *
  * The unit is read once and its identity and tab strip stay put across every section, so inspecting
- * one unit's access, spend and usage is three tab clicks rather than three list searches.
+ * one unit's access, spend and usage is three tab clicks rather than three list searches. Each
+ * section suspends beneath the tab strip rather than above it.
+ *
+ * The unit's subscriptions and the storage cost their forms quote are read alongside the unit, as
+ * is whatever the addressed section reads, so no section waits for the unit before asking.
  */
 export const UnitWorkspace = ({ route }: { route: UnitRoute }) => {
   const scope = useUnitOrganisation(route.unitId);
-  const addressed = useAddressedUnit(route.unitId);
+  usePrefetchQuery(addressedUnitProductsRead(route.unitId));
+  usePrefetchQuery(getGetProductDefaultStorageCostSuspenseQueryOptions());
+  usePrefetchUnitSection(route);
   const organisation = scope.kind === "unknown" ? undefined : scope.organisation;
   const unitSection =
     route.kind === "subscription" || route.kind === "subscription-charges"
@@ -146,8 +189,8 @@ export const UnitWorkspace = ({ route }: { route: UnitRoute }) => {
 
   return (
     <AddressedResourceView
-      addressed={addressed}
       identity={({ id }) => id}
+      read={addressedUnitRead(route.unitId)}
       section={section}
       subject="unit"
     >

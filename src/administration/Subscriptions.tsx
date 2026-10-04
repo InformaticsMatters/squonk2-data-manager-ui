@@ -26,7 +26,7 @@ import { NavigationTab } from "../layouts/navigation/NavigationTab";
 import { projectLinks } from "../projects/routes";
 import { formatCoins } from "../utils/app/coins";
 import { toLocalTimeString } from "../utils/app/datetime";
-import { useAccessFacts, useAddressedProduct, useAddressedUnitProducts } from "./accessFacts";
+import { addressedProductRead, addressedUnitProductsRead, useAccessFacts } from "./accessFacts";
 import { type AdministrationCapability } from "./capabilities";
 import { SubscriptionChargeLedger } from "./ChargeLedgers";
 import { administrationResourceLabel } from "./failures";
@@ -279,7 +279,6 @@ export const UnitSubscriptions = ({
   organisation?: OrganisationAllDetail;
   unit: UnitAllDetail;
 }) => {
-  const addressed = useAddressedUnitProducts(unit.id);
   const callerFacts = useSubscriptionCallerFacts();
   const facts = callerFacts({ organisation, unit });
 
@@ -296,9 +295,12 @@ export const UnitSubscriptions = ({
         />
       </Box>
       <AddressedResourceView
-        addressed={addressed}
         identity={() => unit.id}
+        read={addressedUnitProductsRead(unit.id)}
         section="Subscriptions"
+        skeleton={
+          <DataTable isLoading columns={subscriptionColumns} searchLabel="Search subscriptions" />
+        }
         subject="unit"
       >
         {(products) => {
@@ -633,12 +635,10 @@ const SubscriptionDetail = ({
  * already names both the unit and the product.
  */
 export const SubscriptionSection = ({ route }: { route: SubscriptionRoute }) => {
-  const addressed = useAddressedProduct(route.productId);
-
   return (
     <AddressedResourceView
-      addressed={addressed}
       identity={(subscription) => subscription.product.id}
+      read={addressedProductRead(route.productId)}
       section={section}
       subject="subscription"
     >

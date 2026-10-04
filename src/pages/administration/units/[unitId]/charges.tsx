@@ -1,6 +1,6 @@
-import { AdministrationWorkspace } from "../../../../administration/AdministrationWorkspace";
 import { pagePolicies, withPagePolicy } from "../../../../application/pagePolicy";
 
-const UnitChargesPage = () => <AdministrationWorkspace />;
+// The family shell renders the workspace this address names; the page itself is only the address.
+const UnitChargesPage = () => null;
 
 export default withPagePolicy(pagePolicies.administration("unit-charges"), UnitChargesPage);

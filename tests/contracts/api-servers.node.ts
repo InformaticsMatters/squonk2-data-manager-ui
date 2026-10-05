@@ -7,7 +7,6 @@ const publishedImage = {
   // supplies them to the running container.
   DATA_MANAGER_API_SERVER: "https://an-installation.example/data-manager-api",
   ACCOUNT_SERVER_API_SERVER: "https://an-installation.example/account-server-api",
-  DEPICT_API_SERVER: "https://an-installation.example/depict",
 };
 
 test.describe("API server addresses", () => {
@@ -15,12 +14,11 @@ test.describe("API server addresses", () => {
     expect(readApiServers(publishedImage)).toEqual({
       dataManager: "https://an-installation.example/data-manager-api",
       accountServer: "https://an-installation.example/account-server-api",
-      depict: "https://an-installation.example/depict",
     });
   });
 
   test("answers an unconfigured environment with empty addresses, never undefined", () => {
-    expect(readApiServers({})).toEqual({ dataManager: "", accountServer: "", depict: "" });
+    expect(readApiServers({})).toEqual({ dataManager: "", accountServer: "" });
   });
 
   test("asks the server once, however many callers want the addresses", async () => {
@@ -33,7 +31,6 @@ test.describe("API server addresses", () => {
           Promise.resolve({
             dataManager: "https://an-installation.example/data-manager-api",
             accountServer: "https://an-installation.example/account-server-api",
-            depict: "https://an-installation.example/depict",
           }),
       } as Response);
     }) as unknown as typeof fetch;

@@ -30,18 +30,17 @@ const ReprLi = ({ title, children }: { children: string | null | undefined; titl
 export interface ConfigurationProps {
   dmAPI: string;
   asAPI: string;
-  depictAPI: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps: GetServerSideProps<ConfigurationProps> = async () => {
   // These change between build and deployment, so they are read from the environment this server
   // is running in rather than from the "public" variables `next build` inlined.
-  const { dataManager, accountServer, depict } = readApiServers(process.env);
-  return { props: { dmAPI: dataManager, asAPI: accountServer, depictAPI: depict } };
+  const { dataManager, accountServer } = readApiServers(process.env);
+  return { props: { dmAPI: dataManager, asAPI: accountServer } };
 };
 
-export const Configuration = ({ dmAPI, asAPI, depictAPI }: ConfigurationProps) => (
+export const Configuration = ({ dmAPI, asAPI }: ConfigurationProps) => (
   <Container>
     <PageHead parts={["Configuration"]} />
     <h1>Configuration</h1>
@@ -55,7 +54,6 @@ export const Configuration = ({ dmAPI, asAPI, depictAPI }: ConfigurationProps) =
       <ReprLi title="Base Path">{process.env.NEXT_PUBLIC_BASE_PATH}</ReprLi>
       <ReprLi title="DM API Server">{dmAPI}</ReprLi>
       <ReprLi title="AS API Server">{asAPI}</ReprLi>
-      <ReprLi title="Depict API Server">{depictAPI}</ReprLi>
     </ul>
     <h2>Auth</h2>
     <ul>

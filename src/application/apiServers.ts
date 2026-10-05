@@ -14,19 +14,17 @@ import { withBasePath } from "../utils/app/basePath";
 export interface ApiServers {
   dataManager: string;
   accountServer: string;
-  depict: string;
 }
 
 type Environment = Record<string, string | undefined>;
 
 export const API_SERVERS_PATH = "/api/configuration/api-servers";
 
-const UNCONFIGURED: ApiServers = { dataManager: "", accountServer: "", depict: "" };
+const UNCONFIGURED: ApiServers = { dataManager: "", accountServer: "" };
 
 export const readApiServers = (env: Environment): ApiServers => ({
   dataManager: env.DATA_MANAGER_API_SERVER ?? "",
   accountServer: env.ACCOUNT_SERVER_API_SERVER ?? "",
-  depict: env.DEPICT_API_SERVER ?? "",
 });
 
 let loaded: ApiServers | undefined;

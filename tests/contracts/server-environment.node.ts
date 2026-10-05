@@ -10,7 +10,6 @@ const configured = {
   KEYCLOAK_CLIENT_SECRET: "client-secret",
   DATA_MANAGER_API_SERVER: "https://an-installation.example/data-manager-api",
   ACCOUNT_SERVER_API_SERVER: "https://an-installation.example/account-server-api",
-  DEPICT_API_SERVER: "https://an-installation.example/depict",
 };
 
 test.describe("server environment", () => {

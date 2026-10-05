@@ -12,7 +12,6 @@ const serverEnvironment = z.object({
   KEYCLOAK_CLIENT_SECRET: variable,
   DATA_MANAGER_API_SERVER: variable,
   ACCOUNT_SERVER_API_SERVER: variable,
-  DEPICT_API_SERVER: variable,
 });
 
 /**

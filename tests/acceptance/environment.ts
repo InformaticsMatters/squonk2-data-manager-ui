@@ -24,7 +24,6 @@ export const acceptanceEnvironment = {
   BETTER_AUTH_SECRET: "acceptance-only-secret-at-least-thirty-two-characters",
   CONTROL_SERVER: controlUrl,
   DATA_MANAGER_API_SERVER: dataManagerUrl,
-  DEPICT_API_SERVER: `${dataManagerUrl}/depict`,
   DONT_USE_STANDALONE_OUTPUT: "true",
   KEYCLOAK_CLIENT_ID: "data-manager-ui-acceptance",
   KEYCLOAK_CLIENT_SECRET: "acceptance-client-secret",

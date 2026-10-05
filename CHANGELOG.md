@@ -1,3 +1,11 @@
+## [7.1.1-dev.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0...7.1.1-dev.1) (2026-10-05)
+
+
+### Bug Fixes
+
+* make the navigation bar fit phone and tablet viewports ([fbabcea](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/fbabcea5afb4fb29a110422519516acaba9ff61f))
+* start without a depict API server address ([550edbb](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/550edbbebf25971da08b17b35ee03a94f112539c))
+
 ## [7.1.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0...7.1.1) (2026-10-05)
 
 

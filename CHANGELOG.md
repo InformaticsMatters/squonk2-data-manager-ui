@@ -1,3 +1,21 @@
+# [7.1.0-dev.7](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.6...7.1.0-dev.7) (2026-10-05)
+
+
+### Bug Fixes
+
+* settle refused reads as answers rather than throwing them ([6bcdb6a](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6bcdb6ab74664ae181abb9ea18d63a3cb4c52d57))
+
+
+### Features
+
+* add the section boundary, DataTable skeleton rows and skeleton building blocks ([a7294d4](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/a7294d4a314fb26c63ca49c86bf52dad5214e8c7)), closes [#1983](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/1983)
+* Administration sections suspend inside a frame that never unmounts ([bd16098](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/bd16098777f094253de4ef7c11cd15b312eb7ea1)), closes [#2112](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2112)
+* Datasets list and details resolve together behind one skeleton ([6d7e065](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/6d7e065d7fd4acaf3e956bc9371953f6e0ff6550)), closes [#2113](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2113)
+* hold each page's shape from its first paint so content does not move as it loads ([b96f5c3](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/b96f5c39e68b255dbb12a633105089485b6030b0))
+* project sections resolve behind one skeleton shaped like the section ([eb39b46](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/eb39b46151004b455c45b14efcc5a4301f04deab)), closes [#2114](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2114)
+* resolve the project workspace's project, product and account together ([5a3b7cd](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5a3b7cdbf8d82c5c075bfd44f297870d40c45593)), closes [#2110](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2110)
+* stop Home and the masthead moving content down on load ([5fa888e](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/5fa888e928e09049d8dfb50918af7e8a9e716839)), closes [#2111](https://github.com/InformaticsMatters/squonk2-data-manager-ui/issues/2111)
+
 # [7.1.0-dev.6](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0-dev.5...7.1.0-dev.6) (2026-10-03)
 
 

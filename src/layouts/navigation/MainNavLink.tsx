@@ -55,5 +55,5 @@ export const MainNav = styled("nav", { shouldForwardProp: (prop) => prop !== "li
     maxWidth: `${linkWidth}px`,
     textAlign: "center",
   },
-  "& div:first-of-type": { marginLeft: theme.spacing(4) },
+  "& div:first-of-type": { [theme.breakpoints.up("md")]: { marginLeft: theme.spacing(4) } },
 }));

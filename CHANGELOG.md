@@ -1,3 +1,10 @@
+## [7.1.1](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.1.0...7.1.1) (2026-10-05)
+
+
+### Bug Fixes
+
+* start without a depict API server address ([550edbb](https://github.com/InformaticsMatters/squonk2-data-manager-ui/commit/550edbbebf25971da08b17b35ee03a94f112539c))
+
 # [7.1.0](https://github.com/InformaticsMatters/squonk2-data-manager-ui/compare/7.0.0...7.1.0) (2026-10-05)
 
 

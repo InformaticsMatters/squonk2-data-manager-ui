@@ -1,6 +1,13 @@
 export const RECENT_PROJECTS_STORAGE_KEY = "data-manager-ui-recent-projects";
 
-const MAX_RECENT_PROJECTS = 3;
+/**
+ * Set on `<html>` by `_document`'s inline script, before the first paint, to how many recent
+ * projects this browser remembers, when it remembers any. The server cannot read browser storage,
+ * so this is how Home's server render knows to reserve the section, and how many cards to show.
+ */
+export const RECENT_PROJECTS_ATTRIBUTE = "data-recent-projects";
+
+export const MAX_RECENT_PROJECTS = 3;
 
 export const parseRecentProjectIds = (value: unknown) => {
   if (!Array.isArray(value)) {
@@ -20,8 +27,7 @@ export const readRecentProjectIds = (storage: Pick<Storage, "getItem">) => {
   }
 };
 
-/** The answer a render that has no browser storage to read is given. */
-export const noRecentProjectIds: readonly string[] = [];
+const noRecentProjectIds: readonly string[] = [];
 
 let lastReadRecentProjects: string | null | undefined;
 let lastRecentProjectIds: readonly string[] = noRecentProjectIds;

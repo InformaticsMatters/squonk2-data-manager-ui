@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-
 import { authClient } from "../lib/auth-client";
+import { useClientSnapshot } from "./useClientSnapshot";
 
 type RealmAccess = { roles: string[] };
 
@@ -23,16 +22,13 @@ const emptyIdToken = {
 } as const;
 
 export const useKeycloakIdToken = () => {
-  // Defer session-derived rendering until after hydration. better-auth's
-  // useSession is client-only, so on the server it always reports
-  // "pending / no user", but on the client the session can be available
-  // synchronously from a prior fetch. Returning the empty/loading shape on
-  // the first client render keeps SSR and hydration output identical and
-  // avoids React 19 hydration warnings on every auth-dependent element.
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
+  // Defer session-derived rendering until after hydration. better-auth's useSession is client-only,
+  // so on the server it always reports "pending / no user", but on the client the session can be
+  // available synchronously from a prior fetch. Returning the empty/loading shape while hydrating
+  // keeps SSR and hydration output identical and avoids React 19 hydration warnings. Asked of the
+  // page rather than of each component: one that mounts after hydration has a user on its very first
+  // render, rather than rendering once as though nobody were signed in.
+  const hydrated = useClientSnapshot(() => true, false);
 
   const { data: session, isPending, error } = authClient.useSession();
   const user = session?.user as ExtendedUser | undefined;

@@ -20,10 +20,11 @@ export const developmentJobs: JobSummary[] = inDevelopment
 
 /**
  * Seeds the generated job detail those development definitions describe, under the generated key
- * factory, so the definition route resolves them exactly as it resolves a published job.
+ * factory, so the definition route resolves them exactly as it resolves a published job. It is
+ * seeded once, so it may be called while rendering.
  */
 export const seedDevelopmentDefinitions = (queryClient: QueryClient) => {
-  if (!inDevelopment) {
+  if (!inDevelopment || queryClient.getQueryData(getGetJobQueryKey(TEST_JOB_ID)) !== undefined) {
     return;
   }
   queryClient.setQueryData(getGetJobQueryKey(TEST_JOB_ID), testJob.detail);

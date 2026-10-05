@@ -45,6 +45,9 @@ export const useResultWorkflow = (
   const query = useGetRunningWorkflow(runningWorkflowId, {
     query: {
       retry: false,
+      // A failure the detail settled on before mounting is this read's answer, so mounting does
+      // not ask again; it is still polled and retried.
+      retryOnMount: false,
       refetchInterval: ({ state }) =>
         state.data !== undefined && !addressedHere(state.data)
           ? false
@@ -68,6 +71,7 @@ export const useResultWorkflow = (
     query: {
       enabled: owned,
       retry: false,
+      retryOnMount: false,
       refetchInterval: resultWorkflowPollInterval(lifecycle),
       select: (data) => data.running_workflow_steps,
     },

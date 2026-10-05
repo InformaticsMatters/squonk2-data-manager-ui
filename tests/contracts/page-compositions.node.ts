@@ -3,6 +3,7 @@ import { Fragment, Suspense } from "react";
 import { expect, test } from "@playwright/test";
 import { ErrorBoundary } from "@sentry/nextjs";
 
+import { AdministrationWorkspace } from "../../src/administration/AdministrationWorkspace";
 import {
   ApiClientReadyBoundary,
   ApiClientSetup,
@@ -110,13 +111,14 @@ test.describe("production page compositions", () => {
     expect(Object.keys(applicationShell.props)).toEqual(["children"]);
   });
 
-  // Only Projects adds anything of its own around family content: its project may not mount until
-  // the owning organisation has been adopted. The other two families wrap their content in nothing,
-  // which is a fact about the composition rather than a component that exists to be named.
+  // Projects' project may not mount until the owning organisation has been adopted, and
+  // Administration's shell is its whole workspace, so the rail outlives a section change. Datasets
+  // wraps its content in nothing, which is a fact about the composition rather than a component
+  // that exists to be named.
   for (const [policy, expectedShell] of [
     [pagePolicies.projects("files"), ProjectOrganisationBoundary],
     [pagePolicies.datasets("list"), Fragment],
-    [pagePolicies.administration("organisation-charges"), Fragment],
+    [pagePolicies.administration("organisation-charges"), AdministrationWorkspace],
   ] as const) {
     test(`renders real ${policy.kind} family boundaries and shell`, () => {
       const gate = createFamilyComposition(policy, "content");

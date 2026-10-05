@@ -1,17 +1,24 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
-import { getGetApplicationsQueryKey, useGetApplications } from "@/api/data-manager/application";
-import { getGetInstancesQueryKey, useGetInstances } from "@/api/data-manager/instance";
-import { getGetJobsQueryKey, useGetJobs } from "@/api/data-manager/job";
+import {
+  getGetApplicationsQueryKey,
+  getGetApplicationsSuspenseQueryOptions,
+} from "@/api/data-manager/application";
+import {
+  getGetInstancesQueryKey,
+  getGetInstancesSuspenseQueryOptions,
+} from "@/api/data-manager/instance";
+import { getGetJobsQueryKey, getGetJobsSuspenseQueryOptions } from "@/api/data-manager/job";
 import {
   getGetRunningWorkflowsQueryKey,
+  getGetRunningWorkflowsSuspenseQueryOptions,
   getGetWorkflowsQueryKey,
-  useGetRunningWorkflows,
-  useGetWorkflows,
+  getGetWorkflowsSuspenseQueryOptions,
 } from "@/api/data-manager/workflow";
 
 import { useQueryClient } from "@tanstack/react-query";
 
+import { useSettledQueries, useSettledQuery } from "../hooks/useSettledQuery";
 import { developmentJobs, seedDevelopmentDefinitions } from "./developmentDefinitions";
 import { type RunFilterType } from "./routes";
 import {
@@ -43,8 +50,6 @@ export type ProjectRunCatalogue = {
   executions: { instances: RunExecutions; runningWorkflows: RunExecutions };
   /** Each catalogue's content is only as fresh as its own last read. */
   freshness: Record<RunFilterType, "current" | "stale">;
-  /** The definition catalogues are still being read, so nothing can be said about what they offer. */
-  isLoading: boolean;
   /** Every definition the catalogue offers, before the section's route state narrows them. */
   items: RunDefinitionItem[];
   /** How each definition catalogue's own read answered, so one never speaks for another. */
@@ -67,17 +72,35 @@ export const useProjectRun = (projectId: string): ProjectRunCatalogue => {
   const queryClient = useQueryClient();
   const requests = useMemo(() => runCatalogueRequests(projectId), [projectId]);
 
-  const applications = useGetApplications({
-    query: { retry: false, select: (data) => data.applications },
-  });
-  const jobs = useGetJobs(requests.jobs, { query: { retry: false, select: (data) => data.jobs } });
-  const workflows = useGetWorkflows({ query: { retry: false, select: (data) => data.workflows } });
-  const instances = useGetInstances(requests.instances, {
-    query: { retry: false, select: (data) => data.instances },
-  });
-  const runningWorkflows = useGetRunningWorkflows(requests.runningWorkflows, {
-    query: { retry: false, select: (data) => data.running_workflows },
-  });
+  // Seeded before anything suspends, so a development definition's own route finds it answered.
+  seedDevelopmentDefinitions(queryClient);
+
+  const reads = {
+    applications: getGetApplicationsSuspenseQueryOptions({
+      query: { retry: false, select: (data) => data.applications },
+    }),
+    instances: getGetInstancesSuspenseQueryOptions(requests.instances, {
+      query: { retry: false, select: (data) => data.instances },
+    }),
+    jobs: getGetJobsSuspenseQueryOptions(requests.jobs, {
+      query: { retry: false, select: (data) => data.jobs },
+    }),
+    runningWorkflows: getGetRunningWorkflowsSuspenseQueryOptions(requests.runningWorkflows, {
+      query: { retry: false, select: (data) => data.running_workflows },
+    }),
+    workflows: getGetWorkflowsSuspenseQueryOptions({
+      query: { retry: false, select: (data) => data.workflows },
+    }),
+  };
+  // Every read is started together and answered before the catalogue is shown, so the cards arrive
+  // at once, each with its count, rather than filling in read by read. A failed read is an answer
+  // like any other: it is classified below, and never takes down the reads beside it.
+  useSettledQueries(Object.values(reads));
+  const applications = useSettledQuery(reads.applications);
+  const jobs = useSettledQuery(reads.jobs);
+  const workflows = useSettledQuery(reads.workflows);
+  const instances = useSettledQuery(reads.instances);
+  const runningWorkflows = useSettledQuery(reads.runningWorkflows);
 
   // Each read answers for itself, so one refused or failing read never decides what the others may
   // show, how fresh they are, or whether they are worth retrying.
@@ -99,9 +122,6 @@ export const useProjectRun = (projectId: string): ProjectRunCatalogue => {
   ]);
   const freshness = resolveRunFreshnessByType(readStates);
 
-  useEffect(() => {
-    seedDevelopmentDefinitions(queryClient);
-  }, [queryClient]);
   const items = selectRunCatalogue({
     applications: readableContent(readStates.application, applications.data),
     jobs: [...readableContent(readStates.job, jobs.data), ...developmentJobs],
@@ -130,7 +150,6 @@ export const useProjectRun = (projectId: string): ProjectRunCatalogue => {
       ),
     },
     freshness,
-    isLoading: applications.isLoading || jobs.isLoading || workflows.isLoading,
     items,
     readStates,
     report,

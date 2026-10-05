@@ -6,6 +6,7 @@ import {
   IconButton,
   InputAdornment,
   Paper,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -38,6 +39,7 @@ import {
   getSortedRowModel,
   type PaginationState,
   type Row,
+  type RowData,
   type RowSelectionState,
   type SortingState,
   useReactTable,
@@ -47,6 +49,25 @@ import { CollapseIcon, ExpandIcon, SearchIcon } from "../icons";
 import { IndeterminateCheckbox } from "./IndeterminateCheckbox";
 
 const DEBUG = process.env.NODE_ENV === "development";
+
+declare module "@tanstack/react-table" {
+  // eslint-disable-next-line unused-imports/no-unused-vars -- the names must match the declaration merged with
+  interface ColumnMeta<TData extends RowData, TValue> {
+    /**
+     * The column's width, as a CSS length. A table with any declared width is laid out from its
+     * headings alone rather than from its rows, so it is the same width loading as loaded: the
+     * columns without one share what the declared ones leave.
+     */
+    width?: string;
+  }
+}
+
+/** The leading control columns' widths: the control, and a small cell's padding either side. */
+const expanderWidth = "72px";
+const selectionWidth = "70px";
+
+/** Below this a table laid out from its headings scrolls rather than crushing its columns. */
+const fixedLayoutMinWidth = 900;
 
 export interface DataTableProps<Data extends Record<string, any>> {
   /**
@@ -111,9 +132,14 @@ export interface DataTableProps<Data extends Record<string, any>> {
    */
   customRowProps?: MuiRowProps | ((row: Row<Data>) => MuiRowProps);
   /**
-   * If true, displays the loading icon.
+   * If true, the body holds placeholder rows under the real headings until the data arrives.
    */
   isLoading?: boolean;
+  /**
+   * The height, in pixels, of the placeholder rows a loading listing shows: the height its controls
+   * give its real rows, which placeholders holding no controls cannot arrive at for themselves.
+   */
+  loadingRowHeight?: number;
   /**
    * If truthy, displays the provided `error`.
    */
@@ -142,6 +168,9 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
  */
 const pageSize = 100;
 
+/** Placeholder rows a loading listing previews, enough to fill a table without a scrollbar. */
+const loadingRowCount = 5;
+
 export const DataTable = <Data extends Record<string, any>>(props: DataTableProps<Data>) => {
   const {
     tableContainer = true,
@@ -160,6 +189,8 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
     customCellProps,
     customRowProps,
     error,
+    isLoading,
+    loadingRowHeight,
     searchLabel = "search",
     searchValue,
     onSearchChange,
@@ -180,6 +211,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
       workingColumns.unshift({
         id: "expander",
         enableSorting: false,
+        meta: { width: expanderWidth },
         header: ({ table }) => (
           <Box sx={{ display: "flex" }}>
             <IconButton onClick={table.getToggleAllRowsExpandedHandler()}>
@@ -199,6 +231,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
         workingColumns.unshift({
           id: "selection",
           enableSorting: false,
+          meta: { width: selectionWidth },
           header: ({ table }) => (
             <IndeterminateCheckbox
               checked={table.getIsAllPageRowsSelected()}
@@ -302,6 +335,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
   }
 
   const rows = table.getRowModel().rows;
+  const hasDeclaredWidths = columns.some((column) => column.meta?.width !== undefined);
 
   const tableContents = (
     <>
@@ -323,7 +357,9 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
 
                 htmlInput: { "aria-label": searchLabel },
               }}
-              sx={{ ml: "auto" }}
+              // Its own width whatever the toolbar holds beside it, so it does not narrow when that
+              // content arrives after the listing's placeholder.
+              sx={{ flexShrink: 0, ml: "auto" }}
               value={searchValue ?? globalFilter}
               onChange={(event) => {
                 setGlobalFilter(event.target.value);
@@ -334,7 +370,14 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
         </Toolbar>
       ) : null}
       {ToolbarActionChild ? <Toolbar>{ToolbarActionChild}</Toolbar> : null}
-      <Table size="small" {...customTableProps}>
+      <Table
+        size="small"
+        {...customTableProps}
+        sx={[
+          hasDeclaredWidths && { minWidth: fixedLayoutMinWidth, tableLayout: "fixed" },
+          ...(Array.isArray(customTableProps?.sx) ? customTableProps.sx : [customTableProps?.sx]),
+        ]}
+      >
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -343,6 +386,7 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
                   className={header.column.getCanSort() ? "cursor-pointer select-none" : ""}
                   colSpan={header.colSpan}
                   key={header.id}
+                  sx={{ width: header.column.columnDef.meta?.width }}
                 >
                   {header.isPlaceholder ? null : (
                     <Box sx={{ textWrap: "nowrap" }}>
@@ -372,28 +416,40 @@ export const DataTable = <Data extends Record<string, any>>(props: DataTableProp
             </TableRow>
           ))}
         </TableHead>
-        <TableBody>
-          {rows.map((row) => {
-            const rowProps =
-              typeof customRowProps === "function" ? customRowProps(row) : customRowProps;
-            return (
-              <TableRow {...rowProps} key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <TableCell
-                      {...customCellProps}
-                      key={cell.id}
-                      sx={(theme) => ({
-                        pl: cell.column.getCanSort() ? theme.spacing(2 + 2 * row.depth) : undefined,
-                      })}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        <TableBody aria-busy={isLoading} aria-label={isLoading ? "Loading" : undefined}>
+          {isLoading
+            ? Array.from({ length: loadingRowCount }, (_, index) => (
+                <TableRow key={index} sx={{ height: loadingRowHeight }}>
+                  {table.getVisibleLeafColumns().map((column) => (
+                    <TableCell {...customCellProps} key={column.id}>
+                      <Skeleton />
                     </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
-          })}
+                  ))}
+                </TableRow>
+              ))
+            : rows.map((row) => {
+                const rowProps =
+                  typeof customRowProps === "function" ? customRowProps(row) : customRowProps;
+                return (
+                  <TableRow {...rowProps} key={row.id}>
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <TableCell
+                          {...customCellProps}
+                          key={cell.id}
+                          sx={(theme) => ({
+                            pl: cell.column.getCanSort()
+                              ? theme.spacing(2 + 2 * row.depth)
+                              : undefined,
+                          })}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
         </TableBody>
       </Table>
       {/* Held at the foot of a container taller than the listing, such as Files, and sticky so it

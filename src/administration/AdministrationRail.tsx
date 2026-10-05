@@ -5,13 +5,13 @@ import {
   Box,
   Divider,
   InputAdornment,
-  LinearProgress,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   ListSubheader,
   Paper,
+  Skeleton,
   TextField,
   Typography,
 } from "@mui/material";
@@ -28,6 +28,7 @@ import {
   UnitIcon,
   UsageIcon,
 } from "../components/icons";
+import { Loading } from "../components/skeletons";
 import { useDraftValue } from "../hooks/useDraftValue";
 import { retryAdministrationRead, useAccessFacts } from "./accessFacts";
 import { administrationLinks, type AdministrationRoute } from "./routes";
@@ -35,10 +36,10 @@ import { organisationChargesAreOffered } from "./scope";
 import { buildUnitIndex, type UnitIndexRow } from "./unitIndex";
 
 /** The rail is sized by its content and capped below the viewport, which is what makes it stick. */
-const RAIL_WIDTH = 288;
+export const RAIL_WIDTH = 288;
 // Capped well below the viewport, and floored beneath by the content pane, so the row holding the
 // rail is always taller than the rail itself — which is the whole of what makes it stick.
-const RAIL_MAX_HEIGHT = "calc(100vh - 220px)";
+export const RAIL_MAX_HEIGHT = "calc(100vh - 220px)";
 
 /**
  * Which rail entry the current route selects. The rail is a set of links and the current
@@ -109,6 +110,18 @@ const UnitRow = ({ row, selected }: { row: UnitIndexRow; selected: boolean }) =>
       <PublicIcon sx={{ color: "text.secondary", fontSize: 16 }} titleAccess="Public" />
     )}
   </ListItemButton>
+);
+
+/** The unit list before it has answered: rows shaped like `UnitRow`, under the real heading. */
+const UnitRowsSkeleton = () => (
+  <Loading>
+    {Array.from({ length: 3 }, (_, index) => (
+      <Box key={index} sx={{ px: 2, py: 0.75 }}>
+        <Skeleton width="60%" />
+        <Skeleton width="30%" />
+      </Box>
+    ))}
+  </Loading>
 );
 
 /**
@@ -249,7 +262,6 @@ export const AdministrationRail = ({
       {/* Only the unit list scrolls, so the organisation entries and the search field hold their
           position however many units the organisation has. */}
       <Box sx={{ flexGrow: 1, minHeight: 0, overflowY: "auto" }}>
-        {isPending ? <LinearProgress /> : null}
         {isError ? (
           <Alert severity="warning" sx={{ m: 1.5 }}>
             {UNITS_UNREADABLE}
@@ -265,6 +277,7 @@ export const AdministrationRail = ({
             <UnitRow key={row.unitId} row={row} selected={selected === `unit:${row.unitId}`} />
           ))}
         </List>
+        {isPending ? <UnitRowsSkeleton /> : null}
         {emptiness && !isPending && !isError ? (
           <Typography color="text.secondary" sx={{ p: 1.5 }} variant="body2">
             {unitIndexEmptiness[emptiness]}

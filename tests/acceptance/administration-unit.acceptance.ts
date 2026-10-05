@@ -70,6 +70,69 @@ test("a unit keeps its identity across all four sections", async ({ page }, test
   await expect(page).toHaveURL(`${acceptanceUrls.app}${unitPath}/usage`);
 });
 
+/**
+ * Records, for every mutation from here on, whether a watched landmark has left the document and
+ * whether a spinner stood in for a section. A landmark that is thrown away and rebuilt looks
+ * identical to one that stayed once the destination has rendered, so only watching the whole of
+ * the navigation sees it.
+ */
+const watchWorkspace = async (page: Page, landmarks: string[]) => {
+  await page.evaluate((labels) => {
+    const nodes = labels.map((label) => document.querySelector(`nav[aria-label="${label}"]`));
+    const record = () => {
+      const seen = new Set<string>(
+        JSON.parse(sessionStorage.getItem("workspace-removals") ?? "[]") as string[],
+      );
+      for (const [index, node] of nodes.entries()) {
+        if (!node?.isConnected) {
+          seen.add(labels[index]);
+        }
+      }
+      if (document.querySelector("main .MuiCircularProgress-root")) {
+        seen.add("spinner");
+      }
+      sessionStorage.setItem("workspace-removals", JSON.stringify([...seen]));
+    };
+    record();
+    new MutationObserver(record).observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+  }, landmarks);
+};
+
+const workspaceRemovals = (page: Page) =>
+  page.evaluate(() => sessionStorage.getItem("workspace-removals"));
+
+test("moving between sections never removes the rail or the unit's section strip", async ({
+  page,
+}, testInfo) => {
+  await login(page, "administration", testInfo);
+  await expect(rail(page).getByRole("link", { name: "Acceptance Unit" })).toBeVisible();
+  await watchWorkspace(page, ["Administration"]);
+
+  await rail(page).getByRole("link", { name: "Usage & Inventory" }).click();
+  await expect(page.getByRole("heading", { name: "Usage & Inventory" })).toBeVisible();
+  await rail(page).getByRole("link", { name: "Charges" }).click();
+  await expect(page.getByRole("heading", { name: /Total charges/u })).toBeVisible();
+  await rail(page).getByRole("link", { name: "Acceptance Unit" }).click();
+  await expect(page.getByLabel("Unit name")).toHaveValue("Acceptance Unit");
+  expect(await workspaceRemovals(page)).toBe("[]");
+
+  await watchWorkspace(page, ["Administration", "Unit sections"]);
+  await unitTabs(page).getByRole("link", { name: "Subscriptions" }).click();
+  await page.getByRole("link", { name: "Dataset Storage" }).click();
+  await expect(page.getByRole("heading", { name: "Adjustment" })).toBeVisible();
+  await unitTabs(page).getByRole("link", { name: "Charges" }).click();
+  await expect(page.getByRole("heading", { name: /Total charges/u })).toBeVisible();
+  await page.getByRole("link", { name: "Project Subscription" }).click();
+  await expect(page.getByRole("heading", { name: "Processing charges" })).toBeVisible();
+  await unitTabs(page).getByRole("link", { name: "Usage & Inventory" }).click();
+  await expect(page.getByRole("button", { name: "By project" })).toBeVisible();
+
+  expect(await workspaceRemovals(page)).toBe("[]");
+});
+
 test("a bare unit URL lands on Access", async ({ page }, testInfo) => {
   await login(page, unitPath, testInfo);
 

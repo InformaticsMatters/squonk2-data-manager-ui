@@ -35,16 +35,12 @@ const ResolvedDatasetViewer = ({
   route: Extract<DatasetRoute, { kind: "viewer" }>;
 }) => {
   const { datasetId, datasetVersion } = route;
-  const { error, isLoading, refetch, resolution } = useDatasetVersionResolution(
-    datasetId,
-    datasetVersion,
-  );
+  const { error, refetch, resolution } = useDatasetVersionResolution(datasetId, datasetVersion);
 
   return (
     <DatasetResolutionBoundary
       error={error}
       errorMessage="Dataset data could not be loaded. Retry this exact version."
-      isLoading={isLoading}
       resolution={resolution}
       onRetry={() => void refetch()}
     >

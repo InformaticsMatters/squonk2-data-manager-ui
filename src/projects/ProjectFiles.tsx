@@ -16,7 +16,6 @@ import NextError from "next/error";
 
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
-import { CenterLoader } from "../components/CenterLoader";
 import { DataTable } from "../components/DataTable";
 import { DirectoryIcon, ManagedFileIcon, PrivateIcon, RefreshIcon } from "../components/icons";
 import { FileKindIcon } from "../components/kindIcons";
@@ -45,6 +44,7 @@ import { ProjectFileActions } from "./ProjectFileActions";
 import { CreateDirectoryControl, UploadFileControl } from "./ProjectFileToolbarActions";
 import { ProjectFileUpload } from "./ProjectFileUpload";
 import { ProjectFileViewerLinks } from "./ProjectFileViewerLinks";
+import { filesColumns, filesListingSx } from "./ProjectOrganisationBoundary";
 import { findReadmeRow, ProjectReadme } from "./ProjectReadme";
 import { projectLinks, type ProjectRoute } from "./routes";
 import { SectionReadAlerts } from "./SectionReadAlerts";
@@ -157,10 +157,11 @@ const FilesTable = ({
             )}
           </Box>
         ),
-        header: "File Name",
+        header: filesColumns.name.header,
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : row.data.owner), {
-        header: "Owner",
+        header: filesColumns.owner.header,
+        meta: { width: filesColumns.owner.width },
         id: "owner",
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : fileRowMode(row)), {
@@ -173,7 +174,8 @@ const FilesTable = ({
           ) : (
             getValue()
           ),
-        header: "Mode",
+        header: filesColumns.mode.header,
+        meta: { width: filesColumns.mode.width },
         id: "mode",
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : row.data.stat.size), {
@@ -181,13 +183,15 @@ const FilesTable = ({
           const value = getValue();
           return typeof value === "string" ? value : filesize(value);
         },
-        header: "File size",
+        header: filesColumns.fileSize.header,
+        meta: { width: filesColumns.fileSize.width },
         id: "fileSize",
       }),
       columnHelper.accessor((row) => (isDirectoryRow(row) ? "-" : row.data.stat.modified), {
         cell: ({ getValue, row }) =>
           isDirectoryRow(row.original) ? getValue() : toLocalTimeString(getValue(), true, true),
-        header: "Last updated",
+        header: filesColumns.lastUpdated.header,
+        meta: { width: filesColumns.lastUpdated.width },
         id: "lastUpdated",
       }),
       columnHelper.display({
@@ -202,7 +206,8 @@ const FilesTable = ({
           />
         ),
         enableGrouping: false,
-        header: "Actions",
+        header: filesColumns.actions.header,
+        meta: { width: filesColumns.actions.width },
         id: "actions",
       }),
     ],
@@ -224,29 +229,18 @@ const FilesTable = ({
               {notice}
             </Alert>
           ) : null}
-          {/* A listing that is still loading already says so through its own loader, so what its
-          controls require stays on the controls rather than being announced as a banner every
-          navigation would flash. */}
-          {reason && !files.isLoading ? (
+          {reason ? (
             <Alert severity="info" sx={{ mb: 2 }}>
               {reason}
             </Alert>
           ) : null}
 
-          <Box
-            sx={{
-              "& .MuiPaper-root:last-child": {
-                height: "calc(100vh - 260px)",
-                "@supports (height: 100dvh)": { height: "calc(100dvh - 260px)" },
-              },
-            }}
-          >
+          <Box sx={filesListingSx}>
             <DataTable
               subRowsEnabled
               columns={columns}
-              data={files.isLoading ? undefined : files.rows}
+              data={files.rows}
               getRowId={(row) => row.fullPath}
-              isLoading={files.isLoading}
               toolbarContent={
                 <Grid container sx={{ width: "100%" }}>
                   <Grid sx={{ alignItems: "center", display: "flex" }}>
@@ -298,19 +292,15 @@ export const ProjectFilesSection = ({ notice, route }: { notice?: string; route:
       <Typography gutterBottom component="h1" variant="h4">
         Files
       </Typography>
-      {facts === undefined ? (
-        <CenterLoader />
-      ) : (
-        /* A new project or a new directory is a new listing, so nothing the previous one was
-        showing — rows, dialogs, or an in-flight command's control state — survives into it. */
-        <FilesTable
-          facts={facts}
-          key={`${projectId}:${path}`}
-          notice={notice}
-          path={path}
-          projectId={projectId}
-        />
-      )}
+      {/* A new project or a new directory is a new listing, so nothing the previous one was
+      showing — rows, dialogs, or an in-flight command's control state — survives into it. */}
+      <FilesTable
+        facts={facts}
+        key={`${projectId}:${path}`}
+        notice={notice}
+        path={path}
+        projectId={projectId}
+      />
     </Container>
   );
 };

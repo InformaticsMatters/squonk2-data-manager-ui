@@ -1,5 +1,12 @@
-import { useGetDefaultOrganisation } from "@/api/account-server/organisation";
-import { useGetUserAccount } from "@/api/account-server/user";
+import {
+  getGetDefaultOrganisationSuspenseQueryOptions,
+  useGetDefaultOrganisation,
+} from "@/api/account-server/organisation";
+import { getGetPersonalUnitSuspenseQueryOptions } from "@/api/account-server/unit";
+import {
+  getGetUserAccountSuspenseQueryOptions,
+  useGetUserAccount,
+} from "@/api/account-server/user";
 
 import { classifyTransportFailure } from "../api/runtime/classifyTransportFailure";
 import {
@@ -26,6 +33,16 @@ export type AccountFacts = {
   freshness: UnitCreationFreshness;
   personalUnitId?: string;
 };
+
+/**
+ * The reads `useAccountFacts` is assembled from, for a screen that waits for them behind its
+ * skeleton: its capabilities then arrive decided rather than unconfirmed and settling a moment later.
+ */
+export const accountFactsReads = [
+  getGetUserAccountSuspenseQueryOptions({ query: { retry: false } }),
+  getGetDefaultOrganisationSuspenseQueryOptions({ query: { retry: false } }),
+  getGetPersonalUnitSuspenseQueryOptions({ query: { retry: false } }),
+];
 
 export const useAccountFacts = (): AccountFacts => {
   const account = useGetUserAccount({ query: { retry: false } });

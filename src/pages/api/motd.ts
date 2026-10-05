@@ -57,7 +57,7 @@ function validateMotdFile(parsed: unknown): z.infer<typeof MotdFileSchema> | nul
   return motdFileResult.data;
 }
 
-const readActiveMotd = async (): Promise<z.infer<typeof MotdEntrySchema>[]> => {
+export const readActiveMotd = async (): Promise<z.infer<typeof MotdEntrySchema>[]> => {
   const fileContents = await fs.readFile(MOTD_PATH, "utf8").catch(() => null);
   if (!fileContents) {
     return [];

@@ -1,7 +1,9 @@
 import { expect, type Page, test, type TestInfo } from "@playwright/test";
+import { setTimeout as delay } from "node:timers/promises";
 
 import { fixtureIds } from "./services/fixtures";
 import { acceptanceUrls } from "./environment";
+import { holdReads } from "./holdReads";
 
 test.describe.configure({ mode: "serial" });
 
@@ -324,6 +326,36 @@ test("a project viewer reads results and is told what each unavailable action re
   // Reading the project's results is not withheld along with the actions.
   await expect(page.getByRole("link", { name: "Acceptance Workflow" })).toBeVisible();
   await expect(page.getByRole("link", { name: "DATASET", exact: true })).toBeVisible();
+});
+
+test("a project viewer's section mounts with its read-only statement rather than gaining it later", async ({
+  page,
+  request,
+}, testInfo) => {
+  const statement =
+    "You have read-only access to this project, so you cannot run, stop, delete, or archive work in it.";
+  await request.put(`${acceptanceUrls.control}/scenario/${subjectFor(testInfo)}?profile=read-only`);
+  await login(page, acceptanceResults, testInfo);
+  await expect(page.getByText(statement)).toBeVisible();
+
+  // The caller's account answers last, so a section that mounted before it would first render
+  // without the statement and insert it above its content once the account arrived.
+  await page.route("**/user/account**", async (route) => {
+    await delay(1500);
+    await route.fallback();
+  });
+  await page.addInitScript((text) => {
+    new MutationObserver(() => {
+      const content = document.body.textContent;
+      if (content.includes("Acceptance Instance") && !content.includes(text)) {
+        sessionStorage.setItem("results-without-statement", "true");
+      }
+    }).observe(document, { childList: true, subtree: true });
+  }, statement);
+  await page.goto(acceptanceResults);
+
+  await expect(page.getByText(statement)).toBeVisible();
+  expect(await page.evaluate(() => sessionStorage.getItem("results-without-statement"))).toBeNull();
 });
 
 test("results that cannot be refreshed are marked stale, locked, and retryable", async ({
@@ -689,8 +721,8 @@ test("a definition filter withdraws the type filter before the catalogue has nam
 
   await page.goto(ranJob);
   await outstanding;
-  // The rail is on screen and the read that would name the definition has not answered.
-  await expect(page.getByRole("button", { name: "Refresh results" })).toBeVisible();
+  // The section waits behind its skeleton for the read that would name the definition.
+  await expect(page.getByRole("status", { exact: true, name: "Loading" })).toBeVisible();
 
   // What the route carries withdraws the type filter, not what the catalogue eventually says about
   // it: a choice made in a filter offered during this wait could only be written by dropping the
@@ -793,4 +825,37 @@ test("the definition catalogue read is reported and retried like any other Resul
   await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
   await expect(page).toHaveURL(`${acceptanceUrls.app}${ranJob}`);
   await expect(page.getByText("Acceptance Project", { exact: true })).toBeVisible();
+});
+
+test("the list and its count arrive together behind one skeleton", async ({ page }, testInfo) => {
+  const releaseTasks = await holdReads(page, /\/task\?/u);
+  await login(page, acceptanceResults, testInfo);
+
+  await expect(page.getByRole("status", { exact: true, name: "Loading" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Results" })).toHaveCount(0);
+  await releaseTasks();
+  await expect(page.getByRole("heading", { level: 1, name: "Results" })).toBeVisible();
+  await expect(page.getByText(/^\d+ results?$/u)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Acceptance Instance" })).toBeVisible();
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
+});
+
+test("a result opens whole, with the job it ran and what it was given", async ({
+  page,
+}, testInfo) => {
+  await login(page, acceptanceResults, testInfo);
+  await expect(page.getByRole("link", { name: "Acceptance Instance" })).toBeVisible();
+
+  // The list stays as it is until the instance can be shown with the job it ran.
+  const releaseJob = await holdReads(page, /\/job\/\d+$/u);
+  await page.getByRole("link", { name: "Acceptance Instance" }).click();
+  await expect(page).toHaveURL(
+    `${acceptanceUrls.app}${acceptanceResults}/instances/${fixtureIds.instance}`,
+  );
+  await expect(page.getByRole("link", { name: "All results" })).toHaveCount(0);
+  await releaseJob();
+
+  await expect(page.getByRole("link", { name: "All results" })).toBeVisible();
+  await expect(page.getByText("This job has no inputs")).toBeVisible();
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
 });

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Skeleton, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
 import { DropdownIcon, OrganisationIcon } from "../../components/icons";
@@ -46,8 +46,17 @@ export const OrganisationIdentity = () => {
   const selected =
     organisations.find((candidate) => candidate.id === organisationId) ?? organisation;
   // Nothing is chosen only when nothing is known: an organisation that is in effect always names
-  // itself, however it came to be selected.
-  const label = selected?.name ?? (organisationId ? "Organisation" : "Choose organisation");
+  // itself, however it came to be selected. Until the list answers there is no name to show, so a
+  // placeholder holds the control near the size it will settle at.
+  const label =
+    selected?.name ??
+    (organisationsArePending ? (
+      <Skeleton sx={{ bgcolor: "primary.light" }} width={120} />
+    ) : organisationId ? (
+      "Organisation"
+    ) : (
+      "Choose organisation"
+    ));
 
   // One rule, stated here rather than in a derivation of its own: a trimmed, case-insensitive match
   // on the name. Callers do not type identifiers, so identifiers are shown but not matched.

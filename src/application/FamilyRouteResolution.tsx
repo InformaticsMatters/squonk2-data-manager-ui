@@ -12,7 +12,6 @@ import { Alert } from "@mui/material";
 import NextError from "next/error";
 import { useRouter } from "next/router";
 
-import { CenterLoader } from "../components/CenterLoader";
 import { type RouteNotFoundParent } from "../routing/routeContract";
 import {
   type FamilyPagePolicy,
@@ -136,7 +135,13 @@ export const FamilyRouteResolver = ({
  * A not-found or uncanonicalisable URL is stated inside the masthead, navigation and footer rather
  * than in place of them, so a caller who mistyped an address has somewhere to go from it.
  */
-export const FamilyRouteGate = ({ children }: { children: ReactNode }) => {
+export const FamilyRouteGate = ({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
+  fallback: ReactNode;
+}) => {
   const resolution = useContext(FamilyRouteResolutionContext);
   if (!resolution) {
     throw new Error("Family route resolution is unavailable");
@@ -148,7 +153,7 @@ export const FamilyRouteGate = ({ children }: { children: ReactNode }) => {
     return <Alert severity="error">Unable to canonicalise this route. Reload to retry.</Alert>;
   }
   if (!resolution.route) {
-    return <CenterLoader />;
+    return fallback;
   }
   return children;
 };

@@ -4,28 +4,22 @@ import { useRouter } from "next/router";
 
 import { type FamilyRoute } from "../application/familyRoute";
 import { useFamilyRoute } from "../application/FamilyRouteResolution";
-import { CenterLoader } from "../components/CenterLoader";
-import { DefinitionKindIcon } from "../components/kindIcons";
+import { cardGridSx } from "../components/runCards/cardGrid";
 import { DefinitionCard } from "../components/runCards/DefinitionCard";
 import { capabilityReason, evaluateProjectExecutionCapability } from "./capabilities";
 import { type ProjectFacts, useProjectFacts } from "./projectFacts";
 import { ProjectRunDefinition } from "./ProjectRunDefinition";
-import {
-  projectLinks,
-  type ProjectRoute,
-  runCatalogueState,
-  type RunFilterType,
-  type RunState,
-} from "./routes";
+import { projectLinks, type ProjectRoute, runCatalogueState, type RunState } from "./routes";
 import {
   filterRunItems,
   findRunDefinition,
   runCatalogueOf,
   type RunDefinitionItem,
 } from "./runFacts";
+import { runFilter } from "./runFilter";
 import { SectionReadAlerts } from "./SectionReadAlerts";
 import { resolveProjectSectionRoute } from "./sectionRoute";
-import { type SectionFilterOption, SectionToolbar } from "./SectionToolbar";
+import { SectionToolbar } from "./SectionToolbar";
 import { type ProjectRunCatalogue, useProjectRun } from "./useProjectRun";
 import { type LaunchOutcome } from "./useRunCommands";
 
@@ -33,20 +27,6 @@ type RunRoute = Extract<ProjectRoute, { kind: "run-definition" | "run" }>;
 
 const isRunRoute = (route: FamilyRoute): route is RunRoute =>
   route.kind === "run" || route.kind === "run-definition";
-
-const filterOptions: readonly SectionFilterOption<RunFilterType>[] = [
-  {
-    icon: <DefinitionKindIcon fontSize="small" kind="workflow" />,
-    label: "Workflows",
-    value: "workflow",
-  },
-  {
-    icon: <DefinitionKindIcon fontSize="small" kind="application" />,
-    label: "Applications",
-    value: "application",
-  },
-  { icon: <DefinitionKindIcon fontSize="small" kind="job" />, label: "Jobs", value: "job" },
-];
 
 /**
  * A definition that is absent, refused, not offered by this project, or addressed through a URL
@@ -95,10 +75,6 @@ const RunCatalogue = ({
 }) => {
   const items = filterRunItems(run.items, state);
 
-  if (run.isLoading) {
-    return <CenterLoader />;
-  }
-
   if (items.length === 0) {
     return (
       <Typography align="center" variant="body2">
@@ -108,19 +84,7 @@ const RunCatalogue = ({
   }
 
   return (
-    <Box
-      sx={{
-        display: "grid",
-        gap: 2,
-        gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-        "@container run-page (max-width: 1100px)": {
-          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-        },
-        "@container run-page (max-width: 800px)": {
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-        },
-      }}
-    >
+    <Box sx={cardGridSx}>
       {/* Nothing about a card is derived from a selected or previously current project. */}
       {items.map((item) => (
         <DefinitionCard
@@ -157,7 +121,6 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
   const definitionAbsent =
     addressed !== undefined &&
     addressed.item === undefined &&
-    !run.isLoading &&
     run.readStates[addressed.catalogue].kind === "available";
 
   const handleStateChange = (change: RunState) => {
@@ -190,7 +153,7 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
         Run
       </Typography>
       <SectionToolbar
-        filter={{ label: "Filter", options: filterOptions, size: { md: 4, sm: 6, xs: 12 } }}
+        filter={runFilter}
         refreshLabel="Refresh catalogue"
         state={state}
         onRefresh={() => run.refresh()}
@@ -207,25 +170,19 @@ const RunSection = ({ localNotFound, route }: { localNotFound?: boolean; route: 
       malformed identity and one the project does not offer are indistinguishable. */}
       {localNotFound === true || definitionAbsent ? <DefinitionNotFound /> : null}
 
-      {facts === undefined ? (
-        <CenterLoader />
-      ) : (
-        <>
-          <RunRequirement facts={facts} />
-          <RunCatalogue projectId={projectId} run={run} state={state} />
-          {addressed?.item ? (
-            <ProjectRunDefinition
-              content={run.freshness[addressed.item.kind]}
-              definitionId={addressed.definitionId}
-              facts={facts}
-              item={addressed.item}
-              projectId={projectId}
-              onClose={handleClose}
-              onLaunched={handleLaunched}
-            />
-          ) : null}
-        </>
-      )}
+      <RunRequirement facts={facts} />
+      <RunCatalogue projectId={projectId} run={run} state={state} />
+      {addressed?.item ? (
+        <ProjectRunDefinition
+          content={run.freshness[addressed.item.kind]}
+          definitionId={addressed.definitionId}
+          facts={facts}
+          item={addressed.item}
+          projectId={projectId}
+          onClose={handleClose}
+          onLaunched={handleLaunched}
+        />
+      ) : null}
     </Container>
   );
 };

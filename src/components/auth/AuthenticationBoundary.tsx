@@ -4,9 +4,15 @@ import { useRouter } from "next/router";
 
 import { authClient } from "../../lib/auth-client";
 import { withBasePath } from "../../utils/app/basePath";
-import { CenterLoader } from "../CenterLoader";
 
-export const AuthenticationBoundary = ({ children }: { children: ReactNode }) => {
+/** `fallback` stands in for the page while the session is pending or being signed in again. */
+export const AuthenticationBoundary = ({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
+  fallback: ReactNode;
+}) => {
   const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
 
@@ -20,7 +26,7 @@ export const AuthenticationBoundary = ({ children }: { children: ReactNode }) =>
   }, [isPending, session, router]);
 
   if (isPending || !session) {
-    return <CenterLoader />;
+    return fallback;
   }
   return children;
 };

@@ -108,8 +108,10 @@ export const OrganisationIdentity = () => {
             border: "2px solid",
             borderColor: "primary.light",
             borderRadius: 2,
+            // Shrinks with the bar so the name truncates rather than pushing the account menu off.
+            maxWidth: "100%",
             minWidth: 0,
-            ml: 2,
+            ml: { xs: 1, sm: 2 },
             px: 1,
             py: 0.75,
             textTransform: "none",

@@ -61,14 +61,14 @@ const PublicNavigation = () => (
   <>
     <Toolbar sx={{ gap: 1 }}>
       <HeaderLogo />
-      <Box sx={{ display: { xs: "none", sm: "block" }, ml: "auto" }}>
+      <Box sx={{ display: { xs: "none", md: "block" }, ml: "auto" }}>
         <NavigationLinks authenticated={false} />
       </Box>
-      <Box sx={{ ml: { xs: "auto", sm: 0 } }}>
+      <Box sx={{ ml: { xs: "auto", md: 0 } }}>
         <UserMenu />
       </Box>
     </Toolbar>
-    <Box sx={{ display: { sm: "none" }, overflowX: "auto", px: 1 }}>
+    <Box sx={{ display: { md: "none" }, overflowX: "auto", px: 1 }}>
       <NavigationLinks authenticated={false} />
     </Box>
     {/* A project page is only ever shown signed in, so while the session answers it keeps the
@@ -80,16 +80,19 @@ const PublicNavigation = () => (
 const AuthenticatedNavigation = () => (
   <>
     <Toolbar>
-      <Stack direction="row" sx={{ alignItems: "center", minWidth: 0 }}>
+      <Stack
+        direction="row"
+        sx={{ alignItems: "center", flex: { xs: 1, md: "initial" }, minWidth: 0 }}
+      >
         <HeaderLogo />
         <OrganisationIdentity />
       </Stack>
-      <Box sx={{ display: { xs: "none", sm: "block" }, ml: "auto" }}>
+      <Box sx={{ display: { xs: "none", md: "block" }, ml: "auto" }}>
         <NavigationLinks authenticated />
       </Box>
       <UserMenu />
     </Toolbar>
-    <Box sx={{ display: { sm: "none" }, overflowX: "auto", px: 1 }}>
+    <Box sx={{ display: { md: "none" }, overflowX: "auto", px: 1 }}>
       <NavigationLinks authenticated />
     </Box>
   </>

@@ -27,4 +27,10 @@ const LogoLink = styled(NextLink)(({ theme }) => ({
   display: "inline-block",
   maxHeight: "68px",
   padding: theme.spacing(0.5, 0),
+  // The image is fixed at 206px, which alone is most of a phone's width.
+  [theme.breakpoints.down("sm")]: {
+    flexShrink: 0,
+    width: 124,
+    "& img": { height: "auto", width: "100%" },
+  },
 }));
